@@ -1,0 +1,40 @@
+\section{src/mlpack/methods/neighbor\+\_\+search/typedef.hpp File Reference}
+\label{methods_2neighbor__search_2typedef_8hpp}\index{src/mlpack/methods/neighbor\+\_\+search/typedef.\+hpp@{src/mlpack/methods/neighbor\+\_\+search/typedef.\+hpp}}
+Include dependency graph for typedef.\+hpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{methods_2neighbor__search_2typedef_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{methods_2neighbor__search_2typedef_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ {\bf mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ {\bf mlpack\+::neighbor}
+\begin{DoxyCompactList}\small\item\em Neighbor-\/search routines. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef Neighbor\+Search$<$ Furthest\+Neighbor\+Sort, metric\+::\+Euclidean\+Distance $>$ {\bf mlpack\+::neighbor\+::\+Allk\+FN}
+\item 
+typedef Neighbor\+Search$<$ Nearest\+Neighbor\+Sort, metric\+::\+Euclidean\+Distance $>$ {\bf mlpack\+::neighbor\+::\+Allk\+NN}
+\item 
+{\footnotesize template$<$template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+S\+P\+Tree$>$ }\\using {\bf mlpack\+::neighbor\+::\+Defeatist\+K\+NN} = Neighbor\+Search$<$ Nearest\+Neighbor\+Sort, metric\+::\+Euclidean\+Distance, arma\+::mat, Tree\+Type, Tree\+Type$<$ metric\+::\+Euclidean\+Distance, Neighbor\+Search\+Stat$<$ Nearest\+Neighbor\+Sort $>$, arma\+::mat $>$\+::template Defeatist\+Dual\+Tree\+Traverser, Tree\+Type$<$ metric\+::\+Euclidean\+Distance, Neighbor\+Search\+Stat$<$ Nearest\+Neighbor\+Sort $>$, arma\+::mat $>$\+::template Defeatist\+Single\+Tree\+Traverser $>$
+\begin{DoxyCompactList}\small\item\em The Defeatist\+K\+NN class is the k-\/nearest-\/neighbors method considering defeatist search. \end{DoxyCompactList}\item 
+typedef Neighbor\+Search$<$ Furthest\+Neighbor\+Sort, metric\+::\+Euclidean\+Distance $>$ {\bf mlpack\+::neighbor\+::\+K\+FN}
+\begin{DoxyCompactList}\small\item\em The K\+FN class is the k-\/furthest-\/neighbors method. \end{DoxyCompactList}\item 
+typedef Neighbor\+Search$<$ Nearest\+Neighbor\+Sort, metric\+::\+Euclidean\+Distance $>$ {\bf mlpack\+::neighbor\+::\+K\+NN}
+\begin{DoxyCompactList}\small\item\em The K\+NN class is the k-\/nearest-\/neighbors method. \end{DoxyCompactList}\item 
+typedef Defeatist\+K\+NN$<$ tree\+::\+S\+P\+Tree $>$ {\bf mlpack\+::neighbor\+::\+Spill\+K\+NN}
+\begin{DoxyCompactList}\small\item\em The Spill\+K\+NN class is the k-\/nearest-\/neighbors method considering defeatist search on S\+P\+Tree. \end{DoxyCompactList}\end{DoxyCompactItemize}

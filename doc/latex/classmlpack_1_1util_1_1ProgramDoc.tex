@@ -1,0 +1,87 @@
+\section{mlpack\+:\+:util\+:\+:Program\+Doc Class Reference}
+\label{classmlpack_1_1util_1_1ProgramDoc}\index{mlpack\+::util\+::\+Program\+Doc@{mlpack\+::util\+::\+Program\+Doc}}
+
+
+A static object whose constructor registers program documentation with the \doxyref{C\+LI}{p.}{classmlpack_1_1CLI} class.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Program\+Doc} (const {\bf std\+::string} \&{\bf program\+Name}, const {\bf std\+::string} \&{\bf documentation})
+\begin{DoxyCompactList}\small\item\em Construct a \doxyref{Program\+Doc}{p.}{classmlpack_1_1util_1_1ProgramDoc} object. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+{\bf std\+::string} {\bf documentation}
+\begin{DoxyCompactList}\small\item\em Documentation for what the program does. \end{DoxyCompactList}\item 
+{\bf std\+::string} {\bf program\+Name}
+\begin{DoxyCompactList}\small\item\em The name of the program. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A static object whose constructor registers program documentation with the \doxyref{C\+LI}{p.}{classmlpack_1_1CLI} class. 
+
+This should not be used outside of \doxyref{C\+LI}{p.}{classmlpack_1_1CLI} itself, and you should use the \doxyref{P\+R\+O\+G\+R\+A\+M\+\_\+\+I\+N\+F\+O()}{p.}{param_8hpp_ad781e52fa8bee6ec70cabb646fa16e00} macro to declare these objects. Only one \doxyref{Program\+Doc}{p.}{classmlpack_1_1util_1_1ProgramDoc} object should ever exist.
+
+\begin{DoxySeeAlso}{See also}
+\doxyref{core/util/cli.\+hpp}{p.}{cli_8hpp}, \doxyref{mlpack\+::\+C\+LI}{p.}{classmlpack_1_1CLI} 
+\end{DoxySeeAlso}
+
+
+Definition at line 71 of file option.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::util\+::\+Program\+Doc@{mlpack\+::util\+::\+Program\+Doc}!Program\+Doc@{Program\+Doc}}
+\index{Program\+Doc@{Program\+Doc}!mlpack\+::util\+::\+Program\+Doc@{mlpack\+::util\+::\+Program\+Doc}}
+\subsubsection[{Program\+Doc(const std\+::string \&program\+Name, const std\+::string \&documentation)}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::util\+::\+Program\+Doc\+::\+Program\+Doc (
+\begin{DoxyParamCaption}
+\item[{const {\bf std\+::string} \&}]{program\+Name, }
+\item[{const {\bf std\+::string} \&}]{documentation}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1util_1_1ProgramDoc_ad3fe389bdebe92d02997bdcee3f3651c}
+
+
+Construct a \doxyref{Program\+Doc}{p.}{classmlpack_1_1util_1_1ProgramDoc} object. 
+
+When constructed, it will register itself with \doxyref{C\+LI}{p.}{classmlpack_1_1CLI}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em program\+Name} & Short string representing the name of the program. \\
+\hline
+{\em documentation} & Long string containing documentation on how to use the program and what it is. No newline characters are necessary; this is taken care of by \doxyref{C\+LI}{p.}{classmlpack_1_1CLI} later. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::util\+::\+Program\+Doc@{mlpack\+::util\+::\+Program\+Doc}!documentation@{documentation}}
+\index{documentation@{documentation}!mlpack\+::util\+::\+Program\+Doc@{mlpack\+::util\+::\+Program\+Doc}}
+\subsubsection[{documentation}]{\setlength{\rightskip}{0pt plus 5cm}{\bf std\+::string} mlpack\+::util\+::\+Program\+Doc\+::documentation}\label{classmlpack_1_1util_1_1ProgramDoc_a1088a9e5a986fb6fe3133115985819dd}
+
+
+Documentation for what the program does. 
+
+
+
+Definition at line 89 of file option.\+hpp.
+
+\index{mlpack\+::util\+::\+Program\+Doc@{mlpack\+::util\+::\+Program\+Doc}!program\+Name@{program\+Name}}
+\index{program\+Name@{program\+Name}!mlpack\+::util\+::\+Program\+Doc@{mlpack\+::util\+::\+Program\+Doc}}
+\subsubsection[{program\+Name}]{\setlength{\rightskip}{0pt plus 5cm}{\bf std\+::string} mlpack\+::util\+::\+Program\+Doc\+::program\+Name}\label{classmlpack_1_1util_1_1ProgramDoc_a3bc6af4a515a280ff1dcc2caec404327}
+
+
+The name of the program. 
+
+
+
+Definition at line 87 of file option.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/util/{\bf option.\+hpp}\end{DoxyCompactItemize}

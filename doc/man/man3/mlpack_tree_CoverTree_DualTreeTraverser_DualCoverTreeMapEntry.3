@@ -1,0 +1,92 @@
+.TH "mlpack::tree::CoverTree< MetricType, StatisticType, MatType, RootPointPolicy >::DualTreeTraverser< RuleType >::DualCoverTreeMapEntry" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::tree::CoverTree< MetricType, StatisticType, MatType, RootPointPolicy >::DualTreeTraverser< RuleType >::DualCoverTreeMapEntry \- Struct used for traversal\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "bool \fBoperator<\fP (const \fBDualCoverTreeMapEntry\fP &other) const "
+.br
+.RI "\fIComparison operator, for sorting within the map\&. \fP"
+.in -1c
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "double \fBbaseCase\fP"
+.br
+.RI "\fIThe base case\&. \fP"
+.ti -1c
+.RI "\fBCoverTree\fP< MetricType, StatisticType, MatType, RootPointPolicy > * \fBreferenceNode\fP"
+.br
+.RI "\fIThe node this entry refers to\&. \fP"
+.ti -1c
+.RI "double \fBscore\fP"
+.br
+.RI "\fIThe score of the node\&. \fP"
+.ti -1c
+.RI "RuleType::TraversalInfoType \fBtraversalInfo\fP"
+.br
+.RI "\fIThe traversal info associated with the call to Score() for this entry\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename StatisticType = EmptyStatistic, typename MatType = arma::mat, typename RootPointPolicy = FirstPointIsRoot>
+.br
+template<typename RuleType>
+.br
+struct mlpack::tree::CoverTree< MetricType, StatisticType, MatType, RootPointPolicy >::DualTreeTraverser< RuleType >::DualCoverTreeMapEntry"
+Struct used for traversal\&. 
+.PP
+Definition at line 64 of file dual_tree_traverser\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename MetricType  = metric::LMetric<2, true>, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename RootPointPolicy  = FirstPointIsRoot> template<typename RuleType > bool \fBmlpack::tree::CoverTree\fP< MetricType, StatisticType, MatType, RootPointPolicy >::\fBDualTreeTraverser\fP< RuleType >::DualCoverTreeMapEntry::operator< (const \fBDualCoverTreeMapEntry\fP & other) const\fC [inline]\fP"
+
+.PP
+Comparison operator, for sorting within the map\&. 
+.PP
+Definition at line 77 of file dual_tree_traverser\&.hpp\&.
+.PP
+References mlpack::tree::CoverTree< MetricType, StatisticType, MatType, RootPointPolicy >::DualTreeTraverser< RuleType >::DualCoverTreeMapEntry::baseCase, and mlpack::tree::CoverTree< MetricType, StatisticType, MatType, RootPointPolicy >::DualTreeTraverser< RuleType >::DualCoverTreeMapEntry::score\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename MetricType  = metric::LMetric<2, true>, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename RootPointPolicy  = FirstPointIsRoot> template<typename RuleType > double \fBmlpack::tree::CoverTree\fP< MetricType, StatisticType, MatType, RootPointPolicy >::\fBDualTreeTraverser\fP< RuleType >::DualCoverTreeMapEntry::baseCase"
+
+.PP
+The base case\&. 
+.PP
+Definition at line 72 of file dual_tree_traverser\&.hpp\&.
+.PP
+Referenced by mlpack::tree::CoverTree< MetricType, StatisticType, MatType, RootPointPolicy >::DualTreeTraverser< RuleType >::DualCoverTreeMapEntry::operator<()\&.
+.SS "template<typename MetricType  = metric::LMetric<2, true>, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename RootPointPolicy  = FirstPointIsRoot> template<typename RuleType > \fBCoverTree\fP<MetricType, StatisticType, MatType, RootPointPolicy>* \fBmlpack::tree::CoverTree\fP< MetricType, StatisticType, MatType, RootPointPolicy >::\fBDualTreeTraverser\fP< RuleType >::DualCoverTreeMapEntry::referenceNode"
+
+.PP
+The node this entry refers to\&. 
+.PP
+Definition at line 68 of file dual_tree_traverser\&.hpp\&.
+.SS "template<typename MetricType  = metric::LMetric<2, true>, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename RootPointPolicy  = FirstPointIsRoot> template<typename RuleType > double \fBmlpack::tree::CoverTree\fP< MetricType, StatisticType, MatType, RootPointPolicy >::\fBDualTreeTraverser\fP< RuleType >::DualCoverTreeMapEntry::score"
+
+.PP
+The score of the node\&. 
+.PP
+Definition at line 70 of file dual_tree_traverser\&.hpp\&.
+.PP
+Referenced by mlpack::tree::CoverTree< MetricType, StatisticType, MatType, RootPointPolicy >::DualTreeTraverser< RuleType >::DualCoverTreeMapEntry::operator<()\&.
+.SS "template<typename MetricType  = metric::LMetric<2, true>, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename RootPointPolicy  = FirstPointIsRoot> template<typename RuleType > RuleType::TraversalInfoType \fBmlpack::tree::CoverTree\fP< MetricType, StatisticType, MatType, RootPointPolicy >::\fBDualTreeTraverser\fP< RuleType >::DualCoverTreeMapEntry::traversalInfo"
+
+.PP
+The traversal info associated with the call to Score() for this entry\&. 
+.PP
+Definition at line 74 of file dual_tree_traverser\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

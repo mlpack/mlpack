@@ -1,0 +1,594 @@
+\section{mlpack\+:\+:ann\+:\+:Concat$<$ Input\+Data\+Type, Output\+Data\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1Concat}\index{mlpack\+::ann\+::\+Concat$<$ Input\+Data\+Type, Output\+Data\+Type $>$@{mlpack\+::ann\+::\+Concat$<$ Input\+Data\+Type, Output\+Data\+Type $>$}}
+
+
+Implementation of the \doxyref{Concat}{p.}{classmlpack_1_1ann_1_1Concat} class.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Concat} (const bool {\bf model}=true, const bool {\bf same}=true)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Concat}{p.}{classmlpack_1_1ann_1_1Concat} object using the specified parameters. \end{DoxyCompactList}\item 
+{\footnotesize template$<$class Layer\+Type , class... Args$>$ }\\void {\bf Add} (Args...\+args)
+\item 
+void {\bf Add} ({\bf Layer\+Types} layer)
+\item 
+{\footnotesize template$<$typename eT $>$ }\\void {\bf Backward} (const arma\+::\+Mat$<$ eT $>$ \&\&, arma\+::\+Mat$<$ eT $>$ \&\&gy, arma\+::\+Mat$<$ eT $>$ \&\&g)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network, using 3rd-\/order tensors as input, calculating the function f(x) by propagating x backwards through f. \end{DoxyCompactList}\item 
+arma\+::mat const \& {\bf Delta} () const 
+\begin{DoxyCompactList}\small\item\em Get the delta.\+e. \end{DoxyCompactList}\item 
+arma\+::mat \& {\bf Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void {\bf Forward} (arma\+::\+Mat$<$ eT $>$ \&\&input, arma\+::\+Mat$<$ eT $>$ \&\&output)
+\begin{DoxyCompactList}\small\item\em Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void {\bf Gradient} (arma\+::\+Mat$<$ eT $>$ \&\&, arma\+::\+Mat$<$ eT $>$ \&\&error, arma\+::\+Mat$<$ eT $>$ \&\&)
+\item 
+arma\+::mat const \& {\bf Gradient} () const 
+\begin{DoxyCompactList}\small\item\em Get the gradient. \end{DoxyCompactList}\item 
+arma\+::mat \& {\bf Gradient} ()
+\begin{DoxyCompactList}\small\item\em Modify the gradient. \end{DoxyCompactList}\item 
+arma\+::mat const \& {\bf Input\+Parameter} () const 
+\item 
+arma\+::mat \& {\bf Input\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the input parameter. \end{DoxyCompactList}\item 
+std\+::vector$<$ {\bf Layer\+Types} $>$ \& {\bf Model} ()
+\begin{DoxyCompactList}\small\item\em Return the model modules. \end{DoxyCompactList}\item 
+arma\+::mat const \& {\bf Output\+Parameter} () const 
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+arma\+::mat \& {\bf Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+const arma\+::mat \& {\bf Parameters} () const 
+\begin{DoxyCompactList}\small\item\em Return the initial point for the optimization. \end{DoxyCompactList}\item 
+arma\+::mat \& {\bf Parameters} ()
+\begin{DoxyCompactList}\small\item\em Modify the initial point for the optimization. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&, const unsigned int)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Delete\+Visitor} {\bf delete\+Visitor}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored delete visitor. \end{DoxyCompactList}\item 
+arma\+::mat {\bf delta}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored delta object. \end{DoxyCompactList}\item 
+{\bf Delta\+Visitor} {\bf delta\+Visitor}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored delta visitor. \end{DoxyCompactList}\item 
+std\+::vector$<$ {\bf Layer\+Types} $>$ {\bf empty}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored empty list of modules. \end{DoxyCompactList}\item 
+arma\+::mat {\bf gradient}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored gradient object. \end{DoxyCompactList}\item 
+arma\+::mat {\bf input\+Parameter}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored input parameter object. \end{DoxyCompactList}\item 
+bool {\bf model}
+\begin{DoxyCompactList}\small\item\em Parameter which indicates if the modules should be exposed. \end{DoxyCompactList}\item 
+std\+::vector$<$ {\bf Layer\+Types} $>$ {\bf network}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored network modules. \end{DoxyCompactList}\item 
+arma\+::mat {\bf output\+Parameter}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored output parameter object. \end{DoxyCompactList}\item 
+{\bf Output\+Parameter\+Visitor} {\bf output\+Parameter\+Visitor}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored output parameter visitor. \end{DoxyCompactList}\item 
+arma\+::mat {\bf parameters}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored model parameters. \end{DoxyCompactList}\item 
+bool {\bf same}
+\begin{DoxyCompactList}\small\item\em If true merge the error in the backward pass. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat$>$\\*
+class mlpack\+::ann\+::\+Concat$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+
+Implementation of the \doxyref{Concat}{p.}{classmlpack_1_1ann_1_1Concat} class. 
+
+The \doxyref{Concat}{p.}{classmlpack_1_1ann_1_1Concat} class works as a feed-\/forward fully connected network container which plugs various layers together.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 42 of file concat.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}!Concat@{Concat}}
+\index{Concat@{Concat}!mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}}
+\subsubsection[{Concat(const bool model=true, const bool same=true)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ {\bf mlpack\+::ann\+::\+Concat}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::{\bf Concat} (
+\begin{DoxyParamCaption}
+\item[{const bool}]{model = {\ttfamily true}, }
+\item[{const bool}]{same = {\ttfamily true}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1Concat_a7029700b6533d8711e07ebf7a1a81c95}
+
+
+Create the \doxyref{Concat}{p.}{classmlpack_1_1ann_1_1Concat} object using the specified parameters. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em model} & Expose all network modules. \\
+\hline
+{\em same} & Merge the error in the backward pass. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}!Add@{Add}}
+\index{Add@{Add}!mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}}
+\subsubsection[{Add(\+Args...\+args)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$class Layer\+Type , class... Args$>$ void {\bf mlpack\+::ann\+::\+Concat}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::{\bf Add} (
+\begin{DoxyParamCaption}
+\item[{Args...}]{args}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1Concat_a7c933c9158d7d41f80329a9da90b61f9}
+
+
+Definition at line 95 of file concat.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Concat$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::network.
+
+\index{mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}!Add@{Add}}
+\index{Add@{Add}!mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}}
+\subsubsection[{Add(\+Layer\+Types layer)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ void {\bf mlpack\+::ann\+::\+Concat}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::{\bf Add} (
+\begin{DoxyParamCaption}
+\item[{{\bf Layer\+Types}}]{layer}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1Concat_aaf378884fc93fd65feb195805ea9625d}
+
+
+Definition at line 102 of file concat.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Concat$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::network.
+
+\index{mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}!Backward@{Backward}}
+\index{Backward@{Backward}!mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}}
+\subsubsection[{Backward(const arma\+::\+Mat$<$ e\+T $>$ \&\&, arma\+::\+Mat$<$ e\+T $>$ \&\&gy, arma\+::\+Mat$<$ e\+T $>$ \&\&g)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename eT $>$ void {\bf mlpack\+::ann\+::\+Concat}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Backward (
+\begin{DoxyParamCaption}
+\item[{const arma\+::\+Mat$<$ eT $>$ \&\&}]{, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&\&}]{gy, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&\&}]{g}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1Concat_a708eea646eaf5e0a1cd6cbb43c653832}
+
+
+Ordinary feed backward pass of a neural network, using 3rd-\/order tensors as input, calculating the function f(x) by propagating x backwards through f. 
+
+Using the results from the feed forward pass.
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The propagated input activation. \\
+\hline
+{\em gy} & The backpropagated error. \\
+\hline
+{\em g} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}}
+\subsubsection[{Delta() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ arma\+::mat const\& {\bf mlpack\+::ann\+::\+Concat}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Delta (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1Concat_a28f16e1a142067cce2d28dd88b9e2cfd}
+
+
+Get the delta.\+e. 
+
+
+
+Definition at line 130 of file concat.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Concat$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::delta.
+
+\index{mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}}
+\subsubsection[{Delta()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ arma\+::mat\& {\bf mlpack\+::ann\+::\+Concat}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Delta (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1Concat_a840018841883c094442a6a57cac54dce}
+
+
+Modify the delta. 
+
+
+
+Definition at line 132 of file concat.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Concat$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::delta.
+
+\index{mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}!Forward@{Forward}}
+\index{Forward@{Forward}!mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}}
+\subsubsection[{Forward(arma\+::\+Mat$<$ e\+T $>$ \&\&input, arma\+::\+Mat$<$ e\+T $>$ \&\&output)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename eT $>$ void {\bf mlpack\+::ann\+::\+Concat}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Forward (
+\begin{DoxyParamCaption}
+\item[{arma\+::\+Mat$<$ eT $>$ \&\&}]{input, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&\&}]{output}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1Concat_ac916855f7b3ed4c2f6c0eb5adc157f07}
+
+
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input data used for evaluating the specified function. \\
+\hline
+{\em output} & Resulting output activation. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}}
+\subsubsection[{Gradient(arma\+::\+Mat$<$ e\+T $>$ \&\&, arma\+::\+Mat$<$ e\+T $>$ \&\&error, arma\+::\+Mat$<$ e\+T $>$ \&\&)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename eT $>$ void {\bf mlpack\+::ann\+::\+Concat}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Gradient (
+\begin{DoxyParamCaption}
+\item[{arma\+::\+Mat$<$ eT $>$ \&\&}]{, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&\&}]{error, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&\&}]{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1Concat_ac4cb53c95c2f9ab9d79b5551010d84b9}
+\index{mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}}
+\subsubsection[{Gradient() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ arma\+::mat const\& {\bf mlpack\+::ann\+::\+Concat}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Gradient (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1Concat_a0d7cc25a2cf3fb85aa742cf146dfa6ef}
+
+
+Get the gradient. 
+
+
+
+Definition at line 135 of file concat.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Concat$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::gradient.
+
+\index{mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}}
+\subsubsection[{Gradient()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ arma\+::mat\& {\bf mlpack\+::ann\+::\+Concat}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Gradient (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1Concat_aea14c6d316ee0ca2877527013c67f430}
+
+
+Modify the gradient. 
+
+
+
+Definition at line 137 of file concat.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Concat$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::gradient, and mlpack\+::ann\+::\+Concat$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Serialize().
+
+\index{mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}!Input\+Parameter@{Input\+Parameter}}
+\index{Input\+Parameter@{Input\+Parameter}!mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}}
+\subsubsection[{Input\+Parameter() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ arma\+::mat const\& {\bf mlpack\+::ann\+::\+Concat}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Input\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1Concat_a9fbc78ee72925c7163ce68ae2b2cbc66}
+
+
+Definition at line 120 of file concat.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Concat$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::input\+Parameter.
+
+\index{mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}!Input\+Parameter@{Input\+Parameter}}
+\index{Input\+Parameter@{Input\+Parameter}!mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}}
+\subsubsection[{Input\+Parameter()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ arma\+::mat\& {\bf mlpack\+::ann\+::\+Concat}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Input\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1Concat_a4d20d0c45793398cd7993d7fc3c5307e}
+
+
+Modify the input parameter. 
+
+
+
+Definition at line 122 of file concat.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Concat$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::input\+Parameter.
+
+\index{mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}!Model@{Model}}
+\index{Model@{Model}!mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}}
+\subsubsection[{Model()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ std\+::vector$<${\bf Layer\+Types}$>$\& {\bf mlpack\+::ann\+::\+Concat}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Model (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1Concat_a8947ffcc9a58a218c0149258df46be9c}
+
+
+Return the model modules. 
+
+
+
+Definition at line 105 of file concat.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Concat$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::empty, mlpack\+::ann\+::\+Concat$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::model, and mlpack\+::ann\+::\+Concat$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::network.
+
+\index{mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}}
+\subsubsection[{Output\+Parameter() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ arma\+::mat const\& {\bf mlpack\+::ann\+::\+Concat}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Output\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1Concat_a87b3c98f932741a9ee3247c8e785d33d}
+
+
+Get the output parameter. 
+
+
+
+Definition at line 125 of file concat.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Concat$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Parameter.
+
+\index{mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}}
+\subsubsection[{Output\+Parameter()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ arma\+::mat\& {\bf mlpack\+::ann\+::\+Concat}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Output\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1Concat_af4e86d39c1b3237b4d4a175bd6bd3bc6}
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 127 of file concat.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Concat$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Parameter.
+
+\index{mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}}
+\subsubsection[{Parameters() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ const arma\+::mat\& {\bf mlpack\+::ann\+::\+Concat}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Parameters (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1Concat_a4bc2ecac17bfddd677d96a80c61424f3}
+
+
+Return the initial point for the optimization. 
+
+
+
+Definition at line 116 of file concat.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Concat$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::parameters.
+
+\index{mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}}
+\subsubsection[{Parameters()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ arma\+::mat\& {\bf mlpack\+::ann\+::\+Concat}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Parameters (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1Concat_a30b389c5ea21bdab25bf85d49fd0d20f}
+
+
+Modify the initial point for the optimization. 
+
+
+
+Definition at line 118 of file concat.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Concat$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::parameters.
+
+\index{mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}}
+\subsubsection[{Serialize(\+Archive \&, const unsigned int)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename Archive $>$ void {\bf mlpack\+::ann\+::\+Concat}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{, }
+\item[{const unsigned}]{int}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1Concat_a85b63ea1f3d404132a8cfed4e8b35cf1}
+
+
+Serialize the layer. 
+
+
+
+Referenced by mlpack\+::ann\+::\+Concat$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Gradient().
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}!delete\+Visitor@{delete\+Visitor}}
+\index{delete\+Visitor@{delete\+Visitor}!mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}}
+\subsubsection[{delete\+Visitor}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ {\bf Delete\+Visitor} {\bf mlpack\+::ann\+::\+Concat}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::delete\+Visitor\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1Concat_a063254e168a4ed08e2ffbd041c859850}
+
+
+Locally-\/stored delete visitor. 
+
+
+
+Definition at line 165 of file concat.\+hpp.
+
+\index{mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}!delta@{delta}}
+\index{delta@{delta}!mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}}
+\subsubsection[{delta}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ arma\+::mat {\bf mlpack\+::ann\+::\+Concat}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::delta\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1Concat_a0963534e8b8afc724bbc4274d5315181}
+
+
+Locally-\/stored delta object. 
+
+
+
+Definition at line 171 of file concat.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Concat$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Delta().
+
+\index{mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}!delta\+Visitor@{delta\+Visitor}}
+\index{delta\+Visitor@{delta\+Visitor}!mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}}
+\subsubsection[{delta\+Visitor}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ {\bf Delta\+Visitor} {\bf mlpack\+::ann\+::\+Concat}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::delta\+Visitor\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1Concat_a4a4ca66e85f24a05994fd115258b0750}
+
+
+Locally-\/stored delta visitor. 
+
+
+
+Definition at line 159 of file concat.\+hpp.
+
+\index{mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}!empty@{empty}}
+\index{empty@{empty}!mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}}
+\subsubsection[{empty}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ std\+::vector$<${\bf Layer\+Types}$>$ {\bf mlpack\+::ann\+::\+Concat}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::empty\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1Concat_ac8f2b90d42ae173a9fe13ca169a6206c}
+
+
+Locally-\/stored empty list of modules. 
+
+
+
+Definition at line 168 of file concat.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Concat$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Model().
+
+\index{mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}!gradient@{gradient}}
+\index{gradient@{gradient}!mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}}
+\subsubsection[{gradient}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ arma\+::mat {\bf mlpack\+::ann\+::\+Concat}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::gradient\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1Concat_ad476c2405497fcd78c8e8c17397ee219}
+
+
+Locally-\/stored gradient object. 
+
+
+
+Definition at line 180 of file concat.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Concat$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Gradient().
+
+\index{mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}!input\+Parameter@{input\+Parameter}}
+\index{input\+Parameter@{input\+Parameter}!mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}}
+\subsubsection[{input\+Parameter}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ arma\+::mat {\bf mlpack\+::ann\+::\+Concat}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::input\+Parameter\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1Concat_aa5e38ac5fb989feca2a237789e0e760a}
+
+
+Locally-\/stored input parameter object. 
+
+
+
+Definition at line 174 of file concat.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Concat$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Input\+Parameter().
+
+\index{mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}!model@{model}}
+\index{model@{model}!mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}}
+\subsubsection[{model}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ bool {\bf mlpack\+::ann\+::\+Concat}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::model\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1Concat_a68adb5011879620855ad2dfa8c59cda8}
+
+
+Parameter which indicates if the modules should be exposed. 
+
+
+
+Definition at line 147 of file concat.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Concat$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Model().
+
+\index{mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}!network@{network}}
+\index{network@{network}!mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}}
+\subsubsection[{network}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ std\+::vector$<${\bf Layer\+Types}$>$ {\bf mlpack\+::ann\+::\+Concat}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::network\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1Concat_a59f3debd903612db7cd42c308db7787b}
+
+
+Locally-\/stored network modules. 
+
+
+
+Definition at line 153 of file concat.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Concat$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Add(), and mlpack\+::ann\+::\+Concat$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Model().
+
+\index{mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}!output\+Parameter@{output\+Parameter}}
+\index{output\+Parameter@{output\+Parameter}!mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}}
+\subsubsection[{output\+Parameter}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ arma\+::mat {\bf mlpack\+::ann\+::\+Concat}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Parameter\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1Concat_a5f9e6e513c2992938c058f149b619e8e}
+
+
+Locally-\/stored output parameter object. 
+
+
+
+Definition at line 177 of file concat.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Concat$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Output\+Parameter().
+
+\index{mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}!output\+Parameter\+Visitor@{output\+Parameter\+Visitor}}
+\index{output\+Parameter\+Visitor@{output\+Parameter\+Visitor}!mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}}
+\subsubsection[{output\+Parameter\+Visitor}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ {\bf Output\+Parameter\+Visitor} {\bf mlpack\+::ann\+::\+Concat}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Parameter\+Visitor\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1Concat_a57df9d7a8c17e6568a050670e50e96e0}
+
+
+Locally-\/stored output parameter visitor. 
+
+
+
+Definition at line 162 of file concat.\+hpp.
+
+\index{mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}!parameters@{parameters}}
+\index{parameters@{parameters}!mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}}
+\subsubsection[{parameters}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ arma\+::mat {\bf mlpack\+::ann\+::\+Concat}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::parameters\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1Concat_aab096ba10cc26f12c3b9a9ea510a80b1}
+
+
+Locally-\/stored model parameters. 
+
+
+
+Definition at line 156 of file concat.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Concat$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Parameters().
+
+\index{mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}!same@{same}}
+\index{same@{same}!mlpack\+::ann\+::\+Concat@{mlpack\+::ann\+::\+Concat}}
+\subsubsection[{same}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ bool {\bf mlpack\+::ann\+::\+Concat}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::same\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1Concat_a58f16f5b953c48628f91c0603b6ee193}
+
+
+If true merge the error in the backward pass. 
+
+
+
+Definition at line 150 of file concat.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/ann/layer/{\bf concat.\+hpp}\end{DoxyCompactItemize}

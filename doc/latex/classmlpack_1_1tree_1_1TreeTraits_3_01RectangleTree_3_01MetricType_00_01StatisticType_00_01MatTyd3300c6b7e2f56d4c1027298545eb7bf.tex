@@ -1,0 +1,119 @@
+\section{mlpack\+:\+:tree\+:\+:Tree\+Traits$<$ Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$ Class Template Reference}
+\label{classmlpack_1_1tree_1_1TreeTraits_3_01RectangleTree_3_01MetricType_00_01StatisticType_00_01MatTyd3300c6b7e2f56d4c1027298545eb7bf}\index{mlpack\+::tree\+::\+Tree\+Traits$<$ Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$@{mlpack\+::tree\+::\+Tree\+Traits$<$ Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$}}
+
+
+Since the R+/\+R++ tree can not have overlapping children, we should define traits for the R+/\+R++ tree.  
+
+
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static const bool {\bf Binary\+Tree} = false
+\begin{DoxyCompactList}\small\item\em This tree is not necessarily a binary tree. \end{DoxyCompactList}\item 
+static const bool {\bf First\+Point\+Is\+Centroid} = false
+\begin{DoxyCompactList}\small\item\em There is no guarantee that the first point in a node is its centroid. \end{DoxyCompactList}\item 
+static const bool {\bf Has\+Duplicated\+Points} = false
+\begin{DoxyCompactList}\small\item\em An R-\/tree node doesn\textquotesingle{}t share points with another node. \end{DoxyCompactList}\item 
+static const bool {\bf Has\+Overlapping\+Children} = false
+\begin{DoxyCompactList}\small\item\em The R+/\+R++ tree can\textquotesingle{}t have overlapping children. \end{DoxyCompactList}\item 
+static const bool {\bf Has\+Self\+Children} = false
+\begin{DoxyCompactList}\small\item\em Points are not contained at multiple levels of the R-\/tree. \end{DoxyCompactList}\item 
+static const bool {\bf Rearranges\+Dataset} = false
+\begin{DoxyCompactList}\small\item\em Points are rearranged during building of the tree. \end{DoxyCompactList}\item 
+static const bool {\bf Unique\+Num\+Descendants} = true
+\begin{DoxyCompactList}\small\item\em Rectangle trees don\textquotesingle{}t have duplicated points, so Num\+Descendants() represents the number of unique descendant points. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Metric\+Type, typename Statistic\+Type, typename Mat\+Type, typename Split\+Policy\+Type, template$<$ typename $>$ class Sweep\+Type, typename Descent\+Type, template$<$ typename $>$ class Auxiliary\+Information\+Type$>$\\*
+class mlpack\+::tree\+::\+Tree\+Traits$<$ Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$}
+
+Since the R+/\+R++ tree can not have overlapping children, we should define traits for the R+/\+R++ tree. 
+
+Definition at line 86 of file traits.\+hpp.
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::tree\+::\+Tree\+Traits$<$ Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$@{mlpack\+::tree\+::\+Tree\+Traits$<$ Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$}!Binary\+Tree@{Binary\+Tree}}
+\index{Binary\+Tree@{Binary\+Tree}!mlpack\+::tree\+::\+Tree\+Traits$<$ Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$@{mlpack\+::tree\+::\+Tree\+Traits$<$ Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$}}
+\subsubsection[{Binary\+Tree}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , typename Split\+Policy\+Type , template$<$ typename $>$ class Sweep\+Type, typename Descent\+Type , template$<$ typename $>$ class Auxiliary\+Information\+Type$>$ const bool {\bf mlpack\+::tree\+::\+Tree\+Traits}$<$ {\bf Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf R\+Plus\+Tree\+Split}$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$\+::Binary\+Tree = false\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1tree_1_1TreeTraits_3_01RectangleTree_3_01MetricType_00_01StatisticType_00_01MatTyd3300c6b7e2f56d4c1027298545eb7bf_a67771192a9b3358e5948ee3c00d0f53b}
+
+
+This tree is not necessarily a binary tree. 
+
+
+
+Definition at line 125 of file traits.\+hpp.
+
+\index{mlpack\+::tree\+::\+Tree\+Traits$<$ Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$@{mlpack\+::tree\+::\+Tree\+Traits$<$ Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$}!First\+Point\+Is\+Centroid@{First\+Point\+Is\+Centroid}}
+\index{First\+Point\+Is\+Centroid@{First\+Point\+Is\+Centroid}!mlpack\+::tree\+::\+Tree\+Traits$<$ Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$@{mlpack\+::tree\+::\+Tree\+Traits$<$ Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$}}
+\subsubsection[{First\+Point\+Is\+Centroid}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , typename Split\+Policy\+Type , template$<$ typename $>$ class Sweep\+Type, typename Descent\+Type , template$<$ typename $>$ class Auxiliary\+Information\+Type$>$ const bool {\bf mlpack\+::tree\+::\+Tree\+Traits}$<$ {\bf Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf R\+Plus\+Tree\+Split}$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$\+::First\+Point\+Is\+Centroid = false\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1tree_1_1TreeTraits_3_01RectangleTree_3_01MetricType_00_01StatisticType_00_01MatTyd3300c6b7e2f56d4c1027298545eb7bf_a3cbc5f765ab92d9183ea6f593bc90142}
+
+
+There is no guarantee that the first point in a node is its centroid. 
+
+
+
+Definition at line 108 of file traits.\+hpp.
+
+\index{mlpack\+::tree\+::\+Tree\+Traits$<$ Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$@{mlpack\+::tree\+::\+Tree\+Traits$<$ Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$}!Has\+Duplicated\+Points@{Has\+Duplicated\+Points}}
+\index{Has\+Duplicated\+Points@{Has\+Duplicated\+Points}!mlpack\+::tree\+::\+Tree\+Traits$<$ Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$@{mlpack\+::tree\+::\+Tree\+Traits$<$ Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$}}
+\subsubsection[{Has\+Duplicated\+Points}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , typename Split\+Policy\+Type , template$<$ typename $>$ class Sweep\+Type, typename Descent\+Type , template$<$ typename $>$ class Auxiliary\+Information\+Type$>$ const bool {\bf mlpack\+::tree\+::\+Tree\+Traits}$<$ {\bf Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf R\+Plus\+Tree\+Split}$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$\+::Has\+Duplicated\+Points = false\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1tree_1_1TreeTraits_3_01RectangleTree_3_01MetricType_00_01StatisticType_00_01MatTyd3300c6b7e2f56d4c1027298545eb7bf_a5cb2047d7227a39b24c2ef0eca3fefda}
+
+
+An R-\/tree node doesn\textquotesingle{}t share points with another node. 
+
+
+
+Definition at line 103 of file traits.\+hpp.
+
+\index{mlpack\+::tree\+::\+Tree\+Traits$<$ Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$@{mlpack\+::tree\+::\+Tree\+Traits$<$ Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$}!Has\+Overlapping\+Children@{Has\+Overlapping\+Children}}
+\index{Has\+Overlapping\+Children@{Has\+Overlapping\+Children}!mlpack\+::tree\+::\+Tree\+Traits$<$ Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$@{mlpack\+::tree\+::\+Tree\+Traits$<$ Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$}}
+\subsubsection[{Has\+Overlapping\+Children}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , typename Split\+Policy\+Type , template$<$ typename $>$ class Sweep\+Type, typename Descent\+Type , template$<$ typename $>$ class Auxiliary\+Information\+Type$>$ const bool {\bf mlpack\+::tree\+::\+Tree\+Traits}$<$ {\bf Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf R\+Plus\+Tree\+Split}$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$\+::Has\+Overlapping\+Children = false\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1tree_1_1TreeTraits_3_01RectangleTree_3_01MetricType_00_01StatisticType_00_01MatTyd3300c6b7e2f56d4c1027298545eb7bf_afd2d70fcc10aba20a5135ceb958e2561}
+
+
+The R+/\+R++ tree can\textquotesingle{}t have overlapping children. 
+
+
+
+Definition at line 98 of file traits.\+hpp.
+
+\index{mlpack\+::tree\+::\+Tree\+Traits$<$ Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$@{mlpack\+::tree\+::\+Tree\+Traits$<$ Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$}!Has\+Self\+Children@{Has\+Self\+Children}}
+\index{Has\+Self\+Children@{Has\+Self\+Children}!mlpack\+::tree\+::\+Tree\+Traits$<$ Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$@{mlpack\+::tree\+::\+Tree\+Traits$<$ Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$}}
+\subsubsection[{Has\+Self\+Children}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , typename Split\+Policy\+Type , template$<$ typename $>$ class Sweep\+Type, typename Descent\+Type , template$<$ typename $>$ class Auxiliary\+Information\+Type$>$ const bool {\bf mlpack\+::tree\+::\+Tree\+Traits}$<$ {\bf Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf R\+Plus\+Tree\+Split}$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$\+::Has\+Self\+Children = false\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1tree_1_1TreeTraits_3_01RectangleTree_3_01MetricType_00_01StatisticType_00_01MatTyd3300c6b7e2f56d4c1027298545eb7bf_aae6d3f95fe8de6168ae53a3021efc58d}
+
+
+Points are not contained at multiple levels of the R-\/tree. 
+
+
+
+Definition at line 113 of file traits.\+hpp.
+
+\index{mlpack\+::tree\+::\+Tree\+Traits$<$ Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$@{mlpack\+::tree\+::\+Tree\+Traits$<$ Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$}!Rearranges\+Dataset@{Rearranges\+Dataset}}
+\index{Rearranges\+Dataset@{Rearranges\+Dataset}!mlpack\+::tree\+::\+Tree\+Traits$<$ Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$@{mlpack\+::tree\+::\+Tree\+Traits$<$ Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$}}
+\subsubsection[{Rearranges\+Dataset}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , typename Split\+Policy\+Type , template$<$ typename $>$ class Sweep\+Type, typename Descent\+Type , template$<$ typename $>$ class Auxiliary\+Information\+Type$>$ const bool {\bf mlpack\+::tree\+::\+Tree\+Traits}$<$ {\bf Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf R\+Plus\+Tree\+Split}$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$\+::Rearranges\+Dataset = false\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1tree_1_1TreeTraits_3_01RectangleTree_3_01MetricType_00_01StatisticType_00_01MatTyd3300c6b7e2f56d4c1027298545eb7bf_ae8e3829366909aa353ad9f89c55c078c}
+
+
+Points are rearranged during building of the tree. 
+
+T\+H\+IS M\+AY N\+OT BE T\+R\+UE. IT\textquotesingle{}S H\+A\+RD TO D\+Y\+N\+A\+M\+I\+C\+A\+L\+LY I\+N\+S\+E\+RT P\+O\+I\+N\+TS A\+ND R\+E\+A\+R\+R\+A\+N\+GE T\+HE M\+A\+T\+R\+IX 
+
+Definition at line 120 of file traits.\+hpp.
+
+\index{mlpack\+::tree\+::\+Tree\+Traits$<$ Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$@{mlpack\+::tree\+::\+Tree\+Traits$<$ Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$}!Unique\+Num\+Descendants@{Unique\+Num\+Descendants}}
+\index{Unique\+Num\+Descendants@{Unique\+Num\+Descendants}!mlpack\+::tree\+::\+Tree\+Traits$<$ Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$@{mlpack\+::tree\+::\+Tree\+Traits$<$ Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$}}
+\subsubsection[{Unique\+Num\+Descendants}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , typename Split\+Policy\+Type , template$<$ typename $>$ class Sweep\+Type, typename Descent\+Type , template$<$ typename $>$ class Auxiliary\+Information\+Type$>$ const bool {\bf mlpack\+::tree\+::\+Tree\+Traits}$<$ {\bf Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf R\+Plus\+Tree\+Split}$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$\+::Unique\+Num\+Descendants = true\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1tree_1_1TreeTraits_3_01RectangleTree_3_01MetricType_00_01StatisticType_00_01MatTyd3300c6b7e2f56d4c1027298545eb7bf_a5a4ee25f6db4ce862f262d678cbf1b42}
+
+
+Rectangle trees don\textquotesingle{}t have duplicated points, so Num\+Descendants() represents the number of unique descendant points. 
+
+
+
+Definition at line 131 of file traits.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/tree/rectangle\+\_\+tree/{\bf traits.\+hpp}\end{DoxyCompactItemize}

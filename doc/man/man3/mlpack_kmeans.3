@@ -1,0 +1,144 @@
+.TH "mlpack::kmeans" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::kmeans \- K-Means clustering\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBAllowEmptyClusters\fP"
+.br
+.RI "\fIPolicy which allows K-Means to create empty clusters without any error being reported\&. \fP"
+.ti -1c
+.RI "class \fBDualTreeKMeans\fP"
+.br
+.RI "\fIAn algorithm for an exact Lloyd iteration which simply uses dual-tree nearest-neighbor search to find the nearest centroid for each point in the dataset\&. \fP"
+.ti -1c
+.RI "class \fBDualTreeKMeansRules\fP"
+.br
+.ti -1c
+.RI "class \fBDualTreeKMeansStatistic\fP"
+.br
+.ti -1c
+.RI "class \fBElkanKMeans\fP"
+.br
+.ti -1c
+.RI "class \fBHamerlyKMeans\fP"
+.br
+.ti -1c
+.RI "class \fBKillEmptyClusters\fP"
+.br
+.RI "\fIPolicy which allows K-Means to 'kill' empty clusters without any error being reported\&. \fP"
+.ti -1c
+.RI "class \fBKMeans\fP"
+.br
+.RI "\fIThis class implements K-Means clustering, using a variety of possible implementations of Lloyd's algorithm\&. \fP"
+.ti -1c
+.RI "class \fBMaxVarianceNewCluster\fP"
+.br
+.RI "\fIWhen an empty cluster is detected, this class takes the point furthest from the centroid of the cluster with maximum variance as a new cluster\&. \fP"
+.ti -1c
+.RI "class \fBNaiveKMeans\fP"
+.br
+.RI "\fIThis is an implementation of a single iteration of Lloyd's algorithm for k-means\&. \fP"
+.ti -1c
+.RI "class \fBPellegMooreKMeans\fP"
+.br
+.RI "\fIAn implementation of Pelleg-Moore's 'blacklist' algorithm for k-means clustering\&. \fP"
+.ti -1c
+.RI "class \fBPellegMooreKMeansRules\fP"
+.br
+.RI "\fIThe rules class for the single-tree Pelleg-Moore kd-tree traversal for k-means clustering\&. \fP"
+.ti -1c
+.RI "class \fBPellegMooreKMeansStatistic\fP"
+.br
+.RI "\fIA statistic for trees which holds the blacklist for Pelleg-Moore k-means clustering (which represents the clusters that cannot possibly own any points in a node)\&. \fP"
+.ti -1c
+.RI "class \fBRandomPartition\fP"
+.br
+.RI "\fIA very simple partitioner which partitions the data randomly into the number of desired clusters\&. \fP"
+.ti -1c
+.RI "class \fBRefinedStart\fP"
+.br
+.RI "\fIA refined approach for choosing initial points for k-means clustering\&. \fP"
+.ti -1c
+.RI "class \fBSampleInitialization\fP"
+.br
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "template<typename MetricType , typename MatType > using \fBCoverTreeDualTreeKMeans\fP = \fBDualTreeKMeans\fP< MetricType, MatType, \fBtree::StandardCoverTree\fP >"
+.br
+.RI "\fIA template typedef for the \fBDualTreeKMeans\fP algorithm with the cover tree type\&. \fP"
+.ti -1c
+.RI "template<typename MetricType , typename MatType > using \fBDefaultDualTreeKMeans\fP = \fBDualTreeKMeans\fP< MetricType, MatType >"
+.br
+.RI "\fIA template typedef for the \fBDualTreeKMeans\fP algorithm with the default tree type (a kd-tree)\&. \fP"
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename TreeType > void \fBHideChild\fP (TreeType &node, const size_t child, const typename \fBstd::enable_if_t\fP< !\fBtree::TreeTraits\fP< TreeType >::BinaryTree > *junk=0)"
+.br
+.RI "\fIUtility function for hiding children\&. \fP"
+.ti -1c
+.RI "template<typename TreeType > void \fBHideChild\fP (TreeType &node, const size_t child, const typename \fBstd::enable_if_t\fP< \fBtree::TreeTraits\fP< TreeType >::BinaryTree > *junk=0)"
+.br
+.RI "\fIUtility function for hiding children\&. \fP"
+.ti -1c
+.RI "template<typename TreeType > void \fBRestoreChildren\fP (TreeType &node, const typename \fBstd::enable_if_t\fP<!\fBtree::TreeTraits\fP< TreeType >::BinaryTree > *junk=0)"
+.br
+.RI "\fIUtility function for restoring children to a non-binary tree\&. \fP"
+.ti -1c
+.RI "template<typename TreeType > void \fBRestoreChildren\fP (TreeType &node, const typename \fBstd::enable_if_t\fP< \fBtree::TreeTraits\fP< TreeType >::BinaryTree > *junk=0)"
+.br
+.RI "\fIUtility function for restoring children to a binary tree\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+K-Means clustering\&. 
+
+
+.SH "Typedef Documentation"
+.PP 
+.SS "template<typename MetricType , typename MatType > using \fBmlpack::kmeans::CoverTreeDualTreeKMeans\fP = typedef \fBDualTreeKMeans\fP<MetricType, MatType, \fBtree::StandardCoverTree\fP>"
+
+.PP
+A template typedef for the \fBDualTreeKMeans\fP algorithm with the cover tree type\&. 
+.PP
+Definition at line 170 of file dual_tree_kmeans\&.hpp\&.
+.SS "template<typename MetricType , typename MatType > using \fBmlpack::kmeans::DefaultDualTreeKMeans\fP = typedef \fBDualTreeKMeans\fP<MetricType, MatType>"
+
+.PP
+A template typedef for the \fBDualTreeKMeans\fP algorithm with the default tree type (a kd-tree)\&. 
+.PP
+Definition at line 164 of file dual_tree_kmeans\&.hpp\&.
+.SH "Function Documentation"
+.PP 
+.SS "template<typename TreeType > void mlpack::kmeans::HideChild (TreeType & node, const size_t child, const typename \fBstd::enable_if_t\fP< !\fBtree::TreeTraits\fP< TreeType >::BinaryTree > * junk = \fC0\fP)"
+
+.PP
+Utility function for hiding children\&. This actually does something, and is called if the tree is not a binary tree\&. 
+.SS "template<typename TreeType > void mlpack::kmeans::HideChild (TreeType & node, const size_t child, const typename \fBstd::enable_if_t\fP< \fBtree::TreeTraits\fP< TreeType >::BinaryTree > * junk = \fC0\fP)"
+
+.PP
+Utility function for hiding children\&. This is called when the tree is a binary tree, and does nothing, because we don't hide binary children in this way\&. 
+.SS "template<typename TreeType > void mlpack::kmeans::RestoreChildren (TreeType & node, const typename \fBstd::enable_if_t\fP<!\fBtree::TreeTraits\fP< TreeType >::BinaryTree > * junk = \fC0\fP)"
+
+.PP
+Utility function for restoring children to a non-binary tree\&. 
+.SS "template<typename TreeType > void mlpack::kmeans::RestoreChildren (TreeType & node, const typename \fBstd::enable_if_t\fP< \fBtree::TreeTraits\fP< TreeType >::BinaryTree > * junk = \fC0\fP)"
+
+.PP
+Utility function for restoring children to a binary tree\&. 
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

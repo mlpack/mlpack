@@ -1,0 +1,449 @@
+.TH "mlpack::gmm::GMM" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::gmm::GMM \- A Gaussian Mixture Model (\fBGMM\fP)\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBGMM\fP ()"
+.br
+.RI "\fICreate an empty Gaussian Mixture Model, with zero gaussians\&. \fP"
+.ti -1c
+.RI "\fBGMM\fP (const size_t \fBgaussians\fP, const size_t \fBdimensionality\fP)"
+.br
+.RI "\fICreate a \fBGMM\fP with the given number of Gaussians, each of which have the specified dimensionality\&. \fP"
+.ti -1c
+.RI "\fBGMM\fP (const std::vector< \fBdistribution::GaussianDistribution\fP > &\fBdists\fP, const arma::vec &\fBweights\fP)"
+.br
+.RI "\fICreate a \fBGMM\fP with the given dists and weights\&. \fP"
+.ti -1c
+.RI "\fBGMM\fP (const \fBGMM\fP &other)"
+.br
+.RI "\fICopy constructor for GMMs\&. \fP"
+.ti -1c
+.RI "void \fBClassify\fP (const arma::mat &observations, arma::Row< size_t > &labels) const "
+.br
+.RI "\fIClassify the given observations as being from an individual component in this \fBGMM\fP\&. \fP"
+.ti -1c
+.RI "const \fBdistribution::GaussianDistribution\fP & \fBComponent\fP (size_t i) const "
+.br
+.RI "\fIReturn a const reference to a component distribution\&. \fP"
+.ti -1c
+.RI "\fBdistribution::GaussianDistribution\fP & \fBComponent\fP (size_t i)"
+.br
+.RI "\fIReturn a reference to a component distribution\&. \fP"
+.ti -1c
+.RI "size_t \fBDimensionality\fP () const "
+.br
+.RI "\fIReturn the dimensionality of the model\&. \fP"
+.ti -1c
+.RI "size_t \fBGaussians\fP () const "
+.br
+.RI "\fIReturn the number of gaussians in the model\&. \fP"
+.ti -1c
+.RI "\fBGMM\fP & \fBoperator=\fP (const \fBGMM\fP &other)"
+.br
+.RI "\fICopy operator for GMMs\&. \fP"
+.ti -1c
+.RI "double \fBProbability\fP (const arma::vec &observation) const "
+.br
+.RI "\fIReturn the probability that the given observation came from this distribution\&. \fP"
+.ti -1c
+.RI "double \fBProbability\fP (const arma::vec &observation, const size_t component) const "
+.br
+.RI "\fIReturn the probability that the given observation came from the given Gaussian component in this distribution\&. \fP"
+.ti -1c
+.RI "arma::vec \fBRandom\fP () const "
+.br
+.RI "\fIReturn a randomly generated observation according to the probability distribution defined by this object\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int)"
+.br
+.RI "\fISerialize the \fBGMM\fP\&. \fP"
+.ti -1c
+.RI "template<typename FittingType  = EMFit<>> double \fBTrain\fP (const arma::mat &observations, const size_t trials=1, const bool useExistingModel=false, FittingType fitter=FittingType())"
+.br
+.RI "\fIEstimate the probability distribution directly from the given observations, using the given algorithm in the FittingType class to fit the data\&. \fP"
+.ti -1c
+.RI "template<typename FittingType  = EMFit<>> double \fBTrain\fP (const arma::mat &observations, const arma::vec &probabilities, const size_t trials=1, const bool useExistingModel=false, FittingType fitter=FittingType())"
+.br
+.RI "\fIEstimate the probability distribution directly from the given observations, taking into account the probability of each observation actually being from this distribution, and using the given algorithm in the FittingType class to fit the data\&. \fP"
+.ti -1c
+.RI "const arma::vec & \fBWeights\fP () const "
+.br
+.RI "\fIReturn a const reference to the a priori weights of each Gaussian\&. \fP"
+.ti -1c
+.RI "arma::vec & \fBWeights\fP ()"
+.br
+.RI "\fIReturn a reference to the a priori weights of each Gaussian\&. \fP"
+.in -1c
+.SS "Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "double \fBLogLikelihood\fP (const arma::mat &dataPoints, const std::vector< \fBdistribution::GaussianDistribution\fP > &distsL, const arma::vec &\fBweights\fP) const "
+.br
+.RI "\fIThis function computes the loglikelihood of the given model\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "size_t \fBdimensionality\fP"
+.br
+.RI "\fIThe dimensionality of the model\&. \fP"
+.ti -1c
+.RI "std::vector< \fBdistribution::GaussianDistribution\fP > \fBdists\fP"
+.br
+.RI "\fIVector of Gaussians\&. \fP"
+.ti -1c
+.RI "size_t \fBgaussians\fP"
+.br
+.RI "\fIThe number of Gaussians in the model\&. \fP"
+.ti -1c
+.RI "arma::vec \fBweights\fP"
+.br
+.RI "\fIVector of a priori weights for each Gaussian\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+A Gaussian Mixture Model (\fBGMM\fP)\&. 
+
+This class uses maximum likelihood loss functions to estimate the parameters of the \fBGMM\fP on a given dataset via the given fitting mechanism, defined by the FittingType template parameter\&. The \fBGMM\fP can be trained using normal data, or data with probabilities of being from this \fBGMM\fP (see \fBGMM::Train()\fP for more information)\&.
+.PP
+The \fBTrain()\fP method uses a template type 'FittingType'\&. The FittingType template class must provide a way for the \fBGMM\fP to train on data\&. It must provide the following two functions:
+.PP
+.PP
+.nf
+void Estimate(const arma::mat& observations,
+              std::vector<distribution::GaussianDistribution>& dists,
+              arma::vec& weights);
+
+void Estimate(const arma::mat& observations,
+              const arma::vec& probabilities,
+              std::vector<distribution::GaussianDistribution>& dists,
+              arma::vec& weights);
+.fi
+.PP
+.PP
+These functions should produce a trained \fBGMM\fP from the given observations and probabilities\&. These may modify the size of the model (by increasing the size of the mean and covariance vectors as well as the weight vectors), but the method should expect that these vectors are already set to the size of the \fBGMM\fP as specified in the constructor\&.
+.PP
+For a sample implementation, see the \fBEMFit\fP class; this class uses the EM algorithm to train a \fBGMM\fP, and is the default fitting type for the \fBTrain()\fP method\&.
+.PP
+The \fBGMM\fP, once trained, can be used to generate random points from the distribution and estimate the probability of points being from the distribution\&. The parameters of the \fBGMM\fP can be obtained through the accessors and mutators\&.
+.PP
+Example use:
+.PP
+.PP
+.nf
+// Set up a mixture of 5 gaussians in a 4-dimensional space\&.
+GMM g(5, 4);
+
+// Train the GMM given the data observations, using the default EM fitting
+// mechanism\&.
+g\&.Train(data);
+
+// Get the probability of 'observation' being observed from this GMM\&.
+double probability = g\&.Probability(observation);
+
+// Get a random observation from the GMM\&.
+arma::vec observation = g\&.Random();
+.fi
+.PP
+ 
+.PP
+Definition at line 79 of file gmm\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::gmm::GMM::GMM ()\fC [inline]\fP"
+
+.PP
+Create an empty Gaussian Mixture Model, with zero gaussians\&. 
+.PP
+Definition at line 97 of file gmm\&.hpp\&.
+.PP
+References mlpack::Log::Debug\&.
+.PP
+Referenced by GMM()\&.
+.SS "mlpack::gmm::GMM::GMM (const size_t gaussians, const size_t dimensionality)"
+
+.PP
+Create a \fBGMM\fP with the given number of Gaussians, each of which have the specified dimensionality\&. The means and covariances will be set to 0\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIgaussians\fP Number of Gaussians in this \fBGMM\fP\&. 
+.br
+\fIdimensionality\fP Dimensionality of each Gaussian\&. 
+.RE
+.PP
+
+.SS "mlpack::gmm::GMM::GMM (const std::vector< \fBdistribution::GaussianDistribution\fP > & dists, const arma::vec & weights)\fC [inline]\fP"
+
+.PP
+Create a \fBGMM\fP with the given dists and weights\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdists\fP Distributions of the model\&. 
+.br
+\fIweights\fP Weights of the model\&. 
+.RE
+.PP
+
+.PP
+Definition at line 123 of file gmm\&.hpp\&.
+.PP
+References GMM(), and operator=()\&.
+.SS "mlpack::gmm::GMM::GMM (const \fBGMM\fP & other)"
+
+.PP
+Copy constructor for GMMs\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "void mlpack::gmm::GMM::Classify (const arma::mat & observations, arma::Row< size_t > & labels) const"
+
+.PP
+Classify the given observations as being from an individual component in this \fBGMM\fP\&. The resultant classifications are stored in the 'labels' object, and each label will be between 0 and (\fBGaussians()\fP - 1)\&. Supposing that a point was classified with label 2, and that our \fBGMM\fP object was called 'gmm', one could access the relevant Gaussian distribution as follows:
+.PP
+.PP
+.nf
+arma::vec mean = gmm\&.Means()[2];
+arma::mat covariance = gmm\&.Covariances()[2];
+double priorWeight = gmm\&.Weights()[2];
+.fi
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIobservations\fP List of observations to classify\&. 
+.br
+\fIlabels\fP Object which will be filled with labels\&. 
+.RE
+.PP
+
+.PP
+Referenced by Weights()\&.
+.SS "const \fBdistribution::GaussianDistribution\fP& mlpack::gmm::GMM::Component (size_t i) const\fC [inline]\fP"
+
+.PP
+Return a const reference to a component distribution\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIi\fP index of component\&. 
+.RE
+.PP
+
+.PP
+Definition at line 146 of file gmm\&.hpp\&.
+.SS "\fBdistribution::GaussianDistribution\fP& mlpack::gmm::GMM::Component (size_t i)\fC [inline]\fP"
+
+.PP
+Return a reference to a component distribution\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIi\fP index of component\&. 
+.RE
+.PP
+
+.PP
+Definition at line 153 of file gmm\&.hpp\&.
+.SS "size_t mlpack::gmm::GMM::Dimensionality () const\fC [inline]\fP"
+
+.PP
+Return the dimensionality of the model\&. 
+.PP
+Definition at line 139 of file gmm\&.hpp\&.
+.PP
+References dimensionality\&.
+.SS "size_t mlpack::gmm::GMM::Gaussians () const\fC [inline]\fP"
+
+.PP
+Return the number of gaussians in the model\&. 
+.PP
+Definition at line 137 of file gmm\&.hpp\&.
+.PP
+References gaussians\&.
+.SS "double mlpack::gmm::GMM::LogLikelihood (const arma::mat & dataPoints, const std::vector< \fBdistribution::GaussianDistribution\fP > & distsL, const arma::vec & weights) const\fC [private]\fP"
+
+.PP
+This function computes the loglikelihood of the given model\&. This function is used by \fBGMM::Train()\fP\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdataPoints\fP Observations to calculate the likelihood for\&. 
+.br
+\fImeans\fP Means of the given mixture model\&. 
+.br
+\fIcovars\fP Covariances of the given mixture model\&. 
+.br
+\fIweights\fP Weights of the given mixture model\&. 
+.RE
+.PP
+
+.PP
+Referenced by Weights()\&.
+.SS "\fBGMM\fP& mlpack::gmm::GMM::operator= (const \fBGMM\fP & other)"
+
+.PP
+Copy operator for GMMs\&. 
+.PP
+Referenced by GMM()\&.
+.SS "double mlpack::gmm::GMM::Probability (const arma::vec & observation) const"
+
+.PP
+Return the probability that the given observation came from this distribution\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIobservation\fP Observation to evaluate the probability of\&. 
+.RE
+.PP
+
+.PP
+Referenced by Weights()\&.
+.SS "double mlpack::gmm::GMM::Probability (const arma::vec & observation, const size_t component) const"
+
+.PP
+Return the probability that the given observation came from the given Gaussian component in this distribution\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIobservation\fP Observation to evaluate the probability of\&. 
+.br
+\fIcomponent\fP Index of the component of the \fBGMM\fP to be considered\&. 
+.RE
+.PP
+
+.SS "arma::vec mlpack::gmm::GMM::Random () const"
+
+.PP
+Return a randomly generated observation according to the probability distribution defined by this object\&. 
+.PP
+\fBReturns:\fP
+.RS 4
+Random observation from this \fBGMM\fP\&. 
+.RE
+.PP
+
+.PP
+Referenced by Weights()\&.
+.SS "template<typename Archive > void mlpack::gmm::GMM::Serialize (Archive & ar, const unsigned int)"
+
+.PP
+Serialize the \fBGMM\fP\&. 
+.PP
+Referenced by Weights()\&.
+.SS "template<typename FittingType  = EMFit<>> double mlpack::gmm::GMM::Train (const arma::mat & observations, const size_t trials = \fC1\fP, const bool useExistingModel = \fCfalse\fP, FittingType fitter = \fCFittingType()\fP)"
+
+.PP
+Estimate the probability distribution directly from the given observations, using the given algorithm in the FittingType class to fit the data\&. The fitting will be performed 'trials' times; from these trials, the model with the greatest log-likelihood will be selected\&. By default, only one trial is performed\&. The log-likelihood of the best fitting is returned\&.
+.PP
+Optionally, the existing model can be used as an initial model for the estimation by setting 'useExistingModel' to true\&. If the fitting procedure is deterministic after the initial position is given, then 'trials' should be set to 1\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIFittingType\fP The type of fitting method which should be used (EMFit<> is suggested)\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIobservations\fP Observations of the model\&. 
+.br
+\fItrials\fP Number of trials to perform; the model in these trials with the greatest log-likelihood will be selected\&. 
+.br
+\fIuseExistingModel\fP If true, the existing model is used as an initial model for the estimation\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The log-likelihood of the best fit\&. 
+.RE
+.PP
+
+.PP
+Referenced by Weights()\&.
+.SS "template<typename FittingType  = EMFit<>> double mlpack::gmm::GMM::Train (const arma::mat & observations, const arma::vec & probabilities, const size_t trials = \fC1\fP, const bool useExistingModel = \fCfalse\fP, FittingType fitter = \fCFittingType()\fP)"
+
+.PP
+Estimate the probability distribution directly from the given observations, taking into account the probability of each observation actually being from this distribution, and using the given algorithm in the FittingType class to fit the data\&. The fitting will be performed 'trials' times; from these trials, the model with the greatest log-likelihood will be selected\&. By default, only one trial is performed\&. The log-likelihood of the best fitting is returned\&.
+.PP
+Optionally, the existing model can be used as an initial model for the estimation by setting 'useExistingModel' to true\&. If the fitting procedure is deterministic after the initial position is given, then 'trials' should be set to 1\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIobservations\fP Observations of the model\&. 
+.br
+\fIprobabilities\fP Probability of each observation being from this distribution\&. 
+.br
+\fItrials\fP Number of trials to perform; the model in these trials with the greatest log-likelihood will be selected\&. 
+.br
+\fIuseExistingModel\fP If true, the existing model is used as an initial model for the estimation\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The log-likelihood of the best fit\&. 
+.RE
+.PP
+
+.SS "const arma::vec& mlpack::gmm::GMM::Weights () const\fC [inline]\fP"
+
+.PP
+Return a const reference to the a priori weights of each Gaussian\&. 
+.PP
+Definition at line 156 of file gmm\&.hpp\&.
+.PP
+References weights\&.
+.SS "arma::vec& mlpack::gmm::GMM::Weights ()\fC [inline]\fP"
+
+.PP
+Return a reference to the a priori weights of each Gaussian\&. 
+.PP
+Definition at line 158 of file gmm\&.hpp\&.
+.PP
+References Classify(), LogLikelihood(), Probability(), Random(), Serialize(), Train(), and weights\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "size_t mlpack::gmm::GMM::dimensionality\fC [private]\fP"
+
+.PP
+The dimensionality of the model\&. 
+.PP
+Definition at line 85 of file gmm\&.hpp\&.
+.PP
+Referenced by Dimensionality()\&.
+.SS "std::vector<\fBdistribution::GaussianDistribution\fP> mlpack::gmm::GMM::dists\fC [private]\fP"
+
+.PP
+Vector of Gaussians\&. 
+.PP
+Definition at line 88 of file gmm\&.hpp\&.
+.SS "size_t mlpack::gmm::GMM::gaussians\fC [private]\fP"
+
+.PP
+The number of Gaussians in the model\&. 
+.PP
+Definition at line 83 of file gmm\&.hpp\&.
+.PP
+Referenced by Gaussians()\&.
+.SS "arma::vec mlpack::gmm::GMM::weights\fC [private]\fP"
+
+.PP
+Vector of a priori weights for each Gaussian\&. 
+.PP
+Definition at line 91 of file gmm\&.hpp\&.
+.PP
+Referenced by Weights()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

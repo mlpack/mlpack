@@ -1,0 +1,93 @@
+.TH "mlpack::optimization::GockenbachFunction" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::optimization::GockenbachFunction \- This function is taken from M\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBGockenbachFunction\fP ()"
+.br
+.ti -1c
+.RI "\fBGockenbachFunction\fP (const arma::mat &initial_point)"
+.br
+.ti -1c
+.RI "double \fBEvaluate\fP (const arma::mat &coordinates)"
+.br
+.ti -1c
+.RI "double \fBEvaluateConstraint\fP (const size_t index, const arma::mat &coordinates)"
+.br
+.ti -1c
+.RI "const arma::mat & \fBGetInitialPoint\fP () const "
+.br
+.ti -1c
+.RI "void \fBGradient\fP (const arma::mat &coordinates, arma::mat &gradient)"
+.br
+.ti -1c
+.RI "void \fBGradientConstraint\fP (const size_t index, const arma::mat &coordinates, arma::mat &gradient)"
+.br
+.ti -1c
+.RI "size_t \fBNumConstraints\fP () const "
+.br
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "arma::mat \fBinitialPoint\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+This function is taken from M\&. 
+
+Gockenbach's lectures on general nonlinear programs, found at: http://www.math.mtu.edu/~msgocken/ma5630spring2003/lectures/nlp/nlp.pdf
+.PP
+The program we are using is example 2\&.5 from this document\&. I have arbitrarily decided that this will be called the Gockenbach function\&.
+.PP
+The minimum that satisfies the two constraints is given as x = [0\&.12288, -1\&.1078, 0\&.015100], with an objective value of about 29\&.634\&. 
+.PP
+Definition at line 61 of file aug_lagrangian_test_functions\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::optimization::GockenbachFunction::GockenbachFunction ()"
+
+.SS "mlpack::optimization::GockenbachFunction::GockenbachFunction (const arma::mat & initial_point)"
+
+.SH "Member Function Documentation"
+.PP 
+.SS "double mlpack::optimization::GockenbachFunction::Evaluate (const arma::mat & coordinates)"
+
+.SS "double mlpack::optimization::GockenbachFunction::EvaluateConstraint (const size_t index, const arma::mat & coordinates)"
+
+.SS "const arma::mat& mlpack::optimization::GockenbachFunction::GetInitialPoint () const\fC [inline]\fP"
+
+.PP
+Definition at line 77 of file aug_lagrangian_test_functions\&.hpp\&.
+.PP
+References mlpack::optimization::AugLagrangianTestFunction::initialPoint\&.
+.SS "void mlpack::optimization::GockenbachFunction::Gradient (const arma::mat & coordinates, arma::mat & gradient)"
+
+.SS "void mlpack::optimization::GockenbachFunction::GradientConstraint (const size_t index, const arma::mat & coordinates, arma::mat & gradient)"
+
+.SS "size_t mlpack::optimization::GockenbachFunction::NumConstraints () const\fC [inline]\fP"
+
+.PP
+Definition at line 70 of file aug_lagrangian_test_functions\&.hpp\&.
+.PP
+References mlpack::optimization::AugLagrangianTestFunction::EvaluateConstraint(), and mlpack::optimization::AugLagrangianTestFunction::GradientConstraint()\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "arma::mat mlpack::optimization::GockenbachFunction::initialPoint\fC [private]\fP"
+
+.PP
+Definition at line 80 of file aug_lagrangian_test_functions\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,206 @@
+\section{mlpack\+:\+:Timers Class Reference}
+\label{classmlpack_1_1Timers}\index{mlpack\+::\+Timers@{mlpack\+::\+Timers}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Timers} ()
+\begin{DoxyCompactList}\small\item\em Nothing to do for the constructor. \end{DoxyCompactList}\item 
+std\+::map$<$ {\bf std\+::string}, std\+::chrono\+::microseconds $>$ \& {\bf Get\+All\+Timers} ()
+\begin{DoxyCompactList}\small\item\em Returns a copy of all the timers used via this interface. \end{DoxyCompactList}\item 
+bool {\bf Get\+State} ({\bf std\+::string} timer\+Name)
+\begin{DoxyCompactList}\small\item\em Returns state of the given timer. \end{DoxyCompactList}\item 
+std\+::chrono\+::microseconds {\bf Get\+Timer} (const {\bf std\+::string} \&timer\+Name)
+\begin{DoxyCompactList}\small\item\em Returns a copy of the timer specified. \end{DoxyCompactList}\item 
+void {\bf Print\+Timer} (const {\bf std\+::string} \&timer\+Name)
+\begin{DoxyCompactList}\small\item\em Prints the specified timer. \end{DoxyCompactList}\item 
+void {\bf Start\+Timer} (const {\bf std\+::string} \&timer\+Name)
+\begin{DoxyCompactList}\small\item\em  $\ast$ Initializes a timer, available like a normal value specified on  $\ast$ the command line. \end{DoxyCompactList}\item 
+void {\bf Stop\+Timer} (const {\bf std\+::string} \&timer\+Name)
+\begin{DoxyCompactList}\small\item\em  $\ast$ Halts the timer, and replaces it\textquotesingle{}s value with  $\ast$ the delta time from it\textquotesingle{}s start   $\ast$   $\ast$. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+std\+::chrono\+::high\+\_\+resolution\+\_\+clock\+::time\+\_\+point {\bf Get\+Time} ()
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::map$<$ {\bf std\+::string}, std\+::chrono\+::microseconds $>$ {\bf timers}
+\begin{DoxyCompactList}\small\item\em A map of all the timers that are being tracked. \end{DoxyCompactList}\item 
+std\+::map$<$ {\bf std\+::string}, std\+::chrono\+::high\+\_\+resolution\+\_\+clock\+::time\+\_\+point $>$ {\bf timer\+Start\+Time}
+\begin{DoxyCompactList}\small\item\em A map for the starting values of the timers. \end{DoxyCompactList}\item 
+std\+::map$<$ {\bf std\+::string}, bool $>$ {\bf timer\+State}
+\begin{DoxyCompactList}\small\item\em A map that contains whether or not each timer is currently running. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 72 of file timers.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::\+Timers@{mlpack\+::\+Timers}!Timers@{Timers}}
+\index{Timers@{Timers}!mlpack\+::\+Timers@{mlpack\+::\+Timers}}
+\subsubsection[{Timers()}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::\+Timers\+::\+Timers (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1Timers_ae7142fe87694b1e529ed4962cd092c8a}
+
+
+Nothing to do for the constructor. 
+
+
+
+Definition at line 76 of file timers.\+hpp.
+
+
+
+References string().
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::\+Timers@{mlpack\+::\+Timers}!Get\+All\+Timers@{Get\+All\+Timers}}
+\index{Get\+All\+Timers@{Get\+All\+Timers}!mlpack\+::\+Timers@{mlpack\+::\+Timers}}
+\subsubsection[{Get\+All\+Timers()}]{\setlength{\rightskip}{0pt plus 5cm}std\+::map$<${\bf std\+::string}, std\+::chrono\+::microseconds$>$\& mlpack\+::\+Timers\+::\+Get\+All\+Timers (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1Timers_a9a6d2c873df17ae6d668adee5dc1b30d}
+
+
+Returns a copy of all the timers used via this interface. 
+
+\index{mlpack\+::\+Timers@{mlpack\+::\+Timers}!Get\+State@{Get\+State}}
+\index{Get\+State@{Get\+State}!mlpack\+::\+Timers@{mlpack\+::\+Timers}}
+\subsubsection[{Get\+State(std\+::string timer\+Name)}]{\setlength{\rightskip}{0pt plus 5cm}bool mlpack\+::\+Timers\+::\+Get\+State (
+\begin{DoxyParamCaption}
+\item[{{\bf std\+::string}}]{timer\+Name}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1Timers_ac1c24b8e9d02053ad7f6c0657358625f}
+
+
+Returns state of the given timer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em timer\+Name} & The name of the timer in question. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::\+Timers@{mlpack\+::\+Timers}!Get\+Time@{Get\+Time}}
+\index{Get\+Time@{Get\+Time}!mlpack\+::\+Timers@{mlpack\+::\+Timers}}
+\subsubsection[{Get\+Time()}]{\setlength{\rightskip}{0pt plus 5cm}std\+::chrono\+::high\+\_\+resolution\+\_\+clock\+::time\+\_\+point mlpack\+::\+Timers\+::\+Get\+Time (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1Timers_a473aa6ff734a00ec20cd9f29ea3a64d1}
+\index{mlpack\+::\+Timers@{mlpack\+::\+Timers}!Get\+Timer@{Get\+Timer}}
+\index{Get\+Timer@{Get\+Timer}!mlpack\+::\+Timers@{mlpack\+::\+Timers}}
+\subsubsection[{Get\+Timer(const std\+::string \&timer\+Name)}]{\setlength{\rightskip}{0pt plus 5cm}std\+::chrono\+::microseconds mlpack\+::\+Timers\+::\+Get\+Timer (
+\begin{DoxyParamCaption}
+\item[{const {\bf std\+::string} \&}]{timer\+Name}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1Timers_a312665f7003f1020f48e844ccbbf2e0c}
+
+
+Returns a copy of the timer specified. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em timer\+Name} & The name of the timer in question. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::\+Timers@{mlpack\+::\+Timers}!Print\+Timer@{Print\+Timer}}
+\index{Print\+Timer@{Print\+Timer}!mlpack\+::\+Timers@{mlpack\+::\+Timers}}
+\subsubsection[{Print\+Timer(const std\+::string \&timer\+Name)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::\+Timers\+::\+Print\+Timer (
+\begin{DoxyParamCaption}
+\item[{const {\bf std\+::string} \&}]{timer\+Name}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1Timers_ac2ce38b5d33023a661973e1635819ee6}
+
+
+Prints the specified timer. 
+
+If it took longer than a minute to complete the timer will be displayed in days, hours, and minutes as well.
+
+
+\begin{DoxyParams}{Parameters}
+{\em timer\+Name} & The name of the timer in question. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::\+Timers@{mlpack\+::\+Timers}!Start\+Timer@{Start\+Timer}}
+\index{Start\+Timer@{Start\+Timer}!mlpack\+::\+Timers@{mlpack\+::\+Timers}}
+\subsubsection[{Start\+Timer(const std\+::string \&timer\+Name)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::\+Timers\+::\+Start\+Timer (
+\begin{DoxyParamCaption}
+\item[{const {\bf std\+::string} \&}]{timer\+Name}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1Timers_a843e533245906485becff2c504760184}
+
+
+ $\ast$ Initializes a timer, available like a normal value specified on  $\ast$ the command line. 
+
+  \doxyref{Timers}{p.}{classmlpack_1_1Timers} are of type timeval. If a timer is started, then stopped, then re-\/started, then stopped, the final timer value will be the length of both runs of the timer.  $\ast$  $\ast$ 
+\begin{DoxyParams}{Parameters}
+{\em timer\+Name} & The name of the timer in question.   \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::\+Timers@{mlpack\+::\+Timers}!Stop\+Timer@{Stop\+Timer}}
+\index{Stop\+Timer@{Stop\+Timer}!mlpack\+::\+Timers@{mlpack\+::\+Timers}}
+\subsubsection[{Stop\+Timer(const std\+::string \&timer\+Name)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::\+Timers\+::\+Stop\+Timer (
+\begin{DoxyParamCaption}
+\item[{const {\bf std\+::string} \&}]{timer\+Name}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1Timers_a6fb794426bc921bbc7ef44a1a0fb96e6}
+
+
+ $\ast$ Halts the timer, and replaces it\textquotesingle{}s value with  $\ast$ the delta time from it\textquotesingle{}s start   $\ast$   $\ast$. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em timer\+Name} & The name of the timer in question.   \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::\+Timers@{mlpack\+::\+Timers}!timers@{timers}}
+\index{timers@{timers}!mlpack\+::\+Timers@{mlpack\+::\+Timers}}
+\subsubsection[{timers}]{\setlength{\rightskip}{0pt plus 5cm}std\+::map$<${\bf std\+::string}, std\+::chrono\+::microseconds$>$ mlpack\+::\+Timers\+::timers\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1Timers_a3f6569f3c503eab2da21949756549cbd}
+
+
+A map of all the timers that are being tracked. 
+
+
+
+Definition at line 125 of file timers.\+hpp.
+
+\index{mlpack\+::\+Timers@{mlpack\+::\+Timers}!timer\+Start\+Time@{timer\+Start\+Time}}
+\index{timer\+Start\+Time@{timer\+Start\+Time}!mlpack\+::\+Timers@{mlpack\+::\+Timers}}
+\subsubsection[{timer\+Start\+Time}]{\setlength{\rightskip}{0pt plus 5cm}std\+::map$<${\bf std\+::string}, std\+::chrono\+::high\+\_\+resolution\+\_\+clock\+::time\+\_\+point$>$ mlpack\+::\+Timers\+::timer\+Start\+Time\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1Timers_a0992a5efe600aadfd803f7cb6ba416bc}
+
+
+A map for the starting values of the timers. 
+
+
+
+Definition at line 130 of file timers.\+hpp.
+
+\index{mlpack\+::\+Timers@{mlpack\+::\+Timers}!timer\+State@{timer\+State}}
+\index{timer\+State@{timer\+State}!mlpack\+::\+Timers@{mlpack\+::\+Timers}}
+\subsubsection[{timer\+State}]{\setlength{\rightskip}{0pt plus 5cm}std\+::map$<${\bf std\+::string}, bool$>$ mlpack\+::\+Timers\+::timer\+State\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1Timers_a1dc5c49c91dacdd46f26e5389f4847af}
+
+
+A map that contains whether or not each timer is currently running. 
+
+
+
+Definition at line 127 of file timers.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/util/{\bf timers.\+hpp}\end{DoxyCompactItemize}

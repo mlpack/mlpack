@@ -1,0 +1,521 @@
+.TH "mlpack::ann::Recurrent< InputDataType, OutputDataType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::ann::Recurrent< InputDataType, OutputDataType > \- Implementation of the RecurrentLayer class\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename StartModuleType , typename InputModuleType , typename FeedbackModuleType , typename TransferModuleType > \fBRecurrent\fP (const StartModuleType &start, const InputModuleType &input, const FeedbackModuleType &feedback, const TransferModuleType &transfer, const size_t \fBrho\fP)"
+.br
+.RI "\fICreate the \fBRecurrent\fP object using the specified modules\&. \fP"
+.ti -1c
+.RI "template<typename eT > void \fBBackward\fP (const arma::Mat< eT > &&, arma::Mat< eT > &&gy, arma::Mat< eT > &&g)"
+.br
+.RI "\fIOrdinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f\&. \fP"
+.ti -1c
+.RI "OutputDataType const & \fBDelta\fP () const "
+.br
+.RI "\fIGet the delta\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBDelta\fP ()"
+.br
+.RI "\fIModify the delta\&. \fP"
+.ti -1c
+.RI "bool \fBDeterministic\fP () const "
+.br
+.RI "\fIThe value of the deterministic parameter\&. \fP"
+.ti -1c
+.RI "bool & \fBDeterministic\fP ()"
+.br
+.RI "\fIModify the value of the deterministic parameter\&. \fP"
+.ti -1c
+.RI "template<typename eT > void \fBForward\fP (arma::Mat< eT > &&input, arma::Mat< eT > &&output)"
+.br
+.RI "\fIOrdinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. \fP"
+.ti -1c
+.RI "template<typename eT > void \fBGradient\fP (arma::Mat< eT > &&input, arma::Mat< eT > &&error, arma::Mat< eT > &&)"
+.br
+.ti -1c
+.RI "OutputDataType const & \fBGradient\fP () const "
+.br
+.RI "\fIGet the gradient\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBGradient\fP ()"
+.br
+.RI "\fIModify the gradient\&. \fP"
+.ti -1c
+.RI "InputDataType const & \fBInputParameter\fP () const "
+.br
+.RI "\fIGet the input parameter\&. \fP"
+.ti -1c
+.RI "InputDataType & \fBInputParameter\fP ()"
+.br
+.RI "\fIModify the input parameter\&. \fP"
+.ti -1c
+.RI "std::vector< \fBLayerTypes\fP > & \fBModel\fP ()"
+.br
+.RI "\fIGet the model modules\&. \fP"
+.ti -1c
+.RI "OutputDataType const & \fBOutputParameter\fP () const "
+.br
+.RI "\fIGet the output parameter\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP ()"
+.br
+.RI "\fIModify the output parameter\&. \fP"
+.ti -1c
+.RI "OutputDataType const & \fBParameters\fP () const "
+.br
+.RI "\fIGet the parameters\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBParameters\fP ()"
+.br
+.RI "\fIModify the parameters\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int)"
+.br
+.RI "\fISerialize the layer\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "size_t \fBbackwardStep\fP"
+.br
+.RI "\fILocally-stored number of backward steps\&. \fP"
+.ti -1c
+.RI "OutputDataType \fBdelta\fP"
+.br
+.RI "\fILocally-stored delta object\&. \fP"
+.ti -1c
+.RI "\fBDeltaVisitor\fP \fBdeltaVisitor\fP"
+.br
+.RI "\fILocally-stored delta visitor\&. \fP"
+.ti -1c
+.RI "bool \fBdeterministic\fP"
+.br
+.RI "\fIIf true dropout and scaling is disabled, see notes above\&. \fP"
+.ti -1c
+.RI "\fBLayerTypes\fP \fBfeedbackModule\fP"
+.br
+.RI "\fILocally-stored feedback module\&. \fP"
+.ti -1c
+.RI "std::vector< arma::mat > \fBfeedbackOutputParameter\fP"
+.br
+.RI "\fILocally-stored feedback output parameters\&. \fP"
+.ti -1c
+.RI "size_t \fBforwardStep\fP"
+.br
+.RI "\fILocally-stored number of forward steps\&. \fP"
+.ti -1c
+.RI "OutputDataType \fBgradient\fP"
+.br
+.RI "\fILocally-stored gradient object\&. \fP"
+.ti -1c
+.RI "size_t \fBgradientStep\fP"
+.br
+.RI "\fILocally-stored number of gradient steps\&. \fP"
+.ti -1c
+.RI "\fBLayerTypes\fP \fBinitialModule\fP"
+.br
+.RI "\fILocally-stored initial module\&. \fP"
+.ti -1c
+.RI "\fBLayerTypes\fP \fBinputModule\fP"
+.br
+.RI "\fILocally-stored input module\&. \fP"
+.ti -1c
+.RI "InputDataType \fBinputParameter\fP"
+.br
+.RI "\fILocally-stored input parameter object\&. \fP"
+.ti -1c
+.RI "\fBLayerTypes\fP \fBmergeModule\fP"
+.br
+.RI "\fILocally-stored merge module\&. \fP"
+.ti -1c
+.RI "std::vector< \fBLayerTypes\fP > \fBnetwork\fP"
+.br
+.RI "\fILocally-stored model modules\&. \fP"
+.ti -1c
+.RI "OutputDataType \fBoutputParameter\fP"
+.br
+.RI "\fILocally-stored output parameter object\&. \fP"
+.ti -1c
+.RI "\fBOutputParameterVisitor\fP \fBoutputParameterVisitor\fP"
+.br
+.RI "\fILocally-stored output parameter visitor\&. \fP"
+.ti -1c
+.RI "OutputDataType \fBparameters\fP"
+.br
+.RI "\fILocally-stored weight object\&. \fP"
+.ti -1c
+.RI "arma::mat \fBrecurrentError\fP"
+.br
+.RI "\fILocally-stored recurrent error parameter\&. \fP"
+.ti -1c
+.RI "\fBLayerTypes\fP \fBrecurrentModule\fP"
+.br
+.RI "\fILocally-stored recurrent module\&. \fP"
+.ti -1c
+.RI "size_t \fBrho\fP"
+.br
+.RI "\fINumber of steps to backpropagate through time (BPTT)\&. \fP"
+.ti -1c
+.RI "\fBLayerTypes\fP \fBstartModule\fP"
+.br
+.RI "\fILocally-stored start module\&. \fP"
+.ti -1c
+.RI "\fBLayerTypes\fP \fBtransferModule\fP"
+.br
+.RI "\fILocally-stored transfer module\&. \fP"
+.ti -1c
+.RI "\fBWeightSizeVisitor\fP \fBweightSizeVisitor\fP"
+.br
+.RI "\fILocally-stored weight size visitor\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename InputDataType = arma::mat, typename OutputDataType = arma::mat>
+.br
+class mlpack::ann::Recurrent< InputDataType, OutputDataType >"
+Implementation of the RecurrentLayer class\&. 
+
+\fBRecurrent\fP layers can be used similarly to feed-forward layers\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIInputDataType\fP Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fIOutputDataType\fP Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 52 of file layer_types\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename StartModuleType , typename InputModuleType , typename FeedbackModuleType , typename TransferModuleType > \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::\fBRecurrent\fP (const StartModuleType & start, const InputModuleType & input, const FeedbackModuleType & feedback, const TransferModuleType & transfer, const size_t rho)"
+
+.PP
+Create the \fBRecurrent\fP object using the specified modules\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIstart\fP The start module\&. 
+.br
+\fIstart\fP The input module\&. 
+.br
+\fIstart\fP The feedback module\&. 
+.br
+\fIstart\fP The transfer module\&. 
+.br
+\fIrho\fP Maximum number of steps to backpropagate through time (BPTT)\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename eT > void \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::Backward (const arma::Mat< eT > &&, arma::Mat< eT > && gy, arma::Mat< eT > && g)"
+
+.PP
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f\&. Using the results from the feed forward pass\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP The propagated input activation\&. 
+.br
+\fIgy\fP The backpropagated error\&. 
+.br
+\fIg\fP The calculated gradient\&. 
+.RE
+.PP
+
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType const& \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::Delta () const\fC [inline]\fP"
+
+.PP
+Get the delta\&. 
+.PP
+Definition at line 125 of file recurrent\&.hpp\&.
+.PP
+References mlpack::ann::Recurrent< InputDataType, OutputDataType >::delta\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::Delta ()\fC [inline]\fP"
+
+.PP
+Modify the delta\&. 
+.PP
+Definition at line 127 of file recurrent\&.hpp\&.
+.PP
+References mlpack::ann::Recurrent< InputDataType, OutputDataType >::delta\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> bool \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::Deterministic () const\fC [inline]\fP"
+
+.PP
+The value of the deterministic parameter\&. 
+.PP
+Definition at line 105 of file recurrent\&.hpp\&.
+.PP
+References mlpack::ann::Recurrent< InputDataType, OutputDataType >::deterministic\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> bool& \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::Deterministic ()\fC [inline]\fP"
+
+.PP
+Modify the value of the deterministic parameter\&. 
+.PP
+Definition at line 107 of file recurrent\&.hpp\&.
+.PP
+References mlpack::ann::Recurrent< InputDataType, OutputDataType >::deterministic\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename eT > void \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::Forward (arma::Mat< eT > && input, arma::Mat< eT > && output)"
+
+.PP
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input data used for evaluating the specified function\&. 
+.br
+\fIoutput\fP Resulting output activation\&. 
+.RE
+.PP
+
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename eT > void \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::Gradient (arma::Mat< eT > && input, arma::Mat< eT > && error, arma::Mat< eT > &&)"
+
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType const& \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::Gradient () const\fC [inline]\fP"
+
+.PP
+Get the gradient\&. 
+.PP
+Definition at line 130 of file recurrent\&.hpp\&.
+.PP
+References mlpack::ann::Recurrent< InputDataType, OutputDataType >::gradient\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::Gradient ()\fC [inline]\fP"
+
+.PP
+Modify the gradient\&. 
+.PP
+Definition at line 132 of file recurrent\&.hpp\&.
+.PP
+References mlpack::ann::Recurrent< InputDataType, OutputDataType >::gradient, and mlpack::ann::Recurrent< InputDataType, OutputDataType >::Serialize()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> InputDataType const& \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::InputParameter () const\fC [inline]\fP"
+
+.PP
+Get the input parameter\&. 
+.PP
+Definition at line 115 of file recurrent\&.hpp\&.
+.PP
+References mlpack::ann::Recurrent< InputDataType, OutputDataType >::inputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> InputDataType& \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::InputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the input parameter\&. 
+.PP
+Definition at line 117 of file recurrent\&.hpp\&.
+.PP
+References mlpack::ann::Recurrent< InputDataType, OutputDataType >::inputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> std::vector<\fBLayerTypes\fP>& \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::Model ()\fC [inline]\fP"
+
+.PP
+Get the model modules\&. 
+.PP
+Definition at line 102 of file recurrent\&.hpp\&.
+.PP
+References mlpack::ann::Recurrent< InputDataType, OutputDataType >::network\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType const& \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::OutputParameter () const\fC [inline]\fP"
+
+.PP
+Get the output parameter\&. 
+.PP
+Definition at line 120 of file recurrent\&.hpp\&.
+.PP
+References mlpack::ann::Recurrent< InputDataType, OutputDataType >::outputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::OutputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the output parameter\&. 
+.PP
+Definition at line 122 of file recurrent\&.hpp\&.
+.PP
+References mlpack::ann::Recurrent< InputDataType, OutputDataType >::outputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType const& \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::Parameters () const\fC [inline]\fP"
+
+.PP
+Get the parameters\&. 
+.PP
+Definition at line 110 of file recurrent\&.hpp\&.
+.PP
+References mlpack::ann::Recurrent< InputDataType, OutputDataType >::parameters\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::Parameters ()\fC [inline]\fP"
+
+.PP
+Modify the parameters\&. 
+.PP
+Definition at line 112 of file recurrent\&.hpp\&.
+.PP
+References mlpack::ann::Recurrent< InputDataType, OutputDataType >::parameters\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename Archive > void \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::Serialize (Archive & ar, const unsigned int)"
+
+.PP
+Serialize the layer\&. 
+.PP
+Referenced by mlpack::ann::Recurrent< InputDataType, OutputDataType >::Gradient()\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> size_t \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::backwardStep\fC [private]\fP"
+
+.PP
+Locally-stored number of backward steps\&. 
+.PP
+Definition at line 160 of file recurrent\&.hpp\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::delta\fC [private]\fP"
+
+.PP
+Locally-stored delta object\&. 
+.PP
+Definition at line 196 of file recurrent\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Recurrent< InputDataType, OutputDataType >::Delta()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBDeltaVisitor\fP \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::deltaVisitor\fC [private]\fP"
+
+.PP
+Locally-stored delta visitor\&. 
+.PP
+Definition at line 187 of file recurrent\&.hpp\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> bool \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::deterministic\fC [private]\fP"
+
+.PP
+If true dropout and scaling is disabled, see notes above\&. 
+.PP
+Definition at line 166 of file recurrent\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Recurrent< InputDataType, OutputDataType >::Deterministic()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBLayerTypes\fP \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::feedbackModule\fC [private]\fP"
+
+.PP
+Locally-stored feedback module\&. 
+.PP
+Definition at line 148 of file recurrent\&.hpp\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> std::vector<arma::mat> \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::feedbackOutputParameter\fC [private]\fP"
+
+.PP
+Locally-stored feedback output parameters\&. 
+.PP
+Definition at line 193 of file recurrent\&.hpp\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> size_t \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::forwardStep\fC [private]\fP"
+
+.PP
+Locally-stored number of forward steps\&. 
+.PP
+Definition at line 157 of file recurrent\&.hpp\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::gradient\fC [private]\fP"
+
+.PP
+Locally-stored gradient object\&. 
+.PP
+Definition at line 199 of file recurrent\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Recurrent< InputDataType, OutputDataType >::Gradient()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> size_t \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::gradientStep\fC [private]\fP"
+
+.PP
+Locally-stored number of gradient steps\&. 
+.PP
+Definition at line 163 of file recurrent\&.hpp\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBLayerTypes\fP \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::initialModule\fC [private]\fP"
+
+.PP
+Locally-stored initial module\&. 
+.PP
+Definition at line 172 of file recurrent\&.hpp\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBLayerTypes\fP \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::inputModule\fC [private]\fP"
+
+.PP
+Locally-stored input module\&. 
+.PP
+Definition at line 145 of file recurrent\&.hpp\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> InputDataType \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::inputParameter\fC [private]\fP"
+
+.PP
+Locally-stored input parameter object\&. 
+.PP
+Definition at line 202 of file recurrent\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Recurrent< InputDataType, OutputDataType >::InputParameter()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBLayerTypes\fP \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::mergeModule\fC [private]\fP"
+
+.PP
+Locally-stored merge module\&. 
+.PP
+Definition at line 181 of file recurrent\&.hpp\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> std::vector<\fBLayerTypes\fP> \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::network\fC [private]\fP"
+
+.PP
+Locally-stored model modules\&. 
+.PP
+Definition at line 178 of file recurrent\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Recurrent< InputDataType, OutputDataType >::Model()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::outputParameter\fC [private]\fP"
+
+.PP
+Locally-stored output parameter object\&. 
+.PP
+Definition at line 205 of file recurrent\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Recurrent< InputDataType, OutputDataType >::OutputParameter()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBOutputParameterVisitor\fP \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::outputParameterVisitor\fC [private]\fP"
+
+.PP
+Locally-stored output parameter visitor\&. 
+.PP
+Definition at line 190 of file recurrent\&.hpp\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::parameters\fC [private]\fP"
+
+.PP
+Locally-stored weight object\&. 
+.PP
+Definition at line 169 of file recurrent\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Recurrent< InputDataType, OutputDataType >::Parameters()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> arma::mat \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::recurrentError\fC [private]\fP"
+
+.PP
+Locally-stored recurrent error parameter\&. 
+.PP
+Definition at line 208 of file recurrent\&.hpp\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBLayerTypes\fP \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::recurrentModule\fC [private]\fP"
+
+.PP
+Locally-stored recurrent module\&. 
+.PP
+Definition at line 175 of file recurrent\&.hpp\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> size_t \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::rho\fC [private]\fP"
+
+.PP
+Number of steps to backpropagate through time (BPTT)\&. 
+.PP
+Definition at line 154 of file recurrent\&.hpp\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBLayerTypes\fP \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::startModule\fC [private]\fP"
+
+.PP
+Locally-stored start module\&. 
+.PP
+Definition at line 142 of file recurrent\&.hpp\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBLayerTypes\fP \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::transferModule\fC [private]\fP"
+
+.PP
+Locally-stored transfer module\&. 
+.PP
+Definition at line 151 of file recurrent\&.hpp\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBWeightSizeVisitor\fP \fBmlpack::ann::Recurrent\fP< InputDataType, OutputDataType >::weightSizeVisitor\fC [private]\fP"
+
+.PP
+Locally-stored weight size visitor\&. 
+.PP
+Definition at line 184 of file recurrent\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

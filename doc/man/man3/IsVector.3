@@ -1,0 +1,48 @@
+.TH "IsVector< VecType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+IsVector< VecType > \- If value == true, then VecType is some sort of Armadillo vector or subview\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "static const bool \fBvalue\fP = false"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename VecType>
+.br
+struct IsVector< VecType >"
+If value == true, then VecType is some sort of Armadillo vector or subview\&. 
+
+You might use this struct like this:
+.PP
+.PP
+.nf
+// Only accepts VecTypes that are actually Armadillo vector types\&.
+template<typename VecType>
+void Function(const VecType& argumentA,
+              typename std::enable_if_t<IsVector<VecType>::value>* = 0);
+.fi
+.PP
+.PP
+The use of the enable_if_t object allows the compiler to instantiate Function() only if VecType is one of the Armadillo vector types\&. It has a default argument because it isn't meant to be used in either the function call or the function body\&. 
+.PP
+Definition at line 35 of file arma_traits\&.hpp\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename VecType > const bool \fBIsVector\fP< VecType >::value = false\fC [static]\fP"
+
+.PP
+Definition at line 37 of file arma_traits\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

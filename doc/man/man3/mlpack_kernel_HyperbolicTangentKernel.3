@@ -1,0 +1,176 @@
+.TH "mlpack::kernel::HyperbolicTangentKernel" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::kernel::HyperbolicTangentKernel \- Hyperbolic tangent kernel\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBHyperbolicTangentKernel\fP ()"
+.br
+.RI "\fIThis constructor sets the default scale to 1\&.0 and offset to 0\&.0\&. \fP"
+.ti -1c
+.RI "\fBHyperbolicTangentKernel\fP (double \fBscale\fP, double \fBoffset\fP)"
+.br
+.RI "\fIConstruct the hyperbolic tangent kernel with custom scale factor and offset\&. \fP"
+.ti -1c
+.RI "template<typename VecTypeA , typename VecTypeB > double \fBEvaluate\fP (const VecTypeA &a, const VecTypeB &b)"
+.br
+.RI "\fIEvaluate the hyperbolic tangent kernel\&. \fP"
+.ti -1c
+.RI "double \fBOffset\fP () const "
+.br
+.RI "\fIGet offset for the kernel\&. \fP"
+.ti -1c
+.RI "double & \fBOffset\fP ()"
+.br
+.RI "\fIModify offset for the kernel\&. \fP"
+.ti -1c
+.RI "double \fBScale\fP () const "
+.br
+.RI "\fIGet scale factor\&. \fP"
+.ti -1c
+.RI "double & \fBScale\fP ()"
+.br
+.RI "\fIModify scale factor\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int)"
+.br
+.RI "\fISerialize the kernel\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "double \fBoffset\fP"
+.br
+.ti -1c
+.RI "double \fBscale\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Hyperbolic tangent kernel\&. 
+
+For any two vectors $ x $, $ y $ and a given scale $ s $ and offset $ t $
+.PP
+\[ K(x, y) = \tanh(s <x, y> + t) \] 
+.PP
+Definition at line 28 of file hyperbolic_tangent_kernel\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::kernel::HyperbolicTangentKernel::HyperbolicTangentKernel ()\fC [inline]\fP"
+
+.PP
+This constructor sets the default scale to 1\&.0 and offset to 0\&.0\&. 
+.PP
+Definition at line 34 of file hyperbolic_tangent_kernel\&.hpp\&.
+.SS "mlpack::kernel::HyperbolicTangentKernel::HyperbolicTangentKernel (double scale, double offset)\fC [inline]\fP"
+
+.PP
+Construct the hyperbolic tangent kernel with custom scale factor and offset\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIscale\fP Scaling factor for <x, y>\&. 
+.br
+\fIoffset\fP Kernel offset\&. 
+.RE
+.PP
+
+.PP
+Definition at line 44 of file hyperbolic_tangent_kernel\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename VecTypeA , typename VecTypeB > double mlpack::kernel::HyperbolicTangentKernel::Evaluate (const VecTypeA & a, const VecTypeB & b)\fC [inline]\fP"
+
+.PP
+Evaluate the hyperbolic tangent kernel\&. This evaluation uses Armadillo's dot() function\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIVecTypeA\fP Type of first vector (should be arma::vec or arma::sp_vec)\&. 
+.br
+\fIVecTypeB\fP Type of second vector (arma::vec / arma::sp_vec)\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIa\fP First vector\&. 
+.br
+\fIb\fP Second vector\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+K(a, b)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 60 of file hyperbolic_tangent_kernel\&.hpp\&.
+.PP
+References offset, and scale\&.
+.SS "double mlpack::kernel::HyperbolicTangentKernel::Offset () const\fC [inline]\fP"
+
+.PP
+Get offset for the kernel\&. 
+.PP
+Definition at line 71 of file hyperbolic_tangent_kernel\&.hpp\&.
+.PP
+References offset\&.
+.SS "double& mlpack::kernel::HyperbolicTangentKernel::Offset ()\fC [inline]\fP"
+
+.PP
+Modify offset for the kernel\&. 
+.PP
+Definition at line 73 of file hyperbolic_tangent_kernel\&.hpp\&.
+.PP
+References offset\&.
+.SS "double mlpack::kernel::HyperbolicTangentKernel::Scale () const\fC [inline]\fP"
+
+.PP
+Get scale factor\&. 
+.PP
+Definition at line 66 of file hyperbolic_tangent_kernel\&.hpp\&.
+.PP
+References scale\&.
+.SS "double& mlpack::kernel::HyperbolicTangentKernel::Scale ()\fC [inline]\fP"
+
+.PP
+Modify scale factor\&. 
+.PP
+Definition at line 68 of file hyperbolic_tangent_kernel\&.hpp\&.
+.PP
+References scale\&.
+.SS "template<typename Archive > void mlpack::kernel::HyperbolicTangentKernel::Serialize (Archive & ar, const unsigned int)\fC [inline]\fP"
+
+.PP
+Serialize the kernel\&. 
+.PP
+Definition at line 77 of file hyperbolic_tangent_kernel\&.hpp\&.
+.PP
+References mlpack::data::CreateNVP(), offset, and scale\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "double mlpack::kernel::HyperbolicTangentKernel::offset\fC [private]\fP"
+
+.PP
+Definition at line 85 of file hyperbolic_tangent_kernel\&.hpp\&.
+.PP
+Referenced by Evaluate(), Offset(), and Serialize()\&.
+.SS "double mlpack::kernel::HyperbolicTangentKernel::scale\fC [private]\fP"
+
+.PP
+Definition at line 84 of file hyperbolic_tangent_kernel\&.hpp\&.
+.PP
+Referenced by Evaluate(), Scale(), and Serialize()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

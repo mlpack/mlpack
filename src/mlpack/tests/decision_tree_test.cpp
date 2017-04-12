@@ -424,7 +424,7 @@ BOOST_AUTO_TEST_CASE(SimpleGeneralizationTest)
   if (!data::Load("vc2.csv", inputData))
     BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
-  arma::Mat<size_t> labels;
+  arma::Row<size_t> labels;
   if (!data::Load("vc2_labels.txt", labels))
     BOOST_FAIL("Cannot load labels for vc2_labels.txt");
 

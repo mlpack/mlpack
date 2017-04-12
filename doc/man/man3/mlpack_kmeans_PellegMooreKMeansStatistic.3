@@ -1,0 +1,126 @@
+.TH "mlpack::kmeans::PellegMooreKMeansStatistic" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::kmeans::PellegMooreKMeansStatistic \- A statistic for trees which holds the blacklist for Pelleg-Moore k-means clustering (which represents the clusters that cannot possibly own any points in a node)\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBPellegMooreKMeansStatistic\fP ()"
+.br
+.RI "\fIInitialize the statistic without a node (this does nothing)\&. \fP"
+.ti -1c
+.RI "template<typename TreeType > \fBPellegMooreKMeansStatistic\fP (TreeType &node)"
+.br
+.RI "\fIInitialize the statistic for a node; this calculates the centroid and caches it\&. \fP"
+.ti -1c
+.RI "const arma::uvec & \fBBlacklist\fP () const "
+.br
+.RI "\fIGet the cluster blacklist\&. \fP"
+.ti -1c
+.RI "arma::uvec & \fBBlacklist\fP ()"
+.br
+.RI "\fIModify the cluster blacklist\&. \fP"
+.ti -1c
+.RI "const arma::vec & \fBCentroid\fP () const "
+.br
+.RI "\fIGet the node's centroid\&. \fP"
+.ti -1c
+.RI "arma::vec & \fBCentroid\fP ()"
+.br
+.RI "\fIModify the node's centroid (be careful!)\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "arma::uvec \fBblacklist\fP"
+.br
+.RI "\fIThe cluster blacklist for the node\&. \fP"
+.ti -1c
+.RI "arma::vec \fBcentroid\fP"
+.br
+.RI "\fIThe centroid of the node, cached for use during prunes\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+A statistic for trees which holds the blacklist for Pelleg-Moore k-means clustering (which represents the clusters that cannot possibly own any points in a node)\&. 
+.PP
+Definition at line 24 of file pelleg_moore_kmeans_statistic\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::kmeans::PellegMooreKMeansStatistic::PellegMooreKMeansStatistic ()\fC [inline]\fP"
+
+.PP
+Initialize the statistic without a node (this does nothing)\&. 
+.PP
+Definition at line 28 of file pelleg_moore_kmeans_statistic\&.hpp\&.
+.SS "template<typename TreeType > mlpack::kmeans::PellegMooreKMeansStatistic::PellegMooreKMeansStatistic (TreeType & node)\fC [inline]\fP"
+
+.PP
+Initialize the statistic for a node; this calculates the centroid and caches it\&. 
+.PP
+Definition at line 33 of file pelleg_moore_kmeans_statistic\&.hpp\&.
+.PP
+References centroid\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "const arma::uvec& mlpack::kmeans::PellegMooreKMeansStatistic::Blacklist () const\fC [inline]\fP"
+
+.PP
+Get the cluster blacklist\&. 
+.PP
+Definition at line 57 of file pelleg_moore_kmeans_statistic\&.hpp\&.
+.PP
+References blacklist\&.
+.SS "arma::uvec& mlpack::kmeans::PellegMooreKMeansStatistic::Blacklist ()\fC [inline]\fP"
+
+.PP
+Modify the cluster blacklist\&. 
+.PP
+Definition at line 59 of file pelleg_moore_kmeans_statistic\&.hpp\&.
+.PP
+References blacklist\&.
+.SS "const arma::vec& mlpack::kmeans::PellegMooreKMeansStatistic::Centroid () const\fC [inline]\fP"
+
+.PP
+Get the node's centroid\&. 
+.PP
+Definition at line 62 of file pelleg_moore_kmeans_statistic\&.hpp\&.
+.PP
+References centroid\&.
+.SS "arma::vec& mlpack::kmeans::PellegMooreKMeansStatistic::Centroid ()\fC [inline]\fP"
+
+.PP
+Modify the node's centroid (be careful!)\&. 
+.PP
+Definition at line 64 of file pelleg_moore_kmeans_statistic\&.hpp\&.
+.PP
+References centroid\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "arma::uvec mlpack::kmeans::PellegMooreKMeansStatistic::blacklist\fC [private]\fP"
+
+.PP
+The cluster blacklist for the node\&. 
+.PP
+Definition at line 68 of file pelleg_moore_kmeans_statistic\&.hpp\&.
+.PP
+Referenced by Blacklist()\&.
+.SS "arma::vec mlpack::kmeans::PellegMooreKMeansStatistic::centroid\fC [private]\fP"
+
+.PP
+The centroid of the node, cached for use during prunes\&. 
+.PP
+Definition at line 70 of file pelleg_moore_kmeans_statistic\&.hpp\&.
+.PP
+Referenced by Centroid(), and PellegMooreKMeansStatistic()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

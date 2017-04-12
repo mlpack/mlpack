@@ -1,0 +1,149 @@
+.TH "mlpack::ann::TanhFunction" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::ann::TanhFunction \- The tanh function, defined by\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static double \fBDeriv\fP (const double y)"
+.br
+.RI "\fIComputes the first derivative of the tanh function\&. \fP"
+.ti -1c
+.RI "template<typename InputVecType , typename OutputVecType > static void \fBDeriv\fP (const InputVecType &y, OutputVecType &x)"
+.br
+.RI "\fIComputes the first derivatives of the tanh function\&. \fP"
+.ti -1c
+.RI "static double \fBFn\fP (const double x)"
+.br
+.RI "\fIComputes the tanh function\&. \fP"
+.ti -1c
+.RI "template<typename InputVecType , typename OutputVecType > static void \fBFn\fP (const InputVecType &x, OutputVecType &y)"
+.br
+.RI "\fIComputes the tanh function\&. \fP"
+.ti -1c
+.RI "static double \fBInv\fP (const double y)"
+.br
+.RI "\fIComputes the inverse of the tanh function\&. \fP"
+.ti -1c
+.RI "template<typename InputVecType , typename OutputVecType > static void \fBInv\fP (const InputVecType &y, OutputVecType &x)"
+.br
+.RI "\fIComputes the inverse of the tanh function\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+The tanh function, defined by\&. 
+
+\begin{eqnarray*} f(x) &=& \frac{e^x - e^{-x}}{e^x + e^{-x}} \\ f'(x) &=& 1 - \tanh^2(x) \\ f^{-1}(x) &=& \arctan(x) \end{eqnarray*} 
+.PP
+Definition at line 29 of file tanh_function\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "static double mlpack::ann::TanhFunction::Deriv (const double y)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the first derivative of the tanh function\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIy\fP Input data\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+f'(x) 
+.RE
+.PP
+
+.PP
+Definition at line 61 of file tanh_function\&.hpp\&.
+.SS "template<typename InputVecType , typename OutputVecType > static void mlpack::ann::TanhFunction::Deriv (const InputVecType & y, OutputVecType & x)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the first derivatives of the tanh function\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIy\fP Input data\&. 
+.br
+\fIx\fP The resulting derivatives\&. 
+.RE
+.PP
+
+.PP
+Definition at line 73 of file tanh_function\&.hpp\&.
+.SS "static double mlpack::ann::TanhFunction::Fn (const double x)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the tanh function\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIx\fP Input data\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+f(x)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 38 of file tanh_function\&.hpp\&.
+.SS "template<typename InputVecType , typename OutputVecType > static void mlpack::ann::TanhFunction::Fn (const InputVecType & x, OutputVecType & y)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the tanh function\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIx\fP Input data\&. 
+.br
+\fIy\fP The resulting output activation\&. 
+.RE
+.PP
+
+.PP
+Definition at line 50 of file tanh_function\&.hpp\&.
+.SS "static double mlpack::ann::TanhFunction::Inv (const double y)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the inverse of the tanh function\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIy\fP Input data\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+f^{-1}(x) 
+.RE
+.PP
+
+.PP
+Definition at line 84 of file tanh_function\&.hpp\&.
+.SS "template<typename InputVecType , typename OutputVecType > static void mlpack::ann::TanhFunction::Inv (const InputVecType & y, OutputVecType & x)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the inverse of the tanh function\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIy\fP Input data\&. 
+.br
+\fIx\fP The resulting inverse of the input data\&. 
+.RE
+.PP
+
+.PP
+Definition at line 96 of file tanh_function\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,327 @@
+\section{Introduction}\label{rstutorial_intro_rstut}
+Range search is a simple machine learning task which aims to find all the neighbors of a point that fall into a certain range of distances. In this setting, we have a {\bfseries query} and a {\bfseries reference} dataset. Given a certain range, for each point in the {\bfseries query} dataset, we wish to know all points in the {\bfseries reference} dataset which have distances within that given range to the given query point.
+
+Alternately, if the query and reference datasets are the same, the problem can be stated more simply\+: for each point in the dataset, we wish to know all points which have distance in the given range to that point.
+
+{\bfseries mlpack} provides\+:
+
+
+\begin{DoxyItemize}
+\item a \doxyref{simple command-\/line executable}{p.}{rstutorial_cli_rstut} to run range search
+\item a \doxyref{simple C++ interface}{p.}{rstutorial_rs_rstut} to perform range search
+\item a \doxyref{generic, extensible, and powerful C++ class (Range\+Search)}{p.}{rstutorial_rs_ext_rstut} for complex usage
+\end{DoxyItemize}\section{Table of Contents}\label{rstutorial_toc_rstut}
+A list of all the sections this tutorial contains.
+
+
+\begin{DoxyItemize}
+\item \doxyref{Introduction}{p.}{rstutorial_intro_rstut}
+\item \doxyref{Table of Contents}{p.}{rstutorial_toc_rstut}
+\item \doxyref{The \textquotesingle{}mlpack\+\_\+range\+\_\+search\textquotesingle{} command-\/line executable}{p.}{rstutorial_cli_rstut}
+\begin{DoxyItemize}
+\item \doxyref{One dataset, points with distance $<$= 0.\+01}{p.}{rstutorial_cli_ex1_rstut}
+\item \doxyref{Query and reference dataset, range [1.\+0, 1.\+5]}{p.}{rstutorial_cli_ex2_rstut}
+\item \doxyref{One dataset, range [0.\+7 0.\+8], leaf size of 15 points}{p.}{rstutorial_cli_ex3_rstut}
+\end{DoxyItemize}
+\item \doxyref{The \textquotesingle{}Range\+Search\textquotesingle{} class}{p.}{rstutorial_rs_rstut}
+\begin{DoxyItemize}
+\item \doxyref{Distance less than 2.\+0 on a single dataset}{p.}{rstutorial_rs_ex1_rstut}
+\item \doxyref{Range [3.\+0, 4.\+0] on a query and reference dataset}{p.}{rstutorial_rs_ex2_rstut}
+\item \doxyref{Naive (exhaustive) search for distance greater than 5.\+0 on one dataset}{p.}{rstutorial_rs_ex3_rstut}
+\end{DoxyItemize}
+\item \doxyref{The extensible \textquotesingle{}Range\+Search\textquotesingle{} class}{p.}{rstutorial_rs_ext_rstut}
+\begin{DoxyItemize}
+\item \doxyref{Metric\+Type policy class}{p.}{rstutorial_metric_type_doc_rstut}
+\item \doxyref{Mat\+Type policy class}{p.}{rstutorial_mat_type_doc_rstut}
+\item \doxyref{Tree\+Type policy class}{p.}{rstutorial_tree_type_doc_rstut}
+\end{DoxyItemize}
+\item \doxyref{Further documentation}{p.}{rstutorial_further_doc_rstut}
+\end{DoxyItemize}\section{The \textquotesingle{}mlpack\+\_\+range\+\_\+search\textquotesingle{} command-\/line executable}\label{rstutorial_cli_rstut}
+{\bfseries mlpack} provides an executable, {\ttfamily mlpack\+\_\+range\+\_\+search}, which can be used to perform range searches quickly and simply from the command-\/line. This program will perform the range search and place the resulting neighbor index list into one file and their corresponding distances into another file. These files are organized such that the first row corresponds to the neighbors (or distances) of the first query point, and the second row corresponds to the neighbors (or distances) of the second query point, and so forth. The neighbors of a specific point are not arranged in any specific order.
+
+Because a range search may return different numbers of points (including zero), the output file is technically not a valid C\+SV and may not be loadable by other programs. Therefore, if you need the results in a certain format, it may be better to use the \doxyref{C++ interface}{p.}{rstutorial_rs_rstut} to manually export the data in the preferred format.
+
+Below are several examples of simple usage (and the resultant output). The \textquotesingle{}-\/v\textquotesingle{} option is used so that output is given. Further documentation on each individual option can be found by typing
+
+
+\begin{DoxyCode}
+$ mlpack\_range\_search --help
+\end{DoxyCode}
+\subsection{One dataset, points with distance $<$= 0.\+01}\label{rstutorial_cli_ex1_rstut}
+
+\begin{DoxyCode}
+$ mlpack\_range\_search -r dataset.csv -n neighbors\_out.csv -d distances\_out.csv \(\backslash\)
+> -U 0.076 -v
+[INFO ] Loading \textcolor{stringliteral}{'dataset.csv'} as CSV data.  Size is 3 x 1000.
+[INFO ] Loaded reference data from \textcolor{stringliteral}{'dataset.csv'} (3x1000).
+[INFO ] Building reference tree...
+[INFO ] Tree built.
+[INFO ] Search \textcolor{keywordflow}{for} points in the range [0, 0.076] with dual-tree kd-tree
+search...
+[INFO ] Search complete.
+[INFO ]
+[INFO ] Execution parameters:
+[INFO ]   distances\_file: distances\_out.csv
+[INFO ]   help: \textcolor{keyword}{false}
+[INFO ]   info: \textcolor{stringliteral}{""}
+[INFO ]   input\_model\_file: \textcolor{stringliteral}{""}
+[INFO ]   leaf\_size: 20
+[INFO ]   max: 0.01
+[INFO ]   min: 0
+[INFO ]   naive: \textcolor{keyword}{false}
+[INFO ]   neighbors\_file: neighbors\_out.csv
+[INFO ]   output\_model\_file: \textcolor{stringliteral}{""}
+[INFO ]   query\_file: \textcolor{stringliteral}{""}
+[INFO ]   random\_basis: \textcolor{keyword}{false}
+[INFO ]   reference\_file: dataset.csv
+[INFO ]   seed: 0
+[INFO ]   single\_mode: \textcolor{keyword}{false}
+[INFO ]   tree\_type: kd
+[INFO ]   verbose: \textcolor{keyword}{true}
+[INFO ]   version: \textcolor{keyword}{false}
+[INFO ]
+[INFO ] Program timers:
+[INFO ]   loading\_data: 0.005201s
+[INFO ]   range\_search/computing\_neighbors: 0.017110s
+[INFO ]   total\_time: 0.033313s
+[INFO ]   tree\_building: 0.002500s
+\end{DoxyCode}
+
+
+Convenient program timers are given for different parts of the calculation at the bottom of the output, as well as the parameters the simulation was run with. Now, if we look at the output files\+:
+
+
+\begin{DoxyCode}
+$ head neighbors\_out.csv
+862
+703
+
+397, 277, 319
+840
+732
+
+361
+547, 695
+113, 982, 689
+
+$ head distances\_out.csv
+0.0598608
+0.0753264
+
+0.0207941, 0.0759762, 0.0471072
+0.0708221
+0.0568806
+
+0.0700532
+0.0529565, 0.0550988
+0.0447142, 0.0399286, 0.0734605
+\end{DoxyCode}
+
+
+We can see that only point 862 is within distance 0.\+076 of point 0. We can also see that point 2 has no points within a distance of 0.\+076 -- that line is empty.\subsection{Query and reference dataset, range [1.\+0, 1.\+5]}\label{rstutorial_cli_ex2_rstut}
+
+\begin{DoxyCode}
+$ mlpack\_range\_search -q query\_dataset.csv -r reference\_dataset.csv -n \(\backslash\)
+> neighbors\_out.csv -d distances\_out.csv -L 1.0 -U 1.5 -v
+[INFO ] Loading \textcolor{stringliteral}{'reference\_dataset.csv'} as CSV data.  Size is 3 x 1000.
+[INFO ] Loaded reference data from \textcolor{stringliteral}{'reference\_dataset.csv'} (3x1000).
+[INFO ] Building reference tree...
+[INFO ] Tree built.
+[INFO ] Loading \textcolor{stringliteral}{'query\_dataset.csv'} as CSV data.  Size is 3 x 50.
+[INFO ] Loaded query data from \textcolor{stringliteral}{'query\_dataset.csv'} (3x50).
+[INFO ] Search \textcolor{keywordflow}{for} points in the range [1, 1.5] with dual-tree kd-tree search...
+[INFO ] Building query tree...
+[INFO ] Tree built.
+[INFO ] Search complete.
+[INFO ]
+[INFO ] Execution parameters:
+[INFO ]   distances\_file: distances\_out.csv
+[INFO ]   help: \textcolor{keyword}{false}
+[INFO ]   info: \textcolor{stringliteral}{""}
+[INFO ]   input\_model\_file: \textcolor{stringliteral}{""}
+[INFO ]   leaf\_size: 20
+[INFO ]   max: 1.5
+[INFO ]   min: 1
+[INFO ]   naive: \textcolor{keyword}{false}
+[INFO ]   neighbors\_file: neighbors\_out.csv
+[INFO ]   output\_model\_file: \textcolor{stringliteral}{""}
+[INFO ]   query\_file: query\_dataset.csv
+[INFO ]   random\_basis: \textcolor{keyword}{false}
+[INFO ]   reference\_file: reference\_dataset.csv
+[INFO ]   seed: 0
+[INFO ]   single\_mode: \textcolor{keyword}{false}
+[INFO ]   tree\_type: kd
+[INFO ]   verbose: \textcolor{keyword}{true}
+[INFO ]   version: \textcolor{keyword}{false}
+[INFO ]
+[INFO ] Program timers:
+[INFO ]   loading\_data: 0.006199s
+[INFO ]   range\_search/computing\_neighbors: 0.024427s
+[INFO ]   total\_time: 0.045403s
+[INFO ]   tree\_building: 0.003979s
+\end{DoxyCode}
+\subsection{One dataset, range [0.\+7 0.\+8], leaf size of 15 points}\label{rstutorial_cli_ex3_rstut}
+The {\bfseries mlpack} implementation of range search is a dual-\/tree algorithm; when $kd$-\/trees are used, the leaf size of the tree can be changed. Depending on the characteristics of the dataset, a larger or smaller leaf size can provide faster computation. The leaf size is modifiable through the command-\/line interface, as shown below.
+
+
+\begin{DoxyCode}
+$ mlpack\_range\_search -r dataset.csv -n neighbors\_out.csv -d distances\_out.csv \(\backslash\)
+> -L 0.7 -U 0.8 -l 15 -v
+[INFO ] Loading \textcolor{stringliteral}{'dataset.csv'} as CSV data.  Size is 3 x 1000.
+[INFO ] Loaded reference data from \textcolor{stringliteral}{'dataset.csv'} (3x1000).
+[INFO ] Building reference tree...
+[INFO ] Tree built.
+[INFO ] Search \textcolor{keywordflow}{for} points in the range [0.7, 0.8] with dual-tree kd-tree
+search...
+[INFO ] Search complete.
+[INFO ]
+[INFO ] Execution parameters:
+[INFO ]   distances\_file: distances\_out.csv
+[INFO ]   help: \textcolor{keyword}{false}
+[INFO ]   info: \textcolor{stringliteral}{""}
+[INFO ]   input\_model\_file: \textcolor{stringliteral}{""}
+[INFO ]   leaf\_size: 15
+[INFO ]   max: 0.8
+[INFO ]   min: 0.7
+[INFO ]   naive: \textcolor{keyword}{false}
+[INFO ]   neighbors\_file: neighbors\_out.csv
+[INFO ]   output\_model\_file: \textcolor{stringliteral}{""}
+[INFO ]   query\_file: \textcolor{stringliteral}{""}
+[INFO ]   random\_basis: \textcolor{keyword}{false}
+[INFO ]   reference\_file: dataset.csv
+[INFO ]   seed: 0
+[INFO ]   single\_mode: \textcolor{keyword}{false}
+[INFO ]   tree\_type: kd
+[INFO ]   verbose: \textcolor{keyword}{true}
+[INFO ]   version: \textcolor{keyword}{false}
+[INFO ]
+[INFO ] Program timers:
+[INFO ]   loading\_data: 0.006298s
+[INFO ]   range\_search/computing\_neighbors: 0.411041s
+[INFO ]   total\_time: 0.539931s
+[INFO ]   tree\_building: 0.004695s
+\end{DoxyCode}
+
+
+Further documentation on options should be found by using the --help option.\section{The \textquotesingle{}\+Range\+Search\textquotesingle{} class}\label{rstutorial_rs_rstut}
+The \textquotesingle{}Range\+Search\textquotesingle{} class is an extensible template class which allows a high level of flexibility. However, all of the template arguments have default parameters, allowing a user to simply use \textquotesingle{}Range\+Search$<$$>$\textquotesingle{} for simple usage without worrying about the exact necessary template parameters.
+
+The class bears many similarities to the \doxyref{Neighbor\+Search}{p.}{nstutorial} class; usage generally consists of calling the constructor with one or two datasets, and then calling the \textquotesingle{}Search()\textquotesingle{} method to perform the actual range search.
+
+The \textquotesingle{}Search()\textquotesingle{} method stores the results in two vector-\/of-\/vector objects. This is necessary because each query point may have a different number of neighbors in the specified distance range. The structure of those two objects is very similar to the output files --neighbors\+\_\+file and --distances\+\_\+file for the C\+LI interface (see above). A handful of examples of simple usage of the Range\+Search class are given below.\subsection{Distance less than 2.\+0 on a single dataset}\label{rstutorial_rs_ex1_rstut}
+
+\begin{DoxyCode}
+\textcolor{preprocessor}{#include <mlpack/methods/range_search/range_search.hpp>}
+
+\textcolor{keyword}{using namespace }mlpack::range;
+
+\textcolor{comment}{// Our dataset matrix, which is column-major.}
+\textcolor{keyword}{extern} arma::mat data;
+
+RangeSearch<> a(data);
+
+\textcolor{comment}{// The vector-of-vector objects we will store output in.}
+std::vector<std::vector<size\_t> > resultingNeighbors;
+std::vector<std::vector<double> > resultingDistances;
+
+\textcolor{comment}{// The range we will use.}
+math::Range r(0.0, 2.0); \textcolor{comment}{// [0.0, 2.0].}
+
+a.Search(r, resultingNeighbors, resultingDistances);
+\end{DoxyCode}
+
+
+The output of the search is stored in resulting\+Neighbors and resulting\+Distances.\subsection{Range [3.\+0, 4.\+0] on a query and reference dataset}\label{rstutorial_rs_ex2_rstut}
+
+\begin{DoxyCode}
+\textcolor{preprocessor}{#include <mlpack/methods/range_search/range_search.hpp>}
+
+\textcolor{keyword}{using namespace }mlpack::range;
+
+\textcolor{comment}{// Our dataset matrices, which are column-major.}
+\textcolor{keyword}{extern} arma::mat queryData, referenceData;
+
+RangeSearch<> a(referenceData);
+
+\textcolor{comment}{// The vector-of-vector objects we will store output in.}
+std::vector<std::vector<size\_t> > resultingNeighbors;
+std::vector<std::vector<double> > resultingDistances;
+
+\textcolor{comment}{// The range we will use.}
+math::Range r(3.0, 4.0); \textcolor{comment}{// [3.0, 4.0].}
+
+a.Search(queryData, r, resultingNeighbors, resultingDistances);
+\end{DoxyCode}
+\subsection{Naive (exhaustive) search for distance greater than 5.\+0 on one dataset}\label{rstutorial_rs_ex3_rstut}
+This example uses the O(n$^\wedge$2) naive search (not the tree-\/based search).
+
+
+\begin{DoxyCode}
+\textcolor{preprocessor}{#include <mlpack/methods/range_search/range_search.hpp>}
+
+\textcolor{keyword}{using namespace }mlpack::range;
+
+\textcolor{comment}{// Our dataset matrix, which is column-major.}
+\textcolor{keyword}{extern} arma::mat dataset;
+
+\textcolor{comment}{// The 'true' option indicates that we will use naive calculation.}
+RangeSearch<> a(dataset, \textcolor{keyword}{true});
+
+\textcolor{comment}{// The vector-of-vector objects we will store output in.}
+std::vector<std::vector<size\_t> > resultingNeighbors;
+std::vector<std::vector<double> > resultingDistances;
+
+\textcolor{comment}{// The range we will use.  The upper bound is DBL\_MAX.}
+math::Range r(5.0, DBL\_MAX); \textcolor{comment}{// [5.0, inf).}
+
+a.Search(r, resultingNeighbors, resultingDistances);
+\end{DoxyCode}
+
+
+Needless to say, naive search can be very slow...\section{The extensible \textquotesingle{}\+Range\+Search\textquotesingle{} class}\label{rstutorial_rs_ext_rstut}
+Similar to the \doxyref{Neighbor\+Search class}{p.}{nstutorial}, the Range\+Search class is very extensible, having the following template arguments\+:
+
+
+\begin{DoxyCode}
+\textcolor{keyword}{template}<\textcolor{keyword}{typename} MetricType = metric::EuclideanDistance,
+         \textcolor{keyword}{typename} MatType = arma::mat,
+         \textcolor{keyword}{template}<\textcolor{keyword}{typename} TreeMetricType,
+                  \textcolor{keyword}{typename} TreeStatType,
+                  \textcolor{keyword}{typename} TreeMatType> \textcolor{keyword}{class }TreeType = tree::KDTree>
+\textcolor{keyword}{class }RangeSearch;
+\end{DoxyCode}
+
+
+By choosing different components for each of these template classes, a very arbitrary range searching object can be constructed.\subsection{Metric\+Type policy class}\label{rstutorial_metric_type_doc_rstut}
+The Metric\+Type policy class allows the range search to take place in any arbitrary metric space. The \doxyref{mlpack\+::metric\+::\+L\+Metric}{p.}{classmlpack_1_1metric_1_1LMetric} class is a good example implementation. A Metric\+Type class must provide the following functions\+:
+
+
+\begin{DoxyCode}
+\textcolor{comment}{// Empty constructor is required.}
+MetricType();
+
+\textcolor{comment}{// Compute the distance between two points.}
+\textcolor{keyword}{template}<\textcolor{keyword}{typename} VecType>
+\textcolor{keywordtype}{double} Evaluate(\textcolor{keyword}{const} VecType& a, \textcolor{keyword}{const} VecType& b);
+\end{DoxyCode}
+
+
+Internally, the Range\+Search class keeps an instantiated Metric\+Type class (which can be given in the constructor). This is useful for a metric like the Mahalanobis distance (\doxyref{mlpack\+::metric\+::\+Mahalanobis\+Distance}{p.}{classmlpack_1_1metric_1_1MahalanobisDistance}), which must store state (the covariance matrix). Therefore, you can write a non-\/static Metric\+Type class and use it seamlessly with Range\+Search.\subsection{Mat\+Type policy class}\label{rstutorial_mat_type_doc_rstut}
+The Mat\+Type template parameter specifies the type of data matrix used. This type must implement the same operations as an Armadillo matrix, and so standard choices are {\ttfamily arma\+::mat} and {\ttfamily arma\+::sp\+\_\+mat}.\subsection{Tree\+Type policy class}\label{rstutorial_tree_type_doc_rstut}
+The Range\+Search class also allows a custom tree to be used. The Tree\+Type policy is also used elsewhere in mlpack and is documented more thoroughly \doxyref{here}{p.}{trees}.
+
+Typical choices might include \doxyref{mlpack\+::tree\+::\+K\+D\+Tree}{p.}{namespacemlpack_1_1tree_a562474c3dca60a6ac3c5168ae88bc028} (the default), \doxyref{mlpack\+::tree\+::\+Ball\+Tree}{p.}{namespacemlpack_1_1tree_abc9c69ba447c575b235eff25f14d99c7}, \doxyref{mlpack\+::tree\+::\+R\+Tree}{p.}{namespacemlpack_1_1tree_a1a47efe6afda858544988d1f7927477c}, \doxyref{mlpack\+::tree\+::\+R\+Star\+Tree}{p.}{namespacemlpack_1_1tree_a4e25f4921d1b4ca77a30bf82d5366da5}, or \doxyref{mlpack\+::tree\+::\+Standard\+Cover\+Tree}{p.}{namespacemlpack_1_1tree_a97bb6c0e6c1be359a95c89d21b1afd42}. Below is an example that uses the Range\+Search class with an R-\/tree\+:
+
+
+\begin{DoxyCode}
+\textcolor{comment}{// Construct a RangeSearch object with ball bounds.}
+RangeSearch<
+    metric::EuclideanDistance,
+    arma::mat,
+    tree::RTree
+> rangeSearch(dataset);
+\end{DoxyCode}
+
+
+For further information on trees, including how to write your own tree for use with Range\+Search and other mlpack methods, see the \doxyref{Tree\+Type policy documentation}{p.}{trees}.\section{Further documentation}\label{rstutorial_further_doc_rstut}
+For further documentation on the Range\+Search class, consult the \doxyref{complete A\+PI documentation}{p.}{classmlpack_1_1range_1_1RangeSearch}. 

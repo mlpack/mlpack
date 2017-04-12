@@ -1,0 +1,643 @@
+.TH "mlpack::neighbor::RASearch< SortPolicy, MetricType, MatType, TreeType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::neighbor::RASearch< SortPolicy, MetricType, MatType, TreeType > \- The \fBRASearch\fP class: This class provides a generic manner to perform rank-approximate search via random-sampling\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "typedef TreeType< MetricType, \fBRAQueryStat\fP< SortPolicy >, MatType > \fBTree\fP"
+.br
+.RI "\fIConvenience typedef\&. \fP"
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBRASearch\fP (const MatType &\fBreferenceSet\fP, const bool \fBnaive\fP=false, const bool \fBsingleMode\fP=false, const double \fBtau\fP=5, const double \fBalpha\fP=0\&.95, const bool \fBsampleAtLeaves\fP=false, const bool \fBfirstLeafExact\fP=false, const size_t \fBsingleSampleLimit\fP=20, const MetricType \fBmetric\fP=MetricType())"
+.br
+.RI "\fIInitialize the \fBRASearch\fP object, passing both a reference dataset (this is the dataset that will be searched)\&. \fP"
+.ti -1c
+.RI "\fBRASearch\fP (MatType &&\fBreferenceSet\fP, const bool \fBnaive\fP=false, const bool \fBsingleMode\fP=false, const double \fBtau\fP=5, const double \fBalpha\fP=0\&.95, const bool \fBsampleAtLeaves\fP=false, const bool \fBfirstLeafExact\fP=false, const size_t \fBsingleSampleLimit\fP=20, const MetricType \fBmetric\fP=MetricType())"
+.br
+.RI "\fIInitialize the \fBRASearch\fP object, passing both a reference dataset (this is the dataset that will be searched)\&. \fP"
+.ti -1c
+.RI "\fBRASearch\fP (\fBTree\fP *\fBreferenceTree\fP, const bool \fBsingleMode\fP=false, const double \fBtau\fP=5, const double \fBalpha\fP=0\&.95, const bool \fBsampleAtLeaves\fP=false, const bool \fBfirstLeafExact\fP=false, const size_t \fBsingleSampleLimit\fP=20, const MetricType \fBmetric\fP=MetricType())"
+.br
+.RI "\fIInitialize the \fBRASearch\fP object with the given pre-constructed reference tree\&. \fP"
+.ti -1c
+.RI "\fBRASearch\fP (const bool \fBnaive\fP=false, const bool \fBsingleMode\fP=false, const double \fBtau\fP=5, const double \fBalpha\fP=0\&.95, const bool \fBsampleAtLeaves\fP=false, const bool \fBfirstLeafExact\fP=false, const size_t \fBsingleSampleLimit\fP=20, const MetricType \fBmetric\fP=MetricType())"
+.br
+.RI "\fICreate an \fBRASearch\fP object with no reference data\&. \fP"
+.ti -1c
+.RI "\fB~RASearch\fP ()"
+.br
+.RI "\fIDelete the \fBRASearch\fP object\&. \fP"
+.ti -1c
+.RI "double \fBAlpha\fP () const "
+.br
+.RI "\fIGet the desired success probability\&. \fP"
+.ti -1c
+.RI "double & \fBAlpha\fP ()"
+.br
+.RI "\fIModify the desired success probability\&. \fP"
+.ti -1c
+.RI "bool \fBFirstLeafExact\fP () const "
+.br
+.RI "\fIGet whether or not we traverse to the first leaf without approximation\&. \fP"
+.ti -1c
+.RI "bool & \fBFirstLeafExact\fP ()"
+.br
+.RI "\fIModify whether or not we traverse to the first leaf without approximation\&. \fP"
+.ti -1c
+.RI "bool \fBNaive\fP () const "
+.br
+.RI "\fIGet whether or not naive (brute-force) search is used\&. \fP"
+.ti -1c
+.RI "bool & \fBNaive\fP ()"
+.br
+.RI "\fIModify whether or not naive (brute-force) search is used\&. \fP"
+.ti -1c
+.RI "const MatType & \fBReferenceSet\fP () const "
+.br
+.RI "\fIAccess the reference set\&. \fP"
+.ti -1c
+.RI "void \fBResetQueryTree\fP (\fBTree\fP *queryTree) const "
+.br
+.RI "\fIThis function recursively resets the \fBRAQueryStat\fP of the given query tree to set 'bound' to SortPolicy::WorstDistance and 'numSamplesMade' to 0\&. \fP"
+.ti -1c
+.RI "bool \fBSampleAtLeaves\fP () const "
+.br
+.RI "\fIGet whether or not sampling is done at the leaves\&. \fP"
+.ti -1c
+.RI "bool & \fBSampleAtLeaves\fP ()"
+.br
+.RI "\fIModify whether or not sampling is done at the leaves\&. \fP"
+.ti -1c
+.RI "void \fBSearch\fP (const MatType &querySet, const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances)"
+.br
+.RI "\fICompute the rank approximate nearest neighbors of each query point in the query set and store the output in the given matrices\&. \fP"
+.ti -1c
+.RI "void \fBSearch\fP (\fBTree\fP *queryTree, const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances)"
+.br
+.RI "\fICompute the rank approximate nearest neighbors of each point in the pre-built query tree and store the output in the given matrices\&. \fP"
+.ti -1c
+.RI "void \fBSearch\fP (const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances)"
+.br
+.RI "\fICompute the rank approximate nearest neighbors of each point in the reference set (that is, the query set is taken to be the reference set), and store the output in the given matrices\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int)"
+.br
+.RI "\fISerialize the object\&. \fP"
+.ti -1c
+.RI "bool \fBSingleMode\fP () const "
+.br
+.RI "\fIGet whether or not single-tree search is used\&. \fP"
+.ti -1c
+.RI "bool & \fBSingleMode\fP ()"
+.br
+.RI "\fIModify whether or not single-tree search is used\&. \fP"
+.ti -1c
+.RI "size_t \fBSingleSampleLimit\fP () const "
+.br
+.RI "\fIGet the limit on the size of a node that can be approximated\&. \fP"
+.ti -1c
+.RI "size_t & \fBSingleSampleLimit\fP ()"
+.br
+.RI "\fIModify the limit on the size of a node that can be approximation\&. \fP"
+.ti -1c
+.RI "double \fBTau\fP () const "
+.br
+.RI "\fIGet the rank-approximation in percentile of the data\&. \fP"
+.ti -1c
+.RI "double & \fBTau\fP ()"
+.br
+.RI "\fIModify the rank-approximation in percentile of the data\&. \fP"
+.ti -1c
+.RI "void \fBTrain\fP (const MatType &\fBreferenceSet\fP)"
+.br
+.RI "\fI'Train' the model on the given reference set\&. \fP"
+.ti -1c
+.RI "void \fBTrain\fP (MatType &&\fBreferenceSet\fP)"
+.br
+.RI "\fI'Train' the model on the given reference set, taking ownership of the data matrix\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "double \fBalpha\fP"
+.br
+.RI "\fIThe desired success probability (between 0 and 1)\&. \fP"
+.ti -1c
+.RI "bool \fBfirstLeafExact\fP"
+.br
+.RI "\fIIf true, we will traverse to the first leaf without approximation\&. \fP"
+.ti -1c
+.RI "MetricType \fBmetric\fP"
+.br
+.RI "\fIInstantiation of kernel\&. \fP"
+.ti -1c
+.RI "bool \fBnaive\fP"
+.br
+.RI "\fIIndicates if naive random sampling on the set is being used\&. \fP"
+.ti -1c
+.RI "std::vector< size_t > \fBoldFromNewReferences\fP"
+.br
+.RI "\fIPermutations of reference points during tree building\&. \fP"
+.ti -1c
+.RI "const MatType * \fBreferenceSet\fP"
+.br
+.RI "\fIReference dataset\&. In some situations we may own this dataset\&. \fP"
+.ti -1c
+.RI "\fBTree\fP * \fBreferenceTree\fP"
+.br
+.RI "\fIPointer to the root of the reference tree\&. \fP"
+.ti -1c
+.RI "bool \fBsampleAtLeaves\fP"
+.br
+.RI "\fIWhether or not sampling is done at the leaves\&. Faster, but less accurate\&. \fP"
+.ti -1c
+.RI "bool \fBsetOwner\fP"
+.br
+.RI "\fIIf true, we are responsible for deleting the dataset\&. \fP"
+.ti -1c
+.RI "bool \fBsingleMode\fP"
+.br
+.RI "\fIIndicates if single-tree search is being used (opposed to dual-tree)\&. \fP"
+.ti -1c
+.RI "size_t \fBsingleSampleLimit\fP"
+.br
+.RI "\fIThe limit on the number of points in the largest node that can be approximated by sampling\&. \fP"
+.ti -1c
+.RI "double \fBtau\fP"
+.br
+.RI "\fIThe rank-approximation in percentile of the data (between 0 and 100)\&. \fP"
+.ti -1c
+.RI "bool \fBtreeOwner\fP"
+.br
+.RI "\fIIf true, this object created the trees and is responsible for them\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree>
+.br
+class mlpack::neighbor::RASearch< SortPolicy, MetricType, MatType, TreeType >"
+The \fBRASearch\fP class: This class provides a generic manner to perform rank-approximate search via random-sampling\&. 
+
+If the 'naive' option is chosen, this rank-approximate search will be done by randomly sampling from the whole set\&. If the 'naive' option is not chosen, the sampling is done in a stratified manner in the tree as mentioned in the algorithms in Figure 2 of the following paper:
+.PP
+{ram2009rank, title={{Rank-Approximate Nearest Neighbor Search: Retaining Meaning and Speed in High Dimensions}}, author={{Ram, P\&. and Lee, D\&. and Ouyang, H\&. and Gray, A\&. G\&.}}, booktitle={{Advances of Neural Information Processing Systems}}, year={2009} }
+.PP
+\fBRASearch\fP is currently known to not work with ball trees (#356)\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fISortPolicy\fP The sort policy for distances; see \fBNearestNeighborSort\fP\&. 
+.br
+\fIMetricType\fP The metric to use for computation\&. 
+.br
+\fITreeType\fP The tree type to use\&. 
+.RE
+.PP
+
+.PP
+Definition at line 71 of file ra_search\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> typedef TreeType<MetricType, \fBRAQueryStat\fP<SortPolicy>, MatType> \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::\fBTree\fP"
+
+.PP
+Convenience typedef\&. 
+.PP
+Definition at line 75 of file ra_search\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::\fBRASearch\fP (const MatType & referenceSet, const bool naive = \fCfalse\fP, const bool singleMode = \fCfalse\fP, const double tau = \fC5\fP, const double alpha = \fC0\&.95\fP, const bool sampleAtLeaves = \fCfalse\fP, const bool firstLeafExact = \fCfalse\fP, const size_t singleSampleLimit = \fC20\fP, const MetricType metric = \fCMetricType()\fP)"
+
+.PP
+Initialize the \fBRASearch\fP object, passing both a reference dataset (this is the dataset that will be searched)\&. Optionally, perform the computation in naive mode or single-tree mode\&. An initialized distance metric can be given, for cases where the metric has internal data (i\&.e\&. the distance::MahalanobisDistance class)\&.
+.PP
+This method will copy the matrices to internal copies, which are rearranged during tree-building\&. You can avoid this extra copy by pre-constructing the trees and using the appropriate constructor, or by using the constructor that takes an rvalue reference to the data with std::move()\&.
+.PP
+tau, the rank-approximation parameter, specifies that we are looking for k neighbors with probability alpha of being in the top tau percent of nearest neighbors\&. So, as an example, if our dataset has 1000 points, and we want 5 nearest neighbors with 95% probability of being in the top 5% of nearest neighbors (or, the top 50 nearest neighbors), we set k = 5, tau = 5, and alpha = 0\&.95\&.
+.PP
+The method will fail (and throw a std::invalid_argument exception) if the value of tau is too low: tau must be set such that the number of points in the corresponding percentile of the data is greater than k\&. Thus, if we choose tau = 0\&.1 with a dataset of 1000 points and k = 5, then we are attempting to choose 5 nearest neighbors out of the closest 1 point -- this is invalid\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIreferenceSet\fP Set of reference points\&. 
+.br
+\fInaive\fP If true, the rank-approximate search will be performed by directly sampling the whole set instead of using the stratified sampling on the tree\&. 
+.br
+\fIsingleMode\fP If true, single-tree search will be used (as opposed to dual-tree search)\&. This is useful when \fBSearch()\fP will be called with few query points\&. 
+.br
+\fImetric\fP An optional instance of the MetricType class\&. 
+.br
+\fItau\fP The rank-approximation in percentile of the data\&. The default value is 5%\&. 
+.br
+\fIalpha\fP The desired success probability\&. The default value is 0\&.95\&. 
+.br
+\fIsampleAtLeaves\fP Sample at leaves for faster but less accurate computation\&. This defaults to 'false'\&. 
+.br
+\fIfirstLeafExact\fP Traverse to the first leaf without approximation\&. This can ensure that the query definitely finds its (near) duplicate if there exists one\&. This defaults to 'false' for now\&. 
+.br
+\fIsingleSampleLimit\fP The limit on the largest node that can be approximated by sampling\&. This defaults to 20\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::\fBRASearch\fP (MatType && referenceSet, const bool naive = \fCfalse\fP, const bool singleMode = \fCfalse\fP, const double tau = \fC5\fP, const double alpha = \fC0\&.95\fP, const bool sampleAtLeaves = \fCfalse\fP, const bool firstLeafExact = \fCfalse\fP, const size_t singleSampleLimit = \fC20\fP, const MetricType metric = \fCMetricType()\fP)"
+
+.PP
+Initialize the \fBRASearch\fP object, passing both a reference dataset (this is the dataset that will be searched)\&. Optionally, perform the computation in naive mode or single-tree mode\&. An initialized distance metric can be given, for cases where the metric has internal data (i\&.e\&. the distance::MahalanobisDistance class)\&.
+.PP
+This method will take ownership of the given reference set, avoiding a copy\&. If you need to use the reference set for other purposes, too, consider using the constructor that takes a const reference\&.
+.PP
+tau, the rank-approximation parameter, specifies that we are looking for k neighbors with probability alpha of being in the top tau percent of nearest neighbors\&. So, as an example, if our dataset has 1000 points, and we want 5 nearest neighbors with 95% probability of being in the top 5% of nearest neighbors (or, the top 50 nearest neighbors), we set k = 5, tau = 5, and alpha = 0\&.95\&.
+.PP
+The method will fail (and throw a std::invalid_argument exception) if the value of tau is too low: tau must be set such that the number of points in the corresponding percentile of the data is greater than k\&. Thus, if we choose tau = 0\&.1 with a dataset of 1000 points and k = 5, then we are attempting to choose 5 nearest neighbors out of the closest 1 point -- this is invalid\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIreferenceSet\fP Set of reference points\&. 
+.br
+\fInaive\fP If true, the rank-approximate search will be performed by directly sampling the whole set instead of using the stratified sampling on the tree\&. 
+.br
+\fIsingleMode\fP If true, single-tree search will be used (as opposed to dual-tree search)\&. This is useful when \fBSearch()\fP will be called with few query points\&. 
+.br
+\fImetric\fP An optional instance of the MetricType class\&. 
+.br
+\fItau\fP The rank-approximation in percentile of the data\&. The default value is 5%\&. 
+.br
+\fIalpha\fP The desired success probability\&. The default value is 0\&.95\&. 
+.br
+\fIsampleAtLeaves\fP Sample at leaves for faster but less accurate computation\&. This defaults to 'false'\&. 
+.br
+\fIfirstLeafExact\fP Traverse to the first leaf without approximation\&. This can ensure that the query definitely finds its (near) duplicate if there exists one\&. This defaults to 'false' for now\&. 
+.br
+\fIsingleSampleLimit\fP The limit on the largest node that can be approximated by sampling\&. This defaults to 20\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::\fBRASearch\fP (\fBTree\fP * referenceTree, const bool singleMode = \fCfalse\fP, const double tau = \fC5\fP, const double alpha = \fC0\&.95\fP, const bool sampleAtLeaves = \fCfalse\fP, const bool firstLeafExact = \fCfalse\fP, const size_t singleSampleLimit = \fC20\fP, const MetricType metric = \fCMetricType()\fP)"
+
+.PP
+Initialize the \fBRASearch\fP object with the given pre-constructed reference tree\&. It is assumed that the points in the tree's dataset correspond to the reference set\&. Optionally, choose to use single-tree mode\&. Naive mode is not available as an option for this constructor; instead, to run naive computation, use a different constructor\&. Additionally, an instantiated distance metric can be given, for cases where the distance metric holds data\&.
+.PP
+There is no copying of the data matrices in this constructor (because tree-building is not necessary), so this is the constructor to use when copies absolutely must be avoided\&.
+.PP
+tau, the rank-approximation parameter, specifies that we are looking for k neighbors with probability alpha of being in the top tau percent of nearest neighbors\&. So, as an example, if our dataset has 1000 points, and we want 5 nearest neighbors with 95% probability of being in the top 5% of nearest neighbors (or, the top 50 nearest neighbors), we set k = 5, tau = 5, and alpha = 0\&.95\&.
+.PP
+The method will fail (and throw a std::invalid_argument exception) if the value of tau is too low: tau must be set such that the number of points in the corresponding percentile of the data is greater than k\&. Thus, if we choose tau = 0\&.1 with a dataset of 1000 points and k = 5, then we are attempting to choose 5 nearest neighbors out of the closest 1 point -- this is invalid\&.
+.PP
+\fBNote:\fP
+.RS 4
+Tree-building may (at least with BinarySpaceTree) modify the ordering of a matrix, so be aware that the results you get from \fBSearch()\fP will correspond to the modified matrix\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIreferenceTree\fP Pre-built tree for reference points\&. 
+.br
+\fIsingleMode\fP Whether single-tree computation should be used (as opposed to dual-tree computation)\&. 
+.br
+\fItau\fP The rank-approximation in percentile of the data\&. The default value is 5%\&. 
+.br
+\fIalpha\fP The desired success probability\&. The default value is 0\&.95\&. 
+.br
+\fIsampleAtLeaves\fP Sample at leaves for faster but less accurate computation\&. This defaults to 'false'\&. 
+.br
+\fIfirstLeafExact\fP Traverse to the first leaf without approximation\&. This can ensure that the query definitely finds its (near) duplicate if there exists one\&. This defaults to 'false' for now\&. 
+.br
+\fIsingleSampleLimit\fP The limit on the largest node that can be approximated by sampling\&. This defaults to 20\&. 
+.br
+\fImetric\fP Instantiated distance metric\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::\fBRASearch\fP (const bool naive = \fCfalse\fP, const bool singleMode = \fCfalse\fP, const double tau = \fC5\fP, const double alpha = \fC0\&.95\fP, const bool sampleAtLeaves = \fCfalse\fP, const bool firstLeafExact = \fCfalse\fP, const size_t singleSampleLimit = \fC20\fP, const MetricType metric = \fCMetricType()\fP)"
+
+.PP
+Create an \fBRASearch\fP object with no reference data\&. If \fBSearch()\fP is called before a reference set is set with \fBTrain()\fP, an exception will be thrown\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fInaive\fP Whether naive (brute-force) search should be used\&. 
+.br
+\fIsingleMode\fP Whether single-tree computation should be used (as opposed to dual-tree computation)\&. 
+.br
+\fItau\fP The rank-approximation in percentile of the data\&. The default value is 5%\&. 
+.br
+\fIalpha\fP The desired success probability\&. The default value is 0\&.95\&. 
+.br
+\fIsampleAtLeaves\fP Sample at leaves for faster but less accurate computation\&. This defaults to 'false'\&. 
+.br
+\fIfirstLeafExact\fP Traverse to the first leaf without approximation\&. This can ensure that the query definitely finds its (near) duplicate if there exists one\&. This defaults to 'false' for now\&. 
+.br
+\fIsingleSampleLimit\fP The limit on the largest node that can be approximated by sampling\&. This defaults to 20\&. 
+.br
+\fImetric\fP Instantiated distance metric\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::~\fBRASearch\fP ()"
+
+.PP
+Delete the \fBRASearch\fP object\&. The tree is the only member we are responsible for deleting\&. The others will take care of themselves\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> double \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::Alpha () const\fC [inline]\fP"
+
+.PP
+Get the desired success probability\&. 
+.PP
+Definition at line 398 of file ra_search\&.hpp\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> double& \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::Alpha ()\fC [inline]\fP"
+
+.PP
+Modify the desired success probability\&. 
+.PP
+Definition at line 400 of file ra_search\&.hpp\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> bool \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::FirstLeafExact () const\fC [inline]\fP"
+
+.PP
+Get whether or not we traverse to the first leaf without approximation\&. 
+.PP
+Definition at line 408 of file ra_search\&.hpp\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> bool& \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::FirstLeafExact ()\fC [inline]\fP"
+
+.PP
+Modify whether or not we traverse to the first leaf without approximation\&. 
+.PP
+Definition at line 410 of file ra_search\&.hpp\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> bool \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::Naive () const\fC [inline]\fP"
+
+.PP
+Get whether or not naive (brute-force) search is used\&. 
+.PP
+Definition at line 383 of file ra_search\&.hpp\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> bool& \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::Naive ()\fC [inline]\fP"
+
+.PP
+Modify whether or not naive (brute-force) search is used\&. 
+.PP
+Definition at line 385 of file ra_search\&.hpp\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> const MatType& \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::ReferenceSet () const\fC [inline]\fP"
+
+.PP
+Access the reference set\&. 
+.PP
+Definition at line 380 of file ra_search\&.hpp\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> void \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::ResetQueryTree (\fBTree\fP * queryTree) const"
+
+.PP
+This function recursively resets the \fBRAQueryStat\fP of the given query tree to set 'bound' to SortPolicy::WorstDistance and 'numSamplesMade' to 0\&. This allows a user to perform multiple searches with the same query tree, possibly with different levels of approximation without requiring to build a new pair of trees for every new (approximate) search\&.
+.PP
+If \fBSearch()\fP is called multiple times with the same query tree without calling \fBResetQueryTree()\fP, the results may not satisfy the theoretical guarantees provided by the rank-approximate neighbor search algorithm\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIqueryTree\fP Tree whose statistics should be reset\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> bool \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::SampleAtLeaves () const\fC [inline]\fP"
+
+.PP
+Get whether or not sampling is done at the leaves\&. 
+.PP
+Definition at line 403 of file ra_search\&.hpp\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> bool& \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::SampleAtLeaves ()\fC [inline]\fP"
+
+.PP
+Modify whether or not sampling is done at the leaves\&. 
+.PP
+Definition at line 405 of file ra_search\&.hpp\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> void \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::Search (const MatType & querySet, const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances)"
+
+.PP
+Compute the rank approximate nearest neighbors of each query point in the query set and store the output in the given matrices\&. The matrices will be set to the size of n columns by k rows, where n is the number of points in the query dataset and k is the number of neighbors being searched for\&.
+.PP
+If querySet is small or only contains one point, it can be faster to do single-tree search; single-tree search can be set with the \fBSingleMode()\fP function or in the constructor\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIquerySet\fP Set of query points (can be a single point)\&. 
+.br
+\fIk\fP Number of neighbors to search for\&. 
+.br
+\fIneighbors\fP Matrix storing lists of neighbors for each query point\&. 
+.br
+\fIdistances\fP Matrix storing distances of neighbors for each query point\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> void \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::Search (\fBTree\fP * queryTree, const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances)"
+
+.PP
+Compute the rank approximate nearest neighbors of each point in the pre-built query tree and store the output in the given matrices\&. The matrices will be set to the size of n columns by k rows, where n is the number of points in the query dataset and k is the number of neighbors being searched for\&.
+.PP
+If singleMode or naive is enabled, then this method will throw a std::invalid_argument exception; calling this function implies a dual-tree algorithm\&.
+.PP
+\fBNote:\fP
+.RS 4
+If the tree type you are using modifies the data matrix, be aware that the results returned from this function will be with respect to the modified data matrix\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIqueryTree\fP Tree built on query points\&. 
+.br
+\fIk\fP Number of neighbors to search for\&. 
+.br
+\fIneighbors\fP Matrix storing lists of neighbors for each query point\&. 
+.br
+\fIdistances\fP Matrix storing distances of neighbors for each query point\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> void \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::Search (const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances)"
+
+.PP
+Compute the rank approximate nearest neighbors of each point in the reference set (that is, the query set is taken to be the reference set), and store the output in the given matrices\&. The matrices will be set to the size of n columns by k rows, where n is the number of points in the query dataset and k is the number of neighbors being searched for\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIk\fP Number of neighbors to search for\&. 
+.br
+\fIneighbors\fP Matrix storing lists of neighbors for each point\&. 
+.br
+\fIdistances\fP Matrix storing distances of neighbors for each query point\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> template<typename Archive > void \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::Serialize (Archive & ar, const unsigned int)"
+
+.PP
+Serialize the object\&. 
+.PP
+Referenced by mlpack::neighbor::RASearch< tree::RStarTree >::SingleSampleLimit()\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> bool \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::SingleMode () const\fC [inline]\fP"
+
+.PP
+Get whether or not single-tree search is used\&. 
+.PP
+Definition at line 388 of file ra_search\&.hpp\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> bool& \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::SingleMode ()\fC [inline]\fP"
+
+.PP
+Modify whether or not single-tree search is used\&. 
+.PP
+Definition at line 390 of file ra_search\&.hpp\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> size_t \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::SingleSampleLimit () const\fC [inline]\fP"
+
+.PP
+Get the limit on the size of a node that can be approximated\&. 
+.PP
+Definition at line 413 of file ra_search\&.hpp\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> size_t& \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::SingleSampleLimit ()\fC [inline]\fP"
+
+.PP
+Modify the limit on the size of a node that can be approximation\&. 
+.PP
+Definition at line 415 of file ra_search\&.hpp\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> double \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::Tau () const\fC [inline]\fP"
+
+.PP
+Get the rank-approximation in percentile of the data\&. 
+.PP
+Definition at line 393 of file ra_search\&.hpp\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> double& \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::Tau ()\fC [inline]\fP"
+
+.PP
+Modify the rank-approximation in percentile of the data\&. 
+.PP
+Definition at line 395 of file ra_search\&.hpp\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> void \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::Train (const MatType & referenceSet)"
+
+.PP
+'Train' the model on the given reference set\&. If tree-based search is being used (if \fBNaive()\fP is false), this means rebuilding the reference tree\&. This particular method will make a copy of the given reference data\&. To avoid that copy, use the \fBTrain()\fP method that takes an rvalue reference with std::move()\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIreferenceSet\fP New reference set to use\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> void \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::Train (MatType && referenceSet)"
+
+.PP
+'Train' the model on the given reference set, taking ownership of the data matrix\&. If tree-based search is being used (if \fBNaive()\fP is false), this also means rebuilding the reference tree\&. If you need to keep a copy of the reference data, use the \fBTrain()\fP method that takes a const reference to the data\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIreferenceSet\fP New reference set to use\&. 
+.RE
+.PP
+
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> double \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::alpha\fC [private]\fP"
+
+.PP
+The desired success probability (between 0 and 1)\&. 
+.PP
+Definition at line 442 of file ra_search\&.hpp\&.
+.PP
+Referenced by mlpack::neighbor::RASearch< tree::RStarTree >::Alpha()\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> bool \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::firstLeafExact\fC [private]\fP"
+
+.PP
+If true, we will traverse to the first leaf without approximation\&. 
+.PP
+Definition at line 446 of file ra_search\&.hpp\&.
+.PP
+Referenced by mlpack::neighbor::RASearch< tree::RStarTree >::FirstLeafExact()\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> MetricType \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::metric\fC [private]\fP"
+
+.PP
+Instantiation of kernel\&. 
+.PP
+Definition at line 452 of file ra_search\&.hpp\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> bool \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::naive\fC [private]\fP"
+
+.PP
+Indicates if naive random sampling on the set is being used\&. 
+.PP
+Definition at line 435 of file ra_search\&.hpp\&.
+.PP
+Referenced by mlpack::neighbor::RASearch< tree::RStarTree >::Naive()\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> std::vector<size_t> \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::oldFromNewReferences\fC [private]\fP"
+
+.PP
+Permutations of reference points during tree building\&. 
+.PP
+Definition at line 423 of file ra_search\&.hpp\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> const MatType* \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::referenceSet\fC [private]\fP"
+
+.PP
+Reference dataset\&. In some situations we may own this dataset\&. 
+.PP
+Definition at line 427 of file ra_search\&.hpp\&.
+.PP
+Referenced by mlpack::neighbor::RASearch< tree::RStarTree >::ReferenceSet()\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> \fBTree\fP* \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::referenceTree\fC [private]\fP"
+
+.PP
+Pointer to the root of the reference tree\&. 
+.PP
+Definition at line 425 of file ra_search\&.hpp\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> bool \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::sampleAtLeaves\fC [private]\fP"
+
+.PP
+Whether or not sampling is done at the leaves\&. Faster, but less accurate\&. 
+.PP
+Definition at line 444 of file ra_search\&.hpp\&.
+.PP
+Referenced by mlpack::neighbor::RASearch< tree::RStarTree >::SampleAtLeaves()\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> bool \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::setOwner\fC [private]\fP"
+
+.PP
+If true, we are responsible for deleting the dataset\&. 
+.PP
+Definition at line 432 of file ra_search\&.hpp\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> bool \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::singleMode\fC [private]\fP"
+
+.PP
+Indicates if single-tree search is being used (opposed to dual-tree)\&. 
+.PP
+Definition at line 437 of file ra_search\&.hpp\&.
+.PP
+Referenced by mlpack::neighbor::RASearch< tree::RStarTree >::SingleMode()\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> size_t \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::singleSampleLimit\fC [private]\fP"
+
+.PP
+The limit on the number of points in the largest node that can be approximated by sampling\&. 
+.PP
+Definition at line 449 of file ra_search\&.hpp\&.
+.PP
+Referenced by mlpack::neighbor::RASearch< tree::RStarTree >::SingleSampleLimit()\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> double \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::tau\fC [private]\fP"
+
+.PP
+The rank-approximation in percentile of the data (between 0 and 100)\&. 
+.PP
+Definition at line 440 of file ra_search\&.hpp\&.
+.PP
+Referenced by mlpack::neighbor::RASearch< tree::RStarTree >::Tau()\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> bool \fBmlpack::neighbor::RASearch\fP< SortPolicy, MetricType, MatType, TreeType >::treeOwner\fC [private]\fP"
+
+.PP
+If true, this object created the trees and is responsible for them\&. 
+.PP
+Definition at line 430 of file ra_search\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,379 @@
+\section{mlpack\+:\+:optimization\+:\+:Aug\+Lagrangian$<$ Lagrangian\+Function $>$ Class Template Reference}
+\label{classmlpack_1_1optimization_1_1AugLagrangian}\index{mlpack\+::optimization\+::\+Aug\+Lagrangian$<$ Lagrangian\+Function $>$@{mlpack\+::optimization\+::\+Aug\+Lagrangian$<$ Lagrangian\+Function $>$}}
+
+
+The \doxyref{Aug\+Lagrangian}{p.}{classmlpack_1_1optimization_1_1AugLagrangian} class implements the Augmented Lagrangian method of optimization.  
+
+
+
+
+Inheritance diagram for mlpack\+:\+:optimization\+:\+:Aug\+Lagrangian$<$ Lagrangian\+Function $>$\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmlpack_1_1optimization_1_1AugLagrangian__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef {\bf L\+\_\+\+B\+F\+GS}$<$ {\bf Aug\+Lagrangian\+Function}$<$ Lagrangian\+Function $>$ $>$ {\bf L\+\_\+\+B\+F\+G\+S\+Type}
+\begin{DoxyCompactList}\small\item\em Shorthand for the type of the L-\/\+B\+F\+GS optimizer we\textquotesingle{}ll be using. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Aug\+Lagrangian} (Lagrangian\+Function \&{\bf function})
+\begin{DoxyCompactList}\small\item\em Initialize the Augmented Lagrangian with the default L-\/\+B\+F\+GS optimizer. \end{DoxyCompactList}\item 
+{\bf Aug\+Lagrangian} ({\bf Aug\+Lagrangian\+Function}$<$ Lagrangian\+Function $>$ \&{\bf augfunc}, {\bf L\+\_\+\+B\+F\+G\+S\+Type} \&{\bf lbfgs})
+\begin{DoxyCompactList}\small\item\em Initialize the Augmented Lagrangian with a custom L-\/\+B\+F\+GS optimizer. \end{DoxyCompactList}\item 
+const Lagrangian\+Function \& {\bf Function} () const 
+\begin{DoxyCompactList}\small\item\em Get the Lagrangian\+Function. \end{DoxyCompactList}\item 
+Lagrangian\+Function \& {\bf Function} ()
+\begin{DoxyCompactList}\small\item\em Modify the Lagrangian\+Function. \end{DoxyCompactList}\item 
+const arma\+::vec \& {\bf Lambda} () const 
+\begin{DoxyCompactList}\small\item\em Get the Lagrange multipliers. \end{DoxyCompactList}\item 
+arma\+::vec \& {\bf Lambda} ()
+\begin{DoxyCompactList}\small\item\em Modify the Lagrange multipliers (i.\+e. set them before optimization). \end{DoxyCompactList}\item 
+const {\bf L\+\_\+\+B\+F\+G\+S\+Type} \& {\bf L\+B\+F\+GS} () const 
+\begin{DoxyCompactList}\small\item\em Get the L-\/\+B\+F\+GS object used for the actual optimization. \end{DoxyCompactList}\item 
+{\bf L\+\_\+\+B\+F\+G\+S\+Type} \& {\bf L\+B\+F\+GS} ()
+\begin{DoxyCompactList}\small\item\em Modify the L-\/\+B\+F\+GS object used for the actual optimization. \end{DoxyCompactList}\item 
+bool {\bf Optimize} (arma\+::mat \&coordinates, const size\+\_\+t max\+Iterations=1000)
+\begin{DoxyCompactList}\small\item\em Optimize the function. \end{DoxyCompactList}\item 
+bool {\bf Optimize} (arma\+::mat \&coordinates, const arma\+::vec \&init\+Lambda, const double init\+Sigma, const size\+\_\+t max\+Iterations=1000)
+\begin{DoxyCompactList}\small\item\em Optimize the function, giving initial estimates for the Lagrange multipliers. \end{DoxyCompactList}\item 
+double {\bf Sigma} () const 
+\begin{DoxyCompactList}\small\item\em Get the penalty parameter. \end{DoxyCompactList}\item 
+double \& {\bf Sigma} ()
+\begin{DoxyCompactList}\small\item\em Modify the penalty parameter. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Aug\+Lagrangian\+Function}$<$ Lagrangian\+Function $>$ {\bf augfunc}
+\begin{DoxyCompactList}\small\item\em Internally used \doxyref{Aug\+Lagrangian\+Function}{p.}{classmlpack_1_1optimization_1_1AugLagrangianFunction} which holds the function we are optimizing. \end{DoxyCompactList}\item 
+Lagrangian\+Function \& {\bf function}
+\begin{DoxyCompactList}\small\item\em Function to be optimized. \end{DoxyCompactList}\item 
+{\bf L\+\_\+\+B\+F\+G\+S\+Type} \& {\bf lbfgs}
+\begin{DoxyCompactList}\small\item\em The L-\/\+B\+F\+GS optimizer that we will use. \end{DoxyCompactList}\item 
+{\bf L\+\_\+\+B\+F\+G\+S\+Type} {\bf lbfgs\+Internal}
+\begin{DoxyCompactList}\small\item\em If the user did not pass an \doxyref{L\+\_\+\+B\+F\+GS}{p.}{classmlpack_1_1optimization_1_1L__BFGS} object, we\textquotesingle{}ll use our own internal one. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Lagrangian\+Function$>$\\*
+class mlpack\+::optimization\+::\+Aug\+Lagrangian$<$ Lagrangian\+Function $>$}
+
+The \doxyref{Aug\+Lagrangian}{p.}{classmlpack_1_1optimization_1_1AugLagrangian} class implements the Augmented Lagrangian method of optimization. 
+
+In this scheme, a penalty term is added to the Lagrangian. This method is also called the \char`\"{}method of multipliers\char`\"{}.
+
+The template class Lagrangian\+Function must implement the following five methods\+:
+
+
+\begin{DoxyItemize}
+\item double Evaluate(const arma\+::mat\& coordinates);
+\item void Gradient(const arma\+::mat\& coordinates, arma\+::mat\& gradient);
+\item size\+\_\+t Num\+Constraints();
+\item double Evaluate\+Constraint(size\+\_\+t index, const arma\+::mat\& coordinates);
+\item double Gradient\+Constraint(size\+\_\+t index, const arma\+::mat\& coordinates, arma\+::mat\& gradient);
+\end{DoxyItemize}
+
+The number of constraints must be greater than or equal to 0, and Evaluate\+Constraint() should evaluate the constraint at the given index for the given coordinates. Evaluate() should provide the objective function value for the given coordinates.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Lagrangian\+Function} & Function which can be optimized by this class. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 49 of file aug\+\_\+lagrangian.\+hpp.
+
+
+
+\subsection{Member Typedef Documentation}
+\index{mlpack\+::optimization\+::\+Aug\+Lagrangian@{mlpack\+::optimization\+::\+Aug\+Lagrangian}!L\+\_\+\+B\+F\+G\+S\+Type@{L\+\_\+\+B\+F\+G\+S\+Type}}
+\index{L\+\_\+\+B\+F\+G\+S\+Type@{L\+\_\+\+B\+F\+G\+S\+Type}!mlpack\+::optimization\+::\+Aug\+Lagrangian@{mlpack\+::optimization\+::\+Aug\+Lagrangian}}
+\subsubsection[{L\+\_\+\+B\+F\+G\+S\+Type}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Lagrangian\+Function$>$ typedef {\bf L\+\_\+\+B\+F\+GS}$<${\bf Aug\+Lagrangian\+Function}$<$Lagrangian\+Function$>$ $>$ {\bf mlpack\+::optimization\+::\+Aug\+Lagrangian}$<$ Lagrangian\+Function $>$\+::{\bf L\+\_\+\+B\+F\+G\+S\+Type}}\label{classmlpack_1_1optimization_1_1AugLagrangian_a9236e1d59fd814bda0d65523808b34f1}
+
+
+Shorthand for the type of the L-\/\+B\+F\+GS optimizer we\textquotesingle{}ll be using. 
+
+
+
+Definition at line 54 of file aug\+\_\+lagrangian.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::optimization\+::\+Aug\+Lagrangian@{mlpack\+::optimization\+::\+Aug\+Lagrangian}!Aug\+Lagrangian@{Aug\+Lagrangian}}
+\index{Aug\+Lagrangian@{Aug\+Lagrangian}!mlpack\+::optimization\+::\+Aug\+Lagrangian@{mlpack\+::optimization\+::\+Aug\+Lagrangian}}
+\subsubsection[{Aug\+Lagrangian(\+Lagrangian\+Function \&function)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Lagrangian\+Function$>$ {\bf mlpack\+::optimization\+::\+Aug\+Lagrangian}$<$ Lagrangian\+Function $>$\+::{\bf Aug\+Lagrangian} (
+\begin{DoxyParamCaption}
+\item[{Lagrangian\+Function \&}]{function}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1optimization_1_1AugLagrangian_aec18ad1aa9167e55aff6578e5b5d6a9d}
+
+
+Initialize the Augmented Lagrangian with the default L-\/\+B\+F\+GS optimizer. 
+
+We limit the number of L-\/\+B\+F\+GS iterations to 1000, rather than the unlimited default L-\/\+B\+F\+GS.
+
+
+\begin{DoxyParams}{Parameters}
+{\em function} & The function to be optimized. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::optimization\+::\+Aug\+Lagrangian@{mlpack\+::optimization\+::\+Aug\+Lagrangian}!Aug\+Lagrangian@{Aug\+Lagrangian}}
+\index{Aug\+Lagrangian@{Aug\+Lagrangian}!mlpack\+::optimization\+::\+Aug\+Lagrangian@{mlpack\+::optimization\+::\+Aug\+Lagrangian}}
+\subsubsection[{Aug\+Lagrangian(\+Aug\+Lagrangian\+Function$<$ Lagrangian\+Function $>$ \&augfunc, L\+\_\+\+B\+F\+G\+S\+Type \&lbfgs)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Lagrangian\+Function$>$ {\bf mlpack\+::optimization\+::\+Aug\+Lagrangian}$<$ Lagrangian\+Function $>$\+::{\bf Aug\+Lagrangian} (
+\begin{DoxyParamCaption}
+\item[{{\bf Aug\+Lagrangian\+Function}$<$ Lagrangian\+Function $>$ \&}]{augfunc, }
+\item[{{\bf L\+\_\+\+B\+F\+G\+S\+Type} \&}]{lbfgs}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1optimization_1_1AugLagrangian_aaa67574d7611a09e0b48ec0ae0852477}
+
+
+Initialize the Augmented Lagrangian with a custom L-\/\+B\+F\+GS optimizer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em function} & The function to be optimized. This must be a pre-\/created utility \doxyref{Aug\+Lagrangian\+Function}{p.}{classmlpack_1_1optimization_1_1AugLagrangianFunction}. \\
+\hline
+{\em lbfgs} & The custom L-\/\+B\+F\+GS optimizer to be used. This should have already been initialized with the given \doxyref{Aug\+Lagrangian\+Function}{p.}{classmlpack_1_1optimization_1_1AugLagrangianFunction}. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::optimization\+::\+Aug\+Lagrangian@{mlpack\+::optimization\+::\+Aug\+Lagrangian}!Function@{Function}}
+\index{Function@{Function}!mlpack\+::optimization\+::\+Aug\+Lagrangian@{mlpack\+::optimization\+::\+Aug\+Lagrangian}}
+\subsubsection[{Function() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Lagrangian\+Function$>$ const Lagrangian\+Function\& {\bf mlpack\+::optimization\+::\+Aug\+Lagrangian}$<$ Lagrangian\+Function $>$\+::Function (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1optimization_1_1AugLagrangian_a5db2c48f10cec8f6e4054da64c6a3daf}
+
+
+Get the Lagrangian\+Function. 
+
+
+
+Definition at line 107 of file aug\+\_\+lagrangian.\+hpp.
+
+\index{mlpack\+::optimization\+::\+Aug\+Lagrangian@{mlpack\+::optimization\+::\+Aug\+Lagrangian}!Function@{Function}}
+\index{Function@{Function}!mlpack\+::optimization\+::\+Aug\+Lagrangian@{mlpack\+::optimization\+::\+Aug\+Lagrangian}}
+\subsubsection[{Function()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Lagrangian\+Function$>$ Lagrangian\+Function\& {\bf mlpack\+::optimization\+::\+Aug\+Lagrangian}$<$ Lagrangian\+Function $>$\+::Function (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1optimization_1_1AugLagrangian_af34a54aaa33a2002d04e38d1581444fa}
+
+
+Modify the Lagrangian\+Function. 
+
+
+
+Definition at line 109 of file aug\+\_\+lagrangian.\+hpp.
+
+\index{mlpack\+::optimization\+::\+Aug\+Lagrangian@{mlpack\+::optimization\+::\+Aug\+Lagrangian}!Lambda@{Lambda}}
+\index{Lambda@{Lambda}!mlpack\+::optimization\+::\+Aug\+Lagrangian@{mlpack\+::optimization\+::\+Aug\+Lagrangian}}
+\subsubsection[{Lambda() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Lagrangian\+Function$>$ const arma\+::vec\& {\bf mlpack\+::optimization\+::\+Aug\+Lagrangian}$<$ Lagrangian\+Function $>$\+::Lambda (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1optimization_1_1AugLagrangian_ab912c3bb7da9c0d2e725b0a689521d8b}
+
+
+Get the Lagrange multipliers. 
+
+
+
+Definition at line 117 of file aug\+\_\+lagrangian.\+hpp.
+
+\index{mlpack\+::optimization\+::\+Aug\+Lagrangian@{mlpack\+::optimization\+::\+Aug\+Lagrangian}!Lambda@{Lambda}}
+\index{Lambda@{Lambda}!mlpack\+::optimization\+::\+Aug\+Lagrangian@{mlpack\+::optimization\+::\+Aug\+Lagrangian}}
+\subsubsection[{Lambda()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Lagrangian\+Function$>$ arma\+::vec\& {\bf mlpack\+::optimization\+::\+Aug\+Lagrangian}$<$ Lagrangian\+Function $>$\+::Lambda (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1optimization_1_1AugLagrangian_a9fe03b08a49d6e209ca4e5bd92e89bac}
+
+
+Modify the Lagrange multipliers (i.\+e. set them before optimization). 
+
+
+
+Definition at line 119 of file aug\+\_\+lagrangian.\+hpp.
+
+\index{mlpack\+::optimization\+::\+Aug\+Lagrangian@{mlpack\+::optimization\+::\+Aug\+Lagrangian}!L\+B\+F\+GS@{L\+B\+F\+GS}}
+\index{L\+B\+F\+GS@{L\+B\+F\+GS}!mlpack\+::optimization\+::\+Aug\+Lagrangian@{mlpack\+::optimization\+::\+Aug\+Lagrangian}}
+\subsubsection[{L\+B\+F\+G\+S() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Lagrangian\+Function$>$ const {\bf L\+\_\+\+B\+F\+G\+S\+Type}\& {\bf mlpack\+::optimization\+::\+Aug\+Lagrangian}$<$ Lagrangian\+Function $>$\+::L\+B\+F\+GS (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1optimization_1_1AugLagrangian_a33258b734b9da547cca6c2ffed584fee}
+
+
+Get the L-\/\+B\+F\+GS object used for the actual optimization. 
+
+
+
+Definition at line 112 of file aug\+\_\+lagrangian.\+hpp.
+
+\index{mlpack\+::optimization\+::\+Aug\+Lagrangian@{mlpack\+::optimization\+::\+Aug\+Lagrangian}!L\+B\+F\+GS@{L\+B\+F\+GS}}
+\index{L\+B\+F\+GS@{L\+B\+F\+GS}!mlpack\+::optimization\+::\+Aug\+Lagrangian@{mlpack\+::optimization\+::\+Aug\+Lagrangian}}
+\subsubsection[{L\+B\+F\+G\+S()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Lagrangian\+Function$>$ {\bf L\+\_\+\+B\+F\+G\+S\+Type}\& {\bf mlpack\+::optimization\+::\+Aug\+Lagrangian}$<$ Lagrangian\+Function $>$\+::L\+B\+F\+GS (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1optimization_1_1AugLagrangian_a205c6a195944624a9e312f0822fd9775}
+
+
+Modify the L-\/\+B\+F\+GS object used for the actual optimization. 
+
+
+
+Definition at line 114 of file aug\+\_\+lagrangian.\+hpp.
+
+\index{mlpack\+::optimization\+::\+Aug\+Lagrangian@{mlpack\+::optimization\+::\+Aug\+Lagrangian}!Optimize@{Optimize}}
+\index{Optimize@{Optimize}!mlpack\+::optimization\+::\+Aug\+Lagrangian@{mlpack\+::optimization\+::\+Aug\+Lagrangian}}
+\subsubsection[{Optimize(arma\+::mat \&coordinates, const size\+\_\+t max\+Iterations=1000)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Lagrangian\+Function$>$ bool {\bf mlpack\+::optimization\+::\+Aug\+Lagrangian}$<$ Lagrangian\+Function $>$\+::Optimize (
+\begin{DoxyParamCaption}
+\item[{arma\+::mat \&}]{coordinates, }
+\item[{const size\+\_\+t}]{max\+Iterations = {\ttfamily 1000}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1optimization_1_1AugLagrangian_a3236fe0e8dc522bde55a1d31fe5797d7}
+
+
+Optimize the function. 
+
+The value \textquotesingle{}1\textquotesingle{} is used for the initial value of each Lagrange multiplier. To set the Lagrange multipliers yourself, use the other overload of \doxyref{Optimize()}{p.}{classmlpack_1_1optimization_1_1AugLagrangian_a3236fe0e8dc522bde55a1d31fe5797d7}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em coordinates} & Output matrix to store the optimized coordinates in. \\
+\hline
+{\em max\+Iterations} & Maximum number of iterations of the Augmented Lagrangian algorithm. 0 indicates no maximum. \\
+\hline
+{\em sigma} & Initial penalty parameter. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::optimization\+::\+Aug\+Lagrangian@{mlpack\+::optimization\+::\+Aug\+Lagrangian}!Optimize@{Optimize}}
+\index{Optimize@{Optimize}!mlpack\+::optimization\+::\+Aug\+Lagrangian@{mlpack\+::optimization\+::\+Aug\+Lagrangian}}
+\subsubsection[{Optimize(arma\+::mat \&coordinates, const arma\+::vec \&init\+Lambda, const double init\+Sigma, const size\+\_\+t max\+Iterations=1000)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Lagrangian\+Function$>$ bool {\bf mlpack\+::optimization\+::\+Aug\+Lagrangian}$<$ Lagrangian\+Function $>$\+::Optimize (
+\begin{DoxyParamCaption}
+\item[{arma\+::mat \&}]{coordinates, }
+\item[{const arma\+::vec \&}]{init\+Lambda, }
+\item[{const double}]{init\+Sigma, }
+\item[{const size\+\_\+t}]{max\+Iterations = {\ttfamily 1000}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1optimization_1_1AugLagrangian_a9d8b8fab9e1a3502b87dcc8a525a4c12}
+
+
+Optimize the function, giving initial estimates for the Lagrange multipliers. 
+
+The vector of Lagrange multipliers will be modified to contain the Lagrange multipliers of the final solution (if one is found).
+
+
+\begin{DoxyParams}{Parameters}
+{\em coordinates} & Output matrix to store the optimized coordinates in. \\
+\hline
+{\em init\+Lambda} & Vector of initial Lagrange multipliers. Should have length equal to the number of constraints. \\
+\hline
+{\em init\+Sigma} & Initial penalty parameter. \\
+\hline
+{\em max\+Iterations} & Maximum number of iterations of the Augmented Lagrangian algorithm. 0 indicates no maximum. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::optimization\+::\+Aug\+Lagrangian@{mlpack\+::optimization\+::\+Aug\+Lagrangian}!Sigma@{Sigma}}
+\index{Sigma@{Sigma}!mlpack\+::optimization\+::\+Aug\+Lagrangian@{mlpack\+::optimization\+::\+Aug\+Lagrangian}}
+\subsubsection[{Sigma() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Lagrangian\+Function$>$ double {\bf mlpack\+::optimization\+::\+Aug\+Lagrangian}$<$ Lagrangian\+Function $>$\+::Sigma (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1optimization_1_1AugLagrangian_a04eaf73441a0650405e3b74b903d1eae}
+
+
+Get the penalty parameter. 
+
+
+
+Definition at line 122 of file aug\+\_\+lagrangian.\+hpp.
+
+\index{mlpack\+::optimization\+::\+Aug\+Lagrangian@{mlpack\+::optimization\+::\+Aug\+Lagrangian}!Sigma@{Sigma}}
+\index{Sigma@{Sigma}!mlpack\+::optimization\+::\+Aug\+Lagrangian@{mlpack\+::optimization\+::\+Aug\+Lagrangian}}
+\subsubsection[{Sigma()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Lagrangian\+Function$>$ double\& {\bf mlpack\+::optimization\+::\+Aug\+Lagrangian}$<$ Lagrangian\+Function $>$\+::Sigma (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1optimization_1_1AugLagrangian_a9af7e955a86bd977d442b7acd6a59ae7}
+
+
+Modify the penalty parameter. 
+
+
+
+Definition at line 124 of file aug\+\_\+lagrangian.\+hpp.
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::optimization\+::\+Aug\+Lagrangian@{mlpack\+::optimization\+::\+Aug\+Lagrangian}!augfunc@{augfunc}}
+\index{augfunc@{augfunc}!mlpack\+::optimization\+::\+Aug\+Lagrangian@{mlpack\+::optimization\+::\+Aug\+Lagrangian}}
+\subsubsection[{augfunc}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Lagrangian\+Function$>$ {\bf Aug\+Lagrangian\+Function}$<$Lagrangian\+Function$>$ {\bf mlpack\+::optimization\+::\+Aug\+Lagrangian}$<$ Lagrangian\+Function $>$\+::augfunc\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1optimization_1_1AugLagrangian_a303c0e7e199987eb678316a8532989f5}
+
+
+Internally used \doxyref{Aug\+Lagrangian\+Function}{p.}{classmlpack_1_1optimization_1_1AugLagrangianFunction} which holds the function we are optimizing. 
+
+This isn\textquotesingle{}t publically accessible, but we provide ways to get to the Lagrange multipliers and the penalty parameter sigma. 
+
+Definition at line 133 of file aug\+\_\+lagrangian.\+hpp.
+
+
+
+Referenced by mlpack\+::optimization\+::\+Aug\+Lagrangian$<$ mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function$<$ optimization\+::\+S\+D\+P$<$ arma\+::sp\+\_\+mat $>$ $>$ $>$\+::\+Lambda(), and mlpack\+::optimization\+::\+Aug\+Lagrangian$<$ mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function$<$ optimization\+::\+S\+D\+P$<$ arma\+::sp\+\_\+mat $>$ $>$ $>$\+::\+Sigma().
+
+\index{mlpack\+::optimization\+::\+Aug\+Lagrangian@{mlpack\+::optimization\+::\+Aug\+Lagrangian}!function@{function}}
+\index{function@{function}!mlpack\+::optimization\+::\+Aug\+Lagrangian@{mlpack\+::optimization\+::\+Aug\+Lagrangian}}
+\subsubsection[{function}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Lagrangian\+Function$>$ Lagrangian\+Function\& {\bf mlpack\+::optimization\+::\+Aug\+Lagrangian}$<$ Lagrangian\+Function $>$\+::function\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1optimization_1_1AugLagrangian_a12cd00a9fc80ceb26ccecd438ae1d3eb}
+
+
+Function to be optimized. 
+
+
+
+Definition at line 128 of file aug\+\_\+lagrangian.\+hpp.
+
+\index{mlpack\+::optimization\+::\+Aug\+Lagrangian@{mlpack\+::optimization\+::\+Aug\+Lagrangian}!lbfgs@{lbfgs}}
+\index{lbfgs@{lbfgs}!mlpack\+::optimization\+::\+Aug\+Lagrangian@{mlpack\+::optimization\+::\+Aug\+Lagrangian}}
+\subsubsection[{lbfgs}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Lagrangian\+Function$>$ {\bf L\+\_\+\+B\+F\+G\+S\+Type}\& {\bf mlpack\+::optimization\+::\+Aug\+Lagrangian}$<$ Lagrangian\+Function $>$\+::lbfgs\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1optimization_1_1AugLagrangian_adebbf0a697a0b09ce96ddfc50abcc132}
+
+
+The L-\/\+B\+F\+GS optimizer that we will use. 
+
+
+
+Definition at line 139 of file aug\+\_\+lagrangian.\+hpp.
+
+
+
+Referenced by mlpack\+::optimization\+::\+Aug\+Lagrangian$<$ mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function$<$ optimization\+::\+S\+D\+P$<$ arma\+::sp\+\_\+mat $>$ $>$ $>$\+::\+L\+B\+F\+G\+S().
+
+\index{mlpack\+::optimization\+::\+Aug\+Lagrangian@{mlpack\+::optimization\+::\+Aug\+Lagrangian}!lbfgs\+Internal@{lbfgs\+Internal}}
+\index{lbfgs\+Internal@{lbfgs\+Internal}!mlpack\+::optimization\+::\+Aug\+Lagrangian@{mlpack\+::optimization\+::\+Aug\+Lagrangian}}
+\subsubsection[{lbfgs\+Internal}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Lagrangian\+Function$>$ {\bf L\+\_\+\+B\+F\+G\+S\+Type} {\bf mlpack\+::optimization\+::\+Aug\+Lagrangian}$<$ Lagrangian\+Function $>$\+::lbfgs\+Internal\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1optimization_1_1AugLagrangian_a6126a13f9a48f896b3060a8883b67dc7}
+
+
+If the user did not pass an \doxyref{L\+\_\+\+B\+F\+GS}{p.}{classmlpack_1_1optimization_1_1L__BFGS} object, we\textquotesingle{}ll use our own internal one. 
+
+
+
+Definition at line 136 of file aug\+\_\+lagrangian.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/optimizers/aug\+\_\+lagrangian/{\bf aug\+\_\+lagrangian.\+hpp}\end{DoxyCompactItemize}

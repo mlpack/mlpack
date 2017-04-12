@@ -1,0 +1,70 @@
+.TH "mlpack::amf::RandomInitialization" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::amf::RandomInitialization \- This initialization rule for \fBAMF\fP simply fills the W and H matrices with uniform random noise in [0, 1]\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBRandomInitialization\fP ()"
+.br
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &, const unsigned int)"
+.br
+.RI "\fISerialize the object (in this case, there is nothing to serialize)\&. \fP"
+.in -1c
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename MatType > static void \fBInitialize\fP (const MatType &V, const size_t r, arma::mat &W, arma::mat &H)"
+.br
+.RI "\fIFill W and H with random uniform noise\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+This initialization rule for \fBAMF\fP simply fills the W and H matrices with uniform random noise in [0, 1]\&. 
+.PP
+Definition at line 25 of file random_init\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::amf::RandomInitialization::RandomInitialization ()\fC [inline]\fP"
+
+.PP
+Definition at line 29 of file random_init\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename MatType > static void mlpack::amf::RandomInitialization::Initialize (const MatType & V, const size_t r, arma::mat & W, arma::mat & H)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Fill W and H with random uniform noise\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIV\fP Input matrix\&. 
+.br
+\fIr\fP Rank of decomposition\&. 
+.br
+\fIW\fP W matrix, to be filled with random noise\&. 
+.br
+\fIH\fP H matrix, to be filled with random noise\&. 
+.RE
+.PP
+
+.PP
+Definition at line 40 of file random_init\&.hpp\&.
+.SS "template<typename Archive > void mlpack::amf::RandomInitialization::Serialize (Archive &, const unsigned int)\fC [inline]\fP"
+
+.PP
+Serialize the object (in this case, there is nothing to serialize)\&. 
+.PP
+Definition at line 56 of file random_init\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

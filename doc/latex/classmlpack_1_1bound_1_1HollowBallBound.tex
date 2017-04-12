@@ -1,0 +1,752 @@
+\section{mlpack\+:\+:bound\+:\+:Hollow\+Ball\+Bound$<$ T\+Metric\+Type, Elem\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1bound_1_1HollowBallBound}\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound$<$ T\+Metric\+Type, Elem\+Type $>$@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound$<$ T\+Metric\+Type, Elem\+Type $>$}}
+
+
+Hollow ball bound encloses a set of points at a specific distance (radius) from a specific point (center) except points at a specific distance from another point (the center of the hole).  
+
+
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef T\+Metric\+Type {\bf Metric\+Type}
+\begin{DoxyCompactList}\small\item\em A public version of the metric type. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Hollow\+Ball\+Bound} ()
+\begin{DoxyCompactList}\small\item\em Empty Constructor. \end{DoxyCompactList}\item 
+{\bf Hollow\+Ball\+Bound} (const size\+\_\+t dimension)
+\begin{DoxyCompactList}\small\item\em Create the ball bound with the specified dimensionality. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\{\bf Hollow\+Ball\+Bound} (const Elem\+Type inner\+Radius, const Elem\+Type outer\+Radius, const Vec\+Type \&{\bf center})
+\begin{DoxyCompactList}\small\item\em Create the ball bound with the specified radius and center. \end{DoxyCompactList}\item 
+{\bf Hollow\+Ball\+Bound} (const {\bf Hollow\+Ball\+Bound} \&other)
+\begin{DoxyCompactList}\small\item\em Copy constructor. To prevent memory leaks. \end{DoxyCompactList}\item 
+{\bf Hollow\+Ball\+Bound} ({\bf Hollow\+Ball\+Bound} \&\&other)
+\begin{DoxyCompactList}\small\item\em Move constructor\+: take possession of another bound. \end{DoxyCompactList}\item 
+{\bf $\sim$\+Hollow\+Ball\+Bound} ()
+\begin{DoxyCompactList}\small\item\em Destructor to release allocated memory. \end{DoxyCompactList}\item 
+const arma\+::\+Col$<$ Elem\+Type $>$ \& {\bf Center} () const 
+\begin{DoxyCompactList}\small\item\em Get the center point of the ball. \end{DoxyCompactList}\item 
+arma\+::\+Col$<$ Elem\+Type $>$ \& {\bf Center} ()
+\begin{DoxyCompactList}\small\item\em Modify the center point of the ball. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\void {\bf Center} (Vec\+Type \&{\bf center}) const 
+\begin{DoxyCompactList}\small\item\em Place the center of \doxyref{Ball\+Bound}{p.}{classmlpack_1_1bound_1_1BallBound} into the given vector. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\bool {\bf Contains} (const Vec\+Type \&point) const 
+\begin{DoxyCompactList}\small\item\em Determines if a point is within this bound. \end{DoxyCompactList}\item 
+bool {\bf Contains} (const {\bf Hollow\+Ball\+Bound} \&other) const 
+\begin{DoxyCompactList}\small\item\em Determines if another bound is within this bound. \end{DoxyCompactList}\item 
+Elem\+Type {\bf Diameter} () const 
+\begin{DoxyCompactList}\small\item\em Returns the diameter of the ballbound. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Dim} () const 
+\begin{DoxyCompactList}\small\item\em Get the dimensionality of the ball. \end{DoxyCompactList}\item 
+const arma\+::\+Col$<$ Elem\+Type $>$ \& {\bf Hollow\+Center} () const 
+\begin{DoxyCompactList}\small\item\em Get the center point of the hollow. \end{DoxyCompactList}\item 
+arma\+::\+Col$<$ Elem\+Type $>$ \& {\bf Hollow\+Center} ()
+\begin{DoxyCompactList}\small\item\em Modify the center point of the hollow. \end{DoxyCompactList}\item 
+Elem\+Type {\bf Inner\+Radius} () const 
+\begin{DoxyCompactList}\small\item\em Get the innner radius of the ball. \end{DoxyCompactList}\item 
+Elem\+Type \& {\bf Inner\+Radius} ()
+\begin{DoxyCompactList}\small\item\em Modify the inner radius of the ball. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\Elem\+Type {\bf Max\+Distance} (const Vec\+Type \&point, typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ {\bf Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$=0) const 
+\begin{DoxyCompactList}\small\item\em Computes maximum distance. \end{DoxyCompactList}\item 
+Elem\+Type {\bf Max\+Distance} (const {\bf Hollow\+Ball\+Bound} \&other) const 
+\begin{DoxyCompactList}\small\item\em Computes maximum distance. \end{DoxyCompactList}\item 
+const {\bf Metric\+Type} \& {\bf Metric} () const 
+\begin{DoxyCompactList}\small\item\em Returns the distance metric used in this bound. \end{DoxyCompactList}\item 
+{\bf Metric\+Type} \& {\bf Metric} ()
+\begin{DoxyCompactList}\small\item\em Modify the distance metric used in this bound. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\Elem\+Type {\bf Min\+Distance} (const Vec\+Type \&point, typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ {\bf Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$=0) const 
+\begin{DoxyCompactList}\small\item\em Calculates minimum bound-\/to-\/point squared distance. \end{DoxyCompactList}\item 
+Elem\+Type {\bf Min\+Distance} (const {\bf Hollow\+Ball\+Bound} \&other) const 
+\begin{DoxyCompactList}\small\item\em Calculates minimum bound-\/to-\/bound squared distance. \end{DoxyCompactList}\item 
+Elem\+Type {\bf Min\+Width} () const 
+\begin{DoxyCompactList}\small\item\em Get the minimum width of the bound (this is same as the diameter). \end{DoxyCompactList}\item 
+{\bf Hollow\+Ball\+Bound} \& {\bf operator=} (const {\bf Hollow\+Ball\+Bound} \&other)
+\begin{DoxyCompactList}\small\item\em For the same reason as the copy constructor\+: to prevent memory leaks. \end{DoxyCompactList}\item 
+{\bf math\+::\+Range\+Type}$<$ Elem\+Type $>$ {\bf operator[$\,$]} (const size\+\_\+t i) const 
+\begin{DoxyCompactList}\small\item\em Get the range in a certain dimension. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\const {\bf Hollow\+Ball\+Bound} \& {\bf operator$\vert$=} (const Mat\+Type \&data)
+\begin{DoxyCompactList}\small\item\em Expand the bound to include the given point. \end{DoxyCompactList}\item 
+const {\bf Hollow\+Ball\+Bound} \& {\bf operator$\vert$=} (const {\bf Hollow\+Ball\+Bound} \&other)
+\begin{DoxyCompactList}\small\item\em Expand the bound to include the given bound. \end{DoxyCompactList}\item 
+Elem\+Type {\bf Outer\+Radius} () const 
+\begin{DoxyCompactList}\small\item\em Get the outer radius of the ball. \end{DoxyCompactList}\item 
+Elem\+Type \& {\bf Outer\+Radius} ()
+\begin{DoxyCompactList}\small\item\em Modify the outer radius of the ball. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\{\bf math\+::\+Range\+Type}$<$ Elem\+Type $>$ {\bf Range\+Distance} (const Vec\+Type \&other, typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ {\bf Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$=0) const 
+\begin{DoxyCompactList}\small\item\em Calculates minimum and maximum bound-\/to-\/point distance. \end{DoxyCompactList}\item 
+{\bf math\+::\+Range\+Type}$<$ Elem\+Type $>$ {\bf Range\+Distance} (const {\bf Hollow\+Ball\+Bound} \&other) const 
+\begin{DoxyCompactList}\small\item\em Calculates minimum and maximum bound-\/to-\/bound distance. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&ar, const unsigned int version)
+\begin{DoxyCompactList}\small\item\em Serialize the bound. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+arma\+::\+Col$<$ Elem\+Type $>$ {\bf center}
+\begin{DoxyCompactList}\small\item\em The center of the ball bound. \end{DoxyCompactList}\item 
+arma\+::\+Col$<$ Elem\+Type $>$ {\bf hollow\+Center}
+\begin{DoxyCompactList}\small\item\em The center of the hollow. \end{DoxyCompactList}\item 
+{\bf Metric\+Type} $\ast$ {\bf metric}
+\begin{DoxyCompactList}\small\item\em The metric used in this bound. \end{DoxyCompactList}\item 
+bool {\bf owns\+Metric}
+\begin{DoxyCompactList}\small\item\em To know whether this object allocated memory to the metric member variable. \end{DoxyCompactList}\item 
+{\bf math\+::\+Range\+Type}$<$ Elem\+Type $>$ {\bf radii}
+\begin{DoxyCompactList}\small\item\em The inner and the outer radii of the bound. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$\\*
+class mlpack\+::bound\+::\+Hollow\+Ball\+Bound$<$ T\+Metric\+Type, Elem\+Type $>$}
+
+Hollow ball bound encloses a set of points at a specific distance (radius) from a specific point (center) except points at a specific distance from another point (the center of the hole). 
+
+Metric\+Type is the custom metric type that defaults to the Euclidean (L2) distance.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T\+Metric\+Type} & metric type used in the distance measure. \\
+\hline
+{\em Elem\+Type} & Type of element (float or double or similar). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 33 of file hollow\+\_\+ball\+\_\+bound.\+hpp.
+
+
+
+\subsection{Member Typedef Documentation}
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!Metric\+Type@{Metric\+Type}}
+\index{Metric\+Type@{Metric\+Type}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{Metric\+Type}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ typedef T\+Metric\+Type {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::{\bf Metric\+Type}}\label{classmlpack_1_1bound_1_1HollowBallBound_a993c3adf4eb2e133e1a6f88e25b19c4e}
+
+
+A public version of the metric type. 
+
+
+
+Definition at line 37 of file hollow\+\_\+ball\+\_\+bound.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!Hollow\+Ball\+Bound@{Hollow\+Ball\+Bound}}
+\index{Hollow\+Ball\+Bound@{Hollow\+Ball\+Bound}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{Hollow\+Ball\+Bound()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::{\bf Hollow\+Ball\+Bound} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1bound_1_1HollowBallBound_a852108433fff8a474f147731ae89d0f8}
+
+
+Empty Constructor. 
+
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!Hollow\+Ball\+Bound@{Hollow\+Ball\+Bound}}
+\index{Hollow\+Ball\+Bound@{Hollow\+Ball\+Bound}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{Hollow\+Ball\+Bound(const size\+\_\+t dimension)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::{\bf Hollow\+Ball\+Bound} (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{dimension}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1bound_1_1HollowBallBound_ae55779d2077a51bbf9083a555075e837}
+
+
+Create the ball bound with the specified dimensionality. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em dimension} & Dimensionality of ball bound. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!Hollow\+Ball\+Bound@{Hollow\+Ball\+Bound}}
+\index{Hollow\+Ball\+Bound@{Hollow\+Ball\+Bound}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{Hollow\+Ball\+Bound(const Elem\+Type inner\+Radius, const Elem\+Type outer\+Radius, const Vec\+Type \&center)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ template$<$typename Vec\+Type $>$ {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::{\bf Hollow\+Ball\+Bound} (
+\begin{DoxyParamCaption}
+\item[{const Elem\+Type}]{inner\+Radius, }
+\item[{const Elem\+Type}]{outer\+Radius, }
+\item[{const Vec\+Type \&}]{center}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1bound_1_1HollowBallBound_a2cc0cf4fcac6140f5b6ac2ccfc49d1c1}
+
+
+Create the ball bound with the specified radius and center. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em inner\+Radius} & Inner radius of ball bound. \\
+\hline
+{\em outer\+Radius} & Outer radius of ball bound. \\
+\hline
+{\em center} & Center of ball bound. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!Hollow\+Ball\+Bound@{Hollow\+Ball\+Bound}}
+\index{Hollow\+Ball\+Bound@{Hollow\+Ball\+Bound}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{Hollow\+Ball\+Bound(const Hollow\+Ball\+Bound \&other)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::{\bf Hollow\+Ball\+Bound} (
+\begin{DoxyParamCaption}
+\item[{const {\bf Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$ \&}]{other}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1bound_1_1HollowBallBound_aa85be63dbf393e497551ea3081960309}
+
+
+Copy constructor. To prevent memory leaks. 
+
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!Hollow\+Ball\+Bound@{Hollow\+Ball\+Bound}}
+\index{Hollow\+Ball\+Bound@{Hollow\+Ball\+Bound}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{Hollow\+Ball\+Bound(\+Hollow\+Ball\+Bound \&\&other)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::{\bf Hollow\+Ball\+Bound} (
+\begin{DoxyParamCaption}
+\item[{{\bf Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$ \&\&}]{other}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1bound_1_1HollowBallBound_a0544d0b19f9324d5a58a080af0ca67a6}
+
+
+Move constructor\+: take possession of another bound. 
+
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!````~Hollow\+Ball\+Bound@{$\sim$\+Hollow\+Ball\+Bound}}
+\index{````~Hollow\+Ball\+Bound@{$\sim$\+Hollow\+Ball\+Bound}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{$\sim$\+Hollow\+Ball\+Bound()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::$\sim${\bf Hollow\+Ball\+Bound} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1bound_1_1HollowBallBound_a6b61953ab01809105d53c49968e5dd29}
+
+
+Destructor to release allocated memory. 
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!Center@{Center}}
+\index{Center@{Center}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{Center() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ const arma\+::\+Col$<$Elem\+Type$>$\& {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::Center (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1bound_1_1HollowBallBound_a6a78ebc26c198289b84f30726e202d54}
+
+
+Get the center point of the ball. 
+
+
+
+Definition at line 104 of file hollow\+\_\+ball\+\_\+bound.\+hpp.
+
+
+
+References mlpack\+::bound\+::\+Hollow\+Ball\+Bound$<$ T\+Metric\+Type, Elem\+Type $>$\+::center.
+
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!Center@{Center}}
+\index{Center@{Center}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{Center()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ arma\+::\+Col$<$Elem\+Type$>$\& {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::Center (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1bound_1_1HollowBallBound_ab0f4b973ca7100508edfd313214c1819}
+
+
+Modify the center point of the ball. 
+
+
+
+Definition at line 106 of file hollow\+\_\+ball\+\_\+bound.\+hpp.
+
+
+
+References mlpack\+::bound\+::\+Hollow\+Ball\+Bound$<$ T\+Metric\+Type, Elem\+Type $>$\+::center.
+
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!Center@{Center}}
+\index{Center@{Center}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{Center(\+Vec\+Type \&center) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ template$<$typename Vec\+Type $>$ void {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::Center (
+\begin{DoxyParamCaption}
+\item[{Vec\+Type \&}]{center}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1bound_1_1HollowBallBound_ab76deb763bb515f60c5384c9ea2f72f5}
+
+
+Place the center of \doxyref{Ball\+Bound}{p.}{classmlpack_1_1bound_1_1BallBound} into the given vector. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em center} & Vector which the centroid will be written to. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 142 of file hollow\+\_\+ball\+\_\+bound.\+hpp.
+
+
+
+References mlpack\+::bound\+::\+Hollow\+Ball\+Bound$<$ T\+Metric\+Type, Elem\+Type $>$\+::center, mlpack\+::bound\+::\+Hollow\+Ball\+Bound$<$ T\+Metric\+Type, Elem\+Type $>$\+::\+Max\+Distance(), mlpack\+::bound\+::\+Hollow\+Ball\+Bound$<$ T\+Metric\+Type, Elem\+Type $>$\+::\+Min\+Distance(), mlpack\+::bound\+::\+Hollow\+Ball\+Bound$<$ T\+Metric\+Type, Elem\+Type $>$\+::operator$\vert$=(), and mlpack\+::bound\+::\+Hollow\+Ball\+Bound$<$ T\+Metric\+Type, Elem\+Type $>$\+::\+Range\+Distance().
+
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!Contains@{Contains}}
+\index{Contains@{Contains}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{Contains(const Vec\+Type \&point) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ template$<$typename Vec\+Type $>$ bool {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::Contains (
+\begin{DoxyParamCaption}
+\item[{const Vec\+Type \&}]{point}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1bound_1_1HollowBallBound_a9095d26a77284409e864abc1a0dcf4fa}
+
+
+Determines if a point is within this bound. 
+
+
+
+Referenced by mlpack\+::bound\+::\+Hollow\+Ball\+Bound$<$ T\+Metric\+Type, Elem\+Type $>$\+::\+Min\+Width().
+
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!Contains@{Contains}}
+\index{Contains@{Contains}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{Contains(const Hollow\+Ball\+Bound \&other) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ bool {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::Contains (
+\begin{DoxyParamCaption}
+\item[{const {\bf Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$ \&}]{other}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1bound_1_1HollowBallBound_a3daf73373d5c57e4ca2fb7b11a0d3197}
+
+
+Determines if another bound is within this bound. 
+
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!Diameter@{Diameter}}
+\index{Diameter@{Diameter}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{Diameter() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ Elem\+Type {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::Diameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1bound_1_1HollowBallBound_ab8fb9aa29285502b62baeaff33471ce4}
+
+
+Returns the diameter of the ballbound. 
+
+
+
+Definition at line 209 of file hollow\+\_\+ball\+\_\+bound.\+hpp.
+
+
+
+References mlpack\+::math\+::\+Range\+Type$<$ T $>$\+::\+Hi().
+
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!Dim@{Dim}}
+\index{Dim@{Dim}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{Dim() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ size\+\_\+t {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::Dim (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1bound_1_1HollowBallBound_a13791451af1b055193180f332a7e511c}
+
+
+Get the dimensionality of the ball. 
+
+
+
+Definition at line 114 of file hollow\+\_\+ball\+\_\+bound.\+hpp.
+
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!Hollow\+Center@{Hollow\+Center}}
+\index{Hollow\+Center@{Hollow\+Center}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{Hollow\+Center() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ const arma\+::\+Col$<$Elem\+Type$>$\& {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::Hollow\+Center (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1bound_1_1HollowBallBound_a8802d37e4bad1ac48287be43e9ef211b}
+
+
+Get the center point of the hollow. 
+
+
+
+Definition at line 109 of file hollow\+\_\+ball\+\_\+bound.\+hpp.
+
+
+
+References mlpack\+::bound\+::\+Hollow\+Ball\+Bound$<$ T\+Metric\+Type, Elem\+Type $>$\+::hollow\+Center.
+
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!Hollow\+Center@{Hollow\+Center}}
+\index{Hollow\+Center@{Hollow\+Center}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{Hollow\+Center()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ arma\+::\+Col$<$Elem\+Type$>$\& {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::Hollow\+Center (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1bound_1_1HollowBallBound_abd006b1e269ab227c8c9d3909a5f4f2f}
+
+
+Modify the center point of the hollow. 
+
+
+
+Definition at line 111 of file hollow\+\_\+ball\+\_\+bound.\+hpp.
+
+
+
+References mlpack\+::bound\+::\+Hollow\+Ball\+Bound$<$ T\+Metric\+Type, Elem\+Type $>$\+::hollow\+Center.
+
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!Inner\+Radius@{Inner\+Radius}}
+\index{Inner\+Radius@{Inner\+Radius}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{Inner\+Radius() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ Elem\+Type {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::Inner\+Radius (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1bound_1_1HollowBallBound_a09e3612d17ffa40efaf39f658a837280}
+
+
+Get the innner radius of the ball. 
+
+
+
+Definition at line 99 of file hollow\+\_\+ball\+\_\+bound.\+hpp.
+
+
+
+References mlpack\+::math\+::\+Range\+Type$<$ T $>$\+::\+Lo().
+
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!Inner\+Radius@{Inner\+Radius}}
+\index{Inner\+Radius@{Inner\+Radius}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{Inner\+Radius()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ Elem\+Type\& {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::Inner\+Radius (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1bound_1_1HollowBallBound_abd12738bd9cbe1ff91cac91eec13ea7a}
+
+
+Modify the inner radius of the ball. 
+
+
+
+Definition at line 101 of file hollow\+\_\+ball\+\_\+bound.\+hpp.
+
+
+
+References mlpack\+::math\+::\+Range\+Type$<$ T $>$\+::\+Lo().
+
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!Max\+Distance@{Max\+Distance}}
+\index{Max\+Distance@{Max\+Distance}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{Max\+Distance(const Vec\+Type \&point, typename std\+::enable\+\_\+if\+\_\+t$<$ Is\+Vector$<$ Vec\+Type $>$\+::value $>$ $\ast$=0) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ template$<$typename Vec\+Type $>$ Elem\+Type {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::Max\+Distance (
+\begin{DoxyParamCaption}
+\item[{const Vec\+Type \&}]{point, }
+\item[{typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ {\bf Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1bound_1_1HollowBallBound_aafd59af59959487e064888cc8178f2ab}
+
+
+Computes maximum distance. 
+
+
+
+Referenced by mlpack\+::bound\+::\+Hollow\+Ball\+Bound$<$ T\+Metric\+Type, Elem\+Type $>$\+::\+Center().
+
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!Max\+Distance@{Max\+Distance}}
+\index{Max\+Distance@{Max\+Distance}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{Max\+Distance(const Hollow\+Ball\+Bound \&other) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ Elem\+Type {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::Max\+Distance (
+\begin{DoxyParamCaption}
+\item[{const {\bf Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$ \&}]{other}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1bound_1_1HollowBallBound_a82a63178630ee39068c2ef9b3f0e761f}
+
+
+Computes maximum distance. 
+
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!Metric@{Metric}}
+\index{Metric@{Metric}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{Metric() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ const {\bf Metric\+Type}\& {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::Metric (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1bound_1_1HollowBallBound_ac63c28de570bcb75faa844e6a1b61ab6}
+
+
+Returns the distance metric used in this bound. 
+
+
+
+Definition at line 212 of file hollow\+\_\+ball\+\_\+bound.\+hpp.
+
+
+
+References mlpack\+::bound\+::\+Hollow\+Ball\+Bound$<$ T\+Metric\+Type, Elem\+Type $>$\+::metric.
+
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!Metric@{Metric}}
+\index{Metric@{Metric}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{Metric()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ {\bf Metric\+Type}\& {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::Metric (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1bound_1_1HollowBallBound_a10317976aefa8cbd8ae26933128a1501}
+
+
+Modify the distance metric used in this bound. 
+
+
+
+Definition at line 214 of file hollow\+\_\+ball\+\_\+bound.\+hpp.
+
+
+
+References mlpack\+::bound\+::\+Hollow\+Ball\+Bound$<$ T\+Metric\+Type, Elem\+Type $>$\+::metric, and mlpack\+::bound\+::\+Hollow\+Ball\+Bound$<$ T\+Metric\+Type, Elem\+Type $>$\+::\+Serialize().
+
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!Min\+Distance@{Min\+Distance}}
+\index{Min\+Distance@{Min\+Distance}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{Min\+Distance(const Vec\+Type \&point, typename std\+::enable\+\_\+if\+\_\+t$<$ Is\+Vector$<$ Vec\+Type $>$\+::value $>$ $\ast$=0) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ template$<$typename Vec\+Type $>$ Elem\+Type {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::Min\+Distance (
+\begin{DoxyParamCaption}
+\item[{const Vec\+Type \&}]{point, }
+\item[{typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ {\bf Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1bound_1_1HollowBallBound_a418ccd1b7bc554f39a82158bcd5f25ab}
+
+
+Calculates minimum bound-\/to-\/point squared distance. 
+
+
+
+Referenced by mlpack\+::bound\+::\+Hollow\+Ball\+Bound$<$ T\+Metric\+Type, Elem\+Type $>$\+::\+Center().
+
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!Min\+Distance@{Min\+Distance}}
+\index{Min\+Distance@{Min\+Distance}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{Min\+Distance(const Hollow\+Ball\+Bound \&other) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ Elem\+Type {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::Min\+Distance (
+\begin{DoxyParamCaption}
+\item[{const {\bf Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$ \&}]{other}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1bound_1_1HollowBallBound_a3a2bc57c4b461a82295cc1879e866e64}
+
+
+Calculates minimum bound-\/to-\/bound squared distance. 
+
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!Min\+Width@{Min\+Width}}
+\index{Min\+Width@{Min\+Width}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{Min\+Width() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ Elem\+Type {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::Min\+Width (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1bound_1_1HollowBallBound_a34cdc126c503d2b3c833fa411bd94479}
+
+
+Get the minimum width of the bound (this is same as the diameter). 
+
+For ball bounds, width along all dimensions remain same. 
+
+Definition at line 120 of file hollow\+\_\+ball\+\_\+bound.\+hpp.
+
+
+
+References mlpack\+::bound\+::\+Hollow\+Ball\+Bound$<$ T\+Metric\+Type, Elem\+Type $>$\+::\+Contains(), mlpack\+::math\+::\+Range\+Type$<$ T $>$\+::\+Hi(), and mlpack\+::bound\+::\+Hollow\+Ball\+Bound$<$ T\+Metric\+Type, Elem\+Type $>$\+::operator[$\,$]().
+
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!operator=@{operator=}}
+\index{operator=@{operator=}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{operator=(const Hollow\+Ball\+Bound \&other)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ {\bf Hollow\+Ball\+Bound}\& {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::operator= (
+\begin{DoxyParamCaption}
+\item[{const {\bf Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$ \&}]{other}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1bound_1_1HollowBallBound_a01095f4c7b55c88fae76c24c0283878a}
+
+
+For the same reason as the copy constructor\+: to prevent memory leaks. 
+
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!operator[$\,$]@{operator[]}}
+\index{operator[$\,$]@{operator[]}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{operator[](const size\+\_\+t i) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ {\bf math\+::\+Range\+Type}$<$Elem\+Type$>$ {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::operator[$\,$] (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{i}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1bound_1_1HollowBallBound_ae24b89b02d9058b99f7e364bbbf23738}
+
+
+Get the range in a certain dimension. 
+
+
+
+Referenced by mlpack\+::bound\+::\+Hollow\+Ball\+Bound$<$ T\+Metric\+Type, Elem\+Type $>$\+::\+Min\+Width().
+
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!operator\texttt{"|}=@{operator\texttt{"|}=}}
+\index{operator\texttt{"|}=@{operator\texttt{"|}=}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{operator\texttt{"|}=(const Mat\+Type \&data)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ template$<$typename Mat\+Type $>$ const {\bf Hollow\+Ball\+Bound}\& {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::operator$\vert$= (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{data}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1bound_1_1HollowBallBound_a387a658ac818e6a423796de7e7b3cd25}
+
+
+Expand the bound to include the given point. 
+
+The centroid will not be moved.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Mat\+Type} & Type of matrix; could be arma\+::mat, arma\+::spmat, or a vector. \\
+\hline
+{\em data} & Data points to add. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Referenced by mlpack\+::bound\+::\+Hollow\+Ball\+Bound$<$ T\+Metric\+Type, Elem\+Type $>$\+::\+Center().
+
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!operator\texttt{"|}=@{operator\texttt{"|}=}}
+\index{operator\texttt{"|}=@{operator\texttt{"|}=}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{operator\texttt{"|}=(const Hollow\+Ball\+Bound \&other)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ const {\bf Hollow\+Ball\+Bound}\& {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::operator$\vert$= (
+\begin{DoxyParamCaption}
+\item[{const {\bf Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$ \&}]{other}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1bound_1_1HollowBallBound_ac5d7719af62ab1d1c1f5b2c967f1afce}
+
+
+Expand the bound to include the given bound. 
+
+The centroid will not be moved.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Mat\+Type} & Type of matrix; could be arma\+::mat, arma\+::spmat, or a vector. \\
+\hline
+{\em data} & Data points to add. \\
+\hline
+\end{DoxyTemplParams}
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!Outer\+Radius@{Outer\+Radius}}
+\index{Outer\+Radius@{Outer\+Radius}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{Outer\+Radius() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ Elem\+Type {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::Outer\+Radius (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1bound_1_1HollowBallBound_a4a12e175aa48f868d7b57658258edc62}
+
+
+Get the outer radius of the ball. 
+
+
+
+Definition at line 94 of file hollow\+\_\+ball\+\_\+bound.\+hpp.
+
+
+
+References mlpack\+::math\+::\+Range\+Type$<$ T $>$\+::\+Hi().
+
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!Outer\+Radius@{Outer\+Radius}}
+\index{Outer\+Radius@{Outer\+Radius}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{Outer\+Radius()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ Elem\+Type\& {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::Outer\+Radius (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1bound_1_1HollowBallBound_a894657436a7758cdd0c2e166ee1deba2}
+
+
+Modify the outer radius of the ball. 
+
+
+
+Definition at line 96 of file hollow\+\_\+ball\+\_\+bound.\+hpp.
+
+
+
+References mlpack\+::math\+::\+Range\+Type$<$ T $>$\+::\+Hi().
+
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!Range\+Distance@{Range\+Distance}}
+\index{Range\+Distance@{Range\+Distance}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{Range\+Distance(const Vec\+Type \&other, typename std\+::enable\+\_\+if\+\_\+t$<$ Is\+Vector$<$ Vec\+Type $>$\+::value $>$ $\ast$=0) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ template$<$typename Vec\+Type $>$ {\bf math\+::\+Range\+Type}$<$Elem\+Type$>$ {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::Range\+Distance (
+\begin{DoxyParamCaption}
+\item[{const Vec\+Type \&}]{other, }
+\item[{typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ {\bf Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1bound_1_1HollowBallBound_a79b14d524c386d0db290518920f49b7f}
+
+
+Calculates minimum and maximum bound-\/to-\/point distance. 
+
+
+
+Referenced by mlpack\+::bound\+::\+Hollow\+Ball\+Bound$<$ T\+Metric\+Type, Elem\+Type $>$\+::\+Center().
+
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!Range\+Distance@{Range\+Distance}}
+\index{Range\+Distance@{Range\+Distance}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{Range\+Distance(const Hollow\+Ball\+Bound \&other) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ {\bf math\+::\+Range\+Type}$<$Elem\+Type$>$ {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::Range\+Distance (
+\begin{DoxyParamCaption}
+\item[{const {\bf Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$ \&}]{other}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1bound_1_1HollowBallBound_a2299472032804e4e55ddcf3daf592738}
+
+
+Calculates minimum and maximum bound-\/to-\/bound distance. 
+
+Example\+: bound1.\+Min\+Distance\+Sq(other) for minimum distance. \index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{Serialize(\+Archive \&ar, const unsigned int version)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ template$<$typename Archive $>$ void {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const unsigned int}]{version}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1bound_1_1HollowBallBound_a11f548d2cb30d80faba1e83de46c0b1b}
+
+
+Serialize the bound. 
+
+
+
+Referenced by mlpack\+::bound\+::\+Hollow\+Ball\+Bound$<$ T\+Metric\+Type, Elem\+Type $>$\+::\+Metric().
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!center@{center}}
+\index{center@{center}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{center}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ arma\+::\+Col$<$Elem\+Type$>$ {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::center\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1bound_1_1HollowBallBound_a04bd3c4f55017f8ad0531e336b5d075c}
+
+
+The center of the ball bound. 
+
+
+
+Definition at line 43 of file hollow\+\_\+ball\+\_\+bound.\+hpp.
+
+
+
+Referenced by mlpack\+::bound\+::\+Hollow\+Ball\+Bound$<$ T\+Metric\+Type, Elem\+Type $>$\+::\+Center().
+
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!hollow\+Center@{hollow\+Center}}
+\index{hollow\+Center@{hollow\+Center}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{hollow\+Center}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ arma\+::\+Col$<$Elem\+Type$>$ {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::hollow\+Center\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1bound_1_1HollowBallBound_a6f259bc1f41b79668e8afac35c6de485}
+
+
+The center of the hollow. 
+
+
+
+Definition at line 45 of file hollow\+\_\+ball\+\_\+bound.\+hpp.
+
+
+
+Referenced by mlpack\+::bound\+::\+Hollow\+Ball\+Bound$<$ T\+Metric\+Type, Elem\+Type $>$\+::\+Hollow\+Center().
+
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!metric@{metric}}
+\index{metric@{metric}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{metric}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ {\bf Metric\+Type}$\ast$ {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::metric\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1bound_1_1HollowBallBound_a6d226ee4dc714e8d10633868cfa859fb}
+
+
+The metric used in this bound. 
+
+
+
+Definition at line 47 of file hollow\+\_\+ball\+\_\+bound.\+hpp.
+
+
+
+Referenced by mlpack\+::bound\+::\+Hollow\+Ball\+Bound$<$ T\+Metric\+Type, Elem\+Type $>$\+::\+Metric().
+
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!owns\+Metric@{owns\+Metric}}
+\index{owns\+Metric@{owns\+Metric}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{owns\+Metric}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ bool {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::owns\+Metric\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1bound_1_1HollowBallBound_a608cd9362103a0255270bf71fefae578}
+
+
+To know whether this object allocated memory to the metric member variable. 
+
+This will be true except in the copy constructor and the overloaded assignment operator. We need this to know whether we should delete the metric member variable in the destructor. 
+
+Definition at line 55 of file hollow\+\_\+ball\+\_\+bound.\+hpp.
+
+\index{mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}!radii@{radii}}
+\index{radii@{radii}!mlpack\+::bound\+::\+Hollow\+Ball\+Bound@{mlpack\+::bound\+::\+Hollow\+Ball\+Bound}}
+\subsubsection[{radii}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T\+Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Elem\+Type = double$>$ {\bf math\+::\+Range\+Type}$<$Elem\+Type$>$ {\bf mlpack\+::bound\+::\+Hollow\+Ball\+Bound}$<$ T\+Metric\+Type, Elem\+Type $>$\+::radii\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1bound_1_1HollowBallBound_a1a4621b24dd74a466e0b619d0cb05a21}
+
+
+The inner and the outer radii of the bound. 
+
+
+
+Definition at line 41 of file hollow\+\_\+ball\+\_\+bound.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/tree/{\bf hollow\+\_\+ball\+\_\+bound.\+hpp}\end{DoxyCompactItemize}

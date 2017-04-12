@@ -1,0 +1,96 @@
+\section{mlpack\+:\+:optimization\+:\+:test\+:\+:Rosenbrock\+Function Class Reference}
+\label{classmlpack_1_1optimization_1_1test_1_1RosenbrockFunction}\index{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Function@{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Function}}
+
+
+The Rosenbrock function, defined by f(x) = f1(x) + f2(x) f1(x) = 100 (x2 -\/ x1$^\wedge$2)$^\wedge$2 f2(x) = (1 -\/ x1)$^\wedge$2 x\+\_\+0 = [-\/1.\+2, 1].  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Rosenbrock\+Function} ()
+\item 
+double {\bf Evaluate} (const arma\+::mat \&coordinates)
+\item 
+const arma\+::mat \& {\bf Get\+Initial\+Point} () const 
+\item 
+void {\bf Gradient} (const arma\+::mat \&coordinates, arma\+::mat \&gradient)
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+arma\+::mat {\bf initial\+Point}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The Rosenbrock function, defined by f(x) = f1(x) + f2(x) f1(x) = 100 (x2 -\/ x1$^\wedge$2)$^\wedge$2 f2(x) = (1 -\/ x1)$^\wedge$2 x\+\_\+0 = [-\/1.\+2, 1]. 
+
+This should optimize to f(x) = 0, at x = [1, 1].
+
+\char`\"{}\+An automatic method for finding the greatest or least value of a function.\char`\"{} H.\+H. Rosenbrock. 1960. Comput. J. 3., 175-\/184. 
+
+Definition at line 53 of file test\+\_\+functions.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Function@{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Function}!Rosenbrock\+Function@{Rosenbrock\+Function}}
+\index{Rosenbrock\+Function@{Rosenbrock\+Function}!mlpack\+::optimization\+::test\+::\+Rosenbrock\+Function@{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Function}}
+\subsubsection[{Rosenbrock\+Function()}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::optimization\+::test\+::\+Rosenbrock\+Function\+::\+Rosenbrock\+Function (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1optimization_1_1test_1_1RosenbrockFunction_a21421adbec2194aa3b37bc639e7c32a0}
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Function@{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Function}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!mlpack\+::optimization\+::test\+::\+Rosenbrock\+Function@{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Function}}
+\subsubsection[{Evaluate(const arma\+::mat \&coordinates)}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::optimization\+::test\+::\+Rosenbrock\+Function\+::\+Evaluate (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{coordinates}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1optimization_1_1test_1_1RosenbrockFunction_aee21ab64897b7f64a85117f1bb7af599}
+
+
+Referenced by mlpack\+::optimization\+::test\+::\+Generalized\+Rosenbrock\+Function\+::\+Num\+Functions().
+
+\index{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Function@{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Function}!Get\+Initial\+Point@{Get\+Initial\+Point}}
+\index{Get\+Initial\+Point@{Get\+Initial\+Point}!mlpack\+::optimization\+::test\+::\+Rosenbrock\+Function@{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Function}}
+\subsubsection[{Get\+Initial\+Point() const }]{\setlength{\rightskip}{0pt plus 5cm}const arma\+::mat\& mlpack\+::optimization\+::test\+::\+Rosenbrock\+Function\+::\+Get\+Initial\+Point (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1optimization_1_1test_1_1RosenbrockFunction_a772b848654824123f1b1d4518d4917d5}
+
+
+Referenced by mlpack\+::optimization\+::test\+::\+Generalized\+Rosenbrock\+Function\+::\+Num\+Functions().
+
+\index{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Function@{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Function}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::optimization\+::test\+::\+Rosenbrock\+Function@{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Function}}
+\subsubsection[{Gradient(const arma\+::mat \&coordinates, arma\+::mat \&gradient)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::optimization\+::test\+::\+Rosenbrock\+Function\+::\+Gradient (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{coordinates, }
+\item[{arma\+::mat \&}]{gradient}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1optimization_1_1test_1_1RosenbrockFunction_ade741d0d56dafe11dcfa27a048dc6a14}
+
+
+Referenced by mlpack\+::optimization\+::test\+::\+Generalized\+Rosenbrock\+Function\+::\+Num\+Functions().
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Function@{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Function}!initial\+Point@{initial\+Point}}
+\index{initial\+Point@{initial\+Point}!mlpack\+::optimization\+::test\+::\+Rosenbrock\+Function@{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Function}}
+\subsubsection[{initial\+Point}]{\setlength{\rightskip}{0pt plus 5cm}arma\+::mat mlpack\+::optimization\+::test\+::\+Rosenbrock\+Function\+::initial\+Point\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1optimization_1_1test_1_1RosenbrockFunction_ad5407e827d58982e33ff4eb85ac86a89}
+
+
+Definition at line 64 of file test\+\_\+functions.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/optimizers/lbfgs/{\bf test\+\_\+functions.\+hpp}\end{DoxyCompactItemize}

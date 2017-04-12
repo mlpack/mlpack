@@ -1,0 +1,157 @@
+.TH "mlpack::amf::MaxIterationTermination" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::amf::MaxIterationTermination \- This termination policy only terminates when the maximum number of iterations has been reached\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBMaxIterationTermination\fP (const size_t \fBmaxIterations\fP)"
+.br
+.RI "\fIConstruct the termination policy with the given number of iterations allowed (default 1000)\&. \fP"
+.ti -1c
+.RI "size_t \fBIndex\fP ()"
+.br
+.RI "\fIReturn something similar to the residue, which in this case is just the number of iterations left, since we don't have access to anything else\&. \fP"
+.ti -1c
+.RI "template<typename MatType > void \fBInitialize\fP (const MatType &)"
+.br
+.RI "\fIInitialize for the given matrix V (there is nothing to do)\&. \fP"
+.ti -1c
+.RI "bool \fBIsConverged\fP (const arma::mat &, const arma::mat &)"
+.br
+.RI "\fICheck if convergence has occurred\&. \fP"
+.ti -1c
+.RI "size_t \fBIteration\fP () const "
+.br
+.RI "\fIGet the current iteration\&. \fP"
+.ti -1c
+.RI "size_t & \fBIteration\fP ()"
+.br
+.RI "\fIModify the current iteration\&. \fP"
+.ti -1c
+.RI "size_t \fBMaxIterations\fP () const "
+.br
+.RI "\fIGet the maximum number of iterations\&. \fP"
+.ti -1c
+.RI "size_t & \fBMaxIterations\fP ()"
+.br
+.RI "\fIModify the maximum number of iterations\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "size_t \fBiteration\fP"
+.br
+.RI "\fIThe number of the current iteration\&. \fP"
+.ti -1c
+.RI "size_t \fBmaxIterations\fP"
+.br
+.RI "\fIThe maximum number of allowed iterations\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+This termination policy only terminates when the maximum number of iterations has been reached\&. 
+.PP
+Definition at line 23 of file max_iteration_termination\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::amf::MaxIterationTermination::MaxIterationTermination (const size_t maxIterations)\fC [inline]\fP"
+
+.PP
+Construct the termination policy with the given number of iterations allowed (default 1000)\&. If maxIterations is 0, then termination will never occur\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fImaxIterations\fP Maximum number of allowed iterations\&. 
+.RE
+.PP
+
+.PP
+Definition at line 33 of file max_iteration_termination\&.hpp\&.
+.PP
+References mlpack::Log::Warn\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "size_t mlpack::amf::MaxIterationTermination::Index ()\fC [inline]\fP"
+
+.PP
+Return something similar to the residue, which in this case is just the number of iterations left, since we don't have access to anything else\&. 
+.PP
+Definition at line 60 of file max_iteration_termination\&.hpp\&.
+.PP
+References iteration, and maxIterations\&.
+.SS "template<typename MatType > void mlpack::amf::MaxIterationTermination::Initialize (const MatType &)\fC [inline]\fP"
+
+.PP
+Initialize for the given matrix V (there is nothing to do)\&. 
+.PP
+Definition at line 47 of file max_iteration_termination\&.hpp\&.
+.SS "bool mlpack::amf::MaxIterationTermination::IsConverged (const arma::mat &, const arma::mat &)\fC [inline]\fP"
+
+.PP
+Check if convergence has occurred\&. 
+.PP
+Definition at line 52 of file max_iteration_termination\&.hpp\&.
+.PP
+References iteration, and maxIterations\&.
+.SS "size_t mlpack::amf::MaxIterationTermination::Iteration () const\fC [inline]\fP"
+
+.PP
+Get the current iteration\&. 
+.PP
+Definition at line 66 of file max_iteration_termination\&.hpp\&.
+.PP
+References iteration\&.
+.SS "size_t& mlpack::amf::MaxIterationTermination::Iteration ()\fC [inline]\fP"
+
+.PP
+Modify the current iteration\&. 
+.PP
+Definition at line 68 of file max_iteration_termination\&.hpp\&.
+.PP
+References iteration\&.
+.SS "size_t mlpack::amf::MaxIterationTermination::MaxIterations () const\fC [inline]\fP"
+
+.PP
+Get the maximum number of iterations\&. 
+.PP
+Definition at line 71 of file max_iteration_termination\&.hpp\&.
+.PP
+References maxIterations\&.
+.SS "size_t& mlpack::amf::MaxIterationTermination::MaxIterations ()\fC [inline]\fP"
+
+.PP
+Modify the maximum number of iterations\&. 
+.PP
+Definition at line 73 of file max_iteration_termination\&.hpp\&.
+.PP
+References maxIterations\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "size_t mlpack::amf::MaxIterationTermination::iteration\fC [private]\fP"
+
+.PP
+The number of the current iteration\&. 
+.PP
+Definition at line 79 of file max_iteration_termination\&.hpp\&.
+.PP
+Referenced by Index(), IsConverged(), and Iteration()\&.
+.SS "size_t mlpack::amf::MaxIterationTermination::maxIterations\fC [private]\fP"
+
+.PP
+The maximum number of allowed iterations\&. 
+.PP
+Definition at line 77 of file max_iteration_termination\&.hpp\&.
+.PP
+Referenced by Index(), IsConverged(), and MaxIterations()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,128 @@
+.TH "mlpack::optimization::LovaszThetaSDP" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::optimization::LovaszThetaSDP \- This function is the Lovasz-Theta semidefinite program, as implemented in the following paper:  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBLovaszThetaSDP\fP ()"
+.br
+.ti -1c
+.RI "\fBLovaszThetaSDP\fP (const arma::mat &\fBedges\fP)"
+.br
+.RI "\fIInitialize the Lovasz-Theta \fBSDP\fP with the given set of edges\&. \fP"
+.ti -1c
+.RI "const arma::mat & \fBEdges\fP () const "
+.br
+.ti -1c
+.RI "arma::mat & \fBEdges\fP ()"
+.br
+.ti -1c
+.RI "double \fBEvaluate\fP (const arma::mat &coordinates)"
+.br
+.ti -1c
+.RI "double \fBEvaluateConstraint\fP (const size_t index, const arma::mat &coordinates)"
+.br
+.ti -1c
+.RI "const arma::mat & \fBGetInitialPoint\fP ()"
+.br
+.ti -1c
+.RI "void \fBGradient\fP (const arma::mat &coordinates, arma::mat &gradient)"
+.br
+.ti -1c
+.RI "void \fBGradientConstraint\fP (const size_t index, const arma::mat &coordinates, arma::mat &gradient)"
+.br
+.ti -1c
+.RI "size_t \fBNumConstraints\fP () const "
+.br
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "arma::mat \fBedges\fP"
+.br
+.ti -1c
+.RI "arma::mat \fBinitialPoint\fP"
+.br
+.ti -1c
+.RI "size_t \fBvertices\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+This function is the Lovasz-Theta semidefinite program, as implemented in the following paper: 
+
+S\&. Burer, R\&. Monteiro 'A nonlinear programming algorithm for solving semidefinite programs via
+low-rank factorization\&.' Journal of Mathematical Programming, 2004
+.PP
+Given a simple, undirected graph G = (V, E), the Lovasz-Theta \fBSDP\fP is defined by:
+.PP
+min_X{Tr(-(e e^T)^T X) : Tr(X) = 1, X_ij = 0 for all (i, j) in E, X >= 0}
+.PP
+where e is the vector of all ones and X has dimension |V| x |V|\&.
+.PP
+In the Monteiro-Burer formulation, we take X = R * R^T, where R is the coordinates given to the \fBEvaluate()\fP, \fBGradient()\fP, \fBEvaluateConstraint()\fP, and \fBGradientConstraint()\fP functions\&. 
+.PP
+Definition at line 103 of file aug_lagrangian_test_functions\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::optimization::LovaszThetaSDP::LovaszThetaSDP ()"
+
+.SS "mlpack::optimization::LovaszThetaSDP::LovaszThetaSDP (const arma::mat & edges)"
+
+.PP
+Initialize the Lovasz-Theta \fBSDP\fP with the given set of edges\&. The edge matrix should consist of rows of two dimensions, where dimension 0 is the first vertex of the edge and dimension 1 is the second edge (or vice versa, as it doesn't make a difference)\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIedges\fP Matrix of edges\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "const arma::mat& mlpack::optimization::LovaszThetaSDP::Edges () const\fC [inline]\fP"
+
+.PP
+Definition at line 130 of file aug_lagrangian_test_functions\&.hpp\&.
+.SS "arma::mat& mlpack::optimization::LovaszThetaSDP::Edges ()\fC [inline]\fP"
+
+.PP
+Definition at line 131 of file aug_lagrangian_test_functions\&.hpp\&.
+.SS "double mlpack::optimization::LovaszThetaSDP::Evaluate (const arma::mat & coordinates)"
+
+.SS "double mlpack::optimization::LovaszThetaSDP::EvaluateConstraint (const size_t index, const arma::mat & coordinates)"
+
+.SS "const arma::mat& mlpack::optimization::LovaszThetaSDP::GetInitialPoint ()"
+
+.SS "void mlpack::optimization::LovaszThetaSDP::Gradient (const arma::mat & coordinates, arma::mat & gradient)"
+
+.SS "void mlpack::optimization::LovaszThetaSDP::GradientConstraint (const size_t index, const arma::mat & coordinates, arma::mat & gradient)"
+
+.SS "size_t mlpack::optimization::LovaszThetaSDP::NumConstraints () const"
+
+.SH "Member Data Documentation"
+.PP 
+.SS "arma::mat mlpack::optimization::LovaszThetaSDP::edges\fC [private]\fP"
+
+.PP
+Definition at line 134 of file aug_lagrangian_test_functions\&.hpp\&.
+.SS "arma::mat mlpack::optimization::LovaszThetaSDP::initialPoint\fC [private]\fP"
+
+.PP
+Definition at line 137 of file aug_lagrangian_test_functions\&.hpp\&.
+.SS "size_t mlpack::optimization::LovaszThetaSDP::vertices\fC [private]\fP"
+
+.PP
+Definition at line 135 of file aug_lagrangian_test_functions\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

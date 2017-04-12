@@ -1,0 +1,14 @@
+<map id="src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" name="src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp">
+<area shape="rect" id="node2" href="$rectangle__tree_2dual__tree__traverser_8hpp.html" title="src/mlpack/core/tree\l/rectangle_tree/dual\l_tree_traverser.hpp" alt="" coords="508,109,649,165"/>
+<area shape="rect" id="node3" href="$rectangle__tree_8hpp.html" title="src/mlpack/core/tree\l/rectangle_tree.hpp" alt="" coords="671,213,812,255"/>
+<area shape="rect" id="node12" href="$rectangle__tree_2single__tree__traverser_8hpp.html" title="src/mlpack/core/tree\l/rectangle_tree/single\l_tree_traverser.hpp" alt="" coords="724,109,871,165"/>
+<area shape="rect" id="node13" href="$core_2tree_2rectangle__tree_2typedef_8hpp.html" title="src/mlpack/core/tree\l/rectangle_tree/typedef.hpp" alt="" coords="895,117,1075,158"/>
+<area shape="rect" id="node4" href="$neighbor__search_8hpp.html" title="src/mlpack/methods\l/neighbor_search/neighbor\l_search.hpp" alt="" coords="431,303,606,359"/>
+<area shape="rect" id="node9" href="$ns__model_8hpp.html" title="src/mlpack/methods\l/neighbor_search/ns\l_model.hpp" alt="" coords="639,407,779,463"/>
+<area shape="rect" id="node10" href="$rs__model_8hpp.html" title="src/mlpack/methods\l/range_search/rs_model.hpp" alt="" coords="713,310,900,351"/>
+<area shape="rect" id="node11" href="$ra__model_8hpp.html" title="src/mlpack/methods\l/rann/ra_model.hpp" alt="" coords="925,310,1065,351"/>
+<area shape="rect" id="node5" href="$cf_8hpp.html" title="src/mlpack/methods\l/cf/cf.hpp" alt="" coords="27,414,167,455"/>
+<area shape="rect" id="node7" href="$dual__tree__kmeans_8hpp.html" title="src/mlpack/methods\l/kmeans/dual_tree_kmeans.hpp" alt="" coords="191,414,398,455"/>
+<area shape="rect" id="node8" href="$methods_2neighbor__search_2typedef_8hpp.html" title="src/mlpack/methods\l/neighbor_search/typedef.hpp" alt="" coords="422,414,615,455"/>
+<area shape="rect" id="node6" href="$regularized__svd_8hpp.html" title="src/mlpack/methods\l/regularized_svd/regularized\l_svd.hpp" alt="" coords="5,511,189,567"/>
+</map>

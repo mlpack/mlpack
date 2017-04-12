@@ -1,0 +1,90 @@
+\section{mlpack\+:\+:tree\+:\+:R\+Star\+Tree\+Split Class Reference}
+\label{classmlpack_1_1tree_1_1RStarTreeSplit}\index{mlpack\+::tree\+::\+R\+Star\+Tree\+Split@{mlpack\+::tree\+::\+R\+Star\+Tree\+Split}}
+
+
+A Rectangle Tree has new points inserted at the bottom.  
+
+
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static void {\bf Split\+Leaf\+Node} (Tree\+Type $\ast$tree, std\+::vector$<$ bool $>$ \&relevels)
+\begin{DoxyCompactList}\small\item\em Split a leaf node using the algorithm described in "The R$\ast$-\/tree\+: An Efficient and Robust Access method for Points and Rectangles. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static bool {\bf Split\+Non\+Leaf\+Node} (Tree\+Type $\ast$tree, std\+::vector$<$ bool $>$ \&relevels)
+\begin{DoxyCompactList}\small\item\em Split a non-\/leaf node using the \char`\"{}default\char`\"{} algorithm. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static void {\bf Insert\+Node\+Into\+Tree} (Tree\+Type $\ast$dest\+Tree, Tree\+Type $\ast$src\+Node)
+\begin{DoxyCompactList}\small\item\em Insert a node into another node. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Elem\+Type $>$ }\\static bool {\bf Pair\+Comp} (const std\+::pair$<$ Elem\+Type, size\+\_\+t $>$ \&p1, const std\+::pair$<$ Elem\+Type, size\+\_\+t $>$ \&p2)
+\begin{DoxyCompactList}\small\item\em Comparator for sorting with std\+::pair. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A Rectangle Tree has new points inserted at the bottom. 
+
+When these nodes overflow, we split them, moving up the tree and splitting nodes as necessary. 
+
+Definition at line 26 of file r\+\_\+star\+\_\+tree\+\_\+split.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::tree\+::\+R\+Star\+Tree\+Split@{mlpack\+::tree\+::\+R\+Star\+Tree\+Split}!Insert\+Node\+Into\+Tree@{Insert\+Node\+Into\+Tree}}
+\index{Insert\+Node\+Into\+Tree@{Insert\+Node\+Into\+Tree}!mlpack\+::tree\+::\+R\+Star\+Tree\+Split@{mlpack\+::tree\+::\+R\+Star\+Tree\+Split}}
+\subsubsection[{Insert\+Node\+Into\+Tree(\+Tree\+Type $\ast$dest\+Tree, Tree\+Type $\ast$src\+Node)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Tree\+Type $>$ static void mlpack\+::tree\+::\+R\+Star\+Tree\+Split\+::\+Insert\+Node\+Into\+Tree (
+\begin{DoxyParamCaption}
+\item[{Tree\+Type $\ast$}]{dest\+Tree, }
+\item[{Tree\+Type $\ast$}]{src\+Node}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}\label{classmlpack_1_1tree_1_1RStarTreeSplit_ad9f98dccbc1294f97bacbba70837f6c3}
+
+
+Insert a node into another node. 
+
+\index{mlpack\+::tree\+::\+R\+Star\+Tree\+Split@{mlpack\+::tree\+::\+R\+Star\+Tree\+Split}!Pair\+Comp@{Pair\+Comp}}
+\index{Pair\+Comp@{Pair\+Comp}!mlpack\+::tree\+::\+R\+Star\+Tree\+Split@{mlpack\+::tree\+::\+R\+Star\+Tree\+Split}}
+\subsubsection[{Pair\+Comp(const std\+::pair$<$ Elem\+Type, size\+\_\+t $>$ \&p1, const std\+::pair$<$ Elem\+Type, size\+\_\+t $>$ \&p2)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Elem\+Type $>$ static bool mlpack\+::tree\+::\+R\+Star\+Tree\+Split\+::\+Pair\+Comp (
+\begin{DoxyParamCaption}
+\item[{const std\+::pair$<$ Elem\+Type, size\+\_\+t $>$ \&}]{p1, }
+\item[{const std\+::pair$<$ Elem\+Type, size\+\_\+t $>$ \&}]{p2}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}, {\ttfamily [private]}}\label{classmlpack_1_1tree_1_1RStarTreeSplit_a51c9e803d9e110afa8d3b22095ace8da}
+
+
+Comparator for sorting with std\+::pair. 
+
+This comparator works a little bit faster then the default comparator. 
+
+Definition at line 56 of file r\+\_\+star\+\_\+tree\+\_\+split.\+hpp.
+
+\index{mlpack\+::tree\+::\+R\+Star\+Tree\+Split@{mlpack\+::tree\+::\+R\+Star\+Tree\+Split}!Split\+Leaf\+Node@{Split\+Leaf\+Node}}
+\index{Split\+Leaf\+Node@{Split\+Leaf\+Node}!mlpack\+::tree\+::\+R\+Star\+Tree\+Split@{mlpack\+::tree\+::\+R\+Star\+Tree\+Split}}
+\subsubsection[{Split\+Leaf\+Node(\+Tree\+Type $\ast$tree, std\+::vector$<$ bool $>$ \&relevels)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Tree\+Type $>$ static void mlpack\+::tree\+::\+R\+Star\+Tree\+Split\+::\+Split\+Leaf\+Node (
+\begin{DoxyParamCaption}
+\item[{Tree\+Type $\ast$}]{tree, }
+\item[{std\+::vector$<$ bool $>$ \&}]{relevels}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1tree_1_1RStarTreeSplit_a9f9010623e3c4b309f804bdbfc781a29}
+
+
+Split a leaf node using the algorithm described in "The R$\ast$-\/tree\+: An Efficient and Robust Access method for Points and Rectangles. 
+
+" If necessary, this split will propagate upwards through the tree. \index{mlpack\+::tree\+::\+R\+Star\+Tree\+Split@{mlpack\+::tree\+::\+R\+Star\+Tree\+Split}!Split\+Non\+Leaf\+Node@{Split\+Non\+Leaf\+Node}}
+\index{Split\+Non\+Leaf\+Node@{Split\+Non\+Leaf\+Node}!mlpack\+::tree\+::\+R\+Star\+Tree\+Split@{mlpack\+::tree\+::\+R\+Star\+Tree\+Split}}
+\subsubsection[{Split\+Non\+Leaf\+Node(\+Tree\+Type $\ast$tree, std\+::vector$<$ bool $>$ \&relevels)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Tree\+Type $>$ static bool mlpack\+::tree\+::\+R\+Star\+Tree\+Split\+::\+Split\+Non\+Leaf\+Node (
+\begin{DoxyParamCaption}
+\item[{Tree\+Type $\ast$}]{tree, }
+\item[{std\+::vector$<$ bool $>$ \&}]{relevels}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1tree_1_1RStarTreeSplit_a787e67c56aa32f98238fd87e1e7819a3}
+
+
+Split a non-\/leaf node using the \char`\"{}default\char`\"{} algorithm. 
+
+If this is a root node, the tree increases in depth. 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/tree/rectangle\+\_\+tree/{\bf r\+\_\+star\+\_\+tree\+\_\+split.\+hpp}\end{DoxyCompactItemize}

@@ -1,0 +1,50 @@
+\section{src/mlpack/methods/hmm/hmm\+\_\+util.hpp File Reference}
+\label{hmm__util_8hpp}\index{src/mlpack/methods/hmm/hmm\+\_\+util.\+hpp@{src/mlpack/methods/hmm/hmm\+\_\+util.\+hpp}}
+Include dependency graph for hmm\+\_\+util.\+hpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{hmm__util_8hpp__incl}
+\end{center}
+\end{figure}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ {\bf mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ {\bf mlpack\+::hmm}
+\begin{DoxyCompactList}\small\item\em Hidden Markov Models. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum {\bf mlpack\+::hmm\+::\+H\+M\+M\+Type} \+: char \{ \\*
+{\bf mlpack\+::hmm\+::\+Discrete\+H\+MM} = 0, 
+\\*
+{\bf mlpack\+::hmm\+::\+Gaussian\+H\+MM}, 
+\\*
+{\bf mlpack\+::hmm\+::\+Gaussian\+Mixture\+Model\+H\+MM}, 
+\\*
+{\bf mlpack\+::hmm\+::\+Discrete\+H\+MM} = 0, 
+\\*
+{\bf mlpack\+::hmm\+::\+Gaussian\+H\+MM}, 
+\\*
+{\bf mlpack\+::hmm\+::\+Gaussian\+Mixture\+Model\+H\+MM}
+ \}\begin{DoxyCompactList}\small\item\em H\+M\+M\+Type, to be stored on disk. \end{DoxyCompactList}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Action\+Type , typename Extra\+Info\+Type  = void$>$ }\\void {\bf mlpack\+::hmm\+::\+Load\+H\+M\+M\+And\+Perform\+Action} (const {\bf std\+::string} \&model\+File, Extra\+Info\+Type $\ast$x=N\+U\+LL)
+\begin{DoxyCompactList}\small\item\em Action\+Type should implement static void Apply(\+H\+M\+M\+Type\&). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename H\+M\+M\+Type $>$ }\\void {\bf mlpack\+::hmm\+::\+Save\+H\+MM} (H\+M\+M\+Type \&hmm, const {\bf std\+::string} \&model\+File)
+\begin{DoxyCompactList}\small\item\em Save an \doxyref{H\+MM}{p.}{classmlpack_1_1hmm_1_1HMM} to a file. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Ryan Curtin
+\end{DoxyAuthor}
+Utility to read H\+MM type from file.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause B\+SD license. You should have received a copy of the 3-\/clause B\+SD license along with mlpack. If not, see {\tt http\+://www.\+opensource.\+org/licenses/\+B\+S\+D-\/3-\/\+Clause} for more information. 

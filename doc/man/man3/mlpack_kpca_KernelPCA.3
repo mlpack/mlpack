@@ -1,0 +1,209 @@
+.TH "mlpack::kpca::KernelPCA< KernelType, KernelRule >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::kpca::KernelPCA< KernelType, KernelRule > \- This class performs kernel principal components analysis (Kernel PCA), for a given kernel\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBKernelPCA\fP (const KernelType \fBkernel\fP=KernelType(), const bool \fBcenterTransformedData\fP=false)"
+.br
+.RI "\fIConstruct the \fBKernelPCA\fP object, optionally passing a kernel\&. \fP"
+.ti -1c
+.RI "void \fBApply\fP (const arma::mat &data, arma::mat &transformedData, arma::vec &eigval, arma::mat &eigvec, const size_t newDimension)"
+.br
+.RI "\fIApply Kernel Principal Components Analysis to the provided data set\&. \fP"
+.ti -1c
+.RI "void \fBApply\fP (const arma::mat &data, arma::mat &transformedData, arma::vec &eigval, arma::mat &eigvec)"
+.br
+.RI "\fIApply Kernel Principal Components Analysis to the provided data set\&. \fP"
+.ti -1c
+.RI "void \fBApply\fP (const arma::mat &data, arma::mat &transformedData, arma::vec &eigval)"
+.br
+.RI "\fIApply Kernel Principal Component Analysis to the provided data set\&. \fP"
+.ti -1c
+.RI "void \fBApply\fP (arma::mat &data, const size_t newDimension)"
+.br
+.RI "\fIApply dimensionality reduction using Kernel Principal Component Analysis to the provided data set\&. \fP"
+.ti -1c
+.RI "bool \fBCenterTransformedData\fP () const "
+.br
+.RI "\fIReturn whether or not the transformed data is centered\&. \fP"
+.ti -1c
+.RI "bool & \fBCenterTransformedData\fP ()"
+.br
+.RI "\fIReturn whether or not the transformed data is centered\&. \fP"
+.ti -1c
+.RI "const KernelType & \fBKernel\fP () const "
+.br
+.RI "\fIGet the kernel\&. \fP"
+.ti -1c
+.RI "KernelType & \fBKernel\fP ()"
+.br
+.RI "\fIModify the kernel\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "bool \fBcenterTransformedData\fP"
+.br
+.RI "\fIIf true, the data will be scaled (by standard deviation) when \fBApply()\fP is run\&. \fP"
+.ti -1c
+.RI "KernelType \fBkernel\fP"
+.br
+.RI "\fIThe instantiated kernel\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename KernelType, typename KernelRule = NaiveKernelRule<KernelType>>
+.br
+class mlpack::kpca::KernelPCA< KernelType, KernelRule >"
+This class performs kernel principal components analysis (Kernel PCA), for a given kernel\&. 
+
+This is a standard machine learning technique and is well-documented on the Internet and in standard texts\&. It is often used as a dimensionality reduction technique, and can also be useful in mapping linearly inseparable classes of points to different spaces where they are linearly separable\&.
+.PP
+The performance of the method is highly dependent on the kernel choice\&. There are numerous available kernels in the \fBmlpack::kernel\fP namespace (see files in mlpack/core/kernels/) and it is easy to write your own; see other implementations for examples\&. 
+.PP
+Definition at line 40 of file kernel_pca\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename KernelType , typename KernelRule  = NaiveKernelRule<KernelType>> \fBmlpack::kpca::KernelPCA\fP< KernelType, KernelRule >::\fBKernelPCA\fP (const KernelType kernel = \fCKernelType()\fP, const bool centerTransformedData = \fCfalse\fP)"
+
+.PP
+Construct the \fBKernelPCA\fP object, optionally passing a kernel\&. Optionally, the transformed data can be centered about the origin; to do this, pass 'true' for centerTransformedData\&. This will take slightly longer (but not much)\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIkernel\fP Kernel to be used for computation\&. 
+.br
+\fIcenterTransformedData\fP Center transformed data\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename KernelType , typename KernelRule  = NaiveKernelRule<KernelType>> void \fBmlpack::kpca::KernelPCA\fP< KernelType, KernelRule >::Apply (const arma::mat & data, arma::mat & transformedData, arma::vec & eigval, arma::mat & eigvec, const size_t newDimension)"
+
+.PP
+Apply Kernel Principal Components Analysis to the provided data set\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Data matrix\&. 
+.br
+\fItransformedData\fP Matrix to output results into\&. 
+.br
+\fIeigval\fP KPCA eigenvalues will be written to this vector\&. 
+.br
+\fIeigvec\fP KPCA eigenvectors will be written to this matrix\&. 
+.br
+\fInewDimension\fP New dimension for the dataset\&. 
+.RE
+.PP
+
+.SS "template<typename KernelType , typename KernelRule  = NaiveKernelRule<KernelType>> void \fBmlpack::kpca::KernelPCA\fP< KernelType, KernelRule >::Apply (const arma::mat & data, arma::mat & transformedData, arma::vec & eigval, arma::mat & eigvec)"
+
+.PP
+Apply Kernel Principal Components Analysis to the provided data set\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Data matrix\&. 
+.br
+\fItransformedData\fP Matrix to output results into\&. 
+.br
+\fIeigval\fP KPCA eigenvalues will be written to this vector\&. 
+.br
+\fIeigvec\fP KPCA eigenvectors will be written to this matrix\&. 
+.RE
+.PP
+
+.SS "template<typename KernelType , typename KernelRule  = NaiveKernelRule<KernelType>> void \fBmlpack::kpca::KernelPCA\fP< KernelType, KernelRule >::Apply (const arma::mat & data, arma::mat & transformedData, arma::vec & eigval)"
+
+.PP
+Apply Kernel Principal Component Analysis to the provided data set\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Data matrix\&. 
+.br
+\fItransformedData\fP Matrix to output results into\&. 
+.br
+\fIeigval\fP KPCA eigenvalues will be written to this vector\&. 
+.RE
+.PP
+
+.SS "template<typename KernelType , typename KernelRule  = NaiveKernelRule<KernelType>> void \fBmlpack::kpca::KernelPCA\fP< KernelType, KernelRule >::Apply (arma::mat & data, const size_t newDimension)"
+
+.PP
+Apply dimensionality reduction using Kernel Principal Component Analysis to the provided data set\&. The data matrix will be modified in-place\&. Note that the dimension can be larger than the existing dimension because KPCA works on the kernel matrix, not the covariance matrix\&. This means the new dimension can be as large as the number of points (columns) in the dataset\&. Note that if you specify newDimension to be larger than the current dimension of the data (the number of rows), then it's not really 'dimensionality reduction'\&.\&.\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Data matrix\&. 
+.br
+\fInewDimension\fP New dimension for the dataset\&. 
+.RE
+.PP
+
+.SS "template<typename KernelType , typename KernelRule  = NaiveKernelRule<KernelType>> bool \fBmlpack::kpca::KernelPCA\fP< KernelType, KernelRule >::CenterTransformedData () const\fC [inline]\fP"
+
+.PP
+Return whether or not the transformed data is centered\&. 
+.PP
+Definition at line 115 of file kernel_pca\&.hpp\&.
+.PP
+References mlpack::kpca::KernelPCA< KernelType, KernelRule >::centerTransformedData\&.
+.SS "template<typename KernelType , typename KernelRule  = NaiveKernelRule<KernelType>> bool& \fBmlpack::kpca::KernelPCA\fP< KernelType, KernelRule >::CenterTransformedData ()\fC [inline]\fP"
+
+.PP
+Return whether or not the transformed data is centered\&. 
+.PP
+Definition at line 117 of file kernel_pca\&.hpp\&.
+.PP
+References mlpack::kpca::KernelPCA< KernelType, KernelRule >::centerTransformedData\&.
+.SS "template<typename KernelType , typename KernelRule  = NaiveKernelRule<KernelType>> const KernelType& \fBmlpack::kpca::KernelPCA\fP< KernelType, KernelRule >::Kernel () const\fC [inline]\fP"
+
+.PP
+Get the kernel\&. 
+.PP
+Definition at line 110 of file kernel_pca\&.hpp\&.
+.PP
+References mlpack::kpca::KernelPCA< KernelType, KernelRule >::kernel\&.
+.SS "template<typename KernelType , typename KernelRule  = NaiveKernelRule<KernelType>> KernelType& \fBmlpack::kpca::KernelPCA\fP< KernelType, KernelRule >::Kernel ()\fC [inline]\fP"
+
+.PP
+Modify the kernel\&. 
+.PP
+Definition at line 112 of file kernel_pca\&.hpp\&.
+.PP
+References mlpack::kpca::KernelPCA< KernelType, KernelRule >::kernel\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename KernelType , typename KernelRule  = NaiveKernelRule<KernelType>> bool \fBmlpack::kpca::KernelPCA\fP< KernelType, KernelRule >::centerTransformedData\fC [private]\fP"
+
+.PP
+If true, the data will be scaled (by standard deviation) when \fBApply()\fP is run\&. 
+.PP
+Definition at line 124 of file kernel_pca\&.hpp\&.
+.PP
+Referenced by mlpack::kpca::KernelPCA< KernelType, KernelRule >::CenterTransformedData()\&.
+.SS "template<typename KernelType , typename KernelRule  = NaiveKernelRule<KernelType>> KernelType \fBmlpack::kpca::KernelPCA\fP< KernelType, KernelRule >::kernel\fC [private]\fP"
+
+.PP
+The instantiated kernel\&. 
+.PP
+Definition at line 121 of file kernel_pca\&.hpp\&.
+.PP
+Referenced by mlpack::kpca::KernelPCA< KernelType, KernelRule >::Kernel()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

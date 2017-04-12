@@ -1,0 +1,61 @@
+.TH "src/mlpack/methods/ann/layer/glimpse.hpp" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+src/mlpack/methods/ann/layer/glimpse.hpp \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBmlpack::ann::Glimpse< InputDataType, OutputDataType >\fP"
+.br
+.RI "\fIThe glimpse layer returns a retina-like representation (down-scaled cropped images) of increasing scale around a given location in a given image\&. \fP"
+.ti -1c
+.RI "class \fBmlpack::ann::MeanPoolingRule\fP"
+.br
+.in -1c
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "\fILinear algebra utility functions, generally performed on matrices or vectors\&. \fP"
+.ti -1c
+.RI " \fBmlpack::ann\fP"
+.br
+.RI "\fIArtificial Neural Network\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Marcus Edel
+.RE
+.PP
+Definition of the GlimpseLayer class, which takes an input image and a location to extract a retina-like representation of the input image at different increasing scales\&.
+.PP
+For more information, see the following\&.
+.PP
+.PP
+.nf
+@article{CoRR2014,
+  author  = {Volodymyr Mnih, Nicolas Heess, Alex Graves, Koray Kavukcuoglu},
+  title   = {Recurrent Models of Visual Attention},
+  journal = {CoRR},
+  volume  = {abs/1406\&.6247},
+  year    = {2014},
+}
+.fi
+.PP
+ 
+.PP
+Definition in file \fBglimpse\&.hpp\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

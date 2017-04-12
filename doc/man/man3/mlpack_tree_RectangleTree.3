@@ -1,0 +1,1297 @@
+.TH "mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType > \- A rectangle type tree tree, such as an R-tree or X-tree\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBDualTreeTraverser\fP"
+.br
+.RI "\fIA dual tree traverser for rectangle type trees\&. \fP"
+.ti -1c
+.RI "class \fBSingleTreeTraverser\fP"
+.br
+.RI "\fIA single traverser for rectangle type trees\&. \fP"
+.in -1c
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "typedef AuxiliaryInformationType< \fBRectangleTree\fP > \fBAuxiliaryInformation\fP"
+.br
+.RI "\fIThe auxiliary information type held by the tree\&. \fP"
+.ti -1c
+.RI "typedef MatType::elem_type \fBElemType\fP"
+.br
+.RI "\fIThe element type held by the matrix type\&. \fP"
+.ti -1c
+.RI "typedef MatType \fBMat\fP"
+.br
+.RI "\fISo other classes can use TreeType::Mat\&. \fP"
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBRectangleTree\fP (const MatType &data, const size_t \fBmaxLeafSize\fP=20, const size_t \fBminLeafSize\fP=8, const size_t \fBmaxNumChildren\fP=5, const size_t \fBminNumChildren\fP=2, const size_t firstDataIndex=0)"
+.br
+.RI "\fIConstruct this as the root node of a rectangle type tree using the given dataset\&. \fP"
+.ti -1c
+.RI "\fBRectangleTree\fP (MatType &&data, const size_t \fBmaxLeafSize\fP=20, const size_t \fBminLeafSize\fP=8, const size_t \fBmaxNumChildren\fP=5, const size_t \fBminNumChildren\fP=2, const size_t firstDataIndex=0)"
+.br
+.RI "\fIConstruct this as the root node of a rectangle tree type using the given dataset, and taking ownership of the given dataset\&. \fP"
+.ti -1c
+.RI "\fBRectangleTree\fP (\fBRectangleTree\fP *parentNode, const size_t numMaxChildren=0)"
+.br
+.RI "\fIConstruct this as an empty node with the specified parent\&. \fP"
+.ti -1c
+.RI "\fBRectangleTree\fP (const \fBRectangleTree\fP &other, const bool deepCopy=true, \fBRectangleTree\fP *newParent=NULL)"
+.br
+.RI "\fICreate a rectangle tree by copying the other tree\&. \fP"
+.ti -1c
+.RI "\fBRectangleTree\fP (\fBRectangleTree\fP &&other)"
+.br
+.RI "\fICreate a rectangle tree by moving the other tree\&. \fP"
+.ti -1c
+.RI "template<typename Archive > \fBRectangleTree\fP (Archive &ar, const typename \fBstd::enable_if_t\fP< Archive::is_loading::value > *=0)"
+.br
+.RI "\fIConstruct the tree from a \fBboost::serialization\fP archive\&. \fP"
+.ti -1c
+.RI "\fB~RectangleTree\fP ()"
+.br
+.RI "\fIDeletes this node, deallocating the memory for the children and calling their destructors in turn\&. \fP"
+.ti -1c
+.RI "const AuxiliaryInformationType< \fBRectangleTree\fP > & \fBAuxiliaryInfo\fP () const "
+.br
+.RI "\fIReturn the auxiliary information object of this node\&. \fP"
+.ti -1c
+.RI "AuxiliaryInformationType< \fBRectangleTree\fP > & \fBAuxiliaryInfo\fP ()"
+.br
+.RI "\fIModify the split object of this node\&. \fP"
+.ti -1c
+.RI "size_t \fBBegin\fP () const "
+.br
+.RI "\fIReturn the index of the beginning point of this subset\&. \fP"
+.ti -1c
+.RI "size_t & \fBBegin\fP ()"
+.br
+.RI "\fIModify the index of the beginning point of this subset\&. \fP"
+.ti -1c
+.RI "const \fBbound::HRectBound\fP< MetricType > & \fBBound\fP () const "
+.br
+.RI "\fIReturn the bound object for this node\&. \fP"
+.ti -1c
+.RI "\fBbound::HRectBound\fP< MetricType > & \fBBound\fP ()"
+.br
+.RI "\fIModify the bound object for this node\&. \fP"
+.ti -1c
+.RI "void \fBCenter\fP (arma::vec &center)"
+.br
+.RI "\fIGet the centroid of the node and store it in the given vector\&. \fP"
+.ti -1c
+.RI "\fBRectangleTree\fP & \fBChild\fP (const size_t child) const "
+.br
+.RI "\fIGet the specified child\&. \fP"
+.ti -1c
+.RI "\fBRectangleTree\fP & \fBChild\fP (const size_t child)"
+.br
+.RI "\fIModify the specified child\&. \fP"
+.ti -1c
+.RI "void \fBCondenseTree\fP (const arma::vec &point, std::vector< bool > &relevels, const bool usePoint)"
+.br
+.RI "\fICondense the bounding rectangles for this node based on the removal of the point specified by the arma::vec&\&. \fP"
+.ti -1c
+.RI "size_t \fBCount\fP () const "
+.br
+.RI "\fIReturn the number of points in this subset\&. \fP"
+.ti -1c
+.RI "size_t & \fBCount\fP ()"
+.br
+.RI "\fIModify the number of points in this subset\&. \fP"
+.ti -1c
+.RI "const MatType & \fBDataset\fP () const "
+.br
+.RI "\fIGet the dataset which the tree is built on\&. \fP"
+.ti -1c
+.RI "MatType & \fBDataset\fP ()"
+.br
+.RI "\fIModify the dataset which the tree is built on\&. Be careful! \fP"
+.ti -1c
+.RI "bool \fBDeletePoint\fP (const size_t point)"
+.br
+.RI "\fIDeletes a point from the treeand, updates the bounding rectangle\&. \fP"
+.ti -1c
+.RI "bool \fBDeletePoint\fP (const size_t point, std::vector< bool > &relevels)"
+.br
+.RI "\fIDeletes a point from the tree, updates the bounding rectangle, tracking levels\&. \fP"
+.ti -1c
+.RI "size_t \fBDescendant\fP (const size_t index) const "
+.br
+.RI "\fIReturn the index (with reference to the dataset) of a particular descendant of this node\&. \fP"
+.ti -1c
+.RI "\fBRectangleTree\fP * \fBExactClone\fP ()"
+.br
+.RI "\fIMake an exact copy of this node, pointers and everything\&. \fP"
+.ti -1c
+.RI "const \fBRectangleTree\fP * \fBFindByBeginCount\fP (size_t \fBbegin\fP, size_t \fBcount\fP) const "
+.br
+.RI "\fIFind a node in this tree by its begin and count (const)\&. \fP"
+.ti -1c
+.RI "\fBRectangleTree\fP * \fBFindByBeginCount\fP (size_t \fBbegin\fP, size_t \fBcount\fP)"
+.br
+.RI "\fIFind a node in this tree by its begin and count\&. \fP"
+.ti -1c
+.RI "\fBElemType\fP \fBFurthestDescendantDistance\fP () const "
+.br
+.RI "\fIReturn the furthest possible descendant distance\&. \fP"
+.ti -1c
+.RI "\fBElemType\fP \fBFurthestPointDistance\fP () const "
+.br
+.RI "\fIReturn the furthest distance to a point held in this node\&. \fP"
+.ti -1c
+.RI "template<typename VecType > size_t \fBGetFurthestChild\fP (const VecType &point, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< VecType >::value > *=0)"
+.br
+.RI "\fIReturn the index of the furthest child node to the given query point\&. \fP"
+.ti -1c
+.RI "size_t \fBGetFurthestChild\fP (const \fBRectangleTree\fP &queryNode)"
+.br
+.RI "\fIReturn the index of the furthest child node to the given query node\&. \fP"
+.ti -1c
+.RI "template<typename VecType > size_t \fBGetNearestChild\fP (const VecType &point, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< VecType >::value > *=0)"
+.br
+.RI "\fIReturn the index of the nearest child node to the given query point\&. \fP"
+.ti -1c
+.RI "size_t \fBGetNearestChild\fP (const \fBRectangleTree\fP &queryNode)"
+.br
+.RI "\fIReturn the index of the nearest child node to the given query node\&. \fP"
+.ti -1c
+.RI "void \fBInsertNode\fP (\fBRectangleTree\fP *node, const size_t level, std::vector< bool > &relevels)"
+.br
+.RI "\fIInserts a node into the tree, tracking which levels have been inserted into\&. \fP"
+.ti -1c
+.RI "void \fBInsertPoint\fP (const size_t point)"
+.br
+.RI "\fIInserts a point into the tree\&. \fP"
+.ti -1c
+.RI "void \fBInsertPoint\fP (const size_t point, std::vector< bool > &relevels)"
+.br
+.RI "\fIInserts a point into the tree, tracking which levels have been inserted into\&. \fP"
+.ti -1c
+.RI "bool \fBIsLeaf\fP () const "
+.br
+.RI "\fIReturn whether or not this node is a leaf (true if it has no children)\&. \fP"
+.ti -1c
+.RI "\fBElemType\fP \fBMaxDistance\fP (const \fBRectangleTree\fP &other) const "
+.br
+.RI "\fIReturn the maximum distance to another node\&. \fP"
+.ti -1c
+.RI "template<typename VecType > \fBElemType\fP \fBMaxDistance\fP (const VecType &point, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< VecType >::value > *=0) const "
+.br
+.RI "\fIReturn the maximum distance to another point\&. \fP"
+.ti -1c
+.RI "size_t \fBMaxLeafSize\fP () const "
+.br
+.RI "\fIReturn the maximum leaf size\&. \fP"
+.ti -1c
+.RI "size_t & \fBMaxLeafSize\fP ()"
+.br
+.RI "\fIModify the maximum leaf size\&. \fP"
+.ti -1c
+.RI "size_t \fBMaxNumChildren\fP () const "
+.br
+.RI "\fIReturn the maximum number of children (in a non-leaf node)\&. \fP"
+.ti -1c
+.RI "size_t & \fBMaxNumChildren\fP ()"
+.br
+.RI "\fIModify the maximum number of children (in a non-leaf node)\&. \fP"
+.ti -1c
+.RI "MetricType \fBMetric\fP () const "
+.br
+.RI "\fIGet the metric which the tree uses\&. \fP"
+.ti -1c
+.RI "\fBElemType\fP \fBMinDistance\fP (const \fBRectangleTree\fP &other) const "
+.br
+.RI "\fIReturn the minimum distance to another node\&. \fP"
+.ti -1c
+.RI "template<typename VecType > \fBElemType\fP \fBMinDistance\fP (const VecType &point, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< VecType >::value > *=0) const "
+.br
+.RI "\fIReturn the minimum distance to another point\&. \fP"
+.ti -1c
+.RI "\fBElemType\fP \fBMinimumBoundDistance\fP () const "
+.br
+.RI "\fIReturn the minimum distance from the center to any edge of the bound\&. \fP"
+.ti -1c
+.RI "size_t \fBMinLeafSize\fP () const "
+.br
+.RI "\fIReturn the minimum leaf size\&. \fP"
+.ti -1c
+.RI "size_t & \fBMinLeafSize\fP ()"
+.br
+.RI "\fIModify the minimum leaf size\&. \fP"
+.ti -1c
+.RI "size_t \fBMinNumChildren\fP () const "
+.br
+.RI "\fIReturn the minimum number of children (in a non-leaf node)\&. \fP"
+.ti -1c
+.RI "size_t & \fBMinNumChildren\fP ()"
+.br
+.RI "\fIModify the minimum number of children (in a non-leaf node)\&. \fP"
+.ti -1c
+.RI "void \fBNullifyData\fP ()"
+.br
+.RI "\fINullify the auxiliary information\&. \fP"
+.ti -1c
+.RI "size_t \fBNumChildren\fP () const "
+.br
+.RI "\fIReturn the number of child nodes\&. (One level beneath this one only\&.) \fP"
+.ti -1c
+.RI "size_t & \fBNumChildren\fP ()"
+.br
+.RI "\fIModify the number of child nodes\&. Be careful\&. \fP"
+.ti -1c
+.RI "size_t \fBNumDescendants\fP () const "
+.br
+.RI "\fIReturn the number of descendants of this node\&. \fP"
+.ti -1c
+.RI "size_t \fBNumPoints\fP () const "
+.br
+.RI "\fIReturn the number of points in this node (returns 0 if this node is not a leaf)\&. \fP"
+.ti -1c
+.RI "\fBRectangleTree\fP * \fBParent\fP () const "
+.br
+.RI "\fIGets the parent of this node\&. \fP"
+.ti -1c
+.RI "\fBRectangleTree\fP *& \fBParent\fP ()"
+.br
+.RI "\fIModify the parent of this node\&. \fP"
+.ti -1c
+.RI "\fBElemType\fP \fBParentDistance\fP () const "
+.br
+.RI "\fIReturn the distance from the center of this node to the center of the parent node\&. \fP"
+.ti -1c
+.RI "\fBElemType\fP & \fBParentDistance\fP ()"
+.br
+.RI "\fIModify the distance from the center of this node to the center of the parent node\&. \fP"
+.ti -1c
+.RI "size_t \fBPoint\fP (const size_t index) const "
+.br
+.RI "\fIReturn the index (with reference to the dataset) of a particular point in this node\&. \fP"
+.ti -1c
+.RI "size_t & \fBPoint\fP (const size_t index)"
+.br
+.RI "\fIModify the index of a particular point in this node\&. \fP"
+.ti -1c
+.RI "\fBmath::RangeType\fP< \fBElemType\fP > \fBRangeDistance\fP (const \fBRectangleTree\fP &other) const "
+.br
+.RI "\fIReturn the minimum and maximum distance to another node\&. \fP"
+.ti -1c
+.RI "template<typename VecType > \fBmath::RangeType\fP< \fBElemType\fP > \fBRangeDistance\fP (const VecType &point, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< VecType >::value > *=0) const "
+.br
+.RI "\fIReturn the minimum and maximum distance to another point\&. \fP"
+.ti -1c
+.RI "bool \fBRemoveNode\fP (const \fBRectangleTree\fP *node, std::vector< bool > &relevels)"
+.br
+.RI "\fIRemoves a node from the tree\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int)"
+.br
+.RI "\fISerialize the tree\&. \fP"
+.ti -1c
+.RI "bool \fBShrinkBoundForBound\fP (const \fBbound::HRectBound\fP< MetricType > &changedBound)"
+.br
+.RI "\fIShrink the bound object of this node for the removal of a child node\&. \fP"
+.ti -1c
+.RI "bool \fBShrinkBoundForPoint\fP (const arma::vec &point)"
+.br
+.RI "\fIShrink the bound object of this node for the removal of a point\&. \fP"
+.ti -1c
+.RI "void \fBSoftDelete\fP ()"
+.br
+.RI "\fIDelete this node of the tree, but leave the stuff contained in it intact\&. \fP"
+.ti -1c
+.RI "const StatisticType & \fBStat\fP () const "
+.br
+.RI "\fIReturn the statistic object for this node\&. \fP"
+.ti -1c
+.RI "StatisticType & \fBStat\fP ()"
+.br
+.RI "\fIModify the statistic object for this node\&. \fP"
+.ti -1c
+.RI "size_t \fBTreeDepth\fP () const "
+.br
+.RI "\fIObtains the number of levels below this node in the tree, starting with this\&. \fP"
+.ti -1c
+.RI "size_t \fBTreeSize\fP () const "
+.br
+.RI "\fIObtains the number of nodes in the tree, starting with this\&. \fP"
+.in -1c
+.SS "Protected Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBRectangleTree\fP ()"
+.br
+.RI "\fIA default constructor\&. \fP"
+.in -1c
+.SS "Protected Attributes"
+
+.in +1c
+.ti -1c
+.RI "friend \fBAuxiliaryInformation\fP"
+.br
+.RI "\fIGive friend access for AuxiliaryInformationType\&. \fP"
+.ti -1c
+.RI "friend \fBDescentType\fP"
+.br
+.RI "\fIGive friend access for DescentType\&. \fP"
+.ti -1c
+.RI "friend \fBSplitType\fP"
+.br
+.RI "\fIGive friend access for SplitType\&. \fP"
+.in -1c
+.SS "Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBSplitNode\fP (std::vector< bool > &relevels)"
+.br
+.RI "\fISplits the current node, recursing up the tree\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "AuxiliaryInformationType< \fBRectangleTree\fP > \fBauxiliaryInfo\fP"
+.br
+.RI "\fIA tree-specific information\&. \fP"
+.ti -1c
+.RI "size_t \fBbegin\fP"
+.br
+.RI "\fIThe index of the first point in the dataset contained in this node (and its children)\&. \fP"
+.ti -1c
+.RI "\fBbound::HRectBound\fP< \fBmetric::EuclideanDistance\fP, \fBElemType\fP > \fBbound\fP"
+.br
+.RI "\fIThe bound object for this node\&. \fP"
+.ti -1c
+.RI "std::vector< \fBRectangleTree\fP * > \fBchildren\fP"
+.br
+.RI "\fIThe child nodes (Starting at 0 and ending at (numChildren-1) )\&. \fP"
+.ti -1c
+.RI "size_t \fBcount\fP"
+.br
+.RI "\fIThe number of points in the dataset contained in this node (and its children)\&. \fP"
+.ti -1c
+.RI "const MatType * \fBdataset\fP"
+.br
+.RI "\fIThe dataset\&. \fP"
+.ti -1c
+.RI "size_t \fBmaxLeafSize\fP"
+.br
+.RI "\fIThe max leaf size\&. \fP"
+.ti -1c
+.RI "size_t \fBmaxNumChildren\fP"
+.br
+.RI "\fIThe max number of child nodes a non-leaf node can have\&. \fP"
+.ti -1c
+.RI "size_t \fBminLeafSize\fP"
+.br
+.RI "\fIThe minimum leaf size\&. \fP"
+.ti -1c
+.RI "size_t \fBminNumChildren\fP"
+.br
+.RI "\fIThe minimum number of child nodes a non-leaf node can have\&. \fP"
+.ti -1c
+.RI "size_t \fBnumChildren\fP"
+.br
+.RI "\fIThe number of child nodes actually in use (0 if this is a leaf node)\&. \fP"
+.ti -1c
+.RI "size_t \fBnumDescendants\fP"
+.br
+.RI "\fIThe number of descendants of this node\&. \fP"
+.ti -1c
+.RI "bool \fBownsDataset\fP"
+.br
+.RI "\fIWhether or not we are responsible for deleting the dataset\&. \fP"
+.ti -1c
+.RI "\fBRectangleTree\fP * \fBparent\fP"
+.br
+.RI "\fIThe parent node (NULL if this is the root of the tree)\&. \fP"
+.ti -1c
+.RI "\fBElemType\fP \fBparentDistance\fP"
+.br
+.RI "\fIThe distance from the centroid of this node to the centroid of the parent\&. \fP"
+.ti -1c
+.RI "std::vector< size_t > \fBpoints\fP"
+.br
+.RI "\fIThe mapping to the dataset\&. \fP"
+.ti -1c
+.RI "StatisticType \fBstat\fP"
+.br
+.RI "\fIAny extra data contained in the node\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename MetricType = metric::EuclideanDistance, typename StatisticType = EmptyStatistic, typename MatType = arma::mat, typename SplitType = RTreeSplit, typename DescentType = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation>
+.br
+class mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >"
+A rectangle type tree tree, such as an R-tree or X-tree\&. 
+
+Once the bound and type of dataset is defined, the tree will construct itself\&. Call the constructor with the dataset to build the tree on, and the entire tree will be built\&.
+.PP
+This tree does allow growth, so you can add and delete nodes from it\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIMetricType\fP This \fImust\fP be EuclideanDistance, but the template parameter is required to satisfy the TreeType API\&. 
+.br
+\fIStatisticType\fP Extra data contained in the node\&. See \fBstatistic\&.hpp\fP for the necessary skeleton interface\&. 
+.br
+\fIMatType\fP The dataset class\&. 
+.br
+\fISplitType\fP The type of split to use when inserting points\&. 
+.br
+\fIDescentType\fP The heuristic to use when descending the tree to insert points\&. 
+.br
+\fIAuxiliaryInformationType\fP An auxiliary information contained in the node\&. This information depends on the type of the \fBRectangleTree\fP\&. 
+.RE
+.PP
+
+.PP
+Definition at line 53 of file rectangle_tree\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> typedef AuxiliaryInformationType<\fBRectangleTree\fP> \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::\fBAuxiliaryInformation\fP"
+
+.PP
+The auxiliary information type held by the tree\&. 
+.PP
+Definition at line 65 of file rectangle_tree\&.hpp\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> typedef MatType::elem_type \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::\fBElemType\fP"
+
+.PP
+The element type held by the matrix type\&. 
+.PP
+Definition at line 63 of file rectangle_tree\&.hpp\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> typedef MatType \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::\fBMat\fP"
+
+.PP
+So other classes can use TreeType::Mat\&. 
+.PP
+Definition at line 57 of file rectangle_tree\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::\fBRectangleTree\fP (const MatType & data, const size_t maxLeafSize = \fC20\fP, const size_t minLeafSize = \fC8\fP, const size_t maxNumChildren = \fC5\fP, const size_t minNumChildren = \fC2\fP, const size_t firstDataIndex = \fC0\fP)"
+
+.PP
+Construct this as the root node of a rectangle type tree using the given dataset\&. This will modify the ordering of the points in the dataset!
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Dataset from which to create the tree\&. This will be modified! 
+.br
+\fImaxLeafSize\fP Maximum size of each leaf in the tree\&. 
+.br
+\fIminLeafSize\fP Minimum size of each leaf in the tree\&. 
+.br
+\fImaxNumChildren\fP The maximum number of child nodes a non-leaf node may have\&. 
+.br
+\fIminNumChildren\fP The minimum number of child nodes a non-leaf node may have\&. 
+.br
+\fIfirstDataIndex\fP The index of the first data point\&. UNUSED UNLESS WE ADD SUPPORT FOR HAVING A 'CENTERAL' DATA MATRIX\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::\fBRectangleTree\fP (MatType && data, const size_t maxLeafSize = \fC20\fP, const size_t minLeafSize = \fC8\fP, const size_t maxNumChildren = \fC5\fP, const size_t minNumChildren = \fC2\fP, const size_t firstDataIndex = \fC0\fP)"
+
+.PP
+Construct this as the root node of a rectangle tree type using the given dataset, and taking ownership of the given dataset\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Dataset from which to create the tree\&. 
+.br
+\fImaxLeafSize\fP Maximum size of each leaf in the tree\&. 
+.br
+\fIminLeafSize\fP Minimum size of each leaf in the tree\&. 
+.br
+\fImaxNumChildren\fP The maximum number of child nodes a non-leaf node may have\&. 
+.br
+\fIminNumChildren\fP The minimum number of child nodes a non-leaf node may have\&. 
+.br
+\fIfirstDataIndex\fP The index of the first data point\&. UNUSED UNLESS WE ADD SUPPORT FOR HAVING A 'CENTERAL' DATA MATRIX\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::\fBRectangleTree\fP (\fBRectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType > * parentNode, const size_t numMaxChildren = \fC0\fP)\fC [explicit]\fP"
+
+.PP
+Construct this as an empty node with the specified parent\&. Copying the parameters (maxLeafSize, minLeafSize, maxNumChildren, minNumChildren, firstDataIndex) from the parent\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIparentNode\fP The parent of the node that is being constructed\&. 
+.br
+\fInumMaxChildren\fP The max number of child nodes (used in x-trees)\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::\fBRectangleTree\fP (const \fBRectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType > & other, const bool deepCopy = \fCtrue\fP, \fBRectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType > * newParent = \fCNULL\fP)"
+
+.PP
+Create a rectangle tree by copying the other tree\&. Be careful! This can take a long time and use a lot of memory\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP The tree to be copied\&. 
+.br
+\fIdeepCopy\fP If false, the children are not recursively copied\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::\fBRectangleTree\fP (\fBRectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType > && other)"
+
+.PP
+Create a rectangle tree by moving the other tree\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP The tree to be copied\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> template<typename Archive > \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::\fBRectangleTree\fP (Archive & ar, const typename \fBstd::enable_if_t\fP< Archive::is_loading::value > * = \fC0\fP)"
+
+.PP
+Construct the tree from a \fBboost::serialization\fP archive\&. 
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::~\fBRectangleTree\fP ()"
+
+.PP
+Deletes this node, deallocating the memory for the children and calling their destructors in turn\&. This will invalidate any younters or references to any nodes which are children of this one\&. 
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::\fBRectangleTree\fP ()\fC [protected]\fP"
+
+.PP
+A default constructor\&. This is meant to only be used with \fBboost::serialization\fP, which is allowed with the friend declaration below\&. This does not return a valid tree! This method must be protected, so that the serialization shim can work with the default constructor\&. 
+.PP
+Referenced by mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::Count()\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> const AuxiliaryInformationType<\fBRectangleTree\fP>& \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::AuxiliaryInfo () const\fC [inline]\fP"
+
+.PP
+Return the auxiliary information object of this node\&. 
+.PP
+Definition at line 309 of file rectangle_tree\&.hpp\&.
+.PP
+References mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::auxiliaryInfo\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> AuxiliaryInformationType<\fBRectangleTree\fP>& \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::AuxiliaryInfo ()\fC [inline]\fP"
+
+.PP
+Modify the split object of this node\&. 
+.PP
+Definition at line 312 of file rectangle_tree\&.hpp\&.
+.PP
+References mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::auxiliaryInfo, and mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::IsLeaf()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> size_t \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::Begin () const\fC [inline]\fP"
+
+.PP
+Return the index of the beginning point of this subset\&. 
+.PP
+Definition at line 527 of file rectangle_tree\&.hpp\&.
+.PP
+References mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::begin\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> size_t& \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::Begin ()\fC [inline]\fP"
+
+.PP
+Modify the index of the beginning point of this subset\&. 
+.PP
+Definition at line 529 of file rectangle_tree\&.hpp\&.
+.PP
+References mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::begin\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> const \fBbound::HRectBound\fP<MetricType>& \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::Bound () const\fC [inline]\fP"
+
+.PP
+Return the bound object for this node\&. 
+.PP
+Definition at line 299 of file rectangle_tree\&.hpp\&.
+.PP
+References mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::bound\&.
+.PP
+Referenced by mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::MaxDistance(), mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::MinDistance(), and mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::RangeDistance()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> \fBbound::HRectBound\fP<MetricType>& \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::Bound ()\fC [inline]\fP"
+
+.PP
+Modify the bound object for this node\&. 
+.PP
+Definition at line 301 of file rectangle_tree\&.hpp\&.
+.PP
+References mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::bound\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> void \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::Center (arma::vec & center)\fC [inline]\fP"
+
+.PP
+Get the centroid of the node and store it in the given vector\&. 
+.PP
+Definition at line 352 of file rectangle_tree\&.hpp\&.
+.PP
+References mlpack::bound::HRectBound< MetricType, ElemType >::Center()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> \fBRectangleTree\fP& \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::Child (const size_t child) const\fC [inline]\fP"
+
+.PP
+Get the specified child\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIchild\fP Index of child to return\&. 
+.RE
+.PP
+
+.PP
+Definition at line 421 of file rectangle_tree\&.hpp\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> \fBRectangleTree\fP& \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::Child (const size_t child)\fC [inline]\fP"
+
+.PP
+Modify the specified child\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIchild\fP Index of child to return\&. 
+.RE
+.PP
+
+.PP
+Definition at line 431 of file rectangle_tree\&.hpp\&.
+.PP
+References mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::Descendant(), mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::NumDescendants(), and mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::NumPoints()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> void \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::CondenseTree (const arma::vec & point, std::vector< bool > & relevels, const bool usePoint)"
+
+.PP
+Condense the bounding rectangles for this node based on the removal of the point specified by the arma::vec&\&. This recurses up the tree\&. If a node goes below the minimum fill, this function will fix the tree\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpoint\fP The arma::vec& of the point that was removed to require this condesation of the tree\&. 
+.br
+\fIusePoint\fP True if we use the optimized version of the algorithm that is possible when we now what point was deleted\&. False otherwise (eg\&. if we deleted a node instead of a point)\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> size_t \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::Count () const\fC [inline]\fP"
+
+.PP
+Return the number of points in this subset\&. 
+.PP
+Definition at line 532 of file rectangle_tree\&.hpp\&.
+.PP
+References mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::count\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> size_t& \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::Count ()\fC [inline]\fP"
+
+.PP
+Modify the number of points in this subset\&. 
+.PP
+Definition at line 534 of file rectangle_tree\&.hpp\&.
+.PP
+References mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::count, mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::RectangleTree(), and mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::SplitNode()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> const MatType& \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::Dataset () const\fC [inline]\fP"
+
+.PP
+Get the dataset which the tree is built on\&. 
+.PP
+Definition at line 344 of file rectangle_tree\&.hpp\&.
+.PP
+References mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::dataset\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> MatType& \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::Dataset ()\fC [inline]\fP"
+
+.PP
+Modify the dataset which the tree is built on\&. Be careful! 
+.PP
+Definition at line 346 of file rectangle_tree\&.hpp\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> bool \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::DeletePoint (const size_t point)"
+
+.PP
+Deletes a point from the treeand, updates the bounding rectangle\&. However, the point will be kept in the centeral dataset\&. (The user may remove it from there if he wants, but he must not change the indices of the other points\&.) Returns true if the point is successfully removed and false if it is not\&. (ie\&. the point is not in the tree) 
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> bool \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::DeletePoint (const size_t point, std::vector< bool > & relevels)"
+
+.PP
+Deletes a point from the tree, updates the bounding rectangle, tracking levels\&. However, the point will be kept in the centeral dataset\&. (The user may remove it from there if he wants, but he must not change the indices of the other points\&.) Returns true if the point is successfully removed and false if it is not\&. (ie\&. the point is not in the tree) 
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> size_t \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::Descendant (const size_t index) const"
+
+.PP
+Return the index (with reference to the dataset) of a particular descendant of this node\&. The index should be greater than zero but less than the number of descendants\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIindex\fP Index of the descendant\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::Child()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> \fBRectangleTree\fP* \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::ExactClone ()"
+
+.PP
+Make an exact copy of this node, pointers and everything\&. 
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> const \fBRectangleTree\fP* \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::FindByBeginCount (size_t begin, size_t count) const"
+
+.PP
+Find a node in this tree by its begin and count (const)\&. Every node is uniquely identified by these two numbers\&. This is useful for communicating position over the network, when pointers would be invalid\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIbegin\fP The \fBbegin()\fP of the node to find\&. 
+.br
+\fIcount\fP The \fBcount()\fP of the node to find\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The found node, or NULL if not found\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> \fBRectangleTree\fP* \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::FindByBeginCount (size_t begin, size_t count)"
+
+.PP
+Find a node in this tree by its begin and count\&. Every node is uniquely identified by these two numbers\&. This is useful for communicating position over the network, when pointers would be invalid\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIbegin\fP The \fBbegin()\fP of the node to find\&. 
+.br
+\fIcount\fP The \fBcount()\fP of the node to find\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The found node, or NULL if not found\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> \fBElemType\fP \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::FurthestDescendantDistance () const"
+
+.PP
+Return the furthest possible descendant distance\&. This returns the maximum distance from the centroid to the edge of the bound and not the empirical quantity which is the actual furthest descendant distance\&. So the actual furthest descendant distance may be less than what this method returns (but it will never be greater than this)\&. 
+.PP
+Referenced by mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::NumChildren()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> \fBElemType\fP \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::FurthestPointDistance () const"
+
+.PP
+Return the furthest distance to a point held in this node\&. If this is not a leaf node, then the distance is 0 because the node holds no points\&. 
+.PP
+Referenced by mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::NumChildren()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> template<typename VecType > size_t \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::GetFurthestChild (const VecType & point, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< VecType >::value > * = \fC0\fP)"
+
+.PP
+Return the index of the furthest child node to the given query point\&. If this is a leaf node, it will return \fBNumChildren()\fP (invalid index)\&. 
+.PP
+Referenced by mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::NumChildren()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> size_t \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::GetFurthestChild (const \fBRectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType > & queryNode)"
+
+.PP
+Return the index of the furthest child node to the given query node\&. If it can't decide, it will return \fBNumChildren()\fP (invalid index)\&. 
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> template<typename VecType > size_t \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::GetNearestChild (const VecType & point, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< VecType >::value > * = \fC0\fP)"
+
+.PP
+Return the index of the nearest child node to the given query point\&. If this is a leaf node, it will return \fBNumChildren()\fP (invalid index)\&. 
+.PP
+Referenced by mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::NumChildren()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> size_t \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::GetNearestChild (const \fBRectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType > & queryNode)"
+
+.PP
+Return the index of the nearest child node to the given query node\&. If it can't decide, it will return \fBNumChildren()\fP (invalid index)\&. 
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> void \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::InsertNode (\fBRectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType > * node, const size_t level, std::vector< bool > & relevels)"
+
+.PP
+Inserts a node into the tree, tracking which levels have been inserted into\&. The node will be inserted so that the tree remains valid\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fInode\fP The node to be inserted\&. 
+.br
+\fIlevel\fP The depth that should match the node where this node is finally inserted\&. This should be the number returned by calling \fBTreeDepth()\fP from the node that originally contained 'node'\&. 
+.br
+\fIrelevels\fP The levels that have been reinserted to on this top level insertion\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> void \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::InsertPoint (const size_t point)"
+
+.PP
+Inserts a point into the tree\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpoint\fP The index of a point in the dataset\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> void \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::InsertPoint (const size_t point, std::vector< bool > & relevels)"
+
+.PP
+Inserts a point into the tree, tracking which levels have been inserted into\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpoint\fP The index of a point in the dataset\&. 
+.br
+\fIrelevels\fP The levels that have been reinserted to on this top level insertion\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> bool \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::IsLeaf () const"
+
+.PP
+Return whether or not this node is a leaf (true if it has no children)\&. 
+.PP
+Referenced by mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::AuxiliaryInfo()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> \fBElemType\fP \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::MaxDistance (const \fBRectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType > & other) const\fC [inline]\fP"
+
+.PP
+Return the maximum distance to another node\&. 
+.PP
+Definition at line 477 of file rectangle_tree\&.hpp\&.
+.PP
+References mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::Bound(), and mlpack::bound::HRectBound< MetricType, ElemType >::MaxDistance()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> template<typename VecType > \fBElemType\fP \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::MaxDistance (const VecType & point, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< VecType >::value > * = \fC0\fP) const\fC [inline]\fP"
+
+.PP
+Return the maximum distance to another point\&. 
+.PP
+Definition at line 499 of file rectangle_tree\&.hpp\&.
+.PP
+References mlpack::bound::HRectBound< MetricType, ElemType >::MaxDistance()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> size_t \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::MaxLeafSize () const\fC [inline]\fP"
+
+.PP
+Return the maximum leaf size\&. 
+.PP
+Definition at line 319 of file rectangle_tree\&.hpp\&.
+.PP
+References mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::maxLeafSize\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> size_t& \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::MaxLeafSize ()\fC [inline]\fP"
+
+.PP
+Modify the maximum leaf size\&. 
+.PP
+Definition at line 321 of file rectangle_tree\&.hpp\&.
+.PP
+References mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::maxLeafSize\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> size_t \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::MaxNumChildren () const\fC [inline]\fP"
+
+.PP
+Return the maximum number of children (in a non-leaf node)\&. 
+.PP
+Definition at line 329 of file rectangle_tree\&.hpp\&.
+.PP
+References mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::maxNumChildren\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> size_t& \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::MaxNumChildren ()\fC [inline]\fP"
+
+.PP
+Modify the maximum number of children (in a non-leaf node)\&. 
+.PP
+Definition at line 331 of file rectangle_tree\&.hpp\&.
+.PP
+References mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::maxNumChildren\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> MetricType \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::Metric () const\fC [inline]\fP"
+
+.PP
+Get the metric which the tree uses\&. 
+.PP
+Definition at line 349 of file rectangle_tree\&.hpp\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> \fBElemType\fP \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::MinDistance (const \fBRectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType > & other) const\fC [inline]\fP"
+
+.PP
+Return the minimum distance to another node\&. 
+.PP
+Definition at line 471 of file rectangle_tree\&.hpp\&.
+.PP
+References mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::Bound(), and mlpack::bound::HRectBound< MetricType, ElemType >::MinDistance()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> template<typename VecType > \fBElemType\fP \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::MinDistance (const VecType & point, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< VecType >::value > * = \fC0\fP) const\fC [inline]\fP"
+
+.PP
+Return the minimum distance to another point\&. 
+.PP
+Definition at line 490 of file rectangle_tree\&.hpp\&.
+.PP
+References mlpack::bound::HRectBound< MetricType, ElemType >::MinDistance()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> \fBElemType\fP \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::MinimumBoundDistance () const\fC [inline]\fP"
+
+.PP
+Return the minimum distance from the center to any edge of the bound\&. Currently, this returns 0, which doesn't break algorithms, but it isn't necessarily correct, either\&. 
+.PP
+Definition at line 407 of file rectangle_tree\&.hpp\&.
+.PP
+References mlpack::bound::HRectBound< MetricType, ElemType >::MinWidth()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> size_t \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::MinLeafSize () const\fC [inline]\fP"
+
+.PP
+Return the minimum leaf size\&. 
+.PP
+Definition at line 324 of file rectangle_tree\&.hpp\&.
+.PP
+References mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::minLeafSize\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> size_t& \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::MinLeafSize ()\fC [inline]\fP"
+
+.PP
+Modify the minimum leaf size\&. 
+.PP
+Definition at line 326 of file rectangle_tree\&.hpp\&.
+.PP
+References mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::minLeafSize\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> size_t \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::MinNumChildren () const\fC [inline]\fP"
+
+.PP
+Return the minimum number of children (in a non-leaf node)\&. 
+.PP
+Definition at line 334 of file rectangle_tree\&.hpp\&.
+.PP
+References mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::minNumChildren\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> size_t& \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::MinNumChildren ()\fC [inline]\fP"
+
+.PP
+Modify the minimum number of children (in a non-leaf node)\&. 
+.PP
+Definition at line 336 of file rectangle_tree\&.hpp\&.
+.PP
+References mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::minNumChildren\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> void \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::NullifyData ()"
+
+.PP
+Nullify the auxiliary information\&. Used for memory management\&. Be cafeful\&. 
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> size_t \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::NumChildren () const\fC [inline]\fP"
+
+.PP
+Return the number of child nodes\&. (One level beneath this one only\&.) 
+.PP
+Definition at line 355 of file rectangle_tree\&.hpp\&.
+.PP
+References mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::numChildren\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> size_t& \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::NumChildren ()\fC [inline]\fP"
+
+.PP
+Modify the number of child nodes\&. Be careful\&. 
+.PP
+Definition at line 357 of file rectangle_tree\&.hpp\&.
+.PP
+References mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::FurthestDescendantDistance(), mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::FurthestPointDistance(), mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::GetFurthestChild(), mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::GetNearestChild(), and mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::numChildren\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> size_t \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::NumDescendants () const"
+
+.PP
+Return the number of descendants of this node\&. For a non-leaf in a binary space tree, this is the number of points at the descendant leaves\&. For a leaf, this is the number of points in the leaf\&. 
+.PP
+Referenced by mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::Child()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> size_t \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::NumPoints () const"
+
+.PP
+Return the number of points in this node (returns 0 if this node is not a leaf)\&. 
+.PP
+Referenced by mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::Child()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> \fBRectangleTree\fP* \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::Parent () const\fC [inline]\fP"
+
+.PP
+Gets the parent of this node\&. 
+.PP
+Definition at line 339 of file rectangle_tree\&.hpp\&.
+.PP
+References mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::parent\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> \fBRectangleTree\fP*& \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::Parent ()\fC [inline]\fP"
+
+.PP
+Modify the parent of this node\&. 
+.PP
+Definition at line 341 of file rectangle_tree\&.hpp\&.
+.PP
+References mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::parent\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> \fBElemType\fP \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::ParentDistance () const\fC [inline]\fP"
+
+.PP
+Return the distance from the center of this node to the center of the parent node\&. 
+.PP
+Definition at line 411 of file rectangle_tree\&.hpp\&.
+.PP
+References mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::parentDistance\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> \fBElemType\fP& \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::ParentDistance ()\fC [inline]\fP"
+
+.PP
+Modify the distance from the center of this node to the center of the parent node\&. 
+.PP
+Definition at line 414 of file rectangle_tree\&.hpp\&.
+.PP
+References mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::parentDistance\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> size_t \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::Point (const size_t index) const\fC [inline]\fP"
+
+.PP
+Return the index (with reference to the dataset) of a particular point in this node\&. This will happily return invalid indices if the given index is greater than the number of points in this node (obtained with \fBNumPoints()\fP) -- be careful\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIindex\fP Index of point for which a dataset index is wanted\&. 
+.RE
+.PP
+
+.PP
+Definition at line 464 of file rectangle_tree\&.hpp\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> size_t& \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::Point (const size_t index)\fC [inline]\fP"
+
+.PP
+Modify the index of a particular point in this node\&. Be very careful when you do this! You may make the tree invalid\&. 
+.PP
+Definition at line 468 of file rectangle_tree\&.hpp\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> \fBmath::RangeType\fP<\fBElemType\fP> \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::RangeDistance (const \fBRectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType > & other) const\fC [inline]\fP"
+
+.PP
+Return the minimum and maximum distance to another node\&. 
+.PP
+Definition at line 483 of file rectangle_tree\&.hpp\&.
+.PP
+References mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::Bound(), and mlpack::bound::HRectBound< MetricType, ElemType >::RangeDistance()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> template<typename VecType > \fBmath::RangeType\fP<\fBElemType\fP> \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::RangeDistance (const VecType & point, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< VecType >::value > * = \fC0\fP) const\fC [inline]\fP"
+
+.PP
+Return the minimum and maximum distance to another point\&. 
+.PP
+Definition at line 508 of file rectangle_tree\&.hpp\&.
+.PP
+References mlpack::bound::HRectBound< MetricType, ElemType >::RangeDistance(), mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::TreeDepth(), and mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::TreeSize()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> bool \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::RemoveNode (const \fBRectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType > * node, std::vector< bool > & relevels)"
+
+.PP
+Removes a node from the tree\&. You are responsible for deleting it if you wish to do so\&. 
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> template<typename Archive > void \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::Serialize (Archive & ar, const unsigned int)"
+
+.PP
+Serialize the tree\&. 
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> bool \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::ShrinkBoundForBound (const \fBbound::HRectBound\fP< MetricType > & changedBound)"
+
+.PP
+Shrink the bound object of this node for the removal of a child node\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIbound\fP The HRectBound<>& of the bound that was removed to reqire this shrinking\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+true if the bound needed to be changed, false if it did not\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> bool \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::ShrinkBoundForPoint (const arma::vec & point)"
+
+.PP
+Shrink the bound object of this node for the removal of a point\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpoint\fP The arma::vec& of the point that was removed to require this shrinking\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+true if the bound needed to be changed, false if it did not\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> void \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::SoftDelete ()"
+
+.PP
+Delete this node of the tree, but leave the stuff contained in it intact\&. This is used when splitting a node, where the data in this tree is moved to two other trees\&. 
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> void \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::SplitNode (std::vector< bool > & relevels)\fC [private]\fP"
+
+.PP
+Splits the current node, recursing up the tree\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIrelevels\fP Vector to track which levels have been inserted to\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::Count()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> const StatisticType& \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::Stat () const\fC [inline]\fP"
+
+.PP
+Return the statistic object for this node\&. 
+.PP
+Definition at line 304 of file rectangle_tree\&.hpp\&.
+.PP
+References mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::stat\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> StatisticType& \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::Stat ()\fC [inline]\fP"
+
+.PP
+Modify the statistic object for this node\&. 
+.PP
+Definition at line 306 of file rectangle_tree\&.hpp\&.
+.PP
+References mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::stat\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> size_t \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::TreeDepth () const"
+
+.PP
+Obtains the number of levels below this node in the tree, starting with this\&. 
+.PP
+Referenced by mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::RangeDistance()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> size_t \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::TreeSize () const"
+
+.PP
+Obtains the number of nodes in the tree, starting with this\&. 
+.PP
+Referenced by mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::RangeDistance()\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> AuxiliaryInformationType<\fBRectangleTree\fP> \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::auxiliaryInfo\fC [private]\fP"
+
+.PP
+A tree-specific information\&. 
+.PP
+Definition at line 105 of file rectangle_tree\&.hpp\&.
+.PP
+Referenced by mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::AuxiliaryInfo()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> friend \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::\fBAuxiliaryInformation\fP\fC [protected]\fP"
+
+.PP
+Give friend access for AuxiliaryInformationType\&. 
+.PP
+Definition at line 563 of file rectangle_tree\&.hpp\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> size_t \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::begin\fC [private]\fP"
+
+.PP
+The index of the first point in the dataset contained in this node (and its children)\&. THIS IS ALWAYS 0 AT THE MOMENT\&. IT EXISTS MERELY IN CASE I THINK OF A WAY TO CHANGE THAT\&. IN OTHER WORDS, IT WILL PROBABLY BE REMOVED\&. 
+.PP
+Definition at line 81 of file rectangle_tree\&.hpp\&.
+.PP
+Referenced by mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::Begin()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> \fBbound::HRectBound\fP<\fBmetric::EuclideanDistance\fP, \fBElemType\fP> \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::bound\fC [private]\fP"
+
+.PP
+The bound object for this node\&. 
+.PP
+Definition at line 92 of file rectangle_tree\&.hpp\&.
+.PP
+Referenced by mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::Bound()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> std::vector<\fBRectangleTree\fP*> \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::children\fC [private]\fP"
+
+.PP
+The child nodes (Starting at 0 and ending at (numChildren-1) )\&. 
+.PP
+Definition at line 74 of file rectangle_tree\&.hpp\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> size_t \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::count\fC [private]\fP"
+
+.PP
+The number of points in the dataset contained in this node (and its children)\&. 
+.PP
+Definition at line 84 of file rectangle_tree\&.hpp\&.
+.PP
+Referenced by mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::Count()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> const MatType* \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::dataset\fC [private]\fP"
+
+.PP
+The dataset\&. 
+.PP
+Definition at line 98 of file rectangle_tree\&.hpp\&.
+.PP
+Referenced by mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::Dataset()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> friend \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, DescentType, AuxiliaryInformationType >::DescentType\fC [protected]\fP"
+
+.PP
+Give friend access for DescentType\&. 
+.PP
+Definition at line 557 of file rectangle_tree\&.hpp\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> size_t \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::maxLeafSize\fC [private]\fP"
+
+.PP
+The max leaf size\&. 
+.PP
+Definition at line 88 of file rectangle_tree\&.hpp\&.
+.PP
+Referenced by mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::MaxLeafSize()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> size_t \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::maxNumChildren\fC [private]\fP"
+
+.PP
+The max number of child nodes a non-leaf node can have\&. 
+.PP
+Definition at line 68 of file rectangle_tree\&.hpp\&.
+.PP
+Referenced by mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::MaxNumChildren()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> size_t \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::minLeafSize\fC [private]\fP"
+
+.PP
+The minimum leaf size\&. 
+.PP
+Definition at line 90 of file rectangle_tree\&.hpp\&.
+.PP
+Referenced by mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::MinLeafSize()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> size_t \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::minNumChildren\fC [private]\fP"
+
+.PP
+The minimum number of child nodes a non-leaf node can have\&. 
+.PP
+Definition at line 70 of file rectangle_tree\&.hpp\&.
+.PP
+Referenced by mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::MinNumChildren()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> size_t \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::numChildren\fC [private]\fP"
+
+.PP
+The number of child nodes actually in use (0 if this is a leaf node)\&. 
+.PP
+Definition at line 72 of file rectangle_tree\&.hpp\&.
+.PP
+Referenced by mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::NumChildren()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> size_t \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::numDescendants\fC [private]\fP"
+
+.PP
+The number of descendants of this node\&. 
+.PP
+Definition at line 86 of file rectangle_tree\&.hpp\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> bool \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::ownsDataset\fC [private]\fP"
+
+.PP
+Whether or not we are responsible for deleting the dataset\&. This is probably not aligned well\&.\&.\&. 
+.PP
+Definition at line 101 of file rectangle_tree\&.hpp\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> \fBRectangleTree\fP* \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::parent\fC [private]\fP"
+
+.PP
+The parent node (NULL if this is the root of the tree)\&. 
+.PP
+Definition at line 76 of file rectangle_tree\&.hpp\&.
+.PP
+Referenced by mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::Parent()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> \fBElemType\fP \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::parentDistance\fC [private]\fP"
+
+.PP
+The distance from the centroid of this node to the centroid of the parent\&. 
+.PP
+Definition at line 96 of file rectangle_tree\&.hpp\&.
+.PP
+Referenced by mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::ParentDistance()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> std::vector<size_t> \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::points\fC [private]\fP"
+
+.PP
+The mapping to the dataset\&. 
+.PP
+Definition at line 103 of file rectangle_tree\&.hpp\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> friend \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, SplitType, \fBDescentType\fP, AuxiliaryInformationType >::SplitType\fC [protected]\fP"
+
+.PP
+Give friend access for SplitType\&. 
+.PP
+Definition at line 560 of file rectangle_tree\&.hpp\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, typename SplitType  = RTreeSplit, typename DescentType  = RTreeDescentHeuristic, template< typename > class AuxiliaryInformationType = NoAuxiliaryInformation> StatisticType \fBmlpack::tree::RectangleTree\fP< MetricType, StatisticType, MatType, \fBSplitType\fP, \fBDescentType\fP, AuxiliaryInformationType >::stat\fC [private]\fP"
+
+.PP
+Any extra data contained in the node\&. 
+.PP
+Definition at line 94 of file rectangle_tree\&.hpp\&.
+.PP
+Referenced by mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::Stat()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

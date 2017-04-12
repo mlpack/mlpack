@@ -1,0 +1,74 @@
+.TH "mlpack::range::SerializeVisitor< Archive >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::range::SerializeVisitor< Archive > \- Exposes the seralize method of the given RSType\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits static_visitor< void >\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBSerializeVisitor\fP (Archive &\fBar\fP, const \fBstd::string\fP &\fBname\fP)"
+.br
+.RI "\fIConstruct the \fBSerializeVisitor\fP with the given archive and name\&. \fP"
+.ti -1c
+.RI "template<typename RSType > void \fBoperator()\fP (\fBRSType\fP *rs) const "
+.br
+.RI "\fISerialize the given model\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "Archive & \fBar\fP"
+.br
+.RI "\fIArchive to serialize to\&. \fP"
+.ti -1c
+.RI "const \fBstd::string\fP & \fBname\fP"
+.br
+.RI "\fIName of the model to serialize\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename Archive>
+.br
+class mlpack::range::SerializeVisitor< Archive >"
+Exposes the seralize method of the given RSType\&. 
+.PP
+Definition at line 194 of file rs_model\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename Archive > \fBmlpack::range::SerializeVisitor\fP< Archive >::\fBSerializeVisitor\fP (Archive & ar, const \fBstd::string\fP & name)"
+
+.PP
+Construct the \fBSerializeVisitor\fP with the given archive and name\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename Archive > template<typename RSType > void \fBmlpack::range::SerializeVisitor\fP< Archive >::operator() (\fBRSType\fP * rs) const"
+
+.PP
+Serialize the given model\&. 
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename Archive > Archive& \fBmlpack::range::SerializeVisitor\fP< Archive >::ar\fC [private]\fP"
+
+.PP
+Archive to serialize to\&. 
+.PP
+Definition at line 198 of file rs_model\&.hpp\&.
+.SS "template<typename Archive > const \fBstd::string\fP& \fBmlpack::range::SerializeVisitor\fP< Archive >::name\fC [private]\fP"
+
+.PP
+Name of the model to serialize\&. 
+.PP
+Definition at line 200 of file rs_model\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,9 @@
+<map id="mlpack::metric::IPMetric&lt; KernelType &gt;" name="mlpack::metric::IPMetric&lt; KernelType &gt;">
+<area shape="rect" id="node2" href="$classmlpack_1_1metric_1_1IPMetric.html" title="mlpack::metric::IPMetric\l\&lt; kernel::LinearKernel \&gt;" alt="" coords="444,5,609,47"/>
+<area shape="rect" id="node3" href="$classmlpack_1_1metric_1_1IPMetric.html" title="mlpack::metric::IPMetric\l\&lt; kernel::HyperbolicTangentKernel \&gt;" alt="" coords="409,71,644,112"/>
+<area shape="rect" id="node4" href="$classmlpack_1_1metric_1_1IPMetric.html" title="mlpack::metric::IPMetric\l\&lt; kernel::CosineDistance \&gt;" alt="" coords="435,136,618,177"/>
+<area shape="rect" id="node5" href="$classmlpack_1_1metric_1_1IPMetric.html" title="mlpack::metric::IPMetric\l\&lt; kernel::PolynomialKernel \&gt;" alt="" coords="431,201,622,243"/>
+<area shape="rect" id="node6" href="$classmlpack_1_1metric_1_1IPMetric.html" title="mlpack::metric::IPMetric\l\&lt; kernel::TriangularKernel \&gt;" alt="" coords="435,267,618,308"/>
+<area shape="rect" id="node7" href="$classmlpack_1_1metric_1_1IPMetric.html" title="mlpack::metric::IPMetric\l\&lt; kernel::GaussianKernel \&gt;" alt="" coords="436,332,617,373"/>
+<area shape="rect" id="node8" href="$classmlpack_1_1metric_1_1IPMetric.html" title="mlpack::metric::IPMetric\l\&lt; kernel::EpanechnikovKernel \&gt;" alt="" coords="423,397,631,439"/>
+</map>

@@ -1,0 +1,47 @@
+\section{src/mlpack/tests/serialization.hpp File Reference}
+\label{serialization_8hpp}\index{src/mlpack/tests/serialization.\+hpp@{src/mlpack/tests/serialization.\+hpp}}
+Include dependency graph for serialization.\+hpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{serialization_8hpp__incl}
+\end{center}
+\end{figure}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ {\bf mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void {\bf mlpack\+::\+Check\+Matrices} (const arma\+::mat \&x, const arma\+::mat \&xmlX, const arma\+::mat \&textX, const arma\+::mat \&binaryX)
+\item 
+void {\bf mlpack\+::\+Check\+Matrices} (const arma\+::\+Mat$<$ size\+\_\+t $>$ \&x, const arma\+::\+Mat$<$ size\+\_\+t $>$ \&xmlX, const arma\+::\+Mat$<$ size\+\_\+t $>$ \&textX, const arma\+::\+Mat$<$ size\+\_\+t $>$ \&binaryX)
+\item 
+{\footnotesize template$<$typename T , typename I\+Archive\+Type , typename O\+Archive\+Type $>$ }\\void {\bf mlpack\+::\+Serialize\+Object} (T \&t, T \&newT)
+\item 
+{\footnotesize template$<$typename T $>$ }\\void {\bf mlpack\+::\+Serialize\+Object\+All} (T \&t, T \&xmlT, T \&textT, T \&binaryT)
+\item 
+{\footnotesize template$<$typename T , typename I\+Archive\+Type , typename O\+Archive\+Type $>$ }\\void {\bf mlpack\+::\+Serialize\+Pointer\+Object} (T $\ast$t, T $\ast$\&newT)
+\item 
+{\footnotesize template$<$typename T $>$ }\\void {\bf mlpack\+::\+Serialize\+Pointer\+Object\+All} (T $\ast$t, T $\ast$\&xmlT, T $\ast$\&textT, T $\ast$\&binaryT)
+\item 
+{\footnotesize template$<$typename Cube\+Type $>$ }\\void {\bf mlpack\+::\+Test\+All\+Armadillo\+Serialization} (arma\+::\+Cube$<$ Cube\+Type $>$ \&x)
+\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void {\bf mlpack\+::\+Test\+All\+Armadillo\+Serialization} (Mat\+Type \&x)
+\item 
+{\footnotesize template$<$typename Cube\+Type , typename I\+Archive\+Type , typename O\+Archive\+Type $>$ }\\void {\bf mlpack\+::\+Test\+Armadillo\+Serialization} (arma\+::\+Cube$<$ Cube\+Type $>$ \&x)
+\item 
+{\footnotesize template$<$typename Mat\+Type , typename I\+Archive\+Type , typename O\+Archive\+Type $>$ }\\void {\bf mlpack\+::\+Test\+Armadillo\+Serialization} (Mat\+Type \&x)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Ryan Curtin
+\end{DoxyAuthor}
+Miscellaneous utility functions for serialization tests.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause B\+SD license. You should have received a copy of the 3-\/clause B\+SD license along with mlpack. If not, see {\tt http\+://www.\+opensource.\+org/licenses/\+B\+S\+D-\/3-\/\+Clause} for more information. 

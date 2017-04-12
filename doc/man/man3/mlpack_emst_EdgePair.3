@@ -1,0 +1,156 @@
+.TH "mlpack::emst::EdgePair" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::emst::EdgePair \- An edge pair is simply two indices and a distance\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBEdgePair\fP (const size_t \fBlesser\fP, const size_t \fBgreater\fP, const double dist)"
+.br
+.RI "\fIInitialize an \fBEdgePair\fP with two indices and a distance\&. \fP"
+.ti -1c
+.RI "double \fBDistance\fP () const "
+.br
+.RI "\fIGet the distance\&. \fP"
+.ti -1c
+.RI "double & \fBDistance\fP ()"
+.br
+.RI "\fIModify the distance\&. \fP"
+.ti -1c
+.RI "size_t \fBGreater\fP () const "
+.br
+.RI "\fIGet the greater index\&. \fP"
+.ti -1c
+.RI "size_t & \fBGreater\fP ()"
+.br
+.RI "\fIModify the greater index\&. \fP"
+.ti -1c
+.RI "size_t \fBLesser\fP () const "
+.br
+.RI "\fIGet the lesser index\&. \fP"
+.ti -1c
+.RI "size_t & \fBLesser\fP ()"
+.br
+.RI "\fIModify the lesser index\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "double \fBdistance\fP"
+.br
+.RI "\fIDistance between two indices\&. \fP"
+.ti -1c
+.RI "size_t \fBgreater\fP"
+.br
+.RI "\fIGreater index\&. \fP"
+.ti -1c
+.RI "size_t \fBlesser\fP"
+.br
+.RI "\fILesser index\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+An edge pair is simply two indices and a distance\&. 
+
+It is used as the basic element of an edge list when computing a minimum spanning tree\&. 
+.PP
+Definition at line 28 of file edge_pair\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::emst::EdgePair::EdgePair (const size_t lesser, const size_t greater, const double dist)\fC [inline]\fP"
+
+.PP
+Initialize an \fBEdgePair\fP with two indices and a distance\&. The indices are called lesser and greater, implying that they be sorted before calling Init\&. However, this is not necessary for functionality; it is just a way to keep the edge list organized in other code\&. 
+.PP
+Definition at line 45 of file edge_pair\&.hpp\&.
+.PP
+References mlpack::Log::Assert()\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "double mlpack::emst::EdgePair::Distance () const\fC [inline]\fP"
+
+.PP
+Get the distance\&. 
+.PP
+Definition at line 63 of file edge_pair\&.hpp\&.
+.PP
+References distance\&.
+.PP
+Referenced by mlpack::emst::DualTreeBoruvka< MetricType, MatType, TreeType >::SortEdgesHelper::operator()()\&.
+.SS "double& mlpack::emst::EdgePair::Distance ()\fC [inline]\fP"
+
+.PP
+Modify the distance\&. 
+.PP
+Definition at line 65 of file edge_pair\&.hpp\&.
+.PP
+References distance\&.
+.SS "size_t mlpack::emst::EdgePair::Greater () const\fC [inline]\fP"
+
+.PP
+Get the greater index\&. 
+.PP
+Definition at line 58 of file edge_pair\&.hpp\&.
+.PP
+References greater\&.
+.SS "size_t& mlpack::emst::EdgePair::Greater ()\fC [inline]\fP"
+
+.PP
+Modify the greater index\&. 
+.PP
+Definition at line 60 of file edge_pair\&.hpp\&.
+.PP
+References greater\&.
+.SS "size_t mlpack::emst::EdgePair::Lesser () const\fC [inline]\fP"
+
+.PP
+Get the lesser index\&. 
+.PP
+Definition at line 53 of file edge_pair\&.hpp\&.
+.PP
+References lesser\&.
+.SS "size_t& mlpack::emst::EdgePair::Lesser ()\fC [inline]\fP"
+
+.PP
+Modify the lesser index\&. 
+.PP
+Definition at line 55 of file edge_pair\&.hpp\&.
+.PP
+References lesser\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "double mlpack::emst::EdgePair::distance\fC [private]\fP"
+
+.PP
+Distance between two indices\&. 
+.PP
+Definition at line 36 of file edge_pair\&.hpp\&.
+.PP
+Referenced by Distance()\&.
+.SS "size_t mlpack::emst::EdgePair::greater\fC [private]\fP"
+
+.PP
+Greater index\&. 
+.PP
+Definition at line 34 of file edge_pair\&.hpp\&.
+.PP
+Referenced by Greater()\&.
+.SS "size_t mlpack::emst::EdgePair::lesser\fC [private]\fP"
+
+.PP
+Lesser index\&. 
+.PP
+Definition at line 32 of file edge_pair\&.hpp\&.
+.PP
+Referenced by Lesser()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

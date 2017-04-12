@@ -1,0 +1,184 @@
+\section{Introduction}\label{index_intro_sec}
+mlpack is an intuitive, fast, scalable C++ machine learning library, meant to be a machine learning analog to L\+A\+P\+A\+CK. It aims to implement a wide array of machine learning methods and function as a \char`\"{}swiss army knife\char`\"{} for machine learning researchers. The mlpack development website can be found at {\tt http\+://mlpack.\+org}.
+
+mlpack uses the Armadillo C++ matrix library ({\tt http\+://arma.\+sourceforge.\+net}) for general matrix, vector, and linear algebra support. mlpack also uses the program\+\_\+options, math\+\_\+c99, and unit\+\_\+test\+\_\+framework components of the Boost library, and optionally uses libbfd and libdl to give backtraces when compiled with debugging symbols on some platforms.\section{How To Use This Documentation}\label{index_howto}
+This documentation is A\+PI documentation similar to Javadoc. It isn\textquotesingle{}t necessarily a tutorial, but it does provide detailed documentation on every namespace, method, and class.
+
+Each mlpack namespace generally refers to one machine learning method, so browsing the list of namespaces provides some insight as to the breadth of the methods contained in the library.
+
+To generate this documentation in your own local copy of mlpack, you can simply use Doxygen, from the root directory of the project\+:
+
+
+\begin{DoxyCode}
+$ doxygen
+\end{DoxyCode}
+\section{Executables}\label{index_executables}
+mlpack provides several executables so that mlpack methods can be used without any need for knowledge of C++. These executables are all self-\/documented, and that documentation can be accessed by running the executables with the \textquotesingle{}-\/h\textquotesingle{} or \textquotesingle{}--help\textquotesingle{} flag.
+
+A full list of executables is given below\+:
+
+
+\begin{DoxyItemize}
+\item mlpack\+\_\+adaboost
+\item mlpack\+\_\+approx\+\_\+kfn
+\item mlpack\+\_\+cf
+\item mlpack\+\_\+decision\+\_\+stump
+\item mlpack\+\_\+decision\+\_\+tree
+\item mlpack\+\_\+det
+\item mlpack\+\_\+emst
+\item mlpack\+\_\+fastmks
+\item mlpack\+\_\+gmm\+\_\+train
+\item mlpack\+\_\+gmm\+\_\+generate
+\item mlpack\+\_\+gmm\+\_\+probability
+\item mlpack\+\_\+hmm\+\_\+train
+\item mlpack\+\_\+hmm\+\_\+loglik
+\item mlpack\+\_\+hmm\+\_\+viterbi
+\item mlpack\+\_\+hmm\+\_\+generate
+\item mlpack\+\_\+hoeffding\+\_\+tree
+\item mlpack\+\_\+kernel\+\_\+pca
+\item mlpack\+\_\+kfn
+\item mlpack\+\_\+kmeans
+\item mlpack\+\_\+knn
+\item mlpack\+\_\+krann
+\item mlpack\+\_\+lars
+\item mlpack\+\_\+linear\+\_\+regression
+\item mlpack\+\_\+local\+\_\+coordinate\+\_\+coding
+\item mlpack\+\_\+logistic\+\_\+regression
+\item mlpack\+\_\+lsh
+\item mlpack\+\_\+mean\+\_\+shift
+\item mlpack\+\_\+nbc
+\item mlpack\+\_\+nca
+\item mlpack\+\_\+pca
+\item mlpack\+\_\+perceptron
+\item mlpack\+\_\+radical
+\item mlpack\+\_\+range\+\_\+search
+\item mlpack\+\_\+softmax\+\_\+regression
+\item mlpack\+\_\+sparse\+\_\+coding
+\end{DoxyItemize}\section{Tutorials}\label{index_tutorial}
+A few short tutorials on how to use mlpack are given below.
+
+
+\begin{DoxyItemize}
+\item \doxyref{Building mlpack}{p.}{build_build}
+\item \doxyref{Matrices in mlpack}{p.}{matrices}
+\item \doxyref{mlpack Input and Output}{p.}{iodoc}
+\item \doxyref{mlpack Timers}{p.}{timer}
+\item \doxyref{Simple Sample mlpack Programs}{p.}{sample}
+\item \doxyref{mlpack version information}{p.}{verinfo}
+\end{DoxyItemize}
+
+Tutorials on specific methods are also available.
+
+
+\begin{DoxyItemize}
+\item \doxyref{Neighbor\+Search tutorial (k-\/nearest-\/neighbors)}{p.}{nstutorial}
+\item \doxyref{Linear/ridge regression tutorial (mlpack\+\_\+linear\+\_\+regression)}{p.}{lrtutorial}
+\item \doxyref{Range\+Search tutorial (mlpack\+\_\+range\+\_\+search)}{p.}{rstutorial}
+\item \doxyref{Density Estimation Tree (D\+ET) tutorial}{p.}{dettutorial}
+\item \doxyref{E\+M\+ST Tutorial}{p.}{emst_tutorial}
+\item \doxyref{K-\/\+Means tutorial (kmeans)}{p.}{kmtutorial}
+\item \doxyref{Fast max-\/kernel search tutorial (fastmks)}{p.}{fmkstutorial}
+\item \doxyref{Alternating Matrix Factorization tutorial.}{p.}{amftutorial}
+\end{DoxyItemize}\section{Methods in mlpack}\label{index_methods}
+The following methods are included in mlpack\+:
+
+
+\begin{DoxyItemize}
+\item Density Estimation Trees -\/ \doxyref{mlpack\+::det\+::\+D\+Tree}{p.}{classmlpack_1_1det_1_1DTree}
+\item Euclidean Minimum Spanning Trees -\/ \doxyref{mlpack\+::emst\+::\+Dual\+Tree\+Boruvka}{p.}{classmlpack_1_1emst_1_1DualTreeBoruvka}
+\item Gaussian Mixture Models (G\+M\+Ms) -\/ \doxyref{mlpack\+::gmm\+::\+G\+MM}{p.}{classmlpack_1_1gmm_1_1GMM}
+\item Hidden Markov Models (H\+M\+Ms) -\/ \doxyref{mlpack\+::hmm\+::\+H\+MM}{p.}{classmlpack_1_1hmm_1_1HMM}
+\item Kernel P\+CA -\/ \doxyref{mlpack\+::kpca\+::\+Kernel\+P\+CA}{p.}{classmlpack_1_1kpca_1_1KernelPCA}
+\item K-\/\+Means Clustering -\/ \doxyref{mlpack\+::kmeans\+::\+K\+Means}{p.}{classmlpack_1_1kmeans_1_1KMeans}
+\item Least-\/\+Angle Regression (L\+A\+R\+S/\+L\+A\+S\+SO) -\/ \doxyref{mlpack\+::regression\+::\+L\+A\+RS}{p.}{classmlpack_1_1regression_1_1LARS}
+\item Local Coordinate Coding -\/ \doxyref{mlpack\+::lcc\+::\+Local\+Coordinate\+Coding}{p.}{classmlpack_1_1lcc_1_1LocalCoordinateCoding}
+\item Locality-\/\+Sensitive Hashing -\/ \doxyref{mlpack\+::neighbor\+::\+L\+S\+H\+Search}{p.}{classmlpack_1_1neighbor_1_1LSHSearch}
+\item Naive Bayes Classifier -\/ \doxyref{mlpack\+::naive\+\_\+bayes\+::\+Naive\+Bayes\+Classifier}{p.}{classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier}
+\item Neighborhood Components Analysis (N\+CA) -\/ \doxyref{mlpack\+::nca\+::\+N\+CA}{p.}{classmlpack_1_1nca_1_1NCA}
+\item Principal Components Analysis (P\+CA) -\/ \doxyref{mlpack\+::pca\+::\+P\+CA}{p.}{namespacemlpack_1_1pca_a89b48ac6fa2787f4d1f69c20ce3d5c20}
+\item R\+A\+D\+I\+C\+AL (I\+CA) -\/ \doxyref{mlpack\+::radical\+::\+Radical}{p.}{classmlpack_1_1radical_1_1Radical}
+\item Simple Least-\/\+Squares Linear Regression -\/ \doxyref{mlpack\+::regression\+::\+Linear\+Regression}{p.}{classmlpack_1_1regression_1_1LinearRegression}
+\item Sparse Coding -\/ \doxyref{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}{p.}{classmlpack_1_1sparse__coding_1_1SparseCoding}
+\item Tree-\/based neighbor search (K\+NN, K\+FN) -\/ \doxyref{mlpack\+::neighbor\+::\+Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch}
+\item Tree-\/based range search -\/ \doxyref{mlpack\+::range\+::\+Range\+Search}{p.}{classmlpack_1_1range_1_1RangeSearch}
+\end{DoxyItemize}\section{Final Remarks}\label{index_remarks}
+mlpack contributors include\+:
+
+
+\begin{DoxyItemize}
+\item Ryan Curtin {\tt gth671b@mail.\+gatech.\+edu}
+\item James Cline {\tt james.\+cline@gatech.\+edu}
+\item Neil Slagle {\tt nslagle3@gatech.\+edu}
+\item Matthew Amidon {\tt mamidon@gatech.\+edu}
+\item Vlad Grantcharov {\tt vlad321@gatech.\+edu}
+\item Ajinkya Kale {\tt kaleajinkya@gmail.\+com}
+\item Bill March {\tt march@gatech.\+edu}
+\item Dongryeol Lee {\tt dongryel@cc.\+gatech.\+edu}
+\item Nishant Mehta {\tt niche@cc.\+gatech.\+edu}
+\item Parikshit Ram {\tt p.\+ram@gatech.\+edu}
+\item Rajendran Mohan {\tt rmohan88@gatech.\+edu}
+\item Trironk Kiatkungwanglai {\tt trironk@gmail.\+com}
+\item Patrick Mason {\tt patrick.\+s.\+mason@gmail.\+com}
+\item Chip Mappus {\tt cmappus@gatech.\+edu}
+\item Hua Ouyang {\tt houyang@gatech.\+edu}
+\item Long Quoc Tran {\tt tqlong@gmail.\+com}
+\item Noah Kauffman {\tt notoriousnoah@gmail.\+com}
+\item Guillermo Colon {\tt gcolon7@mail.\+gatech.\+edu}
+\item Wei Guan {\tt wguan@cc.\+gatech.\+edu}
+\item Ryan Riegel {\tt rriegel@cc.\+gatech.\+edu}
+\item Nikolaos Vasiloglou {\tt nvasil@ieee.\+org}
+\item Garry Boyer {\tt garryb@gmail.\+com}
+\item Andreas Löf {\tt andreas.\+lof@cs.\+waikato.\+ac.\+nz}
+\item Marcus Edel {\tt marcus.\+edel@fu-\/berlin.\+de}
+\item Mudit Raj Gupta {\tt mudit.\+raaj.\+gupta@gmail.\+com}
+\item Sumedh Ghaisas {\tt sumedhghaisas@gmail.\+com}
+\item Michael Fox {\tt michaelfox99@gmail.\+com}
+\item Ryan Birmingham {\tt birm@gatech.\+edu}
+\item Siddharth Agrawal {\tt siddharth.\+950@gmail.\+com}
+\item Saheb Motiani {\tt saheb210692@gmail.\+com}
+\item Yash Vadalia {\tt yashdv@gmail.\+com}
+\item Abhishek Laddha {\tt laddhaabhishek11@gmail.\+com}
+\item Vahab Akbarzadeh {\tt v.\+akbarzadeh@gmail.\+com}
+\item Andrew Wells {\tt andrewmw94@gmail.\+com}
+\item Zhihao Lou {\tt lzh1984@gmail.\+com}
+\item Udit Saxena {\tt saxena.\+udit@gmail.\+com}
+\item Stephen Tu {\tt tu.\+stephenl@gmail.\+com}
+\item Jaskaran Singh {\tt jaskaranvirdi@gmail.\+com}
+\item Shangtong Zhang {\tt zhangshangtong.\+cpp@icloud.\+com}
+\item Hritik Jain {\tt hritik.\+jain.\+cse13@itbhu.\+ac.\+in}
+\item Vladimir Glazachev {\tt glazachev.\+vladimir@gmail.\+com}
+\item Qiao\+An Chen {\tt kazenoyumechen@gmail.\+com}
+\item Janzen Brewer {\tt jahabrewer@gmail.\+com}
+\item Trung Dinh {\tt dinhanhtrung@gmail.\+com}
+\item Tham Ngap Wei {\tt thamngapwei@gmail.\+com}
+\item Grzegorz Krajewski {\tt krajekg@gmail.\+com}
+\item Joseph Mariadassou {\tt joe.\+mariadassou@gmail.\+com}
+\item Pavel Zhigulin {\tt pashaworking@gmail.\+com}
+\item Andy Fang {\tt Andy\+Fang.\+D\+Z@gmail.\+com}
+\item Barak Pearlmutter {\tt barak+git@pearlmutter.\+net}
+\item Ivari Horm {\tt ivari@risk.\+ee}
+\item Dhawal Arora {\tt d.\+p.\+arora1@gmail.\+com}
+\item Alexander Leinoff {\tt alexander-\/leinoff@uiowa.\+edu}
+\item Palash Ahuja {\tt abhor902@gmail.\+com}
+\item Yannis Mentekidis {\tt mentekid@gmail.\+com}
+\item Ranjan Mondal {\tt ranjan.\+rev@gmail.\+com}
+\item Mikhail Lozhnikov {\tt lozhnikovma@gmail.\+com}
+\item Marcos Pividori {\tt marcos.\+pividori@gmail.\+com}
+\item Keon Kim {\tt kwk236@gmail.\+com}
+\item Nilay Jain {\tt nilayjain13@gmail.\+com}
+\item Peter Lehner {\tt peter.\+lehner@dlr.\+de}
+\item Anuraj Kanodia {\tt akanuraj200@gmail.\+com}
+\item Ivan Georgiev {\tt ivan@jonan.\+info}
+\item Shikhar Bhardwaj {\tt shikharbhardwaj68@gmail.\+com}
+\item Yashu Seth {\tt yashuseth2503@gmail.\+com}
+\item Mike Izbicki {\tt mike@izbicki.\+me}
+\item Sudhanshu Ranjan {\tt sranjan.\+sud@gmail.\+com}
+\item Piyush Jaiswal {\tt piyush.\+jaiswal@st.\+niituniversity.\+in}
+\item Dinesh Raj {\tt dinu.\+iota@gmail.\+com}
+\item Prasanna Patil {\tt prasannapatil08@gmail.\+com}
+\item Lakshya Agrawal {\tt zeeshan.\+lakshya@gmail.\+com}
+\item Vivek Pal {\tt vivekpal.\+dtu@gmail.\+com}
+\item Praveen Ch {\tt chvsp972911@gmail.\+com}
+\item Kirill Mishchenko {\tt ki.\+mishchenko@gmail.\+com}
+\item Thyrix Yang {\tt thyrixyang@gmail.\+com} 
+\end{DoxyItemize}

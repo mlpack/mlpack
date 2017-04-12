@@ -1,0 +1,68 @@
+\section{src/mlpack/methods/ann/layer/layer\+\_\+types.hpp File Reference}
+\label{layer__types_8hpp}\index{src/mlpack/methods/ann/layer/layer\+\_\+types.\+hpp@{src/mlpack/methods/ann/layer/layer\+\_\+types.\+hpp}}
+Include dependency graph for layer\+\_\+types.\+hpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{layer__types_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{layer__types_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class {\bf mlpack\+::ann\+::\+Add\+Merge$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+\begin{DoxyCompactList}\small\item\em Implementation of the \doxyref{Add\+Merge}{p.}{classmlpack_1_1ann_1_1AddMerge} module class. \end{DoxyCompactList}\item 
+class {\bf mlpack\+::ann\+::\+Concat$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+\begin{DoxyCompactList}\small\item\em Implementation of the \doxyref{Concat}{p.}{classmlpack_1_1ann_1_1Concat} class. \end{DoxyCompactList}\item 
+class {\bf mlpack\+::ann\+::\+Concat\+Performance$<$ Output\+Layer\+Type, Input\+Data\+Type, Output\+Data\+Type $>$}
+\begin{DoxyCompactList}\small\item\em Implementation of the concat performance class. \end{DoxyCompactList}\item 
+class {\bf mlpack\+::ann\+::\+Convolution$<$ Forward\+Convolution\+Rule, Backward\+Convolution\+Rule, Gradient\+Convolution\+Rule, Input\+Data\+Type, Output\+Data\+Type $>$}
+\begin{DoxyCompactList}\small\item\em Implementation of the \doxyref{Convolution}{p.}{classmlpack_1_1ann_1_1Convolution} class. \end{DoxyCompactList}\item 
+class {\bf mlpack\+::ann\+::\+Drop\+Connect$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+\begin{DoxyCompactList}\small\item\em The \doxyref{Drop\+Connect}{p.}{classmlpack_1_1ann_1_1DropConnect} layer is a regularizer that randomly with probability ratio sets the connection values to zero and scales the remaining elements by factor 1 /(1 -\/ ratio). \end{DoxyCompactList}\item 
+class {\bf mlpack\+::ann\+::\+Glimpse$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+\begin{DoxyCompactList}\small\item\em The glimpse layer returns a retina-\/like representation (down-\/scaled cropped images) of increasing scale around a given location in a given image. \end{DoxyCompactList}\item 
+class {\bf mlpack\+::ann\+::\+Linear$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+\begin{DoxyCompactList}\small\item\em Implementation of the \doxyref{Linear}{p.}{classmlpack_1_1ann_1_1Linear} layer class. \end{DoxyCompactList}\item 
+class {\bf mlpack\+::ann\+::\+Linear\+No\+Bias$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+\begin{DoxyCompactList}\small\item\em Implementation of the \doxyref{Linear\+No\+Bias}{p.}{classmlpack_1_1ann_1_1LinearNoBias} class. \end{DoxyCompactList}\item 
+class {\bf mlpack\+::ann\+::\+L\+S\+T\+M$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+\begin{DoxyCompactList}\small\item\em An implementation of a lstm network layer. \end{DoxyCompactList}\item 
+class {\bf mlpack\+::ann\+::\+Recurrent$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+\begin{DoxyCompactList}\small\item\em Implementation of the Recurrent\+Layer class. \end{DoxyCompactList}\item 
+class {\bf mlpack\+::ann\+::\+Recurrent\+Attention$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+\begin{DoxyCompactList}\small\item\em This class implements the \doxyref{Recurrent}{p.}{classmlpack_1_1ann_1_1Recurrent} Model for Visual Attention, using a variety of possible layer implementations. \end{DoxyCompactList}\item 
+class {\bf mlpack\+::ann\+::\+Sequential$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+\begin{DoxyCompactList}\small\item\em Implementation of the \doxyref{Sequential}{p.}{classmlpack_1_1ann_1_1Sequential} class. \end{DoxyCompactList}\item 
+class {\bf mlpack\+::ann\+::\+V\+R\+Class\+Reward$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+\begin{DoxyCompactList}\small\item\em Implementation of the variance reduced classification reinforcement layer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ {\bf mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ {\bf mlpack\+::ann}
+\begin{DoxyCompactList}\small\item\em Artificial Neural Network. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+using {\bf mlpack\+::ann\+::\+Layer\+Types} = boost\+::variant$<$ Add$<$ arma\+::mat, arma\+::mat $>$ $\ast$, Add\+Merge$<$ arma\+::mat, arma\+::mat $>$ $\ast$, Base\+Layer$<$ Logistic\+Function, arma\+::mat, arma\+::mat $>$ $\ast$, Base\+Layer$<$ Identity\+Function, arma\+::mat, arma\+::mat $>$ $\ast$, Base\+Layer$<$ Tanh\+Function, arma\+::mat, arma\+::mat $>$ $\ast$, Base\+Layer$<$ Rectifier\+Function, arma\+::mat, arma\+::mat $>$ $\ast$, Concat$<$ arma\+::mat, arma\+::mat $>$ $\ast$, Concat\+Performance$<$ Negative\+Log\+Likelihood$<$ arma\+::mat, arma\+::mat $>$, arma\+::mat, arma\+::mat $>$ $\ast$, Constant$<$ arma\+::mat, arma\+::mat $>$ $\ast$, Convolution$<$ Naive\+Convolution$<$ Valid\+Convolution $>$, Naive\+Convolution$<$ Full\+Convolution $>$, Naive\+Convolution$<$ Valid\+Convolution $>$, arma\+::mat, arma\+::mat $>$ $\ast$, Drop\+Connect$<$ arma\+::mat, arma\+::mat $>$ $\ast$, Dropout$<$ arma\+::mat, arma\+::mat $>$ $\ast$, Glimpse$<$ arma\+::mat, arma\+::mat $>$ $\ast$, Hard\+TanH$<$ arma\+::mat, arma\+::mat $>$ $\ast$, Join$<$ arma\+::mat, arma\+::mat $>$ $\ast$, Leaky\+Re\+LU$<$ arma\+::mat, arma\+::mat $>$ $\ast$, Linear$<$ arma\+::mat, arma\+::mat $>$ $\ast$, Linear\+No\+Bias$<$ arma\+::mat, arma\+::mat $>$ $\ast$, Log\+Soft\+Max$<$ arma\+::mat, arma\+::mat $>$ $\ast$, Lookup$<$ arma\+::mat, arma\+::mat $>$ $\ast$, L\+S\+TM$<$ arma\+::mat, arma\+::mat $>$ $\ast$, Max\+Pooling$<$ arma\+::mat, arma\+::mat $>$ $\ast$, Mean\+Pooling$<$ arma\+::mat, arma\+::mat $>$ $\ast$, Mean\+Squared\+Error$<$ arma\+::mat, arma\+::mat $>$ $\ast$, Multiply\+Constant$<$ arma\+::mat, arma\+::mat $>$ $\ast$, Negative\+Log\+Likelihood$<$ arma\+::mat, arma\+::mat $>$ $\ast$, P\+Re\+LU$<$ arma\+::mat, arma\+::mat $>$ $\ast$, Recurrent$<$ arma\+::mat, arma\+::mat $>$ $\ast$, Recurrent\+Attention$<$ arma\+::mat, arma\+::mat $>$ $\ast$, Reinforce\+Normal$<$ arma\+::mat, arma\+::mat $>$ $\ast$, Select$<$ arma\+::mat, arma\+::mat $>$ $\ast$, Sequential$<$ arma\+::mat, arma\+::mat $>$ $\ast$, V\+R\+Class\+Reward$<$ arma\+::mat, arma\+::mat $>$ $\ast$ $>$
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Marcus Edel
+\end{DoxyAuthor}
+This provides a list of all modules that can be used to construct a model.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause B\+SD license. You should have received a copy of the 3-\/clause B\+SD license along with mlpack. If not, see {\tt http\+://www.\+opensource.\+org/licenses/\+B\+S\+D-\/3-\/\+Clause} for more information. 

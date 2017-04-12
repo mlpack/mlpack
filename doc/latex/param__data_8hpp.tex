@@ -1,0 +1,100 @@
+\section{src/mlpack/core/util/param\+\_\+data.hpp File Reference}
+\label{param__data_8hpp}\index{src/mlpack/core/util/param\+\_\+data.\+hpp@{src/mlpack/core/util/param\+\_\+data.\+hpp}}
+Include dependency graph for param\+\_\+data.\+hpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{param__data_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{param__data_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct {\bf mlpack\+::util\+::\+Is\+Std\+Vector$<$ T $>$}
+\begin{DoxyCompactList}\small\item\em Metaprogramming structure for vector detection. \end{DoxyCompactList}\item 
+struct {\bf mlpack\+::util\+::\+Is\+Std\+Vector$<$ std\+::vector$<$ T, A $>$ $>$}
+\begin{DoxyCompactList}\small\item\em Metaprogramming structure for vector detection. \end{DoxyCompactList}\item 
+struct {\bf mlpack\+::util\+::\+Param\+Data}
+\begin{DoxyCompactList}\small\item\em This structure holds all of the information about a single parameter, including its value (which is set when Parse\+Command\+Line() is called). \end{DoxyCompactList}\item 
+struct {\bf mlpack\+::util\+::\+Parameter\+Type$<$ T $>$}
+\begin{DoxyCompactList}\small\item\em Utility struct to return the type that boost\+::program\+\_\+options should accept for a given input type. \end{DoxyCompactList}\item 
+struct {\bf mlpack\+::util\+::\+Parameter\+Type$<$ arma\+::\+Col$<$ e\+T $>$ $>$}
+\begin{DoxyCompactList}\small\item\em For vector types, boost\+::program\+\_\+options will accept a std\+::string, not an arma\+::\+Col$<$e\+T$>$ (since it is not clear how to specify a vector on the command-\/line). \end{DoxyCompactList}\item 
+struct {\bf mlpack\+::util\+::\+Parameter\+Type$<$ arma\+::\+Mat$<$ e\+T $>$ $>$}
+\begin{DoxyCompactList}\small\item\em For matrix types, boost\+::program\+\_\+options will accept a std\+::string, not an arma\+::mat (since it is not clear how to specify a matrix on the command-\/line). \end{DoxyCompactList}\item 
+struct {\bf mlpack\+::util\+::\+Parameter\+Type$<$ arma\+::\+Row$<$ e\+T $>$ $>$}
+\begin{DoxyCompactList}\small\item\em For row vector types, boost\+::program\+\_\+options will accept a std\+::string, not an arma\+::\+Row$<$e\+T$>$ (since it is not clear how to specify a vector on the command-\/line). \end{DoxyCompactList}\item 
+struct {\bf mlpack\+::util\+::\+Parameter\+Type$<$ std\+::tuple$<$ mlpack\+::data\+::\+Dataset\+Mapper$<$ Policy\+Type $>$, arma\+::\+Mat$<$ e\+T $>$ $>$ $>$}
+\begin{DoxyCompactList}\small\item\em For matrix+dataset info types, we should accept a std\+::string. \end{DoxyCompactList}\item 
+struct {\bf mlpack\+::util\+::\+Parameter\+Type\+Deducer$<$ Has\+Serialize, T $>$}
+\item 
+struct {\bf mlpack\+::util\+::\+Parameter\+Type\+Deducer$<$ true, T $>$}
+\end{DoxyCompactItemize}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ {\bf mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ {\bf mlpack\+::util}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define {\bf T\+Y\+P\+E\+N\+A\+ME}(x)~({\bf std\+::string}(typeid(x).name()))
+\begin{DoxyCompactList}\small\item\em The T\+Y\+P\+E\+N\+A\+ME macro is used internally to convert a type into a string. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename T $>$ }\\T \& {\bf mlpack\+::util\+::\+Handle\+Parameter} (typename util\+::\+Parameter\+Type$<$ T $>$\+::type \&value, util\+::\+Param\+Data \&d, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ data\+::\+Has\+Serialize$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ {\bf mlpack\+::data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em If needed, map \textquotesingle{}true\+Value\textquotesingle{} to the right type and return it. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\T \& {\bf mlpack\+::util\+::\+Handle\+Parameter} (typename util\+::\+Parameter\+Type$<$ T $>$\+::type \&value, util\+::\+Param\+Data \&d, const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em This must be overloaded for matrices. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\T \& {\bf mlpack\+::util\+::\+Handle\+Parameter} (typename util\+::\+Parameter\+Type$<$ T $>$\+::type \&value, util\+::\+Param\+Data \&d, const typename boost\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ {\bf mlpack\+::data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em This must be overloaded for matrices and dataset info objects. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\T \& {\bf mlpack\+::util\+::\+Handle\+Parameter} (typename util\+::\+Parameter\+Type$<$ T $>$\+::type \&value, util\+::\+Param\+Data \&d, const typename boost\+::enable\+\_\+if$<$ data\+::\+Has\+Serialize$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em This must be overloaded for serializable objects. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\T \& {\bf mlpack\+::util\+::\+Handle\+Raw\+Parameter} (typename util\+::\+Parameter\+Type$<$ T $>$\+::type \&value, util\+::\+Param\+Data \&, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ data\+::\+Has\+Serialize$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ data\+::\+Dataset\+Info, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em This will just return the value. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\T \& {\bf mlpack\+::util\+::\+Handle\+Raw\+Parameter} (typename util\+::\+Parameter\+Type$<$ T $>$\+::type \&, util\+::\+Param\+Data \&d, const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em This will return the mapped value. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\T \& {\bf mlpack\+::util\+::\+Handle\+Raw\+Parameter} (typename util\+::\+Parameter\+Type$<$ T $>$\+::type \&, util\+::\+Param\+Data \&d, const typename boost\+::enable\+\_\+if$<$ data\+::\+Has\+Serialize$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em This will return the mapped value. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\T \& {\bf mlpack\+::util\+::\+Handle\+Raw\+Parameter} (typename util\+::\+Parameter\+Type$<$ T $>$\+::type \&, util\+::\+Param\+Data \&d, const typename boost\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ data\+::\+Dataset\+Info, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em This will return the mapped value. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\{\bf std\+::string} {\bf mlpack\+::util\+::\+Map\+Parameter\+Name} (const {\bf std\+::string} \&identifier, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ data\+::\+Has\+Serialize$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ {\bf mlpack\+::data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em If needed, map the parameter name to the name that is used by boost. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\{\bf std\+::string} {\bf mlpack\+::util\+::\+Map\+Parameter\+Name} (const {\bf std\+::string} \&identifier, const typename boost\+::enable\+\_\+if\+\_\+c$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value$\vert$$\vert$std\+::is\+\_\+same$<$ T, std\+::tuple$<$ {\bf mlpack\+::data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value$\vert$$\vert$data\+::\+Has\+Serialize$<$ T $>$\+::value $>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em This must be overloaded for matrices. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Ryan Curtin
+\end{DoxyAuthor}
+This defines the structure that holds information for each command-\/line parameter, as well as utility functions it is used with. 
+
+\subsection{Macro Definition Documentation}
+\index{param\+\_\+data.\+hpp@{param\+\_\+data.\+hpp}!T\+Y\+P\+E\+N\+A\+ME@{T\+Y\+P\+E\+N\+A\+ME}}
+\index{T\+Y\+P\+E\+N\+A\+ME@{T\+Y\+P\+E\+N\+A\+ME}!param\+\_\+data.\+hpp@{param\+\_\+data.\+hpp}}
+\subsubsection[{T\+Y\+P\+E\+N\+A\+ME}]{\setlength{\rightskip}{0pt plus 5cm}\#define T\+Y\+P\+E\+N\+A\+ME(
+\begin{DoxyParamCaption}
+\item[{}]{x}
+\end{DoxyParamCaption}
+)~({\bf std\+::string}(typeid(x).name()))}\label{param__data_8hpp_ac909d914008cce49fa42ddd10b9b36c5}
+
+
+The T\+Y\+P\+E\+N\+A\+ME macro is used internally to convert a type into a string. 
+
+
+
+Definition at line 18 of file param\+\_\+data.\+hpp.
+

@@ -1,0 +1,254 @@
+\section{mlpack\+:\+:optimization\+:\+:L\+R\+S\+D\+P\+Function$<$ S\+D\+P\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1optimization_1_1LRSDPFunction}\index{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function$<$ S\+D\+P\+Type $>$@{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function$<$ S\+D\+P\+Type $>$}}
+
+
+The objective function that \doxyref{L\+R\+S\+DP}{p.}{classmlpack_1_1optimization_1_1LRSDP} is trying to optimize.  
+
+
+
+
+Inheritance diagram for mlpack\+:\+:optimization\+:\+:L\+R\+S\+D\+P\+Function$<$ S\+D\+P\+Type $>$\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=214pt]{classmlpack_1_1optimization_1_1LRSDPFunction__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf L\+R\+S\+D\+P\+Function} (const S\+D\+P\+Type \&{\bf sdp}, const arma\+::mat \&{\bf initial\+Point})
+\begin{DoxyCompactList}\small\item\em Construct the \doxyref{L\+R\+S\+D\+P\+Function}{p.}{classmlpack_1_1optimization_1_1LRSDPFunction} from the given \doxyref{S\+DP}{p.}{classmlpack_1_1optimization_1_1SDP}. \end{DoxyCompactList}\item 
+{\bf L\+R\+S\+D\+P\+Function} (const size\+\_\+t num\+Sparse\+Constraints, const size\+\_\+t num\+Dense\+Constraints, const arma\+::mat \&{\bf initial\+Point})
+\begin{DoxyCompactList}\small\item\em Construct the \doxyref{L\+R\+S\+D\+P\+Function}{p.}{classmlpack_1_1optimization_1_1LRSDPFunction} with the given initial point and number of constraints. \end{DoxyCompactList}\item 
+double {\bf Evaluate} (const arma\+::mat \&coordinates) const 
+\begin{DoxyCompactList}\small\item\em Evaluate the objective function of the \doxyref{L\+R\+S\+DP}{p.}{classmlpack_1_1optimization_1_1LRSDP} (no constraints) at the given coordinates. \end{DoxyCompactList}\item 
+double {\bf Evaluate\+Constraint} (const size\+\_\+t index, const arma\+::mat \&coordinates) const 
+\begin{DoxyCompactList}\small\item\em Evaluate a particular constraint of the \doxyref{L\+R\+S\+DP}{p.}{classmlpack_1_1optimization_1_1LRSDP} at the given coordinates. \end{DoxyCompactList}\item 
+const arma\+::mat \& {\bf Get\+Initial\+Point} () const 
+\begin{DoxyCompactList}\small\item\em Get the initial point of the \doxyref{L\+R\+S\+DP}{p.}{classmlpack_1_1optimization_1_1LRSDP}. \end{DoxyCompactList}\item 
+void {\bf Gradient} (const arma\+::mat \&coordinates, arma\+::mat \&gradient) const 
+\begin{DoxyCompactList}\small\item\em Evaluate the gradient of the \doxyref{L\+R\+S\+DP}{p.}{classmlpack_1_1optimization_1_1LRSDP} (no constraints) at the given coordinates. \end{DoxyCompactList}\item 
+void {\bf Gradient\+Constraint} (const size\+\_\+t index, const arma\+::mat \&coordinates, arma\+::mat \&gradient) const 
+\begin{DoxyCompactList}\small\item\em Evaluate the gradient of a particular constraint of the \doxyref{L\+R\+S\+DP}{p.}{classmlpack_1_1optimization_1_1LRSDP} at the given coordinates. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Num\+Constraints} () const 
+\begin{DoxyCompactList}\small\item\em Get the total number of constraints in the \doxyref{L\+R\+S\+DP}{p.}{classmlpack_1_1optimization_1_1LRSDP}. \end{DoxyCompactList}\item 
+const S\+D\+P\+Type \& {\bf S\+DP} () const 
+\begin{DoxyCompactList}\small\item\em Return the \doxyref{S\+DP}{p.}{classmlpack_1_1optimization_1_1SDP} object representing the problem. \end{DoxyCompactList}\item 
+S\+D\+P\+Type \& {\bf S\+DP} ()
+\begin{DoxyCompactList}\small\item\em Modify the \doxyref{S\+DP}{p.}{classmlpack_1_1optimization_1_1SDP} object representing the problem. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+arma\+::mat {\bf initial\+Point}
+\begin{DoxyCompactList}\small\item\em Initial point. \end{DoxyCompactList}\item 
+S\+D\+P\+Type {\bf sdp}
+\begin{DoxyCompactList}\small\item\em \doxyref{S\+DP}{p.}{classmlpack_1_1optimization_1_1SDP} object representing the problem. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename S\+D\+P\+Type$>$\\*
+class mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function$<$ S\+D\+P\+Type $>$}
+
+The objective function that \doxyref{L\+R\+S\+DP}{p.}{classmlpack_1_1optimization_1_1LRSDP} is trying to optimize. 
+
+Definition at line 27 of file lrsdp\+\_\+function.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function@{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function}!L\+R\+S\+D\+P\+Function@{L\+R\+S\+D\+P\+Function}}
+\index{L\+R\+S\+D\+P\+Function@{L\+R\+S\+D\+P\+Function}!mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function@{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function}}
+\subsubsection[{L\+R\+S\+D\+P\+Function(const S\+D\+P\+Type \&sdp, const arma\+::mat \&initial\+Point)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename S\+D\+P\+Type$>$ {\bf mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function}$<$ S\+D\+P\+Type $>$\+::{\bf L\+R\+S\+D\+P\+Function} (
+\begin{DoxyParamCaption}
+\item[{const S\+D\+P\+Type \&}]{sdp, }
+\item[{const arma\+::mat \&}]{initial\+Point}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1optimization_1_1LRSDPFunction_a5386d80d2b56be9dc4dbabfb845eaaf6}
+
+
+Construct the \doxyref{L\+R\+S\+D\+P\+Function}{p.}{classmlpack_1_1optimization_1_1LRSDPFunction} from the given \doxyref{S\+DP}{p.}{classmlpack_1_1optimization_1_1SDP}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em sdp} & \\
+\hline
+{\em initial\+Point} & \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function@{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function}!L\+R\+S\+D\+P\+Function@{L\+R\+S\+D\+P\+Function}}
+\index{L\+R\+S\+D\+P\+Function@{L\+R\+S\+D\+P\+Function}!mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function@{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function}}
+\subsubsection[{L\+R\+S\+D\+P\+Function(const size\+\_\+t num\+Sparse\+Constraints, const size\+\_\+t num\+Dense\+Constraints, const arma\+::mat \&initial\+Point)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename S\+D\+P\+Type$>$ {\bf mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function}$<$ S\+D\+P\+Type $>$\+::{\bf L\+R\+S\+D\+P\+Function} (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{num\+Sparse\+Constraints, }
+\item[{const size\+\_\+t}]{num\+Dense\+Constraints, }
+\item[{const arma\+::mat \&}]{initial\+Point}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1optimization_1_1LRSDPFunction_ae099ca0a5a03fd043c54c0d1236c0771}
+
+
+Construct the \doxyref{L\+R\+S\+D\+P\+Function}{p.}{classmlpack_1_1optimization_1_1LRSDPFunction} with the given initial point and number of constraints. 
+
+Note n\+\_\+cols of the initial\+Point specifies the rank.
+
+Set the A\+\_\+x, B\+\_\+x, and C\+\_\+x matrices for each constraint using the A\+\_\+x(), B\+\_\+x(), and C\+\_\+x() functions, for x in \{sparse, dense\}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em num\+Sparse\+Constraints} & \\
+\hline
+{\em num\+Dense\+Constraints} & \\
+\hline
+{\em initial\+Point} & \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function@{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function@{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function}}
+\subsubsection[{Evaluate(const arma\+::mat \&coordinates) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename S\+D\+P\+Type$>$ double {\bf mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function}$<$ S\+D\+P\+Type $>$\+::Evaluate (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{coordinates}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1optimization_1_1LRSDPFunction_a21b8e4f2c4f8a0ee40c8e1c6e0ff3f60}
+
+
+Evaluate the objective function of the \doxyref{L\+R\+S\+DP}{p.}{classmlpack_1_1optimization_1_1LRSDP} (no constraints) at the given coordinates. 
+
+\index{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function@{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function}!Evaluate\+Constraint@{Evaluate\+Constraint}}
+\index{Evaluate\+Constraint@{Evaluate\+Constraint}!mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function@{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function}}
+\subsubsection[{Evaluate\+Constraint(const size\+\_\+t index, const arma\+::mat \&coordinates) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename S\+D\+P\+Type$>$ double {\bf mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function}$<$ S\+D\+P\+Type $>$\+::Evaluate\+Constraint (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{index, }
+\item[{const arma\+::mat \&}]{coordinates}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1optimization_1_1LRSDPFunction_a4217c331f89c41cb6408d5ede87bf875}
+
+
+Evaluate a particular constraint of the \doxyref{L\+R\+S\+DP}{p.}{classmlpack_1_1optimization_1_1LRSDP} at the given coordinates. 
+
+\index{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function@{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function}!Get\+Initial\+Point@{Get\+Initial\+Point}}
+\index{Get\+Initial\+Point@{Get\+Initial\+Point}!mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function@{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function}}
+\subsubsection[{Get\+Initial\+Point() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename S\+D\+P\+Type$>$ const arma\+::mat\& {\bf mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function}$<$ S\+D\+P\+Type $>$\+::Get\+Initial\+Point (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1optimization_1_1LRSDPFunction_afc62e1ab6797fad16057d45d81813323}
+
+
+Get the initial point of the \doxyref{L\+R\+S\+DP}{p.}{classmlpack_1_1optimization_1_1LRSDP}. 
+
+
+
+Definition at line 84 of file lrsdp\+\_\+function.\+hpp.
+
+\index{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function@{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function@{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function}}
+\subsubsection[{Gradient(const arma\+::mat \&coordinates, arma\+::mat \&gradient) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename S\+D\+P\+Type$>$ void {\bf mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function}$<$ S\+D\+P\+Type $>$\+::Gradient (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{coordinates, }
+\item[{arma\+::mat \&}]{gradient}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1optimization_1_1LRSDPFunction_a00ab5ada7c854f14867f631338cc9034}
+
+
+Evaluate the gradient of the \doxyref{L\+R\+S\+DP}{p.}{classmlpack_1_1optimization_1_1LRSDP} (no constraints) at the given coordinates. 
+
+\index{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function@{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function}!Gradient\+Constraint@{Gradient\+Constraint}}
+\index{Gradient\+Constraint@{Gradient\+Constraint}!mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function@{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function}}
+\subsubsection[{Gradient\+Constraint(const size\+\_\+t index, const arma\+::mat \&coordinates, arma\+::mat \&gradient) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename S\+D\+P\+Type$>$ void {\bf mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function}$<$ S\+D\+P\+Type $>$\+::Gradient\+Constraint (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{index, }
+\item[{const arma\+::mat \&}]{coordinates, }
+\item[{arma\+::mat \&}]{gradient}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1optimization_1_1LRSDPFunction_a24ceba6c030ed8154bb52e5c57375f95}
+
+
+Evaluate the gradient of a particular constraint of the \doxyref{L\+R\+S\+DP}{p.}{classmlpack_1_1optimization_1_1LRSDP} at the given coordinates. 
+
+\index{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function@{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function}!Num\+Constraints@{Num\+Constraints}}
+\index{Num\+Constraints@{Num\+Constraints}!mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function@{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function}}
+\subsubsection[{Num\+Constraints() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename S\+D\+P\+Type$>$ size\+\_\+t {\bf mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function}$<$ S\+D\+P\+Type $>$\+::Num\+Constraints (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1optimization_1_1LRSDPFunction_a1f618b1100f7fb2638c3beab8f60898c}
+
+
+Get the total number of constraints in the \doxyref{L\+R\+S\+DP}{p.}{classmlpack_1_1optimization_1_1LRSDP}. 
+
+
+
+Definition at line 81 of file lrsdp\+\_\+function.\+hpp.
+
+\index{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function@{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function}!S\+DP@{S\+DP}}
+\index{S\+DP@{S\+DP}!mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function@{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function}}
+\subsubsection[{S\+D\+P() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename S\+D\+P\+Type$>$ const S\+D\+P\+Type\& {\bf mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function}$<$ S\+D\+P\+Type $>$\+::{\bf S\+DP} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1optimization_1_1LRSDPFunction_a4ff71ca67506faa5d97d9141e64281a1}
+
+
+Return the \doxyref{S\+DP}{p.}{classmlpack_1_1optimization_1_1SDP} object representing the problem. 
+
+
+
+Definition at line 87 of file lrsdp\+\_\+function.\+hpp.
+
+\index{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function@{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function}!S\+DP@{S\+DP}}
+\index{S\+DP@{S\+DP}!mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function@{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function}}
+\subsubsection[{S\+D\+P()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename S\+D\+P\+Type$>$ S\+D\+P\+Type\& {\bf mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function}$<$ S\+D\+P\+Type $>$\+::{\bf S\+DP} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1optimization_1_1LRSDPFunction_ab3ec818ff26b38ad0394f6af97862601}
+
+
+Modify the \doxyref{S\+DP}{p.}{classmlpack_1_1optimization_1_1SDP} object representing the problem. 
+
+
+
+Definition at line 90 of file lrsdp\+\_\+function.\+hpp.
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function@{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function}!initial\+Point@{initial\+Point}}
+\index{initial\+Point@{initial\+Point}!mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function@{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function}}
+\subsubsection[{initial\+Point}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename S\+D\+P\+Type$>$ arma\+::mat {\bf mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function}$<$ S\+D\+P\+Type $>$\+::initial\+Point\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1optimization_1_1LRSDPFunction_ab1e4216431124628b7df93463b7d11ba}
+
+
+Initial point. 
+
+
+
+Definition at line 98 of file lrsdp\+\_\+function.\+hpp.
+
+
+
+Referenced by mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function$<$ optimization\+::\+S\+D\+P$<$ arma\+::sp\+\_\+mat $>$ $>$\+::\+Get\+Initial\+Point().
+
+\index{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function@{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function}!sdp@{sdp}}
+\index{sdp@{sdp}!mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function@{mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function}}
+\subsubsection[{sdp}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename S\+D\+P\+Type$>$ S\+D\+P\+Type {\bf mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function}$<$ S\+D\+P\+Type $>$\+::sdp\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1optimization_1_1LRSDPFunction_a6b92f19ba9240768a8404538be91bd77}
+
+
+\doxyref{S\+DP}{p.}{classmlpack_1_1optimization_1_1SDP} object representing the problem. 
+
+
+
+Definition at line 95 of file lrsdp\+\_\+function.\+hpp.
+
+
+
+Referenced by mlpack\+::optimization\+::\+L\+R\+S\+D\+P\+Function$<$ optimization\+::\+S\+D\+P$<$ arma\+::sp\+\_\+mat $>$ $>$\+::\+S\+D\+P().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/optimizers/sdp/{\bf lrsdp\+\_\+function.\+hpp}\end{DoxyCompactItemize}

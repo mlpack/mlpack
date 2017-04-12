@@ -1,0 +1,181 @@
+\section{mlpack\+:\+:kmeans\+:\+:Max\+Variance\+New\+Cluster Class Reference}
+\label{classmlpack_1_1kmeans_1_1MaxVarianceNewCluster}\index{mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster@{mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster}}
+
+
+When an empty cluster is detected, this class takes the point furthest from the centroid of the cluster with maximum variance as a new cluster.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Max\+Variance\+New\+Cluster} ()
+\begin{DoxyCompactList}\small\item\em Default constructor required by Empty\+Cluster\+Policy. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Mat\+Type $>$ }\\size\+\_\+t {\bf Empty\+Cluster} (const Mat\+Type \&data, const size\+\_\+t empty\+Cluster, const arma\+::mat \&old\+Centroids, arma\+::mat \&new\+Centroids, arma\+::\+Col$<$ size\+\_\+t $>$ \&cluster\+Counts, Metric\+Type \&metric, const size\+\_\+t {\bf iteration})
+\begin{DoxyCompactList}\small\item\em Take the point furthest from the centroid of the cluster with maximum variance to be a new cluster. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&ar, const unsigned int version)
+\begin{DoxyCompactList}\small\item\em Serialize the object. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Metric\+Type , typename Mat\+Type $>$ }\\void {\bf Precalculate} (const Mat\+Type \&data, const arma\+::mat \&old\+Centroids, arma\+::\+Col$<$ size\+\_\+t $>$ \&cluster\+Counts, Metric\+Type \&metric)
+\begin{DoxyCompactList}\small\item\em Called when we are on a new iteration. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+arma\+::\+Row$<$ size\+\_\+t $>$ {\bf assignments}
+\begin{DoxyCompactList}\small\item\em Cached assignments for each point. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf iteration}
+\begin{DoxyCompactList}\small\item\em Index of iteration for which variance is cached. \end{DoxyCompactList}\item 
+arma\+::vec {\bf variances}
+\begin{DoxyCompactList}\small\item\em Cached variances for each cluster. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+When an empty cluster is detected, this class takes the point furthest from the centroid of the cluster with maximum variance as a new cluster. 
+
+Definition at line 26 of file max\+\_\+variance\+\_\+new\+\_\+cluster.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster@{mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster}!Max\+Variance\+New\+Cluster@{Max\+Variance\+New\+Cluster}}
+\index{Max\+Variance\+New\+Cluster@{Max\+Variance\+New\+Cluster}!mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster@{mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster}}
+\subsubsection[{Max\+Variance\+New\+Cluster()}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster\+::\+Max\+Variance\+New\+Cluster (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1kmeans_1_1MaxVarianceNewCluster_a44e417460f632365dcf7de278b8dd84b}
+
+
+Default constructor required by Empty\+Cluster\+Policy. 
+
+
+
+Definition at line 30 of file max\+\_\+variance\+\_\+new\+\_\+cluster.\+hpp.
+
+
+
+References Empty\+Cluster(), iteration, and Serialize().
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster@{mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster}!Empty\+Cluster@{Empty\+Cluster}}
+\index{Empty\+Cluster@{Empty\+Cluster}!mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster@{mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster}}
+\subsubsection[{Empty\+Cluster(const Mat\+Type \&data, const size\+\_\+t empty\+Cluster, const arma\+::mat \&old\+Centroids, arma\+::mat \&new\+Centroids, arma\+::\+Col$<$ size\+\_\+t $>$ \&cluster\+Counts, Metric\+Type \&metric, const size\+\_\+t iteration)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type $>$ size\+\_\+t mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster\+::\+Empty\+Cluster (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{data, }
+\item[{const size\+\_\+t}]{empty\+Cluster, }
+\item[{const arma\+::mat \&}]{old\+Centroids, }
+\item[{arma\+::mat \&}]{new\+Centroids, }
+\item[{arma\+::\+Col$<$ size\+\_\+t $>$ \&}]{cluster\+Counts, }
+\item[{Metric\+Type \&}]{metric, }
+\item[{const size\+\_\+t}]{iteration}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1kmeans_1_1MaxVarianceNewCluster_ab7c4d0e064929e75c1731d44c950ae1a}
+
+
+Take the point furthest from the centroid of the cluster with maximum variance to be a new cluster. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Mat\+Type} & Type of data (arma\+::mat or arma\+::sp\+\_\+mat). \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset on which clustering is being performed. \\
+\hline
+{\em empty\+Cluster} & Index of cluster which is empty. \\
+\hline
+{\em old\+Centroids} & Centroids of each cluster (one per column), at the start of the iteration. \\
+\hline
+{\em new\+Centroids} & Centroids of each cluster (one per column), at the end of the iteration. This will be modified! \\
+\hline
+{\em cluster\+Counts} & Number of points in each cluster. \\
+\hline
+{\em assignments} & Cluster assignments of each point.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Number of points changed. 
+\end{DoxyReturn}
+
+
+Referenced by Max\+Variance\+New\+Cluster().
+
+\index{mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster@{mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster}!Precalculate@{Precalculate}}
+\index{Precalculate@{Precalculate}!mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster@{mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster}}
+\subsubsection[{Precalculate(const Mat\+Type \&data, const arma\+::mat \&old\+Centroids, arma\+::\+Col$<$ size\+\_\+t $>$ \&cluster\+Counts, Metric\+Type \&metric)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type $>$ void mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster\+::\+Precalculate (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{data, }
+\item[{const arma\+::mat \&}]{old\+Centroids, }
+\item[{arma\+::\+Col$<$ size\+\_\+t $>$ \&}]{cluster\+Counts, }
+\item[{Metric\+Type \&}]{metric}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1MaxVarianceNewCluster_a8e3a01fd204f8c5a83260ef0e4f38def}
+
+
+Called when we are on a new iteration. 
+
+\index{mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster@{mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster@{mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster}}
+\subsubsection[{Serialize(\+Archive \&ar, const unsigned int version)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Archive $>$ void mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster\+::\+Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const unsigned int}]{version}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1kmeans_1_1MaxVarianceNewCluster_afeae1e0429a721f5847de913a9968ef3}
+
+
+Serialize the object. 
+
+
+
+Referenced by Max\+Variance\+New\+Cluster().
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster@{mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster}!assignments@{assignments}}
+\index{assignments@{assignments}!mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster@{mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster}}
+\subsubsection[{assignments}]{\setlength{\rightskip}{0pt plus 5cm}arma\+::\+Row$<$size\+\_\+t$>$ mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster\+::assignments\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1MaxVarianceNewCluster_acd34e7a1fc23227a825666c4d6ebfa3a}
+
+
+Cached assignments for each point. 
+
+
+
+Definition at line 67 of file max\+\_\+variance\+\_\+new\+\_\+cluster.\+hpp.
+
+\index{mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster@{mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster}!iteration@{iteration}}
+\index{iteration@{iteration}!mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster@{mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster}}
+\subsubsection[{iteration}]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster\+::iteration\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1MaxVarianceNewCluster_aab5ea8a18dfdf8e9e0d25c00caff611d}
+
+
+Index of iteration for which variance is cached. 
+
+
+
+Definition at line 63 of file max\+\_\+variance\+\_\+new\+\_\+cluster.\+hpp.
+
+
+
+Referenced by Max\+Variance\+New\+Cluster().
+
+\index{mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster@{mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster}!variances@{variances}}
+\index{variances@{variances}!mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster@{mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster}}
+\subsubsection[{variances}]{\setlength{\rightskip}{0pt plus 5cm}arma\+::vec mlpack\+::kmeans\+::\+Max\+Variance\+New\+Cluster\+::variances\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1MaxVarianceNewCluster_a2548cde6d67b71eb9a9d533c370012be}
+
+
+Cached variances for each cluster. 
+
+
+
+Definition at line 65 of file max\+\_\+variance\+\_\+new\+\_\+cluster.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/kmeans/{\bf max\+\_\+variance\+\_\+new\+\_\+cluster.\+hpp}\end{DoxyCompactItemize}

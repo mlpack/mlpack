@@ -1,0 +1,130 @@
+.TH "mlpack::ann::NguyenWidrowInitialization" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::ann::NguyenWidrowInitialization \- This class is used to initialize the weight matrix with the Nguyen-Widrow method\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBNguyenWidrowInitialization\fP (const double \fBlowerBound\fP=\-0\&.5, const double \fBupperBound\fP=0\&.5)"
+.br
+.RI "\fIInitialize the random initialization rule with the given lower bound and upper bound\&. \fP"
+.ti -1c
+.RI "template<typename eT > void \fBInitialize\fP (arma::Mat< eT > &W, const size_t rows, const size_t cols)"
+.br
+.RI "\fIInitialize the elements of the specified weight matrix with the Nguyen-Widrow method\&. \fP"
+.ti -1c
+.RI "template<typename eT > void \fBInitialize\fP (arma::Cube< eT > &W, const size_t rows, const size_t cols, const size_t slices)"
+.br
+.RI "\fIInitialize the elements of the specified weight 3rd order tensor with the Nguyen-Widrow method\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "const double \fBlowerBound\fP"
+.br
+.RI "\fIThe number used as lower bound\&. \fP"
+.ti -1c
+.RI "const double \fBupperBound\fP"
+.br
+.RI "\fIThe number used as upper bound\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+This class is used to initialize the weight matrix with the Nguyen-Widrow method\&. 
+
+The method is defined by
+.PP
+\begin{eqnarray*} \gamma &\le& w_i \le \gamma \\ \beta &=& 0.7H^{\frac{1}{I}} \\ n &=& \sqrt{\sum_{i=0}{I}w_{i}^{2}} \\ w_i &=& \frac{\beta w_i}{n} \end{eqnarray*}.PP
+Where H is the number of neurons in the outgoing layer, I represents the number of neurons in the ingoing layer and gamma defines the random interval that is used to initialize the weights with a random value in a specific range\&. 
+.PP
+Definition at line 52 of file nguyen_widrow_init\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::ann::NguyenWidrowInitialization::NguyenWidrowInitialization (const double lowerBound = \fC\-0\&.5\fP, const double upperBound = \fC0\&.5\fP)\fC [inline]\fP"
+
+.PP
+Initialize the random initialization rule with the given lower bound and upper bound\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIlowerBound\fP The number used as lower bound\&. 
+.br
+\fIupperBound\fP The number used as upper bound\&. 
+.RE
+.PP
+
+.PP
+Definition at line 62 of file nguyen_widrow_init\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename eT > void mlpack::ann::NguyenWidrowInitialization::Initialize (arma::Mat< eT > & W, const size_t rows, const size_t cols)\fC [inline]\fP"
+
+.PP
+Initialize the elements of the specified weight matrix with the Nguyen-Widrow method\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIW\fP Weight matrix to initialize\&. 
+.br
+\fIrows\fP Number of rows\&. 
+.br
+\fIcols\fP Number of columns\&. 
+.RE
+.PP
+
+.PP
+Definition at line 75 of file nguyen_widrow_init\&.hpp\&.
+.PP
+References mlpack::ann::RandomInitialization::Initialize(), lowerBound, and upperBound\&.
+.PP
+Referenced by Initialize()\&.
+.SS "template<typename eT > void mlpack::ann::NguyenWidrowInitialization::Initialize (arma::Cube< eT > & W, const size_t rows, const size_t cols, const size_t slices)\fC [inline]\fP"
+
+.PP
+Initialize the elements of the specified weight 3rd order tensor with the Nguyen-Widrow method\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIW\fP Weight matrix to initialize\&. 
+.br
+\fIrows\fP Number of rows\&. 
+.br
+\fIcols\fP Number of columns\&. 
+.br
+\fIslices\fP Number of slices\&. 
+.RE
+.PP
+
+.PP
+Definition at line 94 of file nguyen_widrow_init\&.hpp\&.
+.PP
+References Initialize()\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "const double mlpack::ann::NguyenWidrowInitialization::lowerBound\fC [private]\fP"
+
+.PP
+The number used as lower bound\&. 
+.PP
+Definition at line 107 of file nguyen_widrow_init\&.hpp\&.
+.PP
+Referenced by Initialize()\&.
+.SS "const double mlpack::ann::NguyenWidrowInitialization::upperBound\fC [private]\fP"
+
+.PP
+The number used as upper bound\&. 
+.PP
+Definition at line 110 of file nguyen_widrow_init\&.hpp\&.
+.PP
+Referenced by Initialize()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

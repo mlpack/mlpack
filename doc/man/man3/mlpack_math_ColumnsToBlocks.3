@@ -1,0 +1,482 @@
+.TH "mlpack::math::ColumnsToBlocks" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::math::ColumnsToBlocks \- Transform the columns of the given matrix into a block format\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBColumnsToBlocks\fP (size_t \fBrows\fP, size_t \fBcols\fP, size_t \fBblockHeight\fP=0, size_t \fBblockWidth\fP=0)"
+.br
+.RI "\fIConstructor a \fBColumnsToBlocks\fP object with the given parameters\&. \fP"
+.ti -1c
+.RI "void \fBBlockHeight\fP (const size_t value)"
+.br
+.RI "\fISet the height of each block; see the constructor for more details\&. \fP"
+.ti -1c
+.RI "size_t \fBBlockHeight\fP () const "
+.br
+.RI "\fIGet the block height\&. \fP"
+.ti -1c
+.RI "void \fBBlockWidth\fP (size_t value)"
+.br
+.RI "\fISet the width of each block; see the constructor for more details\&. \fP"
+.ti -1c
+.RI "size_t \fBBlockWidth\fP () const "
+.br
+.RI "\fIGet the block width\&. \fP"
+.ti -1c
+.RI "void \fBBufSize\fP (const size_t value)"
+.br
+.RI "\fIModify the buffer size (the size of the margin around each column of the input)\&. \fP"
+.ti -1c
+.RI "size_t \fBBufSize\fP () const "
+.br
+.RI "\fIGet the buffer size\&. \fP"
+.ti -1c
+.RI "void \fBBufValue\fP (const double value)"
+.br
+.RI "\fIModify the value used for buffer cells; the default is -1\&. \fP"
+.ti -1c
+.RI "double \fBBufValue\fP () const "
+.br
+.RI "\fIGet the value used for buffer cells\&. \fP"
+.ti -1c
+.RI "void \fBCols\fP (const size_t value)"
+.br
+.RI "\fISet the number of blocks per column\&. \fP"
+.ti -1c
+.RI "size_t \fBCols\fP () const "
+.br
+.RI "\fIReturn the number of blocks per column\&. \fP"
+.ti -1c
+.RI "void \fBMaxRange\fP (const double value)"
+.br
+.RI "\fISet the maximum of the range the input will be scaled to, if scaling is enabled (see \fBScale()\fP)\&. \fP"
+.ti -1c
+.RI "double \fBMaxRange\fP () const "
+.br
+.RI "\fIGet the maximum of the range the input will be scaled to, if scaling is enabled (see \fBScale()\fP)\&. \fP"
+.ti -1c
+.RI "void \fBMinRange\fP (const double value)"
+.br
+.RI "\fISet the minimum of the range the input will be scaled to, if scaling is enabled (see \fBScale()\fP)\&. \fP"
+.ti -1c
+.RI "double \fBMinRange\fP () const "
+.br
+.RI "\fIGet the minimum of the range the input will be scaled to, if scaling is enabled (see \fBScale()\fP)\&. \fP"
+.ti -1c
+.RI "void \fBRows\fP (const size_t value)"
+.br
+.RI "\fISet the number of blocks per row\&. \fP"
+.ti -1c
+.RI "size_t \fBRows\fP () const "
+.br
+.RI "\fIModify the number of blocks per row\&. \fP"
+.ti -1c
+.RI "void \fBScale\fP (const bool value)"
+.br
+.RI "\fISet whether or not scaling is enabled (see also \fBMaxRange()\fP and \fBMinRange()\fP)\&. \fP"
+.ti -1c
+.RI "bool \fBScale\fP () const "
+.br
+.RI "\fIGet whether or not scaling is enabled (see also \fBMaxRange()\fP and \fBMinRange()\fP)\&. \fP"
+.ti -1c
+.RI "void \fBTransform\fP (const arma::mat &maximalInputs, arma::mat &output)"
+.br
+.RI "\fITransform the columns of the input matrix into blocks\&. \fP"
+.in -1c
+.SS "Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "bool \fBIsPerfectSquare\fP (size_t value) const "
+.br
+.RI "\fIDetermine whether or not the number is a perfect square\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "size_t \fBblockHeight\fP"
+.br
+.RI "\fIThe height of each block\&. \fP"
+.ti -1c
+.RI "size_t \fBblockWidth\fP"
+.br
+.RI "\fIThe width of each block\&. \fP"
+.ti -1c
+.RI "size_t \fBbufSize\fP"
+.br
+.RI "\fIThe size of the buffer around each block\&. \fP"
+.ti -1c
+.RI "double \fBbufValue\fP"
+.br
+.RI "\fIThe value of the buffer around each block\&. \fP"
+.ti -1c
+.RI "size_t \fBcols\fP"
+.br
+.RI "\fIThe number of blocks in each column\&. \fP"
+.ti -1c
+.RI "double \fBmaxRange\fP"
+.br
+.RI "\fIThe maximum of the range to be scaled to (if scaling is enabled)\&. \fP"
+.ti -1c
+.RI "double \fBminRange\fP"
+.br
+.RI "\fIThe minimum of the range to be scaled to (if scaling is enabled)\&. \fP"
+.ti -1c
+.RI "size_t \fBrows\fP"
+.br
+.RI "\fIThe number of blocks in each row\&. \fP"
+.ti -1c
+.RI "bool \fBscale\fP"
+.br
+.RI "\fIWhether or not scaling is enabled\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Transform the columns of the given matrix into a block format\&. 
+
+This could be useful with the \fBmlpack::nn::MaximalInputs()\fP function, if your training samples are images\&. Roughly speaking, given a matrix
+.PP
+[[A] [B] [C] [D]]
+.PP
+then the \fBColumnsToBlocks\fP class can transform this to something like
+.PP
+[[m m m m m] [m A m B m] [m m m m m] [m C m D m] [m m m m m]]
+.PP
+where A through D are vectors and may themselves be reshaped by \fBColumnsToBlocks\fP\&.
+.PP
+An example usage of the \fBColumnsToBlocks\fP class with the output of \fBMaximalInputs()\fP is given below; this assumes that the images are square, and will return a matrix with a one-element margin, with each maximal input (that is, each column of the maximalInput matrix) as a square block in the output matrix\&. 5 rows and columns of blocks will be in the output matrix\&.
+.PP
+.PP
+.nf
+// We assume we have a sparse autoencoder 'encoder'\&.
+arma::mat maximalInput; // Store the features learned by sparse autoencoder
+mlpack::nn::MaximalInputs(encoder\&.Parameters(), maximalInput);
+
+arma::mat outputs;
+const bool scale = true;
+
+ColumnsToBlocks ctb(5, 5);
+arma::mat output;
+ctb\&.Transform(maximalInput, output);
+// You can save the output as a pgm, this may help you visualize the training
+// results\&.
+output\&.save(fileName, arma::pgm_binary);
+.fi
+.PP
+.PP
+Another example of usage is given below, on a sample matrix\&.
+.PP
+.PP
+.nf
+// This matrix has two columns\&.
+arma::mat input;
+input << -1\&.0000 << 0\&.1429 << arma::endr
+      << -0\&.7143 << 0\&.4286 << arma::endr
+      << -0\&.4286 << 0\&.7143 << arma::endr
+      << -0\&.1429 << 1\&.0000 << arma::endr;
+
+arma::mat output;
+ColumnsToBlocks ctb(1, 2);
+ctb\&.Transform(input, output);
+
+// The columns of the input will be reshaped as a square which is
+// surrounded by padding value -1 (this value could be changed with the
+// BufValue() method):
+// -1\&.0000  -1\&.0000  -1\&.0000  -1\&.0000  -1\&.0000  -1\&.0000  -1\&.0000
+// -1\&.0000  -1\&.0000  -0\&.4286  -1\&.0000   0\&.1429   0\&.7143  -1\&.0000
+// -1\&.0000  -0\&.7143  -0\&.1429  -1\&.0000   0\&.4286   1\&.0000  -1\&.0000
+// -1\&.0000  -1\&.0000  -1\&.0000  -1\&.0000  -1\&.0000  -1\&.0000  -1\&.0000
+
+// Now, let's change some parameters; let's have each input column output not
+// as a square, but as a 4x1 vector\&.
+ctb\&.BlockWidth(1);
+ctb\&.BlockHeight(4);
+ctb\&.Transform(input, output);
+
+// The output here will be similar, but each maximal input is 4x1:
+// -1\&.0000 -1\&.0000 -1\&.0000 -1\&.0000 -1\&.0000
+// -1\&.0000 -1\&.0000 -1\&.0000  0\&.1429 -1\&.0000
+// -1\&.0000 -0\&.7143 -1\&.0000  0\&.4286 -1\&.0000
+// -1\&.0000 -0\&.4286 -1\&.0000  0\&.7143 -1\&.0000
+// -1\&.0000 -0\&.1429 -1\&.0000  1\&.0000 -1\&.0000
+// -1\&.0000 -1\&.0000 -1\&.0000 -1\&.0000 -1\&.0000
+.fi
+.PP
+.PP
+The \fBColumnsToBlocks\fP class can also, depending on the parameters, scale the input to a given range (useful for exporting to PGM, for instance), and also set the buffer size and value\&. See the \fBScale()\fP, \fBMinRange()\fP, \fBMaxRange()\fP, \fBBufSize()\fP, and \fBBufValue()\fP methods for more details\&. 
+.PP
+Definition at line 106 of file columns_to_blocks\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::math::ColumnsToBlocks::ColumnsToBlocks (size_t rows, size_t cols, size_t blockHeight = \fC0\fP, size_t blockWidth = \fC0\fP)"
+
+.PP
+Constructor a \fBColumnsToBlocks\fP object with the given parameters\&. The rows and cols parameters control the number of blocks per row and column of the output matrix, respectively, and the blockHeight and blockWidth parameters control the size of the individual blocks\&. If blockHeight and blockWidth are specified, then (blockHeight * blockWidth) must be equal to the number of rows in the input matrix when \fBTransform()\fP is called\&. If blockHeight and blockWidth are not specified, then the square root of the number of rows of the input matrix will be taken when \fBTransform()\fP is called and that will be used as the block width and height\&.
+.PP
+Note that the \fBColumnsToBlocks\fP object can also scale the inputs to a given range; see \fBScale()\fP, \fBMinRange()\fP, and \fBMaxRange()\fP, and the buffer (margin) size can also be set with \fBBufSize()\fP, and the value used for the buffer can be set with \fBBufValue()\fP\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIrows\fP Number of blocks in each column of the output matrix\&. 
+.br
+\fIcols\fP Number of blocks in each row of the output matrix\&. 
+.br
+\fIblockHeight\fP Height of each block\&. 
+.br
+\fIblockWidth\fP Width of each block\&.
+.RE
+.PP
+\fBWarning:\fP
+.RS 4
+blockHeight * blockWidth must be equal to maximalInputs\&.n_rows\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "void mlpack::math::ColumnsToBlocks::BlockHeight (const size_t value)\fC [inline]\fP"
+
+.PP
+Set the height of each block; see the constructor for more details\&. 
+.PP
+Definition at line 149 of file columns_to_blocks\&.hpp\&.
+.PP
+References blockHeight\&.
+.SS "size_t mlpack::math::ColumnsToBlocks::BlockHeight () const\fC [inline]\fP"
+
+.PP
+Get the block height\&. 
+.PP
+Definition at line 151 of file columns_to_blocks\&.hpp\&.
+.PP
+References blockHeight\&.
+.SS "void mlpack::math::ColumnsToBlocks::BlockWidth (size_t value)\fC [inline]\fP"
+
+.PP
+Set the width of each block; see the constructor for more details\&. 
+.PP
+Definition at line 154 of file columns_to_blocks\&.hpp\&.
+.PP
+References blockWidth\&.
+.SS "size_t mlpack::math::ColumnsToBlocks::BlockWidth () const\fC [inline]\fP"
+
+.PP
+Get the block width\&. 
+.PP
+Definition at line 156 of file columns_to_blocks\&.hpp\&.
+.PP
+References blockWidth\&.
+.SS "void mlpack::math::ColumnsToBlocks::BufSize (const size_t value)\fC [inline]\fP"
+
+.PP
+Modify the buffer size (the size of the margin around each column of the input)\&. The default value is 1\&. 
+.PP
+Definition at line 160 of file columns_to_blocks\&.hpp\&.
+.PP
+References bufSize\&.
+.SS "size_t mlpack::math::ColumnsToBlocks::BufSize () const\fC [inline]\fP"
+
+.PP
+Get the buffer size\&. 
+.PP
+Definition at line 162 of file columns_to_blocks\&.hpp\&.
+.PP
+References bufSize\&.
+.SS "void mlpack::math::ColumnsToBlocks::BufValue (const double value)\fC [inline]\fP"
+
+.PP
+Modify the value used for buffer cells; the default is -1\&. 
+.PP
+Definition at line 165 of file columns_to_blocks\&.hpp\&.
+.PP
+References bufValue\&.
+.SS "double mlpack::math::ColumnsToBlocks::BufValue () const\fC [inline]\fP"
+
+.PP
+Get the value used for buffer cells\&. 
+.PP
+Definition at line 167 of file columns_to_blocks\&.hpp\&.
+.PP
+References bufValue\&.
+.SS "void mlpack::math::ColumnsToBlocks::Cols (const size_t value)\fC [inline]\fP"
+
+.PP
+Set the number of blocks per column\&. 
+.PP
+Definition at line 196 of file columns_to_blocks\&.hpp\&.
+.SS "size_t mlpack::math::ColumnsToBlocks::Cols () const\fC [inline]\fP"
+
+.PP
+Return the number of blocks per column\&. 
+.PP
+Definition at line 198 of file columns_to_blocks\&.hpp\&.
+.PP
+References cols, and IsPerfectSquare()\&.
+.SS "bool mlpack::math::ColumnsToBlocks::IsPerfectSquare (size_t value) const\fC [private]\fP"
+
+.PP
+Determine whether or not the number is a perfect square\&. 
+.PP
+Referenced by Cols()\&.
+.SS "void mlpack::math::ColumnsToBlocks::MaxRange (const double value)\fC [inline]\fP"
+
+.PP
+Set the maximum of the range the input will be scaled to, if scaling is enabled (see \fBScale()\fP)\&. 
+.PP
+Definition at line 171 of file columns_to_blocks\&.hpp\&.
+.PP
+References maxRange\&.
+.SS "double mlpack::math::ColumnsToBlocks::MaxRange () const\fC [inline]\fP"
+
+.PP
+Get the maximum of the range the input will be scaled to, if scaling is enabled (see \fBScale()\fP)\&. 
+.PP
+Definition at line 174 of file columns_to_blocks\&.hpp\&.
+.PP
+References maxRange\&.
+.SS "void mlpack::math::ColumnsToBlocks::MinRange (const double value)\fC [inline]\fP"
+
+.PP
+Set the minimum of the range the input will be scaled to, if scaling is enabled (see \fBScale()\fP)\&. 
+.PP
+Definition at line 178 of file columns_to_blocks\&.hpp\&.
+.PP
+References minRange\&.
+.SS "double mlpack::math::ColumnsToBlocks::MinRange () const\fC [inline]\fP"
+
+.PP
+Get the minimum of the range the input will be scaled to, if scaling is enabled (see \fBScale()\fP)\&. 
+.PP
+Definition at line 181 of file columns_to_blocks\&.hpp\&.
+.PP
+References minRange\&.
+.SS "void mlpack::math::ColumnsToBlocks::Rows (const size_t value)\fC [inline]\fP"
+
+.PP
+Set the number of blocks per row\&. 
+.PP
+Definition at line 191 of file columns_to_blocks\&.hpp\&.
+.SS "size_t mlpack::math::ColumnsToBlocks::Rows () const\fC [inline]\fP"
+
+.PP
+Modify the number of blocks per row\&. 
+.PP
+Definition at line 193 of file columns_to_blocks\&.hpp\&.
+.PP
+References rows\&.
+.SS "void mlpack::math::ColumnsToBlocks::Scale (const bool value)\fC [inline]\fP"
+
+.PP
+Set whether or not scaling is enabled (see also \fBMaxRange()\fP and \fBMinRange()\fP)\&. 
+.PP
+Definition at line 185 of file columns_to_blocks\&.hpp\&.
+.PP
+References scale\&.
+.SS "bool mlpack::math::ColumnsToBlocks::Scale () const\fC [inline]\fP"
+
+.PP
+Get whether or not scaling is enabled (see also \fBMaxRange()\fP and \fBMinRange()\fP)\&. 
+.PP
+Definition at line 188 of file columns_to_blocks\&.hpp\&.
+.PP
+References scale\&.
+.SS "void mlpack::math::ColumnsToBlocks::Transform (const arma::mat & maximalInputs, arma::mat & output)"
+
+.PP
+Transform the columns of the input matrix into blocks\&. If blockHeight and blockWidth were not specified in the constructor (and \fBBlockHeight()\fP and \fBBlockWidth()\fP were not called), then the number of rows in the input matrix must be a perfect square\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input matrix to transform\&. 
+.br
+\fIoutput\fP Matrix to store transformed output in\&. 
+.RE
+.PP
+
+.SH "Member Data Documentation"
+.PP 
+.SS "size_t mlpack::math::ColumnsToBlocks::blockHeight\fC [private]\fP"
+
+.PP
+The height of each block\&. 
+.PP
+Definition at line 205 of file columns_to_blocks\&.hpp\&.
+.PP
+Referenced by BlockHeight()\&.
+.SS "size_t mlpack::math::ColumnsToBlocks::blockWidth\fC [private]\fP"
+
+.PP
+The width of each block\&. 
+.PP
+Definition at line 207 of file columns_to_blocks\&.hpp\&.
+.PP
+Referenced by BlockWidth()\&.
+.SS "size_t mlpack::math::ColumnsToBlocks::bufSize\fC [private]\fP"
+
+.PP
+The size of the buffer around each block\&. 
+.PP
+Definition at line 209 of file columns_to_blocks\&.hpp\&.
+.PP
+Referenced by BufSize()\&.
+.SS "double mlpack::math::ColumnsToBlocks::bufValue\fC [private]\fP"
+
+.PP
+The value of the buffer around each block\&. 
+.PP
+Definition at line 211 of file columns_to_blocks\&.hpp\&.
+.PP
+Referenced by BufValue()\&.
+.SS "size_t mlpack::math::ColumnsToBlocks::cols\fC [private]\fP"
+
+.PP
+The number of blocks in each column\&. 
+.PP
+Definition at line 221 of file columns_to_blocks\&.hpp\&.
+.PP
+Referenced by Cols()\&.
+.SS "double mlpack::math::ColumnsToBlocks::maxRange\fC [private]\fP"
+
+.PP
+The maximum of the range to be scaled to (if scaling is enabled)\&. 
+.PP
+Definition at line 215 of file columns_to_blocks\&.hpp\&.
+.PP
+Referenced by MaxRange()\&.
+.SS "double mlpack::math::ColumnsToBlocks::minRange\fC [private]\fP"
+
+.PP
+The minimum of the range to be scaled to (if scaling is enabled)\&. 
+.PP
+Definition at line 213 of file columns_to_blocks\&.hpp\&.
+.PP
+Referenced by MinRange()\&.
+.SS "size_t mlpack::math::ColumnsToBlocks::rows\fC [private]\fP"
+
+.PP
+The number of blocks in each row\&. 
+.PP
+Definition at line 219 of file columns_to_blocks\&.hpp\&.
+.PP
+Referenced by Rows()\&.
+.SS "bool mlpack::math::ColumnsToBlocks::scale\fC [private]\fP"
+
+.PP
+Whether or not scaling is enabled\&. 
+.PP
+Definition at line 217 of file columns_to_blocks\&.hpp\&.
+.PP
+Referenced by Scale()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

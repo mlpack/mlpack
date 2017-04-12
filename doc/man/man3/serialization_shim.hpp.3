@@ -1,0 +1,185 @@
+.TH "src/mlpack/core/data/serialization_shim.hpp" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+src/mlpack/core/data/serialization_shim.hpp \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "struct \fBmlpack::data::FirstArrayShim< T >\fP"
+.br
+.RI "\fIA first shim for arrays\&. \fP"
+.ti -1c
+.RI "struct \fBmlpack::data::FirstArrayShim< T >\fP"
+.br
+.RI "\fIA first shim for arrays\&. \fP"
+.ti -1c
+.RI "struct \fBmlpack::data::FirstNormalArrayShim< T >\fP"
+.br
+.RI "\fIA first shim for arrays without a Serialize() method\&. \fP"
+.ti -1c
+.RI "struct \fBmlpack::data::FirstNormalArrayShim< T >\fP"
+.br
+.RI "\fIA first shim for arrays without a Serialize() method\&. \fP"
+.ti -1c
+.RI "struct \fBmlpack::data::FirstShim< T >\fP"
+.br
+.RI "\fIThe first shim: simply holds the object and its name\&. \fP"
+.ti -1c
+.RI "struct \fBmlpack::data::FirstShim< T >\fP"
+.br
+.RI "\fIThe first shim: simply holds the object and its name\&. \fP"
+.ti -1c
+.RI "struct \fBmlpack::data::HasSerialize< T >\fP"
+.br
+.ti -1c
+.RI "struct \fBmlpack::data::HasSerialize< T >::check< U, V, W >\fP"
+.br
+.ti -1c
+.RI "struct \fBmlpack::data::HasSerializeFunction< T >\fP"
+.br
+.ti -1c
+.RI "struct \fBmlpack::data::PointerShim< T >\fP"
+.br
+.RI "\fIA shim for pointers\&. \fP"
+.ti -1c
+.RI "struct \fBmlpack::data::PointerShim< T >\fP"
+.br
+.RI "\fIA shim for pointers\&. \fP"
+.ti -1c
+.RI "struct \fBmlpack::data::SecondArrayShim< T >\fP"
+.br
+.RI "\fIA shim for objects in an array; this is basically like the \fBSecondShim\fP, but for arrays that hold objects that have Serialize() methods instead of \fBserialize()\fP methods\&. \fP"
+.ti -1c
+.RI "struct \fBmlpack::data::SecondArrayShim< T >\fP"
+.br
+.RI "\fIA shim for objects in an array; this is basically like the \fBSecondShim\fP, but for arrays that hold objects that have Serialize() methods instead of \fBserialize()\fP methods\&. \fP"
+.ti -1c
+.RI "struct \fBmlpack::data::SecondNormalArrayShim< T >\fP"
+.br
+.RI "\fIA shim for objects in an array which do not have a Serialize() function\&. \fP"
+.ti -1c
+.RI "struct \fBmlpack::data::SecondNormalArrayShim< T >\fP"
+.br
+.RI "\fIA shim for objects in an array which do not have a Serialize() function\&. \fP"
+.ti -1c
+.RI "struct \fBmlpack::data::SecondShim< T >\fP"
+.br
+.RI "\fIThe second shim: wrap the call to Serialize() inside of a \fBserialize()\fP function, so that an archive type can call \fBserialize()\fP on a \fBSecondShim\fP object and this gets forwarded correctly to our object's Serialize() function\&. \fP"
+.ti -1c
+.RI "struct \fBmlpack::data::SecondShim< T >\fP"
+.br
+.RI "\fIThe second shim: wrap the call to Serialize() inside of a \fBserialize()\fP function, so that an archive type can call \fBserialize()\fP on a \fBSecondShim\fP object and this gets forwarded correctly to our object's Serialize() function\&. \fP"
+.in -1c
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBboost\fP"
+.br
+.ti -1c
+.RI " \fBboost::serialization\fP"
+.br
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "\fILinear algebra utility functions, generally performed on matrices or vectors\&. \fP"
+.ti -1c
+.RI " \fBmlpack::data\fP"
+.br
+.RI "\fIFunctions to load and save matrices and models\&. \fP"
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename T > FirstArrayShim< T > \fBmlpack::data::CreateArrayNVP\fP (T *t, const size_t len, const \fBstd::string\fP &name, typename \fBstd::enable_if_t\fP< HasSerialize< T >::value > *=0)"
+.br
+.RI "\fICall this function to produce a name-value pair for an array; this is similar to boost::serialization::make_array(), but provides a nicer wrapper, allows types that have a Serialize() function, and allows you to give a name to your array\&. \fP"
+.ti -1c
+.RI "template<typename T > FirstNormalArrayShim< T > \fBmlpack::data::CreateArrayNVP\fP (T *t, const size_t len, const \fBstd::string\fP &name, typename \fBstd::enable_if_t\fP<!HasSerialize< T >::value > *=0)"
+.br
+.RI "\fICall this function to produce a name-value pair for an array; this is similar to boost::serialization::make_array(), but provides a nicer wrapper, allows types that have a Serialize() function, and allows you to give a name to your array\&. \fP"
+.ti -1c
+.RI "template<typename T > FirstShim< T > \fBmlpack::data::CreateNVP\fP (T &t, const \fBstd::string\fP &name, typename \fBstd::enable_if_t\fP< HasSerialize< T >::value > *=0)"
+.br
+.RI "\fICall this function to produce a name-value pair; this is similar to BOOST_SERIALIZATION_NVP(), but should be used for types that have a Serialize() function (or contain a type that has a Serialize() function) instead of a \fBserialize()\fP function\&. \fP"
+.ti -1c
+.RI "template<typename T > const boost::serialization::nvp< T > \fBmlpack::data::CreateNVP\fP (T &t, const \fBstd::string\fP &name, typename \fBstd::enable_if_t\fP<!HasSerialize< T >::value > *=0, typename \fBstd::enable_if_t\fP<!std::is_pointer< T >::value > *=0)"
+.br
+.RI "\fICall this function to produce a name-value pair; this is similar to BOOST_SERIALIZATION_NVP(), but should be used for types that have a Serialize() function (or contain a type that has a Serialize() function) instead of a \fBserialize()\fP function\&. \fP"
+.ti -1c
+.RI "template<typename T > const boost::serialization::nvp< PointerShim< T > * > \fBmlpack::data::CreateNVP\fP (T *&t, const \fBstd::string\fP &name, typename \fBstd::enable_if_t\fP< HasSerialize< T >::value > *=0)"
+.br
+.RI "\fICall this function to produce a name-value pair; this is similar to BOOST_SERIALIZATION_NVP(), but should be used for types that have a Serialize() function (or contain a type that has a Serialize() function) instead of a \fBserialize()\fP function\&. \fP"
+.ti -1c
+.RI "template<typename T > const boost::serialization::nvp< T * > \fBmlpack::data::CreateNVP\fP (T *&t, const \fBstd::string\fP &name, typename \fBstd::enable_if_t\fP<!HasSerialize< T >::value > *=0)"
+.br
+.RI "\fICall this function to produce a name-value pair; this is similar to BOOST_SERIALIZATION_NVP(), but should be used for types that have a Serialize() function (or contain a type that has a Serialize() function) instead of a \fBserialize()\fP function\&. \fP"
+.ti -1c
+.RI "\fBmlpack::data::HAS_MEM_FUNC\fP (Serialize, HasSerializeCheck)"
+.br
+.ti -1c
+.RI "template<typename Archive , typename T > Archive & \fBmlpack::data::operator&\fP (Archive &ar, FirstShim< T > t)"
+.br
+.RI "\fICatch when we call operator& with a \fBFirstShim\fP object\&. \fP"
+.ti -1c
+.RI "template<typename Archive , typename T > Archive & \fBmlpack::data::operator&\fP (Archive &ar, FirstArrayShim< T > t)"
+.br
+.RI "\fICatch when we call operator& with a \fBFirstArrayShim\fP object\&. \fP"
+.ti -1c
+.RI "template<typename Archive , typename T > Archive & \fBmlpack::data::operator&\fP (Archive &ar, FirstNormalArrayShim< T > t)"
+.br
+.RI "\fICatch when we call operator& with a \fBFirstNormalArrayShim\fP object\&. \fP"
+.ti -1c
+.RI "template<typename Archive , typename T > Archive & \fBmlpack::data::operator<<\fP (Archive &ar, FirstShim< T > t)"
+.br
+.RI "\fICatch when we call operator<< with a \fBFirstShim\fP object\&. \fP"
+.ti -1c
+.RI "template<typename Archive , typename T > Archive & \fBmlpack::data::operator<<\fP (Archive &ar, FirstArrayShim< T > t)"
+.br
+.RI "\fICatch when we call operator<< with a \fBFirstArrayShim\fP object\&. \fP"
+.ti -1c
+.RI "template<typename Archive , typename T > Archive & \fBmlpack::data::operator<<\fP (Archive &ar, FirstNormalArrayShim< T > t)"
+.br
+.RI "\fICatch when we call operator<< with a \fBFirstNormalArrayShim\fP object\&. \fP"
+.ti -1c
+.RI "template<typename Archive , typename T > Archive & \fBmlpack::data::operator>>\fP (Archive &ar, FirstShim< T > t)"
+.br
+.RI "\fICatch when we call operator>> with a \fBFirstShim\fP object\&. \fP"
+.ti -1c
+.RI "template<typename Archive , typename T > Archive & \fBmlpack::data::operator>>\fP (Archive &ar, FirstArrayShim< T > t)"
+.br
+.RI "\fICatch when we call operator>> with a \fBFirstArrayShim\fP object\&. \fP"
+.ti -1c
+.RI "template<typename Archive , typename T > Archive & \fBmlpack::data::operator>>\fP (Archive &ar, FirstNormalArrayShim< T > t)"
+.br
+.RI "\fICatch when we call operator>> with a \fBFirstNormalArrayShim\fP object\&. \fP"
+.ti -1c
+.RI "template<typename Archive , typename T > void \fBboost::serialization::serialize\fP (Archive &ar, \fBmlpack::data::PointerShim\fP< T > &t, const \fBBOOST_PFTO\fP unsigned int version)"
+.br
+.RI "\fICatch a call to \fBserialize()\fP with a PointerShim, and call the Serialize() function directly\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Ryan Curtin
+.RE
+.PP
+This file contains the necessary shims to make \fBboost::serialization\fP work with classes that have a Serialize() method (instead of a \fBserialize()\fP method)\&.
+.PP
+This allows our mlpack naming conventions to remain intact, and only costs a small amount of ridiculous template metaprogramming\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBserialization_shim\&.hpp\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

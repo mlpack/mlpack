@@ -1,0 +1,103 @@
+\section{mlpack\+:\+:kmeans\+:\+:Random\+Partition Class Reference}
+\label{classmlpack_1_1kmeans_1_1RandomPartition}\index{mlpack\+::kmeans\+::\+Random\+Partition@{mlpack\+::kmeans\+::\+Random\+Partition}}
+
+
+A very simple partitioner which partitions the data randomly into the number of desired clusters.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Random\+Partition} ()
+\begin{DoxyCompactList}\small\item\em Empty constructor, required by the Initial\+Partition\+Policy policy. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&, const unsigned int)
+\begin{DoxyCompactList}\small\item\em Serialize the partitioner (nothing to do). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\static void {\bf Cluster} (const Mat\+Type \&data, const size\+\_\+t clusters, arma\+::\+Row$<$ size\+\_\+t $>$ \&assignments)
+\begin{DoxyCompactList}\small\item\em Partition the given dataset into the given number of clusters. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A very simple partitioner which partitions the data randomly into the number of desired clusters. 
+
+It has no parameters, and so an instance of the class is not even necessary. 
+
+Definition at line 26 of file random\+\_\+partition.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::kmeans\+::\+Random\+Partition@{mlpack\+::kmeans\+::\+Random\+Partition}!Random\+Partition@{Random\+Partition}}
+\index{Random\+Partition@{Random\+Partition}!mlpack\+::kmeans\+::\+Random\+Partition@{mlpack\+::kmeans\+::\+Random\+Partition}}
+\subsubsection[{Random\+Partition()}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::kmeans\+::\+Random\+Partition\+::\+Random\+Partition (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1kmeans_1_1RandomPartition_aa66681c22f1b6322663f2072e77e738e}
+
+
+Empty constructor, required by the Initial\+Partition\+Policy policy. 
+
+
+
+Definition at line 30 of file random\+\_\+partition.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::kmeans\+::\+Random\+Partition@{mlpack\+::kmeans\+::\+Random\+Partition}!Cluster@{Cluster}}
+\index{Cluster@{Cluster}!mlpack\+::kmeans\+::\+Random\+Partition@{mlpack\+::kmeans\+::\+Random\+Partition}}
+\subsubsection[{Cluster(const Mat\+Type \&data, const size\+\_\+t clusters, arma\+::\+Row$<$ size\+\_\+t $>$ \&assignments)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type $>$ static void mlpack\+::kmeans\+::\+Random\+Partition\+::\+Cluster (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{data, }
+\item[{const size\+\_\+t}]{clusters, }
+\item[{arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{assignments}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}\label{classmlpack_1_1kmeans_1_1RandomPartition_abfb2b7260783da88534396fcceefac71}
+
+
+Partition the given dataset into the given number of clusters. 
+
+Assignments are random, and the number of points in each cluster should be equal (or approximately equal).
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Mat\+Type} & Type of data (arma\+::mat or arma\+::sp\+\_\+mat). \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset to partition. \\
+\hline
+{\em clusters} & Number of clusters to split dataset into. \\
+\hline
+{\em assignments} & Vector to store cluster assignments into. Values will be between 0 and (clusters -\/ 1). \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 44 of file random\+\_\+partition.\+hpp.
+
+\index{mlpack\+::kmeans\+::\+Random\+Partition@{mlpack\+::kmeans\+::\+Random\+Partition}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::kmeans\+::\+Random\+Partition@{mlpack\+::kmeans\+::\+Random\+Partition}}
+\subsubsection[{Serialize(\+Archive \&, const unsigned int)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Archive $>$ void mlpack\+::kmeans\+::\+Random\+Partition\+::\+Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{, }
+\item[{const unsigned}]{int}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1kmeans_1_1RandomPartition_aa2d882e3cab51734c36cf3e55a1e79f8}
+
+
+Serialize the partitioner (nothing to do). 
+
+
+
+Definition at line 55 of file random\+\_\+partition.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/kmeans/{\bf random\+\_\+partition.\+hpp}\end{DoxyCompactItemize}

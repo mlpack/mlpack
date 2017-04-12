@@ -1,0 +1,47 @@
+.TH "mlpack::bound::BoundTraits< BoundType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::bound::BoundTraits< BoundType > \- A class to obtain compile-time traits about BoundType classes\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "static const bool \fBHasTightBounds\fP = false"
+.br
+.RI "\fIIf true, then the bounds for each dimension are tight\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename BoundType>
+.br
+struct mlpack::bound::BoundTraits< BoundType >"
+A class to obtain compile-time traits about BoundType classes\&. 
+
+If you are writing your own BoundType class, you should make a template specialization in order to set the values correctly\&.
+.PP
+\fBSee also:\fP
+.RS 4
+TreeTraits, KernelTraits 
+.RE
+.PP
+
+.PP
+Definition at line 26 of file bound_traits\&.hpp\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename BoundType > const bool \fBmlpack::bound::BoundTraits\fP< BoundType >::HasTightBounds = false\fC [static]\fP"
+
+.PP
+If true, then the bounds for each dimension are tight\&. If false, then the bounds for each dimension may be looser than the range of all points held in the bound\&. This defaults to false\&. 
+.PP
+Definition at line 31 of file bound_traits\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,48 @@
+.TH "mlpack::kernel::KernelTraits< CosineDistance >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::kernel::KernelTraits< CosineDistance > \- Kernel traits for the cosine distance\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "static const bool \fBIsNormalized\fP = true"
+.br
+.RI "\fIThe cosine kernel is normalized: K(x, x) = 1 for all x\&. \fP"
+.ti -1c
+.RI "static const bool \fBUsesSquaredDistance\fP = false"
+.br
+.RI "\fIThe cosine kernel doesn't include a squared distance\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<>
+.br
+class mlpack::kernel::KernelTraits< CosineDistance >"
+Kernel traits for the cosine distance\&. 
+.PP
+Definition at line 51 of file cosine_distance\&.hpp\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "const bool \fBmlpack::kernel::KernelTraits\fP< \fBCosineDistance\fP >::IsNormalized = true\fC [static]\fP"
+
+.PP
+The cosine kernel is normalized: K(x, x) = 1 for all x\&. 
+.PP
+Definition at line 55 of file cosine_distance\&.hpp\&.
+.SS "const bool \fBmlpack::kernel::KernelTraits\fP< \fBCosineDistance\fP >::UsesSquaredDistance = false\fC [static]\fP"
+
+.PP
+The cosine kernel doesn't include a squared distance\&. 
+.PP
+Definition at line 58 of file cosine_distance\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

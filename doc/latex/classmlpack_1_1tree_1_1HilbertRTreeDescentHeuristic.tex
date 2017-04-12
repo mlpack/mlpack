@@ -1,0 +1,73 @@
+\section{mlpack\+:\+:tree\+:\+:Hilbert\+R\+Tree\+Descent\+Heuristic Class Reference}
+\label{classmlpack_1_1tree_1_1HilbertRTreeDescentHeuristic}\index{mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Descent\+Heuristic@{mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Descent\+Heuristic}}
+
+
+This class chooses the best child of a node in a Hilbert R tree when inserting a new point.  
+
+
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static size\+\_\+t {\bf Choose\+Descent\+Node} (const Tree\+Type $\ast$node, const size\+\_\+t point)
+\begin{DoxyCompactList}\small\item\em Evaluate the node using a heuristic. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static size\+\_\+t {\bf Choose\+Descent\+Node} (const Tree\+Type $\ast$node, const Tree\+Type $\ast$inserted\+Node)
+\begin{DoxyCompactList}\small\item\em Evaluate the node using a heuristic. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This class chooses the best child of a node in a Hilbert R tree when inserting a new point. 
+
+This is done, in this class, by using the Hilbert value of the point to be inserted. 
+
+Definition at line 26 of file hilbert\+\_\+r\+\_\+tree\+\_\+descent\+\_\+heuristic.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Descent\+Heuristic@{mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Descent\+Heuristic}!Choose\+Descent\+Node@{Choose\+Descent\+Node}}
+\index{Choose\+Descent\+Node@{Choose\+Descent\+Node}!mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Descent\+Heuristic@{mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Descent\+Heuristic}}
+\subsubsection[{Choose\+Descent\+Node(const Tree\+Type $\ast$node, const size\+\_\+t point)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Tree\+Type $>$ static size\+\_\+t mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Descent\+Heuristic\+::\+Choose\+Descent\+Node (
+\begin{DoxyParamCaption}
+\item[{const Tree\+Type $\ast$}]{node, }
+\item[{const size\+\_\+t}]{point}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1tree_1_1HilbertRTreeDescentHeuristic_a366c2faae1d51b1f21e629e8268cbb9c}
+
+
+Evaluate the node using a heuristic. 
+
+Returns the number of the node with minimum largest Hilbert value that is greater than the Hilbert value of the point being inserted.
+
+
+\begin{DoxyParams}{Parameters}
+{\em node} & The node that is being evaluated. \\
+\hline
+{\em point} & The number of the point that is being inserted. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Descent\+Heuristic@{mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Descent\+Heuristic}!Choose\+Descent\+Node@{Choose\+Descent\+Node}}
+\index{Choose\+Descent\+Node@{Choose\+Descent\+Node}!mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Descent\+Heuristic@{mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Descent\+Heuristic}}
+\subsubsection[{Choose\+Descent\+Node(const Tree\+Type $\ast$node, const Tree\+Type $\ast$inserted\+Node)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Tree\+Type $>$ static size\+\_\+t mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Descent\+Heuristic\+::\+Choose\+Descent\+Node (
+\begin{DoxyParamCaption}
+\item[{const Tree\+Type $\ast$}]{node, }
+\item[{const Tree\+Type $\ast$}]{inserted\+Node}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1tree_1_1HilbertRTreeDescentHeuristic_a3a1b08f348d3f6fe29b384280a4af531}
+
+
+Evaluate the node using a heuristic. 
+
+Returns the number of the node with minimum largest Hilbert value that is greater than the largest Hilbert value of the point being inserted.
+
+
+\begin{DoxyParams}{Parameters}
+{\em node} & The node that is being evaluated. \\
+\hline
+{\em inserted\+Node} & The node that is being inserted. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/tree/rectangle\+\_\+tree/{\bf hilbert\+\_\+r\+\_\+tree\+\_\+descent\+\_\+heuristic.\+hpp}\end{DoxyCompactItemize}

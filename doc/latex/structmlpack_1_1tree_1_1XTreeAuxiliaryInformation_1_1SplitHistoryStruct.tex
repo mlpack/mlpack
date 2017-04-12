@@ -1,0 +1,143 @@
+\section{mlpack\+:\+:tree\+:\+:X\+Tree\+Auxiliary\+Information$<$ Tree\+Type $>$\+:\+:Split\+History\+Struct Struct Reference}
+\label{structmlpack_1_1tree_1_1XTreeAuxiliaryInformation_1_1SplitHistoryStruct}\index{mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information$<$ Tree\+Type $>$\+::\+Split\+History\+Struct@{mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information$<$ Tree\+Type $>$\+::\+Split\+History\+Struct}}
+
+
+The X tree requires that the tree records it\textquotesingle{}s \char`\"{}split history\char`\"{}.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Split\+History\+Struct} (int dim)
+\item 
+{\bf Split\+History\+Struct} (const {\bf Split\+History\+Struct} \&other)
+\item 
+{\bf Split\+History\+Struct} ({\bf Split\+History\+Struct} \&\&other)
+\item 
+{\bf Split\+History\+Struct} \& {\bf operator=} (const {\bf Split\+History\+Struct} \&other)
+\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&ar, const unsigned int)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::vector$<$ bool $>$ {\bf history}
+\item 
+int {\bf last\+Dimension}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Tree\+Type$>$\\*
+struct mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information$<$ Tree\+Type $>$\+::\+Split\+History\+Struct}
+
+The X tree requires that the tree records it\textquotesingle{}s \char`\"{}split history\char`\"{}. 
+
+To make this easy, we use the following structure. 
+
+Definition at line 169 of file x\+\_\+tree\+\_\+auxiliary\+\_\+information.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information\+::\+Split\+History\+Struct@{mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information\+::\+Split\+History\+Struct}!Split\+History\+Struct@{Split\+History\+Struct}}
+\index{Split\+History\+Struct@{Split\+History\+Struct}!mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information\+::\+Split\+History\+Struct@{mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information\+::\+Split\+History\+Struct}}
+\subsubsection[{Split\+History\+Struct(int dim)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Tree\+Type $>$ {\bf mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information}$<$ Tree\+Type $>$\+::Split\+History\+Struct\+::\+Split\+History\+Struct (
+\begin{DoxyParamCaption}
+\item[{int}]{dim}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{structmlpack_1_1tree_1_1XTreeAuxiliaryInformation_1_1SplitHistoryStruct_abcc0938d94dab3ab624d475b1a71912f}
+
+
+Definition at line 174 of file x\+\_\+tree\+\_\+auxiliary\+\_\+information.\+hpp.
+
+
+
+Referenced by mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information$<$ Tree\+Type $>$\+::\+Split\+History\+Struct\+::\+Serialize().
+
+\index{mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information\+::\+Split\+History\+Struct@{mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information\+::\+Split\+History\+Struct}!Split\+History\+Struct@{Split\+History\+Struct}}
+\index{Split\+History\+Struct@{Split\+History\+Struct}!mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information\+::\+Split\+History\+Struct@{mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information\+::\+Split\+History\+Struct}}
+\subsubsection[{Split\+History\+Struct(const Split\+History\+Struct \&other)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Tree\+Type $>$ {\bf mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information}$<$ Tree\+Type $>$\+::Split\+History\+Struct\+::\+Split\+History\+Struct (
+\begin{DoxyParamCaption}
+\item[{const {\bf Split\+History\+Struct} \&}]{other}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{structmlpack_1_1tree_1_1XTreeAuxiliaryInformation_1_1SplitHistoryStruct_ac48bd5098008d748236f497fd9dc8f64}
+
+
+Definition at line 180 of file x\+\_\+tree\+\_\+auxiliary\+\_\+information.\+hpp.
+
+\index{mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information\+::\+Split\+History\+Struct@{mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information\+::\+Split\+History\+Struct}!Split\+History\+Struct@{Split\+History\+Struct}}
+\index{Split\+History\+Struct@{Split\+History\+Struct}!mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information\+::\+Split\+History\+Struct@{mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information\+::\+Split\+History\+Struct}}
+\subsubsection[{Split\+History\+Struct(\+Split\+History\+Struct \&\&other)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Tree\+Type $>$ {\bf mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information}$<$ Tree\+Type $>$\+::Split\+History\+Struct\+::\+Split\+History\+Struct (
+\begin{DoxyParamCaption}
+\item[{{\bf Split\+History\+Struct} \&\&}]{other}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{structmlpack_1_1tree_1_1XTreeAuxiliaryInformation_1_1SplitHistoryStruct_a4b4bfeecc09eb5ef10ba4533c207af1b}
+
+
+Definition at line 192 of file x\+\_\+tree\+\_\+auxiliary\+\_\+information.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information\+::\+Split\+History\+Struct@{mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information\+::\+Split\+History\+Struct}!operator=@{operator=}}
+\index{operator=@{operator=}!mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information\+::\+Split\+History\+Struct@{mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information\+::\+Split\+History\+Struct}}
+\subsubsection[{operator=(const Split\+History\+Struct \&other)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Tree\+Type $>$ {\bf Split\+History\+Struct}\& {\bf mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information}$<$ Tree\+Type $>$\+::Split\+History\+Struct\+::operator= (
+\begin{DoxyParamCaption}
+\item[{const {\bf Split\+History\+Struct} \&}]{other}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{structmlpack_1_1tree_1_1XTreeAuxiliaryInformation_1_1SplitHistoryStruct_afaba51829af694786ae87be70650d5a0}
+
+
+Definition at line 185 of file x\+\_\+tree\+\_\+auxiliary\+\_\+information.\+hpp.
+
+
+
+References mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information$<$ Tree\+Type $>$\+::\+Split\+History\+Struct\+::history, and mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information$<$ Tree\+Type $>$\+::\+Split\+History\+Struct\+::last\+Dimension.
+
+\index{mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information\+::\+Split\+History\+Struct@{mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information\+::\+Split\+History\+Struct}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information\+::\+Split\+History\+Struct@{mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information\+::\+Split\+History\+Struct}}
+\subsubsection[{Serialize(\+Archive \&ar, const unsigned int)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Tree\+Type $>$ template$<$typename Archive $>$ void {\bf mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information}$<$ Tree\+Type $>$\+::Split\+History\+Struct\+::\+Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const unsigned}]{int}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{structmlpack_1_1tree_1_1XTreeAuxiliaryInformation_1_1SplitHistoryStruct_af99032b119388f73e62ebeec072c89e5}
+
+
+Definition at line 200 of file x\+\_\+tree\+\_\+auxiliary\+\_\+information.\+hpp.
+
+
+
+References mlpack\+::data\+::\+Create\+N\+V\+P(), and mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information$<$ Tree\+Type $>$\+::\+Split\+History\+Struct\+::\+Split\+History\+Struct().
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information\+::\+Split\+History\+Struct@{mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information\+::\+Split\+History\+Struct}!history@{history}}
+\index{history@{history}!mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information\+::\+Split\+History\+Struct@{mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information\+::\+Split\+History\+Struct}}
+\subsubsection[{history}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Tree\+Type $>$ std\+::vector$<$bool$>$ {\bf mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information}$<$ Tree\+Type $>$\+::Split\+History\+Struct\+::history}\label{structmlpack_1_1tree_1_1XTreeAuxiliaryInformation_1_1SplitHistoryStruct_a9b5345bc550e094771c1ff4bf8c68099}
+
+
+Definition at line 172 of file x\+\_\+tree\+\_\+auxiliary\+\_\+information.\+hpp.
+
+
+
+Referenced by mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information$<$ Tree\+Type $>$\+::\+Split\+History\+Struct\+::operator=().
+
+\index{mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information\+::\+Split\+History\+Struct@{mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information\+::\+Split\+History\+Struct}!last\+Dimension@{last\+Dimension}}
+\index{last\+Dimension@{last\+Dimension}!mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information\+::\+Split\+History\+Struct@{mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information\+::\+Split\+History\+Struct}}
+\subsubsection[{last\+Dimension}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Tree\+Type $>$ int {\bf mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information}$<$ Tree\+Type $>$\+::Split\+History\+Struct\+::last\+Dimension}\label{structmlpack_1_1tree_1_1XTreeAuxiliaryInformation_1_1SplitHistoryStruct_aeff3f4ca9542e1845c3a75950061dd74}
+
+
+Definition at line 171 of file x\+\_\+tree\+\_\+auxiliary\+\_\+information.\+hpp.
+
+
+
+Referenced by mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information$<$ Tree\+Type $>$\+::\+Split\+History\+Struct\+::operator=().
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/tree/rectangle\+\_\+tree/{\bf x\+\_\+tree\+\_\+auxiliary\+\_\+information.\+hpp}\end{DoxyCompactItemize}

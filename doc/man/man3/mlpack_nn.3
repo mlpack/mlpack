@@ -1,0 +1,119 @@
+.TH "mlpack::nn" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::nn \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBSparseAutoencoder\fP"
+.br
+.RI "\fIA sparse autoencoder is a neural network whose aim to learn compressed representations of the data, typically for dimensionality reduction, with a constraint on the activity of the neurons in the network\&. \fP"
+.ti -1c
+.RI "class \fBSparseAutoencoderFunction\fP"
+.br
+.RI "\fIThis is a class for the sparse autoencoder objective function\&. \fP"
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBMaximalInputs\fP (const arma::mat &parameters, arma::mat &output)"
+.br
+.RI "\fIGiven a parameters matrix from an autoencoder, maximize the hidden units of the parameters, storing the maximal inputs in the given output matrix\&. \fP"
+.ti -1c
+.RI "void \fBNormalizeColByMax\fP (const arma::mat &input, arma::mat &output)"
+.br
+.RI "\fINormalize each column of the input matrix by its maximum value, if that maximum value is not zero\&. \fP"
+.in -1c
+.SH "Function Documentation"
+.PP 
+.SS "void mlpack::nn::MaximalInputs (const arma::mat & parameters, arma::mat & output)"
+
+.PP
+Given a parameters matrix from an autoencoder, maximize the hidden units of the parameters, storing the maximal inputs in the given output matrix\&. Details can be found on the 'Visualizing a Trained Autoencoder' page of the Stanford UFLDL tutorial:
+.PP
+http://deeplearning.stanford.edu/wiki/index.php/Main_Page
+.PP
+This function is based on the implementation (display_network\&.m) from the 'Exercise: Sparse Autoencoder' page of the UFLDL tutorial:
+.PP
+http://deeplearning.stanford.edu/wiki/index.php/Exercise:Sparse_Autoencoder
+.PP
+Example usage of this function can be seen below\&. Note that this function can work with the ColumnsToBlocks class in order to reshape the maximal inputs for visualization, as in the UFLDL tutorial\&. The code below demonstrates this\&.
+.PP
+.PP
+.nf
+arma::mat data; // Data matrix\&.
+const size_t vSize = 64; // Size of visible layer, depends on the data\&.
+const size_t hSize = 25; // Size of hidden layer, depends on requirements\&.
+
+const size_t numBasis = 5; // Parameter required for L-BFGS algorithm\&.
+const size_t numIterations = 100; // Maximum number of iterations\&.
+
+// Use an instantiated optimizer for the training\&.
+SparseAutoencoder<L_BFGS> encoder(data, vSize, hSize);
+
+arma::mat maximalInput; // Store the features learned by sparse autoencoder
+mlpack::nn::MaximalInputs(encoder\&.Parameters(), maximalInput);
+
+arma::mat outputs;
+const bool scale = true;
+
+ColumnsToBlocks ctb(5,5);
+arma::mat output;
+ctb\&.Transform(maximalInput, output);
+// Save the output as PGM, for visualization\&.
+output\&.save(fileName, arma::pgm_binary);
+.fi
+.PP
+.PP
+\fBPrecondition:\fP
+.RS 4
+Layout of parameters
+.RE
+.PP
+The layout of the parameters matrix should be same as following 
+.PP
+.nf
+//          vSize   1
+//       |        |  |
+//  hSize|   w1   |b1|
+//       |________|__|
+//       |        |  |
+//  hSize|   w2'  |  |
+//       |________|__|
+//      1|   b2'  |  |
+
+.fi
+.PP
+.PP
+Also, the square root of vSize must be an integer (i\&.e\&. vSize must be a perfect square)\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIparameters\fP The parameters of the autoencoder\&. 
+.br
+\fIoutput\fP Matrix to store the maximal inputs in\&. 
+.RE
+.PP
+
+.SS "void mlpack::nn::NormalizeColByMax (const arma::mat & input, arma::mat & output)"
+
+.PP
+Normalize each column of the input matrix by its maximum value, if that maximum value is not zero\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP The input data to normalize\&. 
+.br
+\fIoutput\fP A matrix to store the input data in after normalization\&. 
+.RE
+.PP
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,235 @@
+.TH "mlpack::tree::BinaryNumericSplit< FitnessFunction, ObservationType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::tree::BinaryNumericSplit< FitnessFunction, ObservationType > \- The \fBBinaryNumericSplit\fP class implements the numeric feature splitting strategy devised by Gama, Rocha, and Medas in the following paper:  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "typedef \fBBinaryNumericSplitInfo\fP< ObservationType > \fBSplitInfo\fP"
+.br
+.RI "\fIThe splitting information required by the \fBBinaryNumericSplit\fP\&. \fP"
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBBinaryNumericSplit\fP (const size_t numClasses)"
+.br
+.RI "\fICreate the \fBBinaryNumericSplit\fP object with the given number of classes\&. \fP"
+.ti -1c
+.RI "\fBBinaryNumericSplit\fP (const size_t numClasses, const \fBBinaryNumericSplit\fP &other)"
+.br
+.RI "\fICreate the \fBBinaryNumericSplit\fP object with the given number of classes, using information from the given other split for other parameters\&. \fP"
+.ti -1c
+.RI "void \fBEvaluateFitnessFunction\fP (double &bestFitness, double &secondBestFitness)"
+.br
+.RI "\fIGiven the points seen so far, evaluate the fitness function, returning the best possible gain of a binary split\&. \fP"
+.ti -1c
+.RI "size_t \fBMajorityClass\fP () const "
+.br
+.RI "\fIThe majority class of the points seen so far\&. \fP"
+.ti -1c
+.RI "double \fBMajorityProbability\fP () const "
+.br
+.RI "\fIThe probability of the majority class given the points seen so far\&. \fP"
+.ti -1c
+.RI "size_t \fBNumChildren\fP () const "
+.br
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int)"
+.br
+.RI "\fISerialize the object\&. \fP"
+.ti -1c
+.RI "void \fBSplit\fP (arma::Col< size_t > &childMajorities, \fBSplitInfo\fP &splitInfo)"
+.br
+.RI "\fIGiven that a split should happen, return the majority classes of the (two) children and an initialized SplitInfo object\&. \fP"
+.ti -1c
+.RI "void \fBTrain\fP (ObservationType value, const size_t label)"
+.br
+.RI "\fITrain on the given value with the given label\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "ObservationType \fBbestSplit\fP"
+.br
+.RI "\fIA cached best split point\&. \fP"
+.ti -1c
+.RI "arma::Col< size_t > \fBclassCounts\fP"
+.br
+.RI "\fIThe classes we have seen so far (for majority calculations)\&. \fP"
+.ti -1c
+.RI "bool \fBisAccurate\fP"
+.br
+.RI "\fIIf true, the cached best split point is accurate (that is, we have not seen any more samples since we calculated it)\&. \fP"
+.ti -1c
+.RI "std::multimap< ObservationType, size_t > \fBsortedElements\fP"
+.br
+.RI "\fIThe elements seen so far, in sorted order\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename FitnessFunction, typename ObservationType = double>
+.br
+class mlpack::tree::BinaryNumericSplit< FitnessFunction, ObservationType >"
+The \fBBinaryNumericSplit\fP class implements the numeric feature splitting strategy devised by Gama, Rocha, and Medas in the following paper: 
+
+
+.PP
+.nf
+@inproceedings{gama2003accurate,
+   title={Accurate Decision Trees for Mining High-Speed Data Streams},
+   author={Gama, J\&. and Rocha, R\&. and Medas, P\&.},
+   year={2003},
+   booktitle={Proceedings of the Ninth ACM SIGKDD International Conference on
+       Knowledge Discovery and Data Mining (KDD '03)},
+   pages={523--528}
+}
+
+.fi
+.PP
+.PP
+This splitting procedure builds a binary tree on points it has seen so far, and then \fBEvaluateFitnessFunction()\fP returns the best possible split in O(n) time, where n is the number of samples seen so far\&. Every split with this split type returns only two splits (greater than or equal to the split point, and less than the split point)\&. The \fBTrain()\fP function should take O(1) time\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIFitnessFunction\fP Fitness function to use for calculating gain\&. 
+.br
+\fIObservationType\fP Type of observation used by this dimension\&. 
+.RE
+.PP
+
+.PP
+Definition at line 47 of file binary_numeric_split\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "template<typename FitnessFunction , typename ObservationType  = double> typedef \fBBinaryNumericSplitInfo\fP<ObservationType> \fBmlpack::tree::BinaryNumericSplit\fP< FitnessFunction, ObservationType >::\fBSplitInfo\fP"
+
+.PP
+The splitting information required by the \fBBinaryNumericSplit\fP\&. 
+.PP
+Definition at line 51 of file binary_numeric_split\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename FitnessFunction , typename ObservationType  = double> \fBmlpack::tree::BinaryNumericSplit\fP< FitnessFunction, ObservationType >::\fBBinaryNumericSplit\fP (const size_t numClasses)"
+
+.PP
+Create the \fBBinaryNumericSplit\fP object with the given number of classes\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fInumClasses\fP Number of classes in dataset\&. 
+.RE
+.PP
+
+.SS "template<typename FitnessFunction , typename ObservationType  = double> \fBmlpack::tree::BinaryNumericSplit\fP< FitnessFunction, ObservationType >::\fBBinaryNumericSplit\fP (const size_t numClasses, const \fBBinaryNumericSplit\fP< FitnessFunction, ObservationType > & other)"
+
+.PP
+Create the \fBBinaryNumericSplit\fP object with the given number of classes, using information from the given other split for other parameters\&. In this case, there are no other parameters, but this function is required by the \fBHoeffdingTree\fP class\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename FitnessFunction , typename ObservationType  = double> void \fBmlpack::tree::BinaryNumericSplit\fP< FitnessFunction, ObservationType >::EvaluateFitnessFunction (double & bestFitness, double & secondBestFitness)"
+
+.PP
+Given the points seen so far, evaluate the fitness function, returning the best possible gain of a binary split\&. Note that this takes O(n) time, where n is the number of points seen so far\&. So this may not exactly be fast\&.\&.\&.
+.PP
+The best possible split will be stored in bestFitness, and the second best possible split will be stored in secondBestFitness\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIbestFitness\fP Fitness function value for best possible split\&. 
+.br
+\fIsecondBestFitness\fP Fitness function value for second best possible split\&. 
+.RE
+.PP
+
+.SS "template<typename FitnessFunction , typename ObservationType  = double> size_t \fBmlpack::tree::BinaryNumericSplit\fP< FitnessFunction, ObservationType >::MajorityClass () const"
+
+.PP
+The majority class of the points seen so far\&. 
+.PP
+Referenced by mlpack::tree::BinaryNumericSplit< FitnessFunction, ObservationType >::NumChildren()\&.
+.SS "template<typename FitnessFunction , typename ObservationType  = double> double \fBmlpack::tree::BinaryNumericSplit\fP< FitnessFunction, ObservationType >::MajorityProbability () const"
+
+.PP
+The probability of the majority class given the points seen so far\&. 
+.PP
+Referenced by mlpack::tree::BinaryNumericSplit< FitnessFunction, ObservationType >::NumChildren()\&.
+.SS "template<typename FitnessFunction , typename ObservationType  = double> size_t \fBmlpack::tree::BinaryNumericSplit\fP< FitnessFunction, ObservationType >::NumChildren () const\fC [inline]\fP"
+
+.PP
+Definition at line 93 of file binary_numeric_split\&.hpp\&.
+.PP
+References mlpack::tree::BinaryNumericSplit< FitnessFunction, ObservationType >::MajorityClass(), mlpack::tree::BinaryNumericSplit< FitnessFunction, ObservationType >::MajorityProbability(), mlpack::tree::BinaryNumericSplit< FitnessFunction, ObservationType >::Serialize(), and mlpack::tree::BinaryNumericSplit< FitnessFunction, ObservationType >::Split()\&.
+.SS "template<typename FitnessFunction , typename ObservationType  = double> template<typename Archive > void \fBmlpack::tree::BinaryNumericSplit\fP< FitnessFunction, ObservationType >::Serialize (Archive & ar, const unsigned int)"
+
+.PP
+Serialize the object\&. 
+.PP
+Referenced by mlpack::tree::BinaryNumericSplit< FitnessFunction, ObservationType >::NumChildren()\&.
+.SS "template<typename FitnessFunction , typename ObservationType  = double> void \fBmlpack::tree::BinaryNumericSplit\fP< FitnessFunction, ObservationType >::Split (arma::Col< size_t > & childMajorities, \fBSplitInfo\fP & splitInfo)"
+
+.PP
+Given that a split should happen, return the majority classes of the (two) children and an initialized SplitInfo object\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIchildMajorities\fP Majority classes of the children after the split\&. 
+.br
+\fIsplitInfo\fP Split information\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::tree::BinaryNumericSplit< FitnessFunction, ObservationType >::NumChildren()\&.
+.SS "template<typename FitnessFunction , typename ObservationType  = double> void \fBmlpack::tree::BinaryNumericSplit\fP< FitnessFunction, ObservationType >::Train (ObservationType value, const size_t label)"
+
+.PP
+Train on the given value with the given label\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIvalue\fP The value to train on\&. 
+.br
+\fIlabel\fP The label to train on\&. 
+.RE
+.PP
+
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename FitnessFunction , typename ObservationType  = double> ObservationType \fBmlpack::tree::BinaryNumericSplit\fP< FitnessFunction, ObservationType >::bestSplit\fC [private]\fP"
+
+.PP
+A cached best split point\&. 
+.PP
+Definition at line 120 of file binary_numeric_split\&.hpp\&.
+.SS "template<typename FitnessFunction , typename ObservationType  = double> arma::Col<size_t> \fBmlpack::tree::BinaryNumericSplit\fP< FitnessFunction, ObservationType >::classCounts\fC [private]\fP"
+
+.PP
+The classes we have seen so far (for majority calculations)\&. 
+.PP
+Definition at line 117 of file binary_numeric_split\&.hpp\&.
+.SS "template<typename FitnessFunction , typename ObservationType  = double> bool \fBmlpack::tree::BinaryNumericSplit\fP< FitnessFunction, ObservationType >::isAccurate\fC [private]\fP"
+
+.PP
+If true, the cached best split point is accurate (that is, we have not seen any more samples since we calculated it)\&. 
+.PP
+Definition at line 123 of file binary_numeric_split\&.hpp\&.
+.SS "template<typename FitnessFunction , typename ObservationType  = double> std::multimap<ObservationType, size_t> \fBmlpack::tree::BinaryNumericSplit\fP< FitnessFunction, ObservationType >::sortedElements\fC [private]\fP"
+
+.PP
+The elements seen so far, in sorted order\&. 
+.PP
+Definition at line 115 of file binary_numeric_split\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

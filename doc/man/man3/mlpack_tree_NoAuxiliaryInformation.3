@@ -1,0 +1,217 @@
+.TH "mlpack::tree::NoAuxiliaryInformation< TreeType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::tree::NoAuxiliaryInformation< TreeType > \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBNoAuxiliaryInformation\fP ()"
+.br
+.RI "\fIConstruct the auxiliary information object\&. \fP"
+.ti -1c
+.RI "\fBNoAuxiliaryInformation\fP (const TreeType *)"
+.br
+.RI "\fIConstruct the auxiliary information object\&. \fP"
+.ti -1c
+.RI "\fBNoAuxiliaryInformation\fP (const \fBNoAuxiliaryInformation\fP &, TreeType *, bool=true)"
+.br
+.RI "\fIConstruct the auxiliary information object\&. \fP"
+.ti -1c
+.RI "\fBNoAuxiliaryInformation\fP (\fBNoAuxiliaryInformation\fP &&)"
+.br
+.RI "\fIConstruct the auxiliary information object\&. \fP"
+.ti -1c
+.RI "bool \fBHandleNodeInsertion\fP (TreeType *, TreeType *, bool)"
+.br
+.RI "\fISome tree types require to save some properties at the insertion process\&. \fP"
+.ti -1c
+.RI "bool \fBHandleNodeRemoval\fP (TreeType *, const size_t)"
+.br
+.RI "\fISome tree types require to save some properties at the deletion process\&. \fP"
+.ti -1c
+.RI "bool \fBHandlePointDeletion\fP (TreeType *, const size_t)"
+.br
+.RI "\fISome tree types require to save some properties at the deletion process\&. \fP"
+.ti -1c
+.RI "bool \fBHandlePointInsertion\fP (TreeType *, const size_t)"
+.br
+.RI "\fISome tree types require to save some properties at the insertion process\&. \fP"
+.ti -1c
+.RI "void \fBNullifyData\fP ()"
+.br
+.RI "\fINullify the auxiliary information in order to prevent an invalid free\&. \fP"
+.ti -1c
+.RI "\fBNoAuxiliaryInformation\fP & \fBoperator=\fP (const \fBNoAuxiliaryInformation\fP &)"
+.br
+.RI "\fICopy the auxiliary information object\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &, const unsigned int)"
+.br
+.RI "\fISerialize the information\&. \fP"
+.ti -1c
+.RI "void \fBSplitAuxiliaryInfo\fP (TreeType *, TreeType *, size_t, typename TreeType::ElemType)"
+.br
+.RI "\fIThe R++ tree requires to split the maximum bounding rectangle of a node that is being split\&. \fP"
+.ti -1c
+.RI "bool \fBUpdateAuxiliaryInfo\fP (TreeType *)"
+.br
+.RI "\fISome tree types require to propagate the information upward\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename TreeType>
+.br
+class mlpack::tree::NoAuxiliaryInformation< TreeType >"
+
+.PP
+Definition at line 20 of file no_auxiliary_information\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename TreeType > \fBmlpack::tree::NoAuxiliaryInformation\fP< TreeType >::\fBNoAuxiliaryInformation\fP ()\fC [inline]\fP"
+
+.PP
+Construct the auxiliary information object\&. 
+.PP
+Definition at line 24 of file no_auxiliary_information\&.hpp\&.
+.SS "template<typename TreeType > \fBmlpack::tree::NoAuxiliaryInformation\fP< TreeType >::\fBNoAuxiliaryInformation\fP (const TreeType *)\fC [inline]\fP"
+
+.PP
+Construct the auxiliary information object\&. 
+.PP
+Definition at line 26 of file no_auxiliary_information\&.hpp\&.
+.SS "template<typename TreeType > \fBmlpack::tree::NoAuxiliaryInformation\fP< TreeType >::\fBNoAuxiliaryInformation\fP (const \fBNoAuxiliaryInformation\fP< TreeType > &, TreeType *, bool = \fCtrue\fP)\fC [inline]\fP"
+
+.PP
+Construct the auxiliary information object\&. 
+.PP
+Definition at line 28 of file no_auxiliary_information\&.hpp\&.
+.SS "template<typename TreeType > \fBmlpack::tree::NoAuxiliaryInformation\fP< TreeType >::\fBNoAuxiliaryInformation\fP (\fBNoAuxiliaryInformation\fP< TreeType > &&)\fC [inline]\fP"
+
+.PP
+Construct the auxiliary information object\&. 
+.PP
+Definition at line 32 of file no_auxiliary_information\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename TreeType > bool \fBmlpack::tree::NoAuxiliaryInformation\fP< TreeType >::HandleNodeInsertion (TreeType *, TreeType *, bool)\fC [inline]\fP"
+
+.PP
+Some tree types require to save some properties at the insertion process\&. This method allows the auxiliary information the option of manipulating the tree in order to perform the insertion process\&. If the auxiliary information does that, then the method should return true; if the method returns false the \fBRectangleTree\fP performs its default behavior\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fInode\fP The node in which the nodeToInsert is being inserted\&. 
+.br
+\fInodeToInsert\fP The node being inserted\&. 
+.br
+\fIinsertionLevel\fP The level of the tree at which the nodeToInsert should be inserted\&. 
+.RE
+.PP
+
+.PP
+Definition at line 67 of file no_auxiliary_information\&.hpp\&.
+.SS "template<typename TreeType > bool \fBmlpack::tree::NoAuxiliaryInformation\fP< TreeType >::HandleNodeRemoval (TreeType *, const size_t)\fC [inline]\fP"
+
+.PP
+Some tree types require to save some properties at the deletion process\&. This method allows the auxiliary information the option of manipulating the tree in order to perform the deletion process\&. If the auxiliary information does that, then the method should return true; if the method returns false the \fBRectangleTree\fP performs its default behavior\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fInode\fP The node from which the node is being deleted\&. 
+.br
+\fInodeIndex\fP The local index of the node being deleted\&. 
+.RE
+.PP
+
+.PP
+Definition at line 99 of file no_auxiliary_information\&.hpp\&.
+.SS "template<typename TreeType > bool \fBmlpack::tree::NoAuxiliaryInformation\fP< TreeType >::HandlePointDeletion (TreeType *, const size_t)\fC [inline]\fP"
+
+.PP
+Some tree types require to save some properties at the deletion process\&. This method allows the auxiliary information the option of manipulating the tree in order to perform the deletion process\&. If the auxiliary information does that, then the method should return true; if the method returns false the \fBRectangleTree\fP performs its default behavior\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fInode\fP The node from which the point is being deleted\&. 
+.br
+\fIlocalIndex\fP The local index of the point being deleted\&. 
+.RE
+.PP
+
+.PP
+Definition at line 84 of file no_auxiliary_information\&.hpp\&.
+.SS "template<typename TreeType > bool \fBmlpack::tree::NoAuxiliaryInformation\fP< TreeType >::HandlePointInsertion (TreeType *, const size_t)\fC [inline]\fP"
+
+.PP
+Some tree types require to save some properties at the insertion process\&. This method allows the auxiliary information the option of manipulating the tree in order to perform the insertion process\&. If the auxiliary information does that, then the method should return true; if the method returns false the \fBRectangleTree\fP performs its default behavior\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fInode\fP The node in which the point is being inserted\&. 
+.br
+\fIpoint\fP The global number of the point being inserted\&. 
+.RE
+.PP
+
+.PP
+Definition at line 50 of file no_auxiliary_information\&.hpp\&.
+.SS "template<typename TreeType > void \fBmlpack::tree::NoAuxiliaryInformation\fP< TreeType >::NullifyData ()\fC [inline]\fP"
+
+.PP
+Nullify the auxiliary information in order to prevent an invalid free\&. 
+.PP
+Definition at line 137 of file no_auxiliary_information\&.hpp\&.
+.SS "template<typename TreeType > \fBNoAuxiliaryInformation\fP& \fBmlpack::tree::NoAuxiliaryInformation\fP< TreeType >::operator= (const \fBNoAuxiliaryInformation\fP< TreeType > &)\fC [inline]\fP"
+
+.PP
+Copy the auxiliary information object\&. 
+.PP
+Definition at line 35 of file no_auxiliary_information\&.hpp\&.
+.SS "template<typename TreeType > template<typename Archive > void \fBmlpack::tree::NoAuxiliaryInformation\fP< TreeType >::Serialize (Archive &, const unsigned int)\fC [inline]\fP"
+
+.PP
+Serialize the information\&. 
+.PP
+Definition at line 144 of file no_auxiliary_information\&.hpp\&.
+.SS "template<typename TreeType > void \fBmlpack::tree::NoAuxiliaryInformation\fP< TreeType >::SplitAuxiliaryInfo (TreeType *, TreeType *, size_t, typename TreeType::ElemType)\fC [inline]\fP"
+
+.PP
+The R++ tree requires to split the maximum bounding rectangle of a node that is being split\&. This method is intended for that\&. This method is only necessary for an AuxiliaryInformationType that is being used in conjunction with \fBRPlusTreeSplit\fP\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fItreeOne\fP The first subtree\&. 
+.br
+\fItreeTwo\fP The second subtree\&. 
+.br
+\fIaxis\fP The axis along which the split is performed\&. 
+.br
+\fIcut\fP The coordinate at which the node is split\&. 
+.RE
+.PP
+
+.PP
+Definition at line 127 of file no_auxiliary_information\&.hpp\&.
+.SS "template<typename TreeType > bool \fBmlpack::tree::NoAuxiliaryInformation\fP< TreeType >::UpdateAuxiliaryInfo (TreeType *)\fC [inline]\fP"
+
+.PP
+Some tree types require to propagate the information upward\&. This method should return false if this is not the case\&. If true is returned, the update will be propagated upward\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fInode\fP The node in which the auxiliary information being update\&. 
+.RE
+.PP
+
+.PP
+Definition at line 111 of file no_auxiliary_information\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

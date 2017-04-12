@@ -1,0 +1,152 @@
+\section{mlpack\+:\+:ann\+:\+:Identity\+Function Class Reference}
+\label{classmlpack_1_1ann_1_1IdentityFunction}\index{mlpack\+::ann\+::\+Identity\+Function@{mlpack\+::ann\+::\+Identity\+Function}}
+
+
+The identity function, defined by.  
+
+
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static double {\bf Deriv} (const double)
+\begin{DoxyCompactList}\small\item\em Computes the first derivative of the identity function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Input\+Vec\+Type , typename Output\+Vec\+Type $>$ }\\static void {\bf Deriv} (const Input\+Vec\+Type \&y, Output\+Vec\+Type \&x)
+\begin{DoxyCompactList}\small\item\em Computes the first derivatives of the identity function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\static void {\bf Deriv} (const arma\+::\+Cube$<$ eT $>$ \&y, arma\+::\+Cube$<$ eT $>$ \&x)
+\begin{DoxyCompactList}\small\item\em Computes the first derivatives of the identity function using a 3rd order tensor as input. \end{DoxyCompactList}\item 
+static double {\bf Fn} (const double x)
+\begin{DoxyCompactList}\small\item\em Computes the identity function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Input\+Vec\+Type , typename Output\+Vec\+Type $>$ }\\static void {\bf Fn} (const Input\+Vec\+Type \&x, Output\+Vec\+Type \&y)
+\begin{DoxyCompactList}\small\item\em Computes the identity function. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The identity function, defined by. 
+
+\begin{eqnarray*} f(x) &=& x \\ f'(x) &=& 1 \end{eqnarray*} 
+
+Definition at line 28 of file identity\+\_\+function.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::ann\+::\+Identity\+Function@{mlpack\+::ann\+::\+Identity\+Function}!Deriv@{Deriv}}
+\index{Deriv@{Deriv}!mlpack\+::ann\+::\+Identity\+Function@{mlpack\+::ann\+::\+Identity\+Function}}
+\subsubsection[{Deriv(const double)}]{\setlength{\rightskip}{0pt plus 5cm}static double mlpack\+::ann\+::\+Identity\+Function\+::\+Deriv (
+\begin{DoxyParamCaption}
+\item[{const double}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}\label{classmlpack_1_1ann_1_1IdentityFunction_a37dada667419a25f1283d76e54090ab6}
+
+
+Computes the first derivative of the identity function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Input data. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+f\textquotesingle{}(x) 
+\end{DoxyReturn}
+
+
+Definition at line 60 of file identity\+\_\+function.\+hpp.
+
+\index{mlpack\+::ann\+::\+Identity\+Function@{mlpack\+::ann\+::\+Identity\+Function}!Deriv@{Deriv}}
+\index{Deriv@{Deriv}!mlpack\+::ann\+::\+Identity\+Function@{mlpack\+::ann\+::\+Identity\+Function}}
+\subsubsection[{Deriv(const Input\+Vec\+Type \&y, Output\+Vec\+Type \&x)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Vec\+Type , typename Output\+Vec\+Type $>$ static void mlpack\+::ann\+::\+Identity\+Function\+::\+Deriv (
+\begin{DoxyParamCaption}
+\item[{const Input\+Vec\+Type \&}]{y, }
+\item[{Output\+Vec\+Type \&}]{x}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}\label{classmlpack_1_1ann_1_1IdentityFunction_a4f962c999b964c65a7c6c58a2843bc17}
+
+
+Computes the first derivatives of the identity function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em y} & Input activations. \\
+\hline
+{\em x} & The resulting derivatives. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 72 of file identity\+\_\+function.\+hpp.
+
+\index{mlpack\+::ann\+::\+Identity\+Function@{mlpack\+::ann\+::\+Identity\+Function}!Deriv@{Deriv}}
+\index{Deriv@{Deriv}!mlpack\+::ann\+::\+Identity\+Function@{mlpack\+::ann\+::\+Identity\+Function}}
+\subsubsection[{Deriv(const arma\+::\+Cube$<$ e\+T $>$ \&y, arma\+::\+Cube$<$ e\+T $>$ \&x)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename eT $>$ static void mlpack\+::ann\+::\+Identity\+Function\+::\+Deriv (
+\begin{DoxyParamCaption}
+\item[{const arma\+::\+Cube$<$ eT $>$ \&}]{y, }
+\item[{arma\+::\+Cube$<$ eT $>$ \&}]{x}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}\label{classmlpack_1_1ann_1_1IdentityFunction_aa4cfd89616779092625ade49c1eade6c}
+
+
+Computes the first derivatives of the identity function using a 3rd order tensor as input. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em y} & Input activations. \\
+\hline
+{\em x} & The resulting derivatives. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 85 of file identity\+\_\+function.\+hpp.
+
+\index{mlpack\+::ann\+::\+Identity\+Function@{mlpack\+::ann\+::\+Identity\+Function}!Fn@{Fn}}
+\index{Fn@{Fn}!mlpack\+::ann\+::\+Identity\+Function@{mlpack\+::ann\+::\+Identity\+Function}}
+\subsubsection[{Fn(const double x)}]{\setlength{\rightskip}{0pt plus 5cm}static double mlpack\+::ann\+::\+Identity\+Function\+::\+Fn (
+\begin{DoxyParamCaption}
+\item[{const double}]{x}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}\label{classmlpack_1_1ann_1_1IdentityFunction_a590c98bbba9f73ef40c966613d7330a8}
+
+
+Computes the identity function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Input data. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+f(x). 
+\end{DoxyReturn}
+
+
+Definition at line 37 of file identity\+\_\+function.\+hpp.
+
+\index{mlpack\+::ann\+::\+Identity\+Function@{mlpack\+::ann\+::\+Identity\+Function}!Fn@{Fn}}
+\index{Fn@{Fn}!mlpack\+::ann\+::\+Identity\+Function@{mlpack\+::ann\+::\+Identity\+Function}}
+\subsubsection[{Fn(const Input\+Vec\+Type \&x, Output\+Vec\+Type \&y)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Vec\+Type , typename Output\+Vec\+Type $>$ static void mlpack\+::ann\+::\+Identity\+Function\+::\+Fn (
+\begin{DoxyParamCaption}
+\item[{const Input\+Vec\+Type \&}]{x, }
+\item[{Output\+Vec\+Type \&}]{y}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}\label{classmlpack_1_1ann_1_1IdentityFunction_a97d04d2651aa1715914eedd2f130bba4}
+
+
+Computes the identity function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Input data. \\
+\hline
+{\em y} & The resulting output activation. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 49 of file identity\+\_\+function.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/ann/activation\+\_\+functions/{\bf identity\+\_\+function.\+hpp}\end{DoxyCompactItemize}

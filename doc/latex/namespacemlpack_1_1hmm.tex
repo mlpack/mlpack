@@ -1,0 +1,142 @@
+\section{mlpack\+:\+:hmm Namespace Reference}
+\label{namespacemlpack_1_1hmm}\index{mlpack\+::hmm@{mlpack\+::hmm}}
+
+
+Hidden Markov Models.  
+
+
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class {\bf H\+MM}
+\begin{DoxyCompactList}\small\item\em A class that represents a Hidden Markov Model with an arbitrary type of emission distribution. \end{DoxyCompactList}\item 
+class {\bf H\+M\+M\+Model}
+\begin{DoxyCompactList}\small\item\em A serializable \doxyref{H\+MM}{p.}{classmlpack_1_1hmm_1_1HMM} model that also stores the type. \end{DoxyCompactList}\item 
+class {\bf H\+M\+M\+Regression}
+\begin{DoxyCompactList}\small\item\em A class that represents a Hidden Markov Model Regression (H\+M\+MR). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum {\bf H\+M\+M\+Type} \+: char \{ \\*
+{\bf Discrete\+H\+MM} = 0, 
+\\*
+{\bf Gaussian\+H\+MM}, 
+\\*
+{\bf Gaussian\+Mixture\+Model\+H\+MM}, 
+\\*
+{\bf Discrete\+H\+MM} = 0, 
+\\*
+{\bf Gaussian\+H\+MM}, 
+\\*
+{\bf Gaussian\+Mixture\+Model\+H\+MM}
+ \}
+\item 
+enum {\bf H\+M\+M\+Type} \+: char \{ \\*
+{\bf Discrete\+H\+MM} = 0, 
+\\*
+{\bf Gaussian\+H\+MM}, 
+\\*
+{\bf Gaussian\+Mixture\+Model\+H\+MM}, 
+\\*
+{\bf Discrete\+H\+MM} = 0, 
+\\*
+{\bf Gaussian\+H\+MM}, 
+\\*
+{\bf Gaussian\+Mixture\+Model\+H\+MM}
+ \}\begin{DoxyCompactList}\small\item\em H\+M\+M\+Type, to be stored on disk. \end{DoxyCompactList}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Action\+Type , typename Extra\+Info\+Type  = void$>$ }\\void {\bf Load\+H\+M\+M\+And\+Perform\+Action} (const {\bf std\+::string} \&model\+File, Extra\+Info\+Type $\ast$x=N\+U\+LL)
+\begin{DoxyCompactList}\small\item\em Action\+Type should implement static void Apply(\+H\+M\+M\+Type\&). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename H\+M\+M\+Type $>$ }\\void {\bf Save\+H\+MM} ({\bf H\+M\+M\+Type} \&hmm, const {\bf std\+::string} \&model\+File)
+\begin{DoxyCompactList}\small\item\em Save an \doxyref{H\+MM}{p.}{classmlpack_1_1hmm_1_1HMM} to a file. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Hidden Markov Models. 
+
+
+
+\subsection{Enumeration Type Documentation}
+\index{mlpack\+::hmm@{mlpack\+::hmm}!H\+M\+M\+Type@{H\+M\+M\+Type}}
+\index{H\+M\+M\+Type@{H\+M\+M\+Type}!mlpack\+::hmm@{mlpack\+::hmm}}
+\subsubsection[{H\+M\+M\+Type}]{\setlength{\rightskip}{0pt plus 5cm}enum {\bf mlpack\+::hmm\+::\+H\+M\+M\+Type} \+: char}\label{namespacemlpack_1_1hmm_a8a727790f859edd88bd4b7f123798ea8}
+\begin{Desc}
+\item[Enumerator]\par
+\begin{description}
+\index{Discrete\+H\+MM@{Discrete\+H\+MM}!mlpack\+::hmm@{mlpack\+::hmm}}\index{mlpack\+::hmm@{mlpack\+::hmm}!Discrete\+H\+MM@{Discrete\+H\+MM}}\item[{\em 
+Discrete\+H\+MM\label{namespacemlpack_1_1hmm_a8a727790f859edd88bd4b7f123798ea8a0de3c8f99595725153797c9d3559c2df}
+}]\index{Gaussian\+H\+MM@{Gaussian\+H\+MM}!mlpack\+::hmm@{mlpack\+::hmm}}\index{mlpack\+::hmm@{mlpack\+::hmm}!Gaussian\+H\+MM@{Gaussian\+H\+MM}}\item[{\em 
+Gaussian\+H\+MM\label{namespacemlpack_1_1hmm_a8a727790f859edd88bd4b7f123798ea8a5cb4e07477fdd27a1ebd6fbdfab2ea9f}
+}]\index{Gaussian\+Mixture\+Model\+H\+MM@{Gaussian\+Mixture\+Model\+H\+MM}!mlpack\+::hmm@{mlpack\+::hmm}}\index{mlpack\+::hmm@{mlpack\+::hmm}!Gaussian\+Mixture\+Model\+H\+MM@{Gaussian\+Mixture\+Model\+H\+MM}}\item[{\em 
+Gaussian\+Mixture\+Model\+H\+MM\label{namespacemlpack_1_1hmm_a8a727790f859edd88bd4b7f123798ea8aa889d0e415b26b92e90daca617b6c22e}
+}]\index{Discrete\+H\+MM@{Discrete\+H\+MM}!mlpack\+::hmm@{mlpack\+::hmm}}\index{mlpack\+::hmm@{mlpack\+::hmm}!Discrete\+H\+MM@{Discrete\+H\+MM}}\item[{\em 
+Discrete\+H\+MM\label{namespacemlpack_1_1hmm_a8a727790f859edd88bd4b7f123798ea8a0de3c8f99595725153797c9d3559c2df}
+}]\index{Gaussian\+H\+MM@{Gaussian\+H\+MM}!mlpack\+::hmm@{mlpack\+::hmm}}\index{mlpack\+::hmm@{mlpack\+::hmm}!Gaussian\+H\+MM@{Gaussian\+H\+MM}}\item[{\em 
+Gaussian\+H\+MM\label{namespacemlpack_1_1hmm_a8a727790f859edd88bd4b7f123798ea8a5cb4e07477fdd27a1ebd6fbdfab2ea9f}
+}]\index{Gaussian\+Mixture\+Model\+H\+MM@{Gaussian\+Mixture\+Model\+H\+MM}!mlpack\+::hmm@{mlpack\+::hmm}}\index{mlpack\+::hmm@{mlpack\+::hmm}!Gaussian\+Mixture\+Model\+H\+MM@{Gaussian\+Mixture\+Model\+H\+MM}}\item[{\em 
+Gaussian\+Mixture\+Model\+H\+MM\label{namespacemlpack_1_1hmm_a8a727790f859edd88bd4b7f123798ea8aa889d0e415b26b92e90daca617b6c22e}
+}]\end{description}
+\end{Desc}
+
+
+Definition at line 16 of file hmm\+\_\+model.\+hpp.
+
+\index{mlpack\+::hmm@{mlpack\+::hmm}!H\+M\+M\+Type@{H\+M\+M\+Type}}
+\index{H\+M\+M\+Type@{H\+M\+M\+Type}!mlpack\+::hmm@{mlpack\+::hmm}}
+\subsubsection[{H\+M\+M\+Type}]{\setlength{\rightskip}{0pt plus 5cm}enum {\bf mlpack\+::hmm\+::\+H\+M\+M\+Type} \+: char}\label{namespacemlpack_1_1hmm_a8a727790f859edd88bd4b7f123798ea8}
+
+
+H\+M\+M\+Type, to be stored on disk. 
+
+This is of type char, which is one byte. (I\textquotesingle{}m not sure what will happen on systems where one byte is not eight bits.) \begin{Desc}
+\item[Enumerator]\par
+\begin{description}
+\index{Discrete\+H\+MM@{Discrete\+H\+MM}!mlpack\+::hmm@{mlpack\+::hmm}}\index{mlpack\+::hmm@{mlpack\+::hmm}!Discrete\+H\+MM@{Discrete\+H\+MM}}\item[{\em 
+Discrete\+H\+MM\label{namespacemlpack_1_1hmm_a8a727790f859edd88bd4b7f123798ea8a0de3c8f99595725153797c9d3559c2df}
+}]\index{Gaussian\+H\+MM@{Gaussian\+H\+MM}!mlpack\+::hmm@{mlpack\+::hmm}}\index{mlpack\+::hmm@{mlpack\+::hmm}!Gaussian\+H\+MM@{Gaussian\+H\+MM}}\item[{\em 
+Gaussian\+H\+MM\label{namespacemlpack_1_1hmm_a8a727790f859edd88bd4b7f123798ea8a5cb4e07477fdd27a1ebd6fbdfab2ea9f}
+}]\index{Gaussian\+Mixture\+Model\+H\+MM@{Gaussian\+Mixture\+Model\+H\+MM}!mlpack\+::hmm@{mlpack\+::hmm}}\index{mlpack\+::hmm@{mlpack\+::hmm}!Gaussian\+Mixture\+Model\+H\+MM@{Gaussian\+Mixture\+Model\+H\+MM}}\item[{\em 
+Gaussian\+Mixture\+Model\+H\+MM\label{namespacemlpack_1_1hmm_a8a727790f859edd88bd4b7f123798ea8aa889d0e415b26b92e90daca617b6c22e}
+}]\index{Discrete\+H\+MM@{Discrete\+H\+MM}!mlpack\+::hmm@{mlpack\+::hmm}}\index{mlpack\+::hmm@{mlpack\+::hmm}!Discrete\+H\+MM@{Discrete\+H\+MM}}\item[{\em 
+Discrete\+H\+MM\label{namespacemlpack_1_1hmm_a8a727790f859edd88bd4b7f123798ea8a0de3c8f99595725153797c9d3559c2df}
+}]\index{Gaussian\+H\+MM@{Gaussian\+H\+MM}!mlpack\+::hmm@{mlpack\+::hmm}}\index{mlpack\+::hmm@{mlpack\+::hmm}!Gaussian\+H\+MM@{Gaussian\+H\+MM}}\item[{\em 
+Gaussian\+H\+MM\label{namespacemlpack_1_1hmm_a8a727790f859edd88bd4b7f123798ea8a5cb4e07477fdd27a1ebd6fbdfab2ea9f}
+}]\index{Gaussian\+Mixture\+Model\+H\+MM@{Gaussian\+Mixture\+Model\+H\+MM}!mlpack\+::hmm@{mlpack\+::hmm}}\index{mlpack\+::hmm@{mlpack\+::hmm}!Gaussian\+Mixture\+Model\+H\+MM@{Gaussian\+Mixture\+Model\+H\+MM}}\item[{\em 
+Gaussian\+Mixture\+Model\+H\+MM\label{namespacemlpack_1_1hmm_a8a727790f859edd88bd4b7f123798ea8aa889d0e415b26b92e90daca617b6c22e}
+}]\end{description}
+\end{Desc}
+
+
+Definition at line 22 of file hmm\+\_\+util.\+hpp.
+
+
+
+\subsection{Function Documentation}
+\index{mlpack\+::hmm@{mlpack\+::hmm}!Load\+H\+M\+M\+And\+Perform\+Action@{Load\+H\+M\+M\+And\+Perform\+Action}}
+\index{Load\+H\+M\+M\+And\+Perform\+Action@{Load\+H\+M\+M\+And\+Perform\+Action}!mlpack\+::hmm@{mlpack\+::hmm}}
+\subsubsection[{Load\+H\+M\+M\+And\+Perform\+Action(const std\+::string \&model\+File, Extra\+Info\+Type $\ast$x=\+N\+U\+L\+L)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Action\+Type , typename Extra\+Info\+Type  = void$>$ void mlpack\+::hmm\+::\+Load\+H\+M\+M\+And\+Perform\+Action (
+\begin{DoxyParamCaption}
+\item[{const {\bf std\+::string} \&}]{model\+File, }
+\item[{Extra\+Info\+Type $\ast$}]{x = {\ttfamily NULL}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1hmm_a096edad8f73173064a7dcc8bc5626298}
+
+
+Action\+Type should implement static void Apply(\+H\+M\+M\+Type\&). 
+
+\index{mlpack\+::hmm@{mlpack\+::hmm}!Save\+H\+MM@{Save\+H\+MM}}
+\index{Save\+H\+MM@{Save\+H\+MM}!mlpack\+::hmm@{mlpack\+::hmm}}
+\subsubsection[{Save\+H\+M\+M(\+H\+M\+M\+Type \&hmm, const std\+::string \&model\+File)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename H\+M\+M\+Type $>$ void mlpack\+::hmm\+::\+Save\+H\+MM (
+\begin{DoxyParamCaption}
+\item[{{\bf H\+M\+M\+Type} \&}]{hmm, }
+\item[{const {\bf std\+::string} \&}]{model\+File}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1hmm_a35e2585a8da30e70484008c4e2a56972}
+
+
+Save an \doxyref{H\+MM}{p.}{classmlpack_1_1hmm_1_1HMM} to a file. 
+
+The file must also encode what type of \doxyref{H\+MM}{p.}{classmlpack_1_1hmm_1_1HMM} is being stored. 

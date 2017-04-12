@@ -1,0 +1,198 @@
+.TH "mlpack::nca::NCA< MetricType, OptimizerType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::nca::NCA< MetricType, OptimizerType > \- An implementation of Neighborhood Components Analysis, both a linear dimensionality reduction technique and a distance learning technique\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBNCA\fP (const arma::mat &\fBdataset\fP, const arma::Row< size_t > &\fBlabels\fP, MetricType \fBmetric\fP=MetricType())"
+.br
+.RI "\fIConstruct the Neighborhood Components Analysis object\&. \fP"
+.ti -1c
+.RI "const arma::mat & \fBDataset\fP () const "
+.br
+.RI "\fIGet the dataset reference\&. \fP"
+.ti -1c
+.RI "const arma::Row< size_t > & \fBLabels\fP () const "
+.br
+.RI "\fIGet the labels reference\&. \fP"
+.ti -1c
+.RI "void \fBLearnDistance\fP (arma::mat &outputMatrix)"
+.br
+.RI "\fIPerform Neighborhood Components Analysis\&. \fP"
+.ti -1c
+.RI "const OptimizerType< \fBSoftmaxErrorFunction\fP< MetricType > > & \fBOptimizer\fP () const "
+.br
+.RI "\fIGet the optimizer\&. \fP"
+.ti -1c
+.RI "OptimizerType< \fBSoftmaxErrorFunction\fP< MetricType > > & \fBOptimizer\fP ()"
+.br
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "const arma::mat & \fBdataset\fP"
+.br
+.RI "\fIDataset reference\&. \fP"
+.ti -1c
+.RI "\fBSoftmaxErrorFunction\fP< MetricType > \fBerrorFunction\fP"
+.br
+.RI "\fIThe function to optimize\&. \fP"
+.ti -1c
+.RI "const arma::Row< size_t > & \fBlabels\fP"
+.br
+.RI "\fILabels reference\&. \fP"
+.ti -1c
+.RI "MetricType \fBmetric\fP"
+.br
+.RI "\fIMetric to be used\&. \fP"
+.ti -1c
+.RI "OptimizerType< \fBSoftmaxErrorFunction\fP< MetricType > > \fBoptimizer\fP"
+.br
+.RI "\fIThe optimizer to use\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename MetricType = metric::SquaredEuclideanDistance, template< typename > class OptimizerType = optimization::StandardSGD>
+.br
+class mlpack::nca::NCA< MetricType, OptimizerType >"
+An implementation of Neighborhood Components Analysis, both a linear dimensionality reduction technique and a distance learning technique\&. 
+
+The method seeks to improve k-nearest-neighbor classification on a dataset by scaling the dimensions\&. The method is nonparametric, and does not require a value of k\&. It works by using stochastic ('soft') neighbor assignments and using optimization techniques over the gradient of the accuracy of the neighbor assignments\&.
+.PP
+For more details, see the following published paper:
+.PP
+.PP
+.nf
+@inproceedings{Goldberger2004,
+  author = {Goldberger, Jacob and Roweis, Sam and Hinton, Geoff and
+      Salakhutdinov, Ruslan},
+  booktitle = {Advances in Neural Information Processing Systems 17},
+  pages = {513--520},
+  publisher = {MIT Press},
+  title = {{Neighbourhood Components Analysis}},
+  year = {2004}
+}
+.fi
+.PP
+ 
+.PP
+Definition at line 49 of file nca\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename MetricType  = metric::SquaredEuclideanDistance, template< typename > class OptimizerType = optimization::StandardSGD> \fBmlpack::nca::NCA\fP< MetricType, OptimizerType >::\fBNCA\fP (const arma::mat & dataset, const arma::Row< size_t > & labels, MetricType metric = \fCMetricType()\fP)"
+
+.PP
+Construct the Neighborhood Components Analysis object\&. This simply stores the reference to the dataset and labels as well as the parameters for optimization before the actual optimization is performed\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdataset\fP Input dataset\&. 
+.br
+\fIlabels\fP Input dataset labels\&. 
+.br
+\fIstepSize\fP Step size for stochastic gradient descent\&. 
+.br
+\fImaxIterations\fP Maximum iterations for stochastic gradient descent\&. 
+.br
+\fItolerance\fP Tolerance for termination of stochastic gradient descent\&. 
+.br
+\fIshuffle\fP Whether or not to shuffle the dataset during SGD\&. 
+.br
+\fImetric\fP Instantiated metric to use\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename MetricType  = metric::SquaredEuclideanDistance, template< typename > class OptimizerType = optimization::StandardSGD> const arma::mat& \fBmlpack::nca::NCA\fP< MetricType, OptimizerType >::Dataset () const\fC [inline]\fP"
+
+.PP
+Get the dataset reference\&. 
+.PP
+Definition at line 81 of file nca\&.hpp\&.
+.PP
+References mlpack::nca::NCA< MetricType, OptimizerType >::dataset\&.
+.SS "template<typename MetricType  = metric::SquaredEuclideanDistance, template< typename > class OptimizerType = optimization::StandardSGD> const arma::Row<size_t>& \fBmlpack::nca::NCA\fP< MetricType, OptimizerType >::Labels () const\fC [inline]\fP"
+
+.PP
+Get the labels reference\&. 
+.PP
+Definition at line 83 of file nca\&.hpp\&.
+.PP
+References mlpack::nca::NCA< MetricType, OptimizerType >::labels\&.
+.SS "template<typename MetricType  = metric::SquaredEuclideanDistance, template< typename > class OptimizerType = optimization::StandardSGD> void \fBmlpack::nca::NCA\fP< MetricType, OptimizerType >::LearnDistance (arma::mat & outputMatrix)"
+
+.PP
+Perform Neighborhood Components Analysis\&. The output distance learning matrix is written into the passed reference\&. If \fBLearnDistance()\fP is called with an outputMatrix which has the correct size (dataset\&.n_rows x dataset\&.n_rows), that matrix will be used as the starting point for optimization\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIoutput_matrix\fP Covariance matrix of Mahalanobis distance\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType  = metric::SquaredEuclideanDistance, template< typename > class OptimizerType = optimization::StandardSGD> const OptimizerType<\fBSoftmaxErrorFunction\fP<MetricType> >& \fBmlpack::nca::NCA\fP< MetricType, OptimizerType >::Optimizer () const\fC [inline]\fP"
+
+.PP
+Get the optimizer\&. 
+.PP
+Definition at line 86 of file nca\&.hpp\&.
+.PP
+References mlpack::nca::NCA< MetricType, OptimizerType >::optimizer\&.
+.SS "template<typename MetricType  = metric::SquaredEuclideanDistance, template< typename > class OptimizerType = optimization::StandardSGD> OptimizerType<\fBSoftmaxErrorFunction\fP<MetricType> >& \fBmlpack::nca::NCA\fP< MetricType, OptimizerType >::Optimizer ()\fC [inline]\fP"
+
+.PP
+Definition at line 88 of file nca\&.hpp\&.
+.PP
+References mlpack::nca::NCA< MetricType, OptimizerType >::optimizer\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename MetricType  = metric::SquaredEuclideanDistance, template< typename > class OptimizerType = optimization::StandardSGD> const arma::mat& \fBmlpack::nca::NCA\fP< MetricType, OptimizerType >::dataset\fC [private]\fP"
+
+.PP
+Dataset reference\&. 
+.PP
+Definition at line 93 of file nca\&.hpp\&.
+.PP
+Referenced by mlpack::nca::NCA< MetricType, OptimizerType >::Dataset()\&.
+.SS "template<typename MetricType  = metric::SquaredEuclideanDistance, template< typename > class OptimizerType = optimization::StandardSGD> \fBSoftmaxErrorFunction\fP<MetricType> \fBmlpack::nca::NCA\fP< MetricType, OptimizerType >::errorFunction\fC [private]\fP"
+
+.PP
+The function to optimize\&. 
+.PP
+Definition at line 101 of file nca\&.hpp\&.
+.SS "template<typename MetricType  = metric::SquaredEuclideanDistance, template< typename > class OptimizerType = optimization::StandardSGD> const arma::Row<size_t>& \fBmlpack::nca::NCA\fP< MetricType, OptimizerType >::labels\fC [private]\fP"
+
+.PP
+Labels reference\&. 
+.PP
+Definition at line 95 of file nca\&.hpp\&.
+.PP
+Referenced by mlpack::nca::NCA< MetricType, OptimizerType >::Labels()\&.
+.SS "template<typename MetricType  = metric::SquaredEuclideanDistance, template< typename > class OptimizerType = optimization::StandardSGD> MetricType \fBmlpack::nca::NCA\fP< MetricType, OptimizerType >::metric\fC [private]\fP"
+
+.PP
+Metric to be used\&. 
+.PP
+Definition at line 98 of file nca\&.hpp\&.
+.SS "template<typename MetricType  = metric::SquaredEuclideanDistance, template< typename > class OptimizerType = optimization::StandardSGD> OptimizerType<\fBSoftmaxErrorFunction\fP<MetricType> > \fBmlpack::nca::NCA\fP< MetricType, OptimizerType >::optimizer\fC [private]\fP"
+
+.PP
+The optimizer to use\&. 
+.PP
+Definition at line 104 of file nca\&.hpp\&.
+.PP
+Referenced by mlpack::nca::NCA< MetricType, OptimizerType >::Optimizer()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

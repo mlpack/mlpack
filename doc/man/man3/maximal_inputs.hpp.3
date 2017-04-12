@@ -1,0 +1,48 @@
+.TH "src/mlpack/methods/sparse_autoencoder/maximal_inputs.hpp" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+src/mlpack/methods/sparse_autoencoder/maximal_inputs.hpp \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "\fILinear algebra utility functions, generally performed on matrices or vectors\&. \fP"
+.ti -1c
+.RI " \fBmlpack::nn\fP"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBmlpack::nn::MaximalInputs\fP (const arma::mat &parameters, arma::mat &output)"
+.br
+.RI "\fIGiven a parameters matrix from an autoencoder, maximize the hidden units of the parameters, storing the maximal inputs in the given output matrix\&. \fP"
+.ti -1c
+.RI "void \fBmlpack::nn::NormalizeColByMax\fP (const arma::mat &input, arma::mat &output)"
+.br
+.RI "\fINormalize each column of the input matrix by its maximum value, if that maximum value is not zero\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Tham Ngap Wei
+.RE
+.PP
+A function to find the maximal inputs of an autoencoder\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBmaximal_inputs\&.hpp\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,94 @@
+\section{src/mlpack/prereqs.hpp File Reference}
+\label{prereqs_8hpp}\index{src/mlpack/prereqs.\+hpp@{src/mlpack/prereqs.\+hpp}}
+
+
+The core includes that mlpack expects; standard C++ includes and Armadillo.  
+
+
+Include dependency graph for prereqs.\+hpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{prereqs_8hpp__incl}
+\end{center}
+\end{figure}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ {\bf std}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define {\bf \+\_\+\+U\+S\+E\+\_\+\+M\+A\+T\+H\+\_\+\+D\+E\+F\+I\+N\+ES}
+\item 
+\#define {\bf B\+O\+O\+S\+T\+\_\+\+M\+P\+L\+\_\+\+C\+F\+G\+\_\+\+N\+O\+\_\+\+P\+R\+E\+P\+R\+O\+C\+E\+S\+S\+E\+D\+\_\+\+H\+E\+A\+D\+E\+RS}
+\item 
+\#define {\bf B\+O\+O\+S\+T\+\_\+\+M\+P\+L\+\_\+\+L\+I\+M\+I\+T\+\_\+\+L\+I\+S\+T\+\_\+\+S\+I\+ZE}~40
+\item 
+\#define {\bf B\+O\+O\+S\+T\+\_\+\+P\+F\+TO}
+\item 
+\#define {\bf force\+\_\+inline}
+\item 
+\#define {\bf M\+\_\+\+PI}~3.\+141592653589793238462643383279
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$bool B, class T  = void$>$ }\\using {\bf std\+::enable\+\_\+if\+\_\+t} = typename enable\+\_\+if$<$ B, T $>$\+::type
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The core includes that mlpack expects; standard C++ includes and Armadillo. 
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause B\+SD license. You should have received a copy of the 3-\/clause B\+SD license along with mlpack. If not, see {\tt http\+://www.\+opensource.\+org/licenses/\+B\+S\+D-\/3-\/\+Clause} for more information. 
+
+\subsection{Macro Definition Documentation}
+\index{prereqs.\+hpp@{prereqs.\+hpp}!\+\_\+\+U\+S\+E\+\_\+\+M\+A\+T\+H\+\_\+\+D\+E\+F\+I\+N\+ES@{\+\_\+\+U\+S\+E\+\_\+\+M\+A\+T\+H\+\_\+\+D\+E\+F\+I\+N\+ES}}
+\index{\+\_\+\+U\+S\+E\+\_\+\+M\+A\+T\+H\+\_\+\+D\+E\+F\+I\+N\+ES@{\+\_\+\+U\+S\+E\+\_\+\+M\+A\+T\+H\+\_\+\+D\+E\+F\+I\+N\+ES}!prereqs.\+hpp@{prereqs.\+hpp}}
+\subsubsection[{\+\_\+\+U\+S\+E\+\_\+\+M\+A\+T\+H\+\_\+\+D\+E\+F\+I\+N\+ES}]{\setlength{\rightskip}{0pt plus 5cm}\#define \+\_\+\+U\+S\+E\+\_\+\+M\+A\+T\+H\+\_\+\+D\+E\+F\+I\+N\+ES}\label{prereqs_8hpp_a525335710b53cb064ca56b936120431e}
+
+
+Definition at line 15 of file prereqs.\+hpp.
+
+\index{prereqs.\+hpp@{prereqs.\+hpp}!B\+O\+O\+S\+T\+\_\+\+M\+P\+L\+\_\+\+C\+F\+G\+\_\+\+N\+O\+\_\+\+P\+R\+E\+P\+R\+O\+C\+E\+S\+S\+E\+D\+\_\+\+H\+E\+A\+D\+E\+RS@{B\+O\+O\+S\+T\+\_\+\+M\+P\+L\+\_\+\+C\+F\+G\+\_\+\+N\+O\+\_\+\+P\+R\+E\+P\+R\+O\+C\+E\+S\+S\+E\+D\+\_\+\+H\+E\+A\+D\+E\+RS}}
+\index{B\+O\+O\+S\+T\+\_\+\+M\+P\+L\+\_\+\+C\+F\+G\+\_\+\+N\+O\+\_\+\+P\+R\+E\+P\+R\+O\+C\+E\+S\+S\+E\+D\+\_\+\+H\+E\+A\+D\+E\+RS@{B\+O\+O\+S\+T\+\_\+\+M\+P\+L\+\_\+\+C\+F\+G\+\_\+\+N\+O\+\_\+\+P\+R\+E\+P\+R\+O\+C\+E\+S\+S\+E\+D\+\_\+\+H\+E\+A\+D\+E\+RS}!prereqs.\+hpp@{prereqs.\+hpp}}
+\subsubsection[{B\+O\+O\+S\+T\+\_\+\+M\+P\+L\+\_\+\+C\+F\+G\+\_\+\+N\+O\+\_\+\+P\+R\+E\+P\+R\+O\+C\+E\+S\+S\+E\+D\+\_\+\+H\+E\+A\+D\+E\+RS}]{\setlength{\rightskip}{0pt plus 5cm}\#define B\+O\+O\+S\+T\+\_\+\+M\+P\+L\+\_\+\+C\+F\+G\+\_\+\+N\+O\+\_\+\+P\+R\+E\+P\+R\+O\+C\+E\+S\+S\+E\+D\+\_\+\+H\+E\+A\+D\+E\+RS}\label{prereqs_8hpp_a5cfc0a80bcb9c742a4dd13252e8e70b2}
+
+
+Definition at line 68 of file prereqs.\+hpp.
+
+\index{prereqs.\+hpp@{prereqs.\+hpp}!B\+O\+O\+S\+T\+\_\+\+M\+P\+L\+\_\+\+L\+I\+M\+I\+T\+\_\+\+L\+I\+S\+T\+\_\+\+S\+I\+ZE@{B\+O\+O\+S\+T\+\_\+\+M\+P\+L\+\_\+\+L\+I\+M\+I\+T\+\_\+\+L\+I\+S\+T\+\_\+\+S\+I\+ZE}}
+\index{B\+O\+O\+S\+T\+\_\+\+M\+P\+L\+\_\+\+L\+I\+M\+I\+T\+\_\+\+L\+I\+S\+T\+\_\+\+S\+I\+ZE@{B\+O\+O\+S\+T\+\_\+\+M\+P\+L\+\_\+\+L\+I\+M\+I\+T\+\_\+\+L\+I\+S\+T\+\_\+\+S\+I\+ZE}!prereqs.\+hpp@{prereqs.\+hpp}}
+\subsubsection[{B\+O\+O\+S\+T\+\_\+\+M\+P\+L\+\_\+\+L\+I\+M\+I\+T\+\_\+\+L\+I\+S\+T\+\_\+\+S\+I\+ZE}]{\setlength{\rightskip}{0pt plus 5cm}\#define B\+O\+O\+S\+T\+\_\+\+M\+P\+L\+\_\+\+L\+I\+M\+I\+T\+\_\+\+L\+I\+S\+T\+\_\+\+S\+I\+ZE~40}\label{prereqs_8hpp_acba1425c4e8d651fd058a07735044b3e}
+
+
+Definition at line 69 of file prereqs.\+hpp.
+
+\index{prereqs.\+hpp@{prereqs.\+hpp}!B\+O\+O\+S\+T\+\_\+\+P\+F\+TO@{B\+O\+O\+S\+T\+\_\+\+P\+F\+TO}}
+\index{B\+O\+O\+S\+T\+\_\+\+P\+F\+TO@{B\+O\+O\+S\+T\+\_\+\+P\+F\+TO}!prereqs.\+hpp@{prereqs.\+hpp}}
+\subsubsection[{B\+O\+O\+S\+T\+\_\+\+P\+F\+TO}]{\setlength{\rightskip}{0pt plus 5cm}\#define B\+O\+O\+S\+T\+\_\+\+P\+F\+TO}\label{prereqs_8hpp_af7bb2c3c080a4be494e2e685c3a3f249}
+
+
+Definition at line 84 of file prereqs.\+hpp.
+
+\index{prereqs.\+hpp@{prereqs.\+hpp}!force\+\_\+inline@{force\+\_\+inline}}
+\index{force\+\_\+inline@{force\+\_\+inline}!prereqs.\+hpp@{prereqs.\+hpp}}
+\subsubsection[{force\+\_\+inline}]{\setlength{\rightskip}{0pt plus 5cm}\#define force\+\_\+inline}\label{prereqs_8hpp_ae8c57c7218a376f10cbdf0e50f1189ee}
+
+
+Definition at line 44 of file prereqs.\+hpp.
+
+\index{prereqs.\+hpp@{prereqs.\+hpp}!M\+\_\+\+PI@{M\+\_\+\+PI}}
+\index{M\+\_\+\+PI@{M\+\_\+\+PI}!prereqs.\+hpp@{prereqs.\+hpp}}
+\subsubsection[{M\+\_\+\+PI}]{\setlength{\rightskip}{0pt plus 5cm}\#define M\+\_\+\+PI~3.\+141592653589793238462643383279}\label{prereqs_8hpp_ae71449b1cc6e6250b91f539153a7a0d3}
+
+
+Definition at line 40 of file prereqs.\+hpp.
+
+
+
+Referenced by mlpack\+::kernel\+::\+Spherical\+Kernel\+::\+Normalizer(), and mlpack\+::kernel\+::\+Gaussian\+Kernel\+::\+Normalizer().
+

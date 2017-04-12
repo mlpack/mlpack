@@ -1,0 +1,65 @@
+.TH "src/mlpack/methods/ann/layer/base_layer.hpp" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+src/mlpack/methods/ann/layer/base_layer.hpp \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBmlpack::ann::BaseLayer< ActivationFunction, InputDataType, OutputDataType >\fP"
+.br
+.RI "\fIImplementation of the base layer\&. \fP"
+.in -1c
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "\fILinear algebra utility functions, generally performed on matrices or vectors\&. \fP"
+.ti -1c
+.RI " \fBmlpack::ann\fP"
+.br
+.RI "\fIArtificial Neural Network\&. \fP"
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "template<class ActivationFunction  = IdentityFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBmlpack::ann::IdentityLayer\fP = BaseLayer< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "\fIStandard Identity-Layer using the identity activation function\&. \fP"
+.ti -1c
+.RI "template<class ActivationFunction  = RectifierFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBmlpack::ann::ReLULayer\fP = BaseLayer< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "\fIStandard rectified linear unit non-linearity layer\&. \fP"
+.ti -1c
+.RI "template<class ActivationFunction  = LogisticFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBmlpack::ann::SigmoidLayer\fP = BaseLayer< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "\fIStandard Sigmoid-Layer using the logistic activation function\&. \fP"
+.ti -1c
+.RI "template<class ActivationFunction  = TanhFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBmlpack::ann::TanHLayer\fP = BaseLayer< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "\fIStandard hyperbolic tangent layer\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Marcus Edel
+.RE
+.PP
+Definition of the BaseLayer class, which attaches various functions to the embedding layer\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBbase_layer\&.hpp\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

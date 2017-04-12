@@ -1,0 +1,97 @@
+.TH "mlpack::tree::XTreeAuxiliaryInformation< TreeType >::SplitHistoryStruct" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::tree::XTreeAuxiliaryInformation< TreeType >::SplitHistoryStruct \- The X tree requires that the tree records it's 'split history'\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBSplitHistoryStruct\fP (int dim)"
+.br
+.ti -1c
+.RI "\fBSplitHistoryStruct\fP (const \fBSplitHistoryStruct\fP &other)"
+.br
+.ti -1c
+.RI "\fBSplitHistoryStruct\fP (\fBSplitHistoryStruct\fP &&other)"
+.br
+.ti -1c
+.RI "\fBSplitHistoryStruct\fP & \fBoperator=\fP (const \fBSplitHistoryStruct\fP &other)"
+.br
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int)"
+.br
+.in -1c
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "std::vector< bool > \fBhistory\fP"
+.br
+.ti -1c
+.RI "int \fBlastDimension\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename TreeType>
+.br
+struct mlpack::tree::XTreeAuxiliaryInformation< TreeType >::SplitHistoryStruct"
+The X tree requires that the tree records it's 'split history'\&. 
+
+To make this easy, we use the following structure\&. 
+.PP
+Definition at line 169 of file x_tree_auxiliary_information\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename TreeType > \fBmlpack::tree::XTreeAuxiliaryInformation\fP< TreeType >::SplitHistoryStruct::SplitHistoryStruct (int dim)\fC [inline]\fP"
+
+.PP
+Definition at line 174 of file x_tree_auxiliary_information\&.hpp\&.
+.PP
+Referenced by mlpack::tree::XTreeAuxiliaryInformation< TreeType >::SplitHistoryStruct::Serialize()\&.
+.SS "template<typename TreeType > \fBmlpack::tree::XTreeAuxiliaryInformation\fP< TreeType >::SplitHistoryStruct::SplitHistoryStruct (const \fBSplitHistoryStruct\fP & other)\fC [inline]\fP"
+
+.PP
+Definition at line 180 of file x_tree_auxiliary_information\&.hpp\&.
+.SS "template<typename TreeType > \fBmlpack::tree::XTreeAuxiliaryInformation\fP< TreeType >::SplitHistoryStruct::SplitHistoryStruct (\fBSplitHistoryStruct\fP && other)\fC [inline]\fP"
+
+.PP
+Definition at line 192 of file x_tree_auxiliary_information\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename TreeType > \fBSplitHistoryStruct\fP& \fBmlpack::tree::XTreeAuxiliaryInformation\fP< TreeType >::SplitHistoryStruct::operator= (const \fBSplitHistoryStruct\fP & other)\fC [inline]\fP"
+
+.PP
+Definition at line 185 of file x_tree_auxiliary_information\&.hpp\&.
+.PP
+References mlpack::tree::XTreeAuxiliaryInformation< TreeType >::SplitHistoryStruct::history, and mlpack::tree::XTreeAuxiliaryInformation< TreeType >::SplitHistoryStruct::lastDimension\&.
+.SS "template<typename TreeType > template<typename Archive > void \fBmlpack::tree::XTreeAuxiliaryInformation\fP< TreeType >::SplitHistoryStruct::Serialize (Archive & ar, const unsigned int)\fC [inline]\fP"
+
+.PP
+Definition at line 200 of file x_tree_auxiliary_information\&.hpp\&.
+.PP
+References mlpack::data::CreateNVP(), and mlpack::tree::XTreeAuxiliaryInformation< TreeType >::SplitHistoryStruct::SplitHistoryStruct()\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename TreeType > std::vector<bool> \fBmlpack::tree::XTreeAuxiliaryInformation\fP< TreeType >::SplitHistoryStruct::history"
+
+.PP
+Definition at line 172 of file x_tree_auxiliary_information\&.hpp\&.
+.PP
+Referenced by mlpack::tree::XTreeAuxiliaryInformation< TreeType >::SplitHistoryStruct::operator=()\&.
+.SS "template<typename TreeType > int \fBmlpack::tree::XTreeAuxiliaryInformation\fP< TreeType >::SplitHistoryStruct::lastDimension"
+
+.PP
+Definition at line 171 of file x_tree_auxiliary_information\&.hpp\&.
+.PP
+Referenced by mlpack::tree::XTreeAuxiliaryInformation< TreeType >::SplitHistoryStruct::operator=()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

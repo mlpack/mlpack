@@ -1,0 +1,273 @@
+\section{mlpack\+:\+:dbscan\+:\+:D\+B\+S\+C\+AN$<$ Range\+Search\+Type, Point\+Selection\+Policy $>$ Class Template Reference}
+\label{classmlpack_1_1dbscan_1_1DBSCAN}\index{mlpack\+::dbscan\+::\+D\+B\+S\+C\+A\+N$<$ Range\+Search\+Type, Point\+Selection\+Policy $>$@{mlpack\+::dbscan\+::\+D\+B\+S\+C\+A\+N$<$ Range\+Search\+Type, Point\+Selection\+Policy $>$}}
+
+
+\doxyref{D\+B\+S\+C\+AN}{p.}{classmlpack_1_1dbscan_1_1DBSCAN} (Density-\/\+Based Spatial Clustering of Applications with Noise) is a clustering technique described in the following paper\+:  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf D\+B\+S\+C\+AN} (const double {\bf epsilon}, const size\+\_\+t {\bf min\+Points}, Range\+Search\+Type {\bf range\+Search}=Range\+Search\+Type(), Point\+Selection\+Policy {\bf point\+Selector}=Point\+Selection\+Policy())
+\begin{DoxyCompactList}\small\item\em Construct the \doxyref{D\+B\+S\+C\+AN}{p.}{classmlpack_1_1dbscan_1_1DBSCAN} object with the given parameters. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\size\+\_\+t {\bf Cluster} (const Mat\+Type \&data, arma\+::mat \&centroids)
+\begin{DoxyCompactList}\small\item\em Performs \doxyref{D\+B\+S\+C\+AN}{p.}{classmlpack_1_1dbscan_1_1DBSCAN} clustering on the data, returning number of clusters and also the centroid of each cluster. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\size\+\_\+t {\bf Cluster} (const Mat\+Type \&data, arma\+::\+Row$<$ size\+\_\+t $>$ \&assignments)
+\begin{DoxyCompactList}\small\item\em Performs \doxyref{D\+B\+S\+C\+AN}{p.}{classmlpack_1_1dbscan_1_1DBSCAN} clustering on the data, returning number of clusters and also the list of cluster assignments. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\size\+\_\+t {\bf Cluster} (const Mat\+Type \&data, arma\+::\+Row$<$ size\+\_\+t $>$ \&assignments, arma\+::mat \&centroids)
+\begin{DoxyCompactList}\small\item\em Performs \doxyref{D\+B\+S\+C\+AN}{p.}{classmlpack_1_1dbscan_1_1DBSCAN} clustering on the data, returning number of clusters, the centroid of each cluster and also the list of cluster assignments. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\size\+\_\+t {\bf Process\+Point} (const Mat\+Type \&data, boost\+::dynamic\+\_\+bitset$<$$>$ \&unvisited, const size\+\_\+t index, arma\+::\+Row$<$ size\+\_\+t $>$ \&assignments, const size\+\_\+t current\+Cluster, const std\+::vector$<$ std\+::vector$<$ size\+\_\+t $>$$>$ \&neighbors, const std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&distances, const bool top\+Level=true)
+\begin{DoxyCompactList}\small\item\em This function processes the point at index. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+double {\bf epsilon}
+\begin{DoxyCompactList}\small\item\em Maximum distance between two points to be part of same cluster. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf min\+Points}
+\begin{DoxyCompactList}\small\item\em Minimum number of points to be in the epsilon-\/neighborhood (including itself) for the point to be a core-\/point. \end{DoxyCompactList}\item 
+Point\+Selection\+Policy {\bf point\+Selector}
+\begin{DoxyCompactList}\small\item\em Instantiated point selection policy. \end{DoxyCompactList}\item 
+Range\+Search\+Type {\bf range\+Search}
+\begin{DoxyCompactList}\small\item\em Instantiated range search policy. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Range\+Search\+Type = range\+::\+Range\+Search$<$$>$, typename Point\+Selection\+Policy = Random\+Point\+Selection$>$\\*
+class mlpack\+::dbscan\+::\+D\+B\+S\+C\+A\+N$<$ Range\+Search\+Type, Point\+Selection\+Policy $>$}
+
+\doxyref{D\+B\+S\+C\+AN}{p.}{classmlpack_1_1dbscan_1_1DBSCAN} (Density-\/\+Based Spatial Clustering of Applications with Noise) is a clustering technique described in the following paper\+: 
+
+
+\begin{DoxyCode}
+@inproceedings\{ester1996density,
+  title=\{A density-based algorithm \textcolor{keywordflow}{for} discovering clusters in large spatial
+      databases with noise.\},
+  author=\{Ester, M. and Kriegel, H.-P. and Sander, J. and Xu, X.\},
+  booktitle=\{Proceedings of the Second International Conference on Knowledge
+      Discovery and Data Mining (KDD \textcolor{stringliteral}{'96)\},}
+\textcolor{stringliteral}{  pages=\{226--231\},}
+\textcolor{stringliteral}{  year=\{1996\}}
+\textcolor{stringliteral}{\}}
+\end{DoxyCode}
+
+
+The \doxyref{D\+B\+S\+C\+AN}{p.}{classmlpack_1_1dbscan_1_1DBSCAN} algorithm iteratively clusters points using range searches with a specified radius parameter. This implementation allows configuration of the range search technique used and the point selection strategy by means of template parameters.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Range\+Search\+Type} & Class to use for range searching. \\
+\hline
+{\em Point\+Selection\+Policy} & Strategy for selecting next point to cluster with. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 46 of file dbscan.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN@{mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN}!D\+B\+S\+C\+AN@{D\+B\+S\+C\+AN}}
+\index{D\+B\+S\+C\+AN@{D\+B\+S\+C\+AN}!mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN@{mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN}}
+\subsubsection[{D\+B\+S\+C\+A\+N(const double epsilon, const size\+\_\+t min\+Points, Range\+Search\+Type range\+Search=\+Range\+Search\+Type(), Point\+Selection\+Policy point\+Selector=\+Point\+Selection\+Policy())}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Range\+Search\+Type  = range\+::\+Range\+Search$<$$>$, typename Point\+Selection\+Policy  = Random\+Point\+Selection$>$ {\bf mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN}$<$ Range\+Search\+Type, Point\+Selection\+Policy $>$\+::{\bf D\+B\+S\+C\+AN} (
+\begin{DoxyParamCaption}
+\item[{const double}]{epsilon, }
+\item[{const size\+\_\+t}]{min\+Points, }
+\item[{Range\+Search\+Type}]{range\+Search = {\ttfamily RangeSearchType()}, }
+\item[{Point\+Selection\+Policy}]{point\+Selector = {\ttfamily PointSelectionPolicy()}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1dbscan_1_1DBSCAN_a96f5c29a196bdfe1196f4aff882509a7}
+
+
+Construct the \doxyref{D\+B\+S\+C\+AN}{p.}{classmlpack_1_1dbscan_1_1DBSCAN} object with the given parameters. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em epsilon} & Size of range query. \\
+\hline
+{\em min\+Points} & Minimum number of points for each cluster. \\
+\hline
+{\em range\+Search} & Optional instantiated Range\+Search object. \\
+\hline
+{\em point\+Selector} & OptionL instantiated Point\+Selection\+Policy object. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN@{mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN}!Cluster@{Cluster}}
+\index{Cluster@{Cluster}!mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN@{mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN}}
+\subsubsection[{Cluster(const Mat\+Type \&data, arma\+::mat \&centroids)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Range\+Search\+Type  = range\+::\+Range\+Search$<$$>$, typename Point\+Selection\+Policy  = Random\+Point\+Selection$>$ template$<$typename Mat\+Type $>$ size\+\_\+t {\bf mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN}$<$ Range\+Search\+Type, Point\+Selection\+Policy $>$\+::Cluster (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{data, }
+\item[{arma\+::mat \&}]{centroids}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1dbscan_1_1DBSCAN_a800a24ccb55712c169e44d13750d8f06}
+
+
+Performs \doxyref{D\+B\+S\+C\+AN}{p.}{classmlpack_1_1dbscan_1_1DBSCAN} clustering on the data, returning number of clusters and also the centroid of each cluster. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Mat\+Type} & Type of matrix (arma\+::mat or arma\+::sp\+\_\+mat). \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset to cluster. \\
+\hline
+{\em centroids} & Matrix in which centroids are stored. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN@{mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN}!Cluster@{Cluster}}
+\index{Cluster@{Cluster}!mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN@{mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN}}
+\subsubsection[{Cluster(const Mat\+Type \&data, arma\+::\+Row$<$ size\+\_\+t $>$ \&assignments)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Range\+Search\+Type  = range\+::\+Range\+Search$<$$>$, typename Point\+Selection\+Policy  = Random\+Point\+Selection$>$ template$<$typename Mat\+Type $>$ size\+\_\+t {\bf mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN}$<$ Range\+Search\+Type, Point\+Selection\+Policy $>$\+::Cluster (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{data, }
+\item[{arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{assignments}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1dbscan_1_1DBSCAN_a7c8d6d6a6b9af8c6c411ac956c29e7b2}
+
+
+Performs \doxyref{D\+B\+S\+C\+AN}{p.}{classmlpack_1_1dbscan_1_1DBSCAN} clustering on the data, returning number of clusters and also the list of cluster assignments. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Mat\+Type} & Type of matrix (arma\+::mat or arma\+::sp\+\_\+mat). \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset to cluster. \\
+\hline
+{\em assignments} & Vector to store cluster assignments. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN@{mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN}!Cluster@{Cluster}}
+\index{Cluster@{Cluster}!mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN@{mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN}}
+\subsubsection[{Cluster(const Mat\+Type \&data, arma\+::\+Row$<$ size\+\_\+t $>$ \&assignments, arma\+::mat \&centroids)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Range\+Search\+Type  = range\+::\+Range\+Search$<$$>$, typename Point\+Selection\+Policy  = Random\+Point\+Selection$>$ template$<$typename Mat\+Type $>$ size\+\_\+t {\bf mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN}$<$ Range\+Search\+Type, Point\+Selection\+Policy $>$\+::Cluster (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{data, }
+\item[{arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{assignments, }
+\item[{arma\+::mat \&}]{centroids}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1dbscan_1_1DBSCAN_a12dbd7b0ad7628a390c39561350a1b66}
+
+
+Performs \doxyref{D\+B\+S\+C\+AN}{p.}{classmlpack_1_1dbscan_1_1DBSCAN} clustering on the data, returning number of clusters, the centroid of each cluster and also the list of cluster assignments. 
+
+If assignments[i] == assignments.\+n\+\_\+elem -\/ 1, then the point is considered \char`\"{}noise\char`\"{}.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Mat\+Type} & Type of matrix (arma\+::mat or arma\+::sp\+\_\+mat). \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset to cluster. \\
+\hline
+{\em assignments} & Vector to store cluster assignments. \\
+\hline
+{\em centroids} & Matrix in which centroids are stored. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN@{mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN}!Process\+Point@{Process\+Point}}
+\index{Process\+Point@{Process\+Point}!mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN@{mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN}}
+\subsubsection[{Process\+Point(const Mat\+Type \&data, boost\+::dynamic\+\_\+bitset$<$$>$ \&unvisited, const size\+\_\+t index, arma\+::\+Row$<$ size\+\_\+t $>$ \&assignments, const size\+\_\+t current\+Cluster, const std\+::vector$<$ std\+::vector$<$ size\+\_\+t $>$$>$ \&neighbors, const std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&distances, const bool top\+Level=true)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Range\+Search\+Type  = range\+::\+Range\+Search$<$$>$, typename Point\+Selection\+Policy  = Random\+Point\+Selection$>$ template$<$typename Mat\+Type $>$ size\+\_\+t {\bf mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN}$<$ Range\+Search\+Type, Point\+Selection\+Policy $>$\+::Process\+Point (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{data, }
+\item[{boost\+::dynamic\+\_\+bitset$<$$>$ \&}]{unvisited, }
+\item[{const size\+\_\+t}]{index, }
+\item[{arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{assignments, }
+\item[{const size\+\_\+t}]{current\+Cluster, }
+\item[{const std\+::vector$<$ std\+::vector$<$ size\+\_\+t $>$$>$ \&}]{neighbors, }
+\item[{const std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&}]{distances, }
+\item[{const bool}]{top\+Level = {\ttfamily true}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1dbscan_1_1DBSCAN_a2fb7ebf28d845367dcbedbc8fd1a6a8a}
+
+
+This function processes the point at index. 
+
+It marks the point as visited, checks if the given point is core or non-\/core. If it is a core point, it expands the cluster, otherwise it returns.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Mat\+Type} & Type of matrix (arma\+::mat or arma\+::sp\+\_\+mat). \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset to cluster. \\
+\hline
+{\em unvisited} & Remembers if a point has been visited. \\
+\hline
+{\em index} & Index of point to be visited now. \\
+\hline
+{\em assignments} & Vector to store cluster assignments. \\
+\hline
+{\em current\+Cluster} & Index of cluster which will be assigned to points in current cluster. \\
+\hline
+{\em neighbors} & Matrix containing list of neighbors for each point which fall in its epsilon-\/neighborhood. \\
+\hline
+{\em distances} & Matrix containing list of distances for each point which fall in its epsilon-\/neighborhood. \\
+\hline
+{\em top\+Level} & If true, then current point is the first point in the current cluster, helps in detecting noise. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN@{mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN}!epsilon@{epsilon}}
+\index{epsilon@{epsilon}!mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN@{mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN}}
+\subsubsection[{epsilon}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Range\+Search\+Type  = range\+::\+Range\+Search$<$$>$, typename Point\+Selection\+Policy  = Random\+Point\+Selection$>$ double {\bf mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN}$<$ Range\+Search\+Type, Point\+Selection\+Policy $>$\+::epsilon\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1dbscan_1_1DBSCAN_a17c67662e8349108561b2e0404b98f41}
+
+
+Maximum distance between two points to be part of same cluster. 
+
+
+
+Definition at line 104 of file dbscan.\+hpp.
+
+\index{mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN@{mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN}!min\+Points@{min\+Points}}
+\index{min\+Points@{min\+Points}!mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN@{mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN}}
+\subsubsection[{min\+Points}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Range\+Search\+Type  = range\+::\+Range\+Search$<$$>$, typename Point\+Selection\+Policy  = Random\+Point\+Selection$>$ size\+\_\+t {\bf mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN}$<$ Range\+Search\+Type, Point\+Selection\+Policy $>$\+::min\+Points\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1dbscan_1_1DBSCAN_a7b5ed90af8fc7fad58d4a70edca60933}
+
+
+Minimum number of points to be in the epsilon-\/neighborhood (including itself) for the point to be a core-\/point. 
+
+
+
+Definition at line 108 of file dbscan.\+hpp.
+
+\index{mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN@{mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN}!point\+Selector@{point\+Selector}}
+\index{point\+Selector@{point\+Selector}!mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN@{mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN}}
+\subsubsection[{point\+Selector}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Range\+Search\+Type  = range\+::\+Range\+Search$<$$>$, typename Point\+Selection\+Policy  = Random\+Point\+Selection$>$ Point\+Selection\+Policy {\bf mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN}$<$ Range\+Search\+Type, Point\+Selection\+Policy $>$\+::point\+Selector\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1dbscan_1_1DBSCAN_a20ad4ad8d5aa72869a1a677d18335119}
+
+
+Instantiated point selection policy. 
+
+
+
+Definition at line 114 of file dbscan.\+hpp.
+
+\index{mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN@{mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN}!range\+Search@{range\+Search}}
+\index{range\+Search@{range\+Search}!mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN@{mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN}}
+\subsubsection[{range\+Search}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Range\+Search\+Type  = range\+::\+Range\+Search$<$$>$, typename Point\+Selection\+Policy  = Random\+Point\+Selection$>$ Range\+Search\+Type {\bf mlpack\+::dbscan\+::\+D\+B\+S\+C\+AN}$<$ Range\+Search\+Type, Point\+Selection\+Policy $>$\+::range\+Search\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1dbscan_1_1DBSCAN_a327125b2edf34c005f43d0642d306879}
+
+
+Instantiated range search policy. 
+
+
+
+Definition at line 111 of file dbscan.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/dbscan/{\bf dbscan.\+hpp}\end{DoxyCompactItemize}

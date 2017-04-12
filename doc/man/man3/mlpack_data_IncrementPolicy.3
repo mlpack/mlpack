@@ -1,0 +1,133 @@
+.TH "mlpack::data::IncrementPolicy" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::data::IncrementPolicy \- \fBIncrementPolicy\fP is used as a helper class for \fBDatasetMapper\fP\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "using \fBMappedType\fP = size_t"
+.br
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename T > void \fBMapFirstPass\fP (const \fBstd::string\fP &\fBstring\fP, const size_t dim, std::vector< \fBDatatype\fP > &types)"
+.br
+.RI "\fIDetermine if the dimension is numeric or categorical\&. \fP"
+.ti -1c
+.RI "template<typename MapType , typename T > T \fBMapString\fP (const \fBstd::string\fP &\fBstring\fP, const size_t dimension, MapType &maps, std::vector< \fBDatatype\fP > &types)"
+.br
+.RI "\fIGiven the string and the dimension to which the it belongs, and the maps and types given by the \fBDatasetMapper\fP class, returns its numeric mapping\&. \fP"
+.ti -1c
+.RI "template<typename eT , typename MapType > void \fBMapTokens\fP (const std::vector< \fBstd::string\fP > &tokens, size_t &row, arma::Mat< eT > &matrix, MapType &maps, std::vector< \fBDatatype\fP > &types)"
+.br
+.RI "\fIMapTokens turns vector of strings into numeric variables and puts them into a given matrix\&. \fP"
+.in -1c
+.SS "Static Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "static const bool \fBNeedsFirstPass\fP = true"
+.br
+.RI "\fIWe do need a first pass over the data to set the dimension types right\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBIncrementPolicy\fP is used as a helper class for \fBDatasetMapper\fP\&. 
+
+It tells how the strings should be mapped\&. Purpose of this policy is to map all dimension if one if the variables in a dimension turns out to be a categorical variable\&. \fBIncrementPolicy\fP maps strings to incrementing unsigned integers (size_t)\&. The first string to be mapped will be mapped to 0, the next to 1 and so on\&. 
+.PP
+Definition at line 29 of file increment_policy\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "using \fBmlpack::data::IncrementPolicy::MappedType\fP =  size_t"
+
+.PP
+Definition at line 33 of file increment_policy\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename T > void mlpack::data::IncrementPolicy::MapFirstPass (const \fBstd::string\fP & string, const size_t dim, std::vector< \fBDatatype\fP > & types)\fC [inline]\fP"
+
+.PP
+Determine if the dimension is numeric or categorical\&. 
+.PP
+Definition at line 42 of file increment_policy\&.hpp\&.
+.PP
+References mlpack::data::categorical\&.
+.SS "template<typename MapType , typename T > T mlpack::data::IncrementPolicy::MapString (const \fBstd::string\fP & string, const size_t dimension, MapType & maps, std::vector< \fBDatatype\fP > & types)\fC [inline]\fP"
+
+.PP
+Given the string and the dimension to which the it belongs, and the maps and types given by the \fBDatasetMapper\fP class, returns its numeric mapping\&. If no mapping yet exists, the string is added to the list of mappings for the given dimension\&. This function is used as a helper function for \fBDatasetMapper\fP class\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIMapType\fP Type of unordered_map that contains mapped value pairs 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIstring\fP String to find/create mapping for\&. 
+.br
+\fIdimension\fP Index of the dimension of the string\&. 
+.br
+\fImaps\fP Unordered map given by the \fBDatasetMapper\fP\&. 
+.br
+\fItypes\fP Vector containing the type information about each dimensions\&. 
+.RE
+.PP
+
+.PP
+Definition at line 81 of file increment_policy\&.hpp\&.
+.PP
+References mlpack::data::categorical, and mlpack::data::numeric\&.
+.PP
+Referenced by MapTokens()\&.
+.SS "template<typename eT , typename MapType > void mlpack::data::IncrementPolicy::MapTokens (const std::vector< \fBstd::string\fP > & tokens, size_t & row, arma::Mat< eT > & matrix, MapType & maps, std::vector< \fBDatatype\fP > & types)\fC [inline]\fP"
+
+.PP
+MapTokens turns vector of strings into numeric variables and puts them into a given matrix\&. It is used as a helper function when trying to load files\&. Each dimension's tokens are given in to this function\&. If one of the tokens turns out to be a string, all the tokens should be mapped using the \fBMapString()\fP funciton\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIeT\fP Type of armadillo matrix\&. 
+.br
+\fIMapType\fP Type of unordered_map that contains mapped value pairs\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fItokens\fP Vector of variables inside a dimension\&. 
+.br
+\fIrow\fP Position of the given tokens\&. 
+.br
+\fImatrix\fP Matrix to save the data into\&. 
+.br
+\fImaps\fP Maps given by the \fBDatasetMapper\fP class\&. 
+.br
+\fItypes\fP Types of each dimensions given by the \fBDatasetMapper\fP class\&. 
+.RE
+.PP
+
+.PP
+Definition at line 146 of file increment_policy\&.hpp\&.
+.PP
+References MapString(), and string()\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "const bool mlpack::data::IncrementPolicy::NeedsFirstPass = true\fC [static]\fP"
+
+.PP
+We do need a first pass over the data to set the dimension types right\&. 
+.PP
+Definition at line 36 of file increment_policy\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

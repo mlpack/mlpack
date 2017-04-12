@@ -1,0 +1,146 @@
+\section{mlpack\+:\+:emst\+:\+:Union\+Find Class Reference}
+\label{classmlpack_1_1emst_1_1UnionFind}\index{mlpack\+::emst\+::\+Union\+Find@{mlpack\+::emst\+::\+Union\+Find}}
+
+
+A Union-\/\+Find data structure.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Union\+Find} (const size\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Construct the object with the given size. \end{DoxyCompactList}\item 
+{\bf $\sim$\+Union\+Find} ()
+\begin{DoxyCompactList}\small\item\em Destroy the object (nothing to do). \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Find} (const size\+\_\+t x)
+\begin{DoxyCompactList}\small\item\em Returns the component containing an element. \end{DoxyCompactList}\item 
+void {\bf Union} (const size\+\_\+t x, const size\+\_\+t y)
+\begin{DoxyCompactList}\small\item\em Union the components containing x and y. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+arma\+::\+Col$<$ size\+\_\+t $>$ {\bf parent}
+\item 
+arma\+::ivec {\bf rank}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A Union-\/\+Find data structure. 
+
+See Cormen, Rivest, \& Stein for details. The structure tracks the components of a graph. Each point in the graph is initially in its own component. Calling Union(x, y) unites the components indexed by x and y. Find(x) returns the index of the component containing point x. 
+
+Definition at line 30 of file union\+\_\+find.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::emst\+::\+Union\+Find@{mlpack\+::emst\+::\+Union\+Find}!Union\+Find@{Union\+Find}}
+\index{Union\+Find@{Union\+Find}!mlpack\+::emst\+::\+Union\+Find@{mlpack\+::emst\+::\+Union\+Find}}
+\subsubsection[{Union\+Find(const size\+\_\+t size)}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::emst\+::\+Union\+Find\+::\+Union\+Find (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{size}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1emst_1_1UnionFind_ab784c7257b0bdefd6b626b8b7300524f}
+
+
+Construct the object with the given size. 
+
+
+
+Definition at line 38 of file union\+\_\+find.\+hpp.
+
+\index{mlpack\+::emst\+::\+Union\+Find@{mlpack\+::emst\+::\+Union\+Find}!````~Union\+Find@{$\sim$\+Union\+Find}}
+\index{````~Union\+Find@{$\sim$\+Union\+Find}!mlpack\+::emst\+::\+Union\+Find@{mlpack\+::emst\+::\+Union\+Find}}
+\subsubsection[{$\sim$\+Union\+Find()}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::emst\+::\+Union\+Find\+::$\sim$\+Union\+Find (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1emst_1_1UnionFind_a838e4718b49262b14c1563e13c665fe9}
+
+
+Destroy the object (nothing to do). 
+
+
+
+Definition at line 48 of file union\+\_\+find.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::emst\+::\+Union\+Find@{mlpack\+::emst\+::\+Union\+Find}!Find@{Find}}
+\index{Find@{Find}!mlpack\+::emst\+::\+Union\+Find@{mlpack\+::emst\+::\+Union\+Find}}
+\subsubsection[{Find(const size\+\_\+t x)}]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t mlpack\+::emst\+::\+Union\+Find\+::\+Find (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{x}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1emst_1_1UnionFind_add632a5cd5315f030e16511437c964e2}
+
+
+Returns the component containing an element. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & the component to be found \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The index of the component containing x 
+\end{DoxyReturn}
+
+
+Definition at line 56 of file union\+\_\+find.\+hpp.
+
+
+
+Referenced by Union().
+
+\index{mlpack\+::emst\+::\+Union\+Find@{mlpack\+::emst\+::\+Union\+Find}!Union@{Union}}
+\index{Union@{Union}!mlpack\+::emst\+::\+Union\+Find@{mlpack\+::emst\+::\+Union\+Find}}
+\subsubsection[{Union(const size\+\_\+t x, const size\+\_\+t y)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::emst\+::\+Union\+Find\+::\+Union (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{x, }
+\item[{const size\+\_\+t}]{y}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1emst_1_1UnionFind_a9b2bf577b1d0011478897724afb04a80}
+
+
+Union the components containing x and y. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & one component \\
+\hline
+{\em y} & the other component \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 76 of file union\+\_\+find.\+hpp.
+
+
+
+References Find().
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::emst\+::\+Union\+Find@{mlpack\+::emst\+::\+Union\+Find}!parent@{parent}}
+\index{parent@{parent}!mlpack\+::emst\+::\+Union\+Find@{mlpack\+::emst\+::\+Union\+Find}}
+\subsubsection[{parent}]{\setlength{\rightskip}{0pt plus 5cm}arma\+::\+Col$<$size\+\_\+t$>$ mlpack\+::emst\+::\+Union\+Find\+::parent\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1emst_1_1UnionFind_ab989de421794b4bc4ab930bec5a2c40b}
+
+
+Definition at line 33 of file union\+\_\+find.\+hpp.
+
+\index{mlpack\+::emst\+::\+Union\+Find@{mlpack\+::emst\+::\+Union\+Find}!rank@{rank}}
+\index{rank@{rank}!mlpack\+::emst\+::\+Union\+Find@{mlpack\+::emst\+::\+Union\+Find}}
+\subsubsection[{rank}]{\setlength{\rightskip}{0pt plus 5cm}arma\+::ivec mlpack\+::emst\+::\+Union\+Find\+::rank\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1emst_1_1UnionFind_a19f06f49e59750a0c06c1d781fc31476}
+
+
+Definition at line 34 of file union\+\_\+find.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/emst/{\bf union\+\_\+find.\+hpp}\end{DoxyCompactItemize}

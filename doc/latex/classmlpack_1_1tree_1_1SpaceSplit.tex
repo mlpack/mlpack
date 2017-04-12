@@ -1,0 +1,93 @@
+\section{mlpack\+:\+:tree\+:\+:Space\+Split$<$ Metric\+Type, Mat\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1tree_1_1SpaceSplit}\index{mlpack\+::tree\+::\+Space\+Split$<$ Metric\+Type, Mat\+Type $>$@{mlpack\+::tree\+::\+Space\+Split$<$ Metric\+Type, Mat\+Type $>$}}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static bool {\bf Get\+Proj\+Vector} (const {\bf bound\+::\+H\+Rect\+Bound}$<$ Metric\+Type $>$ \&bound, const Mat\+Type \&data, const arma\+::\+Col$<$ size\+\_\+t $>$ \&points, {\bf Axis\+Parallel\+Proj\+Vector} \&proj\+Vector, double \&mid\+Value)
+\begin{DoxyCompactList}\small\item\em Create a projection vector based on the given set of point. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Bound\+Type $>$ }\\static bool {\bf Get\+Proj\+Vector} (const Bound\+Type \&bound, const Mat\+Type \&data, const arma\+::\+Col$<$ size\+\_\+t $>$ \&points, {\bf Proj\+Vector} \&proj\+Vector, double \&mid\+Value)
+\begin{DoxyCompactList}\small\item\em Create a projection vector based on the given set of point. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Metric\+Type, typename Mat\+Type$>$\\*
+class mlpack\+::tree\+::\+Space\+Split$<$ Metric\+Type, Mat\+Type $>$}
+
+
+
+Definition at line 23 of file space\+\_\+split.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::tree\+::\+Space\+Split@{mlpack\+::tree\+::\+Space\+Split}!Get\+Proj\+Vector@{Get\+Proj\+Vector}}
+\index{Get\+Proj\+Vector@{Get\+Proj\+Vector}!mlpack\+::tree\+::\+Space\+Split@{mlpack\+::tree\+::\+Space\+Split}}
+\subsubsection[{Get\+Proj\+Vector(const bound\+::\+H\+Rect\+Bound$<$ Metric\+Type $>$ \&bound, const Mat\+Type \&data, const arma\+::\+Col$<$ size\+\_\+t $>$ \&points, Axis\+Parallel\+Proj\+Vector \&proj\+Vector, double \&mid\+Value)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type $>$ static bool {\bf mlpack\+::tree\+::\+Space\+Split}$<$ Metric\+Type, Mat\+Type $>$\+::Get\+Proj\+Vector (
+\begin{DoxyParamCaption}
+\item[{const {\bf bound\+::\+H\+Rect\+Bound}$<$ Metric\+Type $>$ \&}]{bound, }
+\item[{const Mat\+Type \&}]{data, }
+\item[{const arma\+::\+Col$<$ size\+\_\+t $>$ \&}]{points, }
+\item[{{\bf Axis\+Parallel\+Proj\+Vector} \&}]{proj\+Vector, }
+\item[{double \&}]{mid\+Value}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1tree_1_1SpaceSplit_ad996dd0d8808304ebbaf8f489e6610e7}
+
+
+Create a projection vector based on the given set of point. 
+
+This special case will create an axis-\/parallel projection vector in the dimension that has the maximum width.
+
+
+\begin{DoxyParams}{Parameters}
+{\em bound} & The bound used for this node. \\
+\hline
+{\em data} & The dataset used by the tree. \\
+\hline
+{\em points} & Vector of indexes of points to be considered. \\
+\hline
+{\em proj\+Vector} & Resulting axis-\/parallel projection vector. \\
+\hline
+{\em mid\+Value} & Mid value in the chosen projection. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Flag to determine if it is possible. 
+\end{DoxyReturn}
+\index{mlpack\+::tree\+::\+Space\+Split@{mlpack\+::tree\+::\+Space\+Split}!Get\+Proj\+Vector@{Get\+Proj\+Vector}}
+\index{Get\+Proj\+Vector@{Get\+Proj\+Vector}!mlpack\+::tree\+::\+Space\+Split@{mlpack\+::tree\+::\+Space\+Split}}
+\subsubsection[{Get\+Proj\+Vector(const Bound\+Type \&bound, const Mat\+Type \&data, const arma\+::\+Col$<$ size\+\_\+t $>$ \&points, Proj\+Vector \&proj\+Vector, double \&mid\+Value)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type $>$ template$<$typename Bound\+Type $>$ static bool {\bf mlpack\+::tree\+::\+Space\+Split}$<$ Metric\+Type, Mat\+Type $>$\+::Get\+Proj\+Vector (
+\begin{DoxyParamCaption}
+\item[{const Bound\+Type \&}]{bound, }
+\item[{const Mat\+Type \&}]{data, }
+\item[{const arma\+::\+Col$<$ size\+\_\+t $>$ \&}]{points, }
+\item[{{\bf Proj\+Vector} \&}]{proj\+Vector, }
+\item[{double \&}]{mid\+Value}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1tree_1_1SpaceSplit_a04ccca3aaf520b3c3d74f7d86da3ea31}
+
+
+Create a projection vector based on the given set of point. 
+
+We efficiently estimate the farthest pair of points in the given set\+: p and q, and then consider the projection vector (q -\/ p).
+
+
+\begin{DoxyParams}{Parameters}
+{\em bound} & The bound used for this node. \\
+\hline
+{\em data} & The dataset used by the tree. \\
+\hline
+{\em points} & Vector of indexes of points to be considered. \\
+\hline
+{\em proj\+Vector} & Resulting projection vector. \\
+\hline
+{\em mid\+Value} & Mid value in the chosen projection. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Flag to determine if it is possible. 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/tree/space\+\_\+split/{\bf space\+\_\+split.\+hpp}\end{DoxyCompactItemize}

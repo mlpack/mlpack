@@ -1,0 +1,121 @@
+.TH "mlpack::tree::MinimalCoverageSweep< SplitPolicy >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::tree::MinimalCoverageSweep< SplitPolicy > \- The \fBMinimalCoverageSweep\fP class finds a partition along which we can split a node according to the coverage of two resulting nodes\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "struct \fBSweepCost\fP"
+.br
+.RI "\fIA struct that provides the type of the sweep cost\&. \fP"
+.in -1c
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename TreeType , typename ElemType > static bool \fBCheckLeafSweep\fP (const TreeType *node, const size_t cutAxis, const ElemType cut)"
+.br
+.RI "\fICheck if a leaf node can be split along the axis at the provided coordinate\&. \fP"
+.ti -1c
+.RI "template<typename TreeType , typename ElemType > static bool \fBCheckNonLeafSweep\fP (const TreeType *node, const size_t cutAxis, const ElemType cut)"
+.br
+.RI "\fICheck if an intermediate node can be split along the axis at the provided coordinate\&. \fP"
+.ti -1c
+.RI "template<typename TreeType > static TreeType::ElemType \fBSweepLeafNode\fP (const size_t axis, const TreeType *node, typename TreeType::ElemType &axisCut)"
+.br
+.RI "\fIFind a suitable partition of a leaf node along the provided axis\&. \fP"
+.ti -1c
+.RI "template<typename TreeType > static TreeType::ElemType \fBSweepNonLeafNode\fP (const size_t axis, const TreeType *node, typename TreeType::ElemType &axisCut)"
+.br
+.RI "\fIFind a suitable partition of a non-leaf node along the provided axis\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename SplitPolicy>
+.br
+class mlpack::tree::MinimalCoverageSweep< SplitPolicy >"
+The \fBMinimalCoverageSweep\fP class finds a partition along which we can split a node according to the coverage of two resulting nodes\&. 
+
+The class finds a partition along a given axis\&. Moreover, the class evaluates the cost of each split\&. The cost is proportional to the total coverage of resulting nodes\&. If the resulting nodes are overflowed the maximum cost is returned\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fISplitPolicy\fP The class that provides rules for inserting children of a node that is being split into two new subtrees\&. 
+.RE
+.PP
+
+.PP
+Definition at line 30 of file minimal_coverage_sweep\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename SplitPolicy > template<typename TreeType , typename ElemType > static bool \fBmlpack::tree::MinimalCoverageSweep\fP< SplitPolicy >::CheckLeafSweep (const TreeType * node, const size_t cutAxis, const ElemType cut)\fC [static]\fP"
+
+.PP
+Check if a leaf node can be split along the axis at the provided coordinate\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fInode\fP The node that is being split\&. 
+.br
+\fIcutAxis\fP The axis that we want to check\&. 
+.br
+\fIcut\fP The coordinate that we want to check\&. 
+.RE
+.PP
+
+.SS "template<typename SplitPolicy > template<typename TreeType , typename ElemType > static bool \fBmlpack::tree::MinimalCoverageSweep\fP< SplitPolicy >::CheckNonLeafSweep (const TreeType * node, const size_t cutAxis, const ElemType cut)\fC [static]\fP"
+
+.PP
+Check if an intermediate node can be split along the axis at the provided coordinate\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fInode\fP The node that is being split\&. 
+.br
+\fIcutAxis\fP The axis that we want to check\&. 
+.br
+\fIcut\fP The coordinate that we want to check\&. 
+.RE
+.PP
+
+.SS "template<typename SplitPolicy > template<typename TreeType > static TreeType::ElemType \fBmlpack::tree::MinimalCoverageSweep\fP< SplitPolicy >::SweepLeafNode (const size_t axis, const TreeType * node, typename TreeType::ElemType & axisCut)\fC [static]\fP"
+
+.PP
+Find a suitable partition of a leaf node along the provided axis\&. The method returns the cost of the split\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIaxis\fP The axis along which we are finding a partition\&. 
+.br
+\fInode\fP The node that is being split\&. 
+.br
+\fIaxisCut\fP The coordinate at which the node may be split\&. 
+.RE
+.PP
+
+.SS "template<typename SplitPolicy > template<typename TreeType > static TreeType::ElemType \fBmlpack::tree::MinimalCoverageSweep\fP< SplitPolicy >::SweepNonLeafNode (const size_t axis, const TreeType * node, typename TreeType::ElemType & axisCut)\fC [static]\fP"
+
+.PP
+Find a suitable partition of a non-leaf node along the provided axis\&. The method returns the cost of the split\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIaxis\fP The axis along which we are finding a partition\&. 
+.br
+\fInode\fP The node that is being split\&. 
+.br
+\fIaxisCut\fP The coordinate at which the node may be split\&. 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

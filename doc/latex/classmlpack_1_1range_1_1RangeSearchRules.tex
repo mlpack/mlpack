@@ -1,0 +1,475 @@
+\section{mlpack\+:\+:range\+:\+:Range\+Search\+Rules$<$ Metric\+Type, Tree\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1range_1_1RangeSearchRules}\index{mlpack\+::range\+::\+Range\+Search\+Rules$<$ Metric\+Type, Tree\+Type $>$@{mlpack\+::range\+::\+Range\+Search\+Rules$<$ Metric\+Type, Tree\+Type $>$}}
+
+
+The \doxyref{Range\+Search\+Rules}{p.}{classmlpack_1_1range_1_1RangeSearchRules} class is a template helper class used by \doxyref{Range\+Search}{p.}{classmlpack_1_1range_1_1RangeSearch} class when performing range searches.  
+
+
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef {\bf tree\+::\+Traversal\+Info}$<$ Tree\+Type $>$ {\bf Traversal\+Info\+Type}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Range\+Search\+Rules} (const arma\+::mat \&{\bf reference\+Set}, const arma\+::mat \&{\bf query\+Set}, const {\bf math\+::\+Range} \&{\bf range}, std\+::vector$<$ std\+::vector$<$ size\+\_\+t $>$ $>$ \&{\bf neighbors}, std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \&{\bf distances}, Metric\+Type \&{\bf metric}, const bool {\bf same\+Set}=false)
+\begin{DoxyCompactList}\small\item\em Construct the \doxyref{Range\+Search\+Rules}{p.}{classmlpack_1_1range_1_1RangeSearchRules} object. \end{DoxyCompactList}\item 
+double {\bf Base\+Case} (const size\+\_\+t query\+Index, const size\+\_\+t reference\+Index)
+\begin{DoxyCompactList}\small\item\em Compute the base case between the given query point and reference point. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Base\+Cases} () const 
+\begin{DoxyCompactList}\small\item\em Get the number of base cases. \end{DoxyCompactList}\item 
+double {\bf Rescore} (const size\+\_\+t query\+Index, Tree\+Type \&reference\+Node, const double old\+Score) const 
+\begin{DoxyCompactList}\small\item\em Re-\/evaluate the score for recursion order. \end{DoxyCompactList}\item 
+double {\bf Rescore} (Tree\+Type \&query\+Node, Tree\+Type \&reference\+Node, const double old\+Score) const 
+\begin{DoxyCompactList}\small\item\em Re-\/evaluate the score for recursion order. \end{DoxyCompactList}\item 
+double {\bf Score} (const size\+\_\+t query\+Index, Tree\+Type \&reference\+Node)
+\begin{DoxyCompactList}\small\item\em Get the score for recursion order. \end{DoxyCompactList}\item 
+double {\bf Score} (Tree\+Type \&query\+Node, Tree\+Type \&reference\+Node)
+\begin{DoxyCompactList}\small\item\em Get the score for recursion order. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Scores} () const 
+\begin{DoxyCompactList}\small\item\em Get the number of scores (that is, calls to Range\+Distance()). \end{DoxyCompactList}\item 
+const {\bf Traversal\+Info\+Type} \& {\bf Traversal\+Info} () const 
+\item 
+{\bf Traversal\+Info\+Type} \& {\bf Traversal\+Info} ()
+\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void {\bf Add\+Result} (const size\+\_\+t query\+Index, Tree\+Type \&reference\+Node)
+\begin{DoxyCompactList}\small\item\em Add all the points in the given node to the results for the given query point. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+size\+\_\+t {\bf base\+Cases}
+\begin{DoxyCompactList}\small\item\em The number of base cases. \end{DoxyCompactList}\item 
+std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \& {\bf distances}
+\begin{DoxyCompactList}\small\item\em The vector the resultant neighbor distances should be stored in. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf last\+Query\+Index}
+\begin{DoxyCompactList}\small\item\em The last query index. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf last\+Reference\+Index}
+\begin{DoxyCompactList}\small\item\em The last reference index. \end{DoxyCompactList}\item 
+Metric\+Type \& {\bf metric}
+\begin{DoxyCompactList}\small\item\em The instantiated metric. \end{DoxyCompactList}\item 
+std\+::vector$<$ std\+::vector$<$ size\+\_\+t $>$ $>$ \& {\bf neighbors}
+\begin{DoxyCompactList}\small\item\em The vector the resultant neighbor indices should be stored in. \end{DoxyCompactList}\item 
+const arma\+::mat \& {\bf query\+Set}
+\begin{DoxyCompactList}\small\item\em The query set. \end{DoxyCompactList}\item 
+const {\bf math\+::\+Range} \& {\bf range}
+\begin{DoxyCompactList}\small\item\em The range of distances for which we are searching. \end{DoxyCompactList}\item 
+const arma\+::mat \& {\bf reference\+Set}
+\begin{DoxyCompactList}\small\item\em The reference set. \end{DoxyCompactList}\item 
+bool {\bf same\+Set}
+\begin{DoxyCompactList}\small\item\em If true, the query and reference set are taken to be the same. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf scores}
+\begin{DoxyCompactList}\small\item\em T\+He number of scores. \end{DoxyCompactList}\item 
+{\bf Traversal\+Info\+Type} {\bf traversal\+Info}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Metric\+Type, typename Tree\+Type$>$\\*
+class mlpack\+::range\+::\+Range\+Search\+Rules$<$ Metric\+Type, Tree\+Type $>$}
+
+The \doxyref{Range\+Search\+Rules}{p.}{classmlpack_1_1range_1_1RangeSearchRules} class is a template helper class used by \doxyref{Range\+Search}{p.}{classmlpack_1_1range_1_1RangeSearch} class when performing range searches. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Metric\+Type} & The metric to use for computation. \\
+\hline
+{\em Tree\+Type} & The tree type to use; must adhere to the Tree\+Type A\+PI. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 28 of file range\+\_\+search\+\_\+rules.\+hpp.
+
+
+
+\subsection{Member Typedef Documentation}
+\index{mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}!Traversal\+Info\+Type@{Traversal\+Info\+Type}}
+\index{Traversal\+Info\+Type@{Traversal\+Info\+Type}!mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}}
+\subsubsection[{Traversal\+Info\+Type}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Tree\+Type $>$ typedef {\bf tree\+::\+Traversal\+Info}$<$Tree\+Type$>$ {\bf mlpack\+::range\+::\+Range\+Search\+Rules}$<$ Metric\+Type, Tree\+Type $>$\+::{\bf Traversal\+Info\+Type}}\label{classmlpack_1_1range_1_1RangeSearchRules_aa3c017f9cc812ad80a4c414507923464}
+
+
+Definition at line 110 of file range\+\_\+search\+\_\+rules.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}!Range\+Search\+Rules@{Range\+Search\+Rules}}
+\index{Range\+Search\+Rules@{Range\+Search\+Rules}!mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}}
+\subsubsection[{Range\+Search\+Rules(const arma\+::mat \&reference\+Set, const arma\+::mat \&query\+Set, const math\+::\+Range \&range, std\+::vector$<$ std\+::vector$<$ size\+\_\+t $>$ $>$ \&neighbors, std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \&distances, Metric\+Type \&metric, const bool same\+Set=false)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Tree\+Type $>$ {\bf mlpack\+::range\+::\+Range\+Search\+Rules}$<$ Metric\+Type, Tree\+Type $>$\+::{\bf Range\+Search\+Rules} (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{reference\+Set, }
+\item[{const arma\+::mat \&}]{query\+Set, }
+\item[{const {\bf math\+::\+Range} \&}]{range, }
+\item[{std\+::vector$<$ std\+::vector$<$ size\+\_\+t $>$ $>$ \&}]{neighbors, }
+\item[{std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \&}]{distances, }
+\item[{Metric\+Type \&}]{metric, }
+\item[{const bool}]{same\+Set = {\ttfamily false}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1range_1_1RangeSearchRules_a8c71af9710b33dd019a4547f9eb33ea4}
+
+
+Construct the \doxyref{Range\+Search\+Rules}{p.}{classmlpack_1_1range_1_1RangeSearchRules} object. 
+
+This is usually done from within the \doxyref{Range\+Search}{p.}{classmlpack_1_1range_1_1RangeSearch} class at search time.
+
+
+\begin{DoxyParams}{Parameters}
+{\em reference\+Set} & Set of reference data. \\
+\hline
+{\em query\+Set} & Set of query data. \\
+\hline
+{\em range} & Range to search for. \\
+\hline
+{\em neighbors} & Vector to store resulting neighbors in. \\
+\hline
+{\em distances} & Vector to store resulting distances in. \\
+\hline
+{\em metric} & Instantiated metric. \\
+\hline
+{\em same\+Set} & If true, the query and reference set are taken to be the same, and a query point will not return itself in the results. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}!Add\+Result@{Add\+Result}}
+\index{Add\+Result@{Add\+Result}!mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}}
+\subsubsection[{Add\+Result(const size\+\_\+t query\+Index, Tree\+Type \&reference\+Node)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Tree\+Type $>$ void {\bf mlpack\+::range\+::\+Range\+Search\+Rules}$<$ Metric\+Type, Tree\+Type $>$\+::Add\+Result (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{query\+Index, }
+\item[{Tree\+Type \&}]{reference\+Node}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1range_1_1RangeSearchRules_a177d2e37e1c46eb64dbb6af4587fda1e}
+
+
+Add all the points in the given node to the results for the given query point. 
+
+If the base case has already been calculated, we make sure to not add that to the results twice. \index{mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}!Base\+Case@{Base\+Case}}
+\index{Base\+Case@{Base\+Case}!mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}}
+\subsubsection[{Base\+Case(const size\+\_\+t query\+Index, const size\+\_\+t reference\+Index)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Tree\+Type $>$ double {\bf mlpack\+::range\+::\+Range\+Search\+Rules}$<$ Metric\+Type, Tree\+Type $>$\+::Base\+Case (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{query\+Index, }
+\item[{const size\+\_\+t}]{reference\+Index}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1range_1_1RangeSearchRules_a412f1a0f31a78e7c837b62526e1bd356}
+
+
+Compute the base case between the given query point and reference point. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Index} & Index of query point. \\
+\hline
+{\em reference\+Index} & Index of reference point. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}!Base\+Cases@{Base\+Cases}}
+\index{Base\+Cases@{Base\+Cases}!mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}}
+\subsubsection[{Base\+Cases() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Tree\+Type $>$ size\+\_\+t {\bf mlpack\+::range\+::\+Range\+Search\+Rules}$<$ Metric\+Type, Tree\+Type $>$\+::Base\+Cases (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1range_1_1RangeSearchRules_a6f71c939a36aafe04372f4c42c727261}
+
+
+Get the number of base cases. 
+
+
+
+Definition at line 116 of file range\+\_\+search\+\_\+rules.\+hpp.
+
+
+
+References mlpack\+::range\+::\+Range\+Search\+Rules$<$ Metric\+Type, Tree\+Type $>$\+::base\+Cases.
+
+\index{mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}!Rescore@{Rescore}}
+\index{Rescore@{Rescore}!mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}}
+\subsubsection[{Rescore(const size\+\_\+t query\+Index, Tree\+Type \&reference\+Node, const double old\+Score) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Tree\+Type $>$ double {\bf mlpack\+::range\+::\+Range\+Search\+Rules}$<$ Metric\+Type, Tree\+Type $>$\+::Rescore (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{query\+Index, }
+\item[{Tree\+Type \&}]{reference\+Node, }
+\item[{const double}]{old\+Score}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1range_1_1RangeSearchRules_a941cedcec6a89fe6b2c9cbe1a7ea2647}
+
+
+Re-\/evaluate the score for recursion order. 
+
+A low score indicates priority for recursion, while D\+B\+L\+\_\+\+M\+AX indicates that the node should not be recursed into at all (it should be pruned). This is used when the score has already been calculated, but another recursion may have modified the bounds for pruning. So the old score is checked against the new pruning bound.
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Index} & Index of query point. \\
+\hline
+{\em reference\+Node} & Candidate node to be recursed into. \\
+\hline
+{\em old\+Score} & Old score produced by \doxyref{Score()}{p.}{classmlpack_1_1range_1_1RangeSearchRules_ae33fcd5076191e44cd0d54edd73d37f2} (or \doxyref{Rescore()}{p.}{classmlpack_1_1range_1_1RangeSearchRules_a941cedcec6a89fe6b2c9cbe1a7ea2647}). \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}!Rescore@{Rescore}}
+\index{Rescore@{Rescore}!mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}}
+\subsubsection[{Rescore(\+Tree\+Type \&query\+Node, Tree\+Type \&reference\+Node, const double old\+Score) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Tree\+Type $>$ double {\bf mlpack\+::range\+::\+Range\+Search\+Rules}$<$ Metric\+Type, Tree\+Type $>$\+::Rescore (
+\begin{DoxyParamCaption}
+\item[{Tree\+Type \&}]{query\+Node, }
+\item[{Tree\+Type \&}]{reference\+Node, }
+\item[{const double}]{old\+Score}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1range_1_1RangeSearchRules_a7dc82bd61e93b5c0a1c9ea52a33ac4c8}
+
+
+Re-\/evaluate the score for recursion order. 
+
+A low score indicates priority for recursion, while D\+B\+L\+\_\+\+M\+AX indicates that the node should not be recursed into at all (it should be pruned). This is used when the score has already been calculated, but another recursion may have modified the bounds for pruning. So the old score is checked against the new pruning bound.
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Node} & Candidate query node to recurse into. \\
+\hline
+{\em reference\+Node} & Candidate reference node to recurse into. \\
+\hline
+{\em old\+Score} & Old score produced by \doxyref{Score()}{p.}{classmlpack_1_1range_1_1RangeSearchRules_ae33fcd5076191e44cd0d54edd73d37f2} (or \doxyref{Rescore()}{p.}{classmlpack_1_1range_1_1RangeSearchRules_a941cedcec6a89fe6b2c9cbe1a7ea2647}). \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}!Score@{Score}}
+\index{Score@{Score}!mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}}
+\subsubsection[{Score(const size\+\_\+t query\+Index, Tree\+Type \&reference\+Node)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Tree\+Type $>$ double {\bf mlpack\+::range\+::\+Range\+Search\+Rules}$<$ Metric\+Type, Tree\+Type $>$\+::Score (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{query\+Index, }
+\item[{Tree\+Type \&}]{reference\+Node}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1range_1_1RangeSearchRules_ae33fcd5076191e44cd0d54edd73d37f2}
+
+
+Get the score for recursion order. 
+
+A low score indicates priority for recursion, while D\+B\+L\+\_\+\+M\+AX indicates that the node should not be recursed into at all (it should be pruned).
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Index} & Index of query point. \\
+\hline
+{\em reference\+Node} & Candidate node to be recursed into. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}!Score@{Score}}
+\index{Score@{Score}!mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}}
+\subsubsection[{Score(\+Tree\+Type \&query\+Node, Tree\+Type \&reference\+Node)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Tree\+Type $>$ double {\bf mlpack\+::range\+::\+Range\+Search\+Rules}$<$ Metric\+Type, Tree\+Type $>$\+::Score (
+\begin{DoxyParamCaption}
+\item[{Tree\+Type \&}]{query\+Node, }
+\item[{Tree\+Type \&}]{reference\+Node}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1range_1_1RangeSearchRules_a8d0f21fa7c82dbccb0fe616598a037cc}
+
+
+Get the score for recursion order. 
+
+A low score indicates priority for recursion, while D\+B\+L\+\_\+\+M\+AX indicates that the node should not be recursed into at all (it should be pruned).
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Node} & Candidate query node to recurse into. \\
+\hline
+{\em reference\+Node} & Candidate reference node to recurse into. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}!Scores@{Scores}}
+\index{Scores@{Scores}!mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}}
+\subsubsection[{Scores() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Tree\+Type $>$ size\+\_\+t {\bf mlpack\+::range\+::\+Range\+Search\+Rules}$<$ Metric\+Type, Tree\+Type $>$\+::Scores (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1range_1_1RangeSearchRules_a2996938310676b70dcf647b0418f7bec}
+
+
+Get the number of scores (that is, calls to Range\+Distance()). 
+
+
+
+Definition at line 118 of file range\+\_\+search\+\_\+rules.\+hpp.
+
+
+
+References mlpack\+::range\+::\+Range\+Search\+Rules$<$ Metric\+Type, Tree\+Type $>$\+::scores.
+
+\index{mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}!Traversal\+Info@{Traversal\+Info}}
+\index{Traversal\+Info@{Traversal\+Info}!mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}}
+\subsubsection[{Traversal\+Info() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Tree\+Type $>$ const {\bf Traversal\+Info\+Type}\& {\bf mlpack\+::range\+::\+Range\+Search\+Rules}$<$ Metric\+Type, Tree\+Type $>$\+::Traversal\+Info (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1range_1_1RangeSearchRules_a004fdbd40796f40506ef97d6ef01f2c9}
+
+
+Definition at line 112 of file range\+\_\+search\+\_\+rules.\+hpp.
+
+
+
+References mlpack\+::range\+::\+Range\+Search\+Rules$<$ Metric\+Type, Tree\+Type $>$\+::traversal\+Info.
+
+\index{mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}!Traversal\+Info@{Traversal\+Info}}
+\index{Traversal\+Info@{Traversal\+Info}!mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}}
+\subsubsection[{Traversal\+Info()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Tree\+Type $>$ {\bf Traversal\+Info\+Type}\& {\bf mlpack\+::range\+::\+Range\+Search\+Rules}$<$ Metric\+Type, Tree\+Type $>$\+::Traversal\+Info (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1range_1_1RangeSearchRules_ab99205163bf81d166727adb0584b2e23}
+
+
+Definition at line 113 of file range\+\_\+search\+\_\+rules.\+hpp.
+
+
+
+References mlpack\+::range\+::\+Range\+Search\+Rules$<$ Metric\+Type, Tree\+Type $>$\+::traversal\+Info.
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}!base\+Cases@{base\+Cases}}
+\index{base\+Cases@{base\+Cases}!mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}}
+\subsubsection[{base\+Cases}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Tree\+Type $>$ size\+\_\+t {\bf mlpack\+::range\+::\+Range\+Search\+Rules}$<$ Metric\+Type, Tree\+Type $>$\+::base\+Cases\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1range_1_1RangeSearchRules_a9ae6114c71b0f3d2c25d00b739143ef3}
+
+
+The number of base cases. 
+
+
+
+Definition at line 156 of file range\+\_\+search\+\_\+rules.\+hpp.
+
+
+
+Referenced by mlpack\+::range\+::\+Range\+Search\+Rules$<$ Metric\+Type, Tree\+Type $>$\+::\+Base\+Cases().
+
+\index{mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}!distances@{distances}}
+\index{distances@{distances}!mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}}
+\subsubsection[{distances}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Tree\+Type $>$ std\+::vector$<$std\+::vector$<$double$>$ $>$\& {\bf mlpack\+::range\+::\+Range\+Search\+Rules}$<$ Metric\+Type, Tree\+Type $>$\+::distances\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1range_1_1RangeSearchRules_a8910c5f0507d5a9e91a49e5df1763d8b}
+
+
+The vector the resultant neighbor distances should be stored in. 
+
+
+
+Definition at line 134 of file range\+\_\+search\+\_\+rules.\+hpp.
+
+\index{mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}!last\+Query\+Index@{last\+Query\+Index}}
+\index{last\+Query\+Index@{last\+Query\+Index}!mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}}
+\subsubsection[{last\+Query\+Index}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Tree\+Type $>$ size\+\_\+t {\bf mlpack\+::range\+::\+Range\+Search\+Rules}$<$ Metric\+Type, Tree\+Type $>$\+::last\+Query\+Index\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1range_1_1RangeSearchRules_a468193ab4403a82be84a11e0e18d3769}
+
+
+The last query index. 
+
+
+
+Definition at line 143 of file range\+\_\+search\+\_\+rules.\+hpp.
+
+\index{mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}!last\+Reference\+Index@{last\+Reference\+Index}}
+\index{last\+Reference\+Index@{last\+Reference\+Index}!mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}}
+\subsubsection[{last\+Reference\+Index}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Tree\+Type $>$ size\+\_\+t {\bf mlpack\+::range\+::\+Range\+Search\+Rules}$<$ Metric\+Type, Tree\+Type $>$\+::last\+Reference\+Index\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1range_1_1RangeSearchRules_a0e867af7397d7cd5f6d265adc8d45797}
+
+
+The last reference index. 
+
+
+
+Definition at line 145 of file range\+\_\+search\+\_\+rules.\+hpp.
+
+\index{mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}!metric@{metric}}
+\index{metric@{metric}!mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}}
+\subsubsection[{metric}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Tree\+Type $>$ Metric\+Type\& {\bf mlpack\+::range\+::\+Range\+Search\+Rules}$<$ Metric\+Type, Tree\+Type $>$\+::metric\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1range_1_1RangeSearchRules_a62fe0c6a07cd9ffbf4c0b351399b12cc}
+
+
+The instantiated metric. 
+
+
+
+Definition at line 137 of file range\+\_\+search\+\_\+rules.\+hpp.
+
+\index{mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}!neighbors@{neighbors}}
+\index{neighbors@{neighbors}!mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}}
+\subsubsection[{neighbors}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Tree\+Type $>$ std\+::vector$<$std\+::vector$<$size\+\_\+t$>$ $>$\& {\bf mlpack\+::range\+::\+Range\+Search\+Rules}$<$ Metric\+Type, Tree\+Type $>$\+::neighbors\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1range_1_1RangeSearchRules_a71fa3848900b8380c628cbb65c459347}
+
+
+The vector the resultant neighbor indices should be stored in. 
+
+
+
+Definition at line 131 of file range\+\_\+search\+\_\+rules.\+hpp.
+
+\index{mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}!query\+Set@{query\+Set}}
+\index{query\+Set@{query\+Set}!mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}}
+\subsubsection[{query\+Set}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Tree\+Type $>$ const arma\+::mat\& {\bf mlpack\+::range\+::\+Range\+Search\+Rules}$<$ Metric\+Type, Tree\+Type $>$\+::query\+Set\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1range_1_1RangeSearchRules_a7927679667e0cc4c0b1154544d2939e5}
+
+
+The query set. 
+
+
+
+Definition at line 125 of file range\+\_\+search\+\_\+rules.\+hpp.
+
+\index{mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}!range@{range}}
+\index{range@{range}!mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}}
+\subsubsection[{range}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Tree\+Type $>$ const {\bf math\+::\+Range}\& {\bf mlpack\+::range\+::\+Range\+Search\+Rules}$<$ Metric\+Type, Tree\+Type $>$\+::range\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1range_1_1RangeSearchRules_af6263200fa62906536242c2c92bcd272}
+
+
+The range of distances for which we are searching. 
+
+
+
+Definition at line 128 of file range\+\_\+search\+\_\+rules.\+hpp.
+
+\index{mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}!reference\+Set@{reference\+Set}}
+\index{reference\+Set@{reference\+Set}!mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}}
+\subsubsection[{reference\+Set}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Tree\+Type $>$ const arma\+::mat\& {\bf mlpack\+::range\+::\+Range\+Search\+Rules}$<$ Metric\+Type, Tree\+Type $>$\+::reference\+Set\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1range_1_1RangeSearchRules_a202f28e4ab01a714eb5b644bd7821050}
+
+
+The reference set. 
+
+
+
+Definition at line 122 of file range\+\_\+search\+\_\+rules.\+hpp.
+
+\index{mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}!same\+Set@{same\+Set}}
+\index{same\+Set@{same\+Set}!mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}}
+\subsubsection[{same\+Set}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Tree\+Type $>$ bool {\bf mlpack\+::range\+::\+Range\+Search\+Rules}$<$ Metric\+Type, Tree\+Type $>$\+::same\+Set\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1range_1_1RangeSearchRules_a91694e4345bce8e6e51f781e60bb08e7}
+
+
+If true, the query and reference set are taken to be the same. 
+
+
+
+Definition at line 140 of file range\+\_\+search\+\_\+rules.\+hpp.
+
+\index{mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}!scores@{scores}}
+\index{scores@{scores}!mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}}
+\subsubsection[{scores}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Tree\+Type $>$ size\+\_\+t {\bf mlpack\+::range\+::\+Range\+Search\+Rules}$<$ Metric\+Type, Tree\+Type $>$\+::scores\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1range_1_1RangeSearchRules_acdff8571b8681d7310a94939592470a5}
+
+
+T\+He number of scores. 
+
+
+
+Definition at line 158 of file range\+\_\+search\+\_\+rules.\+hpp.
+
+
+
+Referenced by mlpack\+::range\+::\+Range\+Search\+Rules$<$ Metric\+Type, Tree\+Type $>$\+::\+Scores().
+
+\index{mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}!traversal\+Info@{traversal\+Info}}
+\index{traversal\+Info@{traversal\+Info}!mlpack\+::range\+::\+Range\+Search\+Rules@{mlpack\+::range\+::\+Range\+Search\+Rules}}
+\subsubsection[{traversal\+Info}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Tree\+Type $>$ {\bf Traversal\+Info\+Type} {\bf mlpack\+::range\+::\+Range\+Search\+Rules}$<$ Metric\+Type, Tree\+Type $>$\+::traversal\+Info\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1range_1_1RangeSearchRules_a4453109302b3a5e580514c0196900f72}
+
+
+Definition at line 153 of file range\+\_\+search\+\_\+rules.\+hpp.
+
+
+
+Referenced by mlpack\+::range\+::\+Range\+Search\+Rules$<$ Metric\+Type, Tree\+Type $>$\+::\+Traversal\+Info().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/range\+\_\+search/{\bf range\+\_\+search\+\_\+rules.\+hpp}\end{DoxyCompactItemize}

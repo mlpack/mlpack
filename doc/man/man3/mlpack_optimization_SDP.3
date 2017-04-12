@@ -1,0 +1,310 @@
+.TH "mlpack::optimization::SDP< ObjectiveMatrixType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::optimization::SDP< ObjectiveMatrixType > \- Specify an \fBSDP\fP in primal form\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "typedef ObjectiveMatrixType \fBobjective_matrix_type\fP"
+.br
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBSDP\fP ()"
+.br
+.RI "\fIInitialize this \fBSDP\fP to an empty state\&. \fP"
+.ti -1c
+.RI "\fBSDP\fP (const size_t n, const size_t numSparseConstraints, const size_t numDenseConstraints)"
+.br
+.RI "\fIInitialize this \fBSDP\fP to one which structurally has size n\&. \fP"
+.ti -1c
+.RI "ObjectiveMatrixType & \fBC\fP ()"
+.br
+.RI "\fIModify the sparse objective function matrix (sparseC)\&. \fP"
+.ti -1c
+.RI "const ObjectiveMatrixType & \fBC\fP () const "
+.br
+.RI "\fIReturn the sparse objective function matrix (sparseC)\&. \fP"
+.ti -1c
+.RI "const std::vector< arma::mat > & \fBDenseA\fP () const "
+.br
+.RI "\fIReturn the vector of dense A matrices (which correspond to the dense constraints)\&. \fP"
+.ti -1c
+.RI "std::vector< arma::mat > & \fBDenseA\fP ()"
+.br
+.RI "\fIModify the veector of dense A matrices (which correspond to the dense constraints)\&. \fP"
+.ti -1c
+.RI "const arma::vec & \fBDenseB\fP () const "
+.br
+.RI "\fIReturn the vector of dense B values\&. \fP"
+.ti -1c
+.RI "arma::vec & \fBDenseB\fP ()"
+.br
+.RI "\fIModify the vector of dense B values\&. \fP"
+.ti -1c
+.RI "bool \fBHasLinearlyIndependentConstraints\fP () const "
+.br
+.RI "\fICheck whether or not the constraint matrices are linearly independent\&. \fP"
+.ti -1c
+.RI "size_t \fBN\fP () const "
+.br
+.RI "\fIReturn number of rows and columns in the objective matrix C\&. \fP"
+.ti -1c
+.RI "size_t \fBN2bar\fP () const "
+.br
+.ti -1c
+.RI "size_t \fBNumConstraints\fP () const "
+.br
+.RI "\fIReturn the total number of constraints in the \fBSDP\fP\&. \fP"
+.ti -1c
+.RI "size_t \fBNumDenseConstraints\fP () const "
+.br
+.RI "\fIReturn the number of dense constraints (constraints with dense Ai) in the \fBSDP\fP\&. \fP"
+.ti -1c
+.RI "size_t \fBNumSparseConstraints\fP () const "
+.br
+.RI "\fIReturn the number of sparse constraints (constraints with sparse Ai) in the \fBSDP\fP\&. \fP"
+.ti -1c
+.RI "const std::vector< arma::sp_mat > & \fBSparseA\fP () const "
+.br
+.RI "\fIReturn the vector of sparse A matrices (which correspond to the sparse constraints)\&. \fP"
+.ti -1c
+.RI "std::vector< arma::sp_mat > & \fBSparseA\fP ()"
+.br
+.RI "\fIModify the veector of sparse A matrices (which correspond to the sparse constraints)\&. \fP"
+.ti -1c
+.RI "const arma::vec & \fBSparseB\fP () const "
+.br
+.RI "\fIReturn the vector of sparse B values\&. \fP"
+.ti -1c
+.RI "arma::vec & \fBSparseB\fP ()"
+.br
+.RI "\fIModify the vector of sparse B values\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "ObjectiveMatrixType \fBc\fP"
+.br
+.RI "\fIObjective function matrix c\&. \fP"
+.ti -1c
+.RI "std::vector< arma::mat > \fBdenseA\fP"
+.br
+.RI "\fIA_i for each dense constraint\&. \fP"
+.ti -1c
+.RI "arma::vec \fBdenseB\fP"
+.br
+.RI "\fIb_i for each dense constraint\&. \fP"
+.ti -1c
+.RI "std::vector< arma::sp_mat > \fBsparseA\fP"
+.br
+.RI "\fIA_i for each sparse constraint\&. \fP"
+.ti -1c
+.RI "arma::vec \fBsparseB\fP"
+.br
+.RI "\fIb_i for each sparse constraint\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename ObjectiveMatrixType>
+.br
+class mlpack::optimization::SDP< ObjectiveMatrixType >"
+Specify an \fBSDP\fP in primal form\&. 
+
+min dot(C, X) s\&.t\&. dot(Ai, X) = bi, i=1,\&.\&.\&.,m, X >= 0
+.PP
+This representation allows the constraint matrices Ai to be specified as either dense matrices (arma::mat) or sparse matrices (arma::sp_mat)\&. After initializing the \fBSDP\fP object, you will need to set the constraints yourself, via the \fBSparseA()\fP, \fBSparseB()\fP, \fBDenseA()\fP, \fBDenseB()\fP, and \fBC()\fP functions\&. Note that for each matrix you add to either \fBSparseA()\fP or \fBDenseA()\fP, you must add the corresponding b value to the corresponding vector \fBSparseB()\fP or \fBDenseB()\fP\&.
+.PP
+The objective matrix (C) may be stored as either dense or sparse depending on the ObjectiveMatrixType parameter\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIObjectiveMatrixType\fP Should be either arma::mat or arma::sp_mat\&. 
+.RE
+.PP
+
+.PP
+Definition at line 39 of file sdp\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "template<typename ObjectiveMatrixType> typedef ObjectiveMatrixType \fBmlpack::optimization::SDP\fP< ObjectiveMatrixType >::\fBobjective_matrix_type\fP"
+
+.PP
+Definition at line 43 of file sdp\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename ObjectiveMatrixType> \fBmlpack::optimization::SDP\fP< ObjectiveMatrixType >::\fBSDP\fP ()"
+
+.PP
+Initialize this \fBSDP\fP to an empty state\&. To add constraints, you will have to modify the constraints via the \fBSparseA()\fP, \fBDenseA()\fP, \fBSparseB()\fP, \fBDenseB()\fP, and \fBC()\fP functions\&. For the sake of speed, there is no error checking, so if you specify an invalid \fBSDP\fP, whatever solver you use will gladly try to solve it! (And it will probably crash horribly\&.) 
+.PP
+Referenced by mlpack::optimization::LRSDP< optimization::SDP< arma::sp_mat > >::SDP()\&.
+.SS "template<typename ObjectiveMatrixType> \fBmlpack::optimization::SDP\fP< ObjectiveMatrixType >::\fBSDP\fP (const size_t n, const size_t numSparseConstraints, const size_t numDenseConstraints)"
+
+.PP
+Initialize this \fBSDP\fP to one which structurally has size n\&. To set the constraints you will still need to access through \fBSparseA()\fP, \fBDenseA()\fP, \fBSparseB()\fP, \fBDenseB()\fP, and \fBC()\fP\&. Consider using move semantics to keep things fast\&. As with the previous constructor, there is no error checking for the sake of speed, so if you build an invalid \fBSDP\fP, whatever solver you use will gladly try to solve it! (And it will probably crash horribly\&.)
+.PP
+\fBParameters:\fP
+.RS 4
+\fIn\fP Number of rows (and columns) in the objective matrix C\&. 
+.br
+\fInumSparseConstraints\fP Number of sparse constraints\&. 
+.br
+\fInumDenseConstraints\fP Number of dense constraints\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename ObjectiveMatrixType> ObjectiveMatrixType& \fBmlpack::optimization::SDP\fP< ObjectiveMatrixType >::C ()\fC [inline]\fP"
+
+.PP
+Modify the sparse objective function matrix (sparseC)\&. 
+.PP
+Definition at line 86 of file sdp\&.hpp\&.
+.SS "template<typename ObjectiveMatrixType> const ObjectiveMatrixType& \fBmlpack::optimization::SDP\fP< ObjectiveMatrixType >::C () const\fC [inline]\fP"
+
+.PP
+Return the sparse objective function matrix (sparseC)\&. 
+.PP
+Definition at line 88 of file sdp\&.hpp\&.
+.SS "template<typename ObjectiveMatrixType> const std::vector<arma::mat>& \fBmlpack::optimization::SDP\fP< ObjectiveMatrixType >::DenseA () const\fC [inline]\fP"
+
+.PP
+Return the vector of dense A matrices (which correspond to the dense constraints)\&. 
+.PP
+Definition at line 100 of file sdp\&.hpp\&.
+.SS "template<typename ObjectiveMatrixType> std::vector<arma::mat>& \fBmlpack::optimization::SDP\fP< ObjectiveMatrixType >::DenseA ()\fC [inline]\fP"
+
+.PP
+Modify the veector of dense A matrices (which correspond to the dense constraints)\&. 
+.PP
+Definition at line 104 of file sdp\&.hpp\&.
+.SS "template<typename ObjectiveMatrixType> const arma::vec& \fBmlpack::optimization::SDP\fP< ObjectiveMatrixType >::DenseB () const\fC [inline]\fP"
+
+.PP
+Return the vector of dense B values\&. 
+.PP
+Definition at line 112 of file sdp\&.hpp\&.
+.SS "template<typename ObjectiveMatrixType> arma::vec& \fBmlpack::optimization::SDP\fP< ObjectiveMatrixType >::DenseB ()\fC [inline]\fP"
+
+.PP
+Modify the vector of dense B values\&. 
+.PP
+Definition at line 114 of file sdp\&.hpp\&.
+.SS "template<typename ObjectiveMatrixType> bool \fBmlpack::optimization::SDP\fP< ObjectiveMatrixType >::HasLinearlyIndependentConstraints () const"
+
+.PP
+Check whether or not the constraint matrices are linearly independent\&. Warning: possibly very expensive check\&. 
+.PP
+Referenced by mlpack::optimization::SDP< arma::sp_mat >::DenseB()\&.
+.SS "template<typename ObjectiveMatrixType> size_t \fBmlpack::optimization::SDP\fP< ObjectiveMatrixType >::N () const\fC [inline]\fP"
+
+.PP
+Return number of rows and columns in the objective matrix C\&. 
+.PP
+Definition at line 71 of file sdp\&.hpp\&.
+.PP
+Referenced by mlpack::optimization::SDP< arma::sp_mat >::N2bar()\&.
+.SS "template<typename ObjectiveMatrixType> size_t \fBmlpack::optimization::SDP\fP< ObjectiveMatrixType >::N2bar () const\fC [inline]\fP"
+
+.PP
+Definition at line 73 of file sdp\&.hpp\&.
+.SS "template<typename ObjectiveMatrixType> size_t \fBmlpack::optimization::SDP\fP< ObjectiveMatrixType >::NumConstraints () const\fC [inline]\fP"
+
+.PP
+Return the total number of constraints in the \fBSDP\fP\&. 
+.PP
+Definition at line 83 of file sdp\&.hpp\&.
+.SS "template<typename ObjectiveMatrixType> size_t \fBmlpack::optimization::SDP\fP< ObjectiveMatrixType >::NumDenseConstraints () const\fC [inline]\fP"
+
+.PP
+Return the number of dense constraints (constraints with dense Ai) in the \fBSDP\fP\&. 
+.PP
+Definition at line 80 of file sdp\&.hpp\&.
+.SS "template<typename ObjectiveMatrixType> size_t \fBmlpack::optimization::SDP\fP< ObjectiveMatrixType >::NumSparseConstraints () const\fC [inline]\fP"
+
+.PP
+Return the number of sparse constraints (constraints with sparse Ai) in the \fBSDP\fP\&. 
+.PP
+Definition at line 77 of file sdp\&.hpp\&.
+.SS "template<typename ObjectiveMatrixType> const std::vector<arma::sp_mat>& \fBmlpack::optimization::SDP\fP< ObjectiveMatrixType >::SparseA () const\fC [inline]\fP"
+
+.PP
+Return the vector of sparse A matrices (which correspond to the sparse constraints)\&. 
+.PP
+Definition at line 92 of file sdp\&.hpp\&.
+.SS "template<typename ObjectiveMatrixType> std::vector<arma::sp_mat>& \fBmlpack::optimization::SDP\fP< ObjectiveMatrixType >::SparseA ()\fC [inline]\fP"
+
+.PP
+Modify the veector of sparse A matrices (which correspond to the sparse constraints)\&. 
+.PP
+Definition at line 96 of file sdp\&.hpp\&.
+.SS "template<typename ObjectiveMatrixType> const arma::vec& \fBmlpack::optimization::SDP\fP< ObjectiveMatrixType >::SparseB () const\fC [inline]\fP"
+
+.PP
+Return the vector of sparse B values\&. 
+.PP
+Definition at line 107 of file sdp\&.hpp\&.
+.SS "template<typename ObjectiveMatrixType> arma::vec& \fBmlpack::optimization::SDP\fP< ObjectiveMatrixType >::SparseB ()\fC [inline]\fP"
+
+.PP
+Modify the vector of sparse B values\&. 
+.PP
+Definition at line 109 of file sdp\&.hpp\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename ObjectiveMatrixType> ObjectiveMatrixType \fBmlpack::optimization::SDP\fP< ObjectiveMatrixType >::c\fC [private]\fP"
+
+.PP
+Objective function matrix c\&. 
+.PP
+Definition at line 125 of file sdp\&.hpp\&.
+.PP
+Referenced by mlpack::optimization::SDP< arma::sp_mat >::C(), and mlpack::optimization::SDP< arma::sp_mat >::N()\&.
+.SS "template<typename ObjectiveMatrixType> std::vector<arma::mat> \fBmlpack::optimization::SDP\fP< ObjectiveMatrixType >::denseA\fC [private]\fP"
+
+.PP
+A_i for each dense constraint\&. 
+.PP
+Definition at line 133 of file sdp\&.hpp\&.
+.PP
+Referenced by mlpack::optimization::SDP< arma::sp_mat >::DenseA()\&.
+.SS "template<typename ObjectiveMatrixType> arma::vec \fBmlpack::optimization::SDP\fP< ObjectiveMatrixType >::denseB\fC [private]\fP"
+
+.PP
+b_i for each dense constraint\&. 
+.PP
+Definition at line 135 of file sdp\&.hpp\&.
+.PP
+Referenced by mlpack::optimization::SDP< arma::sp_mat >::DenseB(), mlpack::optimization::SDP< arma::sp_mat >::NumConstraints(), and mlpack::optimization::SDP< arma::sp_mat >::NumDenseConstraints()\&.
+.SS "template<typename ObjectiveMatrixType> std::vector<arma::sp_mat> \fBmlpack::optimization::SDP\fP< ObjectiveMatrixType >::sparseA\fC [private]\fP"
+
+.PP
+A_i for each sparse constraint\&. 
+.PP
+Definition at line 128 of file sdp\&.hpp\&.
+.PP
+Referenced by mlpack::optimization::SDP< arma::sp_mat >::SparseA()\&.
+.SS "template<typename ObjectiveMatrixType> arma::vec \fBmlpack::optimization::SDP\fP< ObjectiveMatrixType >::sparseB\fC [private]\fP"
+
+.PP
+b_i for each sparse constraint\&. 
+.PP
+Definition at line 130 of file sdp\&.hpp\&.
+.PP
+Referenced by mlpack::optimization::SDP< arma::sp_mat >::NumConstraints(), mlpack::optimization::SDP< arma::sp_mat >::NumSparseConstraints(), and mlpack::optimization::SDP< arma::sp_mat >::SparseB()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

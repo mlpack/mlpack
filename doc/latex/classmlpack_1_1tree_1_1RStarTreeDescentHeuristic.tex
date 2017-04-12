@@ -1,0 +1,66 @@
+\section{mlpack\+:\+:tree\+:\+:R\+Star\+Tree\+Descent\+Heuristic Class Reference}
+\label{classmlpack_1_1tree_1_1RStarTreeDescentHeuristic}\index{mlpack\+::tree\+::\+R\+Star\+Tree\+Descent\+Heuristic@{mlpack\+::tree\+::\+R\+Star\+Tree\+Descent\+Heuristic}}
+
+
+When descending a \doxyref{Rectangle\+Tree}{p.}{classmlpack_1_1tree_1_1RectangleTree} to insert a point, we need to have a way to choose a child node when the point isn\textquotesingle{}t enclosed by any of them.  
+
+
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static size\+\_\+t {\bf Choose\+Descent\+Node} (const Tree\+Type $\ast$node, const size\+\_\+t point)
+\begin{DoxyCompactList}\small\item\em Evaluate the node using a heuristic. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static size\+\_\+t {\bf Choose\+Descent\+Node} (const Tree\+Type $\ast$node, const Tree\+Type $\ast$inserted\+Node)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+When descending a \doxyref{Rectangle\+Tree}{p.}{classmlpack_1_1tree_1_1RectangleTree} to insert a point, we need to have a way to choose a child node when the point isn\textquotesingle{}t enclosed by any of them. 
+
+This heuristic is used to do so using the rules for the R$\ast$ tree. 
+
+Definition at line 26 of file r\+\_\+star\+\_\+tree\+\_\+descent\+\_\+heuristic.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::tree\+::\+R\+Star\+Tree\+Descent\+Heuristic@{mlpack\+::tree\+::\+R\+Star\+Tree\+Descent\+Heuristic}!Choose\+Descent\+Node@{Choose\+Descent\+Node}}
+\index{Choose\+Descent\+Node@{Choose\+Descent\+Node}!mlpack\+::tree\+::\+R\+Star\+Tree\+Descent\+Heuristic@{mlpack\+::tree\+::\+R\+Star\+Tree\+Descent\+Heuristic}}
+\subsubsection[{Choose\+Descent\+Node(const Tree\+Type $\ast$node, const size\+\_\+t point)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Tree\+Type $>$ static size\+\_\+t mlpack\+::tree\+::\+R\+Star\+Tree\+Descent\+Heuristic\+::\+Choose\+Descent\+Node (
+\begin{DoxyParamCaption}
+\item[{const Tree\+Type $\ast$}]{node, }
+\item[{const size\+\_\+t}]{point}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1tree_1_1RStarTreeDescentHeuristic_a75f0aba5bcdd982aec43e9516a3b1467}
+
+
+Evaluate the node using a heuristic. 
+
+The heuristic guarantees two things\+:
+
+
+\begin{DoxyEnumerate}
+\item If point is contained in (or on) bound, the value returned is zero.
+\item If the point is not contained in (or on) bound, the value returned is greater than zero.
+\end{DoxyEnumerate}
+
+
+\begin{DoxyParams}{Parameters}
+{\em bound} & The bound used for the node that is being evaluated. \\
+\hline
+{\em point} & The index of the point that is being inserted. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::tree\+::\+R\+Star\+Tree\+Descent\+Heuristic@{mlpack\+::tree\+::\+R\+Star\+Tree\+Descent\+Heuristic}!Choose\+Descent\+Node@{Choose\+Descent\+Node}}
+\index{Choose\+Descent\+Node@{Choose\+Descent\+Node}!mlpack\+::tree\+::\+R\+Star\+Tree\+Descent\+Heuristic@{mlpack\+::tree\+::\+R\+Star\+Tree\+Descent\+Heuristic}}
+\subsubsection[{Choose\+Descent\+Node(const Tree\+Type $\ast$node, const Tree\+Type $\ast$inserted\+Node)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Tree\+Type $>$ static size\+\_\+t mlpack\+::tree\+::\+R\+Star\+Tree\+Descent\+Heuristic\+::\+Choose\+Descent\+Node (
+\begin{DoxyParamCaption}
+\item[{const Tree\+Type $\ast$}]{node, }
+\item[{const Tree\+Type $\ast$}]{inserted\+Node}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1tree_1_1RStarTreeDescentHeuristic_afdc050fa0fb5da612b2dc2d83916422c}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/tree/rectangle\+\_\+tree/{\bf r\+\_\+star\+\_\+tree\+\_\+descent\+\_\+heuristic.\+hpp}\end{DoxyCompactItemize}

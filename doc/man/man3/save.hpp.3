@@ -1,0 +1,49 @@
+.TH "src/mlpack/core/data/save.hpp" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+src/mlpack/core/data/save.hpp \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "\fILinear algebra utility functions, generally performed on matrices or vectors\&. \fP"
+.ti -1c
+.RI " \fBmlpack::data\fP"
+.br
+.RI "\fIFunctions to load and save matrices and models\&. \fP"
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename eT > bool \fBmlpack::data::Save\fP (const \fBstd::string\fP &filename, const arma::Mat< eT > &matrix, const bool fatal=false, bool transpose=true)"
+.br
+.RI "\fISaves a matrix to file, guessing the filetype from the extension\&. \fP"
+.ti -1c
+.RI "template<typename T > bool \fBmlpack::data::Save\fP (const \fBstd::string\fP &filename, const \fBstd::string\fP &name, T &t, const bool fatal=false, format f=format::autodetect)"
+.br
+.RI "\fISaves a model to file, guessing the filetype from the extension, or, optionally, saving the specified format\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Ryan Curtin
+.RE
+.PP
+Save an Armadillo matrix to file\&. This is necessary because Armadillo does not transpose matrices upon saving, and it allows us to give better error output\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBsave\&.hpp\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,369 @@
+\section{mlpack\+:\+:tree\+:\+:Hoeffding\+Numeric\+Split$<$ Fitness\+Function, Observation\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1tree_1_1HoeffdingNumericSplit}\index{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split$<$ Fitness\+Function, Observation\+Type $>$@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split$<$ Fitness\+Function, Observation\+Type $>$}}
+
+
+The \doxyref{Hoeffding\+Numeric\+Split}{p.}{classmlpack_1_1tree_1_1HoeffdingNumericSplit} class implements the numeric feature splitting strategy alluded to by Domingos and Hulten in the following paper\+:  
+
+
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef {\bf Numeric\+Split\+Info}$<$ Observation\+Type $>$ {\bf Split\+Info}
+\begin{DoxyCompactList}\small\item\em The splitting information type required by the \doxyref{Hoeffding\+Numeric\+Split}{p.}{classmlpack_1_1tree_1_1HoeffdingNumericSplit}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Hoeffding\+Numeric\+Split} (const size\+\_\+t num\+Classes, const size\+\_\+t {\bf bins}=10, const size\+\_\+t {\bf observations\+Before\+Binning}=100)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Hoeffding\+Numeric\+Split}{p.}{classmlpack_1_1tree_1_1HoeffdingNumericSplit} class, and specify some basic parameters about how the binning should take place. \end{DoxyCompactList}\item 
+{\bf Hoeffding\+Numeric\+Split} (const size\+\_\+t num\+Classes, const {\bf Hoeffding\+Numeric\+Split} \&other)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Hoeffding\+Numeric\+Split}{p.}{classmlpack_1_1tree_1_1HoeffdingNumericSplit} class, using the parameters from the given other split object. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Bins} () const 
+\begin{DoxyCompactList}\small\item\em Return the number of bins. \end{DoxyCompactList}\item 
+void {\bf Evaluate\+Fitness\+Function} (double \&best\+Fitness, double \&second\+Best\+Fitness) const 
+\begin{DoxyCompactList}\small\item\em Evaluate the fitness function given what has been calculated so far. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Majority\+Class} () const 
+\begin{DoxyCompactList}\small\item\em Return the majority class. \end{DoxyCompactList}\item 
+double {\bf Majority\+Probability} () const 
+\begin{DoxyCompactList}\small\item\em Return the probability of the majority class. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Num\+Children} () const 
+\begin{DoxyCompactList}\small\item\em Return the number of children if this node splits on this feature. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&ar, const unsigned int)
+\begin{DoxyCompactList}\small\item\em Serialize the object. \end{DoxyCompactList}\item 
+void {\bf Split} (arma\+::\+Col$<$ size\+\_\+t $>$ \&child\+Majorities, {\bf Split\+Info} \&split\+Info) const 
+\begin{DoxyCompactList}\small\item\em Return the majority class of each child to be created, if a split on this dimension was performed. \end{DoxyCompactList}\item 
+void {\bf Train} (Observation\+Type value, const size\+\_\+t label)
+\begin{DoxyCompactList}\small\item\em Train the \doxyref{Hoeffding\+Numeric\+Split}{p.}{classmlpack_1_1tree_1_1HoeffdingNumericSplit} on the given observed value (remember that this object only cares about the information for a single feature, not an entire point). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+size\+\_\+t {\bf bins}
+\begin{DoxyCompactList}\small\item\em The number of bins. \end{DoxyCompactList}\item 
+arma\+::\+Col$<$ size\+\_\+t $>$ {\bf labels}
+\begin{DoxyCompactList}\small\item\em This holds the labels of the points before binning. \end{DoxyCompactList}\item 
+arma\+::\+Col$<$ Observation\+Type $>$ {\bf observations}
+\begin{DoxyCompactList}\small\item\em Before binning, this holds the points we have seen so far. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf observations\+Before\+Binning}
+\begin{DoxyCompactList}\small\item\em The number of observations we must see before binning. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf samples\+Seen}
+\begin{DoxyCompactList}\small\item\em The number of samples we have seen so far. \end{DoxyCompactList}\item 
+arma\+::\+Col$<$ Observation\+Type $>$ {\bf split\+Points}
+\begin{DoxyCompactList}\small\item\em The split points for the binning (length bins -\/ 1). \end{DoxyCompactList}\item 
+arma\+::\+Mat$<$ size\+\_\+t $>$ {\bf sufficient\+Statistics}
+\begin{DoxyCompactList}\small\item\em After binning, this contains the sufficient statistics. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Fitness\+Function, typename Observation\+Type = double$>$\\*
+class mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split$<$ Fitness\+Function, Observation\+Type $>$}
+
+The \doxyref{Hoeffding\+Numeric\+Split}{p.}{classmlpack_1_1tree_1_1HoeffdingNumericSplit} class implements the numeric feature splitting strategy alluded to by Domingos and Hulten in the following paper\+: 
+
+
+\begin{DoxyCode}
+@inproceedings\{domingos2000mining,
+  title=\{\{Mining High-Speed Data Streams\}\},
+  author=\{Domingos, P. and Hulten, G.\},
+  year=\{2000\},
+  booktitle=\{Proceedings of the Sixth ACM SIGKDD International Conference on
+      Knowledge Discovery and Data Mining (KDD \textcolor{stringliteral}{'00)\},}
+\textcolor{stringliteral}{  pages=\{71--80\}}
+\textcolor{stringliteral}{\}}
+\end{DoxyCode}
+
+
+The strategy alluded to is very simple\+: we discretize the numeric features that we see. But in this case, we don\textquotesingle{}t know how many bins we have, which makes things a little difficult. This class only makes binary splits, and has a maximum number of bins. The binning strategy is simple\+: the split caches the minimum and maximum value of points seen so far, and when the number of points hits a predefined threshold, the cached minimum-\/maximum range is equally split into bins, and splitting proceeds in the same way as with the categorical splits. This is a simple and stupid strategy, so don\textquotesingle{}t expect it to be the best possible thing you can do.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Fitness\+Function} & Fitness function to use for calculating gain. \\
+\hline
+{\em Observation\+Type} & Type of observations in this dimension. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 53 of file hoeffding\+\_\+numeric\+\_\+split.\+hpp.
+
+
+
+\subsection{Member Typedef Documentation}
+\index{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}!Split\+Info@{Split\+Info}}
+\index{Split\+Info@{Split\+Info}!mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}}
+\subsubsection[{Split\+Info}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Fitness\+Function , typename Observation\+Type  = double$>$ typedef {\bf Numeric\+Split\+Info}$<$Observation\+Type$>$ {\bf mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}$<$ Fitness\+Function, Observation\+Type $>$\+::{\bf Split\+Info}}\label{classmlpack_1_1tree_1_1HoeffdingNumericSplit_aa3a4c2b81f56c63e27dd091bc6f40927}
+
+
+The splitting information type required by the \doxyref{Hoeffding\+Numeric\+Split}{p.}{classmlpack_1_1tree_1_1HoeffdingNumericSplit}. 
+
+
+
+Definition at line 57 of file hoeffding\+\_\+numeric\+\_\+split.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}!Hoeffding\+Numeric\+Split@{Hoeffding\+Numeric\+Split}}
+\index{Hoeffding\+Numeric\+Split@{Hoeffding\+Numeric\+Split}!mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}}
+\subsubsection[{Hoeffding\+Numeric\+Split(const size\+\_\+t num\+Classes, const size\+\_\+t bins=10, const size\+\_\+t observations\+Before\+Binning=100)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Fitness\+Function , typename Observation\+Type  = double$>$ {\bf mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}$<$ Fitness\+Function, Observation\+Type $>$\+::{\bf Hoeffding\+Numeric\+Split} (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{num\+Classes, }
+\item[{const size\+\_\+t}]{bins = {\ttfamily 10}, }
+\item[{const size\+\_\+t}]{observations\+Before\+Binning = {\ttfamily 100}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1tree_1_1HoeffdingNumericSplit_a91ed8b70432609be45d99f28ed321628}
+
+
+Create the \doxyref{Hoeffding\+Numeric\+Split}{p.}{classmlpack_1_1tree_1_1HoeffdingNumericSplit} class, and specify some basic parameters about how the binning should take place. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em num\+Classes} & Number of classes. \\
+\hline
+{\em bins} & Number of bins. \\
+\hline
+{\em observations\+Before\+Binning} & Number of points to see before binning is performed. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}!Hoeffding\+Numeric\+Split@{Hoeffding\+Numeric\+Split}}
+\index{Hoeffding\+Numeric\+Split@{Hoeffding\+Numeric\+Split}!mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}}
+\subsubsection[{Hoeffding\+Numeric\+Split(const size\+\_\+t num\+Classes, const Hoeffding\+Numeric\+Split \&other)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Fitness\+Function , typename Observation\+Type  = double$>$ {\bf mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}$<$ Fitness\+Function, Observation\+Type $>$\+::{\bf Hoeffding\+Numeric\+Split} (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{num\+Classes, }
+\item[{const {\bf Hoeffding\+Numeric\+Split}$<$ Fitness\+Function, Observation\+Type $>$ \&}]{other}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1tree_1_1HoeffdingNumericSplit_a3588775865e24b0ff3ab233e440ad403}
+
+
+Create the \doxyref{Hoeffding\+Numeric\+Split}{p.}{classmlpack_1_1tree_1_1HoeffdingNumericSplit} class, using the parameters from the given other split object. 
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}!Bins@{Bins}}
+\index{Bins@{Bins}!mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}}
+\subsubsection[{Bins() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Fitness\+Function , typename Observation\+Type  = double$>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}$<$ Fitness\+Function, Observation\+Type $>$\+::Bins (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1HoeffdingNumericSplit_a222a1506528379aae5a8de50d3bb3fe0}
+
+
+Return the number of bins. 
+
+
+
+Definition at line 120 of file hoeffding\+\_\+numeric\+\_\+split.\+hpp.
+
+
+
+References mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split$<$ Fitness\+Function, Observation\+Type $>$\+::bins, and mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split$<$ Fitness\+Function, Observation\+Type $>$\+::\+Serialize().
+
+\index{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}!Evaluate\+Fitness\+Function@{Evaluate\+Fitness\+Function}}
+\index{Evaluate\+Fitness\+Function@{Evaluate\+Fitness\+Function}!mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}}
+\subsubsection[{Evaluate\+Fitness\+Function(double \&best\+Fitness, double \&second\+Best\+Fitness) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Fitness\+Function , typename Observation\+Type  = double$>$ void {\bf mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}$<$ Fitness\+Function, Observation\+Type $>$\+::Evaluate\+Fitness\+Function (
+\begin{DoxyParamCaption}
+\item[{double \&}]{best\+Fitness, }
+\item[{double \&}]{second\+Best\+Fitness}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1tree_1_1HoeffdingNumericSplit_a142fd54346fe7fe19f203441b2cd0040}
+
+
+Evaluate the fitness function given what has been calculated so far. 
+
+In this case, if binning has not yet been performed, 0 will be returned (i.\+e., no gain). Because this split can only split one possible way, second\+Best\+Fitness (the fitness function for the second best possible split) will be set to 0.
+
+
+\begin{DoxyParams}{Parameters}
+{\em best\+Fitness} & Value of the fitness function for the best possible split. \\
+\hline
+{\em second\+Best\+Fitness} & Value of the fitness function for the second best possible split (always 0 for this split). \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}!Majority\+Class@{Majority\+Class}}
+\index{Majority\+Class@{Majority\+Class}!mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}}
+\subsubsection[{Majority\+Class() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Fitness\+Function , typename Observation\+Type  = double$>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}$<$ Fitness\+Function, Observation\+Type $>$\+::Majority\+Class (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1tree_1_1HoeffdingNumericSplit_a61b3eb88f5c53067598e91c306d255c4}
+
+
+Return the majority class. 
+
+
+
+Referenced by mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split$<$ Fitness\+Function, Observation\+Type $>$\+::\+Num\+Children().
+
+\index{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}!Majority\+Probability@{Majority\+Probability}}
+\index{Majority\+Probability@{Majority\+Probability}!mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}}
+\subsubsection[{Majority\+Probability() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Fitness\+Function , typename Observation\+Type  = double$>$ double {\bf mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}$<$ Fitness\+Function, Observation\+Type $>$\+::Majority\+Probability (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1tree_1_1HoeffdingNumericSplit_ab4fb890bd4dd2026aeee9d5d05beef9e}
+
+
+Return the probability of the majority class. 
+
+
+
+Referenced by mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split$<$ Fitness\+Function, Observation\+Type $>$\+::\+Num\+Children().
+
+\index{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}!Num\+Children@{Num\+Children}}
+\index{Num\+Children@{Num\+Children}!mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}}
+\subsubsection[{Num\+Children() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Fitness\+Function , typename Observation\+Type  = double$>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}$<$ Fitness\+Function, Observation\+Type $>$\+::Num\+Children (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1HoeffdingNumericSplit_a0c26ea1ed7d502f6de7a8dee0b9e138f}
+
+
+Return the number of children if this node splits on this feature. 
+
+
+
+Definition at line 106 of file hoeffding\+\_\+numeric\+\_\+split.\+hpp.
+
+
+
+References mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split$<$ Fitness\+Function, Observation\+Type $>$\+::bins, mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split$<$ Fitness\+Function, Observation\+Type $>$\+::\+Majority\+Class(), mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split$<$ Fitness\+Function, Observation\+Type $>$\+::\+Majority\+Probability(), and mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split$<$ Fitness\+Function, Observation\+Type $>$\+::\+Split().
+
+\index{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}}
+\subsubsection[{Serialize(\+Archive \&ar, const unsigned int)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Fitness\+Function , typename Observation\+Type  = double$>$ template$<$typename Archive $>$ void {\bf mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}$<$ Fitness\+Function, Observation\+Type $>$\+::Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const unsigned}]{int}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1tree_1_1HoeffdingNumericSplit_a376dacc2f0704a777a5da7638e786aac}
+
+
+Serialize the object. 
+
+
+
+Referenced by mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split$<$ Fitness\+Function, Observation\+Type $>$\+::\+Bins().
+
+\index{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}!Split@{Split}}
+\index{Split@{Split}!mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}}
+\subsubsection[{Split(arma\+::\+Col$<$ size\+\_\+t $>$ \&child\+Majorities, Split\+Info \&split\+Info) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Fitness\+Function , typename Observation\+Type  = double$>$ void {\bf mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}$<$ Fitness\+Function, Observation\+Type $>$\+::Split (
+\begin{DoxyParamCaption}
+\item[{arma\+::\+Col$<$ size\+\_\+t $>$ \&}]{child\+Majorities, }
+\item[{{\bf Split\+Info} \&}]{split\+Info}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1tree_1_1HoeffdingNumericSplit_ad93ee243f6877b01cc61e50415b5fb83}
+
+
+Return the majority class of each child to be created, if a split on this dimension was performed. 
+
+Also create the split object. 
+
+Referenced by mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split$<$ Fitness\+Function, Observation\+Type $>$\+::\+Num\+Children().
+
+\index{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}}
+\subsubsection[{Train(\+Observation\+Type value, const size\+\_\+t label)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Fitness\+Function , typename Observation\+Type  = double$>$ void {\bf mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}$<$ Fitness\+Function, Observation\+Type $>$\+::Train (
+\begin{DoxyParamCaption}
+\item[{Observation\+Type}]{value, }
+\item[{const size\+\_\+t}]{label}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1tree_1_1HoeffdingNumericSplit_a79acb149276c16d90fc08ecd75eb03f5}
+
+
+Train the \doxyref{Hoeffding\+Numeric\+Split}{p.}{classmlpack_1_1tree_1_1HoeffdingNumericSplit} on the given observed value (remember that this object only cares about the information for a single feature, not an entire point). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em value} & Value in the dimension that this \doxyref{Hoeffding\+Numeric\+Split}{p.}{classmlpack_1_1tree_1_1HoeffdingNumericSplit} refers to. \\
+\hline
+{\em label} & Label of the given point. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}!bins@{bins}}
+\index{bins@{bins}!mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}}
+\subsubsection[{bins}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Fitness\+Function , typename Observation\+Type  = double$>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}$<$ Fitness\+Function, Observation\+Type $>$\+::bins\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1HoeffdingNumericSplit_a82299e4231b8487513d846d5a94f2702}
+
+
+The number of bins. 
+
+
+
+Definition at line 135 of file hoeffding\+\_\+numeric\+\_\+split.\+hpp.
+
+
+
+Referenced by mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split$<$ Fitness\+Function, Observation\+Type $>$\+::\+Bins(), and mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split$<$ Fitness\+Function, Observation\+Type $>$\+::\+Num\+Children().
+
+\index{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}!labels@{labels}}
+\index{labels@{labels}!mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}}
+\subsubsection[{labels}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Fitness\+Function , typename Observation\+Type  = double$>$ arma\+::\+Col$<$size\+\_\+t$>$ {\bf mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}$<$ Fitness\+Function, Observation\+Type $>$\+::labels\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1HoeffdingNumericSplit_a646601d4adf5129b90ce8963a3a0dab5}
+
+
+This holds the labels of the points before binning. 
+
+
+
+Definition at line 130 of file hoeffding\+\_\+numeric\+\_\+split.\+hpp.
+
+\index{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}!observations@{observations}}
+\index{observations@{observations}!mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}}
+\subsubsection[{observations}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Fitness\+Function , typename Observation\+Type  = double$>$ arma\+::\+Col$<$Observation\+Type$>$ {\bf mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}$<$ Fitness\+Function, Observation\+Type $>$\+::observations\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1HoeffdingNumericSplit_a3fea82cea470f1b00e2778e139f9f663}
+
+
+Before binning, this holds the points we have seen so far. 
+
+
+
+Definition at line 128 of file hoeffding\+\_\+numeric\+\_\+split.\+hpp.
+
+\index{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}!observations\+Before\+Binning@{observations\+Before\+Binning}}
+\index{observations\+Before\+Binning@{observations\+Before\+Binning}!mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}}
+\subsubsection[{observations\+Before\+Binning}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Fitness\+Function , typename Observation\+Type  = double$>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}$<$ Fitness\+Function, Observation\+Type $>$\+::observations\+Before\+Binning\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1HoeffdingNumericSplit_acc722b416d7060537d72e5f5bb3dd20f}
+
+
+The number of observations we must see before binning. 
+
+
+
+Definition at line 137 of file hoeffding\+\_\+numeric\+\_\+split.\+hpp.
+
+\index{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}!samples\+Seen@{samples\+Seen}}
+\index{samples\+Seen@{samples\+Seen}!mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}}
+\subsubsection[{samples\+Seen}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Fitness\+Function , typename Observation\+Type  = double$>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}$<$ Fitness\+Function, Observation\+Type $>$\+::samples\+Seen\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1HoeffdingNumericSplit_abba34fde0bc58f1246006181bdbcd73d}
+
+
+The number of samples we have seen so far. 
+
+
+
+Definition at line 139 of file hoeffding\+\_\+numeric\+\_\+split.\+hpp.
+
+\index{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}!split\+Points@{split\+Points}}
+\index{split\+Points@{split\+Points}!mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}}
+\subsubsection[{split\+Points}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Fitness\+Function , typename Observation\+Type  = double$>$ arma\+::\+Col$<$Observation\+Type$>$ {\bf mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}$<$ Fitness\+Function, Observation\+Type $>$\+::split\+Points\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1HoeffdingNumericSplit_a16e9fc9ab3e10e9af972c4d14e59a25c}
+
+
+The split points for the binning (length bins -\/ 1). 
+
+
+
+Definition at line 133 of file hoeffding\+\_\+numeric\+\_\+split.\+hpp.
+
+\index{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}!sufficient\+Statistics@{sufficient\+Statistics}}
+\index{sufficient\+Statistics@{sufficient\+Statistics}!mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split@{mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}}
+\subsubsection[{sufficient\+Statistics}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Fitness\+Function , typename Observation\+Type  = double$>$ arma\+::\+Mat$<$size\+\_\+t$>$ {\bf mlpack\+::tree\+::\+Hoeffding\+Numeric\+Split}$<$ Fitness\+Function, Observation\+Type $>$\+::sufficient\+Statistics\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1HoeffdingNumericSplit_a3c0af1d0e1a954e25b3a65d1efcdd384}
+
+
+After binning, this contains the sufficient statistics. 
+
+
+
+Definition at line 142 of file hoeffding\+\_\+numeric\+\_\+split.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/hoeffding\+\_\+trees/{\bf hoeffding\+\_\+numeric\+\_\+split.\+hpp}\end{DoxyCompactItemize}

@@ -1,0 +1,383 @@
+.TH "mlpack::hmm::HMMRegression" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::hmm::HMMRegression \- A class that represents a Hidden Markov Model Regression (HMMR)\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits \fBmlpack::hmm::HMM< distribution::RegressionDistribution >\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBHMMRegression\fP (const size_t states, const \fBdistribution::RegressionDistribution\fP emissions, const double \fBtolerance\fP=1e\-5)"
+.br
+.RI "\fICreate the Hidden Markov Model Regression with the given number of hidden states and the given default regression emission\&. \fP"
+.ti -1c
+.RI "\fBHMMRegression\fP (const arma::vec &\fBinitial\fP, const arma::mat &\fBtransition\fP, const std::vector< \fBdistribution::RegressionDistribution\fP > &\fBemission\fP, const double \fBtolerance\fP=1e\-5)"
+.br
+.RI "\fICreate the Hidden Markov Model Regression with the given initial probability vector, the given transition matrix, and the given regression emission distributions\&. \fP"
+.ti -1c
+.RI "double \fBEstimate\fP (const arma::mat &predictors, const arma::vec &responses, arma::mat &stateProb, arma::mat &forwardProb, arma::mat &backwardProb, arma::vec &scales) const "
+.br
+.RI "\fIEstimate the probabilities of each hidden state at each time step for each given data observation, using the Forward-Backward algorithm\&. \fP"
+.ti -1c
+.RI "double \fBEstimate\fP (const arma::mat &predictors, const arma::vec &responses, arma::mat &stateProb) const "
+.br
+.RI "\fIEstimate the probabilities of each hidden state at each time step of each given data observation, using the Forward-Backward algorithm\&. \fP"
+.ti -1c
+.RI "void \fBFilter\fP (const arma::mat &predictors, const arma::vec &responses, arma::vec &filterSeq, size_t ahead=0) const "
+.br
+.RI "\fIHMMR filtering\&. \fP"
+.ti -1c
+.RI "double \fBLogLikelihood\fP (const arma::mat &predictors, const arma::vec &responses) const "
+.br
+.RI "\fICompute the log-likelihood of the given predictors and responses\&. \fP"
+.ti -1c
+.RI "double \fBPredict\fP (const arma::mat &predictors, const arma::vec &responses, arma::Row< size_t > &stateSeq) const "
+.br
+.RI "\fICompute the most probable hidden state sequence for the given predictors and responses, using the Viterbi algorithm, returning the log-likelihood of the most likely state sequence\&. \fP"
+.ti -1c
+.RI "void \fBSmooth\fP (const arma::mat &predictors, const arma::vec &responses, arma::vec &smoothSeq) const "
+.br
+.RI "\fI\fBHMM\fP smoothing\&. \fP"
+.ti -1c
+.RI "void \fBTrain\fP (const std::vector< arma::mat > &predictors, const std::vector< arma::vec > &responses)"
+.br
+.RI "\fITrain the model using the Baum-Welch algorithm, with only the given predictors and responses\&. \fP"
+.ti -1c
+.RI "void \fBTrain\fP (const std::vector< arma::mat > &predictors, const std::vector< arma::vec > &responses, const std::vector< arma::Row< size_t > > &stateSeq)"
+.br
+.RI "\fITrain the model using the given labeled observations; the transition and regression emissions are directly estimated\&. \fP"
+.in -1c
+.SS "Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBBackward\fP (const arma::mat &predictors, const arma::vec &responses, const arma::vec &scales, arma::mat &backwardProb) const "
+.br
+.RI "\fIThe Backward algorithm (part of the Forward-Backward algorithm)\&. \fP"
+.ti -1c
+.RI "void \fBForward\fP (const arma::mat &predictors, const arma::vec &responses, arma::vec &scales, arma::mat &forwardProb) const "
+.br
+.RI "\fIThe Forward algorithm (part of the Forward-Backward algorithm)\&. \fP"
+.ti -1c
+.RI "void \fBStackData\fP (const std::vector< arma::mat > &predictors, const std::vector< arma::vec > &responses, std::vector< arma::mat > &dataSeq) const "
+.br
+.RI "\fIUtility functions to facilitate the use of the \fBHMM\fP class for HMMR\&. \fP"
+.ti -1c
+.RI "void \fBStackData\fP (const arma::mat &predictors, const arma::vec &responses, arma::mat &dataSeq) const "
+.br
+.in -1c
+.SS "Additional Inherited Members"
+.SH "Detailed Description"
+.PP 
+A class that represents a Hidden Markov Model Regression (HMMR)\&. 
+
+HMMR is an extension of Hidden Markov Models to regression analysis\&. The method is described in (Fridman, 1993) https://www.ima.umn.edu/preprints/January1994/1195.pdf An HMMR is a linear regression model whose coefficients are determined by a finite-state Markov chain\&. The error terms are conditionally independently normally distributed with zero mean and state-dependent variance\&. Let Q_t be a finite-state Markov chain, X_t a vector of predictors and Y_t a response\&. The HMMR is Y_t = X_t {Q_t} + {Q_t} 
+.PP
+This HMMR class supports training (supervised and unsupervised), prediction of state sequences via the Viterbi algorithm, estimation of state probabilities, filtering and smoothing of responses, and calculation of the log-likelihood of a given sequence\&.
+.PP
+Usage of the HMMR class generally involves either training an HMMR or loading an already-known HMMR and using to filter a sequence\&. Example code for supervised training of an HMMR is given below\&.
+.PP
+.PP
+.nf
+// Each column is a vector of predictors for a single observation\&.
+arma::mat predictors(5, 100, arma::fill::randn);
+// Responses for each observation
+arma::vec responses(100, arma::fill::randn);
+
+// Create an untrained HMMR with 3 hidden states
+RegressionDistribution rd(predictors, responses);
+arma::mat transition("0\&.5 0\&.5;" "0\&.5 0\&.5;");
+std::vector<RegressionDistribution> emissions(2,rd);
+HMMRegression hmmr("0\&.9 0\&.1", transition, emissions);
+
+ // Train the HMM (supply a state sequence to perform supervised training)
+std::vector<arma::mat> predictorsSeq(1, predictors);
+std::vector< arma::vec> responsesSeq(1, responses);
+hmmr\&.Train(predictorsSeq, responsesSeq);
+hmm\&.Train(observations, states);
+.fi
+.PP
+.PP
+Once initialized, the HMMR can evaluate the probability of a certain sequence (with \fBLogLikelihood()\fP), predict the most likely sequence of hidden states (with \fBPredict()\fP), estimate the probabilities of each state for a sequence of observations (with \fBEstimate()\fP), or perform filtering or smoothing of observations\&. 
+.PP
+Definition at line 69 of file hmm_regression\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::hmm::HMMRegression::HMMRegression (const size_t states, const \fBdistribution::RegressionDistribution\fP emissions, const double tolerance = \fC1e\-5\fP)\fC [inline]\fP"
+
+.PP
+Create the Hidden Markov Model Regression with the given number of hidden states and the given default regression emission\&. The dimensionality of the observations is taken from the emissions variable, so it is important that the given default emission distribution is set with the correct dimensionality\&. Alternately, set the dimensionality with \fBDimensionality()\fP\&. Optionally, the tolerance for convergence of the Baum-Welch algorithm can be set\&.
+.PP
+By default, the transition matrix and initial probability vector are set to contain equal probability for each state\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIstates\fP Number of states\&. 
+.br
+\fIemissions\fP Default distribution for emissions\&. 
+.br
+\fItolerance\fP Tolerance for convergence of training algorithm (Baum-Welch)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 89 of file hmm_regression\&.hpp\&.
+.SS "mlpack::hmm::HMMRegression::HMMRegression (const arma::vec & initial, const arma::mat & transition, const std::vector< \fBdistribution::RegressionDistribution\fP > & emission, const double tolerance = \fC1e\-5\fP)\fC [inline]\fP"
+
+.PP
+Create the Hidden Markov Model Regression with the given initial probability vector, the given transition matrix, and the given regression emission distributions\&. The dimensionality of the observations of the HMMR are taken from the given emission distributions\&. Alternately, the dimensionality can be set with \fBDimensionality()\fP\&.
+.PP
+The initial state probability vector should have length equal to the number of states, and each entry represents the probability of being in the given state at time T = 0 (the beginning of a sequence)\&.
+.PP
+The transition matrix should be such that T(i, j) is the probability of transition to state i from state j\&. The columns of the matrix should sum to 1\&.
+.PP
+Optionally, the tolerance for convergence of the Baum-Welch algorithm can be set\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinitial\fP Initial state probabilities\&. 
+.br
+\fItransition\fP Transition matrix\&. 
+.br
+\fIemission\fP Emission distributions\&. 
+.br
+\fItolerance\fP Tolerance for convergence of training algorithm (Baum-Welch)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 119 of file hmm_regression\&.hpp\&.
+.PP
+References Backward(), Estimate(), Filter(), Forward(), LogLikelihood(), Predict(), Smooth(), StackData(), and Train()\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "void mlpack::hmm::HMMRegression::Backward (const arma::mat & predictors, const arma::vec & responses, const arma::vec & scales, arma::mat & backwardProb) const\fC [private]\fP"
+
+.PP
+The Backward algorithm (part of the Forward-Backward algorithm)\&. Computes backward probabilities for each state for each observation in the given data sequence, using the scaling factors found (presumably) by \fBForward()\fP\&. The returned matrix has rows equal to the number of hidden states and columns equal to the number of observations\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpredictors\fP Vector of predictor sequences\&. 
+.br
+\fIresponses\fP Vector of response sequences\&. 
+.br
+\fIscales\fP Vector of scaling factors\&. 
+.br
+\fIbackwardProb\fP Matrix in which backward probabilities will be saved\&. 
+.RE
+.PP
+
+.PP
+Referenced by HMMRegression()\&.
+.SS "double mlpack::hmm::HMMRegression::Estimate (const arma::mat & predictors, const arma::vec & responses, arma::mat & stateProb, arma::mat & forwardProb, arma::mat & backwardProb, arma::vec & scales) const"
+
+.PP
+Estimate the probabilities of each hidden state at each time step for each given data observation, using the Forward-Backward algorithm\&. Each matrix which is returned has columns equal to the number of data observations, and rows equal to the number of hidden states in the model\&. The log-likelihood of the most probable sequence is returned\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpredictors\fP Vector of predictor sequences\&. 
+.br
+\fIresponses\fP Vector of response sequences\&. 
+.br
+\fIstateProb\fP Matrix in which the probabilities of each state at each time interval will be stored\&. 
+.br
+\fIforwardProb\fP Matrix in which the forward probabilities of each state at each time interval will be stored\&. 
+.br
+\fIbackwardProb\fP Matrix in which the backward probabilities of each state at each time interval will be stored\&. 
+.br
+\fIscales\fP Vector in which the scaling factors at each time interval will be stored\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Log-likelihood of most likely state sequence\&. 
+.RE
+.PP
+
+.PP
+Referenced by HMMRegression()\&.
+.SS "double mlpack::hmm::HMMRegression::Estimate (const arma::mat & predictors, const arma::vec & responses, arma::mat & stateProb) const"
+
+.PP
+Estimate the probabilities of each hidden state at each time step of each given data observation, using the Forward-Backward algorithm\&. The returned matrix of state probabilities has columns equal to the number of data observations, and rows equal to the number of hidden states in the model\&. The log-likelihood of the most probable sequence is returned\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpredictors\fP Vector of predictor sequences\&. 
+.br
+\fIresponses\fP Vector of response sequences\&. 
+.br
+\fIstateProb\fP Probabilities of each state at each time interval\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Log-likelihood of most likely state sequence\&. 
+.RE
+.PP
+
+.SS "void mlpack::hmm::HMMRegression::Filter (const arma::mat & predictors, const arma::vec & responses, arma::vec & filterSeq, size_t ahead = \fC0\fP) const"
+
+.PP
+HMMR filtering\&. Computes the k-step-ahead expected response at each time conditioned only on prior observations\&. That is E{ Y[t+k] | Y[0], \&.\&.\&., Y[t] }\&. The returned matrix has columns equal to the number of observations\&. Note that the expectation may not be meaningful for discrete emissions\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpredictors\fP Vector of predictor sequences\&. 
+.br
+\fIresponses\fP Vector of response sequences\&. 
+.br
+\fIinitial\fP Distribution of initial state\&. 
+.br
+\fIahead\fP Number of steps ahead (k) for expectations\&. 
+.br
+\fIfilterSeq\fP Vector in which the expected emission sequence will be stored\&. 
+.RE
+.PP
+
+.PP
+Referenced by HMMRegression()\&.
+.SS "void mlpack::hmm::HMMRegression::Forward (const arma::mat & predictors, const arma::vec & responses, arma::vec & scales, arma::mat & forwardProb) const\fC [private]\fP"
+
+.PP
+The Forward algorithm (part of the Forward-Backward algorithm)\&. Computes forward probabilities for each state for each observation in the given data sequence\&. The returned matrix has rows equal to the number of hidden states and columns equal to the number of observations\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpredictors\fP Vector of predictor sequences\&. 
+.br
+\fIresponses\fP Vector of response sequences\&. 
+.br
+\fIscales\fP Vector in which scaling factors will be saved\&. 
+.br
+\fIforwardProb\fP Matrix in which forward probabilities will be saved\&. 
+.RE
+.PP
+
+.PP
+Referenced by HMMRegression()\&.
+.SS "double mlpack::hmm::HMMRegression::LogLikelihood (const arma::mat & predictors, const arma::vec & responses) const"
+
+.PP
+Compute the log-likelihood of the given predictors and responses\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpredictors\fP Vector of predictor sequences\&. 
+.br
+\fIresponses\fP Vector of response sequences\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Log-likelihood of the given sequence\&. 
+.RE
+.PP
+
+.PP
+Referenced by HMMRegression()\&.
+.SS "double mlpack::hmm::HMMRegression::Predict (const arma::mat & predictors, const arma::vec & responses, arma::Row< size_t > & stateSeq) const"
+
+.PP
+Compute the most probable hidden state sequence for the given predictors and responses, using the Viterbi algorithm, returning the log-likelihood of the most likely state sequence\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpredictors\fP Vector of predictor sequences\&. 
+.br
+\fIresponses\fP Vector of response sequences\&. 
+.br
+\fIstateSeq\fP Vector in which the most probable state sequence will be stored\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Log-likelihood of most probable state sequence\&. 
+.RE
+.PP
+
+.PP
+Referenced by HMMRegression()\&.
+.SS "void mlpack::hmm::HMMRegression::Smooth (const arma::mat & predictors, const arma::vec & responses, arma::vec & smoothSeq) const"
+
+.PP
+\fBHMM\fP smoothing\&. Computes expected emission at each time conditioned on all observations\&. That is E{ Y[t] | Y[0], \&.\&.\&., Y[T] }\&. The returned matrix has columns equal to the number of observations\&. Note that the expectation may not be meaningful for discrete emissions\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpredictors\fP Vector of predictor sequences\&. 
+.br
+\fIresponses\fP Vector of response sequences\&.\&. 
+.br
+\fIinitial\fP Distribution of initial state\&. 
+.br
+\fIsmoothSeq\fP Vector in which the expected emission sequence will be stored\&. 
+.RE
+.PP
+
+.PP
+Referenced by HMMRegression()\&.
+.SS "void mlpack::hmm::HMMRegression::StackData (const std::vector< arma::mat > & predictors, const std::vector< arma::vec > & responses, std::vector< arma::mat > & dataSeq) const\fC [private]\fP"
+
+.PP
+Utility functions to facilitate the use of the \fBHMM\fP class for HMMR\&. 
+.PP
+Referenced by HMMRegression()\&.
+.SS "void mlpack::hmm::HMMRegression::StackData (const arma::mat & predictors, const arma::vec & responses, arma::mat & dataSeq) const\fC [private]\fP"
+
+.SS "void mlpack::hmm::HMMRegression::Train (const std::vector< arma::mat > & predictors, const std::vector< arma::vec > & responses)"
+
+.PP
+Train the model using the Baum-Welch algorithm, with only the given predictors and responses\&. Instead of giving a guess transition and emission here, do that in the constructor\&. Each matrix in the vector of predictors corresponds to an individual data sequence, and likewise for each vec in the vector of responses\&. The number of rows in each matrix of predictors plus one should be equal to the dimensionality of the \fBHMM\fP (which is set in the constructor)\&.
+.PP
+It is preferable to use the other overload of \fBTrain()\fP, with labeled data\&. That will produce much better results\&. However, if labeled data is unavailable, this will work\&. In addition, it is possible to use \fBTrain()\fP with labeled data first, and then continue to train the model using this overload of \fBTrain()\fP with unlabeled data\&.
+.PP
+The tolerance of the Baum-Welch algorithm can be set either in the constructor or with the \fBTolerance()\fP method\&. When the change in log-likelihood of the model between iterations is less than the tolerance, the Baum-Welch algorithm terminates\&.
+.PP
+\fBNote:\fP
+.RS 4
+\fBTrain()\fP can be called multiple times with different sequences; each time it is called, it uses the current parameters of the \fBHMM\fP as a starting point for training\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpredictors\fP Vector of predictor sequences\&. 
+.br
+\fIresponses\fP Vector of response sequences\&. 
+.RE
+.PP
+
+.PP
+Referenced by HMMRegression()\&.
+.SS "void mlpack::hmm::HMMRegression::Train (const std::vector< arma::mat > & predictors, const std::vector< arma::vec > & responses, const std::vector< arma::Row< size_t > > & stateSeq)"
+
+.PP
+Train the model using the given labeled observations; the transition and regression emissions are directly estimated\&. Each matrix in the vector of predictors corresponds to an individual data sequence, and likewise for each vec in the vector of responses\&. The number of rows in each matrix of predictors plus one should be equal to the dimensionality of the \fBHMM\fP (which is set in the constructor)\&.
+.PP
+\fBNote:\fP
+.RS 4
+\fBTrain()\fP can be called multiple times with different sequences; each time it is called, it uses the current parameters of the HMMR as a starting point for training\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpredictors\fP Vector of predictor sequences\&. 
+.br
+\fIresponses\fP Vector of response sequences\&. 
+.br
+\fIstateSeq\fP Vector of state sequences, corresponding to each observation\&. 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

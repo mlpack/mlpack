@@ -1,0 +1,7 @@
+<map id="mlpack::hmm::HMM&lt; Distribution &gt;" name="mlpack::hmm::HMM&lt; Distribution &gt;">
+<area shape="rect" id="node2" href="$classmlpack_1_1hmm_1_1HMM.html" title="mlpack::hmm::HMM\&lt; gmm\l::GMM \&gt;" alt="" coords="454,5,637,47"/>
+<area shape="rect" id="node3" href="$classmlpack_1_1hmm_1_1HMM.html" title="mlpack::hmm::HMM\&lt; distribution\l::RegressionDistribution \&gt;" alt="" coords="437,71,653,112"/>
+<area shape="rect" id="node5" href="$classmlpack_1_1hmm_1_1HMM.html" title="mlpack::hmm::HMM\&lt; distribution\l::GaussianDistribution \&gt;" alt="" coords="437,136,653,177"/>
+<area shape="rect" id="node6" href="$classmlpack_1_1hmm_1_1HMM.html" title="mlpack::hmm::HMM\&lt; distribution\l::DiscreteDistribution \&gt;" alt="" coords="437,201,653,243"/>
+<area shape="rect" id="node4" href="$classmlpack_1_1hmm_1_1HMMRegression.html" title="A class that represents a Hidden Markov Model Regression (HMMR). " alt="" coords="703,78,909,105"/>
+</map>

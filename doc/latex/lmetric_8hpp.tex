@@ -1,0 +1,52 @@
+\section{src/mlpack/core/metrics/lmetric.hpp File Reference}
+\label{lmetric_8hpp}\index{src/mlpack/core/metrics/lmetric.\+hpp@{src/mlpack/core/metrics/lmetric.\+hpp}}
+Include dependency graph for lmetric.\+hpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{lmetric_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{lmetric_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class {\bf mlpack\+::metric\+::\+L\+Metric$<$ T\+Power, T\+Take\+Root $>$}
+\begin{DoxyCompactList}\small\item\em The L\+\_\+p metric for arbitrary integer p, with an option to take the root. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ {\bf mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ {\bf mlpack\+::metric}
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef L\+Metric$<$ I\+N\+T\+\_\+\+M\+AX, false $>$ {\bf mlpack\+::metric\+::\+Chebyshev\+Distance}
+\begin{DoxyCompactList}\small\item\em The L-\/infinity distance. \end{DoxyCompactList}\item 
+typedef L\+Metric$<$ 2, true $>$ {\bf mlpack\+::metric\+::\+Euclidean\+Distance}
+\begin{DoxyCompactList}\small\item\em The Euclidean (L2) distance. \end{DoxyCompactList}\item 
+typedef L\+Metric$<$ 1, false $>$ {\bf mlpack\+::metric\+::\+Manhattan\+Distance}
+\begin{DoxyCompactList}\small\item\em The Manhattan (L1) distance. \end{DoxyCompactList}\item 
+typedef L\+Metric$<$ 2, false $>$ {\bf mlpack\+::metric\+::\+Squared\+Euclidean\+Distance}
+\begin{DoxyCompactList}\small\item\em The squared Euclidean (L2) distance. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Ryan Curtin
+\end{DoxyAuthor}
+Generalized L-\/metric, allowing both squared distances to be returned as well as non-\/squared distances. The squared distances are faster to compute.
+
+This also gives several convenience typedefs for commonly used L-\/metrics.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause B\+SD license. You should have received a copy of the 3-\/clause B\+SD license along with mlpack. If not, see {\tt http\+://www.\+opensource.\+org/licenses/\+B\+S\+D-\/3-\/\+Clause} for more information. 

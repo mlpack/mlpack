@@ -1,0 +1,806 @@
+\section{mlpack\+:\+:ann\+:\+:Max\+Pooling$<$ Input\+Data\+Type, Output\+Data\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1MaxPooling}\index{mlpack\+::ann\+::\+Max\+Pooling$<$ Input\+Data\+Type, Output\+Data\+Type $>$@{mlpack\+::ann\+::\+Max\+Pooling$<$ Input\+Data\+Type, Output\+Data\+Type $>$}}
+
+
+Implementation of the \doxyref{Max\+Pooling}{p.}{classmlpack_1_1ann_1_1MaxPooling} layer.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Max\+Pooling} ()
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Max\+Pooling}{p.}{classmlpack_1_1ann_1_1MaxPooling} object. \end{DoxyCompactList}\item 
+{\bf Max\+Pooling} (const size\+\_\+t {\bf kW}, const size\+\_\+t {\bf kH}, const size\+\_\+t {\bf dW}=1, const size\+\_\+t {\bf dH}=1, const bool {\bf floor}=true)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Max\+Pooling}{p.}{classmlpack_1_1ann_1_1MaxPooling} object using the specified number of units. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void {\bf Backward} (const arma\+::\+Mat$<$ eT $>$ \&\&, arma\+::\+Mat$<$ eT $>$ \&\&gy, arma\+::\+Mat$<$ eT $>$ \&\&g)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network, using 3rd-\/order tensors as input, calculating the function f(x) by propagating x backwards through f. \end{DoxyCompactList}\item 
+Output\+Data\+Type const \& {\bf Delta} () const 
+\begin{DoxyCompactList}\small\item\em Get the delta. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& {\bf Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+bool {\bf Deterministic} () const 
+\begin{DoxyCompactList}\small\item\em Get the value of the deterministic parameter. \end{DoxyCompactList}\item 
+bool \& {\bf Deterministic} ()
+\begin{DoxyCompactList}\small\item\em Modify the value of the deterministic parameter. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void {\bf Forward} (const arma\+::\+Mat$<$ eT $>$ \&\&input, arma\+::\+Mat$<$ eT $>$ \&\&output)
+\begin{DoxyCompactList}\small\item\em Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. \end{DoxyCompactList}\item 
+size\+\_\+t const \& {\bf Input\+Height} () const 
+\begin{DoxyCompactList}\small\item\em Get the height. \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Input\+Height} ()
+\begin{DoxyCompactList}\small\item\em Modify the height. \end{DoxyCompactList}\item 
+Input\+Data\+Type const \& {\bf Input\+Parameter} () const 
+\begin{DoxyCompactList}\small\item\em Get the input parameter. \end{DoxyCompactList}\item 
+Input\+Data\+Type \& {\bf Input\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the input parameter. \end{DoxyCompactList}\item 
+size\+\_\+t const \& {\bf Input\+Width} () const 
+\begin{DoxyCompactList}\small\item\em Get the width. \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Input\+Width} ()
+\begin{DoxyCompactList}\small\item\em Modify the width. \end{DoxyCompactList}\item 
+size\+\_\+t const \& {\bf Output\+Height} () const 
+\begin{DoxyCompactList}\small\item\em Get the height. \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Output\+Height} ()
+\begin{DoxyCompactList}\small\item\em Modify the height. \end{DoxyCompactList}\item 
+Output\+Data\+Type const \& {\bf Output\+Parameter} () const 
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& {\bf Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+size\+\_\+t const \& {\bf Output\+Width} () const 
+\begin{DoxyCompactList}\small\item\em Get the width. \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Output\+Width} ()
+\begin{DoxyCompactList}\small\item\em Modify the width. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&ar, const unsigned int)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename eT $>$ }\\void {\bf Pooling\+Operation} (const arma\+::\+Mat$<$ eT $>$ \&input, arma\+::\+Mat$<$ eT $>$ \&output, arma\+::\+Mat$<$ eT $>$ \&{\bf pooling\+Indices})
+\begin{DoxyCompactList}\small\item\em Apply pooling to the input and store the results. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void {\bf Unpooling} (const arma\+::\+Mat$<$ eT $>$ \&error, arma\+::\+Mat$<$ eT $>$ \&output, arma\+::\+Mat$<$ eT $>$ \&{\bf pooling\+Indices})
+\begin{DoxyCompactList}\small\item\em Apply unpooling to the input and store the results. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+Output\+Data\+Type {\bf delta}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored delta object. \end{DoxyCompactList}\item 
+bool {\bf deterministic}
+\begin{DoxyCompactList}\small\item\em If true use maximum a posteriori during the forward pass. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf dH}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored height of the stride operation. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf dW}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored width of the stride operation. \end{DoxyCompactList}\item 
+bool {\bf floor}
+\begin{DoxyCompactList}\small\item\em Rounding operation used. \end{DoxyCompactList}\item 
+Output\+Data\+Type {\bf gradient}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored gradient object. \end{DoxyCompactList}\item 
+arma\+::cube {\bf g\+Temp}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored transformed output parameter. \end{DoxyCompactList}\item 
+arma\+::\+Mat$<$ size\+\_\+t $>$ {\bf indices}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored indices matrix parameter. \end{DoxyCompactList}\item 
+arma\+::\+Col$<$ size\+\_\+t $>$ {\bf indices\+Col}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored indices column parameter. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf input\+Height}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored input height. \end{DoxyCompactList}\item 
+Input\+Data\+Type {\bf input\+Parameter}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored input parameter object. \end{DoxyCompactList}\item 
+arma\+::cube {\bf input\+Temp}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored transformed input parameter. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf input\+Width}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored input width. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf in\+Size}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored number of input units. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf kH}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored height of the pooling window. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf kW}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored width of the pooling window. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf offset}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored stored rounding offset. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf output\+Height}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored output height. \end{DoxyCompactList}\item 
+Output\+Data\+Type {\bf output\+Parameter}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored output parameter object. \end{DoxyCompactList}\item 
+arma\+::cube {\bf output\+Temp}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored output parameter. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf output\+Width}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored output width. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf out\+Size}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored number of output units. \end{DoxyCompactList}\item 
+{\bf Max\+Pooling\+Rule} {\bf pooling}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored pooling strategy. \end{DoxyCompactList}\item 
+std\+::vector$<$ arma\+::cube $>$ {\bf pooling\+Indices}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored pooling indicies. \end{DoxyCompactList}\item 
+bool {\bf reset}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored reset parameter used to initialize the module once. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat$>$\\*
+class mlpack\+::ann\+::\+Max\+Pooling$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+
+Implementation of the \doxyref{Max\+Pooling}{p.}{classmlpack_1_1ann_1_1MaxPooling} layer. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 52 of file max\+\_\+pooling.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!Max\+Pooling@{Max\+Pooling}}
+\index{Max\+Pooling@{Max\+Pooling}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{Max\+Pooling()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::{\bf Max\+Pooling} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1MaxPooling_ae77da717024365eefc5e5bf1f77efedf}
+
+
+Create the \doxyref{Max\+Pooling}{p.}{classmlpack_1_1ann_1_1MaxPooling} object. 
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!Max\+Pooling@{Max\+Pooling}}
+\index{Max\+Pooling@{Max\+Pooling}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{Max\+Pooling(const size\+\_\+t k\+W, const size\+\_\+t k\+H, const size\+\_\+t d\+W=1, const size\+\_\+t d\+H=1, const bool floor=true)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::{\bf Max\+Pooling} (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{kW, }
+\item[{const size\+\_\+t}]{kH, }
+\item[{const size\+\_\+t}]{dW = {\ttfamily 1}, }
+\item[{const size\+\_\+t}]{dH = {\ttfamily 1}, }
+\item[{const bool}]{floor = {\ttfamily true}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1MaxPooling_a4828cb85259e1440a0aee62b1b609a0b}
+
+
+Create the \doxyref{Max\+Pooling}{p.}{classmlpack_1_1ann_1_1MaxPooling} object using the specified number of units. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em kW} & Width of the pooling window. \\
+\hline
+{\em kH} & Height of the pooling window. \\
+\hline
+{\em dW} & Width of the stride operation. \\
+\hline
+{\em dH} & Width of the stride operation. \\
+\hline
+{\em floor} & Rounding operator (floor or ceil). \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!Backward@{Backward}}
+\index{Backward@{Backward}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{Backward(const arma\+::\+Mat$<$ e\+T $>$ \&\&, arma\+::\+Mat$<$ e\+T $>$ \&\&gy, arma\+::\+Mat$<$ e\+T $>$ \&\&g)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename eT $>$ void {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Backward (
+\begin{DoxyParamCaption}
+\item[{const arma\+::\+Mat$<$ eT $>$ \&\&}]{, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&\&}]{gy, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&\&}]{g}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1MaxPooling_a0f317ecef40fe1d6271de049517d4ba5}
+
+
+Ordinary feed backward pass of a neural network, using 3rd-\/order tensors as input, calculating the function f(x) by propagating x backwards through f. 
+
+Using the results from the feed forward pass.
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The propagated input activation. \\
+\hline
+{\em gy} & The backpropagated error. \\
+\hline
+{\em g} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{Delta() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type const\& {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Delta (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1MaxPooling_a434fe71e1baef02480133497ad52311a}
+
+
+Get the delta. 
+
+
+
+Definition at line 108 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{Delta()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type\& {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Delta (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1MaxPooling_a27bba9669fd56801c740f026c81aff6e}
+
+
+Modify the delta. 
+
+
+
+Definition at line 110 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!Deterministic@{Deterministic}}
+\index{Deterministic@{Deterministic}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{Deterministic() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ bool {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Deterministic (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1MaxPooling_a397b676a0b9a032a16ff08de4f18a4a6}
+
+
+Get the value of the deterministic parameter. 
+
+
+
+Definition at line 133 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!Deterministic@{Deterministic}}
+\index{Deterministic@{Deterministic}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{Deterministic()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ bool\& {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Deterministic (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1MaxPooling_a162302a423a304ce76302adba3ca0778}
+
+
+Modify the value of the deterministic parameter. 
+
+
+
+Definition at line 135 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!Forward@{Forward}}
+\index{Forward@{Forward}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{Forward(const arma\+::\+Mat$<$ e\+T $>$ \&\&input, arma\+::\+Mat$<$ e\+T $>$ \&\&output)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename eT $>$ void {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Forward (
+\begin{DoxyParamCaption}
+\item[{const arma\+::\+Mat$<$ eT $>$ \&\&}]{input, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&\&}]{output}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1MaxPooling_a2e33b0b3755548dd0692120d020cc423}
+
+
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input data used for evaluating the specified function. \\
+\hline
+{\em output} & Resulting output activation. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!Input\+Height@{Input\+Height}}
+\index{Input\+Height@{Input\+Height}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{Input\+Height() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ size\+\_\+t const\& {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Input\+Height (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1MaxPooling_ae8e2af0483883f150da81409d35c27aa}
+
+
+Get the height. 
+
+
+
+Definition at line 118 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!Input\+Height@{Input\+Height}}
+\index{Input\+Height@{Input\+Height}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{Input\+Height()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ size\+\_\+t\& {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Input\+Height (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1MaxPooling_ae708f20ec21c78c0c5e118b5fd7dff95}
+
+
+Modify the height. 
+
+
+
+Definition at line 120 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!Input\+Parameter@{Input\+Parameter}}
+\index{Input\+Parameter@{Input\+Parameter}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{Input\+Parameter() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Input\+Data\+Type const\& {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Input\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1MaxPooling_a6e96885ca6b41d7fc6066581328d3e21}
+
+
+Get the input parameter. 
+
+
+
+Definition at line 98 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!Input\+Parameter@{Input\+Parameter}}
+\index{Input\+Parameter@{Input\+Parameter}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{Input\+Parameter()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Input\+Data\+Type\& {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Input\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1MaxPooling_ab767a1feb03bf4e5e2923c9a8b0dce11}
+
+
+Modify the input parameter. 
+
+
+
+Definition at line 100 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!Input\+Width@{Input\+Width}}
+\index{Input\+Width@{Input\+Width}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{Input\+Width() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ size\+\_\+t const\& {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Input\+Width (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1MaxPooling_aef6a329681aaefdc800f1ab2402bc18a}
+
+
+Get the width. 
+
+
+
+Definition at line 113 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!Input\+Width@{Input\+Width}}
+\index{Input\+Width@{Input\+Width}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{Input\+Width()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ size\+\_\+t\& {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Input\+Width (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1MaxPooling_ae1238ef65b7e4d30e3bd700866ed6e51}
+
+
+Modify the width. 
+
+
+
+Definition at line 115 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!Output\+Height@{Output\+Height}}
+\index{Output\+Height@{Output\+Height}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{Output\+Height() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ size\+\_\+t const\& {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Output\+Height (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1MaxPooling_aa4c883c8cd5b265e4036d978df653653}
+
+
+Get the height. 
+
+
+
+Definition at line 128 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!Output\+Height@{Output\+Height}}
+\index{Output\+Height@{Output\+Height}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{Output\+Height()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ size\+\_\+t\& {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Output\+Height (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1MaxPooling_ae206b5821605aeb57fdb837c3c47bc22}
+
+
+Modify the height. 
+
+
+
+Definition at line 130 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{Output\+Parameter() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type const\& {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Output\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1MaxPooling_aecd2ace9a1d3c277ec30d033d7d1177e}
+
+
+Get the output parameter. 
+
+
+
+Definition at line 103 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{Output\+Parameter()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type\& {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Output\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1MaxPooling_a991795abaa4d5b2464029f96bb322988}
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 105 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!Output\+Width@{Output\+Width}}
+\index{Output\+Width@{Output\+Width}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{Output\+Width() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ size\+\_\+t const\& {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Output\+Width (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1MaxPooling_afece04876f8abd2611d5071d559d2ce8}
+
+
+Get the width. 
+
+
+
+Definition at line 123 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!Output\+Width@{Output\+Width}}
+\index{Output\+Width@{Output\+Width}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{Output\+Width()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ size\+\_\+t\& {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Output\+Width (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1MaxPooling_a1f2316926786d517d4ad4e9576866a89}
+
+
+Modify the width. 
+
+
+
+Definition at line 125 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!Pooling\+Operation@{Pooling\+Operation}}
+\index{Pooling\+Operation@{Pooling\+Operation}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{Pooling\+Operation(const arma\+::\+Mat$<$ e\+T $>$ \&input, arma\+::\+Mat$<$ e\+T $>$ \&output, arma\+::\+Mat$<$ e\+T $>$ \&pooling\+Indices)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename eT $>$ void {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Pooling\+Operation (
+\begin{DoxyParamCaption}
+\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{input, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&}]{output, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&}]{pooling\+Indices}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}\label{classmlpack_1_1ann_1_1MaxPooling_af8a7a669022a55bbc1d5e33988e6d309}
+
+
+Apply pooling to the input and store the results. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The input to be apply the pooling rule. \\
+\hline
+{\em output} & The pooled result. \\
+\hline
+{\em pooling\+Indices} & The pooled indices. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 153 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{Serialize(\+Archive \&ar, const unsigned int)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename Archive $>$ void {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const unsigned}]{int}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1MaxPooling_afc3034fa9658a5a0a01100b150b8562c}
+
+
+Serialize the layer. 
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!Unpooling@{Unpooling}}
+\index{Unpooling@{Unpooling}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{Unpooling(const arma\+::\+Mat$<$ e\+T $>$ \&error, arma\+::\+Mat$<$ e\+T $>$ \&output, arma\+::\+Mat$<$ e\+T $>$ \&pooling\+Indices)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename eT $>$ void {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Unpooling (
+\begin{DoxyParamCaption}
+\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{error, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&}]{output, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&}]{pooling\+Indices}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}\label{classmlpack_1_1ann_1_1MaxPooling_ac4809c050420e1915c74217d92a6bbcc}
+
+
+Apply unpooling to the input and store the results. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em error} & The backward error. \\
+\hline
+{\em output} & The pooled result. \\
+\hline
+{\em pooling\+Indices} & The pooled indices. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 187 of file max\+\_\+pooling.\+hpp.
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!delta@{delta}}
+\index{delta@{delta}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{delta}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::delta\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1MaxPooling_acaa5b3d0c1c1a6cfe1afbd93845b241e}
+
+
+Locally-\/stored delta object. 
+
+
+
+Definition at line 252 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!deterministic@{deterministic}}
+\index{deterministic@{deterministic}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{deterministic}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ bool {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::deterministic\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1MaxPooling_a1b3828e05d9988099652a17ba41d6944}
+
+
+If true use maximum a posteriori during the forward pass. 
+
+
+
+Definition at line 237 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!dH@{dH}}
+\index{dH@{dH}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{dH}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ size\+\_\+t {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::dH\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1MaxPooling_ab8a901a8e24c01d556c65c31cbe1ce63}
+
+
+Locally-\/stored height of the stride operation. 
+
+
+
+Definition at line 213 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!dW@{dW}}
+\index{dW@{dW}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{dW}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ size\+\_\+t {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::dW\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1MaxPooling_adea486d0f6e143c08d61d29330e672e6}
+
+
+Locally-\/stored width of the stride operation. 
+
+
+
+Definition at line 210 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!floor@{floor}}
+\index{floor@{floor}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{floor}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ bool {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::floor\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1MaxPooling_aa60637b2841ad3ad478efb290d6ae714}
+
+
+Rounding operation used. 
+
+
+
+Definition at line 219 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!gradient@{gradient}}
+\index{gradient@{gradient}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{gradient}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::gradient\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1MaxPooling_ab69738e9d15de9d81ed186c0fdcf2871}
+
+
+Locally-\/stored gradient object. 
+
+
+
+Definition at line 255 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!g\+Temp@{g\+Temp}}
+\index{g\+Temp@{g\+Temp}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{g\+Temp}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ arma\+::cube {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::g\+Temp\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1MaxPooling_a3261a536b63c418114d3543c16548441}
+
+
+Locally-\/stored transformed output parameter. 
+
+
+
+Definition at line 246 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!indices@{indices}}
+\index{indices@{indices}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{indices}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ arma\+::\+Mat$<$size\+\_\+t$>$ {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::indices\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1MaxPooling_a6a62e789cc3d5c24faf67a5840a3c206}
+
+
+Locally-\/stored indices matrix parameter. 
+
+
+
+Definition at line 264 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!indices\+Col@{indices\+Col}}
+\index{indices\+Col@{indices\+Col}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{indices\+Col}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ arma\+::\+Col$<$size\+\_\+t$>$ {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::indices\+Col\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1MaxPooling_a46bc0041349cf858ce07eaecf1895533}
+
+
+Locally-\/stored indices column parameter. 
+
+
+
+Definition at line 267 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!input\+Height@{input\+Height}}
+\index{input\+Height@{input\+Height}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{input\+Height}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ size\+\_\+t {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::input\+Height\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1MaxPooling_a19f21368c70d789ae3bf38d15cd9a764}
+
+
+Locally-\/stored input height. 
+
+
+
+Definition at line 228 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!input\+Parameter@{input\+Parameter}}
+\index{input\+Parameter@{input\+Parameter}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{input\+Parameter}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Input\+Data\+Type {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::input\+Parameter\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1MaxPooling_aa69e1d4eeb29d2148dabc723400f0d32}
+
+
+Locally-\/stored input parameter object. 
+
+
+
+Definition at line 258 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!input\+Temp@{input\+Temp}}
+\index{input\+Temp@{input\+Temp}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{input\+Temp}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ arma\+::cube {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::input\+Temp\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1MaxPooling_ab5bc310559e304efd804113d20eb1d18}
+
+
+Locally-\/stored transformed input parameter. 
+
+
+
+Definition at line 243 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!input\+Width@{input\+Width}}
+\index{input\+Width@{input\+Width}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{input\+Width}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ size\+\_\+t {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::input\+Width\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1MaxPooling_a04119643e40055b1779b81614d50dd5b}
+
+
+Locally-\/stored input width. 
+
+
+
+Definition at line 225 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!in\+Size@{in\+Size}}
+\index{in\+Size@{in\+Size}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{in\+Size}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ size\+\_\+t {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::in\+Size\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1MaxPooling_a27a6224dedfddc8ad8b24777fe9ef0e5}
+
+
+Locally-\/stored number of input units. 
+
+
+
+Definition at line 198 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!kH@{kH}}
+\index{kH@{kH}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{kH}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ size\+\_\+t {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::kH\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1MaxPooling_a10cc8f7787ff9f4a71a3589f56547931}
+
+
+Locally-\/stored height of the pooling window. 
+
+
+
+Definition at line 207 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!kW@{kW}}
+\index{kW@{kW}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{kW}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ size\+\_\+t {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::kW\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1MaxPooling_a3e8ee2feddfbb0fc10b227c6ff1d97ca}
+
+
+Locally-\/stored width of the pooling window. 
+
+
+
+Definition at line 204 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!offset@{offset}}
+\index{offset@{offset}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{offset}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ size\+\_\+t {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::offset\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1MaxPooling_a04aea184834d80f89a3962a391bd0c76}
+
+
+Locally-\/stored stored rounding offset. 
+
+
+
+Definition at line 222 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!output\+Height@{output\+Height}}
+\index{output\+Height@{output\+Height}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{output\+Height}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ size\+\_\+t {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Height\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1MaxPooling_a80d0b811f400c1979a9d3b4978f7fcee}
+
+
+Locally-\/stored output height. 
+
+
+
+Definition at line 234 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!output\+Parameter@{output\+Parameter}}
+\index{output\+Parameter@{output\+Parameter}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{output\+Parameter}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Parameter\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1MaxPooling_a333a98bbdff3dd819b0287fc0cf53161}
+
+
+Locally-\/stored output parameter object. 
+
+
+
+Definition at line 261 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!output\+Temp@{output\+Temp}}
+\index{output\+Temp@{output\+Temp}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{output\+Temp}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ arma\+::cube {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Temp\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1MaxPooling_ab9ce0b71f73a2ed53a02edfd12c9f4b4}
+
+
+Locally-\/stored output parameter. 
+
+
+
+Definition at line 240 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!output\+Width@{output\+Width}}
+\index{output\+Width@{output\+Width}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{output\+Width}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ size\+\_\+t {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Width\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1MaxPooling_a876b2767a09dc1467ed3bc01997867df}
+
+
+Locally-\/stored output width. 
+
+
+
+Definition at line 231 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!out\+Size@{out\+Size}}
+\index{out\+Size@{out\+Size}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{out\+Size}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ size\+\_\+t {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::out\+Size\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1MaxPooling_a4e690ee50dbec5cea05e47b06667d3d3}
+
+
+Locally-\/stored number of output units. 
+
+
+
+Definition at line 201 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!pooling@{pooling}}
+\index{pooling@{pooling}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{pooling}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ {\bf Max\+Pooling\+Rule} {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::pooling\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1MaxPooling_a2af9c7d48fbbb03d97fd23dabd686a39}
+
+
+Locally-\/stored pooling strategy. 
+
+
+
+Definition at line 249 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!pooling\+Indices@{pooling\+Indices}}
+\index{pooling\+Indices@{pooling\+Indices}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{pooling\+Indices}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ std\+::vector$<$arma\+::cube$>$ {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::pooling\+Indices\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1MaxPooling_a9d98b3a8670d11a97f4c49b39e28605a}
+
+
+Locally-\/stored pooling indicies. 
+
+
+
+Definition at line 270 of file max\+\_\+pooling.\+hpp.
+
+\index{mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}!reset@{reset}}
+\index{reset@{reset}!mlpack\+::ann\+::\+Max\+Pooling@{mlpack\+::ann\+::\+Max\+Pooling}}
+\subsubsection[{reset}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ bool {\bf mlpack\+::ann\+::\+Max\+Pooling}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::reset\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1MaxPooling_a5e0ca5d3d69ebb7463df47674a6fbc3b}
+
+
+Locally-\/stored reset parameter used to initialize the module once. 
+
+
+
+Definition at line 216 of file max\+\_\+pooling.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/ann/layer/{\bf max\+\_\+pooling.\+hpp}\end{DoxyCompactItemize}

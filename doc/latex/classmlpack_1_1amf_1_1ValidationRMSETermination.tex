@@ -1,0 +1,499 @@
+\section{mlpack\+:\+:amf\+:\+:Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1amf_1_1ValidationRMSETermination}\index{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$}}
+
+
+This class implements validation termination policy based on R\+M\+SE index.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Validation\+R\+M\+S\+E\+Termination} (Mat\+Type \&V, size\+\_\+t {\bf num\+\_\+test\+\_\+points}, double {\bf tolerance}=1e-\/5, size\+\_\+t max\+Iterations=10000, size\+\_\+t reverse\+Step\+Tolerance=3)
+\begin{DoxyCompactList}\small\item\em Create a validation set according to given parameters and nullifies this set in data matrix(training set). \end{DoxyCompactList}\item 
+const double \& {\bf Index} () const 
+\begin{DoxyCompactList}\small\item\em Get current value of residue. \end{DoxyCompactList}\item 
+void {\bf Initialize} (const Mat\+Type \&)
+\begin{DoxyCompactList}\small\item\em Initializes the termination policy before stating the factorization. \end{DoxyCompactList}\item 
+bool {\bf Is\+Converged} (arma\+::mat \&{\bf W}, arma\+::mat \&{\bf H})
+\begin{DoxyCompactList}\small\item\em Check if termination criterio is met. \end{DoxyCompactList}\item 
+const size\+\_\+t \& {\bf Iteration} () const 
+\begin{DoxyCompactList}\small\item\em Get current iteration count. \end{DoxyCompactList}\item 
+const size\+\_\+t \& {\bf Max\+Iterations} () const 
+\begin{DoxyCompactList}\small\item\em Access upper limit of iteration count. \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Max\+Iterations} ()
+\item 
+const size\+\_\+t \& {\bf Num\+Test\+Points} () const 
+\begin{DoxyCompactList}\small\item\em Get number of validation points. \end{DoxyCompactList}\item 
+const double \& {\bf Tolerance} () const 
+\begin{DoxyCompactList}\small\item\em Access tolerance value. \end{DoxyCompactList}\item 
+double \& {\bf Tolerance} ()
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+double {\bf c\+\_\+index}
+\item 
+double {\bf c\+\_\+index\+Old}
+\item 
+arma\+::mat {\bf H}
+\item 
+bool {\bf is\+Copy}
+\begin{DoxyCompactList}\small\item\em indicates whether a copy of information is available which corresponds to minimum residue point \end{DoxyCompactList}\item 
+size\+\_\+t {\bf iteration}
+\begin{DoxyCompactList}\small\item\em current iteration count \end{DoxyCompactList}\item 
+size\+\_\+t {\bf max\+Iterations}
+\begin{DoxyCompactList}\small\item\em max iteration limit \end{DoxyCompactList}\item 
+size\+\_\+t {\bf num\+\_\+test\+\_\+points}
+\begin{DoxyCompactList}\small\item\em number of validation test points \end{DoxyCompactList}\item 
+size\+\_\+t {\bf reverse\+Step\+Count}
+\begin{DoxyCompactList}\small\item\em successive residue drops \end{DoxyCompactList}\item 
+size\+\_\+t {\bf reverse\+Step\+Tolerance}
+\begin{DoxyCompactList}\small\item\em tolerance on successive residue drops \end{DoxyCompactList}\item 
+double {\bf rmse}
+\item 
+double {\bf rmse\+Old}
+\begin{DoxyCompactList}\small\item\em rmse values \end{DoxyCompactList}\item 
+arma\+::mat {\bf test\+\_\+points}
+\begin{DoxyCompactList}\small\item\em validation point matrix \end{DoxyCompactList}\item 
+double {\bf tolerance}
+\begin{DoxyCompactList}\small\item\em tolerance \end{DoxyCompactList}\item 
+arma\+::mat {\bf W}
+\begin{DoxyCompactList}\small\item\em variables to store information of minimum residue point \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$class Mat\+Type$>$\\*
+class mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$}
+
+This class implements validation termination policy based on R\+M\+SE index. 
+
+The input data matrix is divided into 2 sets, training set and validation set. Entries of validation set are nullifed in the input matrix. Termination criterion is met when increase in validation set R\+M\+Se value drops below the given tolerance. To accommodate spikes certain number of successive validation R\+M\+SE drops are accepted. This upper imit on successive drops can be adjusted with reverse\+Step\+Count. Secondary termination criterion terminates algorithm when iteration count goes above the threshold.
+
+\begin{DoxyNote}{Note}
+The input matrix is modified by this termination policy.
+\end{DoxyNote}
+\begin{DoxySeeAlso}{See also}
+\doxyref{A\+MF}{p.}{classmlpack_1_1amf_1_1AMF} 
+\end{DoxySeeAlso}
+
+
+Definition at line 37 of file validation\+\_\+\+R\+M\+S\+E\+\_\+termination.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}!Validation\+R\+M\+S\+E\+Termination@{Validation\+R\+M\+S\+E\+Termination}}
+\index{Validation\+R\+M\+S\+E\+Termination@{Validation\+R\+M\+S\+E\+Termination}!mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}}
+\subsubsection[{Validation\+R\+M\+S\+E\+Termination(\+Mat\+Type \&\+V, size\+\_\+t num\+\_\+test\+\_\+points, double tolerance=1e-\/5, size\+\_\+t max\+Iterations=10000, size\+\_\+t reverse\+Step\+Tolerance=3)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Mat\+Type $>$ {\bf mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}$<$ Mat\+Type $>$\+::{\bf Validation\+R\+M\+S\+E\+Termination} (
+\begin{DoxyParamCaption}
+\item[{Mat\+Type \&}]{V, }
+\item[{size\+\_\+t}]{num\+\_\+test\+\_\+points, }
+\item[{double}]{tolerance = {\ttfamily 1e-\/5}, }
+\item[{size\+\_\+t}]{max\+Iterations = {\ttfamily 10000}, }
+\item[{size\+\_\+t}]{reverse\+Step\+Tolerance = {\ttfamily 3}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1amf_1_1ValidationRMSETermination_ad72912145f6aaa5f0e82010a1b6c92a4}
+
+
+Create a validation set according to given parameters and nullifies this set in data matrix(training set). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em V} & Input matrix to be factorized. \\
+\hline
+{\em num\+\_\+test\+\_\+points} & number of validation test points \\
+\hline
+{\em max\+Iterations} & max iteration count before termination \\
+\hline
+{\em reverse\+Step\+Tolerance} & max successive R\+M\+SE drops allowed \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 49 of file validation\+\_\+\+R\+M\+S\+E\+\_\+termination.\+hpp.
+
+
+
+References mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::num\+\_\+test\+\_\+points, and mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::test\+\_\+points.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}!Index@{Index}}
+\index{Index@{Index}!mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}}
+\subsubsection[{Index() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Mat\+Type $>$ const double\& {\bf mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}$<$ Mat\+Type $>$\+::Index (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1amf_1_1ValidationRMSETermination_a626e0768e33ae56537975b1bc79f5734}
+
+
+Get current value of residue. 
+
+
+
+Definition at line 187 of file validation\+\_\+\+R\+M\+S\+E\+\_\+termination.\+hpp.
+
+
+
+References mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::rmse.
+
+\index{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}}
+\subsubsection[{Initialize(const Mat\+Type \&)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Mat\+Type $>$ void {\bf mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}$<$ Mat\+Type $>$\+::Initialize (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1amf_1_1ValidationRMSETermination_a56471b093e612e0ba23780dc59d4fb81}
+
+
+Initializes the termination policy before stating the factorization. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em V} & Input matrix to be factorized. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 94 of file validation\+\_\+\+R\+M\+S\+E\+\_\+termination.\+hpp.
+
+
+
+References mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::c\+\_\+index, mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::c\+\_\+index\+Old, mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::is\+Copy, mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::iteration, mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::reverse\+Step\+Count, mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::rmse, and mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::rmse\+Old.
+
+\index{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}!Is\+Converged@{Is\+Converged}}
+\index{Is\+Converged@{Is\+Converged}!mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}}
+\subsubsection[{Is\+Converged(arma\+::mat \&\+W, arma\+::mat \&\+H)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Mat\+Type $>$ bool {\bf mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}$<$ Mat\+Type $>$\+::Is\+Converged (
+\begin{DoxyParamCaption}
+\item[{arma\+::mat \&}]{W, }
+\item[{arma\+::mat \&}]{H}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1amf_1_1ValidationRMSETermination_a8b3f6ab15f0daedfed822879576bbefa}
+
+
+Check if termination criterio is met. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em W} & Basis matrix of output. \\
+\hline
+{\em H} & Encoding matrix of output. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 114 of file validation\+\_\+\+R\+M\+S\+E\+\_\+termination.\+hpp.
+
+
+
+References mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::c\+\_\+index, mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::c\+\_\+index\+Old, mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::H, mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::is\+Copy, mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::iteration, mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::max\+Iterations, mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::num\+\_\+test\+\_\+points, mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::reverse\+Step\+Count, mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::reverse\+Step\+Tolerance, mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::rmse, mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::rmse\+Old, mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::test\+\_\+points, and mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::W.
+
+\index{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}!Iteration@{Iteration}}
+\index{Iteration@{Iteration}!mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}}
+\subsubsection[{Iteration() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Mat\+Type $>$ const size\+\_\+t\& {\bf mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}$<$ Mat\+Type $>$\+::Iteration (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1amf_1_1ValidationRMSETermination_ae7d3ec4bd8b137bfd9d03b3301bd6d1a}
+
+
+Get current iteration count. 
+
+
+
+Definition at line 190 of file validation\+\_\+\+R\+M\+S\+E\+\_\+termination.\+hpp.
+
+
+
+References mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::iteration.
+
+\index{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}!Max\+Iterations@{Max\+Iterations}}
+\index{Max\+Iterations@{Max\+Iterations}!mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}}
+\subsubsection[{Max\+Iterations() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Mat\+Type $>$ const size\+\_\+t\& {\bf mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}$<$ Mat\+Type $>$\+::Max\+Iterations (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1amf_1_1ValidationRMSETermination_acd50cc10ba4253df3596641d0a804a68}
+
+
+Access upper limit of iteration count. 
+
+
+
+Definition at line 196 of file validation\+\_\+\+R\+M\+S\+E\+\_\+termination.\+hpp.
+
+
+
+References mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::max\+Iterations.
+
+\index{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}!Max\+Iterations@{Max\+Iterations}}
+\index{Max\+Iterations@{Max\+Iterations}!mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}}
+\subsubsection[{Max\+Iterations()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Mat\+Type $>$ size\+\_\+t\& {\bf mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}$<$ Mat\+Type $>$\+::Max\+Iterations (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1amf_1_1ValidationRMSETermination_a3399d7f9ebaff93d5a82808a58ed41b7}
+
+
+Definition at line 197 of file validation\+\_\+\+R\+M\+S\+E\+\_\+termination.\+hpp.
+
+
+
+References mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::max\+Iterations.
+
+\index{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}!Num\+Test\+Points@{Num\+Test\+Points}}
+\index{Num\+Test\+Points@{Num\+Test\+Points}!mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}}
+\subsubsection[{Num\+Test\+Points() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Mat\+Type $>$ const size\+\_\+t\& {\bf mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}$<$ Mat\+Type $>$\+::Num\+Test\+Points (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1amf_1_1ValidationRMSETermination_a15af163a5d4a62ba9dbc6b26b75dabb7}
+
+
+Get number of validation points. 
+
+
+
+Definition at line 193 of file validation\+\_\+\+R\+M\+S\+E\+\_\+termination.\+hpp.
+
+
+
+References mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::num\+\_\+test\+\_\+points.
+
+\index{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}!Tolerance@{Tolerance}}
+\index{Tolerance@{Tolerance}!mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}}
+\subsubsection[{Tolerance() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Mat\+Type $>$ const double\& {\bf mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}$<$ Mat\+Type $>$\+::Tolerance (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1amf_1_1ValidationRMSETermination_a3501630aaaa5037e92d1b0369864aa81}
+
+
+Access tolerance value. 
+
+
+
+Definition at line 200 of file validation\+\_\+\+R\+M\+S\+E\+\_\+termination.\+hpp.
+
+
+
+References mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::tolerance.
+
+\index{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}!Tolerance@{Tolerance}}
+\index{Tolerance@{Tolerance}!mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}}
+\subsubsection[{Tolerance()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Mat\+Type $>$ double\& {\bf mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}$<$ Mat\+Type $>$\+::Tolerance (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1amf_1_1ValidationRMSETermination_aa8a3a22f28317d26ae580cc4d49ce2a7}
+
+
+Definition at line 201 of file validation\+\_\+\+R\+M\+S\+E\+\_\+termination.\+hpp.
+
+
+
+References mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::tolerance.
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}!c\+\_\+index@{c\+\_\+index}}
+\index{c\+\_\+index@{c\+\_\+index}!mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}}
+\subsubsection[{c\+\_\+index}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Mat\+Type $>$ double {\bf mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}$<$ Mat\+Type $>$\+::c\+\_\+index\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1amf_1_1ValidationRMSETermination_ab3f28da1cbdce64962526cb8d42c7b35}
+
+
+Definition at line 234 of file validation\+\_\+\+R\+M\+S\+E\+\_\+termination.\+hpp.
+
+
+
+Referenced by mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::\+Initialize(), and mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::\+Is\+Converged().
+
+\index{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}!c\+\_\+index\+Old@{c\+\_\+index\+Old}}
+\index{c\+\_\+index\+Old@{c\+\_\+index\+Old}!mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}}
+\subsubsection[{c\+\_\+index\+Old}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Mat\+Type $>$ double {\bf mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}$<$ Mat\+Type $>$\+::c\+\_\+index\+Old\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1amf_1_1ValidationRMSETermination_ad77132ce1ebf4e46a8c379f0550ccf75}
+
+
+Definition at line 233 of file validation\+\_\+\+R\+M\+S\+E\+\_\+termination.\+hpp.
+
+
+
+Referenced by mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::\+Initialize(), and mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::\+Is\+Converged().
+
+\index{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}!H@{H}}
+\index{H@{H}!mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}}
+\subsubsection[{H}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Mat\+Type $>$ arma\+::mat {\bf mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}$<$ Mat\+Type $>$\+::H\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1amf_1_1ValidationRMSETermination_a7de46b1fac0f9dd2c4abcee499523f95}
+
+
+Definition at line 232 of file validation\+\_\+\+R\+M\+S\+E\+\_\+termination.\+hpp.
+
+
+
+Referenced by mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::\+Is\+Converged().
+
+\index{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}!is\+Copy@{is\+Copy}}
+\index{is\+Copy@{is\+Copy}!mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}}
+\subsubsection[{is\+Copy}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Mat\+Type $>$ bool {\bf mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}$<$ Mat\+Type $>$\+::is\+Copy\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1amf_1_1ValidationRMSETermination_a7ac5f10fb48d1c594f2f015455cc6116}
+
+
+indicates whether a copy of information is available which corresponds to minimum residue point 
+
+
+
+Definition at line 228 of file validation\+\_\+\+R\+M\+S\+E\+\_\+termination.\+hpp.
+
+
+
+Referenced by mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::\+Initialize(), and mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::\+Is\+Converged().
+
+\index{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}!iteration@{iteration}}
+\index{iteration@{iteration}!mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}}
+\subsubsection[{iteration}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Mat\+Type $>$ size\+\_\+t {\bf mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}$<$ Mat\+Type $>$\+::iteration\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1amf_1_1ValidationRMSETermination_af078313ea13a6a640428cd71d5ee476d}
+
+
+current iteration count 
+
+
+
+Definition at line 212 of file validation\+\_\+\+R\+M\+S\+E\+\_\+termination.\+hpp.
+
+
+
+Referenced by mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::\+Initialize(), mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::\+Is\+Converged(), and mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::\+Iteration().
+
+\index{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}!max\+Iterations@{max\+Iterations}}
+\index{max\+Iterations@{max\+Iterations}!mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}}
+\subsubsection[{max\+Iterations}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Mat\+Type $>$ size\+\_\+t {\bf mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}$<$ Mat\+Type $>$\+::max\+Iterations\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1amf_1_1ValidationRMSETermination_ae7ab2e014d372e9156af93ad38b68629}
+
+
+max iteration limit 
+
+
+
+Definition at line 207 of file validation\+\_\+\+R\+M\+S\+E\+\_\+termination.\+hpp.
+
+
+
+Referenced by mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::\+Is\+Converged(), and mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::\+Max\+Iterations().
+
+\index{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}!num\+\_\+test\+\_\+points@{num\+\_\+test\+\_\+points}}
+\index{num\+\_\+test\+\_\+points@{num\+\_\+test\+\_\+points}!mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}}
+\subsubsection[{num\+\_\+test\+\_\+points}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Mat\+Type $>$ size\+\_\+t {\bf mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}$<$ Mat\+Type $>$\+::num\+\_\+test\+\_\+points\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1amf_1_1ValidationRMSETermination_a374e464e94ebebf15e927b5ecac5636f}
+
+
+number of validation test points 
+
+
+
+Definition at line 209 of file validation\+\_\+\+R\+M\+S\+E\+\_\+termination.\+hpp.
+
+
+
+Referenced by mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::\+Is\+Converged(), mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::\+Num\+Test\+Points(), and mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::\+Validation\+R\+M\+S\+E\+Termination().
+
+\index{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}!reverse\+Step\+Count@{reverse\+Step\+Count}}
+\index{reverse\+Step\+Count@{reverse\+Step\+Count}!mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}}
+\subsubsection[{reverse\+Step\+Count}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Mat\+Type $>$ size\+\_\+t {\bf mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}$<$ Mat\+Type $>$\+::reverse\+Step\+Count\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1amf_1_1ValidationRMSETermination_a64fb4214dbd7910232440b016a98644b}
+
+
+successive residue drops 
+
+
+
+Definition at line 224 of file validation\+\_\+\+R\+M\+S\+E\+\_\+termination.\+hpp.
+
+
+
+Referenced by mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::\+Initialize(), and mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::\+Is\+Converged().
+
+\index{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}!reverse\+Step\+Tolerance@{reverse\+Step\+Tolerance}}
+\index{reverse\+Step\+Tolerance@{reverse\+Step\+Tolerance}!mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}}
+\subsubsection[{reverse\+Step\+Tolerance}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Mat\+Type $>$ size\+\_\+t {\bf mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}$<$ Mat\+Type $>$\+::reverse\+Step\+Tolerance\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1amf_1_1ValidationRMSETermination_aa9c814c6c353ee046e0eed93b16074b8}
+
+
+tolerance on successive residue drops 
+
+
+
+Definition at line 222 of file validation\+\_\+\+R\+M\+S\+E\+\_\+termination.\+hpp.
+
+
+
+Referenced by mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::\+Is\+Converged().
+
+\index{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}!rmse@{rmse}}
+\index{rmse@{rmse}!mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}}
+\subsubsection[{rmse}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Mat\+Type $>$ double {\bf mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}$<$ Mat\+Type $>$\+::rmse\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1amf_1_1ValidationRMSETermination_a1c6e6532e567aa2001403fd9f58c769f}
+
+
+Definition at line 219 of file validation\+\_\+\+R\+M\+S\+E\+\_\+termination.\+hpp.
+
+
+
+Referenced by mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::\+Index(), mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::\+Initialize(), and mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::\+Is\+Converged().
+
+\index{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}!rmse\+Old@{rmse\+Old}}
+\index{rmse\+Old@{rmse\+Old}!mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}}
+\subsubsection[{rmse\+Old}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Mat\+Type $>$ double {\bf mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}$<$ Mat\+Type $>$\+::rmse\+Old\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1amf_1_1ValidationRMSETermination_a5a5bdd5602605056d6d225ab31c9db1c}
+
+
+rmse values 
+
+
+
+Definition at line 218 of file validation\+\_\+\+R\+M\+S\+E\+\_\+termination.\+hpp.
+
+
+
+Referenced by mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::\+Initialize(), and mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::\+Is\+Converged().
+
+\index{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}!test\+\_\+points@{test\+\_\+points}}
+\index{test\+\_\+points@{test\+\_\+points}!mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}}
+\subsubsection[{test\+\_\+points}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Mat\+Type $>$ arma\+::mat {\bf mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}$<$ Mat\+Type $>$\+::test\+\_\+points\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1amf_1_1ValidationRMSETermination_a5148461a3ff51b5d57188eb8d75c7a9e}
+
+
+validation point matrix 
+
+
+
+Definition at line 215 of file validation\+\_\+\+R\+M\+S\+E\+\_\+termination.\+hpp.
+
+
+
+Referenced by mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::\+Is\+Converged(), and mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::\+Validation\+R\+M\+S\+E\+Termination().
+
+\index{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}!tolerance@{tolerance}}
+\index{tolerance@{tolerance}!mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}}
+\subsubsection[{tolerance}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Mat\+Type $>$ double {\bf mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}$<$ Mat\+Type $>$\+::tolerance\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1amf_1_1ValidationRMSETermination_a8c24c251ad318a5ebd84500e3f685813}
+
+
+tolerance 
+
+
+
+Definition at line 205 of file validation\+\_\+\+R\+M\+S\+E\+\_\+termination.\+hpp.
+
+
+
+Referenced by mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::\+Tolerance().
+
+\index{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}!W@{W}}
+\index{W@{W}!mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination@{mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}}
+\subsubsection[{W}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Mat\+Type $>$ arma\+::mat {\bf mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination}$<$ Mat\+Type $>$\+::W\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1amf_1_1ValidationRMSETermination_abd7ae3704f27e121e05367c6d16415e7}
+
+
+variables to store information of minimum residue point 
+
+
+
+Definition at line 231 of file validation\+\_\+\+R\+M\+S\+E\+\_\+termination.\+hpp.
+
+
+
+Referenced by mlpack\+::amf\+::\+Validation\+R\+M\+S\+E\+Termination$<$ Mat\+Type $>$\+::\+Is\+Converged().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/amf/termination\+\_\+policies/{\bf validation\+\_\+\+R\+M\+S\+E\+\_\+termination.\+hpp}\end{DoxyCompactItemize}

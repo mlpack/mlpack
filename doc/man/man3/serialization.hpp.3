@@ -1,0 +1,67 @@
+.TH "src/mlpack/tests/serialization.hpp" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+src/mlpack/tests/serialization.hpp \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "\fILinear algebra utility functions, generally performed on matrices or vectors\&. \fP"
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBmlpack::CheckMatrices\fP (const arma::mat &x, const arma::mat &xmlX, const arma::mat &textX, const arma::mat &binaryX)"
+.br
+.ti -1c
+.RI "void \fBmlpack::CheckMatrices\fP (const arma::Mat< size_t > &x, const arma::Mat< size_t > &xmlX, const arma::Mat< size_t > &textX, const arma::Mat< size_t > &binaryX)"
+.br
+.ti -1c
+.RI "template<typename T , typename IArchiveType , typename OArchiveType > void \fBmlpack::SerializeObject\fP (T &t, T &newT)"
+.br
+.ti -1c
+.RI "template<typename T > void \fBmlpack::SerializeObjectAll\fP (T &t, T &xmlT, T &textT, T &binaryT)"
+.br
+.ti -1c
+.RI "template<typename T , typename IArchiveType , typename OArchiveType > void \fBmlpack::SerializePointerObject\fP (T *t, T *&newT)"
+.br
+.ti -1c
+.RI "template<typename T > void \fBmlpack::SerializePointerObjectAll\fP (T *t, T *&xmlT, T *&textT, T *&binaryT)"
+.br
+.ti -1c
+.RI "template<typename CubeType > void \fBmlpack::TestAllArmadilloSerialization\fP (arma::Cube< CubeType > &x)"
+.br
+.ti -1c
+.RI "template<typename MatType > void \fBmlpack::TestAllArmadilloSerialization\fP (MatType &x)"
+.br
+.ti -1c
+.RI "template<typename CubeType , typename IArchiveType , typename OArchiveType > void \fBmlpack::TestArmadilloSerialization\fP (arma::Cube< CubeType > &x)"
+.br
+.ti -1c
+.RI "template<typename MatType , typename IArchiveType , typename OArchiveType > void \fBmlpack::TestArmadilloSerialization\fP (MatType &x)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Ryan Curtin
+.RE
+.PP
+Miscellaneous utility functions for serialization tests\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBserialization\&.hpp\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

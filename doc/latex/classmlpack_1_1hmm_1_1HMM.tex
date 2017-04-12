@@ -1,0 +1,741 @@
+\section{mlpack\+:\+:hmm\+:\+:H\+MM$<$ Distribution $>$ Class Template Reference}
+\label{classmlpack_1_1hmm_1_1HMM}\index{mlpack\+::hmm\+::\+H\+M\+M$<$ Distribution $>$@{mlpack\+::hmm\+::\+H\+M\+M$<$ Distribution $>$}}
+
+
+A class that represents a Hidden Markov Model with an arbitrary type of emission distribution.  
+
+
+
+
+Inheritance diagram for mlpack\+:\+:hmm\+:\+:H\+MM$<$ Distribution $>$\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmlpack_1_1hmm_1_1HMM__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf H\+MM} (const size\+\_\+t states=0, const Distribution emissions=Distribution(), const double {\bf tolerance}=1e-\/5)
+\begin{DoxyCompactList}\small\item\em Create the Hidden Markov Model with the given number of hidden states and the given default distribution for emissions. \end{DoxyCompactList}\item 
+{\bf H\+MM} (const arma\+::vec \&{\bf initial}, const arma\+::mat \&{\bf transition}, const std\+::vector$<$ Distribution $>$ \&{\bf emission}, const double {\bf tolerance}=1e-\/5)
+\begin{DoxyCompactList}\small\item\em Create the Hidden Markov Model with the given initial probability vector, the given transition matrix, and the given emission distributions. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Dimensionality} () const 
+\begin{DoxyCompactList}\small\item\em Get the dimensionality of observations. \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Dimensionality} ()
+\begin{DoxyCompactList}\small\item\em Set the dimensionality of observations. \end{DoxyCompactList}\item 
+const std\+::vector$<$ Distribution $>$ \& {\bf Emission} () const 
+\begin{DoxyCompactList}\small\item\em Return the emission distributions. \end{DoxyCompactList}\item 
+std\+::vector$<$ Distribution $>$ \& {\bf Emission} ()
+\begin{DoxyCompactList}\small\item\em Return a modifiable emission probability matrix reference. \end{DoxyCompactList}\item 
+double {\bf Estimate} (const arma\+::mat \&data\+Seq, arma\+::mat \&state\+Prob, arma\+::mat \&forward\+Prob, arma\+::mat \&backward\+Prob, arma\+::vec \&scales) const 
+\begin{DoxyCompactList}\small\item\em Estimate the probabilities of each hidden state at each time step for each given data observation, using the Forward-\/\+Backward algorithm. \end{DoxyCompactList}\item 
+double {\bf Estimate} (const arma\+::mat \&data\+Seq, arma\+::mat \&state\+Prob) const 
+\begin{DoxyCompactList}\small\item\em Estimate the probabilities of each hidden state at each time step of each given data observation, using the Forward-\/\+Backward algorithm. \end{DoxyCompactList}\item 
+void {\bf Filter} (const arma\+::mat \&data\+Seq, arma\+::mat \&filter\+Seq, size\+\_\+t ahead=0) const 
+\begin{DoxyCompactList}\small\item\em \doxyref{H\+MM}{p.}{classmlpack_1_1hmm_1_1HMM} filtering. \end{DoxyCompactList}\item 
+void {\bf Generate} (const size\+\_\+t length, arma\+::mat \&data\+Sequence, arma\+::\+Row$<$ size\+\_\+t $>$ \&state\+Sequence, const size\+\_\+t start\+State=0) const 
+\begin{DoxyCompactList}\small\item\em Generate a random data sequence of the given length. \end{DoxyCompactList}\item 
+const arma\+::vec \& {\bf Initial} () const 
+\begin{DoxyCompactList}\small\item\em Return the vector of initial state probabilities. \end{DoxyCompactList}\item 
+arma\+::vec \& {\bf Initial} ()
+\begin{DoxyCompactList}\small\item\em Modify the vector of initial state probabilities. \end{DoxyCompactList}\item 
+double {\bf Log\+Likelihood} (const arma\+::mat \&data\+Seq) const 
+\begin{DoxyCompactList}\small\item\em Compute the log-\/likelihood of the given data sequence. \end{DoxyCompactList}\item 
+double {\bf Predict} (const arma\+::mat \&data\+Seq, arma\+::\+Row$<$ size\+\_\+t $>$ \&state\+Seq) const 
+\begin{DoxyCompactList}\small\item\em Compute the most probable hidden state sequence for the given data sequence, using the Viterbi algorithm, returning the log-\/likelihood of the most likely state sequence. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&ar, const unsigned int version)
+\begin{DoxyCompactList}\small\item\em Serialize the object. \end{DoxyCompactList}\item 
+void {\bf Smooth} (const arma\+::mat \&data\+Seq, arma\+::mat \&smooth\+Seq) const 
+\begin{DoxyCompactList}\small\item\em \doxyref{H\+MM}{p.}{classmlpack_1_1hmm_1_1HMM} smoothing. \end{DoxyCompactList}\item 
+double {\bf Tolerance} () const 
+\begin{DoxyCompactList}\small\item\em Get the tolerance of the Baum-\/\+Welch algorithm. \end{DoxyCompactList}\item 
+double \& {\bf Tolerance} ()
+\begin{DoxyCompactList}\small\item\em Modify the tolerance of the Baum-\/\+Welch algorithm. \end{DoxyCompactList}\item 
+void {\bf Train} (const std\+::vector$<$ arma\+::mat $>$ \&data\+Seq)
+\begin{DoxyCompactList}\small\item\em Train the model using the Baum-\/\+Welch algorithm, with only the given unlabeled observations. \end{DoxyCompactList}\item 
+void {\bf Train} (const std\+::vector$<$ arma\+::mat $>$ \&data\+Seq, const std\+::vector$<$ arma\+::\+Row$<$ size\+\_\+t $>$ $>$ \&state\+Seq)
+\begin{DoxyCompactList}\small\item\em Train the model using the given labeled observations; the transition and emission matrices are directly estimated. \end{DoxyCompactList}\item 
+const arma\+::mat \& {\bf Transition} () const 
+\begin{DoxyCompactList}\small\item\em Return the transition matrix. \end{DoxyCompactList}\item 
+arma\+::mat \& {\bf Transition} ()
+\begin{DoxyCompactList}\small\item\em Return a modifiable transition matrix reference. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void {\bf Backward} (const arma\+::mat \&data\+Seq, const arma\+::vec \&scales, arma\+::mat \&backward\+Prob) const 
+\begin{DoxyCompactList}\small\item\em The Backward algorithm (part of the Forward-\/\+Backward algorithm). \end{DoxyCompactList}\item 
+void {\bf Forward} (const arma\+::mat \&data\+Seq, arma\+::vec \&scales, arma\+::mat \&forward\+Prob) const 
+\begin{DoxyCompactList}\small\item\em The Forward algorithm (part of the Forward-\/\+Backward algorithm). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::vector$<$ Distribution $>$ {\bf emission}
+\begin{DoxyCompactList}\small\item\em Set of emission probability distributions; one for each state. \end{DoxyCompactList}\item 
+arma\+::mat {\bf transition}
+\begin{DoxyCompactList}\small\item\em Transition probability matrix. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+size\+\_\+t {\bf dimensionality}
+\begin{DoxyCompactList}\small\item\em Dimensionality of observations. \end{DoxyCompactList}\item 
+arma\+::vec {\bf initial}
+\begin{DoxyCompactList}\small\item\em Initial state probability vector. \end{DoxyCompactList}\item 
+double {\bf tolerance}
+\begin{DoxyCompactList}\small\item\em Tolerance of Baum-\/\+Welch algorithm. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Distribution = distribution\+::\+Discrete\+Distribution$>$\\*
+class mlpack\+::hmm\+::\+H\+M\+M$<$ Distribution $>$}
+
+A class that represents a Hidden Markov Model with an arbitrary type of emission distribution. 
+
+This \doxyref{H\+MM}{p.}{classmlpack_1_1hmm_1_1HMM} class supports training (supervised and unsupervised), prediction of state sequences via the Viterbi algorithm, estimation of state probabilities, generation of random sequences, and calculation of the log-\/likelihood of a given sequence.
+
+The template parameter, Distribution, specifies the distribution which the emissions follow. The class should implement the following functions\+:
+
+
+\begin{DoxyCode}
+\textcolor{keyword}{class }Distribution
+\{
+ \textcolor{keyword}{public}:
+  \textcolor{comment}{// The type of observation used by this distribution.}
+  \textcolor{keyword}{typedef} something DataType;
+
+  \textcolor{comment}{// Return the probability of the given observation.}
+  \textcolor{keywordtype}{double} Probability(\textcolor{keyword}{const} DataType& observation) \textcolor{keyword}{const};
+
+  \textcolor{comment}{// Estimate the distribution based on the given observations.}
+  \textcolor{keywordtype}{void} Train(\textcolor{keyword}{const} std::vector<DataType>& observations);
+
+  \textcolor{comment}{// Estimate the distribution based on the given observations, given also}
+  \textcolor{comment}{// the probability of each observation coming from this distribution.}
+  \textcolor{keywordtype}{void} Train(\textcolor{keyword}{const} std::vector<DataType>& observations,
+             \textcolor{keyword}{const} std::vector<double>& probabilities);
+\};
+\end{DoxyCode}
+
+
+See the \doxyref{mlpack\+::distribution\+::\+Discrete\+Distribution}{p.}{classmlpack_1_1distribution_1_1DiscreteDistribution} class for an example. One would use the Discrete\+Distribution class when the observations are non-\/negative integers. Other distributions could be Gaussians, a mixture of Gaussians (G\+MM), or any other probability distribution implementing the four Distribution functions.
+
+Usage of the \doxyref{H\+MM}{p.}{classmlpack_1_1hmm_1_1HMM} class generally involves either training an \doxyref{H\+MM}{p.}{classmlpack_1_1hmm_1_1HMM} or loading an already-\/known \doxyref{H\+MM}{p.}{classmlpack_1_1hmm_1_1HMM} and taking probability measurements of sequences. Example code for supervised training of a Gaussian \doxyref{H\+MM}{p.}{classmlpack_1_1hmm_1_1HMM} (that is, where the emission output distribution is a single Gaussian for each hidden state) is given below.
+
+
+\begin{DoxyCode}
+\textcolor{keyword}{extern} arma::mat observations; \textcolor{comment}{// Each column is an observation.}
+\textcolor{keyword}{extern} arma::Row<size\_t> states; \textcolor{comment}{// Hidden states for each observation.}
+\textcolor{comment}{// Create an untrained HMM with 5 hidden states and default (N(0, 1))}
+\textcolor{comment}{// Gaussian distributions with the dimensionality of the dataset.}
+HMM<GaussianDistribution> hmm(5, GaussianDistribution(observations.n\_rows));
+
+\textcolor{comment}{// Train the HMM (the labels could be omitted to perform unsupervised}
+\textcolor{comment}{// training).}
+hmm.Train(observations, states);
+\end{DoxyCode}
+
+
+Once initialized, the \doxyref{H\+MM}{p.}{classmlpack_1_1hmm_1_1HMM} can evaluate the probability of a certain sequence (with \doxyref{Log\+Likelihood()}{p.}{classmlpack_1_1hmm_1_1HMM_a83a6f6f0d75fae4f29e9c7e06d353f1d}), predict the most likely sequence of hidden states (with \doxyref{Predict()}{p.}{classmlpack_1_1hmm_1_1HMM_a40e667a6b5508c6d7853d53454a9d590}), generate a sequence (with \doxyref{Generate()}{p.}{classmlpack_1_1hmm_1_1HMM_a4716c89b2a2a064de6ed46f102de7d31}), or estimate the probabilities of each state for a sequence of observations (with \doxyref{Train()}{p.}{classmlpack_1_1hmm_1_1HMM_a222f6678e895293c0ddc3ebc86928f63}).
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Distribution} & Type of emission distribution for this \doxyref{H\+MM}{p.}{classmlpack_1_1hmm_1_1HMM}. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 85 of file hmm.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}!H\+MM@{H\+MM}}
+\index{H\+MM@{H\+MM}!mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}}
+\subsubsection[{H\+M\+M(const size\+\_\+t states=0, const Distribution emissions=\+Distribution(), const double tolerance=1e-\/5)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Distribution = distribution\+::\+Discrete\+Distribution$>$ {\bf mlpack\+::hmm\+::\+H\+MM}$<$ Distribution $>$\+::{\bf H\+MM} (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{states = {\ttfamily 0}, }
+\item[{const Distribution}]{emissions = {\ttfamily Distribution()}, }
+\item[{const double}]{tolerance = {\ttfamily 1e-\/5}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1hmm_1_1HMM_a4f260bb135a8f032e2127d4370afa49e}
+
+
+Create the Hidden Markov Model with the given number of hidden states and the given default distribution for emissions. 
+
+The dimensionality of the observations is taken from the emissions variable, so it is important that the given default emission distribution is set with the correct dimensionality. Alternately, set the dimensionality with \doxyref{Dimensionality()}{p.}{classmlpack_1_1hmm_1_1HMM_a5bfe57d1c239278113cac519f9da2106}. Optionally, the tolerance for convergence of the Baum-\/\+Welch algorithm can be set.
+
+By default, the transition matrix and initial probability vector are set to contain equal probability for each state.
+
+
+\begin{DoxyParams}{Parameters}
+{\em states} & Number of states. \\
+\hline
+{\em emissions} & Default distribution for emissions. \\
+\hline
+{\em tolerance} & Tolerance for convergence of training algorithm (Baum-\/\+Welch). \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}!H\+MM@{H\+MM}}
+\index{H\+MM@{H\+MM}!mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}}
+\subsubsection[{H\+M\+M(const arma\+::vec \&initial, const arma\+::mat \&transition, const std\+::vector$<$ Distribution $>$ \&emission, const double tolerance=1e-\/5)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Distribution = distribution\+::\+Discrete\+Distribution$>$ {\bf mlpack\+::hmm\+::\+H\+MM}$<$ Distribution $>$\+::{\bf H\+MM} (
+\begin{DoxyParamCaption}
+\item[{const arma\+::vec \&}]{initial, }
+\item[{const arma\+::mat \&}]{transition, }
+\item[{const std\+::vector$<$ Distribution $>$ \&}]{emission, }
+\item[{const double}]{tolerance = {\ttfamily 1e-\/5}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1hmm_1_1HMM_a6c8359ae696c381a71bc4056e69e653b}
+
+
+Create the Hidden Markov Model with the given initial probability vector, the given transition matrix, and the given emission distributions. 
+
+The dimensionality of the observations of the \doxyref{H\+MM}{p.}{classmlpack_1_1hmm_1_1HMM} are taken from the given emission distributions. Alternately, the dimensionality can be set with \doxyref{Dimensionality()}{p.}{classmlpack_1_1hmm_1_1HMM_a5bfe57d1c239278113cac519f9da2106}.
+
+The initial state probability vector should have length equal to the number of states, and each entry represents the probability of being in the given state at time T = 0 (the beginning of a sequence).
+
+The transition matrix should be such that T(i, j) is the probability of transition to state i from state j. The columns of the matrix should sum to 1.
+
+The emission matrix should be such that E(i, j) is the probability of emission i while in state j. The columns of the matrix should sum to 1.
+
+Optionally, the tolerance for convergence of the Baum-\/\+Welch algorithm can be set.
+
+
+\begin{DoxyParams}{Parameters}
+{\em initial} & Initial state probabilities. \\
+\hline
+{\em transition} & Transition matrix. \\
+\hline
+{\em emission} & Emission distributions. \\
+\hline
+{\em tolerance} & Tolerance for convergence of training algorithm (Baum-\/\+Welch). \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}!Backward@{Backward}}
+\index{Backward@{Backward}!mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}}
+\subsubsection[{Backward(const arma\+::mat \&data\+Seq, const arma\+::vec \&scales, arma\+::mat \&backward\+Prob) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Distribution = distribution\+::\+Discrete\+Distribution$>$ void {\bf mlpack\+::hmm\+::\+H\+MM}$<$ Distribution $>$\+::Backward (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{data\+Seq, }
+\item[{const arma\+::vec \&}]{scales, }
+\item[{arma\+::mat \&}]{backward\+Prob}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [protected]}}\label{classmlpack_1_1hmm_1_1HMM_a1e3846b8b11eef1ac72a71911f068d4a}
+
+
+The Backward algorithm (part of the Forward-\/\+Backward algorithm). 
+
+Computes backward probabilities for each state for each observation in the given data sequence, using the scaling factors found (presumably) by \doxyref{Forward()}{p.}{classmlpack_1_1hmm_1_1HMM_a9f751f398d07b15c0da8b824d48f5eb1}. The returned matrix has rows equal to the number of hidden states and columns equal to the number of observations.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data\+Seq} & Data sequence to compute probabilities for. \\
+\hline
+{\em scales} & Vector of scaling factors. \\
+\hline
+{\em backward\+Prob} & Matrix in which backward probabilities will be saved. \\
+\hline
+\end{DoxyParams}
+
+
+Referenced by mlpack\+::hmm\+::\+H\+M\+M$<$ distribution\+::\+Discrete\+Distribution $>$\+::\+Tolerance().
+
+\index{mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}!Dimensionality@{Dimensionality}}
+\index{Dimensionality@{Dimensionality}!mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}}
+\subsubsection[{Dimensionality() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Distribution = distribution\+::\+Discrete\+Distribution$>$ size\+\_\+t {\bf mlpack\+::hmm\+::\+H\+MM}$<$ Distribution $>$\+::Dimensionality (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1hmm_1_1HMM_ad21ef93bc0c453d74f6b0bc0234e312b}
+
+
+Get the dimensionality of observations. 
+
+
+
+Definition at line 316 of file hmm.\+hpp.
+
+\index{mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}!Dimensionality@{Dimensionality}}
+\index{Dimensionality@{Dimensionality}!mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}}
+\subsubsection[{Dimensionality()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Distribution = distribution\+::\+Discrete\+Distribution$>$ size\+\_\+t\& {\bf mlpack\+::hmm\+::\+H\+MM}$<$ Distribution $>$\+::Dimensionality (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1hmm_1_1HMM_a5bfe57d1c239278113cac519f9da2106}
+
+
+Set the dimensionality of observations. 
+
+
+
+Definition at line 318 of file hmm.\+hpp.
+
+\index{mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}!Emission@{Emission}}
+\index{Emission@{Emission}!mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}}
+\subsubsection[{Emission() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Distribution = distribution\+::\+Discrete\+Distribution$>$ const std\+::vector$<$Distribution$>$\& {\bf mlpack\+::hmm\+::\+H\+MM}$<$ Distribution $>$\+::Emission (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1hmm_1_1HMM_ae61af6d903e3e47357b56ee130bc4b9d}
+
+
+Return the emission distributions. 
+
+
+
+Definition at line 311 of file hmm.\+hpp.
+
+\index{mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}!Emission@{Emission}}
+\index{Emission@{Emission}!mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}}
+\subsubsection[{Emission()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Distribution = distribution\+::\+Discrete\+Distribution$>$ std\+::vector$<$Distribution$>$\& {\bf mlpack\+::hmm\+::\+H\+MM}$<$ Distribution $>$\+::Emission (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1hmm_1_1HMM_ab321be39937ca1f9e07d7d0aafef84b5}
+
+
+Return a modifiable emission probability matrix reference. 
+
+
+
+Definition at line 313 of file hmm.\+hpp.
+
+\index{mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}!Estimate@{Estimate}}
+\index{Estimate@{Estimate}!mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}}
+\subsubsection[{Estimate(const arma\+::mat \&data\+Seq, arma\+::mat \&state\+Prob, arma\+::mat \&forward\+Prob, arma\+::mat \&backward\+Prob, arma\+::vec \&scales) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Distribution = distribution\+::\+Discrete\+Distribution$>$ double {\bf mlpack\+::hmm\+::\+H\+MM}$<$ Distribution $>$\+::Estimate (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{data\+Seq, }
+\item[{arma\+::mat \&}]{state\+Prob, }
+\item[{arma\+::mat \&}]{forward\+Prob, }
+\item[{arma\+::mat \&}]{backward\+Prob, }
+\item[{arma\+::vec \&}]{scales}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1hmm_1_1HMM_aaf771c62844f8f3b62ce3dde31b6106d}
+
+
+Estimate the probabilities of each hidden state at each time step for each given data observation, using the Forward-\/\+Backward algorithm. 
+
+Each matrix which is returned has columns equal to the number of data observations, and rows equal to the number of hidden states in the model. The log-\/likelihood of the most probable sequence is returned.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data\+Seq} & Sequence of observations. \\
+\hline
+{\em state\+Prob} & Matrix in which the probabilities of each state at each time interval will be stored. \\
+\hline
+{\em forward\+Prob} & Matrix in which the forward probabilities of each state at each time interval will be stored. \\
+\hline
+{\em backward\+Prob} & Matrix in which the backward probabilities of each state at each time interval will be stored. \\
+\hline
+{\em scales} & Vector in which the scaling factors at each time interval will be stored. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Log-\/likelihood of most likely state sequence. 
+\end{DoxyReturn}
+\index{mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}!Estimate@{Estimate}}
+\index{Estimate@{Estimate}!mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}}
+\subsubsection[{Estimate(const arma\+::mat \&data\+Seq, arma\+::mat \&state\+Prob) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Distribution = distribution\+::\+Discrete\+Distribution$>$ double {\bf mlpack\+::hmm\+::\+H\+MM}$<$ Distribution $>$\+::Estimate (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{data\+Seq, }
+\item[{arma\+::mat \&}]{state\+Prob}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1hmm_1_1HMM_a2a18647329960038b4756d8e30e406df}
+
+
+Estimate the probabilities of each hidden state at each time step of each given data observation, using the Forward-\/\+Backward algorithm. 
+
+The returned matrix of state probabilities has columns equal to the number of data observations, and rows equal to the number of hidden states in the model. The log-\/likelihood of the most probable sequence is returned.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data\+Seq} & Sequence of observations. \\
+\hline
+{\em state\+Prob} & Probabilities of each state at each time interval. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Log-\/likelihood of most likely state sequence. 
+\end{DoxyReturn}
+\index{mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}!Filter@{Filter}}
+\index{Filter@{Filter}!mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}}
+\subsubsection[{Filter(const arma\+::mat \&data\+Seq, arma\+::mat \&filter\+Seq, size\+\_\+t ahead=0) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Distribution = distribution\+::\+Discrete\+Distribution$>$ void {\bf mlpack\+::hmm\+::\+H\+MM}$<$ Distribution $>$\+::Filter (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{data\+Seq, }
+\item[{arma\+::mat \&}]{filter\+Seq, }
+\item[{size\+\_\+t}]{ahead = {\ttfamily 0}}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1hmm_1_1HMM_acca74c35fb8ac24b2c08bfd6b064a170}
+
+
+\doxyref{H\+MM}{p.}{classmlpack_1_1hmm_1_1HMM} filtering. 
+
+Computes the k-\/step-\/ahead expected emission at each time conditioned only on prior observations. That is E\{ Y[t+k] $\vert$ Y[0], ..., Y[t] \}. The returned matrix has columns equal to the number of observations. Note that the expectation may not be meaningful for discrete emissions.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data\+Seq} & Sequence of observations. \\
+\hline
+{\em filter\+Seq} & Vector in which the expected emission sequence will be stored. \\
+\hline
+{\em ahead} & Number of steps ahead (k) for expectations. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}!Forward@{Forward}}
+\index{Forward@{Forward}!mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}}
+\subsubsection[{Forward(const arma\+::mat \&data\+Seq, arma\+::vec \&scales, arma\+::mat \&forward\+Prob) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Distribution = distribution\+::\+Discrete\+Distribution$>$ void {\bf mlpack\+::hmm\+::\+H\+MM}$<$ Distribution $>$\+::Forward (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{data\+Seq, }
+\item[{arma\+::vec \&}]{scales, }
+\item[{arma\+::mat \&}]{forward\+Prob}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [protected]}}\label{classmlpack_1_1hmm_1_1HMM_a9f751f398d07b15c0da8b824d48f5eb1}
+
+
+The Forward algorithm (part of the Forward-\/\+Backward algorithm). 
+
+Computes forward probabilities for each state for each observation in the given data sequence. The returned matrix has rows equal to the number of hidden states and columns equal to the number of observations.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data\+Seq} & Data sequence to compute probabilities for. \\
+\hline
+{\em scales} & Vector in which scaling factors will be saved. \\
+\hline
+{\em forward\+Prob} & Matrix in which forward probabilities will be saved. \\
+\hline
+\end{DoxyParams}
+
+
+Referenced by mlpack\+::hmm\+::\+H\+M\+M$<$ distribution\+::\+Discrete\+Distribution $>$\+::\+Tolerance().
+
+\index{mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}!Generate@{Generate}}
+\index{Generate@{Generate}!mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}}
+\subsubsection[{Generate(const size\+\_\+t length, arma\+::mat \&data\+Sequence, arma\+::\+Row$<$ size\+\_\+t $>$ \&state\+Sequence, const size\+\_\+t start\+State=0) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Distribution = distribution\+::\+Discrete\+Distribution$>$ void {\bf mlpack\+::hmm\+::\+H\+MM}$<$ Distribution $>$\+::Generate (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{length, }
+\item[{arma\+::mat \&}]{data\+Sequence, }
+\item[{arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{state\+Sequence, }
+\item[{const size\+\_\+t}]{start\+State = {\ttfamily 0}}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1hmm_1_1HMM_a4716c89b2a2a064de6ed46f102de7d31}
+
+
+Generate a random data sequence of the given length. 
+
+The data sequence is stored in the data\+Sequence parameter, and the state sequence is stored in the state\+Sequence parameter. Each column of data\+Sequence represents a random observation.
+
+
+\begin{DoxyParams}{Parameters}
+{\em length} & Length of random sequence to generate. \\
+\hline
+{\em data\+Sequence} & Vector to store data in. \\
+\hline
+{\em state\+Sequence} & Vector to store states in. \\
+\hline
+{\em start\+State} & Hidden state to start sequence in (default 0). \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}!Initial@{Initial}}
+\index{Initial@{Initial}!mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}}
+\subsubsection[{Initial() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Distribution = distribution\+::\+Discrete\+Distribution$>$ const arma\+::vec\& {\bf mlpack\+::hmm\+::\+H\+MM}$<$ Distribution $>$\+::Initial (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1hmm_1_1HMM_a5895f1863dbe0c3c63d9f80a27e42f9b}
+
+
+Return the vector of initial state probabilities. 
+
+
+
+Definition at line 301 of file hmm.\+hpp.
+
+\index{mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}!Initial@{Initial}}
+\index{Initial@{Initial}!mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}}
+\subsubsection[{Initial()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Distribution = distribution\+::\+Discrete\+Distribution$>$ arma\+::vec\& {\bf mlpack\+::hmm\+::\+H\+MM}$<$ Distribution $>$\+::Initial (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1hmm_1_1HMM_a9025c20d583d42d99372a8c4621875bc}
+
+
+Modify the vector of initial state probabilities. 
+
+
+
+Definition at line 303 of file hmm.\+hpp.
+
+\index{mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}!Log\+Likelihood@{Log\+Likelihood}}
+\index{Log\+Likelihood@{Log\+Likelihood}!mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}}
+\subsubsection[{Log\+Likelihood(const arma\+::mat \&data\+Seq) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Distribution = distribution\+::\+Discrete\+Distribution$>$ double {\bf mlpack\+::hmm\+::\+H\+MM}$<$ Distribution $>$\+::Log\+Likelihood (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{data\+Seq}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1hmm_1_1HMM_a83a6f6f0d75fae4f29e9c7e06d353f1d}
+
+
+Compute the log-\/likelihood of the given data sequence. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data\+Seq} & Data sequence to evaluate the likelihood of. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Log-\/likelihood of the given sequence. 
+\end{DoxyReturn}
+\index{mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}!Predict@{Predict}}
+\index{Predict@{Predict}!mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}}
+\subsubsection[{Predict(const arma\+::mat \&data\+Seq, arma\+::\+Row$<$ size\+\_\+t $>$ \&state\+Seq) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Distribution = distribution\+::\+Discrete\+Distribution$>$ double {\bf mlpack\+::hmm\+::\+H\+MM}$<$ Distribution $>$\+::Predict (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{data\+Seq, }
+\item[{arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{state\+Seq}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1hmm_1_1HMM_a40e667a6b5508c6d7853d53454a9d590}
+
+
+Compute the most probable hidden state sequence for the given data sequence, using the Viterbi algorithm, returning the log-\/likelihood of the most likely state sequence. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data\+Seq} & Sequence of observations. \\
+\hline
+{\em state\+Seq} & Vector in which the most probable state sequence will be stored. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Log-\/likelihood of most probable state sequence. 
+\end{DoxyReturn}
+\index{mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}}
+\subsubsection[{Serialize(\+Archive \&ar, const unsigned int version)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Distribution = distribution\+::\+Discrete\+Distribution$>$ template$<$typename Archive $>$ void {\bf mlpack\+::hmm\+::\+H\+MM}$<$ Distribution $>$\+::Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const unsigned int}]{version}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1hmm_1_1HMM_a582f0300253e5821eba931ad2127422f}
+
+
+Serialize the object. 
+
+
+
+Referenced by mlpack\+::hmm\+::\+H\+M\+M$<$ distribution\+::\+Discrete\+Distribution $>$\+::\+Tolerance().
+
+\index{mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}!Smooth@{Smooth}}
+\index{Smooth@{Smooth}!mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}}
+\subsubsection[{Smooth(const arma\+::mat \&data\+Seq, arma\+::mat \&smooth\+Seq) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Distribution = distribution\+::\+Discrete\+Distribution$>$ void {\bf mlpack\+::hmm\+::\+H\+MM}$<$ Distribution $>$\+::Smooth (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{data\+Seq, }
+\item[{arma\+::mat \&}]{smooth\+Seq}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1hmm_1_1HMM_a5cd79332ac5cdb89f6c59d07e81fae07}
+
+
+\doxyref{H\+MM}{p.}{classmlpack_1_1hmm_1_1HMM} smoothing. 
+
+Computes expected emission at each time conditioned on all observations. That is E\{ Y[t] $\vert$ Y[0], ..., Y[T] \}. The returned matrix has columns equal to the number of observations. Note that the expectation may not be meaningful for discrete emissions.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data\+Seq} & Sequence of observations. \\
+\hline
+{\em smooth\+Seq} & Vector in which the expected emission sequence will be stored. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}!Tolerance@{Tolerance}}
+\index{Tolerance@{Tolerance}!mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}}
+\subsubsection[{Tolerance() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Distribution = distribution\+::\+Discrete\+Distribution$>$ double {\bf mlpack\+::hmm\+::\+H\+MM}$<$ Distribution $>$\+::Tolerance (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1hmm_1_1HMM_ab6b9e56d21ec7c68f51bcd0c6262663d}
+
+
+Get the tolerance of the Baum-\/\+Welch algorithm. 
+
+
+
+Definition at line 321 of file hmm.\+hpp.
+
+\index{mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}!Tolerance@{Tolerance}}
+\index{Tolerance@{Tolerance}!mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}}
+\subsubsection[{Tolerance()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Distribution = distribution\+::\+Discrete\+Distribution$>$ double\& {\bf mlpack\+::hmm\+::\+H\+MM}$<$ Distribution $>$\+::Tolerance (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1hmm_1_1HMM_ab588ae02998cf353e819f2ef8613e481}
+
+
+Modify the tolerance of the Baum-\/\+Welch algorithm. 
+
+
+
+Definition at line 323 of file hmm.\+hpp.
+
+\index{mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}}
+\subsubsection[{Train(const std\+::vector$<$ arma\+::mat $>$ \&data\+Seq)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Distribution = distribution\+::\+Discrete\+Distribution$>$ void {\bf mlpack\+::hmm\+::\+H\+MM}$<$ Distribution $>$\+::Train (
+\begin{DoxyParamCaption}
+\item[{const std\+::vector$<$ arma\+::mat $>$ \&}]{data\+Seq}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1hmm_1_1HMM_a222f6678e895293c0ddc3ebc86928f63}
+
+
+Train the model using the Baum-\/\+Welch algorithm, with only the given unlabeled observations. 
+
+Instead of giving a guess transition and emission matrix here, do that in the constructor. Each matrix in the vector of data sequences holds an individual data sequence; each point in each individual data sequence should be a column in the matrix. The number of rows in each matrix should be equal to the dimensionality of the \doxyref{H\+MM}{p.}{classmlpack_1_1hmm_1_1HMM} (which is set in the constructor).
+
+It is preferable to use the other overload of \doxyref{Train()}{p.}{classmlpack_1_1hmm_1_1HMM_a222f6678e895293c0ddc3ebc86928f63}, with labeled data. That will produce much better results. However, if labeled data is unavailable, this will work. In addition, it is possible to use \doxyref{Train()}{p.}{classmlpack_1_1hmm_1_1HMM_a222f6678e895293c0ddc3ebc86928f63} with labeled data first, and then continue to train the model using this overload of \doxyref{Train()}{p.}{classmlpack_1_1hmm_1_1HMM_a222f6678e895293c0ddc3ebc86928f63} with unlabeled data.
+
+The tolerance of the Baum-\/\+Welch algorithm can be set either in the constructor or with the \doxyref{Tolerance()}{p.}{classmlpack_1_1hmm_1_1HMM_ab588ae02998cf353e819f2ef8613e481} method. When the change in log-\/likelihood of the model between iterations is less than the tolerance, the Baum-\/\+Welch algorithm terminates.
+
+\begin{DoxyNote}{Note}
+\doxyref{Train()}{p.}{classmlpack_1_1hmm_1_1HMM_a222f6678e895293c0ddc3ebc86928f63} can be called multiple times with different sequences; each time it is called, it uses the current parameters of the \doxyref{H\+MM}{p.}{classmlpack_1_1hmm_1_1HMM} as a starting point for training. 
+\end{DoxyNote}
+
+\begin{DoxyParams}{Parameters}
+{\em data\+Seq} & Vector of observation sequences. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}}
+\subsubsection[{Train(const std\+::vector$<$ arma\+::mat $>$ \&data\+Seq, const std\+::vector$<$ arma\+::\+Row$<$ size\+\_\+t $>$ $>$ \&state\+Seq)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Distribution = distribution\+::\+Discrete\+Distribution$>$ void {\bf mlpack\+::hmm\+::\+H\+MM}$<$ Distribution $>$\+::Train (
+\begin{DoxyParamCaption}
+\item[{const std\+::vector$<$ arma\+::mat $>$ \&}]{data\+Seq, }
+\item[{const std\+::vector$<$ arma\+::\+Row$<$ size\+\_\+t $>$ $>$ \&}]{state\+Seq}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1hmm_1_1HMM_aa3d18b3654f345ee9a4f4b11ddef97fe}
+
+
+Train the model using the given labeled observations; the transition and emission matrices are directly estimated. 
+
+Each matrix in the vector of data sequences corresponds to a vector in the vector of state sequences. Each point in each individual data sequence should be a column in the matrix, and its state should be the corresponding element in the state sequence vector. For instance, data\+Seq[0].col(3) corresponds to the fourth observation in the first data sequence, and its state is state\+Seq[0][3]. The number of rows in each matrix should be equal to the dimensionality of the \doxyref{H\+MM}{p.}{classmlpack_1_1hmm_1_1HMM} (which is set in the constructor).
+
+\begin{DoxyNote}{Note}
+\doxyref{Train()}{p.}{classmlpack_1_1hmm_1_1HMM_a222f6678e895293c0ddc3ebc86928f63} can be called multiple times with different sequences; each time it is called, it uses the current parameters of the \doxyref{H\+MM}{p.}{classmlpack_1_1hmm_1_1HMM} as a starting point for training. 
+\end{DoxyNote}
+
+\begin{DoxyParams}{Parameters}
+{\em data\+Seq} & Vector of observation sequences. \\
+\hline
+{\em state\+Seq} & Vector of state sequences, corresponding to each observation. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}!Transition@{Transition}}
+\index{Transition@{Transition}!mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}}
+\subsubsection[{Transition() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Distribution = distribution\+::\+Discrete\+Distribution$>$ const arma\+::mat\& {\bf mlpack\+::hmm\+::\+H\+MM}$<$ Distribution $>$\+::Transition (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1hmm_1_1HMM_a152eda3c0efaaf3d9eb82a23e2e3b2e1}
+
+
+Return the transition matrix. 
+
+
+
+Definition at line 306 of file hmm.\+hpp.
+
+\index{mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}!Transition@{Transition}}
+\index{Transition@{Transition}!mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}}
+\subsubsection[{Transition()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Distribution = distribution\+::\+Discrete\+Distribution$>$ arma\+::mat\& {\bf mlpack\+::hmm\+::\+H\+MM}$<$ Distribution $>$\+::Transition (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1hmm_1_1HMM_a531b08fc79e3d429ec382e901b92eca6}
+
+
+Return a modifiable transition matrix reference. 
+
+
+
+Definition at line 308 of file hmm.\+hpp.
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}!dimensionality@{dimensionality}}
+\index{dimensionality@{dimensionality}!mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}}
+\subsubsection[{dimensionality}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Distribution = distribution\+::\+Discrete\+Distribution$>$ size\+\_\+t {\bf mlpack\+::hmm\+::\+H\+MM}$<$ Distribution $>$\+::dimensionality\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1hmm_1_1HMM_a94bbb69cd0c3b800a18962faee4190bd}
+
+
+Dimensionality of observations. 
+
+
+
+Definition at line 373 of file hmm.\+hpp.
+
+
+
+Referenced by mlpack\+::hmm\+::\+H\+M\+M$<$ distribution\+::\+Discrete\+Distribution $>$\+::\+Dimensionality().
+
+\index{mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}!emission@{emission}}
+\index{emission@{emission}!mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}}
+\subsubsection[{emission}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Distribution = distribution\+::\+Discrete\+Distribution$>$ std\+::vector$<$Distribution$>$ {\bf mlpack\+::hmm\+::\+H\+MM}$<$ Distribution $>$\+::emission\hspace{0.3cm}{\ttfamily [protected]}}\label{classmlpack_1_1hmm_1_1HMM_ab2a10159d760f051148ed24dbbad5f31}
+
+
+Set of emission probability distributions; one for each state. 
+
+
+
+Definition at line 363 of file hmm.\+hpp.
+
+
+
+Referenced by mlpack\+::hmm\+::\+H\+M\+M$<$ distribution\+::\+Discrete\+Distribution $>$\+::\+Emission().
+
+\index{mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}!initial@{initial}}
+\index{initial@{initial}!mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}}
+\subsubsection[{initial}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Distribution = distribution\+::\+Discrete\+Distribution$>$ arma\+::vec {\bf mlpack\+::hmm\+::\+H\+MM}$<$ Distribution $>$\+::initial\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1hmm_1_1HMM_a805ace4cf28eda53e89111e2ccda681f}
+
+
+Initial state probability vector. 
+
+
+
+Definition at line 370 of file hmm.\+hpp.
+
+
+
+Referenced by mlpack\+::hmm\+::\+H\+M\+M$<$ distribution\+::\+Discrete\+Distribution $>$\+::\+Initial().
+
+\index{mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}!tolerance@{tolerance}}
+\index{tolerance@{tolerance}!mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}}
+\subsubsection[{tolerance}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Distribution = distribution\+::\+Discrete\+Distribution$>$ double {\bf mlpack\+::hmm\+::\+H\+MM}$<$ Distribution $>$\+::tolerance\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1hmm_1_1HMM_ae320d8bc5e9eb7b9790eaf6f58630ac8}
+
+
+Tolerance of Baum-\/\+Welch algorithm. 
+
+
+
+Definition at line 376 of file hmm.\+hpp.
+
+
+
+Referenced by mlpack\+::hmm\+::\+H\+M\+M$<$ distribution\+::\+Discrete\+Distribution $>$\+::\+Tolerance().
+
+\index{mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}!transition@{transition}}
+\index{transition@{transition}!mlpack\+::hmm\+::\+H\+MM@{mlpack\+::hmm\+::\+H\+MM}}
+\subsubsection[{transition}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Distribution = distribution\+::\+Discrete\+Distribution$>$ arma\+::mat {\bf mlpack\+::hmm\+::\+H\+MM}$<$ Distribution $>$\+::transition\hspace{0.3cm}{\ttfamily [protected]}}\label{classmlpack_1_1hmm_1_1HMM_ac1ad3d62307dda6c0f65baba216e6bcf}
+
+
+Transition probability matrix. 
+
+
+
+Definition at line 366 of file hmm.\+hpp.
+
+
+
+Referenced by mlpack\+::hmm\+::\+H\+M\+M$<$ distribution\+::\+Discrete\+Distribution $>$\+::\+Transition().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/hmm/{\bf hmm.\+hpp}\end{DoxyCompactItemize}

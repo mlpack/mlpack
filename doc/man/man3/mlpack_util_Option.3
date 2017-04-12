@@ -1,0 +1,66 @@
+.TH "mlpack::util::Option< N >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::util::Option< N > \- A static object whose constructor registers a parameter with the \fBCLI\fP class\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBOption\fP (const N defaultValue, const \fBstd::string\fP &identifier, const \fBstd::string\fP &description, const \fBstd::string\fP &alias, const bool required=false, const bool input=true, const bool noTranspose=false)"
+.br
+.RI "\fIConstruct an \fBOption\fP object\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename N>
+.br
+class mlpack::util::Option< N >"
+A static object whose constructor registers a parameter with the \fBCLI\fP class\&. 
+
+This should not be used outside of \fBCLI\fP itself, and you should use the \fBPARAM_FLAG()\fP, PARAM_DOUBLE(), PARAM_INT(), PARAM_STRING(), or other similar macros to declare these objects instead of declaring them directly\&.
+.PP
+\fBSee also:\fP
+.RS 4
+core/io/cli\&.hpp, \fBmlpack::CLI\fP 
+.RE
+.PP
+
+.PP
+Definition at line 32 of file option\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename N > \fBmlpack::util::Option\fP< N >::\fBOption\fP (const N defaultValue, const \fBstd::string\fP & identifier, const \fBstd::string\fP & description, const \fBstd::string\fP & alias, const bool required = \fCfalse\fP, const bool input = \fCtrue\fP, const bool noTranspose = \fCfalse\fP)\fC [inline]\fP"
+
+.PP
+Construct an \fBOption\fP object\&. When constructed, it will register itself with \fBCLI\fP\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdefaultValue\fP Default value this parameter will be initialized to (for flags, this should be false, for instance)\&. 
+.br
+\fIidentifier\fP The name of the option (no dashes in front; for --help, we would pass 'help')\&. 
+.br
+\fIdescription\fP A short string describing the option\&. 
+.br
+\fIalias\fP Short name of the parameter\&. '' for no alias\&. 
+.br
+\fIrequired\fP Whether or not the option is required at runtime\&. 
+.br
+\fIinput\fP Whether or not the option is an input option\&. 
+.br
+\fInoTranspose\fP If the parameter is a matrix and this is true, then the matrix will not be transposed on loading\&. 
+.RE
+.PP
+
+.PP
+Definition at line 50 of file option\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,58 @@
+.TH "matrices" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+matrices \- Matrices in mlpack 
+
+.SH "Introduction"
+.PP
+mlpack uses Armadillo matrices for matrix support\&. Armadillo is a fast C++ matrix library which makes use of advanced template techniques to provide the fastest possible matrix operations\&.
+.PP
+Documentation on Armadillo can be found on their website:
+.PP
+http://arma.sourceforge.net/docs.html
+.PP
+Nonetheless, there are a few further caveats for mlpack Armadillo usage\&.
+.SH "Column-major Matrices"
+.PP
+Armadillo matrices are stored in a column-major format; this means that on disk, each column is located in contiguous memory\&.
+.PP
+This means that, for the vast majority of machine learning methods, it is faster to store observations as columns and dimensions as rows\&. This is counter to most standard machine learning texts!
+.PP
+Major implications of this are for linear algebra\&. For instance, the covariance of a matrix is typically
+.PP
+$ C = X^T X $.PP
+but for a column-wise matrix, it is
+.PP
+$ C = X X^T $.PP
+and this is very important to keep in mind! If your mlpack code is not working, this may be a factor in why\&.
+.SH "Loading Matrices"
+.PP
+mlpack provides a \fBdata::Load()\fP and \fBdata::Save()\fP function, which should be used instead of Armadillo's loading and saving functions\&.
+.PP
+Most machine learning data is stored in row-major format; a CSV, for example, will generally have one observation per line and each column will correspond to a dimension\&.
+.PP
+The \fBdata::Load()\fP and \fBdata::Save()\fP functions transpose the matrix upon loading, meaning that the following CSV:
+.PP
+.PP
+.nf
+$ cat data\&.csv
+3,3,3,3,0
+3,4,4,3,0
+3,4,4,3,0
+3,3,4,3,0
+3,6,4,3,0
+2,4,4,3,0
+2,4,4,1,0
+3,3,3,2,0
+3,4,4,2,0
+3,4,4,2,0
+3,3,4,2,0
+3,6,4,2,0
+2,4,4,2,0
+.fi
+.PP
+.PP
+is actually loaded with 5 rows and 13 columns, not 13 rows and 5 columns like the CSV is written\&.
+.PP
+This is important to remember! 

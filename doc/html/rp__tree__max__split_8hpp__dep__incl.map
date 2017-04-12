@@ -1,0 +1,31 @@
+<map id="src/mlpack/core/tree/binary_space_tree/rp_tree_max_split.hpp" name="src/mlpack/core/tree/binary_space_tree/rp_tree_max_split.hpp">
+<area shape="rect" id="node2" href="$binary__space__tree_8hpp.html" title="src/mlpack/core/tree\l/binary_space_tree.hpp" alt="" coords="928,213,1085,255"/>
+<area shape="rect" id="node30" href="$rp__tree__mean__split_8hpp.html" title="src/mlpack/core/tree\l/binary_space_tree/rp\l_tree_mean_split.hpp" alt="" coords="989,109,1136,165"/>
+<area shape="rect" id="node3" href="$binary__space__tree_2binary__space__tree_8hpp.html" title="src/mlpack/core/tree\l/binary_space_tree/binary\l_space_tree.hpp" alt="" coords="288,303,459,359"/>
+<area shape="rect" id="node6" href="$neighbor__search_8hpp.html" title="src/mlpack/methods\l/neighbor_search/neighbor\l_search.hpp" alt="" coords="385,407,559,463"/>
+<area shape="rect" id="node9" href="$dual__tree__kmeans_8hpp.html" title="src/mlpack/methods\l/kmeans/dual_tree_kmeans.hpp" alt="" coords="494,518,701,559"/>
+<area shape="rect" id="node11" href="$ns__model_8hpp.html" title="src/mlpack/methods\l/neighbor_search/ns\l_model.hpp" alt="" coords="725,511,865,567"/>
+<area shape="rect" id="node12" href="$breadth__first__dual__tree__traverser_8hpp.html" title="src/mlpack/core/tree\l/binary_space_tree/breadth\l_first_dual_tree_traverser.hpp" alt="" coords="685,303,880,359"/>
+<area shape="rect" id="node13" href="$core_2tree_2binary__space__tree_2typedef_8hpp.html" title="src/mlpack/core/tree\l/binary_space_tree/typedef.hpp" alt="" coords="905,310,1109,351"/>
+<area shape="rect" id="node14" href="$dtb_8hpp.html" title="src/mlpack/methods\l/emst/dtb.hpp" alt="" coords="1133,310,1273,351"/>
+<area shape="rect" id="node15" href="$kmeans_8hpp.html" title="src/mlpack/methods\l/kmeans/kmeans.hpp" alt="" coords="1297,310,1444,351"/>
+<area shape="rect" id="node22" href="$pelleg__moore__kmeans_8hpp.html" title="src/mlpack/methods\l/kmeans/pelleg_moore\l_kmeans.hpp" alt="" coords="1469,303,1622,359"/>
+<area shape="rect" id="node23" href="$range__search_8hpp.html" title="src/mlpack/methods\l/range_search/range\l_search.hpp" alt="" coords="1646,303,1786,359"/>
+<area shape="rect" id="node25" href="$rs__model_8hpp.html" title="src/mlpack/methods\l/range_search/rs_model.hpp" alt="" coords="1651,414,1837,455"/>
+<area shape="rect" id="node26" href="$ra__model_8hpp.html" title="src/mlpack/methods\l/rann/ra_model.hpp" alt="" coords="1805,518,1945,559"/>
+<area shape="rect" id="node27" href="$ra__search_8hpp.html" title="src/mlpack/methods\l/rann/ra_search.hpp" alt="" coords="1970,414,2110,455"/>
+<area shape="rect" id="node29" href="$ra__query__stat_8hpp.html" title="src/mlpack/methods\l/rann/ra_query_stat.hpp" alt="" coords="1963,310,2122,351"/>
+<area shape="rect" id="node4" href="$binary__space__tree_2single__tree__traverser_8hpp.html" title="src/mlpack/core/tree\l/binary_space_tree/single\l_tree_traverser.hpp" alt="" coords="5,407,176,463"/>
+<area shape="rect" id="node5" href="$binary__space__tree_2dual__tree__traverser_8hpp.html" title="src/mlpack/core/tree\l/binary_space_tree/dual\l_tree_traverser.hpp" alt="" coords="200,407,360,463"/>
+<area shape="rect" id="node7" href="$cf_8hpp.html" title="src/mlpack/methods\l/cf/cf.hpp" alt="" coords="330,518,470,559"/>
+<area shape="rect" id="node10" href="$methods_2neighbor__search_2typedef_8hpp.html" title="src/mlpack/methods\l/neighbor_search/typedef.hpp" alt="" coords="113,518,306,559"/>
+<area shape="rect" id="node8" href="$regularized__svd_8hpp.html" title="src/mlpack/methods\l/regularized_svd/regularized\l_svd.hpp" alt="" coords="308,615,492,671"/>
+<area shape="rect" id="node16" href="$em__fit_8hpp.html" title="src/mlpack/methods\l/gmm/em_fit.hpp" alt="" coords="1311,414,1451,455"/>
+<area shape="rect" id="node19" href="$kmeans__selection_8hpp.html" title="src/mlpack/methods\l/nystroem_method/kmeans\l_selection.hpp" alt="" coords="1105,407,1285,463"/>
+<area shape="rect" id="node17" href="$gmm_8hpp.html" title="src/mlpack/methods\l/gmm/gmm.hpp" alt="" coords="1313,518,1453,559"/>
+<area shape="rect" id="node18" href="$hmm__model_8hpp.html" title="src/mlpack/methods\l/hmm/hmm_model.hpp" alt="" coords="1305,622,1460,663"/>
+<area shape="rect" id="node20" href="$kernel__pca_2kernel__rules_2nystroem__method_8hpp.html" title="src/mlpack/methods\l/kernel_pca/kernel_rules\l/nystroem_method.hpp" alt="" coords="1047,615,1209,671"/>
+<area shape="rect" id="node21" href="$nystroem__method_2nystroem__method_8hpp.html" title="src/mlpack/methods\l/nystroem_method/nystroem\l_method.hpp" alt="" coords="1101,511,1289,567"/>
+<area shape="rect" id="node24" href="$dbscan_8hpp.html" title="src/mlpack/methods\l/dbscan/dbscan.hpp" alt="" coords="1486,414,1626,455"/>
+<area shape="rect" id="node28" href="$ra__typedef_8hpp.html" title="src/mlpack/methods\l/rann/ra_typedef.hpp" alt="" coords="1969,518,2111,559"/>
+</map>

@@ -1,0 +1,339 @@
+\section{mlpack\+:\+:amf\+:\+:Simple\+Residue\+Termination Class Reference}
+\label{classmlpack_1_1amf_1_1SimpleResidueTermination}\index{mlpack\+::amf\+::\+Simple\+Residue\+Termination@{mlpack\+::amf\+::\+Simple\+Residue\+Termination}}
+
+
+This class implements a simple residue-\/based termination policy.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Simple\+Residue\+Termination} (const double {\bf min\+Residue}=1e-\/5, const size\+\_\+t max\+Iterations=10000)
+\begin{DoxyCompactList}\small\item\em Construct the \doxyref{Simple\+Residue\+Termination}{p.}{classmlpack_1_1amf_1_1SimpleResidueTermination} object with the given minimum residue (or the default) and the given maximum number of iterations (or the default). \end{DoxyCompactList}\item 
+const double \& {\bf Index} () const 
+\begin{DoxyCompactList}\small\item\em Get current value of residue. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void {\bf Initialize} (const Mat\+Type \&V)
+\begin{DoxyCompactList}\small\item\em Initializes the termination policy before stating the factorization. \end{DoxyCompactList}\item 
+bool {\bf Is\+Converged} (arma\+::mat \&W, arma\+::mat \&H)
+\begin{DoxyCompactList}\small\item\em Check if termination criterion is met. \end{DoxyCompactList}\item 
+const size\+\_\+t \& {\bf Iteration} () const 
+\begin{DoxyCompactList}\small\item\em Get current iteration count. \end{DoxyCompactList}\item 
+const size\+\_\+t \& {\bf Max\+Iterations} () const 
+\begin{DoxyCompactList}\small\item\em Access max iteration count. \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Max\+Iterations} ()
+\item 
+const double \& {\bf Min\+Residue} () const 
+\begin{DoxyCompactList}\small\item\em Access minimum residue value. \end{DoxyCompactList}\item 
+double \& {\bf Min\+Residue} ()
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+size\+\_\+t {\bf iteration}
+\begin{DoxyCompactList}\small\item\em current iteration count \end{DoxyCompactList}\item 
+size\+\_\+t {\bf max\+Iterations}
+\begin{DoxyCompactList}\small\item\em iteration threshold \end{DoxyCompactList}\item 
+double {\bf min\+Residue}
+\begin{DoxyCompactList}\small\item\em residue threshold \end{DoxyCompactList}\item 
+size\+\_\+t {\bf nm}
+\item 
+double {\bf norm\+Old}
+\begin{DoxyCompactList}\small\item\em norm of previous iteration \end{DoxyCompactList}\item 
+double {\bf residue}
+\begin{DoxyCompactList}\small\item\em current value of residue \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This class implements a simple residue-\/based termination policy. 
+
+The termination decision depends on two factors\+: the value of the residue (the difference between the norm of WH this iteration and the previous iteration), and the number of iterations. If the current value of residue drops below the threshold or the number of iterations goes above the iteration limit, \doxyref{Is\+Converged()}{p.}{classmlpack_1_1amf_1_1SimpleResidueTermination_a17e3f9b9a6c7496f2008b077c2ac8ce9} will return true. This class is meant for use with the \doxyref{A\+MF}{p.}{classmlpack_1_1amf_1_1AMF} (alternating matrix factorization) class.
+
+\begin{DoxySeeAlso}{See also}
+\doxyref{A\+MF}{p.}{classmlpack_1_1amf_1_1AMF} 
+\end{DoxySeeAlso}
+
+
+Definition at line 31 of file simple\+\_\+residue\+\_\+termination.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::amf\+::\+Simple\+Residue\+Termination@{mlpack\+::amf\+::\+Simple\+Residue\+Termination}!Simple\+Residue\+Termination@{Simple\+Residue\+Termination}}
+\index{Simple\+Residue\+Termination@{Simple\+Residue\+Termination}!mlpack\+::amf\+::\+Simple\+Residue\+Termination@{mlpack\+::amf\+::\+Simple\+Residue\+Termination}}
+\subsubsection[{Simple\+Residue\+Termination(const double min\+Residue=1e-\/5, const size\+\_\+t max\+Iterations=10000)}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::amf\+::\+Simple\+Residue\+Termination\+::\+Simple\+Residue\+Termination (
+\begin{DoxyParamCaption}
+\item[{const double}]{min\+Residue = {\ttfamily 1e-\/5}, }
+\item[{const size\+\_\+t}]{max\+Iterations = {\ttfamily 10000}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1amf_1_1SimpleResidueTermination_adf313959477f9bddffa31ed2775969d7}
+
+
+Construct the \doxyref{Simple\+Residue\+Termination}{p.}{classmlpack_1_1amf_1_1SimpleResidueTermination} object with the given minimum residue (or the default) and the given maximum number of iterations (or the default). 
+
+0 indicates no iteration limit.
+
+
+\begin{DoxyParams}{Parameters}
+{\em min\+Residue} & Minimum residue for termination. \\
+\hline
+{\em max\+Iterations} & Maximum number of iterations. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 42 of file simple\+\_\+residue\+\_\+termination.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::amf\+::\+Simple\+Residue\+Termination@{mlpack\+::amf\+::\+Simple\+Residue\+Termination}!Index@{Index}}
+\index{Index@{Index}!mlpack\+::amf\+::\+Simple\+Residue\+Termination@{mlpack\+::amf\+::\+Simple\+Residue\+Termination}}
+\subsubsection[{Index() const }]{\setlength{\rightskip}{0pt plus 5cm}const double\& mlpack\+::amf\+::\+Simple\+Residue\+Termination\+::\+Index (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1amf_1_1SimpleResidueTermination_a0d9bd7ca3bc2a599b09db7e3af9d1290}
+
+
+Get current value of residue. 
+
+
+
+Definition at line 89 of file simple\+\_\+residue\+\_\+termination.\+hpp.
+
+
+
+References residue.
+
+\index{mlpack\+::amf\+::\+Simple\+Residue\+Termination@{mlpack\+::amf\+::\+Simple\+Residue\+Termination}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!mlpack\+::amf\+::\+Simple\+Residue\+Termination@{mlpack\+::amf\+::\+Simple\+Residue\+Termination}}
+\subsubsection[{Initialize(const Mat\+Type \&\+V)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type $>$ void mlpack\+::amf\+::\+Simple\+Residue\+Termination\+::\+Initialize (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{V}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1amf_1_1SimpleResidueTermination_af6ba7924ef25b771475e547efdac0bd4}
+
+
+Initializes the termination policy before stating the factorization. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em V} & Input matrix being factorized. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 52 of file simple\+\_\+residue\+\_\+termination.\+hpp.
+
+
+
+References iteration, nm, norm\+Old, and residue.
+
+\index{mlpack\+::amf\+::\+Simple\+Residue\+Termination@{mlpack\+::amf\+::\+Simple\+Residue\+Termination}!Is\+Converged@{Is\+Converged}}
+\index{Is\+Converged@{Is\+Converged}!mlpack\+::amf\+::\+Simple\+Residue\+Termination@{mlpack\+::amf\+::\+Simple\+Residue\+Termination}}
+\subsubsection[{Is\+Converged(arma\+::mat \&\+W, arma\+::mat \&\+H)}]{\setlength{\rightskip}{0pt plus 5cm}bool mlpack\+::amf\+::\+Simple\+Residue\+Termination\+::\+Is\+Converged (
+\begin{DoxyParamCaption}
+\item[{arma\+::mat \&}]{W, }
+\item[{arma\+::mat \&}]{H}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1amf_1_1SimpleResidueTermination_a17e3f9b9a6c7496f2008b077c2ac8ce9}
+
+
+Check if termination criterion is met. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em W} & Basis matrix of output. \\
+\hline
+{\em H} & Encoding matrix of output. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 68 of file simple\+\_\+residue\+\_\+termination.\+hpp.
+
+
+
+References mlpack\+::\+Log\+::\+Info, iteration, max\+Iterations, norm\+Old, and residue.
+
+\index{mlpack\+::amf\+::\+Simple\+Residue\+Termination@{mlpack\+::amf\+::\+Simple\+Residue\+Termination}!Iteration@{Iteration}}
+\index{Iteration@{Iteration}!mlpack\+::amf\+::\+Simple\+Residue\+Termination@{mlpack\+::amf\+::\+Simple\+Residue\+Termination}}
+\subsubsection[{Iteration() const }]{\setlength{\rightskip}{0pt plus 5cm}const size\+\_\+t\& mlpack\+::amf\+::\+Simple\+Residue\+Termination\+::\+Iteration (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1amf_1_1SimpleResidueTermination_a38967b86f2921a6f5f52e24c32148b72}
+
+
+Get current iteration count. 
+
+
+
+Definition at line 92 of file simple\+\_\+residue\+\_\+termination.\+hpp.
+
+
+
+References iteration.
+
+\index{mlpack\+::amf\+::\+Simple\+Residue\+Termination@{mlpack\+::amf\+::\+Simple\+Residue\+Termination}!Max\+Iterations@{Max\+Iterations}}
+\index{Max\+Iterations@{Max\+Iterations}!mlpack\+::amf\+::\+Simple\+Residue\+Termination@{mlpack\+::amf\+::\+Simple\+Residue\+Termination}}
+\subsubsection[{Max\+Iterations() const }]{\setlength{\rightskip}{0pt plus 5cm}const size\+\_\+t\& mlpack\+::amf\+::\+Simple\+Residue\+Termination\+::\+Max\+Iterations (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1amf_1_1SimpleResidueTermination_a205aaaf19f9cea01f231f7b860814f64}
+
+
+Access max iteration count. 
+
+
+
+Definition at line 95 of file simple\+\_\+residue\+\_\+termination.\+hpp.
+
+
+
+References max\+Iterations.
+
+\index{mlpack\+::amf\+::\+Simple\+Residue\+Termination@{mlpack\+::amf\+::\+Simple\+Residue\+Termination}!Max\+Iterations@{Max\+Iterations}}
+\index{Max\+Iterations@{Max\+Iterations}!mlpack\+::amf\+::\+Simple\+Residue\+Termination@{mlpack\+::amf\+::\+Simple\+Residue\+Termination}}
+\subsubsection[{Max\+Iterations()}]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t\& mlpack\+::amf\+::\+Simple\+Residue\+Termination\+::\+Max\+Iterations (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1amf_1_1SimpleResidueTermination_a4226170780b4468cfe91cea92538c704}
+
+
+Definition at line 96 of file simple\+\_\+residue\+\_\+termination.\+hpp.
+
+
+
+References max\+Iterations.
+
+\index{mlpack\+::amf\+::\+Simple\+Residue\+Termination@{mlpack\+::amf\+::\+Simple\+Residue\+Termination}!Min\+Residue@{Min\+Residue}}
+\index{Min\+Residue@{Min\+Residue}!mlpack\+::amf\+::\+Simple\+Residue\+Termination@{mlpack\+::amf\+::\+Simple\+Residue\+Termination}}
+\subsubsection[{Min\+Residue() const }]{\setlength{\rightskip}{0pt plus 5cm}const double\& mlpack\+::amf\+::\+Simple\+Residue\+Termination\+::\+Min\+Residue (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1amf_1_1SimpleResidueTermination_a1dc85995d9bc31e010f4f4b8fa25ed71}
+
+
+Access minimum residue value. 
+
+
+
+Definition at line 99 of file simple\+\_\+residue\+\_\+termination.\+hpp.
+
+
+
+References min\+Residue.
+
+\index{mlpack\+::amf\+::\+Simple\+Residue\+Termination@{mlpack\+::amf\+::\+Simple\+Residue\+Termination}!Min\+Residue@{Min\+Residue}}
+\index{Min\+Residue@{Min\+Residue}!mlpack\+::amf\+::\+Simple\+Residue\+Termination@{mlpack\+::amf\+::\+Simple\+Residue\+Termination}}
+\subsubsection[{Min\+Residue()}]{\setlength{\rightskip}{0pt plus 5cm}double\& mlpack\+::amf\+::\+Simple\+Residue\+Termination\+::\+Min\+Residue (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1amf_1_1SimpleResidueTermination_a10a0047c574597980ec6d14a72c359c0}
+
+
+Definition at line 100 of file simple\+\_\+residue\+\_\+termination.\+hpp.
+
+
+
+References min\+Residue.
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::amf\+::\+Simple\+Residue\+Termination@{mlpack\+::amf\+::\+Simple\+Residue\+Termination}!iteration@{iteration}}
+\index{iteration@{iteration}!mlpack\+::amf\+::\+Simple\+Residue\+Termination@{mlpack\+::amf\+::\+Simple\+Residue\+Termination}}
+\subsubsection[{iteration}]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t mlpack\+::amf\+::\+Simple\+Residue\+Termination\+::iteration}\label{classmlpack_1_1amf_1_1SimpleResidueTermination_ab7447c81c39016a8e29308464ec501ed}
+
+
+current iteration count 
+
+
+
+Definition at line 111 of file simple\+\_\+residue\+\_\+termination.\+hpp.
+
+
+
+Referenced by Initialize(), Is\+Converged(), and Iteration().
+
+\index{mlpack\+::amf\+::\+Simple\+Residue\+Termination@{mlpack\+::amf\+::\+Simple\+Residue\+Termination}!max\+Iterations@{max\+Iterations}}
+\index{max\+Iterations@{max\+Iterations}!mlpack\+::amf\+::\+Simple\+Residue\+Termination@{mlpack\+::amf\+::\+Simple\+Residue\+Termination}}
+\subsubsection[{max\+Iterations}]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t mlpack\+::amf\+::\+Simple\+Residue\+Termination\+::max\+Iterations}\label{classmlpack_1_1amf_1_1SimpleResidueTermination_aa96d175ee3cdbb09e2d98e09ad9fd0e2}
+
+
+iteration threshold 
+
+
+
+Definition at line 106 of file simple\+\_\+residue\+\_\+termination.\+hpp.
+
+
+
+Referenced by Is\+Converged(), and Max\+Iterations().
+
+\index{mlpack\+::amf\+::\+Simple\+Residue\+Termination@{mlpack\+::amf\+::\+Simple\+Residue\+Termination}!min\+Residue@{min\+Residue}}
+\index{min\+Residue@{min\+Residue}!mlpack\+::amf\+::\+Simple\+Residue\+Termination@{mlpack\+::amf\+::\+Simple\+Residue\+Termination}}
+\subsubsection[{min\+Residue}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::amf\+::\+Simple\+Residue\+Termination\+::min\+Residue}\label{classmlpack_1_1amf_1_1SimpleResidueTermination_a64bc2acd0f30cb82cecaee69a0ce55df}
+
+
+residue threshold 
+
+
+
+Definition at line 104 of file simple\+\_\+residue\+\_\+termination.\+hpp.
+
+
+
+Referenced by Min\+Residue().
+
+\index{mlpack\+::amf\+::\+Simple\+Residue\+Termination@{mlpack\+::amf\+::\+Simple\+Residue\+Termination}!nm@{nm}}
+\index{nm@{nm}!mlpack\+::amf\+::\+Simple\+Residue\+Termination@{mlpack\+::amf\+::\+Simple\+Residue\+Termination}}
+\subsubsection[{nm}]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t mlpack\+::amf\+::\+Simple\+Residue\+Termination\+::nm}\label{classmlpack_1_1amf_1_1SimpleResidueTermination_acc24600c309128b8bb24ed957cd05333}
+
+
+Definition at line 115 of file simple\+\_\+residue\+\_\+termination.\+hpp.
+
+
+
+Referenced by Initialize().
+
+\index{mlpack\+::amf\+::\+Simple\+Residue\+Termination@{mlpack\+::amf\+::\+Simple\+Residue\+Termination}!norm\+Old@{norm\+Old}}
+\index{norm\+Old@{norm\+Old}!mlpack\+::amf\+::\+Simple\+Residue\+Termination@{mlpack\+::amf\+::\+Simple\+Residue\+Termination}}
+\subsubsection[{norm\+Old}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::amf\+::\+Simple\+Residue\+Termination\+::norm\+Old}\label{classmlpack_1_1amf_1_1SimpleResidueTermination_ab994f2ab8bb40682f35d479b919792bd}
+
+
+norm of previous iteration 
+
+
+
+Definition at line 113 of file simple\+\_\+residue\+\_\+termination.\+hpp.
+
+
+
+Referenced by Initialize(), and Is\+Converged().
+
+\index{mlpack\+::amf\+::\+Simple\+Residue\+Termination@{mlpack\+::amf\+::\+Simple\+Residue\+Termination}!residue@{residue}}
+\index{residue@{residue}!mlpack\+::amf\+::\+Simple\+Residue\+Termination@{mlpack\+::amf\+::\+Simple\+Residue\+Termination}}
+\subsubsection[{residue}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::amf\+::\+Simple\+Residue\+Termination\+::residue}\label{classmlpack_1_1amf_1_1SimpleResidueTermination_add8f627cfbece1a9b2a1385b66485aa8}
+
+
+current value of residue 
+
+
+
+Definition at line 109 of file simple\+\_\+residue\+\_\+termination.\+hpp.
+
+
+
+Referenced by Index(), Initialize(), and Is\+Converged().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/amf/termination\+\_\+policies/{\bf simple\+\_\+residue\+\_\+termination.\+hpp}\end{DoxyCompactItemize}

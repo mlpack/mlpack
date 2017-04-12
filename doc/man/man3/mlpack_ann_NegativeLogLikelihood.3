@@ -1,0 +1,197 @@
+.TH "mlpack::ann::NegativeLogLikelihood< InputDataType, OutputDataType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::ann::NegativeLogLikelihood< InputDataType, OutputDataType > \- Implementation of the negative log likelihood layer\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBNegativeLogLikelihood\fP ()"
+.br
+.RI "\fICreate the NegativeLogLikelihoodLayer object\&. \fP"
+.ti -1c
+.RI "template<typename eT > void \fBBackward\fP (const arma::Mat< eT > &&input, const arma::Mat< eT > &&target, arma::Mat< eT > &&output)"
+.br
+.RI "\fIOrdinary feed backward pass of a neural network\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBDelta\fP () const "
+.br
+.RI "\fIGet the delta\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBDelta\fP ()"
+.br
+.RI "\fIModify the delta\&. \fP"
+.ti -1c
+.RI "template<typename eT > double \fBForward\fP (const arma::Mat< eT > &&input, arma::Mat< eT > &&target)"
+.br
+.ti -1c
+.RI "InputDataType & \fBInputParameter\fP () const "
+.br
+.RI "\fIGet the input parameter\&. \fP"
+.ti -1c
+.RI "InputDataType & \fBInputParameter\fP ()"
+.br
+.RI "\fIModify the input parameter\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP () const "
+.br
+.RI "\fIGet the output parameter\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP ()"
+.br
+.RI "\fIModify the output parameter\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &, const unsigned int)"
+.br
+.RI "\fISerialize the layer\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "OutputDataType \fBdelta\fP"
+.br
+.RI "\fILocally-stored delta object\&. \fP"
+.ti -1c
+.RI "InputDataType \fBinputParameter\fP"
+.br
+.RI "\fILocally-stored input parameter object\&. \fP"
+.ti -1c
+.RI "OutputDataType \fBoutputParameter\fP"
+.br
+.RI "\fILocally-stored output parameter object\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename InputDataType = arma::mat, typename OutputDataType = arma::mat>
+.br
+class mlpack::ann::NegativeLogLikelihood< InputDataType, OutputDataType >"
+Implementation of the negative log likelihood layer\&. 
+
+The negative log likelihood layer expectes that the input contains log-probabilities for each class\&. The layer also expects a class index, in the range between 1 and the number of classes, as target when calling the Forward function\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIInputDataType\fP Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fIOutputDataType\fP Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 35 of file negative_log_likelihood\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBmlpack::ann::NegativeLogLikelihood\fP< InputDataType, OutputDataType >::\fBNegativeLogLikelihood\fP ()"
+
+.PP
+Create the NegativeLogLikelihoodLayer object\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename eT > void \fBmlpack::ann::NegativeLogLikelihood\fP< InputDataType, OutputDataType >::Backward (const arma::Mat< eT > && input, const arma::Mat< eT > && target, arma::Mat< eT > && output)"
+
+.PP
+Ordinary feed backward pass of a neural network\&. The negative log likelihood layer expectes that the input contains log-probabilities for each class\&. The layer also expects a class index, in the range between 1 and the number of classes, as target when calling the Forward function\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP The propagated input activation\&. 
+.br
+\fItarget\fP The target vector, that contains the class index in the range between 1 and the number of classes\&. 
+.br
+\fIoutput\fP The calculated error\&. 
+.RE
+.PP
+
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::NegativeLogLikelihood\fP< InputDataType, OutputDataType >::Delta () const\fC [inline]\fP"
+
+.PP
+Get the delta\&. 
+.PP
+Definition at line 79 of file negative_log_likelihood\&.hpp\&.
+.PP
+References mlpack::ann::NegativeLogLikelihood< InputDataType, OutputDataType >::delta\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::NegativeLogLikelihood\fP< InputDataType, OutputDataType >::Delta ()\fC [inline]\fP"
+
+.PP
+Modify the delta\&. 
+.PP
+Definition at line 81 of file negative_log_likelihood\&.hpp\&.
+.PP
+References mlpack::ann::NegativeLogLikelihood< InputDataType, OutputDataType >::delta, and mlpack::ann::NegativeLogLikelihood< InputDataType, OutputDataType >::Serialize()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename eT > double \fBmlpack::ann::NegativeLogLikelihood\fP< InputDataType, OutputDataType >::Forward (const arma::Mat< eT > && input, arma::Mat< eT > && target)"
+
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> InputDataType& \fBmlpack::ann::NegativeLogLikelihood\fP< InputDataType, OutputDataType >::InputParameter () const\fC [inline]\fP"
+
+.PP
+Get the input parameter\&. 
+.PP
+Definition at line 69 of file negative_log_likelihood\&.hpp\&.
+.PP
+References mlpack::ann::NegativeLogLikelihood< InputDataType, OutputDataType >::inputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> InputDataType& \fBmlpack::ann::NegativeLogLikelihood\fP< InputDataType, OutputDataType >::InputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the input parameter\&. 
+.PP
+Definition at line 71 of file negative_log_likelihood\&.hpp\&.
+.PP
+References mlpack::ann::NegativeLogLikelihood< InputDataType, OutputDataType >::inputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::NegativeLogLikelihood\fP< InputDataType, OutputDataType >::OutputParameter () const\fC [inline]\fP"
+
+.PP
+Get the output parameter\&. 
+.PP
+Definition at line 74 of file negative_log_likelihood\&.hpp\&.
+.PP
+References mlpack::ann::NegativeLogLikelihood< InputDataType, OutputDataType >::outputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::NegativeLogLikelihood\fP< InputDataType, OutputDataType >::OutputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the output parameter\&. 
+.PP
+Definition at line 76 of file negative_log_likelihood\&.hpp\&.
+.PP
+References mlpack::ann::NegativeLogLikelihood< InputDataType, OutputDataType >::outputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename Archive > void \fBmlpack::ann::NegativeLogLikelihood\fP< InputDataType, OutputDataType >::Serialize (Archive &, const unsigned int)"
+
+.PP
+Serialize the layer\&. 
+.PP
+Referenced by mlpack::ann::NegativeLogLikelihood< InputDataType, OutputDataType >::Delta()\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType \fBmlpack::ann::NegativeLogLikelihood\fP< InputDataType, OutputDataType >::delta\fC [private]\fP"
+
+.PP
+Locally-stored delta object\&. 
+.PP
+Definition at line 91 of file negative_log_likelihood\&.hpp\&.
+.PP
+Referenced by mlpack::ann::NegativeLogLikelihood< InputDataType, OutputDataType >::Delta()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> InputDataType \fBmlpack::ann::NegativeLogLikelihood\fP< InputDataType, OutputDataType >::inputParameter\fC [private]\fP"
+
+.PP
+Locally-stored input parameter object\&. 
+.PP
+Definition at line 94 of file negative_log_likelihood\&.hpp\&.
+.PP
+Referenced by mlpack::ann::NegativeLogLikelihood< InputDataType, OutputDataType >::InputParameter()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType \fBmlpack::ann::NegativeLogLikelihood\fP< InputDataType, OutputDataType >::outputParameter\fC [private]\fP"
+
+.PP
+Locally-stored output parameter object\&. 
+.PP
+Definition at line 97 of file negative_log_likelihood\&.hpp\&.
+.PP
+Referenced by mlpack::ann::NegativeLogLikelihood< InputDataType, OutputDataType >::OutputParameter()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

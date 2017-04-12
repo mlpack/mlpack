@@ -1,0 +1,46 @@
+.TH "src/mlpack/methods/mvu/mvu.hpp" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+src/mlpack/methods/mvu/mvu.hpp \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBmlpack::mvu::MVU\fP"
+.br
+.RI "\fIThe \fBMVU\fP class is meant to provide a good abstraction for users\&. \fP"
+.in -1c
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "\fILinear algebra utility functions, generally performed on matrices or vectors\&. \fP"
+.ti -1c
+.RI " \fBmlpack::mvu\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Ryan Curtin
+.RE
+.PP
+An implementation of Maximum Variance Unfolding\&. This file defines an MVU class as well as a class representing the objective function (a semidefinite program) which MVU seeks to minimize\&. Minimization is performed by the Augmented Lagrangian optimizer (which in turn uses the L-BFGS optimizer)\&.
+.PP
+Note: this implementation of MVU does not work\&. See #189\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBmvu\&.hpp\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

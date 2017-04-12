@@ -1,0 +1,218 @@
+\section{mlpack\+:\+:pca\+:\+:Randomized\+S\+V\+D\+Policy Class Reference}
+\label{classmlpack_1_1pca_1_1RandomizedSVDPolicy}\index{mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy@{mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy}}
+
+
+Implementation of the randomized S\+VD policy.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Randomized\+S\+V\+D\+Policy} (const size\+\_\+t {\bf iterated\+Power}=0, const size\+\_\+t {\bf max\+Iterations}=2)
+\begin{DoxyCompactList}\small\item\em Use randomized S\+VD method to perform the principal components analysis (P\+CA). \end{DoxyCompactList}\item 
+void {\bf Apply} (const arma\+::mat \&data, const arma\+::mat \&centered\+Data, arma\+::mat \&transformed\+Data, arma\+::vec \&eig\+Val, arma\+::mat \&eigvec, const size\+\_\+t rank)
+\begin{DoxyCompactList}\small\item\em Apply Principal Component Analysis to the provided data set using the randomized S\+VD. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Iterated\+Power} () const 
+\begin{DoxyCompactList}\small\item\em Get the size of the normalized power iterations. \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Iterated\+Power} ()
+\begin{DoxyCompactList}\small\item\em Modify the size of the normalized power iterations. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Max\+Iterations} () const 
+\begin{DoxyCompactList}\small\item\em Get the number of iterations for the power method. \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Max\+Iterations} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of iterations for the power method. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+size\+\_\+t {\bf iterated\+Power}
+\begin{DoxyCompactList}\small\item\em Locally stored size of the normalized power iterations. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf max\+Iterations}
+\begin{DoxyCompactList}\small\item\em Locally stored number of iterations for the power method. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Implementation of the randomized S\+VD policy. 
+
+Definition at line 27 of file randomized\+\_\+svd\+\_\+method.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy@{mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy}!Randomized\+S\+V\+D\+Policy@{Randomized\+S\+V\+D\+Policy}}
+\index{Randomized\+S\+V\+D\+Policy@{Randomized\+S\+V\+D\+Policy}!mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy@{mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy}}
+\subsubsection[{Randomized\+S\+V\+D\+Policy(const size\+\_\+t iterated\+Power=0, const size\+\_\+t max\+Iterations=2)}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy\+::\+Randomized\+S\+V\+D\+Policy (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{iterated\+Power = {\ttfamily 0}, }
+\item[{const size\+\_\+t}]{max\+Iterations = {\ttfamily 2}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1pca_1_1RandomizedSVDPolicy_a6b5f608999f337ec66716ee11704f7c8}
+
+
+Use randomized S\+VD method to perform the principal components analysis (P\+CA). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em iterated\+Power} & Size of the normalized power iterations (Default\+: rank + 2). \\
+\hline
+{\em max\+Iterations} & Number of iterations for the power method (Default\+: 2). \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 39 of file randomized\+\_\+svd\+\_\+method.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy@{mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy}!Apply@{Apply}}
+\index{Apply@{Apply}!mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy@{mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy}}
+\subsubsection[{Apply(const arma\+::mat \&data, const arma\+::mat \&centered\+Data, arma\+::mat \&transformed\+Data, arma\+::vec \&eig\+Val, arma\+::mat \&eigvec, const size\+\_\+t rank)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy\+::\+Apply (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{data, }
+\item[{const arma\+::mat \&}]{centered\+Data, }
+\item[{arma\+::mat \&}]{transformed\+Data, }
+\item[{arma\+::vec \&}]{eig\+Val, }
+\item[{arma\+::mat \&}]{eigvec, }
+\item[{const size\+\_\+t}]{rank}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1pca_1_1RandomizedSVDPolicy_ac49f73de1ac8241630c1b74197a26557}
+
+
+Apply Principal Component Analysis to the provided data set using the randomized S\+VD. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Data matrix. \\
+\hline
+{\em centered\+Data} & Centered data matrix. \\
+\hline
+{\em transformed\+Data} & Matrix to put results of P\+CA into. \\
+\hline
+{\em eig\+Val} & Vector to put eigenvalues into. \\
+\hline
+{\em eigvec} & Matrix to put eigenvectors (loadings) into. \\
+\hline
+{\em rank} & Rank of the decomposition. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 58 of file randomized\+\_\+svd\+\_\+method.\+hpp.
+
+
+
+References mlpack\+::svd\+::\+Randomized\+S\+V\+D\+::\+Apply(), iterated\+Power, and max\+Iterations.
+
+\index{mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy@{mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy}!Iterated\+Power@{Iterated\+Power}}
+\index{Iterated\+Power@{Iterated\+Power}!mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy@{mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy}}
+\subsubsection[{Iterated\+Power() const }]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy\+::\+Iterated\+Power (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1pca_1_1RandomizedSVDPolicy_a3c49f26d0bd2fafc8f7a666066657a2b}
+
+
+Get the size of the normalized power iterations. 
+
+
+
+Definition at line 82 of file randomized\+\_\+svd\+\_\+method.\+hpp.
+
+
+
+References iterated\+Power.
+
+\index{mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy@{mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy}!Iterated\+Power@{Iterated\+Power}}
+\index{Iterated\+Power@{Iterated\+Power}!mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy@{mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy}}
+\subsubsection[{Iterated\+Power()}]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t\& mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy\+::\+Iterated\+Power (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1pca_1_1RandomizedSVDPolicy_a2ade92ed36eeab92250d8e97661af822}
+
+
+Modify the size of the normalized power iterations. 
+
+
+
+Definition at line 84 of file randomized\+\_\+svd\+\_\+method.\+hpp.
+
+
+
+References iterated\+Power.
+
+\index{mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy@{mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy}!Max\+Iterations@{Max\+Iterations}}
+\index{Max\+Iterations@{Max\+Iterations}!mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy@{mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy}}
+\subsubsection[{Max\+Iterations() const }]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy\+::\+Max\+Iterations (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1pca_1_1RandomizedSVDPolicy_af2f952c11fc29aa28f711a107664780a}
+
+
+Get the number of iterations for the power method. 
+
+
+
+Definition at line 87 of file randomized\+\_\+svd\+\_\+method.\+hpp.
+
+
+
+References max\+Iterations.
+
+\index{mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy@{mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy}!Max\+Iterations@{Max\+Iterations}}
+\index{Max\+Iterations@{Max\+Iterations}!mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy@{mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy}}
+\subsubsection[{Max\+Iterations()}]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t\& mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy\+::\+Max\+Iterations (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1pca_1_1RandomizedSVDPolicy_a6498d836584bbe173306ca41ba78a56b}
+
+
+Modify the number of iterations for the power method. 
+
+
+
+Definition at line 89 of file randomized\+\_\+svd\+\_\+method.\+hpp.
+
+
+
+References max\+Iterations.
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy@{mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy}!iterated\+Power@{iterated\+Power}}
+\index{iterated\+Power@{iterated\+Power}!mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy@{mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy}}
+\subsubsection[{iterated\+Power}]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy\+::iterated\+Power\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1pca_1_1RandomizedSVDPolicy_a388d19076617e10e1ec6192de64c09ee}
+
+
+Locally stored size of the normalized power iterations. 
+
+
+
+Definition at line 93 of file randomized\+\_\+svd\+\_\+method.\+hpp.
+
+
+
+Referenced by Apply(), and Iterated\+Power().
+
+\index{mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy@{mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy}!max\+Iterations@{max\+Iterations}}
+\index{max\+Iterations@{max\+Iterations}!mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy@{mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy}}
+\subsubsection[{max\+Iterations}]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t mlpack\+::pca\+::\+Randomized\+S\+V\+D\+Policy\+::max\+Iterations\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1pca_1_1RandomizedSVDPolicy_a9a0240b2aed91888c72e1b0331bab409}
+
+
+Locally stored number of iterations for the power method. 
+
+
+
+Definition at line 96 of file randomized\+\_\+svd\+\_\+method.\+hpp.
+
+
+
+Referenced by Apply(), and Max\+Iterations().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/pca/decomposition\+\_\+policies/{\bf randomized\+\_\+svd\+\_\+method.\+hpp}\end{DoxyCompactItemize}

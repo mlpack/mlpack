@@ -1,0 +1,156 @@
+.TH "mlpack::Backtrace" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::Backtrace \- Provides a backtrace\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "struct \fBFrames\fP"
+.br
+.RI "\fI\fBBacktrace\fP datastructure\&. \fP"
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBBacktrace\fP ()"
+.br
+.RI "\fIConstructor initialize fields and call GetAddress to retrieve addresses for each frame of backtrace\&. \fP"
+.ti -1c
+.RI "\fBstd::string\fP \fBToString\fP ()"
+.br
+.RI "\fIReturns string of backtrace\&. \fP"
+.in -1c
+.SS "Static Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static void \fBDecodeAddress\fP (long address)"
+.br
+.RI "\fIDecodes file name, function & line number\&. \fP"
+.ti -1c
+.RI "static void \fBDemangleFunction\fP ()"
+.br
+.RI "\fIDemangles function name\&. \fP"
+.ti -1c
+.RI "static void \fBGetAddress\fP (int maxDepth)"
+.br
+.RI "\fIGets addresses of each called function from the stack\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "struct \fBmlpack::Backtrace::Frames\fP \fBframe\fP"
+.br
+.in -1c
+.SS "Static Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "static std::vector< \fBFrames\fP > \fBstack\fP"
+.br
+.RI "\fIA vector for all the backtrace information\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Provides a backtrace\&. 
+
+The \fBBacktrace\fP class retrieve addresses of each called function from the stack and decode file name, function & line number\&. Retrieved information can be printed in form:
+.PP
+.PP
+.nf
+[b]: (count) /directory/to/file\&.cpp:function(args):line_number
+.fi
+.PP
+.PP
+\fBBacktrace\fP is printed always when \fBLog::Assert\fP failed\&. An example is given below\&.
+.PP
+.PP
+.nf
+if (!someImportantCondition())
+{
+  Log::Fatal << "someImportantCondition() is not satisfied! Terminating\&.";
+  Log::Fatal << std::endl;
+}
+.fi
+.PP
+.PP
+\fBNote:\fP
+.RS 4
+\fBLog::Assert\fP will not be shown when compiling in non-debug mode\&.
+.RE
+.PP
+\fBSee also:\fP
+.RS 4
+PrefixedOutStream, \fBLog\fP 
+.RE
+.PP
+
+.PP
+Definition at line 46 of file backtrace\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::Backtrace::Backtrace ()"
+
+.PP
+Constructor initialize fields and call GetAddress to retrieve addresses for each frame of backtrace\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fImaxDepth\fP Maximum depth of backtrace\&. Default 32 steps\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "static void mlpack::Backtrace::DecodeAddress (long address)\fC [static]\fP, \fC [private]\fP"
+
+.PP
+Decodes file name, function & line number\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIaddress\fP Address of traced frame\&. 
+.RE
+.PP
+
+.SS "static void mlpack::Backtrace::DemangleFunction ()\fC [static]\fP, \fC [private]\fP"
+
+.PP
+Demangles function name\&. 
+.SS "static void mlpack::Backtrace::GetAddress (int maxDepth)\fC [static]\fP, \fC [private]\fP"
+
+.PP
+Gets addresses of each called function from the stack\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fImaxDepth\fP Maximum depth of backtrace\&. Default 32 steps\&. 
+.RE
+.PP
+
+.SS "\fBstd::string\fP mlpack::Backtrace::ToString ()"
+
+.PP
+Returns string of backtrace\&. 
+.SH "Member Data Documentation"
+.PP 
+.SS "struct \fBmlpack::Backtrace::Frames\fP mlpack::Backtrace::frame\fC [private]\fP"
+
+.SS "std::vector<\fBFrames\fP> mlpack::Backtrace::stack\fC [static]\fP, \fC [private]\fP"
+
+.PP
+A vector for all the backtrace information\&. 
+.PP
+Definition at line 91 of file backtrace\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

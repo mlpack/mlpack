@@ -1,0 +1,312 @@
+.TH "mlpack::amf::SimpleToleranceTermination< MatType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::amf::SimpleToleranceTermination< MatType > \- This class implements residue tolerance termination policy\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBSimpleToleranceTermination\fP (const double \fBtolerance\fP=1e\-5, const size_t maxIterations=10000, const size_t reverseStepTolerance=3)"
+.br
+.RI "\fIempty constructor \fP"
+.ti -1c
+.RI "const double & \fBIndex\fP () const "
+.br
+.RI "\fIGet current value of residue\&. \fP"
+.ti -1c
+.RI "void \fBInitialize\fP (const MatType &\fBV\fP)"
+.br
+.RI "\fIInitializes the termination policy before stating the factorization\&. \fP"
+.ti -1c
+.RI "bool \fBIsConverged\fP (arma::mat &\fBW\fP, arma::mat &\fBH\fP)"
+.br
+.RI "\fICheck if termination criterio is met\&. \fP"
+.ti -1c
+.RI "const size_t & \fBIteration\fP () const "
+.br
+.RI "\fIGet current iteration count\&. \fP"
+.ti -1c
+.RI "const size_t & \fBMaxIterations\fP () const "
+.br
+.RI "\fIAccess upper limit of iteration count\&. \fP"
+.ti -1c
+.RI "size_t & \fBMaxIterations\fP ()"
+.br
+.ti -1c
+.RI "const double & \fBTolerance\fP () const "
+.br
+.RI "\fIAccess tolerance value\&. \fP"
+.ti -1c
+.RI "double & \fBTolerance\fP ()"
+.br
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "double \fBc_index\fP"
+.br
+.ti -1c
+.RI "double \fBc_indexOld\fP"
+.br
+.ti -1c
+.RI "arma::mat \fBH\fP"
+.br
+.ti -1c
+.RI "bool \fBisCopy\fP"
+.br
+.RI "\fIindicates whether a copy of information is available which corresponds to minimum residue point \fP"
+.ti -1c
+.RI "size_t \fBiteration\fP"
+.br
+.RI "\fIcurrent iteration count \fP"
+.ti -1c
+.RI "size_t \fBmaxIterations\fP"
+.br
+.RI "\fIiteration threshold \fP"
+.ti -1c
+.RI "double \fBnormOld\fP"
+.br
+.ti -1c
+.RI "double \fBresidue\fP"
+.br
+.ti -1c
+.RI "double \fBresidueOld\fP"
+.br
+.RI "\fIresidue values \fP"
+.ti -1c
+.RI "size_t \fBreverseStepCount\fP"
+.br
+.RI "\fIsuccessive residue drops \fP"
+.ti -1c
+.RI "size_t \fBreverseStepTolerance\fP"
+.br
+.RI "\fItolerance on successive residue drops \fP"
+.ti -1c
+.RI "double \fBtolerance\fP"
+.br
+.RI "\fItolerance \fP"
+.ti -1c
+.RI "const MatType * \fBV\fP"
+.br
+.RI "\fIpointer to matrix being factorized \fP"
+.ti -1c
+.RI "arma::mat \fBW\fP"
+.br
+.RI "\fIvariables to store information of minimum residue poi \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<class MatType>
+.br
+class mlpack::amf::SimpleToleranceTermination< MatType >"
+This class implements residue tolerance termination policy\&. 
+
+Termination criterion is met when increase in residue value drops below the given tolerance\&. To accommodate spikes certain number of successive residue drops are accepted\&. This upper imit on successive drops can be adjusted with reverseStepCount\&. Secondary termination criterion terminates algorithm when iteration count goes above the threshold\&.
+.PP
+\fBSee also:\fP
+.RS 4
+\fBAMF\fP 
+.RE
+.PP
+
+.PP
+Definition at line 31 of file simple_tolerance_termination\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<class MatType > \fBmlpack::amf::SimpleToleranceTermination\fP< MatType >::\fBSimpleToleranceTermination\fP (const double tolerance = \fC1e\-5\fP, const size_t maxIterations = \fC10000\fP, const size_t reverseStepTolerance = \fC3\fP)\fC [inline]\fP"
+
+.PP
+empty constructor 
+.PP
+Definition at line 35 of file simple_tolerance_termination\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<class MatType > const double& \fBmlpack::amf::SimpleToleranceTermination\fP< MatType >::Index () const\fC [inline]\fP"
+
+.PP
+Get current value of residue\&. 
+.PP
+Definition at line 149 of file simple_tolerance_termination\&.hpp\&.
+.PP
+References mlpack::amf::SimpleToleranceTermination< MatType >::residue\&.
+.SS "template<class MatType > void \fBmlpack::amf::SimpleToleranceTermination\fP< MatType >::Initialize (const MatType & V)\fC [inline]\fP"
+
+.PP
+Initializes the termination policy before stating the factorization\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIV\fP Input matrix to be factorized\&. 
+.RE
+.PP
+
+.PP
+Definition at line 47 of file simple_tolerance_termination\&.hpp\&.
+.PP
+References mlpack::amf::SimpleToleranceTermination< MatType >::c_index, mlpack::amf::SimpleToleranceTermination< MatType >::c_indexOld, mlpack::amf::SimpleToleranceTermination< MatType >::isCopy, mlpack::amf::SimpleToleranceTermination< MatType >::iteration, mlpack::amf::SimpleToleranceTermination< MatType >::residue, mlpack::amf::SimpleToleranceTermination< MatType >::residueOld, mlpack::amf::SimpleToleranceTermination< MatType >::reverseStepCount, and mlpack::amf::SimpleToleranceTermination< MatType >::V\&.
+.SS "template<class MatType > bool \fBmlpack::amf::SimpleToleranceTermination\fP< MatType >::IsConverged (arma::mat & W, arma::mat & H)\fC [inline]\fP"
+
+.PP
+Check if termination criterio is met\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIW\fP Basis matrix of output\&. 
+.br
+\fIH\fP Encoding matrix of output\&. 
+.RE
+.PP
+
+.PP
+Definition at line 69 of file simple_tolerance_termination\&.hpp\&.
+.PP
+References mlpack::amf::SimpleToleranceTermination< MatType >::c_index, mlpack::amf::SimpleToleranceTermination< MatType >::c_indexOld, mlpack::amf::SimpleToleranceTermination< MatType >::H, mlpack::Log::Info, mlpack::amf::SimpleToleranceTermination< MatType >::isCopy, mlpack::amf::SimpleToleranceTermination< MatType >::iteration, mlpack::amf::SimpleToleranceTermination< MatType >::maxIterations, mlpack::amf::SimpleToleranceTermination< MatType >::residue, mlpack::amf::SimpleToleranceTermination< MatType >::residueOld, mlpack::amf::SimpleToleranceTermination< MatType >::reverseStepCount, mlpack::amf::SimpleToleranceTermination< MatType >::reverseStepTolerance, mlpack::amf::SimpleToleranceTermination< MatType >::V, and mlpack::amf::SimpleToleranceTermination< MatType >::W\&.
+.SS "template<class MatType > const size_t& \fBmlpack::amf::SimpleToleranceTermination\fP< MatType >::Iteration () const\fC [inline]\fP"
+
+.PP
+Get current iteration count\&. 
+.PP
+Definition at line 152 of file simple_tolerance_termination\&.hpp\&.
+.PP
+References mlpack::amf::SimpleToleranceTermination< MatType >::iteration\&.
+.SS "template<class MatType > const size_t& \fBmlpack::amf::SimpleToleranceTermination\fP< MatType >::MaxIterations () const\fC [inline]\fP"
+
+.PP
+Access upper limit of iteration count\&. 
+.PP
+Definition at line 155 of file simple_tolerance_termination\&.hpp\&.
+.PP
+References mlpack::amf::SimpleToleranceTermination< MatType >::maxIterations\&.
+.SS "template<class MatType > size_t& \fBmlpack::amf::SimpleToleranceTermination\fP< MatType >::MaxIterations ()\fC [inline]\fP"
+
+.PP
+Definition at line 156 of file simple_tolerance_termination\&.hpp\&.
+.PP
+References mlpack::amf::SimpleToleranceTermination< MatType >::maxIterations\&.
+.SS "template<class MatType > const double& \fBmlpack::amf::SimpleToleranceTermination\fP< MatType >::Tolerance () const\fC [inline]\fP"
+
+.PP
+Access tolerance value\&. 
+.PP
+Definition at line 159 of file simple_tolerance_termination\&.hpp\&.
+.PP
+References mlpack::amf::SimpleToleranceTermination< MatType >::tolerance\&.
+.SS "template<class MatType > double& \fBmlpack::amf::SimpleToleranceTermination\fP< MatType >::Tolerance ()\fC [inline]\fP"
+
+.PP
+Definition at line 160 of file simple_tolerance_termination\&.hpp\&.
+.PP
+References mlpack::amf::SimpleToleranceTermination< MatType >::tolerance\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<class MatType > double \fBmlpack::amf::SimpleToleranceTermination\fP< MatType >::c_index\fC [private]\fP"
+
+.PP
+Definition at line 192 of file simple_tolerance_termination\&.hpp\&.
+.PP
+Referenced by mlpack::amf::SimpleToleranceTermination< MatType >::Initialize(), and mlpack::amf::SimpleToleranceTermination< MatType >::IsConverged()\&.
+.SS "template<class MatType > double \fBmlpack::amf::SimpleToleranceTermination\fP< MatType >::c_indexOld\fC [private]\fP"
+
+.PP
+Definition at line 191 of file simple_tolerance_termination\&.hpp\&.
+.PP
+Referenced by mlpack::amf::SimpleToleranceTermination< MatType >::Initialize(), and mlpack::amf::SimpleToleranceTermination< MatType >::IsConverged()\&.
+.SS "template<class MatType > arma::mat \fBmlpack::amf::SimpleToleranceTermination\fP< MatType >::H\fC [private]\fP"
+
+.PP
+Definition at line 190 of file simple_tolerance_termination\&.hpp\&.
+.PP
+Referenced by mlpack::amf::SimpleToleranceTermination< MatType >::IsConverged()\&.
+.SS "template<class MatType > bool \fBmlpack::amf::SimpleToleranceTermination\fP< MatType >::isCopy\fC [private]\fP"
+
+.PP
+indicates whether a copy of information is available which corresponds to minimum residue point 
+.PP
+Definition at line 186 of file simple_tolerance_termination\&.hpp\&.
+.PP
+Referenced by mlpack::amf::SimpleToleranceTermination< MatType >::Initialize(), and mlpack::amf::SimpleToleranceTermination< MatType >::IsConverged()\&.
+.SS "template<class MatType > size_t \fBmlpack::amf::SimpleToleranceTermination\fP< MatType >::iteration\fC [private]\fP"
+
+.PP
+current iteration count 
+.PP
+Definition at line 172 of file simple_tolerance_termination\&.hpp\&.
+.PP
+Referenced by mlpack::amf::SimpleToleranceTermination< MatType >::Initialize(), mlpack::amf::SimpleToleranceTermination< MatType >::IsConverged(), and mlpack::amf::SimpleToleranceTermination< MatType >::Iteration()\&.
+.SS "template<class MatType > size_t \fBmlpack::amf::SimpleToleranceTermination\fP< MatType >::maxIterations\fC [private]\fP"
+
+.PP
+iteration threshold 
+.PP
+Definition at line 166 of file simple_tolerance_termination\&.hpp\&.
+.PP
+Referenced by mlpack::amf::SimpleToleranceTermination< MatType >::IsConverged(), and mlpack::amf::SimpleToleranceTermination< MatType >::MaxIterations()\&.
+.SS "template<class MatType > double \fBmlpack::amf::SimpleToleranceTermination\fP< MatType >::normOld\fC [private]\fP"
+
+.PP
+Definition at line 177 of file simple_tolerance_termination\&.hpp\&.
+.SS "template<class MatType > double \fBmlpack::amf::SimpleToleranceTermination\fP< MatType >::residue\fC [private]\fP"
+
+.PP
+Definition at line 176 of file simple_tolerance_termination\&.hpp\&.
+.PP
+Referenced by mlpack::amf::SimpleToleranceTermination< MatType >::Index(), mlpack::amf::SimpleToleranceTermination< MatType >::Initialize(), and mlpack::amf::SimpleToleranceTermination< MatType >::IsConverged()\&.
+.SS "template<class MatType > double \fBmlpack::amf::SimpleToleranceTermination\fP< MatType >::residueOld\fC [private]\fP"
+
+.PP
+residue values 
+.PP
+Definition at line 175 of file simple_tolerance_termination\&.hpp\&.
+.PP
+Referenced by mlpack::amf::SimpleToleranceTermination< MatType >::Initialize(), and mlpack::amf::SimpleToleranceTermination< MatType >::IsConverged()\&.
+.SS "template<class MatType > size_t \fBmlpack::amf::SimpleToleranceTermination\fP< MatType >::reverseStepCount\fC [private]\fP"
+
+.PP
+successive residue drops 
+.PP
+Definition at line 182 of file simple_tolerance_termination\&.hpp\&.
+.PP
+Referenced by mlpack::amf::SimpleToleranceTermination< MatType >::Initialize(), and mlpack::amf::SimpleToleranceTermination< MatType >::IsConverged()\&.
+.SS "template<class MatType > size_t \fBmlpack::amf::SimpleToleranceTermination\fP< MatType >::reverseStepTolerance\fC [private]\fP"
+
+.PP
+tolerance on successive residue drops 
+.PP
+Definition at line 180 of file simple_tolerance_termination\&.hpp\&.
+.PP
+Referenced by mlpack::amf::SimpleToleranceTermination< MatType >::IsConverged()\&.
+.SS "template<class MatType > double \fBmlpack::amf::SimpleToleranceTermination\fP< MatType >::tolerance\fC [private]\fP"
+
+.PP
+tolerance 
+.PP
+Definition at line 164 of file simple_tolerance_termination\&.hpp\&.
+.PP
+Referenced by mlpack::amf::SimpleToleranceTermination< MatType >::Tolerance()\&.
+.SS "template<class MatType > const MatType* \fBmlpack::amf::SimpleToleranceTermination\fP< MatType >::V\fC [private]\fP"
+
+.PP
+pointer to matrix being factorized 
+.PP
+Definition at line 169 of file simple_tolerance_termination\&.hpp\&.
+.PP
+Referenced by mlpack::amf::SimpleToleranceTermination< MatType >::Initialize(), and mlpack::amf::SimpleToleranceTermination< MatType >::IsConverged()\&.
+.SS "template<class MatType > arma::mat \fBmlpack::amf::SimpleToleranceTermination\fP< MatType >::W\fC [private]\fP"
+
+.PP
+variables to store information of minimum residue poi 
+.PP
+Definition at line 189 of file simple_tolerance_termination\&.hpp\&.
+.PP
+Referenced by mlpack::amf::SimpleToleranceTermination< MatType >::IsConverged()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

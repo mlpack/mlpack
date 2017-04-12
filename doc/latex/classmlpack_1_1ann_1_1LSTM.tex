@@ -1,0 +1,899 @@
+\section{mlpack\+:\+:ann\+:\+:L\+S\+TM$<$ Input\+Data\+Type, Output\+Data\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1LSTM}\index{mlpack\+::ann\+::\+L\+S\+T\+M$<$ Input\+Data\+Type, Output\+Data\+Type $>$@{mlpack\+::ann\+::\+L\+S\+T\+M$<$ Input\+Data\+Type, Output\+Data\+Type $>$}}
+
+
+An implementation of a lstm network layer.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf L\+S\+TM} ()
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{L\+S\+TM}{p.}{classmlpack_1_1ann_1_1LSTM} object. \end{DoxyCompactList}\item 
+{\bf L\+S\+TM} (const size\+\_\+t {\bf in\+Size}, const size\+\_\+t {\bf out\+Size}, const size\+\_\+t {\bf rho})
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{L\+S\+TM}{p.}{classmlpack_1_1ann_1_1LSTM} layer object using the specified parameters. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void {\bf Backward} (const arma\+::\+Mat$<$ eT $>$ \&\&, arma\+::\+Mat$<$ eT $>$ \&\&gy, arma\+::\+Mat$<$ eT $>$ \&\&g)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f. \end{DoxyCompactList}\item 
+Output\+Data\+Type const \& {\bf Delta} () const 
+\begin{DoxyCompactList}\small\item\em Get the delta. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& {\bf Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+bool {\bf Deterministic} () const 
+\begin{DoxyCompactList}\small\item\em The value of the deterministic parameter. \end{DoxyCompactList}\item 
+bool \& {\bf Deterministic} ()
+\begin{DoxyCompactList}\small\item\em Modify the value of the deterministic parameter. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void {\bf Forward} (arma\+::\+Mat$<$ eT $>$ \&\&input, arma\+::\+Mat$<$ eT $>$ \&\&output)
+\begin{DoxyCompactList}\small\item\em Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void {\bf Gradient} (arma\+::\+Mat$<$ eT $>$ \&\&input, arma\+::\+Mat$<$ eT $>$ \&\&, arma\+::\+Mat$<$ eT $>$ \&\&)
+\item 
+Output\+Data\+Type const \& {\bf Gradient} () const 
+\begin{DoxyCompactList}\small\item\em Get the gradient. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& {\bf Gradient} ()
+\begin{DoxyCompactList}\small\item\em Modify the gradient. \end{DoxyCompactList}\item 
+Input\+Data\+Type const \& {\bf Input\+Parameter} () const 
+\begin{DoxyCompactList}\small\item\em Get the input parameter. \end{DoxyCompactList}\item 
+Input\+Data\+Type \& {\bf Input\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the input parameter. \end{DoxyCompactList}\item 
+std\+::vector$<$ {\bf Layer\+Types} $>$ \& {\bf Model} ()
+\begin{DoxyCompactList}\small\item\em Get the model modules. \end{DoxyCompactList}\item 
+Output\+Data\+Type const \& {\bf Output\+Parameter} () const 
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& {\bf Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type const \& {\bf Parameters} () const 
+\begin{DoxyCompactList}\small\item\em Get the parameters. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& {\bf Parameters} ()
+\begin{DoxyCompactList}\small\item\em Modify the parameters. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Rho} () const 
+\begin{DoxyCompactList}\small\item\em Get the maximum number of steps to backpropagate through time (B\+P\+TT). \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Rho} ()
+\begin{DoxyCompactList}\small\item\em Modify the maximum number of steps to backpropagate through time (B\+P\+TT). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&ar, const unsigned int)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+size\+\_\+t {\bf backward\+Step}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored number of backward steps. \end{DoxyCompactList}\item 
+arma\+::mat {\bf cell\+Activation\+Error}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored cell activation error. \end{DoxyCompactList}\item 
+{\bf Layer\+Types} {\bf cell\+Activation\+Module}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored cell activation module. \end{DoxyCompactList}\item 
+{\bf Layer\+Types} {\bf cell\+Module}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored cell module. \end{DoxyCompactList}\item 
+std\+::vector$<$ arma\+::mat $>$ {\bf cell\+Parameter}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored cell parameters. \end{DoxyCompactList}\item 
+Output\+Data\+Type {\bf delta}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored delta object. \end{DoxyCompactList}\item 
+{\bf Delta\+Visitor} {\bf delta\+Visitor}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored delta visitor. \end{DoxyCompactList}\item 
+bool {\bf deterministic}
+\begin{DoxyCompactList}\small\item\em If true dropout and scaling is disabled, see notes above. \end{DoxyCompactList}\item 
+arma\+::mat {\bf forget\+Gate\+Error}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored foget gate error. \end{DoxyCompactList}\item 
+{\bf Layer\+Types} {\bf forget\+Gate\+Module}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored forget gate module. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf forward\+Step}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored number of forward steps. \end{DoxyCompactList}\item 
+Output\+Data\+Type {\bf gradient}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored gradient object. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf gradient\+Step}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored number of gradient steps. \end{DoxyCompactList}\item 
+{\bf Layer\+Types} {\bf hidden\+State\+Module}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored hidden state module. \end{DoxyCompactList}\item 
+{\bf Layer\+Types} {\bf input2\+Gate\+Module}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored input 2 gate module. \end{DoxyCompactList}\item 
+{\bf Layer\+Types} {\bf input\+Gate\+Module}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored input gate module. \end{DoxyCompactList}\item 
+Input\+Data\+Type {\bf input\+Parameter}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored input parameter object. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf in\+Size}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored number of input units. \end{DoxyCompactList}\item 
+std\+::vector$<$ {\bf Layer\+Types} $>$ {\bf network}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored list of network modules. \end{DoxyCompactList}\item 
+std\+::vector$<$ arma\+::mat $>$ {\bf out\+Parameter}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored output parameters. \end{DoxyCompactList}\item 
+{\bf Layer\+Types} {\bf output2\+Gate\+Module}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored output 2 gate module. \end{DoxyCompactList}\item 
+{\bf Layer\+Types} {\bf output\+Gate\+Module}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored output gate module. \end{DoxyCompactList}\item 
+Output\+Data\+Type {\bf output\+Parameter}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored output parameter object. \end{DoxyCompactList}\item 
+{\bf Output\+Parameter\+Visitor} {\bf output\+Parameter\+Visitor}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored output parameter visitor. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf out\+Size}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored number of output units. \end{DoxyCompactList}\item 
+arma\+::mat {\bf prev\+Cell}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored previous cell state. \end{DoxyCompactList}\item 
+arma\+::mat {\bf prev\+Error}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored previous error. \end{DoxyCompactList}\item 
+arma\+::mat {\bf prev\+Output}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored previous output. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf rho}
+\begin{DoxyCompactList}\small\item\em Number of steps to backpropagate through time (B\+P\+TT). \end{DoxyCompactList}\item 
+Output\+Data\+Type {\bf weights}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored weight object. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat$>$\\*
+class mlpack\+::ann\+::\+L\+S\+T\+M$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+
+An implementation of a lstm network layer. 
+
+This class allows specification of the type of the activation functions used for the gates and cells and also of the type of the function used to initialize and update the peephole weights.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 51 of file layer\+\_\+types.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!L\+S\+TM@{L\+S\+TM}}
+\index{L\+S\+TM@{L\+S\+TM}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{L\+S\+T\+M()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::{\bf L\+S\+TM} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1LSTM_ab159ecef80ae317863187f1d27b62184}
+
+
+Create the \doxyref{L\+S\+TM}{p.}{classmlpack_1_1ann_1_1LSTM} object. 
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!L\+S\+TM@{L\+S\+TM}}
+\index{L\+S\+TM@{L\+S\+TM}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{L\+S\+T\+M(const size\+\_\+t in\+Size, const size\+\_\+t out\+Size, const size\+\_\+t rho)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::{\bf L\+S\+TM} (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{in\+Size, }
+\item[{const size\+\_\+t}]{out\+Size, }
+\item[{const size\+\_\+t}]{rho}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1LSTM_af5b9b66b0e38469c2a02608563288889}
+
+
+Create the \doxyref{L\+S\+TM}{p.}{classmlpack_1_1ann_1_1LSTM} layer object using the specified parameters. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em in\+Size} & The number of input units. \\
+\hline
+{\em out\+Size} & The number of output units. \\
+\hline
+{\em rho} & Maximum number of steps to backpropagate through time (B\+P\+TT). \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!Backward@{Backward}}
+\index{Backward@{Backward}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{Backward(const arma\+::\+Mat$<$ e\+T $>$ \&\&, arma\+::\+Mat$<$ e\+T $>$ \&\&gy, arma\+::\+Mat$<$ e\+T $>$ \&\&g)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename eT $>$ void {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Backward (
+\begin{DoxyParamCaption}
+\item[{const arma\+::\+Mat$<$ eT $>$ \&\&}]{, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&\&}]{gy, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&\&}]{g}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1LSTM_aff3ac5ddcf19087f8ff6c3a6a680a7d0}
+
+
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f. 
+
+Using the results from the feed forward pass.
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The propagated input activation. \\
+\hline
+{\em gy} & The backpropagated error. \\
+\hline
+{\em g} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{Delta() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type const\& {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Delta (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1LSTM_a5289b92d6b0b798eedb8225c772b4697}
+
+
+Get the delta. 
+
+
+
+Definition at line 123 of file lstm.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+L\+S\+T\+M$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::delta.
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{Delta()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type\& {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Delta (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1LSTM_a7784831a8b50b81694330cef078b7b8e}
+
+
+Modify the delta. 
+
+
+
+Definition at line 125 of file lstm.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+L\+S\+T\+M$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::delta.
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!Deterministic@{Deterministic}}
+\index{Deterministic@{Deterministic}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{Deterministic() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ bool {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Deterministic (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1LSTM_a1aa54f9b57aecffab0c44310244ab777}
+
+
+The value of the deterministic parameter. 
+
+
+
+Definition at line 98 of file lstm.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+L\+S\+T\+M$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::deterministic.
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!Deterministic@{Deterministic}}
+\index{Deterministic@{Deterministic}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{Deterministic()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ bool\& {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Deterministic (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1LSTM_aae4312bbfe302b01cf8914dff7488ccc}
+
+
+Modify the value of the deterministic parameter. 
+
+
+
+Definition at line 100 of file lstm.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+L\+S\+T\+M$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::deterministic.
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!Forward@{Forward}}
+\index{Forward@{Forward}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{Forward(arma\+::\+Mat$<$ e\+T $>$ \&\&input, arma\+::\+Mat$<$ e\+T $>$ \&\&output)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename eT $>$ void {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Forward (
+\begin{DoxyParamCaption}
+\item[{arma\+::\+Mat$<$ eT $>$ \&\&}]{input, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&\&}]{output}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1LSTM_a4d31940edb8b0b4bab93e61458458629}
+
+
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input data used for evaluating the specified function. \\
+\hline
+{\em output} & Resulting output activation. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{Gradient(arma\+::\+Mat$<$ e\+T $>$ \&\&input, arma\+::\+Mat$<$ e\+T $>$ \&\&, arma\+::\+Mat$<$ e\+T $>$ \&\&)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename eT $>$ void {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Gradient (
+\begin{DoxyParamCaption}
+\item[{arma\+::\+Mat$<$ eT $>$ \&\&}]{input, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&\&}]{, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&\&}]{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1LSTM_a8c9e6a6ddd37632af4f666ff9ce0fa55}
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{Gradient() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type const\& {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Gradient (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1LSTM_ac971b1bdd86847b7f2d5959ec78ff0ce}
+
+
+Get the gradient. 
+
+
+
+Definition at line 128 of file lstm.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+L\+S\+T\+M$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::gradient.
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{Gradient()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type\& {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Gradient (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1LSTM_aff1a8cc892cf4741be34af1a7ccc1a24}
+
+
+Modify the gradient. 
+
+
+
+Definition at line 130 of file lstm.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+L\+S\+T\+M$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::gradient.
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!Input\+Parameter@{Input\+Parameter}}
+\index{Input\+Parameter@{Input\+Parameter}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{Input\+Parameter() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Input\+Data\+Type const\& {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Input\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1LSTM_afe2716eef29f07ee63ba94376d0d6794}
+
+
+Get the input parameter. 
+
+
+
+Definition at line 113 of file lstm.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+L\+S\+T\+M$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::input\+Parameter.
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!Input\+Parameter@{Input\+Parameter}}
+\index{Input\+Parameter@{Input\+Parameter}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{Input\+Parameter()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Input\+Data\+Type\& {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Input\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1LSTM_a36ba3d8dee8b160b90e13012eb07f232}
+
+
+Modify the input parameter. 
+
+
+
+Definition at line 115 of file lstm.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+L\+S\+T\+M$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::input\+Parameter.
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!Model@{Model}}
+\index{Model@{Model}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{Model()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ std\+::vector$<${\bf Layer\+Types}$>$\& {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Model (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1LSTM_a63b244bd757f83a1736303b2600eee05}
+
+
+Get the model modules. 
+
+
+
+Definition at line 133 of file lstm.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+L\+S\+T\+M$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::network, and mlpack\+::ann\+::\+L\+S\+T\+M$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Serialize().
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{Output\+Parameter() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type const\& {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Output\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1LSTM_a717062d26048b86c2fc71bc55fb80fc2}
+
+
+Get the output parameter. 
+
+
+
+Definition at line 118 of file lstm.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+L\+S\+T\+M$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Parameter.
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{Output\+Parameter()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type\& {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Output\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1LSTM_a79e62011be26380ca9b9f7a2fd749f4a}
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 120 of file lstm.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+L\+S\+T\+M$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Parameter.
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{Parameters() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type const\& {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Parameters (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1LSTM_acd44436632956f422318a9e7d765bfd4}
+
+
+Get the parameters. 
+
+
+
+Definition at line 108 of file lstm.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+L\+S\+T\+M$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::weights.
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{Parameters()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type\& {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Parameters (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1LSTM_a8e0176fd77f33349d457305447b070d3}
+
+
+Modify the parameters. 
+
+
+
+Definition at line 110 of file lstm.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+L\+S\+T\+M$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::weights.
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!Rho@{Rho}}
+\index{Rho@{Rho}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{Rho() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ size\+\_\+t {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Rho (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1LSTM_a5b82ea1eceb438357a3f62e7c2da5ea3}
+
+
+Get the maximum number of steps to backpropagate through time (B\+P\+TT). 
+
+
+
+Definition at line 103 of file lstm.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+L\+S\+T\+M$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::rho.
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!Rho@{Rho}}
+\index{Rho@{Rho}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{Rho()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ size\+\_\+t\& {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Rho (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1LSTM_aa4ed168cc339e1d4ca0a496a674ac885}
+
+
+Modify the maximum number of steps to backpropagate through time (B\+P\+TT). 
+
+
+
+Definition at line 105 of file lstm.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+L\+S\+T\+M$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::rho.
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{Serialize(\+Archive \&ar, const unsigned int)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename Archive $>$ void {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const unsigned}]{int}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1LSTM_a03c9b072c9ef31ac8b6e44cb67e2578f}
+
+
+Serialize the layer. 
+
+
+
+Referenced by mlpack\+::ann\+::\+L\+S\+T\+M$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Model().
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!backward\+Step@{backward\+Step}}
+\index{backward\+Step@{backward\+Step}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{backward\+Step}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ size\+\_\+t {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::backward\+Step\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LSTM_a37fa110c99828ce9d8af584d1b385315}
+
+
+Locally-\/stored number of backward steps. 
+
+
+
+Definition at line 198 of file lstm.\+hpp.
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!cell\+Activation\+Error@{cell\+Activation\+Error}}
+\index{cell\+Activation\+Error@{cell\+Activation\+Error}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{cell\+Activation\+Error}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ arma\+::mat {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::cell\+Activation\+Error\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LSTM_aad4612e0f06576a7347d9f3f45c43238}
+
+
+Locally-\/stored cell activation error. 
+
+
+
+Definition at line 213 of file lstm.\+hpp.
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!cell\+Activation\+Module@{cell\+Activation\+Module}}
+\index{cell\+Activation\+Module@{cell\+Activation\+Module}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{cell\+Activation\+Module}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ {\bf Layer\+Types} {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::cell\+Activation\+Module\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LSTM_afc5713192f517c541d12ce680cb44c26}
+
+
+Locally-\/stored cell activation module. 
+
+
+
+Definition at line 183 of file lstm.\+hpp.
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!cell\+Module@{cell\+Module}}
+\index{cell\+Module@{cell\+Module}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{cell\+Module}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ {\bf Layer\+Types} {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::cell\+Module\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LSTM_af3e9eb63b7fe473e8df30eb30a86e809}
+
+
+Locally-\/stored cell module. 
+
+
+
+Definition at line 180 of file lstm.\+hpp.
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!cell\+Parameter@{cell\+Parameter}}
+\index{cell\+Parameter@{cell\+Parameter}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{cell\+Parameter}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ std\+::vector$<$arma\+::mat$>$ {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::cell\+Parameter\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LSTM_a71db18e985d000117c0b2c849eaf73e5}
+
+
+Locally-\/stored cell parameters. 
+
+
+
+Definition at line 204 of file lstm.\+hpp.
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!delta@{delta}}
+\index{delta@{delta}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{delta}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::delta\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LSTM_a3e75e293633d5ad736e44b1395a4b6af}
+
+
+Locally-\/stored delta object. 
+
+
+
+Definition at line 222 of file lstm.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+L\+S\+T\+M$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Delta().
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!delta\+Visitor@{delta\+Visitor}}
+\index{delta\+Visitor@{delta\+Visitor}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{delta\+Visitor}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ {\bf Delta\+Visitor} {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::delta\+Visitor\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LSTM_a8c40e413c87d0b0a7f2951971224b778}
+
+
+Locally-\/stored delta visitor. 
+
+
+
+Definition at line 189 of file lstm.\+hpp.
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!deterministic@{deterministic}}
+\index{deterministic@{deterministic}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{deterministic}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ bool {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::deterministic\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LSTM_a6a5801a3abe11f780894e8c8d6d4796f}
+
+
+If true dropout and scaling is disabled, see notes above. 
+
+
+
+Definition at line 219 of file lstm.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+L\+S\+T\+M$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Deterministic().
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!forget\+Gate\+Error@{forget\+Gate\+Error}}
+\index{forget\+Gate\+Error@{forget\+Gate\+Error}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{forget\+Gate\+Error}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ arma\+::mat {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::forget\+Gate\+Error\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LSTM_ae82a5d99d6886b73012148b1d8da3262}
+
+
+Locally-\/stored foget gate error. 
+
+
+
+Definition at line 216 of file lstm.\+hpp.
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!forget\+Gate\+Module@{forget\+Gate\+Module}}
+\index{forget\+Gate\+Module@{forget\+Gate\+Module}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{forget\+Gate\+Module}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ {\bf Layer\+Types} {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::forget\+Gate\+Module\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LSTM_a07ec127c5126f528be7f9a51c2407112}
+
+
+Locally-\/stored forget gate module. 
+
+
+
+Definition at line 174 of file lstm.\+hpp.
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!forward\+Step@{forward\+Step}}
+\index{forward\+Step@{forward\+Step}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{forward\+Step}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ size\+\_\+t {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::forward\+Step\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LSTM_a1ef95525567c5beb7ef690fb71790120}
+
+
+Locally-\/stored number of forward steps. 
+
+
+
+Definition at line 195 of file lstm.\+hpp.
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!gradient@{gradient}}
+\index{gradient@{gradient}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{gradient}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::gradient\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LSTM_af94db32ee5e6115c645cb5ca958a32ef}
+
+
+Locally-\/stored gradient object. 
+
+
+
+Definition at line 225 of file lstm.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+L\+S\+T\+M$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Gradient().
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!gradient\+Step@{gradient\+Step}}
+\index{gradient\+Step@{gradient\+Step}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{gradient\+Step}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ size\+\_\+t {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::gradient\+Step\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LSTM_adfcf65cbc836110dcb47db5f06d204ac}
+
+
+Locally-\/stored number of gradient steps. 
+
+
+
+Definition at line 201 of file lstm.\+hpp.
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!hidden\+State\+Module@{hidden\+State\+Module}}
+\index{hidden\+State\+Module@{hidden\+State\+Module}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{hidden\+State\+Module}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ {\bf Layer\+Types} {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::hidden\+State\+Module\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LSTM_a009ac1e183e13ab7cecad66e0b02be38}
+
+
+Locally-\/stored hidden state module. 
+
+
+
+Definition at line 171 of file lstm.\+hpp.
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!input2\+Gate\+Module@{input2\+Gate\+Module}}
+\index{input2\+Gate\+Module@{input2\+Gate\+Module}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{input2\+Gate\+Module}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ {\bf Layer\+Types} {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::input2\+Gate\+Module\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LSTM_a5953538dd2185aed6ab691a9bc73b147}
+
+
+Locally-\/stored input 2 gate module. 
+
+
+
+Definition at line 162 of file lstm.\+hpp.
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!input\+Gate\+Module@{input\+Gate\+Module}}
+\index{input\+Gate\+Module@{input\+Gate\+Module}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{input\+Gate\+Module}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ {\bf Layer\+Types} {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::input\+Gate\+Module\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LSTM_a76d3227d9cc3eb17ecf5d3f69955bbd1}
+
+
+Locally-\/stored input gate module. 
+
+
+
+Definition at line 168 of file lstm.\+hpp.
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!input\+Parameter@{input\+Parameter}}
+\index{input\+Parameter@{input\+Parameter}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{input\+Parameter}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Input\+Data\+Type {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::input\+Parameter\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LSTM_a9a22381bcfc5e91a26b36096f75e1e2d}
+
+
+Locally-\/stored input parameter object. 
+
+
+
+Definition at line 228 of file lstm.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+L\+S\+T\+M$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Input\+Parameter().
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!in\+Size@{in\+Size}}
+\index{in\+Size@{in\+Size}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{in\+Size}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ size\+\_\+t {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::in\+Size\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LSTM_a65f69c75e4e7706f1af047f5536b7275}
+
+
+Locally-\/stored number of input units. 
+
+
+
+Definition at line 144 of file lstm.\+hpp.
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!network@{network}}
+\index{network@{network}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{network}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ std\+::vector$<${\bf Layer\+Types}$>$ {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::network\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LSTM_af35b00ad964f5a1e5cb416c8eb92447b}
+
+
+Locally-\/stored list of network modules. 
+
+
+
+Definition at line 192 of file lstm.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+L\+S\+T\+M$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Model().
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!out\+Parameter@{out\+Parameter}}
+\index{out\+Parameter@{out\+Parameter}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{out\+Parameter}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ std\+::vector$<$arma\+::mat$>$ {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::out\+Parameter\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LSTM_a359d4fb97c95d260e93004cdeea1735c}
+
+
+Locally-\/stored output parameters. 
+
+
+
+Definition at line 207 of file lstm.\+hpp.
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!output2\+Gate\+Module@{output2\+Gate\+Module}}
+\index{output2\+Gate\+Module@{output2\+Gate\+Module}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{output2\+Gate\+Module}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ {\bf Layer\+Types} {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output2\+Gate\+Module\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LSTM_a4c15d6043987d2e71312c23868a67b8e}
+
+
+Locally-\/stored output 2 gate module. 
+
+
+
+Definition at line 165 of file lstm.\+hpp.
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!output\+Gate\+Module@{output\+Gate\+Module}}
+\index{output\+Gate\+Module@{output\+Gate\+Module}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{output\+Gate\+Module}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ {\bf Layer\+Types} {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Gate\+Module\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LSTM_a514ad46a50cdee096ecc94ecd90fa87e}
+
+
+Locally-\/stored output gate module. 
+
+
+
+Definition at line 177 of file lstm.\+hpp.
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!output\+Parameter@{output\+Parameter}}
+\index{output\+Parameter@{output\+Parameter}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{output\+Parameter}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Parameter\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LSTM_a6db367b4e67a49e4a2e20d32d8a6c4a6}
+
+
+Locally-\/stored output parameter object. 
+
+
+
+Definition at line 231 of file lstm.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+L\+S\+T\+M$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Output\+Parameter().
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!output\+Parameter\+Visitor@{output\+Parameter\+Visitor}}
+\index{output\+Parameter\+Visitor@{output\+Parameter\+Visitor}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{output\+Parameter\+Visitor}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ {\bf Output\+Parameter\+Visitor} {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Parameter\+Visitor\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LSTM_ae4850133f9acd6eb4ed6cc35c1f2e28e}
+
+
+Locally-\/stored output parameter visitor. 
+
+
+
+Definition at line 186 of file lstm.\+hpp.
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!out\+Size@{out\+Size}}
+\index{out\+Size@{out\+Size}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{out\+Size}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ size\+\_\+t {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::out\+Size\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LSTM_ac880baead753f59008c858e16efd4356}
+
+
+Locally-\/stored number of output units. 
+
+
+
+Definition at line 147 of file lstm.\+hpp.
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!prev\+Cell@{prev\+Cell}}
+\index{prev\+Cell@{prev\+Cell}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{prev\+Cell}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ arma\+::mat {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::prev\+Cell\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LSTM_a86ebbd068b4387774417c75cc46a04dd}
+
+
+Locally-\/stored previous cell state. 
+
+
+
+Definition at line 159 of file lstm.\+hpp.
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!prev\+Error@{prev\+Error}}
+\index{prev\+Error@{prev\+Error}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{prev\+Error}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ arma\+::mat {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::prev\+Error\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LSTM_a5bdbcd77fa0eaad986621c496ea93a10}
+
+
+Locally-\/stored previous error. 
+
+
+
+Definition at line 210 of file lstm.\+hpp.
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!prev\+Output@{prev\+Output}}
+\index{prev\+Output@{prev\+Output}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{prev\+Output}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ arma\+::mat {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::prev\+Output\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LSTM_aeedae70452589c712dff922cc8856517}
+
+
+Locally-\/stored previous output. 
+
+
+
+Definition at line 156 of file lstm.\+hpp.
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!rho@{rho}}
+\index{rho@{rho}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{rho}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ size\+\_\+t {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::rho\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LSTM_a61a26b3c2fcf75e8ab0c4e8f15aee681}
+
+
+Number of steps to backpropagate through time (B\+P\+TT). 
+
+
+
+Definition at line 150 of file lstm.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+L\+S\+T\+M$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Rho().
+
+\index{mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}!weights@{weights}}
+\index{weights@{weights}!mlpack\+::ann\+::\+L\+S\+TM@{mlpack\+::ann\+::\+L\+S\+TM}}
+\subsubsection[{weights}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type {\bf mlpack\+::ann\+::\+L\+S\+TM}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::weights\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LSTM_ab210274648346dfa77300297a00dcf9c}
+
+
+Locally-\/stored weight object. 
+
+
+
+Definition at line 153 of file lstm.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+L\+S\+T\+M$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Parameters().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/ann/layer/{\bf layer\+\_\+types.\+hpp}\item 
+src/mlpack/methods/ann/layer/{\bf lstm.\+hpp}\end{DoxyCompactItemize}

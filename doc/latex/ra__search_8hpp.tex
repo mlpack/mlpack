@@ -1,0 +1,45 @@
+\section{src/mlpack/methods/rann/ra\+\_\+search.hpp File Reference}
+\label{ra__search_8hpp}\index{src/mlpack/methods/rann/ra\+\_\+search.\+hpp@{src/mlpack/methods/rann/ra\+\_\+search.\+hpp}}
+Include dependency graph for ra\+\_\+search.\+hpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{ra__search_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=274pt]{ra__search_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class {\bf mlpack\+::neighbor\+::\+R\+A\+Model$<$ Sort\+Policy $>$}
+\begin{DoxyCompactList}\small\item\em The \doxyref{R\+A\+Model}{p.}{classmlpack_1_1neighbor_1_1RAModel} class provides an abstraction for the \doxyref{R\+A\+Search}{p.}{classmlpack_1_1neighbor_1_1RASearch} class, abstracting away the Tree\+Type parameter and allowing it to be specified at runtime in this class. \end{DoxyCompactList}\item 
+class {\bf mlpack\+::neighbor\+::\+R\+A\+Search$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type $>$}
+\begin{DoxyCompactList}\small\item\em The \doxyref{R\+A\+Search}{p.}{classmlpack_1_1neighbor_1_1RASearch} class\+: This class provides a generic manner to perform rank-\/approximate search via random-\/sampling. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ {\bf mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ {\bf mlpack\+::neighbor}
+\begin{DoxyCompactList}\small\item\em Neighbor-\/search routines. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Parikshit Ram
+\end{DoxyAuthor}
+Defines the R\+A\+Search class, which performs an abstract rank-\/approximate nearest/farthest neighbor query on two datasets.
+
+The details of this method can be found in the following paper\+:
+
+\{ram2009rank, title=\{\{Rank-\/\+Approximate Nearest Neighbor Search\+: Retaining Meaning and Speed in High Dimensions\}\}, author=\{\{Ram, P. and Lee, D. and Ouyang, H. and Gray, A. G.\}\}, booktitle=\{\{Advances of Neural Information Processing Systems\}\}, year=\{2009\} \}
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause B\+SD license. You should have received a copy of the 3-\/clause B\+SD license along with mlpack. If not, see {\tt http\+://www.\+opensource.\+org/licenses/\+B\+S\+D-\/3-\/\+Clause} for more information. 

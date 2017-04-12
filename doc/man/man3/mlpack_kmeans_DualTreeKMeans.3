@@ -1,0 +1,277 @@
+.TH "mlpack::kmeans::DualTreeKMeans< MetricType, MatType, TreeType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::kmeans::DualTreeKMeans< MetricType, MatType, TreeType > \- An algorithm for an exact Lloyd iteration which simply uses dual-tree nearest-neighbor search to find the nearest centroid for each point in the dataset\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "template<typename TreeMetricType , typename IgnoredStatType , typename TreeMatType > using \fBNNSTreeType\fP = TreeType< TreeMetricType, \fBDualTreeKMeansStatistic\fP, TreeMatType >"
+.br
+.ti -1c
+.RI "typedef TreeType< MetricType, \fBDualTreeKMeansStatistic\fP, MatType > \fBTree\fP"
+.br
+.RI "\fIConvenience typedef\&. \fP"
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBDualTreeKMeans\fP (const MatType &\fBdataset\fP, MetricType &\fBmetric\fP)"
+.br
+.RI "\fIConstruct the \fBDualTreeKMeans\fP object, which will construct a tree on the points\&. \fP"
+.ti -1c
+.RI "\fB~DualTreeKMeans\fP ()"
+.br
+.RI "\fIDelete the tree constructed by the \fBDualTreeKMeans\fP object\&. \fP"
+.ti -1c
+.RI "size_t \fBDistanceCalculations\fP () const "
+.br
+.RI "\fIReturn the number of distance calculations\&. \fP"
+.ti -1c
+.RI "size_t & \fBDistanceCalculations\fP ()"
+.br
+.RI "\fIModify the number of distance calculations\&. \fP"
+.ti -1c
+.RI "double \fBIterate\fP (const arma::mat &centroids, arma::mat &newCentroids, arma::Col< size_t > &counts)"
+.br
+.RI "\fIRun a single iteration of the dual-tree nearest neighbor algorithm for k-means, updating the given centroids into the newCentroids matrix\&. \fP"
+.in -1c
+.SS "Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBCoalesceTree\fP (\fBTree\fP &node, const size_t child=0)"
+.br
+.ti -1c
+.RI "void \fBDecoalesceTree\fP (\fBTree\fP &node)"
+.br
+.ti -1c
+.RI "void \fBExtractCentroids\fP (\fBTree\fP &node, arma::mat &newCentroids, arma::Col< size_t > &newCounts, const arma::mat &centroids)"
+.br
+.RI "\fIExtract the centroids of the clusters\&. \fP"
+.ti -1c
+.RI "void \fBUpdateTree\fP (\fBTree\fP &node, const arma::mat &centroids, const double parentUpperBound=0\&.0, const double adjustedParentUpperBound=DBL_MAX, const double parentLowerBound=DBL_MAX, const double adjustedParentLowerBound=0\&.0)"
+.br
+.RI "\fIUpdate the bounds in the tree before the next iteration\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "arma::Row< size_t > \fBassignments\fP"
+.br
+.ti -1c
+.RI "arma::vec \fBclusterDistances\fP"
+.br
+.ti -1c
+.RI "const MatType & \fBdataset\fP"
+.br
+.RI "\fIThe dataset we are using\&. \fP"
+.ti -1c
+.RI "const MatType & \fBdatasetOrig\fP"
+.br
+.RI "\fIThe original dataset reference\&. \fP"
+.ti -1c
+.RI "size_t \fBdistanceCalculations\fP"
+.br
+.RI "\fITrack distance calculations\&. \fP"
+.ti -1c
+.RI "arma::mat \fBinterclusterDistances\fP"
+.br
+.ti -1c
+.RI "size_t \fBiteration\fP"
+.br
+.RI "\fITrack iteration number\&. \fP"
+.ti -1c
+.RI "arma::mat \fBlastIterationCentroids\fP"
+.br
+.ti -1c
+.RI "arma::vec \fBlowerBounds\fP"
+.br
+.RI "\fILower bounds on second closest cluster distance for each point\&. \fP"
+.ti -1c
+.RI "MetricType \fBmetric\fP"
+.br
+.RI "\fIThe metric\&. \fP"
+.ti -1c
+.RI "std::vector< bool > \fBprunedPoints\fP"
+.br
+.RI "\fIIndicator of whether or not the point is pruned\&. \fP"
+.ti -1c
+.RI "\fBTree\fP * \fBtree\fP"
+.br
+.RI "\fIThe tree built on the points\&. \fP"
+.ti -1c
+.RI "arma::vec \fBupperBounds\fP"
+.br
+.RI "\fIUpper bounds on nearest centroid\&. \fP"
+.ti -1c
+.RI "std::vector< bool > \fBvisited\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename MetricType, typename MatType, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree>
+.br
+class mlpack::kmeans::DualTreeKMeans< MetricType, MatType, TreeType >"
+An algorithm for an exact Lloyd iteration which simply uses dual-tree nearest-neighbor search to find the nearest centroid for each point in the dataset\&. 
+
+The conditions under which this will perform best are probably limited to the case where k is close to the number of points in the dataset, and the number of iterations of the k-means algorithm will be few\&. 
+.PP
+Definition at line 41 of file dual_tree_kmeans\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "template<typename MetricType , typename MatType , template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> template<typename TreeMetricType , typename IgnoredStatType , typename TreeMatType > using \fBmlpack::kmeans::DualTreeKMeans\fP< MetricType, MatType, TreeType >::\fBNNSTreeType\fP =  TreeType<TreeMetricType, \fBDualTreeKMeansStatistic\fP, TreeMatType>"
+
+.PP
+Definition at line 51 of file dual_tree_kmeans\&.hpp\&.
+.SS "template<typename MetricType , typename MatType , template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> typedef TreeType<MetricType, \fBDualTreeKMeansStatistic\fP, MatType> \fBmlpack::kmeans::DualTreeKMeans\fP< MetricType, MatType, TreeType >::\fBTree\fP"
+
+.PP
+Convenience typedef\&. 
+.PP
+Definition at line 45 of file dual_tree_kmeans\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename MetricType , typename MatType , template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> \fBmlpack::kmeans::DualTreeKMeans\fP< MetricType, MatType, TreeType >::\fBDualTreeKMeans\fP (const MatType & dataset, MetricType & metric)"
+
+.PP
+Construct the \fBDualTreeKMeans\fP object, which will construct a tree on the points\&. 
+.SS "template<typename MetricType , typename MatType , template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> \fBmlpack::kmeans::DualTreeKMeans\fP< MetricType, MatType, TreeType >::~\fBDualTreeKMeans\fP ()"
+
+.PP
+Delete the tree constructed by the \fBDualTreeKMeans\fP object\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename MetricType , typename MatType , template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> void \fBmlpack::kmeans::DualTreeKMeans\fP< MetricType, MatType, TreeType >::CoalesceTree (\fBTree\fP & node, const size_t child = \fC0\fP)\fC [private]\fP"
+
+.SS "template<typename MetricType , typename MatType , template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> void \fBmlpack::kmeans::DualTreeKMeans\fP< MetricType, MatType, TreeType >::DecoalesceTree (\fBTree\fP & node)\fC [private]\fP"
+
+.SS "template<typename MetricType , typename MatType , template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> size_t \fBmlpack::kmeans::DualTreeKMeans\fP< MetricType, MatType, TreeType >::DistanceCalculations () const\fC [inline]\fP"
+
+.PP
+Return the number of distance calculations\&. 
+.PP
+Definition at line 77 of file dual_tree_kmeans\&.hpp\&.
+.PP
+References mlpack::kmeans::DualTreeKMeans< MetricType, MatType, TreeType >::distanceCalculations\&.
+.SS "template<typename MetricType , typename MatType , template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> size_t& \fBmlpack::kmeans::DualTreeKMeans\fP< MetricType, MatType, TreeType >::DistanceCalculations ()\fC [inline]\fP"
+
+.PP
+Modify the number of distance calculations\&. 
+.PP
+Definition at line 79 of file dual_tree_kmeans\&.hpp\&.
+.PP
+References mlpack::kmeans::DualTreeKMeans< MetricType, MatType, TreeType >::distanceCalculations\&.
+.SS "template<typename MetricType , typename MatType , template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> void \fBmlpack::kmeans::DualTreeKMeans\fP< MetricType, MatType, TreeType >::ExtractCentroids (\fBTree\fP & node, arma::mat & newCentroids, arma::Col< size_t > & newCounts, const arma::mat & centroids)\fC [private]\fP"
+
+.PP
+Extract the centroids of the clusters\&. 
+.SS "template<typename MetricType , typename MatType , template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> double \fBmlpack::kmeans::DualTreeKMeans\fP< MetricType, MatType, TreeType >::Iterate (const arma::mat & centroids, arma::mat & newCentroids, arma::Col< size_t > & counts)"
+
+.PP
+Run a single iteration of the dual-tree nearest neighbor algorithm for k-means, updating the given centroids into the newCentroids matrix\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIcentroids\fP Current cluster centroids\&. 
+.br
+\fInewCentroids\fP New cluster centroids\&. 
+.br
+\fIcounts\fP Current counts, to be overwritten with new counts\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType , typename MatType , template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> void \fBmlpack::kmeans::DualTreeKMeans\fP< MetricType, MatType, TreeType >::UpdateTree (\fBTree\fP & node, const arma::mat & centroids, const double parentUpperBound = \fC0\&.0\fP, const double adjustedParentUpperBound = \fCDBL_MAX\fP, const double parentLowerBound = \fCDBL_MAX\fP, const double adjustedParentLowerBound = \fC0\&.0\fP)\fC [private]\fP"
+
+.PP
+Update the bounds in the tree before the next iteration\&. centroids is the current (not yet searched) centroids\&. 
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename MetricType , typename MatType , template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> arma::Row<size_t> \fBmlpack::kmeans::DualTreeKMeans\fP< MetricType, MatType, TreeType >::assignments\fC [private]\fP"
+
+.PP
+Definition at line 103 of file dual_tree_kmeans\&.hpp\&.
+.SS "template<typename MetricType , typename MatType , template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> arma::vec \fBmlpack::kmeans::DualTreeKMeans\fP< MetricType, MatType, TreeType >::clusterDistances\fC [private]\fP"
+
+.PP
+Definition at line 109 of file dual_tree_kmeans\&.hpp\&.
+.SS "template<typename MetricType , typename MatType , template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> const MatType& \fBmlpack::kmeans::DualTreeKMeans\fP< MetricType, MatType, TreeType >::dataset\fC [private]\fP"
+
+.PP
+The dataset we are using\&. 
+.PP
+Definition at line 87 of file dual_tree_kmeans\&.hpp\&.
+.SS "template<typename MetricType , typename MatType , template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> const MatType& \fBmlpack::kmeans::DualTreeKMeans\fP< MetricType, MatType, TreeType >::datasetOrig\fC [private]\fP"
+
+.PP
+The original dataset reference\&. 
+.PP
+Definition at line 83 of file dual_tree_kmeans\&.hpp\&.
+.SS "template<typename MetricType , typename MatType , template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> size_t \fBmlpack::kmeans::DualTreeKMeans\fP< MetricType, MatType, TreeType >::distanceCalculations\fC [private]\fP"
+
+.PP
+Track distance calculations\&. 
+.PP
+Definition at line 92 of file dual_tree_kmeans\&.hpp\&.
+.PP
+Referenced by mlpack::kmeans::DualTreeKMeans< MetricType, MatType, TreeType >::DistanceCalculations()\&.
+.SS "template<typename MetricType , typename MatType , template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> arma::mat \fBmlpack::kmeans::DualTreeKMeans\fP< MetricType, MatType, TreeType >::interclusterDistances\fC [private]\fP"
+
+.PP
+Definition at line 111 of file dual_tree_kmeans\&.hpp\&.
+.SS "template<typename MetricType , typename MatType , template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> size_t \fBmlpack::kmeans::DualTreeKMeans\fP< MetricType, MatType, TreeType >::iteration\fC [private]\fP"
+
+.PP
+Track iteration number\&. 
+.PP
+Definition at line 94 of file dual_tree_kmeans\&.hpp\&.
+.SS "template<typename MetricType , typename MatType , template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> arma::mat \fBmlpack::kmeans::DualTreeKMeans\fP< MetricType, MatType, TreeType >::lastIterationCentroids\fC [private]\fP"
+
+.PP
+Definition at line 107 of file dual_tree_kmeans\&.hpp\&.
+.SS "template<typename MetricType , typename MatType , template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> arma::vec \fBmlpack::kmeans::DualTreeKMeans\fP< MetricType, MatType, TreeType >::lowerBounds\fC [private]\fP"
+
+.PP
+Lower bounds on second closest cluster distance for each point\&. 
+.PP
+Definition at line 99 of file dual_tree_kmeans\&.hpp\&.
+.SS "template<typename MetricType , typename MatType , template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> MetricType \fBmlpack::kmeans::DualTreeKMeans\fP< MetricType, MatType, TreeType >::metric\fC [private]\fP"
+
+.PP
+The metric\&. 
+.PP
+Definition at line 89 of file dual_tree_kmeans\&.hpp\&.
+.SS "template<typename MetricType , typename MatType , template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> std::vector<bool> \fBmlpack::kmeans::DualTreeKMeans\fP< MetricType, MatType, TreeType >::prunedPoints\fC [private]\fP"
+
+.PP
+Indicator of whether or not the point is pruned\&. 
+.PP
+Definition at line 101 of file dual_tree_kmeans\&.hpp\&.
+.SS "template<typename MetricType , typename MatType , template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> \fBTree\fP* \fBmlpack::kmeans::DualTreeKMeans\fP< MetricType, MatType, TreeType >::tree\fC [private]\fP"
+
+.PP
+The tree built on the points\&. 
+.PP
+Definition at line 85 of file dual_tree_kmeans\&.hpp\&.
+.SS "template<typename MetricType , typename MatType , template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> arma::vec \fBmlpack::kmeans::DualTreeKMeans\fP< MetricType, MatType, TreeType >::upperBounds\fC [private]\fP"
+
+.PP
+Upper bounds on nearest centroid\&. 
+.PP
+Definition at line 97 of file dual_tree_kmeans\&.hpp\&.
+.SS "template<typename MetricType , typename MatType , template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> std::vector<bool> \fBmlpack::kmeans::DualTreeKMeans\fP< MetricType, MatType, TreeType >::visited\fC [private]\fP"
+
+.PP
+Definition at line 105 of file dual_tree_kmeans\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

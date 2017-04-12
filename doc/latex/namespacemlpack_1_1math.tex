@@ -1,0 +1,635 @@
+\section{mlpack\+:\+:math Namespace Reference}
+\label{namespacemlpack_1_1math}\index{mlpack\+::math@{mlpack\+::math}}
+
+
+Miscellaneous math routines.  
+
+
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class {\bf Columns\+To\+Blocks}
+\begin{DoxyCompactList}\small\item\em Transform the columns of the given matrix into a block format. \end{DoxyCompactList}\item 
+class {\bf Range\+Type}
+\begin{DoxyCompactList}\small\item\em Simple real-\/valued range. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef {\bf Range\+Type}$<$ double $>$ {\bf Range}
+\begin{DoxyCompactList}\small\item\em 3.\+0.\+0 T\+O\+DO\+: break reverse-\/compatibility by changing \doxyref{Range\+Type}{p.}{classmlpack_1_1math_1_1RangeType} to Range. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void {\bf Center} (const arma\+::mat \&x, arma\+::mat \&x\+Centered)
+\begin{DoxyCompactList}\small\item\em Creates a centered matrix, where centering is done by subtracting the sum over the columns (a column vector) from each column of the matrix. \end{DoxyCompactList}\item 
+double {\bf Clamp\+Non\+Negative} (const double d)
+\begin{DoxyCompactList}\small\item\em Forces a number to be non-\/negative, turning negative numbers into zero. \end{DoxyCompactList}\item 
+double {\bf Clamp\+Non\+Positive} (const double d)
+\begin{DoxyCompactList}\small\item\em Forces a number to be non-\/positive, turning positive numbers into zero. \end{DoxyCompactList}\item 
+double {\bf Clamp\+Range} (double value, const double range\+Min, const double range\+Max)
+\begin{DoxyCompactList}\small\item\em Clamp a number between a particular range. \end{DoxyCompactList}\item 
+void {\bf Obtain\+Distinct\+Samples} (const size\+\_\+t lo\+Inclusive, const size\+\_\+t hi\+Exclusive, const size\+\_\+t max\+Num\+Samples, arma\+::uvec \&distinct\+Samples)
+\begin{DoxyCompactList}\small\item\em Obtains no more than max\+Num\+Samples distinct samples. \end{DoxyCompactList}\item 
+void {\bf Orthogonalize} (const arma\+::mat \&x, arma\+::mat \&W)
+\begin{DoxyCompactList}\small\item\em Orthogonalize x and return the result in W, using eigendecomposition. \end{DoxyCompactList}\item 
+void {\bf Orthogonalize} (arma\+::mat \&x)
+\begin{DoxyCompactList}\small\item\em Orthogonalize x in-\/place. \end{DoxyCompactList}\item 
+int {\bf Rand\+Int} (const int hi\+Exclusive)
+\begin{DoxyCompactList}\small\item\em Generates a uniform random integer. \end{DoxyCompactList}\item 
+int {\bf Rand\+Int} (const int lo, const int hi\+Exclusive)
+\begin{DoxyCompactList}\small\item\em Generates a uniform random integer. \end{DoxyCompactList}\item 
+double {\bf Rand\+Normal} ()
+\begin{DoxyCompactList}\small\item\em Generates a normally distributed random number with mean 0 and variance 1. \end{DoxyCompactList}\item 
+double {\bf Rand\+Normal} (const double mean, const double variance)
+\begin{DoxyCompactList}\small\item\em Generates a normally distributed random number with specified mean and variance. \end{DoxyCompactList}\item 
+double {\bf Random} ()
+\begin{DoxyCompactList}\small\item\em Generates a uniform random number between 0 and 1. \end{DoxyCompactList}\item 
+double {\bf Random} (const double lo, const double hi)
+\begin{DoxyCompactList}\small\item\em Generates a uniform random number in the specified range. \end{DoxyCompactList}\item 
+void {\bf Random\+Basis} (arma\+::mat \&basis, const size\+\_\+t d)
+\begin{DoxyCompactList}\small\item\em Create a random d-\/dimensional orthogonal basis, storing it in the given matrix. \end{DoxyCompactList}\item 
+void {\bf Random\+Seed} (const size\+\_\+t seed)
+\begin{DoxyCompactList}\small\item\em Set the random seed used by the random functions (\doxyref{Random()}{p.}{namespacemlpack_1_1math_a305db122ade561ba1fe874bd51e9797d} and \doxyref{Rand\+Int()}{p.}{namespacemlpack_1_1math_aad090ac225728d74c1b66bcf52f3ab95}). \end{DoxyCompactList}\item 
+void {\bf Rand\+Vector} (arma\+::vec \&v)
+\begin{DoxyCompactList}\small\item\em Overwrites a dimension-\/N vector to a random vector on the unit sphere in R$^\wedge$N. \end{DoxyCompactList}\item 
+void {\bf Remove\+Rows} (const arma\+::mat \&input, const std\+::vector$<$ size\+\_\+t $>$ \&rows\+To\+Remove, arma\+::mat \&output)
+\begin{DoxyCompactList}\small\item\em Remove a certain set of rows in a matrix while copying to a second matrix. \end{DoxyCompactList}\item 
+void {\bf Smat} (const arma\+::vec \&input, arma\+::mat \&output)
+\begin{DoxyCompactList}\small\item\em The inverse of Svec. \end{DoxyCompactList}\item 
+void {\bf Svec} (const arma\+::mat \&input, arma\+::vec \&output)
+\begin{DoxyCompactList}\small\item\em Upper triangular representation of a symmetric matrix, scaled such that, dot(Svec(\+A), Svec(\+B)) == dot(\+A, B) for symmetric A, B. \end{DoxyCompactList}\item 
+void {\bf Svec} (const arma\+::sp\+\_\+mat \&input, arma\+::sp\+\_\+vec \&output)
+\item 
+size\+\_\+t {\bf Svec\+Index} (size\+\_\+t i, size\+\_\+t j, size\+\_\+t n)
+\begin{DoxyCompactList}\small\item\em Return the index such that A[i,j] == factr(i, j) $\ast$ svec(\+A)[pos(i, j)], where factr(i, j) = sqrt(2) if i != j and 1 otherwise. \end{DoxyCompactList}\item 
+void {\bf Sym\+Kron\+Id} (const arma\+::mat \&A, arma\+::mat \&op)
+\begin{DoxyCompactList}\small\item\em If A is a symmetric matrix, then Sym\+Kron\+Id returns an operator Op such that. \end{DoxyCompactList}\item 
+void {\bf Vector\+Power} (arma\+::vec \&vec, const double power)
+\begin{DoxyCompactList}\small\item\em Auxiliary function to raise vector elements to a specific power. \end{DoxyCompactList}\item 
+void {\bf Whiten\+Using\+Eig} (const arma\+::mat \&x, arma\+::mat \&x\+Whitened, arma\+::mat \&whitening\+Matrix)
+\begin{DoxyCompactList}\small\item\em Whitens a matrix using the eigendecomposition of the covariance matrix. \end{DoxyCompactList}\item 
+void {\bf Whiten\+Using\+S\+VD} (const arma\+::mat \&x, arma\+::mat \&x\+Whitened, arma\+::mat \&whitening\+Matrix)
+\begin{DoxyCompactList}\small\item\em Whitens a matrix using the singular value decomposition of the covariance matrix. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+M\+L\+P\+A\+C\+K\+\_\+\+E\+X\+P\+O\+RT std\+::mt19937 {\bf rand\+Gen}
+\begin{DoxyCompactList}\small\item\em M\+L\+P\+A\+C\+K\+\_\+\+E\+X\+P\+O\+RT is required for global variables; it exports the symbols correctly on Windows. \end{DoxyCompactList}\item 
+M\+L\+P\+A\+C\+K\+\_\+\+E\+X\+P\+O\+RT std\+::normal\+\_\+distribution {\bf rand\+Normal\+Dist}
+\item 
+M\+L\+P\+A\+C\+K\+\_\+\+E\+X\+P\+O\+RT std\+::uniform\+\_\+real\+\_\+distribution {\bf rand\+Uniform\+Dist}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Miscellaneous math routines. 
+
+
+
+\subsection{Typedef Documentation}
+\index{mlpack\+::math@{mlpack\+::math}!Range@{Range}}
+\index{Range@{Range}!mlpack\+::math@{mlpack\+::math}}
+\subsubsection[{Range}]{\setlength{\rightskip}{0pt plus 5cm}typedef {\bf Range\+Type}$<$double$>$ {\bf mlpack\+::math\+::\+Range}}\label{namespacemlpack_1_1math_a927179bb8d2d0fb6164df385ab51cbce}
+
+
+3.\+0.\+0 T\+O\+DO\+: break reverse-\/compatibility by changing \doxyref{Range\+Type}{p.}{classmlpack_1_1math_1_1RangeType} to Range. 
+
+
+
+Definition at line 19 of file range.\+hpp.
+
+
+
+\subsection{Function Documentation}
+\index{mlpack\+::math@{mlpack\+::math}!Center@{Center}}
+\index{Center@{Center}!mlpack\+::math@{mlpack\+::math}}
+\subsubsection[{Center(const arma\+::mat \&x, arma\+::mat \&x\+Centered)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::math\+::\+Center (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{x, }
+\item[{arma\+::mat \&}]{x\+Centered}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1math_af20ca29adeac02601e8f4386bda3588e}
+
+
+Creates a centered matrix, where centering is done by subtracting the sum over the columns (a column vector) from each column of the matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Input matrix \\
+\hline
+{\em x\+Centered} & Matrix to write centered output into \\
+\hline
+\end{DoxyParams}
+
+
+Referenced by mlpack\+::kpca\+::\+Nystroem\+Kernel\+Rule$<$ Kernel\+Type, Point\+Selection\+Policy $>$\+::\+Apply\+Kernel\+Matrix(), and mlpack\+::bound\+::\+H\+Rect\+Bound$<$ Metric\+Type $>$\+::\+Min\+Width().
+
+\index{mlpack\+::math@{mlpack\+::math}!Clamp\+Non\+Negative@{Clamp\+Non\+Negative}}
+\index{Clamp\+Non\+Negative@{Clamp\+Non\+Negative}!mlpack\+::math@{mlpack\+::math}}
+\subsubsection[{Clamp\+Non\+Negative(const double d)}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::math\+::\+Clamp\+Non\+Negative (
+\begin{DoxyParamCaption}
+\item[{const double}]{d}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{namespacemlpack_1_1math_a6d16c12e401f859c53595d709892b2a2}
+
+
+Forces a number to be non-\/negative, turning negative numbers into zero. 
+
+Avoids branching costs (this is a measurable improvement).
+
+
+\begin{DoxyParams}{Parameters}
+{\em d} & Double to clamp. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 if d $<$ 0, d otherwise. 
+\end{DoxyReturn}
+
+
+Definition at line 28 of file clamp.\+hpp.
+
+
+
+Referenced by Clamp\+Range().
+
+\index{mlpack\+::math@{mlpack\+::math}!Clamp\+Non\+Positive@{Clamp\+Non\+Positive}}
+\index{Clamp\+Non\+Positive@{Clamp\+Non\+Positive}!mlpack\+::math@{mlpack\+::math}}
+\subsubsection[{Clamp\+Non\+Positive(const double d)}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::math\+::\+Clamp\+Non\+Positive (
+\begin{DoxyParamCaption}
+\item[{const double}]{d}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{namespacemlpack_1_1math_a10bd2254595feb073cdfd55e31c1231b}
+
+
+Forces a number to be non-\/positive, turning positive numbers into zero. 
+
+Avoids branching costs (this is a measurable improvement).
+
+
+\begin{DoxyParams}{Parameters}
+{\em d} & Double to clamp. \\
+\hline
+{\em 0} & if d $>$ 0, d otherwise. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 40 of file clamp.\+hpp.
+
+
+
+Referenced by Clamp\+Range().
+
+\index{mlpack\+::math@{mlpack\+::math}!Clamp\+Range@{Clamp\+Range}}
+\index{Clamp\+Range@{Clamp\+Range}!mlpack\+::math@{mlpack\+::math}}
+\subsubsection[{Clamp\+Range(double value, const double range\+Min, const double range\+Max)}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::math\+::\+Clamp\+Range (
+\begin{DoxyParamCaption}
+\item[{double}]{value, }
+\item[{const double}]{range\+Min, }
+\item[{const double}]{range\+Max}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{namespacemlpack_1_1math_a0fa7f378ef122a2fc2b82009b436cdeb}
+
+
+Clamp a number between a particular range. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em value} & The number to clamp. \\
+\hline
+{\em range\+Min} & The first of the range. \\
+\hline
+{\em range\+Max} & The last of the range. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+max(range\+Min, min(range\+Max, d)). 
+\end{DoxyReturn}
+
+
+Definition at line 53 of file clamp.\+hpp.
+
+
+
+References Clamp\+Non\+Negative(), and Clamp\+Non\+Positive().
+
+\index{mlpack\+::math@{mlpack\+::math}!Obtain\+Distinct\+Samples@{Obtain\+Distinct\+Samples}}
+\index{Obtain\+Distinct\+Samples@{Obtain\+Distinct\+Samples}!mlpack\+::math@{mlpack\+::math}}
+\subsubsection[{Obtain\+Distinct\+Samples(const size\+\_\+t lo\+Inclusive, const size\+\_\+t hi\+Exclusive, const size\+\_\+t max\+Num\+Samples, arma\+::uvec \&distinct\+Samples)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::math\+::\+Obtain\+Distinct\+Samples (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{lo\+Inclusive, }
+\item[{const size\+\_\+t}]{hi\+Exclusive, }
+\item[{const size\+\_\+t}]{max\+Num\+Samples, }
+\item[{arma\+::uvec \&}]{distinct\+Samples}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{namespacemlpack_1_1math_a9f6fa0072288d9c1139394683e0c3636}
+
+
+Obtains no more than max\+Num\+Samples distinct samples. 
+
+Each sample belongs to [lo\+Inclusive, hi\+Exclusive).
+
+
+\begin{DoxyParams}{Parameters}
+{\em lo\+Inclusive} & The lower bound (inclusive). \\
+\hline
+{\em hi\+Exclusive} & The high bound (exclusive). \\
+\hline
+{\em max\+Num\+Samples} & The maximum number of samples to obtain. \\
+\hline
+{\em distinct\+Samples} & The samples that will be obtained. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 114 of file random.\+hpp.
+
+
+
+References Rand\+Int().
+
+\index{mlpack\+::math@{mlpack\+::math}!Orthogonalize@{Orthogonalize}}
+\index{Orthogonalize@{Orthogonalize}!mlpack\+::math@{mlpack\+::math}}
+\subsubsection[{Orthogonalize(const arma\+::mat \&x, arma\+::mat \&\+W)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::math\+::\+Orthogonalize (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{x, }
+\item[{arma\+::mat \&}]{W}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1math_a33495d8fdb79a9b5783d683cf11b0d6b}
+
+
+Orthogonalize x and return the result in W, using eigendecomposition. 
+
+We will be using the formula $ W = x (x^T x)^{-0.5} $. \index{mlpack\+::math@{mlpack\+::math}!Orthogonalize@{Orthogonalize}}
+\index{Orthogonalize@{Orthogonalize}!mlpack\+::math@{mlpack\+::math}}
+\subsubsection[{Orthogonalize(arma\+::mat \&x)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::math\+::\+Orthogonalize (
+\begin{DoxyParamCaption}
+\item[{arma\+::mat \&}]{x}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1math_a532da68daa876aaa1060fbe54eaa3722}
+
+
+Orthogonalize x in-\/place. 
+
+This could be sped up by a custom implementation. \index{mlpack\+::math@{mlpack\+::math}!Rand\+Int@{Rand\+Int}}
+\index{Rand\+Int@{Rand\+Int}!mlpack\+::math@{mlpack\+::math}}
+\subsubsection[{Rand\+Int(const int hi\+Exclusive)}]{\setlength{\rightskip}{0pt plus 5cm}int mlpack\+::math\+::\+Rand\+Int (
+\begin{DoxyParamCaption}
+\item[{const int}]{hi\+Exclusive}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{namespacemlpack_1_1math_aad090ac225728d74c1b66bcf52f3ab95}
+
+
+Generates a uniform random integer. 
+
+
+
+Definition at line 71 of file random.\+hpp.
+
+
+
+References rand\+Uniform\+Dist.
+
+
+
+Referenced by mlpack\+::kmeans\+::\+Sample\+Initialization\+::\+Cluster(), mlpack\+::sparse\+\_\+coding\+::\+Data\+Dependent\+Random\+Initializer\+::\+Initialize(), mlpack\+::amf\+::\+Random\+Acol\+Initialization$<$ columns\+To\+Average $>$\+::\+Initialize(), Obtain\+Distinct\+Samples(), mlpack\+::dbscan\+::\+Random\+Point\+Selection\+::\+Select(), and mlpack\+::kernel\+::\+Random\+Selection\+::\+Select().
+
+\index{mlpack\+::math@{mlpack\+::math}!Rand\+Int@{Rand\+Int}}
+\index{Rand\+Int@{Rand\+Int}!mlpack\+::math@{mlpack\+::math}}
+\subsubsection[{Rand\+Int(const int lo, const int hi\+Exclusive)}]{\setlength{\rightskip}{0pt plus 5cm}int mlpack\+::math\+::\+Rand\+Int (
+\begin{DoxyParamCaption}
+\item[{const int}]{lo, }
+\item[{const int}]{hi\+Exclusive}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{namespacemlpack_1_1math_a2befbd48db5691a0ed3b87bb4b423095}
+
+
+Generates a uniform random integer. 
+
+
+
+Definition at line 79 of file random.\+hpp.
+
+
+
+References rand\+Uniform\+Dist.
+
+\index{mlpack\+::math@{mlpack\+::math}!Rand\+Normal@{Rand\+Normal}}
+\index{Rand\+Normal@{Rand\+Normal}!mlpack\+::math@{mlpack\+::math}}
+\subsubsection[{Rand\+Normal()}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::math\+::\+Rand\+Normal (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{namespacemlpack_1_1math_a4ad431d20545de6887998188074989af}
+
+
+Generates a normally distributed random number with mean 0 and variance 1. 
+
+
+
+Definition at line 88 of file random.\+hpp.
+
+
+
+References rand\+Normal\+Dist.
+
+\index{mlpack\+::math@{mlpack\+::math}!Rand\+Normal@{Rand\+Normal}}
+\index{Rand\+Normal@{Rand\+Normal}!mlpack\+::math@{mlpack\+::math}}
+\subsubsection[{Rand\+Normal(const double mean, const double variance)}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::math\+::\+Rand\+Normal (
+\begin{DoxyParamCaption}
+\item[{const double}]{mean, }
+\item[{const double}]{variance}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{namespacemlpack_1_1math_a731e1fe0fb09c263299222a594a73e7f}
+
+
+Generates a normally distributed random number with specified mean and variance. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em mean} & Mean of distribution. \\
+\hline
+{\em variance} & Variance of distribution. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 100 of file random.\+hpp.
+
+
+
+References rand\+Normal\+Dist.
+
+\index{mlpack\+::math@{mlpack\+::math}!Random@{Random}}
+\index{Random@{Random}!mlpack\+::math@{mlpack\+::math}}
+\subsubsection[{Random()}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::math\+::\+Random (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{namespacemlpack_1_1math_a305db122ade561ba1fe874bd51e9797d}
+
+
+Generates a uniform random number between 0 and 1. 
+
+
+
+Definition at line 55 of file random.\+hpp.
+
+
+
+References rand\+Uniform\+Dist.
+
+\index{mlpack\+::math@{mlpack\+::math}!Random@{Random}}
+\index{Random@{Random}!mlpack\+::math@{mlpack\+::math}}
+\subsubsection[{Random(const double lo, const double hi)}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::math\+::\+Random (
+\begin{DoxyParamCaption}
+\item[{const double}]{lo, }
+\item[{const double}]{hi}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{namespacemlpack_1_1math_a73063c4b5f50db033266cd16afaceca9}
+
+
+Generates a uniform random number in the specified range. 
+
+
+
+Definition at line 63 of file random.\+hpp.
+
+
+
+References rand\+Uniform\+Dist.
+
+\index{mlpack\+::math@{mlpack\+::math}!Random\+Basis@{Random\+Basis}}
+\index{Random\+Basis@{Random\+Basis}!mlpack\+::math@{mlpack\+::math}}
+\subsubsection[{Random\+Basis(arma\+::mat \&basis, const size\+\_\+t d)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::math\+::\+Random\+Basis (
+\begin{DoxyParamCaption}
+\item[{arma\+::mat \&}]{basis, }
+\item[{const size\+\_\+t}]{d}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1math_ae197a3d057c10401e3a1f30f94ff0934}
+
+
+Create a random d-\/dimensional orthogonal basis, storing it in the given matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em basis} & Matrix to store basis in. \\
+\hline
+{\em d} & Desired number of dimensions in the basis. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::math@{mlpack\+::math}!Random\+Seed@{Random\+Seed}}
+\index{Random\+Seed@{Random\+Seed}!mlpack\+::math@{mlpack\+::math}}
+\subsubsection[{Random\+Seed(const size\+\_\+t seed)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::math\+::\+Random\+Seed (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{seed}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{namespacemlpack_1_1math_a99560c3cf9c2db393309a31933b8d480}
+
+
+Set the random seed used by the random functions (\doxyref{Random()}{p.}{namespacemlpack_1_1math_a305db122ade561ba1fe874bd51e9797d} and \doxyref{Rand\+Int()}{p.}{namespacemlpack_1_1math_aad090ac225728d74c1b66bcf52f3ab95}). 
+
+The seed is casted to a 32-\/bit integer before being given to the random number generator, but a size\+\_\+t is taken as a parameter for A\+PI consistency.
+
+
+\begin{DoxyParams}{Parameters}
+{\em seed} & Seed for the random number generator. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 40 of file random.\+hpp.
+
+\index{mlpack\+::math@{mlpack\+::math}!Rand\+Vector@{Rand\+Vector}}
+\index{Rand\+Vector@{Rand\+Vector}!mlpack\+::math@{mlpack\+::math}}
+\subsubsection[{Rand\+Vector(arma\+::vec \&v)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::math\+::\+Rand\+Vector (
+\begin{DoxyParamCaption}
+\item[{arma\+::vec \&}]{v}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1math_a27732f0088e81d179a8e6c92c4f9c4b8}
+
+
+Overwrites a dimension-\/N vector to a random vector on the unit sphere in R$^\wedge$N. 
+
+\index{mlpack\+::math@{mlpack\+::math}!Remove\+Rows@{Remove\+Rows}}
+\index{Remove\+Rows@{Remove\+Rows}!mlpack\+::math@{mlpack\+::math}}
+\subsubsection[{Remove\+Rows(const arma\+::mat \&input, const std\+::vector$<$ size\+\_\+t $>$ \&rows\+To\+Remove, arma\+::mat \&output)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::math\+::\+Remove\+Rows (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{input, }
+\item[{const std\+::vector$<$ size\+\_\+t $>$ \&}]{rows\+To\+Remove, }
+\item[{arma\+::mat \&}]{output}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1math_ac03fe146911a97bef099efc9e99296ff}
+
+
+Remove a certain set of rows in a matrix while copying to a second matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input matrix to copy. \\
+\hline
+{\em rows\+To\+Remove} & Vector containing indices of rows to be removed. \\
+\hline
+{\em output} & Matrix to copy non-\/removed rows into. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::math@{mlpack\+::math}!Smat@{Smat}}
+\index{Smat@{Smat}!mlpack\+::math@{mlpack\+::math}}
+\subsubsection[{Smat(const arma\+::vec \&input, arma\+::mat \&output)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::math\+::\+Smat (
+\begin{DoxyParamCaption}
+\item[{const arma\+::vec \&}]{input, }
+\item[{arma\+::mat \&}]{output}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1math_acf1d819071707267cdce9c78abd32e2e}
+
+
+The inverse of Svec. 
+
+That is, Smat(\+Svec(\+A)) == A.
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & \\
+\hline
+{\em output} & A symmetric matrix \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::math@{mlpack\+::math}!Svec@{Svec}}
+\index{Svec@{Svec}!mlpack\+::math@{mlpack\+::math}}
+\subsubsection[{Svec(const arma\+::mat \&input, arma\+::vec \&output)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::math\+::\+Svec (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{input, }
+\item[{arma\+::vec \&}]{output}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1math_a76535efa4f447182fed1a2ad789d5340}
+
+
+Upper triangular representation of a symmetric matrix, scaled such that, dot(Svec(\+A), Svec(\+B)) == dot(\+A, B) for symmetric A, B. 
+
+Specifically,
+
+Svec(\+K) = [ K\+\_\+11, sqrt(2) K\+\_\+12, ..., sqrt(2) K\+\_\+1n, K\+\_\+22, ..., sqrt(2) K\+\_\+2n, ..., K\+\_\+nn ]$^\wedge$T
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & A symmetric matrix \\
+\hline
+{\em output} & \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::math@{mlpack\+::math}!Svec@{Svec}}
+\index{Svec@{Svec}!mlpack\+::math@{mlpack\+::math}}
+\subsubsection[{Svec(const arma\+::sp\+\_\+mat \&input, arma\+::sp\+\_\+vec \&output)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::math\+::\+Svec (
+\begin{DoxyParamCaption}
+\item[{const arma\+::sp\+\_\+mat \&}]{input, }
+\item[{arma\+::sp\+\_\+vec \&}]{output}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1math_a2e46372873806bdfef7d596dcc78a5ea}
+\index{mlpack\+::math@{mlpack\+::math}!Svec\+Index@{Svec\+Index}}
+\index{Svec\+Index@{Svec\+Index}!mlpack\+::math@{mlpack\+::math}}
+\subsubsection[{Svec\+Index(size\+\_\+t i, size\+\_\+t j, size\+\_\+t n)}]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t mlpack\+::math\+::\+Svec\+Index (
+\begin{DoxyParamCaption}
+\item[{size\+\_\+t}]{i, }
+\item[{size\+\_\+t}]{j, }
+\item[{size\+\_\+t}]{n}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{namespacemlpack_1_1math_a630a16e49385717a8fef7d25d0093c37}
+
+
+Return the index such that A[i,j] == factr(i, j) $\ast$ svec(\+A)[pos(i, j)], where factr(i, j) = sqrt(2) if i != j and 1 otherwise. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em i} & \\
+\hline
+{\em j} & \\
+\hline
+{\em n} & \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::math@{mlpack\+::math}!Sym\+Kron\+Id@{Sym\+Kron\+Id}}
+\index{Sym\+Kron\+Id@{Sym\+Kron\+Id}!mlpack\+::math@{mlpack\+::math}}
+\subsubsection[{Sym\+Kron\+Id(const arma\+::mat \&\+A, arma\+::mat \&op)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::math\+::\+Sym\+Kron\+Id (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{A, }
+\item[{arma\+::mat \&}]{op}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1math_a99efc34a8a0f9ed477baf86cb62adb3f}
+
+
+If A is a symmetric matrix, then Sym\+Kron\+Id returns an operator Op such that. 
+
+Op $\ast$ svec(\+X) == svec(0.\+5 $\ast$ (AX + XA))
+
+for every symmetric matrix X
+
+
+\begin{DoxyParams}{Parameters}
+{\em A} & \\
+\hline
+{\em op} & \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::math@{mlpack\+::math}!Vector\+Power@{Vector\+Power}}
+\index{Vector\+Power@{Vector\+Power}!mlpack\+::math@{mlpack\+::math}}
+\subsubsection[{Vector\+Power(arma\+::vec \&vec, const double power)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::math\+::\+Vector\+Power (
+\begin{DoxyParamCaption}
+\item[{arma\+::vec \&}]{vec, }
+\item[{const double}]{power}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1math_a1afb9b62743ad2c961a4f240d8694e1e}
+
+
+Auxiliary function to raise vector elements to a specific power. 
+
+The sign is ignored in the power operation and then re-\/added. Useful for eigenvalues. \index{mlpack\+::math@{mlpack\+::math}!Whiten\+Using\+Eig@{Whiten\+Using\+Eig}}
+\index{Whiten\+Using\+Eig@{Whiten\+Using\+Eig}!mlpack\+::math@{mlpack\+::math}}
+\subsubsection[{Whiten\+Using\+Eig(const arma\+::mat \&x, arma\+::mat \&x\+Whitened, arma\+::mat \&whitening\+Matrix)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::math\+::\+Whiten\+Using\+Eig (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{x, }
+\item[{arma\+::mat \&}]{x\+Whitened, }
+\item[{arma\+::mat \&}]{whitening\+Matrix}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1math_af598b11d41b94720546a10a2ac7adb66}
+
+
+Whitens a matrix using the eigendecomposition of the covariance matrix. 
+
+Whitening means the covariance matrix of the result is the identity matrix. \index{mlpack\+::math@{mlpack\+::math}!Whiten\+Using\+S\+VD@{Whiten\+Using\+S\+VD}}
+\index{Whiten\+Using\+S\+VD@{Whiten\+Using\+S\+VD}!mlpack\+::math@{mlpack\+::math}}
+\subsubsection[{Whiten\+Using\+S\+V\+D(const arma\+::mat \&x, arma\+::mat \&x\+Whitened, arma\+::mat \&whitening\+Matrix)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::math\+::\+Whiten\+Using\+S\+VD (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{x, }
+\item[{arma\+::mat \&}]{x\+Whitened, }
+\item[{arma\+::mat \&}]{whitening\+Matrix}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1math_a9498ec73c0c6b0f151a10b2357a11468}
+
+
+Whitens a matrix using the singular value decomposition of the covariance matrix. 
+
+Whitening means the covariance matrix of the result is the identity matrix. 
+
+\subsection{Variable Documentation}
+\index{mlpack\+::math@{mlpack\+::math}!rand\+Gen@{rand\+Gen}}
+\index{rand\+Gen@{rand\+Gen}!mlpack\+::math@{mlpack\+::math}}
+\subsubsection[{rand\+Gen}]{\setlength{\rightskip}{0pt plus 5cm}M\+L\+P\+A\+C\+K\+\_\+\+E\+X\+P\+O\+RT std\+::mt19937 mlpack\+::math\+::rand\+Gen}\label{namespacemlpack_1_1math_a6bcdf252b96b6e681108f1ec9e81ae06}
+
+
+M\+L\+P\+A\+C\+K\+\_\+\+E\+X\+P\+O\+RT is required for global variables; it exports the symbols correctly on Windows. 
+
+\index{mlpack\+::math@{mlpack\+::math}!rand\+Normal\+Dist@{rand\+Normal\+Dist}}
+\index{rand\+Normal\+Dist@{rand\+Normal\+Dist}!mlpack\+::math@{mlpack\+::math}}
+\subsubsection[{rand\+Normal\+Dist}]{\setlength{\rightskip}{0pt plus 5cm}M\+L\+P\+A\+C\+K\+\_\+\+E\+X\+P\+O\+RT std\+::normal\+\_\+distribution mlpack\+::math\+::rand\+Normal\+Dist}\label{namespacemlpack_1_1math_a8f912bbb6f93ae030cee1a0a2c95322a}
+
+
+Referenced by Rand\+Normal().
+
+\index{mlpack\+::math@{mlpack\+::math}!rand\+Uniform\+Dist@{rand\+Uniform\+Dist}}
+\index{rand\+Uniform\+Dist@{rand\+Uniform\+Dist}!mlpack\+::math@{mlpack\+::math}}
+\subsubsection[{rand\+Uniform\+Dist}]{\setlength{\rightskip}{0pt plus 5cm}M\+L\+P\+A\+C\+K\+\_\+\+E\+X\+P\+O\+RT std\+::uniform\+\_\+real\+\_\+distribution mlpack\+::math\+::rand\+Uniform\+Dist}\label{namespacemlpack_1_1math_a72f615dab4a3f2b91aa80d4e817714b6}
+
+
+Referenced by Rand\+Int(), and Random().
+

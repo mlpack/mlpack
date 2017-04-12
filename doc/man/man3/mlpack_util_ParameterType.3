@@ -1,0 +1,37 @@
+.TH "mlpack::util::ParameterType< T >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::util::ParameterType< T > \- Utility struct to return the type that boost::program_options should accept for a given input type\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "typedef \fBParameterTypeDeducer\fP< \fBdata::HasSerialize\fP< T >::value, T >::\fBtype\fP \fBtype\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename T>
+.br
+struct mlpack::util::ParameterType< T >"
+Utility struct to return the type that boost::program_options should accept for a given input type\&. 
+
+In general, there is no change from the input type, but in some cases this may be another type\&. 
+.PP
+Definition at line 51 of file param_data\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "template<typename T> typedef \fBParameterTypeDeducer\fP<\fBdata::HasSerialize\fP<T>::value, T>::\fBtype\fP \fBmlpack::util::ParameterType\fP< T >::\fBtype\fP"
+
+.PP
+Definition at line 54 of file param_data\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

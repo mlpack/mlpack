@@ -1,0 +1,185 @@
+\section{mlpack\+:\+:optimization\+:\+:Lovasz\+Theta\+S\+DP Class Reference}
+\label{classmlpack_1_1optimization_1_1LovaszThetaSDP}\index{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP@{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP}}
+
+
+This function is the Lovasz-\/\+Theta semidefinite program, as implemented in the following paper\+:  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Lovasz\+Theta\+S\+DP} ()
+\item 
+{\bf Lovasz\+Theta\+S\+DP} (const arma\+::mat \&{\bf edges})
+\begin{DoxyCompactList}\small\item\em Initialize the Lovasz-\/\+Theta \doxyref{S\+DP}{p.}{classmlpack_1_1optimization_1_1SDP} with the given set of edges. \end{DoxyCompactList}\item 
+const arma\+::mat \& {\bf Edges} () const 
+\item 
+arma\+::mat \& {\bf Edges} ()
+\item 
+double {\bf Evaluate} (const arma\+::mat \&coordinates)
+\item 
+double {\bf Evaluate\+Constraint} (const size\+\_\+t index, const arma\+::mat \&coordinates)
+\item 
+const arma\+::mat \& {\bf Get\+Initial\+Point} ()
+\item 
+void {\bf Gradient} (const arma\+::mat \&coordinates, arma\+::mat \&gradient)
+\item 
+void {\bf Gradient\+Constraint} (const size\+\_\+t index, const arma\+::mat \&coordinates, arma\+::mat \&gradient)
+\item 
+size\+\_\+t {\bf Num\+Constraints} () const 
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+arma\+::mat {\bf edges}
+\item 
+arma\+::mat {\bf initial\+Point}
+\item 
+size\+\_\+t {\bf vertices}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This function is the Lovasz-\/\+Theta semidefinite program, as implemented in the following paper\+: 
+
+S. Burer, R. Monteiro \char`\"{}\+A nonlinear programming algorithm for solving semidefinite programs via
+low-\/rank factorization.\char`\"{} Journal of Mathematical Programming, 2004
+
+Given a simple, undirected graph G = (V, E), the Lovasz-\/\+Theta \doxyref{S\+DP}{p.}{classmlpack_1_1optimization_1_1SDP} is defined by\+:
+
+min\+\_\+X\{Tr(-\/(e e$^\wedge$T)$^\wedge$T X) \+: Tr(\+X) = 1, X\+\_\+ij = 0 for all (i, j) in E, X $>$= 0\}
+
+where e is the vector of all ones and X has dimension $\vert$\+V$\vert$ x $\vert$\+V$\vert$.
+
+In the Monteiro-\/\+Burer formulation, we take X = R $\ast$ R$^\wedge$T, where R is the coordinates given to the \doxyref{Evaluate()}{p.}{classmlpack_1_1optimization_1_1LovaszThetaSDP_afd2fed8f785f61cfbd1a1548f4d94054}, \doxyref{Gradient()}{p.}{classmlpack_1_1optimization_1_1LovaszThetaSDP_a25903b3d4138c83e7cbec3c96f9683cd}, \doxyref{Evaluate\+Constraint()}{p.}{classmlpack_1_1optimization_1_1LovaszThetaSDP_a93f07ea7e91ca88301627bf2ecc2fc15}, and \doxyref{Gradient\+Constraint()}{p.}{classmlpack_1_1optimization_1_1LovaszThetaSDP_a907a9008c27ca9f135582a903966ad15} functions. 
+
+Definition at line 103 of file aug\+\_\+lagrangian\+\_\+test\+\_\+functions.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP@{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP}!Lovasz\+Theta\+S\+DP@{Lovasz\+Theta\+S\+DP}}
+\index{Lovasz\+Theta\+S\+DP@{Lovasz\+Theta\+S\+DP}!mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP@{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP}}
+\subsubsection[{Lovasz\+Theta\+S\+D\+P()}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+D\+P\+::\+Lovasz\+Theta\+S\+DP (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1optimization_1_1LovaszThetaSDP_a0fbd10b732d4f1f5f9f5d6139f35bffd}
+\index{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP@{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP}!Lovasz\+Theta\+S\+DP@{Lovasz\+Theta\+S\+DP}}
+\index{Lovasz\+Theta\+S\+DP@{Lovasz\+Theta\+S\+DP}!mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP@{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP}}
+\subsubsection[{Lovasz\+Theta\+S\+D\+P(const arma\+::mat \&edges)}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+D\+P\+::\+Lovasz\+Theta\+S\+DP (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{edges}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1optimization_1_1LovaszThetaSDP_aa2c27fed54be0ffb10ba43353e98df29}
+
+
+Initialize the Lovasz-\/\+Theta \doxyref{S\+DP}{p.}{classmlpack_1_1optimization_1_1SDP} with the given set of edges. 
+
+The edge matrix should consist of rows of two dimensions, where dimension 0 is the first vertex of the edge and dimension 1 is the second edge (or vice versa, as it doesn\textquotesingle{}t make a difference).
+
+
+\begin{DoxyParams}{Parameters}
+{\em edges} & Matrix of edges. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP@{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP}!Edges@{Edges}}
+\index{Edges@{Edges}!mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP@{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP}}
+\subsubsection[{Edges() const }]{\setlength{\rightskip}{0pt plus 5cm}const arma\+::mat\& mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+D\+P\+::\+Edges (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1optimization_1_1LovaszThetaSDP_aadcddf90566653aa8029399a9eff43be}
+
+
+Definition at line 130 of file aug\+\_\+lagrangian\+\_\+test\+\_\+functions.\+hpp.
+
+\index{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP@{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP}!Edges@{Edges}}
+\index{Edges@{Edges}!mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP@{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP}}
+\subsubsection[{Edges()}]{\setlength{\rightskip}{0pt plus 5cm}arma\+::mat\& mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+D\+P\+::\+Edges (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1optimization_1_1LovaszThetaSDP_aff918f9bb861fb0d30d313b35102ab73}
+
+
+Definition at line 131 of file aug\+\_\+lagrangian\+\_\+test\+\_\+functions.\+hpp.
+
+\index{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP@{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP@{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP}}
+\subsubsection[{Evaluate(const arma\+::mat \&coordinates)}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+D\+P\+::\+Evaluate (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{coordinates}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1optimization_1_1LovaszThetaSDP_afd2fed8f785f61cfbd1a1548f4d94054}
+\index{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP@{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP}!Evaluate\+Constraint@{Evaluate\+Constraint}}
+\index{Evaluate\+Constraint@{Evaluate\+Constraint}!mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP@{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP}}
+\subsubsection[{Evaluate\+Constraint(const size\+\_\+t index, const arma\+::mat \&coordinates)}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+D\+P\+::\+Evaluate\+Constraint (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{index, }
+\item[{const arma\+::mat \&}]{coordinates}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1optimization_1_1LovaszThetaSDP_a93f07ea7e91ca88301627bf2ecc2fc15}
+\index{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP@{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP}!Get\+Initial\+Point@{Get\+Initial\+Point}}
+\index{Get\+Initial\+Point@{Get\+Initial\+Point}!mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP@{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP}}
+\subsubsection[{Get\+Initial\+Point()}]{\setlength{\rightskip}{0pt plus 5cm}const arma\+::mat\& mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+D\+P\+::\+Get\+Initial\+Point (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1optimization_1_1LovaszThetaSDP_a189124c3dd99dc0660d614f76215b268}
+\index{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP@{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP@{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP}}
+\subsubsection[{Gradient(const arma\+::mat \&coordinates, arma\+::mat \&gradient)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+D\+P\+::\+Gradient (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{coordinates, }
+\item[{arma\+::mat \&}]{gradient}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1optimization_1_1LovaszThetaSDP_a25903b3d4138c83e7cbec3c96f9683cd}
+\index{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP@{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP}!Gradient\+Constraint@{Gradient\+Constraint}}
+\index{Gradient\+Constraint@{Gradient\+Constraint}!mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP@{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP}}
+\subsubsection[{Gradient\+Constraint(const size\+\_\+t index, const arma\+::mat \&coordinates, arma\+::mat \&gradient)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+D\+P\+::\+Gradient\+Constraint (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{index, }
+\item[{const arma\+::mat \&}]{coordinates, }
+\item[{arma\+::mat \&}]{gradient}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1optimization_1_1LovaszThetaSDP_a907a9008c27ca9f135582a903966ad15}
+\index{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP@{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP}!Num\+Constraints@{Num\+Constraints}}
+\index{Num\+Constraints@{Num\+Constraints}!mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP@{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP}}
+\subsubsection[{Num\+Constraints() const }]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+D\+P\+::\+Num\+Constraints (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1optimization_1_1LovaszThetaSDP_a988c4365f7d233832654737affed6830}
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP@{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP}!edges@{edges}}
+\index{edges@{edges}!mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP@{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP}}
+\subsubsection[{edges}]{\setlength{\rightskip}{0pt plus 5cm}arma\+::mat mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+D\+P\+::edges\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1optimization_1_1LovaszThetaSDP_a4994b2dc1ac4c79621bd404c3d5b4ef3}
+
+
+Definition at line 134 of file aug\+\_\+lagrangian\+\_\+test\+\_\+functions.\+hpp.
+
+\index{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP@{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP}!initial\+Point@{initial\+Point}}
+\index{initial\+Point@{initial\+Point}!mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP@{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP}}
+\subsubsection[{initial\+Point}]{\setlength{\rightskip}{0pt plus 5cm}arma\+::mat mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+D\+P\+::initial\+Point\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1optimization_1_1LovaszThetaSDP_a58ecad136790b28dc82b0f56592a1a92}
+
+
+Definition at line 137 of file aug\+\_\+lagrangian\+\_\+test\+\_\+functions.\+hpp.
+
+\index{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP@{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP}!vertices@{vertices}}
+\index{vertices@{vertices}!mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP@{mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+DP}}
+\subsubsection[{vertices}]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t mlpack\+::optimization\+::\+Lovasz\+Theta\+S\+D\+P\+::vertices\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1optimization_1_1LovaszThetaSDP_ab60c06beab0d2370891bffdf46201684}
+
+
+Definition at line 135 of file aug\+\_\+lagrangian\+\_\+test\+\_\+functions.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/optimizers/aug\+\_\+lagrangian/{\bf aug\+\_\+lagrangian\+\_\+test\+\_\+functions.\+hpp}\end{DoxyCompactItemize}

@@ -1,0 +1,329 @@
+.TH "dettutorial" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+dettutorial \- Density Estimation Tree (DET) tutorial 
+
+.SH "Introduction"
+.PP
+DETs perform the unsupervised task of density estimation using decision trees\&. Using a trained density estimation tree (DET), the density at any particular point can be estimated very quickly (O(log n) time, where n is the number of points the tree is built on)\&.
+.PP
+The details of this work is presented in the following paper: 
+.PP
+.nf
+@inproceedings{ram2011density,
+  title={Density estimation trees},
+  author={Ram, P\&. and Gray, A\&.G\&.},
+  booktitle={Proceedings of the 17th ACM SIGKDD International Conference on
+      Knowledge Discovery and Data Mining},
+  pages={627--635},
+  year={2011},
+  organization={ACM}
+}
+
+.fi
+.PP
+.PP
+\fBmlpack\fP provides:
+.PP
+.IP "\(bu" 2
+a \fBsimple command-line executable\fP to perform density estimation and related analyses using DETs
+.IP "\(bu" 2
+a \fBgeneric C++ class (DTree)\fP which provides various functionality for the DETs
+.IP "\(bu" 2
+a set of functions in the namespace \fBmlpack::det\fP to perform cross-validation for the task of density estimation with DETs
+.PP
+.SH "Table of Contents"
+.PP
+A list of all the sections this tutorial contains\&.
+.PP
+.IP "\(bu" 2
+\fBIntroduction\fP
+.IP "\(bu" 2
+\fBTable of Contents\fP
+.IP "\(bu" 2
+\fBCommand-Line mlpack_det\fP
+.IP "  \(bu" 4
+\fBPlain-vanilla density estimation\fP
+.IP "  \(bu" 4
+\fBEstimation on a test set\fP
+.IP "  \(bu" 4
+\fBComputing the variable importance\fP
+.IP "  \(bu" 4
+\fBSaving trained DETs\fP
+.IP "  \(bu" 4
+\fBLoading trained DETs\fP
+.PP
+
+.IP "\(bu" 2
+\fBThe 'DTree' class\fP
+.IP "  \(bu" 4
+\fBPublic Functions\fP
+.PP
+
+.IP "\(bu" 2
+\fB'namespace mlpack::det'\fP
+.IP "  \(bu" 4
+\fBUtility Functions\fP
+.PP
+
+.IP "\(bu" 2
+\fBFurther Documentation\fP
+.PP
+.SH "Command-Line mlpack_det"
+.PP
+The command line arguments of this program can be viewed using the \fC-h\fP option:
+.PP
+.PP
+.nf
+$ mlpack_det -h
+Density Estimation With Density Estimation Trees
+
+  This program performs a number of functions related to Density Estimation
+  Trees\&.  The optimal Density Estimation Tree (DET) can be trained on a set of
+  data (specified by --training_file or -t) using cross-validation (with number
+  of folds specified by --folds)\&.  This trained density estimation tree may then
+  be saved to a model file with the --output_model_file (-M) option\&.
+
+  The variable importances of each dimension may be saved with the --vi_file
+  (-i) option, and the density estimates on each training point may be saved to
+  the file specified with the --training_set_estimates_file (-e) option\&.
+
+  This program also can provide density estimates for a set of test points,
+  specified in the --test_file (-T) file\&.  The density estimation tree used for
+  this task will be the tree that was trained on the given training points, or a
+  tree stored in the file given with the --input_model_file (-m) parameter\&.  The
+  density estimates for the test points may be saved into the file specified
+  with the --test_set_estimates_file (-E) option\&.
+
+
+Options:
+
+  --folds (-f) [int]            The number of folds of cross-validation to
+                                perform for the estimation (0 is LOOCV)  Default
+                                value 10\&.
+  --help (-h)                   Default help info\&.
+  --info [string]               Get help on a specific module or option\&.
+                                Default value ''\&.
+  --input_model_file (-m) [string]
+                                File containing already trained density
+                                estimation tree\&.  Default value ''\&.
+  --max_leaf_size (-L) [int]    The maximum size of a leaf in the unpruned,
+                                fully grown DET\&.  Default value 10\&.
+  --min_leaf_size (-l) [int]    The minimum size of a leaf in the unpruned,
+                                fully grown DET\&.  Default value 5\&.
+  --output_model_file (-M) [string]
+                                File to save trained density estimation tree to\&.
+                                 Default value ''\&.
+  --test_file (-T) [string]     A set of test points to estimate the density of\&.
+                                 Default value ''\&.
+  --test_set_estimates_file (-E) [string]
+                                The file in which to output the estimates on the
+                                test set from the final optimally pruned tree\&.
+                                Default value ''\&.
+  --training_file (-t) [string]
+                                The data set on which to build a density
+                                estimation tree\&.  Default value ''\&.
+  --training_set_estimates_file (-e) [string]
+                                The file in which to output the density
+                                estimates on the training set from the final
+                                optimally pruned tree\&.  Default value ''\&.
+  --verbose (-v)                Display informational messages and the full list
+                                of parameters and timers at the end of
+                                execution\&.
+  --version (-V)                Display the version of mlpack\&.
+  --vi_file (-i) [string]       The file to output the variable importance
+                                values for each feature\&.  Default value ''\&.
+
+For further information, including relevant papers, citations, and theory,
+consult the documentation found at http://www\&.mlpack\&.org or included with your
+distribution of mlpack\&.
+.fi
+.PP
+.SS "Plain-vanilla density estimation"
+We can just train a DET on the provided data set \fIS\fP\&. Like all datasets \fBmlpack\fP uses, the data should be row-major (\fBmlpack\fP transposes data when it is loaded; internally, the data is column-major -- see \fBthis page\fP for more information)\&.
+.PP
+.PP
+.nf
+$ mlpack_det -t dataset\&.csv -v
+.fi
+.PP
+.PP
+By default, \fCmlpack_det\fP performs 10-fold cross-validation (using the $\alpha$-pruning regularization for decision trees)\&. To perform LOOCV (leave-one-out cross-validation), which can provide better results but will take longer, use the following command:
+.PP
+.PP
+.nf
+$ mlpack_det -t dataset\&.csv -f 0 -v
+.fi
+.PP
+.PP
+To perform k-fold crossvalidation, use \fC-f\fP \fCk\fP (or \fC--folds\fP \fCk\fP)\&. There are certain other options available for training\&. For example, in the construction of the initial tree, you can specify the maximum and minimum leaf sizes\&. By default, they are 10 and 5 respectively; you can set them using the \fC-M\fP (\fC--max_leaf_size\fP) and the \fC-N\fP (\fC--min_leaf_size\fP) options\&.
+.PP
+.PP
+.nf
+$ mlpack_det -t dataset\&.csv -M 20 -N 10
+.fi
+.PP
+.PP
+In case you want to output the density estimates at the points in the training set, use the \fC-e\fP (\fC--training_set_estimates_file\fP) option to specify the output file to which the estimates will be saved\&. The first line in density_estimates\&.txt will correspond to the density at the first point in the training set\&. Note that the logarithm of the density estimates are given, which allows smaller estimates to be saved\&.
+.PP
+.PP
+.nf
+$ mlpack_det -t dataset\&.csv -e density_estimates\&.txt -v
+.fi
+.PP
+.SS "Estimation on a test set"
+Often, it is useful to train a density estimation tree on a training set and then obtain density estimates from the learned estimator for a separate set of test points\&. The \fC-T\fP (\fC--test_file\fP) option allows specification of a set of test points, and the \fC-E\fP (\fC--test_set_estimates_file\fP) option allows specification of the file into which the test set estimates are saved\&. Note that the logarithm of the density estimates are saved; this allows smaller values to be saved\&.
+.PP
+.PP
+.nf
+$ mlpack_det -t dataset\&.csv -T test_points\&.csv -E test_density_estimates\&.txt -v
+.fi
+.PP
+.SS "Computing the variable importance"
+The variable importance (with respect to density estimation) of the different features in the data set can be obtained by using the \fC-i\fP (\fC--vi_file\fP ) option\&. This outputs the absolute (as opposed to relative) variable importance of the all the features into the specified file\&.
+.PP
+.PP
+.nf
+$ mlpack_det -t dataset\&.csv -i variable_importance\&.txt -v
+.fi
+.PP
+.SS "Saving trained DETs"
+The \fCmlpack_det\fP program is capable of saving a trained DET to a file for later usage\&. The \fC--output_model_file\fP or \fC-M\fP option allows specification of the file to save to\&. In the example below, a DET trained on \fCdataset\&.csv\fP is saved to the file \fCdet\&.xml\fP\&.
+.PP
+.PP
+.nf
+$ mlpack_det -t dataset\&.csv -M det\&.xml -v
+.fi
+.PP
+.SS "Loading trained DETs"
+A saved DET can be used to perform any of the functionality in the examples above\&. A saved DET is loaded with the \fC--input_model_file\fP or \fC-m\fP option\&. The example below loads a saved DET from \fCdet\&.xml\fP and outputs density estimates on the dataset \fCtest_dataset\&.csv\fP into the file \fCestimates\&.csv\fP\&.
+.PP
+.PP
+.nf
+$ mlpack_det -m det\&.xml -T test_dataset\&.csv -E estimates\&.csv -v
+.fi
+.PP
+.SH "The 'DTree' class"
+.PP
+This class implements density estimation trees\&. Below is a simple example which initializes a density estimation tree\&.
+.PP
+.PP
+.nf
+#include <mlpack/methods/det/dtree\&.hpp>
+
+using namespace mlpack::det;
+
+// The dataset matrix, on which to learn the density estimation tree\&.
+extern arma::Mat<float> data;
+
+// Initialize the tree\&.  This function also creates and saves the bounding box
+// of the data\&.  Note that it does not actually build the tree\&.
+DTree<> det(data);
+.fi
+.PP
+.SS "Public Functions"
+The function \fCGrow()\fP greedily grows the tree, adding new points to the tree\&. Note that the points in the dataset will be reordered\&. This should only be run on a tree which has not already been built\&. In general, it is more useful to use the \fC\fBTrainer()\fP\fP function found in \fB'namespace mlpack::det'\fP\&.
+.PP
+.PP
+.nf
+// This keeps track of the data during the shuffle that occurs while growing the
+// tree\&.
+arma::Col<size_t> oldFromNew(data\&.n_cols);
+for (size_t i = 0; i < data\&.n_cols; i++)
+  oldFromNew[i] = i;
+
+// This function grows the tree down to the leaves\&. It returns the current
+// minimum value of the regularization parameter alpha\&.
+size_t maxLeafSize = 10;
+size_t minLeafSize = 5;
+
+double alpha = det\&.Grow(data, oldFromNew, false, maxLeafSize, minLeafSize);
+.fi
+.PP
+.PP
+Note that the alternate volume regularization should not be used (see ticket #238)\&.
+.PP
+To estimate the density at a given query point, use the following code\&. Note that the logarithm of the density is returned\&.
+.PP
+.PP
+.nf
+// For a given query, you can obtain the density estimate\&.
+extern arma::Col<float> query;
+extern DTree* det;
+double estimate = det->ComputeValue(&query);
+.fi
+.PP
+.PP
+Computing the \fBvariable\fP \fBimportance\fP of each feature for the given DET\&.
+.PP
+.PP
+.nf
+// The data matrix and density estimation tree\&.
+extern arma::mat data;
+extern DTree* det;
+
+// The variable importances will be saved into this vector\&.
+arma::Col<double> varImps;
+
+// You can obtain the variable importance from the current tree\&.
+det->ComputeVariableImportance(varImps);
+.fi
+.PP
+.SH "'namespace mlpack::det'"
+.PP
+The functions in this namespace allows the user to perform tasks with the 'DTree' class\&. Most importantly, the \fC\fBTrainer()\fP\fP method allows the full training of a density estimation tree with cross-validation\&. There are also utility functions which allow printing of leaf membership and variable importance\&.
+.SS "Utility Functions"
+The code below details how to train a density estimation tree with cross-validation\&.
+.PP
+.PP
+.nf
+#include <mlpack/methods/det/dt_utils\&.hpp>
+
+using namespace mlpack::det;
+
+// The dataset matrix, on which to learn the density estimation tree\&.
+extern arma::Mat<float> data;
+
+// The number of folds for cross-validation\&.
+const size_t folds = 10; // Set folds = 0 for LOOCV\&.
+
+const size_t maxLeafSize = 10;
+const size_t minLeafSize = 5;
+
+// Train the density estimation tree with cross-validation\&.
+DTree<>* dtree_opt = Trainer(data, folds, false, maxLeafSize, minLeafSize);
+.fi
+.PP
+.PP
+Note that the alternate volume regularization should be set to false because it has known bugs (see #238)\&.
+.PP
+To print the class membership of leaves in the tree into a file, see the following code\&.
+.PP
+.PP
+.nf
+extern arma::Mat<size_t> labels;
+extern DTree* det;
+const size_t numClasses = 3; // The number of classes must be known\&.
+
+extern string leafClassMembershipFile;
+
+PrintLeafMembership(det, data, labels, numClasses, leafClassMembershipFile);
+.fi
+.PP
+.PP
+Note that you can find the number of classes with \fCmax(labels)\fP \fC+\fP \fC1\fP\&. The variable importance can also be printed to a file in a similar manner\&.
+.PP
+.PP
+.nf
+extern DTree* det;
+
+extern string variableImportanceFile;
+const size_t numFeatures = data\&.n_rows;
+
+PrintVariableImportance(det, numFeatures, variableImportanceFile);
+.fi
+.PP
+.SH "Further Documentation"
+.PP
+For further documentation on the DTree class, consult the \fBcomplete API documentation\fP\&. 

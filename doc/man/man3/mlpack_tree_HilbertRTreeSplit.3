@@ -1,0 +1,134 @@
+.TH "mlpack::tree::HilbertRTreeSplit< splitOrder >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::tree::HilbertRTreeSplit< splitOrder > \- The splitting procedure for the Hilbert R tree\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename TreeType > static void \fBSplitLeafNode\fP (TreeType *tree, std::vector< bool > &relevels)"
+.br
+.RI "\fISplit a leaf node using the 'default' algorithm\&. \fP"
+.ti -1c
+.RI "template<typename TreeType > static bool \fBSplitNonLeafNode\fP (TreeType *tree, std::vector< bool > &relevels)"
+.br
+.RI "\fISplit a non-leaf node using the 'default' algorithm\&. \fP"
+.in -1c
+.SS "Static Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename TreeType > static bool \fBFindCooperatingSiblings\fP (TreeType *parent, const size_t iTree, size_t &firstSibling, size_t &lastSibling)"
+.br
+.RI "\fITry to find splitOrder cooperating siblings in order to redistribute their children evenly\&. \fP"
+.ti -1c
+.RI "template<typename TreeType > static void \fBRedistributeNodesEvenly\fP (const TreeType *parent, const size_t firstSibling, const size_t lastSibling)"
+.br
+.RI "\fIRedistribute the children of the cooperating siblings evenly among them\&. \fP"
+.ti -1c
+.RI "template<typename TreeType > static void \fBRedistributePointsEvenly\fP (TreeType *parent, const size_t firstSibling, const size_t lastSibling)"
+.br
+.RI "\fIRedistribute the points of the cooperating siblings evenly among them\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<size_t splitOrder = 2>
+.br
+class mlpack::tree::HilbertRTreeSplit< splitOrder >"
+The splitting procedure for the Hilbert R tree\&. 
+
+The template parameter splitOrder is the order of the splitting policy\&. The Hilbert R tree splits a node on overflow, turning splitOrder nodes into (splitOrder + 1) nodes\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIsplitOrder\fP Number of nodes to split\&. 
+.RE
+.PP
+
+.PP
+Definition at line 29 of file hilbert_r_tree_split\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<size_t splitOrder = 2> template<typename TreeType > static bool \fBmlpack::tree::HilbertRTreeSplit\fP< splitOrder >::FindCooperatingSiblings (TreeType * parent, const size_t iTree, size_t & firstSibling, size_t & lastSibling)\fC [static]\fP, \fC [private]\fP"
+
+.PP
+Try to find splitOrder cooperating siblings in order to redistribute their children evenly\&. Returns true on success\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIparent\fP The parent of of the overflowing node\&. 
+.br
+\fIiTree\fP The number of the overflowing node\&. 
+.br
+\fIfirstSibling\fP The first cooperating sibling\&. 
+.br
+\fIlastSibling\fP The last cooperating sibling\&. 
+.RE
+.PP
+
+.SS "template<size_t splitOrder = 2> template<typename TreeType > static void \fBmlpack::tree::HilbertRTreeSplit\fP< splitOrder >::RedistributeNodesEvenly (const TreeType * parent, const size_t firstSibling, const size_t lastSibling)\fC [static]\fP, \fC [private]\fP"
+
+.PP
+Redistribute the children of the cooperating siblings evenly among them\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIparent\fP The parent of of the overflowing node\&. 
+.br
+\fIfirstSibling\fP The first cooperating sibling\&. 
+.br
+\fIlastSibling\fP The last cooperating sibling\&. 
+.RE
+.PP
+
+.SS "template<size_t splitOrder = 2> template<typename TreeType > static void \fBmlpack::tree::HilbertRTreeSplit\fP< splitOrder >::RedistributePointsEvenly (TreeType * parent, const size_t firstSibling, const size_t lastSibling)\fC [static]\fP, \fC [private]\fP"
+
+.PP
+Redistribute the points of the cooperating siblings evenly among them\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIparent\fP The parent of of the overflowing node\&. 
+.br
+\fIfirstSibling\fP The first cooperating sibling\&. 
+.br
+\fIlastSibling\fP The last cooperating sibling\&. 
+.RE
+.PP
+
+.SS "template<size_t splitOrder = 2> template<typename TreeType > static void \fBmlpack::tree::HilbertRTreeSplit\fP< splitOrder >::SplitLeafNode (TreeType * tree, std::vector< bool > & relevels)\fC [static]\fP"
+
+.PP
+Split a leaf node using the 'default' algorithm\&. If necessary, this split will propagate upwards through the tree\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fInode\fP The node that is being split\&. 
+.br
+\fIrelevels\fP Not used\&. 
+.RE
+.PP
+
+.SS "template<size_t splitOrder = 2> template<typename TreeType > static bool \fBmlpack::tree::HilbertRTreeSplit\fP< splitOrder >::SplitNonLeafNode (TreeType * tree, std::vector< bool > & relevels)\fC [static]\fP"
+
+.PP
+Split a non-leaf node using the 'default' algorithm\&. If this is a root node, the tree increases in depth\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fInode\fP The node that is being split\&. 
+.br
+\fIrelevels\fP Not used\&. 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

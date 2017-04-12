@@ -1,0 +1,155 @@
+.TH "mlpack::ann::OivsInitialization< ActivationFunction >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::ann::OivsInitialization< ActivationFunction > \- This class is used to initialize the weight matrix with the oivs method\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBOivsInitialization\fP (const double epsilon=0\&.1, const int \fBk\fP=5, const double \fBgamma\fP=0\&.9)"
+.br
+.RI "\fIInitialize the random initialization rule with the given values\&. \fP"
+.ti -1c
+.RI "template<typename eT > void \fBInitialize\fP (arma::Mat< eT > &W, const size_t rows, const size_t cols)"
+.br
+.RI "\fIInitialize the elements of the specified weight matrix with the oivs method\&. \fP"
+.ti -1c
+.RI "template<typename eT > void \fBInitialize\fP (arma::Cube< eT > &W, const size_t rows, const size_t cols, const size_t slices)"
+.br
+.RI "\fIInitialize the elements of the specified weight 3rd order tensor with the oivs method\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "const double \fBb\fP"
+.br
+.RI "\fIParameter to control the activation region\&. \fP"
+.ti -1c
+.RI "const double \fBgamma\fP"
+.br
+.RI "\fIParameter to define the uniform random range\&. \fP"
+.ti -1c
+.RI "const int \fBk\fP"
+.br
+.RI "\fIParameter to control the activation region width\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<class ActivationFunction = LogisticFunction>
+.br
+class mlpack::ann::OivsInitialization< ActivationFunction >"
+This class is used to initialize the weight matrix with the oivs method\&. 
+
+The method is based on the equations representing the characteristics of the information transformation mechanism of a node\&. The method is defined by
+.PP
+\begin{eqnarray*} b &=& |F^{-1}(1 - \epsilon) - f^{-1}(\epsilon)| \\ \hat{w} &=& \frac{b}{k \cdot n} \\ \gamma &\le& a_i \le \gamma \\ w_i &=& \hat{w} \cdot \sqrt{a_i + 1} \end{eqnarray*}.PP
+Where f is the transfer function epsilon, k custom parameters, n the number of neurons in the outgoing layer and gamma a parameter that defines the random interval\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIActivationFunction\fP The activation function used for the oivs method\&. 
+.RE
+.PP
+
+.PP
+Definition at line 59 of file oivs_init\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<class ActivationFunction  = LogisticFunction> \fBmlpack::ann::OivsInitialization\fP< ActivationFunction >::\fBOivsInitialization\fP (const double epsilon = \fC0\&.1\fP, const int k = \fC5\fP, const double gamma = \fC0\&.9\fP)\fC [inline]\fP"
+
+.PP
+Initialize the random initialization rule with the given values\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIepsilon\fP Parameter to control the activation region\&. 
+.br
+\fIk\fP Parameter to control the activation region width\&. 
+.br
+\fIgamma\fP Parameter to define the uniform random range\&. 
+.RE
+.PP
+
+.PP
+Definition at line 69 of file oivs_init\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<class ActivationFunction  = LogisticFunction> template<typename eT > void \fBmlpack::ann::OivsInitialization\fP< ActivationFunction >::Initialize (arma::Mat< eT > & W, const size_t rows, const size_t cols)\fC [inline]\fP"
+
+.PP
+Initialize the elements of the specified weight matrix with the oivs method\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIW\fP Weight matrix to initialize\&. 
+.br
+\fIrows\fP Number of rows\&. 
+.br
+\fIcols\fP Number of columns\&. 
+.RE
+.PP
+
+.PP
+Definition at line 86 of file oivs_init\&.hpp\&.
+.PP
+References mlpack::ann::OivsInitialization< ActivationFunction >::b, mlpack::ann::OivsInitialization< ActivationFunction >::gamma, mlpack::ann::RandomInitialization::Initialize(), and mlpack::ann::OivsInitialization< ActivationFunction >::k\&.
+.PP
+Referenced by mlpack::ann::OivsInitialization< ActivationFunction >::Initialize()\&.
+.SS "template<class ActivationFunction  = LogisticFunction> template<typename eT > void \fBmlpack::ann::OivsInitialization\fP< ActivationFunction >::Initialize (arma::Cube< eT > & W, const size_t rows, const size_t cols, const size_t slices)\fC [inline]\fP"
+
+.PP
+Initialize the elements of the specified weight 3rd order tensor with the oivs method\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIW\fP 3rd order tensor to initialize\&. 
+.br
+\fIrows\fP Number of rows\&. 
+.br
+\fIcols\fP Number of columns\&. 
+.br
+\fIslices\fP Number of slices\&. 
+.RE
+.PP
+
+.PP
+Definition at line 104 of file oivs_init\&.hpp\&.
+.PP
+References mlpack::ann::OivsInitialization< ActivationFunction >::Initialize()\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<class ActivationFunction  = LogisticFunction> const double \fBmlpack::ann::OivsInitialization\fP< ActivationFunction >::b\fC [private]\fP"
+
+.PP
+Parameter to control the activation region\&. 
+.PP
+Definition at line 123 of file oivs_init\&.hpp\&.
+.PP
+Referenced by mlpack::ann::OivsInitialization< ActivationFunction >::Initialize()\&.
+.SS "template<class ActivationFunction  = LogisticFunction> const double \fBmlpack::ann::OivsInitialization\fP< ActivationFunction >::gamma\fC [private]\fP"
+
+.PP
+Parameter to define the uniform random range\&. 
+.PP
+Definition at line 120 of file oivs_init\&.hpp\&.
+.PP
+Referenced by mlpack::ann::OivsInitialization< ActivationFunction >::Initialize()\&.
+.SS "template<class ActivationFunction  = LogisticFunction> const int \fBmlpack::ann::OivsInitialization\fP< ActivationFunction >::k\fC [private]\fP"
+
+.PP
+Parameter to control the activation region width\&. 
+.PP
+Definition at line 117 of file oivs_init\&.hpp\&.
+.PP
+Referenced by mlpack::ann::OivsInitialization< ActivationFunction >::Initialize()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

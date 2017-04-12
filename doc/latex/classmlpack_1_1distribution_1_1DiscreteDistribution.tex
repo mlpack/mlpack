@@ -1,0 +1,361 @@
+\section{mlpack\+:\+:distribution\+:\+:Discrete\+Distribution Class Reference}
+\label{classmlpack_1_1distribution_1_1DiscreteDistribution}\index{mlpack\+::distribution\+::\+Discrete\+Distribution@{mlpack\+::distribution\+::\+Discrete\+Distribution}}
+
+
+A discrete distribution where the only observations are discrete observations.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Discrete\+Distribution} ()
+\begin{DoxyCompactList}\small\item\em Default constructor, which creates a distribution that has no observations. \end{DoxyCompactList}\item 
+{\bf Discrete\+Distribution} (const size\+\_\+t num\+Observations)
+\begin{DoxyCompactList}\small\item\em Define the discrete distribution as having num\+Observations possible observations. \end{DoxyCompactList}\item 
+{\bf Discrete\+Distribution} (const arma\+::\+Col$<$ size\+\_\+t $>$ \&num\+Observations)
+\begin{DoxyCompactList}\small\item\em Define the multidimensional discrete distribution as having num\+Observations possible observations. \end{DoxyCompactList}\item 
+{\bf Discrete\+Distribution} (const std\+::vector$<$ arma\+::vec $>$ \&{\bf probabilities})
+\begin{DoxyCompactList}\small\item\em Define the multidimensional discrete distribution as having the given probabilities for each observation. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Dimensionality} () const 
+\begin{DoxyCompactList}\small\item\em Get the dimensionality of the distribution. \end{DoxyCompactList}\item 
+double {\bf Log\+Probability} (const arma\+::vec \&observation) const 
+\begin{DoxyCompactList}\small\item\em Return the log probability of the given observation. \end{DoxyCompactList}\item 
+arma\+::vec \& {\bf Probabilities} (const size\+\_\+t dim=0)
+\begin{DoxyCompactList}\small\item\em Return the vector of probabilities for the given dimension. \end{DoxyCompactList}\item 
+const arma\+::vec \& {\bf Probabilities} (const size\+\_\+t dim=0) const 
+\begin{DoxyCompactList}\small\item\em Modify the vector of probabilities for the given dimension. \end{DoxyCompactList}\item 
+double {\bf Probability} (const arma\+::vec \&observation) const 
+\begin{DoxyCompactList}\small\item\em Return the probability of the given observation. \end{DoxyCompactList}\item 
+arma\+::vec {\bf Random} () const 
+\begin{DoxyCompactList}\small\item\em Return a randomly generated observation (one-\/dimensional vector; one observation) according to the probability distribution defined by this object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&ar, const unsigned int)
+\begin{DoxyCompactList}\small\item\em Serialize the distribution. \end{DoxyCompactList}\item 
+void {\bf Train} (const arma\+::mat \&observations)
+\begin{DoxyCompactList}\small\item\em Estimate the probability distribution directly from the given observations. \end{DoxyCompactList}\item 
+void {\bf Train} (const arma\+::mat \&observations, const arma\+::vec \&{\bf probabilities})
+\begin{DoxyCompactList}\small\item\em Estimate the probability distribution from the given observations, taking into account the probability of each observation actually being from this distribution. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::vector$<$ arma\+::vec $>$ {\bf probabilities}
+\begin{DoxyCompactList}\small\item\em The probabilities for each dimension; each arma\+::vec represents the probabilities for the observations in each dimension. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A discrete distribution where the only observations are discrete observations. 
+
+This is useful (for example) with discrete Hidden Markov Models, where observations are non-\/negative integers representing specific emissions.
+
+No bounds checking is performed for observations, so if an invalid observation is passed (i.\+e. observation $>$ num\+Observations), a crash will probably occur.
+
+This distribution only supports one-\/dimensional observations, so when passing an arma\+::vec as an observation, it should only have one dimension (vec.\+n\+\_\+rows == 1). Any additional dimensions will simply be ignored.
+
+\begin{DoxyNote}{Note}
+This class, like every other class in mlpack, uses arma\+::vec to represent observations. While a discrete distribution only has positive integers (size\+\_\+t) as observations, these can be converted to doubles (which is what arma\+::vec holds). This distribution internally converts those doubles back into size\+\_\+t before comparisons.  
+\end{DoxyNote}
+
+
+Definition at line 45 of file discrete\+\_\+distribution.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::distribution\+::\+Discrete\+Distribution@{mlpack\+::distribution\+::\+Discrete\+Distribution}!Discrete\+Distribution@{Discrete\+Distribution}}
+\index{Discrete\+Distribution@{Discrete\+Distribution}!mlpack\+::distribution\+::\+Discrete\+Distribution@{mlpack\+::distribution\+::\+Discrete\+Distribution}}
+\subsubsection[{Discrete\+Distribution()}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::distribution\+::\+Discrete\+Distribution\+::\+Discrete\+Distribution (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1distribution_1_1DiscreteDistribution_ae92fa20680434c043dbd3cbc1825bf7b}
+
+
+Default constructor, which creates a distribution that has no observations. 
+
+
+
+Definition at line 51 of file discrete\+\_\+distribution.\+hpp.
+
+\index{mlpack\+::distribution\+::\+Discrete\+Distribution@{mlpack\+::distribution\+::\+Discrete\+Distribution}!Discrete\+Distribution@{Discrete\+Distribution}}
+\index{Discrete\+Distribution@{Discrete\+Distribution}!mlpack\+::distribution\+::\+Discrete\+Distribution@{mlpack\+::distribution\+::\+Discrete\+Distribution}}
+\subsubsection[{Discrete\+Distribution(const size\+\_\+t num\+Observations)}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::distribution\+::\+Discrete\+Distribution\+::\+Discrete\+Distribution (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{num\+Observations}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1distribution_1_1DiscreteDistribution_a284a24758895f104becf646b45e64ca4}
+
+
+Define the discrete distribution as having num\+Observations possible observations. 
+
+The probability in each state will be set to (1 / num\+Observations).
+
+
+\begin{DoxyParams}{Parameters}
+{\em num\+Observations} & Number of possible observations this distribution can have. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 62 of file discrete\+\_\+distribution.\+hpp.
+
+\index{mlpack\+::distribution\+::\+Discrete\+Distribution@{mlpack\+::distribution\+::\+Discrete\+Distribution}!Discrete\+Distribution@{Discrete\+Distribution}}
+\index{Discrete\+Distribution@{Discrete\+Distribution}!mlpack\+::distribution\+::\+Discrete\+Distribution@{mlpack\+::distribution\+::\+Discrete\+Distribution}}
+\subsubsection[{Discrete\+Distribution(const arma\+::\+Col$<$ size\+\_\+t $>$ \&num\+Observations)}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::distribution\+::\+Discrete\+Distribution\+::\+Discrete\+Distribution (
+\begin{DoxyParamCaption}
+\item[{const arma\+::\+Col$<$ size\+\_\+t $>$ \&}]{num\+Observations}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1distribution_1_1DiscreteDistribution_a93371ce703fe0cfc9ba5b1e99272e1d6}
+
+
+Define the multidimensional discrete distribution as having num\+Observations possible observations. 
+
+The probability in each state will be set to (1 / num\+Observations of each dimension).
+
+
+\begin{DoxyParams}{Parameters}
+{\em num\+Observations} & Number of possible observations this distribution can have. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 75 of file discrete\+\_\+distribution.\+hpp.
+
+
+
+References probabilities.
+
+\index{mlpack\+::distribution\+::\+Discrete\+Distribution@{mlpack\+::distribution\+::\+Discrete\+Distribution}!Discrete\+Distribution@{Discrete\+Distribution}}
+\index{Discrete\+Distribution@{Discrete\+Distribution}!mlpack\+::distribution\+::\+Discrete\+Distribution@{mlpack\+::distribution\+::\+Discrete\+Distribution}}
+\subsubsection[{Discrete\+Distribution(const std\+::vector$<$ arma\+::vec $>$ \&probabilities)}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::distribution\+::\+Discrete\+Distribution\+::\+Discrete\+Distribution (
+\begin{DoxyParamCaption}
+\item[{const std\+::vector$<$ arma\+::vec $>$ \&}]{probabilities}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1distribution_1_1DiscreteDistribution_adc0aa8c41a07e53a50af96ffeeb5365e}
+
+
+Define the multidimensional discrete distribution as having the given probabilities for each observation. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em probabilities} & Probabilities of each possible observation. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 97 of file discrete\+\_\+distribution.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::distribution\+::\+Discrete\+Distribution@{mlpack\+::distribution\+::\+Discrete\+Distribution}!Dimensionality@{Dimensionality}}
+\index{Dimensionality@{Dimensionality}!mlpack\+::distribution\+::\+Discrete\+Distribution@{mlpack\+::distribution\+::\+Discrete\+Distribution}}
+\subsubsection[{Dimensionality() const }]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t mlpack\+::distribution\+::\+Discrete\+Distribution\+::\+Dimensionality (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1distribution_1_1DiscreteDistribution_ac7f063c2d79ad674aa876194a7752dcd}
+
+
+Get the dimensionality of the distribution. 
+
+
+
+Definition at line 116 of file discrete\+\_\+distribution.\+hpp.
+
+
+
+References probabilities.
+
+\index{mlpack\+::distribution\+::\+Discrete\+Distribution@{mlpack\+::distribution\+::\+Discrete\+Distribution}!Log\+Probability@{Log\+Probability}}
+\index{Log\+Probability@{Log\+Probability}!mlpack\+::distribution\+::\+Discrete\+Distribution@{mlpack\+::distribution\+::\+Discrete\+Distribution}}
+\subsubsection[{Log\+Probability(const arma\+::vec \&observation) const }]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::distribution\+::\+Discrete\+Distribution\+::\+Log\+Probability (
+\begin{DoxyParamCaption}
+\item[{const arma\+::vec \&}]{observation}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1distribution_1_1DiscreteDistribution_a6768fbb34b2e35e3fb774f70029776a8}
+
+
+Return the log probability of the given observation. 
+
+If the observation is greater than the number of possible observations, then a crash will probably occur -- bounds checking is not performed.
+
+
+\begin{DoxyParams}{Parameters}
+{\em observation} & Observation to return the log probability of. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxyref{Log}{p.}{classmlpack_1_1Log} probability of the given observation. 
+\end{DoxyReturn}
+
+
+Definition at line 164 of file discrete\+\_\+distribution.\+hpp.
+
+
+
+References probabilities, Probability(), Random(), and Train().
+
+\index{mlpack\+::distribution\+::\+Discrete\+Distribution@{mlpack\+::distribution\+::\+Discrete\+Distribution}!Probabilities@{Probabilities}}
+\index{Probabilities@{Probabilities}!mlpack\+::distribution\+::\+Discrete\+Distribution@{mlpack\+::distribution\+::\+Discrete\+Distribution}}
+\subsubsection[{Probabilities(const size\+\_\+t dim=0)}]{\setlength{\rightskip}{0pt plus 5cm}arma\+::vec\& mlpack\+::distribution\+::\+Discrete\+Distribution\+::\+Probabilities (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{dim = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1distribution_1_1DiscreteDistribution_ad178e80a5ad3cdd7e4e174f6964493d3}
+
+
+Return the vector of probabilities for the given dimension. 
+
+
+
+Definition at line 201 of file discrete\+\_\+distribution.\+hpp.
+
+\index{mlpack\+::distribution\+::\+Discrete\+Distribution@{mlpack\+::distribution\+::\+Discrete\+Distribution}!Probabilities@{Probabilities}}
+\index{Probabilities@{Probabilities}!mlpack\+::distribution\+::\+Discrete\+Distribution@{mlpack\+::distribution\+::\+Discrete\+Distribution}}
+\subsubsection[{Probabilities(const size\+\_\+t dim=0) const }]{\setlength{\rightskip}{0pt plus 5cm}const arma\+::vec\& mlpack\+::distribution\+::\+Discrete\+Distribution\+::\+Probabilities (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{dim = {\ttfamily 0}}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1distribution_1_1DiscreteDistribution_a31d902d9fb270de6af74aa8d329ec3c9}
+
+
+Modify the vector of probabilities for the given dimension. 
+
+
+
+Definition at line 203 of file discrete\+\_\+distribution.\+hpp.
+
+\index{mlpack\+::distribution\+::\+Discrete\+Distribution@{mlpack\+::distribution\+::\+Discrete\+Distribution}!Probability@{Probability}}
+\index{Probability@{Probability}!mlpack\+::distribution\+::\+Discrete\+Distribution@{mlpack\+::distribution\+::\+Discrete\+Distribution}}
+\subsubsection[{Probability(const arma\+::vec \&observation) const }]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::distribution\+::\+Discrete\+Distribution\+::\+Probability (
+\begin{DoxyParamCaption}
+\item[{const arma\+::vec \&}]{observation}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1distribution_1_1DiscreteDistribution_a6838b73184083eb322c84887c0e3f12e}
+
+
+Return the probability of the given observation. 
+
+If the observation is greater than the number of possible observations, then a crash will probably occur -- bounds checking is not performed.
+
+
+\begin{DoxyParams}{Parameters}
+{\em observation} & Observation to return the probability of. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Probability of the given observation. 
+\end{DoxyReturn}
+
+
+Definition at line 126 of file discrete\+\_\+distribution.\+hpp.
+
+
+
+References mlpack\+::\+Log\+::\+Debug, and probabilities.
+
+
+
+Referenced by Log\+Probability().
+
+\index{mlpack\+::distribution\+::\+Discrete\+Distribution@{mlpack\+::distribution\+::\+Discrete\+Distribution}!Random@{Random}}
+\index{Random@{Random}!mlpack\+::distribution\+::\+Discrete\+Distribution@{mlpack\+::distribution\+::\+Discrete\+Distribution}}
+\subsubsection[{Random() const }]{\setlength{\rightskip}{0pt plus 5cm}arma\+::vec mlpack\+::distribution\+::\+Discrete\+Distribution\+::\+Random (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1distribution_1_1DiscreteDistribution_adeb56ea7e07eca693ab4de0a21d52509}
+
+
+Return a randomly generated observation (one-\/dimensional vector; one observation) according to the probability distribution defined by this object. 
+
+\begin{DoxyReturn}{Returns}
+Random observation. 
+\end{DoxyReturn}
+
+
+Referenced by Log\+Probability().
+
+\index{mlpack\+::distribution\+::\+Discrete\+Distribution@{mlpack\+::distribution\+::\+Discrete\+Distribution}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::distribution\+::\+Discrete\+Distribution@{mlpack\+::distribution\+::\+Discrete\+Distribution}}
+\subsubsection[{Serialize(\+Archive \&ar, const unsigned int)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Archive $>$ void mlpack\+::distribution\+::\+Discrete\+Distribution\+::\+Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const unsigned}]{int}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1distribution_1_1DiscreteDistribution_ae30476739f3ed9327936ff7b87d0ecd1}
+
+
+Serialize the distribution. 
+
+
+
+Definition at line 210 of file discrete\+\_\+distribution.\+hpp.
+
+
+
+References mlpack\+::data\+::\+Create\+N\+V\+P().
+
+\index{mlpack\+::distribution\+::\+Discrete\+Distribution@{mlpack\+::distribution\+::\+Discrete\+Distribution}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::distribution\+::\+Discrete\+Distribution@{mlpack\+::distribution\+::\+Discrete\+Distribution}}
+\subsubsection[{Train(const arma\+::mat \&observations)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::distribution\+::\+Discrete\+Distribution\+::\+Train (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{observations}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1distribution_1_1DiscreteDistribution_a682b9d50d1b2776ee104d6b78162d042}
+
+
+Estimate the probability distribution directly from the given observations. 
+
+If any of the observations is greater than num\+Observations, a crash is likely to occur.
+
+
+\begin{DoxyParams}{Parameters}
+{\em observations} & List of observations. \\
+\hline
+\end{DoxyParams}
+
+
+Referenced by Log\+Probability().
+
+\index{mlpack\+::distribution\+::\+Discrete\+Distribution@{mlpack\+::distribution\+::\+Discrete\+Distribution}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::distribution\+::\+Discrete\+Distribution@{mlpack\+::distribution\+::\+Discrete\+Distribution}}
+\subsubsection[{Train(const arma\+::mat \&observations, const arma\+::vec \&probabilities)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::distribution\+::\+Discrete\+Distribution\+::\+Train (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{observations, }
+\item[{const arma\+::vec \&}]{probabilities}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1distribution_1_1DiscreteDistribution_afe01e3500f078d6aa87377d1aa22f556}
+
+
+Estimate the probability distribution from the given observations, taking into account the probability of each observation actually being from this distribution. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em observations} & List of observations. \\
+\hline
+{\em probabilities} & List of probabilities that each observation is actually from this distribution. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::distribution\+::\+Discrete\+Distribution@{mlpack\+::distribution\+::\+Discrete\+Distribution}!probabilities@{probabilities}}
+\index{probabilities@{probabilities}!mlpack\+::distribution\+::\+Discrete\+Distribution@{mlpack\+::distribution\+::\+Discrete\+Distribution}}
+\subsubsection[{probabilities}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$arma\+::vec$>$ mlpack\+::distribution\+::\+Discrete\+Distribution\+::probabilities\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1distribution_1_1DiscreteDistribution_a26bcf7b1af4d12c9cb7969af4fbe6b07}
+
+
+The probabilities for each dimension; each arma\+::vec represents the probabilities for the observations in each dimension. 
+
+
+
+Definition at line 235 of file discrete\+\_\+distribution.\+hpp.
+
+
+
+Referenced by Dimensionality(), Discrete\+Distribution(), Log\+Probability(), and Probability().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/dists/{\bf discrete\+\_\+distribution.\+hpp}\end{DoxyCompactItemize}

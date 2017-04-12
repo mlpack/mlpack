@@ -1,0 +1,62 @@
+.TH "mlpack::tree::GiniGain" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::tree::GiniGain \- The Gini gain, a measure of set purity usable as a fitness function (FitnessFunction) for decision trees\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename RowType > static double \fBEvaluate\fP (const RowType &labels, const size_t numClasses)"
+.br
+.RI "\fIEvaluate the Gini impurity on the given set of labels\&. \fP"
+.ti -1c
+.RI "static double \fBRange\fP (const size_t numClasses)"
+.br
+.RI "\fIReturn the range of the Gini impurity for the given number of classes\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+The Gini gain, a measure of set purity usable as a fitness function (FitnessFunction) for decision trees\&. 
+
+This is the exact same thing as the well-known Gini impurity, but negated---since the decision tree will be trying to maximize gain (and the Gini impurity would need to be minimized)\&. 
+.PP
+Definition at line 27 of file gini_gain\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename RowType > static double mlpack::tree::GiniGain::Evaluate (const RowType & labels, const size_t numClasses)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Evaluate the Gini impurity on the given set of labels\&. RowType should be an Armadillo vector that holds size_t objects\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIlabels\fP Set of labels to evaluate Gini impurity on\&. 
+.br
+\fInumClasses\fP Number of classes in the dataset\&. 
+.RE
+.PP
+
+.PP
+Definition at line 38 of file gini_gain\&.hpp\&.
+.SS "static double mlpack::tree::GiniGain::Range (const size_t numClasses)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Return the range of the Gini impurity for the given number of classes\&. (That is, the difference between the maximum possible value and the minimum possible value\&.)
+.PP
+\fBParameters:\fP
+.RS 4
+\fInumClasses\fP Number of classes in the dataset\&. 
+.RE
+.PP
+
+.PP
+Definition at line 68 of file gini_gain\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

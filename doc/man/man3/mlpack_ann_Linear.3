@@ -1,0 +1,348 @@
+.TH "mlpack::ann::Linear< InputDataType, OutputDataType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::ann::Linear< InputDataType, OutputDataType > \- Implementation of the \fBLinear\fP layer class\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBLinear\fP ()"
+.br
+.RI "\fICreate the \fBLinear\fP object\&. \fP"
+.ti -1c
+.RI "\fBLinear\fP (const size_t \fBinSize\fP, const size_t \fBoutSize\fP)"
+.br
+.RI "\fICreate the \fBLinear\fP layer object using the specified number of units\&. \fP"
+.ti -1c
+.RI "template<typename eT > void \fBBackward\fP (const arma::Mat< eT > &&, arma::Mat< eT > &&gy, arma::Mat< eT > &&g)"
+.br
+.RI "\fIOrdinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f\&. \fP"
+.ti -1c
+.RI "OutputDataType const & \fBDelta\fP () const "
+.br
+.RI "\fIGet the delta\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBDelta\fP ()"
+.br
+.RI "\fIModify the delta\&. \fP"
+.ti -1c
+.RI "template<typename eT > void \fBForward\fP (const arma::Mat< eT > &&input, arma::Mat< eT > &&output)"
+.br
+.RI "\fIOrdinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. \fP"
+.ti -1c
+.RI "template<typename eT > void \fBGradient\fP (const arma::Mat< eT > &&input, arma::Mat< eT > &&error, arma::Mat< eT > &&\fBgradient\fP)"
+.br
+.ti -1c
+.RI "OutputDataType const & \fBGradient\fP () const "
+.br
+.RI "\fIGet the gradient\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBGradient\fP ()"
+.br
+.RI "\fIModify the gradient\&. \fP"
+.ti -1c
+.RI "InputDataType const & \fBInputParameter\fP () const "
+.br
+.RI "\fIGet the input parameter\&. \fP"
+.ti -1c
+.RI "InputDataType & \fBInputParameter\fP ()"
+.br
+.RI "\fIModify the input parameter\&. \fP"
+.ti -1c
+.RI "OutputDataType const & \fBOutputParameter\fP () const "
+.br
+.RI "\fIGet the output parameter\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP ()"
+.br
+.RI "\fIModify the output parameter\&. \fP"
+.ti -1c
+.RI "OutputDataType const & \fBParameters\fP () const "
+.br
+.RI "\fIGet the parameters\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBParameters\fP ()"
+.br
+.RI "\fIModify the parameters\&. \fP"
+.ti -1c
+.RI "void \fBReset\fP ()"
+.br
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int)"
+.br
+.RI "\fISerialize the layer\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "OutputDataType \fBbias\fP"
+.br
+.RI "\fILocally-stored bias term parameters\&. \fP"
+.ti -1c
+.RI "OutputDataType \fBdelta\fP"
+.br
+.RI "\fILocally-stored delta object\&. \fP"
+.ti -1c
+.RI "OutputDataType \fBgradient\fP"
+.br
+.RI "\fILocally-stored gradient object\&. \fP"
+.ti -1c
+.RI "InputDataType \fBinputParameter\fP"
+.br
+.RI "\fILocally-stored input parameter object\&. \fP"
+.ti -1c
+.RI "size_t \fBinSize\fP"
+.br
+.RI "\fILocally-stored number of input units\&. \fP"
+.ti -1c
+.RI "OutputDataType \fBoutputParameter\fP"
+.br
+.RI "\fILocally-stored output parameter object\&. \fP"
+.ti -1c
+.RI "size_t \fBoutSize\fP"
+.br
+.RI "\fILocally-stored number of output units\&. \fP"
+.ti -1c
+.RI "OutputDataType \fBweight\fP"
+.br
+.RI "\fILocally-stored weight paramters\&. \fP"
+.ti -1c
+.RI "OutputDataType \fBweights\fP"
+.br
+.RI "\fILocally-stored weight object\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename InputDataType = arma::mat, typename OutputDataType = arma::mat>
+.br
+class mlpack::ann::Linear< InputDataType, OutputDataType >"
+Implementation of the \fBLinear\fP layer class\&. 
+
+The \fBLinear\fP class represents a single layer of a neural network\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIInputDataType\fP Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fIOutputDataType\fP Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 49 of file layer_types\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBmlpack::ann::Linear\fP< InputDataType, OutputDataType >::\fBLinear\fP ()"
+
+.PP
+Create the \fBLinear\fP object\&. 
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBmlpack::ann::Linear\fP< InputDataType, OutputDataType >::\fBLinear\fP (const size_t inSize, const size_t outSize)"
+
+.PP
+Create the \fBLinear\fP layer object using the specified number of units\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinSize\fP The number of input units\&. 
+.br
+\fIoutSize\fP The number of output units\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename eT > void \fBmlpack::ann::Linear\fP< InputDataType, OutputDataType >::Backward (const arma::Mat< eT > &&, arma::Mat< eT > && gy, arma::Mat< eT > && g)"
+
+.PP
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f\&. Using the results from the feed forward pass\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP The propagated input activation\&. 
+.br
+\fIgy\fP The backpropagated error\&. 
+.br
+\fIg\fP The calculated gradient\&. 
+.RE
+.PP
+
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType const& \fBmlpack::ann::Linear\fP< InputDataType, OutputDataType >::Delta () const\fC [inline]\fP"
+
+.PP
+Get the delta\&. 
+.PP
+Definition at line 107 of file linear\&.hpp\&.
+.PP
+References mlpack::ann::Linear< InputDataType, OutputDataType >::delta\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::Linear\fP< InputDataType, OutputDataType >::Delta ()\fC [inline]\fP"
+
+.PP
+Modify the delta\&. 
+.PP
+Definition at line 109 of file linear\&.hpp\&.
+.PP
+References mlpack::ann::Linear< InputDataType, OutputDataType >::delta\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename eT > void \fBmlpack::ann::Linear\fP< InputDataType, OutputDataType >::Forward (const arma::Mat< eT > && input, arma::Mat< eT > && output)"
+
+.PP
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input data used for evaluating the specified function\&. 
+.br
+\fIoutput\fP Resulting output activation\&. 
+.RE
+.PP
+
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename eT > void \fBmlpack::ann::Linear\fP< InputDataType, OutputDataType >::Gradient (const arma::Mat< eT > && input, arma::Mat< eT > && error, arma::Mat< eT > && gradient)"
+
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType const& \fBmlpack::ann::Linear\fP< InputDataType, OutputDataType >::Gradient () const\fC [inline]\fP"
+
+.PP
+Get the gradient\&. 
+.PP
+Definition at line 112 of file linear\&.hpp\&.
+.PP
+References mlpack::ann::Linear< InputDataType, OutputDataType >::gradient\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::Linear\fP< InputDataType, OutputDataType >::Gradient ()\fC [inline]\fP"
+
+.PP
+Modify the gradient\&. 
+.PP
+Definition at line 114 of file linear\&.hpp\&.
+.PP
+References mlpack::ann::Linear< InputDataType, OutputDataType >::gradient, and mlpack::ann::Linear< InputDataType, OutputDataType >::Serialize()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> InputDataType const& \fBmlpack::ann::Linear\fP< InputDataType, OutputDataType >::InputParameter () const\fC [inline]\fP"
+
+.PP
+Get the input parameter\&. 
+.PP
+Definition at line 97 of file linear\&.hpp\&.
+.PP
+References mlpack::ann::Linear< InputDataType, OutputDataType >::inputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> InputDataType& \fBmlpack::ann::Linear\fP< InputDataType, OutputDataType >::InputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the input parameter\&. 
+.PP
+Definition at line 99 of file linear\&.hpp\&.
+.PP
+References mlpack::ann::Linear< InputDataType, OutputDataType >::inputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType const& \fBmlpack::ann::Linear\fP< InputDataType, OutputDataType >::OutputParameter () const\fC [inline]\fP"
+
+.PP
+Get the output parameter\&. 
+.PP
+Definition at line 102 of file linear\&.hpp\&.
+.PP
+References mlpack::ann::Linear< InputDataType, OutputDataType >::outputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::Linear\fP< InputDataType, OutputDataType >::OutputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the output parameter\&. 
+.PP
+Definition at line 104 of file linear\&.hpp\&.
+.PP
+References mlpack::ann::Linear< InputDataType, OutputDataType >::outputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType const& \fBmlpack::ann::Linear\fP< InputDataType, OutputDataType >::Parameters () const\fC [inline]\fP"
+
+.PP
+Get the parameters\&. 
+.PP
+Definition at line 92 of file linear\&.hpp\&.
+.PP
+References mlpack::ann::Linear< InputDataType, OutputDataType >::weights\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::Linear\fP< InputDataType, OutputDataType >::Parameters ()\fC [inline]\fP"
+
+.PP
+Modify the parameters\&. 
+.PP
+Definition at line 94 of file linear\&.hpp\&.
+.PP
+References mlpack::ann::Linear< InputDataType, OutputDataType >::weights\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> void \fBmlpack::ann::Linear\fP< InputDataType, OutputDataType >::Reset ()"
+
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename Archive > void \fBmlpack::ann::Linear\fP< InputDataType, OutputDataType >::Serialize (Archive & ar, const unsigned int)"
+
+.PP
+Serialize the layer\&. 
+.PP
+Referenced by mlpack::ann::Linear< InputDataType, OutputDataType >::Gradient()\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType \fBmlpack::ann::Linear\fP< InputDataType, OutputDataType >::bias\fC [private]\fP"
+
+.PP
+Locally-stored bias term parameters\&. 
+.PP
+Definition at line 136 of file linear\&.hpp\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType \fBmlpack::ann::Linear\fP< InputDataType, OutputDataType >::delta\fC [private]\fP"
+
+.PP
+Locally-stored delta object\&. 
+.PP
+Definition at line 139 of file linear\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Linear< InputDataType, OutputDataType >::Delta()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType \fBmlpack::ann::Linear\fP< InputDataType, OutputDataType >::gradient\fC [private]\fP"
+
+.PP
+Locally-stored gradient object\&. 
+.PP
+Definition at line 142 of file linear\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Linear< InputDataType, OutputDataType >::Gradient()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> InputDataType \fBmlpack::ann::Linear\fP< InputDataType, OutputDataType >::inputParameter\fC [private]\fP"
+
+.PP
+Locally-stored input parameter object\&. 
+.PP
+Definition at line 145 of file linear\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Linear< InputDataType, OutputDataType >::InputParameter()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> size_t \fBmlpack::ann::Linear\fP< InputDataType, OutputDataType >::inSize\fC [private]\fP"
+
+.PP
+Locally-stored number of input units\&. 
+.PP
+Definition at line 124 of file linear\&.hpp\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType \fBmlpack::ann::Linear\fP< InputDataType, OutputDataType >::outputParameter\fC [private]\fP"
+
+.PP
+Locally-stored output parameter object\&. 
+.PP
+Definition at line 148 of file linear\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Linear< InputDataType, OutputDataType >::OutputParameter()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> size_t \fBmlpack::ann::Linear\fP< InputDataType, OutputDataType >::outSize\fC [private]\fP"
+
+.PP
+Locally-stored number of output units\&. 
+.PP
+Definition at line 127 of file linear\&.hpp\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType \fBmlpack::ann::Linear\fP< InputDataType, OutputDataType >::weight\fC [private]\fP"
+
+.PP
+Locally-stored weight paramters\&. 
+.PP
+Definition at line 133 of file linear\&.hpp\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType \fBmlpack::ann::Linear\fP< InputDataType, OutputDataType >::weights\fC [private]\fP"
+
+.PP
+Locally-stored weight object\&. 
+.PP
+Definition at line 130 of file linear\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Linear< InputDataType, OutputDataType >::Parameters()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

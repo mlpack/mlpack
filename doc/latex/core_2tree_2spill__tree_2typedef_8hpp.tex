@@ -1,0 +1,36 @@
+\section{src/mlpack/core/tree/spill\+\_\+tree/typedef.hpp File Reference}
+\label{core_2tree_2spill__tree_2typedef_8hpp}\index{src/mlpack/core/tree/spill\+\_\+tree/typedef.\+hpp@{src/mlpack/core/tree/spill\+\_\+tree/typedef.\+hpp}}
+Include dependency graph for typedef.\+hpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{core_2tree_2spill__tree_2typedef_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{core_2tree_2spill__tree_2typedef_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ {\bf mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ {\bf mlpack\+::tree}
+\begin{DoxyCompactList}\small\item\em Trees and tree-\/building procedures. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using {\bf mlpack\+::tree\+::\+Mean\+S\+P\+Tree} = Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Axis\+Orthogonal\+Hyperplane, Mean\+Space\+Split $>$
+\begin{DoxyCompactList}\small\item\em A mean-\/split hybrid spill tree. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using {\bf mlpack\+::tree\+::\+Non\+Ort\+Mean\+S\+P\+Tree} = Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane, Mean\+Space\+Split $>$
+\begin{DoxyCompactList}\small\item\em A mean-\/split hybrid spill tree considering general splitting hyperplanes (not necessarily axis-\/orthogonal). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using {\bf mlpack\+::tree\+::\+Non\+Ort\+S\+P\+Tree} = Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane, Midpoint\+Space\+Split $>$
+\begin{DoxyCompactList}\small\item\em A hybrid spill tree considering general splitting hyperplanes (not necessarily axis-\/orthogonal). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using {\bf mlpack\+::tree\+::\+S\+P\+Tree} = Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Axis\+Orthogonal\+Hyperplane, Midpoint\+Space\+Split $>$
+\begin{DoxyCompactList}\small\item\em The hybrid spill tree. \end{DoxyCompactList}\end{DoxyCompactItemize}

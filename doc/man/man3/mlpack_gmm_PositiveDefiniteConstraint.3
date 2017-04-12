@@ -1,0 +1,53 @@
+.TH "mlpack::gmm::PositiveDefiniteConstraint" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::gmm::PositiveDefiniteConstraint \- Given a covariance matrix, force the matrix to be positive definite\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static void \fBApplyConstraint\fP (arma::mat &covariance)"
+.br
+.RI "\fIApply the positive definiteness constraint to the given covariance matrix, and ensure each value on the diagonal is at least 1e-50\&. \fP"
+.ti -1c
+.RI "template<typename Archive > static void \fBSerialize\fP (Archive &, const unsigned int)"
+.br
+.RI "\fISerialize the constraint (which stores nothing, so, nothing to do)\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Given a covariance matrix, force the matrix to be positive definite\&. 
+
+Also force a minimum value on the diagonal, so that even if the matrix is invertible, it doesn't cause problems with Cholesky decompositions\&. The forcing here is also done in order to bring the condition number of the matrix under 1e5 (10k), which should help with numerical stability\&. 
+.PP
+Definition at line 27 of file positive_definite_constraint\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "static void mlpack::gmm::PositiveDefiniteConstraint::ApplyConstraint (arma::mat & covariance)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Apply the positive definiteness constraint to the given covariance matrix, and ensure each value on the diagonal is at least 1e-50\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIcovariance\fP Covariance matrix\&. 
+.RE
+.PP
+
+.PP
+Definition at line 36 of file positive_definite_constraint\&.hpp\&.
+.SS "template<typename Archive > static void mlpack::gmm::PositiveDefiniteConstraint::Serialize (Archive &, const unsigned int)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Serialize the constraint (which stores nothing, so, nothing to do)\&. 
+.PP
+Definition at line 67 of file positive_definite_constraint\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

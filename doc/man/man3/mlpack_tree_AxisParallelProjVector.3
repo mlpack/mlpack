@@ -1,0 +1,144 @@
+.TH "mlpack::tree::AxisParallelProjVector" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::tree::AxisParallelProjVector \- \fBAxisParallelProjVector\fP defines an axis-parallel projection vector\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBAxisParallelProjVector\fP (size_t \fBdim\fP=0)"
+.br
+.RI "\fICreate the projection vector based on the specified dimension\&. \fP"
+.ti -1c
+.RI "template<typename VecType > double \fBProject\fP (const VecType &point, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< VecType >::value > *=0) const "
+.br
+.RI "\fIProject the given point on the projection vector\&. \fP"
+.ti -1c
+.RI "template<typename MetricType , typename ElemType > \fBmath::RangeType\fP< ElemType > \fBProject\fP (const \fBbound::HRectBound\fP< MetricType, ElemType > &bound) const "
+.br
+.RI "\fIProject the given hrect bound on the projection vector\&. \fP"
+.ti -1c
+.RI "template<typename MetricType , typename VecType > \fBmath::RangeType\fP< typename VecType::elem_type > \fBProject\fP (const \fBbound::BallBound\fP< MetricType, VecType > &bound) const "
+.br
+.RI "\fIProject the given ball bound on the projection vector\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int)"
+.br
+.RI "\fISerialization\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "size_t \fBdim\fP"
+.br
+.RI "\fIDimension considered\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBAxisParallelProjVector\fP defines an axis-parallel projection vector\&. 
+
+We can efficiently project points, simply analyzing a specific dimension\&. 
+.PP
+Definition at line 24 of file projection_vector\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::tree::AxisParallelProjVector::AxisParallelProjVector (size_t dim = \fC0\fP)\fC [inline]\fP"
+
+.PP
+Create the projection vector based on the specified dimension\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdim\fP Dimension to be considered\&. 
+.RE
+.PP
+
+.PP
+Definition at line 35 of file projection_vector\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename VecType > double mlpack::tree::AxisParallelProjVector::Project (const VecType & point, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< VecType >::value > * = \fC0\fP) const\fC [inline]\fP"
+
+.PP
+Project the given point on the projection vector\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpoint\fP Point to be projected\&. 
+.RE
+.PP
+
+.PP
+Definition at line 45 of file projection_vector\&.hpp\&.
+.PP
+References dim\&.
+.PP
+Referenced by mlpack::tree::ProjVector::Project()\&.
+.SS "template<typename MetricType , typename ElemType > \fBmath::RangeType\fP<ElemType> mlpack::tree::AxisParallelProjVector::Project (const \fBbound::HRectBound\fP< MetricType, ElemType > & bound) const\fC [inline]\fP"
+
+.PP
+Project the given hrect bound on the projection vector\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIbound\fP Bound to be projected\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Range of projected values\&. 
+.RE
+.PP
+
+.PP
+Definition at line 58 of file projection_vector\&.hpp\&.
+.PP
+References dim\&.
+.SS "template<typename MetricType , typename VecType > \fBmath::RangeType\fP<typename VecType::elem_type> mlpack::tree::AxisParallelProjVector::Project (const \fBbound::BallBound\fP< MetricType, VecType > & bound) const\fC [inline]\fP"
+
+.PP
+Project the given ball bound on the projection vector\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIbound\fP Bound to be projected\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Range of projected values\&. 
+.RE
+.PP
+
+.PP
+Definition at line 71 of file projection_vector\&.hpp\&.
+.PP
+References dim\&.
+.SS "template<typename Archive > void mlpack::tree::AxisParallelProjVector::Serialize (Archive & ar, const unsigned int)\fC [inline]\fP"
+
+.PP
+Serialization\&. 
+.PP
+Definition at line 81 of file projection_vector\&.hpp\&.
+.PP
+References mlpack::data::CreateNVP()\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "size_t mlpack::tree::AxisParallelProjVector::dim\fC [private]\fP"
+
+.PP
+Dimension considered\&. 
+.PP
+Definition at line 27 of file projection_vector\&.hpp\&.
+.PP
+Referenced by Project()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

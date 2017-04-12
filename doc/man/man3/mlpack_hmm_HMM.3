@@ -1,0 +1,554 @@
+.TH "mlpack::hmm::HMM< Distribution >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::hmm::HMM< Distribution > \- A class that represents a Hidden Markov Model with an arbitrary type of emission distribution\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBHMM\fP (const size_t states=0, const Distribution emissions=Distribution(), const double \fBtolerance\fP=1e\-5)"
+.br
+.RI "\fICreate the Hidden Markov Model with the given number of hidden states and the given default distribution for emissions\&. \fP"
+.ti -1c
+.RI "\fBHMM\fP (const arma::vec &\fBinitial\fP, const arma::mat &\fBtransition\fP, const std::vector< Distribution > &\fBemission\fP, const double \fBtolerance\fP=1e\-5)"
+.br
+.RI "\fICreate the Hidden Markov Model with the given initial probability vector, the given transition matrix, and the given emission distributions\&. \fP"
+.ti -1c
+.RI "size_t \fBDimensionality\fP () const "
+.br
+.RI "\fIGet the dimensionality of observations\&. \fP"
+.ti -1c
+.RI "size_t & \fBDimensionality\fP ()"
+.br
+.RI "\fISet the dimensionality of observations\&. \fP"
+.ti -1c
+.RI "const std::vector< Distribution > & \fBEmission\fP () const "
+.br
+.RI "\fIReturn the emission distributions\&. \fP"
+.ti -1c
+.RI "std::vector< Distribution > & \fBEmission\fP ()"
+.br
+.RI "\fIReturn a modifiable emission probability matrix reference\&. \fP"
+.ti -1c
+.RI "double \fBEstimate\fP (const arma::mat &dataSeq, arma::mat &stateProb, arma::mat &forwardProb, arma::mat &backwardProb, arma::vec &scales) const "
+.br
+.RI "\fIEstimate the probabilities of each hidden state at each time step for each given data observation, using the Forward-Backward algorithm\&. \fP"
+.ti -1c
+.RI "double \fBEstimate\fP (const arma::mat &dataSeq, arma::mat &stateProb) const "
+.br
+.RI "\fIEstimate the probabilities of each hidden state at each time step of each given data observation, using the Forward-Backward algorithm\&. \fP"
+.ti -1c
+.RI "void \fBFilter\fP (const arma::mat &dataSeq, arma::mat &filterSeq, size_t ahead=0) const "
+.br
+.RI "\fI\fBHMM\fP filtering\&. \fP"
+.ti -1c
+.RI "void \fBGenerate\fP (const size_t length, arma::mat &dataSequence, arma::Row< size_t > &stateSequence, const size_t startState=0) const "
+.br
+.RI "\fIGenerate a random data sequence of the given length\&. \fP"
+.ti -1c
+.RI "const arma::vec & \fBInitial\fP () const "
+.br
+.RI "\fIReturn the vector of initial state probabilities\&. \fP"
+.ti -1c
+.RI "arma::vec & \fBInitial\fP ()"
+.br
+.RI "\fIModify the vector of initial state probabilities\&. \fP"
+.ti -1c
+.RI "double \fBLogLikelihood\fP (const arma::mat &dataSeq) const "
+.br
+.RI "\fICompute the log-likelihood of the given data sequence\&. \fP"
+.ti -1c
+.RI "double \fBPredict\fP (const arma::mat &dataSeq, arma::Row< size_t > &stateSeq) const "
+.br
+.RI "\fICompute the most probable hidden state sequence for the given data sequence, using the Viterbi algorithm, returning the log-likelihood of the most likely state sequence\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int version)"
+.br
+.RI "\fISerialize the object\&. \fP"
+.ti -1c
+.RI "void \fBSmooth\fP (const arma::mat &dataSeq, arma::mat &smoothSeq) const "
+.br
+.RI "\fI\fBHMM\fP smoothing\&. \fP"
+.ti -1c
+.RI "double \fBTolerance\fP () const "
+.br
+.RI "\fIGet the tolerance of the Baum-Welch algorithm\&. \fP"
+.ti -1c
+.RI "double & \fBTolerance\fP ()"
+.br
+.RI "\fIModify the tolerance of the Baum-Welch algorithm\&. \fP"
+.ti -1c
+.RI "void \fBTrain\fP (const std::vector< arma::mat > &dataSeq)"
+.br
+.RI "\fITrain the model using the Baum-Welch algorithm, with only the given unlabeled observations\&. \fP"
+.ti -1c
+.RI "void \fBTrain\fP (const std::vector< arma::mat > &dataSeq, const std::vector< arma::Row< size_t > > &stateSeq)"
+.br
+.RI "\fITrain the model using the given labeled observations; the transition and emission matrices are directly estimated\&. \fP"
+.ti -1c
+.RI "const arma::mat & \fBTransition\fP () const "
+.br
+.RI "\fIReturn the transition matrix\&. \fP"
+.ti -1c
+.RI "arma::mat & \fBTransition\fP ()"
+.br
+.RI "\fIReturn a modifiable transition matrix reference\&. \fP"
+.in -1c
+.SS "Protected Member Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBBackward\fP (const arma::mat &dataSeq, const arma::vec &scales, arma::mat &backwardProb) const "
+.br
+.RI "\fIThe Backward algorithm (part of the Forward-Backward algorithm)\&. \fP"
+.ti -1c
+.RI "void \fBForward\fP (const arma::mat &dataSeq, arma::vec &scales, arma::mat &forwardProb) const "
+.br
+.RI "\fIThe Forward algorithm (part of the Forward-Backward algorithm)\&. \fP"
+.in -1c
+.SS "Protected Attributes"
+
+.in +1c
+.ti -1c
+.RI "std::vector< Distribution > \fBemission\fP"
+.br
+.RI "\fISet of emission probability distributions; one for each state\&. \fP"
+.ti -1c
+.RI "arma::mat \fBtransition\fP"
+.br
+.RI "\fITransition probability matrix\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "size_t \fBdimensionality\fP"
+.br
+.RI "\fIDimensionality of observations\&. \fP"
+.ti -1c
+.RI "arma::vec \fBinitial\fP"
+.br
+.RI "\fIInitial state probability vector\&. \fP"
+.ti -1c
+.RI "double \fBtolerance\fP"
+.br
+.RI "\fITolerance of Baum-Welch algorithm\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename Distribution = distribution::DiscreteDistribution>
+.br
+class mlpack::hmm::HMM< Distribution >"
+A class that represents a Hidden Markov Model with an arbitrary type of emission distribution\&. 
+
+This \fBHMM\fP class supports training (supervised and unsupervised), prediction of state sequences via the Viterbi algorithm, estimation of state probabilities, generation of random sequences, and calculation of the log-likelihood of a given sequence\&.
+.PP
+The template parameter, Distribution, specifies the distribution which the emissions follow\&. The class should implement the following functions:
+.PP
+.PP
+.nf
+class Distribution
+{
+ public:
+  // The type of observation used by this distribution\&.
+  typedef something DataType;
+
+  // Return the probability of the given observation\&.
+  double Probability(const DataType& observation) const;
+
+  // Estimate the distribution based on the given observations\&.
+  void Train(const std::vector<DataType>& observations);
+
+  // Estimate the distribution based on the given observations, given also
+  // the probability of each observation coming from this distribution\&.
+  void Train(const std::vector<DataType>& observations,
+             const std::vector<double>& probabilities);
+};
+.fi
+.PP
+.PP
+See the \fBmlpack::distribution::DiscreteDistribution\fP class for an example\&. One would use the DiscreteDistribution class when the observations are non-negative integers\&. Other distributions could be Gaussians, a mixture of Gaussians (GMM), or any other probability distribution implementing the four Distribution functions\&.
+.PP
+Usage of the \fBHMM\fP class generally involves either training an \fBHMM\fP or loading an already-known \fBHMM\fP and taking probability measurements of sequences\&. Example code for supervised training of a Gaussian \fBHMM\fP (that is, where the emission output distribution is a single Gaussian for each hidden state) is given below\&.
+.PP
+.PP
+.nf
+extern arma::mat observations; // Each column is an observation\&.
+extern arma::Row<size_t> states; // Hidden states for each observation\&.
+// Create an untrained HMM with 5 hidden states and default (N(0, 1))
+// Gaussian distributions with the dimensionality of the dataset\&.
+HMM<GaussianDistribution> hmm(5, GaussianDistribution(observations\&.n_rows));
+
+// Train the HMM (the labels could be omitted to perform unsupervised
+// training)\&.
+hmm\&.Train(observations, states);
+.fi
+.PP
+.PP
+Once initialized, the \fBHMM\fP can evaluate the probability of a certain sequence (with \fBLogLikelihood()\fP), predict the most likely sequence of hidden states (with \fBPredict()\fP), generate a sequence (with \fBGenerate()\fP), or estimate the probabilities of each state for a sequence of observations (with \fBTrain()\fP)\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIDistribution\fP Type of emission distribution for this \fBHMM\fP\&. 
+.RE
+.PP
+
+.PP
+Definition at line 85 of file hmm\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename Distribution = distribution::DiscreteDistribution> \fBmlpack::hmm::HMM\fP< Distribution >::\fBHMM\fP (const size_t states = \fC0\fP, const Distribution emissions = \fCDistribution()\fP, const double tolerance = \fC1e\-5\fP)"
+
+.PP
+Create the Hidden Markov Model with the given number of hidden states and the given default distribution for emissions\&. The dimensionality of the observations is taken from the emissions variable, so it is important that the given default emission distribution is set with the correct dimensionality\&. Alternately, set the dimensionality with \fBDimensionality()\fP\&. Optionally, the tolerance for convergence of the Baum-Welch algorithm can be set\&.
+.PP
+By default, the transition matrix and initial probability vector are set to contain equal probability for each state\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIstates\fP Number of states\&. 
+.br
+\fIemissions\fP Default distribution for emissions\&. 
+.br
+\fItolerance\fP Tolerance for convergence of training algorithm (Baum-Welch)\&. 
+.RE
+.PP
+
+.SS "template<typename Distribution = distribution::DiscreteDistribution> \fBmlpack::hmm::HMM\fP< Distribution >::\fBHMM\fP (const arma::vec & initial, const arma::mat & transition, const std::vector< Distribution > & emission, const double tolerance = \fC1e\-5\fP)"
+
+.PP
+Create the Hidden Markov Model with the given initial probability vector, the given transition matrix, and the given emission distributions\&. The dimensionality of the observations of the \fBHMM\fP are taken from the given emission distributions\&. Alternately, the dimensionality can be set with \fBDimensionality()\fP\&.
+.PP
+The initial state probability vector should have length equal to the number of states, and each entry represents the probability of being in the given state at time T = 0 (the beginning of a sequence)\&.
+.PP
+The transition matrix should be such that T(i, j) is the probability of transition to state i from state j\&. The columns of the matrix should sum to 1\&.
+.PP
+The emission matrix should be such that E(i, j) is the probability of emission i while in state j\&. The columns of the matrix should sum to 1\&.
+.PP
+Optionally, the tolerance for convergence of the Baum-Welch algorithm can be set\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinitial\fP Initial state probabilities\&. 
+.br
+\fItransition\fP Transition matrix\&. 
+.br
+\fIemission\fP Emission distributions\&. 
+.br
+\fItolerance\fP Tolerance for convergence of training algorithm (Baum-Welch)\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename Distribution = distribution::DiscreteDistribution> void \fBmlpack::hmm::HMM\fP< Distribution >::Backward (const arma::mat & dataSeq, const arma::vec & scales, arma::mat & backwardProb) const\fC [protected]\fP"
+
+.PP
+The Backward algorithm (part of the Forward-Backward algorithm)\&. Computes backward probabilities for each state for each observation in the given data sequence, using the scaling factors found (presumably) by \fBForward()\fP\&. The returned matrix has rows equal to the number of hidden states and columns equal to the number of observations\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdataSeq\fP Data sequence to compute probabilities for\&. 
+.br
+\fIscales\fP Vector of scaling factors\&. 
+.br
+\fIbackwardProb\fP Matrix in which backward probabilities will be saved\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::hmm::HMM< distribution::DiscreteDistribution >::Tolerance()\&.
+.SS "template<typename Distribution = distribution::DiscreteDistribution> size_t \fBmlpack::hmm::HMM\fP< Distribution >::Dimensionality () const\fC [inline]\fP"
+
+.PP
+Get the dimensionality of observations\&. 
+.PP
+Definition at line 316 of file hmm\&.hpp\&.
+.SS "template<typename Distribution = distribution::DiscreteDistribution> size_t& \fBmlpack::hmm::HMM\fP< Distribution >::Dimensionality ()\fC [inline]\fP"
+
+.PP
+Set the dimensionality of observations\&. 
+.PP
+Definition at line 318 of file hmm\&.hpp\&.
+.SS "template<typename Distribution = distribution::DiscreteDistribution> const std::vector<Distribution>& \fBmlpack::hmm::HMM\fP< Distribution >::Emission () const\fC [inline]\fP"
+
+.PP
+Return the emission distributions\&. 
+.PP
+Definition at line 311 of file hmm\&.hpp\&.
+.SS "template<typename Distribution = distribution::DiscreteDistribution> std::vector<Distribution>& \fBmlpack::hmm::HMM\fP< Distribution >::Emission ()\fC [inline]\fP"
+
+.PP
+Return a modifiable emission probability matrix reference\&. 
+.PP
+Definition at line 313 of file hmm\&.hpp\&.
+.SS "template<typename Distribution = distribution::DiscreteDistribution> double \fBmlpack::hmm::HMM\fP< Distribution >::Estimate (const arma::mat & dataSeq, arma::mat & stateProb, arma::mat & forwardProb, arma::mat & backwardProb, arma::vec & scales) const"
+
+.PP
+Estimate the probabilities of each hidden state at each time step for each given data observation, using the Forward-Backward algorithm\&. Each matrix which is returned has columns equal to the number of data observations, and rows equal to the number of hidden states in the model\&. The log-likelihood of the most probable sequence is returned\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdataSeq\fP Sequence of observations\&. 
+.br
+\fIstateProb\fP Matrix in which the probabilities of each state at each time interval will be stored\&. 
+.br
+\fIforwardProb\fP Matrix in which the forward probabilities of each state at each time interval will be stored\&. 
+.br
+\fIbackwardProb\fP Matrix in which the backward probabilities of each state at each time interval will be stored\&. 
+.br
+\fIscales\fP Vector in which the scaling factors at each time interval will be stored\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Log-likelihood of most likely state sequence\&. 
+.RE
+.PP
+
+.SS "template<typename Distribution = distribution::DiscreteDistribution> double \fBmlpack::hmm::HMM\fP< Distribution >::Estimate (const arma::mat & dataSeq, arma::mat & stateProb) const"
+
+.PP
+Estimate the probabilities of each hidden state at each time step of each given data observation, using the Forward-Backward algorithm\&. The returned matrix of state probabilities has columns equal to the number of data observations, and rows equal to the number of hidden states in the model\&. The log-likelihood of the most probable sequence is returned\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdataSeq\fP Sequence of observations\&. 
+.br
+\fIstateProb\fP Probabilities of each state at each time interval\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Log-likelihood of most likely state sequence\&. 
+.RE
+.PP
+
+.SS "template<typename Distribution = distribution::DiscreteDistribution> void \fBmlpack::hmm::HMM\fP< Distribution >::Filter (const arma::mat & dataSeq, arma::mat & filterSeq, size_t ahead = \fC0\fP) const"
+
+.PP
+\fBHMM\fP filtering\&. Computes the k-step-ahead expected emission at each time conditioned only on prior observations\&. That is E{ Y[t+k] | Y[0], \&.\&.\&., Y[t] }\&. The returned matrix has columns equal to the number of observations\&. Note that the expectation may not be meaningful for discrete emissions\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdataSeq\fP Sequence of observations\&. 
+.br
+\fIfilterSeq\fP Vector in which the expected emission sequence will be stored\&. 
+.br
+\fIahead\fP Number of steps ahead (k) for expectations\&. 
+.RE
+.PP
+
+.SS "template<typename Distribution = distribution::DiscreteDistribution> void \fBmlpack::hmm::HMM\fP< Distribution >::Forward (const arma::mat & dataSeq, arma::vec & scales, arma::mat & forwardProb) const\fC [protected]\fP"
+
+.PP
+The Forward algorithm (part of the Forward-Backward algorithm)\&. Computes forward probabilities for each state for each observation in the given data sequence\&. The returned matrix has rows equal to the number of hidden states and columns equal to the number of observations\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdataSeq\fP Data sequence to compute probabilities for\&. 
+.br
+\fIscales\fP Vector in which scaling factors will be saved\&. 
+.br
+\fIforwardProb\fP Matrix in which forward probabilities will be saved\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::hmm::HMM< distribution::DiscreteDistribution >::Tolerance()\&.
+.SS "template<typename Distribution = distribution::DiscreteDistribution> void \fBmlpack::hmm::HMM\fP< Distribution >::Generate (const size_t length, arma::mat & dataSequence, arma::Row< size_t > & stateSequence, const size_t startState = \fC0\fP) const"
+
+.PP
+Generate a random data sequence of the given length\&. The data sequence is stored in the dataSequence parameter, and the state sequence is stored in the stateSequence parameter\&. Each column of dataSequence represents a random observation\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIlength\fP Length of random sequence to generate\&. 
+.br
+\fIdataSequence\fP Vector to store data in\&. 
+.br
+\fIstateSequence\fP Vector to store states in\&. 
+.br
+\fIstartState\fP Hidden state to start sequence in (default 0)\&. 
+.RE
+.PP
+
+.SS "template<typename Distribution = distribution::DiscreteDistribution> const arma::vec& \fBmlpack::hmm::HMM\fP< Distribution >::Initial () const\fC [inline]\fP"
+
+.PP
+Return the vector of initial state probabilities\&. 
+.PP
+Definition at line 301 of file hmm\&.hpp\&.
+.SS "template<typename Distribution = distribution::DiscreteDistribution> arma::vec& \fBmlpack::hmm::HMM\fP< Distribution >::Initial ()\fC [inline]\fP"
+
+.PP
+Modify the vector of initial state probabilities\&. 
+.PP
+Definition at line 303 of file hmm\&.hpp\&.
+.SS "template<typename Distribution = distribution::DiscreteDistribution> double \fBmlpack::hmm::HMM\fP< Distribution >::LogLikelihood (const arma::mat & dataSeq) const"
+
+.PP
+Compute the log-likelihood of the given data sequence\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdataSeq\fP Data sequence to evaluate the likelihood of\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Log-likelihood of the given sequence\&. 
+.RE
+.PP
+
+.SS "template<typename Distribution = distribution::DiscreteDistribution> double \fBmlpack::hmm::HMM\fP< Distribution >::Predict (const arma::mat & dataSeq, arma::Row< size_t > & stateSeq) const"
+
+.PP
+Compute the most probable hidden state sequence for the given data sequence, using the Viterbi algorithm, returning the log-likelihood of the most likely state sequence\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdataSeq\fP Sequence of observations\&. 
+.br
+\fIstateSeq\fP Vector in which the most probable state sequence will be stored\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Log-likelihood of most probable state sequence\&. 
+.RE
+.PP
+
+.SS "template<typename Distribution = distribution::DiscreteDistribution> template<typename Archive > void \fBmlpack::hmm::HMM\fP< Distribution >::Serialize (Archive & ar, const unsigned int version)"
+
+.PP
+Serialize the object\&. 
+.PP
+Referenced by mlpack::hmm::HMM< distribution::DiscreteDistribution >::Tolerance()\&.
+.SS "template<typename Distribution = distribution::DiscreteDistribution> void \fBmlpack::hmm::HMM\fP< Distribution >::Smooth (const arma::mat & dataSeq, arma::mat & smoothSeq) const"
+
+.PP
+\fBHMM\fP smoothing\&. Computes expected emission at each time conditioned on all observations\&. That is E{ Y[t] | Y[0], \&.\&.\&., Y[T] }\&. The returned matrix has columns equal to the number of observations\&. Note that the expectation may not be meaningful for discrete emissions\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdataSeq\fP Sequence of observations\&. 
+.br
+\fIsmoothSeq\fP Vector in which the expected emission sequence will be stored\&. 
+.RE
+.PP
+
+.SS "template<typename Distribution = distribution::DiscreteDistribution> double \fBmlpack::hmm::HMM\fP< Distribution >::Tolerance () const\fC [inline]\fP"
+
+.PP
+Get the tolerance of the Baum-Welch algorithm\&. 
+.PP
+Definition at line 321 of file hmm\&.hpp\&.
+.SS "template<typename Distribution = distribution::DiscreteDistribution> double& \fBmlpack::hmm::HMM\fP< Distribution >::Tolerance ()\fC [inline]\fP"
+
+.PP
+Modify the tolerance of the Baum-Welch algorithm\&. 
+.PP
+Definition at line 323 of file hmm\&.hpp\&.
+.SS "template<typename Distribution = distribution::DiscreteDistribution> void \fBmlpack::hmm::HMM\fP< Distribution >::Train (const std::vector< arma::mat > & dataSeq)"
+
+.PP
+Train the model using the Baum-Welch algorithm, with only the given unlabeled observations\&. Instead of giving a guess transition and emission matrix here, do that in the constructor\&. Each matrix in the vector of data sequences holds an individual data sequence; each point in each individual data sequence should be a column in the matrix\&. The number of rows in each matrix should be equal to the dimensionality of the \fBHMM\fP (which is set in the constructor)\&.
+.PP
+It is preferable to use the other overload of \fBTrain()\fP, with labeled data\&. That will produce much better results\&. However, if labeled data is unavailable, this will work\&. In addition, it is possible to use \fBTrain()\fP with labeled data first, and then continue to train the model using this overload of \fBTrain()\fP with unlabeled data\&.
+.PP
+The tolerance of the Baum-Welch algorithm can be set either in the constructor or with the \fBTolerance()\fP method\&. When the change in log-likelihood of the model between iterations is less than the tolerance, the Baum-Welch algorithm terminates\&.
+.PP
+\fBNote:\fP
+.RS 4
+\fBTrain()\fP can be called multiple times with different sequences; each time it is called, it uses the current parameters of the \fBHMM\fP as a starting point for training\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdataSeq\fP Vector of observation sequences\&. 
+.RE
+.PP
+
+.SS "template<typename Distribution = distribution::DiscreteDistribution> void \fBmlpack::hmm::HMM\fP< Distribution >::Train (const std::vector< arma::mat > & dataSeq, const std::vector< arma::Row< size_t > > & stateSeq)"
+
+.PP
+Train the model using the given labeled observations; the transition and emission matrices are directly estimated\&. Each matrix in the vector of data sequences corresponds to a vector in the vector of state sequences\&. Each point in each individual data sequence should be a column in the matrix, and its state should be the corresponding element in the state sequence vector\&. For instance, dataSeq[0]\&.col(3) corresponds to the fourth observation in the first data sequence, and its state is stateSeq[0][3]\&. The number of rows in each matrix should be equal to the dimensionality of the \fBHMM\fP (which is set in the constructor)\&.
+.PP
+\fBNote:\fP
+.RS 4
+\fBTrain()\fP can be called multiple times with different sequences; each time it is called, it uses the current parameters of the \fBHMM\fP as a starting point for training\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdataSeq\fP Vector of observation sequences\&. 
+.br
+\fIstateSeq\fP Vector of state sequences, corresponding to each observation\&. 
+.RE
+.PP
+
+.SS "template<typename Distribution = distribution::DiscreteDistribution> const arma::mat& \fBmlpack::hmm::HMM\fP< Distribution >::Transition () const\fC [inline]\fP"
+
+.PP
+Return the transition matrix\&. 
+.PP
+Definition at line 306 of file hmm\&.hpp\&.
+.SS "template<typename Distribution = distribution::DiscreteDistribution> arma::mat& \fBmlpack::hmm::HMM\fP< Distribution >::Transition ()\fC [inline]\fP"
+
+.PP
+Return a modifiable transition matrix reference\&. 
+.PP
+Definition at line 308 of file hmm\&.hpp\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename Distribution = distribution::DiscreteDistribution> size_t \fBmlpack::hmm::HMM\fP< Distribution >::dimensionality\fC [private]\fP"
+
+.PP
+Dimensionality of observations\&. 
+.PP
+Definition at line 373 of file hmm\&.hpp\&.
+.PP
+Referenced by mlpack::hmm::HMM< distribution::DiscreteDistribution >::Dimensionality()\&.
+.SS "template<typename Distribution = distribution::DiscreteDistribution> std::vector<Distribution> \fBmlpack::hmm::HMM\fP< Distribution >::emission\fC [protected]\fP"
+
+.PP
+Set of emission probability distributions; one for each state\&. 
+.PP
+Definition at line 363 of file hmm\&.hpp\&.
+.PP
+Referenced by mlpack::hmm::HMM< distribution::DiscreteDistribution >::Emission()\&.
+.SS "template<typename Distribution = distribution::DiscreteDistribution> arma::vec \fBmlpack::hmm::HMM\fP< Distribution >::initial\fC [private]\fP"
+
+.PP
+Initial state probability vector\&. 
+.PP
+Definition at line 370 of file hmm\&.hpp\&.
+.PP
+Referenced by mlpack::hmm::HMM< distribution::DiscreteDistribution >::Initial()\&.
+.SS "template<typename Distribution = distribution::DiscreteDistribution> double \fBmlpack::hmm::HMM\fP< Distribution >::tolerance\fC [private]\fP"
+
+.PP
+Tolerance of Baum-Welch algorithm\&. 
+.PP
+Definition at line 376 of file hmm\&.hpp\&.
+.PP
+Referenced by mlpack::hmm::HMM< distribution::DiscreteDistribution >::Tolerance()\&.
+.SS "template<typename Distribution = distribution::DiscreteDistribution> arma::mat \fBmlpack::hmm::HMM\fP< Distribution >::transition\fC [protected]\fP"
+
+.PP
+Transition probability matrix\&. 
+.PP
+Definition at line 366 of file hmm\&.hpp\&.
+.PP
+Referenced by mlpack::hmm::HMM< distribution::DiscreteDistribution >::Transition()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

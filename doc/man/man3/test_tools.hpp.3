@@ -1,0 +1,93 @@
+.TH "src/mlpack/tests/test_tools.hpp" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+src/mlpack/tests/test_tools.hpp \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fBBOOST_REQUIRE_GE\fP(L,  R)   BOOST_REQUIRE_EQUAL( (L >= R), true )"
+.br
+.ti -1c
+.RI "#define \fBBOOST_REQUIRE_GT\fP(L,  R)   BOOST_REQUIRE_EQUAL( (L > R), true )"
+.br
+.ti -1c
+.RI "#define \fBBOOST_REQUIRE_LE\fP(L,  R)   BOOST_REQUIRE_EQUAL( (L <= R), true )"
+.br
+.ti -1c
+.RI "#define \fBBOOST_REQUIRE_LT\fP(L,  R)   BOOST_REQUIRE_EQUAL( (L < R), true )"
+.br
+.ti -1c
+.RI "#define \fBBOOST_REQUIRE_NE\fP(L,  R)   BOOST_REQUIRE_EQUAL( (L != R), true )"
+.br
+.ti -1c
+.RI "#define \fBREQUIRE_RELATIVE_ERR\fP(L,  R,  E)   \fBBOOST_REQUIRE_LE\fP( std::abs((R) \- (L)), (E) * std::abs(R))"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBCheckMatrices\fP (const arma::mat &a, const arma::mat &b, double tolerance=1e\-5)"
+.br
+.ti -1c
+.RI "void \fBCheckMatrices\fP (const arma::Mat< size_t > &a, const arma::Mat< size_t > &b)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Ryan Curtin
+.RE
+.PP
+This file includes some useful macros for tests\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBtest_tools\&.hpp\fP\&.
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define BOOST_REQUIRE_GE(L, R)   BOOST_REQUIRE_EQUAL( (L >= R), true )"
+
+.PP
+Definition at line 26 of file test_tools\&.hpp\&.
+.SS "#define BOOST_REQUIRE_GT(L, R)   BOOST_REQUIRE_EQUAL( (L > R), true )"
+
+.PP
+Definition at line 38 of file test_tools\&.hpp\&.
+.SS "#define BOOST_REQUIRE_LE(L, R)   BOOST_REQUIRE_EQUAL( (L <= R), true )"
+
+.PP
+Definition at line 32 of file test_tools\&.hpp\&.
+.SS "#define BOOST_REQUIRE_LT(L, R)   BOOST_REQUIRE_EQUAL( (L < R), true )"
+
+.PP
+Definition at line 35 of file test_tools\&.hpp\&.
+.SS "#define BOOST_REQUIRE_NE(L, R)   BOOST_REQUIRE_EQUAL( (L != R), true )"
+
+.PP
+Definition at line 29 of file test_tools\&.hpp\&.
+.SS "#define REQUIRE_RELATIVE_ERR(L, R, E)   \fBBOOST_REQUIRE_LE\fP( std::abs((R) \- (L)), (E) * std::abs(R))"
+
+.PP
+Definition at line 45 of file test_tools\&.hpp\&.
+.SH "Function Documentation"
+.PP 
+.SS "void CheckMatrices (const arma::mat & a, const arma::mat & b, double tolerance = \fC1e\-5\fP)\fC [inline]\fP"
+
+.PP
+Definition at line 49 of file test_tools\&.hpp\&.
+.SS "void CheckMatrices (const arma::Mat< size_t > & a, const arma::Mat< size_t > & b)\fC [inline]\fP"
+
+.PP
+Definition at line 65 of file test_tools\&.hpp\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

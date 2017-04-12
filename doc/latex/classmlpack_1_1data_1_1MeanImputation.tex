@@ -1,0 +1,72 @@
+\section{mlpack\+:\+:data\+:\+:Mean\+Imputation$<$ T $>$ Class Template Reference}
+\label{classmlpack_1_1data_1_1MeanImputation}\index{mlpack\+::data\+::\+Mean\+Imputation$<$ T $>$@{mlpack\+::data\+::\+Mean\+Imputation$<$ T $>$}}
+
+
+A simple mean imputation class.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void {\bf Impute} (arma\+::\+Mat$<$ T $>$ \&input, const T \&mapped\+Value, const size\+\_\+t dimension, const bool column\+Major=true)
+\begin{DoxyCompactList}\small\item\em Impute function searches through the input looking for mapped\+Value and replaces it with the mean of the given dimension. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename T$>$\\*
+class mlpack\+::data\+::\+Mean\+Imputation$<$ T $>$}
+
+A simple mean imputation class. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & Type of armadillo matrix \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 24 of file mean\+\_\+imputation.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::data\+::\+Mean\+Imputation@{mlpack\+::data\+::\+Mean\+Imputation}!Impute@{Impute}}
+\index{Impute@{Impute}!mlpack\+::data\+::\+Mean\+Imputation@{mlpack\+::data\+::\+Mean\+Imputation}}
+\subsubsection[{Impute(arma\+::\+Mat$<$ T $>$ \&input, const T \&mapped\+Value, const size\+\_\+t dimension, const bool column\+Major=true)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ void {\bf mlpack\+::data\+::\+Mean\+Imputation}$<$ T $>$\+::Impute (
+\begin{DoxyParamCaption}
+\item[{arma\+::\+Mat$<$ T $>$ \&}]{input, }
+\item[{const T \&}]{mapped\+Value, }
+\item[{const size\+\_\+t}]{dimension, }
+\item[{const bool}]{column\+Major = {\ttfamily true}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1data_1_1MeanImputation_a1499059ca0fc769bc2d325038b625ab6}
+
+
+Impute function searches through the input looking for mapped\+Value and replaces it with the mean of the given dimension. 
+
+The result is overwritten to the input matrix.
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Matrix that contains mapped\+Value. \\
+\hline
+{\em mapped\+Value} & Value that the user wants to get rid of. \\
+\hline
+{\em dimension} & Index of the dimension of the mapped\+Value. \\
+\hline
+{\em column\+Major} & State of whether the input matrix is column\+Major or not. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 37 of file mean\+\_\+imputation.\+hpp.
+
+
+
+References mlpack\+::\+Log\+::\+Fatal.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/data/imputation\+\_\+methods/{\bf mean\+\_\+imputation.\+hpp}\end{DoxyCompactItemize}

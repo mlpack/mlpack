@@ -1,0 +1,444 @@
+.TH "mlpack::ann::Sequential< InputDataType, OutputDataType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::ann::Sequential< InputDataType, OutputDataType > \- Implementation of the \fBSequential\fP class\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBSequential\fP (const bool \fBmodel\fP=true)"
+.br
+.RI "\fICreate the \fBSequential\fP object using the specified parameters\&. \fP"
+.ti -1c
+.RI "\fB~Sequential\fP ()"
+.br
+.RI "\fIDestroy the \fBSequential\fP object\&. \fP"
+.ti -1c
+.RI "template<class LayerType , class\&.\&.\&. Args> void \fBAdd\fP (Args\&.\&.\&.args)"
+.br
+.ti -1c
+.RI "void \fBAdd\fP (\fBLayerTypes\fP layer)"
+.br
+.ti -1c
+.RI "template<typename eT > void \fBBackward\fP (const arma::Mat< eT > &&, arma::Mat< eT > &&gy, arma::Mat< eT > &&g)"
+.br
+.RI "\fIOrdinary feed backward pass of a neural network, using 3rd-order tensors as input, calculating the function f(x) by propagating x backwards through f\&. \fP"
+.ti -1c
+.RI "arma::mat const & \fBDelta\fP () const "
+.br
+.RI "\fIGet the delta\&.e\&. \fP"
+.ti -1c
+.RI "arma::mat & \fBDelta\fP ()"
+.br
+.RI "\fIModify the delta\&. \fP"
+.ti -1c
+.RI "template<typename eT > void \fBForward\fP (arma::Mat< eT > &&input, arma::Mat< eT > &&output)"
+.br
+.RI "\fIOrdinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. \fP"
+.ti -1c
+.RI "template<typename eT > void \fBGradient\fP (arma::Mat< eT > &&input, arma::Mat< eT > &&error, arma::Mat< eT > &&)"
+.br
+.ti -1c
+.RI "arma::mat const & \fBGradient\fP () const "
+.br
+.RI "\fIGet the gradient\&. \fP"
+.ti -1c
+.RI "arma::mat & \fBGradient\fP ()"
+.br
+.RI "\fIModify the gradient\&. \fP"
+.ti -1c
+.RI "arma::mat const & \fBInputParameter\fP () const "
+.br
+.ti -1c
+.RI "arma::mat & \fBInputParameter\fP ()"
+.br
+.RI "\fIModify the input parameter\&. \fP"
+.ti -1c
+.RI "std::vector< \fBLayerTypes\fP > & \fBModel\fP ()"
+.br
+.RI "\fIReturn the model modules\&. \fP"
+.ti -1c
+.RI "arma::mat const & \fBOutputParameter\fP () const "
+.br
+.RI "\fIGet the output parameter\&. \fP"
+.ti -1c
+.RI "arma::mat & \fBOutputParameter\fP ()"
+.br
+.RI "\fIModify the output parameter\&. \fP"
+.ti -1c
+.RI "const arma::mat & \fBParameters\fP () const "
+.br
+.RI "\fIReturn the initial point for the optimization\&. \fP"
+.ti -1c
+.RI "arma::mat & \fBParameters\fP ()"
+.br
+.RI "\fIModify the initial point for the optimization\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &, const unsigned int)"
+.br
+.RI "\fISerialize the layer\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "\fBDeleteVisitor\fP \fBdeleteVisitor\fP"
+.br
+.RI "\fILocally-stored delete visitor\&. \fP"
+.ti -1c
+.RI "arma::mat \fBdelta\fP"
+.br
+.RI "\fILocally-stored delta object\&. \fP"
+.ti -1c
+.RI "\fBDeltaVisitor\fP \fBdeltaVisitor\fP"
+.br
+.RI "\fILocally-stored delta visitor\&. \fP"
+.ti -1c
+.RI "std::vector< \fBLayerTypes\fP > \fBempty\fP"
+.br
+.RI "\fILocally-stored empty list of modules\&. \fP"
+.ti -1c
+.RI "arma::mat \fBgradient\fP"
+.br
+.RI "\fILocally-stored gradient object\&. \fP"
+.ti -1c
+.RI "size_t \fBheight\fP"
+.br
+.RI "\fIThe input height\&. \fP"
+.ti -1c
+.RI "arma::mat \fBinputParameter\fP"
+.br
+.RI "\fILocally-stored input parameter object\&. \fP"
+.ti -1c
+.RI "bool \fBmodel\fP"
+.br
+.RI "\fIParameter which indicates if the modules should be exposed\&. \fP"
+.ti -1c
+.RI "std::vector< \fBLayerTypes\fP > \fBnetwork\fP"
+.br
+.RI "\fILocally-stored network modules\&. \fP"
+.ti -1c
+.RI "\fBOutputHeightVisitor\fP \fBoutputHeightVisitor\fP"
+.br
+.RI "\fILocally-stored output height visitor\&. \fP"
+.ti -1c
+.RI "arma::mat \fBoutputParameter\fP"
+.br
+.RI "\fILocally-stored output parameter object\&. \fP"
+.ti -1c
+.RI "\fBOutputParameterVisitor\fP \fBoutputParameterVisitor\fP"
+.br
+.RI "\fILocally-stored output parameter visitor\&. \fP"
+.ti -1c
+.RI "\fBOutputWidthVisitor\fP \fBoutputWidthVisitor\fP"
+.br
+.RI "\fILocally-stored output width visitor\&. \fP"
+.ti -1c
+.RI "arma::mat \fBparameters\fP"
+.br
+.RI "\fILocally-stored model parameters\&. \fP"
+.ti -1c
+.RI "bool \fBreset\fP"
+.br
+.RI "\fIIndicator if we already initialized the model\&. \fP"
+.ti -1c
+.RI "size_t \fBwidth\fP"
+.br
+.RI "\fIThe input width\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename InputDataType = arma::mat, typename OutputDataType = arma::mat>
+.br
+class mlpack::ann::Sequential< InputDataType, OutputDataType >"
+Implementation of the \fBSequential\fP class\&. 
+
+The sequential class works as a feed-forward fully connected network container which plugs various layers together\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIInputDataType\fP Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fIOutputDataType\fP Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 53 of file layer_types\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBmlpack::ann::Sequential\fP< InputDataType, OutputDataType >::\fBSequential\fP (const bool model = \fCtrue\fP)"
+
+.PP
+Create the \fBSequential\fP object using the specified parameters\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fImodel\fP Expose the all network modules\&. 
+.RE
+.PP
+
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBmlpack::ann::Sequential\fP< InputDataType, OutputDataType >::~\fBSequential\fP ()"
+
+.PP
+Destroy the \fBSequential\fP object\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<class LayerType , class\&.\&.\&. Args> void \fBmlpack::ann::Sequential\fP< InputDataType, OutputDataType >::\fBAdd\fP (Args\&.\&.\&. args)\fC [inline]\fP"
+
+.PP
+Definition at line 102 of file sequential\&.hpp\&.
+.PP
+References mlpack::ann::Sequential< InputDataType, OutputDataType >::network\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> void \fBmlpack::ann::Sequential\fP< InputDataType, OutputDataType >::\fBAdd\fP (\fBLayerTypes\fP layer)\fC [inline]\fP"
+
+.PP
+Definition at line 109 of file sequential\&.hpp\&.
+.PP
+References mlpack::ann::Sequential< InputDataType, OutputDataType >::network\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename eT > void \fBmlpack::ann::Sequential\fP< InputDataType, OutputDataType >::Backward (const arma::Mat< eT > &&, arma::Mat< eT > && gy, arma::Mat< eT > && g)"
+
+.PP
+Ordinary feed backward pass of a neural network, using 3rd-order tensors as input, calculating the function f(x) by propagating x backwards through f\&. Using the results from the feed forward pass\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP The propagated input activation\&. 
+.br
+\fIgy\fP The backpropagated error\&. 
+.br
+\fIg\fP The calculated gradient\&. 
+.RE
+.PP
+
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> arma::mat const& \fBmlpack::ann::Sequential\fP< InputDataType, OutputDataType >::Delta () const\fC [inline]\fP"
+
+.PP
+Get the delta\&.e\&. 
+.PP
+Definition at line 137 of file sequential\&.hpp\&.
+.PP
+References mlpack::ann::Sequential< InputDataType, OutputDataType >::delta\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> arma::mat& \fBmlpack::ann::Sequential\fP< InputDataType, OutputDataType >::Delta ()\fC [inline]\fP"
+
+.PP
+Modify the delta\&. 
+.PP
+Definition at line 139 of file sequential\&.hpp\&.
+.PP
+References mlpack::ann::Sequential< InputDataType, OutputDataType >::delta\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename eT > void \fBmlpack::ann::Sequential\fP< InputDataType, OutputDataType >::Forward (arma::Mat< eT > && input, arma::Mat< eT > && output)"
+
+.PP
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input data used for evaluating the specified function\&. 
+.br
+\fIoutput\fP Resulting output activation\&. 
+.RE
+.PP
+
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename eT > void \fBmlpack::ann::Sequential\fP< InputDataType, OutputDataType >::Gradient (arma::Mat< eT > && input, arma::Mat< eT > && error, arma::Mat< eT > &&)"
+
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> arma::mat const& \fBmlpack::ann::Sequential\fP< InputDataType, OutputDataType >::Gradient () const\fC [inline]\fP"
+
+.PP
+Get the gradient\&. 
+.PP
+Definition at line 142 of file sequential\&.hpp\&.
+.PP
+References mlpack::ann::Sequential< InputDataType, OutputDataType >::gradient\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> arma::mat& \fBmlpack::ann::Sequential\fP< InputDataType, OutputDataType >::Gradient ()\fC [inline]\fP"
+
+.PP
+Modify the gradient\&. 
+.PP
+Definition at line 144 of file sequential\&.hpp\&.
+.PP
+References mlpack::ann::Sequential< InputDataType, OutputDataType >::gradient, and mlpack::ann::Sequential< InputDataType, OutputDataType >::Serialize()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> arma::mat const& \fBmlpack::ann::Sequential\fP< InputDataType, OutputDataType >::InputParameter () const\fC [inline]\fP"
+
+.PP
+Definition at line 127 of file sequential\&.hpp\&.
+.PP
+References mlpack::ann::Sequential< InputDataType, OutputDataType >::inputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> arma::mat& \fBmlpack::ann::Sequential\fP< InputDataType, OutputDataType >::InputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the input parameter\&. 
+.PP
+Definition at line 129 of file sequential\&.hpp\&.
+.PP
+References mlpack::ann::Sequential< InputDataType, OutputDataType >::inputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> std::vector<\fBLayerTypes\fP>& \fBmlpack::ann::Sequential\fP< InputDataType, OutputDataType >::Model ()\fC [inline]\fP"
+
+.PP
+Return the model modules\&. 
+.PP
+Definition at line 112 of file sequential\&.hpp\&.
+.PP
+References mlpack::ann::Sequential< InputDataType, OutputDataType >::empty, mlpack::ann::Sequential< InputDataType, OutputDataType >::model, and mlpack::ann::Sequential< InputDataType, OutputDataType >::network\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> arma::mat const& \fBmlpack::ann::Sequential\fP< InputDataType, OutputDataType >::OutputParameter () const\fC [inline]\fP"
+
+.PP
+Get the output parameter\&. 
+.PP
+Definition at line 132 of file sequential\&.hpp\&.
+.PP
+References mlpack::ann::Sequential< InputDataType, OutputDataType >::outputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> arma::mat& \fBmlpack::ann::Sequential\fP< InputDataType, OutputDataType >::OutputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the output parameter\&. 
+.PP
+Definition at line 134 of file sequential\&.hpp\&.
+.PP
+References mlpack::ann::Sequential< InputDataType, OutputDataType >::outputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> const arma::mat& \fBmlpack::ann::Sequential\fP< InputDataType, OutputDataType >::Parameters () const\fC [inline]\fP"
+
+.PP
+Return the initial point for the optimization\&. 
+.PP
+Definition at line 123 of file sequential\&.hpp\&.
+.PP
+References mlpack::ann::Sequential< InputDataType, OutputDataType >::parameters\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> arma::mat& \fBmlpack::ann::Sequential\fP< InputDataType, OutputDataType >::Parameters ()\fC [inline]\fP"
+
+.PP
+Modify the initial point for the optimization\&. 
+.PP
+Definition at line 125 of file sequential\&.hpp\&.
+.PP
+References mlpack::ann::Sequential< InputDataType, OutputDataType >::parameters\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename Archive > void \fBmlpack::ann::Sequential\fP< InputDataType, OutputDataType >::Serialize (Archive &, const unsigned int)"
+
+.PP
+Serialize the layer\&. 
+.PP
+Referenced by mlpack::ann::Sequential< InputDataType, OutputDataType >::Gradient()\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBDeleteVisitor\fP \fBmlpack::ann::Sequential\fP< InputDataType, OutputDataType >::deleteVisitor\fC [private]\fP"
+
+.PP
+Locally-stored delete visitor\&. 
+.PP
+Definition at line 172 of file sequential\&.hpp\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> arma::mat \fBmlpack::ann::Sequential\fP< InputDataType, OutputDataType >::delta\fC [private]\fP"
+
+.PP
+Locally-stored delta object\&. 
+.PP
+Definition at line 178 of file sequential\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Sequential< InputDataType, OutputDataType >::Delta()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBDeltaVisitor\fP \fBmlpack::ann::Sequential\fP< InputDataType, OutputDataType >::deltaVisitor\fC [private]\fP"
+
+.PP
+Locally-stored delta visitor\&. 
+.PP
+Definition at line 166 of file sequential\&.hpp\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> std::vector<\fBLayerTypes\fP> \fBmlpack::ann::Sequential\fP< InputDataType, OutputDataType >::empty\fC [private]\fP"
+
+.PP
+Locally-stored empty list of modules\&. 
+.PP
+Definition at line 175 of file sequential\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Sequential< InputDataType, OutputDataType >::Model()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> arma::mat \fBmlpack::ann::Sequential\fP< InputDataType, OutputDataType >::gradient\fC [private]\fP"
+
+.PP
+Locally-stored gradient object\&. 
+.PP
+Definition at line 187 of file sequential\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Sequential< InputDataType, OutputDataType >::Gradient()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> size_t \fBmlpack::ann::Sequential\fP< InputDataType, OutputDataType >::height\fC [private]\fP"
+
+.PP
+The input height\&. 
+.PP
+Definition at line 199 of file sequential\&.hpp\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> arma::mat \fBmlpack::ann::Sequential\fP< InputDataType, OutputDataType >::inputParameter\fC [private]\fP"
+
+.PP
+Locally-stored input parameter object\&. 
+.PP
+Definition at line 181 of file sequential\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Sequential< InputDataType, OutputDataType >::InputParameter()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> bool \fBmlpack::ann::Sequential\fP< InputDataType, OutputDataType >::model\fC [private]\fP"
+
+.PP
+Parameter which indicates if the modules should be exposed\&. 
+.PP
+Definition at line 154 of file sequential\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Sequential< InputDataType, OutputDataType >::Model()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> std::vector<\fBLayerTypes\fP> \fBmlpack::ann::Sequential\fP< InputDataType, OutputDataType >::network\fC [private]\fP"
+
+.PP
+Locally-stored network modules\&. 
+.PP
+Definition at line 160 of file sequential\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Sequential< InputDataType, OutputDataType >::Add(), and mlpack::ann::Sequential< InputDataType, OutputDataType >::Model()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBOutputHeightVisitor\fP \fBmlpack::ann::Sequential\fP< InputDataType, OutputDataType >::outputHeightVisitor\fC [private]\fP"
+
+.PP
+Locally-stored output height visitor\&. 
+.PP
+Definition at line 193 of file sequential\&.hpp\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> arma::mat \fBmlpack::ann::Sequential\fP< InputDataType, OutputDataType >::outputParameter\fC [private]\fP"
+
+.PP
+Locally-stored output parameter object\&. 
+.PP
+Definition at line 184 of file sequential\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Sequential< InputDataType, OutputDataType >::OutputParameter()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBOutputParameterVisitor\fP \fBmlpack::ann::Sequential\fP< InputDataType, OutputDataType >::outputParameterVisitor\fC [private]\fP"
+
+.PP
+Locally-stored output parameter visitor\&. 
+.PP
+Definition at line 169 of file sequential\&.hpp\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBOutputWidthVisitor\fP \fBmlpack::ann::Sequential\fP< InputDataType, OutputDataType >::outputWidthVisitor\fC [private]\fP"
+
+.PP
+Locally-stored output width visitor\&. 
+.PP
+Definition at line 190 of file sequential\&.hpp\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> arma::mat \fBmlpack::ann::Sequential\fP< InputDataType, OutputDataType >::parameters\fC [private]\fP"
+
+.PP
+Locally-stored model parameters\&. 
+.PP
+Definition at line 163 of file sequential\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Sequential< InputDataType, OutputDataType >::Parameters()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> bool \fBmlpack::ann::Sequential\fP< InputDataType, OutputDataType >::reset\fC [private]\fP"
+
+.PP
+Indicator if we already initialized the model\&. 
+.PP
+Definition at line 157 of file sequential\&.hpp\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> size_t \fBmlpack::ann::Sequential\fP< InputDataType, OutputDataType >::width\fC [private]\fP"
+
+.PP
+The input width\&. 
+.PP
+Definition at line 196 of file sequential\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

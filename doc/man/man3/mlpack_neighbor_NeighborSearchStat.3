@@ -1,0 +1,206 @@
+.TH "mlpack::neighbor::NeighborSearchStat< SortPolicy >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::neighbor::NeighborSearchStat< SortPolicy > \- Extra data for each node in the tree\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBNeighborSearchStat\fP ()"
+.br
+.RI "\fIInitialize the statistic with the worst possible distance according to our sorting policy\&. \fP"
+.ti -1c
+.RI "template<typename TreeType > \fBNeighborSearchStat\fP (TreeType &)"
+.br
+.RI "\fIInitialization for a fully initialized node\&. \fP"
+.ti -1c
+.RI "double \fBAuxBound\fP () const "
+.br
+.RI "\fIGet the aux bound\&. \fP"
+.ti -1c
+.RI "double & \fBAuxBound\fP ()"
+.br
+.RI "\fIModify the aux bound\&. \fP"
+.ti -1c
+.RI "double \fBFirstBound\fP () const "
+.br
+.RI "\fIGet the first bound\&. \fP"
+.ti -1c
+.RI "double & \fBFirstBound\fP ()"
+.br
+.RI "\fIModify the first bound\&. \fP"
+.ti -1c
+.RI "double \fBLastDistance\fP () const "
+.br
+.RI "\fIGet the last distance calculation\&. \fP"
+.ti -1c
+.RI "double & \fBLastDistance\fP ()"
+.br
+.RI "\fIModify the last distance calculation\&. \fP"
+.ti -1c
+.RI "void \fBReset\fP ()"
+.br
+.RI "\fIReset statistic parameters to initial values\&. \fP"
+.ti -1c
+.RI "double \fBSecondBound\fP () const "
+.br
+.RI "\fIGet the second bound\&. \fP"
+.ti -1c
+.RI "double & \fBSecondBound\fP ()"
+.br
+.RI "\fIModify the second bound\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int)"
+.br
+.RI "\fISerialize the statistic to/from an archive\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "double \fBauxBound\fP"
+.br
+.RI "\fIThe aux bound on the node's neighbor distances (B_aux)\&. \fP"
+.ti -1c
+.RI "double \fBfirstBound\fP"
+.br
+.RI "\fIThe first bound on the node's neighbor distances (B_1)\&. \fP"
+.ti -1c
+.RI "double \fBlastDistance\fP"
+.br
+.RI "\fIThe last distance evaluation\&. \fP"
+.ti -1c
+.RI "double \fBsecondBound\fP"
+.br
+.RI "\fIThe second bound on the node's neighbor distances (B_2)\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename SortPolicy>
+.br
+class mlpack::neighbor::NeighborSearchStat< SortPolicy >"
+Extra data for each node in the tree\&. 
+
+For neighbor searches, each node only needs to store a bound on neighbor distances\&. 
+.PP
+Definition at line 26 of file neighbor_search_stat\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename SortPolicy> \fBmlpack::neighbor::NeighborSearchStat\fP< SortPolicy >::\fBNeighborSearchStat\fP ()\fC [inline]\fP"
+
+.PP
+Initialize the statistic with the worst possible distance according to our sorting policy\&. 
+.PP
+Definition at line 48 of file neighbor_search_stat\&.hpp\&.
+.SS "template<typename SortPolicy> template<typename TreeType > \fBmlpack::neighbor::NeighborSearchStat\fP< SortPolicy >::\fBNeighborSearchStat\fP (TreeType &)\fC [inline]\fP"
+
+.PP
+Initialization for a fully initialized node\&. In this case, we don't need to worry about the node\&. 
+.PP
+Definition at line 59 of file neighbor_search_stat\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename SortPolicy> double \fBmlpack::neighbor::NeighborSearchStat\fP< SortPolicy >::AuxBound () const\fC [inline]\fP"
+
+.PP
+Get the aux bound\&. 
+.PP
+Definition at line 85 of file neighbor_search_stat\&.hpp\&.
+.SS "template<typename SortPolicy> double& \fBmlpack::neighbor::NeighborSearchStat\fP< SortPolicy >::AuxBound ()\fC [inline]\fP"
+
+.PP
+Modify the aux bound\&. 
+.PP
+Definition at line 87 of file neighbor_search_stat\&.hpp\&.
+.SS "template<typename SortPolicy> double \fBmlpack::neighbor::NeighborSearchStat\fP< SortPolicy >::FirstBound () const\fC [inline]\fP"
+
+.PP
+Get the first bound\&. 
+.PP
+Definition at line 77 of file neighbor_search_stat\&.hpp\&.
+.SS "template<typename SortPolicy> double& \fBmlpack::neighbor::NeighborSearchStat\fP< SortPolicy >::FirstBound ()\fC [inline]\fP"
+
+.PP
+Modify the first bound\&. 
+.PP
+Definition at line 79 of file neighbor_search_stat\&.hpp\&.
+.SS "template<typename SortPolicy> double \fBmlpack::neighbor::NeighborSearchStat\fP< SortPolicy >::LastDistance () const\fC [inline]\fP"
+
+.PP
+Get the last distance calculation\&. 
+.PP
+Definition at line 89 of file neighbor_search_stat\&.hpp\&.
+.SS "template<typename SortPolicy> double& \fBmlpack::neighbor::NeighborSearchStat\fP< SortPolicy >::LastDistance ()\fC [inline]\fP"
+
+.PP
+Modify the last distance calculation\&. 
+.PP
+Definition at line 91 of file neighbor_search_stat\&.hpp\&.
+.SS "template<typename SortPolicy> void \fBmlpack::neighbor::NeighborSearchStat\fP< SortPolicy >::Reset ()\fC [inline]\fP"
+
+.PP
+Reset statistic parameters to initial values\&. 
+.PP
+Definition at line 68 of file neighbor_search_stat\&.hpp\&.
+.SS "template<typename SortPolicy> double \fBmlpack::neighbor::NeighborSearchStat\fP< SortPolicy >::SecondBound () const\fC [inline]\fP"
+
+.PP
+Get the second bound\&. 
+.PP
+Definition at line 81 of file neighbor_search_stat\&.hpp\&.
+.SS "template<typename SortPolicy> double& \fBmlpack::neighbor::NeighborSearchStat\fP< SortPolicy >::SecondBound ()\fC [inline]\fP"
+
+.PP
+Modify the second bound\&. 
+.PP
+Definition at line 83 of file neighbor_search_stat\&.hpp\&.
+.SS "template<typename SortPolicy> template<typename Archive > void \fBmlpack::neighbor::NeighborSearchStat\fP< SortPolicy >::Serialize (Archive & ar, const unsigned int)\fC [inline]\fP"
+
+.PP
+Serialize the statistic to/from an archive\&. 
+.PP
+Definition at line 95 of file neighbor_search_stat\&.hpp\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename SortPolicy> double \fBmlpack::neighbor::NeighborSearchStat\fP< SortPolicy >::auxBound\fC [private]\fP"
+
+.PP
+The aux bound on the node's neighbor distances (B_aux)\&. This represents the best descendant candidate distance (used to calculate secondBound)\&. 
+.PP
+Definition at line 39 of file neighbor_search_stat\&.hpp\&.
+.PP
+Referenced by mlpack::neighbor::NeighborSearchStat< neighbor::NearestNeighborSort >::AuxBound()\&.
+.SS "template<typename SortPolicy> double \fBmlpack::neighbor::NeighborSearchStat\fP< SortPolicy >::firstBound\fC [private]\fP"
+
+.PP
+The first bound on the node's neighbor distances (B_1)\&. This represents the worst candidate distance of any descendants of this node\&. 
+.PP
+Definition at line 31 of file neighbor_search_stat\&.hpp\&.
+.PP
+Referenced by mlpack::neighbor::NeighborSearchStat< neighbor::NearestNeighborSort >::FirstBound()\&.
+.SS "template<typename SortPolicy> double \fBmlpack::neighbor::NeighborSearchStat\fP< SortPolicy >::lastDistance\fC [private]\fP"
+
+.PP
+The last distance evaluation\&. 
+.PP
+Definition at line 41 of file neighbor_search_stat\&.hpp\&.
+.PP
+Referenced by mlpack::neighbor::NeighborSearchStat< neighbor::NearestNeighborSort >::LastDistance()\&.
+.SS "template<typename SortPolicy> double \fBmlpack::neighbor::NeighborSearchStat\fP< SortPolicy >::secondBound\fC [private]\fP"
+
+.PP
+The second bound on the node's neighbor distances (B_2)\&. This represents a bound on the worst distance of any descendants of this node assembled using the best descendant candidate distance modified by the furthest descendant distance\&. 
+.PP
+Definition at line 36 of file neighbor_search_stat\&.hpp\&.
+.PP
+Referenced by mlpack::neighbor::NeighborSearchStat< neighbor::NearestNeighborSort >::SecondBound()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

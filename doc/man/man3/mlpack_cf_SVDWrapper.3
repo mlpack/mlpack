@@ -1,0 +1,105 @@
+.TH "mlpack::cf::SVDWrapper< Factorizer >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::cf::SVDWrapper< Factorizer > \- This class acts as the wrapper for all SVD factorizers which are incompatible with \fBCF\fP module\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBSVDWrapper\fP (const Factorizer &\fBfactorizer\fP=Factorizer())"
+.br
+.ti -1c
+.RI "double \fBApply\fP (const arma::mat &V, arma::mat &W, arma::mat &sigma, arma::mat &H) const "
+.br
+.RI "\fIFactorizer function which takes SVD of the given matrix and returns the frobenius norm of error\&. \fP"
+.ti -1c
+.RI "double \fBApply\fP (const arma::mat &V, size_t r, arma::mat &W, arma::mat &H) const "
+.br
+.RI "\fIFactorizer function which computes SVD and returns matrices as required by \fBCF\fP module\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "Factorizer \fBfactorizer\fP"
+.br
+.RI "\fIsvd factorizer \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<class Factorizer = DummyClass>
+.br
+class mlpack::cf::SVDWrapper< Factorizer >"
+This class acts as the wrapper for all SVD factorizers which are incompatible with \fBCF\fP module\&. 
+
+Normally SVD factrorizers implement Apply method which takes matrix V and factorizes it into P, sigma and Q where V = P * sigma * trans(Q)\&. But \fBCF\fP module requires factrorization to be V = W * H\&. This class multiplies P and sigma and takes the first 'r' eigenvectors out where 'r' is the rank of factorization\&. Q matrix is transposed and trimmed to support the rank of factorization\&. The Factroizer class should implement Apply which takes matrices P, sigma, Q and V as their parameter respectively\&. 
+.PP
+Definition at line 40 of file svd_wrapper\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<class Factorizer  = DummyClass> \fBmlpack::cf::SVDWrapper\fP< Factorizer >::\fBSVDWrapper\fP (const Factorizer & factorizer = \fCFactorizer()\fP)\fC [inline]\fP"
+
+.PP
+Definition at line 44 of file svd_wrapper\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<class Factorizer  = DummyClass> double \fBmlpack::cf::SVDWrapper\fP< Factorizer >::Apply (const arma::mat & V, arma::mat & W, arma::mat & sigma, arma::mat & H) const"
+
+.PP
+Factorizer function which takes SVD of the given matrix and returns the frobenius norm of error\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIV\fP input matrix 
+.br
+\fIW\fP first unitary matrix 
+.br
+\fIsigma\fP eigenvalue matrix 
+.br
+\fIH\fP second unitary matrix
+.RE
+.PP
+\fBNote:\fP
+.RS 4
+V = W * sigma * arma::trans(H) 
+.RE
+.PP
+
+.SS "template<class Factorizer  = DummyClass> double \fBmlpack::cf::SVDWrapper\fP< Factorizer >::Apply (const arma::mat & V, size_t r, arma::mat & W, arma::mat & H) const"
+
+.PP
+Factorizer function which computes SVD and returns matrices as required by \fBCF\fP module\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIV\fP input matrix 
+.br
+\fIW\fP first unitary matrix 
+.br
+\fIH\fP second unitary matrix
+.RE
+.PP
+\fBNote:\fP
+.RS 4
+V = W * H 
+.RE
+.PP
+
+.SH "Member Data Documentation"
+.PP 
+.SS "template<class Factorizer  = DummyClass> Factorizer \fBmlpack::cf::SVDWrapper\fP< Factorizer >::factorizer\fC [private]\fP"
+
+.PP
+svd factorizer 
+.PP
+Definition at line 79 of file svd_wrapper\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

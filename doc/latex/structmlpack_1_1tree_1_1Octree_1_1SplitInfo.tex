@@ -1,0 +1,110 @@
+\section{mlpack\+:\+:tree\+:\+:Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+:\+:Split\+Info Struct Reference}
+\label{structmlpack_1_1tree_1_1Octree_1_1SplitInfo}\index{mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Split\+Info@{mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Split\+Info}}
+
+
+This is used for sorting points while splitting.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Split\+Info} (const size\+\_\+t {\bf d}, const arma\+::vec \&c)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Split\+Info}{p.}{structmlpack_1_1tree_1_1Octree_1_1SplitInfo} object. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\static bool {\bf Assign\+To\+Left\+Node} (const Vec\+Type \&point, const {\bf Split\+Info} \&s)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+const arma\+::vec \& {\bf center}
+\begin{DoxyCompactList}\small\item\em The center of the node. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf d}
+\begin{DoxyCompactList}\small\item\em The dimension we are splitting on. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Metric\+Type = metric\+::\+Euclidean\+Distance, typename Statistic\+Type = Empty\+Statistic, typename Mat\+Type = arma\+::mat$>$\\*
+struct mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Split\+Info}
+
+This is used for sorting points while splitting. 
+
+Definition at line 431 of file octree.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::tree\+::\+Octree\+::\+Split\+Info@{mlpack\+::tree\+::\+Octree\+::\+Split\+Info}!Split\+Info@{Split\+Info}}
+\index{Split\+Info@{Split\+Info}!mlpack\+::tree\+::\+Octree\+::\+Split\+Info@{mlpack\+::tree\+::\+Octree\+::\+Split\+Info}}
+\subsubsection[{Split\+Info(const size\+\_\+t d, const arma\+::vec \&c)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Split\+Info\+::\+Split\+Info (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{d, }
+\item[{const arma\+::vec \&}]{c}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{structmlpack_1_1tree_1_1Octree_1_1SplitInfo_ab5dac943a782017bd199e72bc3365dd9}
+
+
+Create the \doxyref{Split\+Info}{p.}{structmlpack_1_1tree_1_1Octree_1_1SplitInfo} object. 
+
+
+
+Definition at line 434 of file octree.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::tree\+::\+Octree\+::\+Split\+Info@{mlpack\+::tree\+::\+Octree\+::\+Split\+Info}!Assign\+To\+Left\+Node@{Assign\+To\+Left\+Node}}
+\index{Assign\+To\+Left\+Node@{Assign\+To\+Left\+Node}!mlpack\+::tree\+::\+Octree\+::\+Split\+Info@{mlpack\+::tree\+::\+Octree\+::\+Split\+Info}}
+\subsubsection[{Assign\+To\+Left\+Node(const Vec\+Type \&point, const Split\+Info \&s)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ template$<$typename Vec\+Type $>$ static bool {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Split\+Info\+::\+Assign\+To\+Left\+Node (
+\begin{DoxyParamCaption}
+\item[{const Vec\+Type \&}]{point, }
+\item[{const {\bf Split\+Info} \&}]{s}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}\label{structmlpack_1_1tree_1_1Octree_1_1SplitInfo_af839a937c4247bac7641d2b4055b7e65}
+
+
+Definition at line 442 of file octree.\+hpp.
+
+
+
+References mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Split\+Info\+::center, and mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Split\+Info\+::d.
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::tree\+::\+Octree\+::\+Split\+Info@{mlpack\+::tree\+::\+Octree\+::\+Split\+Info}!center@{center}}
+\index{center@{center}!mlpack\+::tree\+::\+Octree\+::\+Split\+Info@{mlpack\+::tree\+::\+Octree\+::\+Split\+Info}}
+\subsubsection[{center}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ const arma\+::vec\& {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Split\+Info\+::center}\label{structmlpack_1_1tree_1_1Octree_1_1SplitInfo_a3bedf7ef1883cdaee8cc376f09e475dc}
+
+
+The center of the node. 
+
+
+
+Definition at line 439 of file octree.\+hpp.
+
+
+
+Referenced by mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Split\+Info\+::\+Assign\+To\+Left\+Node().
+
+\index{mlpack\+::tree\+::\+Octree\+::\+Split\+Info@{mlpack\+::tree\+::\+Octree\+::\+Split\+Info}!d@{d}}
+\index{d@{d}!mlpack\+::tree\+::\+Octree\+::\+Split\+Info@{mlpack\+::tree\+::\+Octree\+::\+Split\+Info}}
+\subsubsection[{d}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Split\+Info\+::d}\label{structmlpack_1_1tree_1_1Octree_1_1SplitInfo_a7d7797eb84cec1055ee4d86425e5a94a}
+
+
+The dimension we are splitting on. 
+
+
+
+Definition at line 437 of file octree.\+hpp.
+
+
+
+Referenced by mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Split\+Info\+::\+Assign\+To\+Left\+Node().
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/tree/octree/{\bf octree.\+hpp}\end{DoxyCompactItemize}

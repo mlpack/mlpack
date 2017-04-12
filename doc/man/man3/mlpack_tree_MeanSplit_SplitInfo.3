@@ -1,0 +1,52 @@
+.TH "mlpack::tree::MeanSplit< BoundType, MatType >::SplitInfo" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::tree::MeanSplit< BoundType, MatType >::SplitInfo \- An information about the partition\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "size_t \fBsplitDimension\fP"
+.br
+.RI "\fIThe dimension to split the node on\&. \fP"
+.ti -1c
+.RI "double \fBsplitVal\fP"
+.br
+.RI "\fIThe split in dimension splitDimension is based on this value\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename BoundType, typename MatType = arma::mat>
+.br
+struct mlpack::tree::MeanSplit< BoundType, MatType >::SplitInfo"
+An information about the partition\&. 
+.PP
+Definition at line 33 of file mean_split\&.hpp\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename BoundType , typename MatType  = arma::mat> size_t \fBmlpack::tree::MeanSplit\fP< BoundType, MatType >::SplitInfo::splitDimension"
+
+.PP
+The dimension to split the node on\&. 
+.PP
+Definition at line 36 of file mean_split\&.hpp\&.
+.PP
+Referenced by mlpack::tree::MeanSplit< BoundType, MatType >::AssignToLeftNode()\&.
+.SS "template<typename BoundType , typename MatType  = arma::mat> double \fBmlpack::tree::MeanSplit\fP< BoundType, MatType >::SplitInfo::splitVal"
+
+.PP
+The split in dimension splitDimension is based on this value\&. 
+.PP
+Definition at line 38 of file mean_split\&.hpp\&.
+.PP
+Referenced by mlpack::tree::MeanSplit< BoundType, MatType >::AssignToLeftNode()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

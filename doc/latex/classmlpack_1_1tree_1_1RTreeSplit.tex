@@ -1,0 +1,136 @@
+\section{mlpack\+:\+:tree\+:\+:R\+Tree\+Split Class Reference}
+\label{classmlpack_1_1tree_1_1RTreeSplit}\index{mlpack\+::tree\+::\+R\+Tree\+Split@{mlpack\+::tree\+::\+R\+Tree\+Split}}
+
+
+A Rectangle Tree has new points inserted at the bottom.  
+
+
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static void {\bf Split\+Leaf\+Node} (Tree\+Type $\ast$tree, std\+::vector$<$ bool $>$ \&relevels)
+\begin{DoxyCompactList}\small\item\em Split a leaf node using the \char`\"{}default\char`\"{} algorithm. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static bool {\bf Split\+Non\+Leaf\+Node} (Tree\+Type $\ast$tree, std\+::vector$<$ bool $>$ \&relevels)
+\begin{DoxyCompactList}\small\item\em Split a non-\/leaf node using the \char`\"{}default\char`\"{} algorithm. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static void {\bf Assign\+Node\+Dest\+Node} (Tree\+Type $\ast$old\+Tree, Tree\+Type $\ast$tree\+One, Tree\+Type $\ast$tree\+Two, const int intI, const int intJ)
+\begin{DoxyCompactList}\small\item\em Assign nodes to the two new nodes. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static void {\bf Assign\+Point\+Dest\+Node} (Tree\+Type $\ast$old\+Tree, Tree\+Type $\ast$tree\+One, Tree\+Type $\ast$tree\+Two, const int intI, const int intJ)
+\begin{DoxyCompactList}\small\item\em Assign points to the two new nodes. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static void {\bf Get\+Bound\+Seeds} (const Tree\+Type $\ast$tree, int \&i, int \&j)
+\begin{DoxyCompactList}\small\item\em Get the seeds for splitting a non-\/leaf node. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static void {\bf Get\+Point\+Seeds} (const Tree\+Type $\ast$tree, int \&i, int \&j)
+\begin{DoxyCompactList}\small\item\em Get the seeds for splitting a leaf node. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static void {\bf Insert\+Node\+Into\+Tree} (Tree\+Type $\ast$dest\+Tree, Tree\+Type $\ast$src\+Node)
+\begin{DoxyCompactList}\small\item\em Insert a node into another node. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A Rectangle Tree has new points inserted at the bottom. 
+
+When these nodes overflow, we split them, moving up the tree and splitting nodes as necessary. 
+
+Definition at line 26 of file r\+\_\+tree\+\_\+split.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::tree\+::\+R\+Tree\+Split@{mlpack\+::tree\+::\+R\+Tree\+Split}!Assign\+Node\+Dest\+Node@{Assign\+Node\+Dest\+Node}}
+\index{Assign\+Node\+Dest\+Node@{Assign\+Node\+Dest\+Node}!mlpack\+::tree\+::\+R\+Tree\+Split@{mlpack\+::tree\+::\+R\+Tree\+Split}}
+\subsubsection[{Assign\+Node\+Dest\+Node(\+Tree\+Type $\ast$old\+Tree, Tree\+Type $\ast$tree\+One, Tree\+Type $\ast$tree\+Two, const int int\+I, const int int\+J)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Tree\+Type $>$ static void mlpack\+::tree\+::\+R\+Tree\+Split\+::\+Assign\+Node\+Dest\+Node (
+\begin{DoxyParamCaption}
+\item[{Tree\+Type $\ast$}]{old\+Tree, }
+\item[{Tree\+Type $\ast$}]{tree\+One, }
+\item[{Tree\+Type $\ast$}]{tree\+Two, }
+\item[{const int}]{intI, }
+\item[{const int}]{intJ}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}\label{classmlpack_1_1tree_1_1RTreeSplit_a1dcced1c86c48d2795b91060cd8991f0}
+
+
+Assign nodes to the two new nodes. 
+
+\index{mlpack\+::tree\+::\+R\+Tree\+Split@{mlpack\+::tree\+::\+R\+Tree\+Split}!Assign\+Point\+Dest\+Node@{Assign\+Point\+Dest\+Node}}
+\index{Assign\+Point\+Dest\+Node@{Assign\+Point\+Dest\+Node}!mlpack\+::tree\+::\+R\+Tree\+Split@{mlpack\+::tree\+::\+R\+Tree\+Split}}
+\subsubsection[{Assign\+Point\+Dest\+Node(\+Tree\+Type $\ast$old\+Tree, Tree\+Type $\ast$tree\+One, Tree\+Type $\ast$tree\+Two, const int int\+I, const int int\+J)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Tree\+Type $>$ static void mlpack\+::tree\+::\+R\+Tree\+Split\+::\+Assign\+Point\+Dest\+Node (
+\begin{DoxyParamCaption}
+\item[{Tree\+Type $\ast$}]{old\+Tree, }
+\item[{Tree\+Type $\ast$}]{tree\+One, }
+\item[{Tree\+Type $\ast$}]{tree\+Two, }
+\item[{const int}]{intI, }
+\item[{const int}]{intJ}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}\label{classmlpack_1_1tree_1_1RTreeSplit_a2d447b9f227bbec2a9afe5855b27cff5}
+
+
+Assign points to the two new nodes. 
+
+\index{mlpack\+::tree\+::\+R\+Tree\+Split@{mlpack\+::tree\+::\+R\+Tree\+Split}!Get\+Bound\+Seeds@{Get\+Bound\+Seeds}}
+\index{Get\+Bound\+Seeds@{Get\+Bound\+Seeds}!mlpack\+::tree\+::\+R\+Tree\+Split@{mlpack\+::tree\+::\+R\+Tree\+Split}}
+\subsubsection[{Get\+Bound\+Seeds(const Tree\+Type $\ast$tree, int \&i, int \&j)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Tree\+Type $>$ static void mlpack\+::tree\+::\+R\+Tree\+Split\+::\+Get\+Bound\+Seeds (
+\begin{DoxyParamCaption}
+\item[{const Tree\+Type $\ast$}]{tree, }
+\item[{int \&}]{i, }
+\item[{int \&}]{j}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}\label{classmlpack_1_1tree_1_1RTreeSplit_a21212b1bc658182aeec9b4cc757eac7a}
+
+
+Get the seeds for splitting a non-\/leaf node. 
+
+\index{mlpack\+::tree\+::\+R\+Tree\+Split@{mlpack\+::tree\+::\+R\+Tree\+Split}!Get\+Point\+Seeds@{Get\+Point\+Seeds}}
+\index{Get\+Point\+Seeds@{Get\+Point\+Seeds}!mlpack\+::tree\+::\+R\+Tree\+Split@{mlpack\+::tree\+::\+R\+Tree\+Split}}
+\subsubsection[{Get\+Point\+Seeds(const Tree\+Type $\ast$tree, int \&i, int \&j)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Tree\+Type $>$ static void mlpack\+::tree\+::\+R\+Tree\+Split\+::\+Get\+Point\+Seeds (
+\begin{DoxyParamCaption}
+\item[{const Tree\+Type $\ast$}]{tree, }
+\item[{int \&}]{i, }
+\item[{int \&}]{j}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}\label{classmlpack_1_1tree_1_1RTreeSplit_a7d0055fab51c46c80c1bd4f78f9abdb3}
+
+
+Get the seeds for splitting a leaf node. 
+
+\index{mlpack\+::tree\+::\+R\+Tree\+Split@{mlpack\+::tree\+::\+R\+Tree\+Split}!Insert\+Node\+Into\+Tree@{Insert\+Node\+Into\+Tree}}
+\index{Insert\+Node\+Into\+Tree@{Insert\+Node\+Into\+Tree}!mlpack\+::tree\+::\+R\+Tree\+Split@{mlpack\+::tree\+::\+R\+Tree\+Split}}
+\subsubsection[{Insert\+Node\+Into\+Tree(\+Tree\+Type $\ast$dest\+Tree, Tree\+Type $\ast$src\+Node)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Tree\+Type $>$ static void mlpack\+::tree\+::\+R\+Tree\+Split\+::\+Insert\+Node\+Into\+Tree (
+\begin{DoxyParamCaption}
+\item[{Tree\+Type $\ast$}]{dest\+Tree, }
+\item[{Tree\+Type $\ast$}]{src\+Node}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}\label{classmlpack_1_1tree_1_1RTreeSplit_af7f0ca79f99d82fe08b022df161db42c}
+
+
+Insert a node into another node. 
+
+\index{mlpack\+::tree\+::\+R\+Tree\+Split@{mlpack\+::tree\+::\+R\+Tree\+Split}!Split\+Leaf\+Node@{Split\+Leaf\+Node}}
+\index{Split\+Leaf\+Node@{Split\+Leaf\+Node}!mlpack\+::tree\+::\+R\+Tree\+Split@{mlpack\+::tree\+::\+R\+Tree\+Split}}
+\subsubsection[{Split\+Leaf\+Node(\+Tree\+Type $\ast$tree, std\+::vector$<$ bool $>$ \&relevels)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Tree\+Type $>$ static void mlpack\+::tree\+::\+R\+Tree\+Split\+::\+Split\+Leaf\+Node (
+\begin{DoxyParamCaption}
+\item[{Tree\+Type $\ast$}]{tree, }
+\item[{std\+::vector$<$ bool $>$ \&}]{relevels}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1tree_1_1RTreeSplit_a1d2bed9b4a171c965351d8e1699ef713}
+
+
+Split a leaf node using the \char`\"{}default\char`\"{} algorithm. 
+
+If necessary, this split will propagate upwards through the tree. \index{mlpack\+::tree\+::\+R\+Tree\+Split@{mlpack\+::tree\+::\+R\+Tree\+Split}!Split\+Non\+Leaf\+Node@{Split\+Non\+Leaf\+Node}}
+\index{Split\+Non\+Leaf\+Node@{Split\+Non\+Leaf\+Node}!mlpack\+::tree\+::\+R\+Tree\+Split@{mlpack\+::tree\+::\+R\+Tree\+Split}}
+\subsubsection[{Split\+Non\+Leaf\+Node(\+Tree\+Type $\ast$tree, std\+::vector$<$ bool $>$ \&relevels)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Tree\+Type $>$ static bool mlpack\+::tree\+::\+R\+Tree\+Split\+::\+Split\+Non\+Leaf\+Node (
+\begin{DoxyParamCaption}
+\item[{Tree\+Type $\ast$}]{tree, }
+\item[{std\+::vector$<$ bool $>$ \&}]{relevels}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1tree_1_1RTreeSplit_aab2eae1af731711e33b169300467aea8}
+
+
+Split a non-\/leaf node using the \char`\"{}default\char`\"{} algorithm. 
+
+If this is a root node, the tree increases in depth. 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/tree/rectangle\+\_\+tree/{\bf r\+\_\+tree\+\_\+split.\+hpp}\end{DoxyCompactItemize}

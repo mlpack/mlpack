@@ -1,0 +1,920 @@
+\section{mlpack\+:\+:neighbor\+:\+:Neighbor\+Search$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1neighbor_1_1NeighborSearch}\index{mlpack\+::neighbor\+::\+Neighbor\+Search$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$@{mlpack\+::neighbor\+::\+Neighbor\+Search$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$}}
+
+
+The \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} class is a template class for performing distance-\/based neighbor searches.  
+
+
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef Tree\+Type$<$ Metric\+Type, {\bf Neighbor\+Search\+Stat}$<$ Sort\+Policy $>$, Mat\+Type $>$ {\bf Tree}
+\begin{DoxyCompactList}\small\item\em Convenience typedef. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Neighbor\+Search} (const Mat\+Type \&{\bf reference\+Set}, const {\bf Neighbor\+Search\+Mode} mode={\bf D\+U\+A\+L\+\_\+\+T\+R\+E\+E\+\_\+\+M\+O\+DE}, const double {\bf epsilon}=0, const Metric\+Type {\bf metric}=Metric\+Type())
+\begin{DoxyCompactList}\small\item\em Initialize the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} object, passing a reference dataset (this is the dataset which is searched). \end{DoxyCompactList}\item 
+{\bf Neighbor\+Search} (Mat\+Type \&\&{\bf reference\+Set}, const {\bf Neighbor\+Search\+Mode} mode={\bf D\+U\+A\+L\+\_\+\+T\+R\+E\+E\+\_\+\+M\+O\+DE}, const double {\bf epsilon}=0, const Metric\+Type {\bf metric}=Metric\+Type())
+\begin{DoxyCompactList}\small\item\em Initialize the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} object, taking ownership of the reference dataset (this is the dataset which is searched). \end{DoxyCompactList}\item 
+{\bf Neighbor\+Search} (const {\bf Tree} \&{\bf reference\+Tree}, const {\bf Neighbor\+Search\+Mode} mode={\bf D\+U\+A\+L\+\_\+\+T\+R\+E\+E\+\_\+\+M\+O\+DE}, const double {\bf epsilon}=0, const Metric\+Type {\bf metric}=Metric\+Type())
+\begin{DoxyCompactList}\small\item\em Initialize the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} object with a copy of the given pre-\/constructed reference tree (this is the tree built on the points that will be searched). \end{DoxyCompactList}\item 
+{\bf Neighbor\+Search} ({\bf Tree} \&\&{\bf reference\+Tree}, const {\bf Neighbor\+Search\+Mode} mode={\bf D\+U\+A\+L\+\_\+\+T\+R\+E\+E\+\_\+\+M\+O\+DE}, const double {\bf epsilon}=0, const Metric\+Type {\bf metric}=Metric\+Type())
+\begin{DoxyCompactList}\small\item\em Initialize the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} object with the given pre-\/constructed reference tree (this is the tree built on the points that will be searched). \end{DoxyCompactList}\item 
+{\bf Neighbor\+Search} (const {\bf Neighbor\+Search\+Mode} mode={\bf D\+U\+A\+L\+\_\+\+T\+R\+E\+E\+\_\+\+M\+O\+DE}, const double {\bf epsilon}=0, const Metric\+Type {\bf metric}=Metric\+Type())
+\begin{DoxyCompactList}\small\item\em Create a \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} object without any reference data. \end{DoxyCompactList}\item 
+{\bf Neighbor\+Search} (const {\bf Neighbor\+Search} \&other)
+\begin{DoxyCompactList}\small\item\em Construct the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} object by copying the given \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} object. \end{DoxyCompactList}\item 
+{\bf Neighbor\+Search} ({\bf Neighbor\+Search} \&\&other)
+\begin{DoxyCompactList}\small\item\em Construct the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} object by taking ownership of the given \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} object. \end{DoxyCompactList}\item 
+{\bf $\sim$\+Neighbor\+Search} ()
+\begin{DoxyCompactList}\small\item\em Delete the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} object. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Base\+Cases} () const 
+\begin{DoxyCompactList}\small\item\em Return the total number of base case evaluations performed during the last search. \end{DoxyCompactList}\item 
+double {\bf Epsilon} () const 
+\begin{DoxyCompactList}\small\item\em Access the relative error to be considered in approximate search. \end{DoxyCompactList}\item 
+double \& {\bf Epsilon} ()
+\begin{DoxyCompactList}\small\item\em Modify the relative error to be considered in approximate search. \end{DoxyCompactList}\item 
+{\bf Neighbor\+Search} \& {\bf operator=} (const {\bf Neighbor\+Search} \&other)
+\begin{DoxyCompactList}\small\item\em Copy the given \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} object. \end{DoxyCompactList}\item 
+{\bf Neighbor\+Search} \& {\bf operator=} ({\bf Neighbor\+Search} \&\&other)
+\begin{DoxyCompactList}\small\item\em Take ownership of the given \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} object. \end{DoxyCompactList}\item 
+const Mat\+Type \& {\bf Reference\+Set} () const 
+\begin{DoxyCompactList}\small\item\em Access the reference dataset. \end{DoxyCompactList}\item 
+const {\bf Tree} \& {\bf Reference\+Tree} () const 
+\begin{DoxyCompactList}\small\item\em Access the reference tree. \end{DoxyCompactList}\item 
+{\bf Tree} \& {\bf Reference\+Tree} ()
+\begin{DoxyCompactList}\small\item\em Modify the reference tree. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Scores} () const 
+\begin{DoxyCompactList}\small\item\em Return the number of node combination scores during the last search. \end{DoxyCompactList}\item 
+void {\bf Search} (const Mat\+Type \&query\+Set, const size\+\_\+t k, arma\+::\+Mat$<$ size\+\_\+t $>$ \&neighbors, arma\+::mat \&distances)
+\begin{DoxyCompactList}\small\item\em For each point in the query set, compute the nearest neighbors and store the output in the given matrices. \end{DoxyCompactList}\item 
+void {\bf Search} ({\bf Tree} \&query\+Tree, const size\+\_\+t k, arma\+::\+Mat$<$ size\+\_\+t $>$ \&neighbors, arma\+::mat \&distances, bool same\+Set=false)
+\begin{DoxyCompactList}\small\item\em Given a pre-\/built query tree, search for the nearest neighbors of each point in the query tree, storing the output in the given matrices. \end{DoxyCompactList}\item 
+void {\bf Search} (const size\+\_\+t k, arma\+::\+Mat$<$ size\+\_\+t $>$ \&neighbors, arma\+::mat \&distances)
+\begin{DoxyCompactList}\small\item\em Search for the nearest neighbors of every point in the reference set. \end{DoxyCompactList}\item 
+{\bf Neighbor\+Search\+Mode} {\bf Search\+Mode} () const 
+\begin{DoxyCompactList}\small\item\em Access the search mode. \end{DoxyCompactList}\item 
+{\bf Neighbor\+Search\+Mode} \& {\bf Search\+Mode} ()
+\begin{DoxyCompactList}\small\item\em Modify the search mode. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&ar, const unsigned int)
+\begin{DoxyCompactList}\small\item\em Serialize the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} model. \end{DoxyCompactList}\item 
+void {\bf Train} (const Mat\+Type \&{\bf reference\+Set})
+\begin{DoxyCompactList}\small\item\em Set the reference set to a new reference set, and build a tree if necessary. \end{DoxyCompactList}\item 
+void {\bf Train} (Mat\+Type \&\&{\bf reference\+Set})
+\begin{DoxyCompactList}\small\item\em Set the reference set to a new reference set, taking ownership of the set, and build a tree if necessary. \end{DoxyCompactList}\item 
+void {\bf Train} (const {\bf Tree} \&{\bf reference\+Tree})
+\begin{DoxyCompactList}\small\item\em Set the reference tree as a copy of the given reference tree. \end{DoxyCompactList}\item 
+void {\bf Train} ({\bf Tree} \&\&{\bf reference\+Tree})
+\begin{DoxyCompactList}\small\item\em Set the reference tree to a new reference tree. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static double {\bf Effective\+Error} (arma\+::mat \&found\+Distances, arma\+::mat \&real\+Distances)
+\begin{DoxyCompactList}\small\item\em Calculate the average relative error (effective error) between the distances calculated and the true distances provided. \end{DoxyCompactList}\item 
+static double {\bf Recall} (arma\+::\+Mat$<$ size\+\_\+t $>$ \&found\+Neighbors, arma\+::\+Mat$<$ size\+\_\+t $>$ \&real\+Neighbors)
+\begin{DoxyCompactList}\small\item\em Calculate the recall (\% of neighbors found) given the list of found neighbors and the true set of neighbors. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+size\+\_\+t {\bf base\+Cases}
+\begin{DoxyCompactList}\small\item\em The total number of base cases. \end{DoxyCompactList}\item 
+double {\bf epsilon}
+\begin{DoxyCompactList}\small\item\em Indicates the relative error to be considered in approximate search. \end{DoxyCompactList}\item 
+Metric\+Type {\bf metric}
+\begin{DoxyCompactList}\small\item\em Instantiation of metric. \end{DoxyCompactList}\item 
+std\+::vector$<$ size\+\_\+t $>$ {\bf old\+From\+New\+References}
+\begin{DoxyCompactList}\small\item\em Permutations of reference points during tree building. \end{DoxyCompactList}\item 
+const Mat\+Type $\ast$ {\bf reference\+Set}
+\begin{DoxyCompactList}\small\item\em Reference dataset. In some situations we may be the owner of this. \end{DoxyCompactList}\item 
+{\bf Tree} $\ast$ {\bf reference\+Tree}
+\begin{DoxyCompactList}\small\item\em Pointer to the root of the reference tree. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf scores}
+\begin{DoxyCompactList}\small\item\em The total number of scores (applicable for non-\/naive search). \end{DoxyCompactList}\item 
+{\bf Neighbor\+Search\+Mode} {\bf search\+Mode}
+\begin{DoxyCompactList}\small\item\em Indicates the neighbor search mode. \end{DoxyCompactList}\item 
+bool {\bf set\+Owner}
+\begin{DoxyCompactList}\small\item\em If true, we own the reference set. \end{DoxyCompactList}\item 
+bool {\bf tree\+Needs\+Reset}
+\begin{DoxyCompactList}\small\item\em If this is true, the reference tree bounds need to be reset on a call to \doxyref{Search()}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch_aa38e2a58f4d4d93e43ffa5c26e5ac298} without a query set. \end{DoxyCompactList}\item 
+bool {\bf tree\+Owner}
+\begin{DoxyCompactList}\small\item\em If true, this object created the trees and is responsible for them. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$\\*
+class mlpack\+::neighbor\+::\+Neighbor\+Search$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$}
+
+The \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} class is a template class for performing distance-\/based neighbor searches. 
+
+It takes a query dataset and a reference dataset (or just a reference dataset) and, for each point in the query dataset, finds the k neighbors in the reference dataset which have the \textquotesingle{}best\textquotesingle{} distance according to a given sorting policy. A constructor is given which takes only a reference dataset, and if that constructor is used, the given reference dataset is also used as the query dataset.
+
+The template parameters Sort\+Policy and Metric define the sort function used and the metric (distance function) used. More information on those classes can be found in the \doxyref{Nearest\+Neighbor\+Sort}{p.}{classmlpack_1_1neighbor_1_1NearestNeighborSort} class and the \doxyref{kernel\+::\+Example\+Kernel}{p.}{classmlpack_1_1kernel_1_1ExampleKernel} class.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Sort\+Policy} & The sort policy for distances; see \doxyref{Nearest\+Neighbor\+Sort}{p.}{classmlpack_1_1neighbor_1_1NearestNeighborSort}. \\
+\hline
+{\em Metric\+Type} & The metric to use for computation. \\
+\hline
+{\em Mat\+Type} & The type of data matrix. \\
+\hline
+{\em Tree\+Type} & The tree type to use; must adhere to the Tree\+Type A\+PI. \\
+\hline
+{\em Dual\+Tree\+Traversal\+Type} & The type of dual tree traversal to use (defaults to the tree\textquotesingle{}s default traverser). \\
+\hline
+{\em Single\+Tree\+Traversal\+Type} & The type of single tree traversal to use (defaults to the tree\textquotesingle{}s default traverser). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 83 of file neighbor\+\_\+search.\+hpp.
+
+
+
+\subsection{Member Typedef Documentation}
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!Tree@{Tree}}
+\index{Tree@{Tree}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{Tree}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ typedef Tree\+Type$<$Metric\+Type, {\bf Neighbor\+Search\+Stat}$<$Sort\+Policy$>$, Mat\+Type$>$ {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::{\bf Tree}}\label{classmlpack_1_1neighbor_1_1NeighborSearch_a3960fb4f9887fe8af0311808f0036819}
+
+
+Convenience typedef. 
+
+
+
+Definition at line 87 of file neighbor\+\_\+search.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!Neighbor\+Search@{Neighbor\+Search}}
+\index{Neighbor\+Search@{Neighbor\+Search}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{Neighbor\+Search(const Mat\+Type \&reference\+Set, const Neighbor\+Search\+Mode mode=\+D\+U\+A\+L\+\_\+\+T\+R\+E\+E\+\_\+\+M\+O\+D\+E, const double epsilon=0, const Metric\+Type metric=\+Metric\+Type())}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::{\bf Neighbor\+Search} (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{reference\+Set, }
+\item[{const {\bf Neighbor\+Search\+Mode}}]{mode = {\ttfamily {\bf D\+U\+A\+L\+\_\+\+T\+R\+E\+E\+\_\+\+M\+O\+DE}}, }
+\item[{const double}]{epsilon = {\ttfamily 0}, }
+\item[{const Metric\+Type}]{metric = {\ttfamily MetricType()}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1NeighborSearch_a3d96c045b02d692f548ea81f4d8f818e}
+
+
+Initialize the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} object, passing a reference dataset (this is the dataset which is searched). 
+
+Optionally, perform the computation in a different mode. An initialized distance metric can be given, for cases where the metric has internal data (i.\+e. the distance\+::\+Mahalanobis\+Distance class).
+
+This method will copy the matrices to internal copies, which are rearranged during tree-\/building. You can avoid this extra copy by pre-\/constructing the trees and passing them using a different constructor, or by using the construct that takes an rvalue reference to the dataset.
+
+
+\begin{DoxyParams}{Parameters}
+{\em reference\+Set} & Set of reference points. \\
+\hline
+{\em mode} & Neighbor search mode. \\
+\hline
+{\em epsilon} & Relative approximate error (non-\/negative). \\
+\hline
+{\em metric} & An optional instance of the Metric\+Type class. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!Neighbor\+Search@{Neighbor\+Search}}
+\index{Neighbor\+Search@{Neighbor\+Search}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{Neighbor\+Search(\+Mat\+Type \&\&reference\+Set, const Neighbor\+Search\+Mode mode=\+D\+U\+A\+L\+\_\+\+T\+R\+E\+E\+\_\+\+M\+O\+D\+E, const double epsilon=0, const Metric\+Type metric=\+Metric\+Type())}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::{\bf Neighbor\+Search} (
+\begin{DoxyParamCaption}
+\item[{Mat\+Type \&\&}]{reference\+Set, }
+\item[{const {\bf Neighbor\+Search\+Mode}}]{mode = {\ttfamily {\bf D\+U\+A\+L\+\_\+\+T\+R\+E\+E\+\_\+\+M\+O\+DE}}, }
+\item[{const double}]{epsilon = {\ttfamily 0}, }
+\item[{const Metric\+Type}]{metric = {\ttfamily MetricType()}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1NeighborSearch_a352315dc48e3cb5c8fc8ef8b0baec4b9}
+
+
+Initialize the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} object, taking ownership of the reference dataset (this is the dataset which is searched). 
+
+Optionally, perform the computation in a different mode. An initialized distance metric can be given, for cases where the metric has internal data (i.\+e. the distance\+::\+Mahalanobis\+Distance class).
+
+This method will not copy the data matrix, but will take ownership of it, and depending on the type of tree used, may rearrange the points. If you would rather a copy be made, consider using the constructor that takes a const reference to the data instead.
+
+
+\begin{DoxyParams}{Parameters}
+{\em reference\+Set} & Set of reference points. \\
+\hline
+{\em mode} & Neighbor search mode. \\
+\hline
+{\em epsilon} & Relative approximate error (non-\/negative). \\
+\hline
+{\em metric} & An optional instance of the Metric\+Type class. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!Neighbor\+Search@{Neighbor\+Search}}
+\index{Neighbor\+Search@{Neighbor\+Search}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{Neighbor\+Search(const Tree \&reference\+Tree, const Neighbor\+Search\+Mode mode=\+D\+U\+A\+L\+\_\+\+T\+R\+E\+E\+\_\+\+M\+O\+D\+E, const double epsilon=0, const Metric\+Type metric=\+Metric\+Type())}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::{\bf Neighbor\+Search} (
+\begin{DoxyParamCaption}
+\item[{const {\bf Tree} \&}]{reference\+Tree, }
+\item[{const {\bf Neighbor\+Search\+Mode}}]{mode = {\ttfamily {\bf D\+U\+A\+L\+\_\+\+T\+R\+E\+E\+\_\+\+M\+O\+DE}}, }
+\item[{const double}]{epsilon = {\ttfamily 0}, }
+\item[{const Metric\+Type}]{metric = {\ttfamily MetricType()}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1NeighborSearch_af94774708c31c2b9c3f86135557224ce}
+
+
+Initialize the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} object with a copy of the given pre-\/constructed reference tree (this is the tree built on the points that will be searched). 
+
+Optionally, choose to use single-\/tree mode. Naive mode is not available as an option for this constructor. Additionally, an instantiated distance metric can be given, for cases where the distance metric holds data.
+
+This method will copy the given tree. You can avoid this copy by using the construct that takes a rvalue reference to the tree.
+
+\begin{DoxyNote}{Note}
+Mapping the points of the matrix back to their original indices is not done when this constructor is used, so if the tree type you are using maps points (like Binary\+Space\+Tree), then you will have to perform the re-\/mapping manually. 
+\end{DoxyNote}
+
+\begin{DoxyParams}{Parameters}
+{\em reference\+Tree} & Pre-\/built tree for reference points. \\
+\hline
+{\em mode} & Neighbor search mode. \\
+\hline
+{\em epsilon} & Relative approximate error (non-\/negative). \\
+\hline
+{\em metric} & Instantiated distance metric. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!Neighbor\+Search@{Neighbor\+Search}}
+\index{Neighbor\+Search@{Neighbor\+Search}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{Neighbor\+Search(\+Tree \&\&reference\+Tree, const Neighbor\+Search\+Mode mode=\+D\+U\+A\+L\+\_\+\+T\+R\+E\+E\+\_\+\+M\+O\+D\+E, const double epsilon=0, const Metric\+Type metric=\+Metric\+Type())}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::{\bf Neighbor\+Search} (
+\begin{DoxyParamCaption}
+\item[{{\bf Tree} \&\&}]{reference\+Tree, }
+\item[{const {\bf Neighbor\+Search\+Mode}}]{mode = {\ttfamily {\bf D\+U\+A\+L\+\_\+\+T\+R\+E\+E\+\_\+\+M\+O\+DE}}, }
+\item[{const double}]{epsilon = {\ttfamily 0}, }
+\item[{const Metric\+Type}]{metric = {\ttfamily MetricType()}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1NeighborSearch_a61596c37c527f077c651c3bf73cbb351}
+
+
+Initialize the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} object with the given pre-\/constructed reference tree (this is the tree built on the points that will be searched). 
+
+Optionally, choose to use single-\/tree mode. Naive mode is not available as an option for this constructor. Additionally, an instantiated distance metric can be given, for cases where the distance metric holds data.
+
+This method will take ownership of the given tree. There is no copying of the data matrices (because tree-\/building is not necessary), so this is the constructor to use when copies absolutely must be avoided.
+
+\begin{DoxyNote}{Note}
+Mapping the points of the matrix back to their original indices is not done when this constructor is used, so if the tree type you are using maps points (like Binary\+Space\+Tree), then you will have to perform the re-\/mapping manually. 
+\end{DoxyNote}
+
+\begin{DoxyParams}{Parameters}
+{\em reference\+Tree} & Pre-\/built tree for reference points. \\
+\hline
+{\em mode} & Neighbor search mode. \\
+\hline
+{\em epsilon} & Relative approximate error (non-\/negative). \\
+\hline
+{\em metric} & Instantiated distance metric. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!Neighbor\+Search@{Neighbor\+Search}}
+\index{Neighbor\+Search@{Neighbor\+Search}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{Neighbor\+Search(const Neighbor\+Search\+Mode mode=\+D\+U\+A\+L\+\_\+\+T\+R\+E\+E\+\_\+\+M\+O\+D\+E, const double epsilon=0, const Metric\+Type metric=\+Metric\+Type())}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::{\bf Neighbor\+Search} (
+\begin{DoxyParamCaption}
+\item[{const {\bf Neighbor\+Search\+Mode}}]{mode = {\ttfamily {\bf D\+U\+A\+L\+\_\+\+T\+R\+E\+E\+\_\+\+M\+O\+DE}}, }
+\item[{const double}]{epsilon = {\ttfamily 0}, }
+\item[{const Metric\+Type}]{metric = {\ttfamily MetricType()}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1NeighborSearch_af6c4a4e7f3f3f891d399eead8a1263f8}
+
+
+Create a \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} object without any reference data. 
+
+If \doxyref{Search()}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch_aa38e2a58f4d4d93e43ffa5c26e5ac298} is called before a reference set is set with \doxyref{Train()}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch_afaef875683c28b8ef8089469757e819f}, an exception will be thrown.
+
+
+\begin{DoxyParams}{Parameters}
+{\em mode} & Neighbor search mode. \\
+\hline
+{\em epsilon} & Relative approximate error (non-\/negative). \\
+\hline
+{\em metric} & Instantiated metric. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!Neighbor\+Search@{Neighbor\+Search}}
+\index{Neighbor\+Search@{Neighbor\+Search}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{Neighbor\+Search(const Neighbor\+Search \&other)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::{\bf Neighbor\+Search} (
+\begin{DoxyParamCaption}
+\item[{const {\bf Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$ \&}]{other}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1NeighborSearch_a2bd4412701f6201597a721463cddf6d7}
+
+
+Construct the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} object by copying the given \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} object to copy. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!Neighbor\+Search@{Neighbor\+Search}}
+\index{Neighbor\+Search@{Neighbor\+Search}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{Neighbor\+Search(\+Neighbor\+Search \&\&other)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::{\bf Neighbor\+Search} (
+\begin{DoxyParamCaption}
+\item[{{\bf Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$ \&\&}]{other}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1NeighborSearch_addaead9b2fb976b21e64d24f4258a2be}
+
+
+Construct the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} object by taking ownership of the given \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} object to take ownership of. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!````~Neighbor\+Search@{$\sim$\+Neighbor\+Search}}
+\index{````~Neighbor\+Search@{$\sim$\+Neighbor\+Search}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{$\sim$\+Neighbor\+Search()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::$\sim${\bf Neighbor\+Search} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1NeighborSearch_a30023a0e353a6a304f18b3aed1f30a55}
+
+
+Delete the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} object. 
+
+The tree is the only member we are responsible for deleting. The others will take care of themselves. 
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!Base\+Cases@{Base\+Cases}}
+\index{Base\+Cases@{Base\+Cases}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{Base\+Cases() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ size\+\_\+t {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::Base\+Cases (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1neighbor_1_1NeighborSearch_a33b2d3c5e13b408fec3341e209504cc8}
+
+
+Return the total number of base case evaluations performed during the last search. 
+
+
+
+Definition at line 380 of file neighbor\+\_\+search.\+hpp.
+
+
+
+References mlpack\+::neighbor\+::\+Neighbor\+Search$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::base\+Cases.
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!Effective\+Error@{Effective\+Error}}
+\index{Effective\+Error@{Effective\+Error}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{Effective\+Error(arma\+::mat \&found\+Distances, arma\+::mat \&real\+Distances)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ static double {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::Effective\+Error (
+\begin{DoxyParamCaption}
+\item[{arma\+::mat \&}]{found\+Distances, }
+\item[{arma\+::mat \&}]{real\+Distances}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1neighbor_1_1NeighborSearch_aaf5280eb5e6feaa304dd7bf77badef73}
+
+
+Calculate the average relative error (effective error) between the distances calculated and the true distances provided. 
+
+The input matrices must have the same size.
+
+Cases where the true distance is zero (the same point) or the calculated distance is Sort\+Policy\+::\+Worst\+Distance() (didn\textquotesingle{}t find enough points) will be ignored.
+
+
+\begin{DoxyParams}{Parameters}
+{\em found\+Distances} & Matrix storing lists of calculated distances for each query point. \\
+\hline
+{\em real\+Distances} & Matrix storing lists of true best distances for each query point. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Average relative error. 
+\end{DoxyReturn}
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!Epsilon@{Epsilon}}
+\index{Epsilon@{Epsilon}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{Epsilon() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ double {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::Epsilon (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1neighbor_1_1NeighborSearch_a64caddda792ac15e85bfc1c1a1995163}
+
+
+Access the relative error to be considered in approximate search. 
+
+
+
+Definition at line 391 of file neighbor\+\_\+search.\+hpp.
+
+
+
+References mlpack\+::neighbor\+::\+Neighbor\+Search$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::epsilon.
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!Epsilon@{Epsilon}}
+\index{Epsilon@{Epsilon}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{Epsilon()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ double\& {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::Epsilon (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1neighbor_1_1NeighborSearch_ae56b2db591a2b76ab27dbc0227d1bfbd}
+
+
+Modify the relative error to be considered in approximate search. 
+
+
+
+Definition at line 393 of file neighbor\+\_\+search.\+hpp.
+
+
+
+References mlpack\+::neighbor\+::\+Neighbor\+Search$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::epsilon.
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!operator=@{operator=}}
+\index{operator=@{operator=}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{operator=(const Neighbor\+Search \&other)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ {\bf Neighbor\+Search}\& {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::operator= (
+\begin{DoxyParamCaption}
+\item[{const {\bf Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$ \&}]{other}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1NeighborSearch_aaee347e7b81cd6b3a8d67c81997f0a6b}
+
+
+Copy the given \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} object to copy. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!operator=@{operator=}}
+\index{operator=@{operator=}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{operator=(\+Neighbor\+Search \&\&other)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ {\bf Neighbor\+Search}\& {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::operator= (
+\begin{DoxyParamCaption}
+\item[{{\bf Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$ \&\&}]{other}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1NeighborSearch_a7d4c6556174107f1352501198bf3b021}
+
+
+Take ownership of the given \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} object to take ownership of. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!Recall@{Recall}}
+\index{Recall@{Recall}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{Recall(arma\+::\+Mat$<$ size\+\_\+t $>$ \&found\+Neighbors, arma\+::\+Mat$<$ size\+\_\+t $>$ \&real\+Neighbors)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ static double {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::Recall (
+\begin{DoxyParamCaption}
+\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{found\+Neighbors, }
+\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{real\+Neighbors}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1neighbor_1_1NeighborSearch_a2c91e05636e7122400313270feca1d12}
+
+
+Calculate the recall (\% of neighbors found) given the list of found neighbors and the true set of neighbors. 
+
+The recall returned will be in the range [0, 1].
+
+
+\begin{DoxyParams}{Parameters}
+{\em found\+Neighbors} & Matrix storing lists of calculated neighbors for each query point. \\
+\hline
+{\em real\+Neighbors} & Matrix storing lists of true best neighbors for each query point. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Recall. 
+\end{DoxyReturn}
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!Reference\+Set@{Reference\+Set}}
+\index{Reference\+Set@{Reference\+Set}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{Reference\+Set() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ const Mat\+Type\& {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::Reference\+Set (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1neighbor_1_1NeighborSearch_a6661389e9e9fdd662d36f347bc15945d}
+
+
+Access the reference dataset. 
+
+
+
+Definition at line 396 of file neighbor\+\_\+search.\+hpp.
+
+
+
+References mlpack\+::neighbor\+::\+Neighbor\+Search$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::reference\+Set.
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!Reference\+Tree@{Reference\+Tree}}
+\index{Reference\+Tree@{Reference\+Tree}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{Reference\+Tree() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ const {\bf Tree}\& {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::Reference\+Tree (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1neighbor_1_1NeighborSearch_a94c87b9c41801e25320f418e21872c1e}
+
+
+Access the reference tree. 
+
+
+
+Definition at line 399 of file neighbor\+\_\+search.\+hpp.
+
+
+
+References mlpack\+::neighbor\+::\+Neighbor\+Search$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::reference\+Tree.
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!Reference\+Tree@{Reference\+Tree}}
+\index{Reference\+Tree@{Reference\+Tree}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{Reference\+Tree()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ {\bf Tree}\& {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::Reference\+Tree (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1neighbor_1_1NeighborSearch_aea8c3a20b9051e7f21b88bd7005317a3}
+
+
+Modify the reference tree. 
+
+
+
+Definition at line 401 of file neighbor\+\_\+search.\+hpp.
+
+
+
+References mlpack\+::neighbor\+::\+Neighbor\+Search$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::reference\+Tree, and mlpack\+::neighbor\+::\+Neighbor\+Search$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::\+Serialize().
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!Scores@{Scores}}
+\index{Scores@{Scores}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{Scores() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ size\+\_\+t {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::Scores (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1neighbor_1_1NeighborSearch_a0e18ff5e39676f0128916b72859d9f3f}
+
+
+Return the number of node combination scores during the last search. 
+
+
+
+Definition at line 383 of file neighbor\+\_\+search.\+hpp.
+
+
+
+References mlpack\+::neighbor\+::\+Neighbor\+Search$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::scores.
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!Search@{Search}}
+\index{Search@{Search}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{Search(const Mat\+Type \&query\+Set, const size\+\_\+t k, arma\+::\+Mat$<$ size\+\_\+t $>$ \&neighbors, arma\+::mat \&distances)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ void {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::Search (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{query\+Set, }
+\item[{const size\+\_\+t}]{k, }
+\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{neighbors, }
+\item[{arma\+::mat \&}]{distances}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1NeighborSearch_aa38e2a58f4d4d93e43ffa5c26e5ac298}
+
+
+For each point in the query set, compute the nearest neighbors and store the output in the given matrices. 
+
+The matrices will be set to the size of n columns by k rows, where n is the number of points in the query dataset and k is the number of neighbors being searched for.
+
+If query\+Set contains only a few query points, the extra cost of building a tree on the points for dual-\/tree search may not be warranted, and it may be worthwhile to set single\+Mode = false (either in the constructor or with Single\+Mode()).
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Set} & Set of query points (can be just one point). \\
+\hline
+{\em k} & Number of neighbors to search for. \\
+\hline
+{\em neighbors} & Matrix storing lists of neighbors for each query point. \\
+\hline
+{\em distances} & Matrix storing distances of neighbors for each query point. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!Search@{Search}}
+\index{Search@{Search}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{Search(\+Tree \&query\+Tree, const size\+\_\+t k, arma\+::\+Mat$<$ size\+\_\+t $>$ \&neighbors, arma\+::mat \&distances, bool same\+Set=false)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ void {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::Search (
+\begin{DoxyParamCaption}
+\item[{{\bf Tree} \&}]{query\+Tree, }
+\item[{const size\+\_\+t}]{k, }
+\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{neighbors, }
+\item[{arma\+::mat \&}]{distances, }
+\item[{bool}]{same\+Set = {\ttfamily false}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1NeighborSearch_aab8c55603878488d69374f8475f11ce8}
+
+
+Given a pre-\/built query tree, search for the nearest neighbors of each point in the query tree, storing the output in the given matrices. 
+
+The matrices will be set to the size of n columns by k rows, where n is the number of points in the query dataset and k is the number of neighbors being searched for.
+
+Note that if you are calling \doxyref{Search()}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch_aa38e2a58f4d4d93e43ffa5c26e5ac298} multiple times with a single query tree, you need to reset the bounds in the statistic of each query node, otherwise the result may be wrong! You can do this by calling Tree\+Type\+::\+Stat()\+::\+Reset() on each node in the query tree.
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Tree} & Tree built on query points. \\
+\hline
+{\em k} & Number of neighbors to search for. \\
+\hline
+{\em neighbors} & Matrix storing lists of neighbors for each query point. \\
+\hline
+{\em distances} & Matrix storing distances of neighbors for each query point. \\
+\hline
+{\em same\+Set} & Denotes whether or not the reference and query sets are the same. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!Search@{Search}}
+\index{Search@{Search}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{Search(const size\+\_\+t k, arma\+::\+Mat$<$ size\+\_\+t $>$ \&neighbors, arma\+::mat \&distances)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ void {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::Search (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{k, }
+\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{neighbors, }
+\item[{arma\+::mat \&}]{distances}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1NeighborSearch_a1ee72f753ad23efc31d16140b31481c1}
+
+
+Search for the nearest neighbors of every point in the reference set. 
+
+This is basically equivalent to calling any other overload of \doxyref{Search()}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch_aa38e2a58f4d4d93e43ffa5c26e5ac298} with the reference set as the query set; so, this lets you do all-\/k-\/nearest-\/neighbors search. The results are stored in the given matrices. The matrices will be set to the size of n columns by k rows, where n is the number of points in the query dataset and k is the number of neighbors being searched for.
+
+
+\begin{DoxyParams}{Parameters}
+{\em k} & Number of neighbors to search for. \\
+\hline
+{\em neighbors} & Matrix storing lists of neighbors for each query point. \\
+\hline
+{\em distances} & Matrix storing distances of neighbors for each query point. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!Search\+Mode@{Search\+Mode}}
+\index{Search\+Mode@{Search\+Mode}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{Search\+Mode() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ {\bf Neighbor\+Search\+Mode} {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::Search\+Mode (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1neighbor_1_1NeighborSearch_a60968ce78a1e39b6d145f592ea309daf}
+
+
+Access the search mode. 
+
+
+
+Definition at line 386 of file neighbor\+\_\+search.\+hpp.
+
+
+
+References mlpack\+::neighbor\+::\+Neighbor\+Search$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::search\+Mode.
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!Search\+Mode@{Search\+Mode}}
+\index{Search\+Mode@{Search\+Mode}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{Search\+Mode()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ {\bf Neighbor\+Search\+Mode}\& {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::Search\+Mode (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1neighbor_1_1NeighborSearch_a5be895660a28c5accdea8cf688b5e020}
+
+
+Modify the search mode. 
+
+
+
+Definition at line 388 of file neighbor\+\_\+search.\+hpp.
+
+
+
+References mlpack\+::neighbor\+::\+Neighbor\+Search$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::search\+Mode.
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{Serialize(\+Archive \&ar, const unsigned int)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ template$<$typename Archive $>$ void {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const unsigned}]{int}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1NeighborSearch_a86dcdd264303430172ec30ca4d313c53}
+
+
+Serialize the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} model. 
+
+
+
+Referenced by mlpack\+::neighbor\+::\+Neighbor\+Search$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::\+Reference\+Tree().
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{Train(const Mat\+Type \&reference\+Set)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ void {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::Train (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{reference\+Set}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1NeighborSearch_afaef875683c28b8ef8089469757e819f}
+
+
+Set the reference set to a new reference set, and build a tree if necessary. 
+
+This method is called \textquotesingle{}\doxyref{Train()}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch_afaef875683c28b8ef8089469757e819f}\textquotesingle{} in order to match the rest of the mlpack abstractions, even though calling this \char`\"{}training\char`\"{} is maybe a bit of a stretch.
+
+
+\begin{DoxyParams}{Parameters}
+{\em reference\+Set} & New set of reference data. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{Train(\+Mat\+Type \&\&reference\+Set)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ void {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::Train (
+\begin{DoxyParamCaption}
+\item[{Mat\+Type \&\&}]{reference\+Set}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1NeighborSearch_a574193c2e26ca71af167d7c932bf51ef}
+
+
+Set the reference set to a new reference set, taking ownership of the set, and build a tree if necessary. 
+
+This method is called \textquotesingle{}\doxyref{Train()}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch_afaef875683c28b8ef8089469757e819f}\textquotesingle{} in order to match the rest of the mlpack abstractions, even though calling this \char`\"{}training\char`\"{} is maybe a bit of a stretch.
+
+
+\begin{DoxyParams}{Parameters}
+{\em reference\+Set} & New set of reference data. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{Train(const Tree \&reference\+Tree)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ void {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::Train (
+\begin{DoxyParamCaption}
+\item[{const {\bf Tree} \&}]{reference\+Tree}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1NeighborSearch_a25f82c7dd2450941d8dc75ab1113a9af}
+
+
+Set the reference tree as a copy of the given reference tree. 
+
+This method will copy the given tree. You can avoid this copy by using the \doxyref{Train()}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch_afaef875683c28b8ef8089469757e819f} method that takes a rvalue reference to the tree.
+
+
+\begin{DoxyParams}{Parameters}
+{\em reference\+Tree} & Pre-\/built tree for reference points. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{Train(\+Tree \&\&reference\+Tree)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ void {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::Train (
+\begin{DoxyParamCaption}
+\item[{{\bf Tree} \&\&}]{reference\+Tree}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1NeighborSearch_a11324a983037f6e84526dfe709af5784}
+
+
+Set the reference tree to a new reference tree. 
+
+This method will take ownership of the given tree.
+
+
+\begin{DoxyParams}{Parameters}
+{\em reference\+Tree} & Pre-\/built tree for reference points. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!base\+Cases@{base\+Cases}}
+\index{base\+Cases@{base\+Cases}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{base\+Cases}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ size\+\_\+t {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::base\+Cases\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1neighbor_1_1NeighborSearch_aee06866cee4bae43f4aaca591c5eb55c}
+
+
+The total number of base cases. 
+
+
+
+Definition at line 429 of file neighbor\+\_\+search.\+hpp.
+
+
+
+Referenced by mlpack\+::neighbor\+::\+Neighbor\+Search$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::\+Base\+Cases().
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!epsilon@{epsilon}}
+\index{epsilon@{epsilon}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{epsilon}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ double {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::epsilon\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1neighbor_1_1NeighborSearch_a02d14564a86b37365a5aa6ff67d9f8f2}
+
+
+Indicates the relative error to be considered in approximate search. 
+
+
+
+Definition at line 423 of file neighbor\+\_\+search.\+hpp.
+
+
+
+Referenced by mlpack\+::neighbor\+::\+Neighbor\+Search$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::\+Epsilon().
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!metric@{metric}}
+\index{metric@{metric}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{metric}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ Metric\+Type {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::metric\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1neighbor_1_1NeighborSearch_aa68d8dd825fe1e2afe6ae76a3451f44a}
+
+
+Instantiation of metric. 
+
+
+
+Definition at line 426 of file neighbor\+\_\+search.\+hpp.
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!old\+From\+New\+References@{old\+From\+New\+References}}
+\index{old\+From\+New\+References@{old\+From\+New\+References}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{old\+From\+New\+References}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ std\+::vector$<$size\+\_\+t$>$ {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::old\+From\+New\+References\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1neighbor_1_1NeighborSearch_a2350329e79ee826a1a0bf5f998a69a16}
+
+
+Permutations of reference points during tree building. 
+
+
+
+Definition at line 409 of file neighbor\+\_\+search.\+hpp.
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!reference\+Set@{reference\+Set}}
+\index{reference\+Set@{reference\+Set}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{reference\+Set}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ const Mat\+Type$\ast$ {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::reference\+Set\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1neighbor_1_1NeighborSearch_ae188a34bb4003b946f65319d4d353402}
+
+
+Reference dataset. In some situations we may be the owner of this. 
+
+
+
+Definition at line 413 of file neighbor\+\_\+search.\+hpp.
+
+
+
+Referenced by mlpack\+::neighbor\+::\+Neighbor\+Search$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::\+Reference\+Set().
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!reference\+Tree@{reference\+Tree}}
+\index{reference\+Tree@{reference\+Tree}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{reference\+Tree}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ {\bf Tree}$\ast$ {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::reference\+Tree\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1neighbor_1_1NeighborSearch_afa89993a2ba3ccec0068abdf0c992e62}
+
+
+Pointer to the root of the reference tree. 
+
+
+
+Definition at line 411 of file neighbor\+\_\+search.\+hpp.
+
+
+
+Referenced by mlpack\+::neighbor\+::\+Neighbor\+Search$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::\+Reference\+Tree().
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!scores@{scores}}
+\index{scores@{scores}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{scores}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ size\+\_\+t {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::scores\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1neighbor_1_1NeighborSearch_adcd3070fb70f2f35affe697009575796}
+
+
+The total number of scores (applicable for non-\/naive search). 
+
+
+
+Definition at line 431 of file neighbor\+\_\+search.\+hpp.
+
+
+
+Referenced by mlpack\+::neighbor\+::\+Neighbor\+Search$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::\+Scores().
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!search\+Mode@{search\+Mode}}
+\index{search\+Mode@{search\+Mode}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{search\+Mode}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ {\bf Neighbor\+Search\+Mode} {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::search\+Mode\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1neighbor_1_1NeighborSearch_ac0023bf70f4812bbecbea766f7fbb8ae}
+
+
+Indicates the neighbor search mode. 
+
+
+
+Definition at line 421 of file neighbor\+\_\+search.\+hpp.
+
+
+
+Referenced by mlpack\+::neighbor\+::\+Neighbor\+Search$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::\+Search\+Mode().
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!set\+Owner@{set\+Owner}}
+\index{set\+Owner@{set\+Owner}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{set\+Owner}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ bool {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::set\+Owner\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1neighbor_1_1NeighborSearch_a91b455c873acbc3b47c6413268a8e39a}
+
+
+If true, we own the reference set. 
+
+
+
+Definition at line 418 of file neighbor\+\_\+search.\+hpp.
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!tree\+Needs\+Reset@{tree\+Needs\+Reset}}
+\index{tree\+Needs\+Reset@{tree\+Needs\+Reset}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{tree\+Needs\+Reset}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ bool {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::tree\+Needs\+Reset\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1neighbor_1_1NeighborSearch_add79c0279ba6d78ed04c59a9109774d4}
+
+
+If this is true, the reference tree bounds need to be reset on a call to \doxyref{Search()}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch_aa38e2a58f4d4d93e43ffa5c26e5ac298} without a query set. 
+
+
+
+Definition at line 435 of file neighbor\+\_\+search.\+hpp.
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}!tree\+Owner@{tree\+Owner}}
+\index{tree\+Owner@{tree\+Owner}!mlpack\+::neighbor\+::\+Neighbor\+Search@{mlpack\+::neighbor\+::\+Neighbor\+Search}}
+\subsubsection[{tree\+Owner}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy = Nearest\+Neighbor\+Sort, typename Metric\+Type = mlpack\+::metric\+::\+Euclidean\+Distance, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$\+Metric\+Type,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      Mat\+Type$>$\+::template Single\+Tree\+Traverser$>$ bool {\bf mlpack\+::neighbor\+::\+Neighbor\+Search}$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::tree\+Owner\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1neighbor_1_1NeighborSearch_a03ab4c317b79619050ba1936a4b57508}
+
+
+If true, this object created the trees and is responsible for them. 
+
+
+
+Definition at line 416 of file neighbor\+\_\+search.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/neighbor\+\_\+search/{\bf neighbor\+\_\+search.\+hpp}\end{DoxyCompactItemize}

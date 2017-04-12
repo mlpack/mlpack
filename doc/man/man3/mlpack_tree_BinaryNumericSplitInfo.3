@@ -1,0 +1,79 @@
+.TH "mlpack::tree::BinaryNumericSplitInfo< ObservationType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::tree::BinaryNumericSplitInfo< ObservationType > \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBBinaryNumericSplitInfo\fP ()"
+.br
+.ti -1c
+.RI "\fBBinaryNumericSplitInfo\fP (const ObservationType &\fBsplitPoint\fP)"
+.br
+.ti -1c
+.RI "template<typename eT > size_t \fBCalculateDirection\fP (const eT &value) const "
+.br
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int)"
+.br
+.RI "\fISerialize the split (save/load the split points)\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "ObservationType \fBsplitPoint\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename ObservationType = double>
+.br
+class mlpack::tree::BinaryNumericSplitInfo< ObservationType >"
+
+.PP
+Definition at line 22 of file binary_numeric_split_info\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename ObservationType  = double> \fBmlpack::tree::BinaryNumericSplitInfo\fP< ObservationType >::\fBBinaryNumericSplitInfo\fP ()\fC [inline]\fP"
+
+.PP
+Definition at line 25 of file binary_numeric_split_info\&.hpp\&.
+.SS "template<typename ObservationType  = double> \fBmlpack::tree::BinaryNumericSplitInfo\fP< ObservationType >::\fBBinaryNumericSplitInfo\fP (const ObservationType & splitPoint)\fC [inline]\fP"
+
+.PP
+Definition at line 26 of file binary_numeric_split_info\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename ObservationType  = double> template<typename eT > size_t \fBmlpack::tree::BinaryNumericSplitInfo\fP< ObservationType >::CalculateDirection (const eT & value) const\fC [inline]\fP"
+
+.PP
+Definition at line 30 of file binary_numeric_split_info\&.hpp\&.
+.PP
+References mlpack::tree::BinaryNumericSplitInfo< ObservationType >::splitPoint\&.
+.SS "template<typename ObservationType  = double> template<typename Archive > void \fBmlpack::tree::BinaryNumericSplitInfo\fP< ObservationType >::Serialize (Archive & ar, const unsigned int)\fC [inline]\fP"
+
+.PP
+Serialize the split (save/load the split points)\&. 
+.PP
+Definition at line 37 of file binary_numeric_split_info\&.hpp\&.
+.PP
+References mlpack::data::CreateNVP(), and mlpack::tree::BinaryNumericSplitInfo< ObservationType >::splitPoint\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename ObservationType  = double> ObservationType \fBmlpack::tree::BinaryNumericSplitInfo\fP< ObservationType >::splitPoint\fC [private]\fP"
+
+.PP
+Definition at line 43 of file binary_numeric_split_info\&.hpp\&.
+.PP
+Referenced by mlpack::tree::BinaryNumericSplitInfo< ObservationType >::CalculateDirection(), and mlpack::tree::BinaryNumericSplitInfo< ObservationType >::Serialize()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

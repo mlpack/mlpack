@@ -1,0 +1,130 @@
+.TH "mlpack::ann::KathirvalavakumarSubavathiInitialization" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::ann::KathirvalavakumarSubavathiInitialization \- This class is used to initialize the weight matrix with the method proposed by T\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename eT > \fBKathirvalavakumarSubavathiInitialization\fP (const arma::Mat< eT > &data, const double \fBs\fP)"
+.br
+.RI "\fIInitialize the random initialization rule with the given values\&. \fP"
+.ti -1c
+.RI "template<typename eT > void \fBInitialize\fP (arma::Mat< eT > &W, const size_t rows, const size_t cols)"
+.br
+.RI "\fIInitialize the elements of the specified weight matrix with the Kathirvalavakumar-Subavathi method\&. \fP"
+.ti -1c
+.RI "template<typename eT > void \fBInitialize\fP (arma::Cube< eT > &W, const size_t rows, const size_t cols, const size_t slices)"
+.br
+.RI "\fIInitialize the elements of the specified weight 3rd order tensor with the Kathirvalavakumar-Subavathi method\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "arma::rowvec \fBdataSum\fP"
+.br
+.RI "\fIParameter that defines the sum of elements in each column\&. \fP"
+.ti -1c
+.RI "const double \fBs\fP"
+.br
+.RI "\fIParameter that defines the active region\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+This class is used to initialize the weight matrix with the method proposed by T\&. 
+
+Kathirvalavakumar and S\&. Subavathi\&. The method is based on sensitivity analysis using using cauchy’s inequality\&. The method is defined by
+.PP
+\begin{eqnarray*} \overline{s} &=& f^{-1}(\overline{t}) \\ \Theta^{1}_{p} &\le& \overline{s} \sqrt{\frac{3}{I \sum_{i = 1}^{I} (x_{ip}^2)}} \\ \Theta^1 &=& min(\Theta_{p}^{1}); p=1,2,..,P \\ -\Theta^{1} \le w_{i}^{1} &\le& \Theta^{1} \end{eqnarray*}.PP
+where I is the number of inputs including the bias, p refers the pattern considered in training, f is the transfer function and \\={s} is the active region in which the derivative of the activation function is greater than 4% of the maximum derivatives\&. 
+.PP
+Definition at line 56 of file kathirvalavakumar_subavathi_init\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename eT > mlpack::ann::KathirvalavakumarSubavathiInitialization::KathirvalavakumarSubavathiInitialization (const arma::Mat< eT > & data, const double s)\fC [inline]\fP"
+
+.PP
+Initialize the random initialization rule with the given values\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP The input patterns\&. 
+.br
+\fIs\fP Parameter that defines the active region\&. 
+.RE
+.PP
+
+.PP
+Definition at line 66 of file kathirvalavakumar_subavathi_init\&.hpp\&.
+.PP
+References dataSum\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename eT > void mlpack::ann::KathirvalavakumarSubavathiInitialization::Initialize (arma::Mat< eT > & W, const size_t rows, const size_t cols)\fC [inline]\fP"
+
+.PP
+Initialize the elements of the specified weight matrix with the Kathirvalavakumar-Subavathi method\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIW\fP Weight matrix to initialize\&. 
+.br
+\fIrows\fP Number of rows\&. 
+.br
+\fIcols\fP Number of columns\&. 
+.RE
+.PP
+
+.PP
+Definition at line 81 of file kathirvalavakumar_subavathi_init\&.hpp\&.
+.PP
+References dataSum, mlpack::ann::RandomInitialization::Initialize(), and s\&.
+.PP
+Referenced by Initialize()\&.
+.SS "template<typename eT > void mlpack::ann::KathirvalavakumarSubavathiInitialization::Initialize (arma::Cube< eT > & W, const size_t rows, const size_t cols, const size_t slices)\fC [inline]\fP"
+
+.PP
+Initialize the elements of the specified weight 3rd order tensor with the Kathirvalavakumar-Subavathi method\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIW\fP Weight matrix to initialize\&. 
+.br
+\fIrows\fP Number of rows\&. 
+.br
+\fIcols\fP Number of columns\&. 
+.RE
+.PP
+
+.PP
+Definition at line 98 of file kathirvalavakumar_subavathi_init\&.hpp\&.
+.PP
+References Initialize()\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "arma::rowvec mlpack::ann::KathirvalavakumarSubavathiInitialization::dataSum\fC [private]\fP"
+
+.PP
+Parameter that defines the sum of elements in each column\&. 
+.PP
+Definition at line 111 of file kathirvalavakumar_subavathi_init\&.hpp\&.
+.PP
+Referenced by Initialize(), and KathirvalavakumarSubavathiInitialization()\&.
+.SS "const double mlpack::ann::KathirvalavakumarSubavathiInitialization::s\fC [private]\fP"
+
+.PP
+Parameter that defines the active region\&. 
+.PP
+Definition at line 114 of file kathirvalavakumar_subavathi_init\&.hpp\&.
+.PP
+Referenced by Initialize()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

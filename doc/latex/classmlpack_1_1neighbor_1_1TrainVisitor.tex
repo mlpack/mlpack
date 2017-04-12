@@ -1,0 +1,218 @@
+\section{mlpack\+:\+:neighbor\+:\+:Train\+Visitor$<$ Sort\+Policy $>$ Class Template Reference}
+\label{classmlpack_1_1neighbor_1_1TrainVisitor}\index{mlpack\+::neighbor\+::\+Train\+Visitor$<$ Sort\+Policy $>$@{mlpack\+::neighbor\+::\+Train\+Visitor$<$ Sort\+Policy $>$}}
+
+
+\doxyref{Train\+Visitor}{p.}{classmlpack_1_1neighbor_1_1TrainVisitor} sets the reference set to a new reference set on the given N\+S\+Type.  
+
+
+
+
+Inheritance diagram for mlpack\+:\+:neighbor\+:\+:Train\+Visitor$<$ Sort\+Policy $>$\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=190pt]{classmlpack_1_1neighbor_1_1TrainVisitor__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type$>$ }\\using {\bf N\+S\+TypeT} = {\bf N\+S\+Type}$<$ Sort\+Policy, Tree\+Type $>$
+\begin{DoxyCompactList}\small\item\em Alias template necessary for visual c++ compiler. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Train\+Visitor} (arma\+::mat \&\&{\bf reference\+Set}, const size\+\_\+t {\bf leaf\+Size}, const double {\bf tau}, const double {\bf rho})
+\begin{DoxyCompactList}\small\item\em Construct the \doxyref{Train\+Visitor}{p.}{classmlpack_1_1neighbor_1_1TrainVisitor} object with the given reference set, leaf\+Size for Binary\+Space\+Trees, and tau and rho for spill trees. \end{DoxyCompactList}\item 
+{\footnotesize template$<$template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type$>$ }\\void {\bf operator()} ({\bf N\+S\+TypeT}$<$ Tree\+Type $>$ $\ast$ns) const 
+\begin{DoxyCompactList}\small\item\em Default Train on the given N\+S\+Type instance. \end{DoxyCompactList}\item 
+void {\bf operator()} ({\bf N\+S\+TypeT}$<$ {\bf tree\+::\+K\+D\+Tree} $>$ $\ast$ns) const 
+\begin{DoxyCompactList}\small\item\em Train on the given N\+S\+Type specialized for K\+D\+Trees. \end{DoxyCompactList}\item 
+void {\bf operator()} ({\bf N\+S\+TypeT}$<$ {\bf tree\+::\+Ball\+Tree} $>$ $\ast$ns) const 
+\begin{DoxyCompactList}\small\item\em Train on the given N\+S\+Type specialized for Ball\+Trees. \end{DoxyCompactList}\item 
+void {\bf operator()} ({\bf Spill\+K\+NN} $\ast$ns) const 
+\begin{DoxyCompactList}\small\item\em Train specialized for S\+P\+Trees. \end{DoxyCompactList}\item 
+void {\bf operator()} ({\bf N\+S\+TypeT}$<$ {\bf tree\+::\+Octree} $>$ $\ast$ns) const 
+\begin{DoxyCompactList}\small\item\em Train specialized for octrees. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename N\+S\+Type $>$ }\\void {\bf Train\+Leaf} ({\bf N\+S\+Type} $\ast$ns) const 
+\begin{DoxyCompactList}\small\item\em Train on the given N\+S\+Type considering the leaf\+Size. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+size\+\_\+t {\bf leaf\+Size}
+\begin{DoxyCompactList}\small\item\em The leaf size, used only by Binary\+Space\+Tree. \end{DoxyCompactList}\item 
+arma\+::mat \&\& {\bf reference\+Set}
+\begin{DoxyCompactList}\small\item\em The reference set to use for training. \end{DoxyCompactList}\item 
+const double {\bf rho}
+\begin{DoxyCompactList}\small\item\em Balance threshold (for spill trees). \end{DoxyCompactList}\item 
+const double {\bf tau}
+\begin{DoxyCompactList}\small\item\em Overlapping size (for spill trees). \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Sort\+Policy$>$\\*
+class mlpack\+::neighbor\+::\+Train\+Visitor$<$ Sort\+Policy $>$}
+
+\doxyref{Train\+Visitor}{p.}{classmlpack_1_1neighbor_1_1TrainVisitor} sets the reference set to a new reference set on the given N\+S\+Type. 
+
+We use template specialization to differentiate those tree types that accept leaf\+Size as a parameter. In these cases, a reference tree with proper leaf\+Size is built from the reference\+Set. 
+
+Definition at line 35 of file neighbor\+\_\+search.\+hpp.
+
+
+
+\subsection{Member Typedef Documentation}
+\index{mlpack\+::neighbor\+::\+Train\+Visitor@{mlpack\+::neighbor\+::\+Train\+Visitor}!N\+S\+TypeT@{N\+S\+TypeT}}
+\index{N\+S\+TypeT@{N\+S\+TypeT}!mlpack\+::neighbor\+::\+Train\+Visitor@{mlpack\+::neighbor\+::\+Train\+Visitor}}
+\subsubsection[{N\+S\+TypeT}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ template$<$template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type$>$ using {\bf mlpack\+::neighbor\+::\+Train\+Visitor}$<$ Sort\+Policy $>$\+::{\bf N\+S\+TypeT} =  {\bf N\+S\+Type}$<$Sort\+Policy, Tree\+Type$>$}\label{classmlpack_1_1neighbor_1_1TrainVisitor_a350245ce87a7f9bf6b0ea8a8984325aa}
+
+
+Alias template necessary for visual c++ compiler. 
+
+
+
+Definition at line 183 of file ns\+\_\+model.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::neighbor\+::\+Train\+Visitor@{mlpack\+::neighbor\+::\+Train\+Visitor}!Train\+Visitor@{Train\+Visitor}}
+\index{Train\+Visitor@{Train\+Visitor}!mlpack\+::neighbor\+::\+Train\+Visitor@{mlpack\+::neighbor\+::\+Train\+Visitor}}
+\subsubsection[{Train\+Visitor(arma\+::mat \&\&reference\+Set, const size\+\_\+t leaf\+Size, const double tau, const double rho)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ {\bf mlpack\+::neighbor\+::\+Train\+Visitor}$<$ Sort\+Policy $>$\+::{\bf Train\+Visitor} (
+\begin{DoxyParamCaption}
+\item[{arma\+::mat \&\&}]{reference\+Set, }
+\item[{const size\+\_\+t}]{leaf\+Size, }
+\item[{const double}]{tau, }
+\item[{const double}]{rho}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1TrainVisitor_a407bf9c8b98b65b8e259c6a627d68b50}
+
+
+Construct the \doxyref{Train\+Visitor}{p.}{classmlpack_1_1neighbor_1_1TrainVisitor} object with the given reference set, leaf\+Size for Binary\+Space\+Trees, and tau and rho for spill trees. 
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::neighbor\+::\+Train\+Visitor@{mlpack\+::neighbor\+::\+Train\+Visitor}!operator()@{operator()}}
+\index{operator()@{operator()}!mlpack\+::neighbor\+::\+Train\+Visitor@{mlpack\+::neighbor\+::\+Train\+Visitor}}
+\subsubsection[{operator()(\+N\+S\+Type\+T$<$ Tree\+Type $>$ $\ast$ns) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ template$<$template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type$>$ void {\bf mlpack\+::neighbor\+::\+Train\+Visitor}$<$ Sort\+Policy $>$\+::operator() (
+\begin{DoxyParamCaption}
+\item[{{\bf N\+S\+TypeT}$<$ Tree\+Type $>$ $\ast$}]{ns}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1neighbor_1_1TrainVisitor_a82b653b4b9a7193311cfde864d2329ac}
+
+
+Default Train on the given N\+S\+Type instance. 
+
+\index{mlpack\+::neighbor\+::\+Train\+Visitor@{mlpack\+::neighbor\+::\+Train\+Visitor}!operator()@{operator()}}
+\index{operator()@{operator()}!mlpack\+::neighbor\+::\+Train\+Visitor@{mlpack\+::neighbor\+::\+Train\+Visitor}}
+\subsubsection[{operator()(\+N\+S\+Type\+T$<$ tree\+::\+K\+D\+Tree $>$ $\ast$ns) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ void {\bf mlpack\+::neighbor\+::\+Train\+Visitor}$<$ Sort\+Policy $>$\+::operator() (
+\begin{DoxyParamCaption}
+\item[{{\bf N\+S\+TypeT}$<$ {\bf tree\+::\+K\+D\+Tree} $>$ $\ast$}]{ns}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1neighbor_1_1TrainVisitor_a1ce93b8e995255f66cf901b7c3bf2e3b}
+
+
+Train on the given N\+S\+Type specialized for K\+D\+Trees. 
+
+\index{mlpack\+::neighbor\+::\+Train\+Visitor@{mlpack\+::neighbor\+::\+Train\+Visitor}!operator()@{operator()}}
+\index{operator()@{operator()}!mlpack\+::neighbor\+::\+Train\+Visitor@{mlpack\+::neighbor\+::\+Train\+Visitor}}
+\subsubsection[{operator()(\+N\+S\+Type\+T$<$ tree\+::\+Ball\+Tree $>$ $\ast$ns) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ void {\bf mlpack\+::neighbor\+::\+Train\+Visitor}$<$ Sort\+Policy $>$\+::operator() (
+\begin{DoxyParamCaption}
+\item[{{\bf N\+S\+TypeT}$<$ {\bf tree\+::\+Ball\+Tree} $>$ $\ast$}]{ns}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1neighbor_1_1TrainVisitor_afd0d39efb81a1ba3df2a511f0edf1fff}
+
+
+Train on the given N\+S\+Type specialized for Ball\+Trees. 
+
+\index{mlpack\+::neighbor\+::\+Train\+Visitor@{mlpack\+::neighbor\+::\+Train\+Visitor}!operator()@{operator()}}
+\index{operator()@{operator()}!mlpack\+::neighbor\+::\+Train\+Visitor@{mlpack\+::neighbor\+::\+Train\+Visitor}}
+\subsubsection[{operator()(\+Spill\+K\+N\+N $\ast$ns) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ void {\bf mlpack\+::neighbor\+::\+Train\+Visitor}$<$ Sort\+Policy $>$\+::operator() (
+\begin{DoxyParamCaption}
+\item[{{\bf Spill\+K\+NN} $\ast$}]{ns}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1neighbor_1_1TrainVisitor_a5a3a8aad3b1ff5e7abb7d83f745e42b1}
+
+
+Train specialized for S\+P\+Trees. 
+
+\index{mlpack\+::neighbor\+::\+Train\+Visitor@{mlpack\+::neighbor\+::\+Train\+Visitor}!operator()@{operator()}}
+\index{operator()@{operator()}!mlpack\+::neighbor\+::\+Train\+Visitor@{mlpack\+::neighbor\+::\+Train\+Visitor}}
+\subsubsection[{operator()(\+N\+S\+Type\+T$<$ tree\+::\+Octree $>$ $\ast$ns) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ void {\bf mlpack\+::neighbor\+::\+Train\+Visitor}$<$ Sort\+Policy $>$\+::operator() (
+\begin{DoxyParamCaption}
+\item[{{\bf N\+S\+TypeT}$<$ {\bf tree\+::\+Octree} $>$ $\ast$}]{ns}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1neighbor_1_1TrainVisitor_af03a79ebe19e1fe493697c7a34d93717}
+
+
+Train specialized for octrees. 
+
+\index{mlpack\+::neighbor\+::\+Train\+Visitor@{mlpack\+::neighbor\+::\+Train\+Visitor}!Train\+Leaf@{Train\+Leaf}}
+\index{Train\+Leaf@{Train\+Leaf}!mlpack\+::neighbor\+::\+Train\+Visitor@{mlpack\+::neighbor\+::\+Train\+Visitor}}
+\subsubsection[{Train\+Leaf(\+N\+S\+Type $\ast$ns) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ template$<$typename N\+S\+Type $>$ void {\bf mlpack\+::neighbor\+::\+Train\+Visitor}$<$ Sort\+Policy $>$\+::Train\+Leaf (
+\begin{DoxyParamCaption}
+\item[{{\bf N\+S\+Type} $\ast$}]{ns}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1neighbor_1_1TrainVisitor_a32c488be7dafe48bc16b6c379ab69502}
+
+
+Train on the given N\+S\+Type considering the leaf\+Size. 
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::neighbor\+::\+Train\+Visitor@{mlpack\+::neighbor\+::\+Train\+Visitor}!leaf\+Size@{leaf\+Size}}
+\index{leaf\+Size@{leaf\+Size}!mlpack\+::neighbor\+::\+Train\+Visitor@{mlpack\+::neighbor\+::\+Train\+Visitor}}
+\subsubsection[{leaf\+Size}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ size\+\_\+t {\bf mlpack\+::neighbor\+::\+Train\+Visitor}$<$ Sort\+Policy $>$\+::leaf\+Size\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1neighbor_1_1TrainVisitor_a0925087f122c9c1a87f4a2c9e19c59e7}
+
+
+The leaf size, used only by Binary\+Space\+Tree. 
+
+
+
+Definition at line 168 of file ns\+\_\+model.\+hpp.
+
+\index{mlpack\+::neighbor\+::\+Train\+Visitor@{mlpack\+::neighbor\+::\+Train\+Visitor}!reference\+Set@{reference\+Set}}
+\index{reference\+Set@{reference\+Set}!mlpack\+::neighbor\+::\+Train\+Visitor@{mlpack\+::neighbor\+::\+Train\+Visitor}}
+\subsubsection[{reference\+Set}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ arma\+::mat\&\& {\bf mlpack\+::neighbor\+::\+Train\+Visitor}$<$ Sort\+Policy $>$\+::reference\+Set\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1neighbor_1_1TrainVisitor_a697ed27ce824f4f76d4e89961eeae535}
+
+
+The reference set to use for training. 
+
+
+
+Definition at line 166 of file ns\+\_\+model.\+hpp.
+
+\index{mlpack\+::neighbor\+::\+Train\+Visitor@{mlpack\+::neighbor\+::\+Train\+Visitor}!rho@{rho}}
+\index{rho@{rho}!mlpack\+::neighbor\+::\+Train\+Visitor@{mlpack\+::neighbor\+::\+Train\+Visitor}}
+\subsubsection[{rho}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ const double {\bf mlpack\+::neighbor\+::\+Train\+Visitor}$<$ Sort\+Policy $>$\+::rho\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1neighbor_1_1TrainVisitor_a16da61f6b5d113d4504a3c68b39b79cf}
+
+
+Balance threshold (for spill trees). 
+
+
+
+Definition at line 172 of file ns\+\_\+model.\+hpp.
+
+\index{mlpack\+::neighbor\+::\+Train\+Visitor@{mlpack\+::neighbor\+::\+Train\+Visitor}!tau@{tau}}
+\index{tau@{tau}!mlpack\+::neighbor\+::\+Train\+Visitor@{mlpack\+::neighbor\+::\+Train\+Visitor}}
+\subsubsection[{tau}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ const double {\bf mlpack\+::neighbor\+::\+Train\+Visitor}$<$ Sort\+Policy $>$\+::tau\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1neighbor_1_1TrainVisitor_ac1fafaeb4821e5626577f11663e5a8bd}
+
+
+Overlapping size (for spill trees). 
+
+
+
+Definition at line 170 of file ns\+\_\+model.\+hpp.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/neighbor\+\_\+search/{\bf neighbor\+\_\+search.\+hpp}\item 
+src/mlpack/methods/neighbor\+\_\+search/{\bf ns\+\_\+model.\+hpp}\end{DoxyCompactItemize}

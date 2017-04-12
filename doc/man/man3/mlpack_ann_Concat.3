@@ -1,0 +1,398 @@
+.TH "mlpack::ann::Concat< InputDataType, OutputDataType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::ann::Concat< InputDataType, OutputDataType > \- Implementation of the \fBConcat\fP class\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBConcat\fP (const bool \fBmodel\fP=true, const bool \fBsame\fP=true)"
+.br
+.RI "\fICreate the \fBConcat\fP object using the specified parameters\&. \fP"
+.ti -1c
+.RI "template<class LayerType , class\&.\&.\&. Args> void \fBAdd\fP (Args\&.\&.\&.args)"
+.br
+.ti -1c
+.RI "void \fBAdd\fP (\fBLayerTypes\fP layer)"
+.br
+.ti -1c
+.RI "template<typename eT > void \fBBackward\fP (const arma::Mat< eT > &&, arma::Mat< eT > &&gy, arma::Mat< eT > &&g)"
+.br
+.RI "\fIOrdinary feed backward pass of a neural network, using 3rd-order tensors as input, calculating the function f(x) by propagating x backwards through f\&. \fP"
+.ti -1c
+.RI "arma::mat const & \fBDelta\fP () const "
+.br
+.RI "\fIGet the delta\&.e\&. \fP"
+.ti -1c
+.RI "arma::mat & \fBDelta\fP ()"
+.br
+.RI "\fIModify the delta\&. \fP"
+.ti -1c
+.RI "template<typename eT > void \fBForward\fP (arma::Mat< eT > &&input, arma::Mat< eT > &&output)"
+.br
+.RI "\fIOrdinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. \fP"
+.ti -1c
+.RI "template<typename eT > void \fBGradient\fP (arma::Mat< eT > &&, arma::Mat< eT > &&error, arma::Mat< eT > &&)"
+.br
+.ti -1c
+.RI "arma::mat const & \fBGradient\fP () const "
+.br
+.RI "\fIGet the gradient\&. \fP"
+.ti -1c
+.RI "arma::mat & \fBGradient\fP ()"
+.br
+.RI "\fIModify the gradient\&. \fP"
+.ti -1c
+.RI "arma::mat const & \fBInputParameter\fP () const "
+.br
+.ti -1c
+.RI "arma::mat & \fBInputParameter\fP ()"
+.br
+.RI "\fIModify the input parameter\&. \fP"
+.ti -1c
+.RI "std::vector< \fBLayerTypes\fP > & \fBModel\fP ()"
+.br
+.RI "\fIReturn the model modules\&. \fP"
+.ti -1c
+.RI "arma::mat const & \fBOutputParameter\fP () const "
+.br
+.RI "\fIGet the output parameter\&. \fP"
+.ti -1c
+.RI "arma::mat & \fBOutputParameter\fP ()"
+.br
+.RI "\fIModify the output parameter\&. \fP"
+.ti -1c
+.RI "const arma::mat & \fBParameters\fP () const "
+.br
+.RI "\fIReturn the initial point for the optimization\&. \fP"
+.ti -1c
+.RI "arma::mat & \fBParameters\fP ()"
+.br
+.RI "\fIModify the initial point for the optimization\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &, const unsigned int)"
+.br
+.RI "\fISerialize the layer\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "\fBDeleteVisitor\fP \fBdeleteVisitor\fP"
+.br
+.RI "\fILocally-stored delete visitor\&. \fP"
+.ti -1c
+.RI "arma::mat \fBdelta\fP"
+.br
+.RI "\fILocally-stored delta object\&. \fP"
+.ti -1c
+.RI "\fBDeltaVisitor\fP \fBdeltaVisitor\fP"
+.br
+.RI "\fILocally-stored delta visitor\&. \fP"
+.ti -1c
+.RI "std::vector< \fBLayerTypes\fP > \fBempty\fP"
+.br
+.RI "\fILocally-stored empty list of modules\&. \fP"
+.ti -1c
+.RI "arma::mat \fBgradient\fP"
+.br
+.RI "\fILocally-stored gradient object\&. \fP"
+.ti -1c
+.RI "arma::mat \fBinputParameter\fP"
+.br
+.RI "\fILocally-stored input parameter object\&. \fP"
+.ti -1c
+.RI "bool \fBmodel\fP"
+.br
+.RI "\fIParameter which indicates if the modules should be exposed\&. \fP"
+.ti -1c
+.RI "std::vector< \fBLayerTypes\fP > \fBnetwork\fP"
+.br
+.RI "\fILocally-stored network modules\&. \fP"
+.ti -1c
+.RI "arma::mat \fBoutputParameter\fP"
+.br
+.RI "\fILocally-stored output parameter object\&. \fP"
+.ti -1c
+.RI "\fBOutputParameterVisitor\fP \fBoutputParameterVisitor\fP"
+.br
+.RI "\fILocally-stored output parameter visitor\&. \fP"
+.ti -1c
+.RI "arma::mat \fBparameters\fP"
+.br
+.RI "\fILocally-stored model parameters\&. \fP"
+.ti -1c
+.RI "bool \fBsame\fP"
+.br
+.RI "\fIIf true merge the error in the backward pass\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename InputDataType = arma::mat, typename OutputDataType = arma::mat>
+.br
+class mlpack::ann::Concat< InputDataType, OutputDataType >"
+Implementation of the \fBConcat\fP class\&. 
+
+The \fBConcat\fP class works as a feed-forward fully connected network container which plugs various layers together\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIInputDataType\fP Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fIOutputDataType\fP Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 42 of file concat\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBmlpack::ann::Concat\fP< InputDataType, OutputDataType >::\fBConcat\fP (const bool model = \fCtrue\fP, const bool same = \fCtrue\fP)"
+
+.PP
+Create the \fBConcat\fP object using the specified parameters\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fImodel\fP Expose all network modules\&. 
+.br
+\fIsame\fP Merge the error in the backward pass\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<class LayerType , class\&.\&.\&. Args> void \fBmlpack::ann::Concat\fP< InputDataType, OutputDataType >::\fBAdd\fP (Args\&.\&.\&. args)\fC [inline]\fP"
+
+.PP
+Definition at line 95 of file concat\&.hpp\&.
+.PP
+References mlpack::ann::Concat< InputDataType, OutputDataType >::network\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> void \fBmlpack::ann::Concat\fP< InputDataType, OutputDataType >::\fBAdd\fP (\fBLayerTypes\fP layer)\fC [inline]\fP"
+
+.PP
+Definition at line 102 of file concat\&.hpp\&.
+.PP
+References mlpack::ann::Concat< InputDataType, OutputDataType >::network\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename eT > void \fBmlpack::ann::Concat\fP< InputDataType, OutputDataType >::Backward (const arma::Mat< eT > &&, arma::Mat< eT > && gy, arma::Mat< eT > && g)"
+
+.PP
+Ordinary feed backward pass of a neural network, using 3rd-order tensors as input, calculating the function f(x) by propagating x backwards through f\&. Using the results from the feed forward pass\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP The propagated input activation\&. 
+.br
+\fIgy\fP The backpropagated error\&. 
+.br
+\fIg\fP The calculated gradient\&. 
+.RE
+.PP
+
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> arma::mat const& \fBmlpack::ann::Concat\fP< InputDataType, OutputDataType >::Delta () const\fC [inline]\fP"
+
+.PP
+Get the delta\&.e\&. 
+.PP
+Definition at line 130 of file concat\&.hpp\&.
+.PP
+References mlpack::ann::Concat< InputDataType, OutputDataType >::delta\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> arma::mat& \fBmlpack::ann::Concat\fP< InputDataType, OutputDataType >::Delta ()\fC [inline]\fP"
+
+.PP
+Modify the delta\&. 
+.PP
+Definition at line 132 of file concat\&.hpp\&.
+.PP
+References mlpack::ann::Concat< InputDataType, OutputDataType >::delta\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename eT > void \fBmlpack::ann::Concat\fP< InputDataType, OutputDataType >::Forward (arma::Mat< eT > && input, arma::Mat< eT > && output)"
+
+.PP
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input data used for evaluating the specified function\&. 
+.br
+\fIoutput\fP Resulting output activation\&. 
+.RE
+.PP
+
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename eT > void \fBmlpack::ann::Concat\fP< InputDataType, OutputDataType >::Gradient (arma::Mat< eT > &&, arma::Mat< eT > && error, arma::Mat< eT > &&)"
+
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> arma::mat const& \fBmlpack::ann::Concat\fP< InputDataType, OutputDataType >::Gradient () const\fC [inline]\fP"
+
+.PP
+Get the gradient\&. 
+.PP
+Definition at line 135 of file concat\&.hpp\&.
+.PP
+References mlpack::ann::Concat< InputDataType, OutputDataType >::gradient\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> arma::mat& \fBmlpack::ann::Concat\fP< InputDataType, OutputDataType >::Gradient ()\fC [inline]\fP"
+
+.PP
+Modify the gradient\&. 
+.PP
+Definition at line 137 of file concat\&.hpp\&.
+.PP
+References mlpack::ann::Concat< InputDataType, OutputDataType >::gradient, and mlpack::ann::Concat< InputDataType, OutputDataType >::Serialize()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> arma::mat const& \fBmlpack::ann::Concat\fP< InputDataType, OutputDataType >::InputParameter () const\fC [inline]\fP"
+
+.PP
+Definition at line 120 of file concat\&.hpp\&.
+.PP
+References mlpack::ann::Concat< InputDataType, OutputDataType >::inputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> arma::mat& \fBmlpack::ann::Concat\fP< InputDataType, OutputDataType >::InputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the input parameter\&. 
+.PP
+Definition at line 122 of file concat\&.hpp\&.
+.PP
+References mlpack::ann::Concat< InputDataType, OutputDataType >::inputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> std::vector<\fBLayerTypes\fP>& \fBmlpack::ann::Concat\fP< InputDataType, OutputDataType >::Model ()\fC [inline]\fP"
+
+.PP
+Return the model modules\&. 
+.PP
+Definition at line 105 of file concat\&.hpp\&.
+.PP
+References mlpack::ann::Concat< InputDataType, OutputDataType >::empty, mlpack::ann::Concat< InputDataType, OutputDataType >::model, and mlpack::ann::Concat< InputDataType, OutputDataType >::network\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> arma::mat const& \fBmlpack::ann::Concat\fP< InputDataType, OutputDataType >::OutputParameter () const\fC [inline]\fP"
+
+.PP
+Get the output parameter\&. 
+.PP
+Definition at line 125 of file concat\&.hpp\&.
+.PP
+References mlpack::ann::Concat< InputDataType, OutputDataType >::outputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> arma::mat& \fBmlpack::ann::Concat\fP< InputDataType, OutputDataType >::OutputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the output parameter\&. 
+.PP
+Definition at line 127 of file concat\&.hpp\&.
+.PP
+References mlpack::ann::Concat< InputDataType, OutputDataType >::outputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> const arma::mat& \fBmlpack::ann::Concat\fP< InputDataType, OutputDataType >::Parameters () const\fC [inline]\fP"
+
+.PP
+Return the initial point for the optimization\&. 
+.PP
+Definition at line 116 of file concat\&.hpp\&.
+.PP
+References mlpack::ann::Concat< InputDataType, OutputDataType >::parameters\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> arma::mat& \fBmlpack::ann::Concat\fP< InputDataType, OutputDataType >::Parameters ()\fC [inline]\fP"
+
+.PP
+Modify the initial point for the optimization\&. 
+.PP
+Definition at line 118 of file concat\&.hpp\&.
+.PP
+References mlpack::ann::Concat< InputDataType, OutputDataType >::parameters\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename Archive > void \fBmlpack::ann::Concat\fP< InputDataType, OutputDataType >::Serialize (Archive &, const unsigned int)"
+
+.PP
+Serialize the layer\&. 
+.PP
+Referenced by mlpack::ann::Concat< InputDataType, OutputDataType >::Gradient()\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBDeleteVisitor\fP \fBmlpack::ann::Concat\fP< InputDataType, OutputDataType >::deleteVisitor\fC [private]\fP"
+
+.PP
+Locally-stored delete visitor\&. 
+.PP
+Definition at line 165 of file concat\&.hpp\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> arma::mat \fBmlpack::ann::Concat\fP< InputDataType, OutputDataType >::delta\fC [private]\fP"
+
+.PP
+Locally-stored delta object\&. 
+.PP
+Definition at line 171 of file concat\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Concat< InputDataType, OutputDataType >::Delta()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBDeltaVisitor\fP \fBmlpack::ann::Concat\fP< InputDataType, OutputDataType >::deltaVisitor\fC [private]\fP"
+
+.PP
+Locally-stored delta visitor\&. 
+.PP
+Definition at line 159 of file concat\&.hpp\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> std::vector<\fBLayerTypes\fP> \fBmlpack::ann::Concat\fP< InputDataType, OutputDataType >::empty\fC [private]\fP"
+
+.PP
+Locally-stored empty list of modules\&. 
+.PP
+Definition at line 168 of file concat\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Concat< InputDataType, OutputDataType >::Model()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> arma::mat \fBmlpack::ann::Concat\fP< InputDataType, OutputDataType >::gradient\fC [private]\fP"
+
+.PP
+Locally-stored gradient object\&. 
+.PP
+Definition at line 180 of file concat\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Concat< InputDataType, OutputDataType >::Gradient()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> arma::mat \fBmlpack::ann::Concat\fP< InputDataType, OutputDataType >::inputParameter\fC [private]\fP"
+
+.PP
+Locally-stored input parameter object\&. 
+.PP
+Definition at line 174 of file concat\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Concat< InputDataType, OutputDataType >::InputParameter()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> bool \fBmlpack::ann::Concat\fP< InputDataType, OutputDataType >::model\fC [private]\fP"
+
+.PP
+Parameter which indicates if the modules should be exposed\&. 
+.PP
+Definition at line 147 of file concat\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Concat< InputDataType, OutputDataType >::Model()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> std::vector<\fBLayerTypes\fP> \fBmlpack::ann::Concat\fP< InputDataType, OutputDataType >::network\fC [private]\fP"
+
+.PP
+Locally-stored network modules\&. 
+.PP
+Definition at line 153 of file concat\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Concat< InputDataType, OutputDataType >::Add(), and mlpack::ann::Concat< InputDataType, OutputDataType >::Model()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> arma::mat \fBmlpack::ann::Concat\fP< InputDataType, OutputDataType >::outputParameter\fC [private]\fP"
+
+.PP
+Locally-stored output parameter object\&. 
+.PP
+Definition at line 177 of file concat\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Concat< InputDataType, OutputDataType >::OutputParameter()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBOutputParameterVisitor\fP \fBmlpack::ann::Concat\fP< InputDataType, OutputDataType >::outputParameterVisitor\fC [private]\fP"
+
+.PP
+Locally-stored output parameter visitor\&. 
+.PP
+Definition at line 162 of file concat\&.hpp\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> arma::mat \fBmlpack::ann::Concat\fP< InputDataType, OutputDataType >::parameters\fC [private]\fP"
+
+.PP
+Locally-stored model parameters\&. 
+.PP
+Definition at line 156 of file concat\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Concat< InputDataType, OutputDataType >::Parameters()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> bool \fBmlpack::ann::Concat\fP< InputDataType, OutputDataType >::same\fC [private]\fP"
+
+.PP
+If true merge the error in the backward pass\&. 
+.PP
+Definition at line 150 of file concat\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

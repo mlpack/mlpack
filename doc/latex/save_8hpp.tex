@@ -1,0 +1,41 @@
+\section{src/mlpack/core/data/save.hpp File Reference}
+\label{save_8hpp}\index{src/mlpack/core/data/save.\+hpp@{src/mlpack/core/data/save.\+hpp}}
+Include dependency graph for save.\+hpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{save_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{save_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ {\bf mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ {\bf mlpack\+::data}
+\begin{DoxyCompactList}\small\item\em Functions to load and save matrices and models. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename eT $>$ }\\bool {\bf mlpack\+::data\+::\+Save} (const {\bf std\+::string} \&filename, const arma\+::\+Mat$<$ eT $>$ \&matrix, const bool fatal=false, bool transpose=true)
+\begin{DoxyCompactList}\small\item\em Saves a matrix to file, guessing the filetype from the extension. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\bool {\bf mlpack\+::data\+::\+Save} (const {\bf std\+::string} \&filename, const {\bf std\+::string} \&name, T \&t, const bool fatal=false, format f=format\+::autodetect)
+\begin{DoxyCompactList}\small\item\em Saves a model to file, guessing the filetype from the extension, or, optionally, saving the specified format. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Ryan Curtin
+\end{DoxyAuthor}
+Save an Armadillo matrix to file. This is necessary because Armadillo does not transpose matrices upon saving, and it allows us to give better error output.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause B\+SD license. You should have received a copy of the 3-\/clause B\+SD license along with mlpack. If not, see {\tt http\+://www.\+opensource.\+org/licenses/\+B\+S\+D-\/3-\/\+Clause} for more information. 

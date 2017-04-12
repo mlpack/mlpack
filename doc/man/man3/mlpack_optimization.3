@@ -1,0 +1,118 @@
+.TH "mlpack::optimization" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::optimization \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBtest\fP"
+.br
+.in -1c
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBAdaDelta\fP"
+.br
+.RI "\fIAdadelta is an optimizer that uses two ideas to improve upon the two main drawbacks of the Adagrad method: \fP"
+.ti -1c
+.RI "class \fBAdam\fP"
+.br
+.RI "\fI\fBAdam\fP is an optimizer that computes individual adaptive learning rates for different parameters from estimates of first and second moments of the gradients\&. \fP"
+.ti -1c
+.RI "class \fBAugLagrangian\fP"
+.br
+.RI "\fIThe \fBAugLagrangian\fP class implements the Augmented Lagrangian method of optimization\&. \fP"
+.ti -1c
+.RI "class \fBAugLagrangianFunction\fP"
+.br
+.RI "\fIThis is a utility class used by \fBAugLagrangian\fP, meant to wrap a LagrangianFunction into a function usable by a simple optimizer like L-BFGS\&. \fP"
+.ti -1c
+.RI "class \fBAugLagrangianTestFunction\fP"
+.br
+.RI "\fIThis function is taken from 'Practical Mathematical Optimization' (Snyman), section 5\&.3\&.8 ('Application of the Augmented Lagrangian Method')\&. \fP"
+.ti -1c
+.RI "class \fBExponentialSchedule\fP"
+.br
+.RI "\fIThe exponential cooling schedule cools the temperature T at every step according to the equation\&. \fP"
+.ti -1c
+.RI "class \fBGockenbachFunction\fP"
+.br
+.RI "\fIThis function is taken from M\&. \fP"
+.ti -1c
+.RI "class \fBGradientDescent\fP"
+.br
+.RI "\fIGradient Descent is a technique to minimize a function\&. \fP"
+.ti -1c
+.RI "class \fBL_BFGS\fP"
+.br
+.RI "\fIThe generic L-BFGS optimizer, which uses a back-tracking line search algorithm to minimize a function\&. \fP"
+.ti -1c
+.RI "class \fBLovaszThetaSDP\fP"
+.br
+.RI "\fIThis function is the Lovasz-Theta semidefinite program, as implemented in the following paper: \fP"
+.ti -1c
+.RI "class \fBLRSDP\fP"
+.br
+.RI "\fI\fBLRSDP\fP is the implementation of Monteiro and Burer's formulation of low-rank semidefinite programs (LR-SDP)\&. \fP"
+.ti -1c
+.RI "class \fBLRSDPFunction\fP"
+.br
+.RI "\fIThe objective function that \fBLRSDP\fP is trying to optimize\&. \fP"
+.ti -1c
+.RI "class \fBMiniBatchSGD\fP"
+.br
+.RI "\fIMini-batch Stochastic Gradient Descent is a technique for minimizing a function which can be expressed as a sum of other functions\&. \fP"
+.ti -1c
+.RI "class \fBPrimalDualSolver\fP"
+.br
+.RI "\fIInterface to a primal dual interior point solver\&. \fP"
+.ti -1c
+.RI "class \fBRMSprop\fP"
+.br
+.RI "\fI\fBRMSprop\fP is an optimizer that utilizes the magnitude of recent gradients to normalize the gradients\&. \fP"
+.ti -1c
+.RI "class \fBSA\fP"
+.br
+.RI "\fISimulated Annealing is an stochastic optimization algorithm which is able to deliver near-optimal results quickly without knowing the gradient of the function being optimized\&. \fP"
+.ti -1c
+.RI "class \fBSDP\fP"
+.br
+.RI "\fISpecify an \fBSDP\fP in primal form\&. \fP"
+.ti -1c
+.RI "class \fBSGD\fP"
+.br
+.RI "\fIStochastic Gradient Descent is a technique for minimizing a function which can be expressed as a sum of other functions\&. \fP"
+.ti -1c
+.RI "class \fBVanillaUpdate\fP"
+.br
+.RI "\fIVanilla update policy for Stochastic Gradient Descent (\fBSGD\fP)\&. \fP"
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "template<typename DecomposableFunctionType > using \fBMomentumSGD\fP = \fBSGD\fP< DecomposableFunctionType, MomentumUpdate >"
+.br
+.ti -1c
+.RI "template<typename DecomposableFunctionType > using \fBStandardSGD\fP = \fBSGD\fP< DecomposableFunctionType, \fBVanillaUpdate\fP >"
+.br
+.in -1c
+.SH "Typedef Documentation"
+.PP 
+.SS "template<typename DecomposableFunctionType > using \fBmlpack::optimization::MomentumSGD\fP = typedef \fBSGD\fP<DecomposableFunctionType, MomentumUpdate>"
+
+.PP
+Definition at line 163 of file sgd\&.hpp\&.
+.SS "template<typename DecomposableFunctionType > using \fBmlpack::optimization::StandardSGD\fP = typedef \fBSGD\fP<DecomposableFunctionType, \fBVanillaUpdate\fP>"
+
+.PP
+Definition at line 160 of file sgd\&.hpp\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

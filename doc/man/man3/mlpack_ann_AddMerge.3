@@ -1,0 +1,275 @@
+.TH "mlpack::ann::AddMerge< InputDataType, OutputDataType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::ann::AddMerge< InputDataType, OutputDataType > \- Implementation of the \fBAddMerge\fP module class\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBAddMerge\fP ()"
+.br
+.RI "\fICreate the \fBAddMerge\fP object\&. \fP"
+.ti -1c
+.RI "void \fBAdd\fP (\fBLayerTypes\fP layer)"
+.br
+.ti -1c
+.RI "template<typename LayerType > void \fBAdd\fP (const LayerType &layer)"
+.br
+.ti -1c
+.RI "template<class LayerType , class\&.\&.\&. Args> void \fBAdd\fP (Args\&.\&.\&.args)"
+.br
+.ti -1c
+.RI "template<typename eT > void \fBBackward\fP (const arma::Mat< eT > &&, arma::Mat< eT > &&gy, arma::Mat< eT > &&g)"
+.br
+.RI "\fIOrdinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f\&. \fP"
+.ti -1c
+.RI "OutputDataType const & \fBDelta\fP () const "
+.br
+.RI "\fIGet the delta\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBDelta\fP ()"
+.br
+.RI "\fIModify the delta\&. \fP"
+.ti -1c
+.RI "template<typename InputType , typename OutputType > void \fBForward\fP (const InputType &&, OutputType &&output)"
+.br
+.RI "\fIOrdinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. \fP"
+.ti -1c
+.RI "InputDataType const & \fBInputParameter\fP () const "
+.br
+.RI "\fIGet the input parameter\&. \fP"
+.ti -1c
+.RI "InputDataType & \fBInputParameter\fP ()"
+.br
+.RI "\fIModify the input parameter\&. \fP"
+.ti -1c
+.RI "OutputDataType const & \fBOutputParameter\fP () const "
+.br
+.RI "\fIGet the output parameter\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP ()"
+.br
+.RI "\fIModify the output parameter\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int)"
+.br
+.RI "\fISerialize the layer\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "\fBDeleteVisitor\fP \fBdeleteVisitor\fP"
+.br
+.RI "\fILocally-stored delete visitor module object\&. \fP"
+.ti -1c
+.RI "OutputDataType \fBdelta\fP"
+.br
+.RI "\fILocally-stored delta object\&. \fP"
+.ti -1c
+.RI "\fBDeltaVisitor\fP \fBdeltaVisitor\fP"
+.br
+.RI "\fILocally-stored delta visitor module object\&. \fP"
+.ti -1c
+.RI "InputDataType \fBinputParameter\fP"
+.br
+.RI "\fILocally-stored input parameter object\&. \fP"
+.ti -1c
+.RI "std::vector< \fBLayerTypes\fP > \fBnetwork\fP"
+.br
+.ti -1c
+.RI "OutputDataType \fBoutputParameter\fP"
+.br
+.RI "\fILocally-stored output parameter object\&. \fP"
+.ti -1c
+.RI "\fBOutputParameterVisitor\fP \fBoutputParameterVisitor\fP"
+.br
+.RI "\fILocally-stored output parameter visitor module object\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename InputDataType = arma::mat, typename OutputDataType = arma::mat>
+.br
+class mlpack::ann::AddMerge< InputDataType, OutputDataType >"
+Implementation of the \fBAddMerge\fP module class\&. 
+
+The \fBAddMerge\fP class accumulates the output of various modules\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIInputDataType\fP Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fIOutputDataType\fP Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 40 of file add_merge\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBmlpack::ann::AddMerge\fP< InputDataType, OutputDataType >::\fBAddMerge\fP ()"
+
+.PP
+Create the \fBAddMerge\fP object\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> void \fBmlpack::ann::AddMerge\fP< InputDataType, OutputDataType >::\fBAdd\fP (\fBLayerTypes\fP layer)\fC [inline]\fP"
+
+.PP
+Definition at line 75 of file add_merge\&.hpp\&.
+.PP
+References mlpack::ann::AddMerge< InputDataType, OutputDataType >::network\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename LayerType > void \fBmlpack::ann::AddMerge\fP< InputDataType, OutputDataType >::\fBAdd\fP (const LayerType & layer)\fC [inline]\fP"
+
+.PP
+Definition at line 83 of file add_merge\&.hpp\&.
+.PP
+References mlpack::ann::AddMerge< InputDataType, OutputDataType >::network\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<class LayerType , class\&.\&.\&. Args> void \fBmlpack::ann::AddMerge\fP< InputDataType, OutputDataType >::\fBAdd\fP (Args\&.\&.\&. args)\fC [inline]\fP"
+
+.PP
+Definition at line 91 of file add_merge\&.hpp\&.
+.PP
+References mlpack::ann::AddMerge< InputDataType, OutputDataType >::network\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename eT > void \fBmlpack::ann::AddMerge\fP< InputDataType, OutputDataType >::Backward (const arma::Mat< eT > &&, arma::Mat< eT > && gy, arma::Mat< eT > && g)"
+
+.PP
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f\&. Using the results from the feed forward pass\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP The propagated input activation\&. 
+.br
+\fIgy\fP The backpropagated error\&. 
+.br
+\fIg\fP The calculated gradient\&. 
+.RE
+.PP
+
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType const& \fBmlpack::ann::AddMerge\fP< InputDataType, OutputDataType >::Delta () const\fC [inline]\fP"
+
+.PP
+Get the delta\&. 
+.PP
+Definition at line 104 of file add_merge\&.hpp\&.
+.PP
+References mlpack::ann::AddMerge< InputDataType, OutputDataType >::delta\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::AddMerge\fP< InputDataType, OutputDataType >::Delta ()\fC [inline]\fP"
+
+.PP
+Modify the delta\&. 
+.PP
+Definition at line 106 of file add_merge\&.hpp\&.
+.PP
+References mlpack::ann::AddMerge< InputDataType, OutputDataType >::delta, and mlpack::ann::AddMerge< InputDataType, OutputDataType >::Serialize()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename InputType , typename OutputType > void \fBmlpack::ann::AddMerge\fP< InputDataType, OutputDataType >::Forward (const InputType &&, OutputType && output)"
+
+.PP
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input data used for evaluating the specified function\&. 
+.br
+\fIoutput\fP Resulting output activation\&. 
+.RE
+.PP
+
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> InputDataType const& \fBmlpack::ann::AddMerge\fP< InputDataType, OutputDataType >::InputParameter () const\fC [inline]\fP"
+
+.PP
+Get the input parameter\&. 
+.PP
+Definition at line 94 of file add_merge\&.hpp\&.
+.PP
+References mlpack::ann::AddMerge< InputDataType, OutputDataType >::inputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> InputDataType& \fBmlpack::ann::AddMerge\fP< InputDataType, OutputDataType >::InputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the input parameter\&. 
+.PP
+Definition at line 96 of file add_merge\&.hpp\&.
+.PP
+References mlpack::ann::AddMerge< InputDataType, OutputDataType >::inputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType const& \fBmlpack::ann::AddMerge\fP< InputDataType, OutputDataType >::OutputParameter () const\fC [inline]\fP"
+
+.PP
+Get the output parameter\&. 
+.PP
+Definition at line 99 of file add_merge\&.hpp\&.
+.PP
+References mlpack::ann::AddMerge< InputDataType, OutputDataType >::outputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::AddMerge\fP< InputDataType, OutputDataType >::OutputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the output parameter\&. 
+.PP
+Definition at line 101 of file add_merge\&.hpp\&.
+.PP
+References mlpack::ann::AddMerge< InputDataType, OutputDataType >::outputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename Archive > void \fBmlpack::ann::AddMerge\fP< InputDataType, OutputDataType >::Serialize (Archive & ar, const unsigned int)"
+
+.PP
+Serialize the layer\&. 
+.PP
+Referenced by mlpack::ann::AddMerge< InputDataType, OutputDataType >::Delta()\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBDeleteVisitor\fP \fBmlpack::ann::AddMerge\fP< InputDataType, OutputDataType >::deleteVisitor\fC [private]\fP"
+
+.PP
+Locally-stored delete visitor module object\&. 
+.PP
+Definition at line 118 of file add_merge\&.hpp\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType \fBmlpack::ann::AddMerge\fP< InputDataType, OutputDataType >::delta\fC [private]\fP"
+
+.PP
+Locally-stored delta object\&. 
+.PP
+Definition at line 127 of file add_merge\&.hpp\&.
+.PP
+Referenced by mlpack::ann::AddMerge< InputDataType, OutputDataType >::Delta()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBDeltaVisitor\fP \fBmlpack::ann::AddMerge\fP< InputDataType, OutputDataType >::deltaVisitor\fC [private]\fP"
+
+.PP
+Locally-stored delta visitor module object\&. 
+.PP
+Definition at line 124 of file add_merge\&.hpp\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> InputDataType \fBmlpack::ann::AddMerge\fP< InputDataType, OutputDataType >::inputParameter\fC [private]\fP"
+
+.PP
+Locally-stored input parameter object\&. 
+.PP
+Definition at line 130 of file add_merge\&.hpp\&.
+.PP
+Referenced by mlpack::ann::AddMerge< InputDataType, OutputDataType >::InputParameter()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> std::vector<\fBLayerTypes\fP> \fBmlpack::ann::AddMerge\fP< InputDataType, OutputDataType >::network\fC [private]\fP"
+
+.PP
+Definition at line 115 of file add_merge\&.hpp\&.
+.PP
+Referenced by mlpack::ann::AddMerge< InputDataType, OutputDataType >::Add()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType \fBmlpack::ann::AddMerge\fP< InputDataType, OutputDataType >::outputParameter\fC [private]\fP"
+
+.PP
+Locally-stored output parameter object\&. 
+.PP
+Definition at line 133 of file add_merge\&.hpp\&.
+.PP
+Referenced by mlpack::ann::AddMerge< InputDataType, OutputDataType >::OutputParameter()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBOutputParameterVisitor\fP \fBmlpack::ann::AddMerge\fP< InputDataType, OutputDataType >::outputParameterVisitor\fC [private]\fP"
+
+.PP
+Locally-stored output parameter visitor module object\&. 
+.PP
+Definition at line 121 of file add_merge\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,1659 @@
+\section{src/mlpack/core/util/param.hpp File Reference}
+\label{param_8hpp}\index{src/mlpack/core/util/param.\+hpp@{src/mlpack/core/util/param.\+hpp}}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{param_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class {\bf mlpack\+::data\+::\+Dataset\+Mapper$<$ Policy\+Type $>$}
+\begin{DoxyCompactList}\small\item\em Auxiliary information for a dataset, including mappings to/from strings and the datatype of each dimension. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ {\bf mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ {\bf mlpack\+::data}
+\begin{DoxyCompactList}\small\item\em Functions to load and save matrices and models. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+C\+OL}(ID,  D\+E\+SC,  A\+L\+I\+AS,  R\+EQ,  T\+R\+A\+NS,  IN)
+\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+C\+O\+L\+\_\+\+IN}(ID,  D\+E\+SC,  A\+L\+I\+AS)~{\bf P\+A\+R\+A\+M\+\_\+\+C\+OL}(ID, D\+E\+SC, A\+L\+I\+AS, false, true, true)
+\begin{DoxyCompactList}\small\item\em Define a vector input parameter (type arma\+::vec). \end{DoxyCompactList}\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+C\+O\+L\+\_\+\+O\+UT}(ID,  D\+E\+SC,  A\+L\+I\+AS)~{\bf P\+A\+R\+A\+M\+\_\+\+C\+OL}(ID, D\+E\+SC, A\+L\+I\+AS, false, true, false)
+\begin{DoxyCompactList}\small\item\em Define a vector output parameter (type arma\+::vec). \end{DoxyCompactList}\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+D\+O\+U\+B\+L\+E\+\_\+\+IN}(ID,  D\+E\+SC,  A\+L\+I\+AS,  D\+EF)~{\bf P\+A\+R\+A\+M\+\_\+\+IN}(double, ID, D\+E\+SC, A\+L\+I\+AS, D\+EF, false)
+\begin{DoxyCompactList}\small\item\em Define a double input parameter. \end{DoxyCompactList}\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+D\+O\+U\+B\+L\+E\+\_\+\+I\+N\+\_\+\+R\+EQ}(ID,  D\+E\+SC,  A\+L\+I\+AS)~{\bf P\+A\+R\+A\+M\+\_\+\+IN}(double, ID, D\+E\+SC, A\+L\+I\+AS, 0.\+0d, true)
+\begin{DoxyCompactList}\small\item\em Define a required double parameter. \end{DoxyCompactList}\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+D\+O\+U\+B\+L\+E\+\_\+\+O\+UT}(ID,  D\+E\+SC)~{\bf P\+A\+R\+A\+M\+\_\+\+O\+UT}(double, ID, D\+E\+SC, \char`\"{}\char`\"{}, 0.\+0, false)
+\begin{DoxyCompactList}\small\item\em Define a double output parameter. \end{DoxyCompactList}\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+F\+L\+AG}(ID,  D\+E\+SC,  A\+L\+I\+AS)~{\bf P\+A\+R\+A\+M\+\_\+\+IN}(bool, ID, D\+E\+SC, A\+L\+I\+AS, false, false);
+\begin{DoxyCompactList}\small\item\em Define a flag parameter. \end{DoxyCompactList}\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+IN}(T,  ID,  D\+E\+SC,  A\+L\+I\+AS,  D\+EF,  R\+EQ)
+\begin{DoxyCompactList}\small\item\em Define an input parameter. \end{DoxyCompactList}\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+I\+N\+T\+\_\+\+IN}(ID,  D\+E\+SC,  A\+L\+I\+AS,  D\+EF)~{\bf P\+A\+R\+A\+M\+\_\+\+IN}(int, ID, D\+E\+SC, A\+L\+I\+AS, D\+EF, false)
+\begin{DoxyCompactList}\small\item\em Define an integer input parameter. \end{DoxyCompactList}\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+I\+N\+T\+\_\+\+I\+N\+\_\+\+R\+EQ}(ID,  D\+E\+SC,  A\+L\+I\+AS)~{\bf P\+A\+R\+A\+M\+\_\+\+IN}(int, ID, D\+E\+SC, A\+L\+I\+AS, 0, true)
+\begin{DoxyCompactList}\small\item\em Define a required integer input parameter. \end{DoxyCompactList}\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+I\+N\+T\+\_\+\+O\+UT}(ID,  D\+E\+SC)~{\bf P\+A\+R\+A\+M\+\_\+\+IN}(int, ID, D\+E\+SC, \char`\"{}\char`\"{}, 0, false)
+\begin{DoxyCompactList}\small\item\em Define an integer output parameter. \end{DoxyCompactList}\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+IX}(ID,  D\+E\+SC,  A\+L\+I\+AS,  R\+EQ,  T\+R\+A\+NS,  IN)
+\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+I\+X\+\_\+\+A\+N\+D\+\_\+\+I\+N\+F\+O\+\_\+\+IN}(ID,  D\+E\+SC,  A\+L\+I\+AS)~{\bf P\+A\+R\+A\+M\+\_\+\+IN}({\bf T\+U\+P\+L\+E\+\_\+\+T\+Y\+PE}, ID, D\+E\+SC, A\+L\+I\+AS, {\bf T\+U\+P\+L\+E\+\_\+\+T\+Y\+PE}(), false)
+\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+I\+X\+\_\+\+IN}(ID,  D\+E\+SC,  A\+L\+I\+AS)~{\bf P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+IX}(ID, D\+E\+SC, A\+L\+I\+AS, false, true, true)
+\begin{DoxyCompactList}\small\item\em Define a matrix input parameter. \end{DoxyCompactList}\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+I\+X\+\_\+\+I\+N\+\_\+\+R\+EQ}(ID,  D\+E\+SC,  A\+L\+I\+AS)~{\bf P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+IX}(ID, D\+E\+SC, A\+L\+I\+AS, true, true, true)
+\begin{DoxyCompactList}\small\item\em Define a required matrix input parameter. \end{DoxyCompactList}\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+I\+X\+\_\+\+O\+UT}(ID,  D\+E\+SC,  A\+L\+I\+AS)~{\bf P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+IX}(ID, D\+E\+SC, A\+L\+I\+AS, false, true, false)
+\begin{DoxyCompactList}\small\item\em Define a matrix output parameter. \end{DoxyCompactList}\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+M\+O\+D\+EL}(T\+Y\+PE,  ID,  D\+E\+SC,  A\+L\+I\+AS,  R\+EQ,  IN)
+\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+M\+O\+D\+E\+L\+\_\+\+IN}(T\+Y\+PE,  ID,  D\+E\+SC,  A\+L\+I\+AS)~{\bf P\+A\+R\+A\+M\+\_\+\+M\+O\+D\+EL}(T\+Y\+PE, ID, D\+E\+SC, A\+L\+I\+AS, false, true)
+\begin{DoxyCompactList}\small\item\em Define an input model. \end{DoxyCompactList}\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+M\+O\+D\+E\+L\+\_\+\+I\+N\+\_\+\+R\+EQ}(T\+Y\+PE,  ID,  D\+E\+SC,  A\+L\+I\+AS)~{\bf P\+A\+R\+A\+M\+\_\+\+M\+O\+D\+EL}(T\+Y\+PE, ID, D\+E\+SC, A\+L\+I\+AS, true, true)
+\begin{DoxyCompactList}\small\item\em Define a required input model. \end{DoxyCompactList}\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+M\+O\+D\+E\+L\+\_\+\+O\+UT}(T\+Y\+PE,  ID,  D\+E\+SC,  A\+L\+I\+AS)~{\bf P\+A\+R\+A\+M\+\_\+\+M\+O\+D\+EL}(T\+Y\+PE, ID, D\+E\+SC, A\+L\+I\+AS, false, false)
+\begin{DoxyCompactList}\small\item\em Define an output model. \end{DoxyCompactList}\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+O\+UT}(T,  ID,  D\+E\+SC,  A\+L\+I\+AS,  D\+EF,  R\+EQ)
+\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+R\+OW}(ID,  D\+E\+SC,  A\+L\+I\+AS,  R\+EQ,  T\+R\+A\+NS,  IN)
+\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+R\+O\+W\+\_\+\+IN}(ID,  D\+E\+SC,  A\+L\+I\+AS)~{\bf P\+A\+R\+A\+M\+\_\+\+R\+OW}(ID, D\+E\+SC, A\+L\+I\+AS, false, true, true)
+\begin{DoxyCompactList}\small\item\em Define a row vector input parameter (type arma\+::rowvec). \end{DoxyCompactList}\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+R\+O\+W\+\_\+\+O\+UT}(ID,  D\+E\+SC,  A\+L\+I\+AS)~{\bf P\+A\+R\+A\+M\+\_\+\+R\+OW}(ID, D\+E\+SC, A\+L\+I\+AS, false, true, false)
+\begin{DoxyCompactList}\small\item\em Define a row vector output parameter (type arma\+::rowvec). \end{DoxyCompactList}\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+S\+T\+R\+I\+N\+G\+\_\+\+IN}(ID,  D\+E\+SC,  A\+L\+I\+AS,  D\+EF)~{\bf P\+A\+R\+A\+M\+\_\+\+IN}({\bf std\+::string}, ID, D\+E\+SC, A\+L\+I\+AS, D\+EF, false)
+\begin{DoxyCompactList}\small\item\em Define a string input parameter. \end{DoxyCompactList}\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+S\+T\+R\+I\+N\+G\+\_\+\+I\+N\+\_\+\+R\+EQ}(ID,  D\+E\+SC,  A\+L\+I\+AS)~{\bf P\+A\+R\+A\+M\+\_\+\+IN}({\bf std\+::string}, ID, D\+E\+SC, A\+L\+I\+AS, \char`\"{}\char`\"{}, true)
+\begin{DoxyCompactList}\small\item\em Define a required string parameter. \end{DoxyCompactList}\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+S\+T\+R\+I\+N\+G\+\_\+\+O\+UT}(ID,  D\+E\+SC,  A\+L\+I\+AS)~{\bf P\+A\+R\+A\+M\+\_\+\+O\+UT}({\bf std\+::string}, ID, D\+E\+SC, A\+L\+I\+AS, \char`\"{}\char`\"{}, false)
+\begin{DoxyCompactList}\small\item\em Define a string output parameter. \end{DoxyCompactList}\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+T\+M\+A\+T\+R\+I\+X\+\_\+\+IN}(ID,  D\+E\+SC,  A\+L\+I\+AS)~{\bf P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+IX}(ID, D\+E\+SC, A\+L\+I\+AS, false, false, true)
+\begin{DoxyCompactList}\small\item\em Define a transposed matrix input parameter. \end{DoxyCompactList}\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+T\+M\+A\+T\+R\+I\+X\+\_\+\+I\+N\+\_\+\+R\+EQ}(ID,  D\+E\+SC,  A\+L\+I\+AS)~{\bf P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+IX}(ID, D\+E\+SC, A\+L\+I\+AS, true, false, true)
+\begin{DoxyCompactList}\small\item\em Define a required transposed matrix input parameter. \end{DoxyCompactList}\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+T\+M\+A\+T\+R\+I\+X\+\_\+\+O\+UT}(ID,  D\+E\+SC,  A\+L\+I\+AS)~{\bf P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+IX}(ID, D\+E\+SC, A\+L\+I\+AS, false, false, false)
+\begin{DoxyCompactList}\small\item\em Define a transposed matrix output parameter. \end{DoxyCompactList}\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+U\+C\+OL}(ID,  D\+E\+SC,  A\+L\+I\+AS,  R\+EQ,  T\+R\+A\+NS,  IN)
+\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+U\+C\+O\+L\+\_\+\+IN}(ID,  D\+E\+SC,  A\+L\+I\+AS)~{\bf P\+A\+R\+A\+M\+\_\+\+U\+C\+OL}(ID, D\+E\+SC, A\+L\+I\+AS, false, true, true)
+\begin{DoxyCompactList}\small\item\em Define an unsigned vector input parameter (type arma\+::\+Col$<$size\+\_\+t$>$). \end{DoxyCompactList}\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+U\+C\+O\+L\+\_\+\+O\+UT}(ID,  D\+E\+SC,  A\+L\+I\+AS)~{\bf P\+A\+R\+A\+M\+\_\+\+U\+C\+OL}(ID, D\+E\+SC, A\+L\+I\+AS, false, true, false)
+\begin{DoxyCompactList}\small\item\em Define an unsigned vector output parameter (type arma\+::\+Col$<$size\+\_\+t$>$). \end{DoxyCompactList}\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+U\+M\+A\+T\+R\+IX}(ID,  D\+E\+SC,  A\+L\+I\+AS,  R\+EQ,  T\+R\+A\+NS,  IN)
+\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+U\+M\+A\+T\+R\+I\+X\+\_\+\+IN}(ID,  D\+E\+SC,  A\+L\+I\+AS)~{\bf P\+A\+R\+A\+M\+\_\+\+U\+M\+A\+T\+R\+IX}(ID, D\+E\+SC, A\+L\+I\+AS, false, true, true)
+\begin{DoxyCompactList}\small\item\em Define an unsigned matrix input parameter (arma\+::\+Mat$<$size\+\_\+t$>$). \end{DoxyCompactList}\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+U\+M\+A\+T\+R\+I\+X\+\_\+\+I\+N\+\_\+\+R\+EQ}(ID,  D\+E\+SC,  A\+L\+I\+AS)~{\bf P\+A\+R\+A\+M\+\_\+\+U\+M\+A\+T\+R\+IX}(ID, D\+E\+SC, A\+L\+I\+AS, true, true, true)
+\begin{DoxyCompactList}\small\item\em Define a required unsigned matrix input parameter (arma\+::\+Mat$<$size\+\_\+t$>$). \end{DoxyCompactList}\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+U\+M\+A\+T\+R\+I\+X\+\_\+\+O\+UT}(ID,  D\+E\+SC,  A\+L\+I\+AS)~{\bf P\+A\+R\+A\+M\+\_\+\+U\+M\+A\+T\+R\+IX}(ID, D\+E\+SC, A\+L\+I\+AS, false, true, false)
+\begin{DoxyCompactList}\small\item\em Define an unsigned matrix output parameter (arma\+::\+Mat$<$size\+\_\+t$>$). \end{DoxyCompactList}\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+U\+R\+OW}(ID,  D\+E\+SC,  A\+L\+I\+AS,  R\+EQ,  T\+R\+A\+NS,  IN)
+\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+U\+R\+O\+W\+\_\+\+IN}(ID,  D\+E\+SC,  A\+L\+I\+AS)~{\bf P\+A\+R\+A\+M\+\_\+\+U\+R\+OW}(ID, D\+E\+SC, A\+L\+I\+AS, false, true, true)
+\begin{DoxyCompactList}\small\item\em Define an unsigned row vector input parameter (type arma\+::\+Row$<$size\+\_\+t$>$). \end{DoxyCompactList}\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+U\+R\+O\+W\+\_\+\+O\+UT}(ID,  D\+E\+SC,  A\+L\+I\+AS)~{\bf P\+A\+R\+A\+M\+\_\+\+U\+R\+OW}(ID, D\+E\+SC, A\+L\+I\+AS, false, true, false)
+\begin{DoxyCompactList}\small\item\em Define an unsigned row vector output parameter (type arma\+::\+Row$<$size\+\_\+t$>$). \end{DoxyCompactList}\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+IN}(T,  ID,  D\+E\+SC,  A\+L\+I\+AS)~{\bf P\+A\+R\+A\+M\+\_\+\+IN}(std\+::vector$<$T$>$, ID, D\+E\+SC, A\+L\+I\+AS, std\+::vector$<$T$>$(), false)
+\begin{DoxyCompactList}\small\item\em Define a std\+::vector input parameter. \end{DoxyCompactList}\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+I\+N\+\_\+\+R\+EQ}(T,  ID,  D\+E\+SC,  A\+L\+I\+AS)~{\bf P\+A\+R\+A\+M\+\_\+\+IN}(std\+::vector$<$T$>$, ID, D\+E\+SC, A\+L\+I\+AS, std\+::vector$<$T$>$(), true);
+\begin{DoxyCompactList}\small\item\em Define a required vector parameter. \end{DoxyCompactList}\item 
+\#define {\bf P\+A\+R\+A\+M\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+O\+UT}(T,  ID)~{\bf P\+A\+R\+A\+M\+\_\+\+O\+UT}(std\+::vector$<$T$>$, ID, D\+E\+SC, \char`\"{}\char`\"{}, std\+::vector$<$T$>$(), false)
+\begin{DoxyCompactList}\small\item\em Define a vector output parameter. \end{DoxyCompactList}\item 
+\#define {\bf P\+R\+O\+G\+R\+A\+M\+\_\+\+I\+N\+FO}(N\+A\+ME,  D\+E\+SC)
+\begin{DoxyCompactList}\small\item\em Document an executable. \end{DoxyCompactList}\item 
+\#define {\bf T\+U\+P\+L\+E\+\_\+\+T\+Y\+PE}~std\+::tuple$<${\bf mlpack\+::data\+::\+Dataset\+Info}, arma\+::mat$>$
+\begin{DoxyCompactList}\small\item\em Define an input Dataset\+Info/matrix parameter. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Matthew Amidon 
+
+Ryan Curtin
+\end{DoxyAuthor}
+Definition of P\+A\+R\+A\+M\+\_\+$\ast$\+\_\+\+IN() and P\+A\+R\+A\+M\+\_\+$\ast$\+\_\+\+O\+UT() macros, as well as the \doxyref{P\+R\+O\+G\+R\+A\+M\+\_\+\+I\+N\+F\+O()}{p.}{param_8hpp_ad781e52fa8bee6ec70cabb646fa16e00} macro, which are used to define input and output parameters of command-\/line programs and bindings to other languages.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause B\+SD license. You should have received a copy of the 3-\/clause B\+SD license along with mlpack. If not, see {\tt http\+://www.\+opensource.\+org/licenses/\+B\+S\+D-\/3-\/\+Clause} for more information. 
+
+\subsection{Macro Definition Documentation}
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+C\+OL@{P\+A\+R\+A\+M\+\_\+\+C\+OL}}
+\index{P\+A\+R\+A\+M\+\_\+\+C\+OL@{P\+A\+R\+A\+M\+\_\+\+C\+OL}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+C\+OL}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+C\+OL(
+\begin{DoxyParamCaption}
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS, }
+\item[{}]{R\+EQ, }
+\item[{}]{T\+R\+A\+NS, }
+\item[{}]{IN}
+\end{DoxyParamCaption}
+)}\label{param_8hpp_afef4dcbf5fa0b81c4daf50f77b4391af}
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\textcolor{keyword}{static} mlpack::util::Option<arma::vec> \
+      JOIN(cli\_option\_dummy\_object\_col\_, \_\_LINE\_\_) \(\backslash\)
+      (arma::vec(), ID, DESC, ALIAS, REQ, IN, !TRANS);
+\end{DoxyCode}
+
+
+Definition at line 1081 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+C\+O\+L\+\_\+\+IN@{P\+A\+R\+A\+M\+\_\+\+C\+O\+L\+\_\+\+IN}}
+\index{P\+A\+R\+A\+M\+\_\+\+C\+O\+L\+\_\+\+IN@{P\+A\+R\+A\+M\+\_\+\+C\+O\+L\+\_\+\+IN}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+C\+O\+L\+\_\+\+IN}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+C\+O\+L\+\_\+\+IN(
+\begin{DoxyParamCaption}
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS}
+\end{DoxyParamCaption}
+)~{\bf P\+A\+R\+A\+M\+\_\+\+C\+OL}(ID, D\+E\+SC, A\+L\+I\+AS, false, true, true)}\label{param_8hpp_a36713e2f7157727157af4a92f1c2ad5d}
+
+
+Define a vector input parameter (type arma\+::vec). 
+
+From the command line, the user can specify the file that holds the vector, using the name of the vector parameter with \char`\"{}\+\_\+file\char`\"{} appended (and the same alias). So for instance, if the name of the vector parameter was \char`\"{}vec\char`\"{}, the user could specify that the \char`\"{}vec\char`\"{} vector was held in vec.\+csv by giving the parameter\+:
+
+
+\begin{DoxyCode}
+1 --vec\_file vector.csv
+\end{DoxyCode}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & Name of the parameter. \\
+\hline
+{\em D\+E\+SC} & Description of the parameter (1-\/2 sentences). \\
+\hline
+{\em A\+L\+I\+AS} & An alias for the parameter (one letter).\\
+\hline
+\end{DoxyParams}
+\begin{DoxyRefDesc}{Bug}
+\item[{\bf Bug}]The {\bfseries C\+O\+U\+N\+T\+ER} variable is used in most cases to guarantee a unique global identifier for options declared using the P\+A\+R\+A\+M\+\_\+$\ast$() macros. However, not all compilers have this support--most notably, gcc $<$ 4.\+3. In that case, the {\bfseries L\+I\+NE} macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See {\tt https\+://github.\+com/mlpack/mlpack/issues/100} for more information. \end{DoxyRefDesc}
+
+
+Definition at line 510 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+C\+O\+L\+\_\+\+O\+UT@{P\+A\+R\+A\+M\+\_\+\+C\+O\+L\+\_\+\+O\+UT}}
+\index{P\+A\+R\+A\+M\+\_\+\+C\+O\+L\+\_\+\+O\+UT@{P\+A\+R\+A\+M\+\_\+\+C\+O\+L\+\_\+\+O\+UT}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+C\+O\+L\+\_\+\+O\+UT}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+C\+O\+L\+\_\+\+O\+UT(
+\begin{DoxyParamCaption}
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS}
+\end{DoxyParamCaption}
+)~{\bf P\+A\+R\+A\+M\+\_\+\+C\+OL}(ID, D\+E\+SC, A\+L\+I\+AS, false, true, false)}\label{param_8hpp_a07120f558c6c681b2a27a719a7c39bd2}
+
+
+Define a vector output parameter (type arma\+::vec). 
+
+When the program terminates, the vector will be saved to whatever it was set to during the program. From the command-\/line, the user may specify the file in which to save the output vector using a string option that is the name of the matrix parameter with \char`\"{}\+\_\+file\char`\"{} appended. So, for instance, if the name of the output vector parameter was \char`\"{}vec\char`\"{}, the user could specify that the \char`\"{}vec\char`\"{} vector should be saved in vector.\+csv by giving the parameter\+:
+
+
+\begin{DoxyCode}
+1 --vec\_file vector.csv
+\end{DoxyCode}
+
+
+The output vector will not be printed on stdout, like the other output option types.
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & Name of the parameter. \\
+\hline
+{\em D\+E\+SC} & Description of the parameter (1-\/2 sentences). \\
+\hline
+{\em A\+L\+I\+AS} & An alias for the parameter (one letter).\\
+\hline
+\end{DoxyParams}
+\begin{DoxyRefDesc}{Bug}
+\item[{\bf Bug}]The {\bfseries C\+O\+U\+N\+T\+ER} variable is used in most cases to guarantee a unique global identifier for options declared using the P\+A\+R\+A\+M\+\_\+$\ast$() macros. However, not all compilers have this support--most notably, gcc $<$ 4.\+3. In that case, the {\bfseries L\+I\+NE} macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See {\tt https\+://github.\+com/mlpack/mlpack/issues/100} for more information. \end{DoxyRefDesc}
+
+
+Definition at line 620 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+D\+O\+U\+B\+L\+E\+\_\+\+IN@{P\+A\+R\+A\+M\+\_\+\+D\+O\+U\+B\+L\+E\+\_\+\+IN}}
+\index{P\+A\+R\+A\+M\+\_\+\+D\+O\+U\+B\+L\+E\+\_\+\+IN@{P\+A\+R\+A\+M\+\_\+\+D\+O\+U\+B\+L\+E\+\_\+\+IN}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+D\+O\+U\+B\+L\+E\+\_\+\+IN}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+D\+O\+U\+B\+L\+E\+\_\+\+IN(
+\begin{DoxyParamCaption}
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS, }
+\item[{}]{D\+EF}
+\end{DoxyParamCaption}
+)~{\bf P\+A\+R\+A\+M\+\_\+\+IN}(double, ID, D\+E\+SC, A\+L\+I\+AS, D\+EF, false)}\label{param_8hpp_a14e7059294c684b01128819daea241d4}
+
+
+Define a double input parameter. 
+
+The parameter can then be specified on the command line with --ID=value.
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & Name of the parameter. \\
+\hline
+{\em D\+E\+SC} & Quick description of the parameter (1-\/2 sentences). \\
+\hline
+{\em A\+L\+I\+AS} & An alias for the parameter (one letter). \\
+\hline
+{\em D\+EF} & Default value of the parameter.\\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\doxyref{mlpack\+::\+C\+LI}{p.}{classmlpack_1_1CLI}, \doxyref{P\+R\+O\+G\+R\+A\+M\+\_\+\+I\+N\+F\+O()}{p.}{param_8hpp_ad781e52fa8bee6ec70cabb646fa16e00}
+\end{DoxySeeAlso}
+\begin{DoxyRefDesc}{Bug}
+\item[{\bf Bug}]The {\bfseries C\+O\+U\+N\+T\+ER} variable is used in most cases to guarantee a unique global identifier for options declared using the P\+A\+R\+A\+M\+\_\+$\ast$() macros. However, not all compilers have this support--most notably, gcc $<$ 4.\+3. In that case, the {\bfseries L\+I\+NE} macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See {\tt https\+://github.\+com/mlpack/mlpack/issues/100} for more information. \end{DoxyRefDesc}
+
+
+Definition at line 145 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+D\+O\+U\+B\+L\+E\+\_\+\+I\+N\+\_\+\+R\+EQ@{P\+A\+R\+A\+M\+\_\+\+D\+O\+U\+B\+L\+E\+\_\+\+I\+N\+\_\+\+R\+EQ}}
+\index{P\+A\+R\+A\+M\+\_\+\+D\+O\+U\+B\+L\+E\+\_\+\+I\+N\+\_\+\+R\+EQ@{P\+A\+R\+A\+M\+\_\+\+D\+O\+U\+B\+L\+E\+\_\+\+I\+N\+\_\+\+R\+EQ}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+D\+O\+U\+B\+L\+E\+\_\+\+I\+N\+\_\+\+R\+EQ}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+D\+O\+U\+B\+L\+E\+\_\+\+I\+N\+\_\+\+R\+EQ(
+\begin{DoxyParamCaption}
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS}
+\end{DoxyParamCaption}
+)~{\bf P\+A\+R\+A\+M\+\_\+\+IN}(double, ID, D\+E\+SC, A\+L\+I\+AS, 0.\+0d, true)}\label{param_8hpp_a1236858e19f2e8be7da663d4aecfac9f}
+
+
+Define a required double parameter. 
+
+The parameter must then be specified on the command line with --ID=value.
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & Name of the parameter. \\
+\hline
+{\em D\+E\+SC} & Quick description of the parameter (1-\/2 sentences). \\
+\hline
+{\em A\+L\+I\+AS} & An alias for the parameter (one letter).\\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\doxyref{mlpack\+::\+C\+LI}{p.}{classmlpack_1_1CLI}, \doxyref{P\+R\+O\+G\+R\+A\+M\+\_\+\+I\+N\+F\+O()}{p.}{param_8hpp_ad781e52fa8bee6ec70cabb646fa16e00}
+\end{DoxySeeAlso}
+\begin{DoxyRefDesc}{Bug}
+\item[{\bf Bug}]The {\bfseries C\+O\+U\+N\+T\+ER} variable is used in most cases to guarantee a unique global identifier for options declared using the P\+A\+R\+A\+M\+\_\+$\ast$() macros. However, not all compilers have this support--most notably, gcc $<$ 4.\+3. In that case, the {\bfseries L\+I\+NE} macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See {\tt https\+://github.\+com/mlpack/mlpack/issues/100} for more information. \end{DoxyRefDesc}
+
+
+Definition at line 935 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+D\+O\+U\+B\+L\+E\+\_\+\+O\+UT@{P\+A\+R\+A\+M\+\_\+\+D\+O\+U\+B\+L\+E\+\_\+\+O\+UT}}
+\index{P\+A\+R\+A\+M\+\_\+\+D\+O\+U\+B\+L\+E\+\_\+\+O\+UT@{P\+A\+R\+A\+M\+\_\+\+D\+O\+U\+B\+L\+E\+\_\+\+O\+UT}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+D\+O\+U\+B\+L\+E\+\_\+\+O\+UT}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+D\+O\+U\+B\+L\+E\+\_\+\+O\+UT(
+\begin{DoxyParamCaption}
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC}
+\end{DoxyParamCaption}
+)~{\bf P\+A\+R\+A\+M\+\_\+\+O\+UT}(double, ID, D\+E\+SC, \char`\"{}\char`\"{}, 0.\+0, false)}\label{param_8hpp_aa39a5fa65308f2d5581c01cfae5f9203}
+
+
+Define a double output parameter. 
+
+This parameter will be printed on stdout at the end of the program; for instance, if the parameter name is \char`\"{}number\char`\"{} and the value is 5.\+012, the output on stdout would be of the following form\+:
+
+
+\begin{DoxyCode}
+1 number: 5.012
+\end{DoxyCode}
+
+
+If the parameter is not set by the end of the program, a fatal runtime error will be issued.
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & Name of the parameter. \\
+\hline
+{\em D\+E\+SC} & Quick description of the parameter (1-\/2 sentences).\\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\doxyref{mlpack\+::\+C\+LI}{p.}{classmlpack_1_1CLI}, \doxyref{P\+R\+O\+G\+R\+A\+M\+\_\+\+I\+N\+F\+O()}{p.}{param_8hpp_ad781e52fa8bee6ec70cabb646fa16e00}
+\end{DoxySeeAlso}
+\begin{DoxyRefDesc}{Bug}
+\item[{\bf Bug}]The {\bfseries C\+O\+U\+N\+T\+ER} variable is used in most cases to guarantee a unique global identifier for options declared using the P\+A\+R\+A\+M\+\_\+$\ast$() macros. However, not all compilers have this support--most notably, gcc $<$ 4.\+3. In that case, the {\bfseries L\+I\+NE} macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See {\tt https\+://github.\+com/mlpack/mlpack/issues/100} for more information. \end{DoxyRefDesc}
+
+
+Definition at line 173 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+F\+L\+AG@{P\+A\+R\+A\+M\+\_\+\+F\+L\+AG}}
+\index{P\+A\+R\+A\+M\+\_\+\+F\+L\+AG@{P\+A\+R\+A\+M\+\_\+\+F\+L\+AG}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+F\+L\+AG}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+F\+L\+AG(
+\begin{DoxyParamCaption}
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS}
+\end{DoxyParamCaption}
+)~{\bf P\+A\+R\+A\+M\+\_\+\+IN}(bool, ID, D\+E\+SC, A\+L\+I\+AS, false, false);}\label{param_8hpp_a59a38dfe16c56a278bd89817216a3739}
+
+
+Define a flag parameter. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & Name of the parameter. \\
+\hline
+{\em D\+E\+SC} & Quick description of the parameter (1-\/2 sentences). \\
+\hline
+{\em A\+L\+I\+AS} & An alias for the parameter (one letter).\\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\doxyref{mlpack\+::\+C\+LI}{p.}{classmlpack_1_1CLI}, \doxyref{P\+R\+O\+G\+R\+A\+M\+\_\+\+I\+N\+F\+O()}{p.}{param_8hpp_ad781e52fa8bee6ec70cabb646fa16e00}
+\end{DoxySeeAlso}
+\begin{DoxyRefDesc}{Bug}
+\item[{\bf Bug}]The {\bfseries C\+O\+U\+N\+T\+ER} variable is used in most cases to guarantee a unique global identifier for options declared using the P\+A\+R\+A\+M\+\_\+$\ast$() macros. However, not all compilers have this support--most notably, gcc $<$ 4.\+3. In that case, the {\bfseries L\+I\+NE} macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See {\tt https\+://github.\+com/mlpack/mlpack/issues/100} for more information. \end{DoxyRefDesc}
+
+
+Definition at line 69 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+IN@{P\+A\+R\+A\+M\+\_\+\+IN}}
+\index{P\+A\+R\+A\+M\+\_\+\+IN@{P\+A\+R\+A\+M\+\_\+\+IN}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+IN}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+IN(
+\begin{DoxyParamCaption}
+\item[{}]{T, }
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS, }
+\item[{}]{D\+EF, }
+\item[{}]{R\+EQ}
+\end{DoxyParamCaption}
+)}\label{param_8hpp_a71739f2cfc051c5575d2080203025631}
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\textcolor{keyword}{static} mlpack::util::Option<T> \
+      JOIN(JOIN(cli\_option\_dummy\_object\_in\_, \_\_LINE\_\_), opt) \(\backslash\)
+      (DEF, ID, DESC, ALIAS, REQ, \textcolor{keyword}{true}, \textcolor{keyword}{false});
+\end{DoxyCode}
+
+
+Define an input parameter. 
+
+Don\textquotesingle{}t use this function; use the other ones above that call it. Note that we are using the {\bfseries L\+I\+NE} macro for naming these actual parameters when {\bfseries C\+O\+U\+N\+T\+ER} does not exist, which is a bit of an ugly hack... but this is the preprocessor, after all. We don\textquotesingle{}t have much choice other than ugliness.
+
+
+\begin{DoxyParams}{Parameters}
+{\em T} & Type of the parameter. \\
+\hline
+{\em ID} & Name of the parameter. \\
+\hline
+{\em D\+E\+SC} & Description of the parameter (1-\/2 sentences). \\
+\hline
+{\em A\+L\+I\+AS} & Alias for this parameter (one letter). \\
+\hline
+{\em D\+EF} & Default value of the parameter. \\
+\hline
+{\em R\+EQ} & Whether or not parameter is required (boolean value). \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 1061 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+I\+N\+T\+\_\+\+IN@{P\+A\+R\+A\+M\+\_\+\+I\+N\+T\+\_\+\+IN}}
+\index{P\+A\+R\+A\+M\+\_\+\+I\+N\+T\+\_\+\+IN@{P\+A\+R\+A\+M\+\_\+\+I\+N\+T\+\_\+\+IN}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+I\+N\+T\+\_\+\+IN}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+I\+N\+T\+\_\+\+IN(
+\begin{DoxyParamCaption}
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS, }
+\item[{}]{D\+EF}
+\end{DoxyParamCaption}
+)~{\bf P\+A\+R\+A\+M\+\_\+\+IN}(int, ID, D\+E\+SC, A\+L\+I\+AS, D\+EF, false)}\label{param_8hpp_a627025f18abd2735345f03fd733ccd9b}
+
+
+Define an integer input parameter. 
+
+The parameter can then be specified on the command line with --ID=value.
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & Name of the parameter. \\
+\hline
+{\em D\+E\+SC} & Quick description of the parameter (1-\/2 sentences). \\
+\hline
+{\em A\+L\+I\+AS} & An alias for the parameter (one letter). \\
+\hline
+{\em D\+EF} & Default value of the parameter.\\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\doxyref{mlpack\+::\+C\+LI}{p.}{classmlpack_1_1CLI}, \doxyref{P\+R\+O\+G\+R\+A\+M\+\_\+\+I\+N\+F\+O()}{p.}{param_8hpp_ad781e52fa8bee6ec70cabb646fa16e00}
+\end{DoxySeeAlso}
+\begin{DoxyRefDesc}{Bug}
+\item[{\bf Bug}]The {\bfseries C\+O\+U\+N\+T\+ER} variable is used in most cases to guarantee a unique global identifier for options declared using the P\+A\+R\+A\+M\+\_\+$\ast$() macros. However, not all compilers have this support--most notably, gcc $<$ 4.\+3. In that case, the {\bfseries L\+I\+NE} macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See {\tt https\+://github.\+com/mlpack/mlpack/issues/100} for more information. \end{DoxyRefDesc}
+
+
+Definition at line 93 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+I\+N\+T\+\_\+\+I\+N\+\_\+\+R\+EQ@{P\+A\+R\+A\+M\+\_\+\+I\+N\+T\+\_\+\+I\+N\+\_\+\+R\+EQ}}
+\index{P\+A\+R\+A\+M\+\_\+\+I\+N\+T\+\_\+\+I\+N\+\_\+\+R\+EQ@{P\+A\+R\+A\+M\+\_\+\+I\+N\+T\+\_\+\+I\+N\+\_\+\+R\+EQ}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+I\+N\+T\+\_\+\+I\+N\+\_\+\+R\+EQ}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+I\+N\+T\+\_\+\+I\+N\+\_\+\+R\+EQ(
+\begin{DoxyParamCaption}
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS}
+\end{DoxyParamCaption}
+)~{\bf P\+A\+R\+A\+M\+\_\+\+IN}(int, ID, D\+E\+SC, A\+L\+I\+AS, 0, true)}\label{param_8hpp_a59102e55c5d69d23909a75bd6093f816}
+
+
+Define a required integer input parameter. 
+
+The parameter must then be specified on the command line with --ID=value.
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & Name of the parameter. \\
+\hline
+{\em D\+E\+SC} & Quick description of the parameter (1-\/2 sentences). \\
+\hline
+{\em A\+L\+I\+AS} & An alias for the parameter (one letter).\\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\doxyref{mlpack\+::\+C\+LI}{p.}{classmlpack_1_1CLI}, \doxyref{P\+R\+O\+G\+R\+A\+M\+\_\+\+I\+N\+F\+O()}{p.}{param_8hpp_ad781e52fa8bee6ec70cabb646fa16e00}
+\end{DoxySeeAlso}
+\begin{DoxyRefDesc}{Bug}
+\item[{\bf Bug}]The {\bfseries C\+O\+U\+N\+T\+ER} variable is used in most cases to guarantee a unique global identifier for options declared using the P\+A\+R\+A\+M\+\_\+$\ast$() macros. However, not all compilers have this support--most notably, gcc $<$ 4.\+3. In that case, the {\bfseries L\+I\+NE} macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See {\tt https\+://github.\+com/mlpack/mlpack/issues/100} for more information. \end{DoxyRefDesc}
+
+
+Definition at line 913 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+I\+N\+T\+\_\+\+O\+UT@{P\+A\+R\+A\+M\+\_\+\+I\+N\+T\+\_\+\+O\+UT}}
+\index{P\+A\+R\+A\+M\+\_\+\+I\+N\+T\+\_\+\+O\+UT@{P\+A\+R\+A\+M\+\_\+\+I\+N\+T\+\_\+\+O\+UT}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+I\+N\+T\+\_\+\+O\+UT}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+I\+N\+T\+\_\+\+O\+UT(
+\begin{DoxyParamCaption}
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC}
+\end{DoxyParamCaption}
+)~{\bf P\+A\+R\+A\+M\+\_\+\+IN}(int, ID, D\+E\+SC, \char`\"{}\char`\"{}, 0, false)}\label{param_8hpp_a50b8bfabec3f0b64fb6e15837da50aa0}
+
+
+Define an integer output parameter. 
+
+This parameter will be printed on stdout at the end of the program; for instance, if the parameter name is \char`\"{}number\char`\"{} and the value is 5, the output on stdout would be of the following form\+:
+
+
+\begin{DoxyCode}
+1 number: 5
+\end{DoxyCode}
+
+
+If the parameter is not set by the end of the program, a fatal runtime error will be issued.
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & Name of the parameter. \\
+\hline
+{\em D\+E\+SC} & Quick description of the parameter (1-\/2 sentences).\\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\doxyref{mlpack\+::\+C\+LI}{p.}{classmlpack_1_1CLI}, \doxyref{P\+R\+O\+G\+R\+A\+M\+\_\+\+I\+N\+F\+O()}{p.}{param_8hpp_ad781e52fa8bee6ec70cabb646fa16e00}
+\end{DoxySeeAlso}
+\begin{DoxyRefDesc}{Bug}
+\item[{\bf Bug}]The {\bfseries C\+O\+U\+N\+T\+ER} variable is used in most cases to guarantee a unique global identifier for options declared using the P\+A\+R\+A\+M\+\_\+$\ast$() macros. However, not all compilers have this support--most notably, gcc $<$ 4.\+3. In that case, the {\bfseries L\+I\+NE} macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See {\tt https\+://github.\+com/mlpack/mlpack/issues/100} for more information. \end{DoxyRefDesc}
+
+
+Definition at line 121 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+IX@{P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+IX}}
+\index{P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+IX@{P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+IX}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+IX}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+IX(
+\begin{DoxyParamCaption}
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS, }
+\item[{}]{R\+EQ, }
+\item[{}]{T\+R\+A\+NS, }
+\item[{}]{IN}
+\end{DoxyParamCaption}
+)}\label{param_8hpp_a4ce453a83dd3e3efc08a335b0e2775ea}
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\textcolor{keyword}{static} mlpack::util::Option<arma::mat> \
+      JOIN(JOIN(cli\_option\_dummy\_object\_matrix\_, \_\_LINE\_\_), opt) \(\backslash\)
+      (arma::mat(), ID, DESC, ALIAS, REQ, IN, !TRANS);
+\end{DoxyCode}
+
+
+Definition at line 1071 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+I\+X\+\_\+\+A\+N\+D\+\_\+\+I\+N\+F\+O\+\_\+\+IN@{P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+I\+X\+\_\+\+A\+N\+D\+\_\+\+I\+N\+F\+O\+\_\+\+IN}}
+\index{P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+I\+X\+\_\+\+A\+N\+D\+\_\+\+I\+N\+F\+O\+\_\+\+IN@{P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+I\+X\+\_\+\+A\+N\+D\+\_\+\+I\+N\+F\+O\+\_\+\+IN}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+I\+X\+\_\+\+A\+N\+D\+\_\+\+I\+N\+F\+O\+\_\+\+IN}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+I\+X\+\_\+\+A\+N\+D\+\_\+\+I\+N\+F\+O\+\_\+\+IN(
+\begin{DoxyParamCaption}
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS}
+\end{DoxyParamCaption}
+)~{\bf P\+A\+R\+A\+M\+\_\+\+IN}({\bf T\+U\+P\+L\+E\+\_\+\+T\+Y\+PE}, ID, D\+E\+SC, A\+L\+I\+AS, {\bf T\+U\+P\+L\+E\+\_\+\+T\+Y\+PE}(), false)}\label{param_8hpp_a444c996b7e4b9dadaa5e43a7d7798f71}
+
+
+Definition at line 804 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+I\+X\+\_\+\+IN@{P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+I\+X\+\_\+\+IN}}
+\index{P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+I\+X\+\_\+\+IN@{P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+I\+X\+\_\+\+IN}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+I\+X\+\_\+\+IN}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+I\+X\+\_\+\+IN(
+\begin{DoxyParamCaption}
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS}
+\end{DoxyParamCaption}
+)~{\bf P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+IX}(ID, D\+E\+SC, A\+L\+I\+AS, false, true, true)}\label{param_8hpp_a49e6517671e6c8173dd3570de950363b}
+
+
+Define a matrix input parameter. 
+
+From the command line, the user can specify the file that holds the matrix, using the name of the matrix parameter with \char`\"{}\+\_\+file\char`\"{} appended (and the same alias). So for instance, if the name of the matrix parameter was \char`\"{}mat\char`\"{}, the user could specify that the \char`\"{}mat\char`\"{} matrix was held in matrix.\+csv by giving the parameter
+
+
+\begin{DoxyCode}
+1 --mat\_file matrix.csv
+\end{DoxyCode}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & Name of the parameter. \\
+\hline
+{\em D\+E\+SC} & Description of the parameter (1-\/2 sentences). \\
+\hline
+{\em A\+L\+I\+AS} & An alias for the parameter (one letter).\\
+\hline
+\end{DoxyParams}
+\begin{DoxyRefDesc}{Bug}
+\item[{\bf Bug}]The {\bfseries C\+O\+U\+N\+T\+ER} variable is used in most cases to guarantee a unique global identifier for options declared using the P\+A\+R\+A\+M\+\_\+$\ast$() macros. However, not all compilers have this support--most notably, gcc $<$ 4.\+3. In that case, the {\bfseries L\+I\+NE} macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See {\tt https\+://github.\+com/mlpack/mlpack/issues/100} for more information. \end{DoxyRefDesc}
+
+
+Definition at line 253 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+I\+X\+\_\+\+I\+N\+\_\+\+R\+EQ@{P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+I\+X\+\_\+\+I\+N\+\_\+\+R\+EQ}}
+\index{P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+I\+X\+\_\+\+I\+N\+\_\+\+R\+EQ@{P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+I\+X\+\_\+\+I\+N\+\_\+\+R\+EQ}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+I\+X\+\_\+\+I\+N\+\_\+\+R\+EQ}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+I\+X\+\_\+\+I\+N\+\_\+\+R\+EQ(
+\begin{DoxyParamCaption}
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS}
+\end{DoxyParamCaption}
+)~{\bf P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+IX}(ID, D\+E\+SC, A\+L\+I\+AS, true, true, true)}\label{param_8hpp_a20dc72054c6568f040bdc8a5512acacb}
+
+
+Define a required matrix input parameter. 
+
+From the command line, the user can specify the file that holds the matrix, using the name of the matrix parameter with \char`\"{}\+\_\+file\char`\"{} appended (and the same alias). So for instance, if the name of the matrix parameter was \char`\"{}mat\char`\"{}, the user could specify that the \char`\"{}mat\char`\"{} matrix was held in matrix.\+csv by giving the parameter
+
+
+\begin{DoxyCode}
+1 --mat\_file matrix.csv
+\end{DoxyCode}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & Name of the parameter. \\
+\hline
+{\em D\+E\+SC} & Description of the parameter (1-\/2 sentences). \\
+\hline
+{\em A\+L\+I\+AS} & An alias for the parameter (one letter).\\
+\hline
+\end{DoxyParams}
+\begin{DoxyRefDesc}{Bug}
+\item[{\bf Bug}]The {\bfseries C\+O\+U\+N\+T\+ER} variable is used in most cases to guarantee a unique global identifier for options declared using the P\+A\+R\+A\+M\+\_\+$\ast$() macros. However, not all compilers have this support--most notably, gcc $<$ 4.\+3. In that case, the {\bfseries L\+I\+NE} macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See {\tt https\+://github.\+com/mlpack/mlpack/issues/100} for more information. \end{DoxyRefDesc}
+
+
+Definition at line 279 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+I\+X\+\_\+\+O\+UT@{P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+I\+X\+\_\+\+O\+UT}}
+\index{P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+I\+X\+\_\+\+O\+UT@{P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+I\+X\+\_\+\+O\+UT}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+I\+X\+\_\+\+O\+UT}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+I\+X\+\_\+\+O\+UT(
+\begin{DoxyParamCaption}
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS}
+\end{DoxyParamCaption}
+)~{\bf P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+IX}(ID, D\+E\+SC, A\+L\+I\+AS, false, true, false)}\label{param_8hpp_a20f436f371a7613b532ae3a4c0416b30}
+
+
+Define a matrix output parameter. 
+
+When the program terminates, the matrix will be saved to whatever it was set to by C\+L\+I\+::\+Get\+Param$<$arma\+::mat$>$(\+I\+D) during the program. From the command-\/line, the user may specify the file in which to save the output matrix using a string option that is the name of the matrix parameter with \char`\"{}\+\_\+file\char`\"{} appended. So, for instance, if the name of the output matrix parameter was \char`\"{}mat\char`\"{}, the user could speicfy that the \char`\"{}mat\char`\"{} matrix should be saved in matrix.\+csv by giving the parameter
+
+
+\begin{DoxyCode}
+1 --mat\_file matrix.csv
+\end{DoxyCode}
+
+
+The output matrix will not be printed on stdout, like the other output option types.
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & Name of the parameter. \\
+\hline
+{\em D\+E\+SC} & Description of the parameter (1-\/2 sentences). \\
+\hline
+{\em A\+L\+I\+AS} & An alias for the parameter (one letter).\\
+\hline
+\end{DoxyParams}
+\begin{DoxyRefDesc}{Bug}
+\item[{\bf Bug}]The {\bfseries C\+O\+U\+N\+T\+ER} variable is used in most cases to guarantee a unique global identifier for options declared using the P\+A\+R\+A\+M\+\_\+$\ast$() macros. However, not all compilers have this support--most notably, gcc $<$ 4.\+3. In that case, the {\bfseries L\+I\+NE} macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See {\tt https\+://github.\+com/mlpack/mlpack/issues/100} for more information. \end{DoxyRefDesc}
+
+
+Definition at line 310 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+M\+O\+D\+EL@{P\+A\+R\+A\+M\+\_\+\+M\+O\+D\+EL}}
+\index{P\+A\+R\+A\+M\+\_\+\+M\+O\+D\+EL@{P\+A\+R\+A\+M\+\_\+\+M\+O\+D\+EL}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+M\+O\+D\+EL}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+M\+O\+D\+EL(
+\begin{DoxyParamCaption}
+\item[{}]{T\+Y\+PE, }
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS, }
+\item[{}]{R\+EQ, }
+\item[{}]{IN}
+\end{DoxyParamCaption}
+)}\label{param_8hpp_a1e4f86c8f4de8e3f932c4cedbe4d8157}
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\textcolor{keyword}{static} mlpack::util::Option<TYPE> \
+      JOIN(JOIN(cli\_option\_dummy\_object\_model\_, \_\_LINE\_\_), opt) \(\backslash\)
+      (TYPE(), ID, DESC, ALIAS, REQ, IN);
+\end{DoxyCode}
+
+
+Definition at line 1101 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+M\+O\+D\+E\+L\+\_\+\+IN@{P\+A\+R\+A\+M\+\_\+\+M\+O\+D\+E\+L\+\_\+\+IN}}
+\index{P\+A\+R\+A\+M\+\_\+\+M\+O\+D\+E\+L\+\_\+\+IN@{P\+A\+R\+A\+M\+\_\+\+M\+O\+D\+E\+L\+\_\+\+IN}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+M\+O\+D\+E\+L\+\_\+\+IN}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+M\+O\+D\+E\+L\+\_\+\+IN(
+\begin{DoxyParamCaption}
+\item[{}]{T\+Y\+PE, }
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS}
+\end{DoxyParamCaption}
+)~{\bf P\+A\+R\+A\+M\+\_\+\+M\+O\+D\+EL}(T\+Y\+PE, ID, D\+E\+SC, A\+L\+I\+AS, false, true)}\label{param_8hpp_a663f71826f69f70d119b5f577d20721e}
+
+
+Define an input model. 
+
+From the command line, the user can specify the file that holds the model, using the name of the model parameter with \char`\"{}\+\_\+file\char`\"{} appended (and the same alias). So for instance, if the name of the model parameter was \char`\"{}model\char`\"{}, the user could specify that the \char`\"{}model\char`\"{} model was held in model.\+bin by giving the parameter
+
+
+\begin{DoxyCode}
+1 --model\_file model.bin
+\end{DoxyCode}
+
+
+Note that the first parameter of this model is the type (the class name) of the model to be loaded. This model type must have a Serialize() function; a compilation error (a very long and complex one) will result if the model type does not have the following function\+:
+
+
+\begin{DoxyCode}
+1 template<typename Archive>
+2 void Serialize(Archive& ar, const unsigned int version);
+\end{DoxyCode}
+
+
+This is the \doxyref{boost\+::serialization}{p.}{namespaceboost_1_1serialization} \doxyref{serialize()}{p.}{namespaceboost_1_1serialization_a5c7f0e288c18c6887ba037b2bef6230d} function, just with a capital s for Serialize() (see \doxyref{src/mlpack/core/data/serialization\+\_\+shim.\+hpp}{p.}{serialization__shim_8hpp}).
+
+
+\begin{DoxyParams}{Parameters}
+{\em T\+Y\+PE} & Type of the model to be loaded. \\
+\hline
+{\em ID} & Name of the parameter. \\
+\hline
+{\em D\+E\+SC} & Description of the parameter. \\
+\hline
+{\em A\+L\+I\+AS} & An alias for the parameter (one letter). \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 836 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+M\+O\+D\+E\+L\+\_\+\+I\+N\+\_\+\+R\+EQ@{P\+A\+R\+A\+M\+\_\+\+M\+O\+D\+E\+L\+\_\+\+I\+N\+\_\+\+R\+EQ}}
+\index{P\+A\+R\+A\+M\+\_\+\+M\+O\+D\+E\+L\+\_\+\+I\+N\+\_\+\+R\+EQ@{P\+A\+R\+A\+M\+\_\+\+M\+O\+D\+E\+L\+\_\+\+I\+N\+\_\+\+R\+EQ}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+M\+O\+D\+E\+L\+\_\+\+I\+N\+\_\+\+R\+EQ}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+M\+O\+D\+E\+L\+\_\+\+I\+N\+\_\+\+R\+EQ(
+\begin{DoxyParamCaption}
+\item[{}]{T\+Y\+PE, }
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS}
+\end{DoxyParamCaption}
+)~{\bf P\+A\+R\+A\+M\+\_\+\+M\+O\+D\+EL}(T\+Y\+PE, ID, D\+E\+SC, A\+L\+I\+AS, true, true)}\label{param_8hpp_a42961ca5512a6e6ab58cdcd15e374fca}
+
+
+Define a required input model. 
+
+From the command line, the user can specify the file that holds the model, using the name of the model parameter with \char`\"{}\+\_\+file\char`\"{} appended (and the same alias). So for instance, if the name of the model parameter was \char`\"{}model\char`\"{}, the user could specify that the \char`\"{}model\char`\"{} model was held in model.\+bin by giving the parameter
+
+
+\begin{DoxyCode}
+1 --model\_file model.bin
+\end{DoxyCode}
+
+
+Note that the first parameter of this model is the type (the class name) of the model to be loaded. This model type must have a Serialize() function; a compilation error (a very long and complex one) will result if the model type does not have the following function\+:
+
+
+\begin{DoxyCode}
+1 template<typename Archive>
+2 void Serialize(Archive& ar, const unsigned int version);
+\end{DoxyCode}
+
+
+This is the \doxyref{boost\+::serialization}{p.}{namespaceboost_1_1serialization} \doxyref{serialize()}{p.}{namespaceboost_1_1serialization_a5c7f0e288c18c6887ba037b2bef6230d} function, just with a capital s for Serialize() (see \doxyref{src/mlpack/core/data/serialization\+\_\+shim.\+hpp}{p.}{serialization__shim_8hpp}).
+
+
+\begin{DoxyParams}{Parameters}
+{\em T\+Y\+PE} & Type of the model to be loaded. \\
+\hline
+{\em ID} & Name of the parameter. \\
+\hline
+{\em D\+E\+SC} & Description of the parameter. \\
+\hline
+{\em A\+L\+I\+AS} & An alias for the parameter (one letter). \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 868 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+M\+O\+D\+E\+L\+\_\+\+O\+UT@{P\+A\+R\+A\+M\+\_\+\+M\+O\+D\+E\+L\+\_\+\+O\+UT}}
+\index{P\+A\+R\+A\+M\+\_\+\+M\+O\+D\+E\+L\+\_\+\+O\+UT@{P\+A\+R\+A\+M\+\_\+\+M\+O\+D\+E\+L\+\_\+\+O\+UT}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+M\+O\+D\+E\+L\+\_\+\+O\+UT}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+M\+O\+D\+E\+L\+\_\+\+O\+UT(
+\begin{DoxyParamCaption}
+\item[{}]{T\+Y\+PE, }
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS}
+\end{DoxyParamCaption}
+)~{\bf P\+A\+R\+A\+M\+\_\+\+M\+O\+D\+EL}(T\+Y\+PE, ID, D\+E\+SC, A\+L\+I\+AS, false, false)}\label{param_8hpp_a303372e5feffaee9bd0a4bb50f3011b1}
+
+
+Define an output model. 
+
+From the command line, the user can specify the file that should hold the model, using the name of the model parameter with \char`\"{}\+\_\+file\char`\"{} appended (and the same alias). So for instance, if the user desires to save the model to model.\+bin and the parameter name is \char`\"{}model\char`\"{}, they could specify
+
+
+\begin{DoxyCode}
+1 --model\_file model.bin
+\end{DoxyCode}
+
+
+The model will be saved at the termination of the program. If you use a parameter of this type, you must call C\+L\+I\+::\+Destroy() at the end of your program.
+
+
+\begin{DoxyParams}{Parameters}
+{\em T\+Y\+PE} & Type of the model to be saved. \\
+\hline
+{\em ID} & Name of the parameter. \\
+\hline
+{\em D\+E\+SC} & Description of the parameter. \\
+\hline
+{\em A\+L\+I\+AS} & An alias for the parameter (one letter). \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 891 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+O\+UT@{P\+A\+R\+A\+M\+\_\+\+O\+UT}}
+\index{P\+A\+R\+A\+M\+\_\+\+O\+UT@{P\+A\+R\+A\+M\+\_\+\+O\+UT}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+O\+UT}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+O\+UT(
+\begin{DoxyParamCaption}
+\item[{}]{T, }
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS, }
+\item[{}]{D\+EF, }
+\item[{}]{R\+EQ}
+\end{DoxyParamCaption}
+)}\label{param_8hpp_afe71e03991bbb1721872dbf20620b37a}
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\textcolor{keyword}{static} mlpack::util::Option<T> \
+      JOIN(JOIN(cli\_option\_dummy\_object\_out\_, \_\_LINE\_\_), opt) \(\backslash\)
+      (DEF, ID, DESC, ALIAS, REQ, \textcolor{keyword}{false}, \textcolor{keyword}{false});
+\end{DoxyCode}
+
+
+Definition at line 1066 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+R\+OW@{P\+A\+R\+A\+M\+\_\+\+R\+OW}}
+\index{P\+A\+R\+A\+M\+\_\+\+R\+OW@{P\+A\+R\+A\+M\+\_\+\+R\+OW}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+R\+OW}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+R\+OW(
+\begin{DoxyParamCaption}
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS, }
+\item[{}]{R\+EQ, }
+\item[{}]{T\+R\+A\+NS, }
+\item[{}]{IN}
+\end{DoxyParamCaption}
+)}\label{param_8hpp_ac3efb084f2c69acdb9368f4fb9db654f}
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\textcolor{keyword}{static} mlpack::util::Option<arma::rowvec> \
+      JOIN(cli\_option\_dummy\_object\_row\_, \_\_LINE\_\_) \(\backslash\)
+      (arma::rowvec(), ID, DESC, ALIAS, REQ, IN, !TRANS);
+\end{DoxyCode}
+
+
+Definition at line 1091 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+R\+O\+W\+\_\+\+IN@{P\+A\+R\+A\+M\+\_\+\+R\+O\+W\+\_\+\+IN}}
+\index{P\+A\+R\+A\+M\+\_\+\+R\+O\+W\+\_\+\+IN@{P\+A\+R\+A\+M\+\_\+\+R\+O\+W\+\_\+\+IN}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+R\+O\+W\+\_\+\+IN}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+R\+O\+W\+\_\+\+IN(
+\begin{DoxyParamCaption}
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS}
+\end{DoxyParamCaption}
+)~{\bf P\+A\+R\+A\+M\+\_\+\+R\+OW}(ID, D\+E\+SC, A\+L\+I\+AS, false, true, true)}\label{param_8hpp_a503427b6b8cca3f0948487006e7f11b4}
+
+
+Define a row vector input parameter (type arma\+::rowvec). 
+
+From the command line, the user can specify the file that holds the vector, using the name of the vector parameter with \char`\"{}\+\_\+file\char`\"{} appended (and the same alias). So for instance, if the name of the vector parameter was \char`\"{}vec\char`\"{}, the user could specify that the \char`\"{}vec\char`\"{} vector was held in vec.\+csv by giving the parameter\+:
+
+
+\begin{DoxyCode}
+1 --vec\_file vector.csv
+\end{DoxyCode}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & Name of the parameter. \\
+\hline
+{\em D\+E\+SC} & Description of the parameter (1-\/2 sentences). \\
+\hline
+{\em A\+L\+I\+AS} & An alias for the parameter (one letter).\\
+\hline
+\end{DoxyParams}
+\begin{DoxyRefDesc}{Bug}
+\item[{\bf Bug}]The {\bfseries C\+O\+U\+N\+T\+ER} variable is used in most cases to guarantee a unique global identifier for options declared using the P\+A\+R\+A\+M\+\_\+$\ast$() macros. However, not all compilers have this support--most notably, gcc $<$ 4.\+3. In that case, the {\bfseries L\+I\+NE} macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See {\tt https\+://github.\+com/mlpack/mlpack/issues/100} for more information. \end{DoxyRefDesc}
+
+
+Definition at line 536 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+R\+O\+W\+\_\+\+O\+UT@{P\+A\+R\+A\+M\+\_\+\+R\+O\+W\+\_\+\+O\+UT}}
+\index{P\+A\+R\+A\+M\+\_\+\+R\+O\+W\+\_\+\+O\+UT@{P\+A\+R\+A\+M\+\_\+\+R\+O\+W\+\_\+\+O\+UT}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+R\+O\+W\+\_\+\+O\+UT}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+R\+O\+W\+\_\+\+O\+UT(
+\begin{DoxyParamCaption}
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS}
+\end{DoxyParamCaption}
+)~{\bf P\+A\+R\+A\+M\+\_\+\+R\+OW}(ID, D\+E\+SC, A\+L\+I\+AS, false, true, false)}\label{param_8hpp_a9beb54447b7992ecff903397abb60f73}
+
+
+Define a row vector output parameter (type arma\+::rowvec). 
+
+When the program terminates, the vector will be saved to whatever it was set to during the program. From the command-\/line, the user may specify the file in which to save the output vector using a string option that is the name of the matrix parameter with \char`\"{}\+\_\+file\char`\"{} appended. So, for instance, if the name of the output vector parameter was \char`\"{}vec\char`\"{}, the user could specify that the \char`\"{}vec\char`\"{} vector should be saved in vector.\+csv by giving the parameter\+:
+
+
+\begin{DoxyCode}
+1 --vec\_file vector.csv
+\end{DoxyCode}
+
+
+The output vector will not be printed on stdout, like the other output option types.
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & Name of the parameter. \\
+\hline
+{\em D\+E\+SC} & Description of the parameter (1-\/2 sentences). \\
+\hline
+{\em A\+L\+I\+AS} & An alias for the parameter (one letter).\\
+\hline
+\end{DoxyParams}
+\begin{DoxyRefDesc}{Bug}
+\item[{\bf Bug}]The {\bfseries C\+O\+U\+N\+T\+ER} variable is used in most cases to guarantee a unique global identifier for options declared using the P\+A\+R\+A\+M\+\_\+$\ast$() macros. However, not all compilers have this support--most notably, gcc $<$ 4.\+3. In that case, the {\bfseries L\+I\+NE} macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See {\tt https\+://github.\+com/mlpack/mlpack/issues/100} for more information. \end{DoxyRefDesc}
+
+
+Definition at line 651 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+S\+T\+R\+I\+N\+G\+\_\+\+IN@{P\+A\+R\+A\+M\+\_\+\+S\+T\+R\+I\+N\+G\+\_\+\+IN}}
+\index{P\+A\+R\+A\+M\+\_\+\+S\+T\+R\+I\+N\+G\+\_\+\+IN@{P\+A\+R\+A\+M\+\_\+\+S\+T\+R\+I\+N\+G\+\_\+\+IN}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+S\+T\+R\+I\+N\+G\+\_\+\+IN}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+S\+T\+R\+I\+N\+G\+\_\+\+IN(
+\begin{DoxyParamCaption}
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS, }
+\item[{}]{D\+EF}
+\end{DoxyParamCaption}
+)~{\bf P\+A\+R\+A\+M\+\_\+\+IN}({\bf std\+::string}, ID, D\+E\+SC, A\+L\+I\+AS, D\+EF, false)}\label{param_8hpp_a9514ae93b51ba592bc3299da8326bb80}
+
+
+Define a string input parameter. 
+
+The parameter can then be specified on the command line with --ID=value. If A\+L\+I\+AS is equal to D\+E\+F\+\_\+\+M\+OD (which is set using the \doxyref{P\+R\+O\+G\+R\+A\+M\+\_\+\+I\+N\+F\+O()}{p.}{param_8hpp_ad781e52fa8bee6ec70cabb646fa16e00} macro), the parameter can be specified with just --ID=value.
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & Name of the parameter. \\
+\hline
+{\em D\+E\+SC} & Quick description of the parameter (1-\/2 sentences). \\
+\hline
+{\em A\+L\+I\+AS} & An alias for the parameter (one letter). \\
+\hline
+{\em D\+EF} & Default value of the parameter.\\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\doxyref{mlpack\+::\+C\+LI}{p.}{classmlpack_1_1CLI}, \doxyref{P\+R\+O\+G\+R\+A\+M\+\_\+\+I\+N\+F\+O()}{p.}{param_8hpp_ad781e52fa8bee6ec70cabb646fa16e00}
+\end{DoxySeeAlso}
+\begin{DoxyRefDesc}{Bug}
+\item[{\bf Bug}]The {\bfseries C\+O\+U\+N\+T\+ER} variable is used in most cases to guarantee a unique global identifier for options declared using the P\+A\+R\+A\+M\+\_\+$\ast$() macros. However, not all compilers have this support--most notably, gcc $<$ 4.\+3. In that case, the {\bfseries L\+I\+NE} macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See {\tt https\+://github.\+com/mlpack/mlpack/issues/100} for more information. \end{DoxyRefDesc}
+
+
+Definition at line 198 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+S\+T\+R\+I\+N\+G\+\_\+\+I\+N\+\_\+\+R\+EQ@{P\+A\+R\+A\+M\+\_\+\+S\+T\+R\+I\+N\+G\+\_\+\+I\+N\+\_\+\+R\+EQ}}
+\index{P\+A\+R\+A\+M\+\_\+\+S\+T\+R\+I\+N\+G\+\_\+\+I\+N\+\_\+\+R\+EQ@{P\+A\+R\+A\+M\+\_\+\+S\+T\+R\+I\+N\+G\+\_\+\+I\+N\+\_\+\+R\+EQ}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+S\+T\+R\+I\+N\+G\+\_\+\+I\+N\+\_\+\+R\+EQ}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+S\+T\+R\+I\+N\+G\+\_\+\+I\+N\+\_\+\+R\+EQ(
+\begin{DoxyParamCaption}
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS}
+\end{DoxyParamCaption}
+)~{\bf P\+A\+R\+A\+M\+\_\+\+IN}({\bf std\+::string}, ID, D\+E\+SC, A\+L\+I\+AS, \char`\"{}\char`\"{}, true)}\label{param_8hpp_a39f209691f1ca8c649a40cb22cea5408}
+
+
+Define a required string parameter. 
+
+The parameter must then be specified on the command line with --ID=value.
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & Name of the parameter. \\
+\hline
+{\em D\+E\+SC} & Quick description of the parameter (1-\/2 sentences). \\
+\hline
+{\em A\+L\+I\+AS} & An alias for the parameter (one letter).\\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\doxyref{mlpack\+::\+C\+LI}{p.}{classmlpack_1_1CLI}, \doxyref{P\+R\+O\+G\+R\+A\+M\+\_\+\+I\+N\+F\+O()}{p.}{param_8hpp_ad781e52fa8bee6ec70cabb646fa16e00}
+\end{DoxySeeAlso}
+\begin{DoxyRefDesc}{Bug}
+\item[{\bf Bug}]The {\bfseries C\+O\+U\+N\+T\+ER} variable is used in most cases to guarantee a unique global identifier for options declared using the P\+A\+R\+A\+M\+\_\+$\ast$() macros. However, not all compilers have this support--most notably, gcc $<$ 4.\+3. In that case, the {\bfseries L\+I\+NE} macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See {\tt https\+://github.\+com/mlpack/mlpack/issues/100} for more information. \end{DoxyRefDesc}
+
+
+Definition at line 957 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+S\+T\+R\+I\+N\+G\+\_\+\+O\+UT@{P\+A\+R\+A\+M\+\_\+\+S\+T\+R\+I\+N\+G\+\_\+\+O\+UT}}
+\index{P\+A\+R\+A\+M\+\_\+\+S\+T\+R\+I\+N\+G\+\_\+\+O\+UT@{P\+A\+R\+A\+M\+\_\+\+S\+T\+R\+I\+N\+G\+\_\+\+O\+UT}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+S\+T\+R\+I\+N\+G\+\_\+\+O\+UT}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+S\+T\+R\+I\+N\+G\+\_\+\+O\+UT(
+\begin{DoxyParamCaption}
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS}
+\end{DoxyParamCaption}
+)~{\bf P\+A\+R\+A\+M\+\_\+\+O\+UT}({\bf std\+::string}, ID, D\+E\+SC, A\+L\+I\+AS, \char`\"{}\char`\"{}, false)}\label{param_8hpp_a94d8f8edc103da0e05f04fce245e8a93}
+
+
+Define a string output parameter. 
+
+The string will be printed to stdout at the end of the program. For instance, if there was a string output parameter called \char`\"{}something\char`\"{} with value \char`\"{}hello\char`\"{}, at the end of the program the output would be of the following form\+:
+
+
+\begin{DoxyCode}
+1 something: "hello"
+\end{DoxyCode}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & Name of the parameter. \\
+\hline
+{\em D\+E\+SC} & Quick description of the parameter (1-\/2 sentences). \\
+\hline
+{\em A\+L\+I\+AS} & An alias for the parameter (one letter).\\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\doxyref{mlpack\+::\+C\+LI}{p.}{classmlpack_1_1CLI}, \doxyref{P\+R\+O\+G\+R\+A\+M\+\_\+\+I\+N\+F\+O()}{p.}{param_8hpp_ad781e52fa8bee6ec70cabb646fa16e00}
+\end{DoxySeeAlso}
+\begin{DoxyRefDesc}{Bug}
+\item[{\bf Bug}]The {\bfseries C\+O\+U\+N\+T\+ER} variable is used in most cases to guarantee a unique global identifier for options declared using the P\+A\+R\+A\+M\+\_\+$\ast$() macros. However, not all compilers have this support--most notably, gcc $<$ 4.\+3. In that case, the {\bfseries L\+I\+NE} macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See {\tt https\+://github.\+com/mlpack/mlpack/issues/100} for more information. \end{DoxyRefDesc}
+
+
+Definition at line 227 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+T\+M\+A\+T\+R\+I\+X\+\_\+\+IN@{P\+A\+R\+A\+M\+\_\+\+T\+M\+A\+T\+R\+I\+X\+\_\+\+IN}}
+\index{P\+A\+R\+A\+M\+\_\+\+T\+M\+A\+T\+R\+I\+X\+\_\+\+IN@{P\+A\+R\+A\+M\+\_\+\+T\+M\+A\+T\+R\+I\+X\+\_\+\+IN}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+T\+M\+A\+T\+R\+I\+X\+\_\+\+IN}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+T\+M\+A\+T\+R\+I\+X\+\_\+\+IN(
+\begin{DoxyParamCaption}
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS}
+\end{DoxyParamCaption}
+)~{\bf P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+IX}(ID, D\+E\+SC, A\+L\+I\+AS, false, false, true)}\label{param_8hpp_a237697d0b35e7e6484e8ce52c0ed00c9}
+
+
+Define a transposed matrix input parameter. 
+
+This is useful when data is desired in row-\/major form instead of the usual column-\/major form. From the command line, the user can specify the file that holds the matrix, using the name of the matrix parameter with \char`\"{}\+\_\+file\char`\"{} appended (and the same alias). So for instance, if the name of the matrix parameter was \char`\"{}mat\char`\"{}, the user could specify that the \char`\"{}mat\char`\"{} matrix was held in matrix.\+csv by giving the parameter
+
+
+\begin{DoxyCode}
+1 --mat\_file matrix.csv
+\end{DoxyCode}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & Name of the parameter. \\
+\hline
+{\em D\+E\+SC} & Description of the parameter (1-\/2 sentences). \\
+\hline
+{\em A\+L\+I\+AS} & An alias for the parameter (one letter).\\
+\hline
+\end{DoxyParams}
+\begin{DoxyRefDesc}{Bug}
+\item[{\bf Bug}]The {\bfseries C\+O\+U\+N\+T\+ER} variable is used in most cases to guarantee a unique global identifier for options declared using the P\+A\+R\+A\+M\+\_\+$\ast$() macros. However, not all compilers have this support--most notably, gcc $<$ 4.\+3. In that case, the {\bfseries L\+I\+NE} macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See {\tt https\+://github.\+com/mlpack/mlpack/issues/100} for more information. \end{DoxyRefDesc}
+
+
+Definition at line 337 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+T\+M\+A\+T\+R\+I\+X\+\_\+\+I\+N\+\_\+\+R\+EQ@{P\+A\+R\+A\+M\+\_\+\+T\+M\+A\+T\+R\+I\+X\+\_\+\+I\+N\+\_\+\+R\+EQ}}
+\index{P\+A\+R\+A\+M\+\_\+\+T\+M\+A\+T\+R\+I\+X\+\_\+\+I\+N\+\_\+\+R\+EQ@{P\+A\+R\+A\+M\+\_\+\+T\+M\+A\+T\+R\+I\+X\+\_\+\+I\+N\+\_\+\+R\+EQ}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+T\+M\+A\+T\+R\+I\+X\+\_\+\+I\+N\+\_\+\+R\+EQ}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+T\+M\+A\+T\+R\+I\+X\+\_\+\+I\+N\+\_\+\+R\+EQ(
+\begin{DoxyParamCaption}
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS}
+\end{DoxyParamCaption}
+)~{\bf P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+IX}(ID, D\+E\+SC, A\+L\+I\+AS, true, false, true)}\label{param_8hpp_a580cb0e5b1c587a4bc5b7211aa2c414b}
+
+
+Define a required transposed matrix input parameter. 
+
+This is useful when data is desired in row-\/major form instead of the usual column-\/major form. From the command line, the user can specify the file that holds the matrix, using the name of the matrix parameter with \char`\"{}\+\_\+file\char`\"{} appended (and the same alias). So for instance, if the name of the matrix parameter was \char`\"{}mat\char`\"{}, the user could specify that the \char`\"{}mat\char`\"{} matrix was held in matrix.\+csv by giving the parameter
+
+
+\begin{DoxyCode}
+1 --mat\_file matrix.csv
+\end{DoxyCode}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & Name of the parameter. \\
+\hline
+{\em D\+E\+SC} & Description of the parameter (1-\/2 sentences). \\
+\hline
+{\em A\+L\+I\+AS} & An alias for the parameter (one letter).\\
+\hline
+\end{DoxyParams}
+\begin{DoxyRefDesc}{Bug}
+\item[{\bf Bug}]The {\bfseries C\+O\+U\+N\+T\+ER} variable is used in most cases to guarantee a unique global identifier for options declared using the P\+A\+R\+A\+M\+\_\+$\ast$() macros. However, not all compilers have this support--most notably, gcc $<$ 4.\+3. In that case, the {\bfseries L\+I\+NE} macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See {\tt https\+://github.\+com/mlpack/mlpack/issues/100} for more information. \end{DoxyRefDesc}
+
+
+Definition at line 365 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+T\+M\+A\+T\+R\+I\+X\+\_\+\+O\+UT@{P\+A\+R\+A\+M\+\_\+\+T\+M\+A\+T\+R\+I\+X\+\_\+\+O\+UT}}
+\index{P\+A\+R\+A\+M\+\_\+\+T\+M\+A\+T\+R\+I\+X\+\_\+\+O\+UT@{P\+A\+R\+A\+M\+\_\+\+T\+M\+A\+T\+R\+I\+X\+\_\+\+O\+UT}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+T\+M\+A\+T\+R\+I\+X\+\_\+\+O\+UT}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+T\+M\+A\+T\+R\+I\+X\+\_\+\+O\+UT(
+\begin{DoxyParamCaption}
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS}
+\end{DoxyParamCaption}
+)~{\bf P\+A\+R\+A\+M\+\_\+\+M\+A\+T\+R\+IX}(ID, D\+E\+SC, A\+L\+I\+AS, false, false, false)}\label{param_8hpp_a76754d246b86d1b159270e4794c25019}
+
+
+Define a transposed matrix output parameter. 
+
+This is useful when data is stored in a row-\/major form instead of the usual column-\/major form. When the program terminates, the matrix will be saved to whatever it was set to by C\+L\+I\+::\+Get\+Param$<$arma\+::mat$>$(\+I\+D) during the program. From the command-\/line, the user may specify the file in which to save the output matrix using a string option that is the name of the matrix parameter with \char`\"{}\+\_\+file\char`\"{} appended. So, for instance, if the name of the output matrix parameter was \char`\"{}mat\char`\"{}, the user could speicfy that the \char`\"{}mat\char`\"{} matrix should be saved in matrix.\+csv by giving the parameter
+
+
+\begin{DoxyCode}
+1 --mat\_file matrix.csv
+\end{DoxyCode}
+
+
+The output matrix will not be printed on stdout, like the other output option types.
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & Name of the parameter. \\
+\hline
+{\em D\+E\+SC} & Description of the parameter (1-\/2 sentences). \\
+\hline
+{\em A\+L\+I\+AS} & An alias for the parameter (one letter).\\
+\hline
+\end{DoxyParams}
+\begin{DoxyRefDesc}{Bug}
+\item[{\bf Bug}]The {\bfseries C\+O\+U\+N\+T\+ER} variable is used in most cases to guarantee a unique global identifier for options declared using the P\+A\+R\+A\+M\+\_\+$\ast$() macros. However, not all compilers have this support--most notably, gcc $<$ 4.\+3. In that case, the {\bfseries L\+I\+NE} macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See {\tt https\+://github.\+com/mlpack/mlpack/issues/100} for more information. \end{DoxyRefDesc}
+
+
+Definition at line 398 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+U\+C\+OL@{P\+A\+R\+A\+M\+\_\+\+U\+C\+OL}}
+\index{P\+A\+R\+A\+M\+\_\+\+U\+C\+OL@{P\+A\+R\+A\+M\+\_\+\+U\+C\+OL}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+U\+C\+OL}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+U\+C\+OL(
+\begin{DoxyParamCaption}
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS, }
+\item[{}]{R\+EQ, }
+\item[{}]{T\+R\+A\+NS, }
+\item[{}]{IN}
+\end{DoxyParamCaption}
+)}\label{param_8hpp_ad293cdde75e8b7986b01b50fc05e0186}
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\textcolor{keyword}{static} mlpack::util::Option<arma::Col<size_t>> \(\backslash\)
+      JOIN(cli\_option\_dummy\_object\_ucol\_, \_\_LINE\_\_) \(\backslash\)
+      (arma::Col<size\_t>(), ID, DESC, ALIAS, REQ, IN, !TRANS);
+\end{DoxyCode}
+
+
+Definition at line 1086 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+U\+C\+O\+L\+\_\+\+IN@{P\+A\+R\+A\+M\+\_\+\+U\+C\+O\+L\+\_\+\+IN}}
+\index{P\+A\+R\+A\+M\+\_\+\+U\+C\+O\+L\+\_\+\+IN@{P\+A\+R\+A\+M\+\_\+\+U\+C\+O\+L\+\_\+\+IN}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+U\+C\+O\+L\+\_\+\+IN}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+U\+C\+O\+L\+\_\+\+IN(
+\begin{DoxyParamCaption}
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS}
+\end{DoxyParamCaption}
+)~{\bf P\+A\+R\+A\+M\+\_\+\+U\+C\+OL}(ID, D\+E\+SC, A\+L\+I\+AS, false, true, true)}\label{param_8hpp_a55c356a0f2cc3df7122b3f033033538e}
+
+
+Define an unsigned vector input parameter (type arma\+::\+Col$<$size\+\_\+t$>$). 
+
+From the command line, the user can specify the file that holds the vector, using the name of the vector parameter with \char`\"{}\+\_\+file\char`\"{} appended (and the same alias). So for instance, if the name of the vector parameter was \char`\"{}vec\char`\"{}, the user could specify that the \char`\"{}vec\char`\"{} vector was held in vec.\+csv by giving the parameter\+:
+
+
+\begin{DoxyCode}
+1 --vec\_file vector.csv
+\end{DoxyCode}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & Name of the parameter. \\
+\hline
+{\em D\+E\+SC} & Description of the parameter (1-\/2 sentences). \\
+\hline
+{\em A\+L\+I\+AS} & An alias for the parameter (one letter).\\
+\hline
+\end{DoxyParams}
+\begin{DoxyRefDesc}{Bug}
+\item[{\bf Bug}]The {\bfseries C\+O\+U\+N\+T\+ER} variable is used in most cases to guarantee a unique global identifier for options declared using the P\+A\+R\+A\+M\+\_\+$\ast$() macros. However, not all compilers have this support--most notably, gcc $<$ 4.\+3. In that case, the {\bfseries L\+I\+NE} macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See {\tt https\+://github.\+com/mlpack/mlpack/issues/100} for more information. \end{DoxyRefDesc}
+
+
+Definition at line 562 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+U\+C\+O\+L\+\_\+\+O\+UT@{P\+A\+R\+A\+M\+\_\+\+U\+C\+O\+L\+\_\+\+O\+UT}}
+\index{P\+A\+R\+A\+M\+\_\+\+U\+C\+O\+L\+\_\+\+O\+UT@{P\+A\+R\+A\+M\+\_\+\+U\+C\+O\+L\+\_\+\+O\+UT}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+U\+C\+O\+L\+\_\+\+O\+UT}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+U\+C\+O\+L\+\_\+\+O\+UT(
+\begin{DoxyParamCaption}
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS}
+\end{DoxyParamCaption}
+)~{\bf P\+A\+R\+A\+M\+\_\+\+U\+C\+OL}(ID, D\+E\+SC, A\+L\+I\+AS, false, true, false)}\label{param_8hpp_ac8b7f343ae79cb1ec43a0d2eb791090d}
+
+
+Define an unsigned vector output parameter (type arma\+::\+Col$<$size\+\_\+t$>$). 
+
+When the program terminates, the vector will be saved to whatever it was set to during the program. From the command-\/line, the user may specify the file in which to save the output vector using a string option that is the name of the matrix parameter with \char`\"{}\+\_\+file\char`\"{} appended. So, for instance, if the name of the output vector parameter was \char`\"{}vec\char`\"{}, the user could specify that the \char`\"{}vec\char`\"{} vector should be saved in vector.\+csv by giving the parameter\+:
+
+
+\begin{DoxyCode}
+1 --vec\_file vector.csv
+\end{DoxyCode}
+
+
+The output vector will not be printed on stdout, like the other output option types.
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & Name of the parameter. \\
+\hline
+{\em D\+E\+SC} & Description of the parameter (1-\/2 sentences). \\
+\hline
+{\em A\+L\+I\+AS} & An alias for the parameter (one letter).\\
+\hline
+\end{DoxyParams}
+\begin{DoxyRefDesc}{Bug}
+\item[{\bf Bug}]The {\bfseries C\+O\+U\+N\+T\+ER} variable is used in most cases to guarantee a unique global identifier for options declared using the P\+A\+R\+A\+M\+\_\+$\ast$() macros. However, not all compilers have this support--most notably, gcc $<$ 4.\+3. In that case, the {\bfseries L\+I\+NE} macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See {\tt https\+://github.\+com/mlpack/mlpack/issues/100} for more information. \end{DoxyRefDesc}
+
+
+Definition at line 682 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+U\+M\+A\+T\+R\+IX@{P\+A\+R\+A\+M\+\_\+\+U\+M\+A\+T\+R\+IX}}
+\index{P\+A\+R\+A\+M\+\_\+\+U\+M\+A\+T\+R\+IX@{P\+A\+R\+A\+M\+\_\+\+U\+M\+A\+T\+R\+IX}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+U\+M\+A\+T\+R\+IX}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+U\+M\+A\+T\+R\+IX(
+\begin{DoxyParamCaption}
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS, }
+\item[{}]{R\+EQ, }
+\item[{}]{T\+R\+A\+NS, }
+\item[{}]{IN}
+\end{DoxyParamCaption}
+)}\label{param_8hpp_a6bcf880c112f92361cdb4a3536fba0ca}
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\textcolor{keyword}{static} mlpack::util::Option<arma::Mat<size_t>> \(\backslash\)
+      JOIN(JOIN(cli\_option\_dummy\_object\_umatrix\_, \_\_LINE\_\_), opt) \(\backslash\)
+      (arma::Mat<size\_t>(), ID, DESC, ALIAS, REQ, IN, !TRANS);
+\end{DoxyCode}
+
+
+Definition at line 1076 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+U\+M\+A\+T\+R\+I\+X\+\_\+\+IN@{P\+A\+R\+A\+M\+\_\+\+U\+M\+A\+T\+R\+I\+X\+\_\+\+IN}}
+\index{P\+A\+R\+A\+M\+\_\+\+U\+M\+A\+T\+R\+I\+X\+\_\+\+IN@{P\+A\+R\+A\+M\+\_\+\+U\+M\+A\+T\+R\+I\+X\+\_\+\+IN}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+U\+M\+A\+T\+R\+I\+X\+\_\+\+IN}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+U\+M\+A\+T\+R\+I\+X\+\_\+\+IN(
+\begin{DoxyParamCaption}
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS}
+\end{DoxyParamCaption}
+)~{\bf P\+A\+R\+A\+M\+\_\+\+U\+M\+A\+T\+R\+IX}(ID, D\+E\+SC, A\+L\+I\+AS, false, true, true)}\label{param_8hpp_a0db58e2b5c75754d200638093b9cc40f}
+
+
+Define an unsigned matrix input parameter (arma\+::\+Mat$<$size\+\_\+t$>$). 
+
+From the command line, the user can specify the file that holds the matrix, using the name of the matrix parameter with \char`\"{}\+\_\+file\char`\"{} appended (and the same alias). So for instance, if the name of the matrix parameter was \char`\"{}mat\char`\"{}, the user could specify that the \char`\"{}mat\char`\"{} matrix was held in matrix.\+csv by giving the parameter
+
+
+\begin{DoxyCode}
+1 --mat\_file matrix.csv
+\end{DoxyCode}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & Name of the parameter. \\
+\hline
+{\em D\+E\+SC} & Description of the parameter (1-\/2 sentences). \\
+\hline
+{\em A\+L\+I\+AS} & An alias for the parameter (one letter).\\
+\hline
+\end{DoxyParams}
+\begin{DoxyRefDesc}{Bug}
+\item[{\bf Bug}]The {\bfseries C\+O\+U\+N\+T\+ER} variable is used in most cases to guarantee a unique global identifier for options declared using the P\+A\+R\+A\+M\+\_\+$\ast$() macros. However, not all compilers have this support--most notably, gcc $<$ 4.\+3. In that case, the {\bfseries L\+I\+NE} macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See {\tt https\+://github.\+com/mlpack/mlpack/issues/100} for more information. \end{DoxyRefDesc}
+
+
+Definition at line 424 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+U\+M\+A\+T\+R\+I\+X\+\_\+\+I\+N\+\_\+\+R\+EQ@{P\+A\+R\+A\+M\+\_\+\+U\+M\+A\+T\+R\+I\+X\+\_\+\+I\+N\+\_\+\+R\+EQ}}
+\index{P\+A\+R\+A\+M\+\_\+\+U\+M\+A\+T\+R\+I\+X\+\_\+\+I\+N\+\_\+\+R\+EQ@{P\+A\+R\+A\+M\+\_\+\+U\+M\+A\+T\+R\+I\+X\+\_\+\+I\+N\+\_\+\+R\+EQ}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+U\+M\+A\+T\+R\+I\+X\+\_\+\+I\+N\+\_\+\+R\+EQ}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+U\+M\+A\+T\+R\+I\+X\+\_\+\+I\+N\+\_\+\+R\+EQ(
+\begin{DoxyParamCaption}
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS}
+\end{DoxyParamCaption}
+)~{\bf P\+A\+R\+A\+M\+\_\+\+U\+M\+A\+T\+R\+IX}(ID, D\+E\+SC, A\+L\+I\+AS, true, true, true)}\label{param_8hpp_aaf334355d68e6667f4e50e071eee4d63}
+
+
+Define a required unsigned matrix input parameter (arma\+::\+Mat$<$size\+\_\+t$>$). 
+
+From the command line, the user can specify the file that holds the matrix, using the name of the matrix parameter with \char`\"{}\+\_\+file\char`\"{} appended (and the same alias). So for instance, if the name of the matrix parameter was \char`\"{}mat\char`\"{}, the user could specify that the \char`\"{}mat\char`\"{} matrix was held in matrix.\+csv by giving the parameter
+
+
+\begin{DoxyCode}
+1 --mat\_file matrix.csv
+\end{DoxyCode}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & Name of the parameter. \\
+\hline
+{\em D\+E\+SC} & Description of the parameter (1-\/2 sentences). \\
+\hline
+{\em A\+L\+I\+AS} & An alias for the parameter (one letter).\\
+\hline
+\end{DoxyParams}
+\begin{DoxyRefDesc}{Bug}
+\item[{\bf Bug}]The {\bfseries C\+O\+U\+N\+T\+ER} variable is used in most cases to guarantee a unique global identifier for options declared using the P\+A\+R\+A\+M\+\_\+$\ast$() macros. However, not all compilers have this support--most notably, gcc $<$ 4.\+3. In that case, the {\bfseries L\+I\+NE} macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See {\tt https\+://github.\+com/mlpack/mlpack/issues/100} for more information. \end{DoxyRefDesc}
+
+
+Definition at line 451 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+U\+M\+A\+T\+R\+I\+X\+\_\+\+O\+UT@{P\+A\+R\+A\+M\+\_\+\+U\+M\+A\+T\+R\+I\+X\+\_\+\+O\+UT}}
+\index{P\+A\+R\+A\+M\+\_\+\+U\+M\+A\+T\+R\+I\+X\+\_\+\+O\+UT@{P\+A\+R\+A\+M\+\_\+\+U\+M\+A\+T\+R\+I\+X\+\_\+\+O\+UT}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+U\+M\+A\+T\+R\+I\+X\+\_\+\+O\+UT}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+U\+M\+A\+T\+R\+I\+X\+\_\+\+O\+UT(
+\begin{DoxyParamCaption}
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS}
+\end{DoxyParamCaption}
+)~{\bf P\+A\+R\+A\+M\+\_\+\+U\+M\+A\+T\+R\+IX}(ID, D\+E\+SC, A\+L\+I\+AS, false, true, false)}\label{param_8hpp_a145abfa58262c15f01139092ececc571}
+
+
+Define an unsigned matrix output parameter (arma\+::\+Mat$<$size\+\_\+t$>$). 
+
+When the program terminates, the matrix will be saved to whatever it was set to by C\+L\+I\+::\+Get\+Param$<$arma\+::\+Mat$<$size\+\_\+t$>$$>$(ID) during the program. From the command-\/line, the user may specify the file in which to save the output matrix using a string option that is the name of the matrix parameter with \char`\"{}\+\_\+file\char`\"{} appended. So, for instance, if the name of the output matrix parameter was \char`\"{}mat\char`\"{}, the user could speicfy that the \char`\"{}mat\char`\"{} matrix should be saved in matrix.\+csv by giving the parameter
+
+
+\begin{DoxyCode}
+1 --mat\_file matrix.csv
+\end{DoxyCode}
+
+
+The output matrix will not be printed on stdout, like the other output option types.
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & Name of the parameter. \\
+\hline
+{\em D\+E\+SC} & Description of the parameter (1-\/2 sentences). \\
+\hline
+{\em A\+L\+I\+AS} & An alias for the parameter (one letter).\\
+\hline
+\end{DoxyParams}
+\begin{DoxyRefDesc}{Bug}
+\item[{\bf Bug}]The {\bfseries C\+O\+U\+N\+T\+ER} variable is used in most cases to guarantee a unique global identifier for options declared using the P\+A\+R\+A\+M\+\_\+$\ast$() macros. However, not all compilers have this support--most notably, gcc $<$ 4.\+3. In that case, the {\bfseries L\+I\+NE} macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See {\tt https\+://github.\+com/mlpack/mlpack/issues/100} for more information. \end{DoxyRefDesc}
+
+
+Definition at line 483 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+U\+R\+OW@{P\+A\+R\+A\+M\+\_\+\+U\+R\+OW}}
+\index{P\+A\+R\+A\+M\+\_\+\+U\+R\+OW@{P\+A\+R\+A\+M\+\_\+\+U\+R\+OW}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+U\+R\+OW}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+U\+R\+OW(
+\begin{DoxyParamCaption}
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS, }
+\item[{}]{R\+EQ, }
+\item[{}]{T\+R\+A\+NS, }
+\item[{}]{IN}
+\end{DoxyParamCaption}
+)}\label{param_8hpp_a79385d438fe2c4f19f6d563d26592aea}
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\textcolor{keyword}{static} mlpack::util::Option<arma::Row<size_t>> \(\backslash\)
+      JOIN(cli\_option\_dummy\_object\_urow\_, \_\_LINE\_\_) \(\backslash\)
+      (arma::Row<size\_t>(), ID, DESC, ALIAS, REQ, IN, !TRANS);
+\end{DoxyCode}
+
+
+Definition at line 1096 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+U\+R\+O\+W\+\_\+\+IN@{P\+A\+R\+A\+M\+\_\+\+U\+R\+O\+W\+\_\+\+IN}}
+\index{P\+A\+R\+A\+M\+\_\+\+U\+R\+O\+W\+\_\+\+IN@{P\+A\+R\+A\+M\+\_\+\+U\+R\+O\+W\+\_\+\+IN}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+U\+R\+O\+W\+\_\+\+IN}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+U\+R\+O\+W\+\_\+\+IN(
+\begin{DoxyParamCaption}
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS}
+\end{DoxyParamCaption}
+)~{\bf P\+A\+R\+A\+M\+\_\+\+U\+R\+OW}(ID, D\+E\+SC, A\+L\+I\+AS, false, true, true)}\label{param_8hpp_a311a7e2ebd5c3c73bb58206337e1da5d}
+
+
+Define an unsigned row vector input parameter (type arma\+::\+Row$<$size\+\_\+t$>$). 
+
+From the command line, the user can specify the file that holds the vector, using the name of the vector parameter with \char`\"{}\+\_\+file\char`\"{} appended (and the same alias). So for instance, if the name of the vector parameter was \char`\"{}vec\char`\"{}, the user could specify that the \char`\"{}vec\char`\"{} vector was held in vec.\+csv by giving the parameter\+:
+
+
+\begin{DoxyCode}
+1 --vec\_file vector.csv
+\end{DoxyCode}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & Name of the parameter. \\
+\hline
+{\em D\+E\+SC} & Description of the parameter (1-\/2 sentences). \\
+\hline
+{\em A\+L\+I\+AS} & An alias for the parameter (one letter).\\
+\hline
+\end{DoxyParams}
+\begin{DoxyRefDesc}{Bug}
+\item[{\bf Bug}]The {\bfseries C\+O\+U\+N\+T\+ER} variable is used in most cases to guarantee a unique global identifier for options declared using the P\+A\+R\+A\+M\+\_\+$\ast$() macros. However, not all compilers have this support--most notably, gcc $<$ 4.\+3. In that case, the {\bfseries L\+I\+NE} macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See {\tt https\+://github.\+com/mlpack/mlpack/issues/100} for more information. \end{DoxyRefDesc}
+
+
+Definition at line 589 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+U\+R\+O\+W\+\_\+\+O\+UT@{P\+A\+R\+A\+M\+\_\+\+U\+R\+O\+W\+\_\+\+O\+UT}}
+\index{P\+A\+R\+A\+M\+\_\+\+U\+R\+O\+W\+\_\+\+O\+UT@{P\+A\+R\+A\+M\+\_\+\+U\+R\+O\+W\+\_\+\+O\+UT}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+U\+R\+O\+W\+\_\+\+O\+UT}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+U\+R\+O\+W\+\_\+\+O\+UT(
+\begin{DoxyParamCaption}
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS}
+\end{DoxyParamCaption}
+)~{\bf P\+A\+R\+A\+M\+\_\+\+U\+R\+OW}(ID, D\+E\+SC, A\+L\+I\+AS, false, true, false)}\label{param_8hpp_a0027b7ba5f161851bf91b167c8891058}
+
+
+Define an unsigned row vector output parameter (type arma\+::\+Row$<$size\+\_\+t$>$). 
+
+When the program terminates, the vector will be saved to whatever it was set to during the program. From the command-\/line, the user may specify the file in which to save the output vector using a string option that is the name of the matrix parameter with \char`\"{}\+\_\+file\char`\"{} appended. So, for instance, if the name of the output vector parameter was \char`\"{}vec\char`\"{}, the user could specify that the \char`\"{}vec\char`\"{} vector should be saved in vector.\+csv by giving the parameter\+:
+
+
+\begin{DoxyCode}
+1 --vec\_file vector.csv
+\end{DoxyCode}
+
+
+The output vector will not be printed on stdout, like the other output option types.
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & Name of the parameter. \\
+\hline
+{\em D\+E\+SC} & Description of the parameter (1-\/2 sentences). \\
+\hline
+{\em A\+L\+I\+AS} & An alias for the parameter (one letter).\\
+\hline
+\end{DoxyParams}
+\begin{DoxyRefDesc}{Bug}
+\item[{\bf Bug}]The {\bfseries C\+O\+U\+N\+T\+ER} variable is used in most cases to guarantee a unique global identifier for options declared using the P\+A\+R\+A\+M\+\_\+$\ast$() macros. However, not all compilers have this support--most notably, gcc $<$ 4.\+3. In that case, the {\bfseries L\+I\+NE} macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See {\tt https\+://github.\+com/mlpack/mlpack/issues/100} for more information. \end{DoxyRefDesc}
+
+
+Definition at line 713 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+IN@{P\+A\+R\+A\+M\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+IN}}
+\index{P\+A\+R\+A\+M\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+IN@{P\+A\+R\+A\+M\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+IN}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+IN}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+IN(
+\begin{DoxyParamCaption}
+\item[{}]{T, }
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS}
+\end{DoxyParamCaption}
+)~{\bf P\+A\+R\+A\+M\+\_\+\+IN}(std\+::vector$<$T$>$, ID, D\+E\+SC, A\+L\+I\+AS, std\+::vector$<$T$>$(), false)}\label{param_8hpp_a8431e7deab47987cfdb2ae3f242c72bc}
+
+
+Define a std\+::vector input parameter. 
+
+The parameter can then be specified on the command line with --ID=value1,value2,value3.
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & Name of the parameter. \\
+\hline
+{\em D\+E\+SC} & Quick description of the parameter (1-\/2 sentences). \\
+\hline
+{\em A\+L\+I\+AS} & An alias for the parameter (one letter). \\
+\hline
+{\em D\+EF} & Default value of the parameter.\\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\doxyref{mlpack\+::\+C\+LI}{p.}{classmlpack_1_1CLI}, \doxyref{P\+R\+O\+G\+R\+A\+M\+\_\+\+I\+N\+F\+O()}{p.}{param_8hpp_ad781e52fa8bee6ec70cabb646fa16e00}
+\end{DoxySeeAlso}
+\begin{DoxyRefDesc}{Bug}
+\item[{\bf Bug}]The {\bfseries C\+O\+U\+N\+T\+ER} variable is used in most cases to guarantee a unique global identifier for options declared using the P\+A\+R\+A\+M\+\_\+$\ast$() macros. However, not all compilers have this support--most notably, gcc $<$ 4.\+3. In that case, the {\bfseries L\+I\+NE} macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See {\tt https\+://github.\+com/mlpack/mlpack/issues/100} for more information. \end{DoxyRefDesc}
+
+
+Definition at line 737 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+I\+N\+\_\+\+R\+EQ@{P\+A\+R\+A\+M\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+I\+N\+\_\+\+R\+EQ}}
+\index{P\+A\+R\+A\+M\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+I\+N\+\_\+\+R\+EQ@{P\+A\+R\+A\+M\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+I\+N\+\_\+\+R\+EQ}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+I\+N\+\_\+\+R\+EQ}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+I\+N\+\_\+\+R\+EQ(
+\begin{DoxyParamCaption}
+\item[{}]{T, }
+\item[{}]{ID, }
+\item[{}]{D\+E\+SC, }
+\item[{}]{A\+L\+I\+AS}
+\end{DoxyParamCaption}
+)~{\bf P\+A\+R\+A\+M\+\_\+\+IN}(std\+::vector$<$T$>$, ID, D\+E\+SC, A\+L\+I\+AS, std\+::vector$<$T$>$(), true);}\label{param_8hpp_a83c3be131e322e0a661c8ddf9c3c7df6}
+
+
+Define a required vector parameter. 
+
+The parameter must then be specified on the command line with --ID=value1,value2,value3.
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & Name of the parameter. \\
+\hline
+{\em D\+E\+SC} & Quick description of the parameter (1-\/2 sentences). \\
+\hline
+{\em A\+L\+I\+AS} & An alias for the parameter (one letter).\\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\doxyref{mlpack\+::\+C\+LI}{p.}{classmlpack_1_1CLI}, \doxyref{P\+R\+O\+G\+R\+A\+M\+\_\+\+I\+N\+F\+O()}{p.}{param_8hpp_ad781e52fa8bee6ec70cabb646fa16e00}
+\end{DoxySeeAlso}
+\begin{DoxyRefDesc}{Bug}
+\item[{\bf Bug}]The {\bfseries C\+O\+U\+N\+T\+ER} variable is used in most cases to guarantee a unique global identifier for options declared using the P\+A\+R\+A\+M\+\_\+$\ast$() macros. However, not all compilers have this support--most notably, gcc $<$ 4.\+3. In that case, the {\bfseries L\+I\+NE} macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See {\tt https\+://github.\+com/mlpack/mlpack/issues/100} for more information. \end{DoxyRefDesc}
+
+
+Definition at line 980 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+A\+R\+A\+M\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+O\+UT@{P\+A\+R\+A\+M\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+O\+UT}}
+\index{P\+A\+R\+A\+M\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+O\+UT@{P\+A\+R\+A\+M\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+O\+UT}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+A\+R\+A\+M\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+O\+UT}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+A\+R\+A\+M\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+O\+UT(
+\begin{DoxyParamCaption}
+\item[{}]{T, }
+\item[{}]{ID}
+\end{DoxyParamCaption}
+)~{\bf P\+A\+R\+A\+M\+\_\+\+O\+UT}(std\+::vector$<$T$>$, ID, D\+E\+SC, \char`\"{}\char`\"{}, std\+::vector$<$T$>$(), false)}\label{param_8hpp_a06f7737525c7db616d248d1bfdf0ee38}
+
+
+Define a vector output parameter. 
+
+This vector will be printed on stdout at the end of the program; for instance, if the parameter name is \char`\"{}vector\char`\"{} and the vector holds the array \{ 1, 2, 3, 4 \}, the output on stdout would be of the following form\+:
+
+
+\begin{DoxyCode}
+1 vector: 1, 2, 3, 4
+\end{DoxyCode}
+
+
+If the parameter is not set by the end of the program, a fatal runtime error will be issued.
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & Name of the parameter. \\
+\hline
+{\em D\+E\+SC} & Quick description of the parameter (1-\/2 sentences).\\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\doxyref{mlpack\+::\+C\+LI}{p.}{classmlpack_1_1CLI}, \doxyref{P\+R\+O\+G\+R\+A\+M\+\_\+\+I\+N\+F\+O()}{p.}{param_8hpp_ad781e52fa8bee6ec70cabb646fa16e00}
+\end{DoxySeeAlso}
+\begin{DoxyRefDesc}{Bug}
+\item[{\bf Bug}]The {\bfseries C\+O\+U\+N\+T\+ER} variable is used in most cases to guarantee a unique global identifier for options declared using the P\+A\+R\+A\+M\+\_\+$\ast$() macros. However, not all compilers have this support--most notably, gcc $<$ 4.\+3. In that case, the {\bfseries L\+I\+NE} macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See {\tt https\+://github.\+com/mlpack/mlpack/issues/100} for more information. \end{DoxyRefDesc}
+
+
+Definition at line 766 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!P\+R\+O\+G\+R\+A\+M\+\_\+\+I\+N\+FO@{P\+R\+O\+G\+R\+A\+M\+\_\+\+I\+N\+FO}}
+\index{P\+R\+O\+G\+R\+A\+M\+\_\+\+I\+N\+FO@{P\+R\+O\+G\+R\+A\+M\+\_\+\+I\+N\+FO}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{P\+R\+O\+G\+R\+A\+M\+\_\+\+I\+N\+FO}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+R\+O\+G\+R\+A\+M\+\_\+\+I\+N\+FO(
+\begin{DoxyParamCaption}
+\item[{}]{N\+A\+ME, }
+\item[{}]{D\+E\+SC}
+\end{DoxyParamCaption}
+)}\label{param_8hpp_ad781e52fa8bee6ec70cabb646fa16e00}
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\textcolor{keyword}{static} mlpack::util::ProgramDoc \(\backslash\)
+    cli\_programdoc\_dummy\_object = mlpack::util::ProgramDoc(NAME, DESC);
+\end{DoxyCode}
+
+
+Document an executable. 
+
+Only one instance of this macro should be present in your program! Therefore, use it in the main.\+cpp (or corresponding executable) in your program.
+
+\begin{DoxySeeAlso}{See also}
+\doxyref{mlpack\+::\+C\+LI}{p.}{classmlpack_1_1CLI}, \doxyref{P\+A\+R\+A\+M\+\_\+\+F\+L\+A\+G()}{p.}{param_8hpp_a59a38dfe16c56a278bd89817216a3739}, \doxyref{P\+A\+R\+A\+M\+\_\+\+I\+N\+T\+\_\+\+I\+N()}{p.}{param_8hpp_a627025f18abd2735345f03fd733ccd9b}, \doxyref{P\+A\+R\+A\+M\+\_\+\+D\+O\+U\+B\+L\+E\+\_\+\+I\+N()}{p.}{param_8hpp_a14e7059294c684b01128819daea241d4}, \doxyref{P\+A\+R\+A\+M\+\_\+\+S\+T\+R\+I\+N\+G\+\_\+\+I\+N()}{p.}{param_8hpp_a9514ae93b51ba592bc3299da8326bb80}, \doxyref{P\+A\+R\+A\+M\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+I\+N()}{p.}{param_8hpp_a8431e7deab47987cfdb2ae3f242c72bc}, \doxyref{P\+A\+R\+A\+M\+\_\+\+I\+N\+T\+\_\+\+O\+U\+T()}{p.}{param_8hpp_a50b8bfabec3f0b64fb6e15837da50aa0}, \doxyref{P\+A\+R\+A\+M\+\_\+\+D\+O\+U\+B\+L\+E\+\_\+\+O\+U\+T()}{p.}{param_8hpp_aa39a5fa65308f2d5581c01cfae5f9203}, \doxyref{P\+A\+R\+A\+M\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+O\+U\+T()}{p.}{param_8hpp_a06f7737525c7db616d248d1bfdf0ee38}, \doxyref{P\+A\+R\+A\+M\+\_\+\+I\+N\+T\+\_\+\+I\+N\+\_\+\+R\+E\+Q()}{p.}{param_8hpp_a59102e55c5d69d23909a75bd6093f816}, \doxyref{P\+A\+R\+A\+M\+\_\+\+D\+O\+U\+B\+L\+E\+\_\+\+I\+N\+\_\+\+R\+E\+Q()}{p.}{param_8hpp_a1236858e19f2e8be7da663d4aecfac9f}, \doxyref{P\+A\+R\+A\+M\+\_\+\+S\+T\+R\+I\+N\+G\+\_\+\+I\+N\+\_\+\+R\+E\+Q()}{p.}{param_8hpp_a39f209691f1ca8c649a40cb22cea5408}, \doxyref{P\+A\+R\+A\+M\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+I\+N\+\_\+\+R\+E\+Q()}{p.}{param_8hpp_a83c3be131e322e0a661c8ddf9c3c7df6}, P\+A\+R\+A\+M\+\_\+\+I\+N\+T\+\_\+\+O\+U\+T\+\_\+\+R\+E\+Q(), P\+A\+R\+A\+M\+\_\+\+D\+O\+U\+B\+L\+E\+\_\+\+O\+U\+T\+\_\+\+R\+E\+Q(), P\+A\+R\+A\+M\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+O\+U\+T\+\_\+\+R\+E\+Q(), P\+A\+R\+A\+M\+\_\+\+S\+T\+R\+I\+N\+G\+\_\+\+O\+U\+T\+\_\+\+R\+E\+Q().
+\end{DoxySeeAlso}
+
+\begin{DoxyParams}{Parameters}
+{\em N\+A\+ME} & Short string representing the name of the program. \\
+\hline
+{\em D\+E\+SC} & Long string describing what the program does and possibly a simple usage example. Newlines should not be used here; this is taken care of by C\+LI (however, you can explicitly specify newlines to denote new paragraphs). \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 49 of file param.\+hpp.
+
+\index{param.\+hpp@{param.\+hpp}!T\+U\+P\+L\+E\+\_\+\+T\+Y\+PE@{T\+U\+P\+L\+E\+\_\+\+T\+Y\+PE}}
+\index{T\+U\+P\+L\+E\+\_\+\+T\+Y\+PE@{T\+U\+P\+L\+E\+\_\+\+T\+Y\+PE}!param.\+hpp@{param.\+hpp}}
+\subsubsection[{T\+U\+P\+L\+E\+\_\+\+T\+Y\+PE}]{\setlength{\rightskip}{0pt plus 5cm}\#define T\+U\+P\+L\+E\+\_\+\+T\+Y\+PE~std\+::tuple$<${\bf mlpack\+::data\+::\+Dataset\+Info}, arma\+::mat$>$}\label{param_8hpp_a56a316ac6f3ea218df55afae8376ce4e}
+
+
+Define an input Dataset\+Info/matrix parameter. 
+
+From the command line, the user can specify the file that holds the matrix, using the name of the matrix parameter with \char`\"{}\+\_\+file\char`\"{} appended (and the same alias). So for instance, if the name of the matrix parameter was \char`\"{}matrix\char`\"{}, the user could specify that the \char`\"{}matrix\char`\"{} matrix was held in file.\+csv by giving the parameter
+
+
+\begin{DoxyCode}
+1 --matrix\_file file.csv
+\end{DoxyCode}
+
+
+Then the Dataset\+Info and matrix type could be accessed with
+
+
+\begin{DoxyCode}
+1 DatasetInfo d = std::move(
+2     CLI::GetParam<std::tuple<arma::mat, DatasetInfo>>("matrix").get<0>());
+3 arma::mat m = std::move(
+4     CLI::GetParam<std::tuple<arma::mat, DatasetInfo>>("matrix").get<1>());
+\end{DoxyCode}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & Name of the parameter. \\
+\hline
+{\em D\+E\+SC} & Quick description of the parameter (1-\/2 sentences). \\
+\hline
+{\em A\+L\+I\+AS} & One-\/character string representing the alias of the parameter.\\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\doxyref{mlpack\+::\+C\+LI}{p.}{classmlpack_1_1CLI}, \doxyref{P\+R\+O\+G\+R\+A\+M\+\_\+\+I\+N\+F\+O()}{p.}{param_8hpp_ad781e52fa8bee6ec70cabb646fa16e00}
+\end{DoxySeeAlso}
+\begin{DoxyRefDesc}{Bug}
+\item[{\bf Bug}]The {\bfseries C\+O\+U\+N\+T\+ER} variable is used in most cases to guarantee a unique global identifier for options declared using the P\+A\+R\+A\+M\+\_\+$\ast$() macros. However, not all compilers have this support--most notably, gcc $<$ 4.\+3. In that case, the {\bfseries L\+I\+NE} macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See {\tt https\+://github.\+com/mlpack/mlpack/issues/100} for more information. \end{DoxyRefDesc}
+
+
+Definition at line 803 of file param.\+hpp.
+

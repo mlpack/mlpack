@@ -1,0 +1,1043 @@
+.TH "mlpack::data" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::data \- Functions to load and save matrices and models\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBCustomImputation\fP"
+.br
+.RI "\fIA simple custom imputation class\&. \fP"
+.ti -1c
+.RI "class \fBDatasetMapper\fP"
+.br
+.RI "\fIAuxiliary information for a dataset, including mappings to/from strings and the datatype of each dimension\&. \fP"
+.ti -1c
+.RI "struct \fBFirstArrayShim\fP"
+.br
+.RI "\fIA first shim for arrays\&. \fP"
+.ti -1c
+.RI "struct \fBFirstNormalArrayShim\fP"
+.br
+.RI "\fIA first shim for arrays without a Serialize() method\&. \fP"
+.ti -1c
+.RI "struct \fBFirstShim\fP"
+.br
+.RI "\fIThe first shim: simply holds the object and its name\&. \fP"
+.ti -1c
+.RI "struct \fBHasSerialize\fP"
+.br
+.ti -1c
+.RI "struct \fBHasSerializeFunction\fP"
+.br
+.ti -1c
+.RI "class \fBImputer\fP"
+.br
+.RI "\fIGiven a dataset of a particular datatype, replace user-specified missing value with a variable dependent on the StrategyType and MapperType\&. \fP"
+.ti -1c
+.RI "class \fBIncrementPolicy\fP"
+.br
+.RI "\fI\fBIncrementPolicy\fP is used as a helper class for \fBDatasetMapper\fP\&. \fP"
+.ti -1c
+.RI "class \fBListwiseDeletion\fP"
+.br
+.RI "\fIA complete-case analysis to remove the values containing mappedValue\&. \fP"
+.ti -1c
+.RI "class \fBLoadCSV\fP"
+.br
+.RI "\fILoad the csv file\&.This class use boost::spirit to implement the parser, please refer to following link http://theboostcpplibraries.com/boost.spirit for quick review\&. \fP"
+.ti -1c
+.RI "class \fBMeanImputation\fP"
+.br
+.RI "\fIA simple mean imputation class\&. \fP"
+.ti -1c
+.RI "class \fBMedianImputation\fP"
+.br
+.RI "\fIThis is a class implementation of simple median imputation\&. \fP"
+.ti -1c
+.RI "class \fBMissingPolicy\fP"
+.br
+.RI "\fI\fBMissingPolicy\fP is used as a helper class for \fBDatasetMapper\fP\&. \fP"
+.ti -1c
+.RI "struct \fBPointerShim\fP"
+.br
+.RI "\fIA shim for pointers\&. \fP"
+.ti -1c
+.RI "struct \fBSecondArrayShim\fP"
+.br
+.RI "\fIA shim for objects in an array; this is basically like the \fBSecondShim\fP, but for arrays that hold objects that have Serialize() methods instead of \fBserialize()\fP methods\&. \fP"
+.ti -1c
+.RI "struct \fBSecondNormalArrayShim\fP"
+.br
+.RI "\fIA shim for objects in an array which do not have a Serialize() function\&. \fP"
+.ti -1c
+.RI "struct \fBSecondShim\fP"
+.br
+.RI "\fIThe second shim: wrap the call to Serialize() inside of a \fBserialize()\fP function, so that an archive type can call \fBserialize()\fP on a \fBSecondShim\fP object and this gets forwarded correctly to our object's Serialize() function\&. \fP"
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "using \fBDatasetInfo\fP = \fBDatasetMapper\fP< \fBdata::IncrementPolicy\fP >"
+.br
+.in -1c
+.SS "Enumerations"
+
+.in +1c
+.ti -1c
+.RI "enum \fBDatatype\fP : bool { \fBnumeric\fP = 0, \fBcategorical\fP = 1 }
+.RI "\fIThe Datatype enum specifies the types of data mlpack algorithms can use\&. \fP""
+.br
+.ti -1c
+.RI "enum \fBformat\fP { \fBautodetect\fP, \fBtext\fP, \fBxml\fP, \fBbinary\fP }
+.RI "\fIDefine the formats we can read through \fBboost::serialization\fP\&. \fP""
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename T > void \fBBinarize\fP (const arma::Mat< T > &input, arma::Mat< T > &output, const double threshold)"
+.br
+.RI "\fIGiven an input dataset and threshold, set values greater than threshold to 1 and values less than or equal to the threshold to 0\&. \fP"
+.ti -1c
+.RI "template<typename T > void \fBBinarize\fP (const arma::Mat< T > &input, arma::Mat< T > &output, const double threshold, const size_t dimension)"
+.br
+.RI "\fIGiven an input dataset and threshold, set values greater than threshold to 1 and values less than or equal to the threshold to 0\&. \fP"
+.ti -1c
+.RI "template<typename T > \fBFirstArrayShim\fP< T > \fBCreateArrayNVP\fP (T *t, const size_t len, const \fBstd::string\fP &name, typename \fBstd::enable_if_t\fP< \fBHasSerialize\fP< T >::value > *=0)"
+.br
+.RI "\fICall this function to produce a name-value pair for an array; this is similar to boost::serialization::make_array(), but provides a nicer wrapper, allows types that have a Serialize() function, and allows you to give a name to your array\&. \fP"
+.ti -1c
+.RI "template<typename T > \fBFirstNormalArrayShim\fP< T > \fBCreateArrayNVP\fP (T *t, const size_t len, const \fBstd::string\fP &name, typename \fBstd::enable_if_t\fP<!\fBHasSerialize\fP< T >::value > *=0)"
+.br
+.RI "\fICall this function to produce a name-value pair for an array; this is similar to boost::serialization::make_array(), but provides a nicer wrapper, allows types that have a Serialize() function, and allows you to give a name to your array\&. \fP"
+.ti -1c
+.RI "template<typename T > \fBFirstShim\fP< T > \fBCreateNVP\fP (T &t, const \fBstd::string\fP &name, typename \fBstd::enable_if_t\fP< \fBHasSerialize\fP< T >::value > *=0)"
+.br
+.RI "\fICall this function to produce a name-value pair; this is similar to BOOST_SERIALIZATION_NVP(), but should be used for types that have a Serialize() function (or contain a type that has a Serialize() function) instead of a \fBserialize()\fP function\&. \fP"
+.ti -1c
+.RI "template<typename T > const boost::serialization::nvp< T > \fBCreateNVP\fP (T &t, const \fBstd::string\fP &name, typename \fBstd::enable_if_t\fP<!\fBHasSerialize\fP< T >::value > *=0, typename \fBstd::enable_if_t\fP<!std::is_pointer< T >::value > *=0)"
+.br
+.RI "\fICall this function to produce a name-value pair; this is similar to BOOST_SERIALIZATION_NVP(), but should be used for types that have a Serialize() function (or contain a type that has a Serialize() function) instead of a \fBserialize()\fP function\&. \fP"
+.ti -1c
+.RI "template<typename T > const boost::serialization::nvp< \fBPointerShim\fP< T > * > \fBCreateNVP\fP (T *&t, const \fBstd::string\fP &name, typename \fBstd::enable_if_t\fP< \fBHasSerialize\fP< T >::value > *=0)"
+.br
+.RI "\fICall this function to produce a name-value pair; this is similar to BOOST_SERIALIZATION_NVP(), but should be used for types that have a Serialize() function (or contain a type that has a Serialize() function) instead of a \fBserialize()\fP function\&. \fP"
+.ti -1c
+.RI "template<typename T > const boost::serialization::nvp< T * > \fBCreateNVP\fP (T *&t, const \fBstd::string\fP &name, typename \fBstd::enable_if_t\fP<!\fBHasSerialize\fP< T >::value > *=0)"
+.br
+.RI "\fICall this function to produce a name-value pair; this is similar to BOOST_SERIALIZATION_NVP(), but should be used for types that have a Serialize() function (or contain a type that has a Serialize() function) instead of a \fBserialize()\fP function\&. \fP"
+.ti -1c
+.RI "\fBstd::string\fP \fBExtension\fP (const \fBstd::string\fP &filename)"
+.br
+.ti -1c
+.RI "\fBHAS_MEM_FUNC\fP (Serialize, HasSerializeCheck)"
+.br
+.ti -1c
+.RI "template<typename eT > bool \fBLoad\fP (const \fBstd::string\fP &filename, arma::Mat< eT > &matrix, const bool fatal=false, const bool transpose=true)"
+.br
+.RI "\fILoads a matrix from file, guessing the filetype from the extension\&. \fP"
+.ti -1c
+.RI "template<typename eT > bool \fBLoad\fP (const \fBstd::string\fP &filename, arma::Col< eT > &vec, const bool fatal=false)"
+.br
+.RI "\fILoad a column vector from a file, guessing the filetype from the extension\&. \fP"
+.ti -1c
+.RI "template<typename eT > bool \fBLoad\fP (const \fBstd::string\fP &filename, arma::Row< eT > &rowvec, const bool fatal=false)"
+.br
+.RI "\fILoad a row vector from a file, guessing the filetype from the extension\&. \fP"
+.ti -1c
+.RI "template<typename eT , typename PolicyType > bool \fBLoad\fP (const \fBstd::string\fP &filename, arma::Mat< eT > &matrix, \fBDatasetMapper\fP< PolicyType > &info, const bool fatal=false, const bool transpose=true)"
+.br
+.RI "\fILoads a matrix from a file, guessing the filetype from the extension and mapping categorical features with a \fBDatasetMapper\fP object\&. \fP"
+.ti -1c
+.RI "template<typename T > bool \fBLoad\fP (const \fBstd::string\fP &filename, const \fBstd::string\fP &name, T &t, const bool fatal=false, \fBformat\fP f=format::autodetect)"
+.br
+.RI "\fILoad a model from a file, guessing the filetype from the extension, or, optionally, loading the specified format\&. \fP"
+.ti -1c
+.RI "template bool \fBLoad< double >\fP (const \fBstd::string\fP &, arma::Mat< double > &, const bool, const bool)"
+.br
+.ti -1c
+.RI "template bool \fBLoad< double, IncrementPolicy >\fP (const \fBstd::string\fP &, arma::Mat< double > &, \fBDatasetMapper\fP< \fBIncrementPolicy\fP > &, const bool, const bool)"
+.br
+.ti -1c
+.RI "template bool \fBLoad< float >\fP (const \fBstd::string\fP &, arma::Mat< float > &, const bool, const bool)"
+.br
+.ti -1c
+.RI "template bool \fBLoad< float, IncrementPolicy >\fP (const \fBstd::string\fP &, arma::Mat< float > &, \fBDatasetMapper\fP< \fBIncrementPolicy\fP > &, const bool, const bool)"
+.br
+.ti -1c
+.RI "template bool \fBLoad< int >\fP (const \fBstd::string\fP &, arma::Mat< int > &, const bool, const bool)"
+.br
+.ti -1c
+.RI "template bool \fBLoad< int, IncrementPolicy >\fP (const \fBstd::string\fP &, arma::Mat< int > &, \fBDatasetMapper\fP< \fBIncrementPolicy\fP > &, const bool, const bool)"
+.br
+.ti -1c
+.RI "template bool \fBLoad< size_t >\fP (const \fBstd::string\fP &, arma::Mat< size_t > &, const bool, const bool)"
+.br
+.ti -1c
+.RI "template bool \fBLoad< size_t, IncrementPolicy >\fP (const \fBstd::string\fP &, arma::Mat< size_t > &, \fBDatasetMapper\fP< \fBIncrementPolicy\fP > &, const bool, const bool)"
+.br
+.ti -1c
+.RI "template bool \fBLoad< unsigned long long >\fP (const \fBstd::string\fP &, arma::Mat< unsigned long long > &, const bool, const bool)"
+.br
+.ti -1c
+.RI "template bool \fBLoad< unsigned long long, IncrementPolicy >\fP (const \fBstd::string\fP &, arma::Mat< unsigned long long > &, \fBDatasetMapper\fP< \fBIncrementPolicy\fP > &, const bool, const bool)"
+.br
+.ti -1c
+.RI "template<typename eT > void \fBLoadARFF\fP (const \fBstd::string\fP &filename, arma::Mat< eT > &matrix)"
+.br
+.RI "\fIA utility function to load an ARFF dataset as numeric features (that is, as an Armadillo matrix without any modification)\&. \fP"
+.ti -1c
+.RI "template<typename eT , typename PolicyType > void \fBLoadARFF\fP (const \fBstd::string\fP &filename, arma::Mat< eT > &matrix, \fBDatasetMapper\fP< PolicyType > &info)"
+.br
+.RI "\fIA utility function to load an ARFF dataset as numeric and categorical features, using the DatasetInfo structure for mapping\&. \fP"
+.ti -1c
+.RI "template<typename eT , typename RowType > void \fBNormalizeLabels\fP (const RowType &labelsIn, arma::Row< size_t > &labels, arma::Col< eT > &mapping)"
+.br
+.RI "\fIGiven a set of labels of a particular datatype, convert them to unsigned labels in the range [0, n) where n is the number of different labels\&. \fP"
+.ti -1c
+.RI "template<typename Archive , typename T > Archive & \fBoperator&\fP (Archive &ar, \fBFirstShim\fP< T > t)"
+.br
+.RI "\fICatch when we call operator& with a \fBFirstShim\fP object\&. \fP"
+.ti -1c
+.RI "template<typename Archive , typename T > Archive & \fBoperator&\fP (Archive &ar, \fBFirstArrayShim\fP< T > t)"
+.br
+.RI "\fICatch when we call operator& with a \fBFirstArrayShim\fP object\&. \fP"
+.ti -1c
+.RI "template<typename Archive , typename T > Archive & \fBoperator&\fP (Archive &ar, \fBFirstNormalArrayShim\fP< T > t)"
+.br
+.RI "\fICatch when we call operator& with a \fBFirstNormalArrayShim\fP object\&. \fP"
+.ti -1c
+.RI "template<typename Archive , typename T > Archive & \fBoperator<<\fP (Archive &ar, \fBFirstShim\fP< T > t)"
+.br
+.RI "\fICatch when we call operator<< with a \fBFirstShim\fP object\&. \fP"
+.ti -1c
+.RI "template<typename Archive , typename T > Archive & \fBoperator<<\fP (Archive &ar, \fBFirstArrayShim\fP< T > t)"
+.br
+.RI "\fICatch when we call operator<< with a \fBFirstArrayShim\fP object\&. \fP"
+.ti -1c
+.RI "template<typename Archive , typename T > Archive & \fBoperator<<\fP (Archive &ar, \fBFirstNormalArrayShim\fP< T > t)"
+.br
+.RI "\fICatch when we call operator<< with a \fBFirstNormalArrayShim\fP object\&. \fP"
+.ti -1c
+.RI "template<typename Archive , typename T > Archive & \fBoperator>>\fP (Archive &ar, \fBFirstShim\fP< T > t)"
+.br
+.RI "\fICatch when we call operator>> with a \fBFirstShim\fP object\&. \fP"
+.ti -1c
+.RI "template<typename Archive , typename T > Archive & \fBoperator>>\fP (Archive &ar, \fBFirstArrayShim\fP< T > t)"
+.br
+.RI "\fICatch when we call operator>> with a \fBFirstArrayShim\fP object\&. \fP"
+.ti -1c
+.RI "template<typename Archive , typename T > Archive & \fBoperator>>\fP (Archive &ar, \fBFirstNormalArrayShim\fP< T > t)"
+.br
+.RI "\fICatch when we call operator>> with a \fBFirstNormalArrayShim\fP object\&. \fP"
+.ti -1c
+.RI "template<typename eT > void \fBRevertLabels\fP (const arma::Row< size_t > &labels, const arma::Col< eT > &mapping, arma::Row< eT > &labelsOut)"
+.br
+.RI "\fIGiven a set of labels that have been mapped to the range [0, n), map them back to the original labels given by the 'mapping' vector\&. \fP"
+.ti -1c
+.RI "template<typename eT > bool \fBSave\fP (const \fBstd::string\fP &filename, const arma::Mat< eT > &matrix, const bool fatal=false, bool transpose=true)"
+.br
+.RI "\fISaves a matrix to file, guessing the filetype from the extension\&. \fP"
+.ti -1c
+.RI "template<typename T > bool \fBSave\fP (const \fBstd::string\fP &filename, const \fBstd::string\fP &name, T &t, const bool fatal=false, \fBformat\fP f=format::autodetect)"
+.br
+.RI "\fISaves a model to file, guessing the filetype from the extension, or, optionally, saving the specified format\&. \fP"
+.ti -1c
+.RI "template<typename T , typename U > void \fBSplit\fP (const arma::Mat< T > &input, const arma::Row< U > &inputLabel, arma::Mat< T > &trainData, arma::Mat< T > &testData, arma::Row< U > &trainLabel, arma::Row< U > &testLabel, const double testRatio)"
+.br
+.RI "\fIGiven an input dataset and labels, split into a training set and test set\&. \fP"
+.ti -1c
+.RI "template<typename T > void \fBSplit\fP (const arma::Mat< T > &input, arma::Mat< T > &trainData, arma::Mat< T > &testData, const double testRatio)"
+.br
+.RI "\fIGiven an input dataset, split into a training set and test set\&. \fP"
+.ti -1c
+.RI "template<typename T , typename U > std::tuple< arma::Mat< T >, arma::Mat< T >, arma::Row< U >, arma::Row< U > > \fBSplit\fP (const arma::Mat< T > &input, const arma::Row< U > &inputLabel, const double testRatio)"
+.br
+.RI "\fIGiven an input dataset and labels, split into a training set and test set\&. \fP"
+.ti -1c
+.RI "template<typename T > std::tuple< arma::Mat< T >, arma::Mat< T > > \fBSplit\fP (const arma::Mat< T > &input, const double testRatio)"
+.br
+.RI "\fIGiven an input dataset, split into a training set and test set\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Functions to load and save matrices and models\&. 
+
+Functions to load and save matrices\&.
+.SH "Typedef Documentation"
+.PP 
+.SS "typedef \fBDatasetMapper\fP< \fBIncrementPolicy\fP > \fBmlpack::data::DatasetInfo\fP"
+
+.PP
+Definition at line 173 of file dataset_mapper\&.hpp\&.
+.SH "Enumeration Type Documentation"
+.PP 
+.SS "enum \fBmlpack::data::Datatype\fP : bool"
+
+.PP
+The Datatype enum specifies the types of data mlpack algorithms can use\&. The vast majority of mlpack algorithms can only use numeric data (i\&.e\&. float/double/etc\&.), but some algorithms can use categorical data, specified via this Datatype enum and the \fBDatasetMapper\fP class\&. 
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fInumeric \fP\fP
+.TP
+\fB\fIcategorical \fP\fP
+.PP
+Definition at line 24 of file datatype\&.hpp\&.
+.SS "enum \fBmlpack::data::format\fP"
+
+.PP
+Define the formats we can read through \fBboost::serialization\fP\&. 
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fIautodetect \fP\fP
+.TP
+\fB\fItext \fP\fP
+.TP
+\fB\fIxml \fP\fP
+.TP
+\fB\fIbinary \fP\fP
+.PP
+Definition at line 20 of file format\&.hpp\&.
+.SH "Function Documentation"
+.PP 
+.SS "template<typename T > void mlpack::data::Binarize (const arma::Mat< T > & input, arma::Mat< T > & output, const double threshold)"
+
+.PP
+Given an input dataset and threshold, set values greater than threshold to 1 and values less than or equal to the threshold to 0\&. This overload applies the changes to all dimensions\&.
+.PP
+.PP
+.nf
+arma::Mat<double> input = loadData();
+arma::Mat<double> output;
+double threshold = 0\&.5;
+
+// Binarize the whole Matrix\&. All positive values in will be set to 1 and
+// the values less than or equal to 0\&.5 will become 0\&.
+Binarize<double>(input, output, threshold);
+.fi
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input matrix to Binarize\&. 
+.br
+\fIoutput\fP Matrix you want to save binarized data into\&. 
+.br
+\fIthreshold\fP Threshold can by any number\&. 
+.RE
+.PP
+
+.PP
+Definition at line 41 of file binarize\&.hpp\&.
+.SS "template<typename T > void mlpack::data::Binarize (const arma::Mat< T > & input, arma::Mat< T > & output, const double threshold, const size_t dimension)"
+
+.PP
+Given an input dataset and threshold, set values greater than threshold to 1 and values less than or equal to the threshold to 0\&. This overload takes a dimension and applys the changes to the given dimension\&.
+.PP
+.PP
+.nf
+arma::Mat<double> input = loadData();
+arma::Mat<double> output;
+double threshold = 0\&.5;
+size_t dimension = 0;
+
+// Binarize the first dimension\&. All positive values in the first dimension
+// will be set to 1 and the values less than or equal to 0 will become 0\&.
+Binarize<double>(input, output, threshold, dimension);
+.fi
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input matrix to Binarize\&. 
+.br
+\fIoutput\fP Matrix you want to save binarized data into\&. 
+.br
+\fIthreshold\fP Threshold can by any number\&. 
+.br
+\fIdimension\fP Feature to apply the Binarize function\&. 
+.RE
+.PP
+
+.PP
+Definition at line 83 of file binarize\&.hpp\&.
+.SS "template<typename T > \fBFirstArrayShim\fP<T> mlpack::data::CreateArrayNVP (T * t, const size_t len, const \fBstd::string\fP & name, typename \fBstd::enable_if_t\fP< \fBHasSerialize\fP< T >::value > * = \fC0\fP)\fC [inline]\fP"
+
+.PP
+Call this function to produce a name-value pair for an array; this is similar to boost::serialization::make_array(), but provides a nicer wrapper, allows types that have a Serialize() function, and allows you to give a name to your array\&. This particular overload is used by classes that have a Serialize() function\&. 
+.PP
+Definition at line 214 of file serialization_shim\&.hpp\&.
+.SS "template<typename T > \fBFirstNormalArrayShim\fP<T> mlpack::data::CreateArrayNVP (T * t, const size_t len, const \fBstd::string\fP & name, typename \fBstd::enable_if_t\fP<!\fBHasSerialize\fP< T >::value > * = \fC0\fP)\fC [inline]\fP"
+
+.PP
+Call this function to produce a name-value pair for an array; this is similar to boost::serialization::make_array(), but provides a nicer wrapper, allows types that have a Serialize() function, and allows you to give a name to your array\&. This particular overload is used by classes that do not have a Serialize() function or primitive types\&. 
+.PP
+Definition at line 231 of file serialization_shim\&.hpp\&.
+.SS "template<typename T > \fBFirstShim\fP<T> mlpack::data::CreateNVP (T & t, const \fBstd::string\fP & name, typename \fBstd::enable_if_t\fP< \fBHasSerialize\fP< T >::value > * = \fC0\fP)\fC [inline]\fP"
+
+.PP
+Call this function to produce a name-value pair; this is similar to BOOST_SERIALIZATION_NVP(), but should be used for types that have a Serialize() function (or contain a type that has a Serialize() function) instead of a \fBserialize()\fP function\&. The template type should be automatically deduced, and the two \fBstd::enable_if_t<>\fP parameters are automatically deduced too\&. So usage looks like
+.PP
+.PP
+.nf
+MyType t;
+CreateNVP(t, "my_name_for_t");
+.fi
+.PP
+.PP
+Note that the second parameter, 'name', must be a valid XML identifier\&.
+.PP
+This function does not return a boost::serialization::nvp<T> object, but instead a shim type (FirstShim<T>)\&.
+.PP
+This particular overload is used by classes that have a Serialize() function\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIt\fP Object to create NVP (name-value pair) with\&. 
+.br
+\fIname\fP Name of object (must be a valid XML identifier)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 94 of file serialization_shim\&.hpp\&.
+.PP
+Referenced by mlpack::tree::BinaryNumericSplitInfo< ObservationType >::Serialize(), mlpack::tree::NumericSplitInfo< ObservationType >::Serialize(), mlpack::range::RangeSearchStat::Serialize(), mlpack::amf::GivenInitialization::Serialize(), mlpack::distribution::RegressionDistribution::Serialize(), mlpack::neighbor::RAQueryStat< SortPolicy >::Serialize(), mlpack::kernel::PolynomialKernel::Serialize(), mlpack::kernel::HyperbolicTangentKernel::Serialize(), mlpack::tree::AxisParallelProjVector::Serialize(), mlpack::gmm::EigenvalueRatioConstraint::Serialize(), mlpack::adaboost::AdaBoostModel::Serialize(), mlpack::kernel::TriangularKernel::Serialize(), mlpack::kmeans::RefinedStart::Serialize(), mlpack::neighbor::NeighborSearchStat< neighbor::NearestNeighborSort >::Serialize(), mlpack::kernel::LaplacianKernel::Serialize(), mlpack::fastmks::FastMKSStat::Serialize(), mlpack::kernel::SphericalKernel::Serialize(), mlpack::tree::HoeffdingCategoricalSplit< FitnessFunction >::Serialize(), mlpack::regression::LinearRegression::Serialize(), mlpack::tree::HyperplaneBase< BoundT, ProjVectorT >::Serialize(), mlpack::data::DatasetMapper< PolicyType >::Serialize(), mlpack::hmm::HMMModel::Serialize(), mlpack::tree::ProjVector::Serialize(), mlpack::distribution::LaplaceDistribution::Serialize(), mlpack::distribution::GaussianDistribution::Serialize(), mlpack::kernel::GaussianKernel::Serialize(), mlpack::tree::HoeffdingTreeModel::Serialize(), mlpack::amf::SVDBatchLearning::Serialize(), mlpack::regression::SoftmaxRegression< OptimizerType >::Serialize(), mlpack::tree::XTreeAuxiliaryInformation< TreeType >::SplitHistoryStruct::Serialize(), mlpack::distribution::DiscreteDistribution::Serialize(), mlpack::tree::XTreeAuxiliaryInformation< TreeType >::Serialize(), mlpack::data::SecondArrayShim< T >::serialize(), mlpack::SerializeObject(), and mlpack::SerializePointerObject()\&.
+.SS "template<typename T > const boost::serialization::nvp<T> mlpack::data::CreateNVP (T & t, const \fBstd::string\fP & name, typename \fBstd::enable_if_t\fP<!\fBHasSerialize\fP< T >::value > * = \fC0\fP, typename \fBstd::enable_if_t\fP<!std::is_pointer< T >::value > * = \fC0\fP)\fC [inline]\fP"
+
+.PP
+Call this function to produce a name-value pair; this is similar to BOOST_SERIALIZATION_NVP(), but should be used for types that have a Serialize() function (or contain a type that has a Serialize() function) instead of a \fBserialize()\fP function\&. The template type should be automatically deduced, and the two std::enable_if<> parameters are automatically deduced too\&. So usage looks like
+.PP
+.PP
+.nf
+MyType t;
+CreateNVP(t, "my_name_for_t");
+.fi
+.PP
+.PP
+Note that the second parameter, 'name', must be a valid XML identifier\&.
+.PP
+This particular overload is used by classes that do not have a Serialize() function (so, no shim is necessary) or primitive types that aren't pointers\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIt\fP Object to create NVP (name-value pair) with\&. 
+.br
+\fIname\fP Name of object (must be a valid XML identifier)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 128 of file serialization_shim\&.hpp\&.
+.SS "template<typename T > const boost::serialization::nvp<\fBPointerShim\fP<T>*> mlpack::data::CreateNVP (T *& t, const \fBstd::string\fP & name, typename \fBstd::enable_if_t\fP< \fBHasSerialize\fP< T >::value > * = \fC0\fP)\fC [inline]\fP"
+
+.PP
+Call this function to produce a name-value pair; this is similar to BOOST_SERIALIZATION_NVP(), but should be used for types that have a Serialize() function (or contain a type that has a Serialize() function) instead of a \fBserialize()\fP function\&. The template type should be automatically deduced, and the two \fBstd::enable_if_t<>\fP parameters are automatically deduced too\&. So usage looks like
+.PP
+.PP
+.nf
+MyType t;
+CreateNVP(t, "my_name_for_t");
+.fi
+.PP
+.PP
+Note that the second parameter, 'name', must be a valid XML identifier\&.
+.PP
+This particular overload is used by pointers to classes that have a Serialize() function\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIt\fP Object to create NVP (name-value pair) with\&. 
+.br
+\fIname\fP Name of object (must be a valid XML identifier)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 163 of file serialization_shim\&.hpp\&.
+.SS "template<typename T > const boost::serialization::nvp<T*> mlpack::data::CreateNVP (T *& t, const \fBstd::string\fP & name, typename \fBstd::enable_if_t\fP<!\fBHasSerialize\fP< T >::value > * = \fC0\fP)\fC [inline]\fP"
+
+.PP
+Call this function to produce a name-value pair; this is similar to BOOST_SERIALIZATION_NVP(), but should be used for types that have a Serialize() function (or contain a type that has a Serialize() function) instead of a \fBserialize()\fP function\&. The template type should be automatically deduced, and the two \fBstd::enable_if_t<>\fP parameters are automatically deduced too\&. So usage looks like
+.PP
+.PP
+.nf
+MyType t;
+CreateNVP(t, "my_name_for_t");
+.fi
+.PP
+.PP
+Note that the second parameter, 'name', must be a valid XML identifier\&.
+.PP
+This particular overload is used by pointers to classes that do not have a Serialize() function, or pointers to non-classes\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIt\fP Object to create NVP (name-value pair) with\&. 
+.br
+\fIname\fP Name of object (must be a valid XML identifier)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 198 of file serialization_shim\&.hpp\&.
+.SS "\fBstd::string\fP mlpack::data::Extension (const \fBstd::string\fP & filename)\fC [inline]\fP"
+
+.PP
+Definition at line 21 of file extension\&.hpp\&.
+.PP
+References string()\&.
+.SS "mlpack::data::HAS_MEM_FUNC (Serialize, HasSerializeCheck)"
+
+.SS "template<typename eT > bool mlpack::data::Load (const \fBstd::string\fP & filename, arma::Mat< eT > & matrix, const bool fatal = \fCfalse\fP, const bool transpose = \fCtrue\fP)"
+
+.PP
+Loads a matrix from file, guessing the filetype from the extension\&. This will transpose the matrix at load time (unless the transpose parameter is set to false)\&. If the filetype cannot be determined, an error will be given\&.
+.PP
+The supported types of files are the same as found in Armadillo:
+.PP
+.IP "\(bu" 2
+CSV (csv_ascii), denoted by \&.csv, or optionally \&.txt
+.IP "\(bu" 2
+TSV (raw_ascii), denoted by \&.tsv, \&.csv, or \&.txt
+.IP "\(bu" 2
+ASCII (raw_ascii), denoted by \&.txt
+.IP "\(bu" 2
+Armadillo ASCII (arma_ascii), also denoted by \&.txt
+.IP "\(bu" 2
+PGM (pgm_binary), denoted by \&.pgm
+.IP "\(bu" 2
+PPM (ppm_binary), denoted by \&.ppm
+.IP "\(bu" 2
+Raw binary (raw_binary), denoted by \&.bin
+.IP "\(bu" 2
+Armadillo binary (arma_binary), denoted by \&.bin
+.IP "\(bu" 2
+HDF5, denoted by \&.hdf, \&.hdf5, \&.h5, or \&.he5
+.PP
+.PP
+If the file extension is not one of those types, an error will be given\&. This is preferable to Armadillo's default behavior of loading an unknown filetype as raw_binary, which can have very confusing effects\&.
+.PP
+If the parameter 'fatal' is set to true, a std::runtime_error exception will be thrown if the matrix does not load successfully\&. The parameter 'transpose' controls whether or not the matrix is transposed after loading\&. In most cases, because data is generally stored in a row-major format and mlpack requires column-major matrices, this should be left at its default value of 'true'\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfilename\fP Name of file to load\&. 
+.br
+\fImatrix\fP Matrix to load contents of file into\&. 
+.br
+\fIfatal\fP If an error should be reported as fatal (default false)\&. 
+.br
+\fItranspose\fP If true, transpose the matrix after loading\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Boolean value indicating success or failure of load\&. 
+.RE
+.PP
+
+.SS "template<typename eT > bool mlpack::data::Load (const \fBstd::string\fP & filename, arma::Col< eT > & vec, const bool fatal = \fCfalse\fP)"
+
+.PP
+Load a column vector from a file, guessing the filetype from the extension\&. The supported types of files are the same as found in Armadillo:
+.PP
+.IP "\(bu" 2
+CSV (csv_ascii), denoted by \&.csv, or optionally \&.txt
+.IP "\(bu" 2
+TSV (raw_ascii), denoted by \&.tsv, \&.csv, or \&.txt
+.IP "\(bu" 2
+ASCII (raw_ascii), denoted by \&.txt
+.IP "\(bu" 2
+Armadillo ASCII (arma_ascii), also denoted by \&.txt
+.IP "\(bu" 2
+PGM (pgm_binary), denoted by \&.pgm
+.IP "\(bu" 2
+PPM (ppm_binary), denoted by \&.ppm
+.IP "\(bu" 2
+Raw binary (raw_binary), denoted by \&.bin
+.IP "\(bu" 2
+Armadillo binary (arma_binary), denoted by \&.bin
+.IP "\(bu" 2
+HDF5, denoted by \&.hdf, \&.hdf5, \&.h5, or \&.he5
+.PP
+.PP
+If the file extension is not one of those types, an error will be given\&. This is preferable to Armadillo's default behavior of loading an unknown filetype as raw_binary, which can have very confusing effects\&.
+.PP
+If the parameter 'fatal' is set to true, a std::runtime_error exception will be thrown if the matrix does not load successfully\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfilename\fP Name of file to load\&. 
+.br
+\fIcolvec\fP Column vector to load contents of file into\&. 
+.br
+\fIfatal\fP If an error should be reported as fatal (default false)\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Boolean value indicating success or failure of load\&. 
+.RE
+.PP
+
+.SS "template<typename eT > bool mlpack::data::Load (const \fBstd::string\fP & filename, arma::Row< eT > & rowvec, const bool fatal = \fCfalse\fP)"
+
+.PP
+Load a row vector from a file, guessing the filetype from the extension\&. The supported types of files are the same as found in Armadillo:
+.PP
+.IP "\(bu" 2
+CSV (csv_ascii), denoted by \&.csv, or optionally \&.txt
+.IP "\(bu" 2
+TSV (raw_ascii), denoted by \&.tsv, \&.csv, or \&.txt
+.IP "\(bu" 2
+ASCII (raw_ascii), denoted by \&.txt
+.IP "\(bu" 2
+Armadillo ASCII (arma_ascii), also denoted by \&.txt
+.IP "\(bu" 2
+PGM (pgm_binary), denoted by \&.pgm
+.IP "\(bu" 2
+PPM (ppm_binary), denoted by \&.ppm
+.IP "\(bu" 2
+Raw binary (raw_binary), denoted by \&.bin
+.IP "\(bu" 2
+Armadillo binary (arma_binary), denoted by \&.bin
+.IP "\(bu" 2
+HDF5, denoted by \&.hdf, \&.hdf5, \&.h5, or \&.he5
+.PP
+.PP
+If the file extension is not one of those types, an error will be given\&. This is preferable to Armadillo's default behavior of loading an unknown filetype as raw_binary, which can have very confusing effects\&.
+.PP
+If the parameter 'fatal' is set to true, a std::runtime_error exception will be thrown if the matrix does not load successfully\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfilename\fP Name of file to load\&. 
+.br
+\fIcolvec\fP Column vector to load contents of file into\&. 
+.br
+\fIfatal\fP If an error should be reported as fatal (default false)\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Boolean value indicating success or failure of load\&. 
+.RE
+.PP
+
+.SS "template<typename eT , typename PolicyType > bool mlpack::data::Load (const \fBstd::string\fP & filename, arma::Mat< eT > & matrix, \fBDatasetMapper\fP< PolicyType > & info, const bool fatal = \fCfalse\fP, const bool transpose = \fCtrue\fP)"
+
+.PP
+Loads a matrix from a file, guessing the filetype from the extension and mapping categorical features with a \fBDatasetMapper\fP object\&. This will transpose the matrix (unless the transpose parameter is set to false)\&. This particular overload of \fBLoad()\fP can only load text-based formats, such as those given below:
+.PP
+.IP "\(bu" 2
+CSV (csv_ascii), denoted by \&.csv, or optionally \&.txt
+.IP "\(bu" 2
+TSV (raw_ascii), denoted by \&.tsv, \&.csv, or \&.txt
+.IP "\(bu" 2
+ASCII (raw_ascii), denoted by \&.txt
+.PP
+.PP
+If the file extension is not one of those types, an error will be given\&. This is preferable to Armadillo's default behavior of loading an unknown filetype as raw_binary, which can have very confusing effects\&.
+.PP
+If the parameter 'fatal' is set to true, a std::runtime_error exception will be thrown if the matrix does not load successfully\&. The parameter 'transpose' controls whether or not the matrix is transposed after loading\&. In most cases, because data is generally stored in a row-major format and mlpack requires column-major matrices, this should be left at its default value of 'true'\&.
+.PP
+The \fBDatasetMapper\fP object passed to this function will be re-created, so any mappings from previous loads will be lost\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfilename\fP Name of file to load\&. 
+.br
+\fImatrix\fP Matrix to load contents of file into\&. 
+.br
+\fIinfo\fP \fBDatasetMapper\fP object to populate with mappings and data types\&. 
+.br
+\fIfatal\fP If an error should be reported as fatal (default false)\&. 
+.br
+\fItranspose\fP If true, transpose the matrix after loading\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Boolean value indicating success or failure of load\&. 
+.RE
+.PP
+
+.SS "template<typename T > bool mlpack::data::Load (const \fBstd::string\fP & filename, const \fBstd::string\fP & name, T & t, const bool fatal = \fCfalse\fP, \fBformat\fP f = \fCformat::autodetect\fP)"
+
+.PP
+Load a model from a file, guessing the filetype from the extension, or, optionally, loading the specified format\&. If automatic extension detection is used and the filetype cannot be determined, an error will be given\&.
+.PP
+The supported types of files are the same as what is supported by the \fBboost::serialization\fP library:
+.PP
+.IP "\(bu" 2
+text, denoted by \&.txt
+.IP "\(bu" 2
+xml, denoted by \&.xml
+.IP "\(bu" 2
+binary, denoted by \&.bin
+.PP
+.PP
+The format parameter can take any of the values in the 'format' enum: 'format::autodetect', 'format::text', 'format::xml', and 'format::binary'\&. The autodetect functionality operates on the file extension (so, 'file\&.txt' would be autodetected as text)\&.
+.PP
+The name parameter should be specified to indicate the name of the structure to be loaded\&. This should be the same as the name that was used to save the structure (otherwise, the loading procedure will fail)\&.
+.PP
+If the parameter 'fatal' is set to true, then an exception will be thrown in the event of load failure\&. Otherwise, the method will return false and the relevant error information will be printed to \fBLog::Warn\fP\&. 
+.SS "template bool \fBmlpack::data::Load\fP< double > (const \fBstd::string\fP &, arma::Mat< double > &, const bool, const bool)"
+
+.SS "template bool \fBmlpack::data::Load\fP< double, \fBIncrementPolicy\fP > (const \fBstd::string\fP &, arma::Mat< double > &, \fBDatasetMapper\fP< \fBIncrementPolicy\fP > &, const bool, const bool)"
+
+.SS "template bool \fBmlpack::data::Load\fP< float > (const \fBstd::string\fP &, arma::Mat< float > &, const bool, const bool)"
+
+.SS "template bool \fBmlpack::data::Load\fP< float, \fBIncrementPolicy\fP > (const \fBstd::string\fP &, arma::Mat< float > &, \fBDatasetMapper\fP< \fBIncrementPolicy\fP > &, const bool, const bool)"
+
+.SS "template bool \fBmlpack::data::Load\fP< int > (const \fBstd::string\fP &, arma::Mat< int > &, const bool, const bool)"
+
+.SS "template bool \fBmlpack::data::Load\fP< int, \fBIncrementPolicy\fP > (const \fBstd::string\fP &, arma::Mat< int > &, \fBDatasetMapper\fP< \fBIncrementPolicy\fP > &, const bool, const bool)"
+
+.SS "template bool \fBmlpack::data::Load\fP< size_t > (const \fBstd::string\fP &, arma::Mat< size_t > &, const bool, const bool)"
+
+.SS "template bool \fBmlpack::data::Load\fP< size_t, \fBIncrementPolicy\fP > (const \fBstd::string\fP &, arma::Mat< size_t > &, \fBDatasetMapper\fP< \fBIncrementPolicy\fP > &, const bool, const bool)"
+
+.SS "template bool \fBmlpack::data::Load\fP< unsigned long long > (const \fBstd::string\fP &, arma::Mat< unsigned long long > &, const bool, const bool)"
+
+.SS "template bool \fBmlpack::data::Load\fP< unsigned long long, \fBIncrementPolicy\fP > (const \fBstd::string\fP &, arma::Mat< unsigned long long > &, \fBDatasetMapper\fP< \fBIncrementPolicy\fP > &, const bool, const bool)"
+
+.SS "template<typename eT > void mlpack::data::LoadARFF (const \fBstd::string\fP & filename, arma::Mat< eT > & matrix)"
+
+.PP
+A utility function to load an ARFF dataset as numeric features (that is, as an Armadillo matrix without any modification)\&. An exception will be thrown if any features are non-numeric\&. 
+.SS "template<typename eT , typename PolicyType > void mlpack::data::LoadARFF (const \fBstd::string\fP & filename, arma::Mat< eT > & matrix, \fBDatasetMapper\fP< PolicyType > & info)"
+
+.PP
+A utility function to load an ARFF dataset as numeric and categorical features, using the DatasetInfo structure for mapping\&. An exception will be thrown upon failure\&.
+.PP
+A pre-existing DatasetInfo object can be passed in, but if the dimensionality of the given DatasetInfo object (info\&.Dimensionality()) does not match the dimensionality of the data, a std::invalid_argument exception will be thrown\&. If an empty DatasetInfo object is given (constructed with the default constructor or otherwise, so that info\&.Dimensionality() is 0), it will be set to the right dimensionality\&.
+.PP
+This ability to pass in pre-existing DatasetInfo objects is very necessary when, e\&.g\&., loading a test set after training\&. If the same DatasetInfo from loading the training set is not used, then the test set may be loaded with different mappings---which can cause horrible problems!
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfilename\fP Name of ARFF file to load\&. 
+.br
+\fImatrix\fP Matrix to load data into\&. 
+.br
+\fIinfo\fP DatasetInfo object; can be default-constructed or pre-existing from another call to \fBLoadARFF()\fP\&. 
+.RE
+.PP
+
+.SS "template<typename eT , typename RowType > void mlpack::data::NormalizeLabels (const RowType & labelsIn, arma::Row< size_t > & labels, arma::Col< eT > & mapping)"
+
+.PP
+Given a set of labels of a particular datatype, convert them to unsigned labels in the range [0, n) where n is the number of different labels\&. Also, a reverse mapping from the new label to the old value is stored in the 'mapping' vector\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIlabelsIn\fP Input labels of arbitrary datatype\&. 
+.br
+\fIlabels\fP Vector that unsigned labels will be stored in\&. 
+.br
+\fImapping\fP Reverse mapping to convert new labels back to old labels\&. 
+.RE
+.PP
+
+.SS "template<typename Archive , typename T > Archive& mlpack::data::operator& (Archive & ar, \fBFirstShim\fP< T > t)"
+
+.PP
+Catch when we call operator& with a \fBFirstShim\fP object\&. In this case, we make the second-level shim and use it\&. Note that this second-level shim can be used as an lvalue, which is what's necessary for this whole thing to work\&. The first-level shim can't be an lvalue (this is why we need two levels of shims)\&. 
+.PP
+Definition at line 385 of file serialization_shim\&.hpp\&.
+.PP
+References mlpack::data::FirstShim< T >::name, and mlpack::data::FirstShim< T >::t\&.
+.PP
+Referenced by mlpack::bound::HRectBound< MetricType >::MinWidth()\&.
+.SS "template<typename Archive , typename T > Archive& mlpack::data::operator& (Archive & ar, \fBFirstArrayShim\fP< T > t)"
+
+.PP
+Catch when we call operator& with a \fBFirstArrayShim\fP object\&. In this case, we make the second-level array shim and use it\&. Note that this second-level shim can be used as an lvalue, which is what's necessary for this whole thing to work\&. The first-level shim can't be an lvalue (this is why we need two levels of shims)\&. 
+.PP
+Definition at line 427 of file serialization_shim\&.hpp\&.
+.PP
+References mlpack::data::FirstArrayShim< T >::len, mlpack::data::FirstArrayShim< T >::name, and mlpack::data::FirstArrayShim< T >::t\&.
+.SS "template<typename Archive , typename T > Archive& mlpack::data::operator& (Archive & ar, \fBFirstNormalArrayShim\fP< T > t)"
+
+.PP
+Catch when we call operator& with a \fBFirstNormalArrayShim\fP object\&. In this case, we make the second-level array shim and use it\&. Note that this second-level shim can be used as an lvalue, which is necessary if we want to use make_nvp() safely\&. The first-level shim can't be an lvalue (this is why we need two levels of shims)\&. 
+.PP
+Definition at line 469 of file serialization_shim\&.hpp\&.
+.PP
+References mlpack::data::FirstNormalArrayShim< T >::len, mlpack::data::FirstNormalArrayShim< T >::name, and mlpack::data::FirstNormalArrayShim< T >::t\&.
+.SS "template<typename Archive , typename T > Archive& mlpack::data::operator<< (Archive & ar, \fBFirstShim\fP< T > t)"
+
+.PP
+Catch when we call operator<< with a \fBFirstShim\fP object\&. In this case, we make the second-level shim and use it\&. Note that this second-level shim can be used as an lvalue, which is what's necessary for this whole thing to work\&. The first-level shim can't be an lvalue (this is why we need two levels of shims)\&. 
+.PP
+Definition at line 371 of file serialization_shim\&.hpp\&.
+.SS "template<typename Archive , typename T > Archive& mlpack::data::operator<< (Archive & ar, \fBFirstArrayShim\fP< T > t)"
+
+.PP
+Catch when we call operator<< with a \fBFirstArrayShim\fP object\&. In this case, we make the second-level array shim and use it\&. Note that this second-level shim can be used as an lvalue, which is what's necessary for this whole thing to work\&. The first-level shim can't be an lvalue (this is why we need two levels of shims)\&. 
+.PP
+Definition at line 413 of file serialization_shim\&.hpp\&.
+.SS "template<typename Archive , typename T > Archive& mlpack::data::operator<< (Archive & ar, \fBFirstNormalArrayShim\fP< T > t)"
+
+.PP
+Catch when we call operator<< with a \fBFirstNormalArrayShim\fP object\&. In this case, we make the second-level array shim and use it\&. Note that this second-level shim can be used as an lvalue, which is necessary if we want to use make_nvp() safely\&. The first-level shim can't be an lvalue (this is why we need two levels of shims)\&. 
+.PP
+Definition at line 455 of file serialization_shim\&.hpp\&.
+.SS "template<typename Archive , typename T > Archive& mlpack::data::operator>> (Archive & ar, \fBFirstShim\fP< T > t)"
+
+.PP
+Catch when we call operator>> with a \fBFirstShim\fP object\&. In this case, we make the second-level shim and use it\&. Note that this second-level shim can be used as an lvalue, which is what's necessary for this whole thing to work\&. The first-level shim can't be an lvalue (this is why we need two levels of shims)\&. 
+.PP
+Definition at line 399 of file serialization_shim\&.hpp\&.
+.PP
+References mlpack::data::FirstShim< T >::name, and mlpack::data::FirstShim< T >::t\&.
+.SS "template<typename Archive , typename T > Archive& mlpack::data::operator>> (Archive & ar, \fBFirstArrayShim\fP< T > t)"
+
+.PP
+Catch when we call operator>> with a \fBFirstArrayShim\fP object\&. In this case, we make the second-level array shim and use it\&. Note that this second-level shim can be used as an lvalue, which is what's necessary for this whole thing to work\&. The first-level shim can't be an lvalue (this is why we need two levels of shims)\&. 
+.PP
+Definition at line 441 of file serialization_shim\&.hpp\&.
+.PP
+References mlpack::data::FirstArrayShim< T >::len, mlpack::data::FirstArrayShim< T >::name, and mlpack::data::FirstArrayShim< T >::t\&.
+.SS "template<typename Archive , typename T > Archive& mlpack::data::operator>> (Archive & ar, \fBFirstNormalArrayShim\fP< T > t)"
+
+.PP
+Catch when we call operator>> with a \fBFirstNormalArrayShim\fP object\&. In this case, we make the second-level array shim and use it\&. Note that this second-level shim can be used as an lvalue, which is necessary if we want to use make_nvp() safely\&. The first-level shim can't be an lvalue (this is why we need two levels of shims)\&. 
+.PP
+Definition at line 483 of file serialization_shim\&.hpp\&.
+.PP
+References mlpack::data::FirstNormalArrayShim< T >::len, mlpack::data::FirstNormalArrayShim< T >::name, and mlpack::data::FirstNormalArrayShim< T >::t\&.
+.SS "template<typename eT > void mlpack::data::RevertLabels (const arma::Row< size_t > & labels, const arma::Col< eT > & mapping, arma::Row< eT > & labelsOut)"
+
+.PP
+Given a set of labels that have been mapped to the range [0, n), map them back to the original labels given by the 'mapping' vector\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIlabels\fP Set of normalized labels to convert\&. 
+.br
+\fImapping\fP Mapping to use to convert labels\&. 
+.br
+\fIlabelsOut\fP Vector to store new labels in\&. 
+.RE
+.PP
+
+.SS "template<typename eT > bool mlpack::data::Save (const \fBstd::string\fP & filename, const arma::Mat< eT > & matrix, const bool fatal = \fCfalse\fP, bool transpose = \fCtrue\fP)"
+
+.PP
+Saves a matrix to file, guessing the filetype from the extension\&. This will transpose the matrix at save time\&. If the filetype cannot be determined, an error will be given\&.
+.PP
+The supported types of files are the same as found in Armadillo:
+.PP
+.IP "\(bu" 2
+CSV (csv_ascii), denoted by \&.csv, or optionally \&.txt
+.IP "\(bu" 2
+ASCII (raw_ascii), denoted by \&.txt
+.IP "\(bu" 2
+Armadillo ASCII (arma_ascii), also denoted by \&.txt
+.IP "\(bu" 2
+PGM (pgm_binary), denoted by \&.pgm
+.IP "\(bu" 2
+PPM (ppm_binary), denoted by \&.ppm
+.IP "\(bu" 2
+Raw binary (raw_binary), denoted by \&.bin
+.IP "\(bu" 2
+Armadillo binary (arma_binary), denoted by \&.bin
+.IP "\(bu" 2
+HDF5 (hdf5_binary), denoted by \&.hdf5, \&.hdf, \&.h5, or \&.he5
+.PP
+.PP
+If the file extension is not one of those types, an error will be given\&. If the 'fatal' parameter is set to true, a std::runtime_error exception will be thrown upon failure\&. If the 'transpose' parameter is set to true, the matrix will be transposed before saving\&. Generally, because mlpack stores matrices in a column-major format and most datasets are stored on disk as row-major, this parameter should be left at its default value of 'true'\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfilename\fP Name of file to save to\&. 
+.br
+\fImatrix\fP Matrix to save into file\&. 
+.br
+\fIfatal\fP If an error should be reported as fatal (default false)\&. 
+.br
+\fItranspose\fP If true, transpose the matrix before saving\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Boolean value indicating success or failure of save\&. 
+.RE
+.PP
+
+.SS "template<typename T > bool mlpack::data::Save (const \fBstd::string\fP & filename, const \fBstd::string\fP & name, T & t, const bool fatal = \fCfalse\fP, \fBformat\fP f = \fCformat::autodetect\fP)"
+
+.PP
+Saves a model to file, guessing the filetype from the extension, or, optionally, saving the specified format\&. If automatic extension detection is used and the filetype cannot be determined, and error will be given\&.
+.PP
+The supported types of files are the same as what is supported by the \fBboost::serialization\fP library:
+.PP
+.IP "\(bu" 2
+text, denoted by \&.txt
+.IP "\(bu" 2
+xml, denoted by \&.xml
+.IP "\(bu" 2
+binary, denoted by \&.bin
+.PP
+.PP
+The format parameter can take any of the values in the 'format' enum: 'format::autodetect', 'format::text', 'format::xml', and 'format::binary'\&. The autodetect functionality operates on the file extension (so, 'file\&.txt' would be autodetected as text)\&.
+.PP
+The name parameter should be specified to indicate the name of the structure to be saved\&. If \fBLoad()\fP is later called on the generated file, the name used to load should be the same as the name used for this call to \fBSave()\fP\&.
+.PP
+If the parameter 'fatal' is set to true, then an exception will be thrown in the event of a save failure\&. Otherwise, the method will return false and the relevant error information will be printed to \fBLog::Warn\fP\&. 
+.SS "template<typename T , typename U > void mlpack::data::Split (const arma::Mat< T > & input, const arma::Row< U > & inputLabel, arma::Mat< T > & trainData, arma::Mat< T > & testData, arma::Row< U > & trainLabel, arma::Row< U > & testLabel, const double testRatio)"
+
+.PP
+Given an input dataset and labels, split into a training set and test set\&. Example usage below\&. This overload places the split dataset into the four output parameters given (trainData, testData, trainLabel, and testLabel)\&.
+.PP
+.PP
+.nf
+arma::mat input = loadData();
+arma::Row<size_t> label = loadLabel();
+arma::mat trainData;
+arma::mat testData;
+arma::Row<size_t> trainLabel;
+arma::Row<size_t> testLabel;
+math::RandomSeed(100); // Set the seed if you like\&.
+
+// Split the dataset into a training and test set, with 30% of the data being
+// held out for the test set\&.
+Split(input, label, trainData,
+               testData, trainLabel, testLabel, 0\&.3);
+.fi
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input dataset to split\&. 
+.br
+\fIlabel\fP Input labels to split\&. 
+.br
+\fItrainData\fP Matrix to store training data into\&. 
+.br
+\fItestData\fP Matrix to store test data into\&. 
+.br
+\fItrainLabel\fP Vector to store training labels into\&. 
+.br
+\fItestLabel\fP Vector to store test labels into\&. 
+.br
+\fItestRatio\fP Percentage of dataset to use for test set (between 0 and 1)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 49 of file split_data\&.hpp\&.
+.PP
+Referenced by Split()\&.
+.SS "template<typename T > void mlpack::data::Split (const arma::Mat< T > & input, arma::Mat< T > & trainData, arma::Mat< T > & testData, const double testRatio)"
+
+.PP
+Given an input dataset, split into a training set and test set\&. Example usage below\&. This overload places the split dataset into the two output parameters given (trainData, testData)\&.
+.PP
+.PP
+.nf
+arma::mat input = loadData();
+arma::mat trainData;
+arma::mat testData;
+math::RandomSeed(100); // Set the seed if you like\&.
+
+// Split the dataset into a training and test set, with 30% of the data being
+// held out for the test set\&.
+Split(input, trainData, testData, 0\&.3);
+.fi
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input dataset to split\&. 
+.br
+\fItrainData\fP Matrix to store training data into\&. 
+.br
+\fItestData\fP Matrix to store test data into\&. 
+.br
+\fItestRatio\fP Percentage of dataset to use for test set (between 0 and 1)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 103 of file split_data\&.hpp\&.
+.SS "template<typename T , typename U > std::tuple<arma::Mat<T>, arma::Mat<T>, arma::Row<U>, arma::Row<U> > mlpack::data::Split (const arma::Mat< T > & input, const arma::Row< U > & inputLabel, const double testRatio)"
+
+.PP
+Given an input dataset and labels, split into a training set and test set\&. Example usage below\&. This overload returns the split dataset as a std::tuple with four elements: an arma::Mat<T> containing the training data, an arma::Mat<T> containing the test data, an arma::Row<U> containing the training labels, and an arma::Row<U> containing the test labels\&.
+.PP
+.PP
+.nf
+arma::mat input = loadData();
+arma::Row<size_t> label = loadLabel();
+auto splitResult = Split(input, label, 0\&.2);
+.fi
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input dataset to split\&. 
+.br
+\fIlabel\fP Input labels to split\&. 
+.br
+\fItestRatio\fP Percentage of dataset to use for test set (between 0 and 1)\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+std::tuple containing trainData (arma::Mat<T>), testData (arma::Mat<T>), trainLabel (arma::Row<U>), and testLabel (arma::Row<U>)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 148 of file split_data\&.hpp\&.
+.PP
+References Split()\&.
+.SS "template<typename T > std::tuple<arma::Mat<T>, arma::Mat<T> > mlpack::data::Split (const arma::Mat< T > & input, const double testRatio)"
+
+.PP
+Given an input dataset, split into a training set and test set\&. Example usage below\&. This overload returns the split dataset as a std::tuple with two elements: an arma::Mat<T> containing the training data and an arma::Mat<T> containing the test data\&.
+.PP
+.PP
+.nf
+arma::mat input = loadData();
+auto splitResult = Split(input, 0\&.2);
+.fi
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input dataset to split\&. 
+.br
+\fItestRatio\fP Percentage of dataset to use for test set (between 0 and 1)\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+std::tuple containing trainData (arma::Mat<T>) and testData (arma::Mat<T>)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 184 of file split_data\&.hpp\&.
+.PP
+References Split()\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,123 @@
+\section{mlpack\+:\+:cf\+:\+:S\+V\+D\+Wrapper$<$ Factorizer $>$ Class Template Reference}
+\label{classmlpack_1_1cf_1_1SVDWrapper}\index{mlpack\+::cf\+::\+S\+V\+D\+Wrapper$<$ Factorizer $>$@{mlpack\+::cf\+::\+S\+V\+D\+Wrapper$<$ Factorizer $>$}}
+
+
+This class acts as the wrapper for all S\+VD factorizers which are incompatible with \doxyref{CF}{p.}{classmlpack_1_1cf_1_1CF} module.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf S\+V\+D\+Wrapper} (const Factorizer \&{\bf factorizer}=Factorizer())
+\item 
+double {\bf Apply} (const arma\+::mat \&V, arma\+::mat \&W, arma\+::mat \&sigma, arma\+::mat \&H) const 
+\begin{DoxyCompactList}\small\item\em Factorizer function which takes S\+VD of the given matrix and returns the frobenius norm of error. \end{DoxyCompactList}\item 
+double {\bf Apply} (const arma\+::mat \&V, size\+\_\+t r, arma\+::mat \&W, arma\+::mat \&H) const 
+\begin{DoxyCompactList}\small\item\em Factorizer function which computes S\+VD and returns matrices as required by \doxyref{CF}{p.}{classmlpack_1_1cf_1_1CF} module. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+Factorizer {\bf factorizer}
+\begin{DoxyCompactList}\small\item\em svd factorizer \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$class Factorizer = Dummy\+Class$>$\\*
+class mlpack\+::cf\+::\+S\+V\+D\+Wrapper$<$ Factorizer $>$}
+
+This class acts as the wrapper for all S\+VD factorizers which are incompatible with \doxyref{CF}{p.}{classmlpack_1_1cf_1_1CF} module. 
+
+Normally S\+VD factrorizers implement Apply method which takes matrix V and factorizes it into P, sigma and Q where V = P $\ast$ sigma $\ast$ trans(\+Q). But \doxyref{CF}{p.}{classmlpack_1_1cf_1_1CF} module requires factrorization to be V = W $\ast$ H. This class multiplies P and sigma and takes the first \textquotesingle{}r\textquotesingle{} eigenvectors out where \textquotesingle{}r\textquotesingle{} is the rank of factorization. Q matrix is transposed and trimmed to support the rank of factorization. The Factroizer class should implement Apply which takes matrices P, sigma, Q and V as their parameter respectively. 
+
+Definition at line 40 of file svd\+\_\+wrapper.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::cf\+::\+S\+V\+D\+Wrapper@{mlpack\+::cf\+::\+S\+V\+D\+Wrapper}!S\+V\+D\+Wrapper@{S\+V\+D\+Wrapper}}
+\index{S\+V\+D\+Wrapper@{S\+V\+D\+Wrapper}!mlpack\+::cf\+::\+S\+V\+D\+Wrapper@{mlpack\+::cf\+::\+S\+V\+D\+Wrapper}}
+\subsubsection[{S\+V\+D\+Wrapper(const Factorizer \&factorizer=\+Factorizer())}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Factorizer  = Dummy\+Class$>$ {\bf mlpack\+::cf\+::\+S\+V\+D\+Wrapper}$<$ Factorizer $>$\+::{\bf S\+V\+D\+Wrapper} (
+\begin{DoxyParamCaption}
+\item[{const Factorizer \&}]{factorizer = {\ttfamily Factorizer()}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1cf_1_1SVDWrapper_ac6657fecaccf65eafc9a836ccd297869}
+
+
+Definition at line 44 of file svd\+\_\+wrapper.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::cf\+::\+S\+V\+D\+Wrapper@{mlpack\+::cf\+::\+S\+V\+D\+Wrapper}!Apply@{Apply}}
+\index{Apply@{Apply}!mlpack\+::cf\+::\+S\+V\+D\+Wrapper@{mlpack\+::cf\+::\+S\+V\+D\+Wrapper}}
+\subsubsection[{Apply(const arma\+::mat \&\+V, arma\+::mat \&\+W, arma\+::mat \&sigma, arma\+::mat \&\+H) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Factorizer  = Dummy\+Class$>$ double {\bf mlpack\+::cf\+::\+S\+V\+D\+Wrapper}$<$ Factorizer $>$\+::Apply (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{V, }
+\item[{arma\+::mat \&}]{W, }
+\item[{arma\+::mat \&}]{sigma, }
+\item[{arma\+::mat \&}]{H}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1cf_1_1SVDWrapper_a8094bddff3570b739d04b2ac44546923}
+
+
+Factorizer function which takes S\+VD of the given matrix and returns the frobenius norm of error. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em V} & input matrix \\
+\hline
+{\em W} & first unitary matrix \\
+\hline
+{\em sigma} & eigenvalue matrix \\
+\hline
+{\em H} & second unitary matrix\\
+\hline
+\end{DoxyParams}
+\begin{DoxyNote}{Note}
+V = W $\ast$ sigma $\ast$ arma\+::trans(\+H) 
+\end{DoxyNote}
+\index{mlpack\+::cf\+::\+S\+V\+D\+Wrapper@{mlpack\+::cf\+::\+S\+V\+D\+Wrapper}!Apply@{Apply}}
+\index{Apply@{Apply}!mlpack\+::cf\+::\+S\+V\+D\+Wrapper@{mlpack\+::cf\+::\+S\+V\+D\+Wrapper}}
+\subsubsection[{Apply(const arma\+::mat \&\+V, size\+\_\+t r, arma\+::mat \&\+W, arma\+::mat \&\+H) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Factorizer  = Dummy\+Class$>$ double {\bf mlpack\+::cf\+::\+S\+V\+D\+Wrapper}$<$ Factorizer $>$\+::Apply (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{V, }
+\item[{size\+\_\+t}]{r, }
+\item[{arma\+::mat \&}]{W, }
+\item[{arma\+::mat \&}]{H}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1cf_1_1SVDWrapper_a3bf758ed479ec15a63f345635f886fee}
+
+
+Factorizer function which computes S\+VD and returns matrices as required by \doxyref{CF}{p.}{classmlpack_1_1cf_1_1CF} module. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em V} & input matrix \\
+\hline
+{\em W} & first unitary matrix \\
+\hline
+{\em H} & second unitary matrix\\
+\hline
+\end{DoxyParams}
+\begin{DoxyNote}{Note}
+V = W $\ast$ H 
+\end{DoxyNote}
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::cf\+::\+S\+V\+D\+Wrapper@{mlpack\+::cf\+::\+S\+V\+D\+Wrapper}!factorizer@{factorizer}}
+\index{factorizer@{factorizer}!mlpack\+::cf\+::\+S\+V\+D\+Wrapper@{mlpack\+::cf\+::\+S\+V\+D\+Wrapper}}
+\subsubsection[{factorizer}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Factorizer  = Dummy\+Class$>$ Factorizer {\bf mlpack\+::cf\+::\+S\+V\+D\+Wrapper}$<$ Factorizer $>$\+::factorizer\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1cf_1_1SVDWrapper_abf7a62d5eddcef98f13c80321fae6866}
+
+
+svd factorizer 
+
+
+
+Definition at line 79 of file svd\+\_\+wrapper.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/cf/{\bf svd\+\_\+wrapper.\+hpp}\end{DoxyCompactItemize}

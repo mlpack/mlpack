@@ -1,0 +1,82 @@
+.TH "src/mlpack/core/util/string_type_param.hpp" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+src/mlpack/core/util/string_type_param.hpp \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "\fILinear algebra utility functions, generally performed on matrices or vectors\&. \fP"
+.ti -1c
+.RI " \fBmlpack::util\fP"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename T > \fBstd::string\fP \fBmlpack::util::StringTypeParam\fP ()"
+.br
+.RI "\fIReturn a string containing the type of a parameter\&. \fP"
+.ti -1c
+.RI "template<> \fBstd::string\fP \fBmlpack::util::StringTypeParam< bool >\fP ()"
+.br
+.RI "\fIReturn 'bool'\&. \fP"
+.ti -1c
+.RI "template<> \fBstd::string\fP \fBmlpack::util::StringTypeParam< double >\fP ()"
+.br
+.RI "\fIReturn 'double'\&. \fP"
+.ti -1c
+.RI "template<> \fBstd::string\fP \fBmlpack::util::StringTypeParam< float >\fP ()"
+.br
+.RI "\fIReturn 'float'\&. \fP"
+.ti -1c
+.RI "template<> \fBstd::string\fP \fBmlpack::util::StringTypeParam< int >\fP ()"
+.br
+.RI "\fIReturn 'int'\&. \fP"
+.ti -1c
+.RI "template<> \fBstd::string\fP \fBmlpack::util::StringTypeParam< std::string >\fP ()"
+.br
+.RI "\fIReturn 'string'\&. \fP"
+.ti -1c
+.RI "template<> \fBstd::string\fP \fBmlpack::util::StringTypeParam< std::tuple< mlpack::data::DatasetInfo, arma::mat > >\fP ()"
+.br
+.RI "\fIReturn 'string';\&. \fP"
+.ti -1c
+.RI "template<typename T > \fBstd::string\fP \fBmlpack::util::StringTypeParamImpl\fP (const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::disable_if< IsStdVector< T >>::type *=0, const typename boost::disable_if< data::HasSerialize< T >>::type *=0)"
+.br
+.RI "\fIReturn a string containing the type of the parameter\&. \fP"
+.ti -1c
+.RI "template<typename T > \fBstd::string\fP \fBmlpack::util::StringTypeParamImpl\fP (const typename boost::enable_if< IsStdVector< T >>::type *=0)"
+.br
+.RI "\fIReturn a string containing the type of the parameter, for vector options\&. \fP"
+.ti -1c
+.RI "template<typename T > \fBstd::string\fP \fBmlpack::util::StringTypeParamImpl\fP (const typename boost::enable_if< arma::is_arma_type< T >>::type *=0)"
+.br
+.RI "\fIReturn a string containing the type of the parameter, for matrix options\&. \fP"
+.ti -1c
+.RI "template<typename T > \fBstd::string\fP \fBmlpack::util::StringTypeParamImpl\fP (const typename boost::enable_if< data::HasSerialize< T >>::type *=0)"
+.br
+.RI "\fIReturn a string containing the type of the parameter,\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Ryan Curtin
+.RE
+.PP
+Given a ParamData object, return a string containing the type of the input parameter as given on the command-line\&. 
+.PP
+Definition in file \fBstring_type_param\&.hpp\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

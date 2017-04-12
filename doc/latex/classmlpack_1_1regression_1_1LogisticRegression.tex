@@ -1,0 +1,512 @@
+\section{mlpack\+:\+:regression\+:\+:Logistic\+Regression$<$ Mat\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1regression_1_1LogisticRegression}\index{mlpack\+::regression\+::\+Logistic\+Regression$<$ Mat\+Type $>$@{mlpack\+::regression\+::\+Logistic\+Regression$<$ Mat\+Type $>$}}
+
+
+The \doxyref{Logistic\+Regression}{p.}{classmlpack_1_1regression_1_1LogisticRegression} class implements an L2-\/regularized logistic regression model, and supports training with multiple optimizers and classification.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Logistic\+Regression} (const Mat\+Type \&predictors, const arma\+::\+Row$<$ size\+\_\+t $>$ \&responses, const double {\bf lambda}=0)
+\begin{DoxyCompactList}\small\item\em Construct the \doxyref{Logistic\+Regression}{p.}{classmlpack_1_1regression_1_1LogisticRegression} class with the given labeled training data. \end{DoxyCompactList}\item 
+{\bf Logistic\+Regression} (const Mat\+Type \&predictors, const arma\+::\+Row$<$ size\+\_\+t $>$ \&responses, const arma\+::vec \&initial\+Point, const double {\bf lambda}=0)
+\begin{DoxyCompactList}\small\item\em Construct the \doxyref{Logistic\+Regression}{p.}{classmlpack_1_1regression_1_1LogisticRegression} class with the given labeled training data. \end{DoxyCompactList}\item 
+{\bf Logistic\+Regression} (const size\+\_\+t dimensionality=0, const double {\bf lambda}=0)
+\begin{DoxyCompactList}\small\item\em Construct the \doxyref{Logistic\+Regression}{p.}{classmlpack_1_1regression_1_1LogisticRegression} class without performing any training. \end{DoxyCompactList}\item 
+{\footnotesize template$<$template$<$ typename, typename... $>$ class Optimizer\+Type, typename... Optimizer\+Type\+Args$>$ }\\{\bf Logistic\+Regression} (Optimizer\+Type$<$ {\bf Logistic\+Regression\+Function}$<$ Mat\+Type $>$, Optimizer\+Type\+Args... $>$ \&optimizer)
+\begin{DoxyCompactList}\small\item\em Construct the \doxyref{Logistic\+Regression}{p.}{classmlpack_1_1regression_1_1LogisticRegression} class with the given labeled training data. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\size\+\_\+t {\bf Classify} (const Vec\+Type \&point, const double decision\+Boundary=0.\+5) const 
+\begin{DoxyCompactList}\small\item\em Classify the given point. \end{DoxyCompactList}\item 
+void {\bf Classify} (const Mat\+Type \&dataset, arma\+::\+Row$<$ size\+\_\+t $>$ \&labels, const double decision\+Boundary=0.\+5) const 
+\begin{DoxyCompactList}\small\item\em Classify the given points, returning the predicted labels for each point. \end{DoxyCompactList}\item 
+void {\bf Classify} (const Mat\+Type \&dataset, arma\+::mat \&probabilities) const 
+\begin{DoxyCompactList}\small\item\em Classify the given points, returning class probabilities for each point. \end{DoxyCompactList}\item 
+double {\bf Compute\+Accuracy} (const Mat\+Type \&predictors, const arma\+::\+Row$<$ size\+\_\+t $>$ \&responses, const double decision\+Boundary=0.\+5) const 
+\begin{DoxyCompactList}\small\item\em Compute the accuracy of the model on the given predictors and responses, optionally using the given decision boundary. \end{DoxyCompactList}\item 
+double {\bf Compute\+Error} (const Mat\+Type \&predictors, const arma\+::\+Row$<$ size\+\_\+t $>$ \&responses) const 
+\begin{DoxyCompactList}\small\item\em Compute the error of the model. \end{DoxyCompactList}\item 
+const double \& {\bf Lambda} () const 
+\begin{DoxyCompactList}\small\item\em Return the lambda value for L2-\/regularization. \end{DoxyCompactList}\item 
+double \& {\bf Lambda} ()
+\begin{DoxyCompactList}\small\item\em Modify the lambda value for L2-\/regularization. \end{DoxyCompactList}\item 
+const arma\+::vec \& {\bf Parameters} () const 
+\begin{DoxyCompactList}\small\item\em Return the parameters (the b vector). \end{DoxyCompactList}\item 
+arma\+::vec \& {\bf Parameters} ()
+\begin{DoxyCompactList}\small\item\em Modify the parameters (the b vector). \end{DoxyCompactList}\item 
+{\bf mlpack\+\_\+deprecated} void {\bf Predict} (const Mat\+Type \&predictors, arma\+::\+Row$<$ size\+\_\+t $>$ \&responses, const double decision\+Boundary=0.\+5) const 
+\begin{DoxyCompactList}\small\item\em Predict the responses to a given set of predictors. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&ar, const unsigned int)
+\begin{DoxyCompactList}\small\item\em Serialize the model. \end{DoxyCompactList}\item 
+{\footnotesize template$<$template$<$ typename $>$ class Optimizer\+Type = mlpack\+::optimization\+::\+L\+\_\+\+B\+F\+GS$>$ }\\void {\bf Train} (const Mat\+Type \&predictors, const arma\+::\+Row$<$ size\+\_\+t $>$ \&responses)
+\begin{DoxyCompactList}\small\item\em Train the \doxyref{Logistic\+Regression}{p.}{classmlpack_1_1regression_1_1LogisticRegression} model on the given input data. \end{DoxyCompactList}\item 
+{\footnotesize template$<$template$<$ typename, typename... $>$ class Optimizer\+Type = mlpack\+::optimization\+::\+L\+\_\+\+B\+F\+GS, typename... Optimizer\+Type\+Args$>$ }\\void {\bf Train} (Optimizer\+Type$<$ {\bf Logistic\+Regression\+Function}$<$ Mat\+Type $>$, Optimizer\+Type\+Args... $>$ \&optimizer)
+\begin{DoxyCompactList}\small\item\em Train the \doxyref{Logistic\+Regression}{p.}{classmlpack_1_1regression_1_1LogisticRegression} model with the given instantiated optimizer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+double {\bf lambda}
+\begin{DoxyCompactList}\small\item\em L2-\/regularization penalty parameter. \end{DoxyCompactList}\item 
+arma\+::vec {\bf parameters}
+\begin{DoxyCompactList}\small\item\em Vector of trained parameters (size\+: dimensionality plus one). \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Mat\+Type = arma\+::mat$>$\\*
+class mlpack\+::regression\+::\+Logistic\+Regression$<$ Mat\+Type $>$}
+
+The \doxyref{Logistic\+Regression}{p.}{classmlpack_1_1regression_1_1LogisticRegression} class implements an L2-\/regularized logistic regression model, and supports training with multiple optimizers and classification. 
+
+The class supports different observation types via the Mat\+Type template parameter; for instance, logistic regression can be performed on sparse datasets by specifying arma\+::sp\+\_\+mat as the Mat\+Type parameter.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Mat\+Type} & Type of data matrix. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 35 of file logistic\+\_\+regression.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}!Logistic\+Regression@{Logistic\+Regression}}
+\index{Logistic\+Regression@{Logistic\+Regression}!mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}}
+\subsubsection[{Logistic\+Regression(const Mat\+Type \&predictors, const arma\+::\+Row$<$ size\+\_\+t $>$ \&responses, const double lambda=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type  = arma\+::mat$>$ {\bf mlpack\+::regression\+::\+Logistic\+Regression}$<$ Mat\+Type $>$\+::{\bf Logistic\+Regression} (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{predictors, }
+\item[{const arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{responses, }
+\item[{const double}]{lambda = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1regression_1_1LogisticRegression_a9a0f6a5e01266920c4c960076fa1a6a4}
+
+
+Construct the \doxyref{Logistic\+Regression}{p.}{classmlpack_1_1regression_1_1LogisticRegression} class with the given labeled training data. 
+
+This will train the model. Optionally, specify lambda, which is the penalty parameter for L2-\/regularization. If not specified, it is set to 0, which results in standard (unregularized) logistic regression.
+
+It is not possible to set a custom optimizer with this constructor. Either use a constructor that does not train and call \doxyref{Train()}{p.}{classmlpack_1_1regression_1_1LogisticRegression_acff5f4b97a7a72896ce01cd0ac9e9d30} with a custom optimizer type, or use the constructor that takes an instantiated optimizer. (This unfortunate situation is a language restriction of C++.)
+
+
+\begin{DoxyParams}{Parameters}
+{\em predictors} & Input training variables. \\
+\hline
+{\em responses} & Outputs resulting from input training variables. \\
+\hline
+{\em lambda} & L2-\/regularization parameter. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}!Logistic\+Regression@{Logistic\+Regression}}
+\index{Logistic\+Regression@{Logistic\+Regression}!mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}}
+\subsubsection[{Logistic\+Regression(const Mat\+Type \&predictors, const arma\+::\+Row$<$ size\+\_\+t $>$ \&responses, const arma\+::vec \&initial\+Point, const double lambda=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type  = arma\+::mat$>$ {\bf mlpack\+::regression\+::\+Logistic\+Regression}$<$ Mat\+Type $>$\+::{\bf Logistic\+Regression} (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{predictors, }
+\item[{const arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{responses, }
+\item[{const arma\+::vec \&}]{initial\+Point, }
+\item[{const double}]{lambda = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1regression_1_1LogisticRegression_ad9feedb5484c297a0828fae48ab97403}
+
+
+Construct the \doxyref{Logistic\+Regression}{p.}{classmlpack_1_1regression_1_1LogisticRegression} class with the given labeled training data. 
+
+This will train the model. Optionally, specify lambda, which is the penalty parameter for L2-\/regularization. If not specified, it is set to 0, which results in standard (unregularized) logistic regression.
+
+It is not possible to set a custom optimizer with this constructor. Either use a constructor that does not train and call \doxyref{Train()}{p.}{classmlpack_1_1regression_1_1LogisticRegression_acff5f4b97a7a72896ce01cd0ac9e9d30} with a custom optimizer type, or use the constructor that takes an instantiated optimizer. (This unfortunate situation is a language restriction of C++.)
+
+
+\begin{DoxyParams}{Parameters}
+{\em predictors} & Input training variables. \\
+\hline
+{\em responses} & Outputs results from input training variables. \\
+\hline
+{\em initial\+Point} & Initial model to train with. \\
+\hline
+{\em lambda} & L2-\/regularization parameter. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}!Logistic\+Regression@{Logistic\+Regression}}
+\index{Logistic\+Regression@{Logistic\+Regression}!mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}}
+\subsubsection[{Logistic\+Regression(const size\+\_\+t dimensionality=0, const double lambda=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type  = arma\+::mat$>$ {\bf mlpack\+::regression\+::\+Logistic\+Regression}$<$ Mat\+Type $>$\+::{\bf Logistic\+Regression} (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{dimensionality = {\ttfamily 0}, }
+\item[{const double}]{lambda = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1regression_1_1LogisticRegression_a612b269a07615f2413bea4e0c28eef85}
+
+
+Construct the \doxyref{Logistic\+Regression}{p.}{classmlpack_1_1regression_1_1LogisticRegression} class without performing any training. 
+
+The dimensionality of the data (which will be used to set the size of the parameters vector) must be specified, and all of the parameters in the model will be set to 0. Note that the dimensionality may be changed later by directly modifying the parameters vector (using \doxyref{Parameters()}{p.}{classmlpack_1_1regression_1_1LogisticRegression_a35d1bd554d9bc624fb665cb657dbcd05}).
+
+
+\begin{DoxyParams}{Parameters}
+{\em dimensionality} & Dimensionality of the data. \\
+\hline
+{\em lambda} & L2-\/regularization parameter. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}!Logistic\+Regression@{Logistic\+Regression}}
+\index{Logistic\+Regression@{Logistic\+Regression}!mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}}
+\subsubsection[{Logistic\+Regression(\+Optimizer\+Type$<$ Logistic\+Regression\+Function$<$ Mat\+Type $>$, Optimizer\+Type\+Args... $>$ \&optimizer)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type  = arma\+::mat$>$ template$<$template$<$ typename, typename... $>$ class Optimizer\+Type, typename... Optimizer\+Type\+Args$>$ {\bf mlpack\+::regression\+::\+Logistic\+Regression}$<$ Mat\+Type $>$\+::{\bf Logistic\+Regression} (
+\begin{DoxyParamCaption}
+\item[{Optimizer\+Type$<$ {\bf Logistic\+Regression\+Function}$<$ Mat\+Type $>$, Optimizer\+Type\+Args... $>$ \&}]{optimizer}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1regression_1_1LogisticRegression_a2ae1b6b6caba989c4144c85f57fc7e72}
+
+
+Construct the \doxyref{Logistic\+Regression}{p.}{classmlpack_1_1regression_1_1LogisticRegression} class with the given labeled training data. 
+
+This will train the model. This overload takes an already instantiated optimizer (which holds the \doxyref{Logistic\+Regression\+Function}{p.}{classmlpack_1_1regression_1_1LogisticRegressionFunction} error function, which must also be instantiated), so that the optimizer can be configured before the training is run by this constructor. The update policy of the optimizer can be set through the policy argument. The predictors and responses and initial point are all taken from the error function contained in the optimizer.
+
+
+\begin{DoxyParams}{Parameters}
+{\em optimizer} & Instantiated optimizer with instantiated error function. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}!Classify@{Classify}}
+\index{Classify@{Classify}!mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}}
+\subsubsection[{Classify(const Vec\+Type \&point, const double decision\+Boundary=0.\+5) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type  = arma\+::mat$>$ template$<$typename Vec\+Type $>$ size\+\_\+t {\bf mlpack\+::regression\+::\+Logistic\+Regression}$<$ Mat\+Type $>$\+::Classify (
+\begin{DoxyParamCaption}
+\item[{const Vec\+Type \&}]{point, }
+\item[{const double}]{decision\+Boundary = {\ttfamily 0.5}}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1regression_1_1LogisticRegression_ac062e7b9b69dcc78ce2f9af3de6e91a7}
+
+
+Classify the given point. 
+
+The predicted label is returned. Optionally, specify the decision boundary; logistic regression returns a value between 0 and 1. If the value is greater than the decision boundary, the response is taken to be 1; otherwise, it is 0. By default the decision boundary is 0.\+5.
+
+
+\begin{DoxyParams}{Parameters}
+{\em point} & Point to classify. \\
+\hline
+{\em decision\+Boundary} & Decision boundary (default 0.\+5). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Predicted label of point. 
+\end{DoxyReturn}
+
+
+Referenced by mlpack\+::regression\+::\+Logistic\+Regression$<$ Mat\+Type $>$\+::\+Lambda().
+
+\index{mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}!Classify@{Classify}}
+\index{Classify@{Classify}!mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}}
+\subsubsection[{Classify(const Mat\+Type \&dataset, arma\+::\+Row$<$ size\+\_\+t $>$ \&labels, const double decision\+Boundary=0.\+5) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type  = arma\+::mat$>$ void {\bf mlpack\+::regression\+::\+Logistic\+Regression}$<$ Mat\+Type $>$\+::Classify (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{dataset, }
+\item[{arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{labels, }
+\item[{const double}]{decision\+Boundary = {\ttfamily 0.5}}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1regression_1_1LogisticRegression_aa9ca3f2eea810753e0cbf185f003f620}
+
+
+Classify the given points, returning the predicted labels for each point. 
+
+Optionally, specify the decision boundary; logistic regression returns a value between 0 and 1. If the value is greater than the decision boundary, the response is taken to be 1; otherwise, it is 0. By default the decision boundary is 0.\+5.
+
+
+\begin{DoxyParams}{Parameters}
+{\em dataset} & Set of points to classify. \\
+\hline
+{\em labels} & Predicted labels for each point. \\
+\hline
+{\em decision\+Boundary} & Decision boundary (default 0.\+5). \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}!Classify@{Classify}}
+\index{Classify@{Classify}!mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}}
+\subsubsection[{Classify(const Mat\+Type \&dataset, arma\+::mat \&probabilities) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type  = arma\+::mat$>$ void {\bf mlpack\+::regression\+::\+Logistic\+Regression}$<$ Mat\+Type $>$\+::Classify (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{dataset, }
+\item[{arma\+::mat \&}]{probabilities}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1regression_1_1LogisticRegression_ab405f2fad4ef9dd45a3f4aa8e5f16dcf}
+
+
+Classify the given points, returning class probabilities for each point. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em dataset} & Set of points to classify. \\
+\hline
+{\em probabilities} & Class probabilities for each point (output). \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}!Compute\+Accuracy@{Compute\+Accuracy}}
+\index{Compute\+Accuracy@{Compute\+Accuracy}!mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}}
+\subsubsection[{Compute\+Accuracy(const Mat\+Type \&predictors, const arma\+::\+Row$<$ size\+\_\+t $>$ \&responses, const double decision\+Boundary=0.\+5) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type  = arma\+::mat$>$ double {\bf mlpack\+::regression\+::\+Logistic\+Regression}$<$ Mat\+Type $>$\+::Compute\+Accuracy (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{predictors, }
+\item[{const arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{responses, }
+\item[{const double}]{decision\+Boundary = {\ttfamily 0.5}}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1regression_1_1LogisticRegression_a69147c90cca4de62e50afd2cd1a72829}
+
+
+Compute the accuracy of the model on the given predictors and responses, optionally using the given decision boundary. 
+
+The responses should be either 0 or 1. Logistic regression returns a value between 0 and 1. If the value is greater than the decision boundary, the response is taken to be 1; otherwise, it is 0. By default, the decision boundary is 0.\+5.
+
+The accuracy is returned as a percentage, between 0 and 100.
+
+
+\begin{DoxyParams}{Parameters}
+{\em predictors} & Input predictors. \\
+\hline
+{\em responses} & Vector of responses. \\
+\hline
+{\em decision\+Boundary} & Decision boundary (default 0.\+5). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Percentage of responses that are predicted correctly. 
+\end{DoxyReturn}
+
+
+Referenced by mlpack\+::regression\+::\+Logistic\+Regression$<$ Mat\+Type $>$\+::\+Lambda().
+
+\index{mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}!Compute\+Error@{Compute\+Error}}
+\index{Compute\+Error@{Compute\+Error}!mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}}
+\subsubsection[{Compute\+Error(const Mat\+Type \&predictors, const arma\+::\+Row$<$ size\+\_\+t $>$ \&responses) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type  = arma\+::mat$>$ double {\bf mlpack\+::regression\+::\+Logistic\+Regression}$<$ Mat\+Type $>$\+::Compute\+Error (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{predictors, }
+\item[{const arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{responses}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1regression_1_1LogisticRegression_a440eb2ca02c21ef43407216f1cac05ef}
+
+
+Compute the error of the model. 
+
+This returns the negative objective function of the logistic regression log-\/likelihood function. For the model to be optimal, the negative log-\/likelihood function should be minimized.
+
+
+\begin{DoxyParams}{Parameters}
+{\em predictors} & Input predictors. \\
+\hline
+{\em responses} & Vector of responses. \\
+\hline
+\end{DoxyParams}
+
+
+Referenced by mlpack\+::regression\+::\+Logistic\+Regression$<$ Mat\+Type $>$\+::\+Lambda().
+
+\index{mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}!Lambda@{Lambda}}
+\index{Lambda@{Lambda}!mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}}
+\subsubsection[{Lambda() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type  = arma\+::mat$>$ const double\& {\bf mlpack\+::regression\+::\+Logistic\+Regression}$<$ Mat\+Type $>$\+::Lambda (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1regression_1_1LogisticRegression_ad7d27ae1948a2e37882147852e11e90b}
+
+
+Return the lambda value for L2-\/regularization. 
+
+
+
+Definition at line 157 of file logistic\+\_\+regression.\+hpp.
+
+
+
+References mlpack\+::regression\+::\+Logistic\+Regression$<$ Mat\+Type $>$\+::lambda.
+
+\index{mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}!Lambda@{Lambda}}
+\index{Lambda@{Lambda}!mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}}
+\subsubsection[{Lambda()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type  = arma\+::mat$>$ double\& {\bf mlpack\+::regression\+::\+Logistic\+Regression}$<$ Mat\+Type $>$\+::Lambda (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1regression_1_1LogisticRegression_a781606f6944e17437274ecc65b982b3d}
+
+
+Modify the lambda value for L2-\/regularization. 
+
+
+
+Definition at line 159 of file logistic\+\_\+regression.\+hpp.
+
+
+
+References mlpack\+::regression\+::\+Logistic\+Regression$<$ Mat\+Type $>$\+::\+Classify(), mlpack\+::regression\+::\+Logistic\+Regression$<$ Mat\+Type $>$\+::\+Compute\+Accuracy(), mlpack\+::regression\+::\+Logistic\+Regression$<$ Mat\+Type $>$\+::\+Compute\+Error(), mlpack\+::regression\+::\+Logistic\+Regression$<$ Mat\+Type $>$\+::lambda, mlpack\+\_\+deprecated, mlpack\+::regression\+::\+Logistic\+Regression$<$ Mat\+Type $>$\+::\+Predict(), and mlpack\+::regression\+::\+Logistic\+Regression$<$ Mat\+Type $>$\+::\+Serialize().
+
+\index{mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}}
+\subsubsection[{Parameters() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type  = arma\+::mat$>$ const arma\+::vec\& {\bf mlpack\+::regression\+::\+Logistic\+Regression}$<$ Mat\+Type $>$\+::Parameters (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1regression_1_1LogisticRegression_adbdf31a1aaaeb70dff7719cecd2eda03}
+
+
+Return the parameters (the b vector). 
+
+
+
+Definition at line 152 of file logistic\+\_\+regression.\+hpp.
+
+
+
+References mlpack\+::regression\+::\+Logistic\+Regression$<$ Mat\+Type $>$\+::parameters.
+
+\index{mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}}
+\subsubsection[{Parameters()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type  = arma\+::mat$>$ arma\+::vec\& {\bf mlpack\+::regression\+::\+Logistic\+Regression}$<$ Mat\+Type $>$\+::Parameters (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1regression_1_1LogisticRegression_a35d1bd554d9bc624fb665cb657dbcd05}
+
+
+Modify the parameters (the b vector). 
+
+
+
+Definition at line 154 of file logistic\+\_\+regression.\+hpp.
+
+
+
+References mlpack\+::regression\+::\+Logistic\+Regression$<$ Mat\+Type $>$\+::parameters.
+
+\index{mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}!Predict@{Predict}}
+\index{Predict@{Predict}!mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}}
+\subsubsection[{Predict(const Mat\+Type \&predictors, arma\+::\+Row$<$ size\+\_\+t $>$ \&responses, const double decision\+Boundary=0.\+5) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type  = arma\+::mat$>$ {\bf mlpack\+\_\+deprecated} void {\bf mlpack\+::regression\+::\+Logistic\+Regression}$<$ Mat\+Type $>$\+::Predict (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{predictors, }
+\item[{arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{responses, }
+\item[{const double}]{decision\+Boundary = {\ttfamily 0.5}}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1regression_1_1LogisticRegression_a5f077a4a9130ff7e5905713c525e9f12}
+
+
+Predict the responses to a given set of predictors. 
+
+The responses will be either 0 or 1. Optionally, specify the decision boundary; logistic regression returns a value between 0 and 1. If the value is greater than the decision boundary, the response is taken to be 1; otherwise, it is 0. By default the decision boundary is 0.\+5.
+
+This method is deprecated---you should use \doxyref{Classify()}{p.}{classmlpack_1_1regression_1_1LogisticRegression_ac062e7b9b69dcc78ce2f9af3de6e91a7} instead.
+
+
+\begin{DoxyParams}{Parameters}
+{\em predictors} & Input predictors. \\
+\hline
+{\em responses} & Vector to put output predictions of responses into. \\
+\hline
+{\em decision\+Boundary} & Decision boundary (default 0.\+5). \\
+\hline
+\end{DoxyParams}
+
+
+Referenced by mlpack\+::regression\+::\+Logistic\+Regression$<$ Mat\+Type $>$\+::\+Lambda().
+
+\index{mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}}
+\subsubsection[{Serialize(\+Archive \&ar, const unsigned int)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type  = arma\+::mat$>$ template$<$typename Archive $>$ void {\bf mlpack\+::regression\+::\+Logistic\+Regression}$<$ Mat\+Type $>$\+::Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const unsigned}]{int}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1regression_1_1LogisticRegression_adf741ba3fae90dbfa024c7f25268fab1}
+
+
+Serialize the model. 
+
+
+
+Referenced by mlpack\+::regression\+::\+Logistic\+Regression$<$ Mat\+Type $>$\+::\+Lambda().
+
+\index{mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}}
+\subsubsection[{Train(const Mat\+Type \&predictors, const arma\+::\+Row$<$ size\+\_\+t $>$ \&responses)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type  = arma\+::mat$>$ template$<$template$<$ typename $>$ class Optimizer\+Type = mlpack\+::optimization\+::\+L\+\_\+\+B\+F\+GS$>$ void {\bf mlpack\+::regression\+::\+Logistic\+Regression}$<$ Mat\+Type $>$\+::Train (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{predictors, }
+\item[{const arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{responses}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1regression_1_1LogisticRegression_acff5f4b97a7a72896ce01cd0ac9e9d30}
+
+
+Train the \doxyref{Logistic\+Regression}{p.}{classmlpack_1_1regression_1_1LogisticRegression} model on the given input data. 
+
+By default, the L-\/\+B\+F\+GS optimization algorithm is used, but others can be specified (such as \doxyref{mlpack\+::optimization\+::\+S\+GD}{p.}{classmlpack_1_1optimization_1_1SGD}).
+
+This will use the existing model parameters as a starting point for the optimization. If this is not what you want, then you should access the parameters vector directly with \doxyref{Parameters()}{p.}{classmlpack_1_1regression_1_1LogisticRegression_a35d1bd554d9bc624fb665cb657dbcd05} and modify it as desired.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Optimizer\+Type} & Type of optimizer to use to train the model. \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em predictors} & Input training variables. \\
+\hline
+{\em responses} & Outputs results from input training variables. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}}
+\subsubsection[{Train(\+Optimizer\+Type$<$ Logistic\+Regression\+Function$<$ Mat\+Type $>$, Optimizer\+Type\+Args... $>$ \&optimizer)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type  = arma\+::mat$>$ template$<$template$<$ typename, typename... $>$ class Optimizer\+Type = mlpack\+::optimization\+::\+L\+\_\+\+B\+F\+GS, typename... Optimizer\+Type\+Args$>$ void {\bf mlpack\+::regression\+::\+Logistic\+Regression}$<$ Mat\+Type $>$\+::Train (
+\begin{DoxyParamCaption}
+\item[{Optimizer\+Type$<$ {\bf Logistic\+Regression\+Function}$<$ Mat\+Type $>$, Optimizer\+Type\+Args... $>$ \&}]{optimizer}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1regression_1_1LogisticRegression_a50c4c98c2efc05e117a3eb68668353ef}
+
+
+Train the \doxyref{Logistic\+Regression}{p.}{classmlpack_1_1regression_1_1LogisticRegression} model with the given instantiated optimizer. 
+
+Using this overload allows configuring the instantiated optimizer before training is performed.
+
+Note that the initial point of the optimizer (optimizer.\+Function().Get\+Initial\+Point()) will be used as the initial point of the optimization, overwriting any existing trained model. If you don\textquotesingle{}t want to overwrite the existing model, set optimizer.\+Function().Get\+Initial\+Point() to the current parameters vector, accessible via \doxyref{Parameters()}{p.}{classmlpack_1_1regression_1_1LogisticRegression_a35d1bd554d9bc624fb665cb657dbcd05}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em optimizer} & Instantiated optimizer with instantiated error function. \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Optimizer\+Type\+Args} & Optimizer arguments to customize the behavior of the optimizer. \\
+\hline
+\end{DoxyTemplParams}
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}!lambda@{lambda}}
+\index{lambda@{lambda}!mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}}
+\subsubsection[{lambda}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type  = arma\+::mat$>$ double {\bf mlpack\+::regression\+::\+Logistic\+Regression}$<$ Mat\+Type $>$\+::lambda\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1regression_1_1LogisticRegression_a791a5b68c3ecc4c4d2307395cc28ad99}
+
+
+L2-\/regularization penalty parameter. 
+
+
+
+Definition at line 254 of file logistic\+\_\+regression.\+hpp.
+
+
+
+Referenced by mlpack\+::regression\+::\+Logistic\+Regression$<$ Mat\+Type $>$\+::\+Lambda().
+
+\index{mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}!parameters@{parameters}}
+\index{parameters@{parameters}!mlpack\+::regression\+::\+Logistic\+Regression@{mlpack\+::regression\+::\+Logistic\+Regression}}
+\subsubsection[{parameters}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type  = arma\+::mat$>$ arma\+::vec {\bf mlpack\+::regression\+::\+Logistic\+Regression}$<$ Mat\+Type $>$\+::parameters\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1regression_1_1LogisticRegression_a172d4812aab0107bcce070040c411592}
+
+
+Vector of trained parameters (size\+: dimensionality plus one). 
+
+
+
+Definition at line 252 of file logistic\+\_\+regression.\+hpp.
+
+
+
+Referenced by mlpack\+::regression\+::\+Logistic\+Regression$<$ Mat\+Type $>$\+::\+Parameters().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/logistic\+\_\+regression/{\bf logistic\+\_\+regression.\+hpp}\end{DoxyCompactItemize}

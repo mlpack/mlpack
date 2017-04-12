@@ -1,0 +1,156 @@
+.TH "mlpack::neighbor::TrainVisitor< SortPolicy >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::neighbor::TrainVisitor< SortPolicy > \- \fBTrainVisitor\fP sets the reference set to a new reference set on the given NSType\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits static_visitor< void >\&.
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "template<template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType> using \fBNSTypeT\fP = \fBNSType\fP< SortPolicy, TreeType >"
+.br
+.RI "\fIAlias template necessary for visual c++ compiler\&. \fP"
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBTrainVisitor\fP (arma::mat &&\fBreferenceSet\fP, const size_t \fBleafSize\fP, const double \fBtau\fP, const double \fBrho\fP)"
+.br
+.RI "\fIConstruct the \fBTrainVisitor\fP object with the given reference set, leafSize for BinarySpaceTrees, and tau and rho for spill trees\&. \fP"
+.ti -1c
+.RI "template<template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType> void \fBoperator()\fP (\fBNSTypeT\fP< TreeType > *ns) const "
+.br
+.RI "\fIDefault Train on the given NSType instance\&. \fP"
+.ti -1c
+.RI "void \fBoperator()\fP (\fBNSTypeT\fP< \fBtree::KDTree\fP > *ns) const "
+.br
+.RI "\fITrain on the given NSType specialized for KDTrees\&. \fP"
+.ti -1c
+.RI "void \fBoperator()\fP (\fBNSTypeT\fP< \fBtree::BallTree\fP > *ns) const "
+.br
+.RI "\fITrain on the given NSType specialized for BallTrees\&. \fP"
+.ti -1c
+.RI "void \fBoperator()\fP (\fBSpillKNN\fP *ns) const "
+.br
+.RI "\fITrain specialized for SPTrees\&. \fP"
+.ti -1c
+.RI "void \fBoperator()\fP (\fBNSTypeT\fP< \fBtree::Octree\fP > *ns) const "
+.br
+.RI "\fITrain specialized for octrees\&. \fP"
+.in -1c
+.SS "Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename NSType > void \fBTrainLeaf\fP (\fBNSType\fP *ns) const "
+.br
+.RI "\fITrain on the given NSType considering the leafSize\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "size_t \fBleafSize\fP"
+.br
+.RI "\fIThe leaf size, used only by BinarySpaceTree\&. \fP"
+.ti -1c
+.RI "arma::mat && \fBreferenceSet\fP"
+.br
+.RI "\fIThe reference set to use for training\&. \fP"
+.ti -1c
+.RI "const double \fBrho\fP"
+.br
+.RI "\fIBalance threshold (for spill trees)\&. \fP"
+.ti -1c
+.RI "const double \fBtau\fP"
+.br
+.RI "\fIOverlapping size (for spill trees)\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename SortPolicy>
+.br
+class mlpack::neighbor::TrainVisitor< SortPolicy >"
+\fBTrainVisitor\fP sets the reference set to a new reference set on the given NSType\&. 
+
+We use template specialization to differentiate those tree types that accept leafSize as a parameter\&. In these cases, a reference tree with proper leafSize is built from the referenceSet\&. 
+.PP
+Definition at line 35 of file neighbor_search\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "template<typename SortPolicy > template<template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType> using \fBmlpack::neighbor::TrainVisitor\fP< SortPolicy >::\fBNSTypeT\fP =  \fBNSType\fP<SortPolicy, TreeType>"
+
+.PP
+Alias template necessary for visual c++ compiler\&. 
+.PP
+Definition at line 183 of file ns_model\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename SortPolicy > \fBmlpack::neighbor::TrainVisitor\fP< SortPolicy >::\fBTrainVisitor\fP (arma::mat && referenceSet, const size_t leafSize, const double tau, const double rho)"
+
+.PP
+Construct the \fBTrainVisitor\fP object with the given reference set, leafSize for BinarySpaceTrees, and tau and rho for spill trees\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename SortPolicy > template<template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType> void \fBmlpack::neighbor::TrainVisitor\fP< SortPolicy >::operator() (\fBNSTypeT\fP< TreeType > * ns) const"
+
+.PP
+Default Train on the given NSType instance\&. 
+.SS "template<typename SortPolicy > void \fBmlpack::neighbor::TrainVisitor\fP< SortPolicy >::operator() (\fBNSTypeT\fP< \fBtree::KDTree\fP > * ns) const"
+
+.PP
+Train on the given NSType specialized for KDTrees\&. 
+.SS "template<typename SortPolicy > void \fBmlpack::neighbor::TrainVisitor\fP< SortPolicy >::operator() (\fBNSTypeT\fP< \fBtree::BallTree\fP > * ns) const"
+
+.PP
+Train on the given NSType specialized for BallTrees\&. 
+.SS "template<typename SortPolicy > void \fBmlpack::neighbor::TrainVisitor\fP< SortPolicy >::operator() (\fBSpillKNN\fP * ns) const"
+
+.PP
+Train specialized for SPTrees\&. 
+.SS "template<typename SortPolicy > void \fBmlpack::neighbor::TrainVisitor\fP< SortPolicy >::operator() (\fBNSTypeT\fP< \fBtree::Octree\fP > * ns) const"
+
+.PP
+Train specialized for octrees\&. 
+.SS "template<typename SortPolicy > template<typename NSType > void \fBmlpack::neighbor::TrainVisitor\fP< SortPolicy >::TrainLeaf (\fBNSType\fP * ns) const\fC [private]\fP"
+
+.PP
+Train on the given NSType considering the leafSize\&. 
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename SortPolicy > size_t \fBmlpack::neighbor::TrainVisitor\fP< SortPolicy >::leafSize\fC [private]\fP"
+
+.PP
+The leaf size, used only by BinarySpaceTree\&. 
+.PP
+Definition at line 168 of file ns_model\&.hpp\&.
+.SS "template<typename SortPolicy > arma::mat&& \fBmlpack::neighbor::TrainVisitor\fP< SortPolicy >::referenceSet\fC [private]\fP"
+
+.PP
+The reference set to use for training\&. 
+.PP
+Definition at line 166 of file ns_model\&.hpp\&.
+.SS "template<typename SortPolicy > const double \fBmlpack::neighbor::TrainVisitor\fP< SortPolicy >::rho\fC [private]\fP"
+
+.PP
+Balance threshold (for spill trees)\&. 
+.PP
+Definition at line 172 of file ns_model\&.hpp\&.
+.SS "template<typename SortPolicy > const double \fBmlpack::neighbor::TrainVisitor\fP< SortPolicy >::tau\fC [private]\fP"
+
+.PP
+Overlapping size (for spill trees)\&. 
+.PP
+Definition at line 170 of file ns_model\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

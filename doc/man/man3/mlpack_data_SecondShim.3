@@ -1,0 +1,63 @@
+.TH "mlpack::data::SecondShim< T >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::data::SecondShim< T > \- The second shim: wrap the call to Serialize() inside of a \fBserialize()\fP function, so that an archive type can call \fBserialize()\fP on a \fBSecondShim\fP object and this gets forwarded correctly to our object's Serialize() function\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBSecondShim\fP (T &\fBt\fP)"
+.br
+.RI "\fIConstruct the second shim\&. The name isn't necessary for this shim\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const unsigned int version)"
+.br
+.RI "\fIA wrapper for t\&.Serialize()\&. \fP"
+.in -1c
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "T & \fBt\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename T>
+.br
+struct mlpack::data::SecondShim< T >"
+The second shim: wrap the call to Serialize() inside of a \fBserialize()\fP function, so that an archive type can call \fBserialize()\fP on a \fBSecondShim\fP object and this gets forwarded correctly to our object's Serialize() function\&. 
+.PP
+Definition at line 65 of file serialization_shim\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename T> \fBmlpack::data::SecondShim\fP< T >::\fBSecondShim\fP (T & t)\fC [inline]\fP"
+
+.PP
+Construct the second shim\&. The name isn't necessary for this shim\&. 
+.PP
+Definition at line 298 of file serialization_shim\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename T> template<typename Archive > void \fBmlpack::data::SecondShim\fP< T >::serialize (Archive & ar, const unsigned int version)\fC [inline]\fP"
+
+.PP
+A wrapper for t\&.Serialize()\&. 
+.PP
+Definition at line 302 of file serialization_shim\&.hpp\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename T> T& \fBmlpack::data::SecondShim\fP< T >::t"
+
+.PP
+Definition at line 307 of file serialization_shim\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

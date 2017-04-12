@@ -1,0 +1,317 @@
+.TH "mlpack::regression::SoftmaxRegressionFunction" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::regression::SoftmaxRegressionFunction \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBSoftmaxRegressionFunction\fP (const arma::mat &\fBdata\fP, const arma::Row< size_t > &labels, const size_t \fBnumClasses\fP, const double \fBlambda\fP=0\&.0001, const bool \fBfitIntercept\fP=false)"
+.br
+.RI "\fIConstruct the Softmax Regression objective function with the given parameters\&. \fP"
+.ti -1c
+.RI "double \fBEvaluate\fP (const arma::mat &parameters) const "
+.br
+.RI "\fIEvaluates the objective function of the softmax regression model using the given parameters\&. \fP"
+.ti -1c
+.RI "size_t \fBFeatureSize\fP () const "
+.br
+.RI "\fIGets the features size of the training data\&. \fP"
+.ti -1c
+.RI "bool \fBFitIntercept\fP () const "
+.br
+.RI "\fIGets the intercept flag\&. \fP"
+.ti -1c
+.RI "void \fBGetGroundTruthMatrix\fP (const arma::Row< size_t > &labels, arma::sp_mat &\fBgroundTruth\fP)"
+.br
+.RI "\fIConstructs the ground truth label matrix with the passed labels\&. \fP"
+.ti -1c
+.RI "const arma::mat & \fBGetInitialPoint\fP () const "
+.br
+.RI "\fIReturn the initial point for the optimization\&. \fP"
+.ti -1c
+.RI "void \fBGetProbabilitiesMatrix\fP (const arma::mat &parameters, arma::mat &probabilities) const "
+.br
+.RI "\fIEvaluate the probabilities matrix with the passed parameters\&. \fP"
+.ti -1c
+.RI "void \fBGradient\fP (const arma::mat &parameters, arma::mat &gradient) const "
+.br
+.RI "\fIEvaluates the gradient values of the objective function given the current set of parameters\&. \fP"
+.ti -1c
+.RI "const arma::mat \fBInitializeWeights\fP ()"
+.br
+.RI "\fIInitializes the parameters of the model to suitable values\&. \fP"
+.ti -1c
+.RI "double & \fBLambda\fP ()"
+.br
+.RI "\fISets the regularization parameter\&. \fP"
+.ti -1c
+.RI "double \fBLambda\fP () const "
+.br
+.RI "\fIGets the regularization parameter\&. \fP"
+.ti -1c
+.RI "size_t \fBNumClasses\fP () const "
+.br
+.RI "\fIGets the number of classes\&. \fP"
+.in -1c
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static const arma::mat \fBInitializeWeights\fP (const size_t featureSize, const size_t \fBnumClasses\fP, const bool \fBfitIntercept\fP=false)"
+.br
+.RI "\fIInitialize Softmax Regression weights (trainable parameters) with the given parameters\&. \fP"
+.ti -1c
+.RI "static void \fBInitializeWeights\fP (arma::mat &weights, const size_t featureSize, const size_t \fBnumClasses\fP, const bool \fBfitIntercept\fP=false)"
+.br
+.RI "\fIInitialize Softmax Regression weights (trainable parameters) with the given parameters\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "const arma::mat & \fBdata\fP"
+.br
+.RI "\fITraining data matrix\&. \fP"
+.ti -1c
+.RI "bool \fBfitIntercept\fP"
+.br
+.RI "\fIIntercept term flag\&. \fP"
+.ti -1c
+.RI "arma::sp_mat \fBgroundTruth\fP"
+.br
+.RI "\fILabel matrix for the provided data\&. \fP"
+.ti -1c
+.RI "arma::mat \fBinitialPoint\fP"
+.br
+.RI "\fIInitial parameter point\&. \fP"
+.ti -1c
+.RI "double \fBlambda\fP"
+.br
+.RI "\fIL2-regularization constant\&. \fP"
+.ti -1c
+.RI "size_t \fBnumClasses\fP"
+.br
+.RI "\fINumber of classes\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 21 of file softmax_regression_function\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::regression::SoftmaxRegressionFunction::SoftmaxRegressionFunction (const arma::mat & data, const arma::Row< size_t > & labels, const size_t numClasses, const double lambda = \fC0\&.0001\fP, const bool fitIntercept = \fCfalse\fP)"
+
+.PP
+Construct the Softmax Regression objective function with the given parameters\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Input training data, each column associate with one sample 
+.br
+\fIlabels\fP Labels associated with the feature data\&. 
+.br
+\fIinputSize\fP Size of the input feature vector\&. 
+.br
+\fInumClasses\fP Number of classes for classification\&. 
+.br
+\fIlambda\fP L2-regularization constant\&. 
+.br
+\fIfitIntercept\fP Intercept term flag\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "double mlpack::regression::SoftmaxRegressionFunction::Evaluate (const arma::mat & parameters) const"
+
+.PP
+Evaluates the objective function of the softmax regression model using the given parameters\&. The cost function has terms for the log likelihood error and the regularization cost\&. The objective function takes a low value when the model generalizes well for the given training data, while having small parameter values\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIparameters\fP Current values of the model parameters\&. 
+.RE
+.PP
+
+.SS "size_t mlpack::regression::SoftmaxRegressionFunction::FeatureSize () const\fC [inline]\fP"
+
+.PP
+Gets the features size of the training data\&. 
+.PP
+Definition at line 121 of file softmax_regression_function\&.hpp\&.
+.PP
+References fitIntercept, and initialPoint\&.
+.SS "bool mlpack::regression::SoftmaxRegressionFunction::FitIntercept () const\fC [inline]\fP"
+
+.PP
+Gets the intercept flag\&. 
+.PP
+Definition at line 133 of file softmax_regression_function\&.hpp\&.
+.PP
+References fitIntercept\&.
+.SS "void mlpack::regression::SoftmaxRegressionFunction::GetGroundTruthMatrix (const arma::Row< size_t > & labels, arma::sp_mat & groundTruth)"
+
+.PP
+Constructs the ground truth label matrix with the passed labels\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIlabels\fP Labels associated with the training data\&. 
+.br
+\fIgroundTruth\fP Pointer to arma::mat which stores the computed matrix\&. 
+.RE
+.PP
+
+.SS "const arma::mat& mlpack::regression::SoftmaxRegressionFunction::GetInitialPoint () const\fC [inline]\fP"
+
+.PP
+Return the initial point for the optimization\&. 
+.PP
+Definition at line 115 of file softmax_regression_function\&.hpp\&.
+.PP
+References initialPoint\&.
+.SS "void mlpack::regression::SoftmaxRegressionFunction::GetProbabilitiesMatrix (const arma::mat & parameters, arma::mat & probabilities) const"
+
+.PP
+Evaluate the probabilities matrix with the passed parameters\&. probabilities(i, j) = exp( * data_j) / sum_k(exp( * data_j))\&. It represents the probability of data_j belongs to class i\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIparameters\fP Current values of the model parameters\&. 
+.br
+\fIprobabilities\fP Pointer to arma::mat which stores the probabilities\&. 
+.RE
+.PP
+
+.SS "void mlpack::regression::SoftmaxRegressionFunction::Gradient (const arma::mat & parameters, arma::mat & gradient) const"
+
+.PP
+Evaluates the gradient values of the objective function given the current set of parameters\&. The function calculates the probabilities for each class given the parameters, and computes the gradients based on the difference from the ground truth\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIparameters\fP Current values of the model parameters\&. 
+.br
+\fIgradient\fP Matrix where gradient values will be stored\&. 
+.RE
+.PP
+
+.SS "const arma::mat mlpack::regression::SoftmaxRegressionFunction::InitializeWeights ()"
+
+.PP
+Initializes the parameters of the model to suitable values\&. 
+.SS "static const arma::mat mlpack::regression::SoftmaxRegressionFunction::InitializeWeights (const size_t featureSize, const size_t numClasses, const bool fitIntercept = \fCfalse\fP)\fC [static]\fP"
+
+.PP
+Initialize Softmax Regression weights (trainable parameters) with the given parameters\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfeatureSize\fP The number of features in the training set\&. 
+.br
+\fInumClasses\fP Number of classes for classification\&. 
+.br
+\fIfitIntercept\fP If true, an intercept is fitted\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Initialized model weights\&. 
+.RE
+.PP
+
+.SS "static void mlpack::regression::SoftmaxRegressionFunction::InitializeWeights (arma::mat & weights, const size_t featureSize, const size_t numClasses, const bool fitIntercept = \fCfalse\fP)\fC [static]\fP"
+
+.PP
+Initialize Softmax Regression weights (trainable parameters) with the given parameters\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIweights\fP This will be filled with the initialized model weights\&. 
+.br
+\fIfeatureSize\fP The number of features in the training set\&. 
+.br
+\fInumClasses\fP Number of classes for classification\&. 
+.br
+\fIfitIntercept\fP Intercept term flag\&. 
+.RE
+.PP
+
+.SS "double& mlpack::regression::SoftmaxRegressionFunction::Lambda ()\fC [inline]\fP"
+
+.PP
+Sets the regularization parameter\&. 
+.PP
+Definition at line 128 of file softmax_regression_function\&.hpp\&.
+.PP
+References lambda\&.
+.SS "double mlpack::regression::SoftmaxRegressionFunction::Lambda () const\fC [inline]\fP"
+
+.PP
+Gets the regularization parameter\&. 
+.PP
+Definition at line 130 of file softmax_regression_function\&.hpp\&.
+.PP
+References lambda\&.
+.SS "size_t mlpack::regression::SoftmaxRegressionFunction::NumClasses () const\fC [inline]\fP"
+
+.PP
+Gets the number of classes\&. 
+.PP
+Definition at line 118 of file softmax_regression_function\&.hpp\&.
+.PP
+References numClasses\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "const arma::mat& mlpack::regression::SoftmaxRegressionFunction::data\fC [private]\fP"
+
+.PP
+Training data matrix\&. 
+.PP
+Definition at line 137 of file softmax_regression_function\&.hpp\&.
+.SS "bool mlpack::regression::SoftmaxRegressionFunction::fitIntercept\fC [private]\fP"
+
+.PP
+Intercept term flag\&. 
+.PP
+Definition at line 147 of file softmax_regression_function\&.hpp\&.
+.PP
+Referenced by FeatureSize(), and FitIntercept()\&.
+.SS "arma::sp_mat mlpack::regression::SoftmaxRegressionFunction::groundTruth\fC [private]\fP"
+
+.PP
+Label matrix for the provided data\&. 
+.PP
+Definition at line 139 of file softmax_regression_function\&.hpp\&.
+.SS "arma::mat mlpack::regression::SoftmaxRegressionFunction::initialPoint\fC [private]\fP"
+
+.PP
+Initial parameter point\&. 
+.PP
+Definition at line 141 of file softmax_regression_function\&.hpp\&.
+.PP
+Referenced by FeatureSize(), and GetInitialPoint()\&.
+.SS "double mlpack::regression::SoftmaxRegressionFunction::lambda\fC [private]\fP"
+
+.PP
+L2-regularization constant\&. 
+.PP
+Definition at line 145 of file softmax_regression_function\&.hpp\&.
+.PP
+Referenced by Lambda()\&.
+.SS "size_t mlpack::regression::SoftmaxRegressionFunction::numClasses\fC [private]\fP"
+
+.PP
+Number of classes\&. 
+.PP
+Definition at line 143 of file softmax_regression_function\&.hpp\&.
+.PP
+Referenced by NumClasses()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,180 @@
+.TH "mlpack::tree::RPlusTreeSplit< SplitPolicyType, SweepType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::tree::RPlusTreeSplit< SplitPolicyType, SweepType > \- The \fBRPlusTreeSplit\fP class performs the split process of a node on overflow\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "typedef SplitPolicyType \fBSplitPolicy\fP"
+.br
+.in -1c
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename TreeType > static void \fBSplitLeafNode\fP (TreeType *tree, std::vector< bool > &relevels)"
+.br
+.RI "\fISplit a leaf node using the 'default' algorithm\&. \fP"
+.ti -1c
+.RI "template<typename TreeType > static bool \fBSplitNonLeafNode\fP (TreeType *tree, std::vector< bool > &relevels)"
+.br
+.RI "\fISplit a non-leaf node using the 'default' algorithm\&. \fP"
+.in -1c
+.SS "Static Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename TreeType > static void \fBAddFakeNodes\fP (const TreeType *tree, TreeType *emptyTree)"
+.br
+.RI "\fIThis method is used to make sure that the tree has equivalent maximum depth in every branch\&. \fP"
+.ti -1c
+.RI "template<typename TreeType > static void \fBInsertNodeIntoTree\fP (TreeType *destTree, TreeType *srcNode)"
+.br
+.RI "\fIInsert a node into another node\&. \fP"
+.ti -1c
+.RI "template<typename TreeType > static bool \fBPartitionNode\fP (const TreeType *node, size_t &minCutAxis, typename TreeType::ElemType &minCut)"
+.br
+.RI "\fIPartition a node using SweepType\&. \fP"
+.ti -1c
+.RI "template<typename TreeType > static void \fBSplitLeafNodeAlongPartition\fP (TreeType *tree, TreeType *treeOne, TreeType *treeTwo, const size_t cutAxis, const typename TreeType::ElemType cut)"
+.br
+.RI "\fISplit a leaf node along an axis\&. \fP"
+.ti -1c
+.RI "template<typename TreeType > static void \fBSplitNonLeafNodeAlongPartition\fP (TreeType *tree, TreeType *treeOne, TreeType *treeTwo, const size_t cutAxis, const typename TreeType::ElemType cut)"
+.br
+.RI "\fISplit a non-leaf node along an axis\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename SplitPolicyType, template< typename > class SweepType>
+.br
+class mlpack::tree::RPlusTreeSplit< SplitPolicyType, SweepType >"
+The \fBRPlusTreeSplit\fP class performs the split process of a node on overflow\&. 
+
+
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fISplitPolicyType\fP The class that helps to determine the subtree into which we should insert a child node\&. 
+.br
+\fISweepType\fP The class that finds the partition of a node along a given axis\&. The partition algorithm tries to find a partition along each axis, evaluates each partition and chooses the best one\&. 
+.RE
+.PP
+
+.PP
+Definition at line 32 of file r_plus_tree_split\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "template<typename SplitPolicyType , template< typename > class SweepType> typedef SplitPolicyType \fBmlpack::tree::RPlusTreeSplit\fP< SplitPolicyType, SweepType >::\fBSplitPolicy\fP"
+
+.PP
+Definition at line 35 of file r_plus_tree_split\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename SplitPolicyType , template< typename > class SweepType> template<typename TreeType > static void \fBmlpack::tree::RPlusTreeSplit\fP< SplitPolicyType, SweepType >::AddFakeNodes (const TreeType * tree, TreeType * emptyTree)\fC [static]\fP, \fC [private]\fP"
+
+.PP
+This method is used to make sure that the tree has equivalent maximum depth in every branch\&. The method should be invoked if one of two resulting subtrees is empty after the split process (i\&.e\&. the subtree contains no children)\&. The method convert the empty node into an empty subtree (increase the node in depth)\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fItree\fP One of two subtrees that is not empty\&. 
+.br
+\fIemptyTree\fP The empty subtree\&. 
+.RE
+.PP
+
+.SS "template<typename SplitPolicyType , template< typename > class SweepType> template<typename TreeType > static void \fBmlpack::tree::RPlusTreeSplit\fP< SplitPolicyType, SweepType >::InsertNodeIntoTree (TreeType * destTree, TreeType * srcNode)\fC [static]\fP, \fC [private]\fP"
+
+.PP
+Insert a node into another node\&. 
+.SS "template<typename SplitPolicyType , template< typename > class SweepType> template<typename TreeType > static bool \fBmlpack::tree::RPlusTreeSplit\fP< SplitPolicyType, SweepType >::PartitionNode (const TreeType * node, size_t & minCutAxis, typename TreeType::ElemType & minCut)\fC [static]\fP, \fC [private]\fP"
+
+.PP
+Partition a node using SweepType\&. This method invokes SweepType::Sweep(Non)LeafNode() for each dimension and chooses the best one\&. The method returns false if the node needn't partitioning\&. Overwise, the method returns true\&. If the method failed in finding an acceptable partition, the minCutAxis will be equal to the number of dimensions\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fInode\fP The node that is being split\&. 
+.br
+\fIminCutAxis\fP The axis along which the node will be split\&. 
+.br
+\fIminCut\fP The coordinate at which the node will be split\&. 
+.RE
+.PP
+
+.SS "template<typename SplitPolicyType , template< typename > class SweepType> template<typename TreeType > static void \fBmlpack::tree::RPlusTreeSplit\fP< SplitPolicyType, SweepType >::SplitLeafNode (TreeType * tree, std::vector< bool > & relevels)\fC [static]\fP"
+
+.PP
+Split a leaf node using the 'default' algorithm\&. If necessary, this split will propagate upwards through the tree\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fInode\&.\fP The node that is being split\&. 
+.br
+\fIrelevels\fP Not used\&. 
+.RE
+.PP
+
+.SS "template<typename SplitPolicyType , template< typename > class SweepType> template<typename TreeType > static void \fBmlpack::tree::RPlusTreeSplit\fP< SplitPolicyType, SweepType >::SplitLeafNodeAlongPartition (TreeType * tree, TreeType * treeOne, TreeType * treeTwo, const size_t cutAxis, const typename TreeType::ElemType cut)\fC [static]\fP, \fC [private]\fP"
+
+.PP
+Split a leaf node along an axis\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fItree\fP The node that is being split into two new nodes\&. 
+.br
+\fItreeOne\fP The first subtree of two resulting subtrees\&. 
+.br
+\fItreeOne\fP The second subtree of two resulting subtrees\&. 
+.br
+\fIcutAxis\fP The axis along which the node is being split\&. 
+.br
+\fIcut\fP The coordinate at which the node is being split\&. 
+.RE
+.PP
+
+.SS "template<typename SplitPolicyType , template< typename > class SweepType> template<typename TreeType > static bool \fBmlpack::tree::RPlusTreeSplit\fP< SplitPolicyType, SweepType >::SplitNonLeafNode (TreeType * tree, std::vector< bool > & relevels)\fC [static]\fP"
+
+.PP
+Split a non-leaf node using the 'default' algorithm\&. If this is a root node, the tree increases in depth\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fInode\&.\fP The node that is being split\&. 
+.br
+\fIrelevels\fP Not used\&. 
+.RE
+.PP
+
+.SS "template<typename SplitPolicyType , template< typename > class SweepType> template<typename TreeType > static void \fBmlpack::tree::RPlusTreeSplit\fP< SplitPolicyType, SweepType >::SplitNonLeafNodeAlongPartition (TreeType * tree, TreeType * treeOne, TreeType * treeTwo, const size_t cutAxis, const typename TreeType::ElemType cut)\fC [static]\fP, \fC [private]\fP"
+
+.PP
+Split a non-leaf node along an axis\&. This method propagates the split downward up to a leaf node if necessary\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fItree\fP The node that is being split into two new nodes\&. 
+.br
+\fItreeOne\fP The first subtree of two resulting subtrees\&. 
+.br
+\fItreeOne\fP The second subtree of two resulting subtrees\&. 
+.br
+\fIcutAxis\fP The axis along which the node is being split\&. 
+.br
+\fIcut\fP The coordinate at which the node is being split\&. 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

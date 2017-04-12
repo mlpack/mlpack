@@ -1,0 +1,49 @@
+.TH "src/mlpack/core/data/normalize_labels.hpp" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+src/mlpack/core/data/normalize_labels.hpp \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "\fILinear algebra utility functions, generally performed on matrices or vectors\&. \fP"
+.ti -1c
+.RI " \fBmlpack::data\fP"
+.br
+.RI "\fIFunctions to load and save matrices and models\&. \fP"
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename eT , typename RowType > void \fBmlpack::data::NormalizeLabels\fP (const RowType &labelsIn, arma::Row< size_t > &labels, arma::Col< eT > &mapping)"
+.br
+.RI "\fIGiven a set of labels of a particular datatype, convert them to unsigned labels in the range [0, n) where n is the number of different labels\&. \fP"
+.ti -1c
+.RI "template<typename eT > void \fBmlpack::data::RevertLabels\fP (const arma::Row< size_t > &labels, const arma::Col< eT > &mapping, arma::Row< eT > &labelsOut)"
+.br
+.RI "\fIGiven a set of labels that have been mapped to the range [0, n), map them back to the original labels given by the 'mapping' vector\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Ryan Curtin
+.RE
+.PP
+Often labels are not given as {0, 1, 2, \&.\&.\&.} but instead {1, 2, \&.\&.\&.} or even {-1, 1} or otherwise\&. The purpose of this function is to normalize labels to {0, 1, 2, \&.\&.\&.} and provide a mapping back to those labels\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBnormalize_labels\&.hpp\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

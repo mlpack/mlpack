@@ -1,0 +1,669 @@
+\section{mlpack\+:\+:neighbor\+:\+:Neighbor\+Search\+Rules$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1neighbor_1_1NeighborSearchRules}\index{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$}}
+
+
+The \doxyref{Neighbor\+Search\+Rules}{p.}{classmlpack_1_1neighbor_1_1NeighborSearchRules} class is a template helper class used by \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} class when performing distance-\/based neighbor searches.  
+
+
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct {\bf Candidate\+Cmp}
+\begin{DoxyCompactList}\small\item\em Compare two candidates based on the distance. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef {\bf tree\+::\+Traversal\+Info}$<$ Tree\+Type $>$ {\bf Traversal\+Info\+Type}
+\begin{DoxyCompactList}\small\item\em Convenience typedef. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Neighbor\+Search\+Rules} (const typename Tree\+Type\+::\+Mat \&{\bf reference\+Set}, const typename Tree\+Type\+::\+Mat \&{\bf query\+Set}, const size\+\_\+t {\bf k}, Metric\+Type \&{\bf metric}, const double {\bf epsilon}=0, const bool {\bf same\+Set}=false)
+\begin{DoxyCompactList}\small\item\em Construct the \doxyref{Neighbor\+Search\+Rules}{p.}{classmlpack_1_1neighbor_1_1NeighborSearchRules} object. \end{DoxyCompactList}\item 
+double {\bf Base\+Case} (const size\+\_\+t query\+Index, const size\+\_\+t reference\+Index)
+\begin{DoxyCompactList}\small\item\em Get the distance from the query point to the reference point. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Base\+Cases} () const 
+\begin{DoxyCompactList}\small\item\em Get the number of base cases that have been performed. \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Base\+Cases} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of base cases that have been performed. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Get\+Best\+Child} (const size\+\_\+t query\+Index, Tree\+Type \&reference\+Node)
+\begin{DoxyCompactList}\small\item\em Get the child node with the best score. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Get\+Best\+Child} (const Tree\+Type \&query\+Node, Tree\+Type \&reference\+Node)
+\begin{DoxyCompactList}\small\item\em Get the child node with the best score. \end{DoxyCompactList}\item 
+void {\bf Get\+Results} (arma\+::\+Mat$<$ size\+\_\+t $>$ \&neighbors, arma\+::mat \&distances)
+\begin{DoxyCompactList}\small\item\em Store the list of candidates for each query point in the given matrices. \end{DoxyCompactList}\item 
+double {\bf Rescore} (const size\+\_\+t query\+Index, Tree\+Type \&reference\+Node, const double old\+Score) const 
+\begin{DoxyCompactList}\small\item\em Re-\/evaluate the score for recursion order. \end{DoxyCompactList}\item 
+double {\bf Rescore} (Tree\+Type \&query\+Node, Tree\+Type \&reference\+Node, const double old\+Score) const 
+\begin{DoxyCompactList}\small\item\em Re-\/evaluate the score for recursion order. \end{DoxyCompactList}\item 
+double {\bf Score} (const size\+\_\+t query\+Index, Tree\+Type \&reference\+Node)
+\begin{DoxyCompactList}\small\item\em Get the score for recursion order. \end{DoxyCompactList}\item 
+double {\bf Score} (Tree\+Type \&query\+Node, Tree\+Type \&reference\+Node)
+\begin{DoxyCompactList}\small\item\em Get the score for recursion order. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Scores} () const 
+\begin{DoxyCompactList}\small\item\em Get the number of scores that have been performed. \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Scores} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of scores that have been performed. \end{DoxyCompactList}\item 
+const {\bf Traversal\+Info\+Type} \& {\bf Traversal\+Info} () const 
+\begin{DoxyCompactList}\small\item\em Get the traversal info. \end{DoxyCompactList}\item 
+{\bf Traversal\+Info\+Type} \& {\bf Traversal\+Info} ()
+\begin{DoxyCompactList}\small\item\em Modify the traversal info. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef std\+::pair$<$ double, size\+\_\+t $>$ {\bf Candidate}
+\begin{DoxyCompactList}\small\item\em Candidate represents a possible candidate neighbor (distance, index). \end{DoxyCompactList}\item 
+typedef std\+::priority\+\_\+queue$<$ {\bf Candidate}, std\+::vector$<$ {\bf Candidate} $>$, {\bf Candidate\+Cmp} $>$ {\bf Candidate\+List}
+\begin{DoxyCompactList}\small\item\em Use a priority queue to represent the list of candidate neighbors. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+double {\bf Calculate\+Bound} (Tree\+Type \&query\+Node) const 
+\begin{DoxyCompactList}\small\item\em Recalculate the bound for a given query node. \end{DoxyCompactList}\item 
+void {\bf Insert\+Neighbor} (const size\+\_\+t query\+Index, const size\+\_\+t neighbor, const double distance)
+\begin{DoxyCompactList}\small\item\em Helper function to insert a point into the list of candidate points. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+size\+\_\+t {\bf base\+Cases}
+\begin{DoxyCompactList}\small\item\em The number of base cases that have been performed. \end{DoxyCompactList}\item 
+std\+::vector$<$ {\bf Candidate\+List} $>$ {\bf candidates}
+\begin{DoxyCompactList}\small\item\em Set of candidate neighbors for each point. \end{DoxyCompactList}\item 
+const double {\bf epsilon}
+\begin{DoxyCompactList}\small\item\em Relative error to be considered in approximate search. \end{DoxyCompactList}\item 
+const size\+\_\+t {\bf k}
+\begin{DoxyCompactList}\small\item\em Number of neighbors to search for. \end{DoxyCompactList}\item 
+double {\bf last\+Base\+Case}
+\begin{DoxyCompactList}\small\item\em The last base case result. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf last\+Query\+Index}
+\begin{DoxyCompactList}\small\item\em The last query point \doxyref{Base\+Case()}{p.}{classmlpack_1_1neighbor_1_1NeighborSearchRules_a661725db9c385a83b3622cad02111c77} was called with. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf last\+Reference\+Index}
+\begin{DoxyCompactList}\small\item\em The last reference point \doxyref{Base\+Case()}{p.}{classmlpack_1_1neighbor_1_1NeighborSearchRules_a661725db9c385a83b3622cad02111c77} was called with. \end{DoxyCompactList}\item 
+Metric\+Type \& {\bf metric}
+\begin{DoxyCompactList}\small\item\em The instantiated metric. \end{DoxyCompactList}\item 
+const Tree\+Type\+::\+Mat \& {\bf query\+Set}
+\begin{DoxyCompactList}\small\item\em The query set. \end{DoxyCompactList}\item 
+const Tree\+Type\+::\+Mat \& {\bf reference\+Set}
+\begin{DoxyCompactList}\small\item\em The reference set. \end{DoxyCompactList}\item 
+bool {\bf same\+Set}
+\begin{DoxyCompactList}\small\item\em Denotes whether or not the reference and query sets are the same. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf scores}
+\begin{DoxyCompactList}\small\item\em The number of scores that have been performed. \end{DoxyCompactList}\item 
+{\bf Traversal\+Info\+Type} {\bf traversal\+Info}
+\begin{DoxyCompactList}\small\item\em Traversal info for the parent combination; this is updated by the traversal before each call to \doxyref{Score()}{p.}{classmlpack_1_1neighbor_1_1NeighborSearchRules_a6f4154e108f68b8b43c9076646f6d84b}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Sort\+Policy, typename Metric\+Type, typename Tree\+Type$>$\\*
+class mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$}
+
+The \doxyref{Neighbor\+Search\+Rules}{p.}{classmlpack_1_1neighbor_1_1NeighborSearchRules} class is a template helper class used by \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} class when performing distance-\/based neighbor searches. 
+
+For each point in the query dataset, it keeps track of the k neighbors in the reference dataset which have the \textquotesingle{}best\textquotesingle{} distance according to a given sorting policy.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Sort\+Policy} & The sort policy for distances. \\
+\hline
+{\em Metric\+Type} & The metric to use for computation. \\
+\hline
+{\em Tree\+Type} & The tree type to use; must adhere to the Tree\+Type A\+PI. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 33 of file neighbor\+\_\+search\+\_\+rules.\+hpp.
+
+
+
+\subsection{Member Typedef Documentation}
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}!Candidate@{Candidate}}
+\index{Candidate@{Candidate}!mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}}
+\subsubsection[{Candidate}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy , typename Metric\+Type , typename Tree\+Type $>$ typedef std\+::pair$<$double, size\+\_\+t$>$ {\bf mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::{\bf Candidate}\hspace{0.3cm}{\ttfamily [protected]}}\label{classmlpack_1_1neighbor_1_1NeighborSearchRules_a671cd298dea85d724ae425be6d060af1}
+
+
+Candidate represents a possible candidate neighbor (distance, index). 
+
+
+
+Definition at line 166 of file neighbor\+\_\+search\+\_\+rules.\+hpp.
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}!Candidate\+List@{Candidate\+List}}
+\index{Candidate\+List@{Candidate\+List}!mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}}
+\subsubsection[{Candidate\+List}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy , typename Metric\+Type , typename Tree\+Type $>$ typedef std\+::priority\+\_\+queue$<${\bf Candidate}, std\+::vector$<${\bf Candidate}$>$, {\bf Candidate\+Cmp}$>$ {\bf mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::{\bf Candidate\+List}\hspace{0.3cm}{\ttfamily [protected]}}\label{classmlpack_1_1neighbor_1_1NeighborSearchRules_a4458eb8f70d550cc7e31e093b2e93df8}
+
+
+Use a priority queue to represent the list of candidate neighbors. 
+
+
+
+Definition at line 178 of file neighbor\+\_\+search\+\_\+rules.\+hpp.
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}!Traversal\+Info\+Type@{Traversal\+Info\+Type}}
+\index{Traversal\+Info\+Type@{Traversal\+Info\+Type}!mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}}
+\subsubsection[{Traversal\+Info\+Type}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy , typename Metric\+Type , typename Tree\+Type $>$ typedef {\bf tree\+::\+Traversal\+Info}$<$Tree\+Type$>$ {\bf mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::{\bf Traversal\+Info\+Type}}\label{classmlpack_1_1neighbor_1_1NeighborSearchRules_a0284ce9d7f9b9bebe46f3d0d31c3b06e}
+
+
+Convenience typedef. 
+
+
+
+Definition at line 151 of file neighbor\+\_\+search\+\_\+rules.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}!Neighbor\+Search\+Rules@{Neighbor\+Search\+Rules}}
+\index{Neighbor\+Search\+Rules@{Neighbor\+Search\+Rules}!mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}}
+\subsubsection[{Neighbor\+Search\+Rules(const typename Tree\+Type\+::\+Mat \&reference\+Set, const typename Tree\+Type\+::\+Mat \&query\+Set, const size\+\_\+t k, Metric\+Type \&metric, const double epsilon=0, const bool same\+Set=false)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy , typename Metric\+Type , typename Tree\+Type $>$ {\bf mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::{\bf Neighbor\+Search\+Rules} (
+\begin{DoxyParamCaption}
+\item[{const typename Tree\+Type\+::\+Mat \&}]{reference\+Set, }
+\item[{const typename Tree\+Type\+::\+Mat \&}]{query\+Set, }
+\item[{const size\+\_\+t}]{k, }
+\item[{Metric\+Type \&}]{metric, }
+\item[{const double}]{epsilon = {\ttfamily 0}, }
+\item[{const bool}]{same\+Set = {\ttfamily false}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1NeighborSearchRules_a2a2525b307e1a2a9c3927ad83013d26a}
+
+
+Construct the \doxyref{Neighbor\+Search\+Rules}{p.}{classmlpack_1_1neighbor_1_1NeighborSearchRules} object. 
+
+This is usually done from within the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} class at search time.
+
+
+\begin{DoxyParams}{Parameters}
+{\em reference\+Set} & Set of reference data. \\
+\hline
+{\em query\+Set} & Set of query data. \\
+\hline
+{\em k} & Number of neighbors to search for. \\
+\hline
+{\em metric} & Instantiated metric. \\
+\hline
+{\em epsilon} & Relative approximate error. \\
+\hline
+{\em same\+Set} & If true, the query and reference set are taken to be the same, and a query point will not return itself in the results. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}!Base\+Case@{Base\+Case}}
+\index{Base\+Case@{Base\+Case}!mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}}
+\subsubsection[{Base\+Case(const size\+\_\+t query\+Index, const size\+\_\+t reference\+Index)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy , typename Metric\+Type , typename Tree\+Type $>$ double {\bf mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::Base\+Case (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{query\+Index, }
+\item[{const size\+\_\+t}]{reference\+Index}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1NeighborSearchRules_a661725db9c385a83b3622cad02111c77}
+
+
+Get the distance from the query point to the reference point. 
+
+This will update the list of candidates with the new point if appropriate and will track the number of base cases (number of points evaluated).
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Index} & Index of query point. \\
+\hline
+{\em reference\+Index} & Index of reference point. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}!Base\+Cases@{Base\+Cases}}
+\index{Base\+Cases@{Base\+Cases}!mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}}
+\subsubsection[{Base\+Cases() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy , typename Metric\+Type , typename Tree\+Type $>$ size\+\_\+t {\bf mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::Base\+Cases (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1neighbor_1_1NeighborSearchRules_ab82fdcb35a9ad39d1bfb3b6b62f6571a}
+
+
+Get the number of base cases that have been performed. 
+
+
+
+Definition at line 141 of file neighbor\+\_\+search\+\_\+rules.\+hpp.
+
+
+
+References mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::base\+Cases.
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}!Base\+Cases@{Base\+Cases}}
+\index{Base\+Cases@{Base\+Cases}!mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}}
+\subsubsection[{Base\+Cases()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy , typename Metric\+Type , typename Tree\+Type $>$ size\+\_\+t\& {\bf mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::Base\+Cases (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1neighbor_1_1NeighborSearchRules_a4b0b1bb2beac125c44892dba9e02d913}
+
+
+Modify the number of base cases that have been performed. 
+
+
+
+Definition at line 143 of file neighbor\+\_\+search\+\_\+rules.\+hpp.
+
+
+
+References mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::base\+Cases.
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}!Calculate\+Bound@{Calculate\+Bound}}
+\index{Calculate\+Bound@{Calculate\+Bound}!mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}}
+\subsubsection[{Calculate\+Bound(\+Tree\+Type \&query\+Node) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy , typename Metric\+Type , typename Tree\+Type $>$ double {\bf mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::Calculate\+Bound (
+\begin{DoxyParamCaption}
+\item[{Tree\+Type \&}]{query\+Node}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [protected]}}\label{classmlpack_1_1neighbor_1_1NeighborSearchRules_a2cab2105d03c8b48a84cfdaba95ae35e}
+
+
+Recalculate the bound for a given query node. 
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}!Get\+Best\+Child@{Get\+Best\+Child}}
+\index{Get\+Best\+Child@{Get\+Best\+Child}!mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}}
+\subsubsection[{Get\+Best\+Child(const size\+\_\+t query\+Index, Tree\+Type \&reference\+Node)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy , typename Metric\+Type , typename Tree\+Type $>$ size\+\_\+t {\bf mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::Get\+Best\+Child (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{query\+Index, }
+\item[{Tree\+Type \&}]{reference\+Node}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1NeighborSearchRules_a1c6fd5d9f659c0d2cb69bd8420562e8c}
+
+
+Get the child node with the best score. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Index} & Index of query point. \\
+\hline
+{\em reference\+Node} & Candidate node to be recursed into. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}!Get\+Best\+Child@{Get\+Best\+Child}}
+\index{Get\+Best\+Child@{Get\+Best\+Child}!mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}}
+\subsubsection[{Get\+Best\+Child(const Tree\+Type \&query\+Node, Tree\+Type \&reference\+Node)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy , typename Metric\+Type , typename Tree\+Type $>$ size\+\_\+t {\bf mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::Get\+Best\+Child (
+\begin{DoxyParamCaption}
+\item[{const Tree\+Type \&}]{query\+Node, }
+\item[{Tree\+Type \&}]{reference\+Node}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1NeighborSearchRules_a3b5b535ffedd44c556f14e6dc263fae2}
+
+
+Get the child node with the best score. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Node} & Node to be considered. \\
+\hline
+{\em reference\+Node} & Candidate node to be recursed into. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}!Get\+Results@{Get\+Results}}
+\index{Get\+Results@{Get\+Results}!mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}}
+\subsubsection[{Get\+Results(arma\+::\+Mat$<$ size\+\_\+t $>$ \&neighbors, arma\+::mat \&distances)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy , typename Metric\+Type , typename Tree\+Type $>$ void {\bf mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::Get\+Results (
+\begin{DoxyParamCaption}
+\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{neighbors, }
+\item[{arma\+::mat \&}]{distances}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1NeighborSearchRules_a2133fdf1f3fbdc8c164207991ef608b8}
+
+
+Store the list of candidates for each query point in the given matrices. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em neighbors} & Matrix storing lists of neighbors for each query point. \\
+\hline
+{\em distances} & Matrix storing distances of neighbors for each query point. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}!Insert\+Neighbor@{Insert\+Neighbor}}
+\index{Insert\+Neighbor@{Insert\+Neighbor}!mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}}
+\subsubsection[{Insert\+Neighbor(const size\+\_\+t query\+Index, const size\+\_\+t neighbor, const double distance)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy , typename Metric\+Type , typename Tree\+Type $>$ void {\bf mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::Insert\+Neighbor (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{query\+Index, }
+\item[{const size\+\_\+t}]{neighbor, }
+\item[{const double}]{distance}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}}\label{classmlpack_1_1neighbor_1_1NeighborSearchRules_a655a36360b07b579b1dac4a77746c23e}
+
+
+Helper function to insert a point into the list of candidate points. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Index} & Index of point whose neighbors we are inserting into. \\
+\hline
+{\em neighbor} & Index of reference point which is being inserted. \\
+\hline
+{\em distance} & Distance from query point to reference point. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}!Rescore@{Rescore}}
+\index{Rescore@{Rescore}!mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}}
+\subsubsection[{Rescore(const size\+\_\+t query\+Index, Tree\+Type \&reference\+Node, const double old\+Score) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy , typename Metric\+Type , typename Tree\+Type $>$ double {\bf mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::Rescore (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{query\+Index, }
+\item[{Tree\+Type \&}]{reference\+Node, }
+\item[{const double}]{old\+Score}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1neighbor_1_1NeighborSearchRules_a51b1e4dacf09cc73198ead710255b292}
+
+
+Re-\/evaluate the score for recursion order. 
+
+A low score indicates priority for recursion, while D\+B\+L\+\_\+\+M\+AX indicates that the node should not be recursed into at all (it should be pruned). This is used when the score has already been calculated, but another recursion may have modified the bounds for pruning. So the old score is checked against the new pruning bound.
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Index} & Index of query point. \\
+\hline
+{\em reference\+Node} & Candidate node to be recursed into. \\
+\hline
+{\em old\+Score} & Old score produced by \doxyref{Score()}{p.}{classmlpack_1_1neighbor_1_1NeighborSearchRules_a6f4154e108f68b8b43c9076646f6d84b} (or \doxyref{Rescore()}{p.}{classmlpack_1_1neighbor_1_1NeighborSearchRules_a51b1e4dacf09cc73198ead710255b292}). \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}!Rescore@{Rescore}}
+\index{Rescore@{Rescore}!mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}}
+\subsubsection[{Rescore(\+Tree\+Type \&query\+Node, Tree\+Type \&reference\+Node, const double old\+Score) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy , typename Metric\+Type , typename Tree\+Type $>$ double {\bf mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::Rescore (
+\begin{DoxyParamCaption}
+\item[{Tree\+Type \&}]{query\+Node, }
+\item[{Tree\+Type \&}]{reference\+Node, }
+\item[{const double}]{old\+Score}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1neighbor_1_1NeighborSearchRules_ac64ef17f9142ead2d60a9e62f785c2e8}
+
+
+Re-\/evaluate the score for recursion order. 
+
+A low score indicates priority for recursion, while D\+B\+L\+\_\+\+M\+AX indicates that the node should not be recursed into at all (it should be pruned). This is used when the score has already been calculated, but another recursion may have modified the bounds for pruning. So the old score is checked against the new pruning bound.
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Node} & Candidate query node to recurse into. \\
+\hline
+{\em reference\+Node} & Candidate reference node to recurse into. \\
+\hline
+{\em old\+Score} & Old score produced by Socre() (or \doxyref{Rescore()}{p.}{classmlpack_1_1neighbor_1_1NeighborSearchRules_a51b1e4dacf09cc73198ead710255b292}). \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}!Score@{Score}}
+\index{Score@{Score}!mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}}
+\subsubsection[{Score(const size\+\_\+t query\+Index, Tree\+Type \&reference\+Node)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy , typename Metric\+Type , typename Tree\+Type $>$ double {\bf mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::Score (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{query\+Index, }
+\item[{Tree\+Type \&}]{reference\+Node}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1NeighborSearchRules_a6f4154e108f68b8b43c9076646f6d84b}
+
+
+Get the score for recursion order. 
+
+A low score indicates priority for recursion, while D\+B\+L\+\_\+\+M\+AX indicates that the node should not be recursed into at all (it should be pruned).
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Index} & Index of query point. \\
+\hline
+{\em reference\+Node} & Candidate node to be recursed into. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}!Score@{Score}}
+\index{Score@{Score}!mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}}
+\subsubsection[{Score(\+Tree\+Type \&query\+Node, Tree\+Type \&reference\+Node)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy , typename Metric\+Type , typename Tree\+Type $>$ double {\bf mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::Score (
+\begin{DoxyParamCaption}
+\item[{Tree\+Type \&}]{query\+Node, }
+\item[{Tree\+Type \&}]{reference\+Node}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1NeighborSearchRules_aacb1c216f889695334f7e72df631192b}
+
+
+Get the score for recursion order. 
+
+A low score indicates priority for recursionm while D\+B\+L\+\_\+\+M\+AX indicates that the node should not be recursed into at all (it should be pruned).
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Node} & Candidate query node to recurse into. \\
+\hline
+{\em reference\+Node} & Candidate reference node to recurse into. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}!Scores@{Scores}}
+\index{Scores@{Scores}!mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}}
+\subsubsection[{Scores() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy , typename Metric\+Type , typename Tree\+Type $>$ size\+\_\+t {\bf mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::Scores (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1neighbor_1_1NeighborSearchRules_a8ad34acc2c1322f78814f3d400ae1d8a}
+
+
+Get the number of scores that have been performed. 
+
+
+
+Definition at line 146 of file neighbor\+\_\+search\+\_\+rules.\+hpp.
+
+
+
+References mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::scores.
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}!Scores@{Scores}}
+\index{Scores@{Scores}!mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}}
+\subsubsection[{Scores()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy , typename Metric\+Type , typename Tree\+Type $>$ size\+\_\+t\& {\bf mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::Scores (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1neighbor_1_1NeighborSearchRules_a218305ab205dc73253b152522b4f35de}
+
+
+Modify the number of scores that have been performed. 
+
+
+
+Definition at line 148 of file neighbor\+\_\+search\+\_\+rules.\+hpp.
+
+
+
+References mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::scores.
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}!Traversal\+Info@{Traversal\+Info}}
+\index{Traversal\+Info@{Traversal\+Info}!mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}}
+\subsubsection[{Traversal\+Info() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy , typename Metric\+Type , typename Tree\+Type $>$ const {\bf Traversal\+Info\+Type}\& {\bf mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::Traversal\+Info (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1neighbor_1_1NeighborSearchRules_a80714531d3480ebff07d069101ee3209}
+
+
+Get the traversal info. 
+
+
+
+Definition at line 154 of file neighbor\+\_\+search\+\_\+rules.\+hpp.
+
+
+
+References mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::traversal\+Info.
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}!Traversal\+Info@{Traversal\+Info}}
+\index{Traversal\+Info@{Traversal\+Info}!mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}}
+\subsubsection[{Traversal\+Info()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy , typename Metric\+Type , typename Tree\+Type $>$ {\bf Traversal\+Info\+Type}\& {\bf mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::Traversal\+Info (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1neighbor_1_1NeighborSearchRules_ade927b78f13213ee0f0f76eedf95b576}
+
+
+Modify the traversal info. 
+
+
+
+Definition at line 156 of file neighbor\+\_\+search\+\_\+rules.\+hpp.
+
+
+
+References mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::traversal\+Info.
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}!base\+Cases@{base\+Cases}}
+\index{base\+Cases@{base\+Cases}!mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}}
+\subsubsection[{base\+Cases}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy , typename Metric\+Type , typename Tree\+Type $>$ size\+\_\+t {\bf mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::base\+Cases\hspace{0.3cm}{\ttfamily [protected]}}\label{classmlpack_1_1neighbor_1_1NeighborSearchRules_a08cf827f553e12608f2be4a81dea8040}
+
+
+The number of base cases that have been performed. 
+
+
+
+Definition at line 203 of file neighbor\+\_\+search\+\_\+rules.\+hpp.
+
+
+
+Referenced by mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::\+Base\+Cases().
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}!candidates@{candidates}}
+\index{candidates@{candidates}!mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}}
+\subsubsection[{candidates}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy , typename Metric\+Type , typename Tree\+Type $>$ std\+::vector$<${\bf Candidate\+List}$>$ {\bf mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::candidates\hspace{0.3cm}{\ttfamily [protected]}}\label{classmlpack_1_1neighbor_1_1NeighborSearchRules_a70a5d7e25021f09040615c087e7cbfd3}
+
+
+Set of candidate neighbors for each point. 
+
+
+
+Definition at line 181 of file neighbor\+\_\+search\+\_\+rules.\+hpp.
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}!epsilon@{epsilon}}
+\index{epsilon@{epsilon}!mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}}
+\subsubsection[{epsilon}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy , typename Metric\+Type , typename Tree\+Type $>$ const double {\bf mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::epsilon\hspace{0.3cm}{\ttfamily [protected]}}\label{classmlpack_1_1neighbor_1_1NeighborSearchRules_a82f70bd9e4e319cf3745d6e243a70013}
+
+
+Relative error to be considered in approximate search. 
+
+
+
+Definition at line 193 of file neighbor\+\_\+search\+\_\+rules.\+hpp.
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}!k@{k}}
+\index{k@{k}!mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}}
+\subsubsection[{k}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy , typename Metric\+Type , typename Tree\+Type $>$ const size\+\_\+t {\bf mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::k\hspace{0.3cm}{\ttfamily [protected]}}\label{classmlpack_1_1neighbor_1_1NeighborSearchRules_a9bb2f8a5766e767a26aeb655a91b954d}
+
+
+Number of neighbors to search for. 
+
+
+
+Definition at line 184 of file neighbor\+\_\+search\+\_\+rules.\+hpp.
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}!last\+Base\+Case@{last\+Base\+Case}}
+\index{last\+Base\+Case@{last\+Base\+Case}!mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}}
+\subsubsection[{last\+Base\+Case}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy , typename Metric\+Type , typename Tree\+Type $>$ double {\bf mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::last\+Base\+Case\hspace{0.3cm}{\ttfamily [protected]}}\label{classmlpack_1_1neighbor_1_1NeighborSearchRules_a2c670f24b6f927eaa6564387828b6a5c}
+
+
+The last base case result. 
+
+
+
+Definition at line 200 of file neighbor\+\_\+search\+\_\+rules.\+hpp.
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}!last\+Query\+Index@{last\+Query\+Index}}
+\index{last\+Query\+Index@{last\+Query\+Index}!mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}}
+\subsubsection[{last\+Query\+Index}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy , typename Metric\+Type , typename Tree\+Type $>$ size\+\_\+t {\bf mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::last\+Query\+Index\hspace{0.3cm}{\ttfamily [protected]}}\label{classmlpack_1_1neighbor_1_1NeighborSearchRules_a334a6b2304dbf41c7fb207ce2e23ba7a}
+
+
+The last query point \doxyref{Base\+Case()}{p.}{classmlpack_1_1neighbor_1_1NeighborSearchRules_a661725db9c385a83b3622cad02111c77} was called with. 
+
+
+
+Definition at line 196 of file neighbor\+\_\+search\+\_\+rules.\+hpp.
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}!last\+Reference\+Index@{last\+Reference\+Index}}
+\index{last\+Reference\+Index@{last\+Reference\+Index}!mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}}
+\subsubsection[{last\+Reference\+Index}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy , typename Metric\+Type , typename Tree\+Type $>$ size\+\_\+t {\bf mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::last\+Reference\+Index\hspace{0.3cm}{\ttfamily [protected]}}\label{classmlpack_1_1neighbor_1_1NeighborSearchRules_a9cd5e27ac34a4b7c6b5350a1db385e24}
+
+
+The last reference point \doxyref{Base\+Case()}{p.}{classmlpack_1_1neighbor_1_1NeighborSearchRules_a661725db9c385a83b3622cad02111c77} was called with. 
+
+
+
+Definition at line 198 of file neighbor\+\_\+search\+\_\+rules.\+hpp.
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}!metric@{metric}}
+\index{metric@{metric}!mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}}
+\subsubsection[{metric}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy , typename Metric\+Type , typename Tree\+Type $>$ Metric\+Type\& {\bf mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::metric\hspace{0.3cm}{\ttfamily [protected]}}\label{classmlpack_1_1neighbor_1_1NeighborSearchRules_a4770767f2dd420988ed4b6dcc8565749}
+
+
+The instantiated metric. 
+
+
+
+Definition at line 187 of file neighbor\+\_\+search\+\_\+rules.\+hpp.
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}!query\+Set@{query\+Set}}
+\index{query\+Set@{query\+Set}!mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}}
+\subsubsection[{query\+Set}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy , typename Metric\+Type , typename Tree\+Type $>$ const Tree\+Type\+::\+Mat\& {\bf mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::query\+Set\hspace{0.3cm}{\ttfamily [protected]}}\label{classmlpack_1_1neighbor_1_1NeighborSearchRules_a664b510369d5f02557e99fe083cf4ad2}
+
+
+The query set. 
+
+
+
+Definition at line 163 of file neighbor\+\_\+search\+\_\+rules.\+hpp.
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}!reference\+Set@{reference\+Set}}
+\index{reference\+Set@{reference\+Set}!mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}}
+\subsubsection[{reference\+Set}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy , typename Metric\+Type , typename Tree\+Type $>$ const Tree\+Type\+::\+Mat\& {\bf mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::reference\+Set\hspace{0.3cm}{\ttfamily [protected]}}\label{classmlpack_1_1neighbor_1_1NeighborSearchRules_af35f0f57772bb7a1ead5e1f3c9525aa6}
+
+
+The reference set. 
+
+
+
+Definition at line 160 of file neighbor\+\_\+search\+\_\+rules.\+hpp.
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}!same\+Set@{same\+Set}}
+\index{same\+Set@{same\+Set}!mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}}
+\subsubsection[{same\+Set}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy , typename Metric\+Type , typename Tree\+Type $>$ bool {\bf mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::same\+Set\hspace{0.3cm}{\ttfamily [protected]}}\label{classmlpack_1_1neighbor_1_1NeighborSearchRules_a9a22fbf8f83f8e9e718dfaf972b54f8b}
+
+
+Denotes whether or not the reference and query sets are the same. 
+
+
+
+Definition at line 190 of file neighbor\+\_\+search\+\_\+rules.\+hpp.
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}!scores@{scores}}
+\index{scores@{scores}!mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}}
+\subsubsection[{scores}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy , typename Metric\+Type , typename Tree\+Type $>$ size\+\_\+t {\bf mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::scores\hspace{0.3cm}{\ttfamily [protected]}}\label{classmlpack_1_1neighbor_1_1NeighborSearchRules_a0ee2317502973d0816874349460c30c1}
+
+
+The number of scores that have been performed. 
+
+
+
+Definition at line 205 of file neighbor\+\_\+search\+\_\+rules.\+hpp.
+
+
+
+Referenced by mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::\+Scores().
+
+\index{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}!traversal\+Info@{traversal\+Info}}
+\index{traversal\+Info@{traversal\+Info}!mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules@{mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}}
+\subsubsection[{traversal\+Info}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy , typename Metric\+Type , typename Tree\+Type $>$ {\bf Traversal\+Info\+Type} {\bf mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules}$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::traversal\+Info\hspace{0.3cm}{\ttfamily [protected]}}\label{classmlpack_1_1neighbor_1_1NeighborSearchRules_aed237068f7285eb2aee1cfc5ff4b3f03}
+
+
+Traversal info for the parent combination; this is updated by the traversal before each call to \doxyref{Score()}{p.}{classmlpack_1_1neighbor_1_1NeighborSearchRules_a6f4154e108f68b8b43c9076646f6d84b}. 
+
+
+
+Definition at line 209 of file neighbor\+\_\+search\+\_\+rules.\+hpp.
+
+
+
+Referenced by mlpack\+::neighbor\+::\+Neighbor\+Search\+Rules$<$ Sort\+Policy, Metric\+Type, Tree\+Type $>$\+::\+Traversal\+Info().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/neighbor\+\_\+search/{\bf neighbor\+\_\+search\+\_\+rules.\+hpp}\end{DoxyCompactItemize}

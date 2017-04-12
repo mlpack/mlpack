@@ -1,0 +1,169 @@
+\section{mlpack\+:\+:tree\+:\+:Mean\+Split$<$ Bound\+Type, Mat\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1tree_1_1MeanSplit}\index{mlpack\+::tree\+::\+Mean\+Split$<$ Bound\+Type, Mat\+Type $>$@{mlpack\+::tree\+::\+Mean\+Split$<$ Bound\+Type, Mat\+Type $>$}}
+
+
+A binary space partitioning tree node is split into its left and right child.  
+
+
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct {\bf Split\+Info}
+\begin{DoxyCompactList}\small\item\em An information about the partition. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\static bool {\bf Assign\+To\+Left\+Node} (const Vec\+Type \&point, const {\bf Split\+Info} \&split\+Info)
+\begin{DoxyCompactList}\small\item\em Indicates that a point should be assigned to the left subtree. \end{DoxyCompactList}\item 
+static size\+\_\+t {\bf Perform\+Split} (Mat\+Type \&data, const size\+\_\+t begin, const size\+\_\+t count, const {\bf Split\+Info} \&split\+Info)
+\begin{DoxyCompactList}\small\item\em Perform the split process according to the information about the split. \end{DoxyCompactList}\item 
+static size\+\_\+t {\bf Perform\+Split} (Mat\+Type \&data, const size\+\_\+t begin, const size\+\_\+t count, const {\bf Split\+Info} \&split\+Info, std\+::vector$<$ size\+\_\+t $>$ \&old\+From\+New)
+\begin{DoxyCompactList}\small\item\em Perform the split process according to the information about the split and return the list of changed indices. \end{DoxyCompactList}\item 
+static bool {\bf Split\+Node} (const Bound\+Type \&bound, Mat\+Type \&data, const size\+\_\+t begin, const size\+\_\+t count, {\bf Split\+Info} \&split\+Info)
+\begin{DoxyCompactList}\small\item\em Find the partition of the node. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Bound\+Type, typename Mat\+Type = arma\+::mat$>$\\*
+class mlpack\+::tree\+::\+Mean\+Split$<$ Bound\+Type, Mat\+Type $>$}
+
+A binary space partitioning tree node is split into its left and right child. 
+
+The split is done in the dimension that has the maximum width. The points are divided into two parts based on the mean in this dimension. 
+
+Definition at line 29 of file mean\+\_\+split.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::tree\+::\+Mean\+Split@{mlpack\+::tree\+::\+Mean\+Split}!Assign\+To\+Left\+Node@{Assign\+To\+Left\+Node}}
+\index{Assign\+To\+Left\+Node@{Assign\+To\+Left\+Node}!mlpack\+::tree\+::\+Mean\+Split@{mlpack\+::tree\+::\+Mean\+Split}}
+\subsubsection[{Assign\+To\+Left\+Node(const Vec\+Type \&point, const Split\+Info \&split\+Info)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Bound\+Type , typename Mat\+Type  = arma\+::mat$>$ template$<$typename Vec\+Type $>$ static bool {\bf mlpack\+::tree\+::\+Mean\+Split}$<$ Bound\+Type, Mat\+Type $>$\+::Assign\+To\+Left\+Node (
+\begin{DoxyParamCaption}
+\item[{const Vec\+Type \&}]{point, }
+\item[{const {\bf Split\+Info} \&}]{split\+Info}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}\label{classmlpack_1_1tree_1_1MeanSplit_a6fd99fb994866dd7313335155271b511}
+
+
+Indicates that a point should be assigned to the left subtree. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em point} & The point that is being assigned. \\
+\hline
+{\em split\+Info} & An information about the split. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 115 of file mean\+\_\+split.\+hpp.
+
+
+
+References mlpack\+::tree\+::\+Mean\+Split$<$ Bound\+Type, Mat\+Type $>$\+::\+Split\+Info\+::split\+Dimension, and mlpack\+::tree\+::\+Mean\+Split$<$ Bound\+Type, Mat\+Type $>$\+::\+Split\+Info\+::split\+Val.
+
+\index{mlpack\+::tree\+::\+Mean\+Split@{mlpack\+::tree\+::\+Mean\+Split}!Perform\+Split@{Perform\+Split}}
+\index{Perform\+Split@{Perform\+Split}!mlpack\+::tree\+::\+Mean\+Split@{mlpack\+::tree\+::\+Mean\+Split}}
+\subsubsection[{Perform\+Split(\+Mat\+Type \&data, const size\+\_\+t begin, const size\+\_\+t count, const Split\+Info \&split\+Info)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Bound\+Type , typename Mat\+Type  = arma\+::mat$>$ static size\+\_\+t {\bf mlpack\+::tree\+::\+Mean\+Split}$<$ Bound\+Type, Mat\+Type $>$\+::Perform\+Split (
+\begin{DoxyParamCaption}
+\item[{Mat\+Type \&}]{data, }
+\item[{const size\+\_\+t}]{begin, }
+\item[{const size\+\_\+t}]{count, }
+\item[{const {\bf Split\+Info} \&}]{split\+Info}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}\label{classmlpack_1_1tree_1_1MeanSplit_acdc76446639adca9a0ba8c437d1a8ccb}
+
+
+Perform the split process according to the information about the split. 
+
+This will order the dataset such that points that belong to the left subtree are on the left of the split column, and points from the right subtree are on the right side of the split column.
+
+
+\begin{DoxyParams}{Parameters}
+{\em bound} & The bound used for this node. \\
+\hline
+{\em data} & The dataset used by the binary space tree. \\
+\hline
+{\em begin} & Index of the starting point in the dataset that belongs to this node. \\
+\hline
+{\em count} & Number of points in this node. \\
+\hline
+{\em split\+Info} & The information about the split. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 73 of file mean\+\_\+split.\+hpp.
+
+\index{mlpack\+::tree\+::\+Mean\+Split@{mlpack\+::tree\+::\+Mean\+Split}!Perform\+Split@{Perform\+Split}}
+\index{Perform\+Split@{Perform\+Split}!mlpack\+::tree\+::\+Mean\+Split@{mlpack\+::tree\+::\+Mean\+Split}}
+\subsubsection[{Perform\+Split(\+Mat\+Type \&data, const size\+\_\+t begin, const size\+\_\+t count, const Split\+Info \&split\+Info, std\+::vector$<$ size\+\_\+t $>$ \&old\+From\+New)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Bound\+Type , typename Mat\+Type  = arma\+::mat$>$ static size\+\_\+t {\bf mlpack\+::tree\+::\+Mean\+Split}$<$ Bound\+Type, Mat\+Type $>$\+::Perform\+Split (
+\begin{DoxyParamCaption}
+\item[{Mat\+Type \&}]{data, }
+\item[{const size\+\_\+t}]{begin, }
+\item[{const size\+\_\+t}]{count, }
+\item[{const {\bf Split\+Info} \&}]{split\+Info, }
+\item[{std\+::vector$<$ size\+\_\+t $>$ \&}]{old\+From\+New}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}\label{classmlpack_1_1tree_1_1MeanSplit_adfe66b93425da8c86dd53854319c0a56}
+
+
+Perform the split process according to the information about the split and return the list of changed indices. 
+
+This will order the dataset such that points that belong to the left subtree are on the left of the split column, and points from the right subtree are on the right side of the split column.
+
+
+\begin{DoxyParams}{Parameters}
+{\em bound} & The bound used for this node. \\
+\hline
+{\em data} & The dataset used by the binary space tree. \\
+\hline
+{\em begin} & Index of the starting point in the dataset that belongs to this node. \\
+\hline
+{\em count} & Number of points in this node. \\
+\hline
+{\em split\+Info} & The information about the split. \\
+\hline
+{\em old\+From\+New} & Vector which will be filled with the old positions for each new point. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 98 of file mean\+\_\+split.\+hpp.
+
+\index{mlpack\+::tree\+::\+Mean\+Split@{mlpack\+::tree\+::\+Mean\+Split}!Split\+Node@{Split\+Node}}
+\index{Split\+Node@{Split\+Node}!mlpack\+::tree\+::\+Mean\+Split@{mlpack\+::tree\+::\+Mean\+Split}}
+\subsubsection[{Split\+Node(const Bound\+Type \&bound, Mat\+Type \&data, const size\+\_\+t begin, const size\+\_\+t count, Split\+Info \&split\+Info)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Bound\+Type , typename Mat\+Type  = arma\+::mat$>$ static bool {\bf mlpack\+::tree\+::\+Mean\+Split}$<$ Bound\+Type, Mat\+Type $>$\+::Split\+Node (
+\begin{DoxyParamCaption}
+\item[{const Bound\+Type \&}]{bound, }
+\item[{Mat\+Type \&}]{data, }
+\item[{const size\+\_\+t}]{begin, }
+\item[{const size\+\_\+t}]{count, }
+\item[{{\bf Split\+Info} \&}]{split\+Info}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1tree_1_1MeanSplit_acf8b29f41661b5f29ee52404d519bbc0}
+
+
+Find the partition of the node. 
+
+This method fills up the dimension that will be used to split the node and the value according which the split will be performed.
+
+
+\begin{DoxyParams}{Parameters}
+{\em bound} & The bound used for this node. \\
+\hline
+{\em data} & The dataset used by the binary space tree. \\
+\hline
+{\em begin} & Index of the starting point in the dataset that belongs to this node. \\
+\hline
+{\em count} & Number of points in this node. \\
+\hline
+{\em split\+Info} & An information about the split. This information contains the dimension and the value. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/tree/binary\+\_\+space\+\_\+tree/{\bf mean\+\_\+split.\+hpp}\end{DoxyCompactItemize}

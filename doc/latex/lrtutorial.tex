@@ -1,0 +1,346 @@
+\section{Introduction}\label{lrtutorial_intro_lrtut}
+Linear regression and ridge regression are simple machine learning techniques that aim to estimate the parameters of a linear model. Assuming we have $n$ {\bfseries predictor} points $\mathbf{x_i}, 0 \le i < n$ of dimensionality $d$ and $n$ responses $y_i, 0 \le i < n$, we are trying to estimate the best fit for $\beta_i, 0 \le i \le d$ in the linear model
+
+\[ y_i = \beta_0 + \displaystyle\sum_{j = 1}^{d} \beta_j x_{ij} \]
+
+for each predictor $\mathbf{x_i}$ and response $y_i$. If we take each predictor $\mathbf{x_i}$ as a row in the matrix $\mathbf{X}$ and each response $y_i$ as an entry of the vector $\mathbf{y}$, we can represent the model in vector form\+:
+
+\[ \mathbf{y} = \mathbf{X} \mathbf{\beta} + \beta_0 \]
+
+The result of this method is the vector $\mathbf{\beta}$, including the offset term (or intercept term) $\beta_0$.
+
+{\bfseries mlpack} provides\+:
+
+
+\begin{DoxyItemize}
+\item a \doxyref{simple command-\/line executable}{p.}{lrtutorial_cli_lrtut} to perform linear regression or ridge regression
+\item a \doxyref{simple C++ interface}{p.}{lrtutorial_linreg_lrtut} to perform linear regression or ridge regression
+\end{DoxyItemize}\section{Table of Contents}\label{lrtutorial_toc_lrtut}
+A list of all the sections this tutorial contains.
+
+
+\begin{DoxyItemize}
+\item \doxyref{Introduction}{p.}{lrtutorial_intro_lrtut}
+\item \doxyref{Table of Contents}{p.}{lrtutorial_toc_lrtut}
+\item \doxyref{Command-\/\+Line \textquotesingle{}mlpack\+\_\+linear\+\_\+regression\textquotesingle{}}{p.}{lrtutorial_cli_lrtut}
+\begin{DoxyItemize}
+\item \doxyref{One file, generating the function coefficients}{p.}{lrtutorial_cli_ex1_lrtut}
+\item \doxyref{Compute model and predict at the same time}{p.}{lrtutorial_cli_ex2_lrtut}
+\item \doxyref{Prediction using a precomputed model}{p.}{lrtutorial_cli_ex3_lrtut}
+\item \doxyref{Using ridge regression}{p.}{lrtutorial_cli_ex4_lrtut}
+\end{DoxyItemize}
+\item \doxyref{The \textquotesingle{}Linear\+Regression\textquotesingle{} class}{p.}{lrtutorial_linreg_lrtut}
+\begin{DoxyItemize}
+\item \doxyref{Generating a model}{p.}{lrtutorial_linreg_ex1_lrtut}
+\item \doxyref{Setting a model}{p.}{lrtutorial_linreg_ex2_lrtut}
+\item \doxyref{Load a model from a file}{p.}{lrtutorial_linreg_ex3_lrtut}
+\item \doxyref{Prediction}{p.}{lrtutorial_linreg_ex4_lrtut}
+\item \doxyref{Setting lambda for ridge regression}{p.}{lrtutorial_linreg_ex5_lrtut}
+\end{DoxyItemize}
+\item \doxyref{Further documentation}{p.}{lrtutorial_further_doc_lrtut}
+\end{DoxyItemize}\section{Command-\/\+Line \textquotesingle{}mlpack\+\_\+linear\+\_\+regression\textquotesingle{}}\label{lrtutorial_cli_lrtut}
+The simplest way to perform linear regression or ridge regression in {\bfseries mlpack} is to use the {\ttfamily mlpack\+\_\+linear\+\_\+regression} executable. This program will perform linear regression and place the resultant coefficients into one file.
+
+The output file holds a vector of coefficients in increasing order of dimension; that is, the offset term ( $\beta_0$), the coefficient for dimension 1 ( $\beta_1$, then dimension 2 ( $\beta_2$) and so forth, as well as the intercept. This executable can also predict the $y$ values of a second dataset based on the computed coefficients.
+
+Below are several examples of simple usage (and the resultant output). The {\ttfamily option} is used so that verbose output is given. Further documentation on each individual option can be found by typing
+
+
+\begin{DoxyCode}
+$ mlpack\_linear\_regression --help
+\end{DoxyCode}
+\subsection{One file, generating the function coefficients}\label{lrtutorial_cli_ex1_lrtut}
+
+\begin{DoxyCode}
+$ mlpack\_linear\_regression --training\_file dataset.csv -v -M lr.xml
+[INFO ] Loading \textcolor{stringliteral}{'dataset.csv'} as CSV data.  Size is 2 x 5.
+[INFO ]
+[INFO ] Execution parameters:
+[INFO ]   help: \textcolor{keyword}{false}
+[INFO ]   info: \textcolor{stringliteral}{""}
+[INFO ]   input\_model\_file: \textcolor{stringliteral}{""}
+[INFO ]   lambda: 0
+[INFO ]   output\_model\_file: lr.xml
+[INFO ]   output\_predictions: predictions.csv
+[INFO ]   test\_file: \textcolor{stringliteral}{""}
+[INFO ]   training\_file: dataset.csv
+[INFO ]   training\_responses: \textcolor{stringliteral}{""}
+[INFO ]   verbose: \textcolor{keyword}{true}
+[INFO ]   version: \textcolor{keyword}{false}
+[INFO ]
+[INFO ] Program timers:
+[INFO ]   load\_regressors: 0.000263s
+[INFO ]   loading\_data: 0.000220s
+[INFO ]   regression: 0.000392s
+[INFO ]   total\_time: 0.001920s
+\end{DoxyCode}
+
+
+Convenient program timers are given for different parts of the calculation at the bottom of the output, as well as the parameters the simulation was run with. Now, if we look at the output model file, which is {\ttfamily lr.\+xml},
+
+
+\begin{DoxyCode}
+$ cat dataset.csv
+0,0
+1,1
+2,2
+3,3
+4,4
+
+$ cat lr.xml
+<?xml version=\textcolor{stringliteral}{"1.0"} encoding=\textcolor{stringliteral}{"UTF-8"} standalone=\textcolor{stringliteral}{"yes"} ?>
+<!DOCTYPE boost\_serialization>
+<boost\_serialization signature=\textcolor{stringliteral}{"serialization::archive"} version=\textcolor{stringliteral}{"12"}>
+<linearRegressionModel class\_id=\textcolor{stringliteral}{"0"} tracking\_level=\textcolor{stringliteral}{"0"} version=\textcolor{stringliteral}{"0"}>
+  <parameters class\_id=\textcolor{stringliteral}{"1"} tracking\_level=\textcolor{stringliteral}{"0"} version=\textcolor{stringliteral}{"0"}>
+    <n\_rows>2</n\_rows>
+    <n\_cols>1</n\_cols>
+    <n\_elem>2</n\_elem>
+    <vec\_state>1</vec\_state>
+    <item>-3.97205464519563669e-16</item>
+    <item>1.00000000000000022e+00</item>
+  </parameters>
+  <lambda>0.00000000000000000e+00</lambda>
+  <intercept>1</intercept>
+</linearRegressionModel>
+</boost\_serialization>
+\end{DoxyCode}
+
+
+As you can see, the function for this input is $f(y)=0+1x_1$. We can see that the model we have trained catches this; in the {\ttfamily } $<$parameters$>$ section of {\ttfamily lr.\+xml}, we can see that there are two elements, which are (approximately) 0 and 1. The first element corresponds to the intercept 0, and the second column corresponds to the coefficient 1 for the variable $x_1$. Note that in this example, the regressors for the dataset are the second column. That is, the dataset is one dimensional, and the last column has the $y$ values, or responses, for each row. You can specify these responses in a separate file if you want, using the {\ttfamily --input\+\_\+responses}, or {\ttfamily -\/r}, option.\subsection{Compute model and predict at the same time}\label{lrtutorial_cli_ex2_lrtut}
+
+\begin{DoxyCode}
+$ mlpack\_linear\_regression --training\_file dataset.csv --test\_file predict.csv \(\backslash\)
+> -v
+[INFO ] Loading \textcolor{stringliteral}{'dataset.csv'} as CSV data.  Size is 2 x 5.
+[INFO ] Loading \textcolor{stringliteral}{'predict.csv'} as raw ASCII formatted data.  Size is 1 x 3.
+[INFO ] Saving CSV data to \textcolor{stringliteral}{'predictions.csv'}.
+[INFO ]
+[INFO ] Execution parameters:
+[INFO ]   help: \textcolor{keyword}{false}
+[INFO ]   info: \textcolor{stringliteral}{""}
+[INFO ]   input\_model\_file: \textcolor{stringliteral}{""}
+[INFO ]   lambda: 0
+[INFO ]   output\_model\_file: \textcolor{stringliteral}{""}
+[INFO ]   output\_predictions: predictions.csv
+[INFO ]   test\_file: predict.csv
+[INFO ]   training\_file: dataset.csv
+[INFO ]   training\_responses: \textcolor{stringliteral}{""}
+[INFO ]   verbose: \textcolor{keyword}{true}
+[INFO ]   version: \textcolor{keyword}{false}
+[INFO ]
+[INFO ] Program timers:
+[INFO ]   load\_regressors: 0.000371s
+[INFO ]   load\_test\_points: 0.000229s
+[INFO ]   loading\_data: 0.000491s
+[INFO ]   prediction: 0.000075s
+[INFO ]   regression: 0.000449s
+[INFO ]   saving\_data: 0.000186s
+[INFO ]   total\_time: 0.002731s
+
+$ cat dataset.csv
+0,0
+1,1
+2,2
+3,3
+4,4
+
+$ cat predict.csv
+2
+3
+4
+
+$ cat predictions.csv
+2.0000000000e+00
+3.0000000000e+00
+4.0000000000e+00
+\end{DoxyCode}
+
+
+We used the same dataset, so we got the same parameters. The key thing to note about the {\ttfamily predict.\+csv} dataset is that it has the same dimensionality as the dataset used to create the model, one. If the model generating dataset has $d$ dimensions, so must the dataset we want to predict for.\subsection{Prediction using a precomputed model}\label{lrtutorial_cli_ex3_lrtut}
+
+\begin{DoxyCode}
+$ mlpack\_linear\_regression --input\_model\_file lr.xml --test\_file predict.csv -v
+[INFO ] Loading \textcolor{stringliteral}{'predict.csv'} as raw ASCII formatted data.  Size is 1 x 3.
+[INFO ] Saving CSV data to \textcolor{stringliteral}{'predictions.csv'}.
+[INFO ]
+[INFO ] Execution parameters:
+[INFO ]   help: \textcolor{keyword}{false}
+[INFO ]   info: \textcolor{stringliteral}{""}
+[INFO ]   input\_model\_file: lr.xml
+[INFO ]   lambda: 0
+[INFO ]   output\_model\_file: \textcolor{stringliteral}{""}
+[INFO ]   output\_predictions: predictions.csv
+[INFO ]   test\_file: predict.csv
+[INFO ]   training\_file: \textcolor{stringliteral}{""}
+[INFO ]   training\_responses: \textcolor{stringliteral}{""}
+[INFO ]   verbose: \textcolor{keyword}{true}
+[INFO ]   version: \textcolor{keyword}{false}
+[INFO ]
+[INFO ] Program timers:
+[INFO ]   load\_model: 0.000264s
+[INFO ]   load\_test\_points: 0.000186s
+[INFO ]   loading\_data: 0.000157s
+[INFO ]   prediction: 0.000098s
+[INFO ]   saving\_data: 0.000157s
+[INFO ]   total\_time: 0.001688s
+
+$ cat lr.xml
+<?xml version=\textcolor{stringliteral}{"1.0"} encoding=\textcolor{stringliteral}{"UTF-8"} standalone=\textcolor{stringliteral}{"yes"} ?>
+<!DOCTYPE boost\_serialization>
+<boost\_serialization signature=\textcolor{stringliteral}{"serialization::archive"} version=\textcolor{stringliteral}{"12"}>
+<linearRegressionModel class\_id=\textcolor{stringliteral}{"0"} tracking\_level=\textcolor{stringliteral}{"0"} version=\textcolor{stringliteral}{"0"}>
+  <parameters class\_id=\textcolor{stringliteral}{"1"} tracking\_level=\textcolor{stringliteral}{"0"} version=\textcolor{stringliteral}{"0"}>
+    <n\_rows>2</n\_rows>
+    <n\_cols>1</n\_cols>
+    <n\_elem>2</n\_elem>
+    <vec\_state>1</vec\_state>
+    <item>-3.97205464519563669e-16</item>
+    <item>1.00000000000000022e+00</item>
+  </parameters>
+  <lambda>0.00000000000000000e+00</lambda>
+  <intercept>1</intercept>
+</linearRegressionModel>
+</boost\_serialization>
+
+$ cat predict.csv
+2
+3
+4
+
+$ cat predictions.csv
+2.0000000000e+00
+3.0000000000e+00
+4.0000000000e+00
+\end{DoxyCode}
+\subsection{Using ridge regression}\label{lrtutorial_cli_ex4_lrtut}
+Sometimes, the input matrix of predictors has a covariance matrix that is not invertible, or the system is overdetermined. In this case, ridge regression is useful\+: it adds a normalization term to the covariance matrix to make it invertible. Ridge regression is a standard technique and documentation for the mathematics behind it can be found anywhere on the Internet. In short, the covariance matrix
+
+\[ \mathbf{X}' \mathbf{X} \]
+
+is replaced with
+
+\[ \mathbf{X}' \mathbf{X} + \lambda \mathbf{I} \]
+
+where $\mathbf{I}$ is the identity matrix. So, a $\lambda$ parameter greater than zero should be specified to perform ridge regression, using the {\ttfamily --lambda} (or {\ttfamily -\/l}) option. An example is given below.
+
+
+\begin{DoxyCode}
+$ mlpack\_linear\_regression --training\_file dataset.csv -v --lambda 0.5 -M lr.xml
+[INFO ] Loading \textcolor{stringliteral}{'dataset.csv'} as CSV data.  Size is 2 x 5.
+[INFO ]
+[INFO ] Execution parameters:
+[INFO ]   help: \textcolor{keyword}{false}
+[INFO ]   info: \textcolor{stringliteral}{""}
+[INFO ]   input\_model\_file: \textcolor{stringliteral}{""}
+[INFO ]   lambda: 0.5
+[INFO ]   output\_model\_file: lr.xml
+[INFO ]   output\_predictions: predictions.csv
+[INFO ]   test\_file: \textcolor{stringliteral}{""}
+[INFO ]   training\_file: dataset.csv
+[INFO ]   training\_responses: \textcolor{stringliteral}{""}
+[INFO ]   verbose: \textcolor{keyword}{true}
+[INFO ]   version: \textcolor{keyword}{false}
+[INFO ]
+[INFO ] Program timers:
+[INFO ]   load\_regressors: 0.000210s
+[INFO ]   loading\_data: 0.000170s
+[INFO ]   regression: 0.000332s
+[INFO ]   total\_time: 0.001835s
+\end{DoxyCode}
+
+
+Further documentation on options should be found by using the {\ttfamily --help} option.\section{The \textquotesingle{}\+Linear\+Regression\textquotesingle{} class}\label{lrtutorial_linreg_lrtut}
+The \textquotesingle{}Linear\+Regression\textquotesingle{} class is a simple implementation of linear regression.
+
+Using the Linear\+Regression class is very simple. It has two available constructors; one for generating a model from a matrix of predictors and a vector of responses, and one for loading an already computed model from a given file.
+
+The class provides one method that performs computation\+: 
+\begin{DoxyCode}
+\textcolor{keywordtype}{void} Predict(\textcolor{keyword}{const} arma::mat& points, arma::vec& predictions);
+\end{DoxyCode}
+
+
+Once you have generated or loaded a model, you can call this method and pass it a matrix of data points to predict values for using the model. The second parameter, predictions, will be modified to contain the predicted values corresponding to each row of the points matrix.\subsection{Generating a model}\label{lrtutorial_linreg_ex1_lrtut}
+
+\begin{DoxyCode}
+\textcolor{preprocessor}{#include <mlpack/methods/linear_regression/linear_regression.hpp>}
+
+\textcolor{keyword}{using namespace }mlpack::regression;
+
+arma::mat data; \textcolor{comment}{// The dataset itself.}
+arma::vec responses; \textcolor{comment}{// The responses, one row for each row in data.}
+
+\textcolor{comment}{// Regress.}
+LinearRegression lr(data, responses);
+
+\textcolor{comment}{// Get the parameters, or coefficients.}
+arma::vec parameters = lr.Parameters();
+\end{DoxyCode}
+\subsection{Setting a model}\label{lrtutorial_linreg_ex2_lrtut}
+Assuming you already have a model and do not need to create one, this is how you would set the parameters for a Linear\+Regression instance.
+
+
+\begin{DoxyCode}
+arma::vec parameters; \textcolor{comment}{// Your model.}
+
+LinearRegression lr(); \textcolor{comment}{// Create a new LinearRegression instance or reuse one.}
+lr.Parameters() = parameters; \textcolor{comment}{// Set the model.}
+\end{DoxyCode}
+\subsection{Load a model from a file}\label{lrtutorial_linreg_ex3_lrtut}
+If you have a generated model in a file somewhere you would like to load and use, you can use {\ttfamily \doxyref{data\+::\+Load()}{p.}{namespacemlpack_1_1data_a19805d6585ac8b0be7c4e4b7f081977c}} to load it.
+
+
+\begin{DoxyCode}
+std::string filename; \textcolor{comment}{// The path and name of your file.}
+
+LinearRegression lr;
+data::Load(filename, \textcolor{stringliteral}{"lr\_model"}, lr);
+\end{DoxyCode}
+\subsection{Prediction}\label{lrtutorial_linreg_ex4_lrtut}
+Once you have generated or loaded a model using one of the aforementioned methods, you can predict values for a dataset.
+
+
+\begin{DoxyCode}
+LinearRegression lr();
+\textcolor{comment}{// Load or generate your model.}
+
+\textcolor{comment}{// The dataset we want to predict on; each row is a data point.}
+arma::mat points;
+\textcolor{comment}{// This will store the predictions; one row for each point.}
+arma::vec predictions;
+
+lr.Predict(points, predictions); \textcolor{comment}{// Predict.}
+
+\textcolor{comment}{// Now, the vector 'predictions' will contain the predicted values.}
+\end{DoxyCode}
+\subsection{Setting lambda for ridge regression}\label{lrtutorial_linreg_ex5_lrtut}
+As discussed in \doxyref{Using ridge regression}{p.}{lrtutorial_cli_ex4_lrtut}, ridge regression is useful when the covariance of the predictors is not invertible. The standard constructor can be used to set a value of lambda\+:
+
+
+\begin{DoxyCode}
+\textcolor{preprocessor}{#include <mlpack/methods/linear_regression/linear_regression.hpp>}
+
+\textcolor{keyword}{using namespace }mlpack::regression;
+
+arma::mat data; \textcolor{comment}{// The dataset itself.}
+arma::vec responses; \textcolor{comment}{// The responses, one row for each row in data.}
+
+\textcolor{comment}{// Regress, with a lambda of 0.5.}
+LinearRegression lr(data, responses, 0.5);
+
+\textcolor{comment}{// Get the parameters, or coefficients.}
+arma::vec parameters = lr.Parameters();
+\end{DoxyCode}
+
+
+In addition, the {\ttfamily Lambda()} function can be used to get or modify the lambda value\+:
+
+
+\begin{DoxyCode}
+LinearRegression lr;
+lr.Lambda() = 0.5;
+Log::Info << \textcolor{stringliteral}{"Lambda is "} << lr.Lambda() << \textcolor{stringliteral}{"."} << std::endl;
+\end{DoxyCode}
+\section{Further documentation}\label{lrtutorial_further_doc_lrtut}
+For further documentation on the Linear\+Regression class, consult the \doxyref{complete A\+PI documentation}{p.}{classmlpack_1_1regression_1_1LinearRegression}. 

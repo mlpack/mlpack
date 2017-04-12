@@ -1,0 +1,47 @@
+\section{src/mlpack/core/util/print\+\_\+param.hpp File Reference}
+\label{print__param_8hpp}\index{src/mlpack/core/util/print\+\_\+param.\+hpp@{src/mlpack/core/util/print\+\_\+param.\+hpp}}
+Include dependency graph for print\+\_\+param.\+hpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{print__param_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{print__param_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ {\bf mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ {\bf mlpack\+::util}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename T $>$ }\\void {\bf mlpack\+::util\+::\+Print\+Param} (const Param\+Data \&data)
+\begin{DoxyCompactList}\small\item\em Print an option. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void {\bf mlpack\+::util\+::\+Print\+Param\+Impl} (const Param\+Data \&data, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ Is\+Std\+Vector$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ data\+::\+Has\+Serialize$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ data\+::\+Dataset\+Info, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print an option. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void {\bf mlpack\+::util\+::\+Print\+Param\+Impl} (const Param\+Data \&data, const typename boost\+::enable\+\_\+if$<$ Is\+Std\+Vector$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print a vector option, with spaces between it. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void {\bf mlpack\+::util\+::\+Print\+Param\+Impl} (const Param\+Data \&data, const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print a matrix option (this just prints the filename). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void {\bf mlpack\+::util\+::\+Print\+Param\+Impl} (const Param\+Data \&data, const typename boost\+::enable\+\_\+if$<$ data\+::\+Has\+Serialize$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print a serializable class option (this just prints the filename). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void {\bf mlpack\+::util\+::\+Print\+Param\+Impl} (const Param\+Data \&data, const typename boost\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ data\+::\+Dataset\+Info, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print a mapped matrix option (this just prints the filename). \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Ryan Curtin
+\end{DoxyAuthor}
+Print the parameter to stdout, using template metaprogramming to enforce different behavior for different parameter types. 

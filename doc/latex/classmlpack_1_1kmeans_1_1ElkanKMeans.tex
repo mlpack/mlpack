@@ -1,0 +1,195 @@
+\section{mlpack\+:\+:kmeans\+:\+:Elkan\+K\+Means$<$ Metric\+Type, Mat\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1kmeans_1_1ElkanKMeans}\index{mlpack\+::kmeans\+::\+Elkan\+K\+Means$<$ Metric\+Type, Mat\+Type $>$@{mlpack\+::kmeans\+::\+Elkan\+K\+Means$<$ Metric\+Type, Mat\+Type $>$}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Elkan\+K\+Means} (const Mat\+Type \&{\bf dataset}, Metric\+Type \&{\bf metric})
+\begin{DoxyCompactList}\small\item\em Construct the \doxyref{Elkan\+K\+Means}{p.}{classmlpack_1_1kmeans_1_1ElkanKMeans} object, which must store several sets of bounds. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Distance\+Calculations} () const 
+\item 
+double {\bf Iterate} (const arma\+::mat \&centroids, arma\+::mat \&new\+Centroids, arma\+::\+Col$<$ size\+\_\+t $>$ \&counts)
+\begin{DoxyCompactList}\small\item\em Run a single iteration of Elkan\textquotesingle{}s algorithm, updating the given centroids into the new\+Centroids matrix. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+arma\+::\+Col$<$ size\+\_\+t $>$ {\bf assignments}
+\begin{DoxyCompactList}\small\item\em Holds the index of the cluster that owns each point. \end{DoxyCompactList}\item 
+arma\+::mat {\bf cluster\+Distances}
+\begin{DoxyCompactList}\small\item\em Holds intra-\/cluster distances. \end{DoxyCompactList}\item 
+const Mat\+Type \& {\bf dataset}
+\begin{DoxyCompactList}\small\item\em The dataset. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf distance\+Calculations}
+\begin{DoxyCompactList}\small\item\em Track distance calculations. \end{DoxyCompactList}\item 
+arma\+::mat {\bf lower\+Bounds}
+\begin{DoxyCompactList}\small\item\em Lower bounds on the distance between each point and each cluster. \end{DoxyCompactList}\item 
+Metric\+Type \& {\bf metric}
+\begin{DoxyCompactList}\small\item\em The instantiated metric. \end{DoxyCompactList}\item 
+arma\+::vec {\bf min\+Cluster\+Distances}
+\begin{DoxyCompactList}\small\item\em Half the distance from a cluster to its nearest cluster (s(c)). \end{DoxyCompactList}\item 
+arma\+::vec {\bf upper\+Bounds}
+\begin{DoxyCompactList}\small\item\em Upper bounds on the distance between each point and its closest cluster. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Metric\+Type, typename Mat\+Type$>$\\*
+class mlpack\+::kmeans\+::\+Elkan\+K\+Means$<$ Metric\+Type, Mat\+Type $>$}
+
+
+
+Definition at line 19 of file elkan\+\_\+kmeans.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::kmeans\+::\+Elkan\+K\+Means@{mlpack\+::kmeans\+::\+Elkan\+K\+Means}!Elkan\+K\+Means@{Elkan\+K\+Means}}
+\index{Elkan\+K\+Means@{Elkan\+K\+Means}!mlpack\+::kmeans\+::\+Elkan\+K\+Means@{mlpack\+::kmeans\+::\+Elkan\+K\+Means}}
+\subsubsection[{Elkan\+K\+Means(const Mat\+Type \&dataset, Metric\+Type \&metric)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type $>$ {\bf mlpack\+::kmeans\+::\+Elkan\+K\+Means}$<$ Metric\+Type, Mat\+Type $>$\+::{\bf Elkan\+K\+Means} (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{dataset, }
+\item[{Metric\+Type \&}]{metric}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1kmeans_1_1ElkanKMeans_ad180c261f75659c4b1c725067c76a7da}
+
+
+Construct the \doxyref{Elkan\+K\+Means}{p.}{classmlpack_1_1kmeans_1_1ElkanKMeans} object, which must store several sets of bounds. 
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::kmeans\+::\+Elkan\+K\+Means@{mlpack\+::kmeans\+::\+Elkan\+K\+Means}!Distance\+Calculations@{Distance\+Calculations}}
+\index{Distance\+Calculations@{Distance\+Calculations}!mlpack\+::kmeans\+::\+Elkan\+K\+Means@{mlpack\+::kmeans\+::\+Elkan\+K\+Means}}
+\subsubsection[{Distance\+Calculations() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type $>$ size\+\_\+t {\bf mlpack\+::kmeans\+::\+Elkan\+K\+Means}$<$ Metric\+Type, Mat\+Type $>$\+::Distance\+Calculations (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1kmeans_1_1ElkanKMeans_abc46fa7d419a2825113225def7359a5c}
+
+
+Definition at line 39 of file elkan\+\_\+kmeans.\+hpp.
+
+
+
+References mlpack\+::kmeans\+::\+Elkan\+K\+Means$<$ Metric\+Type, Mat\+Type $>$\+::distance\+Calculations.
+
+\index{mlpack\+::kmeans\+::\+Elkan\+K\+Means@{mlpack\+::kmeans\+::\+Elkan\+K\+Means}!Iterate@{Iterate}}
+\index{Iterate@{Iterate}!mlpack\+::kmeans\+::\+Elkan\+K\+Means@{mlpack\+::kmeans\+::\+Elkan\+K\+Means}}
+\subsubsection[{Iterate(const arma\+::mat \&centroids, arma\+::mat \&new\+Centroids, arma\+::\+Col$<$ size\+\_\+t $>$ \&counts)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type $>$ double {\bf mlpack\+::kmeans\+::\+Elkan\+K\+Means}$<$ Metric\+Type, Mat\+Type $>$\+::Iterate (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{centroids, }
+\item[{arma\+::mat \&}]{new\+Centroids, }
+\item[{arma\+::\+Col$<$ size\+\_\+t $>$ \&}]{counts}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1kmeans_1_1ElkanKMeans_aeb7f0e74e33136b32a6bd545a9e4f548}
+
+
+Run a single iteration of Elkan\textquotesingle{}s algorithm, updating the given centroids into the new\+Centroids matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em centroids} & Current cluster centroids. \\
+\hline
+{\em new\+Centroids} & New cluster centroids. \\
+\hline
+{\em counts} & Current counts, to be overwritten with new counts. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::kmeans\+::\+Elkan\+K\+Means@{mlpack\+::kmeans\+::\+Elkan\+K\+Means}!assignments@{assignments}}
+\index{assignments@{assignments}!mlpack\+::kmeans\+::\+Elkan\+K\+Means@{mlpack\+::kmeans\+::\+Elkan\+K\+Means}}
+\subsubsection[{assignments}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type $>$ arma\+::\+Col$<$size\+\_\+t$>$ {\bf mlpack\+::kmeans\+::\+Elkan\+K\+Means}$<$ Metric\+Type, Mat\+Type $>$\+::assignments\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1ElkanKMeans_aad1de4bf0d05f40271141d5d7309b3f6}
+
+
+Holds the index of the cluster that owns each point. 
+
+
+
+Definition at line 53 of file elkan\+\_\+kmeans.\+hpp.
+
+\index{mlpack\+::kmeans\+::\+Elkan\+K\+Means@{mlpack\+::kmeans\+::\+Elkan\+K\+Means}!cluster\+Distances@{cluster\+Distances}}
+\index{cluster\+Distances@{cluster\+Distances}!mlpack\+::kmeans\+::\+Elkan\+K\+Means@{mlpack\+::kmeans\+::\+Elkan\+K\+Means}}
+\subsubsection[{cluster\+Distances}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type $>$ arma\+::mat {\bf mlpack\+::kmeans\+::\+Elkan\+K\+Means}$<$ Metric\+Type, Mat\+Type $>$\+::cluster\+Distances\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1ElkanKMeans_a3898a4d3e921da178eabdf95a5d03b54}
+
+
+Holds intra-\/cluster distances. 
+
+
+
+Definition at line 48 of file elkan\+\_\+kmeans.\+hpp.
+
+\index{mlpack\+::kmeans\+::\+Elkan\+K\+Means@{mlpack\+::kmeans\+::\+Elkan\+K\+Means}!dataset@{dataset}}
+\index{dataset@{dataset}!mlpack\+::kmeans\+::\+Elkan\+K\+Means@{mlpack\+::kmeans\+::\+Elkan\+K\+Means}}
+\subsubsection[{dataset}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type $>$ const Mat\+Type\& {\bf mlpack\+::kmeans\+::\+Elkan\+K\+Means}$<$ Metric\+Type, Mat\+Type $>$\+::dataset\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1ElkanKMeans_ada8ac50620930388a221defd8386db5e}
+
+
+The dataset. 
+
+
+
+Definition at line 43 of file elkan\+\_\+kmeans.\+hpp.
+
+\index{mlpack\+::kmeans\+::\+Elkan\+K\+Means@{mlpack\+::kmeans\+::\+Elkan\+K\+Means}!distance\+Calculations@{distance\+Calculations}}
+\index{distance\+Calculations@{distance\+Calculations}!mlpack\+::kmeans\+::\+Elkan\+K\+Means@{mlpack\+::kmeans\+::\+Elkan\+K\+Means}}
+\subsubsection[{distance\+Calculations}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type $>$ size\+\_\+t {\bf mlpack\+::kmeans\+::\+Elkan\+K\+Means}$<$ Metric\+Type, Mat\+Type $>$\+::distance\+Calculations\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1ElkanKMeans_ab4f21358a80a8fe164150c8e410282d1}
+
+
+Track distance calculations. 
+
+
+
+Definition at line 61 of file elkan\+\_\+kmeans.\+hpp.
+
+
+
+Referenced by mlpack\+::kmeans\+::\+Elkan\+K\+Means$<$ Metric\+Type, Mat\+Type $>$\+::\+Distance\+Calculations().
+
+\index{mlpack\+::kmeans\+::\+Elkan\+K\+Means@{mlpack\+::kmeans\+::\+Elkan\+K\+Means}!lower\+Bounds@{lower\+Bounds}}
+\index{lower\+Bounds@{lower\+Bounds}!mlpack\+::kmeans\+::\+Elkan\+K\+Means@{mlpack\+::kmeans\+::\+Elkan\+K\+Means}}
+\subsubsection[{lower\+Bounds}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type $>$ arma\+::mat {\bf mlpack\+::kmeans\+::\+Elkan\+K\+Means}$<$ Metric\+Type, Mat\+Type $>$\+::lower\+Bounds\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1ElkanKMeans_aef925405ef0b46bcaa1b76dd0f4cc8b8}
+
+
+Lower bounds on the distance between each point and each cluster. 
+
+
+
+Definition at line 58 of file elkan\+\_\+kmeans.\+hpp.
+
+\index{mlpack\+::kmeans\+::\+Elkan\+K\+Means@{mlpack\+::kmeans\+::\+Elkan\+K\+Means}!metric@{metric}}
+\index{metric@{metric}!mlpack\+::kmeans\+::\+Elkan\+K\+Means@{mlpack\+::kmeans\+::\+Elkan\+K\+Means}}
+\subsubsection[{metric}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type $>$ Metric\+Type\& {\bf mlpack\+::kmeans\+::\+Elkan\+K\+Means}$<$ Metric\+Type, Mat\+Type $>$\+::metric\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1ElkanKMeans_aad24b1baebcb04fa2250c7a0b4c8b574}
+
+
+The instantiated metric. 
+
+
+
+Definition at line 45 of file elkan\+\_\+kmeans.\+hpp.
+
+\index{mlpack\+::kmeans\+::\+Elkan\+K\+Means@{mlpack\+::kmeans\+::\+Elkan\+K\+Means}!min\+Cluster\+Distances@{min\+Cluster\+Distances}}
+\index{min\+Cluster\+Distances@{min\+Cluster\+Distances}!mlpack\+::kmeans\+::\+Elkan\+K\+Means@{mlpack\+::kmeans\+::\+Elkan\+K\+Means}}
+\subsubsection[{min\+Cluster\+Distances}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type $>$ arma\+::vec {\bf mlpack\+::kmeans\+::\+Elkan\+K\+Means}$<$ Metric\+Type, Mat\+Type $>$\+::min\+Cluster\+Distances\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1ElkanKMeans_a41a424de65f191f2283130a627e3854e}
+
+
+Half the distance from a cluster to its nearest cluster (s(c)). 
+
+
+
+Definition at line 50 of file elkan\+\_\+kmeans.\+hpp.
+
+\index{mlpack\+::kmeans\+::\+Elkan\+K\+Means@{mlpack\+::kmeans\+::\+Elkan\+K\+Means}!upper\+Bounds@{upper\+Bounds}}
+\index{upper\+Bounds@{upper\+Bounds}!mlpack\+::kmeans\+::\+Elkan\+K\+Means@{mlpack\+::kmeans\+::\+Elkan\+K\+Means}}
+\subsubsection[{upper\+Bounds}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type $>$ arma\+::vec {\bf mlpack\+::kmeans\+::\+Elkan\+K\+Means}$<$ Metric\+Type, Mat\+Type $>$\+::upper\+Bounds\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1ElkanKMeans_af83223d3e1702ac1fc2eb0a0e1f861d4}
+
+
+Upper bounds on the distance between each point and its closest cluster. 
+
+
+
+Definition at line 56 of file elkan\+\_\+kmeans.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/kmeans/{\bf elkan\+\_\+kmeans.\+hpp}\end{DoxyCompactItemize}

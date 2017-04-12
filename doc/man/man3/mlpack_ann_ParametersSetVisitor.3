@@ -1,0 +1,80 @@
+.TH "mlpack::ann::ParametersSetVisitor" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::ann::ParametersSetVisitor \- \fBParametersSetVisitor\fP update the parameters set using the given matrix\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits static_visitor< void >\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBParametersSetVisitor\fP (arma::mat &&\fBparameters\fP)"
+.br
+.RI "\fIUpdate the parameters set given the parameters matrix\&. \fP"
+.ti -1c
+.RI "template<typename LayerType > void \fBoperator()\fP (LayerType *layer) const "
+.br
+.RI "\fIUpdate the parameters set\&. \fP"
+.in -1c
+.SS "Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename T , typename P > std::enable_if< !HasParametersCheck< T, P &(T::*)()>::value, void >::type \fBLayerParameters\fP (T *layer, P &output) const "
+.br
+.RI "\fIDo not update the parameters set if the module doesn't implement the Parameters() function\&. \fP"
+.ti -1c
+.RI "template<typename T , typename P > std::enable_if< HasParametersCheck< T, P &(T::*)()>::value, void >::type \fBLayerParameters\fP (T *layer, P &output) const "
+.br
+.RI "\fIUpdate the parameters set if the module implements the Parameters() function\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "arma::mat && \fBparameters\fP"
+.br
+.RI "\fIThe parameters set\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBParametersSetVisitor\fP update the parameters set using the given matrix\&. 
+.PP
+Definition at line 27 of file parameters_set_visitor\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::ann::ParametersSetVisitor::ParametersSetVisitor (arma::mat && parameters)"
+
+.PP
+Update the parameters set given the parameters matrix\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename T , typename P > std::enable_if< !HasParametersCheck<T, P&(T::*)()>::value, void>::type mlpack::ann::ParametersSetVisitor::LayerParameters (T * layer, P & output) const\fC [private]\fP"
+
+.PP
+Do not update the parameters set if the module doesn't implement the Parameters() function\&. 
+.SS "template<typename T , typename P > std::enable_if< HasParametersCheck<T, P&(T::*)()>::value, void>::type mlpack::ann::ParametersSetVisitor::LayerParameters (T * layer, P & output) const\fC [private]\fP"
+
+.PP
+Update the parameters set if the module implements the Parameters() function\&. 
+.SS "template<typename LayerType > void mlpack::ann::ParametersSetVisitor::operator() (LayerType * layer) const"
+
+.PP
+Update the parameters set\&. 
+.SH "Member Data Documentation"
+.PP 
+.SS "arma::mat&& mlpack::ann::ParametersSetVisitor::parameters\fC [private]\fP"
+
+.PP
+The parameters set\&. 
+.PP
+Definition at line 39 of file parameters_set_visitor\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

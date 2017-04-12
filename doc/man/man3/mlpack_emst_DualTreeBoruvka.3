@@ -1,0 +1,353 @@
+.TH "mlpack::emst::DualTreeBoruvka< MetricType, MatType, TreeType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::emst::DualTreeBoruvka< MetricType, MatType, TreeType > \- Performs the MST calculation using the Dual-Tree Boruvka algorithm, using any type of tree\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "struct \fBSortEdgesHelper\fP"
+.br
+.RI "\fIFor sorting the edge list after the computation\&. \fP"
+.in -1c
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "typedef TreeType< MetricType, \fBDTBStat\fP, MatType > \fBTree\fP"
+.br
+.RI "\fIConvenience typedef\&. \fP"
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBDualTreeBoruvka\fP (const MatType &dataset, const bool \fBnaive\fP=false, const MetricType \fBmetric\fP=MetricType())"
+.br
+.RI "\fICreate the tree from the given dataset\&. \fP"
+.ti -1c
+.RI "\fBDualTreeBoruvka\fP (\fBTree\fP *\fBtree\fP, const MetricType \fBmetric\fP=MetricType())"
+.br
+.RI "\fICreate the \fBDualTreeBoruvka\fP object with an already initialized tree\&. \fP"
+.ti -1c
+.RI "\fB~DualTreeBoruvka\fP ()"
+.br
+.RI "\fIDelete the tree, if it was created inside the object\&. \fP"
+.ti -1c
+.RI "void \fBComputeMST\fP (arma::mat &results)"
+.br
+.RI "\fIIteratively find the nearest neighbor of each component until the MST is complete\&. \fP"
+.in -1c
+.SS "Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBAddAllEdges\fP ()"
+.br
+.RI "\fIAdds all the edges found in one iteration to the list of neighbors\&. \fP"
+.ti -1c
+.RI "void \fBAddEdge\fP (const size_t e1, const size_t e2, const double distance)"
+.br
+.RI "\fIAdds a single edge to the edge list\&. \fP"
+.ti -1c
+.RI "void \fBCleanup\fP ()"
+.br
+.RI "\fIThe values stored in the tree must be reset on each iteration\&. \fP"
+.ti -1c
+.RI "void \fBCleanupHelper\fP (\fBTree\fP *\fBtree\fP)"
+.br
+.RI "\fIThis function resets the values in the nodes of the tree nearest neighbor distance, and checks for fully connected nodes\&. \fP"
+.ti -1c
+.RI "void \fBEmitResults\fP (arma::mat &results)"
+.br
+.RI "\fIUnpermute the edge list and output it to results\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "\fBUnionFind\fP \fBconnections\fP"
+.br
+.RI "\fIConnections\&. \fP"
+.ti -1c
+.RI "const MatType & \fBdata\fP"
+.br
+.RI "\fIReference to the data (this is what should be used for accessing data)\&. \fP"
+.ti -1c
+.RI "std::vector< \fBEdgePair\fP > \fBedges\fP"
+.br
+.RI "\fIEdges\&. \fP"
+.ti -1c
+.RI "MetricType \fBmetric\fP"
+.br
+.RI "\fIThe instantiated metric\&. \fP"
+.ti -1c
+.RI "bool \fBnaive\fP"
+.br
+.RI "\fIIndicates whether or not O(n^2) naive mode will be used\&. \fP"
+.ti -1c
+.RI "arma::vec \fBneighborsDistances\fP"
+.br
+.RI "\fIList of edge distances\&. \fP"
+.ti -1c
+.RI "arma::Col< size_t > \fBneighborsInComponent\fP"
+.br
+.RI "\fIList of edge nodes\&. \fP"
+.ti -1c
+.RI "arma::Col< size_t > \fBneighborsOutComponent\fP"
+.br
+.RI "\fIList of edge nodes\&. \fP"
+.ti -1c
+.RI "std::vector< size_t > \fBoldFromNew\fP"
+.br
+.RI "\fIPermutations of points during tree building\&. \fP"
+.ti -1c
+.RI "bool \fBownTree\fP"
+.br
+.RI "\fIIndicates whether or not we 'own' the tree\&. \fP"
+.ti -1c
+.RI "struct \fBmlpack::emst::DualTreeBoruvka::SortEdgesHelper\fP \fBSortFun\fP"
+.br
+.ti -1c
+.RI "double \fBtotalDist\fP"
+.br
+.RI "\fITotal distance of the tree\&. \fP"
+.ti -1c
+.RI "\fBTree\fP * \fBtree\fP"
+.br
+.RI "\fIPointer to the root of the tree\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree>
+.br
+class mlpack::emst::DualTreeBoruvka< MetricType, MatType, TreeType >"
+Performs the MST calculation using the Dual-Tree Boruvka algorithm, using any type of tree\&. 
+
+For more information on the algorithm, see the following citation:
+.PP
+.PP
+.nf
+@inproceedings{
+  author = {March, W\&.B\&., Ram, P\&., and Gray, A\&.G\&.},
+  title = {{Fast Euclidean Minimum Spanning Tree: Algorithm, Analysis,
+     Applications\&.}},
+  booktitle = {Proceedings of the 16th ACM SIGKDD International Conference
+     on Knowledge Discovery and Data Mining}
+  series = {KDD 2010},
+  year = {2010}
+}
+.fi
+.PP
+.PP
+General usage of this class might be like this:
+.PP
+.PP
+.nf
+extern arma::mat data; // We want to find the MST of this dataset\&.
+DualTreeBoruvka<> dtb(data); // Create the tree with default options\&.
+
+// Find the MST\&.
+arma::mat mstResults;
+dtb\&.ComputeMST(mstResults);
+.fi
+.PP
+.PP
+More advanced usage of the class can use different types of trees, pass in an already-built tree, or compute the MST using the O(n^2) naive algorithm\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIMetricType\fP The metric to use\&. 
+.br
+\fIMatType\fP The type of data matrix to use\&. 
+.br
+\fITreeType\fP Type of tree to use\&. This should follow the TreeType policy API\&. 
+.RE
+.PP
+
+.PP
+Definition at line 83 of file dtb\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename MatType  = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> typedef TreeType<MetricType, \fBDTBStat\fP, MatType> \fBmlpack::emst::DualTreeBoruvka\fP< MetricType, MatType, TreeType >::\fBTree\fP"
+
+.PP
+Convenience typedef\&. 
+.PP
+Definition at line 87 of file dtb\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename MatType  = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> \fBmlpack::emst::DualTreeBoruvka\fP< MetricType, MatType, TreeType >::\fBDualTreeBoruvka\fP (const MatType & dataset, const bool naive = \fCfalse\fP, const MetricType metric = \fCMetricType()\fP)"
+
+.PP
+Create the tree from the given dataset\&. This copies the dataset to an internal copy, because tree-building modifies the dataset\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Dataset to build a tree for\&. 
+.br
+\fInaive\fP Whether the computation should be done in O(n^2) naive mode\&. 
+.br
+\fImetric\fP An optional instantiated metric to use\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::emst::DualTreeBoruvka< MetricType, MatType, TreeType >::SortEdgesHelper::operator()()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename MatType  = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> \fBmlpack::emst::DualTreeBoruvka\fP< MetricType, MatType, TreeType >::\fBDualTreeBoruvka\fP (\fBTree\fP * tree, const MetricType metric = \fCMetricType()\fP)"
+
+.PP
+Create the \fBDualTreeBoruvka\fP object with an already initialized tree\&. This will not copy the dataset, and can save a little processing power\&. Naive mode is not available as an option for this constructor; instead, to run naive computation, construct a tree with all the points in one leaf (i\&.e\&. leafSize = number of points)\&.
+.PP
+\fBNote:\fP
+.RS 4
+Because tree-building (at least with BinarySpaceTree) modifies the ordering of a matrix, be sure you pass the modified matrix to this object! In addition, mapping the points of the matrix back to their original indices is not done when this constructor is used\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fItree\fP Pre-built tree\&. 
+.br
+\fImetric\fP An optional instantiated metric to use\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename MatType  = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> \fBmlpack::emst::DualTreeBoruvka\fP< MetricType, MatType, TreeType >::~\fBDualTreeBoruvka\fP ()"
+
+.PP
+Delete the tree, if it was created inside the object\&. 
+.PP
+Referenced by mlpack::emst::DualTreeBoruvka< MetricType, MatType, TreeType >::SortEdgesHelper::operator()()\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename MatType  = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> void \fBmlpack::emst::DualTreeBoruvka\fP< MetricType, MatType, TreeType >::AddAllEdges ()\fC [private]\fP"
+
+.PP
+Adds all the edges found in one iteration to the list of neighbors\&. 
+.PP
+Referenced by mlpack::emst::DualTreeBoruvka< MetricType, MatType, TreeType >::SortEdgesHelper::operator()()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename MatType  = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> void \fBmlpack::emst::DualTreeBoruvka\fP< MetricType, MatType, TreeType >::AddEdge (const size_t e1, const size_t e2, const double distance)\fC [private]\fP"
+
+.PP
+Adds a single edge to the edge list\&. 
+.PP
+Referenced by mlpack::emst::DualTreeBoruvka< MetricType, MatType, TreeType >::SortEdgesHelper::operator()()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename MatType  = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> void \fBmlpack::emst::DualTreeBoruvka\fP< MetricType, MatType, TreeType >::Cleanup ()\fC [private]\fP"
+
+.PP
+The values stored in the tree must be reset on each iteration\&. 
+.PP
+Referenced by mlpack::emst::DualTreeBoruvka< MetricType, MatType, TreeType >::SortEdgesHelper::operator()()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename MatType  = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> void \fBmlpack::emst::DualTreeBoruvka\fP< MetricType, MatType, TreeType >::CleanupHelper (\fBTree\fP * tree)\fC [private]\fP"
+
+.PP
+This function resets the values in the nodes of the tree nearest neighbor distance, and checks for fully connected nodes\&. 
+.PP
+Referenced by mlpack::emst::DualTreeBoruvka< MetricType, MatType, TreeType >::SortEdgesHelper::operator()()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename MatType  = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> void \fBmlpack::emst::DualTreeBoruvka\fP< MetricType, MatType, TreeType >::ComputeMST (arma::mat & results)"
+
+.PP
+Iteratively find the nearest neighbor of each component until the MST is complete\&. The results will be a 3xN matrix (with N equal to the number of edges in the minimum spanning tree)\&. The first row will contain the lesser index of the edge; the second row will contain the greater index of the edge; and the third row will contain the distance between the two edges\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIresults\fP Matrix which results will be stored in\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::emst::DualTreeBoruvka< MetricType, MatType, TreeType >::SortEdgesHelper::operator()()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename MatType  = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> void \fBmlpack::emst::DualTreeBoruvka\fP< MetricType, MatType, TreeType >::EmitResults (arma::mat & results)\fC [private]\fP"
+
+.PP
+Unpermute the edge list and output it to results\&. 
+.PP
+Referenced by mlpack::emst::DualTreeBoruvka< MetricType, MatType, TreeType >::SortEdgesHelper::operator()()\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename MatType  = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> \fBUnionFind\fP \fBmlpack::emst::DualTreeBoruvka\fP< MetricType, MatType, TreeType >::connections\fC [private]\fP"
+
+.PP
+Connections\&. 
+.PP
+Definition at line 106 of file dtb\&.hpp\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename MatType  = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> const MatType& \fBmlpack::emst::DualTreeBoruvka\fP< MetricType, MatType, TreeType >::data\fC [private]\fP"
+
+.PP
+Reference to the data (this is what should be used for accessing data)\&. 
+.PP
+Definition at line 95 of file dtb\&.hpp\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename MatType  = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> std::vector<\fBEdgePair\fP> \fBmlpack::emst::DualTreeBoruvka\fP< MetricType, MatType, TreeType >::edges\fC [private]\fP"
+
+.PP
+Edges\&. 
+.PP
+Definition at line 103 of file dtb\&.hpp\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename MatType  = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> MetricType \fBmlpack::emst::DualTreeBoruvka\fP< MetricType, MatType, TreeType >::metric\fC [private]\fP"
+
+.PP
+The instantiated metric\&. 
+.PP
+Definition at line 119 of file dtb\&.hpp\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename MatType  = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> bool \fBmlpack::emst::DualTreeBoruvka\fP< MetricType, MatType, TreeType >::naive\fC [private]\fP"
+
+.PP
+Indicates whether or not O(n^2) naive mode will be used\&. 
+.PP
+Definition at line 100 of file dtb\&.hpp\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename MatType  = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> arma::vec \fBmlpack::emst::DualTreeBoruvka\fP< MetricType, MatType, TreeType >::neighborsDistances\fC [private]\fP"
+
+.PP
+List of edge distances\&. 
+.PP
+Definition at line 113 of file dtb\&.hpp\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename MatType  = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> arma::Col<size_t> \fBmlpack::emst::DualTreeBoruvka\fP< MetricType, MatType, TreeType >::neighborsInComponent\fC [private]\fP"
+
+.PP
+List of edge nodes\&. 
+.PP
+Definition at line 109 of file dtb\&.hpp\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename MatType  = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> arma::Col<size_t> \fBmlpack::emst::DualTreeBoruvka\fP< MetricType, MatType, TreeType >::neighborsOutComponent\fC [private]\fP"
+
+.PP
+List of edge nodes\&. 
+.PP
+Definition at line 111 of file dtb\&.hpp\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename MatType  = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> std::vector<size_t> \fBmlpack::emst::DualTreeBoruvka\fP< MetricType, MatType, TreeType >::oldFromNew\fC [private]\fP"
+
+.PP
+Permutations of points during tree building\&. 
+.PP
+Definition at line 91 of file dtb\&.hpp\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename MatType  = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> bool \fBmlpack::emst::DualTreeBoruvka\fP< MetricType, MatType, TreeType >::ownTree\fC [private]\fP"
+
+.PP
+Indicates whether or not we 'own' the tree\&. 
+.PP
+Definition at line 97 of file dtb\&.hpp\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename MatType  = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> struct \fBmlpack::emst::DualTreeBoruvka::SortEdgesHelper\fP  \fBmlpack::emst::DualTreeBoruvka\fP< MetricType, MatType, TreeType >::SortFun\fC [private]\fP"
+
+.PP
+Referenced by mlpack::emst::DualTreeBoruvka< MetricType, MatType, TreeType >::SortEdgesHelper::operator()()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename MatType  = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> double \fBmlpack::emst::DualTreeBoruvka\fP< MetricType, MatType, TreeType >::totalDist\fC [private]\fP"
+
+.PP
+Total distance of the tree\&. 
+.PP
+Definition at line 116 of file dtb\&.hpp\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename MatType  = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> \fBTree\fP* \fBmlpack::emst::DualTreeBoruvka\fP< MetricType, MatType, TreeType >::tree\fC [private]\fP"
+
+.PP
+Pointer to the root of the tree\&. 
+.PP
+Definition at line 93 of file dtb\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

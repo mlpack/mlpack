@@ -1,0 +1,335 @@
+\section{mlpack\+:\+:ann\+:\+:Select$<$ Input\+Data\+Type, Output\+Data\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1Select}\index{mlpack\+::ann\+::\+Select$<$ Input\+Data\+Type, Output\+Data\+Type $>$@{mlpack\+::ann\+::\+Select$<$ Input\+Data\+Type, Output\+Data\+Type $>$}}
+
+
+The select module selects the specified column from a given input matrix.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Select} (const size\+\_\+t {\bf index}, const size\+\_\+t {\bf elements}=0)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Select}{p.}{classmlpack_1_1ann_1_1Select} object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void {\bf Backward} (const arma\+::\+Mat$<$ eT $>$ \&\&, arma\+::\+Mat$<$ eT $>$ \&\&gy, arma\+::\+Mat$<$ eT $>$ \&\&g)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& {\bf Delta} () const 
+\begin{DoxyCompactList}\small\item\em Get the delta. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& {\bf Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void {\bf Forward} (const arma\+::\+Mat$<$ eT $>$ \&\&input, arma\+::\+Mat$<$ eT $>$ \&\&output)
+\begin{DoxyCompactList}\small\item\em Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. \end{DoxyCompactList}\item 
+Input\+Data\+Type \& {\bf Input\+Parameter} () const 
+\begin{DoxyCompactList}\small\item\em Get the input parameter. \end{DoxyCompactList}\item 
+Input\+Data\+Type \& {\bf Input\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the input parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& {\bf Output\+Parameter} () const 
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& {\bf Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&ar, const unsigned int)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+Output\+Data\+Type {\bf delta}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored delta object. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf elements}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored number of elements selected. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf index}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored column index. \end{DoxyCompactList}\item 
+Input\+Data\+Type {\bf input\+Parameter}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored input parameter object. \end{DoxyCompactList}\item 
+Output\+Data\+Type {\bf output\+Parameter}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored output parameter object. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat$>$\\*
+class mlpack\+::ann\+::\+Select$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+
+The select module selects the specified column from a given input matrix. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 32 of file select.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::ann\+::\+Select@{mlpack\+::ann\+::\+Select}!Select@{Select}}
+\index{Select@{Select}!mlpack\+::ann\+::\+Select@{mlpack\+::ann\+::\+Select}}
+\subsubsection[{Select(const size\+\_\+t index, const size\+\_\+t elements=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ {\bf mlpack\+::ann\+::\+Select}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::{\bf Select} (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{index, }
+\item[{const size\+\_\+t}]{elements = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1Select_a457d7230b23392182a5cdf7af35e026a}
+
+
+Create the \doxyref{Select}{p.}{classmlpack_1_1ann_1_1Select} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em index} & The column which should be extracted from the given input. \\
+\hline
+{\em elements} & The number of elements that should be used. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::ann\+::\+Select@{mlpack\+::ann\+::\+Select}!Backward@{Backward}}
+\index{Backward@{Backward}!mlpack\+::ann\+::\+Select@{mlpack\+::ann\+::\+Select}}
+\subsubsection[{Backward(const arma\+::\+Mat$<$ e\+T $>$ \&\&, arma\+::\+Mat$<$ e\+T $>$ \&\&gy, arma\+::\+Mat$<$ e\+T $>$ \&\&g)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename eT $>$ void {\bf mlpack\+::ann\+::\+Select}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Backward (
+\begin{DoxyParamCaption}
+\item[{const arma\+::\+Mat$<$ eT $>$ \&\&}]{, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&\&}]{gy, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&\&}]{g}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1Select_a8436cff99cf71b3937beef08b99fe7ea}
+
+
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f. 
+
+Using the results from the feed forward pass.
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The propagated input activation. \\
+\hline
+{\em gy} & The backpropagated error. \\
+\hline
+{\em g} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::ann\+::\+Select@{mlpack\+::ann\+::\+Select}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Select@{mlpack\+::ann\+::\+Select}}
+\subsubsection[{Delta() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type\& {\bf mlpack\+::ann\+::\+Select}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Delta (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1Select_a45b1af31967b0a2397cee22777c19c8c}
+
+
+Get the delta. 
+
+
+
+Definition at line 78 of file select.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Select$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::delta.
+
+\index{mlpack\+::ann\+::\+Select@{mlpack\+::ann\+::\+Select}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Select@{mlpack\+::ann\+::\+Select}}
+\subsubsection[{Delta()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type\& {\bf mlpack\+::ann\+::\+Select}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Delta (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1Select_aeba47e0d4b59eddc70560310a80b13bb}
+
+
+Modify the delta. 
+
+
+
+Definition at line 80 of file select.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Select$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::delta, and mlpack\+::ann\+::\+Select$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Serialize().
+
+\index{mlpack\+::ann\+::\+Select@{mlpack\+::ann\+::\+Select}!Forward@{Forward}}
+\index{Forward@{Forward}!mlpack\+::ann\+::\+Select@{mlpack\+::ann\+::\+Select}}
+\subsubsection[{Forward(const arma\+::\+Mat$<$ e\+T $>$ \&\&input, arma\+::\+Mat$<$ e\+T $>$ \&\&output)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename eT $>$ void {\bf mlpack\+::ann\+::\+Select}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Forward (
+\begin{DoxyParamCaption}
+\item[{const arma\+::\+Mat$<$ eT $>$ \&\&}]{input, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&\&}]{output}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1Select_a686db513055c3ac709bd62108b69f5f1}
+
+
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input data used for evaluating the specified function. \\
+\hline
+{\em output} & Resulting output activation. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::ann\+::\+Select@{mlpack\+::ann\+::\+Select}!Input\+Parameter@{Input\+Parameter}}
+\index{Input\+Parameter@{Input\+Parameter}!mlpack\+::ann\+::\+Select@{mlpack\+::ann\+::\+Select}}
+\subsubsection[{Input\+Parameter() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Input\+Data\+Type\& {\bf mlpack\+::ann\+::\+Select}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Input\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1Select_a914b45fbf47944503935bd6fceacd6c7}
+
+
+Get the input parameter. 
+
+
+
+Definition at line 68 of file select.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Select$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::input\+Parameter.
+
+\index{mlpack\+::ann\+::\+Select@{mlpack\+::ann\+::\+Select}!Input\+Parameter@{Input\+Parameter}}
+\index{Input\+Parameter@{Input\+Parameter}!mlpack\+::ann\+::\+Select@{mlpack\+::ann\+::\+Select}}
+\subsubsection[{Input\+Parameter()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Input\+Data\+Type\& {\bf mlpack\+::ann\+::\+Select}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Input\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1Select_aceb0fb2a6f9f966f2459e3d9a3fc6f58}
+
+
+Modify the input parameter. 
+
+
+
+Definition at line 70 of file select.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Select$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::input\+Parameter.
+
+\index{mlpack\+::ann\+::\+Select@{mlpack\+::ann\+::\+Select}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Select@{mlpack\+::ann\+::\+Select}}
+\subsubsection[{Output\+Parameter() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type\& {\bf mlpack\+::ann\+::\+Select}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Output\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1Select_ac05febbd9385d9f96fc9c86e50db7987}
+
+
+Get the output parameter. 
+
+
+
+Definition at line 73 of file select.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Select$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Parameter.
+
+\index{mlpack\+::ann\+::\+Select@{mlpack\+::ann\+::\+Select}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Select@{mlpack\+::ann\+::\+Select}}
+\subsubsection[{Output\+Parameter()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type\& {\bf mlpack\+::ann\+::\+Select}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Output\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1Select_a7c82867b1d57d532d6118a6fd7ed7150}
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 75 of file select.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Select$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Parameter.
+
+\index{mlpack\+::ann\+::\+Select@{mlpack\+::ann\+::\+Select}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::ann\+::\+Select@{mlpack\+::ann\+::\+Select}}
+\subsubsection[{Serialize(\+Archive \&ar, const unsigned int)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename Archive $>$ void {\bf mlpack\+::ann\+::\+Select}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const unsigned}]{int}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1Select_a83a89764c99cbd9faeac0d10a0ebd4a0}
+
+
+Serialize the layer. 
+
+
+
+Referenced by mlpack\+::ann\+::\+Select$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Delta().
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::ann\+::\+Select@{mlpack\+::ann\+::\+Select}!delta@{delta}}
+\index{delta@{delta}!mlpack\+::ann\+::\+Select@{mlpack\+::ann\+::\+Select}}
+\subsubsection[{delta}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type {\bf mlpack\+::ann\+::\+Select}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::delta\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1Select_a10e854def2966953f4e7d15f91c7888a}
+
+
+Locally-\/stored delta object. 
+
+
+
+Definition at line 96 of file select.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Select$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Delta().
+
+\index{mlpack\+::ann\+::\+Select@{mlpack\+::ann\+::\+Select}!elements@{elements}}
+\index{elements@{elements}!mlpack\+::ann\+::\+Select@{mlpack\+::ann\+::\+Select}}
+\subsubsection[{elements}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ size\+\_\+t {\bf mlpack\+::ann\+::\+Select}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::elements\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1Select_aec0e6ca645e2785a91b91cfa81e29989}
+
+
+Locally-\/stored number of elements selected. 
+
+
+
+Definition at line 93 of file select.\+hpp.
+
+\index{mlpack\+::ann\+::\+Select@{mlpack\+::ann\+::\+Select}!index@{index}}
+\index{index@{index}!mlpack\+::ann\+::\+Select@{mlpack\+::ann\+::\+Select}}
+\subsubsection[{index}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ size\+\_\+t {\bf mlpack\+::ann\+::\+Select}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::index\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1Select_a31017b23101c663b8f2cacf2c0200b3f}
+
+
+Locally-\/stored column index. 
+
+
+
+Definition at line 90 of file select.\+hpp.
+
+\index{mlpack\+::ann\+::\+Select@{mlpack\+::ann\+::\+Select}!input\+Parameter@{input\+Parameter}}
+\index{input\+Parameter@{input\+Parameter}!mlpack\+::ann\+::\+Select@{mlpack\+::ann\+::\+Select}}
+\subsubsection[{input\+Parameter}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Input\+Data\+Type {\bf mlpack\+::ann\+::\+Select}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::input\+Parameter\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1Select_a32138f199f361f612143b7c50577a071}
+
+
+Locally-\/stored input parameter object. 
+
+
+
+Definition at line 99 of file select.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Select$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Input\+Parameter().
+
+\index{mlpack\+::ann\+::\+Select@{mlpack\+::ann\+::\+Select}!output\+Parameter@{output\+Parameter}}
+\index{output\+Parameter@{output\+Parameter}!mlpack\+::ann\+::\+Select@{mlpack\+::ann\+::\+Select}}
+\subsubsection[{output\+Parameter}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type {\bf mlpack\+::ann\+::\+Select}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Parameter\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1Select_a90a6e9ae273894b328bcd1de7f052966}
+
+
+Locally-\/stored output parameter object. 
+
+
+
+Definition at line 102 of file select.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Select$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Output\+Parameter().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/ann/layer/{\bf select.\+hpp}\end{DoxyCompactItemize}

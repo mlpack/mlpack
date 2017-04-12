@@ -1,0 +1,334 @@
+\section{mlpack\+:\+:optimization\+:\+:Gradient\+Descent$<$ Function\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1optimization_1_1GradientDescent}\index{mlpack\+::optimization\+::\+Gradient\+Descent$<$ Function\+Type $>$@{mlpack\+::optimization\+::\+Gradient\+Descent$<$ Function\+Type $>$}}
+
+
+Gradient Descent is a technique to minimize a function.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Gradient\+Descent} (Function\+Type \&{\bf function}, const double {\bf step\+Size}=0.\+01, const size\+\_\+t {\bf max\+Iterations}=100000, const double {\bf tolerance}=1e-\/5)
+\begin{DoxyCompactList}\small\item\em Construct the Gradient Descent optimizer with the given function and parameters. \end{DoxyCompactList}\item 
+const Function\+Type \& {\bf Function} () const 
+\begin{DoxyCompactList}\small\item\em Get the instantiated function to be optimized. \end{DoxyCompactList}\item 
+Function\+Type \& {\bf Function} ()
+\begin{DoxyCompactList}\small\item\em Modify the instantiated function. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Max\+Iterations} () const 
+\begin{DoxyCompactList}\small\item\em Get the maximum number of iterations (0 indicates no limit). \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Max\+Iterations} ()
+\begin{DoxyCompactList}\small\item\em Modify the maximum number of iterations (0 indicates no limit). \end{DoxyCompactList}\item 
+double {\bf Optimize} (arma\+::mat \&iterate)
+\begin{DoxyCompactList}\small\item\em Optimize the given function using gradient descent. \end{DoxyCompactList}\item 
+double {\bf Step\+Size} () const 
+\begin{DoxyCompactList}\small\item\em Get the step size. \end{DoxyCompactList}\item 
+double \& {\bf Step\+Size} ()
+\begin{DoxyCompactList}\small\item\em Modify the step size. \end{DoxyCompactList}\item 
+double {\bf Tolerance} () const 
+\begin{DoxyCompactList}\small\item\em Get the tolerance for termination. \end{DoxyCompactList}\item 
+double \& {\bf Tolerance} ()
+\begin{DoxyCompactList}\small\item\em Modify the tolerance for termination. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+Function\+Type \& {\bf function}
+\begin{DoxyCompactList}\small\item\em The instantiated function. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf max\+Iterations}
+\begin{DoxyCompactList}\small\item\em The maximum number of allowed iterations. \end{DoxyCompactList}\item 
+double {\bf step\+Size}
+\begin{DoxyCompactList}\small\item\em The step size for each example. \end{DoxyCompactList}\item 
+double {\bf tolerance}
+\begin{DoxyCompactList}\small\item\em The tolerance for termination. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Function\+Type$>$\\*
+class mlpack\+::optimization\+::\+Gradient\+Descent$<$ Function\+Type $>$}
+
+Gradient Descent is a technique to minimize a function. 
+
+To find a local minimum of a function using gradient descent, one takes steps proportional to the negative of the gradient of the function at the current point, producing the following update scheme\+:
+
+\[ A_{j + 1} = A_j + \alpha \nabla F(A) \]
+
+where $ \alpha $ is a parameter which specifies the step size. $ F $ is the function being optimized. The algorithm continues until $ j $ reaches the maximum number of iterations---or when an update produces an improvement within a certain tolerance $ \epsilon $. That is,
+
+\[ | F(A_{j + 1}) - F(A_j) | < \epsilon. \]
+
+The parameter $\epsilon$ is specified by the tolerance parameter to the constructor.
+
+For Gradient Descent to work, a Function\+Type template parameter is required. This class must implement the following function\+:
+
+double Evaluate(const arma\+::mat\& coordinates); void Gradient(const arma\+::mat\& coordinates, arma\+::mat\& gradient);
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Function\+Type} & Decomposable objective function type to be minimized. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 53 of file gradient\+\_\+descent.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::optimization\+::\+Gradient\+Descent@{mlpack\+::optimization\+::\+Gradient\+Descent}!Gradient\+Descent@{Gradient\+Descent}}
+\index{Gradient\+Descent@{Gradient\+Descent}!mlpack\+::optimization\+::\+Gradient\+Descent@{mlpack\+::optimization\+::\+Gradient\+Descent}}
+\subsubsection[{Gradient\+Descent(\+Function\+Type \&function, const double step\+Size=0.\+01, const size\+\_\+t max\+Iterations=100000, const double tolerance=1e-\/5)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Function\+Type $>$ {\bf mlpack\+::optimization\+::\+Gradient\+Descent}$<$ Function\+Type $>$\+::{\bf Gradient\+Descent} (
+\begin{DoxyParamCaption}
+\item[{Function\+Type \&}]{function, }
+\item[{const double}]{step\+Size = {\ttfamily 0.01}, }
+\item[{const size\+\_\+t}]{max\+Iterations = {\ttfamily 100000}, }
+\item[{const double}]{tolerance = {\ttfamily 1e-\/5}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1optimization_1_1GradientDescent_a4755e084ee5cde85897e241cd1117a85}
+
+
+Construct the Gradient Descent optimizer with the given function and parameters. 
+
+The defaults here are not necessarily good for the given problem, so it is suggested that the values used be tailored to the task at hand.
+
+
+\begin{DoxyParams}{Parameters}
+{\em function} & Function to be optimized (minimized). \\
+\hline
+{\em step\+Size} & Step size for each iteration. \\
+\hline
+{\em max\+Iterations} & Maximum number of iterations allowed (0 means no limit). \\
+\hline
+{\em tolerance} & Maximum absolute tolerance to terminate algorithm. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::optimization\+::\+Gradient\+Descent@{mlpack\+::optimization\+::\+Gradient\+Descent}!Function@{Function}}
+\index{Function@{Function}!mlpack\+::optimization\+::\+Gradient\+Descent@{mlpack\+::optimization\+::\+Gradient\+Descent}}
+\subsubsection[{Function() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Function\+Type $>$ const Function\+Type\& {\bf mlpack\+::optimization\+::\+Gradient\+Descent}$<$ Function\+Type $>$\+::Function (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1optimization_1_1GradientDescent_aaa6285f395314801d8822d7553719fb4}
+
+
+Get the instantiated function to be optimized. 
+
+
+
+Definition at line 84 of file gradient\+\_\+descent.\+hpp.
+
+\index{mlpack\+::optimization\+::\+Gradient\+Descent@{mlpack\+::optimization\+::\+Gradient\+Descent}!Function@{Function}}
+\index{Function@{Function}!mlpack\+::optimization\+::\+Gradient\+Descent@{mlpack\+::optimization\+::\+Gradient\+Descent}}
+\subsubsection[{Function()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Function\+Type $>$ Function\+Type\& {\bf mlpack\+::optimization\+::\+Gradient\+Descent}$<$ Function\+Type $>$\+::Function (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1optimization_1_1GradientDescent_a3850668f2220842895a6b1a3eb567259}
+
+
+Modify the instantiated function. 
+
+
+
+Definition at line 86 of file gradient\+\_\+descent.\+hpp.
+
+\index{mlpack\+::optimization\+::\+Gradient\+Descent@{mlpack\+::optimization\+::\+Gradient\+Descent}!Max\+Iterations@{Max\+Iterations}}
+\index{Max\+Iterations@{Max\+Iterations}!mlpack\+::optimization\+::\+Gradient\+Descent@{mlpack\+::optimization\+::\+Gradient\+Descent}}
+\subsubsection[{Max\+Iterations() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Function\+Type $>$ size\+\_\+t {\bf mlpack\+::optimization\+::\+Gradient\+Descent}$<$ Function\+Type $>$\+::Max\+Iterations (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1optimization_1_1GradientDescent_ab8cf876f67ec1dea34b86eaf4ecfc725}
+
+
+Get the maximum number of iterations (0 indicates no limit). 
+
+
+
+Definition at line 94 of file gradient\+\_\+descent.\+hpp.
+
+
+
+References mlpack\+::optimization\+::\+Gradient\+Descent$<$ Function\+Type $>$\+::max\+Iterations.
+
+\index{mlpack\+::optimization\+::\+Gradient\+Descent@{mlpack\+::optimization\+::\+Gradient\+Descent}!Max\+Iterations@{Max\+Iterations}}
+\index{Max\+Iterations@{Max\+Iterations}!mlpack\+::optimization\+::\+Gradient\+Descent@{mlpack\+::optimization\+::\+Gradient\+Descent}}
+\subsubsection[{Max\+Iterations()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Function\+Type $>$ size\+\_\+t\& {\bf mlpack\+::optimization\+::\+Gradient\+Descent}$<$ Function\+Type $>$\+::Max\+Iterations (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1optimization_1_1GradientDescent_a3dcebe67040ad2ca5d93ab3084686e6e}
+
+
+Modify the maximum number of iterations (0 indicates no limit). 
+
+
+
+Definition at line 96 of file gradient\+\_\+descent.\+hpp.
+
+
+
+References mlpack\+::optimization\+::\+Gradient\+Descent$<$ Function\+Type $>$\+::max\+Iterations.
+
+\index{mlpack\+::optimization\+::\+Gradient\+Descent@{mlpack\+::optimization\+::\+Gradient\+Descent}!Optimize@{Optimize}}
+\index{Optimize@{Optimize}!mlpack\+::optimization\+::\+Gradient\+Descent@{mlpack\+::optimization\+::\+Gradient\+Descent}}
+\subsubsection[{Optimize(arma\+::mat \&iterate)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Function\+Type $>$ double {\bf mlpack\+::optimization\+::\+Gradient\+Descent}$<$ Function\+Type $>$\+::Optimize (
+\begin{DoxyParamCaption}
+\item[{arma\+::mat \&}]{iterate}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1optimization_1_1GradientDescent_a781e2e83082a14ce71a2bfc8a36f41e0}
+
+
+Optimize the given function using gradient descent. 
+
+The given starting point will be modified to store the finishing point of the algorithm, and the final objective value is returned.
+
+
+\begin{DoxyParams}{Parameters}
+{\em iterate} & Starting point (will be modified). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Objective value of the final point. 
+\end{DoxyReturn}
+\index{mlpack\+::optimization\+::\+Gradient\+Descent@{mlpack\+::optimization\+::\+Gradient\+Descent}!Step\+Size@{Step\+Size}}
+\index{Step\+Size@{Step\+Size}!mlpack\+::optimization\+::\+Gradient\+Descent@{mlpack\+::optimization\+::\+Gradient\+Descent}}
+\subsubsection[{Step\+Size() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Function\+Type $>$ double {\bf mlpack\+::optimization\+::\+Gradient\+Descent}$<$ Function\+Type $>$\+::Step\+Size (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1optimization_1_1GradientDescent_a6073395f5d8c020ea20d8d5d519a257d}
+
+
+Get the step size. 
+
+
+
+Definition at line 89 of file gradient\+\_\+descent.\+hpp.
+
+
+
+References mlpack\+::optimization\+::\+Gradient\+Descent$<$ Function\+Type $>$\+::step\+Size.
+
+\index{mlpack\+::optimization\+::\+Gradient\+Descent@{mlpack\+::optimization\+::\+Gradient\+Descent}!Step\+Size@{Step\+Size}}
+\index{Step\+Size@{Step\+Size}!mlpack\+::optimization\+::\+Gradient\+Descent@{mlpack\+::optimization\+::\+Gradient\+Descent}}
+\subsubsection[{Step\+Size()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Function\+Type $>$ double\& {\bf mlpack\+::optimization\+::\+Gradient\+Descent}$<$ Function\+Type $>$\+::Step\+Size (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1optimization_1_1GradientDescent_a3a55d15d3e55a40b1428b2248392dd00}
+
+
+Modify the step size. 
+
+
+
+Definition at line 91 of file gradient\+\_\+descent.\+hpp.
+
+
+
+References mlpack\+::optimization\+::\+Gradient\+Descent$<$ Function\+Type $>$\+::step\+Size.
+
+\index{mlpack\+::optimization\+::\+Gradient\+Descent@{mlpack\+::optimization\+::\+Gradient\+Descent}!Tolerance@{Tolerance}}
+\index{Tolerance@{Tolerance}!mlpack\+::optimization\+::\+Gradient\+Descent@{mlpack\+::optimization\+::\+Gradient\+Descent}}
+\subsubsection[{Tolerance() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Function\+Type $>$ double {\bf mlpack\+::optimization\+::\+Gradient\+Descent}$<$ Function\+Type $>$\+::Tolerance (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1optimization_1_1GradientDescent_a04f7740c385eb35d65ffdce08b3f581a}
+
+
+Get the tolerance for termination. 
+
+
+
+Definition at line 99 of file gradient\+\_\+descent.\+hpp.
+
+
+
+References mlpack\+::optimization\+::\+Gradient\+Descent$<$ Function\+Type $>$\+::tolerance.
+
+\index{mlpack\+::optimization\+::\+Gradient\+Descent@{mlpack\+::optimization\+::\+Gradient\+Descent}!Tolerance@{Tolerance}}
+\index{Tolerance@{Tolerance}!mlpack\+::optimization\+::\+Gradient\+Descent@{mlpack\+::optimization\+::\+Gradient\+Descent}}
+\subsubsection[{Tolerance()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Function\+Type $>$ double\& {\bf mlpack\+::optimization\+::\+Gradient\+Descent}$<$ Function\+Type $>$\+::Tolerance (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1optimization_1_1GradientDescent_a16c47ee04e37a438ab9be28e971b04b4}
+
+
+Modify the tolerance for termination. 
+
+
+
+Definition at line 101 of file gradient\+\_\+descent.\+hpp.
+
+
+
+References mlpack\+::optimization\+::\+Gradient\+Descent$<$ Function\+Type $>$\+::tolerance.
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::optimization\+::\+Gradient\+Descent@{mlpack\+::optimization\+::\+Gradient\+Descent}!function@{function}}
+\index{function@{function}!mlpack\+::optimization\+::\+Gradient\+Descent@{mlpack\+::optimization\+::\+Gradient\+Descent}}
+\subsubsection[{function}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Function\+Type $>$ Function\+Type\& {\bf mlpack\+::optimization\+::\+Gradient\+Descent}$<$ Function\+Type $>$\+::function\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1optimization_1_1GradientDescent_a86773ecb5168d7cb08e36cda3d336b55}
+
+
+The instantiated function. 
+
+
+
+Definition at line 105 of file gradient\+\_\+descent.\+hpp.
+
+\index{mlpack\+::optimization\+::\+Gradient\+Descent@{mlpack\+::optimization\+::\+Gradient\+Descent}!max\+Iterations@{max\+Iterations}}
+\index{max\+Iterations@{max\+Iterations}!mlpack\+::optimization\+::\+Gradient\+Descent@{mlpack\+::optimization\+::\+Gradient\+Descent}}
+\subsubsection[{max\+Iterations}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Function\+Type $>$ size\+\_\+t {\bf mlpack\+::optimization\+::\+Gradient\+Descent}$<$ Function\+Type $>$\+::max\+Iterations\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1optimization_1_1GradientDescent_a7bf45f14dbde579be1c4ecb934d2984f}
+
+
+The maximum number of allowed iterations. 
+
+
+
+Definition at line 111 of file gradient\+\_\+descent.\+hpp.
+
+
+
+Referenced by mlpack\+::optimization\+::\+Gradient\+Descent$<$ Function\+Type $>$\+::\+Max\+Iterations().
+
+\index{mlpack\+::optimization\+::\+Gradient\+Descent@{mlpack\+::optimization\+::\+Gradient\+Descent}!step\+Size@{step\+Size}}
+\index{step\+Size@{step\+Size}!mlpack\+::optimization\+::\+Gradient\+Descent@{mlpack\+::optimization\+::\+Gradient\+Descent}}
+\subsubsection[{step\+Size}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Function\+Type $>$ double {\bf mlpack\+::optimization\+::\+Gradient\+Descent}$<$ Function\+Type $>$\+::step\+Size\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1optimization_1_1GradientDescent_a715079a2cf3184cae181d47afe4cbd42}
+
+
+The step size for each example. 
+
+
+
+Definition at line 108 of file gradient\+\_\+descent.\+hpp.
+
+
+
+Referenced by mlpack\+::optimization\+::\+Gradient\+Descent$<$ Function\+Type $>$\+::\+Step\+Size().
+
+\index{mlpack\+::optimization\+::\+Gradient\+Descent@{mlpack\+::optimization\+::\+Gradient\+Descent}!tolerance@{tolerance}}
+\index{tolerance@{tolerance}!mlpack\+::optimization\+::\+Gradient\+Descent@{mlpack\+::optimization\+::\+Gradient\+Descent}}
+\subsubsection[{tolerance}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Function\+Type $>$ double {\bf mlpack\+::optimization\+::\+Gradient\+Descent}$<$ Function\+Type $>$\+::tolerance\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1optimization_1_1GradientDescent_a3e84efdf47853d628655a1750fb8523a}
+
+
+The tolerance for termination. 
+
+
+
+Definition at line 114 of file gradient\+\_\+descent.\+hpp.
+
+
+
+Referenced by mlpack\+::optimization\+::\+Gradient\+Descent$<$ Function\+Type $>$\+::\+Tolerance().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/optimizers/gradient\+\_\+descent/{\bf gradient\+\_\+descent.\+hpp}\end{DoxyCompactItemize}

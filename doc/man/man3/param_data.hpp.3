@@ -1,0 +1,136 @@
+.TH "src/mlpack/core/util/param_data.hpp" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+src/mlpack/core/util/param_data.hpp \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "struct \fBmlpack::util::IsStdVector< T >\fP"
+.br
+.RI "\fIMetaprogramming structure for vector detection\&. \fP"
+.ti -1c
+.RI "struct \fBmlpack::util::IsStdVector< std::vector< T, A > >\fP"
+.br
+.RI "\fIMetaprogramming structure for vector detection\&. \fP"
+.ti -1c
+.RI "struct \fBmlpack::util::ParamData\fP"
+.br
+.RI "\fIThis structure holds all of the information about a single parameter, including its value (which is set when ParseCommandLine() is called)\&. \fP"
+.ti -1c
+.RI "struct \fBmlpack::util::ParameterType< T >\fP"
+.br
+.RI "\fIUtility struct to return the type that boost::program_options should accept for a given input type\&. \fP"
+.ti -1c
+.RI "struct \fBmlpack::util::ParameterType< arma::Col< eT > >\fP"
+.br
+.RI "\fIFor vector types, boost::program_options will accept a std::string, not an arma::Col<eT> (since it is not clear how to specify a vector on the command-line)\&. \fP"
+.ti -1c
+.RI "struct \fBmlpack::util::ParameterType< arma::Mat< eT > >\fP"
+.br
+.RI "\fIFor matrix types, boost::program_options will accept a std::string, not an arma::mat (since it is not clear how to specify a matrix on the command-line)\&. \fP"
+.ti -1c
+.RI "struct \fBmlpack::util::ParameterType< arma::Row< eT > >\fP"
+.br
+.RI "\fIFor row vector types, boost::program_options will accept a std::string, not an arma::Row<eT> (since it is not clear how to specify a vector on the command-line)\&. \fP"
+.ti -1c
+.RI "struct \fBmlpack::util::ParameterType< std::tuple< mlpack::data::DatasetMapper< PolicyType >, arma::Mat< eT > > >\fP"
+.br
+.RI "\fIFor matrix+dataset info types, we should accept a std::string\&. \fP"
+.ti -1c
+.RI "struct \fBmlpack::util::ParameterTypeDeducer< HasSerialize, T >\fP"
+.br
+.ti -1c
+.RI "struct \fBmlpack::util::ParameterTypeDeducer< true, T >\fP"
+.br
+.in -1c
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "\fILinear algebra utility functions, generally performed on matrices or vectors\&. \fP"
+.ti -1c
+.RI " \fBmlpack::util\fP"
+.br
+.in -1c
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fBTYPENAME\fP(x)   (\fBstd::string\fP(typeid(x)\&.name()))"
+.br
+.RI "\fIThe TYPENAME macro is used internally to convert a type into a string\&. \fP"
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename T > T & \fBmlpack::util::HandleParameter\fP (typename util::ParameterType< T >::type &value, util::ParamData &d, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::disable_if< data::HasSerialize< T >>::type *=0, const typename boost::disable_if< std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "\fIIf needed, map 'trueValue' to the right type and return it\&. \fP"
+.ti -1c
+.RI "template<typename T > T & \fBmlpack::util::HandleParameter\fP (typename util::ParameterType< T >::type &value, util::ParamData &d, const typename boost::enable_if< arma::is_arma_type< T >>::type *=0)"
+.br
+.RI "\fIThis must be overloaded for matrices\&. \fP"
+.ti -1c
+.RI "template<typename T > T & \fBmlpack::util::HandleParameter\fP (typename util::ParameterType< T >::type &value, util::ParamData &d, const typename boost::enable_if< std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "\fIThis must be overloaded for matrices and dataset info objects\&. \fP"
+.ti -1c
+.RI "template<typename T > T & \fBmlpack::util::HandleParameter\fP (typename util::ParameterType< T >::type &value, util::ParamData &d, const typename boost::enable_if< data::HasSerialize< T >>::type *=0)"
+.br
+.RI "\fIThis must be overloaded for serializable objects\&. \fP"
+.ti -1c
+.RI "template<typename T > T & \fBmlpack::util::HandleRawParameter\fP (typename util::ParameterType< T >::type &value, util::ParamData &, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::disable_if< data::HasSerialize< T >>::type *=0, const typename boost::disable_if< std::is_same< T, std::tuple< data::DatasetInfo, arma::mat >>>::type *=0)"
+.br
+.RI "\fIThis will just return the value\&. \fP"
+.ti -1c
+.RI "template<typename T > T & \fBmlpack::util::HandleRawParameter\fP (typename util::ParameterType< T >::type &, util::ParamData &d, const typename boost::enable_if< arma::is_arma_type< T >>::type *=0)"
+.br
+.RI "\fIThis will return the mapped value\&. \fP"
+.ti -1c
+.RI "template<typename T > T & \fBmlpack::util::HandleRawParameter\fP (typename util::ParameterType< T >::type &, util::ParamData &d, const typename boost::enable_if< data::HasSerialize< T >>::type *=0)"
+.br
+.RI "\fIThis will return the mapped value\&. \fP"
+.ti -1c
+.RI "template<typename T > T & \fBmlpack::util::HandleRawParameter\fP (typename util::ParameterType< T >::type &, util::ParamData &d, const typename boost::enable_if< std::is_same< T, std::tuple< data::DatasetInfo, arma::mat >>>::type *=0)"
+.br
+.RI "\fIThis will return the mapped value\&. \fP"
+.ti -1c
+.RI "template<typename T > \fBstd::string\fP \fBmlpack::util::MapParameterName\fP (const \fBstd::string\fP &identifier, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::disable_if< data::HasSerialize< T >>::type *=0, const typename boost::disable_if< std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "\fIIf needed, map the parameter name to the name that is used by boost\&. \fP"
+.ti -1c
+.RI "template<typename T > \fBstd::string\fP \fBmlpack::util::MapParameterName\fP (const \fBstd::string\fP &identifier, const typename boost::enable_if_c< arma::is_arma_type< T >::value||std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>::value||data::HasSerialize< T >::value >::type *=0)"
+.br
+.RI "\fIThis must be overloaded for matrices\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Ryan Curtin
+.RE
+.PP
+This defines the structure that holds information for each command-line parameter, as well as utility functions it is used with\&. 
+.PP
+Definition in file \fBparam_data\&.hpp\fP\&.
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define TYPENAME(x)   (\fBstd::string\fP(typeid(x)\&.name()))"
+
+.PP
+The TYPENAME macro is used internally to convert a type into a string\&. 
+.PP
+Definition at line 18 of file param_data\&.hpp\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

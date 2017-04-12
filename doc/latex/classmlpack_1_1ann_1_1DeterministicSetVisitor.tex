@@ -1,0 +1,138 @@
+\section{mlpack\+:\+:ann\+:\+:Deterministic\+Set\+Visitor Class Reference}
+\label{classmlpack_1_1ann_1_1DeterministicSetVisitor}\index{mlpack\+::ann\+::\+Deterministic\+Set\+Visitor@{mlpack\+::ann\+::\+Deterministic\+Set\+Visitor}}
+
+
+\doxyref{Deterministic\+Set\+Visitor}{p.}{classmlpack_1_1ann_1_1DeterministicSetVisitor} set the deterministic parameter given the deterministic value.  
+
+
+
+
+Inheritance diagram for mlpack\+:\+:ann\+:\+:Deterministic\+Set\+Visitor\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=178pt]{classmlpack_1_1ann_1_1DeterministicSetVisitor__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Deterministic\+Set\+Visitor} (const bool {\bf deterministic}=true)
+\begin{DoxyCompactList}\small\item\em Set the deterministic parameter given the current deterministic value. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Layer\+Type $>$ }\\void {\bf operator()} (Layer\+Type $\ast$layer) const 
+\begin{DoxyCompactList}\small\item\em Set the deterministic parameter. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::enable\+\_\+if$<$ Has\+Deterministic\+Check$<$ T, bool \&(T\+::$\ast$)(void)$>$\+::value \&\&Has\+Model\+Check$<$ T, std\+::vector$<$ {\bf Layer\+Types} $>$ \&(T\+::$\ast$)()$>$\+::value, void $>$\+::type {\bf Layer\+Deterministic} (T $\ast$layer) const 
+\begin{DoxyCompactList}\small\item\em Set the deterministic parameter if the module implements the Deterministic() and Model() function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::enable\+\_\+if$<$ !Has\+Deterministic\+Check$<$ T, bool \&(T\+::$\ast$)(void)$>$\+::value \&\&Has\+Model\+Check$<$ T, std\+::vector$<$ {\bf Layer\+Types} $>$ \&(T\+::$\ast$)()$>$\+::value, void $>$\+::type {\bf Layer\+Deterministic} (T $\ast$layer) const 
+\begin{DoxyCompactList}\small\item\em Set the deterministic parameter if the module implements the Model() function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::enable\+\_\+if$<$ Has\+Deterministic\+Check$<$ T, bool \&(T\+::$\ast$)(void)$>$\+::value \&\&!Has\+Model\+Check$<$ T, std\+::vector$<$ {\bf Layer\+Types} $>$ \&(T\+::$\ast$)()$>$\+::value, void $>$\+::type {\bf Layer\+Deterministic} (T $\ast$layer) const 
+\begin{DoxyCompactList}\small\item\em Set the deterministic parameter if the module implements the Deterministic() function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::enable\+\_\+if$<$ !Has\+Deterministic\+Check$<$ T, bool \&(T\+::$\ast$)(void)$>$\+::value \&\&!Has\+Model\+Check$<$ T, std\+::vector$<$ {\bf Layer\+Types} $>$ \&(T\+::$\ast$)()$>$\+::value, void $>$\+::type {\bf Layer\+Deterministic} (T $\ast$layer) const 
+\begin{DoxyCompactList}\small\item\em Do not set the deterministic parameter if the module doesn\textquotesingle{}t implement the Deterministic() or Model() function. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+const bool {\bf deterministic}
+\begin{DoxyCompactList}\small\item\em The deterministic parameter. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\doxyref{Deterministic\+Set\+Visitor}{p.}{classmlpack_1_1ann_1_1DeterministicSetVisitor} set the deterministic parameter given the deterministic value. 
+
+Definition at line 29 of file deterministic\+\_\+set\+\_\+visitor.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::ann\+::\+Deterministic\+Set\+Visitor@{mlpack\+::ann\+::\+Deterministic\+Set\+Visitor}!Deterministic\+Set\+Visitor@{Deterministic\+Set\+Visitor}}
+\index{Deterministic\+Set\+Visitor@{Deterministic\+Set\+Visitor}!mlpack\+::ann\+::\+Deterministic\+Set\+Visitor@{mlpack\+::ann\+::\+Deterministic\+Set\+Visitor}}
+\subsubsection[{Deterministic\+Set\+Visitor(const bool deterministic=true)}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::ann\+::\+Deterministic\+Set\+Visitor\+::\+Deterministic\+Set\+Visitor (
+\begin{DoxyParamCaption}
+\item[{const bool}]{deterministic = {\ttfamily true}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1DeterministicSetVisitor_a0923f08580c0d8d15361195e3f0267ef}
+
+
+Set the deterministic parameter given the current deterministic value. 
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::ann\+::\+Deterministic\+Set\+Visitor@{mlpack\+::ann\+::\+Deterministic\+Set\+Visitor}!Layer\+Deterministic@{Layer\+Deterministic}}
+\index{Layer\+Deterministic@{Layer\+Deterministic}!mlpack\+::ann\+::\+Deterministic\+Set\+Visitor@{mlpack\+::ann\+::\+Deterministic\+Set\+Visitor}}
+\subsubsection[{Layer\+Deterministic(\+T $\ast$layer) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ std\+::enable\+\_\+if$<$ Has\+Deterministic\+Check$<$T, bool\&(T\+::$\ast$)(void)$>$\+::value \&\& Has\+Model\+Check$<$T, std\+::vector$<${\bf Layer\+Types}$>$\&(T\+::$\ast$)()$>$\+::value, void$>$\+::type mlpack\+::ann\+::\+Deterministic\+Set\+Visitor\+::\+Layer\+Deterministic (
+\begin{DoxyParamCaption}
+\item[{T $\ast$}]{layer}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1DeterministicSetVisitor_a1a603d97b33321c3d3b70697b50456ce}
+
+
+Set the deterministic parameter if the module implements the Deterministic() and Model() function. 
+
+\index{mlpack\+::ann\+::\+Deterministic\+Set\+Visitor@{mlpack\+::ann\+::\+Deterministic\+Set\+Visitor}!Layer\+Deterministic@{Layer\+Deterministic}}
+\index{Layer\+Deterministic@{Layer\+Deterministic}!mlpack\+::ann\+::\+Deterministic\+Set\+Visitor@{mlpack\+::ann\+::\+Deterministic\+Set\+Visitor}}
+\subsubsection[{Layer\+Deterministic(\+T $\ast$layer) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ std\+::enable\+\_\+if$<$ !Has\+Deterministic\+Check$<$T, bool\&(T\+::$\ast$)(void)$>$\+::value \&\& Has\+Model\+Check$<$T, std\+::vector$<${\bf Layer\+Types}$>$\&(T\+::$\ast$)()$>$\+::value, void$>$\+::type mlpack\+::ann\+::\+Deterministic\+Set\+Visitor\+::\+Layer\+Deterministic (
+\begin{DoxyParamCaption}
+\item[{T $\ast$}]{layer}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1DeterministicSetVisitor_aefc6fa02d68b02fca73c874b5f4cff82}
+
+
+Set the deterministic parameter if the module implements the Model() function. 
+
+\index{mlpack\+::ann\+::\+Deterministic\+Set\+Visitor@{mlpack\+::ann\+::\+Deterministic\+Set\+Visitor}!Layer\+Deterministic@{Layer\+Deterministic}}
+\index{Layer\+Deterministic@{Layer\+Deterministic}!mlpack\+::ann\+::\+Deterministic\+Set\+Visitor@{mlpack\+::ann\+::\+Deterministic\+Set\+Visitor}}
+\subsubsection[{Layer\+Deterministic(\+T $\ast$layer) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ std\+::enable\+\_\+if$<$ Has\+Deterministic\+Check$<$T, bool\&(T\+::$\ast$)(void)$>$\+::value \&\& !Has\+Model\+Check$<$T, std\+::vector$<${\bf Layer\+Types}$>$\&(T\+::$\ast$)()$>$\+::value, void$>$\+::type mlpack\+::ann\+::\+Deterministic\+Set\+Visitor\+::\+Layer\+Deterministic (
+\begin{DoxyParamCaption}
+\item[{T $\ast$}]{layer}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1DeterministicSetVisitor_a646100f620bc28c9e25e9a019a341987}
+
+
+Set the deterministic parameter if the module implements the Deterministic() function. 
+
+\index{mlpack\+::ann\+::\+Deterministic\+Set\+Visitor@{mlpack\+::ann\+::\+Deterministic\+Set\+Visitor}!Layer\+Deterministic@{Layer\+Deterministic}}
+\index{Layer\+Deterministic@{Layer\+Deterministic}!mlpack\+::ann\+::\+Deterministic\+Set\+Visitor@{mlpack\+::ann\+::\+Deterministic\+Set\+Visitor}}
+\subsubsection[{Layer\+Deterministic(\+T $\ast$layer) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ std\+::enable\+\_\+if$<$ !Has\+Deterministic\+Check$<$T, bool\&(T\+::$\ast$)(void)$>$\+::value \&\& !Has\+Model\+Check$<$T, std\+::vector$<${\bf Layer\+Types}$>$\&(T\+::$\ast$)()$>$\+::value, void$>$\+::type mlpack\+::ann\+::\+Deterministic\+Set\+Visitor\+::\+Layer\+Deterministic (
+\begin{DoxyParamCaption}
+\item[{T $\ast$}]{layer}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1DeterministicSetVisitor_a73c281926d369a8d6890966c8049e6ad}
+
+
+Do not set the deterministic parameter if the module doesn\textquotesingle{}t implement the Deterministic() or Model() function. 
+
+\index{mlpack\+::ann\+::\+Deterministic\+Set\+Visitor@{mlpack\+::ann\+::\+Deterministic\+Set\+Visitor}!operator()@{operator()}}
+\index{operator()@{operator()}!mlpack\+::ann\+::\+Deterministic\+Set\+Visitor@{mlpack\+::ann\+::\+Deterministic\+Set\+Visitor}}
+\subsubsection[{operator()(\+Layer\+Type $\ast$layer) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Layer\+Type $>$ void mlpack\+::ann\+::\+Deterministic\+Set\+Visitor\+::operator() (
+\begin{DoxyParamCaption}
+\item[{Layer\+Type $\ast$}]{layer}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1ann_1_1DeterministicSetVisitor_aa5f3bb7bc31677e0a386425b778328ce}
+
+
+Set the deterministic parameter. 
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::ann\+::\+Deterministic\+Set\+Visitor@{mlpack\+::ann\+::\+Deterministic\+Set\+Visitor}!deterministic@{deterministic}}
+\index{deterministic@{deterministic}!mlpack\+::ann\+::\+Deterministic\+Set\+Visitor@{mlpack\+::ann\+::\+Deterministic\+Set\+Visitor}}
+\subsubsection[{deterministic}]{\setlength{\rightskip}{0pt plus 5cm}const bool mlpack\+::ann\+::\+Deterministic\+Set\+Visitor\+::deterministic\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1DeterministicSetVisitor_a0cca9919c71a1ef2dc27742467ef97d3}
+
+
+The deterministic parameter. 
+
+
+
+Definition at line 41 of file deterministic\+\_\+set\+\_\+visitor.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/ann/visitor/{\bf deterministic\+\_\+set\+\_\+visitor.\+hpp}\end{DoxyCompactItemize}

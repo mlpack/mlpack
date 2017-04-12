@@ -1,0 +1,222 @@
+\section{mlpack\+:\+:tree\+:\+:R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1tree_1_1RPlusTreeSplit}\index{mlpack\+::tree\+::\+R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$@{mlpack\+::tree\+::\+R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$}}
+
+
+The \doxyref{R\+Plus\+Tree\+Split}{p.}{classmlpack_1_1tree_1_1RPlusTreeSplit} class performs the split process of a node on overflow.  
+
+
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef Split\+Policy\+Type {\bf Split\+Policy}
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static void {\bf Split\+Leaf\+Node} (Tree\+Type $\ast$tree, std\+::vector$<$ bool $>$ \&relevels)
+\begin{DoxyCompactList}\small\item\em Split a leaf node using the \char`\"{}default\char`\"{} algorithm. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static bool {\bf Split\+Non\+Leaf\+Node} (Tree\+Type $\ast$tree, std\+::vector$<$ bool $>$ \&relevels)
+\begin{DoxyCompactList}\small\item\em Split a non-\/leaf node using the \char`\"{}default\char`\"{} algorithm. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static void {\bf Add\+Fake\+Nodes} (const Tree\+Type $\ast$tree, Tree\+Type $\ast$empty\+Tree)
+\begin{DoxyCompactList}\small\item\em This method is used to make sure that the tree has equivalent maximum depth in every branch. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static void {\bf Insert\+Node\+Into\+Tree} (Tree\+Type $\ast$dest\+Tree, Tree\+Type $\ast$src\+Node)
+\begin{DoxyCompactList}\small\item\em Insert a node into another node. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static bool {\bf Partition\+Node} (const Tree\+Type $\ast$node, size\+\_\+t \&min\+Cut\+Axis, typename Tree\+Type\+::\+Elem\+Type \&min\+Cut)
+\begin{DoxyCompactList}\small\item\em Partition a node using Sweep\+Type. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static void {\bf Split\+Leaf\+Node\+Along\+Partition} (Tree\+Type $\ast$tree, Tree\+Type $\ast$tree\+One, Tree\+Type $\ast$tree\+Two, const size\+\_\+t cut\+Axis, const typename Tree\+Type\+::\+Elem\+Type cut)
+\begin{DoxyCompactList}\small\item\em Split a leaf node along an axis. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static void {\bf Split\+Non\+Leaf\+Node\+Along\+Partition} (Tree\+Type $\ast$tree, Tree\+Type $\ast$tree\+One, Tree\+Type $\ast$tree\+Two, const size\+\_\+t cut\+Axis, const typename Tree\+Type\+::\+Elem\+Type cut)
+\begin{DoxyCompactList}\small\item\em Split a non-\/leaf node along an axis. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Split\+Policy\+Type, template$<$ typename $>$ class Sweep\+Type$>$\\*
+class mlpack\+::tree\+::\+R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$}
+
+The \doxyref{R\+Plus\+Tree\+Split}{p.}{classmlpack_1_1tree_1_1RPlusTreeSplit} class performs the split process of a node on overflow. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Split\+Policy\+Type} & The class that helps to determine the subtree into which we should insert a child node. \\
+\hline
+{\em Sweep\+Type} & The class that finds the partition of a node along a given axis. The partition algorithm tries to find a partition along each axis, evaluates each partition and chooses the best one. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 32 of file r\+\_\+plus\+\_\+tree\+\_\+split.\+hpp.
+
+
+
+\subsection{Member Typedef Documentation}
+\index{mlpack\+::tree\+::\+R\+Plus\+Tree\+Split@{mlpack\+::tree\+::\+R\+Plus\+Tree\+Split}!Split\+Policy@{Split\+Policy}}
+\index{Split\+Policy@{Split\+Policy}!mlpack\+::tree\+::\+R\+Plus\+Tree\+Split@{mlpack\+::tree\+::\+R\+Plus\+Tree\+Split}}
+\subsubsection[{Split\+Policy}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Split\+Policy\+Type , template$<$ typename $>$ class Sweep\+Type$>$ typedef Split\+Policy\+Type {\bf mlpack\+::tree\+::\+R\+Plus\+Tree\+Split}$<$ Split\+Policy\+Type, Sweep\+Type $>$\+::{\bf Split\+Policy}}\label{classmlpack_1_1tree_1_1RPlusTreeSplit_a2f140ea5eee740b2ef1cffcf4adbaec6}
+
+
+Definition at line 35 of file r\+\_\+plus\+\_\+tree\+\_\+split.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::tree\+::\+R\+Plus\+Tree\+Split@{mlpack\+::tree\+::\+R\+Plus\+Tree\+Split}!Add\+Fake\+Nodes@{Add\+Fake\+Nodes}}
+\index{Add\+Fake\+Nodes@{Add\+Fake\+Nodes}!mlpack\+::tree\+::\+R\+Plus\+Tree\+Split@{mlpack\+::tree\+::\+R\+Plus\+Tree\+Split}}
+\subsubsection[{Add\+Fake\+Nodes(const Tree\+Type $\ast$tree, Tree\+Type $\ast$empty\+Tree)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Split\+Policy\+Type , template$<$ typename $>$ class Sweep\+Type$>$ template$<$typename Tree\+Type $>$ static void {\bf mlpack\+::tree\+::\+R\+Plus\+Tree\+Split}$<$ Split\+Policy\+Type, Sweep\+Type $>$\+::Add\+Fake\+Nodes (
+\begin{DoxyParamCaption}
+\item[{const Tree\+Type $\ast$}]{tree, }
+\item[{Tree\+Type $\ast$}]{empty\+Tree}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}\label{classmlpack_1_1tree_1_1RPlusTreeSplit_acd25bab6c6e8a522fbc1d2dc6de4b325}
+
+
+This method is used to make sure that the tree has equivalent maximum depth in every branch. 
+
+The method should be invoked if one of two resulting subtrees is empty after the split process (i.\+e. the subtree contains no children). The method convert the empty node into an empty subtree (increase the node in depth).
+
+
+\begin{DoxyParams}{Parameters}
+{\em tree} & One of two subtrees that is not empty. \\
+\hline
+{\em empty\+Tree} & The empty subtree. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::tree\+::\+R\+Plus\+Tree\+Split@{mlpack\+::tree\+::\+R\+Plus\+Tree\+Split}!Insert\+Node\+Into\+Tree@{Insert\+Node\+Into\+Tree}}
+\index{Insert\+Node\+Into\+Tree@{Insert\+Node\+Into\+Tree}!mlpack\+::tree\+::\+R\+Plus\+Tree\+Split@{mlpack\+::tree\+::\+R\+Plus\+Tree\+Split}}
+\subsubsection[{Insert\+Node\+Into\+Tree(\+Tree\+Type $\ast$dest\+Tree, Tree\+Type $\ast$src\+Node)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Split\+Policy\+Type , template$<$ typename $>$ class Sweep\+Type$>$ template$<$typename Tree\+Type $>$ static void {\bf mlpack\+::tree\+::\+R\+Plus\+Tree\+Split}$<$ Split\+Policy\+Type, Sweep\+Type $>$\+::Insert\+Node\+Into\+Tree (
+\begin{DoxyParamCaption}
+\item[{Tree\+Type $\ast$}]{dest\+Tree, }
+\item[{Tree\+Type $\ast$}]{src\+Node}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}\label{classmlpack_1_1tree_1_1RPlusTreeSplit_a285ef515b75a1cd3a2288139f4829f35}
+
+
+Insert a node into another node. 
+
+\index{mlpack\+::tree\+::\+R\+Plus\+Tree\+Split@{mlpack\+::tree\+::\+R\+Plus\+Tree\+Split}!Partition\+Node@{Partition\+Node}}
+\index{Partition\+Node@{Partition\+Node}!mlpack\+::tree\+::\+R\+Plus\+Tree\+Split@{mlpack\+::tree\+::\+R\+Plus\+Tree\+Split}}
+\subsubsection[{Partition\+Node(const Tree\+Type $\ast$node, size\+\_\+t \&min\+Cut\+Axis, typename Tree\+Type\+::\+Elem\+Type \&min\+Cut)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Split\+Policy\+Type , template$<$ typename $>$ class Sweep\+Type$>$ template$<$typename Tree\+Type $>$ static bool {\bf mlpack\+::tree\+::\+R\+Plus\+Tree\+Split}$<$ Split\+Policy\+Type, Sweep\+Type $>$\+::Partition\+Node (
+\begin{DoxyParamCaption}
+\item[{const Tree\+Type $\ast$}]{node, }
+\item[{size\+\_\+t \&}]{min\+Cut\+Axis, }
+\item[{typename Tree\+Type\+::\+Elem\+Type \&}]{min\+Cut}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}\label{classmlpack_1_1tree_1_1RPlusTreeSplit_a3887af6c8c3331acd9391d7b46566da0}
+
+
+Partition a node using Sweep\+Type. 
+
+This method invokes Sweep\+Type\+::\+Sweep(\+Non)Leaf\+Node() for each dimension and chooses the best one. The method returns false if the node needn\textquotesingle{}t partitioning. Overwise, the method returns true. If the method failed in finding an acceptable partition, the min\+Cut\+Axis will be equal to the number of dimensions.
+
+
+\begin{DoxyParams}{Parameters}
+{\em node} & The node that is being split. \\
+\hline
+{\em min\+Cut\+Axis} & The axis along which the node will be split. \\
+\hline
+{\em min\+Cut} & The coordinate at which the node will be split. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::tree\+::\+R\+Plus\+Tree\+Split@{mlpack\+::tree\+::\+R\+Plus\+Tree\+Split}!Split\+Leaf\+Node@{Split\+Leaf\+Node}}
+\index{Split\+Leaf\+Node@{Split\+Leaf\+Node}!mlpack\+::tree\+::\+R\+Plus\+Tree\+Split@{mlpack\+::tree\+::\+R\+Plus\+Tree\+Split}}
+\subsubsection[{Split\+Leaf\+Node(\+Tree\+Type $\ast$tree, std\+::vector$<$ bool $>$ \&relevels)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Split\+Policy\+Type , template$<$ typename $>$ class Sweep\+Type$>$ template$<$typename Tree\+Type $>$ static void {\bf mlpack\+::tree\+::\+R\+Plus\+Tree\+Split}$<$ Split\+Policy\+Type, Sweep\+Type $>$\+::Split\+Leaf\+Node (
+\begin{DoxyParamCaption}
+\item[{Tree\+Type $\ast$}]{tree, }
+\item[{std\+::vector$<$ bool $>$ \&}]{relevels}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1tree_1_1RPlusTreeSplit_a610289d02f6b266356890faac27dae40}
+
+
+Split a leaf node using the \char`\"{}default\char`\"{} algorithm. 
+
+If necessary, this split will propagate upwards through the tree. 
+\begin{DoxyParams}{Parameters}
+{\em node.} & The node that is being split. \\
+\hline
+{\em relevels} & Not used. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::tree\+::\+R\+Plus\+Tree\+Split@{mlpack\+::tree\+::\+R\+Plus\+Tree\+Split}!Split\+Leaf\+Node\+Along\+Partition@{Split\+Leaf\+Node\+Along\+Partition}}
+\index{Split\+Leaf\+Node\+Along\+Partition@{Split\+Leaf\+Node\+Along\+Partition}!mlpack\+::tree\+::\+R\+Plus\+Tree\+Split@{mlpack\+::tree\+::\+R\+Plus\+Tree\+Split}}
+\subsubsection[{Split\+Leaf\+Node\+Along\+Partition(\+Tree\+Type $\ast$tree, Tree\+Type $\ast$tree\+One, Tree\+Type $\ast$tree\+Two, const size\+\_\+t cut\+Axis, const typename Tree\+Type\+::\+Elem\+Type cut)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Split\+Policy\+Type , template$<$ typename $>$ class Sweep\+Type$>$ template$<$typename Tree\+Type $>$ static void {\bf mlpack\+::tree\+::\+R\+Plus\+Tree\+Split}$<$ Split\+Policy\+Type, Sweep\+Type $>$\+::Split\+Leaf\+Node\+Along\+Partition (
+\begin{DoxyParamCaption}
+\item[{Tree\+Type $\ast$}]{tree, }
+\item[{Tree\+Type $\ast$}]{tree\+One, }
+\item[{Tree\+Type $\ast$}]{tree\+Two, }
+\item[{const size\+\_\+t}]{cut\+Axis, }
+\item[{const typename Tree\+Type\+::\+Elem\+Type}]{cut}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}\label{classmlpack_1_1tree_1_1RPlusTreeSplit_ab9849d8b1b3604cf41e10b088aa9fbbc}
+
+
+Split a leaf node along an axis. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em tree} & The node that is being split into two new nodes. \\
+\hline
+{\em tree\+One} & The first subtree of two resulting subtrees. \\
+\hline
+{\em tree\+One} & The second subtree of two resulting subtrees. \\
+\hline
+{\em cut\+Axis} & The axis along which the node is being split. \\
+\hline
+{\em cut} & The coordinate at which the node is being split. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::tree\+::\+R\+Plus\+Tree\+Split@{mlpack\+::tree\+::\+R\+Plus\+Tree\+Split}!Split\+Non\+Leaf\+Node@{Split\+Non\+Leaf\+Node}}
+\index{Split\+Non\+Leaf\+Node@{Split\+Non\+Leaf\+Node}!mlpack\+::tree\+::\+R\+Plus\+Tree\+Split@{mlpack\+::tree\+::\+R\+Plus\+Tree\+Split}}
+\subsubsection[{Split\+Non\+Leaf\+Node(\+Tree\+Type $\ast$tree, std\+::vector$<$ bool $>$ \&relevels)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Split\+Policy\+Type , template$<$ typename $>$ class Sweep\+Type$>$ template$<$typename Tree\+Type $>$ static bool {\bf mlpack\+::tree\+::\+R\+Plus\+Tree\+Split}$<$ Split\+Policy\+Type, Sweep\+Type $>$\+::Split\+Non\+Leaf\+Node (
+\begin{DoxyParamCaption}
+\item[{Tree\+Type $\ast$}]{tree, }
+\item[{std\+::vector$<$ bool $>$ \&}]{relevels}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1tree_1_1RPlusTreeSplit_affac69cbb9908ec76145205b26ef16d9}
+
+
+Split a non-\/leaf node using the \char`\"{}default\char`\"{} algorithm. 
+
+If this is a root node, the tree increases in depth. 
+\begin{DoxyParams}{Parameters}
+{\em node.} & The node that is being split. \\
+\hline
+{\em relevels} & Not used. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::tree\+::\+R\+Plus\+Tree\+Split@{mlpack\+::tree\+::\+R\+Plus\+Tree\+Split}!Split\+Non\+Leaf\+Node\+Along\+Partition@{Split\+Non\+Leaf\+Node\+Along\+Partition}}
+\index{Split\+Non\+Leaf\+Node\+Along\+Partition@{Split\+Non\+Leaf\+Node\+Along\+Partition}!mlpack\+::tree\+::\+R\+Plus\+Tree\+Split@{mlpack\+::tree\+::\+R\+Plus\+Tree\+Split}}
+\subsubsection[{Split\+Non\+Leaf\+Node\+Along\+Partition(\+Tree\+Type $\ast$tree, Tree\+Type $\ast$tree\+One, Tree\+Type $\ast$tree\+Two, const size\+\_\+t cut\+Axis, const typename Tree\+Type\+::\+Elem\+Type cut)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Split\+Policy\+Type , template$<$ typename $>$ class Sweep\+Type$>$ template$<$typename Tree\+Type $>$ static void {\bf mlpack\+::tree\+::\+R\+Plus\+Tree\+Split}$<$ Split\+Policy\+Type, Sweep\+Type $>$\+::Split\+Non\+Leaf\+Node\+Along\+Partition (
+\begin{DoxyParamCaption}
+\item[{Tree\+Type $\ast$}]{tree, }
+\item[{Tree\+Type $\ast$}]{tree\+One, }
+\item[{Tree\+Type $\ast$}]{tree\+Two, }
+\item[{const size\+\_\+t}]{cut\+Axis, }
+\item[{const typename Tree\+Type\+::\+Elem\+Type}]{cut}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}\label{classmlpack_1_1tree_1_1RPlusTreeSplit_a4314d2ecbc9eb80ad8edb8103f6a0753}
+
+
+Split a non-\/leaf node along an axis. 
+
+This method propagates the split downward up to a leaf node if necessary.
+
+
+\begin{DoxyParams}{Parameters}
+{\em tree} & The node that is being split into two new nodes. \\
+\hline
+{\em tree\+One} & The first subtree of two resulting subtrees. \\
+\hline
+{\em tree\+One} & The second subtree of two resulting subtrees. \\
+\hline
+{\em cut\+Axis} & The axis along which the node is being split. \\
+\hline
+{\em cut} & The coordinate at which the node is being split. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/tree/rectangle\+\_\+tree/{\bf r\+\_\+plus\+\_\+tree\+\_\+split.\+hpp}\end{DoxyCompactItemize}

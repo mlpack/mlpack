@@ -1,0 +1,1216 @@
+\section{mlpack\+:\+:tree\+:\+:Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1tree_1_1Octree}\index{mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$@{mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class {\bf Dual\+Tree\+Traverser}
+\begin{DoxyCompactList}\small\item\em A dual-\/tree traverser; see dual\+\_\+tree\+\_\+traverser.\+hpp. \end{DoxyCompactList}\item 
+class {\bf Single\+Tree\+Traverser}
+\begin{DoxyCompactList}\small\item\em A single-\/tree traverser; see single\+\_\+tree\+\_\+traverser.\+hpp. \end{DoxyCompactList}\item 
+struct {\bf Split\+Info}
+\begin{DoxyCompactList}\small\item\em This is used for sorting points while splitting. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef Mat\+Type\+::elem\+\_\+type {\bf Elem\+Type}
+\begin{DoxyCompactList}\small\item\em The type of element held in Mat\+Type. \end{DoxyCompactList}\item 
+typedef Mat\+Type {\bf Mat}
+\begin{DoxyCompactList}\small\item\em So other classes can use Tree\+Type\+::\+Mat. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Octree} (const Mat\+Type \&data, const size\+\_\+t max\+Leaf\+Size=20)
+\begin{DoxyCompactList}\small\item\em Construct this as the root node of an octree on the given dataset. \end{DoxyCompactList}\item 
+{\bf Octree} (const Mat\+Type \&data, std\+::vector$<$ size\+\_\+t $>$ \&old\+From\+New, const size\+\_\+t max\+Leaf\+Size=20)
+\begin{DoxyCompactList}\small\item\em Construct this as the root node of an octree on the given dataset. \end{DoxyCompactList}\item 
+{\bf Octree} (const Mat\+Type \&data, std\+::vector$<$ size\+\_\+t $>$ \&old\+From\+New, std\+::vector$<$ size\+\_\+t $>$ \&new\+From\+Old, const size\+\_\+t max\+Leaf\+Size=20)
+\begin{DoxyCompactList}\small\item\em Construct this as the root node of an octree on the given dataset. \end{DoxyCompactList}\item 
+{\bf Octree} (Mat\+Type \&\&data, const size\+\_\+t max\+Leaf\+Size=20)
+\begin{DoxyCompactList}\small\item\em Construct this as the root node of an octree on the given dataset. \end{DoxyCompactList}\item 
+{\bf Octree} (Mat\+Type \&\&data, std\+::vector$<$ size\+\_\+t $>$ \&old\+From\+New, const size\+\_\+t max\+Leaf\+Size=20)
+\begin{DoxyCompactList}\small\item\em Construct this as the root node of an octree on the given dataset. \end{DoxyCompactList}\item 
+{\bf Octree} (Mat\+Type \&\&data, std\+::vector$<$ size\+\_\+t $>$ \&old\+From\+New, std\+::vector$<$ size\+\_\+t $>$ \&new\+From\+Old, const size\+\_\+t max\+Leaf\+Size=20)
+\begin{DoxyCompactList}\small\item\em Construct this as the root node of an octree on the given dataset. \end{DoxyCompactList}\item 
+{\bf Octree} ({\bf Octree} $\ast${\bf parent}, const size\+\_\+t {\bf begin}, const size\+\_\+t {\bf count}, const arma\+::vec \&center, const double width, const size\+\_\+t max\+Leaf\+Size=20)
+\begin{DoxyCompactList}\small\item\em Construct this node as a child of the given parent, starting at column begin and using count points. \end{DoxyCompactList}\item 
+{\bf Octree} ({\bf Octree} $\ast${\bf parent}, const size\+\_\+t {\bf begin}, const size\+\_\+t {\bf count}, std\+::vector$<$ size\+\_\+t $>$ \&old\+From\+New, const arma\+::vec \&center, const double width, const size\+\_\+t max\+Leaf\+Size=20)
+\begin{DoxyCompactList}\small\item\em Construct this node as a child of the given parent, starting at column begin and using count points. \end{DoxyCompactList}\item 
+{\bf Octree} (const {\bf Octree} \&other)
+\begin{DoxyCompactList}\small\item\em Copy the given tree. \end{DoxyCompactList}\item 
+{\bf Octree} ({\bf Octree} \&\&other)
+\begin{DoxyCompactList}\small\item\em Move the given tree. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\{\bf Octree} (Archive \&ar, const typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ Archive\+::is\+\_\+loading\+::value $>$ $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Initialize the tree from a \doxyref{boost\+::serialization}{p.}{namespaceboost_1_1serialization} archive. \end{DoxyCompactList}\item 
+{\bf $\sim$\+Octree} ()
+\begin{DoxyCompactList}\small\item\em Destroy the tree. \end{DoxyCompactList}\item 
+const {\bf bound\+::\+H\+Rect\+Bound}$<$ Metric\+Type $>$ \& {\bf Bound} () const 
+\begin{DoxyCompactList}\small\item\em Return the bound object for this node. \end{DoxyCompactList}\item 
+{\bf bound\+::\+H\+Rect\+Bound}$<$ Metric\+Type $>$ \& {\bf Bound} ()
+\begin{DoxyCompactList}\small\item\em Modify the bound object for this node. \end{DoxyCompactList}\item 
+void {\bf Center} (arma\+::vec \&center) const 
+\begin{DoxyCompactList}\small\item\em Store the center of the bounding region in the given vector. \end{DoxyCompactList}\item 
+const {\bf Octree} \& {\bf Child} (const size\+\_\+t child) const 
+\begin{DoxyCompactList}\small\item\em Return the specified child. \end{DoxyCompactList}\item 
+{\bf Octree} \& {\bf Child} (const size\+\_\+t child)
+\begin{DoxyCompactList}\small\item\em Return the specified child. \end{DoxyCompactList}\item 
+{\bf Octree} $\ast$\& {\bf Child\+Ptr} (const size\+\_\+t child)
+\begin{DoxyCompactList}\small\item\em Return the pointer to the given child. \end{DoxyCompactList}\item 
+const Mat\+Type \& {\bf Dataset} () const 
+\begin{DoxyCompactList}\small\item\em Return the dataset used by this node. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Descendant} (const size\+\_\+t index) const 
+\begin{DoxyCompactList}\small\item\em Return the index (with reference to the dataset) of a particular descendant. \end{DoxyCompactList}\item 
+{\bf Elem\+Type} {\bf Furthest\+Descendant\+Distance} () const 
+\begin{DoxyCompactList}\small\item\em Return the furthest possible descendant distance. \end{DoxyCompactList}\item 
+{\bf Elem\+Type} {\bf Furthest\+Point\+Distance} () const 
+\begin{DoxyCompactList}\small\item\em Return the furthest distance to a point held in this node. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\size\+\_\+t {\bf Get\+Furthest\+Child} (const Vec\+Type \&point, typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ {\bf Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$=0) const 
+\begin{DoxyCompactList}\small\item\em Return the index of the furthest child node to the given query point. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Get\+Furthest\+Child} (const {\bf Octree} \&query\+Node) const 
+\begin{DoxyCompactList}\small\item\em Return the index of the furthest child node to the given query node. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\size\+\_\+t {\bf Get\+Nearest\+Child} (const Vec\+Type \&point, typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ {\bf Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$=0) const 
+\begin{DoxyCompactList}\small\item\em Return the index of the nearest child node to the given query point. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Get\+Nearest\+Child} (const {\bf Octree} \&query\+Node) const 
+\begin{DoxyCompactList}\small\item\em Return the index of the nearest child node to the given query node. \end{DoxyCompactList}\item 
+bool {\bf Is\+Leaf} () const 
+\begin{DoxyCompactList}\small\item\em Return whether or not the node is a leaf. \end{DoxyCompactList}\item 
+{\bf Elem\+Type} {\bf Max\+Distance} (const {\bf Octree} \&other) const 
+\begin{DoxyCompactList}\small\item\em Return the maximum distance to another node. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\{\bf Elem\+Type} {\bf Max\+Distance} (const Vec\+Type \&point, typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ {\bf Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$=0) const 
+\begin{DoxyCompactList}\small\item\em Return the maximum distance to the given point. \end{DoxyCompactList}\item 
+Metric\+Type {\bf Metric} () const 
+\begin{DoxyCompactList}\small\item\em Return the metric that this tree uses. \end{DoxyCompactList}\item 
+{\bf Elem\+Type} {\bf Min\+Distance} (const {\bf Octree} \&other) const 
+\begin{DoxyCompactList}\small\item\em Return the minimum distance to another node. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\{\bf Elem\+Type} {\bf Min\+Distance} (const Vec\+Type \&point, typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ {\bf Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$=0) const 
+\begin{DoxyCompactList}\small\item\em Return the minimum distance to the given point. \end{DoxyCompactList}\item 
+{\bf Elem\+Type} {\bf Minimum\+Bound\+Distance} () const 
+\begin{DoxyCompactList}\small\item\em Return the minimum distance from the center of the node to any bound edge. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Num\+Children} () const 
+\begin{DoxyCompactList}\small\item\em Return the number of children in this node. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Num\+Descendants} () const 
+\begin{DoxyCompactList}\small\item\em Return the number of descendants of this node. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Num\+Points} () const 
+\begin{DoxyCompactList}\small\item\em Return the number of points in this node (0 if not a leaf). \end{DoxyCompactList}\item 
+{\bf Octree} $\ast$ {\bf Parent} () const 
+\begin{DoxyCompactList}\small\item\em Get the pointer to the parent. \end{DoxyCompactList}\item 
+{\bf Octree} $\ast$\& {\bf Parent} ()
+\begin{DoxyCompactList}\small\item\em Modify the pointer to the parent (be careful!). \end{DoxyCompactList}\item 
+{\bf Elem\+Type} {\bf Parent\+Distance} () const 
+\begin{DoxyCompactList}\small\item\em Return the distance from the center of this node to the center of the parent node. \end{DoxyCompactList}\item 
+{\bf Elem\+Type} \& {\bf Parent\+Distance} ()
+\begin{DoxyCompactList}\small\item\em Modify the distance from the center of this node to the center of the parent node. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Point} (const size\+\_\+t index) const 
+\begin{DoxyCompactList}\small\item\em Return the index (with reference to the dataset) of a particular point in this node. \end{DoxyCompactList}\item 
+{\bf math\+::\+Range\+Type}$<$ {\bf Elem\+Type} $>$ {\bf Range\+Distance} (const {\bf Octree} \&other) const 
+\begin{DoxyCompactList}\small\item\em Return the minimum and maximum distance to another node. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\{\bf math\+::\+Range\+Type}$<$ {\bf Elem\+Type} $>$ {\bf Range\+Distance} (const Vec\+Type \&point, typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ {\bf Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$=0) const 
+\begin{DoxyCompactList}\small\item\em Return the minimum and maximum distance to another node. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&ar, const unsigned int)
+\begin{DoxyCompactList}\small\item\em Serialize the tree. \end{DoxyCompactList}\item 
+const Statistic\+Type \& {\bf Stat} () const 
+\begin{DoxyCompactList}\small\item\em Return the statistic object for this node. \end{DoxyCompactList}\item 
+Statistic\+Type \& {\bf Stat} ()
+\begin{DoxyCompactList}\small\item\em Modify the statistic object for this node. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Octree} ()
+\begin{DoxyCompactList}\small\item\em A default constructor. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void {\bf Split\+Node} (const arma\+::vec \&center, const double width, const size\+\_\+t max\+Leaf\+Size)
+\begin{DoxyCompactList}\small\item\em Split the node, using the given center and the given maximum width of this node. \end{DoxyCompactList}\item 
+void {\bf Split\+Node} (const arma\+::vec \&center, const double width, std\+::vector$<$ size\+\_\+t $>$ \&old\+From\+New, const size\+\_\+t max\+Leaf\+Size)
+\begin{DoxyCompactList}\small\item\em Split the node, using the given center and the given maximum width of this node, and fill the mappings vector. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+size\+\_\+t {\bf begin}
+\begin{DoxyCompactList}\small\item\em The index of the first point in the dataset contained in this node (and its children). \end{DoxyCompactList}\item 
+{\bf bound\+::\+H\+Rect\+Bound}$<$ Metric\+Type $>$ {\bf bound}
+\begin{DoxyCompactList}\small\item\em The minimum bounding rectangle of the points held in the node (and its children). \end{DoxyCompactList}\item 
+std\+::vector$<$ {\bf Octree} $\ast$ $>$ {\bf children}
+\begin{DoxyCompactList}\small\item\em The children held by this node. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf count}
+\begin{DoxyCompactList}\small\item\em The number of points of the dataset contained in this node (and its children). \end{DoxyCompactList}\item 
+Mat\+Type $\ast$ {\bf dataset}
+\begin{DoxyCompactList}\small\item\em The dataset. \end{DoxyCompactList}\item 
+{\bf Elem\+Type} {\bf furthest\+Descendant\+Distance}
+\begin{DoxyCompactList}\small\item\em The distance to the furthest descendant, cached to speed things up. \end{DoxyCompactList}\item 
+Metric\+Type {\bf metric}
+\begin{DoxyCompactList}\small\item\em An instantiated metric. \end{DoxyCompactList}\item 
+{\bf Octree} $\ast$ {\bf parent}
+\begin{DoxyCompactList}\small\item\em The parent (N\+U\+LL if this node is the root). \end{DoxyCompactList}\item 
+{\bf Elem\+Type} {\bf parent\+Distance}
+\begin{DoxyCompactList}\small\item\em The distance from the center of this node to the center of the parent. \end{DoxyCompactList}\item 
+Statistic\+Type {\bf stat}
+\begin{DoxyCompactList}\small\item\em The statistic. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Metric\+Type = metric\+::\+Euclidean\+Distance, typename Statistic\+Type = Empty\+Statistic, typename Mat\+Type = arma\+::mat$>$\\*
+class mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$}
+
+
+
+Definition at line 25 of file octree.\+hpp.
+
+
+
+\subsection{Member Typedef Documentation}
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Elem\+Type@{Elem\+Type}}
+\index{Elem\+Type@{Elem\+Type}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Elem\+Type}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ typedef Mat\+Type\+::elem\+\_\+type {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Elem\+Type}}\label{classmlpack_1_1tree_1_1Octree_aa20764e2edc49b577fa7f243ce126b0b}
+
+
+The type of element held in Mat\+Type. 
+
+
+
+Definition at line 31 of file octree.\+hpp.
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Mat@{Mat}}
+\index{Mat@{Mat}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Mat}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ typedef Mat\+Type {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Mat}}\label{classmlpack_1_1tree_1_1Octree_a4b9a63472f0361d4e94500a55ed721ec}
+
+
+So other classes can use Tree\+Type\+::\+Mat. 
+
+
+
+Definition at line 29 of file octree.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Octree@{Octree}}
+\index{Octree@{Octree}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Octree(const Mat\+Type \&data, const size\+\_\+t max\+Leaf\+Size=20)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Octree} (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{data, }
+\item[{const size\+\_\+t}]{max\+Leaf\+Size = {\ttfamily 20}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1tree_1_1Octree_a3feaf4d7a53d971d351e1e5205decce9}
+
+
+Construct this as the root node of an octree on the given dataset. 
+
+This copies the dataset. If you don\textquotesingle{}t want to copy the input dataset, consider using the constructor that takes an rvalue reference and use std\+::move().
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset to create tree from. This will be copied! \\
+\hline
+{\em max\+Leaf\+Size} & Maximum number of points in a leaf node. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Octree@{Octree}}
+\index{Octree@{Octree}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Octree(const Mat\+Type \&data, std\+::vector$<$ size\+\_\+t $>$ \&old\+From\+New, const size\+\_\+t max\+Leaf\+Size=20)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Octree} (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{data, }
+\item[{std\+::vector$<$ size\+\_\+t $>$ \&}]{old\+From\+New, }
+\item[{const size\+\_\+t}]{max\+Leaf\+Size = {\ttfamily 20}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1tree_1_1Octree_ae8e59c56541ff7e11befdf1e731cf61e}
+
+
+Construct this as the root node of an octree on the given dataset. 
+
+This copies the dataset and modifies its ordering; a mapping of the old point indices to the new point indices is filled. If you don\textquotesingle{}t want the matrix to be copied, consider using the constructor that takes an rvalue reference and use std\+::move().
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset to create tree from. This will be copied! \\
+\hline
+{\em old\+From\+New} & Vector which will be filled with the old positions for each new point. \\
+\hline
+{\em max\+Leaf\+Size} & Maximum number of points in a leaf node. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Octree@{Octree}}
+\index{Octree@{Octree}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Octree(const Mat\+Type \&data, std\+::vector$<$ size\+\_\+t $>$ \&old\+From\+New, std\+::vector$<$ size\+\_\+t $>$ \&new\+From\+Old, const size\+\_\+t max\+Leaf\+Size=20)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Octree} (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{data, }
+\item[{std\+::vector$<$ size\+\_\+t $>$ \&}]{old\+From\+New, }
+\item[{std\+::vector$<$ size\+\_\+t $>$ \&}]{new\+From\+Old, }
+\item[{const size\+\_\+t}]{max\+Leaf\+Size = {\ttfamily 20}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1tree_1_1Octree_adefcee9fb1e53e00d1c265834103fd9d}
+
+
+Construct this as the root node of an octree on the given dataset. 
+
+This copies the dataset and modifies its ordering; a mapping of the old point indices to the new point indices is filled, and a mapping of the new point indices to the old point indices is filled. If you don\textquotesingle{}t want the matrix to be copied, consider using the constructor that takes an rvalue reference and use std\+::move().
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset to create tree from. This will be copied! \\
+\hline
+{\em old\+From\+New} & Vector which will be filled with the old positions for each new point. \\
+\hline
+{\em new\+From\+Old} & Vector which will be filled with the new positions for each old point. \\
+\hline
+{\em max\+Leaf\+Size} & Maximum number of points in a leaf node. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Octree@{Octree}}
+\index{Octree@{Octree}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Octree(\+Mat\+Type \&\&data, const size\+\_\+t max\+Leaf\+Size=20)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Octree} (
+\begin{DoxyParamCaption}
+\item[{Mat\+Type \&\&}]{data, }
+\item[{const size\+\_\+t}]{max\+Leaf\+Size = {\ttfamily 20}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1tree_1_1Octree_a84a7221d80a2400885d2c4199c443289}
+
+
+Construct this as the root node of an octree on the given dataset. 
+
+This will take ownership of the dataset; if you don\textquotesingle{}t want this, consider using the constructor that takes a const reference to the dataset.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset to create tree from. This will be copied! \\
+\hline
+{\em max\+Leaf\+Size} & Maximum number of points in a leaf node. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Octree@{Octree}}
+\index{Octree@{Octree}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Octree(\+Mat\+Type \&\&data, std\+::vector$<$ size\+\_\+t $>$ \&old\+From\+New, const size\+\_\+t max\+Leaf\+Size=20)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Octree} (
+\begin{DoxyParamCaption}
+\item[{Mat\+Type \&\&}]{data, }
+\item[{std\+::vector$<$ size\+\_\+t $>$ \&}]{old\+From\+New, }
+\item[{const size\+\_\+t}]{max\+Leaf\+Size = {\ttfamily 20}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1tree_1_1Octree_ac43fa19d1093a9715f26fb286e4f5cea}
+
+
+Construct this as the root node of an octree on the given dataset. 
+
+This will take ownership of the dataset; if you don\textquotesingle{}t want this, consider using the constructor that takes a const reference to the dataset. This modifies the ordering of the dataset; a mapping of the old point indices to the new point indices is filled.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset to create tree from. This will be copied! \\
+\hline
+{\em old\+From\+New} & Vector which will be filled with the old positions for each new point. \\
+\hline
+{\em max\+Leaf\+Size} & Maximum number of points in a leaf node. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Octree@{Octree}}
+\index{Octree@{Octree}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Octree(\+Mat\+Type \&\&data, std\+::vector$<$ size\+\_\+t $>$ \&old\+From\+New, std\+::vector$<$ size\+\_\+t $>$ \&new\+From\+Old, const size\+\_\+t max\+Leaf\+Size=20)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Octree} (
+\begin{DoxyParamCaption}
+\item[{Mat\+Type \&\&}]{data, }
+\item[{std\+::vector$<$ size\+\_\+t $>$ \&}]{old\+From\+New, }
+\item[{std\+::vector$<$ size\+\_\+t $>$ \&}]{new\+From\+Old, }
+\item[{const size\+\_\+t}]{max\+Leaf\+Size = {\ttfamily 20}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1tree_1_1Octree_abbb535d33b6fc080d1cf9674486fbc9f}
+
+
+Construct this as the root node of an octree on the given dataset. 
+
+This will take ownership of the dataset; if you don\textquotesingle{}t want this, consider using the constructor that takes a const reference to the dataset. This modifies the ordering of the dataset; a mapping of the old point indices to the new point indices is filled, and a mapping of the new point indices to the old point indices is filled.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset to create tree from. This will be copied! \\
+\hline
+{\em old\+From\+New} & Vector which will be filled with the old positions for each new point. \\
+\hline
+{\em new\+From\+Old} & Vector which will be filled with the new positions for each old point. \\
+\hline
+{\em max\+Leaf\+Size} & Maximum number of points in a leaf node. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Octree@{Octree}}
+\index{Octree@{Octree}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Octree(\+Octree $\ast$parent, const size\+\_\+t begin, const size\+\_\+t count, const arma\+::vec \&center, const double width, const size\+\_\+t max\+Leaf\+Size=20)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Octree} (
+\begin{DoxyParamCaption}
+\item[{{\bf Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$ $\ast$}]{parent, }
+\item[{const size\+\_\+t}]{begin, }
+\item[{const size\+\_\+t}]{count, }
+\item[{const arma\+::vec \&}]{center, }
+\item[{const double}]{width, }
+\item[{const size\+\_\+t}]{max\+Leaf\+Size = {\ttfamily 20}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1tree_1_1Octree_a0fcb94baee247f81f7f521ae7463fdf5}
+
+
+Construct this node as a child of the given parent, starting at column begin and using count points. 
+
+The ordering of that subset of points in the parent\textquotesingle{}s data matrix will be modified! This is used for recursive tree-\/building by the other constructors that don\textquotesingle{}t specify point indices.
+
+
+\begin{DoxyParams}{Parameters}
+{\em parent} & Parent of this node. Its dataset will be modified! \\
+\hline
+{\em begin} & Index of point to start tree construction with. \\
+\hline
+{\em count} & Number of points to use to construct tree. \\
+\hline
+{\em center} & Center of the node (for splitting). \\
+\hline
+{\em width} & Width of the node in each dimension. \\
+\hline
+{\em max\+Leaf\+Size} & Maximum number of points in a leaf node. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Octree@{Octree}}
+\index{Octree@{Octree}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Octree(\+Octree $\ast$parent, const size\+\_\+t begin, const size\+\_\+t count, std\+::vector$<$ size\+\_\+t $>$ \&old\+From\+New, const arma\+::vec \&center, const double width, const size\+\_\+t max\+Leaf\+Size=20)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Octree} (
+\begin{DoxyParamCaption}
+\item[{{\bf Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$ $\ast$}]{parent, }
+\item[{const size\+\_\+t}]{begin, }
+\item[{const size\+\_\+t}]{count, }
+\item[{std\+::vector$<$ size\+\_\+t $>$ \&}]{old\+From\+New, }
+\item[{const arma\+::vec \&}]{center, }
+\item[{const double}]{width, }
+\item[{const size\+\_\+t}]{max\+Leaf\+Size = {\ttfamily 20}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1tree_1_1Octree_a241177e4530ce48059c397bfb49dafbc}
+
+
+Construct this node as a child of the given parent, starting at column begin and using count points. 
+
+The ordering of that subset of points in the parent\textquotesingle{}s data matrix will be modified! This is used for recursive tree-\/building by the other constructors that don\textquotesingle{}t specify point indices.
+
+A mapping of the old point indices to the new point indices is filled, but it is expected that the vector is already allocated with size greater than or equal to (begin + count), and if that is not true, invalid memory reads (and writes) will occur.
+
+
+\begin{DoxyParams}{Parameters}
+{\em parent} & Parent of this node. Its dataset will be modified! \\
+\hline
+{\em begin} & Index of point to start tree construction with. \\
+\hline
+{\em count} & Number of points to use to construct tree. \\
+\hline
+{\em old\+From\+New} & Vector which will be filled with the old positions for each new point. \\
+\hline
+{\em center} & Center of the node (for splitting). \\
+\hline
+{\em width} & Width of the node in each dimension. \\
+\hline
+{\em max\+Leaf\+Size} & Maximum number of points in a leaf node. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Octree@{Octree}}
+\index{Octree@{Octree}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Octree(const Octree \&other)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Octree} (
+\begin{DoxyParamCaption}
+\item[{const {\bf Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$ \&}]{other}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1tree_1_1Octree_a0b4833f2f942eeb03746903b6735b29f}
+
+
+Copy the given tree. 
+
+Be careful! This may use a lot of memory.
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & Tree to copy from. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Octree@{Octree}}
+\index{Octree@{Octree}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Octree(\+Octree \&\&other)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Octree} (
+\begin{DoxyParamCaption}
+\item[{{\bf Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$ \&\&}]{other}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1tree_1_1Octree_a0e67aa2ce3e3a83f035227be6229b4db}
+
+
+Move the given tree. 
+
+The tree passed as a parameter will be emptied and will not be usable after this call.
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & Tree to move. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Octree@{Octree}}
+\index{Octree@{Octree}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Octree(\+Archive \&ar, const typename std\+::enable\+\_\+if\+\_\+t$<$ Archive\+::is\+\_\+loading\+::value $>$ $\ast$=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ template$<$typename Archive $>$ {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Octree} (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ Archive\+::is\+\_\+loading\+::value $>$ $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1tree_1_1Octree_a8a0258ddedb29bff08e2bf4a715fe5f6}
+
+
+Initialize the tree from a \doxyref{boost\+::serialization}{p.}{namespaceboost_1_1serialization} archive. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ar} & Archive to load tree from. Must be an iarchive, not an oarchive. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!````~Octree@{$\sim$\+Octree}}
+\index{````~Octree@{$\sim$\+Octree}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{$\sim$\+Octree()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::$\sim${\bf Octree} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1tree_1_1Octree_a8da105a7834635cc14ee186325beb0f6}
+
+
+Destroy the tree. 
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Octree@{Octree}}
+\index{Octree@{Octree}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Octree()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Octree} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}}\label{classmlpack_1_1tree_1_1Octree_afc1f5a121e694178d4158fd7716a6b4f}
+
+
+A default constructor. 
+
+This is meant to only be used with \doxyref{boost\+::serialization}{p.}{namespaceboost_1_1serialization}, which is allowed with the friend declaration below. This does not return a valid treee! The method must be protected, so that the serialization shim can work with the default constructor. 
+
+Referenced by mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Center().
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Bound@{Bound}}
+\index{Bound@{Bound}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Bound() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ const {\bf bound\+::\+H\+Rect\+Bound}$<$Metric\+Type$>$\& {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Bound (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1Octree_a452cb2f0b6c58bb2436a01ac7927e327}
+
+
+Return the bound object for this node. 
+
+
+
+Definition at line 247 of file octree.\+hpp.
+
+
+
+References mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::bound.
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Bound@{Bound}}
+\index{Bound@{Bound}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Bound()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ {\bf bound\+::\+H\+Rect\+Bound}$<$Metric\+Type$>$\& {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Bound (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1Octree_aae7da5f4423534574566ce01bc3c3f32}
+
+
+Modify the bound object for this node. 
+
+
+
+Definition at line 249 of file octree.\+hpp.
+
+
+
+References mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::bound.
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Center@{Center}}
+\index{Center@{Center}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Center(arma\+::vec \&center) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ void {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Center (
+\begin{DoxyParamCaption}
+\item[{arma\+::vec \&}]{center}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1Octree_af210624bc714be08f915cda078aec311}
+
+
+Store the center of the bounding region in the given vector. 
+
+
+
+Definition at line 383 of file octree.\+hpp.
+
+
+
+References mlpack\+::bound\+::\+H\+Rect\+Bound$<$ Metric\+Type, Elem\+Type $>$\+::\+Center(), mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Octree(), and mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Serialize().
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Child@{Child}}
+\index{Child@{Child}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Child(const size\+\_\+t child) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ const {\bf Octree}\& {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Child (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{child}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1Octree_ad695fa4f5c07257043836b2c314caca1}
+
+
+Return the specified child. 
+
+If the index is out of bounds, unspecified behavior will occur. 
+
+Definition at line 326 of file octree.\+hpp.
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Child@{Child}}
+\index{Child@{Child}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Child(const size\+\_\+t child)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ {\bf Octree}\& {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Child (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{child}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1Octree_a19ba544daa39ca1308d5a40fe63214f3}
+
+
+Return the specified child. 
+
+If the index is out of bounds, unspecified behavior will occur. 
+
+Definition at line 332 of file octree.\+hpp.
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Child\+Ptr@{Child\+Ptr}}
+\index{Child\+Ptr@{Child\+Ptr}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Child\+Ptr(const size\+\_\+t child)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ {\bf Octree}$\ast$\& {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Child\+Ptr (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{child}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1Octree_a822be90e25c3a9ffdc2b25aa3c96b8bd}
+
+
+Return the pointer to the given child. 
+
+This allows the child itself to be modified. 
+
+Definition at line 338 of file octree.\+hpp.
+
+
+
+References mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Descendant(), mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Max\+Distance(), mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Min\+Distance(), mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Num\+Descendants(), mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Num\+Points(), mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Point(), and mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Range\+Distance().
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Dataset@{Dataset}}
+\index{Dataset@{Dataset}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Dataset() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ const Mat\+Type\& {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Dataset (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1Octree_a57220daa8b49ffd341441976fe6a3942}
+
+
+Return the dataset used by this node. 
+
+
+
+Definition at line 239 of file octree.\+hpp.
+
+
+
+References mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::dataset.
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Descendant@{Descendant}}
+\index{Descendant@{Descendant}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Descendant(const size\+\_\+t index) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Descendant (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{index}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1tree_1_1Octree_a5297ae382946af49d5dea20d13ea6da2}
+
+
+Return the index (with reference to the dataset) of a particular descendant. 
+
+
+
+Referenced by mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Child\+Ptr().
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Furthest\+Descendant\+Distance@{Furthest\+Descendant\+Distance}}
+\index{Furthest\+Descendant\+Distance@{Furthest\+Descendant\+Distance}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Furthest\+Descendant\+Distance() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ {\bf Elem\+Type} {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Furthest\+Descendant\+Distance (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1tree_1_1Octree_a772c46a747904c85ca2b0633ccc77a80}
+
+
+Return the furthest possible descendant distance. 
+
+This returns the maximum distance from the centroid to the edge of the bound and not the empirical quantity which is the actual furthest descendant distance. So the actual furthest descendant distance may be less than what this method returns (but it will never be greater than this). 
+
+Referenced by mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Is\+Leaf().
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Furthest\+Point\+Distance@{Furthest\+Point\+Distance}}
+\index{Furthest\+Point\+Distance@{Furthest\+Point\+Distance}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Furthest\+Point\+Distance() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ {\bf Elem\+Type} {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Furthest\+Point\+Distance (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1tree_1_1Octree_a2a8b0ef28440c3c991c33240ad0716bb}
+
+
+Return the furthest distance to a point held in this node. 
+
+If this is not a leaf node, then the distance is 0 because the node holds no points. 
+
+Referenced by mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Is\+Leaf().
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Get\+Furthest\+Child@{Get\+Furthest\+Child}}
+\index{Get\+Furthest\+Child@{Get\+Furthest\+Child}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Get\+Furthest\+Child(const Vec\+Type \&point, typename std\+::enable\+\_\+if\+\_\+t$<$ Is\+Vector$<$ Vec\+Type $>$\+::value $>$ $\ast$=0) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ template$<$typename Vec\+Type $>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Get\+Furthest\+Child (
+\begin{DoxyParamCaption}
+\item[{const Vec\+Type \&}]{point, }
+\item[{typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ {\bf Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1tree_1_1Octree_ada7c73a40412e85f448542f7facc7bb3}
+
+
+Return the index of the furthest child node to the given query point. 
+
+If this is a leaf node, it will return \doxyref{Num\+Children()}{p.}{classmlpack_1_1tree_1_1Octree_ab879e91583c89af9fe562f568e7f5349} (invalid index). 
+
+Referenced by mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Is\+Leaf(), and mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Metric().
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Get\+Furthest\+Child@{Get\+Furthest\+Child}}
+\index{Get\+Furthest\+Child@{Get\+Furthest\+Child}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Get\+Furthest\+Child(const Octree \&query\+Node) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Get\+Furthest\+Child (
+\begin{DoxyParamCaption}
+\item[{const {\bf Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$ \&}]{query\+Node}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1tree_1_1Octree_a4d60c2189b3a96791ba5c4557dabe628}
+
+
+Return the index of the furthest child node to the given query node. 
+
+If it can\textquotesingle{}t decide, it will return \doxyref{Num\+Children()}{p.}{classmlpack_1_1tree_1_1Octree_ab879e91583c89af9fe562f568e7f5349} (invalid index). \index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Get\+Nearest\+Child@{Get\+Nearest\+Child}}
+\index{Get\+Nearest\+Child@{Get\+Nearest\+Child}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Get\+Nearest\+Child(const Vec\+Type \&point, typename std\+::enable\+\_\+if\+\_\+t$<$ Is\+Vector$<$ Vec\+Type $>$\+::value $>$ $\ast$=0) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ template$<$typename Vec\+Type $>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Get\+Nearest\+Child (
+\begin{DoxyParamCaption}
+\item[{const Vec\+Type \&}]{point, }
+\item[{typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ {\bf Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1tree_1_1Octree_a8ea304ec71d2a2bc5b00027582f640f6}
+
+
+Return the index of the nearest child node to the given query point. 
+
+If this is a leaf node, it will return \doxyref{Num\+Children()}{p.}{classmlpack_1_1tree_1_1Octree_ab879e91583c89af9fe562f568e7f5349} (invalid index). 
+
+Referenced by mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Is\+Leaf(), and mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Metric().
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Get\+Nearest\+Child@{Get\+Nearest\+Child}}
+\index{Get\+Nearest\+Child@{Get\+Nearest\+Child}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Get\+Nearest\+Child(const Octree \&query\+Node) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Get\+Nearest\+Child (
+\begin{DoxyParamCaption}
+\item[{const {\bf Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$ \&}]{query\+Node}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1tree_1_1Octree_a7e78f3a5f20da8b57298b7ea411c75c5}
+
+
+Return the index of the nearest child node to the given query node. 
+
+If it can\textquotesingle{}t decide, it will return \doxyref{Num\+Children()}{p.}{classmlpack_1_1tree_1_1Octree_ab879e91583c89af9fe562f568e7f5349} (invalid index). \index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Is\+Leaf@{Is\+Leaf}}
+\index{Is\+Leaf@{Is\+Leaf}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Is\+Leaf() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ bool {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Is\+Leaf (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1Octree_a6b9989ae1ee5feab6660c2659a9624d2}
+
+
+Return whether or not the node is a leaf. 
+
+
+
+Definition at line 283 of file octree.\+hpp.
+
+
+
+References mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Furthest\+Descendant\+Distance(), mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Furthest\+Point\+Distance(), mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Get\+Furthest\+Child(), mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Get\+Nearest\+Child(), mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Minimum\+Bound\+Distance(), and mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Num\+Children().
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Max\+Distance@{Max\+Distance}}
+\index{Max\+Distance@{Max\+Distance}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Max\+Distance(const Octree \&other) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ {\bf Elem\+Type} {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Max\+Distance (
+\begin{DoxyParamCaption}
+\item[{const {\bf Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$ \&}]{other}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1tree_1_1Octree_a9575c0526822aed946176655cc0d55dc}
+
+
+Return the maximum distance to another node. 
+
+
+
+Referenced by mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Child\+Ptr().
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Max\+Distance@{Max\+Distance}}
+\index{Max\+Distance@{Max\+Distance}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Max\+Distance(const Vec\+Type \&point, typename std\+::enable\+\_\+if\+\_\+t$<$ Is\+Vector$<$ Vec\+Type $>$\+::value $>$ $\ast$=0) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ template$<$typename Vec\+Type $>$ {\bf Elem\+Type} {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Max\+Distance (
+\begin{DoxyParamCaption}
+\item[{const Vec\+Type \&}]{point, }
+\item[{typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ {\bf Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1tree_1_1Octree_a3cbc3ebff9cc9322479a7d7ef02566d0}
+
+
+Return the maximum distance to the given point. 
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Metric@{Metric}}
+\index{Metric@{Metric}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Metric() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ Metric\+Type {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Metric (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1Octree_a84a8b24bfa0d12a565ccad5be7e52568}
+
+
+Return the metric that this tree uses. 
+
+
+
+Definition at line 260 of file octree.\+hpp.
+
+
+
+References mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Get\+Furthest\+Child(), and mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Get\+Nearest\+Child().
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Min\+Distance@{Min\+Distance}}
+\index{Min\+Distance@{Min\+Distance}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Min\+Distance(const Octree \&other) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ {\bf Elem\+Type} {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Min\+Distance (
+\begin{DoxyParamCaption}
+\item[{const {\bf Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$ \&}]{other}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1tree_1_1Octree_a749f3f625fa3e3a468203826c85085dd}
+
+
+Return the minimum distance to another node. 
+
+
+
+Referenced by mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Child\+Ptr().
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Min\+Distance@{Min\+Distance}}
+\index{Min\+Distance@{Min\+Distance}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Min\+Distance(const Vec\+Type \&point, typename std\+::enable\+\_\+if\+\_\+t$<$ Is\+Vector$<$ Vec\+Type $>$\+::value $>$ $\ast$=0) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ template$<$typename Vec\+Type $>$ {\bf Elem\+Type} {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Min\+Distance (
+\begin{DoxyParamCaption}
+\item[{const Vec\+Type \&}]{point, }
+\item[{typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ {\bf Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1tree_1_1Octree_a6055b765a0bca27fd7ed7da2d551b7ee}
+
+
+Return the minimum distance to the given point. 
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Minimum\+Bound\+Distance@{Minimum\+Bound\+Distance}}
+\index{Minimum\+Bound\+Distance@{Minimum\+Bound\+Distance}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Minimum\+Bound\+Distance() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ {\bf Elem\+Type} {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Minimum\+Bound\+Distance (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1tree_1_1Octree_adf9bf881b541f59ebefc3e2824703124}
+
+
+Return the minimum distance from the center of the node to any bound edge. 
+
+
+
+Referenced by mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Is\+Leaf().
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Num\+Children@{Num\+Children}}
+\index{Num\+Children@{Num\+Children}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Num\+Children() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Num\+Children (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1tree_1_1Octree_ab879e91583c89af9fe562f568e7f5349}
+
+
+Return the number of children in this node. 
+
+
+
+Referenced by mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Is\+Leaf(), and mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Stat().
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Num\+Descendants@{Num\+Descendants}}
+\index{Num\+Descendants@{Num\+Descendants}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Num\+Descendants() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Num\+Descendants (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1tree_1_1Octree_a6b3b290d47d99a4f884ca89d7966f3e5}
+
+
+Return the number of descendants of this node. 
+
+
+
+Referenced by mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Child\+Ptr().
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Num\+Points@{Num\+Points}}
+\index{Num\+Points@{Num\+Points}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Num\+Points() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Num\+Points (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1tree_1_1Octree_a05a1afd43d3be69ab9db0255d690307d}
+
+
+Return the number of points in this node (0 if not a leaf). 
+
+
+
+Referenced by mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Child\+Ptr().
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Parent@{Parent}}
+\index{Parent@{Parent}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Parent() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ {\bf Octree}$\ast$ {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Parent (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1Octree_a639a7dd81cb7201a65060d9f95f0326b}
+
+
+Get the pointer to the parent. 
+
+
+
+Definition at line 242 of file octree.\+hpp.
+
+
+
+References mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::parent.
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Parent@{Parent}}
+\index{Parent@{Parent}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Parent()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ {\bf Octree}$\ast$\& {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Parent (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1Octree_ae4da1659cc848460a36c0b666568c133}
+
+
+Modify the pointer to the parent (be careful!). 
+
+
+
+Definition at line 244 of file octree.\+hpp.
+
+
+
+References mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::parent.
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Parent\+Distance@{Parent\+Distance}}
+\index{Parent\+Distance@{Parent\+Distance}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Parent\+Distance() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ {\bf Elem\+Type} {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Parent\+Distance (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1Octree_acdb0a74b9c08fda47fe42b03ab19de8a}
+
+
+Return the distance from the center of this node to the center of the parent node. 
+
+
+
+Definition at line 317 of file octree.\+hpp.
+
+
+
+References mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::parent\+Distance.
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Parent\+Distance@{Parent\+Distance}}
+\index{Parent\+Distance@{Parent\+Distance}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Parent\+Distance()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ {\bf Elem\+Type}\& {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Parent\+Distance (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1Octree_ac53269198b9ac4e08b9bd67bd7e9ebd9}
+
+
+Modify the distance from the center of this node to the center of the parent node. 
+
+
+
+Definition at line 320 of file octree.\+hpp.
+
+
+
+References mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::parent\+Distance.
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Point@{Point}}
+\index{Point@{Point}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Point(const size\+\_\+t index) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Point (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{index}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1tree_1_1Octree_a81cead53d5ee80b3ec1b931e3156396f}
+
+
+Return the index (with reference to the dataset) of a particular point in this node. 
+
+If the given index is invalid (i.\+e. if it is greater than \doxyref{Num\+Points()}{p.}{classmlpack_1_1tree_1_1Octree_a05a1afd43d3be69ab9db0255d690307d}), the indices returned will be invalid. 
+
+Referenced by mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Child\+Ptr().
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Range\+Distance@{Range\+Distance}}
+\index{Range\+Distance@{Range\+Distance}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Range\+Distance(const Octree \&other) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ {\bf math\+::\+Range\+Type}$<${\bf Elem\+Type}$>$ {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Range\+Distance (
+\begin{DoxyParamCaption}
+\item[{const {\bf Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$ \&}]{other}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1tree_1_1Octree_aacd6a8ba7835094de8ca5dfe242b389a}
+
+
+Return the minimum and maximum distance to another node. 
+
+
+
+Referenced by mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Child\+Ptr().
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Range\+Distance@{Range\+Distance}}
+\index{Range\+Distance@{Range\+Distance}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Range\+Distance(const Vec\+Type \&point, typename std\+::enable\+\_\+if\+\_\+t$<$ Is\+Vector$<$ Vec\+Type $>$\+::value $>$ $\ast$=0) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ template$<$typename Vec\+Type $>$ {\bf math\+::\+Range\+Type}$<${\bf Elem\+Type}$>$ {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Range\+Distance (
+\begin{DoxyParamCaption}
+\item[{const Vec\+Type \&}]{point, }
+\item[{typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ {\bf Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1tree_1_1Octree_ab8a971788819daccc0812e31bbfb0ea0}
+
+
+Return the minimum and maximum distance to another node. 
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Serialize(\+Archive \&ar, const unsigned int)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ template$<$typename Archive $>$ void {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const unsigned}]{int}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1tree_1_1Octree_aa7900c808aea6aacc14385dffcfaf874}
+
+
+Serialize the tree. 
+
+
+
+Referenced by mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Center().
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Split\+Node@{Split\+Node}}
+\index{Split\+Node@{Split\+Node}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Split\+Node(const arma\+::vec \&center, const double width, const size\+\_\+t max\+Leaf\+Size)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ void {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Split\+Node (
+\begin{DoxyParamCaption}
+\item[{const arma\+::vec \&}]{center, }
+\item[{const double}]{width, }
+\item[{const size\+\_\+t}]{max\+Leaf\+Size}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1Octree_aeb73d3863e85eb8ef85eeff881b7b108}
+
+
+Split the node, using the given center and the given maximum width of this node. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em center} & Center of the node. \\
+\hline
+{\em width} & Width of the current node. \\
+\hline
+{\em max\+Leaf\+Size} & Maximum number of points allowed in a leaf. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Split\+Node@{Split\+Node}}
+\index{Split\+Node@{Split\+Node}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Split\+Node(const arma\+::vec \&center, const double width, std\+::vector$<$ size\+\_\+t $>$ \&old\+From\+New, const size\+\_\+t max\+Leaf\+Size)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ void {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Split\+Node (
+\begin{DoxyParamCaption}
+\item[{const arma\+::vec \&}]{center, }
+\item[{const double}]{width, }
+\item[{std\+::vector$<$ size\+\_\+t $>$ \&}]{old\+From\+New, }
+\item[{const size\+\_\+t}]{max\+Leaf\+Size}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1Octree_adcb9e4a58e50c4d8bc93424f36bde963}
+
+
+Split the node, using the given center and the given maximum width of this node, and fill the mappings vector. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em center} & Center of the node. \\
+\hline
+{\em width} & Width of the current node. \\
+\hline
+{\em old\+From\+New} & Mappings from old to new. \\
+\hline
+{\em max\+Leaf\+Size} & Maximum number of points allowed in a leaf. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Stat@{Stat}}
+\index{Stat@{Stat}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Stat() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ const Statistic\+Type\& {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Stat (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1Octree_a038db1518b7a1447c92f64cff9b72e4a}
+
+
+Return the statistic object for this node. 
+
+
+
+Definition at line 252 of file octree.\+hpp.
+
+
+
+References mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::stat.
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!Stat@{Stat}}
+\index{Stat@{Stat}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{Stat()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ Statistic\+Type\& {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Stat (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1Octree_ab18031eb6e6a2a14837ae29183de2899}
+
+
+Modify the statistic object for this node. 
+
+
+
+Definition at line 254 of file octree.\+hpp.
+
+
+
+References mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Num\+Children(), and mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::stat.
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!begin@{begin}}
+\index{begin@{begin}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{begin}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::begin\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1Octree_a5f314dacb1bbb1ff4f74cb9d24b63617}
+
+
+The index of the first point in the dataset contained in this node (and its children). 
+
+
+
+Definition at line 47 of file octree.\+hpp.
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!bound@{bound}}
+\index{bound@{bound}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{bound}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ {\bf bound\+::\+H\+Rect\+Bound}$<$Metric\+Type$>$ {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::bound\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1Octree_a5d5e5c0f12421892bcacff375fee7cd7}
+
+
+The minimum bounding rectangle of the points held in the node (and its children). 
+
+
+
+Definition at line 53 of file octree.\+hpp.
+
+
+
+Referenced by mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Bound().
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!children@{children}}
+\index{children@{children}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{children}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ std\+::vector$<${\bf Octree}$\ast$$>$ {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::children\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1Octree_a3ade8e1b93a5782227840ecfbc00aaaf}
+
+
+The children held by this node. 
+
+
+
+Definition at line 39 of file octree.\+hpp.
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!count@{count}}
+\index{count@{count}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{count}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::count\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1Octree_aa5815470a4f5298b047345dbb8bd711b}
+
+
+The number of points of the dataset contained in this node (and its children). 
+
+
+
+Definition at line 50 of file octree.\+hpp.
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!dataset@{dataset}}
+\index{dataset@{dataset}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{dataset}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ Mat\+Type$\ast$ {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::dataset\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1Octree_a2ea450bb883f1930c404c029654abbae}
+
+
+The dataset. 
+
+
+
+Definition at line 55 of file octree.\+hpp.
+
+
+
+Referenced by mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Dataset().
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!furthest\+Descendant\+Distance@{furthest\+Descendant\+Distance}}
+\index{furthest\+Descendant\+Distance@{furthest\+Descendant\+Distance}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{furthest\+Descendant\+Distance}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ {\bf Elem\+Type} {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::furthest\+Descendant\+Distance\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1Octree_af4a54c76558087afdfc96f85e0e9cdcd}
+
+
+The distance to the furthest descendant, cached to speed things up. 
+
+
+
+Definition at line 63 of file octree.\+hpp.
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!metric@{metric}}
+\index{metric@{metric}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{metric}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ Metric\+Type {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::metric\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1Octree_a22ca26e60a44923e44de1a233d504464}
+
+
+An instantiated metric. 
+
+
+
+Definition at line 65 of file octree.\+hpp.
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!parent@{parent}}
+\index{parent@{parent}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{parent}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ {\bf Octree}$\ast$ {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::parent\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1Octree_a913f670e041d1fa24fb4a5955e315e73}
+
+
+The parent (N\+U\+LL if this node is the root). 
+
+
+
+Definition at line 57 of file octree.\+hpp.
+
+
+
+Referenced by mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Parent().
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!parent\+Distance@{parent\+Distance}}
+\index{parent\+Distance@{parent\+Distance}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{parent\+Distance}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ {\bf Elem\+Type} {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::parent\+Distance\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1Octree_afd5f136e4408f80d1c569196e7729588}
+
+
+The distance from the center of this node to the center of the parent. 
+
+
+
+Definition at line 61 of file octree.\+hpp.
+
+
+
+Referenced by mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Parent\+Distance().
+
+\index{mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}!stat@{stat}}
+\index{stat@{stat}!mlpack\+::tree\+::\+Octree@{mlpack\+::tree\+::\+Octree}}
+\subsubsection[{stat}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ Statistic\+Type {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::stat\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1Octree_a18885654ae2a3b93833df415969ca998}
+
+
+The statistic. 
+
+
+
+Definition at line 59 of file octree.\+hpp.
+
+
+
+Referenced by mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Stat().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/tree/octree/{\bf octree.\+hpp}\end{DoxyCompactItemize}

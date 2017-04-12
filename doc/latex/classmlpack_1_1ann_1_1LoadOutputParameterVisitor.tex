@@ -1,0 +1,112 @@
+\section{mlpack\+:\+:ann\+:\+:Load\+Output\+Parameter\+Visitor Class Reference}
+\label{classmlpack_1_1ann_1_1LoadOutputParameterVisitor}\index{mlpack\+::ann\+::\+Load\+Output\+Parameter\+Visitor@{mlpack\+::ann\+::\+Load\+Output\+Parameter\+Visitor}}
+
+
+\doxyref{Load\+Output\+Parameter\+Visitor}{p.}{classmlpack_1_1ann_1_1LoadOutputParameterVisitor} restores the output parameter using the given parameter set.  
+
+
+
+
+Inheritance diagram for mlpack\+:\+:ann\+:\+:Load\+Output\+Parameter\+Visitor\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=215pt]{classmlpack_1_1ann_1_1LoadOutputParameterVisitor__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Load\+Output\+Parameter\+Visitor} (std\+::vector$<$ arma\+::mat $>$ \&\&{\bf parameter})
+\begin{DoxyCompactList}\small\item\em Restore the output parameter given a parameter set. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Layer\+Type $>$ }\\void {\bf operator()} (Layer\+Type $\ast$layer) const 
+\begin{DoxyCompactList}\small\item\em Restore the output parameter. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::enable\+\_\+if$<$ !Has\+Model\+Check$<$ T, std\+::vector$<$ {\bf Layer\+Types} $>$ \&(T\+::$\ast$)()$>$\+::value, void $>$\+::type {\bf Output\+Parameter} (T $\ast$layer) const 
+\begin{DoxyCompactList}\small\item\em Restore the output parameter for a module which doesn\textquotesingle{}t implement the Model() function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::enable\+\_\+if$<$ Has\+Model\+Check$<$ T, std\+::vector$<$ {\bf Layer\+Types} $>$ \&(T\+::$\ast$)()$>$\+::value, void $>$\+::type {\bf Output\+Parameter} (T $\ast$layer) const 
+\begin{DoxyCompactList}\small\item\em Restore the output parameter for a module which implements the Model() function. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::vector$<$ arma\+::mat $>$ \&\& {\bf parameter}
+\begin{DoxyCompactList}\small\item\em The parameter set. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\doxyref{Load\+Output\+Parameter\+Visitor}{p.}{classmlpack_1_1ann_1_1LoadOutputParameterVisitor} restores the output parameter using the given parameter set. 
+
+Definition at line 29 of file load\+\_\+output\+\_\+parameter\+\_\+visitor.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::ann\+::\+Load\+Output\+Parameter\+Visitor@{mlpack\+::ann\+::\+Load\+Output\+Parameter\+Visitor}!Load\+Output\+Parameter\+Visitor@{Load\+Output\+Parameter\+Visitor}}
+\index{Load\+Output\+Parameter\+Visitor@{Load\+Output\+Parameter\+Visitor}!mlpack\+::ann\+::\+Load\+Output\+Parameter\+Visitor@{mlpack\+::ann\+::\+Load\+Output\+Parameter\+Visitor}}
+\subsubsection[{Load\+Output\+Parameter\+Visitor(std\+::vector$<$ arma\+::mat $>$ \&\&parameter)}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::ann\+::\+Load\+Output\+Parameter\+Visitor\+::\+Load\+Output\+Parameter\+Visitor (
+\begin{DoxyParamCaption}
+\item[{std\+::vector$<$ arma\+::mat $>$ \&\&}]{parameter}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1LoadOutputParameterVisitor_a933144456dd4bb7efc1f4cfa47e36fcb}
+
+
+Restore the output parameter given a parameter set. 
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::ann\+::\+Load\+Output\+Parameter\+Visitor@{mlpack\+::ann\+::\+Load\+Output\+Parameter\+Visitor}!operator()@{operator()}}
+\index{operator()@{operator()}!mlpack\+::ann\+::\+Load\+Output\+Parameter\+Visitor@{mlpack\+::ann\+::\+Load\+Output\+Parameter\+Visitor}}
+\subsubsection[{operator()(\+Layer\+Type $\ast$layer) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Layer\+Type $>$ void mlpack\+::ann\+::\+Load\+Output\+Parameter\+Visitor\+::operator() (
+\begin{DoxyParamCaption}
+\item[{Layer\+Type $\ast$}]{layer}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1ann_1_1LoadOutputParameterVisitor_a4fe6bf0732291ca4beb2d360426c3d9b}
+
+
+Restore the output parameter. 
+
+\index{mlpack\+::ann\+::\+Load\+Output\+Parameter\+Visitor@{mlpack\+::ann\+::\+Load\+Output\+Parameter\+Visitor}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Load\+Output\+Parameter\+Visitor@{mlpack\+::ann\+::\+Load\+Output\+Parameter\+Visitor}}
+\subsubsection[{Output\+Parameter(\+T $\ast$layer) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ std\+::enable\+\_\+if$<$ !Has\+Model\+Check$<$T, std\+::vector$<${\bf Layer\+Types}$>$\&(T\+::$\ast$)()$>$\+::value, void$>$\+::type mlpack\+::ann\+::\+Load\+Output\+Parameter\+Visitor\+::\+Output\+Parameter (
+\begin{DoxyParamCaption}
+\item[{T $\ast$}]{layer}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LoadOutputParameterVisitor_a74adb15ede1d931cc5fbd8affe6e5381}
+
+
+Restore the output parameter for a module which doesn\textquotesingle{}t implement the Model() function. 
+
+\index{mlpack\+::ann\+::\+Load\+Output\+Parameter\+Visitor@{mlpack\+::ann\+::\+Load\+Output\+Parameter\+Visitor}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Load\+Output\+Parameter\+Visitor@{mlpack\+::ann\+::\+Load\+Output\+Parameter\+Visitor}}
+\subsubsection[{Output\+Parameter(\+T $\ast$layer) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ std\+::enable\+\_\+if$<$ Has\+Model\+Check$<$T, std\+::vector$<${\bf Layer\+Types}$>$\&(T\+::$\ast$)()$>$\+::value, void$>$\+::type mlpack\+::ann\+::\+Load\+Output\+Parameter\+Visitor\+::\+Output\+Parameter (
+\begin{DoxyParamCaption}
+\item[{T $\ast$}]{layer}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LoadOutputParameterVisitor_ad7bce5aed36e5d8f107b316b5a787431}
+
+
+Restore the output parameter for a module which implements the Model() function. 
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::ann\+::\+Load\+Output\+Parameter\+Visitor@{mlpack\+::ann\+::\+Load\+Output\+Parameter\+Visitor}!parameter@{parameter}}
+\index{parameter@{parameter}!mlpack\+::ann\+::\+Load\+Output\+Parameter\+Visitor@{mlpack\+::ann\+::\+Load\+Output\+Parameter\+Visitor}}
+\subsubsection[{parameter}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$arma\+::mat$>$\&\& mlpack\+::ann\+::\+Load\+Output\+Parameter\+Visitor\+::parameter\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LoadOutputParameterVisitor_a165d28e7c4fa48459a6fc6a8f368bae0}
+
+
+The parameter set. 
+
+
+
+Definition at line 41 of file load\+\_\+output\+\_\+parameter\+\_\+visitor.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/ann/visitor/{\bf load\+\_\+output\+\_\+parameter\+\_\+visitor.\+hpp}\end{DoxyCompactItemize}

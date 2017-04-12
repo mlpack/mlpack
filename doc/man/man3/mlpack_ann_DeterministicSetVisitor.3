@@ -1,0 +1,96 @@
+.TH "mlpack::ann::DeterministicSetVisitor" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::ann::DeterministicSetVisitor \- \fBDeterministicSetVisitor\fP set the deterministic parameter given the deterministic value\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits static_visitor< void >\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBDeterministicSetVisitor\fP (const bool \fBdeterministic\fP=true)"
+.br
+.RI "\fISet the deterministic parameter given the current deterministic value\&. \fP"
+.ti -1c
+.RI "template<typename LayerType > void \fBoperator()\fP (LayerType *layer) const "
+.br
+.RI "\fISet the deterministic parameter\&. \fP"
+.in -1c
+.SS "Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename T > std::enable_if< HasDeterministicCheck< T, bool &(T::*)(void)>::value &&HasModelCheck< T, std::vector< \fBLayerTypes\fP > &(T::*)()>::value, void >::type \fBLayerDeterministic\fP (T *layer) const "
+.br
+.RI "\fISet the deterministic parameter if the module implements the Deterministic() and Model() function\&. \fP"
+.ti -1c
+.RI "template<typename T > std::enable_if< !HasDeterministicCheck< T, bool &(T::*)(void)>::value &&HasModelCheck< T, std::vector< \fBLayerTypes\fP > &(T::*)()>::value, void >::type \fBLayerDeterministic\fP (T *layer) const "
+.br
+.RI "\fISet the deterministic parameter if the module implements the Model() function\&. \fP"
+.ti -1c
+.RI "template<typename T > std::enable_if< HasDeterministicCheck< T, bool &(T::*)(void)>::value &&!HasModelCheck< T, std::vector< \fBLayerTypes\fP > &(T::*)()>::value, void >::type \fBLayerDeterministic\fP (T *layer) const "
+.br
+.RI "\fISet the deterministic parameter if the module implements the Deterministic() function\&. \fP"
+.ti -1c
+.RI "template<typename T > std::enable_if< !HasDeterministicCheck< T, bool &(T::*)(void)>::value &&!HasModelCheck< T, std::vector< \fBLayerTypes\fP > &(T::*)()>::value, void >::type \fBLayerDeterministic\fP (T *layer) const "
+.br
+.RI "\fIDo not set the deterministic parameter if the module doesn't implement the Deterministic() or Model() function\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "const bool \fBdeterministic\fP"
+.br
+.RI "\fIThe deterministic parameter\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBDeterministicSetVisitor\fP set the deterministic parameter given the deterministic value\&. 
+.PP
+Definition at line 29 of file deterministic_set_visitor\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::ann::DeterministicSetVisitor::DeterministicSetVisitor (const bool deterministic = \fCtrue\fP)"
+
+.PP
+Set the deterministic parameter given the current deterministic value\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename T > std::enable_if< HasDeterministicCheck<T, bool&(T::*)(void)>::value && HasModelCheck<T, std::vector<\fBLayerTypes\fP>&(T::*)()>::value, void>::type mlpack::ann::DeterministicSetVisitor::LayerDeterministic (T * layer) const\fC [private]\fP"
+
+.PP
+Set the deterministic parameter if the module implements the Deterministic() and Model() function\&. 
+.SS "template<typename T > std::enable_if< !HasDeterministicCheck<T, bool&(T::*)(void)>::value && HasModelCheck<T, std::vector<\fBLayerTypes\fP>&(T::*)()>::value, void>::type mlpack::ann::DeterministicSetVisitor::LayerDeterministic (T * layer) const\fC [private]\fP"
+
+.PP
+Set the deterministic parameter if the module implements the Model() function\&. 
+.SS "template<typename T > std::enable_if< HasDeterministicCheck<T, bool&(T::*)(void)>::value && !HasModelCheck<T, std::vector<\fBLayerTypes\fP>&(T::*)()>::value, void>::type mlpack::ann::DeterministicSetVisitor::LayerDeterministic (T * layer) const\fC [private]\fP"
+
+.PP
+Set the deterministic parameter if the module implements the Deterministic() function\&. 
+.SS "template<typename T > std::enable_if< !HasDeterministicCheck<T, bool&(T::*)(void)>::value && !HasModelCheck<T, std::vector<\fBLayerTypes\fP>&(T::*)()>::value, void>::type mlpack::ann::DeterministicSetVisitor::LayerDeterministic (T * layer) const\fC [private]\fP"
+
+.PP
+Do not set the deterministic parameter if the module doesn't implement the Deterministic() or Model() function\&. 
+.SS "template<typename LayerType > void mlpack::ann::DeterministicSetVisitor::operator() (LayerType * layer) const"
+
+.PP
+Set the deterministic parameter\&. 
+.SH "Member Data Documentation"
+.PP 
+.SS "const bool mlpack::ann::DeterministicSetVisitor::deterministic\fC [private]\fP"
+
+.PP
+The deterministic parameter\&. 
+.PP
+Definition at line 41 of file deterministic_set_visitor\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

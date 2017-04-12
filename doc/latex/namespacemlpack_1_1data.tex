@@ -1,0 +1,1363 @@
+\section{mlpack\+:\+:data Namespace Reference}
+\label{namespacemlpack_1_1data}\index{mlpack\+::data@{mlpack\+::data}}
+
+
+Functions to load and save matrices and models.  
+
+
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class {\bf Custom\+Imputation}
+\begin{DoxyCompactList}\small\item\em A simple custom imputation class. \end{DoxyCompactList}\item 
+class {\bf Dataset\+Mapper}
+\begin{DoxyCompactList}\small\item\em Auxiliary information for a dataset, including mappings to/from strings and the datatype of each dimension. \end{DoxyCompactList}\item 
+struct {\bf First\+Array\+Shim}
+\begin{DoxyCompactList}\small\item\em A first shim for arrays. \end{DoxyCompactList}\item 
+struct {\bf First\+Normal\+Array\+Shim}
+\begin{DoxyCompactList}\small\item\em A first shim for arrays without a Serialize() method. \end{DoxyCompactList}\item 
+struct {\bf First\+Shim}
+\begin{DoxyCompactList}\small\item\em The first shim\+: simply holds the object and its name. \end{DoxyCompactList}\item 
+struct {\bf Has\+Serialize}
+\item 
+struct {\bf Has\+Serialize\+Function}
+\item 
+class {\bf Imputer}
+\begin{DoxyCompactList}\small\item\em Given a dataset of a particular datatype, replace user-\/specified missing value with a variable dependent on the Strategy\+Type and Mapper\+Type. \end{DoxyCompactList}\item 
+class {\bf Increment\+Policy}
+\begin{DoxyCompactList}\small\item\em \doxyref{Increment\+Policy}{p.}{classmlpack_1_1data_1_1IncrementPolicy} is used as a helper class for \doxyref{Dataset\+Mapper}{p.}{classmlpack_1_1data_1_1DatasetMapper}. \end{DoxyCompactList}\item 
+class {\bf Listwise\+Deletion}
+\begin{DoxyCompactList}\small\item\em A complete-\/case analysis to remove the values containing mapped\+Value. \end{DoxyCompactList}\item 
+class {\bf Load\+C\+SV}
+\begin{DoxyCompactList}\small\item\em Load the csv file.\+This class use boost\+::spirit to implement the parser, please refer to following link {\tt http\+://theboostcpplibraries.\+com/boost.\+spirit} for quick review. \end{DoxyCompactList}\item 
+class {\bf Mean\+Imputation}
+\begin{DoxyCompactList}\small\item\em A simple mean imputation class. \end{DoxyCompactList}\item 
+class {\bf Median\+Imputation}
+\begin{DoxyCompactList}\small\item\em This is a class implementation of simple median imputation. \end{DoxyCompactList}\item 
+class {\bf Missing\+Policy}
+\begin{DoxyCompactList}\small\item\em \doxyref{Missing\+Policy}{p.}{classmlpack_1_1data_1_1MissingPolicy} is used as a helper class for \doxyref{Dataset\+Mapper}{p.}{classmlpack_1_1data_1_1DatasetMapper}. \end{DoxyCompactList}\item 
+struct {\bf Pointer\+Shim}
+\begin{DoxyCompactList}\small\item\em A shim for pointers. \end{DoxyCompactList}\item 
+struct {\bf Second\+Array\+Shim}
+\begin{DoxyCompactList}\small\item\em A shim for objects in an array; this is basically like the \doxyref{Second\+Shim}{p.}{structmlpack_1_1data_1_1SecondShim}, but for arrays that hold objects that have Serialize() methods instead of \doxyref{serialize()}{p.}{structmlpack_1_1data_1_1SecondArrayShim_a9b7f34ee88e73a99ced7ca803c6c010d} methods. \end{DoxyCompactList}\item 
+struct {\bf Second\+Normal\+Array\+Shim}
+\begin{DoxyCompactList}\small\item\em A shim for objects in an array which do not have a Serialize() function. \end{DoxyCompactList}\item 
+struct {\bf Second\+Shim}
+\begin{DoxyCompactList}\small\item\em The second shim\+: wrap the call to Serialize() inside of a \doxyref{serialize()}{p.}{structmlpack_1_1data_1_1SecondShim_af876ca6368e66bbfebbfa8ca25ad3b45} function, so that an archive type can call \doxyref{serialize()}{p.}{structmlpack_1_1data_1_1SecondShim_af876ca6368e66bbfebbfa8ca25ad3b45} on a \doxyref{Second\+Shim}{p.}{structmlpack_1_1data_1_1SecondShim} object and this gets forwarded correctly to our object\textquotesingle{}s Serialize() function. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+using {\bf Dataset\+Info} = {\bf Dataset\+Mapper}$<$ {\bf data\+::\+Increment\+Policy} $>$
+\end{DoxyCompactItemize}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum {\bf Datatype} \+: bool \{ \\*
+{\bf numeric} = 0, 
+\\*
+{\bf categorical} = 1
+ \}\begin{DoxyCompactList}\small\item\em The Datatype enum specifies the types of data mlpack algorithms can use. \end{DoxyCompactList}
+\item 
+enum {\bf format} \{ \\*
+{\bf autodetect}, 
+\\*
+{\bf text}, 
+\\*
+{\bf xml}, 
+\\*
+{\bf binary}
+ \}\begin{DoxyCompactList}\small\item\em Define the formats we can read through \doxyref{boost\+::serialization}{p.}{namespaceboost_1_1serialization}. \end{DoxyCompactList}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename T $>$ }\\void {\bf Binarize} (const arma\+::\+Mat$<$ T $>$ \&input, arma\+::\+Mat$<$ T $>$ \&output, const double threshold)
+\begin{DoxyCompactList}\small\item\em Given an input dataset and threshold, set values greater than threshold to 1 and values less than or equal to the threshold to 0. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void {\bf Binarize} (const arma\+::\+Mat$<$ T $>$ \&input, arma\+::\+Mat$<$ T $>$ \&output, const double threshold, const size\+\_\+t dimension)
+\begin{DoxyCompactList}\small\item\em Given an input dataset and threshold, set values greater than threshold to 1 and values less than or equal to the threshold to 0. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\{\bf First\+Array\+Shim}$<$ T $>$ {\bf Create\+Array\+N\+VP} (T $\ast$t, const size\+\_\+t len, const {\bf std\+::string} \&name, typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ {\bf Has\+Serialize}$<$ T $>$\+::value $>$ $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Call this function to produce a name-\/value pair for an array; this is similar to boost\+::serialization\+::make\+\_\+array(), but provides a nicer wrapper, allows types that have a Serialize() function, and allows you to give a name to your array. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\{\bf First\+Normal\+Array\+Shim}$<$ T $>$ {\bf Create\+Array\+N\+VP} (T $\ast$t, const size\+\_\+t len, const {\bf std\+::string} \&name, typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$!{\bf Has\+Serialize}$<$ T $>$\+::value $>$ $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Call this function to produce a name-\/value pair for an array; this is similar to boost\+::serialization\+::make\+\_\+array(), but provides a nicer wrapper, allows types that have a Serialize() function, and allows you to give a name to your array. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\{\bf First\+Shim}$<$ T $>$ {\bf Create\+N\+VP} (T \&t, const {\bf std\+::string} \&name, typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ {\bf Has\+Serialize}$<$ T $>$\+::value $>$ $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Call this function to produce a name-\/value pair; this is similar to B\+O\+O\+S\+T\+\_\+\+S\+E\+R\+I\+A\+L\+I\+Z\+A\+T\+I\+O\+N\+\_\+\+N\+V\+P(), but should be used for types that have a Serialize() function (or contain a type that has a Serialize() function) instead of a \doxyref{serialize()}{p.}{namespaceboost_1_1serialization_a5c7f0e288c18c6887ba037b2bef6230d} function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\const boost\+::serialization\+::nvp$<$ T $>$ {\bf Create\+N\+VP} (T \&t, const {\bf std\+::string} \&name, typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$!{\bf Has\+Serialize}$<$ T $>$\+::value $>$ $\ast$=0, typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$!std\+::is\+\_\+pointer$<$ T $>$\+::value $>$ $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Call this function to produce a name-\/value pair; this is similar to B\+O\+O\+S\+T\+\_\+\+S\+E\+R\+I\+A\+L\+I\+Z\+A\+T\+I\+O\+N\+\_\+\+N\+V\+P(), but should be used for types that have a Serialize() function (or contain a type that has a Serialize() function) instead of a \doxyref{serialize()}{p.}{namespaceboost_1_1serialization_a5c7f0e288c18c6887ba037b2bef6230d} function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\const boost\+::serialization\+::nvp$<$ {\bf Pointer\+Shim}$<$ T $>$ $\ast$ $>$ {\bf Create\+N\+VP} (T $\ast$\&t, const {\bf std\+::string} \&name, typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ {\bf Has\+Serialize}$<$ T $>$\+::value $>$ $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Call this function to produce a name-\/value pair; this is similar to B\+O\+O\+S\+T\+\_\+\+S\+E\+R\+I\+A\+L\+I\+Z\+A\+T\+I\+O\+N\+\_\+\+N\+V\+P(), but should be used for types that have a Serialize() function (or contain a type that has a Serialize() function) instead of a \doxyref{serialize()}{p.}{namespaceboost_1_1serialization_a5c7f0e288c18c6887ba037b2bef6230d} function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\const boost\+::serialization\+::nvp$<$ T $\ast$ $>$ {\bf Create\+N\+VP} (T $\ast$\&t, const {\bf std\+::string} \&name, typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$!{\bf Has\+Serialize}$<$ T $>$\+::value $>$ $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Call this function to produce a name-\/value pair; this is similar to B\+O\+O\+S\+T\+\_\+\+S\+E\+R\+I\+A\+L\+I\+Z\+A\+T\+I\+O\+N\+\_\+\+N\+V\+P(), but should be used for types that have a Serialize() function (or contain a type that has a Serialize() function) instead of a \doxyref{serialize()}{p.}{namespaceboost_1_1serialization_a5c7f0e288c18c6887ba037b2bef6230d} function. \end{DoxyCompactList}\item 
+{\bf std\+::string} {\bf Extension} (const {\bf std\+::string} \&filename)
+\item 
+{\bf H\+A\+S\+\_\+\+M\+E\+M\+\_\+\+F\+U\+NC} (Serialize, Has\+Serialize\+Check)
+\item 
+{\footnotesize template$<$typename eT $>$ }\\bool {\bf Load} (const {\bf std\+::string} \&filename, arma\+::\+Mat$<$ eT $>$ \&matrix, const bool fatal=false, const bool transpose=true)
+\begin{DoxyCompactList}\small\item\em Loads a matrix from file, guessing the filetype from the extension. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\bool {\bf Load} (const {\bf std\+::string} \&filename, arma\+::\+Col$<$ eT $>$ \&vec, const bool fatal=false)
+\begin{DoxyCompactList}\small\item\em Load a column vector from a file, guessing the filetype from the extension. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\bool {\bf Load} (const {\bf std\+::string} \&filename, arma\+::\+Row$<$ eT $>$ \&rowvec, const bool fatal=false)
+\begin{DoxyCompactList}\small\item\em Load a row vector from a file, guessing the filetype from the extension. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT , typename Policy\+Type $>$ }\\bool {\bf Load} (const {\bf std\+::string} \&filename, arma\+::\+Mat$<$ eT $>$ \&matrix, {\bf Dataset\+Mapper}$<$ Policy\+Type $>$ \&info, const bool fatal=false, const bool transpose=true)
+\begin{DoxyCompactList}\small\item\em Loads a matrix from a file, guessing the filetype from the extension and mapping categorical features with a \doxyref{Dataset\+Mapper}{p.}{classmlpack_1_1data_1_1DatasetMapper} object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\bool {\bf Load} (const {\bf std\+::string} \&filename, const {\bf std\+::string} \&name, T \&t, const bool fatal=false, {\bf format} f=format\+::autodetect)
+\begin{DoxyCompactList}\small\item\em Load a model from a file, guessing the filetype from the extension, or, optionally, loading the specified format. \end{DoxyCompactList}\item 
+template bool {\bf Load$<$ double $>$} (const {\bf std\+::string} \&, arma\+::\+Mat$<$ double $>$ \&, const bool, const bool)
+\item 
+template bool {\bf Load$<$ double, Increment\+Policy $>$} (const {\bf std\+::string} \&, arma\+::\+Mat$<$ double $>$ \&, {\bf Dataset\+Mapper}$<$ {\bf Increment\+Policy} $>$ \&, const bool, const bool)
+\item 
+template bool {\bf Load$<$ float $>$} (const {\bf std\+::string} \&, arma\+::\+Mat$<$ float $>$ \&, const bool, const bool)
+\item 
+template bool {\bf Load$<$ float, Increment\+Policy $>$} (const {\bf std\+::string} \&, arma\+::\+Mat$<$ float $>$ \&, {\bf Dataset\+Mapper}$<$ {\bf Increment\+Policy} $>$ \&, const bool, const bool)
+\item 
+template bool {\bf Load$<$ int $>$} (const {\bf std\+::string} \&, arma\+::\+Mat$<$ int $>$ \&, const bool, const bool)
+\item 
+template bool {\bf Load$<$ int, Increment\+Policy $>$} (const {\bf std\+::string} \&, arma\+::\+Mat$<$ int $>$ \&, {\bf Dataset\+Mapper}$<$ {\bf Increment\+Policy} $>$ \&, const bool, const bool)
+\item 
+template bool {\bf Load$<$ size\+\_\+t $>$} (const {\bf std\+::string} \&, arma\+::\+Mat$<$ size\+\_\+t $>$ \&, const bool, const bool)
+\item 
+template bool {\bf Load$<$ size\+\_\+t, Increment\+Policy $>$} (const {\bf std\+::string} \&, arma\+::\+Mat$<$ size\+\_\+t $>$ \&, {\bf Dataset\+Mapper}$<$ {\bf Increment\+Policy} $>$ \&, const bool, const bool)
+\item 
+template bool {\bf Load$<$ unsigned long long $>$} (const {\bf std\+::string} \&, arma\+::\+Mat$<$ unsigned long long $>$ \&, const bool, const bool)
+\item 
+template bool {\bf Load$<$ unsigned long long, Increment\+Policy $>$} (const {\bf std\+::string} \&, arma\+::\+Mat$<$ unsigned long long $>$ \&, {\bf Dataset\+Mapper}$<$ {\bf Increment\+Policy} $>$ \&, const bool, const bool)
+\item 
+{\footnotesize template$<$typename eT $>$ }\\void {\bf Load\+A\+R\+FF} (const {\bf std\+::string} \&filename, arma\+::\+Mat$<$ eT $>$ \&matrix)
+\begin{DoxyCompactList}\small\item\em A utility function to load an A\+R\+FF dataset as numeric features (that is, as an Armadillo matrix without any modification). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT , typename Policy\+Type $>$ }\\void {\bf Load\+A\+R\+FF} (const {\bf std\+::string} \&filename, arma\+::\+Mat$<$ eT $>$ \&matrix, {\bf Dataset\+Mapper}$<$ Policy\+Type $>$ \&info)
+\begin{DoxyCompactList}\small\item\em A utility function to load an A\+R\+FF dataset as numeric and categorical features, using the Dataset\+Info structure for mapping. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT , typename Row\+Type $>$ }\\void {\bf Normalize\+Labels} (const Row\+Type \&labels\+In, arma\+::\+Row$<$ size\+\_\+t $>$ \&labels, arma\+::\+Col$<$ eT $>$ \&mapping)
+\begin{DoxyCompactList}\small\item\em Given a set of labels of a particular datatype, convert them to unsigned labels in the range [0, n) where n is the number of different labels. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive , typename T $>$ }\\Archive \& {\bf operator\&} (Archive \&ar, {\bf First\+Shim}$<$ T $>$ t)
+\begin{DoxyCompactList}\small\item\em Catch when we call operator\& with a \doxyref{First\+Shim}{p.}{structmlpack_1_1data_1_1FirstShim} object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive , typename T $>$ }\\Archive \& {\bf operator\&} (Archive \&ar, {\bf First\+Array\+Shim}$<$ T $>$ t)
+\begin{DoxyCompactList}\small\item\em Catch when we call operator\& with a \doxyref{First\+Array\+Shim}{p.}{structmlpack_1_1data_1_1FirstArrayShim} object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive , typename T $>$ }\\Archive \& {\bf operator\&} (Archive \&ar, {\bf First\+Normal\+Array\+Shim}$<$ T $>$ t)
+\begin{DoxyCompactList}\small\item\em Catch when we call operator\& with a \doxyref{First\+Normal\+Array\+Shim}{p.}{structmlpack_1_1data_1_1FirstNormalArrayShim} object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive , typename T $>$ }\\Archive \& {\bf operator$<$$<$} (Archive \&ar, {\bf First\+Shim}$<$ T $>$ t)
+\begin{DoxyCompactList}\small\item\em Catch when we call operator$<$$<$ with a \doxyref{First\+Shim}{p.}{structmlpack_1_1data_1_1FirstShim} object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive , typename T $>$ }\\Archive \& {\bf operator$<$$<$} (Archive \&ar, {\bf First\+Array\+Shim}$<$ T $>$ t)
+\begin{DoxyCompactList}\small\item\em Catch when we call operator$<$$<$ with a \doxyref{First\+Array\+Shim}{p.}{structmlpack_1_1data_1_1FirstArrayShim} object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive , typename T $>$ }\\Archive \& {\bf operator$<$$<$} (Archive \&ar, {\bf First\+Normal\+Array\+Shim}$<$ T $>$ t)
+\begin{DoxyCompactList}\small\item\em Catch when we call operator$<$$<$ with a \doxyref{First\+Normal\+Array\+Shim}{p.}{structmlpack_1_1data_1_1FirstNormalArrayShim} object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive , typename T $>$ }\\Archive \& {\bf operator$>$$>$} (Archive \&ar, {\bf First\+Shim}$<$ T $>$ t)
+\begin{DoxyCompactList}\small\item\em Catch when we call operator$>$$>$ with a \doxyref{First\+Shim}{p.}{structmlpack_1_1data_1_1FirstShim} object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive , typename T $>$ }\\Archive \& {\bf operator$>$$>$} (Archive \&ar, {\bf First\+Array\+Shim}$<$ T $>$ t)
+\begin{DoxyCompactList}\small\item\em Catch when we call operator$>$$>$ with a \doxyref{First\+Array\+Shim}{p.}{structmlpack_1_1data_1_1FirstArrayShim} object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive , typename T $>$ }\\Archive \& {\bf operator$>$$>$} (Archive \&ar, {\bf First\+Normal\+Array\+Shim}$<$ T $>$ t)
+\begin{DoxyCompactList}\small\item\em Catch when we call operator$>$$>$ with a \doxyref{First\+Normal\+Array\+Shim}{p.}{structmlpack_1_1data_1_1FirstNormalArrayShim} object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void {\bf Revert\+Labels} (const arma\+::\+Row$<$ size\+\_\+t $>$ \&labels, const arma\+::\+Col$<$ eT $>$ \&mapping, arma\+::\+Row$<$ eT $>$ \&labels\+Out)
+\begin{DoxyCompactList}\small\item\em Given a set of labels that have been mapped to the range [0, n), map them back to the original labels given by the \textquotesingle{}mapping\textquotesingle{} vector. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\bool {\bf Save} (const {\bf std\+::string} \&filename, const arma\+::\+Mat$<$ eT $>$ \&matrix, const bool fatal=false, bool transpose=true)
+\begin{DoxyCompactList}\small\item\em Saves a matrix to file, guessing the filetype from the extension. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\bool {\bf Save} (const {\bf std\+::string} \&filename, const {\bf std\+::string} \&name, T \&t, const bool fatal=false, {\bf format} f=format\+::autodetect)
+\begin{DoxyCompactList}\small\item\em Saves a model to file, guessing the filetype from the extension, or, optionally, saving the specified format. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T , typename U $>$ }\\void {\bf Split} (const arma\+::\+Mat$<$ T $>$ \&input, const arma\+::\+Row$<$ U $>$ \&input\+Label, arma\+::\+Mat$<$ T $>$ \&train\+Data, arma\+::\+Mat$<$ T $>$ \&test\+Data, arma\+::\+Row$<$ U $>$ \&train\+Label, arma\+::\+Row$<$ U $>$ \&test\+Label, const double test\+Ratio)
+\begin{DoxyCompactList}\small\item\em Given an input dataset and labels, split into a training set and test set. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void {\bf Split} (const arma\+::\+Mat$<$ T $>$ \&input, arma\+::\+Mat$<$ T $>$ \&train\+Data, arma\+::\+Mat$<$ T $>$ \&test\+Data, const double test\+Ratio)
+\begin{DoxyCompactList}\small\item\em Given an input dataset, split into a training set and test set. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T , typename U $>$ }\\std\+::tuple$<$ arma\+::\+Mat$<$ T $>$, arma\+::\+Mat$<$ T $>$, arma\+::\+Row$<$ U $>$, arma\+::\+Row$<$ U $>$ $>$ {\bf Split} (const arma\+::\+Mat$<$ T $>$ \&input, const arma\+::\+Row$<$ U $>$ \&input\+Label, const double test\+Ratio)
+\begin{DoxyCompactList}\small\item\em Given an input dataset and labels, split into a training set and test set. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::tuple$<$ arma\+::\+Mat$<$ T $>$, arma\+::\+Mat$<$ T $>$ $>$ {\bf Split} (const arma\+::\+Mat$<$ T $>$ \&input, const double test\+Ratio)
+\begin{DoxyCompactList}\small\item\em Given an input dataset, split into a training set and test set. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Functions to load and save matrices and models. 
+
+Functions to load and save matrices.
+
+\subsection{Typedef Documentation}
+\index{mlpack\+::data@{mlpack\+::data}!Dataset\+Info@{Dataset\+Info}}
+\index{Dataset\+Info@{Dataset\+Info}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{Dataset\+Info}]{\setlength{\rightskip}{0pt plus 5cm}typedef {\bf Dataset\+Mapper}$<$ {\bf Increment\+Policy} $>$ {\bf mlpack\+::data\+::\+Dataset\+Info}}\label{namespacemlpack_1_1data_a78dcb1509876d801331776f0b895cffb}
+
+
+Definition at line 173 of file dataset\+\_\+mapper.\+hpp.
+
+
+
+\subsection{Enumeration Type Documentation}
+\index{mlpack\+::data@{mlpack\+::data}!Datatype@{Datatype}}
+\index{Datatype@{Datatype}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{Datatype}]{\setlength{\rightskip}{0pt plus 5cm}enum {\bf mlpack\+::data\+::\+Datatype} \+: bool}\label{namespacemlpack_1_1data_a32e8cde4498e5ed79dae4f9d1a845058}
+
+
+The Datatype enum specifies the types of data mlpack algorithms can use. 
+
+The vast majority of mlpack algorithms can only use numeric data (i.\+e. float/double/etc.), but some algorithms can use categorical data, specified via this Datatype enum and the \doxyref{Dataset\+Mapper}{p.}{classmlpack_1_1data_1_1DatasetMapper} class. \begin{Desc}
+\item[Enumerator]\par
+\begin{description}
+\index{numeric@{numeric}!mlpack\+::data@{mlpack\+::data}}\index{mlpack\+::data@{mlpack\+::data}!numeric@{numeric}}\item[{\em 
+numeric\label{namespacemlpack_1_1data_a32e8cde4498e5ed79dae4f9d1a845058a49e7dca1d58e49381fcafd2fa8befe40}
+}]\index{categorical@{categorical}!mlpack\+::data@{mlpack\+::data}}\index{mlpack\+::data@{mlpack\+::data}!categorical@{categorical}}\item[{\em 
+categorical\label{namespacemlpack_1_1data_a32e8cde4498e5ed79dae4f9d1a845058afa48efb7194c09e640a4946fcb133190}
+}]\end{description}
+\end{Desc}
+
+
+Definition at line 24 of file datatype.\+hpp.
+
+\index{mlpack\+::data@{mlpack\+::data}!format@{format}}
+\index{format@{format}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{format}]{\setlength{\rightskip}{0pt plus 5cm}enum {\bf mlpack\+::data\+::format}}\label{namespacemlpack_1_1data_a82fdad40c0f211749dd5b7794a478ad7}
+
+
+Define the formats we can read through \doxyref{boost\+::serialization}{p.}{namespaceboost_1_1serialization}. 
+
+\begin{Desc}
+\item[Enumerator]\par
+\begin{description}
+\index{autodetect@{autodetect}!mlpack\+::data@{mlpack\+::data}}\index{mlpack\+::data@{mlpack\+::data}!autodetect@{autodetect}}\item[{\em 
+autodetect\label{namespacemlpack_1_1data_a82fdad40c0f211749dd5b7794a478ad7a7b886036a0428eed2491c5bbf9193850}
+}]\index{text@{text}!mlpack\+::data@{mlpack\+::data}}\index{mlpack\+::data@{mlpack\+::data}!text@{text}}\item[{\em 
+text\label{namespacemlpack_1_1data_a82fdad40c0f211749dd5b7794a478ad7a33fb1046da125412af0ac83904b1f559}
+}]\index{xml@{xml}!mlpack\+::data@{mlpack\+::data}}\index{mlpack\+::data@{mlpack\+::data}!xml@{xml}}\item[{\em 
+xml\label{namespacemlpack_1_1data_a82fdad40c0f211749dd5b7794a478ad7ac63d17a4db61541233d7579e571c6274}
+}]\index{binary@{binary}!mlpack\+::data@{mlpack\+::data}}\index{mlpack\+::data@{mlpack\+::data}!binary@{binary}}\item[{\em 
+binary\label{namespacemlpack_1_1data_a82fdad40c0f211749dd5b7794a478ad7a00d3edb681e6bb8301dd7ede06c12dbd}
+}]\end{description}
+\end{Desc}
+
+
+Definition at line 20 of file format.\+hpp.
+
+
+
+\subsection{Function Documentation}
+\index{mlpack\+::data@{mlpack\+::data}!Binarize@{Binarize}}
+\index{Binarize@{Binarize}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{Binarize(const arma\+::\+Mat$<$ T $>$ \&input, arma\+::\+Mat$<$ T $>$ \&output, const double threshold)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ void mlpack\+::data\+::\+Binarize (
+\begin{DoxyParamCaption}
+\item[{const arma\+::\+Mat$<$ T $>$ \&}]{input, }
+\item[{arma\+::\+Mat$<$ T $>$ \&}]{output, }
+\item[{const double}]{threshold}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_a28da72e55467d0872681827b30b490ac}
+
+
+Given an input dataset and threshold, set values greater than threshold to 1 and values less than or equal to the threshold to 0. 
+
+This overload applies the changes to all dimensions.
+
+
+\begin{DoxyCode}
+arma::Mat<double> input = loadData();
+arma::Mat<double> output;
+\textcolor{keywordtype}{double} threshold = 0.5;
+
+\textcolor{comment}{// Binarize the whole Matrix. All positive values in will be set to 1 and}
+\textcolor{comment}{// the values less than or equal to 0.5 will become 0.}
+Binarize<double>(input, output, threshold);
+\end{DoxyCode}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input matrix to Binarize. \\
+\hline
+{\em output} & Matrix you want to save binarized data into. \\
+\hline
+{\em threshold} & Threshold can by any number. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 41 of file binarize.\+hpp.
+
+\index{mlpack\+::data@{mlpack\+::data}!Binarize@{Binarize}}
+\index{Binarize@{Binarize}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{Binarize(const arma\+::\+Mat$<$ T $>$ \&input, arma\+::\+Mat$<$ T $>$ \&output, const double threshold, const size\+\_\+t dimension)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ void mlpack\+::data\+::\+Binarize (
+\begin{DoxyParamCaption}
+\item[{const arma\+::\+Mat$<$ T $>$ \&}]{input, }
+\item[{arma\+::\+Mat$<$ T $>$ \&}]{output, }
+\item[{const double}]{threshold, }
+\item[{const size\+\_\+t}]{dimension}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_a39606420520e81f5e87d6ea1e64c27ae}
+
+
+Given an input dataset and threshold, set values greater than threshold to 1 and values less than or equal to the threshold to 0. 
+
+This overload takes a dimension and applys the changes to the given dimension.
+
+
+\begin{DoxyCode}
+arma::Mat<double> input = loadData();
+arma::Mat<double> output;
+\textcolor{keywordtype}{double} threshold = 0.5;
+\textcolor{keywordtype}{size\_t} dimension = 0;
+
+\textcolor{comment}{// Binarize the first dimension. All positive values in the first dimension}
+\textcolor{comment}{// will be set to 1 and the values less than or equal to 0 will become 0.}
+Binarize<double>(input, output, threshold, dimension);
+\end{DoxyCode}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input matrix to Binarize. \\
+\hline
+{\em output} & Matrix you want to save binarized data into. \\
+\hline
+{\em threshold} & Threshold can by any number. \\
+\hline
+{\em dimension} & Feature to apply the Binarize function. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 83 of file binarize.\+hpp.
+
+\index{mlpack\+::data@{mlpack\+::data}!Create\+Array\+N\+VP@{Create\+Array\+N\+VP}}
+\index{Create\+Array\+N\+VP@{Create\+Array\+N\+VP}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{Create\+Array\+N\+V\+P(\+T $\ast$t, const size\+\_\+t len, const std\+::string \&name, typename std\+::enable\+\_\+if\+\_\+t$<$ Has\+Serialize$<$ T $>$\+::value $>$ $\ast$=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ {\bf First\+Array\+Shim}$<$T$>$ mlpack\+::data\+::\+Create\+Array\+N\+VP (
+\begin{DoxyParamCaption}
+\item[{T $\ast$}]{t, }
+\item[{const size\+\_\+t}]{len, }
+\item[{const {\bf std\+::string} \&}]{name, }
+\item[{typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ {\bf Has\+Serialize}$<$ T $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{namespacemlpack_1_1data_af6fa9681153c32b508db3ab023187e3c}
+
+
+Call this function to produce a name-\/value pair for an array; this is similar to boost\+::serialization\+::make\+\_\+array(), but provides a nicer wrapper, allows types that have a Serialize() function, and allows you to give a name to your array. 
+
+This particular overload is used by classes that have a Serialize() function. 
+
+Definition at line 214 of file serialization\+\_\+shim.\+hpp.
+
+\index{mlpack\+::data@{mlpack\+::data}!Create\+Array\+N\+VP@{Create\+Array\+N\+VP}}
+\index{Create\+Array\+N\+VP@{Create\+Array\+N\+VP}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{Create\+Array\+N\+V\+P(\+T $\ast$t, const size\+\_\+t len, const std\+::string \&name, typename std\+::enable\+\_\+if\+\_\+t$<$"!Has\+Serialize$<$ T $>$\+::value $>$ $\ast$=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ {\bf First\+Normal\+Array\+Shim}$<$T$>$ mlpack\+::data\+::\+Create\+Array\+N\+VP (
+\begin{DoxyParamCaption}
+\item[{T $\ast$}]{t, }
+\item[{const size\+\_\+t}]{len, }
+\item[{const {\bf std\+::string} \&}]{name, }
+\item[{typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$!{\bf Has\+Serialize}$<$ T $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{namespacemlpack_1_1data_ae0d96751215d530e53b8ed8c88a7f2cc}
+
+
+Call this function to produce a name-\/value pair for an array; this is similar to boost\+::serialization\+::make\+\_\+array(), but provides a nicer wrapper, allows types that have a Serialize() function, and allows you to give a name to your array. 
+
+This particular overload is used by classes that do not have a Serialize() function or primitive types. 
+
+Definition at line 231 of file serialization\+\_\+shim.\+hpp.
+
+\index{mlpack\+::data@{mlpack\+::data}!Create\+N\+VP@{Create\+N\+VP}}
+\index{Create\+N\+VP@{Create\+N\+VP}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{Create\+N\+V\+P(\+T \&t, const std\+::string \&name, typename std\+::enable\+\_\+if\+\_\+t$<$ Has\+Serialize$<$ T $>$\+::value $>$ $\ast$=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ {\bf First\+Shim}$<$T$>$ mlpack\+::data\+::\+Create\+N\+VP (
+\begin{DoxyParamCaption}
+\item[{T \&}]{t, }
+\item[{const {\bf std\+::string} \&}]{name, }
+\item[{typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ {\bf Has\+Serialize}$<$ T $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{namespacemlpack_1_1data_a785ee98e0070286ef86eeeea85a74018}
+
+
+Call this function to produce a name-\/value pair; this is similar to B\+O\+O\+S\+T\+\_\+\+S\+E\+R\+I\+A\+L\+I\+Z\+A\+T\+I\+O\+N\+\_\+\+N\+V\+P(), but should be used for types that have a Serialize() function (or contain a type that has a Serialize() function) instead of a \doxyref{serialize()}{p.}{namespaceboost_1_1serialization_a5c7f0e288c18c6887ba037b2bef6230d} function. 
+
+The template type should be automatically deduced, and the two \doxyref{std\+::enable\+\_\+if\+\_\+t$<$$>$}{p.}{namespacestd_ac774dbdf8ae769197167b2a8273462fc} parameters are automatically deduced too. So usage looks like
+
+
+\begin{DoxyCode}
+MyType t;
+CreateNVP(t, \textcolor{stringliteral}{"my\_name\_for\_t"});
+\end{DoxyCode}
+
+
+Note that the second parameter, \textquotesingle{}name\textquotesingle{}, must be a valid X\+ML identifier.
+
+This function does not return a boost\+::serialization\+::nvp$<$\+T$>$ object, but instead a shim type (First\+Shim$<$\+T$>$).
+
+This particular overload is used by classes that have a Serialize() function.
+
+
+\begin{DoxyParams}{Parameters}
+{\em t} & Object to create N\+VP (name-\/value pair) with. \\
+\hline
+{\em name} & Name of object (must be a valid X\+ML identifier). \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 94 of file serialization\+\_\+shim.\+hpp.
+
+
+
+Referenced by mlpack\+::tree\+::\+Binary\+Numeric\+Split\+Info$<$ Observation\+Type $>$\+::\+Serialize(), mlpack\+::tree\+::\+Numeric\+Split\+Info$<$ Observation\+Type $>$\+::\+Serialize(), mlpack\+::range\+::\+Range\+Search\+Stat\+::\+Serialize(), mlpack\+::amf\+::\+Given\+Initialization\+::\+Serialize(), mlpack\+::distribution\+::\+Regression\+Distribution\+::\+Serialize(), mlpack\+::neighbor\+::\+R\+A\+Query\+Stat$<$ Sort\+Policy $>$\+::\+Serialize(), mlpack\+::kernel\+::\+Polynomial\+Kernel\+::\+Serialize(), mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel\+::\+Serialize(), mlpack\+::tree\+::\+Axis\+Parallel\+Proj\+Vector\+::\+Serialize(), mlpack\+::gmm\+::\+Eigenvalue\+Ratio\+Constraint\+::\+Serialize(), mlpack\+::adaboost\+::\+Ada\+Boost\+Model\+::\+Serialize(), mlpack\+::kernel\+::\+Triangular\+Kernel\+::\+Serialize(), mlpack\+::kmeans\+::\+Refined\+Start\+::\+Serialize(), mlpack\+::neighbor\+::\+Neighbor\+Search\+Stat$<$ neighbor\+::\+Nearest\+Neighbor\+Sort $>$\+::\+Serialize(), mlpack\+::kernel\+::\+Laplacian\+Kernel\+::\+Serialize(), mlpack\+::fastmks\+::\+Fast\+M\+K\+S\+Stat\+::\+Serialize(), mlpack\+::kernel\+::\+Spherical\+Kernel\+::\+Serialize(), mlpack\+::tree\+::\+Hoeffding\+Categorical\+Split$<$ Fitness\+Function $>$\+::\+Serialize(), mlpack\+::regression\+::\+Linear\+Regression\+::\+Serialize(), mlpack\+::tree\+::\+Hyperplane\+Base$<$ Bound\+T, Proj\+Vector\+T $>$\+::\+Serialize(), mlpack\+::data\+::\+Dataset\+Mapper$<$ Policy\+Type $>$\+::\+Serialize(), mlpack\+::hmm\+::\+H\+M\+M\+Model\+::\+Serialize(), mlpack\+::tree\+::\+Proj\+Vector\+::\+Serialize(), mlpack\+::distribution\+::\+Laplace\+Distribution\+::\+Serialize(), mlpack\+::distribution\+::\+Gaussian\+Distribution\+::\+Serialize(), mlpack\+::kernel\+::\+Gaussian\+Kernel\+::\+Serialize(), mlpack\+::tree\+::\+Hoeffding\+Tree\+Model\+::\+Serialize(), mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning\+::\+Serialize(), mlpack\+::regression\+::\+Softmax\+Regression$<$ Optimizer\+Type $>$\+::\+Serialize(), mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information$<$ Tree\+Type $>$\+::\+Split\+History\+Struct\+::\+Serialize(), mlpack\+::distribution\+::\+Discrete\+Distribution\+::\+Serialize(), mlpack\+::tree\+::\+X\+Tree\+Auxiliary\+Information$<$ Tree\+Type $>$\+::\+Serialize(), mlpack\+::data\+::\+Second\+Array\+Shim$<$ T $>$\+::serialize(), mlpack\+::\+Serialize\+Object(), and mlpack\+::\+Serialize\+Pointer\+Object().
+
+\index{mlpack\+::data@{mlpack\+::data}!Create\+N\+VP@{Create\+N\+VP}}
+\index{Create\+N\+VP@{Create\+N\+VP}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{Create\+N\+V\+P(\+T \&t, const std\+::string \&name, typename std\+::enable\+\_\+if\+\_\+t$<$"!Has\+Serialize$<$ T $>$\+::value $>$ $\ast$=0, typename std\+::enable\+\_\+if\+\_\+t$<$"!std\+::is\+\_\+pointer$<$ T $>$\+::value $>$ $\ast$=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ const boost\+::serialization\+::nvp$<$T$>$ mlpack\+::data\+::\+Create\+N\+VP (
+\begin{DoxyParamCaption}
+\item[{T \&}]{t, }
+\item[{const {\bf std\+::string} \&}]{name, }
+\item[{typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$!{\bf Has\+Serialize}$<$ T $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0}, }
+\item[{typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$!std\+::is\+\_\+pointer$<$ T $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{namespacemlpack_1_1data_abf383bcf90b4a431046de00795f776ea}
+
+
+Call this function to produce a name-\/value pair; this is similar to B\+O\+O\+S\+T\+\_\+\+S\+E\+R\+I\+A\+L\+I\+Z\+A\+T\+I\+O\+N\+\_\+\+N\+V\+P(), but should be used for types that have a Serialize() function (or contain a type that has a Serialize() function) instead of a \doxyref{serialize()}{p.}{namespaceboost_1_1serialization_a5c7f0e288c18c6887ba037b2bef6230d} function. 
+
+The template type should be automatically deduced, and the two std\+::enable\+\_\+if$<$$>$ parameters are automatically deduced too. So usage looks like
+
+
+\begin{DoxyCode}
+MyType t;
+CreateNVP(t, \textcolor{stringliteral}{"my\_name\_for\_t"});
+\end{DoxyCode}
+
+
+Note that the second parameter, \textquotesingle{}name\textquotesingle{}, must be a valid X\+ML identifier.
+
+This particular overload is used by classes that do not have a Serialize() function (so, no shim is necessary) or primitive types that aren\textquotesingle{}t pointers.
+
+
+\begin{DoxyParams}{Parameters}
+{\em t} & Object to create N\+VP (name-\/value pair) with. \\
+\hline
+{\em name} & Name of object (must be a valid X\+ML identifier). \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 128 of file serialization\+\_\+shim.\+hpp.
+
+\index{mlpack\+::data@{mlpack\+::data}!Create\+N\+VP@{Create\+N\+VP}}
+\index{Create\+N\+VP@{Create\+N\+VP}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{Create\+N\+V\+P(\+T $\ast$\&t, const std\+::string \&name, typename std\+::enable\+\_\+if\+\_\+t$<$ Has\+Serialize$<$ T $>$\+::value $>$ $\ast$=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ const boost\+::serialization\+::nvp$<${\bf Pointer\+Shim}$<$T$>$$\ast$$>$ mlpack\+::data\+::\+Create\+N\+VP (
+\begin{DoxyParamCaption}
+\item[{T $\ast$\&}]{t, }
+\item[{const {\bf std\+::string} \&}]{name, }
+\item[{typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ {\bf Has\+Serialize}$<$ T $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{namespacemlpack_1_1data_a62d73620951c2dd75562c84215e3633b}
+
+
+Call this function to produce a name-\/value pair; this is similar to B\+O\+O\+S\+T\+\_\+\+S\+E\+R\+I\+A\+L\+I\+Z\+A\+T\+I\+O\+N\+\_\+\+N\+V\+P(), but should be used for types that have a Serialize() function (or contain a type that has a Serialize() function) instead of a \doxyref{serialize()}{p.}{namespaceboost_1_1serialization_a5c7f0e288c18c6887ba037b2bef6230d} function. 
+
+The template type should be automatically deduced, and the two \doxyref{std\+::enable\+\_\+if\+\_\+t$<$$>$}{p.}{namespacestd_ac774dbdf8ae769197167b2a8273462fc} parameters are automatically deduced too. So usage looks like
+
+
+\begin{DoxyCode}
+MyType t;
+CreateNVP(t, \textcolor{stringliteral}{"my\_name\_for\_t"});
+\end{DoxyCode}
+
+
+Note that the second parameter, \textquotesingle{}name\textquotesingle{}, must be a valid X\+ML identifier.
+
+This particular overload is used by pointers to classes that have a Serialize() function.
+
+
+\begin{DoxyParams}{Parameters}
+{\em t} & Object to create N\+VP (name-\/value pair) with. \\
+\hline
+{\em name} & Name of object (must be a valid X\+ML identifier). \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 163 of file serialization\+\_\+shim.\+hpp.
+
+\index{mlpack\+::data@{mlpack\+::data}!Create\+N\+VP@{Create\+N\+VP}}
+\index{Create\+N\+VP@{Create\+N\+VP}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{Create\+N\+V\+P(\+T $\ast$\&t, const std\+::string \&name, typename std\+::enable\+\_\+if\+\_\+t$<$"!Has\+Serialize$<$ T $>$\+::value $>$ $\ast$=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ const boost\+::serialization\+::nvp$<$T$\ast$$>$ mlpack\+::data\+::\+Create\+N\+VP (
+\begin{DoxyParamCaption}
+\item[{T $\ast$\&}]{t, }
+\item[{const {\bf std\+::string} \&}]{name, }
+\item[{typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$!{\bf Has\+Serialize}$<$ T $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{namespacemlpack_1_1data_a23e2e76fcdd54fb7ce2117e9598ea44c}
+
+
+Call this function to produce a name-\/value pair; this is similar to B\+O\+O\+S\+T\+\_\+\+S\+E\+R\+I\+A\+L\+I\+Z\+A\+T\+I\+O\+N\+\_\+\+N\+V\+P(), but should be used for types that have a Serialize() function (or contain a type that has a Serialize() function) instead of a \doxyref{serialize()}{p.}{namespaceboost_1_1serialization_a5c7f0e288c18c6887ba037b2bef6230d} function. 
+
+The template type should be automatically deduced, and the two \doxyref{std\+::enable\+\_\+if\+\_\+t$<$$>$}{p.}{namespacestd_ac774dbdf8ae769197167b2a8273462fc} parameters are automatically deduced too. So usage looks like
+
+
+\begin{DoxyCode}
+MyType t;
+CreateNVP(t, \textcolor{stringliteral}{"my\_name\_for\_t"});
+\end{DoxyCode}
+
+
+Note that the second parameter, \textquotesingle{}name\textquotesingle{}, must be a valid X\+ML identifier.
+
+This particular overload is used by pointers to classes that do not have a Serialize() function, or pointers to non-\/classes.
+
+
+\begin{DoxyParams}{Parameters}
+{\em t} & Object to create N\+VP (name-\/value pair) with. \\
+\hline
+{\em name} & Name of object (must be a valid X\+ML identifier). \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 198 of file serialization\+\_\+shim.\+hpp.
+
+\index{mlpack\+::data@{mlpack\+::data}!Extension@{Extension}}
+\index{Extension@{Extension}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{Extension(const std\+::string \&filename)}]{\setlength{\rightskip}{0pt plus 5cm}{\bf std\+::string} mlpack\+::data\+::\+Extension (
+\begin{DoxyParamCaption}
+\item[{const {\bf std\+::string} \&}]{filename}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{namespacemlpack_1_1data_a5a13b28050a64b446916c067e1466951}
+
+
+Definition at line 21 of file extension.\+hpp.
+
+
+
+References string().
+
+\index{mlpack\+::data@{mlpack\+::data}!H\+A\+S\+\_\+\+M\+E\+M\+\_\+\+F\+U\+NC@{H\+A\+S\+\_\+\+M\+E\+M\+\_\+\+F\+U\+NC}}
+\index{H\+A\+S\+\_\+\+M\+E\+M\+\_\+\+F\+U\+NC@{H\+A\+S\+\_\+\+M\+E\+M\+\_\+\+F\+U\+NC}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{H\+A\+S\+\_\+\+M\+E\+M\+\_\+\+F\+U\+N\+C(\+Serialize, Has\+Serialize\+Check)}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::data\+::\+H\+A\+S\+\_\+\+M\+E\+M\+\_\+\+F\+U\+NC (
+\begin{DoxyParamCaption}
+\item[{Serialize}]{, }
+\item[{Has\+Serialize\+Check}]{}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_a0ab6ed8ea2bbfe83ccc5554bc9dd6dee}
+\index{mlpack\+::data@{mlpack\+::data}!Load@{Load}}
+\index{Load@{Load}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{Load(const std\+::string \&filename, arma\+::\+Mat$<$ e\+T $>$ \&matrix, const bool fatal=false, const bool transpose=true)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename eT $>$ bool mlpack\+::data\+::\+Load (
+\begin{DoxyParamCaption}
+\item[{const {\bf std\+::string} \&}]{filename, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&}]{matrix, }
+\item[{const bool}]{fatal = {\ttfamily false}, }
+\item[{const bool}]{transpose = {\ttfamily true}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_a19805d6585ac8b0be7c4e4b7f081977c}
+
+
+Loads a matrix from file, guessing the filetype from the extension. 
+
+This will transpose the matrix at load time (unless the transpose parameter is set to false). If the filetype cannot be determined, an error will be given.
+
+The supported types of files are the same as found in Armadillo\+:
+
+
+\begin{DoxyItemize}
+\item C\+SV (csv\+\_\+ascii), denoted by .csv, or optionally .txt
+\item T\+SV (raw\+\_\+ascii), denoted by .tsv, .csv, or .txt
+\item A\+S\+C\+II (raw\+\_\+ascii), denoted by .txt
+\item Armadillo A\+S\+C\+II (arma\+\_\+ascii), also denoted by .txt
+\item P\+GM (pgm\+\_\+binary), denoted by .pgm
+\item P\+PM (ppm\+\_\+binary), denoted by .ppm
+\item Raw binary (raw\+\_\+binary), denoted by .bin
+\item Armadillo binary (arma\+\_\+binary), denoted by .bin
+\item H\+D\+F5, denoted by .hdf, .hdf5, .h5, or .he5
+\end{DoxyItemize}
+
+If the file extension is not one of those types, an error will be given. This is preferable to Armadillo\textquotesingle{}s default behavior of loading an unknown filetype as raw\+\_\+binary, which can have very confusing effects.
+
+If the parameter \textquotesingle{}fatal\textquotesingle{} is set to true, a std\+::runtime\+\_\+error exception will be thrown if the matrix does not load successfully. The parameter \textquotesingle{}transpose\textquotesingle{} controls whether or not the matrix is transposed after loading. In most cases, because data is generally stored in a row-\/major format and mlpack requires column-\/major matrices, this should be left at its default value of \textquotesingle{}true\textquotesingle{}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em filename} & Name of file to load. \\
+\hline
+{\em matrix} & Matrix to load contents of file into. \\
+\hline
+{\em fatal} & If an error should be reported as fatal (default false). \\
+\hline
+{\em transpose} & If true, transpose the matrix after loading. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Boolean value indicating success or failure of load. 
+\end{DoxyReturn}
+\index{mlpack\+::data@{mlpack\+::data}!Load@{Load}}
+\index{Load@{Load}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{Load(const std\+::string \&filename, arma\+::\+Col$<$ e\+T $>$ \&vec, const bool fatal=false)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename eT $>$ bool mlpack\+::data\+::\+Load (
+\begin{DoxyParamCaption}
+\item[{const {\bf std\+::string} \&}]{filename, }
+\item[{arma\+::\+Col$<$ eT $>$ \&}]{vec, }
+\item[{const bool}]{fatal = {\ttfamily false}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_adb0c6adf83024427e47a03bd7fbfb885}
+
+
+Load a column vector from a file, guessing the filetype from the extension. 
+
+The supported types of files are the same as found in Armadillo\+:
+
+
+\begin{DoxyItemize}
+\item C\+SV (csv\+\_\+ascii), denoted by .csv, or optionally .txt
+\item T\+SV (raw\+\_\+ascii), denoted by .tsv, .csv, or .txt
+\item A\+S\+C\+II (raw\+\_\+ascii), denoted by .txt
+\item Armadillo A\+S\+C\+II (arma\+\_\+ascii), also denoted by .txt
+\item P\+GM (pgm\+\_\+binary), denoted by .pgm
+\item P\+PM (ppm\+\_\+binary), denoted by .ppm
+\item Raw binary (raw\+\_\+binary), denoted by .bin
+\item Armadillo binary (arma\+\_\+binary), denoted by .bin
+\item H\+D\+F5, denoted by .hdf, .hdf5, .h5, or .he5
+\end{DoxyItemize}
+
+If the file extension is not one of those types, an error will be given. This is preferable to Armadillo\textquotesingle{}s default behavior of loading an unknown filetype as raw\+\_\+binary, which can have very confusing effects.
+
+If the parameter \textquotesingle{}fatal\textquotesingle{} is set to true, a std\+::runtime\+\_\+error exception will be thrown if the matrix does not load successfully.
+
+
+\begin{DoxyParams}{Parameters}
+{\em filename} & Name of file to load. \\
+\hline
+{\em colvec} & Column vector to load contents of file into. \\
+\hline
+{\em fatal} & If an error should be reported as fatal (default false). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Boolean value indicating success or failure of load. 
+\end{DoxyReturn}
+\index{mlpack\+::data@{mlpack\+::data}!Load@{Load}}
+\index{Load@{Load}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{Load(const std\+::string \&filename, arma\+::\+Row$<$ e\+T $>$ \&rowvec, const bool fatal=false)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename eT $>$ bool mlpack\+::data\+::\+Load (
+\begin{DoxyParamCaption}
+\item[{const {\bf std\+::string} \&}]{filename, }
+\item[{arma\+::\+Row$<$ eT $>$ \&}]{rowvec, }
+\item[{const bool}]{fatal = {\ttfamily false}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_ac5679a4dc8c6129e3895a1089855d25d}
+
+
+Load a row vector from a file, guessing the filetype from the extension. 
+
+The supported types of files are the same as found in Armadillo\+:
+
+
+\begin{DoxyItemize}
+\item C\+SV (csv\+\_\+ascii), denoted by .csv, or optionally .txt
+\item T\+SV (raw\+\_\+ascii), denoted by .tsv, .csv, or .txt
+\item A\+S\+C\+II (raw\+\_\+ascii), denoted by .txt
+\item Armadillo A\+S\+C\+II (arma\+\_\+ascii), also denoted by .txt
+\item P\+GM (pgm\+\_\+binary), denoted by .pgm
+\item P\+PM (ppm\+\_\+binary), denoted by .ppm
+\item Raw binary (raw\+\_\+binary), denoted by .bin
+\item Armadillo binary (arma\+\_\+binary), denoted by .bin
+\item H\+D\+F5, denoted by .hdf, .hdf5, .h5, or .he5
+\end{DoxyItemize}
+
+If the file extension is not one of those types, an error will be given. This is preferable to Armadillo\textquotesingle{}s default behavior of loading an unknown filetype as raw\+\_\+binary, which can have very confusing effects.
+
+If the parameter \textquotesingle{}fatal\textquotesingle{} is set to true, a std\+::runtime\+\_\+error exception will be thrown if the matrix does not load successfully.
+
+
+\begin{DoxyParams}{Parameters}
+{\em filename} & Name of file to load. \\
+\hline
+{\em colvec} & Column vector to load contents of file into. \\
+\hline
+{\em fatal} & If an error should be reported as fatal (default false). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Boolean value indicating success or failure of load. 
+\end{DoxyReturn}
+\index{mlpack\+::data@{mlpack\+::data}!Load@{Load}}
+\index{Load@{Load}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{Load(const std\+::string \&filename, arma\+::\+Mat$<$ e\+T $>$ \&matrix, Dataset\+Mapper$<$ Policy\+Type $>$ \&info, const bool fatal=false, const bool transpose=true)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename eT , typename Policy\+Type $>$ bool mlpack\+::data\+::\+Load (
+\begin{DoxyParamCaption}
+\item[{const {\bf std\+::string} \&}]{filename, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&}]{matrix, }
+\item[{{\bf Dataset\+Mapper}$<$ Policy\+Type $>$ \&}]{info, }
+\item[{const bool}]{fatal = {\ttfamily false}, }
+\item[{const bool}]{transpose = {\ttfamily true}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_a9af06d46f91871c42f38e30aac5d4666}
+
+
+Loads a matrix from a file, guessing the filetype from the extension and mapping categorical features with a \doxyref{Dataset\+Mapper}{p.}{classmlpack_1_1data_1_1DatasetMapper} object. 
+
+This will transpose the matrix (unless the transpose parameter is set to false). This particular overload of \doxyref{Load()}{p.}{namespacemlpack_1_1data_a19805d6585ac8b0be7c4e4b7f081977c} can only load text-\/based formats, such as those given below\+:
+
+
+\begin{DoxyItemize}
+\item C\+SV (csv\+\_\+ascii), denoted by .csv, or optionally .txt
+\item T\+SV (raw\+\_\+ascii), denoted by .tsv, .csv, or .txt
+\item A\+S\+C\+II (raw\+\_\+ascii), denoted by .txt
+\end{DoxyItemize}
+
+If the file extension is not one of those types, an error will be given. This is preferable to Armadillo\textquotesingle{}s default behavior of loading an unknown filetype as raw\+\_\+binary, which can have very confusing effects.
+
+If the parameter \textquotesingle{}fatal\textquotesingle{} is set to true, a std\+::runtime\+\_\+error exception will be thrown if the matrix does not load successfully. The parameter \textquotesingle{}transpose\textquotesingle{} controls whether or not the matrix is transposed after loading. In most cases, because data is generally stored in a row-\/major format and mlpack requires column-\/major matrices, this should be left at its default value of \textquotesingle{}true\textquotesingle{}.
+
+The \doxyref{Dataset\+Mapper}{p.}{classmlpack_1_1data_1_1DatasetMapper} object passed to this function will be re-\/created, so any mappings from previous loads will be lost.
+
+
+\begin{DoxyParams}{Parameters}
+{\em filename} & Name of file to load. \\
+\hline
+{\em matrix} & Matrix to load contents of file into. \\
+\hline
+{\em info} & \doxyref{Dataset\+Mapper}{p.}{classmlpack_1_1data_1_1DatasetMapper} object to populate with mappings and data types. \\
+\hline
+{\em fatal} & If an error should be reported as fatal (default false). \\
+\hline
+{\em transpose} & If true, transpose the matrix after loading. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Boolean value indicating success or failure of load. 
+\end{DoxyReturn}
+\index{mlpack\+::data@{mlpack\+::data}!Load@{Load}}
+\index{Load@{Load}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{Load(const std\+::string \&filename, const std\+::string \&name, T \&t, const bool fatal=false, format f=format\+::autodetect)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ bool mlpack\+::data\+::\+Load (
+\begin{DoxyParamCaption}
+\item[{const {\bf std\+::string} \&}]{filename, }
+\item[{const {\bf std\+::string} \&}]{name, }
+\item[{T \&}]{t, }
+\item[{const bool}]{fatal = {\ttfamily false}, }
+\item[{{\bf format}}]{f = {\ttfamily format\+:\+:autodetect}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_ac0441d5f7e76f0fcdeec487d4a9732ac}
+
+
+Load a model from a file, guessing the filetype from the extension, or, optionally, loading the specified format. 
+
+If automatic extension detection is used and the filetype cannot be determined, an error will be given.
+
+The supported types of files are the same as what is supported by the \doxyref{boost\+::serialization}{p.}{namespaceboost_1_1serialization} library\+:
+
+
+\begin{DoxyItemize}
+\item text, denoted by .txt
+\item xml, denoted by .xml
+\item binary, denoted by .bin
+\end{DoxyItemize}
+
+The format parameter can take any of the values in the \textquotesingle{}format\textquotesingle{} enum\+: \textquotesingle{}format\+::autodetect\textquotesingle{}, \textquotesingle{}format\+::text\textquotesingle{}, \textquotesingle{}format\+::xml\textquotesingle{}, and \textquotesingle{}format\+::binary\textquotesingle{}. The autodetect functionality operates on the file extension (so, \char`\"{}file.\+txt\char`\"{} would be autodetected as text).
+
+The name parameter should be specified to indicate the name of the structure to be loaded. This should be the same as the name that was used to save the structure (otherwise, the loading procedure will fail).
+
+If the parameter \textquotesingle{}fatal\textquotesingle{} is set to true, then an exception will be thrown in the event of load failure. Otherwise, the method will return false and the relevant error information will be printed to \doxyref{Log\+::\+Warn}{p.}{classmlpack_1_1Log_abbf3c5ac36654c0a8f17be3549388b38}. \index{mlpack\+::data@{mlpack\+::data}!Load$<$ double $>$@{Load$<$ double $>$}}
+\index{Load$<$ double $>$@{Load$<$ double $>$}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{Load$<$ double $>$(const std\+::string \&, arma\+::\+Mat$<$ double $>$ \&, const bool, const bool)}]{\setlength{\rightskip}{0pt plus 5cm}template bool {\bf mlpack\+::data\+::\+Load}$<$ double $>$ (
+\begin{DoxyParamCaption}
+\item[{const {\bf std\+::string} \&}]{, }
+\item[{arma\+::\+Mat$<$ double $>$ \&}]{, }
+\item[{const bool}]{, }
+\item[{const bool}]{}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_a7d42d65eae072468777b2493b93e112f}
+\index{mlpack\+::data@{mlpack\+::data}!Load$<$ double, Increment\+Policy $>$@{Load$<$ double, Increment\+Policy $>$}}
+\index{Load$<$ double, Increment\+Policy $>$@{Load$<$ double, Increment\+Policy $>$}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{Load$<$ double, Increment\+Policy $>$(const std\+::string \&, arma\+::\+Mat$<$ double $>$ \&, Dataset\+Mapper$<$ Increment\+Policy $>$ \&, const bool, const bool)}]{\setlength{\rightskip}{0pt plus 5cm}template bool {\bf mlpack\+::data\+::\+Load}$<$ double, {\bf Increment\+Policy} $>$ (
+\begin{DoxyParamCaption}
+\item[{const {\bf std\+::string} \&}]{, }
+\item[{arma\+::\+Mat$<$ double $>$ \&}]{, }
+\item[{{\bf Dataset\+Mapper}$<$ {\bf Increment\+Policy} $>$ \&}]{, }
+\item[{const bool}]{, }
+\item[{const bool}]{}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_aaffc1dadaf0f691334a863e57f46c0bd}
+\index{mlpack\+::data@{mlpack\+::data}!Load$<$ float $>$@{Load$<$ float $>$}}
+\index{Load$<$ float $>$@{Load$<$ float $>$}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{Load$<$ float $>$(const std\+::string \&, arma\+::\+Mat$<$ float $>$ \&, const bool, const bool)}]{\setlength{\rightskip}{0pt plus 5cm}template bool {\bf mlpack\+::data\+::\+Load}$<$ float $>$ (
+\begin{DoxyParamCaption}
+\item[{const {\bf std\+::string} \&}]{, }
+\item[{arma\+::\+Mat$<$ float $>$ \&}]{, }
+\item[{const bool}]{, }
+\item[{const bool}]{}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_a7770eadcbf7890f4cd2801fb5a06fbe8}
+\index{mlpack\+::data@{mlpack\+::data}!Load$<$ float, Increment\+Policy $>$@{Load$<$ float, Increment\+Policy $>$}}
+\index{Load$<$ float, Increment\+Policy $>$@{Load$<$ float, Increment\+Policy $>$}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{Load$<$ float, Increment\+Policy $>$(const std\+::string \&, arma\+::\+Mat$<$ float $>$ \&, Dataset\+Mapper$<$ Increment\+Policy $>$ \&, const bool, const bool)}]{\setlength{\rightskip}{0pt plus 5cm}template bool {\bf mlpack\+::data\+::\+Load}$<$ float, {\bf Increment\+Policy} $>$ (
+\begin{DoxyParamCaption}
+\item[{const {\bf std\+::string} \&}]{, }
+\item[{arma\+::\+Mat$<$ float $>$ \&}]{, }
+\item[{{\bf Dataset\+Mapper}$<$ {\bf Increment\+Policy} $>$ \&}]{, }
+\item[{const bool}]{, }
+\item[{const bool}]{}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_ac81239fdb00cc9ded78678fb1531cb91}
+\index{mlpack\+::data@{mlpack\+::data}!Load$<$ int $>$@{Load$<$ int $>$}}
+\index{Load$<$ int $>$@{Load$<$ int $>$}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{Load$<$ int $>$(const std\+::string \&, arma\+::\+Mat$<$ int $>$ \&, const bool, const bool)}]{\setlength{\rightskip}{0pt plus 5cm}template bool {\bf mlpack\+::data\+::\+Load}$<$ int $>$ (
+\begin{DoxyParamCaption}
+\item[{const {\bf std\+::string} \&}]{, }
+\item[{arma\+::\+Mat$<$ int $>$ \&}]{, }
+\item[{const bool}]{, }
+\item[{const bool}]{}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_aad5b928b94b7ec674860cdcc092c9f01}
+\index{mlpack\+::data@{mlpack\+::data}!Load$<$ int, Increment\+Policy $>$@{Load$<$ int, Increment\+Policy $>$}}
+\index{Load$<$ int, Increment\+Policy $>$@{Load$<$ int, Increment\+Policy $>$}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{Load$<$ int, Increment\+Policy $>$(const std\+::string \&, arma\+::\+Mat$<$ int $>$ \&, Dataset\+Mapper$<$ Increment\+Policy $>$ \&, const bool, const bool)}]{\setlength{\rightskip}{0pt plus 5cm}template bool {\bf mlpack\+::data\+::\+Load}$<$ int, {\bf Increment\+Policy} $>$ (
+\begin{DoxyParamCaption}
+\item[{const {\bf std\+::string} \&}]{, }
+\item[{arma\+::\+Mat$<$ int $>$ \&}]{, }
+\item[{{\bf Dataset\+Mapper}$<$ {\bf Increment\+Policy} $>$ \&}]{, }
+\item[{const bool}]{, }
+\item[{const bool}]{}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_a73835ecb640f2b9aff508838952c5a73}
+\index{mlpack\+::data@{mlpack\+::data}!Load$<$ size\+\_\+t $>$@{Load$<$ size\+\_\+t $>$}}
+\index{Load$<$ size\+\_\+t $>$@{Load$<$ size\+\_\+t $>$}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{Load$<$ size\+\_\+t $>$(const std\+::string \&, arma\+::\+Mat$<$ size\+\_\+t $>$ \&, const bool, const bool)}]{\setlength{\rightskip}{0pt plus 5cm}template bool {\bf mlpack\+::data\+::\+Load}$<$ size\+\_\+t $>$ (
+\begin{DoxyParamCaption}
+\item[{const {\bf std\+::string} \&}]{, }
+\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{, }
+\item[{const bool}]{, }
+\item[{const bool}]{}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_a5fb2e09b7b9e1f9ec81d7c1f4cdf3129}
+\index{mlpack\+::data@{mlpack\+::data}!Load$<$ size\+\_\+t, Increment\+Policy $>$@{Load$<$ size\+\_\+t, Increment\+Policy $>$}}
+\index{Load$<$ size\+\_\+t, Increment\+Policy $>$@{Load$<$ size\+\_\+t, Increment\+Policy $>$}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{Load$<$ size\+\_\+t, Increment\+Policy $>$(const std\+::string \&, arma\+::\+Mat$<$ size\+\_\+t $>$ \&, Dataset\+Mapper$<$ Increment\+Policy $>$ \&, const bool, const bool)}]{\setlength{\rightskip}{0pt plus 5cm}template bool {\bf mlpack\+::data\+::\+Load}$<$ size\+\_\+t, {\bf Increment\+Policy} $>$ (
+\begin{DoxyParamCaption}
+\item[{const {\bf std\+::string} \&}]{, }
+\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{, }
+\item[{{\bf Dataset\+Mapper}$<$ {\bf Increment\+Policy} $>$ \&}]{, }
+\item[{const bool}]{, }
+\item[{const bool}]{}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_a59c790703bf8cdcd3cb823be85f433ac}
+\index{mlpack\+::data@{mlpack\+::data}!Load$<$ unsigned long long $>$@{Load$<$ unsigned long long $>$}}
+\index{Load$<$ unsigned long long $>$@{Load$<$ unsigned long long $>$}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{Load$<$ unsigned long long $>$(const std\+::string \&, arma\+::\+Mat$<$ unsigned long long $>$ \&, const bool, const bool)}]{\setlength{\rightskip}{0pt plus 5cm}template bool {\bf mlpack\+::data\+::\+Load}$<$ unsigned long long $>$ (
+\begin{DoxyParamCaption}
+\item[{const {\bf std\+::string} \&}]{, }
+\item[{arma\+::\+Mat$<$ unsigned long long $>$ \&}]{, }
+\item[{const bool}]{, }
+\item[{const bool}]{}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_a672b9ebadd2ab992b9eb957d365eaee8}
+\index{mlpack\+::data@{mlpack\+::data}!Load$<$ unsigned long long, Increment\+Policy $>$@{Load$<$ unsigned long long, Increment\+Policy $>$}}
+\index{Load$<$ unsigned long long, Increment\+Policy $>$@{Load$<$ unsigned long long, Increment\+Policy $>$}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{Load$<$ unsigned long long, Increment\+Policy $>$(const std\+::string \&, arma\+::\+Mat$<$ unsigned long long $>$ \&, Dataset\+Mapper$<$ Increment\+Policy $>$ \&, const bool, const bool)}]{\setlength{\rightskip}{0pt plus 5cm}template bool {\bf mlpack\+::data\+::\+Load}$<$ unsigned long long, {\bf Increment\+Policy} $>$ (
+\begin{DoxyParamCaption}
+\item[{const {\bf std\+::string} \&}]{, }
+\item[{arma\+::\+Mat$<$ unsigned long long $>$ \&}]{, }
+\item[{{\bf Dataset\+Mapper}$<$ {\bf Increment\+Policy} $>$ \&}]{, }
+\item[{const bool}]{, }
+\item[{const bool}]{}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_a7afbedb8b7a9cacf912317b407d0c782}
+\index{mlpack\+::data@{mlpack\+::data}!Load\+A\+R\+FF@{Load\+A\+R\+FF}}
+\index{Load\+A\+R\+FF@{Load\+A\+R\+FF}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{Load\+A\+R\+F\+F(const std\+::string \&filename, arma\+::\+Mat$<$ e\+T $>$ \&matrix)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename eT $>$ void mlpack\+::data\+::\+Load\+A\+R\+FF (
+\begin{DoxyParamCaption}
+\item[{const {\bf std\+::string} \&}]{filename, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&}]{matrix}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_a951a7dc1fd86524b8dd245bb91841731}
+
+
+A utility function to load an A\+R\+FF dataset as numeric features (that is, as an Armadillo matrix without any modification). 
+
+An exception will be thrown if any features are non-\/numeric. \index{mlpack\+::data@{mlpack\+::data}!Load\+A\+R\+FF@{Load\+A\+R\+FF}}
+\index{Load\+A\+R\+FF@{Load\+A\+R\+FF}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{Load\+A\+R\+F\+F(const std\+::string \&filename, arma\+::\+Mat$<$ e\+T $>$ \&matrix, Dataset\+Mapper$<$ Policy\+Type $>$ \&info)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename eT , typename Policy\+Type $>$ void mlpack\+::data\+::\+Load\+A\+R\+FF (
+\begin{DoxyParamCaption}
+\item[{const {\bf std\+::string} \&}]{filename, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&}]{matrix, }
+\item[{{\bf Dataset\+Mapper}$<$ Policy\+Type $>$ \&}]{info}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_aa2a4a09a274c068e08373200fe611422}
+
+
+A utility function to load an A\+R\+FF dataset as numeric and categorical features, using the Dataset\+Info structure for mapping. 
+
+An exception will be thrown upon failure.
+
+A pre-\/existing Dataset\+Info object can be passed in, but if the dimensionality of the given Dataset\+Info object (info.\+Dimensionality()) does not match the dimensionality of the data, a std\+::invalid\+\_\+argument exception will be thrown. If an empty Dataset\+Info object is given (constructed with the default constructor or otherwise, so that info.\+Dimensionality() is 0), it will be set to the right dimensionality.
+
+This ability to pass in pre-\/existing Dataset\+Info objects is very necessary when, e.\+g., loading a test set after training. If the same Dataset\+Info from loading the training set is not used, then the test set may be loaded with different mappings---which can cause horrible problems!
+
+
+\begin{DoxyParams}{Parameters}
+{\em filename} & Name of A\+R\+FF file to load. \\
+\hline
+{\em matrix} & Matrix to load data into. \\
+\hline
+{\em info} & Dataset\+Info object; can be default-\/constructed or pre-\/existing from another call to \doxyref{Load\+A\+R\+F\+F()}{p.}{namespacemlpack_1_1data_a951a7dc1fd86524b8dd245bb91841731}. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::data@{mlpack\+::data}!Normalize\+Labels@{Normalize\+Labels}}
+\index{Normalize\+Labels@{Normalize\+Labels}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{Normalize\+Labels(const Row\+Type \&labels\+In, arma\+::\+Row$<$ size\+\_\+t $>$ \&labels, arma\+::\+Col$<$ e\+T $>$ \&mapping)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename eT , typename Row\+Type $>$ void mlpack\+::data\+::\+Normalize\+Labels (
+\begin{DoxyParamCaption}
+\item[{const Row\+Type \&}]{labels\+In, }
+\item[{arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{labels, }
+\item[{arma\+::\+Col$<$ eT $>$ \&}]{mapping}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_a664b3fa5243889e2aed47ee750f840ed}
+
+
+Given a set of labels of a particular datatype, convert them to unsigned labels in the range [0, n) where n is the number of different labels. 
+
+Also, a reverse mapping from the new label to the old value is stored in the \textquotesingle{}mapping\textquotesingle{} vector.
+
+
+\begin{DoxyParams}{Parameters}
+{\em labels\+In} & Input labels of arbitrary datatype. \\
+\hline
+{\em labels} & Vector that unsigned labels will be stored in. \\
+\hline
+{\em mapping} & Reverse mapping to convert new labels back to old labels. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::data@{mlpack\+::data}!operator\&@{operator\&}}
+\index{operator\&@{operator\&}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{operator\&(\+Archive \&ar, First\+Shim$<$ T $>$ t)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Archive , typename T $>$ Archive\& mlpack\+::data\+::operator\& (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{{\bf First\+Shim}$<$ T $>$}]{t}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_a2a1999a24345a08307e99a444b235e8d}
+
+
+Catch when we call operator\& with a \doxyref{First\+Shim}{p.}{structmlpack_1_1data_1_1FirstShim} object. 
+
+In this case, we make the second-\/level shim and use it. Note that this second-\/level shim can be used as an lvalue, which is what\textquotesingle{}s necessary for this whole thing to work. The first-\/level shim can\textquotesingle{}t be an lvalue (this is why we need two levels of shims). 
+
+Definition at line 385 of file serialization\+\_\+shim.\+hpp.
+
+
+
+References mlpack\+::data\+::\+First\+Shim$<$ T $>$\+::name, and mlpack\+::data\+::\+First\+Shim$<$ T $>$\+::t.
+
+
+
+Referenced by mlpack\+::bound\+::\+H\+Rect\+Bound$<$ Metric\+Type $>$\+::\+Min\+Width().
+
+\index{mlpack\+::data@{mlpack\+::data}!operator\&@{operator\&}}
+\index{operator\&@{operator\&}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{operator\&(\+Archive \&ar, First\+Array\+Shim$<$ T $>$ t)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Archive , typename T $>$ Archive\& mlpack\+::data\+::operator\& (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{{\bf First\+Array\+Shim}$<$ T $>$}]{t}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_a0f87a31d0723ccb95450df33839df40a}
+
+
+Catch when we call operator\& with a \doxyref{First\+Array\+Shim}{p.}{structmlpack_1_1data_1_1FirstArrayShim} object. 
+
+In this case, we make the second-\/level array shim and use it. Note that this second-\/level shim can be used as an lvalue, which is what\textquotesingle{}s necessary for this whole thing to work. The first-\/level shim can\textquotesingle{}t be an lvalue (this is why we need two levels of shims). 
+
+Definition at line 427 of file serialization\+\_\+shim.\+hpp.
+
+
+
+References mlpack\+::data\+::\+First\+Array\+Shim$<$ T $>$\+::len, mlpack\+::data\+::\+First\+Array\+Shim$<$ T $>$\+::name, and mlpack\+::data\+::\+First\+Array\+Shim$<$ T $>$\+::t.
+
+\index{mlpack\+::data@{mlpack\+::data}!operator\&@{operator\&}}
+\index{operator\&@{operator\&}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{operator\&(\+Archive \&ar, First\+Normal\+Array\+Shim$<$ T $>$ t)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Archive , typename T $>$ Archive\& mlpack\+::data\+::operator\& (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{{\bf First\+Normal\+Array\+Shim}$<$ T $>$}]{t}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_a71b496b2fbfbf01f958934cc986dd49f}
+
+
+Catch when we call operator\& with a \doxyref{First\+Normal\+Array\+Shim}{p.}{structmlpack_1_1data_1_1FirstNormalArrayShim} object. 
+
+In this case, we make the second-\/level array shim and use it. Note that this second-\/level shim can be used as an lvalue, which is necessary if we want to use make\+\_\+nvp() safely. The first-\/level shim can\textquotesingle{}t be an lvalue (this is why we need two levels of shims). 
+
+Definition at line 469 of file serialization\+\_\+shim.\+hpp.
+
+
+
+References mlpack\+::data\+::\+First\+Normal\+Array\+Shim$<$ T $>$\+::len, mlpack\+::data\+::\+First\+Normal\+Array\+Shim$<$ T $>$\+::name, and mlpack\+::data\+::\+First\+Normal\+Array\+Shim$<$ T $>$\+::t.
+
+\index{mlpack\+::data@{mlpack\+::data}!operator$<$$<$@{operator$<$$<$}}
+\index{operator$<$$<$@{operator$<$$<$}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{operator$<$$<$(\+Archive \&ar, First\+Shim$<$ T $>$ t)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Archive , typename T $>$ Archive\& mlpack\+::data\+::operator$<$$<$ (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{{\bf First\+Shim}$<$ T $>$}]{t}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_aee30f774383a3233e70717ce62c777fe}
+
+
+Catch when we call operator$<$$<$ with a \doxyref{First\+Shim}{p.}{structmlpack_1_1data_1_1FirstShim} object. 
+
+In this case, we make the second-\/level shim and use it. Note that this second-\/level shim can be used as an lvalue, which is what\textquotesingle{}s necessary for this whole thing to work. The first-\/level shim can\textquotesingle{}t be an lvalue (this is why we need two levels of shims). 
+
+Definition at line 371 of file serialization\+\_\+shim.\+hpp.
+
+\index{mlpack\+::data@{mlpack\+::data}!operator$<$$<$@{operator$<$$<$}}
+\index{operator$<$$<$@{operator$<$$<$}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{operator$<$$<$(\+Archive \&ar, First\+Array\+Shim$<$ T $>$ t)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Archive , typename T $>$ Archive\& mlpack\+::data\+::operator$<$$<$ (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{{\bf First\+Array\+Shim}$<$ T $>$}]{t}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_afe4ec6eec10c20876621eb1d3b54fa4e}
+
+
+Catch when we call operator$<$$<$ with a \doxyref{First\+Array\+Shim}{p.}{structmlpack_1_1data_1_1FirstArrayShim} object. 
+
+In this case, we make the second-\/level array shim and use it. Note that this second-\/level shim can be used as an lvalue, which is what\textquotesingle{}s necessary for this whole thing to work. The first-\/level shim can\textquotesingle{}t be an lvalue (this is why we need two levels of shims). 
+
+Definition at line 413 of file serialization\+\_\+shim.\+hpp.
+
+\index{mlpack\+::data@{mlpack\+::data}!operator$<$$<$@{operator$<$$<$}}
+\index{operator$<$$<$@{operator$<$$<$}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{operator$<$$<$(\+Archive \&ar, First\+Normal\+Array\+Shim$<$ T $>$ t)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Archive , typename T $>$ Archive\& mlpack\+::data\+::operator$<$$<$ (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{{\bf First\+Normal\+Array\+Shim}$<$ T $>$}]{t}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_a383ab28ecde36144fcd76b205aae0579}
+
+
+Catch when we call operator$<$$<$ with a \doxyref{First\+Normal\+Array\+Shim}{p.}{structmlpack_1_1data_1_1FirstNormalArrayShim} object. 
+
+In this case, we make the second-\/level array shim and use it. Note that this second-\/level shim can be used as an lvalue, which is necessary if we want to use make\+\_\+nvp() safely. The first-\/level shim can\textquotesingle{}t be an lvalue (this is why we need two levels of shims). 
+
+Definition at line 455 of file serialization\+\_\+shim.\+hpp.
+
+\index{mlpack\+::data@{mlpack\+::data}!operator$>$$>$@{operator$>$$>$}}
+\index{operator$>$$>$@{operator$>$$>$}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{operator$>$$>$(\+Archive \&ar, First\+Shim$<$ T $>$ t)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Archive , typename T $>$ Archive\& mlpack\+::data\+::operator$>$$>$ (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{{\bf First\+Shim}$<$ T $>$}]{t}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_acb2e91fe48953177282f96a961046586}
+
+
+Catch when we call operator$>$$>$ with a \doxyref{First\+Shim}{p.}{structmlpack_1_1data_1_1FirstShim} object. 
+
+In this case, we make the second-\/level shim and use it. Note that this second-\/level shim can be used as an lvalue, which is what\textquotesingle{}s necessary for this whole thing to work. The first-\/level shim can\textquotesingle{}t be an lvalue (this is why we need two levels of shims). 
+
+Definition at line 399 of file serialization\+\_\+shim.\+hpp.
+
+
+
+References mlpack\+::data\+::\+First\+Shim$<$ T $>$\+::name, and mlpack\+::data\+::\+First\+Shim$<$ T $>$\+::t.
+
+\index{mlpack\+::data@{mlpack\+::data}!operator$>$$>$@{operator$>$$>$}}
+\index{operator$>$$>$@{operator$>$$>$}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{operator$>$$>$(\+Archive \&ar, First\+Array\+Shim$<$ T $>$ t)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Archive , typename T $>$ Archive\& mlpack\+::data\+::operator$>$$>$ (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{{\bf First\+Array\+Shim}$<$ T $>$}]{t}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_a519b0fa49757cd56804b5a3da923f6d9}
+
+
+Catch when we call operator$>$$>$ with a \doxyref{First\+Array\+Shim}{p.}{structmlpack_1_1data_1_1FirstArrayShim} object. 
+
+In this case, we make the second-\/level array shim and use it. Note that this second-\/level shim can be used as an lvalue, which is what\textquotesingle{}s necessary for this whole thing to work. The first-\/level shim can\textquotesingle{}t be an lvalue (this is why we need two levels of shims). 
+
+Definition at line 441 of file serialization\+\_\+shim.\+hpp.
+
+
+
+References mlpack\+::data\+::\+First\+Array\+Shim$<$ T $>$\+::len, mlpack\+::data\+::\+First\+Array\+Shim$<$ T $>$\+::name, and mlpack\+::data\+::\+First\+Array\+Shim$<$ T $>$\+::t.
+
+\index{mlpack\+::data@{mlpack\+::data}!operator$>$$>$@{operator$>$$>$}}
+\index{operator$>$$>$@{operator$>$$>$}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{operator$>$$>$(\+Archive \&ar, First\+Normal\+Array\+Shim$<$ T $>$ t)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Archive , typename T $>$ Archive\& mlpack\+::data\+::operator$>$$>$ (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{{\bf First\+Normal\+Array\+Shim}$<$ T $>$}]{t}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_a106773eaf403d022d3cd59915a1e2c8b}
+
+
+Catch when we call operator$>$$>$ with a \doxyref{First\+Normal\+Array\+Shim}{p.}{structmlpack_1_1data_1_1FirstNormalArrayShim} object. 
+
+In this case, we make the second-\/level array shim and use it. Note that this second-\/level shim can be used as an lvalue, which is necessary if we want to use make\+\_\+nvp() safely. The first-\/level shim can\textquotesingle{}t be an lvalue (this is why we need two levels of shims). 
+
+Definition at line 483 of file serialization\+\_\+shim.\+hpp.
+
+
+
+References mlpack\+::data\+::\+First\+Normal\+Array\+Shim$<$ T $>$\+::len, mlpack\+::data\+::\+First\+Normal\+Array\+Shim$<$ T $>$\+::name, and mlpack\+::data\+::\+First\+Normal\+Array\+Shim$<$ T $>$\+::t.
+
+\index{mlpack\+::data@{mlpack\+::data}!Revert\+Labels@{Revert\+Labels}}
+\index{Revert\+Labels@{Revert\+Labels}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{Revert\+Labels(const arma\+::\+Row$<$ size\+\_\+t $>$ \&labels, const arma\+::\+Col$<$ e\+T $>$ \&mapping, arma\+::\+Row$<$ e\+T $>$ \&labels\+Out)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename eT $>$ void mlpack\+::data\+::\+Revert\+Labels (
+\begin{DoxyParamCaption}
+\item[{const arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{labels, }
+\item[{const arma\+::\+Col$<$ eT $>$ \&}]{mapping, }
+\item[{arma\+::\+Row$<$ eT $>$ \&}]{labels\+Out}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_a901fe08dcdc58734f64a864dbdef0a28}
+
+
+Given a set of labels that have been mapped to the range [0, n), map them back to the original labels given by the \textquotesingle{}mapping\textquotesingle{} vector. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em labels} & Set of normalized labels to convert. \\
+\hline
+{\em mapping} & Mapping to use to convert labels. \\
+\hline
+{\em labels\+Out} & Vector to store new labels in. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::data@{mlpack\+::data}!Save@{Save}}
+\index{Save@{Save}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{Save(const std\+::string \&filename, const arma\+::\+Mat$<$ e\+T $>$ \&matrix, const bool fatal=false, bool transpose=true)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename eT $>$ bool mlpack\+::data\+::\+Save (
+\begin{DoxyParamCaption}
+\item[{const {\bf std\+::string} \&}]{filename, }
+\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{matrix, }
+\item[{const bool}]{fatal = {\ttfamily false}, }
+\item[{bool}]{transpose = {\ttfamily true}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_a16bc794b14db0ab126595b19a32a5bc0}
+
+
+Saves a matrix to file, guessing the filetype from the extension. 
+
+This will transpose the matrix at save time. If the filetype cannot be determined, an error will be given.
+
+The supported types of files are the same as found in Armadillo\+:
+
+
+\begin{DoxyItemize}
+\item C\+SV (csv\+\_\+ascii), denoted by .csv, or optionally .txt
+\item A\+S\+C\+II (raw\+\_\+ascii), denoted by .txt
+\item Armadillo A\+S\+C\+II (arma\+\_\+ascii), also denoted by .txt
+\item P\+GM (pgm\+\_\+binary), denoted by .pgm
+\item P\+PM (ppm\+\_\+binary), denoted by .ppm
+\item Raw binary (raw\+\_\+binary), denoted by .bin
+\item Armadillo binary (arma\+\_\+binary), denoted by .bin
+\item H\+D\+F5 (hdf5\+\_\+binary), denoted by .hdf5, .hdf, .h5, or .he5
+\end{DoxyItemize}
+
+If the file extension is not one of those types, an error will be given. If the \textquotesingle{}fatal\textquotesingle{} parameter is set to true, a std\+::runtime\+\_\+error exception will be thrown upon failure. If the \textquotesingle{}transpose\textquotesingle{} parameter is set to true, the matrix will be transposed before saving. Generally, because mlpack stores matrices in a column-\/major format and most datasets are stored on disk as row-\/major, this parameter should be left at its default value of \textquotesingle{}true\textquotesingle{}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em filename} & Name of file to save to. \\
+\hline
+{\em matrix} & Matrix to save into file. \\
+\hline
+{\em fatal} & If an error should be reported as fatal (default false). \\
+\hline
+{\em transpose} & If true, transpose the matrix before saving. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Boolean value indicating success or failure of save. 
+\end{DoxyReturn}
+\index{mlpack\+::data@{mlpack\+::data}!Save@{Save}}
+\index{Save@{Save}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{Save(const std\+::string \&filename, const std\+::string \&name, T \&t, const bool fatal=false, format f=format\+::autodetect)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ bool mlpack\+::data\+::\+Save (
+\begin{DoxyParamCaption}
+\item[{const {\bf std\+::string} \&}]{filename, }
+\item[{const {\bf std\+::string} \&}]{name, }
+\item[{T \&}]{t, }
+\item[{const bool}]{fatal = {\ttfamily false}, }
+\item[{{\bf format}}]{f = {\ttfamily format\+:\+:autodetect}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_af30f8bfca9b924d6d935c9f1fae91778}
+
+
+Saves a model to file, guessing the filetype from the extension, or, optionally, saving the specified format. 
+
+If automatic extension detection is used and the filetype cannot be determined, and error will be given.
+
+The supported types of files are the same as what is supported by the \doxyref{boost\+::serialization}{p.}{namespaceboost_1_1serialization} library\+:
+
+
+\begin{DoxyItemize}
+\item text, denoted by .txt
+\item xml, denoted by .xml
+\item binary, denoted by .bin
+\end{DoxyItemize}
+
+The format parameter can take any of the values in the \textquotesingle{}format\textquotesingle{} enum\+: \textquotesingle{}format\+::autodetect\textquotesingle{}, \textquotesingle{}format\+::text\textquotesingle{}, \textquotesingle{}format\+::xml\textquotesingle{}, and \textquotesingle{}format\+::binary\textquotesingle{}. The autodetect functionality operates on the file extension (so, \char`\"{}file.\+txt\char`\"{} would be autodetected as text).
+
+The name parameter should be specified to indicate the name of the structure to be saved. If \doxyref{Load()}{p.}{namespacemlpack_1_1data_a19805d6585ac8b0be7c4e4b7f081977c} is later called on the generated file, the name used to load should be the same as the name used for this call to \doxyref{Save()}{p.}{namespacemlpack_1_1data_a16bc794b14db0ab126595b19a32a5bc0}.
+
+If the parameter \textquotesingle{}fatal\textquotesingle{} is set to true, then an exception will be thrown in the event of a save failure. Otherwise, the method will return false and the relevant error information will be printed to \doxyref{Log\+::\+Warn}{p.}{classmlpack_1_1Log_abbf3c5ac36654c0a8f17be3549388b38}. \index{mlpack\+::data@{mlpack\+::data}!Split@{Split}}
+\index{Split@{Split}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{Split(const arma\+::\+Mat$<$ T $>$ \&input, const arma\+::\+Row$<$ U $>$ \&input\+Label, arma\+::\+Mat$<$ T $>$ \&train\+Data, arma\+::\+Mat$<$ T $>$ \&test\+Data, arma\+::\+Row$<$ U $>$ \&train\+Label, arma\+::\+Row$<$ U $>$ \&test\+Label, const double test\+Ratio)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T , typename U $>$ void mlpack\+::data\+::\+Split (
+\begin{DoxyParamCaption}
+\item[{const arma\+::\+Mat$<$ T $>$ \&}]{input, }
+\item[{const arma\+::\+Row$<$ U $>$ \&}]{input\+Label, }
+\item[{arma\+::\+Mat$<$ T $>$ \&}]{train\+Data, }
+\item[{arma\+::\+Mat$<$ T $>$ \&}]{test\+Data, }
+\item[{arma\+::\+Row$<$ U $>$ \&}]{train\+Label, }
+\item[{arma\+::\+Row$<$ U $>$ \&}]{test\+Label, }
+\item[{const double}]{test\+Ratio}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_a900bb36af4ef0fff3351bb3adb09b8c5}
+
+
+Given an input dataset and labels, split into a training set and test set. 
+
+Example usage below. This overload places the split dataset into the four output parameters given (train\+Data, test\+Data, train\+Label, and test\+Label).
+
+
+\begin{DoxyCode}
+arma::mat input = loadData();
+arma::Row<size\_t> label = loadLabel();
+arma::mat trainData;
+arma::mat testData;
+arma::Row<size\_t> trainLabel;
+arma::Row<size\_t> testLabel;
+math::RandomSeed(100); \textcolor{comment}{// Set the seed if you like.}
+
+\textcolor{comment}{// Split the dataset into a training and test set, with 30% of the data being}
+\textcolor{comment}{// held out for the test set.}
+Split(input, label, trainData,
+               testData, trainLabel, testLabel, 0.3);
+\end{DoxyCode}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input dataset to split. \\
+\hline
+{\em label} & Input labels to split. \\
+\hline
+{\em train\+Data} & Matrix to store training data into. \\
+\hline
+{\em test\+Data} & Matrix to store test data into. \\
+\hline
+{\em train\+Label} & Vector to store training labels into. \\
+\hline
+{\em test\+Label} & Vector to store test labels into. \\
+\hline
+{\em test\+Ratio} & Percentage of dataset to use for test set (between 0 and 1). \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 49 of file split\+\_\+data.\+hpp.
+
+
+
+Referenced by Split().
+
+\index{mlpack\+::data@{mlpack\+::data}!Split@{Split}}
+\index{Split@{Split}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{Split(const arma\+::\+Mat$<$ T $>$ \&input, arma\+::\+Mat$<$ T $>$ \&train\+Data, arma\+::\+Mat$<$ T $>$ \&test\+Data, const double test\+Ratio)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ void mlpack\+::data\+::\+Split (
+\begin{DoxyParamCaption}
+\item[{const arma\+::\+Mat$<$ T $>$ \&}]{input, }
+\item[{arma\+::\+Mat$<$ T $>$ \&}]{train\+Data, }
+\item[{arma\+::\+Mat$<$ T $>$ \&}]{test\+Data, }
+\item[{const double}]{test\+Ratio}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_a2045f699140a37ef0c6f0b3ef816c854}
+
+
+Given an input dataset, split into a training set and test set. 
+
+Example usage below. This overload places the split dataset into the two output parameters given (train\+Data, test\+Data).
+
+
+\begin{DoxyCode}
+arma::mat input = loadData();
+arma::mat trainData;
+arma::mat testData;
+math::RandomSeed(100); \textcolor{comment}{// Set the seed if you like.}
+
+\textcolor{comment}{// Split the dataset into a training and test set, with 30% of the data being}
+\textcolor{comment}{// held out for the test set.}
+Split(input, trainData, testData, 0.3);
+\end{DoxyCode}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input dataset to split. \\
+\hline
+{\em train\+Data} & Matrix to store training data into. \\
+\hline
+{\em test\+Data} & Matrix to store test data into. \\
+\hline
+{\em test\+Ratio} & Percentage of dataset to use for test set (between 0 and 1). \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 103 of file split\+\_\+data.\+hpp.
+
+\index{mlpack\+::data@{mlpack\+::data}!Split@{Split}}
+\index{Split@{Split}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{Split(const arma\+::\+Mat$<$ T $>$ \&input, const arma\+::\+Row$<$ U $>$ \&input\+Label, const double test\+Ratio)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T , typename U $>$ std\+::tuple$<$arma\+::\+Mat$<$T$>$, arma\+::\+Mat$<$T$>$, arma\+::\+Row$<$U$>$, arma\+::\+Row$<$U$>$ $>$ mlpack\+::data\+::\+Split (
+\begin{DoxyParamCaption}
+\item[{const arma\+::\+Mat$<$ T $>$ \&}]{input, }
+\item[{const arma\+::\+Row$<$ U $>$ \&}]{input\+Label, }
+\item[{const double}]{test\+Ratio}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_a813771e519dd63fd2f2b886d976826ce}
+
+
+Given an input dataset and labels, split into a training set and test set. 
+
+Example usage below. This overload returns the split dataset as a std\+::tuple with four elements\+: an arma\+::\+Mat$<$\+T$>$ containing the training data, an arma\+::\+Mat$<$\+T$>$ containing the test data, an arma\+::\+Row$<$\+U$>$ containing the training labels, and an arma\+::\+Row$<$\+U$>$ containing the test labels.
+
+
+\begin{DoxyCode}
+arma::mat input = loadData();
+arma::Row<size\_t> label = loadLabel();
+\textcolor{keyword}{auto} splitResult = Split(input, label, 0.2);
+\end{DoxyCode}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input dataset to split. \\
+\hline
+{\em label} & Input labels to split. \\
+\hline
+{\em test\+Ratio} & Percentage of dataset to use for test set (between 0 and 1). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+std\+::tuple containing train\+Data (arma\+::\+Mat$<$\+T$>$), test\+Data (arma\+::\+Mat$<$\+T$>$), train\+Label (arma\+::\+Row$<$\+U$>$), and test\+Label (arma\+::\+Row$<$\+U$>$). 
+\end{DoxyReturn}
+
+
+Definition at line 148 of file split\+\_\+data.\+hpp.
+
+
+
+References Split().
+
+\index{mlpack\+::data@{mlpack\+::data}!Split@{Split}}
+\index{Split@{Split}!mlpack\+::data@{mlpack\+::data}}
+\subsubsection[{Split(const arma\+::\+Mat$<$ T $>$ \&input, const double test\+Ratio)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ std\+::tuple$<$arma\+::\+Mat$<$T$>$, arma\+::\+Mat$<$T$>$ $>$ mlpack\+::data\+::\+Split (
+\begin{DoxyParamCaption}
+\item[{const arma\+::\+Mat$<$ T $>$ \&}]{input, }
+\item[{const double}]{test\+Ratio}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1data_a80fb8838c66ff6351af3bbb33ee6ebe1}
+
+
+Given an input dataset, split into a training set and test set. 
+
+Example usage below. This overload returns the split dataset as a std\+::tuple with two elements\+: an arma\+::\+Mat$<$\+T$>$ containing the training data and an arma\+::\+Mat$<$\+T$>$ containing the test data.
+
+
+\begin{DoxyCode}
+arma::mat input = loadData();
+\textcolor{keyword}{auto} splitResult = Split(input, 0.2);
+\end{DoxyCode}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input dataset to split. \\
+\hline
+{\em test\+Ratio} & Percentage of dataset to use for test set (between 0 and 1). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+std\+::tuple containing train\+Data (arma\+::\+Mat$<$\+T$>$) and test\+Data (arma\+::\+Mat$<$\+T$>$). 
+\end{DoxyReturn}
+
+
+Definition at line 184 of file split\+\_\+data.\+hpp.
+
+
+
+References Split().
+

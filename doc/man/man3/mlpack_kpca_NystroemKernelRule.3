@@ -1,0 +1,56 @@
+.TH "mlpack::kpca::NystroemKernelRule< KernelType, PointSelectionPolicy >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::kpca::NystroemKernelRule< KernelType, PointSelectionPolicy > \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static void \fBApplyKernelMatrix\fP (const arma::mat &data, arma::mat &transformedData, arma::vec &eigval, arma::mat &eigvec, const size_t rank, KernelType kernel=KernelType())"
+.br
+.RI "\fIConstruct the kernel matrix approximation using the nystroem method\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename KernelType, typename PointSelectionPolicy = kernel::KMeansSelection<>>
+.br
+class mlpack::kpca::NystroemKernelRule< KernelType, PointSelectionPolicy >"
+
+.PP
+Definition at line 27 of file nystroem_method\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename KernelType , typename PointSelectionPolicy  = kernel::KMeansSelection<>> static void \fBmlpack::kpca::NystroemKernelRule\fP< KernelType, PointSelectionPolicy >::ApplyKernelMatrix (const arma::mat & data, arma::mat & transformedData, arma::vec & eigval, arma::mat & eigvec, const size_t rank, KernelType kernel = \fCKernelType()\fP)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Construct the kernel matrix approximation using the nystroem method\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Input data points\&. 
+.br
+\fItransformedData\fP Matrix to output results into\&. 
+.br
+\fIeigval\fP KPCA eigenvalues will be written to this vector\&. 
+.br
+\fIeigvec\fP KPCA eigenvectors will be written to this matrix\&. 
+.br
+\fIrank\fP Rank to be used for matrix approximation\&. 
+.br
+\fIkernel\fP Kernel to be used for computation\&. 
+.RE
+.PP
+
+.PP
+Definition at line 40 of file nystroem_method\&.hpp\&.
+.PP
+References mlpack::kernel::NystroemMethod< KernelType, PointSelectionPolicy >::Apply(), and mlpack::math::Center()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

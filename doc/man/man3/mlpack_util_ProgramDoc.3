@@ -1,0 +1,76 @@
+.TH "mlpack::util::ProgramDoc" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::util::ProgramDoc \- A static object whose constructor registers program documentation with the \fBCLI\fP class\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBProgramDoc\fP (const \fBstd::string\fP &\fBprogramName\fP, const \fBstd::string\fP &\fBdocumentation\fP)"
+.br
+.RI "\fIConstruct a \fBProgramDoc\fP object\&. \fP"
+.in -1c
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "\fBstd::string\fP \fBdocumentation\fP"
+.br
+.RI "\fIDocumentation for what the program does\&. \fP"
+.ti -1c
+.RI "\fBstd::string\fP \fBprogramName\fP"
+.br
+.RI "\fIThe name of the program\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+A static object whose constructor registers program documentation with the \fBCLI\fP class\&. 
+
+This should not be used outside of \fBCLI\fP itself, and you should use the \fBPROGRAM_INFO()\fP macro to declare these objects\&. Only one \fBProgramDoc\fP object should ever exist\&.
+.PP
+\fBSee also:\fP
+.RS 4
+\fBcore/util/cli\&.hpp\fP, \fBmlpack::CLI\fP 
+.RE
+.PP
+
+.PP
+Definition at line 71 of file option\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::util::ProgramDoc::ProgramDoc (const \fBstd::string\fP & programName, const \fBstd::string\fP & documentation)"
+
+.PP
+Construct a \fBProgramDoc\fP object\&. When constructed, it will register itself with \fBCLI\fP\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIprogramName\fP Short string representing the name of the program\&. 
+.br
+\fIdocumentation\fP Long string containing documentation on how to use the program and what it is\&. No newline characters are necessary; this is taken care of by \fBCLI\fP later\&. 
+.RE
+.PP
+
+.SH "Member Data Documentation"
+.PP 
+.SS "\fBstd::string\fP mlpack::util::ProgramDoc::documentation"
+
+.PP
+Documentation for what the program does\&. 
+.PP
+Definition at line 89 of file option\&.hpp\&.
+.SS "\fBstd::string\fP mlpack::util::ProgramDoc::programName"
+
+.PP
+The name of the program\&. 
+.PP
+Definition at line 87 of file option\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

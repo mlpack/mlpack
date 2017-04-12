@@ -1,0 +1,109 @@
+\section{mlpack\+:\+:kernel\+:\+:Linear\+Kernel Class Reference}
+\label{classmlpack_1_1kernel_1_1LinearKernel}\index{mlpack\+::kernel\+::\+Linear\+Kernel@{mlpack\+::kernel\+::\+Linear\+Kernel}}
+
+
+The simple linear kernel (dot product).  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Linear\+Kernel} ()
+\begin{DoxyCompactList}\small\item\em This constructor does nothing; the linear kernel has no parameters to store. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&, const unsigned int)
+\begin{DoxyCompactList}\small\item\em Serialize the kernel (it has no members... do nothing). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Vec\+TypeA , typename Vec\+TypeB $>$ }\\static double {\bf Evaluate} (const Vec\+TypeA \&a, const Vec\+TypeB \&b)
+\begin{DoxyCompactList}\small\item\em Simple evaluation of the dot product. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The simple linear kernel (dot product). 
+
+For any two vectors $ x $ and $ y $,
+
+\[ K(x, y) = x^T y \]
+
+This kernel has no parameters and therefore the evaluation can be static. 
+
+Definition at line 32 of file linear\+\_\+kernel.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::kernel\+::\+Linear\+Kernel@{mlpack\+::kernel\+::\+Linear\+Kernel}!Linear\+Kernel@{Linear\+Kernel}}
+\index{Linear\+Kernel@{Linear\+Kernel}!mlpack\+::kernel\+::\+Linear\+Kernel@{mlpack\+::kernel\+::\+Linear\+Kernel}}
+\subsubsection[{Linear\+Kernel()}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::kernel\+::\+Linear\+Kernel\+::\+Linear\+Kernel (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1kernel_1_1LinearKernel_abdd497ce04db4e9b127590fd0ae0e955}
+
+
+This constructor does nothing; the linear kernel has no parameters to store. 
+
+
+
+Definition at line 39 of file linear\+\_\+kernel.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::kernel\+::\+Linear\+Kernel@{mlpack\+::kernel\+::\+Linear\+Kernel}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!mlpack\+::kernel\+::\+Linear\+Kernel@{mlpack\+::kernel\+::\+Linear\+Kernel}}
+\subsubsection[{Evaluate(const Vec\+Type\+A \&a, const Vec\+Type\+B \&b)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Vec\+TypeA , typename Vec\+TypeB $>$ static double mlpack\+::kernel\+::\+Linear\+Kernel\+::\+Evaluate (
+\begin{DoxyParamCaption}
+\item[{const Vec\+TypeA \&}]{a, }
+\item[{const Vec\+TypeB \&}]{b}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}\label{classmlpack_1_1kernel_1_1LinearKernel_aa6dee6c328bc6f8b18a9daaa09a546a2}
+
+
+Simple evaluation of the dot product. 
+
+This evaluation uses Armadillo\textquotesingle{}s dot() function.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Vec\+TypeA} & Type of first vector (should be arma\+::vec or arma\+::sp\+\_\+vec). \\
+\hline
+{\em Vec\+TypeB} & Type of second vector (arma\+::vec / arma\+::sp\+\_\+vec). \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em a} & First vector. \\
+\hline
+{\em b} & Second vector. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+K(a, b). 
+\end{DoxyReturn}
+
+
+Definition at line 53 of file linear\+\_\+kernel.\+hpp.
+
+\index{mlpack\+::kernel\+::\+Linear\+Kernel@{mlpack\+::kernel\+::\+Linear\+Kernel}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::kernel\+::\+Linear\+Kernel@{mlpack\+::kernel\+::\+Linear\+Kernel}}
+\subsubsection[{Serialize(\+Archive \&, const unsigned int)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Archive $>$ void mlpack\+::kernel\+::\+Linear\+Kernel\+::\+Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{, }
+\item[{const unsigned}]{int}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1kernel_1_1LinearKernel_a51bcd593fc1559cf601c4acca59c3649}
+
+
+Serialize the kernel (it has no members... do nothing). 
+
+
+
+Definition at line 60 of file linear\+\_\+kernel.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/kernels/{\bf linear\+\_\+kernel.\+hpp}\end{DoxyCompactItemize}

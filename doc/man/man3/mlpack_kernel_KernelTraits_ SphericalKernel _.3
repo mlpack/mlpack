@@ -1,0 +1,48 @@
+.TH "mlpack::kernel::KernelTraits< SphericalKernel >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::kernel::KernelTraits< SphericalKernel > \- Kernel traits for the spherical kernel\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "static const bool \fBIsNormalized\fP = true"
+.br
+.RI "\fIThe spherical kernel is normalized: K(x, x) = 1 for all x\&. \fP"
+.ti -1c
+.RI "static const bool \fBUsesSquaredDistance\fP = false"
+.br
+.RI "\fIThe spherical kernel doesn't include a squared distance\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<>
+.br
+class mlpack::kernel::KernelTraits< SphericalKernel >"
+Kernel traits for the spherical kernel\&. 
+.PP
+Definition at line 122 of file spherical_kernel\&.hpp\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "const bool \fBmlpack::kernel::KernelTraits\fP< \fBSphericalKernel\fP >::IsNormalized = true\fC [static]\fP"
+
+.PP
+The spherical kernel is normalized: K(x, x) = 1 for all x\&. 
+.PP
+Definition at line 126 of file spherical_kernel\&.hpp\&.
+.SS "const bool \fBmlpack::kernel::KernelTraits\fP< \fBSphericalKernel\fP >::UsesSquaredDistance = false\fC [static]\fP"
+
+.PP
+The spherical kernel doesn't include a squared distance\&. 
+.PP
+Definition at line 128 of file spherical_kernel\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

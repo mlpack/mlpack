@@ -1,0 +1,387 @@
+\section{mlpack\+:\+:data\+:\+:Dataset\+Mapper$<$ Policy\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1data_1_1DatasetMapper}\index{mlpack\+::data\+::\+Dataset\+Mapper$<$ Policy\+Type $>$@{mlpack\+::data\+::\+Dataset\+Mapper$<$ Policy\+Type $>$}}
+
+
+Auxiliary information for a dataset, including mappings to/from strings and the datatype of each dimension.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Dataset\+Mapper} (const size\+\_\+t dimensionality=0)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Dataset\+Mapper}{p.}{classmlpack_1_1data_1_1DatasetMapper} object with the given dimensionality. \end{DoxyCompactList}\item 
+{\bf Dataset\+Mapper} (Policy\+Type \&{\bf policy}, const size\+\_\+t dimensionality=0)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Dataset\+Mapper}{p.}{classmlpack_1_1data_1_1DatasetMapper} object with the given policy and dimensionality. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Dimensionality} () const 
+\begin{DoxyCompactList}\small\item\em Get the dimensionality of the \doxyref{Dataset\+Mapper}{p.}{classmlpack_1_1data_1_1DatasetMapper} object (that is, how many dimensions it has information for). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void {\bf Map\+First\+Pass} (const {\bf std\+::string} \&{\bf string}, const size\+\_\+t dimension)
+\begin{DoxyCompactList}\small\item\em Preprocessing\+: during a first pass of the data, pass the strings on to the Map\+Policy if they are needed. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\T {\bf Map\+String} (const {\bf std\+::string} \&{\bf string}, const size\+\_\+t dimension)
+\begin{DoxyCompactList}\small\item\em Given the string and the dimension to which it belongs, return its numeric mapping. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void {\bf Map\+Tokens} (const std\+::vector$<$ {\bf std\+::string} $>$ \&tokens, size\+\_\+t \&row, arma\+::\+Mat$<$ eT $>$ \&matrix)
+\begin{DoxyCompactList}\small\item\em Map\+Tokens turns vector of strings into numeric variables and puts them into a given matrix. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Num\+Mappings} (const size\+\_\+t dimension) const 
+\begin{DoxyCompactList}\small\item\em Get the number of mappings for a particular dimension. \end{DoxyCompactList}\item 
+const Policy\+Type \& {\bf Policy} () const 
+\begin{DoxyCompactList}\small\item\em Return the policy of the mapper. \end{DoxyCompactList}\item 
+Policy\+Type \& {\bf Policy} ()
+\begin{DoxyCompactList}\small\item\em Modify the policy of the mapper (be careful!). \end{DoxyCompactList}\item 
+void {\bf Policy} (Policy\+Type \&\&{\bf policy})
+\begin{DoxyCompactList}\small\item\em Modify (Replace) the policy of the mapper with a new policy. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&ar, const unsigned int)
+\begin{DoxyCompactList}\small\item\em Serialize the dataset information. \end{DoxyCompactList}\item 
+{\bf Datatype} {\bf Type} (const size\+\_\+t dimension) const 
+\begin{DoxyCompactList}\small\item\em Return the type of a given dimension (numeric or categorical). \end{DoxyCompactList}\item 
+{\bf Datatype} \& {\bf Type} (const size\+\_\+t dimension)
+\begin{DoxyCompactList}\small\item\em Modify the type of a given dimension (be careful!). \end{DoxyCompactList}\item 
+const {\bf std\+::string} \& {\bf Unmap\+String} (const size\+\_\+t value, const size\+\_\+t dimension)
+\begin{DoxyCompactList}\small\item\em Return the string that corresponds to a given value in a given dimension. \end{DoxyCompactList}\item 
+Policy\+Type\+::\+Mapped\+Type {\bf Unmap\+Value} (const {\bf std\+::string} \&{\bf string}, const size\+\_\+t dimension)
+\begin{DoxyCompactList}\small\item\em Return the value that corresponds to a given string in a given dimension. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Types}
+\begin{DoxyCompactItemize}
+\item 
+using {\bf Bi\+Map\+Type} = boost\+::bimap$<$ {\bf std\+::string}, typename Policy\+Type\+::\+Mapped\+Type $>$
+\item 
+using {\bf Map\+Type} = std\+::unordered\+\_\+map$<$ size\+\_\+t, std\+::pair$<$ {\bf Bi\+Map\+Type}, size\+\_\+t $>$$>$
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Map\+Type} {\bf maps}
+\begin{DoxyCompactList}\small\item\em maps object stores string and numerical pairs. \end{DoxyCompactList}\item 
+Policy\+Type {\bf policy}
+\begin{DoxyCompactList}\small\item\em policy object tells dataset mapper how the categorical values should be \end{DoxyCompactList}\item 
+std\+::vector$<$ {\bf Datatype} $>$ {\bf types}
+\begin{DoxyCompactList}\small\item\em Types of each dimension. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Policy\+Type$>$\\*
+class mlpack\+::data\+::\+Dataset\+Mapper$<$ Policy\+Type $>$}
+
+Auxiliary information for a dataset, including mappings to/from strings and the datatype of each dimension. 
+
+\doxyref{Dataset\+Mapper}{p.}{classmlpack_1_1data_1_1DatasetMapper} objects are optionally produced by \doxyref{data\+::\+Load()}{p.}{namespacemlpack_1_1data_a19805d6585ac8b0be7c4e4b7f081977c}, and store the type of each dimension (Datatype\+::numeric or Datatype\+::categorical) as well as mappings from strings to unsigned integers and vice versa.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Policy\+Type} & Mapping policy used to specify \doxyref{Map\+String()}{p.}{classmlpack_1_1data_1_1DatasetMapper_a8cd218e53f40e74a8e87d505a4b4cf76}; \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 36 of file dataset\+\_\+mapper.\+hpp.
+
+
+
+\subsection{Member Typedef Documentation}
+\index{mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}!Bi\+Map\+Type@{Bi\+Map\+Type}}
+\index{Bi\+Map\+Type@{Bi\+Map\+Type}!mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}}
+\subsubsection[{Bi\+Map\+Type}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Policy\+Type$>$ using {\bf mlpack\+::data\+::\+Dataset\+Mapper}$<$ Policy\+Type $>$\+::{\bf Bi\+Map\+Type} =  boost\+::bimap$<${\bf std\+::string}, typename Policy\+Type\+::\+Mapped\+Type$>$\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1data_1_1DatasetMapper_a5e8d36a41c2b73f0bda421099e185edd}
+
+
+Definition at line 157 of file dataset\+\_\+mapper.\+hpp.
+
+\index{mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}!Map\+Type@{Map\+Type}}
+\index{Map\+Type@{Map\+Type}!mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}}
+\subsubsection[{Map\+Type}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Policy\+Type$>$ using {\bf mlpack\+::data\+::\+Dataset\+Mapper}$<$ Policy\+Type $>$\+::{\bf Map\+Type} =  std\+::unordered\+\_\+map$<$size\+\_\+t, std\+::pair$<${\bf Bi\+Map\+Type}, size\+\_\+t$>$$>$\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1data_1_1DatasetMapper_af8b63c078c1e6caec1a5bb81c74f4007}
+
+
+Definition at line 162 of file dataset\+\_\+mapper.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}!Dataset\+Mapper@{Dataset\+Mapper}}
+\index{Dataset\+Mapper@{Dataset\+Mapper}!mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}}
+\subsubsection[{Dataset\+Mapper(const size\+\_\+t dimensionality=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Policy\+Type$>$ {\bf mlpack\+::data\+::\+Dataset\+Mapper}$<$ Policy\+Type $>$\+::{\bf Dataset\+Mapper} (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{dimensionality = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [explicit]}}\label{classmlpack_1_1data_1_1DatasetMapper_a9c16f7a8e4ede5e53f80cf0ba77d614e}
+
+
+Create the \doxyref{Dataset\+Mapper}{p.}{classmlpack_1_1data_1_1DatasetMapper} object with the given dimensionality. 
+
+Note that the dimensionality cannot be changed later; you will have to create a new \doxyref{Dataset\+Mapper}{p.}{classmlpack_1_1data_1_1DatasetMapper} object. \index{mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}!Dataset\+Mapper@{Dataset\+Mapper}}
+\index{Dataset\+Mapper@{Dataset\+Mapper}!mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}}
+\subsubsection[{Dataset\+Mapper(\+Policy\+Type \&policy, const size\+\_\+t dimensionality=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Policy\+Type$>$ {\bf mlpack\+::data\+::\+Dataset\+Mapper}$<$ Policy\+Type $>$\+::{\bf Dataset\+Mapper} (
+\begin{DoxyParamCaption}
+\item[{Policy\+Type \&}]{policy, }
+\item[{const size\+\_\+t}]{dimensionality = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [explicit]}}\label{classmlpack_1_1data_1_1DatasetMapper_a7abd9613c4eff3dfea4f68a248382031}
+
+
+Create the \doxyref{Dataset\+Mapper}{p.}{classmlpack_1_1data_1_1DatasetMapper} object with the given policy and dimensionality. 
+
+Note that the dimensionality cannot be changed later; you will have to create a new \doxyref{Dataset\+Mapper}{p.}{classmlpack_1_1data_1_1DatasetMapper} object. Policy can be modified by the modifier. 
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}!Dimensionality@{Dimensionality}}
+\index{Dimensionality@{Dimensionality}!mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}}
+\subsubsection[{Dimensionality() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Policy\+Type$>$ size\+\_\+t {\bf mlpack\+::data\+::\+Dataset\+Mapper}$<$ Policy\+Type $>$\+::Dimensionality (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1data_1_1DatasetMapper_ae9d064609c2f15ad760705ce16c1c6ee}
+
+
+Get the dimensionality of the \doxyref{Dataset\+Mapper}{p.}{classmlpack_1_1data_1_1DatasetMapper} object (that is, how many dimensions it has information for). 
+
+If this object was created by a call to \doxyref{mlpack\+::data\+::\+Load()}{p.}{namespacemlpack_1_1data_a19805d6585ac8b0be7c4e4b7f081977c}, then the dimensionality will be the same as the number of rows (dimensions) in the dataset. \index{mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}!Map\+First\+Pass@{Map\+First\+Pass}}
+\index{Map\+First\+Pass@{Map\+First\+Pass}!mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}}
+\subsubsection[{Map\+First\+Pass(const std\+::string \&string, const size\+\_\+t dimension)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Policy\+Type$>$ template$<$typename T $>$ void {\bf mlpack\+::data\+::\+Dataset\+Mapper}$<$ Policy\+Type $>$\+::Map\+First\+Pass (
+\begin{DoxyParamCaption}
+\item[{const {\bf std\+::string} \&}]{string, }
+\item[{const size\+\_\+t}]{dimension}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1data_1_1DatasetMapper_af7298ed7371f0f5a9e6037a7979e011b}
+
+
+Preprocessing\+: during a first pass of the data, pass the strings on to the Map\+Policy if they are needed. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em string} & String to map. \\
+\hline
+{\em dimension} & Dimension to map for. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}!Map\+String@{Map\+String}}
+\index{Map\+String@{Map\+String}!mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}}
+\subsubsection[{Map\+String(const std\+::string \&string, const size\+\_\+t dimension)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Policy\+Type$>$ template$<$typename T $>$ T {\bf mlpack\+::data\+::\+Dataset\+Mapper}$<$ Policy\+Type $>$\+::Map\+String (
+\begin{DoxyParamCaption}
+\item[{const {\bf std\+::string} \&}]{string, }
+\item[{const size\+\_\+t}]{dimension}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1data_1_1DatasetMapper_a8cd218e53f40e74a8e87d505a4b4cf76}
+
+
+Given the string and the dimension to which it belongs, return its numeric mapping. 
+
+If no mapping yet exists, the string is added to the list of mappings for the given dimension. The dimension parameter refers to the index of the dimension of the string (i.\+e. the row in the dataset).
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & Numeric type to map to (int/double/float/etc.). \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em string} & String to find/create mapping for. \\
+\hline
+{\em dimension} & Index of the dimension of the string. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}!Map\+Tokens@{Map\+Tokens}}
+\index{Map\+Tokens@{Map\+Tokens}!mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}}
+\subsubsection[{Map\+Tokens(const std\+::vector$<$ std\+::string $>$ \&tokens, size\+\_\+t \&row, arma\+::\+Mat$<$ e\+T $>$ \&matrix)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Policy\+Type$>$ template$<$typename eT $>$ void {\bf mlpack\+::data\+::\+Dataset\+Mapper}$<$ Policy\+Type $>$\+::Map\+Tokens (
+\begin{DoxyParamCaption}
+\item[{const std\+::vector$<$ {\bf std\+::string} $>$ \&}]{tokens, }
+\item[{size\+\_\+t \&}]{row, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&}]{matrix}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1data_1_1DatasetMapper_a3d8edc5e1b28d178df5096cd7fb5e5d5}
+
+
+Map\+Tokens turns vector of strings into numeric variables and puts them into a given matrix. 
+
+It is uses mapping policy to store categorical values to maps. How it determines whether a value is categorical and how it stores the categorical value into map and replaces with the numerical value all depends on the mapping policy object\textquotesingle{}s \doxyref{Map\+Tokens()}{p.}{classmlpack_1_1data_1_1DatasetMapper_a3d8edc5e1b28d178df5096cd7fb5e5d5} funciton.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em eT} & Type of armadillo matrix. \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em tokens} & Vector of variables inside a dimension. \\
+\hline
+{\em row} & Position of the given tokens. \\
+\hline
+{\em matrix} & Matrix to save the data into. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}!Num\+Mappings@{Num\+Mappings}}
+\index{Num\+Mappings@{Num\+Mappings}!mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}}
+\subsubsection[{Num\+Mappings(const size\+\_\+t dimension) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Policy\+Type$>$ size\+\_\+t {\bf mlpack\+::data\+::\+Dataset\+Mapper}$<$ Policy\+Type $>$\+::Num\+Mappings (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{dimension}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1data_1_1DatasetMapper_a4c8d01ac25fa3614576fbe8652382e02}
+
+
+Get the number of mappings for a particular dimension. 
+
+If the dimension is numeric, then this will return 0. \index{mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}!Policy@{Policy}}
+\index{Policy@{Policy}!mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}}
+\subsubsection[{Policy() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Policy\+Type$>$ const Policy\+Type\& {\bf mlpack\+::data\+::\+Dataset\+Mapper}$<$ Policy\+Type $>$\+::Policy (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1data_1_1DatasetMapper_abe9e4d581578543e9b4a991ed88a33d1}
+
+
+Return the policy of the mapper. 
+
+
+
+Referenced by mlpack\+::data\+::\+Dataset\+Mapper$<$ Policy\+Type $>$\+::\+Serialize().
+
+\index{mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}!Policy@{Policy}}
+\index{Policy@{Policy}!mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}}
+\subsubsection[{Policy()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Policy\+Type$>$ Policy\+Type\& {\bf mlpack\+::data\+::\+Dataset\+Mapper}$<$ Policy\+Type $>$\+::Policy (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1data_1_1DatasetMapper_a4f8fa3eb9620a7e9e56cd30a9c2ade7f}
+
+
+Modify the policy of the mapper (be careful!). 
+
+\index{mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}!Policy@{Policy}}
+\index{Policy@{Policy}!mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}}
+\subsubsection[{Policy(\+Policy\+Type \&\&policy)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Policy\+Type$>$ void {\bf mlpack\+::data\+::\+Dataset\+Mapper}$<$ Policy\+Type $>$\+::Policy (
+\begin{DoxyParamCaption}
+\item[{Policy\+Type \&\&}]{policy}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1data_1_1DatasetMapper_a8674ec5db12763fa40de2a58a35e0bf2}
+
+
+Modify (Replace) the policy of the mapper with a new policy. 
+
+\index{mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}}
+\subsubsection[{Serialize(\+Archive \&ar, const unsigned int)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Policy\+Type$>$ template$<$typename Archive $>$ void {\bf mlpack\+::data\+::\+Dataset\+Mapper}$<$ Policy\+Type $>$\+::Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const unsigned}]{int}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1data_1_1DatasetMapper_abb2b94c14e1723bfbcfd900359a62e8a}
+
+
+Serialize the dataset information. 
+
+
+
+Definition at line 138 of file dataset\+\_\+mapper.\+hpp.
+
+
+
+References mlpack\+::data\+::\+Create\+N\+V\+P(), mlpack\+::data\+::\+Dataset\+Mapper$<$ Policy\+Type $>$\+::maps, mlpack\+::data\+::\+Dataset\+Mapper$<$ Policy\+Type $>$\+::\+Policy(), and mlpack\+::data\+::\+Dataset\+Mapper$<$ Policy\+Type $>$\+::types.
+
+\index{mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}!Type@{Type}}
+\index{Type@{Type}!mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}}
+\subsubsection[{Type(const size\+\_\+t dimension) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Policy\+Type$>$ {\bf Datatype} {\bf mlpack\+::data\+::\+Dataset\+Mapper}$<$ Policy\+Type $>$\+::Type (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{dimension}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1data_1_1DatasetMapper_ac9b3d6d8688cea1819bc8df4516bf37d}
+
+
+Return the type of a given dimension (numeric or categorical). 
+
+\index{mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}!Type@{Type}}
+\index{Type@{Type}!mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}}
+\subsubsection[{Type(const size\+\_\+t dimension)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Policy\+Type$>$ {\bf Datatype}\& {\bf mlpack\+::data\+::\+Dataset\+Mapper}$<$ Policy\+Type $>$\+::Type (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{dimension}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1data_1_1DatasetMapper_ae978b5fe45d9872bbf3d1089952090c4}
+
+
+Modify the type of a given dimension (be careful!). 
+
+\index{mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}!Unmap\+String@{Unmap\+String}}
+\index{Unmap\+String@{Unmap\+String}!mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}}
+\subsubsection[{Unmap\+String(const size\+\_\+t value, const size\+\_\+t dimension)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Policy\+Type$>$ const {\bf std\+::string}\& {\bf mlpack\+::data\+::\+Dataset\+Mapper}$<$ Policy\+Type $>$\+::Unmap\+String (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{value, }
+\item[{const size\+\_\+t}]{dimension}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1data_1_1DatasetMapper_a18ecaf8879808727e9165dc26b069564}
+
+
+Return the string that corresponds to a given value in a given dimension. 
+
+If the string is not a valid mapping in the given dimension, a std\+::invalid\+\_\+argument is thrown.
+
+
+\begin{DoxyParams}{Parameters}
+{\em value} & Mapped value for string. \\
+\hline
+{\em dimension} & Dimension to unmap string from. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}!Unmap\+Value@{Unmap\+Value}}
+\index{Unmap\+Value@{Unmap\+Value}!mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}}
+\subsubsection[{Unmap\+Value(const std\+::string \&string, const size\+\_\+t dimension)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Policy\+Type$>$ Policy\+Type\+::\+Mapped\+Type {\bf mlpack\+::data\+::\+Dataset\+Mapper}$<$ Policy\+Type $>$\+::Unmap\+Value (
+\begin{DoxyParamCaption}
+\item[{const {\bf std\+::string} \&}]{string, }
+\item[{const size\+\_\+t}]{dimension}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1data_1_1DatasetMapper_a93acc59bf57a9f75636a2f7eace384d1}
+
+
+Return the value that corresponds to a given string in a given dimension. 
+
+If the value is not a valid mapping in the given dimension, a std\+::invalid\+\_\+argument is thrown.
+
+
+\begin{DoxyParams}{Parameters}
+{\em string} & Mapped string for value. \\
+\hline
+{\em dimension} & Dimension to unmap string from. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}!maps@{maps}}
+\index{maps@{maps}!mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}}
+\subsubsection[{maps}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Policy\+Type$>$ {\bf Map\+Type} {\bf mlpack\+::data\+::\+Dataset\+Mapper}$<$ Policy\+Type $>$\+::maps\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1data_1_1DatasetMapper_a3b360d6cbb89faf4574aa04d3632671e}
+
+
+maps object stores string and numerical pairs. 
+
+
+
+Definition at line 165 of file dataset\+\_\+mapper.\+hpp.
+
+
+
+Referenced by mlpack\+::data\+::\+Dataset\+Mapper$<$ Policy\+Type $>$\+::\+Serialize().
+
+\index{mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}!policy@{policy}}
+\index{policy@{policy}!mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}}
+\subsubsection[{policy}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Policy\+Type$>$ Policy\+Type {\bf mlpack\+::data\+::\+Dataset\+Mapper}$<$ Policy\+Type $>$\+::policy\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1data_1_1DatasetMapper_a379d553cfa7f8a9d02a6710a59677e4f}
+
+
+policy object tells dataset mapper how the categorical values should be 
+
+
+
+Definition at line 169 of file dataset\+\_\+mapper.\+hpp.
+
+\index{mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}!types@{types}}
+\index{types@{types}!mlpack\+::data\+::\+Dataset\+Mapper@{mlpack\+::data\+::\+Dataset\+Mapper}}
+\subsubsection[{types}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Policy\+Type$>$ std\+::vector$<${\bf Datatype}$>$ {\bf mlpack\+::data\+::\+Dataset\+Mapper}$<$ Policy\+Type $>$\+::types\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1data_1_1DatasetMapper_a5740188736300b964f8c4f6efbc85924}
+
+
+Types of each dimension. 
+
+
+
+Definition at line 154 of file dataset\+\_\+mapper.\+hpp.
+
+
+
+Referenced by mlpack\+::data\+::\+Dataset\+Mapper$<$ Policy\+Type $>$\+::\+Serialize().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/data/{\bf dataset\+\_\+mapper.\+hpp}\end{DoxyCompactItemize}

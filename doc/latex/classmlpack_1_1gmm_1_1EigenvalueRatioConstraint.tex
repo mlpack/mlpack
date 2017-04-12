@@ -1,0 +1,117 @@
+\section{mlpack\+:\+:gmm\+:\+:Eigenvalue\+Ratio\+Constraint Class Reference}
+\label{classmlpack_1_1gmm_1_1EigenvalueRatioConstraint}\index{mlpack\+::gmm\+::\+Eigenvalue\+Ratio\+Constraint@{mlpack\+::gmm\+::\+Eigenvalue\+Ratio\+Constraint}}
+
+
+Given a vector of eigenvalue ratios, ensure that the covariance matrix always has those eigenvalue ratios.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Eigenvalue\+Ratio\+Constraint} (const arma\+::vec \&{\bf ratios})
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Eigenvalue\+Ratio\+Constraint}{p.}{classmlpack_1_1gmm_1_1EigenvalueRatioConstraint} object with the given vector of eigenvalue ratios. \end{DoxyCompactList}\item 
+void {\bf Apply\+Constraint} (arma\+::mat \&covariance) const 
+\begin{DoxyCompactList}\small\item\em Apply the eigenvalue ratio constraint to the given covariance matrix. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&ar, const unsigned int)
+\begin{DoxyCompactList}\small\item\em Serialize the constraint. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+const arma\+::vec {\bf ratios}
+\begin{DoxyCompactList}\small\item\em Ratios for eigenvalues. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Given a vector of eigenvalue ratios, ensure that the covariance matrix always has those eigenvalue ratios. 
+
+When you create this object, make sure that the vector of ratios that you pass does not go out of scope, because this object holds a reference to that vector instead of copying it. (This doesn\textquotesingle{}t apply if you are deserializing the object from a file.) 
+
+Definition at line 27 of file eigenvalue\+\_\+ratio\+\_\+constraint.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::gmm\+::\+Eigenvalue\+Ratio\+Constraint@{mlpack\+::gmm\+::\+Eigenvalue\+Ratio\+Constraint}!Eigenvalue\+Ratio\+Constraint@{Eigenvalue\+Ratio\+Constraint}}
+\index{Eigenvalue\+Ratio\+Constraint@{Eigenvalue\+Ratio\+Constraint}!mlpack\+::gmm\+::\+Eigenvalue\+Ratio\+Constraint@{mlpack\+::gmm\+::\+Eigenvalue\+Ratio\+Constraint}}
+\subsubsection[{Eigenvalue\+Ratio\+Constraint(const arma\+::vec \&ratios)}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::gmm\+::\+Eigenvalue\+Ratio\+Constraint\+::\+Eigenvalue\+Ratio\+Constraint (
+\begin{DoxyParamCaption}
+\item[{const arma\+::vec \&}]{ratios}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1gmm_1_1EigenvalueRatioConstraint_a945a78deed68fd4488455816ab163643}
+
+
+Create the \doxyref{Eigenvalue\+Ratio\+Constraint}{p.}{classmlpack_1_1gmm_1_1EigenvalueRatioConstraint} object with the given vector of eigenvalue ratios. 
+
+These ratios are with respect to the first eigenvalue, which is the largest eigenvalue, so the first element of the vector should be 1. In addition, all other elements should be less than or equal to 1. 
+
+Definition at line 36 of file eigenvalue\+\_\+ratio\+\_\+constraint.\+hpp.
+
+
+
+References mlpack\+::\+Log\+::\+Fatal, and mlpack\+::\+Log\+::\+Warn.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::gmm\+::\+Eigenvalue\+Ratio\+Constraint@{mlpack\+::gmm\+::\+Eigenvalue\+Ratio\+Constraint}!Apply\+Constraint@{Apply\+Constraint}}
+\index{Apply\+Constraint@{Apply\+Constraint}!mlpack\+::gmm\+::\+Eigenvalue\+Ratio\+Constraint@{mlpack\+::gmm\+::\+Eigenvalue\+Ratio\+Constraint}}
+\subsubsection[{Apply\+Constraint(arma\+::mat \&covariance) const }]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::gmm\+::\+Eigenvalue\+Ratio\+Constraint\+::\+Apply\+Constraint (
+\begin{DoxyParamCaption}
+\item[{arma\+::mat \&}]{covariance}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1gmm_1_1EigenvalueRatioConstraint_a6f58aef5f979a05ad6ac029e92ceb418}
+
+
+Apply the eigenvalue ratio constraint to the given covariance matrix. 
+
+
+
+Definition at line 62 of file eigenvalue\+\_\+ratio\+\_\+constraint.\+hpp.
+
+
+
+References ratios.
+
+\index{mlpack\+::gmm\+::\+Eigenvalue\+Ratio\+Constraint@{mlpack\+::gmm\+::\+Eigenvalue\+Ratio\+Constraint}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::gmm\+::\+Eigenvalue\+Ratio\+Constraint@{mlpack\+::gmm\+::\+Eigenvalue\+Ratio\+Constraint}}
+\subsubsection[{Serialize(\+Archive \&ar, const unsigned int)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Archive $>$ void mlpack\+::gmm\+::\+Eigenvalue\+Ratio\+Constraint\+::\+Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const unsigned}]{int}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1gmm_1_1EigenvalueRatioConstraint_a9bfb4e35331f8f0db887b87c1b9b9ae3}
+
+
+Serialize the constraint. 
+
+
+
+Definition at line 81 of file eigenvalue\+\_\+ratio\+\_\+constraint.\+hpp.
+
+
+
+References mlpack\+::data\+::\+Create\+N\+V\+P(), and ratios.
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::gmm\+::\+Eigenvalue\+Ratio\+Constraint@{mlpack\+::gmm\+::\+Eigenvalue\+Ratio\+Constraint}!ratios@{ratios}}
+\index{ratios@{ratios}!mlpack\+::gmm\+::\+Eigenvalue\+Ratio\+Constraint@{mlpack\+::gmm\+::\+Eigenvalue\+Ratio\+Constraint}}
+\subsubsection[{ratios}]{\setlength{\rightskip}{0pt plus 5cm}const arma\+::vec mlpack\+::gmm\+::\+Eigenvalue\+Ratio\+Constraint\+::ratios\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1gmm_1_1EigenvalueRatioConstraint_a3aa2de5d1b7a96c719aebc3f98b7e533}
+
+
+Ratios for eigenvalues. 
+
+
+
+Definition at line 90 of file eigenvalue\+\_\+ratio\+\_\+constraint.\+hpp.
+
+
+
+Referenced by Apply\+Constraint(), and Serialize().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/gmm/{\bf eigenvalue\+\_\+ratio\+\_\+constraint.\+hpp}\end{DoxyCompactItemize}

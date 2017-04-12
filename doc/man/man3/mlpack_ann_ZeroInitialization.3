@@ -1,0 +1,78 @@
+.TH "mlpack::ann::ZeroInitialization" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::ann::ZeroInitialization \- This class is used to initialize randomly the weight matrix\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBZeroInitialization\fP ()"
+.br
+.RI "\fICreate the \fBZeroInitialization\fP object\&. \fP"
+.ti -1c
+.RI "template<typename eT > void \fBInitialize\fP (arma::Mat< eT > &W, const size_t rows, const size_t cols)"
+.br
+.RI "\fIInitialize the elements of the specified weight matrix\&. \fP"
+.ti -1c
+.RI "template<typename eT > void \fBInitialize\fP (arma::Cube< eT > &W, const size_t rows, const size_t cols, const size_t slices)"
+.br
+.RI "\fIInitialize the elements of the specified weight (3rd order tensor)\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+This class is used to initialize randomly the weight matrix\&. 
+.PP
+Definition at line 24 of file zero_init\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::ann::ZeroInitialization::ZeroInitialization ()\fC [inline]\fP"
+
+.PP
+Create the \fBZeroInitialization\fP object\&. 
+.PP
+Definition at line 30 of file zero_init\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename eT > void mlpack::ann::ZeroInitialization::Initialize (arma::Mat< eT > & W, const size_t rows, const size_t cols)\fC [inline]\fP"
+
+.PP
+Initialize the elements of the specified weight matrix\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIW\fP Weight matrix to initialize\&. 
+.br
+\fIrows\fP Number of rows\&. 
+.br
+\fIcols\fP Number of columns\&. 
+.RE
+.PP
+
+.PP
+Definition at line 40 of file zero_init\&.hpp\&.
+.SS "template<typename eT > void mlpack::ann::ZeroInitialization::Initialize (arma::Cube< eT > & W, const size_t rows, const size_t cols, const size_t slices)\fC [inline]\fP"
+
+.PP
+Initialize the elements of the specified weight (3rd order tensor)\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIW\fP Weight matrix to initialize\&. 
+.br
+\fIrows\fP Number of rows\&. 
+.br
+\fIcols\fP Number of columns\&. 
+.RE
+.PP
+
+.PP
+Definition at line 53 of file zero_init\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

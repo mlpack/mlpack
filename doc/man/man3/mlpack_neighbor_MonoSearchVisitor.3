@@ -1,0 +1,84 @@
+.TH "mlpack::neighbor::MonoSearchVisitor" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::neighbor::MonoSearchVisitor \- \fBMonoSearchVisitor\fP executes a monochromatic neighbor search on the given NSType\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits static_visitor< void >\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBMonoSearchVisitor\fP (const size_t \fBk\fP, arma::Mat< size_t > &\fBneighbors\fP, arma::mat &\fBdistances\fP)"
+.br
+.RI "\fIConstruct the \fBMonoSearchVisitor\fP object with the given parameters\&. \fP"
+.ti -1c
+.RI "template<typename NSType > void \fBoperator()\fP (\fBNSType\fP *ns) const "
+.br
+.RI "\fIPerform monochromatic nearest neighbor search\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "arma::mat & \fBdistances\fP"
+.br
+.RI "\fIResult matrix for distances\&. \fP"
+.ti -1c
+.RI "const size_t \fBk\fP"
+.br
+.RI "\fINumber of neighbors to search for\&. \fP"
+.ti -1c
+.RI "arma::Mat< size_t > & \fBneighbors\fP"
+.br
+.RI "\fIResult matrix for neighbors\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBMonoSearchVisitor\fP executes a monochromatic neighbor search on the given NSType\&. 
+
+We don't make any difference for different instantiations of NSType\&. 
+.PP
+Definition at line 66 of file ns_model\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::neighbor::MonoSearchVisitor::MonoSearchVisitor (const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances)\fC [inline]\fP"
+
+.PP
+Construct the \fBMonoSearchVisitor\fP object with the given parameters\&. 
+.PP
+Definition at line 82 of file ns_model\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename NSType > void mlpack::neighbor::MonoSearchVisitor::operator() (\fBNSType\fP * ns) const"
+
+.PP
+Perform monochromatic nearest neighbor search\&. 
+.SH "Member Data Documentation"
+.PP 
+.SS "arma::mat& mlpack::neighbor::MonoSearchVisitor::distances\fC [private]\fP"
+
+.PP
+Result matrix for distances\&. 
+.PP
+Definition at line 74 of file ns_model\&.hpp\&.
+.SS "const size_t mlpack::neighbor::MonoSearchVisitor::k\fC [private]\fP"
+
+.PP
+Number of neighbors to search for\&. 
+.PP
+Definition at line 70 of file ns_model\&.hpp\&.
+.SS "arma::Mat<size_t>& mlpack::neighbor::MonoSearchVisitor::neighbors\fC [private]\fP"
+
+.PP
+Result matrix for neighbors\&. 
+.PP
+Definition at line 72 of file ns_model\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

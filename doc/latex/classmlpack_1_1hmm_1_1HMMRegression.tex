@@ -1,0 +1,502 @@
+\section{mlpack\+:\+:hmm\+:\+:H\+M\+M\+Regression Class Reference}
+\label{classmlpack_1_1hmm_1_1HMMRegression}\index{mlpack\+::hmm\+::\+H\+M\+M\+Regression@{mlpack\+::hmm\+::\+H\+M\+M\+Regression}}
+
+
+A class that represents a Hidden Markov Model Regression (H\+M\+MR).  
+
+
+
+
+Inheritance diagram for mlpack\+:\+:hmm\+:\+:H\+M\+M\+Regression\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=246pt]{classmlpack_1_1hmm_1_1HMMRegression__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf H\+M\+M\+Regression} (const size\+\_\+t states, const {\bf distribution\+::\+Regression\+Distribution} emissions, const double {\bf tolerance}=1e-\/5)
+\begin{DoxyCompactList}\small\item\em Create the Hidden Markov Model Regression with the given number of hidden states and the given default regression emission. \end{DoxyCompactList}\item 
+{\bf H\+M\+M\+Regression} (const arma\+::vec \&{\bf initial}, const arma\+::mat \&{\bf transition}, const std\+::vector$<$ {\bf distribution\+::\+Regression\+Distribution} $>$ \&{\bf emission}, const double {\bf tolerance}=1e-\/5)
+\begin{DoxyCompactList}\small\item\em Create the Hidden Markov Model Regression with the given initial probability vector, the given transition matrix, and the given regression emission distributions. \end{DoxyCompactList}\item 
+double {\bf Estimate} (const arma\+::mat \&predictors, const arma\+::vec \&responses, arma\+::mat \&state\+Prob, arma\+::mat \&forward\+Prob, arma\+::mat \&backward\+Prob, arma\+::vec \&scales) const 
+\begin{DoxyCompactList}\small\item\em Estimate the probabilities of each hidden state at each time step for each given data observation, using the Forward-\/\+Backward algorithm. \end{DoxyCompactList}\item 
+double {\bf Estimate} (const arma\+::mat \&predictors, const arma\+::vec \&responses, arma\+::mat \&state\+Prob) const 
+\begin{DoxyCompactList}\small\item\em Estimate the probabilities of each hidden state at each time step of each given data observation, using the Forward-\/\+Backward algorithm. \end{DoxyCompactList}\item 
+void {\bf Filter} (const arma\+::mat \&predictors, const arma\+::vec \&responses, arma\+::vec \&filter\+Seq, size\+\_\+t ahead=0) const 
+\begin{DoxyCompactList}\small\item\em H\+M\+MR filtering. \end{DoxyCompactList}\item 
+double {\bf Log\+Likelihood} (const arma\+::mat \&predictors, const arma\+::vec \&responses) const 
+\begin{DoxyCompactList}\small\item\em Compute the log-\/likelihood of the given predictors and responses. \end{DoxyCompactList}\item 
+double {\bf Predict} (const arma\+::mat \&predictors, const arma\+::vec \&responses, arma\+::\+Row$<$ size\+\_\+t $>$ \&state\+Seq) const 
+\begin{DoxyCompactList}\small\item\em Compute the most probable hidden state sequence for the given predictors and responses, using the Viterbi algorithm, returning the log-\/likelihood of the most likely state sequence. \end{DoxyCompactList}\item 
+void {\bf Smooth} (const arma\+::mat \&predictors, const arma\+::vec \&responses, arma\+::vec \&smooth\+Seq) const 
+\begin{DoxyCompactList}\small\item\em \doxyref{H\+MM}{p.}{classmlpack_1_1hmm_1_1HMM} smoothing. \end{DoxyCompactList}\item 
+void {\bf Train} (const std\+::vector$<$ arma\+::mat $>$ \&predictors, const std\+::vector$<$ arma\+::vec $>$ \&responses)
+\begin{DoxyCompactList}\small\item\em Train the model using the Baum-\/\+Welch algorithm, with only the given predictors and responses. \end{DoxyCompactList}\item 
+void {\bf Train} (const std\+::vector$<$ arma\+::mat $>$ \&predictors, const std\+::vector$<$ arma\+::vec $>$ \&responses, const std\+::vector$<$ arma\+::\+Row$<$ size\+\_\+t $>$ $>$ \&state\+Seq)
+\begin{DoxyCompactList}\small\item\em Train the model using the given labeled observations; the transition and regression emissions are directly estimated. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void {\bf Backward} (const arma\+::mat \&predictors, const arma\+::vec \&responses, const arma\+::vec \&scales, arma\+::mat \&backward\+Prob) const 
+\begin{DoxyCompactList}\small\item\em The Backward algorithm (part of the Forward-\/\+Backward algorithm). \end{DoxyCompactList}\item 
+void {\bf Forward} (const arma\+::mat \&predictors, const arma\+::vec \&responses, arma\+::vec \&scales, arma\+::mat \&forward\+Prob) const 
+\begin{DoxyCompactList}\small\item\em The Forward algorithm (part of the Forward-\/\+Backward algorithm). \end{DoxyCompactList}\item 
+void {\bf Stack\+Data} (const std\+::vector$<$ arma\+::mat $>$ \&predictors, const std\+::vector$<$ arma\+::vec $>$ \&responses, std\+::vector$<$ arma\+::mat $>$ \&data\+Seq) const 
+\begin{DoxyCompactList}\small\item\em Utility functions to facilitate the use of the \doxyref{H\+MM}{p.}{classmlpack_1_1hmm_1_1HMM} class for H\+M\+MR. \end{DoxyCompactList}\item 
+void {\bf Stack\+Data} (const arma\+::mat \&predictors, const arma\+::vec \&responses, arma\+::mat \&data\+Seq) const 
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+A class that represents a Hidden Markov Model Regression (H\+M\+MR). 
+
+H\+M\+MR is an extension of Hidden Markov Models to regression analysis. The method is described in (Fridman, 1993) {\tt https\+://www.\+ima.\+umn.\+edu/preprints/\+January1994/1195.\+pdf} An H\+M\+MR is a linear regression model whose coefficients are determined by a finite-\/state Markov chain. The error terms are conditionally independently normally distributed with zero mean and state-\/dependent variance. Let Q\+\_\+t be a finite-\/state Markov chain, X\+\_\+t a vector of predictors and Y\+\_\+t a response. The H\+M\+MR is Y\+\_\+t = X\+\_\+t \{Q\+\_\+t\} + \{Q\+\_\+t\} 
+
+This H\+M\+MR class supports training (supervised and unsupervised), prediction of state sequences via the Viterbi algorithm, estimation of state probabilities, filtering and smoothing of responses, and calculation of the log-\/likelihood of a given sequence.
+
+Usage of the H\+M\+MR class generally involves either training an H\+M\+MR or loading an already-\/known H\+M\+MR and using to filter a sequence. Example code for supervised training of an H\+M\+MR is given below.
+
+
+\begin{DoxyCode}
+\textcolor{comment}{// Each column is a vector of predictors for a single observation.}
+arma::mat predictors(5, 100, arma::fill::randn);
+\textcolor{comment}{// Responses for each observation}
+arma::vec responses(100, arma::fill::randn);
+
+\textcolor{comment}{// Create an untrained HMMR with 3 hidden states}
+RegressionDistribution rd(predictors, responses);
+arma::mat transition(\textcolor{stringliteral}{"0.5 0.5;"} \textcolor{stringliteral}{"0.5 0.5;"});
+std::vector<RegressionDistribution> emissions(2,rd);
+HMMRegression hmmr(\textcolor{stringliteral}{"0.9 0.1"}, transition, emissions);
+
+ \textcolor{comment}{// Train the HMM (supply a state sequence to perform supervised training)}
+std::vector<arma::mat> predictorsSeq(1, predictors);
+std::vector< arma::vec> responsesSeq(1, responses);
+hmmr.Train(predictorsSeq, responsesSeq);
+hmm.Train(observations, states);
+\end{DoxyCode}
+
+
+Once initialized, the H\+M\+MR can evaluate the probability of a certain sequence (with \doxyref{Log\+Likelihood()}{p.}{classmlpack_1_1hmm_1_1HMMRegression_aaf56d0c2d4502c8fb6e46acaa93faa47}), predict the most likely sequence of hidden states (with \doxyref{Predict()}{p.}{classmlpack_1_1hmm_1_1HMMRegression_a577783458d593dad59ac92fb7b3b266c}), estimate the probabilities of each state for a sequence of observations (with \doxyref{Estimate()}{p.}{classmlpack_1_1hmm_1_1HMMRegression_a04bdac3f5b6616b578130535263d8b91}), or perform filtering or smoothing of observations. 
+
+Definition at line 69 of file hmm\+\_\+regression.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::hmm\+::\+H\+M\+M\+Regression@{mlpack\+::hmm\+::\+H\+M\+M\+Regression}!H\+M\+M\+Regression@{H\+M\+M\+Regression}}
+\index{H\+M\+M\+Regression@{H\+M\+M\+Regression}!mlpack\+::hmm\+::\+H\+M\+M\+Regression@{mlpack\+::hmm\+::\+H\+M\+M\+Regression}}
+\subsubsection[{H\+M\+M\+Regression(const size\+\_\+t states, const distribution\+::\+Regression\+Distribution emissions, const double tolerance=1e-\/5)}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::hmm\+::\+H\+M\+M\+Regression\+::\+H\+M\+M\+Regression (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{states, }
+\item[{const {\bf distribution\+::\+Regression\+Distribution}}]{emissions, }
+\item[{const double}]{tolerance = {\ttfamily 1e-\/5}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1hmm_1_1HMMRegression_af6df0f1e7761564f877a1e974511f2a3}
+
+
+Create the Hidden Markov Model Regression with the given number of hidden states and the given default regression emission. 
+
+The dimensionality of the observations is taken from the emissions variable, so it is important that the given default emission distribution is set with the correct dimensionality. Alternately, set the dimensionality with \doxyref{Dimensionality()}{p.}{classmlpack_1_1hmm_1_1HMM_a5bfe57d1c239278113cac519f9da2106}. Optionally, the tolerance for convergence of the Baum-\/\+Welch algorithm can be set.
+
+By default, the transition matrix and initial probability vector are set to contain equal probability for each state.
+
+
+\begin{DoxyParams}{Parameters}
+{\em states} & Number of states. \\
+\hline
+{\em emissions} & Default distribution for emissions. \\
+\hline
+{\em tolerance} & Tolerance for convergence of training algorithm (Baum-\/\+Welch). \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 89 of file hmm\+\_\+regression.\+hpp.
+
+\index{mlpack\+::hmm\+::\+H\+M\+M\+Regression@{mlpack\+::hmm\+::\+H\+M\+M\+Regression}!H\+M\+M\+Regression@{H\+M\+M\+Regression}}
+\index{H\+M\+M\+Regression@{H\+M\+M\+Regression}!mlpack\+::hmm\+::\+H\+M\+M\+Regression@{mlpack\+::hmm\+::\+H\+M\+M\+Regression}}
+\subsubsection[{H\+M\+M\+Regression(const arma\+::vec \&initial, const arma\+::mat \&transition, const std\+::vector$<$ distribution\+::\+Regression\+Distribution $>$ \&emission, const double tolerance=1e-\/5)}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::hmm\+::\+H\+M\+M\+Regression\+::\+H\+M\+M\+Regression (
+\begin{DoxyParamCaption}
+\item[{const arma\+::vec \&}]{initial, }
+\item[{const arma\+::mat \&}]{transition, }
+\item[{const std\+::vector$<$ {\bf distribution\+::\+Regression\+Distribution} $>$ \&}]{emission, }
+\item[{const double}]{tolerance = {\ttfamily 1e-\/5}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1hmm_1_1HMMRegression_aaa7414c3eb9f4fb19a1b2d1c699f6333}
+
+
+Create the Hidden Markov Model Regression with the given initial probability vector, the given transition matrix, and the given regression emission distributions. 
+
+The dimensionality of the observations of the H\+M\+MR are taken from the given emission distributions. Alternately, the dimensionality can be set with \doxyref{Dimensionality()}{p.}{classmlpack_1_1hmm_1_1HMM_a5bfe57d1c239278113cac519f9da2106}.
+
+The initial state probability vector should have length equal to the number of states, and each entry represents the probability of being in the given state at time T = 0 (the beginning of a sequence).
+
+The transition matrix should be such that T(i, j) is the probability of transition to state i from state j. The columns of the matrix should sum to 1.
+
+Optionally, the tolerance for convergence of the Baum-\/\+Welch algorithm can be set.
+
+
+\begin{DoxyParams}{Parameters}
+{\em initial} & Initial state probabilities. \\
+\hline
+{\em transition} & Transition matrix. \\
+\hline
+{\em emission} & Emission distributions. \\
+\hline
+{\em tolerance} & Tolerance for convergence of training algorithm (Baum-\/\+Welch). \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 119 of file hmm\+\_\+regression.\+hpp.
+
+
+
+References Backward(), Estimate(), Filter(), Forward(), Log\+Likelihood(), Predict(), Smooth(), Stack\+Data(), and Train().
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::hmm\+::\+H\+M\+M\+Regression@{mlpack\+::hmm\+::\+H\+M\+M\+Regression}!Backward@{Backward}}
+\index{Backward@{Backward}!mlpack\+::hmm\+::\+H\+M\+M\+Regression@{mlpack\+::hmm\+::\+H\+M\+M\+Regression}}
+\subsubsection[{Backward(const arma\+::mat \&predictors, const arma\+::vec \&responses, const arma\+::vec \&scales, arma\+::mat \&backward\+Prob) const }]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::hmm\+::\+H\+M\+M\+Regression\+::\+Backward (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{predictors, }
+\item[{const arma\+::vec \&}]{responses, }
+\item[{const arma\+::vec \&}]{scales, }
+\item[{arma\+::mat \&}]{backward\+Prob}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1hmm_1_1HMMRegression_acc00e1764b74ec5f84f24516c71ce09c}
+
+
+The Backward algorithm (part of the Forward-\/\+Backward algorithm). 
+
+Computes backward probabilities for each state for each observation in the given data sequence, using the scaling factors found (presumably) by \doxyref{Forward()}{p.}{classmlpack_1_1hmm_1_1HMMRegression_a6f037a9bef339480de70685b500dd335}. The returned matrix has rows equal to the number of hidden states and columns equal to the number of observations.
+
+
+\begin{DoxyParams}{Parameters}
+{\em predictors} & Vector of predictor sequences. \\
+\hline
+{\em responses} & Vector of response sequences. \\
+\hline
+{\em scales} & Vector of scaling factors. \\
+\hline
+{\em backward\+Prob} & Matrix in which backward probabilities will be saved. \\
+\hline
+\end{DoxyParams}
+
+
+Referenced by H\+M\+M\+Regression().
+
+\index{mlpack\+::hmm\+::\+H\+M\+M\+Regression@{mlpack\+::hmm\+::\+H\+M\+M\+Regression}!Estimate@{Estimate}}
+\index{Estimate@{Estimate}!mlpack\+::hmm\+::\+H\+M\+M\+Regression@{mlpack\+::hmm\+::\+H\+M\+M\+Regression}}
+\subsubsection[{Estimate(const arma\+::mat \&predictors, const arma\+::vec \&responses, arma\+::mat \&state\+Prob, arma\+::mat \&forward\+Prob, arma\+::mat \&backward\+Prob, arma\+::vec \&scales) const }]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::hmm\+::\+H\+M\+M\+Regression\+::\+Estimate (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{predictors, }
+\item[{const arma\+::vec \&}]{responses, }
+\item[{arma\+::mat \&}]{state\+Prob, }
+\item[{arma\+::mat \&}]{forward\+Prob, }
+\item[{arma\+::mat \&}]{backward\+Prob, }
+\item[{arma\+::vec \&}]{scales}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1hmm_1_1HMMRegression_a04bdac3f5b6616b578130535263d8b91}
+
+
+Estimate the probabilities of each hidden state at each time step for each given data observation, using the Forward-\/\+Backward algorithm. 
+
+Each matrix which is returned has columns equal to the number of data observations, and rows equal to the number of hidden states in the model. The log-\/likelihood of the most probable sequence is returned.
+
+
+\begin{DoxyParams}{Parameters}
+{\em predictors} & Vector of predictor sequences. \\
+\hline
+{\em responses} & Vector of response sequences. \\
+\hline
+{\em state\+Prob} & Matrix in which the probabilities of each state at each time interval will be stored. \\
+\hline
+{\em forward\+Prob} & Matrix in which the forward probabilities of each state at each time interval will be stored. \\
+\hline
+{\em backward\+Prob} & Matrix in which the backward probabilities of each state at each time interval will be stored. \\
+\hline
+{\em scales} & Vector in which the scaling factors at each time interval will be stored. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Log-\/likelihood of most likely state sequence. 
+\end{DoxyReturn}
+
+
+Referenced by H\+M\+M\+Regression().
+
+\index{mlpack\+::hmm\+::\+H\+M\+M\+Regression@{mlpack\+::hmm\+::\+H\+M\+M\+Regression}!Estimate@{Estimate}}
+\index{Estimate@{Estimate}!mlpack\+::hmm\+::\+H\+M\+M\+Regression@{mlpack\+::hmm\+::\+H\+M\+M\+Regression}}
+\subsubsection[{Estimate(const arma\+::mat \&predictors, const arma\+::vec \&responses, arma\+::mat \&state\+Prob) const }]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::hmm\+::\+H\+M\+M\+Regression\+::\+Estimate (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{predictors, }
+\item[{const arma\+::vec \&}]{responses, }
+\item[{arma\+::mat \&}]{state\+Prob}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1hmm_1_1HMMRegression_a047ea47bc41f5c16ef61542f07ad9b89}
+
+
+Estimate the probabilities of each hidden state at each time step of each given data observation, using the Forward-\/\+Backward algorithm. 
+
+The returned matrix of state probabilities has columns equal to the number of data observations, and rows equal to the number of hidden states in the model. The log-\/likelihood of the most probable sequence is returned.
+
+
+\begin{DoxyParams}{Parameters}
+{\em predictors} & Vector of predictor sequences. \\
+\hline
+{\em responses} & Vector of response sequences. \\
+\hline
+{\em state\+Prob} & Probabilities of each state at each time interval. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Log-\/likelihood of most likely state sequence. 
+\end{DoxyReturn}
+\index{mlpack\+::hmm\+::\+H\+M\+M\+Regression@{mlpack\+::hmm\+::\+H\+M\+M\+Regression}!Filter@{Filter}}
+\index{Filter@{Filter}!mlpack\+::hmm\+::\+H\+M\+M\+Regression@{mlpack\+::hmm\+::\+H\+M\+M\+Regression}}
+\subsubsection[{Filter(const arma\+::mat \&predictors, const arma\+::vec \&responses, arma\+::vec \&filter\+Seq, size\+\_\+t ahead=0) const }]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::hmm\+::\+H\+M\+M\+Regression\+::\+Filter (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{predictors, }
+\item[{const arma\+::vec \&}]{responses, }
+\item[{arma\+::vec \&}]{filter\+Seq, }
+\item[{size\+\_\+t}]{ahead = {\ttfamily 0}}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1hmm_1_1HMMRegression_a106bc8d5c186c2aee1bcfcf1437f632a}
+
+
+H\+M\+MR filtering. 
+
+Computes the k-\/step-\/ahead expected response at each time conditioned only on prior observations. That is E\{ Y[t+k] $\vert$ Y[0], ..., Y[t] \}. The returned matrix has columns equal to the number of observations. Note that the expectation may not be meaningful for discrete emissions.
+
+
+\begin{DoxyParams}{Parameters}
+{\em predictors} & Vector of predictor sequences. \\
+\hline
+{\em responses} & Vector of response sequences. \\
+\hline
+{\em initial} & Distribution of initial state. \\
+\hline
+{\em ahead} & Number of steps ahead (k) for expectations. \\
+\hline
+{\em filter\+Seq} & Vector in which the expected emission sequence will be stored. \\
+\hline
+\end{DoxyParams}
+
+
+Referenced by H\+M\+M\+Regression().
+
+\index{mlpack\+::hmm\+::\+H\+M\+M\+Regression@{mlpack\+::hmm\+::\+H\+M\+M\+Regression}!Forward@{Forward}}
+\index{Forward@{Forward}!mlpack\+::hmm\+::\+H\+M\+M\+Regression@{mlpack\+::hmm\+::\+H\+M\+M\+Regression}}
+\subsubsection[{Forward(const arma\+::mat \&predictors, const arma\+::vec \&responses, arma\+::vec \&scales, arma\+::mat \&forward\+Prob) const }]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::hmm\+::\+H\+M\+M\+Regression\+::\+Forward (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{predictors, }
+\item[{const arma\+::vec \&}]{responses, }
+\item[{arma\+::vec \&}]{scales, }
+\item[{arma\+::mat \&}]{forward\+Prob}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1hmm_1_1HMMRegression_a6f037a9bef339480de70685b500dd335}
+
+
+The Forward algorithm (part of the Forward-\/\+Backward algorithm). 
+
+Computes forward probabilities for each state for each observation in the given data sequence. The returned matrix has rows equal to the number of hidden states and columns equal to the number of observations.
+
+
+\begin{DoxyParams}{Parameters}
+{\em predictors} & Vector of predictor sequences. \\
+\hline
+{\em responses} & Vector of response sequences. \\
+\hline
+{\em scales} & Vector in which scaling factors will be saved. \\
+\hline
+{\em forward\+Prob} & Matrix in which forward probabilities will be saved. \\
+\hline
+\end{DoxyParams}
+
+
+Referenced by H\+M\+M\+Regression().
+
+\index{mlpack\+::hmm\+::\+H\+M\+M\+Regression@{mlpack\+::hmm\+::\+H\+M\+M\+Regression}!Log\+Likelihood@{Log\+Likelihood}}
+\index{Log\+Likelihood@{Log\+Likelihood}!mlpack\+::hmm\+::\+H\+M\+M\+Regression@{mlpack\+::hmm\+::\+H\+M\+M\+Regression}}
+\subsubsection[{Log\+Likelihood(const arma\+::mat \&predictors, const arma\+::vec \&responses) const }]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::hmm\+::\+H\+M\+M\+Regression\+::\+Log\+Likelihood (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{predictors, }
+\item[{const arma\+::vec \&}]{responses}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1hmm_1_1HMMRegression_aaf56d0c2d4502c8fb6e46acaa93faa47}
+
+
+Compute the log-\/likelihood of the given predictors and responses. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em predictors} & Vector of predictor sequences. \\
+\hline
+{\em responses} & Vector of response sequences. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Log-\/likelihood of the given sequence. 
+\end{DoxyReturn}
+
+
+Referenced by H\+M\+M\+Regression().
+
+\index{mlpack\+::hmm\+::\+H\+M\+M\+Regression@{mlpack\+::hmm\+::\+H\+M\+M\+Regression}!Predict@{Predict}}
+\index{Predict@{Predict}!mlpack\+::hmm\+::\+H\+M\+M\+Regression@{mlpack\+::hmm\+::\+H\+M\+M\+Regression}}
+\subsubsection[{Predict(const arma\+::mat \&predictors, const arma\+::vec \&responses, arma\+::\+Row$<$ size\+\_\+t $>$ \&state\+Seq) const }]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::hmm\+::\+H\+M\+M\+Regression\+::\+Predict (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{predictors, }
+\item[{const arma\+::vec \&}]{responses, }
+\item[{arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{state\+Seq}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1hmm_1_1HMMRegression_a577783458d593dad59ac92fb7b3b266c}
+
+
+Compute the most probable hidden state sequence for the given predictors and responses, using the Viterbi algorithm, returning the log-\/likelihood of the most likely state sequence. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em predictors} & Vector of predictor sequences. \\
+\hline
+{\em responses} & Vector of response sequences. \\
+\hline
+{\em state\+Seq} & Vector in which the most probable state sequence will be stored. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Log-\/likelihood of most probable state sequence. 
+\end{DoxyReturn}
+
+
+Referenced by H\+M\+M\+Regression().
+
+\index{mlpack\+::hmm\+::\+H\+M\+M\+Regression@{mlpack\+::hmm\+::\+H\+M\+M\+Regression}!Smooth@{Smooth}}
+\index{Smooth@{Smooth}!mlpack\+::hmm\+::\+H\+M\+M\+Regression@{mlpack\+::hmm\+::\+H\+M\+M\+Regression}}
+\subsubsection[{Smooth(const arma\+::mat \&predictors, const arma\+::vec \&responses, arma\+::vec \&smooth\+Seq) const }]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::hmm\+::\+H\+M\+M\+Regression\+::\+Smooth (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{predictors, }
+\item[{const arma\+::vec \&}]{responses, }
+\item[{arma\+::vec \&}]{smooth\+Seq}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1hmm_1_1HMMRegression_a5a4c77b693d2d6801422bdfff2b57e14}
+
+
+\doxyref{H\+MM}{p.}{classmlpack_1_1hmm_1_1HMM} smoothing. 
+
+Computes expected emission at each time conditioned on all observations. That is E\{ Y[t] $\vert$ Y[0], ..., Y[T] \}. The returned matrix has columns equal to the number of observations. Note that the expectation may not be meaningful for discrete emissions.
+
+
+\begin{DoxyParams}{Parameters}
+{\em predictors} & Vector of predictor sequences. \\
+\hline
+{\em responses} & Vector of response sequences.. \\
+\hline
+{\em initial} & Distribution of initial state. \\
+\hline
+{\em smooth\+Seq} & Vector in which the expected emission sequence will be stored. \\
+\hline
+\end{DoxyParams}
+
+
+Referenced by H\+M\+M\+Regression().
+
+\index{mlpack\+::hmm\+::\+H\+M\+M\+Regression@{mlpack\+::hmm\+::\+H\+M\+M\+Regression}!Stack\+Data@{Stack\+Data}}
+\index{Stack\+Data@{Stack\+Data}!mlpack\+::hmm\+::\+H\+M\+M\+Regression@{mlpack\+::hmm\+::\+H\+M\+M\+Regression}}
+\subsubsection[{Stack\+Data(const std\+::vector$<$ arma\+::mat $>$ \&predictors, const std\+::vector$<$ arma\+::vec $>$ \&responses, std\+::vector$<$ arma\+::mat $>$ \&data\+Seq) const }]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::hmm\+::\+H\+M\+M\+Regression\+::\+Stack\+Data (
+\begin{DoxyParamCaption}
+\item[{const std\+::vector$<$ arma\+::mat $>$ \&}]{predictors, }
+\item[{const std\+::vector$<$ arma\+::vec $>$ \&}]{responses, }
+\item[{std\+::vector$<$ arma\+::mat $>$ \&}]{data\+Seq}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1hmm_1_1HMMRegression_ae8c8df1763cdf593eeae0955487a1080}
+
+
+Utility functions to facilitate the use of the \doxyref{H\+MM}{p.}{classmlpack_1_1hmm_1_1HMM} class for H\+M\+MR. 
+
+
+
+Referenced by H\+M\+M\+Regression().
+
+\index{mlpack\+::hmm\+::\+H\+M\+M\+Regression@{mlpack\+::hmm\+::\+H\+M\+M\+Regression}!Stack\+Data@{Stack\+Data}}
+\index{Stack\+Data@{Stack\+Data}!mlpack\+::hmm\+::\+H\+M\+M\+Regression@{mlpack\+::hmm\+::\+H\+M\+M\+Regression}}
+\subsubsection[{Stack\+Data(const arma\+::mat \&predictors, const arma\+::vec \&responses, arma\+::mat \&data\+Seq) const }]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::hmm\+::\+H\+M\+M\+Regression\+::\+Stack\+Data (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{predictors, }
+\item[{const arma\+::vec \&}]{responses, }
+\item[{arma\+::mat \&}]{data\+Seq}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1hmm_1_1HMMRegression_a1c5e64dd601eb1eb70ddad9a4ef413a8}
+\index{mlpack\+::hmm\+::\+H\+M\+M\+Regression@{mlpack\+::hmm\+::\+H\+M\+M\+Regression}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::hmm\+::\+H\+M\+M\+Regression@{mlpack\+::hmm\+::\+H\+M\+M\+Regression}}
+\subsubsection[{Train(const std\+::vector$<$ arma\+::mat $>$ \&predictors, const std\+::vector$<$ arma\+::vec $>$ \&responses)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::hmm\+::\+H\+M\+M\+Regression\+::\+Train (
+\begin{DoxyParamCaption}
+\item[{const std\+::vector$<$ arma\+::mat $>$ \&}]{predictors, }
+\item[{const std\+::vector$<$ arma\+::vec $>$ \&}]{responses}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1hmm_1_1HMMRegression_a5028034d1d33ca83b8268955aa5e6d30}
+
+
+Train the model using the Baum-\/\+Welch algorithm, with only the given predictors and responses. 
+
+Instead of giving a guess transition and emission here, do that in the constructor. Each matrix in the vector of predictors corresponds to an individual data sequence, and likewise for each vec in the vector of responses. The number of rows in each matrix of predictors plus one should be equal to the dimensionality of the \doxyref{H\+MM}{p.}{classmlpack_1_1hmm_1_1HMM} (which is set in the constructor).
+
+It is preferable to use the other overload of \doxyref{Train()}{p.}{classmlpack_1_1hmm_1_1HMMRegression_a5028034d1d33ca83b8268955aa5e6d30}, with labeled data. That will produce much better results. However, if labeled data is unavailable, this will work. In addition, it is possible to use \doxyref{Train()}{p.}{classmlpack_1_1hmm_1_1HMMRegression_a5028034d1d33ca83b8268955aa5e6d30} with labeled data first, and then continue to train the model using this overload of \doxyref{Train()}{p.}{classmlpack_1_1hmm_1_1HMMRegression_a5028034d1d33ca83b8268955aa5e6d30} with unlabeled data.
+
+The tolerance of the Baum-\/\+Welch algorithm can be set either in the constructor or with the \doxyref{Tolerance()}{p.}{classmlpack_1_1hmm_1_1HMM_ab588ae02998cf353e819f2ef8613e481} method. When the change in log-\/likelihood of the model between iterations is less than the tolerance, the Baum-\/\+Welch algorithm terminates.
+
+\begin{DoxyNote}{Note}
+\doxyref{Train()}{p.}{classmlpack_1_1hmm_1_1HMMRegression_a5028034d1d33ca83b8268955aa5e6d30} can be called multiple times with different sequences; each time it is called, it uses the current parameters of the \doxyref{H\+MM}{p.}{classmlpack_1_1hmm_1_1HMM} as a starting point for training. 
+\end{DoxyNote}
+
+\begin{DoxyParams}{Parameters}
+{\em predictors} & Vector of predictor sequences. \\
+\hline
+{\em responses} & Vector of response sequences. \\
+\hline
+\end{DoxyParams}
+
+
+Referenced by H\+M\+M\+Regression().
+
+\index{mlpack\+::hmm\+::\+H\+M\+M\+Regression@{mlpack\+::hmm\+::\+H\+M\+M\+Regression}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::hmm\+::\+H\+M\+M\+Regression@{mlpack\+::hmm\+::\+H\+M\+M\+Regression}}
+\subsubsection[{Train(const std\+::vector$<$ arma\+::mat $>$ \&predictors, const std\+::vector$<$ arma\+::vec $>$ \&responses, const std\+::vector$<$ arma\+::\+Row$<$ size\+\_\+t $>$ $>$ \&state\+Seq)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::hmm\+::\+H\+M\+M\+Regression\+::\+Train (
+\begin{DoxyParamCaption}
+\item[{const std\+::vector$<$ arma\+::mat $>$ \&}]{predictors, }
+\item[{const std\+::vector$<$ arma\+::vec $>$ \&}]{responses, }
+\item[{const std\+::vector$<$ arma\+::\+Row$<$ size\+\_\+t $>$ $>$ \&}]{state\+Seq}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1hmm_1_1HMMRegression_ad47aa641f2520b4d4fa4284914a46b73}
+
+
+Train the model using the given labeled observations; the transition and regression emissions are directly estimated. 
+
+Each matrix in the vector of predictors corresponds to an individual data sequence, and likewise for each vec in the vector of responses. The number of rows in each matrix of predictors plus one should be equal to the dimensionality of the \doxyref{H\+MM}{p.}{classmlpack_1_1hmm_1_1HMM} (which is set in the constructor).
+
+\begin{DoxyNote}{Note}
+\doxyref{Train()}{p.}{classmlpack_1_1hmm_1_1HMMRegression_a5028034d1d33ca83b8268955aa5e6d30} can be called multiple times with different sequences; each time it is called, it uses the current parameters of the H\+M\+MR as a starting point for training. 
+\end{DoxyNote}
+
+\begin{DoxyParams}{Parameters}
+{\em predictors} & Vector of predictor sequences. \\
+\hline
+{\em responses} & Vector of response sequences. \\
+\hline
+{\em state\+Seq} & Vector of state sequences, corresponding to each observation. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/hmm/{\bf hmm\+\_\+regression.\+hpp}\end{DoxyCompactItemize}

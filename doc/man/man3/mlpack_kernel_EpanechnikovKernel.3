@@ -1,0 +1,185 @@
+.TH "mlpack::kernel::EpanechnikovKernel" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::kernel::EpanechnikovKernel \- The Epanechnikov kernel, defined as\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBEpanechnikovKernel\fP (const double \fBbandwidth\fP=1\&.0)"
+.br
+.RI "\fIInstantiate the Epanechnikov kernel with the given bandwidth (default 1\&.0)\&. \fP"
+.ti -1c
+.RI "template<typename VecTypeA , typename VecTypeB > double \fBConvolutionIntegral\fP (const VecTypeA &a, const VecTypeB &b)"
+.br
+.RI "\fIObtains the convolution integral [integral of K(||x-a||) K(||b-x||) dx] for the two vectors\&. \fP"
+.ti -1c
+.RI "template<typename VecTypeA , typename VecTypeB > double \fBEvaluate\fP (const VecTypeA &a, const VecTypeB &b) const "
+.br
+.RI "\fIEvaluate the Epanechnikov kernel on the given two inputs\&. \fP"
+.ti -1c
+.RI "double \fBEvaluate\fP (const double distance) const "
+.br
+.RI "\fIEvaluate the Epanechnikov kernel given that the distance between the two input points is known\&. \fP"
+.ti -1c
+.RI "double \fBGradient\fP (const double distance) const "
+.br
+.RI "\fIEvaluate the Gradient of Epanechnikov kernel given that the distance between the two input points is known\&. \fP"
+.ti -1c
+.RI "double \fBGradientForSquaredDistance\fP (const double distanceSquared) const "
+.br
+.RI "\fIEvaluate the Gradient of Epanechnikov kernel given that the squared distance between the two input points is known\&. \fP"
+.ti -1c
+.RI "double \fBNormalizer\fP (const size_t dimension)"
+.br
+.RI "\fICompute the normalizer of this Epanechnikov kernel for the given dimension\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int version)"
+.br
+.RI "\fISerialize the kernel\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "double \fBbandwidth\fP"
+.br
+.RI "\fIBandwidth of the kernel\&. \fP"
+.ti -1c
+.RI "double \fBinverseBandwidthSquared\fP"
+.br
+.RI "\fICached value of the inverse bandwidth squared (to speed up computation)\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+The Epanechnikov kernel, defined as\&. 
+
+\[ K(x, y) = \max \{0, 1 - || x - y ||^2_2 / b^2 \} \]
+.PP
+where $ b $ is the bandwidth the of the kernel (defaults to 1\&.0)\&. 
+.PP
+Definition at line 30 of file epanechnikov_kernel\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::kernel::EpanechnikovKernel::EpanechnikovKernel (const double bandwidth = \fC1\&.0\fP)\fC [inline]\fP"
+
+.PP
+Instantiate the Epanechnikov kernel with the given bandwidth (default 1\&.0)\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIbandwidth\fP Bandwidth of the kernel\&. 
+.RE
+.PP
+
+.PP
+Definition at line 38 of file epanechnikov_kernel\&.hpp\&.
+.PP
+References ConvolutionIntegral(), Evaluate(), Gradient(), GradientForSquaredDistance(), Normalizer(), and Serialize()\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename VecTypeA , typename VecTypeB > double mlpack::kernel::EpanechnikovKernel::ConvolutionIntegral (const VecTypeA & a, const VecTypeB & b)"
+
+.PP
+Obtains the convolution integral [integral of K(||x-a||) K(||b-x||) dx] for the two vectors\&. 
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIVecType\fP Type of vector (arma::vec, arma::spvec should be expected)\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIa\fP First vector\&. 
+.br
+\fIb\fP Second vector\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+the convolution integral value\&. 
+.RE
+.PP
+
+.PP
+Referenced by EpanechnikovKernel()\&.
+.SS "template<typename VecTypeA , typename VecTypeB > double mlpack::kernel::EpanechnikovKernel::Evaluate (const VecTypeA & a, const VecTypeB & b) const"
+
+.PP
+Evaluate the Epanechnikov kernel on the given two inputs\&. 
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIVecTypeA\fP Type of first vector\&. 
+.br
+\fIVecTypeB\fP Type of second vector\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIa\fP One input vector\&. 
+.br
+\fIb\fP The other input vector\&. 
+.RE
+.PP
+
+.PP
+Referenced by EpanechnikovKernel()\&.
+.SS "double mlpack::kernel::EpanechnikovKernel::Evaluate (const double distance) const"
+
+.PP
+Evaluate the Epanechnikov kernel given that the distance between the two input points is known\&. 
+.SS "double mlpack::kernel::EpanechnikovKernel::Gradient (const double distance) const"
+
+.PP
+Evaluate the Gradient of Epanechnikov kernel given that the distance between the two input points is known\&. 
+.PP
+Referenced by EpanechnikovKernel()\&.
+.SS "double mlpack::kernel::EpanechnikovKernel::GradientForSquaredDistance (const double distanceSquared) const"
+
+.PP
+Evaluate the Gradient of Epanechnikov kernel given that the squared distance between the two input points is known\&. 
+.PP
+Referenced by EpanechnikovKernel()\&.
+.SS "double mlpack::kernel::EpanechnikovKernel::Normalizer (const size_t dimension)"
+
+.PP
+Compute the normalizer of this Epanechnikov kernel for the given dimension\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdimension\fP Dimension to calculate the normalizer for\&. 
+.RE
+.PP
+
+.PP
+Referenced by EpanechnikovKernel()\&.
+.SS "template<typename Archive > void mlpack::kernel::EpanechnikovKernel::Serialize (Archive & ar, const unsigned int version)"
+
+.PP
+Serialize the kernel\&. 
+.PP
+Referenced by EpanechnikovKernel()\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "double mlpack::kernel::EpanechnikovKernel::bandwidth\fC [private]\fP"
+
+.PP
+Bandwidth of the kernel\&. 
+.PP
+Definition at line 100 of file epanechnikov_kernel\&.hpp\&.
+.SS "double mlpack::kernel::EpanechnikovKernel::inverseBandwidthSquared\fC [private]\fP"
+
+.PP
+Cached value of the inverse bandwidth squared (to speed up computation)\&. 
+.PP
+Definition at line 102 of file epanechnikov_kernel\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,335 @@
+.TH "mlpack::tree::XTreeAuxiliaryInformation< TreeType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::tree::XTreeAuxiliaryInformation< TreeType > \- The \fBXTreeAuxiliaryInformation\fP class provides information specific to X trees for each node in a \fBRectangleTree\fP\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "struct \fBSplitHistoryStruct\fP"
+.br
+.RI "\fIThe X tree requires that the tree records it's 'split history'\&. \fP"
+.in -1c
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "typedef struct \fBmlpack::tree::XTreeAuxiliaryInformation::SplitHistoryStruct\fP \fBSplitHistoryStruct\fP"
+.br
+.RI "\fIThe X tree requires that the tree records it's 'split history'\&. \fP"
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBXTreeAuxiliaryInformation\fP ()"
+.br
+.RI "\fIDefault constructor\&. \fP"
+.ti -1c
+.RI "\fBXTreeAuxiliaryInformation\fP (const TreeType *node)"
+.br
+.RI "\fIConstruct this with the specified node\&. \fP"
+.ti -1c
+.RI "\fBXTreeAuxiliaryInformation\fP (const \fBXTreeAuxiliaryInformation\fP &other, TreeType *=NULL, bool=true)"
+.br
+.RI "\fICreate an auxiliary information object by copying from another object\&. \fP"
+.ti -1c
+.RI "\fBXTreeAuxiliaryInformation\fP (\fBXTreeAuxiliaryInformation\fP &&other)"
+.br
+.RI "\fICreate an auxiliary information object by moving from the other node\&. \fP"
+.ti -1c
+.RI "bool \fBHandleNodeInsertion\fP (TreeType *, TreeType *, bool)"
+.br
+.RI "\fISome tree types require to save some properties at the insertion process\&. \fP"
+.ti -1c
+.RI "bool \fBHandleNodeRemoval\fP (TreeType *, const size_t)"
+.br
+.RI "\fISome tree types require to save some properties at the deletion process\&. \fP"
+.ti -1c
+.RI "bool \fBHandlePointDeletion\fP (TreeType *, const size_t)"
+.br
+.RI "\fISome tree types require to save some properties at the deletion process\&. \fP"
+.ti -1c
+.RI "bool \fBHandlePointInsertion\fP (TreeType *, const size_t)"
+.br
+.RI "\fISome tree types require to save some properties at the insertion process\&. \fP"
+.ti -1c
+.RI "size_t \fBNormalNodeMaxNumChildren\fP () const "
+.br
+.RI "\fIReturn the maximum number of a normal node's children\&. \fP"
+.ti -1c
+.RI "size_t & \fBNormalNodeMaxNumChildren\fP ()"
+.br
+.RI "\fIModify the maximum number of a normal node's children\&. \fP"
+.ti -1c
+.RI "void \fBNullifyData\fP ()"
+.br
+.RI "\fINullify the auxiliary information in order to prevent an invalid free\&. \fP"
+.ti -1c
+.RI "\fBXTreeAuxiliaryInformation\fP & \fBoperator=\fP (const \fBXTreeAuxiliaryInformation\fP &other)"
+.br
+.RI "\fICopy the auxiliary information object\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int)"
+.br
+.RI "\fISerialize the information\&. \fP"
+.ti -1c
+.RI "const \fBSplitHistoryStruct\fP & \fBSplitHistory\fP () const "
+.br
+.RI "\fIReturn the split history of the node associated with this object\&. \fP"
+.ti -1c
+.RI "\fBSplitHistoryStruct\fP & \fBSplitHistory\fP ()"
+.br
+.RI "\fIModify the split history of the node associated with this object\&. \fP"
+.ti -1c
+.RI "bool \fBUpdateAuxiliaryInfo\fP (TreeType *)"
+.br
+.RI "\fISome tree types require to propagate the information upward\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "size_t \fBnormalNodeMaxNumChildren\fP"
+.br
+.RI "\fIThe max number of child nodes a non-leaf normal node can have\&. \fP"
+.ti -1c
+.RI "\fBSplitHistoryStruct\fP \fBsplitHistory\fP"
+.br
+.RI "\fIA struct to store the 'split history' for X trees\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename TreeType>
+.br
+class mlpack::tree::XTreeAuxiliaryInformation< TreeType >"
+The \fBXTreeAuxiliaryInformation\fP class provides information specific to X trees for each node in a \fBRectangleTree\fP\&. 
+.PP
+Definition at line 24 of file x_tree_auxiliary_information\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "template<typename TreeType > typedef struct \fBmlpack::tree::XTreeAuxiliaryInformation::SplitHistoryStruct\fP  \fBmlpack::tree::XTreeAuxiliaryInformation\fP< TreeType >::\fBSplitHistoryStruct\fP"
+
+.PP
+The X tree requires that the tree records it's 'split history'\&. To make this easy, we use the following structure\&. 
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename TreeType > \fBmlpack::tree::XTreeAuxiliaryInformation\fP< TreeType >::\fBXTreeAuxiliaryInformation\fP ()\fC [inline]\fP"
+
+.PP
+Default constructor\&. 
+.PP
+Definition at line 28 of file x_tree_auxiliary_information\&.hpp\&.
+.SS "template<typename TreeType > \fBmlpack::tree::XTreeAuxiliaryInformation\fP< TreeType >::\fBXTreeAuxiliaryInformation\fP (const TreeType * node)\fC [inline]\fP"
+
+.PP
+Construct this with the specified node\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fInode\fP The node that stores this auxiliary information\&. 
+.RE
+.PP
+
+.PP
+Definition at line 38 of file x_tree_auxiliary_information\&.hpp\&.
+.SS "template<typename TreeType > \fBmlpack::tree::XTreeAuxiliaryInformation\fP< TreeType >::\fBXTreeAuxiliaryInformation\fP (const \fBXTreeAuxiliaryInformation\fP< TreeType > & other, TreeType * = \fCNULL\fP, bool = \fCtrue\fP)\fC [inline]\fP"
+
+.PP
+Create an auxiliary information object by copying from another object\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP Another auxiliary information object from which the information will be copied\&. 
+.br
+\fItree\fP The node that holds the auxiliary information\&. 
+.br
+\fIdeepCopy\fP If false, the new object uses the same memory (not used here)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 54 of file x_tree_auxiliary_information\&.hpp\&.
+.SS "template<typename TreeType > \fBmlpack::tree::XTreeAuxiliaryInformation\fP< TreeType >::\fBXTreeAuxiliaryInformation\fP (\fBXTreeAuxiliaryInformation\fP< TreeType > && other)\fC [inline]\fP"
+
+.PP
+Create an auxiliary information object by moving from the other node\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP The object from which the information will be moved\&. 
+.RE
+.PP
+
+.PP
+Definition at line 79 of file x_tree_auxiliary_information\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename TreeType > bool \fBmlpack::tree::XTreeAuxiliaryInformation\fP< TreeType >::HandleNodeInsertion (TreeType *, TreeType *, bool)\fC [inline]\fP"
+
+.PP
+Some tree types require to save some properties at the insertion process\&. This method allows the auxiliary information the option of manipulating the tree in order to perform the insertion process\&. If the auxiliary information does that, then the method should return true; if the method returns false the \fBRectangleTree\fP performs its default behavior\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fInode\fP The node in which the nodeToInsert is being inserted\&. 
+.br
+\fInodeToInsert\fP The node being inserted\&. 
+.br
+\fIinsertionLevel\fP The level of the tree at which the nodeToInsert should be inserted\&. 
+.RE
+.PP
+
+.PP
+Definition at line 113 of file x_tree_auxiliary_information\&.hpp\&.
+.SS "template<typename TreeType > bool \fBmlpack::tree::XTreeAuxiliaryInformation\fP< TreeType >::HandleNodeRemoval (TreeType *, const size_t)\fC [inline]\fP"
+
+.PP
+Some tree types require to save some properties at the deletion process\&. This method allows the auxiliary information the option of manipulating the tree in order to perform the deletion process\&. If the auxiliary information does that, then the method should return true; if the method returns false the \fBRectangleTree\fP performs its default behavior\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fInode\fP The node from which the node is being deleted\&. 
+.br
+\fInodeIndex\fP The local index of the node being deleted\&. 
+.RE
+.PP
+
+.PP
+Definition at line 143 of file x_tree_auxiliary_information\&.hpp\&.
+.SS "template<typename TreeType > bool \fBmlpack::tree::XTreeAuxiliaryInformation\fP< TreeType >::HandlePointDeletion (TreeType *, const size_t)\fC [inline]\fP"
+
+.PP
+Some tree types require to save some properties at the deletion process\&. This method allows the auxiliary information the option of manipulating the tree in order to perform the deletion process\&. If the auxiliary information does that, then the method should return true; if the method returns false the \fBRectangleTree\fP performs its default behavior\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fInode\fP The node from which the point is being deleted\&. 
+.br
+\fIlocalIndex\fP The local index of the point being deleted\&. 
+.RE
+.PP
+
+.PP
+Definition at line 129 of file x_tree_auxiliary_information\&.hpp\&.
+.SS "template<typename TreeType > bool \fBmlpack::tree::XTreeAuxiliaryInformation\fP< TreeType >::HandlePointInsertion (TreeType *, const size_t)\fC [inline]\fP"
+
+.PP
+Some tree types require to save some properties at the insertion process\&. This method allows the auxiliary information the option of manipulating the tree in order to perform the insertion process\&. If the auxiliary information does that, then the method should return true; if the method returns false the \fBRectangleTree\fP performs its default behavior\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fInode\fP The node in which the point is being inserted\&. 
+.br
+\fIpoint\fP The global number of the point being inserted\&. 
+.RE
+.PP
+
+.PP
+Definition at line 96 of file x_tree_auxiliary_information\&.hpp\&.
+.SS "template<typename TreeType > size_t \fBmlpack::tree::XTreeAuxiliaryInformation\fP< TreeType >::NormalNodeMaxNumChildren () const\fC [inline]\fP"
+
+.PP
+Return the maximum number of a normal node's children\&. 
+.PP
+Definition at line 215 of file x_tree_auxiliary_information\&.hpp\&.
+.PP
+References mlpack::tree::XTreeAuxiliaryInformation< TreeType >::normalNodeMaxNumChildren\&.
+.PP
+Referenced by mlpack::tree::XTreeAuxiliaryInformation< TreeType >::operator=()\&.
+.SS "template<typename TreeType > size_t& \fBmlpack::tree::XTreeAuxiliaryInformation\fP< TreeType >::NormalNodeMaxNumChildren ()\fC [inline]\fP"
+
+.PP
+Modify the maximum number of a normal node's children\&. 
+.PP
+Definition at line 217 of file x_tree_auxiliary_information\&.hpp\&.
+.PP
+References mlpack::tree::XTreeAuxiliaryInformation< TreeType >::normalNodeMaxNumChildren\&.
+.SS "template<typename TreeType > void \fBmlpack::tree::XTreeAuxiliaryInformation\fP< TreeType >::NullifyData ()\fC [inline]\fP"
+
+.PP
+Nullify the auxiliary information in order to prevent an invalid free\&. 
+.PP
+Definition at line 162 of file x_tree_auxiliary_information\&.hpp\&.
+.SS "template<typename TreeType > \fBXTreeAuxiliaryInformation\fP& \fBmlpack::tree::XTreeAuxiliaryInformation\fP< TreeType >::operator= (const \fBXTreeAuxiliaryInformation\fP< TreeType > & other)\fC [inline]\fP"
+
+.PP
+Copy the auxiliary information object\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP The node from which the information will be copied\&. 
+.RE
+.PP
+
+.PP
+Definition at line 66 of file x_tree_auxiliary_information\&.hpp\&.
+.PP
+References mlpack::tree::XTreeAuxiliaryInformation< TreeType >::normalNodeMaxNumChildren, mlpack::tree::XTreeAuxiliaryInformation< TreeType >::NormalNodeMaxNumChildren(), mlpack::tree::XTreeAuxiliaryInformation< TreeType >::splitHistory, and mlpack::tree::XTreeAuxiliaryInformation< TreeType >::SplitHistory()\&.
+.SS "template<typename TreeType > template<typename Archive > void \fBmlpack::tree::XTreeAuxiliaryInformation\fP< TreeType >::Serialize (Archive & ar, const unsigned int)\fC [inline]\fP"
+
+.PP
+Serialize the information\&. 
+.PP
+Definition at line 227 of file x_tree_auxiliary_information\&.hpp\&.
+.PP
+References mlpack::data::CreateNVP()\&.
+.SS "template<typename TreeType > const \fBSplitHistoryStruct\fP& \fBmlpack::tree::XTreeAuxiliaryInformation\fP< TreeType >::SplitHistory () const\fC [inline]\fP"
+
+.PP
+Return the split history of the node associated with this object\&. 
+.PP
+Definition at line 219 of file x_tree_auxiliary_information\&.hpp\&.
+.PP
+References mlpack::tree::XTreeAuxiliaryInformation< TreeType >::splitHistory\&.
+.PP
+Referenced by mlpack::tree::XTreeAuxiliaryInformation< TreeType >::operator=()\&.
+.SS "template<typename TreeType > \fBSplitHistoryStruct\fP& \fBmlpack::tree::XTreeAuxiliaryInformation\fP< TreeType >::SplitHistory ()\fC [inline]\fP"
+
+.PP
+Modify the split history of the node associated with this object\&. 
+.PP
+Definition at line 221 of file x_tree_auxiliary_information\&.hpp\&.
+.PP
+References mlpack::tree::XTreeAuxiliaryInformation< TreeType >::splitHistory\&.
+.SS "template<typename TreeType > bool \fBmlpack::tree::XTreeAuxiliaryInformation\fP< TreeType >::UpdateAuxiliaryInfo (TreeType *)\fC [inline]\fP"
+
+.PP
+Some tree types require to propagate the information upward\&. This method should return false if this is not the case\&. If true is returned, the update will be propagated upward\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fInode\fP The node in which the auxiliary information being update\&. 
+.RE
+.PP
+
+.PP
+Definition at line 154 of file x_tree_auxiliary_information\&.hpp\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename TreeType > size_t \fBmlpack::tree::XTreeAuxiliaryInformation\fP< TreeType >::normalNodeMaxNumChildren\fC [private]\fP"
+
+.PP
+The max number of child nodes a non-leaf normal node can have\&. 
+.PP
+Definition at line 209 of file x_tree_auxiliary_information\&.hpp\&.
+.PP
+Referenced by mlpack::tree::XTreeAuxiliaryInformation< TreeType >::NormalNodeMaxNumChildren(), and mlpack::tree::XTreeAuxiliaryInformation< TreeType >::operator=()\&.
+.SS "template<typename TreeType > \fBSplitHistoryStruct\fP \fBmlpack::tree::XTreeAuxiliaryInformation\fP< TreeType >::splitHistory\fC [private]\fP"
+
+.PP
+A struct to store the 'split history' for X trees\&. 
+.PP
+Definition at line 211 of file x_tree_auxiliary_information\&.hpp\&.
+.PP
+Referenced by mlpack::tree::XTreeAuxiliaryInformation< TreeType >::operator=(), and mlpack::tree::XTreeAuxiliaryInformation< TreeType >::SplitHistory()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

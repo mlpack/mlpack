@@ -1,0 +1,62 @@
+\section{mlpack\+:\+:pca\+:\+:Exact\+S\+V\+D\+Policy Class Reference}
+\label{classmlpack_1_1pca_1_1ExactSVDPolicy}\index{mlpack\+::pca\+::\+Exact\+S\+V\+D\+Policy@{mlpack\+::pca\+::\+Exact\+S\+V\+D\+Policy}}
+
+
+Implementation of the exact S\+VD policy.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void {\bf Apply} (const arma\+::mat \&data, const arma\+::mat \&centered\+Data, arma\+::mat \&transformed\+Data, arma\+::vec \&eig\+Val, arma\+::mat \&eigvec, const size\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Apply Principal Component Analysis to the provided data set using the exact S\+VD method. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Implementation of the exact S\+VD policy. 
+
+Definition at line 27 of file exact\+\_\+svd\+\_\+method.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::pca\+::\+Exact\+S\+V\+D\+Policy@{mlpack\+::pca\+::\+Exact\+S\+V\+D\+Policy}!Apply@{Apply}}
+\index{Apply@{Apply}!mlpack\+::pca\+::\+Exact\+S\+V\+D\+Policy@{mlpack\+::pca\+::\+Exact\+S\+V\+D\+Policy}}
+\subsubsection[{Apply(const arma\+::mat \&data, const arma\+::mat \&centered\+Data, arma\+::mat \&transformed\+Data, arma\+::vec \&eig\+Val, arma\+::mat \&eigvec, const size\+\_\+t)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::pca\+::\+Exact\+S\+V\+D\+Policy\+::\+Apply (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{data, }
+\item[{const arma\+::mat \&}]{centered\+Data, }
+\item[{arma\+::mat \&}]{transformed\+Data, }
+\item[{arma\+::vec \&}]{eig\+Val, }
+\item[{arma\+::mat \&}]{eigvec, }
+\item[{const size\+\_\+t}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1pca_1_1ExactSVDPolicy_ac7be12f95e69f36b608a1668be8e8105}
+
+
+Apply Principal Component Analysis to the provided data set using the exact S\+VD method. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Data matrix. \\
+\hline
+{\em centered\+Data} & Centered data matrix. \\
+\hline
+{\em transformed\+Data} & Matrix to put results of P\+CA into. \\
+\hline
+{\em eig\+Val} & Vector to put eigenvalues into. \\
+\hline
+{\em eigvec} & Matrix to put eigenvectors (loadings) into. \\
+\hline
+{\em rank} & Rank of the decomposition. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 41 of file exact\+\_\+svd\+\_\+method.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/pca/decomposition\+\_\+policies/{\bf exact\+\_\+svd\+\_\+method.\+hpp}\end{DoxyCompactItemize}

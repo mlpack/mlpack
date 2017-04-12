@@ -1,0 +1,262 @@
+\section{mlpack\+:\+:amf Namespace Reference}
+\label{namespacemlpack_1_1amf}\index{mlpack\+::amf@{mlpack\+::amf}}
+
+
+Alternating Matrix Factorization.  
+
+
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class {\bf A\+MF}
+\begin{DoxyCompactList}\small\item\em This class implements \doxyref{A\+MF}{p.}{classmlpack_1_1amf_1_1AMF} (alternating matrix factorization) on the given matrix V. \end{DoxyCompactList}\item 
+class {\bf Average\+Initialization}
+\begin{DoxyCompactList}\small\item\em This initialization rule initializes matrix W and H to root of the average of V, perturbed with uniform noise. \end{DoxyCompactList}\item 
+class {\bf Complete\+Incremental\+Termination}
+\begin{DoxyCompactList}\small\item\em This class acts as a wrapper for basic termination policies to be used by \doxyref{S\+V\+D\+Complete\+Incremental\+Learning}{p.}{classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning}. \end{DoxyCompactList}\item 
+class {\bf Given\+Initialization}
+\begin{DoxyCompactList}\small\item\em This initialization rule for \doxyref{A\+MF}{p.}{classmlpack_1_1amf_1_1AMF} simply fills the W and H matrices with the matrices given to the constructor of this object. \end{DoxyCompactList}\item 
+class {\bf Incomplete\+Incremental\+Termination}
+\begin{DoxyCompactList}\small\item\em This class acts as a wrapper for basic termination policies to be used by \doxyref{S\+V\+D\+Incomplete\+Incremental\+Learning}{p.}{classmlpack_1_1amf_1_1SVDIncompleteIncrementalLearning}. \end{DoxyCompactList}\item 
+class {\bf Max\+Iteration\+Termination}
+\begin{DoxyCompactList}\small\item\em This termination policy only terminates when the maximum number of iterations has been reached. \end{DoxyCompactList}\item 
+class {\bf N\+M\+F\+A\+L\+S\+Update}
+\begin{DoxyCompactList}\small\item\em This class implements a method titled \textquotesingle{}Alternating Least Squares\textquotesingle{} described in the following paper\+: \end{DoxyCompactList}\item 
+class {\bf N\+M\+F\+Multiplicative\+Distance\+Update}
+\begin{DoxyCompactList}\small\item\em The multiplicative distance update rules for matrices W and H. \end{DoxyCompactList}\item 
+class {\bf N\+M\+F\+Multiplicative\+Divergence\+Update}
+\begin{DoxyCompactList}\small\item\em This follows a method described in the paper \textquotesingle{}Algorithms for Non-\/negative. \end{DoxyCompactList}\item 
+class {\bf Random\+Acol\+Initialization}
+\begin{DoxyCompactList}\small\item\em This class initializes the W matrix of the \doxyref{A\+MF}{p.}{classmlpack_1_1amf_1_1AMF} algorithm by averaging p randomly chosen columns of V. \end{DoxyCompactList}\item 
+class {\bf Random\+Initialization}
+\begin{DoxyCompactList}\small\item\em This initialization rule for \doxyref{A\+MF}{p.}{classmlpack_1_1amf_1_1AMF} simply fills the W and H matrices with uniform random noise in [0, 1]. \end{DoxyCompactList}\item 
+class {\bf Simple\+Residue\+Termination}
+\begin{DoxyCompactList}\small\item\em This class implements a simple residue-\/based termination policy. \end{DoxyCompactList}\item 
+class {\bf Simple\+Tolerance\+Termination}
+\begin{DoxyCompactList}\small\item\em This class implements residue tolerance termination policy. \end{DoxyCompactList}\item 
+class {\bf S\+V\+D\+Batch\+Learning}
+\begin{DoxyCompactList}\small\item\em This class implements S\+VD batch learning with momentum. \end{DoxyCompactList}\item 
+class {\bf S\+V\+D\+Complete\+Incremental\+Learning}
+\begin{DoxyCompactList}\small\item\em This class computes S\+VD using complete incremental batch learning, as described in the following paper\+: \end{DoxyCompactList}\item 
+class {\bf S\+V\+D\+Complete\+Incremental\+Learning$<$ arma\+::sp\+\_\+mat $>$}
+\begin{DoxyCompactList}\small\item\em T\+O\+DO \+: Merge this template specialized function for sparse matrix using common row\+\_\+col\+\_\+iterator. \end{DoxyCompactList}\item 
+class {\bf S\+V\+D\+Incomplete\+Incremental\+Learning}
+\begin{DoxyCompactList}\small\item\em This class computes S\+VD using incomplete incremental batch learning, as described in the following paper\+: \end{DoxyCompactList}\item 
+class {\bf Validation\+R\+M\+S\+E\+Termination}
+\begin{DoxyCompactList}\small\item\em This class implements validation termination policy based on R\+M\+SE index. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef {\bf amf\+::\+A\+MF}$<$ {\bf amf\+::\+Simple\+Residue\+Termination}, {\bf amf\+::\+Random\+Acol\+Initialization}$<$$>$, {\bf amf\+::\+N\+M\+F\+A\+L\+S\+Update} $>$ {\bf N\+M\+F\+A\+L\+S\+Factorizer}
+\item 
+typedef {\bf amf\+::\+A\+MF}$<$ {\bf amf\+::\+Simple\+Residue\+Termination}, {\bf amf\+::\+Random\+Acol\+Initialization}$<$$>$, {\bf amf\+::\+S\+V\+D\+Batch\+Learning} $>$ {\bf Sparse\+S\+V\+D\+Batch\+Factorizer}
+\begin{DoxyCompactList}\small\item\em Add simple typedefs. \end{DoxyCompactList}\item 
+typedef {\bf amf\+::\+A\+MF}$<$ {\bf amf\+::\+Simple\+Residue\+Termination}, {\bf amf\+::\+Random\+Acol\+Initialization}$<$$>$, {\bf amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning}$<$ arma\+::sp\+\_\+mat $>$ $>$ {\bf Sparse\+S\+V\+D\+Complete\+Incremental\+Factorizer}
+\begin{DoxyCompactList}\small\item\em Sparse\+S\+V\+D\+Complete\+Incremental\+Factorizer factorizes given sparse matrix V into two matrices W and H by complete incremental gradient descent. \end{DoxyCompactList}\item 
+typedef {\bf amf\+::\+A\+MF}$<$ {\bf amf\+::\+Simple\+Residue\+Termination}, {\bf amf\+::\+Random\+Acol\+Initialization}$<$$>$, {\bf amf\+::\+S\+V\+D\+Incomplete\+Incremental\+Learning} $>$ {\bf Sparse\+S\+V\+D\+Incomplete\+Incremental\+Factorizer}
+\begin{DoxyCompactList}\small\item\em Sparse\+S\+V\+D\+Incomplete\+Incremental\+Factorizer factorizes given sparse matrix V into two matrices W and H by incomplete incremental gradient descent. \end{DoxyCompactList}\item 
+typedef {\bf amf\+::\+A\+MF}$<$ {\bf amf\+::\+Simple\+Residue\+Termination}, {\bf amf\+::\+Random\+Acol\+Initialization}$<$$>$, {\bf amf\+::\+S\+V\+D\+Batch\+Learning} $>$ {\bf S\+V\+D\+Batch\+Factorizer}
+\begin{DoxyCompactList}\small\item\em Sparse\+S\+V\+D\+Batch\+Factorizer factorizes given matrix V into two matrices W and H by gradient descent. \end{DoxyCompactList}\item 
+typedef {\bf amf\+::\+A\+MF}$<$ {\bf amf\+::\+Simple\+Residue\+Termination}, {\bf amf\+::\+Random\+Acol\+Initialization}$<$$>$, {\bf amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning}$<$ arma\+::mat $>$ $>$ {\bf S\+V\+D\+Complete\+Incremental\+Factorizer}
+\begin{DoxyCompactList}\small\item\em S\+V\+D\+Complete\+Incremental\+Factorizer factorizes given matrix V into two matrices W and H by complete incremental gradient descent. \end{DoxyCompactList}\item 
+typedef {\bf amf\+::\+A\+MF}$<$ {\bf amf\+::\+Simple\+Residue\+Termination}, {\bf amf\+::\+Random\+Acol\+Initialization}$<$$>$, {\bf amf\+::\+S\+V\+D\+Incomplete\+Incremental\+Learning} $>$ {\bf S\+V\+D\+Incomplete\+Incremental\+Factorizer}
+\begin{DoxyCompactList}\small\item\em S\+V\+D\+Incomplete\+Incremental\+Factorizer factorizes given matrix V into two matrices W and H by incomplete incremental gradient descent. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$$>$ }\\void {\bf S\+V\+D\+Batch\+Learning\+::\+H\+Update$<$ arma\+::sp\+\_\+mat $>$} (const arma\+::sp\+\_\+mat \&V, const arma\+::mat \&W, arma\+::mat \&H)
+\item 
+{\footnotesize template$<$$>$ }\\void {\bf S\+V\+D\+Batch\+Learning\+::\+W\+Update$<$ arma\+::sp\+\_\+mat $>$} (const arma\+::sp\+\_\+mat \&V, arma\+::mat \&W, const arma\+::mat \&H)
+\begin{DoxyCompactList}\small\item\em T\+O\+DO \+: Merge this template specialized function for sparse matrix using common row\+\_\+col\+\_\+iterator. \end{DoxyCompactList}\item 
+{\footnotesize template$<$$>$ }\\void {\bf S\+V\+D\+Incomplete\+Incremental\+Learning\+::\+H\+Update$<$ arma\+::sp\+\_\+mat $>$} (const arma\+::sp\+\_\+mat \&V, const arma\+::mat \&W, arma\+::mat \&H)
+\item 
+{\footnotesize template$<$$>$ }\\void {\bf S\+V\+D\+Incomplete\+Incremental\+Learning\+::\+W\+Update$<$ arma\+::sp\+\_\+mat $>$} (const arma\+::sp\+\_\+mat \&V, arma\+::mat \&W, const arma\+::mat \&H)
+\begin{DoxyCompactList}\small\item\em T\+O\+DO \+: Merge this template specialized function for sparse matrix using common row\+\_\+col\+\_\+iterator. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Alternating Matrix Factorization. 
+
+\subsection{Typedef Documentation}
+\index{mlpack\+::amf@{mlpack\+::amf}!N\+M\+F\+A\+L\+S\+Factorizer@{N\+M\+F\+A\+L\+S\+Factorizer}}
+\index{N\+M\+F\+A\+L\+S\+Factorizer@{N\+M\+F\+A\+L\+S\+Factorizer}!mlpack\+::amf@{mlpack\+::amf}}
+\subsubsection[{N\+M\+F\+A\+L\+S\+Factorizer}]{\setlength{\rightskip}{0pt plus 5cm}typedef {\bf amf\+::\+A\+MF}$<${\bf amf\+::\+Simple\+Residue\+Termination}, {\bf amf\+::\+Random\+Acol\+Initialization}$<$$>$, {\bf amf\+::\+N\+M\+F\+A\+L\+S\+Update}$>$ {\bf mlpack\+::amf\+::\+N\+M\+F\+A\+L\+S\+Factorizer}}\label{namespacemlpack_1_1amf_a28055143d86e284abd74bd150ec38c52}
+
+
+Definition at line 143 of file amf.\+hpp.
+
+\index{mlpack\+::amf@{mlpack\+::amf}!Sparse\+S\+V\+D\+Batch\+Factorizer@{Sparse\+S\+V\+D\+Batch\+Factorizer}}
+\index{Sparse\+S\+V\+D\+Batch\+Factorizer@{Sparse\+S\+V\+D\+Batch\+Factorizer}!mlpack\+::amf@{mlpack\+::amf}}
+\subsubsection[{Sparse\+S\+V\+D\+Batch\+Factorizer}]{\setlength{\rightskip}{0pt plus 5cm}typedef {\bf amf\+::\+A\+MF}$<${\bf amf\+::\+Simple\+Residue\+Termination}, {\bf amf\+::\+Random\+Acol\+Initialization}$<$$>$, {\bf amf\+::\+S\+V\+D\+Batch\+Learning}$>$ {\bf mlpack\+::amf\+::\+Sparse\+S\+V\+D\+Batch\+Factorizer}}\label{namespacemlpack_1_1amf_a2c91f0f4499dbc56a5d31de8fea0f199}
+
+
+Add simple typedefs. 
+
+Sparse\+S\+V\+D\+Batch\+Factorizer factorizes given sparse matrix V into two matrices W and H by gradient descent. S\+VD batch learning is described in paper \textquotesingle{}A Guide to singular Value Decomposition\textquotesingle{} by Chih-\/\+Chao Ma.
+
+\begin{DoxySeeAlso}{See also}
+\doxyref{S\+V\+D\+Batch\+Learning}{p.}{classmlpack_1_1amf_1_1SVDBatchLearning} 
+\end{DoxySeeAlso}
+
+
+Definition at line 199 of file amf.\+hpp.
+
+\index{mlpack\+::amf@{mlpack\+::amf}!Sparse\+S\+V\+D\+Complete\+Incremental\+Factorizer@{Sparse\+S\+V\+D\+Complete\+Incremental\+Factorizer}}
+\index{Sparse\+S\+V\+D\+Complete\+Incremental\+Factorizer@{Sparse\+S\+V\+D\+Complete\+Incremental\+Factorizer}!mlpack\+::amf@{mlpack\+::amf}}
+\subsubsection[{Sparse\+S\+V\+D\+Complete\+Incremental\+Factorizer}]{\setlength{\rightskip}{0pt plus 5cm}typedef {\bf amf\+::\+A\+MF}$<${\bf amf\+::\+Simple\+Residue\+Termination}, {\bf amf\+::\+Random\+Acol\+Initialization}$<$$>$, {\bf amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning}$<$arma\+::sp\+\_\+mat$>$ $>$ {\bf mlpack\+::amf\+::\+Sparse\+S\+V\+D\+Complete\+Incremental\+Factorizer}}\label{namespacemlpack_1_1amf_a5b82f9723a02ddca746cdc19e588708a}
+
+
+Sparse\+S\+V\+D\+Complete\+Incremental\+Factorizer factorizes given sparse matrix V into two matrices W and H by complete incremental gradient descent. 
+
+S\+VD complete incremental learning is described in paper \textquotesingle{}A Guide to singular Value Decomposition\textquotesingle{} by Chih-\/\+Chao Ma.
+
+\begin{DoxySeeAlso}{See also}
+\doxyref{S\+V\+D\+Complete\+Incremental\+Learning}{p.}{classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning} 
+\end{DoxySeeAlso}
+
+
+Definition at line 248 of file amf.\+hpp.
+
+\index{mlpack\+::amf@{mlpack\+::amf}!Sparse\+S\+V\+D\+Incomplete\+Incremental\+Factorizer@{Sparse\+S\+V\+D\+Incomplete\+Incremental\+Factorizer}}
+\index{Sparse\+S\+V\+D\+Incomplete\+Incremental\+Factorizer@{Sparse\+S\+V\+D\+Incomplete\+Incremental\+Factorizer}!mlpack\+::amf@{mlpack\+::amf}}
+\subsubsection[{Sparse\+S\+V\+D\+Incomplete\+Incremental\+Factorizer}]{\setlength{\rightskip}{0pt plus 5cm}typedef {\bf amf\+::\+A\+MF}$<${\bf amf\+::\+Simple\+Residue\+Termination}, {\bf amf\+::\+Random\+Acol\+Initialization}$<$$>$, {\bf amf\+::\+S\+V\+D\+Incomplete\+Incremental\+Learning}$>$ {\bf mlpack\+::amf\+::\+Sparse\+S\+V\+D\+Incomplete\+Incremental\+Factorizer}}\label{namespacemlpack_1_1amf_a58095f1a71997e80942cb56f09230fc6}
+
+
+Sparse\+S\+V\+D\+Incomplete\+Incremental\+Factorizer factorizes given sparse matrix V into two matrices W and H by incomplete incremental gradient descent. 
+
+S\+VD incomplete incremental learning is described in paper \textquotesingle{}A Guide to singular Value Decomposition\textquotesingle{} by Chih-\/\+Chao Ma.
+
+\begin{DoxySeeAlso}{See also}
+\doxyref{S\+V\+D\+Incomplete\+Incremental\+Learning}{p.}{classmlpack_1_1amf_1_1SVDIncompleteIncrementalLearning} 
+\end{DoxySeeAlso}
+
+
+Definition at line 222 of file amf.\+hpp.
+
+\index{mlpack\+::amf@{mlpack\+::amf}!S\+V\+D\+Batch\+Factorizer@{S\+V\+D\+Batch\+Factorizer}}
+\index{S\+V\+D\+Batch\+Factorizer@{S\+V\+D\+Batch\+Factorizer}!mlpack\+::amf@{mlpack\+::amf}}
+\subsubsection[{S\+V\+D\+Batch\+Factorizer}]{\setlength{\rightskip}{0pt plus 5cm}typedef {\bf amf\+::\+A\+MF}$<${\bf amf\+::\+Simple\+Residue\+Termination}, {\bf amf\+::\+Random\+Acol\+Initialization}$<$$>$, {\bf amf\+::\+S\+V\+D\+Batch\+Learning}$>$ {\bf mlpack\+::amf\+::\+S\+V\+D\+Batch\+Factorizer}}\label{namespacemlpack_1_1amf_a0a89e9140ca599a10ead8ba2dacbc38b}
+
+
+Sparse\+S\+V\+D\+Batch\+Factorizer factorizes given matrix V into two matrices W and H by gradient descent. 
+
+S\+VD batch learning is described in paper \textquotesingle{}A Guide to singular Value Decomposition\textquotesingle{} by Chih-\/\+Chao Ma.
+
+\begin{DoxySeeAlso}{See also}
+\doxyref{S\+V\+D\+Batch\+Learning}{p.}{classmlpack_1_1amf_1_1SVDBatchLearning} 
+\end{DoxySeeAlso}
+
+
+Definition at line 210 of file amf.\+hpp.
+
+\index{mlpack\+::amf@{mlpack\+::amf}!S\+V\+D\+Complete\+Incremental\+Factorizer@{S\+V\+D\+Complete\+Incremental\+Factorizer}}
+\index{S\+V\+D\+Complete\+Incremental\+Factorizer@{S\+V\+D\+Complete\+Incremental\+Factorizer}!mlpack\+::amf@{mlpack\+::amf}}
+\subsubsection[{S\+V\+D\+Complete\+Incremental\+Factorizer}]{\setlength{\rightskip}{0pt plus 5cm}typedef {\bf amf\+::\+A\+MF}$<${\bf amf\+::\+Simple\+Residue\+Termination}, {\bf amf\+::\+Random\+Acol\+Initialization}$<$$>$, {\bf amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning}$<$arma\+::mat$>$ $>$ {\bf mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Factorizer}}\label{namespacemlpack_1_1amf_a2cd6a9e37e9e0942a335fcc60f853722}
+
+
+S\+V\+D\+Complete\+Incremental\+Factorizer factorizes given matrix V into two matrices W and H by complete incremental gradient descent. 
+
+S\+VD complete incremental learning is described in paper \textquotesingle{}A Guide to singular Value Decomposition\textquotesingle{} by Chih-\/\+Chao Ma.
+
+\begin{DoxySeeAlso}{See also}
+\doxyref{S\+V\+D\+Complete\+Incremental\+Learning}{p.}{classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning} 
+\end{DoxySeeAlso}
+
+
+Definition at line 261 of file amf.\+hpp.
+
+\index{mlpack\+::amf@{mlpack\+::amf}!S\+V\+D\+Incomplete\+Incremental\+Factorizer@{S\+V\+D\+Incomplete\+Incremental\+Factorizer}}
+\index{S\+V\+D\+Incomplete\+Incremental\+Factorizer@{S\+V\+D\+Incomplete\+Incremental\+Factorizer}!mlpack\+::amf@{mlpack\+::amf}}
+\subsubsection[{S\+V\+D\+Incomplete\+Incremental\+Factorizer}]{\setlength{\rightskip}{0pt plus 5cm}typedef {\bf amf\+::\+A\+MF}$<${\bf amf\+::\+Simple\+Residue\+Termination}, {\bf amf\+::\+Random\+Acol\+Initialization}$<$$>$, {\bf amf\+::\+S\+V\+D\+Incomplete\+Incremental\+Learning}$>$ {\bf mlpack\+::amf\+::\+S\+V\+D\+Incomplete\+Incremental\+Factorizer}}\label{namespacemlpack_1_1amf_adbb3b940b48c9f2996a825d66ef1a302}
+
+
+S\+V\+D\+Incomplete\+Incremental\+Factorizer factorizes given matrix V into two matrices W and H by incomplete incremental gradient descent. 
+
+S\+VD incomplete incremental learning is described in paper \textquotesingle{}A Guide to singular Value Decomposition\textquotesingle{} by Chih-\/\+Chao Ma.
+
+\begin{DoxySeeAlso}{See also}
+\doxyref{S\+V\+D\+Incomplete\+Incremental\+Learning}{p.}{classmlpack_1_1amf_1_1SVDIncompleteIncrementalLearning} 
+\end{DoxySeeAlso}
+
+
+Definition at line 235 of file amf.\+hpp.
+
+
+
+\subsection{Function Documentation}
+\index{mlpack\+::amf@{mlpack\+::amf}!S\+V\+D\+Batch\+Learning\+::\+H\+Update$<$ arma\+::sp\+\_\+mat $>$@{S\+V\+D\+Batch\+Learning\+::\+H\+Update$<$ arma\+::sp\+\_\+mat $>$}}
+\index{S\+V\+D\+Batch\+Learning\+::\+H\+Update$<$ arma\+::sp\+\_\+mat $>$@{S\+V\+D\+Batch\+Learning\+::\+H\+Update$<$ arma\+::sp\+\_\+mat $>$}!mlpack\+::amf@{mlpack\+::amf}}
+\subsubsection[{S\+V\+D\+Batch\+Learning\+::\+H\+Update$<$ arma\+::sp\+\_\+mat $>$(const arma\+::sp\+\_\+mat \&\+V, const arma\+::mat \&\+W, arma\+::mat \&\+H)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$$>$ void {\bf mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning\+::\+H\+Update}$<$ arma\+::sp\+\_\+mat $>$ (
+\begin{DoxyParamCaption}
+\item[{const arma\+::sp\+\_\+mat \&}]{V, }
+\item[{const arma\+::mat \&}]{W, }
+\item[{arma\+::mat \&}]{H}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{namespacemlpack_1_1amf_aff87130b0b4854026fdb315627b93916}
+
+
+Definition at line 231 of file svd\+\_\+batch\+\_\+learning.\+hpp.
+
+
+
+References mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning\+::kh, mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning\+::mH, mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning\+::momentum, and mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning\+::u.
+
+\index{mlpack\+::amf@{mlpack\+::amf}!S\+V\+D\+Batch\+Learning\+::\+W\+Update$<$ arma\+::sp\+\_\+mat $>$@{S\+V\+D\+Batch\+Learning\+::\+W\+Update$<$ arma\+::sp\+\_\+mat $>$}}
+\index{S\+V\+D\+Batch\+Learning\+::\+W\+Update$<$ arma\+::sp\+\_\+mat $>$@{S\+V\+D\+Batch\+Learning\+::\+W\+Update$<$ arma\+::sp\+\_\+mat $>$}!mlpack\+::amf@{mlpack\+::amf}}
+\subsubsection[{S\+V\+D\+Batch\+Learning\+::\+W\+Update$<$ arma\+::sp\+\_\+mat $>$(const arma\+::sp\+\_\+mat \&\+V, arma\+::mat \&\+W, const arma\+::mat \&\+H)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$$>$ void {\bf mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning\+::\+W\+Update}$<$ arma\+::sp\+\_\+mat $>$ (
+\begin{DoxyParamCaption}
+\item[{const arma\+::sp\+\_\+mat \&}]{V, }
+\item[{arma\+::mat \&}]{W, }
+\item[{const arma\+::mat \&}]{H}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{namespacemlpack_1_1amf_afe7f98a0fec98543b68a87ed1f044af0}
+
+
+T\+O\+DO \+: Merge this template specialized function for sparse matrix using common row\+\_\+col\+\_\+iterator. 
+
+W\+Update function specialization for sparse matrix 
+
+Definition at line 203 of file svd\+\_\+batch\+\_\+learning.\+hpp.
+
+
+
+References mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning\+::kw, mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning\+::momentum, mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning\+::mW, and mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning\+::u.
+
+\index{mlpack\+::amf@{mlpack\+::amf}!S\+V\+D\+Incomplete\+Incremental\+Learning\+::\+H\+Update$<$ arma\+::sp\+\_\+mat $>$@{S\+V\+D\+Incomplete\+Incremental\+Learning\+::\+H\+Update$<$ arma\+::sp\+\_\+mat $>$}}
+\index{S\+V\+D\+Incomplete\+Incremental\+Learning\+::\+H\+Update$<$ arma\+::sp\+\_\+mat $>$@{S\+V\+D\+Incomplete\+Incremental\+Learning\+::\+H\+Update$<$ arma\+::sp\+\_\+mat $>$}!mlpack\+::amf@{mlpack\+::amf}}
+\subsubsection[{S\+V\+D\+Incomplete\+Incremental\+Learning\+::\+H\+Update$<$ arma\+::sp\+\_\+mat $>$(const arma\+::sp\+\_\+mat \&\+V, const arma\+::mat \&\+W, arma\+::mat \&\+H)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$$>$ void {\bf mlpack\+::amf\+::\+S\+V\+D\+Incomplete\+Incremental\+Learning\+::\+H\+Update}$<$ arma\+::sp\+\_\+mat $>$ (
+\begin{DoxyParamCaption}
+\item[{const arma\+::sp\+\_\+mat \&}]{V, }
+\item[{const arma\+::mat \&}]{W, }
+\item[{arma\+::mat \&}]{H}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{namespacemlpack_1_1amf_a1e85a4f6a4f543e56b2f8b1587cd2dd6}
+
+
+Definition at line 184 of file svd\+\_\+incomplete\+\_\+incremental\+\_\+learning.\+hpp.
+
+
+
+References mlpack\+::amf\+::\+S\+V\+D\+Incomplete\+Incremental\+Learning\+::current\+User\+Index, mlpack\+::amf\+::\+S\+V\+D\+Incomplete\+Incremental\+Learning\+::kh, and mlpack\+::amf\+::\+S\+V\+D\+Incomplete\+Incremental\+Learning\+::u.
+
+\index{mlpack\+::amf@{mlpack\+::amf}!S\+V\+D\+Incomplete\+Incremental\+Learning\+::\+W\+Update$<$ arma\+::sp\+\_\+mat $>$@{S\+V\+D\+Incomplete\+Incremental\+Learning\+::\+W\+Update$<$ arma\+::sp\+\_\+mat $>$}}
+\index{S\+V\+D\+Incomplete\+Incremental\+Learning\+::\+W\+Update$<$ arma\+::sp\+\_\+mat $>$@{S\+V\+D\+Incomplete\+Incremental\+Learning\+::\+W\+Update$<$ arma\+::sp\+\_\+mat $>$}!mlpack\+::amf@{mlpack\+::amf}}
+\subsubsection[{S\+V\+D\+Incomplete\+Incremental\+Learning\+::\+W\+Update$<$ arma\+::sp\+\_\+mat $>$(const arma\+::sp\+\_\+mat \&\+V, arma\+::mat \&\+W, const arma\+::mat \&\+H)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$$>$ void {\bf mlpack\+::amf\+::\+S\+V\+D\+Incomplete\+Incremental\+Learning\+::\+W\+Update}$<$ arma\+::sp\+\_\+mat $>$ (
+\begin{DoxyParamCaption}
+\item[{const arma\+::sp\+\_\+mat \&}]{V, }
+\item[{arma\+::mat \&}]{W, }
+\item[{const arma\+::mat \&}]{H}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{namespacemlpack_1_1amf_acbc9573bcb3df2b5dd1d20cd7a1e4c85}
+
+
+T\+O\+DO \+: Merge this template specialized function for sparse matrix using common row\+\_\+col\+\_\+iterator. 
+
+template specialiazed functions for sparse matrices 
+
+Definition at line 163 of file svd\+\_\+incomplete\+\_\+incremental\+\_\+learning.\+hpp.
+
+
+
+References mlpack\+::amf\+::\+S\+V\+D\+Incomplete\+Incremental\+Learning\+::current\+User\+Index, mlpack\+::amf\+::\+S\+V\+D\+Incomplete\+Incremental\+Learning\+::kw, and mlpack\+::amf\+::\+S\+V\+D\+Incomplete\+Incremental\+Learning\+::u.
+

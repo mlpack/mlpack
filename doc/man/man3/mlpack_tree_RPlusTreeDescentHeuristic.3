@@ -1,0 +1,55 @@
+.TH "mlpack::tree::RPlusTreeDescentHeuristic" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::tree::RPlusTreeDescentHeuristic \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename TreeType > static size_t \fBChooseDescentNode\fP (TreeType *node, const size_t point)"
+.br
+.RI "\fIEvaluate the node using a heuristic\&. \fP"
+.ti -1c
+.RI "template<typename TreeType > static size_t \fBChooseDescentNode\fP (const TreeType *, const TreeType *)"
+.br
+.RI "\fIEvaluate the node using a heuristic\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 21 of file r_plus_tree_descent_heuristic\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename TreeType > static size_t mlpack::tree::RPlusTreeDescentHeuristic::ChooseDescentNode (TreeType * node, const size_t point)\fC [static]\fP"
+
+.PP
+Evaluate the node using a heuristic\&. Returns the number of the node with minimum largest Hilbert value is greater than the Hilbert value of the point being inserted\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fInode\fP The node that is being evaluated\&. 
+.br
+\fIpoint\fP The number of the point that is being inserted\&. 
+.RE
+.PP
+
+.SS "template<typename TreeType > static size_t mlpack::tree::RPlusTreeDescentHeuristic::ChooseDescentNode (const TreeType *, const TreeType *)\fC [static]\fP"
+
+.PP
+Evaluate the node using a heuristic\&. Returns the number of the node with minimum largest Hilbert value is greater than the largest Hilbert value of the point being inserted\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fInode\fP The node that is being evaluated\&. 
+.br
+\fIinsertedNode\fP The node that is being inserted\&. 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

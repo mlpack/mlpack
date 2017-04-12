@@ -1,0 +1,114 @@
+\section{mlpack\+:\+:ann\+:\+:Parameters\+Visitor Class Reference}
+\label{classmlpack_1_1ann_1_1ParametersVisitor}\index{mlpack\+::ann\+::\+Parameters\+Visitor@{mlpack\+::ann\+::\+Parameters\+Visitor}}
+
+
+\doxyref{Parameters\+Visitor}{p.}{classmlpack_1_1ann_1_1ParametersVisitor} exposes the parameters set of the given module and stores the parameters set into the given matrix.  
+
+
+
+
+Inheritance diagram for mlpack\+:\+:ann\+:\+:Parameters\+Visitor\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=198pt]{classmlpack_1_1ann_1_1ParametersVisitor__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Parameters\+Visitor} (arma\+::mat \&\&{\bf parameters})
+\begin{DoxyCompactList}\small\item\em Store the parameters set into the given parameters matrix. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Layer\+Type $>$ }\\void {\bf operator()} (Layer\+Type $\ast$layer) const 
+\begin{DoxyCompactList}\small\item\em Set the parameters set. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename T , typename P $>$ }\\std\+::enable\+\_\+if$<$ !Has\+Parameters\+Check$<$ T, P \&(T\+::$\ast$)()$>$\+::value, void $>$\+::type {\bf Layer\+Parameters} (T $\ast$layer, P \&output) const 
+\begin{DoxyCompactList}\small\item\em Do not set the parameters set if the module doesn\textquotesingle{}t implement the Parameters() function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T , typename P $>$ }\\std\+::enable\+\_\+if$<$ Has\+Parameters\+Check$<$ T, P \&(T\+::$\ast$)()$>$\+::value, void $>$\+::type {\bf Layer\+Parameters} (T $\ast$layer, P \&output) const 
+\begin{DoxyCompactList}\small\item\em Set the parameters set if the module implements the Parameters() function. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+arma\+::mat \&\& {\bf parameters}
+\begin{DoxyCompactList}\small\item\em The parameters set. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\doxyref{Parameters\+Visitor}{p.}{classmlpack_1_1ann_1_1ParametersVisitor} exposes the parameters set of the given module and stores the parameters set into the given matrix. 
+
+Definition at line 28 of file parameters\+\_\+visitor.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::ann\+::\+Parameters\+Visitor@{mlpack\+::ann\+::\+Parameters\+Visitor}!Parameters\+Visitor@{Parameters\+Visitor}}
+\index{Parameters\+Visitor@{Parameters\+Visitor}!mlpack\+::ann\+::\+Parameters\+Visitor@{mlpack\+::ann\+::\+Parameters\+Visitor}}
+\subsubsection[{Parameters\+Visitor(arma\+::mat \&\&parameters)}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::ann\+::\+Parameters\+Visitor\+::\+Parameters\+Visitor (
+\begin{DoxyParamCaption}
+\item[{arma\+::mat \&\&}]{parameters}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1ParametersVisitor_a1b56b312407cc62fe17d08aa6d3b26c1}
+
+
+Store the parameters set into the given parameters matrix. 
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::ann\+::\+Parameters\+Visitor@{mlpack\+::ann\+::\+Parameters\+Visitor}!Layer\+Parameters@{Layer\+Parameters}}
+\index{Layer\+Parameters@{Layer\+Parameters}!mlpack\+::ann\+::\+Parameters\+Visitor@{mlpack\+::ann\+::\+Parameters\+Visitor}}
+\subsubsection[{Layer\+Parameters(\+T $\ast$layer, P \&output) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T , typename P $>$ std\+::enable\+\_\+if$<$ !Has\+Parameters\+Check$<$T, P\&(T\+::$\ast$)()$>$\+::value, void$>$\+::type mlpack\+::ann\+::\+Parameters\+Visitor\+::\+Layer\+Parameters (
+\begin{DoxyParamCaption}
+\item[{T $\ast$}]{layer, }
+\item[{P \&}]{output}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1ParametersVisitor_ab3bf97a67983b22e10f7b97ee0e7753d}
+
+
+Do not set the parameters set if the module doesn\textquotesingle{}t implement the Parameters() function. 
+
+\index{mlpack\+::ann\+::\+Parameters\+Visitor@{mlpack\+::ann\+::\+Parameters\+Visitor}!Layer\+Parameters@{Layer\+Parameters}}
+\index{Layer\+Parameters@{Layer\+Parameters}!mlpack\+::ann\+::\+Parameters\+Visitor@{mlpack\+::ann\+::\+Parameters\+Visitor}}
+\subsubsection[{Layer\+Parameters(\+T $\ast$layer, P \&output) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T , typename P $>$ std\+::enable\+\_\+if$<$ Has\+Parameters\+Check$<$T, P\&(T\+::$\ast$)()$>$\+::value, void$>$\+::type mlpack\+::ann\+::\+Parameters\+Visitor\+::\+Layer\+Parameters (
+\begin{DoxyParamCaption}
+\item[{T $\ast$}]{layer, }
+\item[{P \&}]{output}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1ParametersVisitor_a05c5338bc28dbce483808e2cf36ece0d}
+
+
+Set the parameters set if the module implements the Parameters() function. 
+
+\index{mlpack\+::ann\+::\+Parameters\+Visitor@{mlpack\+::ann\+::\+Parameters\+Visitor}!operator()@{operator()}}
+\index{operator()@{operator()}!mlpack\+::ann\+::\+Parameters\+Visitor@{mlpack\+::ann\+::\+Parameters\+Visitor}}
+\subsubsection[{operator()(\+Layer\+Type $\ast$layer) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Layer\+Type $>$ void mlpack\+::ann\+::\+Parameters\+Visitor\+::operator() (
+\begin{DoxyParamCaption}
+\item[{Layer\+Type $\ast$}]{layer}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1ann_1_1ParametersVisitor_a8cae32b1dbe006e624f413626f79ecc9}
+
+
+Set the parameters set. 
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::ann\+::\+Parameters\+Visitor@{mlpack\+::ann\+::\+Parameters\+Visitor}!parameters@{parameters}}
+\index{parameters@{parameters}!mlpack\+::ann\+::\+Parameters\+Visitor@{mlpack\+::ann\+::\+Parameters\+Visitor}}
+\subsubsection[{parameters}]{\setlength{\rightskip}{0pt plus 5cm}arma\+::mat\&\& mlpack\+::ann\+::\+Parameters\+Visitor\+::parameters\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1ParametersVisitor_a2456c7b59d87a5e8c458d84aaab99771}
+
+
+The parameters set. 
+
+
+
+Definition at line 40 of file parameters\+\_\+visitor.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/ann/visitor/{\bf parameters\+\_\+visitor.\+hpp}\end{DoxyCompactItemize}

@@ -1,0 +1,49 @@
+.TH "src/mlpack/methods/neighbor_search/unmap.hpp" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+src/mlpack/methods/neighbor_search/unmap.hpp \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "\fILinear algebra utility functions, generally performed on matrices or vectors\&. \fP"
+.ti -1c
+.RI " \fBmlpack::neighbor\fP"
+.br
+.RI "\fINeighbor-search routines\&. \fP"
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBmlpack::neighbor::Unmap\fP (const arma::Mat< size_t > &neighbors, const arma::mat &distances, const std::vector< size_t > &referenceMap, const std::vector< size_t > &queryMap, arma::Mat< size_t > &neighborsOut, arma::mat &distancesOut, const bool squareRoot=false)"
+.br
+.RI "\fIAssuming that the datasets have been mapped using the referenceMap and the queryMap (such as during kd-tree construction), unmap the columns of the distances and neighbors matrices into neighborsOut and distancesOut, and also unmap the entries in each row of neighbors\&. \fP"
+.ti -1c
+.RI "void \fBmlpack::neighbor::Unmap\fP (const arma::Mat< size_t > &neighbors, const arma::mat &distances, const std::vector< size_t > &referenceMap, arma::Mat< size_t > &neighborsOut, arma::mat &distancesOut, const bool squareRoot=false)"
+.br
+.RI "\fIAssuming that the datasets have been mapped using referenceMap (such as during kd-tree construction), unmap the columns of the distances and neighbors matrices into neighborsOut and distancesOut, and also unmap the entries in each row of neighbors\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Ryan Curtin
+.RE
+.PP
+Convenience methods to unmap results\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBunmap\&.hpp\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

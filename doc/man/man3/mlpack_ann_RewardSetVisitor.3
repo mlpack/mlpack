@@ -1,0 +1,96 @@
+.TH "mlpack::ann::RewardSetVisitor" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::ann::RewardSetVisitor \- \fBRewardSetVisitor\fP set the reward parameter given the reward value\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits static_visitor< void >\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBRewardSetVisitor\fP (const double \fBreward\fP)"
+.br
+.RI "\fISet the reward parameter given the reward value\&. \fP"
+.ti -1c
+.RI "template<typename LayerType > void \fBoperator()\fP (LayerType *layer) const "
+.br
+.RI "\fISet the reward parameter\&. \fP"
+.in -1c
+.SS "Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename T > std::enable_if< HasRewardCheck< T, double &(T::*)()>::value &&HasModelCheck< T, std::vector< \fBLayerTypes\fP > &(T::*)()>::value, void >::type \fBLayerReward\fP (T *layer) const "
+.br
+.RI "\fISet the deterministic parameter if the module implements the Deterministic() and Model() function\&. \fP"
+.ti -1c
+.RI "template<typename T > std::enable_if< !HasRewardCheck< T, double &(T::*)()>::value &&HasModelCheck< T, std::vector< \fBLayerTypes\fP > &(T::*)()>::value, void >::type \fBLayerReward\fP (T *layer) const "
+.br
+.RI "\fISet the deterministic parameter if the module implements the Model() function\&. \fP"
+.ti -1c
+.RI "template<typename T > std::enable_if< HasRewardCheck< T, double &(T::*)()>::value &&!HasModelCheck< T, std::vector< \fBLayerTypes\fP > &(T::*)()>::value, void >::type \fBLayerReward\fP (T *layer) const "
+.br
+.RI "\fISet the deterministic parameter if the module implements the Deterministic() function\&. \fP"
+.ti -1c
+.RI "template<typename T > std::enable_if< !HasRewardCheck< T, double &(T::*)()>::value &&!HasModelCheck< T, std::vector< \fBLayerTypes\fP > &(T::*)()>::value, void >::type \fBLayerReward\fP (T *layer) const "
+.br
+.RI "\fIDo not set the deterministic parameter if the module doesn't implement the Deterministic() or Model() function\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "const double \fBreward\fP"
+.br
+.RI "\fIThe reward value\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBRewardSetVisitor\fP set the reward parameter given the reward value\&. 
+.PP
+Definition at line 27 of file reward_set_visitor\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::ann::RewardSetVisitor::RewardSetVisitor (const double reward)"
+
+.PP
+Set the reward parameter given the reward value\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename T > std::enable_if< HasRewardCheck<T, double&(T::*)()>::value && HasModelCheck<T, std::vector<\fBLayerTypes\fP>&(T::*)()>::value, void>::type mlpack::ann::RewardSetVisitor::LayerReward (T * layer) const\fC [private]\fP"
+
+.PP
+Set the deterministic parameter if the module implements the Deterministic() and Model() function\&. 
+.SS "template<typename T > std::enable_if< !HasRewardCheck<T, double&(T::*)()>::value && HasModelCheck<T, std::vector<\fBLayerTypes\fP>&(T::*)()>::value, void>::type mlpack::ann::RewardSetVisitor::LayerReward (T * layer) const\fC [private]\fP"
+
+.PP
+Set the deterministic parameter if the module implements the Model() function\&. 
+.SS "template<typename T > std::enable_if< HasRewardCheck<T, double&(T::*)()>::value && !HasModelCheck<T, std::vector<\fBLayerTypes\fP>&(T::*)()>::value, void>::type mlpack::ann::RewardSetVisitor::LayerReward (T * layer) const\fC [private]\fP"
+
+.PP
+Set the deterministic parameter if the module implements the Deterministic() function\&. 
+.SS "template<typename T > std::enable_if< !HasRewardCheck<T, double&(T::*)()>::value && !HasModelCheck<T, std::vector<\fBLayerTypes\fP>&(T::*)()>::value, void>::type mlpack::ann::RewardSetVisitor::LayerReward (T * layer) const\fC [private]\fP"
+
+.PP
+Do not set the deterministic parameter if the module doesn't implement the Deterministic() or Model() function\&. 
+.SS "template<typename LayerType > void mlpack::ann::RewardSetVisitor::operator() (LayerType * layer) const"
+
+.PP
+Set the reward parameter\&. 
+.SH "Member Data Documentation"
+.PP 
+.SS "const double mlpack::ann::RewardSetVisitor::reward\fC [private]\fP"
+
+.PP
+The reward value\&. 
+.PP
+Definition at line 39 of file reward_set_visitor\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

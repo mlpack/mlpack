@@ -1,0 +1,324 @@
+\section{mlpack\+:\+:nca\+:\+:Softmax\+Error\+Function$<$ Metric\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1nca_1_1SoftmaxErrorFunction}\index{mlpack\+::nca\+::\+Softmax\+Error\+Function$<$ Metric\+Type $>$@{mlpack\+::nca\+::\+Softmax\+Error\+Function$<$ Metric\+Type $>$}}
+
+
+The \char`\"{}softmax\char`\"{} stochastic neighbor assignment probability function.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Softmax\+Error\+Function} (const arma\+::mat \&{\bf dataset}, const arma\+::\+Row$<$ size\+\_\+t $>$ \&{\bf labels}, Metric\+Type {\bf metric}=Metric\+Type())
+\begin{DoxyCompactList}\small\item\em Initialize with the given kernel; useful when the kernel has some state to store, which is set elsewhere. \end{DoxyCompactList}\item 
+double {\bf Evaluate} (const arma\+::mat \&covariance)
+\begin{DoxyCompactList}\small\item\em Evaluate the softmax function for the given covariance matrix. \end{DoxyCompactList}\item 
+double {\bf Evaluate} (const arma\+::mat \&covariance, const size\+\_\+t i)
+\begin{DoxyCompactList}\small\item\em Evaluate the softmax objective function for the given covariance matrix on only one point of the dataset. \end{DoxyCompactList}\item 
+const arma\+::mat {\bf Get\+Initial\+Point} () const 
+\begin{DoxyCompactList}\small\item\em Get the initial point. \end{DoxyCompactList}\item 
+void {\bf Gradient} (const arma\+::mat \&covariance, arma\+::mat \&gradient)
+\begin{DoxyCompactList}\small\item\em Evaluate the gradient of the softmax function for the given covariance matrix. \end{DoxyCompactList}\item 
+void {\bf Gradient} (const arma\+::mat \&covariance, const size\+\_\+t i, arma\+::mat \&gradient)
+\begin{DoxyCompactList}\small\item\em Evaluate the gradient of the softmax function for the given covariance matrix on only one point of the dataset. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Num\+Functions} () const 
+\begin{DoxyCompactList}\small\item\em Get the number of functions the objective function can be decomposed into. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void {\bf Precalculate} (const arma\+::mat \&coordinates)
+\begin{DoxyCompactList}\small\item\em Precalculate the denominators and numerators that will make up the p\+\_\+ij, but only if the coordinates matrix is different than the last coordinates the \doxyref{Precalculate()}{p.}{classmlpack_1_1nca_1_1SoftmaxErrorFunction_a436b90591cf003ba82b8a4953b7eadaf} method was run with. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+const arma\+::mat \& {\bf dataset}
+\begin{DoxyCompactList}\small\item\em The dataset. \end{DoxyCompactList}\item 
+arma\+::vec {\bf denominators}
+\begin{DoxyCompactList}\small\item\em Holds denominators for calculation of p\+\_\+ij, for the non-\/separable \doxyref{Evaluate()}{p.}{classmlpack_1_1nca_1_1SoftmaxErrorFunction_a60fcd093a9a44400cfcd6d259357d26e} and \doxyref{Gradient()}{p.}{classmlpack_1_1nca_1_1SoftmaxErrorFunction_a98d77dc2745f01a14aed76aa4735155f}. \end{DoxyCompactList}\item 
+const arma\+::\+Row$<$ size\+\_\+t $>$ \& {\bf labels}
+\begin{DoxyCompactList}\small\item\em Labels for each point in the dataset. \end{DoxyCompactList}\item 
+arma\+::mat {\bf last\+Coordinates}
+\begin{DoxyCompactList}\small\item\em Last coordinates. Used for the non-\/separable \doxyref{Evaluate()}{p.}{classmlpack_1_1nca_1_1SoftmaxErrorFunction_a60fcd093a9a44400cfcd6d259357d26e} and \doxyref{Gradient()}{p.}{classmlpack_1_1nca_1_1SoftmaxErrorFunction_a98d77dc2745f01a14aed76aa4735155f}. \end{DoxyCompactList}\item 
+Metric\+Type {\bf metric}
+\begin{DoxyCompactList}\small\item\em The instantiated metric. \end{DoxyCompactList}\item 
+arma\+::vec {\bf p}
+\begin{DoxyCompactList}\small\item\em Holds calculated p\+\_\+i, for the non-\/separable \doxyref{Evaluate()}{p.}{classmlpack_1_1nca_1_1SoftmaxErrorFunction_a60fcd093a9a44400cfcd6d259357d26e} and \doxyref{Gradient()}{p.}{classmlpack_1_1nca_1_1SoftmaxErrorFunction_a98d77dc2745f01a14aed76aa4735155f}. \end{DoxyCompactList}\item 
+bool {\bf precalculated}
+\begin{DoxyCompactList}\small\item\em False if nothing has ever been precalculated (only at construction time). \end{DoxyCompactList}\item 
+arma\+::mat {\bf stretched\+Dataset}
+\begin{DoxyCompactList}\small\item\em Stretched dataset. Kept internal to avoid memory reallocations. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Metric\+Type = metric\+::\+Squared\+Euclidean\+Distance$>$\\*
+class mlpack\+::nca\+::\+Softmax\+Error\+Function$<$ Metric\+Type $>$}
+
+The \char`\"{}softmax\char`\"{} stochastic neighbor assignment probability function. 
+
+The actual function is
+
+p\+\_\+ij = (exp(-\/$\vert$$\vert$ A x\+\_\+i -\/ A x\+\_\+j $\vert$$\vert$ $^\wedge$ 2)) / (sum\+\_\+\{k != i\} (exp(-\/$\vert$$\vert$ A x\+\_\+i -\/ A x\+\_\+k $\vert$$\vert$ $^\wedge$ 2)))
+
+where x\+\_\+n represents a point and A is the current scaling matrix.
+
+This class is more flexible than the original paper, allowing an arbitrary metric function to be used in place of $\vert$$\vert$ A x\+\_\+i -\/ A x\+\_\+j $\vert$$\vert$$^\wedge$2, meaning that the squared Euclidean distance is not the only allowed metric for \doxyref{N\+CA}{p.}{classmlpack_1_1nca_1_1NCA}. However, that is probably the best way to use this class.
+
+In addition to the standard \doxyref{Evaluate()}{p.}{classmlpack_1_1nca_1_1SoftmaxErrorFunction_a60fcd093a9a44400cfcd6d259357d26e} and \doxyref{Gradient()}{p.}{classmlpack_1_1nca_1_1SoftmaxErrorFunction_a98d77dc2745f01a14aed76aa4735155f} functions which mlpack optimizers use, overloads of \doxyref{Evaluate()}{p.}{classmlpack_1_1nca_1_1SoftmaxErrorFunction_a60fcd093a9a44400cfcd6d259357d26e} and \doxyref{Gradient()}{p.}{classmlpack_1_1nca_1_1SoftmaxErrorFunction_a98d77dc2745f01a14aed76aa4735155f} are given which only operate on one point in the dataset. This is useful for optimizers like stochastic gradient descent (see \doxyref{mlpack\+::optimization\+::\+S\+GD}{p.}{classmlpack_1_1optimization_1_1SGD}). 
+
+Definition at line 42 of file nca\+\_\+softmax\+\_\+error\+\_\+function.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::nca\+::\+Softmax\+Error\+Function@{mlpack\+::nca\+::\+Softmax\+Error\+Function}!Softmax\+Error\+Function@{Softmax\+Error\+Function}}
+\index{Softmax\+Error\+Function@{Softmax\+Error\+Function}!mlpack\+::nca\+::\+Softmax\+Error\+Function@{mlpack\+::nca\+::\+Softmax\+Error\+Function}}
+\subsubsection[{Softmax\+Error\+Function(const arma\+::mat \&dataset, const arma\+::\+Row$<$ size\+\_\+t $>$ \&labels, Metric\+Type metric=\+Metric\+Type())}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+Squared\+Euclidean\+Distance$>$ {\bf mlpack\+::nca\+::\+Softmax\+Error\+Function}$<$ Metric\+Type $>$\+::{\bf Softmax\+Error\+Function} (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{dataset, }
+\item[{const arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{labels, }
+\item[{Metric\+Type}]{metric = {\ttfamily MetricType()}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1nca_1_1SoftmaxErrorFunction_ae91e96bf31977e0ca88c7805a7d7e978}
+
+
+Initialize with the given kernel; useful when the kernel has some state to store, which is set elsewhere. 
+
+If no kernel is given, an empty kernel is used; this way, you can call the constructor with no arguments. A reference to the dataset we will be optimizing over is also required.
+
+
+\begin{DoxyParams}{Parameters}
+{\em dataset} & Matrix containing the dataset. \\
+\hline
+{\em labels} & Vector of class labels for each point in the dataset. \\
+\hline
+{\em kernel} & Instantiated kernel (optional). \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::nca\+::\+Softmax\+Error\+Function@{mlpack\+::nca\+::\+Softmax\+Error\+Function}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!mlpack\+::nca\+::\+Softmax\+Error\+Function@{mlpack\+::nca\+::\+Softmax\+Error\+Function}}
+\subsubsection[{Evaluate(const arma\+::mat \&covariance)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+Squared\+Euclidean\+Distance$>$ double {\bf mlpack\+::nca\+::\+Softmax\+Error\+Function}$<$ Metric\+Type $>$\+::Evaluate (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{covariance}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1nca_1_1SoftmaxErrorFunction_a60fcd093a9a44400cfcd6d259357d26e}
+
+
+Evaluate the softmax function for the given covariance matrix. 
+
+This is the non-\/separable implementation, where the objective function is not decomposed into the sum of several objective functions.
+
+
+\begin{DoxyParams}{Parameters}
+{\em covariance} & Covariance matrix of Mahalanobis distance. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::nca\+::\+Softmax\+Error\+Function@{mlpack\+::nca\+::\+Softmax\+Error\+Function}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!mlpack\+::nca\+::\+Softmax\+Error\+Function@{mlpack\+::nca\+::\+Softmax\+Error\+Function}}
+\subsubsection[{Evaluate(const arma\+::mat \&covariance, const size\+\_\+t i)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+Squared\+Euclidean\+Distance$>$ double {\bf mlpack\+::nca\+::\+Softmax\+Error\+Function}$<$ Metric\+Type $>$\+::Evaluate (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{covariance, }
+\item[{const size\+\_\+t}]{i}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1nca_1_1SoftmaxErrorFunction_aab64c0f64a6ba941e930551faa7a65b6}
+
+
+Evaluate the softmax objective function for the given covariance matrix on only one point of the dataset. 
+
+This is the separable implementation, where the objective function is decomposed into the sum of many objective functions, and here, only one of those constituent objective functions is returned.
+
+
+\begin{DoxyParams}{Parameters}
+{\em covariance} & Covariance matrix of Mahalanobis distance. \\
+\hline
+{\em i} & Index of point to use for objective function. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::nca\+::\+Softmax\+Error\+Function@{mlpack\+::nca\+::\+Softmax\+Error\+Function}!Get\+Initial\+Point@{Get\+Initial\+Point}}
+\index{Get\+Initial\+Point@{Get\+Initial\+Point}!mlpack\+::nca\+::\+Softmax\+Error\+Function@{mlpack\+::nca\+::\+Softmax\+Error\+Function}}
+\subsubsection[{Get\+Initial\+Point() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+Squared\+Euclidean\+Distance$>$ const arma\+::mat {\bf mlpack\+::nca\+::\+Softmax\+Error\+Function}$<$ Metric\+Type $>$\+::Get\+Initial\+Point (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1nca_1_1SoftmaxErrorFunction_a46a4bfef990e09a9e44d63750386829b}
+
+
+Get the initial point. 
+
+\index{mlpack\+::nca\+::\+Softmax\+Error\+Function@{mlpack\+::nca\+::\+Softmax\+Error\+Function}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::nca\+::\+Softmax\+Error\+Function@{mlpack\+::nca\+::\+Softmax\+Error\+Function}}
+\subsubsection[{Gradient(const arma\+::mat \&covariance, arma\+::mat \&gradient)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+Squared\+Euclidean\+Distance$>$ void {\bf mlpack\+::nca\+::\+Softmax\+Error\+Function}$<$ Metric\+Type $>$\+::Gradient (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{covariance, }
+\item[{arma\+::mat \&}]{gradient}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1nca_1_1SoftmaxErrorFunction_a98d77dc2745f01a14aed76aa4735155f}
+
+
+Evaluate the gradient of the softmax function for the given covariance matrix. 
+
+This is the non-\/separable implementation, where the objective function is not decomposed into the sum of several objective functions.
+
+
+\begin{DoxyParams}{Parameters}
+{\em covariance} & Covariance matrix of Mahalanobis distance. \\
+\hline
+{\em gradient} & Matrix to store the calculated gradient in. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::nca\+::\+Softmax\+Error\+Function@{mlpack\+::nca\+::\+Softmax\+Error\+Function}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::nca\+::\+Softmax\+Error\+Function@{mlpack\+::nca\+::\+Softmax\+Error\+Function}}
+\subsubsection[{Gradient(const arma\+::mat \&covariance, const size\+\_\+t i, arma\+::mat \&gradient)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+Squared\+Euclidean\+Distance$>$ void {\bf mlpack\+::nca\+::\+Softmax\+Error\+Function}$<$ Metric\+Type $>$\+::Gradient (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{covariance, }
+\item[{const size\+\_\+t}]{i, }
+\item[{arma\+::mat \&}]{gradient}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1nca_1_1SoftmaxErrorFunction_a706948e7cba12f1840dc4c98cb7b1367}
+
+
+Evaluate the gradient of the softmax function for the given covariance matrix on only one point of the dataset. 
+
+This is the separable implementation, where the objective function is decomposed into the sum of many objective functions, and here, only one of those constituent objective functions is returned.
+
+
+\begin{DoxyParams}{Parameters}
+{\em covariance} & Covariance matrix of Mahalanobis distance. \\
+\hline
+{\em i} & Index of point to use for objective function. \\
+\hline
+{\em gradient} & Matrix to store the calculated gradient in. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::nca\+::\+Softmax\+Error\+Function@{mlpack\+::nca\+::\+Softmax\+Error\+Function}!Num\+Functions@{Num\+Functions}}
+\index{Num\+Functions@{Num\+Functions}!mlpack\+::nca\+::\+Softmax\+Error\+Function@{mlpack\+::nca\+::\+Softmax\+Error\+Function}}
+\subsubsection[{Num\+Functions() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+Squared\+Euclidean\+Distance$>$ size\+\_\+t {\bf mlpack\+::nca\+::\+Softmax\+Error\+Function}$<$ Metric\+Type $>$\+::Num\+Functions (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1nca_1_1SoftmaxErrorFunction_a899db3723fbab16e64238a4d567afa05}
+
+
+Get the number of functions the objective function can be decomposed into. 
+
+This is just the number of points in the dataset. 
+
+Definition at line 114 of file nca\+\_\+softmax\+\_\+error\+\_\+function.\+hpp.
+
+\index{mlpack\+::nca\+::\+Softmax\+Error\+Function@{mlpack\+::nca\+::\+Softmax\+Error\+Function}!Precalculate@{Precalculate}}
+\index{Precalculate@{Precalculate}!mlpack\+::nca\+::\+Softmax\+Error\+Function@{mlpack\+::nca\+::\+Softmax\+Error\+Function}}
+\subsubsection[{Precalculate(const arma\+::mat \&coordinates)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+Squared\+Euclidean\+Distance$>$ void {\bf mlpack\+::nca\+::\+Softmax\+Error\+Function}$<$ Metric\+Type $>$\+::Precalculate (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{coordinates}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1nca_1_1SoftmaxErrorFunction_a436b90591cf003ba82b8a4953b7eadaf}
+
+
+Precalculate the denominators and numerators that will make up the p\+\_\+ij, but only if the coordinates matrix is different than the last coordinates the \doxyref{Precalculate()}{p.}{classmlpack_1_1nca_1_1SoftmaxErrorFunction_a436b90591cf003ba82b8a4953b7eadaf} method was run with. 
+
+This method is only called by the non-\/separable \doxyref{Evaluate()}{p.}{classmlpack_1_1nca_1_1SoftmaxErrorFunction_a60fcd093a9a44400cfcd6d259357d26e} and \doxyref{Gradient()}{p.}{classmlpack_1_1nca_1_1SoftmaxErrorFunction_a98d77dc2745f01a14aed76aa4735155f}.
+
+This will update last\+\_\+coordinates\+\_\+ and stretched\+\_\+dataset\+\_\+, and also calculate the p\+\_\+i and denominators\+\_\+ which are used in the calculation of p\+\_\+i or p\+\_\+ij. The calculation will be O((n $\ast$ (n + 1)) / 2), which is not great.
+
+
+\begin{DoxyParams}{Parameters}
+{\em coordinates} & Coordinates matrix to use for precalculation. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::nca\+::\+Softmax\+Error\+Function@{mlpack\+::nca\+::\+Softmax\+Error\+Function}!dataset@{dataset}}
+\index{dataset@{dataset}!mlpack\+::nca\+::\+Softmax\+Error\+Function@{mlpack\+::nca\+::\+Softmax\+Error\+Function}}
+\subsubsection[{dataset}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+Squared\+Euclidean\+Distance$>$ const arma\+::mat\& {\bf mlpack\+::nca\+::\+Softmax\+Error\+Function}$<$ Metric\+Type $>$\+::dataset\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1nca_1_1SoftmaxErrorFunction_a9b4a79cbe8a8be32c8972b01ee2073d9}
+
+
+The dataset. 
+
+
+
+Definition at line 118 of file nca\+\_\+softmax\+\_\+error\+\_\+function.\+hpp.
+
+\index{mlpack\+::nca\+::\+Softmax\+Error\+Function@{mlpack\+::nca\+::\+Softmax\+Error\+Function}!denominators@{denominators}}
+\index{denominators@{denominators}!mlpack\+::nca\+::\+Softmax\+Error\+Function@{mlpack\+::nca\+::\+Softmax\+Error\+Function}}
+\subsubsection[{denominators}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+Squared\+Euclidean\+Distance$>$ arma\+::vec {\bf mlpack\+::nca\+::\+Softmax\+Error\+Function}$<$ Metric\+Type $>$\+::denominators\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1nca_1_1SoftmaxErrorFunction_a63f3fc50872eabdcfe5ab9eb8a6af22b}
+
+
+Holds denominators for calculation of p\+\_\+ij, for the non-\/separable \doxyref{Evaluate()}{p.}{classmlpack_1_1nca_1_1SoftmaxErrorFunction_a60fcd093a9a44400cfcd6d259357d26e} and \doxyref{Gradient()}{p.}{classmlpack_1_1nca_1_1SoftmaxErrorFunction_a98d77dc2745f01a14aed76aa4735155f}. 
+
+
+
+Definition at line 133 of file nca\+\_\+softmax\+\_\+error\+\_\+function.\+hpp.
+
+\index{mlpack\+::nca\+::\+Softmax\+Error\+Function@{mlpack\+::nca\+::\+Softmax\+Error\+Function}!labels@{labels}}
+\index{labels@{labels}!mlpack\+::nca\+::\+Softmax\+Error\+Function@{mlpack\+::nca\+::\+Softmax\+Error\+Function}}
+\subsubsection[{labels}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+Squared\+Euclidean\+Distance$>$ const arma\+::\+Row$<$size\+\_\+t$>$\& {\bf mlpack\+::nca\+::\+Softmax\+Error\+Function}$<$ Metric\+Type $>$\+::labels\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1nca_1_1SoftmaxErrorFunction_afe9c3d9edb331845c0b6ce28444cc484}
+
+
+Labels for each point in the dataset. 
+
+
+
+Definition at line 120 of file nca\+\_\+softmax\+\_\+error\+\_\+function.\+hpp.
+
+\index{mlpack\+::nca\+::\+Softmax\+Error\+Function@{mlpack\+::nca\+::\+Softmax\+Error\+Function}!last\+Coordinates@{last\+Coordinates}}
+\index{last\+Coordinates@{last\+Coordinates}!mlpack\+::nca\+::\+Softmax\+Error\+Function@{mlpack\+::nca\+::\+Softmax\+Error\+Function}}
+\subsubsection[{last\+Coordinates}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+Squared\+Euclidean\+Distance$>$ arma\+::mat {\bf mlpack\+::nca\+::\+Softmax\+Error\+Function}$<$ Metric\+Type $>$\+::last\+Coordinates\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1nca_1_1SoftmaxErrorFunction_a68407bb96a6b4a3e3b92d3661c177f88}
+
+
+Last coordinates. Used for the non-\/separable \doxyref{Evaluate()}{p.}{classmlpack_1_1nca_1_1SoftmaxErrorFunction_a60fcd093a9a44400cfcd6d259357d26e} and \doxyref{Gradient()}{p.}{classmlpack_1_1nca_1_1SoftmaxErrorFunction_a98d77dc2745f01a14aed76aa4735155f}. 
+
+
+
+Definition at line 126 of file nca\+\_\+softmax\+\_\+error\+\_\+function.\+hpp.
+
+\index{mlpack\+::nca\+::\+Softmax\+Error\+Function@{mlpack\+::nca\+::\+Softmax\+Error\+Function}!metric@{metric}}
+\index{metric@{metric}!mlpack\+::nca\+::\+Softmax\+Error\+Function@{mlpack\+::nca\+::\+Softmax\+Error\+Function}}
+\subsubsection[{metric}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+Squared\+Euclidean\+Distance$>$ Metric\+Type {\bf mlpack\+::nca\+::\+Softmax\+Error\+Function}$<$ Metric\+Type $>$\+::metric\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1nca_1_1SoftmaxErrorFunction_abb8345f6eaaebc416f8e57808785e034}
+
+
+The instantiated metric. 
+
+
+
+Definition at line 123 of file nca\+\_\+softmax\+\_\+error\+\_\+function.\+hpp.
+
+\index{mlpack\+::nca\+::\+Softmax\+Error\+Function@{mlpack\+::nca\+::\+Softmax\+Error\+Function}!p@{p}}
+\index{p@{p}!mlpack\+::nca\+::\+Softmax\+Error\+Function@{mlpack\+::nca\+::\+Softmax\+Error\+Function}}
+\subsubsection[{p}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+Squared\+Euclidean\+Distance$>$ arma\+::vec {\bf mlpack\+::nca\+::\+Softmax\+Error\+Function}$<$ Metric\+Type $>$\+::p\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1nca_1_1SoftmaxErrorFunction_a768e2c60c0f491e57d8a9d3e240f3c0f}
+
+
+Holds calculated p\+\_\+i, for the non-\/separable \doxyref{Evaluate()}{p.}{classmlpack_1_1nca_1_1SoftmaxErrorFunction_a60fcd093a9a44400cfcd6d259357d26e} and \doxyref{Gradient()}{p.}{classmlpack_1_1nca_1_1SoftmaxErrorFunction_a98d77dc2745f01a14aed76aa4735155f}. 
+
+
+
+Definition at line 130 of file nca\+\_\+softmax\+\_\+error\+\_\+function.\+hpp.
+
+\index{mlpack\+::nca\+::\+Softmax\+Error\+Function@{mlpack\+::nca\+::\+Softmax\+Error\+Function}!precalculated@{precalculated}}
+\index{precalculated@{precalculated}!mlpack\+::nca\+::\+Softmax\+Error\+Function@{mlpack\+::nca\+::\+Softmax\+Error\+Function}}
+\subsubsection[{precalculated}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+Squared\+Euclidean\+Distance$>$ bool {\bf mlpack\+::nca\+::\+Softmax\+Error\+Function}$<$ Metric\+Type $>$\+::precalculated\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1nca_1_1SoftmaxErrorFunction_a7bc17888d9ab1ce6920c72d85f618ff7}
+
+
+False if nothing has ever been precalculated (only at construction time). 
+
+
+
+Definition at line 136 of file nca\+\_\+softmax\+\_\+error\+\_\+function.\+hpp.
+
+\index{mlpack\+::nca\+::\+Softmax\+Error\+Function@{mlpack\+::nca\+::\+Softmax\+Error\+Function}!stretched\+Dataset@{stretched\+Dataset}}
+\index{stretched\+Dataset@{stretched\+Dataset}!mlpack\+::nca\+::\+Softmax\+Error\+Function@{mlpack\+::nca\+::\+Softmax\+Error\+Function}}
+\subsubsection[{stretched\+Dataset}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+Squared\+Euclidean\+Distance$>$ arma\+::mat {\bf mlpack\+::nca\+::\+Softmax\+Error\+Function}$<$ Metric\+Type $>$\+::stretched\+Dataset\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1nca_1_1SoftmaxErrorFunction_a11759ec30b7853559df670867e57ceb4}
+
+
+Stretched dataset. Kept internal to avoid memory reallocations. 
+
+
+
+Definition at line 128 of file nca\+\_\+softmax\+\_\+error\+\_\+function.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/nca/{\bf nca\+\_\+softmax\+\_\+error\+\_\+function.\+hpp}\end{DoxyCompactItemize}

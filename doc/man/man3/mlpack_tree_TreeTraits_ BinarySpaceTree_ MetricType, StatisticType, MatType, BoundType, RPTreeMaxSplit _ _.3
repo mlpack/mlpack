@@ -1,0 +1,100 @@
+.TH "mlpack::tree::TreeTraits< BinarySpaceTree< MetricType, StatisticType, MatType, BoundType, RPTreeMaxSplit > >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::tree::TreeTraits< BinarySpaceTree< MetricType, StatisticType, MatType, BoundType, RPTreeMaxSplit > > \- This is a specialization of the TreeType class to the max-split random projection tree\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "static const bool \fBBinaryTree\fP = true"
+.br
+.RI "\fIThis is always a binary tree\&. \fP"
+.ti -1c
+.RI "static const bool \fBFirstPointIsCentroid\fP = false"
+.br
+.RI "\fIThere is no guarantee that the first point in a node is its centroid\&. \fP"
+.ti -1c
+.RI "static const bool \fBHasDuplicatedPoints\fP = false"
+.br
+.RI "\fIThe tree has not got duplicated points\&. \fP"
+.ti -1c
+.RI "static const bool \fBHasOverlappingChildren\fP = true"
+.br
+.RI "\fIChildren of a random projection tree node may overlap\&. \fP"
+.ti -1c
+.RI "static const bool \fBHasSelfChildren\fP = false"
+.br
+.RI "\fIPoints are not contained at multiple levels of the binary space tree\&. \fP"
+.ti -1c
+.RI "static const bool \fBRearrangesDataset\fP = true"
+.br
+.RI "\fIPoints are rearranged during building of the tree\&. \fP"
+.ti -1c
+.RI "static const bool \fBUniqueNumDescendants\fP = true"
+.br
+.RI "\fIBinary space trees don't have duplicated points, so NumDescendants() represents the number of unique descendant points\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename MetricType, typename StatisticType, typename MatType, template< typename BoundMetricType, typename\&.\&.\&. > class BoundType>
+.br
+class mlpack::tree::TreeTraits< BinarySpaceTree< MetricType, StatisticType, MatType, BoundType, RPTreeMaxSplit > >"
+This is a specialization of the TreeType class to the max-split random projection tree\&. 
+
+The only difference with general \fBBinarySpaceTree\fP is that the tree can have overlapping children\&. 
+.PP
+Definition at line 85 of file traits\&.hpp\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename MetricType , typename StatisticType , typename MatType , template< typename BoundMetricType, typename\&.\&.\&. > class BoundType> const bool \fBmlpack::tree::TreeTraits\fP< \fBBinarySpaceTree\fP< MetricType, StatisticType, MatType, BoundType, \fBRPTreeMaxSplit\fP > >::BinaryTree = true\fC [static]\fP"
+
+.PP
+This is always a binary tree\&. 
+.PP
+Definition at line 117 of file traits\&.hpp\&.
+.SS "template<typename MetricType , typename StatisticType , typename MatType , template< typename BoundMetricType, typename\&.\&.\&. > class BoundType> const bool \fBmlpack::tree::TreeTraits\fP< \fBBinarySpaceTree\fP< MetricType, StatisticType, MatType, BoundType, \fBRPTreeMaxSplit\fP > >::FirstPointIsCentroid = false\fC [static]\fP"
+
+.PP
+There is no guarantee that the first point in a node is its centroid\&. 
+.PP
+Definition at line 102 of file traits\&.hpp\&.
+.SS "template<typename MetricType , typename StatisticType , typename MatType , template< typename BoundMetricType, typename\&.\&.\&. > class BoundType> const bool \fBmlpack::tree::TreeTraits\fP< \fBBinarySpaceTree\fP< MetricType, StatisticType, MatType, BoundType, \fBRPTreeMaxSplit\fP > >::HasDuplicatedPoints = false\fC [static]\fP"
+
+.PP
+The tree has not got duplicated points\&. 
+.PP
+Definition at line 97 of file traits\&.hpp\&.
+.SS "template<typename MetricType , typename StatisticType , typename MatType , template< typename BoundMetricType, typename\&.\&.\&. > class BoundType> const bool \fBmlpack::tree::TreeTraits\fP< \fBBinarySpaceTree\fP< MetricType, StatisticType, MatType, BoundType, \fBRPTreeMaxSplit\fP > >::HasOverlappingChildren = true\fC [static]\fP"
+
+.PP
+Children of a random projection tree node may overlap\&. 
+.PP
+Definition at line 92 of file traits\&.hpp\&.
+.SS "template<typename MetricType , typename StatisticType , typename MatType , template< typename BoundMetricType, typename\&.\&.\&. > class BoundType> const bool \fBmlpack::tree::TreeTraits\fP< \fBBinarySpaceTree\fP< MetricType, StatisticType, MatType, BoundType, \fBRPTreeMaxSplit\fP > >::HasSelfChildren = false\fC [static]\fP"
+
+.PP
+Points are not contained at multiple levels of the binary space tree\&. 
+.PP
+Definition at line 107 of file traits\&.hpp\&.
+.SS "template<typename MetricType , typename StatisticType , typename MatType , template< typename BoundMetricType, typename\&.\&.\&. > class BoundType> const bool \fBmlpack::tree::TreeTraits\fP< \fBBinarySpaceTree\fP< MetricType, StatisticType, MatType, BoundType, \fBRPTreeMaxSplit\fP > >::RearrangesDataset = true\fC [static]\fP"
+
+.PP
+Points are rearranged during building of the tree\&. 
+.PP
+Definition at line 112 of file traits\&.hpp\&.
+.SS "template<typename MetricType , typename StatisticType , typename MatType , template< typename BoundMetricType, typename\&.\&.\&. > class BoundType> const bool \fBmlpack::tree::TreeTraits\fP< \fBBinarySpaceTree\fP< MetricType, StatisticType, MatType, BoundType, \fBRPTreeMaxSplit\fP > >::UniqueNumDescendants = true\fC [static]\fP"
+
+.PP
+Binary space trees don't have duplicated points, so NumDescendants() represents the number of unique descendant points\&. 
+.PP
+Definition at line 123 of file traits\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

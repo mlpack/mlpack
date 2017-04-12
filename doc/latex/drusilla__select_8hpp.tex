@@ -1,0 +1,47 @@
+\section{src/mlpack/methods/approx\+\_\+kfn/drusilla\+\_\+select.hpp File Reference}
+\label{drusilla__select_8hpp}\index{src/mlpack/methods/approx\+\_\+kfn/drusilla\+\_\+select.\+hpp@{src/mlpack/methods/approx\+\_\+kfn/drusilla\+\_\+select.\+hpp}}
+Include dependency graph for drusilla\+\_\+select.\+hpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{drusilla__select_8hpp__incl}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class {\bf mlpack\+::neighbor\+::\+Drusilla\+Select$<$ Mat\+Type $>$}
+\end{DoxyCompactItemize}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ {\bf mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ {\bf mlpack\+::neighbor}
+\begin{DoxyCompactList}\small\item\em Neighbor-\/search routines. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Ryan Curtin
+\end{DoxyAuthor}
+An implementation of the approximate furthest neighbor algorithm specified in the following paper\+:
+
+
+\begin{DoxyCode}
+@incollection\{curtin2016fast,
+  title=\{Fast approximate furthest neighbors with data-dependent candidate
+         selection\},
+  author=\{Curtin, R.R., and Gardner, A.B.\},
+  booktitle=\{Similarity Search and Applications\},
+  pages=\{221--235\},
+  year=\{2016\},
+  publisher=\{Springer\}
+\}
+\end{DoxyCode}
+
+
+This algorithm, called Drusilla\+Select, constructs a candidate set of points to query to find an approximate furthest neighbor. The strange name is a result of the algorithm being named after a cat. The cat in question may be viewed at {\tt http\+://www.\+ratml.\+org/misc\+\_\+img/drusilla\+\_\+fence.\+png}.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause B\+SD license. You should have received a copy of the 3-\/clause B\+SD license along with mlpack. If not, see {\tt http\+://www.\+opensource.\+org/licenses/\+B\+S\+D-\/3-\/\+Clause} for more information. 

@@ -1,0 +1,83 @@
+.TH "mlpack::tree::Octree< MetricType, StatisticType, MatType >::SplitInfo" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::tree::Octree< MetricType, StatisticType, MatType >::SplitInfo \- This is used for sorting points while splitting\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBSplitInfo\fP (const size_t \fBd\fP, const arma::vec &c)"
+.br
+.RI "\fICreate the \fBSplitInfo\fP object\&. \fP"
+.in -1c
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename VecType > static bool \fBAssignToLeftNode\fP (const VecType &point, const \fBSplitInfo\fP &s)"
+.br
+.in -1c
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "const arma::vec & \fBcenter\fP"
+.br
+.RI "\fIThe center of the node\&. \fP"
+.ti -1c
+.RI "size_t \fBd\fP"
+.br
+.RI "\fIThe dimension we are splitting on\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename MetricType = metric::EuclideanDistance, typename StatisticType = EmptyStatistic, typename MatType = arma::mat>
+.br
+struct mlpack::tree::Octree< MetricType, StatisticType, MatType >::SplitInfo"
+This is used for sorting points while splitting\&. 
+.PP
+Definition at line 431 of file octree\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat> \fBmlpack::tree::Octree\fP< MetricType, StatisticType, MatType >::SplitInfo::SplitInfo (const size_t d, const arma::vec & c)\fC [inline]\fP"
+
+.PP
+Create the \fBSplitInfo\fP object\&. 
+.PP
+Definition at line 434 of file octree\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat> template<typename VecType > static bool \fBmlpack::tree::Octree\fP< MetricType, StatisticType, MatType >::SplitInfo::AssignToLeftNode (const VecType & point, const \fBSplitInfo\fP & s)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Definition at line 442 of file octree\&.hpp\&.
+.PP
+References mlpack::tree::Octree< MetricType, StatisticType, MatType >::SplitInfo::center, and mlpack::tree::Octree< MetricType, StatisticType, MatType >::SplitInfo::d\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat> const arma::vec& \fBmlpack::tree::Octree\fP< MetricType, StatisticType, MatType >::SplitInfo::center"
+
+.PP
+The center of the node\&. 
+.PP
+Definition at line 439 of file octree\&.hpp\&.
+.PP
+Referenced by mlpack::tree::Octree< MetricType, StatisticType, MatType >::SplitInfo::AssignToLeftNode()\&.
+.SS "template<typename MetricType  = metric::EuclideanDistance, typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat> size_t \fBmlpack::tree::Octree\fP< MetricType, StatisticType, MatType >::SplitInfo::d"
+
+.PP
+The dimension we are splitting on\&. 
+.PP
+Definition at line 437 of file octree\&.hpp\&.
+.PP
+Referenced by mlpack::tree::Octree< MetricType, StatisticType, MatType >::SplitInfo::AssignToLeftNode()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

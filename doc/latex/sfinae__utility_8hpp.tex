@@ -1,0 +1,50 @@
+\section{src/mlpack/core/util/sfinae\+\_\+utility.hpp File Reference}
+\label{sfinae__utility_8hpp}\index{src/mlpack/core/util/sfinae\+\_\+utility.\+hpp@{src/mlpack/core/util/sfinae\+\_\+utility.\+hpp}}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{sfinae__utility_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define {\bf H\+A\+S\+\_\+\+M\+E\+M\+\_\+\+F\+U\+NC}(F\+U\+NC,  N\+A\+ME)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Trironk Kiatkungwanglai
+\end{DoxyAuthor}
+This file contains macro utilities for the S\+F\+I\+N\+AE Paradigm. These utilities determine if classes passed in as template parameters contain members at compile time, which is useful for changing functionality depending on what operations an object is capable of performing.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause B\+SD license. You should have received a copy of the 3-\/clause B\+SD license along with mlpack. If not, see {\tt http\+://www.\+opensource.\+org/licenses/\+B\+S\+D-\/3-\/\+Clause} for more information. 
+
+\subsection{Macro Definition Documentation}
+\index{sfinae\+\_\+utility.\+hpp@{sfinae\+\_\+utility.\+hpp}!H\+A\+S\+\_\+\+M\+E\+M\+\_\+\+F\+U\+NC@{H\+A\+S\+\_\+\+M\+E\+M\+\_\+\+F\+U\+NC}}
+\index{H\+A\+S\+\_\+\+M\+E\+M\+\_\+\+F\+U\+NC@{H\+A\+S\+\_\+\+M\+E\+M\+\_\+\+F\+U\+NC}!sfinae\+\_\+utility.\+hpp@{sfinae\+\_\+utility.\+hpp}}
+\subsubsection[{H\+A\+S\+\_\+\+M\+E\+M\+\_\+\+F\+U\+NC}]{\setlength{\rightskip}{0pt plus 5cm}\#define H\+A\+S\+\_\+\+M\+E\+M\+\_\+\+F\+U\+NC(
+\begin{DoxyParamCaption}
+\item[{}]{F\+U\+NC, }
+\item[{}]{N\+A\+ME}
+\end{DoxyParamCaption}
+)}\label{sfinae__utility_8hpp_a00819f02259866fea01a6adf725c7ecf}
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\textcolor{keyword}{template}<\textcolor{keyword}{typename} T, \textcolor{keyword}{typename} sig>                                             \(\backslash\)
+struct NAME \{                                                                  \(\backslash\)
+  typedef \textcolor{keywordtype}{char} yes[1];                                                         \(\backslash\)
+  typedef \textcolor{keywordtype}{char} no [2];                                                         \(\backslash\)
+  template<typename U, U> \textcolor{keyword}{struct }type\_check;                                   \(\backslash\)
+  template<typename \_1> \textcolor{keyword}{static} yes &chk(type\_check<sig, &\_1::FUNC> *);         \(\backslash\)
+  template<typename   > \textcolor{keyword}{static} no  &chk(...);                                  \(\backslash\)
+  static \textcolor{keywordtype}{bool} \textcolor{keyword}{const} value = \textcolor{keyword}{sizeof}(chk<T>(0)) == \textcolor{keyword}{sizeof}(yes);                  \(\backslash\)
+\};
+\end{DoxyCode}
+
+
+Definition at line 36 of file sfinae\+\_\+utility.\+hpp.
+

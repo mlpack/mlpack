@@ -1,0 +1,84 @@
+\section{mlpack\+:\+:optimization\+:\+:test\+:\+:Wood\+Function Class Reference}
+\label{classmlpack_1_1optimization_1_1test_1_1WoodFunction}\index{mlpack\+::optimization\+::test\+::\+Wood\+Function@{mlpack\+::optimization\+::test\+::\+Wood\+Function}}
+
+
+The Wood function, defined by f(x) = f1(x) + f2(x) + f3(x) + f4(x) + f5(x) + f6(x) f1(x) = 100 (x2 -\/ x1$^\wedge$2)$^\wedge$2 f2(x) = (1 -\/ x1)$^\wedge$2 f3(x) = 90 (x4 -\/ x3$^\wedge$2)$^\wedge$2 f4(x) = (1 -\/ x3)$^\wedge$2 f5(x) = 10 (x2 + x4 -\/ 2)$^\wedge$2 f6(x) = (1 / 10) (x2 -\/ x4)$^\wedge$2 x\+\_\+0 = [-\/3, -\/1, -\/3, -\/1].  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Wood\+Function} ()
+\item 
+double {\bf Evaluate} (const arma\+::mat \&coordinates)
+\item 
+const arma\+::mat \& {\bf Get\+Initial\+Point} () const 
+\item 
+void {\bf Gradient} (const arma\+::mat \&coordinates, arma\+::mat \&gradient)
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+arma\+::mat {\bf initial\+Point}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The Wood function, defined by f(x) = f1(x) + f2(x) + f3(x) + f4(x) + f5(x) + f6(x) f1(x) = 100 (x2 -\/ x1$^\wedge$2)$^\wedge$2 f2(x) = (1 -\/ x1)$^\wedge$2 f3(x) = 90 (x4 -\/ x3$^\wedge$2)$^\wedge$2 f4(x) = (1 -\/ x3)$^\wedge$2 f5(x) = 10 (x2 + x4 -\/ 2)$^\wedge$2 f6(x) = (1 / 10) (x2 -\/ x4)$^\wedge$2 x\+\_\+0 = [-\/3, -\/1, -\/3, -\/1]. 
+
+This should optimize to f(x) = 0, at x = [1, 1, 1, 1].
+
+\char`\"{}\+A comparative study of nonlinear programming codes.\char`\"{} A.\+R. Colville. 1968. Rep. 320-\/2949, I\+BM N.\+Y. Scientific Center. 
+
+Definition at line 83 of file test\+\_\+functions.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::optimization\+::test\+::\+Wood\+Function@{mlpack\+::optimization\+::test\+::\+Wood\+Function}!Wood\+Function@{Wood\+Function}}
+\index{Wood\+Function@{Wood\+Function}!mlpack\+::optimization\+::test\+::\+Wood\+Function@{mlpack\+::optimization\+::test\+::\+Wood\+Function}}
+\subsubsection[{Wood\+Function()}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::optimization\+::test\+::\+Wood\+Function\+::\+Wood\+Function (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1optimization_1_1test_1_1WoodFunction_af8f9510af933ad74c46dc3f1b9403420}
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::optimization\+::test\+::\+Wood\+Function@{mlpack\+::optimization\+::test\+::\+Wood\+Function}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!mlpack\+::optimization\+::test\+::\+Wood\+Function@{mlpack\+::optimization\+::test\+::\+Wood\+Function}}
+\subsubsection[{Evaluate(const arma\+::mat \&coordinates)}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::optimization\+::test\+::\+Wood\+Function\+::\+Evaluate (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{coordinates}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1optimization_1_1test_1_1WoodFunction_ae4a71282f52adebb91b3e47c4c2f67c2}
+\index{mlpack\+::optimization\+::test\+::\+Wood\+Function@{mlpack\+::optimization\+::test\+::\+Wood\+Function}!Get\+Initial\+Point@{Get\+Initial\+Point}}
+\index{Get\+Initial\+Point@{Get\+Initial\+Point}!mlpack\+::optimization\+::test\+::\+Wood\+Function@{mlpack\+::optimization\+::test\+::\+Wood\+Function}}
+\subsubsection[{Get\+Initial\+Point() const }]{\setlength{\rightskip}{0pt plus 5cm}const arma\+::mat\& mlpack\+::optimization\+::test\+::\+Wood\+Function\+::\+Get\+Initial\+Point (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1optimization_1_1test_1_1WoodFunction_a6c1ec7a0904070878e25068689db26ae}
+\index{mlpack\+::optimization\+::test\+::\+Wood\+Function@{mlpack\+::optimization\+::test\+::\+Wood\+Function}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::optimization\+::test\+::\+Wood\+Function@{mlpack\+::optimization\+::test\+::\+Wood\+Function}}
+\subsubsection[{Gradient(const arma\+::mat \&coordinates, arma\+::mat \&gradient)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::optimization\+::test\+::\+Wood\+Function\+::\+Gradient (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{coordinates, }
+\item[{arma\+::mat \&}]{gradient}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1optimization_1_1test_1_1WoodFunction_a221c784e3dfd0fea6794df7fac92a111}
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::optimization\+::test\+::\+Wood\+Function@{mlpack\+::optimization\+::test\+::\+Wood\+Function}!initial\+Point@{initial\+Point}}
+\index{initial\+Point@{initial\+Point}!mlpack\+::optimization\+::test\+::\+Wood\+Function@{mlpack\+::optimization\+::test\+::\+Wood\+Function}}
+\subsubsection[{initial\+Point}]{\setlength{\rightskip}{0pt plus 5cm}arma\+::mat mlpack\+::optimization\+::test\+::\+Wood\+Function\+::initial\+Point\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1optimization_1_1test_1_1WoodFunction_aeafb8b8f3e477eb6c97ab813db61d229}
+
+
+Definition at line 94 of file test\+\_\+functions.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/optimizers/lbfgs/{\bf test\+\_\+functions.\+hpp}\end{DoxyCompactItemize}

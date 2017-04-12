@@ -1,0 +1,141 @@
+\section{mlpack\+:\+:optimization\+:\+:Exponential\+Schedule Class Reference}
+\label{classmlpack_1_1optimization_1_1ExponentialSchedule}\index{mlpack\+::optimization\+::\+Exponential\+Schedule@{mlpack\+::optimization\+::\+Exponential\+Schedule}}
+
+
+The exponential cooling schedule cools the temperature T at every step according to the equation.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Exponential\+Schedule} (const double {\bf lambda}=0.\+001)
+\item 
+double {\bf Lambda} () const 
+\begin{DoxyCompactList}\small\item\em Get the cooling speed, lambda. \end{DoxyCompactList}\item 
+double \& {\bf Lambda} ()
+\begin{DoxyCompactList}\small\item\em Modify the cooling speed, lambda. \end{DoxyCompactList}\item 
+double {\bf Next\+Temperature} (const double current\+Temperature, const double)
+\begin{DoxyCompactList}\small\item\em Returns the next temperature given current status. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+double {\bf lambda}
+\begin{DoxyCompactList}\small\item\em The cooling speed. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The exponential cooling schedule cools the temperature T at every step according to the equation. 
+
+\[ T_{n+1} = (1-\lambda) T_{n} \]
+
+where $ 0<\lambda<1 $ is the cooling speed. The smaller $ \lambda $ is, the slower the cooling speed, and better the final result will be. Some literature uses $ \alpha = (-1 \lambda) $ instead. In practice, $ \alpha $ is very close to 1 and will be awkward to input (e.\+g. alpha = 0.\+999999 vs lambda = 1e-\/6). 
+
+Definition at line 32 of file exponential\+\_\+schedule.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::optimization\+::\+Exponential\+Schedule@{mlpack\+::optimization\+::\+Exponential\+Schedule}!Exponential\+Schedule@{Exponential\+Schedule}}
+\index{Exponential\+Schedule@{Exponential\+Schedule}!mlpack\+::optimization\+::\+Exponential\+Schedule@{mlpack\+::optimization\+::\+Exponential\+Schedule}}
+\subsubsection[{Exponential\+Schedule(const double lambda=0.\+001)}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::optimization\+::\+Exponential\+Schedule\+::\+Exponential\+Schedule (
+\begin{DoxyParamCaption}
+\item[{const double}]{lambda = {\ttfamily 0.001}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1optimization_1_1ExponentialSchedule_a45a0f4195092bb5bbabbe475de4df083}
+
+
+Definition at line 40 of file exponential\+\_\+schedule.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::optimization\+::\+Exponential\+Schedule@{mlpack\+::optimization\+::\+Exponential\+Schedule}!Lambda@{Lambda}}
+\index{Lambda@{Lambda}!mlpack\+::optimization\+::\+Exponential\+Schedule@{mlpack\+::optimization\+::\+Exponential\+Schedule}}
+\subsubsection[{Lambda() const }]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::optimization\+::\+Exponential\+Schedule\+::\+Lambda (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1optimization_1_1ExponentialSchedule_a15154641a7772538bd5e9f8e05c7aeb8}
+
+
+Get the cooling speed, lambda. 
+
+
+
+Definition at line 57 of file exponential\+\_\+schedule.\+hpp.
+
+
+
+References lambda.
+
+\index{mlpack\+::optimization\+::\+Exponential\+Schedule@{mlpack\+::optimization\+::\+Exponential\+Schedule}!Lambda@{Lambda}}
+\index{Lambda@{Lambda}!mlpack\+::optimization\+::\+Exponential\+Schedule@{mlpack\+::optimization\+::\+Exponential\+Schedule}}
+\subsubsection[{Lambda()}]{\setlength{\rightskip}{0pt plus 5cm}double\& mlpack\+::optimization\+::\+Exponential\+Schedule\+::\+Lambda (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1optimization_1_1ExponentialSchedule_a556ae22c3d48f25416239bcbe0c45505}
+
+
+Modify the cooling speed, lambda. 
+
+
+
+Definition at line 59 of file exponential\+\_\+schedule.\+hpp.
+
+
+
+References lambda.
+
+\index{mlpack\+::optimization\+::\+Exponential\+Schedule@{mlpack\+::optimization\+::\+Exponential\+Schedule}!Next\+Temperature@{Next\+Temperature}}
+\index{Next\+Temperature@{Next\+Temperature}!mlpack\+::optimization\+::\+Exponential\+Schedule@{mlpack\+::optimization\+::\+Exponential\+Schedule}}
+\subsubsection[{Next\+Temperature(const double current\+Temperature, const double)}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::optimization\+::\+Exponential\+Schedule\+::\+Next\+Temperature (
+\begin{DoxyParamCaption}
+\item[{const double}]{current\+Temperature, }
+\item[{const double}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1optimization_1_1ExponentialSchedule_af066502a3f7746ba857203114daa6a89}
+
+
+Returns the next temperature given current status. 
+
+The current system\textquotesingle{}s energy is not used in this calculation.
+
+
+\begin{DoxyParams}{Parameters}
+{\em current\+Temperature} & Current temperature of system. \\
+\hline
+{\em current\+Energy} & Current energy of system (not used). \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 49 of file exponential\+\_\+schedule.\+hpp.
+
+
+
+References lambda.
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::optimization\+::\+Exponential\+Schedule@{mlpack\+::optimization\+::\+Exponential\+Schedule}!lambda@{lambda}}
+\index{lambda@{lambda}!mlpack\+::optimization\+::\+Exponential\+Schedule@{mlpack\+::optimization\+::\+Exponential\+Schedule}}
+\subsubsection[{lambda}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::optimization\+::\+Exponential\+Schedule\+::lambda\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1optimization_1_1ExponentialSchedule_adc7beb2e3179c579f16c5eddcaf80291}
+
+
+The cooling speed. 
+
+
+
+Definition at line 63 of file exponential\+\_\+schedule.\+hpp.
+
+
+
+Referenced by Lambda(), and Next\+Temperature().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/optimizers/sa/{\bf exponential\+\_\+schedule.\+hpp}\end{DoxyCompactItemize}

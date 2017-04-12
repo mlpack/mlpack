@@ -1,0 +1,308 @@
+.TH "mlpack::ann::ReinforceNormal< InputDataType, OutputDataType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::ann::ReinforceNormal< InputDataType, OutputDataType > \- Implementation of the reinforce normal layer\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBReinforceNormal\fP (const double \fBstdev\fP)"
+.br
+.RI "\fICreate the \fBReinforceNormal\fP object\&. \fP"
+.ti -1c
+.RI "template<typename DataType > void \fBBackward\fP (const DataType &&input, DataType &&, DataType &&g)"
+.br
+.RI "\fIOrdinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBDelta\fP () const "
+.br
+.RI "\fIGet the delta\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBDelta\fP ()"
+.br
+.RI "\fIModify the delta\&. \fP"
+.ti -1c
+.RI "bool \fBDeterministic\fP () const "
+.br
+.RI "\fIGet the value of the deterministic parameter\&. \fP"
+.ti -1c
+.RI "bool & \fBDeterministic\fP ()"
+.br
+.RI "\fIModify the value of the deterministic parameter\&. \fP"
+.ti -1c
+.RI "template<typename eT > void \fBForward\fP (const arma::Mat< eT > &&input, arma::Mat< eT > &&output)"
+.br
+.RI "\fIOrdinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. \fP"
+.ti -1c
+.RI "InputDataType & \fBInputParameter\fP () const "
+.br
+.RI "\fIGet the input parameter\&. \fP"
+.ti -1c
+.RI "InputDataType & \fBInputParameter\fP ()"
+.br
+.RI "\fIModify the input parameter\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP () const "
+.br
+.RI "\fIGet the output parameter\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP ()"
+.br
+.RI "\fIModify the output parameter\&. \fP"
+.ti -1c
+.RI "double \fBReward\fP () const "
+.br
+.RI "\fIGet the value of the reward parameter\&. \fP"
+.ti -1c
+.RI "double & \fBReward\fP ()"
+.br
+.RI "\fIModify the value of the deterministic parameter\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &, const unsigned int)"
+.br
+.RI "\fISerialize the layer\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "OutputDataType \fBdelta\fP"
+.br
+.RI "\fILocally-stored delta object\&. \fP"
+.ti -1c
+.RI "bool \fBdeterministic\fP"
+.br
+.RI "\fIIf true use maximum a posteriori during the forward pass\&. \fP"
+.ti -1c
+.RI "InputDataType \fBinputParameter\fP"
+.br
+.RI "\fILocally-stored input parameter object\&. \fP"
+.ti -1c
+.RI "std::vector< arma::mat > \fBmoduleInputParameter\fP"
+.br
+.RI "\fILocally-stored output module parameter parameters\&. \fP"
+.ti -1c
+.RI "OutputDataType \fBoutputParameter\fP"
+.br
+.RI "\fILocally-stored output parameter object\&. \fP"
+.ti -1c
+.RI "double \fBreward\fP"
+.br
+.RI "\fILocally-stored reward parameter\&. \fP"
+.ti -1c
+.RI "const double \fBstdev\fP"
+.br
+.RI "\fIStandard deviation used during the forward and backward pass\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename InputDataType = arma::mat, typename OutputDataType = arma::mat>
+.br
+class mlpack::ann::ReinforceNormal< InputDataType, OutputDataType >"
+Implementation of the reinforce normal layer\&. 
+
+The reinforce normal layer implements the REINFORCE algorithm for the normal distribution\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIInputDataType\fP Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fIOutputDataType\fP Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 29 of file reinforce_normal\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBmlpack::ann::ReinforceNormal\fP< InputDataType, OutputDataType >::\fBReinforceNormal\fP (const double stdev)"
+
+.PP
+Create the \fBReinforceNormal\fP object\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIstdev\fP Standard deviation used during the forward and backward pass\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename DataType > void \fBmlpack::ann::ReinforceNormal\fP< InputDataType, OutputDataType >::Backward (const DataType && input, DataType &&, DataType && g)"
+
+.PP
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f\&. Using the results from the feed forward pass\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP The propagated input activation\&. 
+.br
+\fIgy\fP The backpropagated error\&. 
+.br
+\fIg\fP The calculated gradient\&. 
+.RE
+.PP
+
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::ReinforceNormal\fP< InputDataType, OutputDataType >::Delta () const\fC [inline]\fP"
+
+.PP
+Get the delta\&. 
+.PP
+Definition at line 72 of file reinforce_normal\&.hpp\&.
+.PP
+References mlpack::ann::ReinforceNormal< InputDataType, OutputDataType >::delta\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::ReinforceNormal\fP< InputDataType, OutputDataType >::Delta ()\fC [inline]\fP"
+
+.PP
+Modify the delta\&. 
+.PP
+Definition at line 74 of file reinforce_normal\&.hpp\&.
+.PP
+References mlpack::ann::ReinforceNormal< InputDataType, OutputDataType >::delta\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> bool \fBmlpack::ann::ReinforceNormal\fP< InputDataType, OutputDataType >::Deterministic () const\fC [inline]\fP"
+
+.PP
+Get the value of the deterministic parameter\&. 
+.PP
+Definition at line 77 of file reinforce_normal\&.hpp\&.
+.PP
+References mlpack::ann::ReinforceNormal< InputDataType, OutputDataType >::deterministic\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> bool& \fBmlpack::ann::ReinforceNormal\fP< InputDataType, OutputDataType >::Deterministic ()\fC [inline]\fP"
+
+.PP
+Modify the value of the deterministic parameter\&. 
+.PP
+Definition at line 79 of file reinforce_normal\&.hpp\&.
+.PP
+References mlpack::ann::ReinforceNormal< InputDataType, OutputDataType >::deterministic\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename eT > void \fBmlpack::ann::ReinforceNormal\fP< InputDataType, OutputDataType >::Forward (const arma::Mat< eT > && input, arma::Mat< eT > && output)"
+
+.PP
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input data used for evaluating the specified function\&. 
+.br
+\fIoutput\fP Resulting output activation\&. 
+.RE
+.PP
+
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> InputDataType& \fBmlpack::ann::ReinforceNormal\fP< InputDataType, OutputDataType >::InputParameter () const\fC [inline]\fP"
+
+.PP
+Get the input parameter\&. 
+.PP
+Definition at line 62 of file reinforce_normal\&.hpp\&.
+.PP
+References mlpack::ann::ReinforceNormal< InputDataType, OutputDataType >::inputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> InputDataType& \fBmlpack::ann::ReinforceNormal\fP< InputDataType, OutputDataType >::InputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the input parameter\&. 
+.PP
+Definition at line 64 of file reinforce_normal\&.hpp\&.
+.PP
+References mlpack::ann::ReinforceNormal< InputDataType, OutputDataType >::inputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::ReinforceNormal\fP< InputDataType, OutputDataType >::OutputParameter () const\fC [inline]\fP"
+
+.PP
+Get the output parameter\&. 
+.PP
+Definition at line 67 of file reinforce_normal\&.hpp\&.
+.PP
+References mlpack::ann::ReinforceNormal< InputDataType, OutputDataType >::outputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::ReinforceNormal\fP< InputDataType, OutputDataType >::OutputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the output parameter\&. 
+.PP
+Definition at line 69 of file reinforce_normal\&.hpp\&.
+.PP
+References mlpack::ann::ReinforceNormal< InputDataType, OutputDataType >::outputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> double \fBmlpack::ann::ReinforceNormal\fP< InputDataType, OutputDataType >::Reward () const\fC [inline]\fP"
+
+.PP
+Get the value of the reward parameter\&. 
+.PP
+Definition at line 82 of file reinforce_normal\&.hpp\&.
+.PP
+References mlpack::ann::ReinforceNormal< InputDataType, OutputDataType >::reward\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> double& \fBmlpack::ann::ReinforceNormal\fP< InputDataType, OutputDataType >::Reward ()\fC [inline]\fP"
+
+.PP
+Modify the value of the deterministic parameter\&. 
+.PP
+Definition at line 84 of file reinforce_normal\&.hpp\&.
+.PP
+References mlpack::ann::ReinforceNormal< InputDataType, OutputDataType >::reward, and mlpack::ann::ReinforceNormal< InputDataType, OutputDataType >::Serialize()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename Archive > void \fBmlpack::ann::ReinforceNormal\fP< InputDataType, OutputDataType >::Serialize (Archive &, const unsigned int)"
+
+.PP
+Serialize the layer\&. 
+.PP
+Referenced by mlpack::ann::ReinforceNormal< InputDataType, OutputDataType >::Reward()\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType \fBmlpack::ann::ReinforceNormal\fP< InputDataType, OutputDataType >::delta\fC [private]\fP"
+
+.PP
+Locally-stored delta object\&. 
+.PP
+Definition at line 100 of file reinforce_normal\&.hpp\&.
+.PP
+Referenced by mlpack::ann::ReinforceNormal< InputDataType, OutputDataType >::Delta()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> bool \fBmlpack::ann::ReinforceNormal\fP< InputDataType, OutputDataType >::deterministic\fC [private]\fP"
+
+.PP
+If true use maximum a posteriori during the forward pass\&. 
+.PP
+Definition at line 112 of file reinforce_normal\&.hpp\&.
+.PP
+Referenced by mlpack::ann::ReinforceNormal< InputDataType, OutputDataType >::Deterministic()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> InputDataType \fBmlpack::ann::ReinforceNormal\fP< InputDataType, OutputDataType >::inputParameter\fC [private]\fP"
+
+.PP
+Locally-stored input parameter object\&. 
+.PP
+Definition at line 103 of file reinforce_normal\&.hpp\&.
+.PP
+Referenced by mlpack::ann::ReinforceNormal< InputDataType, OutputDataType >::InputParameter()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> std::vector<arma::mat> \fBmlpack::ann::ReinforceNormal\fP< InputDataType, OutputDataType >::moduleInputParameter\fC [private]\fP"
+
+.PP
+Locally-stored output module parameter parameters\&. 
+.PP
+Definition at line 109 of file reinforce_normal\&.hpp\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType \fBmlpack::ann::ReinforceNormal\fP< InputDataType, OutputDataType >::outputParameter\fC [private]\fP"
+
+.PP
+Locally-stored output parameter object\&. 
+.PP
+Definition at line 106 of file reinforce_normal\&.hpp\&.
+.PP
+Referenced by mlpack::ann::ReinforceNormal< InputDataType, OutputDataType >::OutputParameter()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> double \fBmlpack::ann::ReinforceNormal\fP< InputDataType, OutputDataType >::reward\fC [private]\fP"
+
+.PP
+Locally-stored reward parameter\&. 
+.PP
+Definition at line 97 of file reinforce_normal\&.hpp\&.
+.PP
+Referenced by mlpack::ann::ReinforceNormal< InputDataType, OutputDataType >::Reward()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> const double \fBmlpack::ann::ReinforceNormal\fP< InputDataType, OutputDataType >::stdev\fC [private]\fP"
+
+.PP
+Standard deviation used during the forward and backward pass\&. 
+.PP
+Definition at line 94 of file reinforce_normal\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

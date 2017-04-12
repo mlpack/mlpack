@@ -1,0 +1,119 @@
+\section{mlpack\+:\+:ann\+:\+:S\+V\+D\+Convolution$<$ Border\+Mode $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1SVDConvolution}\index{mlpack\+::ann\+::\+S\+V\+D\+Convolution$<$ Border\+Mode $>$@{mlpack\+::ann\+::\+S\+V\+D\+Convolution$<$ Border\+Mode $>$}}
+
+
+Computes the two-\/dimensional convolution using singular value decomposition.  
+
+
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename eT $>$ }\\static void {\bf Convolution} (const arma\+::\+Mat$<$ eT $>$ \&input, const arma\+::\+Mat$<$ eT $>$ \&filter, arma\+::\+Mat$<$ eT $>$ \&output)
+\item 
+{\footnotesize template$<$typename eT $>$ }\\static void {\bf Convolution} (const arma\+::\+Cube$<$ eT $>$ \&input, const arma\+::\+Cube$<$ eT $>$ \&filter, arma\+::\+Cube$<$ eT $>$ \&output)
+\item 
+{\footnotesize template$<$typename eT $>$ }\\static void {\bf Convolution} (const arma\+::\+Mat$<$ eT $>$ \&input, const arma\+::\+Cube$<$ eT $>$ \&filter, arma\+::\+Cube$<$ eT $>$ \&output)
+\item 
+{\footnotesize template$<$typename eT $>$ }\\static void {\bf Convolution} (const arma\+::\+Cube$<$ eT $>$ \&input, const arma\+::\+Mat$<$ eT $>$ \&filter, arma\+::\+Cube$<$ eT $>$ \&output)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Border\+Mode = Full\+Convolution$>$\\*
+class mlpack\+::ann\+::\+S\+V\+D\+Convolution$<$ Border\+Mode $>$}
+
+Computes the two-\/dimensional convolution using singular value decomposition. 
+
+This class allows specification of the type of the border type. The convolution can be compute with the valid border type of the full border type (default).
+
+\doxyref{Full\+Convolution}{p.}{classmlpack_1_1ann_1_1FullConvolution}\+: returns the full two-\/dimensional convolution. \doxyref{Valid\+Convolution}{p.}{classmlpack_1_1ann_1_1ValidConvolution}\+: returns only those parts of the convolution that are computed without the zero-\/padded edges.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Border\+Mode} & Type of the border mode (\doxyref{Full\+Convolution}{p.}{classmlpack_1_1ann_1_1FullConvolution} or \doxyref{Valid\+Convolution}{p.}{classmlpack_1_1ann_1_1ValidConvolution}). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 38 of file svd\+\_\+convolution.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::ann\+::\+S\+V\+D\+Convolution@{mlpack\+::ann\+::\+S\+V\+D\+Convolution}!Convolution@{Convolution}}
+\index{Convolution@{Convolution}!mlpack\+::ann\+::\+S\+V\+D\+Convolution@{mlpack\+::ann\+::\+S\+V\+D\+Convolution}}
+\subsubsection[{Convolution(const arma\+::\+Mat$<$ e\+T $>$ \&input, const arma\+::\+Mat$<$ e\+T $>$ \&filter, arma\+::\+Mat$<$ e\+T $>$ \&output)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Border\+Mode = Full\+Convolution$>$ template$<$typename eT $>$ static void {\bf mlpack\+::ann\+::\+S\+V\+D\+Convolution}$<$ Border\+Mode $>$\+::{\bf Convolution} (
+\begin{DoxyParamCaption}
+\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{input, }
+\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{filter, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&}]{output}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}\label{classmlpack_1_1ann_1_1SVDConvolution_a2fc36d42313cc6a477f1a2ea9aaf242e}
+
+
+Definition at line 56 of file svd\+\_\+convolution.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Naive\+Convolution$<$ Border\+Mode $>$\+::\+Convolution(), and mlpack\+::ann\+::\+F\+F\+T\+Convolution$<$ Border\+Mode, pad\+Last\+Dim $>$\+::\+Convolution().
+
+
+
+Referenced by mlpack\+::ann\+::\+S\+V\+D\+Convolution$<$ Border\+Mode $>$\+::\+Convolution().
+
+\index{mlpack\+::ann\+::\+S\+V\+D\+Convolution@{mlpack\+::ann\+::\+S\+V\+D\+Convolution}!Convolution@{Convolution}}
+\index{Convolution@{Convolution}!mlpack\+::ann\+::\+S\+V\+D\+Convolution@{mlpack\+::ann\+::\+S\+V\+D\+Convolution}}
+\subsubsection[{Convolution(const arma\+::\+Cube$<$ e\+T $>$ \&input, const arma\+::\+Cube$<$ e\+T $>$ \&filter, arma\+::\+Cube$<$ e\+T $>$ \&output)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Border\+Mode = Full\+Convolution$>$ template$<$typename eT $>$ static void {\bf mlpack\+::ann\+::\+S\+V\+D\+Convolution}$<$ Border\+Mode $>$\+::{\bf Convolution} (
+\begin{DoxyParamCaption}
+\item[{const arma\+::\+Cube$<$ eT $>$ \&}]{input, }
+\item[{const arma\+::\+Cube$<$ eT $>$ \&}]{filter, }
+\item[{arma\+::\+Cube$<$ eT $>$ \&}]{output}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}\label{classmlpack_1_1ann_1_1SVDConvolution_aa96abbea3aac8e60eafcaca1096fbf3b}
+
+
+Definition at line 122 of file svd\+\_\+convolution.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+S\+V\+D\+Convolution$<$ Border\+Mode $>$\+::\+Convolution().
+
+\index{mlpack\+::ann\+::\+S\+V\+D\+Convolution@{mlpack\+::ann\+::\+S\+V\+D\+Convolution}!Convolution@{Convolution}}
+\index{Convolution@{Convolution}!mlpack\+::ann\+::\+S\+V\+D\+Convolution@{mlpack\+::ann\+::\+S\+V\+D\+Convolution}}
+\subsubsection[{Convolution(const arma\+::\+Mat$<$ e\+T $>$ \&input, const arma\+::\+Cube$<$ e\+T $>$ \&filter, arma\+::\+Cube$<$ e\+T $>$ \&output)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Border\+Mode = Full\+Convolution$>$ template$<$typename eT $>$ static void {\bf mlpack\+::ann\+::\+S\+V\+D\+Convolution}$<$ Border\+Mode $>$\+::{\bf Convolution} (
+\begin{DoxyParamCaption}
+\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{input, }
+\item[{const arma\+::\+Cube$<$ eT $>$ \&}]{filter, }
+\item[{arma\+::\+Cube$<$ eT $>$ \&}]{output}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}\label{classmlpack_1_1ann_1_1SVDConvolution_a2faf83acdc0a4908aed5b3829f1032b1}
+
+
+Definition at line 153 of file svd\+\_\+convolution.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+S\+V\+D\+Convolution$<$ Border\+Mode $>$\+::\+Convolution().
+
+\index{mlpack\+::ann\+::\+S\+V\+D\+Convolution@{mlpack\+::ann\+::\+S\+V\+D\+Convolution}!Convolution@{Convolution}}
+\index{Convolution@{Convolution}!mlpack\+::ann\+::\+S\+V\+D\+Convolution@{mlpack\+::ann\+::\+S\+V\+D\+Convolution}}
+\subsubsection[{Convolution(const arma\+::\+Cube$<$ e\+T $>$ \&input, const arma\+::\+Mat$<$ e\+T $>$ \&filter, arma\+::\+Cube$<$ e\+T $>$ \&output)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Border\+Mode = Full\+Convolution$>$ template$<$typename eT $>$ static void {\bf mlpack\+::ann\+::\+S\+V\+D\+Convolution}$<$ Border\+Mode $>$\+::{\bf Convolution} (
+\begin{DoxyParamCaption}
+\item[{const arma\+::\+Cube$<$ eT $>$ \&}]{input, }
+\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{filter, }
+\item[{arma\+::\+Cube$<$ eT $>$ \&}]{output}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}\label{classmlpack_1_1ann_1_1SVDConvolution_a10c72c9ce63ef92b75b78f7bd7cd38d0}
+
+
+Definition at line 183 of file svd\+\_\+convolution.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+S\+V\+D\+Convolution$<$ Border\+Mode $>$\+::\+Convolution().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/ann/convolution\+\_\+rules/{\bf svd\+\_\+convolution.\+hpp}\end{DoxyCompactItemize}

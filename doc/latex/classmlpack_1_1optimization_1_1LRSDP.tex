@@ -1,0 +1,248 @@
+\section{mlpack\+:\+:optimization\+:\+:L\+R\+S\+DP$<$ S\+D\+P\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1optimization_1_1LRSDP}\index{mlpack\+::optimization\+::\+L\+R\+S\+D\+P$<$ S\+D\+P\+Type $>$@{mlpack\+::optimization\+::\+L\+R\+S\+D\+P$<$ S\+D\+P\+Type $>$}}
+
+
+\doxyref{L\+R\+S\+DP}{p.}{classmlpack_1_1optimization_1_1LRSDP} is the implementation of Monteiro and Burer\textquotesingle{}s formulation of low-\/rank semidefinite programs (L\+R-\/\+S\+DP).  
+
+
+
+
+Inheritance diagram for mlpack\+:\+:optimization\+:\+:L\+R\+S\+DP$<$ S\+D\+P\+Type $>$\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=202pt]{classmlpack_1_1optimization_1_1LRSDP__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf L\+R\+S\+DP} (const size\+\_\+t num\+Sparse\+Constraints, const size\+\_\+t num\+Dense\+Constraints, const arma\+::mat \&initial\+Point)
+\begin{DoxyCompactList}\small\item\em Create an \doxyref{L\+R\+S\+DP}{p.}{classmlpack_1_1optimization_1_1LRSDP} to be optimized. \end{DoxyCompactList}\item 
+{\bf L\+R\+S\+DP} (const S\+D\+P\+Type \&sdp, const arma\+::mat \&initial\+Point)
+\begin{DoxyCompactList}\small\item\em Create an \doxyref{L\+R\+S\+DP}{p.}{classmlpack_1_1optimization_1_1LRSDP} object with the given \doxyref{S\+DP}{p.}{classmlpack_1_1optimization_1_1SDP} problem to be solved, and the given initial point. \end{DoxyCompactList}\item 
+const {\bf Aug\+Lagrangian}$<$ {\bf L\+R\+S\+D\+P\+Function}$<$ S\+D\+P\+Type $>$ $>$ \& {\bf Aug\+Lag} () const 
+\begin{DoxyCompactList}\small\item\em Return the augmented Lagrangian object. \end{DoxyCompactList}\item 
+{\bf Aug\+Lagrangian}$<$ {\bf L\+R\+S\+D\+P\+Function}$<$ S\+D\+P\+Type $>$ $>$ \& {\bf Aug\+Lag} ()
+\begin{DoxyCompactList}\small\item\em Modify the augmented Lagrangian object. \end{DoxyCompactList}\item 
+const {\bf L\+R\+S\+D\+P\+Function}$<$ S\+D\+P\+Type $>$ \& {\bf Function} () const 
+\begin{DoxyCompactList}\small\item\em Return the function to be optimized. \end{DoxyCompactList}\item 
+{\bf L\+R\+S\+D\+P\+Function}$<$ S\+D\+P\+Type $>$ \& {\bf Function} ()
+\begin{DoxyCompactList}\small\item\em Modify the function to be optimized. \end{DoxyCompactList}\item 
+double {\bf Optimize} (arma\+::mat \&coordinates)
+\begin{DoxyCompactList}\small\item\em Optimize the \doxyref{L\+R\+S\+DP}{p.}{classmlpack_1_1optimization_1_1LRSDP} and return the final objective value. \end{DoxyCompactList}\item 
+const S\+D\+P\+Type \& {\bf S\+DP} () const 
+\begin{DoxyCompactList}\small\item\em Return the \doxyref{S\+DP}{p.}{classmlpack_1_1optimization_1_1SDP} that will be solved. \end{DoxyCompactList}\item 
+S\+D\+P\+Type \& {\bf S\+DP} ()
+\begin{DoxyCompactList}\small\item\em Modify the \doxyref{S\+DP}{p.}{classmlpack_1_1optimization_1_1SDP} that will be solved. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Aug\+Lagrangian}$<$ {\bf L\+R\+S\+D\+P\+Function}$<$ S\+D\+P\+Type $>$ $>$ {\bf aug\+Lag}
+\begin{DoxyCompactList}\small\item\em The \doxyref{Aug\+Lagrangian}{p.}{classmlpack_1_1optimization_1_1AugLagrangian} object which will be used for optimization. \end{DoxyCompactList}\item 
+{\bf L\+R\+S\+D\+P\+Function}$<$ S\+D\+P\+Type $>$ {\bf function}
+\begin{DoxyCompactList}\small\item\em Function to optimize, which the \doxyref{Aug\+Lagrangian}{p.}{classmlpack_1_1optimization_1_1AugLagrangian} object holds. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename S\+D\+P\+Type$>$\\*
+class mlpack\+::optimization\+::\+L\+R\+S\+D\+P$<$ S\+D\+P\+Type $>$}
+
+\doxyref{L\+R\+S\+DP}{p.}{classmlpack_1_1optimization_1_1LRSDP} is the implementation of Monteiro and Burer\textquotesingle{}s formulation of low-\/rank semidefinite programs (L\+R-\/\+S\+DP). 
+
+This solver uses the augmented Lagrangian optimizer to solve low-\/rank semidefinite programs. 
+
+Definition at line 30 of file lrsdp.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::optimization\+::\+L\+R\+S\+DP@{mlpack\+::optimization\+::\+L\+R\+S\+DP}!L\+R\+S\+DP@{L\+R\+S\+DP}}
+\index{L\+R\+S\+DP@{L\+R\+S\+DP}!mlpack\+::optimization\+::\+L\+R\+S\+DP@{mlpack\+::optimization\+::\+L\+R\+S\+DP}}
+\subsubsection[{L\+R\+S\+D\+P(const size\+\_\+t num\+Sparse\+Constraints, const size\+\_\+t num\+Dense\+Constraints, const arma\+::mat \&initial\+Point)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename S\+D\+P\+Type$>$ {\bf mlpack\+::optimization\+::\+L\+R\+S\+DP}$<$ S\+D\+P\+Type $>$\+::{\bf L\+R\+S\+DP} (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{num\+Sparse\+Constraints, }
+\item[{const size\+\_\+t}]{num\+Dense\+Constraints, }
+\item[{const arma\+::mat \&}]{initial\+Point}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1optimization_1_1LRSDP_a50ad9d6cffd72ef9a612738732048fd1}
+
+
+Create an \doxyref{L\+R\+S\+DP}{p.}{classmlpack_1_1optimization_1_1LRSDP} to be optimized. 
+
+The solution will end up being a matrix of size (rows) x (rank). To construct each constraint and the objective function, use the function \doxyref{S\+D\+P()}{p.}{classmlpack_1_1optimization_1_1LRSDP_ab9c8087c07c3502085c032a3b26520c9} in order to access the S\+D\+P\+Type object associated with this optimizer.
+
+
+\begin{DoxyParams}{Parameters}
+{\em num\+Constraints} & Number of constraints in the problem. \\
+\hline
+{\em initial\+Point} & Initial point of the optimization. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::optimization\+::\+L\+R\+S\+DP@{mlpack\+::optimization\+::\+L\+R\+S\+DP}!L\+R\+S\+DP@{L\+R\+S\+DP}}
+\index{L\+R\+S\+DP@{L\+R\+S\+DP}!mlpack\+::optimization\+::\+L\+R\+S\+DP@{mlpack\+::optimization\+::\+L\+R\+S\+DP}}
+\subsubsection[{L\+R\+S\+D\+P(const S\+D\+P\+Type \&sdp, const arma\+::mat \&initial\+Point)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename S\+D\+P\+Type$>$ {\bf mlpack\+::optimization\+::\+L\+R\+S\+DP}$<$ S\+D\+P\+Type $>$\+::{\bf L\+R\+S\+DP} (
+\begin{DoxyParamCaption}
+\item[{const S\+D\+P\+Type \&}]{sdp, }
+\item[{const arma\+::mat \&}]{initial\+Point}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1optimization_1_1LRSDP_a6d90de491d34cc51c7f646647192597f}
+
+
+Create an \doxyref{L\+R\+S\+DP}{p.}{classmlpack_1_1optimization_1_1LRSDP} object with the given \doxyref{S\+DP}{p.}{classmlpack_1_1optimization_1_1SDP} problem to be solved, and the given initial point. 
+
+Note that the \doxyref{S\+DP}{p.}{classmlpack_1_1optimization_1_1SDP} may be modified later by calling \doxyref{S\+D\+P()}{p.}{classmlpack_1_1optimization_1_1LRSDP_ab9c8087c07c3502085c032a3b26520c9} to access the object.
+
+
+\begin{DoxyParams}{Parameters}
+{\em sdp} & \doxyref{S\+DP}{p.}{classmlpack_1_1optimization_1_1SDP} to be solved. \\
+\hline
+{\em initial\+Point} & Initial point of the optimization. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::optimization\+::\+L\+R\+S\+DP@{mlpack\+::optimization\+::\+L\+R\+S\+DP}!Aug\+Lag@{Aug\+Lag}}
+\index{Aug\+Lag@{Aug\+Lag}!mlpack\+::optimization\+::\+L\+R\+S\+DP@{mlpack\+::optimization\+::\+L\+R\+S\+DP}}
+\subsubsection[{Aug\+Lag() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename S\+D\+P\+Type$>$ const {\bf Aug\+Lagrangian}$<${\bf L\+R\+S\+D\+P\+Function}$<$S\+D\+P\+Type$>$ $>$\& {\bf mlpack\+::optimization\+::\+L\+R\+S\+DP}$<$ S\+D\+P\+Type $>$\+::Aug\+Lag (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1optimization_1_1LRSDP_a15c789969d8951a7ed77a8036d80fc9e}
+
+
+Return the augmented Lagrangian object. 
+
+
+
+Definition at line 76 of file lrsdp.\+hpp.
+
+\index{mlpack\+::optimization\+::\+L\+R\+S\+DP@{mlpack\+::optimization\+::\+L\+R\+S\+DP}!Aug\+Lag@{Aug\+Lag}}
+\index{Aug\+Lag@{Aug\+Lag}!mlpack\+::optimization\+::\+L\+R\+S\+DP@{mlpack\+::optimization\+::\+L\+R\+S\+DP}}
+\subsubsection[{Aug\+Lag()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename S\+D\+P\+Type$>$ {\bf Aug\+Lagrangian}$<${\bf L\+R\+S\+D\+P\+Function}$<$S\+D\+P\+Type$>$ $>$\& {\bf mlpack\+::optimization\+::\+L\+R\+S\+DP}$<$ S\+D\+P\+Type $>$\+::Aug\+Lag (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1optimization_1_1LRSDP_ad0d6349ee70807f0355dbcd1ca2fbd2d}
+
+
+Modify the augmented Lagrangian object. 
+
+
+
+Definition at line 78 of file lrsdp.\+hpp.
+
+\index{mlpack\+::optimization\+::\+L\+R\+S\+DP@{mlpack\+::optimization\+::\+L\+R\+S\+DP}!Function@{Function}}
+\index{Function@{Function}!mlpack\+::optimization\+::\+L\+R\+S\+DP@{mlpack\+::optimization\+::\+L\+R\+S\+DP}}
+\subsubsection[{Function() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename S\+D\+P\+Type$>$ const {\bf L\+R\+S\+D\+P\+Function}$<$S\+D\+P\+Type$>$\& {\bf mlpack\+::optimization\+::\+L\+R\+S\+DP}$<$ S\+D\+P\+Type $>$\+::Function (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1optimization_1_1LRSDP_a1034b3c6ac986793e05f467f630f42db}
+
+
+Return the function to be optimized. 
+
+
+
+Definition at line 71 of file lrsdp.\+hpp.
+
+\index{mlpack\+::optimization\+::\+L\+R\+S\+DP@{mlpack\+::optimization\+::\+L\+R\+S\+DP}!Function@{Function}}
+\index{Function@{Function}!mlpack\+::optimization\+::\+L\+R\+S\+DP@{mlpack\+::optimization\+::\+L\+R\+S\+DP}}
+\subsubsection[{Function()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename S\+D\+P\+Type$>$ {\bf L\+R\+S\+D\+P\+Function}$<$S\+D\+P\+Type$>$\& {\bf mlpack\+::optimization\+::\+L\+R\+S\+DP}$<$ S\+D\+P\+Type $>$\+::Function (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1optimization_1_1LRSDP_a77a7aa7438631ae72cb226f3f2dbe43e}
+
+
+Modify the function to be optimized. 
+
+
+
+Definition at line 73 of file lrsdp.\+hpp.
+
+\index{mlpack\+::optimization\+::\+L\+R\+S\+DP@{mlpack\+::optimization\+::\+L\+R\+S\+DP}!Optimize@{Optimize}}
+\index{Optimize@{Optimize}!mlpack\+::optimization\+::\+L\+R\+S\+DP@{mlpack\+::optimization\+::\+L\+R\+S\+DP}}
+\subsubsection[{Optimize(arma\+::mat \&coordinates)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename S\+D\+P\+Type$>$ double {\bf mlpack\+::optimization\+::\+L\+R\+S\+DP}$<$ S\+D\+P\+Type $>$\+::Optimize (
+\begin{DoxyParamCaption}
+\item[{arma\+::mat \&}]{coordinates}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1optimization_1_1LRSDP_a386379f846db29d31ff06a5546adc053}
+
+
+Optimize the \doxyref{L\+R\+S\+DP}{p.}{classmlpack_1_1optimization_1_1LRSDP} and return the final objective value. 
+
+The given coordinates will be modified to contain the final solution.
+
+
+\begin{DoxyParams}{Parameters}
+{\em coordinates} & Starting coordinates for the optimization. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::optimization\+::\+L\+R\+S\+DP@{mlpack\+::optimization\+::\+L\+R\+S\+DP}!S\+DP@{S\+DP}}
+\index{S\+DP@{S\+DP}!mlpack\+::optimization\+::\+L\+R\+S\+DP@{mlpack\+::optimization\+::\+L\+R\+S\+DP}}
+\subsubsection[{S\+D\+P() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename S\+D\+P\+Type$>$ const S\+D\+P\+Type\& {\bf mlpack\+::optimization\+::\+L\+R\+S\+DP}$<$ S\+D\+P\+Type $>$\+::{\bf S\+DP} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1optimization_1_1LRSDP_a26e09e9eaa890343b03d5b7471887d56}
+
+
+Return the \doxyref{S\+DP}{p.}{classmlpack_1_1optimization_1_1SDP} that will be solved. 
+
+
+
+Definition at line 66 of file lrsdp.\+hpp.
+
+\index{mlpack\+::optimization\+::\+L\+R\+S\+DP@{mlpack\+::optimization\+::\+L\+R\+S\+DP}!S\+DP@{S\+DP}}
+\index{S\+DP@{S\+DP}!mlpack\+::optimization\+::\+L\+R\+S\+DP@{mlpack\+::optimization\+::\+L\+R\+S\+DP}}
+\subsubsection[{S\+D\+P()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename S\+D\+P\+Type$>$ S\+D\+P\+Type\& {\bf mlpack\+::optimization\+::\+L\+R\+S\+DP}$<$ S\+D\+P\+Type $>$\+::{\bf S\+DP} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1optimization_1_1LRSDP_ab9c8087c07c3502085c032a3b26520c9}
+
+
+Modify the \doxyref{S\+DP}{p.}{classmlpack_1_1optimization_1_1SDP} that will be solved. 
+
+
+
+Definition at line 68 of file lrsdp.\+hpp.
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::optimization\+::\+L\+R\+S\+DP@{mlpack\+::optimization\+::\+L\+R\+S\+DP}!aug\+Lag@{aug\+Lag}}
+\index{aug\+Lag@{aug\+Lag}!mlpack\+::optimization\+::\+L\+R\+S\+DP@{mlpack\+::optimization\+::\+L\+R\+S\+DP}}
+\subsubsection[{aug\+Lag}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename S\+D\+P\+Type$>$ {\bf Aug\+Lagrangian}$<${\bf L\+R\+S\+D\+P\+Function}$<$S\+D\+P\+Type$>$ $>$ {\bf mlpack\+::optimization\+::\+L\+R\+S\+DP}$<$ S\+D\+P\+Type $>$\+::aug\+Lag\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1optimization_1_1LRSDP_a0d5163d202cae128398bcbdc800cb880}
+
+
+The \doxyref{Aug\+Lagrangian}{p.}{classmlpack_1_1optimization_1_1AugLagrangian} object which will be used for optimization. 
+
+
+
+Definition at line 85 of file lrsdp.\+hpp.
+
+
+
+Referenced by mlpack\+::optimization\+::\+L\+R\+S\+D\+P$<$ optimization\+::\+S\+D\+P$<$ arma\+::sp\+\_\+mat $>$ $>$\+::\+Aug\+Lag().
+
+\index{mlpack\+::optimization\+::\+L\+R\+S\+DP@{mlpack\+::optimization\+::\+L\+R\+S\+DP}!function@{function}}
+\index{function@{function}!mlpack\+::optimization\+::\+L\+R\+S\+DP@{mlpack\+::optimization\+::\+L\+R\+S\+DP}}
+\subsubsection[{function}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename S\+D\+P\+Type$>$ {\bf L\+R\+S\+D\+P\+Function}$<$S\+D\+P\+Type$>$ {\bf mlpack\+::optimization\+::\+L\+R\+S\+DP}$<$ S\+D\+P\+Type $>$\+::function\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1optimization_1_1LRSDP_a9b0cb82cf69c0698505175fe0555921e}
+
+
+Function to optimize, which the \doxyref{Aug\+Lagrangian}{p.}{classmlpack_1_1optimization_1_1AugLagrangian} object holds. 
+
+
+
+Definition at line 82 of file lrsdp.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/optimizers/sdp/{\bf lrsdp.\+hpp}\end{DoxyCompactItemize}

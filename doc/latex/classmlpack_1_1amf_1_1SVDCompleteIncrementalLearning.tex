@@ -1,0 +1,268 @@
+\section{mlpack\+:\+:amf\+:\+:S\+V\+D\+Complete\+Incremental\+Learning$<$ Mat\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning}\index{mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning$<$ Mat\+Type $>$@{mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning$<$ Mat\+Type $>$}}
+
+
+This class computes S\+VD using complete incremental batch learning, as described in the following paper\+:  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf S\+V\+D\+Complete\+Incremental\+Learning} (double {\bf u}=0.\+0001, double {\bf kw}=0, double {\bf kh}=0)
+\begin{DoxyCompactList}\small\item\em Initialize the \doxyref{S\+V\+D\+Complete\+Incremental\+Learning}{p.}{classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning} class with the given parameters. \end{DoxyCompactList}\item 
+void {\bf H\+Update} (const Mat\+Type \&V, const arma\+::mat \&W, arma\+::mat \&H)
+\begin{DoxyCompactList}\small\item\em The update rule for the encoding matrix H. \end{DoxyCompactList}\item 
+void {\bf Initialize} (const Mat\+Type \&, const size\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Initialize parameters before factorization. \end{DoxyCompactList}\item 
+void {\bf W\+Update} (const Mat\+Type \&V, arma\+::mat \&W, const arma\+::mat \&H)
+\begin{DoxyCompactList}\small\item\em The update rule for the basis matrix W. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+size\+\_\+t {\bf current\+Item\+Index}
+\begin{DoxyCompactList}\small\item\em Item index of current entry. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf current\+User\+Index}
+\begin{DoxyCompactList}\small\item\em User of index of current entry. \end{DoxyCompactList}\item 
+double {\bf kh}
+\begin{DoxyCompactList}\small\item\em Regularization parameter for matrix H. \end{DoxyCompactList}\item 
+double {\bf kw}
+\begin{DoxyCompactList}\small\item\em Regularization parameter for matrix W. \end{DoxyCompactList}\item 
+double {\bf u}
+\begin{DoxyCompactList}\small\item\em Step count of batch learning. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$class Mat\+Type$>$\\*
+class mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning$<$ Mat\+Type $>$}
+
+This class computes S\+VD using complete incremental batch learning, as described in the following paper\+: 
+
+
+\begin{DoxyCode}
+@techreport\{ma2008guide,
+  title=\{A Guide to Singular Value Decomposition \textcolor{keywordflow}{for} Collaborative
+      Filtering\},
+  author=\{Ma, Chih-Chao\},
+  year=\{2008\},
+  institution=\{Department of Computer Science, National Taiwan University\}
+\}
+\end{DoxyCode}
+
+
+This class implements \textquotesingle{}Algorithm 3\textquotesingle{} given in the paper. Complete incremental learning is an extreme case of incremental learning, where feature vectors are updated after looking at each single element in the input matrix (V). This approach differs from incomplete incremental learning where feature vectors are updated after seeing columns of elements in the input matrix.
+
+\begin{DoxySeeAlso}{See also}
+\doxyref{S\+V\+D\+Incomplete\+Incremental\+Learning}{p.}{classmlpack_1_1amf_1_1SVDIncompleteIncrementalLearning} 
+\end{DoxySeeAlso}
+
+
+Definition at line 45 of file svd\+\_\+complete\+\_\+incremental\+\_\+learning.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning}!S\+V\+D\+Complete\+Incremental\+Learning@{S\+V\+D\+Complete\+Incremental\+Learning}}
+\index{S\+V\+D\+Complete\+Incremental\+Learning@{S\+V\+D\+Complete\+Incremental\+Learning}!mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning}}
+\subsubsection[{S\+V\+D\+Complete\+Incremental\+Learning(double u=0.\+0001, double kw=0, double kh=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Mat\+Type $>$ {\bf mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning}$<$ Mat\+Type $>$\+::{\bf S\+V\+D\+Complete\+Incremental\+Learning} (
+\begin{DoxyParamCaption}
+\item[{double}]{u = {\ttfamily 0.0001}, }
+\item[{double}]{kw = {\ttfamily 0}, }
+\item[{double}]{kh = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_a81657af0b8f45ff259eb565111bdb147}
+
+
+Initialize the \doxyref{S\+V\+D\+Complete\+Incremental\+Learning}{p.}{classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning} class with the given parameters. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em u} & Step value used in batch learning. \\
+\hline
+{\em kw} & Regularization constant for W matrix. \\
+\hline
+{\em kh} & Regularization constant for H matrix. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 56 of file svd\+\_\+complete\+\_\+incremental\+\_\+learning.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning}!H\+Update@{H\+Update}}
+\index{H\+Update@{H\+Update}!mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning}}
+\subsubsection[{H\+Update(const Mat\+Type \&\+V, const arma\+::mat \&\+W, arma\+::mat \&\+H)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Mat\+Type $>$ void {\bf mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning}$<$ Mat\+Type $>$\+::H\+Update (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{V, }
+\item[{const arma\+::mat \&}]{W, }
+\item[{arma\+::mat \&}]{H}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_a6e29ddb42570b6e4d095bc37b0360910}
+
+
+The update rule for the encoding matrix H. 
+
+The function takes in all the matrices and only changes the value of the H matrix.
+
+
+\begin{DoxyParams}{Parameters}
+{\em V} & Input matrix to be factorized. \\
+\hline
+{\em W} & Basis matrix. \\
+\hline
+{\em H} & Encoding matrix to be updated. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 123 of file svd\+\_\+complete\+\_\+incremental\+\_\+learning.\+hpp.
+
+
+
+References mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning$<$ Mat\+Type $>$\+::current\+Item\+Index, mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning$<$ Mat\+Type $>$\+::current\+User\+Index, mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning$<$ Mat\+Type $>$\+::kh, and mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning$<$ Mat\+Type $>$\+::u.
+
+\index{mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning}}
+\subsubsection[{Initialize(const Mat\+Type \&, const size\+\_\+t)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Mat\+Type $>$ void {\bf mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning}$<$ Mat\+Type $>$\+::Initialize (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{, }
+\item[{const size\+\_\+t}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_aaceb40967111095dd6de8358a14d80d8}
+
+
+Initialize parameters before factorization. 
+
+This function must be called before a new factorization. For this initialization, the input parameters are unnecessary; we are only setting the current element index to 0.
+
+
+\begin{DoxyParams}{Parameters}
+{\em dataset} & Input matrix to be factorized. \\
+\hline
+{\em rank} & rank of factorization \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 72 of file svd\+\_\+complete\+\_\+incremental\+\_\+learning.\+hpp.
+
+
+
+References mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning$<$ Mat\+Type $>$\+::current\+Item\+Index, and mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning$<$ Mat\+Type $>$\+::current\+User\+Index.
+
+\index{mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning}!W\+Update@{W\+Update}}
+\index{W\+Update@{W\+Update}!mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning}}
+\subsubsection[{W\+Update(const Mat\+Type \&\+V, arma\+::mat \&\+W, const arma\+::mat \&\+H)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Mat\+Type $>$ void {\bf mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning}$<$ Mat\+Type $>$\+::W\+Update (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{V, }
+\item[{arma\+::mat \&}]{W, }
+\item[{const arma\+::mat \&}]{H}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_af85298382c39be324a833dd5c6122e65}
+
+
+The update rule for the basis matrix W. 
+
+The function takes in all the matrices and only changes the value of the W matrix.
+
+
+\begin{DoxyParams}{Parameters}
+{\em V} & Input matrix to be factorized. \\
+\hline
+{\em W} & Basis matrix to be updated. \\
+\hline
+{\em H} & Encoding matrix. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 87 of file svd\+\_\+complete\+\_\+incremental\+\_\+learning.\+hpp.
+
+
+
+References mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning$<$ Mat\+Type $>$\+::current\+Item\+Index, mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning$<$ Mat\+Type $>$\+::current\+User\+Index, mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning$<$ Mat\+Type $>$\+::kw, and mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning$<$ Mat\+Type $>$\+::u.
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning}!current\+Item\+Index@{current\+Item\+Index}}
+\index{current\+Item\+Index@{current\+Item\+Index}!mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning}}
+\subsubsection[{current\+Item\+Index}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Mat\+Type $>$ size\+\_\+t {\bf mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning}$<$ Mat\+Type $>$\+::current\+Item\+Index\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_a5f8cfd18eca6184296c013fc31383042}
+
+
+Item index of current entry. 
+
+
+
+Definition at line 161 of file svd\+\_\+complete\+\_\+incremental\+\_\+learning.\+hpp.
+
+
+
+Referenced by mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning$<$ Mat\+Type $>$\+::\+H\+Update(), mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning$<$ arma\+::sp\+\_\+mat $>$\+::\+H\+Update(), mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning$<$ Mat\+Type $>$\+::\+Initialize(), mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning$<$ Mat\+Type $>$\+::\+W\+Update(), and mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning$<$ arma\+::sp\+\_\+mat $>$\+::\+W\+Update().
+
+\index{mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning}!current\+User\+Index@{current\+User\+Index}}
+\index{current\+User\+Index@{current\+User\+Index}!mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning}}
+\subsubsection[{current\+User\+Index}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Mat\+Type $>$ size\+\_\+t {\bf mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning}$<$ Mat\+Type $>$\+::current\+User\+Index\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_ae98eaefa434c4e98e6d9459f0b7d0022}
+
+
+User of index of current entry. 
+
+
+
+Definition at line 159 of file svd\+\_\+complete\+\_\+incremental\+\_\+learning.\+hpp.
+
+
+
+Referenced by mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning$<$ Mat\+Type $>$\+::\+H\+Update(), mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning$<$ arma\+::sp\+\_\+mat $>$\+::\+H\+Update(), mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning$<$ Mat\+Type $>$\+::\+Initialize(), mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning$<$ Mat\+Type $>$\+::\+W\+Update(), and mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning$<$ arma\+::sp\+\_\+mat $>$\+::\+W\+Update().
+
+\index{mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning}!kh@{kh}}
+\index{kh@{kh}!mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning}}
+\subsubsection[{kh}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Mat\+Type $>$ double {\bf mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning}$<$ Mat\+Type $>$\+::kh\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_a6f2796a3644ede16e69275122b1e70e9}
+
+
+Regularization parameter for matrix H. 
+
+
+
+Definition at line 156 of file svd\+\_\+complete\+\_\+incremental\+\_\+learning.\+hpp.
+
+
+
+Referenced by mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning$<$ Mat\+Type $>$\+::\+H\+Update(), and mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning$<$ arma\+::sp\+\_\+mat $>$\+::\+H\+Update().
+
+\index{mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning}!kw@{kw}}
+\index{kw@{kw}!mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning}}
+\subsubsection[{kw}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Mat\+Type $>$ double {\bf mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning}$<$ Mat\+Type $>$\+::kw\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_a92d4cb28311a7b42063d2a16f86d3c86}
+
+
+Regularization parameter for matrix W. 
+
+
+
+Definition at line 154 of file svd\+\_\+complete\+\_\+incremental\+\_\+learning.\+hpp.
+
+
+
+Referenced by mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning$<$ Mat\+Type $>$\+::\+W\+Update(), and mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning$<$ arma\+::sp\+\_\+mat $>$\+::\+W\+Update().
+
+\index{mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning}!u@{u}}
+\index{u@{u}!mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning}}
+\subsubsection[{u}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Mat\+Type $>$ double {\bf mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning}$<$ Mat\+Type $>$\+::u\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_ae5359f509bf44dbf3dc17a0ff6809fb4}
+
+
+Step count of batch learning. 
+
+
+
+Definition at line 152 of file svd\+\_\+complete\+\_\+incremental\+\_\+learning.\+hpp.
+
+
+
+Referenced by mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning$<$ Mat\+Type $>$\+::\+H\+Update(), mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning$<$ arma\+::sp\+\_\+mat $>$\+::\+H\+Update(), mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning$<$ Mat\+Type $>$\+::\+W\+Update(), and mlpack\+::amf\+::\+S\+V\+D\+Complete\+Incremental\+Learning$<$ arma\+::sp\+\_\+mat $>$\+::\+W\+Update().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/amf/update\+\_\+rules/{\bf svd\+\_\+complete\+\_\+incremental\+\_\+learning.\+hpp}\end{DoxyCompactItemize}

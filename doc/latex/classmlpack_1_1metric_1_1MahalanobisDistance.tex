@@ -1,0 +1,235 @@
+\section{mlpack\+:\+:metric\+:\+:Mahalanobis\+Distance$<$ Take\+Root $>$ Class Template Reference}
+\label{classmlpack_1_1metric_1_1MahalanobisDistance}\index{mlpack\+::metric\+::\+Mahalanobis\+Distance$<$ Take\+Root $>$@{mlpack\+::metric\+::\+Mahalanobis\+Distance$<$ Take\+Root $>$}}
+
+
+The Mahalanobis distance, which is essentially a stretched Euclidean distance.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Mahalanobis\+Distance} ()
+\begin{DoxyCompactList}\small\item\em Initialize the Mahalanobis distance with the empty matrix as covariance. \end{DoxyCompactList}\item 
+{\bf Mahalanobis\+Distance} (const size\+\_\+t dimensionality)
+\begin{DoxyCompactList}\small\item\em Initialize the Mahalanobis distance with the identity matrix of the given dimensionality. \end{DoxyCompactList}\item 
+{\bf Mahalanobis\+Distance} (const arma\+::mat \&{\bf covariance})
+\begin{DoxyCompactList}\small\item\em Initialize the Mahalanobis distance with the given covariance matrix. \end{DoxyCompactList}\item 
+const arma\+::mat \& {\bf Covariance} () const 
+\begin{DoxyCompactList}\small\item\em Access the covariance matrix. \end{DoxyCompactList}\item 
+arma\+::mat \& {\bf Covariance} ()
+\begin{DoxyCompactList}\small\item\em Modify the covariance matrix. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+TypeA , typename Vec\+TypeB $>$ }\\double {\bf Evaluate} (const Vec\+TypeA \&a, const Vec\+TypeB \&b)
+\begin{DoxyCompactList}\small\item\em Evaluate the distance between the two given points using this Mahalanobis distance. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&ar, const unsigned int version)
+\begin{DoxyCompactList}\small\item\em Serialize the Mahalanobis distance. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+arma\+::mat {\bf covariance}
+\begin{DoxyCompactList}\small\item\em The covariance matrix associated with this distance. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$bool Take\+Root = true$>$\\*
+class mlpack\+::metric\+::\+Mahalanobis\+Distance$<$ Take\+Root $>$}
+
+The Mahalanobis distance, which is essentially a stretched Euclidean distance. 
+
+Given a square covariance matrix $ Q $ of size $ d $ x $ d $, where $ d $ is the dimensionality of the points it will be evaluating, and given two vectors $ x $ and $ y $ also of dimensionality $ d $,
+
+\[ d(x, y) = \sqrt{(x - y)^T Q (x - y)} \]
+
+where Q is the covariance matrix.
+
+Because each evaluation multiplies (x\+\_\+1 -\/ x\+\_\+2) by the covariance matrix, it may be much quicker to use an \doxyref{L\+Metric}{p.}{classmlpack_1_1metric_1_1LMetric} and simply stretch the actual dataset itself before performing any evaluations. However, this class is provided for convenience.
+
+Similar to the \doxyref{L\+Metric}{p.}{classmlpack_1_1metric_1_1LMetric} class, this offers a template parameter Take\+Root which, when set to false, will instead evaluate the distance
+
+\[ d(x, y) = (x - y)^T Q (x - y) \]
+
+which is faster to evaluate.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Take\+Root} & If true, takes the root of the output. It is slightly faster to leave this at the default of false, but this means the metric may not satisfy the triangle inequality and may not be usable for methods that expect a true metric. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 53 of file mahalanobis\+\_\+distance.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::metric\+::\+Mahalanobis\+Distance@{mlpack\+::metric\+::\+Mahalanobis\+Distance}!Mahalanobis\+Distance@{Mahalanobis\+Distance}}
+\index{Mahalanobis\+Distance@{Mahalanobis\+Distance}!mlpack\+::metric\+::\+Mahalanobis\+Distance@{mlpack\+::metric\+::\+Mahalanobis\+Distance}}
+\subsubsection[{Mahalanobis\+Distance()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$bool Take\+Root = true$>$ {\bf mlpack\+::metric\+::\+Mahalanobis\+Distance}$<$ Take\+Root $>$\+::{\bf Mahalanobis\+Distance} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1metric_1_1MahalanobisDistance_a6388e15cf9007914aa1efc152419d59b}
+
+
+Initialize the Mahalanobis distance with the empty matrix as covariance. 
+
+Don\textquotesingle{}t call \doxyref{Evaluate()}{p.}{classmlpack_1_1metric_1_1MahalanobisDistance_a0c7f63d53def84dcab2b7c67e86f7b0d} until you set the covariance with \doxyref{Covariance()}{p.}{classmlpack_1_1metric_1_1MahalanobisDistance_aa7f7815f6f1f1abb202725fc68480c36}! 
+
+Definition at line 60 of file mahalanobis\+\_\+distance.\+hpp.
+
+\index{mlpack\+::metric\+::\+Mahalanobis\+Distance@{mlpack\+::metric\+::\+Mahalanobis\+Distance}!Mahalanobis\+Distance@{Mahalanobis\+Distance}}
+\index{Mahalanobis\+Distance@{Mahalanobis\+Distance}!mlpack\+::metric\+::\+Mahalanobis\+Distance@{mlpack\+::metric\+::\+Mahalanobis\+Distance}}
+\subsubsection[{Mahalanobis\+Distance(const size\+\_\+t dimensionality)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$bool Take\+Root = true$>$ {\bf mlpack\+::metric\+::\+Mahalanobis\+Distance}$<$ Take\+Root $>$\+::{\bf Mahalanobis\+Distance} (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{dimensionality}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1metric_1_1MahalanobisDistance_aa46143dd506ef7ca3c6146e3ec241d07}
+
+
+Initialize the Mahalanobis distance with the identity matrix of the given dimensionality. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em dimensionality} & Dimesnsionality of the covariance matrix. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 68 of file mahalanobis\+\_\+distance.\+hpp.
+
+\index{mlpack\+::metric\+::\+Mahalanobis\+Distance@{mlpack\+::metric\+::\+Mahalanobis\+Distance}!Mahalanobis\+Distance@{Mahalanobis\+Distance}}
+\index{Mahalanobis\+Distance@{Mahalanobis\+Distance}!mlpack\+::metric\+::\+Mahalanobis\+Distance@{mlpack\+::metric\+::\+Mahalanobis\+Distance}}
+\subsubsection[{Mahalanobis\+Distance(const arma\+::mat \&covariance)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$bool Take\+Root = true$>$ {\bf mlpack\+::metric\+::\+Mahalanobis\+Distance}$<$ Take\+Root $>$\+::{\bf Mahalanobis\+Distance} (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{covariance}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1metric_1_1MahalanobisDistance_a3c644b86b7afcc75ff4bc3a97ad1f250}
+
+
+Initialize the Mahalanobis distance with the given covariance matrix. 
+
+The given covariance matrix will be copied (this is not optimal).
+
+
+\begin{DoxyParams}{Parameters}
+{\em covariance} & The covariance matrix to use for this distance. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 77 of file mahalanobis\+\_\+distance.\+hpp.
+
+
+
+References mlpack\+::metric\+::\+Mahalanobis\+Distance$<$ Take\+Root $>$\+::\+Evaluate().
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::metric\+::\+Mahalanobis\+Distance@{mlpack\+::metric\+::\+Mahalanobis\+Distance}!Covariance@{Covariance}}
+\index{Covariance@{Covariance}!mlpack\+::metric\+::\+Mahalanobis\+Distance@{mlpack\+::metric\+::\+Mahalanobis\+Distance}}
+\subsubsection[{Covariance() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$bool Take\+Root = true$>$ const arma\+::mat\& {\bf mlpack\+::metric\+::\+Mahalanobis\+Distance}$<$ Take\+Root $>$\+::Covariance (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1metric_1_1MahalanobisDistance_a2fc61921c21729909877685b5573e149}
+
+
+Access the covariance matrix. 
+
+\begin{DoxyReturn}{Returns}
+Constant reference to the covariance matrix. 
+\end{DoxyReturn}
+
+
+Definition at line 96 of file mahalanobis\+\_\+distance.\+hpp.
+
+
+
+References mlpack\+::metric\+::\+Mahalanobis\+Distance$<$ Take\+Root $>$\+::covariance.
+
+\index{mlpack\+::metric\+::\+Mahalanobis\+Distance@{mlpack\+::metric\+::\+Mahalanobis\+Distance}!Covariance@{Covariance}}
+\index{Covariance@{Covariance}!mlpack\+::metric\+::\+Mahalanobis\+Distance@{mlpack\+::metric\+::\+Mahalanobis\+Distance}}
+\subsubsection[{Covariance()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$bool Take\+Root = true$>$ arma\+::mat\& {\bf mlpack\+::metric\+::\+Mahalanobis\+Distance}$<$ Take\+Root $>$\+::Covariance (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1metric_1_1MahalanobisDistance_aa7f7815f6f1f1abb202725fc68480c36}
+
+
+Modify the covariance matrix. 
+
+\begin{DoxyReturn}{Returns}
+Reference to the covariance matrix. 
+\end{DoxyReturn}
+
+
+Definition at line 103 of file mahalanobis\+\_\+distance.\+hpp.
+
+
+
+References mlpack\+::metric\+::\+Mahalanobis\+Distance$<$ Take\+Root $>$\+::covariance, and mlpack\+::metric\+::\+Mahalanobis\+Distance$<$ Take\+Root $>$\+::\+Serialize().
+
+\index{mlpack\+::metric\+::\+Mahalanobis\+Distance@{mlpack\+::metric\+::\+Mahalanobis\+Distance}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!mlpack\+::metric\+::\+Mahalanobis\+Distance@{mlpack\+::metric\+::\+Mahalanobis\+Distance}}
+\subsubsection[{Evaluate(const Vec\+Type\+A \&a, const Vec\+Type\+B \&b)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$bool Take\+Root = true$>$ template$<$typename Vec\+TypeA , typename Vec\+TypeB $>$ double {\bf mlpack\+::metric\+::\+Mahalanobis\+Distance}$<$ Take\+Root $>$\+::Evaluate (
+\begin{DoxyParamCaption}
+\item[{const Vec\+TypeA \&}]{a, }
+\item[{const Vec\+TypeB \&}]{b}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1metric_1_1MahalanobisDistance_a0c7f63d53def84dcab2b7c67e86f7b0d}
+
+
+Evaluate the distance between the two given points using this Mahalanobis distance. 
+
+If the covariance matrix has not been set (i.\+e. if you used the empty constructor and did not later modify the covariance matrix), calling this method will probably result in a crash.
+
+
+\begin{DoxyParams}{Parameters}
+{\em a} & First vector. \\
+\hline
+{\em b} & Second vector. \\
+\hline
+\end{DoxyParams}
+
+
+Referenced by mlpack\+::metric\+::\+Mahalanobis\+Distance$<$ Take\+Root $>$\+::\+Mahalanobis\+Distance().
+
+\index{mlpack\+::metric\+::\+Mahalanobis\+Distance@{mlpack\+::metric\+::\+Mahalanobis\+Distance}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::metric\+::\+Mahalanobis\+Distance@{mlpack\+::metric\+::\+Mahalanobis\+Distance}}
+\subsubsection[{Serialize(\+Archive \&ar, const unsigned int version)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$bool Take\+Root = true$>$ template$<$typename Archive $>$ void {\bf mlpack\+::metric\+::\+Mahalanobis\+Distance}$<$ Take\+Root $>$\+::Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const unsigned int}]{version}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1metric_1_1MahalanobisDistance_af0448895154c87a4ffdf0c17084d3a8e}
+
+
+Serialize the Mahalanobis distance. 
+
+
+
+Referenced by mlpack\+::metric\+::\+Mahalanobis\+Distance$<$ Take\+Root $>$\+::\+Covariance().
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::metric\+::\+Mahalanobis\+Distance@{mlpack\+::metric\+::\+Mahalanobis\+Distance}!covariance@{covariance}}
+\index{covariance@{covariance}!mlpack\+::metric\+::\+Mahalanobis\+Distance@{mlpack\+::metric\+::\+Mahalanobis\+Distance}}
+\subsubsection[{covariance}]{\setlength{\rightskip}{0pt plus 5cm}template$<$bool Take\+Root = true$>$ arma\+::mat {\bf mlpack\+::metric\+::\+Mahalanobis\+Distance}$<$ Take\+Root $>$\+::covariance\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1metric_1_1MahalanobisDistance_a106a42d9bd952f863a519d40da2f7bec}
+
+
+The covariance matrix associated with this distance. 
+
+
+
+Definition at line 111 of file mahalanobis\+\_\+distance.\+hpp.
+
+
+
+Referenced by mlpack\+::metric\+::\+Mahalanobis\+Distance$<$ Take\+Root $>$\+::\+Covariance().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/metrics/{\bf mahalanobis\+\_\+distance.\+hpp}\end{DoxyCompactItemize}

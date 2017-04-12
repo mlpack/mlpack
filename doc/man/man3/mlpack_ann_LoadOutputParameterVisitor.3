@@ -1,0 +1,80 @@
+.TH "mlpack::ann::LoadOutputParameterVisitor" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::ann::LoadOutputParameterVisitor \- \fBLoadOutputParameterVisitor\fP restores the output parameter using the given parameter set\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits static_visitor< void >\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBLoadOutputParameterVisitor\fP (std::vector< arma::mat > &&\fBparameter\fP)"
+.br
+.RI "\fIRestore the output parameter given a parameter set\&. \fP"
+.ti -1c
+.RI "template<typename LayerType > void \fBoperator()\fP (LayerType *layer) const "
+.br
+.RI "\fIRestore the output parameter\&. \fP"
+.in -1c
+.SS "Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename T > std::enable_if< !HasModelCheck< T, std::vector< \fBLayerTypes\fP > &(T::*)()>::value, void >::type \fBOutputParameter\fP (T *layer) const "
+.br
+.RI "\fIRestore the output parameter for a module which doesn't implement the Model() function\&. \fP"
+.ti -1c
+.RI "template<typename T > std::enable_if< HasModelCheck< T, std::vector< \fBLayerTypes\fP > &(T::*)()>::value, void >::type \fBOutputParameter\fP (T *layer) const "
+.br
+.RI "\fIRestore the output parameter for a module which implements the Model() function\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "std::vector< arma::mat > && \fBparameter\fP"
+.br
+.RI "\fIThe parameter set\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBLoadOutputParameterVisitor\fP restores the output parameter using the given parameter set\&. 
+.PP
+Definition at line 29 of file load_output_parameter_visitor\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::ann::LoadOutputParameterVisitor::LoadOutputParameterVisitor (std::vector< arma::mat > && parameter)"
+
+.PP
+Restore the output parameter given a parameter set\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename LayerType > void mlpack::ann::LoadOutputParameterVisitor::operator() (LayerType * layer) const"
+
+.PP
+Restore the output parameter\&. 
+.SS "template<typename T > std::enable_if< !HasModelCheck<T, std::vector<\fBLayerTypes\fP>&(T::*)()>::value, void>::type mlpack::ann::LoadOutputParameterVisitor::OutputParameter (T * layer) const\fC [private]\fP"
+
+.PP
+Restore the output parameter for a module which doesn't implement the Model() function\&. 
+.SS "template<typename T > std::enable_if< HasModelCheck<T, std::vector<\fBLayerTypes\fP>&(T::*)()>::value, void>::type mlpack::ann::LoadOutputParameterVisitor::OutputParameter (T * layer) const\fC [private]\fP"
+
+.PP
+Restore the output parameter for a module which implements the Model() function\&. 
+.SH "Member Data Documentation"
+.PP 
+.SS "std::vector<arma::mat>&& mlpack::ann::LoadOutputParameterVisitor::parameter\fC [private]\fP"
+
+.PP
+The parameter set\&. 
+.PP
+Definition at line 41 of file load_output_parameter_visitor\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

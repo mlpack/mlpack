@@ -1,0 +1,63 @@
+.TH "src/mlpack/methods/kmeans/dual_tree_kmeans.hpp" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+src/mlpack/methods/kmeans/dual_tree_kmeans.hpp \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBmlpack::kmeans::DualTreeKMeans< MetricType, MatType, TreeType >\fP"
+.br
+.RI "\fIAn algorithm for an exact Lloyd iteration which simply uses dual-tree nearest-neighbor search to find the nearest centroid for each point in the dataset\&. \fP"
+.in -1c
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "\fILinear algebra utility functions, generally performed on matrices or vectors\&. \fP"
+.ti -1c
+.RI " \fBmlpack::kmeans\fP"
+.br
+.RI "\fIK-Means clustering\&. \fP"
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "template<typename MetricType , typename MatType > using \fBmlpack::kmeans::CoverTreeDualTreeKMeans\fP = DualTreeKMeans< MetricType, MatType, tree::StandardCoverTree >"
+.br
+.RI "\fIA template typedef for the \fBDualTreeKMeans\fP algorithm with the cover tree type\&. \fP"
+.ti -1c
+.RI "template<typename MetricType , typename MatType > using \fBmlpack::kmeans::DefaultDualTreeKMeans\fP = DualTreeKMeans< MetricType, MatType >"
+.br
+.RI "\fIA template typedef for the \fBDualTreeKMeans\fP algorithm with the default tree type (a kd-tree)\&. \fP"
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename TreeType > void \fBmlpack::kmeans::HideChild\fP (TreeType &node, const size_t child, const typename \fBstd::enable_if_t\fP< !tree::TreeTraits< TreeType >::BinaryTree > *junk=0)"
+.br
+.RI "\fIUtility function for hiding children\&. \fP"
+.ti -1c
+.RI "template<typename TreeType > void \fBmlpack::kmeans::HideChild\fP (TreeType &node, const size_t child, const typename \fBstd::enable_if_t\fP< tree::TreeTraits< TreeType >::BinaryTree > *junk=0)"
+.br
+.RI "\fIUtility function for hiding children\&. \fP"
+.ti -1c
+.RI "template<typename TreeType > void \fBmlpack::kmeans::RestoreChildren\fP (TreeType &node, const typename \fBstd::enable_if_t\fP<!tree::TreeTraits< TreeType >::BinaryTree > *junk=0)"
+.br
+.RI "\fIUtility function for restoring children to a non-binary tree\&. \fP"
+.ti -1c
+.RI "template<typename TreeType > void \fBmlpack::kmeans::RestoreChildren\fP (TreeType &node, const typename \fBstd::enable_if_t\fP< tree::TreeTraits< TreeType >::BinaryTree > *junk=0)"
+.br
+.RI "\fIUtility function for restoring children to a binary tree\&. \fP"
+.in -1c
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

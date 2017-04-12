@@ -1,0 +1,50 @@
+.TH "src/mlpack/core/util/sfinae_utility.hpp" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+src/mlpack/core/util/sfinae_utility.hpp \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fBHAS_MEM_FUNC\fP(FUNC,  NAME)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Trironk Kiatkungwanglai
+.RE
+.PP
+This file contains macro utilities for the SFINAE Paradigm\&. These utilities determine if classes passed in as template parameters contain members at compile time, which is useful for changing functionality depending on what operations an object is capable of performing\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBsfinae_utility\&.hpp\fP\&.
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define HAS_MEM_FUNC(FUNC, NAME)"
+\fBValue:\fP
+.PP
+.nf
+template<typename T, typename sig>                                             \
+struct NAME {                                                                  \
+  typedef char yes[1];                                                         \
+  typedef char no [2];                                                         \
+  template<typename U, U> struct type_check;                                   \
+  template<typename _1> static yes &chk(type_check<sig, &_1::FUNC> *);         \
+  template<typename   > static no  &chk(\&.\&.\&.);                                  \
+  static bool const value = sizeof(chk<T>(0)) == sizeof(yes);                  \
+};
+.fi
+.PP
+Definition at line 36 of file sfinae_utility\&.hpp\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

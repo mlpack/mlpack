@@ -1,0 +1,34 @@
+.TH "mlpack::ann::OutputParameterVisitor" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::ann::OutputParameterVisitor \- \fBOutputParameterVisitor\fP exposes the output parameter of the given module\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits static_visitor< arma::mat & >\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename LayerType > arma::mat & \fBoperator()\fP (LayerType *layer) const "
+.br
+.RI "\fIReturn the output parameter set\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBOutputParameterVisitor\fP exposes the output parameter of the given module\&. 
+.PP
+Definition at line 27 of file output_parameter_visitor\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename LayerType > arma::mat& mlpack::ann::OutputParameterVisitor::operator() (LayerType * layer) const"
+
+.PP
+Return the output parameter set\&. 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

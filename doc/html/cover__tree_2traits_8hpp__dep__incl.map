@@ -1,0 +1,13 @@
+<map id="src/mlpack/core/tree/cover_tree/traits.hpp" name="src/mlpack/core/tree/cover_tree/traits.hpp">
+<area shape="rect" id="node2" href="$cover__tree_8hpp.html" title="src/mlpack/core/tree\l/cover_tree.hpp" alt="" coords="479,95,620,136"/>
+<area shape="rect" id="node3" href="$cover__tree_2cover__tree_8hpp.html" title="src/mlpack/core/tree\l/cover_tree/cover_tree.hpp" alt="" coords="222,191,399,233"/>
+<area shape="rect" id="node7" href="$fastmks_8hpp.html" title="src/mlpack/methods\l/fastmks/fastmks.hpp" alt="" coords="475,191,624,233"/>
+<area shape="rect" id="node9" href="$dual__tree__kmeans_8hpp.html" title="src/mlpack/methods\l/kmeans/dual_tree_kmeans.hpp" alt="" coords="649,191,855,233"/>
+<area shape="rect" id="node10" href="$ns__model_8hpp.html" title="src/mlpack/methods\l/neighbor_search/ns\l_model.hpp" alt="" coords="879,184,1019,240"/>
+<area shape="rect" id="node11" href="$rs__model_8hpp.html" title="src/mlpack/methods\l/range_search/rs_model.hpp" alt="" coords="1044,191,1231,233"/>
+<area shape="rect" id="node12" href="$ra__model_8hpp.html" title="src/mlpack/methods\l/rann/ra_model.hpp" alt="" coords="1255,191,1395,233"/>
+<area shape="rect" id="node4" href="$cover__tree_2single__tree__traverser_8hpp.html" title="src/mlpack/core/tree\l/cover_tree/single_tree\l_traverser.hpp" alt="" coords="5,288,160,344"/>
+<area shape="rect" id="node5" href="$core_2tree_2cover__tree_2typedef_8hpp.html" title="src/mlpack/core/tree\l/cover_tree/typedef.hpp" alt="" coords="393,295,551,337"/>
+<area shape="rect" id="node6" href="$fastmks__rules_8hpp.html" title="src/mlpack/methods\l/fastmks/fastmks_rules.hpp" alt="" coords="184,295,368,337"/>
+<area shape="rect" id="node8" href="$fastmks__model_8hpp.html" title="src/mlpack/methods\l/fastmks/fastmks_model.hpp" alt="" coords="575,295,766,337"/>
+</map>

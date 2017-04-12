@@ -1,0 +1,85 @@
+\section{mlpack\+:\+:tree\+:\+:split Namespace Reference}
+\label{namespacemlpack_1_1tree_1_1split}\index{mlpack\+::tree\+::split@{mlpack\+::tree\+::split}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Mat\+Type , typename Split\+Type $>$ }\\size\+\_\+t {\bf Perform\+Split} (Mat\+Type \&data, const size\+\_\+t begin, const size\+\_\+t count, const typename Split\+Type\+::\+Split\+Info \&split\+Info)
+\begin{DoxyCompactList}\small\item\em This function implements the default split behavior i.\+e. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type , typename Split\+Type $>$ }\\size\+\_\+t {\bf Perform\+Split} (Mat\+Type \&data, const size\+\_\+t begin, const size\+\_\+t count, const typename Split\+Type\+::\+Split\+Info \&split\+Info, std\+::vector$<$ size\+\_\+t $>$ \&old\+From\+New)
+\begin{DoxyCompactList}\small\item\em This function implements the default split behavior i.\+e. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\index{mlpack\+::tree\+::split@{mlpack\+::tree\+::split}!Perform\+Split@{Perform\+Split}}
+\index{Perform\+Split@{Perform\+Split}!mlpack\+::tree\+::split@{mlpack\+::tree\+::split}}
+\subsubsection[{Perform\+Split(\+Mat\+Type \&data, const size\+\_\+t begin, const size\+\_\+t count, const typename Split\+Type\+::\+Split\+Info \&split\+Info)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type , typename Split\+Type $>$ size\+\_\+t mlpack\+::tree\+::split\+::\+Perform\+Split (
+\begin{DoxyParamCaption}
+\item[{Mat\+Type \&}]{data, }
+\item[{const size\+\_\+t}]{begin, }
+\item[{const size\+\_\+t}]{count, }
+\item[{const typename Split\+Type\+::\+Split\+Info \&}]{split\+Info}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1tree_1_1split_ae701f1590f5c0fb8ddea4af189f3ee8a}
+
+
+This function implements the default split behavior i.\+e. 
+
+it rearranges points according to the split information. The Split\+Type\+::\+Assign\+To\+Left\+Node() function is used in order to determine the child that contains any particular point.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & The dataset used by the binary space tree. \\
+\hline
+{\em begin} & Index of the starting point in the dataset that belongs to this node. \\
+\hline
+{\em count} & Number of points in this node. \\
+\hline
+{\em split\+Info} & The information about the split. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 36 of file perform\+\_\+split.\+hpp.
+
+
+
+References mlpack\+::\+Log\+::\+Assert().
+
+\index{mlpack\+::tree\+::split@{mlpack\+::tree\+::split}!Perform\+Split@{Perform\+Split}}
+\index{Perform\+Split@{Perform\+Split}!mlpack\+::tree\+::split@{mlpack\+::tree\+::split}}
+\subsubsection[{Perform\+Split(\+Mat\+Type \&data, const size\+\_\+t begin, const size\+\_\+t count, const typename Split\+Type\+::\+Split\+Info \&split\+Info, std\+::vector$<$ size\+\_\+t $>$ \&old\+From\+New)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type , typename Split\+Type $>$ size\+\_\+t mlpack\+::tree\+::split\+::\+Perform\+Split (
+\begin{DoxyParamCaption}
+\item[{Mat\+Type \&}]{data, }
+\item[{const size\+\_\+t}]{begin, }
+\item[{const size\+\_\+t}]{count, }
+\item[{const typename Split\+Type\+::\+Split\+Info \&}]{split\+Info, }
+\item[{std\+::vector$<$ size\+\_\+t $>$ \&}]{old\+From\+New}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1tree_1_1split_a806f7a8af45201051f59a8db0b8b2feb}
+
+
+This function implements the default split behavior i.\+e. 
+
+it rearranges points according to the split information. The Split\+Type\+::\+Assign\+To\+Left\+Node() function is used in order to determine the child that contains any particular point. The function takes care of indices and returns the list of changed indices.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & The dataset used by the binary space tree. \\
+\hline
+{\em begin} & Index of the starting point in the dataset that belongs to this node. \\
+\hline
+{\em count} & Number of points in this node. \\
+\hline
+{\em split\+Info} & The information about the split. \\
+\hline
+{\em old\+From\+New} & Vector which will be filled with the old positions for each new point. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 101 of file perform\+\_\+split.\+hpp.
+
+
+
+References mlpack\+::\+Log\+::\+Assert().
+

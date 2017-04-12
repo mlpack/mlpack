@@ -1,0 +1,15 @@
+<map id="src/mlpack/core/tree/rectangle_tree/r_tree_split.hpp" name="src/mlpack/core/tree/rectangle_tree/r_tree_split.hpp">
+<area shape="rect" id="node2" href="$rectangle__tree_2rectangle__tree_8hpp.html" title="src/mlpack/core/tree\l/rectangle_tree/rectangle\l_tree.hpp" alt="" coords="659,109,824,165"/>
+<area shape="rect" id="node4" href="$rectangle__tree_8hpp.html" title="src/mlpack/core/tree\l/rectangle_tree.hpp" alt="" coords="671,317,812,359"/>
+<area shape="rect" id="node3" href="$rectangle__tree_2dual__tree__traverser_8hpp.html" title="src/mlpack/core/tree\l/rectangle_tree/dual\l_tree_traverser.hpp" alt="" coords="452,213,593,269"/>
+<area shape="rect" id="node13" href="$rectangle__tree_2single__tree__traverser_8hpp.html" title="src/mlpack/core/tree\l/rectangle_tree/single\l_tree_traverser.hpp" alt="" coords="668,213,815,269"/>
+<area shape="rect" id="node14" href="$core_2tree_2rectangle__tree_2typedef_8hpp.html" title="src/mlpack/core/tree\l/rectangle_tree/typedef.hpp" alt="" coords="839,221,1019,262"/>
+<area shape="rect" id="node5" href="$neighbor__search_8hpp.html" title="src/mlpack/methods\l/neighbor_search/neighbor\l_search.hpp" alt="" coords="431,407,606,463"/>
+<area shape="rect" id="node10" href="$ns__model_8hpp.html" title="src/mlpack/methods\l/neighbor_search/ns\l_model.hpp" alt="" coords="639,511,779,567"/>
+<area shape="rect" id="node11" href="$rs__model_8hpp.html" title="src/mlpack/methods\l/range_search/rs_model.hpp" alt="" coords="713,414,900,455"/>
+<area shape="rect" id="node12" href="$ra__model_8hpp.html" title="src/mlpack/methods\l/rann/ra_model.hpp" alt="" coords="925,414,1065,455"/>
+<area shape="rect" id="node6" href="$cf_8hpp.html" title="src/mlpack/methods\l/cf/cf.hpp" alt="" coords="27,518,167,559"/>
+<area shape="rect" id="node8" href="$dual__tree__kmeans_8hpp.html" title="src/mlpack/methods\l/kmeans/dual_tree_kmeans.hpp" alt="" coords="191,518,398,559"/>
+<area shape="rect" id="node9" href="$methods_2neighbor__search_2typedef_8hpp.html" title="src/mlpack/methods\l/neighbor_search/typedef.hpp" alt="" coords="422,518,615,559"/>
+<area shape="rect" id="node7" href="$regularized__svd_8hpp.html" title="src/mlpack/methods\l/regularized_svd/regularized\l_svd.hpp" alt="" coords="5,615,189,671"/>
+</map>

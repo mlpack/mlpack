@@ -1,0 +1,62 @@
+.TH "src/mlpack/core/util/print_param.hpp" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+src/mlpack/core/util/print_param.hpp \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "\fILinear algebra utility functions, generally performed on matrices or vectors\&. \fP"
+.ti -1c
+.RI " \fBmlpack::util\fP"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename T > void \fBmlpack::util::PrintParam\fP (const ParamData &data)"
+.br
+.RI "\fIPrint an option\&. \fP"
+.ti -1c
+.RI "template<typename T > void \fBmlpack::util::PrintParamImpl\fP (const ParamData &data, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::disable_if< IsStdVector< T >>::type *=0, const typename boost::disable_if< data::HasSerialize< T >>::type *=0, const typename boost::disable_if< std::is_same< T, std::tuple< data::DatasetInfo, arma::mat >>>::type *=0)"
+.br
+.RI "\fIPrint an option\&. \fP"
+.ti -1c
+.RI "template<typename T > void \fBmlpack::util::PrintParamImpl\fP (const ParamData &data, const typename boost::enable_if< IsStdVector< T >>::type *=0)"
+.br
+.RI "\fIPrint a vector option, with spaces between it\&. \fP"
+.ti -1c
+.RI "template<typename T > void \fBmlpack::util::PrintParamImpl\fP (const ParamData &data, const typename boost::enable_if< arma::is_arma_type< T >>::type *=0)"
+.br
+.RI "\fIPrint a matrix option (this just prints the filename)\&. \fP"
+.ti -1c
+.RI "template<typename T > void \fBmlpack::util::PrintParamImpl\fP (const ParamData &data, const typename boost::enable_if< data::HasSerialize< T >>::type *=0)"
+.br
+.RI "\fIPrint a serializable class option (this just prints the filename)\&. \fP"
+.ti -1c
+.RI "template<typename T > void \fBmlpack::util::PrintParamImpl\fP (const ParamData &data, const typename boost::enable_if< std::is_same< T, std::tuple< data::DatasetInfo, arma::mat >>>::type *=0)"
+.br
+.RI "\fIPrint a mapped matrix option (this just prints the filename)\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Ryan Curtin
+.RE
+.PP
+Print the parameter to stdout, using template metaprogramming to enforce different behavior for different parameter types\&. 
+.PP
+Definition in file \fBprint_param\&.hpp\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

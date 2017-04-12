@@ -1,0 +1,350 @@
+.TH "mlpack::ann::ELU< InputDataType, OutputDataType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::ann::ELU< InputDataType, OutputDataType > \- The \fBELU\fP activation function, defined by\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBELU\fP (const double \fBalpha\fP=1\&.0)"
+.br
+.RI "\fICreate the \fBELU\fP object using the specified parameters\&. \fP"
+.ti -1c
+.RI "double const & \fBAlpha\fP () const "
+.br
+.RI "\fIGet the non zero gradient\&. \fP"
+.ti -1c
+.RI "double & \fBAlpha\fP ()"
+.br
+.RI "\fIModify the non zero gradient\&. \fP"
+.ti -1c
+.RI "template<typename DataType > void \fBBackward\fP (const DataType &&input, DataType &&gy, DataType &&g)"
+.br
+.RI "\fIOrdinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f\&. \fP"
+.ti -1c
+.RI "OutputDataType const & \fBDelta\fP () const "
+.br
+.RI "\fIGet the delta\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBDelta\fP ()"
+.br
+.RI "\fIModify the delta\&. \fP"
+.ti -1c
+.RI "template<typename InputType , typename OutputType > void \fBForward\fP (const InputType &&input, OutputType &&output)"
+.br
+.RI "\fIOrdinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. \fP"
+.ti -1c
+.RI "InputDataType const & \fBInputParameter\fP () const "
+.br
+.RI "\fIGet the input parameter\&. \fP"
+.ti -1c
+.RI "InputDataType & \fBInputParameter\fP ()"
+.br
+.RI "\fIModify the input parameter\&. \fP"
+.ti -1c
+.RI "OutputDataType const & \fBOutputParameter\fP () const "
+.br
+.RI "\fIGet the output parameter\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP ()"
+.br
+.RI "\fIModify the output parameter\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int)"
+.br
+.RI "\fISerialize the layer\&. \fP"
+.in -1c
+.SS "Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "double \fBDeriv\fP (const double y)"
+.br
+.RI "\fIComputes the first derivative of the \fBELU\fP function\&. \fP"
+.ti -1c
+.RI "template<typename InputType , typename OutputType > void \fBDeriv\fP (const InputType &x, OutputType &y)"
+.br
+.RI "\fIComputes the first derivative of the \fBELU\fP function\&. \fP"
+.ti -1c
+.RI "double \fBFn\fP (const double x)"
+.br
+.RI "\fIComputes the \fBELU\fP function\&. \fP"
+.ti -1c
+.RI "template<typename eT > void \fBFn\fP (const arma::Mat< eT > &x, arma::Mat< eT > &y)"
+.br
+.RI "\fIComputes the \fBELU\fP function using a dense matrix as input\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "double \fBalpha\fP"
+.br
+.RI "\fI\fBELU\fP Hyperparameter (0 < alpha) \fP"
+.ti -1c
+.RI "OutputDataType \fBdelta\fP"
+.br
+.RI "\fILocally-stored delta object\&. \fP"
+.ti -1c
+.RI "InputDataType \fBinputParameter\fP"
+.br
+.RI "\fILocally-stored input parameter object\&. \fP"
+.ti -1c
+.RI "OutputDataType \fBoutputParameter\fP"
+.br
+.RI "\fILocally-stored output parameter object\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename InputDataType = arma::mat, typename OutputDataType = arma::mat>
+.br
+class mlpack::ann::ELU< InputDataType, OutputDataType >"
+The \fBELU\fP activation function, defined by\&. 
+
+\begin{eqnarray*} f(x) &=& \left\{ \begin{array}{lr} x & : x > 0 \\ alpha(e^x - 1) & : x \le 0 \end{array} \right f'(x) &=& \left\{ \begin{array}{lr} 1 & : x > 0 \\ y + alpha & : x \le 0 \end{array} \right \end{eqnarray*}
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIInputDataType\fP Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fIOutputDataType\fP Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 61 of file elu\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBmlpack::ann::ELU\fP< InputDataType, OutputDataType >::\fBELU\fP (const double alpha = \fC1\&.0\fP)"
+
+.PP
+Create the \fBELU\fP object using the specified parameters\&. The non zero gradient for negative inputs can be adjusted by specifying the \fBELU\fP hyperparameter alpha (alpha > 0)\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIalpha\fP Scale parameter for the negative factor (Default alpha = 1\&.0)\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> double const& \fBmlpack::ann::ELU\fP< InputDataType, OutputDataType >::Alpha () const\fC [inline]\fP"
+
+.PP
+Get the non zero gradient\&. 
+.PP
+Definition at line 111 of file elu\&.hpp\&.
+.PP
+References mlpack::ann::ELU< InputDataType, OutputDataType >::alpha\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> double& \fBmlpack::ann::ELU\fP< InputDataType, OutputDataType >::Alpha ()\fC [inline]\fP"
+
+.PP
+Modify the non zero gradient\&. 
+.PP
+Definition at line 113 of file elu\&.hpp\&.
+.PP
+References mlpack::ann::ELU< InputDataType, OutputDataType >::alpha, and mlpack::ann::ELU< InputDataType, OutputDataType >::Serialize()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename DataType > void \fBmlpack::ann::ELU\fP< InputDataType, OutputDataType >::Backward (const DataType && input, DataType && gy, DataType && g)"
+
+.PP
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f\&. Using the results from the feed forward pass\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP The propagated input activation\&. 
+.br
+\fIgy\fP The backpropagated error\&. 
+.br
+\fIg\fP The calculated gradient\&. 
+.RE
+.PP
+
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType const& \fBmlpack::ann::ELU\fP< InputDataType, OutputDataType >::Delta () const\fC [inline]\fP"
+
+.PP
+Get the delta\&. 
+.PP
+Definition at line 106 of file elu\&.hpp\&.
+.PP
+References mlpack::ann::ELU< InputDataType, OutputDataType >::delta\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::ELU\fP< InputDataType, OutputDataType >::Delta ()\fC [inline]\fP"
+
+.PP
+Modify the delta\&. 
+.PP
+Definition at line 108 of file elu\&.hpp\&.
+.PP
+References mlpack::ann::ELU< InputDataType, OutputDataType >::delta\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> double \fBmlpack::ann::ELU\fP< InputDataType, OutputDataType >::Deriv (const double y)\fC [inline]\fP, \fC [private]\fP"
+
+.PP
+Computes the first derivative of the \fBELU\fP function\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIx\fP Input data\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+f'(x) 
+.RE
+.PP
+
+.PP
+Definition at line 158 of file elu\&.hpp\&.
+.PP
+References mlpack::ann::ELU< InputDataType, OutputDataType >::alpha\&.
+.PP
+Referenced by mlpack::ann::ELU< InputDataType, OutputDataType >::Deriv()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename InputType , typename OutputType > void \fBmlpack::ann::ELU\fP< InputDataType, OutputDataType >::Deriv (const InputType & x, OutputType & y)\fC [inline]\fP, \fC [private]\fP"
+
+.PP
+Computes the first derivative of the \fBELU\fP function\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIy\fP Input activations\&. 
+.br
+\fIx\fP The resulting derivatives\&. 
+.RE
+.PP
+
+.PP
+Definition at line 171 of file elu\&.hpp\&.
+.PP
+References mlpack::ann::ELU< InputDataType, OutputDataType >::Deriv()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> double \fBmlpack::ann::ELU\fP< InputDataType, OutputDataType >::Fn (const double x)\fC [inline]\fP, \fC [private]\fP"
+
+.PP
+Computes the \fBELU\fP function\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIx\fP Input data\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+f(x)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 128 of file elu\&.hpp\&.
+.PP
+References mlpack::ann::ELU< InputDataType, OutputDataType >::alpha\&.
+.PP
+Referenced by mlpack::ann::ELU< InputDataType, OutputDataType >::Fn()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename eT > void \fBmlpack::ann::ELU\fP< InputDataType, OutputDataType >::Fn (const arma::Mat< eT > & x, arma::Mat< eT > & y)\fC [inline]\fP, \fC [private]\fP"
+
+.PP
+Computes the \fBELU\fP function using a dense matrix as input\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIx\fP Input data\&. 
+.br
+\fIy\fP The resulting output activation\&. 
+.RE
+.PP
+
+.PP
+Definition at line 142 of file elu\&.hpp\&.
+.PP
+References mlpack::ann::ELU< InputDataType, OutputDataType >::Fn()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename InputType , typename OutputType > void \fBmlpack::ann::ELU\fP< InputDataType, OutputDataType >::Forward (const InputType && input, OutputType && output)"
+
+.PP
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input data used for evaluating the specified function\&. 
+.br
+\fIoutput\fP Resulting output activation\&. 
+.RE
+.PP
+
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> InputDataType const& \fBmlpack::ann::ELU\fP< InputDataType, OutputDataType >::InputParameter () const\fC [inline]\fP"
+
+.PP
+Get the input parameter\&. 
+.PP
+Definition at line 96 of file elu\&.hpp\&.
+.PP
+References mlpack::ann::ELU< InputDataType, OutputDataType >::inputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> InputDataType& \fBmlpack::ann::ELU\fP< InputDataType, OutputDataType >::InputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the input parameter\&. 
+.PP
+Definition at line 98 of file elu\&.hpp\&.
+.PP
+References mlpack::ann::ELU< InputDataType, OutputDataType >::inputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType const& \fBmlpack::ann::ELU\fP< InputDataType, OutputDataType >::OutputParameter () const\fC [inline]\fP"
+
+.PP
+Get the output parameter\&. 
+.PP
+Definition at line 101 of file elu\&.hpp\&.
+.PP
+References mlpack::ann::ELU< InputDataType, OutputDataType >::outputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::ELU\fP< InputDataType, OutputDataType >::OutputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the output parameter\&. 
+.PP
+Definition at line 103 of file elu\&.hpp\&.
+.PP
+References mlpack::ann::ELU< InputDataType, OutputDataType >::outputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename Archive > void \fBmlpack::ann::ELU\fP< InputDataType, OutputDataType >::Serialize (Archive & ar, const unsigned int)"
+
+.PP
+Serialize the layer\&. 
+.PP
+Referenced by mlpack::ann::ELU< InputDataType, OutputDataType >::Alpha()\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> double \fBmlpack::ann::ELU\fP< InputDataType, OutputDataType >::alpha\fC [private]\fP"
+
+.PP
+\fBELU\fP Hyperparameter (0 < alpha) 
+.PP
+Definition at line 191 of file elu\&.hpp\&.
+.PP
+Referenced by mlpack::ann::ELU< InputDataType, OutputDataType >::Alpha(), mlpack::ann::ELU< InputDataType, OutputDataType >::Deriv(), and mlpack::ann::ELU< InputDataType, OutputDataType >::Fn()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType \fBmlpack::ann::ELU\fP< InputDataType, OutputDataType >::delta\fC [private]\fP"
+
+.PP
+Locally-stored delta object\&. 
+.PP
+Definition at line 182 of file elu\&.hpp\&.
+.PP
+Referenced by mlpack::ann::ELU< InputDataType, OutputDataType >::Delta()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> InputDataType \fBmlpack::ann::ELU\fP< InputDataType, OutputDataType >::inputParameter\fC [private]\fP"
+
+.PP
+Locally-stored input parameter object\&. 
+.PP
+Definition at line 185 of file elu\&.hpp\&.
+.PP
+Referenced by mlpack::ann::ELU< InputDataType, OutputDataType >::InputParameter()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType \fBmlpack::ann::ELU\fP< InputDataType, OutputDataType >::outputParameter\fC [private]\fP"
+
+.PP
+Locally-stored output parameter object\&. 
+.PP
+Definition at line 188 of file elu\&.hpp\&.
+.PP
+Referenced by mlpack::ann::ELU< InputDataType, OutputDataType >::OutputParameter()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

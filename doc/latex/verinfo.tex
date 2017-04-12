@@ -1,0 +1,15 @@
+\section{mlpack versions in code}\label{verinfo_vercode}
+mlpack provides a couple of convenience macros and functions to get the version of mlpack. More information (and straightforward code) can be found in \doxyref{src/mlpack/core/util/version.\+hpp}{p.}{src_2mlpack_2core_2util_2version_8hpp}.
+
+The following three macros provide major, minor, and patch versions of mlpack (i.\+e. for mlpack-\/x.\+y.\+z, \textquotesingle{}x\textquotesingle{} is the major version, \textquotesingle{}y\textquotesingle{} is the minor version, and \textquotesingle{}z\textquotesingle{} is the patch version)\+:
+
+
+\begin{DoxyCode}
+MLPACK_VERSION_MAJOR
+MLPACK_VERSION_MINOR
+MLPACK_VERSION_PATCH
+\end{DoxyCode}
+
+
+In addition, the function {\ttfamily \doxyref{mlpack\+::util\+::\+Get\+Version()}{p.}{namespacemlpack_1_1util_a5463728499ca94746d779a6863df5c20}} returns the mlpack version as a string (for instance, \char`\"{}mlpack 1.\+0.\+8\char`\"{}).\section{mlpack executable versions}\label{verinfo_verex}
+Each mlpack executable supports the {\ttfamily --version} (or {\ttfamily -\/V} ) option, which will print the version of mlpack used. If the version is not an official release but instead from svn trunk, the version will be \char`\"{}mlpack trunk\char`\"{} (and may have a revision number appended to \char`\"{}trunk\char`\"{}). 

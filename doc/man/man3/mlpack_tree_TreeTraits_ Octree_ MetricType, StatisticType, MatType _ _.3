@@ -1,0 +1,100 @@
+.TH "mlpack::tree::TreeTraits< Octree< MetricType, StatisticType, MatType > >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::tree::TreeTraits< Octree< MetricType, StatisticType, MatType > > \- This is a specialization of the \fBTreeTraits\fP class to the \fBOctree\fP tree type\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "static const bool \fBBinaryTree\fP = false"
+.br
+.RI "\fIThis is not necessarily a binary tree\&. \fP"
+.ti -1c
+.RI "static const bool \fBFirstPointIsCentroid\fP = false"
+.br
+.RI "\fIThere is no guarantee that the first point in a node is its centroid\&. \fP"
+.ti -1c
+.RI "static const bool \fBHasDuplicatedPoints\fP = false"
+.br
+.RI "\fIPoints are not shared across nodes in the octree\&. \fP"
+.ti -1c
+.RI "static const bool \fBHasOverlappingChildren\fP = false"
+.br
+.RI "\fINo octree nodes will overlap\&. \fP"
+.ti -1c
+.RI "static const bool \fBHasSelfChildren\fP = false"
+.br
+.RI "\fIPoints are not contained at multiple levels of the octree\&. \fP"
+.ti -1c
+.RI "static const bool \fBRearrangesDataset\fP = true"
+.br
+.RI "\fIPoints are rearranged during building of the tree\&. \fP"
+.ti -1c
+.RI "static const bool \fBUniqueNumDescendants\fP = true"
+.br
+.RI "\fINumDescendants() represents the number of unique descendant points\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename MetricType, typename StatisticType, typename MatType>
+.br
+class mlpack::tree::TreeTraits< Octree< MetricType, StatisticType, MatType > >"
+This is a specialization of the \fBTreeTraits\fP class to the \fBOctree\fP tree type\&. 
+
+It defines characteristics of the octree, and is used to help write tree-independent (but still optimized) tree-based algorithms\&. See \fBmlpack/core/tree/tree_traits\&.hpp\fP for more information\&. 
+.PP
+Definition at line 29 of file traits\&.hpp\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename MetricType , typename StatisticType , typename MatType > const bool \fBmlpack::tree::TreeTraits\fP< \fBOctree\fP< MetricType, StatisticType, MatType > >::BinaryTree = false\fC [static]\fP"
+
+.PP
+This is not necessarily a binary tree\&. 
+.PP
+Definition at line 60 of file traits\&.hpp\&.
+.SS "template<typename MetricType , typename StatisticType , typename MatType > const bool \fBmlpack::tree::TreeTraits\fP< \fBOctree\fP< MetricType, StatisticType, MatType > >::FirstPointIsCentroid = false\fC [static]\fP"
+
+.PP
+There is no guarantee that the first point in a node is its centroid\&. 
+.PP
+Definition at line 45 of file traits\&.hpp\&.
+.SS "template<typename MetricType , typename StatisticType , typename MatType > const bool \fBmlpack::tree::TreeTraits\fP< \fBOctree\fP< MetricType, StatisticType, MatType > >::HasDuplicatedPoints = false\fC [static]\fP"
+
+.PP
+Points are not shared across nodes in the octree\&. 
+.PP
+Definition at line 40 of file traits\&.hpp\&.
+.SS "template<typename MetricType , typename StatisticType , typename MatType > const bool \fBmlpack::tree::TreeTraits\fP< \fBOctree\fP< MetricType, StatisticType, MatType > >::HasOverlappingChildren = false\fC [static]\fP"
+
+.PP
+No octree nodes will overlap\&. 
+.PP
+Definition at line 35 of file traits\&.hpp\&.
+.SS "template<typename MetricType , typename StatisticType , typename MatType > const bool \fBmlpack::tree::TreeTraits\fP< \fBOctree\fP< MetricType, StatisticType, MatType > >::HasSelfChildren = false\fC [static]\fP"
+
+.PP
+Points are not contained at multiple levels of the octree\&. 
+.PP
+Definition at line 50 of file traits\&.hpp\&.
+.SS "template<typename MetricType , typename StatisticType , typename MatType > const bool \fBmlpack::tree::TreeTraits\fP< \fBOctree\fP< MetricType, StatisticType, MatType > >::RearrangesDataset = true\fC [static]\fP"
+
+.PP
+Points are rearranged during building of the tree\&. 
+.PP
+Definition at line 55 of file traits\&.hpp\&.
+.SS "template<typename MetricType , typename StatisticType , typename MatType > const bool \fBmlpack::tree::TreeTraits\fP< \fBOctree\fP< MetricType, StatisticType, MatType > >::UniqueNumDescendants = true\fC [static]\fP"
+
+.PP
+NumDescendants() represents the number of unique descendant points\&. 
+.PP
+Definition at line 65 of file traits\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

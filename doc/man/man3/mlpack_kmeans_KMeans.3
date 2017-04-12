@@ -1,0 +1,331 @@
+.TH "mlpack::kmeans::KMeans< MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::kmeans::KMeans< MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType > \- This class implements K-Means clustering, using a variety of possible implementations of Lloyd's algorithm\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBKMeans\fP (const size_t \fBmaxIterations\fP=1000, const MetricType \fBmetric\fP=MetricType(), const InitialPartitionPolicy \fBpartitioner\fP=InitialPartitionPolicy(), const EmptyClusterPolicy \fBemptyClusterAction\fP=EmptyClusterPolicy())"
+.br
+.RI "\fICreate a K-Means object and (optionally) set the parameters which K-Means will be run with\&. \fP"
+.ti -1c
+.RI "void \fBCluster\fP (const MatType &data, const size_t clusters, arma::Row< size_t > &assignments, const bool initialGuess=false)"
+.br
+.RI "\fIPerform k-means clustering on the data, returning a list of cluster assignments\&. \fP"
+.ti -1c
+.RI "void \fBCluster\fP (const MatType &data, const size_t clusters, arma::mat &centroids, const bool initialGuess=false)"
+.br
+.RI "\fIPerform k-means clustering on the data, returning the centroids of each cluster in the centroids matrix\&. \fP"
+.ti -1c
+.RI "void \fBCluster\fP (const MatType &data, const size_t clusters, arma::Row< size_t > &assignments, arma::mat &centroids, const bool initialAssignmentGuess=false, const bool initialCentroidGuess=false)"
+.br
+.RI "\fIPerform k-means clustering on the data, returning a list of cluster assignments and also the centroids of each cluster\&. \fP"
+.ti -1c
+.RI "const EmptyClusterPolicy & \fBEmptyClusterAction\fP () const "
+.br
+.RI "\fIGet the empty cluster policy\&. \fP"
+.ti -1c
+.RI "EmptyClusterPolicy & \fBEmptyClusterAction\fP ()"
+.br
+.RI "\fIModify the empty cluster policy\&. \fP"
+.ti -1c
+.RI "size_t \fBMaxIterations\fP () const "
+.br
+.RI "\fIGet the maximum number of iterations\&. \fP"
+.ti -1c
+.RI "size_t & \fBMaxIterations\fP ()"
+.br
+.RI "\fISet the maximum number of iterations\&. \fP"
+.ti -1c
+.RI "const MetricType & \fBMetric\fP () const "
+.br
+.RI "\fIGet the distance metric\&. \fP"
+.ti -1c
+.RI "MetricType & \fBMetric\fP ()"
+.br
+.RI "\fIModify the distance metric\&. \fP"
+.ti -1c
+.RI "const InitialPartitionPolicy & \fBPartitioner\fP () const "
+.br
+.RI "\fIGet the initial partitioning policy\&. \fP"
+.ti -1c
+.RI "InitialPartitionPolicy & \fBPartitioner\fP ()"
+.br
+.RI "\fIModify the initial partitioning policy\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int version)"
+.br
+.RI "\fISerialize the k-means object\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "EmptyClusterPolicy \fBemptyClusterAction\fP"
+.br
+.RI "\fIInstantiated empty cluster policy\&. \fP"
+.ti -1c
+.RI "size_t \fBmaxIterations\fP"
+.br
+.RI "\fIMaximum number of iterations before giving up\&. \fP"
+.ti -1c
+.RI "MetricType \fBmetric\fP"
+.br
+.RI "\fIInstantiated distance metric\&. \fP"
+.ti -1c
+.RI "InitialPartitionPolicy \fBpartitioner\fP"
+.br
+.RI "\fIInstantiated initial partitioning policy\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename MetricType = metric::EuclideanDistance, typename InitialPartitionPolicy = SampleInitialization, typename EmptyClusterPolicy = MaxVarianceNewCluster, template< class, class > class LloydStepType = NaiveKMeans, typename MatType = arma::mat>
+.br
+class mlpack::kmeans::KMeans< MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType >"
+This class implements K-Means clustering, using a variety of possible implementations of Lloyd's algorithm\&. 
+
+Four template parameters can (optionally) be supplied: the distance metric to use, the policy for how to find the initial partition of the data, the actions to be taken when an empty cluster is encountered, and the implementation of a single Lloyd step to use\&.
+.PP
+A simple example of how to run K-Means clustering is shown below\&.
+.PP
+.PP
+.nf
+extern arma::mat data; // Dataset we want to run K-Means on\&.
+arma::Row<size_t> assignments; // Cluster assignments\&.
+arma::mat centroids; // Cluster centroids\&.
+
+KMeans<> k; // Default options\&.
+k\&.Cluster(data, 3, assignments, centroids); // 3 clusters\&.
+
+// Cluster using the Manhattan distance, 100 iterations maximum, saving only
+// the centroids\&.
+KMeans<metric::ManhattanDistance> k(100);
+k\&.Cluster(data, 6, centroids); // 6 clusters\&.
+.fi
+.PP
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIMetricType\fP The distance metric to use for this \fBKMeans\fP; see \fBmetric::LMetric\fP for an example\&. 
+.br
+\fIInitialPartitionPolicy\fP Initial partitioning policy; must implement a default constructor and either 'void Cluster(const arma::mat&, const size_t, arma::Row<size_t>&)' or 'void Cluster(const arma::mat&, const size_t, arma::mat&)'\&. 
+.br
+\fIEmptyClusterPolicy\fP Policy for what to do on an empty cluster; must implement a default constructor and 'void EmptyCluster(const arma::mat& data, const size_t emptyCluster, const arma::mat& oldCentroids, arma::mat& newCentroids, arma::Col<size_t>& counts, MetricType& metric, const size_t iteration)'\&. 
+.br
+\fILloydStepType\fP Implementation of single Lloyd step to use\&.
+.RE
+.PP
+\fBSee also:\fP
+.RS 4
+\fBRandomPartition\fP, \fBSampleInitialization\fP, \fBRefinedStart\fP, \fBAllowEmptyClusters\fP, \fBMaxVarianceNewCluster\fP, \fBNaiveKMeans\fP, \fBElkanKMeans\fP 
+.RE
+.PP
+
+.PP
+Definition at line 73 of file kmeans\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename MetricType = metric::EuclideanDistance, typename InitialPartitionPolicy = SampleInitialization, typename EmptyClusterPolicy = MaxVarianceNewCluster, template< class, class > class LloydStepType = NaiveKMeans, typename MatType = arma::mat> \fBmlpack::kmeans::KMeans\fP< MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType >::\fBKMeans\fP (const size_t maxIterations = \fC1000\fP, const MetricType metric = \fCMetricType()\fP, const InitialPartitionPolicy partitioner = \fCInitialPartitionPolicy()\fP, const EmptyClusterPolicy emptyClusterAction = \fCEmptyClusterPolicy()\fP)"
+
+.PP
+Create a K-Means object and (optionally) set the parameters which K-Means will be run with\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fImaxIterations\fP Maximum number of iterations allowed before giving up (0 is valid, but the algorithm may never terminate)\&. 
+.br
+\fImetric\fP Optional MetricType object; for when the metric has state it needs to store\&. 
+.br
+\fIpartitioner\fP Optional InitialPartitionPolicy object; for when a specially initialized partitioning policy is required\&. 
+.br
+\fIemptyClusterAction\fP Optional EmptyClusterPolicy object; for when a specially initialized empty cluster policy is required\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename MetricType = metric::EuclideanDistance, typename InitialPartitionPolicy = SampleInitialization, typename EmptyClusterPolicy = MaxVarianceNewCluster, template< class, class > class LloydStepType = NaiveKMeans, typename MatType = arma::mat> void \fBmlpack::kmeans::KMeans\fP< MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType >::Cluster (const MatType & data, const size_t clusters, arma::Row< size_t > & assignments, const bool initialGuess = \fCfalse\fP)"
+
+.PP
+Perform k-means clustering on the data, returning a list of cluster assignments\&. Optionally, the vector of assignments can be set to an initial guess of the cluster assignments; to do this, set initialGuess to true\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIMatType\fP Type of matrix (arma::mat or arma::sp_mat)\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Dataset to cluster\&. 
+.br
+\fIclusters\fP Number of clusters to compute\&. 
+.br
+\fIassignments\fP Vector to store cluster assignments in\&. 
+.br
+\fIinitialGuess\fP If true, then it is assumed that assignments has a list of initial cluster assignments\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType = metric::EuclideanDistance, typename InitialPartitionPolicy = SampleInitialization, typename EmptyClusterPolicy = MaxVarianceNewCluster, template< class, class > class LloydStepType = NaiveKMeans, typename MatType = arma::mat> void \fBmlpack::kmeans::KMeans\fP< MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType >::Cluster (const MatType & data, const size_t clusters, arma::mat & centroids, const bool initialGuess = \fCfalse\fP)"
+
+.PP
+Perform k-means clustering on the data, returning the centroids of each cluster in the centroids matrix\&. Optionally, the initial centroids can be specified by filling the centroids matrix with the initial centroids and specifying initialGuess = true\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIMatType\fP Type of matrix (arma::mat or arma::sp_mat)\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Dataset to cluster\&. 
+.br
+\fIclusters\fP Number of clusters to compute\&. 
+.br
+\fIcentroids\fP Matrix in which centroids are stored\&. 
+.br
+\fIinitialGuess\fP If true, then it is assumed that centroids contains the initial cluster centroids\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType = metric::EuclideanDistance, typename InitialPartitionPolicy = SampleInitialization, typename EmptyClusterPolicy = MaxVarianceNewCluster, template< class, class > class LloydStepType = NaiveKMeans, typename MatType = arma::mat> void \fBmlpack::kmeans::KMeans\fP< MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType >::Cluster (const MatType & data, const size_t clusters, arma::Row< size_t > & assignments, arma::mat & centroids, const bool initialAssignmentGuess = \fCfalse\fP, const bool initialCentroidGuess = \fCfalse\fP)"
+
+.PP
+Perform k-means clustering on the data, returning a list of cluster assignments and also the centroids of each cluster\&. Optionally, the vector of assignments can be set to an initial guess of the cluster assignments; to do this, set initialAssignmentGuess to true\&. Another way to set initial cluster guesses is to fill the centroids matrix with the centroid guesses, and then set initialCentroidGuess to true\&. initialAssignmentGuess supersedes initialCentroidGuess, so if both are set to true, the assignments vector is used\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIMatType\fP Type of matrix (arma::mat or arma::sp_mat)\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Dataset to cluster\&. 
+.br
+\fIclusters\fP Number of clusters to compute\&. 
+.br
+\fIassignments\fP Vector to store cluster assignments in\&. 
+.br
+\fIcentroids\fP Matrix in which centroids are stored\&. 
+.br
+\fIinitialAssignmentGuess\fP If true, then it is assumed that assignments has a list of initial cluster assignments\&. 
+.br
+\fIinitialCentroidGuess\fP If true, then it is assumed that centroids contains the initial centroids of each cluster\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType = metric::EuclideanDistance, typename InitialPartitionPolicy = SampleInitialization, typename EmptyClusterPolicy = MaxVarianceNewCluster, template< class, class > class LloydStepType = NaiveKMeans, typename MatType = arma::mat> const EmptyClusterPolicy& \fBmlpack::kmeans::KMeans\fP< MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType >::EmptyClusterAction () const\fC [inline]\fP"
+
+.PP
+Get the empty cluster policy\&. 
+.PP
+Definition at line 174 of file kmeans\&.hpp\&.
+.PP
+References mlpack::kmeans::KMeans< MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType >::emptyClusterAction\&.
+.SS "template<typename MetricType = metric::EuclideanDistance, typename InitialPartitionPolicy = SampleInitialization, typename EmptyClusterPolicy = MaxVarianceNewCluster, template< class, class > class LloydStepType = NaiveKMeans, typename MatType = arma::mat> EmptyClusterPolicy& \fBmlpack::kmeans::KMeans\fP< MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType >::EmptyClusterAction ()\fC [inline]\fP"
+
+.PP
+Modify the empty cluster policy\&. 
+.PP
+Definition at line 177 of file kmeans\&.hpp\&.
+.PP
+References mlpack::kmeans::KMeans< MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType >::emptyClusterAction, and mlpack::kmeans::KMeans< MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType >::Serialize()\&.
+.SS "template<typename MetricType = metric::EuclideanDistance, typename InitialPartitionPolicy = SampleInitialization, typename EmptyClusterPolicy = MaxVarianceNewCluster, template< class, class > class LloydStepType = NaiveKMeans, typename MatType = arma::mat> size_t \fBmlpack::kmeans::KMeans\fP< MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType >::MaxIterations () const\fC [inline]\fP"
+
+.PP
+Get the maximum number of iterations\&. 
+.PP
+Definition at line 159 of file kmeans\&.hpp\&.
+.PP
+References mlpack::kmeans::KMeans< MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType >::maxIterations\&.
+.SS "template<typename MetricType = metric::EuclideanDistance, typename InitialPartitionPolicy = SampleInitialization, typename EmptyClusterPolicy = MaxVarianceNewCluster, template< class, class > class LloydStepType = NaiveKMeans, typename MatType = arma::mat> size_t& \fBmlpack::kmeans::KMeans\fP< MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType >::MaxIterations ()\fC [inline]\fP"
+
+.PP
+Set the maximum number of iterations\&. 
+.PP
+Definition at line 161 of file kmeans\&.hpp\&.
+.PP
+References mlpack::kmeans::KMeans< MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType >::maxIterations\&.
+.SS "template<typename MetricType = metric::EuclideanDistance, typename InitialPartitionPolicy = SampleInitialization, typename EmptyClusterPolicy = MaxVarianceNewCluster, template< class, class > class LloydStepType = NaiveKMeans, typename MatType = arma::mat> const MetricType& \fBmlpack::kmeans::KMeans\fP< MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType >::Metric () const\fC [inline]\fP"
+
+.PP
+Get the distance metric\&. 
+.PP
+Definition at line 164 of file kmeans\&.hpp\&.
+.PP
+References mlpack::kmeans::KMeans< MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType >::metric\&.
+.SS "template<typename MetricType = metric::EuclideanDistance, typename InitialPartitionPolicy = SampleInitialization, typename EmptyClusterPolicy = MaxVarianceNewCluster, template< class, class > class LloydStepType = NaiveKMeans, typename MatType = arma::mat> MetricType& \fBmlpack::kmeans::KMeans\fP< MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType >::Metric ()\fC [inline]\fP"
+
+.PP
+Modify the distance metric\&. 
+.PP
+Definition at line 166 of file kmeans\&.hpp\&.
+.PP
+References mlpack::kmeans::KMeans< MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType >::metric\&.
+.SS "template<typename MetricType = metric::EuclideanDistance, typename InitialPartitionPolicy = SampleInitialization, typename EmptyClusterPolicy = MaxVarianceNewCluster, template< class, class > class LloydStepType = NaiveKMeans, typename MatType = arma::mat> const InitialPartitionPolicy& \fBmlpack::kmeans::KMeans\fP< MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType >::Partitioner () const\fC [inline]\fP"
+
+.PP
+Get the initial partitioning policy\&. 
+.PP
+Definition at line 169 of file kmeans\&.hpp\&.
+.PP
+References mlpack::kmeans::KMeans< MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType >::partitioner\&.
+.SS "template<typename MetricType = metric::EuclideanDistance, typename InitialPartitionPolicy = SampleInitialization, typename EmptyClusterPolicy = MaxVarianceNewCluster, template< class, class > class LloydStepType = NaiveKMeans, typename MatType = arma::mat> InitialPartitionPolicy& \fBmlpack::kmeans::KMeans\fP< MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType >::Partitioner ()\fC [inline]\fP"
+
+.PP
+Modify the initial partitioning policy\&. 
+.PP
+Definition at line 171 of file kmeans\&.hpp\&.
+.PP
+References mlpack::kmeans::KMeans< MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType >::partitioner\&.
+.SS "template<typename MetricType = metric::EuclideanDistance, typename InitialPartitionPolicy = SampleInitialization, typename EmptyClusterPolicy = MaxVarianceNewCluster, template< class, class > class LloydStepType = NaiveKMeans, typename MatType = arma::mat> template<typename Archive > void \fBmlpack::kmeans::KMeans\fP< MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType >::Serialize (Archive & ar, const unsigned int version)"
+
+.PP
+Serialize the k-means object\&. 
+.PP
+Referenced by mlpack::kmeans::KMeans< MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType >::EmptyClusterAction()\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename MetricType = metric::EuclideanDistance, typename InitialPartitionPolicy = SampleInitialization, typename EmptyClusterPolicy = MaxVarianceNewCluster, template< class, class > class LloydStepType = NaiveKMeans, typename MatType = arma::mat> EmptyClusterPolicy \fBmlpack::kmeans::KMeans\fP< MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType >::emptyClusterAction\fC [private]\fP"
+
+.PP
+Instantiated empty cluster policy\&. 
+.PP
+Definition at line 191 of file kmeans\&.hpp\&.
+.PP
+Referenced by mlpack::kmeans::KMeans< MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType >::EmptyClusterAction()\&.
+.SS "template<typename MetricType = metric::EuclideanDistance, typename InitialPartitionPolicy = SampleInitialization, typename EmptyClusterPolicy = MaxVarianceNewCluster, template< class, class > class LloydStepType = NaiveKMeans, typename MatType = arma::mat> size_t \fBmlpack::kmeans::KMeans\fP< MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType >::maxIterations\fC [private]\fP"
+
+.PP
+Maximum number of iterations before giving up\&. 
+.PP
+Definition at line 185 of file kmeans\&.hpp\&.
+.PP
+Referenced by mlpack::kmeans::KMeans< MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType >::MaxIterations()\&.
+.SS "template<typename MetricType = metric::EuclideanDistance, typename InitialPartitionPolicy = SampleInitialization, typename EmptyClusterPolicy = MaxVarianceNewCluster, template< class, class > class LloydStepType = NaiveKMeans, typename MatType = arma::mat> MetricType \fBmlpack::kmeans::KMeans\fP< MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType >::metric\fC [private]\fP"
+
+.PP
+Instantiated distance metric\&. 
+.PP
+Definition at line 187 of file kmeans\&.hpp\&.
+.PP
+Referenced by mlpack::kmeans::KMeans< MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType >::Metric()\&.
+.SS "template<typename MetricType = metric::EuclideanDistance, typename InitialPartitionPolicy = SampleInitialization, typename EmptyClusterPolicy = MaxVarianceNewCluster, template< class, class > class LloydStepType = NaiveKMeans, typename MatType = arma::mat> InitialPartitionPolicy \fBmlpack::kmeans::KMeans\fP< MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType >::partitioner\fC [private]\fP"
+
+.PP
+Instantiated initial partitioning policy\&. 
+.PP
+Definition at line 189 of file kmeans\&.hpp\&.
+.PP
+Referenced by mlpack::kmeans::KMeans< MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType >::Partitioner()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

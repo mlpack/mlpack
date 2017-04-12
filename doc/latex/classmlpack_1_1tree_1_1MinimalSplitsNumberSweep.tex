@@ -1,0 +1,94 @@
+\section{mlpack\+:\+:tree\+:\+:Minimal\+Splits\+Number\+Sweep$<$ Split\+Policy $>$ Class Template Reference}
+\label{classmlpack_1_1tree_1_1MinimalSplitsNumberSweep}\index{mlpack\+::tree\+::\+Minimal\+Splits\+Number\+Sweep$<$ Split\+Policy $>$@{mlpack\+::tree\+::\+Minimal\+Splits\+Number\+Sweep$<$ Split\+Policy $>$}}
+
+
+The \doxyref{Minimal\+Splits\+Number\+Sweep}{p.}{classmlpack_1_1tree_1_1MinimalSplitsNumberSweep} class finds a partition along which we can split a node according to the number of required splits of the node.  
+
+
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct {\bf Sweep\+Cost}
+\begin{DoxyCompactList}\small\item\em A struct that provides the type of the sweep cost. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static size\+\_\+t {\bf Sweep\+Leaf\+Node} (const size\+\_\+t axis, const Tree\+Type $\ast$node, typename Tree\+Type\+::\+Elem\+Type \&axis\+Cut)
+\begin{DoxyCompactList}\small\item\em Find a suitable partition of a leaf node along the provided axis. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static size\+\_\+t {\bf Sweep\+Non\+Leaf\+Node} (const size\+\_\+t axis, const Tree\+Type $\ast$node, typename Tree\+Type\+::\+Elem\+Type \&axis\+Cut)
+\begin{DoxyCompactList}\small\item\em Find a suitable partition of a non-\/leaf node along the provided axis. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Split\+Policy$>$\\*
+class mlpack\+::tree\+::\+Minimal\+Splits\+Number\+Sweep$<$ Split\+Policy $>$}
+
+The \doxyref{Minimal\+Splits\+Number\+Sweep}{p.}{classmlpack_1_1tree_1_1MinimalSplitsNumberSweep} class finds a partition along which we can split a node according to the number of required splits of the node. 
+
+The class finds a partition along a given axis. Moreover, the class evaluates the cost of each split. The cost is proportional to the number of required splits and the difference of sizes of resulting nodes. If the resulting nodes are overflowed the maximum cost is returned.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Split\+Policy} & The class that provides rules for inserting children of a node that is being split into two new subtrees. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 31 of file minimal\+\_\+splits\+\_\+number\+\_\+sweep.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::tree\+::\+Minimal\+Splits\+Number\+Sweep@{mlpack\+::tree\+::\+Minimal\+Splits\+Number\+Sweep}!Sweep\+Leaf\+Node@{Sweep\+Leaf\+Node}}
+\index{Sweep\+Leaf\+Node@{Sweep\+Leaf\+Node}!mlpack\+::tree\+::\+Minimal\+Splits\+Number\+Sweep@{mlpack\+::tree\+::\+Minimal\+Splits\+Number\+Sweep}}
+\subsubsection[{Sweep\+Leaf\+Node(const size\+\_\+t axis, const Tree\+Type $\ast$node, typename Tree\+Type\+::\+Elem\+Type \&axis\+Cut)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Split\+Policy $>$ template$<$typename Tree\+Type $>$ static size\+\_\+t {\bf mlpack\+::tree\+::\+Minimal\+Splits\+Number\+Sweep}$<$ Split\+Policy $>$\+::Sweep\+Leaf\+Node (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{axis, }
+\item[{const Tree\+Type $\ast$}]{node, }
+\item[{typename Tree\+Type\+::\+Elem\+Type \&}]{axis\+Cut}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1tree_1_1MinimalSplitsNumberSweep_a8653e9bcc6d870182fa5137e0faf4a1a}
+
+
+Find a suitable partition of a leaf node along the provided axis. 
+
+The method returns the cost of the split.
+
+
+\begin{DoxyParams}{Parameters}
+{\em axis} & The axis along which we are finding a partition. \\
+\hline
+{\em node} & The node that is being split. \\
+\hline
+{\em axis\+Cut} & The coordinate at which the node may be split. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::tree\+::\+Minimal\+Splits\+Number\+Sweep@{mlpack\+::tree\+::\+Minimal\+Splits\+Number\+Sweep}!Sweep\+Non\+Leaf\+Node@{Sweep\+Non\+Leaf\+Node}}
+\index{Sweep\+Non\+Leaf\+Node@{Sweep\+Non\+Leaf\+Node}!mlpack\+::tree\+::\+Minimal\+Splits\+Number\+Sweep@{mlpack\+::tree\+::\+Minimal\+Splits\+Number\+Sweep}}
+\subsubsection[{Sweep\+Non\+Leaf\+Node(const size\+\_\+t axis, const Tree\+Type $\ast$node, typename Tree\+Type\+::\+Elem\+Type \&axis\+Cut)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Split\+Policy $>$ template$<$typename Tree\+Type $>$ static size\+\_\+t {\bf mlpack\+::tree\+::\+Minimal\+Splits\+Number\+Sweep}$<$ Split\+Policy $>$\+::Sweep\+Non\+Leaf\+Node (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{axis, }
+\item[{const Tree\+Type $\ast$}]{node, }
+\item[{typename Tree\+Type\+::\+Elem\+Type \&}]{axis\+Cut}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1tree_1_1MinimalSplitsNumberSweep_a1f27ec0cc93af8eba84e15d14ab72270}
+
+
+Find a suitable partition of a non-\/leaf node along the provided axis. 
+
+The method returns the cost of the split.
+
+
+\begin{DoxyParams}{Parameters}
+{\em axis} & The axis along which we are finding a partition. \\
+\hline
+{\em node} & The node that is being split. \\
+\hline
+{\em axis\+Cut} & The coordinate at which the node may be split. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/tree/rectangle\+\_\+tree/{\bf minimal\+\_\+splits\+\_\+number\+\_\+sweep.\+hpp}\end{DoxyCompactItemize}

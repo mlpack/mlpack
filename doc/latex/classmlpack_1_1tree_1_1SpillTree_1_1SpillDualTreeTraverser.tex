@@ -1,0 +1,292 @@
+\section{mlpack\+:\+:tree\+:\+:Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+:\+:Spill\+Dual\+Tree\+Traverser$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1tree_1_1SpillTree_1_1SpillDualTreeTraverser}\index{mlpack\+::tree\+::\+Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Spill\+Dual\+Tree\+Traverser$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$@{mlpack\+::tree\+::\+Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Spill\+Dual\+Tree\+Traverser$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$}}
+
+
+A generic dual-\/tree traverser for hybrid spill trees; see \doxyref{spill\+\_\+dual\+\_\+tree\+\_\+traverser.\+hpp}{p.}{spill__dual__tree__traverser_8hpp} for implementation.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Spill\+Dual\+Tree\+Traverser} (Rule\+Type \&{\bf rule})
+\begin{DoxyCompactList}\small\item\em Instantiate the dual-\/tree traverser with the given rule set. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Num\+Base\+Cases} () const 
+\begin{DoxyCompactList}\small\item\em Get the number of times a base case was calculated. \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Num\+Base\+Cases} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of times a base case was calculated. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Num\+Prunes} () const 
+\begin{DoxyCompactList}\small\item\em Get the number of prunes. \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Num\+Prunes} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of prunes. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Num\+Scores} () const 
+\begin{DoxyCompactList}\small\item\em Get the number of times a node combination was scored. \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Num\+Scores} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of times a node combination was scored. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Num\+Visited} () const 
+\begin{DoxyCompactList}\small\item\em Get the number of visited combinations. \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Num\+Visited} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of visited combinations. \end{DoxyCompactList}\item 
+void {\bf Traverse} ({\bf Spill\+Tree} \&query\+Node, {\bf Spill\+Tree} \&reference\+Node)
+\begin{DoxyCompactList}\small\item\em Traverse the two trees. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+size\+\_\+t {\bf num\+Base\+Cases}
+\begin{DoxyCompactList}\small\item\em The number of times a base case was calculated. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf num\+Prunes}
+\begin{DoxyCompactList}\small\item\em The number of prunes. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf num\+Scores}
+\begin{DoxyCompactList}\small\item\em The number of times a node combination was scored. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf num\+Visited}
+\begin{DoxyCompactList}\small\item\em The number of node combinations that have been visited during traversal. \end{DoxyCompactList}\item 
+Rule\+Type \& {\bf rule}
+\begin{DoxyCompactList}\small\item\em Reference to the rules with which the trees will be traversed. \end{DoxyCompactList}\item 
+Rule\+Type\+::\+Traversal\+Info\+Type {\bf traversal\+Info}
+\begin{DoxyCompactList}\small\item\em Traversal information, held in the class so that it isn\textquotesingle{}t continually being reallocated. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Metric\+Type, typename Statistic\+Type = Empty\+Statistic, typename Mat\+Type = arma\+::mat, template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type = Axis\+Orthogonal\+Hyperplane, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type = Midpoint\+Space\+Split$>$\\*
+template$<$typename Metric\+Type, typename Statistic\+Type, typename Mat\+Type, template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type$>$\\*
+class mlpack\+::tree\+::\+Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Spill\+Dual\+Tree\+Traverser$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$}
+
+A generic dual-\/tree traverser for hybrid spill trees; see \doxyref{spill\+\_\+dual\+\_\+tree\+\_\+traverser.\+hpp}{p.}{spill__dual__tree__traverser_8hpp} for implementation. 
+
+The Defeatist template parameter determines if the traverser must do defeatist search on overlapping nodes. 
+
+Definition at line 35 of file spill\+\_\+dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser}!Spill\+Dual\+Tree\+Traverser@{Spill\+Dual\+Tree\+Traverser}}
+\index{Spill\+Dual\+Tree\+Traverser@{Spill\+Dual\+Tree\+Traverser}!mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser}}
+\subsubsection[{Spill\+Dual\+Tree\+Traverser(\+Rule\+Type \&rule)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat, template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type = Axis\+Orthogonal\+Hyperplane, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type = Midpoint\+Space\+Split$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type$>$ {\bf mlpack\+::tree\+::\+Spill\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::{\bf Spill\+Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::{\bf Spill\+Dual\+Tree\+Traverser} (
+\begin{DoxyParamCaption}
+\item[{Rule\+Type \&}]{rule}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1tree_1_1SpillTree_1_1SpillDualTreeTraverser_af308a1aa6eabf6670ea9b604a7890b4d}
+
+
+Instantiate the dual-\/tree traverser with the given rule set. 
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser}!Num\+Base\+Cases@{Num\+Base\+Cases}}
+\index{Num\+Base\+Cases@{Num\+Base\+Cases}!mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser}}
+\subsubsection[{Num\+Base\+Cases() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat, template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type = Axis\+Orthogonal\+Hyperplane, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type = Midpoint\+Space\+Split$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type$>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Spill\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::{\bf Spill\+Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::Num\+Base\+Cases (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1SpillTree_1_1SpillDualTreeTraverser_aba3d79c80e5d6b1f7a74223bf1e148d9}
+
+
+Get the number of times a base case was calculated. 
+
+
+
+Definition at line 70 of file spill\+\_\+dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser}!Num\+Base\+Cases@{Num\+Base\+Cases}}
+\index{Num\+Base\+Cases@{Num\+Base\+Cases}!mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser}}
+\subsubsection[{Num\+Base\+Cases()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat, template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type = Axis\+Orthogonal\+Hyperplane, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type = Midpoint\+Space\+Split$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type$>$ size\+\_\+t\& {\bf mlpack\+::tree\+::\+Spill\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::{\bf Spill\+Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::Num\+Base\+Cases (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1SpillTree_1_1SpillDualTreeTraverser_a2bc202cd825211b43a57daf1c88b8800}
+
+
+Modify the number of times a base case was calculated. 
+
+
+
+Definition at line 72 of file spill\+\_\+dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser}!Num\+Prunes@{Num\+Prunes}}
+\index{Num\+Prunes@{Num\+Prunes}!mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser}}
+\subsubsection[{Num\+Prunes() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat, template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type = Axis\+Orthogonal\+Hyperplane, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type = Midpoint\+Space\+Split$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type$>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Spill\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::{\bf Spill\+Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::Num\+Prunes (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1SpillTree_1_1SpillDualTreeTraverser_ab22018a573e898da7eb5b053b23f9f03}
+
+
+Get the number of prunes. 
+
+
+
+Definition at line 55 of file spill\+\_\+dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser}!Num\+Prunes@{Num\+Prunes}}
+\index{Num\+Prunes@{Num\+Prunes}!mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser}}
+\subsubsection[{Num\+Prunes()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat, template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type = Axis\+Orthogonal\+Hyperplane, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type = Midpoint\+Space\+Split$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type$>$ size\+\_\+t\& {\bf mlpack\+::tree\+::\+Spill\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::{\bf Spill\+Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::Num\+Prunes (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1SpillTree_1_1SpillDualTreeTraverser_aa44b35dfcbf14910aefe2ecda2f44bae}
+
+
+Modify the number of prunes. 
+
+
+
+Definition at line 57 of file spill\+\_\+dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser}!Num\+Scores@{Num\+Scores}}
+\index{Num\+Scores@{Num\+Scores}!mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser}}
+\subsubsection[{Num\+Scores() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat, template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type = Axis\+Orthogonal\+Hyperplane, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type = Midpoint\+Space\+Split$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type$>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Spill\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::{\bf Spill\+Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::Num\+Scores (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1SpillTree_1_1SpillDualTreeTraverser_aaa80856ce240fb34a57380c2cfb4ef9f}
+
+
+Get the number of times a node combination was scored. 
+
+
+
+Definition at line 65 of file spill\+\_\+dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser}!Num\+Scores@{Num\+Scores}}
+\index{Num\+Scores@{Num\+Scores}!mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser}}
+\subsubsection[{Num\+Scores()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat, template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type = Axis\+Orthogonal\+Hyperplane, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type = Midpoint\+Space\+Split$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type$>$ size\+\_\+t\& {\bf mlpack\+::tree\+::\+Spill\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::{\bf Spill\+Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::Num\+Scores (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1SpillTree_1_1SpillDualTreeTraverser_a3babe28cb51ce3a9b4b0a41e5b03d1c7}
+
+
+Modify the number of times a node combination was scored. 
+
+
+
+Definition at line 67 of file spill\+\_\+dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser}!Num\+Visited@{Num\+Visited}}
+\index{Num\+Visited@{Num\+Visited}!mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser}}
+\subsubsection[{Num\+Visited() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat, template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type = Axis\+Orthogonal\+Hyperplane, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type = Midpoint\+Space\+Split$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type$>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Spill\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::{\bf Spill\+Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::Num\+Visited (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1SpillTree_1_1SpillDualTreeTraverser_a37e3ebdebf9c11f49f39ddb100a32f15}
+
+
+Get the number of visited combinations. 
+
+
+
+Definition at line 60 of file spill\+\_\+dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser}!Num\+Visited@{Num\+Visited}}
+\index{Num\+Visited@{Num\+Visited}!mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser}}
+\subsubsection[{Num\+Visited()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat, template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type = Axis\+Orthogonal\+Hyperplane, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type = Midpoint\+Space\+Split$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type$>$ size\+\_\+t\& {\bf mlpack\+::tree\+::\+Spill\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::{\bf Spill\+Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::Num\+Visited (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1SpillTree_1_1SpillDualTreeTraverser_a500356a3096e30706e998261d9012dad}
+
+
+Modify the number of visited combinations. 
+
+
+
+Definition at line 62 of file spill\+\_\+dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser}!Traverse@{Traverse}}
+\index{Traverse@{Traverse}!mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser}}
+\subsubsection[{Traverse(\+Spill\+Tree \&query\+Node, Spill\+Tree \&reference\+Node)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat, template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type = Axis\+Orthogonal\+Hyperplane, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type = Midpoint\+Space\+Split$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type$>$ void {\bf mlpack\+::tree\+::\+Spill\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::{\bf Spill\+Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::Traverse (
+\begin{DoxyParamCaption}
+\item[{{\bf Spill\+Tree} \&}]{query\+Node, }
+\item[{{\bf Spill\+Tree} \&}]{reference\+Node}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1tree_1_1SpillTree_1_1SpillDualTreeTraverser_ab520328c94d898cecbaeffd3667d63f9}
+
+
+Traverse the two trees. 
+
+This does not reset the number of prunes.
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Node} & The query node to be traversed. \\
+\hline
+{\em reference\+Node} & The reference node to be traversed. \\
+\hline
+{\em score} & The score of the current node combination. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser}!num\+Base\+Cases@{num\+Base\+Cases}}
+\index{num\+Base\+Cases@{num\+Base\+Cases}!mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser}}
+\subsubsection[{num\+Base\+Cases}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat, template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type = Axis\+Orthogonal\+Hyperplane, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type = Midpoint\+Space\+Split$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type$>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Spill\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::{\bf Spill\+Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::num\+Base\+Cases\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1SpillTree_1_1SpillDualTreeTraverser_a277236ddd6e196939fda123e68f75e79}
+
+
+The number of times a base case was calculated. 
+
+
+
+Definition at line 88 of file spill\+\_\+dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser}!num\+Prunes@{num\+Prunes}}
+\index{num\+Prunes@{num\+Prunes}!mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser}}
+\subsubsection[{num\+Prunes}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat, template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type = Axis\+Orthogonal\+Hyperplane, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type = Midpoint\+Space\+Split$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type$>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Spill\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::{\bf Spill\+Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::num\+Prunes\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1SpillTree_1_1SpillDualTreeTraverser_a43da159c41a9a60cbf743572af52d09d}
+
+
+The number of prunes. 
+
+
+
+Definition at line 79 of file spill\+\_\+dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser}!num\+Scores@{num\+Scores}}
+\index{num\+Scores@{num\+Scores}!mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser}}
+\subsubsection[{num\+Scores}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat, template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type = Axis\+Orthogonal\+Hyperplane, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type = Midpoint\+Space\+Split$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type$>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Spill\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::{\bf Spill\+Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::num\+Scores\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1SpillTree_1_1SpillDualTreeTraverser_aa1aa49f1a1150e881d6dcbd6692248af}
+
+
+The number of times a node combination was scored. 
+
+
+
+Definition at line 85 of file spill\+\_\+dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser}!num\+Visited@{num\+Visited}}
+\index{num\+Visited@{num\+Visited}!mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser}}
+\subsubsection[{num\+Visited}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat, template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type = Axis\+Orthogonal\+Hyperplane, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type = Midpoint\+Space\+Split$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type$>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Spill\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::{\bf Spill\+Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::num\+Visited\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1SpillTree_1_1SpillDualTreeTraverser_aa048ffe2334983b67db528349ba22099}
+
+
+The number of node combinations that have been visited during traversal. 
+
+
+
+Definition at line 82 of file spill\+\_\+dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser}!rule@{rule}}
+\index{rule@{rule}!mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser}}
+\subsubsection[{rule}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat, template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type = Axis\+Orthogonal\+Hyperplane, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type = Midpoint\+Space\+Split$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type$>$ Rule\+Type\& {\bf mlpack\+::tree\+::\+Spill\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::{\bf Spill\+Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::rule\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1SpillTree_1_1SpillDualTreeTraverser_ae35d88b3f7efacedd0863464e12a8f21}
+
+
+Reference to the rules with which the trees will be traversed. 
+
+
+
+Definition at line 76 of file spill\+\_\+dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser}!traversal\+Info@{traversal\+Info}}
+\index{traversal\+Info@{traversal\+Info}!mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Spill\+Tree\+::\+Spill\+Dual\+Tree\+Traverser}}
+\subsubsection[{traversal\+Info}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat, template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type = Axis\+Orthogonal\+Hyperplane, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type = Midpoint\+Space\+Split$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type$>$ Rule\+Type\+::\+Traversal\+Info\+Type {\bf mlpack\+::tree\+::\+Spill\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::{\bf Spill\+Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::traversal\+Info\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1SpillTree_1_1SpillDualTreeTraverser_ab2ebec2ebda3dbe34053808da05cd1e9}
+
+
+Traversal information, held in the class so that it isn\textquotesingle{}t continually being reallocated. 
+
+
+
+Definition at line 92 of file spill\+\_\+dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/tree/spill\+\_\+tree/{\bf spill\+\_\+dual\+\_\+tree\+\_\+traverser.\+hpp}\end{DoxyCompactItemize}

@@ -1,0 +1,241 @@
+\section{mlpack\+:\+:kernel\+:\+:Spherical\+Kernel Class Reference}
+\label{classmlpack_1_1kernel_1_1SphericalKernel}\index{mlpack\+::kernel\+::\+Spherical\+Kernel@{mlpack\+::kernel\+::\+Spherical\+Kernel}}
+
+
+The spherical kernel, which is 1 when the distance between the two argument points is less than or equal to the bandwidth, or 0 otherwise.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Spherical\+Kernel} (const double {\bf bandwidth}=1.\+0)
+\begin{DoxyCompactList}\small\item\em Construct the \doxyref{Spherical\+Kernel}{p.}{classmlpack_1_1kernel_1_1SphericalKernel} with the given bandwidth. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+TypeA , typename Vec\+TypeB $>$ }\\double {\bf Convolution\+Integral} (const Vec\+TypeA \&a, const Vec\+TypeB \&b) const 
+\begin{DoxyCompactList}\small\item\em Obtains the convolution integral [integral K($\vert$$\vert$x-\/a$\vert$$\vert$)K($\vert$$\vert$b-\/x$\vert$$\vert$)dx] for the two vectors. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+TypeA , typename Vec\+TypeB $>$ }\\double {\bf Evaluate} (const Vec\+TypeA \&a, const Vec\+TypeB \&b) const 
+\begin{DoxyCompactList}\small\item\em Evaluate the spherical kernel with the given two vectors. \end{DoxyCompactList}\item 
+double {\bf Evaluate} (const double t) const 
+\begin{DoxyCompactList}\small\item\em Evaluate the kernel when only a distance is given, not two points. \end{DoxyCompactList}\item 
+double {\bf Gradient} (double t)
+\item 
+double {\bf Normalizer} (size\+\_\+t dimension) const 
+\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&ar, const unsigned int)
+\begin{DoxyCompactList}\small\item\em Serialize the object. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+double {\bf bandwidth}
+\item 
+double {\bf bandwidth\+Squared}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The spherical kernel, which is 1 when the distance between the two argument points is less than or equal to the bandwidth, or 0 otherwise. 
+
+Definition at line 23 of file spherical\+\_\+kernel.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::kernel\+::\+Spherical\+Kernel@{mlpack\+::kernel\+::\+Spherical\+Kernel}!Spherical\+Kernel@{Spherical\+Kernel}}
+\index{Spherical\+Kernel@{Spherical\+Kernel}!mlpack\+::kernel\+::\+Spherical\+Kernel@{mlpack\+::kernel\+::\+Spherical\+Kernel}}
+\subsubsection[{Spherical\+Kernel(const double bandwidth=1.\+0)}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::kernel\+::\+Spherical\+Kernel\+::\+Spherical\+Kernel (
+\begin{DoxyParamCaption}
+\item[{const double}]{bandwidth = {\ttfamily 1.0}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1kernel_1_1SphericalKernel_a0cbbaa98addc71cbd95c71c17fab63ca}
+
+
+Construct the \doxyref{Spherical\+Kernel}{p.}{classmlpack_1_1kernel_1_1SphericalKernel} with the given bandwidth. 
+
+
+
+Definition at line 29 of file spherical\+\_\+kernel.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::kernel\+::\+Spherical\+Kernel@{mlpack\+::kernel\+::\+Spherical\+Kernel}!Convolution\+Integral@{Convolution\+Integral}}
+\index{Convolution\+Integral@{Convolution\+Integral}!mlpack\+::kernel\+::\+Spherical\+Kernel@{mlpack\+::kernel\+::\+Spherical\+Kernel}}
+\subsubsection[{Convolution\+Integral(const Vec\+Type\+A \&a, const Vec\+Type\+B \&b) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Vec\+TypeA , typename Vec\+TypeB $>$ double mlpack\+::kernel\+::\+Spherical\+Kernel\+::\+Convolution\+Integral (
+\begin{DoxyParamCaption}
+\item[{const Vec\+TypeA \&}]{a, }
+\item[{const Vec\+TypeB \&}]{b}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1kernel_1_1SphericalKernel_a16cd7229cc692d8eb2ed663dd3a3bdaf}
+
+
+Obtains the convolution integral [integral K($\vert$$\vert$x-\/a$\vert$$\vert$)K($\vert$$\vert$b-\/x$\vert$$\vert$)dx] for the two vectors. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Vec\+TypeA} & Type of first vector (arma\+::vec, arma\+::sp\+\_\+vec should be expected). \\
+\hline
+{\em Vec\+TypeB} & Type of second vector. \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em a} & First vector. \\
+\hline
+{\em b} & Second vector. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the convolution integral value. 
+\end{DoxyReturn}
+
+
+Definition at line 62 of file spherical\+\_\+kernel.\+hpp.
+
+
+
+References bandwidth, mlpack\+::metric\+::\+L\+Metric$<$ T\+Power, T\+Take\+Root $>$\+::\+Evaluate(), mlpack\+::\+Log\+::\+Fatal, and Normalizer().
+
+\index{mlpack\+::kernel\+::\+Spherical\+Kernel@{mlpack\+::kernel\+::\+Spherical\+Kernel}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!mlpack\+::kernel\+::\+Spherical\+Kernel@{mlpack\+::kernel\+::\+Spherical\+Kernel}}
+\subsubsection[{Evaluate(const Vec\+Type\+A \&a, const Vec\+Type\+B \&b) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Vec\+TypeA , typename Vec\+TypeB $>$ double mlpack\+::kernel\+::\+Spherical\+Kernel\+::\+Evaluate (
+\begin{DoxyParamCaption}
+\item[{const Vec\+TypeA \&}]{a, }
+\item[{const Vec\+TypeB \&}]{b}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1kernel_1_1SphericalKernel_abc3cd8c42a86d60eea3a55501a6e83f1}
+
+
+Evaluate the spherical kernel with the given two vectors. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Vec\+TypeA} & Type of first vector. \\
+\hline
+{\em Vec\+TypeB} & Type of second vector. \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em a} & First vector. \\
+\hline
+{\em b} & Second vector. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The kernel evaluation between the two vectors. 
+\end{DoxyReturn}
+
+
+Definition at line 44 of file spherical\+\_\+kernel.\+hpp.
+
+
+
+References bandwidth\+Squared, and mlpack\+::metric\+::\+L\+Metric$<$ T\+Power, T\+Take\+Root $>$\+::\+Evaluate().
+
+\index{mlpack\+::kernel\+::\+Spherical\+Kernel@{mlpack\+::kernel\+::\+Spherical\+Kernel}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!mlpack\+::kernel\+::\+Spherical\+Kernel@{mlpack\+::kernel\+::\+Spherical\+Kernel}}
+\subsubsection[{Evaluate(const double t) const }]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::kernel\+::\+Spherical\+Kernel\+::\+Evaluate (
+\begin{DoxyParamCaption}
+\item[{const double}]{t}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1kernel_1_1SphericalKernel_ae4d6d5d792ed784b4a3e522ee5749342}
+
+
+Evaluate the kernel when only a distance is given, not two points. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t} & Argument to kernel. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 99 of file spherical\+\_\+kernel.\+hpp.
+
+
+
+References bandwidth.
+
+\index{mlpack\+::kernel\+::\+Spherical\+Kernel@{mlpack\+::kernel\+::\+Spherical\+Kernel}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::kernel\+::\+Spherical\+Kernel@{mlpack\+::kernel\+::\+Spherical\+Kernel}}
+\subsubsection[{Gradient(double t)}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::kernel\+::\+Spherical\+Kernel\+::\+Gradient (
+\begin{DoxyParamCaption}
+\item[{double}]{t}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1kernel_1_1SphericalKernel_ae06037e9b5dbe050c652c2cea5d135c7}
+
+
+Definition at line 103 of file spherical\+\_\+kernel.\+hpp.
+
+
+
+References bandwidth.
+
+\index{mlpack\+::kernel\+::\+Spherical\+Kernel@{mlpack\+::kernel\+::\+Spherical\+Kernel}!Normalizer@{Normalizer}}
+\index{Normalizer@{Normalizer}!mlpack\+::kernel\+::\+Spherical\+Kernel@{mlpack\+::kernel\+::\+Spherical\+Kernel}}
+\subsubsection[{Normalizer(size\+\_\+t dimension) const }]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::kernel\+::\+Spherical\+Kernel\+::\+Normalizer (
+\begin{DoxyParamCaption}
+\item[{size\+\_\+t}]{dimension}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1kernel_1_1SphericalKernel_a93a055bf91856de641f9553e2022ec28}
+
+
+Definition at line 88 of file spherical\+\_\+kernel.\+hpp.
+
+
+
+References bandwidth, and M\+\_\+\+PI.
+
+
+
+Referenced by Convolution\+Integral().
+
+\index{mlpack\+::kernel\+::\+Spherical\+Kernel@{mlpack\+::kernel\+::\+Spherical\+Kernel}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::kernel\+::\+Spherical\+Kernel@{mlpack\+::kernel\+::\+Spherical\+Kernel}}
+\subsubsection[{Serialize(\+Archive \&ar, const unsigned int)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Archive $>$ void mlpack\+::kernel\+::\+Spherical\+Kernel\+::\+Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const unsigned}]{int}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1kernel_1_1SphericalKernel_a44cf7556038ff95d29093cd95a529f9f}
+
+
+Serialize the object. 
+
+
+
+Definition at line 109 of file spherical\+\_\+kernel.\+hpp.
+
+
+
+References bandwidth, bandwidth\+Squared, and mlpack\+::data\+::\+Create\+N\+V\+P().
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::kernel\+::\+Spherical\+Kernel@{mlpack\+::kernel\+::\+Spherical\+Kernel}!bandwidth@{bandwidth}}
+\index{bandwidth@{bandwidth}!mlpack\+::kernel\+::\+Spherical\+Kernel@{mlpack\+::kernel\+::\+Spherical\+Kernel}}
+\subsubsection[{bandwidth}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::kernel\+::\+Spherical\+Kernel\+::bandwidth\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kernel_1_1SphericalKernel_aeeeceaa0935ccbfd7e3d18931ddd4c14}
+
+
+Definition at line 116 of file spherical\+\_\+kernel.\+hpp.
+
+
+
+Referenced by Convolution\+Integral(), Evaluate(), Gradient(), Normalizer(), and Serialize().
+
+\index{mlpack\+::kernel\+::\+Spherical\+Kernel@{mlpack\+::kernel\+::\+Spherical\+Kernel}!bandwidth\+Squared@{bandwidth\+Squared}}
+\index{bandwidth\+Squared@{bandwidth\+Squared}!mlpack\+::kernel\+::\+Spherical\+Kernel@{mlpack\+::kernel\+::\+Spherical\+Kernel}}
+\subsubsection[{bandwidth\+Squared}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::kernel\+::\+Spherical\+Kernel\+::bandwidth\+Squared\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kernel_1_1SphericalKernel_a4a779b0e23b61bb4e18c1addf4f57579}
+
+
+Definition at line 117 of file spherical\+\_\+kernel.\+hpp.
+
+
+
+Referenced by Evaluate(), and Serialize().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/kernels/{\bf spherical\+\_\+kernel.\+hpp}\end{DoxyCompactItemize}

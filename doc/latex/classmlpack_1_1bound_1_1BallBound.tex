@@ -1,0 +1,651 @@
+\section{mlpack\+:\+:bound\+:\+:Ball\+Bound$<$ Metric\+Type, Vec\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1bound_1_1BallBound}\index{mlpack\+::bound\+::\+Ball\+Bound$<$ Metric\+Type, Vec\+Type $>$@{mlpack\+::bound\+::\+Ball\+Bound$<$ Metric\+Type, Vec\+Type $>$}}
+
+
+Ball bound encloses a set of points at a specific distance (radius) from a specific point (center).  
+
+
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef Vec\+Type\+::elem\+\_\+type {\bf Elem\+Type}
+\begin{DoxyCompactList}\small\item\em The underlying data type. \end{DoxyCompactList}\item 
+typedef Vec\+Type {\bf Vec}
+\begin{DoxyCompactList}\small\item\em A public version of the vector type. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Ball\+Bound} ()
+\begin{DoxyCompactList}\small\item\em Empty Constructor. \end{DoxyCompactList}\item 
+{\bf Ball\+Bound} (const size\+\_\+t dimension)
+\begin{DoxyCompactList}\small\item\em Create the ball bound with the specified dimensionality. \end{DoxyCompactList}\item 
+{\bf Ball\+Bound} (const {\bf Elem\+Type} {\bf radius}, const Vec\+Type \&{\bf center})
+\begin{DoxyCompactList}\small\item\em Create the ball bound with the specified radius and center. \end{DoxyCompactList}\item 
+{\bf Ball\+Bound} (const {\bf Ball\+Bound} \&other)
+\begin{DoxyCompactList}\small\item\em Copy constructor. To prevent memory leaks. \end{DoxyCompactList}\item 
+{\bf Ball\+Bound} ({\bf Ball\+Bound} \&\&other)
+\begin{DoxyCompactList}\small\item\em Move constructor\+: take possession of another bound. \end{DoxyCompactList}\item 
+{\bf $\sim$\+Ball\+Bound} ()
+\begin{DoxyCompactList}\small\item\em Destructor to release allocated memory. \end{DoxyCompactList}\item 
+const Vec\+Type \& {\bf Center} () const 
+\begin{DoxyCompactList}\small\item\em Get the center point of the ball. \end{DoxyCompactList}\item 
+Vec\+Type \& {\bf Center} ()
+\begin{DoxyCompactList}\small\item\em Modify the center point of the ball. \end{DoxyCompactList}\item 
+void {\bf Center} (Vec\+Type \&{\bf center}) const 
+\begin{DoxyCompactList}\small\item\em Place the center of \doxyref{Ball\+Bound}{p.}{classmlpack_1_1bound_1_1BallBound} into the given vector. \end{DoxyCompactList}\item 
+bool {\bf Contains} (const Vec\+Type \&point) const 
+\begin{DoxyCompactList}\small\item\em Determines if a point is within this bound. \end{DoxyCompactList}\item 
+{\bf Elem\+Type} {\bf Diameter} () const 
+\begin{DoxyCompactList}\small\item\em Returns the diameter of the ballbound. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Dim} () const 
+\begin{DoxyCompactList}\small\item\em Get the dimensionality of the ball. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Other\+Vec\+Type $>$ }\\{\bf Elem\+Type} {\bf Max\+Distance} (const Other\+Vec\+Type \&point, typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ {\bf Is\+Vector}$<$ Other\+Vec\+Type $>$\+::value $>$ $\ast$=0) const 
+\begin{DoxyCompactList}\small\item\em Computes maximum distance. \end{DoxyCompactList}\item 
+{\bf Elem\+Type} {\bf Max\+Distance} (const {\bf Ball\+Bound} \&other) const 
+\begin{DoxyCompactList}\small\item\em Computes maximum distance. \end{DoxyCompactList}\item 
+const Metric\+Type \& {\bf Metric} () const 
+\begin{DoxyCompactList}\small\item\em Returns the distance metric used in this bound. \end{DoxyCompactList}\item 
+Metric\+Type \& {\bf Metric} ()
+\begin{DoxyCompactList}\small\item\em Modify the distance metric used in this bound. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Other\+Vec\+Type $>$ }\\{\bf Elem\+Type} {\bf Min\+Distance} (const Other\+Vec\+Type \&point, typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ {\bf Is\+Vector}$<$ Other\+Vec\+Type $>$\+::value $>$ $\ast$=0) const 
+\begin{DoxyCompactList}\small\item\em Calculates minimum bound-\/to-\/point squared distance. \end{DoxyCompactList}\item 
+{\bf Elem\+Type} {\bf Min\+Distance} (const {\bf Ball\+Bound} \&other) const 
+\begin{DoxyCompactList}\small\item\em Calculates minimum bound-\/to-\/bound squared distance. \end{DoxyCompactList}\item 
+{\bf Elem\+Type} {\bf Min\+Width} () const 
+\begin{DoxyCompactList}\small\item\em Get the minimum width of the bound (this is same as the diameter). \end{DoxyCompactList}\item 
+{\bf Ball\+Bound} \& {\bf operator=} (const {\bf Ball\+Bound} \&other)
+\begin{DoxyCompactList}\small\item\em For the same reason as the copy constructor\+: to prevent memory leaks. \end{DoxyCompactList}\item 
+{\bf math\+::\+Range\+Type}$<$ {\bf Elem\+Type} $>$ {\bf operator[$\,$]} (const size\+\_\+t i) const 
+\begin{DoxyCompactList}\small\item\em Get the range in a certain dimension. \end{DoxyCompactList}\item 
+const {\bf Ball\+Bound} \& {\bf operator$\vert$=} (const {\bf Ball\+Bound} \&other)
+\begin{DoxyCompactList}\small\item\em Expand the bound to include the given node. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\const {\bf Ball\+Bound} \& {\bf operator$\vert$=} (const Mat\+Type \&data)
+\begin{DoxyCompactList}\small\item\em Expand the bound to include the given point. \end{DoxyCompactList}\item 
+{\bf Elem\+Type} {\bf Radius} () const 
+\begin{DoxyCompactList}\small\item\em Get the radius of the ball. \end{DoxyCompactList}\item 
+{\bf Elem\+Type} \& {\bf Radius} ()
+\begin{DoxyCompactList}\small\item\em Modify the radius of the ball. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Other\+Vec\+Type $>$ }\\{\bf math\+::\+Range\+Type}$<$ {\bf Elem\+Type} $>$ {\bf Range\+Distance} (const Other\+Vec\+Type \&other, typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ {\bf Is\+Vector}$<$ Other\+Vec\+Type $>$\+::value $>$ $\ast$=0) const 
+\begin{DoxyCompactList}\small\item\em Calculates minimum and maximum bound-\/to-\/point distance. \end{DoxyCompactList}\item 
+{\bf math\+::\+Range\+Type}$<$ {\bf Elem\+Type} $>$ {\bf Range\+Distance} (const {\bf Ball\+Bound} \&other) const 
+\begin{DoxyCompactList}\small\item\em Calculates minimum and maximum bound-\/to-\/bound distance. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&ar, const unsigned int version)
+\begin{DoxyCompactList}\small\item\em Serialize the bound. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+Vec\+Type {\bf center}
+\begin{DoxyCompactList}\small\item\em The center of the ball bound. \end{DoxyCompactList}\item 
+Metric\+Type $\ast$ {\bf metric}
+\begin{DoxyCompactList}\small\item\em The metric used in this bound. \end{DoxyCompactList}\item 
+bool {\bf owns\+Metric}
+\begin{DoxyCompactList}\small\item\em To know whether this object allocated memory to the metric member variable. \end{DoxyCompactList}\item 
+{\bf Elem\+Type} {\bf radius}
+\begin{DoxyCompactList}\small\item\em The radius of the ball bound. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Vec\+Type = arma\+::vec$>$\\*
+class mlpack\+::bound\+::\+Ball\+Bound$<$ Metric\+Type, Vec\+Type $>$}
+
+Ball bound encloses a set of points at a specific distance (radius) from a specific point (center). 
+
+Metric\+Type is the custom metric type that defaults to the Euclidean (L2) distance.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Metric\+Type} & metric type used in the distance measure. \\
+\hline
+{\em Vec\+Type} & Type of vector (arma\+::vec or arma\+::sp\+\_\+vec or similar). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 32 of file ballbound.\+hpp.
+
+
+
+\subsection{Member Typedef Documentation}
+\index{mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}!Elem\+Type@{Elem\+Type}}
+\index{Elem\+Type@{Elem\+Type}!mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}}
+\subsubsection[{Elem\+Type}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Vec\+Type = arma\+::vec$>$ typedef Vec\+Type\+::elem\+\_\+type {\bf mlpack\+::bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$\+::{\bf Elem\+Type}}\label{classmlpack_1_1bound_1_1BallBound_a1dd52e343c3e277bf13ba3d8fa42af0f}
+
+
+The underlying data type. 
+
+
+
+Definition at line 36 of file ballbound.\+hpp.
+
+\index{mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}!Vec@{Vec}}
+\index{Vec@{Vec}!mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}}
+\subsubsection[{Vec}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Vec\+Type = arma\+::vec$>$ typedef Vec\+Type {\bf mlpack\+::bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$\+::{\bf Vec}}\label{classmlpack_1_1bound_1_1BallBound_a80bd22c7f2db7dd90f256148ecd6eb5f}
+
+
+A public version of the vector type. 
+
+
+
+Definition at line 38 of file ballbound.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}!Ball\+Bound@{Ball\+Bound}}
+\index{Ball\+Bound@{Ball\+Bound}!mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}}
+\subsubsection[{Ball\+Bound()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Vec\+Type = arma\+::vec$>$ {\bf mlpack\+::bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$\+::{\bf Ball\+Bound} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1bound_1_1BallBound_ac6240245d7fef887d55b62d960c92f70}
+
+
+Empty Constructor. 
+
+\index{mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}!Ball\+Bound@{Ball\+Bound}}
+\index{Ball\+Bound@{Ball\+Bound}!mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}}
+\subsubsection[{Ball\+Bound(const size\+\_\+t dimension)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Vec\+Type = arma\+::vec$>$ {\bf mlpack\+::bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$\+::{\bf Ball\+Bound} (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{dimension}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1bound_1_1BallBound_a7a670a6390de8ceab5e73de409c11921}
+
+
+Create the ball bound with the specified dimensionality. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em dimension} & Dimensionality of ball bound. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}!Ball\+Bound@{Ball\+Bound}}
+\index{Ball\+Bound@{Ball\+Bound}!mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}}
+\subsubsection[{Ball\+Bound(const Elem\+Type radius, const Vec\+Type \&center)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Vec\+Type = arma\+::vec$>$ {\bf mlpack\+::bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$\+::{\bf Ball\+Bound} (
+\begin{DoxyParamCaption}
+\item[{const {\bf Elem\+Type}}]{radius, }
+\item[{const Vec\+Type \&}]{center}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1bound_1_1BallBound_a32a856a62c27970157dd0a517837cd7f}
+
+
+Create the ball bound with the specified radius and center. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em radius} & Radius of ball bound. \\
+\hline
+{\em center} & Center of ball bound. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}!Ball\+Bound@{Ball\+Bound}}
+\index{Ball\+Bound@{Ball\+Bound}!mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}}
+\subsubsection[{Ball\+Bound(const Ball\+Bound \&other)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Vec\+Type = arma\+::vec$>$ {\bf mlpack\+::bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$\+::{\bf Ball\+Bound} (
+\begin{DoxyParamCaption}
+\item[{const {\bf Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$ \&}]{other}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1bound_1_1BallBound_aba6ff3f85bd0b64b3dc5e00019e70ec5}
+
+
+Copy constructor. To prevent memory leaks. 
+
+\index{mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}!Ball\+Bound@{Ball\+Bound}}
+\index{Ball\+Bound@{Ball\+Bound}!mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}}
+\subsubsection[{Ball\+Bound(\+Ball\+Bound \&\&other)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Vec\+Type = arma\+::vec$>$ {\bf mlpack\+::bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$\+::{\bf Ball\+Bound} (
+\begin{DoxyParamCaption}
+\item[{{\bf Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$ \&\&}]{other}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1bound_1_1BallBound_ad25ce1cdf3b36577d0e210a3555c8da8}
+
+
+Move constructor\+: take possession of another bound. 
+
+\index{mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}!````~Ball\+Bound@{$\sim$\+Ball\+Bound}}
+\index{````~Ball\+Bound@{$\sim$\+Ball\+Bound}!mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}}
+\subsubsection[{$\sim$\+Ball\+Bound()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Vec\+Type = arma\+::vec$>$ {\bf mlpack\+::bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$\+::$\sim${\bf Ball\+Bound} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1bound_1_1BallBound_a6f8dc17fce15f1d4f61493d4dd212ced}
+
+
+Destructor to release allocated memory. 
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}!Center@{Center}}
+\index{Center@{Center}!mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}}
+\subsubsection[{Center() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Vec\+Type = arma\+::vec$>$ const Vec\+Type\& {\bf mlpack\+::bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$\+::Center (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1bound_1_1BallBound_ac60c58308dd69773c48734a19a0312c4}
+
+
+Get the center point of the ball. 
+
+
+
+Definition at line 94 of file ballbound.\+hpp.
+
+
+
+References mlpack\+::bound\+::\+Ball\+Bound$<$ Metric\+Type, Vec\+Type $>$\+::center.
+
+
+
+Referenced by mlpack\+::tree\+::\+Proj\+Vector\+::\+Project().
+
+\index{mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}!Center@{Center}}
+\index{Center@{Center}!mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}}
+\subsubsection[{Center()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Vec\+Type = arma\+::vec$>$ Vec\+Type\& {\bf mlpack\+::bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$\+::Center (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1bound_1_1BallBound_a7b0f8a6081e910ef1fa81e4253d1970b}
+
+
+Modify the center point of the ball. 
+
+
+
+Definition at line 96 of file ballbound.\+hpp.
+
+
+
+References mlpack\+::bound\+::\+Ball\+Bound$<$ Metric\+Type, Vec\+Type $>$\+::center.
+
+\index{mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}!Center@{Center}}
+\index{Center@{Center}!mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}}
+\subsubsection[{Center(\+Vec\+Type \&center) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Vec\+Type = arma\+::vec$>$ void {\bf mlpack\+::bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$\+::Center (
+\begin{DoxyParamCaption}
+\item[{Vec\+Type \&}]{center}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1bound_1_1BallBound_abe44bc9a1e27dfbb555bea486db2a500}
+
+
+Place the center of \doxyref{Ball\+Bound}{p.}{classmlpack_1_1bound_1_1BallBound} into the given vector. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em center} & Vector which the centroid will be written to. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 120 of file ballbound.\+hpp.
+
+
+
+References mlpack\+::bound\+::\+Ball\+Bound$<$ Metric\+Type, Vec\+Type $>$\+::center, mlpack\+::bound\+::\+Ball\+Bound$<$ Metric\+Type, Vec\+Type $>$\+::\+Max\+Distance(), mlpack\+::bound\+::\+Ball\+Bound$<$ Metric\+Type, Vec\+Type $>$\+::\+Min\+Distance(), mlpack\+::bound\+::\+Ball\+Bound$<$ Metric\+Type, Vec\+Type $>$\+::operator$\vert$=(), and mlpack\+::bound\+::\+Ball\+Bound$<$ Metric\+Type, Vec\+Type $>$\+::\+Range\+Distance().
+
+\index{mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}!Contains@{Contains}}
+\index{Contains@{Contains}!mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}}
+\subsubsection[{Contains(const Vec\+Type \&point) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Vec\+Type = arma\+::vec$>$ bool {\bf mlpack\+::bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$\+::Contains (
+\begin{DoxyParamCaption}
+\item[{const Vec\+Type \&}]{point}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1bound_1_1BallBound_a3c5dcfc8d566ed37791dbdfeb667b4ed}
+
+
+Determines if a point is within this bound. 
+
+
+
+Referenced by mlpack\+::bound\+::\+Ball\+Bound$<$ Metric\+Type, Vec\+Type $>$\+::\+Min\+Width().
+
+\index{mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}!Diameter@{Diameter}}
+\index{Diameter@{Diameter}!mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}}
+\subsubsection[{Diameter() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Vec\+Type = arma\+::vec$>$ {\bf Elem\+Type} {\bf mlpack\+::bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$\+::Diameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1bound_1_1BallBound_aa803589ed18bcf00c2c9583aa8451421}
+
+
+Returns the diameter of the ballbound. 
+
+
+
+Definition at line 182 of file ballbound.\+hpp.
+
+
+
+References mlpack\+::bound\+::\+Ball\+Bound$<$ Metric\+Type, Vec\+Type $>$\+::radius.
+
+\index{mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}!Dim@{Dim}}
+\index{Dim@{Dim}!mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}}
+\subsubsection[{Dim() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Vec\+Type = arma\+::vec$>$ size\+\_\+t {\bf mlpack\+::bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$\+::Dim (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1bound_1_1BallBound_ae44eb636e9f0ad0eefb5a0989d231c37}
+
+
+Get the dimensionality of the ball. 
+
+
+
+Definition at line 99 of file ballbound.\+hpp.
+
+\index{mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}!Max\+Distance@{Max\+Distance}}
+\index{Max\+Distance@{Max\+Distance}!mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}}
+\subsubsection[{Max\+Distance(const Other\+Vec\+Type \&point, typename std\+::enable\+\_\+if\+\_\+t$<$ Is\+Vector$<$ Other\+Vec\+Type $>$\+::value $>$ $\ast$=0) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Vec\+Type = arma\+::vec$>$ template$<$typename Other\+Vec\+Type $>$ {\bf Elem\+Type} {\bf mlpack\+::bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$\+::Max\+Distance (
+\begin{DoxyParamCaption}
+\item[{const Other\+Vec\+Type \&}]{point, }
+\item[{typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ {\bf Is\+Vector}$<$ Other\+Vec\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1bound_1_1BallBound_ac62d5dfecae0a935c1a88787d694a8b8}
+
+
+Computes maximum distance. 
+
+
+
+Referenced by mlpack\+::bound\+::\+Ball\+Bound$<$ Metric\+Type, Vec\+Type $>$\+::\+Center().
+
+\index{mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}!Max\+Distance@{Max\+Distance}}
+\index{Max\+Distance@{Max\+Distance}!mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}}
+\subsubsection[{Max\+Distance(const Ball\+Bound \&other) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Vec\+Type = arma\+::vec$>$ {\bf Elem\+Type} {\bf mlpack\+::bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$\+::Max\+Distance (
+\begin{DoxyParamCaption}
+\item[{const {\bf Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$ \&}]{other}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1bound_1_1BallBound_a9368c39397736c1a22ea5703a66cbabc}
+
+
+Computes maximum distance. 
+
+\index{mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}!Metric@{Metric}}
+\index{Metric@{Metric}!mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}}
+\subsubsection[{Metric() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Vec\+Type = arma\+::vec$>$ const Metric\+Type\& {\bf mlpack\+::bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$\+::Metric (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1bound_1_1BallBound_a4c1247d0aa6cbee9004ac94b6005e094}
+
+
+Returns the distance metric used in this bound. 
+
+
+
+Definition at line 185 of file ballbound.\+hpp.
+
+
+
+References mlpack\+::bound\+::\+Ball\+Bound$<$ Metric\+Type, Vec\+Type $>$\+::metric.
+
+\index{mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}!Metric@{Metric}}
+\index{Metric@{Metric}!mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}}
+\subsubsection[{Metric()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Vec\+Type = arma\+::vec$>$ Metric\+Type\& {\bf mlpack\+::bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$\+::Metric (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1bound_1_1BallBound_abd5054c88bee7f230881adb6fc00fa16}
+
+
+Modify the distance metric used in this bound. 
+
+
+
+Definition at line 187 of file ballbound.\+hpp.
+
+
+
+References mlpack\+::bound\+::\+Ball\+Bound$<$ Metric\+Type, Vec\+Type $>$\+::metric, and mlpack\+::bound\+::\+Ball\+Bound$<$ Metric\+Type, Vec\+Type $>$\+::\+Serialize().
+
+\index{mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}!Min\+Distance@{Min\+Distance}}
+\index{Min\+Distance@{Min\+Distance}!mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}}
+\subsubsection[{Min\+Distance(const Other\+Vec\+Type \&point, typename std\+::enable\+\_\+if\+\_\+t$<$ Is\+Vector$<$ Other\+Vec\+Type $>$\+::value $>$ $\ast$=0) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Vec\+Type = arma\+::vec$>$ template$<$typename Other\+Vec\+Type $>$ {\bf Elem\+Type} {\bf mlpack\+::bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$\+::Min\+Distance (
+\begin{DoxyParamCaption}
+\item[{const Other\+Vec\+Type \&}]{point, }
+\item[{typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ {\bf Is\+Vector}$<$ Other\+Vec\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1bound_1_1BallBound_ab0bb37ff1ce3330ea41a6280f0898f5c}
+
+
+Calculates minimum bound-\/to-\/point squared distance. 
+
+
+
+Referenced by mlpack\+::bound\+::\+Ball\+Bound$<$ Metric\+Type, Vec\+Type $>$\+::\+Center().
+
+\index{mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}!Min\+Distance@{Min\+Distance}}
+\index{Min\+Distance@{Min\+Distance}!mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}}
+\subsubsection[{Min\+Distance(const Ball\+Bound \&other) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Vec\+Type = arma\+::vec$>$ {\bf Elem\+Type} {\bf mlpack\+::bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$\+::Min\+Distance (
+\begin{DoxyParamCaption}
+\item[{const {\bf Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$ \&}]{other}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1bound_1_1BallBound_a1b5b3966c9b52bd4fa393cfd97aaaa42}
+
+
+Calculates minimum bound-\/to-\/bound squared distance. 
+
+\index{mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}!Min\+Width@{Min\+Width}}
+\index{Min\+Width@{Min\+Width}!mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}}
+\subsubsection[{Min\+Width() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Vec\+Type = arma\+::vec$>$ {\bf Elem\+Type} {\bf mlpack\+::bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$\+::Min\+Width (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1bound_1_1BallBound_a46c4ba7ee41d634761c1310f8f831c81}
+
+
+Get the minimum width of the bound (this is same as the diameter). 
+
+For ball bounds, width along all dimensions remain same. 
+
+Definition at line 105 of file ballbound.\+hpp.
+
+
+
+References mlpack\+::bound\+::\+Ball\+Bound$<$ Metric\+Type, Vec\+Type $>$\+::\+Contains(), and mlpack\+::bound\+::\+Ball\+Bound$<$ Metric\+Type, Vec\+Type $>$\+::operator[$\,$]().
+
+\index{mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}!operator=@{operator=}}
+\index{operator=@{operator=}!mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}}
+\subsubsection[{operator=(const Ball\+Bound \&other)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Vec\+Type = arma\+::vec$>$ {\bf Ball\+Bound}\& {\bf mlpack\+::bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$\+::operator= (
+\begin{DoxyParamCaption}
+\item[{const {\bf Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$ \&}]{other}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1bound_1_1BallBound_acfd16e20bee164f41afbde9cb0c0752e}
+
+
+For the same reason as the copy constructor\+: to prevent memory leaks. 
+
+\index{mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}!operator[$\,$]@{operator[]}}
+\index{operator[$\,$]@{operator[]}!mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}}
+\subsubsection[{operator[](const size\+\_\+t i) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Vec\+Type = arma\+::vec$>$ {\bf math\+::\+Range\+Type}$<${\bf Elem\+Type}$>$ {\bf mlpack\+::bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$\+::operator[$\,$] (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{i}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1bound_1_1BallBound_aa34a34811eb02546b4ab0ff86cf132c3}
+
+
+Get the range in a certain dimension. 
+
+
+
+Referenced by mlpack\+::bound\+::\+Ball\+Bound$<$ Metric\+Type, Vec\+Type $>$\+::\+Min\+Width().
+
+\index{mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}!operator\texttt{"|}=@{operator\texttt{"|}=}}
+\index{operator\texttt{"|}=@{operator\texttt{"|}=}!mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}}
+\subsubsection[{operator\texttt{"|}=(const Ball\+Bound \&other)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Vec\+Type = arma\+::vec$>$ const {\bf Ball\+Bound}\& {\bf mlpack\+::bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$\+::operator$\vert$= (
+\begin{DoxyParamCaption}
+\item[{const {\bf Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$ \&}]{other}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1bound_1_1BallBound_ac6a01d6d374ab93276c31af5ee08f876}
+
+
+Expand the bound to include the given node. 
+
+
+
+Referenced by mlpack\+::bound\+::\+Ball\+Bound$<$ Metric\+Type, Vec\+Type $>$\+::\+Center().
+
+\index{mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}!operator\texttt{"|}=@{operator\texttt{"|}=}}
+\index{operator\texttt{"|}=@{operator\texttt{"|}=}!mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}}
+\subsubsection[{operator\texttt{"|}=(const Mat\+Type \&data)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Vec\+Type = arma\+::vec$>$ template$<$typename Mat\+Type $>$ const {\bf Ball\+Bound}\& {\bf mlpack\+::bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$\+::operator$\vert$= (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{data}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1bound_1_1BallBound_acf503608449a78107d9b73f6976a8f64}
+
+
+Expand the bound to include the given point. 
+
+The centroid is recalculated to be the center of all of the given points.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Mat\+Type} & Type of matrix; could be arma\+::mat, arma\+::spmat, or a vector. \\
+\hline
+{\em data} & Data points to add. \\
+\hline
+\end{DoxyTemplParams}
+\index{mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}!Radius@{Radius}}
+\index{Radius@{Radius}!mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}}
+\subsubsection[{Radius() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Vec\+Type = arma\+::vec$>$ {\bf Elem\+Type} {\bf mlpack\+::bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$\+::Radius (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1bound_1_1BallBound_a20a40a8b30e58cad16f9d6ce01b45144}
+
+
+Get the radius of the ball. 
+
+
+
+Definition at line 89 of file ballbound.\+hpp.
+
+
+
+References mlpack\+::bound\+::\+Ball\+Bound$<$ Metric\+Type, Vec\+Type $>$\+::radius.
+
+
+
+Referenced by mlpack\+::tree\+::\+Proj\+Vector\+::\+Project().
+
+\index{mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}!Radius@{Radius}}
+\index{Radius@{Radius}!mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}}
+\subsubsection[{Radius()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Vec\+Type = arma\+::vec$>$ {\bf Elem\+Type}\& {\bf mlpack\+::bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$\+::Radius (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1bound_1_1BallBound_a8b7dec9c7e5956c11b77e4f768bee028}
+
+
+Modify the radius of the ball. 
+
+
+
+Definition at line 91 of file ballbound.\+hpp.
+
+
+
+References mlpack\+::bound\+::\+Ball\+Bound$<$ Metric\+Type, Vec\+Type $>$\+::radius.
+
+\index{mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}!Range\+Distance@{Range\+Distance}}
+\index{Range\+Distance@{Range\+Distance}!mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}}
+\subsubsection[{Range\+Distance(const Other\+Vec\+Type \&other, typename std\+::enable\+\_\+if\+\_\+t$<$ Is\+Vector$<$ Other\+Vec\+Type $>$\+::value $>$ $\ast$=0) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Vec\+Type = arma\+::vec$>$ template$<$typename Other\+Vec\+Type $>$ {\bf math\+::\+Range\+Type}$<${\bf Elem\+Type}$>$ {\bf mlpack\+::bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$\+::Range\+Distance (
+\begin{DoxyParamCaption}
+\item[{const Other\+Vec\+Type \&}]{other, }
+\item[{typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ {\bf Is\+Vector}$<$ Other\+Vec\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1bound_1_1BallBound_afda450244a516b9a1538d025e59807ec}
+
+
+Calculates minimum and maximum bound-\/to-\/point distance. 
+
+
+
+Referenced by mlpack\+::bound\+::\+Ball\+Bound$<$ Metric\+Type, Vec\+Type $>$\+::\+Center().
+
+\index{mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}!Range\+Distance@{Range\+Distance}}
+\index{Range\+Distance@{Range\+Distance}!mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}}
+\subsubsection[{Range\+Distance(const Ball\+Bound \&other) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Vec\+Type = arma\+::vec$>$ {\bf math\+::\+Range\+Type}$<${\bf Elem\+Type}$>$ {\bf mlpack\+::bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$\+::Range\+Distance (
+\begin{DoxyParamCaption}
+\item[{const {\bf Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$ \&}]{other}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1bound_1_1BallBound_afccba7e37e522c67da5d852e4d26f998}
+
+
+Calculates minimum and maximum bound-\/to-\/bound distance. 
+
+Example\+: bound1.\+Min\+Distance\+Sq(other) for minimum distance. \index{mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}}
+\subsubsection[{Serialize(\+Archive \&ar, const unsigned int version)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Vec\+Type = arma\+::vec$>$ template$<$typename Archive $>$ void {\bf mlpack\+::bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$\+::Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const unsigned int}]{version}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1bound_1_1BallBound_a82efc45ffc6e6c2475f70092bbde998e}
+
+
+Serialize the bound. 
+
+
+
+Referenced by mlpack\+::bound\+::\+Ball\+Bound$<$ Metric\+Type, Vec\+Type $>$\+::\+Metric().
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}!center@{center}}
+\index{center@{center}!mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}}
+\subsubsection[{center}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Vec\+Type = arma\+::vec$>$ Vec\+Type {\bf mlpack\+::bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$\+::center\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1bound_1_1BallBound_a3b45484f06dd2f1d5195b3cfcb1c16f2}
+
+
+The center of the ball bound. 
+
+
+
+Definition at line 44 of file ballbound.\+hpp.
+
+
+
+Referenced by mlpack\+::bound\+::\+Ball\+Bound$<$ Metric\+Type, Vec\+Type $>$\+::\+Center().
+
+\index{mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}!metric@{metric}}
+\index{metric@{metric}!mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}}
+\subsubsection[{metric}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Vec\+Type = arma\+::vec$>$ Metric\+Type$\ast$ {\bf mlpack\+::bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$\+::metric\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1bound_1_1BallBound_ade12f89129a3d9951fcb536cf518fbfa}
+
+
+The metric used in this bound. 
+
+
+
+Definition at line 46 of file ballbound.\+hpp.
+
+
+
+Referenced by mlpack\+::bound\+::\+Ball\+Bound$<$ Metric\+Type, Vec\+Type $>$\+::\+Metric().
+
+\index{mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}!owns\+Metric@{owns\+Metric}}
+\index{owns\+Metric@{owns\+Metric}!mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}}
+\subsubsection[{owns\+Metric}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Vec\+Type = arma\+::vec$>$ bool {\bf mlpack\+::bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$\+::owns\+Metric\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1bound_1_1BallBound_a36eec59b8edbd35d735a4c781dab9b3e}
+
+
+To know whether this object allocated memory to the metric member variable. 
+
+This will be true except in the copy constructor and the overloaded assignment operator. We need this to know whether we should delete the metric member variable in the destructor. 
+
+Definition at line 54 of file ballbound.\+hpp.
+
+\index{mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}!radius@{radius}}
+\index{radius@{radius}!mlpack\+::bound\+::\+Ball\+Bound@{mlpack\+::bound\+::\+Ball\+Bound}}
+\subsubsection[{radius}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type = metric\+::\+L\+Metric$<$2, true$>$, typename Vec\+Type = arma\+::vec$>$ {\bf Elem\+Type} {\bf mlpack\+::bound\+::\+Ball\+Bound}$<$ Metric\+Type, Vec\+Type $>$\+::radius\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1bound_1_1BallBound_a0f5d2f54e0e759d909cb3942f6081164}
+
+
+The radius of the ball bound. 
+
+
+
+Definition at line 42 of file ballbound.\+hpp.
+
+
+
+Referenced by mlpack\+::bound\+::\+Ball\+Bound$<$ Metric\+Type, Vec\+Type $>$\+::\+Diameter(), and mlpack\+::bound\+::\+Ball\+Bound$<$ Metric\+Type, Vec\+Type $>$\+::\+Radius().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/tree/{\bf ballbound.\+hpp}\end{DoxyCompactItemize}

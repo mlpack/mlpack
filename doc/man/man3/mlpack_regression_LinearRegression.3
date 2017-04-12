@@ -1,0 +1,260 @@
+.TH "mlpack::regression::LinearRegression" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::regression::LinearRegression \- A simple linear regression algorithm using ordinary least squares\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBLinearRegression\fP (const arma::mat &predictors, const arma::vec &responses, const double \fBlambda\fP=0, const bool \fBintercept\fP=true, const arma::vec &weights=arma::vec())"
+.br
+.RI "\fICreates the model\&. \fP"
+.ti -1c
+.RI "\fBLinearRegression\fP (const \fBLinearRegression\fP &linearRegression)"
+.br
+.RI "\fICopy constructor\&. \fP"
+.ti -1c
+.RI "\fBLinearRegression\fP ()"
+.br
+.RI "\fIEmpty constructor\&. \fP"
+.ti -1c
+.RI "double \fBComputeError\fP (const arma::mat &points, const arma::vec &responses) const "
+.br
+.RI "\fICalculate the L2 squared error on the given predictors and responses using this linear regression model\&. \fP"
+.ti -1c
+.RI "bool \fBIntercept\fP () const "
+.br
+.RI "\fIReturn whether or not an intercept term is used in the model\&. \fP"
+.ti -1c
+.RI "double \fBLambda\fP () const "
+.br
+.RI "\fIReturn the Tikhonov regularization parameter for ridge regression\&. \fP"
+.ti -1c
+.RI "double & \fBLambda\fP ()"
+.br
+.RI "\fIModify the Tikhonov regularization parameter for ridge regression\&. \fP"
+.ti -1c
+.RI "const arma::vec & \fBParameters\fP () const "
+.br
+.RI "\fIReturn the parameters (the b vector)\&. \fP"
+.ti -1c
+.RI "arma::vec & \fBParameters\fP ()"
+.br
+.RI "\fIModify the parameters (the b vector)\&. \fP"
+.ti -1c
+.RI "void \fBPredict\fP (const arma::mat &points, arma::vec &predictions) const "
+.br
+.RI "\fICalculate y_i for each data point in points\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int)"
+.br
+.RI "\fISerialize the model\&. \fP"
+.ti -1c
+.RI "void \fBTrain\fP (const arma::mat &predictors, const arma::vec &responses, const bool \fBintercept\fP=true, const arma::vec &weights=arma::vec())"
+.br
+.RI "\fITrain the \fBLinearRegression\fP model on the given data\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "bool \fBintercept\fP"
+.br
+.RI "\fIIndicates whether first parameter is intercept\&. \fP"
+.ti -1c
+.RI "double \fBlambda\fP"
+.br
+.RI "\fIThe Tikhonov regularization parameter for ridge regression (0 for linear regression)\&. \fP"
+.ti -1c
+.RI "arma::vec \fBparameters\fP"
+.br
+.RI "\fIThe calculated B\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+A simple linear regression algorithm using ordinary least squares\&. 
+
+Optionally, this class can perform ridge regression, if the lambda parameter is set to a number greater than zero\&. 
+.PP
+Definition at line 26 of file linear_regression\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::regression::LinearRegression::LinearRegression (const arma::mat & predictors, const arma::vec & responses, const double lambda = \fC0\fP, const bool intercept = \fCtrue\fP, const arma::vec & weights = \fCarma::vec()\fP)"
+
+.PP
+Creates the model\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpredictors\fP X, matrix of data points to create B with\&. 
+.br
+\fIresponses\fP y, the measured data for each point in X\&. 
+.br
+\fIlambda\fP Regularization constant for ridge regression\&. 
+.br
+\fIintercept\fP Whether or not to include an intercept term\&. 
+.br
+\fIweights\fP Observation weights (for boosting)\&. 
+.RE
+.PP
+
+.SS "mlpack::regression::LinearRegression::LinearRegression (const \fBLinearRegression\fP & linearRegression)"
+
+.PP
+Copy constructor\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIlinearRegression\fP the other instance to copy parameters from\&. 
+.RE
+.PP
+
+.SS "mlpack::regression::LinearRegression::LinearRegression ()\fC [inline]\fP"
+
+.PP
+Empty constructor\&. This gives a non-working model, so make sure \fBTrain()\fP is called (or make sure the model parameters are set) before calling \fBPredict()\fP! 
+.PP
+Definition at line 56 of file linear_regression\&.hpp\&.
+.PP
+References ComputeError(), intercept, Predict(), and Train()\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "double mlpack::regression::LinearRegression::ComputeError (const arma::mat & points, const arma::vec & responses) const"
+
+.PP
+Calculate the L2 squared error on the given predictors and responses using this linear regression model\&. This calculation returns
+.PP
+\[ (1 / n) * \| y - X B \|^2_2 \].PP
+where $ y $ is the responses vector, $ X $ is the matrix of predictors, and $ B $ is the parameters of the trained linear regression model\&.
+.PP
+As this number decreases to 0, the linear regression fit is better\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpoints\fP Matrix of predictors (X)\&. 
+.br
+\fIresponses\fP Vector of responses (y)\&. 
+.RE
+.PP
+
+.PP
+Referenced by LinearRegression(), and mlpack::distribution::RegressionDistribution::RegressionDistribution()\&.
+.SS "bool mlpack::regression::LinearRegression::Intercept () const\fC [inline]\fP"
+
+.PP
+Return whether or not an intercept term is used in the model\&. 
+.PP
+Definition at line 114 of file linear_regression\&.hpp\&.
+.PP
+References intercept\&.
+.SS "double mlpack::regression::LinearRegression::Lambda () const\fC [inline]\fP"
+
+.PP
+Return the Tikhonov regularization parameter for ridge regression\&. 
+.PP
+Definition at line 109 of file linear_regression\&.hpp\&.
+.PP
+References lambda\&.
+.SS "double& mlpack::regression::LinearRegression::Lambda ()\fC [inline]\fP"
+
+.PP
+Modify the Tikhonov regularization parameter for ridge regression\&. 
+.PP
+Definition at line 111 of file linear_regression\&.hpp\&.
+.PP
+References lambda\&.
+.SS "const arma::vec& mlpack::regression::LinearRegression::Parameters () const\fC [inline]\fP"
+
+.PP
+Return the parameters (the b vector)\&. 
+.PP
+Definition at line 104 of file linear_regression\&.hpp\&.
+.PP
+References parameters\&.
+.PP
+Referenced by mlpack::distribution::RegressionDistribution::Dimensionality(), and mlpack::distribution::RegressionDistribution::Parameters()\&.
+.SS "arma::vec& mlpack::regression::LinearRegression::Parameters ()\fC [inline]\fP"
+
+.PP
+Modify the parameters (the b vector)\&. 
+.PP
+Definition at line 106 of file linear_regression\&.hpp\&.
+.PP
+References parameters\&.
+.SS "void mlpack::regression::LinearRegression::Predict (const arma::mat & points, arma::vec & predictions) const"
+
+.PP
+Calculate y_i for each data point in points\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpoints\fP the data points to calculate with\&. 
+.br
+\fIpredictions\fP y, will contain calculated values on completion\&. 
+.RE
+.PP
+
+.PP
+Referenced by LinearRegression()\&.
+.SS "template<typename Archive > void mlpack::regression::LinearRegression::Serialize (Archive & ar, const unsigned int)\fC [inline]\fP"
+
+.PP
+Serialize the model\&. 
+.PP
+Definition at line 120 of file linear_regression\&.hpp\&.
+.PP
+References mlpack::data::CreateNVP(), intercept, lambda, and parameters\&.
+.SS "void mlpack::regression::LinearRegression::Train (const arma::mat & predictors, const arma::vec & responses, const bool intercept = \fCtrue\fP, const arma::vec & weights = \fCarma::vec()\fP)"
+
+.PP
+Train the \fBLinearRegression\fP model on the given data\&. Careful! This will completely ignore and overwrite the existing model\&. This particular implementation does not have an incremental training algorithm\&. To set the regularization parameter lambda, call \fBLambda()\fP or set a different value in the constructor\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpredictors\fP X, the matrix of data points to train the model on\&. 
+.br
+\fIresponses\fP y, the vector of responses to each data point\&. 
+.br
+\fIintercept\fP Whether or not to fit an intercept term\&. 
+.br
+\fIweights\fP Observation weights (for boosting)\&. 
+.RE
+.PP
+
+.PP
+Referenced by LinearRegression()\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "bool mlpack::regression::LinearRegression::intercept\fC [private]\fP"
+
+.PP
+Indicates whether first parameter is intercept\&. 
+.PP
+Definition at line 141 of file linear_regression\&.hpp\&.
+.PP
+Referenced by Intercept(), LinearRegression(), and Serialize()\&.
+.SS "double mlpack::regression::LinearRegression::lambda\fC [private]\fP"
+
+.PP
+The Tikhonov regularization parameter for ridge regression (0 for linear regression)\&. 
+.PP
+Definition at line 138 of file linear_regression\&.hpp\&.
+.PP
+Referenced by Lambda(), and Serialize()\&.
+.SS "arma::vec mlpack::regression::LinearRegression::parameters\fC [private]\fP"
+
+.PP
+The calculated B\&. Initialized and filled by constructor to hold the least squares solution\&. 
+.PP
+Definition at line 132 of file linear_regression\&.hpp\&.
+.PP
+Referenced by Parameters(), and Serialize()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

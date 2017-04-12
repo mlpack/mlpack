@@ -1,0 +1,180 @@
+.TH "mlpack::metric::MahalanobisDistance< TakeRoot >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::metric::MahalanobisDistance< TakeRoot > \- The Mahalanobis distance, which is essentially a stretched Euclidean distance\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBMahalanobisDistance\fP ()"
+.br
+.RI "\fIInitialize the Mahalanobis distance with the empty matrix as covariance\&. \fP"
+.ti -1c
+.RI "\fBMahalanobisDistance\fP (const size_t dimensionality)"
+.br
+.RI "\fIInitialize the Mahalanobis distance with the identity matrix of the given dimensionality\&. \fP"
+.ti -1c
+.RI "\fBMahalanobisDistance\fP (const arma::mat &\fBcovariance\fP)"
+.br
+.RI "\fIInitialize the Mahalanobis distance with the given covariance matrix\&. \fP"
+.ti -1c
+.RI "const arma::mat & \fBCovariance\fP () const "
+.br
+.RI "\fIAccess the covariance matrix\&. \fP"
+.ti -1c
+.RI "arma::mat & \fBCovariance\fP ()"
+.br
+.RI "\fIModify the covariance matrix\&. \fP"
+.ti -1c
+.RI "template<typename VecTypeA , typename VecTypeB > double \fBEvaluate\fP (const VecTypeA &a, const VecTypeB &b)"
+.br
+.RI "\fIEvaluate the distance between the two given points using this Mahalanobis distance\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int version)"
+.br
+.RI "\fISerialize the Mahalanobis distance\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "arma::mat \fBcovariance\fP"
+.br
+.RI "\fIThe covariance matrix associated with this distance\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<bool TakeRoot = true>
+.br
+class mlpack::metric::MahalanobisDistance< TakeRoot >"
+The Mahalanobis distance, which is essentially a stretched Euclidean distance\&. 
+
+Given a square covariance matrix $ Q $ of size $ d $ x $ d $, where $ d $ is the dimensionality of the points it will be evaluating, and given two vectors $ x $ and $ y $ also of dimensionality $ d $,
+.PP
+\[ d(x, y) = \sqrt{(x - y)^T Q (x - y)} \].PP
+where Q is the covariance matrix\&.
+.PP
+Because each evaluation multiplies (x_1 - x_2) by the covariance matrix, it may be much quicker to use an \fBLMetric\fP and simply stretch the actual dataset itself before performing any evaluations\&. However, this class is provided for convenience\&.
+.PP
+Similar to the \fBLMetric\fP class, this offers a template parameter TakeRoot which, when set to false, will instead evaluate the distance
+.PP
+\[ d(x, y) = (x - y)^T Q (x - y) \].PP
+which is faster to evaluate\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fITakeRoot\fP If true, takes the root of the output\&. It is slightly faster to leave this at the default of false, but this means the metric may not satisfy the triangle inequality and may not be usable for methods that expect a true metric\&. 
+.RE
+.PP
+
+.PP
+Definition at line 53 of file mahalanobis_distance\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<bool TakeRoot = true> \fBmlpack::metric::MahalanobisDistance\fP< TakeRoot >::\fBMahalanobisDistance\fP ()\fC [inline]\fP"
+
+.PP
+Initialize the Mahalanobis distance with the empty matrix as covariance\&. Don't call \fBEvaluate()\fP until you set the covariance with \fBCovariance()\fP! 
+.PP
+Definition at line 60 of file mahalanobis_distance\&.hpp\&.
+.SS "template<bool TakeRoot = true> \fBmlpack::metric::MahalanobisDistance\fP< TakeRoot >::\fBMahalanobisDistance\fP (const size_t dimensionality)\fC [inline]\fP"
+
+.PP
+Initialize the Mahalanobis distance with the identity matrix of the given dimensionality\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdimensionality\fP Dimesnsionality of the covariance matrix\&. 
+.RE
+.PP
+
+.PP
+Definition at line 68 of file mahalanobis_distance\&.hpp\&.
+.SS "template<bool TakeRoot = true> \fBmlpack::metric::MahalanobisDistance\fP< TakeRoot >::\fBMahalanobisDistance\fP (const arma::mat & covariance)\fC [inline]\fP"
+
+.PP
+Initialize the Mahalanobis distance with the given covariance matrix\&. The given covariance matrix will be copied (this is not optimal)\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIcovariance\fP The covariance matrix to use for this distance\&. 
+.RE
+.PP
+
+.PP
+Definition at line 77 of file mahalanobis_distance\&.hpp\&.
+.PP
+References mlpack::metric::MahalanobisDistance< TakeRoot >::Evaluate()\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<bool TakeRoot = true> const arma::mat& \fBmlpack::metric::MahalanobisDistance\fP< TakeRoot >::Covariance () const\fC [inline]\fP"
+
+.PP
+Access the covariance matrix\&. 
+.PP
+\fBReturns:\fP
+.RS 4
+Constant reference to the covariance matrix\&. 
+.RE
+.PP
+
+.PP
+Definition at line 96 of file mahalanobis_distance\&.hpp\&.
+.PP
+References mlpack::metric::MahalanobisDistance< TakeRoot >::covariance\&.
+.SS "template<bool TakeRoot = true> arma::mat& \fBmlpack::metric::MahalanobisDistance\fP< TakeRoot >::Covariance ()\fC [inline]\fP"
+
+.PP
+Modify the covariance matrix\&. 
+.PP
+\fBReturns:\fP
+.RS 4
+Reference to the covariance matrix\&. 
+.RE
+.PP
+
+.PP
+Definition at line 103 of file mahalanobis_distance\&.hpp\&.
+.PP
+References mlpack::metric::MahalanobisDistance< TakeRoot >::covariance, and mlpack::metric::MahalanobisDistance< TakeRoot >::Serialize()\&.
+.SS "template<bool TakeRoot = true> template<typename VecTypeA , typename VecTypeB > double \fBmlpack::metric::MahalanobisDistance\fP< TakeRoot >::Evaluate (const VecTypeA & a, const VecTypeB & b)"
+
+.PP
+Evaluate the distance between the two given points using this Mahalanobis distance\&. If the covariance matrix has not been set (i\&.e\&. if you used the empty constructor and did not later modify the covariance matrix), calling this method will probably result in a crash\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIa\fP First vector\&. 
+.br
+\fIb\fP Second vector\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::metric::MahalanobisDistance< TakeRoot >::MahalanobisDistance()\&.
+.SS "template<bool TakeRoot = true> template<typename Archive > void \fBmlpack::metric::MahalanobisDistance\fP< TakeRoot >::Serialize (Archive & ar, const unsigned int version)"
+
+.PP
+Serialize the Mahalanobis distance\&. 
+.PP
+Referenced by mlpack::metric::MahalanobisDistance< TakeRoot >::Covariance()\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<bool TakeRoot = true> arma::mat \fBmlpack::metric::MahalanobisDistance\fP< TakeRoot >::covariance\fC [private]\fP"
+
+.PP
+The covariance matrix associated with this distance\&. 
+.PP
+Definition at line 111 of file mahalanobis_distance\&.hpp\&.
+.PP
+Referenced by mlpack::metric::MahalanobisDistance< TakeRoot >::Covariance()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

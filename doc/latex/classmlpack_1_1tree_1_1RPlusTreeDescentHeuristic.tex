@@ -1,0 +1,66 @@
+\section{mlpack\+:\+:tree\+:\+:R\+Plus\+Tree\+Descent\+Heuristic Class Reference}
+\label{classmlpack_1_1tree_1_1RPlusTreeDescentHeuristic}\index{mlpack\+::tree\+::\+R\+Plus\+Tree\+Descent\+Heuristic@{mlpack\+::tree\+::\+R\+Plus\+Tree\+Descent\+Heuristic}}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static size\+\_\+t {\bf Choose\+Descent\+Node} (Tree\+Type $\ast$node, const size\+\_\+t point)
+\begin{DoxyCompactList}\small\item\em Evaluate the node using a heuristic. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static size\+\_\+t {\bf Choose\+Descent\+Node} (const Tree\+Type $\ast$, const Tree\+Type $\ast$)
+\begin{DoxyCompactList}\small\item\em Evaluate the node using a heuristic. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 21 of file r\+\_\+plus\+\_\+tree\+\_\+descent\+\_\+heuristic.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::tree\+::\+R\+Plus\+Tree\+Descent\+Heuristic@{mlpack\+::tree\+::\+R\+Plus\+Tree\+Descent\+Heuristic}!Choose\+Descent\+Node@{Choose\+Descent\+Node}}
+\index{Choose\+Descent\+Node@{Choose\+Descent\+Node}!mlpack\+::tree\+::\+R\+Plus\+Tree\+Descent\+Heuristic@{mlpack\+::tree\+::\+R\+Plus\+Tree\+Descent\+Heuristic}}
+\subsubsection[{Choose\+Descent\+Node(\+Tree\+Type $\ast$node, const size\+\_\+t point)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Tree\+Type $>$ static size\+\_\+t mlpack\+::tree\+::\+R\+Plus\+Tree\+Descent\+Heuristic\+::\+Choose\+Descent\+Node (
+\begin{DoxyParamCaption}
+\item[{Tree\+Type $\ast$}]{node, }
+\item[{const size\+\_\+t}]{point}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1tree_1_1RPlusTreeDescentHeuristic_a9d3f048215e88d82e9762253ec54066e}
+
+
+Evaluate the node using a heuristic. 
+
+Returns the number of the node with minimum largest Hilbert value is greater than the Hilbert value of the point being inserted.
+
+
+\begin{DoxyParams}{Parameters}
+{\em node} & The node that is being evaluated. \\
+\hline
+{\em point} & The number of the point that is being inserted. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::tree\+::\+R\+Plus\+Tree\+Descent\+Heuristic@{mlpack\+::tree\+::\+R\+Plus\+Tree\+Descent\+Heuristic}!Choose\+Descent\+Node@{Choose\+Descent\+Node}}
+\index{Choose\+Descent\+Node@{Choose\+Descent\+Node}!mlpack\+::tree\+::\+R\+Plus\+Tree\+Descent\+Heuristic@{mlpack\+::tree\+::\+R\+Plus\+Tree\+Descent\+Heuristic}}
+\subsubsection[{Choose\+Descent\+Node(const Tree\+Type $\ast$, const Tree\+Type $\ast$)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Tree\+Type $>$ static size\+\_\+t mlpack\+::tree\+::\+R\+Plus\+Tree\+Descent\+Heuristic\+::\+Choose\+Descent\+Node (
+\begin{DoxyParamCaption}
+\item[{const Tree\+Type $\ast$}]{, }
+\item[{const Tree\+Type $\ast$}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1tree_1_1RPlusTreeDescentHeuristic_ab9f3eed81b8ac08f0997620cbf739eb9}
+
+
+Evaluate the node using a heuristic. 
+
+Returns the number of the node with minimum largest Hilbert value is greater than the largest Hilbert value of the point being inserted.
+
+
+\begin{DoxyParams}{Parameters}
+{\em node} & The node that is being evaluated. \\
+\hline
+{\em inserted\+Node} & The node that is being inserted. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/tree/rectangle\+\_\+tree/{\bf r\+\_\+plus\+\_\+tree\+\_\+descent\+\_\+heuristic.\+hpp}\end{DoxyCompactItemize}

@@ -1,0 +1,425 @@
+\section{mlpack\+:\+:radical\+:\+:Radical Class Reference}
+\label{classmlpack_1_1radical_1_1Radical}\index{mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}}
+
+
+An implementation of R\+A\+D\+I\+C\+AL, an algorithm for independent component analysis (I\+CA).  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Radical} (const double {\bf noise\+Std\+Dev}=0.\+175, const size\+\_\+t {\bf replicates}=30, const size\+\_\+t {\bf angles}=150, const size\+\_\+t {\bf sweeps}=0, const size\+\_\+t {\bf m}=0)
+\begin{DoxyCompactList}\small\item\em Set the parameters to R\+A\+D\+I\+C\+AL. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Angles} () const 
+\begin{DoxyCompactList}\small\item\em Get the number of angles considered during brute-\/force search. \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Angles} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of angles considered during brute-\/force search. \end{DoxyCompactList}\item 
+void {\bf Copy\+And\+Perturb} (arma\+::mat \&x\+New, const arma\+::mat \&x) const 
+\begin{DoxyCompactList}\small\item\em Make replicates of each data point (the number of replicates is set in either the constructor or with \doxyref{Replicates()}{p.}{classmlpack_1_1radical_1_1Radical_aa8e538bda62339fed17a7776226f1ad6}) and perturb data with Gaussian noise with standard deviation noise\+Std\+Dev. \end{DoxyCompactList}\item 
+void {\bf Do\+Radical} (const arma\+::mat \&matX, arma\+::mat \&matY, arma\+::mat \&matW)
+\begin{DoxyCompactList}\small\item\em Run R\+A\+D\+I\+C\+AL. \end{DoxyCompactList}\item 
+double {\bf Do\+Radical2D} (const arma\+::mat \&matX)
+\begin{DoxyCompactList}\small\item\em Two-\/dimensional version of R\+A\+D\+I\+C\+AL. \end{DoxyCompactList}\item 
+double {\bf Noise\+Std\+Dev} () const 
+\begin{DoxyCompactList}\small\item\em Get the standard deviation of the additive Gaussian noise. \end{DoxyCompactList}\item 
+double \& {\bf Noise\+Std\+Dev} ()
+\begin{DoxyCompactList}\small\item\em Modify the standard deviation of the additive Gaussian noise. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Replicates} () const 
+\begin{DoxyCompactList}\small\item\em Get the number of Gaussian-\/perturbed replicates used per point. \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Replicates} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of Gaussian-\/perturbed replicates used per point. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Sweeps} () const 
+\begin{DoxyCompactList}\small\item\em Get the number of sweeps. \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Sweeps} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of sweeps. \end{DoxyCompactList}\item 
+double {\bf Vasicek} (arma\+::vec \&x) const 
+\begin{DoxyCompactList}\small\item\em Vasicek\textquotesingle{}s m-\/spacing estimator of entropy, with overlap modification from (Learned-\/\+Miller and Fisher, 2003). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+size\+\_\+t {\bf angles}
+\begin{DoxyCompactList}\small\item\em Number of angles to consider in brute-\/force search during Radical2D. \end{DoxyCompactList}\item 
+arma\+::mat {\bf candidate}
+\begin{DoxyCompactList}\small\item\em Internal matrix, held as member variable to prevent memory reallocations. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf m}
+\begin{DoxyCompactList}\small\item\em Value of m to use for Vasicek\textquotesingle{}s m-\/spacing estimator of entropy. \end{DoxyCompactList}\item 
+double {\bf noise\+Std\+Dev}
+\begin{DoxyCompactList}\small\item\em Standard deviation of the Gaussian noise added to the replicates of the data points during Radical2D. \end{DoxyCompactList}\item 
+arma\+::mat {\bf perturbed}
+\begin{DoxyCompactList}\small\item\em Internal matrix, held as member variable to prevent memory reallocations. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf replicates}
+\begin{DoxyCompactList}\small\item\em Number of Gaussian-\/perturbed replicates to use (per point) in Radical2D. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf sweeps}
+\begin{DoxyCompactList}\small\item\em Number of sweeps; each sweep calls Radical2D once for each pair of dimensions. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+An implementation of R\+A\+D\+I\+C\+AL, an algorithm for independent component analysis (I\+CA). 
+
+Let X be a matrix where each column is a point and each row a dimension. The goal is to find a square unmixing matrix W such that Y = W X and the rows of Y are independent components.
+
+For more details, see the following paper\+:
+
+
+\begin{DoxyCode}
+@article\{learned2003ica,
+  title = \{ICA Using Spacings Estimates of Entropy\},
+  author = \{Learned-Miller, E.G. and Fisher III, J.W.\},
+  journal = \{Journal of Machine Learning Research\},
+  volume = \{4\},
+  pages = \{1271--1295\},
+  year = \{2003\}
+\}
+\end{DoxyCode}
+ 
+
+Definition at line 43 of file radical.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}!Radical@{Radical}}
+\index{Radical@{Radical}!mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}}
+\subsubsection[{Radical(const double noise\+Std\+Dev=0.\+175, const size\+\_\+t replicates=30, const size\+\_\+t angles=150, const size\+\_\+t sweeps=0, const size\+\_\+t m=0)}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::radical\+::\+Radical\+::\+Radical (
+\begin{DoxyParamCaption}
+\item[{const double}]{noise\+Std\+Dev = {\ttfamily 0.175}, }
+\item[{const size\+\_\+t}]{replicates = {\ttfamily 30}, }
+\item[{const size\+\_\+t}]{angles = {\ttfamily 150}, }
+\item[{const size\+\_\+t}]{sweeps = {\ttfamily 0}, }
+\item[{const size\+\_\+t}]{m = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1radical_1_1Radical_ad1c87631c64363d72f73d8925b786f9f}
+
+
+Set the parameters to R\+A\+D\+I\+C\+AL. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em noise\+Std\+Dev} & Standard deviation of the Gaussian noise added to the replicates of the data points during Radical2D \\
+\hline
+{\em replicates} & Number of Gaussian-\/perturbed replicates to use (per point) in Radical2D \\
+\hline
+{\em angles} & Number of angles to consider in brute-\/force search during Radical2D \\
+\hline
+{\em sweeps} & Number of sweeps. Each sweep calls Radical2D once for each pair of dimensions \\
+\hline
+{\em m} & The variable m from Vasicek\textquotesingle{}s m-\/spacing estimator of entropy. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}!Angles@{Angles}}
+\index{Angles@{Angles}!mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}}
+\subsubsection[{Angles() const }]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t mlpack\+::radical\+::\+Radical\+::\+Angles (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1radical_1_1Radical_a7074ecc00aa5d7fa40e376f2f8f9d3c8}
+
+
+Get the number of angles considered during brute-\/force search. 
+
+
+
+Definition at line 105 of file radical.\+hpp.
+
+
+
+References angles.
+
+\index{mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}!Angles@{Angles}}
+\index{Angles@{Angles}!mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}}
+\subsubsection[{Angles()}]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t\& mlpack\+::radical\+::\+Radical\+::\+Angles (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1radical_1_1Radical_a8bfdd20f3642a834f0ced3ae0c9d82ca}
+
+
+Modify the number of angles considered during brute-\/force search. 
+
+
+
+Definition at line 107 of file radical.\+hpp.
+
+
+
+References angles.
+
+\index{mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}!Copy\+And\+Perturb@{Copy\+And\+Perturb}}
+\index{Copy\+And\+Perturb@{Copy\+And\+Perturb}!mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}}
+\subsubsection[{Copy\+And\+Perturb(arma\+::mat \&x\+New, const arma\+::mat \&x) const }]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::radical\+::\+Radical\+::\+Copy\+And\+Perturb (
+\begin{DoxyParamCaption}
+\item[{arma\+::mat \&}]{x\+New, }
+\item[{const arma\+::mat \&}]{x}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1radical_1_1Radical_aea30e5156a066f561c8294b46996d255}
+
+
+Make replicates of each data point (the number of replicates is set in either the constructor or with \doxyref{Replicates()}{p.}{classmlpack_1_1radical_1_1Radical_aa8e538bda62339fed17a7776226f1ad6}) and perturb data with Gaussian noise with standard deviation noise\+Std\+Dev. 
+
+\index{mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}!Do\+Radical@{Do\+Radical}}
+\index{Do\+Radical@{Do\+Radical}!mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}}
+\subsubsection[{Do\+Radical(const arma\+::mat \&mat\+X, arma\+::mat \&mat\+Y, arma\+::mat \&mat\+W)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::radical\+::\+Radical\+::\+Do\+Radical (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{matX, }
+\item[{arma\+::mat \&}]{matY, }
+\item[{arma\+::mat \&}]{matW}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1radical_1_1Radical_a4a16b771ff562765e5d1af1eb7f32d73}
+
+
+Run R\+A\+D\+I\+C\+AL. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em matX} & Input data into the algorithm -\/ a matrix where each column is a point and each row is a dimension. \\
+\hline
+{\em matY} & Estimated independent components -\/ a matrix where each column is a point and each row is an estimated independent component. \\
+\hline
+{\em matW} & Estimated unmixing matrix, where matY = matW $\ast$ matX. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}!Do\+Radical2D@{Do\+Radical2D}}
+\index{Do\+Radical2D@{Do\+Radical2D}!mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}}
+\subsubsection[{Do\+Radical2\+D(const arma\+::mat \&mat\+X)}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::radical\+::\+Radical\+::\+Do\+Radical2D (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{matX}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1radical_1_1Radical_a8c7b303786a17734fc70171de5361299}
+
+
+Two-\/dimensional version of R\+A\+D\+I\+C\+AL. 
+
+\index{mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}!Noise\+Std\+Dev@{Noise\+Std\+Dev}}
+\index{Noise\+Std\+Dev@{Noise\+Std\+Dev}!mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}}
+\subsubsection[{Noise\+Std\+Dev() const }]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::radical\+::\+Radical\+::\+Noise\+Std\+Dev (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1radical_1_1Radical_ae5d46561f11418284a64af8bfc83ffe2}
+
+
+Get the standard deviation of the additive Gaussian noise. 
+
+
+
+Definition at line 95 of file radical.\+hpp.
+
+
+
+References noise\+Std\+Dev.
+
+\index{mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}!Noise\+Std\+Dev@{Noise\+Std\+Dev}}
+\index{Noise\+Std\+Dev@{Noise\+Std\+Dev}!mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}}
+\subsubsection[{Noise\+Std\+Dev()}]{\setlength{\rightskip}{0pt plus 5cm}double\& mlpack\+::radical\+::\+Radical\+::\+Noise\+Std\+Dev (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1radical_1_1Radical_a6b84dcd16324daff38c0d1b82887deae}
+
+
+Modify the standard deviation of the additive Gaussian noise. 
+
+
+
+Definition at line 97 of file radical.\+hpp.
+
+
+
+References noise\+Std\+Dev.
+
+\index{mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}!Replicates@{Replicates}}
+\index{Replicates@{Replicates}!mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}}
+\subsubsection[{Replicates() const }]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t mlpack\+::radical\+::\+Radical\+::\+Replicates (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1radical_1_1Radical_afd2efae93e53a97a9619dab1780b1e48}
+
+
+Get the number of Gaussian-\/perturbed replicates used per point. 
+
+
+
+Definition at line 100 of file radical.\+hpp.
+
+
+
+References replicates.
+
+\index{mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}!Replicates@{Replicates}}
+\index{Replicates@{Replicates}!mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}}
+\subsubsection[{Replicates()}]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t\& mlpack\+::radical\+::\+Radical\+::\+Replicates (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1radical_1_1Radical_aa8e538bda62339fed17a7776226f1ad6}
+
+
+Modify the number of Gaussian-\/perturbed replicates used per point. 
+
+
+
+Definition at line 102 of file radical.\+hpp.
+
+
+
+References replicates.
+
+\index{mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}!Sweeps@{Sweeps}}
+\index{Sweeps@{Sweeps}!mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}}
+\subsubsection[{Sweeps() const }]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t mlpack\+::radical\+::\+Radical\+::\+Sweeps (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1radical_1_1Radical_a0c1245b5dcd0359a55155c89174fd325}
+
+
+Get the number of sweeps. 
+
+
+
+Definition at line 110 of file radical.\+hpp.
+
+
+
+References sweeps.
+
+\index{mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}!Sweeps@{Sweeps}}
+\index{Sweeps@{Sweeps}!mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}}
+\subsubsection[{Sweeps()}]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t\& mlpack\+::radical\+::\+Radical\+::\+Sweeps (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1radical_1_1Radical_a7e06e79989c125b564d5bda93286e37e}
+
+
+Modify the number of sweeps. 
+
+
+
+Definition at line 112 of file radical.\+hpp.
+
+
+
+References sweeps.
+
+\index{mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}!Vasicek@{Vasicek}}
+\index{Vasicek@{Vasicek}!mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}}
+\subsubsection[{Vasicek(arma\+::vec \&x) const }]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::radical\+::\+Radical\+::\+Vasicek (
+\begin{DoxyParamCaption}
+\item[{arma\+::vec \&}]{x}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1radical_1_1Radical_a90ed16b8fe5c6924de5e1912ac54e768}
+
+
+Vasicek\textquotesingle{}s m-\/spacing estimator of entropy, with overlap modification from (Learned-\/\+Miller and Fisher, 2003). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Empirical sample (one-\/dimensional) over which to estimate entropy. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}!angles@{angles}}
+\index{angles@{angles}!mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}}
+\subsubsection[{angles}]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t mlpack\+::radical\+::\+Radical\+::angles\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1radical_1_1Radical_af4fa9e46a72c48793944672392b9041d}
+
+
+Number of angles to consider in brute-\/force search during Radical2D. 
+
+
+
+Definition at line 123 of file radical.\+hpp.
+
+
+
+Referenced by Angles().
+
+\index{mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}!candidate@{candidate}}
+\index{candidate@{candidate}!mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}}
+\subsubsection[{candidate}]{\setlength{\rightskip}{0pt plus 5cm}arma\+::mat mlpack\+::radical\+::\+Radical\+::candidate\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1radical_1_1Radical_a587c33208fe08226395d51418cac2933}
+
+
+Internal matrix, held as member variable to prevent memory reallocations. 
+
+
+
+Definition at line 135 of file radical.\+hpp.
+
+\index{mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}!m@{m}}
+\index{m@{m}!mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}}
+\subsubsection[{m}]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t mlpack\+::radical\+::\+Radical\+::m\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1radical_1_1Radical_ae5b0f6a3b27aa27ab5a54626ba7924a7}
+
+
+Value of m to use for Vasicek\textquotesingle{}s m-\/spacing estimator of entropy. 
+
+
+
+Definition at line 130 of file radical.\+hpp.
+
+\index{mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}!noise\+Std\+Dev@{noise\+Std\+Dev}}
+\index{noise\+Std\+Dev@{noise\+Std\+Dev}!mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}}
+\subsubsection[{noise\+Std\+Dev}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::radical\+::\+Radical\+::noise\+Std\+Dev\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1radical_1_1Radical_aa41a0f7635ec66752711903266f2c00d}
+
+
+Standard deviation of the Gaussian noise added to the replicates of the data points during Radical2D. 
+
+
+
+Definition at line 117 of file radical.\+hpp.
+
+
+
+Referenced by Noise\+Std\+Dev().
+
+\index{mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}!perturbed@{perturbed}}
+\index{perturbed@{perturbed}!mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}}
+\subsubsection[{perturbed}]{\setlength{\rightskip}{0pt plus 5cm}arma\+::mat mlpack\+::radical\+::\+Radical\+::perturbed\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1radical_1_1Radical_a73abbb7691ed3022235b1b3694740fe7}
+
+
+Internal matrix, held as member variable to prevent memory reallocations. 
+
+
+
+Definition at line 133 of file radical.\+hpp.
+
+\index{mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}!replicates@{replicates}}
+\index{replicates@{replicates}!mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}}
+\subsubsection[{replicates}]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t mlpack\+::radical\+::\+Radical\+::replicates\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1radical_1_1Radical_a1a7e6e2e69e6c90da3a99ef24b02b086}
+
+
+Number of Gaussian-\/perturbed replicates to use (per point) in Radical2D. 
+
+
+
+Definition at line 120 of file radical.\+hpp.
+
+
+
+Referenced by Replicates().
+
+\index{mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}!sweeps@{sweeps}}
+\index{sweeps@{sweeps}!mlpack\+::radical\+::\+Radical@{mlpack\+::radical\+::\+Radical}}
+\subsubsection[{sweeps}]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t mlpack\+::radical\+::\+Radical\+::sweeps\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1radical_1_1Radical_a745954758301598ad34af9ef8fa0adc5}
+
+
+Number of sweeps; each sweep calls Radical2D once for each pair of dimensions. 
+
+
+
+Definition at line 127 of file radical.\+hpp.
+
+
+
+Referenced by Sweeps().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/radical/{\bf radical.\+hpp}\end{DoxyCompactItemize}

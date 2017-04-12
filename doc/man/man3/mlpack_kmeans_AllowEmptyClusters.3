@@ -1,0 +1,89 @@
+.TH "mlpack::kmeans::AllowEmptyClusters" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::kmeans::AllowEmptyClusters \- Policy which allows K-Means to create empty clusters without any error being reported\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBAllowEmptyClusters\fP ()"
+.br
+.RI "\fIDefault constructor required by EmptyClusterPolicy policy\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &, const unsigned int)"
+.br
+.RI "\fISerialize the empty cluster policy (nothing to do)\&. \fP"
+.in -1c
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename MetricType , typename MatType > static \fBforce_inline\fP size_t \fBEmptyCluster\fP (const MatType &, const size_t emptyCluster, const arma::mat &oldCentroids, arma::mat &newCentroids, arma::Col< size_t > &, MetricType &, const size_t)"
+.br
+.RI "\fIThis function allows empty clusters to persist simply by leaving the empty cluster in its last position\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Policy which allows K-Means to create empty clusters without any error being reported\&. 
+.PP
+Definition at line 25 of file allow_empty_clusters\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::kmeans::AllowEmptyClusters::AllowEmptyClusters ()\fC [inline]\fP"
+
+.PP
+Default constructor required by EmptyClusterPolicy policy\&. 
+.PP
+Definition at line 29 of file allow_empty_clusters\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename MetricType , typename MatType > static \fBforce_inline\fP size_t mlpack::kmeans::AllowEmptyClusters::EmptyCluster (const MatType &, const size_t emptyCluster, const arma::mat & oldCentroids, arma::mat & newCentroids, arma::Col< size_t > &, MetricType &, const size_t)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+This function allows empty clusters to persist simply by leaving the empty cluster in its last position\&. 
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIMatType\fP Type of data (arma::mat or arma::spmat)\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Dataset on which clustering is being performed\&. 
+.br
+\fIemptyCluster\fP Index of cluster which is empty\&. 
+.br
+\fIoldCentroids\fP Centroids of each cluster (one per column) at the start of the iteration\&. 
+.br
+\fInewCentroids\fP Centroids of each cluster (one per column) at the end of the iteration\&. 
+.br
+\fIclusterCounts\fP Number of points in each cluster\&. 
+.br
+\fIassignments\fP Cluster assignments of each point\&. 
+.br
+\fIiteration\fP Number of iteration\&.
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Number of points changed (0)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 49 of file allow_empty_clusters\&.hpp\&.
+.SS "template<typename Archive > void mlpack::kmeans::AllowEmptyClusters::Serialize (Archive &, const unsigned int)\fC [inline]\fP"
+
+.PP
+Serialize the empty cluster policy (nothing to do)\&. 
+.PP
+Definition at line 65 of file allow_empty_clusters\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

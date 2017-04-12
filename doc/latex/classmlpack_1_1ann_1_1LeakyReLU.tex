@@ -1,0 +1,492 @@
+\section{mlpack\+:\+:ann\+:\+:Leaky\+Re\+LU$<$ Input\+Data\+Type, Output\+Data\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1LeakyReLU}\index{mlpack\+::ann\+::\+Leaky\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$@{mlpack\+::ann\+::\+Leaky\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$}}
+
+
+The \doxyref{Leaky\+Re\+LU}{p.}{classmlpack_1_1ann_1_1LeakyReLU} activation function, defined by.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Leaky\+Re\+LU} (const double {\bf alpha}=0.\+03)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Leaky\+Re\+LU}{p.}{classmlpack_1_1ann_1_1LeakyReLU} object using the specified parameters. \end{DoxyCompactList}\item 
+double const \& {\bf Alpha} () const 
+\begin{DoxyCompactList}\small\item\em Get the non zero gradient. \end{DoxyCompactList}\item 
+double \& {\bf Alpha} ()
+\begin{DoxyCompactList}\small\item\em Modify the non zero gradient. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Data\+Type $>$ }\\void {\bf Backward} (const Data\+Type \&\&input, Data\+Type \&\&gy, Data\+Type \&\&g)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f. \end{DoxyCompactList}\item 
+Output\+Data\+Type const \& {\bf Delta} () const 
+\begin{DoxyCompactList}\small\item\em Get the delta. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& {\bf Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Input\+Type , typename Output\+Type $>$ }\\void {\bf Forward} (const Input\+Type \&\&input, Output\+Type \&\&output)
+\begin{DoxyCompactList}\small\item\em Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. \end{DoxyCompactList}\item 
+Input\+Data\+Type const \& {\bf Input\+Parameter} () const 
+\begin{DoxyCompactList}\small\item\em Get the input parameter. \end{DoxyCompactList}\item 
+Input\+Data\+Type \& {\bf Input\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the input parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type const \& {\bf Output\+Parameter} () const 
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& {\bf Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&ar, const unsigned int)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+double {\bf Deriv} (const double x)
+\begin{DoxyCompactList}\small\item\em Computes the first derivative of the \doxyref{Leaky\+Re\+LU}{p.}{classmlpack_1_1ann_1_1LeakyReLU} function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Input\+Type , typename Output\+Type $>$ }\\void {\bf Deriv} (const Input\+Type \&x, Output\+Type \&y)
+\begin{DoxyCompactList}\small\item\em Computes the first derivative of the \doxyref{Leaky\+Re\+LU}{p.}{classmlpack_1_1ann_1_1LeakyReLU} function. \end{DoxyCompactList}\item 
+double {\bf Fn} (const double x)
+\begin{DoxyCompactList}\small\item\em Computes the Leak\+Re\+LU function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void {\bf Fn} (const arma\+::\+Mat$<$ eT $>$ \&x, arma\+::\+Mat$<$ eT $>$ \&y)
+\begin{DoxyCompactList}\small\item\em Computes the Leaky Re\+LU function using a dense matrix as input. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+double {\bf alpha}
+\begin{DoxyCompactList}\small\item\em Leakyness Parameter in the range 0 $<$alpha$<$ 1. \end{DoxyCompactList}\item 
+Output\+Data\+Type {\bf delta}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored delta object. \end{DoxyCompactList}\item 
+Input\+Data\+Type {\bf input\+Parameter}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored input parameter object. \end{DoxyCompactList}\item 
+Output\+Data\+Type {\bf output\+Parameter}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored output parameter object. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat$>$\\*
+class mlpack\+::ann\+::\+Leaky\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+
+The \doxyref{Leaky\+Re\+LU}{p.}{classmlpack_1_1ann_1_1LeakyReLU} activation function, defined by. 
+
+\begin{eqnarray*} f(x) &=& \max(x, alpha*x) \\ f'(x) &=& \left\{ \begin{array}{lr} 1 & : x > 0 \\ alpha & : x \le 0 \end{array} \right. \end{eqnarray*}
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 44 of file leaky\+\_\+relu.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}!Leaky\+Re\+LU@{Leaky\+Re\+LU}}
+\index{Leaky\+Re\+LU@{Leaky\+Re\+LU}!mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}}
+\subsubsection[{Leaky\+Re\+L\+U(const double alpha=0.\+03)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ {\bf mlpack\+::ann\+::\+Leaky\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::{\bf Leaky\+Re\+LU} (
+\begin{DoxyParamCaption}
+\item[{const double}]{alpha = {\ttfamily 0.03}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1LeakyReLU_a29ce2e1ea75bd695b7718365a5e6d9a1}
+
+
+Create the \doxyref{Leaky\+Re\+LU}{p.}{classmlpack_1_1ann_1_1LeakyReLU} object using the specified parameters. 
+
+The non zero gradient can be adjusted by specifying tha parameter alpha in the range 0 to 1. Default (alpha = 0.\+03)
+
+
+\begin{DoxyParams}{Parameters}
+{\em alpha} & Non zero gradient \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}!Alpha@{Alpha}}
+\index{Alpha@{Alpha}!mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}}
+\subsubsection[{Alpha() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ double const\& {\bf mlpack\+::ann\+::\+Leaky\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Alpha (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1LeakyReLU_a77c76ba010d85cc0fa8da696826f1bae}
+
+
+Get the non zero gradient. 
+
+
+
+Definition at line 94 of file leaky\+\_\+relu.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Leaky\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::alpha.
+
+\index{mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}!Alpha@{Alpha}}
+\index{Alpha@{Alpha}!mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}}
+\subsubsection[{Alpha()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ double\& {\bf mlpack\+::ann\+::\+Leaky\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Alpha (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1LeakyReLU_af3699fb0d778107aed7168d81d0ab4c2}
+
+
+Modify the non zero gradient. 
+
+
+
+Definition at line 96 of file leaky\+\_\+relu.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Leaky\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::alpha, and mlpack\+::ann\+::\+Leaky\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Serialize().
+
+\index{mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}!Backward@{Backward}}
+\index{Backward@{Backward}!mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}}
+\subsubsection[{Backward(const Data\+Type \&\&input, Data\+Type \&\&gy, Data\+Type \&\&g)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename Data\+Type $>$ void {\bf mlpack\+::ann\+::\+Leaky\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Backward (
+\begin{DoxyParamCaption}
+\item[{const Data\+Type \&\&}]{input, }
+\item[{Data\+Type \&\&}]{gy, }
+\item[{Data\+Type \&\&}]{g}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1LeakyReLU_ad6b714ab8fd3f29dd7ac36f097d76458}
+
+
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f. 
+
+Using the results from the feed forward pass.
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The propagated input activation. \\
+\hline
+{\em gy} & The backpropagated error. \\
+\hline
+{\em g} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}}
+\subsubsection[{Delta() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type const\& {\bf mlpack\+::ann\+::\+Leaky\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Delta (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1LeakyReLU_a0bcdb3fa8bcf4d5a2021846af8a43628}
+
+
+Get the delta. 
+
+
+
+Definition at line 89 of file leaky\+\_\+relu.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Leaky\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::delta.
+
+\index{mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}}
+\subsubsection[{Delta()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type\& {\bf mlpack\+::ann\+::\+Leaky\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Delta (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1LeakyReLU_a19c2131f94048bb089649d2211a96597}
+
+
+Modify the delta. 
+
+
+
+Definition at line 91 of file leaky\+\_\+relu.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Leaky\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::delta.
+
+\index{mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}!Deriv@{Deriv}}
+\index{Deriv@{Deriv}!mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}}
+\subsubsection[{Deriv(const double x)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ double {\bf mlpack\+::ann\+::\+Leaky\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Deriv (
+\begin{DoxyParamCaption}
+\item[{const double}]{x}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LeakyReLU_a888f64de6ad7265e1e4171bb6ef7bdb1}
+
+
+Computes the first derivative of the \doxyref{Leaky\+Re\+LU}{p.}{classmlpack_1_1ann_1_1LeakyReLU} function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Input data. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+f\textquotesingle{}(x) 
+\end{DoxyReturn}
+
+
+Definition at line 134 of file leaky\+\_\+relu.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Leaky\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::alpha.
+
+
+
+Referenced by mlpack\+::ann\+::\+Leaky\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Deriv().
+
+\index{mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}!Deriv@{Deriv}}
+\index{Deriv@{Deriv}!mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}}
+\subsubsection[{Deriv(const Input\+Type \&x, Output\+Type \&y)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename Input\+Type , typename Output\+Type $>$ void {\bf mlpack\+::ann\+::\+Leaky\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Deriv (
+\begin{DoxyParamCaption}
+\item[{const Input\+Type \&}]{x, }
+\item[{Output\+Type \&}]{y}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LeakyReLU_a6cf25ff768a6cc768dd47b8ac5b8de47}
+
+
+Computes the first derivative of the \doxyref{Leaky\+Re\+LU}{p.}{classmlpack_1_1ann_1_1LeakyReLU} function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em y} & Input activations. \\
+\hline
+{\em x} & The resulting derivatives. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 147 of file leaky\+\_\+relu.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Leaky\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Deriv().
+
+\index{mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}!Fn@{Fn}}
+\index{Fn@{Fn}!mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}}
+\subsubsection[{Fn(const double x)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ double {\bf mlpack\+::ann\+::\+Leaky\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Fn (
+\begin{DoxyParamCaption}
+\item[{const double}]{x}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LeakyReLU_a98d1d60d367a3c508e6fe8d8f7bc8fa1}
+
+
+Computes the Leak\+Re\+LU function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Input data. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+f(x). 
+\end{DoxyReturn}
+
+
+Definition at line 111 of file leaky\+\_\+relu.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Leaky\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::alpha.
+
+\index{mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}!Fn@{Fn}}
+\index{Fn@{Fn}!mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}}
+\subsubsection[{Fn(const arma\+::\+Mat$<$ e\+T $>$ \&x, arma\+::\+Mat$<$ e\+T $>$ \&y)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename eT $>$ void {\bf mlpack\+::ann\+::\+Leaky\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Fn (
+\begin{DoxyParamCaption}
+\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{x, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&}]{y}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LeakyReLU_a0dcdb14b942fc3be911814b7d64ea14a}
+
+
+Computes the Leaky Re\+LU function using a dense matrix as input. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Input data. \\
+\hline
+{\em y} & The resulting output activation. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 123 of file leaky\+\_\+relu.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Leaky\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::alpha.
+
+\index{mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}!Forward@{Forward}}
+\index{Forward@{Forward}!mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}}
+\subsubsection[{Forward(const Input\+Type \&\&input, Output\+Type \&\&output)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename Input\+Type , typename Output\+Type $>$ void {\bf mlpack\+::ann\+::\+Leaky\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Forward (
+\begin{DoxyParamCaption}
+\item[{const Input\+Type \&\&}]{input, }
+\item[{Output\+Type \&\&}]{output}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1LeakyReLU_a5d210205593bfa37c533d46c16d3a46d}
+
+
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input data used for evaluating the specified function. \\
+\hline
+{\em output} & Resulting output activation. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}!Input\+Parameter@{Input\+Parameter}}
+\index{Input\+Parameter@{Input\+Parameter}!mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}}
+\subsubsection[{Input\+Parameter() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Input\+Data\+Type const\& {\bf mlpack\+::ann\+::\+Leaky\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Input\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1LeakyReLU_ace7858ccf21f137efc03423f48b20823}
+
+
+Get the input parameter. 
+
+
+
+Definition at line 79 of file leaky\+\_\+relu.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Leaky\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::input\+Parameter.
+
+\index{mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}!Input\+Parameter@{Input\+Parameter}}
+\index{Input\+Parameter@{Input\+Parameter}!mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}}
+\subsubsection[{Input\+Parameter()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Input\+Data\+Type\& {\bf mlpack\+::ann\+::\+Leaky\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Input\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1LeakyReLU_a3698251c81e24a8bbc426698f95f3412}
+
+
+Modify the input parameter. 
+
+
+
+Definition at line 81 of file leaky\+\_\+relu.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Leaky\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::input\+Parameter.
+
+\index{mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}}
+\subsubsection[{Output\+Parameter() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type const\& {\bf mlpack\+::ann\+::\+Leaky\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Output\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1LeakyReLU_a0e173a77c46bad56c8d0505beaee31be}
+
+
+Get the output parameter. 
+
+
+
+Definition at line 84 of file leaky\+\_\+relu.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Leaky\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Parameter.
+
+\index{mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}}
+\subsubsection[{Output\+Parameter()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type\& {\bf mlpack\+::ann\+::\+Leaky\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Output\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1LeakyReLU_a10f694a521c3f7e78104d364c802bf66}
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 86 of file leaky\+\_\+relu.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Leaky\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Parameter.
+
+\index{mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}}
+\subsubsection[{Serialize(\+Archive \&ar, const unsigned int)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename Archive $>$ void {\bf mlpack\+::ann\+::\+Leaky\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const unsigned}]{int}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1LeakyReLU_a12f8027855ca001ecd96ce7a1e1d3d4a}
+
+
+Serialize the layer. 
+
+
+
+Referenced by mlpack\+::ann\+::\+Leaky\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Alpha().
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}!alpha@{alpha}}
+\index{alpha@{alpha}!mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}}
+\subsubsection[{alpha}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ double {\bf mlpack\+::ann\+::\+Leaky\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::alpha\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LeakyReLU_a3a032204e1cf7fb4ff6cded582edf1b4}
+
+
+Leakyness Parameter in the range 0 $<$alpha$<$ 1. 
+
+
+
+Definition at line 167 of file leaky\+\_\+relu.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Leaky\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Alpha(), mlpack\+::ann\+::\+Leaky\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Deriv(), and mlpack\+::ann\+::\+Leaky\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Fn().
+
+\index{mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}!delta@{delta}}
+\index{delta@{delta}!mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}}
+\subsubsection[{delta}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type {\bf mlpack\+::ann\+::\+Leaky\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::delta\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LeakyReLU_a2ab7a7e514002bb7a8197eba386bab7a}
+
+
+Locally-\/stored delta object. 
+
+
+
+Definition at line 158 of file leaky\+\_\+relu.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Leaky\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Delta().
+
+\index{mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}!input\+Parameter@{input\+Parameter}}
+\index{input\+Parameter@{input\+Parameter}!mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}}
+\subsubsection[{input\+Parameter}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Input\+Data\+Type {\bf mlpack\+::ann\+::\+Leaky\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::input\+Parameter\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LeakyReLU_a7732c60bfeb23b8123ad9a6eb59532a3}
+
+
+Locally-\/stored input parameter object. 
+
+
+
+Definition at line 161 of file leaky\+\_\+relu.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Leaky\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Input\+Parameter().
+
+\index{mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}!output\+Parameter@{output\+Parameter}}
+\index{output\+Parameter@{output\+Parameter}!mlpack\+::ann\+::\+Leaky\+Re\+LU@{mlpack\+::ann\+::\+Leaky\+Re\+LU}}
+\subsubsection[{output\+Parameter}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type {\bf mlpack\+::ann\+::\+Leaky\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Parameter\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1LeakyReLU_afe6da3240e611fdb1223d371dd9965df}
+
+
+Locally-\/stored output parameter object. 
+
+
+
+Definition at line 164 of file leaky\+\_\+relu.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Leaky\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Output\+Parameter().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/ann/layer/{\bf leaky\+\_\+relu.\+hpp}\end{DoxyCompactItemize}

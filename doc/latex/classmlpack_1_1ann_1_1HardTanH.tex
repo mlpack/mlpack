@@ -1,0 +1,431 @@
+\section{mlpack\+:\+:ann\+:\+:Hard\+TanH$<$ Input\+Data\+Type, Output\+Data\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1HardTanH}\index{mlpack\+::ann\+::\+Hard\+Tan\+H$<$ Input\+Data\+Type, Output\+Data\+Type $>$@{mlpack\+::ann\+::\+Hard\+Tan\+H$<$ Input\+Data\+Type, Output\+Data\+Type $>$}}
+
+
+The Hard Tanh activation function, defined by.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Hard\+TanH} (const double {\bf max\+Value}=1, const double {\bf min\+Value}=-\/1)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Hard\+TanH}{p.}{classmlpack_1_1ann_1_1HardTanH} object using the specified parameters. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Data\+Type $>$ }\\void {\bf Backward} (const Data\+Type \&\&input, Data\+Type \&\&gy, Data\+Type \&\&g)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f. \end{DoxyCompactList}\item 
+Output\+Data\+Type const \& {\bf Delta} () const 
+\begin{DoxyCompactList}\small\item\em Get the delta. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& {\bf Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Input\+Type , typename Output\+Type $>$ }\\void {\bf Forward} (const Input\+Type \&\&input, Output\+Type \&\&output)
+\begin{DoxyCompactList}\small\item\em Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. \end{DoxyCompactList}\item 
+Input\+Data\+Type const \& {\bf Input\+Parameter} () const 
+\begin{DoxyCompactList}\small\item\em Get the input parameter. \end{DoxyCompactList}\item 
+Input\+Data\+Type \& {\bf Input\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the input parameter. \end{DoxyCompactList}\item 
+double const \& {\bf Max\+Value} () const 
+\begin{DoxyCompactList}\small\item\em Get the maximum value. \end{DoxyCompactList}\item 
+double \& {\bf Max\+Value} ()
+\begin{DoxyCompactList}\small\item\em Modify the maximum value. \end{DoxyCompactList}\item 
+double const \& {\bf Min\+Value} () const 
+\begin{DoxyCompactList}\small\item\em Get the minimum value. \end{DoxyCompactList}\item 
+double \& {\bf Min\+Value} ()
+\begin{DoxyCompactList}\small\item\em Modify the minimum value. \end{DoxyCompactList}\item 
+Output\+Data\+Type const \& {\bf Output\+Parameter} () const 
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& {\bf Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&ar, const unsigned int)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+Output\+Data\+Type {\bf delta}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored delta object. \end{DoxyCompactList}\item 
+Input\+Data\+Type {\bf input\+Parameter}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored input parameter object. \end{DoxyCompactList}\item 
+double {\bf max\+Value}
+\begin{DoxyCompactList}\small\item\em Maximum value for the \doxyref{Hard\+TanH}{p.}{classmlpack_1_1ann_1_1HardTanH} function. \end{DoxyCompactList}\item 
+double {\bf min\+Value}
+\begin{DoxyCompactList}\small\item\em Minimum value for the \doxyref{Hard\+TanH}{p.}{classmlpack_1_1ann_1_1HardTanH} function. \end{DoxyCompactList}\item 
+Output\+Data\+Type {\bf output\+Parameter}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored output parameter object. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat$>$\\*
+class mlpack\+::ann\+::\+Hard\+Tan\+H$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+
+The Hard Tanh activation function, defined by. 
+
+\begin{eqnarray*} f(x) &=& \left\{ \begin{array}{lr} max & : x > maxValue \\ min & : x \le minValue \\ x & : otherwise \end{array} \right. \\ f'(x) &=& \left\{ \begin{array}{lr} 0 & : x > maxValue \\ 0 & : x \le minValue \\ 1 & : otherwise \end{array} \right. \end{eqnarray*}
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 49 of file hard\+\_\+tanh.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}!Hard\+TanH@{Hard\+TanH}}
+\index{Hard\+TanH@{Hard\+TanH}!mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}}
+\subsubsection[{Hard\+Tan\+H(const double max\+Value=1, const double min\+Value=-\/1)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ {\bf mlpack\+::ann\+::\+Hard\+TanH}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::{\bf Hard\+TanH} (
+\begin{DoxyParamCaption}
+\item[{const double}]{max\+Value = {\ttfamily 1}, }
+\item[{const double}]{min\+Value = {\ttfamily -\/1}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1HardTanH_afd7fa8cc498dfb3f53da571845f6d93a}
+
+
+Create the \doxyref{Hard\+TanH}{p.}{classmlpack_1_1ann_1_1HardTanH} object using the specified parameters. 
+
+The range of the linear region can be adjusted by specifying the max\+Value and min\+Value. Default (max\+Value = 1, min\+Value = -\/1).
+
+
+\begin{DoxyParams}{Parameters}
+{\em max\+Value} & Range of the linear region maximum value. \\
+\hline
+{\em min\+Value} & Range of the linear region minimum value. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}!Backward@{Backward}}
+\index{Backward@{Backward}!mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}}
+\subsubsection[{Backward(const Data\+Type \&\&input, Data\+Type \&\&gy, Data\+Type \&\&g)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename Data\+Type $>$ void {\bf mlpack\+::ann\+::\+Hard\+TanH}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Backward (
+\begin{DoxyParamCaption}
+\item[{const Data\+Type \&\&}]{input, }
+\item[{Data\+Type \&\&}]{gy, }
+\item[{Data\+Type \&\&}]{g}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1HardTanH_a6584d29866557ef6f1bb016ea3142e5d}
+
+
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f. 
+
+Using the results from the feed forward pass.
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The propagated input activation. \\
+\hline
+{\em gy} & The backpropagated error. \\
+\hline
+{\em g} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}}
+\subsubsection[{Delta() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type const\& {\bf mlpack\+::ann\+::\+Hard\+TanH}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Delta (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1HardTanH_a626216b433c99a0a91f850690a9998ad}
+
+
+Get the delta. 
+
+
+
+Definition at line 97 of file hard\+\_\+tanh.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Hard\+Tan\+H$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::delta.
+
+\index{mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}}
+\subsubsection[{Delta()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type\& {\bf mlpack\+::ann\+::\+Hard\+TanH}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Delta (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1HardTanH_afc3cdbd2ec10233fd14c50a68ce88ade}
+
+
+Modify the delta. 
+
+
+
+Definition at line 99 of file hard\+\_\+tanh.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Hard\+Tan\+H$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::delta.
+
+\index{mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}!Forward@{Forward}}
+\index{Forward@{Forward}!mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}}
+\subsubsection[{Forward(const Input\+Type \&\&input, Output\+Type \&\&output)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename Input\+Type , typename Output\+Type $>$ void {\bf mlpack\+::ann\+::\+Hard\+TanH}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Forward (
+\begin{DoxyParamCaption}
+\item[{const Input\+Type \&\&}]{input, }
+\item[{Output\+Type \&\&}]{output}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1HardTanH_af870a425156d2ba92f6315d01204ee2f}
+
+
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input data used for evaluating the specified function. \\
+\hline
+{\em output} & Resulting output activation. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}!Input\+Parameter@{Input\+Parameter}}
+\index{Input\+Parameter@{Input\+Parameter}!mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}}
+\subsubsection[{Input\+Parameter() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Input\+Data\+Type const\& {\bf mlpack\+::ann\+::\+Hard\+TanH}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Input\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1HardTanH_a3b58c184ced331d039b81b92636ac3b6}
+
+
+Get the input parameter. 
+
+
+
+Definition at line 87 of file hard\+\_\+tanh.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Hard\+Tan\+H$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::input\+Parameter.
+
+\index{mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}!Input\+Parameter@{Input\+Parameter}}
+\index{Input\+Parameter@{Input\+Parameter}!mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}}
+\subsubsection[{Input\+Parameter()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Input\+Data\+Type\& {\bf mlpack\+::ann\+::\+Hard\+TanH}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Input\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1HardTanH_ab9d7ba478d760c9f372d2840dafe6026}
+
+
+Modify the input parameter. 
+
+
+
+Definition at line 89 of file hard\+\_\+tanh.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Hard\+Tan\+H$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::input\+Parameter.
+
+\index{mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}!Max\+Value@{Max\+Value}}
+\index{Max\+Value@{Max\+Value}!mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}}
+\subsubsection[{Max\+Value() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ double const\& {\bf mlpack\+::ann\+::\+Hard\+TanH}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Max\+Value (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1HardTanH_aadd9ecb0239f135c5337be3790741c9c}
+
+
+Get the maximum value. 
+
+
+
+Definition at line 102 of file hard\+\_\+tanh.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Hard\+Tan\+H$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::max\+Value.
+
+\index{mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}!Max\+Value@{Max\+Value}}
+\index{Max\+Value@{Max\+Value}!mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}}
+\subsubsection[{Max\+Value()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ double\& {\bf mlpack\+::ann\+::\+Hard\+TanH}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Max\+Value (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1HardTanH_aa35cb34d55953a23f8356834e581c5b3}
+
+
+Modify the maximum value. 
+
+
+
+Definition at line 104 of file hard\+\_\+tanh.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Hard\+Tan\+H$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::max\+Value.
+
+\index{mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}!Min\+Value@{Min\+Value}}
+\index{Min\+Value@{Min\+Value}!mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}}
+\subsubsection[{Min\+Value() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ double const\& {\bf mlpack\+::ann\+::\+Hard\+TanH}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Min\+Value (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1HardTanH_aefa263bd9c2b752f6ea6ab301053bbf0}
+
+
+Get the minimum value. 
+
+
+
+Definition at line 107 of file hard\+\_\+tanh.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Hard\+Tan\+H$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::min\+Value.
+
+\index{mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}!Min\+Value@{Min\+Value}}
+\index{Min\+Value@{Min\+Value}!mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}}
+\subsubsection[{Min\+Value()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ double\& {\bf mlpack\+::ann\+::\+Hard\+TanH}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Min\+Value (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1HardTanH_a8fc2d042270ebd4c057bffd363686945}
+
+
+Modify the minimum value. 
+
+
+
+Definition at line 109 of file hard\+\_\+tanh.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Hard\+Tan\+H$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::min\+Value, and mlpack\+::ann\+::\+Hard\+Tan\+H$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Serialize().
+
+\index{mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}}
+\subsubsection[{Output\+Parameter() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type const\& {\bf mlpack\+::ann\+::\+Hard\+TanH}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Output\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1HardTanH_a88997071321cfe71c88d3723fe6f6a61}
+
+
+Get the output parameter. 
+
+
+
+Definition at line 92 of file hard\+\_\+tanh.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Hard\+Tan\+H$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Parameter.
+
+\index{mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}}
+\subsubsection[{Output\+Parameter()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type\& {\bf mlpack\+::ann\+::\+Hard\+TanH}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Output\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1HardTanH_a14873c7afce7deea90fe21b3e6254c99}
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 94 of file hard\+\_\+tanh.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Hard\+Tan\+H$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Parameter.
+
+\index{mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}}
+\subsubsection[{Serialize(\+Archive \&ar, const unsigned int)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename Archive $>$ void {\bf mlpack\+::ann\+::\+Hard\+TanH}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const unsigned}]{int}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1HardTanH_a2174894d92a45172de5aaba744f2111b}
+
+
+Serialize the layer. 
+
+
+
+Referenced by mlpack\+::ann\+::\+Hard\+Tan\+H$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Min\+Value().
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}!delta@{delta}}
+\index{delta@{delta}!mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}}
+\subsubsection[{delta}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type {\bf mlpack\+::ann\+::\+Hard\+TanH}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::delta\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1HardTanH_a5809ba7636846cd39a5f7d2b5704d12a}
+
+
+Locally-\/stored delta object. 
+
+
+
+Definition at line 119 of file hard\+\_\+tanh.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Hard\+Tan\+H$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Delta().
+
+\index{mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}!input\+Parameter@{input\+Parameter}}
+\index{input\+Parameter@{input\+Parameter}!mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}}
+\subsubsection[{input\+Parameter}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Input\+Data\+Type {\bf mlpack\+::ann\+::\+Hard\+TanH}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::input\+Parameter\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1HardTanH_ae8f69ab54474d5084a3f27d4fbb26d05}
+
+
+Locally-\/stored input parameter object. 
+
+
+
+Definition at line 122 of file hard\+\_\+tanh.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Hard\+Tan\+H$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Input\+Parameter().
+
+\index{mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}!max\+Value@{max\+Value}}
+\index{max\+Value@{max\+Value}!mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}}
+\subsubsection[{max\+Value}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ double {\bf mlpack\+::ann\+::\+Hard\+TanH}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::max\+Value\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1HardTanH_ac6750d807f24c8e8091a3c2a1360c618}
+
+
+Maximum value for the \doxyref{Hard\+TanH}{p.}{classmlpack_1_1ann_1_1HardTanH} function. 
+
+
+
+Definition at line 128 of file hard\+\_\+tanh.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Hard\+Tan\+H$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Max\+Value().
+
+\index{mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}!min\+Value@{min\+Value}}
+\index{min\+Value@{min\+Value}!mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}}
+\subsubsection[{min\+Value}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ double {\bf mlpack\+::ann\+::\+Hard\+TanH}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::min\+Value\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1HardTanH_a8f66963e6b68fd6949a9b4e3073790d1}
+
+
+Minimum value for the \doxyref{Hard\+TanH}{p.}{classmlpack_1_1ann_1_1HardTanH} function. 
+
+
+
+Definition at line 131 of file hard\+\_\+tanh.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Hard\+Tan\+H$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Min\+Value().
+
+\index{mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}!output\+Parameter@{output\+Parameter}}
+\index{output\+Parameter@{output\+Parameter}!mlpack\+::ann\+::\+Hard\+TanH@{mlpack\+::ann\+::\+Hard\+TanH}}
+\subsubsection[{output\+Parameter}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type {\bf mlpack\+::ann\+::\+Hard\+TanH}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Parameter\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1HardTanH_a57a5552cb816c54b96c974dd2389b57f}
+
+
+Locally-\/stored output parameter object. 
+
+
+
+Definition at line 125 of file hard\+\_\+tanh.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Hard\+Tan\+H$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Output\+Parameter().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/ann/layer/{\bf hard\+\_\+tanh.\+hpp}\end{DoxyCompactItemize}

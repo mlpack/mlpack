@@ -1,0 +1,199 @@
+.TH "mlpack::ann::MeanSquaredError< InputDataType, OutputDataType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::ann::MeanSquaredError< InputDataType, OutputDataType > \- The mean squared error performance function measures the network's performance according to the mean of squared errors\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBMeanSquaredError\fP ()"
+.br
+.RI "\fICreate the \fBMeanSquaredError\fP object\&. \fP"
+.ti -1c
+.RI "template<typename eT > void \fBBackward\fP (const arma::Mat< eT > &&input, const arma::Mat< eT > &&target, arma::Mat< eT > &&output)"
+.br
+.RI "\fIOrdinary feed backward pass of a neural network\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBDelta\fP () const "
+.br
+.RI "\fIGet the delta\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBDelta\fP ()"
+.br
+.RI "\fIModify the delta\&. \fP"
+.ti -1c
+.RI "template<typename eT > double \fBForward\fP (const arma::Mat< eT > &&input, const arma::Mat< eT > &&target)"
+.br
+.ti -1c
+.RI "InputDataType & \fBInputParameter\fP () const "
+.br
+.RI "\fIGet the input parameter\&. \fP"
+.ti -1c
+.RI "InputDataType & \fBInputParameter\fP ()"
+.br
+.RI "\fIModify the input parameter\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP () const "
+.br
+.RI "\fIGet the output parameter\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP ()"
+.br
+.RI "\fIModify the output parameter\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int)"
+.br
+.RI "\fISerialize the layer\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "OutputDataType \fBdelta\fP"
+.br
+.RI "\fILocally-stored delta object\&. \fP"
+.ti -1c
+.RI "InputDataType \fBinputParameter\fP"
+.br
+.RI "\fILocally-stored input parameter object\&. \fP"
+.ti -1c
+.RI "OutputDataType \fBoutputParameter\fP"
+.br
+.RI "\fILocally-stored output parameter object\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename InputDataType = arma::mat, typename OutputDataType = arma::mat>
+.br
+class mlpack::ann::MeanSquaredError< InputDataType, OutputDataType >"
+The mean squared error performance function measures the network's performance according to the mean of squared errors\&. 
+
+
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIActivationFunction\fP Activation function used for the embedding layer\&. 
+.br
+\fIInputDataType\fP Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fIOutputDataType\fP Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 34 of file mean_squared_error\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBmlpack::ann::MeanSquaredError\fP< InputDataType, OutputDataType >::\fBMeanSquaredError\fP ()"
+
+.PP
+Create the \fBMeanSquaredError\fP object\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename eT > void \fBmlpack::ann::MeanSquaredError\fP< InputDataType, OutputDataType >::Backward (const arma::Mat< eT > && input, const arma::Mat< eT > && target, arma::Mat< eT > && output)"
+
+.PP
+Ordinary feed backward pass of a neural network\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP The propagated input activation\&. 
+.br
+\fItarget\fP The target vector\&. 
+.br
+\fIoutput\fP The calculated error\&. 
+.RE
+.PP
+
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::MeanSquaredError\fP< InputDataType, OutputDataType >::Delta () const\fC [inline]\fP"
+
+.PP
+Get the delta\&. 
+.PP
+Definition at line 73 of file mean_squared_error\&.hpp\&.
+.PP
+References mlpack::ann::MeanSquaredError< InputDataType, OutputDataType >::delta\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::MeanSquaredError\fP< InputDataType, OutputDataType >::Delta ()\fC [inline]\fP"
+
+.PP
+Modify the delta\&. 
+.PP
+Definition at line 75 of file mean_squared_error\&.hpp\&.
+.PP
+References mlpack::ann::MeanSquaredError< InputDataType, OutputDataType >::delta, and mlpack::ann::MeanSquaredError< InputDataType, OutputDataType >::Serialize()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename eT > double \fBmlpack::ann::MeanSquaredError\fP< InputDataType, OutputDataType >::Forward (const arma::Mat< eT > && input, const arma::Mat< eT > && target)"
+
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> InputDataType& \fBmlpack::ann::MeanSquaredError\fP< InputDataType, OutputDataType >::InputParameter () const\fC [inline]\fP"
+
+.PP
+Get the input parameter\&. 
+.PP
+Definition at line 63 of file mean_squared_error\&.hpp\&.
+.PP
+References mlpack::ann::MeanSquaredError< InputDataType, OutputDataType >::inputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> InputDataType& \fBmlpack::ann::MeanSquaredError\fP< InputDataType, OutputDataType >::InputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the input parameter\&. 
+.PP
+Definition at line 65 of file mean_squared_error\&.hpp\&.
+.PP
+References mlpack::ann::MeanSquaredError< InputDataType, OutputDataType >::inputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::MeanSquaredError\fP< InputDataType, OutputDataType >::OutputParameter () const\fC [inline]\fP"
+
+.PP
+Get the output parameter\&. 
+.PP
+Definition at line 68 of file mean_squared_error\&.hpp\&.
+.PP
+References mlpack::ann::MeanSquaredError< InputDataType, OutputDataType >::outputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::MeanSquaredError\fP< InputDataType, OutputDataType >::OutputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the output parameter\&. 
+.PP
+Definition at line 70 of file mean_squared_error\&.hpp\&.
+.PP
+References mlpack::ann::MeanSquaredError< InputDataType, OutputDataType >::outputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename Archive > void \fBmlpack::ann::MeanSquaredError\fP< InputDataType, OutputDataType >::Serialize (Archive & ar, const unsigned int)"
+
+.PP
+Serialize the layer\&. 
+.PP
+Referenced by mlpack::ann::MeanSquaredError< InputDataType, OutputDataType >::Delta()\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType \fBmlpack::ann::MeanSquaredError\fP< InputDataType, OutputDataType >::delta\fC [private]\fP"
+
+.PP
+Locally-stored delta object\&. 
+.PP
+Definition at line 85 of file mean_squared_error\&.hpp\&.
+.PP
+Referenced by mlpack::ann::MeanSquaredError< InputDataType, OutputDataType >::Delta()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> InputDataType \fBmlpack::ann::MeanSquaredError\fP< InputDataType, OutputDataType >::inputParameter\fC [private]\fP"
+
+.PP
+Locally-stored input parameter object\&. 
+.PP
+Definition at line 88 of file mean_squared_error\&.hpp\&.
+.PP
+Referenced by mlpack::ann::MeanSquaredError< InputDataType, OutputDataType >::InputParameter()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType \fBmlpack::ann::MeanSquaredError\fP< InputDataType, OutputDataType >::outputParameter\fC [private]\fP"
+
+.PP
+Locally-stored output parameter object\&. 
+.PP
+Definition at line 91 of file mean_squared_error\&.hpp\&.
+.PP
+Referenced by mlpack::ann::MeanSquaredError< InputDataType, OutputDataType >::OutputParameter()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

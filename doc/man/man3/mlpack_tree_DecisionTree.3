@@ -1,0 +1,445 @@
+.TH "mlpack::tree::DecisionTree< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::tree::DecisionTree< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion > \- This class implements a generic decision tree learner\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits templateAuxiliarySplitInfo< ElemType >, and templateAuxiliarySplitInfo< ElemType >\&.
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "typedef CategoricalSplitType< FitnessFunction > \fBCategoricalSplit\fP"
+.br
+.RI "\fIAllow access to the categorical split type\&. \fP"
+.ti -1c
+.RI "typedef NumericSplitType< FitnessFunction > \fBNumericSplit\fP"
+.br
+.RI "\fIAllow access to the numeric split type\&. \fP"
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename MatType > \fBDecisionTree\fP (const MatType &data, const \fBdata::DatasetInfo\fP &datasetInfo, const arma::Row< size_t > &labels, const size_t numClasses, const size_t minimumLeafSize=10)"
+.br
+.RI "\fIConstruct the decision tree on the given data and labels, where the data can be both numeric and categorical\&. \fP"
+.ti -1c
+.RI "template<typename MatType > \fBDecisionTree\fP (const MatType &data, const arma::Row< size_t > &labels, const size_t numClasses, const size_t minimumLeafSize=10)"
+.br
+.RI "\fIConstruct the decision tree on the given data and labels, assuming that the data is all of the numeric type\&. \fP"
+.ti -1c
+.RI "\fBDecisionTree\fP (const size_t numClasses=1)"
+.br
+.RI "\fIConstruct a decision tree without training it\&. \fP"
+.ti -1c
+.RI "\fBDecisionTree\fP (const \fBDecisionTree\fP &other)"
+.br
+.RI "\fICopy another tree\&. \fP"
+.ti -1c
+.RI "\fBDecisionTree\fP (\fBDecisionTree\fP &&other)"
+.br
+.RI "\fITake ownership of another tree\&. \fP"
+.ti -1c
+.RI "\fB~DecisionTree\fP ()"
+.br
+.RI "\fIClean up memory\&. \fP"
+.ti -1c
+.RI "template<typename VecType > size_t \fBCalculateDirection\fP (const VecType &point) const "
+.br
+.RI "\fIGiven a point and that this node is not a leaf, calculate the index of the child node this point would go towards\&. \fP"
+.ti -1c
+.RI "const \fBDecisionTree\fP & \fBChild\fP (const size_t i) const "
+.br
+.RI "\fIGet the child of the given index\&. \fP"
+.ti -1c
+.RI "\fBDecisionTree\fP & \fBChild\fP (const size_t i)"
+.br
+.RI "\fIModify the child of the given index (be careful!)\&. \fP"
+.ti -1c
+.RI "template<typename VecType > size_t \fBClassify\fP (const VecType &point) const "
+.br
+.RI "\fIClassify the given point, using the entire tree\&. \fP"
+.ti -1c
+.RI "template<typename VecType > void \fBClassify\fP (const VecType &point, size_t &prediction, arma::vec &probabilities) const "
+.br
+.RI "\fIClassify the given point and also return estimates of the probability for each class in the given vector\&. \fP"
+.ti -1c
+.RI "template<typename MatType > void \fBClassify\fP (const MatType &data, arma::Row< size_t > &predictions) const "
+.br
+.RI "\fIClassify the given points, using the entire tree\&. \fP"
+.ti -1c
+.RI "template<typename MatType > void \fBClassify\fP (const MatType &data, arma::Row< size_t > &predictions, arma::mat &probabilities) const "
+.br
+.RI "\fIClassify the given points and also return estimates of the probabilities for each class in the given matrix\&. \fP"
+.ti -1c
+.RI "size_t \fBNumChildren\fP () const "
+.br
+.RI "\fIGet the number of children\&. \fP"
+.ti -1c
+.RI "\fBDecisionTree\fP & \fBoperator=\fP (const \fBDecisionTree\fP &other)"
+.br
+.RI "\fICopy another tree\&. \fP"
+.ti -1c
+.RI "\fBDecisionTree\fP & \fBoperator=\fP (\fBDecisionTree\fP &&other)"
+.br
+.RI "\fITake ownership of another tree\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int)"
+.br
+.RI "\fISerialize the tree\&. \fP"
+.ti -1c
+.RI "template<typename MatType > void \fBTrain\fP (const MatType &data, const \fBdata::DatasetInfo\fP &datasetInfo, const arma::Row< size_t > &labels, const size_t numClasses, const size_t minimumLeafSize=10)"
+.br
+.RI "\fITrain the decision tree on the given data\&. \fP"
+.ti -1c
+.RI "template<typename MatType > void \fBTrain\fP (const MatType &data, const arma::Row< size_t > &labels, const size_t numClasses, const size_t minimumLeafSize=10)"
+.br
+.RI "\fITrain the decision tree on the given data, assuming that all dimensions are numeric\&. \fP"
+.in -1c
+.SS "Private Types"
+
+.in +1c
+.ti -1c
+.RI "typedef CategoricalSplit::template AuxiliarySplitInfo< ElemType > \fBCategoricalAuxiliarySplitInfo\fP"
+.br
+.ti -1c
+.RI "typedef NumericSplit::template AuxiliarySplitInfo< ElemType > \fBNumericAuxiliarySplitInfo\fP"
+.br
+.RI "\fINote that this class will also hold the members of the NumericSplit and CategoricalSplit AuxiliarySplitInfo classes, since it inherits from them\&. \fP"
+.in -1c
+.SS "Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename RowType > void \fBCalculateClassProbabilities\fP (const RowType &labels, const size_t numClasses)"
+.br
+.RI "\fICalculate the class probabilities of the given labels\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "std::vector< \fBDecisionTree\fP * > \fBchildren\fP"
+.br
+.RI "\fIThe vector of children\&. \fP"
+.ti -1c
+.RI "arma::vec \fBclassProbabilities\fP"
+.br
+.RI "\fIThis vector may hold different things\&. \fP"
+.ti -1c
+.RI "size_t \fBdimensionTypeOrMajorityClass\fP"
+.br
+.RI "\fIThe type of the dimension that we have split on (if we are not a leaf)\&. \fP"
+.ti -1c
+.RI "size_t \fBsplitDimension\fP"
+.br
+.RI "\fIThe dimension this node splits on\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename FitnessFunction = GiniGain, template< typename > class NumericSplitType = BestBinaryNumericSplit, template< typename > class CategoricalSplitType = AllCategoricalSplit, typename ElemType = double, bool NoRecursion = false>
+.br
+class mlpack::tree::DecisionTree< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >"
+This class implements a generic decision tree learner\&. 
+
+Its behavior can be controlled via its template arguments\&.
+.PP
+The class inherits from the auxiliary split information in order to prevent an empty auxiliary split information struct from taking any extra size\&. 
+.PP
+Definition at line 31 of file decision_tree\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "template<typename FitnessFunction  = GiniGain, template< typename > class NumericSplitType = BestBinaryNumericSplit, template< typename > class CategoricalSplitType = AllCategoricalSplit, typename ElemType  = double, bool NoRecursion = false> typedef CategoricalSplit::template AuxiliarySplitInfo<ElemType> \fBmlpack::tree::DecisionTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >::\fBCategoricalAuxiliarySplitInfo\fP\fC [private]\fP"
+
+.PP
+Definition at line 254 of file decision_tree\&.hpp\&.
+.SS "template<typename FitnessFunction  = GiniGain, template< typename > class NumericSplitType = BestBinaryNumericSplit, template< typename > class CategoricalSplitType = AllCategoricalSplit, typename ElemType  = double, bool NoRecursion = false> typedef CategoricalSplitType<FitnessFunction> \fBmlpack::tree::DecisionTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >::\fBCategoricalSplit\fP"
+
+.PP
+Allow access to the categorical split type\&. 
+.PP
+Definition at line 41 of file decision_tree\&.hpp\&.
+.SS "template<typename FitnessFunction  = GiniGain, template< typename > class NumericSplitType = BestBinaryNumericSplit, template< typename > class CategoricalSplitType = AllCategoricalSplit, typename ElemType  = double, bool NoRecursion = false> typedef NumericSplit::template AuxiliarySplitInfo<ElemType> \fBmlpack::tree::DecisionTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >::\fBNumericAuxiliarySplitInfo\fP\fC [private]\fP"
+
+.PP
+Note that this class will also hold the members of the NumericSplit and CategoricalSplit AuxiliarySplitInfo classes, since it inherits from them\&. We'll define some convenience typedefs here\&. 
+.PP
+Definition at line 252 of file decision_tree\&.hpp\&.
+.SS "template<typename FitnessFunction  = GiniGain, template< typename > class NumericSplitType = BestBinaryNumericSplit, template< typename > class CategoricalSplitType = AllCategoricalSplit, typename ElemType  = double, bool NoRecursion = false> typedef NumericSplitType<FitnessFunction> \fBmlpack::tree::DecisionTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >::\fBNumericSplit\fP"
+
+.PP
+Allow access to the numeric split type\&. 
+.PP
+Definition at line 39 of file decision_tree\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename FitnessFunction  = GiniGain, template< typename > class NumericSplitType = BestBinaryNumericSplit, template< typename > class CategoricalSplitType = AllCategoricalSplit, typename ElemType  = double, bool NoRecursion = false> template<typename MatType > \fBmlpack::tree::DecisionTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >::\fBDecisionTree\fP (const MatType & data, const \fBdata::DatasetInfo\fP & datasetInfo, const arma::Row< size_t > & labels, const size_t numClasses, const size_t minimumLeafSize = \fC10\fP)"
+
+.PP
+Construct the decision tree on the given data and labels, where the data can be both numeric and categorical\&. Setting minimumLeafSize too small may cause the tree to overfit, but setting it too large may cause it to underfit\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Dataset to train on\&. 
+.br
+\fIdatasetInfo\fP Type information for each dimension of the dataset\&. 
+.br
+\fIlabels\fP Labels for each training point\&. 
+.br
+\fInumClasses\fP Number of classes in the dataset\&. 
+.br
+\fIminimumLeafSize\fP Minimum number of points in each leaf node\&. 
+.RE
+.PP
+
+.SS "template<typename FitnessFunction  = GiniGain, template< typename > class NumericSplitType = BestBinaryNumericSplit, template< typename > class CategoricalSplitType = AllCategoricalSplit, typename ElemType  = double, bool NoRecursion = false> template<typename MatType > \fBmlpack::tree::DecisionTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >::\fBDecisionTree\fP (const MatType & data, const arma::Row< size_t > & labels, const size_t numClasses, const size_t minimumLeafSize = \fC10\fP)"
+
+.PP
+Construct the decision tree on the given data and labels, assuming that the data is all of the numeric type\&. Setting minimumLeafSize too small may cause the tree to overfit, but setting it too large may cause it to underfit\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Dataset to train on\&. 
+.br
+\fIlabels\fP Labels for each training point\&. 
+.br
+\fInumClasses\fP Number of classes in the dataset\&. 
+.br
+\fIminimumLeafSize\fP Minimum number of points in each leaf node\&. 
+.RE
+.PP
+
+.SS "template<typename FitnessFunction  = GiniGain, template< typename > class NumericSplitType = BestBinaryNumericSplit, template< typename > class CategoricalSplitType = AllCategoricalSplit, typename ElemType  = double, bool NoRecursion = false> \fBmlpack::tree::DecisionTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >::\fBDecisionTree\fP (const size_t numClasses = \fC1\fP)"
+
+.PP
+Construct a decision tree without training it\&. It will be a leaf node with equal probabilities for each class\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fInumClasses\fP Number of classes in the dataset\&. 
+.RE
+.PP
+
+.SS "template<typename FitnessFunction  = GiniGain, template< typename > class NumericSplitType = BestBinaryNumericSplit, template< typename > class CategoricalSplitType = AllCategoricalSplit, typename ElemType  = double, bool NoRecursion = false> \fBmlpack::tree::DecisionTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >::\fBDecisionTree\fP (const \fBDecisionTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion > & other)"
+
+.PP
+Copy another tree\&. This may use a lot of memory---be sure that it's what you want to do\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP Tree to copy\&. 
+.RE
+.PP
+
+.SS "template<typename FitnessFunction  = GiniGain, template< typename > class NumericSplitType = BestBinaryNumericSplit, template< typename > class CategoricalSplitType = AllCategoricalSplit, typename ElemType  = double, bool NoRecursion = false> \fBmlpack::tree::DecisionTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >::\fBDecisionTree\fP (\fBDecisionTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion > && other)"
+
+.PP
+Take ownership of another tree\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP Tree to take ownership of\&. 
+.RE
+.PP
+
+.SS "template<typename FitnessFunction  = GiniGain, template< typename > class NumericSplitType = BestBinaryNumericSplit, template< typename > class CategoricalSplitType = AllCategoricalSplit, typename ElemType  = double, bool NoRecursion = false> \fBmlpack::tree::DecisionTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >::~\fBDecisionTree\fP ()"
+
+.PP
+Clean up memory\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename FitnessFunction  = GiniGain, template< typename > class NumericSplitType = BestBinaryNumericSplit, template< typename > class CategoricalSplitType = AllCategoricalSplit, typename ElemType  = double, bool NoRecursion = false> template<typename RowType > void \fBmlpack::tree::DecisionTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >::CalculateClassProbabilities (const RowType & labels, const size_t numClasses)\fC [private]\fP"
+
+.PP
+Calculate the class probabilities of the given labels\&. 
+.SS "template<typename FitnessFunction  = GiniGain, template< typename > class NumericSplitType = BestBinaryNumericSplit, template< typename > class CategoricalSplitType = AllCategoricalSplit, typename ElemType  = double, bool NoRecursion = false> template<typename VecType > size_t \fBmlpack::tree::DecisionTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >::CalculateDirection (const VecType & point) const"
+
+.PP
+Given a point and that this node is not a leaf, calculate the index of the child node this point would go towards\&. This method is primarily used by the \fBClassify()\fP function, but it can be used in a standalone sense too\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpoint\fP Point to classify\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::tree::DecisionTree< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >::Child()\&.
+.SS "template<typename FitnessFunction  = GiniGain, template< typename > class NumericSplitType = BestBinaryNumericSplit, template< typename > class CategoricalSplitType = AllCategoricalSplit, typename ElemType  = double, bool NoRecursion = false> const \fBDecisionTree\fP& \fBmlpack::tree::DecisionTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >::Child (const size_t i) const\fC [inline]\fP"
+
+.PP
+Get the child of the given index\&. 
+.PP
+Definition at line 217 of file decision_tree\&.hpp\&.
+.PP
+References mlpack::tree::DecisionTree< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >::children\&.
+.SS "template<typename FitnessFunction  = GiniGain, template< typename > class NumericSplitType = BestBinaryNumericSplit, template< typename > class CategoricalSplitType = AllCategoricalSplit, typename ElemType  = double, bool NoRecursion = false> \fBDecisionTree\fP& \fBmlpack::tree::DecisionTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >::Child (const size_t i)\fC [inline]\fP"
+
+.PP
+Modify the child of the given index (be careful!)\&. 
+.PP
+Definition at line 219 of file decision_tree\&.hpp\&.
+.PP
+References mlpack::tree::DecisionTree< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >::CalculateDirection(), and mlpack::tree::DecisionTree< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >::children\&.
+.SS "template<typename FitnessFunction  = GiniGain, template< typename > class NumericSplitType = BestBinaryNumericSplit, template< typename > class CategoricalSplitType = AllCategoricalSplit, typename ElemType  = double, bool NoRecursion = false> template<typename VecType > size_t \fBmlpack::tree::DecisionTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >::Classify (const VecType & point) const"
+
+.PP
+Classify the given point, using the entire tree\&. The predicted label is returned\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpoint\fP Point to classify\&. 
+.RE
+.PP
+
+.SS "template<typename FitnessFunction  = GiniGain, template< typename > class NumericSplitType = BestBinaryNumericSplit, template< typename > class CategoricalSplitType = AllCategoricalSplit, typename ElemType  = double, bool NoRecursion = false> template<typename VecType > void \fBmlpack::tree::DecisionTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >::Classify (const VecType & point, size_t & prediction, arma::vec & probabilities) const"
+
+.PP
+Classify the given point and also return estimates of the probability for each class in the given vector\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpoint\fP Point to classify\&. 
+.br
+\fIprediction\fP This will be set to the predicted class of the point\&. 
+.br
+\fIprobabilities\fP This will be filled with class probabilities for the point\&. 
+.RE
+.PP
+
+.SS "template<typename FitnessFunction  = GiniGain, template< typename > class NumericSplitType = BestBinaryNumericSplit, template< typename > class CategoricalSplitType = AllCategoricalSplit, typename ElemType  = double, bool NoRecursion = false> template<typename MatType > void \fBmlpack::tree::DecisionTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >::Classify (const MatType & data, arma::Row< size_t > & predictions) const"
+
+.PP
+Classify the given points, using the entire tree\&. The predicted labels for each point are stored in the given vector\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Set of points to classify\&. 
+.br
+\fIpredictions\fP This will be filled with predictions for each point\&. 
+.RE
+.PP
+
+.SS "template<typename FitnessFunction  = GiniGain, template< typename > class NumericSplitType = BestBinaryNumericSplit, template< typename > class CategoricalSplitType = AllCategoricalSplit, typename ElemType  = double, bool NoRecursion = false> template<typename MatType > void \fBmlpack::tree::DecisionTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >::Classify (const MatType & data, arma::Row< size_t > & predictions, arma::mat & probabilities) const"
+
+.PP
+Classify the given points and also return estimates of the probabilities for each class in the given matrix\&. The predicted labels for each point are stored in the given vector\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Set of points to classify\&. 
+.br
+\fIpredictions\fP This will be filled with predictions for each point\&. 
+.br
+\fIprobabilities\fP This will be filled with class probabilities for each point\&. 
+.RE
+.PP
+
+.SS "template<typename FitnessFunction  = GiniGain, template< typename > class NumericSplitType = BestBinaryNumericSplit, template< typename > class CategoricalSplitType = AllCategoricalSplit, typename ElemType  = double, bool NoRecursion = false> size_t \fBmlpack::tree::DecisionTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >::NumChildren () const\fC [inline]\fP"
+
+.PP
+Get the number of children\&. 
+.PP
+Definition at line 214 of file decision_tree\&.hpp\&.
+.PP
+References mlpack::tree::DecisionTree< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >::children\&.
+.SS "template<typename FitnessFunction  = GiniGain, template< typename > class NumericSplitType = BestBinaryNumericSplit, template< typename > class CategoricalSplitType = AllCategoricalSplit, typename ElemType  = double, bool NoRecursion = false> \fBDecisionTree\fP& \fBmlpack::tree::DecisionTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >::operator= (const \fBDecisionTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion > & other)"
+
+.PP
+Copy another tree\&. This may use a lot of memory---be sure that it's what you want to do\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP Tree to copy\&. 
+.RE
+.PP
+
+.SS "template<typename FitnessFunction  = GiniGain, template< typename > class NumericSplitType = BestBinaryNumericSplit, template< typename > class CategoricalSplitType = AllCategoricalSplit, typename ElemType  = double, bool NoRecursion = false> \fBDecisionTree\fP& \fBmlpack::tree::DecisionTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >::operator= (\fBDecisionTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion > && other)"
+
+.PP
+Take ownership of another tree\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP Tree to take ownership of\&. 
+.RE
+.PP
+
+.SS "template<typename FitnessFunction  = GiniGain, template< typename > class NumericSplitType = BestBinaryNumericSplit, template< typename > class CategoricalSplitType = AllCategoricalSplit, typename ElemType  = double, bool NoRecursion = false> template<typename Archive > void \fBmlpack::tree::DecisionTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >::Serialize (Archive & ar, const unsigned int)"
+
+.PP
+Serialize the tree\&. 
+.SS "template<typename FitnessFunction  = GiniGain, template< typename > class NumericSplitType = BestBinaryNumericSplit, template< typename > class CategoricalSplitType = AllCategoricalSplit, typename ElemType  = double, bool NoRecursion = false> template<typename MatType > void \fBmlpack::tree::DecisionTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >::Train (const MatType & data, const \fBdata::DatasetInfo\fP & datasetInfo, const arma::Row< size_t > & labels, const size_t numClasses, const size_t minimumLeafSize = \fC10\fP)"
+
+.PP
+Train the decision tree on the given data\&. This will overwrite the existing model\&. The data may have numeric and categorical types, specified by the datasetInfo parameter\&. Setting minimumLeafSize too small may cause the tree to overfit, but setting it too large may cause it to underfit\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Dataset to train on\&. 
+.br
+\fIdatasetInfo\fP Type information for each dimension\&. 
+.br
+\fIlabels\fP Labels for each training point\&. 
+.br
+\fInumClasses\fP Number of classes in the dataset\&. 
+.br
+\fIminimumLeafSize\fP Minimum number of points in each leaf node\&. 
+.RE
+.PP
+
+.SS "template<typename FitnessFunction  = GiniGain, template< typename > class NumericSplitType = BestBinaryNumericSplit, template< typename > class CategoricalSplitType = AllCategoricalSplit, typename ElemType  = double, bool NoRecursion = false> template<typename MatType > void \fBmlpack::tree::DecisionTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >::Train (const MatType & data, const arma::Row< size_t > & labels, const size_t numClasses, const size_t minimumLeafSize = \fC10\fP)"
+
+.PP
+Train the decision tree on the given data, assuming that all dimensions are numeric\&. This will overwrite the given model\&. Setting minimumLeafSize too small may cause the tree to overfit, but setting it too large may cause it to underfit\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Dataset to train on\&. 
+.br
+\fIlabels\fP Labels for each training point\&. 
+.br
+\fInumClasses\fP Number of classes in the dataset\&. 
+.br
+\fIminimumLeafSize\fP Minimum number of points in each leaf node\&. 
+.RE
+.PP
+
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename FitnessFunction  = GiniGain, template< typename > class NumericSplitType = BestBinaryNumericSplit, template< typename > class CategoricalSplitType = AllCategoricalSplit, typename ElemType  = double, bool NoRecursion = false> std::vector<\fBDecisionTree\fP*> \fBmlpack::tree::DecisionTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >::children\fC [private]\fP"
+
+.PP
+The vector of children\&. 
+.PP
+Definition at line 233 of file decision_tree\&.hpp\&.
+.PP
+Referenced by mlpack::tree::DecisionTree< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >::Child(), and mlpack::tree::DecisionTree< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >::NumChildren()\&.
+.SS "template<typename FitnessFunction  = GiniGain, template< typename > class NumericSplitType = BestBinaryNumericSplit, template< typename > class CategoricalSplitType = AllCategoricalSplit, typename ElemType  = double, bool NoRecursion = false> arma::vec \fBmlpack::tree::DecisionTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >::classProbabilities\fC [private]\fP"
+
+.PP
+This vector may hold different things\&. If the node has no children, then it is guaranteed to hold the probabilities of each class\&. If the node has children, then it may be used arbitrarily by the split type's \fBCalculateDirection()\fP function and may not necessarily hold class probabilities\&. 
+.PP
+Definition at line 246 of file decision_tree\&.hpp\&.
+.SS "template<typename FitnessFunction  = GiniGain, template< typename > class NumericSplitType = BestBinaryNumericSplit, template< typename > class CategoricalSplitType = AllCategoricalSplit, typename ElemType  = double, bool NoRecursion = false> size_t \fBmlpack::tree::DecisionTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >::dimensionTypeOrMajorityClass\fC [private]\fP"
+
+.PP
+The type of the dimension that we have split on (if we are not a leaf)\&. If we are a leaf, then this is the index of the majority class\&. 
+.PP
+Definition at line 238 of file decision_tree\&.hpp\&.
+.SS "template<typename FitnessFunction  = GiniGain, template< typename > class NumericSplitType = BestBinaryNumericSplit, template< typename > class CategoricalSplitType = AllCategoricalSplit, typename ElemType  = double, bool NoRecursion = false> size_t \fBmlpack::tree::DecisionTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType, ElemType, NoRecursion >::splitDimension\fC [private]\fP"
+
+.PP
+The dimension this node splits on\&. 
+.PP
+Definition at line 235 of file decision_tree\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,170 @@
+\section{mlpack\+:\+:ann\+:\+:Nguyen\+Widrow\+Initialization Class Reference}
+\label{classmlpack_1_1ann_1_1NguyenWidrowInitialization}\index{mlpack\+::ann\+::\+Nguyen\+Widrow\+Initialization@{mlpack\+::ann\+::\+Nguyen\+Widrow\+Initialization}}
+
+
+This class is used to initialize the weight matrix with the Nguyen-\/\+Widrow method.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Nguyen\+Widrow\+Initialization} (const double {\bf lower\+Bound}=-\/0.\+5, const double {\bf upper\+Bound}=0.\+5)
+\begin{DoxyCompactList}\small\item\em Initialize the random initialization rule with the given lower bound and upper bound. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void {\bf Initialize} (arma\+::\+Mat$<$ eT $>$ \&W, const size\+\_\+t rows, const size\+\_\+t cols)
+\begin{DoxyCompactList}\small\item\em Initialize the elements of the specified weight matrix with the Nguyen-\/\+Widrow method. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void {\bf Initialize} (arma\+::\+Cube$<$ eT $>$ \&W, const size\+\_\+t rows, const size\+\_\+t cols, const size\+\_\+t slices)
+\begin{DoxyCompactList}\small\item\em Initialize the elements of the specified weight 3rd order tensor with the Nguyen-\/\+Widrow method. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+const double {\bf lower\+Bound}
+\begin{DoxyCompactList}\small\item\em The number used as lower bound. \end{DoxyCompactList}\item 
+const double {\bf upper\+Bound}
+\begin{DoxyCompactList}\small\item\em The number used as upper bound. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This class is used to initialize the weight matrix with the Nguyen-\/\+Widrow method. 
+
+The method is defined by
+
+\begin{eqnarray*} \gamma &\le& w_i \le \gamma \\ \beta &=& 0.7H^{\frac{1}{I}} \\ n &=& \sqrt{\sum_{i=0}{I}w_{i}^{2}} \\ w_i &=& \frac{\beta w_i}{n} \end{eqnarray*}
+
+Where H is the number of neurons in the outgoing layer, I represents the number of neurons in the ingoing layer and gamma defines the random interval that is used to initialize the weights with a random value in a specific range. 
+
+Definition at line 52 of file nguyen\+\_\+widrow\+\_\+init.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::ann\+::\+Nguyen\+Widrow\+Initialization@{mlpack\+::ann\+::\+Nguyen\+Widrow\+Initialization}!Nguyen\+Widrow\+Initialization@{Nguyen\+Widrow\+Initialization}}
+\index{Nguyen\+Widrow\+Initialization@{Nguyen\+Widrow\+Initialization}!mlpack\+::ann\+::\+Nguyen\+Widrow\+Initialization@{mlpack\+::ann\+::\+Nguyen\+Widrow\+Initialization}}
+\subsubsection[{Nguyen\+Widrow\+Initialization(const double lower\+Bound=-\/0.\+5, const double upper\+Bound=0.\+5)}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::ann\+::\+Nguyen\+Widrow\+Initialization\+::\+Nguyen\+Widrow\+Initialization (
+\begin{DoxyParamCaption}
+\item[{const double}]{lower\+Bound = {\ttfamily -\/0.5}, }
+\item[{const double}]{upper\+Bound = {\ttfamily 0.5}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1NguyenWidrowInitialization_af76d5378c4df05c4a931cdfbdbaab9d2}
+
+
+Initialize the random initialization rule with the given lower bound and upper bound. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em lower\+Bound} & The number used as lower bound. \\
+\hline
+{\em upper\+Bound} & The number used as upper bound. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 62 of file nguyen\+\_\+widrow\+\_\+init.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::ann\+::\+Nguyen\+Widrow\+Initialization@{mlpack\+::ann\+::\+Nguyen\+Widrow\+Initialization}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!mlpack\+::ann\+::\+Nguyen\+Widrow\+Initialization@{mlpack\+::ann\+::\+Nguyen\+Widrow\+Initialization}}
+\subsubsection[{Initialize(arma\+::\+Mat$<$ e\+T $>$ \&\+W, const size\+\_\+t rows, const size\+\_\+t cols)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename eT $>$ void mlpack\+::ann\+::\+Nguyen\+Widrow\+Initialization\+::\+Initialize (
+\begin{DoxyParamCaption}
+\item[{arma\+::\+Mat$<$ eT $>$ \&}]{W, }
+\item[{const size\+\_\+t}]{rows, }
+\item[{const size\+\_\+t}]{cols}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1NguyenWidrowInitialization_af2e199dbc60e1dc4961d52b61d4ec7f1}
+
+
+Initialize the elements of the specified weight matrix with the Nguyen-\/\+Widrow method. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em W} & Weight matrix to initialize. \\
+\hline
+{\em rows} & Number of rows. \\
+\hline
+{\em cols} & Number of columns. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 75 of file nguyen\+\_\+widrow\+\_\+init.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Random\+Initialization\+::\+Initialize(), lower\+Bound, and upper\+Bound.
+
+
+
+Referenced by Initialize().
+
+\index{mlpack\+::ann\+::\+Nguyen\+Widrow\+Initialization@{mlpack\+::ann\+::\+Nguyen\+Widrow\+Initialization}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!mlpack\+::ann\+::\+Nguyen\+Widrow\+Initialization@{mlpack\+::ann\+::\+Nguyen\+Widrow\+Initialization}}
+\subsubsection[{Initialize(arma\+::\+Cube$<$ e\+T $>$ \&\+W, const size\+\_\+t rows, const size\+\_\+t cols, const size\+\_\+t slices)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename eT $>$ void mlpack\+::ann\+::\+Nguyen\+Widrow\+Initialization\+::\+Initialize (
+\begin{DoxyParamCaption}
+\item[{arma\+::\+Cube$<$ eT $>$ \&}]{W, }
+\item[{const size\+\_\+t}]{rows, }
+\item[{const size\+\_\+t}]{cols, }
+\item[{const size\+\_\+t}]{slices}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1NguyenWidrowInitialization_a8d15875cc74467c7022440a5528219cb}
+
+
+Initialize the elements of the specified weight 3rd order tensor with the Nguyen-\/\+Widrow method. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em W} & Weight matrix to initialize. \\
+\hline
+{\em rows} & Number of rows. \\
+\hline
+{\em cols} & Number of columns. \\
+\hline
+{\em slices} & Number of slices. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 94 of file nguyen\+\_\+widrow\+\_\+init.\+hpp.
+
+
+
+References Initialize().
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::ann\+::\+Nguyen\+Widrow\+Initialization@{mlpack\+::ann\+::\+Nguyen\+Widrow\+Initialization}!lower\+Bound@{lower\+Bound}}
+\index{lower\+Bound@{lower\+Bound}!mlpack\+::ann\+::\+Nguyen\+Widrow\+Initialization@{mlpack\+::ann\+::\+Nguyen\+Widrow\+Initialization}}
+\subsubsection[{lower\+Bound}]{\setlength{\rightskip}{0pt plus 5cm}const double mlpack\+::ann\+::\+Nguyen\+Widrow\+Initialization\+::lower\+Bound\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1NguyenWidrowInitialization_a60ae790db77596a962215c629edaaff5}
+
+
+The number used as lower bound. 
+
+
+
+Definition at line 107 of file nguyen\+\_\+widrow\+\_\+init.\+hpp.
+
+
+
+Referenced by Initialize().
+
+\index{mlpack\+::ann\+::\+Nguyen\+Widrow\+Initialization@{mlpack\+::ann\+::\+Nguyen\+Widrow\+Initialization}!upper\+Bound@{upper\+Bound}}
+\index{upper\+Bound@{upper\+Bound}!mlpack\+::ann\+::\+Nguyen\+Widrow\+Initialization@{mlpack\+::ann\+::\+Nguyen\+Widrow\+Initialization}}
+\subsubsection[{upper\+Bound}]{\setlength{\rightskip}{0pt plus 5cm}const double mlpack\+::ann\+::\+Nguyen\+Widrow\+Initialization\+::upper\+Bound\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1NguyenWidrowInitialization_a87d667d5f25c0a6c7fc495573cbfb242}
+
+
+The number used as upper bound. 
+
+
+
+Definition at line 110 of file nguyen\+\_\+widrow\+\_\+init.\+hpp.
+
+
+
+Referenced by Initialize().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/ann/init\+\_\+rules/{\bf nguyen\+\_\+widrow\+\_\+init.\+hpp}\end{DoxyCompactItemize}

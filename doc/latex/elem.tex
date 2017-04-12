@@ -1,0 +1,25 @@
+\section{Overview}\label{elem_Overview}
+{\bfseries mlpack} algorithms should be as generic as possible. Often this means allowing arbitrary metrics or kernels to be used, but this also means allowing any type of data point to be used. This means that {\bfseries mlpack} classes should support {\ttfamily float}, {\ttfamily double}, and other observation types. Some algorithms support this through the use of a {\ttfamily Mat\+Type} template parameter; others will have their own template parameter, {\ttfamily Elem\+Type}.
+
+The {\ttfamily Elem\+Type} template parameter can take any value that can be used by Armadillo (or, specifically, classes like {\ttfamily arma\+::\+Mat$<$$>$} and others); this encompasses the types
+
+
+\begin{DoxyItemize}
+\item {\ttfamily double} 
+\item {\ttfamily float} 
+\item {\ttfamily int} 
+\item {\ttfamily unsigned} int
+\item {\ttfamily std\+::complex$<$double$>$} 
+\item {\ttfamily std\+::complex$<$float$>$} 
+\end{DoxyItemize}
+
+and other primitive numeric types. Note that Armadillo does not support some integer types for functionality such as matrix decompositions or other more advanced linear algebra. This means that when these integer types are used, some algorithms may fail with Armadillo error messages indicating that those types cannot be used.\section{note for developers}\label{elem_A}
+If the class has a {\ttfamily Mat\+Type} template parameter, {\ttfamily Elem\+Type} can be easily defined as below\+:
+
+
+\begin{DoxyCode}
+\textcolor{keyword}{typedef} \textcolor{keyword}{typename} MatType::elem\_type ElemType;
+\end{DoxyCode}
+
+
+and otherwise a template parameter with the name {\ttfamily Elem\+Type} can be used. It is generally a good idea to expose the element type somehow for use by other classes. 

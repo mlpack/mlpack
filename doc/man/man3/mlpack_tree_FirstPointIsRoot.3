@@ -1,0 +1,36 @@
+.TH "mlpack::tree::FirstPointIsRoot" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::tree::FirstPointIsRoot \- This class is meant to be used as a choice for the policy class RootPointPolicy of the \fBCoverTree\fP class\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename MatType > static size_t \fBChooseRoot\fP (const MatType &)"
+.br
+.RI "\fIReturn the point to be used as the root point of the cover tree\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+This class is meant to be used as a choice for the policy class RootPointPolicy of the \fBCoverTree\fP class\&. 
+
+This policy determines which point is used for the root node of the cover tree\&. This particular implementation simply chooses the first point in the dataset as the root\&. A more complex implementation might choose, for instance, the point with least maximum distance to other points (the closest to the 'middle')\&. 
+.PP
+Definition at line 29 of file first_point_is_root\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename MatType > static size_t mlpack::tree::FirstPointIsRoot::ChooseRoot (const MatType &)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Return the point to be used as the root point of the cover tree\&. This just returns 0\&. 
+.PP
+Definition at line 37 of file first_point_is_root\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,182 @@
+.TH "mlpack::kmeans::PellegMooreKMeans< MetricType, MatType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::kmeans::PellegMooreKMeans< MetricType, MatType > \- An implementation of Pelleg-Moore's 'blacklist' algorithm for k-means clustering\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "typedef \fBtree::KDTree\fP< MetricType, \fBPellegMooreKMeansStatistic\fP, MatType > \fBTreeType\fP"
+.br
+.RI "\fIConvenience typedef for the tree\&. \fP"
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBPellegMooreKMeans\fP (const MatType &\fBdataset\fP, MetricType &\fBmetric\fP)"
+.br
+.RI "\fIConstruct the \fBPellegMooreKMeans\fP object, which must construct a tree\&. \fP"
+.ti -1c
+.RI "\fB~PellegMooreKMeans\fP ()"
+.br
+.RI "\fIDelete the tree constructed by the \fBPellegMooreKMeans\fP object\&. \fP"
+.ti -1c
+.RI "size_t \fBDistanceCalculations\fP () const "
+.br
+.RI "\fIReturn the number of distance calculations\&. \fP"
+.ti -1c
+.RI "size_t & \fBDistanceCalculations\fP ()"
+.br
+.RI "\fIModify the number of distance calculations\&. \fP"
+.ti -1c
+.RI "double \fBIterate\fP (const arma::mat &centroids, arma::mat &newCentroids, arma::Col< size_t > &counts)"
+.br
+.RI "\fIRun a single iteration of the Pelleg-Moore blacklist algorithm, updating the given centroids into the newCentroids matrix\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "const MatType & \fBdataset\fP"
+.br
+.RI "\fIThe dataset we are using\&. \fP"
+.ti -1c
+.RI "const MatType & \fBdatasetOrig\fP"
+.br
+.RI "\fIThe original dataset reference\&. \fP"
+.ti -1c
+.RI "size_t \fBdistanceCalculations\fP"
+.br
+.RI "\fITrack distance calculations\&. \fP"
+.ti -1c
+.RI "MetricType & \fBmetric\fP"
+.br
+.RI "\fIThe metric\&. \fP"
+.ti -1c
+.RI "\fBTreeType\fP * \fBtree\fP"
+.br
+.RI "\fIThe tree built on the points\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename MetricType, typename MatType>
+.br
+class mlpack::kmeans::PellegMooreKMeans< MetricType, MatType >"
+An implementation of Pelleg-Moore's 'blacklist' algorithm for k-means clustering\&. 
+
+This algorithm builds a kd-tree on the data points and traverses it in order to determine the closest clusters to each point\&.
+.PP
+For more information on the algorithm, see
+.PP
+.PP
+.nf
+@inproceedings{pelleg1999accelerating,
+    title={Accelerating exact k-means algorithms with geometric reasoning},
+    author={Pelleg, Dan and Moore, Andrew W\&.},
+    booktitle={Proceedings of the Fifth ACM SIGKDD International Conference
+      on Knowledge Discovery and Data Mining (KDD '99)},
+pages={277--281},
+year={1999},
+organization={ACM}
+}
+.fi
+.PP
+ 
+.PP
+Definition at line 42 of file pelleg_moore_kmeans\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "template<typename MetricType , typename MatType > typedef \fBtree::KDTree\fP<MetricType, \fBPellegMooreKMeansStatistic\fP, MatType> \fBmlpack::kmeans::PellegMooreKMeans\fP< MetricType, MatType >::\fBTreeType\fP"
+
+.PP
+Convenience typedef for the tree\&. 
+.PP
+Definition at line 74 of file pelleg_moore_kmeans\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename MetricType , typename MatType > \fBmlpack::kmeans::PellegMooreKMeans\fP< MetricType, MatType >::\fBPellegMooreKMeans\fP (const MatType & dataset, MetricType & metric)"
+
+.PP
+Construct the \fBPellegMooreKMeans\fP object, which must construct a tree\&. 
+.SS "template<typename MetricType , typename MatType > \fBmlpack::kmeans::PellegMooreKMeans\fP< MetricType, MatType >::~\fBPellegMooreKMeans\fP ()"
+
+.PP
+Delete the tree constructed by the \fBPellegMooreKMeans\fP object\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename MetricType , typename MatType > size_t \fBmlpack::kmeans::PellegMooreKMeans\fP< MetricType, MatType >::DistanceCalculations () const\fC [inline]\fP"
+
+.PP
+Return the number of distance calculations\&. 
+.PP
+Definition at line 68 of file pelleg_moore_kmeans\&.hpp\&.
+.PP
+References mlpack::kmeans::PellegMooreKMeans< MetricType, MatType >::distanceCalculations\&.
+.SS "template<typename MetricType , typename MatType > size_t& \fBmlpack::kmeans::PellegMooreKMeans\fP< MetricType, MatType >::DistanceCalculations ()\fC [inline]\fP"
+
+.PP
+Modify the number of distance calculations\&. 
+.PP
+Definition at line 70 of file pelleg_moore_kmeans\&.hpp\&.
+.PP
+References mlpack::kmeans::PellegMooreKMeans< MetricType, MatType >::distanceCalculations\&.
+.SS "template<typename MetricType , typename MatType > double \fBmlpack::kmeans::PellegMooreKMeans\fP< MetricType, MatType >::Iterate (const arma::mat & centroids, arma::mat & newCentroids, arma::Col< size_t > & counts)"
+
+.PP
+Run a single iteration of the Pelleg-Moore blacklist algorithm, updating the given centroids into the newCentroids matrix\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIcentroids\fP Current cluster centroids\&. 
+.br
+\fInewCentroids\fP New cluster centroids\&. 
+.br
+\fIcounts\fP Current counts, to be overwritten with new counts\&. 
+.RE
+.PP
+
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename MetricType , typename MatType > const MatType& \fBmlpack::kmeans::PellegMooreKMeans\fP< MetricType, MatType >::dataset\fC [private]\fP"
+
+.PP
+The dataset we are using\&. 
+.PP
+Definition at line 82 of file pelleg_moore_kmeans\&.hpp\&.
+.SS "template<typename MetricType , typename MatType > const MatType& \fBmlpack::kmeans::PellegMooreKMeans\fP< MetricType, MatType >::datasetOrig\fC [private]\fP"
+
+.PP
+The original dataset reference\&. 
+.PP
+Definition at line 78 of file pelleg_moore_kmeans\&.hpp\&.
+.SS "template<typename MetricType , typename MatType > size_t \fBmlpack::kmeans::PellegMooreKMeans\fP< MetricType, MatType >::distanceCalculations\fC [private]\fP"
+
+.PP
+Track distance calculations\&. 
+.PP
+Definition at line 87 of file pelleg_moore_kmeans\&.hpp\&.
+.PP
+Referenced by mlpack::kmeans::PellegMooreKMeans< MetricType, MatType >::DistanceCalculations()\&.
+.SS "template<typename MetricType , typename MatType > MetricType& \fBmlpack::kmeans::PellegMooreKMeans\fP< MetricType, MatType >::metric\fC [private]\fP"
+
+.PP
+The metric\&. 
+.PP
+Definition at line 84 of file pelleg_moore_kmeans\&.hpp\&.
+.SS "template<typename MetricType , typename MatType > \fBTreeType\fP* \fBmlpack::kmeans::PellegMooreKMeans\fP< MetricType, MatType >::tree\fC [private]\fP"
+
+.PP
+The tree built on the points\&. 
+.PP
+Definition at line 80 of file pelleg_moore_kmeans\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

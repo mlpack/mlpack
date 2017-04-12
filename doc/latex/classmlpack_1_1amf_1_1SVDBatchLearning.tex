@@ -1,0 +1,306 @@
+\section{mlpack\+:\+:amf\+:\+:S\+V\+D\+Batch\+Learning Class Reference}
+\label{classmlpack_1_1amf_1_1SVDBatchLearning}\index{mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning}}
+
+
+This class implements S\+VD batch learning with momentum.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf S\+V\+D\+Batch\+Learning} (double {\bf u}=0.\+0002, double {\bf kw}=0, double {\bf kh}=0, double {\bf momentum}=0.\+9)
+\begin{DoxyCompactList}\small\item\em S\+VD Batch learning constructor. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void {\bf H\+Update} (const Mat\+Type \&V, const arma\+::mat \&W, arma\+::mat \&H)
+\begin{DoxyCompactList}\small\item\em The update rule for the encoding matrix H. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void {\bf Initialize} (const Mat\+Type \&dataset, const size\+\_\+t rank)
+\begin{DoxyCompactList}\small\item\em Initialize parameters before factorization. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&ar, const unsigned int)
+\begin{DoxyCompactList}\small\item\em Serialize the S\+V\+D\+Batch object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void {\bf W\+Update} (const Mat\+Type \&V, arma\+::mat \&W, const arma\+::mat \&H)
+\begin{DoxyCompactList}\small\item\em The update rule for the basis matrix W. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+double {\bf kh}
+\begin{DoxyCompactList}\small\item\em Regularization parameter for matrix H. \end{DoxyCompactList}\item 
+double {\bf kw}
+\begin{DoxyCompactList}\small\item\em Regularization parameter for matrix W. \end{DoxyCompactList}\item 
+arma\+::mat {\bf mH}
+\begin{DoxyCompactList}\small\item\em Momentum matrix for matrix H. \end{DoxyCompactList}\item 
+double {\bf momentum}
+\begin{DoxyCompactList}\small\item\em Momentum value (between 0 and 1). \end{DoxyCompactList}\item 
+arma\+::mat {\bf mW}
+\begin{DoxyCompactList}\small\item\em Momentum matrix for matrix W. \end{DoxyCompactList}\item 
+double {\bf u}
+\begin{DoxyCompactList}\small\item\em Step size of the algorithm. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This class implements S\+VD batch learning with momentum. 
+
+This procedure is described in the following paper\+:
+
+
+\begin{DoxyCode}
+@techreport\{ma2008guide,
+  title=\{A Guide to Singular Value Decomposition \textcolor{keywordflow}{for} Collaborative
+      Filtering\},
+  author=\{Ma, Chih-Chao\},
+  year=\{2008\},
+  institution=\{Department of Computer Science, National Taiwan University\}
+\}
+\end{DoxyCode}
+
+
+This class implements \textquotesingle{}Algorithm 4\textquotesingle{} as given in the paper.
+
+The factorizer decomposes the matrix V into two matrices W and H such that sum of sum of squared error between V and W $\ast$ H is minimum. This optimization is performed with gradient descent. To make gradient descent faster, momentum is added. 
+
+Definition at line 41 of file svd\+\_\+batch\+\_\+learning.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning}!S\+V\+D\+Batch\+Learning@{S\+V\+D\+Batch\+Learning}}
+\index{S\+V\+D\+Batch\+Learning@{S\+V\+D\+Batch\+Learning}!mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning}}
+\subsubsection[{S\+V\+D\+Batch\+Learning(double u=0.\+0002, double kw=0, double kh=0, double momentum=0.\+9)}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning\+::\+S\+V\+D\+Batch\+Learning (
+\begin{DoxyParamCaption}
+\item[{double}]{u = {\ttfamily 0.0002}, }
+\item[{double}]{kw = {\ttfamily 0}, }
+\item[{double}]{kh = {\ttfamily 0}, }
+\item[{double}]{momentum = {\ttfamily 0.9}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1amf_1_1SVDBatchLearning_a180c77df8990203257919ec73f1dd097}
+
+
+S\+VD Batch learning constructor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em u} & step value used in batch learning \\
+\hline
+{\em kw} & regularization constant for W matrix \\
+\hline
+{\em kh} & regularization constant for H matrix \\
+\hline
+{\em momentum} & momentum applied to batch learning process \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 52 of file svd\+\_\+batch\+\_\+learning.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning}!H\+Update@{H\+Update}}
+\index{H\+Update@{H\+Update}!mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning}}
+\subsubsection[{H\+Update(const Mat\+Type \&\+V, const arma\+::mat \&\+W, arma\+::mat \&\+H)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type $>$ void mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning\+::\+H\+Update (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{V, }
+\item[{const arma\+::mat \&}]{W, }
+\item[{arma\+::mat \&}]{H}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1amf_1_1SVDBatchLearning_a986d428f8db1544bcdd4ff0de4ec5866}
+
+
+The update rule for the encoding matrix H. 
+
+The function takes in all the matrices and only changes the value of the H matrix.
+
+
+\begin{DoxyParams}{Parameters}
+{\em V} & Input matrix to be factorized. \\
+\hline
+{\em W} & Basis matrix. \\
+\hline
+{\em H} & Encoding matrix to be updated. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 133 of file svd\+\_\+batch\+\_\+learning.\+hpp.
+
+
+
+References kh, mH, momentum, and u.
+
+\index{mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning}}
+\subsubsection[{Initialize(const Mat\+Type \&dataset, const size\+\_\+t rank)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type $>$ void mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning\+::\+Initialize (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{dataset, }
+\item[{const size\+\_\+t}]{rank}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1amf_1_1SVDBatchLearning_a366329ff8e455ad5426a59c3c7088aab}
+
+
+Initialize parameters before factorization. 
+
+This function must be called before a new factorization. This resets the internally-\/held momentum.
+
+
+\begin{DoxyParams}{Parameters}
+{\em dataset} & Input matrix to be factorized. \\
+\hline
+{\em rank} & rank of factorization \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 69 of file svd\+\_\+batch\+\_\+learning.\+hpp.
+
+
+
+References mH, and mW.
+
+\index{mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning}}
+\subsubsection[{Serialize(\+Archive \&ar, const unsigned int)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Archive $>$ void mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning\+::\+Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const unsigned}]{int}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1amf_1_1SVDBatchLearning_a916ec112cc73c6a0cd06f13a514da1c9}
+
+
+Serialize the S\+V\+D\+Batch object. 
+
+
+
+Definition at line 169 of file svd\+\_\+batch\+\_\+learning.\+hpp.
+
+
+
+References mlpack\+::data\+::\+Create\+N\+V\+P(), kh, kw, mH, momentum, mW, and u.
+
+\index{mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning}!W\+Update@{W\+Update}}
+\index{W\+Update@{W\+Update}!mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning}}
+\subsubsection[{W\+Update(const Mat\+Type \&\+V, arma\+::mat \&\+W, const arma\+::mat \&\+H)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type $>$ void mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning\+::\+W\+Update (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{V, }
+\item[{arma\+::mat \&}]{W, }
+\item[{const arma\+::mat \&}]{H}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1amf_1_1SVDBatchLearning_a6cd4aa4d07ac58ae1a19cc6e5045f530}
+
+
+The update rule for the basis matrix W. 
+
+The function takes in all the matrices and only changes the value of the W matrix.
+
+
+\begin{DoxyParams}{Parameters}
+{\em V} & Input matrix to be factorized. \\
+\hline
+{\em W} & Basis matrix to be updated. \\
+\hline
+{\em H} & Encoding matrix. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 88 of file svd\+\_\+batch\+\_\+learning.\+hpp.
+
+
+
+References kw, momentum, mW, and u.
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning}!kh@{kh}}
+\index{kh@{kh}!mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning}}
+\subsubsection[{kh}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning\+::kh\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1amf_1_1SVDBatchLearning_ada381dbf4c249d020ca1172ba2b14522}
+
+
+Regularization parameter for matrix H. 
+
+
+
+Definition at line 186 of file svd\+\_\+batch\+\_\+learning.\+hpp.
+
+
+
+Referenced by H\+Update(), Serialize(), and mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning\+::\+H\+Update$<$ arma\+::sp\+\_\+mat $>$().
+
+\index{mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning}!kw@{kw}}
+\index{kw@{kw}!mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning}}
+\subsubsection[{kw}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning\+::kw\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1amf_1_1SVDBatchLearning_aaee5ceafcb9b97f7380846ca115bc66d}
+
+
+Regularization parameter for matrix W. 
+
+
+
+Definition at line 184 of file svd\+\_\+batch\+\_\+learning.\+hpp.
+
+
+
+Referenced by Serialize(), mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning\+::\+W\+Update$<$ arma\+::sp\+\_\+mat $>$(), and W\+Update().
+
+\index{mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning}!mH@{mH}}
+\index{mH@{mH}!mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning}}
+\subsubsection[{mH}]{\setlength{\rightskip}{0pt plus 5cm}arma\+::mat mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning\+::mH\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1amf_1_1SVDBatchLearning_a7b33197f276bf37458898c9b322f69c8}
+
+
+Momentum matrix for matrix H. 
+
+
+
+Definition at line 193 of file svd\+\_\+batch\+\_\+learning.\+hpp.
+
+
+
+Referenced by H\+Update(), Initialize(), Serialize(), and mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning\+::\+H\+Update$<$ arma\+::sp\+\_\+mat $>$().
+
+\index{mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning}!momentum@{momentum}}
+\index{momentum@{momentum}!mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning}}
+\subsubsection[{momentum}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning\+::momentum\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1amf_1_1SVDBatchLearning_a634ccfb27e600ffc433223dcea8763a1}
+
+
+Momentum value (between 0 and 1). 
+
+
+
+Definition at line 188 of file svd\+\_\+batch\+\_\+learning.\+hpp.
+
+
+
+Referenced by H\+Update(), Serialize(), mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning\+::\+H\+Update$<$ arma\+::sp\+\_\+mat $>$(), mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning\+::\+W\+Update$<$ arma\+::sp\+\_\+mat $>$(), and W\+Update().
+
+\index{mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning}!mW@{mW}}
+\index{mW@{mW}!mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning}}
+\subsubsection[{mW}]{\setlength{\rightskip}{0pt plus 5cm}arma\+::mat mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning\+::mW\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1amf_1_1SVDBatchLearning_ab3e822a4685a26878119a457386e981e}
+
+
+Momentum matrix for matrix W. 
+
+
+
+Definition at line 191 of file svd\+\_\+batch\+\_\+learning.\+hpp.
+
+
+
+Referenced by Initialize(), Serialize(), mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning\+::\+W\+Update$<$ arma\+::sp\+\_\+mat $>$(), and W\+Update().
+
+\index{mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning}!u@{u}}
+\index{u@{u}!mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning@{mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning}}
+\subsubsection[{u}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning\+::u\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1amf_1_1SVDBatchLearning_acea55e198332c16129d79bb00cc97737}
+
+
+Step size of the algorithm. 
+
+
+
+Definition at line 182 of file svd\+\_\+batch\+\_\+learning.\+hpp.
+
+
+
+Referenced by H\+Update(), Serialize(), mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning\+::\+H\+Update$<$ arma\+::sp\+\_\+mat $>$(), mlpack\+::amf\+::\+S\+V\+D\+Batch\+Learning\+::\+W\+Update$<$ arma\+::sp\+\_\+mat $>$(), and W\+Update().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/amf/update\+\_\+rules/{\bf svd\+\_\+batch\+\_\+learning.\+hpp}\end{DoxyCompactItemize}

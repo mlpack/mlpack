@@ -1,0 +1,219 @@
+.TH "mlpack::tree::RPTreeMeanSplit< BoundType, MatType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::tree::RPTreeMeanSplit< BoundType, MatType > \- This class splits a binary space tree\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "struct \fBSplitInfo\fP"
+.br
+.RI "\fIAn information about the partition\&. \fP"
+.in -1c
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "typedef MatType::elem_type \fBElemType\fP"
+.br
+.RI "\fIThe element type held by the matrix type\&. \fP"
+.in -1c
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename VecType > static bool \fBAssignToLeftNode\fP (const VecType &point, const \fBSplitInfo\fP &splitInfo)"
+.br
+.RI "\fIIndicates that a point should be assigned to the left subtree\&. \fP"
+.ti -1c
+.RI "static size_t \fBPerformSplit\fP (MatType &data, const size_t begin, const size_t count, const \fBSplitInfo\fP &splitInfo)"
+.br
+.RI "\fIPerform the split process according to the information about the split\&. \fP"
+.ti -1c
+.RI "static size_t \fBPerformSplit\fP (MatType &data, const size_t begin, const size_t count, const \fBSplitInfo\fP &splitInfo, std::vector< size_t > &oldFromNew)"
+.br
+.RI "\fIPerform the split process according to the information about the split and return the list of changed indices\&. \fP"
+.ti -1c
+.RI "static bool \fBSplitNode\fP (const BoundType &, MatType &data, const size_t begin, const size_t count, \fBSplitInfo\fP &splitInfo)"
+.br
+.RI "\fISplit the node according to the mean value in the dimension with maximum width\&. \fP"
+.in -1c
+.SS "Static Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static \fBElemType\fP \fBGetAveragePointDistance\fP (MatType &data, const arma::uvec &samples)"
+.br
+.RI "\fIGet the average distance between points in the dataset\&. \fP"
+.ti -1c
+.RI "static bool \fBGetDotMedian\fP (const MatType &data, const arma::uvec &samples, const arma::Col< \fBElemType\fP > &direction, \fBElemType\fP &splitVal)"
+.br
+.RI "\fIGet the median of scalar products of the sampled points and the normal to the hyperplane (i\&.e\&. \fP"
+.ti -1c
+.RI "static bool \fBGetMeanMedian\fP (const MatType &data, const arma::uvec &samples, arma::Col< \fBElemType\fP > &mean, \fBElemType\fP &splitVal)"
+.br
+.RI "\fIGet the mean point and the median of distance from the mean to any point of the dataset\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename BoundType, typename MatType = arma::mat>
+.br
+class mlpack::tree::RPTreeMeanSplit< BoundType, MatType >"
+This class splits a binary space tree\&. 
+
+This class provides two different kinds of split\&. The mean split (i\&.e\&. all points are split by the median of their distance to the mean point) is performed if the average distance between points multiplied by a constant is greater than the diameter of the node\&. Otherwise, the median split (i\&.e\&. the node is split by a random hyperplane) is performed\&. 
+.PP
+Definition at line 33 of file rp_tree_mean_split\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "template<typename BoundType , typename MatType  = arma::mat> typedef MatType::elem_type \fBmlpack::tree::RPTreeMeanSplit\fP< BoundType, MatType >::\fBElemType\fP"
+
+.PP
+The element type held by the matrix type\&. 
+.PP
+Definition at line 37 of file rp_tree_mean_split\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename BoundType , typename MatType  = arma::mat> template<typename VecType > static bool \fBmlpack::tree::RPTreeMeanSplit\fP< BoundType, MatType >::AssignToLeftNode (const VecType & point, const \fBSplitInfo\fP & splitInfo)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Indicates that a point should be assigned to the left subtree\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpoint\fP The point that is being assigned\&. 
+.br
+\fIsplitInfo\fP An information about the split\&. 
+.RE
+.PP
+
+.PP
+Definition at line 125 of file rp_tree_mean_split\&.hpp\&.
+.PP
+References mlpack::tree::RPTreeMeanSplit< BoundType, MatType >::SplitInfo::direction, mlpack::tree::RPTreeMeanSplit< BoundType, MatType >::GetAveragePointDistance(), mlpack::tree::RPTreeMeanSplit< BoundType, MatType >::GetDotMedian(), mlpack::tree::RPTreeMeanSplit< BoundType, MatType >::GetMeanMedian(), mlpack::tree::RPTreeMeanSplit< BoundType, MatType >::SplitInfo::mean, mlpack::tree::RPTreeMeanSplit< BoundType, MatType >::SplitInfo::meanSplit, and mlpack::tree::RPTreeMeanSplit< BoundType, MatType >::SplitInfo::splitVal\&.
+.SS "template<typename BoundType , typename MatType  = arma::mat> static \fBElemType\fP \fBmlpack::tree::RPTreeMeanSplit\fP< BoundType, MatType >::GetAveragePointDistance (MatType & data, const arma::uvec & samples)\fC [static]\fP, \fC [private]\fP"
+
+.PP
+Get the average distance between points in the dataset\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP The dataset used by the binary space tree\&. 
+.br
+\fIsamples\fP The indices of points that will be used for the calculation\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::tree::RPTreeMeanSplit< BoundType, MatType >::AssignToLeftNode()\&.
+.SS "template<typename BoundType , typename MatType  = arma::mat> static bool \fBmlpack::tree::RPTreeMeanSplit\fP< BoundType, MatType >::GetDotMedian (const MatType & data, const arma::uvec & samples, const arma::Col< \fBElemType\fP > & direction, \fBElemType\fP & splitVal)\fC [static]\fP, \fC [private]\fP"
+
+.PP
+Get the median of scalar products of the sampled points and the normal to the hyperplane (i\&.e\&. the position of the hyperplane)\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP The dataset used by the binary space tree\&. 
+.br
+\fIsamples\fP The indices of points that will be used for the calculation\&. 
+.br
+\fIdirection\fP The normal to the hyperplane\&. 
+.br
+\fIsplitVal\fP The median value\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::tree::RPTreeMeanSplit< BoundType, MatType >::AssignToLeftNode()\&.
+.SS "template<typename BoundType , typename MatType  = arma::mat> static bool \fBmlpack::tree::RPTreeMeanSplit\fP< BoundType, MatType >::GetMeanMedian (const MatType & data, const arma::uvec & samples, arma::Col< \fBElemType\fP > & mean, \fBElemType\fP & splitVal)\fC [static]\fP, \fC [private]\fP"
+
+.PP
+Get the mean point and the median of distance from the mean to any point of the dataset\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP The dataset used by the binary space tree\&. 
+.br
+\fIsamples\fP The indices of points that will be used for the calculation\&. 
+.br
+\fImean\fP The mean point\&. 
+.br
+\fIsplitVal\fP The median value\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::tree::RPTreeMeanSplit< BoundType, MatType >::AssignToLeftNode()\&.
+.SS "template<typename BoundType , typename MatType  = arma::mat> static size_t \fBmlpack::tree::RPTreeMeanSplit\fP< BoundType, MatType >::PerformSplit (MatType & data, const size_t begin, const size_t count, const \fBSplitInfo\fP & splitInfo)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Perform the split process according to the information about the split\&. This will order the dataset such that points that belong to the left subtree are on the left of the split column, and points from the right subtree are on the right side of the split column\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIbound\fP The bound used for this node\&. 
+.br
+\fIdata\fP The dataset used by the binary space tree\&. 
+.br
+\fIbegin\fP Index of the starting point in the dataset that belongs to this node\&. 
+.br
+\fIcount\fP Number of points in this node\&. 
+.br
+\fIsplitInfo\fP The information about the split\&. 
+.RE
+.PP
+
+.PP
+Definition at line 83 of file rp_tree_mean_split\&.hpp\&.
+.SS "template<typename BoundType , typename MatType  = arma::mat> static size_t \fBmlpack::tree::RPTreeMeanSplit\fP< BoundType, MatType >::PerformSplit (MatType & data, const size_t begin, const size_t count, const \fBSplitInfo\fP & splitInfo, std::vector< size_t > & oldFromNew)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Perform the split process according to the information about the split and return the list of changed indices\&. This will order the dataset such that points that belong to the left subtree are on the left of the split column, and points from the right subtree are on the right side of the split column\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIbound\fP The bound used for this node\&. 
+.br
+\fIdata\fP The dataset used by the binary space tree\&. 
+.br
+\fIbegin\fP Index of the starting point in the dataset that belongs to this node\&. 
+.br
+\fIcount\fP Number of points in this node\&. 
+.br
+\fIsplitInfo\fP The information about the split\&. 
+.br
+\fIoldFromNew\fP Vector which will be filled with the old positions for each new point\&. 
+.RE
+.PP
+
+.PP
+Definition at line 108 of file rp_tree_mean_split\&.hpp\&.
+.SS "template<typename BoundType , typename MatType  = arma::mat> static bool \fBmlpack::tree::RPTreeMeanSplit\fP< BoundType, MatType >::SplitNode (const BoundType &, MatType & data, const size_t begin, const size_t count, \fBSplitInfo\fP & splitInfo)\fC [static]\fP"
+
+.PP
+Split the node according to the mean value in the dimension with maximum width\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIbound\fP The bound used for this node\&. 
+.br
+\fIdata\fP The dataset used by the binary space tree\&. 
+.br
+\fIbegin\fP Index of the starting point in the dataset that belongs to this node\&. 
+.br
+\fIcount\fP Number of points in this node\&. 
+.br
+\fIsplitInfo\fP An information about the split\&. This information contains the direction and the value\&. 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

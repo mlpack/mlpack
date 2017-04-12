@@ -1,0 +1,115 @@
+\section{mlpack\+:\+:tree\+:\+:Information\+Gain Class Reference}
+\label{classmlpack_1_1tree_1_1InformationGain}\index{mlpack\+::tree\+::\+Information\+Gain@{mlpack\+::tree\+::\+Information\+Gain}}
+
+
+The standard information gain criterion, used for calculating gain in decision trees.  
+
+
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static double {\bf Evaluate} (const arma\+::\+Mat$<$ size\+\_\+t $>$ \&counts)
+\begin{DoxyCompactList}\small\item\em Given the sufficient statistics of a proposed split, calculate the information gain if that split was to be used. \end{DoxyCompactList}\item 
+static double {\bf Evaluate} (const arma\+::\+Row$<$ size\+\_\+t $>$ \&labels, const size\+\_\+t num\+Classes)
+\begin{DoxyCompactList}\small\item\em Given a set of labels, calculate the information gain of those labels. \end{DoxyCompactList}\item 
+static double {\bf Range} (const size\+\_\+t num\+Classes)
+\begin{DoxyCompactList}\small\item\em Return the range of the information gain for the given number of classes. \end{DoxyCompactList}\item 
+static double {\bf Range} (const size\+\_\+t num\+Classes)
+\begin{DoxyCompactList}\small\item\em Return the range of the information gain for the given number of classes. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The standard information gain criterion, used for calculating gain in decision trees. 
+
+Definition at line 25 of file information\+\_\+gain.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::tree\+::\+Information\+Gain@{mlpack\+::tree\+::\+Information\+Gain}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!mlpack\+::tree\+::\+Information\+Gain@{mlpack\+::tree\+::\+Information\+Gain}}
+\subsubsection[{Evaluate(const arma\+::\+Mat$<$ size\+\_\+t $>$ \&counts)}]{\setlength{\rightskip}{0pt plus 5cm}static double mlpack\+::tree\+::\+Information\+Gain\+::\+Evaluate (
+\begin{DoxyParamCaption}
+\item[{const arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{counts}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}\label{classmlpack_1_1tree_1_1InformationGain_a20845d9c6613e2653f2cff024916bc82}
+
+
+Given the sufficient statistics of a proposed split, calculate the information gain if that split was to be used. 
+
+The \textquotesingle{}counts\textquotesingle{} matrix should contain the number of points in each class in each column, so the size of \textquotesingle{}counts\textquotesingle{} is children x classes, where \textquotesingle{}children\textquotesingle{} is the number of child nodes in the proposed split.
+
+
+\begin{DoxyParams}{Parameters}
+{\em counts} & Matrix of sufficient statistics. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 31 of file information\+\_\+gain.\+hpp.
+
+\index{mlpack\+::tree\+::\+Information\+Gain@{mlpack\+::tree\+::\+Information\+Gain}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!mlpack\+::tree\+::\+Information\+Gain@{mlpack\+::tree\+::\+Information\+Gain}}
+\subsubsection[{Evaluate(const arma\+::\+Row$<$ size\+\_\+t $>$ \&labels, const size\+\_\+t num\+Classes)}]{\setlength{\rightskip}{0pt plus 5cm}static double mlpack\+::tree\+::\+Information\+Gain\+::\+Evaluate (
+\begin{DoxyParamCaption}
+\item[{const arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{labels, }
+\item[{const size\+\_\+t}]{num\+Classes}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}\label{classmlpack_1_1tree_1_1InformationGain_ac50105cc9c959dc89754baa4ba9b6408}
+
+
+Given a set of labels, calculate the information gain of those labels. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em labels} & Labels of the dataset. \\
+\hline
+{\em num\+Classes} & Number of classes in the dataset. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 34 of file information\+\_\+gain.\+hpp.
+
+\index{mlpack\+::tree\+::\+Information\+Gain@{mlpack\+::tree\+::\+Information\+Gain}!Range@{Range}}
+\index{Range@{Range}!mlpack\+::tree\+::\+Information\+Gain@{mlpack\+::tree\+::\+Information\+Gain}}
+\subsubsection[{Range(const size\+\_\+t num\+Classes)}]{\setlength{\rightskip}{0pt plus 5cm}static double mlpack\+::tree\+::\+Information\+Gain\+::\+Range (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{num\+Classes}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}\label{classmlpack_1_1tree_1_1InformationGain_af18b0bba60c637ccbd5f4b60eb4b46b0}
+
+
+Return the range of the information gain for the given number of classes. 
+
+(That is, the difference between the maximum possible value and the minimum possible value.)
+
+
+\begin{DoxyParams}{Parameters}
+{\em num\+Classes} & Number of classes in the dataset. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 66 of file information\+\_\+gain.\+hpp.
+
+\index{mlpack\+::tree\+::\+Information\+Gain@{mlpack\+::tree\+::\+Information\+Gain}!Range@{Range}}
+\index{Range@{Range}!mlpack\+::tree\+::\+Information\+Gain@{mlpack\+::tree\+::\+Information\+Gain}}
+\subsubsection[{Range(const size\+\_\+t num\+Classes)}]{\setlength{\rightskip}{0pt plus 5cm}static double mlpack\+::tree\+::\+Information\+Gain\+::\+Range (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{num\+Classes}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}\label{classmlpack_1_1tree_1_1InformationGain_af18b0bba60c637ccbd5f4b60eb4b46b0}
+
+
+Return the range of the information gain for the given number of classes. 
+
+(That is, the difference between the maximum possible value and the minimum possible value.) 
+
+Definition at line 84 of file information\+\_\+gain.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/decision\+\_\+tree/{\bf information\+\_\+gain.\+hpp}\end{DoxyCompactItemize}

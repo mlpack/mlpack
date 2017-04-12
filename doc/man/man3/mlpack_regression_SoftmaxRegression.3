@@ -1,0 +1,382 @@
+.TH "mlpack::regression::SoftmaxRegression< OptimizerType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::regression::SoftmaxRegression< OptimizerType > \- Softmax Regression is a classifier which can be used for classification when the data available can take two or more class values\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBSoftmaxRegression\fP (const size_t inputSize=0, const size_t \fBnumClasses\fP=0, const bool \fBfitIntercept\fP=false)"
+.br
+.RI "\fIInitialize the \fBSoftmaxRegression\fP without performing training\&. \fP"
+.ti -1c
+.RI "\fBSoftmaxRegression\fP (const arma::mat &data, const arma::Row< size_t > &labels, const size_t \fBnumClasses\fP, const double \fBlambda\fP=0\&.0001, const bool \fBfitIntercept\fP=false)"
+.br
+.RI "\fIConstruct the \fBSoftmaxRegression\fP class with the provided data and labels\&. \fP"
+.ti -1c
+.RI "\fBSoftmaxRegression\fP (OptimizerType< \fBSoftmaxRegressionFunction\fP > &optimizer)"
+.br
+.RI "\fIConstruct the softmax regression model with the given training data\&. \fP"
+.ti -1c
+.RI "void \fBClassify\fP (const arma::mat &dataset, arma::Row< size_t > &labels) const "
+.br
+.RI "\fIClassify the given points, returning the predicted labels for each point\&. \fP"
+.ti -1c
+.RI "double \fBComputeAccuracy\fP (const arma::mat &testData, const arma::Row< size_t > &labels) const "
+.br
+.RI "\fIComputes accuracy of the learned model given the feature data and the labels associated with each data point\&. \fP"
+.ti -1c
+.RI "size_t \fBFeatureSize\fP () const "
+.br
+.RI "\fIGets the features size of the training data\&. \fP"
+.ti -1c
+.RI "bool \fBFitIntercept\fP () const "
+.br
+.RI "\fIGets the intercept term flag\&. We can't change this after training\&. \fP"
+.ti -1c
+.RI "double & \fBLambda\fP ()"
+.br
+.RI "\fISets the regularization parameter\&. \fP"
+.ti -1c
+.RI "double \fBLambda\fP () const "
+.br
+.RI "\fIGets the regularization parameter\&. \fP"
+.ti -1c
+.RI "size_t & \fBNumClasses\fP ()"
+.br
+.RI "\fISets the number of classes\&. \fP"
+.ti -1c
+.RI "size_t \fBNumClasses\fP () const "
+.br
+.RI "\fIGets the number of classes\&. \fP"
+.ti -1c
+.RI "arma::mat & \fBParameters\fP ()"
+.br
+.RI "\fIGet the model parameters\&. \fP"
+.ti -1c
+.RI "const arma::mat & \fBParameters\fP () const "
+.br
+.RI "\fIGet the model parameters\&. \fP"
+.ti -1c
+.RI "\fBmlpack_deprecated\fP void \fBPredict\fP (const arma::mat &testData, arma::Row< size_t > &predictions) const "
+.br
+.RI "\fIPredict the class labels for the provided feature points\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int)"
+.br
+.RI "\fISerialize the \fBSoftmaxRegression\fP model\&. \fP"
+.ti -1c
+.RI "double \fBTrain\fP (OptimizerType< \fBSoftmaxRegressionFunction\fP > &optimizer)"
+.br
+.RI "\fITrain the softmax regression model with the given optimizer\&. \fP"
+.ti -1c
+.RI "double \fBTrain\fP (const arma::mat &data, const arma::Row< size_t > &labels, const size_t \fBnumClasses\fP)"
+.br
+.RI "\fITrain the softmax regression with the given training data\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "bool \fBfitIntercept\fP"
+.br
+.RI "\fIIntercept term flag\&. \fP"
+.ti -1c
+.RI "double \fBlambda\fP"
+.br
+.RI "\fIL2-regularization constant\&. \fP"
+.ti -1c
+.RI "size_t \fBnumClasses\fP"
+.br
+.RI "\fINumber of classes\&. \fP"
+.ti -1c
+.RI "arma::mat \fBparameters\fP"
+.br
+.RI "\fIParameters after optimization\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<template< typename > class OptimizerType = mlpack::optimization::L_BFGS>
+.br
+class mlpack::regression::SoftmaxRegression< OptimizerType >"
+Softmax Regression is a classifier which can be used for classification when the data available can take two or more class values\&. 
+
+It is a generalization of Logistic Regression (which is used only for binary classification)\&. The model has a different set of parameters for each class, but can be easily converted into a vectorized implementation as has been done in this module\&. The model can be used for direct classification of feature data or in conjunction with unsupervised learning methods\&. More technical details about the model can be found on the following webpage:
+.PP
+http://ufldl.stanford.edu/wiki/index.php/Softmax_Regression
+.PP
+An example on how to use the interface is shown below:
+.PP
+.PP
+.nf
+arma::mat train_data; // Training data matrix\&.
+arma::vec labels; // Labels associated with the data\&.
+const size_t inputSize = 784; // Size of input feature vector\&.
+const size_t numClasses = 10; // Number of classes\&.
+
+// Train the model using default options\&.
+SoftmaxRegression<> regressor1(train_data, labels, inputSize, numClasses);
+
+const size_t numBasis = 5; // Parameter required for L-BFGS algorithm\&.
+const size_t numIterations = 100; // Maximum number of iterations\&.
+
+// Use an instantiated optimizer for the training\&.
+SoftmaxRegressionFunction srf(train_data, labels, inputSize, numClasses);
+L_BFGS<SoftmaxRegressionFunction> optimizer(srf, numBasis, numIterations);
+SoftmaxRegression<L_BFGS> regressor2(optimizer);
+
+arma::mat test_data; // Test data matrix\&.
+arma::vec predictions1, predictions2; // Vectors to store predictions in\&.
+
+// Obtain predictions from both the learned models\&.
+regressor1\&.Classify(test_data, predictions1);
+regressor2\&.Classify(test_data, predictions2);
+.fi
+.PP
+ 
+.PP
+Definition at line 65 of file softmax_regression\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<template< typename > class OptimizerType = mlpack::optimization::L_BFGS> \fBmlpack::regression::SoftmaxRegression\fP< OptimizerType >::\fBSoftmaxRegression\fP (const size_t inputSize = \fC0\fP, const size_t numClasses = \fC0\fP, const bool fitIntercept = \fCfalse\fP)"
+
+.PP
+Initialize the \fBSoftmaxRegression\fP without performing training\&. Default value of lambda is 0\&.0001\&. Be sure to use \fBTrain()\fP before calling \fBClassify()\fP or \fBComputeAccuracy()\fP, otherwise the results may be meaningless\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinputSize\fP Size of the input feature vector\&. 
+.br
+\fInumClasses\fP Number of classes for classification\&. 
+.br
+\fIfitIntercept\fP add intercept term or not\&. 
+.RE
+.PP
+
+.SS "template<template< typename > class OptimizerType = mlpack::optimization::L_BFGS> \fBmlpack::regression::SoftmaxRegression\fP< OptimizerType >::\fBSoftmaxRegression\fP (const arma::mat & data, const arma::Row< size_t > & labels, const size_t numClasses, const double lambda = \fC0\&.0001\fP, const bool fitIntercept = \fCfalse\fP)"
+
+.PP
+Construct the \fBSoftmaxRegression\fP class with the provided data and labels\&. This will train the model\&. Optionally, the parameter 'lambda' can be passed, which controls the amount of L2-regularization in the objective function\&. By default, the model takes a small value\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Input training features\&. Each column associate with one sample 
+.br
+\fIlabels\fP Labels associated with the feature data\&. 
+.br
+\fIinputSize\fP Size of the input feature vector\&. 
+.br
+\fInumClasses\fP Number of classes for classification\&. 
+.br
+\fIlambda\fP L2-regularization constant\&. 
+.br
+\fIfitIntercept\fP add intercept term or not\&. 
+.RE
+.PP
+
+.SS "template<template< typename > class OptimizerType = mlpack::optimization::L_BFGS> \fBmlpack::regression::SoftmaxRegression\fP< OptimizerType >::\fBSoftmaxRegression\fP (OptimizerType< \fBSoftmaxRegressionFunction\fP > & optimizer)"
+
+.PP
+Construct the softmax regression model with the given training data\&. This will train the model\&. This overload takes an already instantiated optimizer and uses it to train the model\&. The optimizer should hold an instantiated \fBSoftmaxRegressionFunction\fP object for the function to operate upon\&. This option should be preferred when the optimizer options are to be changed\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIoptimizer\fP Instantiated optimizer with instantiated error function\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "template<template< typename > class OptimizerType = mlpack::optimization::L_BFGS> void \fBmlpack::regression::SoftmaxRegression\fP< OptimizerType >::Classify (const arma::mat & dataset, arma::Row< size_t > & labels) const"
+
+.PP
+Classify the given points, returning the predicted labels for each point\&. The function calculates the probabilities for every class, given a data point\&. It then chooses the class which has the highest probability among all\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdataset\fP Set of points to classify\&. 
+.br
+\fIlabels\fP Predicted labels for each point\&. 
+.RE
+.PP
+
+.SS "template<template< typename > class OptimizerType = mlpack::optimization::L_BFGS> double \fBmlpack::regression::SoftmaxRegression\fP< OptimizerType >::ComputeAccuracy (const arma::mat & testData, const arma::Row< size_t > & labels) const"
+
+.PP
+Computes accuracy of the learned model given the feature data and the labels associated with each data point\&. Predictions are made using the provided data and are compared with the actual labels\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fItestData\fP Matrix of data points using which predictions are made\&. 
+.br
+\fIlabels\fP Vector of labels associated with the data\&. 
+.RE
+.PP
+
+.SS "template<template< typename > class OptimizerType = mlpack::optimization::L_BFGS> size_t \fBmlpack::regression::SoftmaxRegression\fP< OptimizerType >::FeatureSize () const\fC [inline]\fP"
+
+.PP
+Gets the features size of the training data\&. 
+.PP
+Definition at line 186 of file softmax_regression\&.hpp\&.
+.PP
+References mlpack::regression::SoftmaxRegression< OptimizerType >::fitIntercept, and mlpack::regression::SoftmaxRegression< OptimizerType >::parameters\&.
+.SS "template<template< typename > class OptimizerType = mlpack::optimization::L_BFGS> bool \fBmlpack::regression::SoftmaxRegression\fP< OptimizerType >::FitIntercept () const\fC [inline]\fP"
+
+.PP
+Gets the intercept term flag\&. We can't change this after training\&. 
+.PP
+Definition at line 178 of file softmax_regression\&.hpp\&.
+.PP
+References mlpack::regression::SoftmaxRegression< OptimizerType >::fitIntercept\&.
+.SS "template<template< typename > class OptimizerType = mlpack::optimization::L_BFGS> double& \fBmlpack::regression::SoftmaxRegression\fP< OptimizerType >::Lambda ()\fC [inline]\fP"
+
+.PP
+Sets the regularization parameter\&. 
+.PP
+Definition at line 173 of file softmax_regression\&.hpp\&.
+.PP
+References mlpack::regression::SoftmaxRegression< OptimizerType >::lambda\&.
+.SS "template<template< typename > class OptimizerType = mlpack::optimization::L_BFGS> double \fBmlpack::regression::SoftmaxRegression\fP< OptimizerType >::Lambda () const\fC [inline]\fP"
+
+.PP
+Gets the regularization parameter\&. 
+.PP
+Definition at line 175 of file softmax_regression\&.hpp\&.
+.PP
+References mlpack::regression::SoftmaxRegression< OptimizerType >::lambda\&.
+.SS "template<template< typename > class OptimizerType = mlpack::optimization::L_BFGS> size_t& \fBmlpack::regression::SoftmaxRegression\fP< OptimizerType >::NumClasses ()\fC [inline]\fP"
+
+.PP
+Sets the number of classes\&. 
+.PP
+Definition at line 168 of file softmax_regression\&.hpp\&.
+.PP
+References mlpack::regression::SoftmaxRegression< OptimizerType >::numClasses\&.
+.SS "template<template< typename > class OptimizerType = mlpack::optimization::L_BFGS> size_t \fBmlpack::regression::SoftmaxRegression\fP< OptimizerType >::NumClasses () const\fC [inline]\fP"
+
+.PP
+Gets the number of classes\&. 
+.PP
+Definition at line 170 of file softmax_regression\&.hpp\&.
+.PP
+References mlpack::regression::SoftmaxRegression< OptimizerType >::numClasses\&.
+.SS "template<template< typename > class OptimizerType = mlpack::optimization::L_BFGS> arma::mat& \fBmlpack::regression::SoftmaxRegression\fP< OptimizerType >::Parameters ()\fC [inline]\fP"
+
+.PP
+Get the model parameters\&. 
+.PP
+Definition at line 181 of file softmax_regression\&.hpp\&.
+.PP
+References mlpack::regression::SoftmaxRegression< OptimizerType >::parameters\&.
+.SS "template<template< typename > class OptimizerType = mlpack::optimization::L_BFGS> const arma::mat& \fBmlpack::regression::SoftmaxRegression\fP< OptimizerType >::Parameters () const\fC [inline]\fP"
+
+.PP
+Get the model parameters\&. 
+.PP
+Definition at line 183 of file softmax_regression\&.hpp\&.
+.PP
+References mlpack::regression::SoftmaxRegression< OptimizerType >::parameters\&.
+.SS "template<template< typename > class OptimizerType = mlpack::optimization::L_BFGS> \fBmlpack_deprecated\fP void \fBmlpack::regression::SoftmaxRegression\fP< OptimizerType >::Predict (const arma::mat & testData, arma::Row< size_t > & predictions) const"
+
+.PP
+Predict the class labels for the provided feature points\&. The function calculates the probabilities for every class, given a data point\&. It then chooses the class which has the highest probability among all\&.
+.PP
+This method is deprecated and will be removed in mlpack 3\&.0\&.0\&. You should use \fBClassify()\fP instead\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fItestData\fP Matrix of data points for which predictions are to be made\&. 
+.br
+\fIpredictions\fP Vector to store the predictions in\&. 
+.RE
+.PP
+
+.SS "template<template< typename > class OptimizerType = mlpack::optimization::L_BFGS> template<typename Archive > void \fBmlpack::regression::SoftmaxRegression\fP< OptimizerType >::Serialize (Archive & ar, const unsigned int)\fC [inline]\fP"
+
+.PP
+Serialize the \fBSoftmaxRegression\fP model\&. 
+.PP
+Definition at line 194 of file softmax_regression\&.hpp\&.
+.PP
+References mlpack::data::CreateNVP(), mlpack::regression::SoftmaxRegression< OptimizerType >::fitIntercept, mlpack::regression::SoftmaxRegression< OptimizerType >::lambda, and mlpack::regression::SoftmaxRegression< OptimizerType >::parameters\&.
+.SS "template<template< typename > class OptimizerType = mlpack::optimization::L_BFGS> double \fBmlpack::regression::SoftmaxRegression\fP< OptimizerType >::Train (OptimizerType< \fBSoftmaxRegressionFunction\fP > & optimizer)"
+
+.PP
+Train the softmax regression model with the given optimizer\&. The optimizer should hold an instantiated \fBSoftmaxRegressionFunction\fP object for the function to operate upon\&. This option should be preferred when the optimizer options are to be changed\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIoptimizer\fP Instantiated optimizer with instantiated error function\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Objective value of the final point\&. 
+.RE
+.PP
+
+.SS "template<template< typename > class OptimizerType = mlpack::optimization::L_BFGS> double \fBmlpack::regression::SoftmaxRegression\fP< OptimizerType >::Train (const arma::mat & data, const arma::Row< size_t > & labels, const size_t numClasses)"
+
+.PP
+Train the softmax regression with the given training data\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Input data with each column as one example\&. 
+.br
+\fIlabels\fP Labels associated with the feature data\&. 
+.br
+\fInumClasses\fP Number of classes for classification\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Objective value of the final point\&. 
+.RE
+.PP
+
+.SH "Member Data Documentation"
+.PP 
+.SS "template<template< typename > class OptimizerType = mlpack::optimization::L_BFGS> bool \fBmlpack::regression::SoftmaxRegression\fP< OptimizerType >::fitIntercept\fC [private]\fP"
+
+.PP
+Intercept term flag\&. 
+.PP
+Definition at line 212 of file softmax_regression\&.hpp\&.
+.PP
+Referenced by mlpack::regression::SoftmaxRegression< OptimizerType >::FeatureSize(), mlpack::regression::SoftmaxRegression< OptimizerType >::FitIntercept(), and mlpack::regression::SoftmaxRegression< OptimizerType >::Serialize()\&.
+.SS "template<template< typename > class OptimizerType = mlpack::optimization::L_BFGS> double \fBmlpack::regression::SoftmaxRegression\fP< OptimizerType >::lambda\fC [private]\fP"
+
+.PP
+L2-regularization constant\&. 
+.PP
+Definition at line 210 of file softmax_regression\&.hpp\&.
+.PP
+Referenced by mlpack::regression::SoftmaxRegression< OptimizerType >::Lambda(), and mlpack::regression::SoftmaxRegression< OptimizerType >::Serialize()\&.
+.SS "template<template< typename > class OptimizerType = mlpack::optimization::L_BFGS> size_t \fBmlpack::regression::SoftmaxRegression\fP< OptimizerType >::numClasses\fC [private]\fP"
+
+.PP
+Number of classes\&. 
+.PP
+Definition at line 208 of file softmax_regression\&.hpp\&.
+.PP
+Referenced by mlpack::regression::SoftmaxRegression< OptimizerType >::NumClasses()\&.
+.SS "template<template< typename > class OptimizerType = mlpack::optimization::L_BFGS> arma::mat \fBmlpack::regression::SoftmaxRegression\fP< OptimizerType >::parameters\fC [private]\fP"
+
+.PP
+Parameters after optimization\&. 
+.PP
+Definition at line 206 of file softmax_regression\&.hpp\&.
+.PP
+Referenced by mlpack::regression::SoftmaxRegression< OptimizerType >::FeatureSize(), mlpack::regression::SoftmaxRegression< OptimizerType >::Parameters(), and mlpack::regression::SoftmaxRegression< OptimizerType >::Serialize()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

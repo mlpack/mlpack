@@ -1,0 +1,117 @@
+\section{mlpack\+:\+:range\+:\+:Mono\+Search\+Visitor Class Reference}
+\label{classmlpack_1_1range_1_1MonoSearchVisitor}\index{mlpack\+::range\+::\+Mono\+Search\+Visitor@{mlpack\+::range\+::\+Mono\+Search\+Visitor}}
+
+
+\doxyref{Mono\+Search\+Visitor}{p.}{classmlpack_1_1range_1_1MonoSearchVisitor} executes a monochromatic range search on the given R\+S\+Type.  
+
+
+
+
+Inheritance diagram for mlpack\+:\+:range\+:\+:Mono\+Search\+Visitor\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=183pt]{classmlpack_1_1range_1_1MonoSearchVisitor__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Mono\+Search\+Visitor} (const {\bf math\+::\+Range} \&{\bf range}, std\+::vector$<$ std\+::vector$<$ size\+\_\+t $>$$>$ \&{\bf neighbors}, std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&{\bf distances})
+\begin{DoxyCompactList}\small\item\em Construct the \doxyref{Mono\+Search\+Visitor}{p.}{classmlpack_1_1range_1_1MonoSearchVisitor} with the given parameters. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename R\+S\+Type $>$ }\\void {\bf operator()} ({\bf R\+S\+Type} $\ast$rs) const 
+\begin{DoxyCompactList}\small\item\em Perform monochromatic search with the given \doxyref{Range\+Search}{p.}{classmlpack_1_1range_1_1RangeSearch} object. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \& {\bf distances}
+\begin{DoxyCompactList}\small\item\em Output distances. \end{DoxyCompactList}\item 
+std\+::vector$<$ std\+::vector$<$ size\+\_\+t $>$ $>$ \& {\bf neighbors}
+\begin{DoxyCompactList}\small\item\em Output neighbors. \end{DoxyCompactList}\item 
+const {\bf math\+::\+Range} \& {\bf range}
+\begin{DoxyCompactList}\small\item\em The range to search for. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\doxyref{Mono\+Search\+Visitor}{p.}{classmlpack_1_1range_1_1MonoSearchVisitor} executes a monochromatic range search on the given R\+S\+Type. 
+
+Range Search is performed on the reference set itself, no query\+Set. 
+
+Definition at line 45 of file rs\+\_\+model.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::range\+::\+Mono\+Search\+Visitor@{mlpack\+::range\+::\+Mono\+Search\+Visitor}!Mono\+Search\+Visitor@{Mono\+Search\+Visitor}}
+\index{Mono\+Search\+Visitor@{Mono\+Search\+Visitor}!mlpack\+::range\+::\+Mono\+Search\+Visitor@{mlpack\+::range\+::\+Mono\+Search\+Visitor}}
+\subsubsection[{Mono\+Search\+Visitor(const math\+::\+Range \&range, std\+::vector$<$ std\+::vector$<$ size\+\_\+t $>$$>$ \&neighbors, std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&distances)}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::range\+::\+Mono\+Search\+Visitor\+::\+Mono\+Search\+Visitor (
+\begin{DoxyParamCaption}
+\item[{const {\bf math\+::\+Range} \&}]{range, }
+\item[{std\+::vector$<$ std\+::vector$<$ size\+\_\+t $>$$>$ \&}]{neighbors, }
+\item[{std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&}]{distances}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1range_1_1MonoSearchVisitor_a05039629732a655a80290d61b6cf8cd6}
+
+
+Construct the \doxyref{Mono\+Search\+Visitor}{p.}{classmlpack_1_1range_1_1MonoSearchVisitor} with the given parameters. 
+
+
+
+Definition at line 61 of file rs\+\_\+model.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::range\+::\+Mono\+Search\+Visitor@{mlpack\+::range\+::\+Mono\+Search\+Visitor}!operator()@{operator()}}
+\index{operator()@{operator()}!mlpack\+::range\+::\+Mono\+Search\+Visitor@{mlpack\+::range\+::\+Mono\+Search\+Visitor}}
+\subsubsection[{operator()(\+R\+S\+Type $\ast$rs) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename R\+S\+Type $>$ void mlpack\+::range\+::\+Mono\+Search\+Visitor\+::operator() (
+\begin{DoxyParamCaption}
+\item[{{\bf R\+S\+Type} $\ast$}]{rs}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1range_1_1MonoSearchVisitor_ac161fee4d3ab193338b7bd22c1a9d155}
+
+
+Perform monochromatic search with the given \doxyref{Range\+Search}{p.}{classmlpack_1_1range_1_1RangeSearch} object. 
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::range\+::\+Mono\+Search\+Visitor@{mlpack\+::range\+::\+Mono\+Search\+Visitor}!distances@{distances}}
+\index{distances@{distances}!mlpack\+::range\+::\+Mono\+Search\+Visitor@{mlpack\+::range\+::\+Mono\+Search\+Visitor}}
+\subsubsection[{distances}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$std\+::vector$<$double$>$ $>$\& mlpack\+::range\+::\+Mono\+Search\+Visitor\+::distances\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1range_1_1MonoSearchVisitor_a21f4870e38a82953859666e3d91ccbe0}
+
+
+Output distances. 
+
+
+
+Definition at line 53 of file rs\+\_\+model.\+hpp.
+
+\index{mlpack\+::range\+::\+Mono\+Search\+Visitor@{mlpack\+::range\+::\+Mono\+Search\+Visitor}!neighbors@{neighbors}}
+\index{neighbors@{neighbors}!mlpack\+::range\+::\+Mono\+Search\+Visitor@{mlpack\+::range\+::\+Mono\+Search\+Visitor}}
+\subsubsection[{neighbors}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$std\+::vector$<$size\+\_\+t$>$ $>$\& mlpack\+::range\+::\+Mono\+Search\+Visitor\+::neighbors\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1range_1_1MonoSearchVisitor_af70abd67fd5514a624836b53e68dba1d}
+
+
+Output neighbors. 
+
+
+
+Definition at line 51 of file rs\+\_\+model.\+hpp.
+
+\index{mlpack\+::range\+::\+Mono\+Search\+Visitor@{mlpack\+::range\+::\+Mono\+Search\+Visitor}!range@{range}}
+\index{range@{range}!mlpack\+::range\+::\+Mono\+Search\+Visitor@{mlpack\+::range\+::\+Mono\+Search\+Visitor}}
+\subsubsection[{range}]{\setlength{\rightskip}{0pt plus 5cm}const {\bf math\+::\+Range}\& mlpack\+::range\+::\+Mono\+Search\+Visitor\+::range\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1range_1_1MonoSearchVisitor_afe86c3469679d8f77273b8b141ab4484}
+
+
+The range to search for. 
+
+
+
+Definition at line 49 of file rs\+\_\+model.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/range\+\_\+search/{\bf rs\+\_\+model.\+hpp}\end{DoxyCompactItemize}

@@ -1,0 +1,48 @@
+.TH "mlpack::kernel::KernelTraits< TriangularKernel >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::kernel::KernelTraits< TriangularKernel > \- Kernel traits for the triangular kernel\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "static const bool \fBIsNormalized\fP = true"
+.br
+.RI "\fIThe triangular kernel is normalized: K(x, x) = 1 for all x\&. \fP"
+.ti -1c
+.RI "static const bool \fBUsesSquaredDistance\fP = false"
+.br
+.RI "\fIThe triangular kernel doesn't include a squared distance\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<>
+.br
+class mlpack::kernel::KernelTraits< TriangularKernel >"
+Kernel traits for the triangular kernel\&. 
+.PP
+Definition at line 102 of file triangular_kernel\&.hpp\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "const bool \fBmlpack::kernel::KernelTraits\fP< \fBTriangularKernel\fP >::IsNormalized = true\fC [static]\fP"
+
+.PP
+The triangular kernel is normalized: K(x, x) = 1 for all x\&. 
+.PP
+Definition at line 106 of file triangular_kernel\&.hpp\&.
+.SS "const bool \fBmlpack::kernel::KernelTraits\fP< \fBTriangularKernel\fP >::UsesSquaredDistance = false\fC [static]\fP"
+
+.PP
+The triangular kernel doesn't include a squared distance\&. 
+.PP
+Definition at line 108 of file triangular_kernel\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

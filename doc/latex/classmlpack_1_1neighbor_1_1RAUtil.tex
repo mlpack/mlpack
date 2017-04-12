@@ -1,0 +1,98 @@
+\section{mlpack\+:\+:neighbor\+:\+:R\+A\+Util Class Reference}
+\label{classmlpack_1_1neighbor_1_1RAUtil}\index{mlpack\+::neighbor\+::\+R\+A\+Util@{mlpack\+::neighbor\+::\+R\+A\+Util}}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static size\+\_\+t {\bf Minimum\+Samples\+Reqd} (const size\+\_\+t n, const size\+\_\+t k, const double tau, const double {\bf alpha})
+\begin{DoxyCompactList}\small\item\em Compute the minimum number of samples required to guarantee the given rank-\/approximation and success probability. \end{DoxyCompactList}\item 
+static void {\bf Obtain\+Distinct\+Samples} (const size\+\_\+t num\+Samples, const size\+\_\+t range\+Upper\+Bound, arma\+::uvec \&distinct\+Samples)
+\begin{DoxyCompactList}\small\item\em Pick up desired number of samples (with replacement) from a given range of integers so that only the distinct samples are returned from the range [0 -\/ specified upper bound) \end{DoxyCompactList}\item 
+static double {\bf Success\+Probability} (const size\+\_\+t n, const size\+\_\+t k, const size\+\_\+t m, const size\+\_\+t t)
+\begin{DoxyCompactList}\small\item\em Compute the success probability of obtaining \textquotesingle{}k\textquotesingle{}-\/neighbors from a set of size \textquotesingle{}n\textquotesingle{} within the top \textquotesingle{}t\textquotesingle{} neighbors if \textquotesingle{}m\textquotesingle{} samples are made. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 21 of file ra\+\_\+util.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::neighbor\+::\+R\+A\+Util@{mlpack\+::neighbor\+::\+R\+A\+Util}!Minimum\+Samples\+Reqd@{Minimum\+Samples\+Reqd}}
+\index{Minimum\+Samples\+Reqd@{Minimum\+Samples\+Reqd}!mlpack\+::neighbor\+::\+R\+A\+Util@{mlpack\+::neighbor\+::\+R\+A\+Util}}
+\subsubsection[{Minimum\+Samples\+Reqd(const size\+\_\+t n, const size\+\_\+t k, const double tau, const double alpha)}]{\setlength{\rightskip}{0pt plus 5cm}static size\+\_\+t mlpack\+::neighbor\+::\+R\+A\+Util\+::\+Minimum\+Samples\+Reqd (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{n, }
+\item[{const size\+\_\+t}]{k, }
+\item[{const double}]{tau, }
+\item[{const double}]{alpha}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1neighbor_1_1RAUtil_a3e004c7082de16b5365c7d27d7208220}
+
+
+Compute the minimum number of samples required to guarantee the given rank-\/approximation and success probability. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em n} & Size of the set to be sampled from. \\
+\hline
+{\em k} & The number of neighbors required within the rank-\/approximation. \\
+\hline
+{\em tau} & The rank-\/approximation in percentile of the data. \\
+\hline
+{\em alpha} & The success probability desired. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::neighbor\+::\+R\+A\+Util@{mlpack\+::neighbor\+::\+R\+A\+Util}!Obtain\+Distinct\+Samples@{Obtain\+Distinct\+Samples}}
+\index{Obtain\+Distinct\+Samples@{Obtain\+Distinct\+Samples}!mlpack\+::neighbor\+::\+R\+A\+Util@{mlpack\+::neighbor\+::\+R\+A\+Util}}
+\subsubsection[{Obtain\+Distinct\+Samples(const size\+\_\+t num\+Samples, const size\+\_\+t range\+Upper\+Bound, arma\+::uvec \&distinct\+Samples)}]{\setlength{\rightskip}{0pt plus 5cm}static void mlpack\+::neighbor\+::\+R\+A\+Util\+::\+Obtain\+Distinct\+Samples (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{num\+Samples, }
+\item[{const size\+\_\+t}]{range\+Upper\+Bound, }
+\item[{arma\+::uvec \&}]{distinct\+Samples}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1neighbor_1_1RAUtil_a521f426a54e5f41464046c5f1fd6308c}
+
+
+Pick up desired number of samples (with replacement) from a given range of integers so that only the distinct samples are returned from the range [0 -\/ specified upper bound) 
+
+
+\begin{DoxyParams}{Parameters}
+{\em num\+Samples} & Number of random samples. \\
+\hline
+{\em range\+Upper\+Bound} & The upper bound on the range of integers. \\
+\hline
+{\em distinct\+Samples} & The list of the distinct samples. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::neighbor\+::\+R\+A\+Util@{mlpack\+::neighbor\+::\+R\+A\+Util}!Success\+Probability@{Success\+Probability}}
+\index{Success\+Probability@{Success\+Probability}!mlpack\+::neighbor\+::\+R\+A\+Util@{mlpack\+::neighbor\+::\+R\+A\+Util}}
+\subsubsection[{Success\+Probability(const size\+\_\+t n, const size\+\_\+t k, const size\+\_\+t m, const size\+\_\+t t)}]{\setlength{\rightskip}{0pt plus 5cm}static double mlpack\+::neighbor\+::\+R\+A\+Util\+::\+Success\+Probability (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{n, }
+\item[{const size\+\_\+t}]{k, }
+\item[{const size\+\_\+t}]{m, }
+\item[{const size\+\_\+t}]{t}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1neighbor_1_1RAUtil_aaa9f86a34028f67529f3771409a033a1}
+
+
+Compute the success probability of obtaining \textquotesingle{}k\textquotesingle{}-\/neighbors from a set of size \textquotesingle{}n\textquotesingle{} within the top \textquotesingle{}t\textquotesingle{} neighbors if \textquotesingle{}m\textquotesingle{} samples are made. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em n} & Size of the set being sampled from. \\
+\hline
+{\em k} & The number of neighbors required within the rank-\/approximation. \\
+\hline
+{\em m} & The number of random samples. \\
+\hline
+{\em t} & The desired rank-\/approximation. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/rann/{\bf ra\+\_\+util.\+hpp}\end{DoxyCompactItemize}

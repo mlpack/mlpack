@@ -1,0 +1,783 @@
+.TH "mlpack::det::DTree< MatType, TagType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::det::DTree< MatType, TagType > \- A density estimation tree is similar to both a decision tree and a space partitioning tree (like a kd-tree)\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "typedef MatType::elem_type \fBElemType\fP"
+.br
+.RI "\fIThe actual, underlying type we're working with\&. \fP"
+.ti -1c
+.RI "typedef arma::Col< \fBElemType\fP > \fBStatType\fP"
+.br
+.ti -1c
+.RI "typedef MatType::vec_type \fBVecType\fP"
+.br
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBDTree\fP ()"
+.br
+.RI "\fICreate an empty density estimation tree\&. \fP"
+.ti -1c
+.RI "\fBDTree\fP (const \fBDTree\fP &obj)"
+.br
+.RI "\fICreate a tree that is the copy of the given tree\&. \fP"
+.ti -1c
+.RI "\fBDTree\fP (\fBDTree\fP &&obj)"
+.br
+.RI "\fICreate a tree by taking ownership of another tree (move constructor)\&. \fP"
+.ti -1c
+.RI "\fBDTree\fP (const \fBStatType\fP &\fBmaxVals\fP, const \fBStatType\fP &\fBminVals\fP, const size_t totalPoints)"
+.br
+.RI "\fICreate a density estimation tree with the given bounds and the given number of total points\&. \fP"
+.ti -1c
+.RI "\fBDTree\fP (MatType &data)"
+.br
+.RI "\fICreate a density estimation tree on the given data\&. \fP"
+.ti -1c
+.RI "\fBDTree\fP (const \fBStatType\fP &\fBmaxVals\fP, const \fBStatType\fP &\fBminVals\fP, const size_t \fBstart\fP, const size_t \fBend\fP, const double \fBlogNegError\fP)"
+.br
+.RI "\fICreate a child node of a density estimation tree given the bounding box specified by maxVals and minVals, using the size given in start and end and the specified error\&. \fP"
+.ti -1c
+.RI "\fBDTree\fP (const \fBStatType\fP &\fBmaxVals\fP, const \fBStatType\fP &\fBminVals\fP, const size_t totalPoints, const size_t \fBstart\fP, const size_t \fBend\fP)"
+.br
+.RI "\fICreate a child node of a density estimation tree given the bounding box specified by maxVals and minVals, using the size given in start and end, and calculating the error with the total number of points given\&. \fP"
+.ti -1c
+.RI "\fB~DTree\fP ()"
+.br
+.RI "\fIClean up memory allocated by the tree\&. \fP"
+.ti -1c
+.RI "double \fBAlphaUpper\fP () const "
+.br
+.RI "\fIReturn the upper part of the alpha sum\&. \fP"
+.ti -1c
+.RI "TagType \fBBucketTag\fP () const "
+.br
+.RI "\fIReturn the current bucket's ID, if leaf, or -1 otherwise\&. \fP"
+.ti -1c
+.RI "double \fBComputeValue\fP (const \fBVecType\fP &query) const "
+.br
+.RI "\fICompute the logarithm of the density estimate of a given query point\&. \fP"
+.ti -1c
+.RI "void \fBComputeVariableImportance\fP (arma::vec &importances) const "
+.br
+.RI "\fICompute the variable importance of each dimension in the learned tree\&. \fP"
+.ti -1c
+.RI "size_t \fBEnd\fP () const "
+.br
+.RI "\fIReturn the first index of a point not contained in this node\&. \fP"
+.ti -1c
+.RI "TagType \fBFindBucket\fP (const \fBVecType\fP &query) const "
+.br
+.RI "\fIReturn the tag of the leaf containing the query\&. \fP"
+.ti -1c
+.RI "double \fBGrow\fP (MatType &data, arma::Col< size_t > &oldFromNew, const bool useVolReg=false, const size_t maxLeafSize=10, const size_t minLeafSize=5)"
+.br
+.RI "\fIGreedily expand the tree\&. \fP"
+.ti -1c
+.RI "\fBDTree\fP * \fBLeft\fP () const "
+.br
+.RI "\fIReturn the left child\&. \fP"
+.ti -1c
+.RI "double \fBLogNegativeError\fP (const size_t totalPoints) const "
+.br
+.RI "\fICompute the log-negative-error for this point, given the total number of points in the dataset\&. \fP"
+.ti -1c
+.RI "double \fBLogNegError\fP () const "
+.br
+.RI "\fIReturn the log negative error of this node\&. \fP"
+.ti -1c
+.RI "double \fBLogVolume\fP () const "
+.br
+.RI "\fIReturn the inverse of the volume of this node\&. \fP"
+.ti -1c
+.RI "const \fBStatType\fP & \fBMaxVals\fP () const "
+.br
+.RI "\fIReturn the maximum values\&. \fP"
+.ti -1c
+.RI "const \fBStatType\fP & \fBMinVals\fP () const "
+.br
+.RI "\fIReturn the minimum values\&. \fP"
+.ti -1c
+.RI "\fBDTree\fP & \fBoperator=\fP (const \fBDTree\fP &obj)"
+.br
+.RI "\fICopy the given tree\&. \fP"
+.ti -1c
+.RI "\fBDTree\fP & \fBoperator=\fP (\fBDTree\fP &&obj)"
+.br
+.RI "\fITake ownership of the given tree (move operator)\&. \fP"
+.ti -1c
+.RI "double \fBPruneAndUpdate\fP (const double oldAlpha, const size_t points, const bool useVolReg=false)"
+.br
+.RI "\fIPerform alpha pruning on a tree\&. \fP"
+.ti -1c
+.RI "double \fBRatio\fP () const "
+.br
+.RI "\fIReturn the ratio of points in this node to the points in the whole dataset\&. \fP"
+.ti -1c
+.RI "\fBDTree\fP * \fBRight\fP () const "
+.br
+.RI "\fIReturn the right child\&. \fP"
+.ti -1c
+.RI "bool \fBRoot\fP () const "
+.br
+.RI "\fIReturn whether or not this is the root of the tree\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int)"
+.br
+.RI "\fISerialize the density estimation tree\&. \fP"
+.ti -1c
+.RI "size_t \fBSplitDim\fP () const "
+.br
+.RI "\fIReturn the split dimension of this node\&. \fP"
+.ti -1c
+.RI "\fBElemType\fP \fBSplitValue\fP () const "
+.br
+.RI "\fIReturn the split value of this node\&. \fP"
+.ti -1c
+.RI "size_t \fBStart\fP () const "
+.br
+.RI "\fIReturn the starting index of points contained in this node\&. \fP"
+.ti -1c
+.RI "size_t \fBSubtreeLeaves\fP () const "
+.br
+.RI "\fIReturn the number of leaves which are descendants of this node\&. \fP"
+.ti -1c
+.RI "double \fBSubtreeLeavesLogNegError\fP () const "
+.br
+.RI "\fIReturn the log negative error of all descendants of this node\&. \fP"
+.ti -1c
+.RI "TagType \fBTagTree\fP (const TagType &tag=0)"
+.br
+.RI "\fIIndex the buckets for possible usage later; this results in every leaf in the tree having a specific tag (accessible with \fBBucketTag()\fP)\&. \fP"
+.ti -1c
+.RI "bool \fBWithinRange\fP (const \fBVecType\fP &query) const "
+.br
+.RI "\fIReturn whether a query point is within the range of this node\&. \fP"
+.in -1c
+.SS "Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "bool \fBFindSplit\fP (const MatType &data, size_t &\fBsplitDim\fP, \fBElemType\fP &\fBsplitValue\fP, double &leftError, double &rightError, const size_t minLeafSize=5) const "
+.br
+.RI "\fIFind the dimension to split on\&. \fP"
+.ti -1c
+.RI "size_t \fBSplitData\fP (MatType &data, const size_t \fBsplitDim\fP, const \fBElemType\fP \fBsplitValue\fP, arma::Col< size_t > &oldFromNew) const "
+.br
+.RI "\fISplit the data, returning the number of points left of the split\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "double \fBalphaUpper\fP"
+.br
+.RI "\fIUpper part of alpha sum; used for pruning\&. \fP"
+.ti -1c
+.RI "TagType \fBbucketTag\fP"
+.br
+.RI "\fIThe tag for the leaf, used for hashing points\&. \fP"
+.ti -1c
+.RI "size_t \fBend\fP"
+.br
+.RI "\fIThe index of the last point in the dataset contained in this node (and its children)\&. \fP"
+.ti -1c
+.RI "\fBDTree\fP * \fBleft\fP"
+.br
+.RI "\fIThe left child\&. \fP"
+.ti -1c
+.RI "double \fBlogNegError\fP"
+.br
+.RI "\fIlog-negative-L2-error of the node\&. \fP"
+.ti -1c
+.RI "double \fBlogVolume\fP"
+.br
+.RI "\fIThe logarithm of the volume of the node\&. \fP"
+.ti -1c
+.RI "\fBStatType\fP \fBmaxVals\fP"
+.br
+.RI "\fIUpper half of bounding box for this node\&. \fP"
+.ti -1c
+.RI "\fBStatType\fP \fBminVals\fP"
+.br
+.RI "\fILower half of bounding box for this node\&. \fP"
+.ti -1c
+.RI "double \fBratio\fP"
+.br
+.RI "\fIRatio of the number of points in the node to the total number of points\&. \fP"
+.ti -1c
+.RI "\fBDTree\fP * \fBright\fP"
+.br
+.RI "\fIThe right child\&. \fP"
+.ti -1c
+.RI "bool \fBroot\fP"
+.br
+.RI "\fIIf true, this node is the root of the tree\&. \fP"
+.ti -1c
+.RI "size_t \fBsplitDim\fP"
+.br
+.RI "\fIThe splitting dimension for this node\&. \fP"
+.ti -1c
+.RI "\fBElemType\fP \fBsplitValue\fP"
+.br
+.RI "\fIThe split value on the splitting dimension for this node\&. \fP"
+.ti -1c
+.RI "size_t \fBstart\fP"
+.br
+.RI "\fIThe index of the first point in the dataset contained in this node (and its children)\&. \fP"
+.ti -1c
+.RI "size_t \fBsubtreeLeaves\fP"
+.br
+.RI "\fINumber of leaves of the subtree\&. \fP"
+.ti -1c
+.RI "double \fBsubtreeLeavesLogNegError\fP"
+.br
+.RI "\fISum of the error of the leaves of the subtree\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename MatType, typename TagType = int>
+.br
+class mlpack::det::DTree< MatType, TagType >"
+A density estimation tree is similar to both a decision tree and a space partitioning tree (like a kd-tree)\&. 
+
+Each leaf represents a constant-density hyper-rectangle\&. The tree is constructed in such a way as to minimize the integrated square error between the probability distribution of the tree and the observed probability distribution of the data\&. Because the tree is similar to a decision tree, the density estimation tree can provide very fast density estimates for a given point\&.
+.PP
+For more information, see the following paper:
+.PP
+.PP
+.nf
+@incollection{ram2011,
+  author = {Ram, Parikshit and Gray, Alexander G\&.},
+  title = {Density estimation trees},
+  booktitle = {{Proceedings of the 17th ACM SIGKDD International Conference
+      on Knowledge Discovery and Data Mining}},
+  series = {KDD '11},
+  year = {2011},
+  pages = {627--635}
+}
+.fi
+.PP
+ 
+.PP
+Definition at line 46 of file dtree\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "template<typename MatType, typename TagType = int> typedef MatType::elem_type \fBmlpack::det::DTree\fP< MatType, TagType >::\fBElemType\fP"
+
+.PP
+The actual, underlying type we're working with\&. 
+.PP
+Definition at line 52 of file dtree\&.hpp\&.
+.SS "template<typename MatType, typename TagType = int> typedef arma::Col<\fBElemType\fP> \fBmlpack::det::DTree\fP< MatType, TagType >::\fBStatType\fP"
+
+.PP
+Definition at line 54 of file dtree\&.hpp\&.
+.SS "template<typename MatType, typename TagType = int> typedef MatType::vec_type \fBmlpack::det::DTree\fP< MatType, TagType >::\fBVecType\fP"
+
+.PP
+Definition at line 53 of file dtree\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename MatType, typename TagType = int> \fBmlpack::det::DTree\fP< MatType, TagType >::\fBDTree\fP ()"
+
+.PP
+Create an empty density estimation tree\&. 
+.SS "template<typename MatType, typename TagType = int> \fBmlpack::det::DTree\fP< MatType, TagType >::\fBDTree\fP (const \fBDTree\fP< MatType, TagType > & obj)"
+
+.PP
+Create a tree that is the copy of the given tree\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIobj\fP Tree to copy\&. 
+.RE
+.PP
+
+.SS "template<typename MatType, typename TagType = int> \fBmlpack::det::DTree\fP< MatType, TagType >::\fBDTree\fP (\fBDTree\fP< MatType, TagType > && obj)"
+
+.PP
+Create a tree by taking ownership of another tree (move constructor)\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIobj\fP Tree to take ownership of\&. 
+.RE
+.PP
+
+.SS "template<typename MatType, typename TagType = int> \fBmlpack::det::DTree\fP< MatType, TagType >::\fBDTree\fP (const \fBStatType\fP & maxVals, const \fBStatType\fP & minVals, const size_t totalPoints)"
+
+.PP
+Create a density estimation tree with the given bounds and the given number of total points\&. Children will not be created\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fImaxVals\fP Maximum values of the bounding box\&. 
+.br
+\fIminVals\fP Minimum values of the bounding box\&. 
+.br
+\fItotalPoints\fP Total number of points in the dataset\&. 
+.RE
+.PP
+
+.SS "template<typename MatType, typename TagType = int> \fBmlpack::det::DTree\fP< MatType, TagType >::\fBDTree\fP (MatType & data)"
+
+.PP
+Create a density estimation tree on the given data\&. Children will be created following the procedure outlined in the paper\&. The data will be modified; it will be reordered similar to the way BinarySpaceTree modifies datasets\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Dataset to build tree on\&. 
+.RE
+.PP
+
+.SS "template<typename MatType, typename TagType = int> \fBmlpack::det::DTree\fP< MatType, TagType >::\fBDTree\fP (const \fBStatType\fP & maxVals, const \fBStatType\fP & minVals, const size_t start, const size_t end, const double logNegError)"
+
+.PP
+Create a child node of a density estimation tree given the bounding box specified by maxVals and minVals, using the size given in start and end and the specified error\&. Children of this node will not be created recursively\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fImaxVals\fP Upper bound of bounding box\&. 
+.br
+\fIminVals\fP Lower bound of bounding box\&. 
+.br
+\fIstart\fP Start of points represented by this node in the data matrix\&. 
+.br
+\fIend\fP End of points represented by this node in the data matrix\&. 
+.br
+\fIerror\fP log-negative error of this node\&. 
+.RE
+.PP
+
+.SS "template<typename MatType, typename TagType = int> \fBmlpack::det::DTree\fP< MatType, TagType >::\fBDTree\fP (const \fBStatType\fP & maxVals, const \fBStatType\fP & minVals, const size_t totalPoints, const size_t start, const size_t end)"
+
+.PP
+Create a child node of a density estimation tree given the bounding box specified by maxVals and minVals, using the size given in start and end, and calculating the error with the total number of points given\&. Children of this node will not be created recursively\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fImaxVals\fP Upper bound of bounding box\&. 
+.br
+\fIminVals\fP Lower bound of bounding box\&. 
+.br
+\fIstart\fP Start of points represented by this node in the data matrix\&. 
+.br
+\fIend\fP End of points represented by this node in the data matrix\&. 
+.RE
+.PP
+
+.SS "template<typename MatType, typename TagType = int> \fBmlpack::det::DTree\fP< MatType, TagType >::~\fBDTree\fP ()"
+
+.PP
+Clean up memory allocated by the tree\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename MatType, typename TagType = int> double \fBmlpack::det::DTree\fP< MatType, TagType >::AlphaUpper () const\fC [inline]\fP"
+
+.PP
+Return the upper part of the alpha sum\&. 
+.PP
+Definition at line 302 of file dtree\&.hpp\&.
+.PP
+References mlpack::det::DTree< MatType, TagType >::alphaUpper\&.
+.SS "template<typename MatType, typename TagType = int> TagType \fBmlpack::det::DTree\fP< MatType, TagType >::BucketTag () const\fC [inline]\fP"
+
+.PP
+Return the current bucket's ID, if leaf, or -1 otherwise\&. 
+.PP
+Definition at line 304 of file dtree\&.hpp\&.
+.SS "template<typename MatType, typename TagType = int> double \fBmlpack::det::DTree\fP< MatType, TagType >::ComputeValue (const \fBVecType\fP & query) const"
+
+.PP
+Compute the logarithm of the density estimate of a given query point\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIquery\fP Point to estimate density of\&. 
+.RE
+.PP
+
+.SS "template<typename MatType, typename TagType = int> void \fBmlpack::det::DTree\fP< MatType, TagType >::ComputeVariableImportance (arma::vec & importances) const"
+
+.PP
+Compute the variable importance of each dimension in the learned tree\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIimportances\fP Vector to store the calculated importances in\&. 
+.RE
+.PP
+
+.SS "template<typename MatType, typename TagType = int> size_t \fBmlpack::det::DTree\fP< MatType, TagType >::End () const\fC [inline]\fP"
+
+.PP
+Return the first index of a point not contained in this node\&. 
+.PP
+Definition at line 279 of file dtree\&.hpp\&.
+.PP
+References mlpack::det::DTree< MatType, TagType >::end\&.
+.SS "template<typename MatType, typename TagType = int> TagType \fBmlpack::det::DTree\fP< MatType, TagType >::FindBucket (const \fBVecType\fP & query) const"
+
+.PP
+Return the tag of the leaf containing the query\&. This is useful for generating class memberships\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIquery\fP Query to search for\&. 
+.RE
+.PP
+
+.SS "template<typename MatType, typename TagType = int> bool \fBmlpack::det::DTree\fP< MatType, TagType >::FindSplit (const MatType & data, size_t & splitDim, \fBElemType\fP & splitValue, double & leftError, double & rightError, const size_t minLeafSize = \fC5\fP) const\fC [private]\fP"
+
+.PP
+Find the dimension to split on\&. 
+.PP
+Referenced by mlpack::det::DTree< MatType, TagType >::MinVals()\&.
+.SS "template<typename MatType, typename TagType = int> double \fBmlpack::det::DTree\fP< MatType, TagType >::Grow (MatType & data, arma::Col< size_t > & oldFromNew, const bool useVolReg = \fCfalse\fP, const size_t maxLeafSize = \fC10\fP, const size_t minLeafSize = \fC5\fP)"
+
+.PP
+Greedily expand the tree\&. The points in the dataset will be reordered during tree growth\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Dataset to build tree on\&. 
+.br
+\fIoldFromNew\fP Mappings from old points to new points\&. 
+.br
+\fIuseVolReg\fP If true, volume regularization is used\&. 
+.br
+\fImaxLeafSize\fP Maximum size of a leaf\&. 
+.br
+\fIminLeafSize\fP Minimum size of a leaf\&. 
+.RE
+.PP
+
+.SS "template<typename MatType, typename TagType = int> \fBDTree\fP* \fBmlpack::det::DTree\fP< MatType, TagType >::Left () const\fC [inline]\fP"
+
+.PP
+Return the left child\&. 
+.PP
+Definition at line 296 of file dtree\&.hpp\&.
+.PP
+References mlpack::det::DTree< MatType, TagType >::left\&.
+.SS "template<typename MatType, typename TagType = int> double \fBmlpack::det::DTree\fP< MatType, TagType >::LogNegativeError (const size_t totalPoints) const"
+
+.PP
+Compute the log-negative-error for this point, given the total number of points in the dataset\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fItotalPoints\fP Total number of points in the dataset\&. 
+.RE
+.PP
+
+.SS "template<typename MatType, typename TagType = int> double \fBmlpack::det::DTree\fP< MatType, TagType >::LogNegError () const\fC [inline]\fP"
+
+.PP
+Return the log negative error of this node\&. 
+.PP
+Definition at line 285 of file dtree\&.hpp\&.
+.PP
+References mlpack::det::DTree< MatType, TagType >::logNegError\&.
+.SS "template<typename MatType, typename TagType = int> double \fBmlpack::det::DTree\fP< MatType, TagType >::LogVolume () const\fC [inline]\fP"
+
+.PP
+Return the inverse of the volume of this node\&. 
+.PP
+Definition at line 294 of file dtree\&.hpp\&.
+.PP
+References mlpack::det::DTree< MatType, TagType >::logVolume\&.
+.SS "template<typename MatType, typename TagType = int> const \fBStatType\fP& \fBmlpack::det::DTree\fP< MatType, TagType >::MaxVals () const\fC [inline]\fP"
+
+.PP
+Return the maximum values\&. 
+.PP
+Definition at line 307 of file dtree\&.hpp\&.
+.PP
+References mlpack::det::DTree< MatType, TagType >::maxVals\&.
+.SS "template<typename MatType, typename TagType = int> const \fBStatType\fP& \fBmlpack::det::DTree\fP< MatType, TagType >::MinVals () const\fC [inline]\fP"
+
+.PP
+Return the minimum values\&. 
+.PP
+Definition at line 310 of file dtree\&.hpp\&.
+.PP
+References mlpack::det::DTree< MatType, TagType >::FindSplit(), mlpack::det::DTree< MatType, TagType >::minVals, mlpack::det::DTree< MatType, TagType >::Serialize(), and mlpack::det::DTree< MatType, TagType >::SplitData()\&.
+.SS "template<typename MatType, typename TagType = int> \fBDTree\fP& \fBmlpack::det::DTree\fP< MatType, TagType >::operator= (const \fBDTree\fP< MatType, TagType > & obj)"
+
+.PP
+Copy the given tree\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIobj\fP Tree to copy\&. 
+.RE
+.PP
+
+.SS "template<typename MatType, typename TagType = int> \fBDTree\fP& \fBmlpack::det::DTree\fP< MatType, TagType >::operator= (\fBDTree\fP< MatType, TagType > && obj)"
+
+.PP
+Take ownership of the given tree (move operator)\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIobj\fP Tree to take ownership of\&. 
+.RE
+.PP
+
+.SS "template<typename MatType, typename TagType = int> double \fBmlpack::det::DTree\fP< MatType, TagType >::PruneAndUpdate (const double oldAlpha, const size_t points, const bool useVolReg = \fCfalse\fP)"
+
+.PP
+Perform alpha pruning on a tree\&. Returns the new value of alpha\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIoldAlpha\fP Old value of alpha\&. 
+.br
+\fIpoints\fP Total number of points in dataset\&. 
+.br
+\fIuseVolReg\fP If true, volume regularization is used\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+New value of alpha\&. 
+.RE
+.PP
+
+.SS "template<typename MatType, typename TagType = int> double \fBmlpack::det::DTree\fP< MatType, TagType >::Ratio () const\fC [inline]\fP"
+
+.PP
+Return the ratio of points in this node to the points in the whole dataset\&. 
+.PP
+Definition at line 292 of file dtree\&.hpp\&.
+.PP
+References mlpack::det::DTree< MatType, TagType >::ratio\&.
+.SS "template<typename MatType, typename TagType = int> \fBDTree\fP* \fBmlpack::det::DTree\fP< MatType, TagType >::Right () const\fC [inline]\fP"
+
+.PP
+Return the right child\&. 
+.PP
+Definition at line 298 of file dtree\&.hpp\&.
+.PP
+References mlpack::det::DTree< MatType, TagType >::right\&.
+.SS "template<typename MatType, typename TagType = int> bool \fBmlpack::det::DTree\fP< MatType, TagType >::Root () const\fC [inline]\fP"
+
+.PP
+Return whether or not this is the root of the tree\&. 
+.PP
+Definition at line 300 of file dtree\&.hpp\&.
+.PP
+References mlpack::det::DTree< MatType, TagType >::root\&.
+.SS "template<typename MatType, typename TagType = int> template<typename Archive > void \fBmlpack::det::DTree\fP< MatType, TagType >::Serialize (Archive & ar, const unsigned int)"
+
+.PP
+Serialize the density estimation tree\&. 
+.PP
+Referenced by mlpack::det::DTree< MatType, TagType >::MinVals()\&.
+.SS "template<typename MatType, typename TagType = int> size_t \fBmlpack::det::DTree\fP< MatType, TagType >::SplitData (MatType & data, const size_t splitDim, const \fBElemType\fP splitValue, arma::Col< size_t > & oldFromNew) const\fC [private]\fP"
+
+.PP
+Split the data, returning the number of points left of the split\&. 
+.PP
+Referenced by mlpack::det::DTree< MatType, TagType >::MinVals()\&.
+.SS "template<typename MatType, typename TagType = int> size_t \fBmlpack::det::DTree\fP< MatType, TagType >::SplitDim () const\fC [inline]\fP"
+
+.PP
+Return the split dimension of this node\&. 
+.PP
+Definition at line 281 of file dtree\&.hpp\&.
+.PP
+References mlpack::det::DTree< MatType, TagType >::splitDim\&.
+.SS "template<typename MatType, typename TagType = int> \fBElemType\fP \fBmlpack::det::DTree\fP< MatType, TagType >::SplitValue () const\fC [inline]\fP"
+
+.PP
+Return the split value of this node\&. 
+.PP
+Definition at line 283 of file dtree\&.hpp\&.
+.PP
+References mlpack::det::DTree< MatType, TagType >::splitValue\&.
+.SS "template<typename MatType, typename TagType = int> size_t \fBmlpack::det::DTree\fP< MatType, TagType >::Start () const\fC [inline]\fP"
+
+.PP
+Return the starting index of points contained in this node\&. 
+.PP
+Definition at line 277 of file dtree\&.hpp\&.
+.PP
+References mlpack::det::DTree< MatType, TagType >::start\&.
+.SS "template<typename MatType, typename TagType = int> size_t \fBmlpack::det::DTree\fP< MatType, TagType >::SubtreeLeaves () const\fC [inline]\fP"
+
+.PP
+Return the number of leaves which are descendants of this node\&. 
+.PP
+Definition at line 289 of file dtree\&.hpp\&.
+.PP
+References mlpack::det::DTree< MatType, TagType >::subtreeLeaves\&.
+.SS "template<typename MatType, typename TagType = int> double \fBmlpack::det::DTree\fP< MatType, TagType >::SubtreeLeavesLogNegError () const\fC [inline]\fP"
+
+.PP
+Return the log negative error of all descendants of this node\&. 
+.PP
+Definition at line 287 of file dtree\&.hpp\&.
+.PP
+References mlpack::det::DTree< MatType, TagType >::subtreeLeavesLogNegError\&.
+.SS "template<typename MatType, typename TagType = int> TagType \fBmlpack::det::DTree\fP< MatType, TagType >::TagTree (const TagType & tag = \fC0\fP)"
+
+.PP
+Index the buckets for possible usage later; this results in every leaf in the tree having a specific tag (accessible with \fBBucketTag()\fP)\&. This function calls itself recursively\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fItag\fP Tag for the next leaf; leave at 0 for the initial call\&. 
+.RE
+.PP
+
+.SS "template<typename MatType, typename TagType = int> bool \fBmlpack::det::DTree\fP< MatType, TagType >::WithinRange (const \fBVecType\fP & query) const"
+
+.PP
+Return whether a query point is within the range of this node\&. 
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename MatType, typename TagType = int> double \fBmlpack::det::DTree\fP< MatType, TagType >::alphaUpper\fC [private]\fP"
+
+.PP
+Upper part of alpha sum; used for pruning\&. 
+.PP
+Definition at line 268 of file dtree\&.hpp\&.
+.PP
+Referenced by mlpack::det::DTree< MatType, TagType >::AlphaUpper()\&.
+.SS "template<typename MatType, typename TagType = int> TagType \fBmlpack::det::DTree\fP< MatType, TagType >::bucketTag\fC [private]\fP"
+
+.PP
+The tag for the leaf, used for hashing points\&. 
+.PP
+Definition at line 265 of file dtree\&.hpp\&.
+.SS "template<typename MatType, typename TagType = int> size_t \fBmlpack::det::DTree\fP< MatType, TagType >::end\fC [private]\fP"
+
+.PP
+The index of the last point in the dataset contained in this node (and its children)\&. 
+.PP
+Definition at line 233 of file dtree\&.hpp\&.
+.PP
+Referenced by mlpack::det::DTree< MatType, TagType >::End()\&.
+.SS "template<typename MatType, typename TagType = int> \fBDTree\fP* \fBmlpack::det::DTree\fP< MatType, TagType >::left\fC [private]\fP"
+
+.PP
+The left child\&. 
+.PP
+Definition at line 271 of file dtree\&.hpp\&.
+.PP
+Referenced by mlpack::det::DTree< MatType, TagType >::Left()\&.
+.SS "template<typename MatType, typename TagType = int> double \fBmlpack::det::DTree\fP< MatType, TagType >::logNegError\fC [private]\fP"
+
+.PP
+log-negative-L2-error of the node\&. 
+.PP
+Definition at line 247 of file dtree\&.hpp\&.
+.PP
+Referenced by mlpack::det::DTree< MatType, TagType >::LogNegError()\&.
+.SS "template<typename MatType, typename TagType = int> double \fBmlpack::det::DTree\fP< MatType, TagType >::logVolume\fC [private]\fP"
+
+.PP
+The logarithm of the volume of the node\&. 
+.PP
+Definition at line 262 of file dtree\&.hpp\&.
+.PP
+Referenced by mlpack::det::DTree< MatType, TagType >::LogVolume()\&.
+.SS "template<typename MatType, typename TagType = int> \fBStatType\fP \fBmlpack::det::DTree\fP< MatType, TagType >::maxVals\fC [private]\fP"
+
+.PP
+Upper half of bounding box for this node\&. 
+.PP
+Definition at line 236 of file dtree\&.hpp\&.
+.PP
+Referenced by mlpack::det::DTree< MatType, TagType >::MaxVals()\&.
+.SS "template<typename MatType, typename TagType = int> \fBStatType\fP \fBmlpack::det::DTree\fP< MatType, TagType >::minVals\fC [private]\fP"
+
+.PP
+Lower half of bounding box for this node\&. 
+.PP
+Definition at line 238 of file dtree\&.hpp\&.
+.PP
+Referenced by mlpack::det::DTree< MatType, TagType >::MinVals()\&.
+.SS "template<typename MatType, typename TagType = int> double \fBmlpack::det::DTree\fP< MatType, TagType >::ratio\fC [private]\fP"
+
+.PP
+Ratio of the number of points in the node to the total number of points\&. 
+.PP
+Definition at line 259 of file dtree\&.hpp\&.
+.PP
+Referenced by mlpack::det::DTree< MatType, TagType >::Ratio()\&.
+.SS "template<typename MatType, typename TagType = int> \fBDTree\fP* \fBmlpack::det::DTree\fP< MatType, TagType >::right\fC [private]\fP"
+
+.PP
+The right child\&. 
+.PP
+Definition at line 273 of file dtree\&.hpp\&.
+.PP
+Referenced by mlpack::det::DTree< MatType, TagType >::Right()\&.
+.SS "template<typename MatType, typename TagType = int> bool \fBmlpack::det::DTree\fP< MatType, TagType >::root\fC [private]\fP"
+
+.PP
+If true, this node is the root of the tree\&. 
+.PP
+Definition at line 256 of file dtree\&.hpp\&.
+.PP
+Referenced by mlpack::det::DTree< MatType, TagType >::Root()\&.
+.SS "template<typename MatType, typename TagType = int> size_t \fBmlpack::det::DTree\fP< MatType, TagType >::splitDim\fC [private]\fP"
+
+.PP
+The splitting dimension for this node\&. 
+.PP
+Definition at line 241 of file dtree\&.hpp\&.
+.PP
+Referenced by mlpack::det::DTree< MatType, TagType >::SplitDim()\&.
+.SS "template<typename MatType, typename TagType = int> \fBElemType\fP \fBmlpack::det::DTree\fP< MatType, TagType >::splitValue\fC [private]\fP"
+
+.PP
+The split value on the splitting dimension for this node\&. 
+.PP
+Definition at line 244 of file dtree\&.hpp\&.
+.PP
+Referenced by mlpack::det::DTree< MatType, TagType >::SplitValue()\&.
+.SS "template<typename MatType, typename TagType = int> size_t \fBmlpack::det::DTree\fP< MatType, TagType >::start\fC [private]\fP"
+
+.PP
+The index of the first point in the dataset contained in this node (and its children)\&. 
+.PP
+Definition at line 230 of file dtree\&.hpp\&.
+.PP
+Referenced by mlpack::det::DTree< MatType, TagType >::Start()\&.
+.SS "template<typename MatType, typename TagType = int> size_t \fBmlpack::det::DTree\fP< MatType, TagType >::subtreeLeaves\fC [private]\fP"
+
+.PP
+Number of leaves of the subtree\&. 
+.PP
+Definition at line 253 of file dtree\&.hpp\&.
+.PP
+Referenced by mlpack::det::DTree< MatType, TagType >::SubtreeLeaves()\&.
+.SS "template<typename MatType, typename TagType = int> double \fBmlpack::det::DTree\fP< MatType, TagType >::subtreeLeavesLogNegError\fC [private]\fP"
+
+.PP
+Sum of the error of the leaves of the subtree\&. 
+.PP
+Definition at line 250 of file dtree\&.hpp\&.
+.PP
+Referenced by mlpack::det::DTree< MatType, TagType >::SubtreeLeavesLogNegError()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,84 @@
+.TH "mlpack::ann::FFTConvolution< BorderMode, padLastDim >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::ann::FFTConvolution< BorderMode, padLastDim > \- Computes the two-dimensional convolution through fft\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename eT , typename Border  = BorderMode> static std::enable_if< std::is_same< Border, \fBValidConvolution\fP >::value, void >::type \fBConvolution\fP (const arma::Mat< eT > &input, const arma::Mat< eT > &filter, arma::Mat< eT > &output)"
+.br
+.ti -1c
+.RI "template<typename eT , typename Border  = BorderMode> static std::enable_if< std::is_same< Border, \fBFullConvolution\fP >::value, void >::type \fBConvolution\fP (const arma::Mat< eT > &input, const arma::Mat< eT > &filter, arma::Mat< eT > &output)"
+.br
+.ti -1c
+.RI "template<typename eT > static void \fBConvolution\fP (const arma::Cube< eT > &input, const arma::Cube< eT > &filter, arma::Cube< eT > &output)"
+.br
+.ti -1c
+.RI "template<typename eT > static void \fBConvolution\fP (const arma::Mat< eT > &input, const arma::Cube< eT > &filter, arma::Cube< eT > &output)"
+.br
+.ti -1c
+.RI "template<typename eT > static void \fBConvolution\fP (const arma::Cube< eT > &input, const arma::Mat< eT > &filter, arma::Cube< eT > &output)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename BorderMode = FullConvolution, const bool padLastDim = false>
+.br
+class mlpack::ann::FFTConvolution< BorderMode, padLastDim >"
+Computes the two-dimensional convolution through fft\&. 
+
+This class allows specification of the type of the border type\&. The convolution can be compute with the valid border type of the full border type (default)\&.
+.PP
+\fBFullConvolution\fP: returns the full two-dimensional convolution\&. \fBValidConvolution\fP: returns only those parts of the convolution that are computed without the zero-padded edges\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIBorderMode\fP Type of the border mode (\fBFullConvolution\fP or \fBValidConvolution\fP)\&. 
+.br
+\fIpadLastDim\fP Pad the last dimension of the input to to turn it from odd to even\&. 
+.RE
+.PP
+
+.PP
+Definition at line 37 of file fft_convolution\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename BorderMode = FullConvolution, const bool padLastDim = false> template<typename eT , typename Border  = BorderMode> static std::enable_if< std::is_same<Border, \fBValidConvolution\fP>::value, void>::type \fBmlpack::ann::FFTConvolution\fP< BorderMode, padLastDim >::\fBConvolution\fP (const arma::Mat< eT > & input, const arma::Mat< eT > & filter, arma::Mat< eT > & output)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Definition at line 54 of file fft_convolution\&.hpp\&.
+.PP
+Referenced by mlpack::ann::SVDConvolution< BorderMode >::Convolution(), and mlpack::ann::FFTConvolution< BorderMode, padLastDim >::Convolution()\&.
+.SS "template<typename BorderMode = FullConvolution, const bool padLastDim = false> template<typename eT , typename Border  = BorderMode> static std::enable_if< std::is_same<Border, \fBFullConvolution\fP>::value, void>::type \fBmlpack::ann::FFTConvolution\fP< BorderMode, padLastDim >::\fBConvolution\fP (const arma::Mat< eT > & input, const arma::Mat< eT > & filter, arma::Mat< eT > & output)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Definition at line 89 of file fft_convolution\&.hpp\&.
+.SS "template<typename BorderMode = FullConvolution, const bool padLastDim = false> template<typename eT > static void \fBmlpack::ann::FFTConvolution\fP< BorderMode, padLastDim >::\fBConvolution\fP (const arma::Cube< eT > & input, const arma::Cube< eT > & filter, arma::Cube< eT > & output)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Definition at line 135 of file fft_convolution\&.hpp\&.
+.PP
+References mlpack::ann::FFTConvolution< BorderMode, padLastDim >::Convolution()\&.
+.SS "template<typename BorderMode = FullConvolution, const bool padLastDim = false> template<typename eT > static void \fBmlpack::ann::FFTConvolution\fP< BorderMode, padLastDim >::\fBConvolution\fP (const arma::Mat< eT > & input, const arma::Cube< eT > & filter, arma::Cube< eT > & output)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Definition at line 167 of file fft_convolution\&.hpp\&.
+.PP
+References mlpack::ann::FFTConvolution< BorderMode, padLastDim >::Convolution()\&.
+.SS "template<typename BorderMode = FullConvolution, const bool padLastDim = false> template<typename eT > static void \fBmlpack::ann::FFTConvolution\fP< BorderMode, padLastDim >::\fBConvolution\fP (const arma::Cube< eT > & input, const arma::Mat< eT > & filter, arma::Cube< eT > & output)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Definition at line 196 of file fft_convolution\&.hpp\&.
+.PP
+References mlpack::ann::FFTConvolution< BorderMode, padLastDim >::Convolution()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

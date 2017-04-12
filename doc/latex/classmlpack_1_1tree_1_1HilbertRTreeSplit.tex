@@ -1,0 +1,163 @@
+\section{mlpack\+:\+:tree\+:\+:Hilbert\+R\+Tree\+Split$<$ split\+Order $>$ Class Template Reference}
+\label{classmlpack_1_1tree_1_1HilbertRTreeSplit}\index{mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Split$<$ split\+Order $>$@{mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Split$<$ split\+Order $>$}}
+
+
+The splitting procedure for the Hilbert R tree.  
+
+
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static void {\bf Split\+Leaf\+Node} (Tree\+Type $\ast$tree, std\+::vector$<$ bool $>$ \&relevels)
+\begin{DoxyCompactList}\small\item\em Split a leaf node using the \char`\"{}default\char`\"{} algorithm. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static bool {\bf Split\+Non\+Leaf\+Node} (Tree\+Type $\ast$tree, std\+::vector$<$ bool $>$ \&relevels)
+\begin{DoxyCompactList}\small\item\em Split a non-\/leaf node using the \char`\"{}default\char`\"{} algorithm. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static bool {\bf Find\+Cooperating\+Siblings} (Tree\+Type $\ast$parent, const size\+\_\+t i\+Tree, size\+\_\+t \&first\+Sibling, size\+\_\+t \&last\+Sibling)
+\begin{DoxyCompactList}\small\item\em Try to find split\+Order cooperating siblings in order to redistribute their children evenly. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static void {\bf Redistribute\+Nodes\+Evenly} (const Tree\+Type $\ast$parent, const size\+\_\+t first\+Sibling, const size\+\_\+t last\+Sibling)
+\begin{DoxyCompactList}\small\item\em Redistribute the children of the cooperating siblings evenly among them. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static void {\bf Redistribute\+Points\+Evenly} (Tree\+Type $\ast$parent, const size\+\_\+t first\+Sibling, const size\+\_\+t last\+Sibling)
+\begin{DoxyCompactList}\small\item\em Redistribute the points of the cooperating siblings evenly among them. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$size\+\_\+t split\+Order = 2$>$\\*
+class mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Split$<$ split\+Order $>$}
+
+The splitting procedure for the Hilbert R tree. 
+
+The template parameter split\+Order is the order of the splitting policy. The Hilbert R tree splits a node on overflow, turning split\+Order nodes into (split\+Order + 1) nodes.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em split\+Order} & Number of nodes to split. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 29 of file hilbert\+\_\+r\+\_\+tree\+\_\+split.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Split@{mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Split}!Find\+Cooperating\+Siblings@{Find\+Cooperating\+Siblings}}
+\index{Find\+Cooperating\+Siblings@{Find\+Cooperating\+Siblings}!mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Split@{mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Split}}
+\subsubsection[{Find\+Cooperating\+Siblings(\+Tree\+Type $\ast$parent, const size\+\_\+t i\+Tree, size\+\_\+t \&first\+Sibling, size\+\_\+t \&last\+Sibling)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\+\_\+t split\+Order = 2$>$ template$<$typename Tree\+Type $>$ static bool {\bf mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Split}$<$ split\+Order $>$\+::Find\+Cooperating\+Siblings (
+\begin{DoxyParamCaption}
+\item[{Tree\+Type $\ast$}]{parent, }
+\item[{const size\+\_\+t}]{i\+Tree, }
+\item[{size\+\_\+t \&}]{first\+Sibling, }
+\item[{size\+\_\+t \&}]{last\+Sibling}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}\label{classmlpack_1_1tree_1_1HilbertRTreeSplit_a58c831e8d918028ce02c72c42504fed1}
+
+
+Try to find split\+Order cooperating siblings in order to redistribute their children evenly. 
+
+Returns true on success.
+
+
+\begin{DoxyParams}{Parameters}
+{\em parent} & The parent of of the overflowing node. \\
+\hline
+{\em i\+Tree} & The number of the overflowing node. \\
+\hline
+{\em first\+Sibling} & The first cooperating sibling. \\
+\hline
+{\em last\+Sibling} & The last cooperating sibling. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Split@{mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Split}!Redistribute\+Nodes\+Evenly@{Redistribute\+Nodes\+Evenly}}
+\index{Redistribute\+Nodes\+Evenly@{Redistribute\+Nodes\+Evenly}!mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Split@{mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Split}}
+\subsubsection[{Redistribute\+Nodes\+Evenly(const Tree\+Type $\ast$parent, const size\+\_\+t first\+Sibling, const size\+\_\+t last\+Sibling)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\+\_\+t split\+Order = 2$>$ template$<$typename Tree\+Type $>$ static void {\bf mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Split}$<$ split\+Order $>$\+::Redistribute\+Nodes\+Evenly (
+\begin{DoxyParamCaption}
+\item[{const Tree\+Type $\ast$}]{parent, }
+\item[{const size\+\_\+t}]{first\+Sibling, }
+\item[{const size\+\_\+t}]{last\+Sibling}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}\label{classmlpack_1_1tree_1_1HilbertRTreeSplit_a4c9fcf3038bbee3d18c38811c86ae343}
+
+
+Redistribute the children of the cooperating siblings evenly among them. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em parent} & The parent of of the overflowing node. \\
+\hline
+{\em first\+Sibling} & The first cooperating sibling. \\
+\hline
+{\em last\+Sibling} & The last cooperating sibling. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Split@{mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Split}!Redistribute\+Points\+Evenly@{Redistribute\+Points\+Evenly}}
+\index{Redistribute\+Points\+Evenly@{Redistribute\+Points\+Evenly}!mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Split@{mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Split}}
+\subsubsection[{Redistribute\+Points\+Evenly(\+Tree\+Type $\ast$parent, const size\+\_\+t first\+Sibling, const size\+\_\+t last\+Sibling)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\+\_\+t split\+Order = 2$>$ template$<$typename Tree\+Type $>$ static void {\bf mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Split}$<$ split\+Order $>$\+::Redistribute\+Points\+Evenly (
+\begin{DoxyParamCaption}
+\item[{Tree\+Type $\ast$}]{parent, }
+\item[{const size\+\_\+t}]{first\+Sibling, }
+\item[{const size\+\_\+t}]{last\+Sibling}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}\label{classmlpack_1_1tree_1_1HilbertRTreeSplit_a23e37c440350e73a80586c9297332bf0}
+
+
+Redistribute the points of the cooperating siblings evenly among them. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em parent} & The parent of of the overflowing node. \\
+\hline
+{\em first\+Sibling} & The first cooperating sibling. \\
+\hline
+{\em last\+Sibling} & The last cooperating sibling. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Split@{mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Split}!Split\+Leaf\+Node@{Split\+Leaf\+Node}}
+\index{Split\+Leaf\+Node@{Split\+Leaf\+Node}!mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Split@{mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Split}}
+\subsubsection[{Split\+Leaf\+Node(\+Tree\+Type $\ast$tree, std\+::vector$<$ bool $>$ \&relevels)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\+\_\+t split\+Order = 2$>$ template$<$typename Tree\+Type $>$ static void {\bf mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Split}$<$ split\+Order $>$\+::Split\+Leaf\+Node (
+\begin{DoxyParamCaption}
+\item[{Tree\+Type $\ast$}]{tree, }
+\item[{std\+::vector$<$ bool $>$ \&}]{relevels}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1tree_1_1HilbertRTreeSplit_a997935ef77a0fac91b5477b6e7243420}
+
+
+Split a leaf node using the \char`\"{}default\char`\"{} algorithm. 
+
+If necessary, this split will propagate upwards through the tree.
+
+
+\begin{DoxyParams}{Parameters}
+{\em node} & The node that is being split. \\
+\hline
+{\em relevels} & Not used. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Split@{mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Split}!Split\+Non\+Leaf\+Node@{Split\+Non\+Leaf\+Node}}
+\index{Split\+Non\+Leaf\+Node@{Split\+Non\+Leaf\+Node}!mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Split@{mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Split}}
+\subsubsection[{Split\+Non\+Leaf\+Node(\+Tree\+Type $\ast$tree, std\+::vector$<$ bool $>$ \&relevels)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$size\+\_\+t split\+Order = 2$>$ template$<$typename Tree\+Type $>$ static bool {\bf mlpack\+::tree\+::\+Hilbert\+R\+Tree\+Split}$<$ split\+Order $>$\+::Split\+Non\+Leaf\+Node (
+\begin{DoxyParamCaption}
+\item[{Tree\+Type $\ast$}]{tree, }
+\item[{std\+::vector$<$ bool $>$ \&}]{relevels}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1tree_1_1HilbertRTreeSplit_a5781dc4e0677cbdeb0a92fd7bcb45c2c}
+
+
+Split a non-\/leaf node using the \char`\"{}default\char`\"{} algorithm. 
+
+If this is a root node, the tree increases in depth.
+
+
+\begin{DoxyParams}{Parameters}
+{\em node} & The node that is being split. \\
+\hline
+{\em relevels} & Not used. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/tree/rectangle\+\_\+tree/{\bf hilbert\+\_\+r\+\_\+tree\+\_\+split.\+hpp}\end{DoxyCompactItemize}

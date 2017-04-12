@@ -1,0 +1,135 @@
+\section{mlpack\+:\+:tree\+:\+:Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+:\+:Single\+Tree\+Traverser$<$ Rule\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1tree_1_1Octree_1_1SingleTreeTraverser}\index{mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Single\+Tree\+Traverser$<$ Rule\+Type $>$@{mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Single\+Tree\+Traverser$<$ Rule\+Type $>$}}
+
+
+A single-\/tree traverser; see single\+\_\+tree\+\_\+traverser.\+hpp.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Single\+Tree\+Traverser} (Rule\+Type \&{\bf rule})
+\begin{DoxyCompactList}\small\item\em Instantiate the traverser with the given rule set. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Num\+Prunes} () const 
+\begin{DoxyCompactList}\small\item\em Get the number of pruned nodes. \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Num\+Prunes} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of pruned nodes. \end{DoxyCompactList}\item 
+void {\bf Traverse} (const size\+\_\+t query\+Index, {\bf Octree} \&reference\+Node)
+\begin{DoxyCompactList}\small\item\em Traverse the reference tree with the given query point. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+size\+\_\+t {\bf num\+Prunes}
+\begin{DoxyCompactList}\small\item\em The number of reference nodes that have been pruned. \end{DoxyCompactList}\item 
+Rule\+Type \& {\bf rule}
+\begin{DoxyCompactList}\small\item\em The instantiated rule. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Metric\+Type = metric\+::\+Euclidean\+Distance, typename Statistic\+Type = Empty\+Statistic, typename Mat\+Type = arma\+::mat$>$\\*
+template$<$typename Rule\+Type$>$\\*
+class mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Single\+Tree\+Traverser$<$ Rule\+Type $>$}
+
+A single-\/tree traverser; see single\+\_\+tree\+\_\+traverser.\+hpp. 
+
+Definition at line 35 of file octree.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::tree\+::\+Octree\+::\+Single\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Single\+Tree\+Traverser}!Single\+Tree\+Traverser@{Single\+Tree\+Traverser}}
+\index{Single\+Tree\+Traverser@{Single\+Tree\+Traverser}!mlpack\+::tree\+::\+Octree\+::\+Single\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Single\+Tree\+Traverser}}
+\subsubsection[{Single\+Tree\+Traverser(\+Rule\+Type \&rule)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ template$<$typename Rule\+Type $>$ {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Single\+Tree\+Traverser}$<$ Rule\+Type $>$\+::{\bf Single\+Tree\+Traverser} (
+\begin{DoxyParamCaption}
+\item[{Rule\+Type \&}]{rule}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1tree_1_1Octree_1_1SingleTreeTraverser_ab2db72dff8d42dbedfadf4edb2ea1dfd}
+
+
+Instantiate the traverser with the given rule set. 
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::tree\+::\+Octree\+::\+Single\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Single\+Tree\+Traverser}!Num\+Prunes@{Num\+Prunes}}
+\index{Num\+Prunes@{Num\+Prunes}!mlpack\+::tree\+::\+Octree\+::\+Single\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Single\+Tree\+Traverser}}
+\subsubsection[{Num\+Prunes() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ template$<$typename Rule\+Type $>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Single\+Tree\+Traverser}$<$ Rule\+Type $>$\+::Num\+Prunes (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1Octree_1_1SingleTreeTraverser_a82ae66926afa65119eb4860e36eaa14d}
+
+
+Get the number of pruned nodes. 
+
+
+
+Definition at line 41 of file single\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Octree\+::\+Single\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Single\+Tree\+Traverser}!Num\+Prunes@{Num\+Prunes}}
+\index{Num\+Prunes@{Num\+Prunes}!mlpack\+::tree\+::\+Octree\+::\+Single\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Single\+Tree\+Traverser}}
+\subsubsection[{Num\+Prunes()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ template$<$typename Rule\+Type $>$ size\+\_\+t\& {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Single\+Tree\+Traverser}$<$ Rule\+Type $>$\+::Num\+Prunes (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1Octree_1_1SingleTreeTraverser_aa41eca89cad5929e7d3cde3720a27fda}
+
+
+Modify the number of pruned nodes. 
+
+
+
+Definition at line 43 of file single\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Octree\+::\+Single\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Single\+Tree\+Traverser}!Traverse@{Traverse}}
+\index{Traverse@{Traverse}!mlpack\+::tree\+::\+Octree\+::\+Single\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Single\+Tree\+Traverser}}
+\subsubsection[{Traverse(const size\+\_\+t query\+Index, Octree \&reference\+Node)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ template$<$typename Rule\+Type $>$ void {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Single\+Tree\+Traverser}$<$ Rule\+Type $>$\+::Traverse (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{query\+Index, }
+\item[{{\bf Octree} \&}]{reference\+Node}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1tree_1_1Octree_1_1SingleTreeTraverser_a441150d2bb73ccf4a82a4426a0530c68}
+
+
+Traverse the reference tree with the given query point. 
+
+This does not reset the number of pruned nodes.
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Index} & Index of query point. \\
+\hline
+{\em reference\+Node} & Node in reference tree. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::tree\+::\+Octree\+::\+Single\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Single\+Tree\+Traverser}!num\+Prunes@{num\+Prunes}}
+\index{num\+Prunes@{num\+Prunes}!mlpack\+::tree\+::\+Octree\+::\+Single\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Single\+Tree\+Traverser}}
+\subsubsection[{num\+Prunes}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ template$<$typename Rule\+Type $>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Single\+Tree\+Traverser}$<$ Rule\+Type $>$\+::num\+Prunes\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1Octree_1_1SingleTreeTraverser_aeed81fa993e4c7b9619d1c9ca926b4a5}
+
+
+The number of reference nodes that have been pruned. 
+
+
+
+Definition at line 49 of file single\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Octree\+::\+Single\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Single\+Tree\+Traverser}!rule@{rule}}
+\index{rule@{rule}!mlpack\+::tree\+::\+Octree\+::\+Single\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Single\+Tree\+Traverser}}
+\subsubsection[{rule}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ template$<$typename Rule\+Type $>$ Rule\+Type\& {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Single\+Tree\+Traverser}$<$ Rule\+Type $>$\+::rule\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1Octree_1_1SingleTreeTraverser_a06f5bbbdc88e51b940c3288c5f3d2241}
+
+
+The instantiated rule. 
+
+
+
+Definition at line 47 of file single\+\_\+tree\+\_\+traverser.\+hpp.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/tree/octree/{\bf octree.\+hpp}\item 
+src/mlpack/core/tree/octree/{\bf single\+\_\+tree\+\_\+traverser.\+hpp}\end{DoxyCompactItemize}

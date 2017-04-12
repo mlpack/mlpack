@@ -1,0 +1,976 @@
+.TH "mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType > \- A hybrid spill tree is a variant of binary space trees in which the children of a node can 'spill over' each other, and contain shared datapoints\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBSpillDualTreeTraverser\fP"
+.br
+.RI "\fIA generic dual-tree traverser for hybrid spill trees; see \fBspill_dual_tree_traverser\&.hpp\fP for implementation\&. \fP"
+.ti -1c
+.RI "class \fBSpillSingleTreeTraverser\fP"
+.br
+.RI "\fIA generic single-tree traverser for hybrid spill trees; see \fBspill_single_tree_traverser\&.hpp\fP for implementation\&. \fP"
+.in -1c
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "typedef HyperplaneType< MetricType >::\fBBoundType\fP \fBBoundType\fP"
+.br
+.RI "\fIThe bound type\&. \fP"
+.ti -1c
+.RI "template<typename RuleType > using \fBDefeatistDualTreeTraverser\fP = \fBSpillDualTreeTraverser\fP< RuleType, true >"
+.br
+.RI "\fIA defeatist dual-tree traverser for hybrid spill trees\&. \fP"
+.ti -1c
+.RI "template<typename RuleType > using \fBDefeatistSingleTreeTraverser\fP = \fBSpillSingleTreeTraverser\fP< RuleType, true >"
+.br
+.RI "\fIA defeatist single-tree traverser for hybrid spill trees\&. \fP"
+.ti -1c
+.RI "template<typename RuleType > using \fBDualTreeTraverser\fP = \fBSpillDualTreeTraverser\fP< RuleType, false >"
+.br
+.RI "\fIA dual-tree traverser for hybrid spill trees\&. \fP"
+.ti -1c
+.RI "typedef MatType::elem_type \fBElemType\fP"
+.br
+.RI "\fIThe type of element held in MatType\&. \fP"
+.ti -1c
+.RI "typedef MatType \fBMat\fP"
+.br
+.RI "\fISo other classes can use TreeType::Mat\&. \fP"
+.ti -1c
+.RI "template<typename RuleType > using \fBSingleTreeTraverser\fP = \fBSpillSingleTreeTraverser\fP< RuleType, false >"
+.br
+.RI "\fIA single-tree traverser for hybrid spill trees\&. \fP"
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBSpillTree\fP (const MatType &data, const double tau=0, const size_t maxLeafSize=20, const double rho=0\&.7)"
+.br
+.RI "\fIConstruct this as the root node of a hybrid spill tree using the given dataset\&. \fP"
+.ti -1c
+.RI "\fBSpillTree\fP (MatType &&data, const double tau=0, const size_t maxLeafSize=20, const double rho=0\&.7)"
+.br
+.RI "\fIConstruct this as the root node of a hybrid spill tree using the given dataset\&. \fP"
+.ti -1c
+.RI "\fBSpillTree\fP (\fBSpillTree\fP *\fBparent\fP, arma::Col< size_t > &points, const double tau=0, const size_t maxLeafSize=20, const double rho=0\&.7)"
+.br
+.RI "\fIConstruct this node as a child of the given parent, including the given list of points\&. \fP"
+.ti -1c
+.RI "\fBSpillTree\fP (const \fBSpillTree\fP &other)"
+.br
+.RI "\fICreate a hybrid spill tree by copying the other tree\&. \fP"
+.ti -1c
+.RI "\fBSpillTree\fP (\fBSpillTree\fP &&other)"
+.br
+.RI "\fIMove constructor for a \fBSpillTree\fP; possess all the members of the given tree\&. \fP"
+.ti -1c
+.RI "template<typename Archive > \fBSpillTree\fP (Archive &ar, const typename \fBstd::enable_if_t\fP< Archive::is_loading::value > *=0)"
+.br
+.RI "\fIInitialize the tree from a \fBboost::serialization\fP archive\&. \fP"
+.ti -1c
+.RI "\fB~SpillTree\fP ()"
+.br
+.RI "\fIDeletes this node, deallocating the memory for the children and calling their destructors in turn\&. \fP"
+.ti -1c
+.RI "const \fBBoundType\fP & \fBBound\fP () const "
+.br
+.RI "\fIReturn the bound object for this node\&. \fP"
+.ti -1c
+.RI "\fBBoundType\fP & \fBBound\fP ()"
+.br
+.RI "\fIReturn the bound object for this node\&. \fP"
+.ti -1c
+.RI "void \fBCenter\fP (arma::vec &center)"
+.br
+.RI "\fIStore the center of the bounding region in the given vector\&. \fP"
+.ti -1c
+.RI "\fBSpillTree\fP & \fBChild\fP (const size_t child) const "
+.br
+.RI "\fIReturn the specified child (0 will be left, 1 will be right)\&. \fP"
+.ti -1c
+.RI "\fBSpillTree\fP *& \fBChildPtr\fP (const size_t child)"
+.br
+.ti -1c
+.RI "const MatType & \fBDataset\fP () const "
+.br
+.RI "\fIGet the dataset which the tree is built on\&. \fP"
+.ti -1c
+.RI "size_t \fBDescendant\fP (const size_t index) const "
+.br
+.RI "\fIReturn the index (with reference to the dataset) of a particular descendant of this node\&. \fP"
+.ti -1c
+.RI "\fBElemType\fP \fBFurthestDescendantDistance\fP () const "
+.br
+.RI "\fIReturn the furthest possible descendant distance\&. \fP"
+.ti -1c
+.RI "\fBElemType\fP \fBFurthestPointDistance\fP () const "
+.br
+.RI "\fIReturn the furthest distance to a point held in this node\&. \fP"
+.ti -1c
+.RI "template<typename VecType > size_t \fBGetFurthestChild\fP (const VecType &point, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< VecType >::value > *=0)"
+.br
+.RI "\fIReturn the index of the furthest child node to the given query point (this is an efficient estimation based on the splitting hyperplane, the node returned is not necessarily the furthest)\&. \fP"
+.ti -1c
+.RI "size_t \fBGetFurthestChild\fP (const \fBSpillTree\fP &queryNode)"
+.br
+.RI "\fIReturn the index of the furthest child node to the given query node (this is an efficient estimation based on the splitting hyperplane, the node returned is not necessarily the furthest)\&. \fP"
+.ti -1c
+.RI "template<typename VecType > size_t \fBGetNearestChild\fP (const VecType &point, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< VecType >::value > *=0)"
+.br
+.RI "\fIReturn the index of the nearest child node to the given query point (this is an efficient estimation based on the splitting hyperplane, the node returned is not necessarily the nearest)\&. \fP"
+.ti -1c
+.RI "size_t \fBGetNearestChild\fP (const \fBSpillTree\fP &queryNode)"
+.br
+.RI "\fIReturn the index of the nearest child node to the given query node (this is an efficient estimation based on the splitting hyperplane, the node returned is not necessarily the nearest)\&. \fP"
+.ti -1c
+.RI "const HyperplaneType< MetricType > & \fBHyperplane\fP () const "
+.br
+.RI "\fIGet the Hyperplane instance\&. \fP"
+.ti -1c
+.RI "bool \fBIsLeaf\fP () const "
+.br
+.RI "\fIReturn whether or not this node is a leaf (true if it has no children)\&. \fP"
+.ti -1c
+.RI "\fBSpillTree\fP * \fBLeft\fP () const "
+.br
+.RI "\fIGets the left child of this node\&. \fP"
+.ti -1c
+.RI "\fBSpillTree\fP *& \fBLeft\fP ()"
+.br
+.RI "\fIModify the left child of this node\&. \fP"
+.ti -1c
+.RI "\fBElemType\fP \fBMaxDistance\fP (const \fBSpillTree\fP &other) const "
+.br
+.RI "\fIReturn the maximum distance to another node\&. \fP"
+.ti -1c
+.RI "template<typename VecType > \fBElemType\fP \fBMaxDistance\fP (const VecType &point, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< VecType >::value > *=0) const "
+.br
+.RI "\fIReturn the maximum distance to another point\&. \fP"
+.ti -1c
+.RI "MetricType \fBMetric\fP () const "
+.br
+.RI "\fIGet the metric that the tree uses\&. \fP"
+.ti -1c
+.RI "\fBElemType\fP \fBMinDistance\fP (const \fBSpillTree\fP &other) const "
+.br
+.RI "\fIReturn the minimum distance to another node\&. \fP"
+.ti -1c
+.RI "template<typename VecType > \fBElemType\fP \fBMinDistance\fP (const VecType &point, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< VecType >::value > *=0) const "
+.br
+.RI "\fIReturn the minimum distance to another point\&. \fP"
+.ti -1c
+.RI "\fBElemType\fP \fBMinimumBoundDistance\fP () const "
+.br
+.RI "\fIReturn the minimum distance from the center of the node to any bound edge\&. \fP"
+.ti -1c
+.RI "size_t \fBNumChildren\fP () const "
+.br
+.RI "\fIReturn the number of children in this node\&. \fP"
+.ti -1c
+.RI "size_t \fBNumDescendants\fP () const "
+.br
+.RI "\fIReturn the number of descendants of this node\&. \fP"
+.ti -1c
+.RI "size_t \fBNumPoints\fP () const "
+.br
+.RI "\fIReturn the number of points in this node (0 if not a leaf)\&. \fP"
+.ti -1c
+.RI "bool \fBOverlap\fP () const "
+.br
+.RI "\fIDistinguish overlapping nodes from non-overlapping nodes\&. \fP"
+.ti -1c
+.RI "\fBSpillTree\fP * \fBParent\fP () const "
+.br
+.RI "\fIGets the parent of this node\&. \fP"
+.ti -1c
+.RI "\fBSpillTree\fP *& \fBParent\fP ()"
+.br
+.RI "\fIModify the parent of this node\&. \fP"
+.ti -1c
+.RI "\fBElemType\fP \fBParentDistance\fP () const "
+.br
+.RI "\fIReturn the distance from the center of this node to the center of the parent node\&. \fP"
+.ti -1c
+.RI "\fBElemType\fP & \fBParentDistance\fP ()"
+.br
+.RI "\fIModify the distance from the center of this node to the center of the parent node\&. \fP"
+.ti -1c
+.RI "size_t \fBPoint\fP (const size_t index) const "
+.br
+.RI "\fIReturn the index (with reference to the dataset) of a particular point in this node\&. \fP"
+.ti -1c
+.RI "\fBmath::RangeType\fP< \fBElemType\fP > \fBRangeDistance\fP (const \fBSpillTree\fP &other) const "
+.br
+.RI "\fIReturn the minimum and maximum distance to another node\&. \fP"
+.ti -1c
+.RI "template<typename VecType > \fBmath::RangeType\fP< \fBElemType\fP > \fBRangeDistance\fP (const VecType &point, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< VecType >::value > *=0) const "
+.br
+.RI "\fIReturn the minimum and maximum distance to another point\&. \fP"
+.ti -1c
+.RI "\fBSpillTree\fP * \fBRight\fP () const "
+.br
+.RI "\fIGets the right child of this node\&. \fP"
+.ti -1c
+.RI "\fBSpillTree\fP *& \fBRight\fP ()"
+.br
+.RI "\fIModify the right child of this node\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int version)"
+.br
+.RI "\fISerialize the tree\&. \fP"
+.ti -1c
+.RI "const StatisticType & \fBStat\fP () const "
+.br
+.RI "\fIReturn the statistic object for this node\&. \fP"
+.ti -1c
+.RI "StatisticType & \fBStat\fP ()"
+.br
+.RI "\fIReturn the statistic object for this node\&. \fP"
+.in -1c
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static bool \fBHasSelfChildren\fP ()"
+.br
+.RI "\fIReturns false: this tree type does not have self children\&. \fP"
+.in -1c
+.SS "Protected Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBSpillTree\fP ()"
+.br
+.RI "\fIA default constructor\&. \fP"
+.in -1c
+.SS "Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBSplitNode\fP (arma::Col< size_t > &points, const size_t maxLeafSize, const double tau, const double rho)"
+.br
+.RI "\fISplits the current node, assigning its left and right children recursively\&. \fP"
+.ti -1c
+.RI "bool \fBSplitPoints\fP (const double tau, const double rho, const arma::Col< size_t > &points, arma::Col< size_t > &leftPoints, arma::Col< size_t > &rightPoints)"
+.br
+.RI "\fISplit the list of points\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "\fBBoundType\fP \fBbound\fP"
+.br
+.RI "\fIThe bound object for this node\&. \fP"
+.ti -1c
+.RI "size_t \fBcount\fP"
+.br
+.RI "\fIThe number of points of the dataset contained in this node (and its children)\&. \fP"
+.ti -1c
+.RI "const MatType * \fBdataset\fP"
+.br
+.RI "\fIThe dataset\&. \fP"
+.ti -1c
+.RI "\fBElemType\fP \fBfurthestDescendantDistance\fP"
+.br
+.RI "\fIThe worst possible distance to the furthest descendant, cached to speed things up\&. \fP"
+.ti -1c
+.RI "HyperplaneType< MetricType > \fBhyperplane\fP"
+.br
+.RI "\fISplitting hyperplane represented by this node\&. \fP"
+.ti -1c
+.RI "\fBSpillTree\fP * \fBleft\fP"
+.br
+.RI "\fIThe left child node\&. \fP"
+.ti -1c
+.RI "bool \fBlocalDataset\fP"
+.br
+.RI "\fIIf true, we own the dataset and need to destroy it in the destructor\&. \fP"
+.ti -1c
+.RI "\fBElemType\fP \fBminimumBoundDistance\fP"
+.br
+.RI "\fIThe minimum distance from the center to any edge of the bound\&. \fP"
+.ti -1c
+.RI "bool \fBoverlappingNode\fP"
+.br
+.RI "\fIFlag to distinguish overlapping nodes from non-overlapping nodes\&. \fP"
+.ti -1c
+.RI "\fBSpillTree\fP * \fBparent\fP"
+.br
+.RI "\fIThe parent node (NULL if this is the root of the tree)\&. \fP"
+.ti -1c
+.RI "\fBElemType\fP \fBparentDistance\fP"
+.br
+.RI "\fIThe distance from the centroid of this node to the centroid of the parent\&. \fP"
+.ti -1c
+.RI "arma::Col< size_t > * \fBpointsIndex\fP"
+.br
+.RI "\fIThe list of indexes of points contained in this node (non-null for leaf nodes)\&. \fP"
+.ti -1c
+.RI "\fBSpillTree\fP * \fBright\fP"
+.br
+.RI "\fIThe right child node\&. \fP"
+.ti -1c
+.RI "StatisticType \fBstat\fP"
+.br
+.RI "\fIAny extra data contained in the node\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename MetricType, typename StatisticType = EmptyStatistic, typename MatType = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit>
+.br
+class mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >"
+A hybrid spill tree is a variant of binary space trees in which the children of a node can 'spill over' each other, and contain shared datapoints\&. 
+
+Two new separating planes lplane and rplane are defined, both of which are parallel to the original decision boundary and at a distance tau from it\&. The region between lplane and rplane is called 'overlapping buffer'\&.
+.PP
+For each node, we first split the points considering the overlapping buffer\&. If either of its children contains more than rho fraction of the total points we undo the overlapping splitting\&. Instead a conventional partition is used\&. In this way, we can ensure that each split reduces the number of points of a node by at least a constant factor\&.
+.PP
+This particular tree does not allow growth, so you cannot add or delete nodes from it\&. If you need to add or delete a node, the better procedure is to rebuild the tree entirely\&.
+.PP
+Three runtime parameters are required in the constructor:
+.IP "\(bu" 2
+maxLeafSize: Max leaf size to be used\&.
+.IP "\(bu" 2
+tau: Overlapping size\&.
+.IP "\(bu" 2
+rho: Balance threshold\&.
+.PP
+.PP
+For more information on spill trees, see
+.PP
+.PP
+.nf
+@inproceedings{
+  author = {Ting Liu, Andrew W\&. Moore, Alexander Gray and Ke Yang},
+  title = {An Investigation of Practical Approximate Nearest Neighbor
+    Algorithms},
+  booktitle = {Advances in Neural Information Processing Systems 17},
+  year = {2005},
+  pages = {825--832}
+}
+.fi
+.PP
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIMetricType\fP The metric used for tree-building\&. 
+.br
+\fIStatisticType\fP Extra data contained in the node\&. See \fBstatistic\&.hpp\fP for the necessary skeleton interface\&. 
+.br
+\fIMatType\fP The dataset class\&. 
+.br
+\fIHyperplaneType\fP The splitting hyperplane class\&. 
+.br
+\fISplitType\fP The class that partitions the dataset/points at a particular node into two parts\&. Its definition decides the way this split is done\&. 
+.RE
+.PP
+
+.PP
+Definition at line 73 of file spill_tree\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> typedef HyperplaneType<MetricType>::\fBBoundType\fP \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::\fBBoundType\fP"
+
+.PP
+The bound type\&. 
+.PP
+Definition at line 81 of file spill_tree\&.hpp\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> template<typename RuleType > using \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::\fBDefeatistDualTreeTraverser\fP =  \fBSpillDualTreeTraverser\fP<RuleType, true>"
+
+.PP
+A defeatist dual-tree traverser for hybrid spill trees\&. 
+.PP
+Definition at line 146 of file spill_tree\&.hpp\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> template<typename RuleType > using \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::\fBDefeatistSingleTreeTraverser\fP =  \fBSpillSingleTreeTraverser\fP<RuleType, true>"
+
+.PP
+A defeatist single-tree traverser for hybrid spill trees\&. 
+.PP
+Definition at line 138 of file spill_tree\&.hpp\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> template<typename RuleType > using \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::\fBDualTreeTraverser\fP =  \fBSpillDualTreeTraverser\fP<RuleType, false>"
+
+.PP
+A dual-tree traverser for hybrid spill trees\&. 
+.PP
+Definition at line 142 of file spill_tree\&.hpp\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> typedef MatType::elem_type \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::\fBElemType\fP"
+
+.PP
+The type of element held in MatType\&. 
+.PP
+Definition at line 79 of file spill_tree\&.hpp\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> typedef MatType \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::\fBMat\fP"
+
+.PP
+So other classes can use TreeType::Mat\&. 
+.PP
+Definition at line 77 of file spill_tree\&.hpp\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> template<typename RuleType > using \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::\fBSingleTreeTraverser\fP =  \fBSpillSingleTreeTraverser\fP<RuleType, false>"
+
+.PP
+A single-tree traverser for hybrid spill trees\&. 
+.PP
+Definition at line 134 of file spill_tree\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::\fBSpillTree\fP (const MatType & data, const double tau = \fC0\fP, const size_t maxLeafSize = \fC20\fP, const double rho = \fC0\&.7\fP)"
+
+.PP
+Construct this as the root node of a hybrid spill tree using the given dataset\&. The dataset will not be modified during the building procedure (unlike \fBBinarySpaceTree\fP)\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Dataset to create tree from\&. 
+.br
+\fItau\fP Overlapping size\&. 
+.br
+\fImaxLeafSize\fP Size of each leaf in the tree\&. 
+.br
+\fIrho\fP Balance threshold\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::\fBSpillTree\fP (MatType && data, const double tau = \fC0\fP, const size_t maxLeafSize = \fC20\fP, const double rho = \fC0\&.7\fP)"
+
+.PP
+Construct this as the root node of a hybrid spill tree using the given dataset\&. This will take ownership of the data matrix; if you don't want this, consider using the constructor that takes a const reference to a dataset\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Dataset to create tree from\&. 
+.br
+\fItau\fP Overlapping size\&. 
+.br
+\fImaxLeafSize\fP Size of each leaf in the tree\&. 
+.br
+\fIrho\fP Balance threshold\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::\fBSpillTree\fP (\fBSpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType > * parent, arma::Col< size_t > & points, const double tau = \fC0\fP, const size_t maxLeafSize = \fC20\fP, const double rho = \fC0\&.7\fP)"
+
+.PP
+Construct this node as a child of the given parent, including the given list of points\&. This is used for recursive tree-building by the other constructors which don't specify point indices\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIparent\fP Parent of this node\&. 
+.br
+\fIpoints\fP Vector of indexes of points to be included in this node\&. 
+.br
+\fItau\fP Overlapping size\&. 
+.br
+\fImaxLeafSize\fP Size of each leaf in the tree\&. 
+.br
+\fIrho\fP Balance threshold\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::\fBSpillTree\fP (const \fBSpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType > & other)"
+
+.PP
+Create a hybrid spill tree by copying the other tree\&. Be careful! This can take a long time and use a lot of memory\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP tree to be replicated\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::\fBSpillTree\fP (\fBSpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType > && other)"
+
+.PP
+Move constructor for a \fBSpillTree\fP; possess all the members of the given tree\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP tree to be moved\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> template<typename Archive > \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::\fBSpillTree\fP (Archive & ar, const typename \fBstd::enable_if_t\fP< Archive::is_loading::value > * = \fC0\fP)"
+
+.PP
+Initialize the tree from a \fBboost::serialization\fP archive\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIar\fP Archive to load tree from\&. Must be an iarchive, not an oarchive\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::~\fBSpillTree\fP ()"
+
+.PP
+Deletes this node, deallocating the memory for the children and calling their destructors in turn\&. This will invalidate any pointers or references to any nodes which are children of this one\&. 
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::\fBSpillTree\fP ()\fC [protected]\fP"
+
+.PP
+A default constructor\&. This is meant to only be used with \fBboost::serialization\fP, which is allowed with the friend declaration below\&. This does not return a valid tree! The method must be protected, so that the serialization shim can work with the default constructor\&. 
+.PP
+Referenced by mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Center()\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> const \fBBoundType\fP& \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Bound () const\fC [inline]\fP"
+
+.PP
+Return the bound object for this node\&. 
+.PP
+Definition at line 230 of file spill_tree\&.hpp\&.
+.PP
+References mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::bound\&.
+.PP
+Referenced by mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::MaxDistance(), mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::MinDistance(), and mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::RangeDistance()\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> \fBBoundType\fP& \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Bound ()\fC [inline]\fP"
+
+.PP
+Return the bound object for this node\&. 
+.PP
+Definition at line 232 of file spill_tree\&.hpp\&.
+.PP
+References mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::bound\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> void \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Center (arma::vec & center)\fC [inline]\fP"
+
+.PP
+Store the center of the bounding region in the given vector\&. 
+.PP
+Definition at line 424 of file spill_tree\&.hpp\&.
+.PP
+References mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::SpillTree(), mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::SplitNode(), and mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::SplitPoints()\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> \fBSpillTree\fP& \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Child (const size_t child) const"
+
+.PP
+Return the specified child (0 will be left, 1 will be right)\&. If the index is greater than 1, this will return the right child\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIchild\fP Index of child to return\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::ParentDistance()\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> \fBSpillTree\fP*& \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::ChildPtr (const size_t child)\fC [inline]\fP"
+
+.PP
+Definition at line 343 of file spill_tree\&.hpp\&.
+.PP
+References mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Descendant(), mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::NumDescendants(), mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::NumPoints(), mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Point(), and mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::right\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> const MatType& \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Dataset () const\fC [inline]\fP"
+
+.PP
+Get the dataset which the tree is built on\&. 
+.PP
+Definition at line 258 of file spill_tree\&.hpp\&.
+.PP
+References mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::dataset\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> size_t \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Descendant (const size_t index) const"
+
+.PP
+Return the index (with reference to the dataset) of a particular descendant of this node\&. The index should be greater than zero but less than the number of descendants\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIindex\fP Index of the descendant\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::ChildPtr()\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> \fBElemType\fP \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::FurthestDescendantDistance () const"
+
+.PP
+Return the furthest possible descendant distance\&. This returns the maximum distance from the centroid to the edge of the bound and not the empirical quantity which is the actual furthest descendant distance\&. So the actual furthest descendant distance may be less than what this method returns (but it will never be greater than this)\&. 
+.PP
+Referenced by mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Metric()\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> \fBElemType\fP \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::FurthestPointDistance () const"
+
+.PP
+Return the furthest distance to a point held in this node\&. If this is not a leaf node, then the distance is 0 because the node holds no points\&. 
+.PP
+Referenced by mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Metric()\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> template<typename VecType > size_t \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::GetFurthestChild (const VecType & point, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< VecType >::value > * = \fC0\fP)"
+
+.PP
+Return the index of the furthest child node to the given query point (this is an efficient estimation based on the splitting hyperplane, the node returned is not necessarily the furthest)\&. If this is a leaf node, it will return \fBNumChildren()\fP (invalid index)\&. 
+.PP
+Referenced by mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Metric()\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> size_t \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::GetFurthestChild (const \fBSpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType > & queryNode)"
+
+.PP
+Return the index of the furthest child node to the given query node (this is an efficient estimation based on the splitting hyperplane, the node returned is not necessarily the furthest)\&. If it can't decide it will return \fBNumChildren()\fP (invalid index)\&. 
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> template<typename VecType > size_t \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::GetNearestChild (const VecType & point, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< VecType >::value > * = \fC0\fP)"
+
+.PP
+Return the index of the nearest child node to the given query point (this is an efficient estimation based on the splitting hyperplane, the node returned is not necessarily the nearest)\&. If this is a leaf node, it will return \fBNumChildren()\fP (invalid index)\&. 
+.PP
+Referenced by mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Metric()\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> size_t \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::GetNearestChild (const \fBSpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType > & queryNode)"
+
+.PP
+Return the index of the nearest child node to the given query node (this is an efficient estimation based on the splitting hyperplane, the node returned is not necessarily the nearest)\&. If it can't decide it will return \fBNumChildren()\fP (invalid index)\&. 
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> static bool \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::HasSelfChildren ()\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Returns false: this tree type does not have self children\&. 
+.PP
+Definition at line 421 of file spill_tree\&.hpp\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> const HyperplaneType<MetricType>& \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::\fBHyperplane\fP () const\fC [inline]\fP"
+
+.PP
+Get the Hyperplane instance\&. 
+.PP
+Definition at line 264 of file spill_tree\&.hpp\&.
+.PP
+References mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::hyperplane\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> bool \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::IsLeaf () const"
+
+.PP
+Return whether or not this node is a leaf (true if it has no children)\&. 
+.PP
+Referenced by mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Stat()\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> \fBSpillTree\fP* \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Left () const\fC [inline]\fP"
+
+.PP
+Gets the left child of this node\&. 
+.PP
+Definition at line 243 of file spill_tree\&.hpp\&.
+.PP
+References mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::left\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> \fBSpillTree\fP*& \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Left ()\fC [inline]\fP"
+
+.PP
+Modify the left child of this node\&. 
+.PP
+Definition at line 245 of file spill_tree\&.hpp\&.
+.PP
+References mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::left\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> \fBElemType\fP \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::MaxDistance (const \fBSpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType > & other) const\fC [inline]\fP"
+
+.PP
+Return the maximum distance to another node\&. 
+.PP
+Definition at line 382 of file spill_tree\&.hpp\&.
+.PP
+References mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Bound()\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> template<typename VecType > \fBElemType\fP \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::MaxDistance (const VecType & point, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< VecType >::value > * = \fC0\fP) const\fC [inline]\fP"
+
+.PP
+Return the maximum distance to another point\&. 
+.PP
+Definition at line 404 of file spill_tree\&.hpp\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> MetricType \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Metric () const\fC [inline]\fP"
+
+.PP
+Get the metric that the tree uses\&. 
+.PP
+Definition at line 267 of file spill_tree\&.hpp\&.
+.PP
+References mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::FurthestDescendantDistance(), mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::FurthestPointDistance(), mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::GetFurthestChild(), mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::GetNearestChild(), mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::MinimumBoundDistance(), and mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::NumChildren()\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> \fBElemType\fP \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::MinDistance (const \fBSpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType > & other) const\fC [inline]\fP"
+
+.PP
+Return the minimum distance to another node\&. 
+.PP
+Definition at line 376 of file spill_tree\&.hpp\&.
+.PP
+References mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Bound()\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> template<typename VecType > \fBElemType\fP \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::MinDistance (const VecType & point, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< VecType >::value > * = \fC0\fP) const\fC [inline]\fP"
+
+.PP
+Return the minimum distance to another point\&. 
+.PP
+Definition at line 395 of file spill_tree\&.hpp\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> \fBElemType\fP \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::MinimumBoundDistance () const"
+
+.PP
+Return the minimum distance from the center of the node to any bound edge\&. 
+.PP
+Referenced by mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Metric()\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> size_t \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::NumChildren () const"
+
+.PP
+Return the number of children in this node\&. 
+.PP
+Referenced by mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Metric()\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> size_t \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::NumDescendants () const"
+
+.PP
+Return the number of descendants of this node\&. For a non-leaf spill tree, this is the number of points at the descendant leaves\&. For a leaf, this is the number of points in the leaf\&. 
+.PP
+Referenced by mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::ChildPtr()\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> size_t \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::NumPoints () const"
+
+.PP
+Return the number of points in this node (0 if not a leaf)\&. 
+.PP
+Referenced by mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::ChildPtr()\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> bool \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Overlap () const\fC [inline]\fP"
+
+.PP
+Distinguish overlapping nodes from non-overlapping nodes\&. 
+.PP
+Definition at line 261 of file spill_tree\&.hpp\&.
+.PP
+References mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::overlappingNode\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> \fBSpillTree\fP* \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Parent () const\fC [inline]\fP"
+
+.PP
+Gets the parent of this node\&. 
+.PP
+Definition at line 253 of file spill_tree\&.hpp\&.
+.PP
+References mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::parent\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> \fBSpillTree\fP*& \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Parent ()\fC [inline]\fP"
+
+.PP
+Modify the parent of this node\&. 
+.PP
+Definition at line 255 of file spill_tree\&.hpp\&.
+.PP
+References mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::parent\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> \fBElemType\fP \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::ParentDistance () const\fC [inline]\fP"
+
+.PP
+Return the distance from the center of this node to the center of the parent node\&. 
+.PP
+Definition at line 330 of file spill_tree\&.hpp\&.
+.PP
+References mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::parentDistance\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> \fBElemType\fP& \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::ParentDistance ()\fC [inline]\fP"
+
+.PP
+Modify the distance from the center of this node to the center of the parent node\&. 
+.PP
+Definition at line 333 of file spill_tree\&.hpp\&.
+.PP
+References mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Child(), and mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::parentDistance\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> size_t \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Point (const size_t index) const"
+
+.PP
+Return the index (with reference to the dataset) of a particular point in this node\&. This will happily return invalid indices if the given index is greater than the number of points in this node (obtained with \fBNumPoints()\fP) -- be careful\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIindex\fP Index of point for which a dataset index is wanted\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::ChildPtr()\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> \fBmath::RangeType\fP<\fBElemType\fP> \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::RangeDistance (const \fBSpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType > & other) const\fC [inline]\fP"
+
+.PP
+Return the minimum and maximum distance to another node\&. 
+.PP
+Definition at line 388 of file spill_tree\&.hpp\&.
+.PP
+References mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Bound()\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> template<typename VecType > \fBmath::RangeType\fP<\fBElemType\fP> \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::RangeDistance (const VecType & point, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< VecType >::value > * = \fC0\fP) const\fC [inline]\fP"
+
+.PP
+Return the minimum and maximum distance to another point\&. 
+.PP
+Definition at line 414 of file spill_tree\&.hpp\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> \fBSpillTree\fP* \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Right () const\fC [inline]\fP"
+
+.PP
+Gets the right child of this node\&. 
+.PP
+Definition at line 248 of file spill_tree\&.hpp\&.
+.PP
+References mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::right\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> \fBSpillTree\fP*& \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Right ()\fC [inline]\fP"
+
+.PP
+Modify the right child of this node\&. 
+.PP
+Definition at line 250 of file spill_tree\&.hpp\&.
+.PP
+References mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::right\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> template<typename Archive > void \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Serialize (Archive & ar, const unsigned int version)"
+
+.PP
+Serialize the tree\&. 
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> void \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::SplitNode (arma::Col< size_t > & points, const size_t maxLeafSize, const double tau, const double rho)\fC [private]\fP"
+
+.PP
+Splits the current node, assigning its left and right children recursively\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpoints\fP Vector of indexes of points to be included in this node\&. 
+.br
+\fImaxLeafSize\fP Maximum number of points held in a leaf\&. 
+.br
+\fItau\fP Overlapping size\&. 
+.br
+\fIrho\fP Balance threshold\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Center()\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> bool \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::SplitPoints (const double tau, const double rho, const arma::Col< size_t > & points, arma::Col< size_t > & leftPoints, arma::Col< size_t > & rightPoints)\fC [private]\fP"
+
+.PP
+Split the list of points\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fItau\fP Overlapping size\&. 
+.br
+\fIrho\fP Balance threshold\&. 
+.br
+\fIpoints\fP Vector of indexes of points to be included\&. 
+.br
+\fIleftPoints\fP Indexes of points to be included in left child\&. 
+.br
+\fIrightPoints\fP Indexes of points to be included in right child\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Flag to know if the overlapping buffer was included\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Center()\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> const StatisticType& \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Stat () const\fC [inline]\fP"
+
+.PP
+Return the statistic object for this node\&. 
+.PP
+Definition at line 235 of file spill_tree\&.hpp\&.
+.PP
+References mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::stat\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> StatisticType& \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Stat ()\fC [inline]\fP"
+
+.PP
+Return the statistic object for this node\&. 
+.PP
+Definition at line 237 of file spill_tree\&.hpp\&.
+.PP
+References mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::IsLeaf(), and mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::stat\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> \fBBoundType\fP \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::bound\fC [private]\fP"
+
+.PP
+The bound object for this node\&. 
+.PP
+Definition at line 101 of file spill_tree\&.hpp\&.
+.PP
+Referenced by mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Bound()\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> size_t \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::count\fC [private]\fP"
+
+.PP
+The number of points of the dataset contained in this node (and its children)\&. 
+.PP
+Definition at line 92 of file spill_tree\&.hpp\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> const MatType* \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::dataset\fC [private]\fP"
+
+.PP
+The dataset\&. If we are the root of the tree, we own the dataset and must delete it\&. 
+.PP
+Definition at line 113 of file spill_tree\&.hpp\&.
+.PP
+Referenced by mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Dataset()\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> \fBElemType\fP \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::furthestDescendantDistance\fC [private]\fP"
+
+.PP
+The worst possible distance to the furthest descendant, cached to speed things up\&. 
+.PP
+Definition at line 108 of file spill_tree\&.hpp\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> HyperplaneType<MetricType> \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::hyperplane\fC [private]\fP"
+
+.PP
+Splitting hyperplane represented by this node\&. 
+.PP
+Definition at line 99 of file spill_tree\&.hpp\&.
+.PP
+Referenced by mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Hyperplane()\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> \fBSpillTree\fP* \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::left\fC [private]\fP"
+
+.PP
+The left child node\&. 
+.PP
+Definition at line 85 of file spill_tree\&.hpp\&.
+.PP
+Referenced by mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Left()\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> bool \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::localDataset\fC [private]\fP"
+
+.PP
+If true, we own the dataset and need to destroy it in the destructor\&. 
+.PP
+Definition at line 115 of file spill_tree\&.hpp\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> \fBElemType\fP \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::minimumBoundDistance\fC [private]\fP"
+
+.PP
+The minimum distance from the center to any edge of the bound\&. 
+.PP
+Definition at line 110 of file spill_tree\&.hpp\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> bool \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::overlappingNode\fC [private]\fP"
+
+.PP
+Flag to distinguish overlapping nodes from non-overlapping nodes\&. 
+.PP
+Definition at line 97 of file spill_tree\&.hpp\&.
+.PP
+Referenced by mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Overlap()\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> \fBSpillTree\fP* \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::parent\fC [private]\fP"
+
+.PP
+The parent node (NULL if this is the root of the tree)\&. 
+.PP
+Definition at line 89 of file spill_tree\&.hpp\&.
+.PP
+Referenced by mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Parent()\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> \fBElemType\fP \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::parentDistance\fC [private]\fP"
+
+.PP
+The distance from the centroid of this node to the centroid of the parent\&. 
+.PP
+Definition at line 105 of file spill_tree\&.hpp\&.
+.PP
+Referenced by mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::ParentDistance()\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> arma::Col<size_t>* \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::pointsIndex\fC [private]\fP"
+
+.PP
+The list of indexes of points contained in this node (non-null for leaf nodes)\&. 
+.PP
+Definition at line 95 of file spill_tree\&.hpp\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> \fBSpillTree\fP* \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::right\fC [private]\fP"
+
+.PP
+The right child node\&. 
+.PP
+Definition at line 87 of file spill_tree\&.hpp\&.
+.PP
+Referenced by mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::ChildPtr(), and mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Right()\&.
+.SS "template<typename MetricType , typename StatisticType  = EmptyStatistic, typename MatType  = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit> StatisticType \fBmlpack::tree::SpillTree\fP< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::stat\fC [private]\fP"
+
+.PP
+Any extra data contained in the node\&. 
+.PP
+Definition at line 103 of file spill_tree\&.hpp\&.
+.PP
+Referenced by mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::Stat()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

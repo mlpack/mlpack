@@ -1,0 +1,639 @@
+\section{mlpack\+:\+:ann\+:\+:P\+Re\+LU$<$ Input\+Data\+Type, Output\+Data\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1PReLU}\index{mlpack\+::ann\+::\+P\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$@{mlpack\+::ann\+::\+P\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$}}
+
+
+The \doxyref{P\+Re\+LU}{p.}{classmlpack_1_1ann_1_1PReLU} activation function, defined by (where alpha is trainable)  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf P\+Re\+LU} (const double {\bf user\+\_\+alpha}=0.\+03)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{P\+Re\+LU}{p.}{classmlpack_1_1ann_1_1PReLU} object using the specified parameters. \end{DoxyCompactList}\item 
+double const \& {\bf Alpha} () const 
+\begin{DoxyCompactList}\small\item\em Get the non zero gradient. \end{DoxyCompactList}\item 
+double \& {\bf Alpha} ()
+\begin{DoxyCompactList}\small\item\em Modify the non zero gradient. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Data\+Type $>$ }\\void {\bf Backward} (const Data\+Type \&\&input, Data\+Type \&\&gy, Data\+Type \&\&g)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f. \end{DoxyCompactList}\item 
+Output\+Data\+Type const \& {\bf Delta} () const 
+\begin{DoxyCompactList}\small\item\em Get the delta. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& {\bf Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Input\+Type , typename Output\+Type $>$ }\\void {\bf Forward} (const Input\+Type \&\&input, Output\+Type \&\&output)
+\begin{DoxyCompactList}\small\item\em Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void {\bf Gradient} (const arma\+::\+Mat$<$ eT $>$ \&\&input, arma\+::\+Mat$<$ eT $>$ \&\&error, arma\+::\+Mat$<$ eT $>$ \&\&{\bf gradient})
+\begin{DoxyCompactList}\small\item\em Calculate the gradient using the output delta and the input activation. \end{DoxyCompactList}\item 
+Output\+Data\+Type const \& {\bf Gradient} () const 
+\begin{DoxyCompactList}\small\item\em Get the gradient. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& {\bf Gradient} ()
+\begin{DoxyCompactList}\small\item\em Modify the gradient. \end{DoxyCompactList}\item 
+Input\+Data\+Type const \& {\bf Input\+Parameter} () const 
+\begin{DoxyCompactList}\small\item\em Get the input parameter. \end{DoxyCompactList}\item 
+Input\+Data\+Type \& {\bf Input\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the input parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type const \& {\bf Output\+Parameter} () const 
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& {\bf Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type const \& {\bf Parameters} () const 
+\begin{DoxyCompactList}\small\item\em Get the parameters. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& {\bf Parameters} ()
+\begin{DoxyCompactList}\small\item\em Modify the parameters. \end{DoxyCompactList}\item 
+void {\bf Reset} ()
+\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&ar, const unsigned int)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+double {\bf Deriv} (const double x)
+\begin{DoxyCompactList}\small\item\em Computes the first derivative of the parametric Re\+LU function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Input\+Type , typename Output\+Type $>$ }\\void {\bf Deriv} (const Input\+Type \&x, Output\+Type \&y)
+\begin{DoxyCompactList}\small\item\em Computes the first derivative of the \doxyref{P\+Re\+LU}{p.}{classmlpack_1_1ann_1_1PReLU} function. \end{DoxyCompactList}\item 
+double {\bf Fn} (const double x)
+\begin{DoxyCompactList}\small\item\em Computes the parametric Re\+LU function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void {\bf Fn} (const arma\+::\+Mat$<$ eT $>$ \&x, arma\+::\+Mat$<$ eT $>$ \&y)
+\begin{DoxyCompactList}\small\item\em Computes the parametric Re\+LU function using a dense matrix as input. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+Output\+Data\+Type {\bf alpha}
+\begin{DoxyCompactList}\small\item\em Leakyness Parameter object. \end{DoxyCompactList}\item 
+Output\+Data\+Type {\bf delta}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored delta object. \end{DoxyCompactList}\item 
+Output\+Data\+Type {\bf gradient}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored gradient object. \end{DoxyCompactList}\item 
+Input\+Data\+Type {\bf input\+Parameter}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored input parameter object. \end{DoxyCompactList}\item 
+Output\+Data\+Type {\bf output\+Parameter}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored output parameter object. \end{DoxyCompactList}\item 
+double {\bf user\+\_\+alpha}
+\begin{DoxyCompactList}\small\item\em Leakyness Parameter given by user in the range 0 $<$ alpha $<$ 1. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat$>$\\*
+class mlpack\+::ann\+::\+P\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+
+The \doxyref{P\+Re\+LU}{p.}{classmlpack_1_1ann_1_1PReLU} activation function, defined by (where alpha is trainable) 
+
+\begin{eqnarray*} f(x) &=& \max(x, alpha*x) \\ f'(x) &=& \left\{ \begin{array}{lr} 1 & : x > 0 \\ alpha & : x \le 0 \end{array} \right. \end{eqnarray*}
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 45 of file parametric\+\_\+relu.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}!P\+Re\+LU@{P\+Re\+LU}}
+\index{P\+Re\+LU@{P\+Re\+LU}!mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}}
+\subsubsection[{P\+Re\+L\+U(const double user\+\_\+alpha=0.\+03)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ {\bf mlpack\+::ann\+::\+P\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::{\bf P\+Re\+LU} (
+\begin{DoxyParamCaption}
+\item[{const double}]{user\+\_\+alpha = {\ttfamily 0.03}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1PReLU_a2a7f8e3cfa3667e8cfda7a63294afae3}
+
+
+Create the \doxyref{P\+Re\+LU}{p.}{classmlpack_1_1ann_1_1PReLU} object using the specified parameters. 
+
+The non zero gradient can be adjusted by specifying tha parameter alpha in the range 0 to 1. Default (alpha = 0.\+03). This parameter is trainable.
+
+
+\begin{DoxyParams}{Parameters}
+{\em alpha} & Non zero gradient \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}!Alpha@{Alpha}}
+\index{Alpha@{Alpha}!mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}}
+\subsubsection[{Alpha() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ double const\& {\bf mlpack\+::ann\+::\+P\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Alpha (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1PReLU_a7a4c9c12a9ba49daedfae1cc22a0371b}
+
+
+Get the non zero gradient. 
+
+
+
+Definition at line 123 of file parametric\+\_\+relu.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+P\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::alpha.
+
+\index{mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}!Alpha@{Alpha}}
+\index{Alpha@{Alpha}!mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}}
+\subsubsection[{Alpha()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ double\& {\bf mlpack\+::ann\+::\+P\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Alpha (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1PReLU_a6ed613997ae0379fbd9eb8e1b66ff7f0}
+
+
+Modify the non zero gradient. 
+
+
+
+Definition at line 125 of file parametric\+\_\+relu.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+P\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::alpha, and mlpack\+::ann\+::\+P\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Serialize().
+
+\index{mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}!Backward@{Backward}}
+\index{Backward@{Backward}!mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}}
+\subsubsection[{Backward(const Data\+Type \&\&input, Data\+Type \&\&gy, Data\+Type \&\&g)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename Data\+Type $>$ void {\bf mlpack\+::ann\+::\+P\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Backward (
+\begin{DoxyParamCaption}
+\item[{const Data\+Type \&\&}]{input, }
+\item[{Data\+Type \&\&}]{gy, }
+\item[{Data\+Type \&\&}]{g}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1PReLU_a57f0df26e09aa7953c6eeaee5ce472df}
+
+
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f. 
+
+Using the results from the feed forward pass.
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The propagated input activation. \\
+\hline
+{\em gy} & The backpropagated error. \\
+\hline
+{\em g} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}}
+\subsubsection[{Delta() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type const\& {\bf mlpack\+::ann\+::\+P\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Delta (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1PReLU_a6c76b2c06fb177ad2f093bfae4a5cac7}
+
+
+Get the delta. 
+
+
+
+Definition at line 113 of file parametric\+\_\+relu.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+P\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::delta.
+
+\index{mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}}
+\subsubsection[{Delta()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type\& {\bf mlpack\+::ann\+::\+P\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Delta (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1PReLU_acb0b262b617243d91640cbe72a956da6}
+
+
+Modify the delta. 
+
+
+
+Definition at line 115 of file parametric\+\_\+relu.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+P\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::delta.
+
+\index{mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}!Deriv@{Deriv}}
+\index{Deriv@{Deriv}!mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}}
+\subsubsection[{Deriv(const double x)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ double {\bf mlpack\+::ann\+::\+P\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Deriv (
+\begin{DoxyParamCaption}
+\item[{const double}]{x}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}\label{classmlpack_1_1ann_1_1PReLU_a09027b84e7743d0e7554b9dd4be3a751}
+
+
+Computes the first derivative of the parametric Re\+LU function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Input data. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+f\textquotesingle{}(x) 
+\end{DoxyReturn}
+
+
+Definition at line 165 of file parametric\+\_\+relu.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+P\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::alpha.
+
+
+
+Referenced by mlpack\+::ann\+::\+P\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Deriv().
+
+\index{mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}!Deriv@{Deriv}}
+\index{Deriv@{Deriv}!mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}}
+\subsubsection[{Deriv(const Input\+Type \&x, Output\+Type \&y)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename Input\+Type , typename Output\+Type $>$ void {\bf mlpack\+::ann\+::\+P\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Deriv (
+\begin{DoxyParamCaption}
+\item[{const Input\+Type \&}]{x, }
+\item[{Output\+Type \&}]{y}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}\label{classmlpack_1_1ann_1_1PReLU_ab66e989da773ce81d1468fe60700f901}
+
+
+Computes the first derivative of the \doxyref{P\+Re\+LU}{p.}{classmlpack_1_1ann_1_1PReLU} function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em y} & Input activations. \\
+\hline
+{\em x} & The resulting derivatives. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 178 of file parametric\+\_\+relu.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+P\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Deriv().
+
+\index{mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}!Fn@{Fn}}
+\index{Fn@{Fn}!mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}}
+\subsubsection[{Fn(const double x)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ double {\bf mlpack\+::ann\+::\+P\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Fn (
+\begin{DoxyParamCaption}
+\item[{const double}]{x}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}\label{classmlpack_1_1ann_1_1PReLU_a3b2c0dca6b3c3b977bd6283114700f60}
+
+
+Computes the parametric Re\+LU function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Input data. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+f(x). 
+\end{DoxyReturn}
+
+
+Definition at line 140 of file parametric\+\_\+relu.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+P\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::alpha.
+
+\index{mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}!Fn@{Fn}}
+\index{Fn@{Fn}!mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}}
+\subsubsection[{Fn(const arma\+::\+Mat$<$ e\+T $>$ \&x, arma\+::\+Mat$<$ e\+T $>$ \&y)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename eT $>$ void {\bf mlpack\+::ann\+::\+P\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Fn (
+\begin{DoxyParamCaption}
+\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{x, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&}]{y}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}\label{classmlpack_1_1ann_1_1PReLU_a15ff8bd28cd47529dfda47e24421226e}
+
+
+Computes the parametric Re\+LU function using a dense matrix as input. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Input data. \\
+\hline
+{\em y} & The resulting output activation. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 152 of file parametric\+\_\+relu.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+P\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::alpha.
+
+\index{mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}!Forward@{Forward}}
+\index{Forward@{Forward}!mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}}
+\subsubsection[{Forward(const Input\+Type \&\&input, Output\+Type \&\&output)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename Input\+Type , typename Output\+Type $>$ void {\bf mlpack\+::ann\+::\+P\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Forward (
+\begin{DoxyParamCaption}
+\item[{const Input\+Type \&\&}]{input, }
+\item[{Output\+Type \&\&}]{output}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1PReLU_acedd1877d81c33e03f5f09981099420e}
+
+
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input data used for evaluating the specified function. \\
+\hline
+{\em output} & Resulting output activation. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}}
+\subsubsection[{Gradient(const arma\+::\+Mat$<$ e\+T $>$ \&\&input, arma\+::\+Mat$<$ e\+T $>$ \&\&error, arma\+::\+Mat$<$ e\+T $>$ \&\&gradient)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename eT $>$ void {\bf mlpack\+::ann\+::\+P\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Gradient (
+\begin{DoxyParamCaption}
+\item[{const arma\+::\+Mat$<$ eT $>$ \&\&}]{input, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&\&}]{error, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&\&}]{gradient}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1PReLU_af134bb33bbefe67852dd718d6fef1429}
+
+
+Calculate the gradient using the output delta and the input activation. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The input parameter used for calculating the gradient. \\
+\hline
+{\em error} & The calculated error. \\
+\hline
+{\em gradient} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}}
+\subsubsection[{Gradient() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type const\& {\bf mlpack\+::ann\+::\+P\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Gradient (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1PReLU_ab0dff8f710e7764f811a63f305617339}
+
+
+Get the gradient. 
+
+
+
+Definition at line 118 of file parametric\+\_\+relu.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+P\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::gradient.
+
+\index{mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}}
+\subsubsection[{Gradient()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type\& {\bf mlpack\+::ann\+::\+P\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Gradient (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1PReLU_afcf466240b4160f058198e7bc0946262}
+
+
+Modify the gradient. 
+
+
+
+Definition at line 120 of file parametric\+\_\+relu.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+P\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::gradient.
+
+\index{mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}!Input\+Parameter@{Input\+Parameter}}
+\index{Input\+Parameter@{Input\+Parameter}!mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}}
+\subsubsection[{Input\+Parameter() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Input\+Data\+Type const\& {\bf mlpack\+::ann\+::\+P\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Input\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1PReLU_a1e5ba54ab7b45512b60429f1c3efcac8}
+
+
+Get the input parameter. 
+
+
+
+Definition at line 103 of file parametric\+\_\+relu.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+P\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::input\+Parameter.
+
+\index{mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}!Input\+Parameter@{Input\+Parameter}}
+\index{Input\+Parameter@{Input\+Parameter}!mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}}
+\subsubsection[{Input\+Parameter()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Input\+Data\+Type\& {\bf mlpack\+::ann\+::\+P\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Input\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1PReLU_aeccf884c0697c322bbd4895efdca51f8}
+
+
+Modify the input parameter. 
+
+
+
+Definition at line 105 of file parametric\+\_\+relu.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+P\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::input\+Parameter.
+
+\index{mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}}
+\subsubsection[{Output\+Parameter() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type const\& {\bf mlpack\+::ann\+::\+P\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Output\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1PReLU_aa05b216031121ac0f09ba5af63c3e1c0}
+
+
+Get the output parameter. 
+
+
+
+Definition at line 108 of file parametric\+\_\+relu.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+P\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Parameter.
+
+\index{mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}}
+\subsubsection[{Output\+Parameter()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type\& {\bf mlpack\+::ann\+::\+P\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Output\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1PReLU_afa8e29abab902e9d1656b21672368f2c}
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 110 of file parametric\+\_\+relu.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+P\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Parameter.
+
+\index{mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}}
+\subsubsection[{Parameters() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type const\& {\bf mlpack\+::ann\+::\+P\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Parameters (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1PReLU_af8319d33d180cf6672618f9acf5fa577}
+
+
+Get the parameters. 
+
+
+
+Definition at line 98 of file parametric\+\_\+relu.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+P\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::alpha.
+
+\index{mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}}
+\subsubsection[{Parameters()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type\& {\bf mlpack\+::ann\+::\+P\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Parameters (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1PReLU_ab914d5253ff54a561c0fb19425df7011}
+
+
+Modify the parameters. 
+
+
+
+Definition at line 100 of file parametric\+\_\+relu.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+P\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::alpha.
+
+\index{mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}!Reset@{Reset}}
+\index{Reset@{Reset}!mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}}
+\subsubsection[{Reset()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ void {\bf mlpack\+::ann\+::\+P\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Reset (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1PReLU_aa2abb422e52df1e689bad80c5b38e55f}
+\index{mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}}
+\subsubsection[{Serialize(\+Archive \&ar, const unsigned int)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename Archive $>$ void {\bf mlpack\+::ann\+::\+P\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const unsigned}]{int}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1PReLU_af12064472b05c31a34f405df4be40eae}
+
+
+Serialize the layer. 
+
+
+
+Referenced by mlpack\+::ann\+::\+P\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Alpha().
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}!alpha@{alpha}}
+\index{alpha@{alpha}!mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}}
+\subsubsection[{alpha}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type {\bf mlpack\+::ann\+::\+P\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::alpha\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1PReLU_a099eec8bf7ef21f9831230ceb91078ac}
+
+
+Leakyness Parameter object. 
+
+
+
+Definition at line 198 of file parametric\+\_\+relu.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+P\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Alpha(), mlpack\+::ann\+::\+P\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Deriv(), mlpack\+::ann\+::\+P\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Fn(), and mlpack\+::ann\+::\+P\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Parameters().
+
+\index{mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}!delta@{delta}}
+\index{delta@{delta}!mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}}
+\subsubsection[{delta}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type {\bf mlpack\+::ann\+::\+P\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::delta\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1PReLU_a0292218424e01cc6e489185072214135}
+
+
+Locally-\/stored delta object. 
+
+
+
+Definition at line 189 of file parametric\+\_\+relu.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+P\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Delta().
+
+\index{mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}!gradient@{gradient}}
+\index{gradient@{gradient}!mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}}
+\subsubsection[{gradient}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type {\bf mlpack\+::ann\+::\+P\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::gradient\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1PReLU_a1bdc66a0b4ec1dc6de9cacd9a64c440f}
+
+
+Locally-\/stored gradient object. 
+
+
+
+Definition at line 201 of file parametric\+\_\+relu.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+P\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Gradient().
+
+\index{mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}!input\+Parameter@{input\+Parameter}}
+\index{input\+Parameter@{input\+Parameter}!mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}}
+\subsubsection[{input\+Parameter}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Input\+Data\+Type {\bf mlpack\+::ann\+::\+P\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::input\+Parameter\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1PReLU_a01c772ecc8c53d56be508a996d737b7f}
+
+
+Locally-\/stored input parameter object. 
+
+
+
+Definition at line 192 of file parametric\+\_\+relu.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+P\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Input\+Parameter().
+
+\index{mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}!output\+Parameter@{output\+Parameter}}
+\index{output\+Parameter@{output\+Parameter}!mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}}
+\subsubsection[{output\+Parameter}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type {\bf mlpack\+::ann\+::\+P\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Parameter\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1PReLU_a98c037324220ff53294e72337695a1ef}
+
+
+Locally-\/stored output parameter object. 
+
+
+
+Definition at line 195 of file parametric\+\_\+relu.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+P\+Re\+L\+U$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Output\+Parameter().
+
+\index{mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}!user\+\_\+alpha@{user\+\_\+alpha}}
+\index{user\+\_\+alpha@{user\+\_\+alpha}!mlpack\+::ann\+::\+P\+Re\+LU@{mlpack\+::ann\+::\+P\+Re\+LU}}
+\subsubsection[{user\+\_\+alpha}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ double {\bf mlpack\+::ann\+::\+P\+Re\+LU}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::user\+\_\+alpha\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1PReLU_a69e9f82a43fbc7176f804440958b33dc}
+
+
+Leakyness Parameter given by user in the range 0 $<$ alpha $<$ 1. 
+
+
+
+Definition at line 204 of file parametric\+\_\+relu.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/ann/layer/{\bf parametric\+\_\+relu.\+hpp}\end{DoxyCompactItemize}

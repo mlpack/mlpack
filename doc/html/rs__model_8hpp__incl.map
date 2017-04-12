@@ -1,0 +1,42 @@
+<map id="src/mlpack/methods/range_search/rs_model.hpp" name="src/mlpack/methods/range_search/rs_model.hpp">
+<area shape="rect" id="node2" href="$binary__space__tree_8hpp.html" title="mlpack/core/tree/binary\l_space_tree.hpp" alt="" coords="3829,169,3987,211"/>
+<area shape="rect" id="node20" href="$cover__tree_8hpp.html" title="mlpack/core/tree/cover\l_tree.hpp" alt="" coords="461,169,616,211"/>
+<area shape="rect" id="node29" href="$rectangle__tree_8hpp.html" title="mlpack/core/tree/rectangle\l_tree.hpp" alt="" coords="1992,169,2168,211"/>
+<area shape="rect" id="node47" href="$octree_8hpp.html" title="mlpack/core/tree/octree.hpp" alt="" coords="2833,177,3017,203"/>
+<area shape="rect" id="node49" href="$range__search_8hpp.html" title="range_search.hpp" alt="" coords="3749,95,3875,121"/>
+<area shape="rect" id="node3" href="$prereqs_8hpp.html" title="The core includes that mlpack expects; standard C++ includes and Armadillo. " alt="" coords="2584,541,2720,568"/>
+<area shape="rect" id="node4" href="$bounds_8hpp.html" title="Bounds that are useful for binary space partitioning trees. " alt="" coords="2798,273,2887,300"/>
+<area shape="rect" id="node5" href="$midpoint__split_8hpp.html" title="binary_space_tree/midpoint\l_split.hpp" alt="" coords="4021,452,4203,493"/>
+<area shape="rect" id="node6" href="$mean__split_8hpp.html" title="binary_space_tree/mean\l_split.hpp" alt="" coords="4906,363,5070,404"/>
+<area shape="rect" id="node7" href="$vantage__point__split_8hpp.html" title="binary_space_tree/vantage\l_point_split.hpp" alt="" coords="3171,363,3349,404"/>
+<area shape="rect" id="node8" href="$rp__tree__max__split_8hpp.html" title="binary_space_tree/rp\l_tree_max_split.hpp" alt="" coords="3582,363,3725,404"/>
+<area shape="rect" id="node9" href="$rp__tree__mean__split_8hpp.html" title="binary_space_tree/rp\l_tree_mean_split.hpp" alt="" coords="3699,266,3845,307"/>
+<area shape="rect" id="node10" href="$ub__tree__split_8hpp.html" title="binary_space_tree/ub\l_tree_split.hpp" alt="" coords="3800,452,3947,493"/>
+<area shape="rect" id="node11" href="$binary__space__tree_2binary__space__tree_8hpp.html" title="binary_space_tree/binary\l_space_tree.hpp" alt="" coords="4105,363,4271,404"/>
+<area shape="rect" id="node12" href="$binary__space__tree_2single__tree__traverser_8hpp.html" title="binary_space_tree/single\l_tree_traverser.hpp" alt="" coords="3971,266,4138,307"/>
+<area shape="rect" id="node14" href="$binary__space__tree_2dual__tree__traverser_8hpp.html" title="binary_space_tree/dual\l_tree_traverser.hpp" alt="" coords="4238,266,4394,307"/>
+<area shape="rect" id="node16" href="$breadth__first__dual__tree__traverser_8hpp.html" title="binary_space_tree/breadth\l_first_dual_tree_traverser.hpp" alt="" coords="4419,266,4613,307"/>
+<area shape="rect" id="node18" href="$binary__space__tree_2traits_8hpp.html" title="binary_space_tree/traits.hpp" alt="" coords="3163,273,3349,300"/>
+<area shape="rect" id="node19" href="$core_2tree_2binary__space__tree_2typedef_8hpp.html" title="binary_space_tree/typedef.hpp" alt="" coords="3373,273,3573,300"/>
+<area shape="rect" id="node21" href="$first__point__is__root_8hpp.html" title="cover_tree/first_point\l_is_root.hpp" alt="" coords="347,452,491,493"/>
+<area shape="rect" id="node22" href="$cover__tree_2cover__tree_8hpp.html" title="cover_tree/cover_tree.hpp" alt="" coords="332,370,505,397"/>
+<area shape="rect" id="node23" href="$cover__tree_2single__tree__traverser_8hpp.html" title="cover_tree/single_tree\l_traverser.hpp" alt="" coords="799,266,950,307"/>
+<area shape="rect" id="node25" href="$cover__tree_2dual__tree__traverser_8hpp.html" title="cover_tree/dual_tree\l_traverser.hpp" alt="" coords="861,363,1001,404"/>
+<area shape="rect" id="node27" href="$cover__tree_2traits_8hpp.html" title="cover_tree/traits.hpp" alt="" coords="633,273,775,300"/>
+<area shape="rect" id="node28" href="$core_2tree_2cover__tree_2typedef_8hpp.html" title="cover_tree/typedef.hpp" alt="" coords="39,273,193,300"/>
+<area shape="rect" id="node30" href="$rectangle__tree_2rectangle__tree_8hpp.html" title="rectangle_tree/rectangle\l_tree.hpp" alt="" coords="2039,363,2201,404"/>
+<area shape="rect" id="node31" href="$r__tree__split_8hpp.html" title="r_tree_split.hpp" alt="" coords="1918,459,2029,486"/>
+<area shape="rect" id="node32" href="$r__tree__descent__heuristic_8hpp.html" title="r_tree_descent_heuristic.hpp" alt="" coords="2104,459,2293,486"/>
+<area shape="rect" id="node33" href="$no__auxiliary__information_8hpp.html" title="no_auxiliary_information.hpp" alt="" coords="2317,459,2504,486"/>
+<area shape="rect" id="node34" href="$rectangle__tree_2single__tree__traverser_8hpp.html" title="rectangle_tree/single\l_tree_traverser.hpp" alt="" coords="1491,266,1634,307"/>
+<area shape="rect" id="node36" href="$rectangle__tree_2dual__tree__traverser_8hpp.html" title="rectangle_tree/dual\l_tree_traverser.hpp" alt="" coords="1857,266,1991,307"/>
+<area shape="rect" id="node38" href="$r__star__tree__split_8hpp.html" title="rectangle_tree/r_star\l_tree_split.hpp" alt="" coords="2528,452,2669,493"/>
+<area shape="rect" id="node39" href="$r__star__tree__descent__heuristic_8hpp.html" title="rectangle_tree/r_star\l_tree_descent_heuristic.hpp" alt="" coords="2507,363,2693,404"/>
+<area shape="rect" id="node40" href="$x__tree__split_8hpp.html" title="rectangle_tree/x_tree\l_split.hpp" alt="" coords="2744,452,2888,493"/>
+<area shape="rect" id="node41" href="$x__tree__auxiliary__information_8hpp.html" title="rectangle_tree/x_tree\l_auxiliary_information.hpp" alt="" coords="1659,266,1832,307"/>
+<area shape="rect" id="node42" href="$hilbert__r__tree__descent__heuristic_8hpp.html" title="rectangle_tree/hilbert\l_r_tree_descent_heuristic.hpp" alt="" coords="1077,363,1273,404"/>
+<area shape="rect" id="node43" href="$hilbert__r__tree__split_8hpp.html" title="rectangle_tree/hilbert\l_r_tree_split.hpp" alt="" coords="1306,452,1449,493"/>
+<area shape="rect" id="node44" href="$hilbert__r__tree__auxiliary__information_8hpp.html" title="rectangle_tree/hilbert\l_r_tree_auxiliary_information.hpp" alt="" coords="2117,266,2331,307"/>
+<area shape="rect" id="node45" href="$discrete__hilbert__value_8hpp.html" title="rectangle_tree/discrete\l_hilbert_value.hpp" alt="" coords="1348,363,1503,404"/>
+<area shape="rect" id="node46" href="$r__plus__tree__descent__heuristic_8hpp.html" title="rectangle_tree/r_plus\l_tree_descent_heuristic.hpp" alt="" coords="1590,452,1775,493"/>
+</map>

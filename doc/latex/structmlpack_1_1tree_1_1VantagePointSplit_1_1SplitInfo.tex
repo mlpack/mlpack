@@ -1,0 +1,117 @@
+\section{mlpack\+:\+:tree\+:\+:Vantage\+Point\+Split$<$ Bound\+Type, Mat\+Type, Max\+Num\+Samples $>$\+:\+:Split\+Info Struct Reference}
+\label{structmlpack_1_1tree_1_1VantagePointSplit_1_1SplitInfo}\index{mlpack\+::tree\+::\+Vantage\+Point\+Split$<$ Bound\+Type, Mat\+Type, Max\+Num\+Samples $>$\+::\+Split\+Info@{mlpack\+::tree\+::\+Vantage\+Point\+Split$<$ Bound\+Type, Mat\+Type, Max\+Num\+Samples $>$\+::\+Split\+Info}}
+
+
+A struct that contains an information about the split.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Split\+Info} ()
+\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\{\bf Split\+Info} (const {\bf Metric\+Type} \&{\bf metric}, const Vec\+Type \&{\bf vantage\+Point}, {\bf Elem\+Type} {\bf mu})
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+const {\bf Metric\+Type} $\ast$ {\bf metric}
+\begin{DoxyCompactList}\small\item\em An instance of the Metric\+Type class. \end{DoxyCompactList}\item 
+{\bf Elem\+Type} {\bf mu}
+\begin{DoxyCompactList}\small\item\em The median distance according to which the node will be split. \end{DoxyCompactList}\item 
+arma\+::\+Col$<$ {\bf Elem\+Type} $>$ {\bf vantage\+Point}
+\begin{DoxyCompactList}\small\item\em The vantage point. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Bound\+Type, typename Mat\+Type = arma\+::mat, size\+\_\+t Max\+Num\+Samples = 100$>$\\*
+struct mlpack\+::tree\+::\+Vantage\+Point\+Split$<$ Bound\+Type, Mat\+Type, Max\+Num\+Samples $>$\+::\+Split\+Info}
+
+A struct that contains an information about the split. 
+
+Definition at line 40 of file vantage\+\_\+point\+\_\+split.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::tree\+::\+Vantage\+Point\+Split\+::\+Split\+Info@{mlpack\+::tree\+::\+Vantage\+Point\+Split\+::\+Split\+Info}!Split\+Info@{Split\+Info}}
+\index{Split\+Info@{Split\+Info}!mlpack\+::tree\+::\+Vantage\+Point\+Split\+::\+Split\+Info@{mlpack\+::tree\+::\+Vantage\+Point\+Split\+::\+Split\+Info}}
+\subsubsection[{Split\+Info()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Bound\+Type , typename Mat\+Type  = arma\+::mat, size\+\_\+t Max\+Num\+Samples = 100$>$ {\bf mlpack\+::tree\+::\+Vantage\+Point\+Split}$<$ Bound\+Type, Mat\+Type, Max\+Num\+Samples $>$\+::Split\+Info\+::\+Split\+Info (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{structmlpack_1_1tree_1_1VantagePointSplit_1_1SplitInfo_a7ac2ce76d05d61f8c65edcd33450c78c}
+
+
+Definition at line 49 of file vantage\+\_\+point\+\_\+split.\+hpp.
+
+\index{mlpack\+::tree\+::\+Vantage\+Point\+Split\+::\+Split\+Info@{mlpack\+::tree\+::\+Vantage\+Point\+Split\+::\+Split\+Info}!Split\+Info@{Split\+Info}}
+\index{Split\+Info@{Split\+Info}!mlpack\+::tree\+::\+Vantage\+Point\+Split\+::\+Split\+Info@{mlpack\+::tree\+::\+Vantage\+Point\+Split\+::\+Split\+Info}}
+\subsubsection[{Split\+Info(const Metric\+Type \&metric, const Vec\+Type \&vantage\+Point, Elem\+Type mu)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Bound\+Type , typename Mat\+Type  = arma\+::mat, size\+\_\+t Max\+Num\+Samples = 100$>$ template$<$typename Vec\+Type $>$ {\bf mlpack\+::tree\+::\+Vantage\+Point\+Split}$<$ Bound\+Type, Mat\+Type, Max\+Num\+Samples $>$\+::Split\+Info\+::\+Split\+Info (
+\begin{DoxyParamCaption}
+\item[{const {\bf Metric\+Type} \&}]{metric, }
+\item[{const Vec\+Type \&}]{vantage\+Point, }
+\item[{{\bf Elem\+Type}}]{mu}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{structmlpack_1_1tree_1_1VantagePointSplit_1_1SplitInfo_a7cb88038d0d080ba0d5bdfdc73e6f0b6}
+
+
+Definition at line 55 of file vantage\+\_\+point\+\_\+split.\+hpp.
+
+
+
+References mlpack\+::tree\+::\+Vantage\+Point\+Split$<$ Bound\+Type, Mat\+Type, Max\+Num\+Samples $>$\+::\+Split\+Node().
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::tree\+::\+Vantage\+Point\+Split\+::\+Split\+Info@{mlpack\+::tree\+::\+Vantage\+Point\+Split\+::\+Split\+Info}!metric@{metric}}
+\index{metric@{metric}!mlpack\+::tree\+::\+Vantage\+Point\+Split\+::\+Split\+Info@{mlpack\+::tree\+::\+Vantage\+Point\+Split\+::\+Split\+Info}}
+\subsubsection[{metric}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Bound\+Type , typename Mat\+Type  = arma\+::mat, size\+\_\+t Max\+Num\+Samples = 100$>$ const {\bf Metric\+Type}$\ast$ {\bf mlpack\+::tree\+::\+Vantage\+Point\+Split}$<$ Bound\+Type, Mat\+Type, Max\+Num\+Samples $>$\+::Split\+Info\+::metric}\label{structmlpack_1_1tree_1_1VantagePointSplit_1_1SplitInfo_a13c3b0562e80afc571af60a8cb2ddaa2}
+
+
+An instance of the Metric\+Type class. 
+
+
+
+Definition at line 47 of file vantage\+\_\+point\+\_\+split.\+hpp.
+
+
+
+Referenced by mlpack\+::tree\+::\+Vantage\+Point\+Split$<$ Bound\+Type, Mat\+Type, Max\+Num\+Samples $>$\+::\+Assign\+To\+Left\+Node().
+
+\index{mlpack\+::tree\+::\+Vantage\+Point\+Split\+::\+Split\+Info@{mlpack\+::tree\+::\+Vantage\+Point\+Split\+::\+Split\+Info}!mu@{mu}}
+\index{mu@{mu}!mlpack\+::tree\+::\+Vantage\+Point\+Split\+::\+Split\+Info@{mlpack\+::tree\+::\+Vantage\+Point\+Split\+::\+Split\+Info}}
+\subsubsection[{mu}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Bound\+Type , typename Mat\+Type  = arma\+::mat, size\+\_\+t Max\+Num\+Samples = 100$>$ {\bf Elem\+Type} {\bf mlpack\+::tree\+::\+Vantage\+Point\+Split}$<$ Bound\+Type, Mat\+Type, Max\+Num\+Samples $>$\+::Split\+Info\+::mu}\label{structmlpack_1_1tree_1_1VantagePointSplit_1_1SplitInfo_a63001de625339c0797165eaed6eb54af}
+
+
+The median distance according to which the node will be split. 
+
+
+
+Definition at line 45 of file vantage\+\_\+point\+\_\+split.\+hpp.
+
+
+
+Referenced by mlpack\+::tree\+::\+Vantage\+Point\+Split$<$ Bound\+Type, Mat\+Type, Max\+Num\+Samples $>$\+::\+Assign\+To\+Left\+Node().
+
+\index{mlpack\+::tree\+::\+Vantage\+Point\+Split\+::\+Split\+Info@{mlpack\+::tree\+::\+Vantage\+Point\+Split\+::\+Split\+Info}!vantage\+Point@{vantage\+Point}}
+\index{vantage\+Point@{vantage\+Point}!mlpack\+::tree\+::\+Vantage\+Point\+Split\+::\+Split\+Info@{mlpack\+::tree\+::\+Vantage\+Point\+Split\+::\+Split\+Info}}
+\subsubsection[{vantage\+Point}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Bound\+Type , typename Mat\+Type  = arma\+::mat, size\+\_\+t Max\+Num\+Samples = 100$>$ arma\+::\+Col$<${\bf Elem\+Type}$>$ {\bf mlpack\+::tree\+::\+Vantage\+Point\+Split}$<$ Bound\+Type, Mat\+Type, Max\+Num\+Samples $>$\+::Split\+Info\+::vantage\+Point}\label{structmlpack_1_1tree_1_1VantagePointSplit_1_1SplitInfo_a06d7fda7b3bf4570da3699e58dd77a67}
+
+
+The vantage point. 
+
+
+
+Definition at line 43 of file vantage\+\_\+point\+\_\+split.\+hpp.
+
+
+
+Referenced by mlpack\+::tree\+::\+Vantage\+Point\+Split$<$ Bound\+Type, Mat\+Type, Max\+Num\+Samples $>$\+::\+Assign\+To\+Left\+Node().
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/tree/binary\+\_\+space\+\_\+tree/{\bf vantage\+\_\+point\+\_\+split.\+hpp}\end{DoxyCompactItemize}

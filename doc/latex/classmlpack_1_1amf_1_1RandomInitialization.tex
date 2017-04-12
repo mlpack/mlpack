@@ -1,0 +1,93 @@
+\section{mlpack\+:\+:amf\+:\+:Random\+Initialization Class Reference}
+\label{classmlpack_1_1amf_1_1RandomInitialization}\index{mlpack\+::amf\+::\+Random\+Initialization@{mlpack\+::amf\+::\+Random\+Initialization}}
+
+
+This initialization rule for \doxyref{A\+MF}{p.}{classmlpack_1_1amf_1_1AMF} simply fills the W and H matrices with uniform random noise in [0, 1].  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Random\+Initialization} ()
+\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&, const unsigned int)
+\begin{DoxyCompactList}\small\item\em Serialize the object (in this case, there is nothing to serialize). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\static void {\bf Initialize} (const Mat\+Type \&V, const size\+\_\+t r, arma\+::mat \&W, arma\+::mat \&H)
+\begin{DoxyCompactList}\small\item\em Fill W and H with random uniform noise. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This initialization rule for \doxyref{A\+MF}{p.}{classmlpack_1_1amf_1_1AMF} simply fills the W and H matrices with uniform random noise in [0, 1]. 
+
+Definition at line 25 of file random\+\_\+init.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::amf\+::\+Random\+Initialization@{mlpack\+::amf\+::\+Random\+Initialization}!Random\+Initialization@{Random\+Initialization}}
+\index{Random\+Initialization@{Random\+Initialization}!mlpack\+::amf\+::\+Random\+Initialization@{mlpack\+::amf\+::\+Random\+Initialization}}
+\subsubsection[{Random\+Initialization()}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::amf\+::\+Random\+Initialization\+::\+Random\+Initialization (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1amf_1_1RandomInitialization_afbb2f299c75e717e393c8464f233df75}
+
+
+Definition at line 29 of file random\+\_\+init.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::amf\+::\+Random\+Initialization@{mlpack\+::amf\+::\+Random\+Initialization}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!mlpack\+::amf\+::\+Random\+Initialization@{mlpack\+::amf\+::\+Random\+Initialization}}
+\subsubsection[{Initialize(const Mat\+Type \&\+V, const size\+\_\+t r, arma\+::mat \&\+W, arma\+::mat \&\+H)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type $>$ static void mlpack\+::amf\+::\+Random\+Initialization\+::\+Initialize (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{V, }
+\item[{const size\+\_\+t}]{r, }
+\item[{arma\+::mat \&}]{W, }
+\item[{arma\+::mat \&}]{H}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}\label{classmlpack_1_1amf_1_1RandomInitialization_ae968a72010bb14abc671ebdfd74de1e0}
+
+
+Fill W and H with random uniform noise. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em V} & Input matrix. \\
+\hline
+{\em r} & Rank of decomposition. \\
+\hline
+{\em W} & W matrix, to be filled with random noise. \\
+\hline
+{\em H} & H matrix, to be filled with random noise. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 40 of file random\+\_\+init.\+hpp.
+
+\index{mlpack\+::amf\+::\+Random\+Initialization@{mlpack\+::amf\+::\+Random\+Initialization}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::amf\+::\+Random\+Initialization@{mlpack\+::amf\+::\+Random\+Initialization}}
+\subsubsection[{Serialize(\+Archive \&, const unsigned int)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Archive $>$ void mlpack\+::amf\+::\+Random\+Initialization\+::\+Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{, }
+\item[{const unsigned}]{int}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1amf_1_1RandomInitialization_a9da606972f56312c02cea1375ad2b594}
+
+
+Serialize the object (in this case, there is nothing to serialize). 
+
+
+
+Definition at line 56 of file random\+\_\+init.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/amf/init\+\_\+rules/{\bf random\+\_\+init.\+hpp}\end{DoxyCompactItemize}

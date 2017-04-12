@@ -1,0 +1,386 @@
+\section{Introduction}\label{nstutorial_intro_nstut}
+Nearest-\/neighbors search is a common machine learning task. In this setting, we have a {\bfseries query} and a {\bfseries reference} dataset. For each point in the {\bfseries query} dataset, we wish to know the $k$ points in the {\bfseries reference} dataset which are closest to the given query point.
+
+Alternately, if the query and reference datasets are the same, the problem can be stated more simply\+: for each point in the dataset, we wish to know the $k$ nearest points to that point.
+
+{\bfseries mlpack} provides\+:
+
+
+\begin{DoxyItemize}
+\item a \doxyref{simple command-\/line executable}{p.}{nstutorial_cli_nstut} to run nearest-\/neighbors search (and furthest-\/neighbors search)
+\item a \doxyref{simple C++ interface}{p.}{nstutorial_knn_nstut} to perform nearest-\/neighbors search (and furthest-\/neighbors search)
+\item a \doxyref{generic, extensible, and powerful C++ class (Neighbor\+Search)}{p.}{nstutorial_neighborsearch_nstut} for complex usage
+\end{DoxyItemize}\section{Table of Contents}\label{nstutorial_toc_nstut}
+A list of all the sections this tutorial contains.
+
+
+\begin{DoxyItemize}
+\item \doxyref{Introduction}{p.}{nstutorial_intro_nstut}
+\item \doxyref{Table of Contents}{p.}{nstutorial_toc_nstut}
+\item \doxyref{Command-\/\+Line \textquotesingle{}mlpack\+\_\+knn\textquotesingle{}}{p.}{nstutorial_cli_nstut}
+\begin{DoxyItemize}
+\item \doxyref{One dataset, 5 nearest neighbors}{p.}{nstutorial_cli_ex1_nstut}
+\item \doxyref{Query and reference dataset, 10 nearest neighbors}{p.}{nstutorial_cli_ex2_nstut}
+\item \doxyref{One dataset, 3 nearest neighbors, leaf size of 15 points}{p.}{nstutorial_cli_ex3_nstut}
+\end{DoxyItemize}
+\item \doxyref{The \textquotesingle{}K\+NN\textquotesingle{} class}{p.}{nstutorial_knn_nstut}
+\begin{DoxyItemize}
+\item \doxyref{5 nearest neighbors on a single dataset}{p.}{nstutorial_knn_ex1_nstut}
+\item \doxyref{10 nearest neighbors on a query and reference dataset}{p.}{nstutorial_knn_ex2_nstut}
+\item \doxyref{Naive (exhaustive) search for 6 nearest neighbors on one dataset}{p.}{nstutorial_knn_ex3_nstut}
+\end{DoxyItemize}
+\item \doxyref{The extensible \textquotesingle{}Neighbor\+Search\textquotesingle{} class}{p.}{nstutorial_neighborsearch_nstut}
+\begin{DoxyItemize}
+\item \doxyref{Sort\+Policy policy class}{p.}{nstutorial_sort_policy_doc_nstut}
+\item \doxyref{Metric\+Type policy class}{p.}{nstutorial_metric_type_doc_nstut}
+\item \doxyref{Mat\+Type policy class}{p.}{nstutorial_mat_type_doc_nstut}
+\item \doxyref{Tree\+Type policy class}{p.}{nstutorial_tree_type_doc_nstut}
+\item \doxyref{Traverser\+Type policy class}{p.}{nstutorial_traverser_type_doc_nstut}
+\end{DoxyItemize}
+\item \doxyref{Further documentation}{p.}{nstutorial_further_doc_nstut}
+\end{DoxyItemize}\section{Command-\/\+Line \textquotesingle{}mlpack\+\_\+knn\textquotesingle{}}\label{nstutorial_cli_nstut}
+The simplest way to perform nearest-\/neighbors search in {\bfseries mlpack} is to use the {\ttfamily mlpack\+\_\+knn} executable. This program will perform nearest-\/neighbors search and place the resultant neighbors into one file and the resultant distances into another. The output files are organized such that the first row corresponds to the nearest neighbors of the first query point, with the first column corresponding to the nearest neighbor, and so forth.
+
+Below are several examples of simple usage (and the resultant output). The {\ttfamily -\/v} option is used so that output is given. Further documentation on each individual option can be found by typing
+
+
+\begin{DoxyCode}
+$ mlpack\_knn --help
+\end{DoxyCode}
+\subsection{One dataset, 5 nearest neighbors}\label{nstutorial_cli_ex1_nstut}
+
+\begin{DoxyCode}
+$ mlpack\_knn -r dataset.csv -n neighbors\_out.csv -d distances\_out.csv -k 5 -v
+[INFO ] Loading \textcolor{stringliteral}{'dataset.csv'} as CSV data.  Size is 3 x 1000.
+[INFO ] Loaded reference data from \textcolor{stringliteral}{'dataset.csv'} (3 x 1000).
+[INFO ] Building reference tree...
+[INFO ] Tree built.
+[INFO ] Searching \textcolor{keywordflow}{for} 5 nearest neighbors with dual-tree kd-tree search...
+[INFO ] 18412 node combinations were scored.
+[INFO ] 54543 base cases were calculated.
+[INFO ] Search complete.
+[INFO ] Saving CSV data to \textcolor{stringliteral}{'neighbors\_out.csv'}.
+[INFO ] Saving CSV data to \textcolor{stringliteral}{'distances\_out.csv'}.
+[INFO ]
+[INFO ] Execution parameters:
+[INFO ]   distances\_file: distances\_out.csv
+[INFO ]   help: \textcolor{keyword}{false}
+[INFO ]   info: \textcolor{stringliteral}{""}
+[INFO ]   input\_model\_file: \textcolor{stringliteral}{""}
+[INFO ]   k: 5
+[INFO ]   leaf\_size: 20
+[INFO ]   naive: \textcolor{keyword}{false}
+[INFO ]   neighbors\_file: neighbors\_out.csv
+[INFO ]   output\_model\_file: \textcolor{stringliteral}{""}
+[INFO ]   query\_file: \textcolor{stringliteral}{""}
+[INFO ]   random\_basis: \textcolor{keyword}{false}
+[INFO ]   reference\_file: dataset.csv
+[INFO ]   seed: 0
+[INFO ]   single\_mode: \textcolor{keyword}{false}
+[INFO ]   tree\_type: kd
+[INFO ]   verbose: \textcolor{keyword}{true}
+[INFO ]   version: \textcolor{keyword}{false}
+[INFO ]
+[INFO ] Program timers:
+[INFO ]   computing\_neighbors: 0.108968s
+[INFO ]   loading\_data: 0.006495s
+[INFO ]   saving\_data: 0.003843s
+[INFO ]   total\_time: 0.126036s
+[INFO ]   tree\_building: 0.003442s
+\end{DoxyCode}
+
+
+Convenient program timers are given for different parts of the calculation at the bottom of the output, as well as the parameters the simulation was run with. Now, if we look at the output files\+:
+
+
+\begin{DoxyCode}
+$ head neighbors\_out.csv
+862,344,224,43,885
+703,499,805,639,450
+867,472,972,380,601
+397,319,277,443,323
+840,827,865,38,438
+732,876,751,492,616
+563,222,569,985,940
+361,97,928,437,79
+547,695,419,961,716
+982,113,689,843,634
+
+$ head distances\_out.csv
+5.986076164057e-02,7.664920518084e-02,1.116050961847e-01,1.155595474371e-01,1.169810085522e-01
+7.532635022982e-02,1.012564715841e-01,1.127846944644e-01,1.209584396720e-01,1.216543647014e-01
+7.659571546879e-02,1.014588981948e-01,1.025114621511e-01,1.128082429187e-01,1.131659758673e-01
+2.079405647909e-02,4.710724516732e-02,7.597622408419e-02,9.171977778898e-02,1.037033340864e-01
+7.082206779700e-02,9.002355499742e-02,1.044181406406e-01,1.093149568834e-01,1.139700558608e-01
+5.688056488896e-02,9.478072514474e-02,1.085637706630e-01,1.114177921451e-01,1.139370265105e-01
+7.882260880455e-02,9.454474078041e-02,9.724494179950e-02,1.023829575445e-01,1.066927013814e-01
+7.005321598247e-02,9.131417221561e-02,9.498248889074e-02,9.897964162308e-02,1.121202216165e-01
+5.295654132754e-02,5.509877761894e-02,8.108227366619e-02,9.785461174861e-02,1.043968140367e-01
+3.992859920333e-02,4.471418646159e-02,7.346053904990e-02,9.181982339584e-02,9.843075910782e-02
+\end{DoxyCode}
+
+
+So, the nearest neighbor to point 0 is point 862, with a distance of 5.\+986076164057e-\/02. The second nearest neighbor to point 0 is point 344, with a distance of 7.\+664920518084e-\/02. The third nearest neighbor to point 5 is point 751, with a distance of 1.\+085637706630e-\/01.\subsection{Query and reference dataset, 10 nearest neighbors}\label{nstutorial_cli_ex2_nstut}
+
+\begin{DoxyCode}
+$ mlpack\_knn -q query\_dataset.csv -r reference\_dataset.csv \(\backslash\)
+> -n neighbors\_out.csv -d distances\_out.csv -k 10 -v
+[INFO ] Loading \textcolor{stringliteral}{'reference\_dataset.csv'} as CSV data.  Size is 3 x 1000.
+[INFO ] Loaded reference data from \textcolor{stringliteral}{'reference\_dataset.csv'} (3 x 1000).
+[INFO ] Building reference tree...
+[INFO ] Tree built.
+[INFO ] Loading \textcolor{stringliteral}{'query\_dataset.csv'} as CSV data.  Size is 3 x 50.
+[INFO ] Loaded query data from \textcolor{stringliteral}{'query\_dataset.csv'} (3x50).
+[INFO ] Searching \textcolor{keywordflow}{for} 10 nearest neighbors with dual-tree kd-tree search...
+[INFO ] Building query tree...
+[INFO ] Tree built.
+[INFO ] Search complete.
+[INFO ] Saving CSV data to \textcolor{stringliteral}{'neighbors\_out.csv'}.
+[INFO ] Saving CSV data to \textcolor{stringliteral}{'distances\_out.csv'}.
+[INFO ]
+[INFO ] Execution parameters:
+[INFO ]   distances\_file: distances\_out.csv
+[INFO ]   help: \textcolor{keyword}{false}
+[INFO ]   info: \textcolor{stringliteral}{""}
+[INFO ]   input\_model\_file: \textcolor{stringliteral}{""}
+[INFO ]   k: 10
+[INFO ]   leaf\_size: 20
+[INFO ]   naive: \textcolor{keyword}{false}
+[INFO ]   neighbors\_file: neighbors\_out.csv
+[INFO ]   output\_model\_file: \textcolor{stringliteral}{""}
+[INFO ]   query\_file: query\_dataset.csv
+[INFO ]   random\_basis: \textcolor{keyword}{false}
+[INFO ]   reference\_file: reference\_dataset.csv
+[INFO ]   seed: 0
+[INFO ]   single\_mode: \textcolor{keyword}{false}
+[INFO ]   tree\_type: kd
+[INFO ]   verbose: \textcolor{keyword}{true}
+[INFO ]   version: \textcolor{keyword}{false}
+[INFO ]
+[INFO ] Program timers:
+[INFO ]   computing\_neighbors: 0.022589s
+[INFO ]   loading\_data: 0.003572s
+[INFO ]   saving\_data: 0.000755s
+[INFO ]   total\_time: 0.032197s
+[INFO ]   tree\_building: 0.002590s
+\end{DoxyCode}
+\subsection{One dataset, 3 nearest neighbors, leaf size of 15 points}\label{nstutorial_cli_ex3_nstut}
+
+\begin{DoxyCode}
+$ mlpack\_knn -r dataset.csv -n neighbors\_out.csv -d distances\_out.csv -k 3 -l 15 -v
+[INFO ] Loading \textcolor{stringliteral}{'dataset.csv'} as CSV data.  Size is 3 x 1000.
+[INFO ] Loaded reference data from \textcolor{stringliteral}{'dataset.csv'} (3 x 1000).
+[INFO ] Building reference tree...
+[INFO ] Tree built.
+[INFO ] Searching \textcolor{keywordflow}{for} 3 nearest neighbors with dual-tree kd-tree search...
+[INFO ] 19692 node combinations were scored.
+[INFO ] 36263 base cases were calculated.
+[INFO ] Search complete.
+[INFO ] Saving CSV data to \textcolor{stringliteral}{'neighbors\_out.csv'}.
+[INFO ] Saving CSV data to \textcolor{stringliteral}{'distances\_out.csv'}.
+[INFO ]
+[INFO ] Execution parameters:
+[INFO ]   distances\_file: distances\_out.csv
+[INFO ]   help: \textcolor{keyword}{false}
+[INFO ]   info: \textcolor{stringliteral}{""}
+[INFO ]   input\_model\_file: \textcolor{stringliteral}{""}
+[INFO ]   k: 3
+[INFO ]   leaf\_size: 15
+[INFO ]   naive: \textcolor{keyword}{false}
+[INFO ]   neighbors\_file: neighbors\_out.csv
+[INFO ]   output\_model\_file: \textcolor{stringliteral}{""}
+[INFO ]   query\_file: \textcolor{stringliteral}{""}
+[INFO ]   random\_basis: \textcolor{keyword}{false}
+[INFO ]   reference\_file: dataset.csv
+[INFO ]   seed: 0
+[INFO ]   single\_mode: \textcolor{keyword}{false}
+[INFO ]   tree\_type: kd
+[INFO ]   verbose: \textcolor{keyword}{true}
+[INFO ]   version: \textcolor{keyword}{false}
+[INFO ]
+[INFO ] Program timers:
+[INFO ]   computing\_neighbors: 0.059020s
+[INFO ]   loading\_data: 0.002791s
+[INFO ]   saving\_data: 0.002369s
+[INFO ]   total\_time: 0.069277s
+[INFO ]   tree\_building: 0.002713s
+\end{DoxyCode}
+
+
+Further documentation on options should be found by using the --help option.\section{The \textquotesingle{}\+K\+N\+N\textquotesingle{} class}\label{nstutorial_knn_nstut}
+The \textquotesingle{}K\+NN\textquotesingle{} class is, specifically, a typedef of the more extensible Neighbor\+Search class, querying for nearest neighbors using the Euclidean distance.
+
+
+\begin{DoxyCode}
+\textcolor{keyword}{typedef} NeighborSearch<NearestNeighborSort, metric::EuclideanDistance>
+    KNN;
+\end{DoxyCode}
+
+
+Using the K\+NN class is particularly simple; first, the object must be constructed and given a dataset. Then, the method is run, and two matrices are returned\+: one which holds the indices of the nearest neighbors, and one which holds the distances of the nearest neighbors. These are of the same structure as the output --neighbors\+\_\+file and --distances\+\_\+file for the C\+LI interface (see above). A handful of examples of simple usage of the K\+NN class are given below.\subsection{5 nearest neighbors on a single dataset}\label{nstutorial_knn_ex1_nstut}
+
+\begin{DoxyCode}
+\textcolor{preprocessor}{#include <mlpack/methods/neighbor_search/neighbor_search.hpp>}
+
+\textcolor{keyword}{using namespace }mlpack::neighbor;
+
+\textcolor{comment}{// Our dataset matrix, which is column-major.}
+\textcolor{keyword}{extern} arma::mat data;
+
+KNN a(data);
+
+\textcolor{comment}{// The matrices we will store output in.}
+arma::Mat<size\_t> resultingNeighbors;
+arma::mat resultingDistances;
+
+a.Search(5, resultingNeighbors, resultingDistances);
+\end{DoxyCode}
+
+
+The output of the search is stored in resulting\+Neighbors and resulting\+Distances.\subsection{10 nearest neighbors on a query and reference dataset}\label{nstutorial_knn_ex2_nstut}
+
+\begin{DoxyCode}
+\textcolor{preprocessor}{#include <mlpack/methods/neighbor_search/neighbor_search.hpp>}
+
+\textcolor{keyword}{using namespace }mlpack::neighbor;
+
+\textcolor{comment}{// Our dataset matrices, which are column-major.}
+\textcolor{keyword}{extern} arma::mat queryData, referenceData;
+
+KNN a(referenceData);
+
+\textcolor{comment}{// The matrices we will store output in.}
+arma::Mat<size\_t> resultingNeighbors;
+arma::mat resultingDistances;
+
+a.Search(queryData, 10, resultingNeighbors, resultingDistances);
+\end{DoxyCode}
+\subsection{Naive (exhaustive) search for 6 nearest neighbors on one dataset}\label{nstutorial_knn_ex3_nstut}
+This example uses the O(n$^\wedge$2) naive search (not the tree-\/based search).
+
+
+\begin{DoxyCode}
+\textcolor{preprocessor}{#include <mlpack/methods/neighbor_search/neighbor_search.hpp>}
+
+\textcolor{keyword}{using namespace }mlpack::neighbor;
+
+\textcolor{comment}{// Our dataset matrix, which is column-major.}
+\textcolor{keyword}{extern} arma::mat dataset;
+
+KNN a(dataset, \textcolor{keyword}{true});
+
+\textcolor{comment}{// The matrices we will store output in.}
+arma::Mat<size\_t> resultingNeighbors;
+arma::mat resultingDistances;
+
+a.Search(6, resultingNeighbors, resultingDistances);
+\end{DoxyCode}
+
+
+Needless to say, naive search can be very slow...\section{The extensible \textquotesingle{}\+Neighbor\+Search\textquotesingle{} class}\label{nstutorial_neighborsearch_nstut}
+The Neighbor\+Search class is very extensible, having the following template arguments\+:
+
+
+\begin{DoxyCode}
+\textcolor{keyword}{template}<
+  \textcolor{keyword}{typename} SortPolicy = NearestNeighborSort,
+  \textcolor{keyword}{typename} MetricType = mlpack::metric::EuclideanDistance,
+  \textcolor{keyword}{typename} MatType = arma::mat,
+  \textcolor{keyword}{template}<\textcolor{keyword}{typename} TreeMetricType,
+           \textcolor{keyword}{typename} TreeStatType,
+           \textcolor{keyword}{typename} TreeMatType> \textcolor{keyword}{class }TreeType = tree::KDTree,
+  \textcolor{keyword}{template}<\textcolor{keyword}{typename} RuleType> \textcolor{keyword}{class }TraversalType =
+      TreeType<MetricType, NeighborSearchStat<SortPolicy>,
+               MatType>::template DualTreeTraverser>
+>
+\textcolor{keyword}{class }NeighborSearch;
+\end{DoxyCode}
+
+
+By choosing different components for each of these template classes, a very arbitrary neighbor searching object can be constructed. Note that each of these template parameters have defaults, so it is not necessary to specify each one.\subsection{Sort\+Policy policy class}\label{nstutorial_sort_policy_doc_nstut}
+The Sort\+Policy template parameter allows specification of how the Neighbor\+Search object will decide which points are to be searched for. The \doxyref{mlpack\+::neighbor\+::\+Nearest\+Neighbor\+Sort}{p.}{classmlpack_1_1neighbor_1_1NearestNeighborSort} class is a well-\/documented example. A custom Sort\+Policy class must implement the same methods which Nearest\+Neighbor\+Sort does\+:
+
+
+\begin{DoxyCode}
+\textcolor{keyword}{static} \textcolor{keywordtype}{size\_t} SortDistance(\textcolor{keyword}{const} arma::vec& list, \textcolor{keywordtype}{double} newDistance);
+
+\textcolor{keyword}{static} \textcolor{keywordtype}{bool} IsBetter(\textcolor{keyword}{const} \textcolor{keywordtype}{double} value, \textcolor{keyword}{const} \textcolor{keywordtype}{double} ref);
+
+\textcolor{keyword}{template}<\textcolor{keyword}{typename} TreeType>
+\textcolor{keyword}{static} \textcolor{keywordtype}{double} BestNodeToNodeDistance(\textcolor{keyword}{const} TreeType* queryNode,
+                                     \textcolor{keyword}{const} TreeType* referenceNode);
+
+\textcolor{keyword}{template}<\textcolor{keyword}{typename} TreeType>
+\textcolor{keyword}{static} \textcolor{keywordtype}{double} BestPointToNodeDistance(\textcolor{keyword}{const} arma::vec& queryPoint,
+                                      \textcolor{keyword}{const} TreeType* referenceNode);
+
+\textcolor{keyword}{static} \textcolor{keyword}{const} \textcolor{keywordtype}{double} WorstDistance();
+
+\textcolor{keyword}{static} \textcolor{keyword}{const} \textcolor{keywordtype}{double} BestDistance();
+\end{DoxyCode}
+
+
+The \doxyref{mlpack\+::neighbor\+::\+Furthest\+Neighbor\+Sort}{p.}{classmlpack_1_1neighbor_1_1FurthestNeighborSort} class is another implementation, which is used to create the \textquotesingle{}K\+FN\textquotesingle{} typedef class, which finds the furthest neighbors, as opposed to the nearest neighbors.\subsection{Metric\+Type policy class}\label{nstutorial_metric_type_doc_nstut}
+The Metric\+Type policy class allows the neighbor search to take place in any arbitrary metric space. The \doxyref{mlpack\+::metric\+::\+L\+Metric}{p.}{classmlpack_1_1metric_1_1LMetric} class is a good example implementation. A Metric\+Type class must provide the following functions\+:
+
+
+\begin{DoxyCode}
+\textcolor{comment}{// Empty constructor is required.}
+MetricType();
+
+\textcolor{comment}{// Compute the distance between two points.}
+\textcolor{keyword}{template}<\textcolor{keyword}{typename} VecType>
+\textcolor{keywordtype}{double} Evaluate(\textcolor{keyword}{const} VecType& a, \textcolor{keyword}{const} VecType& b);
+\end{DoxyCode}
+
+
+Internally, the Neighbor\+Search class keeps an instantiated Metric\+Type class (which can be given in the constructor). This is useful for a metric like the Mahalanobis distance (\doxyref{mlpack\+::metric\+::\+Mahalanobis\+Distance}{p.}{classmlpack_1_1metric_1_1MahalanobisDistance}), which must store state (the covariance matrix). Therefore, you can write a non-\/static Metric\+Type class and use it seamlessly with Neighbor\+Search.
+
+For more information on the Metric\+Type policy, see the documentation \doxyref{here}{p.}{metrics}.\subsection{Mat\+Type policy class}\label{nstutorial_mat_type_doc_nstut}
+The Mat\+Type template parameter specifies the type of data matrix used. This type must implement the same operations as an Armadillo matrix, and so standard choices are {\ttfamily arma\+::mat} and {\ttfamily arma\+::sp\+\_\+mat}.\subsection{Tree\+Type policy class}\label{nstutorial_tree_type_doc_nstut}
+The Neighbor\+Search class allows great extensibility in the selection of the type of tree used for search. This type must follow the typical mlpack Tree\+Type policy, documented \doxyref{here}{p.}{trees}.
+
+Typical choices might include \doxyref{mlpack\+::tree\+::\+K\+D\+Tree}{p.}{namespacemlpack_1_1tree_a562474c3dca60a6ac3c5168ae88bc028}, \doxyref{mlpack\+::tree\+::\+Ball\+Tree}{p.}{namespacemlpack_1_1tree_abc9c69ba447c575b235eff25f14d99c7}, \doxyref{mlpack\+::tree\+::\+Standard\+Cover\+Tree}{p.}{namespacemlpack_1_1tree_a97bb6c0e6c1be359a95c89d21b1afd42}, \doxyref{mlpack\+::tree\+::\+R\+Tree}{p.}{namespacemlpack_1_1tree_a1a47efe6afda858544988d1f7927477c}, or \doxyref{mlpack\+::tree\+::\+R\+Star\+Tree}{p.}{namespacemlpack_1_1tree_a4e25f4921d1b4ca77a30bf82d5366da5}. It is easily possible to make your own tree type for use with Neighbor\+Search; consult the \doxyref{Tree\+Type documentation}{p.}{trees} for more details.
+
+An example of using the Neighbor\+Search class with a ball tree is given below.
+
+
+\begin{DoxyCode}
+\textcolor{comment}{// Construct a NeighborSearch object with ball bounds.}
+NeighborSearch<
+    NearestNeighborSort,
+    metric::EuclideanDistance,
+    arma::mat,
+    tree::BallTree
+> neighborSearch(dataset);
+\end{DoxyCode}
+\subsection{Traverser\+Type policy class}\label{nstutorial_traverser_type_doc_nstut}
+The last template parameter the Neighbor\+Search class offers is the Traverser\+Type class. The Traverser\+Type class holds the strategy used to traverse the trees in either single-\/tree or dual-\/tree search mode. By default, it is set to use the default traverser of the given {\ttfamily Tree\+Type} (which is the member {\ttfamily Tree\+Type\+::\+Dual\+Tree\+Traverser}).
+
+This class must implement the following two methods\+:
+
+
+\begin{DoxyCode}
+\textcolor{comment}{// Instantiate with a given RuleType.}
+TraverserType(RuleType& rule);
+
+\textcolor{comment}{// Traverse with two trees.}
+\textcolor{keywordtype}{void} Traverse(TreeType& queryNode, TreeType& referenceNode);
+\end{DoxyCode}
+
+
+The Rule\+Type class provides the following functions for use in the traverser\+:
+
+
+\begin{DoxyCode}
+\textcolor{comment}{// Evaluate the base case between two points.}
+\textcolor{keywordtype}{double} BaseCase(\textcolor{keyword}{const} \textcolor{keywordtype}{size\_t} queryIndex, \textcolor{keyword}{const} \textcolor{keywordtype}{size\_t} referenceIndex);
+
+\textcolor{comment}{// Score the two nodes to see if they can be pruned, returning DBL\_MAX if they}
+\textcolor{comment}{// can be pruned.}
+\textcolor{keywordtype}{double} Score(TreeType& queryNode, TreeType& referenceNode);
+\end{DoxyCode}
+
+
+Note also that any traverser given must satisfy the definition of a pruning dual-\/tree traversal given in the paper \char`\"{}\+Tree-\/independent dual-\/tree algorithms\char`\"{}.\section{Further documentation}\label{nstutorial_further_doc_nstut}
+For further documentation on the Neighbor\+Search class, consult the \doxyref{complete A\+PI documentation}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch}. 

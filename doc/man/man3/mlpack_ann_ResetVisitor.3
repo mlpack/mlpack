@@ -1,0 +1,70 @@
+.TH "mlpack::ann::ResetVisitor" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::ann::ResetVisitor \- \fBResetVisitor\fP executes the Reset() function\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits static_visitor< void >\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename LayerType > void \fBoperator()\fP (LayerType *layer) const "
+.br
+.RI "\fIExecute the Reset() function\&. \fP"
+.in -1c
+.SS "Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename T > std::enable_if< HasResetCheck< T, void(T::*)()>::value &&!HasModelCheck< T, std::vector< \fBLayerTypes\fP > &(T::*)()>::value, void >::type \fBResetParameter\fP (T *layer) const "
+.br
+.RI "\fIExecute the Reset() function for a module which implements the Reset() function\&. \fP"
+.ti -1c
+.RI "template<typename T > std::enable_if< !HasResetCheck< T, void(T::*)()>::value &&HasModelCheck< T, std::vector< \fBLayerTypes\fP > &(T::*)()>::value, void >::type \fBResetParameter\fP (T *layer) const "
+.br
+.RI "\fIExecute the Reset() function for a module which implements the Model() function\&. \fP"
+.ti -1c
+.RI "template<typename T > std::enable_if< HasResetCheck< T, void(T::*)()>::value &&HasModelCheck< T, std::vector< \fBLayerTypes\fP > &(T::*)()>::value, void >::type \fBResetParameter\fP (T *layer) const "
+.br
+.RI "\fIExecute the Reset() function for a module which implements the Reset() and Model() function\&. \fP"
+.ti -1c
+.RI "template<typename T > std::enable_if< !HasResetCheck< T, void(T::*)()>::value &&!HasModelCheck< T, std::vector< \fBLayerTypes\fP > &(T::*)()>::value, void >::type \fBResetParameter\fP (T *layer) const "
+.br
+.RI "\fIDo not execute the Reset() function for a module which doesn't implement\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBResetVisitor\fP executes the Reset() function\&. 
+.PP
+Definition at line 27 of file reset_visitor\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename LayerType > void mlpack::ann::ResetVisitor::operator() (LayerType * layer) const"
+
+.PP
+Execute the Reset() function\&. 
+.SS "template<typename T > std::enable_if< HasResetCheck<T, void(T::*)()>::value && !HasModelCheck<T, std::vector<\fBLayerTypes\fP>&(T::*)()>::value, void>::type mlpack::ann::ResetVisitor::ResetParameter (T * layer) const\fC [private]\fP"
+
+.PP
+Execute the Reset() function for a module which implements the Reset() function\&. 
+.SS "template<typename T > std::enable_if< !HasResetCheck<T, void(T::*)()>::value && HasModelCheck<T, std::vector<\fBLayerTypes\fP>&(T::*)()>::value, void>::type mlpack::ann::ResetVisitor::ResetParameter (T * layer) const\fC [private]\fP"
+
+.PP
+Execute the Reset() function for a module which implements the Model() function\&. 
+.SS "template<typename T > std::enable_if< HasResetCheck<T, void(T::*)()>::value && HasModelCheck<T, std::vector<\fBLayerTypes\fP>&(T::*)()>::value, void>::type mlpack::ann::ResetVisitor::ResetParameter (T * layer) const\fC [private]\fP"
+
+.PP
+Execute the Reset() function for a module which implements the Reset() and Model() function\&. 
+.SS "template<typename T > std::enable_if< !HasResetCheck<T, void(T::*)()>::value && !HasModelCheck<T, std::vector<\fBLayerTypes\fP>&(T::*)()>::value, void>::type mlpack::ann::ResetVisitor::ResetParameter (T * layer) const\fC [private]\fP"
+
+.PP
+Do not execute the Reset() function for a module which doesn't implement\&. 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

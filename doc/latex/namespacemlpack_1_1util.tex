@@ -1,0 +1,663 @@
+\section{mlpack\+:\+:util Namespace Reference}
+\label{namespacemlpack_1_1util}\index{mlpack\+::util@{mlpack\+::util}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class {\bf C\+L\+I\+Deleter}
+\begin{DoxyCompactList}\small\item\em Extremely simple class whose only job is to delete the existing \doxyref{C\+LI}{p.}{classmlpack_1_1CLI} object at the end of execution. \end{DoxyCompactList}\item 
+struct {\bf Is\+Std\+Vector}
+\begin{DoxyCompactList}\small\item\em Metaprogramming structure for vector detection. \end{DoxyCompactList}\item 
+struct {\bf Is\+Std\+Vector$<$ std\+::vector$<$ T, A $>$ $>$}
+\begin{DoxyCompactList}\small\item\em Metaprogramming structure for vector detection. \end{DoxyCompactList}\item 
+class {\bf Null\+Out\+Stream}
+\begin{DoxyCompactList}\small\item\em Used for \doxyref{Log\+::\+Debug}{p.}{classmlpack_1_1Log_a80ba817a1abcf742c7463b1e74bf55da} when not compiled with debugging symbols. \end{DoxyCompactList}\item 
+class {\bf Option}
+\begin{DoxyCompactList}\small\item\em A static object whose constructor registers a parameter with the \doxyref{C\+LI}{p.}{classmlpack_1_1CLI} class. \end{DoxyCompactList}\item 
+struct {\bf Param\+Data}
+\begin{DoxyCompactList}\small\item\em This structure holds all of the information about a single parameter, including its value (which is set when Parse\+Command\+Line() is called). \end{DoxyCompactList}\item 
+struct {\bf Parameter\+Type}
+\begin{DoxyCompactList}\small\item\em Utility struct to return the type that boost\+::program\+\_\+options should accept for a given input type. \end{DoxyCompactList}\item 
+struct {\bf Parameter\+Type$<$ arma\+::\+Col$<$ e\+T $>$ $>$}
+\begin{DoxyCompactList}\small\item\em For vector types, boost\+::program\+\_\+options will accept a std\+::string, not an arma\+::\+Col$<$e\+T$>$ (since it is not clear how to specify a vector on the command-\/line). \end{DoxyCompactList}\item 
+struct {\bf Parameter\+Type$<$ arma\+::\+Mat$<$ e\+T $>$ $>$}
+\begin{DoxyCompactList}\small\item\em For matrix types, boost\+::program\+\_\+options will accept a std\+::string, not an arma\+::mat (since it is not clear how to specify a matrix on the command-\/line). \end{DoxyCompactList}\item 
+struct {\bf Parameter\+Type$<$ arma\+::\+Row$<$ e\+T $>$ $>$}
+\begin{DoxyCompactList}\small\item\em For row vector types, boost\+::program\+\_\+options will accept a std\+::string, not an arma\+::\+Row$<$e\+T$>$ (since it is not clear how to specify a vector on the command-\/line). \end{DoxyCompactList}\item 
+struct {\bf Parameter\+Type$<$ std\+::tuple$<$ mlpack\+::data\+::\+Dataset\+Mapper$<$ Policy\+Type $>$, arma\+::\+Mat$<$ e\+T $>$ $>$ $>$}
+\begin{DoxyCompactList}\small\item\em For matrix+dataset info types, we should accept a std\+::string. \end{DoxyCompactList}\item 
+struct {\bf Parameter\+Type\+Deducer}
+\item 
+struct {\bf Parameter\+Type\+Deducer$<$ true, T $>$}
+\item 
+class {\bf Prefixed\+Out\+Stream}
+\begin{DoxyCompactList}\small\item\em Allows us to output to an ostream with a prefix at the beginning of each line, in the same way we would output to cout or cerr. \end{DoxyCompactList}\item 
+class {\bf Program\+Doc}
+\begin{DoxyCompactList}\small\item\em A static object whose constructor registers program documentation with the \doxyref{C\+LI}{p.}{classmlpack_1_1CLI} class. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename T $>$ }\\{\bf std\+::string} {\bf Default\+Param} (const {\bf Param\+Data} \&data)
+\begin{DoxyCompactList}\small\item\em Return the default value of an option. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\{\bf std\+::string} {\bf Default\+Param\+Impl} (const {\bf Param\+Data} \&data, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ {\bf Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ {\bf data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, {\bf std\+::string} $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ {\bf mlpack\+::data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return the default value of an option. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\{\bf std\+::string} {\bf Default\+Param\+Impl} (const {\bf Param\+Data} \&data, const typename boost\+::enable\+\_\+if$<$ {\bf Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return the default value of a vector option. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\{\bf std\+::string} {\bf Default\+Param\+Impl} (const {\bf Param\+Data} \&data, const typename boost\+::enable\+\_\+if\+\_\+c$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value$\vert$$\vert${\bf data\+::\+Has\+Serialize}$<$ T $>$\+::value$\vert$$\vert$std\+::is\+\_\+same$<$ T, std\+::tuple$<$ {\bf mlpack\+::data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value$\vert$$\vert$std\+::is\+\_\+same$<$ T, {\bf std\+::string} $>$\+::value $>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return the default value of a matrix option (this returns the default filename, or \textquotesingle{}\textquotesingle{} if the default is no file). \end{DoxyCompactList}\item 
+{\bf std\+::string} {\bf Get\+Version} ()
+\begin{DoxyCompactList}\small\item\em This will return either \char`\"{}mlpack x.\+y.\+z\char`\"{} or \char`\"{}mlpack master-\/\+X\+X\+X\+X\+X\+X\+X\char`\"{} depending on whether or not this is a stable version of mlpack or a git repository. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\T \& {\bf Handle\+Parameter} (typename {\bf util\+::\+Parameter\+Type}$<$ T $>$\+::type \&value, {\bf util\+::\+Param\+Data} \&d, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ {\bf data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ {\bf mlpack\+::data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em If needed, map \textquotesingle{}true\+Value\textquotesingle{} to the right type and return it. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\T \& {\bf Handle\+Parameter} (typename {\bf util\+::\+Parameter\+Type}$<$ T $>$\+::type \&value, {\bf util\+::\+Param\+Data} \&d, const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em This must be overloaded for matrices. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\T \& {\bf Handle\+Parameter} (typename {\bf util\+::\+Parameter\+Type}$<$ T $>$\+::type \&value, {\bf util\+::\+Param\+Data} \&d, const typename boost\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ {\bf mlpack\+::data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em This must be overloaded for matrices and dataset info objects. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\T \& {\bf Handle\+Parameter} (typename {\bf util\+::\+Parameter\+Type}$<$ T $>$\+::type \&value, {\bf util\+::\+Param\+Data} \&d, const typename boost\+::enable\+\_\+if$<$ {\bf data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em This must be overloaded for serializable objects. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\T \& {\bf Handle\+Raw\+Parameter} (typename {\bf util\+::\+Parameter\+Type}$<$ T $>$\+::type \&value, {\bf util\+::\+Param\+Data} \&, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ {\bf data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ {\bf data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em This will just return the value. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\T \& {\bf Handle\+Raw\+Parameter} (typename {\bf util\+::\+Parameter\+Type}$<$ T $>$\+::type \&, {\bf util\+::\+Param\+Data} \&d, const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em This will return the mapped value. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\T \& {\bf Handle\+Raw\+Parameter} (typename {\bf util\+::\+Parameter\+Type}$<$ T $>$\+::type \&, {\bf util\+::\+Param\+Data} \&d, const typename boost\+::enable\+\_\+if$<$ {\bf data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em This will return the mapped value. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\T \& {\bf Handle\+Raw\+Parameter} (typename {\bf util\+::\+Parameter\+Type}$<$ T $>$\+::type \&, {\bf util\+::\+Param\+Data} \&d, const typename boost\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ {\bf data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em This will return the mapped value. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\{\bf std\+::string} {\bf Map\+Parameter\+Name} (const {\bf std\+::string} \&identifier, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ {\bf data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ {\bf mlpack\+::data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em If needed, map the parameter name to the name that is used by boost. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\{\bf std\+::string} {\bf Map\+Parameter\+Name} (const {\bf std\+::string} \&identifier, const typename boost\+::enable\+\_\+if\+\_\+c$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value$\vert$$\vert$std\+::is\+\_\+same$<$ T, std\+::tuple$<$ {\bf mlpack\+::data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value$\vert$$\vert${\bf data\+::\+Has\+Serialize}$<$ T $>$\+::value $>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em This must be overloaded for matrices. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void {\bf Output\+Param} (const {\bf Param\+Data} \&data)
+\begin{DoxyCompactList}\small\item\em Output an option. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void {\bf Output\+Param\+Impl} (const {\bf Param\+Data} \&data, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ {\bf Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ {\bf data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ {\bf data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Output an option (print to stdout). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void {\bf Output\+Param\+Impl} (const {\bf Param\+Data} \&data, const typename boost\+::enable\+\_\+if$<$ {\bf Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Output a vector option (print to stdout). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void {\bf Output\+Param\+Impl} (const {\bf Param\+Data} \&data, const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Output a matrix option (this saves it to the given file). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void {\bf Output\+Param\+Impl} (const {\bf Param\+Data} \&data, const typename boost\+::enable\+\_\+if$<$ {\bf data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Output a serializable class option (this saves it to the given file). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void {\bf Output\+Param\+Impl} (const {\bf Param\+Data} \&data, const typename boost\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ {\bf data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Output a mapped dataset. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void {\bf Print\+Param} (const {\bf Param\+Data} \&data)
+\begin{DoxyCompactList}\small\item\em Print an option. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void {\bf Print\+Param\+Impl} (const {\bf Param\+Data} \&data, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ {\bf Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ {\bf data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ {\bf data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print an option. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void {\bf Print\+Param\+Impl} (const {\bf Param\+Data} \&data, const typename boost\+::enable\+\_\+if$<$ {\bf Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print a vector option, with spaces between it. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void {\bf Print\+Param\+Impl} (const {\bf Param\+Data} \&data, const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print a matrix option (this just prints the filename). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void {\bf Print\+Param\+Impl} (const {\bf Param\+Data} \&data, const typename boost\+::enable\+\_\+if$<$ {\bf data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print a serializable class option (this just prints the filename). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void {\bf Print\+Param\+Impl} (const {\bf Param\+Data} \&data, const typename boost\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ {\bf data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print a mapped matrix option (this just prints the filename). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\{\bf std\+::string} {\bf String\+Type\+Param} ()
+\begin{DoxyCompactList}\small\item\em Return a string containing the type of a parameter. \end{DoxyCompactList}\item 
+{\footnotesize template$<$$>$ }\\{\bf std\+::string} {\bf String\+Type\+Param$<$ bool $>$} ()
+\begin{DoxyCompactList}\small\item\em Return \char`\"{}bool\char`\"{}. \end{DoxyCompactList}\item 
+{\footnotesize template$<$$>$ }\\{\bf std\+::string} {\bf String\+Type\+Param$<$ double $>$} ()
+\begin{DoxyCompactList}\small\item\em Return \char`\"{}double\char`\"{}. \end{DoxyCompactList}\item 
+{\footnotesize template$<$$>$ }\\{\bf std\+::string} {\bf String\+Type\+Param$<$ float $>$} ()
+\begin{DoxyCompactList}\small\item\em Return \char`\"{}float\char`\"{}. \end{DoxyCompactList}\item 
+{\footnotesize template$<$$>$ }\\{\bf std\+::string} {\bf String\+Type\+Param$<$ int $>$} ()
+\begin{DoxyCompactList}\small\item\em Return \char`\"{}int\char`\"{}. \end{DoxyCompactList}\item 
+{\footnotesize template$<$$>$ }\\{\bf std\+::string} {\bf String\+Type\+Param$<$ std\+::string $>$} ()
+\begin{DoxyCompactList}\small\item\em Return \char`\"{}string\char`\"{}. \end{DoxyCompactList}\item 
+{\footnotesize template$<$$>$ }\\{\bf std\+::string} {\bf String\+Type\+Param$<$ std\+::tuple$<$ mlpack\+::data\+::\+Dataset\+Info, arma\+::mat $>$ $>$} ()
+\begin{DoxyCompactList}\small\item\em Return \char`\"{}string\char`\"{};. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\{\bf std\+::string} {\bf String\+Type\+Param\+Impl} (const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ {\bf Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ {\bf data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return a string containing the type of the parameter. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\{\bf std\+::string} {\bf String\+Type\+Param\+Impl} (const typename boost\+::enable\+\_\+if$<$ {\bf Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return a string containing the type of the parameter, for vector options. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\{\bf std\+::string} {\bf String\+Type\+Param\+Impl} (const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return a string containing the type of the parameter, for matrix options. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\{\bf std\+::string} {\bf String\+Type\+Param\+Impl} (const typename boost\+::enable\+\_\+if$<$ {\bf data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return a string containing the type of the parameter,. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+M\+L\+P\+A\+C\+K\+\_\+\+E\+X\+P\+O\+RT {\bf C\+L\+I\+Deleter} {\bf cli\+Deleter}
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\index{mlpack\+::util@{mlpack\+::util}!Default\+Param@{Default\+Param}}
+\index{Default\+Param@{Default\+Param}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{Default\+Param(const Param\+Data \&data)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ {\bf std\+::string} mlpack\+::util\+::\+Default\+Param (
+\begin{DoxyParamCaption}
+\item[{const {\bf Param\+Data} \&}]{data}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1util_a10e767ce28784a5d9d1254e64c247f29}
+
+
+Return the default value of an option. 
+
+This is the function that will be called by the \doxyref{C\+LI}{p.}{classmlpack_1_1CLI} module. 
+
+Definition at line 55 of file default\+\_\+param.\+hpp.
+
+\index{mlpack\+::util@{mlpack\+::util}!Default\+Param\+Impl@{Default\+Param\+Impl}}
+\index{Default\+Param\+Impl@{Default\+Param\+Impl}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{Default\+Param\+Impl(const Param\+Data \&data, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ Is\+Std\+Vector$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ data\+::\+Has\+Serialize$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::string $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ mlpack\+::data\+::\+Dataset\+Info, arma\+::mat $>$$>$$>$\+::type $\ast$=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ {\bf std\+::string} mlpack\+::util\+::\+Default\+Param\+Impl (
+\begin{DoxyParamCaption}
+\item[{const {\bf Param\+Data} \&}]{data, }
+\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0}, }
+\item[{const typename boost\+::disable\+\_\+if$<$ {\bf Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0}, }
+\item[{const typename boost\+::disable\+\_\+if$<$ {\bf data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0}, }
+\item[{const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, {\bf std\+::string} $>$$>$\+::type $\ast$}]{ = {\ttfamily 0}, }
+\item[{const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ {\bf mlpack\+::data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1util_a7a07ecac4cd6cb8d46e06e99a38034b2}
+
+
+Return the default value of an option. 
+
+\index{mlpack\+::util@{mlpack\+::util}!Default\+Param\+Impl@{Default\+Param\+Impl}}
+\index{Default\+Param\+Impl@{Default\+Param\+Impl}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{Default\+Param\+Impl(const Param\+Data \&data, const typename boost\+::enable\+\_\+if$<$ Is\+Std\+Vector$<$ T $>$$>$\+::type $\ast$=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ {\bf std\+::string} mlpack\+::util\+::\+Default\+Param\+Impl (
+\begin{DoxyParamCaption}
+\item[{const {\bf Param\+Data} \&}]{data, }
+\item[{const typename boost\+::enable\+\_\+if$<$ {\bf Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1util_a225b8a894c66a27847172bd249f61935}
+
+
+Return the default value of a vector option. 
+
+\index{mlpack\+::util@{mlpack\+::util}!Default\+Param\+Impl@{Default\+Param\+Impl}}
+\index{Default\+Param\+Impl@{Default\+Param\+Impl}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{Default\+Param\+Impl(const Param\+Data \&data, const typename boost\+::enable\+\_\+if\+\_\+c$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value\texttt{"|}\texttt{"|}data\+::\+Has\+Serialize$<$ T $>$\+::value\texttt{"|}\texttt{"|}std\+::is\+\_\+same$<$ T, std\+::tuple$<$ mlpack\+::data\+::\+Dataset\+Info, arma\+::mat $>$$>$\+::value\texttt{"|}\texttt{"|}std\+::is\+\_\+same$<$ T, std\+::string $>$\+::value $>$\+::type $\ast$=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ {\bf std\+::string} mlpack\+::util\+::\+Default\+Param\+Impl (
+\begin{DoxyParamCaption}
+\item[{const {\bf Param\+Data} \&}]{data, }
+\item[{const typename boost\+::enable\+\_\+if\+\_\+c$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value$\vert$$\vert${\bf data\+::\+Has\+Serialize}$<$ T $>$\+::value$\vert$$\vert$std\+::is\+\_\+same$<$ T, std\+::tuple$<$ {\bf mlpack\+::data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value$\vert$$\vert$std\+::is\+\_\+same$<$ T, {\bf std\+::string} $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1util_a753b832dccb22fc7745156fbb488a830}
+
+
+Return the default value of a matrix option (this returns the default filename, or \textquotesingle{}\textquotesingle{} if the default is no file). 
+
+\index{mlpack\+::util@{mlpack\+::util}!Get\+Version@{Get\+Version}}
+\index{Get\+Version@{Get\+Version}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{Get\+Version()}]{\setlength{\rightskip}{0pt plus 5cm}{\bf std\+::string} mlpack\+::util\+::\+Get\+Version (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1util_a5463728499ca94746d779a6863df5c20}
+
+
+This will return either \char`\"{}mlpack x.\+y.\+z\char`\"{} or \char`\"{}mlpack master-\/\+X\+X\+X\+X\+X\+X\+X\char`\"{} depending on whether or not this is a stable version of mlpack or a git repository. 
+
+\index{mlpack\+::util@{mlpack\+::util}!Handle\+Parameter@{Handle\+Parameter}}
+\index{Handle\+Parameter@{Handle\+Parameter}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{Handle\+Parameter(typename util\+::\+Parameter\+Type$<$ T $>$\+::type \&value, util\+::\+Param\+Data \&d, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ data\+::\+Has\+Serialize$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ mlpack\+::data\+::\+Dataset\+Info, arma\+::mat $>$$>$$>$\+::type $\ast$=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ T\& mlpack\+::util\+::\+Handle\+Parameter (
+\begin{DoxyParamCaption}
+\item[{typename {\bf util\+::\+Parameter\+Type}$<$ T $>$\+::type \&}]{value, }
+\item[{{\bf util\+::\+Param\+Data} \&}]{d, }
+\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0}, }
+\item[{const typename boost\+::disable\+\_\+if$<$ {\bf data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0}, }
+\item[{const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ {\bf mlpack\+::data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1util_aae3470fa2dbb78cf7941aee55b93c0df}
+
+
+If needed, map \textquotesingle{}true\+Value\textquotesingle{} to the right type and return it. 
+
+This is called from Get\+Param(). \index{mlpack\+::util@{mlpack\+::util}!Handle\+Parameter@{Handle\+Parameter}}
+\index{Handle\+Parameter@{Handle\+Parameter}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{Handle\+Parameter(typename util\+::\+Parameter\+Type$<$ T $>$\+::type \&value, util\+::\+Param\+Data \&d, const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ T\& mlpack\+::util\+::\+Handle\+Parameter (
+\begin{DoxyParamCaption}
+\item[{typename {\bf util\+::\+Parameter\+Type}$<$ T $>$\+::type \&}]{value, }
+\item[{{\bf util\+::\+Param\+Data} \&}]{d, }
+\item[{const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1util_a4d174fb0ab66d73fba1f05863ce7550b}
+
+
+This must be overloaded for matrices. 
+
+\index{mlpack\+::util@{mlpack\+::util}!Handle\+Parameter@{Handle\+Parameter}}
+\index{Handle\+Parameter@{Handle\+Parameter}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{Handle\+Parameter(typename util\+::\+Parameter\+Type$<$ T $>$\+::type \&value, util\+::\+Param\+Data \&d, const typename boost\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ mlpack\+::data\+::\+Dataset\+Info, arma\+::mat $>$$>$$>$\+::type $\ast$=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ T\& mlpack\+::util\+::\+Handle\+Parameter (
+\begin{DoxyParamCaption}
+\item[{typename {\bf util\+::\+Parameter\+Type}$<$ T $>$\+::type \&}]{value, }
+\item[{{\bf util\+::\+Param\+Data} \&}]{d, }
+\item[{const typename boost\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ {\bf mlpack\+::data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1util_a38013d0e8b2a39c854aade282b38f9c6}
+
+
+This must be overloaded for matrices and dataset info objects. 
+
+\index{mlpack\+::util@{mlpack\+::util}!Handle\+Parameter@{Handle\+Parameter}}
+\index{Handle\+Parameter@{Handle\+Parameter}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{Handle\+Parameter(typename util\+::\+Parameter\+Type$<$ T $>$\+::type \&value, util\+::\+Param\+Data \&d, const typename boost\+::enable\+\_\+if$<$ data\+::\+Has\+Serialize$<$ T $>$$>$\+::type $\ast$=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ T\& mlpack\+::util\+::\+Handle\+Parameter (
+\begin{DoxyParamCaption}
+\item[{typename {\bf util\+::\+Parameter\+Type}$<$ T $>$\+::type \&}]{value, }
+\item[{{\bf util\+::\+Param\+Data} \&}]{d, }
+\item[{const typename boost\+::enable\+\_\+if$<$ {\bf data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1util_ab92ce8a41434ce579db31759d0fcfbc0}
+
+
+This must be overloaded for serializable objects. 
+
+\index{mlpack\+::util@{mlpack\+::util}!Handle\+Raw\+Parameter@{Handle\+Raw\+Parameter}}
+\index{Handle\+Raw\+Parameter@{Handle\+Raw\+Parameter}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{Handle\+Raw\+Parameter(typename util\+::\+Parameter\+Type$<$ T $>$\+::type \&value, util\+::\+Param\+Data \&, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ data\+::\+Has\+Serialize$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ data\+::\+Dataset\+Info, arma\+::mat $>$$>$$>$\+::type $\ast$=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ T\& mlpack\+::util\+::\+Handle\+Raw\+Parameter (
+\begin{DoxyParamCaption}
+\item[{typename {\bf util\+::\+Parameter\+Type}$<$ T $>$\+::type \&}]{value, }
+\item[{{\bf util\+::\+Param\+Data} \&}]{, }
+\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0}, }
+\item[{const typename boost\+::disable\+\_\+if$<$ {\bf data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0}, }
+\item[{const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ {\bf data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1util_aa3f80098eaaf4a405f255b4dc5582e78}
+
+
+This will just return the value. 
+
+
+
+Definition at line 221 of file param\+\_\+data.\+hpp.
+
+
+
+References mlpack\+::util\+::\+Is\+Std\+Vector$<$ T $>$\+::value.
+
+\index{mlpack\+::util@{mlpack\+::util}!Handle\+Raw\+Parameter@{Handle\+Raw\+Parameter}}
+\index{Handle\+Raw\+Parameter@{Handle\+Raw\+Parameter}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{Handle\+Raw\+Parameter(typename util\+::\+Parameter\+Type$<$ T $>$\+::type \&, util\+::\+Param\+Data \&d, const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ T\& mlpack\+::util\+::\+Handle\+Raw\+Parameter (
+\begin{DoxyParamCaption}
+\item[{typename {\bf util\+::\+Parameter\+Type}$<$ T $>$\+::type \&}]{, }
+\item[{{\bf util\+::\+Param\+Data} \&}]{d, }
+\item[{const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1util_a223c0bcfebfb9d36efa41babd17a9bb6}
+
+
+This will return the mapped value. 
+
+
+
+Definition at line 234 of file param\+\_\+data.\+hpp.
+
+
+
+References mlpack\+::util\+::\+Param\+Data\+::mapped\+Value.
+
+\index{mlpack\+::util@{mlpack\+::util}!Handle\+Raw\+Parameter@{Handle\+Raw\+Parameter}}
+\index{Handle\+Raw\+Parameter@{Handle\+Raw\+Parameter}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{Handle\+Raw\+Parameter(typename util\+::\+Parameter\+Type$<$ T $>$\+::type \&, util\+::\+Param\+Data \&d, const typename boost\+::enable\+\_\+if$<$ data\+::\+Has\+Serialize$<$ T $>$$>$\+::type $\ast$=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ T\& mlpack\+::util\+::\+Handle\+Raw\+Parameter (
+\begin{DoxyParamCaption}
+\item[{typename {\bf util\+::\+Parameter\+Type}$<$ T $>$\+::type \&}]{, }
+\item[{{\bf util\+::\+Param\+Data} \&}]{d, }
+\item[{const typename boost\+::enable\+\_\+if$<$ {\bf data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1util_a2b664de274d87b5828a27dfcee6b2763}
+
+
+This will return the mapped value. 
+
+
+
+Definition at line 244 of file param\+\_\+data.\+hpp.
+
+
+
+References mlpack\+::util\+::\+Param\+Data\+::mapped\+Value.
+
+\index{mlpack\+::util@{mlpack\+::util}!Handle\+Raw\+Parameter@{Handle\+Raw\+Parameter}}
+\index{Handle\+Raw\+Parameter@{Handle\+Raw\+Parameter}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{Handle\+Raw\+Parameter(typename util\+::\+Parameter\+Type$<$ T $>$\+::type \&, util\+::\+Param\+Data \&d, const typename boost\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ data\+::\+Dataset\+Info, arma\+::mat $>$$>$$>$\+::type $\ast$=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ T\& mlpack\+::util\+::\+Handle\+Raw\+Parameter (
+\begin{DoxyParamCaption}
+\item[{typename {\bf util\+::\+Parameter\+Type}$<$ T $>$\+::type \&}]{, }
+\item[{{\bf util\+::\+Param\+Data} \&}]{d, }
+\item[{const typename boost\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ {\bf data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1util_a2569291ffd7a7a9bcadb809ce362b0ab}
+
+
+This will return the mapped value. 
+
+
+
+Definition at line 254 of file param\+\_\+data.\+hpp.
+
+
+
+References mlpack\+::util\+::\+Param\+Data\+::mapped\+Value.
+
+\index{mlpack\+::util@{mlpack\+::util}!Map\+Parameter\+Name@{Map\+Parameter\+Name}}
+\index{Map\+Parameter\+Name@{Map\+Parameter\+Name}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{Map\+Parameter\+Name(const std\+::string \&identifier, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ data\+::\+Has\+Serialize$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ mlpack\+::data\+::\+Dataset\+Info, arma\+::mat $>$$>$$>$\+::type $\ast$=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ {\bf std\+::string} mlpack\+::util\+::\+Map\+Parameter\+Name (
+\begin{DoxyParamCaption}
+\item[{const {\bf std\+::string} \&}]{identifier, }
+\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0}, }
+\item[{const typename boost\+::disable\+\_\+if$<$ {\bf data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0}, }
+\item[{const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ {\bf mlpack\+::data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1util_ad9bc434c49bd32e0e2d5189777734015}
+
+
+If needed, map the parameter name to the name that is used by boost. 
+
+This is generally the same as the name, but for matrices it may be different. \index{mlpack\+::util@{mlpack\+::util}!Map\+Parameter\+Name@{Map\+Parameter\+Name}}
+\index{Map\+Parameter\+Name@{Map\+Parameter\+Name}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{Map\+Parameter\+Name(const std\+::string \&identifier, const typename boost\+::enable\+\_\+if\+\_\+c$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value\texttt{"|}\texttt{"|}std\+::is\+\_\+same$<$ T, std\+::tuple$<$ mlpack\+::data\+::\+Dataset\+Info, arma\+::mat $>$$>$\+::value\texttt{"|}\texttt{"|}data\+::\+Has\+Serialize$<$ T $>$\+::value $>$\+::type $\ast$=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ {\bf std\+::string} mlpack\+::util\+::\+Map\+Parameter\+Name (
+\begin{DoxyParamCaption}
+\item[{const {\bf std\+::string} \&}]{identifier, }
+\item[{const typename boost\+::enable\+\_\+if\+\_\+c$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value$\vert$$\vert$std\+::is\+\_\+same$<$ T, std\+::tuple$<$ {\bf mlpack\+::data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value$\vert$$\vert${\bf data\+::\+Has\+Serialize}$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1util_a8a288f98f034cfacefc9ad0edbe79598}
+
+
+This must be overloaded for matrices. 
+
+\index{mlpack\+::util@{mlpack\+::util}!Output\+Param@{Output\+Param}}
+\index{Output\+Param@{Output\+Param}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{Output\+Param(const Param\+Data \&data)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ void mlpack\+::util\+::\+Output\+Param (
+\begin{DoxyParamCaption}
+\item[{const {\bf Param\+Data} \&}]{data}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1util_adbbdffbdf9cf692ba53f3a98babba064}
+
+
+Output an option. 
+
+This is the function that will be called by the \doxyref{C\+LI}{p.}{classmlpack_1_1CLI} module. 
+
+Definition at line 66 of file output\+\_\+param.\+hpp.
+
+\index{mlpack\+::util@{mlpack\+::util}!Output\+Param\+Impl@{Output\+Param\+Impl}}
+\index{Output\+Param\+Impl@{Output\+Param\+Impl}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{Output\+Param\+Impl(const Param\+Data \&data, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ Is\+Std\+Vector$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ data\+::\+Has\+Serialize$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ data\+::\+Dataset\+Info, arma\+::mat $>$$>$$>$\+::type $\ast$=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ void mlpack\+::util\+::\+Output\+Param\+Impl (
+\begin{DoxyParamCaption}
+\item[{const {\bf Param\+Data} \&}]{data, }
+\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0}, }
+\item[{const typename boost\+::disable\+\_\+if$<$ {\bf Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0}, }
+\item[{const typename boost\+::disable\+\_\+if$<$ {\bf data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0}, }
+\item[{const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ {\bf data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1util_a82f394d5f14ef8ddf126d274de2fe883}
+
+
+Output an option (print to stdout). 
+
+\index{mlpack\+::util@{mlpack\+::util}!Output\+Param\+Impl@{Output\+Param\+Impl}}
+\index{Output\+Param\+Impl@{Output\+Param\+Impl}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{Output\+Param\+Impl(const Param\+Data \&data, const typename boost\+::enable\+\_\+if$<$ Is\+Std\+Vector$<$ T $>$$>$\+::type $\ast$=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ void mlpack\+::util\+::\+Output\+Param\+Impl (
+\begin{DoxyParamCaption}
+\item[{const {\bf Param\+Data} \&}]{data, }
+\item[{const typename boost\+::enable\+\_\+if$<$ {\bf Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1util_a6888af772f845937a5ab64b485057025}
+
+
+Output a vector option (print to stdout). 
+
+\index{mlpack\+::util@{mlpack\+::util}!Output\+Param\+Impl@{Output\+Param\+Impl}}
+\index{Output\+Param\+Impl@{Output\+Param\+Impl}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{Output\+Param\+Impl(const Param\+Data \&data, const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ void mlpack\+::util\+::\+Output\+Param\+Impl (
+\begin{DoxyParamCaption}
+\item[{const {\bf Param\+Data} \&}]{data, }
+\item[{const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1util_aae01ac09ae0e6243562ed474a089a485}
+
+
+Output a matrix option (this saves it to the given file). 
+
+\index{mlpack\+::util@{mlpack\+::util}!Output\+Param\+Impl@{Output\+Param\+Impl}}
+\index{Output\+Param\+Impl@{Output\+Param\+Impl}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{Output\+Param\+Impl(const Param\+Data \&data, const typename boost\+::enable\+\_\+if$<$ data\+::\+Has\+Serialize$<$ T $>$$>$\+::type $\ast$=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ void mlpack\+::util\+::\+Output\+Param\+Impl (
+\begin{DoxyParamCaption}
+\item[{const {\bf Param\+Data} \&}]{data, }
+\item[{const typename boost\+::enable\+\_\+if$<$ {\bf data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1util_a4fe9a182118d6a99a9d5977153056de4}
+
+
+Output a serializable class option (this saves it to the given file). 
+
+\index{mlpack\+::util@{mlpack\+::util}!Output\+Param\+Impl@{Output\+Param\+Impl}}
+\index{Output\+Param\+Impl@{Output\+Param\+Impl}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{Output\+Param\+Impl(const Param\+Data \&data, const typename boost\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ data\+::\+Dataset\+Info, arma\+::mat $>$$>$$>$\+::type $\ast$=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ void mlpack\+::util\+::\+Output\+Param\+Impl (
+\begin{DoxyParamCaption}
+\item[{const {\bf Param\+Data} \&}]{data, }
+\item[{const typename boost\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ {\bf data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1util_a32023409e5b4401bf06f06676cdffd11}
+
+
+Output a mapped dataset. 
+
+\index{mlpack\+::util@{mlpack\+::util}!Print\+Param@{Print\+Param}}
+\index{Print\+Param@{Print\+Param}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{Print\+Param(const Param\+Data \&data)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ void mlpack\+::util\+::\+Print\+Param (
+\begin{DoxyParamCaption}
+\item[{const {\bf Param\+Data} \&}]{data}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1util_ae45eda92ca7755fc81268c525aa5f955}
+
+
+Print an option. 
+
+
+
+Definition at line 66 of file print\+\_\+param.\+hpp.
+
+\index{mlpack\+::util@{mlpack\+::util}!Print\+Param\+Impl@{Print\+Param\+Impl}}
+\index{Print\+Param\+Impl@{Print\+Param\+Impl}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{Print\+Param\+Impl(const Param\+Data \&data, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ Is\+Std\+Vector$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ data\+::\+Has\+Serialize$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ data\+::\+Dataset\+Info, arma\+::mat $>$$>$$>$\+::type $\ast$=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ void mlpack\+::util\+::\+Print\+Param\+Impl (
+\begin{DoxyParamCaption}
+\item[{const {\bf Param\+Data} \&}]{data, }
+\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0}, }
+\item[{const typename boost\+::disable\+\_\+if$<$ {\bf Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0}, }
+\item[{const typename boost\+::disable\+\_\+if$<$ {\bf data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0}, }
+\item[{const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ {\bf data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1util_a131d023b96d1ed2e3b9bbea264be4755}
+
+
+Print an option. 
+
+\index{mlpack\+::util@{mlpack\+::util}!Print\+Param\+Impl@{Print\+Param\+Impl}}
+\index{Print\+Param\+Impl@{Print\+Param\+Impl}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{Print\+Param\+Impl(const Param\+Data \&data, const typename boost\+::enable\+\_\+if$<$ Is\+Std\+Vector$<$ T $>$$>$\+::type $\ast$=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ void mlpack\+::util\+::\+Print\+Param\+Impl (
+\begin{DoxyParamCaption}
+\item[{const {\bf Param\+Data} \&}]{data, }
+\item[{const typename boost\+::enable\+\_\+if$<$ {\bf Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1util_a2cf2079c2a18c687df34e74b4aeb1edb}
+
+
+Print a vector option, with spaces between it. 
+
+\index{mlpack\+::util@{mlpack\+::util}!Print\+Param\+Impl@{Print\+Param\+Impl}}
+\index{Print\+Param\+Impl@{Print\+Param\+Impl}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{Print\+Param\+Impl(const Param\+Data \&data, const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ void mlpack\+::util\+::\+Print\+Param\+Impl (
+\begin{DoxyParamCaption}
+\item[{const {\bf Param\+Data} \&}]{data, }
+\item[{const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1util_a14c836aded83193b0a499b443cd63763}
+
+
+Print a matrix option (this just prints the filename). 
+
+\index{mlpack\+::util@{mlpack\+::util}!Print\+Param\+Impl@{Print\+Param\+Impl}}
+\index{Print\+Param\+Impl@{Print\+Param\+Impl}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{Print\+Param\+Impl(const Param\+Data \&data, const typename boost\+::enable\+\_\+if$<$ data\+::\+Has\+Serialize$<$ T $>$$>$\+::type $\ast$=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ void mlpack\+::util\+::\+Print\+Param\+Impl (
+\begin{DoxyParamCaption}
+\item[{const {\bf Param\+Data} \&}]{data, }
+\item[{const typename boost\+::enable\+\_\+if$<$ {\bf data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1util_ab736a558dacbbcf16da7d2120bb99f07}
+
+
+Print a serializable class option (this just prints the filename). 
+
+\index{mlpack\+::util@{mlpack\+::util}!Print\+Param\+Impl@{Print\+Param\+Impl}}
+\index{Print\+Param\+Impl@{Print\+Param\+Impl}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{Print\+Param\+Impl(const Param\+Data \&data, const typename boost\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ data\+::\+Dataset\+Info, arma\+::mat $>$$>$$>$\+::type $\ast$=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ void mlpack\+::util\+::\+Print\+Param\+Impl (
+\begin{DoxyParamCaption}
+\item[{const {\bf Param\+Data} \&}]{data, }
+\item[{const typename boost\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ {\bf data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1util_ad92710b65f7293d208cc68768fc2c817}
+
+
+Print a mapped matrix option (this just prints the filename). 
+
+\index{mlpack\+::util@{mlpack\+::util}!String\+Type\+Param@{String\+Type\+Param}}
+\index{String\+Type\+Param@{String\+Type\+Param}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{String\+Type\+Param()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ {\bf std\+::string} mlpack\+::util\+::\+String\+Type\+Param (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1util_a0cc66b97c93b6f4dce27477069de8413}
+
+
+Return a string containing the type of a parameter. 
+
+This overload is used if we don\textquotesingle{}t have a primitive type. 
+
+Definition at line 51 of file string\+\_\+type\+\_\+param.\+hpp.
+
+
+
+References string(), String\+Type\+Param$<$ bool $>$(), String\+Type\+Param$<$ double $>$(), String\+Type\+Param$<$ float $>$(), and String\+Type\+Param$<$ int $>$().
+
+\index{mlpack\+::util@{mlpack\+::util}!String\+Type\+Param$<$ bool $>$@{String\+Type\+Param$<$ bool $>$}}
+\index{String\+Type\+Param$<$ bool $>$@{String\+Type\+Param$<$ bool $>$}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{String\+Type\+Param$<$ bool $>$()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$$>$ {\bf std\+::string} {\bf mlpack\+::util\+::\+String\+Type\+Param}$<$ bool $>$ (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{namespacemlpack_1_1util_abb6c3b21f51a46bc2b1db7a382be12c5}
+
+
+Return \char`\"{}bool\char`\"{}. 
+
+
+
+Referenced by String\+Type\+Param().
+
+\index{mlpack\+::util@{mlpack\+::util}!String\+Type\+Param$<$ double $>$@{String\+Type\+Param$<$ double $>$}}
+\index{String\+Type\+Param$<$ double $>$@{String\+Type\+Param$<$ double $>$}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{String\+Type\+Param$<$ double $>$()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$$>$ {\bf std\+::string} {\bf mlpack\+::util\+::\+String\+Type\+Param}$<$ double $>$ (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{namespacemlpack_1_1util_a2ccc102860d47ccb9f73420c32999418}
+
+
+Return \char`\"{}double\char`\"{}. 
+
+
+
+Referenced by String\+Type\+Param().
+
+\index{mlpack\+::util@{mlpack\+::util}!String\+Type\+Param$<$ float $>$@{String\+Type\+Param$<$ float $>$}}
+\index{String\+Type\+Param$<$ float $>$@{String\+Type\+Param$<$ float $>$}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{String\+Type\+Param$<$ float $>$()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$$>$ {\bf std\+::string} {\bf mlpack\+::util\+::\+String\+Type\+Param}$<$ float $>$ (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{namespacemlpack_1_1util_a4f7d512d89dd588e61bbdbcd0037a049}
+
+
+Return \char`\"{}float\char`\"{}. 
+
+
+
+Referenced by String\+Type\+Param().
+
+\index{mlpack\+::util@{mlpack\+::util}!String\+Type\+Param$<$ int $>$@{String\+Type\+Param$<$ int $>$}}
+\index{String\+Type\+Param$<$ int $>$@{String\+Type\+Param$<$ int $>$}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{String\+Type\+Param$<$ int $>$()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$$>$ {\bf std\+::string} {\bf mlpack\+::util\+::\+String\+Type\+Param}$<$ int $>$ (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{namespacemlpack_1_1util_af845fe7ea2ea747b9a61d42a457947b9}
+
+
+Return \char`\"{}int\char`\"{}. 
+
+
+
+Referenced by String\+Type\+Param().
+
+\index{mlpack\+::util@{mlpack\+::util}!String\+Type\+Param$<$ std\+::string $>$@{String\+Type\+Param$<$ std\+::string $>$}}
+\index{String\+Type\+Param$<$ std\+::string $>$@{String\+Type\+Param$<$ std\+::string $>$}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{String\+Type\+Param$<$ std\+::string $>$()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$$>$ {\bf std\+::string} {\bf mlpack\+::util\+::\+String\+Type\+Param}$<$ {\bf std\+::string} $>$ (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{namespacemlpack_1_1util_a5e19b654ebc354898c2f26f185699d59}
+
+
+Return \char`\"{}string\char`\"{}. 
+
+\index{mlpack\+::util@{mlpack\+::util}!String\+Type\+Param$<$ std\+::tuple$<$ mlpack\+::data\+::\+Dataset\+Info, arma\+::mat $>$ $>$@{String\+Type\+Param$<$ std\+::tuple$<$ mlpack\+::data\+::\+Dataset\+Info, arma\+::mat $>$ $>$}}
+\index{String\+Type\+Param$<$ std\+::tuple$<$ mlpack\+::data\+::\+Dataset\+Info, arma\+::mat $>$ $>$@{String\+Type\+Param$<$ std\+::tuple$<$ mlpack\+::data\+::\+Dataset\+Info, arma\+::mat $>$ $>$}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{String\+Type\+Param$<$ std\+::tuple$<$ mlpack\+::data\+::\+Dataset\+Info, arma\+::mat $>$ $>$()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$$>$ {\bf std\+::string} {\bf mlpack\+::util\+::\+String\+Type\+Param}$<$ std\+::tuple$<$ {\bf mlpack\+::data\+::\+Dataset\+Info}, arma\+::mat $>$ $>$ (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{namespacemlpack_1_1util_a1cbe2d5f5b4d9be2790d428fdd01ce38}
+
+
+Return \char`\"{}string\char`\"{};. 
+
+\index{mlpack\+::util@{mlpack\+::util}!String\+Type\+Param\+Impl@{String\+Type\+Param\+Impl}}
+\index{String\+Type\+Param\+Impl@{String\+Type\+Param\+Impl}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{String\+Type\+Param\+Impl(const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ Is\+Std\+Vector$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ data\+::\+Has\+Serialize$<$ T $>$$>$\+::type $\ast$=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ {\bf std\+::string} mlpack\+::util\+::\+String\+Type\+Param\+Impl (
+\begin{DoxyParamCaption}
+\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0}, }
+\item[{const typename boost\+::disable\+\_\+if$<$ {\bf Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0}, }
+\item[{const typename boost\+::disable\+\_\+if$<$ {\bf data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1util_a5c4225da8c0cb8e68c1071491732b5aa}
+
+
+Return a string containing the type of the parameter. 
+
+\index{mlpack\+::util@{mlpack\+::util}!String\+Type\+Param\+Impl@{String\+Type\+Param\+Impl}}
+\index{String\+Type\+Param\+Impl@{String\+Type\+Param\+Impl}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{String\+Type\+Param\+Impl(const typename boost\+::enable\+\_\+if$<$ Is\+Std\+Vector$<$ T $>$$>$\+::type $\ast$=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ {\bf std\+::string} mlpack\+::util\+::\+String\+Type\+Param\+Impl (
+\begin{DoxyParamCaption}
+\item[{const typename boost\+::enable\+\_\+if$<$ {\bf Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1util_a3f0813d63ece8533c107fc42d31d3fe2}
+
+
+Return a string containing the type of the parameter, for vector options. 
+
+\index{mlpack\+::util@{mlpack\+::util}!String\+Type\+Param\+Impl@{String\+Type\+Param\+Impl}}
+\index{String\+Type\+Param\+Impl@{String\+Type\+Param\+Impl}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{String\+Type\+Param\+Impl(const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ {\bf std\+::string} mlpack\+::util\+::\+String\+Type\+Param\+Impl (
+\begin{DoxyParamCaption}
+\item[{const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1util_ae3bfa21c755b8f24f793b3884c0e703a}
+
+
+Return a string containing the type of the parameter, for matrix options. 
+
+\index{mlpack\+::util@{mlpack\+::util}!String\+Type\+Param\+Impl@{String\+Type\+Param\+Impl}}
+\index{String\+Type\+Param\+Impl@{String\+Type\+Param\+Impl}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{String\+Type\+Param\+Impl(const typename boost\+::enable\+\_\+if$<$ data\+::\+Has\+Serialize$<$ T $>$$>$\+::type $\ast$=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ {\bf std\+::string} mlpack\+::util\+::\+String\+Type\+Param\+Impl (
+\begin{DoxyParamCaption}
+\item[{const typename boost\+::enable\+\_\+if$<$ {\bf data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1util_ae7dda2e30a9b297ab1472897079cde76}
+
+
+Return a string containing the type of the parameter,. 
+
+
+
+\subsection{Variable Documentation}
+\index{mlpack\+::util@{mlpack\+::util}!cli\+Deleter@{cli\+Deleter}}
+\index{cli\+Deleter@{cli\+Deleter}!mlpack\+::util@{mlpack\+::util}}
+\subsubsection[{cli\+Deleter}]{\setlength{\rightskip}{0pt plus 5cm}M\+L\+P\+A\+C\+K\+\_\+\+E\+X\+P\+O\+RT {\bf C\+L\+I\+Deleter} mlpack\+::util\+::cli\+Deleter}\label{namespacemlpack_1_1util_a9ecc257ffeaca47df842c38a253c152c}

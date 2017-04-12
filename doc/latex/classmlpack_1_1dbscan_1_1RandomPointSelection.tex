@@ -1,0 +1,54 @@
+\section{mlpack\+:\+:dbscan\+:\+:Random\+Point\+Selection Class Reference}
+\label{classmlpack_1_1dbscan_1_1RandomPointSelection}\index{mlpack\+::dbscan\+::\+Random\+Point\+Selection@{mlpack\+::dbscan\+::\+Random\+Point\+Selection}}
+
+
+This class can be used to randomly select the next point to use for \doxyref{D\+B\+S\+C\+AN}{p.}{classmlpack_1_1dbscan_1_1DBSCAN}.  
+
+
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\static size\+\_\+t {\bf Select} (const boost\+::dynamic\+\_\+bitset$<$$>$ \&unvisited, const Mat\+Type \&)
+\begin{DoxyCompactList}\small\item\em Select the next point to use, randomly. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This class can be used to randomly select the next point to use for \doxyref{D\+B\+S\+C\+AN}{p.}{classmlpack_1_1dbscan_1_1DBSCAN}. 
+
+Definition at line 19 of file random\+\_\+point\+\_\+selection.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::dbscan\+::\+Random\+Point\+Selection@{mlpack\+::dbscan\+::\+Random\+Point\+Selection}!Select@{Select}}
+\index{Select@{Select}!mlpack\+::dbscan\+::\+Random\+Point\+Selection@{mlpack\+::dbscan\+::\+Random\+Point\+Selection}}
+\subsubsection[{Select(const boost\+::dynamic\+\_\+bitset$<$$>$ \&unvisited, const Mat\+Type \&)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type $>$ static size\+\_\+t mlpack\+::dbscan\+::\+Random\+Point\+Selection\+::\+Select (
+\begin{DoxyParamCaption}
+\item[{const boost\+::dynamic\+\_\+bitset$<$$>$ \&}]{unvisited, }
+\item[{const Mat\+Type \&}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}\label{classmlpack_1_1dbscan_1_1RandomPointSelection_a3672b6f0915ee792efb712ef40fb0ab7}
+
+
+Select the next point to use, randomly. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em unvisited} & Bitset indicating which points are unvisited. \\
+\hline
+{\em data} & Unused data. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 29 of file random\+\_\+point\+\_\+selection.\+hpp.
+
+
+
+References mlpack\+::math\+::\+Rand\+Int().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/dbscan/{\bf random\+\_\+point\+\_\+selection.\+hpp}\end{DoxyCompactItemize}

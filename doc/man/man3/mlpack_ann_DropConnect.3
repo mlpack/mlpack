@@ -1,0 +1,479 @@
+.TH "mlpack::ann::DropConnect< InputDataType, OutputDataType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::ann::DropConnect< InputDataType, OutputDataType > \- The \fBDropConnect\fP layer is a regularizer that randomly with probability ratio sets the connection values to zero and scales the remaining elements by factor 1 /(1 - ratio)\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBDropConnect\fP ()"
+.br
+.RI "\fICreate the \fBDropConnect\fP object\&. \fP"
+.ti -1c
+.RI "\fBDropConnect\fP (const size_t inSize, const size_t outSize, const double \fBratio\fP=0\&.5)"
+.br
+.RI "\fICreates the \fBDropConnect\fP Layer as a \fBLinear\fP Object that takes input size, output size and ratio as parameter\&. \fP"
+.ti -1c
+.RI "\fB~DropConnect\fP ()"
+.br
+.ti -1c
+.RI "template<typename eT > void \fBBackward\fP (arma::Mat< eT > &&input, arma::Mat< eT > &&gy, arma::Mat< eT > &&g)"
+.br
+.RI "\fIOrdinary feed backward pass of the \fBDropConnect\fP layer\&. \fP"
+.ti -1c
+.RI "OutputDataType const & \fBDelta\fP () const "
+.br
+.RI "\fIGet the delta\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBDelta\fP ()"
+.br
+.RI "\fIModify the delta\&. \fP"
+.ti -1c
+.RI "bool \fBDeterministic\fP () const "
+.br
+.RI "\fIThe value of the deterministic parameter\&. \fP"
+.ti -1c
+.RI "bool & \fBDeterministic\fP ()"
+.br
+.RI "\fIModify the value of the deterministic parameter\&. \fP"
+.ti -1c
+.RI "template<typename eT > void \fBForward\fP (arma::Mat< eT > &&input, arma::Mat< eT > &&output)"
+.br
+.RI "\fIOrdinary feed forward pass of the \fBDropConnect\fP layer\&. \fP"
+.ti -1c
+.RI "template<typename eT > void \fBGradient\fP (arma::Mat< eT > &&input, arma::Mat< eT > &&error, arma::Mat< eT > &&)"
+.br
+.RI "\fICalculate the gradient using the output delta and the input activation\&. \fP"
+.ti -1c
+.RI "OutputDataType const & \fBGradient\fP () const "
+.br
+.RI "\fIGet the gradient\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBGradient\fP ()"
+.br
+.RI "\fIModify the gradient\&. \fP"
+.ti -1c
+.RI "InputDataType const & \fBInputParameter\fP () const "
+.br
+.RI "\fIGet the input parameter\&. \fP"
+.ti -1c
+.RI "InputDataType & \fBInputParameter\fP ()"
+.br
+.RI "\fIModify the input parameter\&. \fP"
+.ti -1c
+.RI "std::vector< \fBLayerTypes\fP > & \fBModel\fP ()"
+.br
+.RI "\fIGet the model modules\&. \fP"
+.ti -1c
+.RI "OutputDataType const & \fBOutputParameter\fP () const "
+.br
+.RI "\fIGet the output parameter\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP ()"
+.br
+.RI "\fIModify the output parameter\&. \fP"
+.ti -1c
+.RI "OutputDataType const & \fBParameters\fP () const "
+.br
+.RI "\fIGet the parameters\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBParameters\fP ()"
+.br
+.RI "\fIModify the parameters\&. \fP"
+.ti -1c
+.RI "double \fBRatio\fP () const "
+.br
+.RI "\fIThe probability of setting a value to zero\&. \fP"
+.ti -1c
+.RI "void \fBRatio\fP (const double r)"
+.br
+.RI "\fIModify the probability of setting a value to zero\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int)"
+.br
+.RI "\fISerialize the layer\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "\fBLayerTypes\fP \fBbaseLayer\fP"
+.br
+.RI "\fILocally-stored layer module\&. \fP"
+.ti -1c
+.RI "OutputDataType \fBdelta\fP"
+.br
+.RI "\fILocally-stored delta object\&. \fP"
+.ti -1c
+.RI "OutputDataType \fBdenoise\fP"
+.br
+.RI "\fIDenoise mask for the weights\&. \fP"
+.ti -1c
+.RI "bool \fBdeterministic\fP"
+.br
+.RI "\fIIf true dropout and scaling is disabled, see notes above\&. \fP"
+.ti -1c
+.RI "OutputDataType \fBgradient\fP"
+.br
+.RI "\fILocally-stored gradient object\&. \fP"
+.ti -1c
+.RI "InputDataType \fBinputParameter\fP"
+.br
+.RI "\fILocally-stored input parameter object\&. \fP"
+.ti -1c
+.RI "OutputDataType \fBmask\fP"
+.br
+.RI "\fILocally-stored mask object\&. \fP"
+.ti -1c
+.RI "std::vector< \fBLayerTypes\fP > \fBnetwork\fP"
+.br
+.RI "\fILocally-stored network modules\&. \fP"
+.ti -1c
+.RI "OutputDataType \fBoutputParameter\fP"
+.br
+.RI "\fILocally-stored output parameter object\&. \fP"
+.ti -1c
+.RI "OutputDataType \fBparameters\fP"
+.br
+.RI "\fILocally-stored weight object\&. \fP"
+.ti -1c
+.RI "double \fBratio\fP"
+.br
+.RI "\fIThe probability of setting a value to zero\&. \fP"
+.ti -1c
+.RI "double \fBscale\fP"
+.br
+.RI "\fIThe scale fraction\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename InputDataType = arma::mat, typename OutputDataType = arma::mat>
+.br
+class mlpack::ann::DropConnect< InputDataType, OutputDataType >"
+The \fBDropConnect\fP layer is a regularizer that randomly with probability ratio sets the connection values to zero and scales the remaining elements by factor 1 /(1 - ratio)\&. 
+
+The output is scaled with 1 / (1 - p) when deterministic is false\&. In the deterministic mode(during testing), the layer just computes the output\&. The output is computed according to the input layer\&. If no input layer is given, it will take a linear layer as default\&.
+.PP
+Note: During training you should set deterministic to false and during testing you should set deterministic to true\&.
+.PP
+For more information, see the following\&.
+.PP
+.PP
+.nf
+@inproceedings{WanICML2013,
+  title={Regularization of Neural Networks using DropConnect},
+  booktitle = {Proceedings of the 30th International Conference on Machine
+               Learning(ICML - 13)},
+  author = {Li Wan and Matthew Zeiler and Sixin Zhang and Yann L\&. Cun and
+            Rob Fergus},
+  year = {2013}
+}
+.fi
+.PP
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIInputDataType\fP Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fIOutputDataType\fP Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 62 of file dropconnect\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBmlpack::ann::DropConnect\fP< InputDataType, OutputDataType >::\fBDropConnect\fP ()"
+
+.PP
+Create the \fBDropConnect\fP object\&. 
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBmlpack::ann::DropConnect\fP< InputDataType, OutputDataType >::\fBDropConnect\fP (const size_t inSize, const size_t outSize, const double ratio = \fC0\&.5\fP)"
+
+.PP
+Creates the \fBDropConnect\fP Layer as a \fBLinear\fP Object that takes input size, output size and ratio as parameter\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinSize\fP The number of input units\&. 
+.br
+\fIoutSize\fP The number of output units\&. 
+.br
+\fIratio\fP The probability of setting a value to zero\&. 
+.RE
+.PP
+
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBmlpack::ann::DropConnect\fP< InputDataType, OutputDataType >::~\fBDropConnect\fP ()"
+
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename eT > void \fBmlpack::ann::DropConnect\fP< InputDataType, OutputDataType >::Backward (arma::Mat< eT > && input, arma::Mat< eT > && gy, arma::Mat< eT > && g)"
+
+.PP
+Ordinary feed backward pass of the \fBDropConnect\fP layer\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP The propagated input activation\&. 
+.br
+\fIgy\fP The backpropagated error\&. 
+.br
+\fIg\fP The calculated gradient\&. 
+.RE
+.PP
+
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType const& \fBmlpack::ann::DropConnect\fP< InputDataType, OutputDataType >::Delta () const\fC [inline]\fP"
+
+.PP
+Get the delta\&. 
+.PP
+Definition at line 134 of file dropconnect\&.hpp\&.
+.PP
+References mlpack::ann::DropConnect< InputDataType, OutputDataType >::delta\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::DropConnect\fP< InputDataType, OutputDataType >::Delta ()\fC [inline]\fP"
+
+.PP
+Modify the delta\&. 
+.PP
+Definition at line 136 of file dropconnect\&.hpp\&.
+.PP
+References mlpack::ann::DropConnect< InputDataType, OutputDataType >::delta\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> bool \fBmlpack::ann::DropConnect\fP< InputDataType, OutputDataType >::Deterministic () const\fC [inline]\fP"
+
+.PP
+The value of the deterministic parameter\&. 
+.PP
+Definition at line 144 of file dropconnect\&.hpp\&.
+.PP
+References mlpack::ann::DropConnect< InputDataType, OutputDataType >::deterministic\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> bool& \fBmlpack::ann::DropConnect\fP< InputDataType, OutputDataType >::Deterministic ()\fC [inline]\fP"
+
+.PP
+Modify the value of the deterministic parameter\&. 
+.PP
+Definition at line 147 of file dropconnect\&.hpp\&.
+.PP
+References mlpack::ann::DropConnect< InputDataType, OutputDataType >::deterministic\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename eT > void \fBmlpack::ann::DropConnect\fP< InputDataType, OutputDataType >::Forward (arma::Mat< eT > && input, arma::Mat< eT > && output)"
+
+.PP
+Ordinary feed forward pass of the \fBDropConnect\fP layer\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input data used for evaluating the specified function\&. 
+.br
+\fIoutput\fP Resulting output activation\&. 
+.RE
+.PP
+
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename eT > void \fBmlpack::ann::DropConnect\fP< InputDataType, OutputDataType >::Gradient (arma::Mat< eT > && input, arma::Mat< eT > && error, arma::Mat< eT > &&)"
+
+.PP
+Calculate the gradient using the output delta and the input activation\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP The propagated input\&. 
+.br
+\fId\fP The calculated error\&. 
+.br
+\fIg\fP The calculated gradient\&. 
+.RE
+.PP
+
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType const& \fBmlpack::ann::DropConnect\fP< InputDataType, OutputDataType >::Gradient () const\fC [inline]\fP"
+
+.PP
+Get the gradient\&. 
+.PP
+Definition at line 139 of file dropconnect\&.hpp\&.
+.PP
+References mlpack::ann::DropConnect< InputDataType, OutputDataType >::gradient\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::DropConnect\fP< InputDataType, OutputDataType >::Gradient ()\fC [inline]\fP"
+
+.PP
+Modify the gradient\&. 
+.PP
+Definition at line 141 of file dropconnect\&.hpp\&.
+.PP
+References mlpack::ann::DropConnect< InputDataType, OutputDataType >::gradient\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> InputDataType const& \fBmlpack::ann::DropConnect\fP< InputDataType, OutputDataType >::InputParameter () const\fC [inline]\fP"
+
+.PP
+Get the input parameter\&. 
+.PP
+Definition at line 124 of file dropconnect\&.hpp\&.
+.PP
+References mlpack::ann::DropConnect< InputDataType, OutputDataType >::inputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> InputDataType& \fBmlpack::ann::DropConnect\fP< InputDataType, OutputDataType >::InputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the input parameter\&. 
+.PP
+Definition at line 126 of file dropconnect\&.hpp\&.
+.PP
+References mlpack::ann::DropConnect< InputDataType, OutputDataType >::inputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> std::vector<\fBLayerTypes\fP>& \fBmlpack::ann::DropConnect\fP< InputDataType, OutputDataType >::Model ()\fC [inline]\fP"
+
+.PP
+Get the model modules\&. 
+.PP
+Definition at line 116 of file dropconnect\&.hpp\&.
+.PP
+References mlpack::ann::DropConnect< InputDataType, OutputDataType >::network\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType const& \fBmlpack::ann::DropConnect\fP< InputDataType, OutputDataType >::OutputParameter () const\fC [inline]\fP"
+
+.PP
+Get the output parameter\&. 
+.PP
+Definition at line 129 of file dropconnect\&.hpp\&.
+.PP
+References mlpack::ann::DropConnect< InputDataType, OutputDataType >::outputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::DropConnect\fP< InputDataType, OutputDataType >::OutputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the output parameter\&. 
+.PP
+Definition at line 131 of file dropconnect\&.hpp\&.
+.PP
+References mlpack::ann::DropConnect< InputDataType, OutputDataType >::outputParameter\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType const& \fBmlpack::ann::DropConnect\fP< InputDataType, OutputDataType >::Parameters () const\fC [inline]\fP"
+
+.PP
+Get the parameters\&. 
+.PP
+Definition at line 119 of file dropconnect\&.hpp\&.
+.PP
+References mlpack::ann::DropConnect< InputDataType, OutputDataType >::parameters\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::DropConnect\fP< InputDataType, OutputDataType >::Parameters ()\fC [inline]\fP"
+
+.PP
+Modify the parameters\&. 
+.PP
+Definition at line 121 of file dropconnect\&.hpp\&.
+.PP
+References mlpack::ann::DropConnect< InputDataType, OutputDataType >::parameters\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> double \fBmlpack::ann::DropConnect\fP< InputDataType, OutputDataType >::Ratio () const\fC [inline]\fP"
+
+.PP
+The probability of setting a value to zero\&. 
+.PP
+Definition at line 150 of file dropconnect\&.hpp\&.
+.PP
+References mlpack::ann::DropConnect< InputDataType, OutputDataType >::ratio\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> void \fBmlpack::ann::DropConnect\fP< InputDataType, OutputDataType >::Ratio (const double r)\fC [inline]\fP"
+
+.PP
+Modify the probability of setting a value to zero\&. 
+.PP
+Definition at line 153 of file dropconnect\&.hpp\&.
+.PP
+References mlpack::ann::DropConnect< InputDataType, OutputDataType >::ratio, mlpack::ann::DropConnect< InputDataType, OutputDataType >::scale, and mlpack::ann::DropConnect< InputDataType, OutputDataType >::Serialize()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename Archive > void \fBmlpack::ann::DropConnect\fP< InputDataType, OutputDataType >::Serialize (Archive & ar, const unsigned int)"
+
+.PP
+Serialize the layer\&. 
+.PP
+Referenced by mlpack::ann::DropConnect< InputDataType, OutputDataType >::Ratio()\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBLayerTypes\fP \fBmlpack::ann::DropConnect\fP< InputDataType, OutputDataType >::baseLayer\fC [private]\fP"
+
+.PP
+Locally-stored layer module\&. 
+.PP
+Definition at line 197 of file dropconnect\&.hpp\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType \fBmlpack::ann::DropConnect\fP< InputDataType, OutputDataType >::delta\fC [private]\fP"
+
+.PP
+Locally-stored delta object\&. 
+.PP
+Definition at line 176 of file dropconnect\&.hpp\&.
+.PP
+Referenced by mlpack::ann::DropConnect< InputDataType, OutputDataType >::Delta()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType \fBmlpack::ann::DropConnect\fP< InputDataType, OutputDataType >::denoise\fC [private]\fP"
+
+.PP
+Denoise mask for the weights\&. 
+.PP
+Definition at line 194 of file dropconnect\&.hpp\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> bool \fBmlpack::ann::DropConnect\fP< InputDataType, OutputDataType >::deterministic\fC [private]\fP"
+
+.PP
+If true dropout and scaling is disabled, see notes above\&. 
+.PP
+Definition at line 191 of file dropconnect\&.hpp\&.
+.PP
+Referenced by mlpack::ann::DropConnect< InputDataType, OutputDataType >::Deterministic()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType \fBmlpack::ann::DropConnect\fP< InputDataType, OutputDataType >::gradient\fC [private]\fP"
+
+.PP
+Locally-stored gradient object\&. 
+.PP
+Definition at line 179 of file dropconnect\&.hpp\&.
+.PP
+Referenced by mlpack::ann::DropConnect< InputDataType, OutputDataType >::Gradient()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> InputDataType \fBmlpack::ann::DropConnect\fP< InputDataType, OutputDataType >::inputParameter\fC [private]\fP"
+
+.PP
+Locally-stored input parameter object\&. 
+.PP
+Definition at line 182 of file dropconnect\&.hpp\&.
+.PP
+Referenced by mlpack::ann::DropConnect< InputDataType, OutputDataType >::InputParameter()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType \fBmlpack::ann::DropConnect\fP< InputDataType, OutputDataType >::mask\fC [private]\fP"
+
+.PP
+Locally-stored mask object\&. 
+.PP
+Definition at line 188 of file dropconnect\&.hpp\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> std::vector<\fBLayerTypes\fP> \fBmlpack::ann::DropConnect\fP< InputDataType, OutputDataType >::network\fC [private]\fP"
+
+.PP
+Locally-stored network modules\&. 
+.PP
+Definition at line 200 of file dropconnect\&.hpp\&.
+.PP
+Referenced by mlpack::ann::DropConnect< InputDataType, OutputDataType >::Model()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType \fBmlpack::ann::DropConnect\fP< InputDataType, OutputDataType >::outputParameter\fC [private]\fP"
+
+.PP
+Locally-stored output parameter object\&. 
+.PP
+Definition at line 185 of file dropconnect\&.hpp\&.
+.PP
+Referenced by mlpack::ann::DropConnect< InputDataType, OutputDataType >::OutputParameter()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType \fBmlpack::ann::DropConnect\fP< InputDataType, OutputDataType >::parameters\fC [private]\fP"
+
+.PP
+Locally-stored weight object\&. 
+.PP
+Definition at line 173 of file dropconnect\&.hpp\&.
+.PP
+Referenced by mlpack::ann::DropConnect< InputDataType, OutputDataType >::Parameters()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> double \fBmlpack::ann::DropConnect\fP< InputDataType, OutputDataType >::ratio\fC [private]\fP"
+
+.PP
+The probability of setting a value to zero\&. 
+.PP
+Definition at line 167 of file dropconnect\&.hpp\&.
+.PP
+Referenced by mlpack::ann::DropConnect< InputDataType, OutputDataType >::Ratio()\&.
+.SS "template<typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> double \fBmlpack::ann::DropConnect\fP< InputDataType, OutputDataType >::scale\fC [private]\fP"
+
+.PP
+The scale fraction\&. 
+.PP
+Definition at line 170 of file dropconnect\&.hpp\&.
+.PP
+Referenced by mlpack::ann::DropConnect< InputDataType, OutputDataType >::Ratio()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,297 @@
+.TH "mlpack::radical::Radical" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::radical::Radical \- An implementation of RADICAL, an algorithm for independent component analysis (ICA)\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBRadical\fP (const double \fBnoiseStdDev\fP=0\&.175, const size_t \fBreplicates\fP=30, const size_t \fBangles\fP=150, const size_t \fBsweeps\fP=0, const size_t \fBm\fP=0)"
+.br
+.RI "\fISet the parameters to RADICAL\&. \fP"
+.ti -1c
+.RI "size_t \fBAngles\fP () const "
+.br
+.RI "\fIGet the number of angles considered during brute-force search\&. \fP"
+.ti -1c
+.RI "size_t & \fBAngles\fP ()"
+.br
+.RI "\fIModify the number of angles considered during brute-force search\&. \fP"
+.ti -1c
+.RI "void \fBCopyAndPerturb\fP (arma::mat &xNew, const arma::mat &x) const "
+.br
+.RI "\fIMake replicates of each data point (the number of replicates is set in either the constructor or with \fBReplicates()\fP) and perturb data with Gaussian noise with standard deviation noiseStdDev\&. \fP"
+.ti -1c
+.RI "void \fBDoRadical\fP (const arma::mat &matX, arma::mat &matY, arma::mat &matW)"
+.br
+.RI "\fIRun RADICAL\&. \fP"
+.ti -1c
+.RI "double \fBDoRadical2D\fP (const arma::mat &matX)"
+.br
+.RI "\fITwo-dimensional version of RADICAL\&. \fP"
+.ti -1c
+.RI "double \fBNoiseStdDev\fP () const "
+.br
+.RI "\fIGet the standard deviation of the additive Gaussian noise\&. \fP"
+.ti -1c
+.RI "double & \fBNoiseStdDev\fP ()"
+.br
+.RI "\fIModify the standard deviation of the additive Gaussian noise\&. \fP"
+.ti -1c
+.RI "size_t \fBReplicates\fP () const "
+.br
+.RI "\fIGet the number of Gaussian-perturbed replicates used per point\&. \fP"
+.ti -1c
+.RI "size_t & \fBReplicates\fP ()"
+.br
+.RI "\fIModify the number of Gaussian-perturbed replicates used per point\&. \fP"
+.ti -1c
+.RI "size_t \fBSweeps\fP () const "
+.br
+.RI "\fIGet the number of sweeps\&. \fP"
+.ti -1c
+.RI "size_t & \fBSweeps\fP ()"
+.br
+.RI "\fIModify the number of sweeps\&. \fP"
+.ti -1c
+.RI "double \fBVasicek\fP (arma::vec &x) const "
+.br
+.RI "\fIVasicek's m-spacing estimator of entropy, with overlap modification from (Learned-Miller and Fisher, 2003)\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "size_t \fBangles\fP"
+.br
+.RI "\fINumber of angles to consider in brute-force search during Radical2D\&. \fP"
+.ti -1c
+.RI "arma::mat \fBcandidate\fP"
+.br
+.RI "\fIInternal matrix, held as member variable to prevent memory reallocations\&. \fP"
+.ti -1c
+.RI "size_t \fBm\fP"
+.br
+.RI "\fIValue of m to use for Vasicek's m-spacing estimator of entropy\&. \fP"
+.ti -1c
+.RI "double \fBnoiseStdDev\fP"
+.br
+.RI "\fIStandard deviation of the Gaussian noise added to the replicates of the data points during Radical2D\&. \fP"
+.ti -1c
+.RI "arma::mat \fBperturbed\fP"
+.br
+.RI "\fIInternal matrix, held as member variable to prevent memory reallocations\&. \fP"
+.ti -1c
+.RI "size_t \fBreplicates\fP"
+.br
+.RI "\fINumber of Gaussian-perturbed replicates to use (per point) in Radical2D\&. \fP"
+.ti -1c
+.RI "size_t \fBsweeps\fP"
+.br
+.RI "\fINumber of sweeps; each sweep calls Radical2D once for each pair of dimensions\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+An implementation of RADICAL, an algorithm for independent component analysis (ICA)\&. 
+
+Let X be a matrix where each column is a point and each row a dimension\&. The goal is to find a square unmixing matrix W such that Y = W X and the rows of Y are independent components\&.
+.PP
+For more details, see the following paper:
+.PP
+.PP
+.nf
+@article{learned2003ica,
+  title = {ICA Using Spacings Estimates of Entropy},
+  author = {Learned-Miller, E\&.G\&. and Fisher III, J\&.W\&.},
+  journal = {Journal of Machine Learning Research},
+  volume = {4},
+  pages = {1271--1295},
+  year = {2003}
+}
+.fi
+.PP
+ 
+.PP
+Definition at line 43 of file radical\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::radical::Radical::Radical (const double noiseStdDev = \fC0\&.175\fP, const size_t replicates = \fC30\fP, const size_t angles = \fC150\fP, const size_t sweeps = \fC0\fP, const size_t m = \fC0\fP)"
+
+.PP
+Set the parameters to RADICAL\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fInoiseStdDev\fP Standard deviation of the Gaussian noise added to the replicates of the data points during Radical2D 
+.br
+\fIreplicates\fP Number of Gaussian-perturbed replicates to use (per point) in Radical2D 
+.br
+\fIangles\fP Number of angles to consider in brute-force search during Radical2D 
+.br
+\fIsweeps\fP Number of sweeps\&. Each sweep calls Radical2D once for each pair of dimensions 
+.br
+\fIm\fP The variable m from Vasicek's m-spacing estimator of entropy\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "size_t mlpack::radical::Radical::Angles () const\fC [inline]\fP"
+
+.PP
+Get the number of angles considered during brute-force search\&. 
+.PP
+Definition at line 105 of file radical\&.hpp\&.
+.PP
+References angles\&.
+.SS "size_t& mlpack::radical::Radical::Angles ()\fC [inline]\fP"
+
+.PP
+Modify the number of angles considered during brute-force search\&. 
+.PP
+Definition at line 107 of file radical\&.hpp\&.
+.PP
+References angles\&.
+.SS "void mlpack::radical::Radical::CopyAndPerturb (arma::mat & xNew, const arma::mat & x) const"
+
+.PP
+Make replicates of each data point (the number of replicates is set in either the constructor or with \fBReplicates()\fP) and perturb data with Gaussian noise with standard deviation noiseStdDev\&. 
+.SS "void mlpack::radical::Radical::DoRadical (const arma::mat & matX, arma::mat & matY, arma::mat & matW)"
+
+.PP
+Run RADICAL\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fImatX\fP Input data into the algorithm - a matrix where each column is a point and each row is a dimension\&. 
+.br
+\fImatY\fP Estimated independent components - a matrix where each column is a point and each row is an estimated independent component\&. 
+.br
+\fImatW\fP Estimated unmixing matrix, where matY = matW * matX\&. 
+.RE
+.PP
+
+.SS "double mlpack::radical::Radical::DoRadical2D (const arma::mat & matX)"
+
+.PP
+Two-dimensional version of RADICAL\&. 
+.SS "double mlpack::radical::Radical::NoiseStdDev () const\fC [inline]\fP"
+
+.PP
+Get the standard deviation of the additive Gaussian noise\&. 
+.PP
+Definition at line 95 of file radical\&.hpp\&.
+.PP
+References noiseStdDev\&.
+.SS "double& mlpack::radical::Radical::NoiseStdDev ()\fC [inline]\fP"
+
+.PP
+Modify the standard deviation of the additive Gaussian noise\&. 
+.PP
+Definition at line 97 of file radical\&.hpp\&.
+.PP
+References noiseStdDev\&.
+.SS "size_t mlpack::radical::Radical::Replicates () const\fC [inline]\fP"
+
+.PP
+Get the number of Gaussian-perturbed replicates used per point\&. 
+.PP
+Definition at line 100 of file radical\&.hpp\&.
+.PP
+References replicates\&.
+.SS "size_t& mlpack::radical::Radical::Replicates ()\fC [inline]\fP"
+
+.PP
+Modify the number of Gaussian-perturbed replicates used per point\&. 
+.PP
+Definition at line 102 of file radical\&.hpp\&.
+.PP
+References replicates\&.
+.SS "size_t mlpack::radical::Radical::Sweeps () const\fC [inline]\fP"
+
+.PP
+Get the number of sweeps\&. 
+.PP
+Definition at line 110 of file radical\&.hpp\&.
+.PP
+References sweeps\&.
+.SS "size_t& mlpack::radical::Radical::Sweeps ()\fC [inline]\fP"
+
+.PP
+Modify the number of sweeps\&. 
+.PP
+Definition at line 112 of file radical\&.hpp\&.
+.PP
+References sweeps\&.
+.SS "double mlpack::radical::Radical::Vasicek (arma::vec & x) const"
+
+.PP
+Vasicek's m-spacing estimator of entropy, with overlap modification from (Learned-Miller and Fisher, 2003)\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIx\fP Empirical sample (one-dimensional) over which to estimate entropy\&. 
+.RE
+.PP
+
+.SH "Member Data Documentation"
+.PP 
+.SS "size_t mlpack::radical::Radical::angles\fC [private]\fP"
+
+.PP
+Number of angles to consider in brute-force search during Radical2D\&. 
+.PP
+Definition at line 123 of file radical\&.hpp\&.
+.PP
+Referenced by Angles()\&.
+.SS "arma::mat mlpack::radical::Radical::candidate\fC [private]\fP"
+
+.PP
+Internal matrix, held as member variable to prevent memory reallocations\&. 
+.PP
+Definition at line 135 of file radical\&.hpp\&.
+.SS "size_t mlpack::radical::Radical::m\fC [private]\fP"
+
+.PP
+Value of m to use for Vasicek's m-spacing estimator of entropy\&. 
+.PP
+Definition at line 130 of file radical\&.hpp\&.
+.SS "double mlpack::radical::Radical::noiseStdDev\fC [private]\fP"
+
+.PP
+Standard deviation of the Gaussian noise added to the replicates of the data points during Radical2D\&. 
+.PP
+Definition at line 117 of file radical\&.hpp\&.
+.PP
+Referenced by NoiseStdDev()\&.
+.SS "arma::mat mlpack::radical::Radical::perturbed\fC [private]\fP"
+
+.PP
+Internal matrix, held as member variable to prevent memory reallocations\&. 
+.PP
+Definition at line 133 of file radical\&.hpp\&.
+.SS "size_t mlpack::radical::Radical::replicates\fC [private]\fP"
+
+.PP
+Number of Gaussian-perturbed replicates to use (per point) in Radical2D\&. 
+.PP
+Definition at line 120 of file radical\&.hpp\&.
+.PP
+Referenced by Replicates()\&.
+.SS "size_t mlpack::radical::Radical::sweeps\fC [private]\fP"
+
+.PP
+Number of sweeps; each sweep calls Radical2D once for each pair of dimensions\&. 
+.PP
+Definition at line 127 of file radical\&.hpp\&.
+.PP
+Referenced by Sweeps()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

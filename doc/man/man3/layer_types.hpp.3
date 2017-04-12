@@ -1,0 +1,100 @@
+.TH "src/mlpack/methods/ann/layer/layer_types.hpp" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+src/mlpack/methods/ann/layer/layer_types.hpp \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBmlpack::ann::AddMerge< InputDataType, OutputDataType >\fP"
+.br
+.RI "\fIImplementation of the \fBAddMerge\fP module class\&. \fP"
+.ti -1c
+.RI "class \fBmlpack::ann::Concat< InputDataType, OutputDataType >\fP"
+.br
+.RI "\fIImplementation of the \fBConcat\fP class\&. \fP"
+.ti -1c
+.RI "class \fBmlpack::ann::ConcatPerformance< OutputLayerType, InputDataType, OutputDataType >\fP"
+.br
+.RI "\fIImplementation of the concat performance class\&. \fP"
+.ti -1c
+.RI "class \fBmlpack::ann::Convolution< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >\fP"
+.br
+.RI "\fIImplementation of the \fBConvolution\fP class\&. \fP"
+.ti -1c
+.RI "class \fBmlpack::ann::DropConnect< InputDataType, OutputDataType >\fP"
+.br
+.RI "\fIThe \fBDropConnect\fP layer is a regularizer that randomly with probability ratio sets the connection values to zero and scales the remaining elements by factor 1 /(1 - ratio)\&. \fP"
+.ti -1c
+.RI "class \fBmlpack::ann::Glimpse< InputDataType, OutputDataType >\fP"
+.br
+.RI "\fIThe glimpse layer returns a retina-like representation (down-scaled cropped images) of increasing scale around a given location in a given image\&. \fP"
+.ti -1c
+.RI "class \fBmlpack::ann::Linear< InputDataType, OutputDataType >\fP"
+.br
+.RI "\fIImplementation of the \fBLinear\fP layer class\&. \fP"
+.ti -1c
+.RI "class \fBmlpack::ann::LinearNoBias< InputDataType, OutputDataType >\fP"
+.br
+.RI "\fIImplementation of the \fBLinearNoBias\fP class\&. \fP"
+.ti -1c
+.RI "class \fBmlpack::ann::LSTM< InputDataType, OutputDataType >\fP"
+.br
+.RI "\fIAn implementation of a lstm network layer\&. \fP"
+.ti -1c
+.RI "class \fBmlpack::ann::Recurrent< InputDataType, OutputDataType >\fP"
+.br
+.RI "\fIImplementation of the RecurrentLayer class\&. \fP"
+.ti -1c
+.RI "class \fBmlpack::ann::RecurrentAttention< InputDataType, OutputDataType >\fP"
+.br
+.RI "\fIThis class implements the \fBRecurrent\fP Model for Visual Attention, using a variety of possible layer implementations\&. \fP"
+.ti -1c
+.RI "class \fBmlpack::ann::Sequential< InputDataType, OutputDataType >\fP"
+.br
+.RI "\fIImplementation of the \fBSequential\fP class\&. \fP"
+.ti -1c
+.RI "class \fBmlpack::ann::VRClassReward< InputDataType, OutputDataType >\fP"
+.br
+.RI "\fIImplementation of the variance reduced classification reinforcement layer\&. \fP"
+.in -1c
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "\fILinear algebra utility functions, generally performed on matrices or vectors\&. \fP"
+.ti -1c
+.RI " \fBmlpack::ann\fP"
+.br
+.RI "\fIArtificial Neural Network\&. \fP"
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "using \fBmlpack::ann::LayerTypes\fP = boost::variant< Add< arma::mat, arma::mat > *, AddMerge< arma::mat, arma::mat > *, BaseLayer< LogisticFunction, arma::mat, arma::mat > *, BaseLayer< IdentityFunction, arma::mat, arma::mat > *, BaseLayer< TanhFunction, arma::mat, arma::mat > *, BaseLayer< RectifierFunction, arma::mat, arma::mat > *, Concat< arma::mat, arma::mat > *, ConcatPerformance< NegativeLogLikelihood< arma::mat, arma::mat >, arma::mat, arma::mat > *, Constant< arma::mat, arma::mat > *, Convolution< NaiveConvolution< ValidConvolution >, NaiveConvolution< FullConvolution >, NaiveConvolution< ValidConvolution >, arma::mat, arma::mat > *, DropConnect< arma::mat, arma::mat > *, Dropout< arma::mat, arma::mat > *, Glimpse< arma::mat, arma::mat > *, HardTanH< arma::mat, arma::mat > *, Join< arma::mat, arma::mat > *, LeakyReLU< arma::mat, arma::mat > *, Linear< arma::mat, arma::mat > *, LinearNoBias< arma::mat, arma::mat > *, LogSoftMax< arma::mat, arma::mat > *, Lookup< arma::mat, arma::mat > *, LSTM< arma::mat, arma::mat > *, MaxPooling< arma::mat, arma::mat > *, MeanPooling< arma::mat, arma::mat > *, MeanSquaredError< arma::mat, arma::mat > *, MultiplyConstant< arma::mat, arma::mat > *, NegativeLogLikelihood< arma::mat, arma::mat > *, PReLU< arma::mat, arma::mat > *, Recurrent< arma::mat, arma::mat > *, RecurrentAttention< arma::mat, arma::mat > *, ReinforceNormal< arma::mat, arma::mat > *, Select< arma::mat, arma::mat > *, Sequential< arma::mat, arma::mat > *, VRClassReward< arma::mat, arma::mat > * >"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Marcus Edel
+.RE
+.PP
+This provides a list of all modules that can be used to construct a model\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBlayer_types\&.hpp\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

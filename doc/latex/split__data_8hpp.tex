@@ -1,0 +1,37 @@
+\section{src/mlpack/core/data/split\+\_\+data.hpp File Reference}
+\label{split__data_8hpp}\index{src/mlpack/core/data/split\+\_\+data.\+hpp@{src/mlpack/core/data/split\+\_\+data.\+hpp}}
+Include dependency graph for split\+\_\+data.\+hpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{split__data_8hpp__incl}
+\end{center}
+\end{figure}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ {\bf mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ {\bf mlpack\+::data}
+\begin{DoxyCompactList}\small\item\em Functions to load and save matrices and models. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename T , typename U $>$ }\\void {\bf mlpack\+::data\+::\+Split} (const arma\+::\+Mat$<$ T $>$ \&input, const arma\+::\+Row$<$ U $>$ \&input\+Label, arma\+::\+Mat$<$ T $>$ \&train\+Data, arma\+::\+Mat$<$ T $>$ \&test\+Data, arma\+::\+Row$<$ U $>$ \&train\+Label, arma\+::\+Row$<$ U $>$ \&test\+Label, const double test\+Ratio)
+\begin{DoxyCompactList}\small\item\em Given an input dataset and labels, split into a training set and test set. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void {\bf mlpack\+::data\+::\+Split} (const arma\+::\+Mat$<$ T $>$ \&input, arma\+::\+Mat$<$ T $>$ \&train\+Data, arma\+::\+Mat$<$ T $>$ \&test\+Data, const double test\+Ratio)
+\begin{DoxyCompactList}\small\item\em Given an input dataset, split into a training set and test set. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T , typename U $>$ }\\std\+::tuple$<$ arma\+::\+Mat$<$ T $>$, arma\+::\+Mat$<$ T $>$, arma\+::\+Row$<$ U $>$, arma\+::\+Row$<$ U $>$ $>$ {\bf mlpack\+::data\+::\+Split} (const arma\+::\+Mat$<$ T $>$ \&input, const arma\+::\+Row$<$ U $>$ \&input\+Label, const double test\+Ratio)
+\begin{DoxyCompactList}\small\item\em Given an input dataset and labels, split into a training set and test set. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::tuple$<$ arma\+::\+Mat$<$ T $>$, arma\+::\+Mat$<$ T $>$ $>$ {\bf mlpack\+::data\+::\+Split} (const arma\+::\+Mat$<$ T $>$ \&input, const double test\+Ratio)
+\begin{DoxyCompactList}\small\item\em Given an input dataset, split into a training set and test set. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Tham Ngap Wei, Keon Kim
+\end{DoxyAuthor}
+Defines \doxyref{Split()}{p.}{namespacemlpack_1_1data_a80fb8838c66ff6351af3bbb33ee6ebe1}, a utility function to split a dataset into a training set and a test set.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause B\+SD license. You should have received a copy of the 3-\/clause B\+SD license along with mlpack. If not, see {\tt http\+://www.\+opensource.\+org/licenses/\+B\+S\+D-\/3-\/\+Clause} for more information. 

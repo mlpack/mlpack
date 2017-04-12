@@ -1,0 +1,50 @@
+\section{Is\+Vector$<$ Vec\+Type $>$ Struct Template Reference}
+\label{structIsVector}\index{Is\+Vector$<$ Vec\+Type $>$@{Is\+Vector$<$ Vec\+Type $>$}}
+
+
+If value == true, then Vec\+Type is some sort of Armadillo vector or subview.  
+
+
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static const bool {\bf value} = false
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Vec\+Type$>$\\*
+struct Is\+Vector$<$ Vec\+Type $>$}
+
+If value == true, then Vec\+Type is some sort of Armadillo vector or subview. 
+
+You might use this struct like this\+:
+
+
+\begin{DoxyCode}
+\textcolor{comment}{// Only accepts VecTypes that are actually Armadillo vector types.}
+\textcolor{keyword}{template}<\textcolor{keyword}{typename} VecType>
+\textcolor{keywordtype}{void} Function(\textcolor{keyword}{const} VecType& argumentA,
+              \textcolor{keyword}{typename} std::enable_if_t<IsVector<VecType>::value>* = 0);
+\end{DoxyCode}
+
+
+The use of the enable\+\_\+if\+\_\+t object allows the compiler to instantiate Function() only if Vec\+Type is one of the Armadillo vector types. It has a default argument because it isn\textquotesingle{}t meant to be used in either the function call or the function body. 
+
+Definition at line 35 of file arma\+\_\+traits.\+hpp.
+
+
+
+\subsection{Member Data Documentation}
+\index{Is\+Vector@{Is\+Vector}!value@{value}}
+\index{value@{value}!Is\+Vector@{Is\+Vector}}
+\subsubsection[{value}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Vec\+Type $>$ const bool {\bf Is\+Vector}$<$ Vec\+Type $>$\+::value = false\hspace{0.3cm}{\ttfamily [static]}}\label{structIsVector_a5ec0c1366b298b7200906b0772831f45}
+
+
+Definition at line 37 of file arma\+\_\+traits.\+hpp.
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/util/{\bf arma\+\_\+traits.\+hpp}\end{DoxyCompactItemize}

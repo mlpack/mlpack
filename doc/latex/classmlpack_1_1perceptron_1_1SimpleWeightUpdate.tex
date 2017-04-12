@@ -1,0 +1,64 @@
+\section{mlpack\+:\+:perceptron\+:\+:Simple\+Weight\+Update Class Reference}
+\label{classmlpack_1_1perceptron_1_1SimpleWeightUpdate}\index{mlpack\+::perceptron\+::\+Simple\+Weight\+Update@{mlpack\+::perceptron\+::\+Simple\+Weight\+Update}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\void {\bf Update\+Weights} (const Vec\+Type \&training\+Point, arma\+::mat \&weights, arma\+::vec \&biases, const size\+\_\+t incorrect\+Class, const size\+\_\+t correct\+Class, const double instance\+Weight=1.\+0)
+\begin{DoxyCompactList}\small\item\em This function is called to update the weight\+Vectors matrix. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 30 of file simple\+\_\+weight\+\_\+update.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::perceptron\+::\+Simple\+Weight\+Update@{mlpack\+::perceptron\+::\+Simple\+Weight\+Update}!Update\+Weights@{Update\+Weights}}
+\index{Update\+Weights@{Update\+Weights}!mlpack\+::perceptron\+::\+Simple\+Weight\+Update@{mlpack\+::perceptron\+::\+Simple\+Weight\+Update}}
+\subsubsection[{Update\+Weights(const Vec\+Type \&training\+Point, arma\+::mat \&weights, arma\+::vec \&biases, const size\+\_\+t incorrect\+Class, const size\+\_\+t correct\+Class, const double instance\+Weight=1.\+0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Vec\+Type $>$ void mlpack\+::perceptron\+::\+Simple\+Weight\+Update\+::\+Update\+Weights (
+\begin{DoxyParamCaption}
+\item[{const Vec\+Type \&}]{training\+Point, }
+\item[{arma\+::mat \&}]{weights, }
+\item[{arma\+::vec \&}]{biases, }
+\item[{const size\+\_\+t}]{incorrect\+Class, }
+\item[{const size\+\_\+t}]{correct\+Class, }
+\item[{const double}]{instance\+Weight = {\ttfamily 1.0}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1perceptron_1_1SimpleWeightUpdate_ab335b415829d52222829a599be27ce5a}
+
+
+This function is called to update the weight\+Vectors matrix. 
+
+It decreases the weights of the incorrectly classified class while increasing the weight of the correct class it should have been classified to.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Type} & of vector (should be an Armadillo vector like arma\+::vec or arma\+::sp\+\_\+vec or something similar). \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em training\+Point} & Point that was misclassified. \\
+\hline
+{\em weights} & Matrix of weights. \\
+\hline
+{\em biases} & Vector of biases. \\
+\hline
+{\em incorrect\+Class} & Index of class that the point was incorrectly classified as. \\
+\hline
+{\em correct\+Class} & Index of the true class of the point. \\
+\hline
+{\em instance\+Weight} & Weight to be given to this particular point during training (this is useful for boosting). \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 50 of file simple\+\_\+weight\+\_\+update.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/perceptron/learning\+\_\+policies/{\bf simple\+\_\+weight\+\_\+update.\+hpp}\end{DoxyCompactItemize}

@@ -1,0 +1,438 @@
+\section{mlpack\+:\+:distribution\+:\+:Gamma\+Distribution Class Reference}
+\label{classmlpack_1_1distribution_1_1GammaDistribution}\index{mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}}
+
+
+This class represents the Gamma distribution.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Gamma\+Distribution} (const size\+\_\+t dimensionality=0)
+\begin{DoxyCompactList}\small\item\em Construct the Gamma distribution with the given number of dimensions (default 0); each parameter will be initialized to 0. \end{DoxyCompactList}\item 
+{\bf Gamma\+Distribution} (const arma\+::mat \&data, const double tol=1e-\/8)
+\begin{DoxyCompactList}\small\item\em Construct the Gamma distribution, training on the given parameters. \end{DoxyCompactList}\item 
+{\bf Gamma\+Distribution} (const arma\+::vec \&{\bf alpha}, const arma\+::vec \&{\bf beta})
+\begin{DoxyCompactList}\small\item\em Construct the Gamma distribution given two vectors alpha and beta. \end{DoxyCompactList}\item 
+{\bf $\sim$\+Gamma\+Distribution} ()
+\begin{DoxyCompactList}\small\item\em Destructor. \end{DoxyCompactList}\item 
+double {\bf Alpha} (const size\+\_\+t dim) const 
+\begin{DoxyCompactList}\small\item\em Get the alpha parameter of the given dimension. \end{DoxyCompactList}\item 
+double \& {\bf Alpha} (const size\+\_\+t dim)
+\begin{DoxyCompactList}\small\item\em Modify the alpha parameter of the given dimension. \end{DoxyCompactList}\item 
+double {\bf Beta} (const size\+\_\+t dim) const 
+\begin{DoxyCompactList}\small\item\em Get the beta parameter of the given dimension. \end{DoxyCompactList}\item 
+double \& {\bf Beta} (const size\+\_\+t dim)
+\begin{DoxyCompactList}\small\item\em Modify the beta parameter of the given dimension. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Dimensionality} () const 
+\begin{DoxyCompactList}\small\item\em Get the dimensionality of the distribution. \end{DoxyCompactList}\item 
+void {\bf Log\+Probability} (const arma\+::mat \&observations, arma\+::vec \&Log\+Probabilities) const 
+\begin{DoxyCompactList}\small\item\em This function returns the logarithm of the probability of a group of observations. \end{DoxyCompactList}\item 
+void {\bf Probability} (const arma\+::mat \&observations, arma\+::vec \&Probabilities) const 
+\begin{DoxyCompactList}\small\item\em This function returns the probability of a group of observations. \end{DoxyCompactList}\item 
+double {\bf Probability} (double x, size\+\_\+t dim) const 
+\item 
+arma\+::vec {\bf Random} () const 
+\begin{DoxyCompactList}\small\item\em This function returns an observation of this distribution. \end{DoxyCompactList}\item 
+void {\bf Train} (const arma\+::mat \&rdata, const double tol=1e-\/8)
+\begin{DoxyCompactList}\small\item\em This function trains (fits distribution parameters) to new data or the dataset the object owns. \end{DoxyCompactList}\item 
+void {\bf Train} (const arma\+::mat \&observations, const arma\+::vec \&probabilities, const double tol=1e-\/8)
+\begin{DoxyCompactList}\small\item\em Fits an alpha and beta parameter according to observation probabilities. \end{DoxyCompactList}\item 
+void {\bf Train} (const arma\+::vec \&log\+Meanx\+Vec, const arma\+::vec \&mean\+Logx\+Vec, const arma\+::vec \&meanx\+Vec, const double tol=1e-\/8)
+\begin{DoxyCompactList}\small\item\em This function trains (fits distribution parameters) to a dataset with pre-\/computed statistics log\+Meanx, mean\+Logx, meanx for each dimension. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool {\bf Converged} (const double a\+Old, const double a\+New, const double tol)
+\begin{DoxyCompactList}\small\item\em This is a small function that returns true if the update of alpha is smaller than the tolerance ratio. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+arma\+::vec {\bf alpha}
+\begin{DoxyCompactList}\small\item\em Array of fitted alphas. \end{DoxyCompactList}\item 
+arma\+::vec {\bf beta}
+\begin{DoxyCompactList}\small\item\em Array of fitted betas. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This class represents the Gamma distribution. 
+
+It supports training a Gamma distribution on a given dataset and accessing the fitted alpha and beta parameters.
+
+This class supports multidimensional Gamma distributions; however, it is assumed that each dimension is independent; therefore, a multidimensional Gamma distribution here may be seen as a set of independent single-\/dimensional Gamma distributions---and the parameters are estimated under this assumption.
+
+The estimation algorithm used can be found in the following paper\+:
+
+
+\begin{DoxyCode}
+@techreport\{minka2002estimating,
+  title=\{Estimating a \{G\}amma distribution\},
+  author=\{Minka, Thomas P.\},
+  institution=\{Microsoft Research\},
+  address=\{Cambridge, U.K.\},
+  year=\{2002\}
+\}
+\end{DoxyCode}
+ 
+
+Definition at line 51 of file gamma\+\_\+distribution.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}!Gamma\+Distribution@{Gamma\+Distribution}}
+\index{Gamma\+Distribution@{Gamma\+Distribution}!mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}}
+\subsubsection[{Gamma\+Distribution(const size\+\_\+t dimensionality=0)}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::distribution\+::\+Gamma\+Distribution\+::\+Gamma\+Distribution (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{dimensionality = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1distribution_1_1GammaDistribution_a84cc247cd4c782eae19acdc0ead6ee59}
+
+
+Construct the Gamma distribution with the given number of dimensions (default 0); each parameter will be initialized to 0. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em dimensionality} & Number of dimensions. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}!Gamma\+Distribution@{Gamma\+Distribution}}
+\index{Gamma\+Distribution@{Gamma\+Distribution}!mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}}
+\subsubsection[{Gamma\+Distribution(const arma\+::mat \&data, const double tol=1e-\/8)}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::distribution\+::\+Gamma\+Distribution\+::\+Gamma\+Distribution (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{data, }
+\item[{const double}]{tol = {\ttfamily 1e-\/8}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1distribution_1_1GammaDistribution_a88b3dbb35196b43250a6909bb9036454}
+
+
+Construct the Gamma distribution, training on the given parameters. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Data to train the distribution on. \\
+\hline
+{\em tol} & Convergence tolerance. This is {\itshape not} an absolute measure\+: It will stop the approximation once the {\itshape change} in the value is smaller than tol. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}!Gamma\+Distribution@{Gamma\+Distribution}}
+\index{Gamma\+Distribution@{Gamma\+Distribution}!mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}}
+\subsubsection[{Gamma\+Distribution(const arma\+::vec \&alpha, const arma\+::vec \&beta)}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::distribution\+::\+Gamma\+Distribution\+::\+Gamma\+Distribution (
+\begin{DoxyParamCaption}
+\item[{const arma\+::vec \&}]{alpha, }
+\item[{const arma\+::vec \&}]{beta}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1distribution_1_1GammaDistribution_a9db8324c21c421124aaafcc503ab493e}
+
+
+Construct the Gamma distribution given two vectors alpha and beta. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em alpha} & The vector of alphas, one per dimension. \\
+\hline
+{\em beta} & The vector of betas, one per dimension. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}!````~Gamma\+Distribution@{$\sim$\+Gamma\+Distribution}}
+\index{````~Gamma\+Distribution@{$\sim$\+Gamma\+Distribution}!mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}}
+\subsubsection[{$\sim$\+Gamma\+Distribution()}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::distribution\+::\+Gamma\+Distribution\+::$\sim$\+Gamma\+Distribution (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1distribution_1_1GammaDistribution_abc9d862ffa4f6f7c1401d3a5e4acac24}
+
+
+Destructor. 
+
+
+
+Definition at line 83 of file gamma\+\_\+distribution.\+hpp.
+
+
+
+References Log\+Probability(), Probability(), Random(), and Train().
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}!Alpha@{Alpha}}
+\index{Alpha@{Alpha}!mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}}
+\subsubsection[{Alpha(const size\+\_\+t dim) const }]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::distribution\+::\+Gamma\+Distribution\+::\+Alpha (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{dim}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1distribution_1_1GammaDistribution_aa4a49d87adb00a7b53373bfb11fff00a}
+
+
+Get the alpha parameter of the given dimension. 
+
+
+
+Definition at line 183 of file gamma\+\_\+distribution.\+hpp.
+
+\index{mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}!Alpha@{Alpha}}
+\index{Alpha@{Alpha}!mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}}
+\subsubsection[{Alpha(const size\+\_\+t dim)}]{\setlength{\rightskip}{0pt plus 5cm}double\& mlpack\+::distribution\+::\+Gamma\+Distribution\+::\+Alpha (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{dim}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1distribution_1_1GammaDistribution_aaa0fd52dca357099d6f78b1b5e836df9}
+
+
+Modify the alpha parameter of the given dimension. 
+
+
+
+Definition at line 185 of file gamma\+\_\+distribution.\+hpp.
+
+\index{mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}!Beta@{Beta}}
+\index{Beta@{Beta}!mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}}
+\subsubsection[{Beta(const size\+\_\+t dim) const }]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::distribution\+::\+Gamma\+Distribution\+::\+Beta (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{dim}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1distribution_1_1GammaDistribution_af5abc4f3e3d205c34c403d85264cb563}
+
+
+Get the beta parameter of the given dimension. 
+
+
+
+Definition at line 188 of file gamma\+\_\+distribution.\+hpp.
+
+\index{mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}!Beta@{Beta}}
+\index{Beta@{Beta}!mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}}
+\subsubsection[{Beta(const size\+\_\+t dim)}]{\setlength{\rightskip}{0pt plus 5cm}double\& mlpack\+::distribution\+::\+Gamma\+Distribution\+::\+Beta (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{dim}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1distribution_1_1GammaDistribution_adc12a877ed696ba8f9a1951e59d0ae49}
+
+
+Modify the beta parameter of the given dimension. 
+
+
+
+Definition at line 190 of file gamma\+\_\+distribution.\+hpp.
+
+\index{mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}!Converged@{Converged}}
+\index{Converged@{Converged}!mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}}
+\subsubsection[{Converged(const double a\+Old, const double a\+New, const double tol)}]{\setlength{\rightskip}{0pt plus 5cm}bool mlpack\+::distribution\+::\+Gamma\+Distribution\+::\+Converged (
+\begin{DoxyParamCaption}
+\item[{const double}]{a\+Old, }
+\item[{const double}]{a\+New, }
+\item[{const double}]{tol}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}\label{classmlpack_1_1distribution_1_1GammaDistribution_a9ff123afa842d66d60aae6f7e8ed97c4}
+
+
+This is a small function that returns true if the update of alpha is smaller than the tolerance ratio. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em a\+Old} & old value of parameter we want to estimate (alpha in our case). \\
+\hline
+{\em a\+New} & new value of parameter (the value after 1 iteration from a\+Old). \\
+\hline
+{\em tol} & Convergence tolerance. Relative measure (see documentation of \doxyref{Gamma\+Distribution\+::\+Train}{p.}{classmlpack_1_1distribution_1_1GammaDistribution_a006389e4d498360297d7bfee4e197549}). \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}!Dimensionality@{Dimensionality}}
+\index{Dimensionality@{Dimensionality}!mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}}
+\subsubsection[{Dimensionality() const }]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t mlpack\+::distribution\+::\+Gamma\+Distribution\+::\+Dimensionality (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1distribution_1_1GammaDistribution_acf130dfa81e6e3ae941901c16b534da8}
+
+
+Get the dimensionality of the distribution. 
+
+
+
+Definition at line 193 of file gamma\+\_\+distribution.\+hpp.
+
+\index{mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}!Log\+Probability@{Log\+Probability}}
+\index{Log\+Probability@{Log\+Probability}!mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}}
+\subsubsection[{Log\+Probability(const arma\+::mat \&observations, arma\+::vec \&\+Log\+Probabilities) const }]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::distribution\+::\+Gamma\+Distribution\+::\+Log\+Probability (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{observations, }
+\item[{arma\+::vec \&}]{Log\+Probabilities}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1distribution_1_1GammaDistribution_adc9a82eca7e4a1853a7125614fd7c6ec}
+
+
+This function returns the logarithm of the probability of a group of observations. 
+
+The logarithm of the probability of a value x is
+
+log(\{x$^\wedge$( -\/ 1)\}\{() $\ast$ $^\wedge$\} $\ast$ e $^\wedge$ \{-\/\{x\}\{\}\})
+
+for one dimension. This implementation assumes each dimension is independent, so the product rule is used.
+
+
+\begin{DoxyParams}{Parameters}
+{\em observations} & Matrix of observations, one per column. \\
+\hline
+{\em log\+Probabilities} & column vector of log probabilities, one per observation. \\
+\hline
+\end{DoxyParams}
+
+
+Referenced by $\sim$\+Gamma\+Distribution().
+
+\index{mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}!Probability@{Probability}}
+\index{Probability@{Probability}!mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}}
+\subsubsection[{Probability(const arma\+::mat \&observations, arma\+::vec \&\+Probabilities) const }]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::distribution\+::\+Gamma\+Distribution\+::\+Probability (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{observations, }
+\item[{arma\+::vec \&}]{Probabilities}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1distribution_1_1GammaDistribution_a1721c59eebdddb1367d11d33bbaf28e2}
+
+
+This function returns the probability of a group of observations. 
+
+The probability of the value x is
+
+\{x$^\wedge$( -\/ 1)\}\{() $\ast$ $^\wedge$\} $\ast$ e $^\wedge$ \{-\/\{x\}\{\}\}
+
+for one dimension. This implementation assumes each dimension is independent, so the product rule is used.
+
+
+\begin{DoxyParams}{Parameters}
+{\em observations} & Matrix of observations, one per column. \\
+\hline
+{\em probabilities} & column vector of probabilities, one per observation. \\
+\hline
+\end{DoxyParams}
+
+
+Referenced by $\sim$\+Gamma\+Distribution().
+
+\index{mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}!Probability@{Probability}}
+\index{Probability@{Probability}!mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}}
+\subsubsection[{Probability(double x, size\+\_\+t dim) const }]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::distribution\+::\+Gamma\+Distribution\+::\+Probability (
+\begin{DoxyParamCaption}
+\item[{double}]{x, }
+\item[{size\+\_\+t}]{dim}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1distribution_1_1GammaDistribution_a8de8437f9d4b385e0fd4c306e64df56f}
+\index{mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}!Random@{Random}}
+\index{Random@{Random}!mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}}
+\subsubsection[{Random() const }]{\setlength{\rightskip}{0pt plus 5cm}arma\+::vec mlpack\+::distribution\+::\+Gamma\+Distribution\+::\+Random (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1distribution_1_1GammaDistribution_acb31c20345e9f63dda9661db321968e1}
+
+
+This function returns an observation of this distribution. 
+
+
+
+Referenced by $\sim$\+Gamma\+Distribution().
+
+\index{mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}}
+\subsubsection[{Train(const arma\+::mat \&rdata, const double tol=1e-\/8)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::distribution\+::\+Gamma\+Distribution\+::\+Train (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{rdata, }
+\item[{const double}]{tol = {\ttfamily 1e-\/8}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1distribution_1_1GammaDistribution_a006389e4d498360297d7bfee4e197549}
+
+
+This function trains (fits distribution parameters) to new data or the dataset the object owns. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rdata} & Reference data to fit parameters to. \\
+\hline
+{\em tol} & Convergence tolerance. This is {\itshape not} an absolute measure\+: It will stop the approximation once the {\itshape change} in the value is smaller than tol. \\
+\hline
+\end{DoxyParams}
+
+
+Referenced by $\sim$\+Gamma\+Distribution().
+
+\index{mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}}
+\subsubsection[{Train(const arma\+::mat \&observations, const arma\+::vec \&probabilities, const double tol=1e-\/8)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::distribution\+::\+Gamma\+Distribution\+::\+Train (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{observations, }
+\item[{const arma\+::vec \&}]{probabilities, }
+\item[{const double}]{tol = {\ttfamily 1e-\/8}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1distribution_1_1GammaDistribution_a094a23e2ba5414a6c3bdecb0c40ac367}
+
+
+Fits an alpha and beta parameter according to observation probabilities. 
+
+This method is not yet implemented.
+
+
+\begin{DoxyParams}{Parameters}
+{\em observations} & The reference data, one observation per column \\
+\hline
+{\em probabilities} & The probability of each observation. One value per column of the observations matrix. \\
+\hline
+{\em tol} & Convergence tolerance. This is {\itshape not} an absolute measure\+: It will stop the approximation once the {\itshape change} in the value is smaller than tol. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}}
+\subsubsection[{Train(const arma\+::vec \&log\+Meanx\+Vec, const arma\+::vec \&mean\+Logx\+Vec, const arma\+::vec \&meanx\+Vec, const double tol=1e-\/8)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::distribution\+::\+Gamma\+Distribution\+::\+Train (
+\begin{DoxyParamCaption}
+\item[{const arma\+::vec \&}]{log\+Meanx\+Vec, }
+\item[{const arma\+::vec \&}]{mean\+Logx\+Vec, }
+\item[{const arma\+::vec \&}]{meanx\+Vec, }
+\item[{const double}]{tol = {\ttfamily 1e-\/8}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1distribution_1_1GammaDistribution_a78e5a62add8c4056b4a98e0b9286bc06}
+
+
+This function trains (fits distribution parameters) to a dataset with pre-\/computed statistics log\+Meanx, mean\+Logx, meanx for each dimension. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em log\+Meanx\+Vec} & Is each dimension\textquotesingle{}s logarithm of the mean (log(mean(x))). \\
+\hline
+{\em mean\+Logx\+Vec} & Is each dimension\textquotesingle{}s mean of logarithms (mean(log(x))). \\
+\hline
+{\em meanx\+Vec} & Is each dimension\textquotesingle{}s mean (mean(x)). \\
+\hline
+{\em tol} & Convergence tolerance. This is {\itshape not} an absolute measure\+: It will stop the approximation once the {\itshape change} in the value is smaller than tol. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}!alpha@{alpha}}
+\index{alpha@{alpha}!mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}}
+\subsubsection[{alpha}]{\setlength{\rightskip}{0pt plus 5cm}arma\+::vec mlpack\+::distribution\+::\+Gamma\+Distribution\+::alpha\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1distribution_1_1GammaDistribution_a6af68345fbe4d2937d7d9a8bfddcb3c3}
+
+
+Array of fitted alphas. 
+
+
+
+Definition at line 197 of file gamma\+\_\+distribution.\+hpp.
+
+\index{mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}!beta@{beta}}
+\index{beta@{beta}!mlpack\+::distribution\+::\+Gamma\+Distribution@{mlpack\+::distribution\+::\+Gamma\+Distribution}}
+\subsubsection[{beta}]{\setlength{\rightskip}{0pt plus 5cm}arma\+::vec mlpack\+::distribution\+::\+Gamma\+Distribution\+::beta\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1distribution_1_1GammaDistribution_a1a0e1f5438a9ca0064487473a62ca64c}
+
+
+Array of fitted betas. 
+
+
+
+Definition at line 199 of file gamma\+\_\+distribution.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/dists/{\bf gamma\+\_\+distribution.\+hpp}\end{DoxyCompactItemize}

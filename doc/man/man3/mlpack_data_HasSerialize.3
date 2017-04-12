@@ -1,0 +1,77 @@
+.TH "mlpack::data::HasSerialize< T >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::data::HasSerialize< T > \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "struct \fBcheck\fP"
+.br
+.in -1c
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "typedef char \fBno\fP[2]"
+.br
+.ti -1c
+.RI "typedef char \fByes\fP[1]"
+.br
+.in -1c
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename U > static \fByes\fP & \fBchk\fP (\fBcheck\fP< U, typename \fBstd::enable_if_t\fP< std::is_class< U >::\fBvalue\fP > *, typename \fBstd::enable_if_t\fP< \fBHasSerializeFunction\fP< U >::\fBvalue\fP > * > *)"
+.br
+.ti -1c
+.RI "template<typename > static \fBno\fP & \fBchk\fP (\&.\&.\&.)"
+.br
+.in -1c
+.SS "Static Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "static const bool \fBvalue\fP = (sizeof(\fBchk\fP<T>(0)) == sizeof(\fByes\fP))"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename T>
+.br
+struct mlpack::data::HasSerialize< T >"
+
+.PP
+Definition at line 46 of file serialization_shim\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "template<typename T > typedef char \fBmlpack::data::HasSerialize\fP< T >::no[2]"
+
+.PP
+Definition at line 50 of file serialization_shim\&.hpp\&.
+.SS "template<typename T > typedef char \fBmlpack::data::HasSerialize\fP< T >::yes[1]"
+
+.PP
+Definition at line 49 of file serialization_shim\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename T > template<typename U > static \fByes\fP& \fBmlpack::data::HasSerialize\fP< T >::chk (\fBcheck\fP< U, typename \fBstd::enable_if_t\fP< std::is_class< U >::\fBvalue\fP > *, typename \fBstd::enable_if_t\fP< \fBHasSerializeFunction\fP< U >::\fBvalue\fP > * > *)\fC [static]\fP"
+
+.SS "template<typename T > template<typename > static \fBno\fP& \fBmlpack::data::HasSerialize\fP< T >::chk ( \&.\&.\&.)\fC [static]\fP"
+
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename T > const bool \fBmlpack::data::HasSerialize\fP< T >::value = (sizeof(\fBchk\fP<T>(0)) == sizeof(\fByes\fP))\fC [static]\fP"
+
+.PP
+Definition at line 58 of file serialization_shim\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

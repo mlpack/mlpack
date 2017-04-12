@@ -1,0 +1,1378 @@
+.TH "src/mlpack/core/util/param.hpp" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+src/mlpack/core/util/param.hpp \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBmlpack::data::DatasetMapper< PolicyType >\fP"
+.br
+.RI "\fIAuxiliary information for a dataset, including mappings to/from strings and the datatype of each dimension\&. \fP"
+.in -1c
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "\fILinear algebra utility functions, generally performed on matrices or vectors\&. \fP"
+.ti -1c
+.RI " \fBmlpack::data\fP"
+.br
+.RI "\fIFunctions to load and save matrices and models\&. \fP"
+.in -1c
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fBPARAM_COL\fP(ID,  DESC,  ALIAS,  REQ,  TRANS,  IN)"
+.br
+.ti -1c
+.RI "#define \fBPARAM_COL_IN\fP(ID,  DESC,  ALIAS)   \fBPARAM_COL\fP(ID, DESC, ALIAS, false, true, true)"
+.br
+.RI "\fIDefine a vector input parameter (type arma::vec)\&. \fP"
+.ti -1c
+.RI "#define \fBPARAM_COL_OUT\fP(ID,  DESC,  ALIAS)   \fBPARAM_COL\fP(ID, DESC, ALIAS, false, true, false)"
+.br
+.RI "\fIDefine a vector output parameter (type arma::vec)\&. \fP"
+.ti -1c
+.RI "#define \fBPARAM_DOUBLE_IN\fP(ID,  DESC,  ALIAS,  DEF)   \fBPARAM_IN\fP(double, ID, DESC, ALIAS, DEF, false)"
+.br
+.RI "\fIDefine a double input parameter\&. \fP"
+.ti -1c
+.RI "#define \fBPARAM_DOUBLE_IN_REQ\fP(ID,  DESC,  ALIAS)   \fBPARAM_IN\fP(double, ID, DESC, ALIAS, 0\&.0d, true)"
+.br
+.RI "\fIDefine a required double parameter\&. \fP"
+.ti -1c
+.RI "#define \fBPARAM_DOUBLE_OUT\fP(ID,  DESC)   \fBPARAM_OUT\fP(double, ID, DESC, '', 0\&.0, false)"
+.br
+.RI "\fIDefine a double output parameter\&. \fP"
+.ti -1c
+.RI "#define \fBPARAM_FLAG\fP(ID,  DESC,  ALIAS)   \fBPARAM_IN\fP(bool, ID, DESC, ALIAS, false, false);"
+.br
+.RI "\fIDefine a flag parameter\&. \fP"
+.ti -1c
+.RI "#define \fBPARAM_IN\fP(T,  ID,  DESC,  ALIAS,  DEF,  REQ)"
+.br
+.RI "\fIDefine an input parameter\&. \fP"
+.ti -1c
+.RI "#define \fBPARAM_INT_IN\fP(ID,  DESC,  ALIAS,  DEF)   \fBPARAM_IN\fP(int, ID, DESC, ALIAS, DEF, false)"
+.br
+.RI "\fIDefine an integer input parameter\&. \fP"
+.ti -1c
+.RI "#define \fBPARAM_INT_IN_REQ\fP(ID,  DESC,  ALIAS)   \fBPARAM_IN\fP(int, ID, DESC, ALIAS, 0, true)"
+.br
+.RI "\fIDefine a required integer input parameter\&. \fP"
+.ti -1c
+.RI "#define \fBPARAM_INT_OUT\fP(ID,  DESC)   \fBPARAM_IN\fP(int, ID, DESC, '', 0, false)"
+.br
+.RI "\fIDefine an integer output parameter\&. \fP"
+.ti -1c
+.RI "#define \fBPARAM_MATRIX\fP(ID,  DESC,  ALIAS,  REQ,  TRANS,  IN)"
+.br
+.ti -1c
+.RI "#define \fBPARAM_MATRIX_AND_INFO_IN\fP(ID,  DESC,  ALIAS)   \fBPARAM_IN\fP(\fBTUPLE_TYPE\fP, ID, DESC, ALIAS, \fBTUPLE_TYPE\fP(), false)"
+.br
+.ti -1c
+.RI "#define \fBPARAM_MATRIX_IN\fP(ID,  DESC,  ALIAS)   \fBPARAM_MATRIX\fP(ID, DESC, ALIAS, false, true, true)"
+.br
+.RI "\fIDefine a matrix input parameter\&. \fP"
+.ti -1c
+.RI "#define \fBPARAM_MATRIX_IN_REQ\fP(ID,  DESC,  ALIAS)   \fBPARAM_MATRIX\fP(ID, DESC, ALIAS, true, true, true)"
+.br
+.RI "\fIDefine a required matrix input parameter\&. \fP"
+.ti -1c
+.RI "#define \fBPARAM_MATRIX_OUT\fP(ID,  DESC,  ALIAS)   \fBPARAM_MATRIX\fP(ID, DESC, ALIAS, false, true, false)"
+.br
+.RI "\fIDefine a matrix output parameter\&. \fP"
+.ti -1c
+.RI "#define \fBPARAM_MODEL\fP(TYPE,  ID,  DESC,  ALIAS,  REQ,  IN)"
+.br
+.ti -1c
+.RI "#define \fBPARAM_MODEL_IN\fP(TYPE,  ID,  DESC,  ALIAS)   \fBPARAM_MODEL\fP(TYPE, ID, DESC, ALIAS, false, true)"
+.br
+.RI "\fIDefine an input model\&. \fP"
+.ti -1c
+.RI "#define \fBPARAM_MODEL_IN_REQ\fP(TYPE,  ID,  DESC,  ALIAS)   \fBPARAM_MODEL\fP(TYPE, ID, DESC, ALIAS, true, true)"
+.br
+.RI "\fIDefine a required input model\&. \fP"
+.ti -1c
+.RI "#define \fBPARAM_MODEL_OUT\fP(TYPE,  ID,  DESC,  ALIAS)   \fBPARAM_MODEL\fP(TYPE, ID, DESC, ALIAS, false, false)"
+.br
+.RI "\fIDefine an output model\&. \fP"
+.ti -1c
+.RI "#define \fBPARAM_OUT\fP(T,  ID,  DESC,  ALIAS,  DEF,  REQ)"
+.br
+.ti -1c
+.RI "#define \fBPARAM_ROW\fP(ID,  DESC,  ALIAS,  REQ,  TRANS,  IN)"
+.br
+.ti -1c
+.RI "#define \fBPARAM_ROW_IN\fP(ID,  DESC,  ALIAS)   \fBPARAM_ROW\fP(ID, DESC, ALIAS, false, true, true)"
+.br
+.RI "\fIDefine a row vector input parameter (type arma::rowvec)\&. \fP"
+.ti -1c
+.RI "#define \fBPARAM_ROW_OUT\fP(ID,  DESC,  ALIAS)   \fBPARAM_ROW\fP(ID, DESC, ALIAS, false, true, false)"
+.br
+.RI "\fIDefine a row vector output parameter (type arma::rowvec)\&. \fP"
+.ti -1c
+.RI "#define \fBPARAM_STRING_IN\fP(ID,  DESC,  ALIAS,  DEF)   \fBPARAM_IN\fP(\fBstd::string\fP, ID, DESC, ALIAS, DEF, false)"
+.br
+.RI "\fIDefine a string input parameter\&. \fP"
+.ti -1c
+.RI "#define \fBPARAM_STRING_IN_REQ\fP(ID,  DESC,  ALIAS)   \fBPARAM_IN\fP(\fBstd::string\fP, ID, DESC, ALIAS, '', true)"
+.br
+.RI "\fIDefine a required string parameter\&. \fP"
+.ti -1c
+.RI "#define \fBPARAM_STRING_OUT\fP(ID,  DESC,  ALIAS)   \fBPARAM_OUT\fP(\fBstd::string\fP, ID, DESC, ALIAS, '', false)"
+.br
+.RI "\fIDefine a string output parameter\&. \fP"
+.ti -1c
+.RI "#define \fBPARAM_TMATRIX_IN\fP(ID,  DESC,  ALIAS)   \fBPARAM_MATRIX\fP(ID, DESC, ALIAS, false, false, true)"
+.br
+.RI "\fIDefine a transposed matrix input parameter\&. \fP"
+.ti -1c
+.RI "#define \fBPARAM_TMATRIX_IN_REQ\fP(ID,  DESC,  ALIAS)   \fBPARAM_MATRIX\fP(ID, DESC, ALIAS, true, false, true)"
+.br
+.RI "\fIDefine a required transposed matrix input parameter\&. \fP"
+.ti -1c
+.RI "#define \fBPARAM_TMATRIX_OUT\fP(ID,  DESC,  ALIAS)   \fBPARAM_MATRIX\fP(ID, DESC, ALIAS, false, false, false)"
+.br
+.RI "\fIDefine a transposed matrix output parameter\&. \fP"
+.ti -1c
+.RI "#define \fBPARAM_UCOL\fP(ID,  DESC,  ALIAS,  REQ,  TRANS,  IN)"
+.br
+.ti -1c
+.RI "#define \fBPARAM_UCOL_IN\fP(ID,  DESC,  ALIAS)   \fBPARAM_UCOL\fP(ID, DESC, ALIAS, false, true, true)"
+.br
+.RI "\fIDefine an unsigned vector input parameter (type arma::Col<size_t>)\&. \fP"
+.ti -1c
+.RI "#define \fBPARAM_UCOL_OUT\fP(ID,  DESC,  ALIAS)   \fBPARAM_UCOL\fP(ID, DESC, ALIAS, false, true, false)"
+.br
+.RI "\fIDefine an unsigned vector output parameter (type arma::Col<size_t>)\&. \fP"
+.ti -1c
+.RI "#define \fBPARAM_UMATRIX\fP(ID,  DESC,  ALIAS,  REQ,  TRANS,  IN)"
+.br
+.ti -1c
+.RI "#define \fBPARAM_UMATRIX_IN\fP(ID,  DESC,  ALIAS)   \fBPARAM_UMATRIX\fP(ID, DESC, ALIAS, false, true, true)"
+.br
+.RI "\fIDefine an unsigned matrix input parameter (arma::Mat<size_t>)\&. \fP"
+.ti -1c
+.RI "#define \fBPARAM_UMATRIX_IN_REQ\fP(ID,  DESC,  ALIAS)   \fBPARAM_UMATRIX\fP(ID, DESC, ALIAS, true, true, true)"
+.br
+.RI "\fIDefine a required unsigned matrix input parameter (arma::Mat<size_t>)\&. \fP"
+.ti -1c
+.RI "#define \fBPARAM_UMATRIX_OUT\fP(ID,  DESC,  ALIAS)   \fBPARAM_UMATRIX\fP(ID, DESC, ALIAS, false, true, false)"
+.br
+.RI "\fIDefine an unsigned matrix output parameter (arma::Mat<size_t>)\&. \fP"
+.ti -1c
+.RI "#define \fBPARAM_UROW\fP(ID,  DESC,  ALIAS,  REQ,  TRANS,  IN)"
+.br
+.ti -1c
+.RI "#define \fBPARAM_UROW_IN\fP(ID,  DESC,  ALIAS)   \fBPARAM_UROW\fP(ID, DESC, ALIAS, false, true, true)"
+.br
+.RI "\fIDefine an unsigned row vector input parameter (type arma::Row<size_t>)\&. \fP"
+.ti -1c
+.RI "#define \fBPARAM_UROW_OUT\fP(ID,  DESC,  ALIAS)   \fBPARAM_UROW\fP(ID, DESC, ALIAS, false, true, false)"
+.br
+.RI "\fIDefine an unsigned row vector output parameter (type arma::Row<size_t>)\&. \fP"
+.ti -1c
+.RI "#define \fBPARAM_VECTOR_IN\fP(T,  ID,  DESC,  ALIAS)   \fBPARAM_IN\fP(std::vector<T>, ID, DESC, ALIAS, std::vector<T>(), false)"
+.br
+.RI "\fIDefine a std::vector input parameter\&. \fP"
+.ti -1c
+.RI "#define \fBPARAM_VECTOR_IN_REQ\fP(T,  ID,  DESC,  ALIAS)   \fBPARAM_IN\fP(std::vector<T>, ID, DESC, ALIAS, std::vector<T>(), true);"
+.br
+.RI "\fIDefine a required vector parameter\&. \fP"
+.ti -1c
+.RI "#define \fBPARAM_VECTOR_OUT\fP(T,  ID)   \fBPARAM_OUT\fP(std::vector<T>, ID, DESC, '', std::vector<T>(), false)"
+.br
+.RI "\fIDefine a vector output parameter\&. \fP"
+.ti -1c
+.RI "#define \fBPROGRAM_INFO\fP(NAME,  DESC)"
+.br
+.RI "\fIDocument an executable\&. \fP"
+.ti -1c
+.RI "#define \fBTUPLE_TYPE\fP   std::tuple<\fBmlpack::data::DatasetInfo\fP, arma::mat>"
+.br
+.RI "\fIDefine an input DatasetInfo/matrix parameter\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Matthew Amidon 
+.PP
+Ryan Curtin
+.RE
+.PP
+Definition of PARAM_*_IN() and PARAM_*_OUT() macros, as well as the \fBPROGRAM_INFO()\fP macro, which are used to define input and output parameters of command-line programs and bindings to other languages\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBparam\&.hpp\fP\&.
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define PARAM_COL(ID, DESC, ALIAS, REQ, TRANS, IN)"
+\fBValue:\fP
+.PP
+.nf
+static mlpack::util::Option<arma::vec> \\
+      JOIN(cli_option_dummy_object_col_, __LINE__) \
+      (arma::vec(), ID, DESC, ALIAS, REQ, IN, !TRANS);
+.fi
+.PP
+Definition at line 1081 of file param\&.hpp\&.
+.SS "#define PARAM_COL_IN(ID, DESC, ALIAS)   \fBPARAM_COL\fP(ID, DESC, ALIAS, false, true, true)"
+
+.PP
+Define a vector input parameter (type arma::vec)\&. From the command line, the user can specify the file that holds the vector, using the name of the vector parameter with '_file' appended (and the same alias)\&. So for instance, if the name of the vector parameter was 'vec', the user could specify that the 'vec' vector was held in vec\&.csv by giving the parameter:
+.PP
+.PP
+.nf
+1 --vec_file vector\&.csv
+.fi
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIID\fP Name of the parameter\&. 
+.br
+\fIDESC\fP Description of the parameter (1-2 sentences)\&. 
+.br
+\fIALIAS\fP An alias for the parameter (one letter)\&.
+.RE
+.PP
+\fBBug\fP
+.RS 4
+The \fBCOUNTER\fP variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros\&. However, not all compilers have this support--most notably, gcc < 4\&.3\&. In that case, the \fBLINE\fP macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages\&. See https://github.com/mlpack/mlpack/issues/100 for more information\&. 
+.RE
+.PP
+
+.PP
+Definition at line 510 of file param\&.hpp\&.
+.SS "#define PARAM_COL_OUT(ID, DESC, ALIAS)   \fBPARAM_COL\fP(ID, DESC, ALIAS, false, true, false)"
+
+.PP
+Define a vector output parameter (type arma::vec)\&. When the program terminates, the vector will be saved to whatever it was set to during the program\&. From the command-line, the user may specify the file in which to save the output vector using a string option that is the name of the matrix parameter with '_file' appended\&. So, for instance, if the name of the output vector parameter was 'vec', the user could specify that the 'vec' vector should be saved in vector\&.csv by giving the parameter:
+.PP
+.PP
+.nf
+1 --vec_file vector\&.csv
+.fi
+.PP
+.PP
+The output vector will not be printed on stdout, like the other output option types\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIID\fP Name of the parameter\&. 
+.br
+\fIDESC\fP Description of the parameter (1-2 sentences)\&. 
+.br
+\fIALIAS\fP An alias for the parameter (one letter)\&.
+.RE
+.PP
+\fBBug\fP
+.RS 4
+The \fBCOUNTER\fP variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros\&. However, not all compilers have this support--most notably, gcc < 4\&.3\&. In that case, the \fBLINE\fP macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages\&. See https://github.com/mlpack/mlpack/issues/100 for more information\&. 
+.RE
+.PP
+
+.PP
+Definition at line 620 of file param\&.hpp\&.
+.SS "#define PARAM_DOUBLE_IN(ID, DESC, ALIAS, DEF)   \fBPARAM_IN\fP(double, ID, DESC, ALIAS, DEF, false)"
+
+.PP
+Define a double input parameter\&. The parameter can then be specified on the command line with --ID=value\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIID\fP Name of the parameter\&. 
+.br
+\fIDESC\fP Quick description of the parameter (1-2 sentences)\&. 
+.br
+\fIALIAS\fP An alias for the parameter (one letter)\&. 
+.br
+\fIDEF\fP Default value of the parameter\&.
+.RE
+.PP
+\fBSee also:\fP
+.RS 4
+\fBmlpack::CLI\fP, \fBPROGRAM_INFO()\fP
+.RE
+.PP
+\fBBug\fP
+.RS 4
+The \fBCOUNTER\fP variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros\&. However, not all compilers have this support--most notably, gcc < 4\&.3\&. In that case, the \fBLINE\fP macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages\&. See https://github.com/mlpack/mlpack/issues/100 for more information\&. 
+.RE
+.PP
+
+.PP
+Definition at line 145 of file param\&.hpp\&.
+.SS "#define PARAM_DOUBLE_IN_REQ(ID, DESC, ALIAS)   \fBPARAM_IN\fP(double, ID, DESC, ALIAS, 0\&.0d, true)"
+
+.PP
+Define a required double parameter\&. The parameter must then be specified on the command line with --ID=value\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIID\fP Name of the parameter\&. 
+.br
+\fIDESC\fP Quick description of the parameter (1-2 sentences)\&. 
+.br
+\fIALIAS\fP An alias for the parameter (one letter)\&.
+.RE
+.PP
+\fBSee also:\fP
+.RS 4
+\fBmlpack::CLI\fP, \fBPROGRAM_INFO()\fP
+.RE
+.PP
+\fBBug\fP
+.RS 4
+The \fBCOUNTER\fP variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros\&. However, not all compilers have this support--most notably, gcc < 4\&.3\&. In that case, the \fBLINE\fP macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages\&. See https://github.com/mlpack/mlpack/issues/100 for more information\&. 
+.RE
+.PP
+
+.PP
+Definition at line 935 of file param\&.hpp\&.
+.SS "#define PARAM_DOUBLE_OUT(ID, DESC)   \fBPARAM_OUT\fP(double, ID, DESC, '', 0\&.0, false)"
+
+.PP
+Define a double output parameter\&. This parameter will be printed on stdout at the end of the program; for instance, if the parameter name is 'number' and the value is 5\&.012, the output on stdout would be of the following form:
+.PP
+.PP
+.nf
+1 number: 5\&.012
+.fi
+.PP
+.PP
+If the parameter is not set by the end of the program, a fatal runtime error will be issued\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIID\fP Name of the parameter\&. 
+.br
+\fIDESC\fP Quick description of the parameter (1-2 sentences)\&.
+.RE
+.PP
+\fBSee also:\fP
+.RS 4
+\fBmlpack::CLI\fP, \fBPROGRAM_INFO()\fP
+.RE
+.PP
+\fBBug\fP
+.RS 4
+The \fBCOUNTER\fP variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros\&. However, not all compilers have this support--most notably, gcc < 4\&.3\&. In that case, the \fBLINE\fP macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages\&. See https://github.com/mlpack/mlpack/issues/100 for more information\&. 
+.RE
+.PP
+
+.PP
+Definition at line 173 of file param\&.hpp\&.
+.SS "#define PARAM_FLAG(ID, DESC, ALIAS)   \fBPARAM_IN\fP(bool, ID, DESC, ALIAS, false, false);"
+
+.PP
+Define a flag parameter\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIID\fP Name of the parameter\&. 
+.br
+\fIDESC\fP Quick description of the parameter (1-2 sentences)\&. 
+.br
+\fIALIAS\fP An alias for the parameter (one letter)\&.
+.RE
+.PP
+\fBSee also:\fP
+.RS 4
+\fBmlpack::CLI\fP, \fBPROGRAM_INFO()\fP
+.RE
+.PP
+\fBBug\fP
+.RS 4
+The \fBCOUNTER\fP variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros\&. However, not all compilers have this support--most notably, gcc < 4\&.3\&. In that case, the \fBLINE\fP macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages\&. See https://github.com/mlpack/mlpack/issues/100 for more information\&. 
+.RE
+.PP
+
+.PP
+Definition at line 69 of file param\&.hpp\&.
+.SS "#define PARAM_IN(T, ID, DESC, ALIAS, DEF, REQ)"
+\fBValue:\fP
+.PP
+.nf
+static mlpack::util::Option<T> \\
+      JOIN(JOIN(cli_option_dummy_object_in_, __LINE__), opt) \
+      (DEF, ID, DESC, ALIAS, REQ, true, false);
+.fi
+.PP
+Define an input parameter\&. Don't use this function; use the other ones above that call it\&. Note that we are using the \fBLINE\fP macro for naming these actual parameters when \fBCOUNTER\fP does not exist, which is a bit of an ugly hack\&.\&.\&. but this is the preprocessor, after all\&. We don't have much choice other than ugliness\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIT\fP Type of the parameter\&. 
+.br
+\fIID\fP Name of the parameter\&. 
+.br
+\fIDESC\fP Description of the parameter (1-2 sentences)\&. 
+.br
+\fIALIAS\fP Alias for this parameter (one letter)\&. 
+.br
+\fIDEF\fP Default value of the parameter\&. 
+.br
+\fIREQ\fP Whether or not parameter is required (boolean value)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 1061 of file param\&.hpp\&.
+.SS "#define PARAM_INT_IN(ID, DESC, ALIAS, DEF)   \fBPARAM_IN\fP(int, ID, DESC, ALIAS, DEF, false)"
+
+.PP
+Define an integer input parameter\&. The parameter can then be specified on the command line with --ID=value\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIID\fP Name of the parameter\&. 
+.br
+\fIDESC\fP Quick description of the parameter (1-2 sentences)\&. 
+.br
+\fIALIAS\fP An alias for the parameter (one letter)\&. 
+.br
+\fIDEF\fP Default value of the parameter\&.
+.RE
+.PP
+\fBSee also:\fP
+.RS 4
+\fBmlpack::CLI\fP, \fBPROGRAM_INFO()\fP
+.RE
+.PP
+\fBBug\fP
+.RS 4
+The \fBCOUNTER\fP variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros\&. However, not all compilers have this support--most notably, gcc < 4\&.3\&. In that case, the \fBLINE\fP macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages\&. See https://github.com/mlpack/mlpack/issues/100 for more information\&. 
+.RE
+.PP
+
+.PP
+Definition at line 93 of file param\&.hpp\&.
+.SS "#define PARAM_INT_IN_REQ(ID, DESC, ALIAS)   \fBPARAM_IN\fP(int, ID, DESC, ALIAS, 0, true)"
+
+.PP
+Define a required integer input parameter\&. The parameter must then be specified on the command line with --ID=value\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIID\fP Name of the parameter\&. 
+.br
+\fIDESC\fP Quick description of the parameter (1-2 sentences)\&. 
+.br
+\fIALIAS\fP An alias for the parameter (one letter)\&.
+.RE
+.PP
+\fBSee also:\fP
+.RS 4
+\fBmlpack::CLI\fP, \fBPROGRAM_INFO()\fP
+.RE
+.PP
+\fBBug\fP
+.RS 4
+The \fBCOUNTER\fP variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros\&. However, not all compilers have this support--most notably, gcc < 4\&.3\&. In that case, the \fBLINE\fP macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages\&. See https://github.com/mlpack/mlpack/issues/100 for more information\&. 
+.RE
+.PP
+
+.PP
+Definition at line 913 of file param\&.hpp\&.
+.SS "#define PARAM_INT_OUT(ID, DESC)   \fBPARAM_IN\fP(int, ID, DESC, '', 0, false)"
+
+.PP
+Define an integer output parameter\&. This parameter will be printed on stdout at the end of the program; for instance, if the parameter name is 'number' and the value is 5, the output on stdout would be of the following form:
+.PP
+.PP
+.nf
+1 number: 5
+.fi
+.PP
+.PP
+If the parameter is not set by the end of the program, a fatal runtime error will be issued\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIID\fP Name of the parameter\&. 
+.br
+\fIDESC\fP Quick description of the parameter (1-2 sentences)\&.
+.RE
+.PP
+\fBSee also:\fP
+.RS 4
+\fBmlpack::CLI\fP, \fBPROGRAM_INFO()\fP
+.RE
+.PP
+\fBBug\fP
+.RS 4
+The \fBCOUNTER\fP variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros\&. However, not all compilers have this support--most notably, gcc < 4\&.3\&. In that case, the \fBLINE\fP macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages\&. See https://github.com/mlpack/mlpack/issues/100 for more information\&. 
+.RE
+.PP
+
+.PP
+Definition at line 121 of file param\&.hpp\&.
+.SS "#define PARAM_MATRIX(ID, DESC, ALIAS, REQ, TRANS, IN)"
+\fBValue:\fP
+.PP
+.nf
+static mlpack::util::Option<arma::mat> \\
+      JOIN(JOIN(cli_option_dummy_object_matrix_, __LINE__), opt) \
+      (arma::mat(), ID, DESC, ALIAS, REQ, IN, !TRANS);
+.fi
+.PP
+Definition at line 1071 of file param\&.hpp\&.
+.SS "#define PARAM_MATRIX_AND_INFO_IN(ID, DESC, ALIAS)   \fBPARAM_IN\fP(\fBTUPLE_TYPE\fP, ID, DESC, ALIAS, \fBTUPLE_TYPE\fP(), false)"
+
+.PP
+Definition at line 804 of file param\&.hpp\&.
+.SS "#define PARAM_MATRIX_IN(ID, DESC, ALIAS)   \fBPARAM_MATRIX\fP(ID, DESC, ALIAS, false, true, true)"
+
+.PP
+Define a matrix input parameter\&. From the command line, the user can specify the file that holds the matrix, using the name of the matrix parameter with '_file' appended (and the same alias)\&. So for instance, if the name of the matrix parameter was 'mat', the user could specify that the 'mat' matrix was held in matrix\&.csv by giving the parameter
+.PP
+.PP
+.nf
+1 --mat_file matrix\&.csv
+.fi
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIID\fP Name of the parameter\&. 
+.br
+\fIDESC\fP Description of the parameter (1-2 sentences)\&. 
+.br
+\fIALIAS\fP An alias for the parameter (one letter)\&.
+.RE
+.PP
+\fBBug\fP
+.RS 4
+The \fBCOUNTER\fP variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros\&. However, not all compilers have this support--most notably, gcc < 4\&.3\&. In that case, the \fBLINE\fP macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages\&. See https://github.com/mlpack/mlpack/issues/100 for more information\&. 
+.RE
+.PP
+
+.PP
+Definition at line 253 of file param\&.hpp\&.
+.SS "#define PARAM_MATRIX_IN_REQ(ID, DESC, ALIAS)   \fBPARAM_MATRIX\fP(ID, DESC, ALIAS, true, true, true)"
+
+.PP
+Define a required matrix input parameter\&. From the command line, the user can specify the file that holds the matrix, using the name of the matrix parameter with '_file' appended (and the same alias)\&. So for instance, if the name of the matrix parameter was 'mat', the user could specify that the 'mat' matrix was held in matrix\&.csv by giving the parameter
+.PP
+.PP
+.nf
+1 --mat_file matrix\&.csv
+.fi
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIID\fP Name of the parameter\&. 
+.br
+\fIDESC\fP Description of the parameter (1-2 sentences)\&. 
+.br
+\fIALIAS\fP An alias for the parameter (one letter)\&.
+.RE
+.PP
+\fBBug\fP
+.RS 4
+The \fBCOUNTER\fP variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros\&. However, not all compilers have this support--most notably, gcc < 4\&.3\&. In that case, the \fBLINE\fP macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages\&. See https://github.com/mlpack/mlpack/issues/100 for more information\&. 
+.RE
+.PP
+
+.PP
+Definition at line 279 of file param\&.hpp\&.
+.SS "#define PARAM_MATRIX_OUT(ID, DESC, ALIAS)   \fBPARAM_MATRIX\fP(ID, DESC, ALIAS, false, true, false)"
+
+.PP
+Define a matrix output parameter\&. When the program terminates, the matrix will be saved to whatever it was set to by CLI::GetParam<arma::mat>(ID) during the program\&. From the command-line, the user may specify the file in which to save the output matrix using a string option that is the name of the matrix parameter with '_file' appended\&. So, for instance, if the name of the output matrix parameter was 'mat', the user could speicfy that the 'mat' matrix should be saved in matrix\&.csv by giving the parameter
+.PP
+.PP
+.nf
+1 --mat_file matrix\&.csv
+.fi
+.PP
+.PP
+The output matrix will not be printed on stdout, like the other output option types\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIID\fP Name of the parameter\&. 
+.br
+\fIDESC\fP Description of the parameter (1-2 sentences)\&. 
+.br
+\fIALIAS\fP An alias for the parameter (one letter)\&.
+.RE
+.PP
+\fBBug\fP
+.RS 4
+The \fBCOUNTER\fP variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros\&. However, not all compilers have this support--most notably, gcc < 4\&.3\&. In that case, the \fBLINE\fP macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages\&. See https://github.com/mlpack/mlpack/issues/100 for more information\&. 
+.RE
+.PP
+
+.PP
+Definition at line 310 of file param\&.hpp\&.
+.SS "#define PARAM_MODEL(TYPE, ID, DESC, ALIAS, REQ, IN)"
+\fBValue:\fP
+.PP
+.nf
+static mlpack::util::Option<TYPE> \\
+      JOIN(JOIN(cli_option_dummy_object_model_, __LINE__), opt) \
+      (TYPE(), ID, DESC, ALIAS, REQ, IN);
+.fi
+.PP
+Definition at line 1101 of file param\&.hpp\&.
+.SS "#define PARAM_MODEL_IN(TYPE, ID, DESC, ALIAS)   \fBPARAM_MODEL\fP(TYPE, ID, DESC, ALIAS, false, true)"
+
+.PP
+Define an input model\&. From the command line, the user can specify the file that holds the model, using the name of the model parameter with '_file' appended (and the same alias)\&. So for instance, if the name of the model parameter was 'model', the user could specify that the 'model' model was held in model\&.bin by giving the parameter
+.PP
+.PP
+.nf
+1 --model_file model\&.bin
+.fi
+.PP
+.PP
+Note that the first parameter of this model is the type (the class name) of the model to be loaded\&. This model type must have a Serialize() function; a compilation error (a very long and complex one) will result if the model type does not have the following function:
+.PP
+.PP
+.nf
+1 template<typename Archive>
+2 void Serialize(Archive& ar, const unsigned int version);
+.fi
+.PP
+.PP
+This is the \fBboost::serialization\fP \fBserialize()\fP function, just with a capital s for Serialize() (see \fBsrc/mlpack/core/data/serialization_shim\&.hpp\fP)\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fITYPE\fP Type of the model to be loaded\&. 
+.br
+\fIID\fP Name of the parameter\&. 
+.br
+\fIDESC\fP Description of the parameter\&. 
+.br
+\fIALIAS\fP An alias for the parameter (one letter)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 836 of file param\&.hpp\&.
+.SS "#define PARAM_MODEL_IN_REQ(TYPE, ID, DESC, ALIAS)   \fBPARAM_MODEL\fP(TYPE, ID, DESC, ALIAS, true, true)"
+
+.PP
+Define a required input model\&. From the command line, the user can specify the file that holds the model, using the name of the model parameter with '_file' appended (and the same alias)\&. So for instance, if the name of the model parameter was 'model', the user could specify that the 'model' model was held in model\&.bin by giving the parameter
+.PP
+.PP
+.nf
+1 --model_file model\&.bin
+.fi
+.PP
+.PP
+Note that the first parameter of this model is the type (the class name) of the model to be loaded\&. This model type must have a Serialize() function; a compilation error (a very long and complex one) will result if the model type does not have the following function:
+.PP
+.PP
+.nf
+1 template<typename Archive>
+2 void Serialize(Archive& ar, const unsigned int version);
+.fi
+.PP
+.PP
+This is the \fBboost::serialization\fP \fBserialize()\fP function, just with a capital s for Serialize() (see \fBsrc/mlpack/core/data/serialization_shim\&.hpp\fP)\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fITYPE\fP Type of the model to be loaded\&. 
+.br
+\fIID\fP Name of the parameter\&. 
+.br
+\fIDESC\fP Description of the parameter\&. 
+.br
+\fIALIAS\fP An alias for the parameter (one letter)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 868 of file param\&.hpp\&.
+.SS "#define PARAM_MODEL_OUT(TYPE, ID, DESC, ALIAS)   \fBPARAM_MODEL\fP(TYPE, ID, DESC, ALIAS, false, false)"
+
+.PP
+Define an output model\&. From the command line, the user can specify the file that should hold the model, using the name of the model parameter with '_file' appended (and the same alias)\&. So for instance, if the user desires to save the model to model\&.bin and the parameter name is 'model', they could specify
+.PP
+.PP
+.nf
+1 --model_file model\&.bin
+.fi
+.PP
+.PP
+The model will be saved at the termination of the program\&. If you use a parameter of this type, you must call CLI::Destroy() at the end of your program\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fITYPE\fP Type of the model to be saved\&. 
+.br
+\fIID\fP Name of the parameter\&. 
+.br
+\fIDESC\fP Description of the parameter\&. 
+.br
+\fIALIAS\fP An alias for the parameter (one letter)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 891 of file param\&.hpp\&.
+.SS "#define PARAM_OUT(T, ID, DESC, ALIAS, DEF, REQ)"
+\fBValue:\fP
+.PP
+.nf
+static mlpack::util::Option<T> \\
+      JOIN(JOIN(cli_option_dummy_object_out_, __LINE__), opt) \
+      (DEF, ID, DESC, ALIAS, REQ, false, false);
+.fi
+.PP
+Definition at line 1066 of file param\&.hpp\&.
+.SS "#define PARAM_ROW(ID, DESC, ALIAS, REQ, TRANS, IN)"
+\fBValue:\fP
+.PP
+.nf
+static mlpack::util::Option<arma::rowvec> \\
+      JOIN(cli_option_dummy_object_row_, __LINE__) \
+      (arma::rowvec(), ID, DESC, ALIAS, REQ, IN, !TRANS);
+.fi
+.PP
+Definition at line 1091 of file param\&.hpp\&.
+.SS "#define PARAM_ROW_IN(ID, DESC, ALIAS)   \fBPARAM_ROW\fP(ID, DESC, ALIAS, false, true, true)"
+
+.PP
+Define a row vector input parameter (type arma::rowvec)\&. From the command line, the user can specify the file that holds the vector, using the name of the vector parameter with '_file' appended (and the same alias)\&. So for instance, if the name of the vector parameter was 'vec', the user could specify that the 'vec' vector was held in vec\&.csv by giving the parameter:
+.PP
+.PP
+.nf
+1 --vec_file vector\&.csv
+.fi
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIID\fP Name of the parameter\&. 
+.br
+\fIDESC\fP Description of the parameter (1-2 sentences)\&. 
+.br
+\fIALIAS\fP An alias for the parameter (one letter)\&.
+.RE
+.PP
+\fBBug\fP
+.RS 4
+The \fBCOUNTER\fP variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros\&. However, not all compilers have this support--most notably, gcc < 4\&.3\&. In that case, the \fBLINE\fP macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages\&. See https://github.com/mlpack/mlpack/issues/100 for more information\&. 
+.RE
+.PP
+
+.PP
+Definition at line 536 of file param\&.hpp\&.
+.SS "#define PARAM_ROW_OUT(ID, DESC, ALIAS)   \fBPARAM_ROW\fP(ID, DESC, ALIAS, false, true, false)"
+
+.PP
+Define a row vector output parameter (type arma::rowvec)\&. When the program terminates, the vector will be saved to whatever it was set to during the program\&. From the command-line, the user may specify the file in which to save the output vector using a string option that is the name of the matrix parameter with '_file' appended\&. So, for instance, if the name of the output vector parameter was 'vec', the user could specify that the 'vec' vector should be saved in vector\&.csv by giving the parameter:
+.PP
+.PP
+.nf
+1 --vec_file vector\&.csv
+.fi
+.PP
+.PP
+The output vector will not be printed on stdout, like the other output option types\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIID\fP Name of the parameter\&. 
+.br
+\fIDESC\fP Description of the parameter (1-2 sentences)\&. 
+.br
+\fIALIAS\fP An alias for the parameter (one letter)\&.
+.RE
+.PP
+\fBBug\fP
+.RS 4
+The \fBCOUNTER\fP variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros\&. However, not all compilers have this support--most notably, gcc < 4\&.3\&. In that case, the \fBLINE\fP macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages\&. See https://github.com/mlpack/mlpack/issues/100 for more information\&. 
+.RE
+.PP
+
+.PP
+Definition at line 651 of file param\&.hpp\&.
+.SS "#define PARAM_STRING_IN(ID, DESC, ALIAS, DEF)   \fBPARAM_IN\fP(\fBstd::string\fP, ID, DESC, ALIAS, DEF, false)"
+
+.PP
+Define a string input parameter\&. The parameter can then be specified on the command line with --ID=value\&. If ALIAS is equal to DEF_MOD (which is set using the \fBPROGRAM_INFO()\fP macro), the parameter can be specified with just --ID=value\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIID\fP Name of the parameter\&. 
+.br
+\fIDESC\fP Quick description of the parameter (1-2 sentences)\&. 
+.br
+\fIALIAS\fP An alias for the parameter (one letter)\&. 
+.br
+\fIDEF\fP Default value of the parameter\&.
+.RE
+.PP
+\fBSee also:\fP
+.RS 4
+\fBmlpack::CLI\fP, \fBPROGRAM_INFO()\fP
+.RE
+.PP
+\fBBug\fP
+.RS 4
+The \fBCOUNTER\fP variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros\&. However, not all compilers have this support--most notably, gcc < 4\&.3\&. In that case, the \fBLINE\fP macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages\&. See https://github.com/mlpack/mlpack/issues/100 for more information\&. 
+.RE
+.PP
+
+.PP
+Definition at line 198 of file param\&.hpp\&.
+.SS "#define PARAM_STRING_IN_REQ(ID, DESC, ALIAS)   \fBPARAM_IN\fP(\fBstd::string\fP, ID, DESC, ALIAS, '', true)"
+
+.PP
+Define a required string parameter\&. The parameter must then be specified on the command line with --ID=value\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIID\fP Name of the parameter\&. 
+.br
+\fIDESC\fP Quick description of the parameter (1-2 sentences)\&. 
+.br
+\fIALIAS\fP An alias for the parameter (one letter)\&.
+.RE
+.PP
+\fBSee also:\fP
+.RS 4
+\fBmlpack::CLI\fP, \fBPROGRAM_INFO()\fP
+.RE
+.PP
+\fBBug\fP
+.RS 4
+The \fBCOUNTER\fP variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros\&. However, not all compilers have this support--most notably, gcc < 4\&.3\&. In that case, the \fBLINE\fP macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages\&. See https://github.com/mlpack/mlpack/issues/100 for more information\&. 
+.RE
+.PP
+
+.PP
+Definition at line 957 of file param\&.hpp\&.
+.SS "#define PARAM_STRING_OUT(ID, DESC, ALIAS)   \fBPARAM_OUT\fP(\fBstd::string\fP, ID, DESC, ALIAS, '', false)"
+
+.PP
+Define a string output parameter\&. The string will be printed to stdout at the end of the program\&. For instance, if there was a string output parameter called 'something' with value 'hello', at the end of the program the output would be of the following form:
+.PP
+.PP
+.nf
+1 something: "hello"
+.fi
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIID\fP Name of the parameter\&. 
+.br
+\fIDESC\fP Quick description of the parameter (1-2 sentences)\&. 
+.br
+\fIALIAS\fP An alias for the parameter (one letter)\&.
+.RE
+.PP
+\fBSee also:\fP
+.RS 4
+\fBmlpack::CLI\fP, \fBPROGRAM_INFO()\fP
+.RE
+.PP
+\fBBug\fP
+.RS 4
+The \fBCOUNTER\fP variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros\&. However, not all compilers have this support--most notably, gcc < 4\&.3\&. In that case, the \fBLINE\fP macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages\&. See https://github.com/mlpack/mlpack/issues/100 for more information\&. 
+.RE
+.PP
+
+.PP
+Definition at line 227 of file param\&.hpp\&.
+.SS "#define PARAM_TMATRIX_IN(ID, DESC, ALIAS)   \fBPARAM_MATRIX\fP(ID, DESC, ALIAS, false, false, true)"
+
+.PP
+Define a transposed matrix input parameter\&. This is useful when data is desired in row-major form instead of the usual column-major form\&. From the command line, the user can specify the file that holds the matrix, using the name of the matrix parameter with '_file' appended (and the same alias)\&. So for instance, if the name of the matrix parameter was 'mat', the user could specify that the 'mat' matrix was held in matrix\&.csv by giving the parameter
+.PP
+.PP
+.nf
+1 --mat_file matrix\&.csv
+.fi
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIID\fP Name of the parameter\&. 
+.br
+\fIDESC\fP Description of the parameter (1-2 sentences)\&. 
+.br
+\fIALIAS\fP An alias for the parameter (one letter)\&.
+.RE
+.PP
+\fBBug\fP
+.RS 4
+The \fBCOUNTER\fP variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros\&. However, not all compilers have this support--most notably, gcc < 4\&.3\&. In that case, the \fBLINE\fP macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages\&. See https://github.com/mlpack/mlpack/issues/100 for more information\&. 
+.RE
+.PP
+
+.PP
+Definition at line 337 of file param\&.hpp\&.
+.SS "#define PARAM_TMATRIX_IN_REQ(ID, DESC, ALIAS)   \fBPARAM_MATRIX\fP(ID, DESC, ALIAS, true, false, true)"
+
+.PP
+Define a required transposed matrix input parameter\&. This is useful when data is desired in row-major form instead of the usual column-major form\&. From the command line, the user can specify the file that holds the matrix, using the name of the matrix parameter with '_file' appended (and the same alias)\&. So for instance, if the name of the matrix parameter was 'mat', the user could specify that the 'mat' matrix was held in matrix\&.csv by giving the parameter
+.PP
+.PP
+.nf
+1 --mat_file matrix\&.csv
+.fi
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIID\fP Name of the parameter\&. 
+.br
+\fIDESC\fP Description of the parameter (1-2 sentences)\&. 
+.br
+\fIALIAS\fP An alias for the parameter (one letter)\&.
+.RE
+.PP
+\fBBug\fP
+.RS 4
+The \fBCOUNTER\fP variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros\&. However, not all compilers have this support--most notably, gcc < 4\&.3\&. In that case, the \fBLINE\fP macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages\&. See https://github.com/mlpack/mlpack/issues/100 for more information\&. 
+.RE
+.PP
+
+.PP
+Definition at line 365 of file param\&.hpp\&.
+.SS "#define PARAM_TMATRIX_OUT(ID, DESC, ALIAS)   \fBPARAM_MATRIX\fP(ID, DESC, ALIAS, false, false, false)"
+
+.PP
+Define a transposed matrix output parameter\&. This is useful when data is stored in a row-major form instead of the usual column-major form\&. When the program terminates, the matrix will be saved to whatever it was set to by CLI::GetParam<arma::mat>(ID) during the program\&. From the command-line, the user may specify the file in which to save the output matrix using a string option that is the name of the matrix parameter with '_file' appended\&. So, for instance, if the name of the output matrix parameter was 'mat', the user could speicfy that the 'mat' matrix should be saved in matrix\&.csv by giving the parameter
+.PP
+.PP
+.nf
+1 --mat_file matrix\&.csv
+.fi
+.PP
+.PP
+The output matrix will not be printed on stdout, like the other output option types\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIID\fP Name of the parameter\&. 
+.br
+\fIDESC\fP Description of the parameter (1-2 sentences)\&. 
+.br
+\fIALIAS\fP An alias for the parameter (one letter)\&.
+.RE
+.PP
+\fBBug\fP
+.RS 4
+The \fBCOUNTER\fP variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros\&. However, not all compilers have this support--most notably, gcc < 4\&.3\&. In that case, the \fBLINE\fP macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages\&. See https://github.com/mlpack/mlpack/issues/100 for more information\&. 
+.RE
+.PP
+
+.PP
+Definition at line 398 of file param\&.hpp\&.
+.SS "#define PARAM_UCOL(ID, DESC, ALIAS, REQ, TRANS, IN)"
+\fBValue:\fP
+.PP
+.nf
+static mlpack::util::Option<arma::Col<size_t>> \
+      JOIN(cli_option_dummy_object_ucol_, __LINE__) \
+      (arma::Col<size_t>(), ID, DESC, ALIAS, REQ, IN, !TRANS);
+.fi
+.PP
+Definition at line 1086 of file param\&.hpp\&.
+.SS "#define PARAM_UCOL_IN(ID, DESC, ALIAS)   \fBPARAM_UCOL\fP(ID, DESC, ALIAS, false, true, true)"
+
+.PP
+Define an unsigned vector input parameter (type arma::Col<size_t>)\&. From the command line, the user can specify the file that holds the vector, using the name of the vector parameter with '_file' appended (and the same alias)\&. So for instance, if the name of the vector parameter was 'vec', the user could specify that the 'vec' vector was held in vec\&.csv by giving the parameter:
+.PP
+.PP
+.nf
+1 --vec_file vector\&.csv
+.fi
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIID\fP Name of the parameter\&. 
+.br
+\fIDESC\fP Description of the parameter (1-2 sentences)\&. 
+.br
+\fIALIAS\fP An alias for the parameter (one letter)\&.
+.RE
+.PP
+\fBBug\fP
+.RS 4
+The \fBCOUNTER\fP variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros\&. However, not all compilers have this support--most notably, gcc < 4\&.3\&. In that case, the \fBLINE\fP macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages\&. See https://github.com/mlpack/mlpack/issues/100 for more information\&. 
+.RE
+.PP
+
+.PP
+Definition at line 562 of file param\&.hpp\&.
+.SS "#define PARAM_UCOL_OUT(ID, DESC, ALIAS)   \fBPARAM_UCOL\fP(ID, DESC, ALIAS, false, true, false)"
+
+.PP
+Define an unsigned vector output parameter (type arma::Col<size_t>)\&. When the program terminates, the vector will be saved to whatever it was set to during the program\&. From the command-line, the user may specify the file in which to save the output vector using a string option that is the name of the matrix parameter with '_file' appended\&. So, for instance, if the name of the output vector parameter was 'vec', the user could specify that the 'vec' vector should be saved in vector\&.csv by giving the parameter:
+.PP
+.PP
+.nf
+1 --vec_file vector\&.csv
+.fi
+.PP
+.PP
+The output vector will not be printed on stdout, like the other output option types\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIID\fP Name of the parameter\&. 
+.br
+\fIDESC\fP Description of the parameter (1-2 sentences)\&. 
+.br
+\fIALIAS\fP An alias for the parameter (one letter)\&.
+.RE
+.PP
+\fBBug\fP
+.RS 4
+The \fBCOUNTER\fP variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros\&. However, not all compilers have this support--most notably, gcc < 4\&.3\&. In that case, the \fBLINE\fP macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages\&. See https://github.com/mlpack/mlpack/issues/100 for more information\&. 
+.RE
+.PP
+
+.PP
+Definition at line 682 of file param\&.hpp\&.
+.SS "#define PARAM_UMATRIX(ID, DESC, ALIAS, REQ, TRANS, IN)"
+\fBValue:\fP
+.PP
+.nf
+static mlpack::util::Option<arma::Mat<size_t>> \
+      JOIN(JOIN(cli_option_dummy_object_umatrix_, __LINE__), opt) \
+      (arma::Mat<size_t>(), ID, DESC, ALIAS, REQ, IN, !TRANS);
+.fi
+.PP
+Definition at line 1076 of file param\&.hpp\&.
+.SS "#define PARAM_UMATRIX_IN(ID, DESC, ALIAS)   \fBPARAM_UMATRIX\fP(ID, DESC, ALIAS, false, true, true)"
+
+.PP
+Define an unsigned matrix input parameter (arma::Mat<size_t>)\&. From the command line, the user can specify the file that holds the matrix, using the name of the matrix parameter with '_file' appended (and the same alias)\&. So for instance, if the name of the matrix parameter was 'mat', the user could specify that the 'mat' matrix was held in matrix\&.csv by giving the parameter
+.PP
+.PP
+.nf
+1 --mat_file matrix\&.csv
+.fi
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIID\fP Name of the parameter\&. 
+.br
+\fIDESC\fP Description of the parameter (1-2 sentences)\&. 
+.br
+\fIALIAS\fP An alias for the parameter (one letter)\&.
+.RE
+.PP
+\fBBug\fP
+.RS 4
+The \fBCOUNTER\fP variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros\&. However, not all compilers have this support--most notably, gcc < 4\&.3\&. In that case, the \fBLINE\fP macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages\&. See https://github.com/mlpack/mlpack/issues/100 for more information\&. 
+.RE
+.PP
+
+.PP
+Definition at line 424 of file param\&.hpp\&.
+.SS "#define PARAM_UMATRIX_IN_REQ(ID, DESC, ALIAS)   \fBPARAM_UMATRIX\fP(ID, DESC, ALIAS, true, true, true)"
+
+.PP
+Define a required unsigned matrix input parameter (arma::Mat<size_t>)\&. From the command line, the user can specify the file that holds the matrix, using the name of the matrix parameter with '_file' appended (and the same alias)\&. So for instance, if the name of the matrix parameter was 'mat', the user could specify that the 'mat' matrix was held in matrix\&.csv by giving the parameter
+.PP
+.PP
+.nf
+1 --mat_file matrix\&.csv
+.fi
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIID\fP Name of the parameter\&. 
+.br
+\fIDESC\fP Description of the parameter (1-2 sentences)\&. 
+.br
+\fIALIAS\fP An alias for the parameter (one letter)\&.
+.RE
+.PP
+\fBBug\fP
+.RS 4
+The \fBCOUNTER\fP variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros\&. However, not all compilers have this support--most notably, gcc < 4\&.3\&. In that case, the \fBLINE\fP macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages\&. See https://github.com/mlpack/mlpack/issues/100 for more information\&. 
+.RE
+.PP
+
+.PP
+Definition at line 451 of file param\&.hpp\&.
+.SS "#define PARAM_UMATRIX_OUT(ID, DESC, ALIAS)   \fBPARAM_UMATRIX\fP(ID, DESC, ALIAS, false, true, false)"
+
+.PP
+Define an unsigned matrix output parameter (arma::Mat<size_t>)\&. When the program terminates, the matrix will be saved to whatever it was set to by CLI::GetParam<arma::Mat<size_t>>(ID) during the program\&. From the command-line, the user may specify the file in which to save the output matrix using a string option that is the name of the matrix parameter with '_file' appended\&. So, for instance, if the name of the output matrix parameter was 'mat', the user could speicfy that the 'mat' matrix should be saved in matrix\&.csv by giving the parameter
+.PP
+.PP
+.nf
+1 --mat_file matrix\&.csv
+.fi
+.PP
+.PP
+The output matrix will not be printed on stdout, like the other output option types\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIID\fP Name of the parameter\&. 
+.br
+\fIDESC\fP Description of the parameter (1-2 sentences)\&. 
+.br
+\fIALIAS\fP An alias for the parameter (one letter)\&.
+.RE
+.PP
+\fBBug\fP
+.RS 4
+The \fBCOUNTER\fP variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros\&. However, not all compilers have this support--most notably, gcc < 4\&.3\&. In that case, the \fBLINE\fP macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages\&. See https://github.com/mlpack/mlpack/issues/100 for more information\&. 
+.RE
+.PP
+
+.PP
+Definition at line 483 of file param\&.hpp\&.
+.SS "#define PARAM_UROW(ID, DESC, ALIAS, REQ, TRANS, IN)"
+\fBValue:\fP
+.PP
+.nf
+static mlpack::util::Option<arma::Row<size_t>> \
+      JOIN(cli_option_dummy_object_urow_, __LINE__) \
+      (arma::Row<size_t>(), ID, DESC, ALIAS, REQ, IN, !TRANS);
+.fi
+.PP
+Definition at line 1096 of file param\&.hpp\&.
+.SS "#define PARAM_UROW_IN(ID, DESC, ALIAS)   \fBPARAM_UROW\fP(ID, DESC, ALIAS, false, true, true)"
+
+.PP
+Define an unsigned row vector input parameter (type arma::Row<size_t>)\&. From the command line, the user can specify the file that holds the vector, using the name of the vector parameter with '_file' appended (and the same alias)\&. So for instance, if the name of the vector parameter was 'vec', the user could specify that the 'vec' vector was held in vec\&.csv by giving the parameter:
+.PP
+.PP
+.nf
+1 --vec_file vector\&.csv
+.fi
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIID\fP Name of the parameter\&. 
+.br
+\fIDESC\fP Description of the parameter (1-2 sentences)\&. 
+.br
+\fIALIAS\fP An alias for the parameter (one letter)\&.
+.RE
+.PP
+\fBBug\fP
+.RS 4
+The \fBCOUNTER\fP variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros\&. However, not all compilers have this support--most notably, gcc < 4\&.3\&. In that case, the \fBLINE\fP macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages\&. See https://github.com/mlpack/mlpack/issues/100 for more information\&. 
+.RE
+.PP
+
+.PP
+Definition at line 589 of file param\&.hpp\&.
+.SS "#define PARAM_UROW_OUT(ID, DESC, ALIAS)   \fBPARAM_UROW\fP(ID, DESC, ALIAS, false, true, false)"
+
+.PP
+Define an unsigned row vector output parameter (type arma::Row<size_t>)\&. When the program terminates, the vector will be saved to whatever it was set to during the program\&. From the command-line, the user may specify the file in which to save the output vector using a string option that is the name of the matrix parameter with '_file' appended\&. So, for instance, if the name of the output vector parameter was 'vec', the user could specify that the 'vec' vector should be saved in vector\&.csv by giving the parameter:
+.PP
+.PP
+.nf
+1 --vec_file vector\&.csv
+.fi
+.PP
+.PP
+The output vector will not be printed on stdout, like the other output option types\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIID\fP Name of the parameter\&. 
+.br
+\fIDESC\fP Description of the parameter (1-2 sentences)\&. 
+.br
+\fIALIAS\fP An alias for the parameter (one letter)\&.
+.RE
+.PP
+\fBBug\fP
+.RS 4
+The \fBCOUNTER\fP variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros\&. However, not all compilers have this support--most notably, gcc < 4\&.3\&. In that case, the \fBLINE\fP macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages\&. See https://github.com/mlpack/mlpack/issues/100 for more information\&. 
+.RE
+.PP
+
+.PP
+Definition at line 713 of file param\&.hpp\&.
+.SS "#define PARAM_VECTOR_IN(T, ID, DESC, ALIAS)   \fBPARAM_IN\fP(std::vector<T>, ID, DESC, ALIAS, std::vector<T>(), false)"
+
+.PP
+Define a std::vector input parameter\&. The parameter can then be specified on the command line with --ID=value1,value2,value3\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIID\fP Name of the parameter\&. 
+.br
+\fIDESC\fP Quick description of the parameter (1-2 sentences)\&. 
+.br
+\fIALIAS\fP An alias for the parameter (one letter)\&. 
+.br
+\fIDEF\fP Default value of the parameter\&.
+.RE
+.PP
+\fBSee also:\fP
+.RS 4
+\fBmlpack::CLI\fP, \fBPROGRAM_INFO()\fP
+.RE
+.PP
+\fBBug\fP
+.RS 4
+The \fBCOUNTER\fP variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros\&. However, not all compilers have this support--most notably, gcc < 4\&.3\&. In that case, the \fBLINE\fP macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages\&. See https://github.com/mlpack/mlpack/issues/100 for more information\&. 
+.RE
+.PP
+
+.PP
+Definition at line 737 of file param\&.hpp\&.
+.SS "#define PARAM_VECTOR_IN_REQ(T, ID, DESC, ALIAS)   \fBPARAM_IN\fP(std::vector<T>, ID, DESC, ALIAS, std::vector<T>(), true);"
+
+.PP
+Define a required vector parameter\&. The parameter must then be specified on the command line with --ID=value1,value2,value3\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIID\fP Name of the parameter\&. 
+.br
+\fIDESC\fP Quick description of the parameter (1-2 sentences)\&. 
+.br
+\fIALIAS\fP An alias for the parameter (one letter)\&.
+.RE
+.PP
+\fBSee also:\fP
+.RS 4
+\fBmlpack::CLI\fP, \fBPROGRAM_INFO()\fP
+.RE
+.PP
+\fBBug\fP
+.RS 4
+The \fBCOUNTER\fP variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros\&. However, not all compilers have this support--most notably, gcc < 4\&.3\&. In that case, the \fBLINE\fP macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages\&. See https://github.com/mlpack/mlpack/issues/100 for more information\&. 
+.RE
+.PP
+
+.PP
+Definition at line 980 of file param\&.hpp\&.
+.SS "#define PARAM_VECTOR_OUT(T, ID)   \fBPARAM_OUT\fP(std::vector<T>, ID, DESC, '', std::vector<T>(), false)"
+
+.PP
+Define a vector output parameter\&. This vector will be printed on stdout at the end of the program; for instance, if the parameter name is 'vector' and the vector holds the array { 1, 2, 3, 4 }, the output on stdout would be of the following form:
+.PP
+.PP
+.nf
+1 vector: 1, 2, 3, 4
+.fi
+.PP
+.PP
+If the parameter is not set by the end of the program, a fatal runtime error will be issued\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIID\fP Name of the parameter\&. 
+.br
+\fIDESC\fP Quick description of the parameter (1-2 sentences)\&.
+.RE
+.PP
+\fBSee also:\fP
+.RS 4
+\fBmlpack::CLI\fP, \fBPROGRAM_INFO()\fP
+.RE
+.PP
+\fBBug\fP
+.RS 4
+The \fBCOUNTER\fP variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros\&. However, not all compilers have this support--most notably, gcc < 4\&.3\&. In that case, the \fBLINE\fP macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages\&. See https://github.com/mlpack/mlpack/issues/100 for more information\&. 
+.RE
+.PP
+
+.PP
+Definition at line 766 of file param\&.hpp\&.
+.SS "#define PROGRAM_INFO(NAME, DESC)"
+\fBValue:\fP
+.PP
+.nf
+static mlpack::util::ProgramDoc \
+    cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, DESC);
+.fi
+.PP
+Document an executable\&. Only one instance of this macro should be present in your program! Therefore, use it in the main\&.cpp (or corresponding executable) in your program\&.
+.PP
+\fBSee also:\fP
+.RS 4
+\fBmlpack::CLI\fP, \fBPARAM_FLAG()\fP, \fBPARAM_INT_IN()\fP, \fBPARAM_DOUBLE_IN()\fP, \fBPARAM_STRING_IN()\fP, \fBPARAM_VECTOR_IN()\fP, \fBPARAM_INT_OUT()\fP, \fBPARAM_DOUBLE_OUT()\fP, \fBPARAM_VECTOR_OUT()\fP, \fBPARAM_INT_IN_REQ()\fP, \fBPARAM_DOUBLE_IN_REQ()\fP, \fBPARAM_STRING_IN_REQ()\fP, \fBPARAM_VECTOR_IN_REQ()\fP, PARAM_INT_OUT_REQ(), PARAM_DOUBLE_OUT_REQ(), PARAM_VECTOR_OUT_REQ(), PARAM_STRING_OUT_REQ()\&.
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fINAME\fP Short string representing the name of the program\&. 
+.br
+\fIDESC\fP Long string describing what the program does and possibly a simple usage example\&. Newlines should not be used here; this is taken care of by CLI (however, you can explicitly specify newlines to denote new paragraphs)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 49 of file param\&.hpp\&.
+.SS "#define TUPLE_TYPE   std::tuple<\fBmlpack::data::DatasetInfo\fP, arma::mat>"
+
+.PP
+Define an input DatasetInfo/matrix parameter\&. From the command line, the user can specify the file that holds the matrix, using the name of the matrix parameter with '_file' appended (and the same alias)\&. So for instance, if the name of the matrix parameter was 'matrix', the user could specify that the 'matrix' matrix was held in file\&.csv by giving the parameter
+.PP
+.PP
+.nf
+1 --matrix_file file\&.csv
+.fi
+.PP
+.PP
+Then the DatasetInfo and matrix type could be accessed with
+.PP
+.PP
+.nf
+1 DatasetInfo d = std::move(
+2     CLI::GetParam<std::tuple<arma::mat, DatasetInfo>>("matrix")\&.get<0>());
+3 arma::mat m = std::move(
+4     CLI::GetParam<std::tuple<arma::mat, DatasetInfo>>("matrix")\&.get<1>());
+.fi
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIID\fP Name of the parameter\&. 
+.br
+\fIDESC\fP Quick description of the parameter (1-2 sentences)\&. 
+.br
+\fIALIAS\fP One-character string representing the alias of the parameter\&.
+.RE
+.PP
+\fBSee also:\fP
+.RS 4
+\fBmlpack::CLI\fP, \fBPROGRAM_INFO()\fP
+.RE
+.PP
+\fBBug\fP
+.RS 4
+The \fBCOUNTER\fP variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros\&. However, not all compilers have this support--most notably, gcc < 4\&.3\&. In that case, the \fBLINE\fP macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages\&. See https://github.com/mlpack/mlpack/issues/100 for more information\&. 
+.RE
+.PP
+
+.PP
+Definition at line 803 of file param\&.hpp\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

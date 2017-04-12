@@ -1,0 +1,110 @@
+\section{mlpack\+:\+:tree\+:\+:Numeric\+Split\+Info$<$ Observation\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1tree_1_1NumericSplitInfo}\index{mlpack\+::tree\+::\+Numeric\+Split\+Info$<$ Observation\+Type $>$@{mlpack\+::tree\+::\+Numeric\+Split\+Info$<$ Observation\+Type $>$}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Numeric\+Split\+Info} ()
+\item 
+{\bf Numeric\+Split\+Info} (const arma\+::\+Col$<$ Observation\+Type $>$ \&{\bf split\+Points})
+\item 
+{\footnotesize template$<$typename eT $>$ }\\size\+\_\+t {\bf Calculate\+Direction} (const eT \&value) const 
+\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&ar, const unsigned int)
+\begin{DoxyCompactList}\small\item\em Serialize the split (save/load the split points). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+arma\+::\+Col$<$ Observation\+Type $>$ {\bf split\+Points}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Observation\+Type = double$>$\\*
+class mlpack\+::tree\+::\+Numeric\+Split\+Info$<$ Observation\+Type $>$}
+
+
+
+Definition at line 21 of file numeric\+\_\+split\+\_\+info.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::tree\+::\+Numeric\+Split\+Info@{mlpack\+::tree\+::\+Numeric\+Split\+Info}!Numeric\+Split\+Info@{Numeric\+Split\+Info}}
+\index{Numeric\+Split\+Info@{Numeric\+Split\+Info}!mlpack\+::tree\+::\+Numeric\+Split\+Info@{mlpack\+::tree\+::\+Numeric\+Split\+Info}}
+\subsubsection[{Numeric\+Split\+Info()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Observation\+Type  = double$>$ {\bf mlpack\+::tree\+::\+Numeric\+Split\+Info}$<$ Observation\+Type $>$\+::{\bf Numeric\+Split\+Info} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1NumericSplitInfo_aa71381550ab3aa062e95f86f7e05a6bd}
+
+
+Definition at line 24 of file numeric\+\_\+split\+\_\+info.\+hpp.
+
+\index{mlpack\+::tree\+::\+Numeric\+Split\+Info@{mlpack\+::tree\+::\+Numeric\+Split\+Info}!Numeric\+Split\+Info@{Numeric\+Split\+Info}}
+\index{Numeric\+Split\+Info@{Numeric\+Split\+Info}!mlpack\+::tree\+::\+Numeric\+Split\+Info@{mlpack\+::tree\+::\+Numeric\+Split\+Info}}
+\subsubsection[{Numeric\+Split\+Info(const arma\+::\+Col$<$ Observation\+Type $>$ \&split\+Points)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Observation\+Type  = double$>$ {\bf mlpack\+::tree\+::\+Numeric\+Split\+Info}$<$ Observation\+Type $>$\+::{\bf Numeric\+Split\+Info} (
+\begin{DoxyParamCaption}
+\item[{const arma\+::\+Col$<$ Observation\+Type $>$ \&}]{split\+Points}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1NumericSplitInfo_a9b62cadd66cad1a4782ab640bc539e5e}
+
+
+Definition at line 25 of file numeric\+\_\+split\+\_\+info.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::tree\+::\+Numeric\+Split\+Info@{mlpack\+::tree\+::\+Numeric\+Split\+Info}!Calculate\+Direction@{Calculate\+Direction}}
+\index{Calculate\+Direction@{Calculate\+Direction}!mlpack\+::tree\+::\+Numeric\+Split\+Info@{mlpack\+::tree\+::\+Numeric\+Split\+Info}}
+\subsubsection[{Calculate\+Direction(const e\+T \&value) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Observation\+Type  = double$>$ template$<$typename eT $>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Numeric\+Split\+Info}$<$ Observation\+Type $>$\+::Calculate\+Direction (
+\begin{DoxyParamCaption}
+\item[{const eT \&}]{value}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1NumericSplitInfo_a2de6ee7f0a05fe6658a6203aaf43c7f6}
+
+
+Definition at line 29 of file numeric\+\_\+split\+\_\+info.\+hpp.
+
+
+
+References mlpack\+::tree\+::\+Numeric\+Split\+Info$<$ Observation\+Type $>$\+::split\+Points.
+
+\index{mlpack\+::tree\+::\+Numeric\+Split\+Info@{mlpack\+::tree\+::\+Numeric\+Split\+Info}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::tree\+::\+Numeric\+Split\+Info@{mlpack\+::tree\+::\+Numeric\+Split\+Info}}
+\subsubsection[{Serialize(\+Archive \&ar, const unsigned int)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Observation\+Type  = double$>$ template$<$typename Archive $>$ void {\bf mlpack\+::tree\+::\+Numeric\+Split\+Info}$<$ Observation\+Type $>$\+::Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const unsigned}]{int}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1NumericSplitInfo_a75d25f08047877de121375284e4f8495}
+
+
+Serialize the split (save/load the split points). 
+
+
+
+Definition at line 41 of file numeric\+\_\+split\+\_\+info.\+hpp.
+
+
+
+References mlpack\+::data\+::\+Create\+N\+V\+P(), and mlpack\+::tree\+::\+Numeric\+Split\+Info$<$ Observation\+Type $>$\+::split\+Points.
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::tree\+::\+Numeric\+Split\+Info@{mlpack\+::tree\+::\+Numeric\+Split\+Info}!split\+Points@{split\+Points}}
+\index{split\+Points@{split\+Points}!mlpack\+::tree\+::\+Numeric\+Split\+Info@{mlpack\+::tree\+::\+Numeric\+Split\+Info}}
+\subsubsection[{split\+Points}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Observation\+Type  = double$>$ arma\+::\+Col$<$Observation\+Type$>$ {\bf mlpack\+::tree\+::\+Numeric\+Split\+Info}$<$ Observation\+Type $>$\+::split\+Points\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1NumericSplitInfo_a412b1f69c08315c03b2b9de5422162a6}
+
+
+Definition at line 47 of file numeric\+\_\+split\+\_\+info.\+hpp.
+
+
+
+Referenced by mlpack\+::tree\+::\+Numeric\+Split\+Info$<$ Observation\+Type $>$\+::\+Calculate\+Direction(), and mlpack\+::tree\+::\+Numeric\+Split\+Info$<$ Observation\+Type $>$\+::\+Serialize().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/hoeffding\+\_\+trees/{\bf numeric\+\_\+split\+\_\+info.\+hpp}\end{DoxyCompactItemize}

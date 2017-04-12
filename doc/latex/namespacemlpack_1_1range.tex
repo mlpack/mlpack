@@ -1,0 +1,60 @@
+\section{mlpack\+:\+:range Namespace Reference}
+\label{namespacemlpack_1_1range}\index{mlpack\+::range@{mlpack\+::range}}
+
+
+Range-\/search routines.  
+
+
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class {\bf Bi\+Search\+Visitor}
+\begin{DoxyCompactList}\small\item\em \doxyref{Bi\+Search\+Visitor}{p.}{classmlpack_1_1range_1_1BiSearchVisitor} executes a bichromatic range search on the given R\+S\+Type. \end{DoxyCompactList}\item 
+class {\bf Delete\+Visitor}
+\begin{DoxyCompactList}\small\item\em \doxyref{Delete\+Visitor}{p.}{classmlpack_1_1range_1_1DeleteVisitor} deletes the given R\+S\+Type instance. \end{DoxyCompactList}\item 
+class {\bf Mono\+Search\+Visitor}
+\begin{DoxyCompactList}\small\item\em \doxyref{Mono\+Search\+Visitor}{p.}{classmlpack_1_1range_1_1MonoSearchVisitor} executes a monochromatic range search on the given R\+S\+Type. \end{DoxyCompactList}\item 
+class {\bf Naive\+Visitor}
+\begin{DoxyCompactList}\small\item\em \doxyref{Naive\+Visitor}{p.}{classmlpack_1_1range_1_1NaiveVisitor} exposes the Naive() method of the given R\+S\+Type. \end{DoxyCompactList}\item 
+class {\bf Range\+Search}
+\begin{DoxyCompactList}\small\item\em The \doxyref{Range\+Search}{p.}{classmlpack_1_1range_1_1RangeSearch} class is a template class for performing range searches. \end{DoxyCompactList}\item 
+class {\bf Range\+Search\+Rules}
+\begin{DoxyCompactList}\small\item\em The \doxyref{Range\+Search\+Rules}{p.}{classmlpack_1_1range_1_1RangeSearchRules} class is a template helper class used by \doxyref{Range\+Search}{p.}{classmlpack_1_1range_1_1RangeSearch} class when performing range searches. \end{DoxyCompactList}\item 
+class {\bf Range\+Search\+Stat}
+\begin{DoxyCompactList}\small\item\em Statistic class for \doxyref{Range\+Search}{p.}{classmlpack_1_1range_1_1RangeSearch}, to be set to the Statistic\+Type of the tree type that range search is being performed with. \end{DoxyCompactList}\item 
+class {\bf Reference\+Set\+Visitor}
+\begin{DoxyCompactList}\small\item\em \doxyref{Reference\+Set\+Visitor}{p.}{classmlpack_1_1range_1_1ReferenceSetVisitor} exposes the reference\+Set of the given R\+S\+Type. \end{DoxyCompactList}\item 
+class {\bf R\+S\+Model}
+\item 
+struct {\bf R\+S\+Model\+Name}
+\item 
+class {\bf Serialize\+Visitor}
+\begin{DoxyCompactList}\small\item\em Exposes the seralize method of the given R\+S\+Type. \end{DoxyCompactList}\item 
+class {\bf Single\+Mode\+Visitor}
+\begin{DoxyCompactList}\small\item\em \doxyref{Single\+Mode\+Visitor}{p.}{classmlpack_1_1range_1_1SingleModeVisitor} exposes the Single\+Mode() method of the given R\+S\+Type. \end{DoxyCompactList}\item 
+class {\bf Train\+Visitor}
+\begin{DoxyCompactList}\small\item\em \doxyref{Train\+Visitor}{p.}{classmlpack_1_1range_1_1TrainVisitor} sets the reference set to a new reference set on the given R\+S\+Type. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type$>$ }\\using {\bf R\+S\+Type} = {\bf Range\+Search}$<$ {\bf metric\+::\+Euclidean\+Distance}, arma\+::mat, Tree\+Type $>$
+\begin{DoxyCompactList}\small\item\em Alias template for Range Search. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Range-\/search routines. 
+
+
+
+\subsection{Typedef Documentation}
+\index{mlpack\+::range@{mlpack\+::range}!R\+S\+Type@{R\+S\+Type}}
+\index{R\+S\+Type@{R\+S\+Type}!mlpack\+::range@{mlpack\+::range}}
+\subsubsection[{R\+S\+Type}]{\setlength{\rightskip}{0pt plus 5cm}template$<$template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type$>$ using {\bf mlpack\+::range\+::\+R\+S\+Type} = typedef {\bf Range\+Search}$<${\bf metric\+::\+Euclidean\+Distance}, arma\+::mat, Tree\+Type$>$}\label{namespacemlpack_1_1range_a375fbc1dc0953c3f302fba62a8adbfdf}
+
+
+Alias template for Range Search. 
+
+
+
+Definition at line 34 of file rs\+\_\+model.\+hpp.
+

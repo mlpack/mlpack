@@ -1,0 +1,215 @@
+\section{mlpack\+:\+:neighbor\+:\+:R\+A\+Query\+Stat$<$ Sort\+Policy $>$ Class Template Reference}
+\label{classmlpack_1_1neighbor_1_1RAQueryStat}\index{mlpack\+::neighbor\+::\+R\+A\+Query\+Stat$<$ Sort\+Policy $>$@{mlpack\+::neighbor\+::\+R\+A\+Query\+Stat$<$ Sort\+Policy $>$}}
+
+
+Extra data for each node in the tree.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf R\+A\+Query\+Stat} ()
+\begin{DoxyCompactList}\small\item\em Initialize the statistic with the worst possible distance according to our sorting policy. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\{\bf R\+A\+Query\+Stat} (const Tree\+Type \&)
+\begin{DoxyCompactList}\small\item\em Initialization for a node. \end{DoxyCompactList}\item 
+double {\bf Bound} () const 
+\begin{DoxyCompactList}\small\item\em Get the bound. \end{DoxyCompactList}\item 
+double \& {\bf Bound} ()
+\begin{DoxyCompactList}\small\item\em Modify the bound. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Num\+Samples\+Made} () const 
+\begin{DoxyCompactList}\small\item\em Get the number of samples made. \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Num\+Samples\+Made} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of samples made. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&ar, const unsigned int)
+\begin{DoxyCompactList}\small\item\em Serialize the statistic. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+double {\bf bound}
+\begin{DoxyCompactList}\small\item\em The bound on the node\textquotesingle{}s neighbor distances. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf num\+Samples\+Made}
+\begin{DoxyCompactList}\small\item\em The minimum number of samples made by any query in this node. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Sort\+Policy$>$\\*
+class mlpack\+::neighbor\+::\+R\+A\+Query\+Stat$<$ Sort\+Policy $>$}
+
+Extra data for each node in the tree. 
+
+For neighbor searches, each node only needs to store a bound on neighbor distances.
+
+Every query is required to make a minimum number of samples to guarantee the desired approximation error. The \textquotesingle{}num\+Samples\+Made\textquotesingle{} keeps track of the minimum number of samples made by all queries in the node in question. 
+
+Definition at line 35 of file ra\+\_\+query\+\_\+stat.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::neighbor\+::\+R\+A\+Query\+Stat@{mlpack\+::neighbor\+::\+R\+A\+Query\+Stat}!R\+A\+Query\+Stat@{R\+A\+Query\+Stat}}
+\index{R\+A\+Query\+Stat@{R\+A\+Query\+Stat}!mlpack\+::neighbor\+::\+R\+A\+Query\+Stat@{mlpack\+::neighbor\+::\+R\+A\+Query\+Stat}}
+\subsubsection[{R\+A\+Query\+Stat()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ {\bf mlpack\+::neighbor\+::\+R\+A\+Query\+Stat}$<$ Sort\+Policy $>$\+::{\bf R\+A\+Query\+Stat} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1neighbor_1_1RAQueryStat_af7f28b132170cfd3ea5c968297964e59}
+
+
+Initialize the statistic with the worst possible distance according to our sorting policy. 
+
+
+
+Definition at line 42 of file ra\+\_\+query\+\_\+stat.\+hpp.
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Query\+Stat@{mlpack\+::neighbor\+::\+R\+A\+Query\+Stat}!R\+A\+Query\+Stat@{R\+A\+Query\+Stat}}
+\index{R\+A\+Query\+Stat@{R\+A\+Query\+Stat}!mlpack\+::neighbor\+::\+R\+A\+Query\+Stat@{mlpack\+::neighbor\+::\+R\+A\+Query\+Stat}}
+\subsubsection[{R\+A\+Query\+Stat(const Tree\+Type \&)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ template$<$typename Tree\+Type $>$ {\bf mlpack\+::neighbor\+::\+R\+A\+Query\+Stat}$<$ Sort\+Policy $>$\+::{\bf R\+A\+Query\+Stat} (
+\begin{DoxyParamCaption}
+\item[{const Tree\+Type \&}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1neighbor_1_1RAQueryStat_aa366819b315d62722f2a17f30413c9b0}
+
+
+Initialization for a node. 
+
+
+
+Definition at line 48 of file ra\+\_\+query\+\_\+stat.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::neighbor\+::\+R\+A\+Query\+Stat@{mlpack\+::neighbor\+::\+R\+A\+Query\+Stat}!Bound@{Bound}}
+\index{Bound@{Bound}!mlpack\+::neighbor\+::\+R\+A\+Query\+Stat@{mlpack\+::neighbor\+::\+R\+A\+Query\+Stat}}
+\subsubsection[{Bound() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ double {\bf mlpack\+::neighbor\+::\+R\+A\+Query\+Stat}$<$ Sort\+Policy $>$\+::Bound (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1neighbor_1_1RAQueryStat_a404611ae48f09f2e5e553c712a4c436a}
+
+
+Get the bound. 
+
+
+
+Definition at line 54 of file ra\+\_\+query\+\_\+stat.\+hpp.
+
+
+
+References mlpack\+::neighbor\+::\+R\+A\+Query\+Stat$<$ Sort\+Policy $>$\+::bound.
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Query\+Stat@{mlpack\+::neighbor\+::\+R\+A\+Query\+Stat}!Bound@{Bound}}
+\index{Bound@{Bound}!mlpack\+::neighbor\+::\+R\+A\+Query\+Stat@{mlpack\+::neighbor\+::\+R\+A\+Query\+Stat}}
+\subsubsection[{Bound()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ double\& {\bf mlpack\+::neighbor\+::\+R\+A\+Query\+Stat}$<$ Sort\+Policy $>$\+::Bound (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1neighbor_1_1RAQueryStat_a60864f3dcc8cbc72b50bc028f8768b14}
+
+
+Modify the bound. 
+
+
+
+Definition at line 56 of file ra\+\_\+query\+\_\+stat.\+hpp.
+
+
+
+References mlpack\+::neighbor\+::\+R\+A\+Query\+Stat$<$ Sort\+Policy $>$\+::bound.
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Query\+Stat@{mlpack\+::neighbor\+::\+R\+A\+Query\+Stat}!Num\+Samples\+Made@{Num\+Samples\+Made}}
+\index{Num\+Samples\+Made@{Num\+Samples\+Made}!mlpack\+::neighbor\+::\+R\+A\+Query\+Stat@{mlpack\+::neighbor\+::\+R\+A\+Query\+Stat}}
+\subsubsection[{Num\+Samples\+Made() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ size\+\_\+t {\bf mlpack\+::neighbor\+::\+R\+A\+Query\+Stat}$<$ Sort\+Policy $>$\+::Num\+Samples\+Made (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1neighbor_1_1RAQueryStat_a42349c72c731ecb8aa94350f24378d4d}
+
+
+Get the number of samples made. 
+
+
+
+Definition at line 59 of file ra\+\_\+query\+\_\+stat.\+hpp.
+
+
+
+References mlpack\+::neighbor\+::\+R\+A\+Query\+Stat$<$ Sort\+Policy $>$\+::num\+Samples\+Made.
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Query\+Stat@{mlpack\+::neighbor\+::\+R\+A\+Query\+Stat}!Num\+Samples\+Made@{Num\+Samples\+Made}}
+\index{Num\+Samples\+Made@{Num\+Samples\+Made}!mlpack\+::neighbor\+::\+R\+A\+Query\+Stat@{mlpack\+::neighbor\+::\+R\+A\+Query\+Stat}}
+\subsubsection[{Num\+Samples\+Made()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ size\+\_\+t\& {\bf mlpack\+::neighbor\+::\+R\+A\+Query\+Stat}$<$ Sort\+Policy $>$\+::Num\+Samples\+Made (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1neighbor_1_1RAQueryStat_aefe583d9e61bf2f49d8469699408f19f}
+
+
+Modify the number of samples made. 
+
+
+
+Definition at line 61 of file ra\+\_\+query\+\_\+stat.\+hpp.
+
+
+
+References mlpack\+::neighbor\+::\+R\+A\+Query\+Stat$<$ Sort\+Policy $>$\+::num\+Samples\+Made.
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Query\+Stat@{mlpack\+::neighbor\+::\+R\+A\+Query\+Stat}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::neighbor\+::\+R\+A\+Query\+Stat@{mlpack\+::neighbor\+::\+R\+A\+Query\+Stat}}
+\subsubsection[{Serialize(\+Archive \&ar, const unsigned int)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ template$<$typename Archive $>$ void {\bf mlpack\+::neighbor\+::\+R\+A\+Query\+Stat}$<$ Sort\+Policy $>$\+::Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const unsigned}]{int}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1neighbor_1_1RAQueryStat_a21ebbf2fbd08b559e3cc8843c39641d3}
+
+
+Serialize the statistic. 
+
+
+
+Definition at line 65 of file ra\+\_\+query\+\_\+stat.\+hpp.
+
+
+
+References mlpack\+::neighbor\+::\+R\+A\+Query\+Stat$<$ Sort\+Policy $>$\+::bound, mlpack\+::data\+::\+Create\+N\+V\+P(), and mlpack\+::neighbor\+::\+R\+A\+Query\+Stat$<$ Sort\+Policy $>$\+::num\+Samples\+Made.
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::neighbor\+::\+R\+A\+Query\+Stat@{mlpack\+::neighbor\+::\+R\+A\+Query\+Stat}!bound@{bound}}
+\index{bound@{bound}!mlpack\+::neighbor\+::\+R\+A\+Query\+Stat@{mlpack\+::neighbor\+::\+R\+A\+Query\+Stat}}
+\subsubsection[{bound}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ double {\bf mlpack\+::neighbor\+::\+R\+A\+Query\+Stat}$<$ Sort\+Policy $>$\+::bound\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1neighbor_1_1RAQueryStat_a702796c4b0dde428c875fae7a4241767}
+
+
+The bound on the node\textquotesingle{}s neighbor distances. 
+
+
+
+Definition at line 73 of file ra\+\_\+query\+\_\+stat.\+hpp.
+
+
+
+Referenced by mlpack\+::neighbor\+::\+R\+A\+Query\+Stat$<$ Sort\+Policy $>$\+::\+Bound(), and mlpack\+::neighbor\+::\+R\+A\+Query\+Stat$<$ Sort\+Policy $>$\+::\+Serialize().
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Query\+Stat@{mlpack\+::neighbor\+::\+R\+A\+Query\+Stat}!num\+Samples\+Made@{num\+Samples\+Made}}
+\index{num\+Samples\+Made@{num\+Samples\+Made}!mlpack\+::neighbor\+::\+R\+A\+Query\+Stat@{mlpack\+::neighbor\+::\+R\+A\+Query\+Stat}}
+\subsubsection[{num\+Samples\+Made}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ size\+\_\+t {\bf mlpack\+::neighbor\+::\+R\+A\+Query\+Stat}$<$ Sort\+Policy $>$\+::num\+Samples\+Made\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1neighbor_1_1RAQueryStat_a3cd7914ee8302a753a0df4dc1869655b}
+
+
+The minimum number of samples made by any query in this node. 
+
+
+
+Definition at line 75 of file ra\+\_\+query\+\_\+stat.\+hpp.
+
+
+
+Referenced by mlpack\+::neighbor\+::\+R\+A\+Query\+Stat$<$ Sort\+Policy $>$\+::\+Num\+Samples\+Made(), and mlpack\+::neighbor\+::\+R\+A\+Query\+Stat$<$ Sort\+Policy $>$\+::\+Serialize().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/rann/{\bf ra\+\_\+query\+\_\+stat.\+hpp}\end{DoxyCompactItemize}

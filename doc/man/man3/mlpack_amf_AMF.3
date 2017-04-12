@@ -1,0 +1,218 @@
+.TH "mlpack::amf::AMF< TerminationPolicyType, InitializationRuleType, UpdateRuleType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::amf::AMF< TerminationPolicyType, InitializationRuleType, UpdateRuleType > \- This class implements \fBAMF\fP (alternating matrix factorization) on the given matrix V\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBAMF\fP (const TerminationPolicyType &\fBterminationPolicy\fP=TerminationPolicyType(), const InitializationRuleType &initializeRule=InitializationRuleType(), const UpdateRuleType &\fBupdate\fP=UpdateRuleType())"
+.br
+.RI "\fICreate the \fBAMF\fP object and (optionally) set the parameters which \fBAMF\fP will run with\&. \fP"
+.ti -1c
+.RI "template<typename MatType > double \fBApply\fP (const MatType &V, const size_t r, arma::mat &W, arma::mat &H)"
+.br
+.RI "\fIApply Alternating Matrix Factorization to the provided matrix\&. \fP"
+.ti -1c
+.RI "const InitializationRuleType & \fBInitializeRule\fP () const "
+.br
+.RI "\fIAccess the initialization rule\&. \fP"
+.ti -1c
+.RI "InitializationRuleType & \fBInitializeRule\fP ()"
+.br
+.RI "\fIModify the initialization rule\&. \fP"
+.ti -1c
+.RI "const TerminationPolicyType & \fBTerminationPolicy\fP () const "
+.br
+.RI "\fIAccess the termination policy\&. \fP"
+.ti -1c
+.RI "TerminationPolicyType & \fBTerminationPolicy\fP ()"
+.br
+.RI "\fIModify the termination policy\&. \fP"
+.ti -1c
+.RI "const UpdateRuleType & \fBUpdate\fP () const "
+.br
+.RI "\fIAccess the update rule\&. \fP"
+.ti -1c
+.RI "UpdateRuleType & \fBUpdate\fP ()"
+.br
+.RI "\fIModify the update rule\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "InitializationRuleType \fBinitializationRule\fP"
+.br
+.RI "\fIInstantiated initialization Rule\&. \fP"
+.ti -1c
+.RI "TerminationPolicyType \fBterminationPolicy\fP"
+.br
+.RI "\fITermination policy\&. \fP"
+.ti -1c
+.RI "UpdateRuleType \fBupdate\fP"
+.br
+.RI "\fIInstantiated update rule\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename TerminationPolicyType = SimpleResidueTermination, typename InitializationRuleType = RandomAcolInitialization<>, typename UpdateRuleType = NMFMultiplicativeDistanceUpdate>
+.br
+class mlpack::amf::AMF< TerminationPolicyType, InitializationRuleType, UpdateRuleType >"
+This class implements \fBAMF\fP (alternating matrix factorization) on the given matrix V\&. 
+
+Alternating matrix factorization decomposes V in the form $ V \approx WH $ where W is called the basis matrix and H is called the encoding matrix\&. V is taken to be of size n x m and the obtained W is n x r and H is r x m\&. The size r is called the rank of the factorization\&.
+.PP
+The implementation requires three template types; the first contains the policy used to determine when the algorithm has converged; the second contains the initialization rule for the W and H matrix; the last contains the update rule to be used during each iteration\&. This templatization allows the user to try various update rules, initialization rules, and termination policies (including ones not supplied with mlpack) for factorization\&. By default, the template parameters to \fBAMF\fP implement non-negative matrix factorization with the multiplicative distance update\&.
+.PP
+A simple example of how to run \fBAMF\fP (or NMF) is shown below\&.
+.PP
+.PP
+.nf
+extern arma::mat V; // Matrix that we want to perform LMF on\&.
+size_t r = 10; // Rank of decomposition
+arma::mat W; // Basis matrix
+arma::mat H; // Encoding matrix
+
+AMF<> amf; // Default options: NMF with multiplicative distance update rules\&.
+amf\&.Apply(V, r, W, H);
+.fi
+.PP
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fITerminationPolicy\fP The policy to use for determining when the factorization has converged\&. 
+.br
+\fIInitializationRule\fP The initialization rule for initializing W and H matrix\&. 
+.br
+\fIUpdateRule\fP The update rule for calculating W and H matrix at each iteration\&.
+.RE
+.PP
+\fBSee also:\fP
+.RS 4
+\fBNMFMultiplicativeDistanceUpdate\fP, \fBSimpleResidueTermination\fP 
+.RE
+.PP
+
+.PP
+Definition at line 78 of file amf\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename TerminationPolicyType  = SimpleResidueTermination, typename InitializationRuleType  = RandomAcolInitialization<>, typename UpdateRuleType  = NMFMultiplicativeDistanceUpdate> \fBmlpack::amf::AMF\fP< TerminationPolicyType, InitializationRuleType, UpdateRuleType >::\fBAMF\fP (const TerminationPolicyType & terminationPolicy = \fCTerminationPolicyType()\fP, const InitializationRuleType & initializeRule = \fCInitializationRuleType()\fP, const UpdateRuleType & update = \fCUpdateRuleType()\fP)"
+
+.PP
+Create the \fBAMF\fP object and (optionally) set the parameters which \fBAMF\fP will run with\&. The minimum residue refers to the root mean square of the difference between two subsequent iterations of the product W * H\&. A low residue indicates that subsequent iterations are not producing much change in W and H\&. Once the residue goes below the specified minimum residue, the algorithm terminates\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinitializationRule\fP Optional instantiated InitializationRule object for initializing the W and H matrices\&. 
+.br
+\fIupdateRule\fP Optional instantiated UpdateRule object; this parameter is useful when the update rule for the W and H vector has state that it needs to store (i\&.e\&. HUpdate() and WUpdate() are not static functions)\&. 
+.br
+\fIterminationPolicy\fP Optional instantiated TerminationPolicy object\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename TerminationPolicyType  = SimpleResidueTermination, typename InitializationRuleType  = RandomAcolInitialization<>, typename UpdateRuleType  = NMFMultiplicativeDistanceUpdate> template<typename MatType > double \fBmlpack::amf::AMF\fP< TerminationPolicyType, InitializationRuleType, UpdateRuleType >::Apply (const MatType & V, const size_t r, arma::mat & W, arma::mat & H)"
+
+.PP
+Apply Alternating Matrix Factorization to the provided matrix\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIV\fP Input matrix to be factorized\&. 
+.br
+\fIW\fP Basis matrix to be output\&. 
+.br
+\fIH\fP Encoding matrix to output\&. 
+.br
+\fIr\fP Rank r of the factorization\&. 
+.RE
+.PP
+
+.SS "template<typename TerminationPolicyType  = SimpleResidueTermination, typename InitializationRuleType  = RandomAcolInitialization<>, typename UpdateRuleType  = NMFMultiplicativeDistanceUpdate> const InitializationRuleType& \fBmlpack::amf::AMF\fP< TerminationPolicyType, InitializationRuleType, UpdateRuleType >::InitializeRule () const\fC [inline]\fP"
+
+.PP
+Access the initialization rule\&. 
+.PP
+Definition at line 122 of file amf\&.hpp\&.
+.PP
+References mlpack::amf::AMF< TerminationPolicyType, InitializationRuleType, UpdateRuleType >::initializationRule\&.
+.SS "template<typename TerminationPolicyType  = SimpleResidueTermination, typename InitializationRuleType  = RandomAcolInitialization<>, typename UpdateRuleType  = NMFMultiplicativeDistanceUpdate> InitializationRuleType& \fBmlpack::amf::AMF\fP< TerminationPolicyType, InitializationRuleType, UpdateRuleType >::InitializeRule ()\fC [inline]\fP"
+
+.PP
+Modify the initialization rule\&. 
+.PP
+Definition at line 125 of file amf\&.hpp\&.
+.PP
+References mlpack::amf::AMF< TerminationPolicyType, InitializationRuleType, UpdateRuleType >::initializationRule\&.
+.SS "template<typename TerminationPolicyType  = SimpleResidueTermination, typename InitializationRuleType  = RandomAcolInitialization<>, typename UpdateRuleType  = NMFMultiplicativeDistanceUpdate> const TerminationPolicyType& \fBmlpack::amf::AMF\fP< TerminationPolicyType, InitializationRuleType, UpdateRuleType >::TerminationPolicy () const\fC [inline]\fP"
+
+.PP
+Access the termination policy\&. 
+.PP
+Definition at line 116 of file amf\&.hpp\&.
+.PP
+References mlpack::amf::AMF< TerminationPolicyType, InitializationRuleType, UpdateRuleType >::terminationPolicy\&.
+.SS "template<typename TerminationPolicyType  = SimpleResidueTermination, typename InitializationRuleType  = RandomAcolInitialization<>, typename UpdateRuleType  = NMFMultiplicativeDistanceUpdate> TerminationPolicyType& \fBmlpack::amf::AMF\fP< TerminationPolicyType, InitializationRuleType, UpdateRuleType >::TerminationPolicy ()\fC [inline]\fP"
+
+.PP
+Modify the termination policy\&. 
+.PP
+Definition at line 119 of file amf\&.hpp\&.
+.PP
+References mlpack::amf::AMF< TerminationPolicyType, InitializationRuleType, UpdateRuleType >::terminationPolicy\&.
+.SS "template<typename TerminationPolicyType  = SimpleResidueTermination, typename InitializationRuleType  = RandomAcolInitialization<>, typename UpdateRuleType  = NMFMultiplicativeDistanceUpdate> const UpdateRuleType& \fBmlpack::amf::AMF\fP< TerminationPolicyType, InitializationRuleType, UpdateRuleType >::Update () const\fC [inline]\fP"
+
+.PP
+Access the update rule\&. 
+.PP
+Definition at line 128 of file amf\&.hpp\&.
+.PP
+References mlpack::amf::AMF< TerminationPolicyType, InitializationRuleType, UpdateRuleType >::update\&.
+.SS "template<typename TerminationPolicyType  = SimpleResidueTermination, typename InitializationRuleType  = RandomAcolInitialization<>, typename UpdateRuleType  = NMFMultiplicativeDistanceUpdate> UpdateRuleType& \fBmlpack::amf::AMF\fP< TerminationPolicyType, InitializationRuleType, UpdateRuleType >::Update ()\fC [inline]\fP"
+
+.PP
+Modify the update rule\&. 
+.PP
+Definition at line 130 of file amf\&.hpp\&.
+.PP
+References mlpack::amf::AMF< TerminationPolicyType, InitializationRuleType, UpdateRuleType >::update\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename TerminationPolicyType  = SimpleResidueTermination, typename InitializationRuleType  = RandomAcolInitialization<>, typename UpdateRuleType  = NMFMultiplicativeDistanceUpdate> InitializationRuleType \fBmlpack::amf::AMF\fP< TerminationPolicyType, InitializationRuleType, UpdateRuleType >::initializationRule\fC [private]\fP"
+
+.PP
+Instantiated initialization Rule\&. 
+.PP
+Definition at line 136 of file amf\&.hpp\&.
+.PP
+Referenced by mlpack::amf::AMF< TerminationPolicyType, InitializationRuleType, UpdateRuleType >::InitializeRule()\&.
+.SS "template<typename TerminationPolicyType  = SimpleResidueTermination, typename InitializationRuleType  = RandomAcolInitialization<>, typename UpdateRuleType  = NMFMultiplicativeDistanceUpdate> TerminationPolicyType \fBmlpack::amf::AMF\fP< TerminationPolicyType, InitializationRuleType, UpdateRuleType >::terminationPolicy\fC [private]\fP"
+
+.PP
+Termination policy\&. 
+.PP
+Definition at line 134 of file amf\&.hpp\&.
+.PP
+Referenced by mlpack::amf::AMF< TerminationPolicyType, InitializationRuleType, UpdateRuleType >::TerminationPolicy()\&.
+.SS "template<typename TerminationPolicyType  = SimpleResidueTermination, typename InitializationRuleType  = RandomAcolInitialization<>, typename UpdateRuleType  = NMFMultiplicativeDistanceUpdate> UpdateRuleType \fBmlpack::amf::AMF\fP< TerminationPolicyType, InitializationRuleType, UpdateRuleType >::update\fC [private]\fP"
+
+.PP
+Instantiated update rule\&. 
+.PP
+Definition at line 138 of file amf\&.hpp\&.
+.PP
+Referenced by mlpack::amf::AMF< TerminationPolicyType, InitializationRuleType, UpdateRuleType >::Update()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

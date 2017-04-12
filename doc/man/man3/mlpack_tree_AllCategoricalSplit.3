@@ -1,0 +1,107 @@
+.TH "mlpack::tree::AllCategoricalSplit< FitnessFunction >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::tree::AllCategoricalSplit< FitnessFunction > \- The \fBAllCategoricalSplit\fP is a splitting function that will split categorical features into many children: one child for each category\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBAuxiliarySplitInfo\fP"
+.br
+.in -1c
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename ElemType > static size_t \fBCalculateDirection\fP (const ElemType &point, const arma::Col< ElemType > &classProbabilities, const \fBAuxiliarySplitInfo\fP< ElemType > &)"
+.br
+.RI "\fICalculate the direction a point should percolate to\&. \fP"
+.ti -1c
+.RI "template<typename ElemType > static size_t \fBNumChildren\fP (const arma::Col< ElemType > &classProbabilities, const \fBAuxiliarySplitInfo\fP< ElemType > &)"
+.br
+.RI "\fIReturn the number of children in the split\&. \fP"
+.ti -1c
+.RI "template<typename VecType > static double \fBSplitIfBetter\fP (const double bestGain, const VecType &data, const size_t numCategories, const arma::Row< size_t > &labels, const size_t numClasses, const size_t minimumLeafSize, arma::Col< typename VecType::elem_type > &classProbabilities, \fBAuxiliarySplitInfo\fP< typename VecType::elem_type > &aux)"
+.br
+.RI "\fICheck if we can split a node\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename FitnessFunction>
+.br
+class mlpack::tree::AllCategoricalSplit< FitnessFunction >"
+The \fBAllCategoricalSplit\fP is a splitting function that will split categorical features into many children: one child for each category\&. 
+
+
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIFitnessFunction\fP Fitness function to evaluate gain with\&. 
+.RE
+.PP
+
+.PP
+Definition at line 23 of file all_categorical_split\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename FitnessFunction > template<typename ElemType > static size_t \fBmlpack::tree::AllCategoricalSplit\fP< FitnessFunction >::CalculateDirection (const ElemType & point, const arma::Col< ElemType > & classProbabilities, const \fBAuxiliarySplitInfo\fP< ElemType > &)\fC [static]\fP"
+
+.PP
+Calculate the direction a point should percolate to\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIclassProbabilities\fP Auxiliary information for the split\&. 
+.br
+\fIaux\fP (Unused) auxiliary information for the split\&. 
+.RE
+.PP
+
+.SS "template<typename FitnessFunction > template<typename ElemType > static size_t \fBmlpack::tree::AllCategoricalSplit\fP< FitnessFunction >::NumChildren (const arma::Col< ElemType > & classProbabilities, const \fBAuxiliarySplitInfo\fP< ElemType > &)\fC [static]\fP"
+
+.PP
+Return the number of children in the split\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIclassProbabilities\fP Auxiliary information for the split\&. 
+.br
+\fIaux\fP (Unused) auxiliary information for the split\&. 
+.RE
+.PP
+
+.SS "template<typename FitnessFunction > template<typename VecType > static double \fBmlpack::tree::AllCategoricalSplit\fP< FitnessFunction >::SplitIfBetter (const double bestGain, const VecType & data, const size_t numCategories, const arma::Row< size_t > & labels, const size_t numClasses, const size_t minimumLeafSize, arma::Col< typename VecType::elem_type > & classProbabilities, \fBAuxiliarySplitInfo\fP< typename VecType::elem_type > & aux)\fC [static]\fP"
+
+.PP
+Check if we can split a node\&. If we can split a node in a way that improves on 'bestGain', then we return the improved gain\&. Otherwise we return the value 'bestGain'\&. If a split is made, then classProbabilities and aux may be modified\&. For this particular split type, aux will be empty and classProbabilities will hold one element---the number of children\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIbestGain\fP Best gain seen so far (we'll only split if we find gain better than this)\&. 
+.br
+\fIdata\fP The dimension of data points to check for a split in\&. 
+.br
+\fInumCategories\fP Number of categories in the categorical data\&. 
+.br
+\fIlabels\fP Labels for each point\&. 
+.br
+\fInumClasses\fP Number of classes in the dataset\&. 
+.br
+\fIminimumLeafSize\fP Minimum number of points in a leaf node for splitting\&. 
+.br
+\fIclassProbabilities\fP Class probabilities vector, which may be filled with split information a successful split\&. 
+.br
+\fIaux\fP Auxiliary split information, which may be modified on a successful split\&. 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

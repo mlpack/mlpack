@@ -1,0 +1,316 @@
+.TH "mlpack::optimization::MiniBatchSGD< DecomposableFunctionType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::optimization::MiniBatchSGD< DecomposableFunctionType > \- Mini-batch Stochastic Gradient Descent is a technique for minimizing a function which can be expressed as a sum of other functions\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBMiniBatchSGD\fP (DecomposableFunctionType &\fBfunction\fP, const size_t \fBbatchSize\fP=1000, const double \fBstepSize\fP=0\&.01, const size_t \fBmaxIterations\fP=100000, const double \fBtolerance\fP=1e\-5, const bool shuffle=true)"
+.br
+.RI "\fIConstruct the \fBMiniBatchSGD\fP optimizer with the given function and parameters\&. \fP"
+.ti -1c
+.RI "size_t \fBBatchSize\fP () const "
+.br
+.RI "\fIGet the batch size\&. \fP"
+.ti -1c
+.RI "size_t & \fBBatchSize\fP ()"
+.br
+.RI "\fIModify the batch size\&. \fP"
+.ti -1c
+.RI "const DecomposableFunctionType & \fBFunction\fP () const "
+.br
+.RI "\fIGet the instantiated function to be optimized\&. \fP"
+.ti -1c
+.RI "DecomposableFunctionType & \fBFunction\fP ()"
+.br
+.RI "\fIModify the instantiated function\&. \fP"
+.ti -1c
+.RI "size_t \fBMaxIterations\fP () const "
+.br
+.RI "\fIGet the maximum number of iterations (0 indicates no limit)\&. \fP"
+.ti -1c
+.RI "size_t & \fBMaxIterations\fP ()"
+.br
+.RI "\fIModify the maximum number of iterations (0 indicates no limit)\&. \fP"
+.ti -1c
+.RI "double \fBOptimize\fP (arma::mat &iterate)"
+.br
+.RI "\fIOptimize the given function using mini-batch \fBSGD\fP\&. \fP"
+.ti -1c
+.RI "bool \fBShuffle\fP () const "
+.br
+.RI "\fIGet whether or not the individual functions are shuffled\&. \fP"
+.ti -1c
+.RI "bool & \fBShuffle\fP ()"
+.br
+.RI "\fIModify whether or not the individual functions are shuffled\&. \fP"
+.ti -1c
+.RI "double \fBStepSize\fP () const "
+.br
+.RI "\fIGet the step size\&. \fP"
+.ti -1c
+.RI "double & \fBStepSize\fP ()"
+.br
+.RI "\fIModify the step size\&. \fP"
+.ti -1c
+.RI "double \fBTolerance\fP () const "
+.br
+.RI "\fIGet the tolerance for termination\&. \fP"
+.ti -1c
+.RI "double & \fBTolerance\fP ()"
+.br
+.RI "\fIModify the tolerance for termination\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "size_t \fBbatchSize\fP"
+.br
+.RI "\fIThe size of each mini-batch\&. \fP"
+.ti -1c
+.RI "DecomposableFunctionType & \fBfunction\fP"
+.br
+.RI "\fIThe instantiated function\&. \fP"
+.ti -1c
+.RI "size_t \fBmaxIterations\fP"
+.br
+.RI "\fIThe maximum number of allowed iterations\&. \fP"
+.ti -1c
+.RI "bool \fBshuffle\fP"
+.br
+.RI "\fIControls whether or not the individual functions are shuffled when iterating\&. \fP"
+.ti -1c
+.RI "double \fBstepSize\fP"
+.br
+.RI "\fIThe step size for each example\&. \fP"
+.ti -1c
+.RI "double \fBtolerance\fP"
+.br
+.RI "\fIThe tolerance for termination\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename DecomposableFunctionType>
+.br
+class mlpack::optimization::MiniBatchSGD< DecomposableFunctionType >"
+Mini-batch Stochastic Gradient Descent is a technique for minimizing a function which can be expressed as a sum of other functions\&. 
+
+That is, suppose we have
+.PP
+\[ f(A) = \sum_{i = 0}^{n} f_i(A) \].PP
+and our task is to minimize $ A $\&. Mini-batch \fBSGD\fP iterates over batches of functions $ \{ f_{i0}(A), f_{i1}(A), \ldots, f_{i(m - 1)}(A) $ for some batch size $ m $, producing the following update scheme:
+.PP
+\[ A_{j + 1} = A_j + \alpha \left(\sum_{k = 0}^{m - 1} \nabla f_{ik}(A) \right) \].PP
+where $ \alpha $ is a parameter which specifies the step size\&. Each mini-batch is passed through either sequentially or randomly\&. The algorithm continues until $ j $ reaches the maximum number of iterations---or when a full sequence of updates through each of the mini-batches produces an improvement within a certain tolerance $ \epsilon $\&.
+.PP
+The parameter $ \epsilon $ is specified by the tolerance parameter tot he constructor, as is the maximum number of iterations specified by the maxIterations parameter\&.
+.PP
+This class is useful for data-dependent functions whose objective function can be expressed as a sum of objective functions operating on an individual point\&. Then, mini-batch \fBSGD\fP considers the gradient of the objective function operation on an individual mini-batch of points in its update of $ A $\&.
+.PP
+For mini-batch \fBSGD\fP to work, a DecomposableFunctionType template parameter is required\&. This class must implement the following function:
+.PP
+size_t NumFunctions(); double Evaluate(const arma::mat& coordinates, const size_t i); void Gradient(const arma::mat& coordinates, const size_t i, arma::mat& gradient);
+.PP
+NumFunctions() should return the number of functions, and in the other two functions, the parameter i refers to which individual function (or gradient) is being evaluated\&. So, for the case of a data-dependent function, such as NCA (see \fBmlpack::nca::NCA\fP), NumFunctions() should return the number of points in the dataset, and Evaluate(coordinates, 0) will evaluate the objective function on the first point in the dataset (presumably, the dataset is held internally in the DecomposableFunctionType)\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIDecomposableFunctionType\fP Decomposable objective function type to be minimized\&. 
+.RE
+.PP
+
+.PP
+Definition at line 74 of file minibatch_sgd\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename DecomposableFunctionType > \fBmlpack::optimization::MiniBatchSGD\fP< DecomposableFunctionType >::\fBMiniBatchSGD\fP (DecomposableFunctionType & function, const size_t batchSize = \fC1000\fP, const double stepSize = \fC0\&.01\fP, const size_t maxIterations = \fC100000\fP, const double tolerance = \fC1e\-5\fP, const bool shuffle = \fCtrue\fP)"
+
+.PP
+Construct the \fBMiniBatchSGD\fP optimizer with the given function and parameters\&. The defaults here are not necessarily good for the given problem, so it is suggested that the values used be tailored for the task at hand\&. The maximum number of iterations refers to the maximum number of mini-batches that are processed\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfunction\fP Function to be optimized (minimized)\&. 
+.br
+\fIbatchSize\fP Size of each mini-batch\&. 
+.br
+\fIstepSize\fP Step size for each iteration\&. 
+.br
+\fImaxIterations\fP Maximum number of iterations allowed (0 means no limit)\&. 
+.br
+\fItolerance\fP Maximum absolute tolerance to terminate algorithm\&. 
+.br
+\fIshuffle\fP If true, the mini-batch order is shuffled; otherwise, each mini-batch is visited in linear order\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename DecomposableFunctionType > size_t \fBmlpack::optimization::MiniBatchSGD\fP< DecomposableFunctionType >::BatchSize () const\fC [inline]\fP"
+
+.PP
+Get the batch size\&. 
+.PP
+Definition at line 116 of file minibatch_sgd\&.hpp\&.
+.PP
+References mlpack::optimization::MiniBatchSGD< DecomposableFunctionType >::batchSize\&.
+.SS "template<typename DecomposableFunctionType > size_t& \fBmlpack::optimization::MiniBatchSGD\fP< DecomposableFunctionType >::BatchSize ()\fC [inline]\fP"
+
+.PP
+Modify the batch size\&. 
+.PP
+Definition at line 118 of file minibatch_sgd\&.hpp\&.
+.PP
+References mlpack::optimization::MiniBatchSGD< DecomposableFunctionType >::batchSize\&.
+.SS "template<typename DecomposableFunctionType > const DecomposableFunctionType& \fBmlpack::optimization::MiniBatchSGD\fP< DecomposableFunctionType >::Function () const\fC [inline]\fP"
+
+.PP
+Get the instantiated function to be optimized\&. 
+.PP
+Definition at line 111 of file minibatch_sgd\&.hpp\&.
+.SS "template<typename DecomposableFunctionType > DecomposableFunctionType& \fBmlpack::optimization::MiniBatchSGD\fP< DecomposableFunctionType >::Function ()\fC [inline]\fP"
+
+.PP
+Modify the instantiated function\&. 
+.PP
+Definition at line 113 of file minibatch_sgd\&.hpp\&.
+.SS "template<typename DecomposableFunctionType > size_t \fBmlpack::optimization::MiniBatchSGD\fP< DecomposableFunctionType >::MaxIterations () const\fC [inline]\fP"
+
+.PP
+Get the maximum number of iterations (0 indicates no limit)\&. 
+.PP
+Definition at line 126 of file minibatch_sgd\&.hpp\&.
+.PP
+References mlpack::optimization::MiniBatchSGD< DecomposableFunctionType >::maxIterations\&.
+.SS "template<typename DecomposableFunctionType > size_t& \fBmlpack::optimization::MiniBatchSGD\fP< DecomposableFunctionType >::MaxIterations ()\fC [inline]\fP"
+
+.PP
+Modify the maximum number of iterations (0 indicates no limit)\&. 
+.PP
+Definition at line 128 of file minibatch_sgd\&.hpp\&.
+.PP
+References mlpack::optimization::MiniBatchSGD< DecomposableFunctionType >::maxIterations\&.
+.SS "template<typename DecomposableFunctionType > double \fBmlpack::optimization::MiniBatchSGD\fP< DecomposableFunctionType >::Optimize (arma::mat & iterate)"
+
+.PP
+Optimize the given function using mini-batch \fBSGD\fP\&. The given starting point will be modified to store the finishing point of the algorithm, and the final objective value is returned\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIiterate\fP Starting point (will be modified)\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Objective value of the final point\&. 
+.RE
+.PP
+
+.SS "template<typename DecomposableFunctionType > bool \fBmlpack::optimization::MiniBatchSGD\fP< DecomposableFunctionType >::Shuffle () const\fC [inline]\fP"
+
+.PP
+Get whether or not the individual functions are shuffled\&. 
+.PP
+Definition at line 136 of file minibatch_sgd\&.hpp\&.
+.PP
+References mlpack::optimization::MiniBatchSGD< DecomposableFunctionType >::shuffle\&.
+.SS "template<typename DecomposableFunctionType > bool& \fBmlpack::optimization::MiniBatchSGD\fP< DecomposableFunctionType >::Shuffle ()\fC [inline]\fP"
+
+.PP
+Modify whether or not the individual functions are shuffled\&. 
+.PP
+Definition at line 138 of file minibatch_sgd\&.hpp\&.
+.PP
+References mlpack::optimization::MiniBatchSGD< DecomposableFunctionType >::shuffle\&.
+.SS "template<typename DecomposableFunctionType > double \fBmlpack::optimization::MiniBatchSGD\fP< DecomposableFunctionType >::StepSize () const\fC [inline]\fP"
+
+.PP
+Get the step size\&. 
+.PP
+Definition at line 121 of file minibatch_sgd\&.hpp\&.
+.PP
+References mlpack::optimization::MiniBatchSGD< DecomposableFunctionType >::stepSize\&.
+.SS "template<typename DecomposableFunctionType > double& \fBmlpack::optimization::MiniBatchSGD\fP< DecomposableFunctionType >::StepSize ()\fC [inline]\fP"
+
+.PP
+Modify the step size\&. 
+.PP
+Definition at line 123 of file minibatch_sgd\&.hpp\&.
+.PP
+References mlpack::optimization::MiniBatchSGD< DecomposableFunctionType >::stepSize\&.
+.SS "template<typename DecomposableFunctionType > double \fBmlpack::optimization::MiniBatchSGD\fP< DecomposableFunctionType >::Tolerance () const\fC [inline]\fP"
+
+.PP
+Get the tolerance for termination\&. 
+.PP
+Definition at line 131 of file minibatch_sgd\&.hpp\&.
+.PP
+References mlpack::optimization::MiniBatchSGD< DecomposableFunctionType >::tolerance\&.
+.SS "template<typename DecomposableFunctionType > double& \fBmlpack::optimization::MiniBatchSGD\fP< DecomposableFunctionType >::Tolerance ()\fC [inline]\fP"
+
+.PP
+Modify the tolerance for termination\&. 
+.PP
+Definition at line 133 of file minibatch_sgd\&.hpp\&.
+.PP
+References mlpack::optimization::MiniBatchSGD< DecomposableFunctionType >::tolerance\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename DecomposableFunctionType > size_t \fBmlpack::optimization::MiniBatchSGD\fP< DecomposableFunctionType >::batchSize\fC [private]\fP"
+
+.PP
+The size of each mini-batch\&. 
+.PP
+Definition at line 145 of file minibatch_sgd\&.hpp\&.
+.PP
+Referenced by mlpack::optimization::MiniBatchSGD< DecomposableFunctionType >::BatchSize()\&.
+.SS "template<typename DecomposableFunctionType > DecomposableFunctionType& \fBmlpack::optimization::MiniBatchSGD\fP< DecomposableFunctionType >::function\fC [private]\fP"
+
+.PP
+The instantiated function\&. 
+.PP
+Definition at line 142 of file minibatch_sgd\&.hpp\&.
+.SS "template<typename DecomposableFunctionType > size_t \fBmlpack::optimization::MiniBatchSGD\fP< DecomposableFunctionType >::maxIterations\fC [private]\fP"
+
+.PP
+The maximum number of allowed iterations\&. 
+.PP
+Definition at line 151 of file minibatch_sgd\&.hpp\&.
+.PP
+Referenced by mlpack::optimization::MiniBatchSGD< DecomposableFunctionType >::MaxIterations()\&.
+.SS "template<typename DecomposableFunctionType > bool \fBmlpack::optimization::MiniBatchSGD\fP< DecomposableFunctionType >::shuffle\fC [private]\fP"
+
+.PP
+Controls whether or not the individual functions are shuffled when iterating\&. 
+.PP
+Definition at line 158 of file minibatch_sgd\&.hpp\&.
+.PP
+Referenced by mlpack::optimization::MiniBatchSGD< DecomposableFunctionType >::Shuffle()\&.
+.SS "template<typename DecomposableFunctionType > double \fBmlpack::optimization::MiniBatchSGD\fP< DecomposableFunctionType >::stepSize\fC [private]\fP"
+
+.PP
+The step size for each example\&. 
+.PP
+Definition at line 148 of file minibatch_sgd\&.hpp\&.
+.PP
+Referenced by mlpack::optimization::MiniBatchSGD< DecomposableFunctionType >::StepSize()\&.
+.SS "template<typename DecomposableFunctionType > double \fBmlpack::optimization::MiniBatchSGD\fP< DecomposableFunctionType >::tolerance\fC [private]\fP"
+
+.PP
+The tolerance for termination\&. 
+.PP
+Definition at line 154 of file minibatch_sgd\&.hpp\&.
+.PP
+Referenced by mlpack::optimization::MiniBatchSGD< DecomposableFunctionType >::Tolerance()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

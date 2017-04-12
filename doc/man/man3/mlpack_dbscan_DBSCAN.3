@@ -1,0 +1,230 @@
+.TH "mlpack::dbscan::DBSCAN< RangeSearchType, PointSelectionPolicy >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::dbscan::DBSCAN< RangeSearchType, PointSelectionPolicy > \- \fBDBSCAN\fP (Density-Based Spatial Clustering of Applications with Noise) is a clustering technique described in the following paper:  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBDBSCAN\fP (const double \fBepsilon\fP, const size_t \fBminPoints\fP, RangeSearchType \fBrangeSearch\fP=RangeSearchType(), PointSelectionPolicy \fBpointSelector\fP=PointSelectionPolicy())"
+.br
+.RI "\fIConstruct the \fBDBSCAN\fP object with the given parameters\&. \fP"
+.ti -1c
+.RI "template<typename MatType > size_t \fBCluster\fP (const MatType &data, arma::mat &centroids)"
+.br
+.RI "\fIPerforms \fBDBSCAN\fP clustering on the data, returning number of clusters and also the centroid of each cluster\&. \fP"
+.ti -1c
+.RI "template<typename MatType > size_t \fBCluster\fP (const MatType &data, arma::Row< size_t > &assignments)"
+.br
+.RI "\fIPerforms \fBDBSCAN\fP clustering on the data, returning number of clusters and also the list of cluster assignments\&. \fP"
+.ti -1c
+.RI "template<typename MatType > size_t \fBCluster\fP (const MatType &data, arma::Row< size_t > &assignments, arma::mat &centroids)"
+.br
+.RI "\fIPerforms \fBDBSCAN\fP clustering on the data, returning number of clusters, the centroid of each cluster and also the list of cluster assignments\&. \fP"
+.in -1c
+.SS "Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename MatType > size_t \fBProcessPoint\fP (const MatType &data, boost::dynamic_bitset<> &unvisited, const size_t index, arma::Row< size_t > &assignments, const size_t currentCluster, const std::vector< std::vector< size_t >> &neighbors, const std::vector< std::vector< double >> &distances, const bool topLevel=true)"
+.br
+.RI "\fIThis function processes the point at index\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "double \fBepsilon\fP"
+.br
+.RI "\fIMaximum distance between two points to be part of same cluster\&. \fP"
+.ti -1c
+.RI "size_t \fBminPoints\fP"
+.br
+.RI "\fIMinimum number of points to be in the epsilon-neighborhood (including itself) for the point to be a core-point\&. \fP"
+.ti -1c
+.RI "PointSelectionPolicy \fBpointSelector\fP"
+.br
+.RI "\fIInstantiated point selection policy\&. \fP"
+.ti -1c
+.RI "RangeSearchType \fBrangeSearch\fP"
+.br
+.RI "\fIInstantiated range search policy\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename RangeSearchType = range::RangeSearch<>, typename PointSelectionPolicy = RandomPointSelection>
+.br
+class mlpack::dbscan::DBSCAN< RangeSearchType, PointSelectionPolicy >"
+\fBDBSCAN\fP (Density-Based Spatial Clustering of Applications with Noise) is a clustering technique described in the following paper: 
+
+
+.PP
+.nf
+@inproceedings{ester1996density,
+  title={A density-based algorithm for discovering clusters in large spatial
+      databases with noise\&.},
+  author={Ester, M\&. and Kriegel, H\&.-P\&. and Sander, J\&. and Xu, X\&.},
+  booktitle={Proceedings of the Second International Conference on Knowledge
+      Discovery and Data Mining (KDD '96)},
+  pages={226--231},
+  year={1996}
+}
+
+.fi
+.PP
+.PP
+The \fBDBSCAN\fP algorithm iteratively clusters points using range searches with a specified radius parameter\&. This implementation allows configuration of the range search technique used and the point selection strategy by means of template parameters\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIRangeSearchType\fP Class to use for range searching\&. 
+.br
+\fIPointSelectionPolicy\fP Strategy for selecting next point to cluster with\&. 
+.RE
+.PP
+
+.PP
+Definition at line 46 of file dbscan\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename RangeSearchType  = range::RangeSearch<>, typename PointSelectionPolicy  = RandomPointSelection> \fBmlpack::dbscan::DBSCAN\fP< RangeSearchType, PointSelectionPolicy >::\fBDBSCAN\fP (const double epsilon, const size_t minPoints, RangeSearchType rangeSearch = \fCRangeSearchType()\fP, PointSelectionPolicy pointSelector = \fCPointSelectionPolicy()\fP)"
+
+.PP
+Construct the \fBDBSCAN\fP object with the given parameters\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIepsilon\fP Size of range query\&. 
+.br
+\fIminPoints\fP Minimum number of points for each cluster\&. 
+.br
+\fIrangeSearch\fP Optional instantiated RangeSearch object\&. 
+.br
+\fIpointSelector\fP OptionL instantiated PointSelectionPolicy object\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename RangeSearchType  = range::RangeSearch<>, typename PointSelectionPolicy  = RandomPointSelection> template<typename MatType > size_t \fBmlpack::dbscan::DBSCAN\fP< RangeSearchType, PointSelectionPolicy >::Cluster (const MatType & data, arma::mat & centroids)"
+
+.PP
+Performs \fBDBSCAN\fP clustering on the data, returning number of clusters and also the centroid of each cluster\&. 
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIMatType\fP Type of matrix (arma::mat or arma::sp_mat)\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Dataset to cluster\&. 
+.br
+\fIcentroids\fP Matrix in which centroids are stored\&. 
+.RE
+.PP
+
+.SS "template<typename RangeSearchType  = range::RangeSearch<>, typename PointSelectionPolicy  = RandomPointSelection> template<typename MatType > size_t \fBmlpack::dbscan::DBSCAN\fP< RangeSearchType, PointSelectionPolicy >::Cluster (const MatType & data, arma::Row< size_t > & assignments)"
+
+.PP
+Performs \fBDBSCAN\fP clustering on the data, returning number of clusters and also the list of cluster assignments\&. 
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIMatType\fP Type of matrix (arma::mat or arma::sp_mat)\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Dataset to cluster\&. 
+.br
+\fIassignments\fP Vector to store cluster assignments\&. 
+.RE
+.PP
+
+.SS "template<typename RangeSearchType  = range::RangeSearch<>, typename PointSelectionPolicy  = RandomPointSelection> template<typename MatType > size_t \fBmlpack::dbscan::DBSCAN\fP< RangeSearchType, PointSelectionPolicy >::Cluster (const MatType & data, arma::Row< size_t > & assignments, arma::mat & centroids)"
+
+.PP
+Performs \fBDBSCAN\fP clustering on the data, returning number of clusters, the centroid of each cluster and also the list of cluster assignments\&. If assignments[i] == assignments\&.n_elem - 1, then the point is considered 'noise'\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIMatType\fP Type of matrix (arma::mat or arma::sp_mat)\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Dataset to cluster\&. 
+.br
+\fIassignments\fP Vector to store cluster assignments\&. 
+.br
+\fIcentroids\fP Matrix in which centroids are stored\&. 
+.RE
+.PP
+
+.SS "template<typename RangeSearchType  = range::RangeSearch<>, typename PointSelectionPolicy  = RandomPointSelection> template<typename MatType > size_t \fBmlpack::dbscan::DBSCAN\fP< RangeSearchType, PointSelectionPolicy >::ProcessPoint (const MatType & data, boost::dynamic_bitset<> & unvisited, const size_t index, arma::Row< size_t > & assignments, const size_t currentCluster, const std::vector< std::vector< size_t >> & neighbors, const std::vector< std::vector< double >> & distances, const bool topLevel = \fCtrue\fP)\fC [private]\fP"
+
+.PP
+This function processes the point at index\&. It marks the point as visited, checks if the given point is core or non-core\&. If it is a core point, it expands the cluster, otherwise it returns\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIMatType\fP Type of matrix (arma::mat or arma::sp_mat)\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Dataset to cluster\&. 
+.br
+\fIunvisited\fP Remembers if a point has been visited\&. 
+.br
+\fIindex\fP Index of point to be visited now\&. 
+.br
+\fIassignments\fP Vector to store cluster assignments\&. 
+.br
+\fIcurrentCluster\fP Index of cluster which will be assigned to points in current cluster\&. 
+.br
+\fIneighbors\fP Matrix containing list of neighbors for each point which fall in its epsilon-neighborhood\&. 
+.br
+\fIdistances\fP Matrix containing list of distances for each point which fall in its epsilon-neighborhood\&. 
+.br
+\fItopLevel\fP If true, then current point is the first point in the current cluster, helps in detecting noise\&. 
+.RE
+.PP
+
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename RangeSearchType  = range::RangeSearch<>, typename PointSelectionPolicy  = RandomPointSelection> double \fBmlpack::dbscan::DBSCAN\fP< RangeSearchType, PointSelectionPolicy >::epsilon\fC [private]\fP"
+
+.PP
+Maximum distance between two points to be part of same cluster\&. 
+.PP
+Definition at line 104 of file dbscan\&.hpp\&.
+.SS "template<typename RangeSearchType  = range::RangeSearch<>, typename PointSelectionPolicy  = RandomPointSelection> size_t \fBmlpack::dbscan::DBSCAN\fP< RangeSearchType, PointSelectionPolicy >::minPoints\fC [private]\fP"
+
+.PP
+Minimum number of points to be in the epsilon-neighborhood (including itself) for the point to be a core-point\&. 
+.PP
+Definition at line 108 of file dbscan\&.hpp\&.
+.SS "template<typename RangeSearchType  = range::RangeSearch<>, typename PointSelectionPolicy  = RandomPointSelection> PointSelectionPolicy \fBmlpack::dbscan::DBSCAN\fP< RangeSearchType, PointSelectionPolicy >::pointSelector\fC [private]\fP"
+
+.PP
+Instantiated point selection policy\&. 
+.PP
+Definition at line 114 of file dbscan\&.hpp\&.
+.SS "template<typename RangeSearchType  = range::RangeSearch<>, typename PointSelectionPolicy  = RandomPointSelection> RangeSearchType \fBmlpack::dbscan::DBSCAN\fP< RangeSearchType, PointSelectionPolicy >::rangeSearch\fC [private]\fP"
+
+.PP
+Instantiated range search policy\&. 
+.PP
+Definition at line 111 of file dbscan\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

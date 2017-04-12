@@ -1,0 +1,501 @@
+.TH "mlpack::neighbor::NeighborSearchRules< SortPolicy, MetricType, TreeType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::neighbor::NeighborSearchRules< SortPolicy, MetricType, TreeType > \- The \fBNeighborSearchRules\fP class is a template helper class used by \fBNeighborSearch\fP class when performing distance-based neighbor searches\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "struct \fBCandidateCmp\fP"
+.br
+.RI "\fICompare two candidates based on the distance\&. \fP"
+.in -1c
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "typedef \fBtree::TraversalInfo\fP< TreeType > \fBTraversalInfoType\fP"
+.br
+.RI "\fIConvenience typedef\&. \fP"
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBNeighborSearchRules\fP (const typename TreeType::Mat &\fBreferenceSet\fP, const typename TreeType::Mat &\fBquerySet\fP, const size_t \fBk\fP, MetricType &\fBmetric\fP, const double \fBepsilon\fP=0, const bool \fBsameSet\fP=false)"
+.br
+.RI "\fIConstruct the \fBNeighborSearchRules\fP object\&. \fP"
+.ti -1c
+.RI "double \fBBaseCase\fP (const size_t queryIndex, const size_t referenceIndex)"
+.br
+.RI "\fIGet the distance from the query point to the reference point\&. \fP"
+.ti -1c
+.RI "size_t \fBBaseCases\fP () const "
+.br
+.RI "\fIGet the number of base cases that have been performed\&. \fP"
+.ti -1c
+.RI "size_t & \fBBaseCases\fP ()"
+.br
+.RI "\fIModify the number of base cases that have been performed\&. \fP"
+.ti -1c
+.RI "size_t \fBGetBestChild\fP (const size_t queryIndex, TreeType &referenceNode)"
+.br
+.RI "\fIGet the child node with the best score\&. \fP"
+.ti -1c
+.RI "size_t \fBGetBestChild\fP (const TreeType &queryNode, TreeType &referenceNode)"
+.br
+.RI "\fIGet the child node with the best score\&. \fP"
+.ti -1c
+.RI "void \fBGetResults\fP (arma::Mat< size_t > &neighbors, arma::mat &distances)"
+.br
+.RI "\fIStore the list of candidates for each query point in the given matrices\&. \fP"
+.ti -1c
+.RI "double \fBRescore\fP (const size_t queryIndex, TreeType &referenceNode, const double oldScore) const "
+.br
+.RI "\fIRe-evaluate the score for recursion order\&. \fP"
+.ti -1c
+.RI "double \fBRescore\fP (TreeType &queryNode, TreeType &referenceNode, const double oldScore) const "
+.br
+.RI "\fIRe-evaluate the score for recursion order\&. \fP"
+.ti -1c
+.RI "double \fBScore\fP (const size_t queryIndex, TreeType &referenceNode)"
+.br
+.RI "\fIGet the score for recursion order\&. \fP"
+.ti -1c
+.RI "double \fBScore\fP (TreeType &queryNode, TreeType &referenceNode)"
+.br
+.RI "\fIGet the score for recursion order\&. \fP"
+.ti -1c
+.RI "size_t \fBScores\fP () const "
+.br
+.RI "\fIGet the number of scores that have been performed\&. \fP"
+.ti -1c
+.RI "size_t & \fBScores\fP ()"
+.br
+.RI "\fIModify the number of scores that have been performed\&. \fP"
+.ti -1c
+.RI "const \fBTraversalInfoType\fP & \fBTraversalInfo\fP () const "
+.br
+.RI "\fIGet the traversal info\&. \fP"
+.ti -1c
+.RI "\fBTraversalInfoType\fP & \fBTraversalInfo\fP ()"
+.br
+.RI "\fIModify the traversal info\&. \fP"
+.in -1c
+.SS "Protected Types"
+
+.in +1c
+.ti -1c
+.RI "typedef std::pair< double, size_t > \fBCandidate\fP"
+.br
+.RI "\fICandidate represents a possible candidate neighbor (distance, index)\&. \fP"
+.ti -1c
+.RI "typedef std::priority_queue< \fBCandidate\fP, std::vector< \fBCandidate\fP >, \fBCandidateCmp\fP > \fBCandidateList\fP"
+.br
+.RI "\fIUse a priority queue to represent the list of candidate neighbors\&. \fP"
+.in -1c
+.SS "Protected Member Functions"
+
+.in +1c
+.ti -1c
+.RI "double \fBCalculateBound\fP (TreeType &queryNode) const "
+.br
+.RI "\fIRecalculate the bound for a given query node\&. \fP"
+.ti -1c
+.RI "void \fBInsertNeighbor\fP (const size_t queryIndex, const size_t neighbor, const double distance)"
+.br
+.RI "\fIHelper function to insert a point into the list of candidate points\&. \fP"
+.in -1c
+.SS "Protected Attributes"
+
+.in +1c
+.ti -1c
+.RI "size_t \fBbaseCases\fP"
+.br
+.RI "\fIThe number of base cases that have been performed\&. \fP"
+.ti -1c
+.RI "std::vector< \fBCandidateList\fP > \fBcandidates\fP"
+.br
+.RI "\fISet of candidate neighbors for each point\&. \fP"
+.ti -1c
+.RI "const double \fBepsilon\fP"
+.br
+.RI "\fIRelative error to be considered in approximate search\&. \fP"
+.ti -1c
+.RI "const size_t \fBk\fP"
+.br
+.RI "\fINumber of neighbors to search for\&. \fP"
+.ti -1c
+.RI "double \fBlastBaseCase\fP"
+.br
+.RI "\fIThe last base case result\&. \fP"
+.ti -1c
+.RI "size_t \fBlastQueryIndex\fP"
+.br
+.RI "\fIThe last query point \fBBaseCase()\fP was called with\&. \fP"
+.ti -1c
+.RI "size_t \fBlastReferenceIndex\fP"
+.br
+.RI "\fIThe last reference point \fBBaseCase()\fP was called with\&. \fP"
+.ti -1c
+.RI "MetricType & \fBmetric\fP"
+.br
+.RI "\fIThe instantiated metric\&. \fP"
+.ti -1c
+.RI "const TreeType::Mat & \fBquerySet\fP"
+.br
+.RI "\fIThe query set\&. \fP"
+.ti -1c
+.RI "const TreeType::Mat & \fBreferenceSet\fP"
+.br
+.RI "\fIThe reference set\&. \fP"
+.ti -1c
+.RI "bool \fBsameSet\fP"
+.br
+.RI "\fIDenotes whether or not the reference and query sets are the same\&. \fP"
+.ti -1c
+.RI "size_t \fBscores\fP"
+.br
+.RI "\fIThe number of scores that have been performed\&. \fP"
+.ti -1c
+.RI "\fBTraversalInfoType\fP \fBtraversalInfo\fP"
+.br
+.RI "\fITraversal info for the parent combination; this is updated by the traversal before each call to \fBScore()\fP\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename SortPolicy, typename MetricType, typename TreeType>
+.br
+class mlpack::neighbor::NeighborSearchRules< SortPolicy, MetricType, TreeType >"
+The \fBNeighborSearchRules\fP class is a template helper class used by \fBNeighborSearch\fP class when performing distance-based neighbor searches\&. 
+
+For each point in the query dataset, it keeps track of the k neighbors in the reference dataset which have the 'best' distance according to a given sorting policy\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fISortPolicy\fP The sort policy for distances\&. 
+.br
+\fIMetricType\fP The metric to use for computation\&. 
+.br
+\fITreeType\fP The tree type to use; must adhere to the TreeType API\&. 
+.RE
+.PP
+
+.PP
+Definition at line 33 of file neighbor_search_rules\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "template<typename SortPolicy , typename MetricType , typename TreeType > typedef std::pair<double, size_t> \fBmlpack::neighbor::NeighborSearchRules\fP< SortPolicy, MetricType, TreeType >::\fBCandidate\fP\fC [protected]\fP"
+
+.PP
+Candidate represents a possible candidate neighbor (distance, index)\&. 
+.PP
+Definition at line 166 of file neighbor_search_rules\&.hpp\&.
+.SS "template<typename SortPolicy , typename MetricType , typename TreeType > typedef std::priority_queue<\fBCandidate\fP, std::vector<\fBCandidate\fP>, \fBCandidateCmp\fP> \fBmlpack::neighbor::NeighborSearchRules\fP< SortPolicy, MetricType, TreeType >::\fBCandidateList\fP\fC [protected]\fP"
+
+.PP
+Use a priority queue to represent the list of candidate neighbors\&. 
+.PP
+Definition at line 178 of file neighbor_search_rules\&.hpp\&.
+.SS "template<typename SortPolicy , typename MetricType , typename TreeType > typedef \fBtree::TraversalInfo\fP<TreeType> \fBmlpack::neighbor::NeighborSearchRules\fP< SortPolicy, MetricType, TreeType >::\fBTraversalInfoType\fP"
+
+.PP
+Convenience typedef\&. 
+.PP
+Definition at line 151 of file neighbor_search_rules\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename SortPolicy , typename MetricType , typename TreeType > \fBmlpack::neighbor::NeighborSearchRules\fP< SortPolicy, MetricType, TreeType >::\fBNeighborSearchRules\fP (const typename TreeType::Mat & referenceSet, const typename TreeType::Mat & querySet, const size_t k, MetricType & metric, const double epsilon = \fC0\fP, const bool sameSet = \fCfalse\fP)"
+
+.PP
+Construct the \fBNeighborSearchRules\fP object\&. This is usually done from within the \fBNeighborSearch\fP class at search time\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIreferenceSet\fP Set of reference data\&. 
+.br
+\fIquerySet\fP Set of query data\&. 
+.br
+\fIk\fP Number of neighbors to search for\&. 
+.br
+\fImetric\fP Instantiated metric\&. 
+.br
+\fIepsilon\fP Relative approximate error\&. 
+.br
+\fIsameSet\fP If true, the query and reference set are taken to be the same, and a query point will not return itself in the results\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename SortPolicy , typename MetricType , typename TreeType > double \fBmlpack::neighbor::NeighborSearchRules\fP< SortPolicy, MetricType, TreeType >::BaseCase (const size_t queryIndex, const size_t referenceIndex)"
+
+.PP
+Get the distance from the query point to the reference point\&. This will update the list of candidates with the new point if appropriate and will track the number of base cases (number of points evaluated)\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIqueryIndex\fP Index of query point\&. 
+.br
+\fIreferenceIndex\fP Index of reference point\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy , typename MetricType , typename TreeType > size_t \fBmlpack::neighbor::NeighborSearchRules\fP< SortPolicy, MetricType, TreeType >::BaseCases () const\fC [inline]\fP"
+
+.PP
+Get the number of base cases that have been performed\&. 
+.PP
+Definition at line 141 of file neighbor_search_rules\&.hpp\&.
+.PP
+References mlpack::neighbor::NeighborSearchRules< SortPolicy, MetricType, TreeType >::baseCases\&.
+.SS "template<typename SortPolicy , typename MetricType , typename TreeType > size_t& \fBmlpack::neighbor::NeighborSearchRules\fP< SortPolicy, MetricType, TreeType >::BaseCases ()\fC [inline]\fP"
+
+.PP
+Modify the number of base cases that have been performed\&. 
+.PP
+Definition at line 143 of file neighbor_search_rules\&.hpp\&.
+.PP
+References mlpack::neighbor::NeighborSearchRules< SortPolicy, MetricType, TreeType >::baseCases\&.
+.SS "template<typename SortPolicy , typename MetricType , typename TreeType > double \fBmlpack::neighbor::NeighborSearchRules\fP< SortPolicy, MetricType, TreeType >::CalculateBound (TreeType & queryNode) const\fC [protected]\fP"
+
+.PP
+Recalculate the bound for a given query node\&. 
+.SS "template<typename SortPolicy , typename MetricType , typename TreeType > size_t \fBmlpack::neighbor::NeighborSearchRules\fP< SortPolicy, MetricType, TreeType >::GetBestChild (const size_t queryIndex, TreeType & referenceNode)"
+
+.PP
+Get the child node with the best score\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIqueryIndex\fP Index of query point\&. 
+.br
+\fIreferenceNode\fP Candidate node to be recursed into\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy , typename MetricType , typename TreeType > size_t \fBmlpack::neighbor::NeighborSearchRules\fP< SortPolicy, MetricType, TreeType >::GetBestChild (const TreeType & queryNode, TreeType & referenceNode)"
+
+.PP
+Get the child node with the best score\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIqueryNode\fP Node to be considered\&. 
+.br
+\fIreferenceNode\fP Candidate node to be recursed into\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy , typename MetricType , typename TreeType > void \fBmlpack::neighbor::NeighborSearchRules\fP< SortPolicy, MetricType, TreeType >::GetResults (arma::Mat< size_t > & neighbors, arma::mat & distances)"
+
+.PP
+Store the list of candidates for each query point in the given matrices\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIneighbors\fP Matrix storing lists of neighbors for each query point\&. 
+.br
+\fIdistances\fP Matrix storing distances of neighbors for each query point\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy , typename MetricType , typename TreeType > void \fBmlpack::neighbor::NeighborSearchRules\fP< SortPolicy, MetricType, TreeType >::InsertNeighbor (const size_t queryIndex, const size_t neighbor, const double distance)\fC [protected]\fP"
+
+.PP
+Helper function to insert a point into the list of candidate points\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIqueryIndex\fP Index of point whose neighbors we are inserting into\&. 
+.br
+\fIneighbor\fP Index of reference point which is being inserted\&. 
+.br
+\fIdistance\fP Distance from query point to reference point\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy , typename MetricType , typename TreeType > double \fBmlpack::neighbor::NeighborSearchRules\fP< SortPolicy, MetricType, TreeType >::Rescore (const size_t queryIndex, TreeType & referenceNode, const double oldScore) const"
+
+.PP
+Re-evaluate the score for recursion order\&. A low score indicates priority for recursion, while DBL_MAX indicates that the node should not be recursed into at all (it should be pruned)\&. This is used when the score has already been calculated, but another recursion may have modified the bounds for pruning\&. So the old score is checked against the new pruning bound\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIqueryIndex\fP Index of query point\&. 
+.br
+\fIreferenceNode\fP Candidate node to be recursed into\&. 
+.br
+\fIoldScore\fP Old score produced by \fBScore()\fP (or \fBRescore()\fP)\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy , typename MetricType , typename TreeType > double \fBmlpack::neighbor::NeighborSearchRules\fP< SortPolicy, MetricType, TreeType >::Rescore (TreeType & queryNode, TreeType & referenceNode, const double oldScore) const"
+
+.PP
+Re-evaluate the score for recursion order\&. A low score indicates priority for recursion, while DBL_MAX indicates that the node should not be recursed into at all (it should be pruned)\&. This is used when the score has already been calculated, but another recursion may have modified the bounds for pruning\&. So the old score is checked against the new pruning bound\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIqueryNode\fP Candidate query node to recurse into\&. 
+.br
+\fIreferenceNode\fP Candidate reference node to recurse into\&. 
+.br
+\fIoldScore\fP Old score produced by Socre() (or \fBRescore()\fP)\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy , typename MetricType , typename TreeType > double \fBmlpack::neighbor::NeighborSearchRules\fP< SortPolicy, MetricType, TreeType >::Score (const size_t queryIndex, TreeType & referenceNode)"
+
+.PP
+Get the score for recursion order\&. A low score indicates priority for recursion, while DBL_MAX indicates that the node should not be recursed into at all (it should be pruned)\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIqueryIndex\fP Index of query point\&. 
+.br
+\fIreferenceNode\fP Candidate node to be recursed into\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy , typename MetricType , typename TreeType > double \fBmlpack::neighbor::NeighborSearchRules\fP< SortPolicy, MetricType, TreeType >::Score (TreeType & queryNode, TreeType & referenceNode)"
+
+.PP
+Get the score for recursion order\&. A low score indicates priority for recursionm while DBL_MAX indicates that the node should not be recursed into at all (it should be pruned)\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIqueryNode\fP Candidate query node to recurse into\&. 
+.br
+\fIreferenceNode\fP Candidate reference node to recurse into\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy , typename MetricType , typename TreeType > size_t \fBmlpack::neighbor::NeighborSearchRules\fP< SortPolicy, MetricType, TreeType >::Scores () const\fC [inline]\fP"
+
+.PP
+Get the number of scores that have been performed\&. 
+.PP
+Definition at line 146 of file neighbor_search_rules\&.hpp\&.
+.PP
+References mlpack::neighbor::NeighborSearchRules< SortPolicy, MetricType, TreeType >::scores\&.
+.SS "template<typename SortPolicy , typename MetricType , typename TreeType > size_t& \fBmlpack::neighbor::NeighborSearchRules\fP< SortPolicy, MetricType, TreeType >::Scores ()\fC [inline]\fP"
+
+.PP
+Modify the number of scores that have been performed\&. 
+.PP
+Definition at line 148 of file neighbor_search_rules\&.hpp\&.
+.PP
+References mlpack::neighbor::NeighborSearchRules< SortPolicy, MetricType, TreeType >::scores\&.
+.SS "template<typename SortPolicy , typename MetricType , typename TreeType > const \fBTraversalInfoType\fP& \fBmlpack::neighbor::NeighborSearchRules\fP< SortPolicy, MetricType, TreeType >::TraversalInfo () const\fC [inline]\fP"
+
+.PP
+Get the traversal info\&. 
+.PP
+Definition at line 154 of file neighbor_search_rules\&.hpp\&.
+.PP
+References mlpack::neighbor::NeighborSearchRules< SortPolicy, MetricType, TreeType >::traversalInfo\&.
+.SS "template<typename SortPolicy , typename MetricType , typename TreeType > \fBTraversalInfoType\fP& \fBmlpack::neighbor::NeighborSearchRules\fP< SortPolicy, MetricType, TreeType >::TraversalInfo ()\fC [inline]\fP"
+
+.PP
+Modify the traversal info\&. 
+.PP
+Definition at line 156 of file neighbor_search_rules\&.hpp\&.
+.PP
+References mlpack::neighbor::NeighborSearchRules< SortPolicy, MetricType, TreeType >::traversalInfo\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename SortPolicy , typename MetricType , typename TreeType > size_t \fBmlpack::neighbor::NeighborSearchRules\fP< SortPolicy, MetricType, TreeType >::baseCases\fC [protected]\fP"
+
+.PP
+The number of base cases that have been performed\&. 
+.PP
+Definition at line 203 of file neighbor_search_rules\&.hpp\&.
+.PP
+Referenced by mlpack::neighbor::NeighborSearchRules< SortPolicy, MetricType, TreeType >::BaseCases()\&.
+.SS "template<typename SortPolicy , typename MetricType , typename TreeType > std::vector<\fBCandidateList\fP> \fBmlpack::neighbor::NeighborSearchRules\fP< SortPolicy, MetricType, TreeType >::candidates\fC [protected]\fP"
+
+.PP
+Set of candidate neighbors for each point\&. 
+.PP
+Definition at line 181 of file neighbor_search_rules\&.hpp\&.
+.SS "template<typename SortPolicy , typename MetricType , typename TreeType > const double \fBmlpack::neighbor::NeighborSearchRules\fP< SortPolicy, MetricType, TreeType >::epsilon\fC [protected]\fP"
+
+.PP
+Relative error to be considered in approximate search\&. 
+.PP
+Definition at line 193 of file neighbor_search_rules\&.hpp\&.
+.SS "template<typename SortPolicy , typename MetricType , typename TreeType > const size_t \fBmlpack::neighbor::NeighborSearchRules\fP< SortPolicy, MetricType, TreeType >::k\fC [protected]\fP"
+
+.PP
+Number of neighbors to search for\&. 
+.PP
+Definition at line 184 of file neighbor_search_rules\&.hpp\&.
+.SS "template<typename SortPolicy , typename MetricType , typename TreeType > double \fBmlpack::neighbor::NeighborSearchRules\fP< SortPolicy, MetricType, TreeType >::lastBaseCase\fC [protected]\fP"
+
+.PP
+The last base case result\&. 
+.PP
+Definition at line 200 of file neighbor_search_rules\&.hpp\&.
+.SS "template<typename SortPolicy , typename MetricType , typename TreeType > size_t \fBmlpack::neighbor::NeighborSearchRules\fP< SortPolicy, MetricType, TreeType >::lastQueryIndex\fC [protected]\fP"
+
+.PP
+The last query point \fBBaseCase()\fP was called with\&. 
+.PP
+Definition at line 196 of file neighbor_search_rules\&.hpp\&.
+.SS "template<typename SortPolicy , typename MetricType , typename TreeType > size_t \fBmlpack::neighbor::NeighborSearchRules\fP< SortPolicy, MetricType, TreeType >::lastReferenceIndex\fC [protected]\fP"
+
+.PP
+The last reference point \fBBaseCase()\fP was called with\&. 
+.PP
+Definition at line 198 of file neighbor_search_rules\&.hpp\&.
+.SS "template<typename SortPolicy , typename MetricType , typename TreeType > MetricType& \fBmlpack::neighbor::NeighborSearchRules\fP< SortPolicy, MetricType, TreeType >::metric\fC [protected]\fP"
+
+.PP
+The instantiated metric\&. 
+.PP
+Definition at line 187 of file neighbor_search_rules\&.hpp\&.
+.SS "template<typename SortPolicy , typename MetricType , typename TreeType > const TreeType::Mat& \fBmlpack::neighbor::NeighborSearchRules\fP< SortPolicy, MetricType, TreeType >::querySet\fC [protected]\fP"
+
+.PP
+The query set\&. 
+.PP
+Definition at line 163 of file neighbor_search_rules\&.hpp\&.
+.SS "template<typename SortPolicy , typename MetricType , typename TreeType > const TreeType::Mat& \fBmlpack::neighbor::NeighborSearchRules\fP< SortPolicy, MetricType, TreeType >::referenceSet\fC [protected]\fP"
+
+.PP
+The reference set\&. 
+.PP
+Definition at line 160 of file neighbor_search_rules\&.hpp\&.
+.SS "template<typename SortPolicy , typename MetricType , typename TreeType > bool \fBmlpack::neighbor::NeighborSearchRules\fP< SortPolicy, MetricType, TreeType >::sameSet\fC [protected]\fP"
+
+.PP
+Denotes whether or not the reference and query sets are the same\&. 
+.PP
+Definition at line 190 of file neighbor_search_rules\&.hpp\&.
+.SS "template<typename SortPolicy , typename MetricType , typename TreeType > size_t \fBmlpack::neighbor::NeighborSearchRules\fP< SortPolicy, MetricType, TreeType >::scores\fC [protected]\fP"
+
+.PP
+The number of scores that have been performed\&. 
+.PP
+Definition at line 205 of file neighbor_search_rules\&.hpp\&.
+.PP
+Referenced by mlpack::neighbor::NeighborSearchRules< SortPolicy, MetricType, TreeType >::Scores()\&.
+.SS "template<typename SortPolicy , typename MetricType , typename TreeType > \fBTraversalInfoType\fP \fBmlpack::neighbor::NeighborSearchRules\fP< SortPolicy, MetricType, TreeType >::traversalInfo\fC [protected]\fP"
+
+.PP
+Traversal info for the parent combination; this is updated by the traversal before each call to \fBScore()\fP\&. 
+.PP
+Definition at line 209 of file neighbor_search_rules\&.hpp\&.
+.PP
+Referenced by mlpack::neighbor::NeighborSearchRules< SortPolicy, MetricType, TreeType >::TraversalInfo()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

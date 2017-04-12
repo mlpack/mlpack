@@ -1,0 +1,226 @@
+.TH "mlpack::ann::ConcatPerformance< OutputLayerType, InputDataType, OutputDataType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::ann::ConcatPerformance< OutputLayerType, InputDataType, OutputDataType > \- Implementation of the concat performance class\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBConcatPerformance\fP (const size_t \fBinSize\fP, OutputLayerType &&\fBoutputLayer\fP=OutputLayerType())"
+.br
+.RI "\fICreate the \fBConcatPerformance\fP object\&. \fP"
+.ti -1c
+.RI "template<typename eT > void \fBBackward\fP (const arma::Mat< eT > &&input, const arma::Mat< eT > &&target, arma::Mat< eT > &&output)"
+.br
+.RI "\fIOrdinary feed backward pass of a neural network\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBDelta\fP () const "
+.br
+.RI "\fIGet the delta\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBDelta\fP ()"
+.br
+.RI "\fIModify the delta\&. \fP"
+.ti -1c
+.RI "template<typename eT > double \fBForward\fP (const arma::Mat< eT > &&input, arma::Mat< eT > &&target)"
+.br
+.ti -1c
+.RI "InputDataType & \fBInputParameter\fP () const "
+.br
+.RI "\fIGet the input parameter\&. \fP"
+.ti -1c
+.RI "InputDataType & \fBInputParameter\fP ()"
+.br
+.RI "\fIModify the input parameter\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP () const "
+.br
+.RI "\fIGet the output parameter\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP ()"
+.br
+.RI "\fIModify the output parameter\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &, const unsigned int)"
+.br
+.RI "\fISerialize the layer\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "OutputDataType \fBdelta\fP"
+.br
+.RI "\fILocally-stored delta object\&. \fP"
+.ti -1c
+.RI "InputDataType \fBinputParameter\fP"
+.br
+.RI "\fILocally-stored input parameter object\&. \fP"
+.ti -1c
+.RI "size_t \fBinSize\fP"
+.br
+.RI "\fILocally-stored number of inputs\&. \fP"
+.ti -1c
+.RI "OutputLayerType \fBoutputLayer\fP"
+.br
+.RI "\fIInstantiated outputlayer used to evaluate the network\&. \fP"
+.ti -1c
+.RI "OutputDataType \fBoutputParameter\fP"
+.br
+.RI "\fILocally-stored output parameter object\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename OutputLayerType = NegativeLogLikelihood<>, typename InputDataType = arma::mat, typename OutputDataType = arma::mat>
+.br
+class mlpack::ann::ConcatPerformance< OutputLayerType, InputDataType, OutputDataType >"
+Implementation of the concat performance class\&. 
+
+The class works as a feed-forward fully connected network container which plugs performance layers together\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIInputDataType\fP Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fIOutputDataType\fP Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 39 of file concat_performance\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBmlpack::ann::ConcatPerformance\fP< OutputLayerType, InputDataType, OutputDataType >::\fBConcatPerformance\fP (const size_t inSize, OutputLayerType && outputLayer = \fCOutputLayerType()\fP)"
+
+.PP
+Create the \fBConcatPerformance\fP object\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinSize\fP The number of inputs\&. 
+.br
+\fIoutputLayer\fP Output layer used to evaluate the network\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename eT > void \fBmlpack::ann::ConcatPerformance\fP< OutputLayerType, InputDataType, OutputDataType >::Backward (const arma::Mat< eT > && input, const arma::Mat< eT > && target, arma::Mat< eT > && output)"
+
+.PP
+Ordinary feed backward pass of a neural network\&. The negative log likelihood layer expectes that the input contains log-probabilities for each class\&. The layer also expects a class index, in the range between 1 and the number of classes, as target when calling the Forward function\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP The propagated input activation\&. 
+.br
+\fItarget\fP The target vector, that contains the class index in the range between 1 and the number of classes\&. 
+.br
+\fIoutput\fP The calculated error\&. 
+.RE
+.PP
+
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::ConcatPerformance\fP< OutputLayerType, InputDataType, OutputDataType >::Delta () const\fC [inline]\fP"
+
+.PP
+Get the delta\&. 
+.PP
+Definition at line 86 of file concat_performance\&.hpp\&.
+.PP
+References mlpack::ann::ConcatPerformance< OutputLayerType, InputDataType, OutputDataType >::delta\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::ConcatPerformance\fP< OutputLayerType, InputDataType, OutputDataType >::Delta ()\fC [inline]\fP"
+
+.PP
+Modify the delta\&. 
+.PP
+Definition at line 88 of file concat_performance\&.hpp\&.
+.PP
+References mlpack::ann::ConcatPerformance< OutputLayerType, InputDataType, OutputDataType >::delta, and mlpack::ann::ConcatPerformance< OutputLayerType, InputDataType, OutputDataType >::Serialize()\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename eT > double \fBmlpack::ann::ConcatPerformance\fP< OutputLayerType, InputDataType, OutputDataType >::Forward (const arma::Mat< eT > && input, arma::Mat< eT > && target)"
+
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> InputDataType& \fBmlpack::ann::ConcatPerformance\fP< OutputLayerType, InputDataType, OutputDataType >::InputParameter () const\fC [inline]\fP"
+
+.PP
+Get the input parameter\&. 
+.PP
+Definition at line 76 of file concat_performance\&.hpp\&.
+.PP
+References mlpack::ann::ConcatPerformance< OutputLayerType, InputDataType, OutputDataType >::inputParameter\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> InputDataType& \fBmlpack::ann::ConcatPerformance\fP< OutputLayerType, InputDataType, OutputDataType >::InputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the input parameter\&. 
+.PP
+Definition at line 78 of file concat_performance\&.hpp\&.
+.PP
+References mlpack::ann::ConcatPerformance< OutputLayerType, InputDataType, OutputDataType >::inputParameter\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::ConcatPerformance\fP< OutputLayerType, InputDataType, OutputDataType >::OutputParameter () const\fC [inline]\fP"
+
+.PP
+Get the output parameter\&. 
+.PP
+Definition at line 81 of file concat_performance\&.hpp\&.
+.PP
+References mlpack::ann::ConcatPerformance< OutputLayerType, InputDataType, OutputDataType >::outputParameter\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::ConcatPerformance\fP< OutputLayerType, InputDataType, OutputDataType >::OutputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the output parameter\&. 
+.PP
+Definition at line 83 of file concat_performance\&.hpp\&.
+.PP
+References mlpack::ann::ConcatPerformance< OutputLayerType, InputDataType, OutputDataType >::outputParameter\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename Archive > void \fBmlpack::ann::ConcatPerformance\fP< OutputLayerType, InputDataType, OutputDataType >::Serialize (Archive &, const unsigned int)"
+
+.PP
+Serialize the layer\&. 
+.PP
+Referenced by mlpack::ann::ConcatPerformance< OutputLayerType, InputDataType, OutputDataType >::Delta()\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType \fBmlpack::ann::ConcatPerformance\fP< OutputLayerType, InputDataType, OutputDataType >::delta\fC [private]\fP"
+
+.PP
+Locally-stored delta object\&. 
+.PP
+Definition at line 104 of file concat_performance\&.hpp\&.
+.PP
+Referenced by mlpack::ann::ConcatPerformance< OutputLayerType, InputDataType, OutputDataType >::Delta()\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> InputDataType \fBmlpack::ann::ConcatPerformance\fP< OutputLayerType, InputDataType, OutputDataType >::inputParameter\fC [private]\fP"
+
+.PP
+Locally-stored input parameter object\&. 
+.PP
+Definition at line 107 of file concat_performance\&.hpp\&.
+.PP
+Referenced by mlpack::ann::ConcatPerformance< OutputLayerType, InputDataType, OutputDataType >::InputParameter()\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> size_t \fBmlpack::ann::ConcatPerformance\fP< OutputLayerType, InputDataType, OutputDataType >::inSize\fC [private]\fP"
+
+.PP
+Locally-stored number of inputs\&. 
+.PP
+Definition at line 98 of file concat_performance\&.hpp\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputLayerType \fBmlpack::ann::ConcatPerformance\fP< OutputLayerType, InputDataType, OutputDataType >::outputLayer\fC [private]\fP"
+
+.PP
+Instantiated outputlayer used to evaluate the network\&. 
+.PP
+Definition at line 101 of file concat_performance\&.hpp\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType \fBmlpack::ann::ConcatPerformance\fP< OutputLayerType, InputDataType, OutputDataType >::outputParameter\fC [private]\fP"
+
+.PP
+Locally-stored output parameter object\&. 
+.PP
+Definition at line 110 of file concat_performance\&.hpp\&.
+.PP
+Referenced by mlpack::ann::ConcatPerformance< OutputLayerType, InputDataType, OutputDataType >::OutputParameter()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

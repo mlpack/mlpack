@@ -1,0 +1,65 @@
+\section{src/mlpack/core/data/serialization\+\_\+template\+\_\+version.hpp File Reference}
+\label{serialization__template__version_8hpp}\index{src/mlpack/core/data/serialization\+\_\+template\+\_\+version.\+hpp@{src/mlpack/core/data/serialization\+\_\+template\+\_\+version.\+hpp}}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{serialization__template__version_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define {\bf B\+O\+O\+S\+T\+\_\+\+T\+E\+M\+P\+L\+A\+T\+E\+\_\+\+C\+L\+A\+S\+S\+\_\+\+V\+E\+R\+S\+I\+ON}(S\+I\+G\+N\+A\+T\+U\+RE,  T,  N)
+\begin{DoxyCompactList}\small\item\em Use this like B\+O\+O\+S\+T\+\_\+\+C\+L\+A\+S\+S\+\_\+\+V\+E\+R\+S\+I\+O\+N(), but for templated classes. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Ryan Curtin
+\end{DoxyAuthor}
+A better version of the B\+O\+O\+S\+T\+\_\+\+C\+L\+A\+S\+S\+\_\+\+V\+E\+R\+S\+I\+O\+N() macro that supports templated classes.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause B\+SD license. You should have received a copy of the 3-\/clause B\+SD license along with mlpack. If not, see {\tt http\+://www.\+opensource.\+org/licenses/\+B\+S\+D-\/3-\/\+Clause} for more information. 
+
+\subsection{Macro Definition Documentation}
+\index{serialization\+\_\+template\+\_\+version.\+hpp@{serialization\+\_\+template\+\_\+version.\+hpp}!B\+O\+O\+S\+T\+\_\+\+T\+E\+M\+P\+L\+A\+T\+E\+\_\+\+C\+L\+A\+S\+S\+\_\+\+V\+E\+R\+S\+I\+ON@{B\+O\+O\+S\+T\+\_\+\+T\+E\+M\+P\+L\+A\+T\+E\+\_\+\+C\+L\+A\+S\+S\+\_\+\+V\+E\+R\+S\+I\+ON}}
+\index{B\+O\+O\+S\+T\+\_\+\+T\+E\+M\+P\+L\+A\+T\+E\+\_\+\+C\+L\+A\+S\+S\+\_\+\+V\+E\+R\+S\+I\+ON@{B\+O\+O\+S\+T\+\_\+\+T\+E\+M\+P\+L\+A\+T\+E\+\_\+\+C\+L\+A\+S\+S\+\_\+\+V\+E\+R\+S\+I\+ON}!serialization\+\_\+template\+\_\+version.\+hpp@{serialization\+\_\+template\+\_\+version.\+hpp}}
+\subsubsection[{B\+O\+O\+S\+T\+\_\+\+T\+E\+M\+P\+L\+A\+T\+E\+\_\+\+C\+L\+A\+S\+S\+\_\+\+V\+E\+R\+S\+I\+ON}]{\setlength{\rightskip}{0pt plus 5cm}\#define B\+O\+O\+S\+T\+\_\+\+T\+E\+M\+P\+L\+A\+T\+E\+\_\+\+C\+L\+A\+S\+S\+\_\+\+V\+E\+R\+S\+I\+ON(
+\begin{DoxyParamCaption}
+\item[{}]{S\+I\+G\+N\+A\+T\+U\+RE, }
+\item[{}]{T, }
+\item[{}]{N}
+\end{DoxyParamCaption}
+)}\label{serialization__template__version_8hpp_a0cffb646dc070a8ea22e3101a0d4144c}
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\textcolor{keyword}{namespace }boost \{ \(\backslash\)
+namespace serialization \{ \(\backslash\)
+SIGNATURE \(\backslash\)
+struct version<mlpack::data::SecondShim<T>> \(\backslash\)
+\{ \(\backslash\)
+  typedef mpl::int\_<N> type; \(\backslash\)
+  typedef mpl::integral\_c\_tag tag; \(\backslash\)
+  BOOST\_STATIC\_CONSTANT(\textcolor{keywordtype}{int}, value = version::type::value); \(\backslash\)
+  BOOST\_MPL\_ASSERT(( \(\backslash\)
+      boost::mpl::less< \(\backslash\)
+          boost::mpl::int\_<N>, \(\backslash\)
+          boost::mpl::int\_<256> \(\backslash\)
+      > \(\backslash\)
+  )); \(\backslash\)
+\}; \(\backslash\)
+\} \(\backslash\)
+\}
+\end{DoxyCode}
+
+
+Use this like B\+O\+O\+S\+T\+\_\+\+C\+L\+A\+S\+S\+\_\+\+V\+E\+R\+S\+I\+O\+N(), but for templated classes. 
+
+The first argument is the signature for the template. Here is an example for math\+::\+Range$<$e\+T$>$\+:
+
+\doxyref{B\+O\+O\+S\+T\+\_\+\+T\+E\+M\+P\+L\+A\+T\+E\+\_\+\+C\+L\+A\+S\+S\+\_\+\+V\+E\+R\+S\+I\+O\+N(template$<$typename e\+T$>$, math\+::\+Range$<$e\+T$>$, 1)}{p.}{serialization__template__version_8hpp_a0cffb646dc070a8ea22e3101a0d4144c}; 
+
+Definition at line 23 of file serialization\+\_\+template\+\_\+version.\+hpp.
+

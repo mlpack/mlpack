@@ -1,0 +1,515 @@
+\section{mlpack\+:\+:ann\+:\+:Linear$<$ Input\+Data\+Type, Output\+Data\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1Linear}\index{mlpack\+::ann\+::\+Linear$<$ Input\+Data\+Type, Output\+Data\+Type $>$@{mlpack\+::ann\+::\+Linear$<$ Input\+Data\+Type, Output\+Data\+Type $>$}}
+
+
+Implementation of the \doxyref{Linear}{p.}{classmlpack_1_1ann_1_1Linear} layer class.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Linear} ()
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Linear}{p.}{classmlpack_1_1ann_1_1Linear} object. \end{DoxyCompactList}\item 
+{\bf Linear} (const size\+\_\+t {\bf in\+Size}, const size\+\_\+t {\bf out\+Size})
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Linear}{p.}{classmlpack_1_1ann_1_1Linear} layer object using the specified number of units. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void {\bf Backward} (const arma\+::\+Mat$<$ eT $>$ \&\&, arma\+::\+Mat$<$ eT $>$ \&\&gy, arma\+::\+Mat$<$ eT $>$ \&\&g)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f. \end{DoxyCompactList}\item 
+Output\+Data\+Type const \& {\bf Delta} () const 
+\begin{DoxyCompactList}\small\item\em Get the delta. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& {\bf Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void {\bf Forward} (const arma\+::\+Mat$<$ eT $>$ \&\&input, arma\+::\+Mat$<$ eT $>$ \&\&output)
+\begin{DoxyCompactList}\small\item\em Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void {\bf Gradient} (const arma\+::\+Mat$<$ eT $>$ \&\&input, arma\+::\+Mat$<$ eT $>$ \&\&error, arma\+::\+Mat$<$ eT $>$ \&\&{\bf gradient})
+\item 
+Output\+Data\+Type const \& {\bf Gradient} () const 
+\begin{DoxyCompactList}\small\item\em Get the gradient. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& {\bf Gradient} ()
+\begin{DoxyCompactList}\small\item\em Modify the gradient. \end{DoxyCompactList}\item 
+Input\+Data\+Type const \& {\bf Input\+Parameter} () const 
+\begin{DoxyCompactList}\small\item\em Get the input parameter. \end{DoxyCompactList}\item 
+Input\+Data\+Type \& {\bf Input\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the input parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type const \& {\bf Output\+Parameter} () const 
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& {\bf Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type const \& {\bf Parameters} () const 
+\begin{DoxyCompactList}\small\item\em Get the parameters. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& {\bf Parameters} ()
+\begin{DoxyCompactList}\small\item\em Modify the parameters. \end{DoxyCompactList}\item 
+void {\bf Reset} ()
+\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&ar, const unsigned int)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+Output\+Data\+Type {\bf bias}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored bias term parameters. \end{DoxyCompactList}\item 
+Output\+Data\+Type {\bf delta}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored delta object. \end{DoxyCompactList}\item 
+Output\+Data\+Type {\bf gradient}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored gradient object. \end{DoxyCompactList}\item 
+Input\+Data\+Type {\bf input\+Parameter}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored input parameter object. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf in\+Size}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored number of input units. \end{DoxyCompactList}\item 
+Output\+Data\+Type {\bf output\+Parameter}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored output parameter object. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf out\+Size}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored number of output units. \end{DoxyCompactList}\item 
+Output\+Data\+Type {\bf weight}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored weight paramters. \end{DoxyCompactList}\item 
+Output\+Data\+Type {\bf weights}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored weight object. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat$>$\\*
+class mlpack\+::ann\+::\+Linear$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+
+Implementation of the \doxyref{Linear}{p.}{classmlpack_1_1ann_1_1Linear} layer class. 
+
+The \doxyref{Linear}{p.}{classmlpack_1_1ann_1_1Linear} class represents a single layer of a neural network.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 49 of file layer\+\_\+types.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}!Linear@{Linear}}
+\index{Linear@{Linear}!mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}}
+\subsubsection[{Linear()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ {\bf mlpack\+::ann\+::\+Linear}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::{\bf Linear} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1Linear_a1be1eb0a6579a5fb9a6e5e0d5a8800fe}
+
+
+Create the \doxyref{Linear}{p.}{classmlpack_1_1ann_1_1Linear} object. 
+
+\index{mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}!Linear@{Linear}}
+\index{Linear@{Linear}!mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}}
+\subsubsection[{Linear(const size\+\_\+t in\+Size, const size\+\_\+t out\+Size)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ {\bf mlpack\+::ann\+::\+Linear}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::{\bf Linear} (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{in\+Size, }
+\item[{const size\+\_\+t}]{out\+Size}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1Linear_ae2684c830cc4bb46554ec12bae5d7802}
+
+
+Create the \doxyref{Linear}{p.}{classmlpack_1_1ann_1_1Linear} layer object using the specified number of units. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em in\+Size} & The number of input units. \\
+\hline
+{\em out\+Size} & The number of output units. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}!Backward@{Backward}}
+\index{Backward@{Backward}!mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}}
+\subsubsection[{Backward(const arma\+::\+Mat$<$ e\+T $>$ \&\&, arma\+::\+Mat$<$ e\+T $>$ \&\&gy, arma\+::\+Mat$<$ e\+T $>$ \&\&g)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename eT $>$ void {\bf mlpack\+::ann\+::\+Linear}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Backward (
+\begin{DoxyParamCaption}
+\item[{const arma\+::\+Mat$<$ eT $>$ \&\&}]{, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&\&}]{gy, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&\&}]{g}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1Linear_ac5375dc32ad3173a20408055b4834534}
+
+
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f. 
+
+Using the results from the feed forward pass.
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The propagated input activation. \\
+\hline
+{\em gy} & The backpropagated error. \\
+\hline
+{\em g} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}}
+\subsubsection[{Delta() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type const\& {\bf mlpack\+::ann\+::\+Linear}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Delta (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1Linear_a115a1c6c51291d27520dfd7babffd20a}
+
+
+Get the delta. 
+
+
+
+Definition at line 107 of file linear.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Linear$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::delta.
+
+\index{mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}}
+\subsubsection[{Delta()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type\& {\bf mlpack\+::ann\+::\+Linear}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Delta (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1Linear_a1272f5fb4ac5234e8340f4903e32f7e3}
+
+
+Modify the delta. 
+
+
+
+Definition at line 109 of file linear.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Linear$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::delta.
+
+\index{mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}!Forward@{Forward}}
+\index{Forward@{Forward}!mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}}
+\subsubsection[{Forward(const arma\+::\+Mat$<$ e\+T $>$ \&\&input, arma\+::\+Mat$<$ e\+T $>$ \&\&output)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename eT $>$ void {\bf mlpack\+::ann\+::\+Linear}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Forward (
+\begin{DoxyParamCaption}
+\item[{const arma\+::\+Mat$<$ eT $>$ \&\&}]{input, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&\&}]{output}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1Linear_a48374a974817b574a4ee7c4250451aba}
+
+
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input data used for evaluating the specified function. \\
+\hline
+{\em output} & Resulting output activation. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}}
+\subsubsection[{Gradient(const arma\+::\+Mat$<$ e\+T $>$ \&\&input, arma\+::\+Mat$<$ e\+T $>$ \&\&error, arma\+::\+Mat$<$ e\+T $>$ \&\&gradient)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename eT $>$ void {\bf mlpack\+::ann\+::\+Linear}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Gradient (
+\begin{DoxyParamCaption}
+\item[{const arma\+::\+Mat$<$ eT $>$ \&\&}]{input, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&\&}]{error, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&\&}]{gradient}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1Linear_af759d05a1b8e00eec4c3dcbfaa5f41dc}
+\index{mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}}
+\subsubsection[{Gradient() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type const\& {\bf mlpack\+::ann\+::\+Linear}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Gradient (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1Linear_a5c86f0d2e8c8c29265574344c41a94d7}
+
+
+Get the gradient. 
+
+
+
+Definition at line 112 of file linear.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Linear$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::gradient.
+
+\index{mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}}
+\subsubsection[{Gradient()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type\& {\bf mlpack\+::ann\+::\+Linear}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Gradient (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1Linear_a3c35974cbbc4749f413b88ba6b42ecce}
+
+
+Modify the gradient. 
+
+
+
+Definition at line 114 of file linear.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Linear$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::gradient, and mlpack\+::ann\+::\+Linear$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Serialize().
+
+\index{mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}!Input\+Parameter@{Input\+Parameter}}
+\index{Input\+Parameter@{Input\+Parameter}!mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}}
+\subsubsection[{Input\+Parameter() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Input\+Data\+Type const\& {\bf mlpack\+::ann\+::\+Linear}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Input\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1Linear_a15b4715e595067e766408a59a31267d3}
+
+
+Get the input parameter. 
+
+
+
+Definition at line 97 of file linear.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Linear$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::input\+Parameter.
+
+\index{mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}!Input\+Parameter@{Input\+Parameter}}
+\index{Input\+Parameter@{Input\+Parameter}!mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}}
+\subsubsection[{Input\+Parameter()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Input\+Data\+Type\& {\bf mlpack\+::ann\+::\+Linear}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Input\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1Linear_a698ba080a6faf3aeba51886740522d12}
+
+
+Modify the input parameter. 
+
+
+
+Definition at line 99 of file linear.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Linear$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::input\+Parameter.
+
+\index{mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}}
+\subsubsection[{Output\+Parameter() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type const\& {\bf mlpack\+::ann\+::\+Linear}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Output\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1Linear_a9524048d87cf83bee89d25c9378e163b}
+
+
+Get the output parameter. 
+
+
+
+Definition at line 102 of file linear.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Linear$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Parameter.
+
+\index{mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}}
+\subsubsection[{Output\+Parameter()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type\& {\bf mlpack\+::ann\+::\+Linear}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Output\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1Linear_a7897517565442b849257aaf2bc81ecd9}
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 104 of file linear.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Linear$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Parameter.
+
+\index{mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}}
+\subsubsection[{Parameters() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type const\& {\bf mlpack\+::ann\+::\+Linear}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Parameters (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1Linear_a35bd05cafff459547ca52d5b29731148}
+
+
+Get the parameters. 
+
+
+
+Definition at line 92 of file linear.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Linear$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::weights.
+
+\index{mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}}
+\subsubsection[{Parameters()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type\& {\bf mlpack\+::ann\+::\+Linear}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Parameters (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1Linear_a3df2bb06b13782f76789decad0cf50c3}
+
+
+Modify the parameters. 
+
+
+
+Definition at line 94 of file linear.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Linear$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::weights.
+
+\index{mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}!Reset@{Reset}}
+\index{Reset@{Reset}!mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}}
+\subsubsection[{Reset()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ void {\bf mlpack\+::ann\+::\+Linear}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Reset (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1Linear_abc7588fc1eca48455b90ee72e6ba6d81}
+\index{mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}}
+\subsubsection[{Serialize(\+Archive \&ar, const unsigned int)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename Archive $>$ void {\bf mlpack\+::ann\+::\+Linear}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const unsigned}]{int}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1Linear_a1a33e43608e313dadf9b3fa61db9d96f}
+
+
+Serialize the layer. 
+
+
+
+Referenced by mlpack\+::ann\+::\+Linear$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Gradient().
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}!bias@{bias}}
+\index{bias@{bias}!mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}}
+\subsubsection[{bias}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type {\bf mlpack\+::ann\+::\+Linear}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::bias\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1Linear_ac3f6f38157a8e9be4bbc2c785d07260a}
+
+
+Locally-\/stored bias term parameters. 
+
+
+
+Definition at line 136 of file linear.\+hpp.
+
+\index{mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}!delta@{delta}}
+\index{delta@{delta}!mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}}
+\subsubsection[{delta}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type {\bf mlpack\+::ann\+::\+Linear}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::delta\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1Linear_a38aeeecc6afbad907a61ebf70b6b2839}
+
+
+Locally-\/stored delta object. 
+
+
+
+Definition at line 139 of file linear.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Linear$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Delta().
+
+\index{mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}!gradient@{gradient}}
+\index{gradient@{gradient}!mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}}
+\subsubsection[{gradient}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type {\bf mlpack\+::ann\+::\+Linear}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::gradient\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1Linear_aa1a600304ceebb15dd77bbed700bda19}
+
+
+Locally-\/stored gradient object. 
+
+
+
+Definition at line 142 of file linear.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Linear$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Gradient().
+
+\index{mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}!input\+Parameter@{input\+Parameter}}
+\index{input\+Parameter@{input\+Parameter}!mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}}
+\subsubsection[{input\+Parameter}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Input\+Data\+Type {\bf mlpack\+::ann\+::\+Linear}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::input\+Parameter\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1Linear_a280c47482a6c158cebe4c900c1c9bb84}
+
+
+Locally-\/stored input parameter object. 
+
+
+
+Definition at line 145 of file linear.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Linear$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Input\+Parameter().
+
+\index{mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}!in\+Size@{in\+Size}}
+\index{in\+Size@{in\+Size}!mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}}
+\subsubsection[{in\+Size}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ size\+\_\+t {\bf mlpack\+::ann\+::\+Linear}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::in\+Size\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1Linear_a487d648357ab00cd181a5a0b7397dcd7}
+
+
+Locally-\/stored number of input units. 
+
+
+
+Definition at line 124 of file linear.\+hpp.
+
+\index{mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}!output\+Parameter@{output\+Parameter}}
+\index{output\+Parameter@{output\+Parameter}!mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}}
+\subsubsection[{output\+Parameter}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type {\bf mlpack\+::ann\+::\+Linear}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Parameter\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1Linear_a4210f09a1e048955dddc0d46b4129047}
+
+
+Locally-\/stored output parameter object. 
+
+
+
+Definition at line 148 of file linear.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Linear$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Output\+Parameter().
+
+\index{mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}!out\+Size@{out\+Size}}
+\index{out\+Size@{out\+Size}!mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}}
+\subsubsection[{out\+Size}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ size\+\_\+t {\bf mlpack\+::ann\+::\+Linear}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::out\+Size\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1Linear_a02b35875dfcd60424e3d251409a060e7}
+
+
+Locally-\/stored number of output units. 
+
+
+
+Definition at line 127 of file linear.\+hpp.
+
+\index{mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}!weight@{weight}}
+\index{weight@{weight}!mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}}
+\subsubsection[{weight}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type {\bf mlpack\+::ann\+::\+Linear}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::weight\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1Linear_a181443d628529d4c448b297d9fc4f4b3}
+
+
+Locally-\/stored weight paramters. 
+
+
+
+Definition at line 133 of file linear.\+hpp.
+
+\index{mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}!weights@{weights}}
+\index{weights@{weights}!mlpack\+::ann\+::\+Linear@{mlpack\+::ann\+::\+Linear}}
+\subsubsection[{weights}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type {\bf mlpack\+::ann\+::\+Linear}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::weights\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1Linear_a53c70fbbea85fd880ce065b4e23897bf}
+
+
+Locally-\/stored weight object. 
+
+
+
+Definition at line 130 of file linear.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Linear$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Parameters().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/ann/layer/{\bf layer\+\_\+types.\+hpp}\item 
+src/mlpack/methods/ann/layer/{\bf linear.\+hpp}\end{DoxyCompactItemize}

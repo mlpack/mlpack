@@ -1,0 +1,57 @@
+.TH "src/mlpack/methods/hmm/hmm_util.hpp" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+src/mlpack/methods/hmm/hmm_util.hpp \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "\fILinear algebra utility functions, generally performed on matrices or vectors\&. \fP"
+.ti -1c
+.RI " \fBmlpack::hmm\fP"
+.br
+.RI "\fIHidden Markov Models\&. \fP"
+.in -1c
+.SS "Enumerations"
+
+.in +1c
+.ti -1c
+.RI "enum \fBmlpack::hmm::HMMType\fP : char { \fBmlpack::hmm::DiscreteHMM\fP = 0, \fBmlpack::hmm::GaussianHMM\fP, \fBmlpack::hmm::GaussianMixtureModelHMM\fP, \fBmlpack::hmm::DiscreteHMM\fP = 0, \fBmlpack::hmm::GaussianHMM\fP, \fBmlpack::hmm::GaussianMixtureModelHMM\fP }
+.RI "\fIHMMType, to be stored on disk\&. \fP""
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename ActionType , typename ExtraInfoType  = void> void \fBmlpack::hmm::LoadHMMAndPerformAction\fP (const \fBstd::string\fP &modelFile, ExtraInfoType *x=NULL)"
+.br
+.RI "\fIActionType should implement static void Apply(HMMType&)\&. \fP"
+.ti -1c
+.RI "template<typename HMMType > void \fBmlpack::hmm::SaveHMM\fP (HMMType &hmm, const \fBstd::string\fP &modelFile)"
+.br
+.RI "\fISave an \fBHMM\fP to a file\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Ryan Curtin
+.RE
+.PP
+Utility to read HMM type from file\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBhmm_util\&.hpp\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

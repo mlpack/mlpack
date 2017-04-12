@@ -1,0 +1,616 @@
+.TH "mlpack::optimization::L_BFGS< FunctionType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::optimization::L_BFGS< FunctionType > \- The generic L-BFGS optimizer, which uses a back-tracking line search algorithm to minimize a function\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBL_BFGS\fP (FunctionType &\fBfunction\fP, const size_t \fBnumBasis\fP=10, const size_t \fBmaxIterations\fP=10000, const double \fBarmijoConstant\fP=1e\-4, const double wolfe=0\&.9, const double minGradientNorm=1e\-6, const double factr=1e\-15, const size_t maxLineSearchTrials=50, const double minStep=1e\-20, const double maxStep=1e20)"
+.br
+.RI "\fIInitialize the L-BFGS object\&. \fP"
+.ti -1c
+.RI "double \fBArmijoConstant\fP () const "
+.br
+.RI "\fIGet the Armijo condition constant\&. \fP"
+.ti -1c
+.RI "double & \fBArmijoConstant\fP ()"
+.br
+.RI "\fIModify the Armijo condition constant\&. \fP"
+.ti -1c
+.RI "double \fBFactr\fP () const "
+.br
+.RI "\fIGet the factr value\&. \fP"
+.ti -1c
+.RI "double & \fBFactr\fP ()"
+.br
+.RI "\fIModify the factr value\&. \fP"
+.ti -1c
+.RI "const FunctionType & \fBFunction\fP () const "
+.br
+.RI "\fIReturn the function that is being optimized\&. \fP"
+.ti -1c
+.RI "FunctionType & \fBFunction\fP ()"
+.br
+.RI "\fIModify the function that is being optimized\&. \fP"
+.ti -1c
+.RI "size_t \fBMaxIterations\fP () const "
+.br
+.RI "\fIGet the maximum number of iterations\&. \fP"
+.ti -1c
+.RI "size_t & \fBMaxIterations\fP ()"
+.br
+.RI "\fIModify the maximum number of iterations\&. \fP"
+.ti -1c
+.RI "size_t \fBMaxLineSearchTrials\fP () const "
+.br
+.RI "\fIGet the maximum number of line search trials\&. \fP"
+.ti -1c
+.RI "size_t & \fBMaxLineSearchTrials\fP ()"
+.br
+.RI "\fIModify the maximum number of line search trials\&. \fP"
+.ti -1c
+.RI "double \fBMaxStep\fP () const "
+.br
+.RI "\fIReturn the maximum line search step size\&. \fP"
+.ti -1c
+.RI "double & \fBMaxStep\fP ()"
+.br
+.RI "\fIModify the maximum line search step size\&. \fP"
+.ti -1c
+.RI "double \fBMinGradientNorm\fP () const "
+.br
+.RI "\fIGet the minimum gradient norm\&. \fP"
+.ti -1c
+.RI "double & \fBMinGradientNorm\fP ()"
+.br
+.RI "\fIModify the minimum gradient norm\&. \fP"
+.ti -1c
+.RI "const std::pair< arma::mat, double > & \fBMinPointIterate\fP () const "
+.br
+.RI "\fIReturn the point where the lowest function value has been found\&. \fP"
+.ti -1c
+.RI "double \fBMinStep\fP () const "
+.br
+.RI "\fIReturn the minimum line search step size\&. \fP"
+.ti -1c
+.RI "double & \fBMinStep\fP ()"
+.br
+.RI "\fIModify the minimum line search step size\&. \fP"
+.ti -1c
+.RI "size_t \fBNumBasis\fP () const "
+.br
+.RI "\fIGet the memory size\&. \fP"
+.ti -1c
+.RI "size_t & \fBNumBasis\fP ()"
+.br
+.RI "\fIModify the memory size\&. \fP"
+.ti -1c
+.RI "double \fBOptimize\fP (arma::mat &iterate)"
+.br
+.RI "\fIUse L-BFGS to optimize the given function, starting at the given iterate point and finding the minimum\&. \fP"
+.ti -1c
+.RI "double \fBOptimize\fP (arma::mat &iterate, const size_t \fBmaxIterations\fP)"
+.br
+.RI "\fIUse L-BFGS to optimize (minimize) the given function, starting at the given iterate point, and performing no more than the given maximum number of iterations (the class variable maxIterations is ignored for this run, but not modified)\&. \fP"
+.ti -1c
+.RI "double \fBWolfe\fP () const "
+.br
+.RI "\fIGet the Wolfe parameter\&. \fP"
+.ti -1c
+.RI "double & \fBWolfe\fP ()"
+.br
+.RI "\fIModify the Wolfe parameter\&. \fP"
+.in -1c
+.SS "Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "double \fBChooseScalingFactor\fP (const size_t iterationNum, const arma::mat &gradient)"
+.br
+.RI "\fICalculate the scaling factor, gamma, which is used to scale the Hessian approximation matrix\&. \fP"
+.ti -1c
+.RI "double \fBEvaluate\fP (const arma::mat &iterate)"
+.br
+.RI "\fIEvaluate the function at the given iterate point and store the result if it is a new minimum\&. \fP"
+.ti -1c
+.RI "bool \fBGradientNormTooSmall\fP (const arma::mat &gradient)"
+.br
+.RI "\fICheck to make sure that the norm of the gradient is not smaller than 1e-5\&. \fP"
+.ti -1c
+.RI "bool \fBLineSearch\fP (double &functionValue, arma::mat &iterate, arma::mat &gradient, const arma::mat &searchDirection)"
+.br
+.RI "\fIPerform a back-tracking line search along the search direction to calculate a step size satisfying the Wolfe conditions\&. \fP"
+.ti -1c
+.RI "void \fBSearchDirection\fP (const arma::mat &gradient, const size_t iterationNum, const double scalingFactor, arma::mat &searchDirection)"
+.br
+.RI "\fIFind the L-BFGS search direction\&. \fP"
+.ti -1c
+.RI "void \fBUpdateBasisSet\fP (const size_t iterationNum, const arma::mat &iterate, const arma::mat &oldIterate, const arma::mat &gradient, const arma::mat &oldGradient)"
+.br
+.RI "\fIUpdate the y and s matrices, which store the differences between the iterate and old iterate and the differences between the gradient and the old gradient, respectively\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "double \fBarmijoConstant\fP"
+.br
+.RI "\fIParameter for determining the Armijo condition\&. \fP"
+.ti -1c
+.RI "double \fBfactr\fP"
+.br
+.RI "\fIMinimum relative function value decrease to continue the optimization\&. \fP"
+.ti -1c
+.RI "FunctionType & \fBfunction\fP"
+.br
+.RI "\fIInternal reference to the function we are optimizing\&. \fP"
+.ti -1c
+.RI "size_t \fBmaxIterations\fP"
+.br
+.RI "\fIMaximum number of iterations\&. \fP"
+.ti -1c
+.RI "size_t \fBmaxLineSearchTrials\fP"
+.br
+.RI "\fIMaximum number of trials for the line search\&. \fP"
+.ti -1c
+.RI "double \fBmaxStep\fP"
+.br
+.RI "\fIMaximum step of the line search\&. \fP"
+.ti -1c
+.RI "double \fBminGradientNorm\fP"
+.br
+.RI "\fIMinimum gradient norm required to continue the optimization\&. \fP"
+.ti -1c
+.RI "std::pair< arma::mat, double > \fBminPointIterate\fP"
+.br
+.RI "\fIBest point found so far\&. \fP"
+.ti -1c
+.RI "double \fBminStep\fP"
+.br
+.RI "\fIMinimum step of the line search\&. \fP"
+.ti -1c
+.RI "arma::mat \fBnewIterateTmp\fP"
+.br
+.RI "\fIPosition of the new iterate\&. \fP"
+.ti -1c
+.RI "size_t \fBnumBasis\fP"
+.br
+.RI "\fISize of memory for this L-BFGS optimizer\&. \fP"
+.ti -1c
+.RI "arma::cube \fBs\fP"
+.br
+.RI "\fIStores all the s matrices in memory\&. \fP"
+.ti -1c
+.RI "double \fBwolfe\fP"
+.br
+.RI "\fIParameter for detecting the Wolfe condition\&. \fP"
+.ti -1c
+.RI "arma::cube \fBy\fP"
+.br
+.RI "\fIStores all the y matrices in memory\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename FunctionType>
+.br
+class mlpack::optimization::L_BFGS< FunctionType >"
+The generic L-BFGS optimizer, which uses a back-tracking line search algorithm to minimize a function\&. 
+
+The parameters for the algorithm (number of memory points, maximum step size, and so forth) are all configurable via either the constructor or standalone modifier functions\&. A function which can be optimized by this class must implement the following methods:
+.PP
+.IP "\(bu" 2
+a default constructor
+.IP "\(bu" 2
+double \fBEvaluate(const arma::mat& coordinates)\fP;
+.IP "\(bu" 2
+void Gradient(const arma::mat& coordinates, arma::mat& gradient);
+.IP "\(bu" 2
+arma::mat& GetInitialPoint(); 
+.PP
+
+.PP
+Definition at line 34 of file lbfgs\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename FunctionType> \fBmlpack::optimization::L_BFGS\fP< FunctionType >::\fBL_BFGS\fP (FunctionType & function, const size_t numBasis = \fC10\fP, const size_t maxIterations = \fC10000\fP, const double armijoConstant = \fC1e\-4\fP, const double wolfe = \fC0\&.9\fP, const double minGradientNorm = \fC1e\-6\fP, const double factr = \fC1e\-15\fP, const size_t maxLineSearchTrials = \fC50\fP, const double minStep = \fC1e\-20\fP, const double maxStep = \fC1e20\fP)"
+
+.PP
+Initialize the L-BFGS object\&. Store a reference to the function we will be optimizing and set the size of the memory for the algorithm\&. There are many parameters that can be set for the optimization, but default values are given for each of them\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfunction\fP Instance of function to be optimized\&. 
+.br
+\fInumBasis\fP Number of memory points to be stored (default 5)\&. 
+.br
+\fImaxIterations\fP Maximum number of iterations for the optimization (0 means no limit and may run indefinitely)\&. 
+.br
+\fIarmijoConstant\fP Controls the accuracy of the line search routine for determining the Armijo condition\&. 
+.br
+\fIwolfe\fP Parameter for detecting the Wolfe condition\&. 
+.br
+\fIminGradientNorm\fP Minimum gradient norm required to continue the optimization\&. 
+.br
+\fImaxLineSearchTrials\fP The maximum number of trials for the line search (before giving up)\&. 
+.br
+\fIminStep\fP The minimum step of the line search\&. 
+.br
+\fImaxStep\fP The maximum step of the line search\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename FunctionType> double \fBmlpack::optimization::L_BFGS\fP< FunctionType >::ArmijoConstant () const\fC [inline]\fP"
+
+.PP
+Get the Armijo condition constant\&. 
+.PP
+Definition at line 119 of file lbfgs\&.hpp\&.
+.SS "template<typename FunctionType> double& \fBmlpack::optimization::L_BFGS\fP< FunctionType >::ArmijoConstant ()\fC [inline]\fP"
+
+.PP
+Modify the Armijo condition constant\&. 
+.PP
+Definition at line 121 of file lbfgs\&.hpp\&.
+.SS "template<typename FunctionType> double \fBmlpack::optimization::L_BFGS\fP< FunctionType >::ChooseScalingFactor (const size_t iterationNum, const arma::mat & gradient)\fC [private]\fP"
+
+.PP
+Calculate the scaling factor, gamma, which is used to scale the Hessian approximation matrix\&. See method M3 in Section 4 of Liu and Nocedal (1989)\&.
+.PP
+\fBReturns:\fP
+.RS 4
+The calculated scaling factor\&. 
+.RE
+.PP
+
+.SS "template<typename FunctionType> double \fBmlpack::optimization::L_BFGS\fP< FunctionType >::Evaluate (const arma::mat & iterate)\fC [private]\fP"
+
+.PP
+Evaluate the function at the given iterate point and store the result if it is a new minimum\&. 
+.PP
+\fBReturns:\fP
+.RS 4
+The value of the function\&. 
+.RE
+.PP
+
+.SS "template<typename FunctionType> double \fBmlpack::optimization::L_BFGS\fP< FunctionType >::Factr () const\fC [inline]\fP"
+
+.PP
+Get the factr value\&. 
+.PP
+Definition at line 134 of file lbfgs\&.hpp\&.
+.SS "template<typename FunctionType> double& \fBmlpack::optimization::L_BFGS\fP< FunctionType >::Factr ()\fC [inline]\fP"
+
+.PP
+Modify the factr value\&. 
+.PP
+Definition at line 136 of file lbfgs\&.hpp\&.
+.SS "template<typename FunctionType> const FunctionType& \fBmlpack::optimization::L_BFGS\fP< FunctionType >::Function () const\fC [inline]\fP"
+
+.PP
+Return the function that is being optimized\&. 
+.PP
+Definition at line 104 of file lbfgs\&.hpp\&.
+.SS "template<typename FunctionType> FunctionType& \fBmlpack::optimization::L_BFGS\fP< FunctionType >::Function ()\fC [inline]\fP"
+
+.PP
+Modify the function that is being optimized\&. 
+.PP
+Definition at line 106 of file lbfgs\&.hpp\&.
+.SS "template<typename FunctionType> bool \fBmlpack::optimization::L_BFGS\fP< FunctionType >::GradientNormTooSmall (const arma::mat & gradient)\fC [private]\fP"
+
+.PP
+Check to make sure that the norm of the gradient is not smaller than 1e-5\&. Currently that value is not configurable\&.
+.PP
+\fBReturns:\fP
+.RS 4
+(norm < minGradientNorm)\&. 
+.RE
+.PP
+
+.SS "template<typename FunctionType> bool \fBmlpack::optimization::L_BFGS\fP< FunctionType >::LineSearch (double & functionValue, arma::mat & iterate, arma::mat & gradient, const arma::mat & searchDirection)\fC [private]\fP"
+
+.PP
+Perform a back-tracking line search along the search direction to calculate a step size satisfying the Wolfe conditions\&. The parameter iterate will be modified if the method is successful\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfunctionValue\fP Value of the function at the initial point 
+.br
+\fIiterate\fP The initial point to begin the line search from 
+.br
+\fIgradient\fP The gradient at the initial point 
+.br
+\fIsearchDirection\fP A vector specifying the search direction 
+.br
+\fIstepSize\fP Variable the calculated step size will be stored in
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+false if no step size is suitable, true otherwise\&. 
+.RE
+.PP
+
+.SS "template<typename FunctionType> size_t \fBmlpack::optimization::L_BFGS\fP< FunctionType >::MaxIterations () const\fC [inline]\fP"
+
+.PP
+Get the maximum number of iterations\&. 
+.PP
+Definition at line 114 of file lbfgs\&.hpp\&.
+.SS "template<typename FunctionType> size_t& \fBmlpack::optimization::L_BFGS\fP< FunctionType >::MaxIterations ()\fC [inline]\fP"
+
+.PP
+Modify the maximum number of iterations\&. 
+.PP
+Definition at line 116 of file lbfgs\&.hpp\&.
+.SS "template<typename FunctionType> size_t \fBmlpack::optimization::L_BFGS\fP< FunctionType >::MaxLineSearchTrials () const\fC [inline]\fP"
+
+.PP
+Get the maximum number of line search trials\&. 
+.PP
+Definition at line 139 of file lbfgs\&.hpp\&.
+.SS "template<typename FunctionType> size_t& \fBmlpack::optimization::L_BFGS\fP< FunctionType >::MaxLineSearchTrials ()\fC [inline]\fP"
+
+.PP
+Modify the maximum number of line search trials\&. 
+.PP
+Definition at line 141 of file lbfgs\&.hpp\&.
+.SS "template<typename FunctionType> double \fBmlpack::optimization::L_BFGS\fP< FunctionType >::MaxStep () const\fC [inline]\fP"
+
+.PP
+Return the maximum line search step size\&. 
+.PP
+Definition at line 149 of file lbfgs\&.hpp\&.
+.SS "template<typename FunctionType> double& \fBmlpack::optimization::L_BFGS\fP< FunctionType >::MaxStep ()\fC [inline]\fP"
+
+.PP
+Modify the maximum line search step size\&. 
+.PP
+Definition at line 151 of file lbfgs\&.hpp\&.
+.SS "template<typename FunctionType> double \fBmlpack::optimization::L_BFGS\fP< FunctionType >::MinGradientNorm () const\fC [inline]\fP"
+
+.PP
+Get the minimum gradient norm\&. 
+.PP
+Definition at line 129 of file lbfgs\&.hpp\&.
+.SS "template<typename FunctionType> double& \fBmlpack::optimization::L_BFGS\fP< FunctionType >::MinGradientNorm ()\fC [inline]\fP"
+
+.PP
+Modify the minimum gradient norm\&. 
+.PP
+Definition at line 131 of file lbfgs\&.hpp\&.
+.SS "template<typename FunctionType> const std::pair<arma::mat, double>& \fBmlpack::optimization::L_BFGS\fP< FunctionType >::MinPointIterate () const"
+
+.PP
+Return the point where the lowest function value has been found\&. 
+.PP
+\fBReturns:\fP
+.RS 4
+arma::vec representing the point and a double with the function value at that point\&. 
+.RE
+.PP
+
+.SS "template<typename FunctionType> double \fBmlpack::optimization::L_BFGS\fP< FunctionType >::MinStep () const\fC [inline]\fP"
+
+.PP
+Return the minimum line search step size\&. 
+.PP
+Definition at line 144 of file lbfgs\&.hpp\&.
+.SS "template<typename FunctionType> double& \fBmlpack::optimization::L_BFGS\fP< FunctionType >::MinStep ()\fC [inline]\fP"
+
+.PP
+Modify the minimum line search step size\&. 
+.PP
+Definition at line 146 of file lbfgs\&.hpp\&.
+.SS "template<typename FunctionType> size_t \fBmlpack::optimization::L_BFGS\fP< FunctionType >::NumBasis () const\fC [inline]\fP"
+
+.PP
+Get the memory size\&. 
+.PP
+Definition at line 109 of file lbfgs\&.hpp\&.
+.SS "template<typename FunctionType> size_t& \fBmlpack::optimization::L_BFGS\fP< FunctionType >::NumBasis ()\fC [inline]\fP"
+
+.PP
+Modify the memory size\&. 
+.PP
+Definition at line 111 of file lbfgs\&.hpp\&.
+.SS "template<typename FunctionType> double \fBmlpack::optimization::L_BFGS\fP< FunctionType >::Optimize (arma::mat & iterate)"
+
+.PP
+Use L-BFGS to optimize the given function, starting at the given iterate point and finding the minimum\&. The maximum number of iterations is set in the constructor (or with \fBMaxIterations()\fP)\&. Alternately, another overload is provided which takes a maximum number of iterations as a parameter\&. The given starting point will be modified to store the finishing point of the algorithm, and the final objective value is returned\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIiterate\fP Starting point (will be modified)\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Objective value of the final point\&. 
+.RE
+.PP
+
+.SS "template<typename FunctionType> double \fBmlpack::optimization::L_BFGS\fP< FunctionType >::Optimize (arma::mat & iterate, const size_t maxIterations)"
+
+.PP
+Use L-BFGS to optimize (minimize) the given function, starting at the given iterate point, and performing no more than the given maximum number of iterations (the class variable maxIterations is ignored for this run, but not modified)\&. The given starting point will be modified to store the finishing point of the algorithm, and the final objective value is returned\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIiterate\fP Starting point (will be modified)\&. 
+.br
+\fImaxIterations\fP Maximum number of iterations (0 specifies no limit)\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Objective value of the final point\&. 
+.RE
+.PP
+
+.SS "template<typename FunctionType> void \fBmlpack::optimization::L_BFGS\fP< FunctionType >::SearchDirection (const arma::mat & gradient, const size_t iterationNum, const double scalingFactor, arma::mat & searchDirection)\fC [private]\fP"
+
+.PP
+Find the L-BFGS search direction\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIgradient\fP The gradient at the current point 
+.br
+\fIiteration_num\fP The iteration number 
+.br
+\fIscaling_factor\fP Scaling factor to use (see ChooseScalingFactor_()) 
+.br
+\fIsearch_direction\fP Vector to store search direction in 
+.RE
+.PP
+
+.SS "template<typename FunctionType> void \fBmlpack::optimization::L_BFGS\fP< FunctionType >::UpdateBasisSet (const size_t iterationNum, const arma::mat & iterate, const arma::mat & oldIterate, const arma::mat & gradient, const arma::mat & oldGradient)\fC [private]\fP"
+
+.PP
+Update the y and s matrices, which store the differences between the iterate and old iterate and the differences between the gradient and the old gradient, respectively\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIiterationNum\fP Iteration number 
+.br
+\fIiterate\fP Current point 
+.br
+\fIoldIterate\fP Point at last iteration 
+.br
+\fIgradient\fP Gradient at current point (iterate) 
+.br
+\fIoldGradient\fP Gradient at last iteration point (oldIterate) 
+.RE
+.PP
+
+.SS "template<typename FunctionType> double \fBmlpack::optimization::L_BFGS\fP< FunctionType >::Wolfe () const\fC [inline]\fP"
+
+.PP
+Get the Wolfe parameter\&. 
+.PP
+Definition at line 124 of file lbfgs\&.hpp\&.
+.SS "template<typename FunctionType> double& \fBmlpack::optimization::L_BFGS\fP< FunctionType >::Wolfe ()\fC [inline]\fP"
+
+.PP
+Modify the Wolfe parameter\&. 
+.PP
+Definition at line 126 of file lbfgs\&.hpp\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename FunctionType> double \fBmlpack::optimization::L_BFGS\fP< FunctionType >::armijoConstant\fC [private]\fP"
+
+.PP
+Parameter for determining the Armijo condition\&. 
+.PP
+Definition at line 169 of file lbfgs\&.hpp\&.
+.PP
+Referenced by mlpack::optimization::L_BFGS< AugLagrangianFunction< mlpack::optimization::LRSDPFunction< optimization::SDP< arma::sp_mat > > > >::ArmijoConstant()\&.
+.SS "template<typename FunctionType> double \fBmlpack::optimization::L_BFGS\fP< FunctionType >::factr\fC [private]\fP"
+
+.PP
+Minimum relative function value decrease to continue the optimization\&. 
+.PP
+Definition at line 175 of file lbfgs\&.hpp\&.
+.PP
+Referenced by mlpack::optimization::L_BFGS< AugLagrangianFunction< mlpack::optimization::LRSDPFunction< optimization::SDP< arma::sp_mat > > > >::Factr()\&.
+.SS "template<typename FunctionType> FunctionType& \fBmlpack::optimization::L_BFGS\fP< FunctionType >::function\fC [private]\fP"
+
+.PP
+Internal reference to the function we are optimizing\&. 
+.PP
+Definition at line 155 of file lbfgs\&.hpp\&.
+.SS "template<typename FunctionType> size_t \fBmlpack::optimization::L_BFGS\fP< FunctionType >::maxIterations\fC [private]\fP"
+
+.PP
+Maximum number of iterations\&. 
+.PP
+Definition at line 167 of file lbfgs\&.hpp\&.
+.PP
+Referenced by mlpack::optimization::L_BFGS< AugLagrangianFunction< mlpack::optimization::LRSDPFunction< optimization::SDP< arma::sp_mat > > > >::MaxIterations()\&.
+.SS "template<typename FunctionType> size_t \fBmlpack::optimization::L_BFGS\fP< FunctionType >::maxLineSearchTrials\fC [private]\fP"
+
+.PP
+Maximum number of trials for the line search\&. 
+.PP
+Definition at line 177 of file lbfgs\&.hpp\&.
+.PP
+Referenced by mlpack::optimization::L_BFGS< AugLagrangianFunction< mlpack::optimization::LRSDPFunction< optimization::SDP< arma::sp_mat > > > >::MaxLineSearchTrials()\&.
+.SS "template<typename FunctionType> double \fBmlpack::optimization::L_BFGS\fP< FunctionType >::maxStep\fC [private]\fP"
+
+.PP
+Maximum step of the line search\&. 
+.PP
+Definition at line 181 of file lbfgs\&.hpp\&.
+.PP
+Referenced by mlpack::optimization::L_BFGS< AugLagrangianFunction< mlpack::optimization::LRSDPFunction< optimization::SDP< arma::sp_mat > > > >::MaxStep()\&.
+.SS "template<typename FunctionType> double \fBmlpack::optimization::L_BFGS\fP< FunctionType >::minGradientNorm\fC [private]\fP"
+
+.PP
+Minimum gradient norm required to continue the optimization\&. 
+.PP
+Definition at line 173 of file lbfgs\&.hpp\&.
+.PP
+Referenced by mlpack::optimization::L_BFGS< AugLagrangianFunction< mlpack::optimization::LRSDPFunction< optimization::SDP< arma::sp_mat > > > >::MinGradientNorm()\&.
+.SS "template<typename FunctionType> std::pair<arma::mat, double> \fBmlpack::optimization::L_BFGS\fP< FunctionType >::minPointIterate\fC [private]\fP"
+
+.PP
+Best point found so far\&. 
+.PP
+Definition at line 184 of file lbfgs\&.hpp\&.
+.SS "template<typename FunctionType> double \fBmlpack::optimization::L_BFGS\fP< FunctionType >::minStep\fC [private]\fP"
+
+.PP
+Minimum step of the line search\&. 
+.PP
+Definition at line 179 of file lbfgs\&.hpp\&.
+.PP
+Referenced by mlpack::optimization::L_BFGS< AugLagrangianFunction< mlpack::optimization::LRSDPFunction< optimization::SDP< arma::sp_mat > > > >::MinStep()\&.
+.SS "template<typename FunctionType> arma::mat \fBmlpack::optimization::L_BFGS\fP< FunctionType >::newIterateTmp\fC [private]\fP"
+
+.PP
+Position of the new iterate\&. 
+.PP
+Definition at line 158 of file lbfgs\&.hpp\&.
+.SS "template<typename FunctionType> size_t \fBmlpack::optimization::L_BFGS\fP< FunctionType >::numBasis\fC [private]\fP"
+
+.PP
+Size of memory for this L-BFGS optimizer\&. 
+.PP
+Definition at line 165 of file lbfgs\&.hpp\&.
+.PP
+Referenced by mlpack::optimization::L_BFGS< AugLagrangianFunction< mlpack::optimization::LRSDPFunction< optimization::SDP< arma::sp_mat > > > >::NumBasis()\&.
+.SS "template<typename FunctionType> arma::cube \fBmlpack::optimization::L_BFGS\fP< FunctionType >::s\fC [private]\fP"
+
+.PP
+Stores all the s matrices in memory\&. 
+.PP
+Definition at line 160 of file lbfgs\&.hpp\&.
+.SS "template<typename FunctionType> double \fBmlpack::optimization::L_BFGS\fP< FunctionType >::wolfe\fC [private]\fP"
+
+.PP
+Parameter for detecting the Wolfe condition\&. 
+.PP
+Definition at line 171 of file lbfgs\&.hpp\&.
+.PP
+Referenced by mlpack::optimization::L_BFGS< AugLagrangianFunction< mlpack::optimization::LRSDPFunction< optimization::SDP< arma::sp_mat > > > >::Wolfe()\&.
+.SS "template<typename FunctionType> arma::cube \fBmlpack::optimization::L_BFGS\fP< FunctionType >::y\fC [private]\fP"
+
+.PP
+Stores all the y matrices in memory\&. 
+.PP
+Definition at line 162 of file lbfgs\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

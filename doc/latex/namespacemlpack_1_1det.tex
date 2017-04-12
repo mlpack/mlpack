@@ -1,0 +1,111 @@
+\section{mlpack\+:\+:det Namespace Reference}
+\label{namespacemlpack_1_1det}\index{mlpack\+::det@{mlpack\+::det}}
+
+
+Density Estimation Trees.  
+
+
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class {\bf D\+Tree}
+\begin{DoxyCompactList}\small\item\em A density estimation tree is similar to both a decision tree and a space partitioning tree (like a kd-\/tree). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Mat\+Type , typename Tag\+Type $>$ }\\void {\bf Print\+Leaf\+Membership} ({\bf D\+Tree}$<$ Mat\+Type, Tag\+Type $>$ $\ast$dtree, const Mat\+Type \&data, const arma\+::\+Mat$<$ size\+\_\+t $>$ \&labels, const size\+\_\+t num\+Classes, const {\bf std\+::string} leaf\+Class\+Membership\+File=\char`\"{}\char`\"{})
+\begin{DoxyCompactList}\small\item\em Print the membership of leaves of a density estimation tree given the labels and number of classes. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type , typename Tag\+Type $>$ }\\void {\bf Print\+Variable\+Importance} (const {\bf D\+Tree}$<$ Mat\+Type, Tag\+Type $>$ $\ast$dtree, const {\bf std\+::string} vi\+File=\char`\"{}\char`\"{})
+\begin{DoxyCompactList}\small\item\em Print the variable importance of each dimension of a density estimation tree. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type , typename Tag\+Type $>$ }\\{\bf D\+Tree}$<$ Mat\+Type, Tag\+Type $>$ $\ast$ {\bf Trainer} (Mat\+Type \&dataset, const size\+\_\+t folds, const bool use\+Volume\+Reg=false, const size\+\_\+t max\+Leaf\+Size=10, const size\+\_\+t min\+Leaf\+Size=5, const {\bf std\+::string} unpruned\+Tree\+Output=\char`\"{}\char`\"{})
+\begin{DoxyCompactList}\small\item\em Train the optimal decision tree using cross-\/validation with the given number of folds. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Density Estimation Trees. 
+
+\subsection{Function Documentation}
+\index{mlpack\+::det@{mlpack\+::det}!Print\+Leaf\+Membership@{Print\+Leaf\+Membership}}
+\index{Print\+Leaf\+Membership@{Print\+Leaf\+Membership}!mlpack\+::det@{mlpack\+::det}}
+\subsubsection[{Print\+Leaf\+Membership(\+D\+Tree$<$ Mat\+Type, Tag\+Type $>$ $\ast$dtree, const Mat\+Type \&data, const arma\+::\+Mat$<$ size\+\_\+t $>$ \&labels, const size\+\_\+t num\+Classes, const std\+::string leaf\+Class\+Membership\+File="""")}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type , typename Tag\+Type $>$ void mlpack\+::det\+::\+Print\+Leaf\+Membership (
+\begin{DoxyParamCaption}
+\item[{{\bf D\+Tree}$<$ Mat\+Type, Tag\+Type $>$ $\ast$}]{dtree, }
+\item[{const Mat\+Type \&}]{data, }
+\item[{const arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{labels, }
+\item[{const size\+\_\+t}]{num\+Classes, }
+\item[{const {\bf std\+::string}}]{leaf\+Class\+Membership\+File = {\ttfamily \char`\"{}\char`\"{}}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1det_af87956fd1b9ecdbe6736a570e05f1df3}
+
+
+Print the membership of leaves of a density estimation tree given the labels and number of classes. 
+
+Optionally, pass the name of a file to print this information to (otherwise stdout is used).
+
+
+\begin{DoxyParams}{Parameters}
+{\em dtree} & Tree to print membership of. \\
+\hline
+{\em data} & Dataset tree is built upon. \\
+\hline
+{\em labels} & Class labels of dataset. \\
+\hline
+{\em num\+Classes} & Number of classes in dataset. \\
+\hline
+{\em leaf\+Class\+Membership\+File} & Name of file to print to (optional). \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::det@{mlpack\+::det}!Print\+Variable\+Importance@{Print\+Variable\+Importance}}
+\index{Print\+Variable\+Importance@{Print\+Variable\+Importance}!mlpack\+::det@{mlpack\+::det}}
+\subsubsection[{Print\+Variable\+Importance(const D\+Tree$<$ Mat\+Type, Tag\+Type $>$ $\ast$dtree, const std\+::string vi\+File="""")}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type , typename Tag\+Type $>$ void mlpack\+::det\+::\+Print\+Variable\+Importance (
+\begin{DoxyParamCaption}
+\item[{const {\bf D\+Tree}$<$ Mat\+Type, Tag\+Type $>$ $\ast$}]{dtree, }
+\item[{const {\bf std\+::string}}]{vi\+File = {\ttfamily \char`\"{}\char`\"{}}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1det_ac64804c6c73b842b3eb69d9a64fb12e3}
+
+
+Print the variable importance of each dimension of a density estimation tree. 
+
+Optionally, pass the name of a file to print this information to (otherwise stdout is used).
+
+
+\begin{DoxyParams}{Parameters}
+{\em dtree} & Density tree to use. \\
+\hline
+{\em vi\+File} & Name of file to print to (optional). \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::det@{mlpack\+::det}!Trainer@{Trainer}}
+\index{Trainer@{Trainer}!mlpack\+::det@{mlpack\+::det}}
+\subsubsection[{Trainer(\+Mat\+Type \&dataset, const size\+\_\+t folds, const bool use\+Volume\+Reg=false, const size\+\_\+t max\+Leaf\+Size=10, const size\+\_\+t min\+Leaf\+Size=5, const std\+::string unpruned\+Tree\+Output="""")}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type , typename Tag\+Type $>$ {\bf D\+Tree}$<$Mat\+Type, Tag\+Type$>$$\ast$ mlpack\+::det\+::\+Trainer (
+\begin{DoxyParamCaption}
+\item[{Mat\+Type \&}]{dataset, }
+\item[{const size\+\_\+t}]{folds, }
+\item[{const bool}]{use\+Volume\+Reg = {\ttfamily false}, }
+\item[{const size\+\_\+t}]{max\+Leaf\+Size = {\ttfamily 10}, }
+\item[{const size\+\_\+t}]{min\+Leaf\+Size = {\ttfamily 5}, }
+\item[{const {\bf std\+::string}}]{unpruned\+Tree\+Output = {\ttfamily \char`\"{}\char`\"{}}}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1det_a87869f8ef3c28bc04f5cdb62bf415f17}
+
+
+Train the optimal decision tree using cross-\/validation with the given number of folds. 
+
+Optionally, give a filename to print the unpruned tree to. This initializes a tree on the heap, so you are responsible for deleting it.
+
+
+\begin{DoxyParams}{Parameters}
+{\em dataset} & Dataset for the tree to use. \\
+\hline
+{\em folds} & Number of folds to use for cross-\/validation. \\
+\hline
+{\em use\+Volume\+Reg} & If true, use volume regularization. \\
+\hline
+{\em max\+Leaf\+Size} & Maximum number of points allowed in a leaf. \\
+\hline
+{\em min\+Leaf\+Size} & Minimum number of points allowed in a leaf. \\
+\hline
+{\em unpruned\+Tree\+Output} & Filename to print unpruned tree to (optional). \\
+\hline
+\end{DoxyParams}

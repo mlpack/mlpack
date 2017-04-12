@@ -1,0 +1,193 @@
+\section{mlpack\+:\+:kernel\+:\+:Example\+Kernel Class Reference}
+\label{classmlpack_1_1kernel_1_1ExampleKernel}\index{mlpack\+::kernel\+::\+Example\+Kernel@{mlpack\+::kernel\+::\+Example\+Kernel}}
+
+
+An example kernel function.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Example\+Kernel} ()
+\begin{DoxyCompactList}\small\item\em The default constructor, which takes no parameters. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&, const unsigned int)
+\begin{DoxyCompactList}\small\item\em Serializes the kernel. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Vec\+TypeA , typename Vec\+TypeB $>$ }\\static double {\bf Convolution\+Integral} (const Vec\+TypeA \&, const Vec\+TypeB \&)
+\begin{DoxyCompactList}\small\item\em Obtains the convolution integral [integral K($\vert$$\vert$x-\/a$\vert$$\vert$)K($\vert$$\vert$b-\/x$\vert$$\vert$)dx] for the two vectors. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+TypeA , typename Vec\+TypeB $>$ }\\static double {\bf Evaluate} (const Vec\+TypeA \&, const Vec\+TypeB \&)
+\begin{DoxyCompactList}\small\item\em Evaluates the kernel function for two given vectors. \end{DoxyCompactList}\item 
+static double {\bf Normalizer} ()
+\begin{DoxyCompactList}\small\item\em Obtains the normalizing volume for the kernel with dimension \$dimension\$. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+An example kernel function. 
+
+This is not a useful kernel, but it implements the two functions necessary to satisfy the Kernel policy (so that a class can be used whenever an mlpack method calls for a {\ttfamily typename Kernel} template parameter.
+
+All that is necessary is a constructor and an {\ttfamily \doxyref{Evaluate()}{p.}{classmlpack_1_1kernel_1_1ExampleKernel_ab6493b82672c90274e9c0acc1340bf8f}} function. More methods could be added; for instance, one useful idea is a constructor which takes parameters for a kernel (for instance, the width of the Gaussian for a Gaussian kernel). However, mlpack methods cannot count on these various constructors existing, which is why most methods allow passing an already-\/instantiated kernel object (and by default the method will construct the kernel with the default constructor). So, for instance,
+
+
+\begin{DoxyCode}
+GaussianKernel k(5.0);
+KernelPCA<GaussianKernel> kpca(dataset, k);
+\end{DoxyCode}
+
+
+will set up kernel P\+CA using a Gaussian kernel with a width of 5.\+0, but
+
+
+\begin{DoxyCode}
+KernelPCA<GaussianKernel> kpca(dataset);
+\end{DoxyCode}
+
+
+will create the kernel with the default constructor. It is important (but not strictly mandatory) that your default constructor still gives a working kernel.
+
+\begin{DoxyNote}{Note}
+Not all kernels require state. For instance, the regular dot product needs no parameters. In that case, no local variables are necessary and {\ttfamily \doxyref{Evaluate()}{p.}{classmlpack_1_1kernel_1_1ExampleKernel_ab6493b82672c90274e9c0acc1340bf8f}} can (and should) be declared static. However, for greater generalization, mlpack methods expect all kernels to require state and hence must store instantiated kernel functions; this is why a default constructor is necessary.  
+\end{DoxyNote}
+
+
+Definition at line 77 of file example\+\_\+kernel.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::kernel\+::\+Example\+Kernel@{mlpack\+::kernel\+::\+Example\+Kernel}!Example\+Kernel@{Example\+Kernel}}
+\index{Example\+Kernel@{Example\+Kernel}!mlpack\+::kernel\+::\+Example\+Kernel@{mlpack\+::kernel\+::\+Example\+Kernel}}
+\subsubsection[{Example\+Kernel()}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::kernel\+::\+Example\+Kernel\+::\+Example\+Kernel (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1kernel_1_1ExampleKernel_aa2ccb2c56b15cdd07f952464e2eeb784}
+
+
+The default constructor, which takes no parameters. 
+
+Because our simple example kernel has no internal parameters that need to be stored, the constructor does not need to do anything. For a more complex example, see the \doxyref{Gaussian\+Kernel}{p.}{classmlpack_1_1kernel_1_1GaussianKernel}, which stores an internal parameter. 
+
+Definition at line 86 of file example\+\_\+kernel.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::kernel\+::\+Example\+Kernel@{mlpack\+::kernel\+::\+Example\+Kernel}!Convolution\+Integral@{Convolution\+Integral}}
+\index{Convolution\+Integral@{Convolution\+Integral}!mlpack\+::kernel\+::\+Example\+Kernel@{mlpack\+::kernel\+::\+Example\+Kernel}}
+\subsubsection[{Convolution\+Integral(const Vec\+Type\+A \&, const Vec\+Type\+B \&)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Vec\+TypeA , typename Vec\+TypeB $>$ static double mlpack\+::kernel\+::\+Example\+Kernel\+::\+Convolution\+Integral (
+\begin{DoxyParamCaption}
+\item[{const Vec\+TypeA \&}]{, }
+\item[{const Vec\+TypeB \&}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}\label{classmlpack_1_1kernel_1_1ExampleKernel_a59c724a6bfaa2678d94ea1fb7280e597}
+
+
+Obtains the convolution integral [integral K($\vert$$\vert$x-\/a$\vert$$\vert$)K($\vert$$\vert$b-\/x$\vert$$\vert$)dx] for the two vectors. 
+
+In this case, because our simple example kernel has no internal parameters, we can declare the function static. For a more complex example which cannot be declared static, see the \doxyref{Gaussian\+Kernel}{p.}{classmlpack_1_1kernel_1_1GaussianKernel}, which stores an internal parameter.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Vec\+TypeA} & Type of first vector (arma\+::vec, arma\+::sp\+\_\+vec should be expected). \\
+\hline
+{\em Vec\+TypeB} & Type of second vector (arma\+::vec, arma\+::sp\+\_\+vec). \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em a} & First vector. \\
+\hline
+{\em b} & Second vector. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the convolution integral value. 
+\end{DoxyReturn}
+
+
+Definition at line 127 of file example\+\_\+kernel.\+hpp.
+
+\index{mlpack\+::kernel\+::\+Example\+Kernel@{mlpack\+::kernel\+::\+Example\+Kernel}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!mlpack\+::kernel\+::\+Example\+Kernel@{mlpack\+::kernel\+::\+Example\+Kernel}}
+\subsubsection[{Evaluate(const Vec\+Type\+A \&, const Vec\+Type\+B \&)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Vec\+TypeA , typename Vec\+TypeB $>$ static double mlpack\+::kernel\+::\+Example\+Kernel\+::\+Evaluate (
+\begin{DoxyParamCaption}
+\item[{const Vec\+TypeA \&}]{, }
+\item[{const Vec\+TypeB \&}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}\label{classmlpack_1_1kernel_1_1ExampleKernel_ab6493b82672c90274e9c0acc1340bf8f}
+
+
+Evaluates the kernel function for two given vectors. 
+
+In this case, because our simple example kernel has no internal parameters, we can declare the function static. For a more complex example which cannot be declared static, see the \doxyref{Gaussian\+Kernel}{p.}{classmlpack_1_1kernel_1_1GaussianKernel}, which stores an internal parameter.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Vec\+TypeA} & Type of first vector (arma\+::vec, arma\+::sp\+\_\+vec should be expected). \\
+\hline
+{\em Vec\+TypeB} & Type of second vector (arma\+::vec, arma\+::sp\+\_\+vec). \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em a} & First vector. \\
+\hline
+{\em b} & Second vector. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+K(a, b). 
+\end{DoxyReturn}
+
+
+Definition at line 102 of file example\+\_\+kernel.\+hpp.
+
+\index{mlpack\+::kernel\+::\+Example\+Kernel@{mlpack\+::kernel\+::\+Example\+Kernel}!Normalizer@{Normalizer}}
+\index{Normalizer@{Normalizer}!mlpack\+::kernel\+::\+Example\+Kernel@{mlpack\+::kernel\+::\+Example\+Kernel}}
+\subsubsection[{Normalizer()}]{\setlength{\rightskip}{0pt plus 5cm}static double mlpack\+::kernel\+::\+Example\+Kernel\+::\+Normalizer (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}\label{classmlpack_1_1kernel_1_1ExampleKernel_aced4887ace203b120790584eb0f29efe}
+
+
+Obtains the normalizing volume for the kernel with dimension \$dimension\$. 
+
+In this case, because our simple example kernel has no internal parameters, we can declare the function static. For a more complex example which cannot be declared static, see the \doxyref{Gaussian\+Kernel}{p.}{classmlpack_1_1kernel_1_1GaussianKernel}, which stores an internal parameter.
+
+
+\begin{DoxyParams}{Parameters}
+{\em dimension} & the dimension of the space. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the normalization constant. 
+\end{DoxyReturn}
+
+
+Definition at line 140 of file example\+\_\+kernel.\+hpp.
+
+\index{mlpack\+::kernel\+::\+Example\+Kernel@{mlpack\+::kernel\+::\+Example\+Kernel}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::kernel\+::\+Example\+Kernel@{mlpack\+::kernel\+::\+Example\+Kernel}}
+\subsubsection[{Serialize(\+Archive \&, const unsigned int)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Archive $>$ void mlpack\+::kernel\+::\+Example\+Kernel\+::\+Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{, }
+\item[{const unsigned}]{int}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1kernel_1_1ExampleKernel_ab2e9908961dcd1510e2e8e26901303b2}
+
+
+Serializes the kernel. 
+
+In this case, the kernel has no members, so we do not need to do anything at all. 
+
+Definition at line 110 of file example\+\_\+kernel.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/kernels/{\bf example\+\_\+kernel.\+hpp}\end{DoxyCompactItemize}

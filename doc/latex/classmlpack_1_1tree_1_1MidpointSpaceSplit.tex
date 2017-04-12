@@ -1,0 +1,53 @@
+\section{mlpack\+:\+:tree\+:\+:Midpoint\+Space\+Split$<$ Metric\+Type, Mat\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1tree_1_1MidpointSpaceSplit}\index{mlpack\+::tree\+::\+Midpoint\+Space\+Split$<$ Metric\+Type, Mat\+Type $>$@{mlpack\+::tree\+::\+Midpoint\+Space\+Split$<$ Metric\+Type, Mat\+Type $>$}}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Hyperplane\+Type $>$ }\\static bool {\bf Split\+Space} (const typename Hyperplane\+Type\+::\+Bound\+Type \&bound, const Mat\+Type \&data, const arma\+::\+Col$<$ size\+\_\+t $>$ \&points, Hyperplane\+Type \&hyp)
+\begin{DoxyCompactList}\small\item\em Create a splitting hyperplane considering the midpoint of the values in a certain projection. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Metric\+Type, typename Mat\+Type$>$\\*
+class mlpack\+::tree\+::\+Midpoint\+Space\+Split$<$ Metric\+Type, Mat\+Type $>$}
+
+
+
+Definition at line 23 of file midpoint\+\_\+space\+\_\+split.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::tree\+::\+Midpoint\+Space\+Split@{mlpack\+::tree\+::\+Midpoint\+Space\+Split}!Split\+Space@{Split\+Space}}
+\index{Split\+Space@{Split\+Space}!mlpack\+::tree\+::\+Midpoint\+Space\+Split@{mlpack\+::tree\+::\+Midpoint\+Space\+Split}}
+\subsubsection[{Split\+Space(const typename Hyperplane\+Type\+::\+Bound\+Type \&bound, const Mat\+Type \&data, const arma\+::\+Col$<$ size\+\_\+t $>$ \&points, Hyperplane\+Type \&hyp)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type $>$ template$<$typename Hyperplane\+Type $>$ static bool {\bf mlpack\+::tree\+::\+Midpoint\+Space\+Split}$<$ Metric\+Type, Mat\+Type $>$\+::Split\+Space (
+\begin{DoxyParamCaption}
+\item[{const typename Hyperplane\+Type\+::\+Bound\+Type \&}]{bound, }
+\item[{const Mat\+Type \&}]{data, }
+\item[{const arma\+::\+Col$<$ size\+\_\+t $>$ \&}]{points, }
+\item[{Hyperplane\+Type \&}]{hyp}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1tree_1_1MidpointSpaceSplit_a978dda0dcc487dcbac179435e4e52239}
+
+
+Create a splitting hyperplane considering the midpoint of the values in a certain projection. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em bound} & The bound used for this node. \\
+\hline
+{\em data} & The dataset used by the tree. \\
+\hline
+{\em points} & Vector of indexes of points to be considered. \\
+\hline
+{\em hyp} & Resulting splitting hyperplane. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Flag to determine if split is possible. 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/tree/space\+\_\+split/{\bf midpoint\+\_\+space\+\_\+split.\+hpp}\end{DoxyCompactItemize}

@@ -1,0 +1,410 @@
+.TH "mlpack::neighbor::NSModel< SortPolicy >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::neighbor::NSModel< SortPolicy > \- The \fBNSModel\fP class provides an easy way to serialize a model, abstracts away the different types of trees, and also reflects the \fBNeighborSearch\fP API\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "enum \fBTreeTypes\fP { \fBKD_TREE\fP, \fBCOVER_TREE\fP, \fBR_TREE\fP, \fBR_STAR_TREE\fP, \fBBALL_TREE\fP, \fBX_TREE\fP, \fBHILBERT_R_TREE\fP, \fBR_PLUS_TREE\fP, \fBR_PLUS_PLUS_TREE\fP, \fBVP_TREE\fP, \fBRP_TREE\fP, \fBMAX_RP_TREE\fP, \fBSPILL_TREE\fP, \fBUB_TREE\fP, \fBOCTREE\fP }
+.RI "\fIEnum type to identify each accepted tree type\&. \fP""
+.br
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBNSModel\fP (\fBTreeTypes\fP \fBtreeType\fP=TreeTypes::KD_TREE, bool \fBrandomBasis\fP=false)"
+.br
+.RI "\fIInitialize the \fBNSModel\fP with the given type and whether or not a random basis should be used\&. \fP"
+.ti -1c
+.RI "\fBNSModel\fP (const \fBNSModel\fP &other)"
+.br
+.RI "\fICopy the given \fBNSModel\fP\&. \fP"
+.ti -1c
+.RI "\fBNSModel\fP (\fBNSModel\fP &&other)"
+.br
+.RI "\fITake ownership of the given \fBNSModel\fP\&. \fP"
+.ti -1c
+.RI "\fB~NSModel\fP ()"
+.br
+.RI "\fIClean memory, if necessary\&. \fP"
+.ti -1c
+.RI "void \fBBuildModel\fP (arma::mat &&referenceSet, const size_t \fBleafSize\fP, const \fBNeighborSearchMode\fP searchMode, const double epsilon=0)"
+.br
+.RI "\fIBuild the reference tree\&. \fP"
+.ti -1c
+.RI "const arma::mat & \fBDataset\fP () const "
+.br
+.RI "\fIExpose the dataset\&. \fP"
+.ti -1c
+.RI "double \fBEpsilon\fP () const "
+.br
+.RI "\fIExpose Epsilon\&. \fP"
+.ti -1c
+.RI "double & \fBEpsilon\fP ()"
+.br
+.ti -1c
+.RI "size_t \fBLeafSize\fP () const "
+.br
+.RI "\fIExpose leafSize\&. \fP"
+.ti -1c
+.RI "size_t & \fBLeafSize\fP ()"
+.br
+.ti -1c
+.RI "\fBNSModel\fP & \fBoperator=\fP (const \fBNSModel\fP &other)"
+.br
+.RI "\fICopy the given \fBNSModel\fP\&. \fP"
+.ti -1c
+.RI "\fBNSModel\fP & \fBoperator=\fP (\fBNSModel\fP &&other)"
+.br
+.RI "\fITake ownership of the given \fBNSModel\fP\&. \fP"
+.ti -1c
+.RI "bool \fBRandomBasis\fP () const "
+.br
+.RI "\fIExpose randomBasis\&. \fP"
+.ti -1c
+.RI "bool & \fBRandomBasis\fP ()"
+.br
+.ti -1c
+.RI "double \fBRho\fP () const "
+.br
+.RI "\fIExpose rho\&. \fP"
+.ti -1c
+.RI "double & \fBRho\fP ()"
+.br
+.ti -1c
+.RI "void \fBSearch\fP (arma::mat &&querySet, const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances)"
+.br
+.RI "\fIPerform neighbor search\&. The query set will be reordered\&. \fP"
+.ti -1c
+.RI "void \fBSearch\fP (const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances)"
+.br
+.RI "\fIPerform monochromatic neighbor search\&. \fP"
+.ti -1c
+.RI "\fBNeighborSearchMode\fP \fBSearchMode\fP () const "
+.br
+.RI "\fIExpose SearchMode\&. \fP"
+.ti -1c
+.RI "\fBNeighborSearchMode\fP & \fBSearchMode\fP ()"
+.br
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int)"
+.br
+.RI "\fISerialize the neighbor search model\&. \fP"
+.ti -1c
+.RI "double \fBTau\fP () const "
+.br
+.RI "\fIExpose tau\&. \fP"
+.ti -1c
+.RI "double & \fBTau\fP ()"
+.br
+.ti -1c
+.RI "\fBstd::string\fP \fBTreeName\fP () const "
+.br
+.RI "\fIReturn a string representation of the current tree type\&. \fP"
+.ti -1c
+.RI "\fBTreeTypes\fP \fBTreeType\fP () const "
+.br
+.RI "\fIExpose treeType\&. \fP"
+.ti -1c
+.RI "\fBTreeTypes\fP & \fBTreeType\fP ()"
+.br
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "size_t \fBleafSize\fP"
+.br
+.RI "\fIFor tree types that accept the maxLeafSize parameter\&. \fP"
+.ti -1c
+.RI "boost::variant< \fBNSType\fP< SortPolicy, \fBtree::KDTree\fP > *, \fBNSType\fP< SortPolicy, \fBtree::StandardCoverTree\fP > *, \fBNSType\fP< SortPolicy, \fBtree::RTree\fP > *, \fBNSType\fP< SortPolicy, \fBtree::RStarTree\fP > *, \fBNSType\fP< SortPolicy, \fBtree::BallTree\fP > *, \fBNSType\fP< SortPolicy, \fBtree::XTree\fP > *, \fBNSType\fP< SortPolicy, \fBtree::HilbertRTree\fP > *, \fBNSType\fP< SortPolicy, \fBtree::RPlusTree\fP > *, \fBNSType\fP< SortPolicy, \fBtree::RPlusPlusTree\fP > *, \fBNSType\fP< SortPolicy, \fBtree::VPTree\fP > *, \fBNSType\fP< SortPolicy, \fBtree::RPTree\fP > *, \fBNSType\fP< SortPolicy, \fBtree::MaxRPTree\fP > *, \fBSpillKNN\fP *, \fBNSType\fP< SortPolicy, \fBtree::UBTree\fP > *, \fBNSType\fP< SortPolicy, \fBtree::Octree\fP > * > \fBnSearch\fP"
+.br
+.RI "\fInSearch holds an instance of the NeigborSearch class for the current treeType\&. \fP"
+.ti -1c
+.RI "arma::mat \fBq\fP"
+.br
+.RI "\fIThis is the random projection matrix; only used if randomBasis is true\&. \fP"
+.ti -1c
+.RI "bool \fBrandomBasis\fP"
+.br
+.RI "\fIIf true, random projections are used\&. \fP"
+.ti -1c
+.RI "double \fBrho\fP"
+.br
+.RI "\fIBalance threshold (for spill trees)\&. \fP"
+.ti -1c
+.RI "double \fBtau\fP"
+.br
+.RI "\fIOverlapping size (for spill trees)\&. \fP"
+.ti -1c
+.RI "\fBTreeTypes\fP \fBtreeType\fP"
+.br
+.RI "\fITree type considered for neighbor search\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename SortPolicy>
+.br
+class mlpack::neighbor::NSModel< SortPolicy >"
+The \fBNSModel\fP class provides an easy way to serialize a model, abstracts away the different types of trees, and also reflects the \fBNeighborSearch\fP API\&. 
+
+This class is meant to be used by the command-line mlpack_knn and mlpack_kfn programs, and thus does not have the same complete functionality and flexibility as the \fBNeighborSearch\fP class\&. So if you are using it outside of mlpack_knn and mlpack_kfn, be aware that it is limited!
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fISortPolicy\fP The sort policy for distances; see \fBNearestNeighborSort\fP\&. 
+.RE
+.PP
+
+.PP
+Definition at line 266 of file ns_model\&.hpp\&.
+.SH "Member Enumeration Documentation"
+.PP 
+.SS "template<typename SortPolicy > enum \fBmlpack::neighbor::NSModel::TreeTypes\fP"
+
+.PP
+Enum type to identify each accepted tree type\&. 
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fIKD_TREE \fP\fP
+.TP
+\fB\fICOVER_TREE \fP\fP
+.TP
+\fB\fIR_TREE \fP\fP
+.TP
+\fB\fIR_STAR_TREE \fP\fP
+.TP
+\fB\fIBALL_TREE \fP\fP
+.TP
+\fB\fIX_TREE \fP\fP
+.TP
+\fB\fIHILBERT_R_TREE \fP\fP
+.TP
+\fB\fIR_PLUS_TREE \fP\fP
+.TP
+\fB\fIR_PLUS_PLUS_TREE \fP\fP
+.TP
+\fB\fIVP_TREE \fP\fP
+.TP
+\fB\fIRP_TREE \fP\fP
+.TP
+\fB\fIMAX_RP_TREE \fP\fP
+.TP
+\fB\fISPILL_TREE \fP\fP
+.TP
+\fB\fIUB_TREE \fP\fP
+.TP
+\fB\fIOCTREE \fP\fP
+.PP
+Definition at line 270 of file ns_model\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename SortPolicy > \fBmlpack::neighbor::NSModel\fP< SortPolicy >::\fBNSModel\fP (\fBTreeTypes\fP treeType = \fCTreeTypes::KD_TREE\fP, bool randomBasis = \fCfalse\fP)"
+
+.PP
+Initialize the \fBNSModel\fP with the given type and whether or not a random basis should be used\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fItreeType\fP Type of tree to use\&. 
+.br
+\fIrandomBasis\fP Whether or not to project the points onto a random basis before searching\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy > \fBmlpack::neighbor::NSModel\fP< SortPolicy >::\fBNSModel\fP (const \fBNSModel\fP< SortPolicy > & other)"
+
+.PP
+Copy the given \fBNSModel\fP\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP Model to copy\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy > \fBmlpack::neighbor::NSModel\fP< SortPolicy >::\fBNSModel\fP (\fBNSModel\fP< SortPolicy > && other)"
+
+.PP
+Take ownership of the given \fBNSModel\fP\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP Model to take ownership of\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy > \fBmlpack::neighbor::NSModel\fP< SortPolicy >::~\fBNSModel\fP ()"
+
+.PP
+Clean memory, if necessary\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename SortPolicy > void \fBmlpack::neighbor::NSModel\fP< SortPolicy >::BuildModel (arma::mat && referenceSet, const size_t leafSize, const \fBNeighborSearchMode\fP searchMode, const double epsilon = \fC0\fP)"
+
+.PP
+Build the reference tree\&. 
+.SS "template<typename SortPolicy > const arma::mat& \fBmlpack::neighbor::NSModel\fP< SortPolicy >::Dataset () const"
+
+.PP
+Expose the dataset\&. 
+.SS "template<typename SortPolicy > double \fBmlpack::neighbor::NSModel\fP< SortPolicy >::Epsilon () const"
+
+.PP
+Expose Epsilon\&. 
+.SS "template<typename SortPolicy > double& \fBmlpack::neighbor::NSModel\fP< SortPolicy >::Epsilon ()"
+
+.SS "template<typename SortPolicy > size_t \fBmlpack::neighbor::NSModel\fP< SortPolicy >::LeafSize () const\fC [inline]\fP"
+
+.PP
+Expose leafSize\&. 
+.PP
+Definition at line 385 of file ns_model\&.hpp\&.
+.SS "template<typename SortPolicy > size_t& \fBmlpack::neighbor::NSModel\fP< SortPolicy >::LeafSize ()\fC [inline]\fP"
+
+.PP
+Definition at line 386 of file ns_model\&.hpp\&.
+.SS "template<typename SortPolicy > \fBNSModel\fP& \fBmlpack::neighbor::NSModel\fP< SortPolicy >::operator= (const \fBNSModel\fP< SortPolicy > & other)"
+
+.PP
+Copy the given \fBNSModel\fP\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP Model to copy\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy > \fBNSModel\fP& \fBmlpack::neighbor::NSModel\fP< SortPolicy >::operator= (\fBNSModel\fP< SortPolicy > && other)"
+
+.PP
+Take ownership of the given \fBNSModel\fP\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP Model to take ownership of\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy > bool \fBmlpack::neighbor::NSModel\fP< SortPolicy >::RandomBasis () const\fC [inline]\fP"
+
+.PP
+Expose randomBasis\&. 
+.PP
+Definition at line 401 of file ns_model\&.hpp\&.
+.SS "template<typename SortPolicy > bool& \fBmlpack::neighbor::NSModel\fP< SortPolicy >::RandomBasis ()\fC [inline]\fP"
+
+.PP
+Definition at line 402 of file ns_model\&.hpp\&.
+.PP
+References BOOST_TEMPLATE_CLASS_VERSION(), and string()\&.
+.SS "template<typename SortPolicy > double \fBmlpack::neighbor::NSModel\fP< SortPolicy >::Rho () const\fC [inline]\fP"
+
+.PP
+Expose rho\&. 
+.PP
+Definition at line 393 of file ns_model\&.hpp\&.
+.SS "template<typename SortPolicy > double& \fBmlpack::neighbor::NSModel\fP< SortPolicy >::Rho ()\fC [inline]\fP"
+
+.PP
+Definition at line 394 of file ns_model\&.hpp\&.
+.SS "template<typename SortPolicy > void \fBmlpack::neighbor::NSModel\fP< SortPolicy >::Search (arma::mat && querySet, const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances)"
+
+.PP
+Perform neighbor search\&. The query set will be reordered\&. 
+.SS "template<typename SortPolicy > void \fBmlpack::neighbor::NSModel\fP< SortPolicy >::Search (const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances)"
+
+.PP
+Perform monochromatic neighbor search\&. 
+.SS "template<typename SortPolicy > \fBNeighborSearchMode\fP \fBmlpack::neighbor::NSModel\fP< SortPolicy >::SearchMode () const"
+
+.PP
+Expose SearchMode\&. 
+.SS "template<typename SortPolicy > \fBNeighborSearchMode\fP& \fBmlpack::neighbor::NSModel\fP< SortPolicy >::SearchMode ()"
+
+.SS "template<typename SortPolicy > template<typename Archive > void \fBmlpack::neighbor::NSModel\fP< SortPolicy >::Serialize (Archive & ar, const unsigned int)"
+
+.PP
+Serialize the neighbor search model\&. 
+.SS "template<typename SortPolicy > double \fBmlpack::neighbor::NSModel\fP< SortPolicy >::Tau () const\fC [inline]\fP"
+
+.PP
+Expose tau\&. 
+.PP
+Definition at line 389 of file ns_model\&.hpp\&.
+.SS "template<typename SortPolicy > double& \fBmlpack::neighbor::NSModel\fP< SortPolicy >::Tau ()\fC [inline]\fP"
+
+.PP
+Definition at line 390 of file ns_model\&.hpp\&.
+.SS "template<typename SortPolicy > \fBstd::string\fP \fBmlpack::neighbor::NSModel\fP< SortPolicy >::TreeName () const"
+
+.PP
+Return a string representation of the current tree type\&. 
+.SS "template<typename SortPolicy > \fBTreeTypes\fP \fBmlpack::neighbor::NSModel\fP< SortPolicy >::TreeType () const\fC [inline]\fP"
+
+.PP
+Expose treeType\&. 
+.PP
+Definition at line 397 of file ns_model\&.hpp\&.
+.SS "template<typename SortPolicy > \fBTreeTypes\fP& \fBmlpack::neighbor::NSModel\fP< SortPolicy >::TreeType ()\fC [inline]\fP"
+
+.PP
+Definition at line 398 of file ns_model\&.hpp\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename SortPolicy > size_t \fBmlpack::neighbor::NSModel\fP< SortPolicy >::leafSize\fC [private]\fP"
+
+.PP
+For tree types that accept the maxLeafSize parameter\&. 
+.PP
+Definition at line 294 of file ns_model\&.hpp\&.
+.SS "template<typename SortPolicy > boost::variant<\fBNSType\fP<SortPolicy, \fBtree::KDTree\fP>*, \fBNSType\fP<SortPolicy, \fBtree::StandardCoverTree\fP>*, \fBNSType\fP<SortPolicy, \fBtree::RTree\fP>*, \fBNSType\fP<SortPolicy, \fBtree::RStarTree\fP>*, \fBNSType\fP<SortPolicy, \fBtree::BallTree\fP>*, \fBNSType\fP<SortPolicy, \fBtree::XTree\fP>*, \fBNSType\fP<SortPolicy, \fBtree::HilbertRTree\fP>*, \fBNSType\fP<SortPolicy, \fBtree::RPlusTree\fP>*, \fBNSType\fP<SortPolicy, \fBtree::RPlusPlusTree\fP>*, \fBNSType\fP<SortPolicy, \fBtree::VPTree\fP>*, \fBNSType\fP<SortPolicy, \fBtree::RPTree\fP>*, \fBNSType\fP<SortPolicy, \fBtree::MaxRPTree\fP>*, \fBSpillKNN\fP*, \fBNSType\fP<SortPolicy, \fBtree::UBTree\fP>*, \fBNSType\fP<SortPolicy, \fBtree::Octree\fP>*> \fBmlpack::neighbor::NSModel\fP< SortPolicy >::nSearch\fC [private]\fP"
+
+.PP
+nSearch holds an instance of the NeigborSearch class for the current treeType\&. It is initialized every time BuildModel is executed\&. We access to the contained value through the visitor classes defined above\&. 
+.PP
+Definition at line 325 of file ns_model\&.hpp\&.
+.SS "template<typename SortPolicy > arma::mat \fBmlpack::neighbor::NSModel\fP< SortPolicy >::q\fC [private]\fP"
+
+.PP
+This is the random projection matrix; only used if randomBasis is true\&. 
+.PP
+Definition at line 304 of file ns_model\&.hpp\&.
+.SS "template<typename SortPolicy > bool \fBmlpack::neighbor::NSModel\fP< SortPolicy >::randomBasis\fC [private]\fP"
+
+.PP
+If true, random projections are used\&. 
+.PP
+Definition at line 302 of file ns_model\&.hpp\&.
+.SS "template<typename SortPolicy > double \fBmlpack::neighbor::NSModel\fP< SortPolicy >::rho\fC [private]\fP"
+
+.PP
+Balance threshold (for spill trees)\&. 
+.PP
+Definition at line 299 of file ns_model\&.hpp\&.
+.SS "template<typename SortPolicy > double \fBmlpack::neighbor::NSModel\fP< SortPolicy >::tau\fC [private]\fP"
+
+.PP
+Overlapping size (for spill trees)\&. 
+.PP
+Definition at line 297 of file ns_model\&.hpp\&.
+.SS "template<typename SortPolicy > \fBTreeTypes\fP \fBmlpack::neighbor::NSModel\fP< SortPolicy >::treeType\fC [private]\fP"
+
+.PP
+Tree type considered for neighbor search\&. 
+.PP
+Definition at line 291 of file ns_model\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

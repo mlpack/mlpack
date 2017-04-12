@@ -1,0 +1,72 @@
+.TH "mlpack::tree::RTreeDescentHeuristic" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::tree::RTreeDescentHeuristic \- When descending a \fBRectangleTree\fP to insert a point, we need to have a way to choose a child node when the point isn't enclosed by any of them\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename TreeType > static size_t \fBChooseDescentNode\fP (const TreeType *node, const size_t point)"
+.br
+.RI "\fIEvaluate the node using a heuristic\&. \fP"
+.ti -1c
+.RI "template<typename TreeType > static size_t \fBChooseDescentNode\fP (const TreeType *node, const TreeType *insertedNode)"
+.br
+.RI "\fIEvaluate the node using a heuristic\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+When descending a \fBRectangleTree\fP to insert a point, we need to have a way to choose a child node when the point isn't enclosed by any of them\&. 
+
+This heuristic is used to do so\&. 
+.PP
+Definition at line 26 of file r_tree_descent_heuristic\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename TreeType > static size_t mlpack::tree::RTreeDescentHeuristic::ChooseDescentNode (const TreeType * node, const size_t point)\fC [static]\fP"
+
+.PP
+Evaluate the node using a heuristic\&. The heuristic guarantees two things:
+.PP
+.IP "1." 4
+If point is contained in (or on) the bound, the value returned is zero\&.
+.IP "2." 4
+If the point is not contained in (or on) the bound, the value returned is greater than zero\&.
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fInode\fP The node that is being evaluated\&. 
+.br
+\fIpoint\fP The index of the point that is being inserted\&. 
+.RE
+.PP
+
+.SS "template<typename TreeType > static size_t mlpack::tree::RTreeDescentHeuristic::ChooseDescentNode (const TreeType * node, const TreeType * insertedNode)\fC [static]\fP"
+
+.PP
+Evaluate the node using a heuristic\&. The heuristic guarantees two things:
+.PP
+.IP "1." 4
+If point is contained in (or on) the bound, the value returned is zero\&.
+.IP "2." 4
+If the point is not contained in (or on) the bound, the value returned is greater than zero\&.
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fInode\fP The node that is being evaluated\&. 
+.br
+\fIinsertedNode\fP The node that is being inserted\&. 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

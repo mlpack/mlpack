@@ -1,0 +1,243 @@
+.TH "mlpack::kmeans::DualTreeKMeansRules< MetricType, TreeType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::kmeans::DualTreeKMeansRules< MetricType, TreeType > \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "typedef \fBtree::TraversalInfo\fP< TreeType > \fBTraversalInfoType\fP"
+.br
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBDualTreeKMeansRules\fP (const arma::mat &\fBcentroids\fP, const arma::mat &\fBdataset\fP, arma::Row< size_t > &\fBassignments\fP, arma::vec &\fBupperBounds\fP, arma::vec &\fBlowerBounds\fP, MetricType &\fBmetric\fP, const std::vector< bool > &\fBprunedPoints\fP, const std::vector< size_t > &\fBoldFromNewCentroids\fP, std::vector< bool > &\fBvisited\fP)"
+.br
+.ti -1c
+.RI "double \fBBaseCase\fP (const size_t queryIndex, const size_t referenceIndex)"
+.br
+.ti -1c
+.RI "size_t \fBBaseCases\fP () const "
+.br
+.ti -1c
+.RI "size_t & \fBBaseCases\fP ()"
+.br
+.ti -1c
+.RI "double \fBRescore\fP (const size_t queryIndex, TreeType &referenceNode, const double oldScore)"
+.br
+.ti -1c
+.RI "double \fBRescore\fP (TreeType &queryNode, TreeType &referenceNode, const double oldScore)"
+.br
+.ti -1c
+.RI "double \fBScore\fP (const size_t queryIndex, TreeType &referenceNode)"
+.br
+.ti -1c
+.RI "double \fBScore\fP (TreeType &queryNode, TreeType &referenceNode)"
+.br
+.ti -1c
+.RI "size_t \fBScores\fP () const "
+.br
+.ti -1c
+.RI "size_t & \fBScores\fP ()"
+.br
+.ti -1c
+.RI "\fBTraversalInfoType\fP & \fBTraversalInfo\fP ()"
+.br
+.ti -1c
+.RI "const \fBTraversalInfoType\fP & \fBTraversalInfo\fP () const "
+.br
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "arma::Row< size_t > & \fBassignments\fP"
+.br
+.ti -1c
+.RI "size_t \fBbaseCases\fP"
+.br
+.ti -1c
+.RI "const arma::mat & \fBcentroids\fP"
+.br
+.ti -1c
+.RI "const arma::mat & \fBdataset\fP"
+.br
+.ti -1c
+.RI "size_t \fBlastBaseCase\fP"
+.br
+.ti -1c
+.RI "size_t \fBlastQueryIndex\fP"
+.br
+.ti -1c
+.RI "size_t \fBlastReferenceIndex\fP"
+.br
+.ti -1c
+.RI "arma::vec & \fBlowerBounds\fP"
+.br
+.ti -1c
+.RI "MetricType & \fBmetric\fP"
+.br
+.ti -1c
+.RI "const std::vector< size_t > & \fBoldFromNewCentroids\fP"
+.br
+.ti -1c
+.RI "const std::vector< bool > & \fBprunedPoints\fP"
+.br
+.ti -1c
+.RI "size_t \fBscores\fP"
+.br
+.ti -1c
+.RI "\fBTraversalInfoType\fP \fBtraversalInfo\fP"
+.br
+.ti -1c
+.RI "arma::vec & \fBupperBounds\fP"
+.br
+.ti -1c
+.RI "std::vector< bool > & \fBvisited\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename MetricType, typename TreeType>
+.br
+class mlpack::kmeans::DualTreeKMeansRules< MetricType, TreeType >"
+
+.PP
+Definition at line 23 of file dual_tree_kmeans_rules\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "template<typename MetricType , typename TreeType > typedef \fBtree::TraversalInfo\fP<TreeType> \fBmlpack::kmeans::DualTreeKMeansRules\fP< MetricType, TreeType >::\fBTraversalInfoType\fP"
+
+.PP
+Definition at line 47 of file dual_tree_kmeans_rules\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename MetricType , typename TreeType > \fBmlpack::kmeans::DualTreeKMeansRules\fP< MetricType, TreeType >::\fBDualTreeKMeansRules\fP (const arma::mat & centroids, const arma::mat & dataset, arma::Row< size_t > & assignments, arma::vec & upperBounds, arma::vec & lowerBounds, MetricType & metric, const std::vector< bool > & prunedPoints, const std::vector< size_t > & oldFromNewCentroids, std::vector< bool > & visited)"
+
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename MetricType , typename TreeType > double \fBmlpack::kmeans::DualTreeKMeansRules\fP< MetricType, TreeType >::BaseCase (const size_t queryIndex, const size_t referenceIndex)"
+
+.SS "template<typename MetricType , typename TreeType > size_t \fBmlpack::kmeans::DualTreeKMeansRules\fP< MetricType, TreeType >::BaseCases () const\fC [inline]\fP"
+
+.PP
+Definition at line 52 of file dual_tree_kmeans_rules\&.hpp\&.
+.PP
+References mlpack::kmeans::DualTreeKMeansRules< MetricType, TreeType >::baseCases\&.
+.SS "template<typename MetricType , typename TreeType > size_t& \fBmlpack::kmeans::DualTreeKMeansRules\fP< MetricType, TreeType >::BaseCases ()\fC [inline]\fP"
+
+.PP
+Definition at line 53 of file dual_tree_kmeans_rules\&.hpp\&.
+.PP
+References mlpack::kmeans::DualTreeKMeansRules< MetricType, TreeType >::baseCases\&.
+.SS "template<typename MetricType , typename TreeType > double \fBmlpack::kmeans::DualTreeKMeansRules\fP< MetricType, TreeType >::Rescore (const size_t queryIndex, TreeType & referenceNode, const double oldScore)"
+
+.SS "template<typename MetricType , typename TreeType > double \fBmlpack::kmeans::DualTreeKMeansRules\fP< MetricType, TreeType >::Rescore (TreeType & queryNode, TreeType & referenceNode, const double oldScore)"
+
+.SS "template<typename MetricType , typename TreeType > double \fBmlpack::kmeans::DualTreeKMeansRules\fP< MetricType, TreeType >::Score (const size_t queryIndex, TreeType & referenceNode)"
+
+.SS "template<typename MetricType , typename TreeType > double \fBmlpack::kmeans::DualTreeKMeansRules\fP< MetricType, TreeType >::Score (TreeType & queryNode, TreeType & referenceNode)"
+
+.SS "template<typename MetricType , typename TreeType > size_t \fBmlpack::kmeans::DualTreeKMeansRules\fP< MetricType, TreeType >::Scores () const\fC [inline]\fP"
+
+.PP
+Definition at line 55 of file dual_tree_kmeans_rules\&.hpp\&.
+.PP
+References mlpack::kmeans::DualTreeKMeansRules< MetricType, TreeType >::scores\&.
+.SS "template<typename MetricType , typename TreeType > size_t& \fBmlpack::kmeans::DualTreeKMeansRules\fP< MetricType, TreeType >::Scores ()\fC [inline]\fP"
+
+.PP
+Definition at line 56 of file dual_tree_kmeans_rules\&.hpp\&.
+.PP
+References mlpack::kmeans::DualTreeKMeansRules< MetricType, TreeType >::scores\&.
+.SS "template<typename MetricType , typename TreeType > \fBTraversalInfoType\fP& \fBmlpack::kmeans::DualTreeKMeansRules\fP< MetricType, TreeType >::TraversalInfo ()\fC [inline]\fP"
+
+.PP
+Definition at line 49 of file dual_tree_kmeans_rules\&.hpp\&.
+.PP
+References mlpack::kmeans::DualTreeKMeansRules< MetricType, TreeType >::traversalInfo\&.
+.SS "template<typename MetricType , typename TreeType > const \fBTraversalInfoType\fP& \fBmlpack::kmeans::DualTreeKMeansRules\fP< MetricType, TreeType >::TraversalInfo () const\fC [inline]\fP"
+
+.PP
+Definition at line 50 of file dual_tree_kmeans_rules\&.hpp\&.
+.PP
+References mlpack::kmeans::DualTreeKMeansRules< MetricType, TreeType >::traversalInfo\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename MetricType , typename TreeType > arma::Row<size_t>& \fBmlpack::kmeans::DualTreeKMeansRules\fP< MetricType, TreeType >::assignments\fC [private]\fP"
+
+.PP
+Definition at line 61 of file dual_tree_kmeans_rules\&.hpp\&.
+.SS "template<typename MetricType , typename TreeType > size_t \fBmlpack::kmeans::DualTreeKMeansRules\fP< MetricType, TreeType >::baseCases\fC [private]\fP"
+
+.PP
+Definition at line 72 of file dual_tree_kmeans_rules\&.hpp\&.
+.PP
+Referenced by mlpack::kmeans::DualTreeKMeansRules< MetricType, TreeType >::BaseCases()\&.
+.SS "template<typename MetricType , typename TreeType > const arma::mat& \fBmlpack::kmeans::DualTreeKMeansRules\fP< MetricType, TreeType >::centroids\fC [private]\fP"
+
+.PP
+Definition at line 59 of file dual_tree_kmeans_rules\&.hpp\&.
+.SS "template<typename MetricType , typename TreeType > const arma::mat& \fBmlpack::kmeans::DualTreeKMeansRules\fP< MetricType, TreeType >::dataset\fC [private]\fP"
+
+.PP
+Definition at line 60 of file dual_tree_kmeans_rules\&.hpp\&.
+.SS "template<typename MetricType , typename TreeType > size_t \fBmlpack::kmeans::DualTreeKMeansRules\fP< MetricType, TreeType >::lastBaseCase\fC [private]\fP"
+
+.PP
+Definition at line 79 of file dual_tree_kmeans_rules\&.hpp\&.
+.SS "template<typename MetricType , typename TreeType > size_t \fBmlpack::kmeans::DualTreeKMeansRules\fP< MetricType, TreeType >::lastQueryIndex\fC [private]\fP"
+
+.PP
+Definition at line 77 of file dual_tree_kmeans_rules\&.hpp\&.
+.SS "template<typename MetricType , typename TreeType > size_t \fBmlpack::kmeans::DualTreeKMeansRules\fP< MetricType, TreeType >::lastReferenceIndex\fC [private]\fP"
+
+.PP
+Definition at line 78 of file dual_tree_kmeans_rules\&.hpp\&.
+.SS "template<typename MetricType , typename TreeType > arma::vec& \fBmlpack::kmeans::DualTreeKMeansRules\fP< MetricType, TreeType >::lowerBounds\fC [private]\fP"
+
+.PP
+Definition at line 63 of file dual_tree_kmeans_rules\&.hpp\&.
+.SS "template<typename MetricType , typename TreeType > MetricType& \fBmlpack::kmeans::DualTreeKMeansRules\fP< MetricType, TreeType >::metric\fC [private]\fP"
+
+.PP
+Definition at line 64 of file dual_tree_kmeans_rules\&.hpp\&.
+.SS "template<typename MetricType , typename TreeType > const std::vector<size_t>& \fBmlpack::kmeans::DualTreeKMeansRules\fP< MetricType, TreeType >::oldFromNewCentroids\fC [private]\fP"
+
+.PP
+Definition at line 68 of file dual_tree_kmeans_rules\&.hpp\&.
+.SS "template<typename MetricType , typename TreeType > const std::vector<bool>& \fBmlpack::kmeans::DualTreeKMeansRules\fP< MetricType, TreeType >::prunedPoints\fC [private]\fP"
+
+.PP
+Definition at line 66 of file dual_tree_kmeans_rules\&.hpp\&.
+.SS "template<typename MetricType , typename TreeType > size_t \fBmlpack::kmeans::DualTreeKMeansRules\fP< MetricType, TreeType >::scores\fC [private]\fP"
+
+.PP
+Definition at line 73 of file dual_tree_kmeans_rules\&.hpp\&.
+.PP
+Referenced by mlpack::kmeans::DualTreeKMeansRules< MetricType, TreeType >::Scores()\&.
+.SS "template<typename MetricType , typename TreeType > \fBTraversalInfoType\fP \fBmlpack::kmeans::DualTreeKMeansRules\fP< MetricType, TreeType >::traversalInfo\fC [private]\fP"
+
+.PP
+Definition at line 75 of file dual_tree_kmeans_rules\&.hpp\&.
+.PP
+Referenced by mlpack::kmeans::DualTreeKMeansRules< MetricType, TreeType >::TraversalInfo()\&.
+.SS "template<typename MetricType , typename TreeType > arma::vec& \fBmlpack::kmeans::DualTreeKMeansRules\fP< MetricType, TreeType >::upperBounds\fC [private]\fP"
+
+.PP
+Definition at line 62 of file dual_tree_kmeans_rules\&.hpp\&.
+.SS "template<typename MetricType , typename TreeType > std::vector<bool>& \fBmlpack::kmeans::DualTreeKMeansRules\fP< MetricType, TreeType >::visited\fC [private]\fP"
+
+.PP
+Definition at line 70 of file dual_tree_kmeans_rules\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

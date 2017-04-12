@@ -1,0 +1,155 @@
+\section{mlpack\+:\+:kmeans\+:\+:Naive\+K\+Means$<$ Metric\+Type, Mat\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1kmeans_1_1NaiveKMeans}\index{mlpack\+::kmeans\+::\+Naive\+K\+Means$<$ Metric\+Type, Mat\+Type $>$@{mlpack\+::kmeans\+::\+Naive\+K\+Means$<$ Metric\+Type, Mat\+Type $>$}}
+
+
+This is an implementation of a single iteration of Lloyd\textquotesingle{}s algorithm for k-\/means.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Naive\+K\+Means} (const Mat\+Type \&{\bf dataset}, Metric\+Type \&{\bf metric})
+\begin{DoxyCompactList}\small\item\em Construct the \doxyref{Naive\+K\+Means}{p.}{classmlpack_1_1kmeans_1_1NaiveKMeans} object with the given dataset and metric. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Distance\+Calculations} () const 
+\item 
+double {\bf Iterate} (const arma\+::mat \&centroids, arma\+::mat \&new\+Centroids, arma\+::\+Col$<$ size\+\_\+t $>$ \&counts)
+\begin{DoxyCompactList}\small\item\em Run a single iteration of the Lloyd algorithm, updating the given centroids into the new\+Centroids matrix. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+const Mat\+Type \& {\bf dataset}
+\begin{DoxyCompactList}\small\item\em The dataset. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf distance\+Calculations}
+\begin{DoxyCompactList}\small\item\em Number of distance calculations. \end{DoxyCompactList}\item 
+Metric\+Type \& {\bf metric}
+\begin{DoxyCompactList}\small\item\em The instantiated metric. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Metric\+Type, typename Mat\+Type$>$\\*
+class mlpack\+::kmeans\+::\+Naive\+K\+Means$<$ Metric\+Type, Mat\+Type $>$}
+
+This is an implementation of a single iteration of Lloyd\textquotesingle{}s algorithm for k-\/means. 
+
+If your intention is to run the full k-\/means algorithm, you are looking for the \doxyref{mlpack\+::kmeans\+::\+K\+Means}{p.}{classmlpack_1_1kmeans_1_1KMeans} class instead of this one. This class is used by \doxyref{K\+Means}{p.}{classmlpack_1_1kmeans_1_1KMeans} as the actual implementation of the Lloyd iteration.
+
+
+\begin{DoxyParams}{Parameters}
+{\em Metric\+Type} & Type of metric used with this implementation. \\
+\hline
+{\em Mat\+Type} & Matrix type (arma\+::mat or arma\+::sp\+\_\+mat). \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 30 of file naive\+\_\+kmeans.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::kmeans\+::\+Naive\+K\+Means@{mlpack\+::kmeans\+::\+Naive\+K\+Means}!Naive\+K\+Means@{Naive\+K\+Means}}
+\index{Naive\+K\+Means@{Naive\+K\+Means}!mlpack\+::kmeans\+::\+Naive\+K\+Means@{mlpack\+::kmeans\+::\+Naive\+K\+Means}}
+\subsubsection[{Naive\+K\+Means(const Mat\+Type \&dataset, Metric\+Type \&metric)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type $>$ {\bf mlpack\+::kmeans\+::\+Naive\+K\+Means}$<$ Metric\+Type, Mat\+Type $>$\+::{\bf Naive\+K\+Means} (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{dataset, }
+\item[{Metric\+Type \&}]{metric}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1kmeans_1_1NaiveKMeans_affb36bf55850bb284edb63810b1f79c2}
+
+
+Construct the \doxyref{Naive\+K\+Means}{p.}{classmlpack_1_1kmeans_1_1NaiveKMeans} object with the given dataset and metric. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em dataset} & Dataset. \\
+\hline
+{\em metric} & Instantiated metric. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::kmeans\+::\+Naive\+K\+Means@{mlpack\+::kmeans\+::\+Naive\+K\+Means}!Distance\+Calculations@{Distance\+Calculations}}
+\index{Distance\+Calculations@{Distance\+Calculations}!mlpack\+::kmeans\+::\+Naive\+K\+Means@{mlpack\+::kmeans\+::\+Naive\+K\+Means}}
+\subsubsection[{Distance\+Calculations() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type $>$ size\+\_\+t {\bf mlpack\+::kmeans\+::\+Naive\+K\+Means}$<$ Metric\+Type, Mat\+Type $>$\+::Distance\+Calculations (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1kmeans_1_1NaiveKMeans_a2733d965435b70248a6d58ce9a7bd643}
+
+
+Definition at line 55 of file naive\+\_\+kmeans.\+hpp.
+
+
+
+References mlpack\+::kmeans\+::\+Naive\+K\+Means$<$ Metric\+Type, Mat\+Type $>$\+::distance\+Calculations.
+
+\index{mlpack\+::kmeans\+::\+Naive\+K\+Means@{mlpack\+::kmeans\+::\+Naive\+K\+Means}!Iterate@{Iterate}}
+\index{Iterate@{Iterate}!mlpack\+::kmeans\+::\+Naive\+K\+Means@{mlpack\+::kmeans\+::\+Naive\+K\+Means}}
+\subsubsection[{Iterate(const arma\+::mat \&centroids, arma\+::mat \&new\+Centroids, arma\+::\+Col$<$ size\+\_\+t $>$ \&counts)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type $>$ double {\bf mlpack\+::kmeans\+::\+Naive\+K\+Means}$<$ Metric\+Type, Mat\+Type $>$\+::Iterate (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{centroids, }
+\item[{arma\+::mat \&}]{new\+Centroids, }
+\item[{arma\+::\+Col$<$ size\+\_\+t $>$ \&}]{counts}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1kmeans_1_1NaiveKMeans_acdceec4c68f5958ec8b0c66ecbb0fa77}
+
+
+Run a single iteration of the Lloyd algorithm, updating the given centroids into the new\+Centroids matrix. 
+
+If any cluster is empty (that is, if any cluster has no points assigned to it), then the centroid associated with that cluster may be filled with invalid data (it will be corrected later).
+
+
+\begin{DoxyParams}{Parameters}
+{\em centroids} & Current cluster centroids. \\
+\hline
+{\em new\+Centroids} & New cluster centroids. \\
+\hline
+{\em counts} & Number of points in each cluster at the end of the iteration. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::kmeans\+::\+Naive\+K\+Means@{mlpack\+::kmeans\+::\+Naive\+K\+Means}!dataset@{dataset}}
+\index{dataset@{dataset}!mlpack\+::kmeans\+::\+Naive\+K\+Means@{mlpack\+::kmeans\+::\+Naive\+K\+Means}}
+\subsubsection[{dataset}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type $>$ const Mat\+Type\& {\bf mlpack\+::kmeans\+::\+Naive\+K\+Means}$<$ Metric\+Type, Mat\+Type $>$\+::dataset\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1NaiveKMeans_ab53c2659b67e187dd57d7f26e174adcb}
+
+
+The dataset. 
+
+
+
+Definition at line 59 of file naive\+\_\+kmeans.\+hpp.
+
+\index{mlpack\+::kmeans\+::\+Naive\+K\+Means@{mlpack\+::kmeans\+::\+Naive\+K\+Means}!distance\+Calculations@{distance\+Calculations}}
+\index{distance\+Calculations@{distance\+Calculations}!mlpack\+::kmeans\+::\+Naive\+K\+Means@{mlpack\+::kmeans\+::\+Naive\+K\+Means}}
+\subsubsection[{distance\+Calculations}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type $>$ size\+\_\+t {\bf mlpack\+::kmeans\+::\+Naive\+K\+Means}$<$ Metric\+Type, Mat\+Type $>$\+::distance\+Calculations\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1NaiveKMeans_a2fd92120132106940681edccb2a0df97}
+
+
+Number of distance calculations. 
+
+
+
+Definition at line 64 of file naive\+\_\+kmeans.\+hpp.
+
+
+
+Referenced by mlpack\+::kmeans\+::\+Naive\+K\+Means$<$ Metric\+Type, Mat\+Type $>$\+::\+Distance\+Calculations().
+
+\index{mlpack\+::kmeans\+::\+Naive\+K\+Means@{mlpack\+::kmeans\+::\+Naive\+K\+Means}!metric@{metric}}
+\index{metric@{metric}!mlpack\+::kmeans\+::\+Naive\+K\+Means@{mlpack\+::kmeans\+::\+Naive\+K\+Means}}
+\subsubsection[{metric}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type $>$ Metric\+Type\& {\bf mlpack\+::kmeans\+::\+Naive\+K\+Means}$<$ Metric\+Type, Mat\+Type $>$\+::metric\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1NaiveKMeans_a14541b70d795b048b926c1205fe53aa5}
+
+
+The instantiated metric. 
+
+
+
+Definition at line 61 of file naive\+\_\+kmeans.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/kmeans/{\bf naive\+\_\+kmeans.\+hpp}\end{DoxyCompactItemize}

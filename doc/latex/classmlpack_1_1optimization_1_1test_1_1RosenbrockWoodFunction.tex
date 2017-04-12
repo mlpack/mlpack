@@ -1,0 +1,100 @@
+\section{mlpack\+:\+:optimization\+:\+:test\+:\+:Rosenbrock\+Wood\+Function Class Reference}
+\label{classmlpack_1_1optimization_1_1test_1_1RosenbrockWoodFunction}\index{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function@{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function}}
+
+
+The Generalized Rosenbrock function in 4 dimensions with the Wood Function in four dimensions.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Rosenbrock\+Wood\+Function} ()
+\item 
+double {\bf Evaluate} (const arma\+::mat \&coordinates)
+\item 
+const arma\+::mat \& {\bf Get\+Initial\+Point} () const 
+\item 
+void {\bf Gradient} (const arma\+::mat \&coordinates, arma\+::mat \&gradient)
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+arma\+::mat {\bf initial\+Point}
+\item 
+{\bf Generalized\+Rosenbrock\+Function} {\bf rf}
+\item 
+{\bf Wood\+Function} {\bf wf}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The Generalized Rosenbrock function in 4 dimensions with the Wood Function in four dimensions. 
+
+In this function we are actually optimizing a 2x4 matrix of coordinates, not a vector. 
+
+Definition at line 144 of file test\+\_\+functions.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function@{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function}!Rosenbrock\+Wood\+Function@{Rosenbrock\+Wood\+Function}}
+\index{Rosenbrock\+Wood\+Function@{Rosenbrock\+Wood\+Function}!mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function@{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function}}
+\subsubsection[{Rosenbrock\+Wood\+Function()}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function\+::\+Rosenbrock\+Wood\+Function (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1optimization_1_1test_1_1RosenbrockWoodFunction_a663c01e89065a590d024ffc7a74a00c1}
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function@{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function@{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function}}
+\subsubsection[{Evaluate(const arma\+::mat \&coordinates)}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function\+::\+Evaluate (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{coordinates}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1optimization_1_1test_1_1RosenbrockWoodFunction_aa32de0525af8b3c296ed4faade406c41}
+\index{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function@{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function}!Get\+Initial\+Point@{Get\+Initial\+Point}}
+\index{Get\+Initial\+Point@{Get\+Initial\+Point}!mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function@{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function}}
+\subsubsection[{Get\+Initial\+Point() const }]{\setlength{\rightskip}{0pt plus 5cm}const arma\+::mat\& mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function\+::\+Get\+Initial\+Point (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1optimization_1_1test_1_1RosenbrockWoodFunction_a28fe8d39b1bf6879c886206a80e7dba5}
+\index{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function@{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function@{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function}}
+\subsubsection[{Gradient(const arma\+::mat \&coordinates, arma\+::mat \&gradient)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function\+::\+Gradient (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{coordinates, }
+\item[{arma\+::mat \&}]{gradient}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1optimization_1_1test_1_1RosenbrockWoodFunction_a715c5fe02b137503247cf8f1fa79fe9a}
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function@{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function}!initial\+Point@{initial\+Point}}
+\index{initial\+Point@{initial\+Point}!mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function@{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function}}
+\subsubsection[{initial\+Point}]{\setlength{\rightskip}{0pt plus 5cm}arma\+::mat mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function\+::initial\+Point\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1optimization_1_1test_1_1RosenbrockWoodFunction_a2fcaec05823503f6aff9c21ac0401ed5}
+
+
+Definition at line 155 of file test\+\_\+functions.\+hpp.
+
+\index{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function@{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function}!rf@{rf}}
+\index{rf@{rf}!mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function@{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function}}
+\subsubsection[{rf}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Generalized\+Rosenbrock\+Function} mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function\+::rf\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1optimization_1_1test_1_1RosenbrockWoodFunction_ac84bea4afa457ec97d671ceee56bc165}
+
+
+Definition at line 156 of file test\+\_\+functions.\+hpp.
+
+\index{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function@{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function}!wf@{wf}}
+\index{wf@{wf}!mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function@{mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function}}
+\subsubsection[{wf}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Wood\+Function} mlpack\+::optimization\+::test\+::\+Rosenbrock\+Wood\+Function\+::wf\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1optimization_1_1test_1_1RosenbrockWoodFunction_abcaa6f9433de5259df3e0b2f8e878123}
+
+
+Definition at line 157 of file test\+\_\+functions.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/optimizers/lbfgs/{\bf test\+\_\+functions.\+hpp}\end{DoxyCompactItemize}

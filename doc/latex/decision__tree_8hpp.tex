@@ -1,0 +1,34 @@
+\section{src/mlpack/methods/decision\+\_\+tree/decision\+\_\+tree.hpp File Reference}
+\label{decision__tree_8hpp}\index{src/mlpack/methods/decision\+\_\+tree/decision\+\_\+tree.\+hpp@{src/mlpack/methods/decision\+\_\+tree/decision\+\_\+tree.\+hpp}}
+Include dependency graph for decision\+\_\+tree.\+hpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{decision__tree_8hpp__incl}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class {\bf mlpack\+::tree\+::\+Decision\+Tree$<$ Fitness\+Function, Numeric\+Split\+Type, Categorical\+Split\+Type, Elem\+Type, No\+Recursion $>$}
+\begin{DoxyCompactList}\small\item\em This class implements a generic decision tree learner. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ {\bf mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ {\bf mlpack\+::tree}
+\begin{DoxyCompactList}\small\item\em Trees and tree-\/building procedures. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Fitness\+Function  = Gini\+Gain, template$<$ typename $>$ class Numeric\+Split\+Type = Best\+Binary\+Numeric\+Split, template$<$ typename $>$ class Categorical\+Split\+Type = All\+Categorical\+Split, typename Elem\+Type  = double$>$ }\\using {\bf mlpack\+::tree\+::\+Decision\+Stump} = Decision\+Tree$<$ Fitness\+Function, Numeric\+Split\+Type, Categorical\+Split\+Type, Elem\+Type, false $>$
+\begin{DoxyCompactList}\small\item\em Convenience typedef for decision stumps (single level decision trees). \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Ryan Curtin
+\end{DoxyAuthor}
+A generic decision tree learner. Its behavior can be controlled via template arguments. 

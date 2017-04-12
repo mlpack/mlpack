@@ -1,0 +1,705 @@
+\section{mlpack\+:\+:ann\+:\+:Drop\+Connect$<$ Input\+Data\+Type, Output\+Data\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1DropConnect}\index{mlpack\+::ann\+::\+Drop\+Connect$<$ Input\+Data\+Type, Output\+Data\+Type $>$@{mlpack\+::ann\+::\+Drop\+Connect$<$ Input\+Data\+Type, Output\+Data\+Type $>$}}
+
+
+The \doxyref{Drop\+Connect}{p.}{classmlpack_1_1ann_1_1DropConnect} layer is a regularizer that randomly with probability ratio sets the connection values to zero and scales the remaining elements by factor 1 /(1 -\/ ratio).  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Drop\+Connect} ()
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Drop\+Connect}{p.}{classmlpack_1_1ann_1_1DropConnect} object. \end{DoxyCompactList}\item 
+{\bf Drop\+Connect} (const size\+\_\+t in\+Size, const size\+\_\+t out\+Size, const double {\bf ratio}=0.\+5)
+\begin{DoxyCompactList}\small\item\em Creates the \doxyref{Drop\+Connect}{p.}{classmlpack_1_1ann_1_1DropConnect} Layer as a \doxyref{Linear}{p.}{classmlpack_1_1ann_1_1Linear} Object that takes input size, output size and ratio as parameter. \end{DoxyCompactList}\item 
+{\bf $\sim$\+Drop\+Connect} ()
+\item 
+{\footnotesize template$<$typename eT $>$ }\\void {\bf Backward} (arma\+::\+Mat$<$ eT $>$ \&\&input, arma\+::\+Mat$<$ eT $>$ \&\&gy, arma\+::\+Mat$<$ eT $>$ \&\&g)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of the \doxyref{Drop\+Connect}{p.}{classmlpack_1_1ann_1_1DropConnect} layer. \end{DoxyCompactList}\item 
+Output\+Data\+Type const \& {\bf Delta} () const 
+\begin{DoxyCompactList}\small\item\em Get the delta. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& {\bf Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+bool {\bf Deterministic} () const 
+\begin{DoxyCompactList}\small\item\em The value of the deterministic parameter. \end{DoxyCompactList}\item 
+bool \& {\bf Deterministic} ()
+\begin{DoxyCompactList}\small\item\em Modify the value of the deterministic parameter. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void {\bf Forward} (arma\+::\+Mat$<$ eT $>$ \&\&input, arma\+::\+Mat$<$ eT $>$ \&\&output)
+\begin{DoxyCompactList}\small\item\em Ordinary feed forward pass of the \doxyref{Drop\+Connect}{p.}{classmlpack_1_1ann_1_1DropConnect} layer. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void {\bf Gradient} (arma\+::\+Mat$<$ eT $>$ \&\&input, arma\+::\+Mat$<$ eT $>$ \&\&error, arma\+::\+Mat$<$ eT $>$ \&\&)
+\begin{DoxyCompactList}\small\item\em Calculate the gradient using the output delta and the input activation. \end{DoxyCompactList}\item 
+Output\+Data\+Type const \& {\bf Gradient} () const 
+\begin{DoxyCompactList}\small\item\em Get the gradient. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& {\bf Gradient} ()
+\begin{DoxyCompactList}\small\item\em Modify the gradient. \end{DoxyCompactList}\item 
+Input\+Data\+Type const \& {\bf Input\+Parameter} () const 
+\begin{DoxyCompactList}\small\item\em Get the input parameter. \end{DoxyCompactList}\item 
+Input\+Data\+Type \& {\bf Input\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the input parameter. \end{DoxyCompactList}\item 
+std\+::vector$<$ {\bf Layer\+Types} $>$ \& {\bf Model} ()
+\begin{DoxyCompactList}\small\item\em Get the model modules. \end{DoxyCompactList}\item 
+Output\+Data\+Type const \& {\bf Output\+Parameter} () const 
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& {\bf Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type const \& {\bf Parameters} () const 
+\begin{DoxyCompactList}\small\item\em Get the parameters. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& {\bf Parameters} ()
+\begin{DoxyCompactList}\small\item\em Modify the parameters. \end{DoxyCompactList}\item 
+double {\bf Ratio} () const 
+\begin{DoxyCompactList}\small\item\em The probability of setting a value to zero. \end{DoxyCompactList}\item 
+void {\bf Ratio} (const double r)
+\begin{DoxyCompactList}\small\item\em Modify the probability of setting a value to zero. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&ar, const unsigned int)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Layer\+Types} {\bf base\+Layer}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored layer module. \end{DoxyCompactList}\item 
+Output\+Data\+Type {\bf delta}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored delta object. \end{DoxyCompactList}\item 
+Output\+Data\+Type {\bf denoise}
+\begin{DoxyCompactList}\small\item\em Denoise mask for the weights. \end{DoxyCompactList}\item 
+bool {\bf deterministic}
+\begin{DoxyCompactList}\small\item\em If true dropout and scaling is disabled, see notes above. \end{DoxyCompactList}\item 
+Output\+Data\+Type {\bf gradient}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored gradient object. \end{DoxyCompactList}\item 
+Input\+Data\+Type {\bf input\+Parameter}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored input parameter object. \end{DoxyCompactList}\item 
+Output\+Data\+Type {\bf mask}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored mask object. \end{DoxyCompactList}\item 
+std\+::vector$<$ {\bf Layer\+Types} $>$ {\bf network}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored network modules. \end{DoxyCompactList}\item 
+Output\+Data\+Type {\bf output\+Parameter}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored output parameter object. \end{DoxyCompactList}\item 
+Output\+Data\+Type {\bf parameters}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored weight object. \end{DoxyCompactList}\item 
+double {\bf ratio}
+\begin{DoxyCompactList}\small\item\em The probability of setting a value to zero. \end{DoxyCompactList}\item 
+double {\bf scale}
+\begin{DoxyCompactList}\small\item\em The scale fraction. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat$>$\\*
+class mlpack\+::ann\+::\+Drop\+Connect$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+
+The \doxyref{Drop\+Connect}{p.}{classmlpack_1_1ann_1_1DropConnect} layer is a regularizer that randomly with probability ratio sets the connection values to zero and scales the remaining elements by factor 1 /(1 -\/ ratio). 
+
+The output is scaled with 1 / (1 -\/ p) when deterministic is false. In the deterministic mode(during testing), the layer just computes the output. The output is computed according to the input layer. If no input layer is given, it will take a linear layer as default.
+
+Note\+: During training you should set deterministic to false and during testing you should set deterministic to true.
+
+For more information, see the following.
+
+
+\begin{DoxyCode}
+@inproceedings\{WanICML2013,
+  title=\{Regularization of Neural Networks \textcolor{keyword}{using} DropConnect\},
+  booktitle = \{Proceedings of the 30th International Conference on Machine
+               Learning(ICML - 13)\},
+  author = \{Li Wan and Matthew Zeiler and Sixin Zhang and Yann L. Cun and
+            Rob Fergus\},
+  year = \{2013\}
+\}
+\end{DoxyCode}
+
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 62 of file dropconnect.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}!Drop\+Connect@{Drop\+Connect}}
+\index{Drop\+Connect@{Drop\+Connect}!mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}}
+\subsubsection[{Drop\+Connect()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ {\bf mlpack\+::ann\+::\+Drop\+Connect}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::{\bf Drop\+Connect} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1DropConnect_af6915653f18bce1510215ddf618d130b}
+
+
+Create the \doxyref{Drop\+Connect}{p.}{classmlpack_1_1ann_1_1DropConnect} object. 
+
+\index{mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}!Drop\+Connect@{Drop\+Connect}}
+\index{Drop\+Connect@{Drop\+Connect}!mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}}
+\subsubsection[{Drop\+Connect(const size\+\_\+t in\+Size, const size\+\_\+t out\+Size, const double ratio=0.\+5)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ {\bf mlpack\+::ann\+::\+Drop\+Connect}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::{\bf Drop\+Connect} (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{in\+Size, }
+\item[{const size\+\_\+t}]{out\+Size, }
+\item[{const double}]{ratio = {\ttfamily 0.5}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1DropConnect_a05e5acf0bd95ca3f54fa67c94e021a9c}
+
+
+Creates the \doxyref{Drop\+Connect}{p.}{classmlpack_1_1ann_1_1DropConnect} Layer as a \doxyref{Linear}{p.}{classmlpack_1_1ann_1_1Linear} Object that takes input size, output size and ratio as parameter. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em in\+Size} & The number of input units. \\
+\hline
+{\em out\+Size} & The number of output units. \\
+\hline
+{\em ratio} & The probability of setting a value to zero. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}!````~Drop\+Connect@{$\sim$\+Drop\+Connect}}
+\index{````~Drop\+Connect@{$\sim$\+Drop\+Connect}!mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}}
+\subsubsection[{$\sim$\+Drop\+Connect()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ {\bf mlpack\+::ann\+::\+Drop\+Connect}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::$\sim${\bf Drop\+Connect} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1DropConnect_ab884d1d6d70390f90217d624f34711f3}
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}!Backward@{Backward}}
+\index{Backward@{Backward}!mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}}
+\subsubsection[{Backward(arma\+::\+Mat$<$ e\+T $>$ \&\&input, arma\+::\+Mat$<$ e\+T $>$ \&\&gy, arma\+::\+Mat$<$ e\+T $>$ \&\&g)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename eT $>$ void {\bf mlpack\+::ann\+::\+Drop\+Connect}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Backward (
+\begin{DoxyParamCaption}
+\item[{arma\+::\+Mat$<$ eT $>$ \&\&}]{input, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&\&}]{gy, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&\&}]{g}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1DropConnect_aa9a1ddbba3b650baa6e30dc0f000cd58}
+
+
+Ordinary feed backward pass of the \doxyref{Drop\+Connect}{p.}{classmlpack_1_1ann_1_1DropConnect} layer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The propagated input activation. \\
+\hline
+{\em gy} & The backpropagated error. \\
+\hline
+{\em g} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}}
+\subsubsection[{Delta() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type const\& {\bf mlpack\+::ann\+::\+Drop\+Connect}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Delta (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1DropConnect_a573007f3da70fe2af6977ef9143f3fcb}
+
+
+Get the delta. 
+
+
+
+Definition at line 134 of file dropconnect.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Drop\+Connect$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::delta.
+
+\index{mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}}
+\subsubsection[{Delta()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type\& {\bf mlpack\+::ann\+::\+Drop\+Connect}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Delta (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1DropConnect_ad9cffce3c77a70e89a9f136a619e1bb6}
+
+
+Modify the delta. 
+
+
+
+Definition at line 136 of file dropconnect.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Drop\+Connect$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::delta.
+
+\index{mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}!Deterministic@{Deterministic}}
+\index{Deterministic@{Deterministic}!mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}}
+\subsubsection[{Deterministic() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ bool {\bf mlpack\+::ann\+::\+Drop\+Connect}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Deterministic (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1DropConnect_af096d8054dd0ecf730a6fa8e96e5c87b}
+
+
+The value of the deterministic parameter. 
+
+
+
+Definition at line 144 of file dropconnect.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Drop\+Connect$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::deterministic.
+
+\index{mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}!Deterministic@{Deterministic}}
+\index{Deterministic@{Deterministic}!mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}}
+\subsubsection[{Deterministic()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ bool\& {\bf mlpack\+::ann\+::\+Drop\+Connect}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Deterministic (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1DropConnect_a612833e074fe7cc626f4ab51453de58e}
+
+
+Modify the value of the deterministic parameter. 
+
+
+
+Definition at line 147 of file dropconnect.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Drop\+Connect$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::deterministic.
+
+\index{mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}!Forward@{Forward}}
+\index{Forward@{Forward}!mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}}
+\subsubsection[{Forward(arma\+::\+Mat$<$ e\+T $>$ \&\&input, arma\+::\+Mat$<$ e\+T $>$ \&\&output)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename eT $>$ void {\bf mlpack\+::ann\+::\+Drop\+Connect}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Forward (
+\begin{DoxyParamCaption}
+\item[{arma\+::\+Mat$<$ eT $>$ \&\&}]{input, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&\&}]{output}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1DropConnect_a512641afd252b5220ae8e77ddc3d9864}
+
+
+Ordinary feed forward pass of the \doxyref{Drop\+Connect}{p.}{classmlpack_1_1ann_1_1DropConnect} layer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input data used for evaluating the specified function. \\
+\hline
+{\em output} & Resulting output activation. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}}
+\subsubsection[{Gradient(arma\+::\+Mat$<$ e\+T $>$ \&\&input, arma\+::\+Mat$<$ e\+T $>$ \&\&error, arma\+::\+Mat$<$ e\+T $>$ \&\&)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename eT $>$ void {\bf mlpack\+::ann\+::\+Drop\+Connect}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Gradient (
+\begin{DoxyParamCaption}
+\item[{arma\+::\+Mat$<$ eT $>$ \&\&}]{input, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&\&}]{error, }
+\item[{arma\+::\+Mat$<$ eT $>$ \&\&}]{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1DropConnect_abf3f2c5a0e215e73042c55a679029fa0}
+
+
+Calculate the gradient using the output delta and the input activation. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The propagated input. \\
+\hline
+{\em d} & The calculated error. \\
+\hline
+{\em g} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}}
+\subsubsection[{Gradient() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type const\& {\bf mlpack\+::ann\+::\+Drop\+Connect}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Gradient (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1DropConnect_a4e6d6e6ecdd11b092282641fa9033f5b}
+
+
+Get the gradient. 
+
+
+
+Definition at line 139 of file dropconnect.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Drop\+Connect$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::gradient.
+
+\index{mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}}
+\subsubsection[{Gradient()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type\& {\bf mlpack\+::ann\+::\+Drop\+Connect}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Gradient (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1DropConnect_a263f5e443d532e10769b36db4532c906}
+
+
+Modify the gradient. 
+
+
+
+Definition at line 141 of file dropconnect.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Drop\+Connect$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::gradient.
+
+\index{mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}!Input\+Parameter@{Input\+Parameter}}
+\index{Input\+Parameter@{Input\+Parameter}!mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}}
+\subsubsection[{Input\+Parameter() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Input\+Data\+Type const\& {\bf mlpack\+::ann\+::\+Drop\+Connect}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Input\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1DropConnect_ab8baa36c835249bbe798d5f49b51fa08}
+
+
+Get the input parameter. 
+
+
+
+Definition at line 124 of file dropconnect.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Drop\+Connect$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::input\+Parameter.
+
+\index{mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}!Input\+Parameter@{Input\+Parameter}}
+\index{Input\+Parameter@{Input\+Parameter}!mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}}
+\subsubsection[{Input\+Parameter()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Input\+Data\+Type\& {\bf mlpack\+::ann\+::\+Drop\+Connect}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Input\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1DropConnect_aec9a66fba4fae0970e9dc91a7bd83031}
+
+
+Modify the input parameter. 
+
+
+
+Definition at line 126 of file dropconnect.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Drop\+Connect$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::input\+Parameter.
+
+\index{mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}!Model@{Model}}
+\index{Model@{Model}!mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}}
+\subsubsection[{Model()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ std\+::vector$<${\bf Layer\+Types}$>$\& {\bf mlpack\+::ann\+::\+Drop\+Connect}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Model (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1DropConnect_a39fd81285f3904cc39a8afacd4829f0b}
+
+
+Get the model modules. 
+
+
+
+Definition at line 116 of file dropconnect.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Drop\+Connect$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::network.
+
+\index{mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}}
+\subsubsection[{Output\+Parameter() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type const\& {\bf mlpack\+::ann\+::\+Drop\+Connect}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Output\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1DropConnect_acf2cccedd8dcae7ec3576c3d55c2a5d7}
+
+
+Get the output parameter. 
+
+
+
+Definition at line 129 of file dropconnect.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Drop\+Connect$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Parameter.
+
+\index{mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}}
+\subsubsection[{Output\+Parameter()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type\& {\bf mlpack\+::ann\+::\+Drop\+Connect}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Output\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1DropConnect_a8ef7af43f9123bb6262949aa890bc351}
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 131 of file dropconnect.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Drop\+Connect$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Parameter.
+
+\index{mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}}
+\subsubsection[{Parameters() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type const\& {\bf mlpack\+::ann\+::\+Drop\+Connect}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Parameters (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1DropConnect_af9258122f43da3618c8e5bc37953da63}
+
+
+Get the parameters. 
+
+
+
+Definition at line 119 of file dropconnect.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Drop\+Connect$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::parameters.
+
+\index{mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}}
+\subsubsection[{Parameters()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type\& {\bf mlpack\+::ann\+::\+Drop\+Connect}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Parameters (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1DropConnect_ae433b76c7884a7ed251a71c3ad3ad7c5}
+
+
+Modify the parameters. 
+
+
+
+Definition at line 121 of file dropconnect.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Drop\+Connect$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::parameters.
+
+\index{mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}!Ratio@{Ratio}}
+\index{Ratio@{Ratio}!mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}}
+\subsubsection[{Ratio() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ double {\bf mlpack\+::ann\+::\+Drop\+Connect}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Ratio (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1DropConnect_a20c9e7836c2c378fccd2e62f567b6ffd}
+
+
+The probability of setting a value to zero. 
+
+
+
+Definition at line 150 of file dropconnect.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Drop\+Connect$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::ratio.
+
+\index{mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}!Ratio@{Ratio}}
+\index{Ratio@{Ratio}!mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}}
+\subsubsection[{Ratio(const double r)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ void {\bf mlpack\+::ann\+::\+Drop\+Connect}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Ratio (
+\begin{DoxyParamCaption}
+\item[{const double}]{r}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1DropConnect_a3cb4e1651fd054b6e8263fbdfdd11a37}
+
+
+Modify the probability of setting a value to zero. 
+
+
+
+Definition at line 153 of file dropconnect.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Drop\+Connect$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::ratio, mlpack\+::ann\+::\+Drop\+Connect$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::scale, and mlpack\+::ann\+::\+Drop\+Connect$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Serialize().
+
+\index{mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}}
+\subsubsection[{Serialize(\+Archive \&ar, const unsigned int)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename Archive $>$ void {\bf mlpack\+::ann\+::\+Drop\+Connect}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const unsigned}]{int}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1DropConnect_ae20c0351244d7f07b00f2fff38598e48}
+
+
+Serialize the layer. 
+
+
+
+Referenced by mlpack\+::ann\+::\+Drop\+Connect$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Ratio().
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}!base\+Layer@{base\+Layer}}
+\index{base\+Layer@{base\+Layer}!mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}}
+\subsubsection[{base\+Layer}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ {\bf Layer\+Types} {\bf mlpack\+::ann\+::\+Drop\+Connect}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::base\+Layer\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1DropConnect_a29c4338022c0edf59d0f831ad9b621c0}
+
+
+Locally-\/stored layer module. 
+
+
+
+Definition at line 197 of file dropconnect.\+hpp.
+
+\index{mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}!delta@{delta}}
+\index{delta@{delta}!mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}}
+\subsubsection[{delta}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type {\bf mlpack\+::ann\+::\+Drop\+Connect}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::delta\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1DropConnect_a927e1a85cb1eee8ade598cab0d0a7819}
+
+
+Locally-\/stored delta object. 
+
+
+
+Definition at line 176 of file dropconnect.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Drop\+Connect$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Delta().
+
+\index{mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}!denoise@{denoise}}
+\index{denoise@{denoise}!mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}}
+\subsubsection[{denoise}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type {\bf mlpack\+::ann\+::\+Drop\+Connect}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::denoise\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1DropConnect_acf0e2cfcb410f74bb06620de524d8440}
+
+
+Denoise mask for the weights. 
+
+
+
+Definition at line 194 of file dropconnect.\+hpp.
+
+\index{mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}!deterministic@{deterministic}}
+\index{deterministic@{deterministic}!mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}}
+\subsubsection[{deterministic}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ bool {\bf mlpack\+::ann\+::\+Drop\+Connect}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::deterministic\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1DropConnect_a604d44d3cf1bde1d0ad966d5cae9ff65}
+
+
+If true dropout and scaling is disabled, see notes above. 
+
+
+
+Definition at line 191 of file dropconnect.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Drop\+Connect$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Deterministic().
+
+\index{mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}!gradient@{gradient}}
+\index{gradient@{gradient}!mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}}
+\subsubsection[{gradient}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type {\bf mlpack\+::ann\+::\+Drop\+Connect}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::gradient\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1DropConnect_a3b163a2e564fd70b8c0b890f458ae00f}
+
+
+Locally-\/stored gradient object. 
+
+
+
+Definition at line 179 of file dropconnect.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Drop\+Connect$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Gradient().
+
+\index{mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}!input\+Parameter@{input\+Parameter}}
+\index{input\+Parameter@{input\+Parameter}!mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}}
+\subsubsection[{input\+Parameter}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Input\+Data\+Type {\bf mlpack\+::ann\+::\+Drop\+Connect}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::input\+Parameter\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1DropConnect_a7d6e791a374d14f401e7c2a70e9a9b74}
+
+
+Locally-\/stored input parameter object. 
+
+
+
+Definition at line 182 of file dropconnect.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Drop\+Connect$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Input\+Parameter().
+
+\index{mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}!mask@{mask}}
+\index{mask@{mask}!mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}}
+\subsubsection[{mask}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type {\bf mlpack\+::ann\+::\+Drop\+Connect}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::mask\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1DropConnect_a6b58f886ec784feee52a5327b4965892}
+
+
+Locally-\/stored mask object. 
+
+
+
+Definition at line 188 of file dropconnect.\+hpp.
+
+\index{mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}!network@{network}}
+\index{network@{network}!mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}}
+\subsubsection[{network}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ std\+::vector$<${\bf Layer\+Types}$>$ {\bf mlpack\+::ann\+::\+Drop\+Connect}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::network\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1DropConnect_a766f86601fa03c92af9c37e742d2505e}
+
+
+Locally-\/stored network modules. 
+
+
+
+Definition at line 200 of file dropconnect.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Drop\+Connect$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Model().
+
+\index{mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}!output\+Parameter@{output\+Parameter}}
+\index{output\+Parameter@{output\+Parameter}!mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}}
+\subsubsection[{output\+Parameter}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type {\bf mlpack\+::ann\+::\+Drop\+Connect}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Parameter\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1DropConnect_aee969d872badf694936701544475293e}
+
+
+Locally-\/stored output parameter object. 
+
+
+
+Definition at line 185 of file dropconnect.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Drop\+Connect$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Output\+Parameter().
+
+\index{mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}!parameters@{parameters}}
+\index{parameters@{parameters}!mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}}
+\subsubsection[{parameters}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type {\bf mlpack\+::ann\+::\+Drop\+Connect}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::parameters\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1DropConnect_a4549fa950dee8e640f29aa88b511ca38}
+
+
+Locally-\/stored weight object. 
+
+
+
+Definition at line 173 of file dropconnect.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Drop\+Connect$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Parameters().
+
+\index{mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}!ratio@{ratio}}
+\index{ratio@{ratio}!mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}}
+\subsubsection[{ratio}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ double {\bf mlpack\+::ann\+::\+Drop\+Connect}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::ratio\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1DropConnect_ab9fc4f382294abac67562f6fffd0300d}
+
+
+The probability of setting a value to zero. 
+
+
+
+Definition at line 167 of file dropconnect.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Drop\+Connect$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Ratio().
+
+\index{mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}!scale@{scale}}
+\index{scale@{scale}!mlpack\+::ann\+::\+Drop\+Connect@{mlpack\+::ann\+::\+Drop\+Connect}}
+\subsubsection[{scale}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ double {\bf mlpack\+::ann\+::\+Drop\+Connect}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::scale\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1DropConnect_aedfa964e618fc551a8c65a9521b7071b}
+
+
+The scale fraction. 
+
+
+
+Definition at line 170 of file dropconnect.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Drop\+Connect$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Ratio().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/ann/layer/{\bf dropconnect.\+hpp}\end{DoxyCompactItemize}

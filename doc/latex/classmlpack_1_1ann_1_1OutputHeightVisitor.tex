@@ -1,0 +1,103 @@
+\section{mlpack\+:\+:ann\+:\+:Output\+Height\+Visitor Class Reference}
+\label{classmlpack_1_1ann_1_1OutputHeightVisitor}\index{mlpack\+::ann\+::\+Output\+Height\+Visitor@{mlpack\+::ann\+::\+Output\+Height\+Visitor}}
+
+
+\doxyref{Output\+Width\+Visitor}{p.}{classmlpack_1_1ann_1_1OutputWidthVisitor} exposes the Output\+Height() method of the given module.  
+
+
+
+
+Inheritance diagram for mlpack\+:\+:ann\+:\+:Output\+Height\+Visitor\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=178pt]{classmlpack_1_1ann_1_1OutputHeightVisitor__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Layer\+Type $>$ }\\size\+\_\+t {\bf operator()} (Layer\+Type $\ast$layer) const 
+\begin{DoxyCompactList}\small\item\em Return the output height. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::enable\+\_\+if$<$ !Has\+Input\+Height$<$ T, size\+\_\+t \&(T\+::$\ast$)()$>$\+::value \&\&!Has\+Model\+Check$<$ T, std\+::vector$<$ {\bf Layer\+Types} $>$ \&(T\+::$\ast$)()$>$\+::value, size\+\_\+t $>$\+::type {\bf Layer\+Output\+Height} (T $\ast$layer) const 
+\begin{DoxyCompactList}\small\item\em Return 0 if the module doesn\textquotesingle{}t implement the Input\+Height() or Model() function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::enable\+\_\+if$<$ Has\+Input\+Height$<$ T, size\+\_\+t \&(T\+::$\ast$)()$>$\+::value \&\&!Has\+Model\+Check$<$ T, std\+::vector$<$ {\bf Layer\+Types} $>$ \&(T\+::$\ast$)()$>$\+::value, size\+\_\+t $>$\+::type {\bf Layer\+Output\+Height} (T $\ast$layer) const 
+\begin{DoxyCompactList}\small\item\em Return the output height if the module implements the Input\+Height() function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::enable\+\_\+if$<$ !Has\+Input\+Height$<$ T, size\+\_\+t \&(T\+::$\ast$)()$>$\+::value \&\&Has\+Model\+Check$<$ T, std\+::vector$<$ {\bf Layer\+Types} $>$ \&(T\+::$\ast$)()$>$\+::value, size\+\_\+t $>$\+::type {\bf Layer\+Output\+Height} (T $\ast$layer) const 
+\begin{DoxyCompactList}\small\item\em Return the output height if the module implements the Model() function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::enable\+\_\+if$<$ Has\+Input\+Height$<$ T, size\+\_\+t \&(T\+::$\ast$)()$>$\+::value \&\&Has\+Model\+Check$<$ T, std\+::vector$<$ {\bf Layer\+Types} $>$ \&(T\+::$\ast$)()$>$\+::value, size\+\_\+t $>$\+::type {\bf Layer\+Output\+Height} (T $\ast$layer) const 
+\begin{DoxyCompactList}\small\item\em Return the output height if the module implement the Model() or Input\+Height() function. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\doxyref{Output\+Width\+Visitor}{p.}{classmlpack_1_1ann_1_1OutputWidthVisitor} exposes the Output\+Height() method of the given module. 
+
+Definition at line 28 of file output\+\_\+height\+\_\+visitor.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::ann\+::\+Output\+Height\+Visitor@{mlpack\+::ann\+::\+Output\+Height\+Visitor}!Layer\+Output\+Height@{Layer\+Output\+Height}}
+\index{Layer\+Output\+Height@{Layer\+Output\+Height}!mlpack\+::ann\+::\+Output\+Height\+Visitor@{mlpack\+::ann\+::\+Output\+Height\+Visitor}}
+\subsubsection[{Layer\+Output\+Height(\+T $\ast$layer) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ std\+::enable\+\_\+if$<$ !Has\+Input\+Height$<$T, size\+\_\+t\&(T\+::$\ast$)()$>$\+::value \&\& !Has\+Model\+Check$<$T, std\+::vector$<${\bf Layer\+Types}$>$\&(T\+::$\ast$)()$>$\+::value, size\+\_\+t$>$\+::type mlpack\+::ann\+::\+Output\+Height\+Visitor\+::\+Layer\+Output\+Height (
+\begin{DoxyParamCaption}
+\item[{T $\ast$}]{layer}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1OutputHeightVisitor_a09787c780fe1e735ba333c15614ec803}
+
+
+Return 0 if the module doesn\textquotesingle{}t implement the Input\+Height() or Model() function. 
+
+\index{mlpack\+::ann\+::\+Output\+Height\+Visitor@{mlpack\+::ann\+::\+Output\+Height\+Visitor}!Layer\+Output\+Height@{Layer\+Output\+Height}}
+\index{Layer\+Output\+Height@{Layer\+Output\+Height}!mlpack\+::ann\+::\+Output\+Height\+Visitor@{mlpack\+::ann\+::\+Output\+Height\+Visitor}}
+\subsubsection[{Layer\+Output\+Height(\+T $\ast$layer) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ std\+::enable\+\_\+if$<$ Has\+Input\+Height$<$T, size\+\_\+t\&(T\+::$\ast$)()$>$\+::value \&\& !Has\+Model\+Check$<$T, std\+::vector$<${\bf Layer\+Types}$>$\&(T\+::$\ast$)()$>$\+::value, size\+\_\+t$>$\+::type mlpack\+::ann\+::\+Output\+Height\+Visitor\+::\+Layer\+Output\+Height (
+\begin{DoxyParamCaption}
+\item[{T $\ast$}]{layer}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1OutputHeightVisitor_a50f100518f614041de702a09cdf10f39}
+
+
+Return the output height if the module implements the Input\+Height() function. 
+
+\index{mlpack\+::ann\+::\+Output\+Height\+Visitor@{mlpack\+::ann\+::\+Output\+Height\+Visitor}!Layer\+Output\+Height@{Layer\+Output\+Height}}
+\index{Layer\+Output\+Height@{Layer\+Output\+Height}!mlpack\+::ann\+::\+Output\+Height\+Visitor@{mlpack\+::ann\+::\+Output\+Height\+Visitor}}
+\subsubsection[{Layer\+Output\+Height(\+T $\ast$layer) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ std\+::enable\+\_\+if$<$ !Has\+Input\+Height$<$T, size\+\_\+t\&(T\+::$\ast$)()$>$\+::value \&\& Has\+Model\+Check$<$T, std\+::vector$<${\bf Layer\+Types}$>$\&(T\+::$\ast$)()$>$\+::value, size\+\_\+t$>$\+::type mlpack\+::ann\+::\+Output\+Height\+Visitor\+::\+Layer\+Output\+Height (
+\begin{DoxyParamCaption}
+\item[{T $\ast$}]{layer}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1OutputHeightVisitor_a376986fe6846544f656d4dc6a198c1f2}
+
+
+Return the output height if the module implements the Model() function. 
+
+\index{mlpack\+::ann\+::\+Output\+Height\+Visitor@{mlpack\+::ann\+::\+Output\+Height\+Visitor}!Layer\+Output\+Height@{Layer\+Output\+Height}}
+\index{Layer\+Output\+Height@{Layer\+Output\+Height}!mlpack\+::ann\+::\+Output\+Height\+Visitor@{mlpack\+::ann\+::\+Output\+Height\+Visitor}}
+\subsubsection[{Layer\+Output\+Height(\+T $\ast$layer) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ std\+::enable\+\_\+if$<$ Has\+Input\+Height$<$T, size\+\_\+t\&(T\+::$\ast$)()$>$\+::value \&\& Has\+Model\+Check$<$T, std\+::vector$<${\bf Layer\+Types}$>$\&(T\+::$\ast$)()$>$\+::value, size\+\_\+t$>$\+::type mlpack\+::ann\+::\+Output\+Height\+Visitor\+::\+Layer\+Output\+Height (
+\begin{DoxyParamCaption}
+\item[{T $\ast$}]{layer}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1OutputHeightVisitor_ae24bbdc639652440c7fbdbb1c6aa69c5}
+
+
+Return the output height if the module implement the Model() or Input\+Height() function. 
+
+\index{mlpack\+::ann\+::\+Output\+Height\+Visitor@{mlpack\+::ann\+::\+Output\+Height\+Visitor}!operator()@{operator()}}
+\index{operator()@{operator()}!mlpack\+::ann\+::\+Output\+Height\+Visitor@{mlpack\+::ann\+::\+Output\+Height\+Visitor}}
+\subsubsection[{operator()(\+Layer\+Type $\ast$layer) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Layer\+Type $>$ size\+\_\+t mlpack\+::ann\+::\+Output\+Height\+Visitor\+::operator() (
+\begin{DoxyParamCaption}
+\item[{Layer\+Type $\ast$}]{layer}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1ann_1_1OutputHeightVisitor_afcb7e2d92bb71b8dcc634e6d26c00912}
+
+
+Return the output height. 
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/ann/visitor/{\bf output\+\_\+height\+\_\+visitor.\+hpp}\end{DoxyCompactItemize}

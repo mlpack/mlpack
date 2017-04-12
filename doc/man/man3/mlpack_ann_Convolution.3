@@ -1,0 +1,663 @@
+.TH "mlpack::ann::Convolution< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::ann::Convolution< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType > \- Implementation of the \fBConvolution\fP class\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBConvolution\fP ()"
+.br
+.RI "\fICreate the \fBConvolution\fP object\&. \fP"
+.ti -1c
+.RI "\fBConvolution\fP (const size_t \fBinSize\fP, const size_t \fBoutSize\fP, const size_t \fBkW\fP, const size_t \fBkH\fP, const size_t \fBdW\fP=1, const size_t \fBdH\fP=1, const size_t \fBpadW\fP=0, const size_t \fBpadH\fP=0, const size_t \fBinputWidth\fP=0, const size_t \fBinputHeight\fP=0)"
+.br
+.RI "\fICreate the \fBConvolution\fP object using the specified number of input maps, output maps, filter size, stride and padding parameter\&. \fP"
+.ti -1c
+.RI "template<typename eT > void \fBBackward\fP (const arma::Mat< eT > &&, arma::Mat< eT > &&gy, arma::Mat< eT > &&g)"
+.br
+.RI "\fIOrdinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f\&. \fP"
+.ti -1c
+.RI "OutputDataType const & \fBDelta\fP () const "
+.br
+.RI "\fIGet the delta\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBDelta\fP ()"
+.br
+.RI "\fIModify the delta\&. \fP"
+.ti -1c
+.RI "template<typename eT > void \fBForward\fP (const arma::Mat< eT > &&input, arma::Mat< eT > &&output)"
+.br
+.RI "\fIOrdinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. \fP"
+.ti -1c
+.RI "template<typename eT > void \fBGradient\fP (const arma::Mat< eT > &&, arma::Mat< eT > &&error, arma::Mat< eT > &&\fBgradient\fP)"
+.br
+.ti -1c
+.RI "OutputDataType const & \fBGradient\fP () const "
+.br
+.RI "\fIGet the gradient\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBGradient\fP ()"
+.br
+.RI "\fIModify the gradient\&. \fP"
+.ti -1c
+.RI "size_t const & \fBInputHeight\fP () const "
+.br
+.RI "\fIGet the input height\&. \fP"
+.ti -1c
+.RI "size_t & \fBInputHeight\fP ()"
+.br
+.RI "\fIModify the input height\&. \fP"
+.ti -1c
+.RI "InputDataType const & \fBInputParameter\fP () const "
+.br
+.RI "\fIGet the input parameter\&. \fP"
+.ti -1c
+.RI "InputDataType & \fBInputParameter\fP ()"
+.br
+.RI "\fIModify the input parameter\&. \fP"
+.ti -1c
+.RI "size_t const & \fBInputWidth\fP () const "
+.br
+.RI "\fIGet the input width\&. \fP"
+.ti -1c
+.RI "size_t & \fBInputWidth\fP ()"
+.br
+.RI "\fIModify input the width\&. \fP"
+.ti -1c
+.RI "size_t const & \fBOutputHeight\fP () const "
+.br
+.RI "\fIGet the output height\&. \fP"
+.ti -1c
+.RI "size_t & \fBOutputHeight\fP ()"
+.br
+.RI "\fIModify the output height\&. \fP"
+.ti -1c
+.RI "OutputDataType const & \fBOutputParameter\fP () const "
+.br
+.RI "\fIGet the output parameter\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP ()"
+.br
+.RI "\fIModify the output parameter\&. \fP"
+.ti -1c
+.RI "size_t const & \fBOutputWidth\fP () const "
+.br
+.RI "\fIGet the output width\&. \fP"
+.ti -1c
+.RI "size_t & \fBOutputWidth\fP ()"
+.br
+.RI "\fIModify the output width\&. \fP"
+.ti -1c
+.RI "OutputDataType const & \fBParameters\fP () const "
+.br
+.RI "\fIGet the parameters\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBParameters\fP ()"
+.br
+.RI "\fIModify the parameters\&. \fP"
+.ti -1c
+.RI "void \fBReset\fP ()"
+.br
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int)"
+.br
+.RI "\fISerialize the layer\&. \fP"
+.in -1c
+.SS "Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "size_t \fBConvOutSize\fP (const size_t size, const size_t k, const size_t s, const size_t p)"
+.br
+.ti -1c
+.RI "template<typename eT > void \fBPad\fP (const arma::Mat< eT > &input, size_t wPad, size_t hPad, arma::Mat< eT > &output)"
+.br
+.ti -1c
+.RI "template<typename eT > void \fBPad\fP (const arma::Cube< eT > &input, size_t wPad, size_t hPad, arma::Cube< eT > &output)"
+.br
+.ti -1c
+.RI "template<typename eT > void \fBRotate180\fP (const arma::Cube< eT > &input, arma::Cube< eT > &output)"
+.br
+.ti -1c
+.RI "template<typename eT > void \fBRotate180\fP (const arma::Mat< eT > &input, arma::Mat< eT > &output)"
+.br
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "arma::mat \fBbias\fP"
+.br
+.RI "\fILocally-stored bias term object\&. \fP"
+.ti -1c
+.RI "OutputDataType \fBdelta\fP"
+.br
+.RI "\fILocally-stored delta object\&. \fP"
+.ti -1c
+.RI "size_t \fBdH\fP"
+.br
+.RI "\fILocally-stored stride of the filter in y-direction\&. \fP"
+.ti -1c
+.RI "size_t \fBdW\fP"
+.br
+.RI "\fILocally-stored stride of the filter in x-direction\&. \fP"
+.ti -1c
+.RI "OutputDataType \fBgradient\fP"
+.br
+.RI "\fILocally-stored gradient object\&. \fP"
+.ti -1c
+.RI "arma::cube \fBgradientTemp\fP"
+.br
+.RI "\fILocally-stored transformed gradient parameter\&. \fP"
+.ti -1c
+.RI "arma::cube \fBgTemp\fP"
+.br
+.RI "\fILocally-stored transformed error parameter\&. \fP"
+.ti -1c
+.RI "size_t \fBinputHeight\fP"
+.br
+.RI "\fILocally-stored input height\&. \fP"
+.ti -1c
+.RI "arma::cube \fBinputPaddedTemp\fP"
+.br
+.RI "\fILocally-stored transformed padded input parameter\&. \fP"
+.ti -1c
+.RI "InputDataType \fBinputParameter\fP"
+.br
+.RI "\fILocally-stored input parameter object\&. \fP"
+.ti -1c
+.RI "arma::cube \fBinputTemp\fP"
+.br
+.RI "\fILocally-stored transformed input parameter\&. \fP"
+.ti -1c
+.RI "size_t \fBinputWidth\fP"
+.br
+.RI "\fILocally-stored input width\&. \fP"
+.ti -1c
+.RI "size_t \fBinSize\fP"
+.br
+.RI "\fILocally-stored number of input units\&. \fP"
+.ti -1c
+.RI "size_t \fBkH\fP"
+.br
+.RI "\fILocally-stored filter/kernel height\&. \fP"
+.ti -1c
+.RI "size_t \fBkW\fP"
+.br
+.RI "\fILocally-stored filter/kernel width\&. \fP"
+.ti -1c
+.RI "size_t \fBoutputHeight\fP"
+.br
+.RI "\fILocally-stored output height\&. \fP"
+.ti -1c
+.RI "OutputDataType \fBoutputParameter\fP"
+.br
+.RI "\fILocally-stored output parameter object\&. \fP"
+.ti -1c
+.RI "arma::cube \fBoutputTemp\fP"
+.br
+.RI "\fILocally-stored transformed output parameter\&. \fP"
+.ti -1c
+.RI "size_t \fBoutputWidth\fP"
+.br
+.RI "\fILocally-stored output width\&. \fP"
+.ti -1c
+.RI "size_t \fBoutSize\fP"
+.br
+.RI "\fILocally-stored number of output units\&. \fP"
+.ti -1c
+.RI "size_t \fBpadH\fP"
+.br
+.RI "\fILocally-stored padding height\&. \fP"
+.ti -1c
+.RI "size_t \fBpadW\fP"
+.br
+.RI "\fILocally-stored padding width\&. \fP"
+.ti -1c
+.RI "arma::cube \fBweight\fP"
+.br
+.RI "\fILocally-stored weight object\&. \fP"
+.ti -1c
+.RI "OutputDataType \fBweights\fP"
+.br
+.RI "\fILocally-stored weight object\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename ForwardConvolutionRule = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule = NaiveConvolution<ValidConvolution>, typename InputDataType = arma::mat, typename OutputDataType = arma::mat>
+.br
+class mlpack::ann::Convolution< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >"
+Implementation of the \fBConvolution\fP class\&. 
+
+The \fBConvolution\fP class represents a single layer of a neural network\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIForwardConvolutionRule\fP \fBConvolution\fP to perform forward process\&. 
+.br
+\fIBackwardConvolutionRule\fP \fBConvolution\fP to perform backward process\&. 
+.br
+\fIGradientConvolutionRule\fP \fBConvolution\fP to calculate gradient\&. 
+.br
+\fIInputDataType\fP Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fIOutputDataType\fP Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 46 of file convolution\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::\fBConvolution\fP ()"
+
+.PP
+Create the \fBConvolution\fP object\&. 
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::\fBConvolution\fP (const size_t inSize, const size_t outSize, const size_t kW, const size_t kH, const size_t dW = \fC1\fP, const size_t dH = \fC1\fP, const size_t padW = \fC0\fP, const size_t padH = \fC0\fP, const size_t inputWidth = \fC0\fP, const size_t inputHeight = \fC0\fP)"
+
+.PP
+Create the \fBConvolution\fP object using the specified number of input maps, output maps, filter size, stride and padding parameter\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinSize\fP The number of input maps\&. 
+.br
+\fIoutSize\fP The number of output maps\&. 
+.br
+\fIkW\fP Width of the filter/kernel\&. 
+.br
+\fIkH\fP Height of the filter/kernel\&. 
+.br
+\fIdW\fP Stride of filter application in the x direction\&. 
+.br
+\fIdH\fP Stride of filter application in the y direction\&. 
+.br
+\fIpadW\fP Padding width of the input\&. 
+.br
+\fIpadH\fP Padding height of the input\&. 
+.br
+\fIinputWidth\fP The widht of the input data\&. 
+.br
+\fIinputHeight\fP The height of the input data\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename eT > void \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::Backward (const arma::Mat< eT > &&, arma::Mat< eT > && gy, arma::Mat< eT > && g)"
+
+.PP
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f\&. Using the results from the feed forward pass\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP The propagated input activation\&. 
+.br
+\fIgy\fP The backpropagated error\&. 
+.br
+\fIg\fP The calculated gradient\&. 
+.RE
+.PP
+
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> size_t \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::ConvOutSize (const size_t size, const size_t k, const size_t s, const size_t p)\fC [inline]\fP, \fC [private]\fP"
+
+.PP
+Definition at line 181 of file convolution\&.hpp\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType const& \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::Delta () const\fC [inline]\fP"
+
+.PP
+Get the delta\&. 
+.PP
+Definition at line 135 of file convolution\&.hpp\&.
+.PP
+References mlpack::ann::Convolution< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::delta\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::Delta ()\fC [inline]\fP"
+
+.PP
+Modify the delta\&. 
+.PP
+Definition at line 137 of file convolution\&.hpp\&.
+.PP
+References mlpack::ann::Convolution< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::delta\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename eT > void \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::Forward (const arma::Mat< eT > && input, arma::Mat< eT > && output)"
+
+.PP
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input data used for evaluating the specified function\&. 
+.br
+\fIoutput\fP Resulting output activation\&. 
+.RE
+.PP
+
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename eT > void \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::Gradient (const arma::Mat< eT > &&, arma::Mat< eT > && error, arma::Mat< eT > && gradient)"
+
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType const& \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::Gradient () const\fC [inline]\fP"
+
+.PP
+Get the gradient\&. 
+.PP
+Definition at line 140 of file convolution\&.hpp\&.
+.PP
+References mlpack::ann::Convolution< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::gradient\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::Gradient ()\fC [inline]\fP"
+
+.PP
+Modify the gradient\&. 
+.PP
+Definition at line 142 of file convolution\&.hpp\&.
+.PP
+References mlpack::ann::Convolution< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::gradient\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> size_t const& \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::InputHeight () const\fC [inline]\fP"
+
+.PP
+Get the input height\&. 
+.PP
+Definition at line 150 of file convolution\&.hpp\&.
+.PP
+References mlpack::ann::Convolution< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::inputHeight\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> size_t& \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::InputHeight ()\fC [inline]\fP"
+
+.PP
+Modify the input height\&. 
+.PP
+Definition at line 152 of file convolution\&.hpp\&.
+.PP
+References mlpack::ann::Convolution< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::inputHeight\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> InputDataType const& \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::InputParameter () const\fC [inline]\fP"
+
+.PP
+Get the input parameter\&. 
+.PP
+Definition at line 125 of file convolution\&.hpp\&.
+.PP
+References mlpack::ann::Convolution< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::inputParameter\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> InputDataType& \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::InputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the input parameter\&. 
+.PP
+Definition at line 127 of file convolution\&.hpp\&.
+.PP
+References mlpack::ann::Convolution< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::inputParameter\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> size_t const& \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::InputWidth () const\fC [inline]\fP"
+
+.PP
+Get the input width\&. 
+.PP
+Definition at line 145 of file convolution\&.hpp\&.
+.PP
+References mlpack::ann::Convolution< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::inputWidth\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> size_t& \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::InputWidth ()\fC [inline]\fP"
+
+.PP
+Modify input the width\&. 
+.PP
+Definition at line 147 of file convolution\&.hpp\&.
+.PP
+References mlpack::ann::Convolution< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::inputWidth\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> size_t const& \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::OutputHeight () const\fC [inline]\fP"
+
+.PP
+Get the output height\&. 
+.PP
+Definition at line 160 of file convolution\&.hpp\&.
+.PP
+References mlpack::ann::Convolution< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::outputHeight\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> size_t& \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::OutputHeight ()\fC [inline]\fP"
+
+.PP
+Modify the output height\&. 
+.PP
+Definition at line 162 of file convolution\&.hpp\&.
+.PP
+References mlpack::ann::Convolution< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::outputHeight, and mlpack::ann::Convolution< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::Serialize()\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType const& \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::OutputParameter () const\fC [inline]\fP"
+
+.PP
+Get the output parameter\&. 
+.PP
+Definition at line 130 of file convolution\&.hpp\&.
+.PP
+References mlpack::ann::Convolution< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::outputParameter\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::OutputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the output parameter\&. 
+.PP
+Definition at line 132 of file convolution\&.hpp\&.
+.PP
+References mlpack::ann::Convolution< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::outputParameter\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> size_t const& \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::OutputWidth () const\fC [inline]\fP"
+
+.PP
+Get the output width\&. 
+.PP
+Definition at line 155 of file convolution\&.hpp\&.
+.PP
+References mlpack::ann::Convolution< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::outputWidth\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> size_t& \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::OutputWidth ()\fC [inline]\fP"
+
+.PP
+Modify the output width\&. 
+.PP
+Definition at line 157 of file convolution\&.hpp\&.
+.PP
+References mlpack::ann::Convolution< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::outputWidth\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename eT > void \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::Pad (const arma::Mat< eT > & input, size_t wPad, size_t hPad, arma::Mat< eT > & output)\fC [inline]\fP, \fC [private]\fP"
+
+.PP
+Definition at line 227 of file convolution\&.hpp\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename eT > void \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::Pad (const arma::Cube< eT > & input, size_t wPad, size_t hPad, arma::Cube< eT > & output)\fC [inline]\fP, \fC [private]\fP"
+
+.PP
+Definition at line 251 of file convolution\&.hpp\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType const& \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::Parameters () const\fC [inline]\fP"
+
+.PP
+Get the parameters\&. 
+.PP
+Definition at line 120 of file convolution\&.hpp\&.
+.PP
+References mlpack::ann::Convolution< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::weights\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::Parameters ()\fC [inline]\fP"
+
+.PP
+Modify the parameters\&. 
+.PP
+Definition at line 122 of file convolution\&.hpp\&.
+.PP
+References mlpack::ann::Convolution< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::weights\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> void \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::Reset ()"
+
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename eT > void \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::Rotate180 (const arma::Cube< eT > & input, arma::Cube< eT > & output)\fC [inline]\fP, \fC [private]\fP"
+
+.PP
+Definition at line 196 of file convolution\&.hpp\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename eT > void \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::Rotate180 (const arma::Mat< eT > & input, arma::Mat< eT > & output)\fC [inline]\fP, \fC [private]\fP"
+
+.PP
+Definition at line 212 of file convolution\&.hpp\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename Archive > void \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::Serialize (Archive & ar, const unsigned int)"
+
+.PP
+Serialize the layer\&. 
+.PP
+Referenced by mlpack::ann::Convolution< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::OutputHeight()\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> arma::mat \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::bias\fC [private]\fP"
+
+.PP
+Locally-stored bias term object\&. 
+.PP
+Definition at line 296 of file convolution\&.hpp\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::delta\fC [private]\fP"
+
+.PP
+Locally-stored delta object\&. 
+.PP
+Definition at line 326 of file convolution\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Convolution< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::Delta()\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> size_t \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::dH\fC [private]\fP"
+
+.PP
+Locally-stored stride of the filter in y-direction\&. 
+.PP
+Definition at line 281 of file convolution\&.hpp\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> size_t \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::dW\fC [private]\fP"
+
+.PP
+Locally-stored stride of the filter in x-direction\&. 
+.PP
+Definition at line 278 of file convolution\&.hpp\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::gradient\fC [private]\fP"
+
+.PP
+Locally-stored gradient object\&. 
+.PP
+Definition at line 329 of file convolution\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Convolution< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::Gradient()\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> arma::cube \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::gradientTemp\fC [private]\fP"
+
+.PP
+Locally-stored transformed gradient parameter\&. 
+.PP
+Definition at line 323 of file convolution\&.hpp\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> arma::cube \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::gTemp\fC [private]\fP"
+
+.PP
+Locally-stored transformed error parameter\&. 
+.PP
+Definition at line 320 of file convolution\&.hpp\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> size_t \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::inputHeight\fC [private]\fP"
+
+.PP
+Locally-stored input height\&. 
+.PP
+Definition at line 302 of file convolution\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Convolution< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::InputHeight()\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> arma::cube \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::inputPaddedTemp\fC [private]\fP"
+
+.PP
+Locally-stored transformed padded input parameter\&. 
+.PP
+Definition at line 317 of file convolution\&.hpp\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> InputDataType \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::inputParameter\fC [private]\fP"
+
+.PP
+Locally-stored input parameter object\&. 
+.PP
+Definition at line 332 of file convolution\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Convolution< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::InputParameter()\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> arma::cube \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::inputTemp\fC [private]\fP"
+
+.PP
+Locally-stored transformed input parameter\&. 
+.PP
+Definition at line 314 of file convolution\&.hpp\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> size_t \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::inputWidth\fC [private]\fP"
+
+.PP
+Locally-stored input width\&. 
+.PP
+Definition at line 299 of file convolution\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Convolution< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::InputWidth()\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> size_t \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::inSize\fC [private]\fP"
+
+.PP
+Locally-stored number of input units\&. 
+.PP
+Definition at line 266 of file convolution\&.hpp\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> size_t \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::kH\fC [private]\fP"
+
+.PP
+Locally-stored filter/kernel height\&. 
+.PP
+Definition at line 275 of file convolution\&.hpp\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> size_t \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::kW\fC [private]\fP"
+
+.PP
+Locally-stored filter/kernel width\&. 
+.PP
+Definition at line 272 of file convolution\&.hpp\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> size_t \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::outputHeight\fC [private]\fP"
+
+.PP
+Locally-stored output height\&. 
+.PP
+Definition at line 308 of file convolution\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Convolution< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::OutputHeight()\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::outputParameter\fC [private]\fP"
+
+.PP
+Locally-stored output parameter object\&. 
+.PP
+Definition at line 335 of file convolution\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Convolution< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::OutputParameter()\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> arma::cube \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::outputTemp\fC [private]\fP"
+
+.PP
+Locally-stored transformed output parameter\&. 
+.PP
+Definition at line 311 of file convolution\&.hpp\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> size_t \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::outputWidth\fC [private]\fP"
+
+.PP
+Locally-stored output width\&. 
+.PP
+Definition at line 305 of file convolution\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Convolution< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::OutputWidth()\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> size_t \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::outSize\fC [private]\fP"
+
+.PP
+Locally-stored number of output units\&. 
+.PP
+Definition at line 269 of file convolution\&.hpp\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> size_t \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::padH\fC [private]\fP"
+
+.PP
+Locally-stored padding height\&. 
+.PP
+Definition at line 287 of file convolution\&.hpp\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> size_t \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::padW\fC [private]\fP"
+
+.PP
+Locally-stored padding width\&. 
+.PP
+Definition at line 284 of file convolution\&.hpp\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> arma::cube \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::weight\fC [private]\fP"
+
+.PP
+Locally-stored weight object\&. 
+.PP
+Definition at line 293 of file convolution\&.hpp\&.
+.SS "template<typename ForwardConvolutionRule  = NaiveConvolution<ValidConvolution>, typename BackwardConvolutionRule  = NaiveConvolution<FullConvolution>, typename GradientConvolutionRule  = NaiveConvolution<ValidConvolution>, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType \fBmlpack::ann::Convolution\fP< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::weights\fC [private]\fP"
+
+.PP
+Locally-stored weight object\&. 
+.PP
+Definition at line 290 of file convolution\&.hpp\&.
+.PP
+Referenced by mlpack::ann::Convolution< ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType >::Parameters()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

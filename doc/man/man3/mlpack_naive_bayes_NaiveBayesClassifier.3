@@ -1,0 +1,280 @@
+.TH "mlpack::naive_bayes::NaiveBayesClassifier< MatType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::naive_bayes::NaiveBayesClassifier< MatType > \- The simple Naive Bayes classifier\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBNaiveBayesClassifier\fP (const MatType &data, const arma::Row< size_t > &labels, const size_t classes, const bool incrementalVariance=false)"
+.br
+.RI "\fIInitializes the classifier as per the input and then trains it by calculating the sample mean and variances\&. \fP"
+.ti -1c
+.RI "\fBNaiveBayesClassifier\fP (const size_t dimensionality=0, const size_t classes=0)"
+.br
+.RI "\fIInitialize the Naive Bayes classifier without performing training\&. \fP"
+.ti -1c
+.RI "void \fBClassify\fP (const MatType &data, arma::Row< size_t > &results)"
+.br
+.RI "\fIGiven a bunch of data points, this function evaluates the class of each of those data points, and puts it in the vector 'results'\&. \fP"
+.ti -1c
+.RI "const MatType & \fBMeans\fP () const "
+.br
+.RI "\fIGet the sample means for each class\&. \fP"
+.ti -1c
+.RI "MatType & \fBMeans\fP ()"
+.br
+.RI "\fIModify the sample means for each class\&. \fP"
+.ti -1c
+.RI "const arma::vec & \fBProbabilities\fP () const "
+.br
+.RI "\fIGet the prior probabilities for each class\&. \fP"
+.ti -1c
+.RI "arma::vec & \fBProbabilities\fP ()"
+.br
+.RI "\fIModify the prior probabilities for each class\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int)"
+.br
+.RI "\fISerialize the classifier\&. \fP"
+.ti -1c
+.RI "void \fBTrain\fP (const MatType &data, const arma::Row< size_t > &labels, const bool incremental=true)"
+.br
+.RI "\fITrain the Naive Bayes classifier on the given dataset\&. \fP"
+.ti -1c
+.RI "template<typename VecType > void \fBTrain\fP (const VecType &point, const size_t label)"
+.br
+.RI "\fITrain the Naive Bayes classifier on the given point\&. \fP"
+.ti -1c
+.RI "const MatType & \fBVariances\fP () const "
+.br
+.RI "\fIGet the sample variances for each class\&. \fP"
+.ti -1c
+.RI "MatType & \fBVariances\fP ()"
+.br
+.RI "\fIModify the sample variances for each class\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "MatType \fBmeans\fP"
+.br
+.RI "\fISample mean for each class\&. \fP"
+.ti -1c
+.RI "arma::vec \fBprobabilities\fP"
+.br
+.RI "\fIClass probabilities\&. \fP"
+.ti -1c
+.RI "size_t \fBtrainingPoints\fP"
+.br
+.RI "\fINumber of training points seen so far\&. \fP"
+.ti -1c
+.RI "MatType \fBvariances\fP"
+.br
+.RI "\fISample variances for each class\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename MatType = arma::mat>
+.br
+class mlpack::naive_bayes::NaiveBayesClassifier< MatType >"
+The simple Naive Bayes classifier\&. 
+
+This class trains on the data by calculating the sample mean and variance of the features with respect to each of the labels, and also the class probabilities\&. The class labels are assumed to be positive integers (starting with 0), and are expected to be the last row of the data input to the constructor\&.
+.PP
+Mathematically, it computes P(X_i = x_i | Y = y_j) for each feature X_i for each of the labels y_j\&. Alongwith this, it also computes the class probabilities P(Y = y_j)\&.
+.PP
+For classifying a data point (x_1, x_2, \&.\&.\&., x_n), it computes the following: arg max_y(P(Y = y)*P(X_1 = x_1 | Y = y) * \&.\&.\&. * P(X_n = x_n | Y = y))
+.PP
+Example use:
+.PP
+.PP
+.nf
+extern arma::mat training_data, testing_data;
+NaiveBayesClassifier<> nbc(training_data, 5);
+arma::vec results;
+
+nbc\&.Classify(testing_data, results);
+.fi
+.PP
+ 
+.PP
+Definition at line 47 of file naive_bayes_classifier\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename MatType  = arma::mat> \fBmlpack::naive_bayes::NaiveBayesClassifier\fP< MatType >::\fBNaiveBayesClassifier\fP (const MatType & data, const arma::Row< size_t > & labels, const size_t classes, const bool incrementalVariance = \fCfalse\fP)"
+
+.PP
+Initializes the classifier as per the input and then trains it by calculating the sample mean and variances\&. Example use: 
+.PP
+.nf
+extern arma::mat training_data, testing_data;
+extern arma::Row<size_t> labels;
+NaiveBayesClassifier nbc(training_data, labels, 5);
+
+.fi
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Training data points\&. 
+.br
+\fIlabels\fP Labels corresponding to training data points\&. 
+.br
+\fIclasses\fP Number of classes in this classifier\&. 
+.br
+\fIincrementalVariance\fP If true, an incremental algorithm is used to calculate the variance; this can prevent loss of precision in some cases, but will be somewhat slower to calculate\&. 
+.RE
+.PP
+
+.SS "template<typename MatType  = arma::mat> \fBmlpack::naive_bayes::NaiveBayesClassifier\fP< MatType >::\fBNaiveBayesClassifier\fP (const size_t dimensionality = \fC0\fP, const size_t classes = \fC0\fP)"
+
+.PP
+Initialize the Naive Bayes classifier without performing training\&. All of the parameters of the model will be initialized to zero\&. Be sure to use \fBTrain()\fP before calling \fBClassify()\fP, otherwise the results may be meaningless\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename MatType  = arma::mat> void \fBmlpack::naive_bayes::NaiveBayesClassifier\fP< MatType >::Classify (const MatType & data, arma::Row< size_t > & results)"
+
+.PP
+Given a bunch of data points, this function evaluates the class of each of those data points, and puts it in the vector 'results'\&. 
+.PP
+.nf
+arma::mat test_data; // each column is a test point
+arma::Row<size_t> results;
+\&.\&.\&.
+nbc\&.Classify(test_data, &results);
+
+.fi
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP List of data points\&. 
+.br
+\fIresults\fP Vector that class predictions will be placed into\&. 
+.RE
+.PP
+
+.SS "template<typename MatType  = arma::mat> const MatType& \fBmlpack::naive_bayes::NaiveBayesClassifier\fP< MatType >::Means () const\fC [inline]\fP"
+
+.PP
+Get the sample means for each class\&. 
+.PP
+Definition at line 129 of file naive_bayes_classifier\&.hpp\&.
+.PP
+References mlpack::naive_bayes::NaiveBayesClassifier< MatType >::means\&.
+.SS "template<typename MatType  = arma::mat> MatType& \fBmlpack::naive_bayes::NaiveBayesClassifier\fP< MatType >::Means ()\fC [inline]\fP"
+
+.PP
+Modify the sample means for each class\&. 
+.PP
+Definition at line 131 of file naive_bayes_classifier\&.hpp\&.
+.PP
+References mlpack::naive_bayes::NaiveBayesClassifier< MatType >::means\&.
+.SS "template<typename MatType  = arma::mat> const arma::vec& \fBmlpack::naive_bayes::NaiveBayesClassifier\fP< MatType >::Probabilities () const\fC [inline]\fP"
+
+.PP
+Get the prior probabilities for each class\&. 
+.PP
+Definition at line 139 of file naive_bayes_classifier\&.hpp\&.
+.PP
+References mlpack::naive_bayes::NaiveBayesClassifier< MatType >::probabilities\&.
+.SS "template<typename MatType  = arma::mat> arma::vec& \fBmlpack::naive_bayes::NaiveBayesClassifier\fP< MatType >::Probabilities ()\fC [inline]\fP"
+
+.PP
+Modify the prior probabilities for each class\&. 
+.PP
+Definition at line 141 of file naive_bayes_classifier\&.hpp\&.
+.PP
+References mlpack::naive_bayes::NaiveBayesClassifier< MatType >::probabilities, and mlpack::naive_bayes::NaiveBayesClassifier< MatType >::Serialize()\&.
+.SS "template<typename MatType  = arma::mat> template<typename Archive > void \fBmlpack::naive_bayes::NaiveBayesClassifier\fP< MatType >::Serialize (Archive & ar, const unsigned int)"
+
+.PP
+Serialize the classifier\&. 
+.PP
+Referenced by mlpack::naive_bayes::NaiveBayesClassifier< MatType >::Probabilities()\&.
+.SS "template<typename MatType  = arma::mat> void \fBmlpack::naive_bayes::NaiveBayesClassifier\fP< MatType >::Train (const MatType & data, const arma::Row< size_t > & labels, const bool incremental = \fCtrue\fP)"
+
+.PP
+Train the Naive Bayes classifier on the given dataset\&. If the incremental algorithm is used, the current model is used as a starting point (this is the default)\&. If the incremental algorithm is not used, then the current model is ignored and the new model will be trained only on the given data\&. Note that even if the incremental algorithm is not used, the data must have the same dimensionality and number of classes that the model was initialized with\&. If you want to change the dimensionality or number of classes, either re-initialize or call \fBMeans()\fP, \fBVariances()\fP, and \fBProbabilities()\fP individually to set them to the right size\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP The dataset to train on\&. 
+.br
+\fIincremental\fP Whether or not to use the incremental algorithm for training\&. 
+.RE
+.PP
+
+.SS "template<typename MatType  = arma::mat> template<typename VecType > void \fBmlpack::naive_bayes::NaiveBayesClassifier\fP< MatType >::Train (const VecType & point, const size_t label)"
+
+.PP
+Train the Naive Bayes classifier on the given point\&. This will use the incremental algorithm for updating the model parameters\&. The data must be the same dimensionality as the existing model parameters\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpoint\fP Data point to train on\&. 
+.br
+\fIlabel\fP Label of data point\&. 
+.RE
+.PP
+
+.SS "template<typename MatType  = arma::mat> const MatType& \fBmlpack::naive_bayes::NaiveBayesClassifier\fP< MatType >::Variances () const\fC [inline]\fP"
+
+.PP
+Get the sample variances for each class\&. 
+.PP
+Definition at line 134 of file naive_bayes_classifier\&.hpp\&.
+.PP
+References mlpack::naive_bayes::NaiveBayesClassifier< MatType >::variances\&.
+.SS "template<typename MatType  = arma::mat> MatType& \fBmlpack::naive_bayes::NaiveBayesClassifier\fP< MatType >::Variances ()\fC [inline]\fP"
+
+.PP
+Modify the sample variances for each class\&. 
+.PP
+Definition at line 136 of file naive_bayes_classifier\&.hpp\&.
+.PP
+References mlpack::naive_bayes::NaiveBayesClassifier< MatType >::variances\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename MatType  = arma::mat> MatType \fBmlpack::naive_bayes::NaiveBayesClassifier\fP< MatType >::means\fC [private]\fP"
+
+.PP
+Sample mean for each class\&. 
+.PP
+Definition at line 149 of file naive_bayes_classifier\&.hpp\&.
+.PP
+Referenced by mlpack::naive_bayes::NaiveBayesClassifier< MatType >::Means()\&.
+.SS "template<typename MatType  = arma::mat> arma::vec \fBmlpack::naive_bayes::NaiveBayesClassifier\fP< MatType >::probabilities\fC [private]\fP"
+
+.PP
+Class probabilities\&. 
+.PP
+Definition at line 153 of file naive_bayes_classifier\&.hpp\&.
+.PP
+Referenced by mlpack::naive_bayes::NaiveBayesClassifier< MatType >::Probabilities()\&.
+.SS "template<typename MatType  = arma::mat> size_t \fBmlpack::naive_bayes::NaiveBayesClassifier\fP< MatType >::trainingPoints\fC [private]\fP"
+
+.PP
+Number of training points seen so far\&. 
+.PP
+Definition at line 155 of file naive_bayes_classifier\&.hpp\&.
+.SS "template<typename MatType  = arma::mat> MatType \fBmlpack::naive_bayes::NaiveBayesClassifier\fP< MatType >::variances\fC [private]\fP"
+
+.PP
+Sample variances for each class\&. 
+.PP
+Definition at line 151 of file naive_bayes_classifier\&.hpp\&.
+.PP
+Referenced by mlpack::naive_bayes::NaiveBayesClassifier< MatType >::Variances()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,40 @@
+\section{src/mlpack/methods/kmeans/dual\+\_\+tree\+\_\+kmeans.hpp File Reference}
+\label{dual__tree__kmeans_8hpp}\index{src/mlpack/methods/kmeans/dual\+\_\+tree\+\_\+kmeans.\+hpp@{src/mlpack/methods/kmeans/dual\+\_\+tree\+\_\+kmeans.\+hpp}}
+Include dependency graph for dual\+\_\+tree\+\_\+kmeans.\+hpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dual__tree__kmeans_8hpp__incl}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class {\bf mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$}
+\begin{DoxyCompactList}\small\item\em An algorithm for an exact Lloyd iteration which simply uses dual-\/tree nearest-\/neighbor search to find the nearest centroid for each point in the dataset. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ {\bf mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ {\bf mlpack\+::kmeans}
+\begin{DoxyCompactList}\small\item\em K-\/\+Means clustering. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Metric\+Type , typename Mat\+Type $>$ }\\using {\bf mlpack\+::kmeans\+::\+Cover\+Tree\+Dual\+Tree\+K\+Means} = Dual\+Tree\+K\+Means$<$ Metric\+Type, Mat\+Type, tree\+::\+Standard\+Cover\+Tree $>$
+\begin{DoxyCompactList}\small\item\em A template typedef for the \doxyref{Dual\+Tree\+K\+Means}{p.}{classmlpack_1_1kmeans_1_1DualTreeKMeans} algorithm with the cover tree type. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Mat\+Type $>$ }\\using {\bf mlpack\+::kmeans\+::\+Default\+Dual\+Tree\+K\+Means} = Dual\+Tree\+K\+Means$<$ Metric\+Type, Mat\+Type $>$
+\begin{DoxyCompactList}\small\item\em A template typedef for the \doxyref{Dual\+Tree\+K\+Means}{p.}{classmlpack_1_1kmeans_1_1DualTreeKMeans} algorithm with the default tree type (a kd-\/tree). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\void {\bf mlpack\+::kmeans\+::\+Hide\+Child} (Tree\+Type \&node, const size\+\_\+t child, const typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ !tree\+::\+Tree\+Traits$<$ Tree\+Type $>$\+::Binary\+Tree $>$ $\ast$junk=0)
+\begin{DoxyCompactList}\small\item\em Utility function for hiding children. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\void {\bf mlpack\+::kmeans\+::\+Hide\+Child} (Tree\+Type \&node, const size\+\_\+t child, const typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ tree\+::\+Tree\+Traits$<$ Tree\+Type $>$\+::Binary\+Tree $>$ $\ast$junk=0)
+\begin{DoxyCompactList}\small\item\em Utility function for hiding children. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\void {\bf mlpack\+::kmeans\+::\+Restore\+Children} (Tree\+Type \&node, const typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$!tree\+::\+Tree\+Traits$<$ Tree\+Type $>$\+::Binary\+Tree $>$ $\ast$junk=0)
+\begin{DoxyCompactList}\small\item\em Utility function for restoring children to a non-\/binary tree. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\void {\bf mlpack\+::kmeans\+::\+Restore\+Children} (Tree\+Type \&node, const typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ tree\+::\+Tree\+Traits$<$ Tree\+Type $>$\+::Binary\+Tree $>$ $\ast$junk=0)
+\begin{DoxyCompactList}\small\item\em Utility function for restoring children to a binary tree. \end{DoxyCompactList}\end{DoxyCompactItemize}

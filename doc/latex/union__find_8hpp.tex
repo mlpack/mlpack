@@ -1,0 +1,39 @@
+\section{src/mlpack/methods/emst/union\+\_\+find.hpp File Reference}
+\label{union__find_8hpp}\index{src/mlpack/methods/emst/union\+\_\+find.\+hpp@{src/mlpack/methods/emst/union\+\_\+find.\+hpp}}
+Include dependency graph for union\+\_\+find.\+hpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{union__find_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=151pt]{union__find_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class {\bf mlpack\+::emst\+::\+Union\+Find}
+\begin{DoxyCompactList}\small\item\em A Union-\/\+Find data structure. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ {\bf mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ {\bf mlpack\+::emst}
+\begin{DoxyCompactList}\small\item\em Euclidean Minimum Spanning Trees. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Bill March ({\tt march@gatech.\+edu})
+\end{DoxyAuthor}
+Implements a union-\/find data structure. This structure tracks the components of a graph. Each point in the graph is initially in its own component. Calling unionfind.\+Union(x, y) unites the components indexed by x and y. unionfind.\+Find(x) returns the index of the component containing point x.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause B\+SD license. You should have received a copy of the 3-\/clause B\+SD license along with mlpack. If not, see {\tt http\+://www.\+opensource.\+org/licenses/\+B\+S\+D-\/3-\/\+Clause} for more information. 

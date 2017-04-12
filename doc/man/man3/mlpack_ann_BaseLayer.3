@@ -1,0 +1,229 @@
+.TH "mlpack::ann::BaseLayer< ActivationFunction, InputDataType, OutputDataType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::ann::BaseLayer< ActivationFunction, InputDataType, OutputDataType > \- Implementation of the base layer\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBBaseLayer\fP ()"
+.br
+.RI "\fICreate the \fBBaseLayer\fP object\&. \fP"
+.ti -1c
+.RI "template<typename eT > void \fBBackward\fP (const arma::Mat< eT > &&input, arma::Mat< eT > &&gy, arma::Mat< eT > &&g)"
+.br
+.RI "\fIOrdinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f\&. \fP"
+.ti -1c
+.RI "OutputDataType const & \fBDelta\fP () const "
+.br
+.RI "\fIGet the delta\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBDelta\fP ()"
+.br
+.RI "\fIModify the delta\&. \fP"
+.ti -1c
+.RI "template<typename InputType , typename OutputType > void \fBForward\fP (const InputType &&input, OutputType &&output)"
+.br
+.RI "\fIOrdinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. \fP"
+.ti -1c
+.RI "InputDataType const & \fBInputParameter\fP () const "
+.br
+.RI "\fIGet the input parameter\&. \fP"
+.ti -1c
+.RI "InputDataType & \fBInputParameter\fP ()"
+.br
+.RI "\fIModify the input parameter\&. \fP"
+.ti -1c
+.RI "OutputDataType const & \fBOutputParameter\fP () const "
+.br
+.RI "\fIGet the output parameter\&. \fP"
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP ()"
+.br
+.RI "\fIModify the output parameter\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &, const unsigned int)"
+.br
+.RI "\fISerialize the layer\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "OutputDataType \fBdelta\fP"
+.br
+.RI "\fILocally-stored delta object\&. \fP"
+.ti -1c
+.RI "InputDataType \fBinputParameter\fP"
+.br
+.RI "\fILocally-stored input parameter object\&. \fP"
+.ti -1c
+.RI "OutputDataType \fBoutputParameter\fP"
+.br
+.RI "\fILocally-stored output parameter object\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<class ActivationFunction = LogisticFunction, typename InputDataType = arma::mat, typename OutputDataType = arma::mat>
+.br
+class mlpack::ann::BaseLayer< ActivationFunction, InputDataType, OutputDataType >"
+Implementation of the base layer\&. 
+
+The base layer works as a metaclass which attaches various functions to the embedding layer\&.
+.PP
+A few convenience typedefs are given:
+.PP
+.IP "\(bu" 2
+SigmoidLayer
+.IP "\(bu" 2
+IdentityLayer
+.IP "\(bu" 2
+ReLULayer
+.IP "\(bu" 2
+TanHLayer
+.PP
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIActivationFunction\fP Activation function used for the embedding layer\&. 
+.br
+\fIInputDataType\fP Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fIOutputDataType\fP Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 47 of file base_layer\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<class ActivationFunction  = LogisticFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> \fBmlpack::ann::BaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >::\fBBaseLayer\fP ()\fC [inline]\fP"
+
+.PP
+Create the \fBBaseLayer\fP object\&. 
+.PP
+Definition at line 53 of file base_layer\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<class ActivationFunction  = LogisticFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename eT > void \fBmlpack::ann::BaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >::Backward (const arma::Mat< eT > && input, arma::Mat< eT > && gy, arma::Mat< eT > && g)\fC [inline]\fP"
+
+.PP
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f\&. Using the results from the feed forward pass\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP The propagated input activation\&. 
+.br
+\fIgy\fP The backpropagated error\&. 
+.br
+\fIg\fP The calculated gradient\&. 
+.RE
+.PP
+
+.PP
+Definition at line 81 of file base_layer\&.hpp\&.
+.SS "template<class ActivationFunction  = LogisticFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType const& \fBmlpack::ann::BaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >::Delta () const\fC [inline]\fP"
+
+.PP
+Get the delta\&. 
+.PP
+Definition at line 101 of file base_layer\&.hpp\&.
+.PP
+References mlpack::ann::BaseLayer< ActivationFunction, InputDataType, OutputDataType >::delta\&.
+.SS "template<class ActivationFunction  = LogisticFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::BaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >::Delta ()\fC [inline]\fP"
+
+.PP
+Modify the delta\&. 
+.PP
+Definition at line 103 of file base_layer\&.hpp\&.
+.PP
+References mlpack::ann::BaseLayer< ActivationFunction, InputDataType, OutputDataType >::delta\&.
+.SS "template<class ActivationFunction  = LogisticFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename InputType , typename OutputType > void \fBmlpack::ann::BaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >::Forward (const InputType && input, OutputType && output)\fC [inline]\fP"
+
+.PP
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Input data used for evaluating the specified function\&. 
+.br
+\fIoutput\fP Resulting output activation\&. 
+.RE
+.PP
+
+.PP
+Definition at line 66 of file base_layer\&.hpp\&.
+.SS "template<class ActivationFunction  = LogisticFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> InputDataType const& \fBmlpack::ann::BaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >::InputParameter () const\fC [inline]\fP"
+
+.PP
+Get the input parameter\&. 
+.PP
+Definition at line 91 of file base_layer\&.hpp\&.
+.PP
+References mlpack::ann::BaseLayer< ActivationFunction, InputDataType, OutputDataType >::inputParameter\&.
+.SS "template<class ActivationFunction  = LogisticFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> InputDataType& \fBmlpack::ann::BaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >::InputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the input parameter\&. 
+.PP
+Definition at line 93 of file base_layer\&.hpp\&.
+.PP
+References mlpack::ann::BaseLayer< ActivationFunction, InputDataType, OutputDataType >::inputParameter\&.
+.SS "template<class ActivationFunction  = LogisticFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType const& \fBmlpack::ann::BaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >::OutputParameter () const\fC [inline]\fP"
+
+.PP
+Get the output parameter\&. 
+.PP
+Definition at line 96 of file base_layer\&.hpp\&.
+.PP
+References mlpack::ann::BaseLayer< ActivationFunction, InputDataType, OutputDataType >::outputParameter\&.
+.SS "template<class ActivationFunction  = LogisticFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType& \fBmlpack::ann::BaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >::OutputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the output parameter\&. 
+.PP
+Definition at line 98 of file base_layer\&.hpp\&.
+.PP
+References mlpack::ann::BaseLayer< ActivationFunction, InputDataType, OutputDataType >::outputParameter\&.
+.SS "template<class ActivationFunction  = LogisticFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> template<typename Archive > void \fBmlpack::ann::BaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >::Serialize (Archive &, const unsigned int)\fC [inline]\fP"
+
+.PP
+Serialize the layer\&. 
+.PP
+Definition at line 109 of file base_layer\&.hpp\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<class ActivationFunction  = LogisticFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType \fBmlpack::ann::BaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >::delta\fC [private]\fP"
+
+.PP
+Locally-stored delta object\&. 
+.PP
+Definition at line 116 of file base_layer\&.hpp\&.
+.PP
+Referenced by mlpack::ann::BaseLayer< ActivationFunction, InputDataType, OutputDataType >::Delta()\&.
+.SS "template<class ActivationFunction  = LogisticFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> InputDataType \fBmlpack::ann::BaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >::inputParameter\fC [private]\fP"
+
+.PP
+Locally-stored input parameter object\&. 
+.PP
+Definition at line 119 of file base_layer\&.hpp\&.
+.PP
+Referenced by mlpack::ann::BaseLayer< ActivationFunction, InputDataType, OutputDataType >::InputParameter()\&.
+.SS "template<class ActivationFunction  = LogisticFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> OutputDataType \fBmlpack::ann::BaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >::outputParameter\fC [private]\fP"
+
+.PP
+Locally-stored output parameter object\&. 
+.PP
+Definition at line 122 of file base_layer\&.hpp\&.
+.PP
+Referenced by mlpack::ann::BaseLayer< ActivationFunction, InputDataType, OutputDataType >::OutputParameter()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

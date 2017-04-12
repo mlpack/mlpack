@@ -1,0 +1,50 @@
+.TH "mlpack::kernel::KernelTraits< KernelType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::kernel::KernelTraits< KernelType > \- This is a template class that can provide information about various kernels\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "static const bool \fBIsNormalized\fP = false"
+.br
+.RI "\fIIf true, then the kernel is normalized: K(x, x) = K(y, y) = 1 for all x\&. \fP"
+.ti -1c
+.RI "static const bool \fBUsesSquaredDistance\fP = false"
+.br
+.RI "\fIIf true, then the kernel include a squared distance, ||x - y||^2 \&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename KernelType>
+.br
+class mlpack::kernel::KernelTraits< KernelType >"
+This is a template class that can provide information about various kernels\&. 
+
+By default, this class will provide the weakest possible assumptions on kernels, and each kernel should override values as necessary\&. If a kernel doesn't need to override a value, then there's no need to write a \fBKernelTraits\fP specialization for that class\&. 
+.PP
+Definition at line 27 of file kernel_traits\&.hpp\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename KernelType > const bool \fBmlpack::kernel::KernelTraits\fP< KernelType >::IsNormalized = false\fC [static]\fP"
+
+.PP
+If true, then the kernel is normalized: K(x, x) = K(y, y) = 1 for all x\&. 
+.PP
+Definition at line 33 of file kernel_traits\&.hpp\&.
+.SS "template<typename KernelType > const bool \fBmlpack::kernel::KernelTraits\fP< KernelType >::UsesSquaredDistance = false\fC [static]\fP"
+
+.PP
+If true, then the kernel include a squared distance, ||x - y||^2 \&. 
+.PP
+Definition at line 38 of file kernel_traits\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

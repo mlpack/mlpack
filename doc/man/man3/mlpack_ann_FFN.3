@@ -1,0 +1,605 @@
+.TH "mlpack::ann::FFN< OutputLayerType, InitializationRuleType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::ann::FFN< OutputLayerType, InitializationRuleType > \- Implementation of a standard feed forward network\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "using \fBNetworkType\fP = \fBFFN\fP< OutputLayerType, InitializationRuleType >"
+.br
+.RI "\fIConvenience typedef for the internal model construction\&. \fP"
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBFFN\fP (OutputLayerType &&\fBoutputLayer\fP=OutputLayerType(), InitializationRuleType \fBinitializeRule\fP=InitializationRuleType())"
+.br
+.RI "\fICreate the \fBFFN\fP object with the given predictors and responses set (this is the set that is used to train the network) and the given optimizer\&. \fP"
+.ti -1c
+.RI "\fBFFN\fP (const arma::mat &\fBpredictors\fP, const arma::mat &\fBresponses\fP, OutputLayerType &&\fBoutputLayer\fP=OutputLayerType(), InitializationRuleType \fBinitializeRule\fP=InitializationRuleType())"
+.br
+.RI "\fICreate the \fBFFN\fP object with the given predictors and responses set (this is the set that is used to train the network) and the given optimizer\&. \fP"
+.ti -1c
+.RI "\fB~FFN\fP ()"
+.br
+.RI "\fIDestructor to release allocated memory\&. \fP"
+.ti -1c
+.RI "template<class LayerType , class\&.\&.\&. Args> void \fBAdd\fP (Args\&.\&.\&.args)"
+.br
+.ti -1c
+.RI "void \fBAdd\fP (\fBLayerTypes\fP layer)"
+.br
+.ti -1c
+.RI "double \fBEvaluate\fP (const arma::mat &parameters, const size_t i, const bool \fBdeterministic\fP=true)"
+.br
+.RI "\fIEvaluate the feedforward network with the given parameters\&. \fP"
+.ti -1c
+.RI "void \fBGradient\fP (const arma::mat &parameters, const size_t i, arma::mat &\fBgradient\fP)"
+.br
+.RI "\fIEvaluate the gradient of the feedforward network with the given parameters, and with respect to only one point in the dataset\&. \fP"
+.ti -1c
+.RI "size_t \fBNumFunctions\fP () const "
+.br
+.RI "\fIReturn the number of separable functions (the number of predictor points)\&. \fP"
+.ti -1c
+.RI "const arma::mat & \fBParameters\fP () const "
+.br
+.RI "\fIReturn the initial point for the optimization\&. \fP"
+.ti -1c
+.RI "arma::mat & \fBParameters\fP ()"
+.br
+.RI "\fIModify the initial point for the optimization\&. \fP"
+.ti -1c
+.RI "void \fBPredict\fP (arma::mat &\fBpredictors\fP, arma::mat &\fBresponses\fP)"
+.br
+.RI "\fIPredict the responses to a given set of predictors\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int)"
+.br
+.RI "\fISerialize the model\&. \fP"
+.ti -1c
+.RI "template<template< typename > class OptimizerType = mlpack::optimization::RMSprop> void \fBTrain\fP (const arma::mat &\fBpredictors\fP, const arma::mat &\fBresponses\fP, OptimizerType< \fBNetworkType\fP > &optimizer)"
+.br
+.RI "\fITrain the feedforward network on the given input data using the given optimizer\&. \fP"
+.ti -1c
+.RI "template<template< typename > class OptimizerType = mlpack::optimization::RMSprop> void \fBTrain\fP (const arma::mat &\fBpredictors\fP, const arma::mat &\fBresponses\fP)"
+.br
+.RI "\fITrain the feedforward network on the given input data\&. \fP"
+.in -1c
+.SS "Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBBackward\fP ()"
+.br
+.RI "\fIThe Backward algorithm (part of the Forward-Backward algorithm)\&. \fP"
+.ti -1c
+.RI "void \fBForward\fP (arma::mat &&input)"
+.br
+.RI "\fIThe Forward algorithm (part of the Forward-Backward algorithm)\&. \fP"
+.ti -1c
+.RI "void \fBGradient\fP ()"
+.br
+.RI "\fIIterate through all layer modules and update the the gradient using the layer defined optimizer\&. \fP"
+.ti -1c
+.RI "void \fBResetDeterministic\fP ()"
+.br
+.RI "\fIReset the module status by setting the current deterministic parameter for all modules that implement the Deterministic function\&. \fP"
+.ti -1c
+.RI "void \fBResetGradients\fP (arma::mat &\fBgradient\fP)"
+.br
+.RI "\fIReset the gradient for all modules that implement the Gradient function\&. \fP"
+.ti -1c
+.RI "void \fBResetParameters\fP ()"
+.br
+.RI "\fIReset the module infomration (weights/parameters)\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "arma::mat \fBcurrentInput\fP"
+.br
+.RI "\fITHe current input of the forward/backward pass\&. \fP"
+.ti -1c
+.RI "arma::mat \fBcurrentTarget\fP"
+.br
+.RI "\fITHe current target of the forward/backward pass\&. \fP"
+.ti -1c
+.RI "\fBDeleteVisitor\fP \fBdeleteVisitor\fP"
+.br
+.RI "\fILocally-stored delete visitor\&. \fP"
+.ti -1c
+.RI "arma::mat \fBdelta\fP"
+.br
+.RI "\fILocally-stored delta object\&. \fP"
+.ti -1c
+.RI "\fBDeltaVisitor\fP \fBdeltaVisitor\fP"
+.br
+.RI "\fILocally-stored delta visitor\&. \fP"
+.ti -1c
+.RI "bool \fBdeterministic\fP"
+.br
+.RI "\fIThe current evaluation mode (training or testing)\&. \fP"
+.ti -1c
+.RI "arma::mat \fBerror\fP"
+.br
+.RI "\fIThe current error for the backward pass\&. \fP"
+.ti -1c
+.RI "arma::mat \fBgradient\fP"
+.br
+.RI "\fILocally-stored gradient parameter\&. \fP"
+.ti -1c
+.RI "size_t \fBheight\fP"
+.br
+.RI "\fIThe input height\&. \fP"
+.ti -1c
+.RI "InitializationRuleType \fBinitializeRule\fP"
+.br
+.RI "\fIInstantiated InitializationRule object for initializing the network parameter\&. \fP"
+.ti -1c
+.RI "arma::mat \fBinputParameter\fP"
+.br
+.RI "\fILocally-stored input parameter object\&. \fP"
+.ti -1c
+.RI "std::vector< \fBLayerTypes\fP > \fBnetwork\fP"
+.br
+.RI "\fILocally-stored model modules\&. \fP"
+.ti -1c
+.RI "size_t \fBnumFunctions\fP"
+.br
+.RI "\fIThe number of separable functions (the number of predictor points)\&. \fP"
+.ti -1c
+.RI "\fBOutputHeightVisitor\fP \fBoutputHeightVisitor\fP"
+.br
+.RI "\fILocally-stored output height visitor\&. \fP"
+.ti -1c
+.RI "OutputLayerType \fBoutputLayer\fP"
+.br
+.RI "\fIInstantiated outputlayer used to evaluate the network\&. \fP"
+.ti -1c
+.RI "arma::mat \fBoutputParameter\fP"
+.br
+.RI "\fILocally-stored output parameter object\&. \fP"
+.ti -1c
+.RI "\fBOutputParameterVisitor\fP \fBoutputParameterVisitor\fP"
+.br
+.RI "\fILocally-stored output parameter visitor\&. \fP"
+.ti -1c
+.RI "\fBOutputWidthVisitor\fP \fBoutputWidthVisitor\fP"
+.br
+.RI "\fILocally-stored output width visitor\&. \fP"
+.ti -1c
+.RI "arma::mat \fBparameter\fP"
+.br
+.RI "\fIMatrix of (trained) parameters\&. \fP"
+.ti -1c
+.RI "arma::mat \fBpredictors\fP"
+.br
+.RI "\fIThe matrix of data points (predictors)\&. \fP"
+.ti -1c
+.RI "bool \fBreset\fP"
+.br
+.RI "\fIIndicator if we already trained the model\&. \fP"
+.ti -1c
+.RI "\fBResetVisitor\fP \fBresetVisitor\fP"
+.br
+.RI "\fILocally-stored reset visitor\&. \fP"
+.ti -1c
+.RI "arma::mat \fBresponses\fP"
+.br
+.RI "\fIThe matrix of responses to the input data points\&. \fP"
+.ti -1c
+.RI "\fBWeightSizeVisitor\fP \fBweightSizeVisitor\fP"
+.br
+.RI "\fILocally-stored weight size visitor\&. \fP"
+.ti -1c
+.RI "size_t \fBwidth\fP"
+.br
+.RI "\fIThe input width\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename OutputLayerType = NegativeLogLikelihood<>, typename InitializationRuleType = RandomInitialization>
+.br
+class mlpack::ann::FFN< OutputLayerType, InitializationRuleType >"
+Implementation of a standard feed forward network\&. 
+
+
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIOutputLayerType\fP The output layer type used to evaluate the network\&. 
+.br
+\fIInitializationRuleType\fP Rule used to initialize the weight matrix\&. 
+.RE
+.PP
+
+.PP
+Definition at line 42 of file ffn\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> using \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::\fBNetworkType\fP =  \fBFFN\fP<OutputLayerType, InitializationRuleType>"
+
+.PP
+Convenience typedef for the internal model construction\&. 
+.PP
+Definition at line 46 of file ffn\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::\fBFFN\fP (OutputLayerType && outputLayer = \fCOutputLayerType()\fP, InitializationRuleType initializeRule = \fCInitializationRuleType()\fP)"
+
+.PP
+Create the \fBFFN\fP object with the given predictors and responses set (this is the set that is used to train the network) and the given optimizer\&. Optionally, specify which initialize rule and performance function should be used\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIoutputLayer\fP Output layer used to evaluate the network\&. 
+.br
+\fIinitializeRule\fP Optional instantiated InitializationRule object for initializing the network parameter\&. 
+.RE
+.PP
+
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::\fBFFN\fP (const arma::mat & predictors, const arma::mat & responses, OutputLayerType && outputLayer = \fCOutputLayerType()\fP, InitializationRuleType initializeRule = \fCInitializationRuleType()\fP)"
+
+.PP
+Create the \fBFFN\fP object with the given predictors and responses set (this is the set that is used to train the network) and the given optimizer\&. Optionally, specify which initialize rule and performance function should be used\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpredictors\fP Input training variables\&. 
+.br
+\fIresponses\fP Outputs results from input training variables\&. 
+.br
+\fIoutputLayer\fP Output layer used to evaluate the network\&. 
+.br
+\fIinitializeRule\fP Optional instantiated InitializationRule object for initializing the network parameter\&. 
+.RE
+.PP
+
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::~\fBFFN\fP ()"
+
+.PP
+Destructor to release allocated memory\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> template<class LayerType , class\&.\&.\&. Args> void \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::\fBAdd\fP (Args\&.\&.\&. args)\fC [inline]\fP"
+
+.PP
+Definition at line 161 of file ffn\&.hpp\&.
+.PP
+References mlpack::ann::FFN< OutputLayerType, InitializationRuleType >::network\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> void \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::\fBAdd\fP (\fBLayerTypes\fP layer)\fC [inline]\fP"
+
+.PP
+Definition at line 168 of file ffn\&.hpp\&.
+.PP
+References mlpack::ann::FFN< OutputLayerType, InitializationRuleType >::network\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> void \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::Backward ()\fC [private]\fP"
+
+.PP
+The Backward algorithm (part of the Forward-Backward algorithm)\&. Computes backward pass for module\&. 
+.PP
+Referenced by mlpack::ann::FFN< OutputLayerType, InitializationRuleType >::Parameters()\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> double \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::Evaluate (const arma::mat & parameters, const size_t i, const bool deterministic = \fCtrue\fP)"
+
+.PP
+Evaluate the feedforward network with the given parameters\&. This function is usually called by the optimizer to train the model\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIparameters\fP Matrix model parameters\&. 
+.br
+\fIi\fP Index of point to use for objective function evaluation\&. 
+.br
+\fIdeterministic\fP Whether or not to train or test the model\&. Note some layer act differently in training or testing mode\&. 
+.RE
+.PP
+
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> void \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::Forward (arma::mat && input)\fC [private]\fP"
+
+.PP
+The Forward algorithm (part of the Forward-Backward algorithm)\&. Computes forward probabilities for each module\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinput\fP Data sequence to compute probabilities for\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::ann::FFN< OutputLayerType, InitializationRuleType >::Parameters()\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> void \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::Gradient (const arma::mat & parameters, const size_t i, arma::mat & gradient)"
+
+.PP
+Evaluate the gradient of the feedforward network with the given parameters, and with respect to only one point in the dataset\&. This is useful for optimizers such as SGD, which require a separable objective function\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIparameters\fP Matrix of the model parameters to be optimized\&. 
+.br
+\fIi\fP Index of points to use for objective function gradient evaluation\&. 
+.br
+\fIgradient\fP Matrix to output gradient into\&. 
+.RE
+.PP
+
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> void \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::Gradient ()\fC [private]\fP"
+
+.PP
+Iterate through all layer modules and update the the gradient using the layer defined optimizer\&. 
+.PP
+Referenced by mlpack::ann::FFN< OutputLayerType, InitializationRuleType >::Parameters()\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> size_t \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::NumFunctions () const\fC [inline]\fP"
+
+.PP
+Return the number of separable functions (the number of predictor points)\&. 
+.PP
+Definition at line 171 of file ffn\&.hpp\&.
+.PP
+References mlpack::ann::FFN< OutputLayerType, InitializationRuleType >::numFunctions\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> const arma::mat& \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::Parameters () const\fC [inline]\fP"
+
+.PP
+Return the initial point for the optimization\&. 
+.PP
+Definition at line 174 of file ffn\&.hpp\&.
+.PP
+References mlpack::ann::FFN< OutputLayerType, InitializationRuleType >::parameter\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> arma::mat& \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::Parameters ()\fC [inline]\fP"
+
+.PP
+Modify the initial point for the optimization\&. 
+.PP
+Definition at line 176 of file ffn\&.hpp\&.
+.PP
+References mlpack::ann::FFN< OutputLayerType, InitializationRuleType >::Backward(), mlpack::ann::FFN< OutputLayerType, InitializationRuleType >::Forward(), mlpack::ann::FFN< OutputLayerType, InitializationRuleType >::Gradient(), mlpack::ann::FFN< OutputLayerType, InitializationRuleType >::gradient, mlpack::ann::FFN< OutputLayerType, InitializationRuleType >::parameter, mlpack::ann::FFN< OutputLayerType, InitializationRuleType >::ResetDeterministic(), mlpack::ann::FFN< OutputLayerType, InitializationRuleType >::ResetGradients(), mlpack::ann::FFN< OutputLayerType, InitializationRuleType >::ResetParameters(), and mlpack::ann::FFN< OutputLayerType, InitializationRuleType >::Serialize()\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> void \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::Predict (arma::mat & predictors, arma::mat & responses)"
+
+.PP
+Predict the responses to a given set of predictors\&. The responses will reflect the output of the given output layer as returned by the output layer function\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpredictors\fP Input predictors\&. 
+.br
+\fIresponses\fP Matrix to put output predictions of responses into\&. 
+.RE
+.PP
+
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> void \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::ResetDeterministic ()\fC [private]\fP"
+
+.PP
+Reset the module status by setting the current deterministic parameter for all modules that implement the Deterministic function\&. 
+.PP
+Referenced by mlpack::ann::FFN< OutputLayerType, InitializationRuleType >::Parameters()\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> void \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::ResetGradients (arma::mat & gradient)\fC [private]\fP"
+
+.PP
+Reset the gradient for all modules that implement the Gradient function\&. 
+.PP
+Referenced by mlpack::ann::FFN< OutputLayerType, InitializationRuleType >::Parameters()\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> void \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::ResetParameters ()\fC [private]\fP"
+
+.PP
+Reset the module infomration (weights/parameters)\&. 
+.PP
+Referenced by mlpack::ann::FFN< OutputLayerType, InitializationRuleType >::Parameters()\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> template<typename Archive > void \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::Serialize (Archive & ar, const unsigned int)"
+
+.PP
+Serialize the model\&. 
+.PP
+Referenced by mlpack::ann::FFN< OutputLayerType, InitializationRuleType >::Parameters()\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> template<template< typename > class OptimizerType = mlpack::optimization::RMSprop> void \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::Train (const arma::mat & predictors, const arma::mat & responses, OptimizerType< \fBNetworkType\fP > & optimizer)"
+
+.PP
+Train the feedforward network on the given input data using the given optimizer\&. This will use the existing model parameters as a starting point for the optimization\&. If this is not what you want, then you should access the parameters vector directly with \fBParameters()\fP and modify it as desired\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIOptimizerType\fP Type of optimizer to use to train the model\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpredictors\fP Input training variables\&. 
+.br
+\fIresponses\fP Outputs results from input training variables\&. 
+.br
+\fIoptimizer\fP Instantiated optimizer used to train the model\&. 
+.RE
+.PP
+
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> template<template< typename > class OptimizerType = mlpack::optimization::RMSprop> void \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::Train (const arma::mat & predictors, const arma::mat & responses)"
+
+.PP
+Train the feedforward network on the given input data\&. By default, the RMSprop optimization algorithm is used, but others can be specified (such as \fBmlpack::optimization::SGD\fP)\&.
+.PP
+This will use the existing model parameters as a starting point for the optimization\&. If this is not what you want, then you should access the parameters vector directly with \fBParameters()\fP and modify it as desired\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIOptimizerType\fP Type of optimizer to use to train the model\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpredictors\fP Input training variables\&. 
+.br
+\fIresponses\fP Outputs results from input training variables\&. 
+.RE
+.PP
+
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> arma::mat \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::currentInput\fC [private]\fP"
+
+.PP
+THe current input of the forward/backward pass\&. 
+.PP
+Definition at line 255 of file ffn\&.hpp\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> arma::mat \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::currentTarget\fC [private]\fP"
+
+.PP
+THe current target of the forward/backward pass\&. 
+.PP
+Definition at line 258 of file ffn\&.hpp\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> \fBDeleteVisitor\fP \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::deleteVisitor\fC [private]\fP"
+
+.PP
+Locally-stored delete visitor\&. 
+.PP
+Definition at line 279 of file ffn\&.hpp\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> arma::mat \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::delta\fC [private]\fP"
+
+.PP
+Locally-stored delta object\&. 
+.PP
+Definition at line 285 of file ffn\&.hpp\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> \fBDeltaVisitor\fP \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::deltaVisitor\fC [private]\fP"
+
+.PP
+Locally-stored delta visitor\&. 
+.PP
+Definition at line 261 of file ffn\&.hpp\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> bool \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::deterministic\fC [private]\fP"
+
+.PP
+The current evaluation mode (training or testing)\&. 
+.PP
+Definition at line 282 of file ffn\&.hpp\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> arma::mat \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::error\fC [private]\fP"
+
+.PP
+The current error for the backward pass\&. 
+.PP
+Definition at line 252 of file ffn\&.hpp\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> arma::mat \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::gradient\fC [private]\fP"
+
+.PP
+Locally-stored gradient parameter\&. 
+.PP
+Definition at line 294 of file ffn\&.hpp\&.
+.PP
+Referenced by mlpack::ann::FFN< OutputLayerType, InitializationRuleType >::Parameters()\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> size_t \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::height\fC [private]\fP"
+
+.PP
+The input height\&. 
+.PP
+Definition at line 231 of file ffn\&.hpp\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> InitializationRuleType \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::initializeRule\fC [private]\fP"
+
+.PP
+Instantiated InitializationRule object for initializing the network parameter\&. 
+.PP
+Definition at line 225 of file ffn\&.hpp\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> arma::mat \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::inputParameter\fC [private]\fP"
+
+.PP
+Locally-stored input parameter object\&. 
+.PP
+Definition at line 288 of file ffn\&.hpp\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> std::vector<\fBLayerTypes\fP> \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::network\fC [private]\fP"
+
+.PP
+Locally-stored model modules\&. 
+.PP
+Definition at line 237 of file ffn\&.hpp\&.
+.PP
+Referenced by mlpack::ann::FFN< OutputLayerType, InitializationRuleType >::Add()\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> size_t \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::numFunctions\fC [private]\fP"
+
+.PP
+The number of separable functions (the number of predictor points)\&. 
+.PP
+Definition at line 249 of file ffn\&.hpp\&.
+.PP
+Referenced by mlpack::ann::FFN< OutputLayerType, InitializationRuleType >::NumFunctions()\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> \fBOutputHeightVisitor\fP \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::outputHeightVisitor\fC [private]\fP"
+
+.PP
+Locally-stored output height visitor\&. 
+.PP
+Definition at line 273 of file ffn\&.hpp\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> OutputLayerType \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::outputLayer\fC [private]\fP"
+
+.PP
+Instantiated outputlayer used to evaluate the network\&. 
+.PP
+Definition at line 221 of file ffn\&.hpp\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> arma::mat \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::outputParameter\fC [private]\fP"
+
+.PP
+Locally-stored output parameter object\&. 
+.PP
+Definition at line 291 of file ffn\&.hpp\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> \fBOutputParameterVisitor\fP \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::outputParameterVisitor\fC [private]\fP"
+
+.PP
+Locally-stored output parameter visitor\&. 
+.PP
+Definition at line 264 of file ffn\&.hpp\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> \fBOutputWidthVisitor\fP \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::outputWidthVisitor\fC [private]\fP"
+
+.PP
+Locally-stored output width visitor\&. 
+.PP
+Definition at line 270 of file ffn\&.hpp\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> arma::mat \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::parameter\fC [private]\fP"
+
+.PP
+Matrix of (trained) parameters\&. 
+.PP
+Definition at line 246 of file ffn\&.hpp\&.
+.PP
+Referenced by mlpack::ann::FFN< OutputLayerType, InitializationRuleType >::Parameters()\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> arma::mat \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::predictors\fC [private]\fP"
+
+.PP
+The matrix of data points (predictors)\&. 
+.PP
+Definition at line 240 of file ffn\&.hpp\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> bool \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::reset\fC [private]\fP"
+
+.PP
+Indicator if we already trained the model\&. 
+.PP
+Definition at line 234 of file ffn\&.hpp\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> \fBResetVisitor\fP \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::resetVisitor\fC [private]\fP"
+
+.PP
+Locally-stored reset visitor\&. 
+.PP
+Definition at line 276 of file ffn\&.hpp\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> arma::mat \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::responses\fC [private]\fP"
+
+.PP
+The matrix of responses to the input data points\&. 
+.PP
+Definition at line 243 of file ffn\&.hpp\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> \fBWeightSizeVisitor\fP \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::weightSizeVisitor\fC [private]\fP"
+
+.PP
+Locally-stored weight size visitor\&. 
+.PP
+Definition at line 267 of file ffn\&.hpp\&.
+.SS "template<typename OutputLayerType  = NegativeLogLikelihood<>, typename InitializationRuleType  = RandomInitialization> size_t \fBmlpack::ann::FFN\fP< OutputLayerType, InitializationRuleType >::width\fC [private]\fP"
+
+.PP
+The input width\&. 
+.PP
+Definition at line 228 of file ffn\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

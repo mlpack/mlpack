@@ -1,0 +1,94 @@
+\section{mlpack\+:\+:data\+:\+:First\+Normal\+Array\+Shim$<$ T $>$ Struct Template Reference}
+\label{structmlpack_1_1data_1_1FirstNormalArrayShim}\index{mlpack\+::data\+::\+First\+Normal\+Array\+Shim$<$ T $>$@{mlpack\+::data\+::\+First\+Normal\+Array\+Shim$<$ T $>$}}
+
+
+A first shim for arrays without a Serialize() method.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf First\+Normal\+Array\+Shim} (T $\ast${\bf t}, const size\+\_\+t {\bf len}, const {\bf std\+::string} \&{\bf name})
+\begin{DoxyCompactList}\small\item\em Construct the first shim with the given objects, length, and name. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+const size\+\_\+t {\bf len}
+\item 
+const {\bf std\+::string} \& {\bf name}
+\item 
+T $\ast$ {\bf t}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename T$>$\\*
+struct mlpack\+::data\+::\+First\+Normal\+Array\+Shim$<$ T $>$}
+
+A first shim for arrays without a Serialize() method. 
+
+This shim\textquotesingle{}s purpose is to be caught by our overloads of operator$<$$<$, operator\&, and operator$>$$>$, which then creates a second shim. 
+
+Definition at line 64 of file serialization\+\_\+shim.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::data\+::\+First\+Normal\+Array\+Shim@{mlpack\+::data\+::\+First\+Normal\+Array\+Shim}!First\+Normal\+Array\+Shim@{First\+Normal\+Array\+Shim}}
+\index{First\+Normal\+Array\+Shim@{First\+Normal\+Array\+Shim}!mlpack\+::data\+::\+First\+Normal\+Array\+Shim@{mlpack\+::data\+::\+First\+Normal\+Array\+Shim}}
+\subsubsection[{First\+Normal\+Array\+Shim(\+T $\ast$t, const size\+\_\+t len, const std\+::string \&name)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T$>$ {\bf mlpack\+::data\+::\+First\+Normal\+Array\+Shim}$<$ T $>$\+::{\bf First\+Normal\+Array\+Shim} (
+\begin{DoxyParamCaption}
+\item[{T $\ast$}]{t, }
+\item[{const size\+\_\+t}]{len, }
+\item[{const {\bf std\+::string} \&}]{name}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{structmlpack_1_1data_1_1FirstNormalArrayShim_a0107f29193bd5367b0e45cfd9159b0c9}
+
+
+Construct the first shim with the given objects, length, and name. 
+
+
+
+Definition at line 281 of file serialization\+\_\+shim.\+hpp.
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::data\+::\+First\+Normal\+Array\+Shim@{mlpack\+::data\+::\+First\+Normal\+Array\+Shim}!len@{len}}
+\index{len@{len}!mlpack\+::data\+::\+First\+Normal\+Array\+Shim@{mlpack\+::data\+::\+First\+Normal\+Array\+Shim}}
+\subsubsection[{len}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T$>$ const size\+\_\+t {\bf mlpack\+::data\+::\+First\+Normal\+Array\+Shim}$<$ T $>$\+::len}\label{structmlpack_1_1data_1_1FirstNormalArrayShim_ae49b595bc9f15dfbd579a1729f8a8c2b}
+
+
+Definition at line 285 of file serialization\+\_\+shim.\+hpp.
+
+
+
+Referenced by mlpack\+::data\+::operator\&(), and mlpack\+::data\+::operator$>$$>$().
+
+\index{mlpack\+::data\+::\+First\+Normal\+Array\+Shim@{mlpack\+::data\+::\+First\+Normal\+Array\+Shim}!name@{name}}
+\index{name@{name}!mlpack\+::data\+::\+First\+Normal\+Array\+Shim@{mlpack\+::data\+::\+First\+Normal\+Array\+Shim}}
+\subsubsection[{name}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T$>$ const {\bf std\+::string}\& {\bf mlpack\+::data\+::\+First\+Normal\+Array\+Shim}$<$ T $>$\+::name}\label{structmlpack_1_1data_1_1FirstNormalArrayShim_a9238fa4b73eac8e4245fcb546eeb0ac9}
+
+
+Definition at line 286 of file serialization\+\_\+shim.\+hpp.
+
+
+
+Referenced by mlpack\+::data\+::operator\&(), and mlpack\+::data\+::operator$>$$>$().
+
+\index{mlpack\+::data\+::\+First\+Normal\+Array\+Shim@{mlpack\+::data\+::\+First\+Normal\+Array\+Shim}!t@{t}}
+\index{t@{t}!mlpack\+::data\+::\+First\+Normal\+Array\+Shim@{mlpack\+::data\+::\+First\+Normal\+Array\+Shim}}
+\subsubsection[{t}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T$>$ T$\ast$ {\bf mlpack\+::data\+::\+First\+Normal\+Array\+Shim}$<$ T $>$\+::t}\label{structmlpack_1_1data_1_1FirstNormalArrayShim_a885e1053095f85e3cad274628e428b58}
+
+
+Definition at line 284 of file serialization\+\_\+shim.\+hpp.
+
+
+
+Referenced by mlpack\+::data\+::operator\&(), and mlpack\+::data\+::operator$>$$>$().
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/data/{\bf serialization\+\_\+shim.\+hpp}\end{DoxyCompactItemize}

@@ -1,0 +1,254 @@
+\section{mlpack\+:\+:util\+:\+:Param\+Data Struct Reference}
+\label{structmlpack_1_1util_1_1ParamData}\index{mlpack\+::util\+::\+Param\+Data@{mlpack\+::util\+::\+Param\+Data}}
+
+
+This structure holds all of the information about a single parameter, including its value (which is set when Parse\+Command\+Line() is called).  
+
+
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+char {\bf alias}
+\begin{DoxyCompactList}\small\item\em Alias for this parameter. \end{DoxyCompactList}\item 
+{\bf std\+::string} {\bf boost\+Name}
+\begin{DoxyCompactList}\small\item\em The name of the parameter, as seen by boost\+::program\+\_\+options. \end{DoxyCompactList}\item 
+{\bf std\+::string}($\ast$ {\bf default\+Function} )(const {\bf Param\+Data} \&)
+\begin{DoxyCompactList}\small\item\em When the \doxyref{C\+LI}{p.}{classmlpack_1_1CLI} object is asked to print help, output the default value. \end{DoxyCompactList}\item 
+{\bf std\+::string} {\bf desc}
+\begin{DoxyCompactList}\small\item\em Description of this parameter, if any. \end{DoxyCompactList}\item 
+bool {\bf input}
+\begin{DoxyCompactList}\small\item\em True if this option is an input option (otherwise, it is output). \end{DoxyCompactList}\item 
+bool {\bf is\+Flag}
+\begin{DoxyCompactList}\small\item\em True if the was\+Passed value should not be ignored. \end{DoxyCompactList}\item 
+bool {\bf is\+Mapped\+String}
+\begin{DoxyCompactList}\small\item\em If this is a matrix or model parameter, then boost\+::program\+\_\+options will actually represent this as a string. \end{DoxyCompactList}\item 
+bool {\bf loaded}
+\begin{DoxyCompactList}\small\item\em If this is an input parameter that needs extra loading, this indicates whether or not it has been loaded. \end{DoxyCompactList}\item 
+boost\+::any {\bf mapped\+Value}
+\begin{DoxyCompactList}\small\item\em The value that the user interacts with, if the type is different than the type of the parameter. \end{DoxyCompactList}\item 
+{\bf std\+::string} {\bf name}
+\begin{DoxyCompactList}\small\item\em Name of this parameter. \end{DoxyCompactList}\item 
+bool {\bf no\+Transpose}
+\begin{DoxyCompactList}\small\item\em True if this is a matrix that should not be transposed. \end{DoxyCompactList}\item 
+void($\ast$ {\bf output\+Function} )(const {\bf Param\+Data} \&)
+\begin{DoxyCompactList}\small\item\em When the \doxyref{C\+LI}{p.}{classmlpack_1_1CLI} object is destructed, output options must be output. \end{DoxyCompactList}\item 
+void($\ast$ {\bf print\+Function} )(const {\bf Param\+Data} \&)
+\begin{DoxyCompactList}\small\item\em When the \doxyref{C\+LI}{p.}{classmlpack_1_1CLI} object is destructed, output a string representation of the parameter. \end{DoxyCompactList}\item 
+bool {\bf required}
+\begin{DoxyCompactList}\small\item\em True if this option is required. \end{DoxyCompactList}\item 
+{\bf std\+::string}($\ast$ {\bf string\+Type\+Function} )()
+\begin{DoxyCompactList}\small\item\em When the \doxyref{C\+LI}{p.}{classmlpack_1_1CLI} object is asked to print parameter types, output a string version of this parameter\textquotesingle{}s type. \end{DoxyCompactList}\item 
+{\bf std\+::string} {\bf tname}
+\begin{DoxyCompactList}\small\item\em Type information of this parameter. \end{DoxyCompactList}\item 
+boost\+::any {\bf value}
+\begin{DoxyCompactList}\small\item\em The actual value that is held, as passed from the user (so the type could be different than the type of the parameter). \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This structure holds all of the information about a single parameter, including its value (which is set when Parse\+Command\+Line() is called). 
+
+It does not hold any information about whether or not it was passed---that is handled elsewhere. A \doxyref{Param\+Data}{p.}{structmlpack_1_1util_1_1ParamData} struct is only useful in order to get \char`\"{}static\char`\"{} information about a parameter. Note that some parameter types have internal types but also different types that are used by boost\+::program\+\_\+options (specifically, matrix and model types map to strings).
+
+This structure is somewhat unwieldy and is likely to be refactored at some point in the future, but for now it does the job fine. 
+
+Definition at line 112 of file param\+\_\+data.\+hpp.
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::util\+::\+Param\+Data@{mlpack\+::util\+::\+Param\+Data}!alias@{alias}}
+\index{alias@{alias}!mlpack\+::util\+::\+Param\+Data@{mlpack\+::util\+::\+Param\+Data}}
+\subsubsection[{alias}]{\setlength{\rightskip}{0pt plus 5cm}char mlpack\+::util\+::\+Param\+Data\+::alias}\label{structmlpack_1_1util_1_1ParamData_a273db63fa1ea8a9d6d4b122653c4b2a0}
+
+
+Alias for this parameter. 
+
+
+
+Definition at line 123 of file param\+\_\+data.\+hpp.
+
+\index{mlpack\+::util\+::\+Param\+Data@{mlpack\+::util\+::\+Param\+Data}!boost\+Name@{boost\+Name}}
+\index{boost\+Name@{boost\+Name}!mlpack\+::util\+::\+Param\+Data@{mlpack\+::util\+::\+Param\+Data}}
+\subsubsection[{boost\+Name}]{\setlength{\rightskip}{0pt plus 5cm}{\bf std\+::string} mlpack\+::util\+::\+Param\+Data\+::boost\+Name}\label{structmlpack_1_1util_1_1ParamData_af71b2b56778c90598a4b17c3c08e084e}
+
+
+The name of the parameter, as seen by boost\+::program\+\_\+options. 
+
+
+
+Definition at line 147 of file param\+\_\+data.\+hpp.
+
+\index{mlpack\+::util\+::\+Param\+Data@{mlpack\+::util\+::\+Param\+Data}!default\+Function@{default\+Function}}
+\index{default\+Function@{default\+Function}!mlpack\+::util\+::\+Param\+Data@{mlpack\+::util\+::\+Param\+Data}}
+\subsubsection[{default\+Function}]{\setlength{\rightskip}{0pt plus 5cm}{\bf std\+::string}($\ast$ mlpack\+::util\+::\+Param\+Data\+::default\+Function) (const {\bf Param\+Data} \&)}\label{structmlpack_1_1util_1_1ParamData_a01d18ac33ac1af45ccb9541832c89033}
+
+
+When the \doxyref{C\+LI}{p.}{classmlpack_1_1CLI} object is asked to print help, output the default value. 
+
+
+
+Definition at line 156 of file param\+\_\+data.\+hpp.
+
+\index{mlpack\+::util\+::\+Param\+Data@{mlpack\+::util\+::\+Param\+Data}!desc@{desc}}
+\index{desc@{desc}!mlpack\+::util\+::\+Param\+Data@{mlpack\+::util\+::\+Param\+Data}}
+\subsubsection[{desc}]{\setlength{\rightskip}{0pt plus 5cm}{\bf std\+::string} mlpack\+::util\+::\+Param\+Data\+::desc}\label{structmlpack_1_1util_1_1ParamData_a541d5faab2b9d917be0a2e958968723b}
+
+
+Description of this parameter, if any. 
+
+
+
+Definition at line 118 of file param\+\_\+data.\+hpp.
+
+\index{mlpack\+::util\+::\+Param\+Data@{mlpack\+::util\+::\+Param\+Data}!input@{input}}
+\index{input@{input}!mlpack\+::util\+::\+Param\+Data@{mlpack\+::util\+::\+Param\+Data}}
+\subsubsection[{input}]{\setlength{\rightskip}{0pt plus 5cm}bool mlpack\+::util\+::\+Param\+Data\+::input}\label{structmlpack_1_1util_1_1ParamData_a93189e360f4014c4b6925da021370e8a}
+
+
+True if this option is an input option (otherwise, it is output). 
+
+
+
+Definition at line 132 of file param\+\_\+data.\+hpp.
+
+\index{mlpack\+::util\+::\+Param\+Data@{mlpack\+::util\+::\+Param\+Data}!is\+Flag@{is\+Flag}}
+\index{is\+Flag@{is\+Flag}!mlpack\+::util\+::\+Param\+Data@{mlpack\+::util\+::\+Param\+Data}}
+\subsubsection[{is\+Flag}]{\setlength{\rightskip}{0pt plus 5cm}bool mlpack\+::util\+::\+Param\+Data\+::is\+Flag}\label{structmlpack_1_1util_1_1ParamData_a8e9b94515a797b6ef6c01156a9cff8ec}
+
+
+True if the was\+Passed value should not be ignored. 
+
+
+
+Definition at line 125 of file param\+\_\+data.\+hpp.
+
+\index{mlpack\+::util\+::\+Param\+Data@{mlpack\+::util\+::\+Param\+Data}!is\+Mapped\+String@{is\+Mapped\+String}}
+\index{is\+Mapped\+String@{is\+Mapped\+String}!mlpack\+::util\+::\+Param\+Data@{mlpack\+::util\+::\+Param\+Data}}
+\subsubsection[{is\+Mapped\+String}]{\setlength{\rightskip}{0pt plus 5cm}bool mlpack\+::util\+::\+Param\+Data\+::is\+Mapped\+String}\label{structmlpack_1_1util_1_1ParamData_a8a088428ca45750f5f08d55ac7b6617c}
+
+
+If this is a matrix or model parameter, then boost\+::program\+\_\+options will actually represent this as a string. 
+
+
+
+Definition at line 138 of file param\+\_\+data.\+hpp.
+
+\index{mlpack\+::util\+::\+Param\+Data@{mlpack\+::util\+::\+Param\+Data}!loaded@{loaded}}
+\index{loaded@{loaded}!mlpack\+::util\+::\+Param\+Data@{mlpack\+::util\+::\+Param\+Data}}
+\subsubsection[{loaded}]{\setlength{\rightskip}{0pt plus 5cm}bool mlpack\+::util\+::\+Param\+Data\+::loaded}\label{structmlpack_1_1util_1_1ParamData_a996860421389d9ab43c7aa5228e7c1d2}
+
+
+If this is an input parameter that needs extra loading, this indicates whether or not it has been loaded. 
+
+
+
+Definition at line 135 of file param\+\_\+data.\+hpp.
+
+\index{mlpack\+::util\+::\+Param\+Data@{mlpack\+::util\+::\+Param\+Data}!mapped\+Value@{mapped\+Value}}
+\index{mapped\+Value@{mapped\+Value}!mlpack\+::util\+::\+Param\+Data@{mlpack\+::util\+::\+Param\+Data}}
+\subsubsection[{mapped\+Value}]{\setlength{\rightskip}{0pt plus 5cm}boost\+::any mlpack\+::util\+::\+Param\+Data\+::mapped\+Value}\label{structmlpack_1_1util_1_1ParamData_a8cd658de534e93dd31b2848dc2d5acb6}
+
+
+The value that the user interacts with, if the type is different than the type of the parameter. 
+
+This is used to store matrices, for instance, because \textquotesingle{}value\textquotesingle{} must hold the string name that the user passed. 
+
+Definition at line 145 of file param\+\_\+data.\+hpp.
+
+
+
+Referenced by mlpack\+::util\+::\+Handle\+Raw\+Parameter().
+
+\index{mlpack\+::util\+::\+Param\+Data@{mlpack\+::util\+::\+Param\+Data}!name@{name}}
+\index{name@{name}!mlpack\+::util\+::\+Param\+Data@{mlpack\+::util\+::\+Param\+Data}}
+\subsubsection[{name}]{\setlength{\rightskip}{0pt plus 5cm}{\bf std\+::string} mlpack\+::util\+::\+Param\+Data\+::name}\label{structmlpack_1_1util_1_1ParamData_a56f641e9d81af6fa0a0d49dfe7e3a08e}
+
+
+Name of this parameter. 
+
+This is the name used for Has\+Param() and Get\+Param(). 
+
+Definition at line 116 of file param\+\_\+data.\+hpp.
+
+\index{mlpack\+::util\+::\+Param\+Data@{mlpack\+::util\+::\+Param\+Data}!no\+Transpose@{no\+Transpose}}
+\index{no\+Transpose@{no\+Transpose}!mlpack\+::util\+::\+Param\+Data@{mlpack\+::util\+::\+Param\+Data}}
+\subsubsection[{no\+Transpose}]{\setlength{\rightskip}{0pt plus 5cm}bool mlpack\+::util\+::\+Param\+Data\+::no\+Transpose}\label{structmlpack_1_1util_1_1ParamData_a82904c5c4236ea2795b543d2e0efa140}
+
+
+True if this is a matrix that should not be transposed. 
+
+Ignored if the parameter is not a matrix. 
+
+Definition at line 128 of file param\+\_\+data.\+hpp.
+
+\index{mlpack\+::util\+::\+Param\+Data@{mlpack\+::util\+::\+Param\+Data}!output\+Function@{output\+Function}}
+\index{output\+Function@{output\+Function}!mlpack\+::util\+::\+Param\+Data@{mlpack\+::util\+::\+Param\+Data}}
+\subsubsection[{output\+Function}]{\setlength{\rightskip}{0pt plus 5cm}void($\ast$ mlpack\+::util\+::\+Param\+Data\+::output\+Function) (const {\bf Param\+Data} \&)}\label{structmlpack_1_1util_1_1ParamData_a25dc0fea8a24388d0ccd13f9589d71c7}
+
+
+When the \doxyref{C\+LI}{p.}{classmlpack_1_1CLI} object is destructed, output options must be output. 
+
+If \textquotesingle{}input\textquotesingle{} is false, then this function pointer should point to a function that outputs the parameter. 
+
+Definition at line 151 of file param\+\_\+data.\+hpp.
+
+\index{mlpack\+::util\+::\+Param\+Data@{mlpack\+::util\+::\+Param\+Data}!print\+Function@{print\+Function}}
+\index{print\+Function@{print\+Function}!mlpack\+::util\+::\+Param\+Data@{mlpack\+::util\+::\+Param\+Data}}
+\subsubsection[{print\+Function}]{\setlength{\rightskip}{0pt plus 5cm}void($\ast$ mlpack\+::util\+::\+Param\+Data\+::print\+Function) (const {\bf Param\+Data} \&)}\label{structmlpack_1_1util_1_1ParamData_a1edcf1ce692b44d15278909ffcdd6430}
+
+
+When the \doxyref{C\+LI}{p.}{classmlpack_1_1CLI} object is destructed, output a string representation of the parameter. 
+
+
+
+Definition at line 154 of file param\+\_\+data.\+hpp.
+
+\index{mlpack\+::util\+::\+Param\+Data@{mlpack\+::util\+::\+Param\+Data}!required@{required}}
+\index{required@{required}!mlpack\+::util\+::\+Param\+Data@{mlpack\+::util\+::\+Param\+Data}}
+\subsubsection[{required}]{\setlength{\rightskip}{0pt plus 5cm}bool mlpack\+::util\+::\+Param\+Data\+::required}\label{structmlpack_1_1util_1_1ParamData_a8f2963265dccc10347b16e5f9c596016}
+
+
+True if this option is required. 
+
+
+
+Definition at line 130 of file param\+\_\+data.\+hpp.
+
+\index{mlpack\+::util\+::\+Param\+Data@{mlpack\+::util\+::\+Param\+Data}!string\+Type\+Function@{string\+Type\+Function}}
+\index{string\+Type\+Function@{string\+Type\+Function}!mlpack\+::util\+::\+Param\+Data@{mlpack\+::util\+::\+Param\+Data}}
+\subsubsection[{string\+Type\+Function}]{\setlength{\rightskip}{0pt plus 5cm}{\bf std\+::string}($\ast$ mlpack\+::util\+::\+Param\+Data\+::string\+Type\+Function) ()}\label{structmlpack_1_1util_1_1ParamData_a839356bc66465246430e541fc163dba6}
+
+
+When the \doxyref{C\+LI}{p.}{classmlpack_1_1CLI} object is asked to print parameter types, output a string version of this parameter\textquotesingle{}s type. 
+
+
+
+Definition at line 159 of file param\+\_\+data.\+hpp.
+
+\index{mlpack\+::util\+::\+Param\+Data@{mlpack\+::util\+::\+Param\+Data}!tname@{tname}}
+\index{tname@{tname}!mlpack\+::util\+::\+Param\+Data@{mlpack\+::util\+::\+Param\+Data}}
+\subsubsection[{tname}]{\setlength{\rightskip}{0pt plus 5cm}{\bf std\+::string} mlpack\+::util\+::\+Param\+Data\+::tname}\label{structmlpack_1_1util_1_1ParamData_ab42d669fa227a2c97aef0b2ef1eb2d75}
+
+
+Type information of this parameter. 
+
+Note that this is \doxyref{T\+Y\+P\+E\+N\+A\+M\+E()}{p.}{param__data_8hpp_ac909d914008cce49fa42ddd10b9b36c5} of the user-\/visible parameter type, not whatever is given by Parameter\+Type$<$$>$. 
+
+Definition at line 121 of file param\+\_\+data.\+hpp.
+
+\index{mlpack\+::util\+::\+Param\+Data@{mlpack\+::util\+::\+Param\+Data}!value@{value}}
+\index{value@{value}!mlpack\+::util\+::\+Param\+Data@{mlpack\+::util\+::\+Param\+Data}}
+\subsubsection[{value}]{\setlength{\rightskip}{0pt plus 5cm}boost\+::any mlpack\+::util\+::\+Param\+Data\+::value}\label{structmlpack_1_1util_1_1ParamData_a7d0be00e9db307e417b6cf378c13a0d9}
+
+
+The actual value that is held, as passed from the user (so the type could be different than the type of the parameter). 
+
+
+
+Definition at line 141 of file param\+\_\+data.\+hpp.
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/util/{\bf param\+\_\+data.\+hpp}\end{DoxyCompactItemize}

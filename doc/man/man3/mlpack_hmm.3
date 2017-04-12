@@ -1,0 +1,108 @@
+.TH "mlpack::hmm" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::hmm \- Hidden Markov Models\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBHMM\fP"
+.br
+.RI "\fIA class that represents a Hidden Markov Model with an arbitrary type of emission distribution\&. \fP"
+.ti -1c
+.RI "class \fBHMMModel\fP"
+.br
+.RI "\fIA serializable \fBHMM\fP model that also stores the type\&. \fP"
+.ti -1c
+.RI "class \fBHMMRegression\fP"
+.br
+.RI "\fIA class that represents a Hidden Markov Model Regression (HMMR)\&. \fP"
+.in -1c
+.SS "Enumerations"
+
+.in +1c
+.ti -1c
+.RI "enum \fBHMMType\fP : char { \fBDiscreteHMM\fP = 0, \fBGaussianHMM\fP, \fBGaussianMixtureModelHMM\fP, \fBDiscreteHMM\fP = 0, \fBGaussianHMM\fP, \fBGaussianMixtureModelHMM\fP }"
+.br
+.ti -1c
+.RI "enum \fBHMMType\fP : char { \fBDiscreteHMM\fP = 0, \fBGaussianHMM\fP, \fBGaussianMixtureModelHMM\fP, \fBDiscreteHMM\fP = 0, \fBGaussianHMM\fP, \fBGaussianMixtureModelHMM\fP }
+.RI "\fIHMMType, to be stored on disk\&. \fP""
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename ActionType , typename ExtraInfoType  = void> void \fBLoadHMMAndPerformAction\fP (const \fBstd::string\fP &modelFile, ExtraInfoType *x=NULL)"
+.br
+.RI "\fIActionType should implement static void Apply(HMMType&)\&. \fP"
+.ti -1c
+.RI "template<typename HMMType > void \fBSaveHMM\fP (\fBHMMType\fP &hmm, const \fBstd::string\fP &modelFile)"
+.br
+.RI "\fISave an \fBHMM\fP to a file\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Hidden Markov Models\&. 
+
+
+.SH "Enumeration Type Documentation"
+.PP 
+.SS "enum \fBmlpack::hmm::HMMType\fP : char"
+
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fIDiscreteHMM \fP\fP
+.TP
+\fB\fIGaussianHMM \fP\fP
+.TP
+\fB\fIGaussianMixtureModelHMM \fP\fP
+.TP
+\fB\fIDiscreteHMM \fP\fP
+.TP
+\fB\fIGaussianHMM \fP\fP
+.TP
+\fB\fIGaussianMixtureModelHMM \fP\fP
+.PP
+Definition at line 16 of file hmm_model\&.hpp\&.
+.SS "enum \fBmlpack::hmm::HMMType\fP : char"
+
+.PP
+HMMType, to be stored on disk\&. This is of type char, which is one byte\&. (I'm not sure what will happen on systems where one byte is not eight bits\&.) 
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fIDiscreteHMM \fP\fP
+.TP
+\fB\fIGaussianHMM \fP\fP
+.TP
+\fB\fIGaussianMixtureModelHMM \fP\fP
+.TP
+\fB\fIDiscreteHMM \fP\fP
+.TP
+\fB\fIGaussianHMM \fP\fP
+.TP
+\fB\fIGaussianMixtureModelHMM \fP\fP
+.PP
+Definition at line 22 of file hmm_util\&.hpp\&.
+.SH "Function Documentation"
+.PP 
+.SS "template<typename ActionType , typename ExtraInfoType  = void> void mlpack::hmm::LoadHMMAndPerformAction (const \fBstd::string\fP & modelFile, ExtraInfoType * x = \fCNULL\fP)"
+
+.PP
+ActionType should implement static void Apply(HMMType&)\&. 
+.SS "template<typename HMMType > void mlpack::hmm::SaveHMM (\fBHMMType\fP & hmm, const \fBstd::string\fP & modelFile)"
+
+.PP
+Save an \fBHMM\fP to a file\&. The file must also encode what type of \fBHMM\fP is being stored\&. 
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

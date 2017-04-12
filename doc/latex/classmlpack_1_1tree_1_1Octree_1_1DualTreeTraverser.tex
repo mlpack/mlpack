@@ -1,0 +1,279 @@
+\section{mlpack\+:\+:tree\+:\+:Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+:\+:Dual\+Tree\+Traverser$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser}\index{mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Dual\+Tree\+Traverser$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$@{mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Dual\+Tree\+Traverser$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$}}
+
+
+A dual-\/tree traverser; see dual\+\_\+tree\+\_\+traverser.\+hpp.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Dual\+Tree\+Traverser} (Rule\+Type \&{\bf rule})
+\begin{DoxyCompactList}\small\item\em Instantiate the given dual-\/tree traverser with the given rule set. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Num\+Base\+Cases} () const 
+\begin{DoxyCompactList}\small\item\em Get the number of times a base case was computed. \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Num\+Base\+Cases} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of times a base case was computed. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Num\+Prunes} () const 
+\begin{DoxyCompactList}\small\item\em Get the number of pruned nodes. \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Num\+Prunes} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of pruned nodes (i.\+e. to reset it). \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Num\+Scores} () const 
+\begin{DoxyCompactList}\small\item\em Get the number of times a node was scored. \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Num\+Scores} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of times a node was scored. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Num\+Visited} () const 
+\begin{DoxyCompactList}\small\item\em Get the number of visited node combinations. \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Num\+Vistied} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of visited node combinations. \end{DoxyCompactList}\item 
+void {\bf Traverse} ({\bf Octree} \&query\+Node, {\bf Octree} \&reference\+Node)
+\begin{DoxyCompactList}\small\item\em Traverse the two trees. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+size\+\_\+t {\bf num\+Base\+Cases}
+\begin{DoxyCompactList}\small\item\em The number of times a base case was calculated. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf num\+Prunes}
+\begin{DoxyCompactList}\small\item\em The number of prunes. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf num\+Scores}
+\begin{DoxyCompactList}\small\item\em The number of times a node was scored. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf num\+Visited}
+\begin{DoxyCompactList}\small\item\em The number of visited node combinations. \end{DoxyCompactList}\item 
+Rule\+Type \& {\bf rule}
+\begin{DoxyCompactList}\small\item\em The rule type to use. \end{DoxyCompactList}\item 
+Rule\+Type\+::\+Traversal\+Info\+Type {\bf traversal\+Info}
+\begin{DoxyCompactList}\small\item\em Traversal information, held in the class so that it isn\textquotesingle{}t continually being reallocated. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Metric\+Type = metric\+::\+Euclidean\+Distance, typename Statistic\+Type = Empty\+Statistic, typename Mat\+Type = arma\+::mat$>$\\*
+template$<$typename Metric\+Type, typename Statistic\+Type, typename Mat\+Type$>$\\*
+class mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Dual\+Tree\+Traverser$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$}
+
+A dual-\/tree traverser; see dual\+\_\+tree\+\_\+traverser.\+hpp. 
+
+Definition at line 25 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser}!Dual\+Tree\+Traverser@{Dual\+Tree\+Traverser}}
+\index{Dual\+Tree\+Traverser@{Dual\+Tree\+Traverser}!mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection[{Dual\+Tree\+Traverser(\+Rule\+Type \&rule)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Dual\+Tree\+Traverser} (
+\begin{DoxyParamCaption}
+\item[{Rule\+Type \&}]{rule}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_a535fa50d463b33754c55ca3cefcd093d}
+
+
+Instantiate the given dual-\/tree traverser with the given rule set. 
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser}!Num\+Base\+Cases@{Num\+Base\+Cases}}
+\index{Num\+Base\+Cases@{Num\+Base\+Cases}!mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection[{Num\+Base\+Cases() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Num\+Base\+Cases (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_ae360ce237497927c1f200ba269eb0015}
+
+
+Get the number of times a base case was computed. 
+
+
+
+Definition at line 55 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser}!Num\+Base\+Cases@{Num\+Base\+Cases}}
+\index{Num\+Base\+Cases@{Num\+Base\+Cases}!mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection[{Num\+Base\+Cases()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ size\+\_\+t\& {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Num\+Base\+Cases (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_aa727bd1ae3b82cecd0c0300377be7d95}
+
+
+Modify the number of times a base case was computed. 
+
+
+
+Definition at line 57 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser}!Num\+Prunes@{Num\+Prunes}}
+\index{Num\+Prunes@{Num\+Prunes}!mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection[{Num\+Prunes() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Num\+Prunes (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_a2ebbe87c30795624103a3e21bbd10988}
+
+
+Get the number of pruned nodes. 
+
+
+
+Definition at line 40 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser}!Num\+Prunes@{Num\+Prunes}}
+\index{Num\+Prunes@{Num\+Prunes}!mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection[{Num\+Prunes()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ size\+\_\+t\& {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Num\+Prunes (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_aa56da9be596823644f57c8c8871974b5}
+
+
+Modify the number of pruned nodes (i.\+e. to reset it). 
+
+
+
+Definition at line 42 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser}!Num\+Scores@{Num\+Scores}}
+\index{Num\+Scores@{Num\+Scores}!mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection[{Num\+Scores() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Num\+Scores (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_a52cc556dac8d46c6fa41d39acead5d16}
+
+
+Get the number of times a node was scored. 
+
+
+
+Definition at line 50 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser}!Num\+Scores@{Num\+Scores}}
+\index{Num\+Scores@{Num\+Scores}!mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection[{Num\+Scores()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ size\+\_\+t\& {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Num\+Scores (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_a6824a06db5e683c2da2cbd39908096cd}
+
+
+Modify the number of times a node was scored. 
+
+
+
+Definition at line 52 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser}!Num\+Visited@{Num\+Visited}}
+\index{Num\+Visited@{Num\+Visited}!mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection[{Num\+Visited() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Num\+Visited (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_a875e2b1b18bd0b59df0533ab28935821}
+
+
+Get the number of visited node combinations. 
+
+
+
+Definition at line 45 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser}!Num\+Vistied@{Num\+Vistied}}
+\index{Num\+Vistied@{Num\+Vistied}!mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection[{Num\+Vistied()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ size\+\_\+t\& {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Num\+Vistied (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_af4200742b2bf8c20b5a37dd4b248543b}
+
+
+Modify the number of visited node combinations. 
+
+
+
+Definition at line 47 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser}!Traverse@{Traverse}}
+\index{Traverse@{Traverse}!mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection[{Traverse(\+Octree \&query\+Node, Octree \&reference\+Node)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ void {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Traverse (
+\begin{DoxyParamCaption}
+\item[{{\bf Octree} \&}]{query\+Node, }
+\item[{{\bf Octree} \&}]{reference\+Node}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_abe12f8815b555677f54975e6658ab60f}
+
+
+Traverse the two trees. 
+
+This does not reset the statistics of the traversals (it just adds to them). 
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser}!num\+Base\+Cases@{num\+Base\+Cases}}
+\index{num\+Base\+Cases@{num\+Base\+Cases}!mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection[{num\+Base\+Cases}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::num\+Base\+Cases\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_afaab73d39262d5be360dbf41653b0f4a}
+
+
+The number of times a base case was calculated. 
+
+
+
+Definition at line 70 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser}!num\+Prunes@{num\+Prunes}}
+\index{num\+Prunes@{num\+Prunes}!mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection[{num\+Prunes}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::num\+Prunes\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_a3cae8fa03909c475b397520354c19934}
+
+
+The number of prunes. 
+
+
+
+Definition at line 64 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser}!num\+Scores@{num\+Scores}}
+\index{num\+Scores@{num\+Scores}!mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection[{num\+Scores}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::num\+Scores\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_ae001526b9fe3730ecdd6f17a3abe1e88}
+
+
+The number of times a node was scored. 
+
+
+
+Definition at line 68 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser}!num\+Visited@{num\+Visited}}
+\index{num\+Visited@{num\+Visited}!mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection[{num\+Visited}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::num\+Visited\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_a3265e0f237153f363e3bc18fff59fe07}
+
+
+The number of visited node combinations. 
+
+
+
+Definition at line 66 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser}!rule@{rule}}
+\index{rule@{rule}!mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection[{rule}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ Rule\+Type\& {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::rule\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_a411d89f94e0e50f9d9d9f28cd31ae6e9}
+
+
+The rule type to use. 
+
+
+
+Definition at line 61 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser}!traversal\+Info@{traversal\+Info}}
+\index{traversal\+Info@{traversal\+Info}!mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Octree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection[{traversal\+Info}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ Rule\+Type\+::\+Traversal\+Info\+Type {\bf mlpack\+::tree\+::\+Octree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::{\bf Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::traversal\+Info\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_af549771f12ff31e4ec6e8f073cb5fc44}
+
+
+Traversal information, held in the class so that it isn\textquotesingle{}t continually being reallocated. 
+
+
+
+Definition at line 74 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/tree/octree/{\bf dual\+\_\+tree\+\_\+traverser.\+hpp}\end{DoxyCompactItemize}

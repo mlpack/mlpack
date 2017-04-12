@@ -1,0 +1,138 @@
+\section{mlpack\+:\+:ann\+:\+:Reward\+Set\+Visitor Class Reference}
+\label{classmlpack_1_1ann_1_1RewardSetVisitor}\index{mlpack\+::ann\+::\+Reward\+Set\+Visitor@{mlpack\+::ann\+::\+Reward\+Set\+Visitor}}
+
+
+\doxyref{Reward\+Set\+Visitor}{p.}{classmlpack_1_1ann_1_1RewardSetVisitor} set the reward parameter given the reward value.  
+
+
+
+
+Inheritance diagram for mlpack\+:\+:ann\+:\+:Reward\+Set\+Visitor\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=196pt]{classmlpack_1_1ann_1_1RewardSetVisitor__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Reward\+Set\+Visitor} (const double {\bf reward})
+\begin{DoxyCompactList}\small\item\em Set the reward parameter given the reward value. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Layer\+Type $>$ }\\void {\bf operator()} (Layer\+Type $\ast$layer) const 
+\begin{DoxyCompactList}\small\item\em Set the reward parameter. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::enable\+\_\+if$<$ Has\+Reward\+Check$<$ T, double \&(T\+::$\ast$)()$>$\+::value \&\&Has\+Model\+Check$<$ T, std\+::vector$<$ {\bf Layer\+Types} $>$ \&(T\+::$\ast$)()$>$\+::value, void $>$\+::type {\bf Layer\+Reward} (T $\ast$layer) const 
+\begin{DoxyCompactList}\small\item\em Set the deterministic parameter if the module implements the Deterministic() and Model() function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::enable\+\_\+if$<$ !Has\+Reward\+Check$<$ T, double \&(T\+::$\ast$)()$>$\+::value \&\&Has\+Model\+Check$<$ T, std\+::vector$<$ {\bf Layer\+Types} $>$ \&(T\+::$\ast$)()$>$\+::value, void $>$\+::type {\bf Layer\+Reward} (T $\ast$layer) const 
+\begin{DoxyCompactList}\small\item\em Set the deterministic parameter if the module implements the Model() function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::enable\+\_\+if$<$ Has\+Reward\+Check$<$ T, double \&(T\+::$\ast$)()$>$\+::value \&\&!Has\+Model\+Check$<$ T, std\+::vector$<$ {\bf Layer\+Types} $>$ \&(T\+::$\ast$)()$>$\+::value, void $>$\+::type {\bf Layer\+Reward} (T $\ast$layer) const 
+\begin{DoxyCompactList}\small\item\em Set the deterministic parameter if the module implements the Deterministic() function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::enable\+\_\+if$<$ !Has\+Reward\+Check$<$ T, double \&(T\+::$\ast$)()$>$\+::value \&\&!Has\+Model\+Check$<$ T, std\+::vector$<$ {\bf Layer\+Types} $>$ \&(T\+::$\ast$)()$>$\+::value, void $>$\+::type {\bf Layer\+Reward} (T $\ast$layer) const 
+\begin{DoxyCompactList}\small\item\em Do not set the deterministic parameter if the module doesn\textquotesingle{}t implement the Deterministic() or Model() function. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+const double {\bf reward}
+\begin{DoxyCompactList}\small\item\em The reward value. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\doxyref{Reward\+Set\+Visitor}{p.}{classmlpack_1_1ann_1_1RewardSetVisitor} set the reward parameter given the reward value. 
+
+Definition at line 27 of file reward\+\_\+set\+\_\+visitor.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::ann\+::\+Reward\+Set\+Visitor@{mlpack\+::ann\+::\+Reward\+Set\+Visitor}!Reward\+Set\+Visitor@{Reward\+Set\+Visitor}}
+\index{Reward\+Set\+Visitor@{Reward\+Set\+Visitor}!mlpack\+::ann\+::\+Reward\+Set\+Visitor@{mlpack\+::ann\+::\+Reward\+Set\+Visitor}}
+\subsubsection[{Reward\+Set\+Visitor(const double reward)}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::ann\+::\+Reward\+Set\+Visitor\+::\+Reward\+Set\+Visitor (
+\begin{DoxyParamCaption}
+\item[{const double}]{reward}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1RewardSetVisitor_aa648ec35cc26eb69f209c5a276ec83c4}
+
+
+Set the reward parameter given the reward value. 
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::ann\+::\+Reward\+Set\+Visitor@{mlpack\+::ann\+::\+Reward\+Set\+Visitor}!Layer\+Reward@{Layer\+Reward}}
+\index{Layer\+Reward@{Layer\+Reward}!mlpack\+::ann\+::\+Reward\+Set\+Visitor@{mlpack\+::ann\+::\+Reward\+Set\+Visitor}}
+\subsubsection[{Layer\+Reward(\+T $\ast$layer) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ std\+::enable\+\_\+if$<$ Has\+Reward\+Check$<$T, double\&(T\+::$\ast$)()$>$\+::value \&\& Has\+Model\+Check$<$T, std\+::vector$<${\bf Layer\+Types}$>$\&(T\+::$\ast$)()$>$\+::value, void$>$\+::type mlpack\+::ann\+::\+Reward\+Set\+Visitor\+::\+Layer\+Reward (
+\begin{DoxyParamCaption}
+\item[{T $\ast$}]{layer}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1RewardSetVisitor_ace155b2bbdc94def24c3a774c0a92d3f}
+
+
+Set the deterministic parameter if the module implements the Deterministic() and Model() function. 
+
+\index{mlpack\+::ann\+::\+Reward\+Set\+Visitor@{mlpack\+::ann\+::\+Reward\+Set\+Visitor}!Layer\+Reward@{Layer\+Reward}}
+\index{Layer\+Reward@{Layer\+Reward}!mlpack\+::ann\+::\+Reward\+Set\+Visitor@{mlpack\+::ann\+::\+Reward\+Set\+Visitor}}
+\subsubsection[{Layer\+Reward(\+T $\ast$layer) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ std\+::enable\+\_\+if$<$ !Has\+Reward\+Check$<$T, double\&(T\+::$\ast$)()$>$\+::value \&\& Has\+Model\+Check$<$T, std\+::vector$<${\bf Layer\+Types}$>$\&(T\+::$\ast$)()$>$\+::value, void$>$\+::type mlpack\+::ann\+::\+Reward\+Set\+Visitor\+::\+Layer\+Reward (
+\begin{DoxyParamCaption}
+\item[{T $\ast$}]{layer}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1RewardSetVisitor_adb09417535c8ca8dbcc30f6c0b95f569}
+
+
+Set the deterministic parameter if the module implements the Model() function. 
+
+\index{mlpack\+::ann\+::\+Reward\+Set\+Visitor@{mlpack\+::ann\+::\+Reward\+Set\+Visitor}!Layer\+Reward@{Layer\+Reward}}
+\index{Layer\+Reward@{Layer\+Reward}!mlpack\+::ann\+::\+Reward\+Set\+Visitor@{mlpack\+::ann\+::\+Reward\+Set\+Visitor}}
+\subsubsection[{Layer\+Reward(\+T $\ast$layer) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ std\+::enable\+\_\+if$<$ Has\+Reward\+Check$<$T, double\&(T\+::$\ast$)()$>$\+::value \&\& !Has\+Model\+Check$<$T, std\+::vector$<${\bf Layer\+Types}$>$\&(T\+::$\ast$)()$>$\+::value, void$>$\+::type mlpack\+::ann\+::\+Reward\+Set\+Visitor\+::\+Layer\+Reward (
+\begin{DoxyParamCaption}
+\item[{T $\ast$}]{layer}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1RewardSetVisitor_aaa21cf01be9a29342fb123857f59f541}
+
+
+Set the deterministic parameter if the module implements the Deterministic() function. 
+
+\index{mlpack\+::ann\+::\+Reward\+Set\+Visitor@{mlpack\+::ann\+::\+Reward\+Set\+Visitor}!Layer\+Reward@{Layer\+Reward}}
+\index{Layer\+Reward@{Layer\+Reward}!mlpack\+::ann\+::\+Reward\+Set\+Visitor@{mlpack\+::ann\+::\+Reward\+Set\+Visitor}}
+\subsubsection[{Layer\+Reward(\+T $\ast$layer) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ std\+::enable\+\_\+if$<$ !Has\+Reward\+Check$<$T, double\&(T\+::$\ast$)()$>$\+::value \&\& !Has\+Model\+Check$<$T, std\+::vector$<${\bf Layer\+Types}$>$\&(T\+::$\ast$)()$>$\+::value, void$>$\+::type mlpack\+::ann\+::\+Reward\+Set\+Visitor\+::\+Layer\+Reward (
+\begin{DoxyParamCaption}
+\item[{T $\ast$}]{layer}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1RewardSetVisitor_a6db276c3185fd052f1c4cb31cdb0036f}
+
+
+Do not set the deterministic parameter if the module doesn\textquotesingle{}t implement the Deterministic() or Model() function. 
+
+\index{mlpack\+::ann\+::\+Reward\+Set\+Visitor@{mlpack\+::ann\+::\+Reward\+Set\+Visitor}!operator()@{operator()}}
+\index{operator()@{operator()}!mlpack\+::ann\+::\+Reward\+Set\+Visitor@{mlpack\+::ann\+::\+Reward\+Set\+Visitor}}
+\subsubsection[{operator()(\+Layer\+Type $\ast$layer) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Layer\+Type $>$ void mlpack\+::ann\+::\+Reward\+Set\+Visitor\+::operator() (
+\begin{DoxyParamCaption}
+\item[{Layer\+Type $\ast$}]{layer}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1ann_1_1RewardSetVisitor_ac00fedd6c47811c775b007ae16cc9fdb}
+
+
+Set the reward parameter. 
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::ann\+::\+Reward\+Set\+Visitor@{mlpack\+::ann\+::\+Reward\+Set\+Visitor}!reward@{reward}}
+\index{reward@{reward}!mlpack\+::ann\+::\+Reward\+Set\+Visitor@{mlpack\+::ann\+::\+Reward\+Set\+Visitor}}
+\subsubsection[{reward}]{\setlength{\rightskip}{0pt plus 5cm}const double mlpack\+::ann\+::\+Reward\+Set\+Visitor\+::reward\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1RewardSetVisitor_ac1e3be082da226cc6ad027c89e693dd0}
+
+
+The reward value. 
+
+
+
+Definition at line 39 of file reward\+\_\+set\+\_\+visitor.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/ann/visitor/{\bf reward\+\_\+set\+\_\+visitor.\+hpp}\end{DoxyCompactItemize}

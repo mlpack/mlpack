@@ -1,0 +1,463 @@
+\section{mlpack\+:\+:gmm\+:\+:E\+M\+Fit$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$ Class Template Reference}
+\label{classmlpack_1_1gmm_1_1EMFit}\index{mlpack\+::gmm\+::\+E\+M\+Fit$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$@{mlpack\+::gmm\+::\+E\+M\+Fit$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$}}
+
+
+This class contains methods which can fit a \doxyref{G\+MM}{p.}{classmlpack_1_1gmm_1_1GMM} to observations using the EM algorithm.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf E\+M\+Fit} (const size\+\_\+t {\bf max\+Iterations}=300, const double {\bf tolerance}=1e-\/10, Initial\+Clustering\+Type clusterer=\+Initial\+Clustering\+Type(), Covariance\+Constraint\+Policy constraint=\+Covariance\+Constraint\+Policy())
+\begin{DoxyCompactList}\small\item\em Construct the \doxyref{E\+M\+Fit}{p.}{classmlpack_1_1gmm_1_1EMFit} object, optionally passing an Initial\+Clustering\+Type object (just in case it needs to store state). \end{DoxyCompactList}\item 
+const Initial\+Clustering\+Type \& {\bf Clusterer} () const 
+\begin{DoxyCompactList}\small\item\em Get the clusterer. \end{DoxyCompactList}\item 
+Initial\+Clustering\+Type \& {\bf Clusterer} ()
+\begin{DoxyCompactList}\small\item\em Modify the clusterer. \end{DoxyCompactList}\item 
+const Covariance\+Constraint\+Policy \& {\bf Constraint} () const 
+\begin{DoxyCompactList}\small\item\em Get the covariance constraint policy class. \end{DoxyCompactList}\item 
+Covariance\+Constraint\+Policy \& {\bf Constraint} ()
+\begin{DoxyCompactList}\small\item\em Modify the covariance constraint policy class. \end{DoxyCompactList}\item 
+void {\bf Estimate} (const arma\+::mat \&observations, std\+::vector$<$ {\bf distribution\+::\+Gaussian\+Distribution} $>$ \&dists, arma\+::vec \&weights, const bool use\+Initial\+Model=false)
+\begin{DoxyCompactList}\small\item\em Fit the observations to a Gaussian mixture model (\doxyref{G\+MM}{p.}{classmlpack_1_1gmm_1_1GMM}) using the EM algorithm. \end{DoxyCompactList}\item 
+void {\bf Estimate} (const arma\+::mat \&observations, const arma\+::vec \&probabilities, std\+::vector$<$ {\bf distribution\+::\+Gaussian\+Distribution} $>$ \&dists, arma\+::vec \&weights, const bool use\+Initial\+Model=false)
+\begin{DoxyCompactList}\small\item\em Fit the observations to a Gaussian mixture model (\doxyref{G\+MM}{p.}{classmlpack_1_1gmm_1_1GMM}) using the EM algorithm, taking into account the probabilities of each point being from this mixture. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Max\+Iterations} () const 
+\begin{DoxyCompactList}\small\item\em Get the maximum number of iterations of the EM algorithm. \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Max\+Iterations} ()
+\begin{DoxyCompactList}\small\item\em Modify the maximum number of iterations of the EM algorithm. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&ar, const unsigned int version)
+\begin{DoxyCompactList}\small\item\em Serialize the fitter. \end{DoxyCompactList}\item 
+double {\bf Tolerance} () const 
+\begin{DoxyCompactList}\small\item\em Get the tolerance for the convergence of the EM algorithm. \end{DoxyCompactList}\item 
+double \& {\bf Tolerance} ()
+\begin{DoxyCompactList}\small\item\em Modify the tolerance for the convergence of the EM algorithm. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void {\bf Initial\+Clustering} (const arma\+::mat \&observations, std\+::vector$<$ {\bf distribution\+::\+Gaussian\+Distribution} $>$ \&dists, arma\+::vec \&weights)
+\begin{DoxyCompactList}\small\item\em Run the clusterer, and then turn the cluster assignments into Gaussians. \end{DoxyCompactList}\item 
+double {\bf Log\+Likelihood} (const arma\+::mat \&data, const std\+::vector$<$ {\bf distribution\+::\+Gaussian\+Distribution} $>$ \&dists, const arma\+::vec \&weights) const 
+\begin{DoxyCompactList}\small\item\em Calculate the log-\/likelihood of a model. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+Initial\+Clustering\+Type {\bf clusterer}
+\begin{DoxyCompactList}\small\item\em Object which will perform the clustering. \end{DoxyCompactList}\item 
+Covariance\+Constraint\+Policy {\bf constraint}
+\begin{DoxyCompactList}\small\item\em Object which applies constraints to the covariance matrix. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf max\+Iterations}
+\begin{DoxyCompactList}\small\item\em Maximum iterations of EM algorithm. \end{DoxyCompactList}\item 
+double {\bf tolerance}
+\begin{DoxyCompactList}\small\item\em Tolerance for convergence of EM. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Initial\+Clustering\+Type = kmeans\+::\+K\+Means$<$$>$, typename Covariance\+Constraint\+Policy = Positive\+Definite\+Constraint$>$\\*
+class mlpack\+::gmm\+::\+E\+M\+Fit$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$}
+
+This class contains methods which can fit a \doxyref{G\+MM}{p.}{classmlpack_1_1gmm_1_1GMM} to observations using the EM algorithm. 
+
+It requires an initial clustering mechanism, which is by default the K\+Means algorithm. The clustering mechanism must implement the following method\+:
+
+
+\begin{DoxyItemize}
+\item void Cluster(const arma\+::mat\& observations, const size\+\_\+t clusters, arma\+::\+Row$<$size\+\_\+t$>$\& assignments);
+\end{DoxyItemize}
+
+This method should create \textquotesingle{}clusters\textquotesingle{} clusters, and return the assignment of each point to a cluster. 
+
+Definition at line 43 of file em\+\_\+fit.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}!E\+M\+Fit@{E\+M\+Fit}}
+\index{E\+M\+Fit@{E\+M\+Fit}!mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}}
+\subsubsection[{E\+M\+Fit(const size\+\_\+t max\+Iterations=300, const double tolerance=1e-\/10, Initial\+Clustering\+Type clusterer=\+Initial\+Clustering\+Type(), Covariance\+Constraint\+Policy constraint=\+Covariance\+Constraint\+Policy())}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Initial\+Clustering\+Type  = kmeans\+::\+K\+Means$<$$>$, typename Covariance\+Constraint\+Policy  = Positive\+Definite\+Constraint$>$ {\bf mlpack\+::gmm\+::\+E\+M\+Fit}$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$\+::{\bf E\+M\+Fit} (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{max\+Iterations = {\ttfamily 300}, }
+\item[{const double}]{tolerance = {\ttfamily 1e-\/10}, }
+\item[{Initial\+Clustering\+Type}]{clusterer = {\ttfamily InitialClusteringType()}, }
+\item[{Covariance\+Constraint\+Policy}]{constraint = {\ttfamily CovarianceConstraintPolicy()}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1gmm_1_1EMFit_a629f0c991f79d2baa3fb09c49ba3834f}
+
+
+Construct the \doxyref{E\+M\+Fit}{p.}{classmlpack_1_1gmm_1_1EMFit} object, optionally passing an Initial\+Clustering\+Type object (just in case it needs to store state). 
+
+Setting the maximum number of iterations to 0 means that the EM algorithm will iterate until convergence (with the given tolerance).
+
+The parameter force\+Positive controls whether or not the covariance matrices are checked for positive definiteness at each iteration. This could be a time-\/consuming task, so, if you know your data is well-\/behaved, you can set it to false and save some runtime.
+
+
+\begin{DoxyParams}{Parameters}
+{\em max\+Iterations} & Maximum number of iterations for EM. \\
+\hline
+{\em tolerance} & Log-\/likelihood tolerance required for convergence. \\
+\hline
+{\em force\+Positive} & Check for positive-\/definiteness of each covariance matrix at each iteration. \\
+\hline
+{\em clusterer} & Object which will perform the initial clustering. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}!Clusterer@{Clusterer}}
+\index{Clusterer@{Clusterer}!mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}}
+\subsubsection[{Clusterer() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Initial\+Clustering\+Type  = kmeans\+::\+K\+Means$<$$>$, typename Covariance\+Constraint\+Policy  = Positive\+Definite\+Constraint$>$ const Initial\+Clustering\+Type\& {\bf mlpack\+::gmm\+::\+E\+M\+Fit}$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$\+::Clusterer (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1gmm_1_1EMFit_a9552740fd3dd1625320b402e5773b17d}
+
+
+Get the clusterer. 
+
+
+
+Definition at line 112 of file em\+\_\+fit.\+hpp.
+
+
+
+References mlpack\+::gmm\+::\+E\+M\+Fit$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$\+::clusterer.
+
+\index{mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}!Clusterer@{Clusterer}}
+\index{Clusterer@{Clusterer}!mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}}
+\subsubsection[{Clusterer()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Initial\+Clustering\+Type  = kmeans\+::\+K\+Means$<$$>$, typename Covariance\+Constraint\+Policy  = Positive\+Definite\+Constraint$>$ Initial\+Clustering\+Type\& {\bf mlpack\+::gmm\+::\+E\+M\+Fit}$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$\+::Clusterer (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1gmm_1_1EMFit_a707dba7c98fcf7cc828bdef8e6d299d1}
+
+
+Modify the clusterer. 
+
+
+
+Definition at line 114 of file em\+\_\+fit.\+hpp.
+
+
+
+References mlpack\+::gmm\+::\+E\+M\+Fit$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$\+::clusterer.
+
+\index{mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}!Constraint@{Constraint}}
+\index{Constraint@{Constraint}!mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}}
+\subsubsection[{Constraint() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Initial\+Clustering\+Type  = kmeans\+::\+K\+Means$<$$>$, typename Covariance\+Constraint\+Policy  = Positive\+Definite\+Constraint$>$ const Covariance\+Constraint\+Policy\& {\bf mlpack\+::gmm\+::\+E\+M\+Fit}$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$\+::Constraint (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1gmm_1_1EMFit_a3837a426192b5aa6583c780efc7964cb}
+
+
+Get the covariance constraint policy class. 
+
+
+
+Definition at line 117 of file em\+\_\+fit.\+hpp.
+
+
+
+References mlpack\+::gmm\+::\+E\+M\+Fit$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$\+::constraint.
+
+\index{mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}!Constraint@{Constraint}}
+\index{Constraint@{Constraint}!mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}}
+\subsubsection[{Constraint()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Initial\+Clustering\+Type  = kmeans\+::\+K\+Means$<$$>$, typename Covariance\+Constraint\+Policy  = Positive\+Definite\+Constraint$>$ Covariance\+Constraint\+Policy\& {\bf mlpack\+::gmm\+::\+E\+M\+Fit}$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$\+::Constraint (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1gmm_1_1EMFit_abd646e32dea239c90f312fe0f29b0abf}
+
+
+Modify the covariance constraint policy class. 
+
+
+
+Definition at line 119 of file em\+\_\+fit.\+hpp.
+
+
+
+References mlpack\+::gmm\+::\+E\+M\+Fit$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$\+::constraint.
+
+\index{mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}!Estimate@{Estimate}}
+\index{Estimate@{Estimate}!mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}}
+\subsubsection[{Estimate(const arma\+::mat \&observations, std\+::vector$<$ distribution\+::\+Gaussian\+Distribution $>$ \&dists, arma\+::vec \&weights, const bool use\+Initial\+Model=false)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Initial\+Clustering\+Type  = kmeans\+::\+K\+Means$<$$>$, typename Covariance\+Constraint\+Policy  = Positive\+Definite\+Constraint$>$ void {\bf mlpack\+::gmm\+::\+E\+M\+Fit}$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$\+::Estimate (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{observations, }
+\item[{std\+::vector$<$ {\bf distribution\+::\+Gaussian\+Distribution} $>$ \&}]{dists, }
+\item[{arma\+::vec \&}]{weights, }
+\item[{const bool}]{use\+Initial\+Model = {\ttfamily false}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1gmm_1_1EMFit_a866986fd0df110ec1b32d25d71ac6a23}
+
+
+Fit the observations to a Gaussian mixture model (\doxyref{G\+MM}{p.}{classmlpack_1_1gmm_1_1GMM}) using the EM algorithm. 
+
+The size of the vectors (indicating the number of components) must already be set. Optionally, if use\+Initial\+Model is set to true, then the model given in the means, covariances, and weights parameters is used as the initial model, instead of using the Initial\+Clustering\+Type\+::\+Cluster() option.
+
+
+\begin{DoxyParams}{Parameters}
+{\em observations} & List of observations to train on. \\
+\hline
+{\em means} & Vector to store trained means in. \\
+\hline
+{\em covariances} & Vector to store trained covariances in. \\
+\hline
+{\em weights} & Vector to store a priori weights in. \\
+\hline
+{\em use\+Initial\+Model} & If true, the given model is used for the initial clustering. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}!Estimate@{Estimate}}
+\index{Estimate@{Estimate}!mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}}
+\subsubsection[{Estimate(const arma\+::mat \&observations, const arma\+::vec \&probabilities, std\+::vector$<$ distribution\+::\+Gaussian\+Distribution $>$ \&dists, arma\+::vec \&weights, const bool use\+Initial\+Model=false)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Initial\+Clustering\+Type  = kmeans\+::\+K\+Means$<$$>$, typename Covariance\+Constraint\+Policy  = Positive\+Definite\+Constraint$>$ void {\bf mlpack\+::gmm\+::\+E\+M\+Fit}$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$\+::Estimate (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{observations, }
+\item[{const arma\+::vec \&}]{probabilities, }
+\item[{std\+::vector$<$ {\bf distribution\+::\+Gaussian\+Distribution} $>$ \&}]{dists, }
+\item[{arma\+::vec \&}]{weights, }
+\item[{const bool}]{use\+Initial\+Model = {\ttfamily false}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1gmm_1_1EMFit_a213279d43424371e9fdd270b93a5cef9}
+
+
+Fit the observations to a Gaussian mixture model (\doxyref{G\+MM}{p.}{classmlpack_1_1gmm_1_1GMM}) using the EM algorithm, taking into account the probabilities of each point being from this mixture. 
+
+The size of the vectors (indicating the number of components) must already be set. Optionally, if use\+Initial\+Model is set to true, then the model given in the means, covariances, and weights parameters is used as the initial model, instead of using the Initial\+Clustering\+Type\+::\+Cluster() option.
+
+
+\begin{DoxyParams}{Parameters}
+{\em observations} & List of observations to train on. \\
+\hline
+{\em probabilities} & Probability of each point being from this model. \\
+\hline
+{\em means} & Vector to store trained means in. \\
+\hline
+{\em covariances} & Vector to store trained covariances in. \\
+\hline
+{\em weights} & Vector to store a priori weights in. \\
+\hline
+{\em use\+Initial\+Model} & If true, the given model is used for the initial clustering. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}!Initial\+Clustering@{Initial\+Clustering}}
+\index{Initial\+Clustering@{Initial\+Clustering}!mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}}
+\subsubsection[{Initial\+Clustering(const arma\+::mat \&observations, std\+::vector$<$ distribution\+::\+Gaussian\+Distribution $>$ \&dists, arma\+::vec \&weights)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Initial\+Clustering\+Type  = kmeans\+::\+K\+Means$<$$>$, typename Covariance\+Constraint\+Policy  = Positive\+Definite\+Constraint$>$ void {\bf mlpack\+::gmm\+::\+E\+M\+Fit}$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$\+::Initial\+Clustering (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{observations, }
+\item[{std\+::vector$<$ {\bf distribution\+::\+Gaussian\+Distribution} $>$ \&}]{dists, }
+\item[{arma\+::vec \&}]{weights}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1gmm_1_1EMFit_ae9d13d0112224ce200118d85cc1f4856}
+
+
+Run the clusterer, and then turn the cluster assignments into Gaussians. 
+
+This is a helper function for both overloads of \doxyref{Estimate()}{p.}{classmlpack_1_1gmm_1_1EMFit_a866986fd0df110ec1b32d25d71ac6a23}. The vectors must be already set to the number of clusters.
+
+
+\begin{DoxyParams}{Parameters}
+{\em observations} & List of observations. \\
+\hline
+{\em means} & Vector to store means in. \\
+\hline
+{\em covariances} & Vector to store covariances in. \\
+\hline
+{\em weights} & Vector to store a priori weights in. \\
+\hline
+\end{DoxyParams}
+
+
+Referenced by mlpack\+::gmm\+::\+E\+M\+Fit$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$\+::\+Tolerance().
+
+\index{mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}!Log\+Likelihood@{Log\+Likelihood}}
+\index{Log\+Likelihood@{Log\+Likelihood}!mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}}
+\subsubsection[{Log\+Likelihood(const arma\+::mat \&data, const std\+::vector$<$ distribution\+::\+Gaussian\+Distribution $>$ \&dists, const arma\+::vec \&weights) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Initial\+Clustering\+Type  = kmeans\+::\+K\+Means$<$$>$, typename Covariance\+Constraint\+Policy  = Positive\+Definite\+Constraint$>$ double {\bf mlpack\+::gmm\+::\+E\+M\+Fit}$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$\+::Log\+Likelihood (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{data, }
+\item[{const std\+::vector$<$ {\bf distribution\+::\+Gaussian\+Distribution} $>$ \&}]{dists, }
+\item[{const arma\+::vec \&}]{weights}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1gmm_1_1EMFit_a331b4e87ccd48fb56019cfd039c7d266}
+
+
+Calculate the log-\/likelihood of a model. 
+
+Yes, this is reimplemented in the \doxyref{G\+MM}{p.}{classmlpack_1_1gmm_1_1GMM} code. Intuition suggests that the log-\/likelihood is not the best way to determine if the EM algorithm has converged.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Data matrix. \\
+\hline
+{\em means} & Vector of means. \\
+\hline
+{\em covariances} & Vector of covariance matrices. \\
+\hline
+{\em weights} & Vector of a priori weights. \\
+\hline
+\end{DoxyParams}
+
+
+Referenced by mlpack\+::gmm\+::\+E\+M\+Fit$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$\+::\+Tolerance().
+
+\index{mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}!Max\+Iterations@{Max\+Iterations}}
+\index{Max\+Iterations@{Max\+Iterations}!mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}}
+\subsubsection[{Max\+Iterations() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Initial\+Clustering\+Type  = kmeans\+::\+K\+Means$<$$>$, typename Covariance\+Constraint\+Policy  = Positive\+Definite\+Constraint$>$ size\+\_\+t {\bf mlpack\+::gmm\+::\+E\+M\+Fit}$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$\+::Max\+Iterations (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1gmm_1_1EMFit_af6c593e716a094b742d2d157f52ca75e}
+
+
+Get the maximum number of iterations of the EM algorithm. 
+
+
+
+Definition at line 122 of file em\+\_\+fit.\+hpp.
+
+
+
+References mlpack\+::gmm\+::\+E\+M\+Fit$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$\+::max\+Iterations.
+
+\index{mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}!Max\+Iterations@{Max\+Iterations}}
+\index{Max\+Iterations@{Max\+Iterations}!mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}}
+\subsubsection[{Max\+Iterations()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Initial\+Clustering\+Type  = kmeans\+::\+K\+Means$<$$>$, typename Covariance\+Constraint\+Policy  = Positive\+Definite\+Constraint$>$ size\+\_\+t\& {\bf mlpack\+::gmm\+::\+E\+M\+Fit}$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$\+::Max\+Iterations (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1gmm_1_1EMFit_ab1d0543bde9b1a4f2431e599a4470d93}
+
+
+Modify the maximum number of iterations of the EM algorithm. 
+
+
+
+Definition at line 124 of file em\+\_\+fit.\+hpp.
+
+
+
+References mlpack\+::gmm\+::\+E\+M\+Fit$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$\+::max\+Iterations.
+
+\index{mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}}
+\subsubsection[{Serialize(\+Archive \&ar, const unsigned int version)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Initial\+Clustering\+Type  = kmeans\+::\+K\+Means$<$$>$, typename Covariance\+Constraint\+Policy  = Positive\+Definite\+Constraint$>$ template$<$typename Archive $>$ void {\bf mlpack\+::gmm\+::\+E\+M\+Fit}$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$\+::Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const unsigned int}]{version}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1gmm_1_1EMFit_a86bf5dcce8f31358af461ad78f055b37}
+
+
+Serialize the fitter. 
+
+
+
+Referenced by mlpack\+::gmm\+::\+E\+M\+Fit$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$\+::\+Tolerance().
+
+\index{mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}!Tolerance@{Tolerance}}
+\index{Tolerance@{Tolerance}!mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}}
+\subsubsection[{Tolerance() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Initial\+Clustering\+Type  = kmeans\+::\+K\+Means$<$$>$, typename Covariance\+Constraint\+Policy  = Positive\+Definite\+Constraint$>$ double {\bf mlpack\+::gmm\+::\+E\+M\+Fit}$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$\+::Tolerance (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1gmm_1_1EMFit_aa3aad8721a7e8538ea9c3cdacc35a996}
+
+
+Get the tolerance for the convergence of the EM algorithm. 
+
+
+
+Definition at line 127 of file em\+\_\+fit.\+hpp.
+
+
+
+References mlpack\+::gmm\+::\+E\+M\+Fit$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$\+::tolerance.
+
+\index{mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}!Tolerance@{Tolerance}}
+\index{Tolerance@{Tolerance}!mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}}
+\subsubsection[{Tolerance()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Initial\+Clustering\+Type  = kmeans\+::\+K\+Means$<$$>$, typename Covariance\+Constraint\+Policy  = Positive\+Definite\+Constraint$>$ double\& {\bf mlpack\+::gmm\+::\+E\+M\+Fit}$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$\+::Tolerance (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1gmm_1_1EMFit_a9bdffd46ef67bec866e5819fdc56bf2b}
+
+
+Modify the tolerance for the convergence of the EM algorithm. 
+
+
+
+Definition at line 129 of file em\+\_\+fit.\+hpp.
+
+
+
+References mlpack\+::gmm\+::\+E\+M\+Fit$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$\+::\+Initial\+Clustering(), mlpack\+::gmm\+::\+E\+M\+Fit$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$\+::\+Log\+Likelihood(), mlpack\+::gmm\+::\+E\+M\+Fit$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$\+::\+Serialize(), and mlpack\+::gmm\+::\+E\+M\+Fit$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$\+::tolerance.
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}!clusterer@{clusterer}}
+\index{clusterer@{clusterer}!mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}}
+\subsubsection[{clusterer}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Initial\+Clustering\+Type  = kmeans\+::\+K\+Means$<$$>$, typename Covariance\+Constraint\+Policy  = Positive\+Definite\+Constraint$>$ Initial\+Clustering\+Type {\bf mlpack\+::gmm\+::\+E\+M\+Fit}$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$\+::clusterer\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1gmm_1_1EMFit_ae2c22954de90170cb1f96e36d35fcf5e}
+
+
+Object which will perform the clustering. 
+
+
+
+Definition at line 170 of file em\+\_\+fit.\+hpp.
+
+
+
+Referenced by mlpack\+::gmm\+::\+E\+M\+Fit$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$\+::\+Clusterer().
+
+\index{mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}!constraint@{constraint}}
+\index{constraint@{constraint}!mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}}
+\subsubsection[{constraint}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Initial\+Clustering\+Type  = kmeans\+::\+K\+Means$<$$>$, typename Covariance\+Constraint\+Policy  = Positive\+Definite\+Constraint$>$ Covariance\+Constraint\+Policy {\bf mlpack\+::gmm\+::\+E\+M\+Fit}$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$\+::constraint\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1gmm_1_1EMFit_a7dceacbb8ad05fa9ffca11dac4a1e372}
+
+
+Object which applies constraints to the covariance matrix. 
+
+
+
+Definition at line 172 of file em\+\_\+fit.\+hpp.
+
+
+
+Referenced by mlpack\+::gmm\+::\+E\+M\+Fit$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$\+::\+Constraint().
+
+\index{mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}!max\+Iterations@{max\+Iterations}}
+\index{max\+Iterations@{max\+Iterations}!mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}}
+\subsubsection[{max\+Iterations}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Initial\+Clustering\+Type  = kmeans\+::\+K\+Means$<$$>$, typename Covariance\+Constraint\+Policy  = Positive\+Definite\+Constraint$>$ size\+\_\+t {\bf mlpack\+::gmm\+::\+E\+M\+Fit}$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$\+::max\+Iterations\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1gmm_1_1EMFit_a7cec14ec7765af815fe30e3899c6812c}
+
+
+Maximum iterations of EM algorithm. 
+
+
+
+Definition at line 166 of file em\+\_\+fit.\+hpp.
+
+
+
+Referenced by mlpack\+::gmm\+::\+E\+M\+Fit$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$\+::\+Max\+Iterations().
+
+\index{mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}!tolerance@{tolerance}}
+\index{tolerance@{tolerance}!mlpack\+::gmm\+::\+E\+M\+Fit@{mlpack\+::gmm\+::\+E\+M\+Fit}}
+\subsubsection[{tolerance}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Initial\+Clustering\+Type  = kmeans\+::\+K\+Means$<$$>$, typename Covariance\+Constraint\+Policy  = Positive\+Definite\+Constraint$>$ double {\bf mlpack\+::gmm\+::\+E\+M\+Fit}$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$\+::tolerance\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1gmm_1_1EMFit_aa068530ec69e3fc9b329f68adb6f6716}
+
+
+Tolerance for convergence of EM. 
+
+
+
+Definition at line 168 of file em\+\_\+fit.\+hpp.
+
+
+
+Referenced by mlpack\+::gmm\+::\+E\+M\+Fit$<$ Initial\+Clustering\+Type, Covariance\+Constraint\+Policy $>$\+::\+Tolerance().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/gmm/{\bf em\+\_\+fit.\+hpp}\end{DoxyCompactItemize}

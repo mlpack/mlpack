@@ -1,0 +1,70 @@
+.TH "mlpack::optimization::test::GDTestFunction" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::optimization::test::GDTestFunction \- Very, very simple test function which is the composite of three other functions\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBGDTestFunction\fP ()"
+.br
+.RI "\fINothing to do for the constructor\&. \fP"
+.ti -1c
+.RI "double \fBEvaluate\fP (const arma::mat &coordinates) const "
+.br
+.RI "\fIEvaluate a function\&. \fP"
+.ti -1c
+.RI "arma::mat \fBGetInitialPoint\fP () const "
+.br
+.RI "\fIGet the starting point\&. \fP"
+.ti -1c
+.RI "void \fBGradient\fP (const arma::mat &coordinates, arma::mat &gradient) const "
+.br
+.RI "\fIEvaluate the gradient of a function\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Very, very simple test function which is the composite of three other functions\&. 
+
+The gradient is not very steep far away from the optimum, so a larger step size may be required to optimize it in a reasonable number of iterations\&. 
+.PP
+Definition at line 25 of file test_function\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::optimization::test::GDTestFunction::GDTestFunction ()\fC [inline]\fP"
+
+.PP
+Nothing to do for the constructor\&. 
+.PP
+Definition at line 29 of file test_function\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "double mlpack::optimization::test::GDTestFunction::Evaluate (const arma::mat & coordinates) const"
+
+.PP
+Evaluate a function\&. 
+.PP
+Referenced by GetInitialPoint()\&.
+.SS "arma::mat mlpack::optimization::test::GDTestFunction::GetInitialPoint () const\fC [inline]\fP"
+
+.PP
+Get the starting point\&. 
+.PP
+Definition at line 32 of file test_function\&.hpp\&.
+.PP
+References Evaluate(), and Gradient()\&.
+.SS "void mlpack::optimization::test::GDTestFunction::Gradient (const arma::mat & coordinates, arma::mat & gradient) const"
+
+.PP
+Evaluate the gradient of a function\&. 
+.PP
+Referenced by GetInitialPoint()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

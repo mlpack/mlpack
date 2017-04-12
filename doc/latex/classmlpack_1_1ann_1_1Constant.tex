@@ -1,0 +1,352 @@
+\section{mlpack\+:\+:ann\+:\+:Constant$<$ Input\+Data\+Type, Output\+Data\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1Constant}\index{mlpack\+::ann\+::\+Constant$<$ Input\+Data\+Type, Output\+Data\+Type $>$@{mlpack\+::ann\+::\+Constant$<$ Input\+Data\+Type, Output\+Data\+Type $>$}}
+
+
+Implementation of the constant layer.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Constant} (const size\+\_\+t {\bf out\+Size}, const double scalar)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Constant}{p.}{classmlpack_1_1ann_1_1Constant} object that outputs a given constant scalar value given any input value. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Data\+Type $>$ }\\void {\bf Backward} (const Data\+Type \&\&, Data\+Type \&\&, Data\+Type \&\&g)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& {\bf Delta} () const 
+\begin{DoxyCompactList}\small\item\em Get the delta. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& {\bf Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Input\+Type , typename Output\+Type $>$ }\\void {\bf Forward} (const Input\+Type \&\&input, Output\+Type \&\&output)
+\begin{DoxyCompactList}\small\item\em Ordinary feed forward pass of a neural network. \end{DoxyCompactList}\item 
+Input\+Data\+Type \& {\bf Input\+Parameter} () const 
+\begin{DoxyCompactList}\small\item\em Get the input parameter. \end{DoxyCompactList}\item 
+Input\+Data\+Type \& {\bf Input\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the input parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& {\bf Output\+Parameter} () const 
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& {\bf Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&ar, const unsigned int)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+Output\+Data\+Type {\bf constant\+Output}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored constant output matrix. \end{DoxyCompactList}\item 
+Output\+Data\+Type {\bf delta}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored delta object. \end{DoxyCompactList}\item 
+Input\+Data\+Type {\bf input\+Parameter}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored input parameter object. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf in\+Size}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored number of input units. \end{DoxyCompactList}\item 
+Output\+Data\+Type {\bf output\+Parameter}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored output parameter object. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf out\+Size}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored number of output units. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat$>$\\*
+class mlpack\+::ann\+::\+Constant$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+
+Implementation of the constant layer. 
+
+The constant layer outputs a given constant value given any input value.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 34 of file constant.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::ann\+::\+Constant@{mlpack\+::ann\+::\+Constant}!Constant@{Constant}}
+\index{Constant@{Constant}!mlpack\+::ann\+::\+Constant@{mlpack\+::ann\+::\+Constant}}
+\subsubsection[{Constant(const size\+\_\+t out\+Size, const double scalar)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ {\bf mlpack\+::ann\+::\+Constant}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::{\bf Constant} (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{out\+Size, }
+\item[{const double}]{scalar}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1Constant_a651218b67fa2b8280bf1d29401e33dcd}
+
+
+Create the \doxyref{Constant}{p.}{classmlpack_1_1ann_1_1Constant} object that outputs a given constant scalar value given any input value. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em out\+Size} & The number of output units. \\
+\hline
+{\em scalar} & The constant value used to create the constant output. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::ann\+::\+Constant@{mlpack\+::ann\+::\+Constant}!Backward@{Backward}}
+\index{Backward@{Backward}!mlpack\+::ann\+::\+Constant@{mlpack\+::ann\+::\+Constant}}
+\subsubsection[{Backward(const Data\+Type \&\&, Data\+Type \&\&, Data\+Type \&\&g)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename Data\+Type $>$ void {\bf mlpack\+::ann\+::\+Constant}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Backward (
+\begin{DoxyParamCaption}
+\item[{const Data\+Type \&\&}]{, }
+\item[{Data\+Type \&\&}]{, }
+\item[{Data\+Type \&\&}]{g}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1Constant_abf84fb7bc07da880d421ebdc08002a3c}
+
+
+Ordinary feed backward pass of a neural network. 
+
+The backward pass of the constant layer is returns always a zero output error matrix.
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The propagated input activation. \\
+\hline
+{\em gy} & The backpropagated error. \\
+\hline
+{\em g} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::ann\+::\+Constant@{mlpack\+::ann\+::\+Constant}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Constant@{mlpack\+::ann\+::\+Constant}}
+\subsubsection[{Delta() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type\& {\bf mlpack\+::ann\+::\+Constant}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Delta (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1Constant_a1bb779947dfb369d177623c4dbbb8992}
+
+
+Get the delta. 
+
+
+
+Definition at line 80 of file constant.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Constant$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::delta.
+
+\index{mlpack\+::ann\+::\+Constant@{mlpack\+::ann\+::\+Constant}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Constant@{mlpack\+::ann\+::\+Constant}}
+\subsubsection[{Delta()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type\& {\bf mlpack\+::ann\+::\+Constant}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Delta (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1Constant_a93e56f6053486fc188e786bf0594718b}
+
+
+Modify the delta. 
+
+
+
+Definition at line 82 of file constant.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Constant$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::delta, and mlpack\+::ann\+::\+Constant$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Serialize().
+
+\index{mlpack\+::ann\+::\+Constant@{mlpack\+::ann\+::\+Constant}!Forward@{Forward}}
+\index{Forward@{Forward}!mlpack\+::ann\+::\+Constant@{mlpack\+::ann\+::\+Constant}}
+\subsubsection[{Forward(const Input\+Type \&\&input, Output\+Type \&\&output)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename Input\+Type , typename Output\+Type $>$ void {\bf mlpack\+::ann\+::\+Constant}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Forward (
+\begin{DoxyParamCaption}
+\item[{const Input\+Type \&\&}]{input, }
+\item[{Output\+Type \&\&}]{output}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1Constant_ad73c7f323c82a05ae82b334641160f15}
+
+
+Ordinary feed forward pass of a neural network. 
+
+The forward pass fills the output with the specified constant parameter.
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input data used for evaluating the specified function. \\
+\hline
+{\em output} & Resulting output activation. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::ann\+::\+Constant@{mlpack\+::ann\+::\+Constant}!Input\+Parameter@{Input\+Parameter}}
+\index{Input\+Parameter@{Input\+Parameter}!mlpack\+::ann\+::\+Constant@{mlpack\+::ann\+::\+Constant}}
+\subsubsection[{Input\+Parameter() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Input\+Data\+Type\& {\bf mlpack\+::ann\+::\+Constant}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Input\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1Constant_a4b2faa0f8fa6b07fc20c2bb822e779bf}
+
+
+Get the input parameter. 
+
+
+
+Definition at line 70 of file constant.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Constant$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::input\+Parameter.
+
+\index{mlpack\+::ann\+::\+Constant@{mlpack\+::ann\+::\+Constant}!Input\+Parameter@{Input\+Parameter}}
+\index{Input\+Parameter@{Input\+Parameter}!mlpack\+::ann\+::\+Constant@{mlpack\+::ann\+::\+Constant}}
+\subsubsection[{Input\+Parameter()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Input\+Data\+Type\& {\bf mlpack\+::ann\+::\+Constant}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Input\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1Constant_a831d2df2d8dd4910ee72af5eef7b30be}
+
+
+Modify the input parameter. 
+
+
+
+Definition at line 72 of file constant.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Constant$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::input\+Parameter.
+
+\index{mlpack\+::ann\+::\+Constant@{mlpack\+::ann\+::\+Constant}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Constant@{mlpack\+::ann\+::\+Constant}}
+\subsubsection[{Output\+Parameter() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type\& {\bf mlpack\+::ann\+::\+Constant}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Output\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1Constant_a4455732ef2d8b6e4bef0738af29f3be9}
+
+
+Get the output parameter. 
+
+
+
+Definition at line 75 of file constant.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Constant$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Parameter.
+
+\index{mlpack\+::ann\+::\+Constant@{mlpack\+::ann\+::\+Constant}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Constant@{mlpack\+::ann\+::\+Constant}}
+\subsubsection[{Output\+Parameter()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type\& {\bf mlpack\+::ann\+::\+Constant}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Output\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1Constant_a08336abea806519ab827307698aa70a3}
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 77 of file constant.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Constant$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Parameter.
+
+\index{mlpack\+::ann\+::\+Constant@{mlpack\+::ann\+::\+Constant}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::ann\+::\+Constant@{mlpack\+::ann\+::\+Constant}}
+\subsubsection[{Serialize(\+Archive \&ar, const unsigned int)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename Archive $>$ void {\bf mlpack\+::ann\+::\+Constant}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const unsigned}]{int}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1Constant_a05c0b8c293bc7516305c2f38cc6af3bf}
+
+
+Serialize the layer. 
+
+
+
+Referenced by mlpack\+::ann\+::\+Constant$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Delta().
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::ann\+::\+Constant@{mlpack\+::ann\+::\+Constant}!constant\+Output@{constant\+Output}}
+\index{constant\+Output@{constant\+Output}!mlpack\+::ann\+::\+Constant@{mlpack\+::ann\+::\+Constant}}
+\subsubsection[{constant\+Output}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type {\bf mlpack\+::ann\+::\+Constant}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::constant\+Output\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1Constant_a9ebdcfdcfb8a6e69092e2c42e581be30}
+
+
+Locally-\/stored constant output matrix. 
+
+
+
+Definition at line 98 of file constant.\+hpp.
+
+\index{mlpack\+::ann\+::\+Constant@{mlpack\+::ann\+::\+Constant}!delta@{delta}}
+\index{delta@{delta}!mlpack\+::ann\+::\+Constant@{mlpack\+::ann\+::\+Constant}}
+\subsubsection[{delta}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type {\bf mlpack\+::ann\+::\+Constant}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::delta\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1Constant_acf313c124fafdfb8d8cf418975446d43}
+
+
+Locally-\/stored delta object. 
+
+
+
+Definition at line 101 of file constant.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Constant$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Delta().
+
+\index{mlpack\+::ann\+::\+Constant@{mlpack\+::ann\+::\+Constant}!input\+Parameter@{input\+Parameter}}
+\index{input\+Parameter@{input\+Parameter}!mlpack\+::ann\+::\+Constant@{mlpack\+::ann\+::\+Constant}}
+\subsubsection[{input\+Parameter}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Input\+Data\+Type {\bf mlpack\+::ann\+::\+Constant}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::input\+Parameter\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1Constant_ad7e2be994bb4e04cf27c8c0025657efe}
+
+
+Locally-\/stored input parameter object. 
+
+
+
+Definition at line 104 of file constant.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Constant$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Input\+Parameter().
+
+\index{mlpack\+::ann\+::\+Constant@{mlpack\+::ann\+::\+Constant}!in\+Size@{in\+Size}}
+\index{in\+Size@{in\+Size}!mlpack\+::ann\+::\+Constant@{mlpack\+::ann\+::\+Constant}}
+\subsubsection[{in\+Size}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ size\+\_\+t {\bf mlpack\+::ann\+::\+Constant}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::in\+Size\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1Constant_a9bb32ccd7dd65e517640ddf9b45d5650}
+
+
+Locally-\/stored number of input units. 
+
+
+
+Definition at line 92 of file constant.\+hpp.
+
+\index{mlpack\+::ann\+::\+Constant@{mlpack\+::ann\+::\+Constant}!output\+Parameter@{output\+Parameter}}
+\index{output\+Parameter@{output\+Parameter}!mlpack\+::ann\+::\+Constant@{mlpack\+::ann\+::\+Constant}}
+\subsubsection[{output\+Parameter}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type {\bf mlpack\+::ann\+::\+Constant}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Parameter\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1Constant_aa29cf61e312d0f8a4b9a097151bbfb00}
+
+
+Locally-\/stored output parameter object. 
+
+
+
+Definition at line 107 of file constant.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Constant$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Output\+Parameter().
+
+\index{mlpack\+::ann\+::\+Constant@{mlpack\+::ann\+::\+Constant}!out\+Size@{out\+Size}}
+\index{out\+Size@{out\+Size}!mlpack\+::ann\+::\+Constant@{mlpack\+::ann\+::\+Constant}}
+\subsubsection[{out\+Size}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ size\+\_\+t {\bf mlpack\+::ann\+::\+Constant}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::out\+Size\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1Constant_af196f2d479b645873a44443c6b2b09bb}
+
+
+Locally-\/stored number of output units. 
+
+
+
+Definition at line 95 of file constant.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/ann/layer/{\bf constant.\+hpp}\end{DoxyCompactItemize}

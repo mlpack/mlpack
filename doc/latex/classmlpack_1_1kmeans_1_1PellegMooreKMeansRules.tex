@@ -1,0 +1,267 @@
+\section{mlpack\+:\+:kmeans\+:\+:Pelleg\+Moore\+K\+Means\+Rules$<$ Metric\+Type, Tree\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1kmeans_1_1PellegMooreKMeansRules}\index{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules$<$ Metric\+Type, Tree\+Type $>$@{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules$<$ Metric\+Type, Tree\+Type $>$}}
+
+
+The rules class for the single-\/tree Pelleg-\/\+Moore kd-\/tree traversal for k-\/means clustering.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Pelleg\+Moore\+K\+Means\+Rules} (const typename Tree\+Type\+::\+Mat \&{\bf dataset}, const arma\+::mat \&{\bf centroids}, arma\+::mat \&{\bf new\+Centroids}, arma\+::\+Col$<$ size\+\_\+t $>$ \&{\bf counts}, Metric\+Type \&{\bf metric})
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Pelleg\+Moore\+K\+Means\+Rules}{p.}{classmlpack_1_1kmeans_1_1PellegMooreKMeansRules} object. \end{DoxyCompactList}\item 
+double {\bf Base\+Case} (const size\+\_\+t query\+Index, const size\+\_\+t reference\+Index)
+\begin{DoxyCompactList}\small\item\em The \doxyref{Base\+Case()}{p.}{classmlpack_1_1kmeans_1_1PellegMooreKMeansRules_a850214bcba90bb3d0ab67861c119972a} function for this single-\/tree algorithm does nothing. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Distance\+Calculations} () const 
+\begin{DoxyCompactList}\small\item\em Get the number of distance calculations that have been performed. \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Distance\+Calculations} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of distance calculations that have been performed. \end{DoxyCompactList}\item 
+double {\bf Rescore} (const size\+\_\+t query\+Index, Tree\+Type \&reference\+Node, const double old\+Score)
+\begin{DoxyCompactList}\small\item\em Rescore to determine if a node can be pruned. \end{DoxyCompactList}\item 
+double {\bf Score} (const size\+\_\+t query\+Index, Tree\+Type \&reference\+Node)
+\begin{DoxyCompactList}\small\item\em Determine if a cluster can be pruned, and if not, perform point-\/to-\/cluster comparisons. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+const arma\+::mat \& {\bf centroids}
+\begin{DoxyCompactList}\small\item\em The clusters. \end{DoxyCompactList}\item 
+arma\+::\+Col$<$ size\+\_\+t $>$ \& {\bf counts}
+\begin{DoxyCompactList}\small\item\em The counts of points in each cluster. \end{DoxyCompactList}\item 
+const Tree\+Type\+::\+Mat \& {\bf dataset}
+\begin{DoxyCompactList}\small\item\em The dataset. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf distance\+Calculations}
+\begin{DoxyCompactList}\small\item\em The number of O(d) distance calculations that have been performed. \end{DoxyCompactList}\item 
+Metric\+Type \& {\bf metric}
+\begin{DoxyCompactList}\small\item\em Instantiated metric. \end{DoxyCompactList}\item 
+arma\+::mat \& {\bf new\+Centroids}
+\begin{DoxyCompactList}\small\item\em The new centroids. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Metric\+Type, typename Tree\+Type$>$\\*
+class mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules$<$ Metric\+Type, Tree\+Type $>$}
+
+The rules class for the single-\/tree Pelleg-\/\+Moore kd-\/tree traversal for k-\/means clustering. 
+
+Although Tree\+Type is a free template parameter, this particular implementation is specialized to trees with hyper-\/rectangle bounds due to the pruning rule used to determine if one cluster dominates a node with respect to another cluster.
+
+Our implementation here abuses the single-\/tree algorithm abstractions a little bit. Instead of doing a traversal for a particular query point, in this case we consider all clusters at once---so the query point is entirely ignored during in \doxyref{Base\+Case()}{p.}{classmlpack_1_1kmeans_1_1PellegMooreKMeansRules_a850214bcba90bb3d0ab67861c119972a} and \doxyref{Score()}{p.}{classmlpack_1_1kmeans_1_1PellegMooreKMeansRules_abd3bba4750bdcab91a86c0544cf2a24c}. 
+
+Definition at line 33 of file pelleg\+\_\+moore\+\_\+kmeans\+\_\+rules.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules@{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules}!Pelleg\+Moore\+K\+Means\+Rules@{Pelleg\+Moore\+K\+Means\+Rules}}
+\index{Pelleg\+Moore\+K\+Means\+Rules@{Pelleg\+Moore\+K\+Means\+Rules}!mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules@{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules}}
+\subsubsection[{Pelleg\+Moore\+K\+Means\+Rules(const typename Tree\+Type\+::\+Mat \&dataset, const arma\+::mat \&centroids, arma\+::mat \&new\+Centroids, arma\+::\+Col$<$ size\+\_\+t $>$ \&counts, Metric\+Type \&metric)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Tree\+Type $>$ {\bf mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules}$<$ Metric\+Type, Tree\+Type $>$\+::{\bf Pelleg\+Moore\+K\+Means\+Rules} (
+\begin{DoxyParamCaption}
+\item[{const typename Tree\+Type\+::\+Mat \&}]{dataset, }
+\item[{const arma\+::mat \&}]{centroids, }
+\item[{arma\+::mat \&}]{new\+Centroids, }
+\item[{arma\+::\+Col$<$ size\+\_\+t $>$ \&}]{counts, }
+\item[{Metric\+Type \&}]{metric}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1kmeans_1_1PellegMooreKMeansRules_ae67e4b33ff08e00e4f729fde863e6701}
+
+
+Create the \doxyref{Pelleg\+Moore\+K\+Means\+Rules}{p.}{classmlpack_1_1kmeans_1_1PellegMooreKMeansRules} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em dataset} & The dataset that the tree is built on. \\
+\hline
+{\em centroids} & The current centroids. \\
+\hline
+{\em new\+Centroids} & New centroids after this iteration (output). \\
+\hline
+{\em counts} & Current cluster counts, to be replaced with new cluster counts. \\
+\hline
+{\em metric} & Instantiated metric. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules@{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules}!Base\+Case@{Base\+Case}}
+\index{Base\+Case@{Base\+Case}!mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules@{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules}}
+\subsubsection[{Base\+Case(const size\+\_\+t query\+Index, const size\+\_\+t reference\+Index)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Tree\+Type $>$ double {\bf mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules}$<$ Metric\+Type, Tree\+Type $>$\+::Base\+Case (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{query\+Index, }
+\item[{const size\+\_\+t}]{reference\+Index}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1kmeans_1_1PellegMooreKMeansRules_a850214bcba90bb3d0ab67861c119972a}
+
+
+The \doxyref{Base\+Case()}{p.}{classmlpack_1_1kmeans_1_1PellegMooreKMeansRules_a850214bcba90bb3d0ab67861c119972a} function for this single-\/tree algorithm does nothing. 
+
+Instead, point-\/to-\/cluster comparisons are handled as necessary in \doxyref{Score()}{p.}{classmlpack_1_1kmeans_1_1PellegMooreKMeansRules_abd3bba4750bdcab91a86c0544cf2a24c}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Index} & Index of query point (fake, will be ignored). \\
+\hline
+{\em reference\+Index} & Index of reference point. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules@{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules}!Distance\+Calculations@{Distance\+Calculations}}
+\index{Distance\+Calculations@{Distance\+Calculations}!mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules@{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules}}
+\subsubsection[{Distance\+Calculations() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Tree\+Type $>$ size\+\_\+t {\bf mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules}$<$ Metric\+Type, Tree\+Type $>$\+::Distance\+Calculations (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1kmeans_1_1PellegMooreKMeansRules_a4a49d2d19a052fb08d4ae63c8b994bab}
+
+
+Get the number of distance calculations that have been performed. 
+
+
+
+Definition at line 84 of file pelleg\+\_\+moore\+\_\+kmeans\+\_\+rules.\+hpp.
+
+
+
+References mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules$<$ Metric\+Type, Tree\+Type $>$\+::distance\+Calculations.
+
+\index{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules@{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules}!Distance\+Calculations@{Distance\+Calculations}}
+\index{Distance\+Calculations@{Distance\+Calculations}!mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules@{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules}}
+\subsubsection[{Distance\+Calculations()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Tree\+Type $>$ size\+\_\+t\& {\bf mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules}$<$ Metric\+Type, Tree\+Type $>$\+::Distance\+Calculations (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1kmeans_1_1PellegMooreKMeansRules_a98151ee2988e1253f7675ff8ce56dbc7}
+
+
+Modify the number of distance calculations that have been performed. 
+
+
+
+Definition at line 86 of file pelleg\+\_\+moore\+\_\+kmeans\+\_\+rules.\+hpp.
+
+
+
+References mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules$<$ Metric\+Type, Tree\+Type $>$\+::distance\+Calculations.
+
+\index{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules@{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules}!Rescore@{Rescore}}
+\index{Rescore@{Rescore}!mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules@{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules}}
+\subsubsection[{Rescore(const size\+\_\+t query\+Index, Tree\+Type \&reference\+Node, const double old\+Score)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Tree\+Type $>$ double {\bf mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules}$<$ Metric\+Type, Tree\+Type $>$\+::Rescore (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{query\+Index, }
+\item[{Tree\+Type \&}]{reference\+Node, }
+\item[{const double}]{old\+Score}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1kmeans_1_1PellegMooreKMeansRules_a227f5b4954011ed5d87d83ae997ed159}
+
+
+Rescore to determine if a node can be pruned. 
+
+In this case, a node can never be pruned during rescoring, so this just returns old\+Score.
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Index} & Index of query point (fake, will be ignored). \\
+\hline
+{\em reference\+Node} & Node containing points in the dataset. \\
+\hline
+{\em old\+Score} & Resulting score from \doxyref{Score()}{p.}{classmlpack_1_1kmeans_1_1PellegMooreKMeansRules_abd3bba4750bdcab91a86c0544cf2a24c}. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules@{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules}!Score@{Score}}
+\index{Score@{Score}!mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules@{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules}}
+\subsubsection[{Score(const size\+\_\+t query\+Index, Tree\+Type \&reference\+Node)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Tree\+Type $>$ double {\bf mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules}$<$ Metric\+Type, Tree\+Type $>$\+::Score (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{query\+Index, }
+\item[{Tree\+Type \&}]{reference\+Node}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1kmeans_1_1PellegMooreKMeansRules_abd3bba4750bdcab91a86c0544cf2a24c}
+
+
+Determine if a cluster can be pruned, and if not, perform point-\/to-\/cluster comparisons. 
+
+The point-\/to-\/cluster comparisons are performed here and not in \doxyref{Base\+Case()}{p.}{classmlpack_1_1kmeans_1_1PellegMooreKMeansRules_a850214bcba90bb3d0ab67861c119972a} because of the complexity of managing the blacklist.
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Index} & Index of query point (fake, will be ignored). \\
+\hline
+{\em reference\+Node} & Node containing points in the dataset. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules@{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules}!centroids@{centroids}}
+\index{centroids@{centroids}!mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules@{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules}}
+\subsubsection[{centroids}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Tree\+Type $>$ const arma\+::mat\& {\bf mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules}$<$ Metric\+Type, Tree\+Type $>$\+::centroids\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1PellegMooreKMeansRules_afcf1a5cf765fcc784013f4ac5b24d448}
+
+
+The clusters. 
+
+
+
+Definition at line 92 of file pelleg\+\_\+moore\+\_\+kmeans\+\_\+rules.\+hpp.
+
+\index{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules@{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules}!counts@{counts}}
+\index{counts@{counts}!mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules@{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules}}
+\subsubsection[{counts}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Tree\+Type $>$ arma\+::\+Col$<$size\+\_\+t$>$\& {\bf mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules}$<$ Metric\+Type, Tree\+Type $>$\+::counts\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1PellegMooreKMeansRules_a73cdb1613731661e40c45739a0d52d70}
+
+
+The counts of points in each cluster. 
+
+
+
+Definition at line 96 of file pelleg\+\_\+moore\+\_\+kmeans\+\_\+rules.\+hpp.
+
+\index{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules@{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules}!dataset@{dataset}}
+\index{dataset@{dataset}!mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules@{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules}}
+\subsubsection[{dataset}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Tree\+Type $>$ const Tree\+Type\+::\+Mat\& {\bf mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules}$<$ Metric\+Type, Tree\+Type $>$\+::dataset\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1PellegMooreKMeansRules_a154b2824252dfcf69e8bf79263f58601}
+
+
+The dataset. 
+
+
+
+Definition at line 90 of file pelleg\+\_\+moore\+\_\+kmeans\+\_\+rules.\+hpp.
+
+\index{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules@{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules}!distance\+Calculations@{distance\+Calculations}}
+\index{distance\+Calculations@{distance\+Calculations}!mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules@{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules}}
+\subsubsection[{distance\+Calculations}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Tree\+Type $>$ size\+\_\+t {\bf mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules}$<$ Metric\+Type, Tree\+Type $>$\+::distance\+Calculations\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1PellegMooreKMeansRules_a4dfdae98ee395c0df6029fd99c983531}
+
+
+The number of O(d) distance calculations that have been performed. 
+
+
+
+Definition at line 101 of file pelleg\+\_\+moore\+\_\+kmeans\+\_\+rules.\+hpp.
+
+
+
+Referenced by mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules$<$ Metric\+Type, Tree\+Type $>$\+::\+Distance\+Calculations().
+
+\index{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules@{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules}!metric@{metric}}
+\index{metric@{metric}!mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules@{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules}}
+\subsubsection[{metric}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Tree\+Type $>$ Metric\+Type\& {\bf mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules}$<$ Metric\+Type, Tree\+Type $>$\+::metric\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1PellegMooreKMeansRules_a1848681d1b45ba6ad2bc6d0db0360556}
+
+
+Instantiated metric. 
+
+
+
+Definition at line 98 of file pelleg\+\_\+moore\+\_\+kmeans\+\_\+rules.\+hpp.
+
+\index{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules@{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules}!new\+Centroids@{new\+Centroids}}
+\index{new\+Centroids@{new\+Centroids}!mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules@{mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules}}
+\subsubsection[{new\+Centroids}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Tree\+Type $>$ arma\+::mat\& {\bf mlpack\+::kmeans\+::\+Pelleg\+Moore\+K\+Means\+Rules}$<$ Metric\+Type, Tree\+Type $>$\+::new\+Centroids\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1PellegMooreKMeansRules_a06162e08df12f667835c664974d8ef40}
+
+
+The new centroids. 
+
+
+
+Definition at line 94 of file pelleg\+\_\+moore\+\_\+kmeans\+\_\+rules.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/kmeans/{\bf pelleg\+\_\+moore\+\_\+kmeans\+\_\+rules.\+hpp}\end{DoxyCompactItemize}

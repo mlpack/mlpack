@@ -1,0 +1,318 @@
+\section{mlpack\+:\+:ann\+:\+:Multiply\+Constant$<$ Input\+Data\+Type, Output\+Data\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1MultiplyConstant}\index{mlpack\+::ann\+::\+Multiply\+Constant$<$ Input\+Data\+Type, Output\+Data\+Type $>$@{mlpack\+::ann\+::\+Multiply\+Constant$<$ Input\+Data\+Type, Output\+Data\+Type $>$}}
+
+
+Implementation of the multiply constant layer.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Multiply\+Constant} (const double {\bf scalar})
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Multiply\+Constant}{p.}{classmlpack_1_1ann_1_1MultiplyConstant} object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Data\+Type $>$ }\\void {\bf Backward} (const Data\+Type \&\&, Data\+Type \&\&gy, Data\+Type \&\&g)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& {\bf Delta} () const 
+\begin{DoxyCompactList}\small\item\em Get the delta. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& {\bf Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Input\+Type , typename Output\+Type $>$ }\\void {\bf Forward} (const Input\+Type \&\&input, Output\+Type \&\&output)
+\begin{DoxyCompactList}\small\item\em Ordinary feed forward pass of a neural network. \end{DoxyCompactList}\item 
+Input\+Data\+Type \& {\bf Input\+Parameter} () const 
+\begin{DoxyCompactList}\small\item\em Get the input parameter. \end{DoxyCompactList}\item 
+Input\+Data\+Type \& {\bf Input\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the input parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& {\bf Output\+Parameter} () const 
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& {\bf Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&ar, const unsigned int)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+Output\+Data\+Type {\bf delta}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored delta object. \end{DoxyCompactList}\item 
+Input\+Data\+Type {\bf input\+Parameter}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored input parameter object. \end{DoxyCompactList}\item 
+Output\+Data\+Type {\bf output\+Parameter}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored output parameter object. \end{DoxyCompactList}\item 
+const double {\bf scalar}
+\begin{DoxyCompactList}\small\item\em Locally-\/stored constant scalar value. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat$>$\\*
+class mlpack\+::ann\+::\+Multiply\+Constant$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+
+Implementation of the multiply constant layer. 
+
+The multiply constant layer multiplies the input by a (non-\/learnable) constant.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 29 of file multiply\+\_\+constant.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::ann\+::\+Multiply\+Constant@{mlpack\+::ann\+::\+Multiply\+Constant}!Multiply\+Constant@{Multiply\+Constant}}
+\index{Multiply\+Constant@{Multiply\+Constant}!mlpack\+::ann\+::\+Multiply\+Constant@{mlpack\+::ann\+::\+Multiply\+Constant}}
+\subsubsection[{Multiply\+Constant(const double scalar)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ {\bf mlpack\+::ann\+::\+Multiply\+Constant}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::{\bf Multiply\+Constant} (
+\begin{DoxyParamCaption}
+\item[{const double}]{scalar}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1MultiplyConstant_a5c66c311cb3e0c4b719f7621d5e3c20a}
+
+
+Create the \doxyref{Multiply\+Constant}{p.}{classmlpack_1_1ann_1_1MultiplyConstant} object. 
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::ann\+::\+Multiply\+Constant@{mlpack\+::ann\+::\+Multiply\+Constant}!Backward@{Backward}}
+\index{Backward@{Backward}!mlpack\+::ann\+::\+Multiply\+Constant@{mlpack\+::ann\+::\+Multiply\+Constant}}
+\subsubsection[{Backward(const Data\+Type \&\&, Data\+Type \&\&gy, Data\+Type \&\&g)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename Data\+Type $>$ void {\bf mlpack\+::ann\+::\+Multiply\+Constant}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Backward (
+\begin{DoxyParamCaption}
+\item[{const Data\+Type \&\&}]{, }
+\item[{Data\+Type \&\&}]{gy, }
+\item[{Data\+Type \&\&}]{g}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1MultiplyConstant_a3e92bfcfcb1ec572caee846f45d8d98b}
+
+
+Ordinary feed backward pass of a neural network. 
+
+The backward pass multiplies the error with the specified constant scalar value.
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The propagated input activation. \\
+\hline
+{\em gy} & The backpropagated error. \\
+\hline
+{\em g} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::ann\+::\+Multiply\+Constant@{mlpack\+::ann\+::\+Multiply\+Constant}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Multiply\+Constant@{mlpack\+::ann\+::\+Multiply\+Constant}}
+\subsubsection[{Delta() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type\& {\bf mlpack\+::ann\+::\+Multiply\+Constant}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Delta (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1MultiplyConstant_af5713c7c0e979c983a1d0cc681973a5f}
+
+
+Get the delta. 
+
+
+
+Definition at line 69 of file multiply\+\_\+constant.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Multiply\+Constant$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::delta.
+
+\index{mlpack\+::ann\+::\+Multiply\+Constant@{mlpack\+::ann\+::\+Multiply\+Constant}!Delta@{Delta}}
+\index{Delta@{Delta}!mlpack\+::ann\+::\+Multiply\+Constant@{mlpack\+::ann\+::\+Multiply\+Constant}}
+\subsubsection[{Delta()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type\& {\bf mlpack\+::ann\+::\+Multiply\+Constant}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Delta (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1MultiplyConstant_a47060723cb04a6d5aa03fe5a84d9fba6}
+
+
+Modify the delta. 
+
+
+
+Definition at line 71 of file multiply\+\_\+constant.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Multiply\+Constant$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::delta, and mlpack\+::ann\+::\+Multiply\+Constant$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Serialize().
+
+\index{mlpack\+::ann\+::\+Multiply\+Constant@{mlpack\+::ann\+::\+Multiply\+Constant}!Forward@{Forward}}
+\index{Forward@{Forward}!mlpack\+::ann\+::\+Multiply\+Constant@{mlpack\+::ann\+::\+Multiply\+Constant}}
+\subsubsection[{Forward(const Input\+Type \&\&input, Output\+Type \&\&output)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename Input\+Type , typename Output\+Type $>$ void {\bf mlpack\+::ann\+::\+Multiply\+Constant}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Forward (
+\begin{DoxyParamCaption}
+\item[{const Input\+Type \&\&}]{input, }
+\item[{Output\+Type \&\&}]{output}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1MultiplyConstant_a28e13ea7502efee6a98813b41f558033}
+
+
+Ordinary feed forward pass of a neural network. 
+
+Multiply the input with the specified constant scalar value.
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input data used for evaluating the specified function. \\
+\hline
+{\em output} & Resulting output activation. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::ann\+::\+Multiply\+Constant@{mlpack\+::ann\+::\+Multiply\+Constant}!Input\+Parameter@{Input\+Parameter}}
+\index{Input\+Parameter@{Input\+Parameter}!mlpack\+::ann\+::\+Multiply\+Constant@{mlpack\+::ann\+::\+Multiply\+Constant}}
+\subsubsection[{Input\+Parameter() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Input\+Data\+Type\& {\bf mlpack\+::ann\+::\+Multiply\+Constant}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Input\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1MultiplyConstant_a793ca229b4bb8f0e239dee568da8488b}
+
+
+Get the input parameter. 
+
+
+
+Definition at line 59 of file multiply\+\_\+constant.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Multiply\+Constant$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::input\+Parameter.
+
+\index{mlpack\+::ann\+::\+Multiply\+Constant@{mlpack\+::ann\+::\+Multiply\+Constant}!Input\+Parameter@{Input\+Parameter}}
+\index{Input\+Parameter@{Input\+Parameter}!mlpack\+::ann\+::\+Multiply\+Constant@{mlpack\+::ann\+::\+Multiply\+Constant}}
+\subsubsection[{Input\+Parameter()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Input\+Data\+Type\& {\bf mlpack\+::ann\+::\+Multiply\+Constant}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Input\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1MultiplyConstant_a16c70794727ef0bb4ca6b8e252d1c1b1}
+
+
+Modify the input parameter. 
+
+
+
+Definition at line 61 of file multiply\+\_\+constant.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Multiply\+Constant$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::input\+Parameter.
+
+\index{mlpack\+::ann\+::\+Multiply\+Constant@{mlpack\+::ann\+::\+Multiply\+Constant}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Multiply\+Constant@{mlpack\+::ann\+::\+Multiply\+Constant}}
+\subsubsection[{Output\+Parameter() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type\& {\bf mlpack\+::ann\+::\+Multiply\+Constant}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Output\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1MultiplyConstant_a42d0722d2092d5671d7a011c29ce56d0}
+
+
+Get the output parameter. 
+
+
+
+Definition at line 64 of file multiply\+\_\+constant.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Multiply\+Constant$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Parameter.
+
+\index{mlpack\+::ann\+::\+Multiply\+Constant@{mlpack\+::ann\+::\+Multiply\+Constant}!Output\+Parameter@{Output\+Parameter}}
+\index{Output\+Parameter@{Output\+Parameter}!mlpack\+::ann\+::\+Multiply\+Constant@{mlpack\+::ann\+::\+Multiply\+Constant}}
+\subsubsection[{Output\+Parameter()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type\& {\bf mlpack\+::ann\+::\+Multiply\+Constant}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Output\+Parameter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1MultiplyConstant_a5e2c105f761d5e6de9277f6f1e6ccdbf}
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 66 of file multiply\+\_\+constant.\+hpp.
+
+
+
+References mlpack\+::ann\+::\+Multiply\+Constant$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Parameter.
+
+\index{mlpack\+::ann\+::\+Multiply\+Constant@{mlpack\+::ann\+::\+Multiply\+Constant}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::ann\+::\+Multiply\+Constant@{mlpack\+::ann\+::\+Multiply\+Constant}}
+\subsubsection[{Serialize(\+Archive \&ar, const unsigned int)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ template$<$typename Archive $>$ void {\bf mlpack\+::ann\+::\+Multiply\+Constant}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const unsigned}]{int}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1MultiplyConstant_af03df6af8f903c246f0ec24914645bfd}
+
+
+Serialize the layer. 
+
+
+
+Referenced by mlpack\+::ann\+::\+Multiply\+Constant$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Delta().
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::ann\+::\+Multiply\+Constant@{mlpack\+::ann\+::\+Multiply\+Constant}!delta@{delta}}
+\index{delta@{delta}!mlpack\+::ann\+::\+Multiply\+Constant@{mlpack\+::ann\+::\+Multiply\+Constant}}
+\subsubsection[{delta}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type {\bf mlpack\+::ann\+::\+Multiply\+Constant}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::delta\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1MultiplyConstant_a5adad09671273535b0d99d5e3f00900f}
+
+
+Locally-\/stored delta object. 
+
+
+
+Definition at line 84 of file multiply\+\_\+constant.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Multiply\+Constant$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Delta().
+
+\index{mlpack\+::ann\+::\+Multiply\+Constant@{mlpack\+::ann\+::\+Multiply\+Constant}!input\+Parameter@{input\+Parameter}}
+\index{input\+Parameter@{input\+Parameter}!mlpack\+::ann\+::\+Multiply\+Constant@{mlpack\+::ann\+::\+Multiply\+Constant}}
+\subsubsection[{input\+Parameter}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Input\+Data\+Type {\bf mlpack\+::ann\+::\+Multiply\+Constant}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::input\+Parameter\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1MultiplyConstant_a418af38da226c152f1dc9a4b96be4bd3}
+
+
+Locally-\/stored input parameter object. 
+
+
+
+Definition at line 87 of file multiply\+\_\+constant.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Multiply\+Constant$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Input\+Parameter().
+
+\index{mlpack\+::ann\+::\+Multiply\+Constant@{mlpack\+::ann\+::\+Multiply\+Constant}!output\+Parameter@{output\+Parameter}}
+\index{output\+Parameter@{output\+Parameter}!mlpack\+::ann\+::\+Multiply\+Constant@{mlpack\+::ann\+::\+Multiply\+Constant}}
+\subsubsection[{output\+Parameter}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ Output\+Data\+Type {\bf mlpack\+::ann\+::\+Multiply\+Constant}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::output\+Parameter\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1MultiplyConstant_a1dcf3e4dc23fa4036ebd856db173ada9}
+
+
+Locally-\/stored output parameter object. 
+
+
+
+Definition at line 90 of file multiply\+\_\+constant.\+hpp.
+
+
+
+Referenced by mlpack\+::ann\+::\+Multiply\+Constant$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::\+Output\+Parameter().
+
+\index{mlpack\+::ann\+::\+Multiply\+Constant@{mlpack\+::ann\+::\+Multiply\+Constant}!scalar@{scalar}}
+\index{scalar@{scalar}!mlpack\+::ann\+::\+Multiply\+Constant@{mlpack\+::ann\+::\+Multiply\+Constant}}
+\subsubsection[{scalar}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ const double {\bf mlpack\+::ann\+::\+Multiply\+Constant}$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+::scalar\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1MultiplyConstant_a85f39928fcee7dc7ba5056cdcac9b78b}
+
+
+Locally-\/stored constant scalar value. 
+
+
+
+Definition at line 81 of file multiply\+\_\+constant.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/ann/layer/{\bf multiply\+\_\+constant.\+hpp}\end{DoxyCompactItemize}

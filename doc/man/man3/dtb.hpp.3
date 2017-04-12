@@ -1,0 +1,81 @@
+.TH "src/mlpack/methods/emst/dtb.hpp" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+src/mlpack/methods/emst/dtb.hpp \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBmlpack::emst::DualTreeBoruvka< MetricType, MatType, TreeType >\fP"
+.br
+.RI "\fIPerforms the MST calculation using the Dual-Tree Boruvka algorithm, using any type of tree\&. \fP"
+.ti -1c
+.RI "struct \fBmlpack::emst::DualTreeBoruvka< MetricType, MatType, TreeType >::SortEdgesHelper\fP"
+.br
+.RI "\fIFor sorting the edge list after the computation\&. \fP"
+.in -1c
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "\fILinear algebra utility functions, generally performed on matrices or vectors\&. \fP"
+.ti -1c
+.RI " \fBmlpack::emst\fP"
+.br
+.RI "\fIEuclidean Minimum Spanning Trees\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Bill March (march@gatech.edu)
+.RE
+.PP
+Contains an implementation of the DualTreeBoruvka algorithm for finding a Euclidean Minimum Spanning Tree using the kd-tree data structure\&.
+.PP
+.PP
+.nf
+@inproceedings{
+  author = {March, W\&.B\&., Ram, P\&., and Gray, A\&.G\&.},
+  title = {{Fast Euclidean Minimum Spanning Tree: Algorithm, Analysis,
+     Applications\&.}},
+  booktitle = {Proceedings of the 16th ACM SIGKDD International Conference
+     on Knowledge Discovery and Data Mining}
+  series = {KDD 2010},
+  year = {2010}
+}
+.fi
+.PP
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&.
+.PP
+\fBAuthor:\fP
+.RS 4
+Bill March (march@gatech.edu)
+.RE
+.PP
+Tree traverser rules for the DualTreeBoruvka algorithm\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&.
+.PP
+\fBAuthor:\fP
+.RS 4
+Bill March (march@gatech.edu)
+.RE
+.PP
+DTBStat is the StatisticType used by trees when performing EMST\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBdtb\&.hpp\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

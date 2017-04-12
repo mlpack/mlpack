@@ -1,0 +1,265 @@
+.TH "mlpack::distribution::DiscreteDistribution" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::distribution::DiscreteDistribution \- A discrete distribution where the only observations are discrete observations\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBDiscreteDistribution\fP ()"
+.br
+.RI "\fIDefault constructor, which creates a distribution that has no observations\&. \fP"
+.ti -1c
+.RI "\fBDiscreteDistribution\fP (const size_t numObservations)"
+.br
+.RI "\fIDefine the discrete distribution as having numObservations possible observations\&. \fP"
+.ti -1c
+.RI "\fBDiscreteDistribution\fP (const arma::Col< size_t > &numObservations)"
+.br
+.RI "\fIDefine the multidimensional discrete distribution as having numObservations possible observations\&. \fP"
+.ti -1c
+.RI "\fBDiscreteDistribution\fP (const std::vector< arma::vec > &\fBprobabilities\fP)"
+.br
+.RI "\fIDefine the multidimensional discrete distribution as having the given probabilities for each observation\&. \fP"
+.ti -1c
+.RI "size_t \fBDimensionality\fP () const "
+.br
+.RI "\fIGet the dimensionality of the distribution\&. \fP"
+.ti -1c
+.RI "double \fBLogProbability\fP (const arma::vec &observation) const "
+.br
+.RI "\fIReturn the log probability of the given observation\&. \fP"
+.ti -1c
+.RI "arma::vec & \fBProbabilities\fP (const size_t dim=0)"
+.br
+.RI "\fIReturn the vector of probabilities for the given dimension\&. \fP"
+.ti -1c
+.RI "const arma::vec & \fBProbabilities\fP (const size_t dim=0) const "
+.br
+.RI "\fIModify the vector of probabilities for the given dimension\&. \fP"
+.ti -1c
+.RI "double \fBProbability\fP (const arma::vec &observation) const "
+.br
+.RI "\fIReturn the probability of the given observation\&. \fP"
+.ti -1c
+.RI "arma::vec \fBRandom\fP () const "
+.br
+.RI "\fIReturn a randomly generated observation (one-dimensional vector; one observation) according to the probability distribution defined by this object\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int)"
+.br
+.RI "\fISerialize the distribution\&. \fP"
+.ti -1c
+.RI "void \fBTrain\fP (const arma::mat &observations)"
+.br
+.RI "\fIEstimate the probability distribution directly from the given observations\&. \fP"
+.ti -1c
+.RI "void \fBTrain\fP (const arma::mat &observations, const arma::vec &\fBprobabilities\fP)"
+.br
+.RI "\fIEstimate the probability distribution from the given observations, taking into account the probability of each observation actually being from this distribution\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "std::vector< arma::vec > \fBprobabilities\fP"
+.br
+.RI "\fIThe probabilities for each dimension; each arma::vec represents the probabilities for the observations in each dimension\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+A discrete distribution where the only observations are discrete observations\&. 
+
+This is useful (for example) with discrete Hidden Markov Models, where observations are non-negative integers representing specific emissions\&.
+.PP
+No bounds checking is performed for observations, so if an invalid observation is passed (i\&.e\&. observation > numObservations), a crash will probably occur\&.
+.PP
+This distribution only supports one-dimensional observations, so when passing an arma::vec as an observation, it should only have one dimension (vec\&.n_rows == 1)\&. Any additional dimensions will simply be ignored\&.
+.PP
+\fBNote:\fP
+.RS 4
+This class, like every other class in mlpack, uses arma::vec to represent observations\&. While a discrete distribution only has positive integers (size_t) as observations, these can be converted to doubles (which is what arma::vec holds)\&. This distribution internally converts those doubles back into size_t before comparisons\&.  
+.RE
+.PP
+
+.PP
+Definition at line 45 of file discrete_distribution\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::distribution::DiscreteDistribution::DiscreteDistribution ()\fC [inline]\fP"
+
+.PP
+Default constructor, which creates a distribution that has no observations\&. 
+.PP
+Definition at line 51 of file discrete_distribution\&.hpp\&.
+.SS "mlpack::distribution::DiscreteDistribution::DiscreteDistribution (const size_t numObservations)\fC [inline]\fP"
+
+.PP
+Define the discrete distribution as having numObservations possible observations\&. The probability in each state will be set to (1 / numObservations)\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fInumObservations\fP Number of possible observations this distribution can have\&. 
+.RE
+.PP
+
+.PP
+Definition at line 62 of file discrete_distribution\&.hpp\&.
+.SS "mlpack::distribution::DiscreteDistribution::DiscreteDistribution (const arma::Col< size_t > & numObservations)\fC [inline]\fP"
+
+.PP
+Define the multidimensional discrete distribution as having numObservations possible observations\&. The probability in each state will be set to (1 / numObservations of each dimension)\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fInumObservations\fP Number of possible observations this distribution can have\&. 
+.RE
+.PP
+
+.PP
+Definition at line 75 of file discrete_distribution\&.hpp\&.
+.PP
+References probabilities\&.
+.SS "mlpack::distribution::DiscreteDistribution::DiscreteDistribution (const std::vector< arma::vec > & probabilities)\fC [inline]\fP"
+
+.PP
+Define the multidimensional discrete distribution as having the given probabilities for each observation\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIprobabilities\fP Probabilities of each possible observation\&. 
+.RE
+.PP
+
+.PP
+Definition at line 97 of file discrete_distribution\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "size_t mlpack::distribution::DiscreteDistribution::Dimensionality () const\fC [inline]\fP"
+
+.PP
+Get the dimensionality of the distribution\&. 
+.PP
+Definition at line 116 of file discrete_distribution\&.hpp\&.
+.PP
+References probabilities\&.
+.SS "double mlpack::distribution::DiscreteDistribution::LogProbability (const arma::vec & observation) const\fC [inline]\fP"
+
+.PP
+Return the log probability of the given observation\&. If the observation is greater than the number of possible observations, then a crash will probably occur -- bounds checking is not performed\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIobservation\fP Observation to return the log probability of\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+\fBLog\fP probability of the given observation\&. 
+.RE
+.PP
+
+.PP
+Definition at line 164 of file discrete_distribution\&.hpp\&.
+.PP
+References probabilities, Probability(), Random(), and Train()\&.
+.SS "arma::vec& mlpack::distribution::DiscreteDistribution::Probabilities (const size_t dim = \fC0\fP)\fC [inline]\fP"
+
+.PP
+Return the vector of probabilities for the given dimension\&. 
+.PP
+Definition at line 201 of file discrete_distribution\&.hpp\&.
+.SS "const arma::vec& mlpack::distribution::DiscreteDistribution::Probabilities (const size_t dim = \fC0\fP) const\fC [inline]\fP"
+
+.PP
+Modify the vector of probabilities for the given dimension\&. 
+.PP
+Definition at line 203 of file discrete_distribution\&.hpp\&.
+.SS "double mlpack::distribution::DiscreteDistribution::Probability (const arma::vec & observation) const\fC [inline]\fP"
+
+.PP
+Return the probability of the given observation\&. If the observation is greater than the number of possible observations, then a crash will probably occur -- bounds checking is not performed\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIobservation\fP Observation to return the probability of\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Probability of the given observation\&. 
+.RE
+.PP
+
+.PP
+Definition at line 126 of file discrete_distribution\&.hpp\&.
+.PP
+References mlpack::Log::Debug, and probabilities\&.
+.PP
+Referenced by LogProbability()\&.
+.SS "arma::vec mlpack::distribution::DiscreteDistribution::Random () const"
+
+.PP
+Return a randomly generated observation (one-dimensional vector; one observation) according to the probability distribution defined by this object\&. 
+.PP
+\fBReturns:\fP
+.RS 4
+Random observation\&. 
+.RE
+.PP
+
+.PP
+Referenced by LogProbability()\&.
+.SS "template<typename Archive > void mlpack::distribution::DiscreteDistribution::Serialize (Archive & ar, const unsigned int)\fC [inline]\fP"
+
+.PP
+Serialize the distribution\&. 
+.PP
+Definition at line 210 of file discrete_distribution\&.hpp\&.
+.PP
+References mlpack::data::CreateNVP()\&.
+.SS "void mlpack::distribution::DiscreteDistribution::Train (const arma::mat & observations)"
+
+.PP
+Estimate the probability distribution directly from the given observations\&. If any of the observations is greater than numObservations, a crash is likely to occur\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIobservations\fP List of observations\&. 
+.RE
+.PP
+
+.PP
+Referenced by LogProbability()\&.
+.SS "void mlpack::distribution::DiscreteDistribution::Train (const arma::mat & observations, const arma::vec & probabilities)"
+
+.PP
+Estimate the probability distribution from the given observations, taking into account the probability of each observation actually being from this distribution\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIobservations\fP List of observations\&. 
+.br
+\fIprobabilities\fP List of probabilities that each observation is actually from this distribution\&. 
+.RE
+.PP
+
+.SH "Member Data Documentation"
+.PP 
+.SS "std::vector<arma::vec> mlpack::distribution::DiscreteDistribution::probabilities\fC [private]\fP"
+
+.PP
+The probabilities for each dimension; each arma::vec represents the probabilities for the observations in each dimension\&. 
+.PP
+Definition at line 235 of file discrete_distribution\&.hpp\&.
+.PP
+Referenced by Dimensionality(), DiscreteDistribution(), LogProbability(), and Probability()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

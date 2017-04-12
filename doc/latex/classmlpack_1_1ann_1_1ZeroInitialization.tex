@@ -1,0 +1,102 @@
+\section{mlpack\+:\+:ann\+:\+:Zero\+Initialization Class Reference}
+\label{classmlpack_1_1ann_1_1ZeroInitialization}\index{mlpack\+::ann\+::\+Zero\+Initialization@{mlpack\+::ann\+::\+Zero\+Initialization}}
+
+
+This class is used to initialize randomly the weight matrix.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Zero\+Initialization} ()
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Zero\+Initialization}{p.}{classmlpack_1_1ann_1_1ZeroInitialization} object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void {\bf Initialize} (arma\+::\+Mat$<$ eT $>$ \&W, const size\+\_\+t rows, const size\+\_\+t cols)
+\begin{DoxyCompactList}\small\item\em Initialize the elements of the specified weight matrix. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void {\bf Initialize} (arma\+::\+Cube$<$ eT $>$ \&W, const size\+\_\+t rows, const size\+\_\+t cols, const size\+\_\+t slices)
+\begin{DoxyCompactList}\small\item\em Initialize the elements of the specified weight (3rd order tensor). \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This class is used to initialize randomly the weight matrix. 
+
+Definition at line 24 of file zero\+\_\+init.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::ann\+::\+Zero\+Initialization@{mlpack\+::ann\+::\+Zero\+Initialization}!Zero\+Initialization@{Zero\+Initialization}}
+\index{Zero\+Initialization@{Zero\+Initialization}!mlpack\+::ann\+::\+Zero\+Initialization@{mlpack\+::ann\+::\+Zero\+Initialization}}
+\subsubsection[{Zero\+Initialization()}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::ann\+::\+Zero\+Initialization\+::\+Zero\+Initialization (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1ZeroInitialization_a10ac30039e980d40c6a5c8b97f133add}
+
+
+Create the \doxyref{Zero\+Initialization}{p.}{classmlpack_1_1ann_1_1ZeroInitialization} object. 
+
+
+
+Definition at line 30 of file zero\+\_\+init.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::ann\+::\+Zero\+Initialization@{mlpack\+::ann\+::\+Zero\+Initialization}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!mlpack\+::ann\+::\+Zero\+Initialization@{mlpack\+::ann\+::\+Zero\+Initialization}}
+\subsubsection[{Initialize(arma\+::\+Mat$<$ e\+T $>$ \&\+W, const size\+\_\+t rows, const size\+\_\+t cols)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename eT $>$ void mlpack\+::ann\+::\+Zero\+Initialization\+::\+Initialize (
+\begin{DoxyParamCaption}
+\item[{arma\+::\+Mat$<$ eT $>$ \&}]{W, }
+\item[{const size\+\_\+t}]{rows, }
+\item[{const size\+\_\+t}]{cols}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1ZeroInitialization_a27396bbb964d62c7534a7ffe14ff5178}
+
+
+Initialize the elements of the specified weight matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em W} & Weight matrix to initialize. \\
+\hline
+{\em rows} & Number of rows. \\
+\hline
+{\em cols} & Number of columns. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 40 of file zero\+\_\+init.\+hpp.
+
+\index{mlpack\+::ann\+::\+Zero\+Initialization@{mlpack\+::ann\+::\+Zero\+Initialization}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!mlpack\+::ann\+::\+Zero\+Initialization@{mlpack\+::ann\+::\+Zero\+Initialization}}
+\subsubsection[{Initialize(arma\+::\+Cube$<$ e\+T $>$ \&\+W, const size\+\_\+t rows, const size\+\_\+t cols, const size\+\_\+t slices)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename eT $>$ void mlpack\+::ann\+::\+Zero\+Initialization\+::\+Initialize (
+\begin{DoxyParamCaption}
+\item[{arma\+::\+Cube$<$ eT $>$ \&}]{W, }
+\item[{const size\+\_\+t}]{rows, }
+\item[{const size\+\_\+t}]{cols, }
+\item[{const size\+\_\+t}]{slices}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1ann_1_1ZeroInitialization_a343a2da93909be98f57da5268b16aa05}
+
+
+Initialize the elements of the specified weight (3rd order tensor). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em W} & Weight matrix to initialize. \\
+\hline
+{\em rows} & Number of rows. \\
+\hline
+{\em cols} & Number of columns. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 53 of file zero\+\_\+init.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/ann/init\+\_\+rules/{\bf zero\+\_\+init.\+hpp}\end{DoxyCompactItemize}

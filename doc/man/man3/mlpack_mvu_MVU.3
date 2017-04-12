@@ -1,0 +1,58 @@
+.TH "mlpack::mvu::MVU" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::mvu::MVU \- The \fBMVU\fP class is meant to provide a good abstraction for users\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBMVU\fP (const arma::mat &dataIn)"
+.br
+.ti -1c
+.RI "void \fBUnfold\fP (const size_t newDim, const size_t numNeighbors, arma::mat &outputCoordinates)"
+.br
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "const arma::mat & \fBdata\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+The \fBMVU\fP class is meant to provide a good abstraction for users\&. 
+
+The dataset needs to be provided, as well as several parameters\&.
+.PP
+.IP "\(bu" 2
+dataset
+.IP "\(bu" 2
+new dimensionality 
+.PP
+
+.PP
+Definition at line 32 of file mvu\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::mvu::MVU::MVU (const arma::mat & dataIn)"
+
+.SH "Member Function Documentation"
+.PP 
+.SS "void mlpack::mvu::MVU::Unfold (const size_t newDim, const size_t numNeighbors, arma::mat & outputCoordinates)"
+
+.SH "Member Data Documentation"
+.PP 
+.SS "const arma::mat& mlpack::mvu::MVU::data\fC [private]\fP"
+
+.PP
+Definition at line 42 of file mvu\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

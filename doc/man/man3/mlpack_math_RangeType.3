@@ -1,0 +1,400 @@
+.TH "mlpack::math::RangeType< T >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::math::RangeType< T > \- Simple real-valued range\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBRangeType\fP ()"
+.br
+.RI "\fIThe upper bound\&. \fP"
+.ti -1c
+.RI "\fBRangeType\fP (const T point)"
+.br
+.ti -1c
+.RI "\fBRangeType\fP (const T \fBlo\fP, const T \fBhi\fP)"
+.br
+.RI "\fIInitializes to specified range\&. \fP"
+.ti -1c
+.RI "bool \fBContains\fP (const T d) const "
+.br
+.RI "\fIDetermines if a point is contained within the range\&. \fP"
+.ti -1c
+.RI "bool \fBContains\fP (const \fBRangeType\fP &r) const "
+.br
+.RI "\fIDetermines if another range overlaps with this one\&. \fP"
+.ti -1c
+.RI "T \fBHi\fP () const "
+.br
+.RI "\fIGet the upper bound\&. \fP"
+.ti -1c
+.RI "T & \fBHi\fP ()"
+.br
+.RI "\fIModify the upper bound\&. \fP"
+.ti -1c
+.RI "T \fBLo\fP () const "
+.br
+.RI "\fIGet the lower bound\&. \fP"
+.ti -1c
+.RI "T & \fBLo\fP ()"
+.br
+.RI "\fIModify the lower bound\&. \fP"
+.ti -1c
+.RI "T \fBMid\fP () const "
+.br
+.RI "\fIGets the midpoint of this range\&. \fP"
+.ti -1c
+.RI "bool \fBoperator!=\fP (const \fBRangeType\fP &rhs) const "
+.br
+.RI "\fICompare with another range for strict equality\&. \fP"
+.ti -1c
+.RI "\fBRangeType\fP \fBoperator&\fP (const \fBRangeType\fP &rhs) const "
+.br
+.RI "\fIShrinks this range to be the overlap with another range; this makes an empty set if there is no overlap\&. \fP"
+.ti -1c
+.RI "\fBRangeType\fP & \fBoperator&=\fP (const \fBRangeType\fP &rhs)"
+.br
+.RI "\fIShrinks this range to be the overlap with another range; this makes an empty set if there is no overlap\&. \fP"
+.ti -1c
+.RI "\fBRangeType\fP \fBoperator*\fP (const T d) const "
+.br
+.RI "\fIScale the bounds by the given double\&. \fP"
+.ti -1c
+.RI "\fBRangeType\fP & \fBoperator*=\fP (const T d)"
+.br
+.RI "\fIScale the bounds by the given double\&. \fP"
+.ti -1c
+.RI "bool \fBoperator<\fP (const \fBRangeType\fP &rhs) const "
+.br
+.RI "\fICompare with another range\&. \fP"
+.ti -1c
+.RI "bool \fBoperator==\fP (const \fBRangeType\fP &rhs) const "
+.br
+.RI "\fICompare with another range for strict equality\&. \fP"
+.ti -1c
+.RI "bool \fBoperator>\fP (const \fBRangeType\fP &rhs) const "
+.br
+.RI "\fICompare with another range\&. \fP"
+.ti -1c
+.RI "\fBRangeType\fP \fBoperator|\fP (const \fBRangeType\fP &rhs) const "
+.br
+.RI "\fIExpands this range to include another range\&. \fP"
+.ti -1c
+.RI "\fBRangeType\fP & \fBoperator|=\fP (const \fBRangeType\fP &rhs)"
+.br
+.RI "\fIExpands this range to include another range\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int version)"
+.br
+.RI "\fISerialize the range object\&. \fP"
+.ti -1c
+.RI "T \fBWidth\fP () const "
+.br
+.RI "\fIGets the span of the range (hi - lo)\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "T \fBhi\fP"
+.br
+.RI "\fIThe lower bound\&. \fP"
+.ti -1c
+.RI "T \fBlo\fP"
+.br
+.in -1c
+.SS "Friends"
+
+.in +1c
+.ti -1c
+.RI "template<typename TT > \fBRangeType\fP< TT > \fBoperator*\fP (const TT d, const \fBRangeType\fP< TT > &r)"
+.br
+.RI "\fIScale the bounds by the given double\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename T = double>
+.br
+class mlpack::math::RangeType< T >"
+Simple real-valued range\&. 
+
+It contains an upper and lower bound\&.
+.PP
+Note that until mlpack 3\&.0\&.0, this class is named RangeType<> and for the specification where T is double, you can use \fBmath::Range\fP\&. As of mlpack 3\&.0\&.0, this class will be renamed \fBmath::Range<>\fP\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIT\fP type of element held by this range\&. 
+.RE
+.PP
+
+.PP
+Definition at line 19 of file range\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename T = double> \fBmlpack::math::RangeType\fP< T >::\fBRangeType\fP ()\fC [inline]\fP"
+
+.PP
+The upper bound\&. Initialize to an empty set (where lo > hi)\&. 
+.SS "template<typename T = double> \fBmlpack::math::RangeType\fP< T >::\fBRangeType\fP (const T point)\fC [inline]\fP"
+
+.SS "template<typename T = double> \fBmlpack::math::RangeType\fP< T >::\fBRangeType\fP (const T lo, const T hi)\fC [inline]\fP"
+
+.PP
+Initializes to specified range\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIlo\fP Lower bound of the range\&. 
+.br
+\fIhi\fP Upper bound of the range\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename T = double> bool \fBmlpack::math::RangeType\fP< T >::Contains (const T d) const\fC [inline]\fP"
+
+.PP
+Determines if a point is contained within the range\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fId\fP Point to check\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::math::RangeType< ElemType >::Hi()\&.
+.SS "template<typename T = double> bool \fBmlpack::math::RangeType\fP< T >::Contains (const \fBRangeType\fP< T > & r) const\fC [inline]\fP"
+
+.PP
+Determines if another range overlaps with this one\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIr\fP Other range\&.
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+true if ranges overlap at all\&. 
+.RE
+.PP
+
+.SS "template<typename T = double> T \fBmlpack::math::RangeType\fP< T >::Hi () const\fC [inline]\fP"
+
+.PP
+Get the upper bound\&. 
+.PP
+Definition at line 66 of file range\&.hpp\&.
+.PP
+Referenced by mlpack::bound::HollowBallBound< TMetricType, ElemType >::Diameter(), mlpack::bound::HollowBallBound< TMetricType, ElemType >::MinWidth(), and mlpack::bound::HollowBallBound< TMetricType, ElemType >::OuterRadius()\&.
+.SS "template<typename T = double> T& \fBmlpack::math::RangeType\fP< T >::Hi ()\fC [inline]\fP"
+
+.PP
+Modify the upper bound\&. 
+.PP
+Definition at line 68 of file range\&.hpp\&.
+.SS "template<typename T = double> T \fBmlpack::math::RangeType\fP< T >::Lo () const\fC [inline]\fP"
+
+.PP
+Get the lower bound\&. 
+.PP
+Definition at line 61 of file range\&.hpp\&.
+.PP
+Referenced by mlpack::bound::HollowBallBound< TMetricType, ElemType >::InnerRadius()\&.
+.SS "template<typename T = double> T& \fBmlpack::math::RangeType\fP< T >::Lo ()\fC [inline]\fP"
+
+.PP
+Modify the lower bound\&. 
+.PP
+Definition at line 63 of file range\&.hpp\&.
+.SS "template<typename T = double> T \fBmlpack::math::RangeType\fP< T >::Mid () const\fC [inline]\fP"
+
+.PP
+Gets the midpoint of this range\&. 
+.PP
+Referenced by mlpack::math::RangeType< ElemType >::Hi()\&.
+.SS "template<typename T = double> bool \fBmlpack::math::RangeType\fP< T >::operator!= (const \fBRangeType\fP< T > & rhs) const\fC [inline]\fP"
+
+.PP
+Compare with another range for strict equality\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIrhs\fP Other range\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::math::RangeType< ElemType >::Hi()\&.
+.SS "template<typename T = double> \fBRangeType\fP \fBmlpack::math::RangeType\fP< T >::operator& (const \fBRangeType\fP< T > & rhs) const\fC [inline]\fP"
+
+.PP
+Shrinks this range to be the overlap with another range; this makes an empty set if there is no overlap\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIrhs\fP Other range\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::math::RangeType< ElemType >::Hi()\&.
+.SS "template<typename T = double> \fBRangeType\fP& \fBmlpack::math::RangeType\fP< T >::operator&= (const \fBRangeType\fP< T > & rhs)\fC [inline]\fP"
+
+.PP
+Shrinks this range to be the overlap with another range; this makes an empty set if there is no overlap\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIrhs\fP Other range\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::math::RangeType< ElemType >::Hi()\&.
+.SS "template<typename T = double> \fBRangeType\fP \fBmlpack::math::RangeType\fP< T >::operator* (const T d) const\fC [inline]\fP"
+
+.PP
+Scale the bounds by the given double\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fId\fP Scaling factor\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::math::RangeType< ElemType >::Hi()\&.
+.SS "template<typename T = double> \fBRangeType\fP& \fBmlpack::math::RangeType\fP< T >::operator*= (const T d)\fC [inline]\fP"
+
+.PP
+Scale the bounds by the given double\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fId\fP Scaling factor\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::math::RangeType< ElemType >::Hi()\&.
+.SS "template<typename T = double> bool \fBmlpack::math::RangeType\fP< T >::operator< (const \fBRangeType\fP< T > & rhs) const\fC [inline]\fP"
+
+.PP
+Compare with another range\&. For Range objects x and y, x < y means that x is strictly less than y and does not overlap at all\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIrhs\fP Other range\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::math::RangeType< ElemType >::Hi()\&.
+.SS "template<typename T = double> bool \fBmlpack::math::RangeType\fP< T >::operator== (const \fBRangeType\fP< T > & rhs) const\fC [inline]\fP"
+
+.PP
+Compare with another range for strict equality\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIrhs\fP Other range\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::math::RangeType< ElemType >::Hi()\&.
+.SS "template<typename T = double> bool \fBmlpack::math::RangeType\fP< T >::operator> (const \fBRangeType\fP< T > & rhs) const\fC [inline]\fP"
+
+.PP
+Compare with another range\&. For Range objects x and y, x < y means that x is strictly less than y and does not overlap at all\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIrhs\fP Other range\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::math::RangeType< ElemType >::Hi()\&.
+.SS "template<typename T = double> \fBRangeType\fP \fBmlpack::math::RangeType\fP< T >::operator| (const \fBRangeType\fP< T > & rhs) const\fC [inline]\fP"
+
+.PP
+Expands this range to include another range\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIrhs\fP Range to include\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::math::RangeType< ElemType >::Hi()\&.
+.SS "template<typename T = double> \fBRangeType\fP& \fBmlpack::math::RangeType\fP< T >::operator|= (const \fBRangeType\fP< T > & rhs)\fC [inline]\fP"
+
+.PP
+Expands this range to include another range\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIrhs\fP Range to include\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::math::RangeType< ElemType >::Hi()\&.
+.SS "template<typename T = double> template<typename Archive > void \fBmlpack::math::RangeType\fP< T >::Serialize (Archive & ar, const unsigned int version)"
+
+.PP
+Serialize the range object\&. 
+.PP
+Referenced by mlpack::math::RangeType< ElemType >::Hi()\&.
+.SS "template<typename T = double> T \fBmlpack::math::RangeType\fP< T >::Width () const\fC [inline]\fP"
+
+.PP
+Gets the span of the range (hi - lo)\&. 
+.PP
+Referenced by mlpack::math::RangeType< ElemType >::Hi()\&.
+.SH "Friends And Related Function Documentation"
+.PP 
+.SS "template<typename T = double> template<typename TT > \fBRangeType\fP<TT> operator* (const TT d, const \fBRangeType\fP< TT > & r)\fC [friend]\fP"
+
+.PP
+Scale the bounds by the given double\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fId\fP Scaling factor\&. 
+.RE
+.PP
+
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename T = double> T \fBmlpack::math::RangeType\fP< T >::hi\fC [private]\fP"
+
+.PP
+The lower bound\&. 
+.PP
+Definition at line 38 of file range\&.hpp\&.
+.PP
+Referenced by mlpack::math::RangeType< ElemType >::Hi()\&.
+.SS "template<typename T = double> T \fBmlpack::math::RangeType\fP< T >::lo\fC [private]\fP"
+
+.PP
+Definition at line 37 of file range\&.hpp\&.
+.PP
+Referenced by mlpack::math::RangeType< ElemType >::Lo()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

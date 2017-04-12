@@ -1,0 +1,87 @@
+.TH "mlpack::tree::InformationGain" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::tree::InformationGain \- The standard information gain criterion, used for calculating gain in decision trees\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static double \fBEvaluate\fP (const arma::Mat< size_t > &counts)"
+.br
+.RI "\fIGiven the sufficient statistics of a proposed split, calculate the information gain if that split was to be used\&. \fP"
+.ti -1c
+.RI "static double \fBEvaluate\fP (const arma::Row< size_t > &labels, const size_t numClasses)"
+.br
+.RI "\fIGiven a set of labels, calculate the information gain of those labels\&. \fP"
+.ti -1c
+.RI "static double \fBRange\fP (const size_t numClasses)"
+.br
+.RI "\fIReturn the range of the information gain for the given number of classes\&. \fP"
+.ti -1c
+.RI "static double \fBRange\fP (const size_t numClasses)"
+.br
+.RI "\fIReturn the range of the information gain for the given number of classes\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+The standard information gain criterion, used for calculating gain in decision trees\&. 
+.PP
+Definition at line 25 of file information_gain\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "static double mlpack::tree::InformationGain::Evaluate (const arma::Mat< size_t > & counts)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Given the sufficient statistics of a proposed split, calculate the information gain if that split was to be used\&. The 'counts' matrix should contain the number of points in each class in each column, so the size of 'counts' is children x classes, where 'children' is the number of child nodes in the proposed split\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIcounts\fP Matrix of sufficient statistics\&. 
+.RE
+.PP
+
+.PP
+Definition at line 31 of file information_gain\&.hpp\&.
+.SS "static double mlpack::tree::InformationGain::Evaluate (const arma::Row< size_t > & labels, const size_t numClasses)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Given a set of labels, calculate the information gain of those labels\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIlabels\fP Labels of the dataset\&. 
+.br
+\fInumClasses\fP Number of classes in the dataset\&. 
+.RE
+.PP
+
+.PP
+Definition at line 34 of file information_gain\&.hpp\&.
+.SS "static double mlpack::tree::InformationGain::Range (const size_t numClasses)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Return the range of the information gain for the given number of classes\&. (That is, the difference between the maximum possible value and the minimum possible value\&.)
+.PP
+\fBParameters:\fP
+.RS 4
+\fInumClasses\fP Number of classes in the dataset\&. 
+.RE
+.PP
+
+.PP
+Definition at line 66 of file information_gain\&.hpp\&.
+.SS "static double mlpack::tree::InformationGain::Range (const size_t numClasses)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Return the range of the information gain for the given number of classes\&. (That is, the difference between the maximum possible value and the minimum possible value\&.) 
+.PP
+Definition at line 84 of file information_gain\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

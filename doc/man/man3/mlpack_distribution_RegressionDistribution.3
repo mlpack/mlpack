@@ -1,0 +1,260 @@
+.TH "mlpack::distribution::RegressionDistribution" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::distribution::RegressionDistribution \- A class that represents a univariate conditionally Gaussian distribution\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBRegressionDistribution\fP ()"
+.br
+.RI "\fIDefault constructor, which creates a Gaussian with zero dimension\&. \fP"
+.ti -1c
+.RI "\fBRegressionDistribution\fP (const arma::mat &predictors, const arma::vec &responses)"
+.br
+.RI "\fICreate a Conditional Gaussian distribution with conditional mean function obtained by running RegressionFunction on predictors, responses\&. \fP"
+.ti -1c
+.RI "size_t \fBDimensionality\fP () const "
+.br
+.RI "\fIReturn the dimensionality\&. \fP"
+.ti -1c
+.RI "const \fBGaussianDistribution\fP & \fBErr\fP () const "
+.br
+.RI "\fIReturn error distribution\&. \fP"
+.ti -1c
+.RI "\fBGaussianDistribution\fP & \fBErr\fP ()"
+.br
+.RI "\fIModify error distribution\&. \fP"
+.ti -1c
+.RI "double \fBLogProbability\fP (const arma::vec &observation) const "
+.br
+.RI "\fIEvaluate log probability density function of given observation\&. \fP"
+.ti -1c
+.RI "const arma::vec & \fBParameters\fP () const "
+.br
+.RI "\fIReturn the parameters (the b vector)\&. \fP"
+.ti -1c
+.RI "void \fBPredict\fP (const arma::mat &points, arma::vec &predictions) const "
+.br
+.RI "\fICalculate y_i for each data point in points\&. \fP"
+.ti -1c
+.RI "double \fBProbability\fP (const arma::vec &observation) const "
+.br
+.RI "\fIEvaluate probability density function of given observation\&. \fP"
+.ti -1c
+.RI "const \fBregression::LinearRegression\fP & \fBRf\fP () const "
+.br
+.RI "\fIReturn regression function\&. \fP"
+.ti -1c
+.RI "\fBregression::LinearRegression\fP & \fBRf\fP ()"
+.br
+.RI "\fIModify regression function\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int)"
+.br
+.RI "\fISerialize the distribution\&. \fP"
+.ti -1c
+.RI "void \fBTrain\fP (const arma::mat &observations)"
+.br
+.RI "\fIEstimate the Gaussian distribution directly from the given observations\&. \fP"
+.ti -1c
+.RI "void \fBTrain\fP (const arma::mat &observations, const arma::vec &weights)"
+.br
+.RI "\fIEstimate parameters using provided observation weights\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "\fBGaussianDistribution\fP \fBerr\fP"
+.br
+.RI "\fIError distribution\&. \fP"
+.ti -1c
+.RI "\fBregression::LinearRegression\fP \fBrf\fP"
+.br
+.RI "\fIRegression function for representing conditional mean\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+A class that represents a univariate conditionally Gaussian distribution\&. 
+
+Can be used as an emission distribution with the hmm class to implement HMM regression (HMMR) as described in https://www.ima.umn.edu/preprints/January1994/1195.pdf The hmm observations should have the dependent variable in the first row, with the independent variables in the other rows\&. 
+.PP
+Definition at line 30 of file regression_distribution\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::distribution::RegressionDistribution::RegressionDistribution ()\fC [inline]\fP"
+
+.PP
+Default constructor, which creates a Gaussian with zero dimension\&. 
+.PP
+Definition at line 42 of file regression_distribution\&.hpp\&.
+.SS "mlpack::distribution::RegressionDistribution::RegressionDistribution (const arma::mat & predictors, const arma::vec & responses)\fC [inline]\fP"
+
+.PP
+Create a Conditional Gaussian distribution with conditional mean function obtained by running RegressionFunction on predictors, responses\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpredictors\fP Matrix of predictors (X)\&. 
+.br
+\fIresponses\fP Vector of responses (y)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 51 of file regression_distribution\&.hpp\&.
+.PP
+References mlpack::regression::LinearRegression::ComputeError(), and mlpack::distribution::GaussianDistribution::Covariance()\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "size_t mlpack::distribution::RegressionDistribution::Dimensionality () const\fC [inline]\fP"
+
+.PP
+Return the dimensionality\&. 
+.PP
+Definition at line 123 of file regression_distribution\&.hpp\&.
+.PP
+References mlpack::regression::LinearRegression::Parameters()\&.
+.SS "const \fBGaussianDistribution\fP& mlpack::distribution::RegressionDistribution::Err () const\fC [inline]\fP"
+
+.PP
+Return error distribution\&. 
+.PP
+Definition at line 77 of file regression_distribution\&.hpp\&.
+.PP
+References err\&.
+.SS "\fBGaussianDistribution\fP& mlpack::distribution::RegressionDistribution::Err ()\fC [inline]\fP"
+
+.PP
+Modify error distribution\&. 
+.PP
+Definition at line 79 of file regression_distribution\&.hpp\&.
+.PP
+References err, Probability(), and Train()\&.
+.SS "double mlpack::distribution::RegressionDistribution::LogProbability (const arma::vec & observation) const\fC [inline]\fP"
+
+.PP
+Evaluate log probability density function of given observation\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIobservation\fP point to evaluate log probability at 
+.RE
+.PP
+
+.PP
+Definition at line 107 of file regression_distribution\&.hpp\&.
+.PP
+References Predict(), and Probability()\&.
+.SS "const arma::vec& mlpack::distribution::RegressionDistribution::Parameters () const\fC [inline]\fP"
+
+.PP
+Return the parameters (the b vector)\&. 
+.PP
+Definition at line 120 of file regression_distribution\&.hpp\&.
+.PP
+References mlpack::regression::LinearRegression::Parameters()\&.
+.SS "void mlpack::distribution::RegressionDistribution::Predict (const arma::mat & points, arma::vec & predictions) const"
+
+.PP
+Calculate y_i for each data point in points\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpoints\fP the data points to calculate with\&. 
+.br
+\fIpredictions\fP y, will contain calculated values on completion\&. 
+.RE
+.PP
+
+.PP
+Referenced by LogProbability()\&.
+.SS "double mlpack::distribution::RegressionDistribution::Probability (const arma::vec & observation) const"
+
+.PP
+Evaluate probability density function of given observation\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIobservation\fP point to evaluate probability at 
+.RE
+.PP
+
+.PP
+Referenced by Err(), and LogProbability()\&.
+.SS "const \fBregression::LinearRegression\fP& mlpack::distribution::RegressionDistribution::Rf () const\fC [inline]\fP"
+
+.PP
+Return regression function\&. 
+.PP
+Definition at line 72 of file regression_distribution\&.hpp\&.
+.PP
+References rf\&.
+.SS "\fBregression::LinearRegression\fP& mlpack::distribution::RegressionDistribution::Rf ()\fC [inline]\fP"
+
+.PP
+Modify regression function\&. 
+.PP
+Definition at line 74 of file regression_distribution\&.hpp\&.
+.PP
+References rf\&.
+.SS "template<typename Archive > void mlpack::distribution::RegressionDistribution::Serialize (Archive & ar, const unsigned int)\fC [inline]\fP"
+
+.PP
+Serialize the distribution\&. 
+.PP
+Definition at line 65 of file regression_distribution\&.hpp\&.
+.PP
+References mlpack::data::CreateNVP()\&.
+.SS "void mlpack::distribution::RegressionDistribution::Train (const arma::mat & observations)"
+
+.PP
+Estimate the Gaussian distribution directly from the given observations\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIobservations\fP List of observations\&. 
+.RE
+.PP
+
+.PP
+Referenced by Err()\&.
+.SS "void mlpack::distribution::RegressionDistribution::Train (const arma::mat & observations, const arma::vec & weights)"
+
+.PP
+Estimate parameters using provided observation weights\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIweights\fP probability that given observation is from distribution 
+.RE
+.PP
+
+.SH "Member Data Documentation"
+.PP 
+.SS "\fBGaussianDistribution\fP mlpack::distribution::RegressionDistribution::err\fC [private]\fP"
+
+.PP
+Error distribution\&. 
+.PP
+Definition at line 36 of file regression_distribution\&.hpp\&.
+.PP
+Referenced by Err()\&.
+.SS "\fBregression::LinearRegression\fP mlpack::distribution::RegressionDistribution::rf\fC [private]\fP"
+
+.PP
+Regression function for representing conditional mean\&. 
+.PP
+Definition at line 34 of file regression_distribution\&.hpp\&.
+.PP
+Referenced by Rf()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,112 @@
+\section{mlpack\+:\+:ann\+:\+:Add\+Visitor Class Reference}
+\label{classmlpack_1_1ann_1_1AddVisitor}\index{mlpack\+::ann\+::\+Add\+Visitor@{mlpack\+::ann\+::\+Add\+Visitor}}
+
+
+\doxyref{Add\+Visitor}{p.}{classmlpack_1_1ann_1_1AddVisitor} exposes the Add() method of the given module.  
+
+
+
+
+Inheritance diagram for mlpack\+:\+:ann\+:\+:Add\+Visitor\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=165pt]{classmlpack_1_1ann_1_1AddVisitor__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename T $>$ }\\{\bf Add\+Visitor} (T {\bf new\+Layer})
+\begin{DoxyCompactList}\small\item\em Exposes the Add() method of the given module. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Layer\+Type $>$ }\\void {\bf operator()} (Layer\+Type $\ast$layer) const 
+\begin{DoxyCompactList}\small\item\em Exposes the Add() method. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::enable\+\_\+if$<$ Has\+Add\+Check$<$ T, void(T\+::$\ast$)({\bf Layer\+Types})$>$\+::value, void $>$\+::type {\bf Layer\+Add} (T $\ast$layer) const 
+\begin{DoxyCompactList}\small\item\em Only add the layer if the module implements the Add() function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::enable\+\_\+if$<$ !Has\+Add\+Check$<$ T, void(T\+::$\ast$)({\bf Layer\+Types})$>$\+::value, void $>$\+::type {\bf Layer\+Add} (T $\ast$layer) const 
+\begin{DoxyCompactList}\small\item\em Do not add the layer if the module doesn\textquotesingle{}t implement the Add() function. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Layer\+Types} {\bf new\+Layer}
+\begin{DoxyCompactList}\small\item\em The layer that should be added. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\doxyref{Add\+Visitor}{p.}{classmlpack_1_1ann_1_1AddVisitor} exposes the Add() method of the given module. 
+
+Definition at line 27 of file add\+\_\+visitor.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::ann\+::\+Add\+Visitor@{mlpack\+::ann\+::\+Add\+Visitor}!Add\+Visitor@{Add\+Visitor}}
+\index{Add\+Visitor@{Add\+Visitor}!mlpack\+::ann\+::\+Add\+Visitor@{mlpack\+::ann\+::\+Add\+Visitor}}
+\subsubsection[{Add\+Visitor(\+T new\+Layer)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ mlpack\+::ann\+::\+Add\+Visitor\+::\+Add\+Visitor (
+\begin{DoxyParamCaption}
+\item[{T}]{new\+Layer}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1AddVisitor_ad1cbfe430e2d79c7aead148d2dea9736}
+
+
+Exposes the Add() method of the given module. 
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::ann\+::\+Add\+Visitor@{mlpack\+::ann\+::\+Add\+Visitor}!Layer\+Add@{Layer\+Add}}
+\index{Layer\+Add@{Layer\+Add}!mlpack\+::ann\+::\+Add\+Visitor@{mlpack\+::ann\+::\+Add\+Visitor}}
+\subsubsection[{Layer\+Add(\+T $\ast$layer) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ std\+::enable\+\_\+if$<$ Has\+Add\+Check$<$T, void(T\+::$\ast$)({\bf Layer\+Types})$>$\+::value, void$>$\+::type mlpack\+::ann\+::\+Add\+Visitor\+::\+Layer\+Add (
+\begin{DoxyParamCaption}
+\item[{T $\ast$}]{layer}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1AddVisitor_ae9bf6e0150b414339c97385c38dca00b}
+
+
+Only add the layer if the module implements the Add() function. 
+
+\index{mlpack\+::ann\+::\+Add\+Visitor@{mlpack\+::ann\+::\+Add\+Visitor}!Layer\+Add@{Layer\+Add}}
+\index{Layer\+Add@{Layer\+Add}!mlpack\+::ann\+::\+Add\+Visitor@{mlpack\+::ann\+::\+Add\+Visitor}}
+\subsubsection[{Layer\+Add(\+T $\ast$layer) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ std\+::enable\+\_\+if$<$ !Has\+Add\+Check$<$T, void(T\+::$\ast$)({\bf Layer\+Types})$>$\+::value, void$>$\+::type mlpack\+::ann\+::\+Add\+Visitor\+::\+Layer\+Add (
+\begin{DoxyParamCaption}
+\item[{T $\ast$}]{layer}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1AddVisitor_a90ae14f508033c0359cb9b1f44c75d69}
+
+
+Do not add the layer if the module doesn\textquotesingle{}t implement the Add() function. 
+
+\index{mlpack\+::ann\+::\+Add\+Visitor@{mlpack\+::ann\+::\+Add\+Visitor}!operator()@{operator()}}
+\index{operator()@{operator()}!mlpack\+::ann\+::\+Add\+Visitor@{mlpack\+::ann\+::\+Add\+Visitor}}
+\subsubsection[{operator()(\+Layer\+Type $\ast$layer) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Layer\+Type $>$ void mlpack\+::ann\+::\+Add\+Visitor\+::operator() (
+\begin{DoxyParamCaption}
+\item[{Layer\+Type $\ast$}]{layer}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1ann_1_1AddVisitor_a2f6b72d36c00722db6e688b25bbbe493}
+
+
+Exposes the Add() method. 
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::ann\+::\+Add\+Visitor@{mlpack\+::ann\+::\+Add\+Visitor}!new\+Layer@{new\+Layer}}
+\index{new\+Layer@{new\+Layer}!mlpack\+::ann\+::\+Add\+Visitor@{mlpack\+::ann\+::\+Add\+Visitor}}
+\subsubsection[{new\+Layer}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Layer\+Types} mlpack\+::ann\+::\+Add\+Visitor\+::new\+Layer\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1AddVisitor_a5afd01c32a2bba9860181e89ba0e82d0}
+
+
+The layer that should be added. 
+
+
+
+Definition at line 40 of file add\+\_\+visitor.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/ann/visitor/{\bf add\+\_\+visitor.\+hpp}\end{DoxyCompactItemize}

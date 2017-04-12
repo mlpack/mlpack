@@ -1,0 +1,163 @@
+\section{mlpack\+:\+:Log Class Reference}
+\label{classmlpack_1_1Log}\index{mlpack\+::\+Log@{mlpack\+::\+Log}}
+
+
+Provides a convenient way to give formatted output.  
+
+
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void {\bf Assert} (bool condition, const {\bf std\+::string} \&message=\char`\"{}Assert Failed.\char`\"{})
+\begin{DoxyCompactList}\small\item\em Checks if the specified condition is true. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static std\+::ostream \& {\bf cout}
+\begin{DoxyCompactList}\small\item\em Reference to cout, if necessary. \end{DoxyCompactList}\item 
+static M\+L\+P\+A\+C\+K\+\_\+\+E\+X\+P\+O\+RT {\bf util\+::\+Null\+Out\+Stream} {\bf Debug}
+\begin{DoxyCompactList}\small\item\em M\+L\+P\+A\+C\+K\+\_\+\+E\+X\+P\+O\+RT is required for global variables, so that they are properly exported by the Windows compiler. \end{DoxyCompactList}\item 
+static M\+L\+P\+A\+C\+K\+\_\+\+E\+X\+P\+O\+RT {\bf util\+::\+Prefixed\+Out\+Stream} {\bf Fatal}
+\begin{DoxyCompactList}\small\item\em Prints fatal messages prefixed with [F\+A\+T\+AL], then terminates the program. \end{DoxyCompactList}\item 
+static M\+L\+P\+A\+C\+K\+\_\+\+E\+X\+P\+O\+RT {\bf util\+::\+Prefixed\+Out\+Stream} {\bf Info}
+\begin{DoxyCompactList}\small\item\em Prints informational messages if --verbose is specified, prefixed with [I\+N\+FO ]. \end{DoxyCompactList}\item 
+static M\+L\+P\+A\+C\+K\+\_\+\+E\+X\+P\+O\+RT {\bf util\+::\+Prefixed\+Out\+Stream} {\bf Warn}
+\begin{DoxyCompactList}\small\item\em Prints warning messages prefixed with [W\+A\+RN ]. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Provides a convenient way to give formatted output. 
+
+The \doxyref{Log}{p.}{classmlpack_1_1Log} class has four members which can be used in the same way ostreams can be used\+:
+
+
+\begin{DoxyItemize}
+\item \doxyref{Log\+::\+Debug}{p.}{classmlpack_1_1Log_a80ba817a1abcf742c7463b1e74bf55da}
+\item \doxyref{Log\+::\+Info}{p.}{classmlpack_1_1Log_a403428883bc3b47cf96924abb6a40adf}
+\item \doxyref{Log\+::\+Warn}{p.}{classmlpack_1_1Log_abbf3c5ac36654c0a8f17be3549388b38}
+\item \doxyref{Log\+::\+Fatal}{p.}{classmlpack_1_1Log_a396b80849caab1ec8a856f9d06c31a1d}
+\end{DoxyItemize}
+
+Each of these will prefix a tag to the output (for easy filtering), and the fatal output will terminate the program when a newline is encountered. An example is given below.
+
+
+\begin{DoxyCode}
+Log::Info << \textcolor{stringliteral}{"Checking a condition."} << std::endl;
+\textcolor{keywordflow}{if} (!someCondition())
+  Log::Warn << \textcolor{stringliteral}{"someCondition() is not satisfied!"} << std::endl;
+Log::Info << \textcolor{stringliteral}{"Checking an important condition."} << std::endl;
+\textcolor{keywordflow}{if} (!someImportantCondition())
+\{
+  Log::Fatal << \textcolor{stringliteral}{"someImportantCondition() is not satisfied! Terminating."};
+  Log::Fatal << std::endl;
+\}
+\end{DoxyCode}
+
+
+Any messages sent to \doxyref{Log\+::\+Debug}{p.}{classmlpack_1_1Log_a80ba817a1abcf742c7463b1e74bf55da} will not be shown when compiling in non-\/debug mode. Messages to \doxyref{Log\+::\+Info}{p.}{classmlpack_1_1Log_a403428883bc3b47cf96924abb6a40adf} will only be shown when the --verbose flag is given to the program (or rather, the \doxyref{C\+LI}{p.}{classmlpack_1_1CLI} class).
+
+\begin{DoxySeeAlso}{See also}
+Prefixed\+Out\+Stream, Null\+Out\+Stream, \doxyref{C\+LI}{p.}{classmlpack_1_1CLI} 
+\end{DoxySeeAlso}
+
+
+Definition at line 56 of file log.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::\+Log@{mlpack\+::\+Log}!Assert@{Assert}}
+\index{Assert@{Assert}!mlpack\+::\+Log@{mlpack\+::\+Log}}
+\subsubsection[{Assert(bool condition, const std\+::string \&message=""Assert Failed."")}]{\setlength{\rightskip}{0pt plus 5cm}static void mlpack\+::\+Log\+::\+Assert (
+\begin{DoxyParamCaption}
+\item[{bool}]{condition, }
+\item[{const {\bf std\+::string} \&}]{message = {\ttfamily \char`\"{}Assert~Failed.\char`\"{}}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1Log_a894b6a6ce578301d1d4404416e8496d3}
+
+
+Checks if the specified condition is true. 
+
+If not, halts program execution and prints a custom error message. Does nothing in non-\/debug mode. 
+
+Referenced by mlpack\+::emst\+::\+Edge\+Pair\+::\+Edge\+Pair(), and mlpack\+::tree\+::split\+::\+Perform\+Split().
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::\+Log@{mlpack\+::\+Log}!cout@{cout}}
+\index{cout@{cout}!mlpack\+::\+Log@{mlpack\+::\+Log}}
+\subsubsection[{cout}]{\setlength{\rightskip}{0pt plus 5cm}std\+::ostream\& mlpack\+::\+Log\+::cout\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1Log_aaae645acd77959d7754961f7292bc8c6}
+
+
+Reference to cout, if necessary. 
+
+
+
+Definition at line 93 of file log.\+hpp.
+
+\index{mlpack\+::\+Log@{mlpack\+::\+Log}!Debug@{Debug}}
+\index{Debug@{Debug}!mlpack\+::\+Log@{mlpack\+::\+Log}}
+\subsubsection[{Debug}]{\setlength{\rightskip}{0pt plus 5cm}M\+L\+P\+A\+C\+K\+\_\+\+E\+X\+P\+O\+RT {\bf util\+::\+Null\+Out\+Stream} mlpack\+::\+Log\+::\+Debug\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1Log_a80ba817a1abcf742c7463b1e74bf55da}
+
+
+M\+L\+P\+A\+C\+K\+\_\+\+E\+X\+P\+O\+RT is required for global variables, so that they are properly exported by the Windows compiler. 
+
+Dumps debug output into the bit nether regions. 
+
+Definition at line 79 of file log.\+hpp.
+
+
+
+Referenced by mlpack\+::gmm\+::\+G\+M\+M\+::\+G\+M\+M(), and mlpack\+::distribution\+::\+Discrete\+Distribution\+::\+Probability().
+
+\index{mlpack\+::\+Log@{mlpack\+::\+Log}!Fatal@{Fatal}}
+\index{Fatal@{Fatal}!mlpack\+::\+Log@{mlpack\+::\+Log}}
+\subsubsection[{Fatal}]{\setlength{\rightskip}{0pt plus 5cm}M\+L\+P\+A\+C\+K\+\_\+\+E\+X\+P\+O\+RT {\bf util\+::\+Prefixed\+Out\+Stream} mlpack\+::\+Log\+::\+Fatal\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1Log_a396b80849caab1ec8a856f9d06c31a1d}
+
+
+Prints fatal messages prefixed with [F\+A\+T\+AL], then terminates the program. 
+
+
+
+Definition at line 90 of file log.\+hpp.
+
+
+
+Referenced by mlpack\+::kernel\+::\+Spherical\+Kernel\+::\+Convolution\+Integral(), mlpack\+::gmm\+::\+Eigenvalue\+Ratio\+Constraint\+::\+Eigenvalue\+Ratio\+Constraint(), and mlpack\+::data\+::\+Mean\+Imputation$<$ T $>$\+::\+Impute().
+
+\index{mlpack\+::\+Log@{mlpack\+::\+Log}!Info@{Info}}
+\index{Info@{Info}!mlpack\+::\+Log@{mlpack\+::\+Log}}
+\subsubsection[{Info}]{\setlength{\rightskip}{0pt plus 5cm}M\+L\+P\+A\+C\+K\+\_\+\+E\+X\+P\+O\+RT {\bf util\+::\+Prefixed\+Out\+Stream} mlpack\+::\+Log\+::\+Info\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1Log_a403428883bc3b47cf96924abb6a40adf}
+
+
+Prints informational messages if --verbose is specified, prefixed with [I\+N\+FO ]. 
+
+
+
+Definition at line 84 of file log.\+hpp.
+
+
+
+Referenced by mlpack\+::amf\+::\+Simple\+Residue\+Termination\+::\+Is\+Converged(), and mlpack\+::amf\+::\+Simple\+Tolerance\+Termination$<$ Mat\+Type $>$\+::\+Is\+Converged().
+
+\index{mlpack\+::\+Log@{mlpack\+::\+Log}!Warn@{Warn}}
+\index{Warn@{Warn}!mlpack\+::\+Log@{mlpack\+::\+Log}}
+\subsubsection[{Warn}]{\setlength{\rightskip}{0pt plus 5cm}M\+L\+P\+A\+C\+K\+\_\+\+E\+X\+P\+O\+RT {\bf util\+::\+Prefixed\+Out\+Stream} mlpack\+::\+Log\+::\+Warn\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1Log_abbf3c5ac36654c0a8f17be3549388b38}
+
+
+Prints warning messages prefixed with [W\+A\+RN ]. 
+
+
+
+Definition at line 87 of file log.\+hpp.
+
+
+
+Referenced by mlpack\+::gmm\+::\+Eigenvalue\+Ratio\+Constraint\+::\+Eigenvalue\+Ratio\+Constraint(), mlpack\+::amf\+::\+Random\+Acol\+Initialization$<$ columns\+To\+Average $>$\+::\+Initialize(), mlpack\+::amf\+::\+Max\+Iteration\+Termination\+::\+Max\+Iteration\+Termination(), and mlpack\+::cf\+::\+C\+F\+::\+Num\+Users\+For\+Similarity().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/util/{\bf log.\+hpp}\end{DoxyCompactItemize}

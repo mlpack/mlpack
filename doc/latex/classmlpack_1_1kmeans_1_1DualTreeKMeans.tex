@@ -1,0 +1,382 @@
+\section{mlpack\+:\+:kmeans\+:\+:Dual\+Tree\+K\+Means$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1kmeans_1_1DualTreeKMeans}\index{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$}}
+
+
+An algorithm for an exact Lloyd iteration which simply uses dual-\/tree nearest-\/neighbor search to find the nearest centroid for each point in the dataset.  
+
+
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Tree\+Metric\+Type , typename Ignored\+Stat\+Type , typename Tree\+Mat\+Type $>$ }\\using {\bf N\+N\+S\+Tree\+Type} = Tree\+Type$<$ Tree\+Metric\+Type, {\bf Dual\+Tree\+K\+Means\+Statistic}, Tree\+Mat\+Type $>$
+\item 
+typedef Tree\+Type$<$ Metric\+Type, {\bf Dual\+Tree\+K\+Means\+Statistic}, Mat\+Type $>$ {\bf Tree}
+\begin{DoxyCompactList}\small\item\em Convenience typedef. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Dual\+Tree\+K\+Means} (const Mat\+Type \&{\bf dataset}, Metric\+Type \&{\bf metric})
+\begin{DoxyCompactList}\small\item\em Construct the \doxyref{Dual\+Tree\+K\+Means}{p.}{classmlpack_1_1kmeans_1_1DualTreeKMeans} object, which will construct a tree on the points. \end{DoxyCompactList}\item 
+{\bf $\sim$\+Dual\+Tree\+K\+Means} ()
+\begin{DoxyCompactList}\small\item\em Delete the tree constructed by the \doxyref{Dual\+Tree\+K\+Means}{p.}{classmlpack_1_1kmeans_1_1DualTreeKMeans} object. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Distance\+Calculations} () const 
+\begin{DoxyCompactList}\small\item\em Return the number of distance calculations. \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Distance\+Calculations} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of distance calculations. \end{DoxyCompactList}\item 
+double {\bf Iterate} (const arma\+::mat \&centroids, arma\+::mat \&new\+Centroids, arma\+::\+Col$<$ size\+\_\+t $>$ \&counts)
+\begin{DoxyCompactList}\small\item\em Run a single iteration of the dual-\/tree nearest neighbor algorithm for k-\/means, updating the given centroids into the new\+Centroids matrix. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void {\bf Coalesce\+Tree} ({\bf Tree} \&node, const size\+\_\+t child=0)
+\item 
+void {\bf Decoalesce\+Tree} ({\bf Tree} \&node)
+\item 
+void {\bf Extract\+Centroids} ({\bf Tree} \&node, arma\+::mat \&new\+Centroids, arma\+::\+Col$<$ size\+\_\+t $>$ \&new\+Counts, const arma\+::mat \&centroids)
+\begin{DoxyCompactList}\small\item\em Extract the centroids of the clusters. \end{DoxyCompactList}\item 
+void {\bf Update\+Tree} ({\bf Tree} \&node, const arma\+::mat \&centroids, const double parent\+Upper\+Bound=0.\+0, const double adjusted\+Parent\+Upper\+Bound=D\+B\+L\+\_\+\+M\+AX, const double parent\+Lower\+Bound=D\+B\+L\+\_\+\+M\+AX, const double adjusted\+Parent\+Lower\+Bound=0.\+0)
+\begin{DoxyCompactList}\small\item\em Update the bounds in the tree before the next iteration. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+arma\+::\+Row$<$ size\+\_\+t $>$ {\bf assignments}
+\item 
+arma\+::vec {\bf cluster\+Distances}
+\item 
+const Mat\+Type \& {\bf dataset}
+\begin{DoxyCompactList}\small\item\em The dataset we are using. \end{DoxyCompactList}\item 
+const Mat\+Type \& {\bf dataset\+Orig}
+\begin{DoxyCompactList}\small\item\em The original dataset reference. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf distance\+Calculations}
+\begin{DoxyCompactList}\small\item\em Track distance calculations. \end{DoxyCompactList}\item 
+arma\+::mat {\bf intercluster\+Distances}
+\item 
+size\+\_\+t {\bf iteration}
+\begin{DoxyCompactList}\small\item\em Track iteration number. \end{DoxyCompactList}\item 
+arma\+::mat {\bf last\+Iteration\+Centroids}
+\item 
+arma\+::vec {\bf lower\+Bounds}
+\begin{DoxyCompactList}\small\item\em Lower bounds on second closest cluster distance for each point. \end{DoxyCompactList}\item 
+Metric\+Type {\bf metric}
+\begin{DoxyCompactList}\small\item\em The metric. \end{DoxyCompactList}\item 
+std\+::vector$<$ bool $>$ {\bf pruned\+Points}
+\begin{DoxyCompactList}\small\item\em Indicator of whether or not the point is pruned. \end{DoxyCompactList}\item 
+{\bf Tree} $\ast$ {\bf tree}
+\begin{DoxyCompactList}\small\item\em The tree built on the points. \end{DoxyCompactList}\item 
+arma\+::vec {\bf upper\+Bounds}
+\begin{DoxyCompactList}\small\item\em Upper bounds on nearest centroid. \end{DoxyCompactList}\item 
+std\+::vector$<$ bool $>$ {\bf visited}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Metric\+Type, typename Mat\+Type, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree$>$\\*
+class mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$}
+
+An algorithm for an exact Lloyd iteration which simply uses dual-\/tree nearest-\/neighbor search to find the nearest centroid for each point in the dataset. 
+
+The conditions under which this will perform best are probably limited to the case where k is close to the number of points in the dataset, and the number of iterations of the k-\/means algorithm will be few. 
+
+Definition at line 41 of file dual\+\_\+tree\+\_\+kmeans.\+hpp.
+
+
+
+\subsection{Member Typedef Documentation}
+\index{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}!N\+N\+S\+Tree\+Type@{N\+N\+S\+Tree\+Type}}
+\index{N\+N\+S\+Tree\+Type@{N\+N\+S\+Tree\+Type}!mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}}
+\subsubsection[{N\+N\+S\+Tree\+Type}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type , template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree$>$ template$<$typename Tree\+Metric\+Type , typename Ignored\+Stat\+Type , typename Tree\+Mat\+Type $>$ using {\bf mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$\+::{\bf N\+N\+S\+Tree\+Type} =  Tree\+Type$<$Tree\+Metric\+Type, {\bf Dual\+Tree\+K\+Means\+Statistic}, Tree\+Mat\+Type$>$}\label{classmlpack_1_1kmeans_1_1DualTreeKMeans_acd350b7d58d6a938689ffc45c7bdbeb0}
+
+
+Definition at line 51 of file dual\+\_\+tree\+\_\+kmeans.\+hpp.
+
+\index{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}!Tree@{Tree}}
+\index{Tree@{Tree}!mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}}
+\subsubsection[{Tree}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type , template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree$>$ typedef Tree\+Type$<$Metric\+Type, {\bf Dual\+Tree\+K\+Means\+Statistic}, Mat\+Type$>$ {\bf mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$\+::{\bf Tree}}\label{classmlpack_1_1kmeans_1_1DualTreeKMeans_a3cf23d9d4f6526e570f63c585794ce17}
+
+
+Convenience typedef. 
+
+
+
+Definition at line 45 of file dual\+\_\+tree\+\_\+kmeans.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}!Dual\+Tree\+K\+Means@{Dual\+Tree\+K\+Means}}
+\index{Dual\+Tree\+K\+Means@{Dual\+Tree\+K\+Means}!mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}}
+\subsubsection[{Dual\+Tree\+K\+Means(const Mat\+Type \&dataset, Metric\+Type \&metric)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type , template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree$>$ {\bf mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$\+::{\bf Dual\+Tree\+K\+Means} (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{dataset, }
+\item[{Metric\+Type \&}]{metric}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1kmeans_1_1DualTreeKMeans_adb339c5141729e768b9a1af3e45af826}
+
+
+Construct the \doxyref{Dual\+Tree\+K\+Means}{p.}{classmlpack_1_1kmeans_1_1DualTreeKMeans} object, which will construct a tree on the points. 
+
+\index{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}!````~Dual\+Tree\+K\+Means@{$\sim$\+Dual\+Tree\+K\+Means}}
+\index{````~Dual\+Tree\+K\+Means@{$\sim$\+Dual\+Tree\+K\+Means}!mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}}
+\subsubsection[{$\sim$\+Dual\+Tree\+K\+Means()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type , template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree$>$ {\bf mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$\+::$\sim${\bf Dual\+Tree\+K\+Means} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1kmeans_1_1DualTreeKMeans_a0f218939ff900783b1033164ab1f66c1}
+
+
+Delete the tree constructed by the \doxyref{Dual\+Tree\+K\+Means}{p.}{classmlpack_1_1kmeans_1_1DualTreeKMeans} object. 
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}!Coalesce\+Tree@{Coalesce\+Tree}}
+\index{Coalesce\+Tree@{Coalesce\+Tree}!mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}}
+\subsubsection[{Coalesce\+Tree(\+Tree \&node, const size\+\_\+t child=0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type , template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree$>$ void {\bf mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$\+::Coalesce\+Tree (
+\begin{DoxyParamCaption}
+\item[{{\bf Tree} \&}]{node, }
+\item[{const size\+\_\+t}]{child = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1DualTreeKMeans_a7a9e956ef9cce2b257b493d0b7180a97}
+\index{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}!Decoalesce\+Tree@{Decoalesce\+Tree}}
+\index{Decoalesce\+Tree@{Decoalesce\+Tree}!mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}}
+\subsubsection[{Decoalesce\+Tree(\+Tree \&node)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type , template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree$>$ void {\bf mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$\+::Decoalesce\+Tree (
+\begin{DoxyParamCaption}
+\item[{{\bf Tree} \&}]{node}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1DualTreeKMeans_a10aea0475bb45d319d364482cf888104}
+\index{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}!Distance\+Calculations@{Distance\+Calculations}}
+\index{Distance\+Calculations@{Distance\+Calculations}!mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}}
+\subsubsection[{Distance\+Calculations() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type , template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree$>$ size\+\_\+t {\bf mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$\+::Distance\+Calculations (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1kmeans_1_1DualTreeKMeans_aa7a6f7bb913555131b173abe1b117dca}
+
+
+Return the number of distance calculations. 
+
+
+
+Definition at line 77 of file dual\+\_\+tree\+\_\+kmeans.\+hpp.
+
+
+
+References mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$\+::distance\+Calculations.
+
+\index{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}!Distance\+Calculations@{Distance\+Calculations}}
+\index{Distance\+Calculations@{Distance\+Calculations}!mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}}
+\subsubsection[{Distance\+Calculations()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type , template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree$>$ size\+\_\+t\& {\bf mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$\+::Distance\+Calculations (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1kmeans_1_1DualTreeKMeans_aba8ee074f92723cee93fec6dd686294d}
+
+
+Modify the number of distance calculations. 
+
+
+
+Definition at line 79 of file dual\+\_\+tree\+\_\+kmeans.\+hpp.
+
+
+
+References mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$\+::distance\+Calculations.
+
+\index{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}!Extract\+Centroids@{Extract\+Centroids}}
+\index{Extract\+Centroids@{Extract\+Centroids}!mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}}
+\subsubsection[{Extract\+Centroids(\+Tree \&node, arma\+::mat \&new\+Centroids, arma\+::\+Col$<$ size\+\_\+t $>$ \&new\+Counts, const arma\+::mat \&centroids)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type , template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree$>$ void {\bf mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$\+::Extract\+Centroids (
+\begin{DoxyParamCaption}
+\item[{{\bf Tree} \&}]{node, }
+\item[{arma\+::mat \&}]{new\+Centroids, }
+\item[{arma\+::\+Col$<$ size\+\_\+t $>$ \&}]{new\+Counts, }
+\item[{const arma\+::mat \&}]{centroids}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1DualTreeKMeans_a497ab8fc96ac2c2d674cd7352789c972}
+
+
+Extract the centroids of the clusters. 
+
+\index{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}!Iterate@{Iterate}}
+\index{Iterate@{Iterate}!mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}}
+\subsubsection[{Iterate(const arma\+::mat \&centroids, arma\+::mat \&new\+Centroids, arma\+::\+Col$<$ size\+\_\+t $>$ \&counts)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type , template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree$>$ double {\bf mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$\+::Iterate (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{centroids, }
+\item[{arma\+::mat \&}]{new\+Centroids, }
+\item[{arma\+::\+Col$<$ size\+\_\+t $>$ \&}]{counts}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1kmeans_1_1DualTreeKMeans_a97734ee1faca73ae63e0fb67f593bea6}
+
+
+Run a single iteration of the dual-\/tree nearest neighbor algorithm for k-\/means, updating the given centroids into the new\+Centroids matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em centroids} & Current cluster centroids. \\
+\hline
+{\em new\+Centroids} & New cluster centroids. \\
+\hline
+{\em counts} & Current counts, to be overwritten with new counts. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}!Update\+Tree@{Update\+Tree}}
+\index{Update\+Tree@{Update\+Tree}!mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}}
+\subsubsection[{Update\+Tree(\+Tree \&node, const arma\+::mat \&centroids, const double parent\+Upper\+Bound=0.\+0, const double adjusted\+Parent\+Upper\+Bound=\+D\+B\+L\+\_\+\+M\+A\+X, const double parent\+Lower\+Bound=\+D\+B\+L\+\_\+\+M\+A\+X, const double adjusted\+Parent\+Lower\+Bound=0.\+0)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type , template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree$>$ void {\bf mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$\+::Update\+Tree (
+\begin{DoxyParamCaption}
+\item[{{\bf Tree} \&}]{node, }
+\item[{const arma\+::mat \&}]{centroids, }
+\item[{const double}]{parent\+Upper\+Bound = {\ttfamily 0.0}, }
+\item[{const double}]{adjusted\+Parent\+Upper\+Bound = {\ttfamily DBL\+\_\+MAX}, }
+\item[{const double}]{parent\+Lower\+Bound = {\ttfamily DBL\+\_\+MAX}, }
+\item[{const double}]{adjusted\+Parent\+Lower\+Bound = {\ttfamily 0.0}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1DualTreeKMeans_af45ca60eca6565443e6f9f75cee17f90}
+
+
+Update the bounds in the tree before the next iteration. 
+
+centroids is the current (not yet searched) centroids. 
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}!assignments@{assignments}}
+\index{assignments@{assignments}!mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}}
+\subsubsection[{assignments}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type , template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree$>$ arma\+::\+Row$<$size\+\_\+t$>$ {\bf mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$\+::assignments\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1DualTreeKMeans_af8fb651b910ec9e3fc43f33ab255638a}
+
+
+Definition at line 103 of file dual\+\_\+tree\+\_\+kmeans.\+hpp.
+
+\index{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}!cluster\+Distances@{cluster\+Distances}}
+\index{cluster\+Distances@{cluster\+Distances}!mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}}
+\subsubsection[{cluster\+Distances}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type , template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree$>$ arma\+::vec {\bf mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$\+::cluster\+Distances\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1DualTreeKMeans_a46c004f79622fe542b48596a4826cf52}
+
+
+Definition at line 109 of file dual\+\_\+tree\+\_\+kmeans.\+hpp.
+
+\index{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}!dataset@{dataset}}
+\index{dataset@{dataset}!mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}}
+\subsubsection[{dataset}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type , template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree$>$ const Mat\+Type\& {\bf mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$\+::dataset\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1DualTreeKMeans_a5ace861dbf91faf6071886e6d8e67e75}
+
+
+The dataset we are using. 
+
+
+
+Definition at line 87 of file dual\+\_\+tree\+\_\+kmeans.\+hpp.
+
+\index{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}!dataset\+Orig@{dataset\+Orig}}
+\index{dataset\+Orig@{dataset\+Orig}!mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}}
+\subsubsection[{dataset\+Orig}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type , template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree$>$ const Mat\+Type\& {\bf mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$\+::dataset\+Orig\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1DualTreeKMeans_a975751fcc56636d0446fcfe2d0a193d8}
+
+
+The original dataset reference. 
+
+
+
+Definition at line 83 of file dual\+\_\+tree\+\_\+kmeans.\+hpp.
+
+\index{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}!distance\+Calculations@{distance\+Calculations}}
+\index{distance\+Calculations@{distance\+Calculations}!mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}}
+\subsubsection[{distance\+Calculations}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type , template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree$>$ size\+\_\+t {\bf mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$\+::distance\+Calculations\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1DualTreeKMeans_a72dc71e00415b466f78478ec1b64dcf7}
+
+
+Track distance calculations. 
+
+
+
+Definition at line 92 of file dual\+\_\+tree\+\_\+kmeans.\+hpp.
+
+
+
+Referenced by mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$\+::\+Distance\+Calculations().
+
+\index{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}!intercluster\+Distances@{intercluster\+Distances}}
+\index{intercluster\+Distances@{intercluster\+Distances}!mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}}
+\subsubsection[{intercluster\+Distances}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type , template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree$>$ arma\+::mat {\bf mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$\+::intercluster\+Distances\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1DualTreeKMeans_a9db123c7e579d2fd9bbc6d70e5fdddb2}
+
+
+Definition at line 111 of file dual\+\_\+tree\+\_\+kmeans.\+hpp.
+
+\index{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}!iteration@{iteration}}
+\index{iteration@{iteration}!mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}}
+\subsubsection[{iteration}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type , template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree$>$ size\+\_\+t {\bf mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$\+::iteration\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1DualTreeKMeans_aa7cde48f8227ee1aaddc26481c2cde5d}
+
+
+Track iteration number. 
+
+
+
+Definition at line 94 of file dual\+\_\+tree\+\_\+kmeans.\+hpp.
+
+\index{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}!last\+Iteration\+Centroids@{last\+Iteration\+Centroids}}
+\index{last\+Iteration\+Centroids@{last\+Iteration\+Centroids}!mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}}
+\subsubsection[{last\+Iteration\+Centroids}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type , template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree$>$ arma\+::mat {\bf mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$\+::last\+Iteration\+Centroids\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1DualTreeKMeans_a5a24f057ba754920da1c3419a6511458}
+
+
+Definition at line 107 of file dual\+\_\+tree\+\_\+kmeans.\+hpp.
+
+\index{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}!lower\+Bounds@{lower\+Bounds}}
+\index{lower\+Bounds@{lower\+Bounds}!mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}}
+\subsubsection[{lower\+Bounds}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type , template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree$>$ arma\+::vec {\bf mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$\+::lower\+Bounds\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1DualTreeKMeans_ac0339cd27a8591c4b205b35e2d8027e2}
+
+
+Lower bounds on second closest cluster distance for each point. 
+
+
+
+Definition at line 99 of file dual\+\_\+tree\+\_\+kmeans.\+hpp.
+
+\index{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}!metric@{metric}}
+\index{metric@{metric}!mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}}
+\subsubsection[{metric}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type , template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree$>$ Metric\+Type {\bf mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$\+::metric\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1DualTreeKMeans_ad258f124665eeb5e1e100e97fa471a96}
+
+
+The metric. 
+
+
+
+Definition at line 89 of file dual\+\_\+tree\+\_\+kmeans.\+hpp.
+
+\index{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}!pruned\+Points@{pruned\+Points}}
+\index{pruned\+Points@{pruned\+Points}!mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}}
+\subsubsection[{pruned\+Points}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type , template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree$>$ std\+::vector$<$bool$>$ {\bf mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$\+::pruned\+Points\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1DualTreeKMeans_ad0e4d105c12361ec532a1ab877318a46}
+
+
+Indicator of whether or not the point is pruned. 
+
+
+
+Definition at line 101 of file dual\+\_\+tree\+\_\+kmeans.\+hpp.
+
+\index{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}!tree@{tree}}
+\index{tree@{tree}!mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}}
+\subsubsection[{tree}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type , template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree$>$ {\bf Tree}$\ast$ {\bf mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$\+::tree\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1DualTreeKMeans_a25b8ec5fcca7215399d94f7efe5ad4a1}
+
+
+The tree built on the points. 
+
+
+
+Definition at line 85 of file dual\+\_\+tree\+\_\+kmeans.\+hpp.
+
+\index{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}!upper\+Bounds@{upper\+Bounds}}
+\index{upper\+Bounds@{upper\+Bounds}!mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}}
+\subsubsection[{upper\+Bounds}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type , template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree$>$ arma\+::vec {\bf mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$\+::upper\+Bounds\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1DualTreeKMeans_a2c10299590ed0c222823f26c111fcfd0}
+
+
+Upper bounds on nearest centroid. 
+
+
+
+Definition at line 97 of file dual\+\_\+tree\+\_\+kmeans.\+hpp.
+
+\index{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}!visited@{visited}}
+\index{visited@{visited}!mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means@{mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}}
+\subsubsection[{visited}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Mat\+Type , template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+K\+D\+Tree$>$ std\+::vector$<$bool$>$ {\bf mlpack\+::kmeans\+::\+Dual\+Tree\+K\+Means}$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$\+::visited\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kmeans_1_1DualTreeKMeans_a415f69923025718468f48cbc5d0d9548}
+
+
+Definition at line 105 of file dual\+\_\+tree\+\_\+kmeans.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/kmeans/{\bf dual\+\_\+tree\+\_\+kmeans.\+hpp}\end{DoxyCompactItemize}

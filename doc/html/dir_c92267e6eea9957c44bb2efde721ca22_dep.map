@@ -1,0 +1,18 @@
+<map id="src/mlpack/core/optimizers" name="src/mlpack/core/optimizers">
+<area shape="rect" id="node2" href="dir_d97efbb231ca91939918f07f71c16817.html" title="adadelta" alt="" coords="795,63,867,111"/>
+<area shape="rect" id="node3" href="dir_3e726917654401abf235b4ebf3621f0a.html" title="adam" alt="" coords="699,63,771,111"/>
+<area shape="rect" id="node4" href="dir_ae31c4a0b67a7e5a42573da2deb29693.html" title="aug_lagrangian" alt="" coords="115,159,224,207"/>
+<area shape="rect" id="node6" href="dir_8a431898e456b87398169d85cf9274bc.html" title="lbfgs" alt="" coords="133,255,205,303"/>
+<area shape="rect" id="edge1-headlabel" href="dir_000016_000019.html" title="1" alt="" coords="174,229,182,244"/>
+<area shape="rect" id="node5" href="dir_6aa760fe348f674b356bdba40d95b29b.html" title="gradient_descent" alt="" coords="553,63,674,111"/>
+<area shape="rect" id="node7" href="dir_66272309bbbae2ac1ebb1e2f8790a019.html" title="minibatch_sgd" alt="" coords="421,63,528,111"/>
+<area shape="rect" id="node8" href="dir_e81b6b380a93e771ede77bbcce0ca7b6.html" title="rmsprop" alt="" coords="325,63,397,111"/>
+<area shape="rect" id="node9" href="dir_9f40f51d8aaee01cc4bb84882cf8b376.html" title="sa" alt="" coords="229,63,301,111"/>
+<area shape="rect" id="node10" href="dir_cef0860c8727e0fef4b30c067d38228f.html" title="sdp" alt="" coords="133,63,205,111"/>
+<area shape="rect" id="edge2-headlabel" href="dir_000023_000016.html" title="2" alt="" coords="174,133,182,148"/>
+<area shape="rect" id="node12" href="dir_c99ddc62a84c9c2eac1febe115accba9.html" title="math" alt="" coords="1005,159,1077,207"/>
+<area shape="rect" id="edge3-headlabel" href="dir_000023_000011.html" title="1" alt="" coords="986,143,994,157"/>
+<area shape="rect" id="node11" href="dir_1bfd5596fecf22290211be250d517d41.html" title="sgd" alt="" coords="37,63,109,111"/>
+<area shape="rect" id="clust2" href="dir_c92267e6eea9957c44bb2efde721ca22.html" alt="" coords="27,52,984,313"/>
+<area shape="rect" id="clust1" href="dir_f7ac9cdfd28b2e882eb44d163e3b98b4.html" title="core" alt="" coords="16,16,995,324"/>
+</map>

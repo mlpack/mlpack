@@ -1,0 +1,54 @@
+.TH "src/mlpack/core/util/default_param.hpp" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+src/mlpack/core/util/default_param.hpp \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "\fILinear algebra utility functions, generally performed on matrices or vectors\&. \fP"
+.ti -1c
+.RI " \fBmlpack::util\fP"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename T > \fBstd::string\fP \fBmlpack::util::DefaultParam\fP (const ParamData &data)"
+.br
+.RI "\fIReturn the default value of an option\&. \fP"
+.ti -1c
+.RI "template<typename T > \fBstd::string\fP \fBmlpack::util::DefaultParamImpl\fP (const ParamData &data, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::disable_if< IsStdVector< T >>::type *=0, const typename boost::disable_if< data::HasSerialize< T >>::type *=0, const typename boost::disable_if< std::is_same< T, \fBstd::string\fP >>::type *=0, const typename boost::disable_if< std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "\fIReturn the default value of an option\&. \fP"
+.ti -1c
+.RI "template<typename T > \fBstd::string\fP \fBmlpack::util::DefaultParamImpl\fP (const ParamData &data, const typename boost::enable_if< IsStdVector< T >>::type *=0)"
+.br
+.RI "\fIReturn the default value of a vector option\&. \fP"
+.ti -1c
+.RI "template<typename T > \fBstd::string\fP \fBmlpack::util::DefaultParamImpl\fP (const ParamData &data, const typename boost::enable_if_c< arma::is_arma_type< T >::value||data::HasSerialize< T >::value||std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>::value||std::is_same< T, \fBstd::string\fP >::value >::type *=0)"
+.br
+.RI "\fIReturn the default value of a matrix option (this returns the default filename, or '' if the default is no file)\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Ryan Curtin
+.RE
+.PP
+Return the default value of a parameter, depending on its type\&. 
+.PP
+Definition in file \fBdefault_param\&.hpp\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

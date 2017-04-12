@@ -1,0 +1,53 @@
+.TH "mlpack::tree::MeanSpaceSplit< MetricType, MatType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::tree::MeanSpaceSplit< MetricType, MatType > \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename HyperplaneType > static bool \fBSplitSpace\fP (const typename HyperplaneType::BoundType &bound, const MatType &data, const arma::Col< size_t > &points, HyperplaneType &hyp)"
+.br
+.RI "\fICreate a splitting hyperplane considering the mean of the values in a certain projection\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename MetricType, typename MatType>
+.br
+class mlpack::tree::MeanSpaceSplit< MetricType, MatType >"
+
+.PP
+Definition at line 23 of file mean_space_split\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename MetricType , typename MatType > template<typename HyperplaneType > static bool \fBmlpack::tree::MeanSpaceSplit\fP< MetricType, MatType >::SplitSpace (const typename HyperplaneType::BoundType & bound, const MatType & data, const arma::Col< size_t > & points, HyperplaneType & hyp)\fC [static]\fP"
+
+.PP
+Create a splitting hyperplane considering the mean of the values in a certain projection\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIbound\fP The bound used for this node\&. 
+.br
+\fIdata\fP The dataset used by the tree\&. 
+.br
+\fIpoints\fP Vector of indexes of points to be considered\&. 
+.br
+\fIhyp\fP Resulting splitting hyperplane\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Flag to determine if split is possible\&. 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

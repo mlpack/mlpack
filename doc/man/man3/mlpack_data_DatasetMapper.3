@@ -1,0 +1,282 @@
+.TH "mlpack::data::DatasetMapper< PolicyType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::data::DatasetMapper< PolicyType > \- Auxiliary information for a dataset, including mappings to/from strings and the datatype of each dimension\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBDatasetMapper\fP (const size_t dimensionality=0)"
+.br
+.RI "\fICreate the \fBDatasetMapper\fP object with the given dimensionality\&. \fP"
+.ti -1c
+.RI "\fBDatasetMapper\fP (PolicyType &\fBpolicy\fP, const size_t dimensionality=0)"
+.br
+.RI "\fICreate the \fBDatasetMapper\fP object with the given policy and dimensionality\&. \fP"
+.ti -1c
+.RI "size_t \fBDimensionality\fP () const "
+.br
+.RI "\fIGet the dimensionality of the \fBDatasetMapper\fP object (that is, how many dimensions it has information for)\&. \fP"
+.ti -1c
+.RI "template<typename T > void \fBMapFirstPass\fP (const \fBstd::string\fP &\fBstring\fP, const size_t dimension)"
+.br
+.RI "\fIPreprocessing: during a first pass of the data, pass the strings on to the MapPolicy if they are needed\&. \fP"
+.ti -1c
+.RI "template<typename T > T \fBMapString\fP (const \fBstd::string\fP &\fBstring\fP, const size_t dimension)"
+.br
+.RI "\fIGiven the string and the dimension to which it belongs, return its numeric mapping\&. \fP"
+.ti -1c
+.RI "template<typename eT > void \fBMapTokens\fP (const std::vector< \fBstd::string\fP > &tokens, size_t &row, arma::Mat< eT > &matrix)"
+.br
+.RI "\fIMapTokens turns vector of strings into numeric variables and puts them into a given matrix\&. \fP"
+.ti -1c
+.RI "size_t \fBNumMappings\fP (const size_t dimension) const "
+.br
+.RI "\fIGet the number of mappings for a particular dimension\&. \fP"
+.ti -1c
+.RI "const PolicyType & \fBPolicy\fP () const "
+.br
+.RI "\fIReturn the policy of the mapper\&. \fP"
+.ti -1c
+.RI "PolicyType & \fBPolicy\fP ()"
+.br
+.RI "\fIModify the policy of the mapper (be careful!)\&. \fP"
+.ti -1c
+.RI "void \fBPolicy\fP (PolicyType &&\fBpolicy\fP)"
+.br
+.RI "\fIModify (Replace) the policy of the mapper with a new policy\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int)"
+.br
+.RI "\fISerialize the dataset information\&. \fP"
+.ti -1c
+.RI "\fBDatatype\fP \fBType\fP (const size_t dimension) const "
+.br
+.RI "\fIReturn the type of a given dimension (numeric or categorical)\&. \fP"
+.ti -1c
+.RI "\fBDatatype\fP & \fBType\fP (const size_t dimension)"
+.br
+.RI "\fIModify the type of a given dimension (be careful!)\&. \fP"
+.ti -1c
+.RI "const \fBstd::string\fP & \fBUnmapString\fP (const size_t value, const size_t dimension)"
+.br
+.RI "\fIReturn the string that corresponds to a given value in a given dimension\&. \fP"
+.ti -1c
+.RI "PolicyType::MappedType \fBUnmapValue\fP (const \fBstd::string\fP &\fBstring\fP, const size_t dimension)"
+.br
+.RI "\fIReturn the value that corresponds to a given string in a given dimension\&. \fP"
+.in -1c
+.SS "Private Types"
+
+.in +1c
+.ti -1c
+.RI "using \fBBiMapType\fP = boost::bimap< \fBstd::string\fP, typename PolicyType::MappedType >"
+.br
+.ti -1c
+.RI "using \fBMapType\fP = std::unordered_map< size_t, std::pair< \fBBiMapType\fP, size_t >>"
+.br
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "\fBMapType\fP \fBmaps\fP"
+.br
+.RI "\fImaps object stores string and numerical pairs\&. \fP"
+.ti -1c
+.RI "PolicyType \fBpolicy\fP"
+.br
+.RI "\fIpolicy object tells dataset mapper how the categorical values should be \fP"
+.ti -1c
+.RI "std::vector< \fBDatatype\fP > \fBtypes\fP"
+.br
+.RI "\fITypes of each dimension\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename PolicyType>
+.br
+class mlpack::data::DatasetMapper< PolicyType >"
+Auxiliary information for a dataset, including mappings to/from strings and the datatype of each dimension\&. 
+
+\fBDatasetMapper\fP objects are optionally produced by \fBdata::Load()\fP, and store the type of each dimension (Datatype::numeric or Datatype::categorical) as well as mappings from strings to unsigned integers and vice versa\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIPolicyType\fP Mapping policy used to specify \fBMapString()\fP; 
+.RE
+.PP
+
+.PP
+Definition at line 36 of file dataset_mapper\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "template<typename PolicyType> using \fBmlpack::data::DatasetMapper\fP< PolicyType >::\fBBiMapType\fP =  boost::bimap<\fBstd::string\fP, typename PolicyType::MappedType>\fC [private]\fP"
+
+.PP
+Definition at line 157 of file dataset_mapper\&.hpp\&.
+.SS "template<typename PolicyType> using \fBmlpack::data::DatasetMapper\fP< PolicyType >::\fBMapType\fP =  std::unordered_map<size_t, std::pair<\fBBiMapType\fP, size_t>>\fC [private]\fP"
+
+.PP
+Definition at line 162 of file dataset_mapper\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename PolicyType> \fBmlpack::data::DatasetMapper\fP< PolicyType >::\fBDatasetMapper\fP (const size_t dimensionality = \fC0\fP)\fC [explicit]\fP"
+
+.PP
+Create the \fBDatasetMapper\fP object with the given dimensionality\&. Note that the dimensionality cannot be changed later; you will have to create a new \fBDatasetMapper\fP object\&. 
+.SS "template<typename PolicyType> \fBmlpack::data::DatasetMapper\fP< PolicyType >::\fBDatasetMapper\fP (PolicyType & policy, const size_t dimensionality = \fC0\fP)\fC [explicit]\fP"
+
+.PP
+Create the \fBDatasetMapper\fP object with the given policy and dimensionality\&. Note that the dimensionality cannot be changed later; you will have to create a new \fBDatasetMapper\fP object\&. Policy can be modified by the modifier\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename PolicyType> size_t \fBmlpack::data::DatasetMapper\fP< PolicyType >::Dimensionality () const"
+
+.PP
+Get the dimensionality of the \fBDatasetMapper\fP object (that is, how many dimensions it has information for)\&. If this object was created by a call to \fBmlpack::data::Load()\fP, then the dimensionality will be the same as the number of rows (dimensions) in the dataset\&. 
+.SS "template<typename PolicyType> template<typename T > void \fBmlpack::data::DatasetMapper\fP< PolicyType >::MapFirstPass (const \fBstd::string\fP & string, const size_t dimension)"
+
+.PP
+Preprocessing: during a first pass of the data, pass the strings on to the MapPolicy if they are needed\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIstring\fP String to map\&. 
+.br
+\fIdimension\fP Dimension to map for\&. 
+.RE
+.PP
+
+.SS "template<typename PolicyType> template<typename T > T \fBmlpack::data::DatasetMapper\fP< PolicyType >::MapString (const \fBstd::string\fP & string, const size_t dimension)"
+
+.PP
+Given the string and the dimension to which it belongs, return its numeric mapping\&. If no mapping yet exists, the string is added to the list of mappings for the given dimension\&. The dimension parameter refers to the index of the dimension of the string (i\&.e\&. the row in the dataset)\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIT\fP Numeric type to map to (int/double/float/etc\&.)\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIstring\fP String to find/create mapping for\&. 
+.br
+\fIdimension\fP Index of the dimension of the string\&. 
+.RE
+.PP
+
+.SS "template<typename PolicyType> template<typename eT > void \fBmlpack::data::DatasetMapper\fP< PolicyType >::MapTokens (const std::vector< \fBstd::string\fP > & tokens, size_t & row, arma::Mat< eT > & matrix)"
+
+.PP
+MapTokens turns vector of strings into numeric variables and puts them into a given matrix\&. It is uses mapping policy to store categorical values to maps\&. How it determines whether a value is categorical and how it stores the categorical value into map and replaces with the numerical value all depends on the mapping policy object's \fBMapTokens()\fP funciton\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIeT\fP Type of armadillo matrix\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fItokens\fP Vector of variables inside a dimension\&. 
+.br
+\fIrow\fP Position of the given tokens\&. 
+.br
+\fImatrix\fP Matrix to save the data into\&. 
+.RE
+.PP
+
+.SS "template<typename PolicyType> size_t \fBmlpack::data::DatasetMapper\fP< PolicyType >::NumMappings (const size_t dimension) const"
+
+.PP
+Get the number of mappings for a particular dimension\&. If the dimension is numeric, then this will return 0\&. 
+.SS "template<typename PolicyType> const PolicyType& \fBmlpack::data::DatasetMapper\fP< PolicyType >::Policy () const"
+
+.PP
+Return the policy of the mapper\&. 
+.PP
+Referenced by mlpack::data::DatasetMapper< PolicyType >::Serialize()\&.
+.SS "template<typename PolicyType> PolicyType& \fBmlpack::data::DatasetMapper\fP< PolicyType >::Policy ()"
+
+.PP
+Modify the policy of the mapper (be careful!)\&. 
+.SS "template<typename PolicyType> void \fBmlpack::data::DatasetMapper\fP< PolicyType >::Policy (PolicyType && policy)"
+
+.PP
+Modify (Replace) the policy of the mapper with a new policy\&. 
+.SS "template<typename PolicyType> template<typename Archive > void \fBmlpack::data::DatasetMapper\fP< PolicyType >::Serialize (Archive & ar, const unsigned int)\fC [inline]\fP"
+
+.PP
+Serialize the dataset information\&. 
+.PP
+Definition at line 138 of file dataset_mapper\&.hpp\&.
+.PP
+References mlpack::data::CreateNVP(), mlpack::data::DatasetMapper< PolicyType >::maps, mlpack::data::DatasetMapper< PolicyType >::Policy(), and mlpack::data::DatasetMapper< PolicyType >::types\&.
+.SS "template<typename PolicyType> \fBDatatype\fP \fBmlpack::data::DatasetMapper\fP< PolicyType >::Type (const size_t dimension) const"
+
+.PP
+Return the type of a given dimension (numeric or categorical)\&. 
+.SS "template<typename PolicyType> \fBDatatype\fP& \fBmlpack::data::DatasetMapper\fP< PolicyType >::Type (const size_t dimension)"
+
+.PP
+Modify the type of a given dimension (be careful!)\&. 
+.SS "template<typename PolicyType> const \fBstd::string\fP& \fBmlpack::data::DatasetMapper\fP< PolicyType >::UnmapString (const size_t value, const size_t dimension)"
+
+.PP
+Return the string that corresponds to a given value in a given dimension\&. If the string is not a valid mapping in the given dimension, a std::invalid_argument is thrown\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIvalue\fP Mapped value for string\&. 
+.br
+\fIdimension\fP Dimension to unmap string from\&. 
+.RE
+.PP
+
+.SS "template<typename PolicyType> PolicyType::MappedType \fBmlpack::data::DatasetMapper\fP< PolicyType >::UnmapValue (const \fBstd::string\fP & string, const size_t dimension)"
+
+.PP
+Return the value that corresponds to a given string in a given dimension\&. If the value is not a valid mapping in the given dimension, a std::invalid_argument is thrown\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIstring\fP Mapped string for value\&. 
+.br
+\fIdimension\fP Dimension to unmap string from\&. 
+.RE
+.PP
+
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename PolicyType> \fBMapType\fP \fBmlpack::data::DatasetMapper\fP< PolicyType >::maps\fC [private]\fP"
+
+.PP
+maps object stores string and numerical pairs\&. 
+.PP
+Definition at line 165 of file dataset_mapper\&.hpp\&.
+.PP
+Referenced by mlpack::data::DatasetMapper< PolicyType >::Serialize()\&.
+.SS "template<typename PolicyType> PolicyType \fBmlpack::data::DatasetMapper\fP< PolicyType >::policy\fC [private]\fP"
+
+.PP
+policy object tells dataset mapper how the categorical values should be 
+.PP
+Definition at line 169 of file dataset_mapper\&.hpp\&.
+.SS "template<typename PolicyType> std::vector<\fBDatatype\fP> \fBmlpack::data::DatasetMapper\fP< PolicyType >::types\fC [private]\fP"
+
+.PP
+Types of each dimension\&. 
+.PP
+Definition at line 154 of file dataset_mapper\&.hpp\&.
+.PP
+Referenced by mlpack::data::DatasetMapper< PolicyType >::Serialize()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

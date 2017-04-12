@@ -1,0 +1,378 @@
+\section{mlpack\+:\+:distribution\+:\+:Regression\+Distribution Class Reference}
+\label{classmlpack_1_1distribution_1_1RegressionDistribution}\index{mlpack\+::distribution\+::\+Regression\+Distribution@{mlpack\+::distribution\+::\+Regression\+Distribution}}
+
+
+A class that represents a univariate conditionally Gaussian distribution.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Regression\+Distribution} ()
+\begin{DoxyCompactList}\small\item\em Default constructor, which creates a Gaussian with zero dimension. \end{DoxyCompactList}\item 
+{\bf Regression\+Distribution} (const arma\+::mat \&predictors, const arma\+::vec \&responses)
+\begin{DoxyCompactList}\small\item\em Create a Conditional Gaussian distribution with conditional mean function obtained by running Regression\+Function on predictors, responses. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Dimensionality} () const 
+\begin{DoxyCompactList}\small\item\em Return the dimensionality. \end{DoxyCompactList}\item 
+const {\bf Gaussian\+Distribution} \& {\bf Err} () const 
+\begin{DoxyCompactList}\small\item\em Return error distribution. \end{DoxyCompactList}\item 
+{\bf Gaussian\+Distribution} \& {\bf Err} ()
+\begin{DoxyCompactList}\small\item\em Modify error distribution. \end{DoxyCompactList}\item 
+double {\bf Log\+Probability} (const arma\+::vec \&observation) const 
+\begin{DoxyCompactList}\small\item\em Evaluate log probability density function of given observation. \end{DoxyCompactList}\item 
+const arma\+::vec \& {\bf Parameters} () const 
+\begin{DoxyCompactList}\small\item\em Return the parameters (the b vector). \end{DoxyCompactList}\item 
+void {\bf Predict} (const arma\+::mat \&points, arma\+::vec \&predictions) const 
+\begin{DoxyCompactList}\small\item\em Calculate y\+\_\+i for each data point in points. \end{DoxyCompactList}\item 
+double {\bf Probability} (const arma\+::vec \&observation) const 
+\begin{DoxyCompactList}\small\item\em Evaluate probability density function of given observation. \end{DoxyCompactList}\item 
+const {\bf regression\+::\+Linear\+Regression} \& {\bf Rf} () const 
+\begin{DoxyCompactList}\small\item\em Return regression function. \end{DoxyCompactList}\item 
+{\bf regression\+::\+Linear\+Regression} \& {\bf Rf} ()
+\begin{DoxyCompactList}\small\item\em Modify regression function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&ar, const unsigned int)
+\begin{DoxyCompactList}\small\item\em Serialize the distribution. \end{DoxyCompactList}\item 
+void {\bf Train} (const arma\+::mat \&observations)
+\begin{DoxyCompactList}\small\item\em Estimate the Gaussian distribution directly from the given observations. \end{DoxyCompactList}\item 
+void {\bf Train} (const arma\+::mat \&observations, const arma\+::vec \&weights)
+\begin{DoxyCompactList}\small\item\em Estimate parameters using provided observation weights. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Gaussian\+Distribution} {\bf err}
+\begin{DoxyCompactList}\small\item\em Error distribution. \end{DoxyCompactList}\item 
+{\bf regression\+::\+Linear\+Regression} {\bf rf}
+\begin{DoxyCompactList}\small\item\em Regression function for representing conditional mean. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A class that represents a univariate conditionally Gaussian distribution. 
+
+Can be used as an emission distribution with the hmm class to implement H\+MM regression (H\+M\+MR) as described in {\tt https\+://www.\+ima.\+umn.\+edu/preprints/\+January1994/1195.\+pdf} The hmm observations should have the dependent variable in the first row, with the independent variables in the other rows. 
+
+Definition at line 30 of file regression\+\_\+distribution.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::distribution\+::\+Regression\+Distribution@{mlpack\+::distribution\+::\+Regression\+Distribution}!Regression\+Distribution@{Regression\+Distribution}}
+\index{Regression\+Distribution@{Regression\+Distribution}!mlpack\+::distribution\+::\+Regression\+Distribution@{mlpack\+::distribution\+::\+Regression\+Distribution}}
+\subsubsection[{Regression\+Distribution()}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::distribution\+::\+Regression\+Distribution\+::\+Regression\+Distribution (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1distribution_1_1RegressionDistribution_a04e57f869f787f5f7ba9d5d897b56b9b}
+
+
+Default constructor, which creates a Gaussian with zero dimension. 
+
+
+
+Definition at line 42 of file regression\+\_\+distribution.\+hpp.
+
+\index{mlpack\+::distribution\+::\+Regression\+Distribution@{mlpack\+::distribution\+::\+Regression\+Distribution}!Regression\+Distribution@{Regression\+Distribution}}
+\index{Regression\+Distribution@{Regression\+Distribution}!mlpack\+::distribution\+::\+Regression\+Distribution@{mlpack\+::distribution\+::\+Regression\+Distribution}}
+\subsubsection[{Regression\+Distribution(const arma\+::mat \&predictors, const arma\+::vec \&responses)}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::distribution\+::\+Regression\+Distribution\+::\+Regression\+Distribution (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{predictors, }
+\item[{const arma\+::vec \&}]{responses}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1distribution_1_1RegressionDistribution_abceed28a81a615771c19c5ad5bf77313}
+
+
+Create a Conditional Gaussian distribution with conditional mean function obtained by running Regression\+Function on predictors, responses. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em predictors} & Matrix of predictors (X). \\
+\hline
+{\em responses} & Vector of responses (y). \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 51 of file regression\+\_\+distribution.\+hpp.
+
+
+
+References mlpack\+::regression\+::\+Linear\+Regression\+::\+Compute\+Error(), and mlpack\+::distribution\+::\+Gaussian\+Distribution\+::\+Covariance().
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::distribution\+::\+Regression\+Distribution@{mlpack\+::distribution\+::\+Regression\+Distribution}!Dimensionality@{Dimensionality}}
+\index{Dimensionality@{Dimensionality}!mlpack\+::distribution\+::\+Regression\+Distribution@{mlpack\+::distribution\+::\+Regression\+Distribution}}
+\subsubsection[{Dimensionality() const }]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t mlpack\+::distribution\+::\+Regression\+Distribution\+::\+Dimensionality (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1distribution_1_1RegressionDistribution_a8d63dbe51faa2f23011624c2d4385c68}
+
+
+Return the dimensionality. 
+
+
+
+Definition at line 123 of file regression\+\_\+distribution.\+hpp.
+
+
+
+References mlpack\+::regression\+::\+Linear\+Regression\+::\+Parameters().
+
+\index{mlpack\+::distribution\+::\+Regression\+Distribution@{mlpack\+::distribution\+::\+Regression\+Distribution}!Err@{Err}}
+\index{Err@{Err}!mlpack\+::distribution\+::\+Regression\+Distribution@{mlpack\+::distribution\+::\+Regression\+Distribution}}
+\subsubsection[{Err() const }]{\setlength{\rightskip}{0pt plus 5cm}const {\bf Gaussian\+Distribution}\& mlpack\+::distribution\+::\+Regression\+Distribution\+::\+Err (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1distribution_1_1RegressionDistribution_a6d00806e36cabaaf4747773fe605ba11}
+
+
+Return error distribution. 
+
+
+
+Definition at line 77 of file regression\+\_\+distribution.\+hpp.
+
+
+
+References err.
+
+\index{mlpack\+::distribution\+::\+Regression\+Distribution@{mlpack\+::distribution\+::\+Regression\+Distribution}!Err@{Err}}
+\index{Err@{Err}!mlpack\+::distribution\+::\+Regression\+Distribution@{mlpack\+::distribution\+::\+Regression\+Distribution}}
+\subsubsection[{Err()}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Gaussian\+Distribution}\& mlpack\+::distribution\+::\+Regression\+Distribution\+::\+Err (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1distribution_1_1RegressionDistribution_a7864d28a8e888c8367341dcb373b9159}
+
+
+Modify error distribution. 
+
+
+
+Definition at line 79 of file regression\+\_\+distribution.\+hpp.
+
+
+
+References err, Probability(), and Train().
+
+\index{mlpack\+::distribution\+::\+Regression\+Distribution@{mlpack\+::distribution\+::\+Regression\+Distribution}!Log\+Probability@{Log\+Probability}}
+\index{Log\+Probability@{Log\+Probability}!mlpack\+::distribution\+::\+Regression\+Distribution@{mlpack\+::distribution\+::\+Regression\+Distribution}}
+\subsubsection[{Log\+Probability(const arma\+::vec \&observation) const }]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::distribution\+::\+Regression\+Distribution\+::\+Log\+Probability (
+\begin{DoxyParamCaption}
+\item[{const arma\+::vec \&}]{observation}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1distribution_1_1RegressionDistribution_a46b67ea1537c4914de15c41286bf9faf}
+
+
+Evaluate log probability density function of given observation. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em observation} & point to evaluate log probability at \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 107 of file regression\+\_\+distribution.\+hpp.
+
+
+
+References Predict(), and Probability().
+
+\index{mlpack\+::distribution\+::\+Regression\+Distribution@{mlpack\+::distribution\+::\+Regression\+Distribution}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!mlpack\+::distribution\+::\+Regression\+Distribution@{mlpack\+::distribution\+::\+Regression\+Distribution}}
+\subsubsection[{Parameters() const }]{\setlength{\rightskip}{0pt plus 5cm}const arma\+::vec\& mlpack\+::distribution\+::\+Regression\+Distribution\+::\+Parameters (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1distribution_1_1RegressionDistribution_a00ee499217ac66a1a339d9d506289f87}
+
+
+Return the parameters (the b vector). 
+
+
+
+Definition at line 120 of file regression\+\_\+distribution.\+hpp.
+
+
+
+References mlpack\+::regression\+::\+Linear\+Regression\+::\+Parameters().
+
+\index{mlpack\+::distribution\+::\+Regression\+Distribution@{mlpack\+::distribution\+::\+Regression\+Distribution}!Predict@{Predict}}
+\index{Predict@{Predict}!mlpack\+::distribution\+::\+Regression\+Distribution@{mlpack\+::distribution\+::\+Regression\+Distribution}}
+\subsubsection[{Predict(const arma\+::mat \&points, arma\+::vec \&predictions) const }]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::distribution\+::\+Regression\+Distribution\+::\+Predict (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{points, }
+\item[{arma\+::vec \&}]{predictions}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1distribution_1_1RegressionDistribution_a8ccce41b87587054b321948c3d5111c8}
+
+
+Calculate y\+\_\+i for each data point in points. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em points} & the data points to calculate with. \\
+\hline
+{\em predictions} & y, will contain calculated values on completion. \\
+\hline
+\end{DoxyParams}
+
+
+Referenced by Log\+Probability().
+
+\index{mlpack\+::distribution\+::\+Regression\+Distribution@{mlpack\+::distribution\+::\+Regression\+Distribution}!Probability@{Probability}}
+\index{Probability@{Probability}!mlpack\+::distribution\+::\+Regression\+Distribution@{mlpack\+::distribution\+::\+Regression\+Distribution}}
+\subsubsection[{Probability(const arma\+::vec \&observation) const }]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::distribution\+::\+Regression\+Distribution\+::\+Probability (
+\begin{DoxyParamCaption}
+\item[{const arma\+::vec \&}]{observation}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1distribution_1_1RegressionDistribution_a123eaa62908186bf9cc83c34311f2f61}
+
+
+Evaluate probability density function of given observation. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em observation} & point to evaluate probability at \\
+\hline
+\end{DoxyParams}
+
+
+Referenced by Err(), and Log\+Probability().
+
+\index{mlpack\+::distribution\+::\+Regression\+Distribution@{mlpack\+::distribution\+::\+Regression\+Distribution}!Rf@{Rf}}
+\index{Rf@{Rf}!mlpack\+::distribution\+::\+Regression\+Distribution@{mlpack\+::distribution\+::\+Regression\+Distribution}}
+\subsubsection[{Rf() const }]{\setlength{\rightskip}{0pt plus 5cm}const {\bf regression\+::\+Linear\+Regression}\& mlpack\+::distribution\+::\+Regression\+Distribution\+::\+Rf (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1distribution_1_1RegressionDistribution_af8ea5f46d3b3f52070ca69b5ddab2ffb}
+
+
+Return regression function. 
+
+
+
+Definition at line 72 of file regression\+\_\+distribution.\+hpp.
+
+
+
+References rf.
+
+\index{mlpack\+::distribution\+::\+Regression\+Distribution@{mlpack\+::distribution\+::\+Regression\+Distribution}!Rf@{Rf}}
+\index{Rf@{Rf}!mlpack\+::distribution\+::\+Regression\+Distribution@{mlpack\+::distribution\+::\+Regression\+Distribution}}
+\subsubsection[{Rf()}]{\setlength{\rightskip}{0pt plus 5cm}{\bf regression\+::\+Linear\+Regression}\& mlpack\+::distribution\+::\+Regression\+Distribution\+::\+Rf (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1distribution_1_1RegressionDistribution_a854bcc37110425ee2785aba6e47eaa15}
+
+
+Modify regression function. 
+
+
+
+Definition at line 74 of file regression\+\_\+distribution.\+hpp.
+
+
+
+References rf.
+
+\index{mlpack\+::distribution\+::\+Regression\+Distribution@{mlpack\+::distribution\+::\+Regression\+Distribution}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::distribution\+::\+Regression\+Distribution@{mlpack\+::distribution\+::\+Regression\+Distribution}}
+\subsubsection[{Serialize(\+Archive \&ar, const unsigned int)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Archive $>$ void mlpack\+::distribution\+::\+Regression\+Distribution\+::\+Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const unsigned}]{int}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1distribution_1_1RegressionDistribution_a2d87668437affed9e7e2d976d379360b}
+
+
+Serialize the distribution. 
+
+
+
+Definition at line 65 of file regression\+\_\+distribution.\+hpp.
+
+
+
+References mlpack\+::data\+::\+Create\+N\+V\+P().
+
+\index{mlpack\+::distribution\+::\+Regression\+Distribution@{mlpack\+::distribution\+::\+Regression\+Distribution}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::distribution\+::\+Regression\+Distribution@{mlpack\+::distribution\+::\+Regression\+Distribution}}
+\subsubsection[{Train(const arma\+::mat \&observations)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::distribution\+::\+Regression\+Distribution\+::\+Train (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{observations}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1distribution_1_1RegressionDistribution_a42f52fc4c59d7032899730fa9063b772}
+
+
+Estimate the Gaussian distribution directly from the given observations. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em observations} & List of observations. \\
+\hline
+\end{DoxyParams}
+
+
+Referenced by Err().
+
+\index{mlpack\+::distribution\+::\+Regression\+Distribution@{mlpack\+::distribution\+::\+Regression\+Distribution}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::distribution\+::\+Regression\+Distribution@{mlpack\+::distribution\+::\+Regression\+Distribution}}
+\subsubsection[{Train(const arma\+::mat \&observations, const arma\+::vec \&weights)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::distribution\+::\+Regression\+Distribution\+::\+Train (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{observations, }
+\item[{const arma\+::vec \&}]{weights}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1distribution_1_1RegressionDistribution_ac074fe586a0b666c79fc33cf40144471}
+
+
+Estimate parameters using provided observation weights. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em weights} & probability that given observation is from distribution \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::distribution\+::\+Regression\+Distribution@{mlpack\+::distribution\+::\+Regression\+Distribution}!err@{err}}
+\index{err@{err}!mlpack\+::distribution\+::\+Regression\+Distribution@{mlpack\+::distribution\+::\+Regression\+Distribution}}
+\subsubsection[{err}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Gaussian\+Distribution} mlpack\+::distribution\+::\+Regression\+Distribution\+::err\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1distribution_1_1RegressionDistribution_a6a7e22ec080d7e0085813231b9e384e0}
+
+
+Error distribution. 
+
+
+
+Definition at line 36 of file regression\+\_\+distribution.\+hpp.
+
+
+
+Referenced by Err().
+
+\index{mlpack\+::distribution\+::\+Regression\+Distribution@{mlpack\+::distribution\+::\+Regression\+Distribution}!rf@{rf}}
+\index{rf@{rf}!mlpack\+::distribution\+::\+Regression\+Distribution@{mlpack\+::distribution\+::\+Regression\+Distribution}}
+\subsubsection[{rf}]{\setlength{\rightskip}{0pt plus 5cm}{\bf regression\+::\+Linear\+Regression} mlpack\+::distribution\+::\+Regression\+Distribution\+::rf\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1distribution_1_1RegressionDistribution_ad8b0c4f275bae93da112cc899be046c3}
+
+
+Regression function for representing conditional mean. 
+
+
+
+Definition at line 34 of file regression\+\_\+distribution.\+hpp.
+
+
+
+Referenced by Rf().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/dists/{\bf regression\+\_\+distribution.\+hpp}\end{DoxyCompactItemize}

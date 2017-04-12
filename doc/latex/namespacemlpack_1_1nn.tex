@@ -1,0 +1,111 @@
+\section{mlpack\+:\+:nn Namespace Reference}
+\label{namespacemlpack_1_1nn}\index{mlpack\+::nn@{mlpack\+::nn}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class {\bf Sparse\+Autoencoder}
+\begin{DoxyCompactList}\small\item\em A sparse autoencoder is a neural network whose aim to learn compressed representations of the data, typically for dimensionality reduction, with a constraint on the activity of the neurons in the network. \end{DoxyCompactList}\item 
+class {\bf Sparse\+Autoencoder\+Function}
+\begin{DoxyCompactList}\small\item\em This is a class for the sparse autoencoder objective function. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void {\bf Maximal\+Inputs} (const arma\+::mat \&parameters, arma\+::mat \&output)
+\begin{DoxyCompactList}\small\item\em Given a parameters matrix from an autoencoder, maximize the hidden units of the parameters, storing the maximal inputs in the given output matrix. \end{DoxyCompactList}\item 
+void {\bf Normalize\+Col\+By\+Max} (const arma\+::mat \&input, arma\+::mat \&output)
+\begin{DoxyCompactList}\small\item\em Normalize each column of the input matrix by its maximum value, if that maximum value is not zero. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\index{mlpack\+::nn@{mlpack\+::nn}!Maximal\+Inputs@{Maximal\+Inputs}}
+\index{Maximal\+Inputs@{Maximal\+Inputs}!mlpack\+::nn@{mlpack\+::nn}}
+\subsubsection[{Maximal\+Inputs(const arma\+::mat \&parameters, arma\+::mat \&output)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::nn\+::\+Maximal\+Inputs (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{parameters, }
+\item[{arma\+::mat \&}]{output}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1nn_a5fcd73722265acc12d00ba8d32db6f17}
+
+
+Given a parameters matrix from an autoencoder, maximize the hidden units of the parameters, storing the maximal inputs in the given output matrix. 
+
+Details can be found on the \textquotesingle{}Visualizing a Trained Autoencoder\textquotesingle{} page of the Stanford U\+F\+L\+DL tutorial\+:
+
+{\tt http\+://deeplearning.\+stanford.\+edu/wiki/index.\+php/\+Main\+\_\+\+Page}
+
+This function is based on the implementation (display\+\_\+network.\+m) from the \char`\"{}\+Exercise\+: Sparse Autoencoder\char`\"{} page of the U\+F\+L\+DL tutorial\+:
+
+{\tt http\+://deeplearning.\+stanford.\+edu/wiki/index.\+php/\+Exercise\+:\+Sparse\+\_\+\+Autoencoder}
+
+Example usage of this function can be seen below. Note that this function can work with the Columns\+To\+Blocks class in order to reshape the maximal inputs for visualization, as in the U\+F\+L\+DL tutorial. The code below demonstrates this.
+
+
+\begin{DoxyCode}
+arma::mat data; \textcolor{comment}{// Data matrix.}
+\textcolor{keyword}{const} \textcolor{keywordtype}{size\_t} vSize = 64; \textcolor{comment}{// Size of visible layer, depends on the data.}
+\textcolor{keyword}{const} \textcolor{keywordtype}{size\_t} hSize = 25; \textcolor{comment}{// Size of hidden layer, depends on requirements.}
+
+\textcolor{keyword}{const} \textcolor{keywordtype}{size\_t} numBasis = 5; \textcolor{comment}{// Parameter required for L-BFGS algorithm.}
+\textcolor{keyword}{const} \textcolor{keywordtype}{size\_t} numIterations = 100; \textcolor{comment}{// Maximum number of iterations.}
+
+\textcolor{comment}{// Use an instantiated optimizer for the training.}
+SparseAutoencoder<L\_BFGS> encoder(data, vSize, hSize);
+
+arma::mat maximalInput; \textcolor{comment}{// Store the features learned by sparse autoencoder}
+mlpack::nn::MaximalInputs(encoder.Parameters(), maximalInput);
+
+arma::mat outputs;
+\textcolor{keyword}{const} \textcolor{keywordtype}{bool} scale = \textcolor{keyword}{true};
+
+ColumnsToBlocks ctb(5,5);
+arma::mat output;
+ctb.Transform(maximalInput, output);
+\textcolor{comment}{// Save the output as PGM, for visualization.}
+output.save(fileName, arma::pgm\_binary);
+\end{DoxyCode}
+
+
+\begin{DoxyPrecond}{Precondition}
+Layout of parameters
+\end{DoxyPrecond}
+The layout of the parameters matrix should be same as following 
+\begin{DoxyCode}
+\textcolor{comment}{//          vSize   1}
+\textcolor{comment}{//       |        |  |}
+\textcolor{comment}{//  hSize|   w1   |b1|}
+\textcolor{comment}{//       |\_\_\_\_\_\_\_\_|\_\_|}
+\textcolor{comment}{//       |        |  |}
+\textcolor{comment}{//  hSize|   w2'  |  |}
+\textcolor{comment}{//       |\_\_\_\_\_\_\_\_|\_\_|}
+\textcolor{comment}{//      1|   b2'  |  |}
+\end{DoxyCode}
+
+
+Also, the square root of v\+Size must be an integer (i.\+e. v\+Size must be a perfect square).
+
+
+\begin{DoxyParams}{Parameters}
+{\em parameters} & The parameters of the autoencoder. \\
+\hline
+{\em output} & Matrix to store the maximal inputs in. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::nn@{mlpack\+::nn}!Normalize\+Col\+By\+Max@{Normalize\+Col\+By\+Max}}
+\index{Normalize\+Col\+By\+Max@{Normalize\+Col\+By\+Max}!mlpack\+::nn@{mlpack\+::nn}}
+\subsubsection[{Normalize\+Col\+By\+Max(const arma\+::mat \&input, arma\+::mat \&output)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::nn\+::\+Normalize\+Col\+By\+Max (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{input, }
+\item[{arma\+::mat \&}]{output}
+\end{DoxyParamCaption}
+)}\label{namespacemlpack_1_1nn_a9887e1e5ada8c7d5fb1ad59dc4d16b4a}
+
+
+Normalize each column of the input matrix by its maximum value, if that maximum value is not zero. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The input data to normalize. \\
+\hline
+{\em output} & A matrix to store the input data in after normalization. \\
+\hline
+\end{DoxyParams}

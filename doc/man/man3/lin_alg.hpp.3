@@ -1,0 +1,92 @@
+.TH "src/mlpack/core/math/lin_alg.hpp" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+src/mlpack/core/math/lin_alg.hpp \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "\fILinear algebra utility functions, generally performed on matrices or vectors\&. \fP"
+.ti -1c
+.RI " \fBmlpack::math\fP"
+.br
+.RI "\fIMiscellaneous math routines\&. \fP"
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBmlpack::math::Center\fP (const arma::mat &x, arma::mat &xCentered)"
+.br
+.RI "\fICreates a centered matrix, where centering is done by subtracting the sum over the columns (a column vector) from each column of the matrix\&. \fP"
+.ti -1c
+.RI "void \fBmlpack::math::Orthogonalize\fP (const arma::mat &x, arma::mat &W)"
+.br
+.RI "\fIOrthogonalize x and return the result in W, using eigendecomposition\&. \fP"
+.ti -1c
+.RI "void \fBmlpack::math::Orthogonalize\fP (arma::mat &x)"
+.br
+.RI "\fIOrthogonalize x in-place\&. \fP"
+.ti -1c
+.RI "void \fBmlpack::math::RandVector\fP (arma::vec &v)"
+.br
+.RI "\fIOverwrites a dimension-N vector to a random vector on the unit sphere in R^N\&. \fP"
+.ti -1c
+.RI "void \fBmlpack::math::RemoveRows\fP (const arma::mat &input, const std::vector< size_t > &rowsToRemove, arma::mat &output)"
+.br
+.RI "\fIRemove a certain set of rows in a matrix while copying to a second matrix\&. \fP"
+.ti -1c
+.RI "void \fBmlpack::math::Smat\fP (const arma::vec &input, arma::mat &output)"
+.br
+.RI "\fIThe inverse of Svec\&. \fP"
+.ti -1c
+.RI "void \fBmlpack::math::Svec\fP (const arma::mat &input, arma::vec &output)"
+.br
+.RI "\fIUpper triangular representation of a symmetric matrix, scaled such that, dot(Svec(A), Svec(B)) == dot(A, B) for symmetric A, B\&. \fP"
+.ti -1c
+.RI "void \fBmlpack::math::Svec\fP (const arma::sp_mat &input, arma::sp_vec &output)"
+.br
+.ti -1c
+.RI "size_t \fBmlpack::math::SvecIndex\fP (size_t i, size_t j, size_t n)"
+.br
+.RI "\fIReturn the index such that A[i,j] == factr(i, j) * svec(A)[pos(i, j)], where factr(i, j) = sqrt(2) if i != j and 1 otherwise\&. \fP"
+.ti -1c
+.RI "void \fBmlpack::math::SymKronId\fP (const arma::mat &A, arma::mat &op)"
+.br
+.RI "\fIIf A is a symmetric matrix, then SymKronId returns an operator Op such that\&. \fP"
+.ti -1c
+.RI "void \fBmlpack::math::VectorPower\fP (arma::vec &vec, const double power)"
+.br
+.RI "\fIAuxiliary function to raise vector elements to a specific power\&. \fP"
+.ti -1c
+.RI "void \fBmlpack::math::WhitenUsingEig\fP (const arma::mat &x, arma::mat &xWhitened, arma::mat &whiteningMatrix)"
+.br
+.RI "\fIWhitens a matrix using the eigendecomposition of the covariance matrix\&. \fP"
+.ti -1c
+.RI "void \fBmlpack::math::WhitenUsingSVD\fP (const arma::mat &x, arma::mat &xWhitened, arma::mat &whiteningMatrix)"
+.br
+.RI "\fIWhitens a matrix using the singular value decomposition of the covariance matrix\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Nishant Mehta
+.RE
+.PP
+Linear algebra utilities\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBlin_alg\&.hpp\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,5 @@
+<map id="mlpack::optimization::L_BFGS&lt; FunctionType &gt;" name="mlpack::optimization::L_BFGS&lt; FunctionType &gt;">
+<area shape="rect" id="node2" href="$classmlpack_1_1optimization_1_1L__BFGS.html" title="mlpack::optimization\l::L_BFGS\&lt; AugLagrangianFunction\l\&lt; LagrangianFunction \&gt; \&gt;" alt="" coords="471,5,699,61"/>
+<area shape="rect" id="node3" href="$classmlpack_1_1optimization_1_1L__BFGS.html" title="mlpack::optimization\l::L_BFGS\&lt; AugLagrangianFunction\l\&lt; mlpack::optimization::LRSDPFunction\l\&lt; SDPType \&gt; \&gt; \&gt;" alt="" coords="457,86,714,157"/>
+<area shape="rect" id="node4" href="$classmlpack_1_1optimization_1_1L__BFGS.html" title="mlpack::optimization\l::L_BFGS\&lt; AugLagrangianFunction\l\&lt; mlpack::optimization::LRSDPFunction\l\&lt; optimization::SDP\&lt; arma::sp_mat \&gt; \&gt; \&gt; \&gt;" alt="" coords="445,181,725,251"/>
+</map>

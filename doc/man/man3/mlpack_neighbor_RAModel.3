@@ -1,0 +1,524 @@
+.TH "mlpack::neighbor::RAModel< SortPolicy >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::neighbor::RAModel< SortPolicy > \- The \fBRAModel\fP class provides an abstraction for the \fBRASearch\fP class, abstracting away the TreeType parameter and allowing it to be specified at runtime in this class\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "enum \fBTreeTypes\fP { \fBKD_TREE\fP, \fBCOVER_TREE\fP, \fBR_TREE\fP, \fBR_STAR_TREE\fP, \fBX_TREE\fP, \fBHILBERT_R_TREE\fP, \fBR_PLUS_TREE\fP, \fBR_PLUS_PLUS_TREE\fP, \fBUB_TREE\fP, \fBOCTREE\fP }
+.RI "\fIThe list of tree types we can use with \fBRASearch\fP\&. \fP""
+.br
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBRAModel\fP (\fBTreeTypes\fP \fBtreeType\fP=TreeTypes::KD_TREE, bool \fBrandomBasis\fP=false)"
+.br
+.RI "\fIInitialize the \fBRAModel\fP with the given type and whether or not a random basis should be used\&. \fP"
+.ti -1c
+.RI "\fBRAModel\fP (const \fBRAModel\fP &other)"
+.br
+.RI "\fICopy the given \fBRAModel\fP\&. \fP"
+.ti -1c
+.RI "\fBRAModel\fP (\fBRAModel\fP &&other)"
+.br
+.RI "\fITake ownership of the given \fBRAModel\fP\&. \fP"
+.ti -1c
+.RI "\fB~RAModel\fP ()"
+.br
+.RI "\fIClean memory, if necessary\&. \fP"
+.ti -1c
+.RI "double \fBAlpha\fP () const "
+.br
+.RI "\fIGet the desired success probability\&. \fP"
+.ti -1c
+.RI "double & \fBAlpha\fP ()"
+.br
+.RI "\fIModify the desired success probability\&. \fP"
+.ti -1c
+.RI "void \fBBuildModel\fP (arma::mat &&referenceSet, const size_t \fBleafSize\fP, const bool naive, const bool singleMode)"
+.br
+.RI "\fIBuild the reference tree\&. \fP"
+.ti -1c
+.RI "const arma::mat & \fBDataset\fP () const "
+.br
+.RI "\fIExpose the dataset\&. \fP"
+.ti -1c
+.RI "bool \fBFirstLeafExact\fP () const "
+.br
+.RI "\fIGet whether or not we traverse to the first leaf without approximation\&. \fP"
+.ti -1c
+.RI "bool & \fBFirstLeafExact\fP ()"
+.br
+.RI "\fIModify whether or not we traverse to the first leaf without approximation\&. \fP"
+.ti -1c
+.RI "size_t \fBLeafSize\fP () const "
+.br
+.RI "\fIGet the leaf size (only relevant when the kd-tree is used)\&. \fP"
+.ti -1c
+.RI "size_t & \fBLeafSize\fP ()"
+.br
+.RI "\fIModify the leaf size (only relevant when the kd-tree is used)\&. \fP"
+.ti -1c
+.RI "bool \fBNaive\fP () const "
+.br
+.RI "\fIGet whether or not naive search is being used\&. \fP"
+.ti -1c
+.RI "bool & \fBNaive\fP ()"
+.br
+.RI "\fIModify whether or not naive search is being used\&. \fP"
+.ti -1c
+.RI "\fBRAModel\fP & \fBoperator=\fP (const \fBRAModel\fP &other)"
+.br
+.RI "\fICopy the given \fBRAModel\fP\&. \fP"
+.ti -1c
+.RI "\fBRAModel\fP & \fBoperator=\fP (\fBRAModel\fP &&other)"
+.br
+.RI "\fITake ownership of the given \fBRAModel\fP\&. \fP"
+.ti -1c
+.RI "bool \fBRandomBasis\fP () const "
+.br
+.RI "\fIGet whether or not a random basis is being used\&. \fP"
+.ti -1c
+.RI "bool & \fBRandomBasis\fP ()"
+.br
+.RI "\fIModify whether or not a random basis is being used\&. \fP"
+.ti -1c
+.RI "bool \fBSampleAtLeaves\fP () const "
+.br
+.RI "\fIGet whether or not sampling is done at the leaves\&. \fP"
+.ti -1c
+.RI "bool & \fBSampleAtLeaves\fP ()"
+.br
+.RI "\fIModify whether or not sampling is done at the leaves\&. \fP"
+.ti -1c
+.RI "void \fBSearch\fP (arma::mat &&querySet, const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances)"
+.br
+.RI "\fIPerform rank-approximate neighbor search, taking ownership of the query set\&. \fP"
+.ti -1c
+.RI "void \fBSearch\fP (const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances)"
+.br
+.RI "\fIPerform rank-approximate neighbor search, using the reference set as the query set\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int)"
+.br
+.RI "\fISerialize the model\&. \fP"
+.ti -1c
+.RI "bool \fBSingleMode\fP () const "
+.br
+.RI "\fIGet whether or not single-tree search is being used\&. \fP"
+.ti -1c
+.RI "bool & \fBSingleMode\fP ()"
+.br
+.RI "\fIModify whether or not single-tree search is being used\&. \fP"
+.ti -1c
+.RI "size_t \fBSingleSampleLimit\fP () const "
+.br
+.RI "\fIGet the limit on the size of a node that can be approximated\&. \fP"
+.ti -1c
+.RI "size_t & \fBSingleSampleLimit\fP ()"
+.br
+.RI "\fIModify the limit on the size of a node that can be approximation\&. \fP"
+.ti -1c
+.RI "double \fBTau\fP () const "
+.br
+.RI "\fIGet the rank-approximation in percentile of the data\&. \fP"
+.ti -1c
+.RI "double & \fBTau\fP ()"
+.br
+.RI "\fIModify the rank-approximation in percentile of the data\&. \fP"
+.ti -1c
+.RI "\fBstd::string\fP \fBTreeName\fP () const "
+.br
+.RI "\fIGet the name of the tree type\&. \fP"
+.ti -1c
+.RI "\fBTreeTypes\fP \fBTreeType\fP () const "
+.br
+.RI "\fIGet the type of tree being used\&. \fP"
+.ti -1c
+.RI "\fBTreeTypes\fP & \fBTreeType\fP ()"
+.br
+.RI "\fIModify the type of tree being used\&. \fP"
+.in -1c
+.SS "Private Types"
+
+.in +1c
+.ti -1c
+.RI "template<template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType> using \fBRAType\fP = \fBRASearch\fP< SortPolicy, \fBmetric::EuclideanDistance\fP, arma::mat, \fBTreeType\fP >"
+.br
+.RI "\fITypedef the \fBRASearch\fP class we'll use\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "\fBRAType\fP< \fBtree::StandardCoverTree\fP > * \fBcoverTreeRA\fP"
+.br
+.RI "\fINon-NULL if the cover tree is used\&. \fP"
+.ti -1c
+.RI "\fBRAType\fP< \fBtree::HilbertRTree\fP > * \fBhilbertRTreeRA\fP"
+.br
+.RI "\fINon-NULL if the Hilbert R tree is used\&. \fP"
+.ti -1c
+.RI "\fBRAType\fP< \fBtree::KDTree\fP > * \fBkdTreeRA\fP"
+.br
+.RI "\fINon-NULL if the kd-tree is used\&. \fP"
+.ti -1c
+.RI "size_t \fBleafSize\fP"
+.br
+.RI "\fIThe leaf size of the tree being used (useful only for the kd-tree)\&. \fP"
+.ti -1c
+.RI "\fBRAType\fP< \fBtree::Octree\fP > * \fBoctreeRA\fP"
+.br
+.RI "\fINon-NULL if the octree is used\&. \fP"
+.ti -1c
+.RI "arma::mat \fBq\fP"
+.br
+.RI "\fIThe basis to project into\&. \fP"
+.ti -1c
+.RI "bool \fBrandomBasis\fP"
+.br
+.RI "\fIIf true, randomly project into a new basis\&. \fP"
+.ti -1c
+.RI "\fBRAType\fP< \fBtree::RPlusPlusTree\fP > * \fBrPlusPlusTreeRA\fP"
+.br
+.RI "\fINon-NULL if the R++ tree is used\&. \fP"
+.ti -1c
+.RI "\fBRAType\fP< \fBtree::RPlusTree\fP > * \fBrPlusTreeRA\fP"
+.br
+.RI "\fINon-NULL if the R+ tree is used\&. \fP"
+.ti -1c
+.RI "\fBRAType\fP< \fBtree::RStarTree\fP > * \fBrStarTreeRA\fP"
+.br
+.RI "\fINon-NULL if the R* tree is used\&. \fP"
+.ti -1c
+.RI "\fBRAType\fP< \fBtree::RTree\fP > * \fBrTreeRA\fP"
+.br
+.RI "\fINon-NULL if the R tree is used\&. \fP"
+.ti -1c
+.RI "\fBTreeTypes\fP \fBtreeType\fP"
+.br
+.RI "\fIThe type of tree being used\&. \fP"
+.ti -1c
+.RI "\fBRAType\fP< \fBtree::UBTree\fP > * \fBubTreeRA\fP"
+.br
+.RI "\fINon-NULL if the UB tree is used\&. \fP"
+.ti -1c
+.RI "\fBRAType\fP< \fBtree::XTree\fP > * \fBxTreeRA\fP"
+.br
+.RI "\fINon-NULL if the X tree is used\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename SortPolicy>
+.br
+class mlpack::neighbor::RAModel< SortPolicy >"
+The \fBRAModel\fP class provides an abstraction for the \fBRASearch\fP class, abstracting away the TreeType parameter and allowing it to be specified at runtime in this class\&. 
+
+This class is written for the sake of the 'allkrann' program, but is not necessarily restricted to that use\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fISortPolicy\fP Sorting policy for neighbor searching (see \fBRASearch\fP)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 36 of file ra_model\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "template<typename SortPolicy > template<template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType> using \fBmlpack::neighbor::RAModel\fP< SortPolicy >::\fBRAType\fP =  \fBRASearch\fP<SortPolicy, \fBmetric::EuclideanDistance\fP, arma::mat, \fBTreeType\fP>\fC [private]\fP"
+
+.PP
+Typedef the \fBRASearch\fP class we'll use\&. 
+.PP
+Definition at line 75 of file ra_model\&.hpp\&.
+.SH "Member Enumeration Documentation"
+.PP 
+.SS "template<typename SortPolicy > enum \fBmlpack::neighbor::RAModel::TreeTypes\fP"
+
+.PP
+The list of tree types we can use with \fBRASearch\fP\&. Does not include ball trees; see #338\&. 
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fIKD_TREE \fP\fP
+.TP
+\fB\fICOVER_TREE \fP\fP
+.TP
+\fB\fIR_TREE \fP\fP
+.TP
+\fB\fIR_STAR_TREE \fP\fP
+.TP
+\fB\fIX_TREE \fP\fP
+.TP
+\fB\fIHILBERT_R_TREE \fP\fP
+.TP
+\fB\fIR_PLUS_TREE \fP\fP
+.TP
+\fB\fIR_PLUS_PLUS_TREE \fP\fP
+.TP
+\fB\fIUB_TREE \fP\fP
+.TP
+\fB\fIOCTREE \fP\fP
+.PP
+Definition at line 43 of file ra_model\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename SortPolicy > \fBmlpack::neighbor::RAModel\fP< SortPolicy >::\fBRAModel\fP (\fBTreeTypes\fP treeType = \fCTreeTypes::KD_TREE\fP, bool randomBasis = \fCfalse\fP)"
+
+.PP
+Initialize the \fBRAModel\fP with the given type and whether or not a random basis should be used\&. 
+.SS "template<typename SortPolicy > \fBmlpack::neighbor::RAModel\fP< SortPolicy >::\fBRAModel\fP (const \fBRAModel\fP< SortPolicy > & other)"
+
+.PP
+Copy the given \fBRAModel\fP\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP \fBRAModel\fP to copy\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy > \fBmlpack::neighbor::RAModel\fP< SortPolicy >::\fBRAModel\fP (\fBRAModel\fP< SortPolicy > && other)"
+
+.PP
+Take ownership of the given \fBRAModel\fP\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP \fBRAModel\fP to take ownership of\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy > \fBmlpack::neighbor::RAModel\fP< SortPolicy >::~\fBRAModel\fP ()"
+
+.PP
+Clean memory, if necessary\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename SortPolicy > double \fBmlpack::neighbor::RAModel\fP< SortPolicy >::Alpha () const"
+
+.PP
+Get the desired success probability\&. 
+.SS "template<typename SortPolicy > double& \fBmlpack::neighbor::RAModel\fP< SortPolicy >::Alpha ()"
+
+.PP
+Modify the desired success probability\&. 
+.SS "template<typename SortPolicy > void \fBmlpack::neighbor::RAModel\fP< SortPolicy >::BuildModel (arma::mat && referenceSet, const size_t leafSize, const bool naive, const bool singleMode)"
+
+.PP
+Build the reference tree\&. 
+.SS "template<typename SortPolicy > const arma::mat& \fBmlpack::neighbor::RAModel\fP< SortPolicy >::Dataset () const"
+
+.PP
+Expose the dataset\&. 
+.SS "template<typename SortPolicy > bool \fBmlpack::neighbor::RAModel\fP< SortPolicy >::FirstLeafExact () const"
+
+.PP
+Get whether or not we traverse to the first leaf without approximation\&. 
+.SS "template<typename SortPolicy > bool& \fBmlpack::neighbor::RAModel\fP< SortPolicy >::FirstLeafExact ()"
+
+.PP
+Modify whether or not we traverse to the first leaf without approximation\&. 
+.SS "template<typename SortPolicy > size_t \fBmlpack::neighbor::RAModel\fP< SortPolicy >::LeafSize () const"
+
+.PP
+Get the leaf size (only relevant when the kd-tree is used)\&. 
+.SS "template<typename SortPolicy > size_t& \fBmlpack::neighbor::RAModel\fP< SortPolicy >::LeafSize ()"
+
+.PP
+Modify the leaf size (only relevant when the kd-tree is used)\&. 
+.SS "template<typename SortPolicy > bool \fBmlpack::neighbor::RAModel\fP< SortPolicy >::Naive () const"
+
+.PP
+Get whether or not naive search is being used\&. 
+.SS "template<typename SortPolicy > bool& \fBmlpack::neighbor::RAModel\fP< SortPolicy >::Naive ()"
+
+.PP
+Modify whether or not naive search is being used\&. 
+.SS "template<typename SortPolicy > \fBRAModel\fP& \fBmlpack::neighbor::RAModel\fP< SortPolicy >::operator= (const \fBRAModel\fP< SortPolicy > & other)"
+
+.PP
+Copy the given \fBRAModel\fP\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP \fBRAModel\fP to copy\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy > \fBRAModel\fP& \fBmlpack::neighbor::RAModel\fP< SortPolicy >::operator= (\fBRAModel\fP< SortPolicy > && other)"
+
+.PP
+Take ownership of the given \fBRAModel\fP\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP \fBRAModel\fP to take ownership of\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy > bool \fBmlpack::neighbor::RAModel\fP< SortPolicy >::RandomBasis () const"
+
+.PP
+Get whether or not a random basis is being used\&. 
+.SS "template<typename SortPolicy > bool& \fBmlpack::neighbor::RAModel\fP< SortPolicy >::RandomBasis ()"
+
+.PP
+Modify whether or not a random basis is being used\&. Be sure to rebuild the model using \fBBuildModel()\fP\&. 
+.SS "template<typename SortPolicy > bool \fBmlpack::neighbor::RAModel\fP< SortPolicy >::SampleAtLeaves () const"
+
+.PP
+Get whether or not sampling is done at the leaves\&. 
+.SS "template<typename SortPolicy > bool& \fBmlpack::neighbor::RAModel\fP< SortPolicy >::SampleAtLeaves ()"
+
+.PP
+Modify whether or not sampling is done at the leaves\&. 
+.SS "template<typename SortPolicy > void \fBmlpack::neighbor::RAModel\fP< SortPolicy >::Search (arma::mat && querySet, const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances)"
+
+.PP
+Perform rank-approximate neighbor search, taking ownership of the query set\&. 
+.SS "template<typename SortPolicy > void \fBmlpack::neighbor::RAModel\fP< SortPolicy >::Search (const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances)"
+
+.PP
+Perform rank-approximate neighbor search, using the reference set as the query set\&. 
+.SS "template<typename SortPolicy > template<typename Archive > void \fBmlpack::neighbor::RAModel\fP< SortPolicy >::Serialize (Archive & ar, const unsigned int)"
+
+.PP
+Serialize the model\&. 
+.SS "template<typename SortPolicy > bool \fBmlpack::neighbor::RAModel\fP< SortPolicy >::SingleMode () const"
+
+.PP
+Get whether or not single-tree search is being used\&. 
+.SS "template<typename SortPolicy > bool& \fBmlpack::neighbor::RAModel\fP< SortPolicy >::SingleMode ()"
+
+.PP
+Modify whether or not single-tree search is being used\&. 
+.SS "template<typename SortPolicy > size_t \fBmlpack::neighbor::RAModel\fP< SortPolicy >::SingleSampleLimit () const"
+
+.PP
+Get the limit on the size of a node that can be approximated\&. 
+.SS "template<typename SortPolicy > size_t& \fBmlpack::neighbor::RAModel\fP< SortPolicy >::SingleSampleLimit ()"
+
+.PP
+Modify the limit on the size of a node that can be approximation\&. 
+.SS "template<typename SortPolicy > double \fBmlpack::neighbor::RAModel\fP< SortPolicy >::Tau () const"
+
+.PP
+Get the rank-approximation in percentile of the data\&. 
+.SS "template<typename SortPolicy > double& \fBmlpack::neighbor::RAModel\fP< SortPolicy >::Tau ()"
+
+.PP
+Modify the rank-approximation in percentile of the data\&. 
+.SS "template<typename SortPolicy > \fBstd::string\fP \fBmlpack::neighbor::RAModel\fP< SortPolicy >::TreeName () const"
+
+.PP
+Get the name of the tree type\&. 
+.SS "template<typename SortPolicy > \fBTreeTypes\fP \fBmlpack::neighbor::RAModel\fP< SortPolicy >::TreeType () const"
+
+.PP
+Get the type of tree being used\&. 
+.SS "template<typename SortPolicy > \fBTreeTypes\fP& \fBmlpack::neighbor::RAModel\fP< SortPolicy >::TreeType ()"
+
+.PP
+Modify the type of tree being used\&. 
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename SortPolicy > \fBRAType\fP<\fBtree::StandardCoverTree\fP>* \fBmlpack::neighbor::RAModel\fP< SortPolicy >::coverTreeRA\fC [private]\fP"
+
+.PP
+Non-NULL if the cover tree is used\&. 
+.PP
+Definition at line 80 of file ra_model\&.hpp\&.
+.SS "template<typename SortPolicy > \fBRAType\fP<\fBtree::HilbertRTree\fP>* \fBmlpack::neighbor::RAModel\fP< SortPolicy >::hilbertRTreeRA\fC [private]\fP"
+
+.PP
+Non-NULL if the Hilbert R tree is used\&. 
+.PP
+Definition at line 88 of file ra_model\&.hpp\&.
+.SS "template<typename SortPolicy > \fBRAType\fP<\fBtree::KDTree\fP>* \fBmlpack::neighbor::RAModel\fP< SortPolicy >::kdTreeRA\fC [private]\fP"
+
+.PP
+Non-NULL if the kd-tree is used\&. 
+.PP
+Definition at line 78 of file ra_model\&.hpp\&.
+.SS "template<typename SortPolicy > size_t \fBmlpack::neighbor::RAModel\fP< SortPolicy >::leafSize\fC [private]\fP"
+
+.PP
+The leaf size of the tree being used (useful only for the kd-tree)\&. 
+.PP
+Definition at line 61 of file ra_model\&.hpp\&.
+.SS "template<typename SortPolicy > \fBRAType\fP<\fBtree::Octree\fP>* \fBmlpack::neighbor::RAModel\fP< SortPolicy >::octreeRA\fC [private]\fP"
+
+.PP
+Non-NULL if the octree is used\&. 
+.PP
+Definition at line 96 of file ra_model\&.hpp\&.
+.SS "template<typename SortPolicy > arma::mat \fBmlpack::neighbor::RAModel\fP< SortPolicy >::q\fC [private]\fP"
+
+.PP
+The basis to project into\&. 
+.PP
+Definition at line 66 of file ra_model\&.hpp\&.
+.SS "template<typename SortPolicy > bool \fBmlpack::neighbor::RAModel\fP< SortPolicy >::randomBasis\fC [private]\fP"
+
+.PP
+If true, randomly project into a new basis\&. 
+.PP
+Definition at line 64 of file ra_model\&.hpp\&.
+.SS "template<typename SortPolicy > \fBRAType\fP<\fBtree::RPlusPlusTree\fP>* \fBmlpack::neighbor::RAModel\fP< SortPolicy >::rPlusPlusTreeRA\fC [private]\fP"
+
+.PP
+Non-NULL if the R++ tree is used\&. 
+.PP
+Definition at line 92 of file ra_model\&.hpp\&.
+.SS "template<typename SortPolicy > \fBRAType\fP<\fBtree::RPlusTree\fP>* \fBmlpack::neighbor::RAModel\fP< SortPolicy >::rPlusTreeRA\fC [private]\fP"
+
+.PP
+Non-NULL if the R+ tree is used\&. 
+.PP
+Definition at line 90 of file ra_model\&.hpp\&.
+.SS "template<typename SortPolicy > \fBRAType\fP<\fBtree::RStarTree\fP>* \fBmlpack::neighbor::RAModel\fP< SortPolicy >::rStarTreeRA\fC [private]\fP"
+
+.PP
+Non-NULL if the R* tree is used\&. 
+.PP
+Definition at line 84 of file ra_model\&.hpp\&.
+.SS "template<typename SortPolicy > \fBRAType\fP<\fBtree::RTree\fP>* \fBmlpack::neighbor::RAModel\fP< SortPolicy >::rTreeRA\fC [private]\fP"
+
+.PP
+Non-NULL if the R tree is used\&. 
+.PP
+Definition at line 82 of file ra_model\&.hpp\&.
+.SS "template<typename SortPolicy > \fBTreeTypes\fP \fBmlpack::neighbor::RAModel\fP< SortPolicy >::treeType\fC [private]\fP"
+
+.PP
+The type of tree being used\&. 
+.PP
+Definition at line 59 of file ra_model\&.hpp\&.
+.SS "template<typename SortPolicy > \fBRAType\fP<\fBtree::UBTree\fP>* \fBmlpack::neighbor::RAModel\fP< SortPolicy >::ubTreeRA\fC [private]\fP"
+
+.PP
+Non-NULL if the UB tree is used\&. 
+.PP
+Definition at line 94 of file ra_model\&.hpp\&.
+.SS "template<typename SortPolicy > \fBRAType\fP<\fBtree::XTree\fP>* \fBmlpack::neighbor::RAModel\fP< SortPolicy >::xTreeRA\fC [private]\fP"
+
+.PP
+Non-NULL if the X tree is used\&. 
+.PP
+Definition at line 86 of file ra_model\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

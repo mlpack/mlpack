@@ -1,0 +1,587 @@
+.TH "mlpack::range::RangeSearch< MetricType, MatType, TreeType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::range::RangeSearch< MetricType, MatType, TreeType > \- The \fBRangeSearch\fP class is a template class for performing range searches\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "typedef TreeType< MetricType, \fBRangeSearchStat\fP, MatType > \fBTree\fP"
+.br
+.RI "\fIConvenience typedef\&. \fP"
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBRangeSearch\fP (const MatType &\fBreferenceSet\fP, const bool \fBnaive\fP=false, const bool \fBsingleMode\fP=false, const MetricType \fBmetric\fP=MetricType())"
+.br
+.RI "\fIInitialize the \fBRangeSearch\fP object with a given reference dataset (this is the dataset which is searched)\&. \fP"
+.ti -1c
+.RI "\fBRangeSearch\fP (MatType &&\fBreferenceSet\fP, const bool \fBnaive\fP=false, const bool \fBsingleMode\fP=false, const MetricType \fBmetric\fP=MetricType())"
+.br
+.RI "\fIInitialize the \fBRangeSearch\fP object with the given reference dataset (this is the dataset which is searched), taking ownership of the matrix\&. \fP"
+.ti -1c
+.RI "\fBRangeSearch\fP (\fBTree\fP *\fBreferenceTree\fP, const bool \fBsingleMode\fP=false, const MetricType \fBmetric\fP=MetricType())"
+.br
+.RI "\fIInitialize the \fBRangeSearch\fP object with the given pre-constructed reference tree (this is the tree built on the reference set, which is the set that is searched)\&. \fP"
+.ti -1c
+.RI "\fBRangeSearch\fP (const bool \fBnaive\fP=false, const bool \fBsingleMode\fP=false, const MetricType \fBmetric\fP=MetricType())"
+.br
+.RI "\fIInitialize the \fBRangeSearch\fP object without any reference data\&. \fP"
+.ti -1c
+.RI "\fBRangeSearch\fP (const \fBRangeSearch\fP &other)"
+.br
+.RI "\fIConstruct the \fBRangeSearch\fP model as a copy of the given model\&. \fP"
+.ti -1c
+.RI "\fBRangeSearch\fP (\fBRangeSearch\fP &&other)"
+.br
+.RI "\fIConstruct the \fBRangeSearch\fP model by taking ownership of the given model\&. \fP"
+.ti -1c
+.RI "\fB~RangeSearch\fP ()"
+.br
+.RI "\fIDestroy the \fBRangeSearch\fP object\&. \fP"
+.ti -1c
+.RI "size_t \fBBaseCases\fP () const "
+.br
+.RI "\fIGet the number of base cases during the last search\&. \fP"
+.ti -1c
+.RI "bool \fBNaive\fP () const "
+.br
+.RI "\fIGet whether naive search is being used\&. \fP"
+.ti -1c
+.RI "bool & \fBNaive\fP ()"
+.br
+.RI "\fIModify whether naive search is being used\&. \fP"
+.ti -1c
+.RI "\fBRangeSearch\fP & \fBoperator=\fP (const \fBRangeSearch\fP &other)"
+.br
+.RI "\fICopy the given \fBRangeSearch\fP model\&. \fP"
+.ti -1c
+.RI "\fBRangeSearch\fP & \fBoperator=\fP (\fBRangeSearch\fP &&other)"
+.br
+.RI "\fITake ownership of the given \fBRangeSearch\fP model\&. \fP"
+.ti -1c
+.RI "const MatType & \fBReferenceSet\fP () const "
+.br
+.RI "\fIReturn the reference set\&. \fP"
+.ti -1c
+.RI "\fBTree\fP * \fBReferenceTree\fP ()"
+.br
+.RI "\fIReturn the reference tree (or NULL if in naive mode)\&. \fP"
+.ti -1c
+.RI "size_t \fBScores\fP () const "
+.br
+.RI "\fIGet the number of scores during the last search\&. \fP"
+.ti -1c
+.RI "void \fBSearch\fP (const MatType &querySet, const \fBmath::Range\fP &range, std::vector< std::vector< size_t >> &neighbors, std::vector< std::vector< double >> &distances)"
+.br
+.RI "\fISearch for all reference points in the given range for each point in the query set, returning the results in the neighbors and distances objects\&. \fP"
+.ti -1c
+.RI "void \fBSearch\fP (\fBTree\fP *queryTree, const \fBmath::Range\fP &range, std::vector< std::vector< size_t >> &neighbors, std::vector< std::vector< double >> &distances)"
+.br
+.RI "\fIGiven a pre-built query tree, search for all reference points in the given range for each point in the query set, returning the results in the neighbors and distances objects\&. \fP"
+.ti -1c
+.RI "void \fBSearch\fP (const \fBmath::Range\fP &range, std::vector< std::vector< size_t >> &neighbors, std::vector< std::vector< double >> &distances)"
+.br
+.RI "\fISearch for all points in the given range for each point in the reference set (which was passed to the constructor), returning the results in the neighbors and distances objects\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int version)"
+.br
+.RI "\fISerialize the model\&. \fP"
+.ti -1c
+.RI "bool \fBSingleMode\fP () const "
+.br
+.RI "\fIGet whether single-tree search is being used\&. \fP"
+.ti -1c
+.RI "bool & \fBSingleMode\fP ()"
+.br
+.RI "\fIModify whether single-tree search is being used\&. \fP"
+.ti -1c
+.RI "void \fBTrain\fP (const MatType &\fBreferenceSet\fP)"
+.br
+.RI "\fISet the reference set to a new reference set, and build a tree if necessary\&. \fP"
+.ti -1c
+.RI "void \fBTrain\fP (MatType &&\fBreferenceSet\fP)"
+.br
+.RI "\fISet the reference set to a new reference set, taking ownership of the set\&. \fP"
+.ti -1c
+.RI "void \fBTrain\fP (\fBTree\fP *\fBreferenceTree\fP)"
+.br
+.RI "\fISet the reference tree to a new reference tree\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "size_t \fBbaseCases\fP"
+.br
+.RI "\fIThe total number of base cases during the last search\&. \fP"
+.ti -1c
+.RI "MetricType \fBmetric\fP"
+.br
+.RI "\fIInstantiated distance metric\&. \fP"
+.ti -1c
+.RI "bool \fBnaive\fP"
+.br
+.RI "\fIIf true, O(n^2) naive computation is used\&. \fP"
+.ti -1c
+.RI "std::vector< size_t > \fBoldFromNewReferences\fP"
+.br
+.RI "\fIMappings to old reference indices (used when this object builds trees)\&. \fP"
+.ti -1c
+.RI "const MatType * \fBreferenceSet\fP"
+.br
+.RI "\fIReference set (data should be accessed using this)\&. \fP"
+.ti -1c
+.RI "\fBTree\fP * \fBreferenceTree\fP"
+.br
+.RI "\fIReference tree\&. \fP"
+.ti -1c
+.RI "size_t \fBscores\fP"
+.br
+.RI "\fIThe total number of scores during the last search\&. \fP"
+.ti -1c
+.RI "bool \fBsetOwner\fP"
+.br
+.RI "\fIIf true, we own the reference set\&. \fP"
+.ti -1c
+.RI "bool \fBsingleMode\fP"
+.br
+.RI "\fIIf true, single-tree computation is used\&. \fP"
+.ti -1c
+.RI "bool \fBtreeOwner\fP"
+.br
+.RI "\fIIf true, this object is responsible for deleting the trees\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree>
+.br
+class mlpack::range::RangeSearch< MetricType, MatType, TreeType >"
+The \fBRangeSearch\fP class is a template class for performing range searches\&. 
+
+It is implemented in the style of a generalized tree-independent dual-tree algorithm; for more details on the actual algorithm, see the \fBRangeSearchRules\fP class\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIMetricType\fP Metric to use for range search calculations\&. 
+.br
+\fIMatType\fP Type of data to use\&. 
+.br
+\fITreeType\fP Type of tree to use; must satisfy the TreeType policy API\&. 
+.RE
+.PP
+
+.PP
+Definition at line 42 of file range_search\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> typedef TreeType<MetricType, \fBRangeSearchStat\fP, MatType> \fBmlpack::range::RangeSearch\fP< MetricType, MatType, TreeType >::\fBTree\fP"
+
+.PP
+Convenience typedef\&. 
+.PP
+Definition at line 46 of file range_search\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> \fBmlpack::range::RangeSearch\fP< MetricType, MatType, TreeType >::\fBRangeSearch\fP (const MatType & referenceSet, const bool naive = \fCfalse\fP, const bool singleMode = \fCfalse\fP, const MetricType metric = \fCMetricType()\fP)"
+
+.PP
+Initialize the \fBRangeSearch\fP object with a given reference dataset (this is the dataset which is searched)\&. Optionally, perform the computation in naive mode or single-tree mode\&. Additionally, an instantiated metric can be given, for cases where the distance metric holds data\&.
+.PP
+This method will copy the matrices to internal copies, which are rearranged during tree-building\&. You can avoid this extra copy by pre-constructing the trees and passing them using a different constructor\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIreferenceSet\fP Reference dataset\&. 
+.br
+\fInaive\fP Whether the computation should be done in O(n^2) naive mode\&. 
+.br
+\fIsingleMode\fP Whether single-tree computation should be used (as opposed to dual-tree computation)\&. 
+.br
+\fImetric\fP Instantiated distance metric\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> \fBmlpack::range::RangeSearch\fP< MetricType, MatType, TreeType >::\fBRangeSearch\fP (MatType && referenceSet, const bool naive = \fCfalse\fP, const bool singleMode = \fCfalse\fP, const MetricType metric = \fCMetricType()\fP)"
+
+.PP
+Initialize the \fBRangeSearch\fP object with the given reference dataset (this is the dataset which is searched), taking ownership of the matrix\&. Optionally, perform the computation in naive mode or single-tree mode\&. Additionally, an instantiated metric can be given, for cases where the distance metric holds data\&.
+.PP
+This method will not copy the data matrix, but will take ownership of it, and depending on the type of tree used, may rearrange the points\&. If you would rather a copy be made, consider using the constructor that takes a const reference to the data instead\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIreferenceSet\fP Set of reference points\&. 
+.br
+\fInaive\fP If true, brute force naive search will be used (as opposed to dual-tree search)\&. This overrides singleMode (if it is set to true)\&. 
+.br
+\fIsingleMode\fP If true, single-tree search will be used (as opposed to dual-tree search)\&. 
+.br
+\fImetric\fP An optional instance of the MetricType class\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> \fBmlpack::range::RangeSearch\fP< MetricType, MatType, TreeType >::\fBRangeSearch\fP (\fBTree\fP * referenceTree, const bool singleMode = \fCfalse\fP, const MetricType metric = \fCMetricType()\fP)"
+
+.PP
+Initialize the \fBRangeSearch\fP object with the given pre-constructed reference tree (this is the tree built on the reference set, which is the set that is searched)\&. Optionally, choose to use single-tree mode, which will not build a tree on query points\&. Naive mode is not available as an option for this constructor\&. Additionally, an instantiated distance metric can be given, for cases where the distance metric holds data\&.
+.PP
+There is no copying of the data matrices in this constructor (because tree-building is not necessary), so this is the constructor to use when copies absolutely must be avoided\&.
+.PP
+\fBNote:\fP
+.RS 4
+Because tree-building (at least with BinarySpaceTree) modifies the ordering of a matrix, be aware that mapping of the points back to their original indices is not done when this constructor is used\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIreferenceTree\fP Pre-built tree for reference points\&. 
+.br
+\fIreferenceSet\fP Set of reference points corresponding to referenceTree\&. 
+.br
+\fIsingleMode\fP Whether single-tree computation should be used (as opposed to dual-tree computation)\&. 
+.br
+\fImetric\fP Instantiated distance metric\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> \fBmlpack::range::RangeSearch\fP< MetricType, MatType, TreeType >::\fBRangeSearch\fP (const bool naive = \fCfalse\fP, const bool singleMode = \fCfalse\fP, const MetricType metric = \fCMetricType()\fP)"
+
+.PP
+Initialize the \fBRangeSearch\fP object without any reference data\&. If the monochromatic \fBSearch()\fP is called before a reference set is set with \fBTrain()\fP, no results will be returned (since the reference set is empty)\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fInaive\fP Whether to use naive search\&. 
+.br
+\fIsingleMode\fP Whether single-tree computation should be used (as opposed to dual-tree computation)\&. 
+.br
+\fImetric\fP Instantiated metric\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> \fBmlpack::range::RangeSearch\fP< MetricType, MatType, TreeType >::\fBRangeSearch\fP (const \fBRangeSearch\fP< MetricType, MatType, TreeType > & other)"
+
+.PP
+Construct the \fBRangeSearch\fP model as a copy of the given model\&. Note that this may be computationally intensive!
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP \fBRangeSearch\fP model to copy\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> \fBmlpack::range::RangeSearch\fP< MetricType, MatType, TreeType >::\fBRangeSearch\fP (\fBRangeSearch\fP< MetricType, MatType, TreeType > && other)"
+
+.PP
+Construct the \fBRangeSearch\fP model by taking ownership of the given model\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP \fBRangeSearch\fP model to take ownership of\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> \fBmlpack::range::RangeSearch\fP< MetricType, MatType, TreeType >::~\fBRangeSearch\fP ()"
+
+.PP
+Destroy the \fBRangeSearch\fP object\&. If trees were created, they will be deleted\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> size_t \fBmlpack::range::RangeSearch\fP< MetricType, MatType, TreeType >::BaseCases () const\fC [inline]\fP"
+
+.PP
+Get the number of base cases during the last search\&. 
+.PP
+Definition at line 313 of file range_search\&.hpp\&.
+.PP
+References mlpack::range::RangeSearch< MetricType, MatType, TreeType >::baseCases\&.
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> bool \fBmlpack::range::RangeSearch\fP< MetricType, MatType, TreeType >::Naive () const\fC [inline]\fP"
+
+.PP
+Get whether naive search is being used\&. 
+.PP
+Definition at line 308 of file range_search\&.hpp\&.
+.PP
+References mlpack::range::RangeSearch< MetricType, MatType, TreeType >::naive\&.
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> bool& \fBmlpack::range::RangeSearch\fP< MetricType, MatType, TreeType >::Naive ()\fC [inline]\fP"
+
+.PP
+Modify whether naive search is being used\&. 
+.PP
+Definition at line 310 of file range_search\&.hpp\&.
+.PP
+References mlpack::range::RangeSearch< MetricType, MatType, TreeType >::naive\&.
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> \fBRangeSearch\fP& \fBmlpack::range::RangeSearch\fP< MetricType, MatType, TreeType >::operator= (const \fBRangeSearch\fP< MetricType, MatType, TreeType > & other)"
+
+.PP
+Copy the given \fBRangeSearch\fP model\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP \fBRangeSearch\fP model to copy\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> \fBRangeSearch\fP& \fBmlpack::range::RangeSearch\fP< MetricType, MatType, TreeType >::operator= (\fBRangeSearch\fP< MetricType, MatType, TreeType > && other)"
+
+.PP
+Take ownership of the given \fBRangeSearch\fP model\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP \fBRangeSearch\fP model to take ownership of\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> const MatType& \fBmlpack::range::RangeSearch\fP< MetricType, MatType, TreeType >::ReferenceSet () const\fC [inline]\fP"
+
+.PP
+Return the reference set\&. 
+.PP
+Definition at line 322 of file range_search\&.hpp\&.
+.PP
+References mlpack::range::RangeSearch< MetricType, MatType, TreeType >::referenceSet\&.
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> \fBTree\fP* \fBmlpack::range::RangeSearch\fP< MetricType, MatType, TreeType >::ReferenceTree ()\fC [inline]\fP"
+
+.PP
+Return the reference tree (or NULL if in naive mode)\&. 
+.PP
+Definition at line 325 of file range_search\&.hpp\&.
+.PP
+References mlpack::range::RangeSearch< MetricType, MatType, TreeType >::referenceTree\&.
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> size_t \fBmlpack::range::RangeSearch\fP< MetricType, MatType, TreeType >::Scores () const\fC [inline]\fP"
+
+.PP
+Get the number of scores during the last search\&. 
+.PP
+Definition at line 315 of file range_search\&.hpp\&.
+.PP
+References mlpack::range::RangeSearch< MetricType, MatType, TreeType >::scores, and mlpack::range::RangeSearch< MetricType, MatType, TreeType >::Serialize()\&.
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> void \fBmlpack::range::RangeSearch\fP< MetricType, MatType, TreeType >::Search (const MatType & querySet, const \fBmath::Range\fP & range, std::vector< std::vector< size_t >> & neighbors, std::vector< std::vector< double >> & distances)"
+
+.PP
+Search for all reference points in the given range for each point in the query set, returning the results in the neighbors and distances objects\&. Each entry in the external vector corresponds to a query point\&. Each of these entries holds a vector which contains the indices and distances of the reference points falling into the given range\&.
+.PP
+That is:
+.PP
+.IP "\(bu" 2
+neighbors\&.size() and distances\&.size() both equal the number of query points\&.
+.IP "\(bu" 2
+neighbors[i] contains the indices of all the points in the reference set which have distances inside the given range to query point i\&.
+.IP "\(bu" 2
+distances[i] contains all of the distances corresponding to the indices contained in neighbors[i]\&.
+.IP "\(bu" 2
+neighbors[i] and distances[i] are not sorted in any particular order\&.
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIquerySet\fP Set of query points to search with\&. 
+.br
+\fIrange\fP Range of distances in which to search\&. 
+.br
+\fIneighbors\fP Object which will hold the list of neighbors for each point which fell into the given range, for each query point\&. 
+.br
+\fIdistances\fP Object which will hold the list of distances for each point which fell into the given range, for each query point\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> void \fBmlpack::range::RangeSearch\fP< MetricType, MatType, TreeType >::Search (\fBTree\fP * queryTree, const \fBmath::Range\fP & range, std::vector< std::vector< size_t >> & neighbors, std::vector< std::vector< double >> & distances)"
+
+.PP
+Given a pre-built query tree, search for all reference points in the given range for each point in the query set, returning the results in the neighbors and distances objects\&. Each entry in the external vector corresponds to a query point\&. Each of these entries holds a vector which contains the indices and distances of the reference points falling into the given range\&.
+.PP
+That is:
+.PP
+.IP "\(bu" 2
+neighbors\&.size() and distances\&.size() both equal the number of query points\&.
+.IP "\(bu" 2
+neighbors[i] contains the indices of all the points in the reference set which have distances inside the given range to query point i\&.
+.IP "\(bu" 2
+distances[i] contains all of the distances corresponding to the indices contained in neighbors[i]\&.
+.IP "\(bu" 2
+neighbors[i] and distances[i] are not sorted in any particular order\&.
+.PP
+.PP
+If either naive or singleMode are set to true, this will throw an invalid_argument exception; passing in a query tree implies dual-tree search\&.
+.PP
+If you want to use the reference tree as the query tree, instead call the overload of \fBSearch()\fP that does not take a query set\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIqueryTree\fP Tree built on query points\&. 
+.br
+\fIrange\fP Range of distances in which to search\&. 
+.br
+\fIneighbors\fP Object which will hold the list of neighbors for each point which fell into the given range, for each query point\&. 
+.br
+\fIdistances\fP Object which will hold the list of distances for each point which fell into the given range, for each query point\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> void \fBmlpack::range::RangeSearch\fP< MetricType, MatType, TreeType >::Search (const \fBmath::Range\fP & range, std::vector< std::vector< size_t >> & neighbors, std::vector< std::vector< double >> & distances)"
+
+.PP
+Search for all points in the given range for each point in the reference set (which was passed to the constructor), returning the results in the neighbors and distances objects\&. This means that the query set and the reference set are the same\&.
+.PP
+Each entry in the external vector corresponds to a query point\&. Each of these entries holds a vector which contains the indices and distances of the reference points falling into the given range\&.
+.PP
+That is:
+.PP
+.IP "\(bu" 2
+neighbors\&.size() and distances\&.size() both equal the number of query points\&.
+.IP "\(bu" 2
+neighbors[i] contains the indices of all the points in the reference set which have distances inside the given range to query point i\&.
+.IP "\(bu" 2
+distances[i] contains all of the distances corresponding to the indices contained in neighbors[i]\&.
+.IP "\(bu" 2
+neighbors[i] and distances[i] are not sorted in any particular order\&.
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIqueryTree\fP Tree built on query points\&. 
+.br
+\fIrange\fP Range of distances in which to search\&. 
+.br
+\fIneighbors\fP Object which will hold the list of neighbors for each point which fell into the given range, for each query point\&. 
+.br
+\fIdistances\fP Object which will hold the list of distances for each point which fell into the given range, for each query point\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> template<typename Archive > void \fBmlpack::range::RangeSearch\fP< MetricType, MatType, TreeType >::Serialize (Archive & ar, const unsigned int version)"
+
+.PP
+Serialize the model\&. 
+.PP
+Referenced by mlpack::range::RangeSearch< MetricType, MatType, TreeType >::Scores()\&.
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> bool \fBmlpack::range::RangeSearch\fP< MetricType, MatType, TreeType >::SingleMode () const\fC [inline]\fP"
+
+.PP
+Get whether single-tree search is being used\&. 
+.PP
+Definition at line 303 of file range_search\&.hpp\&.
+.PP
+References mlpack::range::RangeSearch< MetricType, MatType, TreeType >::singleMode\&.
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> bool& \fBmlpack::range::RangeSearch\fP< MetricType, MatType, TreeType >::SingleMode ()\fC [inline]\fP"
+
+.PP
+Modify whether single-tree search is being used\&. 
+.PP
+Definition at line 305 of file range_search\&.hpp\&.
+.PP
+References mlpack::range::RangeSearch< MetricType, MatType, TreeType >::singleMode\&.
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> void \fBmlpack::range::RangeSearch\fP< MetricType, MatType, TreeType >::Train (const MatType & referenceSet)"
+
+.PP
+Set the reference set to a new reference set, and build a tree if necessary\&. This method is called '\fBTrain()\fP' in order to match the rest of the mlpack abstractions, even though calling this 'training' is maybe a bit of a stretch\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIreferenceSet\fP New set of reference data\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> void \fBmlpack::range::RangeSearch\fP< MetricType, MatType, TreeType >::Train (MatType && referenceSet)"
+
+.PP
+Set the reference set to a new reference set, taking ownership of the set\&. A tree is built if necessary\&. This method is called '\fBTrain()\fP' in order to match the rest of the mlpack abstractions, even though calling this 'training' is maybe a bit of a stretch\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIreferenceSet\fP New set of reference data\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> void \fBmlpack::range::RangeSearch\fP< MetricType, MatType, TreeType >::Train (\fBTree\fP * referenceTree)"
+
+.PP
+Set the reference tree to a new reference tree\&. 
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> size_t \fBmlpack::range::RangeSearch\fP< MetricType, MatType, TreeType >::baseCases\fC [private]\fP"
+
+.PP
+The total number of base cases during the last search\&. 
+.PP
+Definition at line 350 of file range_search\&.hpp\&.
+.PP
+Referenced by mlpack::range::RangeSearch< MetricType, MatType, TreeType >::BaseCases()\&.
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> MetricType \fBmlpack::range::RangeSearch\fP< MetricType, MatType, TreeType >::metric\fC [private]\fP"
+
+.PP
+Instantiated distance metric\&. 
+.PP
+Definition at line 347 of file range_search\&.hpp\&.
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> bool \fBmlpack::range::RangeSearch\fP< MetricType, MatType, TreeType >::naive\fC [private]\fP"
+
+.PP
+If true, O(n^2) naive computation is used\&. 
+.PP
+Definition at line 342 of file range_search\&.hpp\&.
+.PP
+Referenced by mlpack::range::RangeSearch< MetricType, MatType, TreeType >::Naive()\&.
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> std::vector<size_t> \fBmlpack::range::RangeSearch\fP< MetricType, MatType, TreeType >::oldFromNewReferences\fC [private]\fP"
+
+.PP
+Mappings to old reference indices (used when this object builds trees)\&. 
+.PP
+Definition at line 329 of file range_search\&.hpp\&.
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> const MatType* \fBmlpack::range::RangeSearch\fP< MetricType, MatType, TreeType >::referenceSet\fC [private]\fP"
+
+.PP
+Reference set (data should be accessed using this)\&. In some situations we may be the owner of this\&. 
+.PP
+Definition at line 334 of file range_search\&.hpp\&.
+.PP
+Referenced by mlpack::range::RangeSearch< MetricType, MatType, TreeType >::ReferenceSet()\&.
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> \fBTree\fP* \fBmlpack::range::RangeSearch\fP< MetricType, MatType, TreeType >::referenceTree\fC [private]\fP"
+
+.PP
+Reference tree\&. 
+.PP
+Definition at line 331 of file range_search\&.hpp\&.
+.PP
+Referenced by mlpack::range::RangeSearch< MetricType, MatType, TreeType >::ReferenceTree()\&.
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> size_t \fBmlpack::range::RangeSearch\fP< MetricType, MatType, TreeType >::scores\fC [private]\fP"
+
+.PP
+The total number of scores during the last search\&. 
+.PP
+Definition at line 352 of file range_search\&.hpp\&.
+.PP
+Referenced by mlpack::range::RangeSearch< MetricType, MatType, TreeType >::Scores()\&.
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> bool \fBmlpack::range::RangeSearch\fP< MetricType, MatType, TreeType >::setOwner\fC [private]\fP"
+
+.PP
+If true, we own the reference set\&. 
+.PP
+Definition at line 339 of file range_search\&.hpp\&.
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> bool \fBmlpack::range::RangeSearch\fP< MetricType, MatType, TreeType >::singleMode\fC [private]\fP"
+
+.PP
+If true, single-tree computation is used\&. 
+.PP
+Definition at line 344 of file range_search\&.hpp\&.
+.PP
+Referenced by mlpack::range::RangeSearch< MetricType, MatType, TreeType >::SingleMode()\&.
+.SS "template<typename MetricType = metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree> bool \fBmlpack::range::RangeSearch\fP< MetricType, MatType, TreeType >::treeOwner\fC [private]\fP"
+
+.PP
+If true, this object is responsible for deleting the trees\&. 
+.PP
+Definition at line 337 of file range_search\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

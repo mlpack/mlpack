@@ -1,0 +1,431 @@
+.TH "mlpack::bound::BallBound< MetricType, VecType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::bound::BallBound< MetricType, VecType > \- Ball bound encloses a set of points at a specific distance (radius) from a specific point (center)\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "typedef VecType::elem_type \fBElemType\fP"
+.br
+.RI "\fIThe underlying data type\&. \fP"
+.ti -1c
+.RI "typedef VecType \fBVec\fP"
+.br
+.RI "\fIA public version of the vector type\&. \fP"
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBBallBound\fP ()"
+.br
+.RI "\fIEmpty Constructor\&. \fP"
+.ti -1c
+.RI "\fBBallBound\fP (const size_t dimension)"
+.br
+.RI "\fICreate the ball bound with the specified dimensionality\&. \fP"
+.ti -1c
+.RI "\fBBallBound\fP (const \fBElemType\fP \fBradius\fP, const VecType &\fBcenter\fP)"
+.br
+.RI "\fICreate the ball bound with the specified radius and center\&. \fP"
+.ti -1c
+.RI "\fBBallBound\fP (const \fBBallBound\fP &other)"
+.br
+.RI "\fICopy constructor\&. To prevent memory leaks\&. \fP"
+.ti -1c
+.RI "\fBBallBound\fP (\fBBallBound\fP &&other)"
+.br
+.RI "\fIMove constructor: take possession of another bound\&. \fP"
+.ti -1c
+.RI "\fB~BallBound\fP ()"
+.br
+.RI "\fIDestructor to release allocated memory\&. \fP"
+.ti -1c
+.RI "const VecType & \fBCenter\fP () const "
+.br
+.RI "\fIGet the center point of the ball\&. \fP"
+.ti -1c
+.RI "VecType & \fBCenter\fP ()"
+.br
+.RI "\fIModify the center point of the ball\&. \fP"
+.ti -1c
+.RI "void \fBCenter\fP (VecType &\fBcenter\fP) const "
+.br
+.RI "\fIPlace the center of \fBBallBound\fP into the given vector\&. \fP"
+.ti -1c
+.RI "bool \fBContains\fP (const VecType &point) const "
+.br
+.RI "\fIDetermines if a point is within this bound\&. \fP"
+.ti -1c
+.RI "\fBElemType\fP \fBDiameter\fP () const "
+.br
+.RI "\fIReturns the diameter of the ballbound\&. \fP"
+.ti -1c
+.RI "size_t \fBDim\fP () const "
+.br
+.RI "\fIGet the dimensionality of the ball\&. \fP"
+.ti -1c
+.RI "template<typename OtherVecType > \fBElemType\fP \fBMaxDistance\fP (const OtherVecType &point, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< OtherVecType >::value > *=0) const "
+.br
+.RI "\fIComputes maximum distance\&. \fP"
+.ti -1c
+.RI "\fBElemType\fP \fBMaxDistance\fP (const \fBBallBound\fP &other) const "
+.br
+.RI "\fIComputes maximum distance\&. \fP"
+.ti -1c
+.RI "const MetricType & \fBMetric\fP () const "
+.br
+.RI "\fIReturns the distance metric used in this bound\&. \fP"
+.ti -1c
+.RI "MetricType & \fBMetric\fP ()"
+.br
+.RI "\fIModify the distance metric used in this bound\&. \fP"
+.ti -1c
+.RI "template<typename OtherVecType > \fBElemType\fP \fBMinDistance\fP (const OtherVecType &point, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< OtherVecType >::value > *=0) const "
+.br
+.RI "\fICalculates minimum bound-to-point squared distance\&. \fP"
+.ti -1c
+.RI "\fBElemType\fP \fBMinDistance\fP (const \fBBallBound\fP &other) const "
+.br
+.RI "\fICalculates minimum bound-to-bound squared distance\&. \fP"
+.ti -1c
+.RI "\fBElemType\fP \fBMinWidth\fP () const "
+.br
+.RI "\fIGet the minimum width of the bound (this is same as the diameter)\&. \fP"
+.ti -1c
+.RI "\fBBallBound\fP & \fBoperator=\fP (const \fBBallBound\fP &other)"
+.br
+.RI "\fIFor the same reason as the copy constructor: to prevent memory leaks\&. \fP"
+.ti -1c
+.RI "\fBmath::RangeType\fP< \fBElemType\fP > \fBoperator[]\fP (const size_t i) const "
+.br
+.RI "\fIGet the range in a certain dimension\&. \fP"
+.ti -1c
+.RI "const \fBBallBound\fP & \fBoperator|=\fP (const \fBBallBound\fP &other)"
+.br
+.RI "\fIExpand the bound to include the given node\&. \fP"
+.ti -1c
+.RI "template<typename MatType > const \fBBallBound\fP & \fBoperator|=\fP (const MatType &data)"
+.br
+.RI "\fIExpand the bound to include the given point\&. \fP"
+.ti -1c
+.RI "\fBElemType\fP \fBRadius\fP () const "
+.br
+.RI "\fIGet the radius of the ball\&. \fP"
+.ti -1c
+.RI "\fBElemType\fP & \fBRadius\fP ()"
+.br
+.RI "\fIModify the radius of the ball\&. \fP"
+.ti -1c
+.RI "template<typename OtherVecType > \fBmath::RangeType\fP< \fBElemType\fP > \fBRangeDistance\fP (const OtherVecType &other, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< OtherVecType >::value > *=0) const "
+.br
+.RI "\fICalculates minimum and maximum bound-to-point distance\&. \fP"
+.ti -1c
+.RI "\fBmath::RangeType\fP< \fBElemType\fP > \fBRangeDistance\fP (const \fBBallBound\fP &other) const "
+.br
+.RI "\fICalculates minimum and maximum bound-to-bound distance\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int version)"
+.br
+.RI "\fISerialize the bound\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "VecType \fBcenter\fP"
+.br
+.RI "\fIThe center of the ball bound\&. \fP"
+.ti -1c
+.RI "MetricType * \fBmetric\fP"
+.br
+.RI "\fIThe metric used in this bound\&. \fP"
+.ti -1c
+.RI "bool \fBownsMetric\fP"
+.br
+.RI "\fITo know whether this object allocated memory to the metric member variable\&. \fP"
+.ti -1c
+.RI "\fBElemType\fP \fBradius\fP"
+.br
+.RI "\fIThe radius of the ball bound\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename VecType = arma::vec>
+.br
+class mlpack::bound::BallBound< MetricType, VecType >"
+Ball bound encloses a set of points at a specific distance (radius) from a specific point (center)\&. 
+
+MetricType is the custom metric type that defaults to the Euclidean (L2) distance\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIMetricType\fP metric type used in the distance measure\&. 
+.br
+\fIVecType\fP Type of vector (arma::vec or arma::sp_vec or similar)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 32 of file ballbound\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename VecType = arma::vec> typedef VecType::elem_type \fBmlpack::bound::BallBound\fP< MetricType, VecType >::\fBElemType\fP"
+
+.PP
+The underlying data type\&. 
+.PP
+Definition at line 36 of file ballbound\&.hpp\&.
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename VecType = arma::vec> typedef VecType \fBmlpack::bound::BallBound\fP< MetricType, VecType >::\fBVec\fP"
+
+.PP
+A public version of the vector type\&. 
+.PP
+Definition at line 38 of file ballbound\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename VecType = arma::vec> \fBmlpack::bound::BallBound\fP< MetricType, VecType >::\fBBallBound\fP ()"
+
+.PP
+Empty Constructor\&. 
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename VecType = arma::vec> \fBmlpack::bound::BallBound\fP< MetricType, VecType >::\fBBallBound\fP (const size_t dimension)"
+
+.PP
+Create the ball bound with the specified dimensionality\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdimension\fP Dimensionality of ball bound\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename VecType = arma::vec> \fBmlpack::bound::BallBound\fP< MetricType, VecType >::\fBBallBound\fP (const \fBElemType\fP radius, const VecType & center)"
+
+.PP
+Create the ball bound with the specified radius and center\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIradius\fP Radius of ball bound\&. 
+.br
+\fIcenter\fP Center of ball bound\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename VecType = arma::vec> \fBmlpack::bound::BallBound\fP< MetricType, VecType >::\fBBallBound\fP (const \fBBallBound\fP< MetricType, VecType > & other)"
+
+.PP
+Copy constructor\&. To prevent memory leaks\&. 
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename VecType = arma::vec> \fBmlpack::bound::BallBound\fP< MetricType, VecType >::\fBBallBound\fP (\fBBallBound\fP< MetricType, VecType > && other)"
+
+.PP
+Move constructor: take possession of another bound\&. 
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename VecType = arma::vec> \fBmlpack::bound::BallBound\fP< MetricType, VecType >::~\fBBallBound\fP ()"
+
+.PP
+Destructor to release allocated memory\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename VecType = arma::vec> const VecType& \fBmlpack::bound::BallBound\fP< MetricType, VecType >::Center () const\fC [inline]\fP"
+
+.PP
+Get the center point of the ball\&. 
+.PP
+Definition at line 94 of file ballbound\&.hpp\&.
+.PP
+References mlpack::bound::BallBound< MetricType, VecType >::center\&.
+.PP
+Referenced by mlpack::tree::ProjVector::Project()\&.
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename VecType = arma::vec> VecType& \fBmlpack::bound::BallBound\fP< MetricType, VecType >::Center ()\fC [inline]\fP"
+
+.PP
+Modify the center point of the ball\&. 
+.PP
+Definition at line 96 of file ballbound\&.hpp\&.
+.PP
+References mlpack::bound::BallBound< MetricType, VecType >::center\&.
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename VecType = arma::vec> void \fBmlpack::bound::BallBound\fP< MetricType, VecType >::Center (VecType & center) const\fC [inline]\fP"
+
+.PP
+Place the center of \fBBallBound\fP into the given vector\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIcenter\fP Vector which the centroid will be written to\&. 
+.RE
+.PP
+
+.PP
+Definition at line 120 of file ballbound\&.hpp\&.
+.PP
+References mlpack::bound::BallBound< MetricType, VecType >::center, mlpack::bound::BallBound< MetricType, VecType >::MaxDistance(), mlpack::bound::BallBound< MetricType, VecType >::MinDistance(), mlpack::bound::BallBound< MetricType, VecType >::operator|=(), and mlpack::bound::BallBound< MetricType, VecType >::RangeDistance()\&.
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename VecType = arma::vec> bool \fBmlpack::bound::BallBound\fP< MetricType, VecType >::Contains (const VecType & point) const"
+
+.PP
+Determines if a point is within this bound\&. 
+.PP
+Referenced by mlpack::bound::BallBound< MetricType, VecType >::MinWidth()\&.
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename VecType = arma::vec> \fBElemType\fP \fBmlpack::bound::BallBound\fP< MetricType, VecType >::Diameter () const\fC [inline]\fP"
+
+.PP
+Returns the diameter of the ballbound\&. 
+.PP
+Definition at line 182 of file ballbound\&.hpp\&.
+.PP
+References mlpack::bound::BallBound< MetricType, VecType >::radius\&.
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename VecType = arma::vec> size_t \fBmlpack::bound::BallBound\fP< MetricType, VecType >::Dim () const\fC [inline]\fP"
+
+.PP
+Get the dimensionality of the ball\&. 
+.PP
+Definition at line 99 of file ballbound\&.hpp\&.
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename VecType = arma::vec> template<typename OtherVecType > \fBElemType\fP \fBmlpack::bound::BallBound\fP< MetricType, VecType >::MaxDistance (const OtherVecType & point, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< OtherVecType >::value > * = \fC0\fP) const"
+
+.PP
+Computes maximum distance\&. 
+.PP
+Referenced by mlpack::bound::BallBound< MetricType, VecType >::Center()\&.
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename VecType = arma::vec> \fBElemType\fP \fBmlpack::bound::BallBound\fP< MetricType, VecType >::MaxDistance (const \fBBallBound\fP< MetricType, VecType > & other) const"
+
+.PP
+Computes maximum distance\&. 
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename VecType = arma::vec> const MetricType& \fBmlpack::bound::BallBound\fP< MetricType, VecType >::Metric () const\fC [inline]\fP"
+
+.PP
+Returns the distance metric used in this bound\&. 
+.PP
+Definition at line 185 of file ballbound\&.hpp\&.
+.PP
+References mlpack::bound::BallBound< MetricType, VecType >::metric\&.
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename VecType = arma::vec> MetricType& \fBmlpack::bound::BallBound\fP< MetricType, VecType >::Metric ()\fC [inline]\fP"
+
+.PP
+Modify the distance metric used in this bound\&. 
+.PP
+Definition at line 187 of file ballbound\&.hpp\&.
+.PP
+References mlpack::bound::BallBound< MetricType, VecType >::metric, and mlpack::bound::BallBound< MetricType, VecType >::Serialize()\&.
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename VecType = arma::vec> template<typename OtherVecType > \fBElemType\fP \fBmlpack::bound::BallBound\fP< MetricType, VecType >::MinDistance (const OtherVecType & point, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< OtherVecType >::value > * = \fC0\fP) const"
+
+.PP
+Calculates minimum bound-to-point squared distance\&. 
+.PP
+Referenced by mlpack::bound::BallBound< MetricType, VecType >::Center()\&.
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename VecType = arma::vec> \fBElemType\fP \fBmlpack::bound::BallBound\fP< MetricType, VecType >::MinDistance (const \fBBallBound\fP< MetricType, VecType > & other) const"
+
+.PP
+Calculates minimum bound-to-bound squared distance\&. 
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename VecType = arma::vec> \fBElemType\fP \fBmlpack::bound::BallBound\fP< MetricType, VecType >::MinWidth () const\fC [inline]\fP"
+
+.PP
+Get the minimum width of the bound (this is same as the diameter)\&. For ball bounds, width along all dimensions remain same\&. 
+.PP
+Definition at line 105 of file ballbound\&.hpp\&.
+.PP
+References mlpack::bound::BallBound< MetricType, VecType >::Contains(), and mlpack::bound::BallBound< MetricType, VecType >::operator[]()\&.
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename VecType = arma::vec> \fBBallBound\fP& \fBmlpack::bound::BallBound\fP< MetricType, VecType >::operator= (const \fBBallBound\fP< MetricType, VecType > & other)"
+
+.PP
+For the same reason as the copy constructor: to prevent memory leaks\&. 
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename VecType = arma::vec> \fBmath::RangeType\fP<\fBElemType\fP> \fBmlpack::bound::BallBound\fP< MetricType, VecType >::operator[] (const size_t i) const"
+
+.PP
+Get the range in a certain dimension\&. 
+.PP
+Referenced by mlpack::bound::BallBound< MetricType, VecType >::MinWidth()\&.
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename VecType = arma::vec> const \fBBallBound\fP& \fBmlpack::bound::BallBound\fP< MetricType, VecType >::operator|= (const \fBBallBound\fP< MetricType, VecType > & other)"
+
+.PP
+Expand the bound to include the given node\&. 
+.PP
+Referenced by mlpack::bound::BallBound< MetricType, VecType >::Center()\&.
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename VecType = arma::vec> template<typename MatType > const \fBBallBound\fP& \fBmlpack::bound::BallBound\fP< MetricType, VecType >::operator|= (const MatType & data)"
+
+.PP
+Expand the bound to include the given point\&. The centroid is recalculated to be the center of all of the given points\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIMatType\fP Type of matrix; could be arma::mat, arma::spmat, or a vector\&. 
+.br
+\fIdata\fP Data points to add\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename VecType = arma::vec> \fBElemType\fP \fBmlpack::bound::BallBound\fP< MetricType, VecType >::Radius () const\fC [inline]\fP"
+
+.PP
+Get the radius of the ball\&. 
+.PP
+Definition at line 89 of file ballbound\&.hpp\&.
+.PP
+References mlpack::bound::BallBound< MetricType, VecType >::radius\&.
+.PP
+Referenced by mlpack::tree::ProjVector::Project()\&.
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename VecType = arma::vec> \fBElemType\fP& \fBmlpack::bound::BallBound\fP< MetricType, VecType >::Radius ()\fC [inline]\fP"
+
+.PP
+Modify the radius of the ball\&. 
+.PP
+Definition at line 91 of file ballbound\&.hpp\&.
+.PP
+References mlpack::bound::BallBound< MetricType, VecType >::radius\&.
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename VecType = arma::vec> template<typename OtherVecType > \fBmath::RangeType\fP<\fBElemType\fP> \fBmlpack::bound::BallBound\fP< MetricType, VecType >::RangeDistance (const OtherVecType & other, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< OtherVecType >::value > * = \fC0\fP) const"
+
+.PP
+Calculates minimum and maximum bound-to-point distance\&. 
+.PP
+Referenced by mlpack::bound::BallBound< MetricType, VecType >::Center()\&.
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename VecType = arma::vec> \fBmath::RangeType\fP<\fBElemType\fP> \fBmlpack::bound::BallBound\fP< MetricType, VecType >::RangeDistance (const \fBBallBound\fP< MetricType, VecType > & other) const"
+
+.PP
+Calculates minimum and maximum bound-to-bound distance\&. Example: bound1\&.MinDistanceSq(other) for minimum distance\&. 
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename VecType = arma::vec> template<typename Archive > void \fBmlpack::bound::BallBound\fP< MetricType, VecType >::Serialize (Archive & ar, const unsigned int version)"
+
+.PP
+Serialize the bound\&. 
+.PP
+Referenced by mlpack::bound::BallBound< MetricType, VecType >::Metric()\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename VecType = arma::vec> VecType \fBmlpack::bound::BallBound\fP< MetricType, VecType >::center\fC [private]\fP"
+
+.PP
+The center of the ball bound\&. 
+.PP
+Definition at line 44 of file ballbound\&.hpp\&.
+.PP
+Referenced by mlpack::bound::BallBound< MetricType, VecType >::Center()\&.
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename VecType = arma::vec> MetricType* \fBmlpack::bound::BallBound\fP< MetricType, VecType >::metric\fC [private]\fP"
+
+.PP
+The metric used in this bound\&. 
+.PP
+Definition at line 46 of file ballbound\&.hpp\&.
+.PP
+Referenced by mlpack::bound::BallBound< MetricType, VecType >::Metric()\&.
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename VecType = arma::vec> bool \fBmlpack::bound::BallBound\fP< MetricType, VecType >::ownsMetric\fC [private]\fP"
+
+.PP
+To know whether this object allocated memory to the metric member variable\&. This will be true except in the copy constructor and the overloaded assignment operator\&. We need this to know whether we should delete the metric member variable in the destructor\&. 
+.PP
+Definition at line 54 of file ballbound\&.hpp\&.
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename VecType = arma::vec> \fBElemType\fP \fBmlpack::bound::BallBound\fP< MetricType, VecType >::radius\fC [private]\fP"
+
+.PP
+The radius of the ball bound\&. 
+.PP
+Definition at line 42 of file ballbound\&.hpp\&.
+.PP
+Referenced by mlpack::bound::BallBound< MetricType, VecType >::Diameter(), and mlpack::bound::BallBound< MetricType, VecType >::Radius()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

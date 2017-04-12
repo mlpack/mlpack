@@ -1,0 +1,141 @@
+\section{mlpack\+:\+:optimization\+:\+:Gockenbach\+Function Class Reference}
+\label{classmlpack_1_1optimization_1_1GockenbachFunction}\index{mlpack\+::optimization\+::\+Gockenbach\+Function@{mlpack\+::optimization\+::\+Gockenbach\+Function}}
+
+
+This function is taken from M.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Gockenbach\+Function} ()
+\item 
+{\bf Gockenbach\+Function} (const arma\+::mat \&initial\+\_\+point)
+\item 
+double {\bf Evaluate} (const arma\+::mat \&coordinates)
+\item 
+double {\bf Evaluate\+Constraint} (const size\+\_\+t index, const arma\+::mat \&coordinates)
+\item 
+const arma\+::mat \& {\bf Get\+Initial\+Point} () const 
+\item 
+void {\bf Gradient} (const arma\+::mat \&coordinates, arma\+::mat \&gradient)
+\item 
+void {\bf Gradient\+Constraint} (const size\+\_\+t index, const arma\+::mat \&coordinates, arma\+::mat \&gradient)
+\item 
+size\+\_\+t {\bf Num\+Constraints} () const 
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+arma\+::mat {\bf initial\+Point}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This function is taken from M. 
+
+Gockenbach\textquotesingle{}s lectures on general nonlinear programs, found at\+: {\tt http\+://www.\+math.\+mtu.\+edu/$\sim$msgocken/ma5630spring2003/lectures/nlp/nlp.\+pdf}
+
+The program we are using is example 2.\+5 from this document. I have arbitrarily decided that this will be called the Gockenbach function.
+
+The minimum that satisfies the two constraints is given as x = [0.\+12288, -\/1.\+1078, 0.\+015100], with an objective value of about 29.\+634. 
+
+Definition at line 61 of file aug\+\_\+lagrangian\+\_\+test\+\_\+functions.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::optimization\+::\+Gockenbach\+Function@{mlpack\+::optimization\+::\+Gockenbach\+Function}!Gockenbach\+Function@{Gockenbach\+Function}}
+\index{Gockenbach\+Function@{Gockenbach\+Function}!mlpack\+::optimization\+::\+Gockenbach\+Function@{mlpack\+::optimization\+::\+Gockenbach\+Function}}
+\subsubsection[{Gockenbach\+Function()}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::optimization\+::\+Gockenbach\+Function\+::\+Gockenbach\+Function (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1optimization_1_1GockenbachFunction_aaad2388dd86d0591d5eadcdfc0f18c2f}
+\index{mlpack\+::optimization\+::\+Gockenbach\+Function@{mlpack\+::optimization\+::\+Gockenbach\+Function}!Gockenbach\+Function@{Gockenbach\+Function}}
+\index{Gockenbach\+Function@{Gockenbach\+Function}!mlpack\+::optimization\+::\+Gockenbach\+Function@{mlpack\+::optimization\+::\+Gockenbach\+Function}}
+\subsubsection[{Gockenbach\+Function(const arma\+::mat \&initial\+\_\+point)}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::optimization\+::\+Gockenbach\+Function\+::\+Gockenbach\+Function (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{initial\+\_\+point}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1optimization_1_1GockenbachFunction_aa6bd79a3bfdc679542c910b25904da47}
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::optimization\+::\+Gockenbach\+Function@{mlpack\+::optimization\+::\+Gockenbach\+Function}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!mlpack\+::optimization\+::\+Gockenbach\+Function@{mlpack\+::optimization\+::\+Gockenbach\+Function}}
+\subsubsection[{Evaluate(const arma\+::mat \&coordinates)}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::optimization\+::\+Gockenbach\+Function\+::\+Evaluate (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{coordinates}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1optimization_1_1GockenbachFunction_a08683cc694d1cdb51dddd24d3b60f88a}
+\index{mlpack\+::optimization\+::\+Gockenbach\+Function@{mlpack\+::optimization\+::\+Gockenbach\+Function}!Evaluate\+Constraint@{Evaluate\+Constraint}}
+\index{Evaluate\+Constraint@{Evaluate\+Constraint}!mlpack\+::optimization\+::\+Gockenbach\+Function@{mlpack\+::optimization\+::\+Gockenbach\+Function}}
+\subsubsection[{Evaluate\+Constraint(const size\+\_\+t index, const arma\+::mat \&coordinates)}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::optimization\+::\+Gockenbach\+Function\+::\+Evaluate\+Constraint (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{index, }
+\item[{const arma\+::mat \&}]{coordinates}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1optimization_1_1GockenbachFunction_a221752195c8d69171e42ff499e028ab1}
+\index{mlpack\+::optimization\+::\+Gockenbach\+Function@{mlpack\+::optimization\+::\+Gockenbach\+Function}!Get\+Initial\+Point@{Get\+Initial\+Point}}
+\index{Get\+Initial\+Point@{Get\+Initial\+Point}!mlpack\+::optimization\+::\+Gockenbach\+Function@{mlpack\+::optimization\+::\+Gockenbach\+Function}}
+\subsubsection[{Get\+Initial\+Point() const }]{\setlength{\rightskip}{0pt plus 5cm}const arma\+::mat\& mlpack\+::optimization\+::\+Gockenbach\+Function\+::\+Get\+Initial\+Point (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1optimization_1_1GockenbachFunction_a78a73d4f39a7ff163de0167de3efa843}
+
+
+Definition at line 77 of file aug\+\_\+lagrangian\+\_\+test\+\_\+functions.\+hpp.
+
+
+
+References mlpack\+::optimization\+::\+Aug\+Lagrangian\+Test\+Function\+::initial\+Point.
+
+\index{mlpack\+::optimization\+::\+Gockenbach\+Function@{mlpack\+::optimization\+::\+Gockenbach\+Function}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::optimization\+::\+Gockenbach\+Function@{mlpack\+::optimization\+::\+Gockenbach\+Function}}
+\subsubsection[{Gradient(const arma\+::mat \&coordinates, arma\+::mat \&gradient)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::optimization\+::\+Gockenbach\+Function\+::\+Gradient (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{coordinates, }
+\item[{arma\+::mat \&}]{gradient}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1optimization_1_1GockenbachFunction_ab0d361b7a8b1cecbb85657c53d198843}
+\index{mlpack\+::optimization\+::\+Gockenbach\+Function@{mlpack\+::optimization\+::\+Gockenbach\+Function}!Gradient\+Constraint@{Gradient\+Constraint}}
+\index{Gradient\+Constraint@{Gradient\+Constraint}!mlpack\+::optimization\+::\+Gockenbach\+Function@{mlpack\+::optimization\+::\+Gockenbach\+Function}}
+\subsubsection[{Gradient\+Constraint(const size\+\_\+t index, const arma\+::mat \&coordinates, arma\+::mat \&gradient)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::optimization\+::\+Gockenbach\+Function\+::\+Gradient\+Constraint (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{index, }
+\item[{const arma\+::mat \&}]{coordinates, }
+\item[{arma\+::mat \&}]{gradient}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1optimization_1_1GockenbachFunction_a6cdc11ff58584870ecc96fc4b135fc35}
+\index{mlpack\+::optimization\+::\+Gockenbach\+Function@{mlpack\+::optimization\+::\+Gockenbach\+Function}!Num\+Constraints@{Num\+Constraints}}
+\index{Num\+Constraints@{Num\+Constraints}!mlpack\+::optimization\+::\+Gockenbach\+Function@{mlpack\+::optimization\+::\+Gockenbach\+Function}}
+\subsubsection[{Num\+Constraints() const }]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t mlpack\+::optimization\+::\+Gockenbach\+Function\+::\+Num\+Constraints (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1optimization_1_1GockenbachFunction_ac7b1dd9767dd4a08687138a3951ca090}
+
+
+Definition at line 70 of file aug\+\_\+lagrangian\+\_\+test\+\_\+functions.\+hpp.
+
+
+
+References mlpack\+::optimization\+::\+Aug\+Lagrangian\+Test\+Function\+::\+Evaluate\+Constraint(), and mlpack\+::optimization\+::\+Aug\+Lagrangian\+Test\+Function\+::\+Gradient\+Constraint().
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::optimization\+::\+Gockenbach\+Function@{mlpack\+::optimization\+::\+Gockenbach\+Function}!initial\+Point@{initial\+Point}}
+\index{initial\+Point@{initial\+Point}!mlpack\+::optimization\+::\+Gockenbach\+Function@{mlpack\+::optimization\+::\+Gockenbach\+Function}}
+\subsubsection[{initial\+Point}]{\setlength{\rightskip}{0pt plus 5cm}arma\+::mat mlpack\+::optimization\+::\+Gockenbach\+Function\+::initial\+Point\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1optimization_1_1GockenbachFunction_a244c71dbc7aae79eb991f84ced05f326}
+
+
+Definition at line 80 of file aug\+\_\+lagrangian\+\_\+test\+\_\+functions.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/optimizers/aug\+\_\+lagrangian/{\bf aug\+\_\+lagrangian\+\_\+test\+\_\+functions.\+hpp}\end{DoxyCompactItemize}

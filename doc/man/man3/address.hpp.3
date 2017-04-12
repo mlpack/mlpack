@@ -1,0 +1,79 @@
+.TH "src/mlpack/core/tree/address.hpp" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+src/mlpack/core/tree/address.hpp \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "\fILinear algebra utility functions, generally performed on matrices or vectors\&. \fP"
+.ti -1c
+.RI " \fBmlpack::bound\fP"
+.br
+.ti -1c
+.RI " \fBmlpack::bound::addr\fP"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename AddressType , typename VecType > void \fBmlpack::bound::addr::AddressToPoint\fP (VecType &point, const AddressType &address)"
+.br
+.RI "\fITranslate the address to the point\&. \fP"
+.ti -1c
+.RI "template<typename AddressType1 , typename AddressType2 > int \fBmlpack::bound::addr::CompareAddresses\fP (const AddressType1 &addr1, const AddressType2 &addr2)"
+.br
+.RI "\fICompare two addresses\&. \fP"
+.ti -1c
+.RI "template<typename AddressType1 , typename AddressType2 , typename AddressType3 > bool \fBmlpack::bound::addr::Contains\fP (const AddressType1 &address, const AddressType2 &loBound, const AddressType3 &hiBound)"
+.br
+.RI "\fIReturns true if an address is contained between two other addresses\&. \fP"
+.ti -1c
+.RI "template<typename AddressType , typename VecType > void \fBmlpack::bound::addr::PointToAddress\fP (AddressType &address, const VecType &point)"
+.br
+.RI "\fICalculate the address of a point\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Mikhail Lozhnikov
+.RE
+.PP
+This file contains a series of functions for translating points to addresses and back and functions for comparing addresses\&.
+.PP
+The notion of addresses is described in the following paper\&. 
+.PP
+.nf
+@inproceedings{bayer1997,
+  author = {Bayer, Rudolf},
+  title = {The Universal B-Tree for Multidimensional Indexing: General
+      Concepts},
+  booktitle = {Proceedings of the International Conference on Worldwide
+      Computing and Its Applications},
+  series = {WWCA '97},
+  year = {1997},
+  isbn = {3-540-63343-X},
+  pages = {198--209},
+  numpages = {12},
+  publisher = {Springer-Verlag},
+  address = {London, UK, UK},
+}
+
+.fi
+.PP
+ 
+.PP
+Definition in file \fBaddress\&.hpp\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

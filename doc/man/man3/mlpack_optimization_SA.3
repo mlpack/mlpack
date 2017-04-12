@@ -1,0 +1,530 @@
+.TH "mlpack::optimization::SA< FunctionType, CoolingScheduleType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::optimization::SA< FunctionType, CoolingScheduleType > \- Simulated Annealing is an stochastic optimization algorithm which is able to deliver near-optimal results quickly without knowing the gradient of the function being optimized\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBSA\fP (FunctionType &\fBfunction\fP, CoolingScheduleType &\fBcoolingSchedule\fP, const size_t \fBmaxIterations\fP=1000000, const double initT=10000\&., const size_t \fBinitMoves\fP=1000, const size_t \fBmoveCtrlSweep\fP=100, const double \fBtolerance\fP=1e\-5, const size_t maxToleranceSweep=3, const double maxMoveCoef=20, const double initMoveCoef=0\&.3, const double gain=0\&.3)"
+.br
+.RI "\fIConstruct the \fBSA\fP optimizer with the given function and parameters\&. \fP"
+.ti -1c
+.RI "const FunctionType & \fBFunction\fP () const "
+.br
+.RI "\fIGet the instantiated function to be optimized\&. \fP"
+.ti -1c
+.RI "FunctionType & \fBFunction\fP ()"
+.br
+.RI "\fIModify the instantiated function\&. \fP"
+.ti -1c
+.RI "double \fBGain\fP () const "
+.br
+.RI "\fIGet the gain\&. \fP"
+.ti -1c
+.RI "double & \fBGain\fP ()"
+.br
+.RI "\fIModify the gain\&. \fP"
+.ti -1c
+.RI "size_t \fBInitMoves\fP () const "
+.br
+.RI "\fIGet the initial moves\&. \fP"
+.ti -1c
+.RI "size_t & \fBInitMoves\fP ()"
+.br
+.RI "\fIModify the initial moves\&. \fP"
+.ti -1c
+.RI "size_t \fBMaxIterations\fP () const "
+.br
+.RI "\fIGet the maximum number of iterations\&. \fP"
+.ti -1c
+.RI "size_t & \fBMaxIterations\fP ()"
+.br
+.RI "\fIModify the maximum number of iterations\&. \fP"
+.ti -1c
+.RI "arma::mat \fBMaxMove\fP () const "
+.br
+.RI "\fIGet the maximum move size of each parameter\&. \fP"
+.ti -1c
+.RI "arma::mat & \fBMaxMove\fP ()"
+.br
+.RI "\fIModify the maximum move size of each parameter\&. \fP"
+.ti -1c
+.RI "size_t \fBMaxToleranceSweep\fP () const "
+.br
+.RI "\fIGet the maxToleranceSweep\&. \fP"
+.ti -1c
+.RI "size_t & \fBMaxToleranceSweep\fP ()"
+.br
+.RI "\fIModify the maxToleranceSweep\&. \fP"
+.ti -1c
+.RI "size_t \fBMoveCtrlSweep\fP () const "
+.br
+.RI "\fIGet sweeps per move control\&. \fP"
+.ti -1c
+.RI "size_t & \fBMoveCtrlSweep\fP ()"
+.br
+.RI "\fIModify sweeps per move control\&. \fP"
+.ti -1c
+.RI "arma::mat \fBMoveSize\fP () const "
+.br
+.RI "\fIGet move size of each parameter\&. \fP"
+.ti -1c
+.RI "arma::mat & \fBMoveSize\fP ()"
+.br
+.RI "\fIModify move size of each parameter\&. \fP"
+.ti -1c
+.RI "double \fBOptimize\fP (arma::mat &iterate)"
+.br
+.RI "\fIOptimize the given function using simulated annealing\&. \fP"
+.ti -1c
+.RI "double \fBTemperature\fP () const "
+.br
+.RI "\fIGet the temperature\&. \fP"
+.ti -1c
+.RI "double & \fBTemperature\fP ()"
+.br
+.RI "\fIModify the temperature\&. \fP"
+.ti -1c
+.RI "double \fBTolerance\fP () const "
+.br
+.RI "\fIGet the tolerance\&. \fP"
+.ti -1c
+.RI "double & \fBTolerance\fP ()"
+.br
+.RI "\fIModify the tolerance\&. \fP"
+.in -1c
+.SS "Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBGenerateMove\fP (arma::mat &iterate, arma::mat &accept, double &energy, size_t &idx, size_t &sweepCounter)"
+.br
+.RI "\fIGenerateMove proposes a move on element iterate(idx), and determines if that move is acceptable or not according to the Metropolis criterion\&. \fP"
+.ti -1c
+.RI "void \fBMoveControl\fP (const size_t nMoves, arma::mat &accept)"
+.br
+.RI "\fI\fBMoveControl()\fP uses a proportional feedback control to determine the size parameter to pass to the move generation distribution\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "CoolingScheduleType & \fBcoolingSchedule\fP"
+.br
+.RI "\fIThe cooling schedule being used\&. \fP"
+.ti -1c
+.RI "FunctionType & \fBfunction\fP"
+.br
+.RI "\fIThe function to be optimized\&. \fP"
+.ti -1c
+.RI "double \fBgain\fP"
+.br
+.RI "\fIProportional control in feedback move control\&. \fP"
+.ti -1c
+.RI "size_t \fBinitMoves\fP"
+.br
+.RI "\fIThe number of initial moves before reducing the temperature\&. \fP"
+.ti -1c
+.RI "size_t \fBmaxIterations\fP"
+.br
+.RI "\fIThe maximum number of iterations\&. \fP"
+.ti -1c
+.RI "arma::mat \fBmaxMove\fP"
+.br
+.RI "\fIMaximum move size of each parameter\&. \fP"
+.ti -1c
+.RI "size_t \fBmaxToleranceSweep\fP"
+.br
+.RI "\fINumber of sweeps in tolerance before system is considered frozen\&. \fP"
+.ti -1c
+.RI "size_t \fBmoveCtrlSweep\fP"
+.br
+.RI "\fIThe number of sweeps before a \fBMoveControl()\fP call\&. \fP"
+.ti -1c
+.RI "arma::mat \fBmoveSize\fP"
+.br
+.RI "\fIMove size of each parameter\&. \fP"
+.ti -1c
+.RI "double \fBtemperature\fP"
+.br
+.RI "\fIThe current temperature\&. \fP"
+.ti -1c
+.RI "double \fBtolerance\fP"
+.br
+.RI "\fITolerance for convergence\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename FunctionType, typename CoolingScheduleType = ExponentialSchedule>
+.br
+class mlpack::optimization::SA< FunctionType, CoolingScheduleType >"
+Simulated Annealing is an stochastic optimization algorithm which is able to deliver near-optimal results quickly without knowing the gradient of the function being optimized\&. 
+
+It has unique hill climbing capability that makes it less vulnerable to local minima\&. This implementation uses exponential cooling schedule and feedback move control by default, but the cooling schedule can be changed via a template parameter\&.
+.PP
+The algorithm keeps the temperature at initial temperature for initMove steps to get rid of the dependency on the initial condition\&. After that, it cools every step until the system is considered frozen or maxIterations is reached\&.
+.PP
+At each step, \fBSA\fP only perturbs one parameter at a time\&. When \fBSA\fP has perturbed all parameters in a problem, a sweep has been completed\&. Every moveCtrlSweep sweeps, the algorithm does feedback move control to change the average move size depending on the responsiveness of each parameter\&. Parameter gain controls the proportion of the feedback control\&.
+.PP
+The system is considered 'frozen' when its score fails to change more then tolerance for maxToleranceSweep consecutive sweeps\&.
+.PP
+For \fBSA\fP to work, the FunctionType parameter must implement the following two methods:
+.PP
+double Evaluate(const arma::mat& coordinates); arma::mat& GetInitialPoint();
+.PP
+and the CoolingScheduleType parameter must implement the following method:
+.PP
+double NextTemperature(const double currentTemperature, const double currentValue);
+.PP
+which returns the next temperature given current temperature and the value of the function being optimized\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIFunctionType\fP objective function type to be minimized\&. 
+.br
+\fICoolingScheduleType\fP type for cooling schedule 
+.RE
+.PP
+
+.PP
+Definition at line 65 of file sa\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename FunctionType , typename CoolingScheduleType  = ExponentialSchedule> \fBmlpack::optimization::SA\fP< FunctionType, CoolingScheduleType >::\fBSA\fP (FunctionType & function, CoolingScheduleType & coolingSchedule, const size_t maxIterations = \fC1000000\fP, const double initT = \fC10000\&.\fP, const size_t initMoves = \fC1000\fP, const size_t moveCtrlSweep = \fC100\fP, const double tolerance = \fC1e\-5\fP, const size_t maxToleranceSweep = \fC3\fP, const double maxMoveCoef = \fC20\fP, const double initMoveCoef = \fC0\&.3\fP, const double gain = \fC0\&.3\fP)"
+
+.PP
+Construct the \fBSA\fP optimizer with the given function and parameters\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfunction\fP Function to be minimized\&. 
+.br
+\fIcoolingSchedule\fP Instantiated cooling schedule\&. 
+.br
+\fImaxIterations\fP Maximum number of iterations allowed (0 indicates no limit)\&. 
+.br
+\fIinitT\fP Initial temperature\&. 
+.br
+\fIinitMoves\fP Number of initial iterations without changing temperature\&. 
+.br
+\fImoveCtrlSweep\fP Sweeps per feedback move control\&. 
+.br
+\fItolerance\fP Tolerance to consider system frozen\&. 
+.br
+\fImaxToleranceSweep\fP Maximum sweeps below tolerance to consider system frozen\&. 
+.br
+\fImaxMoveCoef\fP Maximum move size\&. 
+.br
+\fIinitMoveCoef\fP Initial move size\&. 
+.br
+\fIgain\fP Proportional control in feedback move control\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename FunctionType , typename CoolingScheduleType  = ExponentialSchedule> const FunctionType& \fBmlpack::optimization::SA\fP< FunctionType, CoolingScheduleType >::Function () const\fC [inline]\fP"
+
+.PP
+Get the instantiated function to be optimized\&. 
+.PP
+Definition at line 107 of file sa\&.hpp\&.
+.SS "template<typename FunctionType , typename CoolingScheduleType  = ExponentialSchedule> FunctionType& \fBmlpack::optimization::SA\fP< FunctionType, CoolingScheduleType >::Function ()\fC [inline]\fP"
+
+.PP
+Modify the instantiated function\&. 
+.PP
+Definition at line 109 of file sa\&.hpp\&.
+.SS "template<typename FunctionType , typename CoolingScheduleType  = ExponentialSchedule> double \fBmlpack::optimization::SA\fP< FunctionType, CoolingScheduleType >::Gain () const\fC [inline]\fP"
+
+.PP
+Get the gain\&. 
+.PP
+Definition at line 137 of file sa\&.hpp\&.
+.PP
+References mlpack::optimization::SA< FunctionType, CoolingScheduleType >::gain\&.
+.SS "template<typename FunctionType , typename CoolingScheduleType  = ExponentialSchedule> double& \fBmlpack::optimization::SA\fP< FunctionType, CoolingScheduleType >::Gain ()\fC [inline]\fP"
+
+.PP
+Modify the gain\&. 
+.PP
+Definition at line 139 of file sa\&.hpp\&.
+.PP
+References mlpack::optimization::SA< FunctionType, CoolingScheduleType >::gain\&.
+.SS "template<typename FunctionType , typename CoolingScheduleType  = ExponentialSchedule> void \fBmlpack::optimization::SA\fP< FunctionType, CoolingScheduleType >::GenerateMove (arma::mat & iterate, arma::mat & accept, double & energy, size_t & idx, size_t & sweepCounter)\fC [private]\fP"
+
+.PP
+GenerateMove proposes a move on element iterate(idx), and determines if that move is acceptable or not according to the Metropolis criterion\&. After that it increments idx so the next call will make a move on next parameters\&. When all elements of the state have been moved (a sweep), it resets idx and increments sweepCounter\&. When sweepCounter reaches moveCtrlSweep, it performs \fBMoveControl()\fP and resets sweepCounter\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIiterate\fP Current optimization position\&. 
+.br
+\fIaccept\fP Matrix representing which parameters have had accepted moves\&. 
+.br
+\fIenergy\fP Current energy of the system\&. 
+.br
+\fIidx\fP Current parameter to modify\&. 
+.br
+\fIsweepCounter\fP Current counter representing how many sweeps have been completed\&. 
+.RE
+.PP
+
+.SS "template<typename FunctionType , typename CoolingScheduleType  = ExponentialSchedule> size_t \fBmlpack::optimization::SA\fP< FunctionType, CoolingScheduleType >::InitMoves () const\fC [inline]\fP"
+
+.PP
+Get the initial moves\&. 
+.PP
+Definition at line 117 of file sa\&.hpp\&.
+.PP
+References mlpack::optimization::SA< FunctionType, CoolingScheduleType >::initMoves\&.
+.SS "template<typename FunctionType , typename CoolingScheduleType  = ExponentialSchedule> size_t& \fBmlpack::optimization::SA\fP< FunctionType, CoolingScheduleType >::InitMoves ()\fC [inline]\fP"
+
+.PP
+Modify the initial moves\&. 
+.PP
+Definition at line 119 of file sa\&.hpp\&.
+.PP
+References mlpack::optimization::SA< FunctionType, CoolingScheduleType >::initMoves\&.
+.SS "template<typename FunctionType , typename CoolingScheduleType  = ExponentialSchedule> size_t \fBmlpack::optimization::SA\fP< FunctionType, CoolingScheduleType >::MaxIterations () const\fC [inline]\fP"
+
+.PP
+Get the maximum number of iterations\&. 
+.PP
+Definition at line 142 of file sa\&.hpp\&.
+.PP
+References mlpack::optimization::SA< FunctionType, CoolingScheduleType >::maxIterations\&.
+.SS "template<typename FunctionType , typename CoolingScheduleType  = ExponentialSchedule> size_t& \fBmlpack::optimization::SA\fP< FunctionType, CoolingScheduleType >::MaxIterations ()\fC [inline]\fP"
+
+.PP
+Modify the maximum number of iterations\&. 
+.PP
+Definition at line 144 of file sa\&.hpp\&.
+.PP
+References mlpack::optimization::SA< FunctionType, CoolingScheduleType >::maxIterations\&.
+.SS "template<typename FunctionType , typename CoolingScheduleType  = ExponentialSchedule> arma::mat \fBmlpack::optimization::SA\fP< FunctionType, CoolingScheduleType >::MaxMove () const\fC [inline]\fP"
+
+.PP
+Get the maximum move size of each parameter\&. 
+.PP
+Definition at line 147 of file sa\&.hpp\&.
+.PP
+References mlpack::optimization::SA< FunctionType, CoolingScheduleType >::maxMove\&.
+.SS "template<typename FunctionType , typename CoolingScheduleType  = ExponentialSchedule> arma::mat& \fBmlpack::optimization::SA\fP< FunctionType, CoolingScheduleType >::MaxMove ()\fC [inline]\fP"
+
+.PP
+Modify the maximum move size of each parameter\&. 
+.PP
+Definition at line 149 of file sa\&.hpp\&.
+.PP
+References mlpack::optimization::SA< FunctionType, CoolingScheduleType >::maxMove\&.
+.SS "template<typename FunctionType , typename CoolingScheduleType  = ExponentialSchedule> size_t \fBmlpack::optimization::SA\fP< FunctionType, CoolingScheduleType >::MaxToleranceSweep () const\fC [inline]\fP"
+
+.PP
+Get the maxToleranceSweep\&. 
+.PP
+Definition at line 132 of file sa\&.hpp\&.
+.PP
+References mlpack::optimization::SA< FunctionType, CoolingScheduleType >::maxToleranceSweep\&.
+.SS "template<typename FunctionType , typename CoolingScheduleType  = ExponentialSchedule> size_t& \fBmlpack::optimization::SA\fP< FunctionType, CoolingScheduleType >::MaxToleranceSweep ()\fC [inline]\fP"
+
+.PP
+Modify the maxToleranceSweep\&. 
+.PP
+Definition at line 134 of file sa\&.hpp\&.
+.PP
+References mlpack::optimization::SA< FunctionType, CoolingScheduleType >::maxToleranceSweep\&.
+.SS "template<typename FunctionType , typename CoolingScheduleType  = ExponentialSchedule> void \fBmlpack::optimization::SA\fP< FunctionType, CoolingScheduleType >::MoveControl (const size_t nMoves, arma::mat & accept)\fC [private]\fP"
+
+.PP
+\fBMoveControl()\fP uses a proportional feedback control to determine the size parameter to pass to the move generation distribution\&. The target of such move control is to make the acceptance ratio, accept/nMoves, be as close to 0\&.44 as possible\&. Generally speaking, the larger the move size is, the larger the function value change of the move will be, and less likely such move will be accepted by the Metropolis criterion\&. Thus, the move size is controlled by
+.PP
+log(moveSize) = log(moveSize) + gain * (accept/nMoves - target)
+.PP
+For more theory and the mysterious 0\&.44 value, see Jimmy K\&.-C\&. Lam and Jean-Marc Delosme\&. `An efficient simulated annealing schedule: derivation'\&. Technical Report 8816, Yale University, 1988\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fInMoves\fP Number of moves since last call\&. 
+.br
+\fIaccept\fP Matrix representing which parameters have had accepted moves\&. 
+.RE
+.PP
+
+.SS "template<typename FunctionType , typename CoolingScheduleType  = ExponentialSchedule> size_t \fBmlpack::optimization::SA\fP< FunctionType, CoolingScheduleType >::MoveCtrlSweep () const\fC [inline]\fP"
+
+.PP
+Get sweeps per move control\&. 
+.PP
+Definition at line 122 of file sa\&.hpp\&.
+.PP
+References mlpack::optimization::SA< FunctionType, CoolingScheduleType >::moveCtrlSweep\&.
+.SS "template<typename FunctionType , typename CoolingScheduleType  = ExponentialSchedule> size_t& \fBmlpack::optimization::SA\fP< FunctionType, CoolingScheduleType >::MoveCtrlSweep ()\fC [inline]\fP"
+
+.PP
+Modify sweeps per move control\&. 
+.PP
+Definition at line 124 of file sa\&.hpp\&.
+.PP
+References mlpack::optimization::SA< FunctionType, CoolingScheduleType >::moveCtrlSweep\&.
+.SS "template<typename FunctionType , typename CoolingScheduleType  = ExponentialSchedule> arma::mat \fBmlpack::optimization::SA\fP< FunctionType, CoolingScheduleType >::MoveSize () const\fC [inline]\fP"
+
+.PP
+Get move size of each parameter\&. 
+.PP
+Definition at line 152 of file sa\&.hpp\&.
+.PP
+References mlpack::optimization::SA< FunctionType, CoolingScheduleType >::moveSize\&.
+.SS "template<typename FunctionType , typename CoolingScheduleType  = ExponentialSchedule> arma::mat& \fBmlpack::optimization::SA\fP< FunctionType, CoolingScheduleType >::MoveSize ()\fC [inline]\fP"
+
+.PP
+Modify move size of each parameter\&. 
+.PP
+Definition at line 154 of file sa\&.hpp\&.
+.PP
+References mlpack::optimization::SA< FunctionType, CoolingScheduleType >::moveSize\&.
+.SS "template<typename FunctionType , typename CoolingScheduleType  = ExponentialSchedule> double \fBmlpack::optimization::SA\fP< FunctionType, CoolingScheduleType >::Optimize (arma::mat & iterate)"
+
+.PP
+Optimize the given function using simulated annealing\&. The given starting point will be modified to store the finishing point of the algorithm, and the final objective value is returned\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIiterate\fP Starting point (will be modified)\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Objective value of the final point\&. 
+.RE
+.PP
+
+.SS "template<typename FunctionType , typename CoolingScheduleType  = ExponentialSchedule> double \fBmlpack::optimization::SA\fP< FunctionType, CoolingScheduleType >::Temperature () const\fC [inline]\fP"
+
+.PP
+Get the temperature\&. 
+.PP
+Definition at line 112 of file sa\&.hpp\&.
+.PP
+References mlpack::optimization::SA< FunctionType, CoolingScheduleType >::temperature\&.
+.SS "template<typename FunctionType , typename CoolingScheduleType  = ExponentialSchedule> double& \fBmlpack::optimization::SA\fP< FunctionType, CoolingScheduleType >::Temperature ()\fC [inline]\fP"
+
+.PP
+Modify the temperature\&. 
+.PP
+Definition at line 114 of file sa\&.hpp\&.
+.PP
+References mlpack::optimization::SA< FunctionType, CoolingScheduleType >::temperature\&.
+.SS "template<typename FunctionType , typename CoolingScheduleType  = ExponentialSchedule> double \fBmlpack::optimization::SA\fP< FunctionType, CoolingScheduleType >::Tolerance () const\fC [inline]\fP"
+
+.PP
+Get the tolerance\&. 
+.PP
+Definition at line 127 of file sa\&.hpp\&.
+.PP
+References mlpack::optimization::SA< FunctionType, CoolingScheduleType >::tolerance\&.
+.SS "template<typename FunctionType , typename CoolingScheduleType  = ExponentialSchedule> double& \fBmlpack::optimization::SA\fP< FunctionType, CoolingScheduleType >::Tolerance ()\fC [inline]\fP"
+
+.PP
+Modify the tolerance\&. 
+.PP
+Definition at line 129 of file sa\&.hpp\&.
+.PP
+References mlpack::optimization::SA< FunctionType, CoolingScheduleType >::tolerance\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename FunctionType , typename CoolingScheduleType  = ExponentialSchedule> CoolingScheduleType& \fBmlpack::optimization::SA\fP< FunctionType, CoolingScheduleType >::coolingSchedule\fC [private]\fP"
+
+.PP
+The cooling schedule being used\&. 
+.PP
+Definition at line 160 of file sa\&.hpp\&.
+.SS "template<typename FunctionType , typename CoolingScheduleType  = ExponentialSchedule> FunctionType& \fBmlpack::optimization::SA\fP< FunctionType, CoolingScheduleType >::function\fC [private]\fP"
+
+.PP
+The function to be optimized\&. 
+.PP
+Definition at line 158 of file sa\&.hpp\&.
+.SS "template<typename FunctionType , typename CoolingScheduleType  = ExponentialSchedule> double \fBmlpack::optimization::SA\fP< FunctionType, CoolingScheduleType >::gain\fC [private]\fP"
+
+.PP
+Proportional control in feedback move control\&. 
+.PP
+Definition at line 174 of file sa\&.hpp\&.
+.PP
+Referenced by mlpack::optimization::SA< FunctionType, CoolingScheduleType >::Gain()\&.
+.SS "template<typename FunctionType , typename CoolingScheduleType  = ExponentialSchedule> size_t \fBmlpack::optimization::SA\fP< FunctionType, CoolingScheduleType >::initMoves\fC [private]\fP"
+
+.PP
+The number of initial moves before reducing the temperature\&. 
+.PP
+Definition at line 166 of file sa\&.hpp\&.
+.PP
+Referenced by mlpack::optimization::SA< FunctionType, CoolingScheduleType >::InitMoves()\&.
+.SS "template<typename FunctionType , typename CoolingScheduleType  = ExponentialSchedule> size_t \fBmlpack::optimization::SA\fP< FunctionType, CoolingScheduleType >::maxIterations\fC [private]\fP"
+
+.PP
+The maximum number of iterations\&. 
+.PP
+Definition at line 162 of file sa\&.hpp\&.
+.PP
+Referenced by mlpack::optimization::SA< FunctionType, CoolingScheduleType >::MaxIterations()\&.
+.SS "template<typename FunctionType , typename CoolingScheduleType  = ExponentialSchedule> arma::mat \fBmlpack::optimization::SA\fP< FunctionType, CoolingScheduleType >::maxMove\fC [private]\fP"
+
+.PP
+Maximum move size of each parameter\&. 
+.PP
+Definition at line 177 of file sa\&.hpp\&.
+.PP
+Referenced by mlpack::optimization::SA< FunctionType, CoolingScheduleType >::MaxMove()\&.
+.SS "template<typename FunctionType , typename CoolingScheduleType  = ExponentialSchedule> size_t \fBmlpack::optimization::SA\fP< FunctionType, CoolingScheduleType >::maxToleranceSweep\fC [private]\fP"
+
+.PP
+Number of sweeps in tolerance before system is considered frozen\&. 
+.PP
+Definition at line 172 of file sa\&.hpp\&.
+.PP
+Referenced by mlpack::optimization::SA< FunctionType, CoolingScheduleType >::MaxToleranceSweep()\&.
+.SS "template<typename FunctionType , typename CoolingScheduleType  = ExponentialSchedule> size_t \fBmlpack::optimization::SA\fP< FunctionType, CoolingScheduleType >::moveCtrlSweep\fC [private]\fP"
+
+.PP
+The number of sweeps before a \fBMoveControl()\fP call\&. 
+.PP
+Definition at line 168 of file sa\&.hpp\&.
+.PP
+Referenced by mlpack::optimization::SA< FunctionType, CoolingScheduleType >::MoveCtrlSweep()\&.
+.SS "template<typename FunctionType , typename CoolingScheduleType  = ExponentialSchedule> arma::mat \fBmlpack::optimization::SA\fP< FunctionType, CoolingScheduleType >::moveSize\fC [private]\fP"
+
+.PP
+Move size of each parameter\&. 
+.PP
+Definition at line 179 of file sa\&.hpp\&.
+.PP
+Referenced by mlpack::optimization::SA< FunctionType, CoolingScheduleType >::MoveSize()\&.
+.SS "template<typename FunctionType , typename CoolingScheduleType  = ExponentialSchedule> double \fBmlpack::optimization::SA\fP< FunctionType, CoolingScheduleType >::temperature\fC [private]\fP"
+
+.PP
+The current temperature\&. 
+.PP
+Definition at line 164 of file sa\&.hpp\&.
+.PP
+Referenced by mlpack::optimization::SA< FunctionType, CoolingScheduleType >::Temperature()\&.
+.SS "template<typename FunctionType , typename CoolingScheduleType  = ExponentialSchedule> double \fBmlpack::optimization::SA\fP< FunctionType, CoolingScheduleType >::tolerance\fC [private]\fP"
+
+.PP
+Tolerance for convergence\&. 
+.PP
+Definition at line 170 of file sa\&.hpp\&.
+.PP
+Referenced by mlpack::optimization::SA< FunctionType, CoolingScheduleType >::Tolerance()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

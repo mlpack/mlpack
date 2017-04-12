@@ -1,0 +1,28 @@
+<map id="src/mlpack/methods/rann/ra_typedef.hpp" name="src/mlpack/methods/rann/ra_typedef.hpp">
+<area shape="rect" id="node2" href="$ra__search_8hpp.html" title="ra_search.hpp" alt="" coords="1663,109,1767,136"/>
+<area shape="rect" id="node30" href="$lmetric_8hpp.html" title="mlpack/core/metrics\l/lmetric.hpp" alt="" coords="1545,481,1685,523"/>
+<area shape="rect" id="node44" href="$nearest__neighbor__sort_8hpp.html" title="mlpack/methods/neighbor\l_search/sort_policies\l/nearest_neighbor_sort.hpp" alt="" coords="1752,288,1931,344"/>
+<area shape="rect" id="node49" href="$furthest__neighbor__sort_8hpp.html" title="mlpack/methods/neighbor\l_search/sort_policies\l/furthest_neighbor_sort.hpp" alt="" coords="2113,95,2293,151"/>
+<area shape="rect" id="node3" href="$prereqs_8hpp.html" title="The core includes that mlpack expects; standard C++ includes and Armadillo. " alt="" coords="1050,660,1186,687"/>
+<area shape="rect" id="node28" href="$binary__space__tree_8hpp.html" title="mlpack/core/tree/binary\l_space_tree.hpp" alt="" coords="865,295,1024,337"/>
+<area shape="rect" id="node46" href="$ra__query__stat_8hpp.html" title="ra_query_stat.hpp" alt="" coords="1652,206,1778,233"/>
+<area shape="rect" id="node47" href="$ra__util_8hpp.html" title="ra_util.hpp" alt="" coords="1955,303,2038,329"/>
+<area shape="rect" id="node20" href="$serialization__shim_8hpp.html" title="mlpack/core/data/serialization\l_shim.hpp" alt="" coords="1650,735,1844,776"/>
+<area shape="rect" id="node21" href="$serialization__template__version_8hpp.html" title="mlpack/core/data/serialization\l_template_version.hpp" alt="" coords="1868,735,2063,776"/>
+<area shape="rect" id="node23" href="$arma__traits_8hpp.html" title="mlpack/core/util/arma\l_traits.hpp" alt="" coords="2284,735,2431,776"/>
+<area shape="rect" id="node24" href="$arma__config__check_8hpp.html" title="mlpack/core/util/arma\l_config_check.hpp" alt="" coords="2455,735,2602,776"/>
+<area shape="rect" id="node25" href="$log_8hpp.html" title="mlpack/core/util/log.hpp" alt="" coords="2626,742,2786,769"/>
+<area shape="rect" id="node26" href="$timers_8hpp.html" title="mlpack/core/util/timers.hpp" alt="" coords="2810,742,2988,769"/>
+<area shape="rect" id="node27" href="$deprecated_8hpp.html" title="mlpack/core/util/deprecated.hpp" alt="" coords="3013,742,3220,769"/>
+<area shape="rect" id="node29" href="$bounds_8hpp.html" title="Bounds that are useful for binary space partitioning trees. " alt="" coords="1486,399,1576,426"/>
+<area shape="rect" id="node32" href="$midpoint__split_8hpp.html" title="binary_space_tree/midpoint\l_split.hpp" alt="" coords="436,571,618,612"/>
+<area shape="rect" id="node33" href="$mean__split_8hpp.html" title="binary_space_tree/mean\l_split.hpp" alt="" coords="916,481,1080,523"/>
+<area shape="rect" id="node34" href="$vantage__point__split_8hpp.html" title="binary_space_tree/vantage\l_point_split.hpp" alt="" coords="1028,571,1207,612"/>
+<area shape="rect" id="node35" href="$rp__tree__max__split_8hpp.html" title="binary_space_tree/rp\l_tree_max_split.hpp" alt="" coords="1156,481,1298,523"/>
+<area shape="rect" id="node36" href="$rp__tree__mean__split_8hpp.html" title="binary_space_tree/rp\l_tree_mean_split.hpp" alt="" coords="1263,392,1410,433"/>
+<area shape="rect" id="node37" href="$ub__tree__split_8hpp.html" title="binary_space_tree/ub\l_tree_split.hpp" alt="" coords="1374,481,1520,523"/>
+<area shape="rect" id="node38" href="$binary__space__tree_2binary__space__tree_8hpp.html" title="binary_space_tree/binary\l_space_tree.hpp" alt="" coords="316,481,482,523"/>
+<area shape="rect" id="node39" href="$binary__space__tree_2single__tree__traverser_8hpp.html" title="binary_space_tree/single\l_tree_traverser.hpp" alt="" coords="182,392,349,433"/>
+<area shape="rect" id="node41" href="$binary__space__tree_2dual__tree__traverser_8hpp.html" title="binary_space_tree/dual\l_tree_traverser.hpp" alt="" coords="500,392,656,433"/>
+<area shape="rect" id="node43" href="$breadth__first__dual__tree__traverser_8hpp.html" title="binary_space_tree/breadth\l_first_dual_tree_traverser.hpp" alt="" coords="46,571,240,612"/>
+</map>

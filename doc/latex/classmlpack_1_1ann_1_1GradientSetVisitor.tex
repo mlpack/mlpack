@@ -1,0 +1,156 @@
+\section{mlpack\+:\+:ann\+:\+:Gradient\+Set\+Visitor Class Reference}
+\label{classmlpack_1_1ann_1_1GradientSetVisitor}\index{mlpack\+::ann\+::\+Gradient\+Set\+Visitor@{mlpack\+::ann\+::\+Gradient\+Set\+Visitor}}
+
+
+\doxyref{Gradient\+Set\+Visitor}{p.}{classmlpack_1_1ann_1_1GradientSetVisitor} update the gradient parameter given the gradient set.  
+
+
+
+
+Inheritance diagram for mlpack\+:\+:ann\+:\+:Gradient\+Set\+Visitor\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=172pt]{classmlpack_1_1ann_1_1GradientSetVisitor__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Gradient\+Set\+Visitor} (arma\+::mat \&\&{\bf gradient}, size\+\_\+t {\bf offset}=0)
+\begin{DoxyCompactList}\small\item\em Update the gradient parameter given the gradient set. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Layer\+Type $>$ }\\size\+\_\+t {\bf operator()} (Layer\+Type $\ast$layer) const 
+\begin{DoxyCompactList}\small\item\em Update the gradient parameter. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::enable\+\_\+if$<$ Has\+Gradient\+Check$<$ T, arma\+::mat \&(T\+::$\ast$)()$>$\+::value \&\&!Has\+Model\+Check$<$ T, std\+::vector$<$ {\bf Layer\+Types} $>$ \&(T\+::$\ast$)()$>$\+::value, size\+\_\+t $>$\+::type {\bf Layer\+Gradients} (T $\ast$layer, arma\+::mat \&input) const 
+\begin{DoxyCompactList}\small\item\em Update the gradient if the module implements the Gradient() function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::enable\+\_\+if$<$ !Has\+Gradient\+Check$<$ T, arma\+::mat \&(T\+::$\ast$)()$>$\+::value \&\&Has\+Model\+Check$<$ T, std\+::vector$<$ {\bf Layer\+Types} $>$ \&(T\+::$\ast$)()$>$\+::value, size\+\_\+t $>$\+::type {\bf Layer\+Gradients} (T $\ast$layer, arma\+::mat \&input) const 
+\begin{DoxyCompactList}\small\item\em Update the gradient if the module implements the Model() function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::enable\+\_\+if$<$ Has\+Gradient\+Check$<$ T, arma\+::mat \&(T\+::$\ast$)()$>$\+::value \&\&Has\+Model\+Check$<$ T, std\+::vector$<$ {\bf Layer\+Types} $>$ \&(T\+::$\ast$)()$>$\+::value, size\+\_\+t $>$\+::type {\bf Layer\+Gradients} (T $\ast$layer, arma\+::mat \&input) const 
+\begin{DoxyCompactList}\small\item\em Update the gradient if the module implements the Gradient() and Model() function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T , typename P $>$ }\\std\+::enable\+\_\+if$<$ !Has\+Gradient\+Check$<$ T, P \&(T\+::$\ast$)()$>$\+::value \&\&!Has\+Model\+Check$<$ T, std\+::vector$<$ {\bf Layer\+Types} $>$ \&(T\+::$\ast$)()$>$\+::value, size\+\_\+t $>$\+::type {\bf Layer\+Gradients} (T $\ast$layer, P \&input) const 
+\begin{DoxyCompactList}\small\item\em Do not update the gradient parameter if the module doesn\textquotesingle{}t implement the Gradient() or Model() function. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+arma\+::mat \&\& {\bf gradient}
+\begin{DoxyCompactList}\small\item\em The gradient set. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf offset}
+\begin{DoxyCompactList}\small\item\em The gradient offset. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\doxyref{Gradient\+Set\+Visitor}{p.}{classmlpack_1_1ann_1_1GradientSetVisitor} update the gradient parameter given the gradient set. 
+
+Definition at line 27 of file gradient\+\_\+set\+\_\+visitor.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::ann\+::\+Gradient\+Set\+Visitor@{mlpack\+::ann\+::\+Gradient\+Set\+Visitor}!Gradient\+Set\+Visitor@{Gradient\+Set\+Visitor}}
+\index{Gradient\+Set\+Visitor@{Gradient\+Set\+Visitor}!mlpack\+::ann\+::\+Gradient\+Set\+Visitor@{mlpack\+::ann\+::\+Gradient\+Set\+Visitor}}
+\subsubsection[{Gradient\+Set\+Visitor(arma\+::mat \&\&gradient, size\+\_\+t offset=0)}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::ann\+::\+Gradient\+Set\+Visitor\+::\+Gradient\+Set\+Visitor (
+\begin{DoxyParamCaption}
+\item[{arma\+::mat \&\&}]{gradient, }
+\item[{size\+\_\+t}]{offset = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1GradientSetVisitor_aa331d5c5b4458dd7ff5a09a04011b946}
+
+
+Update the gradient parameter given the gradient set. 
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::ann\+::\+Gradient\+Set\+Visitor@{mlpack\+::ann\+::\+Gradient\+Set\+Visitor}!Layer\+Gradients@{Layer\+Gradients}}
+\index{Layer\+Gradients@{Layer\+Gradients}!mlpack\+::ann\+::\+Gradient\+Set\+Visitor@{mlpack\+::ann\+::\+Gradient\+Set\+Visitor}}
+\subsubsection[{Layer\+Gradients(\+T $\ast$layer, arma\+::mat \&input) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ std\+::enable\+\_\+if$<$ Has\+Gradient\+Check$<$T, arma\+::mat\&(T\+::$\ast$)()$>$\+::value \&\& !Has\+Model\+Check$<$T, std\+::vector$<${\bf Layer\+Types}$>$\&(T\+::$\ast$)()$>$\+::value, size\+\_\+t$>$\+::type mlpack\+::ann\+::\+Gradient\+Set\+Visitor\+::\+Layer\+Gradients (
+\begin{DoxyParamCaption}
+\item[{T $\ast$}]{layer, }
+\item[{arma\+::mat \&}]{input}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1GradientSetVisitor_a6f126b07993d8d4b03a9fc5b979ae646}
+
+
+Update the gradient if the module implements the Gradient() function. 
+
+\index{mlpack\+::ann\+::\+Gradient\+Set\+Visitor@{mlpack\+::ann\+::\+Gradient\+Set\+Visitor}!Layer\+Gradients@{Layer\+Gradients}}
+\index{Layer\+Gradients@{Layer\+Gradients}!mlpack\+::ann\+::\+Gradient\+Set\+Visitor@{mlpack\+::ann\+::\+Gradient\+Set\+Visitor}}
+\subsubsection[{Layer\+Gradients(\+T $\ast$layer, arma\+::mat \&input) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ std\+::enable\+\_\+if$<$ !Has\+Gradient\+Check$<$T, arma\+::mat\&(T\+::$\ast$)()$>$\+::value \&\& Has\+Model\+Check$<$T, std\+::vector$<${\bf Layer\+Types}$>$\&(T\+::$\ast$)()$>$\+::value, size\+\_\+t$>$\+::type mlpack\+::ann\+::\+Gradient\+Set\+Visitor\+::\+Layer\+Gradients (
+\begin{DoxyParamCaption}
+\item[{T $\ast$}]{layer, }
+\item[{arma\+::mat \&}]{input}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1GradientSetVisitor_af3b2a6ad9b749e0d34422153e97c962d}
+
+
+Update the gradient if the module implements the Model() function. 
+
+\index{mlpack\+::ann\+::\+Gradient\+Set\+Visitor@{mlpack\+::ann\+::\+Gradient\+Set\+Visitor}!Layer\+Gradients@{Layer\+Gradients}}
+\index{Layer\+Gradients@{Layer\+Gradients}!mlpack\+::ann\+::\+Gradient\+Set\+Visitor@{mlpack\+::ann\+::\+Gradient\+Set\+Visitor}}
+\subsubsection[{Layer\+Gradients(\+T $\ast$layer, arma\+::mat \&input) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ std\+::enable\+\_\+if$<$ Has\+Gradient\+Check$<$T, arma\+::mat\&(T\+::$\ast$)()$>$\+::value \&\& Has\+Model\+Check$<$T, std\+::vector$<${\bf Layer\+Types}$>$\&(T\+::$\ast$)()$>$\+::value, size\+\_\+t$>$\+::type mlpack\+::ann\+::\+Gradient\+Set\+Visitor\+::\+Layer\+Gradients (
+\begin{DoxyParamCaption}
+\item[{T $\ast$}]{layer, }
+\item[{arma\+::mat \&}]{input}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1GradientSetVisitor_a6c92ed2955bb2364193beeac815e5ac7}
+
+
+Update the gradient if the module implements the Gradient() and Model() function. 
+
+\index{mlpack\+::ann\+::\+Gradient\+Set\+Visitor@{mlpack\+::ann\+::\+Gradient\+Set\+Visitor}!Layer\+Gradients@{Layer\+Gradients}}
+\index{Layer\+Gradients@{Layer\+Gradients}!mlpack\+::ann\+::\+Gradient\+Set\+Visitor@{mlpack\+::ann\+::\+Gradient\+Set\+Visitor}}
+\subsubsection[{Layer\+Gradients(\+T $\ast$layer, P \&input) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T , typename P $>$ std\+::enable\+\_\+if$<$ !Has\+Gradient\+Check$<$T, P\&(T\+::$\ast$)()$>$\+::value \&\& !Has\+Model\+Check$<$T, std\+::vector$<${\bf Layer\+Types}$>$\&(T\+::$\ast$)()$>$\+::value, size\+\_\+t$>$\+::type mlpack\+::ann\+::\+Gradient\+Set\+Visitor\+::\+Layer\+Gradients (
+\begin{DoxyParamCaption}
+\item[{T $\ast$}]{layer, }
+\item[{P \&}]{input}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1GradientSetVisitor_aa758f9ed7592a443f98510b5e7fc34e5}
+
+
+Do not update the gradient parameter if the module doesn\textquotesingle{}t implement the Gradient() or Model() function. 
+
+\index{mlpack\+::ann\+::\+Gradient\+Set\+Visitor@{mlpack\+::ann\+::\+Gradient\+Set\+Visitor}!operator()@{operator()}}
+\index{operator()@{operator()}!mlpack\+::ann\+::\+Gradient\+Set\+Visitor@{mlpack\+::ann\+::\+Gradient\+Set\+Visitor}}
+\subsubsection[{operator()(\+Layer\+Type $\ast$layer) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Layer\+Type $>$ size\+\_\+t mlpack\+::ann\+::\+Gradient\+Set\+Visitor\+::operator() (
+\begin{DoxyParamCaption}
+\item[{Layer\+Type $\ast$}]{layer}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1ann_1_1GradientSetVisitor_a5377e375498464fb992bf9e8eccb062d}
+
+
+Update the gradient parameter. 
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::ann\+::\+Gradient\+Set\+Visitor@{mlpack\+::ann\+::\+Gradient\+Set\+Visitor}!gradient@{gradient}}
+\index{gradient@{gradient}!mlpack\+::ann\+::\+Gradient\+Set\+Visitor@{mlpack\+::ann\+::\+Gradient\+Set\+Visitor}}
+\subsubsection[{gradient}]{\setlength{\rightskip}{0pt plus 5cm}arma\+::mat\&\& mlpack\+::ann\+::\+Gradient\+Set\+Visitor\+::gradient\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1GradientSetVisitor_affa05389932f2659d518d0441f7f680b}
+
+
+The gradient set. 
+
+
+
+Definition at line 39 of file gradient\+\_\+set\+\_\+visitor.\+hpp.
+
+\index{mlpack\+::ann\+::\+Gradient\+Set\+Visitor@{mlpack\+::ann\+::\+Gradient\+Set\+Visitor}!offset@{offset}}
+\index{offset@{offset}!mlpack\+::ann\+::\+Gradient\+Set\+Visitor@{mlpack\+::ann\+::\+Gradient\+Set\+Visitor}}
+\subsubsection[{offset}]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t mlpack\+::ann\+::\+Gradient\+Set\+Visitor\+::offset\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1GradientSetVisitor_a3795b799132c8b5fcb6f273d918efc0b}
+
+
+The gradient offset. 
+
+
+
+Definition at line 42 of file gradient\+\_\+set\+\_\+visitor.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/ann/visitor/{\bf gradient\+\_\+set\+\_\+visitor.\+hpp}\end{DoxyCompactItemize}

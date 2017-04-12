@@ -1,0 +1,56 @@
+\section{src/mlpack/core/tree/address.hpp File Reference}
+\label{address_8hpp}\index{src/mlpack/core/tree/address.\+hpp@{src/mlpack/core/tree/address.\+hpp}}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{address_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ {\bf mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ {\bf mlpack\+::bound}
+\item 
+ {\bf mlpack\+::bound\+::addr}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Address\+Type , typename Vec\+Type $>$ }\\void {\bf mlpack\+::bound\+::addr\+::\+Address\+To\+Point} (Vec\+Type \&point, const Address\+Type \&address)
+\begin{DoxyCompactList}\small\item\em Translate the address to the point. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Address\+Type1 , typename Address\+Type2 $>$ }\\int {\bf mlpack\+::bound\+::addr\+::\+Compare\+Addresses} (const Address\+Type1 \&addr1, const Address\+Type2 \&addr2)
+\begin{DoxyCompactList}\small\item\em Compare two addresses. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Address\+Type1 , typename Address\+Type2 , typename Address\+Type3 $>$ }\\bool {\bf mlpack\+::bound\+::addr\+::\+Contains} (const Address\+Type1 \&address, const Address\+Type2 \&lo\+Bound, const Address\+Type3 \&hi\+Bound)
+\begin{DoxyCompactList}\small\item\em Returns true if an address is contained between two other addresses. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Address\+Type , typename Vec\+Type $>$ }\\void {\bf mlpack\+::bound\+::addr\+::\+Point\+To\+Address} (Address\+Type \&address, const Vec\+Type \&point)
+\begin{DoxyCompactList}\small\item\em Calculate the address of a point. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Mikhail Lozhnikov
+\end{DoxyAuthor}
+This file contains a series of functions for translating points to addresses and back and functions for comparing addresses.
+
+The notion of addresses is described in the following paper. 
+\begin{DoxyCode}
+@inproceedings\{bayer1997,
+  author = \{Bayer, Rudolf\},
+  title = \{The Universal B-Tree \textcolor{keywordflow}{for} Multidimensional Indexing: General
+      Concepts\},
+  booktitle = \{Proceedings of the International Conference on Worldwide
+      Computing and Its Applications\},
+  series = \{WWCA \textcolor{stringliteral}{'97\},}
+\textcolor{stringliteral}{  year = \{1997\},}
+\textcolor{stringliteral}{  isbn = \{3-540-63343-X\},}
+\textcolor{stringliteral}{  pages = \{198--209\},}
+\textcolor{stringliteral}{  numpages = \{12\},}
+\textcolor{stringliteral}{  publisher = \{Springer-Verlag\},}
+\textcolor{stringliteral}{  address = \{London, UK, UK\},}
+\textcolor{stringliteral}{\}}
+\end{DoxyCode}
+ 

@@ -1,0 +1,171 @@
+\section{mlpack\+:\+:Backtrace Class Reference}
+\label{classmlpack_1_1Backtrace}\index{mlpack\+::\+Backtrace@{mlpack\+::\+Backtrace}}
+
+
+Provides a backtrace.  
+
+
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct {\bf Frames}
+\begin{DoxyCompactList}\small\item\em \doxyref{Backtrace}{p.}{classmlpack_1_1Backtrace} datastructure. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Backtrace} ()
+\begin{DoxyCompactList}\small\item\em Constructor initialize fields and call Get\+Address to retrieve addresses for each frame of backtrace. \end{DoxyCompactList}\item 
+{\bf std\+::string} {\bf To\+String} ()
+\begin{DoxyCompactList}\small\item\em Returns string of backtrace. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void {\bf Decode\+Address} (long address)
+\begin{DoxyCompactList}\small\item\em Decodes file name, function \& line number. \end{DoxyCompactList}\item 
+static void {\bf Demangle\+Function} ()
+\begin{DoxyCompactList}\small\item\em Demangles function name. \end{DoxyCompactList}\item 
+static void {\bf Get\+Address} (int max\+Depth)
+\begin{DoxyCompactList}\small\item\em Gets addresses of each called function from the stack. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+struct {\bf mlpack\+::\+Backtrace\+::\+Frames} {\bf frame}
+\end{DoxyCompactItemize}
+\subsection*{Static Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static std\+::vector$<$ {\bf Frames} $>$ {\bf stack}
+\begin{DoxyCompactList}\small\item\em A vector for all the backtrace information. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Provides a backtrace. 
+
+The \doxyref{Backtrace}{p.}{classmlpack_1_1Backtrace} class retrieve addresses of each called function from the stack and decode file name, function \& line number. Retrieved information can be printed in form\+:
+
+
+\begin{DoxyCode}
+[b]: (count) /directory/to/file.cpp:\textcolor{keyword}{function}(args):line\_number
+\end{DoxyCode}
+
+
+\doxyref{Backtrace}{p.}{classmlpack_1_1Backtrace} is printed always when \doxyref{Log\+::\+Assert}{p.}{classmlpack_1_1Log_a894b6a6ce578301d1d4404416e8496d3} failed. An example is given below.
+
+
+\begin{DoxyCode}
+\textcolor{keywordflow}{if} (!someImportantCondition())
+\{
+  Log::Fatal << \textcolor{stringliteral}{"someImportantCondition() is not satisfied! Terminating."};
+  Log::Fatal << std::endl;
+\}
+\end{DoxyCode}
+
+
+\begin{DoxyNote}{Note}
+\doxyref{Log\+::\+Assert}{p.}{classmlpack_1_1Log_a894b6a6ce578301d1d4404416e8496d3} will not be shown when compiling in non-\/debug mode.
+\end{DoxyNote}
+\begin{DoxySeeAlso}{See also}
+Prefixed\+Out\+Stream, \doxyref{Log}{p.}{classmlpack_1_1Log} 
+\end{DoxySeeAlso}
+
+
+Definition at line 46 of file backtrace.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::\+Backtrace@{mlpack\+::\+Backtrace}!Backtrace@{Backtrace}}
+\index{Backtrace@{Backtrace}!mlpack\+::\+Backtrace@{mlpack\+::\+Backtrace}}
+\subsubsection[{Backtrace()}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::\+Backtrace\+::\+Backtrace (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1Backtrace_aafd8c5b38d705fe30a95a77cf4cd4733}
+
+
+Constructor initialize fields and call Get\+Address to retrieve addresses for each frame of backtrace. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em max\+Depth} & Maximum depth of backtrace. Default 32 steps. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::\+Backtrace@{mlpack\+::\+Backtrace}!Decode\+Address@{Decode\+Address}}
+\index{Decode\+Address@{Decode\+Address}!mlpack\+::\+Backtrace@{mlpack\+::\+Backtrace}}
+\subsubsection[{Decode\+Address(long address)}]{\setlength{\rightskip}{0pt plus 5cm}static void mlpack\+::\+Backtrace\+::\+Decode\+Address (
+\begin{DoxyParamCaption}
+\item[{long}]{address}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}\label{classmlpack_1_1Backtrace_a6a7072146260e6c518c869dac2f533dc}
+
+
+Decodes file name, function \& line number. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em address} & Address of traced frame. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::\+Backtrace@{mlpack\+::\+Backtrace}!Demangle\+Function@{Demangle\+Function}}
+\index{Demangle\+Function@{Demangle\+Function}!mlpack\+::\+Backtrace@{mlpack\+::\+Backtrace}}
+\subsubsection[{Demangle\+Function()}]{\setlength{\rightskip}{0pt plus 5cm}static void mlpack\+::\+Backtrace\+::\+Demangle\+Function (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}\label{classmlpack_1_1Backtrace_adaf7b82d759203c53b86dc5f1e577854}
+
+
+Demangles function name. 
+
+\index{mlpack\+::\+Backtrace@{mlpack\+::\+Backtrace}!Get\+Address@{Get\+Address}}
+\index{Get\+Address@{Get\+Address}!mlpack\+::\+Backtrace@{mlpack\+::\+Backtrace}}
+\subsubsection[{Get\+Address(int max\+Depth)}]{\setlength{\rightskip}{0pt plus 5cm}static void mlpack\+::\+Backtrace\+::\+Get\+Address (
+\begin{DoxyParamCaption}
+\item[{int}]{max\+Depth}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}\label{classmlpack_1_1Backtrace_ad3a35e77ea697f8856b1b7cf79734df1}
+
+
+Gets addresses of each called function from the stack. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em max\+Depth} & Maximum depth of backtrace. Default 32 steps. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::\+Backtrace@{mlpack\+::\+Backtrace}!To\+String@{To\+String}}
+\index{To\+String@{To\+String}!mlpack\+::\+Backtrace@{mlpack\+::\+Backtrace}}
+\subsubsection[{To\+String()}]{\setlength{\rightskip}{0pt plus 5cm}{\bf std\+::string} mlpack\+::\+Backtrace\+::\+To\+String (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1Backtrace_a08aceaae4ac2faae9c27d7d9b557f7c0}
+
+
+Returns string of backtrace. 
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::\+Backtrace@{mlpack\+::\+Backtrace}!frame@{frame}}
+\index{frame@{frame}!mlpack\+::\+Backtrace@{mlpack\+::\+Backtrace}}
+\subsubsection[{frame}]{\setlength{\rightskip}{0pt plus 5cm}struct {\bf mlpack\+::\+Backtrace\+::\+Frames} mlpack\+::\+Backtrace\+::frame\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1Backtrace_adb74af1e0158315968c249ba566eb70a}
+\index{mlpack\+::\+Backtrace@{mlpack\+::\+Backtrace}!stack@{stack}}
+\index{stack@{stack}!mlpack\+::\+Backtrace@{mlpack\+::\+Backtrace}}
+\subsubsection[{stack}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<${\bf Frames}$>$ mlpack\+::\+Backtrace\+::stack\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}\label{classmlpack_1_1Backtrace_a939d55982282b38a4aa32304300238ac}
+
+
+A vector for all the backtrace information. 
+
+
+
+Definition at line 91 of file backtrace.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/util/{\bf backtrace.\+hpp}\end{DoxyCompactItemize}

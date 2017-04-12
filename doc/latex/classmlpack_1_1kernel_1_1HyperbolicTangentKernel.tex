@@ -1,0 +1,253 @@
+\section{mlpack\+:\+:kernel\+:\+:Hyperbolic\+Tangent\+Kernel Class Reference}
+\label{classmlpack_1_1kernel_1_1HyperbolicTangentKernel}\index{mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel@{mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel}}
+
+
+Hyperbolic tangent kernel.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Hyperbolic\+Tangent\+Kernel} ()
+\begin{DoxyCompactList}\small\item\em This constructor sets the default scale to 1.\+0 and offset to 0.\+0. \end{DoxyCompactList}\item 
+{\bf Hyperbolic\+Tangent\+Kernel} (double {\bf scale}, double {\bf offset})
+\begin{DoxyCompactList}\small\item\em Construct the hyperbolic tangent kernel with custom scale factor and offset. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+TypeA , typename Vec\+TypeB $>$ }\\double {\bf Evaluate} (const Vec\+TypeA \&a, const Vec\+TypeB \&b)
+\begin{DoxyCompactList}\small\item\em Evaluate the hyperbolic tangent kernel. \end{DoxyCompactList}\item 
+double {\bf Offset} () const 
+\begin{DoxyCompactList}\small\item\em Get offset for the kernel. \end{DoxyCompactList}\item 
+double \& {\bf Offset} ()
+\begin{DoxyCompactList}\small\item\em Modify offset for the kernel. \end{DoxyCompactList}\item 
+double {\bf Scale} () const 
+\begin{DoxyCompactList}\small\item\em Get scale factor. \end{DoxyCompactList}\item 
+double \& {\bf Scale} ()
+\begin{DoxyCompactList}\small\item\em Modify scale factor. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&ar, const unsigned int)
+\begin{DoxyCompactList}\small\item\em Serialize the kernel. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+double {\bf offset}
+\item 
+double {\bf scale}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Hyperbolic tangent kernel. 
+
+For any two vectors $ x $, $ y $ and a given scale $ s $ and offset $ t $
+
+\[ K(x, y) = \tanh(s <x, y> + t) \] 
+
+Definition at line 28 of file hyperbolic\+\_\+tangent\+\_\+kernel.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel@{mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel}!Hyperbolic\+Tangent\+Kernel@{Hyperbolic\+Tangent\+Kernel}}
+\index{Hyperbolic\+Tangent\+Kernel@{Hyperbolic\+Tangent\+Kernel}!mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel@{mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel}}
+\subsubsection[{Hyperbolic\+Tangent\+Kernel()}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel\+::\+Hyperbolic\+Tangent\+Kernel (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1kernel_1_1HyperbolicTangentKernel_afa9f40ba3290589444163d6f0a45247f}
+
+
+This constructor sets the default scale to 1.\+0 and offset to 0.\+0. 
+
+
+
+Definition at line 34 of file hyperbolic\+\_\+tangent\+\_\+kernel.\+hpp.
+
+\index{mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel@{mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel}!Hyperbolic\+Tangent\+Kernel@{Hyperbolic\+Tangent\+Kernel}}
+\index{Hyperbolic\+Tangent\+Kernel@{Hyperbolic\+Tangent\+Kernel}!mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel@{mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel}}
+\subsubsection[{Hyperbolic\+Tangent\+Kernel(double scale, double offset)}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel\+::\+Hyperbolic\+Tangent\+Kernel (
+\begin{DoxyParamCaption}
+\item[{double}]{scale, }
+\item[{double}]{offset}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1kernel_1_1HyperbolicTangentKernel_ae1a31f6d0b15b156451712aa0741f26b}
+
+
+Construct the hyperbolic tangent kernel with custom scale factor and offset. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em scale} & Scaling factor for $<$x, y$>$. \\
+\hline
+{\em offset} & Kernel offset. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 44 of file hyperbolic\+\_\+tangent\+\_\+kernel.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel@{mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel@{mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel}}
+\subsubsection[{Evaluate(const Vec\+Type\+A \&a, const Vec\+Type\+B \&b)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Vec\+TypeA , typename Vec\+TypeB $>$ double mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel\+::\+Evaluate (
+\begin{DoxyParamCaption}
+\item[{const Vec\+TypeA \&}]{a, }
+\item[{const Vec\+TypeB \&}]{b}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1kernel_1_1HyperbolicTangentKernel_a98757405d0e08bef9d0f32a61a9549cc}
+
+
+Evaluate the hyperbolic tangent kernel. 
+
+This evaluation uses Armadillo\textquotesingle{}s dot() function.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Vec\+TypeA} & Type of first vector (should be arma\+::vec or arma\+::sp\+\_\+vec). \\
+\hline
+{\em Vec\+TypeB} & Type of second vector (arma\+::vec / arma\+::sp\+\_\+vec). \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em a} & First vector. \\
+\hline
+{\em b} & Second vector. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+K(a, b). 
+\end{DoxyReturn}
+
+
+Definition at line 60 of file hyperbolic\+\_\+tangent\+\_\+kernel.\+hpp.
+
+
+
+References offset, and scale.
+
+\index{mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel@{mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel}!Offset@{Offset}}
+\index{Offset@{Offset}!mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel@{mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel}}
+\subsubsection[{Offset() const }]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel\+::\+Offset (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1kernel_1_1HyperbolicTangentKernel_a6bf4a131db46bab6c2f7730a38030e3a}
+
+
+Get offset for the kernel. 
+
+
+
+Definition at line 71 of file hyperbolic\+\_\+tangent\+\_\+kernel.\+hpp.
+
+
+
+References offset.
+
+\index{mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel@{mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel}!Offset@{Offset}}
+\index{Offset@{Offset}!mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel@{mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel}}
+\subsubsection[{Offset()}]{\setlength{\rightskip}{0pt plus 5cm}double\& mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel\+::\+Offset (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1kernel_1_1HyperbolicTangentKernel_a7cbaf664ca2c4e0b79f5e236cab8af2d}
+
+
+Modify offset for the kernel. 
+
+
+
+Definition at line 73 of file hyperbolic\+\_\+tangent\+\_\+kernel.\+hpp.
+
+
+
+References offset.
+
+\index{mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel@{mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel}!Scale@{Scale}}
+\index{Scale@{Scale}!mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel@{mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel}}
+\subsubsection[{Scale() const }]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel\+::\+Scale (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1kernel_1_1HyperbolicTangentKernel_a6b583368f635e94f92e7ad9625ff5a1a}
+
+
+Get scale factor. 
+
+
+
+Definition at line 66 of file hyperbolic\+\_\+tangent\+\_\+kernel.\+hpp.
+
+
+
+References scale.
+
+\index{mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel@{mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel}!Scale@{Scale}}
+\index{Scale@{Scale}!mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel@{mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel}}
+\subsubsection[{Scale()}]{\setlength{\rightskip}{0pt plus 5cm}double\& mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel\+::\+Scale (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1kernel_1_1HyperbolicTangentKernel_a1a3a6b933bbe7f71bd905784f9360d8d}
+
+
+Modify scale factor. 
+
+
+
+Definition at line 68 of file hyperbolic\+\_\+tangent\+\_\+kernel.\+hpp.
+
+
+
+References scale.
+
+\index{mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel@{mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel@{mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel}}
+\subsubsection[{Serialize(\+Archive \&ar, const unsigned int)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Archive $>$ void mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel\+::\+Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const unsigned}]{int}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1kernel_1_1HyperbolicTangentKernel_a59ac706f30a339c2f09eb7fbccf48c56}
+
+
+Serialize the kernel. 
+
+
+
+Definition at line 77 of file hyperbolic\+\_\+tangent\+\_\+kernel.\+hpp.
+
+
+
+References mlpack\+::data\+::\+Create\+N\+V\+P(), offset, and scale.
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel@{mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel}!offset@{offset}}
+\index{offset@{offset}!mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel@{mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel}}
+\subsubsection[{offset}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel\+::offset\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kernel_1_1HyperbolicTangentKernel_a7fa7810cbab749d93de8f4994f55919d}
+
+
+Definition at line 85 of file hyperbolic\+\_\+tangent\+\_\+kernel.\+hpp.
+
+
+
+Referenced by Evaluate(), Offset(), and Serialize().
+
+\index{mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel@{mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel}!scale@{scale}}
+\index{scale@{scale}!mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel@{mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel}}
+\subsubsection[{scale}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel\+::scale\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1kernel_1_1HyperbolicTangentKernel_ac7fc2bb9399ec5ebbbf1b45f5eb14f44}
+
+
+Definition at line 84 of file hyperbolic\+\_\+tangent\+\_\+kernel.\+hpp.
+
+
+
+Referenced by Evaluate(), Scale(), and Serialize().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/kernels/{\bf hyperbolic\+\_\+tangent\+\_\+kernel.\+hpp}\end{DoxyCompactItemize}

@@ -1,0 +1,219 @@
+.TH "mlpack::fastmks::FastMKSStat" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::fastmks::FastMKSStat \- The statistic used in trees with \fBFastMKS\fP\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBFastMKSStat\fP ()"
+.br
+.RI "\fIDefault initialization\&. \fP"
+.ti -1c
+.RI "template<typename TreeType > \fBFastMKSStat\fP (const TreeType &node)"
+.br
+.RI "\fIInitialize this statistic for the given tree node\&. \fP"
+.ti -1c
+.RI "double \fBBound\fP () const "
+.br
+.RI "\fIGet the bound\&. \fP"
+.ti -1c
+.RI "double & \fBBound\fP ()"
+.br
+.RI "\fIModify the bound\&. \fP"
+.ti -1c
+.RI "double \fBLastKernel\fP () const "
+.br
+.RI "\fIGet the last kernel evaluation\&. \fP"
+.ti -1c
+.RI "double & \fBLastKernel\fP ()"
+.br
+.RI "\fIModify the last kernel evaluation\&. \fP"
+.ti -1c
+.RI "void * \fBLastKernelNode\fP () const "
+.br
+.RI "\fIGet the address of the node corresponding to the last distance evaluation\&. \fP"
+.ti -1c
+.RI "void *& \fBLastKernelNode\fP ()"
+.br
+.RI "\fIModify the address of the node corresponding to the last distance evaluation\&. \fP"
+.ti -1c
+.RI "double \fBSelfKernel\fP () const "
+.br
+.RI "\fIGet the self-kernel\&. \fP"
+.ti -1c
+.RI "double & \fBSelfKernel\fP ()"
+.br
+.RI "\fIModify the self-kernel\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int)"
+.br
+.RI "\fISerialize the statistic\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "double \fBbound\fP"
+.br
+.RI "\fIThe bound for pruning\&. \fP"
+.ti -1c
+.RI "double \fBlastKernel\fP"
+.br
+.RI "\fIThe last kernel evaluation\&. \fP"
+.ti -1c
+.RI "void * \fBlastKernelNode\fP"
+.br
+.RI "\fIThe node corresponding to the last kernel evaluation\&. \fP"
+.ti -1c
+.RI "double \fBselfKernel\fP"
+.br
+.RI "\fIThe self-kernel evaluation: sqrt(K(centroid, centroid))\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+The statistic used in trees with \fBFastMKS\fP\&. 
+
+This stores both the bound and the self-kernels for each node in the tree\&. 
+.PP
+Definition at line 25 of file fastmks_stat\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::fastmks::FastMKSStat::FastMKSStat ()\fC [inline]\fP"
+
+.PP
+Default initialization\&. 
+.PP
+Definition at line 31 of file fastmks_stat\&.hpp\&.
+.SS "template<typename TreeType > mlpack::fastmks::FastMKSStat::FastMKSStat (const TreeType & node)\fC [inline]\fP"
+
+.PP
+Initialize this statistic for the given tree node\&. The TreeType's metric better be IPMetric with some kernel type (that is, Metric()\&.Kernel() must exist)\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fInode\fP Node that this statistic is built for\&. 
+.RE
+.PP
+
+.PP
+Definition at line 46 of file fastmks_stat\&.hpp\&.
+.PP
+References selfKernel\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "double mlpack::fastmks::FastMKSStat::Bound () const\fC [inline]\fP"
+
+.PP
+Get the bound\&. 
+.PP
+Definition at line 86 of file fastmks_stat\&.hpp\&.
+.PP
+References bound\&.
+.SS "double& mlpack::fastmks::FastMKSStat::Bound ()\fC [inline]\fP"
+
+.PP
+Modify the bound\&. 
+.PP
+Definition at line 88 of file fastmks_stat\&.hpp\&.
+.PP
+References bound\&.
+.SS "double mlpack::fastmks::FastMKSStat::LastKernel () const\fC [inline]\fP"
+
+.PP
+Get the last kernel evaluation\&. 
+.PP
+Definition at line 91 of file fastmks_stat\&.hpp\&.
+.PP
+References lastKernel\&.
+.SS "double& mlpack::fastmks::FastMKSStat::LastKernel ()\fC [inline]\fP"
+
+.PP
+Modify the last kernel evaluation\&. 
+.PP
+Definition at line 93 of file fastmks_stat\&.hpp\&.
+.PP
+References lastKernel\&.
+.SS "void* mlpack::fastmks::FastMKSStat::LastKernelNode () const\fC [inline]\fP"
+
+.PP
+Get the address of the node corresponding to the last distance evaluation\&. 
+.PP
+Definition at line 96 of file fastmks_stat\&.hpp\&.
+.PP
+References lastKernelNode\&.
+.SS "void*& mlpack::fastmks::FastMKSStat::LastKernelNode ()\fC [inline]\fP"
+
+.PP
+Modify the address of the node corresponding to the last distance evaluation\&. 
+.PP
+Definition at line 99 of file fastmks_stat\&.hpp\&.
+.PP
+References lastKernelNode\&.
+.SS "double mlpack::fastmks::FastMKSStat::SelfKernel () const\fC [inline]\fP"
+
+.PP
+Get the self-kernel\&. 
+.PP
+Definition at line 81 of file fastmks_stat\&.hpp\&.
+.PP
+References selfKernel\&.
+.SS "double& mlpack::fastmks::FastMKSStat::SelfKernel ()\fC [inline]\fP"
+
+.PP
+Modify the self-kernel\&. 
+.PP
+Definition at line 83 of file fastmks_stat\&.hpp\&.
+.PP
+References selfKernel\&.
+.SS "template<typename Archive > void mlpack::fastmks::FastMKSStat::Serialize (Archive & ar, const unsigned int)\fC [inline]\fP"
+
+.PP
+Serialize the statistic\&. 
+.PP
+Definition at line 103 of file fastmks_stat\&.hpp\&.
+.PP
+References bound, mlpack::data::CreateNVP(), lastKernel, lastKernelNode, and selfKernel\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "double mlpack::fastmks::FastMKSStat::bound\fC [private]\fP"
+
+.PP
+The bound for pruning\&. 
+.PP
+Definition at line 118 of file fastmks_stat\&.hpp\&.
+.PP
+Referenced by Bound(), and Serialize()\&.
+.SS "double mlpack::fastmks::FastMKSStat::lastKernel\fC [private]\fP"
+
+.PP
+The last kernel evaluation\&. 
+.PP
+Definition at line 124 of file fastmks_stat\&.hpp\&.
+.PP
+Referenced by LastKernel(), and Serialize()\&.
+.SS "void* mlpack::fastmks::FastMKSStat::lastKernelNode\fC [private]\fP"
+
+.PP
+The node corresponding to the last kernel evaluation\&. This has to be void otherwise we get recursive template arguments\&. 
+.PP
+Definition at line 128 of file fastmks_stat\&.hpp\&.
+.PP
+Referenced by LastKernelNode(), and Serialize()\&.
+.SS "double mlpack::fastmks::FastMKSStat::selfKernel\fC [private]\fP"
+
+.PP
+The self-kernel evaluation: sqrt(K(centroid, centroid))\&. 
+.PP
+Definition at line 121 of file fastmks_stat\&.hpp\&.
+.PP
+Referenced by FastMKSStat(), SelfKernel(), and Serialize()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

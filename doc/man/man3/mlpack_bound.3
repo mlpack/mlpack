@@ -1,0 +1,60 @@
+.TH "mlpack::bound" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::bound \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBaddr\fP"
+.br
+.ti -1c
+.RI " \fBmeta\fP"
+.br
+.RI "\fIMetaprogramming utilities\&. \fP"
+.in -1c
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBBallBound\fP"
+.br
+.RI "\fIBall bound encloses a set of points at a specific distance (radius) from a specific point (center)\&. \fP"
+.ti -1c
+.RI "struct \fBBoundTraits\fP"
+.br
+.RI "\fIA class to obtain compile-time traits about BoundType classes\&. \fP"
+.ti -1c
+.RI "struct \fBBoundTraits< BallBound< MetricType, VecType > >\fP"
+.br
+.RI "\fIA specialization of \fBBoundTraits\fP for this bound type\&. \fP"
+.ti -1c
+.RI "struct \fBBoundTraits< CellBound< MetricType, ElemType > >\fP"
+.br
+.ti -1c
+.RI "struct \fBBoundTraits< HollowBallBound< MetricType, ElemType > >\fP"
+.br
+.RI "\fIA specialization of \fBBoundTraits\fP for this bound type\&. \fP"
+.ti -1c
+.RI "struct \fBBoundTraits< HRectBound< MetricType, ElemType > >\fP"
+.br
+.ti -1c
+.RI "class \fBCellBound\fP"
+.br
+.RI "\fIThe \fBCellBound\fP class describes a bound that consists of a number of hyperrectangles\&. \fP"
+.ti -1c
+.RI "class \fBHollowBallBound\fP"
+.br
+.RI "\fIHollow ball bound encloses a set of points at a specific distance (radius) from a specific point (center) except points at a specific distance from another point (the center of the hole)\&. \fP"
+.ti -1c
+.RI "class \fBHRectBound\fP"
+.br
+.RI "\fIHyper-rectangle bound for an L-metric\&. \fP"
+.in -1c
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

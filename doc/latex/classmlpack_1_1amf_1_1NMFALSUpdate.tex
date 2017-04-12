@@ -1,0 +1,169 @@
+\section{mlpack\+:\+:amf\+:\+:N\+M\+F\+A\+L\+S\+Update Class Reference}
+\label{classmlpack_1_1amf_1_1NMFALSUpdate}\index{mlpack\+::amf\+::\+N\+M\+F\+A\+L\+S\+Update@{mlpack\+::amf\+::\+N\+M\+F\+A\+L\+S\+Update}}
+
+
+This class implements a method titled \textquotesingle{}Alternating Least Squares\textquotesingle{} described in the following paper\+:  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf N\+M\+F\+A\+L\+S\+Update} ()
+\begin{DoxyCompactList}\small\item\em Empty constructor required for the Update\+Rule template. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void {\bf Initialize} (const Mat\+Type \&, const size\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Set initial values for the factorization. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&, const unsigned int)
+\begin{DoxyCompactList}\small\item\em Serialize the object (in this case, there is nothing to serialize). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\static void {\bf H\+Update} (const Mat\+Type \&V, const arma\+::mat \&W, arma\+::mat \&H)
+\begin{DoxyCompactList}\small\item\em The update rule for the encoding matrix H. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\static void {\bf W\+Update} (const Mat\+Type \&V, arma\+::mat \&W, const arma\+::mat \&H)
+\begin{DoxyCompactList}\small\item\em The update rule for the basis matrix W. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This class implements a method titled \textquotesingle{}Alternating Least Squares\textquotesingle{} described in the following paper\+: 
+
+
+\begin{DoxyCode}
+@article\{paatero1994positive,
+ title=\{Positive matrix factorization: A non-negative factor model with
+     optimal utilization of error estimates of data values\},
+ author=\{Paatero, P. and Tapper, U.\},
+ journal=\{Environmetrics\},
+ volume=\{5\},
+ number=\{2\},
+ pages=\{111--126\},
+ year=\{1994\}
+\}
+\end{DoxyCode}
+
+
+It uses the least squares projection formula to reduce the error value of $ \sqrt{\sum_i \sum_j(V-WH)^2} $ by alternately calculating W and H respectively while holding the other matrix constant. 
+
+Definition at line 41 of file nmf\+\_\+als.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::amf\+::\+N\+M\+F\+A\+L\+S\+Update@{mlpack\+::amf\+::\+N\+M\+F\+A\+L\+S\+Update}!N\+M\+F\+A\+L\+S\+Update@{N\+M\+F\+A\+L\+S\+Update}}
+\index{N\+M\+F\+A\+L\+S\+Update@{N\+M\+F\+A\+L\+S\+Update}!mlpack\+::amf\+::\+N\+M\+F\+A\+L\+S\+Update@{mlpack\+::amf\+::\+N\+M\+F\+A\+L\+S\+Update}}
+\subsubsection[{N\+M\+F\+A\+L\+S\+Update()}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::amf\+::\+N\+M\+F\+A\+L\+S\+Update\+::\+N\+M\+F\+A\+L\+S\+Update (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1amf_1_1NMFALSUpdate_a4d1783987920c1882aaf4189b4f474bd}
+
+
+Empty constructor required for the Update\+Rule template. 
+
+
+
+Definition at line 45 of file nmf\+\_\+als.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::amf\+::\+N\+M\+F\+A\+L\+S\+Update@{mlpack\+::amf\+::\+N\+M\+F\+A\+L\+S\+Update}!H\+Update@{H\+Update}}
+\index{H\+Update@{H\+Update}!mlpack\+::amf\+::\+N\+M\+F\+A\+L\+S\+Update@{mlpack\+::amf\+::\+N\+M\+F\+A\+L\+S\+Update}}
+\subsubsection[{H\+Update(const Mat\+Type \&\+V, const arma\+::mat \&\+W, arma\+::mat \&\+H)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type $>$ static void mlpack\+::amf\+::\+N\+M\+F\+A\+L\+S\+Update\+::\+H\+Update (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{V, }
+\item[{const arma\+::mat \&}]{W, }
+\item[{arma\+::mat \&}]{H}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}\label{classmlpack_1_1amf_1_1NMFALSUpdate_a95953ee6655a287ff502a358189b4bee}
+
+
+The update rule for the encoding matrix H. 
+
+The formula used is
+
+\[ H = \frac{W^T V}{W^T W} \]
+
+The function takes in all the matrices and only changes the value of the H matrix.
+
+
+\begin{DoxyParams}{Parameters}
+{\em V} & Input matrix to be factorized. \\
+\hline
+{\em W} & Basis matrix. \\
+\hline
+{\em H} & Encoding matrix to be updated. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 105 of file nmf\+\_\+als.\+hpp.
+
+\index{mlpack\+::amf\+::\+N\+M\+F\+A\+L\+S\+Update@{mlpack\+::amf\+::\+N\+M\+F\+A\+L\+S\+Update}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!mlpack\+::amf\+::\+N\+M\+F\+A\+L\+S\+Update@{mlpack\+::amf\+::\+N\+M\+F\+A\+L\+S\+Update}}
+\subsubsection[{Initialize(const Mat\+Type \&, const size\+\_\+t)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type $>$ void mlpack\+::amf\+::\+N\+M\+F\+A\+L\+S\+Update\+::\+Initialize (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{, }
+\item[{const size\+\_\+t}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1amf_1_1NMFALSUpdate_aa356ae918bac789c7e7f9ac1bf94a6c8}
+
+
+Set initial values for the factorization. 
+
+In this case, we don\textquotesingle{}t need to set anything. 
+
+Definition at line 52 of file nmf\+\_\+als.\+hpp.
+
+\index{mlpack\+::amf\+::\+N\+M\+F\+A\+L\+S\+Update@{mlpack\+::amf\+::\+N\+M\+F\+A\+L\+S\+Update}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::amf\+::\+N\+M\+F\+A\+L\+S\+Update@{mlpack\+::amf\+::\+N\+M\+F\+A\+L\+S\+Update}}
+\subsubsection[{Serialize(\+Archive \&, const unsigned int)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Archive $>$ void mlpack\+::amf\+::\+N\+M\+F\+A\+L\+S\+Update\+::\+Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{, }
+\item[{const unsigned}]{int}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1amf_1_1NMFALSUpdate_a0a407037255e2191e952e6c8f00f091a}
+
+
+Serialize the object (in this case, there is nothing to serialize). 
+
+
+
+Definition at line 123 of file nmf\+\_\+als.\+hpp.
+
+\index{mlpack\+::amf\+::\+N\+M\+F\+A\+L\+S\+Update@{mlpack\+::amf\+::\+N\+M\+F\+A\+L\+S\+Update}!W\+Update@{W\+Update}}
+\index{W\+Update@{W\+Update}!mlpack\+::amf\+::\+N\+M\+F\+A\+L\+S\+Update@{mlpack\+::amf\+::\+N\+M\+F\+A\+L\+S\+Update}}
+\subsubsection[{W\+Update(const Mat\+Type \&\+V, arma\+::mat \&\+W, const arma\+::mat \&\+H)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type $>$ static void mlpack\+::amf\+::\+N\+M\+F\+A\+L\+S\+Update\+::\+W\+Update (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{V, }
+\item[{arma\+::mat \&}]{W, }
+\item[{const arma\+::mat \&}]{H}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}\label{classmlpack_1_1amf_1_1NMFALSUpdate_a0eb0c482aa6e596e2f3679b40640a72a}
+
+
+The update rule for the basis matrix W. 
+
+The formula used isa
+
+\[ W^T = \frac{H V^T}{H H^T} \]
+
+The function takes in all the matrices and only changes the value of the W matrix.
+
+
+\begin{DoxyParams}{Parameters}
+{\em V} & Input matrix to be factorized. \\
+\hline
+{\em W} & Basis matrix to be updated. \\
+\hline
+{\em H} & Encoding matrix. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 72 of file nmf\+\_\+als.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/amf/update\+\_\+rules/{\bf nmf\+\_\+als.\+hpp}\end{DoxyCompactItemize}

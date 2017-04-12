@@ -1,0 +1,658 @@
+\section{mlpack\+:\+:fastmks\+:\+:Fast\+M\+KS$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1fastmks_1_1FastMKS}\index{mlpack\+::fastmks\+::\+Fast\+M\+K\+S$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$@{mlpack\+::fastmks\+::\+Fast\+M\+K\+S$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$}}
+
+
+An implementation of fast exact max-\/kernel search.  
+
+
+
+
+Inheritance diagram for mlpack\+:\+:fastmks\+:\+:Fast\+M\+KS$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmlpack_1_1fastmks_1_1FastMKS__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct {\bf Candidate\+Cmp}
+\begin{DoxyCompactList}\small\item\em Compare two candidates based on the value. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef Tree\+Type$<$ {\bf metric\+::\+I\+P\+Metric}$<$ Kernel\+Type $>$, {\bf Fast\+M\+K\+S\+Stat}, Mat\+Type $>$ {\bf Tree}
+\begin{DoxyCompactList}\small\item\em Convenience typedef. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Fast\+M\+KS} (const bool {\bf single\+Mode}=false, const bool {\bf naive}=false)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Fast\+M\+KS}{p.}{classmlpack_1_1fastmks_1_1FastMKS} object with an empty reference set and default kernel. \end{DoxyCompactList}\item 
+{\bf Fast\+M\+KS} (const Mat\+Type \&{\bf reference\+Set}, const bool {\bf single\+Mode}=false, const bool {\bf naive}=false)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Fast\+M\+KS}{p.}{classmlpack_1_1fastmks_1_1FastMKS} object with the given reference set (this is the set that is searched). \end{DoxyCompactList}\item 
+{\bf Fast\+M\+KS} (const Mat\+Type \&{\bf reference\+Set}, Kernel\+Type \&kernel, const bool {\bf single\+Mode}=false, const bool {\bf naive}=false)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Fast\+M\+KS}{p.}{classmlpack_1_1fastmks_1_1FastMKS} object using the reference set (this is the set that is searched) with an initialized kernel. \end{DoxyCompactList}\item 
+{\bf Fast\+M\+KS} ({\bf Tree} $\ast${\bf reference\+Tree}, const bool {\bf single\+Mode}=false)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Fast\+M\+KS}{p.}{classmlpack_1_1fastmks_1_1FastMKS} object with an already-\/initialized tree built on the reference points. \end{DoxyCompactList}\item 
+{\bf Fast\+M\+KS} (const {\bf Fast\+M\+KS} \&other)
+\begin{DoxyCompactList}\small\item\em Copy the parameters of the given model. \end{DoxyCompactList}\item 
+{\bf Fast\+M\+KS} ({\bf Fast\+M\+KS} \&\&other)
+\begin{DoxyCompactList}\small\item\em Take ownership of the given model. \end{DoxyCompactList}\item 
+{\bf $\sim$\+Fast\+M\+KS} ()
+\begin{DoxyCompactList}\small\item\em Destructor for the \doxyref{Fast\+M\+KS}{p.}{classmlpack_1_1fastmks_1_1FastMKS} object. \end{DoxyCompactList}\item 
+const {\bf metric\+::\+I\+P\+Metric}$<$ Kernel\+Type $>$ \& {\bf Metric} () const 
+\begin{DoxyCompactList}\small\item\em Get the inner-\/product metric induced by the given kernel. \end{DoxyCompactList}\item 
+{\bf metric\+::\+I\+P\+Metric}$<$ Kernel\+Type $>$ \& {\bf Metric} ()
+\begin{DoxyCompactList}\small\item\em Modify the inner-\/product metric induced by the given kernel. \end{DoxyCompactList}\item 
+bool {\bf Naive} () const 
+\begin{DoxyCompactList}\small\item\em Get whether or not brute-\/force (naive) search is used. \end{DoxyCompactList}\item 
+bool \& {\bf Naive} ()
+\begin{DoxyCompactList}\small\item\em Modify whether or not brute-\/force (naive) search is used. \end{DoxyCompactList}\item 
+{\bf Fast\+M\+KS} \& {\bf operator=} (const {\bf Fast\+M\+KS} \&other)
+\begin{DoxyCompactList}\small\item\em Assign this model to be a copy of the given model. \end{DoxyCompactList}\item 
+void {\bf Search} (const Mat\+Type \&query\+Set, const size\+\_\+t k, arma\+::\+Mat$<$ size\+\_\+t $>$ \&indices, arma\+::mat \&kernels)
+\begin{DoxyCompactList}\small\item\em Search for the points in the reference set with maximum kernel evaluation to each point in the given query set. \end{DoxyCompactList}\item 
+void {\bf Search} ({\bf Tree} $\ast$query\+Set, const size\+\_\+t k, arma\+::\+Mat$<$ size\+\_\+t $>$ \&indices, arma\+::mat \&kernels)
+\begin{DoxyCompactList}\small\item\em Search for the points in the reference set with maximum kernel evaluation to each point in the query set corresponding to the given pre-\/built query tree. \end{DoxyCompactList}\item 
+void {\bf Search} (const size\+\_\+t k, arma\+::\+Mat$<$ size\+\_\+t $>$ \&indices, arma\+::mat \&products)
+\begin{DoxyCompactList}\small\item\em Search for the maximum inner products of the query set (or if no query set was passed, the reference set is used). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&ar, const unsigned int)
+\begin{DoxyCompactList}\small\item\em Serialize the model. \end{DoxyCompactList}\item 
+bool {\bf Single\+Mode} () const 
+\begin{DoxyCompactList}\small\item\em Get whether or not single-\/tree search is used. \end{DoxyCompactList}\item 
+bool \& {\bf Single\+Mode} ()
+\begin{DoxyCompactList}\small\item\em Modify whether or not single-\/tree search is used. \end{DoxyCompactList}\item 
+void {\bf Train} (const Mat\+Type \&{\bf reference\+Set})
+\begin{DoxyCompactList}\small\item\em \char`\"{}\+Train\char`\"{} the \doxyref{Fast\+M\+KS}{p.}{classmlpack_1_1fastmks_1_1FastMKS} model on the given reference set (this will just build a tree, if the current search mode is not naive mode). \end{DoxyCompactList}\item 
+void {\bf Train} (const Mat\+Type \&{\bf reference\+Set}, Kernel\+Type \&kernel)
+\begin{DoxyCompactList}\small\item\em \char`\"{}\+Train\char`\"{} the \doxyref{Fast\+M\+KS}{p.}{classmlpack_1_1fastmks_1_1FastMKS} model on the given reference set and use the given kernel. \end{DoxyCompactList}\item 
+void {\bf Train} ({\bf Tree} $\ast${\bf reference\+Tree})
+\begin{DoxyCompactList}\small\item\em Train the \doxyref{Fast\+M\+KS}{p.}{classmlpack_1_1fastmks_1_1FastMKS} model on the given reference tree. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef std\+::pair$<$ double, size\+\_\+t $>$ {\bf Candidate}
+\begin{DoxyCompactList}\small\item\em Candidate represents a possible candidate point (value, index). \end{DoxyCompactList}\item 
+typedef std\+::priority\+\_\+queue$<$ {\bf Candidate}, std\+::vector$<$ {\bf Candidate} $>$, {\bf Candidate\+Cmp} $>$ {\bf Candidate\+List}
+\begin{DoxyCompactList}\small\item\em Use a priority queue to represent the list of candidate points. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+{\bf metric\+::\+I\+P\+Metric}$<$ Kernel\+Type $>$ {\bf metric}
+\begin{DoxyCompactList}\small\item\em The instantiated inner-\/product metric induced by the given kernel. \end{DoxyCompactList}\item 
+bool {\bf naive}
+\begin{DoxyCompactList}\small\item\em If true, naive (brute-\/force) search is used. \end{DoxyCompactList}\item 
+const Mat\+Type $\ast$ {\bf reference\+Set}
+\begin{DoxyCompactList}\small\item\em The reference dataset. \end{DoxyCompactList}\item 
+{\bf Tree} $\ast$ {\bf reference\+Tree}
+\begin{DoxyCompactList}\small\item\em The tree built on the reference dataset. \end{DoxyCompactList}\item 
+bool {\bf set\+Owner}
+\begin{DoxyCompactList}\small\item\em If true, we own the dataset. This happens in only a few situations. \end{DoxyCompactList}\item 
+bool {\bf single\+Mode}
+\begin{DoxyCompactList}\small\item\em If true, single-\/tree search is used. \end{DoxyCompactList}\item 
+bool {\bf tree\+Owner}
+\begin{DoxyCompactList}\small\item\em If true, this object created the tree and is responsible for it. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Kernel\+Type, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+Standard\+Cover\+Tree$>$\\*
+class mlpack\+::fastmks\+::\+Fast\+M\+K\+S$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$}
+
+An implementation of fast exact max-\/kernel search. 
+
+Given a query dataset and a reference dataset (or optionally just a reference dataset which is also used as the query dataset), fast exact max-\/kernel search finds, for each point in the query dataset, the k points in the reference set with maximum kernel value K(p\+\_\+q, p\+\_\+r), where k is a specified parameter and K() is a Mercer kernel.
+
+For more information, see the following paper.
+
+
+\begin{DoxyCode}
+@inproceedings\{curtin2013fast,
+  title=\{Fast Exact Max-Kernel Search\},
+  author=\{Curtin, Ryan R. and Ram, Parikshit and Gray, Alexander G.\},
+  booktitle=\{Proceedings of the 2013 SIAM International Conference on Data
+      Mining (SDM 13)\},
+  year=\{2013\}
+\}
+\end{DoxyCode}
+
+
+This class allows specification of the type of kernel and also of the type of tree. \doxyref{Fast\+M\+KS}{p.}{classmlpack_1_1fastmks_1_1FastMKS} can be run on kernels that work on arbitrary objects -- however, this only works with cover trees and other trees that are built only on points in the dataset (and not centroids of regions or anything like that).
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Kernel\+Type} & Type of kernel to run \doxyref{Fast\+M\+KS}{p.}{classmlpack_1_1fastmks_1_1FastMKS} with. \\
+\hline
+{\em Mat\+Type} & Type of data matrix (usually arma\+::mat). \\
+\hline
+{\em Tree\+Type} & Type of tree to run \doxyref{Fast\+M\+KS}{p.}{classmlpack_1_1fastmks_1_1FastMKS} with; it must satisfy the Tree\+Type policy A\+PI. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 62 of file fastmks.\+hpp.
+
+
+
+\subsection{Member Typedef Documentation}
+\index{mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}!Candidate@{Candidate}}
+\index{Candidate@{Candidate}!mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}}
+\subsubsection[{Candidate}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Kernel\+Type, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+Standard\+Cover\+Tree$>$ typedef std\+::pair$<$double, size\+\_\+t$>$ {\bf mlpack\+::fastmks\+::\+Fast\+M\+KS}$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$\+::{\bf Candidate}\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1fastmks_1_1FastMKS_a9dc5450661e33a40be75e6f2ca54d744}
+
+
+Candidate represents a possible candidate point (value, index). 
+
+
+
+Definition at line 274 of file fastmks.\+hpp.
+
+\index{mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}!Candidate\+List@{Candidate\+List}}
+\index{Candidate\+List@{Candidate\+List}!mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}}
+\subsubsection[{Candidate\+List}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Kernel\+Type, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+Standard\+Cover\+Tree$>$ typedef std\+::priority\+\_\+queue$<${\bf Candidate}, std\+::vector$<${\bf Candidate}$>$, {\bf Candidate\+Cmp}$>$ {\bf mlpack\+::fastmks\+::\+Fast\+M\+KS}$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$\+::{\bf Candidate\+List}\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1fastmks_1_1FastMKS_a948400df3fa1c3208178107f8e232eb4}
+
+
+Use a priority queue to represent the list of candidate points. 
+
+
+
+Definition at line 286 of file fastmks.\+hpp.
+
+\index{mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}!Tree@{Tree}}
+\index{Tree@{Tree}!mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}}
+\subsubsection[{Tree}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Kernel\+Type, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+Standard\+Cover\+Tree$>$ typedef Tree\+Type$<${\bf metric\+::\+I\+P\+Metric}$<$Kernel\+Type$>$, {\bf Fast\+M\+K\+S\+Stat}, Mat\+Type$>$ {\bf mlpack\+::fastmks\+::\+Fast\+M\+KS}$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$\+::{\bf Tree}}\label{classmlpack_1_1fastmks_1_1FastMKS_a8356e084e0fc325bc78b488374d49cd3}
+
+
+Convenience typedef. 
+
+
+
+Definition at line 66 of file fastmks.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}!Fast\+M\+KS@{Fast\+M\+KS}}
+\index{Fast\+M\+KS@{Fast\+M\+KS}!mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}}
+\subsubsection[{Fast\+M\+K\+S(const bool single\+Mode=false, const bool naive=false)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Kernel\+Type, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+Standard\+Cover\+Tree$>$ {\bf mlpack\+::fastmks\+::\+Fast\+M\+KS}$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$\+::{\bf Fast\+M\+KS} (
+\begin{DoxyParamCaption}
+\item[{const bool}]{single\+Mode = {\ttfamily false}, }
+\item[{const bool}]{naive = {\ttfamily false}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1fastmks_1_1FastMKS_a97388ce6bfd2a64483f048cbaf0a0948}
+
+
+Create the \doxyref{Fast\+M\+KS}{p.}{classmlpack_1_1fastmks_1_1FastMKS} object with an empty reference set and default kernel. 
+
+Make sure to call \doxyref{Train()}{p.}{classmlpack_1_1fastmks_1_1FastMKS_a1d0853f5bc2f2e9f37fe289e664d73bd} before \doxyref{Search()}{p.}{classmlpack_1_1fastmks_1_1FastMKS_ad2da7df9b8e8d7122e135ebe6882720b} is called!
+
+
+\begin{DoxyParams}{Parameters}
+{\em single\+Mode} & Whether or not to run single-\/tree search. \\
+\hline
+{\em naive} & Whether or not to run brute-\/force (naive) search. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}!Fast\+M\+KS@{Fast\+M\+KS}}
+\index{Fast\+M\+KS@{Fast\+M\+KS}!mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}}
+\subsubsection[{Fast\+M\+K\+S(const Mat\+Type \&reference\+Set, const bool single\+Mode=false, const bool naive=false)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Kernel\+Type, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+Standard\+Cover\+Tree$>$ {\bf mlpack\+::fastmks\+::\+Fast\+M\+KS}$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$\+::{\bf Fast\+M\+KS} (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{reference\+Set, }
+\item[{const bool}]{single\+Mode = {\ttfamily false}, }
+\item[{const bool}]{naive = {\ttfamily false}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1fastmks_1_1FastMKS_a8eecc60591399e576952039711035d54}
+
+
+Create the \doxyref{Fast\+M\+KS}{p.}{classmlpack_1_1fastmks_1_1FastMKS} object with the given reference set (this is the set that is searched). 
+
+Optionally, specify whether or not single-\/tree search or naive (brute-\/force) search should be used.
+
+
+\begin{DoxyParams}{Parameters}
+{\em reference\+Set} & Set of reference data. \\
+\hline
+{\em single\+Mode} & Whether or not to run single-\/tree search. \\
+\hline
+{\em naive} & Whether or not to run brute-\/force (naive) search. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}!Fast\+M\+KS@{Fast\+M\+KS}}
+\index{Fast\+M\+KS@{Fast\+M\+KS}!mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}}
+\subsubsection[{Fast\+M\+K\+S(const Mat\+Type \&reference\+Set, Kernel\+Type \&kernel, const bool single\+Mode=false, const bool naive=false)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Kernel\+Type, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+Standard\+Cover\+Tree$>$ {\bf mlpack\+::fastmks\+::\+Fast\+M\+KS}$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$\+::{\bf Fast\+M\+KS} (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{reference\+Set, }
+\item[{Kernel\+Type \&}]{kernel, }
+\item[{const bool}]{single\+Mode = {\ttfamily false}, }
+\item[{const bool}]{naive = {\ttfamily false}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1fastmks_1_1FastMKS_aedbfb860968483f4c90051866995892e}
+
+
+Create the \doxyref{Fast\+M\+KS}{p.}{classmlpack_1_1fastmks_1_1FastMKS} object using the reference set (this is the set that is searched) with an initialized kernel. 
+
+This is useful for when the kernel stores state. Optionally, specify whether or not single-\/tree search or naive (brute-\/force) search should be used.
+
+
+\begin{DoxyParams}{Parameters}
+{\em reference\+Set} & Reference set of data for \doxyref{Fast\+M\+KS}{p.}{classmlpack_1_1fastmks_1_1FastMKS}. \\
+\hline
+{\em kernel} & Initialized kernel. \\
+\hline
+{\em single} & Whether or not to run single-\/tree search. \\
+\hline
+{\em naive} & Whether or not to run brute-\/force (naive) search. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}!Fast\+M\+KS@{Fast\+M\+KS}}
+\index{Fast\+M\+KS@{Fast\+M\+KS}!mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}}
+\subsubsection[{Fast\+M\+K\+S(\+Tree $\ast$reference\+Tree, const bool single\+Mode=false)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Kernel\+Type, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+Standard\+Cover\+Tree$>$ {\bf mlpack\+::fastmks\+::\+Fast\+M\+KS}$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$\+::{\bf Fast\+M\+KS} (
+\begin{DoxyParamCaption}
+\item[{{\bf Tree} $\ast$}]{reference\+Tree, }
+\item[{const bool}]{single\+Mode = {\ttfamily false}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1fastmks_1_1FastMKS_a5fd8b0fe58ad6622bab66d78809a4961}
+
+
+Create the \doxyref{Fast\+M\+KS}{p.}{classmlpack_1_1fastmks_1_1FastMKS} object with an already-\/initialized tree built on the reference points. 
+
+Be sure that the tree is built with the metric type I\+P\+Metric$<$\+Kernel\+Type$>$. Optionally, whether or not to run single-\/tree search can be specified. Brute-\/force search is not available with this constructor since a tree is given (use one of the other constructors).
+
+
+\begin{DoxyParams}{Parameters}
+{\em reference\+Tree} & Tree built on reference data. \\
+\hline
+{\em single} & Whether or not to run single-\/tree search. \\
+\hline
+{\em naive} & Whether or not to run brute-\/force (naive) search. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}!Fast\+M\+KS@{Fast\+M\+KS}}
+\index{Fast\+M\+KS@{Fast\+M\+KS}!mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}}
+\subsubsection[{Fast\+M\+K\+S(const Fast\+M\+K\+S \&other)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Kernel\+Type, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+Standard\+Cover\+Tree$>$ {\bf mlpack\+::fastmks\+::\+Fast\+M\+KS}$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$\+::{\bf Fast\+M\+KS} (
+\begin{DoxyParamCaption}
+\item[{const {\bf Fast\+M\+KS}$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$ \&}]{other}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1fastmks_1_1FastMKS_a985b51ba07e56b99eaa5768e64c1c778}
+
+
+Copy the parameters of the given model. 
+
+\index{mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}!Fast\+M\+KS@{Fast\+M\+KS}}
+\index{Fast\+M\+KS@{Fast\+M\+KS}!mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}}
+\subsubsection[{Fast\+M\+K\+S(\+Fast\+M\+K\+S \&\&other)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Kernel\+Type, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+Standard\+Cover\+Tree$>$ {\bf mlpack\+::fastmks\+::\+Fast\+M\+KS}$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$\+::{\bf Fast\+M\+KS} (
+\begin{DoxyParamCaption}
+\item[{{\bf Fast\+M\+KS}$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$ \&\&}]{other}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1fastmks_1_1FastMKS_a3ab05866754d6d93fea6f4559d60761c}
+
+
+Take ownership of the given model. 
+
+\index{mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}!````~Fast\+M\+KS@{$\sim$\+Fast\+M\+KS}}
+\index{````~Fast\+M\+KS@{$\sim$\+Fast\+M\+KS}!mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}}
+\subsubsection[{$\sim$\+Fast\+M\+K\+S()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Kernel\+Type, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+Standard\+Cover\+Tree$>$ {\bf mlpack\+::fastmks\+::\+Fast\+M\+KS}$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$\+::$\sim${\bf Fast\+M\+KS} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1fastmks_1_1FastMKS_a1aadb1664b5174f963edef9a07f816e5}
+
+
+Destructor for the \doxyref{Fast\+M\+KS}{p.}{classmlpack_1_1fastmks_1_1FastMKS} object. 
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}!Metric@{Metric}}
+\index{Metric@{Metric}!mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}}
+\subsubsection[{Metric() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Kernel\+Type, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+Standard\+Cover\+Tree$>$ const {\bf metric\+::\+I\+P\+Metric}$<$Kernel\+Type$>$\& {\bf mlpack\+::fastmks\+::\+Fast\+M\+KS}$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$\+::Metric (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1fastmks_1_1FastMKS_aa2f358ec981cf2f58346bc5c1b500250}
+
+
+Get the inner-\/product metric induced by the given kernel. 
+
+
+
+Definition at line 236 of file fastmks.\+hpp.
+
+\index{mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}!Metric@{Metric}}
+\index{Metric@{Metric}!mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}}
+\subsubsection[{Metric()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Kernel\+Type, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+Standard\+Cover\+Tree$>$ {\bf metric\+::\+I\+P\+Metric}$<$Kernel\+Type$>$\& {\bf mlpack\+::fastmks\+::\+Fast\+M\+KS}$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$\+::Metric (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1fastmks_1_1FastMKS_ab377ba4ad53c024d6133be54c1f76fc9}
+
+
+Modify the inner-\/product metric induced by the given kernel. 
+
+
+
+Definition at line 238 of file fastmks.\+hpp.
+
+\index{mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}!Naive@{Naive}}
+\index{Naive@{Naive}!mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}}
+\subsubsection[{Naive() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Kernel\+Type, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+Standard\+Cover\+Tree$>$ bool {\bf mlpack\+::fastmks\+::\+Fast\+M\+KS}$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$\+::Naive (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1fastmks_1_1FastMKS_a9bfa73dd5be821b58670688bcc734527}
+
+
+Get whether or not brute-\/force (naive) search is used. 
+
+
+
+Definition at line 246 of file fastmks.\+hpp.
+
+\index{mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}!Naive@{Naive}}
+\index{Naive@{Naive}!mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}}
+\subsubsection[{Naive()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Kernel\+Type, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+Standard\+Cover\+Tree$>$ bool\& {\bf mlpack\+::fastmks\+::\+Fast\+M\+KS}$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$\+::Naive (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1fastmks_1_1FastMKS_a6e8dbda7545650617d0c395c8691fa36}
+
+
+Modify whether or not brute-\/force (naive) search is used. 
+
+
+
+Definition at line 248 of file fastmks.\+hpp.
+
+\index{mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}!operator=@{operator=}}
+\index{operator=@{operator=}!mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}}
+\subsubsection[{operator=(const Fast\+M\+K\+S \&other)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Kernel\+Type, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+Standard\+Cover\+Tree$>$ {\bf Fast\+M\+KS}\& {\bf mlpack\+::fastmks\+::\+Fast\+M\+KS}$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$\+::operator= (
+\begin{DoxyParamCaption}
+\item[{const {\bf Fast\+M\+KS}$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$ \&}]{other}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1fastmks_1_1FastMKS_a6bec17384349391b7730c6d6296da59b}
+
+
+Assign this model to be a copy of the given model. 
+
+\index{mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}!Search@{Search}}
+\index{Search@{Search}!mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}}
+\subsubsection[{Search(const Mat\+Type \&query\+Set, const size\+\_\+t k, arma\+::\+Mat$<$ size\+\_\+t $>$ \&indices, arma\+::mat \&kernels)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Kernel\+Type, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+Standard\+Cover\+Tree$>$ void {\bf mlpack\+::fastmks\+::\+Fast\+M\+KS}$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$\+::Search (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{query\+Set, }
+\item[{const size\+\_\+t}]{k, }
+\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{indices, }
+\item[{arma\+::mat \&}]{kernels}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1fastmks_1_1FastMKS_ad2da7df9b8e8d7122e135ebe6882720b}
+
+
+Search for the points in the reference set with maximum kernel evaluation to each point in the given query set. 
+
+The resulting kernel evaluations are stored in the kernels matrix, and the corresponding point indices are stored in the indices matrix. The results for each point in the query set are stored in the corresponding column of the kernels and products matrices; for instance, the index of the point with maximum kernel evaluation to point 4 in the query set will be stored in row 0 and column 4 of the indices matrix.
+
+If query\+Set only contains a few points, the extra overhead of building a tree to perform dual-\/tree search may not be warranted, and it may be faster to use single-\/tree search, either by setting single\+Mode to false in the constructor or with \doxyref{Single\+Mode()}{p.}{classmlpack_1_1fastmks_1_1FastMKS_a4788c6a86ac17402ee36ffe1cd5dee8c}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Set} & Set of query points (can be a single point). \\
+\hline
+{\em k} & The number of maximum kernels to find. \\
+\hline
+{\em indices} & Matrix to store resulting indices of max-\/kernel search in. \\
+\hline
+{\em kernels} & Matrix to store resulting max-\/kernel values in. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}!Search@{Search}}
+\index{Search@{Search}!mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}}
+\subsubsection[{Search(\+Tree $\ast$query\+Set, const size\+\_\+t k, arma\+::\+Mat$<$ size\+\_\+t $>$ \&indices, arma\+::mat \&kernels)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Kernel\+Type, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+Standard\+Cover\+Tree$>$ void {\bf mlpack\+::fastmks\+::\+Fast\+M\+KS}$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$\+::Search (
+\begin{DoxyParamCaption}
+\item[{{\bf Tree} $\ast$}]{query\+Set, }
+\item[{const size\+\_\+t}]{k, }
+\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{indices, }
+\item[{arma\+::mat \&}]{kernels}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1fastmks_1_1FastMKS_a5f26ff58fe569ac64acf0c523699df4c}
+
+
+Search for the points in the reference set with maximum kernel evaluation to each point in the query set corresponding to the given pre-\/built query tree. 
+
+The resulting kernel evaluations are stored in the kernels matrix, and the corresponding point indices are stored in the indices matrix. The results for each point in the query set are stored in the corresponding column of the kernels and products matrices; for instance, the index of the point with maximum kernel evaluation to point 4 in the query set will be stored in row 0 and column 4 of the indices matrix.
+
+This will throw an exception if called while the \doxyref{Fast\+M\+KS}{p.}{classmlpack_1_1fastmks_1_1FastMKS} object has \textquotesingle{}single\textquotesingle{} set to true.
+
+Be aware that if your tree modifies the original input matrix, the results here are with respect to the modified input matrix (that is, query\+Tree-\/$>$Dataset()).
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Tree} & Tree built on query points. \\
+\hline
+{\em k} & The number of maximum kernels to find. \\
+\hline
+{\em indices} & Matrix to store resulting indices of max-\/kernel search in. \\
+\hline
+{\em kernels} & Matrix to store resulting max-\/kernel values in. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}!Search@{Search}}
+\index{Search@{Search}!mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}}
+\subsubsection[{Search(const size\+\_\+t k, arma\+::\+Mat$<$ size\+\_\+t $>$ \&indices, arma\+::mat \&products)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Kernel\+Type, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+Standard\+Cover\+Tree$>$ void {\bf mlpack\+::fastmks\+::\+Fast\+M\+KS}$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$\+::Search (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{k, }
+\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{indices, }
+\item[{arma\+::mat \&}]{products}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1fastmks_1_1FastMKS_afda1ec75f93ec784080ab165efc021c2}
+
+
+Search for the maximum inner products of the query set (or if no query set was passed, the reference set is used). 
+
+The resulting maximum inner products are stored in the products matrix and the corresponding point indices are stores in the indices matrix. The results for each point in the query set are stored in the corresponding column of the indices and products matrices; for instance, the index of the point with maximum inner product to point 4 in the query set will be stored in row 0 and column 4 of the indices matrix.
+
+
+\begin{DoxyParams}{Parameters}
+{\em k} & The number of maximum kernels to find. \\
+\hline
+{\em indices} & Matrix to store resulting indices of max-\/kernel search in. \\
+\hline
+{\em products} & Matrix to store resulting max-\/kernel values in. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}}
+\subsubsection[{Serialize(\+Archive \&ar, const unsigned int)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Kernel\+Type, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+Standard\+Cover\+Tree$>$ template$<$typename Archive $>$ void {\bf mlpack\+::fastmks\+::\+Fast\+M\+KS}$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$\+::Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const unsigned}]{int}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1fastmks_1_1FastMKS_a75193dccbc442faf6cfc3badf7c3544a}
+
+
+Serialize the model. 
+
+
+
+Referenced by mlpack\+::fastmks\+::\+Fast\+M\+K\+S$<$ kernel\+::\+Epanechnikov\+Kernel $>$\+::\+Naive().
+
+\index{mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}!Single\+Mode@{Single\+Mode}}
+\index{Single\+Mode@{Single\+Mode}!mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}}
+\subsubsection[{Single\+Mode() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Kernel\+Type, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+Standard\+Cover\+Tree$>$ bool {\bf mlpack\+::fastmks\+::\+Fast\+M\+KS}$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$\+::Single\+Mode (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1fastmks_1_1FastMKS_a79999fcc0325a7279c39ee84014ce952}
+
+
+Get whether or not single-\/tree search is used. 
+
+
+
+Definition at line 241 of file fastmks.\+hpp.
+
+\index{mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}!Single\+Mode@{Single\+Mode}}
+\index{Single\+Mode@{Single\+Mode}!mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}}
+\subsubsection[{Single\+Mode()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Kernel\+Type, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+Standard\+Cover\+Tree$>$ bool\& {\bf mlpack\+::fastmks\+::\+Fast\+M\+KS}$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$\+::Single\+Mode (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1fastmks_1_1FastMKS_a4788c6a86ac17402ee36ffe1cd5dee8c}
+
+
+Modify whether or not single-\/tree search is used. 
+
+
+
+Definition at line 243 of file fastmks.\+hpp.
+
+\index{mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}}
+\subsubsection[{Train(const Mat\+Type \&reference\+Set)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Kernel\+Type, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+Standard\+Cover\+Tree$>$ void {\bf mlpack\+::fastmks\+::\+Fast\+M\+KS}$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$\+::Train (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{reference\+Set}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1fastmks_1_1FastMKS_a1d0853f5bc2f2e9f37fe289e664d73bd}
+
+
+\char`\"{}\+Train\char`\"{} the \doxyref{Fast\+M\+KS}{p.}{classmlpack_1_1fastmks_1_1FastMKS} model on the given reference set (this will just build a tree, if the current search mode is not naive mode). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em reference\+Set} & Set of reference points. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}}
+\subsubsection[{Train(const Mat\+Type \&reference\+Set, Kernel\+Type \&kernel)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Kernel\+Type, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+Standard\+Cover\+Tree$>$ void {\bf mlpack\+::fastmks\+::\+Fast\+M\+KS}$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$\+::Train (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{reference\+Set, }
+\item[{Kernel\+Type \&}]{kernel}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1fastmks_1_1FastMKS_ab773461608c6c44bacad8e1ca96a7a69}
+
+
+\char`\"{}\+Train\char`\"{} the \doxyref{Fast\+M\+KS}{p.}{classmlpack_1_1fastmks_1_1FastMKS} model on the given reference set and use the given kernel. 
+
+This will just build a tree and replace the metric, if the current search mode is not naive mode.
+
+
+\begin{DoxyParams}{Parameters}
+{\em reference\+Set} & Set of reference points. \\
+\hline
+{\em kernel} & Kernel to use for search. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}}
+\subsubsection[{Train(\+Tree $\ast$reference\+Tree)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Kernel\+Type, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+Standard\+Cover\+Tree$>$ void {\bf mlpack\+::fastmks\+::\+Fast\+M\+KS}$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$\+::Train (
+\begin{DoxyParamCaption}
+\item[{{\bf Tree} $\ast$}]{reference\+Tree}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1fastmks_1_1FastMKS_a17459df96a330da05911e79b62e3d174}
+
+
+Train the \doxyref{Fast\+M\+KS}{p.}{classmlpack_1_1fastmks_1_1FastMKS} model on the given reference tree. 
+
+This takes ownership of the tree, so you do not need to delete it! This will throw an exception if the model is searching in naive mode (i.\+e. if \doxyref{Naive()}{p.}{classmlpack_1_1fastmks_1_1FastMKS_a6e8dbda7545650617d0c395c8691fa36} == true).
+
+
+\begin{DoxyParams}{Parameters}
+{\em tree} & Tree to use as reference data. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}!metric@{metric}}
+\index{metric@{metric}!mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}}
+\subsubsection[{metric}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Kernel\+Type, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+Standard\+Cover\+Tree$>$ {\bf metric\+::\+I\+P\+Metric}$<$Kernel\+Type$>$ {\bf mlpack\+::fastmks\+::\+Fast\+M\+KS}$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$\+::metric\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1fastmks_1_1FastMKS_a2abc93f02e1c890b98938903efee4d90}
+
+
+The instantiated inner-\/product metric induced by the given kernel. 
+
+
+
+Definition at line 271 of file fastmks.\+hpp.
+
+
+
+Referenced by mlpack\+::fastmks\+::\+Fast\+M\+K\+S$<$ kernel\+::\+Epanechnikov\+Kernel $>$\+::\+Metric().
+
+\index{mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}!naive@{naive}}
+\index{naive@{naive}!mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}}
+\subsubsection[{naive}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Kernel\+Type, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+Standard\+Cover\+Tree$>$ bool {\bf mlpack\+::fastmks\+::\+Fast\+M\+KS}$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$\+::naive\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1fastmks_1_1FastMKS_a916790de36c206488d6fdf36901c7cbf}
+
+
+If true, naive (brute-\/force) search is used. 
+
+
+
+Definition at line 268 of file fastmks.\+hpp.
+
+
+
+Referenced by mlpack\+::fastmks\+::\+Fast\+M\+K\+S$<$ kernel\+::\+Epanechnikov\+Kernel $>$\+::\+Naive().
+
+\index{mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}!reference\+Set@{reference\+Set}}
+\index{reference\+Set@{reference\+Set}!mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}}
+\subsubsection[{reference\+Set}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Kernel\+Type, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+Standard\+Cover\+Tree$>$ const Mat\+Type$\ast$ {\bf mlpack\+::fastmks\+::\+Fast\+M\+KS}$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$\+::reference\+Set\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1fastmks_1_1FastMKS_a00d1bb48c7a4bda9c6df67d5e88e386d}
+
+
+The reference dataset. 
+
+We never own this; only the tree or a higher level does. 
+
+Definition at line 257 of file fastmks.\+hpp.
+
+\index{mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}!reference\+Tree@{reference\+Tree}}
+\index{reference\+Tree@{reference\+Tree}!mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}}
+\subsubsection[{reference\+Tree}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Kernel\+Type, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+Standard\+Cover\+Tree$>$ {\bf Tree}$\ast$ {\bf mlpack\+::fastmks\+::\+Fast\+M\+KS}$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$\+::reference\+Tree\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1fastmks_1_1FastMKS_ad6682cd3139ea20c0a8c034093f23b00}
+
+
+The tree built on the reference dataset. 
+
+
+
+Definition at line 259 of file fastmks.\+hpp.
+
+\index{mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}!set\+Owner@{set\+Owner}}
+\index{set\+Owner@{set\+Owner}!mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}}
+\subsubsection[{set\+Owner}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Kernel\+Type, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+Standard\+Cover\+Tree$>$ bool {\bf mlpack\+::fastmks\+::\+Fast\+M\+KS}$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$\+::set\+Owner\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1fastmks_1_1FastMKS_a64814ca2e056052e17c250949b08f872}
+
+
+If true, we own the dataset. This happens in only a few situations. 
+
+
+
+Definition at line 263 of file fastmks.\+hpp.
+
+\index{mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}!single\+Mode@{single\+Mode}}
+\index{single\+Mode@{single\+Mode}!mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}}
+\subsubsection[{single\+Mode}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Kernel\+Type, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+Standard\+Cover\+Tree$>$ bool {\bf mlpack\+::fastmks\+::\+Fast\+M\+KS}$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$\+::single\+Mode\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1fastmks_1_1FastMKS_ae82f4acece0ba9666cbc02e83af44276}
+
+
+If true, single-\/tree search is used. 
+
+
+
+Definition at line 266 of file fastmks.\+hpp.
+
+
+
+Referenced by mlpack\+::fastmks\+::\+Fast\+M\+K\+S$<$ kernel\+::\+Epanechnikov\+Kernel $>$\+::\+Single\+Mode().
+
+\index{mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}!tree\+Owner@{tree\+Owner}}
+\index{tree\+Owner@{tree\+Owner}!mlpack\+::fastmks\+::\+Fast\+M\+KS@{mlpack\+::fastmks\+::\+Fast\+M\+KS}}
+\subsubsection[{tree\+Owner}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Kernel\+Type, typename Mat\+Type = arma\+::mat, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+Standard\+Cover\+Tree$>$ bool {\bf mlpack\+::fastmks\+::\+Fast\+M\+KS}$<$ Kernel\+Type, Mat\+Type, Tree\+Type $>$\+::tree\+Owner\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1fastmks_1_1FastMKS_ac971d02510603dbe359a2f26a44d027c}
+
+
+If true, this object created the tree and is responsible for it. 
+
+
+
+Definition at line 261 of file fastmks.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/fastmks/{\bf fastmks.\+hpp}\end{DoxyCompactItemize}

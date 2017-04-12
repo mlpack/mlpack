@@ -1,0 +1,106 @@
+.TH "mlpack::ann::GradientSetVisitor" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::ann::GradientSetVisitor \- \fBGradientSetVisitor\fP update the gradient parameter given the gradient set\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits static_visitor< size_t >\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBGradientSetVisitor\fP (arma::mat &&\fBgradient\fP, size_t \fBoffset\fP=0)"
+.br
+.RI "\fIUpdate the gradient parameter given the gradient set\&. \fP"
+.ti -1c
+.RI "template<typename LayerType > size_t \fBoperator()\fP (LayerType *layer) const "
+.br
+.RI "\fIUpdate the gradient parameter\&. \fP"
+.in -1c
+.SS "Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename T > std::enable_if< HasGradientCheck< T, arma::mat &(T::*)()>::value &&!HasModelCheck< T, std::vector< \fBLayerTypes\fP > &(T::*)()>::value, size_t >::type \fBLayerGradients\fP (T *layer, arma::mat &input) const "
+.br
+.RI "\fIUpdate the gradient if the module implements the Gradient() function\&. \fP"
+.ti -1c
+.RI "template<typename T > std::enable_if< !HasGradientCheck< T, arma::mat &(T::*)()>::value &&HasModelCheck< T, std::vector< \fBLayerTypes\fP > &(T::*)()>::value, size_t >::type \fBLayerGradients\fP (T *layer, arma::mat &input) const "
+.br
+.RI "\fIUpdate the gradient if the module implements the Model() function\&. \fP"
+.ti -1c
+.RI "template<typename T > std::enable_if< HasGradientCheck< T, arma::mat &(T::*)()>::value &&HasModelCheck< T, std::vector< \fBLayerTypes\fP > &(T::*)()>::value, size_t >::type \fBLayerGradients\fP (T *layer, arma::mat &input) const "
+.br
+.RI "\fIUpdate the gradient if the module implements the Gradient() and Model() function\&. \fP"
+.ti -1c
+.RI "template<typename T , typename P > std::enable_if< !HasGradientCheck< T, P &(T::*)()>::value &&!HasModelCheck< T, std::vector< \fBLayerTypes\fP > &(T::*)()>::value, size_t >::type \fBLayerGradients\fP (T *layer, P &input) const "
+.br
+.RI "\fIDo not update the gradient parameter if the module doesn't implement the Gradient() or Model() function\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "arma::mat && \fBgradient\fP"
+.br
+.RI "\fIThe gradient set\&. \fP"
+.ti -1c
+.RI "size_t \fBoffset\fP"
+.br
+.RI "\fIThe gradient offset\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBGradientSetVisitor\fP update the gradient parameter given the gradient set\&. 
+.PP
+Definition at line 27 of file gradient_set_visitor\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::ann::GradientSetVisitor::GradientSetVisitor (arma::mat && gradient, size_t offset = \fC0\fP)"
+
+.PP
+Update the gradient parameter given the gradient set\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename T > std::enable_if< HasGradientCheck<T, arma::mat&(T::*)()>::value && !HasModelCheck<T, std::vector<\fBLayerTypes\fP>&(T::*)()>::value, size_t>::type mlpack::ann::GradientSetVisitor::LayerGradients (T * layer, arma::mat & input) const\fC [private]\fP"
+
+.PP
+Update the gradient if the module implements the Gradient() function\&. 
+.SS "template<typename T > std::enable_if< !HasGradientCheck<T, arma::mat&(T::*)()>::value && HasModelCheck<T, std::vector<\fBLayerTypes\fP>&(T::*)()>::value, size_t>::type mlpack::ann::GradientSetVisitor::LayerGradients (T * layer, arma::mat & input) const\fC [private]\fP"
+
+.PP
+Update the gradient if the module implements the Model() function\&. 
+.SS "template<typename T > std::enable_if< HasGradientCheck<T, arma::mat&(T::*)()>::value && HasModelCheck<T, std::vector<\fBLayerTypes\fP>&(T::*)()>::value, size_t>::type mlpack::ann::GradientSetVisitor::LayerGradients (T * layer, arma::mat & input) const\fC [private]\fP"
+
+.PP
+Update the gradient if the module implements the Gradient() and Model() function\&. 
+.SS "template<typename T , typename P > std::enable_if< !HasGradientCheck<T, P&(T::*)()>::value && !HasModelCheck<T, std::vector<\fBLayerTypes\fP>&(T::*)()>::value, size_t>::type mlpack::ann::GradientSetVisitor::LayerGradients (T * layer, P & input) const\fC [private]\fP"
+
+.PP
+Do not update the gradient parameter if the module doesn't implement the Gradient() or Model() function\&. 
+.SS "template<typename LayerType > size_t mlpack::ann::GradientSetVisitor::operator() (LayerType * layer) const"
+
+.PP
+Update the gradient parameter\&. 
+.SH "Member Data Documentation"
+.PP 
+.SS "arma::mat&& mlpack::ann::GradientSetVisitor::gradient\fC [private]\fP"
+
+.PP
+The gradient set\&. 
+.PP
+Definition at line 39 of file gradient_set_visitor\&.hpp\&.
+.SS "size_t mlpack::ann::GradientSetVisitor::offset\fC [private]\fP"
+
+.PP
+The gradient offset\&. 
+.PP
+Definition at line 42 of file gradient_set_visitor\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

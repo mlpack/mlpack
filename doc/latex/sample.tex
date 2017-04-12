@@ -1,0 +1,83 @@
+\section{Introduction}\label{sample_sampleintro}
+On this page, several simple mlpack examples are contained, in increasing order of complexity. If you compile from the command-\/line, be sure that your compiler is in C++11 mode. With gcc and clang, this can be accomplished by adding the {\ttfamily -\/std=c++11} option.\section{Covariance Computation}\label{sample_covariance}
+A simple program to compute the covariance of a data matrix (\char`\"{}data.\+csv\char`\"{}), assuming that the data is already centered, and save it to file.
+
+
+\begin{DoxyCode}
+\textcolor{comment}{// Includes all relevant components of mlpack.}
+\textcolor{preprocessor}{#include <mlpack/core.hpp>}
+
+\textcolor{comment}{// Convenience.}
+\textcolor{keyword}{using namespace }mlpack;
+
+\textcolor{keywordtype}{int} main()
+\{
+  \textcolor{comment}{// First, load the data.}
+  arma::mat data;
+  \textcolor{comment}{// Use data::Load() which transposes the matrix.}
+  data::Load(\textcolor{stringliteral}{"data.csv"}, data, \textcolor{keyword}{true});
+
+  \textcolor{comment}{// Now compute the covariance.  We assume that the data is already centered.}
+  \textcolor{comment}{// Remember, because the matrix is column-major, the covariance operation is}
+  \textcolor{comment}{// transposed.}
+  arma::mat cov = data * trans(data) / data.n\_cols;
+
+  \textcolor{comment}{// Save the output.}
+  data::Save(\textcolor{stringliteral}{"cov.csv"}, cov, \textcolor{keyword}{true});
+\}
+\end{DoxyCode}
+\section{Nearest Neighbor}\label{sample_nn}
+This simple program uses the \doxyref{mlpack\+::neighbor\+::\+Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} object to find the nearest neighbor of each point in a dataset using the L1 metric, and then print the index of the neighbor and the distance of it to stdout.
+
+
+\begin{DoxyCode}
+\textcolor{preprocessor}{#include <mlpack/core.hpp>}
+\textcolor{preprocessor}{#include <mlpack/methods/neighbor_search/neighbor_search.hpp>}
+
+\textcolor{keyword}{using namespace }mlpack;
+\textcolor{keyword}{using namespace }mlpack::neighbor; \textcolor{comment}{// NeighborSearch and NearestNeighborSort}
+\textcolor{keyword}{using namespace }mlpack::metric; \textcolor{comment}{// ManhattanDistance}
+
+\textcolor{keywordtype}{int} main()
+\{
+  \textcolor{comment}{// Load the data from data.csv (hard-coded).  Use CLI for simple command-line}
+  \textcolor{comment}{// parameter handling.}
+  arma::mat data;
+  data::Load(\textcolor{stringliteral}{"data.csv"}, data, \textcolor{keyword}{true});
+
+  \textcolor{comment}{// Use templates to specify that we want a NeighborSearch object which uses}
+  \textcolor{comment}{// the Manhattan distance.}
+  NeighborSearch<NearestNeighborSort, ManhattanDistance> nn(data);
+
+  \textcolor{comment}{// Create the object we will store the nearest neighbors in.}
+  arma::Mat<size\_t> neighbors;
+  arma::mat distances; \textcolor{comment}{// We need to store the distance too.}
+
+  \textcolor{comment}{// Compute the neighbors.}
+  nn.Search(1, neighbors, distances);
+
+  \textcolor{comment}{// Write each neighbor and distance using Log.}
+  \textcolor{keywordflow}{for} (\textcolor{keywordtype}{size\_t} i = 0; i < neighbors.n\_elem; ++i)
+  \{
+    std::cout << \textcolor{stringliteral}{"Nearest neighbor of point "} << i << \textcolor{stringliteral}{" is point "}
+        << neighbors[i] << \textcolor{stringliteral}{" and the distance is "} << distances[i] << \textcolor{stringliteral}{".\(\backslash\)n"};
+  \}
+\}
+\end{DoxyCode}
+\section{Other examples}\label{sample_other}
+For more complex examples, it is useful to refer to the main executables\+:
+
+
+\begin{DoxyItemize}
+\item methods/neighbor\+\_\+search/knn\+\_\+main.\+cpp
+\item methods/neighbor\+\_\+search/kfn\+\_\+main.\+cpp
+\item methods/emst/emst\+\_\+main.\+cpp
+\item methods/radical/radical\+\_\+main.\+cpp
+\item methods/nca/nca\+\_\+main.\+cpp
+\item methods/naive\+\_\+bayes/nbc\+\_\+main.\+cpp
+\item methods/pca/pca\+\_\+main.\+cpp
+\item methods/lars/lars\+\_\+main.\+cpp
+\item methods/linear\+\_\+regression/linear\+\_\+regression\+\_\+main.\+cpp
+\item methods/gmm/gmm\+\_\+main.\+cpp
+\item methods/kmeans/kmeans\+\_\+main.\+cpp 
+\end{DoxyItemize}

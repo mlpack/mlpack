@@ -1,0 +1,42 @@
+\section{src/mlpack/core/tree/rectangle\+\_\+tree/typedef.hpp File Reference}
+\label{core_2tree_2rectangle__tree_2typedef_8hpp}\index{src/mlpack/core/tree/rectangle\+\_\+tree/typedef.\+hpp@{src/mlpack/core/tree/rectangle\+\_\+tree/typedef.\+hpp}}
+Include dependency graph for typedef.\+hpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{core_2tree_2rectangle__tree_2typedef_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{core_2tree_2rectangle__tree_2typedef_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ {\bf mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ {\bf mlpack\+::tree}
+\begin{DoxyCompactList}\small\item\em Trees and tree-\/building procedures. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\using {\bf mlpack\+::tree\+::\+Discrete\+Hilbert\+R\+Tree\+Auxiliary\+Information} = Hilbert\+R\+Tree\+Auxiliary\+Information$<$ Tree\+Type, Discrete\+Hilbert\+Value $>$
+\begin{DoxyCompactList}\small\item\em The Hilbert R-\/tree, a variant of the R tree with an ordering along the Hilbert curve. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using {\bf mlpack\+::tree\+::\+Hilbert\+R\+Tree} = Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hilbert\+R\+Tree\+Split$<$ 2 $>$, Hilbert\+R\+Tree\+Descent\+Heuristic, Discrete\+Hilbert\+R\+Tree\+Auxiliary\+Information $>$
+\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using {\bf mlpack\+::tree\+::\+R\+Plus\+Plus\+Tree} = Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Plus\+Tree\+Split$<$ R\+Plus\+Plus\+Tree\+Split\+Policy, Minimal\+Splits\+Number\+Sweep $>$, R\+Plus\+Plus\+Tree\+Descent\+Heuristic, R\+Plus\+Plus\+Tree\+Auxiliary\+Information $>$
+\begin{DoxyCompactList}\small\item\em The R++ tree, a variant of the R+ tree with maximum buonding rectangles. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using {\bf mlpack\+::tree\+::\+R\+Plus\+Tree} = Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Plus\+Tree\+Split$<$ R\+Plus\+Tree\+Split\+Policy, Minimal\+Coverage\+Sweep $>$, R\+Plus\+Tree\+Descent\+Heuristic, No\+Auxiliary\+Information $>$
+\begin{DoxyCompactList}\small\item\em The R+ tree, a variant of the R tree that avoids overlapping rectangles. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using {\bf mlpack\+::tree\+::\+R\+Star\+Tree} = Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Star\+Tree\+Split, R\+Star\+Tree\+Descent\+Heuristic, No\+Auxiliary\+Information $>$
+\begin{DoxyCompactList}\small\item\em The R$\ast$-\/tree, a more recent variant of the R tree. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using {\bf mlpack\+::tree\+::\+R\+Tree} = Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Tree\+Split, R\+Tree\+Descent\+Heuristic, No\+Auxiliary\+Information $>$
+\begin{DoxyCompactList}\small\item\em An implementation of the R tree that satisfies the Tree\+Type policy A\+PI. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using {\bf mlpack\+::tree\+::\+X\+Tree} = Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, X\+Tree\+Split, R\+Tree\+Descent\+Heuristic, X\+Tree\+Auxiliary\+Information $>$
+\begin{DoxyCompactList}\small\item\em The X-\/tree, a variant of the R tree with supernodes. \end{DoxyCompactList}\end{DoxyCompactItemize}

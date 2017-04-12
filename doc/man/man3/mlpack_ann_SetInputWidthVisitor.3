@@ -1,0 +1,106 @@
+.TH "mlpack::ann::SetInputWidthVisitor" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::ann::SetInputWidthVisitor \- \fBSetInputWidthVisitor\fP updates the input width parameter with the given input width\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits static_visitor< bool >\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBSetInputWidthVisitor\fP (const size_t \fBinputWidth\fP=0, const bool \fBreset\fP=false)"
+.br
+.RI "\fIUpdate the input width parameter with the given input width\&. \fP"
+.ti -1c
+.RI "template<typename LayerType > bool \fBoperator()\fP (LayerType *layer) const "
+.br
+.RI "\fIUpdate the input width parameter\&. \fP"
+.in -1c
+.SS "Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename T > std::enable_if< !HasInputWidth< T, size_t &(T::*)()>::value &&!HasModelCheck< T, std::vector< \fBLayerTypes\fP > &(T::*)()>::value, bool >::type \fBLayerInputWidth\fP (T *layer) const "
+.br
+.RI "\fIDo nothing if the module doesn't implement the InputWidth() or Model() function\&. \fP"
+.ti -1c
+.RI "template<typename T > std::enable_if< HasInputWidth< T, size_t &(T::*)()>::value &&!HasModelCheck< T, std::vector< \fBLayerTypes\fP > &(T::*)()>::value, bool >::type \fBLayerInputWidth\fP (T *layer) const "
+.br
+.RI "\fIUpdate the input width if the module implements the InputWidth() function\&. \fP"
+.ti -1c
+.RI "template<typename T > std::enable_if< !HasInputWidth< T, size_t &(T::*)()>::value &&HasModelCheck< T, std::vector< \fBLayerTypes\fP > &(T::*)()>::value, bool >::type \fBLayerInputWidth\fP (T *layer) const "
+.br
+.RI "\fIUpdate the input width if the module implements the Model() function\&. \fP"
+.ti -1c
+.RI "template<typename T > std::enable_if< HasInputWidth< T, size_t &(T::*)()>::value &&HasModelCheck< T, std::vector< \fBLayerTypes\fP > &(T::*)()>::value, bool >::type \fBLayerInputWidth\fP (T *layer) const "
+.br
+.RI "\fIUpdate the input width if the module implements the InputWidth() or Model() function\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "size_t \fBinputWidth\fP"
+.br
+.RI "\fIThe input width parameter\&. \fP"
+.ti -1c
+.RI "bool \fBreset\fP"
+.br
+.RI "\fIIf set reset the height parameter if already set\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBSetInputWidthVisitor\fP updates the input width parameter with the given input width\&. 
+.PP
+Definition at line 28 of file set_input_width_visitor\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::ann::SetInputWidthVisitor::SetInputWidthVisitor (const size_t inputWidth = \fC0\fP, const bool reset = \fCfalse\fP)"
+
+.PP
+Update the input width parameter with the given input width\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename T > std::enable_if< !HasInputWidth<T, size_t&(T::*)()>::value && !HasModelCheck<T, std::vector<\fBLayerTypes\fP>&(T::*)()>::value, bool>::type mlpack::ann::SetInputWidthVisitor::LayerInputWidth (T * layer) const\fC [private]\fP"
+
+.PP
+Do nothing if the module doesn't implement the InputWidth() or Model() function\&. 
+.SS "template<typename T > std::enable_if< HasInputWidth<T, size_t&(T::*)()>::value && !HasModelCheck<T, std::vector<\fBLayerTypes\fP>&(T::*)()>::value, bool>::type mlpack::ann::SetInputWidthVisitor::LayerInputWidth (T * layer) const\fC [private]\fP"
+
+.PP
+Update the input width if the module implements the InputWidth() function\&. 
+.SS "template<typename T > std::enable_if< !HasInputWidth<T, size_t&(T::*)()>::value && HasModelCheck<T, std::vector<\fBLayerTypes\fP>&(T::*)()>::value, bool>::type mlpack::ann::SetInputWidthVisitor::LayerInputWidth (T * layer) const\fC [private]\fP"
+
+.PP
+Update the input width if the module implements the Model() function\&. 
+.SS "template<typename T > std::enable_if< HasInputWidth<T, size_t&(T::*)()>::value && HasModelCheck<T, std::vector<\fBLayerTypes\fP>&(T::*)()>::value, bool>::type mlpack::ann::SetInputWidthVisitor::LayerInputWidth (T * layer) const\fC [private]\fP"
+
+.PP
+Update the input width if the module implements the InputWidth() or Model() function\&. 
+.SS "template<typename LayerType > bool mlpack::ann::SetInputWidthVisitor::operator() (LayerType * layer) const"
+
+.PP
+Update the input width parameter\&. 
+.SH "Member Data Documentation"
+.PP 
+.SS "size_t mlpack::ann::SetInputWidthVisitor::inputWidth\fC [private]\fP"
+
+.PP
+The input width parameter\&. 
+.PP
+Definition at line 40 of file set_input_width_visitor\&.hpp\&.
+.SS "bool mlpack::ann::SetInputWidthVisitor::reset\fC [private]\fP"
+
+.PP
+If set reset the height parameter if already set\&. 
+.PP
+Definition at line 43 of file set_input_width_visitor\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

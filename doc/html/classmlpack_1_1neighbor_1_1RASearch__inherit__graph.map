@@ -1,0 +1,12 @@
+<map id="mlpack::neighbor::RASearch&lt; SortPolicy, MetricType, MatType, TreeType &gt;" name="mlpack::neighbor::RASearch&lt; SortPolicy, MetricType, MatType, TreeType &gt;">
+<area shape="rect" id="node2" href="$classmlpack_1_1neighbor_1_1RASearch.html" title="mlpack::neighbor::RASearch\l\&lt; tree::KDTree \&gt;" alt="" coords="415,5,604,47"/>
+<area shape="rect" id="node3" href="$classmlpack_1_1neighbor_1_1RASearch.html" title="mlpack::neighbor::RASearch\l\&lt; tree::RTree \&gt;" alt="" coords="415,71,604,112"/>
+<area shape="rect" id="node4" href="$classmlpack_1_1neighbor_1_1RASearch.html" title="mlpack::neighbor::RASearch\l\&lt; tree::UBTree \&gt;" alt="" coords="415,136,604,177"/>
+<area shape="rect" id="node5" href="$classmlpack_1_1neighbor_1_1RASearch.html" title="mlpack::neighbor::RASearch\l\&lt; tree::StandardCoverTree \&gt;" alt="" coords="415,201,604,243"/>
+<area shape="rect" id="node6" href="$classmlpack_1_1neighbor_1_1RASearch.html" title="mlpack::neighbor::RASearch\l\&lt; tree::RPlusPlusTree \&gt;" alt="" coords="415,267,604,308"/>
+<area shape="rect" id="node7" href="$classmlpack_1_1neighbor_1_1RASearch.html" title="mlpack::neighbor::RASearch\l\&lt; tree::HilbertRTree \&gt;" alt="" coords="415,332,604,373"/>
+<area shape="rect" id="node8" href="$classmlpack_1_1neighbor_1_1RASearch.html" title="mlpack::neighbor::RASearch\l\&lt; tree::Octree \&gt;" alt="" coords="415,397,604,439"/>
+<area shape="rect" id="node9" href="$classmlpack_1_1neighbor_1_1RASearch.html" title="mlpack::neighbor::RASearch\l\&lt; tree::XTree \&gt;" alt="" coords="415,463,604,504"/>
+<area shape="rect" id="node10" href="$classmlpack_1_1neighbor_1_1RASearch.html" title="mlpack::neighbor::RASearch\l\&lt; tree::RPlusTree \&gt;" alt="" coords="415,528,604,569"/>
+<area shape="rect" id="node11" href="$classmlpack_1_1neighbor_1_1RASearch.html" title="mlpack::neighbor::RASearch\l\&lt; tree::RStarTree \&gt;" alt="" coords="415,593,604,635"/>
+</map>

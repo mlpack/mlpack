@@ -1,0 +1,21 @@
+<map id="src/mlpack/core/data/map_policies/datatype.hpp" name="src/mlpack/core/data/map_policies/datatype.hpp">
+<area shape="rect" id="node2" href="$increment__policy_8hpp.html" title="src/mlpack/core/data\l/map_policies/increment\l_policy.hpp" alt="" coords="280,95,443,151"/>
+<area shape="rect" id="node20" href="$missing__policy_8hpp.html" title="src/mlpack/core/data\l/map_policies/missing\l_policy.hpp" alt="" coords="167,199,318,255"/>
+<area shape="rect" id="node3" href="$dataset__mapper_8hpp.html" title="src/mlpack/core/data\l/dataset_mapper.hpp" alt="" coords="393,206,537,247"/>
+<area shape="rect" id="node4" href="$imputer_8hpp.html" title="src/mlpack/core/data\l/imputer.hpp" alt="" coords="175,310,319,351"/>
+<area shape="rect" id="node5" href="$load_8hpp.html" title="src/mlpack/core/data\l/load.hpp" alt="" coords="393,310,537,351"/>
+<area shape="rect" id="node7" href="$load__csv_8hpp.html" title="src/mlpack/core/data\l/load_csv.hpp" alt="" coords="5,518,149,559"/>
+<area shape="rect" id="node16" href="$load__arff_8hpp.html" title="src/mlpack/core/data\l/load_arff.hpp" alt="" coords="561,310,705,351"/>
+<area shape="rect" id="node17" href="$hoeffding__tree_8hpp.html" title="src/mlpack/methods\l/hoeffding_trees/hoeffding\l_tree.hpp" alt="" coords="730,303,902,359"/>
+<area shape="rect" id="node6" href="$core_8hpp.html" title="Include all of the base components required to write MLPACK methods, and the main MLPACK Doxygen docu..." alt="" coords="438,421,578,448"/>
+<area shape="rect" id="node8" href="$adaboost__model_8hpp.html" title="src/mlpack/methods\l/adaboost/adaboost_model.hpp" alt="" coords="905,518,1108,559"/>
+<area shape="rect" id="node9" href="$recurrent_8hpp.html" title="src/mlpack/methods\l/ann/layer/recurrent.hpp" alt="" coords="174,518,333,559"/>
+<area shape="rect" id="node11" href="$dbscan_8hpp.html" title="src/mlpack/methods\l/dbscan/dbscan.hpp" alt="" coords="357,518,497,559"/>
+<area shape="rect" id="node12" href="$gini__gain_8hpp.html" title="src/mlpack/methods\l/decision_tree/gini\l_gain.hpp" alt="" coords="521,511,661,567"/>
+<area shape="rect" id="node14" href="$serialization_8hpp.html" title="src/mlpack/tests/serialization.hpp" alt="" coords="726,629,943,656"/>
+<area shape="rect" id="node15" href="$test__tools_8hpp.html" title="src/mlpack/tests/test\l_tools.hpp" alt="" coords="685,518,830,559"/>
+<area shape="rect" id="node10" href="$layer_8hpp.html" title="src/mlpack/methods\l/ann/layer/layer.hpp" alt="" coords="183,622,323,663"/>
+<area shape="rect" id="node13" href="$decision__tree_8hpp.html" title="src/mlpack/methods\l/decision_tree/decision\l_tree.hpp" alt="" coords="513,615,668,671"/>
+<area shape="rect" id="node18" href="$hoeffding__tree__model_8hpp.html" title="src/mlpack/methods\l/hoeffding_trees/hoeffding\l_tree_model.hpp" alt="" coords="687,407,859,463"/>
+<area shape="rect" id="node19" href="$methods_2hoeffding__trees_2typedef_8hpp.html" title="src/mlpack/methods\l/hoeffding_trees/typedef.hpp" alt="" coords="884,414,1071,455"/>
+</map>

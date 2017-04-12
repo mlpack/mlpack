@@ -1,0 +1,44 @@
+\section{mlpack\+:\+:tree\+:\+:First\+Point\+Is\+Root Class Reference}
+\label{classmlpack_1_1tree_1_1FirstPointIsRoot}\index{mlpack\+::tree\+::\+First\+Point\+Is\+Root@{mlpack\+::tree\+::\+First\+Point\+Is\+Root}}
+
+
+This class is meant to be used as a choice for the policy class Root\+Point\+Policy of the \doxyref{Cover\+Tree}{p.}{classmlpack_1_1tree_1_1CoverTree} class.  
+
+
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\static size\+\_\+t {\bf Choose\+Root} (const Mat\+Type \&)
+\begin{DoxyCompactList}\small\item\em Return the point to be used as the root point of the cover tree. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This class is meant to be used as a choice for the policy class Root\+Point\+Policy of the \doxyref{Cover\+Tree}{p.}{classmlpack_1_1tree_1_1CoverTree} class. 
+
+This policy determines which point is used for the root node of the cover tree. This particular implementation simply chooses the first point in the dataset as the root. A more complex implementation might choose, for instance, the point with least maximum distance to other points (the closest to the \char`\"{}middle\char`\"{}). 
+
+Definition at line 29 of file first\+\_\+point\+\_\+is\+\_\+root.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::tree\+::\+First\+Point\+Is\+Root@{mlpack\+::tree\+::\+First\+Point\+Is\+Root}!Choose\+Root@{Choose\+Root}}
+\index{Choose\+Root@{Choose\+Root}!mlpack\+::tree\+::\+First\+Point\+Is\+Root@{mlpack\+::tree\+::\+First\+Point\+Is\+Root}}
+\subsubsection[{Choose\+Root(const Mat\+Type \&)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type $>$ static size\+\_\+t mlpack\+::tree\+::\+First\+Point\+Is\+Root\+::\+Choose\+Root (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}\label{classmlpack_1_1tree_1_1FirstPointIsRoot_aab09eb6f7d8a35e68b2afb8fe3e8cbfe}
+
+
+Return the point to be used as the root point of the cover tree. 
+
+This just returns 0. 
+
+Definition at line 37 of file first\+\_\+point\+\_\+is\+\_\+root.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/tree/cover\+\_\+tree/{\bf first\+\_\+point\+\_\+is\+\_\+root.\+hpp}\end{DoxyCompactItemize}

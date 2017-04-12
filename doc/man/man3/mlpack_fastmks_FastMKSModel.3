@@ -1,0 +1,319 @@
+.TH "mlpack::fastmks::FastMKSModel" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::fastmks::FastMKSModel \- A utility struct to contain all the possible \fBFastMKS\fP models, for use by the mlpack_fastmks program\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "enum \fBKernelTypes\fP { \fBLINEAR_KERNEL\fP, \fBPOLYNOMIAL_KERNEL\fP, \fBCOSINE_DISTANCE\fP, \fBGAUSSIAN_KERNEL\fP, \fBEPANECHNIKOV_KERNEL\fP, \fBTRIANGULAR_KERNEL\fP, \fBHYPTAN_KERNEL\fP }
+.RI "\fIA list of all the kernels we support\&. \fP""
+.br
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBFastMKSModel\fP (const int \fBkernelType\fP=\fBLINEAR_KERNEL\fP)"
+.br
+.RI "\fICreate the \fBFastMKSModel\fP with the given kernel type\&. \fP"
+.ti -1c
+.RI "\fBFastMKSModel\fP (const \fBFastMKSModel\fP &other)"
+.br
+.RI "\fICopy constructor\&. \fP"
+.ti -1c
+.RI "\fBFastMKSModel\fP (\fBFastMKSModel\fP &&other)"
+.br
+.RI "\fIMove constructor\&. \fP"
+.ti -1c
+.RI "\fB~FastMKSModel\fP ()"
+.br
+.RI "\fIClean memory\&. \fP"
+.ti -1c
+.RI "template<typename TKernelType > void \fBBuildModel\fP (const arma::mat &referenceData, TKernelType &kernel, const bool singleMode, const bool naive, const double base)"
+.br
+.RI "\fIBuild the model on the given reference set\&. \fP"
+.ti -1c
+.RI "int \fBKernelType\fP () const "
+.br
+.RI "\fIGet the kernel type\&. \fP"
+.ti -1c
+.RI "int & \fBKernelType\fP ()"
+.br
+.RI "\fIModify the kernel type\&. \fP"
+.ti -1c
+.RI "bool \fBNaive\fP () const "
+.br
+.RI "\fIGet whether or not naive search is used\&. \fP"
+.ti -1c
+.RI "bool & \fBNaive\fP ()"
+.br
+.RI "\fISet whether or not naive search is used\&. \fP"
+.ti -1c
+.RI "\fBFastMKSModel\fP & \fBoperator=\fP (const \fBFastMKSModel\fP &other)"
+.br
+.RI "\fICopy assignment operator\&. \fP"
+.ti -1c
+.RI "void \fBSearch\fP (const arma::mat &querySet, const size_t k, arma::Mat< size_t > &indices, arma::mat &kernels, const double base)"
+.br
+.RI "\fISearch with a different query set\&. \fP"
+.ti -1c
+.RI "void \fBSearch\fP (const size_t k, arma::Mat< size_t > &indices, arma::mat &kernels)"
+.br
+.RI "\fISearch with the reference set as the query set\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int)"
+.br
+.RI "\fISerialize the model\&. \fP"
+.ti -1c
+.RI "bool \fBSingleMode\fP () const "
+.br
+.RI "\fIGet whether or not single-tree search is used\&. \fP"
+.ti -1c
+.RI "bool & \fBSingleMode\fP ()"
+.br
+.RI "\fISet whether or not single-tree search is used\&. \fP"
+.in -1c
+.SS "Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename FastMKSType > void \fBSearch\fP (FastMKSType &f, const arma::mat &querySet, const size_t k, arma::Mat< size_t > &indices, arma::mat &kernels, const double base)"
+.br
+.RI "\fIBuild a query tree and execute the search\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "\fBFastMKS\fP< \fBkernel::CosineDistance\fP > * \fBcosine\fP"
+.br
+.RI "\fIThis will only be non-NULL if this is the type of kernel we are using\&. \fP"
+.ti -1c
+.RI "\fBFastMKS\fP< \fBkernel::EpanechnikovKernel\fP > * \fBepan\fP"
+.br
+.RI "\fIThis will only be non-NULL if this is the type of kernel we are using\&. \fP"
+.ti -1c
+.RI "\fBFastMKS\fP< \fBkernel::GaussianKernel\fP > * \fBgaussian\fP"
+.br
+.RI "\fIThis will only be non-NULL if this is the type of kernel we are using\&. \fP"
+.ti -1c
+.RI "\fBFastMKS\fP< \fBkernel::HyperbolicTangentKernel\fP > * \fBhyptan\fP"
+.br
+.RI "\fIThis will only be non-NULL if this is the type of kernel we are using\&. \fP"
+.ti -1c
+.RI "int \fBkernelType\fP"
+.br
+.RI "\fIThe type of kernel we are using\&. \fP"
+.ti -1c
+.RI "\fBFastMKS\fP< \fBkernel::LinearKernel\fP > * \fBlinear\fP"
+.br
+.RI "\fIThis will only be non-NULL if this is the type of kernel we are using\&. \fP"
+.ti -1c
+.RI "\fBFastMKS\fP< \fBkernel::PolynomialKernel\fP > * \fBpolynomial\fP"
+.br
+.RI "\fIThis will only be non-NULL if this is the type of kernel we are using\&. \fP"
+.ti -1c
+.RI "\fBFastMKS\fP< \fBkernel::TriangularKernel\fP > * \fBtriangular\fP"
+.br
+.RI "\fIThis will only be non-NULL if this is the type of kernel we are using\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+A utility struct to contain all the possible \fBFastMKS\fP models, for use by the mlpack_fastmks program\&. 
+
+
+.PP
+Definition at line 34 of file fastmks_model\&.hpp\&.
+.SH "Member Enumeration Documentation"
+.PP 
+.SS "enum \fBmlpack::fastmks::FastMKSModel::KernelTypes\fP"
+
+.PP
+A list of all the kernels we support\&. 
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fILINEAR_KERNEL \fP\fP
+.TP
+\fB\fIPOLYNOMIAL_KERNEL \fP\fP
+.TP
+\fB\fICOSINE_DISTANCE \fP\fP
+.TP
+\fB\fIGAUSSIAN_KERNEL \fP\fP
+.TP
+\fB\fIEPANECHNIKOV_KERNEL \fP\fP
+.TP
+\fB\fITRIANGULAR_KERNEL \fP\fP
+.TP
+\fB\fIHYPTAN_KERNEL \fP\fP
+.PP
+Definition at line 38 of file fastmks_model\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::fastmks::FastMKSModel::FastMKSModel (const int kernelType = \fC\fBLINEAR_KERNEL\fP\fP)"
+
+.PP
+Create the \fBFastMKSModel\fP with the given kernel type\&. 
+.SS "mlpack::fastmks::FastMKSModel::FastMKSModel (const \fBFastMKSModel\fP & other)"
+
+.PP
+Copy constructor\&. 
+.SS "mlpack::fastmks::FastMKSModel::FastMKSModel (\fBFastMKSModel\fP && other)"
+
+.PP
+Move constructor\&. 
+.SS "mlpack::fastmks::FastMKSModel::~FastMKSModel ()"
+
+.PP
+Clean memory\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename TKernelType > void mlpack::fastmks::FastMKSModel::BuildModel (const arma::mat & referenceData, TKernelType & kernel, const bool singleMode, const bool naive, const double base)"
+
+.PP
+Build the model on the given reference set\&. Make sure kernelType is equal to the correct entry in KernelTypes for the given KernelType class! 
+.SS "int mlpack::fastmks::FastMKSModel::KernelType () const\fC [inline]\fP"
+
+.PP
+Get the kernel type\&. 
+.PP
+Definition at line 90 of file fastmks_model\&.hpp\&.
+.PP
+References kernelType\&.
+.SS "int& mlpack::fastmks::FastMKSModel::KernelType ()\fC [inline]\fP"
+
+.PP
+Modify the kernel type\&. 
+.PP
+Definition at line 92 of file fastmks_model\&.hpp\&.
+.PP
+References kernelType, Search(), and Serialize()\&.
+.SS "bool mlpack::fastmks::FastMKSModel::Naive () const"
+
+.PP
+Get whether or not naive search is used\&. 
+.SS "bool& mlpack::fastmks::FastMKSModel::Naive ()"
+
+.PP
+Set whether or not naive search is used\&. 
+.SS "\fBFastMKSModel\fP& mlpack::fastmks::FastMKSModel::operator= (const \fBFastMKSModel\fP & other)"
+
+.PP
+Copy assignment operator\&. 
+.SS "void mlpack::fastmks::FastMKSModel::Search (const arma::mat & querySet, const size_t k, arma::Mat< size_t > & indices, arma::mat & kernels, const double base)"
+
+.PP
+Search with a different query set\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIquerySet\fP Set to search with\&. 
+.br
+\fIk\fP Number of max-kernel candidates to search for\&. 
+.br
+\fIindices\fP A matrix in which to store the indices of max-kernel candidates\&. 
+.br
+\fIkernels\fP A matrix in which to store the max-kernel candidate kernel values\&. 
+.br
+\fIbase\fP Base to use for cover tree building (if in dual-tree search mode)\&. 
+.RE
+.PP
+
+.PP
+Referenced by KernelType()\&.
+.SS "void mlpack::fastmks::FastMKSModel::Search (const size_t k, arma::Mat< size_t > & indices, arma::mat & kernels)"
+
+.PP
+Search with the reference set as the query set\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIk\fP Number of max-kernel candidates to search for\&. 
+.br
+\fIindices\fP A matrix in which to store the indices of max-kernel candidates\&. 
+.br
+\fIkernels\fP A matrix in which to store the max-kernel candidate kernel values\&. 
+.RE
+.PP
+
+.SS "template<typename FastMKSType > void mlpack::fastmks::FastMKSModel::Search (FastMKSType & f, const arma::mat & querySet, const size_t k, arma::Mat< size_t > & indices, arma::mat & kernels, const double base)\fC [private]\fP"
+
+.PP
+Build a query tree and execute the search\&. 
+.SS "template<typename Archive > void mlpack::fastmks::FastMKSModel::Serialize (Archive & ar, const unsigned int)"
+
+.PP
+Serialize the model\&. 
+.PP
+Referenced by KernelType()\&.
+.SS "bool mlpack::fastmks::FastMKSModel::SingleMode () const"
+
+.PP
+Get whether or not single-tree search is used\&. 
+.SS "bool& mlpack::fastmks::FastMKSModel::SingleMode ()"
+
+.PP
+Set whether or not single-tree search is used\&. 
+.SH "Member Data Documentation"
+.PP 
+.SS "\fBFastMKS\fP<\fBkernel::CosineDistance\fP>* mlpack::fastmks::FastMKSModel::cosine\fC [private]\fP"
+
+.PP
+This will only be non-NULL if this is the type of kernel we are using\&. 
+.PP
+Definition at line 140 of file fastmks_model\&.hpp\&.
+.SS "\fBFastMKS\fP<\fBkernel::EpanechnikovKernel\fP>* mlpack::fastmks::FastMKSModel::epan\fC [private]\fP"
+
+.PP
+This will only be non-NULL if this is the type of kernel we are using\&. 
+.PP
+Definition at line 144 of file fastmks_model\&.hpp\&.
+.SS "\fBFastMKS\fP<\fBkernel::GaussianKernel\fP>* mlpack::fastmks::FastMKSModel::gaussian\fC [private]\fP"
+
+.PP
+This will only be non-NULL if this is the type of kernel we are using\&. 
+.PP
+Definition at line 142 of file fastmks_model\&.hpp\&.
+.SS "\fBFastMKS\fP<\fBkernel::HyperbolicTangentKernel\fP>* mlpack::fastmks::FastMKSModel::hyptan\fC [private]\fP"
+
+.PP
+This will only be non-NULL if this is the type of kernel we are using\&. 
+.PP
+Definition at line 148 of file fastmks_model\&.hpp\&.
+.SS "int mlpack::fastmks::FastMKSModel::kernelType\fC [private]\fP"
+
+.PP
+The type of kernel we are using\&. 
+.PP
+Definition at line 133 of file fastmks_model\&.hpp\&.
+.PP
+Referenced by KernelType()\&.
+.SS "\fBFastMKS\fP<\fBkernel::LinearKernel\fP>* mlpack::fastmks::FastMKSModel::linear\fC [private]\fP"
+
+.PP
+This will only be non-NULL if this is the type of kernel we are using\&. 
+.PP
+Definition at line 136 of file fastmks_model\&.hpp\&.
+.SS "\fBFastMKS\fP<\fBkernel::PolynomialKernel\fP>* mlpack::fastmks::FastMKSModel::polynomial\fC [private]\fP"
+
+.PP
+This will only be non-NULL if this is the type of kernel we are using\&. 
+.PP
+Definition at line 138 of file fastmks_model\&.hpp\&.
+.SS "\fBFastMKS\fP<\fBkernel::TriangularKernel\fP>* mlpack::fastmks::FastMKSModel::triangular\fC [private]\fP"
+
+.PP
+This will only be non-NULL if this is the type of kernel we are using\&. 
+.PP
+Definition at line 146 of file fastmks_model\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

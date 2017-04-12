@@ -1,0 +1,38 @@
+.TH "elem" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+elem \- The ElemType policy in mlpack 
+
+.SH "Overview"
+.PP
+\fBmlpack\fP algorithms should be as generic as possible\&. Often this means allowing arbitrary metrics or kernels to be used, but this also means allowing any type of data point to be used\&. This means that \fBmlpack\fP classes should support \fCfloat\fP, \fCdouble\fP, and other observation types\&. Some algorithms support this through the use of a \fCMatType\fP template parameter; others will have their own template parameter, \fCElemType\fP\&.
+.PP
+The \fCElemType\fP template parameter can take any value that can be used by Armadillo (or, specifically, classes like \fCarma::Mat<>\fP and others); this encompasses the types
+.PP
+.IP "\(bu" 2
+\fCdouble\fP 
+.IP "\(bu" 2
+\fCfloat\fP 
+.IP "\(bu" 2
+\fCint\fP 
+.IP "\(bu" 2
+\fCunsigned\fP int
+.IP "\(bu" 2
+\fCstd::complex<double>\fP 
+.IP "\(bu" 2
+\fCstd::complex<float>\fP 
+.PP
+.PP
+and other primitive numeric types\&. Note that Armadillo does not support some integer types for functionality such as matrix decompositions or other more advanced linear algebra\&. This means that when these integer types are used, some algorithms may fail with Armadillo error messages indicating that those types cannot be used\&.
+.SH "note for developers"
+.PP
+If the class has a \fCMatType\fP template parameter, \fCElemType\fP can be easily defined as below:
+.PP
+.PP
+.nf
+typedef typename MatType::elem_type ElemType;
+.fi
+.PP
+.PP
+and otherwise a template parameter with the name \fCElemType\fP can be used\&. It is generally a good idea to expose the element type somehow for use by other classes\&. 

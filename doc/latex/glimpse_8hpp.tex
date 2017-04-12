@@ -1,0 +1,53 @@
+\section{src/mlpack/methods/ann/layer/glimpse.hpp File Reference}
+\label{glimpse_8hpp}\index{src/mlpack/methods/ann/layer/glimpse.\+hpp@{src/mlpack/methods/ann/layer/glimpse.\+hpp}}
+Include dependency graph for glimpse.\+hpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{glimpse_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=159pt]{glimpse_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class {\bf mlpack\+::ann\+::\+Glimpse$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+\begin{DoxyCompactList}\small\item\em The glimpse layer returns a retina-\/like representation (down-\/scaled cropped images) of increasing scale around a given location in a given image. \end{DoxyCompactList}\item 
+class {\bf mlpack\+::ann\+::\+Mean\+Pooling\+Rule}
+\end{DoxyCompactItemize}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ {\bf mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ {\bf mlpack\+::ann}
+\begin{DoxyCompactList}\small\item\em Artificial Neural Network. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Marcus Edel
+\end{DoxyAuthor}
+Definition of the Glimpse\+Layer class, which takes an input image and a location to extract a retina-\/like representation of the input image at different increasing scales.
+
+For more information, see the following.
+
+
+\begin{DoxyCode}
+@article\{CoRR2014,
+  author  = \{Volodymyr Mnih, Nicolas Heess, Alex Graves, Koray Kavukcuoglu\},
+  title   = \{Recurrent Models of Visual Attention\},
+  journal = \{CoRR\},
+  volume  = \{abs/1406.6247\},
+  year    = \{2014\},
+\}
+\end{DoxyCode}
+ 

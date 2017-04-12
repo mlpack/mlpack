@@ -1,0 +1,923 @@
+\section{mlpack\+:\+:tree Namespace Reference}
+\label{namespacemlpack_1_1tree}\index{mlpack\+::tree@{mlpack\+::tree}}
+
+
+Trees and tree-\/building procedures.  
+
+
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ {\bf split}
+\end{DoxyCompactItemize}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class {\bf All\+Categorical\+Split}
+\begin{DoxyCompactList}\small\item\em The \doxyref{All\+Categorical\+Split}{p.}{classmlpack_1_1tree_1_1AllCategoricalSplit} is a splitting function that will split categorical features into many children\+: one child for each category. \end{DoxyCompactList}\item 
+class {\bf Axis\+Parallel\+Proj\+Vector}
+\begin{DoxyCompactList}\small\item\em \doxyref{Axis\+Parallel\+Proj\+Vector}{p.}{classmlpack_1_1tree_1_1AxisParallelProjVector} defines an axis-\/parallel projection vector. \end{DoxyCompactList}\item 
+class {\bf Best\+Binary\+Numeric\+Split}
+\begin{DoxyCompactList}\small\item\em The \doxyref{Best\+Binary\+Numeric\+Split}{p.}{classmlpack_1_1tree_1_1BestBinaryNumericSplit} is a splitting function for decision trees that will exhaustively search a numeric dimension for the best binary split. \end{DoxyCompactList}\item 
+class {\bf Binary\+Numeric\+Split}
+\begin{DoxyCompactList}\small\item\em The \doxyref{Binary\+Numeric\+Split}{p.}{classmlpack_1_1tree_1_1BinaryNumericSplit} class implements the numeric feature splitting strategy devised by Gama, Rocha, and Medas in the following paper\+: \end{DoxyCompactList}\item 
+class {\bf Binary\+Numeric\+Split\+Info}
+\item 
+class {\bf Binary\+Space\+Tree}
+\begin{DoxyCompactList}\small\item\em A binary space partitioning tree, such as a K\+D-\/tree or a ball tree. \end{DoxyCompactList}\item 
+class {\bf Categorical\+Split\+Info}
+\item 
+class {\bf Compare\+Cosine\+Node}
+\item 
+class {\bf Cosine\+Tree}
+\item 
+class {\bf Cover\+Tree}
+\begin{DoxyCompactList}\small\item\em A cover tree is a tree specifically designed to speed up nearest-\/neighbor computation in high-\/dimensional spaces. \end{DoxyCompactList}\item 
+class {\bf Decision\+Tree}
+\begin{DoxyCompactList}\small\item\em This class implements a generic decision tree learner. \end{DoxyCompactList}\item 
+class {\bf Discrete\+Hilbert\+Value}
+\begin{DoxyCompactList}\small\item\em The \doxyref{Discrete\+Hilbert\+Value}{p.}{classmlpack_1_1tree_1_1DiscreteHilbertValue} class stores Hilbert values for all of the points in a \doxyref{Rectangle\+Tree}{p.}{classmlpack_1_1tree_1_1RectangleTree} node, and calculates Hilbert values for new points. \end{DoxyCompactList}\item 
+class {\bf Empty\+Statistic}
+\begin{DoxyCompactList}\small\item\em Empty statistic if you are not interested in storing statistics in your tree. \end{DoxyCompactList}\item 
+class {\bf Example\+Tree}
+\begin{DoxyCompactList}\small\item\em This is not an actual space tree but instead an example tree that exists to show and document all the functions that mlpack trees must implement. \end{DoxyCompactList}\item 
+class {\bf First\+Point\+Is\+Root}
+\begin{DoxyCompactList}\small\item\em This class is meant to be used as a choice for the policy class Root\+Point\+Policy of the \doxyref{Cover\+Tree}{p.}{classmlpack_1_1tree_1_1CoverTree} class. \end{DoxyCompactList}\item 
+class {\bf Gini\+Gain}
+\begin{DoxyCompactList}\small\item\em The Gini gain, a measure of set purity usable as a fitness function (Fitness\+Function) for decision trees. \end{DoxyCompactList}\item 
+class {\bf Gini\+Impurity}
+\item 
+class {\bf Greedy\+Single\+Tree\+Traverser}
+\item 
+class {\bf Hilbert\+R\+Tree\+Auxiliary\+Information}
+\item 
+class {\bf Hilbert\+R\+Tree\+Descent\+Heuristic}
+\begin{DoxyCompactList}\small\item\em This class chooses the best child of a node in a Hilbert R tree when inserting a new point. \end{DoxyCompactList}\item 
+class {\bf Hilbert\+R\+Tree\+Split}
+\begin{DoxyCompactList}\small\item\em The splitting procedure for the Hilbert R tree. \end{DoxyCompactList}\item 
+class {\bf Hoeffding\+Categorical\+Split}
+\begin{DoxyCompactList}\small\item\em This is the standard Hoeffding-\/bound categorical feature proposed in the paper below\+: \end{DoxyCompactList}\item 
+class {\bf Hoeffding\+Numeric\+Split}
+\begin{DoxyCompactList}\small\item\em The \doxyref{Hoeffding\+Numeric\+Split}{p.}{classmlpack_1_1tree_1_1HoeffdingNumericSplit} class implements the numeric feature splitting strategy alluded to by Domingos and Hulten in the following paper\+: \end{DoxyCompactList}\item 
+class {\bf Hoeffding\+Tree}
+\begin{DoxyCompactList}\small\item\em The \doxyref{Hoeffding\+Tree}{p.}{classmlpack_1_1tree_1_1HoeffdingTree} object represents all of the necessary information for a Hoeffding-\/bound-\/based decision tree. \end{DoxyCompactList}\item 
+class {\bf Hoeffding\+Tree\+Model}
+\begin{DoxyCompactList}\small\item\em This class is a serializable Hoeffding tree model that can hold four different types of Hoeffding trees. \end{DoxyCompactList}\item 
+class {\bf Hyperplane\+Base}
+\begin{DoxyCompactList}\small\item\em \doxyref{Hyperplane\+Base}{p.}{classmlpack_1_1tree_1_1HyperplaneBase} defines a splitting hyperplane based on a projection vector and projection value. \end{DoxyCompactList}\item 
+class {\bf Information\+Gain}
+\begin{DoxyCompactList}\small\item\em The standard information gain criterion, used for calculating gain in decision trees. \end{DoxyCompactList}\item 
+struct {\bf Is\+Spill\+Tree}
+\item 
+struct {\bf Is\+Spill\+Tree$<$ tree\+::\+Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $>$}
+\item 
+class {\bf Mean\+Space\+Split}
+\item 
+class {\bf Mean\+Split}
+\begin{DoxyCompactList}\small\item\em A binary space partitioning tree node is split into its left and right child. \end{DoxyCompactList}\item 
+class {\bf Midpoint\+Space\+Split}
+\item 
+class {\bf Midpoint\+Split}
+\begin{DoxyCompactList}\small\item\em A binary space partitioning tree node is split into its left and right child. \end{DoxyCompactList}\item 
+class {\bf Minimal\+Coverage\+Sweep}
+\begin{DoxyCompactList}\small\item\em The \doxyref{Minimal\+Coverage\+Sweep}{p.}{classmlpack_1_1tree_1_1MinimalCoverageSweep} class finds a partition along which we can split a node according to the coverage of two resulting nodes. \end{DoxyCompactList}\item 
+class {\bf Minimal\+Splits\+Number\+Sweep}
+\begin{DoxyCompactList}\small\item\em The \doxyref{Minimal\+Splits\+Number\+Sweep}{p.}{classmlpack_1_1tree_1_1MinimalSplitsNumberSweep} class finds a partition along which we can split a node according to the number of required splits of the node. \end{DoxyCompactList}\item 
+class {\bf No\+Auxiliary\+Information}
+\item 
+class {\bf Numeric\+Split\+Info}
+\item 
+class {\bf Octree}
+\item 
+class {\bf Proj\+Vector}
+\begin{DoxyCompactList}\small\item\em \doxyref{Proj\+Vector}{p.}{classmlpack_1_1tree_1_1ProjVector} defines a general projection vector (not necessarily axis-\/parallel). \end{DoxyCompactList}\item 
+struct {\bf Queue\+Frame}
+\item 
+class {\bf Rectangle\+Tree}
+\begin{DoxyCompactList}\small\item\em A rectangle type tree tree, such as an R-\/tree or X-\/tree. \end{DoxyCompactList}\item 
+class {\bf R\+Plus\+Plus\+Tree\+Auxiliary\+Information}
+\item 
+class {\bf R\+Plus\+Plus\+Tree\+Descent\+Heuristic}
+\item 
+class {\bf R\+Plus\+Plus\+Tree\+Split\+Policy}
+\begin{DoxyCompactList}\small\item\em The \doxyref{R\+Plus\+Plus\+Tree\+Split\+Policy}{p.}{classmlpack_1_1tree_1_1RPlusPlusTreeSplitPolicy} helps to determine the subtree into which we should insert a child of an intermediate node that is being split. \end{DoxyCompactList}\item 
+class {\bf R\+Plus\+Tree\+Descent\+Heuristic}
+\item 
+class {\bf R\+Plus\+Tree\+Split}
+\begin{DoxyCompactList}\small\item\em The \doxyref{R\+Plus\+Tree\+Split}{p.}{classmlpack_1_1tree_1_1RPlusTreeSplit} class performs the split process of a node on overflow. \end{DoxyCompactList}\item 
+class {\bf R\+Plus\+Tree\+Split\+Policy}
+\begin{DoxyCompactList}\small\item\em The \doxyref{R\+Plus\+Plus\+Tree\+Split\+Policy}{p.}{classmlpack_1_1tree_1_1RPlusPlusTreeSplitPolicy} helps to determine the subtree into which we should insert a child of an intermediate node that is being split. \end{DoxyCompactList}\item 
+class {\bf R\+P\+Tree\+Max\+Split}
+\begin{DoxyCompactList}\small\item\em This class splits a node by a random hyperplane. \end{DoxyCompactList}\item 
+class {\bf R\+P\+Tree\+Mean\+Split}
+\begin{DoxyCompactList}\small\item\em This class splits a binary space tree. \end{DoxyCompactList}\item 
+class {\bf R\+Star\+Tree\+Descent\+Heuristic}
+\begin{DoxyCompactList}\small\item\em When descending a \doxyref{Rectangle\+Tree}{p.}{classmlpack_1_1tree_1_1RectangleTree} to insert a point, we need to have a way to choose a child node when the point isn\textquotesingle{}t enclosed by any of them. \end{DoxyCompactList}\item 
+class {\bf R\+Star\+Tree\+Split}
+\begin{DoxyCompactList}\small\item\em A Rectangle Tree has new points inserted at the bottom. \end{DoxyCompactList}\item 
+class {\bf R\+Tree\+Descent\+Heuristic}
+\begin{DoxyCompactList}\small\item\em When descending a \doxyref{Rectangle\+Tree}{p.}{classmlpack_1_1tree_1_1RectangleTree} to insert a point, we need to have a way to choose a child node when the point isn\textquotesingle{}t enclosed by any of them. \end{DoxyCompactList}\item 
+class {\bf R\+Tree\+Split}
+\begin{DoxyCompactList}\small\item\em A Rectangle Tree has new points inserted at the bottom. \end{DoxyCompactList}\item 
+class {\bf Space\+Split}
+\item 
+class {\bf Spill\+Tree}
+\begin{DoxyCompactList}\small\item\em A hybrid spill tree is a variant of binary space trees in which the children of a node can \char`\"{}spill over\char`\"{} each other, and contain shared datapoints. \end{DoxyCompactList}\item 
+class {\bf Traversal\+Info}
+\begin{DoxyCompactList}\small\item\em The \doxyref{Traversal\+Info}{p.}{classmlpack_1_1tree_1_1TraversalInfo} class holds traversal information which is used in dual-\/tree (and single-\/tree) traversals. \end{DoxyCompactList}\item 
+class {\bf Tree\+Traits}
+\begin{DoxyCompactList}\small\item\em The \doxyref{Tree\+Traits}{p.}{classmlpack_1_1tree_1_1TreeTraits} class provides compile-\/time information on the characteristics of a given tree type. \end{DoxyCompactList}\item 
+class {\bf Tree\+Traits$<$ Binary\+Space\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, bound\+::\+Ball\+Bound, Split\+Type $>$ $>$}
+\begin{DoxyCompactList}\small\item\em This is a specialization of the Tree\+Type class to the Ball\+Tree tree type. \end{DoxyCompactList}\item 
+class {\bf Tree\+Traits$<$ Binary\+Space\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, bound\+::\+Cell\+Bound, Split\+Type $>$ $>$}
+\begin{DoxyCompactList}\small\item\em This is a specialization of the Tree\+Type class to the U\+B\+Tree tree type. \end{DoxyCompactList}\item 
+class {\bf Tree\+Traits$<$ Binary\+Space\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, bound\+::\+Hollow\+Ball\+Bound, Split\+Type $>$ $>$}
+\begin{DoxyCompactList}\small\item\em This is a specialization of the Tree\+Type class to an arbitrary tree with Hollow\+Ball\+Bound (currently only the vantage point tree is supported). \end{DoxyCompactList}\item 
+class {\bf Tree\+Traits$<$ Binary\+Space\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Bound\+Type, R\+P\+Tree\+Max\+Split $>$ $>$}
+\begin{DoxyCompactList}\small\item\em This is a specialization of the Tree\+Type class to the max-\/split random projection tree. \end{DoxyCompactList}\item 
+class {\bf Tree\+Traits$<$ Binary\+Space\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Bound\+Type, R\+P\+Tree\+Mean\+Split $>$ $>$}
+\begin{DoxyCompactList}\small\item\em This is a specialization of the Tree\+Type class to the mean-\/split random projection tree. \end{DoxyCompactList}\item 
+class {\bf Tree\+Traits$<$ Binary\+Space\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Bound\+Type, Split\+Type $>$ $>$}
+\begin{DoxyCompactList}\small\item\em This is a specialization of the \doxyref{Tree\+Traits}{p.}{classmlpack_1_1tree_1_1TreeTraits} class to the \doxyref{Binary\+Space\+Tree}{p.}{classmlpack_1_1tree_1_1BinarySpaceTree} tree type. \end{DoxyCompactList}\item 
+class {\bf Tree\+Traits$<$ Cover\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Root\+Point\+Policy $>$ $>$}
+\begin{DoxyCompactList}\small\item\em The specialization of the \doxyref{Tree\+Traits}{p.}{classmlpack_1_1tree_1_1TreeTraits} class for the \doxyref{Cover\+Tree}{p.}{classmlpack_1_1tree_1_1CoverTree} tree type. \end{DoxyCompactList}\item 
+class {\bf Tree\+Traits$<$ Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$ $>$}
+\begin{DoxyCompactList}\small\item\em This is a specialization of the \doxyref{Tree\+Traits}{p.}{classmlpack_1_1tree_1_1TreeTraits} class to the \doxyref{Octree}{p.}{classmlpack_1_1tree_1_1Octree} tree type. \end{DoxyCompactList}\item 
+class {\bf Tree\+Traits$<$ Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, R\+Plus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$}
+\begin{DoxyCompactList}\small\item\em Since the R+/\+R++ tree can not have overlapping children, we should define traits for the R+/\+R++ tree. \end{DoxyCompactList}\item 
+class {\bf Tree\+Traits$<$ Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Split\+Type, Descent\+Type, Auxiliary\+Information\+Type $>$ $>$}
+\begin{DoxyCompactList}\small\item\em This is a specialization of the Tree\+Type class to the \doxyref{Rectangle\+Tree}{p.}{classmlpack_1_1tree_1_1RectangleTree} tree type. \end{DoxyCompactList}\item 
+class {\bf Tree\+Traits$<$ Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $>$}
+\begin{DoxyCompactList}\small\item\em This is a specialization of the Tree\+Type class to the \doxyref{Spill\+Tree}{p.}{classmlpack_1_1tree_1_1SpillTree} tree type. \end{DoxyCompactList}\item 
+class {\bf U\+B\+Tree\+Split}
+\begin{DoxyCompactList}\small\item\em Split a node into two parts according to the median address of points contained in the node. \end{DoxyCompactList}\item 
+class {\bf Vantage\+Point\+Split}
+\begin{DoxyCompactList}\small\item\em The class splits a binary space partitioning tree node according to the median distance to the vantage point. \end{DoxyCompactList}\item 
+class {\bf X\+Tree\+Auxiliary\+Information}
+\begin{DoxyCompactList}\small\item\em The \doxyref{X\+Tree\+Auxiliary\+Information}{p.}{classmlpack_1_1tree_1_1XTreeAuxiliaryInformation} class provides information specific to X trees for each node in a \doxyref{Rectangle\+Tree}{p.}{classmlpack_1_1tree_1_1RectangleTree}. \end{DoxyCompactList}\item 
+class {\bf X\+Tree\+Split}
+\begin{DoxyCompactList}\small\item\em A Rectangle Tree has new points inserted at the bottom. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Metric\+Type $>$ }\\using {\bf Axis\+Orthogonal\+Hyperplane} = {\bf Hyperplane\+Base}$<$ {\bf bound\+::\+H\+Rect\+Bound}$<$ Metric\+Type $>$, {\bf Axis\+Parallel\+Proj\+Vector} $>$
+\begin{DoxyCompactList}\small\item\em Axis\+Orthogonal\+Hyperplane represents a hyperplane orthogonal to an axis. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using {\bf Ball\+Tree} = {\bf Binary\+Space\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf bound\+::\+Ball\+Bound}, {\bf Midpoint\+Split} $>$
+\begin{DoxyCompactList}\small\item\em A midpoint-\/split ball tree. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Fitness\+Function $>$ }\\using {\bf Binary\+Double\+Numeric\+Split} = {\bf Binary\+Numeric\+Split}$<$ Fitness\+Function, double $>$
+\item 
+typedef boost\+::heap\+::priority\+\_\+queue$<$ {\bf Cosine\+Tree} $\ast$, boost\+::heap\+::compare$<$ {\bf Compare\+Cosine\+Node} $>$ $>$ {\bf Cosine\+Node\+Queue}
+\item 
+{\footnotesize template$<$typename Fitness\+Function  = Gini\+Gain, template$<$ typename $>$ class Numeric\+Split\+Type = Best\+Binary\+Numeric\+Split, template$<$ typename $>$ class Categorical\+Split\+Type = All\+Categorical\+Split, typename Elem\+Type  = double$>$ }\\using {\bf Decision\+Stump} = {\bf Decision\+Tree}$<$ Fitness\+Function, Numeric\+Split\+Type, Categorical\+Split\+Type, Elem\+Type, false $>$
+\begin{DoxyCompactList}\small\item\em Convenience typedef for decision stumps (single level decision trees). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\using {\bf Discrete\+Hilbert\+R\+Tree\+Auxiliary\+Information} = {\bf Hilbert\+R\+Tree\+Auxiliary\+Information}$<$ Tree\+Type, {\bf Discrete\+Hilbert\+Value} $>$
+\begin{DoxyCompactList}\small\item\em The Hilbert R-\/tree, a variant of the R tree with an ordering along the Hilbert curve. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using {\bf Hilbert\+R\+Tree} = {\bf Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Hilbert\+R\+Tree\+Split}$<$ 2 $>$, {\bf Hilbert\+R\+Tree\+Descent\+Heuristic}, {\bf Discrete\+Hilbert\+R\+Tree\+Auxiliary\+Information} $>$
+\item 
+{\footnotesize template$<$typename Fitness\+Function $>$ }\\using {\bf Hoeffding\+Double\+Numeric\+Split} = {\bf Hoeffding\+Numeric\+Split}$<$ Fitness\+Function, double $>$
+\begin{DoxyCompactList}\small\item\em Convenience typedef. \end{DoxyCompactList}\item 
+typedef Streaming\+Decision\+Tree$<$ {\bf Hoeffding\+Tree}$<$$>$ $>$ {\bf Hoeffding\+Tree\+Type}
+\item 
+{\footnotesize template$<$typename Metric\+Type $>$ }\\using {\bf Hyperplane} = {\bf Hyperplane\+Base}$<$ {\bf bound\+::\+Ball\+Bound}$<$ Metric\+Type $>$, {\bf Proj\+Vector} $>$
+\begin{DoxyCompactList}\small\item\em Hyperplane represents a general hyperplane (not necessarily axis-\/orthogonal). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using {\bf K\+D\+Tree} = {\bf Binary\+Space\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf bound\+::\+H\+Rect\+Bound}, {\bf Midpoint\+Split} $>$
+\begin{DoxyCompactList}\small\item\em The standard midpoint-\/split kd-\/tree. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using {\bf Max\+R\+P\+Tree} = {\bf Binary\+Space\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf bound\+::\+H\+Rect\+Bound}, {\bf R\+P\+Tree\+Max\+Split} $>$
+\begin{DoxyCompactList}\small\item\em A max-\/split random projection tree. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using {\bf Mean\+Split\+Ball\+Tree} = {\bf Binary\+Space\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf bound\+::\+Ball\+Bound}, {\bf Mean\+Split} $>$
+\begin{DoxyCompactList}\small\item\em A mean-\/split ball tree. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using {\bf Mean\+Split\+K\+D\+Tree} = {\bf Binary\+Space\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf bound\+::\+H\+Rect\+Bound}, {\bf Mean\+Split} $>$
+\begin{DoxyCompactList}\small\item\em A mean-\/split kd-\/tree. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using {\bf Mean\+S\+P\+Tree} = {\bf Spill\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Axis\+Orthogonal\+Hyperplane}, {\bf Mean\+Space\+Split} $>$
+\begin{DoxyCompactList}\small\item\em A mean-\/split hybrid spill tree. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using {\bf Non\+Ort\+Mean\+S\+P\+Tree} = {\bf Spill\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Hyperplane}, {\bf Mean\+Space\+Split} $>$
+\begin{DoxyCompactList}\small\item\em A mean-\/split hybrid spill tree considering general splitting hyperplanes (not necessarily axis-\/orthogonal). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using {\bf Non\+Ort\+S\+P\+Tree} = {\bf Spill\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Hyperplane}, {\bf Midpoint\+Space\+Split} $>$
+\begin{DoxyCompactList}\small\item\em A hybrid spill tree considering general splitting hyperplanes (not necessarily axis-\/orthogonal). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using {\bf R\+Plus\+Plus\+Tree} = {\bf Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf R\+Plus\+Tree\+Split}$<$ {\bf R\+Plus\+Plus\+Tree\+Split\+Policy}, {\bf Minimal\+Splits\+Number\+Sweep} $>$, {\bf R\+Plus\+Plus\+Tree\+Descent\+Heuristic}, {\bf R\+Plus\+Plus\+Tree\+Auxiliary\+Information} $>$
+\begin{DoxyCompactList}\small\item\em The R++ tree, a variant of the R+ tree with maximum buonding rectangles. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using {\bf R\+Plus\+Tree} = {\bf Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf R\+Plus\+Tree\+Split}$<$ {\bf R\+Plus\+Tree\+Split\+Policy}, {\bf Minimal\+Coverage\+Sweep} $>$, {\bf R\+Plus\+Tree\+Descent\+Heuristic}, {\bf No\+Auxiliary\+Information} $>$
+\begin{DoxyCompactList}\small\item\em The R+ tree, a variant of the R tree that avoids overlapping rectangles. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using {\bf R\+P\+Tree} = {\bf Binary\+Space\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf bound\+::\+H\+Rect\+Bound}, {\bf R\+P\+Tree\+Mean\+Split} $>$
+\begin{DoxyCompactList}\small\item\em A mean-\/split random projection tree. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using {\bf R\+Star\+Tree} = {\bf Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf R\+Star\+Tree\+Split}, {\bf R\+Star\+Tree\+Descent\+Heuristic}, {\bf No\+Auxiliary\+Information} $>$
+\begin{DoxyCompactList}\small\item\em The R$\ast$-\/tree, a more recent variant of the R tree. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using {\bf R\+Tree} = {\bf Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf R\+Tree\+Split}, {\bf R\+Tree\+Descent\+Heuristic}, {\bf No\+Auxiliary\+Information} $>$
+\begin{DoxyCompactList}\small\item\em An implementation of the R tree that satisfies the Tree\+Type policy A\+PI. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using {\bf S\+P\+Tree} = {\bf Spill\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Axis\+Orthogonal\+Hyperplane}, {\bf Midpoint\+Space\+Split} $>$
+\begin{DoxyCompactList}\small\item\em The hybrid spill tree. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using {\bf Standard\+Cover\+Tree} = {\bf Cover\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf First\+Point\+Is\+Root} $>$
+\begin{DoxyCompactList}\small\item\em The standard cover tree, as detailed in the original cover tree paper\+: \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using {\bf U\+B\+Tree} = {\bf Binary\+Space\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf bound\+::\+Cell\+Bound}, {\bf U\+B\+Tree\+Split} $>$
+\begin{DoxyCompactList}\small\item\em The Universal B-\/tree. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using {\bf V\+P\+Tree} = {\bf Binary\+Space\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf bound\+::\+Hollow\+Ball\+Bound}, {\bf V\+P\+Tree\+Split} $>$
+\item 
+{\footnotesize template$<$typename Bound\+Type , typename Mat\+Type  = arma\+::mat$>$ }\\using {\bf V\+P\+Tree\+Split} = {\bf Vantage\+Point\+Split}$<$ Bound\+Type, Mat\+Type, 100 $>$
+\begin{DoxyCompactList}\small\item\em The vantage point tree (which is also called the metric tree. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using {\bf X\+Tree} = {\bf Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf X\+Tree\+Split}, {\bf R\+Tree\+Descent\+Heuristic}, {\bf X\+Tree\+Auxiliary\+Information} $>$
+\begin{DoxyCompactList}\small\item\em The X-\/tree, a variant of the R tree with supernodes. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+const double {\bf M\+A\+X\+\_\+\+O\+V\+E\+R\+L\+AP} = 0.\+2
+\begin{DoxyCompactList}\small\item\em The X-\/tree paper says that a maximum allowable overlap of 20\% works well. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Trees and tree-\/building procedures. 
+
+
+
+\subsection{Typedef Documentation}
+\index{mlpack\+::tree@{mlpack\+::tree}!Axis\+Orthogonal\+Hyperplane@{Axis\+Orthogonal\+Hyperplane}}
+\index{Axis\+Orthogonal\+Hyperplane@{Axis\+Orthogonal\+Hyperplane}!mlpack\+::tree@{mlpack\+::tree}}
+\subsubsection[{Axis\+Orthogonal\+Hyperplane}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type $>$ using {\bf mlpack\+::tree\+::\+Axis\+Orthogonal\+Hyperplane} = typedef {\bf Hyperplane\+Base}$<${\bf bound\+::\+H\+Rect\+Bound}$<$Metric\+Type$>$, {\bf Axis\+Parallel\+Proj\+Vector}$>$}\label{namespacemlpack_1_1tree_a7d44f5de78bfccf79a309bc6a57313fa}
+
+
+Axis\+Orthogonal\+Hyperplane represents a hyperplane orthogonal to an axis. 
+
+
+
+Definition at line 145 of file hyperplane.\+hpp.
+
+\index{mlpack\+::tree@{mlpack\+::tree}!Ball\+Tree@{Ball\+Tree}}
+\index{Ball\+Tree@{Ball\+Tree}!mlpack\+::tree@{mlpack\+::tree}}
+\subsubsection[{Ball\+Tree}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ using {\bf mlpack\+::tree\+::\+Ball\+Tree} = typedef {\bf Binary\+Space\+Tree}$<$Metric\+Type, Statistic\+Type, Mat\+Type, {\bf bound\+::\+Ball\+Bound}, {\bf Midpoint\+Split}$>$}\label{namespacemlpack_1_1tree_abc9c69ba447c575b235eff25f14d99c7}
+
+
+A midpoint-\/split ball tree. 
+
+This tree holds its points only in the leaves, similar to the K\+D\+Tree and Mean\+Split\+K\+D\+Tree. However, the bounding shape of each node is a ball, not a hyper-\/rectangle. This can make the ball tree advantageous in some higher-\/dimensional situations and for some datasets. The tree construction algorithm here is the same as Omohundro\textquotesingle{}s \textquotesingle{}K-\/d construction algorithm\textquotesingle{}, except the splitting value is the midpoint, not the median. This can result in trees that better reflect the data, although they may be unbalanced.
+
+
+\begin{DoxyCode}
+@techreport\{omohundro1989five,
+  author=\{S.M. Omohundro\},
+  title=\{Five balltree construction algorithms\},
+  year=\{1989\},
+  institution=\{University of California, Berkeley International Computer
+      Science Institute Technical Reports\},
+  number=\{TR-89-063\}
+\}
+\end{DoxyCode}
+
+
+This template typedef satisfies the Tree\+Type policy A\+PI.
+
+\begin{DoxySeeAlso}{See also}
+\doxyref{The Tree\+Type policy in mlpack}{p.}{trees}, \doxyref{Binary\+Space\+Tree}{p.}{classmlpack_1_1tree_1_1BinarySpaceTree}, \doxyref{K\+D\+Tree}{p.}{namespacemlpack_1_1tree_a562474c3dca60a6ac3c5168ae88bc028}, \doxyref{Mean\+Split\+Ball\+Tree}{p.}{namespacemlpack_1_1tree_a1694b911159c91573f77dfb5430fa1cd} 
+\end{DoxySeeAlso}
+
+
+Definition at line 112 of file typedef.\+hpp.
+
+\index{mlpack\+::tree@{mlpack\+::tree}!Binary\+Double\+Numeric\+Split@{Binary\+Double\+Numeric\+Split}}
+\index{Binary\+Double\+Numeric\+Split@{Binary\+Double\+Numeric\+Split}!mlpack\+::tree@{mlpack\+::tree}}
+\subsubsection[{Binary\+Double\+Numeric\+Split}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Fitness\+Function $>$ using {\bf mlpack\+::tree\+::\+Binary\+Double\+Numeric\+Split} = typedef {\bf Binary\+Numeric\+Split}$<$Fitness\+Function, double$>$}\label{namespacemlpack_1_1tree_aee8064e063faf98870a4a5d4c2a0c46f}
+
+
+Definition at line 128 of file binary\+\_\+numeric\+\_\+split.\+hpp.
+
+\index{mlpack\+::tree@{mlpack\+::tree}!Cosine\+Node\+Queue@{Cosine\+Node\+Queue}}
+\index{Cosine\+Node\+Queue@{Cosine\+Node\+Queue}!mlpack\+::tree@{mlpack\+::tree}}
+\subsubsection[{Cosine\+Node\+Queue}]{\setlength{\rightskip}{0pt plus 5cm}typedef boost\+::heap\+::priority\+\_\+queue$<${\bf Cosine\+Tree}$\ast$, boost\+::heap\+::compare$<${\bf Compare\+Cosine\+Node}$>$ $>$ {\bf mlpack\+::tree\+::\+Cosine\+Node\+Queue}}\label{namespacemlpack_1_1tree_a84f2fb164d4b443c3409e1b88633745b}
+
+
+Definition at line 23 of file cosine\+\_\+tree.\+hpp.
+
+\index{mlpack\+::tree@{mlpack\+::tree}!Decision\+Stump@{Decision\+Stump}}
+\index{Decision\+Stump@{Decision\+Stump}!mlpack\+::tree@{mlpack\+::tree}}
+\subsubsection[{Decision\+Stump}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Fitness\+Function  = Gini\+Gain, template$<$ typename $>$ class Numeric\+Split\+Type = Best\+Binary\+Numeric\+Split, template$<$ typename $>$ class Categorical\+Split\+Type = All\+Categorical\+Split, typename Elem\+Type  = double$>$ using {\bf mlpack\+::tree\+::\+Decision\+Stump} = typedef {\bf Decision\+Tree}$<$Fitness\+Function, Numeric\+Split\+Type, Categorical\+Split\+Type, Elem\+Type, false$>$}\label{namespacemlpack_1_1tree_adb29d1f69355144f569e4d820a04242a}
+
+
+Convenience typedef for decision stumps (single level decision trees). 
+
+
+
+Definition at line 275 of file decision\+\_\+tree.\+hpp.
+
+\index{mlpack\+::tree@{mlpack\+::tree}!Discrete\+Hilbert\+R\+Tree\+Auxiliary\+Information@{Discrete\+Hilbert\+R\+Tree\+Auxiliary\+Information}}
+\index{Discrete\+Hilbert\+R\+Tree\+Auxiliary\+Information@{Discrete\+Hilbert\+R\+Tree\+Auxiliary\+Information}!mlpack\+::tree@{mlpack\+::tree}}
+\subsubsection[{Discrete\+Hilbert\+R\+Tree\+Auxiliary\+Information}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Tree\+Type $>$ using {\bf mlpack\+::tree\+::\+Discrete\+Hilbert\+R\+Tree\+Auxiliary\+Information} = typedef {\bf Hilbert\+R\+Tree\+Auxiliary\+Information}$<$Tree\+Type,{\bf Discrete\+Hilbert\+Value}$>$}\label{namespacemlpack_1_1tree_a0d6a5d2949864bfa27fb64938948ac41}
+
+
+The Hilbert R-\/tree, a variant of the R tree with an ordering along the Hilbert curve. 
+
+This template typedef satisfies the Tree\+Type policy A\+PI.
+
+
+\begin{DoxyCode}
+@inproceedings\{kamel1994r,
+  author = \{Kamel, Ibrahim and Faloutsos, Christos\},
+  title = \{Hilbert R-tree: An Improved R-tree Using Fractals\},
+  booktitle = \{Proceedings of the 20th International Conference on Very Large Data Bases\},
+  series = \{VLDB \textcolor{stringliteral}{'94\},}
+\textcolor{stringliteral}{  year = \{1994\},}
+\textcolor{stringliteral}{  isbn = \{1-55860-153-8\},}
+\textcolor{stringliteral}{  pages = \{500--509\},}
+\textcolor{stringliteral}{  numpages = \{10\},}
+\textcolor{stringliteral}{  url = \{http://dl.acm.org/citation.cfm?id=645920.673001\},}
+\textcolor{stringliteral}{  acmid = \{673001\},}
+\textcolor{stringliteral}{  publisher = \{Morgan Kaufmann Publishers Inc.\},}
+\textcolor{stringliteral}{  address = \{San Francisco, CA, USA\}}
+\textcolor{stringliteral}{\}}
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+\doxyref{The Tree\+Type policy in mlpack}{p.}{trees}, \doxyref{R\+Tree}{p.}{namespacemlpack_1_1tree_a1a47efe6afda858544988d1f7927477c}, Discrete\+Hilbert\+R\+Tree 
+\end{DoxySeeAlso}
+
+
+Definition at line 128 of file typedef.\+hpp.
+
+\index{mlpack\+::tree@{mlpack\+::tree}!Hilbert\+R\+Tree@{Hilbert\+R\+Tree}}
+\index{Hilbert\+R\+Tree@{Hilbert\+R\+Tree}!mlpack\+::tree@{mlpack\+::tree}}
+\subsubsection[{Hilbert\+R\+Tree}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ using {\bf mlpack\+::tree\+::\+Hilbert\+R\+Tree} = typedef {\bf Rectangle\+Tree}$<$Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Hilbert\+R\+Tree\+Split}$<$2$>$, {\bf Hilbert\+R\+Tree\+Descent\+Heuristic}, {\bf Discrete\+Hilbert\+R\+Tree\+Auxiliary\+Information}$>$}\label{namespacemlpack_1_1tree_aae244245c400b527b6e35ae81dbfaaa0}
+
+
+Definition at line 136 of file typedef.\+hpp.
+
+\index{mlpack\+::tree@{mlpack\+::tree}!Hoeffding\+Double\+Numeric\+Split@{Hoeffding\+Double\+Numeric\+Split}}
+\index{Hoeffding\+Double\+Numeric\+Split@{Hoeffding\+Double\+Numeric\+Split}!mlpack\+::tree@{mlpack\+::tree}}
+\subsubsection[{Hoeffding\+Double\+Numeric\+Split}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Fitness\+Function $>$ using {\bf mlpack\+::tree\+::\+Hoeffding\+Double\+Numeric\+Split} = typedef {\bf Hoeffding\+Numeric\+Split}$<$Fitness\+Function, double$>$}\label{namespacemlpack_1_1tree_a20fda6c6aece9c58c011ffea7e123378}
+
+
+Convenience typedef. 
+
+
+
+Definition at line 148 of file hoeffding\+\_\+numeric\+\_\+split.\+hpp.
+
+\index{mlpack\+::tree@{mlpack\+::tree}!Hoeffding\+Tree\+Type@{Hoeffding\+Tree\+Type}}
+\index{Hoeffding\+Tree\+Type@{Hoeffding\+Tree\+Type}!mlpack\+::tree@{mlpack\+::tree}}
+\subsubsection[{Hoeffding\+Tree\+Type}]{\setlength{\rightskip}{0pt plus 5cm}typedef Streaming\+Decision\+Tree$<${\bf Hoeffding\+Tree}$<$$>$ $>$ {\bf mlpack\+::tree\+::\+Hoeffding\+Tree\+Type}}\label{namespacemlpack_1_1tree_a94a035a6b91291ba28e1255b1555edc2}
+
+
+Definition at line 21 of file typedef.\+hpp.
+
+\index{mlpack\+::tree@{mlpack\+::tree}!Hyperplane@{Hyperplane}}
+\index{Hyperplane@{Hyperplane}!mlpack\+::tree@{mlpack\+::tree}}
+\subsubsection[{Hyperplane}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type $>$ using {\bf mlpack\+::tree\+::\+Hyperplane} = typedef {\bf Hyperplane\+Base}$<${\bf bound\+::\+Ball\+Bound}$<$Metric\+Type$>$, {\bf Proj\+Vector}$>$}\label{namespacemlpack_1_1tree_ab58a5d5d9fb70b74d391ffb929cfd00a}
+
+
+Hyperplane represents a general hyperplane (not necessarily axis-\/orthogonal). 
+
+
+
+Definition at line 151 of file hyperplane.\+hpp.
+
+\index{mlpack\+::tree@{mlpack\+::tree}!K\+D\+Tree@{K\+D\+Tree}}
+\index{K\+D\+Tree@{K\+D\+Tree}!mlpack\+::tree@{mlpack\+::tree}}
+\subsubsection[{K\+D\+Tree}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ using {\bf mlpack\+::tree\+::\+K\+D\+Tree} = typedef {\bf Binary\+Space\+Tree}$<$Metric\+Type, Statistic\+Type, Mat\+Type, {\bf bound\+::\+H\+Rect\+Bound}, {\bf Midpoint\+Split}$>$}\label{namespacemlpack_1_1tree_a562474c3dca60a6ac3c5168ae88bc028}
+
+
+The standard midpoint-\/split kd-\/tree. 
+
+This is not the original formulation by Bentley but instead the later formulation by Deng and Moore, which only holds points in the leaves of the tree. When recursively splitting nodes, the K\+D\+Tree class select the dimension with maximum variance to split on, and picks the midpoint of the range in that dimension as the value on which to split nodes.
+
+For more information, see the following papers.
+
+
+\begin{DoxyCode}
+@article\{bentley1975multidimensional,
+  title=\{Multidimensional binary search trees used \textcolor{keywordflow}{for} associative searching\},
+  author=\{Bentley, J.L.\},
+  journal=\{Communications of the ACM\},
+  volume=\{18\},
+  number=\{9\},
+  pages=\{509--517\},
+  year=\{1975\},
+  publisher=\{ACM\}
+\}
+
+@inproceedings\{deng1995multiresolution,
+  title=\{Multiresolution instance-based learning\},
+  author=\{Deng, K. and Moore, A.W.\},
+  booktitle=\{Proceedings of the 1995 International Joint Conference on AI
+      (IJCAI-95)\},
+  pages=\{1233--1239\},
+  year=\{1995\}
+\}
+\end{DoxyCode}
+
+
+This template typedef satisfies the Tree\+Type policy A\+PI.
+
+\begin{DoxySeeAlso}{See also}
+\doxyref{The Tree\+Type policy in mlpack}{p.}{trees}, \doxyref{Binary\+Space\+Tree}{p.}{classmlpack_1_1tree_1_1BinarySpaceTree}, \doxyref{Mean\+Split\+K\+D\+Tree}{p.}{namespacemlpack_1_1tree_a5f0cce5886fb2559c7e7cb0a9efb2079} 
+\end{DoxySeeAlso}
+
+
+Definition at line 63 of file typedef.\+hpp.
+
+\index{mlpack\+::tree@{mlpack\+::tree}!Max\+R\+P\+Tree@{Max\+R\+P\+Tree}}
+\index{Max\+R\+P\+Tree@{Max\+R\+P\+Tree}!mlpack\+::tree@{mlpack\+::tree}}
+\subsubsection[{Max\+R\+P\+Tree}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ using {\bf mlpack\+::tree\+::\+Max\+R\+P\+Tree} = typedef {\bf Binary\+Space\+Tree}$<$Metric\+Type, Statistic\+Type, Mat\+Type, {\bf bound\+::\+H\+Rect\+Bound}, {\bf R\+P\+Tree\+Max\+Split}$>$}\label{namespacemlpack_1_1tree_a7444d894bd44b8a0c6a33e0044c4bf73}
+
+
+A max-\/split random projection tree. 
+
+When recursively splitting nodes, the Max\+Split\+R\+P\+Tree class selects a random hyperplane and splits a node by the hyperplane. The tree holds points in leaf nodes. In contrast to the k-\/d tree, children of a Max\+Split\+R\+P\+Tree node may overlap.
+
+
+\begin{DoxyCode}
+@inproceedings\{dasgupta2008,
+  author = \{Dasgupta, Sanjoy and Freund, Yoav\},
+  title = \{Random Projection Trees and Low Dimensional Manifolds\},
+  booktitle = \{Proceedings of the Fortieth Annual ACM Symposium on Theory of
+      Computing\},
+  series = \{STOC \textcolor{stringliteral}{'08\},}
+\textcolor{stringliteral}{  year = \{2008\},}
+\textcolor{stringliteral}{  pages = \{537--546\},}
+\textcolor{stringliteral}{  numpages = \{10\},}
+\textcolor{stringliteral}{  publisher = \{ACM\},}
+\textcolor{stringliteral}{  address = \{New York, NY, USA\},}
+\textcolor{stringliteral}{\}}
+\end{DoxyCode}
+
+
+This template typedef satisfies the Tree\+Type policy A\+PI.
+
+\begin{DoxySeeAlso}{See also}
+\doxyref{The Tree\+Type policy in mlpack}{p.}{trees}, \doxyref{Binary\+Space\+Tree}{p.}{classmlpack_1_1tree_1_1BinarySpaceTree}, \doxyref{Ball\+Tree}{p.}{namespacemlpack_1_1tree_abc9c69ba447c575b235eff25f14d99c7}, \doxyref{Mean\+Split\+K\+D\+Tree}{p.}{namespacemlpack_1_1tree_a5f0cce5886fb2559c7e7cb0a9efb2079} 
+\end{DoxySeeAlso}
+
+
+Definition at line 232 of file typedef.\+hpp.
+
+\index{mlpack\+::tree@{mlpack\+::tree}!Mean\+Split\+Ball\+Tree@{Mean\+Split\+Ball\+Tree}}
+\index{Mean\+Split\+Ball\+Tree@{Mean\+Split\+Ball\+Tree}!mlpack\+::tree@{mlpack\+::tree}}
+\subsubsection[{Mean\+Split\+Ball\+Tree}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ using {\bf mlpack\+::tree\+::\+Mean\+Split\+Ball\+Tree} = typedef {\bf Binary\+Space\+Tree}$<$Metric\+Type, Statistic\+Type, Mat\+Type, {\bf bound\+::\+Ball\+Bound}, {\bf Mean\+Split}$>$}\label{namespacemlpack_1_1tree_a1694b911159c91573f77dfb5430fa1cd}
+
+
+A mean-\/split ball tree. 
+
+This tree, like the Ball\+Tree, holds its points only in the leaves. The tree construction algorithm here is the same as Omohundro\textquotesingle{}s \textquotesingle{}K-\/dc onstruction algorithm\textquotesingle{}, except the splitting value is the mean, not the median. This can result in trees that better reflect the data, although they may be unbalanced.
+
+
+\begin{DoxyCode}
+@techreport\{omohundro1989five,
+  author=\{S.M. Omohundro\},
+  title=\{Five balltree construction algorithms\},
+  year=\{1989\},
+  institution=\{University of California, Berkeley International Computer
+      Science Institute Technical Reports\},
+  number=\{TR-89-063\}
+\}
+\end{DoxyCode}
+
+
+This template typedef satisfies the Tree\+Type policy A\+PI.
+
+\begin{DoxySeeAlso}{See also}
+\doxyref{The Tree\+Type policy in mlpack}{p.}{trees}, \doxyref{Binary\+Space\+Tree}{p.}{classmlpack_1_1tree_1_1BinarySpaceTree}, \doxyref{Ball\+Tree}{p.}{namespacemlpack_1_1tree_abc9c69ba447c575b235eff25f14d99c7}, \doxyref{Mean\+Split\+K\+D\+Tree}{p.}{namespacemlpack_1_1tree_a5f0cce5886fb2559c7e7cb0a9efb2079} 
+\end{DoxySeeAlso}
+
+
+Definition at line 141 of file typedef.\+hpp.
+
+\index{mlpack\+::tree@{mlpack\+::tree}!Mean\+Split\+K\+D\+Tree@{Mean\+Split\+K\+D\+Tree}}
+\index{Mean\+Split\+K\+D\+Tree@{Mean\+Split\+K\+D\+Tree}!mlpack\+::tree@{mlpack\+::tree}}
+\subsubsection[{Mean\+Split\+K\+D\+Tree}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ using {\bf mlpack\+::tree\+::\+Mean\+Split\+K\+D\+Tree} = typedef {\bf Binary\+Space\+Tree}$<$Metric\+Type, Statistic\+Type, Mat\+Type, {\bf bound\+::\+H\+Rect\+Bound}, {\bf Mean\+Split}$>$}\label{namespacemlpack_1_1tree_a5f0cce5886fb2559c7e7cb0a9efb2079}
+
+
+A mean-\/split kd-\/tree. 
+
+This is the same as the K\+D\+Tree, but this particular implementation will use the mean of the data in the split dimension as the value on which to split, instead of the midpoint. This can sometimes give better performance, but it is not always clear which type of tree is best.
+
+This template typedef satisfies the Tree\+Type policy A\+PI.
+
+\begin{DoxySeeAlso}{See also}
+\doxyref{The Tree\+Type policy in mlpack}{p.}{trees}, \doxyref{Binary\+Space\+Tree}{p.}{classmlpack_1_1tree_1_1BinarySpaceTree}, \doxyref{K\+D\+Tree}{p.}{namespacemlpack_1_1tree_a562474c3dca60a6ac3c5168ae88bc028} 
+\end{DoxySeeAlso}
+
+
+Definition at line 80 of file typedef.\+hpp.
+
+\index{mlpack\+::tree@{mlpack\+::tree}!Mean\+S\+P\+Tree@{Mean\+S\+P\+Tree}}
+\index{Mean\+S\+P\+Tree@{Mean\+S\+P\+Tree}!mlpack\+::tree@{mlpack\+::tree}}
+\subsubsection[{Mean\+S\+P\+Tree}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ using {\bf mlpack\+::tree\+::\+Mean\+S\+P\+Tree} = typedef {\bf Spill\+Tree}$<$Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Axis\+Orthogonal\+Hyperplane}, {\bf Mean\+Space\+Split}$>$}\label{namespacemlpack_1_1tree_ad20f514d6967490eb25a6b15bed0658b}
+
+
+A mean-\/split hybrid spill tree. 
+
+This is the same as the S\+P\+Tree, but this particular implementation will use the mean of the data in the split dimension as the value on which to split, instead of the midpoint. This can sometimes give better performance, but it is not always clear which type of tree is best.
+
+This template typedef satisfies the Tree\+Type policy A\+PI.
+
+\begin{DoxySeeAlso}{See also}
+\doxyref{The Tree\+Type policy in mlpack}{p.}{trees}, \doxyref{Spill\+Tree}{p.}{classmlpack_1_1tree_1_1SpillTree}, \doxyref{S\+P\+Tree}{p.}{namespacemlpack_1_1tree_adec131814632778ce027eb29bc7f89b3} 
+\end{DoxySeeAlso}
+
+
+Definition at line 80 of file typedef.\+hpp.
+
+\index{mlpack\+::tree@{mlpack\+::tree}!Non\+Ort\+Mean\+S\+P\+Tree@{Non\+Ort\+Mean\+S\+P\+Tree}}
+\index{Non\+Ort\+Mean\+S\+P\+Tree@{Non\+Ort\+Mean\+S\+P\+Tree}!mlpack\+::tree@{mlpack\+::tree}}
+\subsubsection[{Non\+Ort\+Mean\+S\+P\+Tree}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ using {\bf mlpack\+::tree\+::\+Non\+Ort\+Mean\+S\+P\+Tree} = typedef {\bf Spill\+Tree}$<$Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Hyperplane}, {\bf Mean\+Space\+Split}$>$}\label{namespacemlpack_1_1tree_ac7965e7e58ac06b96aa3acf1b940f57b}
+
+
+A mean-\/split hybrid spill tree considering general splitting hyperplanes (not necessarily axis-\/orthogonal). 
+
+This is the same as the Non\+Ort\+S\+P\+Tree, but this particular implementation will use the mean of the data in the split projection as the value on which to split, instead of the midpoint. This can sometimes give better performance, but it is not always clear which type of tree is best.
+
+This template typedef satisfies the Tree\+Type policy A\+PI.
+
+\begin{DoxySeeAlso}{See also}
+\doxyref{The Tree\+Type policy in mlpack}{p.}{trees}, \doxyref{Spill\+Tree}{p.}{classmlpack_1_1tree_1_1SpillTree}, \doxyref{Mean\+S\+P\+Tree}{p.}{namespacemlpack_1_1tree_ad20f514d6967490eb25a6b15bed0658b}, \doxyref{Non\+Ort\+S\+P\+Tree}{p.}{namespacemlpack_1_1tree_a4f019d86f45f77ae3f4aef9446da3ac7} 
+\end{DoxySeeAlso}
+
+
+Definition at line 119 of file typedef.\+hpp.
+
+\index{mlpack\+::tree@{mlpack\+::tree}!Non\+Ort\+S\+P\+Tree@{Non\+Ort\+S\+P\+Tree}}
+\index{Non\+Ort\+S\+P\+Tree@{Non\+Ort\+S\+P\+Tree}!mlpack\+::tree@{mlpack\+::tree}}
+\subsubsection[{Non\+Ort\+S\+P\+Tree}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ using {\bf mlpack\+::tree\+::\+Non\+Ort\+S\+P\+Tree} = typedef {\bf Spill\+Tree}$<$Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Hyperplane}, {\bf Midpoint\+Space\+Split}$>$}\label{namespacemlpack_1_1tree_a4f019d86f45f77ae3f4aef9446da3ac7}
+
+
+A hybrid spill tree considering general splitting hyperplanes (not necessarily axis-\/orthogonal). 
+
+This particular implementation will consider the midpoint of the projection of the data in the vector determined by the farthest pair of points. This can sometimes give better performance, but generally it doesn\textquotesingle{}t because it takes O(d) to calculate the projection of the query point when deciding which node to traverse, while when using a axis-\/orthogonal hyperplane, as S\+P\+Tree does, we can do it in O(1).
+
+This template typedef satisfies the Tree\+Type policy A\+PI.
+
+\begin{DoxySeeAlso}{See also}
+\doxyref{The Tree\+Type policy in mlpack}{p.}{trees}, \doxyref{Spill\+Tree}{p.}{classmlpack_1_1tree_1_1SpillTree}, \doxyref{S\+P\+Tree}{p.}{namespacemlpack_1_1tree_adec131814632778ce027eb29bc7f89b3} 
+\end{DoxySeeAlso}
+
+
+Definition at line 100 of file typedef.\+hpp.
+
+\index{mlpack\+::tree@{mlpack\+::tree}!R\+Plus\+Plus\+Tree@{R\+Plus\+Plus\+Tree}}
+\index{R\+Plus\+Plus\+Tree@{R\+Plus\+Plus\+Tree}!mlpack\+::tree@{mlpack\+::tree}}
+\subsubsection[{R\+Plus\+Plus\+Tree}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ using {\bf mlpack\+::tree\+::\+R\+Plus\+Plus\+Tree} = typedef {\bf Rectangle\+Tree}$<$Metric\+Type, Statistic\+Type, Mat\+Type, {\bf R\+Plus\+Tree\+Split}$<${\bf R\+Plus\+Plus\+Tree\+Split\+Policy}, {\bf Minimal\+Splits\+Number\+Sweep}$>$, {\bf R\+Plus\+Plus\+Tree\+Descent\+Heuristic}, {\bf R\+Plus\+Plus\+Tree\+Auxiliary\+Information}$>$}\label{namespacemlpack_1_1tree_a07d7bd84f9b043f3033d8e28fdfa976a}
+
+
+The R++ tree, a variant of the R+ tree with maximum buonding rectangles. 
+
+This template typedef satisfies the Tree\+Type policy A\+PI.
+
+
+\begin{DoxyCode}
+@inproceedings\{sumak2014r,
+  author = \{\{\(\backslash\)v\{S\}\}um\{\(\backslash\)\textcolor{stringliteral}{'a\}k, Martin and Gursk\{\(\backslash\)'y\}, Peter\},}
+\textcolor{stringliteral}{  title = \{R++-Tree: An Efficient Spatial Access Method for Highly Redundant}
+\textcolor{stringliteral}{     Point Data\},}
+\textcolor{stringliteral}{  booktitle = \{New Trends in Databases and Information Systems: 17th East}
+\textcolor{stringliteral}{     European Conference on Advances in Databases and Information Systems\},}
+\textcolor{stringliteral}{  year = \{2014\},}
+\textcolor{stringliteral}{  isbn = \{978-3-319-01863-8\},}
+\textcolor{stringliteral}{  pages = \{37--44\},}
+\textcolor{stringliteral}{  publisher = \{Springer International Publishing\},}
+\textcolor{stringliteral}{\}}
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+\doxyref{The Tree\+Type policy in mlpack}{p.}{trees}, \doxyref{R\+Tree}{p.}{namespacemlpack_1_1tree_a1a47efe6afda858544988d1f7927477c}, \doxyref{R\+Tree}{p.}{namespacemlpack_1_1tree_a1a47efe6afda858544988d1f7927477c}, \doxyref{R\+Plus\+Tree}{p.}{namespacemlpack_1_1tree_aa982af750a28398e11787f1e98a9e347}, \doxyref{R\+Plus\+Plus\+Tree}{p.}{namespacemlpack_1_1tree_a07d7bd84f9b043f3033d8e28fdfa976a} 
+\end{DoxySeeAlso}
+
+
+Definition at line 196 of file typedef.\+hpp.
+
+\index{mlpack\+::tree@{mlpack\+::tree}!R\+Plus\+Tree@{R\+Plus\+Tree}}
+\index{R\+Plus\+Tree@{R\+Plus\+Tree}!mlpack\+::tree@{mlpack\+::tree}}
+\subsubsection[{R\+Plus\+Tree}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ using {\bf mlpack\+::tree\+::\+R\+Plus\+Tree} = typedef {\bf Rectangle\+Tree}$<$Metric\+Type, Statistic\+Type, Mat\+Type, {\bf R\+Plus\+Tree\+Split}$<${\bf R\+Plus\+Tree\+Split\+Policy}, {\bf Minimal\+Coverage\+Sweep}$>$, {\bf R\+Plus\+Tree\+Descent\+Heuristic}, {\bf No\+Auxiliary\+Information}$>$}\label{namespacemlpack_1_1tree_aa982af750a28398e11787f1e98a9e347}
+
+
+The R+ tree, a variant of the R tree that avoids overlapping rectangles. 
+
+The implementation is modified from the original paper implementation. This template typedef satisfies the Tree\+Type policy A\+PI.
+
+
+\begin{DoxyCode}
+@inproceedings\{sellis1987r,
+  author = \{Sellis, Timos K. and Roussopoulos, Nick and Faloutsos, Christos\},
+  title = \{The R+-Tree: A Dynamic Index \textcolor{keywordflow}{for} Multi-Dimensional Objects\},
+  booktitle = \{Proceedings of the 13th International Conference on Very
+     Large Data Bases\},
+  series = \{VLDB \textcolor{stringliteral}{'87\},}
+\textcolor{stringliteral}{  year = \{1987\},}
+\textcolor{stringliteral}{  isbn = \{0-934613-46-X\},}
+\textcolor{stringliteral}{  pages = \{507--518\},}
+\textcolor{stringliteral}{  numpages = \{12\},}
+\textcolor{stringliteral}{  publisher = \{Morgan Kaufmann Publishers Inc.\},}
+\textcolor{stringliteral}{  address = \{San Francisco, CA, USA\},}
+\textcolor{stringliteral}{\}}
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+\doxyref{The Tree\+Type policy in mlpack}{p.}{trees}, \doxyref{R\+Tree}{p.}{namespacemlpack_1_1tree_a1a47efe6afda858544988d1f7927477c}, \doxyref{R\+Tree}{p.}{namespacemlpack_1_1tree_a1a47efe6afda858544988d1f7927477c}, \doxyref{R\+Plus\+Tree}{p.}{namespacemlpack_1_1tree_aa982af750a28398e11787f1e98a9e347} 
+\end{DoxySeeAlso}
+
+
+Definition at line 168 of file typedef.\+hpp.
+
+\index{mlpack\+::tree@{mlpack\+::tree}!R\+P\+Tree@{R\+P\+Tree}}
+\index{R\+P\+Tree@{R\+P\+Tree}!mlpack\+::tree@{mlpack\+::tree}}
+\subsubsection[{R\+P\+Tree}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ using {\bf mlpack\+::tree\+::\+R\+P\+Tree} = typedef {\bf Binary\+Space\+Tree}$<$Metric\+Type, Statistic\+Type, Mat\+Type, {\bf bound\+::\+H\+Rect\+Bound}, {\bf R\+P\+Tree\+Mean\+Split}$>$}\label{namespacemlpack_1_1tree_a833a7346a362bc844f691c28034494d1}
+
+
+A mean-\/split random projection tree. 
+
+When recursively splitting nodes, the R\+P\+Tree class may perform one of two different kinds of split. Depending on the diameter and the average distance between points, the node may be split by a random hyperplane or according to the distance from the mean point. The tree holds points in leaf nodes. In contrast to the k-\/d tree, children of a Max\+Split\+R\+P\+Tree node may overlap.
+
+
+\begin{DoxyCode}
+@inproceedings\{dasgupta2008,
+  author = \{Dasgupta, Sanjoy and Freund, Yoav\},
+  title = \{Random Projection Trees and Low Dimensional Manifolds\},
+  booktitle = \{Proceedings of the Fortieth Annual ACM Symposium on Theory of
+      Computing\},
+  series = \{STOC \textcolor{stringliteral}{'08\},}
+\textcolor{stringliteral}{  year = \{2008\},}
+\textcolor{stringliteral}{  pages = \{537--546\},}
+\textcolor{stringliteral}{  numpages = \{10\},}
+\textcolor{stringliteral}{  publisher = \{ACM\},}
+\textcolor{stringliteral}{  address = \{New York, NY, USA\},}
+\textcolor{stringliteral}{\}}
+\end{DoxyCode}
+
+
+This template typedef satisfies the Tree\+Type policy A\+PI.
+
+\begin{DoxySeeAlso}{See also}
+\doxyref{The Tree\+Type policy in mlpack}{p.}{trees}, \doxyref{Binary\+Space\+Tree}{p.}{classmlpack_1_1tree_1_1BinarySpaceTree}, \doxyref{Ball\+Tree}{p.}{namespacemlpack_1_1tree_abc9c69ba447c575b235eff25f14d99c7}, \doxyref{Mean\+Split\+K\+D\+Tree}{p.}{namespacemlpack_1_1tree_a5f0cce5886fb2559c7e7cb0a9efb2079} 
+\end{DoxySeeAlso}
+
+
+Definition at line 266 of file typedef.\+hpp.
+
+\index{mlpack\+::tree@{mlpack\+::tree}!R\+Star\+Tree@{R\+Star\+Tree}}
+\index{R\+Star\+Tree@{R\+Star\+Tree}!mlpack\+::tree@{mlpack\+::tree}}
+\subsubsection[{R\+Star\+Tree}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ using {\bf mlpack\+::tree\+::\+R\+Star\+Tree} = typedef {\bf Rectangle\+Tree}$<$Metric\+Type, Statistic\+Type, Mat\+Type, {\bf R\+Star\+Tree\+Split}, {\bf R\+Star\+Tree\+Descent\+Heuristic}, {\bf No\+Auxiliary\+Information}$>$}\label{namespacemlpack_1_1tree_a4e25f4921d1b4ca77a30bf82d5366da5}
+
+
+The R$\ast$-\/tree, a more recent variant of the R tree. 
+
+This template typedef satisfies the Tree\+Type policy A\+PI.
+
+
+\begin{DoxyCode}
+@inproceedings\{beckmann1990r,
+  title=\{The R*-tree: an efficient and robust access method \textcolor{keywordflow}{for} points and
+      rectangles\},
+  author=\{Beckmann, N. and Kriegel, H.-P. and Schneider, R. and Seeger, B.\},
+  booktitle=\{Proceedings of the 1990 ACM SIGMOD International Conference on
+      Management of Data (SIGMOD \textcolor{stringliteral}{'90)\},}
+\textcolor{stringliteral}{  volume=\{19\},}
+\textcolor{stringliteral}{  number=\{2\},}
+\textcolor{stringliteral}{  year=\{1990\},}
+\textcolor{stringliteral}{  publisher=\{ACM\}}
+\textcolor{stringliteral}{\}}
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+\doxyref{The Tree\+Type policy in mlpack}{p.}{trees}, \doxyref{R\+Tree}{p.}{namespacemlpack_1_1tree_a1a47efe6afda858544988d1f7927477c} 
+\end{DoxySeeAlso}
+
+
+Definition at line 75 of file typedef.\+hpp.
+
+\index{mlpack\+::tree@{mlpack\+::tree}!R\+Tree@{R\+Tree}}
+\index{R\+Tree@{R\+Tree}!mlpack\+::tree@{mlpack\+::tree}}
+\subsubsection[{R\+Tree}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ using {\bf mlpack\+::tree\+::\+R\+Tree} = typedef {\bf Rectangle\+Tree}$<$Metric\+Type, Statistic\+Type, Mat\+Type, {\bf R\+Tree\+Split}, {\bf R\+Tree\+Descent\+Heuristic}, {\bf No\+Auxiliary\+Information}$>$}\label{namespacemlpack_1_1tree_a1a47efe6afda858544988d1f7927477c}
+
+
+An implementation of the R tree that satisfies the Tree\+Type policy A\+PI. 
+
+This is the same R-\/tree structure as proposed by Guttman\+:
+
+
+\begin{DoxyCode}
+@inproceedings\{guttman1984r,
+  title=\{R-trees: a dynamic index structure \textcolor{keywordflow}{for} spatial searching\},
+  author=\{Guttman, A.\},
+  booktitle=\{Proceedings of the 1984 ACM SIGMOD International Conference on
+      Management of Data (SIGMOD \textcolor{stringliteral}{'84)\},}
+\textcolor{stringliteral}{  volume=\{14\},}
+\textcolor{stringliteral}{  number=\{2\},}
+\textcolor{stringliteral}{  year=\{1984\},}
+\textcolor{stringliteral}{  publisher=\{ACM\}}
+\textcolor{stringliteral}{\}}
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+\doxyref{The Tree\+Type policy in mlpack}{p.}{trees}, \doxyref{R\+Star\+Tree}{p.}{namespacemlpack_1_1tree_a4e25f4921d1b4ca77a30bf82d5366da5} 
+\end{DoxySeeAlso}
+
+
+Definition at line 47 of file typedef.\+hpp.
+
+\index{mlpack\+::tree@{mlpack\+::tree}!S\+P\+Tree@{S\+P\+Tree}}
+\index{S\+P\+Tree@{S\+P\+Tree}!mlpack\+::tree@{mlpack\+::tree}}
+\subsubsection[{S\+P\+Tree}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ using {\bf mlpack\+::tree\+::\+S\+P\+Tree} = typedef {\bf Spill\+Tree}$<$Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Axis\+Orthogonal\+Hyperplane}, {\bf Midpoint\+Space\+Split}$>$}\label{namespacemlpack_1_1tree_adec131814632778ce027eb29bc7f89b3}
+
+
+The hybrid spill tree. 
+
+It is a variant of metric-\/trees in which the children of a node can \char`\"{}spill over\char`\"{} onto each other, and contain shared datapoints.
+
+When recursively splitting nodes, the S\+P\+Tree class select the dimension with maximum width to split on, and picks the midpoint of the range in that dimension as the value on which to split nodes.
+
+In each case a \char`\"{}overlapping buffer\char`\"{} is defined, included points at a distance less than tau from the decision boundary defined by the midpoint.
+
+For each node, we first split the points considering the overlapping buffer. If either of its children contains more than rho fraction of the total points we undo the overlapping splitting. Instead a conventional partition is used. In this way, we can ensure that each split reduces the number of points of a node by at least a constant factor.
+
+For more information, see the following paper.
+
+
+\begin{DoxyCode}
+@inproceedings\{
+  author = \{Ting Liu, Andrew W. Moore, Alexander Gray and Ke Yang\},
+  title = \{An Investigation of Practical Approximate Nearest Neighbor
+    Algorithms\},
+  booktitle = \{Advances in Neural Information Processing Systems 17\},
+  year = \{2005\},
+  pages = \{825--832\}
+\}
+\end{DoxyCode}
+
+
+This template typedef satisfies the Tree\+Type policy A\+PI.
+
+\begin{DoxySeeAlso}{See also}
+\doxyref{The Tree\+Type policy in mlpack}{p.}{trees}, \doxyref{Spill\+Tree}{p.}{classmlpack_1_1tree_1_1SpillTree}, \doxyref{Mean\+S\+P\+Tree}{p.}{namespacemlpack_1_1tree_ad20f514d6967490eb25a6b15bed0658b} 
+\end{DoxySeeAlso}
+
+
+Definition at line 62 of file typedef.\+hpp.
+
+\index{mlpack\+::tree@{mlpack\+::tree}!Standard\+Cover\+Tree@{Standard\+Cover\+Tree}}
+\index{Standard\+Cover\+Tree@{Standard\+Cover\+Tree}!mlpack\+::tree@{mlpack\+::tree}}
+\subsubsection[{Standard\+Cover\+Tree}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ using {\bf mlpack\+::tree\+::\+Standard\+Cover\+Tree} = typedef {\bf Cover\+Tree}$<$Metric\+Type, Statistic\+Type, Mat\+Type, {\bf First\+Point\+Is\+Root}$>$}\label{namespacemlpack_1_1tree_a97bb6c0e6c1be359a95c89d21b1afd42}
+
+
+The standard cover tree, as detailed in the original cover tree paper\+: 
+
+
+\begin{DoxyCode}
+@inproceedings\{
+  author=\{Beygelzimer, A. and Kakade, S. and Langford, J.\},
+  title=\{Cover trees \textcolor{keywordflow}{for} nearest neighbor\},
+  booktitle=\{Proceedings of the 23rd International Conference on Machine
+      Learning (ICML 2006)\},
+  pages=\{97--104\},
+  year=\{2006\}
+\}
+\end{DoxyCode}
+
+
+This template typedef satisfies the requirements of the Tree\+Type A\+PI.
+
+\begin{DoxySeeAlso}{See also}
+\doxyref{The Tree\+Type policy in mlpack}{p.}{trees}, \doxyref{Cover\+Tree}{p.}{classmlpack_1_1tree_1_1CoverTree} 
+\end{DoxySeeAlso}
+
+
+Definition at line 42 of file typedef.\+hpp.
+
+\index{mlpack\+::tree@{mlpack\+::tree}!U\+B\+Tree@{U\+B\+Tree}}
+\index{U\+B\+Tree@{U\+B\+Tree}!mlpack\+::tree@{mlpack\+::tree}}
+\subsubsection[{U\+B\+Tree}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ using {\bf mlpack\+::tree\+::\+U\+B\+Tree} = typedef {\bf Binary\+Space\+Tree}$<$Metric\+Type, Statistic\+Type, Mat\+Type, {\bf bound\+::\+Cell\+Bound}, {\bf U\+B\+Tree\+Split}$>$}\label{namespacemlpack_1_1tree_a567f5bb0682dbac3bb72f5822335da5c}
+
+
+The Universal B-\/tree. 
+
+When recursively splitting nodes, the class calculates addresses of all points and splits each node according to the median address. Children may overlap since the implementation of a tighter bound requires a lot of arithmetic operations. In order to get a tighter bound increase the Cell\+Bound\+::max\+Num\+Bounds constant.
+
+
+\begin{DoxyCode}
+@inproceedings\{bayer1997,
+  author = \{Bayer, Rudolf\},
+  title = \{The Universal B-Tree \textcolor{keywordflow}{for} Multidimensional Indexing: General
+      Concepts\},
+  booktitle = \{Proceedings of the International Conference on Worldwide
+      Computing and Its Applications\},
+  series = \{WWCA \textcolor{stringliteral}{'97\},}
+\textcolor{stringliteral}{  year = \{1997\},}
+\textcolor{stringliteral}{  isbn = \{3-540-63343-X\},}
+\textcolor{stringliteral}{  pages = \{198--209\},}
+\textcolor{stringliteral}{  numpages = \{12\},}
+\textcolor{stringliteral}{  publisher = \{Springer-Verlag\},}
+\textcolor{stringliteral}{  address = \{London, UK, UK\},}
+\textcolor{stringliteral}{\}}
+\end{DoxyCode}
+
+
+This template typedef satisfies the Tree\+Type policy A\+PI.
+
+\begin{DoxySeeAlso}{See also}
+\doxyref{The Tree\+Type policy in mlpack}{p.}{trees}, \doxyref{Binary\+Space\+Tree}{p.}{classmlpack_1_1tree_1_1BinarySpaceTree}, \doxyref{Ball\+Tree}{p.}{namespacemlpack_1_1tree_abc9c69ba447c575b235eff25f14d99c7}, \doxyref{Mean\+Split\+K\+D\+Tree}{p.}{namespacemlpack_1_1tree_a5f0cce5886fb2559c7e7cb0a9efb2079} 
+\end{DoxySeeAlso}
+
+
+Definition at line 301 of file typedef.\+hpp.
+
+\index{mlpack\+::tree@{mlpack\+::tree}!V\+P\+Tree@{V\+P\+Tree}}
+\index{V\+P\+Tree@{V\+P\+Tree}!mlpack\+::tree@{mlpack\+::tree}}
+\subsubsection[{V\+P\+Tree}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ using {\bf mlpack\+::tree\+::\+V\+P\+Tree} = typedef {\bf Binary\+Space\+Tree}$<$Metric\+Type, Statistic\+Type, Mat\+Type, {\bf bound\+::\+Hollow\+Ball\+Bound}, {\bf V\+P\+Tree\+Split}$>$}\label{namespacemlpack_1_1tree_a8aa23faa8b1343b19a123535cfc85b9a}
+
+
+Definition at line 199 of file typedef.\+hpp.
+
+\index{mlpack\+::tree@{mlpack\+::tree}!V\+P\+Tree\+Split@{V\+P\+Tree\+Split}}
+\index{V\+P\+Tree\+Split@{V\+P\+Tree\+Split}!mlpack\+::tree@{mlpack\+::tree}}
+\subsubsection[{V\+P\+Tree\+Split}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Bound\+Type , typename Mat\+Type  = arma\+::mat$>$ using {\bf mlpack\+::tree\+::\+V\+P\+Tree\+Split} = typedef {\bf Vantage\+Point\+Split}$<$Bound\+Type, Mat\+Type, 100$>$}\label{namespacemlpack_1_1tree_a9c6891d010c7e41d1de1bbb25466b735}
+
+
+The vantage point tree (which is also called the metric tree. 
+
+Vantage point trees and metric trees were invented independently by Yianilos an Uhlmann) is a kind of the binary space tree. When recursively splitting nodes, the V\+P\+Tree class selects the vantage point and splits the node according to the distance to this point. Thus, points that are closer to the vantage point form the inner subtree. Other points form the outer subtree. The vantage point is contained in the first (inner) node.
+
+This implementation differs from the original algorithms. Namely, vantage points are not contained in intermediate nodes. The tree has points only in the leaves of the tree.
+
+For more information, see the following papers.
+
+
+\begin{DoxyCode}
+@inproceedings\{yianilos1993vptrees,
+  author = \{Yianilos, Peter N.\},
+  title = \{Data Structures and Algorithms \textcolor{keywordflow}{for} Nearest Neighbor Search in
+      General Metric Spaces\},
+  booktitle = \{Proceedings of the Fourth Annual ACM-SIAM Symposium on
+      Discrete Algorithms\},
+  series = \{SODA \textcolor{stringliteral}{'93\},}
+\textcolor{stringliteral}{  year = \{1993\},}
+\textcolor{stringliteral}{  isbn = \{0-89871-313-7\},}
+\textcolor{stringliteral}{  pages = \{311--321\},}
+\textcolor{stringliteral}{  numpages = \{11\},}
+\textcolor{stringliteral}{  publisher = \{Society for Industrial and Applied Mathematics\},}
+\textcolor{stringliteral}{  address = \{Philadelphia, PA, USA\}}
+\textcolor{stringliteral}{\}}
+\textcolor{stringliteral}{}
+\textcolor{stringliteral}{@article\{uhlmann1991metrictrees,}
+\textcolor{stringliteral}{  author = \{Jeffrey K. Uhlmann\},}
+\textcolor{stringliteral}{  title = \{Satisfying general proximity / similarity queries with metric}
+\textcolor{stringliteral}{      trees\},}
+\textcolor{stringliteral}{  journal = \{Information Processing Letters\},}
+\textcolor{stringliteral}{  volume = \{40\},}
+\textcolor{stringliteral}{  number = \{4\},}
+\textcolor{stringliteral}{  pages = \{175 - 179\},}
+\textcolor{stringliteral}{  year = \{1991\},}
+\textcolor{stringliteral}{\}}
+\end{DoxyCode}
+
+
+This template typedef satisfies the Tree\+Type policy A\+PI.
+
+\begin{DoxySeeAlso}{See also}
+\doxyref{The Tree\+Type policy in mlpack}{p.}{trees}, \doxyref{Binary\+Space\+Tree}{p.}{classmlpack_1_1tree_1_1BinarySpaceTree}, Vantage\+Point\+Tree, \doxyref{V\+P\+Tree}{p.}{namespacemlpack_1_1tree_a8aa23faa8b1343b19a123535cfc85b9a} 
+\end{DoxySeeAlso}
+
+
+Definition at line 192 of file typedef.\+hpp.
+
+\index{mlpack\+::tree@{mlpack\+::tree}!X\+Tree@{X\+Tree}}
+\index{X\+Tree@{X\+Tree}!mlpack\+::tree@{mlpack\+::tree}}
+\subsubsection[{X\+Tree}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ using {\bf mlpack\+::tree\+::\+X\+Tree} = typedef {\bf Rectangle\+Tree}$<$Metric\+Type, Statistic\+Type, Mat\+Type, {\bf X\+Tree\+Split}, {\bf R\+Tree\+Descent\+Heuristic}, {\bf X\+Tree\+Auxiliary\+Information}$>$}\label{namespacemlpack_1_1tree_a5e3954722233535e71bb024f29c2b340}
+
+
+The X-\/tree, a variant of the R tree with supernodes. 
+
+This template typedef satisfies the Tree\+Type policy A\+PI.
+
+
+\begin{DoxyCode}
+@inproceedings\{berchtold1996r,
+  title = \{The X-Tree: An Index Structure \textcolor{keywordflow}{for} High--Dimensional Data\},
+  author = \{Berchtold, Stefan and Keim, Daniel A. and Kriegel, Hans-Peter\},
+  booktitle = \{Proc. 22th Int. Conf. on Very Large Databases (VLDB\textcolor{stringliteral}{'96), Bombay, India\},}
+\textcolor{stringliteral}{  editor = \{Vijayaraman, T. and Buchmann, Alex and Mohan, C. and Sarda, N.\},}
+\textcolor{stringliteral}{  pages = \{28--39\},}
+\textcolor{stringliteral}{  year = \{1996\},}
+\textcolor{stringliteral}{  publisher = \{Morgan Kaufmann\}}
+\textcolor{stringliteral}{\}}
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+\doxyref{The Tree\+Type policy in mlpack}{p.}{trees}, \doxyref{R\+Tree}{p.}{namespacemlpack_1_1tree_a1a47efe6afda858544988d1f7927477c}, \doxyref{R\+Star\+Tree}{p.}{namespacemlpack_1_1tree_a4e25f4921d1b4ca77a30bf82d5366da5} 
+\end{DoxySeeAlso}
+
+
+Definition at line 101 of file typedef.\+hpp.
+
+
+
+\subsection{Variable Documentation}
+\index{mlpack\+::tree@{mlpack\+::tree}!M\+A\+X\+\_\+\+O\+V\+E\+R\+L\+AP@{M\+A\+X\+\_\+\+O\+V\+E\+R\+L\+AP}}
+\index{M\+A\+X\+\_\+\+O\+V\+E\+R\+L\+AP@{M\+A\+X\+\_\+\+O\+V\+E\+R\+L\+AP}!mlpack\+::tree@{mlpack\+::tree}}
+\subsubsection[{M\+A\+X\+\_\+\+O\+V\+E\+R\+L\+AP}]{\setlength{\rightskip}{0pt plus 5cm}const double mlpack\+::tree\+::\+M\+A\+X\+\_\+\+O\+V\+E\+R\+L\+AP = 0.\+2}\label{namespacemlpack_1_1tree_a9a652c551813fa3c2ddf96f6361fa200}
+
+
+The X-\/tree paper says that a maximum allowable overlap of 20\% works well. 
+
+This code should eventually be refactored so as to avoid polluting \doxyref{mlpack\+::tree}{p.}{namespacemlpack_1_1tree} with this random double. 
+
+Definition at line 29 of file x\+\_\+tree\+\_\+split.\+hpp.
+

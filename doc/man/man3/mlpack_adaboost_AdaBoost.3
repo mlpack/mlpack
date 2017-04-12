@@ -1,0 +1,307 @@
+.TH "mlpack::adaboost::AdaBoost< WeakLearnerType, MatType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::adaboost::AdaBoost< WeakLearnerType, MatType > \- The \fBAdaBoost\fP class\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBAdaBoost\fP (const MatType &data, const arma::Row< size_t > &labels, const WeakLearnerType &other, const size_t iterations=100, const double \fBtolerance\fP=1e\-6)"
+.br
+.RI "\fIConstructor\&. \fP"
+.ti -1c
+.RI "\fBAdaBoost\fP (const double \fBtolerance\fP=1e\-6)"
+.br
+.RI "\fICreate the \fBAdaBoost\fP object without training\&. \fP"
+.ti -1c
+.RI "double \fBAlpha\fP (const size_t i) const "
+.br
+.RI "\fIGet the weights for the given weak learner\&. \fP"
+.ti -1c
+.RI "double & \fBAlpha\fP (const size_t i)"
+.br
+.RI "\fIModify the weight for the given weak learner (be careful!)\&. \fP"
+.ti -1c
+.RI "size_t \fBClasses\fP () const "
+.br
+.RI "\fIGet the number of classes this model is trained on\&. \fP"
+.ti -1c
+.RI "void \fBClassify\fP (const MatType &test, arma::Row< size_t > &predictedLabels)"
+.br
+.RI "\fIClassify the given test points\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int)"
+.br
+.RI "\fISerialize the \fBAdaBoost\fP model\&. \fP"
+.ti -1c
+.RI "double \fBTolerance\fP () const "
+.br
+.RI "\fIGet the tolerance for stopping the optimization during training\&. \fP"
+.ti -1c
+.RI "double & \fBTolerance\fP ()"
+.br
+.RI "\fIModify the tolerance for stopping the optimization during training\&. \fP"
+.ti -1c
+.RI "void \fBTrain\fP (const MatType &data, const arma::Row< size_t > &labels, const WeakLearnerType &learner, const size_t iterations=100, const double \fBtolerance\fP=1e\-6)"
+.br
+.RI "\fITrain \fBAdaBoost\fP on the given dataset\&. \fP"
+.ti -1c
+.RI "const WeakLearnerType & \fBWeakLearner\fP (const size_t i) const "
+.br
+.RI "\fIGet the given weak learner\&. \fP"
+.ti -1c
+.RI "WeakLearnerType & \fBWeakLearner\fP (const size_t i)"
+.br
+.RI "\fIModify the given weak learner (be careful!)\&. \fP"
+.ti -1c
+.RI "size_t \fBWeakLearners\fP () const "
+.br
+.RI "\fIGet the number of weak learners in the model\&. \fP"
+.ti -1c
+.RI "double \fBZtProduct\fP ()"
+.br
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "std::vector< double > \fBalpha\fP"
+.br
+.RI "\fIThe weights corresponding to each weak learner\&. \fP"
+.ti -1c
+.RI "size_t \fBclasses\fP"
+.br
+.RI "\fIThe number of classes in the model\&. \fP"
+.ti -1c
+.RI "double \fBtolerance\fP"
+.br
+.ti -1c
+.RI "std::vector< WeakLearnerType > \fBwl\fP"
+.br
+.RI "\fIThe vector of weak learners\&. \fP"
+.ti -1c
+.RI "double \fBztProduct\fP"
+.br
+.RI "\fITo check for the bound for the Hamming loss\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename WeakLearnerType = mlpack::perceptron::Perceptron<>, typename MatType = arma::mat>
+.br
+class mlpack::adaboost::AdaBoost< WeakLearnerType, MatType >"
+The \fBAdaBoost\fP class\&. 
+
+\fBAdaBoost\fP is a boosting algorithm, meaning that it combines an ensemble of weak learners to produce a strong learner\&. For more information on \fBAdaBoost\fP, see the following paper:
+.PP
+.PP
+.nf
+@article{schapire1999improved,
+  author = {Schapire, Robert E\&. and Singer, Yoram},
+  title = {Improved Boosting Algorithms Using Confidence-rated Predictions},
+  journal = {Machine Learning},
+  volume = {37},
+  number = {3},
+  month = dec,
+  year = {1999},
+  issn = {0885-6125},
+  pages = {297--336},
+}
+.fi
+.PP
+.PP
+This class is general, and can be used with any type of weak learner, so long as the learner implements the following functions:
+.PP
+.PP
+.nf
+// A boosting constructor, which learns using the training parameters of the
+// given other WeakLearner, but uses the given instance weights for training\&.
+WeakLearner(WeakLearner& other,
+            const MatType& data,
+            const arma::Row<size_t>& labels,
+            const arma::rowvec& weights);
+
+// Given the test points, classify them and output predictions into
+// predictedLabels\&.
+void Classify(const MatType& data, arma::Row<size_t>& predictedLabels);
+.fi
+.PP
+.PP
+For more information on and examples of weak learners, see perceptron::Perceptron<> and decision_stump::DecisionStump<>\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIMatType\fP Data matrix type (i\&.e\&. arma::mat or arma::sp_mat)\&. 
+.br
+\fIWeakLearnerType\fP Type of weak learner to use\&. 
+.RE
+.PP
+
+.PP
+Definition at line 81 of file adaboost\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename WeakLearnerType = mlpack::perceptron::Perceptron<>, typename MatType = arma::mat> \fBmlpack::adaboost::AdaBoost\fP< WeakLearnerType, MatType >::\fBAdaBoost\fP (const MatType & data, const arma::Row< size_t > & labels, const WeakLearnerType & other, const size_t iterations = \fC100\fP, const double tolerance = \fC1e\-6\fP)"
+
+.PP
+Constructor\&. This runs the AdaBoost\&.MH algorithm to provide a trained boosting model\&. This constructor takes an already-initialized weak learner; all other weak learners will learn with the same parameters as the given weak learner\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Input data\&. 
+.br
+\fIlabels\fP Corresponding labels\&. 
+.br
+\fIiterations\fP Number of boosting rounds\&. 
+.br
+\fItol\fP The tolerance for change in values of rt\&. 
+.br
+\fIother\fP Weak learner that has already been initialized\&. 
+.RE
+.PP
+
+.SS "template<typename WeakLearnerType = mlpack::perceptron::Perceptron<>, typename MatType = arma::mat> \fBmlpack::adaboost::AdaBoost\fP< WeakLearnerType, MatType >::\fBAdaBoost\fP (const double tolerance = \fC1e\-6\fP)"
+
+.PP
+Create the \fBAdaBoost\fP object without training\&. Be sure to call \fBTrain()\fP before calling \fBClassify()\fP! 
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename WeakLearnerType = mlpack::perceptron::Perceptron<>, typename MatType = arma::mat> double \fBmlpack::adaboost::AdaBoost\fP< WeakLearnerType, MatType >::Alpha (const size_t i) const\fC [inline]\fP"
+
+.PP
+Get the weights for the given weak learner\&. 
+.PP
+Definition at line 123 of file adaboost\&.hpp\&.
+.SS "template<typename WeakLearnerType = mlpack::perceptron::Perceptron<>, typename MatType = arma::mat> double& \fBmlpack::adaboost::AdaBoost\fP< WeakLearnerType, MatType >::Alpha (const size_t i)\fC [inline]\fP"
+
+.PP
+Modify the weight for the given weak learner (be careful!)\&. 
+.PP
+Definition at line 125 of file adaboost\&.hpp\&.
+.SS "template<typename WeakLearnerType = mlpack::perceptron::Perceptron<>, typename MatType = arma::mat> size_t \fBmlpack::adaboost::AdaBoost\fP< WeakLearnerType, MatType >::Classes () const\fC [inline]\fP"
+
+.PP
+Get the number of classes this model is trained on\&. 
+.PP
+Definition at line 117 of file adaboost\&.hpp\&.
+.SS "template<typename WeakLearnerType = mlpack::perceptron::Perceptron<>, typename MatType = arma::mat> void \fBmlpack::adaboost::AdaBoost\fP< WeakLearnerType, MatType >::Classify (const MatType & test, arma::Row< size_t > & predictedLabels)"
+
+.PP
+Classify the given test points\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fItest\fP Testing data\&. 
+.br
+\fIpredictedLabels\fP Vector in which to the predicted labels of the test set will be stored\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::adaboost::AdaBoost< decision_stump::DecisionStump<> >::WeakLearner()\&.
+.SS "template<typename WeakLearnerType = mlpack::perceptron::Perceptron<>, typename MatType = arma::mat> template<typename Archive > void \fBmlpack::adaboost::AdaBoost\fP< WeakLearnerType, MatType >::Serialize (Archive & ar, const unsigned int)"
+
+.PP
+Serialize the \fBAdaBoost\fP model\&. 
+.PP
+Referenced by mlpack::adaboost::AdaBoost< decision_stump::DecisionStump<> >::WeakLearner()\&.
+.SS "template<typename WeakLearnerType = mlpack::perceptron::Perceptron<>, typename MatType = arma::mat> double \fBmlpack::adaboost::AdaBoost\fP< WeakLearnerType, MatType >::Tolerance () const\fC [inline]\fP"
+
+.PP
+Get the tolerance for stopping the optimization during training\&. 
+.PP
+Definition at line 112 of file adaboost\&.hpp\&.
+.SS "template<typename WeakLearnerType = mlpack::perceptron::Perceptron<>, typename MatType = arma::mat> double& \fBmlpack::adaboost::AdaBoost\fP< WeakLearnerType, MatType >::Tolerance ()\fC [inline]\fP"
+
+.PP
+Modify the tolerance for stopping the optimization during training\&. 
+.PP
+Definition at line 114 of file adaboost\&.hpp\&.
+.SS "template<typename WeakLearnerType = mlpack::perceptron::Perceptron<>, typename MatType = arma::mat> void \fBmlpack::adaboost::AdaBoost\fP< WeakLearnerType, MatType >::Train (const MatType & data, const arma::Row< size_t > & labels, const WeakLearnerType & learner, const size_t iterations = \fC100\fP, const double tolerance = \fC1e\-6\fP)"
+
+.PP
+Train \fBAdaBoost\fP on the given dataset\&. This method takes an initialized WeakLearnerType; the parameters for this weak learner will be used to train each of the weak learners during \fBAdaBoost\fP training\&. Note that this will completely overwrite any model that has already been trained with this object\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Dataset to train on\&. 
+.br
+\fIlabels\fP Labels for each point in the dataset\&. 
+.br
+\fIlearner\fP Learner to use for training\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::adaboost::AdaBoost< decision_stump::DecisionStump<> >::WeakLearner()\&.
+.SS "template<typename WeakLearnerType = mlpack::perceptron::Perceptron<>, typename MatType = arma::mat> const WeakLearnerType& \fBmlpack::adaboost::AdaBoost\fP< WeakLearnerType, MatType >::WeakLearner (const size_t i) const\fC [inline]\fP"
+
+.PP
+Get the given weak learner\&. 
+.PP
+Definition at line 128 of file adaboost\&.hpp\&.
+.SS "template<typename WeakLearnerType = mlpack::perceptron::Perceptron<>, typename MatType = arma::mat> WeakLearnerType& \fBmlpack::adaboost::AdaBoost\fP< WeakLearnerType, MatType >::WeakLearner (const size_t i)\fC [inline]\fP"
+
+.PP
+Modify the given weak learner (be careful!)\&. 
+.PP
+Definition at line 130 of file adaboost\&.hpp\&.
+.SS "template<typename WeakLearnerType = mlpack::perceptron::Perceptron<>, typename MatType = arma::mat> size_t \fBmlpack::adaboost::AdaBoost\fP< WeakLearnerType, MatType >::WeakLearners () const\fC [inline]\fP"
+
+.PP
+Get the number of weak learners in the model\&. 
+.PP
+Definition at line 120 of file adaboost\&.hpp\&.
+.SS "template<typename WeakLearnerType = mlpack::perceptron::Perceptron<>, typename MatType = arma::mat> double \fBmlpack::adaboost::AdaBoost\fP< WeakLearnerType, MatType >::ZtProduct ()\fC [inline]\fP"
+
+.PP
+Definition at line 109 of file adaboost\&.hpp\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename WeakLearnerType = mlpack::perceptron::Perceptron<>, typename MatType = arma::mat> std::vector<double> \fBmlpack::adaboost::AdaBoost\fP< WeakLearnerType, MatType >::alpha\fC [private]\fP"
+
+.PP
+The weights corresponding to each weak learner\&. 
+.PP
+Definition at line 173 of file adaboost\&.hpp\&.
+.PP
+Referenced by mlpack::adaboost::AdaBoost< decision_stump::DecisionStump<> >::Alpha(), and mlpack::adaboost::AdaBoost< decision_stump::DecisionStump<> >::WeakLearners()\&.
+.SS "template<typename WeakLearnerType = mlpack::perceptron::Perceptron<>, typename MatType = arma::mat> size_t \fBmlpack::adaboost::AdaBoost\fP< WeakLearnerType, MatType >::classes\fC [private]\fP"
+
+.PP
+The number of classes in the model\&. 
+.PP
+Definition at line 166 of file adaboost\&.hpp\&.
+.PP
+Referenced by mlpack::adaboost::AdaBoost< decision_stump::DecisionStump<> >::Classes()\&.
+.SS "template<typename WeakLearnerType = mlpack::perceptron::Perceptron<>, typename MatType = arma::mat> double \fBmlpack::adaboost::AdaBoost\fP< WeakLearnerType, MatType >::tolerance\fC [private]\fP"
+
+.PP
+Definition at line 168 of file adaboost\&.hpp\&.
+.PP
+Referenced by mlpack::adaboost::AdaBoost< decision_stump::DecisionStump<> >::Tolerance(), and mlpack::adaboost::AdaBoost< decision_stump::DecisionStump<> >::WeakLearner()\&.
+.SS "template<typename WeakLearnerType = mlpack::perceptron::Perceptron<>, typename MatType = arma::mat> std::vector<WeakLearnerType> \fBmlpack::adaboost::AdaBoost\fP< WeakLearnerType, MatType >::wl\fC [private]\fP"
+
+.PP
+The vector of weak learners\&. 
+.PP
+Definition at line 171 of file adaboost\&.hpp\&.
+.PP
+Referenced by mlpack::adaboost::AdaBoost< decision_stump::DecisionStump<> >::WeakLearner()\&.
+.SS "template<typename WeakLearnerType = mlpack::perceptron::Perceptron<>, typename MatType = arma::mat> double \fBmlpack::adaboost::AdaBoost\fP< WeakLearnerType, MatType >::ztProduct\fC [private]\fP"
+
+.PP
+To check for the bound for the Hamming loss\&. 
+.PP
+Definition at line 176 of file adaboost\&.hpp\&.
+.PP
+Referenced by mlpack::adaboost::AdaBoost< decision_stump::DecisionStump<> >::ZtProduct()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

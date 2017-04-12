@@ -1,0 +1,81 @@
+\section{mlpack\+:\+:data\+:\+:Second\+Shim$<$ T $>$ Struct Template Reference}
+\label{structmlpack_1_1data_1_1SecondShim}\index{mlpack\+::data\+::\+Second\+Shim$<$ T $>$@{mlpack\+::data\+::\+Second\+Shim$<$ T $>$}}
+
+
+The second shim\+: wrap the call to Serialize() inside of a \doxyref{serialize()}{p.}{structmlpack_1_1data_1_1SecondShim_af876ca6368e66bbfebbfa8ca25ad3b45} function, so that an archive type can call \doxyref{serialize()}{p.}{structmlpack_1_1data_1_1SecondShim_af876ca6368e66bbfebbfa8ca25ad3b45} on a \doxyref{Second\+Shim}{p.}{structmlpack_1_1data_1_1SecondShim} object and this gets forwarded correctly to our object\textquotesingle{}s Serialize() function.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Second\+Shim} (T \&{\bf t})
+\begin{DoxyCompactList}\small\item\em Construct the second shim. The name isn\textquotesingle{}t necessary for this shim. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf serialize} (Archive \&ar, const unsigned int version)
+\begin{DoxyCompactList}\small\item\em A wrapper for t.\+Serialize(). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+T \& {\bf t}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename T$>$\\*
+struct mlpack\+::data\+::\+Second\+Shim$<$ T $>$}
+
+The second shim\+: wrap the call to Serialize() inside of a \doxyref{serialize()}{p.}{structmlpack_1_1data_1_1SecondShim_af876ca6368e66bbfebbfa8ca25ad3b45} function, so that an archive type can call \doxyref{serialize()}{p.}{structmlpack_1_1data_1_1SecondShim_af876ca6368e66bbfebbfa8ca25ad3b45} on a \doxyref{Second\+Shim}{p.}{structmlpack_1_1data_1_1SecondShim} object and this gets forwarded correctly to our object\textquotesingle{}s Serialize() function. 
+
+Definition at line 65 of file serialization\+\_\+shim.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::data\+::\+Second\+Shim@{mlpack\+::data\+::\+Second\+Shim}!Second\+Shim@{Second\+Shim}}
+\index{Second\+Shim@{Second\+Shim}!mlpack\+::data\+::\+Second\+Shim@{mlpack\+::data\+::\+Second\+Shim}}
+\subsubsection[{Second\+Shim(\+T \&t)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T$>$ {\bf mlpack\+::data\+::\+Second\+Shim}$<$ T $>$\+::{\bf Second\+Shim} (
+\begin{DoxyParamCaption}
+\item[{T \&}]{t}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{structmlpack_1_1data_1_1SecondShim_a28b59057a739256d3a3d76dae9e55593}
+
+
+Construct the second shim. The name isn\textquotesingle{}t necessary for this shim. 
+
+
+
+Definition at line 298 of file serialization\+\_\+shim.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::data\+::\+Second\+Shim@{mlpack\+::data\+::\+Second\+Shim}!serialize@{serialize}}
+\index{serialize@{serialize}!mlpack\+::data\+::\+Second\+Shim@{mlpack\+::data\+::\+Second\+Shim}}
+\subsubsection[{serialize(\+Archive \&ar, const unsigned int version)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T$>$ template$<$typename Archive $>$ void {\bf mlpack\+::data\+::\+Second\+Shim}$<$ T $>$\+::serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const unsigned int}]{version}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{structmlpack_1_1data_1_1SecondShim_af876ca6368e66bbfebbfa8ca25ad3b45}
+
+
+A wrapper for t.\+Serialize(). 
+
+
+
+Definition at line 302 of file serialization\+\_\+shim.\+hpp.
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::data\+::\+Second\+Shim@{mlpack\+::data\+::\+Second\+Shim}!t@{t}}
+\index{t@{t}!mlpack\+::data\+::\+Second\+Shim@{mlpack\+::data\+::\+Second\+Shim}}
+\subsubsection[{t}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T$>$ T\& {\bf mlpack\+::data\+::\+Second\+Shim}$<$ T $>$\+::t}\label{structmlpack_1_1data_1_1SecondShim_ac22f3c2713a99424e941ca10ab645d94}
+
+
+Definition at line 307 of file serialization\+\_\+shim.\+hpp.
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/data/{\bf serialization\+\_\+shim.\+hpp}\end{DoxyCompactItemize}

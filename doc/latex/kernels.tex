@@ -1,0 +1,136 @@
+\section{Table of Contents}\label{kernels_kerneltoc}
+
+\begin{DoxyItemize}
+\item \doxyref{Introduction to the Kernel\+Type policy}{p.}{kernels_kerneltype}
+\item \doxyref{The Kernel\+Traits trait class}{p.}{kernels_kerneltraits}
+\item \doxyref{List of kernels and classes that use a {\ttfamily Kernel\+Type} }{p.}{kernels_kernellist}
+\end{DoxyItemize}\section{Introduction to the Kernel\+Type policy}\label{kernels_kerneltype}
+`\+Kernel methods\textquotesingle{} make up a large class of machine learning techniques. Each of these methods is characterized by its dependence on a {\bfseries kernel} {\bfseries function}. In rough terms, a kernel function is a general notion of similarity between two points, with its value large when objects are similar and its value small when objects are dissimilar (note that this is not the only interpretation of what a kernel is).
+
+A kernel (or `\+Mercer kernel\textquotesingle{}) $\mathcal{K}(\cdot, \cdot)$ takes two objects as input and returns some sort of similarity value. The specific details and properties of kernels are outside the scope of this documentation; for a better introduction to kernels and kernel methods, there are numerous better resources available, including http\+://www.eric-\/kim.\+net/eric-\/kim-\/net/posts/1/kernel\+\_\+trick.html \char`\"{}\+Eric Kim\textquotesingle{}s
+tutorial\char`\"{}.
+
+mlpack implements a number of kernel methods and, accordingly, each of these methods allows arbitrary kernels to be used via the {\ttfamily Kernel\+Type} template parameter. Like the \doxyref{Metric\+Type policy}{p.}{metrics}, the requirements are quite simple\+: a class implementing the {\ttfamily Kernel\+Type} policy must have
+
+
+\begin{DoxyItemize}
+\item an {\ttfamily Evaluate()} function
+\item a default constructor
+\end{DoxyItemize}
+
+The signature of the {\ttfamily Evaluate()} function is straightforward\+:
+
+
+\begin{DoxyCode}
+\textcolor{keyword}{template}<\textcolor{keyword}{typename} VecTypeA, \textcolor{keyword}{typename} VecTypeB>
+\textcolor{keywordtype}{double} Evaluate(\textcolor{keyword}{const} VecTypeA& a, \textcolor{keyword}{const} VecTypeB& b);
+\end{DoxyCode}
+
+
+The function takes two vector arguments, {\ttfamily a} and {\ttfamily b}, and returns a {\ttfamily double} that is the evaluation of the kernel between the two arguments. So, for a particular kernel $\mathcal{K}(\cdot, \cdot)$, the {\ttfamily Evaluate()} function should return $\mathcal{K}(a, b)$.
+
+The arguments {\ttfamily a} and {\ttfamily b}, of types {\ttfamily Vec\+TypeA} and {\ttfamily Vec\+TypeB}, respectively, will be an Armadillo-\/like vector type (usually {\ttfamily arma\+::vec}, {\ttfamily arma\+::sp\+\_\+vec}, or similar). In general it should be valid to assume that {\ttfamily Vec\+TypeA} is a class with the same A\+PI as {\ttfamily arma\+::vec}.
+
+Note that for kernels that do not hold any state, the {\ttfamily Evaluate()} method can be marked as {\ttfamily static}.
+
+Overall, the {\ttfamily Kernel\+Type} template policy is quite simple (much like the \doxyref{Metric\+Type policy}{p.}{metrics}). Below is an example kernel class, which outputs {\ttfamily 1} if the vectors are close and {\ttfamily 0} otherwise.
+
+
+\begin{DoxyCode}
+\textcolor{keyword}{class }ExampleKernel
+\{
+  \textcolor{comment}{// Default constructor is required.}
+  ExampleKernel() \{ \}
+
+  \textcolor{comment}{// The example kernel holds no state, so we can mark Evaluate() as static.}
+  \textcolor{keyword}{template}<\textcolor{keyword}{typename} VecTypeA, \textcolor{keyword}{typename} VecTypeB>
+  \textcolor{keyword}{static} \textcolor{keywordtype}{double} Evaluate(\textcolor{keyword}{const} VecTypeA& a, \textcolor{keyword}{const} VecTypeB& b)
+  \{
+    \textcolor{comment}{// Get how far apart the vectors are (using the Euclidean distance).}
+    \textcolor{keyword}{const} \textcolor{keywordtype}{double} distance = arma::norm(a - b);
+
+    \textcolor{keywordflow}{if} (distance < 0.05) \textcolor{comment}{// Less than 0.05 distance is "close".}
+      \textcolor{keywordflow}{return} 1;
+    \textcolor{keywordflow}{else}
+      \textcolor{keywordflow}{return} 0;
+  \}
+\};
+\end{DoxyCode}
+
+
+Then, this kernel may be easily used inside of mlpack algorithms. For instance, the code below runs kernel P\+CA ({\ttfamily \doxyref{mlpack\+::kpca\+::\+Kernel\+P\+CA}{p.}{classmlpack_1_1kpca_1_1KernelPCA}}) on a random dataset using the {\ttfamily Example\+Kernel}. The results are saved to a file called {\ttfamily results.\+csv}. (Note that this is simply an example to demonstrate usage, and this example kernel isn\textquotesingle{}t actually likely to be useful in practice.)
+
+
+\begin{DoxyCode}
+\textcolor{preprocessor}{#include <mlpack/core.hpp>}
+\textcolor{preprocessor}{#include <mlpack/methods/kernel_pca/kernel_pca.hpp>}
+\textcolor{preprocessor}{#include "example_kernel.hpp"} \textcolor{comment}{// Contains the ExampleKernel class.}
+
+\textcolor{keyword}{using namespace }mlpack;
+\textcolor{keyword}{using namespace }mlpack::kpca;
+\textcolor{keyword}{using namespace }arma;
+
+\textcolor{keywordtype}{int} main()
+\{
+  \textcolor{comment}{// Generate the random dataset; 10 dimensions, 5000 points.}
+  mat dataset = randu<mat>(10, 5000);
+
+  \textcolor{comment}{// Instantiate the KernelPCA object with the ExampleKernel kernel type.}
+  KernelPCA<ExampleKernel> kpca;
+
+  \textcolor{comment}{// The dataset will be transformed using kernel PCA with the example kernel to}
+  \textcolor{comment}{// contain only 2 dimensions.}
+  kpca.Apply(dataset, 2);
+
+  \textcolor{comment}{// Save the results to 'results.csv'.}
+  data::Save(dataset, \textcolor{stringliteral}{"results.csv"});
+\}
+\end{DoxyCode}
+\section{The Kernel\+Traits trait class}\label{kernels_kerneltraits}
+Some algorithms that use kernels can specialize if the kernel fulfills some certain conditions. An example of a condition might be that the kernel is shift-\/invariant or that the kernel is normalized. In the case of fast max-\/kernel search (\doxyref{mlpack\+::fastmks\+::\+Fast\+M\+KS}{p.}{classmlpack_1_1fastmks_1_1FastMKS}), the computation can be accelerated if the kernel is normalized. For this reason, the {\ttfamily Kernel\+Traits} trait class exists. This allows a kernel to specify via a {\ttfamily const} {\ttfamily static} {\ttfamily bool} when these types of conditions are satisfied. {\bfseries Note that a Kernel\+Traits class is not required,} but may be helpful.
+
+The {\ttfamily Kernel\+Traits} trait class is a template class that takes a {\ttfamily Kernel\+Type} as a parameter, and exposes {\ttfamily const} {\ttfamily static} {\ttfamily bool} values that depend on the kernel. Setting these values is achieved by specialization. The code below provides an example, specializing {\ttfamily Kernel\+Traits} for the {\ttfamily Example\+Kernel} from earlier\+:
+
+
+\begin{DoxyCode}
+\textcolor{keyword}{template}<>
+\textcolor{keyword}{class }KernelTraits<ExampleKernel>
+\{
+ \textcolor{keyword}{public}:
+  \textcolor{keyword}{const} \textcolor{keyword}{static} \textcolor{keywordtype}{bool} IsNormalized = \textcolor{keyword}{true};
+\};
+\end{DoxyCode}
+
+
+At this time, there is only one kernel trait that is used in mlpack code\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily Is\+Normalized} (defaults to {\ttfamily false})\+: if $ K(x, x) = 1 \; \forall x $, then the kernel is normalized and this should be set to true.
+\end{DoxyItemize}\section{List of kernels and classes that use a \textbackslash{}c Kernel\+Type}\label{kernels_kernellist}
+mlpack comes with a number of pre-\/written kernels that satisfy the {\ttfamily Kernel\+Type} policy\+:
+
+
+\begin{DoxyItemize}
+\item \doxyref{mlpack\+::kernel\+::\+Linear\+Kernel}{p.}{classmlpack_1_1kernel_1_1LinearKernel}
+\item \doxyref{mlpack\+::kernel\+::\+Example\+Kernel}{p.}{classmlpack_1_1kernel_1_1ExampleKernel} -- an example kernel with more documentation
+\item \doxyref{mlpack\+::kernel\+::\+Gaussian\+Kernel}{p.}{classmlpack_1_1kernel_1_1GaussianKernel}
+\item \doxyref{mlpack\+::kernel\+::\+Hyperbolic\+Tangent\+Kernel}{p.}{classmlpack_1_1kernel_1_1HyperbolicTangentKernel}
+\item \doxyref{mlpack\+::kernel\+::\+Epanechnikov\+Kernel}{p.}{classmlpack_1_1kernel_1_1EpanechnikovKernel}
+\item \doxyref{mlpack\+::kernel\+::\+Cosine\+Distance}{p.}{classmlpack_1_1kernel_1_1CosineDistance}
+\item \doxyref{mlpack\+::kernel\+::\+Laplacian\+Kernel}{p.}{classmlpack_1_1kernel_1_1LaplacianKernel}
+\item \doxyref{mlpack\+::kernel\+::\+Polynomial\+Kernel}{p.}{classmlpack_1_1kernel_1_1PolynomialKernel}
+\item \doxyref{mlpack\+::kernel\+::\+Triangular\+Kernel}{p.}{classmlpack_1_1kernel_1_1TriangularKernel}
+\item \doxyref{mlpack\+::kernel\+::\+Spherical\+Kernel}{p.}{classmlpack_1_1kernel_1_1SphericalKernel}
+\item \doxyref{mlpack\+::kernel\+::\+P\+Spectrum\+String\+Kernel}{p.}{classmlpack_1_1kernel_1_1PSpectrumStringKernel} -- operates on strings, not vectors
+\end{DoxyItemize}
+
+These kernels (or a custom kernel) may be used in a variety of mlpack methods\+:
+
+
+\begin{DoxyItemize}
+\item \doxyref{mlpack\+::kpca\+::\+Kernel\+P\+CA}{p.}{classmlpack_1_1kpca_1_1KernelPCA} -\/ kernel principal components analysis
+\item \doxyref{mlpack\+::fastmks\+::\+Fast\+M\+KS}{p.}{classmlpack_1_1fastmks_1_1FastMKS} -\/ fast max-\/kernel search
+\item \doxyref{mlpack\+::kernel\+::\+Nystroem\+Method}{p.}{classmlpack_1_1kernel_1_1NystroemMethod} -\/ the Nystroem method for sampling
+\item \doxyref{mlpack\+::metric\+::\+I\+P\+Metric}{p.}{classmlpack_1_1metric_1_1IPMetric} -\/ a metric built on a kernel 
+\end{DoxyItemize}

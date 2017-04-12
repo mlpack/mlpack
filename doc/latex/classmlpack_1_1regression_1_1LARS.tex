@@ -1,0 +1,622 @@
+\section{mlpack\+:\+:regression\+:\+:L\+A\+RS Class Reference}
+\label{classmlpack_1_1regression_1_1LARS}\index{mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}}
+
+
+An implementation of \doxyref{L\+A\+RS}{p.}{classmlpack_1_1regression_1_1LARS}, a stage-\/wise homotopy-\/based algorithm for l1-\/regularized linear regression (L\+A\+S\+SO) and l1+l2 regularized linear regression (Elastic Net).  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf L\+A\+RS} (const bool {\bf use\+Cholesky}=false, const double {\bf lambda1}=0.\+0, const double {\bf lambda2}=0.\+0, const double {\bf tolerance}=1e-\/16)
+\begin{DoxyCompactList}\small\item\em Set the parameters to \doxyref{L\+A\+RS}{p.}{classmlpack_1_1regression_1_1LARS}. \end{DoxyCompactList}\item 
+{\bf L\+A\+RS} (const bool {\bf use\+Cholesky}, const arma\+::mat \&gram\+Matrix, const double {\bf lambda1}=0.\+0, const double {\bf lambda2}=0.\+0, const double {\bf tolerance}=1e-\/16)
+\begin{DoxyCompactList}\small\item\em Set the parameters to \doxyref{L\+A\+RS}{p.}{classmlpack_1_1regression_1_1LARS}, and pass in a precalculated Gram matrix. \end{DoxyCompactList}\item 
+const std\+::vector$<$ size\+\_\+t $>$ \& {\bf Active\+Set} () const 
+\begin{DoxyCompactList}\small\item\em Access the set of active dimensions. \end{DoxyCompactList}\item 
+const std\+::vector$<$ arma\+::vec $>$ \& {\bf Beta\+Path} () const 
+\begin{DoxyCompactList}\small\item\em Access the set of coefficients after each iteration; the solution is the last element. \end{DoxyCompactList}\item 
+const std\+::vector$<$ double $>$ \& {\bf Lambda\+Path} () const 
+\begin{DoxyCompactList}\small\item\em Access the set of values for lambda1 after each iteration; the solution is the last element. \end{DoxyCompactList}\item 
+const arma\+::mat \& {\bf Mat\+Utri\+Chol\+Factor} () const 
+\begin{DoxyCompactList}\small\item\em Access the upper triangular cholesky factor. \end{DoxyCompactList}\item 
+void {\bf Predict} (const arma\+::mat \&points, arma\+::vec \&predictions, const bool row\+Major=false) const 
+\begin{DoxyCompactList}\small\item\em Predict y\+\_\+i for each data point in the given data matrix, using the currently-\/trained \doxyref{L\+A\+RS}{p.}{classmlpack_1_1regression_1_1LARS} model (so make sure you run Regress() first). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&ar, const unsigned int)
+\begin{DoxyCompactList}\small\item\em Serialize the \doxyref{L\+A\+RS}{p.}{classmlpack_1_1regression_1_1LARS} model. \end{DoxyCompactList}\item 
+void {\bf Train} (const arma\+::mat \&data, const arma\+::vec \&responses, arma\+::vec \&beta, const bool transpose\+Data=true)
+\begin{DoxyCompactList}\small\item\em Run \doxyref{L\+A\+RS}{p.}{classmlpack_1_1regression_1_1LARS}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void {\bf Activate} (const size\+\_\+t var\+Ind)
+\begin{DoxyCompactList}\small\item\em Add dimension var\+Ind to active set. \end{DoxyCompactList}\item 
+void {\bf Cholesky\+Delete} (const size\+\_\+t col\+To\+Kill)
+\item 
+void {\bf Cholesky\+Insert} (const arma\+::vec \&newX, const arma\+::mat \&X)
+\item 
+void {\bf Cholesky\+Insert} (double sq\+Norm\+NewX, const arma\+::vec \&new\+Gram\+Col)
+\item 
+void {\bf Compute\+Y\+Hat\+Direction} (const arma\+::mat \&matX, const arma\+::vec \&beta\+Direction, arma\+::vec \&y\+Hat\+Direction)
+\item 
+void {\bf Deactivate} (const size\+\_\+t active\+Var\+Ind)
+\begin{DoxyCompactList}\small\item\em Remove active\+Var\+Ind\textquotesingle{}th element from active set. \end{DoxyCompactList}\item 
+void {\bf Givens\+Rotate} (const arma\+::vec\+::fixed$<$ 2 $>$ \&x, arma\+::vec\+::fixed$<$ 2 $>$ \&rotatedX, arma\+::mat \&G)
+\item 
+void {\bf Ignore} (const size\+\_\+t var\+Ind)
+\begin{DoxyCompactList}\small\item\em Add dimension var\+Ind to ignores set (never removed). \end{DoxyCompactList}\item 
+void {\bf Interpolate\+Beta} ()
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::vector$<$ size\+\_\+t $>$ {\bf active\+Set}
+\begin{DoxyCompactList}\small\item\em Active set of dimensions. \end{DoxyCompactList}\item 
+std\+::vector$<$ arma\+::vec $>$ {\bf beta\+Path}
+\begin{DoxyCompactList}\small\item\em Solution path. \end{DoxyCompactList}\item 
+bool {\bf elastic\+Net}
+\begin{DoxyCompactList}\small\item\em True if this is the elastic net problem. \end{DoxyCompactList}\item 
+std\+::vector$<$ size\+\_\+t $>$ {\bf ignore\+Set}
+\begin{DoxyCompactList}\small\item\em Set of ignored variables (for dimensions in span\{active set dimensions\}). \end{DoxyCompactList}\item 
+std\+::vector$<$ bool $>$ {\bf is\+Active}
+\begin{DoxyCompactList}\small\item\em Active set membership indicator (for each dimension). \end{DoxyCompactList}\item 
+std\+::vector$<$ bool $>$ {\bf is\+Ignored}
+\begin{DoxyCompactList}\small\item\em Membership indicator for set of ignored variables. \end{DoxyCompactList}\item 
+double {\bf lambda1}
+\begin{DoxyCompactList}\small\item\em Regularization parameter for l1 penalty. \end{DoxyCompactList}\item 
+double {\bf lambda2}
+\begin{DoxyCompactList}\small\item\em Regularization parameter for l2 penalty. \end{DoxyCompactList}\item 
+std\+::vector$<$ double $>$ {\bf lambda\+Path}
+\begin{DoxyCompactList}\small\item\em Value of lambda\+\_\+1 for each solution in solution path. \end{DoxyCompactList}\item 
+bool {\bf lasso}
+\begin{DoxyCompactList}\small\item\em True if this is the L\+A\+S\+SO problem. \end{DoxyCompactList}\item 
+const arma\+::mat $\ast$ {\bf mat\+Gram}
+\begin{DoxyCompactList}\small\item\em Pointer to the Gram matrix we will use. \end{DoxyCompactList}\item 
+arma\+::mat {\bf mat\+Gram\+Internal}
+\begin{DoxyCompactList}\small\item\em Gram matrix. \end{DoxyCompactList}\item 
+arma\+::mat {\bf mat\+Utri\+Chol\+Factor}
+\begin{DoxyCompactList}\small\item\em Upper triangular cholesky factor; initially 0x0 matrix. \end{DoxyCompactList}\item 
+double {\bf tolerance}
+\begin{DoxyCompactList}\small\item\em Tolerance for main loop. \end{DoxyCompactList}\item 
+bool {\bf use\+Cholesky}
+\begin{DoxyCompactList}\small\item\em Whether or not to use Cholesky decomposition when solving linear system. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+An implementation of \doxyref{L\+A\+RS}{p.}{classmlpack_1_1regression_1_1LARS}, a stage-\/wise homotopy-\/based algorithm for l1-\/regularized linear regression (L\+A\+S\+SO) and l1+l2 regularized linear regression (Elastic Net). 
+
+Let $ X $ be a matrix where each row is a point and each column is a dimension and let $ y $ be a vector of responses.
+
+The Elastic Net problem is to solve
+
+\[ \min_{\beta} 0.5 || X \beta - y ||_2^2 + \lambda_1 || \beta ||_1 + 0.5 \lambda_2 || \beta ||_2^2 \]
+
+where $ \beta $ is the vector of regression coefficients.
+
+If $ \lambda_1 > 0 $ and $ \lambda_2 = 0 $, the problem is the L\+A\+S\+SO. If $ \lambda_1 > 0 $ and $ \lambda_2 > 0 $, the problem is the elastic net. If $ \lambda_1 = 0 $ and $ \lambda_2 > 0 $, the problem is ridge regression. If $ \lambda_1 = 0 $ and $ \lambda_2 = 0 $, the problem is unregularized linear regression.
+
+Note\+: This algorithm is not recommended for use (in terms of efficiency) when $ \lambda_1 $ = 0.
+
+For more details, see the following papers\+:
+
+
+\begin{DoxyCode}
+@article\{efron2004least,
+  title=\{Least angle regression\},
+  author=\{Efron, B. and Hastie, T. and Johnstone, I. and Tibshirani, R.\},
+  journal=\{The Annals of statistics\},
+  volume=\{32\},
+  number=\{2\},
+  pages=\{407--499\},
+  year=\{2004\},
+  publisher=\{Institute of Mathematical Statistics\}
+\}
+\end{DoxyCode}
+
+
+
+\begin{DoxyCode}
+@article\{zou2005regularization,
+  title=\{Regularization and variable selection via the elastic net\},
+  author=\{Zou, H. and Hastie, T.\},
+  journal=\{Journal of the Royal Statistical Society Series B\},
+  volume=\{67\},
+  number=\{2\},
+  pages=\{301--320\},
+  year=\{2005\},
+  publisher=\{Royal Statistical Society\}
+\}
+\end{DoxyCode}
+ 
+
+Definition at line 89 of file lars.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}!L\+A\+RS@{L\+A\+RS}}
+\index{L\+A\+RS@{L\+A\+RS}!mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}}
+\subsubsection[{L\+A\+R\+S(const bool use\+Cholesky=false, const double lambda1=0.\+0, const double lambda2=0.\+0, const double tolerance=1e-\/16)}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::regression\+::\+L\+A\+R\+S\+::\+L\+A\+RS (
+\begin{DoxyParamCaption}
+\item[{const bool}]{use\+Cholesky = {\ttfamily false}, }
+\item[{const double}]{lambda1 = {\ttfamily 0.0}, }
+\item[{const double}]{lambda2 = {\ttfamily 0.0}, }
+\item[{const double}]{tolerance = {\ttfamily 1e-\/16}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1regression_1_1LARS_a7bbe6b8cf539bf449052776278963fc0}
+
+
+Set the parameters to \doxyref{L\+A\+RS}{p.}{classmlpack_1_1regression_1_1LARS}. 
+
+Both lambda1 and lambda2 default to 0.
+
+
+\begin{DoxyParams}{Parameters}
+{\em use\+Cholesky} & Whether or not to use Cholesky decomposition when solving linear system (as opposed to using the full Gram matrix). \\
+\hline
+{\em lambda1} & Regularization parameter for l1-\/norm penalty. \\
+\hline
+{\em lambda2} & Regularization parameter for l2-\/norm penalty. \\
+\hline
+{\em tolerance} & Run until the maximum correlation of elements in (X$^\wedge$T y) is less than this. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}!L\+A\+RS@{L\+A\+RS}}
+\index{L\+A\+RS@{L\+A\+RS}!mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}}
+\subsubsection[{L\+A\+R\+S(const bool use\+Cholesky, const arma\+::mat \&gram\+Matrix, const double lambda1=0.\+0, const double lambda2=0.\+0, const double tolerance=1e-\/16)}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::regression\+::\+L\+A\+R\+S\+::\+L\+A\+RS (
+\begin{DoxyParamCaption}
+\item[{const bool}]{use\+Cholesky, }
+\item[{const arma\+::mat \&}]{gram\+Matrix, }
+\item[{const double}]{lambda1 = {\ttfamily 0.0}, }
+\item[{const double}]{lambda2 = {\ttfamily 0.0}, }
+\item[{const double}]{tolerance = {\ttfamily 1e-\/16}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1regression_1_1LARS_a50f214b37d0fc8f7c036cefd1a000534}
+
+
+Set the parameters to \doxyref{L\+A\+RS}{p.}{classmlpack_1_1regression_1_1LARS}, and pass in a precalculated Gram matrix. 
+
+Both lambda1 and lambda2 default to 0.
+
+
+\begin{DoxyParams}{Parameters}
+{\em use\+Cholesky} & Whether or not to use Cholesky decomposition when solving linear system (as opposed to using the full Gram matrix). \\
+\hline
+{\em gram\+Matrix} & Gram matrix. \\
+\hline
+{\em lambda1} & Regularization parameter for l1-\/norm penalty. \\
+\hline
+{\em lambda2} & Regularization parameter for l2-\/norm penalty. \\
+\hline
+{\em tolerance} & Run until the maximum correlation of elements in (X$^\wedge$T y) is less than this. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}!Activate@{Activate}}
+\index{Activate@{Activate}!mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}}
+\subsubsection[{Activate(const size\+\_\+t var\+Ind)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::regression\+::\+L\+A\+R\+S\+::\+Activate (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{var\+Ind}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1regression_1_1LARS_a504b043dbd8ddad13ed8d5cccd095b03}
+
+
+Add dimension var\+Ind to active set. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em var\+Ind} & Dimension to add to active set. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}!Active\+Set@{Active\+Set}}
+\index{Active\+Set@{Active\+Set}!mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}}
+\subsubsection[{Active\+Set() const }]{\setlength{\rightskip}{0pt plus 5cm}const std\+::vector$<$size\+\_\+t$>$\& mlpack\+::regression\+::\+L\+A\+R\+S\+::\+Active\+Set (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1regression_1_1LARS_a3335da218d0776b6c2f9e9c61615ef43}
+
+
+Access the set of active dimensions. 
+
+
+
+Definition at line 158 of file lars.\+hpp.
+
+
+
+References active\+Set.
+
+\index{mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}!Beta\+Path@{Beta\+Path}}
+\index{Beta\+Path@{Beta\+Path}!mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}}
+\subsubsection[{Beta\+Path() const }]{\setlength{\rightskip}{0pt plus 5cm}const std\+::vector$<$arma\+::vec$>$\& mlpack\+::regression\+::\+L\+A\+R\+S\+::\+Beta\+Path (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1regression_1_1LARS_a6028a84e0e32decf2c2d80c00918a539}
+
+
+Access the set of coefficients after each iteration; the solution is the last element. 
+
+
+
+Definition at line 162 of file lars.\+hpp.
+
+
+
+References beta\+Path.
+
+\index{mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}!Cholesky\+Delete@{Cholesky\+Delete}}
+\index{Cholesky\+Delete@{Cholesky\+Delete}!mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}}
+\subsubsection[{Cholesky\+Delete(const size\+\_\+t col\+To\+Kill)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::regression\+::\+L\+A\+R\+S\+::\+Cholesky\+Delete (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{col\+To\+Kill}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1regression_1_1LARS_a36d8876d8658bcce0472e282a45b037b}
+\index{mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}!Cholesky\+Insert@{Cholesky\+Insert}}
+\index{Cholesky\+Insert@{Cholesky\+Insert}!mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}}
+\subsubsection[{Cholesky\+Insert(const arma\+::vec \&new\+X, const arma\+::mat \&\+X)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::regression\+::\+L\+A\+R\+S\+::\+Cholesky\+Insert (
+\begin{DoxyParamCaption}
+\item[{const arma\+::vec \&}]{newX, }
+\item[{const arma\+::mat \&}]{X}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1regression_1_1LARS_a8683c355eab8ce88d385ad2de97a039d}
+\index{mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}!Cholesky\+Insert@{Cholesky\+Insert}}
+\index{Cholesky\+Insert@{Cholesky\+Insert}!mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}}
+\subsubsection[{Cholesky\+Insert(double sq\+Norm\+New\+X, const arma\+::vec \&new\+Gram\+Col)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::regression\+::\+L\+A\+R\+S\+::\+Cholesky\+Insert (
+\begin{DoxyParamCaption}
+\item[{double}]{sq\+Norm\+NewX, }
+\item[{const arma\+::vec \&}]{new\+Gram\+Col}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1regression_1_1LARS_a30c8e2d75b9947fcf63b4ea84ea48177}
+\index{mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}!Compute\+Y\+Hat\+Direction@{Compute\+Y\+Hat\+Direction}}
+\index{Compute\+Y\+Hat\+Direction@{Compute\+Y\+Hat\+Direction}!mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}}
+\subsubsection[{Compute\+Y\+Hat\+Direction(const arma\+::mat \&mat\+X, const arma\+::vec \&beta\+Direction, arma\+::vec \&y\+Hat\+Direction)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::regression\+::\+L\+A\+R\+S\+::\+Compute\+Y\+Hat\+Direction (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{matX, }
+\item[{const arma\+::vec \&}]{beta\+Direction, }
+\item[{arma\+::vec \&}]{y\+Hat\+Direction}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1regression_1_1LARS_a0edfa0c2371e56bd05eb3313b0eab9c0}
+\index{mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}!Deactivate@{Deactivate}}
+\index{Deactivate@{Deactivate}!mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}}
+\subsubsection[{Deactivate(const size\+\_\+t active\+Var\+Ind)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::regression\+::\+L\+A\+R\+S\+::\+Deactivate (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{active\+Var\+Ind}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1regression_1_1LARS_ae8a7cc3b78a39bebfb9903851f628b59}
+
+
+Remove active\+Var\+Ind\textquotesingle{}th element from active set. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em active\+Var\+Ind} & Index of element to remove from active set. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}!Givens\+Rotate@{Givens\+Rotate}}
+\index{Givens\+Rotate@{Givens\+Rotate}!mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}}
+\subsubsection[{Givens\+Rotate(const arma\+::vec\+::fixed$<$ 2 $>$ \&x, arma\+::vec\+::fixed$<$ 2 $>$ \&rotated\+X, arma\+::mat \&\+G)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::regression\+::\+L\+A\+R\+S\+::\+Givens\+Rotate (
+\begin{DoxyParamCaption}
+\item[{const arma\+::vec\+::fixed$<$ 2 $>$ \&}]{x, }
+\item[{arma\+::vec\+::fixed$<$ 2 $>$ \&}]{rotatedX, }
+\item[{arma\+::mat \&}]{G}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1regression_1_1LARS_a8e661e364db8957375c2f0d6f6b436cb}
+\index{mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}!Ignore@{Ignore}}
+\index{Ignore@{Ignore}!mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}}
+\subsubsection[{Ignore(const size\+\_\+t var\+Ind)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::regression\+::\+L\+A\+R\+S\+::\+Ignore (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{var\+Ind}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1regression_1_1LARS_a6ef1c6332d5bbe45664957da49b1bee8}
+
+
+Add dimension var\+Ind to ignores set (never removed). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em var\+Ind} & Dimension to add to ignores set. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}!Interpolate\+Beta@{Interpolate\+Beta}}
+\index{Interpolate\+Beta@{Interpolate\+Beta}!mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}}
+\subsubsection[{Interpolate\+Beta()}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::regression\+::\+L\+A\+R\+S\+::\+Interpolate\+Beta (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1regression_1_1LARS_a087d74551fe138fa3007166249b29912}
+\index{mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}!Lambda\+Path@{Lambda\+Path}}
+\index{Lambda\+Path@{Lambda\+Path}!mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}}
+\subsubsection[{Lambda\+Path() const }]{\setlength{\rightskip}{0pt plus 5cm}const std\+::vector$<$double$>$\& mlpack\+::regression\+::\+L\+A\+R\+S\+::\+Lambda\+Path (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1regression_1_1LARS_a2cca58e005bebb79b6eee3ae1aceb703}
+
+
+Access the set of values for lambda1 after each iteration; the solution is the last element. 
+
+
+
+Definition at line 166 of file lars.\+hpp.
+
+
+
+References lambda\+Path.
+
+\index{mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}!Mat\+Utri\+Chol\+Factor@{Mat\+Utri\+Chol\+Factor}}
+\index{Mat\+Utri\+Chol\+Factor@{Mat\+Utri\+Chol\+Factor}!mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}}
+\subsubsection[{Mat\+Utri\+Chol\+Factor() const }]{\setlength{\rightskip}{0pt plus 5cm}const arma\+::mat\& mlpack\+::regression\+::\+L\+A\+R\+S\+::\+Mat\+Utri\+Chol\+Factor (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1regression_1_1LARS_a5c8f7687c1dbd02e44b76a639b47ae23}
+
+
+Access the upper triangular cholesky factor. 
+
+
+
+Definition at line 169 of file lars.\+hpp.
+
+
+
+References mat\+Utri\+Chol\+Factor, and Serialize().
+
+\index{mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}!Predict@{Predict}}
+\index{Predict@{Predict}!mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}}
+\subsubsection[{Predict(const arma\+::mat \&points, arma\+::vec \&predictions, const bool row\+Major=false) const }]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::regression\+::\+L\+A\+R\+S\+::\+Predict (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{points, }
+\item[{arma\+::vec \&}]{predictions, }
+\item[{const bool}]{row\+Major = {\ttfamily false}}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1regression_1_1LARS_ac817486e5524240cd13d8e4a7752242a}
+
+
+Predict y\+\_\+i for each data point in the given data matrix, using the currently-\/trained \doxyref{L\+A\+RS}{p.}{classmlpack_1_1regression_1_1LARS} model (so make sure you run Regress() first). 
+
+If the data matrix is row-\/major (as opposed to the usual column-\/major format for mlpack matrices), set row\+Major = true to avoid an extra transpose.
+
+
+\begin{DoxyParams}{Parameters}
+{\em points} & The data points to regress on. \\
+\hline
+{\em predictions} & y, which will contained calculated values on completion. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}}
+\subsubsection[{Serialize(\+Archive \&ar, const unsigned int)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Archive $>$ void mlpack\+::regression\+::\+L\+A\+R\+S\+::\+Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const unsigned}]{int}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1regression_1_1LARS_a3808e03f2d6c8102345200c44a31b6af}
+
+
+Serialize the \doxyref{L\+A\+RS}{p.}{classmlpack_1_1regression_1_1LARS} model. 
+
+
+
+Referenced by Mat\+Utri\+Chol\+Factor().
+
+\index{mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}}
+\subsubsection[{Train(const arma\+::mat \&data, const arma\+::vec \&responses, arma\+::vec \&beta, const bool transpose\+Data=true)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::regression\+::\+L\+A\+R\+S\+::\+Train (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{data, }
+\item[{const arma\+::vec \&}]{responses, }
+\item[{arma\+::vec \&}]{beta, }
+\item[{const bool}]{transpose\+Data = {\ttfamily true}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1regression_1_1LARS_a660d69532b1877a266f72805e8d2a42b}
+
+
+Run \doxyref{L\+A\+RS}{p.}{classmlpack_1_1regression_1_1LARS}. 
+
+The input matrix (like all mlpack matrices) should be column-\/major -- each column is an observation and each row is a dimension. However, because \doxyref{L\+A\+RS}{p.}{classmlpack_1_1regression_1_1LARS} is more efficient on a row-\/major matrix, this method will (internally) transpose the matrix. If this transposition is not necessary (i.\+e., you want to pass in a row-\/major matrix), pass \textquotesingle{}false\textquotesingle{} for the transpose\+Data parameter.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Column-\/major input data (or row-\/major input data if row\+Major = true). \\
+\hline
+{\em responses} & A vector of targets. \\
+\hline
+{\em beta} & Vector to store the solution (the coefficients) in. \\
+\hline
+{\em transpose\+Data} & Set to false if the data is row-\/major. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}!active\+Set@{active\+Set}}
+\index{active\+Set@{active\+Set}!mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}}
+\subsubsection[{active\+Set}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$size\+\_\+t$>$ mlpack\+::regression\+::\+L\+A\+R\+S\+::active\+Set\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1regression_1_1LARS_a89b9907865950046de9487f0b4382e6f}
+
+
+Active set of dimensions. 
+
+
+
+Definition at line 210 of file lars.\+hpp.
+
+
+
+Referenced by Active\+Set().
+
+\index{mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}!beta\+Path@{beta\+Path}}
+\index{beta\+Path@{beta\+Path}!mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}}
+\subsubsection[{beta\+Path}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$arma\+::vec$>$ mlpack\+::regression\+::\+L\+A\+R\+S\+::beta\+Path\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1regression_1_1LARS_adf274c035b452a8460618d6553cad72f}
+
+
+Solution path. 
+
+
+
+Definition at line 204 of file lars.\+hpp.
+
+
+
+Referenced by Beta\+Path().
+
+\index{mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}!elastic\+Net@{elastic\+Net}}
+\index{elastic\+Net@{elastic\+Net}!mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}}
+\subsubsection[{elastic\+Net}]{\setlength{\rightskip}{0pt plus 5cm}bool mlpack\+::regression\+::\+L\+A\+R\+S\+::elastic\+Net\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1regression_1_1LARS_a0d7b186958893d8c80daa0e807def589}
+
+
+True if this is the elastic net problem. 
+
+
+
+Definition at line 196 of file lars.\+hpp.
+
+\index{mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}!ignore\+Set@{ignore\+Set}}
+\index{ignore\+Set@{ignore\+Set}!mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}}
+\subsubsection[{ignore\+Set}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$size\+\_\+t$>$ mlpack\+::regression\+::\+L\+A\+R\+S\+::ignore\+Set\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1regression_1_1LARS_a432e9a138721e36f78a6cc99277dfa02}
+
+
+Set of ignored variables (for dimensions in span\{active set dimensions\}). 
+
+
+
+Definition at line 218 of file lars.\+hpp.
+
+\index{mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}!is\+Active@{is\+Active}}
+\index{is\+Active@{is\+Active}!mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}}
+\subsubsection[{is\+Active}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$bool$>$ mlpack\+::regression\+::\+L\+A\+R\+S\+::is\+Active\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1regression_1_1LARS_a834dd8243424b50caa6cda01be429ac2}
+
+
+Active set membership indicator (for each dimension). 
+
+
+
+Definition at line 213 of file lars.\+hpp.
+
+\index{mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}!is\+Ignored@{is\+Ignored}}
+\index{is\+Ignored@{is\+Ignored}!mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}}
+\subsubsection[{is\+Ignored}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$bool$>$ mlpack\+::regression\+::\+L\+A\+R\+S\+::is\+Ignored\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1regression_1_1LARS_ac77ad1cd3a85bd5412350a467ec10f33}
+
+
+Membership indicator for set of ignored variables. 
+
+
+
+Definition at line 221 of file lars.\+hpp.
+
+\index{mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}!lambda1@{lambda1}}
+\index{lambda1@{lambda1}!mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}}
+\subsubsection[{lambda1}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::regression\+::\+L\+A\+R\+S\+::lambda1\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1regression_1_1LARS_a52454759cec1963bd8197470cee5c27d}
+
+
+Regularization parameter for l1 penalty. 
+
+
+
+Definition at line 193 of file lars.\+hpp.
+
+\index{mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}!lambda2@{lambda2}}
+\index{lambda2@{lambda2}!mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}}
+\subsubsection[{lambda2}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::regression\+::\+L\+A\+R\+S\+::lambda2\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1regression_1_1LARS_a007065083ec3d5b9e48815ad67c04922}
+
+
+Regularization parameter for l2 penalty. 
+
+
+
+Definition at line 198 of file lars.\+hpp.
+
+\index{mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}!lambda\+Path@{lambda\+Path}}
+\index{lambda\+Path@{lambda\+Path}!mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}}
+\subsubsection[{lambda\+Path}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$double$>$ mlpack\+::regression\+::\+L\+A\+R\+S\+::lambda\+Path\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1regression_1_1LARS_aefcc54780af00b52976c5afc72e8d4c5}
+
+
+Value of lambda\+\_\+1 for each solution in solution path. 
+
+
+
+Definition at line 207 of file lars.\+hpp.
+
+
+
+Referenced by Lambda\+Path().
+
+\index{mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}!lasso@{lasso}}
+\index{lasso@{lasso}!mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}}
+\subsubsection[{lasso}]{\setlength{\rightskip}{0pt plus 5cm}bool mlpack\+::regression\+::\+L\+A\+R\+S\+::lasso\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1regression_1_1LARS_ae7545355b38002cb5f56a0d0b93fe3bf}
+
+
+True if this is the L\+A\+S\+SO problem. 
+
+
+
+Definition at line 191 of file lars.\+hpp.
+
+\index{mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}!mat\+Gram@{mat\+Gram}}
+\index{mat\+Gram@{mat\+Gram}!mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}}
+\subsubsection[{mat\+Gram}]{\setlength{\rightskip}{0pt plus 5cm}const arma\+::mat$\ast$ mlpack\+::regression\+::\+L\+A\+R\+S\+::mat\+Gram\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1regression_1_1LARS_a050c73224837905fd46f959a489ab9f5}
+
+
+Pointer to the Gram matrix we will use. 
+
+
+
+Definition at line 182 of file lars.\+hpp.
+
+\index{mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}!mat\+Gram\+Internal@{mat\+Gram\+Internal}}
+\index{mat\+Gram\+Internal@{mat\+Gram\+Internal}!mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}}
+\subsubsection[{mat\+Gram\+Internal}]{\setlength{\rightskip}{0pt plus 5cm}arma\+::mat mlpack\+::regression\+::\+L\+A\+R\+S\+::mat\+Gram\+Internal\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1regression_1_1LARS_adac1f76f33cdf09d5fa8e6d8f3d178aa}
+
+
+Gram matrix. 
+
+
+
+Definition at line 179 of file lars.\+hpp.
+
+\index{mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}!mat\+Utri\+Chol\+Factor@{mat\+Utri\+Chol\+Factor}}
+\index{mat\+Utri\+Chol\+Factor@{mat\+Utri\+Chol\+Factor}!mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}}
+\subsubsection[{mat\+Utri\+Chol\+Factor}]{\setlength{\rightskip}{0pt plus 5cm}arma\+::mat mlpack\+::regression\+::\+L\+A\+R\+S\+::mat\+Utri\+Chol\+Factor\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1regression_1_1LARS_a781e4048271f1d755fc2fa82019f3de7}
+
+
+Upper triangular cholesky factor; initially 0x0 matrix. 
+
+
+
+Definition at line 185 of file lars.\+hpp.
+
+
+
+Referenced by Mat\+Utri\+Chol\+Factor().
+
+\index{mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}!tolerance@{tolerance}}
+\index{tolerance@{tolerance}!mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}}
+\subsubsection[{tolerance}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::regression\+::\+L\+A\+R\+S\+::tolerance\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1regression_1_1LARS_a6173af38f90e3aa8cd64a6afe0619681}
+
+
+Tolerance for main loop. 
+
+
+
+Definition at line 201 of file lars.\+hpp.
+
+\index{mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}!use\+Cholesky@{use\+Cholesky}}
+\index{use\+Cholesky@{use\+Cholesky}!mlpack\+::regression\+::\+L\+A\+RS@{mlpack\+::regression\+::\+L\+A\+RS}}
+\subsubsection[{use\+Cholesky}]{\setlength{\rightskip}{0pt plus 5cm}bool mlpack\+::regression\+::\+L\+A\+R\+S\+::use\+Cholesky\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1regression_1_1LARS_aa1263eedd1f8a947110abb6139692edf}
+
+
+Whether or not to use Cholesky decomposition when solving linear system. 
+
+
+
+Definition at line 188 of file lars.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/lars/{\bf lars.\+hpp}\end{DoxyCompactItemize}

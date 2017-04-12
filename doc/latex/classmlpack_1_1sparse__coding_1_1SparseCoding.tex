@@ -1,0 +1,698 @@
+\section{mlpack\+:\+:sparse\+\_\+coding\+:\+:Sparse\+Coding Class Reference}
+\label{classmlpack_1_1sparse__coding_1_1SparseCoding}\index{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}}
+
+
+An implementation of Sparse Coding with Dictionary Learning that achieves sparsity via an l1-\/norm regularizer on the codes (L\+A\+S\+SO) or an (l1+l2)-\/norm regularizer on the codes (the Elastic Net).  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Dictionary\+Initializer  = Data\+Dependent\+Random\+Initializer$>$ }\\{\bf Sparse\+Coding} (const arma\+::mat \&data, const size\+\_\+t {\bf atoms}, const double {\bf lambda1}, const double {\bf lambda2}=0, const size\+\_\+t {\bf max\+Iterations}=0, const double {\bf obj\+Tolerance}=0.\+01, const double {\bf newton\+Tolerance}=1e-\/6, const Dictionary\+Initializer \&initializer=\+Dictionary\+Initializer())
+\begin{DoxyCompactList}\small\item\em Set the parameters to \doxyref{Sparse\+Coding}{p.}{classmlpack_1_1sparse__coding_1_1SparseCoding}. \end{DoxyCompactList}\item 
+{\bf Sparse\+Coding} (const size\+\_\+t {\bf atoms}=0, const double {\bf lambda1}=0, const double {\bf lambda2}=0, const size\+\_\+t {\bf max\+Iterations}=0, const double {\bf obj\+Tolerance}=0.\+01, const double {\bf newton\+Tolerance}=1e-\/6)
+\begin{DoxyCompactList}\small\item\em Set the parameters to \doxyref{Sparse\+Coding}{p.}{classmlpack_1_1sparse__coding_1_1SparseCoding}. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Atoms} () const 
+\begin{DoxyCompactList}\small\item\em Access the number of atoms. \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Atoms} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of atoms. \end{DoxyCompactList}\item 
+const arma\+::mat \& {\bf Dictionary} () const 
+\begin{DoxyCompactList}\small\item\em Access the dictionary. \end{DoxyCompactList}\item 
+arma\+::mat \& {\bf Dictionary} ()
+\begin{DoxyCompactList}\small\item\em Modify the dictionary. \end{DoxyCompactList}\item 
+void {\bf Encode} (const arma\+::mat \&data, arma\+::mat \&codes)
+\begin{DoxyCompactList}\small\item\em Sparse code each point in the given dataset via L\+A\+RS, using the current dictionary and store the encoded data in the codes matrix. \end{DoxyCompactList}\item 
+double {\bf Lambda1} () const 
+\begin{DoxyCompactList}\small\item\em Access the L1 regularization term. \end{DoxyCompactList}\item 
+double \& {\bf Lambda1} ()
+\begin{DoxyCompactList}\small\item\em Modify the L1 regularization term. \end{DoxyCompactList}\item 
+double {\bf Lambda2} () const 
+\begin{DoxyCompactList}\small\item\em Access the L2 regularization term. \end{DoxyCompactList}\item 
+double \& {\bf Lambda2} ()
+\begin{DoxyCompactList}\small\item\em Modify the L2 regularization term. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Max\+Iterations} () const 
+\begin{DoxyCompactList}\small\item\em Get the maximum number of iterations. \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Max\+Iterations} ()
+\begin{DoxyCompactList}\small\item\em Modify the maximum number of iterations. \end{DoxyCompactList}\item 
+double {\bf Newton\+Tolerance} () const 
+\begin{DoxyCompactList}\small\item\em Get the tolerance for Newton\textquotesingle{}s method (dictionary optimization step). \end{DoxyCompactList}\item 
+double \& {\bf Newton\+Tolerance} ()
+\begin{DoxyCompactList}\small\item\em Modify the tolerance for Newton\textquotesingle{}s method (dictionary optimization step). \end{DoxyCompactList}\item 
+double {\bf Objective} (const arma\+::mat \&data, const arma\+::mat \&codes) const 
+\begin{DoxyCompactList}\small\item\em Compute the objective function. \end{DoxyCompactList}\item 
+double {\bf Obj\+Tolerance} () const 
+\begin{DoxyCompactList}\small\item\em Get the objective tolerance. \end{DoxyCompactList}\item 
+double \& {\bf Obj\+Tolerance} ()
+\begin{DoxyCompactList}\small\item\em Modify the objective tolerance. \end{DoxyCompactList}\item 
+double {\bf Optimize\+Dictionary} (const arma\+::mat \&data, const arma\+::mat \&codes, const arma\+::uvec \&adjacencies)
+\begin{DoxyCompactList}\small\item\em Learn dictionary via Newton method based on Lagrange dual. \end{DoxyCompactList}\item 
+void {\bf Project\+Dictionary} ()
+\begin{DoxyCompactList}\small\item\em Project each atom of the dictionary back onto the unit ball, if necessary. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&ar, const unsigned int)
+\begin{DoxyCompactList}\small\item\em Serialize the sparse coding model. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Dictionary\+Initializer  = Data\+Dependent\+Random\+Initializer$>$ }\\void {\bf Train} (const arma\+::mat \&data, const Dictionary\+Initializer \&initializer=Dictionary\+Initializer())
+\begin{DoxyCompactList}\small\item\em Train the sparse coding model on the given dataset. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+size\+\_\+t {\bf atoms}
+\begin{DoxyCompactList}\small\item\em Number of atoms. \end{DoxyCompactList}\item 
+arma\+::mat {\bf dictionary}
+\begin{DoxyCompactList}\small\item\em Dictionary (columns are atoms). \end{DoxyCompactList}\item 
+double {\bf lambda1}
+\begin{DoxyCompactList}\small\item\em l1 regularization term. \end{DoxyCompactList}\item 
+double {\bf lambda2}
+\begin{DoxyCompactList}\small\item\em l2 regularization term. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf max\+Iterations}
+\begin{DoxyCompactList}\small\item\em Maximum number of iterations during training. \end{DoxyCompactList}\item 
+double {\bf newton\+Tolerance}
+\begin{DoxyCompactList}\small\item\em Tolerance for Newton\textquotesingle{}s method (dictionary training). \end{DoxyCompactList}\item 
+double {\bf obj\+Tolerance}
+\begin{DoxyCompactList}\small\item\em Tolerance for main objective. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+An implementation of Sparse Coding with Dictionary Learning that achieves sparsity via an l1-\/norm regularizer on the codes (L\+A\+S\+SO) or an (l1+l2)-\/norm regularizer on the codes (the Elastic Net). 
+
+Let d be the number of dimensions in the original space, m the number of training points, and k the number of atoms in the dictionary (the dimension of the learned feature space). The training data X is a d-\/by-\/m matrix where each column is a point and each row is a dimension. The dictionary D is a d-\/by-\/k matrix, and the sparse codes matrix Z is a k-\/by-\/m matrix. This program seeks to minimize the objective\+:
+
+\[ \min_{D,Z} 0.5 ||X - D Z||_{F}^2\ + \lambda_1 \sum_{i=1}^m ||Z_i||_1 + 0.5 \lambda_2 \sum_{i=1}^m ||Z_i||_2^2 \]
+
+subject to $ ||D_j||_2 <= 1 $ for $ 1 <= j <= k $ where typically $ lambda_1 > 0 $ and $ lambda_2 = 0 $.
+
+This problem is solved by an algorithm that alternates between a dictionary learning step and a sparse coding step. The dictionary learning step updates the dictionary D using a Newton method based on the Lagrange dual (see the paper below for details). The sparse coding step involves solving a large number of sparse linear regression problems; this can be done efficiently using L\+A\+RS, an algorithm that can solve the L\+A\+S\+SO or the Elastic Net (papers below).
+
+Here are those papers\+:
+
+
+\begin{DoxyCode}
+@incollection\{lee2007efficient,
+  title = \{Efficient sparse coding algorithms\},
+  author = \{Honglak Lee and Alexis Battle and Rajat Raina and Andrew Y. Ng\},
+  booktitle = \{Advances in Neural Information Processing Systems 19\},
+  editor = \{B. Sch\(\backslash\)\textcolor{stringliteral}{"\{o\}lkopf and J. Platt and T. Hoffman\},}
+\textcolor{stringliteral}{  publisher = \{MIT Press\},}
+\textcolor{stringliteral}{  address = \{Cambridge, MA\},}
+\textcolor{stringliteral}{  pages = \{801--808\},}
+\textcolor{stringliteral}{  year = \{2007\}}
+\textcolor{stringliteral}{\}}
+\end{DoxyCode}
+
+
+
+\begin{DoxyCode}
+@article\{efron2004least,
+  title=\{Least angle regression\},
+  author=\{Efron, B. and Hastie, T. and Johnstone, I. and Tibshirani, R.\},
+  journal=\{The Annals of statistics\},
+  volume=\{32\},
+  number=\{2\},
+  pages=\{407--499\},
+  year=\{2004\},
+  publisher=\{Institute of Mathematical Statistics\}
+\}
+\end{DoxyCode}
+
+
+
+\begin{DoxyCode}
+@article\{zou2005regularization,
+  title=\{Regularization and variable selection via the elastic net\},
+  author=\{Zou, H. and Hastie, T.\},
+  journal=\{Journal of the Royal Statistical Society Series B\},
+  volume=\{67\},
+  number=\{2\},
+  pages=\{301--320\},
+  year=\{2005\},
+  publisher=\{Royal Statistical Society\}
+\}
+\end{DoxyCode}
+
+
+Note that the implementation here does not use the feature-\/sign search algorithm from Honglak Lee\textquotesingle{}s paper, but instead the L\+A\+RS algorithm suggested in that paper.
+
+When \doxyref{Train()}{p.}{classmlpack_1_1sparse__coding_1_1SparseCoding_a523ba5f1facb8ae4cafd734c33a1d230} is called, the dictionary is initialized using the Dictionary\+Initialization\+Policy class. Possible choices include the \doxyref{Random\+Initializer}{p.}{classmlpack_1_1sparse__coding_1_1RandomInitializer}, which provides an entirely random dictionary, the \doxyref{Data\+Dependent\+Random\+Initializer}{p.}{classmlpack_1_1sparse__coding_1_1DataDependentRandomInitializer}, which provides a random dictionary based loosely on characteristics of the dataset, and the \doxyref{Nothing\+Initializer}{p.}{classmlpack_1_1sparse__coding_1_1NothingInitializer}, which does not initialize the dictionary -- instead, the user should set the dictionary using the \doxyref{Dictionary()}{p.}{classmlpack_1_1sparse__coding_1_1SparseCoding_ab069f805f1db24a672b6f38a6d9cf755} mutator method.
+
+Once a dictionary is trained with \doxyref{Train()}{p.}{classmlpack_1_1sparse__coding_1_1SparseCoding_a523ba5f1facb8ae4cafd734c33a1d230}, another matrix may be encoded with the \doxyref{Encode()}{p.}{classmlpack_1_1sparse__coding_1_1SparseCoding_a1a83718fbf6b44326e9309775ec5bd93} function.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Dictionary\+Initialization\+Policy} & The class to use to initialize the dictionary; must have \textquotesingle{}void Initialize(const arma\+::mat\& data, arma\+::mat\& dictionary)\textquotesingle{} function. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 115 of file sparse\+\_\+coding.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}!Sparse\+Coding@{Sparse\+Coding}}
+\index{Sparse\+Coding@{Sparse\+Coding}!mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}}
+\subsubsection[{Sparse\+Coding(const arma\+::mat \&data, const size\+\_\+t atoms, const double lambda1, const double lambda2=0, const size\+\_\+t max\+Iterations=0, const double obj\+Tolerance=0.\+01, const double newton\+Tolerance=1e-\/6, const Dictionary\+Initializer \&initializer=\+Dictionary\+Initializer())}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Dictionary\+Initializer  = Data\+Dependent\+Random\+Initializer$>$ mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding\+::\+Sparse\+Coding (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{data, }
+\item[{const size\+\_\+t}]{atoms, }
+\item[{const double}]{lambda1, }
+\item[{const double}]{lambda2 = {\ttfamily 0}, }
+\item[{const size\+\_\+t}]{max\+Iterations = {\ttfamily 0}, }
+\item[{const double}]{obj\+Tolerance = {\ttfamily 0.01}, }
+\item[{const double}]{newton\+Tolerance = {\ttfamily 1e-\/6}, }
+\item[{const Dictionary\+Initializer \&}]{initializer = {\ttfamily DictionaryInitializer()}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1sparse__coding_1_1SparseCoding_a6a00e8188578c374b2d6036d64bb64dd}
+
+
+Set the parameters to \doxyref{Sparse\+Coding}{p.}{classmlpack_1_1sparse__coding_1_1SparseCoding}. 
+
+lambda2 defaults to 0. This constructor will train the model. If that is not desired, call the other constructor that does not take a data matrix. This constructor will also initialize the dictionary using the given Dictionary\+Initializer before training.
+
+If you want to initialize the dictionary to a custom matrix, consider either writing your own Dictionary\+Initializer class (with void Initialize(const arma\+::mat\& data, arma\+::mat\& dictionary) function), or call the constructor that does not take a data matrix, then call \doxyref{Dictionary()}{p.}{classmlpack_1_1sparse__coding_1_1SparseCoding_ab069f805f1db24a672b6f38a6d9cf755} to set the dictionary matrix to a matrix of your choosing, and then call \doxyref{Train()}{p.}{classmlpack_1_1sparse__coding_1_1SparseCoding_a523ba5f1facb8ae4cafd734c33a1d230} with \doxyref{Nothing\+Initializer}{p.}{classmlpack_1_1sparse__coding_1_1NothingInitializer} (i.\+e. Train$<$\+Nothing\+Initializer$>$(data)).
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Data matrix. \\
+\hline
+{\em atoms} & Number of atoms in dictionary. \\
+\hline
+{\em lambda1} & Regularization parameter for l1-\/norm penalty. \\
+\hline
+{\em lambda2} & Regularization parameter for l2-\/norm penalty. \\
+\hline
+{\em max\+Iterations} & Maximum number of iterations to run algorithm. If 0, the algorithm will run until convergence (or forever). \\
+\hline
+{\em obj\+Tolerance} & Tolerance for objective function. When an iteration of the algorithm produces an improvement smaller than this, the algorithm will terminate. \\
+\hline
+{\em newton\+Tolerance} & Tolerance for the Newton\textquotesingle{}s method dictionary optimization step. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}!Sparse\+Coding@{Sparse\+Coding}}
+\index{Sparse\+Coding@{Sparse\+Coding}!mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}}
+\subsubsection[{Sparse\+Coding(const size\+\_\+t atoms=0, const double lambda1=0, const double lambda2=0, const size\+\_\+t max\+Iterations=0, const double obj\+Tolerance=0.\+01, const double newton\+Tolerance=1e-\/6)}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding\+::\+Sparse\+Coding (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{atoms = {\ttfamily 0}, }
+\item[{const double}]{lambda1 = {\ttfamily 0}, }
+\item[{const double}]{lambda2 = {\ttfamily 0}, }
+\item[{const size\+\_\+t}]{max\+Iterations = {\ttfamily 0}, }
+\item[{const double}]{obj\+Tolerance = {\ttfamily 0.01}, }
+\item[{const double}]{newton\+Tolerance = {\ttfamily 1e-\/6}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1sparse__coding_1_1SparseCoding_a7849a56a97f599479aa38bcbd34f80b8}
+
+
+Set the parameters to \doxyref{Sparse\+Coding}{p.}{classmlpack_1_1sparse__coding_1_1SparseCoding}. 
+
+lambda2 defaults to 0. This constructor will not train the model, and a subsequent call to \doxyref{Train()}{p.}{classmlpack_1_1sparse__coding_1_1SparseCoding_a523ba5f1facb8ae4cafd734c33a1d230} will be required before the model can encode points with \doxyref{Encode()}{p.}{classmlpack_1_1sparse__coding_1_1SparseCoding_a1a83718fbf6b44326e9309775ec5bd93}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em atoms} & Number of atoms in dictionary. \\
+\hline
+{\em lambda1} & Regularization parameter for l1-\/norm penalty. \\
+\hline
+{\em lambda2} & Regularization parameter for l2-\/norm penalty. \\
+\hline
+{\em max\+Iterations} & Maximum number of iterations to run algorithm. If 0, the algorithm will run until convergence (or forever). \\
+\hline
+{\em obj\+Tolerance} & Tolerance for objective function. When an iteration of the algorithm produces an improvement smaller than this, the algorithm will terminate. \\
+\hline
+{\em newton\+Tolerance} & Tolerance for the Newton\textquotesingle{}s method dictionary optimization step. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}!Atoms@{Atoms}}
+\index{Atoms@{Atoms}!mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}}
+\subsubsection[{Atoms() const }]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding\+::\+Atoms (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1sparse__coding_1_1SparseCoding_a953c6a16d66622fffb3be8a703e22554}
+
+
+Access the number of atoms. 
+
+
+
+Definition at line 226 of file sparse\+\_\+coding.\+hpp.
+
+
+
+References atoms.
+
+\index{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}!Atoms@{Atoms}}
+\index{Atoms@{Atoms}!mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}}
+\subsubsection[{Atoms()}]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t\& mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding\+::\+Atoms (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1sparse__coding_1_1SparseCoding_a777e19b014ebeb2e9f0a033afe684d3c}
+
+
+Modify the number of atoms. 
+
+
+
+Definition at line 228 of file sparse\+\_\+coding.\+hpp.
+
+
+
+References atoms.
+
+\index{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}!Dictionary@{Dictionary}}
+\index{Dictionary@{Dictionary}!mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}}
+\subsubsection[{Dictionary() const }]{\setlength{\rightskip}{0pt plus 5cm}const arma\+::mat\& mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding\+::\+Dictionary (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1sparse__coding_1_1SparseCoding_af9f8ca70ece9948605d25fb2e9ee76d5}
+
+
+Access the dictionary. 
+
+
+
+Definition at line 221 of file sparse\+\_\+coding.\+hpp.
+
+
+
+References dictionary.
+
+\index{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}!Dictionary@{Dictionary}}
+\index{Dictionary@{Dictionary}!mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}}
+\subsubsection[{Dictionary()}]{\setlength{\rightskip}{0pt plus 5cm}arma\+::mat\& mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding\+::\+Dictionary (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1sparse__coding_1_1SparseCoding_ab069f805f1db24a672b6f38a6d9cf755}
+
+
+Modify the dictionary. 
+
+
+
+Definition at line 223 of file sparse\+\_\+coding.\+hpp.
+
+
+
+References dictionary.
+
+\index{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}!Encode@{Encode}}
+\index{Encode@{Encode}!mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}}
+\subsubsection[{Encode(const arma\+::mat \&data, arma\+::mat \&codes)}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding\+::\+Encode (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{data, }
+\item[{arma\+::mat \&}]{codes}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1sparse__coding_1_1SparseCoding_a1a83718fbf6b44326e9309775ec5bd93}
+
+
+Sparse code each point in the given dataset via L\+A\+RS, using the current dictionary and store the encoded data in the codes matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Input data matrix to be encoded. \\
+\hline
+{\em codes} & Output codes matrix. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}!Lambda1@{Lambda1}}
+\index{Lambda1@{Lambda1}!mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}}
+\subsubsection[{Lambda1() const }]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding\+::\+Lambda1 (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1sparse__coding_1_1SparseCoding_a47d91644f8f0cc08961c3caf43cd81a9}
+
+
+Access the L1 regularization term. 
+
+
+
+Definition at line 231 of file sparse\+\_\+coding.\+hpp.
+
+
+
+References lambda1.
+
+\index{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}!Lambda1@{Lambda1}}
+\index{Lambda1@{Lambda1}!mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}}
+\subsubsection[{Lambda1()}]{\setlength{\rightskip}{0pt plus 5cm}double\& mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding\+::\+Lambda1 (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1sparse__coding_1_1SparseCoding_a431d1dc6ec0c629c0168eb44d76e59c1}
+
+
+Modify the L1 regularization term. 
+
+
+
+Definition at line 233 of file sparse\+\_\+coding.\+hpp.
+
+
+
+References lambda1.
+
+\index{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}!Lambda2@{Lambda2}}
+\index{Lambda2@{Lambda2}!mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}}
+\subsubsection[{Lambda2() const }]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding\+::\+Lambda2 (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1sparse__coding_1_1SparseCoding_a54f409dd73bb45d60b769e2b759eb3c4}
+
+
+Access the L2 regularization term. 
+
+
+
+Definition at line 236 of file sparse\+\_\+coding.\+hpp.
+
+
+
+References lambda2.
+
+\index{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}!Lambda2@{Lambda2}}
+\index{Lambda2@{Lambda2}!mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}}
+\subsubsection[{Lambda2()}]{\setlength{\rightskip}{0pt plus 5cm}double\& mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding\+::\+Lambda2 (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1sparse__coding_1_1SparseCoding_a90a77a7f18df81b2332ab55492878e61}
+
+
+Modify the L2 regularization term. 
+
+
+
+Definition at line 238 of file sparse\+\_\+coding.\+hpp.
+
+
+
+References lambda2.
+
+\index{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}!Max\+Iterations@{Max\+Iterations}}
+\index{Max\+Iterations@{Max\+Iterations}!mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}}
+\subsubsection[{Max\+Iterations() const }]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding\+::\+Max\+Iterations (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1sparse__coding_1_1SparseCoding_afbb6a1afa961fe55837defb7d020d693}
+
+
+Get the maximum number of iterations. 
+
+
+
+Definition at line 241 of file sparse\+\_\+coding.\+hpp.
+
+
+
+References max\+Iterations.
+
+\index{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}!Max\+Iterations@{Max\+Iterations}}
+\index{Max\+Iterations@{Max\+Iterations}!mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}}
+\subsubsection[{Max\+Iterations()}]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t\& mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding\+::\+Max\+Iterations (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1sparse__coding_1_1SparseCoding_a309ec92833b38a75c7a1e83927166ecb}
+
+
+Modify the maximum number of iterations. 
+
+
+
+Definition at line 243 of file sparse\+\_\+coding.\+hpp.
+
+
+
+References max\+Iterations.
+
+\index{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}!Newton\+Tolerance@{Newton\+Tolerance}}
+\index{Newton\+Tolerance@{Newton\+Tolerance}!mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}}
+\subsubsection[{Newton\+Tolerance() const }]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding\+::\+Newton\+Tolerance (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1sparse__coding_1_1SparseCoding_a982c9d648fb8eed1258110e2709b753e}
+
+
+Get the tolerance for Newton\textquotesingle{}s method (dictionary optimization step). 
+
+
+
+Definition at line 251 of file sparse\+\_\+coding.\+hpp.
+
+
+
+References newton\+Tolerance.
+
+\index{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}!Newton\+Tolerance@{Newton\+Tolerance}}
+\index{Newton\+Tolerance@{Newton\+Tolerance}!mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}}
+\subsubsection[{Newton\+Tolerance()}]{\setlength{\rightskip}{0pt plus 5cm}double\& mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding\+::\+Newton\+Tolerance (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1sparse__coding_1_1SparseCoding_a1bf33eeef675654898572456d67ce572}
+
+
+Modify the tolerance for Newton\textquotesingle{}s method (dictionary optimization step). 
+
+
+
+Definition at line 253 of file sparse\+\_\+coding.\+hpp.
+
+
+
+References newton\+Tolerance, and Serialize().
+
+\index{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}!Objective@{Objective}}
+\index{Objective@{Objective}!mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}}
+\subsubsection[{Objective(const arma\+::mat \&data, const arma\+::mat \&codes) const }]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding\+::\+Objective (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{data, }
+\item[{const arma\+::mat \&}]{codes}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1sparse__coding_1_1SparseCoding_a018fe8a03cd5788ae42c32c10fc0bb00}
+
+
+Compute the objective function. 
+
+\index{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}!Obj\+Tolerance@{Obj\+Tolerance}}
+\index{Obj\+Tolerance@{Obj\+Tolerance}!mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}}
+\subsubsection[{Obj\+Tolerance() const }]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding\+::\+Obj\+Tolerance (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1sparse__coding_1_1SparseCoding_a9118842bfcd0c5f760aa1e139a2352bc}
+
+
+Get the objective tolerance. 
+
+
+
+Definition at line 246 of file sparse\+\_\+coding.\+hpp.
+
+
+
+References obj\+Tolerance.
+
+\index{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}!Obj\+Tolerance@{Obj\+Tolerance}}
+\index{Obj\+Tolerance@{Obj\+Tolerance}!mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}}
+\subsubsection[{Obj\+Tolerance()}]{\setlength{\rightskip}{0pt plus 5cm}double\& mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding\+::\+Obj\+Tolerance (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1sparse__coding_1_1SparseCoding_a77437cec620b2d34d81fa17acf029b04}
+
+
+Modify the objective tolerance. 
+
+
+
+Definition at line 248 of file sparse\+\_\+coding.\+hpp.
+
+
+
+References obj\+Tolerance.
+
+\index{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}!Optimize\+Dictionary@{Optimize\+Dictionary}}
+\index{Optimize\+Dictionary@{Optimize\+Dictionary}!mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}}
+\subsubsection[{Optimize\+Dictionary(const arma\+::mat \&data, const arma\+::mat \&codes, const arma\+::uvec \&adjacencies)}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding\+::\+Optimize\+Dictionary (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{data, }
+\item[{const arma\+::mat \&}]{codes, }
+\item[{const arma\+::uvec \&}]{adjacencies}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1sparse__coding_1_1SparseCoding_a74bd6bdf548cdf4cafdc2dfd9bf088d6}
+
+
+Learn dictionary via Newton method based on Lagrange dual. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Data matrix. \\
+\hline
+{\em codes} & Matrix of codes. \\
+\hline
+{\em adjacencies} & Indices of entries (unrolled column by column) of the coding matrix Z that are non-\/zero (the adjacency matrix for the bipartite graph of points and atoms). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the norm of the gradient of the Lagrange dual with respect to the dual variables 
+\end{DoxyReturn}
+\index{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}!Project\+Dictionary@{Project\+Dictionary}}
+\index{Project\+Dictionary@{Project\+Dictionary}!mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}}
+\subsubsection[{Project\+Dictionary()}]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding\+::\+Project\+Dictionary (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1sparse__coding_1_1SparseCoding_a893395402ca5da626cd262a41a28848c}
+
+
+Project each atom of the dictionary back onto the unit ball, if necessary. 
+
+\index{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}}
+\subsubsection[{Serialize(\+Archive \&ar, const unsigned int)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Archive $>$ void mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding\+::\+Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const unsigned}]{int}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1sparse__coding_1_1SparseCoding_a1d54b3fc3ff871f2febfe576ce146fb7}
+
+
+Serialize the sparse coding model. 
+
+
+
+Referenced by Newton\+Tolerance().
+
+\index{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}!Train@{Train}}
+\index{Train@{Train}!mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}}
+\subsubsection[{Train(const arma\+::mat \&data, const Dictionary\+Initializer \&initializer=\+Dictionary\+Initializer())}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Dictionary\+Initializer  = Data\+Dependent\+Random\+Initializer$>$ void mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding\+::\+Train (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{data, }
+\item[{const Dictionary\+Initializer \&}]{initializer = {\ttfamily DictionaryInitializer()}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1sparse__coding_1_1SparseCoding_a523ba5f1facb8ae4cafd734c33a1d230}
+
+
+Train the sparse coding model on the given dataset. 
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}!atoms@{atoms}}
+\index{atoms@{atoms}!mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}}
+\subsubsection[{atoms}]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding\+::atoms\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1sparse__coding_1_1SparseCoding_af9b3bf2d390d108c626f7ea7368328b0}
+
+
+Number of atoms. 
+
+
+
+Definition at line 261 of file sparse\+\_\+coding.\+hpp.
+
+
+
+Referenced by Atoms().
+
+\index{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}!dictionary@{dictionary}}
+\index{dictionary@{dictionary}!mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}}
+\subsubsection[{dictionary}]{\setlength{\rightskip}{0pt plus 5cm}arma\+::mat mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding\+::dictionary\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1sparse__coding_1_1SparseCoding_a930b87c1b123d6ffdbc244d68790d098}
+
+
+Dictionary (columns are atoms). 
+
+
+
+Definition at line 264 of file sparse\+\_\+coding.\+hpp.
+
+
+
+Referenced by Dictionary().
+
+\index{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}!lambda1@{lambda1}}
+\index{lambda1@{lambda1}!mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}}
+\subsubsection[{lambda1}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding\+::lambda1\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1sparse__coding_1_1SparseCoding_ab4711495fe1881bc4f61a3252b660166}
+
+
+l1 regularization term. 
+
+
+
+Definition at line 267 of file sparse\+\_\+coding.\+hpp.
+
+
+
+Referenced by Lambda1().
+
+\index{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}!lambda2@{lambda2}}
+\index{lambda2@{lambda2}!mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}}
+\subsubsection[{lambda2}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding\+::lambda2\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1sparse__coding_1_1SparseCoding_a8b2505fdc424c72f9925060631f9d2cc}
+
+
+l2 regularization term. 
+
+
+
+Definition at line 269 of file sparse\+\_\+coding.\+hpp.
+
+
+
+Referenced by Lambda2().
+
+\index{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}!max\+Iterations@{max\+Iterations}}
+\index{max\+Iterations@{max\+Iterations}!mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}}
+\subsubsection[{max\+Iterations}]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding\+::max\+Iterations\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1sparse__coding_1_1SparseCoding_ac2e86cbe516dc6c8a66541853e7c8e2f}
+
+
+Maximum number of iterations during training. 
+
+
+
+Definition at line 272 of file sparse\+\_\+coding.\+hpp.
+
+
+
+Referenced by Max\+Iterations().
+
+\index{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}!newton\+Tolerance@{newton\+Tolerance}}
+\index{newton\+Tolerance@{newton\+Tolerance}!mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}}
+\subsubsection[{newton\+Tolerance}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding\+::newton\+Tolerance\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1sparse__coding_1_1SparseCoding_ad9474bd8956404954370c4fa75fb883a}
+
+
+Tolerance for Newton\textquotesingle{}s method (dictionary training). 
+
+
+
+Definition at line 276 of file sparse\+\_\+coding.\+hpp.
+
+
+
+Referenced by Newton\+Tolerance().
+
+\index{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}!obj\+Tolerance@{obj\+Tolerance}}
+\index{obj\+Tolerance@{obj\+Tolerance}!mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding@{mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding}}
+\subsubsection[{obj\+Tolerance}]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::sparse\+\_\+coding\+::\+Sparse\+Coding\+::obj\+Tolerance\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1sparse__coding_1_1SparseCoding_a6b04b57a6c0c93afd1f166549bed6d65}
+
+
+Tolerance for main objective. 
+
+
+
+Definition at line 274 of file sparse\+\_\+coding.\+hpp.
+
+
+
+Referenced by Obj\+Tolerance().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/sparse\+\_\+coding/{\bf sparse\+\_\+coding.\+hpp}\end{DoxyCompactItemize}

@@ -1,0 +1,319 @@
+.TH "mlpack::gmm::EMFit< InitialClusteringType, CovarianceConstraintPolicy >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::gmm::EMFit< InitialClusteringType, CovarianceConstraintPolicy > \- This class contains methods which can fit a \fBGMM\fP to observations using the EM algorithm\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBEMFit\fP (const size_t \fBmaxIterations\fP=300, const double \fBtolerance\fP=1e\-10, InitialClusteringType clusterer=InitialClusteringType(), CovarianceConstraintPolicy constraint=CovarianceConstraintPolicy())"
+.br
+.RI "\fIConstruct the \fBEMFit\fP object, optionally passing an InitialClusteringType object (just in case it needs to store state)\&. \fP"
+.ti -1c
+.RI "const InitialClusteringType & \fBClusterer\fP () const "
+.br
+.RI "\fIGet the clusterer\&. \fP"
+.ti -1c
+.RI "InitialClusteringType & \fBClusterer\fP ()"
+.br
+.RI "\fIModify the clusterer\&. \fP"
+.ti -1c
+.RI "const CovarianceConstraintPolicy & \fBConstraint\fP () const "
+.br
+.RI "\fIGet the covariance constraint policy class\&. \fP"
+.ti -1c
+.RI "CovarianceConstraintPolicy & \fBConstraint\fP ()"
+.br
+.RI "\fIModify the covariance constraint policy class\&. \fP"
+.ti -1c
+.RI "void \fBEstimate\fP (const arma::mat &observations, std::vector< \fBdistribution::GaussianDistribution\fP > &dists, arma::vec &weights, const bool useInitialModel=false)"
+.br
+.RI "\fIFit the observations to a Gaussian mixture model (\fBGMM\fP) using the EM algorithm\&. \fP"
+.ti -1c
+.RI "void \fBEstimate\fP (const arma::mat &observations, const arma::vec &probabilities, std::vector< \fBdistribution::GaussianDistribution\fP > &dists, arma::vec &weights, const bool useInitialModel=false)"
+.br
+.RI "\fIFit the observations to a Gaussian mixture model (\fBGMM\fP) using the EM algorithm, taking into account the probabilities of each point being from this mixture\&. \fP"
+.ti -1c
+.RI "size_t \fBMaxIterations\fP () const "
+.br
+.RI "\fIGet the maximum number of iterations of the EM algorithm\&. \fP"
+.ti -1c
+.RI "size_t & \fBMaxIterations\fP ()"
+.br
+.RI "\fIModify the maximum number of iterations of the EM algorithm\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int version)"
+.br
+.RI "\fISerialize the fitter\&. \fP"
+.ti -1c
+.RI "double \fBTolerance\fP () const "
+.br
+.RI "\fIGet the tolerance for the convergence of the EM algorithm\&. \fP"
+.ti -1c
+.RI "double & \fBTolerance\fP ()"
+.br
+.RI "\fIModify the tolerance for the convergence of the EM algorithm\&. \fP"
+.in -1c
+.SS "Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBInitialClustering\fP (const arma::mat &observations, std::vector< \fBdistribution::GaussianDistribution\fP > &dists, arma::vec &weights)"
+.br
+.RI "\fIRun the clusterer, and then turn the cluster assignments into Gaussians\&. \fP"
+.ti -1c
+.RI "double \fBLogLikelihood\fP (const arma::mat &data, const std::vector< \fBdistribution::GaussianDistribution\fP > &dists, const arma::vec &weights) const "
+.br
+.RI "\fICalculate the log-likelihood of a model\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "InitialClusteringType \fBclusterer\fP"
+.br
+.RI "\fIObject which will perform the clustering\&. \fP"
+.ti -1c
+.RI "CovarianceConstraintPolicy \fBconstraint\fP"
+.br
+.RI "\fIObject which applies constraints to the covariance matrix\&. \fP"
+.ti -1c
+.RI "size_t \fBmaxIterations\fP"
+.br
+.RI "\fIMaximum iterations of EM algorithm\&. \fP"
+.ti -1c
+.RI "double \fBtolerance\fP"
+.br
+.RI "\fITolerance for convergence of EM\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename InitialClusteringType = kmeans::KMeans<>, typename CovarianceConstraintPolicy = PositiveDefiniteConstraint>
+.br
+class mlpack::gmm::EMFit< InitialClusteringType, CovarianceConstraintPolicy >"
+This class contains methods which can fit a \fBGMM\fP to observations using the EM algorithm\&. 
+
+It requires an initial clustering mechanism, which is by default the KMeans algorithm\&. The clustering mechanism must implement the following method:
+.PP
+.IP "\(bu" 2
+void Cluster(const arma::mat& observations, const size_t clusters, arma::Row<size_t>& assignments);
+.PP
+.PP
+This method should create 'clusters' clusters, and return the assignment of each point to a cluster\&. 
+.PP
+Definition at line 43 of file em_fit\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename InitialClusteringType  = kmeans::KMeans<>, typename CovarianceConstraintPolicy  = PositiveDefiniteConstraint> \fBmlpack::gmm::EMFit\fP< InitialClusteringType, CovarianceConstraintPolicy >::\fBEMFit\fP (const size_t maxIterations = \fC300\fP, const double tolerance = \fC1e\-10\fP, InitialClusteringType clusterer = \fCInitialClusteringType()\fP, CovarianceConstraintPolicy constraint = \fCCovarianceConstraintPolicy()\fP)"
+
+.PP
+Construct the \fBEMFit\fP object, optionally passing an InitialClusteringType object (just in case it needs to store state)\&. Setting the maximum number of iterations to 0 means that the EM algorithm will iterate until convergence (with the given tolerance)\&.
+.PP
+The parameter forcePositive controls whether or not the covariance matrices are checked for positive definiteness at each iteration\&. This could be a time-consuming task, so, if you know your data is well-behaved, you can set it to false and save some runtime\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fImaxIterations\fP Maximum number of iterations for EM\&. 
+.br
+\fItolerance\fP Log-likelihood tolerance required for convergence\&. 
+.br
+\fIforcePositive\fP Check for positive-definiteness of each covariance matrix at each iteration\&. 
+.br
+\fIclusterer\fP Object which will perform the initial clustering\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename InitialClusteringType  = kmeans::KMeans<>, typename CovarianceConstraintPolicy  = PositiveDefiniteConstraint> const InitialClusteringType& \fBmlpack::gmm::EMFit\fP< InitialClusteringType, CovarianceConstraintPolicy >::Clusterer () const\fC [inline]\fP"
+
+.PP
+Get the clusterer\&. 
+.PP
+Definition at line 112 of file em_fit\&.hpp\&.
+.PP
+References mlpack::gmm::EMFit< InitialClusteringType, CovarianceConstraintPolicy >::clusterer\&.
+.SS "template<typename InitialClusteringType  = kmeans::KMeans<>, typename CovarianceConstraintPolicy  = PositiveDefiniteConstraint> InitialClusteringType& \fBmlpack::gmm::EMFit\fP< InitialClusteringType, CovarianceConstraintPolicy >::Clusterer ()\fC [inline]\fP"
+
+.PP
+Modify the clusterer\&. 
+.PP
+Definition at line 114 of file em_fit\&.hpp\&.
+.PP
+References mlpack::gmm::EMFit< InitialClusteringType, CovarianceConstraintPolicy >::clusterer\&.
+.SS "template<typename InitialClusteringType  = kmeans::KMeans<>, typename CovarianceConstraintPolicy  = PositiveDefiniteConstraint> const CovarianceConstraintPolicy& \fBmlpack::gmm::EMFit\fP< InitialClusteringType, CovarianceConstraintPolicy >::Constraint () const\fC [inline]\fP"
+
+.PP
+Get the covariance constraint policy class\&. 
+.PP
+Definition at line 117 of file em_fit\&.hpp\&.
+.PP
+References mlpack::gmm::EMFit< InitialClusteringType, CovarianceConstraintPolicy >::constraint\&.
+.SS "template<typename InitialClusteringType  = kmeans::KMeans<>, typename CovarianceConstraintPolicy  = PositiveDefiniteConstraint> CovarianceConstraintPolicy& \fBmlpack::gmm::EMFit\fP< InitialClusteringType, CovarianceConstraintPolicy >::Constraint ()\fC [inline]\fP"
+
+.PP
+Modify the covariance constraint policy class\&. 
+.PP
+Definition at line 119 of file em_fit\&.hpp\&.
+.PP
+References mlpack::gmm::EMFit< InitialClusteringType, CovarianceConstraintPolicy >::constraint\&.
+.SS "template<typename InitialClusteringType  = kmeans::KMeans<>, typename CovarianceConstraintPolicy  = PositiveDefiniteConstraint> void \fBmlpack::gmm::EMFit\fP< InitialClusteringType, CovarianceConstraintPolicy >::Estimate (const arma::mat & observations, std::vector< \fBdistribution::GaussianDistribution\fP > & dists, arma::vec & weights, const bool useInitialModel = \fCfalse\fP)"
+
+.PP
+Fit the observations to a Gaussian mixture model (\fBGMM\fP) using the EM algorithm\&. The size of the vectors (indicating the number of components) must already be set\&. Optionally, if useInitialModel is set to true, then the model given in the means, covariances, and weights parameters is used as the initial model, instead of using the InitialClusteringType::Cluster() option\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIobservations\fP List of observations to train on\&. 
+.br
+\fImeans\fP Vector to store trained means in\&. 
+.br
+\fIcovariances\fP Vector to store trained covariances in\&. 
+.br
+\fIweights\fP Vector to store a priori weights in\&. 
+.br
+\fIuseInitialModel\fP If true, the given model is used for the initial clustering\&. 
+.RE
+.PP
+
+.SS "template<typename InitialClusteringType  = kmeans::KMeans<>, typename CovarianceConstraintPolicy  = PositiveDefiniteConstraint> void \fBmlpack::gmm::EMFit\fP< InitialClusteringType, CovarianceConstraintPolicy >::Estimate (const arma::mat & observations, const arma::vec & probabilities, std::vector< \fBdistribution::GaussianDistribution\fP > & dists, arma::vec & weights, const bool useInitialModel = \fCfalse\fP)"
+
+.PP
+Fit the observations to a Gaussian mixture model (\fBGMM\fP) using the EM algorithm, taking into account the probabilities of each point being from this mixture\&. The size of the vectors (indicating the number of components) must already be set\&. Optionally, if useInitialModel is set to true, then the model given in the means, covariances, and weights parameters is used as the initial model, instead of using the InitialClusteringType::Cluster() option\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIobservations\fP List of observations to train on\&. 
+.br
+\fIprobabilities\fP Probability of each point being from this model\&. 
+.br
+\fImeans\fP Vector to store trained means in\&. 
+.br
+\fIcovariances\fP Vector to store trained covariances in\&. 
+.br
+\fIweights\fP Vector to store a priori weights in\&. 
+.br
+\fIuseInitialModel\fP If true, the given model is used for the initial clustering\&. 
+.RE
+.PP
+
+.SS "template<typename InitialClusteringType  = kmeans::KMeans<>, typename CovarianceConstraintPolicy  = PositiveDefiniteConstraint> void \fBmlpack::gmm::EMFit\fP< InitialClusteringType, CovarianceConstraintPolicy >::InitialClustering (const arma::mat & observations, std::vector< \fBdistribution::GaussianDistribution\fP > & dists, arma::vec & weights)\fC [private]\fP"
+
+.PP
+Run the clusterer, and then turn the cluster assignments into Gaussians\&. This is a helper function for both overloads of \fBEstimate()\fP\&. The vectors must be already set to the number of clusters\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIobservations\fP List of observations\&. 
+.br
+\fImeans\fP Vector to store means in\&. 
+.br
+\fIcovariances\fP Vector to store covariances in\&. 
+.br
+\fIweights\fP Vector to store a priori weights in\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::gmm::EMFit< InitialClusteringType, CovarianceConstraintPolicy >::Tolerance()\&.
+.SS "template<typename InitialClusteringType  = kmeans::KMeans<>, typename CovarianceConstraintPolicy  = PositiveDefiniteConstraint> double \fBmlpack::gmm::EMFit\fP< InitialClusteringType, CovarianceConstraintPolicy >::LogLikelihood (const arma::mat & data, const std::vector< \fBdistribution::GaussianDistribution\fP > & dists, const arma::vec & weights) const\fC [private]\fP"
+
+.PP
+Calculate the log-likelihood of a model\&. Yes, this is reimplemented in the \fBGMM\fP code\&. Intuition suggests that the log-likelihood is not the best way to determine if the EM algorithm has converged\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Data matrix\&. 
+.br
+\fImeans\fP Vector of means\&. 
+.br
+\fIcovariances\fP Vector of covariance matrices\&. 
+.br
+\fIweights\fP Vector of a priori weights\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::gmm::EMFit< InitialClusteringType, CovarianceConstraintPolicy >::Tolerance()\&.
+.SS "template<typename InitialClusteringType  = kmeans::KMeans<>, typename CovarianceConstraintPolicy  = PositiveDefiniteConstraint> size_t \fBmlpack::gmm::EMFit\fP< InitialClusteringType, CovarianceConstraintPolicy >::MaxIterations () const\fC [inline]\fP"
+
+.PP
+Get the maximum number of iterations of the EM algorithm\&. 
+.PP
+Definition at line 122 of file em_fit\&.hpp\&.
+.PP
+References mlpack::gmm::EMFit< InitialClusteringType, CovarianceConstraintPolicy >::maxIterations\&.
+.SS "template<typename InitialClusteringType  = kmeans::KMeans<>, typename CovarianceConstraintPolicy  = PositiveDefiniteConstraint> size_t& \fBmlpack::gmm::EMFit\fP< InitialClusteringType, CovarianceConstraintPolicy >::MaxIterations ()\fC [inline]\fP"
+
+.PP
+Modify the maximum number of iterations of the EM algorithm\&. 
+.PP
+Definition at line 124 of file em_fit\&.hpp\&.
+.PP
+References mlpack::gmm::EMFit< InitialClusteringType, CovarianceConstraintPolicy >::maxIterations\&.
+.SS "template<typename InitialClusteringType  = kmeans::KMeans<>, typename CovarianceConstraintPolicy  = PositiveDefiniteConstraint> template<typename Archive > void \fBmlpack::gmm::EMFit\fP< InitialClusteringType, CovarianceConstraintPolicy >::Serialize (Archive & ar, const unsigned int version)"
+
+.PP
+Serialize the fitter\&. 
+.PP
+Referenced by mlpack::gmm::EMFit< InitialClusteringType, CovarianceConstraintPolicy >::Tolerance()\&.
+.SS "template<typename InitialClusteringType  = kmeans::KMeans<>, typename CovarianceConstraintPolicy  = PositiveDefiniteConstraint> double \fBmlpack::gmm::EMFit\fP< InitialClusteringType, CovarianceConstraintPolicy >::Tolerance () const\fC [inline]\fP"
+
+.PP
+Get the tolerance for the convergence of the EM algorithm\&. 
+.PP
+Definition at line 127 of file em_fit\&.hpp\&.
+.PP
+References mlpack::gmm::EMFit< InitialClusteringType, CovarianceConstraintPolicy >::tolerance\&.
+.SS "template<typename InitialClusteringType  = kmeans::KMeans<>, typename CovarianceConstraintPolicy  = PositiveDefiniteConstraint> double& \fBmlpack::gmm::EMFit\fP< InitialClusteringType, CovarianceConstraintPolicy >::Tolerance ()\fC [inline]\fP"
+
+.PP
+Modify the tolerance for the convergence of the EM algorithm\&. 
+.PP
+Definition at line 129 of file em_fit\&.hpp\&.
+.PP
+References mlpack::gmm::EMFit< InitialClusteringType, CovarianceConstraintPolicy >::InitialClustering(), mlpack::gmm::EMFit< InitialClusteringType, CovarianceConstraintPolicy >::LogLikelihood(), mlpack::gmm::EMFit< InitialClusteringType, CovarianceConstraintPolicy >::Serialize(), and mlpack::gmm::EMFit< InitialClusteringType, CovarianceConstraintPolicy >::tolerance\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename InitialClusteringType  = kmeans::KMeans<>, typename CovarianceConstraintPolicy  = PositiveDefiniteConstraint> InitialClusteringType \fBmlpack::gmm::EMFit\fP< InitialClusteringType, CovarianceConstraintPolicy >::clusterer\fC [private]\fP"
+
+.PP
+Object which will perform the clustering\&. 
+.PP
+Definition at line 170 of file em_fit\&.hpp\&.
+.PP
+Referenced by mlpack::gmm::EMFit< InitialClusteringType, CovarianceConstraintPolicy >::Clusterer()\&.
+.SS "template<typename InitialClusteringType  = kmeans::KMeans<>, typename CovarianceConstraintPolicy  = PositiveDefiniteConstraint> CovarianceConstraintPolicy \fBmlpack::gmm::EMFit\fP< InitialClusteringType, CovarianceConstraintPolicy >::constraint\fC [private]\fP"
+
+.PP
+Object which applies constraints to the covariance matrix\&. 
+.PP
+Definition at line 172 of file em_fit\&.hpp\&.
+.PP
+Referenced by mlpack::gmm::EMFit< InitialClusteringType, CovarianceConstraintPolicy >::Constraint()\&.
+.SS "template<typename InitialClusteringType  = kmeans::KMeans<>, typename CovarianceConstraintPolicy  = PositiveDefiniteConstraint> size_t \fBmlpack::gmm::EMFit\fP< InitialClusteringType, CovarianceConstraintPolicy >::maxIterations\fC [private]\fP"
+
+.PP
+Maximum iterations of EM algorithm\&. 
+.PP
+Definition at line 166 of file em_fit\&.hpp\&.
+.PP
+Referenced by mlpack::gmm::EMFit< InitialClusteringType, CovarianceConstraintPolicy >::MaxIterations()\&.
+.SS "template<typename InitialClusteringType  = kmeans::KMeans<>, typename CovarianceConstraintPolicy  = PositiveDefiniteConstraint> double \fBmlpack::gmm::EMFit\fP< InitialClusteringType, CovarianceConstraintPolicy >::tolerance\fC [private]\fP"
+
+.PP
+Tolerance for convergence of EM\&. 
+.PP
+Definition at line 168 of file em_fit\&.hpp\&.
+.PP
+Referenced by mlpack::gmm::EMFit< InitialClusteringType, CovarianceConstraintPolicy >::Tolerance()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

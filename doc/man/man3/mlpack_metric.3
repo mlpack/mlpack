@@ -1,0 +1,73 @@
+.TH "mlpack::metric" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::metric \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBIPMetric\fP"
+.br
+.RI "\fIThe inner product metric, \fBIPMetric\fP, takes a given Mercer kernel (KernelType), and when \fBEvaluate()\fP is called, returns the distance between the two points in kernel space: \fP"
+.ti -1c
+.RI "class \fBLMetric\fP"
+.br
+.RI "\fIThe L_p metric for arbitrary integer p, with an option to take the root\&. \fP"
+.ti -1c
+.RI "class \fBMahalanobisDistance\fP"
+.br
+.RI "\fIThe Mahalanobis distance, which is essentially a stretched Euclidean distance\&. \fP"
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "typedef \fBLMetric\fP< INT_MAX, false > \fBChebyshevDistance\fP"
+.br
+.RI "\fIThe L-infinity distance\&. \fP"
+.ti -1c
+.RI "typedef \fBLMetric\fP< 2, true > \fBEuclideanDistance\fP"
+.br
+.RI "\fIThe Euclidean (L2) distance\&. \fP"
+.ti -1c
+.RI "typedef \fBLMetric\fP< 1, false > \fBManhattanDistance\fP"
+.br
+.RI "\fIThe Manhattan (L1) distance\&. \fP"
+.ti -1c
+.RI "typedef \fBLMetric\fP< 2, false > \fBSquaredEuclideanDistance\fP"
+.br
+.RI "\fIThe squared Euclidean (L2) distance\&. \fP"
+.in -1c
+.SH "Typedef Documentation"
+.PP 
+.SS "typedef \fBLMetric\fP<INT_MAX, false> \fBmlpack::metric::ChebyshevDistance\fP"
+
+.PP
+The L-infinity distance\&. 
+.PP
+Definition at line 117 of file lmetric\&.hpp\&.
+.SS "typedef \fBLMetric\fP<2, true> \fBmlpack::metric::EuclideanDistance\fP"
+
+.PP
+The Euclidean (L2) distance\&. 
+.PP
+Definition at line 112 of file lmetric\&.hpp\&.
+.SS "typedef \fBLMetric\fP<1, false> \fBmlpack::metric::ManhattanDistance\fP"
+
+.PP
+The Manhattan (L1) distance\&. 
+.PP
+Definition at line 101 of file lmetric\&.hpp\&.
+.SS "typedef \fBLMetric\fP<2, false> \fBmlpack::metric::SquaredEuclideanDistance\fP"
+
+.PP
+The squared Euclidean (L2) distance\&. Note that this is not technically a metric! But it can sometimes be used when distances are required\&. 
+.PP
+Definition at line 107 of file lmetric\&.hpp\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

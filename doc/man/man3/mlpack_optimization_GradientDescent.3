@@ -1,0 +1,234 @@
+.TH "mlpack::optimization::GradientDescent< FunctionType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::optimization::GradientDescent< FunctionType > \- Gradient Descent is a technique to minimize a function\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBGradientDescent\fP (FunctionType &\fBfunction\fP, const double \fBstepSize\fP=0\&.01, const size_t \fBmaxIterations\fP=100000, const double \fBtolerance\fP=1e\-5)"
+.br
+.RI "\fIConstruct the Gradient Descent optimizer with the given function and parameters\&. \fP"
+.ti -1c
+.RI "const FunctionType & \fBFunction\fP () const "
+.br
+.RI "\fIGet the instantiated function to be optimized\&. \fP"
+.ti -1c
+.RI "FunctionType & \fBFunction\fP ()"
+.br
+.RI "\fIModify the instantiated function\&. \fP"
+.ti -1c
+.RI "size_t \fBMaxIterations\fP () const "
+.br
+.RI "\fIGet the maximum number of iterations (0 indicates no limit)\&. \fP"
+.ti -1c
+.RI "size_t & \fBMaxIterations\fP ()"
+.br
+.RI "\fIModify the maximum number of iterations (0 indicates no limit)\&. \fP"
+.ti -1c
+.RI "double \fBOptimize\fP (arma::mat &iterate)"
+.br
+.RI "\fIOptimize the given function using gradient descent\&. \fP"
+.ti -1c
+.RI "double \fBStepSize\fP () const "
+.br
+.RI "\fIGet the step size\&. \fP"
+.ti -1c
+.RI "double & \fBStepSize\fP ()"
+.br
+.RI "\fIModify the step size\&. \fP"
+.ti -1c
+.RI "double \fBTolerance\fP () const "
+.br
+.RI "\fIGet the tolerance for termination\&. \fP"
+.ti -1c
+.RI "double & \fBTolerance\fP ()"
+.br
+.RI "\fIModify the tolerance for termination\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "FunctionType & \fBfunction\fP"
+.br
+.RI "\fIThe instantiated function\&. \fP"
+.ti -1c
+.RI "size_t \fBmaxIterations\fP"
+.br
+.RI "\fIThe maximum number of allowed iterations\&. \fP"
+.ti -1c
+.RI "double \fBstepSize\fP"
+.br
+.RI "\fIThe step size for each example\&. \fP"
+.ti -1c
+.RI "double \fBtolerance\fP"
+.br
+.RI "\fIThe tolerance for termination\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename FunctionType>
+.br
+class mlpack::optimization::GradientDescent< FunctionType >"
+Gradient Descent is a technique to minimize a function\&. 
+
+To find a local minimum of a function using gradient descent, one takes steps proportional to the negative of the gradient of the function at the current point, producing the following update scheme:
+.PP
+\[ A_{j + 1} = A_j + \alpha \nabla F(A) \].PP
+where $ \alpha $ is a parameter which specifies the step size\&. $ F $ is the function being optimized\&. The algorithm continues until $ j $ reaches the maximum number of iterations---or when an update produces an improvement within a certain tolerance $ \epsilon $\&. That is,
+.PP
+\[ | F(A_{j + 1}) - F(A_j) | < \epsilon. \].PP
+The parameter $\epsilon$ is specified by the tolerance parameter to the constructor\&.
+.PP
+For Gradient Descent to work, a FunctionType template parameter is required\&. This class must implement the following function:
+.PP
+double Evaluate(const arma::mat& coordinates); void Gradient(const arma::mat& coordinates, arma::mat& gradient);
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIFunctionType\fP Decomposable objective function type to be minimized\&. 
+.RE
+.PP
+
+.PP
+Definition at line 53 of file gradient_descent\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename FunctionType > \fBmlpack::optimization::GradientDescent\fP< FunctionType >::\fBGradientDescent\fP (FunctionType & function, const double stepSize = \fC0\&.01\fP, const size_t maxIterations = \fC100000\fP, const double tolerance = \fC1e\-5\fP)"
+
+.PP
+Construct the Gradient Descent optimizer with the given function and parameters\&. The defaults here are not necessarily good for the given problem, so it is suggested that the values used be tailored to the task at hand\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfunction\fP Function to be optimized (minimized)\&. 
+.br
+\fIstepSize\fP Step size for each iteration\&. 
+.br
+\fImaxIterations\fP Maximum number of iterations allowed (0 means no limit)\&. 
+.br
+\fItolerance\fP Maximum absolute tolerance to terminate algorithm\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename FunctionType > const FunctionType& \fBmlpack::optimization::GradientDescent\fP< FunctionType >::Function () const\fC [inline]\fP"
+
+.PP
+Get the instantiated function to be optimized\&. 
+.PP
+Definition at line 84 of file gradient_descent\&.hpp\&.
+.SS "template<typename FunctionType > FunctionType& \fBmlpack::optimization::GradientDescent\fP< FunctionType >::Function ()\fC [inline]\fP"
+
+.PP
+Modify the instantiated function\&. 
+.PP
+Definition at line 86 of file gradient_descent\&.hpp\&.
+.SS "template<typename FunctionType > size_t \fBmlpack::optimization::GradientDescent\fP< FunctionType >::MaxIterations () const\fC [inline]\fP"
+
+.PP
+Get the maximum number of iterations (0 indicates no limit)\&. 
+.PP
+Definition at line 94 of file gradient_descent\&.hpp\&.
+.PP
+References mlpack::optimization::GradientDescent< FunctionType >::maxIterations\&.
+.SS "template<typename FunctionType > size_t& \fBmlpack::optimization::GradientDescent\fP< FunctionType >::MaxIterations ()\fC [inline]\fP"
+
+.PP
+Modify the maximum number of iterations (0 indicates no limit)\&. 
+.PP
+Definition at line 96 of file gradient_descent\&.hpp\&.
+.PP
+References mlpack::optimization::GradientDescent< FunctionType >::maxIterations\&.
+.SS "template<typename FunctionType > double \fBmlpack::optimization::GradientDescent\fP< FunctionType >::Optimize (arma::mat & iterate)"
+
+.PP
+Optimize the given function using gradient descent\&. The given starting point will be modified to store the finishing point of the algorithm, and the final objective value is returned\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIiterate\fP Starting point (will be modified)\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Objective value of the final point\&. 
+.RE
+.PP
+
+.SS "template<typename FunctionType > double \fBmlpack::optimization::GradientDescent\fP< FunctionType >::StepSize () const\fC [inline]\fP"
+
+.PP
+Get the step size\&. 
+.PP
+Definition at line 89 of file gradient_descent\&.hpp\&.
+.PP
+References mlpack::optimization::GradientDescent< FunctionType >::stepSize\&.
+.SS "template<typename FunctionType > double& \fBmlpack::optimization::GradientDescent\fP< FunctionType >::StepSize ()\fC [inline]\fP"
+
+.PP
+Modify the step size\&. 
+.PP
+Definition at line 91 of file gradient_descent\&.hpp\&.
+.PP
+References mlpack::optimization::GradientDescent< FunctionType >::stepSize\&.
+.SS "template<typename FunctionType > double \fBmlpack::optimization::GradientDescent\fP< FunctionType >::Tolerance () const\fC [inline]\fP"
+
+.PP
+Get the tolerance for termination\&. 
+.PP
+Definition at line 99 of file gradient_descent\&.hpp\&.
+.PP
+References mlpack::optimization::GradientDescent< FunctionType >::tolerance\&.
+.SS "template<typename FunctionType > double& \fBmlpack::optimization::GradientDescent\fP< FunctionType >::Tolerance ()\fC [inline]\fP"
+
+.PP
+Modify the tolerance for termination\&. 
+.PP
+Definition at line 101 of file gradient_descent\&.hpp\&.
+.PP
+References mlpack::optimization::GradientDescent< FunctionType >::tolerance\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename FunctionType > FunctionType& \fBmlpack::optimization::GradientDescent\fP< FunctionType >::function\fC [private]\fP"
+
+.PP
+The instantiated function\&. 
+.PP
+Definition at line 105 of file gradient_descent\&.hpp\&.
+.SS "template<typename FunctionType > size_t \fBmlpack::optimization::GradientDescent\fP< FunctionType >::maxIterations\fC [private]\fP"
+
+.PP
+The maximum number of allowed iterations\&. 
+.PP
+Definition at line 111 of file gradient_descent\&.hpp\&.
+.PP
+Referenced by mlpack::optimization::GradientDescent< FunctionType >::MaxIterations()\&.
+.SS "template<typename FunctionType > double \fBmlpack::optimization::GradientDescent\fP< FunctionType >::stepSize\fC [private]\fP"
+
+.PP
+The step size for each example\&. 
+.PP
+Definition at line 108 of file gradient_descent\&.hpp\&.
+.PP
+Referenced by mlpack::optimization::GradientDescent< FunctionType >::StepSize()\&.
+.SS "template<typename FunctionType > double \fBmlpack::optimization::GradientDescent\fP< FunctionType >::tolerance\fC [private]\fP"
+
+.PP
+The tolerance for termination\&. 
+.PP
+Definition at line 114 of file gradient_descent\&.hpp\&.
+.PP
+Referenced by mlpack::optimization::GradientDescent< FunctionType >::Tolerance()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,173 @@
+\section{mlpack\+:\+:range\+:\+:Train\+Visitor Class Reference}
+\label{classmlpack_1_1range_1_1TrainVisitor}\index{mlpack\+::range\+::\+Train\+Visitor@{mlpack\+::range\+::\+Train\+Visitor}}
+
+
+\doxyref{Train\+Visitor}{p.}{classmlpack_1_1range_1_1TrainVisitor} sets the reference set to a new reference set on the given R\+S\+Type.  
+
+
+
+
+Inheritance diagram for mlpack\+:\+:range\+:\+:Train\+Visitor\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=178pt]{classmlpack_1_1range_1_1TrainVisitor__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type$>$ }\\using {\bf R\+S\+TypeT} = {\bf R\+S\+Type}$<$ Tree\+Type $>$
+\begin{DoxyCompactList}\small\item\em Alias template necessary for visual c++ compiler. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Train\+Visitor} (arma\+::mat \&\&{\bf reference\+Set}, const size\+\_\+t {\bf leaf\+Size})
+\begin{DoxyCompactList}\small\item\em Construct the \doxyref{Train\+Visitor}{p.}{classmlpack_1_1range_1_1TrainVisitor} object with the given reference set, leaf\+Size. \end{DoxyCompactList}\item 
+{\footnotesize template$<$template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type$>$ }\\void {\bf operator()} ({\bf R\+S\+TypeT}$<$ Tree\+Type $>$ $\ast$rs) const 
+\begin{DoxyCompactList}\small\item\em Default Train on the given R\+S\+Type instance. \end{DoxyCompactList}\item 
+void {\bf operator()} ({\bf R\+S\+TypeT}$<$ {\bf tree\+::\+K\+D\+Tree} $>$ $\ast$rs) const 
+\begin{DoxyCompactList}\small\item\em Train on the given R\+S\+Type specialized for K\+D\+Trees. \end{DoxyCompactList}\item 
+void {\bf operator()} ({\bf R\+S\+TypeT}$<$ {\bf tree\+::\+Ball\+Tree} $>$ $\ast$rs) const 
+\begin{DoxyCompactList}\small\item\em Train on the given R\+S\+Type specialized for Ball\+Trees. \end{DoxyCompactList}\item 
+void {\bf operator()} ({\bf R\+S\+TypeT}$<$ {\bf tree\+::\+Octree} $>$ $\ast$rs) const 
+\begin{DoxyCompactList}\small\item\em Train specialized for octrees. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename R\+S\+Type $>$ }\\void {\bf Train\+Leaf} ({\bf R\+S\+Type} $\ast$rs) const 
+\begin{DoxyCompactList}\small\item\em Train on the given Rs\+Type considering the leaf\+Size. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+size\+\_\+t {\bf leaf\+Size}
+\begin{DoxyCompactList}\small\item\em The leaf size, used only by Binary\+Space\+Tree. \end{DoxyCompactList}\item 
+arma\+::mat \&\& {\bf reference\+Set}
+\begin{DoxyCompactList}\small\item\em The reference set to use for training. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\doxyref{Train\+Visitor}{p.}{classmlpack_1_1range_1_1TrainVisitor} sets the reference set to a new reference set on the given R\+S\+Type. 
+
+We use template specialization to differentiate those tree types that accept leaf\+Size as a parameter. In these cases, a reference tree with proper leaf\+Size is built from the reference\+Set. 
+
+Definition at line 130 of file rs\+\_\+model.\+hpp.
+
+
+
+\subsection{Member Typedef Documentation}
+\index{mlpack\+::range\+::\+Train\+Visitor@{mlpack\+::range\+::\+Train\+Visitor}!R\+S\+TypeT@{R\+S\+TypeT}}
+\index{R\+S\+TypeT@{R\+S\+TypeT}!mlpack\+::range\+::\+Train\+Visitor@{mlpack\+::range\+::\+Train\+Visitor}}
+\subsubsection[{R\+S\+TypeT}]{\setlength{\rightskip}{0pt plus 5cm}template$<$template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type$>$ using {\bf mlpack\+::range\+::\+Train\+Visitor\+::\+R\+S\+TypeT} =  {\bf R\+S\+Type}$<$Tree\+Type$>$}\label{classmlpack_1_1range_1_1TrainVisitor_a1abe17c3620171f93b88e23f16a348cd}
+
+
+Alias template necessary for visual c++ compiler. 
+
+
+
+Definition at line 146 of file rs\+\_\+model.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::range\+::\+Train\+Visitor@{mlpack\+::range\+::\+Train\+Visitor}!Train\+Visitor@{Train\+Visitor}}
+\index{Train\+Visitor@{Train\+Visitor}!mlpack\+::range\+::\+Train\+Visitor@{mlpack\+::range\+::\+Train\+Visitor}}
+\subsubsection[{Train\+Visitor(arma\+::mat \&\&reference\+Set, const size\+\_\+t leaf\+Size)}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::range\+::\+Train\+Visitor\+::\+Train\+Visitor (
+\begin{DoxyParamCaption}
+\item[{arma\+::mat \&\&}]{reference\+Set, }
+\item[{const size\+\_\+t}]{leaf\+Size}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1range_1_1TrainVisitor_ac3b1eb80e90eb76574951cc515b041c7}
+
+
+Construct the \doxyref{Train\+Visitor}{p.}{classmlpack_1_1range_1_1TrainVisitor} object with the given reference set, leaf\+Size. 
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::range\+::\+Train\+Visitor@{mlpack\+::range\+::\+Train\+Visitor}!operator()@{operator()}}
+\index{operator()@{operator()}!mlpack\+::range\+::\+Train\+Visitor@{mlpack\+::range\+::\+Train\+Visitor}}
+\subsubsection[{operator()(\+R\+S\+Type\+T$<$ Tree\+Type $>$ $\ast$rs) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type$>$ void mlpack\+::range\+::\+Train\+Visitor\+::operator() (
+\begin{DoxyParamCaption}
+\item[{{\bf R\+S\+TypeT}$<$ Tree\+Type $>$ $\ast$}]{rs}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1range_1_1TrainVisitor_ad4496624ccbfc118d2635c51f27b9b86}
+
+
+Default Train on the given R\+S\+Type instance. 
+
+\index{mlpack\+::range\+::\+Train\+Visitor@{mlpack\+::range\+::\+Train\+Visitor}!operator()@{operator()}}
+\index{operator()@{operator()}!mlpack\+::range\+::\+Train\+Visitor@{mlpack\+::range\+::\+Train\+Visitor}}
+\subsubsection[{operator()(\+R\+S\+Type\+T$<$ tree\+::\+K\+D\+Tree $>$ $\ast$rs) const }]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::range\+::\+Train\+Visitor\+::operator() (
+\begin{DoxyParamCaption}
+\item[{{\bf R\+S\+TypeT}$<$ {\bf tree\+::\+K\+D\+Tree} $>$ $\ast$}]{rs}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1range_1_1TrainVisitor_a977f795c0c9a1f27548704da9f61150f}
+
+
+Train on the given R\+S\+Type specialized for K\+D\+Trees. 
+
+\index{mlpack\+::range\+::\+Train\+Visitor@{mlpack\+::range\+::\+Train\+Visitor}!operator()@{operator()}}
+\index{operator()@{operator()}!mlpack\+::range\+::\+Train\+Visitor@{mlpack\+::range\+::\+Train\+Visitor}}
+\subsubsection[{operator()(\+R\+S\+Type\+T$<$ tree\+::\+Ball\+Tree $>$ $\ast$rs) const }]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::range\+::\+Train\+Visitor\+::operator() (
+\begin{DoxyParamCaption}
+\item[{{\bf R\+S\+TypeT}$<$ {\bf tree\+::\+Ball\+Tree} $>$ $\ast$}]{rs}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1range_1_1TrainVisitor_afabe9eff893efab48913823331508d70}
+
+
+Train on the given R\+S\+Type specialized for Ball\+Trees. 
+
+\index{mlpack\+::range\+::\+Train\+Visitor@{mlpack\+::range\+::\+Train\+Visitor}!operator()@{operator()}}
+\index{operator()@{operator()}!mlpack\+::range\+::\+Train\+Visitor@{mlpack\+::range\+::\+Train\+Visitor}}
+\subsubsection[{operator()(\+R\+S\+Type\+T$<$ tree\+::\+Octree $>$ $\ast$rs) const }]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::range\+::\+Train\+Visitor\+::operator() (
+\begin{DoxyParamCaption}
+\item[{{\bf R\+S\+TypeT}$<$ {\bf tree\+::\+Octree} $>$ $\ast$}]{rs}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1range_1_1TrainVisitor_a54c9c208d41671a25a162648f43ea34b}
+
+
+Train specialized for octrees. 
+
+\index{mlpack\+::range\+::\+Train\+Visitor@{mlpack\+::range\+::\+Train\+Visitor}!Train\+Leaf@{Train\+Leaf}}
+\index{Train\+Leaf@{Train\+Leaf}!mlpack\+::range\+::\+Train\+Visitor@{mlpack\+::range\+::\+Train\+Visitor}}
+\subsubsection[{Train\+Leaf(\+R\+S\+Type $\ast$rs) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename R\+S\+Type $>$ void mlpack\+::range\+::\+Train\+Visitor\+::\+Train\+Leaf (
+\begin{DoxyParamCaption}
+\item[{{\bf R\+S\+Type} $\ast$}]{rs}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1range_1_1TrainVisitor_ad1c56b5f83ce254a9914ee45a4f6ab06}
+
+
+Train on the given Rs\+Type considering the leaf\+Size. 
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::range\+::\+Train\+Visitor@{mlpack\+::range\+::\+Train\+Visitor}!leaf\+Size@{leaf\+Size}}
+\index{leaf\+Size@{leaf\+Size}!mlpack\+::range\+::\+Train\+Visitor@{mlpack\+::range\+::\+Train\+Visitor}}
+\subsubsection[{leaf\+Size}]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t mlpack\+::range\+::\+Train\+Visitor\+::leaf\+Size\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1range_1_1TrainVisitor_a067104ceca5b47dcded564ba191d10cb}
+
+
+The leaf size, used only by Binary\+Space\+Tree. 
+
+
+
+Definition at line 136 of file rs\+\_\+model.\+hpp.
+
+\index{mlpack\+::range\+::\+Train\+Visitor@{mlpack\+::range\+::\+Train\+Visitor}!reference\+Set@{reference\+Set}}
+\index{reference\+Set@{reference\+Set}!mlpack\+::range\+::\+Train\+Visitor@{mlpack\+::range\+::\+Train\+Visitor}}
+\subsubsection[{reference\+Set}]{\setlength{\rightskip}{0pt plus 5cm}arma\+::mat\&\& mlpack\+::range\+::\+Train\+Visitor\+::reference\+Set\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1range_1_1TrainVisitor_a9203796bb95a69ac8914e878597b61ce}
+
+
+The reference set to use for training. 
+
+
+
+Definition at line 134 of file rs\+\_\+model.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/range\+\_\+search/{\bf rs\+\_\+model.\+hpp}\end{DoxyCompactItemize}

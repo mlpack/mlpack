@@ -1,0 +1,108 @@
+\section{mlpack\+:\+:tree\+:\+:Tree\+Traits$<$ Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $>$ Class Template Reference}
+\label{classmlpack_1_1tree_1_1TreeTraits_3_01SpillTree_3_01MetricType_00_01StatisticType_00_01MatType_03c639ada9e7ec3c7879b4d5a2cf50982}\index{mlpack\+::tree\+::\+Tree\+Traits$<$ Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $>$@{mlpack\+::tree\+::\+Tree\+Traits$<$ Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $>$}}
+
+
+This is a specialization of the Tree\+Type class to the \doxyref{Spill\+Tree}{p.}{classmlpack_1_1tree_1_1SpillTree} tree type.  
+
+
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static const bool {\bf Binary\+Tree} = true
+\begin{DoxyCompactList}\small\item\em This is always a binary tree. \end{DoxyCompactList}\item 
+static const bool {\bf First\+Point\+Is\+Centroid} = false
+\begin{DoxyCompactList}\small\item\em There is no guarantee that the first point in a node is its centroid. \end{DoxyCompactList}\item 
+static const bool {\bf Has\+Overlapping\+Children} = true
+\begin{DoxyCompactList}\small\item\em Each spill tree node has two children which can share points. \end{DoxyCompactList}\item 
+static const bool {\bf Has\+Self\+Children} = false
+\begin{DoxyCompactList}\small\item\em Points are not contained at multiple levels of the spill tree. \end{DoxyCompactList}\item 
+static const bool {\bf Rearranges\+Dataset} = false
+\begin{DoxyCompactList}\small\item\em Points are not rearranged during building of the tree. \end{DoxyCompactList}\item 
+static const bool {\bf Unique\+Num\+Descendants} = false
+\begin{DoxyCompactList}\small\item\em Spill trees have duplicated points, so Num\+Descendants() could count a given point twice. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Metric\+Type, typename Statistic\+Type, typename Mat\+Type, template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type$>$\\*
+class mlpack\+::tree\+::\+Tree\+Traits$<$ Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $>$}
+
+This is a specialization of the Tree\+Type class to the \doxyref{Spill\+Tree}{p.}{classmlpack_1_1tree_1_1SpillTree} tree type. 
+
+It defines characteristics of the spill tree, and is used to help write tree-\/independent (but still optimized) tree-\/based algorithms. See \doxyref{mlpack/core/tree/tree\+\_\+traits.\+hpp}{p.}{tree__traits_8hpp} for more information. 
+
+Definition at line 33 of file traits.\+hpp.
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::tree\+::\+Tree\+Traits$<$ Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $>$@{mlpack\+::tree\+::\+Tree\+Traits$<$ Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $>$}!Binary\+Tree@{Binary\+Tree}}
+\index{Binary\+Tree@{Binary\+Tree}!mlpack\+::tree\+::\+Tree\+Traits$<$ Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $>$@{mlpack\+::tree\+::\+Tree\+Traits$<$ Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $>$}}
+\subsubsection[{Binary\+Tree}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type$>$ const bool {\bf mlpack\+::tree\+::\+Tree\+Traits}$<$ {\bf Spill\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $>$\+::Binary\+Tree = true\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1tree_1_1TreeTraits_3_01SpillTree_3_01MetricType_00_01StatisticType_00_01MatType_03c639ada9e7ec3c7879b4d5a2cf50982_ad812ea9ac8cd760188f6a0b7f55892e7}
+
+
+This is always a binary tree. 
+
+
+
+Definition at line 61 of file traits.\+hpp.
+
+\index{mlpack\+::tree\+::\+Tree\+Traits$<$ Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $>$@{mlpack\+::tree\+::\+Tree\+Traits$<$ Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $>$}!First\+Point\+Is\+Centroid@{First\+Point\+Is\+Centroid}}
+\index{First\+Point\+Is\+Centroid@{First\+Point\+Is\+Centroid}!mlpack\+::tree\+::\+Tree\+Traits$<$ Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $>$@{mlpack\+::tree\+::\+Tree\+Traits$<$ Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $>$}}
+\subsubsection[{First\+Point\+Is\+Centroid}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type$>$ const bool {\bf mlpack\+::tree\+::\+Tree\+Traits}$<$ {\bf Spill\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $>$\+::First\+Point\+Is\+Centroid = false\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1tree_1_1TreeTraits_3_01SpillTree_3_01MetricType_00_01StatisticType_00_01MatType_03c639ada9e7ec3c7879b4d5a2cf50982_a7cc23abaae4d8e7f540f98611c1c5d7b}
+
+
+There is no guarantee that the first point in a node is its centroid. 
+
+
+
+Definition at line 46 of file traits.\+hpp.
+
+\index{mlpack\+::tree\+::\+Tree\+Traits$<$ Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $>$@{mlpack\+::tree\+::\+Tree\+Traits$<$ Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $>$}!Has\+Overlapping\+Children@{Has\+Overlapping\+Children}}
+\index{Has\+Overlapping\+Children@{Has\+Overlapping\+Children}!mlpack\+::tree\+::\+Tree\+Traits$<$ Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $>$@{mlpack\+::tree\+::\+Tree\+Traits$<$ Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $>$}}
+\subsubsection[{Has\+Overlapping\+Children}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type$>$ const bool {\bf mlpack\+::tree\+::\+Tree\+Traits}$<$ {\bf Spill\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $>$\+::Has\+Overlapping\+Children = true\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1tree_1_1TreeTraits_3_01SpillTree_3_01MetricType_00_01StatisticType_00_01MatType_03c639ada9e7ec3c7879b4d5a2cf50982_aa197a0627e25706cc3eae55812904332}
+
+
+Each spill tree node has two children which can share points. 
+
+Therefore, children can be overlapping. 
+
+Definition at line 41 of file traits.\+hpp.
+
+\index{mlpack\+::tree\+::\+Tree\+Traits$<$ Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $>$@{mlpack\+::tree\+::\+Tree\+Traits$<$ Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $>$}!Has\+Self\+Children@{Has\+Self\+Children}}
+\index{Has\+Self\+Children@{Has\+Self\+Children}!mlpack\+::tree\+::\+Tree\+Traits$<$ Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $>$@{mlpack\+::tree\+::\+Tree\+Traits$<$ Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $>$}}
+\subsubsection[{Has\+Self\+Children}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type$>$ const bool {\bf mlpack\+::tree\+::\+Tree\+Traits}$<$ {\bf Spill\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $>$\+::Has\+Self\+Children = false\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1tree_1_1TreeTraits_3_01SpillTree_3_01MetricType_00_01StatisticType_00_01MatType_03c639ada9e7ec3c7879b4d5a2cf50982_a6420ccee8e6517ce36aac510d99f4f7a}
+
+
+Points are not contained at multiple levels of the spill tree. 
+
+
+
+Definition at line 51 of file traits.\+hpp.
+
+\index{mlpack\+::tree\+::\+Tree\+Traits$<$ Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $>$@{mlpack\+::tree\+::\+Tree\+Traits$<$ Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $>$}!Rearranges\+Dataset@{Rearranges\+Dataset}}
+\index{Rearranges\+Dataset@{Rearranges\+Dataset}!mlpack\+::tree\+::\+Tree\+Traits$<$ Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $>$@{mlpack\+::tree\+::\+Tree\+Traits$<$ Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $>$}}
+\subsubsection[{Rearranges\+Dataset}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type$>$ const bool {\bf mlpack\+::tree\+::\+Tree\+Traits}$<$ {\bf Spill\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $>$\+::Rearranges\+Dataset = false\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1tree_1_1TreeTraits_3_01SpillTree_3_01MetricType_00_01StatisticType_00_01MatType_03c639ada9e7ec3c7879b4d5a2cf50982_ae7797f8cd98bf03fc84fc7e670571e4b}
+
+
+Points are not rearranged during building of the tree. 
+
+
+
+Definition at line 56 of file traits.\+hpp.
+
+\index{mlpack\+::tree\+::\+Tree\+Traits$<$ Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $>$@{mlpack\+::tree\+::\+Tree\+Traits$<$ Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $>$}!Unique\+Num\+Descendants@{Unique\+Num\+Descendants}}
+\index{Unique\+Num\+Descendants@{Unique\+Num\+Descendants}!mlpack\+::tree\+::\+Tree\+Traits$<$ Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $>$@{mlpack\+::tree\+::\+Tree\+Traits$<$ Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $>$}}
+\subsubsection[{Unique\+Num\+Descendants}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type$>$ const bool {\bf mlpack\+::tree\+::\+Tree\+Traits}$<$ {\bf Spill\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ $>$\+::Unique\+Num\+Descendants = false\hspace{0.3cm}{\ttfamily [static]}}\label{classmlpack_1_1tree_1_1TreeTraits_3_01SpillTree_3_01MetricType_00_01StatisticType_00_01MatType_03c639ada9e7ec3c7879b4d5a2cf50982_a4416b8999925fd53ff052ddfe5a4f2e3}
+
+
+Spill trees have duplicated points, so Num\+Descendants() could count a given point twice. 
+
+
+
+Definition at line 67 of file traits.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/tree/spill\+\_\+tree/{\bf traits.\+hpp}\end{DoxyCompactItemize}

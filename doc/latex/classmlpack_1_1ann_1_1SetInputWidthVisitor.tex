@@ -1,0 +1,152 @@
+\section{mlpack\+:\+:ann\+:\+:Set\+Input\+Width\+Visitor Class Reference}
+\label{classmlpack_1_1ann_1_1SetInputWidthVisitor}\index{mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor@{mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor}}
+
+
+\doxyref{Set\+Input\+Width\+Visitor}{p.}{classmlpack_1_1ann_1_1SetInputWidthVisitor} updates the input width parameter with the given input width.  
+
+
+
+
+Inheritance diagram for mlpack\+:\+:ann\+:\+:Set\+Input\+Width\+Visitor\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=182pt]{classmlpack_1_1ann_1_1SetInputWidthVisitor__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Set\+Input\+Width\+Visitor} (const size\+\_\+t {\bf input\+Width}=0, const bool {\bf reset}=false)
+\begin{DoxyCompactList}\small\item\em Update the input width parameter with the given input width. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Layer\+Type $>$ }\\bool {\bf operator()} (Layer\+Type $\ast$layer) const 
+\begin{DoxyCompactList}\small\item\em Update the input width parameter. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::enable\+\_\+if$<$ !Has\+Input\+Width$<$ T, size\+\_\+t \&(T\+::$\ast$)()$>$\+::value \&\&!Has\+Model\+Check$<$ T, std\+::vector$<$ {\bf Layer\+Types} $>$ \&(T\+::$\ast$)()$>$\+::value, bool $>$\+::type {\bf Layer\+Input\+Width} (T $\ast$layer) const 
+\begin{DoxyCompactList}\small\item\em Do nothing if the module doesn\textquotesingle{}t implement the Input\+Width() or Model() function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::enable\+\_\+if$<$ Has\+Input\+Width$<$ T, size\+\_\+t \&(T\+::$\ast$)()$>$\+::value \&\&!Has\+Model\+Check$<$ T, std\+::vector$<$ {\bf Layer\+Types} $>$ \&(T\+::$\ast$)()$>$\+::value, bool $>$\+::type {\bf Layer\+Input\+Width} (T $\ast$layer) const 
+\begin{DoxyCompactList}\small\item\em Update the input width if the module implements the Input\+Width() function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::enable\+\_\+if$<$ !Has\+Input\+Width$<$ T, size\+\_\+t \&(T\+::$\ast$)()$>$\+::value \&\&Has\+Model\+Check$<$ T, std\+::vector$<$ {\bf Layer\+Types} $>$ \&(T\+::$\ast$)()$>$\+::value, bool $>$\+::type {\bf Layer\+Input\+Width} (T $\ast$layer) const 
+\begin{DoxyCompactList}\small\item\em Update the input width if the module implements the Model() function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::enable\+\_\+if$<$ Has\+Input\+Width$<$ T, size\+\_\+t \&(T\+::$\ast$)()$>$\+::value \&\&Has\+Model\+Check$<$ T, std\+::vector$<$ {\bf Layer\+Types} $>$ \&(T\+::$\ast$)()$>$\+::value, bool $>$\+::type {\bf Layer\+Input\+Width} (T $\ast$layer) const 
+\begin{DoxyCompactList}\small\item\em Update the input width if the module implements the Input\+Width() or Model() function. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+size\+\_\+t {\bf input\+Width}
+\begin{DoxyCompactList}\small\item\em The input width parameter. \end{DoxyCompactList}\item 
+bool {\bf reset}
+\begin{DoxyCompactList}\small\item\em If set reset the height parameter if already set. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\doxyref{Set\+Input\+Width\+Visitor}{p.}{classmlpack_1_1ann_1_1SetInputWidthVisitor} updates the input width parameter with the given input width. 
+
+Definition at line 28 of file set\+\_\+input\+\_\+width\+\_\+visitor.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor@{mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor}!Set\+Input\+Width\+Visitor@{Set\+Input\+Width\+Visitor}}
+\index{Set\+Input\+Width\+Visitor@{Set\+Input\+Width\+Visitor}!mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor@{mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor}}
+\subsubsection[{Set\+Input\+Width\+Visitor(const size\+\_\+t input\+Width=0, const bool reset=false)}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor\+::\+Set\+Input\+Width\+Visitor (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{input\+Width = {\ttfamily 0}, }
+\item[{const bool}]{reset = {\ttfamily false}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1ann_1_1SetInputWidthVisitor_ae1902fc84e2f3604ebe1b6506ebd53e1}
+
+
+Update the input width parameter with the given input width. 
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor@{mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor}!Layer\+Input\+Width@{Layer\+Input\+Width}}
+\index{Layer\+Input\+Width@{Layer\+Input\+Width}!mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor@{mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor}}
+\subsubsection[{Layer\+Input\+Width(\+T $\ast$layer) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ std\+::enable\+\_\+if$<$ !Has\+Input\+Width$<$T, size\+\_\+t\&(T\+::$\ast$)()$>$\+::value \&\& !Has\+Model\+Check$<$T, std\+::vector$<${\bf Layer\+Types}$>$\&(T\+::$\ast$)()$>$\+::value, bool$>$\+::type mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor\+::\+Layer\+Input\+Width (
+\begin{DoxyParamCaption}
+\item[{T $\ast$}]{layer}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1SetInputWidthVisitor_a285ee78f8ab91c6d2452d9ddc8ef5b90}
+
+
+Do nothing if the module doesn\textquotesingle{}t implement the Input\+Width() or Model() function. 
+
+\index{mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor@{mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor}!Layer\+Input\+Width@{Layer\+Input\+Width}}
+\index{Layer\+Input\+Width@{Layer\+Input\+Width}!mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor@{mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor}}
+\subsubsection[{Layer\+Input\+Width(\+T $\ast$layer) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ std\+::enable\+\_\+if$<$ Has\+Input\+Width$<$T, size\+\_\+t\&(T\+::$\ast$)()$>$\+::value \&\& !Has\+Model\+Check$<$T, std\+::vector$<${\bf Layer\+Types}$>$\&(T\+::$\ast$)()$>$\+::value, bool$>$\+::type mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor\+::\+Layer\+Input\+Width (
+\begin{DoxyParamCaption}
+\item[{T $\ast$}]{layer}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1SetInputWidthVisitor_acdafe122b16f5119c6398340d6f63b36}
+
+
+Update the input width if the module implements the Input\+Width() function. 
+
+\index{mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor@{mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor}!Layer\+Input\+Width@{Layer\+Input\+Width}}
+\index{Layer\+Input\+Width@{Layer\+Input\+Width}!mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor@{mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor}}
+\subsubsection[{Layer\+Input\+Width(\+T $\ast$layer) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ std\+::enable\+\_\+if$<$ !Has\+Input\+Width$<$T, size\+\_\+t\&(T\+::$\ast$)()$>$\+::value \&\& Has\+Model\+Check$<$T, std\+::vector$<${\bf Layer\+Types}$>$\&(T\+::$\ast$)()$>$\+::value, bool$>$\+::type mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor\+::\+Layer\+Input\+Width (
+\begin{DoxyParamCaption}
+\item[{T $\ast$}]{layer}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1SetInputWidthVisitor_a048cdd100ad61e6682dfb6fc2c35a44b}
+
+
+Update the input width if the module implements the Model() function. 
+
+\index{mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor@{mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor}!Layer\+Input\+Width@{Layer\+Input\+Width}}
+\index{Layer\+Input\+Width@{Layer\+Input\+Width}!mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor@{mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor}}
+\subsubsection[{Layer\+Input\+Width(\+T $\ast$layer) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ std\+::enable\+\_\+if$<$ Has\+Input\+Width$<$T, size\+\_\+t\&(T\+::$\ast$)()$>$\+::value \&\& Has\+Model\+Check$<$T, std\+::vector$<${\bf Layer\+Types}$>$\&(T\+::$\ast$)()$>$\+::value, bool$>$\+::type mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor\+::\+Layer\+Input\+Width (
+\begin{DoxyParamCaption}
+\item[{T $\ast$}]{layer}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1SetInputWidthVisitor_a8477cbacb666d3fab932b9bb45bff66a}
+
+
+Update the input width if the module implements the Input\+Width() or Model() function. 
+
+\index{mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor@{mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor}!operator()@{operator()}}
+\index{operator()@{operator()}!mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor@{mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor}}
+\subsubsection[{operator()(\+Layer\+Type $\ast$layer) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Layer\+Type $>$ bool mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor\+::operator() (
+\begin{DoxyParamCaption}
+\item[{Layer\+Type $\ast$}]{layer}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1ann_1_1SetInputWidthVisitor_a8ae0d7eb48874892220f6a38f8f0d8a8}
+
+
+Update the input width parameter. 
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor@{mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor}!input\+Width@{input\+Width}}
+\index{input\+Width@{input\+Width}!mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor@{mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor}}
+\subsubsection[{input\+Width}]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor\+::input\+Width\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1SetInputWidthVisitor_a4c89e8ba5b62efc9265201918fde39d2}
+
+
+The input width parameter. 
+
+
+
+Definition at line 40 of file set\+\_\+input\+\_\+width\+\_\+visitor.\+hpp.
+
+\index{mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor@{mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor}!reset@{reset}}
+\index{reset@{reset}!mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor@{mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor}}
+\subsubsection[{reset}]{\setlength{\rightskip}{0pt plus 5cm}bool mlpack\+::ann\+::\+Set\+Input\+Width\+Visitor\+::reset\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1SetInputWidthVisitor_af0b5ba523d829926fad33728e4bde799}
+
+
+If set reset the height parameter if already set. 
+
+
+
+Definition at line 43 of file set\+\_\+input\+\_\+width\+\_\+visitor.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/ann/visitor/{\bf set\+\_\+input\+\_\+width\+\_\+visitor.\+hpp}\end{DoxyCompactItemize}

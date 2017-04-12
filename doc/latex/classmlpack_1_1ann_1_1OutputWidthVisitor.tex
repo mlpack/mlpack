@@ -1,0 +1,103 @@
+\section{mlpack\+:\+:ann\+:\+:Output\+Width\+Visitor Class Reference}
+\label{classmlpack_1_1ann_1_1OutputWidthVisitor}\index{mlpack\+::ann\+::\+Output\+Width\+Visitor@{mlpack\+::ann\+::\+Output\+Width\+Visitor}}
+
+
+\doxyref{Output\+Width\+Visitor}{p.}{classmlpack_1_1ann_1_1OutputWidthVisitor} exposes the Output\+Width() method of the given module.  
+
+
+
+
+Inheritance diagram for mlpack\+:\+:ann\+:\+:Output\+Width\+Visitor\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=175pt]{classmlpack_1_1ann_1_1OutputWidthVisitor__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Layer\+Type $>$ }\\size\+\_\+t {\bf operator()} (Layer\+Type $\ast$layer) const 
+\begin{DoxyCompactList}\small\item\em Return the output width. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::enable\+\_\+if$<$ !Has\+Input\+Width$<$ T, size\+\_\+t \&(T\+::$\ast$)()$>$\+::value \&\&!Has\+Model\+Check$<$ T, std\+::vector$<$ {\bf Layer\+Types} $>$ \&(T\+::$\ast$)()$>$\+::value, size\+\_\+t $>$\+::type {\bf Layer\+Output\+Width} (T $\ast$layer) const 
+\begin{DoxyCompactList}\small\item\em Return 0 if the module doesn\textquotesingle{}t implement the Input\+Width() or Model() function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::enable\+\_\+if$<$ Has\+Input\+Width$<$ T, size\+\_\+t \&(T\+::$\ast$)()$>$\+::value \&\&!Has\+Model\+Check$<$ T, std\+::vector$<$ {\bf Layer\+Types} $>$ \&(T\+::$\ast$)()$>$\+::value, size\+\_\+t $>$\+::type {\bf Layer\+Output\+Width} (T $\ast$layer) const 
+\begin{DoxyCompactList}\small\item\em Return the output width if the module implements the Input\+Width() function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::enable\+\_\+if$<$ !Has\+Input\+Width$<$ T, size\+\_\+t \&(T\+::$\ast$)()$>$\+::value \&\&Has\+Model\+Check$<$ T, std\+::vector$<$ {\bf Layer\+Types} $>$ \&(T\+::$\ast$)()$>$\+::value, size\+\_\+t $>$\+::type {\bf Layer\+Output\+Width} (T $\ast$layer) const 
+\begin{DoxyCompactList}\small\item\em Return the output width if the module implements the Model() function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::enable\+\_\+if$<$ Has\+Input\+Width$<$ T, size\+\_\+t \&(T\+::$\ast$)()$>$\+::value \&\&Has\+Model\+Check$<$ T, std\+::vector$<$ {\bf Layer\+Types} $>$ \&(T\+::$\ast$)()$>$\+::value, size\+\_\+t $>$\+::type {\bf Layer\+Output\+Width} (T $\ast$layer) const 
+\begin{DoxyCompactList}\small\item\em Return the output width if the module implements the Model() or Input\+Width() function. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\doxyref{Output\+Width\+Visitor}{p.}{classmlpack_1_1ann_1_1OutputWidthVisitor} exposes the Output\+Width() method of the given module. 
+
+Definition at line 28 of file output\+\_\+width\+\_\+visitor.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::ann\+::\+Output\+Width\+Visitor@{mlpack\+::ann\+::\+Output\+Width\+Visitor}!Layer\+Output\+Width@{Layer\+Output\+Width}}
+\index{Layer\+Output\+Width@{Layer\+Output\+Width}!mlpack\+::ann\+::\+Output\+Width\+Visitor@{mlpack\+::ann\+::\+Output\+Width\+Visitor}}
+\subsubsection[{Layer\+Output\+Width(\+T $\ast$layer) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ std\+::enable\+\_\+if$<$ !Has\+Input\+Width$<$T, size\+\_\+t\&(T\+::$\ast$)()$>$\+::value \&\& !Has\+Model\+Check$<$T, std\+::vector$<${\bf Layer\+Types}$>$\&(T\+::$\ast$)()$>$\+::value, size\+\_\+t$>$\+::type mlpack\+::ann\+::\+Output\+Width\+Visitor\+::\+Layer\+Output\+Width (
+\begin{DoxyParamCaption}
+\item[{T $\ast$}]{layer}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1OutputWidthVisitor_a274877e3578aa50989196c9e588ccfbb}
+
+
+Return 0 if the module doesn\textquotesingle{}t implement the Input\+Width() or Model() function. 
+
+\index{mlpack\+::ann\+::\+Output\+Width\+Visitor@{mlpack\+::ann\+::\+Output\+Width\+Visitor}!Layer\+Output\+Width@{Layer\+Output\+Width}}
+\index{Layer\+Output\+Width@{Layer\+Output\+Width}!mlpack\+::ann\+::\+Output\+Width\+Visitor@{mlpack\+::ann\+::\+Output\+Width\+Visitor}}
+\subsubsection[{Layer\+Output\+Width(\+T $\ast$layer) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ std\+::enable\+\_\+if$<$ Has\+Input\+Width$<$T, size\+\_\+t\&(T\+::$\ast$)()$>$\+::value \&\& !Has\+Model\+Check$<$T, std\+::vector$<${\bf Layer\+Types}$>$\&(T\+::$\ast$)()$>$\+::value, size\+\_\+t$>$\+::type mlpack\+::ann\+::\+Output\+Width\+Visitor\+::\+Layer\+Output\+Width (
+\begin{DoxyParamCaption}
+\item[{T $\ast$}]{layer}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1OutputWidthVisitor_ae1645c641c61595eeb40e0201e497477}
+
+
+Return the output width if the module implements the Input\+Width() function. 
+
+\index{mlpack\+::ann\+::\+Output\+Width\+Visitor@{mlpack\+::ann\+::\+Output\+Width\+Visitor}!Layer\+Output\+Width@{Layer\+Output\+Width}}
+\index{Layer\+Output\+Width@{Layer\+Output\+Width}!mlpack\+::ann\+::\+Output\+Width\+Visitor@{mlpack\+::ann\+::\+Output\+Width\+Visitor}}
+\subsubsection[{Layer\+Output\+Width(\+T $\ast$layer) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ std\+::enable\+\_\+if$<$ !Has\+Input\+Width$<$T, size\+\_\+t\&(T\+::$\ast$)()$>$\+::value \&\& Has\+Model\+Check$<$T, std\+::vector$<${\bf Layer\+Types}$>$\&(T\+::$\ast$)()$>$\+::value, size\+\_\+t$>$\+::type mlpack\+::ann\+::\+Output\+Width\+Visitor\+::\+Layer\+Output\+Width (
+\begin{DoxyParamCaption}
+\item[{T $\ast$}]{layer}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1OutputWidthVisitor_a89f1293f3a79a24330dac27d63e471b9}
+
+
+Return the output width if the module implements the Model() function. 
+
+\index{mlpack\+::ann\+::\+Output\+Width\+Visitor@{mlpack\+::ann\+::\+Output\+Width\+Visitor}!Layer\+Output\+Width@{Layer\+Output\+Width}}
+\index{Layer\+Output\+Width@{Layer\+Output\+Width}!mlpack\+::ann\+::\+Output\+Width\+Visitor@{mlpack\+::ann\+::\+Output\+Width\+Visitor}}
+\subsubsection[{Layer\+Output\+Width(\+T $\ast$layer) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ std\+::enable\+\_\+if$<$ Has\+Input\+Width$<$T, size\+\_\+t\&(T\+::$\ast$)()$>$\+::value \&\& Has\+Model\+Check$<$T, std\+::vector$<${\bf Layer\+Types}$>$\&(T\+::$\ast$)()$>$\+::value, size\+\_\+t$>$\+::type mlpack\+::ann\+::\+Output\+Width\+Visitor\+::\+Layer\+Output\+Width (
+\begin{DoxyParamCaption}
+\item[{T $\ast$}]{layer}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1ann_1_1OutputWidthVisitor_a023eaf740fa2141509ee72be7adae631}
+
+
+Return the output width if the module implements the Model() or Input\+Width() function. 
+
+\index{mlpack\+::ann\+::\+Output\+Width\+Visitor@{mlpack\+::ann\+::\+Output\+Width\+Visitor}!operator()@{operator()}}
+\index{operator()@{operator()}!mlpack\+::ann\+::\+Output\+Width\+Visitor@{mlpack\+::ann\+::\+Output\+Width\+Visitor}}
+\subsubsection[{operator()(\+Layer\+Type $\ast$layer) const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Layer\+Type $>$ size\+\_\+t mlpack\+::ann\+::\+Output\+Width\+Visitor\+::operator() (
+\begin{DoxyParamCaption}
+\item[{Layer\+Type $\ast$}]{layer}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1ann_1_1OutputWidthVisitor_ac7c2430684003c0a405991878f899315}
+
+
+Return the output width. 
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/ann/visitor/{\bf output\+\_\+width\+\_\+visitor.\+hpp}\end{DoxyCompactItemize}

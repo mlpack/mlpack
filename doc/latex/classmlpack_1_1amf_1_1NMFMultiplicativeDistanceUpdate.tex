@@ -1,0 +1,165 @@
+\section{mlpack\+:\+:amf\+:\+:N\+M\+F\+Multiplicative\+Distance\+Update Class Reference}
+\label{classmlpack_1_1amf_1_1NMFMultiplicativeDistanceUpdate}\index{mlpack\+::amf\+::\+N\+M\+F\+Multiplicative\+Distance\+Update@{mlpack\+::amf\+::\+N\+M\+F\+Multiplicative\+Distance\+Update}}
+
+
+The multiplicative distance update rules for matrices W and H.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf N\+M\+F\+Multiplicative\+Distance\+Update} ()
+\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void {\bf Initialize} (const Mat\+Type \&, const size\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Initialize the factorization. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&, const unsigned int)
+\begin{DoxyCompactList}\small\item\em Serialize the object (in this case, there is nothing to serialize). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\static void {\bf H\+Update} (const Mat\+Type \&V, const arma\+::mat \&W, arma\+::mat \&H)
+\begin{DoxyCompactList}\small\item\em The update rule for the encoding matrix H. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\static void {\bf W\+Update} (const Mat\+Type \&V, arma\+::mat \&W, const arma\+::mat \&H)
+\begin{DoxyCompactList}\small\item\em The update rule for the basis matrix W. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The multiplicative distance update rules for matrices W and H. 
+
+This follows a method described in the following paper\+:
+
+
+\begin{DoxyCode}
+@inproceedings\{lee2001algorithms,
+  title=\{Algorithms \textcolor{keywordflow}{for} non-negative matrix factorization\},
+  author=\{Lee, D.D. and Seung, H.S.\},
+  booktitle=\{Advances in Neural Information Processing Systems 13
+      (NIPS 2000)\},
+  pages=\{556--562\},
+  year=\{2001\}
+\}
+\end{DoxyCode}
+
+
+This is a multiplicative rule that ensures that the Frobenius norm $ \sqrt{\sum_i \sum_j(V-WH)^2} $ is non-\/increasing between subsequent iterations. Both of the update rules for W and H are defined in this file. 
+
+Definition at line 39 of file nmf\+\_\+mult\+\_\+dist.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::amf\+::\+N\+M\+F\+Multiplicative\+Distance\+Update@{mlpack\+::amf\+::\+N\+M\+F\+Multiplicative\+Distance\+Update}!N\+M\+F\+Multiplicative\+Distance\+Update@{N\+M\+F\+Multiplicative\+Distance\+Update}}
+\index{N\+M\+F\+Multiplicative\+Distance\+Update@{N\+M\+F\+Multiplicative\+Distance\+Update}!mlpack\+::amf\+::\+N\+M\+F\+Multiplicative\+Distance\+Update@{mlpack\+::amf\+::\+N\+M\+F\+Multiplicative\+Distance\+Update}}
+\subsubsection[{N\+M\+F\+Multiplicative\+Distance\+Update()}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::amf\+::\+N\+M\+F\+Multiplicative\+Distance\+Update\+::\+N\+M\+F\+Multiplicative\+Distance\+Update (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1amf_1_1NMFMultiplicativeDistanceUpdate_a8c702dd8bd0b59187f2ad57c90e774ad}
+
+
+Definition at line 43 of file nmf\+\_\+mult\+\_\+dist.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::amf\+::\+N\+M\+F\+Multiplicative\+Distance\+Update@{mlpack\+::amf\+::\+N\+M\+F\+Multiplicative\+Distance\+Update}!H\+Update@{H\+Update}}
+\index{H\+Update@{H\+Update}!mlpack\+::amf\+::\+N\+M\+F\+Multiplicative\+Distance\+Update@{mlpack\+::amf\+::\+N\+M\+F\+Multiplicative\+Distance\+Update}}
+\subsubsection[{H\+Update(const Mat\+Type \&\+V, const arma\+::mat \&\+W, arma\+::mat \&\+H)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type $>$ static void mlpack\+::amf\+::\+N\+M\+F\+Multiplicative\+Distance\+Update\+::\+H\+Update (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{V, }
+\item[{const arma\+::mat \&}]{W, }
+\item[{arma\+::mat \&}]{H}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}\label{classmlpack_1_1amf_1_1NMFMultiplicativeDistanceUpdate_a32469c2f51f5b0859aff74db2fe136ab}
+
+
+The update rule for the encoding matrix H. 
+
+The formula used is
+
+\[ H_{a\mu} \leftarrow H_{a\mu} \frac{(W^T V)_{a\mu}}{(W^T WH)_{a\mu}} \]
+
+The function takes in all the matrices and only changes the value of the H matrix.
+
+
+\begin{DoxyParams}{Parameters}
+{\em V} & Input matrix to be factorized. \\
+\hline
+{\em W} & Basis matrix. \\
+\hline
+{\em H} & Encoding matrix to be updated. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 92 of file nmf\+\_\+mult\+\_\+dist.\+hpp.
+
+\index{mlpack\+::amf\+::\+N\+M\+F\+Multiplicative\+Distance\+Update@{mlpack\+::amf\+::\+N\+M\+F\+Multiplicative\+Distance\+Update}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!mlpack\+::amf\+::\+N\+M\+F\+Multiplicative\+Distance\+Update@{mlpack\+::amf\+::\+N\+M\+F\+Multiplicative\+Distance\+Update}}
+\subsubsection[{Initialize(const Mat\+Type \&, const size\+\_\+t)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type $>$ void mlpack\+::amf\+::\+N\+M\+F\+Multiplicative\+Distance\+Update\+::\+Initialize (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{, }
+\item[{const size\+\_\+t}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1amf_1_1NMFMultiplicativeDistanceUpdate_a2d7b189f18209952d4005442d4e3e14d}
+
+
+Initialize the factorization. 
+
+These update rules hold no information, so the input parameters are ignored. 
+
+Definition at line 50 of file nmf\+\_\+mult\+\_\+dist.\+hpp.
+
+\index{mlpack\+::amf\+::\+N\+M\+F\+Multiplicative\+Distance\+Update@{mlpack\+::amf\+::\+N\+M\+F\+Multiplicative\+Distance\+Update}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::amf\+::\+N\+M\+F\+Multiplicative\+Distance\+Update@{mlpack\+::amf\+::\+N\+M\+F\+Multiplicative\+Distance\+Update}}
+\subsubsection[{Serialize(\+Archive \&, const unsigned int)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Archive $>$ void mlpack\+::amf\+::\+N\+M\+F\+Multiplicative\+Distance\+Update\+::\+Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{, }
+\item[{const unsigned}]{int}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1amf_1_1NMFMultiplicativeDistanceUpdate_ab5740a2e871f98b8dc40ec4b88cf2361}
+
+
+Serialize the object (in this case, there is nothing to serialize). 
+
+
+
+Definition at line 101 of file nmf\+\_\+mult\+\_\+dist.\+hpp.
+
+\index{mlpack\+::amf\+::\+N\+M\+F\+Multiplicative\+Distance\+Update@{mlpack\+::amf\+::\+N\+M\+F\+Multiplicative\+Distance\+Update}!W\+Update@{W\+Update}}
+\index{W\+Update@{W\+Update}!mlpack\+::amf\+::\+N\+M\+F\+Multiplicative\+Distance\+Update@{mlpack\+::amf\+::\+N\+M\+F\+Multiplicative\+Distance\+Update}}
+\subsubsection[{W\+Update(const Mat\+Type \&\+V, arma\+::mat \&\+W, const arma\+::mat \&\+H)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Mat\+Type $>$ static void mlpack\+::amf\+::\+N\+M\+F\+Multiplicative\+Distance\+Update\+::\+W\+Update (
+\begin{DoxyParamCaption}
+\item[{const Mat\+Type \&}]{V, }
+\item[{arma\+::mat \&}]{W, }
+\item[{const arma\+::mat \&}]{H}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}\label{classmlpack_1_1amf_1_1NMFMultiplicativeDistanceUpdate_a51f2ef4143c9cb8e2faed2009f2b5fce}
+
+
+The update rule for the basis matrix W. 
+
+The formula used isa
+
+\[ W_{ia} \leftarrow W_{ia} \frac{(VH^T)_{ia}}{(WHH^T)_{ia}} \]
+
+The function takes in all the matrices and only changes the value of the W matrix.
+
+
+\begin{DoxyParams}{Parameters}
+{\em V} & Input matrix to be factorized. \\
+\hline
+{\em W} & Basis matrix to be updated. \\
+\hline
+{\em H} & Encoding matrix. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 70 of file nmf\+\_\+mult\+\_\+dist.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/amf/update\+\_\+rules/{\bf nmf\+\_\+mult\+\_\+dist.\+hpp}\end{DoxyCompactItemize}

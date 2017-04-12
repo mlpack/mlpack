@@ -1,0 +1,87 @@
+.TH "mlpack::range" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::range \- Range-search routines\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBBiSearchVisitor\fP"
+.br
+.RI "\fI\fBBiSearchVisitor\fP executes a bichromatic range search on the given RSType\&. \fP"
+.ti -1c
+.RI "class \fBDeleteVisitor\fP"
+.br
+.RI "\fI\fBDeleteVisitor\fP deletes the given RSType instance\&. \fP"
+.ti -1c
+.RI "class \fBMonoSearchVisitor\fP"
+.br
+.RI "\fI\fBMonoSearchVisitor\fP executes a monochromatic range search on the given RSType\&. \fP"
+.ti -1c
+.RI "class \fBNaiveVisitor\fP"
+.br
+.RI "\fI\fBNaiveVisitor\fP exposes the Naive() method of the given RSType\&. \fP"
+.ti -1c
+.RI "class \fBRangeSearch\fP"
+.br
+.RI "\fIThe \fBRangeSearch\fP class is a template class for performing range searches\&. \fP"
+.ti -1c
+.RI "class \fBRangeSearchRules\fP"
+.br
+.RI "\fIThe \fBRangeSearchRules\fP class is a template helper class used by \fBRangeSearch\fP class when performing range searches\&. \fP"
+.ti -1c
+.RI "class \fBRangeSearchStat\fP"
+.br
+.RI "\fIStatistic class for \fBRangeSearch\fP, to be set to the StatisticType of the tree type that range search is being performed with\&. \fP"
+.ti -1c
+.RI "class \fBReferenceSetVisitor\fP"
+.br
+.RI "\fI\fBReferenceSetVisitor\fP exposes the referenceSet of the given RSType\&. \fP"
+.ti -1c
+.RI "class \fBRSModel\fP"
+.br
+.ti -1c
+.RI "struct \fBRSModelName\fP"
+.br
+.ti -1c
+.RI "class \fBSerializeVisitor\fP"
+.br
+.RI "\fIExposes the seralize method of the given RSType\&. \fP"
+.ti -1c
+.RI "class \fBSingleModeVisitor\fP"
+.br
+.RI "\fI\fBSingleModeVisitor\fP exposes the SingleMode() method of the given RSType\&. \fP"
+.ti -1c
+.RI "class \fBTrainVisitor\fP"
+.br
+.RI "\fI\fBTrainVisitor\fP sets the reference set to a new reference set on the given RSType\&. \fP"
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "template<template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType> using \fBRSType\fP = \fBRangeSearch\fP< \fBmetric::EuclideanDistance\fP, arma::mat, TreeType >"
+.br
+.RI "\fIAlias template for Range Search\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Range-search routines\&. 
+
+
+.SH "Typedef Documentation"
+.PP 
+.SS "template<template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType> using \fBmlpack::range::RSType\fP = typedef \fBRangeSearch\fP<\fBmetric::EuclideanDistance\fP, arma::mat, TreeType>"
+
+.PP
+Alias template for Range Search\&. 
+.PP
+Definition at line 34 of file rs_model\&.hpp\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

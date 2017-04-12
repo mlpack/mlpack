@@ -1,0 +1,434 @@
+.TH "mlpack::ann" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::ann \- Artificial Neural Network\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBAdd\fP"
+.br
+.RI "\fIImplementation of the \fBAdd\fP module class\&. \fP"
+.ti -1c
+.RI "class \fBAddMerge\fP"
+.br
+.RI "\fIImplementation of the \fBAddMerge\fP module class\&. \fP"
+.ti -1c
+.RI "class \fBAddVisitor\fP"
+.br
+.RI "\fI\fBAddVisitor\fP exposes the Add() method of the given module\&. \fP"
+.ti -1c
+.RI "class \fBBackwardVisitor\fP"
+.br
+.RI "\fI\fBBackwardVisitor\fP executes the Backward() function given the input, error and delta parameter\&. \fP"
+.ti -1c
+.RI "class \fBBaseLayer\fP"
+.br
+.RI "\fIImplementation of the base layer\&. \fP"
+.ti -1c
+.RI "class \fBConcat\fP"
+.br
+.RI "\fIImplementation of the \fBConcat\fP class\&. \fP"
+.ti -1c
+.RI "class \fBConcatPerformance\fP"
+.br
+.RI "\fIImplementation of the concat performance class\&. \fP"
+.ti -1c
+.RI "class \fBConstant\fP"
+.br
+.RI "\fIImplementation of the constant layer\&. \fP"
+.ti -1c
+.RI "class \fBConvolution\fP"
+.br
+.RI "\fIImplementation of the \fBConvolution\fP class\&. \fP"
+.ti -1c
+.RI "class \fBDeleteVisitor\fP"
+.br
+.RI "\fI\fBDeleteVisitor\fP executes the destructor of the instantiated object\&. \fP"
+.ti -1c
+.RI "class \fBDeltaVisitor\fP"
+.br
+.RI "\fI\fBDeltaVisitor\fP exposes the delta parameter of the given module\&. \fP"
+.ti -1c
+.RI "class \fBDeterministicSetVisitor\fP"
+.br
+.RI "\fI\fBDeterministicSetVisitor\fP set the deterministic parameter given the deterministic value\&. \fP"
+.ti -1c
+.RI "class \fBDropConnect\fP"
+.br
+.RI "\fIThe \fBDropConnect\fP layer is a regularizer that randomly with probability ratio sets the connection values to zero and scales the remaining elements by factor 1 /(1 - ratio)\&. \fP"
+.ti -1c
+.RI "class \fBDropout\fP"
+.br
+.RI "\fIThe dropout layer is a regularizer that randomly with probability ratio sets input values to zero and scales the remaining elements by factor 1 / (1 - ratio)\&. \fP"
+.ti -1c
+.RI "class \fBELU\fP"
+.br
+.RI "\fIThe \fBELU\fP activation function, defined by\&. \fP"
+.ti -1c
+.RI "class \fBFFN\fP"
+.br
+.RI "\fIImplementation of a standard feed forward network\&. \fP"
+.ti -1c
+.RI "class \fBFFTConvolution\fP"
+.br
+.RI "\fIComputes the two-dimensional convolution through fft\&. \fP"
+.ti -1c
+.RI "class \fBForwardVisitor\fP"
+.br
+.RI "\fI\fBForwardVisitor\fP executes the Forward() function given the input and output parameter\&. \fP"
+.ti -1c
+.RI "class \fBFullConvolution\fP"
+.br
+.ti -1c
+.RI "class \fBGlimpse\fP"
+.br
+.RI "\fIThe glimpse layer returns a retina-like representation (down-scaled cropped images) of increasing scale around a given location in a given image\&. \fP"
+.ti -1c
+.RI "class \fBGradientSetVisitor\fP"
+.br
+.RI "\fI\fBGradientSetVisitor\fP update the gradient parameter given the gradient set\&. \fP"
+.ti -1c
+.RI "class \fBGradientUpdateVisitor\fP"
+.br
+.RI "\fI\fBGradientUpdateVisitor\fP update the gradient parameter given the gradient set\&. \fP"
+.ti -1c
+.RI "class \fBGradientVisitor\fP"
+.br
+.RI "\fISearchModeVisitor executes the Gradient() method of the given module using the input and delta parameter\&. \fP"
+.ti -1c
+.RI "class \fBGradientZeroVisitor\fP"
+.br
+.ti -1c
+.RI "class \fBHardTanH\fP"
+.br
+.RI "\fIThe Hard Tanh activation function, defined by\&. \fP"
+.ti -1c
+.RI "class \fBIdentityFunction\fP"
+.br
+.RI "\fIThe identity function, defined by\&. \fP"
+.ti -1c
+.RI "class \fBJoin\fP"
+.br
+.RI "\fIImplementation of the \fBJoin\fP module class\&. \fP"
+.ti -1c
+.RI "class \fBKathirvalavakumarSubavathiInitialization\fP"
+.br
+.RI "\fIThis class is used to initialize the weight matrix with the method proposed by T\&. \fP"
+.ti -1c
+.RI "class \fBLayerTraits\fP"
+.br
+.RI "\fIThis is a template class that can provide information about various layers\&. \fP"
+.ti -1c
+.RI "class \fBLeakyReLU\fP"
+.br
+.RI "\fIThe \fBLeakyReLU\fP activation function, defined by\&. \fP"
+.ti -1c
+.RI "class \fBLinear\fP"
+.br
+.RI "\fIImplementation of the \fBLinear\fP layer class\&. \fP"
+.ti -1c
+.RI "class \fBLinearNoBias\fP"
+.br
+.RI "\fIImplementation of the \fBLinearNoBias\fP class\&. \fP"
+.ti -1c
+.RI "class \fBLoadOutputParameterVisitor\fP"
+.br
+.RI "\fI\fBLoadOutputParameterVisitor\fP restores the output parameter using the given parameter set\&. \fP"
+.ti -1c
+.RI "class \fBLogisticFunction\fP"
+.br
+.RI "\fIThe logistic function, defined by\&. \fP"
+.ti -1c
+.RI "class \fBLogSoftMax\fP"
+.br
+.RI "\fIImplementation of the log softmax layer\&. \fP"
+.ti -1c
+.RI "class \fBLookup\fP"
+.br
+.RI "\fIImplementation of the \fBLookup\fP class\&. \fP"
+.ti -1c
+.RI "class \fBLSTM\fP"
+.br
+.RI "\fIAn implementation of a lstm network layer\&. \fP"
+.ti -1c
+.RI "class \fBMaxPooling\fP"
+.br
+.RI "\fIImplementation of the \fBMaxPooling\fP layer\&. \fP"
+.ti -1c
+.RI "class \fBMaxPoolingRule\fP"
+.br
+.ti -1c
+.RI "class \fBMeanPooling\fP"
+.br
+.RI "\fIImplementation of the \fBMeanPooling\fP\&. \fP"
+.ti -1c
+.RI "class \fBMeanPoolingRule\fP"
+.br
+.ti -1c
+.RI "class \fBMeanSquaredError\fP"
+.br
+.RI "\fIThe mean squared error performance function measures the network's performance according to the mean of squared errors\&. \fP"
+.ti -1c
+.RI "class \fBMultiplyConstant\fP"
+.br
+.RI "\fIImplementation of the multiply constant layer\&. \fP"
+.ti -1c
+.RI "class \fBNaiveConvolution\fP"
+.br
+.RI "\fIComputes the two-dimensional convolution\&. \fP"
+.ti -1c
+.RI "class \fBNegativeLogLikelihood\fP"
+.br
+.RI "\fIImplementation of the negative log likelihood layer\&. \fP"
+.ti -1c
+.RI "class \fBNguyenWidrowInitialization\fP"
+.br
+.RI "\fIThis class is used to initialize the weight matrix with the Nguyen-Widrow method\&. \fP"
+.ti -1c
+.RI "class \fBOivsInitialization\fP"
+.br
+.RI "\fIThis class is used to initialize the weight matrix with the oivs method\&. \fP"
+.ti -1c
+.RI "class \fBOrthogonalInitialization\fP"
+.br
+.RI "\fIThis class is used to initialize the weight matrix with the orthogonal matrix initialization\&. \fP"
+.ti -1c
+.RI "class \fBOutputHeightVisitor\fP"
+.br
+.RI "\fI\fBOutputWidthVisitor\fP exposes the OutputHeight() method of the given module\&. \fP"
+.ti -1c
+.RI "class \fBOutputParameterVisitor\fP"
+.br
+.RI "\fI\fBOutputParameterVisitor\fP exposes the output parameter of the given module\&. \fP"
+.ti -1c
+.RI "class \fBOutputWidthVisitor\fP"
+.br
+.RI "\fI\fBOutputWidthVisitor\fP exposes the OutputWidth() method of the given module\&. \fP"
+.ti -1c
+.RI "class \fBParametersSetVisitor\fP"
+.br
+.RI "\fI\fBParametersSetVisitor\fP update the parameters set using the given matrix\&. \fP"
+.ti -1c
+.RI "class \fBParametersVisitor\fP"
+.br
+.RI "\fI\fBParametersVisitor\fP exposes the parameters set of the given module and stores the parameters set into the given matrix\&. \fP"
+.ti -1c
+.RI "class \fBPReLU\fP"
+.br
+.RI "\fIThe \fBPReLU\fP activation function, defined by (where alpha is trainable) \fP"
+.ti -1c
+.RI "class \fBRandomInitialization\fP"
+.br
+.RI "\fIThis class is used to initialize randomly the weight matrix\&. \fP"
+.ti -1c
+.RI "class \fBRectifierFunction\fP"
+.br
+.RI "\fIThe rectifier function, defined by\&. \fP"
+.ti -1c
+.RI "class \fBRecurrent\fP"
+.br
+.RI "\fIImplementation of the RecurrentLayer class\&. \fP"
+.ti -1c
+.RI "class \fBRecurrentAttention\fP"
+.br
+.RI "\fIThis class implements the \fBRecurrent\fP Model for Visual Attention, using a variety of possible layer implementations\&. \fP"
+.ti -1c
+.RI "class \fBReinforceNormal\fP"
+.br
+.RI "\fIImplementation of the reinforce normal layer\&. \fP"
+.ti -1c
+.RI "class \fBResetVisitor\fP"
+.br
+.RI "\fI\fBResetVisitor\fP executes the Reset() function\&. \fP"
+.ti -1c
+.RI "class \fBRewardSetVisitor\fP"
+.br
+.RI "\fI\fBRewardSetVisitor\fP set the reward parameter given the reward value\&. \fP"
+.ti -1c
+.RI "class \fBRNN\fP"
+.br
+.RI "\fIImplementation of a standard recurrent neural network container\&. \fP"
+.ti -1c
+.RI "class \fBSaveOutputParameterVisitor\fP"
+.br
+.RI "\fI\fBSaveOutputParameterVisitor\fP saves the output parameter into the given parameter set\&. \fP"
+.ti -1c
+.RI "class \fBSelect\fP"
+.br
+.RI "\fIThe select module selects the specified column from a given input matrix\&. \fP"
+.ti -1c
+.RI "class \fBSequential\fP"
+.br
+.RI "\fIImplementation of the \fBSequential\fP class\&. \fP"
+.ti -1c
+.RI "class \fBSetInputHeightVisitor\fP"
+.br
+.RI "\fI\fBSetInputHeightVisitor\fP updates the input height parameter with the given input height\&. \fP"
+.ti -1c
+.RI "class \fBSetInputWidthVisitor\fP"
+.br
+.RI "\fI\fBSetInputWidthVisitor\fP updates the input width parameter with the given input width\&. \fP"
+.ti -1c
+.RI "class \fBSoftplusFunction\fP"
+.br
+.RI "\fIThe softplus function, defined by\&. \fP"
+.ti -1c
+.RI "class \fBSoftsignFunction\fP"
+.br
+.RI "\fIThe softsign function, defined by\&. \fP"
+.ti -1c
+.RI "class \fBSVDConvolution\fP"
+.br
+.RI "\fIComputes the two-dimensional convolution using singular value decomposition\&. \fP"
+.ti -1c
+.RI "class \fBTanhFunction\fP"
+.br
+.RI "\fIThe tanh function, defined by\&. \fP"
+.ti -1c
+.RI "class \fBValidConvolution\fP"
+.br
+.ti -1c
+.RI "class \fBVRClassReward\fP"
+.br
+.RI "\fIImplementation of the variance reduced classification reinforcement layer\&. \fP"
+.ti -1c
+.RI "class \fBWeightSetVisitor\fP"
+.br
+.RI "\fI\fBWeightSetVisitor\fP update the module parameters given the parameters set\&. \fP"
+.ti -1c
+.RI "class \fBWeightSizeVisitor\fP"
+.br
+.RI "\fI\fBWeightSizeVisitor\fP returns the number of weights of the given module\&. \fP"
+.ti -1c
+.RI "class \fBZeroInitialization\fP"
+.br
+.RI "\fIThis class is used to initialize randomly the weight matrix\&. \fP"
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "template<class ActivationFunction  = IdentityFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBIdentityLayer\fP = \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "\fIStandard Identity-Layer using the identity activation function\&. \fP"
+.ti -1c
+.RI "using \fBLayerTypes\fP = boost::variant< \fBAdd\fP< arma::mat, arma::mat > *, \fBAddMerge\fP< arma::mat, arma::mat > *, \fBBaseLayer\fP< \fBLogisticFunction\fP, arma::mat, arma::mat > *, \fBBaseLayer\fP< \fBIdentityFunction\fP, arma::mat, arma::mat > *, \fBBaseLayer\fP< \fBTanhFunction\fP, arma::mat, arma::mat > *, \fBBaseLayer\fP< \fBRectifierFunction\fP, arma::mat, arma::mat > *, \fBConcat\fP< arma::mat, arma::mat > *, \fBConcatPerformance\fP< \fBNegativeLogLikelihood\fP< arma::mat, arma::mat >, arma::mat, arma::mat > *, \fBConstant\fP< arma::mat, arma::mat > *, \fBConvolution\fP< \fBNaiveConvolution\fP< \fBValidConvolution\fP >, \fBNaiveConvolution\fP< \fBFullConvolution\fP >, \fBNaiveConvolution\fP< \fBValidConvolution\fP >, arma::mat, arma::mat > *, \fBDropConnect\fP< arma::mat, arma::mat > *, \fBDropout\fP< arma::mat, arma::mat > *, \fBGlimpse\fP< arma::mat, arma::mat > *, \fBHardTanH\fP< arma::mat, arma::mat > *, \fBJoin\fP< arma::mat, arma::mat > *, \fBLeakyReLU\fP< arma::mat, arma::mat > *, \fBLinear\fP< arma::mat, arma::mat > *, \fBLinearNoBias\fP< arma::mat, arma::mat > *, \fBLogSoftMax\fP< arma::mat, arma::mat > *, \fBLookup\fP< arma::mat, arma::mat > *, \fBLSTM\fP< arma::mat, arma::mat > *, \fBMaxPooling\fP< arma::mat, arma::mat > *, \fBMeanPooling\fP< arma::mat, arma::mat > *, \fBMeanSquaredError\fP< arma::mat, arma::mat > *, \fBMultiplyConstant\fP< arma::mat, arma::mat > *, \fBNegativeLogLikelihood\fP< arma::mat, arma::mat > *, \fBPReLU\fP< arma::mat, arma::mat > *, \fBRecurrent\fP< arma::mat, arma::mat > *, \fBRecurrentAttention\fP< arma::mat, arma::mat > *, \fBReinforceNormal\fP< arma::mat, arma::mat > *, \fBSelect\fP< arma::mat, arma::mat > *, \fBSequential\fP< arma::mat, arma::mat > *, \fBVRClassReward\fP< arma::mat, arma::mat > * >"
+.br
+.ti -1c
+.RI "template<class ActivationFunction  = RectifierFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBReLULayer\fP = \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "\fIStandard rectified linear unit non-linearity layer\&. \fP"
+.ti -1c
+.RI "template<class ActivationFunction  = LogisticFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBSigmoidLayer\fP = \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "\fIStandard Sigmoid-Layer using the logistic activation function\&. \fP"
+.ti -1c
+.RI "template<class ActivationFunction  = TanhFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBTanHLayer\fP = \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "\fIStandard hyperbolic tangent layer\&. \fP"
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBHAS_MEM_FUNC\fP (Gradient, HasGradientCheck)"
+.br
+.ti -1c
+.RI "\fBHAS_MEM_FUNC\fP (Deterministic, HasDeterministicCheck)"
+.br
+.ti -1c
+.RI "\fBHAS_MEM_FUNC\fP (Parameters, HasParametersCheck)"
+.br
+.ti -1c
+.RI "\fBHAS_MEM_FUNC\fP (\fBAdd\fP, HasAddCheck)"
+.br
+.ti -1c
+.RI "\fBHAS_MEM_FUNC\fP (Model, HasModelCheck)"
+.br
+.ti -1c
+.RI "\fBHAS_MEM_FUNC\fP (Location, HasLocationCheck)"
+.br
+.ti -1c
+.RI "\fBHAS_MEM_FUNC\fP (Reset, HasResetCheck)"
+.br
+.ti -1c
+.RI "\fBHAS_MEM_FUNC\fP (Reward, HasRewardCheck)"
+.br
+.ti -1c
+.RI "\fBHAS_MEM_FUNC\fP (InputWidth, HasInputWidth)"
+.br
+.ti -1c
+.RI "\fBHAS_MEM_FUNC\fP (InputHeight, HasInputHeight)"
+.br
+.ti -1c
+.RI "\fBHAS_MEM_FUNC\fP (InputHeight, HasRho)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Artificial Neural Network\&. 
+
+
+.SH "Typedef Documentation"
+.PP 
+.SS "template<class ActivationFunction  = IdentityFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBmlpack::ann::IdentityLayer\fP = typedef \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType>"
+
+.PP
+Standard Identity-Layer using the identity activation function\&. 
+.PP
+Definition at line 147 of file base_layer\&.hpp\&.
+.SS "using \fBmlpack::ann::LayerTypes\fP = typedef boost::variant< \fBAdd\fP<arma::mat, arma::mat>*, \fBAddMerge\fP<arma::mat, arma::mat>*, \fBBaseLayer\fP<\fBLogisticFunction\fP, arma::mat, arma::mat>*, \fBBaseLayer\fP<\fBIdentityFunction\fP, arma::mat, arma::mat>*, \fBBaseLayer\fP<\fBTanhFunction\fP, arma::mat, arma::mat>*, \fBBaseLayer\fP<\fBRectifierFunction\fP, arma::mat, arma::mat>*, \fBConcat\fP<arma::mat, arma::mat>*, \fBConcatPerformance\fP<\fBNegativeLogLikelihood\fP<arma::mat, arma::mat>, arma::mat, arma::mat>*, \fBConstant\fP<arma::mat, arma::mat>*, \fBConvolution\fP<\fBNaiveConvolution\fP<\fBValidConvolution\fP>, \fBNaiveConvolution\fP<\fBFullConvolution\fP>, \fBNaiveConvolution\fP<\fBValidConvolution\fP>, arma::mat, arma::mat>*, \fBDropConnect\fP<arma::mat, arma::mat>*, \fBDropout\fP<arma::mat, arma::mat>*, \fBGlimpse\fP<arma::mat, arma::mat>*, \fBHardTanH\fP<arma::mat, arma::mat>*, \fBJoin\fP<arma::mat, arma::mat>*, \fBLeakyReLU\fP<arma::mat, arma::mat>*, \fBLinear\fP<arma::mat, arma::mat>*, \fBLinearNoBias\fP<arma::mat, arma::mat>*, \fBLogSoftMax\fP<arma::mat, arma::mat>*, \fBLookup\fP<arma::mat, arma::mat>*, \fBLSTM\fP<arma::mat, arma::mat>*, \fBMaxPooling\fP<arma::mat, arma::mat>*, \fBMeanPooling\fP<arma::mat, arma::mat>*, \fBMeanSquaredError\fP<arma::mat, arma::mat>*, \fBMultiplyConstant\fP<arma::mat, arma::mat>*, \fBNegativeLogLikelihood\fP<arma::mat, arma::mat>*, \fBPReLU\fP<arma::mat, arma::mat>*, \fBRecurrent\fP<arma::mat, arma::mat>*, \fBRecurrentAttention\fP<arma::mat, arma::mat>*, \fBReinforceNormal\fP<arma::mat, arma::mat>*, \fBSelect\fP<arma::mat, arma::mat>*, \fBSequential\fP<arma::mat, arma::mat>*, \fBVRClassReward\fP<arma::mat, arma::mat>* >"
+
+.PP
+Definition at line 115 of file layer_types\&.hpp\&.
+.SS "template<class ActivationFunction  = RectifierFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBmlpack::ann::ReLULayer\fP = typedef \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType>"
+
+.PP
+Standard rectified linear unit non-linearity layer\&. 
+.PP
+Definition at line 158 of file base_layer\&.hpp\&.
+.SS "template<class ActivationFunction  = LogisticFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBmlpack::ann::SigmoidLayer\fP = typedef \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType>"
+
+.PP
+Standard Sigmoid-Layer using the logistic activation function\&. 
+.PP
+Definition at line 136 of file base_layer\&.hpp\&.
+.SS "template<class ActivationFunction  = TanhFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBmlpack::ann::TanHLayer\fP = typedef \fBBaseLayer\fP< ActivationFunction, InputDataType, OutputDataType>"
+
+.PP
+Standard hyperbolic tangent layer\&. 
+.PP
+Definition at line 169 of file base_layer\&.hpp\&.
+.SH "Function Documentation"
+.PP 
+.SS "mlpack::ann::HAS_MEM_FUNC (Gradient, HasGradientCheck)"
+
+.SS "mlpack::ann::HAS_MEM_FUNC (Deterministic, HasDeterministicCheck)"
+
+.SS "mlpack::ann::HAS_MEM_FUNC (Parameters, HasParametersCheck)"
+
+.SS "mlpack::ann::HAS_MEM_FUNC (\fBAdd\fP, HasAddCheck)"
+
+.SS "mlpack::ann::HAS_MEM_FUNC (Model, HasModelCheck)"
+
+.SS "mlpack::ann::HAS_MEM_FUNC (Location, HasLocationCheck)"
+
+.SS "mlpack::ann::HAS_MEM_FUNC (Reset, HasResetCheck)"
+
+.SS "mlpack::ann::HAS_MEM_FUNC (Reward, HasRewardCheck)"
+
+.SS "mlpack::ann::HAS_MEM_FUNC (InputWidth, HasInputWidth)"
+
+.SS "mlpack::ann::HAS_MEM_FUNC (InputHeight, HasInputHeight)"
+
+.SS "mlpack::ann::HAS_MEM_FUNC (InputHeight, HasRho)"
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

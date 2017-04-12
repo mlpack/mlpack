@@ -1,0 +1,103 @@
+\section{mlpack\+:\+:optimization\+:\+:test\+:\+:G\+D\+Test\+Function Class Reference}
+\label{classmlpack_1_1optimization_1_1test_1_1GDTestFunction}\index{mlpack\+::optimization\+::test\+::\+G\+D\+Test\+Function@{mlpack\+::optimization\+::test\+::\+G\+D\+Test\+Function}}
+
+
+Very, very simple test function which is the composite of three other functions.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf G\+D\+Test\+Function} ()
+\begin{DoxyCompactList}\small\item\em Nothing to do for the constructor. \end{DoxyCompactList}\item 
+double {\bf Evaluate} (const arma\+::mat \&coordinates) const 
+\begin{DoxyCompactList}\small\item\em Evaluate a function. \end{DoxyCompactList}\item 
+arma\+::mat {\bf Get\+Initial\+Point} () const 
+\begin{DoxyCompactList}\small\item\em Get the starting point. \end{DoxyCompactList}\item 
+void {\bf Gradient} (const arma\+::mat \&coordinates, arma\+::mat \&gradient) const 
+\begin{DoxyCompactList}\small\item\em Evaluate the gradient of a function. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Very, very simple test function which is the composite of three other functions. 
+
+The gradient is not very steep far away from the optimum, so a larger step size may be required to optimize it in a reasonable number of iterations. 
+
+Definition at line 25 of file test\+\_\+function.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::optimization\+::test\+::\+G\+D\+Test\+Function@{mlpack\+::optimization\+::test\+::\+G\+D\+Test\+Function}!G\+D\+Test\+Function@{G\+D\+Test\+Function}}
+\index{G\+D\+Test\+Function@{G\+D\+Test\+Function}!mlpack\+::optimization\+::test\+::\+G\+D\+Test\+Function@{mlpack\+::optimization\+::test\+::\+G\+D\+Test\+Function}}
+\subsubsection[{G\+D\+Test\+Function()}]{\setlength{\rightskip}{0pt plus 5cm}mlpack\+::optimization\+::test\+::\+G\+D\+Test\+Function\+::\+G\+D\+Test\+Function (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1optimization_1_1test_1_1GDTestFunction_a2b2cfa54b72e865d197c821823bb6f0a}
+
+
+Nothing to do for the constructor. 
+
+
+
+Definition at line 29 of file test\+\_\+function.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::optimization\+::test\+::\+G\+D\+Test\+Function@{mlpack\+::optimization\+::test\+::\+G\+D\+Test\+Function}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!mlpack\+::optimization\+::test\+::\+G\+D\+Test\+Function@{mlpack\+::optimization\+::test\+::\+G\+D\+Test\+Function}}
+\subsubsection[{Evaluate(const arma\+::mat \&coordinates) const }]{\setlength{\rightskip}{0pt plus 5cm}double mlpack\+::optimization\+::test\+::\+G\+D\+Test\+Function\+::\+Evaluate (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{coordinates}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1optimization_1_1test_1_1GDTestFunction_a20389f791fe2edbcad1319b265aae013}
+
+
+Evaluate a function. 
+
+
+
+Referenced by Get\+Initial\+Point().
+
+\index{mlpack\+::optimization\+::test\+::\+G\+D\+Test\+Function@{mlpack\+::optimization\+::test\+::\+G\+D\+Test\+Function}!Get\+Initial\+Point@{Get\+Initial\+Point}}
+\index{Get\+Initial\+Point@{Get\+Initial\+Point}!mlpack\+::optimization\+::test\+::\+G\+D\+Test\+Function@{mlpack\+::optimization\+::test\+::\+G\+D\+Test\+Function}}
+\subsubsection[{Get\+Initial\+Point() const }]{\setlength{\rightskip}{0pt plus 5cm}arma\+::mat mlpack\+::optimization\+::test\+::\+G\+D\+Test\+Function\+::\+Get\+Initial\+Point (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1optimization_1_1test_1_1GDTestFunction_a62b5ec1dc6b97aed6820a9272b4de70b}
+
+
+Get the starting point. 
+
+
+
+Definition at line 32 of file test\+\_\+function.\+hpp.
+
+
+
+References Evaluate(), and Gradient().
+
+\index{mlpack\+::optimization\+::test\+::\+G\+D\+Test\+Function@{mlpack\+::optimization\+::test\+::\+G\+D\+Test\+Function}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!mlpack\+::optimization\+::test\+::\+G\+D\+Test\+Function@{mlpack\+::optimization\+::test\+::\+G\+D\+Test\+Function}}
+\subsubsection[{Gradient(const arma\+::mat \&coordinates, arma\+::mat \&gradient) const }]{\setlength{\rightskip}{0pt plus 5cm}void mlpack\+::optimization\+::test\+::\+G\+D\+Test\+Function\+::\+Gradient (
+\begin{DoxyParamCaption}
+\item[{const arma\+::mat \&}]{coordinates, }
+\item[{arma\+::mat \&}]{gradient}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1optimization_1_1test_1_1GDTestFunction_ae258c9cd113a03148eff31cbe8999896}
+
+
+Evaluate the gradient of a function. 
+
+
+
+Referenced by Get\+Initial\+Point().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/optimizers/gradient\+\_\+descent/{\bf test\+\_\+function.\+hpp}\end{DoxyCompactItemize}

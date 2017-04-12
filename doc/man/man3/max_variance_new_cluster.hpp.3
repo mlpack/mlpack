@@ -1,0 +1,45 @@
+.TH "src/mlpack/methods/kmeans/max_variance_new_cluster.hpp" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+src/mlpack/methods/kmeans/max_variance_new_cluster.hpp \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBmlpack::kmeans::MaxVarianceNewCluster\fP"
+.br
+.RI "\fIWhen an empty cluster is detected, this class takes the point furthest from the centroid of the cluster with maximum variance as a new cluster\&. \fP"
+.in -1c
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "\fILinear algebra utility functions, generally performed on matrices or vectors\&. \fP"
+.ti -1c
+.RI " \fBmlpack::kmeans\fP"
+.br
+.RI "\fIK-Means clustering\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Ryan Curtin
+.RE
+.PP
+An implementation of the EmptyClusterPolicy policy class for K-Means\&. When an empty cluster is detected, the point furthest from the centroid of the cluster with maximum variance is taken to be a new cluster\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBmax_variance_new_cluster\&.hpp\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,114 @@
+\section{src/mlpack/core/data/serialization\+\_\+shim.hpp File Reference}
+\label{serialization__shim_8hpp}\index{src/mlpack/core/data/serialization\+\_\+shim.\+hpp@{src/mlpack/core/data/serialization\+\_\+shim.\+hpp}}
+Include dependency graph for serialization\+\_\+shim.\+hpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{serialization__shim_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{serialization__shim_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct {\bf mlpack\+::data\+::\+First\+Array\+Shim$<$ T $>$}
+\begin{DoxyCompactList}\small\item\em A first shim for arrays. \end{DoxyCompactList}\item 
+struct {\bf mlpack\+::data\+::\+First\+Array\+Shim$<$ T $>$}
+\begin{DoxyCompactList}\small\item\em A first shim for arrays. \end{DoxyCompactList}\item 
+struct {\bf mlpack\+::data\+::\+First\+Normal\+Array\+Shim$<$ T $>$}
+\begin{DoxyCompactList}\small\item\em A first shim for arrays without a Serialize() method. \end{DoxyCompactList}\item 
+struct {\bf mlpack\+::data\+::\+First\+Normal\+Array\+Shim$<$ T $>$}
+\begin{DoxyCompactList}\small\item\em A first shim for arrays without a Serialize() method. \end{DoxyCompactList}\item 
+struct {\bf mlpack\+::data\+::\+First\+Shim$<$ T $>$}
+\begin{DoxyCompactList}\small\item\em The first shim\+: simply holds the object and its name. \end{DoxyCompactList}\item 
+struct {\bf mlpack\+::data\+::\+First\+Shim$<$ T $>$}
+\begin{DoxyCompactList}\small\item\em The first shim\+: simply holds the object and its name. \end{DoxyCompactList}\item 
+struct {\bf mlpack\+::data\+::\+Has\+Serialize$<$ T $>$}
+\item 
+struct {\bf mlpack\+::data\+::\+Has\+Serialize$<$ T $>$\+::check$<$ U, V, W $>$}
+\item 
+struct {\bf mlpack\+::data\+::\+Has\+Serialize\+Function$<$ T $>$}
+\item 
+struct {\bf mlpack\+::data\+::\+Pointer\+Shim$<$ T $>$}
+\begin{DoxyCompactList}\small\item\em A shim for pointers. \end{DoxyCompactList}\item 
+struct {\bf mlpack\+::data\+::\+Pointer\+Shim$<$ T $>$}
+\begin{DoxyCompactList}\small\item\em A shim for pointers. \end{DoxyCompactList}\item 
+struct {\bf mlpack\+::data\+::\+Second\+Array\+Shim$<$ T $>$}
+\begin{DoxyCompactList}\small\item\em A shim for objects in an array; this is basically like the \doxyref{Second\+Shim}{p.}{structmlpack_1_1data_1_1SecondShim}, but for arrays that hold objects that have Serialize() methods instead of \doxyref{serialize()}{p.}{structmlpack_1_1data_1_1SecondArrayShim_a9b7f34ee88e73a99ced7ca803c6c010d} methods. \end{DoxyCompactList}\item 
+struct {\bf mlpack\+::data\+::\+Second\+Array\+Shim$<$ T $>$}
+\begin{DoxyCompactList}\small\item\em A shim for objects in an array; this is basically like the \doxyref{Second\+Shim}{p.}{structmlpack_1_1data_1_1SecondShim}, but for arrays that hold objects that have Serialize() methods instead of \doxyref{serialize()}{p.}{structmlpack_1_1data_1_1SecondArrayShim_a9b7f34ee88e73a99ced7ca803c6c010d} methods. \end{DoxyCompactList}\item 
+struct {\bf mlpack\+::data\+::\+Second\+Normal\+Array\+Shim$<$ T $>$}
+\begin{DoxyCompactList}\small\item\em A shim for objects in an array which do not have a Serialize() function. \end{DoxyCompactList}\item 
+struct {\bf mlpack\+::data\+::\+Second\+Normal\+Array\+Shim$<$ T $>$}
+\begin{DoxyCompactList}\small\item\em A shim for objects in an array which do not have a Serialize() function. \end{DoxyCompactList}\item 
+struct {\bf mlpack\+::data\+::\+Second\+Shim$<$ T $>$}
+\begin{DoxyCompactList}\small\item\em The second shim\+: wrap the call to Serialize() inside of a \doxyref{serialize()}{p.}{structmlpack_1_1data_1_1SecondShim_af876ca6368e66bbfebbfa8ca25ad3b45} function, so that an archive type can call \doxyref{serialize()}{p.}{structmlpack_1_1data_1_1SecondShim_af876ca6368e66bbfebbfa8ca25ad3b45} on a \doxyref{Second\+Shim}{p.}{structmlpack_1_1data_1_1SecondShim} object and this gets forwarded correctly to our object\textquotesingle{}s Serialize() function. \end{DoxyCompactList}\item 
+struct {\bf mlpack\+::data\+::\+Second\+Shim$<$ T $>$}
+\begin{DoxyCompactList}\small\item\em The second shim\+: wrap the call to Serialize() inside of a \doxyref{serialize()}{p.}{structmlpack_1_1data_1_1SecondShim_af876ca6368e66bbfebbfa8ca25ad3b45} function, so that an archive type can call \doxyref{serialize()}{p.}{structmlpack_1_1data_1_1SecondShim_af876ca6368e66bbfebbfa8ca25ad3b45} on a \doxyref{Second\+Shim}{p.}{structmlpack_1_1data_1_1SecondShim} object and this gets forwarded correctly to our object\textquotesingle{}s Serialize() function. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ {\bf boost}
+\item 
+ {\bf boost\+::serialization}
+\item 
+ {\bf mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ {\bf mlpack\+::data}
+\begin{DoxyCompactList}\small\item\em Functions to load and save matrices and models. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename T $>$ }\\First\+Array\+Shim$<$ T $>$ {\bf mlpack\+::data\+::\+Create\+Array\+N\+VP} (T $\ast$t, const size\+\_\+t len, const {\bf std\+::string} \&name, typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ Has\+Serialize$<$ T $>$\+::value $>$ $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Call this function to produce a name-\/value pair for an array; this is similar to boost\+::serialization\+::make\+\_\+array(), but provides a nicer wrapper, allows types that have a Serialize() function, and allows you to give a name to your array. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\First\+Normal\+Array\+Shim$<$ T $>$ {\bf mlpack\+::data\+::\+Create\+Array\+N\+VP} (T $\ast$t, const size\+\_\+t len, const {\bf std\+::string} \&name, typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$!Has\+Serialize$<$ T $>$\+::value $>$ $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Call this function to produce a name-\/value pair for an array; this is similar to boost\+::serialization\+::make\+\_\+array(), but provides a nicer wrapper, allows types that have a Serialize() function, and allows you to give a name to your array. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\First\+Shim$<$ T $>$ {\bf mlpack\+::data\+::\+Create\+N\+VP} (T \&t, const {\bf std\+::string} \&name, typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ Has\+Serialize$<$ T $>$\+::value $>$ $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Call this function to produce a name-\/value pair; this is similar to B\+O\+O\+S\+T\+\_\+\+S\+E\+R\+I\+A\+L\+I\+Z\+A\+T\+I\+O\+N\+\_\+\+N\+V\+P(), but should be used for types that have a Serialize() function (or contain a type that has a Serialize() function) instead of a \doxyref{serialize()}{p.}{namespaceboost_1_1serialization_a5c7f0e288c18c6887ba037b2bef6230d} function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\const boost\+::serialization\+::nvp$<$ T $>$ {\bf mlpack\+::data\+::\+Create\+N\+VP} (T \&t, const {\bf std\+::string} \&name, typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$!Has\+Serialize$<$ T $>$\+::value $>$ $\ast$=0, typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$!std\+::is\+\_\+pointer$<$ T $>$\+::value $>$ $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Call this function to produce a name-\/value pair; this is similar to B\+O\+O\+S\+T\+\_\+\+S\+E\+R\+I\+A\+L\+I\+Z\+A\+T\+I\+O\+N\+\_\+\+N\+V\+P(), but should be used for types that have a Serialize() function (or contain a type that has a Serialize() function) instead of a \doxyref{serialize()}{p.}{namespaceboost_1_1serialization_a5c7f0e288c18c6887ba037b2bef6230d} function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\const boost\+::serialization\+::nvp$<$ Pointer\+Shim$<$ T $>$ $\ast$ $>$ {\bf mlpack\+::data\+::\+Create\+N\+VP} (T $\ast$\&t, const {\bf std\+::string} \&name, typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ Has\+Serialize$<$ T $>$\+::value $>$ $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Call this function to produce a name-\/value pair; this is similar to B\+O\+O\+S\+T\+\_\+\+S\+E\+R\+I\+A\+L\+I\+Z\+A\+T\+I\+O\+N\+\_\+\+N\+V\+P(), but should be used for types that have a Serialize() function (or contain a type that has a Serialize() function) instead of a \doxyref{serialize()}{p.}{namespaceboost_1_1serialization_a5c7f0e288c18c6887ba037b2bef6230d} function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\const boost\+::serialization\+::nvp$<$ T $\ast$ $>$ {\bf mlpack\+::data\+::\+Create\+N\+VP} (T $\ast$\&t, const {\bf std\+::string} \&name, typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$!Has\+Serialize$<$ T $>$\+::value $>$ $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Call this function to produce a name-\/value pair; this is similar to B\+O\+O\+S\+T\+\_\+\+S\+E\+R\+I\+A\+L\+I\+Z\+A\+T\+I\+O\+N\+\_\+\+N\+V\+P(), but should be used for types that have a Serialize() function (or contain a type that has a Serialize() function) instead of a \doxyref{serialize()}{p.}{namespaceboost_1_1serialization_a5c7f0e288c18c6887ba037b2bef6230d} function. \end{DoxyCompactList}\item 
+{\bf mlpack\+::data\+::\+H\+A\+S\+\_\+\+M\+E\+M\+\_\+\+F\+U\+NC} (Serialize, Has\+Serialize\+Check)
+\item 
+{\footnotesize template$<$typename Archive , typename T $>$ }\\Archive \& {\bf mlpack\+::data\+::operator\&} (Archive \&ar, First\+Shim$<$ T $>$ t)
+\begin{DoxyCompactList}\small\item\em Catch when we call operator\& with a \doxyref{First\+Shim}{p.}{structmlpack_1_1data_1_1FirstShim} object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive , typename T $>$ }\\Archive \& {\bf mlpack\+::data\+::operator\&} (Archive \&ar, First\+Array\+Shim$<$ T $>$ t)
+\begin{DoxyCompactList}\small\item\em Catch when we call operator\& with a \doxyref{First\+Array\+Shim}{p.}{structmlpack_1_1data_1_1FirstArrayShim} object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive , typename T $>$ }\\Archive \& {\bf mlpack\+::data\+::operator\&} (Archive \&ar, First\+Normal\+Array\+Shim$<$ T $>$ t)
+\begin{DoxyCompactList}\small\item\em Catch when we call operator\& with a \doxyref{First\+Normal\+Array\+Shim}{p.}{structmlpack_1_1data_1_1FirstNormalArrayShim} object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive , typename T $>$ }\\Archive \& {\bf mlpack\+::data\+::operator$<$$<$} (Archive \&ar, First\+Shim$<$ T $>$ t)
+\begin{DoxyCompactList}\small\item\em Catch when we call operator$<$$<$ with a \doxyref{First\+Shim}{p.}{structmlpack_1_1data_1_1FirstShim} object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive , typename T $>$ }\\Archive \& {\bf mlpack\+::data\+::operator$<$$<$} (Archive \&ar, First\+Array\+Shim$<$ T $>$ t)
+\begin{DoxyCompactList}\small\item\em Catch when we call operator$<$$<$ with a \doxyref{First\+Array\+Shim}{p.}{structmlpack_1_1data_1_1FirstArrayShim} object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive , typename T $>$ }\\Archive \& {\bf mlpack\+::data\+::operator$<$$<$} (Archive \&ar, First\+Normal\+Array\+Shim$<$ T $>$ t)
+\begin{DoxyCompactList}\small\item\em Catch when we call operator$<$$<$ with a \doxyref{First\+Normal\+Array\+Shim}{p.}{structmlpack_1_1data_1_1FirstNormalArrayShim} object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive , typename T $>$ }\\Archive \& {\bf mlpack\+::data\+::operator$>$$>$} (Archive \&ar, First\+Shim$<$ T $>$ t)
+\begin{DoxyCompactList}\small\item\em Catch when we call operator$>$$>$ with a \doxyref{First\+Shim}{p.}{structmlpack_1_1data_1_1FirstShim} object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive , typename T $>$ }\\Archive \& {\bf mlpack\+::data\+::operator$>$$>$} (Archive \&ar, First\+Array\+Shim$<$ T $>$ t)
+\begin{DoxyCompactList}\small\item\em Catch when we call operator$>$$>$ with a \doxyref{First\+Array\+Shim}{p.}{structmlpack_1_1data_1_1FirstArrayShim} object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive , typename T $>$ }\\Archive \& {\bf mlpack\+::data\+::operator$>$$>$} (Archive \&ar, First\+Normal\+Array\+Shim$<$ T $>$ t)
+\begin{DoxyCompactList}\small\item\em Catch when we call operator$>$$>$ with a \doxyref{First\+Normal\+Array\+Shim}{p.}{structmlpack_1_1data_1_1FirstNormalArrayShim} object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive , typename T $>$ }\\void {\bf boost\+::serialization\+::serialize} (Archive \&ar, {\bf mlpack\+::data\+::\+Pointer\+Shim}$<$ T $>$ \&t, const {\bf B\+O\+O\+S\+T\+\_\+\+P\+F\+TO} unsigned int version)
+\begin{DoxyCompactList}\small\item\em Catch a call to \doxyref{serialize()}{p.}{namespaceboost_1_1serialization_a5c7f0e288c18c6887ba037b2bef6230d} with a Pointer\+Shim, and call the Serialize() function directly. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Ryan Curtin
+\end{DoxyAuthor}
+This file contains the necessary shims to make \doxyref{boost\+::serialization}{p.}{namespaceboost_1_1serialization} work with classes that have a Serialize() method (instead of a \doxyref{serialize()}{p.}{namespaceboost_1_1serialization_a5c7f0e288c18c6887ba037b2bef6230d} method).
+
+This allows our mlpack naming conventions to remain intact, and only costs a small amount of ridiculous template metaprogramming.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause B\+SD license. You should have received a copy of the 3-\/clause B\+SD license along with mlpack. If not, see {\tt http\+://www.\+opensource.\+org/licenses/\+B\+S\+D-\/3-\/\+Clause} for more information. 

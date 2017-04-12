@@ -1,0 +1,336 @@
+.TH "mlpack::util::PrefixedOutStream" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::util::PrefixedOutStream \- Allows us to output to an ostream with a prefix at the beginning of each line, in the same way we would output to cout or cerr\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBPrefixedOutStream\fP (std::ostream &\fBdestination\fP, const char *\fBprefix\fP, bool \fBignoreInput\fP=false, bool \fBfatal\fP=false)"
+.br
+.RI "\fISet up the \fBPrefixedOutStream\fP\&. \fP"
+.ti -1c
+.RI "\fBPrefixedOutStream\fP & \fBoperator<<\fP (bool val)"
+.br
+.RI "\fIWrite a bool to the stream\&. \fP"
+.ti -1c
+.RI "\fBPrefixedOutStream\fP & \fBoperator<<\fP (short val)"
+.br
+.RI "\fIWrite a short to the stream\&. \fP"
+.ti -1c
+.RI "\fBPrefixedOutStream\fP & \fBoperator<<\fP (unsigned short val)"
+.br
+.RI "\fIWrite an unsigned short to the stream\&. \fP"
+.ti -1c
+.RI "\fBPrefixedOutStream\fP & \fBoperator<<\fP (int val)"
+.br
+.RI "\fIWrite an int to the stream\&. \fP"
+.ti -1c
+.RI "\fBPrefixedOutStream\fP & \fBoperator<<\fP (unsigned int val)"
+.br
+.RI "\fIWrite an unsigned int to the stream\&. \fP"
+.ti -1c
+.RI "\fBPrefixedOutStream\fP & \fBoperator<<\fP (long val)"
+.br
+.RI "\fIWrite a long to the stream\&. \fP"
+.ti -1c
+.RI "\fBPrefixedOutStream\fP & \fBoperator<<\fP (unsigned long val)"
+.br
+.RI "\fIWrite an unsigned long to the stream\&. \fP"
+.ti -1c
+.RI "\fBPrefixedOutStream\fP & \fBoperator<<\fP (float val)"
+.br
+.RI "\fIWrite a float to the stream\&. \fP"
+.ti -1c
+.RI "\fBPrefixedOutStream\fP & \fBoperator<<\fP (double val)"
+.br
+.RI "\fIWrite a double to the stream\&. \fP"
+.ti -1c
+.RI "\fBPrefixedOutStream\fP & \fBoperator<<\fP (long double val)"
+.br
+.RI "\fIWrite a long double to the stream\&. \fP"
+.ti -1c
+.RI "\fBPrefixedOutStream\fP & \fBoperator<<\fP (void *val)"
+.br
+.RI "\fIWrite a void pointer to the stream\&. \fP"
+.ti -1c
+.RI "\fBPrefixedOutStream\fP & \fBoperator<<\fP (const char *str)"
+.br
+.RI "\fIWrite a character array to the stream\&. \fP"
+.ti -1c
+.RI "\fBPrefixedOutStream\fP & \fBoperator<<\fP (\fBstd::string\fP &str)"
+.br
+.RI "\fIWrite a string to the stream\&. \fP"
+.ti -1c
+.RI "\fBPrefixedOutStream\fP & \fBoperator<<\fP (std::streambuf *sb)"
+.br
+.RI "\fIWrite a streambuf to the stream\&. \fP"
+.ti -1c
+.RI "\fBPrefixedOutStream\fP & \fBoperator<<\fP (std::ostream &(*pf)(std::ostream &))"
+.br
+.RI "\fIWrite an ostream manipulator function to the stream\&. \fP"
+.ti -1c
+.RI "\fBPrefixedOutStream\fP & \fBoperator<<\fP (std::ios &(*pf)(std::ios &))"
+.br
+.RI "\fIWrite an ios manipulator function to the stream\&. \fP"
+.ti -1c
+.RI "\fBPrefixedOutStream\fP & \fBoperator<<\fP (std::ios_base &(*pf)(std::ios_base &))"
+.br
+.RI "\fIWrite an ios_base manipulator function to the stream\&. \fP"
+.ti -1c
+.RI "template<typename T > \fBPrefixedOutStream\fP & \fBoperator<<\fP (const T &s)"
+.br
+.RI "\fIWrite anything else to the stream\&. \fP"
+.in -1c
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "std::ostream & \fBdestination\fP"
+.br
+.RI "\fIThe output stream that all data is to be sent to; example: std::cout\&. \fP"
+.ti -1c
+.RI "bool \fBignoreInput\fP"
+.br
+.RI "\fIDiscards input, prints nothing if true\&. \fP"
+.in -1c
+.SS "Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename T > std::enable_if<!arma::is_arma_type< T >::value >::type \fBBaseLogic\fP (const T &val)"
+.br
+.RI "\fIConducts the base logic required in all the operator << overloads\&. \fP"
+.ti -1c
+.RI "template<typename T > std::enable_if< arma::is_arma_type< T >::value >::type \fBBaseLogic\fP (const T &val)"
+.br
+.RI "\fIConducts the base logic required in all the operator << overloads\&. \fP"
+.ti -1c
+.RI "void \fBPrefixIfNeeded\fP ()"
+.br
+.RI "\fIOutput the prefix, but only if we need to and if we are allowed to\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "bool \fBcarriageReturned\fP"
+.br
+.RI "\fIIf true, the previous call to operator<< encountered a CR, and a prefix will be necessary\&. \fP"
+.ti -1c
+.RI "bool \fBfatal\fP"
+.br
+.RI "\fIIf true, a std::runtime_error exception will be thrown when a CR is encountered\&. \fP"
+.ti -1c
+.RI "\fBstd::string\fP \fBprefix\fP"
+.br
+.RI "\fIContains the prefix we must prepend to each line\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Allows us to output to an ostream with a prefix at the beginning of each line, in the same way we would output to cout or cerr\&. 
+
+The prefix is specified in the constructor (as well as the destination ostream)\&. A newline must be passed to the stream, and then the prefix will be prepended to the next line\&. For example,
+.PP
+.PP
+.nf
+PrefixedOutStream outstr(std::cout, "[TEST] ");
+outstr << "Hello world I like " << 7\&.5;
+outstr << "\&.\&.\&.Continue" << std::endl;
+outstr << "After the CR\n" << std::endl;
+.fi
+.PP
+.PP
+would give, on std::cout,
+.PP
+.PP
+.nf
+[TEST] Hello world I like 7\&.5\&.\&.\&.Continue
+[TEST] After the CR
+[TEST]
+.fi
+.PP
+.PP
+These objects are used for the \fBmlpack::Log\fP levels (DEBUG, INFO, WARN, and FATAL)\&. 
+.PP
+Definition at line 46 of file prefixedoutstream\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::util::PrefixedOutStream::PrefixedOutStream (std::ostream & destination, const char * prefix, bool ignoreInput = \fCfalse\fP, bool fatal = \fCfalse\fP)\fC [inline]\fP"
+
+.PP
+Set up the \fBPrefixedOutStream\fP\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdestination\fP ostream which receives output from this object\&. 
+.br
+\fIprefix\fP The prefix to prepend to each line\&. 
+.br
+\fIignoreInput\fP If true, the stream will not be printed\&. 
+.br
+\fIfatal\fP If true, a std::runtime_error exception is thrown after printing a newline\&. 
+.RE
+.PP
+
+.PP
+Definition at line 58 of file prefixedoutstream\&.hpp\&.
+.PP
+References operator<<(), and string()\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename T > std::enable_if<!arma::is_arma_type<T>::value>::type mlpack::util::PrefixedOutStream::BaseLogic (const T & val)\fC [private]\fP"
+
+.PP
+Conducts the base logic required in all the operator << overloads\&. Mostly just a good idea to reduce copy-pasta\&.
+.PP
+This overload is for non-Armadillo objects, which need special handling during printing\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIT\fP The type of the data to output\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIval\fP The The data to be output\&. 
+.RE
+.PP
+
+.SS "template<typename T > std::enable_if<arma::is_arma_type<T>::value>::type mlpack::util::PrefixedOutStream::BaseLogic (const T & val)\fC [private]\fP"
+
+.PP
+Conducts the base logic required in all the operator << overloads\&. Mostly just a good idea to reduce copy-pasta\&.
+.PP
+This overload is for Armadillo objects, which need special handling during printing\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIT\fP The type of the data to output\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIval\fP The The data to be output\&. 
+.RE
+.PP
+
+.SS "\fBPrefixedOutStream\fP& mlpack::util::PrefixedOutStream::operator<< (bool val)"
+
+.PP
+Write a bool to the stream\&. 
+.PP
+Referenced by PrefixedOutStream()\&.
+.SS "\fBPrefixedOutStream\fP& mlpack::util::PrefixedOutStream::operator<< (short val)"
+
+.PP
+Write a short to the stream\&. 
+.SS "\fBPrefixedOutStream\fP& mlpack::util::PrefixedOutStream::operator<< (unsigned short val)"
+
+.PP
+Write an unsigned short to the stream\&. 
+.SS "\fBPrefixedOutStream\fP& mlpack::util::PrefixedOutStream::operator<< (int val)"
+
+.PP
+Write an int to the stream\&. 
+.SS "\fBPrefixedOutStream\fP& mlpack::util::PrefixedOutStream::operator<< (unsigned int val)"
+
+.PP
+Write an unsigned int to the stream\&. 
+.SS "\fBPrefixedOutStream\fP& mlpack::util::PrefixedOutStream::operator<< (long val)"
+
+.PP
+Write a long to the stream\&. 
+.SS "\fBPrefixedOutStream\fP& mlpack::util::PrefixedOutStream::operator<< (unsigned long val)"
+
+.PP
+Write an unsigned long to the stream\&. 
+.SS "\fBPrefixedOutStream\fP& mlpack::util::PrefixedOutStream::operator<< (float val)"
+
+.PP
+Write a float to the stream\&. 
+.SS "\fBPrefixedOutStream\fP& mlpack::util::PrefixedOutStream::operator<< (double val)"
+
+.PP
+Write a double to the stream\&. 
+.SS "\fBPrefixedOutStream\fP& mlpack::util::PrefixedOutStream::operator<< (long double val)"
+
+.PP
+Write a long double to the stream\&. 
+.SS "\fBPrefixedOutStream\fP& mlpack::util::PrefixedOutStream::operator<< (void * val)"
+
+.PP
+Write a void pointer to the stream\&. 
+.SS "\fBPrefixedOutStream\fP& mlpack::util::PrefixedOutStream::operator<< (const char * str)"
+
+.PP
+Write a character array to the stream\&. 
+.SS "\fBPrefixedOutStream\fP& mlpack::util::PrefixedOutStream::operator<< (\fBstd::string\fP & str)"
+
+.PP
+Write a string to the stream\&. 
+.SS "\fBPrefixedOutStream\fP& mlpack::util::PrefixedOutStream::operator<< (std::streambuf * sb)"
+
+.PP
+Write a streambuf to the stream\&. 
+.SS "\fBPrefixedOutStream\fP& mlpack::util::PrefixedOutStream::operator<< (std::ostream &(*)(std::ostream &) pf)"
+
+.PP
+Write an ostream manipulator function to the stream\&. 
+.SS "\fBPrefixedOutStream\fP& mlpack::util::PrefixedOutStream::operator<< (std::ios &(*)(std::ios &) pf)"
+
+.PP
+Write an ios manipulator function to the stream\&. 
+.SS "\fBPrefixedOutStream\fP& mlpack::util::PrefixedOutStream::operator<< (std::ios_base &(*)(std::ios_base &) pf)"
+
+.PP
+Write an ios_base manipulator function to the stream\&. 
+.SS "template<typename T > \fBPrefixedOutStream\fP& mlpack::util::PrefixedOutStream::operator<< (const T & s)"
+
+.PP
+Write anything else to the stream\&. 
+.SS "void mlpack::util::PrefixedOutStream::PrefixIfNeeded ()\fC [inline]\fP, \fC [private]\fP"
+
+.PP
+Output the prefix, but only if we need to and if we are allowed to\&. 
+.SH "Member Data Documentation"
+.PP 
+.SS "bool mlpack::util::PrefixedOutStream::carriageReturned\fC [private]\fP"
+
+.PP
+If true, the previous call to operator<< encountered a CR, and a prefix will be necessary\&. 
+.PP
+Definition at line 155 of file prefixedoutstream\&.hpp\&.
+.SS "std::ostream& mlpack::util::PrefixedOutStream::destination"
+
+.PP
+The output stream that all data is to be sent to; example: std::cout\&. 
+.PP
+Definition at line 111 of file prefixedoutstream\&.hpp\&.
+.SS "bool mlpack::util::PrefixedOutStream::fatal\fC [private]\fP"
+
+.PP
+If true, a std::runtime_error exception will be thrown when a CR is encountered\&. 
+.PP
+Definition at line 159 of file prefixedoutstream\&.hpp\&.
+.SS "bool mlpack::util::PrefixedOutStream::ignoreInput"
+
+.PP
+Discards input, prints nothing if true\&. 
+.PP
+Definition at line 114 of file prefixedoutstream\&.hpp\&.
+.SS "\fBstd::string\fP mlpack::util::PrefixedOutStream::prefix\fC [private]\fP"
+
+.PP
+Contains the prefix we must prepend to each line\&. 
+.PP
+Definition at line 151 of file prefixedoutstream\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

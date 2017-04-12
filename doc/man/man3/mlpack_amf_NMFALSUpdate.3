@@ -1,0 +1,127 @@
+.TH "mlpack::amf::NMFALSUpdate" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::amf::NMFALSUpdate \- This class implements a method titled 'Alternating Least Squares' described in the following paper:  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBNMFALSUpdate\fP ()"
+.br
+.RI "\fIEmpty constructor required for the UpdateRule template\&. \fP"
+.ti -1c
+.RI "template<typename MatType > void \fBInitialize\fP (const MatType &, const size_t)"
+.br
+.RI "\fISet initial values for the factorization\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &, const unsigned int)"
+.br
+.RI "\fISerialize the object (in this case, there is nothing to serialize)\&. \fP"
+.in -1c
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename MatType > static void \fBHUpdate\fP (const MatType &V, const arma::mat &W, arma::mat &H)"
+.br
+.RI "\fIThe update rule for the encoding matrix H\&. \fP"
+.ti -1c
+.RI "template<typename MatType > static void \fBWUpdate\fP (const MatType &V, arma::mat &W, const arma::mat &H)"
+.br
+.RI "\fIThe update rule for the basis matrix W\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+This class implements a method titled 'Alternating Least Squares' described in the following paper: 
+
+
+.PP
+.nf
+@article{paatero1994positive,
+ title={Positive matrix factorization: A non-negative factor model with
+     optimal utilization of error estimates of data values},
+ author={Paatero, P\&. and Tapper, U\&.},
+ journal={Environmetrics},
+ volume={5},
+ number={2},
+ pages={111--126},
+ year={1994}
+}
+
+.fi
+.PP
+.PP
+It uses the least squares projection formula to reduce the error value of $ \sqrt{\sum_i \sum_j(V-WH)^2} $ by alternately calculating W and H respectively while holding the other matrix constant\&. 
+.PP
+Definition at line 41 of file nmf_als\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::amf::NMFALSUpdate::NMFALSUpdate ()\fC [inline]\fP"
+
+.PP
+Empty constructor required for the UpdateRule template\&. 
+.PP
+Definition at line 45 of file nmf_als\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename MatType > static void mlpack::amf::NMFALSUpdate::HUpdate (const MatType & V, const arma::mat & W, arma::mat & H)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+The update rule for the encoding matrix H\&. The formula used is
+.PP
+\[ H = \frac{W^T V}{W^T W} \].PP
+The function takes in all the matrices and only changes the value of the H matrix\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIV\fP Input matrix to be factorized\&. 
+.br
+\fIW\fP Basis matrix\&. 
+.br
+\fIH\fP Encoding matrix to be updated\&. 
+.RE
+.PP
+
+.PP
+Definition at line 105 of file nmf_als\&.hpp\&.
+.SS "template<typename MatType > void mlpack::amf::NMFALSUpdate::Initialize (const MatType &, const size_t)\fC [inline]\fP"
+
+.PP
+Set initial values for the factorization\&. In this case, we don't need to set anything\&. 
+.PP
+Definition at line 52 of file nmf_als\&.hpp\&.
+.SS "template<typename Archive > void mlpack::amf::NMFALSUpdate::Serialize (Archive &, const unsigned int)\fC [inline]\fP"
+
+.PP
+Serialize the object (in this case, there is nothing to serialize)\&. 
+.PP
+Definition at line 123 of file nmf_als\&.hpp\&.
+.SS "template<typename MatType > static void mlpack::amf::NMFALSUpdate::WUpdate (const MatType & V, arma::mat & W, const arma::mat & H)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+The update rule for the basis matrix W\&. The formula used isa
+.PP
+\[ W^T = \frac{H V^T}{H H^T} \].PP
+The function takes in all the matrices and only changes the value of the W matrix\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIV\fP Input matrix to be factorized\&. 
+.br
+\fIW\fP Basis matrix to be updated\&. 
+.br
+\fIH\fP Encoding matrix\&. 
+.RE
+.PP
+
+.PP
+Definition at line 72 of file nmf_als\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,170 @@
+.TH "mlpack::optimization::LRSDPFunction< SDPType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::optimization::LRSDPFunction< SDPType > \- The objective function that \fBLRSDP\fP is trying to optimize\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBLRSDPFunction\fP (const SDPType &\fBsdp\fP, const arma::mat &\fBinitialPoint\fP)"
+.br
+.RI "\fIConstruct the \fBLRSDPFunction\fP from the given \fBSDP\fP\&. \fP"
+.ti -1c
+.RI "\fBLRSDPFunction\fP (const size_t numSparseConstraints, const size_t numDenseConstraints, const arma::mat &\fBinitialPoint\fP)"
+.br
+.RI "\fIConstruct the \fBLRSDPFunction\fP with the given initial point and number of constraints\&. \fP"
+.ti -1c
+.RI "double \fBEvaluate\fP (const arma::mat &coordinates) const "
+.br
+.RI "\fIEvaluate the objective function of the \fBLRSDP\fP (no constraints) at the given coordinates\&. \fP"
+.ti -1c
+.RI "double \fBEvaluateConstraint\fP (const size_t index, const arma::mat &coordinates) const "
+.br
+.RI "\fIEvaluate a particular constraint of the \fBLRSDP\fP at the given coordinates\&. \fP"
+.ti -1c
+.RI "const arma::mat & \fBGetInitialPoint\fP () const "
+.br
+.RI "\fIGet the initial point of the \fBLRSDP\fP\&. \fP"
+.ti -1c
+.RI "void \fBGradient\fP (const arma::mat &coordinates, arma::mat &gradient) const "
+.br
+.RI "\fIEvaluate the gradient of the \fBLRSDP\fP (no constraints) at the given coordinates\&. \fP"
+.ti -1c
+.RI "void \fBGradientConstraint\fP (const size_t index, const arma::mat &coordinates, arma::mat &gradient) const "
+.br
+.RI "\fIEvaluate the gradient of a particular constraint of the \fBLRSDP\fP at the given coordinates\&. \fP"
+.ti -1c
+.RI "size_t \fBNumConstraints\fP () const "
+.br
+.RI "\fIGet the total number of constraints in the \fBLRSDP\fP\&. \fP"
+.ti -1c
+.RI "const SDPType & \fBSDP\fP () const "
+.br
+.RI "\fIReturn the \fBSDP\fP object representing the problem\&. \fP"
+.ti -1c
+.RI "SDPType & \fBSDP\fP ()"
+.br
+.RI "\fIModify the \fBSDP\fP object representing the problem\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "arma::mat \fBinitialPoint\fP"
+.br
+.RI "\fIInitial point\&. \fP"
+.ti -1c
+.RI "SDPType \fBsdp\fP"
+.br
+.RI "\fI\fBSDP\fP object representing the problem\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename SDPType>
+.br
+class mlpack::optimization::LRSDPFunction< SDPType >"
+The objective function that \fBLRSDP\fP is trying to optimize\&. 
+.PP
+Definition at line 27 of file lrsdp_function\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename SDPType> \fBmlpack::optimization::LRSDPFunction\fP< SDPType >::\fBLRSDPFunction\fP (const SDPType & sdp, const arma::mat & initialPoint)"
+
+.PP
+Construct the \fBLRSDPFunction\fP from the given \fBSDP\fP\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIsdp\fP 
+.br
+\fIinitialPoint\fP 
+.RE
+.PP
+
+.SS "template<typename SDPType> \fBmlpack::optimization::LRSDPFunction\fP< SDPType >::\fBLRSDPFunction\fP (const size_t numSparseConstraints, const size_t numDenseConstraints, const arma::mat & initialPoint)"
+
+.PP
+Construct the \fBLRSDPFunction\fP with the given initial point and number of constraints\&. Note n_cols of the initialPoint specifies the rank\&.
+.PP
+Set the A_x, B_x, and C_x matrices for each constraint using the A_x(), B_x(), and C_x() functions, for x in {sparse, dense}\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fInumSparseConstraints\fP 
+.br
+\fInumDenseConstraints\fP 
+.br
+\fIinitialPoint\fP 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename SDPType> double \fBmlpack::optimization::LRSDPFunction\fP< SDPType >::Evaluate (const arma::mat & coordinates) const"
+
+.PP
+Evaluate the objective function of the \fBLRSDP\fP (no constraints) at the given coordinates\&. 
+.SS "template<typename SDPType> double \fBmlpack::optimization::LRSDPFunction\fP< SDPType >::EvaluateConstraint (const size_t index, const arma::mat & coordinates) const"
+
+.PP
+Evaluate a particular constraint of the \fBLRSDP\fP at the given coordinates\&. 
+.SS "template<typename SDPType> const arma::mat& \fBmlpack::optimization::LRSDPFunction\fP< SDPType >::GetInitialPoint () const\fC [inline]\fP"
+
+.PP
+Get the initial point of the \fBLRSDP\fP\&. 
+.PP
+Definition at line 84 of file lrsdp_function\&.hpp\&.
+.SS "template<typename SDPType> void \fBmlpack::optimization::LRSDPFunction\fP< SDPType >::Gradient (const arma::mat & coordinates, arma::mat & gradient) const"
+
+.PP
+Evaluate the gradient of the \fBLRSDP\fP (no constraints) at the given coordinates\&. 
+.SS "template<typename SDPType> void \fBmlpack::optimization::LRSDPFunction\fP< SDPType >::GradientConstraint (const size_t index, const arma::mat & coordinates, arma::mat & gradient) const"
+
+.PP
+Evaluate the gradient of a particular constraint of the \fBLRSDP\fP at the given coordinates\&. 
+.SS "template<typename SDPType> size_t \fBmlpack::optimization::LRSDPFunction\fP< SDPType >::NumConstraints () const\fC [inline]\fP"
+
+.PP
+Get the total number of constraints in the \fBLRSDP\fP\&. 
+.PP
+Definition at line 81 of file lrsdp_function\&.hpp\&.
+.SS "template<typename SDPType> const SDPType& \fBmlpack::optimization::LRSDPFunction\fP< SDPType >::\fBSDP\fP () const\fC [inline]\fP"
+
+.PP
+Return the \fBSDP\fP object representing the problem\&. 
+.PP
+Definition at line 87 of file lrsdp_function\&.hpp\&.
+.SS "template<typename SDPType> SDPType& \fBmlpack::optimization::LRSDPFunction\fP< SDPType >::\fBSDP\fP ()\fC [inline]\fP"
+
+.PP
+Modify the \fBSDP\fP object representing the problem\&. 
+.PP
+Definition at line 90 of file lrsdp_function\&.hpp\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename SDPType> arma::mat \fBmlpack::optimization::LRSDPFunction\fP< SDPType >::initialPoint\fC [private]\fP"
+
+.PP
+Initial point\&. 
+.PP
+Definition at line 98 of file lrsdp_function\&.hpp\&.
+.PP
+Referenced by mlpack::optimization::LRSDPFunction< optimization::SDP< arma::sp_mat > >::GetInitialPoint()\&.
+.SS "template<typename SDPType> SDPType \fBmlpack::optimization::LRSDPFunction\fP< SDPType >::sdp\fC [private]\fP"
+
+.PP
+\fBSDP\fP object representing the problem\&. 
+.PP
+Definition at line 95 of file lrsdp_function\&.hpp\&.
+.PP
+Referenced by mlpack::optimization::LRSDPFunction< optimization::SDP< arma::sp_mat > >::SDP()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,70 @@
+.TH "mlpack::ann::OutputHeightVisitor" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::ann::OutputHeightVisitor \- \fBOutputWidthVisitor\fP exposes the OutputHeight() method of the given module\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits static_visitor< size_t >\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename LayerType > size_t \fBoperator()\fP (LayerType *layer) const "
+.br
+.RI "\fIReturn the output height\&. \fP"
+.in -1c
+.SS "Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename T > std::enable_if< !HasInputHeight< T, size_t &(T::*)()>::value &&!HasModelCheck< T, std::vector< \fBLayerTypes\fP > &(T::*)()>::value, size_t >::type \fBLayerOutputHeight\fP (T *layer) const "
+.br
+.RI "\fIReturn 0 if the module doesn't implement the InputHeight() or Model() function\&. \fP"
+.ti -1c
+.RI "template<typename T > std::enable_if< HasInputHeight< T, size_t &(T::*)()>::value &&!HasModelCheck< T, std::vector< \fBLayerTypes\fP > &(T::*)()>::value, size_t >::type \fBLayerOutputHeight\fP (T *layer) const "
+.br
+.RI "\fIReturn the output height if the module implements the InputHeight() function\&. \fP"
+.ti -1c
+.RI "template<typename T > std::enable_if< !HasInputHeight< T, size_t &(T::*)()>::value &&HasModelCheck< T, std::vector< \fBLayerTypes\fP > &(T::*)()>::value, size_t >::type \fBLayerOutputHeight\fP (T *layer) const "
+.br
+.RI "\fIReturn the output height if the module implements the Model() function\&. \fP"
+.ti -1c
+.RI "template<typename T > std::enable_if< HasInputHeight< T, size_t &(T::*)()>::value &&HasModelCheck< T, std::vector< \fBLayerTypes\fP > &(T::*)()>::value, size_t >::type \fBLayerOutputHeight\fP (T *layer) const "
+.br
+.RI "\fIReturn the output height if the module implement the Model() or InputHeight() function\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBOutputWidthVisitor\fP exposes the OutputHeight() method of the given module\&. 
+.PP
+Definition at line 28 of file output_height_visitor\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename T > std::enable_if< !HasInputHeight<T, size_t&(T::*)()>::value && !HasModelCheck<T, std::vector<\fBLayerTypes\fP>&(T::*)()>::value, size_t>::type mlpack::ann::OutputHeightVisitor::LayerOutputHeight (T * layer) const\fC [private]\fP"
+
+.PP
+Return 0 if the module doesn't implement the InputHeight() or Model() function\&. 
+.SS "template<typename T > std::enable_if< HasInputHeight<T, size_t&(T::*)()>::value && !HasModelCheck<T, std::vector<\fBLayerTypes\fP>&(T::*)()>::value, size_t>::type mlpack::ann::OutputHeightVisitor::LayerOutputHeight (T * layer) const\fC [private]\fP"
+
+.PP
+Return the output height if the module implements the InputHeight() function\&. 
+.SS "template<typename T > std::enable_if< !HasInputHeight<T, size_t&(T::*)()>::value && HasModelCheck<T, std::vector<\fBLayerTypes\fP>&(T::*)()>::value, size_t>::type mlpack::ann::OutputHeightVisitor::LayerOutputHeight (T * layer) const\fC [private]\fP"
+
+.PP
+Return the output height if the module implements the Model() function\&. 
+.SS "template<typename T > std::enable_if< HasInputHeight<T, size_t&(T::*)()>::value && HasModelCheck<T, std::vector<\fBLayerTypes\fP>&(T::*)()>::value, size_t>::type mlpack::ann::OutputHeightVisitor::LayerOutputHeight (T * layer) const\fC [private]\fP"
+
+.PP
+Return the output height if the module implement the Model() or InputHeight() function\&. 
+.SS "template<typename LayerType > size_t mlpack::ann::OutputHeightVisitor::operator() (LayerType * layer) const"
+
+.PP
+Return the output height\&. 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

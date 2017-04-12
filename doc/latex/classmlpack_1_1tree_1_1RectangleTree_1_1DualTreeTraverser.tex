@@ -1,0 +1,316 @@
+\section{mlpack\+:\+:tree\+:\+:Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Split\+Type, Descent\+Type, Auxiliary\+Information\+Type $>$\+:\+:Dual\+Tree\+Traverser$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Split\+Type, Descent\+Type, Auxiliary\+Information\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1tree_1_1RectangleTree_1_1DualTreeTraverser}\index{mlpack\+::tree\+::\+Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Split\+Type, Descent\+Type, Auxiliary\+Information\+Type $>$\+::\+Dual\+Tree\+Traverser$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Split\+Type, Descent\+Type, Auxiliary\+Information\+Type $>$@{mlpack\+::tree\+::\+Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Split\+Type, Descent\+Type, Auxiliary\+Information\+Type $>$\+::\+Dual\+Tree\+Traverser$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Split\+Type, Descent\+Type, Auxiliary\+Information\+Type $>$}}
+
+
+A dual tree traverser for rectangle type trees.  
+
+
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct {\bf Node\+And\+Score}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf Dual\+Tree\+Traverser} (Rule\+Type \&{\bf rule})
+\begin{DoxyCompactList}\small\item\em Instantiate the dual-\/tree traverser with the given rule set. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Num\+Base\+Cases} () const 
+\begin{DoxyCompactList}\small\item\em Get the number of times a base case was calculated. \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Num\+Base\+Cases} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of times a base case was calculated. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Num\+Prunes} () const 
+\begin{DoxyCompactList}\small\item\em Get the number of prunes. \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Num\+Prunes} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of prunes. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Num\+Scores} () const 
+\begin{DoxyCompactList}\small\item\em Get the number of times a node combination was scored. \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Num\+Scores} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of times a node combination was scored. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Num\+Visited} () const 
+\begin{DoxyCompactList}\small\item\em Get the number of visited combinations. \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Num\+Visited} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of visited combinations. \end{DoxyCompactList}\item 
+void {\bf Traverse} ({\bf Rectangle\+Tree} \&query\+Node, {\bf Rectangle\+Tree} \&reference\+Node)
+\begin{DoxyCompactList}\small\item\em Traverse the two trees. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static bool {\bf node\+Comparator} (const {\bf Node\+And\+Score} \&obj1, const {\bf Node\+And\+Score} \&obj2)
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+size\+\_\+t {\bf num\+Base\+Cases}
+\begin{DoxyCompactList}\small\item\em The number of times a base case was calculated. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf num\+Prunes}
+\begin{DoxyCompactList}\small\item\em The number of prunes. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf num\+Scores}
+\begin{DoxyCompactList}\small\item\em The number of times a node combination was scored. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf num\+Visited}
+\begin{DoxyCompactList}\small\item\em The number of node combinations that have been visited during traversal. \end{DoxyCompactList}\item 
+Rule\+Type \& {\bf rule}
+\begin{DoxyCompactList}\small\item\em Reference to the rules with which the trees will be traversed. \end{DoxyCompactList}\item 
+Rule\+Type\+::\+Traversal\+Info\+Type {\bf traversal\+Info}
+\begin{DoxyCompactList}\small\item\em Traversal information, held in the class so that it isn\textquotesingle{}t continually being reallocated. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Metric\+Type = metric\+::\+Euclidean\+Distance, typename Statistic\+Type = Empty\+Statistic, typename Mat\+Type = arma\+::mat, typename Split\+Type = R\+Tree\+Split, typename Descent\+Type = R\+Tree\+Descent\+Heuristic, template$<$ typename $>$ class Auxiliary\+Information\+Type = No\+Auxiliary\+Information$>$\\*
+template$<$typename Metric\+Type, typename Statistic\+Type, typename Mat\+Type, typename Split\+Type, typename Descent\+Type, template$<$ typename $>$ class Auxiliary\+Information\+Type$>$\\*
+class mlpack\+::tree\+::\+Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Split\+Type, Descent\+Type, Auxiliary\+Information\+Type $>$\+::\+Dual\+Tree\+Traverser$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Split\+Type, Descent\+Type, Auxiliary\+Information\+Type $>$}
+
+A dual tree traverser for rectangle type trees. 
+
+Definition at line 31 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser}!Dual\+Tree\+Traverser@{Dual\+Tree\+Traverser}}
+\index{Dual\+Tree\+Traverser@{Dual\+Tree\+Traverser}!mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection[{Dual\+Tree\+Traverser(\+Rule\+Type \&rule)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat, typename Split\+Type  = R\+Tree\+Split, typename Descent\+Type  = R\+Tree\+Descent\+Heuristic, template$<$ typename $>$ class Auxiliary\+Information\+Type = No\+Auxiliary\+Information$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , typename Split\+Type , typename Descent\+Type , template$<$ typename $>$ class Auxiliary\+Information\+Type$>$ {\bf mlpack\+::tree\+::\+Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Split\+Type}, {\bf Descent\+Type}, Auxiliary\+Information\+Type $>$\+::{\bf Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Split\+Type}, {\bf Descent\+Type}, Auxiliary\+Information\+Type $>$\+::{\bf Dual\+Tree\+Traverser} (
+\begin{DoxyParamCaption}
+\item[{Rule\+Type \&}]{rule}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1tree_1_1RectangleTree_1_1DualTreeTraverser_aa4922d0b7472d96e6085e02fdf06e5d8}
+
+
+Instantiate the dual-\/tree traverser with the given rule set. 
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser}!node\+Comparator@{node\+Comparator}}
+\index{node\+Comparator@{node\+Comparator}!mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection[{node\+Comparator(const Node\+And\+Score \&obj1, const Node\+And\+Score \&obj2)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat, typename Split\+Type  = R\+Tree\+Split, typename Descent\+Type  = R\+Tree\+Descent\+Heuristic, template$<$ typename $>$ class Auxiliary\+Information\+Type = No\+Auxiliary\+Information$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , typename Split\+Type , typename Descent\+Type , template$<$ typename $>$ class Auxiliary\+Information\+Type$>$ static bool {\bf mlpack\+::tree\+::\+Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Split\+Type}, {\bf Descent\+Type}, Auxiliary\+Information\+Type $>$\+::{\bf Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Split\+Type}, {\bf Descent\+Type}, Auxiliary\+Information\+Type $>$\+::node\+Comparator (
+\begin{DoxyParamCaption}
+\item[{const {\bf Node\+And\+Score} \&}]{obj1, }
+\item[{const {\bf Node\+And\+Score} \&}]{obj2}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}, {\ttfamily [private]}}\label{classmlpack_1_1tree_1_1RectangleTree_1_1DualTreeTraverser_adaad75bf99f3a0f50d569494eb84886a}
+
+
+Definition at line 80 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+
+
+References mlpack\+::tree\+::\+Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Split\+Type, Descent\+Type, Auxiliary\+Information\+Type $>$\+::\+Dual\+Tree\+Traverser$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Split\+Type, Descent\+Type, Auxiliary\+Information\+Type $>$\+::\+Node\+And\+Score$<$ Rule\+Type $>$\+::score.
+
+\index{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser}!Num\+Base\+Cases@{Num\+Base\+Cases}}
+\index{Num\+Base\+Cases@{Num\+Base\+Cases}!mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection[{Num\+Base\+Cases() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat, typename Split\+Type  = R\+Tree\+Split, typename Descent\+Type  = R\+Tree\+Descent\+Heuristic, template$<$ typename $>$ class Auxiliary\+Information\+Type = No\+Auxiliary\+Information$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , typename Split\+Type , typename Descent\+Type , template$<$ typename $>$ class Auxiliary\+Information\+Type$>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Split\+Type}, {\bf Descent\+Type}, Auxiliary\+Information\+Type $>$\+::{\bf Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Split\+Type}, {\bf Descent\+Type}, Auxiliary\+Information\+Type $>$\+::Num\+Base\+Cases (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1RectangleTree_1_1DualTreeTraverser_a66cdb9b49aac5e5e7a6ddf0b88c0e802}
+
+
+Get the number of times a base case was calculated. 
+
+
+
+Definition at line 65 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser}!Num\+Base\+Cases@{Num\+Base\+Cases}}
+\index{Num\+Base\+Cases@{Num\+Base\+Cases}!mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection[{Num\+Base\+Cases()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat, typename Split\+Type  = R\+Tree\+Split, typename Descent\+Type  = R\+Tree\+Descent\+Heuristic, template$<$ typename $>$ class Auxiliary\+Information\+Type = No\+Auxiliary\+Information$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , typename Split\+Type , typename Descent\+Type , template$<$ typename $>$ class Auxiliary\+Information\+Type$>$ size\+\_\+t\& {\bf mlpack\+::tree\+::\+Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Split\+Type}, {\bf Descent\+Type}, Auxiliary\+Information\+Type $>$\+::{\bf Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Split\+Type}, {\bf Descent\+Type}, Auxiliary\+Information\+Type $>$\+::Num\+Base\+Cases (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1RectangleTree_1_1DualTreeTraverser_a653a5b66ed6e315841d22ca7796100db}
+
+
+Modify the number of times a base case was calculated. 
+
+
+
+Definition at line 67 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser}!Num\+Prunes@{Num\+Prunes}}
+\index{Num\+Prunes@{Num\+Prunes}!mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection[{Num\+Prunes() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat, typename Split\+Type  = R\+Tree\+Split, typename Descent\+Type  = R\+Tree\+Descent\+Heuristic, template$<$ typename $>$ class Auxiliary\+Information\+Type = No\+Auxiliary\+Information$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , typename Split\+Type , typename Descent\+Type , template$<$ typename $>$ class Auxiliary\+Information\+Type$>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Split\+Type}, {\bf Descent\+Type}, Auxiliary\+Information\+Type $>$\+::{\bf Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Split\+Type}, {\bf Descent\+Type}, Auxiliary\+Information\+Type $>$\+::Num\+Prunes (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1RectangleTree_1_1DualTreeTraverser_a14135873b1b688c9a39ffc3b2757cba5}
+
+
+Get the number of prunes. 
+
+
+
+Definition at line 50 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser}!Num\+Prunes@{Num\+Prunes}}
+\index{Num\+Prunes@{Num\+Prunes}!mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection[{Num\+Prunes()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat, typename Split\+Type  = R\+Tree\+Split, typename Descent\+Type  = R\+Tree\+Descent\+Heuristic, template$<$ typename $>$ class Auxiliary\+Information\+Type = No\+Auxiliary\+Information$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , typename Split\+Type , typename Descent\+Type , template$<$ typename $>$ class Auxiliary\+Information\+Type$>$ size\+\_\+t\& {\bf mlpack\+::tree\+::\+Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Split\+Type}, {\bf Descent\+Type}, Auxiliary\+Information\+Type $>$\+::{\bf Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Split\+Type}, {\bf Descent\+Type}, Auxiliary\+Information\+Type $>$\+::Num\+Prunes (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1RectangleTree_1_1DualTreeTraverser_ab590fc8beec04998918a35d09163a46c}
+
+
+Modify the number of prunes. 
+
+
+
+Definition at line 52 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser}!Num\+Scores@{Num\+Scores}}
+\index{Num\+Scores@{Num\+Scores}!mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection[{Num\+Scores() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat, typename Split\+Type  = R\+Tree\+Split, typename Descent\+Type  = R\+Tree\+Descent\+Heuristic, template$<$ typename $>$ class Auxiliary\+Information\+Type = No\+Auxiliary\+Information$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , typename Split\+Type , typename Descent\+Type , template$<$ typename $>$ class Auxiliary\+Information\+Type$>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Split\+Type}, {\bf Descent\+Type}, Auxiliary\+Information\+Type $>$\+::{\bf Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Split\+Type}, {\bf Descent\+Type}, Auxiliary\+Information\+Type $>$\+::Num\+Scores (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1RectangleTree_1_1DualTreeTraverser_a27057155bae4ca33de0280cb06ff6cda}
+
+
+Get the number of times a node combination was scored. 
+
+
+
+Definition at line 60 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser}!Num\+Scores@{Num\+Scores}}
+\index{Num\+Scores@{Num\+Scores}!mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection[{Num\+Scores()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat, typename Split\+Type  = R\+Tree\+Split, typename Descent\+Type  = R\+Tree\+Descent\+Heuristic, template$<$ typename $>$ class Auxiliary\+Information\+Type = No\+Auxiliary\+Information$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , typename Split\+Type , typename Descent\+Type , template$<$ typename $>$ class Auxiliary\+Information\+Type$>$ size\+\_\+t\& {\bf mlpack\+::tree\+::\+Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Split\+Type}, {\bf Descent\+Type}, Auxiliary\+Information\+Type $>$\+::{\bf Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Split\+Type}, {\bf Descent\+Type}, Auxiliary\+Information\+Type $>$\+::Num\+Scores (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1RectangleTree_1_1DualTreeTraverser_a13d174f21d5e5abc26ed74e5b4e5023f}
+
+
+Modify the number of times a node combination was scored. 
+
+
+
+Definition at line 62 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser}!Num\+Visited@{Num\+Visited}}
+\index{Num\+Visited@{Num\+Visited}!mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection[{Num\+Visited() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat, typename Split\+Type  = R\+Tree\+Split, typename Descent\+Type  = R\+Tree\+Descent\+Heuristic, template$<$ typename $>$ class Auxiliary\+Information\+Type = No\+Auxiliary\+Information$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , typename Split\+Type , typename Descent\+Type , template$<$ typename $>$ class Auxiliary\+Information\+Type$>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Split\+Type}, {\bf Descent\+Type}, Auxiliary\+Information\+Type $>$\+::{\bf Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Split\+Type}, {\bf Descent\+Type}, Auxiliary\+Information\+Type $>$\+::Num\+Visited (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1RectangleTree_1_1DualTreeTraverser_ad9ccabd421b08f1daa6b1db9a0be9adf}
+
+
+Get the number of visited combinations. 
+
+
+
+Definition at line 55 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser}!Num\+Visited@{Num\+Visited}}
+\index{Num\+Visited@{Num\+Visited}!mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection[{Num\+Visited()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat, typename Split\+Type  = R\+Tree\+Split, typename Descent\+Type  = R\+Tree\+Descent\+Heuristic, template$<$ typename $>$ class Auxiliary\+Information\+Type = No\+Auxiliary\+Information$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , typename Split\+Type , typename Descent\+Type , template$<$ typename $>$ class Auxiliary\+Information\+Type$>$ size\+\_\+t\& {\bf mlpack\+::tree\+::\+Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Split\+Type}, {\bf Descent\+Type}, Auxiliary\+Information\+Type $>$\+::{\bf Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Split\+Type}, {\bf Descent\+Type}, Auxiliary\+Information\+Type $>$\+::Num\+Visited (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmlpack_1_1tree_1_1RectangleTree_1_1DualTreeTraverser_a342cd4c408531b284a5a930116361024}
+
+
+Modify the number of visited combinations. 
+
+
+
+Definition at line 57 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser}!Traverse@{Traverse}}
+\index{Traverse@{Traverse}!mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection[{Traverse(\+Rectangle\+Tree \&query\+Node, Rectangle\+Tree \&reference\+Node)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat, typename Split\+Type  = R\+Tree\+Split, typename Descent\+Type  = R\+Tree\+Descent\+Heuristic, template$<$ typename $>$ class Auxiliary\+Information\+Type = No\+Auxiliary\+Information$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , typename Split\+Type , typename Descent\+Type , template$<$ typename $>$ class Auxiliary\+Information\+Type$>$ void {\bf mlpack\+::tree\+::\+Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Split\+Type}, {\bf Descent\+Type}, Auxiliary\+Information\+Type $>$\+::{\bf Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Split\+Type}, {\bf Descent\+Type}, Auxiliary\+Information\+Type $>$\+::Traverse (
+\begin{DoxyParamCaption}
+\item[{{\bf Rectangle\+Tree} \&}]{query\+Node, }
+\item[{{\bf Rectangle\+Tree} \&}]{reference\+Node}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1tree_1_1RectangleTree_1_1DualTreeTraverser_a063dc55e335b326b53bef6b54c9aff77}
+
+
+Traverse the two trees. 
+
+This does not reset the number of prunes.
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Node} & The query node to be traversed. \\
+\hline
+{\em reference\+Node} & The reference node to be traversed. \\
+\hline
+{\em score} & The score of the current node combination. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser}!num\+Base\+Cases@{num\+Base\+Cases}}
+\index{num\+Base\+Cases@{num\+Base\+Cases}!mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection[{num\+Base\+Cases}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat, typename Split\+Type  = R\+Tree\+Split, typename Descent\+Type  = R\+Tree\+Descent\+Heuristic, template$<$ typename $>$ class Auxiliary\+Information\+Type = No\+Auxiliary\+Information$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , typename Split\+Type , typename Descent\+Type , template$<$ typename $>$ class Auxiliary\+Information\+Type$>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Split\+Type}, {\bf Descent\+Type}, Auxiliary\+Information\+Type $>$\+::{\bf Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Split\+Type}, {\bf Descent\+Type}, Auxiliary\+Information\+Type $>$\+::num\+Base\+Cases\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1RectangleTree_1_1DualTreeTraverser_a637e4544ee3c2f86136718a7d66590ca}
+
+
+The number of times a base case was calculated. 
+
+
+
+Definition at line 99 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser}!num\+Prunes@{num\+Prunes}}
+\index{num\+Prunes@{num\+Prunes}!mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection[{num\+Prunes}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat, typename Split\+Type  = R\+Tree\+Split, typename Descent\+Type  = R\+Tree\+Descent\+Heuristic, template$<$ typename $>$ class Auxiliary\+Information\+Type = No\+Auxiliary\+Information$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , typename Split\+Type , typename Descent\+Type , template$<$ typename $>$ class Auxiliary\+Information\+Type$>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Split\+Type}, {\bf Descent\+Type}, Auxiliary\+Information\+Type $>$\+::{\bf Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Split\+Type}, {\bf Descent\+Type}, Auxiliary\+Information\+Type $>$\+::num\+Prunes\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1RectangleTree_1_1DualTreeTraverser_a1db3b2b95418041a76ca0236fc1b143e}
+
+
+The number of prunes. 
+
+
+
+Definition at line 90 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser}!num\+Scores@{num\+Scores}}
+\index{num\+Scores@{num\+Scores}!mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection[{num\+Scores}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat, typename Split\+Type  = R\+Tree\+Split, typename Descent\+Type  = R\+Tree\+Descent\+Heuristic, template$<$ typename $>$ class Auxiliary\+Information\+Type = No\+Auxiliary\+Information$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , typename Split\+Type , typename Descent\+Type , template$<$ typename $>$ class Auxiliary\+Information\+Type$>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Split\+Type}, {\bf Descent\+Type}, Auxiliary\+Information\+Type $>$\+::{\bf Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Split\+Type}, {\bf Descent\+Type}, Auxiliary\+Information\+Type $>$\+::num\+Scores\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1RectangleTree_1_1DualTreeTraverser_add565feea9cd2ea9800b75a8228de884}
+
+
+The number of times a node combination was scored. 
+
+
+
+Definition at line 96 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser}!num\+Visited@{num\+Visited}}
+\index{num\+Visited@{num\+Visited}!mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection[{num\+Visited}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat, typename Split\+Type  = R\+Tree\+Split, typename Descent\+Type  = R\+Tree\+Descent\+Heuristic, template$<$ typename $>$ class Auxiliary\+Information\+Type = No\+Auxiliary\+Information$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , typename Split\+Type , typename Descent\+Type , template$<$ typename $>$ class Auxiliary\+Information\+Type$>$ size\+\_\+t {\bf mlpack\+::tree\+::\+Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Split\+Type}, {\bf Descent\+Type}, Auxiliary\+Information\+Type $>$\+::{\bf Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Split\+Type}, {\bf Descent\+Type}, Auxiliary\+Information\+Type $>$\+::num\+Visited\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1RectangleTree_1_1DualTreeTraverser_aa5c4f93304a6e8181dcb922abb39a4aa}
+
+
+The number of node combinations that have been visited during traversal. 
+
+
+
+Definition at line 93 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser}!rule@{rule}}
+\index{rule@{rule}!mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection[{rule}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat, typename Split\+Type  = R\+Tree\+Split, typename Descent\+Type  = R\+Tree\+Descent\+Heuristic, template$<$ typename $>$ class Auxiliary\+Information\+Type = No\+Auxiliary\+Information$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , typename Split\+Type , typename Descent\+Type , template$<$ typename $>$ class Auxiliary\+Information\+Type$>$ Rule\+Type\& {\bf mlpack\+::tree\+::\+Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Split\+Type}, {\bf Descent\+Type}, Auxiliary\+Information\+Type $>$\+::{\bf Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Split\+Type}, {\bf Descent\+Type}, Auxiliary\+Information\+Type $>$\+::rule\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1RectangleTree_1_1DualTreeTraverser_ab2092fd36ff02e28c4efc2d235f1b61d}
+
+
+Reference to the rules with which the trees will be traversed. 
+
+
+
+Definition at line 87 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\index{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser}!traversal\+Info@{traversal\+Info}}
+\index{traversal\+Info@{traversal\+Info}!mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser@{mlpack\+::tree\+::\+Rectangle\+Tree\+::\+Dual\+Tree\+Traverser}}
+\subsubsection[{traversal\+Info}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Metric\+Type  = metric\+::\+Euclidean\+Distance, typename Statistic\+Type  = Empty\+Statistic, typename Mat\+Type  = arma\+::mat, typename Split\+Type  = R\+Tree\+Split, typename Descent\+Type  = R\+Tree\+Descent\+Heuristic, template$<$ typename $>$ class Auxiliary\+Information\+Type = No\+Auxiliary\+Information$>$ template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type , typename Split\+Type , typename Descent\+Type , template$<$ typename $>$ class Auxiliary\+Information\+Type$>$ Rule\+Type\+::\+Traversal\+Info\+Type {\bf mlpack\+::tree\+::\+Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Split\+Type}, {\bf Descent\+Type}, Auxiliary\+Information\+Type $>$\+::{\bf Dual\+Tree\+Traverser}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, {\bf Split\+Type}, {\bf Descent\+Type}, Auxiliary\+Information\+Type $>$\+::traversal\+Info\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1tree_1_1RectangleTree_1_1DualTreeTraverser_aa99ca1eb6bdb5e74d88f63a511e5bcf1}
+
+
+Traversal information, held in the class so that it isn\textquotesingle{}t continually being reallocated. 
+
+
+
+Definition at line 103 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/tree/rectangle\+\_\+tree/{\bf dual\+\_\+tree\+\_\+traverser.\+hpp}\end{DoxyCompactItemize}

@@ -1,0 +1,53 @@
+.TH "mlpack::perceptron::SimpleWeightUpdate" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::perceptron::SimpleWeightUpdate \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename VecType > void \fBUpdateWeights\fP (const VecType &trainingPoint, arma::mat &weights, arma::vec &biases, const size_t incorrectClass, const size_t correctClass, const double instanceWeight=1\&.0)"
+.br
+.RI "\fIThis function is called to update the weightVectors matrix\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 30 of file simple_weight_update\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename VecType > void mlpack::perceptron::SimpleWeightUpdate::UpdateWeights (const VecType & trainingPoint, arma::mat & weights, arma::vec & biases, const size_t incorrectClass, const size_t correctClass, const double instanceWeight = \fC1\&.0\fP)\fC [inline]\fP"
+
+.PP
+This function is called to update the weightVectors matrix\&. It decreases the weights of the incorrectly classified class while increasing the weight of the correct class it should have been classified to\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIType\fP of vector (should be an Armadillo vector like arma::vec or arma::sp_vec or something similar)\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fItrainingPoint\fP Point that was misclassified\&. 
+.br
+\fIweights\fP Matrix of weights\&. 
+.br
+\fIbiases\fP Vector of biases\&. 
+.br
+\fIincorrectClass\fP Index of class that the point was incorrectly classified as\&. 
+.br
+\fIcorrectClass\fP Index of the true class of the point\&. 
+.br
+\fIinstanceWeight\fP Weight to be given to this particular point during training (this is useful for boosting)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 50 of file simple_weight_update\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

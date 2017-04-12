@@ -1,0 +1,704 @@
+.TH "mlpack::tree::HoeffdingTree< FitnessFunction, NumericSplitType, CategoricalSplitType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::tree::HoeffdingTree< FitnessFunction, NumericSplitType, CategoricalSplitType > \- The \fBHoeffdingTree\fP object represents all of the necessary information for a Hoeffding-bound-based decision tree\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "typedef CategoricalSplitType< FitnessFunction > \fBCategoricalSplit\fP"
+.br
+.RI "\fIAllow access to the categorical split type\&. \fP"
+.ti -1c
+.RI "typedef NumericSplitType< FitnessFunction > \fBNumericSplit\fP"
+.br
+.RI "\fIAllow access to the numeric split type\&. \fP"
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename MatType > \fBHoeffdingTree\fP (const MatType &data, const \fBdata::DatasetInfo\fP &\fBdatasetInfo\fP, const arma::Row< size_t > &labels, const size_t \fBnumClasses\fP, const bool batchTraining=true, const double \fBsuccessProbability\fP=0\&.95, const size_t \fBmaxSamples\fP=0, const size_t \fBcheckInterval\fP=100, const size_t \fBminSamples\fP=100, const CategoricalSplitType< FitnessFunction > &categoricalSplitIn=CategoricalSplitType< FitnessFunction >(0, 0), const NumericSplitType< FitnessFunction > &numericSplitIn=NumericSplitType< FitnessFunction >(0))"
+.br
+.RI "\fIConstruct the Hoeffding tree with the given parameters and given training data\&. \fP"
+.ti -1c
+.RI "\fBHoeffdingTree\fP (const \fBdata::DatasetInfo\fP &\fBdatasetInfo\fP, const size_t \fBnumClasses\fP, const double \fBsuccessProbability\fP=0\&.95, const size_t \fBmaxSamples\fP=0, const size_t \fBcheckInterval\fP=100, const size_t \fBminSamples\fP=100, const CategoricalSplitType< FitnessFunction > &categoricalSplitIn=CategoricalSplitType< FitnessFunction >(0, 0), const NumericSplitType< FitnessFunction > &numericSplitIn=NumericSplitType< FitnessFunction >(0), std::unordered_map< size_t, std::pair< size_t, size_t >> *\fBdimensionMappings\fP=NULL)"
+.br
+.RI "\fIConstruct the Hoeffding tree with the given parameters, but training on no data\&. \fP"
+.ti -1c
+.RI "\fBHoeffdingTree\fP (const \fBHoeffdingTree\fP &other)"
+.br
+.RI "\fICopy another tree (warning: this will duplicate the tree entirely, and may use a lot of memory\&. \fP"
+.ti -1c
+.RI "\fB~HoeffdingTree\fP ()"
+.br
+.RI "\fIClean up memory\&. \fP"
+.ti -1c
+.RI "template<typename VecType > size_t \fBCalculateDirection\fP (const VecType &point) const "
+.br
+.RI "\fIGiven a point and that this node is not a leaf, calculate the index of the child node this point would go towards\&. \fP"
+.ti -1c
+.RI "size_t \fBCheckInterval\fP () const "
+.br
+.RI "\fIGet the number of samples before a split check is performed\&. \fP"
+.ti -1c
+.RI "void \fBCheckInterval\fP (const size_t \fBcheckInterval\fP)"
+.br
+.RI "\fIModify the number of samples before a split check is performed\&. \fP"
+.ti -1c
+.RI "const \fBHoeffdingTree\fP & \fBChild\fP (const size_t i) const "
+.br
+.RI "\fIGet a child\&. \fP"
+.ti -1c
+.RI "\fBHoeffdingTree\fP & \fBChild\fP (const size_t i)"
+.br
+.RI "\fIModify a child\&. \fP"
+.ti -1c
+.RI "template<typename VecType > size_t \fBClassify\fP (const VecType &point) const "
+.br
+.RI "\fIClassify the given point, using this node and the entire (sub)tree beneath it\&. \fP"
+.ti -1c
+.RI "template<typename VecType > void \fBClassify\fP (const VecType &point, size_t &prediction, double &probability) const "
+.br
+.RI "\fIClassify the given point and also return an estimate of the probability that the prediction is correct\&. \fP"
+.ti -1c
+.RI "template<typename MatType > void \fBClassify\fP (const MatType &data, arma::Row< size_t > &predictions) const "
+.br
+.RI "\fIClassify the given points, using this node and the entire (sub)tree beneath it\&. \fP"
+.ti -1c
+.RI "template<typename MatType > void \fBClassify\fP (const MatType &data, arma::Row< size_t > &predictions, arma::rowvec &probabilities) const "
+.br
+.RI "\fIClassify the given points, using this node and the entire (sub)tree beneath it\&. \fP"
+.ti -1c
+.RI "void \fBCreateChildren\fP ()"
+.br
+.RI "\fIGiven that this node should split, create the children\&. \fP"
+.ti -1c
+.RI "size_t \fBMajorityClass\fP () const "
+.br
+.RI "\fIGet the majority class\&. \fP"
+.ti -1c
+.RI "size_t & \fBMajorityClass\fP ()"
+.br
+.RI "\fIModify the majority class\&. \fP"
+.ti -1c
+.RI "double \fBMajorityProbability\fP () const "
+.br
+.RI "\fIGet the probability of the majority class (based on training samples)\&. \fP"
+.ti -1c
+.RI "double & \fBMajorityProbability\fP ()"
+.br
+.RI "\fIModify the probability of the majority class\&. \fP"
+.ti -1c
+.RI "size_t \fBMaxSamples\fP () const "
+.br
+.RI "\fIGet the maximum number of samples before a split is forced\&. \fP"
+.ti -1c
+.RI "void \fBMaxSamples\fP (const size_t \fBmaxSamples\fP)"
+.br
+.RI "\fIModify the maximum number of samples before a split is forced\&. \fP"
+.ti -1c
+.RI "size_t \fBMinSamples\fP () const "
+.br
+.RI "\fIGet the minimum number of samples for a split\&. \fP"
+.ti -1c
+.RI "void \fBMinSamples\fP (const size_t \fBminSamples\fP)"
+.br
+.RI "\fIModify the minimum number of samples for a split\&. \fP"
+.ti -1c
+.RI "size_t \fBNumChildren\fP () const "
+.br
+.RI "\fIGet the number of children\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int)"
+.br
+.RI "\fISerialize the split\&. \fP"
+.ti -1c
+.RI "size_t \fBSplitCheck\fP ()"
+.br
+.RI "\fICheck if a split would satisfy the conditions of the Hoeffding bound with the node's specified success probability\&. \fP"
+.ti -1c
+.RI "size_t \fBSplitDimension\fP () const "
+.br
+.RI "\fIGet the splitting dimension (size_t(-1) if no split)\&. \fP"
+.ti -1c
+.RI "double \fBSuccessProbability\fP () const "
+.br
+.RI "\fIGet the confidence required for a split\&. \fP"
+.ti -1c
+.RI "void \fBSuccessProbability\fP (const double \fBsuccessProbability\fP)"
+.br
+.RI "\fIModify the confidence required for a split\&. \fP"
+.ti -1c
+.RI "template<typename MatType > void \fBTrain\fP (const MatType &data, const arma::Row< size_t > &labels, const bool batchTraining=true)"
+.br
+.RI "\fITrain on a set of points, either in streaming mode or in batch mode, with the given labels\&. \fP"
+.ti -1c
+.RI "template<typename VecType > void \fBTrain\fP (const VecType &point, const size_t label)"
+.br
+.RI "\fITrain on a single point in streaming mode, with the given label\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "CategoricalSplitType< FitnessFunction >::SplitInfo \fBcategoricalSplit\fP"
+.br
+.RI "\fIIf the split is categorical, this holds the splitting information\&. \fP"
+.ti -1c
+.RI "std::vector< CategoricalSplitType< FitnessFunction > > \fBcategoricalSplits\fP"
+.br
+.RI "\fIInformation for splitting of categorical features (used before split)\&. \fP"
+.ti -1c
+.RI "size_t \fBcheckInterval\fP"
+.br
+.RI "\fIThe number of samples that should be seen before checking for a split\&. \fP"
+.ti -1c
+.RI "std::vector< \fBHoeffdingTree\fP * > \fBchildren\fP"
+.br
+.RI "\fIIf the split has occurred, these are the children\&. \fP"
+.ti -1c
+.RI "const \fBdata::DatasetInfo\fP * \fBdatasetInfo\fP"
+.br
+.RI "\fIThe dataset information\&. \fP"
+.ti -1c
+.RI "std::unordered_map< size_t, std::pair< size_t, size_t > > * \fBdimensionMappings\fP"
+.br
+.RI "\fIThis structure is owned by this node only if it is the root of the tree\&. \fP"
+.ti -1c
+.RI "size_t \fBmajorityClass\fP"
+.br
+.RI "\fIThe majority class of this node\&. \fP"
+.ti -1c
+.RI "double \fBmajorityProbability\fP"
+.br
+.RI "\fIThe empirical probability of a point this node saw having the majority class\&. \fP"
+.ti -1c
+.RI "size_t \fBmaxSamples\fP"
+.br
+.RI "\fIThe maximum number of samples we can see before splitting\&. \fP"
+.ti -1c
+.RI "size_t \fBminSamples\fP"
+.br
+.RI "\fIThe minimum number of samples for splitting\&. \fP"
+.ti -1c
+.RI "size_t \fBnumClasses\fP"
+.br
+.RI "\fIThe number of classes this node is trained on\&. \fP"
+.ti -1c
+.RI "NumericSplitType< FitnessFunction >::SplitInfo \fBnumericSplit\fP"
+.br
+.RI "\fIIf the split is numeric, this holds the splitting information\&. \fP"
+.ti -1c
+.RI "std::vector< NumericSplitType< FitnessFunction > > \fBnumericSplits\fP"
+.br
+.RI "\fIInformation for splitting of numeric features (used before split)\&. \fP"
+.ti -1c
+.RI "size_t \fBnumSamples\fP"
+.br
+.RI "\fIThe number of samples seen so far by this node\&. \fP"
+.ti -1c
+.RI "bool \fBownsInfo\fP"
+.br
+.RI "\fIWhether or not we own the dataset information\&. \fP"
+.ti -1c
+.RI "bool \fBownsMappings\fP"
+.br
+.RI "\fIIndicates whether or not we own the mappings\&. \fP"
+.ti -1c
+.RI "size_t \fBsplitDimension\fP"
+.br
+.RI "\fIThe dimension that this node has split on\&. \fP"
+.ti -1c
+.RI "double \fBsuccessProbability\fP"
+.br
+.RI "\fIThe required probability of success for a split to be performed\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename FitnessFunction = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit>
+.br
+class mlpack::tree::HoeffdingTree< FitnessFunction, NumericSplitType, CategoricalSplitType >"
+The \fBHoeffdingTree\fP object represents all of the necessary information for a Hoeffding-bound-based decision tree\&. 
+
+This class is able to train on samples in streaming settings and batch settings, and perform splits based on the Hoeffding bound\&. The Hoeffding tree (also known as the 'very fast decision
+tree' -- VFDT) is described in the following paper:
+.PP
+.PP
+.nf
+@inproceedings{domingos2000mining,
+    title={{Mining High-Speed Data Streams}},
+    author={Domingos, P\&. and Hulten, G\&.},
+    year={2000},
+    booktitle={Proceedings of the Sixth ACM SIGKDD International Conference
+        on Knowledge Discovery and Data Mining (KDD '00)},
+    pages={71--80}
+}
+.fi
+.PP
+.PP
+The class is modular, and takes three template parameters\&. The first, FitnessFunction, is the fitness function that should be used to determine whether a split is beneficial; examples might be \fBGiniImpurity\fP or \fBInformationGain\fP\&. The NumericSplitType determines how numeric attributes are handled, and the CategoricalSplitType determines how categorical attributes are handled\&. As far as the actual splitting goes, the meat of the splitting procedure will be contained in those two classes\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIFitnessFunction\fP Fitness function to use\&. 
+.br
+\fINumericSplitType\fP Technique for splitting numeric features\&. 
+.br
+\fICategoricalSplitType\fP Technique for splitting categorical features\&. 
+.RE
+.PP
+
+.PP
+Definition at line 61 of file hoeffding_tree\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> typedef CategoricalSplitType<FitnessFunction> \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::\fBCategoricalSplit\fP"
+
+.PP
+Allow access to the categorical split type\&. 
+.PP
+Definition at line 67 of file hoeffding_tree\&.hpp\&.
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> typedef NumericSplitType<FitnessFunction> \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::\fBNumericSplit\fP"
+
+.PP
+Allow access to the numeric split type\&. 
+.PP
+Definition at line 65 of file hoeffding_tree\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> template<typename MatType > \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::\fBHoeffdingTree\fP (const MatType & data, const \fBdata::DatasetInfo\fP & datasetInfo, const arma::Row< size_t > & labels, const size_t numClasses, const bool batchTraining = \fCtrue\fP, const double successProbability = \fC0\&.95\fP, const size_t maxSamples = \fC0\fP, const size_t checkInterval = \fC100\fP, const size_t minSamples = \fC100\fP, const CategoricalSplitType< FitnessFunction > & categoricalSplitIn = \fCCategoricalSplitType< FitnessFunction >(0, 0)\fP, const NumericSplitType< FitnessFunction > & numericSplitIn = \fCNumericSplitType< FitnessFunction >(0)\fP)"
+
+.PP
+Construct the Hoeffding tree with the given parameters and given training data\&. The tree may be trained either in batch mode (which looks at all points before splitting, and propagates these points to the created children for further training), or in streaming mode, where each point is only considered once\&. (In general, batch mode will give better-performing trees, but will have higher memory and runtime costs for the same dataset\&.)
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Dataset to train on\&. 
+.br
+\fIdatasetInfo\fP Information on the dataset (types of each feature)\&. 
+.br
+\fIlabels\fP Labels of each point in the dataset\&. 
+.br
+\fInumClasses\fP Number of classes in the dataset\&. 
+.br
+\fIbatchTraining\fP Whether or not to train in batch\&. 
+.br
+\fIsuccessProbability\fP Probability of success required in Hoeffding bounds before a split can happen\&. 
+.br
+\fImaxSamples\fP Maximum number of samples before a split is forced (0 never forces a split); ignored in batch training mode\&. 
+.br
+\fIcheckInterval\fP Number of samples required before each split; ignored in batch training mode\&. 
+.br
+\fIminSamples\fP If the node has seen this many points or fewer, no split will be allowed\&. 
+.RE
+.PP
+
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::\fBHoeffdingTree\fP (const \fBdata::DatasetInfo\fP & datasetInfo, const size_t numClasses, const double successProbability = \fC0\&.95\fP, const size_t maxSamples = \fC0\fP, const size_t checkInterval = \fC100\fP, const size_t minSamples = \fC100\fP, const CategoricalSplitType< FitnessFunction > & categoricalSplitIn = \fCCategoricalSplitType< FitnessFunction >(0, 0)\fP, const NumericSplitType< FitnessFunction > & numericSplitIn = \fCNumericSplitType< FitnessFunction >(0)\fP, std::unordered_map< size_t, std::pair< size_t, size_t >> * dimensionMappings = \fCNULL\fP)"
+
+.PP
+Construct the Hoeffding tree with the given parameters, but training on no data\&. The dimensionMappings parameter is only used if it is desired that this node does not create its own dimensionMappings object (for instance, if this is a child of another node in the tree)\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdimensionality\fP Dimensionality of the dataset\&. 
+.br
+\fInumClasses\fP Number of classes in the dataset\&. 
+.br
+\fIdatasetInfo\fP Information on the dataset (types of each feature)\&. 
+.br
+\fIsuccessProbability\fP Probability of success required in Hoeffding bound before a split can happen\&. 
+.br
+\fImaxSamples\fP Maximum number of samples before a split is forced\&. 
+.br
+\fIcheckInterval\fP Number of samples required before each split check\&. 
+.br
+\fIminSamples\fP If the node has seen this many points or fewer, no split will be allowed\&. 
+.br
+\fIdimensionMappings\fP Mappings from dimension indices to positions in numeric and categorical split vectors\&. If left NULL, a new one will be created\&. 
+.RE
+.PP
+
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::\fBHoeffdingTree\fP (const \fBHoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType > & other)"
+
+.PP
+Copy another tree (warning: this will duplicate the tree entirely, and may use a lot of memory\&. Make sure it's what you want before you do it)\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP Tree to copy\&. 
+.RE
+.PP
+
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::~\fBHoeffdingTree\fP ()"
+
+.PP
+Clean up memory\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> template<typename VecType > size_t \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::CalculateDirection (const VecType & point) const"
+
+.PP
+Given a point and that this node is not a leaf, calculate the index of the child node this point would go towards\&. This method is primarily used by the \fBClassify()\fP function, but it can be used in a standalone sense too\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpoint\fP Point to classify\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::tree::HoeffdingTree< FitnessFunction, NumericSplitType, CategoricalSplitType >::CheckInterval()\&.
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> size_t \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::CheckInterval () const\fC [inline]\fP"
+
+.PP
+Get the number of samples before a split check is performed\&. 
+.PP
+Definition at line 217 of file hoeffding_tree\&.hpp\&.
+.PP
+References mlpack::tree::HoeffdingTree< FitnessFunction, NumericSplitType, CategoricalSplitType >::CalculateDirection(), mlpack::tree::HoeffdingTree< FitnessFunction, NumericSplitType, CategoricalSplitType >::checkInterval, mlpack::tree::HoeffdingTree< FitnessFunction, NumericSplitType, CategoricalSplitType >::Classify(), mlpack::tree::HoeffdingTree< FitnessFunction, NumericSplitType, CategoricalSplitType >::CreateChildren(), and mlpack::tree::HoeffdingTree< FitnessFunction, NumericSplitType, CategoricalSplitType >::Serialize()\&.
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> void \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::CheckInterval (const size_t checkInterval)"
+
+.PP
+Modify the number of samples before a split check is performed\&. 
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> const \fBHoeffdingTree\fP& \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::Child (const size_t i) const\fC [inline]\fP"
+
+.PP
+Get a child\&. 
+.PP
+Definition at line 197 of file hoeffding_tree\&.hpp\&.
+.PP
+References mlpack::tree::HoeffdingTree< FitnessFunction, NumericSplitType, CategoricalSplitType >::children\&.
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> \fBHoeffdingTree\fP& \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::Child (const size_t i)\fC [inline]\fP"
+
+.PP
+Modify a child\&. 
+.PP
+Definition at line 199 of file hoeffding_tree\&.hpp\&.
+.PP
+References mlpack::tree::HoeffdingTree< FitnessFunction, NumericSplitType, CategoricalSplitType >::children\&.
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> template<typename VecType > size_t \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::Classify (const VecType & point) const"
+
+.PP
+Classify the given point, using this node and the entire (sub)tree beneath it\&. The predicted label is returned\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpoint\fP Point to classify\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Predicted label of point\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::tree::HoeffdingTree< FitnessFunction, NumericSplitType, CategoricalSplitType >::CheckInterval()\&.
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> template<typename VecType > void \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::Classify (const VecType & point, size_t & prediction, double & probability) const"
+
+.PP
+Classify the given point and also return an estimate of the probability that the prediction is correct\&. (This estimate is simply the probability that a training point was from the majority class in the leaf that this point binned to\&.)
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpoint\fP Point to classify\&. 
+.br
+\fIprediction\fP Predicted label of point\&. 
+.br
+\fIprobability\fP An estimate of the probability that the prediction is correct\&. 
+.RE
+.PP
+
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> template<typename MatType > void \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::Classify (const MatType & data, arma::Row< size_t > & predictions) const"
+
+.PP
+Classify the given points, using this node and the entire (sub)tree beneath it\&. The predicted labels for each point are returned\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Points to classify\&. 
+.br
+\fIpredictions\fP Predicted labels for each point\&. 
+.RE
+.PP
+
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> template<typename MatType > void \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::Classify (const MatType & data, arma::Row< size_t > & predictions, arma::rowvec & probabilities) const"
+
+.PP
+Classify the given points, using this node and the entire (sub)tree beneath it\&. The predicted labels for each point are returned, as well as an estimate of the probability that the prediction is correct for each point\&. This estimate is simply the \fBMajorityProbability()\fP for the leaf that each point bins to\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Points to classify\&. 
+.br
+\fIpredictions\fP Predicted labels for each point\&. 
+.br
+\fIprobabilities\fP Probability estimates for each predicted label\&. 
+.RE
+.PP
+
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> void \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::CreateChildren ()"
+
+.PP
+Given that this node should split, create the children\&. 
+.PP
+Referenced by mlpack::tree::HoeffdingTree< FitnessFunction, NumericSplitType, CategoricalSplitType >::CheckInterval()\&.
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> size_t \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::MajorityClass () const\fC [inline]\fP"
+
+.PP
+Get the majority class\&. 
+.PP
+Definition at line 184 of file hoeffding_tree\&.hpp\&.
+.PP
+References mlpack::tree::HoeffdingTree< FitnessFunction, NumericSplitType, CategoricalSplitType >::majorityClass\&.
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> size_t& \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::MajorityClass ()\fC [inline]\fP"
+
+.PP
+Modify the majority class\&. 
+.PP
+Definition at line 186 of file hoeffding_tree\&.hpp\&.
+.PP
+References mlpack::tree::HoeffdingTree< FitnessFunction, NumericSplitType, CategoricalSplitType >::majorityClass\&.
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> double \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::MajorityProbability () const\fC [inline]\fP"
+
+.PP
+Get the probability of the majority class (based on training samples)\&. 
+.PP
+Definition at line 189 of file hoeffding_tree\&.hpp\&.
+.PP
+References mlpack::tree::HoeffdingTree< FitnessFunction, NumericSplitType, CategoricalSplitType >::majorityProbability\&.
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> double& \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::MajorityProbability ()\fC [inline]\fP"
+
+.PP
+Modify the probability of the majority class\&. 
+.PP
+Definition at line 191 of file hoeffding_tree\&.hpp\&.
+.PP
+References mlpack::tree::HoeffdingTree< FitnessFunction, NumericSplitType, CategoricalSplitType >::majorityProbability\&.
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> size_t \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::MaxSamples () const\fC [inline]\fP"
+
+.PP
+Get the maximum number of samples before a split is forced\&. 
+.PP
+Definition at line 212 of file hoeffding_tree\&.hpp\&.
+.PP
+References mlpack::tree::HoeffdingTree< FitnessFunction, NumericSplitType, CategoricalSplitType >::maxSamples\&.
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> void \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::MaxSamples (const size_t maxSamples)"
+
+.PP
+Modify the maximum number of samples before a split is forced\&. 
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> size_t \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::MinSamples () const\fC [inline]\fP"
+
+.PP
+Get the minimum number of samples for a split\&. 
+.PP
+Definition at line 207 of file hoeffding_tree\&.hpp\&.
+.PP
+References mlpack::tree::HoeffdingTree< FitnessFunction, NumericSplitType, CategoricalSplitType >::minSamples\&.
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> void \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::MinSamples (const size_t minSamples)"
+
+.PP
+Modify the minimum number of samples for a split\&. 
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> size_t \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::NumChildren () const\fC [inline]\fP"
+
+.PP
+Get the number of children\&. 
+.PP
+Definition at line 194 of file hoeffding_tree\&.hpp\&.
+.PP
+References mlpack::tree::HoeffdingTree< FitnessFunction, NumericSplitType, CategoricalSplitType >::children\&.
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> template<typename Archive > void \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::Serialize (Archive & ar, const unsigned int)"
+
+.PP
+Serialize the split\&. 
+.PP
+Referenced by mlpack::tree::HoeffdingTree< FitnessFunction, NumericSplitType, CategoricalSplitType >::CheckInterval()\&.
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> size_t \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::SplitCheck ()"
+
+.PP
+Check if a split would satisfy the conditions of the Hoeffding bound with the node's specified success probability\&. If so, the number of children that would be created is returned\&. If not, 0 is returned\&. 
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> size_t \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::SplitDimension () const\fC [inline]\fP"
+
+.PP
+Get the splitting dimension (size_t(-1) if no split)\&. 
+.PP
+Definition at line 181 of file hoeffding_tree\&.hpp\&.
+.PP
+References mlpack::tree::HoeffdingTree< FitnessFunction, NumericSplitType, CategoricalSplitType >::splitDimension\&.
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> double \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::SuccessProbability () const\fC [inline]\fP"
+
+.PP
+Get the confidence required for a split\&. 
+.PP
+Definition at line 202 of file hoeffding_tree\&.hpp\&.
+.PP
+References mlpack::tree::HoeffdingTree< FitnessFunction, NumericSplitType, CategoricalSplitType >::successProbability\&.
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> void \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::SuccessProbability (const double successProbability)"
+
+.PP
+Modify the confidence required for a split\&. 
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> template<typename MatType > void \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::Train (const MatType & data, const arma::Row< size_t > & labels, const bool batchTraining = \fCtrue\fP)"
+
+.PP
+Train on a set of points, either in streaming mode or in batch mode, with the given labels\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Data points to train on\&. 
+.br
+\fIlabel\fP Labels of data points\&. 
+.br
+\fIbatchTraining\fP If true, perform training in batch\&. 
+.RE
+.PP
+
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> template<typename VecType > void \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::Train (const VecType & point, const size_t label)"
+
+.PP
+Train on a single point in streaming mode, with the given label\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpoint\fP Point to train on\&. 
+.br
+\fIlabel\fP Label of point to train on\&. 
+.RE
+.PP
+
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> CategoricalSplitType<FitnessFunction>::SplitInfo \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::categoricalSplit\fC [private]\fP"
+
+.PP
+If the split is categorical, this holds the splitting information\&. 
+.PP
+Definition at line 331 of file hoeffding_tree\&.hpp\&.
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> std::vector<CategoricalSplitType<FitnessFunction> > \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::categoricalSplits\fC [private]\fP"
+
+.PP
+Information for splitting of categorical features (used before split)\&. 
+.PP
+Definition at line 297 of file hoeffding_tree\&.hpp\&.
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> size_t \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::checkInterval\fC [private]\fP"
+
+.PP
+The number of samples that should be seen before checking for a split\&. 
+.PP
+Definition at line 311 of file hoeffding_tree\&.hpp\&.
+.PP
+Referenced by mlpack::tree::HoeffdingTree< FitnessFunction, NumericSplitType, CategoricalSplitType >::CheckInterval()\&.
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> std::vector<\fBHoeffdingTree\fP*> \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::children\fC [private]\fP"
+
+.PP
+If the split has occurred, these are the children\&. 
+.PP
+Definition at line 335 of file hoeffding_tree\&.hpp\&.
+.PP
+Referenced by mlpack::tree::HoeffdingTree< FitnessFunction, NumericSplitType, CategoricalSplitType >::Child(), and mlpack::tree::HoeffdingTree< FitnessFunction, NumericSplitType, CategoricalSplitType >::NumChildren()\&.
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> const \fBdata::DatasetInfo\fP* \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::datasetInfo\fC [private]\fP"
+
+.PP
+The dataset information\&. 
+.PP
+Definition at line 315 of file hoeffding_tree\&.hpp\&.
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> std::unordered_map<size_t, std::pair<size_t, size_t> >* \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::dimensionMappings\fC [private]\fP"
+
+.PP
+This structure is owned by this node only if it is the root of the tree\&. 
+.PP
+Definition at line 300 of file hoeffding_tree\&.hpp\&.
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> size_t \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::majorityClass\fC [private]\fP"
+
+.PP
+The majority class of this node\&. 
+.PP
+Definition at line 326 of file hoeffding_tree\&.hpp\&.
+.PP
+Referenced by mlpack::tree::HoeffdingTree< FitnessFunction, NumericSplitType, CategoricalSplitType >::MajorityClass()\&.
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> double \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::majorityProbability\fC [private]\fP"
+
+.PP
+The empirical probability of a point this node saw having the majority class\&. 
+.PP
+Definition at line 329 of file hoeffding_tree\&.hpp\&.
+.PP
+Referenced by mlpack::tree::HoeffdingTree< FitnessFunction, NumericSplitType, CategoricalSplitType >::MajorityProbability()\&.
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> size_t \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::maxSamples\fC [private]\fP"
+
+.PP
+The maximum number of samples we can see before splitting\&. 
+.PP
+Definition at line 309 of file hoeffding_tree\&.hpp\&.
+.PP
+Referenced by mlpack::tree::HoeffdingTree< FitnessFunction, NumericSplitType, CategoricalSplitType >::MaxSamples()\&.
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> size_t \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::minSamples\fC [private]\fP"
+
+.PP
+The minimum number of samples for splitting\&. 
+.PP
+Definition at line 313 of file hoeffding_tree\&.hpp\&.
+.PP
+Referenced by mlpack::tree::HoeffdingTree< FitnessFunction, NumericSplitType, CategoricalSplitType >::MinSamples()\&.
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> size_t \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::numClasses\fC [private]\fP"
+
+.PP
+The number of classes this node is trained on\&. 
+.PP
+Definition at line 307 of file hoeffding_tree\&.hpp\&.
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> NumericSplitType<FitnessFunction>::SplitInfo \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::numericSplit\fC [private]\fP"
+
+.PP
+If the split is numeric, this holds the splitting information\&. 
+.PP
+Definition at line 333 of file hoeffding_tree\&.hpp\&.
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> std::vector<NumericSplitType<FitnessFunction> > \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::numericSplits\fC [private]\fP"
+
+.PP
+Information for splitting of numeric features (used before split)\&. 
+.PP
+Definition at line 295 of file hoeffding_tree\&.hpp\&.
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> size_t \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::numSamples\fC [private]\fP"
+
+.PP
+The number of samples seen so far by this node\&. 
+.PP
+Definition at line 305 of file hoeffding_tree\&.hpp\&.
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> bool \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::ownsInfo\fC [private]\fP"
+
+.PP
+Whether or not we own the dataset information\&. 
+.PP
+Definition at line 317 of file hoeffding_tree\&.hpp\&.
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> bool \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::ownsMappings\fC [private]\fP"
+
+.PP
+Indicates whether or not we own the mappings\&. 
+.PP
+Definition at line 302 of file hoeffding_tree\&.hpp\&.
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> size_t \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::splitDimension\fC [private]\fP"
+
+.PP
+The dimension that this node has split on\&. 
+.PP
+Definition at line 324 of file hoeffding_tree\&.hpp\&.
+.PP
+Referenced by mlpack::tree::HoeffdingTree< FitnessFunction, NumericSplitType, CategoricalSplitType >::SplitDimension()\&.
+.SS "template<typename FitnessFunction  = GiniImpurity, template< typename > class NumericSplitType = HoeffdingDoubleNumericSplit, template< typename > class CategoricalSplitType = HoeffdingCategoricalSplit> double \fBmlpack::tree::HoeffdingTree\fP< FitnessFunction, NumericSplitType, CategoricalSplitType >::successProbability\fC [private]\fP"
+
+.PP
+The required probability of success for a split to be performed\&. 
+.PP
+Definition at line 319 of file hoeffding_tree\&.hpp\&.
+.PP
+Referenced by mlpack::tree::HoeffdingTree< FitnessFunction, NumericSplitType, CategoricalSplitType >::SuccessProbability()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

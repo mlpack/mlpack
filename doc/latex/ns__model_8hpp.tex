@@ -1,0 +1,80 @@
+\section{src/mlpack/methods/neighbor\+\_\+search/ns\+\_\+model.hpp File Reference}
+\label{ns__model_8hpp}\index{src/mlpack/methods/neighbor\+\_\+search/ns\+\_\+model.\+hpp@{src/mlpack/methods/neighbor\+\_\+search/ns\+\_\+model.\+hpp}}
+Include dependency graph for ns\+\_\+model.\+hpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{ns__model_8hpp__incl}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class {\bf mlpack\+::neighbor\+::\+Bi\+Search\+Visitor$<$ Sort\+Policy $>$}
+\begin{DoxyCompactList}\small\item\em \doxyref{Bi\+Search\+Visitor}{p.}{classmlpack_1_1neighbor_1_1BiSearchVisitor} executes a bichromatic neighbor search on the given N\+S\+Type. \end{DoxyCompactList}\item 
+class {\bf mlpack\+::neighbor\+::\+Delete\+Visitor}
+\begin{DoxyCompactList}\small\item\em \doxyref{Delete\+Visitor}{p.}{classmlpack_1_1neighbor_1_1DeleteVisitor} deletes the given N\+S\+Type instance. \end{DoxyCompactList}\item 
+class {\bf mlpack\+::neighbor\+::\+Epsilon\+Visitor}
+\begin{DoxyCompactList}\small\item\em \doxyref{Epsilon\+Visitor}{p.}{classmlpack_1_1neighbor_1_1EpsilonVisitor} exposes the Epsilon method of the given N\+S\+Type. \end{DoxyCompactList}\item 
+class {\bf mlpack\+::neighbor\+::\+Mono\+Search\+Visitor}
+\begin{DoxyCompactList}\small\item\em \doxyref{Mono\+Search\+Visitor}{p.}{classmlpack_1_1neighbor_1_1MonoSearchVisitor} executes a monochromatic neighbor search on the given N\+S\+Type. \end{DoxyCompactList}\item 
+class {\bf mlpack\+::neighbor\+::\+N\+S\+Model$<$ Sort\+Policy $>$}
+\begin{DoxyCompactList}\small\item\em The \doxyref{N\+S\+Model}{p.}{classmlpack_1_1neighbor_1_1NSModel} class provides an easy way to serialize a model, abstracts away the different types of trees, and also reflects the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} A\+PI. \end{DoxyCompactList}\item 
+struct {\bf mlpack\+::neighbor\+::\+N\+S\+Model\+Name$<$ Sort\+Policy $>$}
+\item 
+struct {\bf mlpack\+::neighbor\+::\+N\+S\+Model\+Name$<$ Furthest\+Neighbor\+Sort $>$}
+\item 
+struct {\bf mlpack\+::neighbor\+::\+N\+S\+Model\+Name$<$ Nearest\+Neighbor\+Sort $>$}
+\item 
+class {\bf mlpack\+::neighbor\+::\+Reference\+Set\+Visitor}
+\begin{DoxyCompactList}\small\item\em \doxyref{Reference\+Set\+Visitor}{p.}{classmlpack_1_1neighbor_1_1ReferenceSetVisitor} exposes the reference\+Set of the given N\+S\+Type. \end{DoxyCompactList}\item 
+class {\bf mlpack\+::neighbor\+::\+Search\+Mode\+Visitor}
+\begin{DoxyCompactList}\small\item\em \doxyref{Search\+Mode\+Visitor}{p.}{classmlpack_1_1neighbor_1_1SearchModeVisitor} exposes the Search\+Mode() method of the given N\+S\+Type. \end{DoxyCompactList}\item 
+class {\bf mlpack\+::neighbor\+::\+Train\+Visitor$<$ Sort\+Policy $>$}
+\begin{DoxyCompactList}\small\item\em \doxyref{Train\+Visitor}{p.}{classmlpack_1_1neighbor_1_1TrainVisitor} sets the reference set to a new reference set on the given N\+S\+Type. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ {\bf mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ {\bf mlpack\+::neighbor}
+\begin{DoxyCompactList}\small\item\em Neighbor-\/search routines. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Sort\+Policy , template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type$>$ }\\using {\bf mlpack\+::neighbor\+::\+N\+S\+Type} = Neighbor\+Search$<$ Sort\+Policy, metric\+::\+Euclidean\+Distance, arma\+::mat, Tree\+Type, Tree\+Type$<$ metric\+::\+Euclidean\+Distance, Neighbor\+Search\+Stat$<$ Sort\+Policy $>$, arma\+::mat $>$\+::template Dual\+Tree\+Traverser $>$
+\begin{DoxyCompactList}\small\item\em Alias template for euclidean neighbor search. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf B\+O\+O\+S\+T\+\_\+\+T\+E\+M\+P\+L\+A\+T\+E\+\_\+\+C\+L\+A\+S\+S\+\_\+\+V\+E\+R\+S\+I\+ON} (template$<$ typename Sort\+Policy $>$, {\bf mlpack\+::neighbor\+::\+N\+S\+Model}$<$ Sort\+Policy $>$, 1)
+\begin{DoxyCompactList}\small\item\em Set the serialization version of the N\+S\+Model class. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Ryan Curtin
+\end{DoxyAuthor}
+This is a model for nearest or furthest neighbor search. It is useful in that it provides an easy way to serialize a model, abstracts away the different types of trees, and also reflects the Neighbor\+Search A\+PI and automatically directs to the right tree type.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause B\+SD license. You should have received a copy of the 3-\/clause B\+SD license along with mlpack. If not, see {\tt http\+://www.\+opensource.\+org/licenses/\+B\+S\+D-\/3-\/\+Clause} for more information. 
+
+\subsection{Function Documentation}
+\index{ns\+\_\+model.\+hpp@{ns\+\_\+model.\+hpp}!B\+O\+O\+S\+T\+\_\+\+T\+E\+M\+P\+L\+A\+T\+E\+\_\+\+C\+L\+A\+S\+S\+\_\+\+V\+E\+R\+S\+I\+ON@{B\+O\+O\+S\+T\+\_\+\+T\+E\+M\+P\+L\+A\+T\+E\+\_\+\+C\+L\+A\+S\+S\+\_\+\+V\+E\+R\+S\+I\+ON}}
+\index{B\+O\+O\+S\+T\+\_\+\+T\+E\+M\+P\+L\+A\+T\+E\+\_\+\+C\+L\+A\+S\+S\+\_\+\+V\+E\+R\+S\+I\+ON@{B\+O\+O\+S\+T\+\_\+\+T\+E\+M\+P\+L\+A\+T\+E\+\_\+\+C\+L\+A\+S\+S\+\_\+\+V\+E\+R\+S\+I\+ON}!ns\+\_\+model.\+hpp@{ns\+\_\+model.\+hpp}}
+\subsubsection[{B\+O\+O\+S\+T\+\_\+\+T\+E\+M\+P\+L\+A\+T\+E\+\_\+\+C\+L\+A\+S\+S\+\_\+\+V\+E\+R\+S\+I\+O\+N(template$<$ typename Sort\+Policy $>$, mlpack\+::neighbor\+::\+N\+S\+Model$<$ Sort\+Policy $>$, 1)}]{\setlength{\rightskip}{0pt plus 5cm}B\+O\+O\+S\+T\+\_\+\+T\+E\+M\+P\+L\+A\+T\+E\+\_\+\+C\+L\+A\+S\+S\+\_\+\+V\+E\+R\+S\+I\+ON (
+\begin{DoxyParamCaption}
+\item[{template$<$ typename Sort\+Policy $>$}]{, }
+\item[{{\bf mlpack\+::neighbor\+::\+N\+S\+Model}$<$ Sort\+Policy $>$}]{, }
+\item[{1}]{}
+\end{DoxyParamCaption}
+)}\label{ns__model_8hpp_a9b67caf7ca2f312476efdacd8210d85d}
+
+
+Set the serialization version of the N\+S\+Model class. 
+
+
+
+Referenced by mlpack\+::neighbor\+::\+N\+S\+Model$<$ Sort\+Policy $>$\+::\+Random\+Basis().
+

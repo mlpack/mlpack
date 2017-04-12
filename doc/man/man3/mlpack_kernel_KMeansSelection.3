@@ -1,0 +1,63 @@
+.TH "mlpack::kernel::KMeansSelection< ClusteringType, maxIterations >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::kernel::KMeansSelection< ClusteringType, maxIterations > \- Implementation of the kmeans sampling scheme\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static const arma::mat * \fBSelect\fP (const arma::mat &data, const size_t m)"
+.br
+.RI "\fIUse the K-Means clustering method to select the specified number of points in the dataset\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename ClusteringType = kmeans::KMeans<>, size_t maxIterations = 5>
+.br
+class mlpack::kernel::KMeansSelection< ClusteringType, maxIterations >"
+Implementation of the kmeans sampling scheme\&. 
+
+
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIClusteringType\fP Type of clustering\&. 
+.br
+\fImaxIterations\fP Maximum number of iterations allowed before giving up\&. 
+.RE
+.PP
+
+.PP
+Definition at line 29 of file kmeans_selection\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename ClusteringType  = kmeans::KMeans<>, size_t maxIterations = 5> static const arma::mat* \fBmlpack::kernel::KMeansSelection\fP< ClusteringType, maxIterations >::Select (const arma::mat & data, const size_t m)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Use the K-Means clustering method to select the specified number of points in the dataset\&. You are responsible for deleting the returned matrix!
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Dataset to sample from\&. 
+.br
+\fIm\fP Number of points to select\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Matrix pointer in which centroids are stored\&. 
+.RE
+.PP
+
+.PP
+Definition at line 40 of file kmeans_selection\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,494 @@
+.TH "mlpack::bound::HollowBallBound< TMetricType, ElemType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::bound::HollowBallBound< TMetricType, ElemType > \- Hollow ball bound encloses a set of points at a specific distance (radius) from a specific point (center) except points at a specific distance from another point (the center of the hole)\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "typedef TMetricType \fBMetricType\fP"
+.br
+.RI "\fIA public version of the metric type\&. \fP"
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBHollowBallBound\fP ()"
+.br
+.RI "\fIEmpty Constructor\&. \fP"
+.ti -1c
+.RI "\fBHollowBallBound\fP (const size_t dimension)"
+.br
+.RI "\fICreate the ball bound with the specified dimensionality\&. \fP"
+.ti -1c
+.RI "template<typename VecType > \fBHollowBallBound\fP (const ElemType innerRadius, const ElemType outerRadius, const VecType &\fBcenter\fP)"
+.br
+.RI "\fICreate the ball bound with the specified radius and center\&. \fP"
+.ti -1c
+.RI "\fBHollowBallBound\fP (const \fBHollowBallBound\fP &other)"
+.br
+.RI "\fICopy constructor\&. To prevent memory leaks\&. \fP"
+.ti -1c
+.RI "\fBHollowBallBound\fP (\fBHollowBallBound\fP &&other)"
+.br
+.RI "\fIMove constructor: take possession of another bound\&. \fP"
+.ti -1c
+.RI "\fB~HollowBallBound\fP ()"
+.br
+.RI "\fIDestructor to release allocated memory\&. \fP"
+.ti -1c
+.RI "const arma::Col< ElemType > & \fBCenter\fP () const "
+.br
+.RI "\fIGet the center point of the ball\&. \fP"
+.ti -1c
+.RI "arma::Col< ElemType > & \fBCenter\fP ()"
+.br
+.RI "\fIModify the center point of the ball\&. \fP"
+.ti -1c
+.RI "template<typename VecType > void \fBCenter\fP (VecType &\fBcenter\fP) const "
+.br
+.RI "\fIPlace the center of \fBBallBound\fP into the given vector\&. \fP"
+.ti -1c
+.RI "template<typename VecType > bool \fBContains\fP (const VecType &point) const "
+.br
+.RI "\fIDetermines if a point is within this bound\&. \fP"
+.ti -1c
+.RI "bool \fBContains\fP (const \fBHollowBallBound\fP &other) const "
+.br
+.RI "\fIDetermines if another bound is within this bound\&. \fP"
+.ti -1c
+.RI "ElemType \fBDiameter\fP () const "
+.br
+.RI "\fIReturns the diameter of the ballbound\&. \fP"
+.ti -1c
+.RI "size_t \fBDim\fP () const "
+.br
+.RI "\fIGet the dimensionality of the ball\&. \fP"
+.ti -1c
+.RI "const arma::Col< ElemType > & \fBHollowCenter\fP () const "
+.br
+.RI "\fIGet the center point of the hollow\&. \fP"
+.ti -1c
+.RI "arma::Col< ElemType > & \fBHollowCenter\fP ()"
+.br
+.RI "\fIModify the center point of the hollow\&. \fP"
+.ti -1c
+.RI "ElemType \fBInnerRadius\fP () const "
+.br
+.RI "\fIGet the innner radius of the ball\&. \fP"
+.ti -1c
+.RI "ElemType & \fBInnerRadius\fP ()"
+.br
+.RI "\fIModify the inner radius of the ball\&. \fP"
+.ti -1c
+.RI "template<typename VecType > ElemType \fBMaxDistance\fP (const VecType &point, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< VecType >::value > *=0) const "
+.br
+.RI "\fIComputes maximum distance\&. \fP"
+.ti -1c
+.RI "ElemType \fBMaxDistance\fP (const \fBHollowBallBound\fP &other) const "
+.br
+.RI "\fIComputes maximum distance\&. \fP"
+.ti -1c
+.RI "const \fBMetricType\fP & \fBMetric\fP () const "
+.br
+.RI "\fIReturns the distance metric used in this bound\&. \fP"
+.ti -1c
+.RI "\fBMetricType\fP & \fBMetric\fP ()"
+.br
+.RI "\fIModify the distance metric used in this bound\&. \fP"
+.ti -1c
+.RI "template<typename VecType > ElemType \fBMinDistance\fP (const VecType &point, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< VecType >::value > *=0) const "
+.br
+.RI "\fICalculates minimum bound-to-point squared distance\&. \fP"
+.ti -1c
+.RI "ElemType \fBMinDistance\fP (const \fBHollowBallBound\fP &other) const "
+.br
+.RI "\fICalculates minimum bound-to-bound squared distance\&. \fP"
+.ti -1c
+.RI "ElemType \fBMinWidth\fP () const "
+.br
+.RI "\fIGet the minimum width of the bound (this is same as the diameter)\&. \fP"
+.ti -1c
+.RI "\fBHollowBallBound\fP & \fBoperator=\fP (const \fBHollowBallBound\fP &other)"
+.br
+.RI "\fIFor the same reason as the copy constructor: to prevent memory leaks\&. \fP"
+.ti -1c
+.RI "\fBmath::RangeType\fP< ElemType > \fBoperator[]\fP (const size_t i) const "
+.br
+.RI "\fIGet the range in a certain dimension\&. \fP"
+.ti -1c
+.RI "template<typename MatType > const \fBHollowBallBound\fP & \fBoperator|=\fP (const MatType &data)"
+.br
+.RI "\fIExpand the bound to include the given point\&. \fP"
+.ti -1c
+.RI "const \fBHollowBallBound\fP & \fBoperator|=\fP (const \fBHollowBallBound\fP &other)"
+.br
+.RI "\fIExpand the bound to include the given bound\&. \fP"
+.ti -1c
+.RI "ElemType \fBOuterRadius\fP () const "
+.br
+.RI "\fIGet the outer radius of the ball\&. \fP"
+.ti -1c
+.RI "ElemType & \fBOuterRadius\fP ()"
+.br
+.RI "\fIModify the outer radius of the ball\&. \fP"
+.ti -1c
+.RI "template<typename VecType > \fBmath::RangeType\fP< ElemType > \fBRangeDistance\fP (const VecType &other, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< VecType >::value > *=0) const "
+.br
+.RI "\fICalculates minimum and maximum bound-to-point distance\&. \fP"
+.ti -1c
+.RI "\fBmath::RangeType\fP< ElemType > \fBRangeDistance\fP (const \fBHollowBallBound\fP &other) const "
+.br
+.RI "\fICalculates minimum and maximum bound-to-bound distance\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int version)"
+.br
+.RI "\fISerialize the bound\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "arma::Col< ElemType > \fBcenter\fP"
+.br
+.RI "\fIThe center of the ball bound\&. \fP"
+.ti -1c
+.RI "arma::Col< ElemType > \fBhollowCenter\fP"
+.br
+.RI "\fIThe center of the hollow\&. \fP"
+.ti -1c
+.RI "\fBMetricType\fP * \fBmetric\fP"
+.br
+.RI "\fIThe metric used in this bound\&. \fP"
+.ti -1c
+.RI "bool \fBownsMetric\fP"
+.br
+.RI "\fITo know whether this object allocated memory to the metric member variable\&. \fP"
+.ti -1c
+.RI "\fBmath::RangeType\fP< ElemType > \fBradii\fP"
+.br
+.RI "\fIThe inner and the outer radii of the bound\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double>
+.br
+class mlpack::bound::HollowBallBound< TMetricType, ElemType >"
+Hollow ball bound encloses a set of points at a specific distance (radius) from a specific point (center) except points at a specific distance from another point (the center of the hole)\&. 
+
+MetricType is the custom metric type that defaults to the Euclidean (L2) distance\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fITMetricType\fP metric type used in the distance measure\&. 
+.br
+\fIElemType\fP Type of element (float or double or similar)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 33 of file hollow_ball_bound\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> typedef TMetricType \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::\fBMetricType\fP"
+
+.PP
+A public version of the metric type\&. 
+.PP
+Definition at line 37 of file hollow_ball_bound\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::\fBHollowBallBound\fP ()"
+
+.PP
+Empty Constructor\&. 
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::\fBHollowBallBound\fP (const size_t dimension)"
+
+.PP
+Create the ball bound with the specified dimensionality\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdimension\fP Dimensionality of ball bound\&. 
+.RE
+.PP
+
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> template<typename VecType > \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::\fBHollowBallBound\fP (const ElemType innerRadius, const ElemType outerRadius, const VecType & center)"
+
+.PP
+Create the ball bound with the specified radius and center\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinnerRadius\fP Inner radius of ball bound\&. 
+.br
+\fIouterRadius\fP Outer radius of ball bound\&. 
+.br
+\fIcenter\fP Center of ball bound\&. 
+.RE
+.PP
+
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::\fBHollowBallBound\fP (const \fBHollowBallBound\fP< TMetricType, ElemType > & other)"
+
+.PP
+Copy constructor\&. To prevent memory leaks\&. 
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::\fBHollowBallBound\fP (\fBHollowBallBound\fP< TMetricType, ElemType > && other)"
+
+.PP
+Move constructor: take possession of another bound\&. 
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::~\fBHollowBallBound\fP ()"
+
+.PP
+Destructor to release allocated memory\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> const arma::Col<ElemType>& \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::Center () const\fC [inline]\fP"
+
+.PP
+Get the center point of the ball\&. 
+.PP
+Definition at line 104 of file hollow_ball_bound\&.hpp\&.
+.PP
+References mlpack::bound::HollowBallBound< TMetricType, ElemType >::center\&.
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> arma::Col<ElemType>& \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::Center ()\fC [inline]\fP"
+
+.PP
+Modify the center point of the ball\&. 
+.PP
+Definition at line 106 of file hollow_ball_bound\&.hpp\&.
+.PP
+References mlpack::bound::HollowBallBound< TMetricType, ElemType >::center\&.
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> template<typename VecType > void \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::Center (VecType & center) const\fC [inline]\fP"
+
+.PP
+Place the center of \fBBallBound\fP into the given vector\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIcenter\fP Vector which the centroid will be written to\&. 
+.RE
+.PP
+
+.PP
+Definition at line 142 of file hollow_ball_bound\&.hpp\&.
+.PP
+References mlpack::bound::HollowBallBound< TMetricType, ElemType >::center, mlpack::bound::HollowBallBound< TMetricType, ElemType >::MaxDistance(), mlpack::bound::HollowBallBound< TMetricType, ElemType >::MinDistance(), mlpack::bound::HollowBallBound< TMetricType, ElemType >::operator|=(), and mlpack::bound::HollowBallBound< TMetricType, ElemType >::RangeDistance()\&.
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> template<typename VecType > bool \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::Contains (const VecType & point) const"
+
+.PP
+Determines if a point is within this bound\&. 
+.PP
+Referenced by mlpack::bound::HollowBallBound< TMetricType, ElemType >::MinWidth()\&.
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> bool \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::Contains (const \fBHollowBallBound\fP< TMetricType, ElemType > & other) const"
+
+.PP
+Determines if another bound is within this bound\&. 
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> ElemType \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::Diameter () const\fC [inline]\fP"
+
+.PP
+Returns the diameter of the ballbound\&. 
+.PP
+Definition at line 209 of file hollow_ball_bound\&.hpp\&.
+.PP
+References mlpack::math::RangeType< T >::Hi()\&.
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> size_t \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::Dim () const\fC [inline]\fP"
+
+.PP
+Get the dimensionality of the ball\&. 
+.PP
+Definition at line 114 of file hollow_ball_bound\&.hpp\&.
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> const arma::Col<ElemType>& \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::HollowCenter () const\fC [inline]\fP"
+
+.PP
+Get the center point of the hollow\&. 
+.PP
+Definition at line 109 of file hollow_ball_bound\&.hpp\&.
+.PP
+References mlpack::bound::HollowBallBound< TMetricType, ElemType >::hollowCenter\&.
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> arma::Col<ElemType>& \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::HollowCenter ()\fC [inline]\fP"
+
+.PP
+Modify the center point of the hollow\&. 
+.PP
+Definition at line 111 of file hollow_ball_bound\&.hpp\&.
+.PP
+References mlpack::bound::HollowBallBound< TMetricType, ElemType >::hollowCenter\&.
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> ElemType \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::InnerRadius () const\fC [inline]\fP"
+
+.PP
+Get the innner radius of the ball\&. 
+.PP
+Definition at line 99 of file hollow_ball_bound\&.hpp\&.
+.PP
+References mlpack::math::RangeType< T >::Lo()\&.
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> ElemType& \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::InnerRadius ()\fC [inline]\fP"
+
+.PP
+Modify the inner radius of the ball\&. 
+.PP
+Definition at line 101 of file hollow_ball_bound\&.hpp\&.
+.PP
+References mlpack::math::RangeType< T >::Lo()\&.
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> template<typename VecType > ElemType \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::MaxDistance (const VecType & point, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< VecType >::value > * = \fC0\fP) const"
+
+.PP
+Computes maximum distance\&. 
+.PP
+Referenced by mlpack::bound::HollowBallBound< TMetricType, ElemType >::Center()\&.
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> ElemType \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::MaxDistance (const \fBHollowBallBound\fP< TMetricType, ElemType > & other) const"
+
+.PP
+Computes maximum distance\&. 
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> const \fBMetricType\fP& \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::Metric () const\fC [inline]\fP"
+
+.PP
+Returns the distance metric used in this bound\&. 
+.PP
+Definition at line 212 of file hollow_ball_bound\&.hpp\&.
+.PP
+References mlpack::bound::HollowBallBound< TMetricType, ElemType >::metric\&.
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> \fBMetricType\fP& \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::Metric ()\fC [inline]\fP"
+
+.PP
+Modify the distance metric used in this bound\&. 
+.PP
+Definition at line 214 of file hollow_ball_bound\&.hpp\&.
+.PP
+References mlpack::bound::HollowBallBound< TMetricType, ElemType >::metric, and mlpack::bound::HollowBallBound< TMetricType, ElemType >::Serialize()\&.
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> template<typename VecType > ElemType \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::MinDistance (const VecType & point, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< VecType >::value > * = \fC0\fP) const"
+
+.PP
+Calculates minimum bound-to-point squared distance\&. 
+.PP
+Referenced by mlpack::bound::HollowBallBound< TMetricType, ElemType >::Center()\&.
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> ElemType \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::MinDistance (const \fBHollowBallBound\fP< TMetricType, ElemType > & other) const"
+
+.PP
+Calculates minimum bound-to-bound squared distance\&. 
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> ElemType \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::MinWidth () const\fC [inline]\fP"
+
+.PP
+Get the minimum width of the bound (this is same as the diameter)\&. For ball bounds, width along all dimensions remain same\&. 
+.PP
+Definition at line 120 of file hollow_ball_bound\&.hpp\&.
+.PP
+References mlpack::bound::HollowBallBound< TMetricType, ElemType >::Contains(), mlpack::math::RangeType< T >::Hi(), and mlpack::bound::HollowBallBound< TMetricType, ElemType >::operator[]()\&.
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> \fBHollowBallBound\fP& \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::operator= (const \fBHollowBallBound\fP< TMetricType, ElemType > & other)"
+
+.PP
+For the same reason as the copy constructor: to prevent memory leaks\&. 
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> \fBmath::RangeType\fP<ElemType> \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::operator[] (const size_t i) const"
+
+.PP
+Get the range in a certain dimension\&. 
+.PP
+Referenced by mlpack::bound::HollowBallBound< TMetricType, ElemType >::MinWidth()\&.
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> template<typename MatType > const \fBHollowBallBound\fP& \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::operator|= (const MatType & data)"
+
+.PP
+Expand the bound to include the given point\&. The centroid will not be moved\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIMatType\fP Type of matrix; could be arma::mat, arma::spmat, or a vector\&. 
+.br
+\fIdata\fP Data points to add\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::bound::HollowBallBound< TMetricType, ElemType >::Center()\&.
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> const \fBHollowBallBound\fP& \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::operator|= (const \fBHollowBallBound\fP< TMetricType, ElemType > & other)"
+
+.PP
+Expand the bound to include the given bound\&. The centroid will not be moved\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIMatType\fP Type of matrix; could be arma::mat, arma::spmat, or a vector\&. 
+.br
+\fIdata\fP Data points to add\&. 
+.RE
+.PP
+
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> ElemType \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::OuterRadius () const\fC [inline]\fP"
+
+.PP
+Get the outer radius of the ball\&. 
+.PP
+Definition at line 94 of file hollow_ball_bound\&.hpp\&.
+.PP
+References mlpack::math::RangeType< T >::Hi()\&.
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> ElemType& \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::OuterRadius ()\fC [inline]\fP"
+
+.PP
+Modify the outer radius of the ball\&. 
+.PP
+Definition at line 96 of file hollow_ball_bound\&.hpp\&.
+.PP
+References mlpack::math::RangeType< T >::Hi()\&.
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> template<typename VecType > \fBmath::RangeType\fP<ElemType> \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::RangeDistance (const VecType & other, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< VecType >::value > * = \fC0\fP) const"
+
+.PP
+Calculates minimum and maximum bound-to-point distance\&. 
+.PP
+Referenced by mlpack::bound::HollowBallBound< TMetricType, ElemType >::Center()\&.
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> \fBmath::RangeType\fP<ElemType> \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::RangeDistance (const \fBHollowBallBound\fP< TMetricType, ElemType > & other) const"
+
+.PP
+Calculates minimum and maximum bound-to-bound distance\&. Example: bound1\&.MinDistanceSq(other) for minimum distance\&. 
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> template<typename Archive > void \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::Serialize (Archive & ar, const unsigned int version)"
+
+.PP
+Serialize the bound\&. 
+.PP
+Referenced by mlpack::bound::HollowBallBound< TMetricType, ElemType >::Metric()\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> arma::Col<ElemType> \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::center\fC [private]\fP"
+
+.PP
+The center of the ball bound\&. 
+.PP
+Definition at line 43 of file hollow_ball_bound\&.hpp\&.
+.PP
+Referenced by mlpack::bound::HollowBallBound< TMetricType, ElemType >::Center()\&.
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> arma::Col<ElemType> \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::hollowCenter\fC [private]\fP"
+
+.PP
+The center of the hollow\&. 
+.PP
+Definition at line 45 of file hollow_ball_bound\&.hpp\&.
+.PP
+Referenced by mlpack::bound::HollowBallBound< TMetricType, ElemType >::HollowCenter()\&.
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> \fBMetricType\fP* \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::metric\fC [private]\fP"
+
+.PP
+The metric used in this bound\&. 
+.PP
+Definition at line 47 of file hollow_ball_bound\&.hpp\&.
+.PP
+Referenced by mlpack::bound::HollowBallBound< TMetricType, ElemType >::Metric()\&.
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> bool \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::ownsMetric\fC [private]\fP"
+
+.PP
+To know whether this object allocated memory to the metric member variable\&. This will be true except in the copy constructor and the overloaded assignment operator\&. We need this to know whether we should delete the metric member variable in the destructor\&. 
+.PP
+Definition at line 55 of file hollow_ball_bound\&.hpp\&.
+.SS "template<typename TMetricType = metric::LMetric<2, true>, typename ElemType = double> \fBmath::RangeType\fP<ElemType> \fBmlpack::bound::HollowBallBound\fP< TMetricType, ElemType >::radii\fC [private]\fP"
+
+.PP
+The inner and the outer radii of the bound\&. 
+.PP
+Definition at line 41 of file hollow_ball_bound\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,757 @@
+\section{mlpack\+:\+:neighbor\+:\+:R\+A\+Model$<$ Sort\+Policy $>$ Class Template Reference}
+\label{classmlpack_1_1neighbor_1_1RAModel}\index{mlpack\+::neighbor\+::\+R\+A\+Model$<$ Sort\+Policy $>$@{mlpack\+::neighbor\+::\+R\+A\+Model$<$ Sort\+Policy $>$}}
+
+
+The \doxyref{R\+A\+Model}{p.}{classmlpack_1_1neighbor_1_1RAModel} class provides an abstraction for the \doxyref{R\+A\+Search}{p.}{classmlpack_1_1neighbor_1_1RASearch} class, abstracting away the Tree\+Type parameter and allowing it to be specified at runtime in this class.  
+
+
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum {\bf Tree\+Types} \{ \\*
+{\bf K\+D\+\_\+\+T\+R\+EE}, 
+\\*
+{\bf C\+O\+V\+E\+R\+\_\+\+T\+R\+EE}, 
+\\*
+{\bf R\+\_\+\+T\+R\+EE}, 
+\\*
+{\bf R\+\_\+\+S\+T\+A\+R\+\_\+\+T\+R\+EE}, 
+\\*
+{\bf X\+\_\+\+T\+R\+EE}, 
+\\*
+{\bf H\+I\+L\+B\+E\+R\+T\+\_\+\+R\+\_\+\+T\+R\+EE}, 
+\\*
+{\bf R\+\_\+\+P\+L\+U\+S\+\_\+\+T\+R\+EE}, 
+\\*
+{\bf R\+\_\+\+P\+L\+U\+S\+\_\+\+P\+L\+U\+S\+\_\+\+T\+R\+EE}, 
+\\*
+{\bf U\+B\+\_\+\+T\+R\+EE}, 
+\\*
+{\bf O\+C\+T\+R\+EE}
+ \}\begin{DoxyCompactList}\small\item\em The list of tree types we can use with \doxyref{R\+A\+Search}{p.}{classmlpack_1_1neighbor_1_1RASearch}. \end{DoxyCompactList}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf R\+A\+Model} ({\bf Tree\+Types} {\bf tree\+Type}=Tree\+Types\+::\+K\+D\+\_\+\+T\+R\+EE, bool {\bf random\+Basis}=false)
+\begin{DoxyCompactList}\small\item\em Initialize the \doxyref{R\+A\+Model}{p.}{classmlpack_1_1neighbor_1_1RAModel} with the given type and whether or not a random basis should be used. \end{DoxyCompactList}\item 
+{\bf R\+A\+Model} (const {\bf R\+A\+Model} \&other)
+\begin{DoxyCompactList}\small\item\em Copy the given \doxyref{R\+A\+Model}{p.}{classmlpack_1_1neighbor_1_1RAModel}. \end{DoxyCompactList}\item 
+{\bf R\+A\+Model} ({\bf R\+A\+Model} \&\&other)
+\begin{DoxyCompactList}\small\item\em Take ownership of the given \doxyref{R\+A\+Model}{p.}{classmlpack_1_1neighbor_1_1RAModel}. \end{DoxyCompactList}\item 
+{\bf $\sim$\+R\+A\+Model} ()
+\begin{DoxyCompactList}\small\item\em Clean memory, if necessary. \end{DoxyCompactList}\item 
+double {\bf Alpha} () const 
+\begin{DoxyCompactList}\small\item\em Get the desired success probability. \end{DoxyCompactList}\item 
+double \& {\bf Alpha} ()
+\begin{DoxyCompactList}\small\item\em Modify the desired success probability. \end{DoxyCompactList}\item 
+void {\bf Build\+Model} (arma\+::mat \&\&reference\+Set, const size\+\_\+t {\bf leaf\+Size}, const bool naive, const bool single\+Mode)
+\begin{DoxyCompactList}\small\item\em Build the reference tree. \end{DoxyCompactList}\item 
+const arma\+::mat \& {\bf Dataset} () const 
+\begin{DoxyCompactList}\small\item\em Expose the dataset. \end{DoxyCompactList}\item 
+bool {\bf First\+Leaf\+Exact} () const 
+\begin{DoxyCompactList}\small\item\em Get whether or not we traverse to the first leaf without approximation. \end{DoxyCompactList}\item 
+bool \& {\bf First\+Leaf\+Exact} ()
+\begin{DoxyCompactList}\small\item\em Modify whether or not we traverse to the first leaf without approximation. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Leaf\+Size} () const 
+\begin{DoxyCompactList}\small\item\em Get the leaf size (only relevant when the kd-\/tree is used). \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Leaf\+Size} ()
+\begin{DoxyCompactList}\small\item\em Modify the leaf size (only relevant when the kd-\/tree is used). \end{DoxyCompactList}\item 
+bool {\bf Naive} () const 
+\begin{DoxyCompactList}\small\item\em Get whether or not naive search is being used. \end{DoxyCompactList}\item 
+bool \& {\bf Naive} ()
+\begin{DoxyCompactList}\small\item\em Modify whether or not naive search is being used. \end{DoxyCompactList}\item 
+{\bf R\+A\+Model} \& {\bf operator=} (const {\bf R\+A\+Model} \&other)
+\begin{DoxyCompactList}\small\item\em Copy the given \doxyref{R\+A\+Model}{p.}{classmlpack_1_1neighbor_1_1RAModel}. \end{DoxyCompactList}\item 
+{\bf R\+A\+Model} \& {\bf operator=} ({\bf R\+A\+Model} \&\&other)
+\begin{DoxyCompactList}\small\item\em Take ownership of the given \doxyref{R\+A\+Model}{p.}{classmlpack_1_1neighbor_1_1RAModel}. \end{DoxyCompactList}\item 
+bool {\bf Random\+Basis} () const 
+\begin{DoxyCompactList}\small\item\em Get whether or not a random basis is being used. \end{DoxyCompactList}\item 
+bool \& {\bf Random\+Basis} ()
+\begin{DoxyCompactList}\small\item\em Modify whether or not a random basis is being used. \end{DoxyCompactList}\item 
+bool {\bf Sample\+At\+Leaves} () const 
+\begin{DoxyCompactList}\small\item\em Get whether or not sampling is done at the leaves. \end{DoxyCompactList}\item 
+bool \& {\bf Sample\+At\+Leaves} ()
+\begin{DoxyCompactList}\small\item\em Modify whether or not sampling is done at the leaves. \end{DoxyCompactList}\item 
+void {\bf Search} (arma\+::mat \&\&query\+Set, const size\+\_\+t k, arma\+::\+Mat$<$ size\+\_\+t $>$ \&neighbors, arma\+::mat \&distances)
+\begin{DoxyCompactList}\small\item\em Perform rank-\/approximate neighbor search, taking ownership of the query set. \end{DoxyCompactList}\item 
+void {\bf Search} (const size\+\_\+t k, arma\+::\+Mat$<$ size\+\_\+t $>$ \&neighbors, arma\+::mat \&distances)
+\begin{DoxyCompactList}\small\item\em Perform rank-\/approximate neighbor search, using the reference set as the query set. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void {\bf Serialize} (Archive \&ar, const unsigned int)
+\begin{DoxyCompactList}\small\item\em Serialize the model. \end{DoxyCompactList}\item 
+bool {\bf Single\+Mode} () const 
+\begin{DoxyCompactList}\small\item\em Get whether or not single-\/tree search is being used. \end{DoxyCompactList}\item 
+bool \& {\bf Single\+Mode} ()
+\begin{DoxyCompactList}\small\item\em Modify whether or not single-\/tree search is being used. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf Single\+Sample\+Limit} () const 
+\begin{DoxyCompactList}\small\item\em Get the limit on the size of a node that can be approximated. \end{DoxyCompactList}\item 
+size\+\_\+t \& {\bf Single\+Sample\+Limit} ()
+\begin{DoxyCompactList}\small\item\em Modify the limit on the size of a node that can be approximation. \end{DoxyCompactList}\item 
+double {\bf Tau} () const 
+\begin{DoxyCompactList}\small\item\em Get the rank-\/approximation in percentile of the data. \end{DoxyCompactList}\item 
+double \& {\bf Tau} ()
+\begin{DoxyCompactList}\small\item\em Modify the rank-\/approximation in percentile of the data. \end{DoxyCompactList}\item 
+{\bf std\+::string} {\bf Tree\+Name} () const 
+\begin{DoxyCompactList}\small\item\em Get the name of the tree type. \end{DoxyCompactList}\item 
+{\bf Tree\+Types} {\bf Tree\+Type} () const 
+\begin{DoxyCompactList}\small\item\em Get the type of tree being used. \end{DoxyCompactList}\item 
+{\bf Tree\+Types} \& {\bf Tree\+Type} ()
+\begin{DoxyCompactList}\small\item\em Modify the type of tree being used. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Types}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type$>$ }\\using {\bf R\+A\+Type} = {\bf R\+A\+Search}$<$ Sort\+Policy, {\bf metric\+::\+Euclidean\+Distance}, arma\+::mat, {\bf Tree\+Type} $>$
+\begin{DoxyCompactList}\small\item\em Typedef the \doxyref{R\+A\+Search}{p.}{classmlpack_1_1neighbor_1_1RASearch} class we\textquotesingle{}ll use. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+{\bf R\+A\+Type}$<$ {\bf tree\+::\+Standard\+Cover\+Tree} $>$ $\ast$ {\bf cover\+Tree\+RA}
+\begin{DoxyCompactList}\small\item\em Non-\/\+N\+U\+LL if the cover tree is used. \end{DoxyCompactList}\item 
+{\bf R\+A\+Type}$<$ {\bf tree\+::\+Hilbert\+R\+Tree} $>$ $\ast$ {\bf hilbert\+R\+Tree\+RA}
+\begin{DoxyCompactList}\small\item\em Non-\/\+N\+U\+LL if the Hilbert R tree is used. \end{DoxyCompactList}\item 
+{\bf R\+A\+Type}$<$ {\bf tree\+::\+K\+D\+Tree} $>$ $\ast$ {\bf kd\+Tree\+RA}
+\begin{DoxyCompactList}\small\item\em Non-\/\+N\+U\+LL if the kd-\/tree is used. \end{DoxyCompactList}\item 
+size\+\_\+t {\bf leaf\+Size}
+\begin{DoxyCompactList}\small\item\em The leaf size of the tree being used (useful only for the kd-\/tree). \end{DoxyCompactList}\item 
+{\bf R\+A\+Type}$<$ {\bf tree\+::\+Octree} $>$ $\ast$ {\bf octree\+RA}
+\begin{DoxyCompactList}\small\item\em Non-\/\+N\+U\+LL if the octree is used. \end{DoxyCompactList}\item 
+arma\+::mat {\bf q}
+\begin{DoxyCompactList}\small\item\em The basis to project into. \end{DoxyCompactList}\item 
+bool {\bf random\+Basis}
+\begin{DoxyCompactList}\small\item\em If true, randomly project into a new basis. \end{DoxyCompactList}\item 
+{\bf R\+A\+Type}$<$ {\bf tree\+::\+R\+Plus\+Plus\+Tree} $>$ $\ast$ {\bf r\+Plus\+Plus\+Tree\+RA}
+\begin{DoxyCompactList}\small\item\em Non-\/\+N\+U\+LL if the R++ tree is used. \end{DoxyCompactList}\item 
+{\bf R\+A\+Type}$<$ {\bf tree\+::\+R\+Plus\+Tree} $>$ $\ast$ {\bf r\+Plus\+Tree\+RA}
+\begin{DoxyCompactList}\small\item\em Non-\/\+N\+U\+LL if the R+ tree is used. \end{DoxyCompactList}\item 
+{\bf R\+A\+Type}$<$ {\bf tree\+::\+R\+Star\+Tree} $>$ $\ast$ {\bf r\+Star\+Tree\+RA}
+\begin{DoxyCompactList}\small\item\em Non-\/\+N\+U\+LL if the R$\ast$ tree is used. \end{DoxyCompactList}\item 
+{\bf R\+A\+Type}$<$ {\bf tree\+::\+R\+Tree} $>$ $\ast$ {\bf r\+Tree\+RA}
+\begin{DoxyCompactList}\small\item\em Non-\/\+N\+U\+LL if the R tree is used. \end{DoxyCompactList}\item 
+{\bf Tree\+Types} {\bf tree\+Type}
+\begin{DoxyCompactList}\small\item\em The type of tree being used. \end{DoxyCompactList}\item 
+{\bf R\+A\+Type}$<$ {\bf tree\+::\+U\+B\+Tree} $>$ $\ast$ {\bf ub\+Tree\+RA}
+\begin{DoxyCompactList}\small\item\em Non-\/\+N\+U\+LL if the UB tree is used. \end{DoxyCompactList}\item 
+{\bf R\+A\+Type}$<$ {\bf tree\+::\+X\+Tree} $>$ $\ast$ {\bf x\+Tree\+RA}
+\begin{DoxyCompactList}\small\item\em Non-\/\+N\+U\+LL if the X tree is used. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Sort\+Policy$>$\\*
+class mlpack\+::neighbor\+::\+R\+A\+Model$<$ Sort\+Policy $>$}
+
+The \doxyref{R\+A\+Model}{p.}{classmlpack_1_1neighbor_1_1RAModel} class provides an abstraction for the \doxyref{R\+A\+Search}{p.}{classmlpack_1_1neighbor_1_1RASearch} class, abstracting away the Tree\+Type parameter and allowing it to be specified at runtime in this class. 
+
+This class is written for the sake of the \textquotesingle{}allkrann\textquotesingle{} program, but is not necessarily restricted to that use.
+
+
+\begin{DoxyParams}{Parameters}
+{\em Sort\+Policy} & Sorting policy for neighbor searching (see \doxyref{R\+A\+Search}{p.}{classmlpack_1_1neighbor_1_1RASearch}). \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 36 of file ra\+\_\+model.\+hpp.
+
+
+
+\subsection{Member Typedef Documentation}
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!R\+A\+Type@{R\+A\+Type}}
+\index{R\+A\+Type@{R\+A\+Type}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{R\+A\+Type}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ template$<$template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type$>$ using {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::{\bf R\+A\+Type} =  {\bf R\+A\+Search}$<$Sort\+Policy, {\bf metric\+::\+Euclidean\+Distance}, arma\+::mat, {\bf Tree\+Type}$>$\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1neighbor_1_1RAModel_aa17c879dbae983c4c62b0796b3267487}
+
+
+Typedef the \doxyref{R\+A\+Search}{p.}{classmlpack_1_1neighbor_1_1RASearch} class we\textquotesingle{}ll use. 
+
+
+
+Definition at line 75 of file ra\+\_\+model.\+hpp.
+
+
+
+\subsection{Member Enumeration Documentation}
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!Tree\+Types@{Tree\+Types}}
+\index{Tree\+Types@{Tree\+Types}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{Tree\+Types}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ enum {\bf mlpack\+::neighbor\+::\+R\+A\+Model\+::\+Tree\+Types}}\label{classmlpack_1_1neighbor_1_1RAModel_a559a0c887c070982348e0dece805ff77}
+
+
+The list of tree types we can use with \doxyref{R\+A\+Search}{p.}{classmlpack_1_1neighbor_1_1RASearch}. 
+
+Does not include ball trees; see \#338. \begin{Desc}
+\item[Enumerator]\par
+\begin{description}
+\index{K\+D\+\_\+\+T\+R\+EE@{K\+D\+\_\+\+T\+R\+EE}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!K\+D\+\_\+\+T\+R\+EE@{K\+D\+\_\+\+T\+R\+EE}}\item[{\em 
+K\+D\+\_\+\+T\+R\+EE\label{classmlpack_1_1neighbor_1_1RAModel_a559a0c887c070982348e0dece805ff77a61c202e9ea3636714831585138b26abd}
+}]\index{C\+O\+V\+E\+R\+\_\+\+T\+R\+EE@{C\+O\+V\+E\+R\+\_\+\+T\+R\+EE}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!C\+O\+V\+E\+R\+\_\+\+T\+R\+EE@{C\+O\+V\+E\+R\+\_\+\+T\+R\+EE}}\item[{\em 
+C\+O\+V\+E\+R\+\_\+\+T\+R\+EE\label{classmlpack_1_1neighbor_1_1RAModel_a559a0c887c070982348e0dece805ff77a839bf4f3ed54925ed5541b48cfb31558}
+}]\index{R\+\_\+\+T\+R\+EE@{R\+\_\+\+T\+R\+EE}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!R\+\_\+\+T\+R\+EE@{R\+\_\+\+T\+R\+EE}}\item[{\em 
+R\+\_\+\+T\+R\+EE\label{classmlpack_1_1neighbor_1_1RAModel_a559a0c887c070982348e0dece805ff77a397fa422edbd5ada89913581dab0bf60}
+}]\index{R\+\_\+\+S\+T\+A\+R\+\_\+\+T\+R\+EE@{R\+\_\+\+S\+T\+A\+R\+\_\+\+T\+R\+EE}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!R\+\_\+\+S\+T\+A\+R\+\_\+\+T\+R\+EE@{R\+\_\+\+S\+T\+A\+R\+\_\+\+T\+R\+EE}}\item[{\em 
+R\+\_\+\+S\+T\+A\+R\+\_\+\+T\+R\+EE\label{classmlpack_1_1neighbor_1_1RAModel_a559a0c887c070982348e0dece805ff77ae65ee31555b4c48c11929a5db2de5f9c}
+}]\index{X\+\_\+\+T\+R\+EE@{X\+\_\+\+T\+R\+EE}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!X\+\_\+\+T\+R\+EE@{X\+\_\+\+T\+R\+EE}}\item[{\em 
+X\+\_\+\+T\+R\+EE\label{classmlpack_1_1neighbor_1_1RAModel_a559a0c887c070982348e0dece805ff77a4c36a0d3ac4471ba475c1b640d9d573f}
+}]\index{H\+I\+L\+B\+E\+R\+T\+\_\+\+R\+\_\+\+T\+R\+EE@{H\+I\+L\+B\+E\+R\+T\+\_\+\+R\+\_\+\+T\+R\+EE}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!H\+I\+L\+B\+E\+R\+T\+\_\+\+R\+\_\+\+T\+R\+EE@{H\+I\+L\+B\+E\+R\+T\+\_\+\+R\+\_\+\+T\+R\+EE}}\item[{\em 
+H\+I\+L\+B\+E\+R\+T\+\_\+\+R\+\_\+\+T\+R\+EE\label{classmlpack_1_1neighbor_1_1RAModel_a559a0c887c070982348e0dece805ff77a53207a88fc67c712d313f6c082b888c3}
+}]\index{R\+\_\+\+P\+L\+U\+S\+\_\+\+T\+R\+EE@{R\+\_\+\+P\+L\+U\+S\+\_\+\+T\+R\+EE}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!R\+\_\+\+P\+L\+U\+S\+\_\+\+T\+R\+EE@{R\+\_\+\+P\+L\+U\+S\+\_\+\+T\+R\+EE}}\item[{\em 
+R\+\_\+\+P\+L\+U\+S\+\_\+\+T\+R\+EE\label{classmlpack_1_1neighbor_1_1RAModel_a559a0c887c070982348e0dece805ff77ad4181043d5999cc7237d90b0b1f409c8}
+}]\index{R\+\_\+\+P\+L\+U\+S\+\_\+\+P\+L\+U\+S\+\_\+\+T\+R\+EE@{R\+\_\+\+P\+L\+U\+S\+\_\+\+P\+L\+U\+S\+\_\+\+T\+R\+EE}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!R\+\_\+\+P\+L\+U\+S\+\_\+\+P\+L\+U\+S\+\_\+\+T\+R\+EE@{R\+\_\+\+P\+L\+U\+S\+\_\+\+P\+L\+U\+S\+\_\+\+T\+R\+EE}}\item[{\em 
+R\+\_\+\+P\+L\+U\+S\+\_\+\+P\+L\+U\+S\+\_\+\+T\+R\+EE\label{classmlpack_1_1neighbor_1_1RAModel_a559a0c887c070982348e0dece805ff77a6f0d25909d7e7e0ea06215505d326c78}
+}]\index{U\+B\+\_\+\+T\+R\+EE@{U\+B\+\_\+\+T\+R\+EE}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!U\+B\+\_\+\+T\+R\+EE@{U\+B\+\_\+\+T\+R\+EE}}\item[{\em 
+U\+B\+\_\+\+T\+R\+EE\label{classmlpack_1_1neighbor_1_1RAModel_a559a0c887c070982348e0dece805ff77a098a8002aa472d25a2db56833af11c5b}
+}]\index{O\+C\+T\+R\+EE@{O\+C\+T\+R\+EE}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!O\+C\+T\+R\+EE@{O\+C\+T\+R\+EE}}\item[{\em 
+O\+C\+T\+R\+EE\label{classmlpack_1_1neighbor_1_1RAModel_a559a0c887c070982348e0dece805ff77a764ecfc4c18f676a4089af56f521b1f2}
+}]\end{description}
+\end{Desc}
+
+
+Definition at line 43 of file ra\+\_\+model.\+hpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!R\+A\+Model@{R\+A\+Model}}
+\index{R\+A\+Model@{R\+A\+Model}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{R\+A\+Model(\+Tree\+Types tree\+Type=\+Tree\+Types\+::\+K\+D\+\_\+\+T\+R\+E\+E, bool random\+Basis=false)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::{\bf R\+A\+Model} (
+\begin{DoxyParamCaption}
+\item[{{\bf Tree\+Types}}]{tree\+Type = {\ttfamily TreeTypes\+:\+:KD\+\_\+TREE}, }
+\item[{bool}]{random\+Basis = {\ttfamily false}}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1RAModel_aaa6acdf7c21b54d696d55021c3ac7d56}
+
+
+Initialize the \doxyref{R\+A\+Model}{p.}{classmlpack_1_1neighbor_1_1RAModel} with the given type and whether or not a random basis should be used. 
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!R\+A\+Model@{R\+A\+Model}}
+\index{R\+A\+Model@{R\+A\+Model}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{R\+A\+Model(const R\+A\+Model \&other)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::{\bf R\+A\+Model} (
+\begin{DoxyParamCaption}
+\item[{const {\bf R\+A\+Model}$<$ Sort\+Policy $>$ \&}]{other}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1RAModel_a271284f44837925dace7f4fd97b171c3}
+
+
+Copy the given \doxyref{R\+A\+Model}{p.}{classmlpack_1_1neighbor_1_1RAModel}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & \doxyref{R\+A\+Model}{p.}{classmlpack_1_1neighbor_1_1RAModel} to copy. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!R\+A\+Model@{R\+A\+Model}}
+\index{R\+A\+Model@{R\+A\+Model}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{R\+A\+Model(\+R\+A\+Model \&\&other)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::{\bf R\+A\+Model} (
+\begin{DoxyParamCaption}
+\item[{{\bf R\+A\+Model}$<$ Sort\+Policy $>$ \&\&}]{other}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1RAModel_ad648eba8e8e5f7785275356fc3522dbf}
+
+
+Take ownership of the given \doxyref{R\+A\+Model}{p.}{classmlpack_1_1neighbor_1_1RAModel}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & \doxyref{R\+A\+Model}{p.}{classmlpack_1_1neighbor_1_1RAModel} to take ownership of. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!````~R\+A\+Model@{$\sim$\+R\+A\+Model}}
+\index{````~R\+A\+Model@{$\sim$\+R\+A\+Model}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{$\sim$\+R\+A\+Model()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::$\sim${\bf R\+A\+Model} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1RAModel_aac6cebb7529723899610b7c6eb013499}
+
+
+Clean memory, if necessary. 
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!Alpha@{Alpha}}
+\index{Alpha@{Alpha}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{Alpha() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ double {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::Alpha (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1neighbor_1_1RAModel_ae6ca679b553db565d9d0b2b3624a77f7}
+
+
+Get the desired success probability. 
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!Alpha@{Alpha}}
+\index{Alpha@{Alpha}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{Alpha()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ double\& {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::Alpha (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1RAModel_ab423d87f8361726490c3a738a1031f58}
+
+
+Modify the desired success probability. 
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!Build\+Model@{Build\+Model}}
+\index{Build\+Model@{Build\+Model}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{Build\+Model(arma\+::mat \&\&reference\+Set, const size\+\_\+t leaf\+Size, const bool naive, const bool single\+Mode)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ void {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::Build\+Model (
+\begin{DoxyParamCaption}
+\item[{arma\+::mat \&\&}]{reference\+Set, }
+\item[{const size\+\_\+t}]{leaf\+Size, }
+\item[{const bool}]{naive, }
+\item[{const bool}]{single\+Mode}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1RAModel_a0e7d7d261fff216272d3009bab0300a6}
+
+
+Build the reference tree. 
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!Dataset@{Dataset}}
+\index{Dataset@{Dataset}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{Dataset() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ const arma\+::mat\& {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::Dataset (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1neighbor_1_1RAModel_ac3236b298a55b7481923f7d3bf40e917}
+
+
+Expose the dataset. 
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!First\+Leaf\+Exact@{First\+Leaf\+Exact}}
+\index{First\+Leaf\+Exact@{First\+Leaf\+Exact}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{First\+Leaf\+Exact() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ bool {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::First\+Leaf\+Exact (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1neighbor_1_1RAModel_a158ebc68058cc98f073456ac3a51964c}
+
+
+Get whether or not we traverse to the first leaf without approximation. 
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!First\+Leaf\+Exact@{First\+Leaf\+Exact}}
+\index{First\+Leaf\+Exact@{First\+Leaf\+Exact}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{First\+Leaf\+Exact()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ bool\& {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::First\+Leaf\+Exact (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1RAModel_a3e35401c02ca8055efa6a92fcf358541}
+
+
+Modify whether or not we traverse to the first leaf without approximation. 
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!Leaf\+Size@{Leaf\+Size}}
+\index{Leaf\+Size@{Leaf\+Size}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{Leaf\+Size() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ size\+\_\+t {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::Leaf\+Size (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1neighbor_1_1RAModel_a9992c74713a8095bc0026e95ec9b3f6d}
+
+
+Get the leaf size (only relevant when the kd-\/tree is used). 
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!Leaf\+Size@{Leaf\+Size}}
+\index{Leaf\+Size@{Leaf\+Size}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{Leaf\+Size()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ size\+\_\+t\& {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::Leaf\+Size (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1RAModel_abd9009a0873ef64b95e127ed13eb1cd0}
+
+
+Modify the leaf size (only relevant when the kd-\/tree is used). 
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!Naive@{Naive}}
+\index{Naive@{Naive}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{Naive() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ bool {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::Naive (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1neighbor_1_1RAModel_aa52f355419fcef10dc1816a2b31e3fd2}
+
+
+Get whether or not naive search is being used. 
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!Naive@{Naive}}
+\index{Naive@{Naive}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{Naive()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ bool\& {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::Naive (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1RAModel_a31952b2f3b5eafd0216c3adea8d46fa3}
+
+
+Modify whether or not naive search is being used. 
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!operator=@{operator=}}
+\index{operator=@{operator=}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{operator=(const R\+A\+Model \&other)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ {\bf R\+A\+Model}\& {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::operator= (
+\begin{DoxyParamCaption}
+\item[{const {\bf R\+A\+Model}$<$ Sort\+Policy $>$ \&}]{other}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1RAModel_a031c00bab3d67e27411fa08d84716825}
+
+
+Copy the given \doxyref{R\+A\+Model}{p.}{classmlpack_1_1neighbor_1_1RAModel}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & \doxyref{R\+A\+Model}{p.}{classmlpack_1_1neighbor_1_1RAModel} to copy. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!operator=@{operator=}}
+\index{operator=@{operator=}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{operator=(\+R\+A\+Model \&\&other)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ {\bf R\+A\+Model}\& {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::operator= (
+\begin{DoxyParamCaption}
+\item[{{\bf R\+A\+Model}$<$ Sort\+Policy $>$ \&\&}]{other}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1RAModel_a34869868afaa820b18c651c8f26361ce}
+
+
+Take ownership of the given \doxyref{R\+A\+Model}{p.}{classmlpack_1_1neighbor_1_1RAModel}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & \doxyref{R\+A\+Model}{p.}{classmlpack_1_1neighbor_1_1RAModel} to take ownership of. \\
+\hline
+\end{DoxyParams}
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!Random\+Basis@{Random\+Basis}}
+\index{Random\+Basis@{Random\+Basis}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{Random\+Basis() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ bool {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::Random\+Basis (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1neighbor_1_1RAModel_a3d00405e63755cf98d1c5fd1050c0d1a}
+
+
+Get whether or not a random basis is being used. 
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!Random\+Basis@{Random\+Basis}}
+\index{Random\+Basis@{Random\+Basis}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{Random\+Basis()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ bool\& {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::Random\+Basis (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1RAModel_ad2724004104046e39837640df8f11a0c}
+
+
+Modify whether or not a random basis is being used. 
+
+Be sure to rebuild the model using \doxyref{Build\+Model()}{p.}{classmlpack_1_1neighbor_1_1RAModel_a0e7d7d261fff216272d3009bab0300a6}. \index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!Sample\+At\+Leaves@{Sample\+At\+Leaves}}
+\index{Sample\+At\+Leaves@{Sample\+At\+Leaves}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{Sample\+At\+Leaves() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ bool {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::Sample\+At\+Leaves (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1neighbor_1_1RAModel_af4824e40b7c3cf0f295aa6f641cec8bd}
+
+
+Get whether or not sampling is done at the leaves. 
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!Sample\+At\+Leaves@{Sample\+At\+Leaves}}
+\index{Sample\+At\+Leaves@{Sample\+At\+Leaves}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{Sample\+At\+Leaves()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ bool\& {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::Sample\+At\+Leaves (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1RAModel_a6fdeef4e0d950ab06b64ee17a94369c9}
+
+
+Modify whether or not sampling is done at the leaves. 
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!Search@{Search}}
+\index{Search@{Search}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{Search(arma\+::mat \&\&query\+Set, const size\+\_\+t k, arma\+::\+Mat$<$ size\+\_\+t $>$ \&neighbors, arma\+::mat \&distances)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ void {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::Search (
+\begin{DoxyParamCaption}
+\item[{arma\+::mat \&\&}]{query\+Set, }
+\item[{const size\+\_\+t}]{k, }
+\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{neighbors, }
+\item[{arma\+::mat \&}]{distances}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1RAModel_a10420eb9e9f11ebe1a57d0c0070ad255}
+
+
+Perform rank-\/approximate neighbor search, taking ownership of the query set. 
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!Search@{Search}}
+\index{Search@{Search}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{Search(const size\+\_\+t k, arma\+::\+Mat$<$ size\+\_\+t $>$ \&neighbors, arma\+::mat \&distances)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ void {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::Search (
+\begin{DoxyParamCaption}
+\item[{const size\+\_\+t}]{k, }
+\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{neighbors, }
+\item[{arma\+::mat \&}]{distances}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1RAModel_a2c24334648a8badc328717cd814f205b}
+
+
+Perform rank-\/approximate neighbor search, using the reference set as the query set. 
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!Serialize@{Serialize}}
+\index{Serialize@{Serialize}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{Serialize(\+Archive \&ar, const unsigned int)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ template$<$typename Archive $>$ void {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::Serialize (
+\begin{DoxyParamCaption}
+\item[{Archive \&}]{ar, }
+\item[{const unsigned}]{int}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1RAModel_a3c29e44ded8bb7d2f6a3c0c354969667}
+
+
+Serialize the model. 
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!Single\+Mode@{Single\+Mode}}
+\index{Single\+Mode@{Single\+Mode}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{Single\+Mode() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ bool {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::Single\+Mode (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1neighbor_1_1RAModel_ad8f4a7f7c0b1288bd078e9d4bf570a2e}
+
+
+Get whether or not single-\/tree search is being used. 
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!Single\+Mode@{Single\+Mode}}
+\index{Single\+Mode@{Single\+Mode}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{Single\+Mode()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ bool\& {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::Single\+Mode (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1RAModel_ad32ca1b61668502853ceaf66f107490b}
+
+
+Modify whether or not single-\/tree search is being used. 
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!Single\+Sample\+Limit@{Single\+Sample\+Limit}}
+\index{Single\+Sample\+Limit@{Single\+Sample\+Limit}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{Single\+Sample\+Limit() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ size\+\_\+t {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::Single\+Sample\+Limit (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1neighbor_1_1RAModel_a538c13b1fdb5726e3f0b964ef9376091}
+
+
+Get the limit on the size of a node that can be approximated. 
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!Single\+Sample\+Limit@{Single\+Sample\+Limit}}
+\index{Single\+Sample\+Limit@{Single\+Sample\+Limit}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{Single\+Sample\+Limit()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ size\+\_\+t\& {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::Single\+Sample\+Limit (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1RAModel_ac45de9471a6b161b471b491233254082}
+
+
+Modify the limit on the size of a node that can be approximation. 
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!Tau@{Tau}}
+\index{Tau@{Tau}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{Tau() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ double {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::Tau (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1neighbor_1_1RAModel_a70f3c896f07fc8435e6a208b6a0ce9b5}
+
+
+Get the rank-\/approximation in percentile of the data. 
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!Tau@{Tau}}
+\index{Tau@{Tau}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{Tau()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ double\& {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::Tau (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1RAModel_ad01707ccaad63c793f490a9e163c5039}
+
+
+Modify the rank-\/approximation in percentile of the data. 
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!Tree\+Name@{Tree\+Name}}
+\index{Tree\+Name@{Tree\+Name}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{Tree\+Name() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ {\bf std\+::string} {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::Tree\+Name (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1neighbor_1_1RAModel_afd7c74f13c0472d45d449bc33462126f}
+
+
+Get the name of the tree type. 
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!Tree\+Type@{Tree\+Type}}
+\index{Tree\+Type@{Tree\+Type}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{Tree\+Type() const }]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ {\bf Tree\+Types} {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::Tree\+Type (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}\label{classmlpack_1_1neighbor_1_1RAModel_ab623d1ffe67e66a4df70c5e008b5b249}
+
+
+Get the type of tree being used. 
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!Tree\+Type@{Tree\+Type}}
+\index{Tree\+Type@{Tree\+Type}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{Tree\+Type()}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ {\bf Tree\+Types}\& {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::Tree\+Type (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmlpack_1_1neighbor_1_1RAModel_af70143b4bbb9bb38535d8aff772fa1c5}
+
+
+Modify the type of tree being used. 
+
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!cover\+Tree\+RA@{cover\+Tree\+RA}}
+\index{cover\+Tree\+RA@{cover\+Tree\+RA}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{cover\+Tree\+RA}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ {\bf R\+A\+Type}$<${\bf tree\+::\+Standard\+Cover\+Tree}$>$$\ast$ {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::cover\+Tree\+RA\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1neighbor_1_1RAModel_a8938212bce4f81f6d91ceedee64431b6}
+
+
+Non-\/\+N\+U\+LL if the cover tree is used. 
+
+
+
+Definition at line 80 of file ra\+\_\+model.\+hpp.
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!hilbert\+R\+Tree\+RA@{hilbert\+R\+Tree\+RA}}
+\index{hilbert\+R\+Tree\+RA@{hilbert\+R\+Tree\+RA}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{hilbert\+R\+Tree\+RA}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ {\bf R\+A\+Type}$<${\bf tree\+::\+Hilbert\+R\+Tree}$>$$\ast$ {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::hilbert\+R\+Tree\+RA\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1neighbor_1_1RAModel_af1835348e1dc729fae1666508e0d98e1}
+
+
+Non-\/\+N\+U\+LL if the Hilbert R tree is used. 
+
+
+
+Definition at line 88 of file ra\+\_\+model.\+hpp.
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!kd\+Tree\+RA@{kd\+Tree\+RA}}
+\index{kd\+Tree\+RA@{kd\+Tree\+RA}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{kd\+Tree\+RA}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ {\bf R\+A\+Type}$<${\bf tree\+::\+K\+D\+Tree}$>$$\ast$ {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::kd\+Tree\+RA\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1neighbor_1_1RAModel_aaf34ecdea81b9540da6d6c71d02f8805}
+
+
+Non-\/\+N\+U\+LL if the kd-\/tree is used. 
+
+
+
+Definition at line 78 of file ra\+\_\+model.\+hpp.
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!leaf\+Size@{leaf\+Size}}
+\index{leaf\+Size@{leaf\+Size}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{leaf\+Size}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ size\+\_\+t {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::leaf\+Size\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1neighbor_1_1RAModel_aa9185caf67d14dbcbe5743f15c1b03ef}
+
+
+The leaf size of the tree being used (useful only for the kd-\/tree). 
+
+
+
+Definition at line 61 of file ra\+\_\+model.\+hpp.
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!octree\+RA@{octree\+RA}}
+\index{octree\+RA@{octree\+RA}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{octree\+RA}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ {\bf R\+A\+Type}$<${\bf tree\+::\+Octree}$>$$\ast$ {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::octree\+RA\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1neighbor_1_1RAModel_a6897d7f01bc18e481955a26d515b4aa0}
+
+
+Non-\/\+N\+U\+LL if the octree is used. 
+
+
+
+Definition at line 96 of file ra\+\_\+model.\+hpp.
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!q@{q}}
+\index{q@{q}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{q}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ arma\+::mat {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::q\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1neighbor_1_1RAModel_a1ebc008d35cbaceac4356ae3d2a3d758}
+
+
+The basis to project into. 
+
+
+
+Definition at line 66 of file ra\+\_\+model.\+hpp.
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!random\+Basis@{random\+Basis}}
+\index{random\+Basis@{random\+Basis}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{random\+Basis}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ bool {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::random\+Basis\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1neighbor_1_1RAModel_a4f1124c6c398701c2c6e37d449490fad}
+
+
+If true, randomly project into a new basis. 
+
+
+
+Definition at line 64 of file ra\+\_\+model.\+hpp.
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!r\+Plus\+Plus\+Tree\+RA@{r\+Plus\+Plus\+Tree\+RA}}
+\index{r\+Plus\+Plus\+Tree\+RA@{r\+Plus\+Plus\+Tree\+RA}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{r\+Plus\+Plus\+Tree\+RA}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ {\bf R\+A\+Type}$<${\bf tree\+::\+R\+Plus\+Plus\+Tree}$>$$\ast$ {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::r\+Plus\+Plus\+Tree\+RA\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1neighbor_1_1RAModel_aa86c4a28da64b5cbaf416b2c906363e2}
+
+
+Non-\/\+N\+U\+LL if the R++ tree is used. 
+
+
+
+Definition at line 92 of file ra\+\_\+model.\+hpp.
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!r\+Plus\+Tree\+RA@{r\+Plus\+Tree\+RA}}
+\index{r\+Plus\+Tree\+RA@{r\+Plus\+Tree\+RA}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{r\+Plus\+Tree\+RA}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ {\bf R\+A\+Type}$<${\bf tree\+::\+R\+Plus\+Tree}$>$$\ast$ {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::r\+Plus\+Tree\+RA\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1neighbor_1_1RAModel_ad31c7b8f21bdf83fe1fd81c6799f7a9f}
+
+
+Non-\/\+N\+U\+LL if the R+ tree is used. 
+
+
+
+Definition at line 90 of file ra\+\_\+model.\+hpp.
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!r\+Star\+Tree\+RA@{r\+Star\+Tree\+RA}}
+\index{r\+Star\+Tree\+RA@{r\+Star\+Tree\+RA}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{r\+Star\+Tree\+RA}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ {\bf R\+A\+Type}$<${\bf tree\+::\+R\+Star\+Tree}$>$$\ast$ {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::r\+Star\+Tree\+RA\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1neighbor_1_1RAModel_a0e947d34323c83b62243129a49048b95}
+
+
+Non-\/\+N\+U\+LL if the R$\ast$ tree is used. 
+
+
+
+Definition at line 84 of file ra\+\_\+model.\+hpp.
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!r\+Tree\+RA@{r\+Tree\+RA}}
+\index{r\+Tree\+RA@{r\+Tree\+RA}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{r\+Tree\+RA}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ {\bf R\+A\+Type}$<${\bf tree\+::\+R\+Tree}$>$$\ast$ {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::r\+Tree\+RA\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1neighbor_1_1RAModel_a46a31437e438b4ec6df3b5fc9ad35f98}
+
+
+Non-\/\+N\+U\+LL if the R tree is used. 
+
+
+
+Definition at line 82 of file ra\+\_\+model.\+hpp.
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!tree\+Type@{tree\+Type}}
+\index{tree\+Type@{tree\+Type}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{tree\+Type}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ {\bf Tree\+Types} {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::tree\+Type\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1neighbor_1_1RAModel_a3eee1fbf94269eb9356139624fa9bdf9}
+
+
+The type of tree being used. 
+
+
+
+Definition at line 59 of file ra\+\_\+model.\+hpp.
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!ub\+Tree\+RA@{ub\+Tree\+RA}}
+\index{ub\+Tree\+RA@{ub\+Tree\+RA}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{ub\+Tree\+RA}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ {\bf R\+A\+Type}$<${\bf tree\+::\+U\+B\+Tree}$>$$\ast$ {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::ub\+Tree\+RA\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1neighbor_1_1RAModel_a14d4703ee60bf8ffe5e510d06feb2754}
+
+
+Non-\/\+N\+U\+LL if the UB tree is used. 
+
+
+
+Definition at line 94 of file ra\+\_\+model.\+hpp.
+
+\index{mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}!x\+Tree\+RA@{x\+Tree\+RA}}
+\index{x\+Tree\+RA@{x\+Tree\+RA}!mlpack\+::neighbor\+::\+R\+A\+Model@{mlpack\+::neighbor\+::\+R\+A\+Model}}
+\subsubsection[{x\+Tree\+RA}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Sort\+Policy $>$ {\bf R\+A\+Type}$<${\bf tree\+::\+X\+Tree}$>$$\ast$ {\bf mlpack\+::neighbor\+::\+R\+A\+Model}$<$ Sort\+Policy $>$\+::x\+Tree\+RA\hspace{0.3cm}{\ttfamily [private]}}\label{classmlpack_1_1neighbor_1_1RAModel_a9bad4e2c3944607fded2af721fc903e3}
+
+
+Non-\/\+N\+U\+LL if the X tree is used. 
+
+
+
+Definition at line 86 of file ra\+\_\+model.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/methods/rann/{\bf ra\+\_\+model.\+hpp}\end{DoxyCompactItemize}

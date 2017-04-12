@@ -1,0 +1,397 @@
+.TH "mlpack::bound::HRectBound< MetricType, ElemType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::bound::HRectBound< MetricType, ElemType > \- Hyper-rectangle bound for an L-metric\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBHRectBound\fP ()"
+.br
+.RI "\fIEmpty constructor; creates a bound of dimensionality 0\&. \fP"
+.ti -1c
+.RI "\fBHRectBound\fP (const size_t dimension)"
+.br
+.RI "\fIInitializes to specified dimensionality with each dimension the empty set\&. \fP"
+.ti -1c
+.RI "\fBHRectBound\fP (const \fBHRectBound\fP &other)"
+.br
+.RI "\fICopy constructor; necessary to prevent memory leaks\&. \fP"
+.ti -1c
+.RI "\fBHRectBound\fP (\fBHRectBound\fP &&other)"
+.br
+.RI "\fIMove constructor: take possession of another bound's information\&. \fP"
+.ti -1c
+.RI "\fB~HRectBound\fP ()"
+.br
+.RI "\fIDestructor: clean up memory\&. \fP"
+.ti -1c
+.RI "void \fBCenter\fP (arma::Col< ElemType > &center) const "
+.br
+.RI "\fICalculates the center of the range, placing it into the given vector\&. \fP"
+.ti -1c
+.RI "void \fBClear\fP ()"
+.br
+.RI "\fIResets all dimensions to the empty set (so that this bound contains nothing)\&. \fP"
+.ti -1c
+.RI "template<typename VecType > bool \fBContains\fP (const VecType &point) const "
+.br
+.RI "\fIDetermines if a point is within this bound\&. \fP"
+.ti -1c
+.RI "bool \fBContains\fP (const \fBHRectBound\fP &bound) const "
+.br
+.RI "\fIDetermines if this bound partially contains a bound\&. \fP"
+.ti -1c
+.RI "ElemType \fBDiameter\fP () const "
+.br
+.RI "\fIReturns the diameter of the hyperrectangle (that is, the longest diagonal)\&. \fP"
+.ti -1c
+.RI "size_t \fBDim\fP () const "
+.br
+.RI "\fIGets the dimensionality\&. \fP"
+.ti -1c
+.RI "template<typename VecType > ElemType \fBMaxDistance\fP (const VecType &point, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< VecType >::value > *=0) const "
+.br
+.RI "\fICalculates maximum bound-to-point squared distance\&. \fP"
+.ti -1c
+.RI "ElemType \fBMaxDistance\fP (const \fBHRectBound\fP &other) const "
+.br
+.RI "\fIComputes maximum distance\&. \fP"
+.ti -1c
+.RI "template<typename VecType > ElemType \fBMinDistance\fP (const VecType &point, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< VecType >::value > *=0) const "
+.br
+.RI "\fICalculates minimum bound-to-point distance\&. \fP"
+.ti -1c
+.RI "ElemType \fBMinDistance\fP (const \fBHRectBound\fP &other) const "
+.br
+.RI "\fICalculates minimum bound-to-bound distance\&. \fP"
+.ti -1c
+.RI "ElemType \fBMinWidth\fP () const "
+.br
+.RI "\fIGet the minimum width of the bound\&. \fP"
+.ti -1c
+.RI "ElemType & \fBMinWidth\fP ()"
+.br
+.RI "\fIModify the minimum width of the bound\&. \fP"
+.ti -1c
+.RI "\fBHRectBound\fP \fBoperator&\fP (const \fBHRectBound\fP &bound) const "
+.br
+.RI "\fIReturns the intersection of this bound and another\&. \fP"
+.ti -1c
+.RI "\fBHRectBound\fP & \fBoperator&=\fP (const \fBHRectBound\fP &bound)"
+.br
+.RI "\fIIntersects this bound with another\&. \fP"
+.ti -1c
+.RI "\fBHRectBound\fP & \fBoperator=\fP (const \fBHRectBound\fP &other)"
+.br
+.RI "\fISame as copy constructor; necessary to prevent memory leaks\&. \fP"
+.ti -1c
+.RI "\fBmath::RangeType\fP< ElemType > & \fBoperator[]\fP (const size_t i)"
+.br
+.RI "\fIGet the range for a particular dimension\&. \fP"
+.ti -1c
+.RI "const \fBmath::RangeType\fP< ElemType > & \fBoperator[]\fP (const size_t i) const "
+.br
+.RI "\fIModify the range for a particular dimension\&. No bounds checking\&. \fP"
+.ti -1c
+.RI "template<typename MatType > \fBHRectBound\fP & \fBoperator|=\fP (const MatType &data)"
+.br
+.RI "\fIExpands this region to include new points\&. \fP"
+.ti -1c
+.RI "\fBHRectBound\fP & \fBoperator|=\fP (const \fBHRectBound\fP &other)"
+.br
+.RI "\fIExpands this region to encompass another bound\&. \fP"
+.ti -1c
+.RI "ElemType \fBOverlap\fP (const \fBHRectBound\fP &bound) const "
+.br
+.RI "\fIReturns the volume of overlap of this bound and another\&. \fP"
+.ti -1c
+.RI "\fBmath::RangeType\fP< ElemType > \fBRangeDistance\fP (const \fBHRectBound\fP &other) const "
+.br
+.RI "\fICalculates minimum and maximum bound-to-bound distance\&. \fP"
+.ti -1c
+.RI "template<typename VecType > \fBmath::RangeType\fP< ElemType > \fBRangeDistance\fP (const VecType &point, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< VecType >::value > *=0) const "
+.br
+.RI "\fICalculates minimum and maximum bound-to-point distance\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int version)"
+.br
+.RI "\fISerialize the bound object\&. \fP"
+.ti -1c
+.RI "ElemType \fBVolume\fP () const "
+.br
+.RI "\fICalculate the volume of the hyperrectangle\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "\fBmath::RangeType\fP< ElemType > * \fBbounds\fP"
+.br
+.RI "\fIThe bounds for each dimension\&. \fP"
+.ti -1c
+.RI "size_t \fBdim\fP"
+.br
+.RI "\fIThe dimensionality of the bound\&. \fP"
+.ti -1c
+.RI "ElemType \fBminWidth\fP"
+.br
+.RI "\fICached minimum width of bound\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename ElemType = double>
+.br
+class mlpack::bound::HRectBound< MetricType, ElemType >"
+Hyper-rectangle bound for an L-metric\&. 
+
+This should be used in conjunction with the LMetric class\&. Be sure to use the same template parameters for LMetric as you do for \fBHRectBound\fP -- otherwise odd results may occur\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIMetricType\fP Type of metric to use; must be of type LMetric\&. 
+.br
+\fIElemType\fP Element type (double/float/int/etc\&.)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 54 of file hrectbound\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename ElemType = double> \fBmlpack::bound::HRectBound\fP< MetricType, ElemType >::\fBHRectBound\fP ()"
+
+.PP
+Empty constructor; creates a bound of dimensionality 0\&. 
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename ElemType = double> \fBmlpack::bound::HRectBound\fP< MetricType, ElemType >::\fBHRectBound\fP (const size_t dimension)"
+
+.PP
+Initializes to specified dimensionality with each dimension the empty set\&. 
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename ElemType = double> \fBmlpack::bound::HRectBound\fP< MetricType, ElemType >::\fBHRectBound\fP (const \fBHRectBound\fP< MetricType, ElemType > & other)"
+
+.PP
+Copy constructor; necessary to prevent memory leaks\&. 
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename ElemType = double> \fBmlpack::bound::HRectBound\fP< MetricType, ElemType >::\fBHRectBound\fP (\fBHRectBound\fP< MetricType, ElemType > && other)"
+
+.PP
+Move constructor: take possession of another bound's information\&. 
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename ElemType = double> \fBmlpack::bound::HRectBound\fP< MetricType, ElemType >::~\fBHRectBound\fP ()"
+
+.PP
+Destructor: clean up memory\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename ElemType = double> void \fBmlpack::bound::HRectBound\fP< MetricType, ElemType >::Center (arma::Col< ElemType > & center) const"
+
+.PP
+Calculates the center of the range, placing it into the given vector\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIcenter\fP Vector which the center will be written to\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::Center(), and mlpack::tree::Octree< MetricType, StatisticType, MatType >::Center()\&.
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename ElemType = double> void \fBmlpack::bound::HRectBound\fP< MetricType, ElemType >::Clear ()"
+
+.PP
+Resets all dimensions to the empty set (so that this bound contains nothing)\&. 
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename ElemType = double> template<typename VecType > bool \fBmlpack::bound::HRectBound\fP< MetricType, ElemType >::Contains (const VecType & point) const"
+
+.PP
+Determines if a point is within this bound\&. 
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename ElemType = double> bool \fBmlpack::bound::HRectBound\fP< MetricType, ElemType >::Contains (const \fBHRectBound\fP< MetricType, ElemType > & bound) const"
+
+.PP
+Determines if this bound partially contains a bound\&. 
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename ElemType = double> ElemType \fBmlpack::bound::HRectBound\fP< MetricType, ElemType >::Diameter () const"
+
+.PP
+Returns the diameter of the hyperrectangle (that is, the longest diagonal)\&. 
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename ElemType = double> size_t \fBmlpack::bound::HRectBound\fP< MetricType, ElemType >::Dim () const\fC [inline]\fP"
+
+.PP
+Gets the dimensionality\&. 
+.PP
+Definition at line 90 of file hrectbound\&.hpp\&.
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename ElemType = double> template<typename VecType > ElemType \fBmlpack::bound::HRectBound\fP< MetricType, ElemType >::MaxDistance (const VecType & point, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< VecType >::value > * = \fC0\fP) const"
+
+.PP
+Calculates maximum bound-to-point squared distance\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpoint\fP Point to which the maximum distance is requested\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::MaxDistance()\&.
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename ElemType = double> ElemType \fBmlpack::bound::HRectBound\fP< MetricType, ElemType >::MaxDistance (const \fBHRectBound\fP< MetricType, ElemType > & other) const"
+
+.PP
+Computes maximum distance\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP Bound to which the maximum distance is requested\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename ElemType = double> template<typename VecType > ElemType \fBmlpack::bound::HRectBound\fP< MetricType, ElemType >::MinDistance (const VecType & point, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< VecType >::value > * = \fC0\fP) const"
+
+.PP
+Calculates minimum bound-to-point distance\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpoint\fP Point to which the minimum distance is requested\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::MinDistance()\&.
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename ElemType = double> ElemType \fBmlpack::bound::HRectBound\fP< MetricType, ElemType >::MinDistance (const \fBHRectBound\fP< MetricType, ElemType > & other) const"
+
+.PP
+Calculates minimum bound-to-bound distance\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP Bound to which the minimum distance is requested\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename ElemType = double> ElemType \fBmlpack::bound::HRectBound\fP< MetricType, ElemType >::MinWidth () const\fC [inline]\fP"
+
+.PP
+Get the minimum width of the bound\&. 
+.PP
+Definition at line 100 of file hrectbound\&.hpp\&.
+.PP
+Referenced by mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::MinimumBoundDistance()\&.
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename ElemType = double> ElemType& \fBmlpack::bound::HRectBound\fP< MetricType, ElemType >::MinWidth ()\fC [inline]\fP"
+
+.PP
+Modify the minimum width of the bound\&. 
+.PP
+Definition at line 102 of file hrectbound\&.hpp\&.
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename ElemType = double> \fBHRectBound\fP \fBmlpack::bound::HRectBound\fP< MetricType, ElemType >::operator& (const \fBHRectBound\fP< MetricType, ElemType > & bound) const"
+
+.PP
+Returns the intersection of this bound and another\&. 
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename ElemType = double> \fBHRectBound\fP& \fBmlpack::bound::HRectBound\fP< MetricType, ElemType >::operator&= (const \fBHRectBound\fP< MetricType, ElemType > & bound)"
+
+.PP
+Intersects this bound with another\&. 
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename ElemType = double> \fBHRectBound\fP& \fBmlpack::bound::HRectBound\fP< MetricType, ElemType >::operator= (const \fBHRectBound\fP< MetricType, ElemType > & other)"
+
+.PP
+Same as copy constructor; necessary to prevent memory leaks\&. 
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename ElemType = double> \fBmath::RangeType\fP<ElemType>& \fBmlpack::bound::HRectBound\fP< MetricType, ElemType >::operator[] (const size_t i)\fC [inline]\fP"
+
+.PP
+Get the range for a particular dimension\&. No bounds checking\&. Be careful: this may make \fBMinWidth()\fP invalid\&. 
+.PP
+Definition at line 94 of file hrectbound\&.hpp\&.
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename ElemType = double> const \fBmath::RangeType\fP<ElemType>& \fBmlpack::bound::HRectBound\fP< MetricType, ElemType >::operator[] (const size_t i) const\fC [inline]\fP"
+
+.PP
+Modify the range for a particular dimension\&. No bounds checking\&. 
+.PP
+Definition at line 96 of file hrectbound\&.hpp\&.
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename ElemType = double> template<typename MatType > \fBHRectBound\fP& \fBmlpack::bound::HRectBound\fP< MetricType, ElemType >::operator|= (const MatType & data)"
+
+.PP
+Expands this region to include new points\&. 
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIMatType\fP Type of matrix; could be Mat, SpMat, a subview, or just a vector\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdata\fP Data points to expand this region to include\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename ElemType = double> \fBHRectBound\fP& \fBmlpack::bound::HRectBound\fP< MetricType, ElemType >::operator|= (const \fBHRectBound\fP< MetricType, ElemType > & other)"
+
+.PP
+Expands this region to encompass another bound\&. 
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename ElemType = double> ElemType \fBmlpack::bound::HRectBound\fP< MetricType, ElemType >::Overlap (const \fBHRectBound\fP< MetricType, ElemType > & bound) const"
+
+.PP
+Returns the volume of overlap of this bound and another\&. 
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename ElemType = double> \fBmath::RangeType\fP<ElemType> \fBmlpack::bound::HRectBound\fP< MetricType, ElemType >::RangeDistance (const \fBHRectBound\fP< MetricType, ElemType > & other) const"
+
+.PP
+Calculates minimum and maximum bound-to-bound distance\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP Bound to which the minimum and maximum distances are requested\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::tree::RectangleTree< MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType >::RangeDistance()\&.
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename ElemType = double> template<typename VecType > \fBmath::RangeType\fP<ElemType> \fBmlpack::bound::HRectBound\fP< MetricType, ElemType >::RangeDistance (const VecType & point, typename \fBstd::enable_if_t\fP< \fBIsVector\fP< VecType >::value > * = \fC0\fP) const"
+
+.PP
+Calculates minimum and maximum bound-to-point distance\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpoint\fP Point to which the minimum and maximum distances are requested\&. 
+.RE
+.PP
+
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename ElemType = double> template<typename Archive > void \fBmlpack::bound::HRectBound\fP< MetricType, ElemType >::Serialize (Archive & ar, const unsigned int version)"
+
+.PP
+Serialize the bound object\&. 
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename ElemType = double> ElemType \fBmlpack::bound::HRectBound\fP< MetricType, ElemType >::Volume () const"
+
+.PP
+Calculate the volume of the hyperrectangle\&. 
+.PP
+\fBReturns:\fP
+.RS 4
+Volume of the hyperrectangle\&. 
+.RE
+.PP
+
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename ElemType = double> \fBmath::RangeType\fP<ElemType>* \fBmlpack::bound::HRectBound\fP< MetricType, ElemType >::bounds\fC [private]\fP"
+
+.PP
+The bounds for each dimension\&. 
+.PP
+Definition at line 227 of file hrectbound\&.hpp\&.
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename ElemType = double> size_t \fBmlpack::bound::HRectBound\fP< MetricType, ElemType >::dim\fC [private]\fP"
+
+.PP
+The dimensionality of the bound\&. 
+.PP
+Definition at line 225 of file hrectbound\&.hpp\&.
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename ElemType = double> ElemType \fBmlpack::bound::HRectBound\fP< MetricType, ElemType >::minWidth\fC [private]\fP"
+
+.PP
+Cached minimum width of bound\&. 
+.PP
+Definition at line 229 of file hrectbound\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,85 @@
+\section{mlpack\+:\+:data\+:\+:Has\+Serialize$<$ T $>$ Struct Template Reference}
+\label{structmlpack_1_1data_1_1HasSerialize}\index{mlpack\+::data\+::\+Has\+Serialize$<$ T $>$@{mlpack\+::data\+::\+Has\+Serialize$<$ T $>$}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct {\bf check}
+\end{DoxyCompactItemize}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef char {\bf no}[2]
+\item 
+typedef char {\bf yes}[1]
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename U $>$ }\\static {\bf yes} \& {\bf chk} ({\bf check}$<$ U, typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ std\+::is\+\_\+class$<$ U $>$\+::{\bf value} $>$ $\ast$, typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ {\bf Has\+Serialize\+Function}$<$ U $>$\+::{\bf value} $>$ $\ast$ $>$ $\ast$)
+\item 
+{\footnotesize template$<$typename $>$ }\\static {\bf no} \& {\bf chk} (...)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static const bool {\bf value} = (sizeof({\bf chk}$<$T$>$(0)) == sizeof({\bf yes}))
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename T$>$\\*
+struct mlpack\+::data\+::\+Has\+Serialize$<$ T $>$}
+
+
+
+Definition at line 46 of file serialization\+\_\+shim.\+hpp.
+
+
+
+\subsection{Member Typedef Documentation}
+\index{mlpack\+::data\+::\+Has\+Serialize@{mlpack\+::data\+::\+Has\+Serialize}!no@{no}}
+\index{no@{no}!mlpack\+::data\+::\+Has\+Serialize@{mlpack\+::data\+::\+Has\+Serialize}}
+\subsubsection[{no}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ typedef char {\bf mlpack\+::data\+::\+Has\+Serialize}$<$ T $>$\+::no[2]}\label{structmlpack_1_1data_1_1HasSerialize_a2882b53f3ac9f1e66fd5c9957452a0fe}
+
+
+Definition at line 50 of file serialization\+\_\+shim.\+hpp.
+
+\index{mlpack\+::data\+::\+Has\+Serialize@{mlpack\+::data\+::\+Has\+Serialize}!yes@{yes}}
+\index{yes@{yes}!mlpack\+::data\+::\+Has\+Serialize@{mlpack\+::data\+::\+Has\+Serialize}}
+\subsubsection[{yes}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ typedef char {\bf mlpack\+::data\+::\+Has\+Serialize}$<$ T $>$\+::yes[1]}\label{structmlpack_1_1data_1_1HasSerialize_ae1ded96ae5e44ded6d49c22d51b07b87}
+
+
+Definition at line 49 of file serialization\+\_\+shim.\+hpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{mlpack\+::data\+::\+Has\+Serialize@{mlpack\+::data\+::\+Has\+Serialize}!chk@{chk}}
+\index{chk@{chk}!mlpack\+::data\+::\+Has\+Serialize@{mlpack\+::data\+::\+Has\+Serialize}}
+\subsubsection[{chk(check$<$ U, typename std\+::enable\+\_\+if\+\_\+t$<$ std\+::is\+\_\+class$<$ U $>$\+::value $>$ $\ast$, typename std\+::enable\+\_\+if\+\_\+t$<$ Has\+Serialize\+Function$<$ U $>$\+::value $>$ $\ast$ $>$ $\ast$)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ template$<$typename U $>$ static {\bf yes}\& {\bf mlpack\+::data\+::\+Has\+Serialize}$<$ T $>$\+::chk (
+\begin{DoxyParamCaption}
+\item[{{\bf check}$<$ U, typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ std\+::is\+\_\+class$<$ U $>$\+::{\bf value} $>$ $\ast$, typename {\bf std\+::enable\+\_\+if\+\_\+t}$<$ {\bf Has\+Serialize\+Function}$<$ U $>$\+::{\bf value} $>$ $\ast$ $>$ $\ast$}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{structmlpack_1_1data_1_1HasSerialize_a7183c8c8c0b62f2b2555d4e77f944d73}
+\index{mlpack\+::data\+::\+Has\+Serialize@{mlpack\+::data\+::\+Has\+Serialize}!chk@{chk}}
+\index{chk@{chk}!mlpack\+::data\+::\+Has\+Serialize@{mlpack\+::data\+::\+Has\+Serialize}}
+\subsubsection[{chk(...)}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ template$<$typename $>$ static {\bf no}\& {\bf mlpack\+::data\+::\+Has\+Serialize}$<$ T $>$\+::chk (
+\begin{DoxyParamCaption}
+\item[{}]{...}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{structmlpack_1_1data_1_1HasSerialize_a43b0ef32f1ab282b644b3a5350df86da}
+
+
+\subsection{Member Data Documentation}
+\index{mlpack\+::data\+::\+Has\+Serialize@{mlpack\+::data\+::\+Has\+Serialize}!value@{value}}
+\index{value@{value}!mlpack\+::data\+::\+Has\+Serialize@{mlpack\+::data\+::\+Has\+Serialize}}
+\subsubsection[{value}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ const bool {\bf mlpack\+::data\+::\+Has\+Serialize}$<$ T $>$\+::value = (sizeof({\bf chk}$<$T$>$(0)) == sizeof({\bf yes}))\hspace{0.3cm}{\ttfamily [static]}}\label{structmlpack_1_1data_1_1HasSerialize_a4a79528513f2e61a4eb161398a837bac}
+
+
+Definition at line 58 of file serialization\+\_\+shim.\+hpp.
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/mlpack/core/data/{\bf serialization\+\_\+shim.\+hpp}\end{DoxyCompactItemize}

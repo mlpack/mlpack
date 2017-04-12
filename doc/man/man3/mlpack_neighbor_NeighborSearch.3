@@ -1,0 +1,679 @@
+.TH "mlpack::neighbor::NeighborSearch< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::neighbor::NeighborSearch< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType > \- The \fBNeighborSearch\fP class is a template class for performing distance-based neighbor searches\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "typedef TreeType< MetricType, \fBNeighborSearchStat\fP< SortPolicy >, MatType > \fBTree\fP"
+.br
+.RI "\fIConvenience typedef\&. \fP"
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBNeighborSearch\fP (const MatType &\fBreferenceSet\fP, const \fBNeighborSearchMode\fP mode=\fBDUAL_TREE_MODE\fP, const double \fBepsilon\fP=0, const MetricType \fBmetric\fP=MetricType())"
+.br
+.RI "\fIInitialize the \fBNeighborSearch\fP object, passing a reference dataset (this is the dataset which is searched)\&. \fP"
+.ti -1c
+.RI "\fBNeighborSearch\fP (MatType &&\fBreferenceSet\fP, const \fBNeighborSearchMode\fP mode=\fBDUAL_TREE_MODE\fP, const double \fBepsilon\fP=0, const MetricType \fBmetric\fP=MetricType())"
+.br
+.RI "\fIInitialize the \fBNeighborSearch\fP object, taking ownership of the reference dataset (this is the dataset which is searched)\&. \fP"
+.ti -1c
+.RI "\fBNeighborSearch\fP (const \fBTree\fP &\fBreferenceTree\fP, const \fBNeighborSearchMode\fP mode=\fBDUAL_TREE_MODE\fP, const double \fBepsilon\fP=0, const MetricType \fBmetric\fP=MetricType())"
+.br
+.RI "\fIInitialize the \fBNeighborSearch\fP object with a copy of the given pre-constructed reference tree (this is the tree built on the points that will be searched)\&. \fP"
+.ti -1c
+.RI "\fBNeighborSearch\fP (\fBTree\fP &&\fBreferenceTree\fP, const \fBNeighborSearchMode\fP mode=\fBDUAL_TREE_MODE\fP, const double \fBepsilon\fP=0, const MetricType \fBmetric\fP=MetricType())"
+.br
+.RI "\fIInitialize the \fBNeighborSearch\fP object with the given pre-constructed reference tree (this is the tree built on the points that will be searched)\&. \fP"
+.ti -1c
+.RI "\fBNeighborSearch\fP (const \fBNeighborSearchMode\fP mode=\fBDUAL_TREE_MODE\fP, const double \fBepsilon\fP=0, const MetricType \fBmetric\fP=MetricType())"
+.br
+.RI "\fICreate a \fBNeighborSearch\fP object without any reference data\&. \fP"
+.ti -1c
+.RI "\fBNeighborSearch\fP (const \fBNeighborSearch\fP &other)"
+.br
+.RI "\fIConstruct the \fBNeighborSearch\fP object by copying the given \fBNeighborSearch\fP object\&. \fP"
+.ti -1c
+.RI "\fBNeighborSearch\fP (\fBNeighborSearch\fP &&other)"
+.br
+.RI "\fIConstruct the \fBNeighborSearch\fP object by taking ownership of the given \fBNeighborSearch\fP object\&. \fP"
+.ti -1c
+.RI "\fB~NeighborSearch\fP ()"
+.br
+.RI "\fIDelete the \fBNeighborSearch\fP object\&. \fP"
+.ti -1c
+.RI "size_t \fBBaseCases\fP () const "
+.br
+.RI "\fIReturn the total number of base case evaluations performed during the last search\&. \fP"
+.ti -1c
+.RI "double \fBEpsilon\fP () const "
+.br
+.RI "\fIAccess the relative error to be considered in approximate search\&. \fP"
+.ti -1c
+.RI "double & \fBEpsilon\fP ()"
+.br
+.RI "\fIModify the relative error to be considered in approximate search\&. \fP"
+.ti -1c
+.RI "\fBNeighborSearch\fP & \fBoperator=\fP (const \fBNeighborSearch\fP &other)"
+.br
+.RI "\fICopy the given \fBNeighborSearch\fP object\&. \fP"
+.ti -1c
+.RI "\fBNeighborSearch\fP & \fBoperator=\fP (\fBNeighborSearch\fP &&other)"
+.br
+.RI "\fITake ownership of the given \fBNeighborSearch\fP object\&. \fP"
+.ti -1c
+.RI "const MatType & \fBReferenceSet\fP () const "
+.br
+.RI "\fIAccess the reference dataset\&. \fP"
+.ti -1c
+.RI "const \fBTree\fP & \fBReferenceTree\fP () const "
+.br
+.RI "\fIAccess the reference tree\&. \fP"
+.ti -1c
+.RI "\fBTree\fP & \fBReferenceTree\fP ()"
+.br
+.RI "\fIModify the reference tree\&. \fP"
+.ti -1c
+.RI "size_t \fBScores\fP () const "
+.br
+.RI "\fIReturn the number of node combination scores during the last search\&. \fP"
+.ti -1c
+.RI "void \fBSearch\fP (const MatType &querySet, const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances)"
+.br
+.RI "\fIFor each point in the query set, compute the nearest neighbors and store the output in the given matrices\&. \fP"
+.ti -1c
+.RI "void \fBSearch\fP (\fBTree\fP &queryTree, const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances, bool sameSet=false)"
+.br
+.RI "\fIGiven a pre-built query tree, search for the nearest neighbors of each point in the query tree, storing the output in the given matrices\&. \fP"
+.ti -1c
+.RI "void \fBSearch\fP (const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances)"
+.br
+.RI "\fISearch for the nearest neighbors of every point in the reference set\&. \fP"
+.ti -1c
+.RI "\fBNeighborSearchMode\fP \fBSearchMode\fP () const "
+.br
+.RI "\fIAccess the search mode\&. \fP"
+.ti -1c
+.RI "\fBNeighborSearchMode\fP & \fBSearchMode\fP ()"
+.br
+.RI "\fIModify the search mode\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int)"
+.br
+.RI "\fISerialize the \fBNeighborSearch\fP model\&. \fP"
+.ti -1c
+.RI "void \fBTrain\fP (const MatType &\fBreferenceSet\fP)"
+.br
+.RI "\fISet the reference set to a new reference set, and build a tree if necessary\&. \fP"
+.ti -1c
+.RI "void \fBTrain\fP (MatType &&\fBreferenceSet\fP)"
+.br
+.RI "\fISet the reference set to a new reference set, taking ownership of the set, and build a tree if necessary\&. \fP"
+.ti -1c
+.RI "void \fBTrain\fP (const \fBTree\fP &\fBreferenceTree\fP)"
+.br
+.RI "\fISet the reference tree as a copy of the given reference tree\&. \fP"
+.ti -1c
+.RI "void \fBTrain\fP (\fBTree\fP &&\fBreferenceTree\fP)"
+.br
+.RI "\fISet the reference tree to a new reference tree\&. \fP"
+.in -1c
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static double \fBEffectiveError\fP (arma::mat &foundDistances, arma::mat &realDistances)"
+.br
+.RI "\fICalculate the average relative error (effective error) between the distances calculated and the true distances provided\&. \fP"
+.ti -1c
+.RI "static double \fBRecall\fP (arma::Mat< size_t > &foundNeighbors, arma::Mat< size_t > &realNeighbors)"
+.br
+.RI "\fICalculate the recall (% of neighbors found) given the list of found neighbors and the true set of neighbors\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "size_t \fBbaseCases\fP"
+.br
+.RI "\fIThe total number of base cases\&. \fP"
+.ti -1c
+.RI "double \fBepsilon\fP"
+.br
+.RI "\fIIndicates the relative error to be considered in approximate search\&. \fP"
+.ti -1c
+.RI "MetricType \fBmetric\fP"
+.br
+.RI "\fIInstantiation of metric\&. \fP"
+.ti -1c
+.RI "std::vector< size_t > \fBoldFromNewReferences\fP"
+.br
+.RI "\fIPermutations of reference points during tree building\&. \fP"
+.ti -1c
+.RI "const MatType * \fBreferenceSet\fP"
+.br
+.RI "\fIReference dataset\&. In some situations we may be the owner of this\&. \fP"
+.ti -1c
+.RI "\fBTree\fP * \fBreferenceTree\fP"
+.br
+.RI "\fIPointer to the root of the reference tree\&. \fP"
+.ti -1c
+.RI "size_t \fBscores\fP"
+.br
+.RI "\fIThe total number of scores (applicable for non-naive search)\&. \fP"
+.ti -1c
+.RI "\fBNeighborSearchMode\fP \fBsearchMode\fP"
+.br
+.RI "\fIIndicates the neighbor search mode\&. \fP"
+.ti -1c
+.RI "bool \fBsetOwner\fP"
+.br
+.RI "\fIIf true, we own the reference set\&. \fP"
+.ti -1c
+.RI "bool \fBtreeNeedsReset\fP"
+.br
+.RI "\fIIf this is true, the reference tree bounds need to be reset on a call to \fBSearch()\fP without a query set\&. \fP"
+.ti -1c
+.RI "bool \fBtreeOwner\fP"
+.br
+.RI "\fIIf true, this object created the trees and is responsible for them\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser>
+.br
+class mlpack::neighbor::NeighborSearch< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >"
+The \fBNeighborSearch\fP class is a template class for performing distance-based neighbor searches\&. 
+
+It takes a query dataset and a reference dataset (or just a reference dataset) and, for each point in the query dataset, finds the k neighbors in the reference dataset which have the 'best' distance according to a given sorting policy\&. A constructor is given which takes only a reference dataset, and if that constructor is used, the given reference dataset is also used as the query dataset\&.
+.PP
+The template parameters SortPolicy and Metric define the sort function used and the metric (distance function) used\&. More information on those classes can be found in the \fBNearestNeighborSort\fP class and the \fBkernel::ExampleKernel\fP class\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fISortPolicy\fP The sort policy for distances; see \fBNearestNeighborSort\fP\&. 
+.br
+\fIMetricType\fP The metric to use for computation\&. 
+.br
+\fIMatType\fP The type of data matrix\&. 
+.br
+\fITreeType\fP The tree type to use; must adhere to the TreeType API\&. 
+.br
+\fIDualTreeTraversalType\fP The type of dual tree traversal to use (defaults to the tree's default traverser)\&. 
+.br
+\fISingleTreeTraversalType\fP The type of single tree traversal to use (defaults to the tree's default traverser)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 83 of file neighbor_search\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> typedef TreeType<MetricType, \fBNeighborSearchStat\fP<SortPolicy>, MatType> \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::\fBTree\fP"
+
+.PP
+Convenience typedef\&. 
+.PP
+Definition at line 87 of file neighbor_search\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::\fBNeighborSearch\fP (const MatType & referenceSet, const \fBNeighborSearchMode\fP mode = \fC\fBDUAL_TREE_MODE\fP\fP, const double epsilon = \fC0\fP, const MetricType metric = \fCMetricType()\fP)"
+
+.PP
+Initialize the \fBNeighborSearch\fP object, passing a reference dataset (this is the dataset which is searched)\&. Optionally, perform the computation in a different mode\&. An initialized distance metric can be given, for cases where the metric has internal data (i\&.e\&. the distance::MahalanobisDistance class)\&.
+.PP
+This method will copy the matrices to internal copies, which are rearranged during tree-building\&. You can avoid this extra copy by pre-constructing the trees and passing them using a different constructor, or by using the construct that takes an rvalue reference to the dataset\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIreferenceSet\fP Set of reference points\&. 
+.br
+\fImode\fP Neighbor search mode\&. 
+.br
+\fIepsilon\fP Relative approximate error (non-negative)\&. 
+.br
+\fImetric\fP An optional instance of the MetricType class\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::\fBNeighborSearch\fP (MatType && referenceSet, const \fBNeighborSearchMode\fP mode = \fC\fBDUAL_TREE_MODE\fP\fP, const double epsilon = \fC0\fP, const MetricType metric = \fCMetricType()\fP)"
+
+.PP
+Initialize the \fBNeighborSearch\fP object, taking ownership of the reference dataset (this is the dataset which is searched)\&. Optionally, perform the computation in a different mode\&. An initialized distance metric can be given, for cases where the metric has internal data (i\&.e\&. the distance::MahalanobisDistance class)\&.
+.PP
+This method will not copy the data matrix, but will take ownership of it, and depending on the type of tree used, may rearrange the points\&. If you would rather a copy be made, consider using the constructor that takes a const reference to the data instead\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIreferenceSet\fP Set of reference points\&. 
+.br
+\fImode\fP Neighbor search mode\&. 
+.br
+\fIepsilon\fP Relative approximate error (non-negative)\&. 
+.br
+\fImetric\fP An optional instance of the MetricType class\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::\fBNeighborSearch\fP (const \fBTree\fP & referenceTree, const \fBNeighborSearchMode\fP mode = \fC\fBDUAL_TREE_MODE\fP\fP, const double epsilon = \fC0\fP, const MetricType metric = \fCMetricType()\fP)"
+
+.PP
+Initialize the \fBNeighborSearch\fP object with a copy of the given pre-constructed reference tree (this is the tree built on the points that will be searched)\&. Optionally, choose to use single-tree mode\&. Naive mode is not available as an option for this constructor\&. Additionally, an instantiated distance metric can be given, for cases where the distance metric holds data\&.
+.PP
+This method will copy the given tree\&. You can avoid this copy by using the construct that takes a rvalue reference to the tree\&.
+.PP
+\fBNote:\fP
+.RS 4
+Mapping the points of the matrix back to their original indices is not done when this constructor is used, so if the tree type you are using maps points (like BinarySpaceTree), then you will have to perform the re-mapping manually\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIreferenceTree\fP Pre-built tree for reference points\&. 
+.br
+\fImode\fP Neighbor search mode\&. 
+.br
+\fIepsilon\fP Relative approximate error (non-negative)\&. 
+.br
+\fImetric\fP Instantiated distance metric\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::\fBNeighborSearch\fP (\fBTree\fP && referenceTree, const \fBNeighborSearchMode\fP mode = \fC\fBDUAL_TREE_MODE\fP\fP, const double epsilon = \fC0\fP, const MetricType metric = \fCMetricType()\fP)"
+
+.PP
+Initialize the \fBNeighborSearch\fP object with the given pre-constructed reference tree (this is the tree built on the points that will be searched)\&. Optionally, choose to use single-tree mode\&. Naive mode is not available as an option for this constructor\&. Additionally, an instantiated distance metric can be given, for cases where the distance metric holds data\&.
+.PP
+This method will take ownership of the given tree\&. There is no copying of the data matrices (because tree-building is not necessary), so this is the constructor to use when copies absolutely must be avoided\&.
+.PP
+\fBNote:\fP
+.RS 4
+Mapping the points of the matrix back to their original indices is not done when this constructor is used, so if the tree type you are using maps points (like BinarySpaceTree), then you will have to perform the re-mapping manually\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIreferenceTree\fP Pre-built tree for reference points\&. 
+.br
+\fImode\fP Neighbor search mode\&. 
+.br
+\fIepsilon\fP Relative approximate error (non-negative)\&. 
+.br
+\fImetric\fP Instantiated distance metric\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::\fBNeighborSearch\fP (const \fBNeighborSearchMode\fP mode = \fC\fBDUAL_TREE_MODE\fP\fP, const double epsilon = \fC0\fP, const MetricType metric = \fCMetricType()\fP)"
+
+.PP
+Create a \fBNeighborSearch\fP object without any reference data\&. If \fBSearch()\fP is called before a reference set is set with \fBTrain()\fP, an exception will be thrown\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fImode\fP Neighbor search mode\&. 
+.br
+\fIepsilon\fP Relative approximate error (non-negative)\&. 
+.br
+\fImetric\fP Instantiated metric\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::\fBNeighborSearch\fP (const \fBNeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType > & other)"
+
+.PP
+Construct the \fBNeighborSearch\fP object by copying the given \fBNeighborSearch\fP object\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP \fBNeighborSearch\fP object to copy\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::\fBNeighborSearch\fP (\fBNeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType > && other)"
+
+.PP
+Construct the \fBNeighborSearch\fP object by taking ownership of the given \fBNeighborSearch\fP object\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP \fBNeighborSearch\fP object to take ownership of\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::~\fBNeighborSearch\fP ()"
+
+.PP
+Delete the \fBNeighborSearch\fP object\&. The tree is the only member we are responsible for deleting\&. The others will take care of themselves\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> size_t \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::BaseCases () const\fC [inline]\fP"
+
+.PP
+Return the total number of base case evaluations performed during the last search\&. 
+.PP
+Definition at line 380 of file neighbor_search\&.hpp\&.
+.PP
+References mlpack::neighbor::NeighborSearch< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::baseCases\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> static double \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::EffectiveError (arma::mat & foundDistances, arma::mat & realDistances)\fC [static]\fP"
+
+.PP
+Calculate the average relative error (effective error) between the distances calculated and the true distances provided\&. The input matrices must have the same size\&.
+.PP
+Cases where the true distance is zero (the same point) or the calculated distance is SortPolicy::WorstDistance() (didn't find enough points) will be ignored\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfoundDistances\fP Matrix storing lists of calculated distances for each query point\&. 
+.br
+\fIrealDistances\fP Matrix storing lists of true best distances for each query point\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Average relative error\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> double \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::Epsilon () const\fC [inline]\fP"
+
+.PP
+Access the relative error to be considered in approximate search\&. 
+.PP
+Definition at line 391 of file neighbor_search\&.hpp\&.
+.PP
+References mlpack::neighbor::NeighborSearch< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::epsilon\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> double& \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::Epsilon ()\fC [inline]\fP"
+
+.PP
+Modify the relative error to be considered in approximate search\&. 
+.PP
+Definition at line 393 of file neighbor_search\&.hpp\&.
+.PP
+References mlpack::neighbor::NeighborSearch< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::epsilon\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> \fBNeighborSearch\fP& \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::operator= (const \fBNeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType > & other)"
+
+.PP
+Copy the given \fBNeighborSearch\fP object\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP \fBNeighborSearch\fP object to copy\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> \fBNeighborSearch\fP& \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::operator= (\fBNeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType > && other)"
+
+.PP
+Take ownership of the given \fBNeighborSearch\fP object\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIother\fP \fBNeighborSearch\fP object to take ownership of\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> static double \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::Recall (arma::Mat< size_t > & foundNeighbors, arma::Mat< size_t > & realNeighbors)\fC [static]\fP"
+
+.PP
+Calculate the recall (% of neighbors found) given the list of found neighbors and the true set of neighbors\&. The recall returned will be in the range [0, 1]\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfoundNeighbors\fP Matrix storing lists of calculated neighbors for each query point\&. 
+.br
+\fIrealNeighbors\fP Matrix storing lists of true best neighbors for each query point\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Recall\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> const MatType& \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::ReferenceSet () const\fC [inline]\fP"
+
+.PP
+Access the reference dataset\&. 
+.PP
+Definition at line 396 of file neighbor_search\&.hpp\&.
+.PP
+References mlpack::neighbor::NeighborSearch< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::referenceSet\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> const \fBTree\fP& \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::ReferenceTree () const\fC [inline]\fP"
+
+.PP
+Access the reference tree\&. 
+.PP
+Definition at line 399 of file neighbor_search\&.hpp\&.
+.PP
+References mlpack::neighbor::NeighborSearch< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::referenceTree\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> \fBTree\fP& \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::ReferenceTree ()\fC [inline]\fP"
+
+.PP
+Modify the reference tree\&. 
+.PP
+Definition at line 401 of file neighbor_search\&.hpp\&.
+.PP
+References mlpack::neighbor::NeighborSearch< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::referenceTree, and mlpack::neighbor::NeighborSearch< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::Serialize()\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> size_t \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::Scores () const\fC [inline]\fP"
+
+.PP
+Return the number of node combination scores during the last search\&. 
+.PP
+Definition at line 383 of file neighbor_search\&.hpp\&.
+.PP
+References mlpack::neighbor::NeighborSearch< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::scores\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> void \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::Search (const MatType & querySet, const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances)"
+
+.PP
+For each point in the query set, compute the nearest neighbors and store the output in the given matrices\&. The matrices will be set to the size of n columns by k rows, where n is the number of points in the query dataset and k is the number of neighbors being searched for\&.
+.PP
+If querySet contains only a few query points, the extra cost of building a tree on the points for dual-tree search may not be warranted, and it may be worthwhile to set singleMode = false (either in the constructor or with SingleMode())\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIquerySet\fP Set of query points (can be just one point)\&. 
+.br
+\fIk\fP Number of neighbors to search for\&. 
+.br
+\fIneighbors\fP Matrix storing lists of neighbors for each query point\&. 
+.br
+\fIdistances\fP Matrix storing distances of neighbors for each query point\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> void \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::Search (\fBTree\fP & queryTree, const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances, bool sameSet = \fCfalse\fP)"
+
+.PP
+Given a pre-built query tree, search for the nearest neighbors of each point in the query tree, storing the output in the given matrices\&. The matrices will be set to the size of n columns by k rows, where n is the number of points in the query dataset and k is the number of neighbors being searched for\&.
+.PP
+Note that if you are calling \fBSearch()\fP multiple times with a single query tree, you need to reset the bounds in the statistic of each query node, otherwise the result may be wrong! You can do this by calling TreeType::Stat()::Reset() on each node in the query tree\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIqueryTree\fP Tree built on query points\&. 
+.br
+\fIk\fP Number of neighbors to search for\&. 
+.br
+\fIneighbors\fP Matrix storing lists of neighbors for each query point\&. 
+.br
+\fIdistances\fP Matrix storing distances of neighbors for each query point\&. 
+.br
+\fIsameSet\fP Denotes whether or not the reference and query sets are the same\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> void \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::Search (const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances)"
+
+.PP
+Search for the nearest neighbors of every point in the reference set\&. This is basically equivalent to calling any other overload of \fBSearch()\fP with the reference set as the query set; so, this lets you do all-k-nearest-neighbors search\&. The results are stored in the given matrices\&. The matrices will be set to the size of n columns by k rows, where n is the number of points in the query dataset and k is the number of neighbors being searched for\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIk\fP Number of neighbors to search for\&. 
+.br
+\fIneighbors\fP Matrix storing lists of neighbors for each query point\&. 
+.br
+\fIdistances\fP Matrix storing distances of neighbors for each query point\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> \fBNeighborSearchMode\fP \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::SearchMode () const\fC [inline]\fP"
+
+.PP
+Access the search mode\&. 
+.PP
+Definition at line 386 of file neighbor_search\&.hpp\&.
+.PP
+References mlpack::neighbor::NeighborSearch< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::searchMode\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> \fBNeighborSearchMode\fP& \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::SearchMode ()\fC [inline]\fP"
+
+.PP
+Modify the search mode\&. 
+.PP
+Definition at line 388 of file neighbor_search\&.hpp\&.
+.PP
+References mlpack::neighbor::NeighborSearch< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::searchMode\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> template<typename Archive > void \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::Serialize (Archive & ar, const unsigned int)"
+
+.PP
+Serialize the \fBNeighborSearch\fP model\&. 
+.PP
+Referenced by mlpack::neighbor::NeighborSearch< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::ReferenceTree()\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> void \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::Train (const MatType & referenceSet)"
+
+.PP
+Set the reference set to a new reference set, and build a tree if necessary\&. This method is called '\fBTrain()\fP' in order to match the rest of the mlpack abstractions, even though calling this 'training' is maybe a bit of a stretch\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIreferenceSet\fP New set of reference data\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> void \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::Train (MatType && referenceSet)"
+
+.PP
+Set the reference set to a new reference set, taking ownership of the set, and build a tree if necessary\&. This method is called '\fBTrain()\fP' in order to match the rest of the mlpack abstractions, even though calling this 'training' is maybe a bit of a stretch\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIreferenceSet\fP New set of reference data\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> void \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::Train (const \fBTree\fP & referenceTree)"
+
+.PP
+Set the reference tree as a copy of the given reference tree\&. This method will copy the given tree\&. You can avoid this copy by using the \fBTrain()\fP method that takes a rvalue reference to the tree\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIreferenceTree\fP Pre-built tree for reference points\&. 
+.RE
+.PP
+
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> void \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::Train (\fBTree\fP && referenceTree)"
+
+.PP
+Set the reference tree to a new reference tree\&. This method will take ownership of the given tree\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIreferenceTree\fP Pre-built tree for reference points\&. 
+.RE
+.PP
+
+.SH "Member Data Documentation"
+.PP 
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> size_t \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::baseCases\fC [private]\fP"
+
+.PP
+The total number of base cases\&. 
+.PP
+Definition at line 429 of file neighbor_search\&.hpp\&.
+.PP
+Referenced by mlpack::neighbor::NeighborSearch< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::BaseCases()\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> double \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::epsilon\fC [private]\fP"
+
+.PP
+Indicates the relative error to be considered in approximate search\&. 
+.PP
+Definition at line 423 of file neighbor_search\&.hpp\&.
+.PP
+Referenced by mlpack::neighbor::NeighborSearch< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::Epsilon()\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> MetricType \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::metric\fC [private]\fP"
+
+.PP
+Instantiation of metric\&. 
+.PP
+Definition at line 426 of file neighbor_search\&.hpp\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> std::vector<size_t> \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::oldFromNewReferences\fC [private]\fP"
+
+.PP
+Permutations of reference points during tree building\&. 
+.PP
+Definition at line 409 of file neighbor_search\&.hpp\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> const MatType* \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::referenceSet\fC [private]\fP"
+
+.PP
+Reference dataset\&. In some situations we may be the owner of this\&. 
+.PP
+Definition at line 413 of file neighbor_search\&.hpp\&.
+.PP
+Referenced by mlpack::neighbor::NeighborSearch< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::ReferenceSet()\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> \fBTree\fP* \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::referenceTree\fC [private]\fP"
+
+.PP
+Pointer to the root of the reference tree\&. 
+.PP
+Definition at line 411 of file neighbor_search\&.hpp\&.
+.PP
+Referenced by mlpack::neighbor::NeighborSearch< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::ReferenceTree()\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> size_t \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::scores\fC [private]\fP"
+
+.PP
+The total number of scores (applicable for non-naive search)\&. 
+.PP
+Definition at line 431 of file neighbor_search\&.hpp\&.
+.PP
+Referenced by mlpack::neighbor::NeighborSearch< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::Scores()\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> \fBNeighborSearchMode\fP \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::searchMode\fC [private]\fP"
+
+.PP
+Indicates the neighbor search mode\&. 
+.PP
+Definition at line 421 of file neighbor_search\&.hpp\&.
+.PP
+Referenced by mlpack::neighbor::NeighborSearch< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::SearchMode()\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> bool \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::setOwner\fC [private]\fP"
+
+.PP
+If true, we own the reference set\&. 
+.PP
+Definition at line 418 of file neighbor_search\&.hpp\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> bool \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::treeNeedsReset\fC [private]\fP"
+
+.PP
+If this is true, the reference tree bounds need to be reset on a call to \fBSearch()\fP without a query set\&. 
+.PP
+Definition at line 435 of file neighbor_search\&.hpp\&.
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser> bool \fBmlpack::neighbor::NeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::treeOwner\fC [private]\fP"
+
+.PP
+If true, this object created the trees and is responsible for them\&. 
+.PP
+Definition at line 416 of file neighbor_search\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

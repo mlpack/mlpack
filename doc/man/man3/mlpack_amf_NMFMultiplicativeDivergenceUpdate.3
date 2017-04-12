@@ -1,0 +1,127 @@
+.TH "mlpack::amf::NMFMultiplicativeDivergenceUpdate" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::amf::NMFMultiplicativeDivergenceUpdate \- This follows a method described in the paper 'Algorithms for Non-negative\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBNMFMultiplicativeDivergenceUpdate\fP ()"
+.br
+.ti -1c
+.RI "template<typename MatType > void \fBInitialize\fP (const MatType &, const size_t)"
+.br
+.RI "\fIInitialize the factorization\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &, const unsigned int)"
+.br
+.RI "\fISerialize the object (in this case, there is nothing to serialize)\&. \fP"
+.in -1c
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename MatType > static void \fBHUpdate\fP (const MatType &V, const arma::mat &W, arma::mat &H)"
+.br
+.RI "\fIThe update rule for the encoding matrix H\&. \fP"
+.ti -1c
+.RI "template<typename MatType > static void \fBWUpdate\fP (const MatType &V, arma::mat &W, const arma::mat &H)"
+.br
+.RI "\fIThe update rule for the basis matrix W\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+This follows a method described in the paper 'Algorithms for Non-negative\&. 
+
+
+.PP
+.nf
+@inproceedings{lee2001algorithms,
+  title={Algorithms for non-negative matrix factorization},
+  author={Lee, D\&.D\&. and Seung, H\&.S\&.},
+  booktitle={Advances in Neural Information Processing Systems 13
+      (NIPS 2000)},
+  pages={556--562},
+  year={2001}
+}
+
+.fi
+.PP
+.PP
+This is a multiplicative rule that ensures that the Kullback–Leibler divergence
+.PP
+\[ \sum_i \sum_j (V_{ij} \log\frac{V_{ij}}{(W H)_{ij}} - V_{ij} + (W H)_{ij}) \].PP
+is non-increasing between subsequent iterations\&. Both of the update rules for W and H are defined in this file\&.
+.PP
+This set of update rules is not meant to work with sparse matrices\&. Using sparse matrices often causes NaNs in the output, so other choices of update rules are better in that situation\&. 
+.PP
+Definition at line 48 of file nmf_mult_div\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::amf::NMFMultiplicativeDivergenceUpdate::NMFMultiplicativeDivergenceUpdate ()\fC [inline]\fP"
+
+.PP
+Definition at line 52 of file nmf_mult_div\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "template<typename MatType > static void mlpack::amf::NMFMultiplicativeDivergenceUpdate::HUpdate (const MatType & V, const arma::mat & W, arma::mat & H)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+The update rule for the encoding matrix H\&. The formula used is
+.PP
+\[ H_{a\mu} \leftarrow H_{a\mu} \frac{\sum_{i} W_{ia} V_{i\mu}/(WH)_{i\mu}} {\sum_{k} H_{ka}} \].PP
+The function takes in all the matrices and only changes the value of the H matrix\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIV\fP Input matrix to be factorized\&. 
+.br
+\fIW\fP Basis matrix\&. 
+.br
+\fIH\fP Encoding matrix to updated\&. 
+.RE
+.PP
+
+.PP
+Definition at line 124 of file nmf_mult_div\&.hpp\&.
+.SS "template<typename MatType > void mlpack::amf::NMFMultiplicativeDivergenceUpdate::Initialize (const MatType &, const size_t)\fC [inline]\fP"
+
+.PP
+Initialize the factorization\&. These rules don't store any state, so the input values are ignore\&. 
+.PP
+Definition at line 59 of file nmf_mult_div\&.hpp\&.
+.SS "template<typename Archive > void mlpack::amf::NMFMultiplicativeDivergenceUpdate::Serialize (Archive &, const unsigned int)\fC [inline]\fP"
+
+.PP
+Serialize the object (in this case, there is nothing to serialize)\&. 
+.PP
+Definition at line 154 of file nmf_mult_div\&.hpp\&.
+.SS "template<typename MatType > static void mlpack::amf::NMFMultiplicativeDivergenceUpdate::WUpdate (const MatType & V, arma::mat & W, const arma::mat & H)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+The update rule for the basis matrix W\&. The formula used is
+.PP
+\[ W_{ia} \leftarrow W_{ia} \frac{\sum_{\mu} H_{a\mu} V_{i\mu} / (W H)_{i\mu}} {\sum_{\nu} H_{a\nu}} \].PP
+The function takes in all the matrices and only changes the value of the W matrix\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIV\fP Input matrix to be factorized\&. 
+.br
+\fIW\fP Basis matrix to be updated\&. 
+.br
+\fIH\fP Encoding matrix\&. 
+.RE
+.PP
+
+.PP
+Definition at line 80 of file nmf_mult_div\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

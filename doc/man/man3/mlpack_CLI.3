@@ -1,0 +1,555 @@
+.TH "mlpack::CLI" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::CLI \- Parses the command line for parameters and holds user-specified parameters\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fB~CLI\fP ()"
+.br
+.RI "\fIDestructor\&. \fP"
+.in -1c
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<class T > static void \fBAdd\fP (const T &defaultValue, const \fBstd::string\fP &identifier, const \fBstd::string\fP &description, const char alias= '\\0', const bool required=false, const bool input=true, const bool noTranspose=false)"
+.br
+.RI "\fIAdds a parameter to the hierarchy; use the PARAM_*() macros instead of this (i\&.e\&. \fP"
+.ti -1c
+.RI "static void \fBDestroy\fP ()"
+.br
+.RI "\fIDestroy the \fBCLI\fP object\&. \fP"
+.ti -1c
+.RI "template<typename T > static T & \fBGetParam\fP (const \fBstd::string\fP &identifier)"
+.br
+.RI "\fIGrab the value of type T found while parsing\&. \fP"
+.ti -1c
+.RI "template<typename T > static T & \fBGetRawParam\fP (const \fBstd::string\fP &identifier)"
+.br
+.RI "\fIGet the raw value of the parameter before the processing that \fBGetParam()\fP would normally do\&. \fP"
+.ti -1c
+.RI "static \fBCLI\fP & \fBGetSingleton\fP ()"
+.br
+.RI "\fIRetrieve the singleton\&. \fP"
+.ti -1c
+.RI "template<typename T > static \fButil::ParameterType\fP< T >::type & \fBGetUnmappedParam\fP (const \fBstd::string\fP &identifier)"
+.br
+.RI "\fIGet the unmapped (i\&.e\&. \fP"
+.ti -1c
+.RI "static bool \fBHasParam\fP (const \fBstd::string\fP &identifier)"
+.br
+.RI "\fISee if the specified flag was found while parsing\&. \fP"
+.ti -1c
+.RI "static \fBstd::string\fP \fBHyphenateString\fP (const \fBstd::string\fP &str, int padding)"
+.br
+.RI "\fIHyphenate a string or split it onto multiple 80-character lines, with some amount of padding on each line\&. \fP"
+.ti -1c
+.RI "static void \fBParseCommandLine\fP (int argc, char **argv)"
+.br
+.RI "\fIParses the commandline for arguments\&. \fP"
+.ti -1c
+.RI "static void \fBPrintHelp\fP (const \fBstd::string\fP &param='')"
+.br
+.RI "\fIPrint out the help info for the given parameter (or all parameters if no argument is specified)\&. \fP"
+.ti -1c
+.RI "static void \fBRegisterProgramDoc\fP (\fButil::ProgramDoc\fP *\fBdoc\fP)"
+.br
+.RI "\fIRegisters a ProgramDoc object, which contains documentation about the program\&. \fP"
+.in -1c
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "\fButil::ProgramDoc\fP * \fBdoc\fP"
+.br
+.RI "\fIPointer to the ProgramDoc object\&. \fP"
+.in -1c
+.SS "Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBCLI\fP ()"
+.br
+.RI "\fIMake the constructor private, to preclude unauthorized instances\&. \fP"
+.ti -1c
+.RI "\fBCLI\fP (const \fBCLI\fP &other)"
+.br
+.RI "\fIPrivate copy constructor; we don't want copies floating around\&. \fP"
+.ti -1c
+.RI "template<typename T > void \fBAddOption\fP (const char *optId, const char *descr, const typename \fBstd::enable_if_t\fP<!\fButil::IsStdVector\fP< T >::value > *=0)"
+.br
+.RI "\fIAdd an option if it is not a vector type\&. \fP"
+.ti -1c
+.RI "template<typename T > void \fBAddOption\fP (const char *optId, const char *descr, const typename \fBstd::enable_if_t\fP< \fButil::IsStdVector\fP< T >::value > *=0)"
+.br
+.RI "\fIAdd an option if it is a vector type\&. \fP"
+.in -1c
+.SS "Static Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static void \fBAddAlias\fP (const \fBstd::string\fP &alias, const \fBstd::string\fP &original)"
+.br
+.RI "\fIMaps a given alias to a given parameter\&. \fP"
+.ti -1c
+.RI "static char \fBAliasReverseLookup\fP (const \fBstd::string\fP &value)"
+.br
+.RI "\fIReturns an alias, if given the name of the original\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "std::map< char, \fBstd::string\fP > \fBaliases\fP"
+.br
+.RI "\fIConvenience map from alias values to names\&. \fP"
+.ti -1c
+.RI "po::options_description \fBdesc\fP"
+.br
+.RI "\fIThe documentation and names of options\&. \fP"
+.ti -1c
+.RI "bool \fBdidParse\fP"
+.br
+.RI "\fITrue, if \fBCLI\fP was used to parse command line options\&. \fP"
+.ti -1c
+.RI "std::list< \fBstd::string\fP > \fBoutputOptions\fP"
+.br
+.RI "\fIConvenience list of output options\&. \fP"
+.ti -1c
+.RI "std::map< \fBstd::string\fP, \fButil::ParamData\fP > \fBparameters\fP"
+.br
+.RI "\fIMap of parameters\&. \fP"
+.ti -1c
+.RI "\fBstd::string\fP \fBprogramName\fP"
+.br
+.RI "\fIHolds the name of the program for --version\&. \fP"
+.ti -1c
+.RI "std::list< \fBstd::string\fP > \fBrequiredOptions\fP"
+.br
+.RI "\fIConvenience list of required options\&. \fP"
+.ti -1c
+.RI "\fBTimers\fP \fBtimer\fP"
+.br
+.RI "\fIHolds the timer objects\&. \fP"
+.ti -1c
+.RI "po::variables_map \fBvmap\fP"
+.br
+.RI "\fIValues of the options given by user\&. \fP"
+.in -1c
+.SS "Static Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "static \fBCLI\fP * \fBsingleton\fP"
+.br
+.RI "\fIThe singleton itself\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Parses the command line for parameters and holds user-specified parameters\&. 
+
+The \fBCLI\fP class is a subsystem by which parameters for machine learning methods can be specified and accessed\&. In conjunction with the macros PARAM_DOUBLE, PARAM_INT, PARAM_STRING, PARAM_FLAG, and others, this class aims to make user configurability of mlpack methods very easy\&. There are only three methods in \fBCLI\fP that a user should need: \fBCLI::ParseCommandLine()\fP, \fBCLI::GetParam()\fP, and \fBCLI::HasParam()\fP (in addition to the PARAM_*() macros)\&.
+.SH "Adding parameters to a program"
+.PP
+.PP
+.nf
+$ \&./executable --bar=5
+.fi
+.PP
+.PP
+\fBNote:\fP
+.RS 4
+The = is optional; a space can also be used\&.
+.RE
+.PP
+A parameter is specified by using one of the following macros (this is not a complete list; see core/io/cli\&.hpp):
+.PP
+.IP "\(bu" 2
+\fBPARAM_FLAG(ID, DESC, ALIAS)\fP
+.IP "\(bu" 2
+PARAM_DOUBLE(ID, DESC, ALIAS, DEF)
+.IP "\(bu" 2
+PARAM_INT(ID, DESC, ALIAS, DEF)
+.IP "\(bu" 2
+PARAM_STRING(ID, DESC, ALIAS, DEF)
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIID\fP Name of the parameter\&. 
+.br
+\fIDESC\fP Short description of the parameter (one/two sentences)\&. 
+.br
+\fIALIAS\fP An alias for the parameter\&. 
+.br
+\fIDEF\fP Default value of the parameter\&.
+.RE
+.PP
+The flag (boolean) type automatically defaults to false; it is specified merely as a flag on the command line (no '=true' is required)\&.
+.PP
+Here is an example of a few parameters being defined; this is for the KNN executable (methods/neighbor_search/knn_main\&.cpp):
+.PP
+.PP
+.nf
+PARAM_STRING_REQ("reference_file", "File containing the reference dataset\&.",
+    "r");
+PARAM_STRING_REQ("distances_file", "File to output distances into\&.", "d");
+PARAM_STRING_REQ("neighbors_file", "File to output neighbors into\&.", "n");
+PARAM_INT_REQ("k", "Number of furthest neighbors to find\&.", "k");
+PARAM_STRING("query_file", "File containing query points (optional)\&.", "q",
+    "");
+PARAM_INT("leaf_size", "Leaf size for tree building\&.", "l", 20);
+PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation\&.",
+    "N");
+PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed "
+    "to dual-tree search\&.", "s");
+.fi
+.PP
+.PP
+More documentation is available on the PARAM_*() macros in the documentation for core/io/cli\&.hpp\&.
+.SH "Documenting the program itself"
+.PP
+In addition to allowing documentation for each individual parameter and module, the \fBPROGRAM_INFO()\fP macro provides support for documenting the program itself\&. There should only be one instance of the \fBPROGRAM_INFO()\fP macro\&. Below is an example:
+.PP
+.PP
+.nf
+PROGRAM_INFO("Maximum Variance Unfolding", "This program performs maximum "
+   "variance unfolding on the given dataset, writing a lower-dimensional "
+   "unfolded dataset to the given output file\&.");
+.fi
+.PP
+.PP
+This description should be verbose, and explain to a non-expert user what the program does and how to use it\&. If relevant, paper citations should be included\&.
+.SH "Parsing the command line with CLI"
+.PP
+To have \fBCLI\fP parse the command line at the beginning of code execution, only a call to \fBParseCommandLine()\fP is necessary:
+.PP
+.PP
+.nf
+int main(int argc, char** argv)
+{
+  CLI::ParseCommandLine(argc, argv);
+
+  \&.\&.\&.
+}
+.fi
+.PP
+.PP
+\fBCLI\fP provides --help and --info options which give nicely formatted documentation of each option; the documentation is generated from the DESC arguments in the PARAM_*() macros\&.
+.SH "Getting parameters with CLI"
+.PP
+When the parameters have been defined, the next important thing is how to access them\&. For this, the \fBHasParam()\fP and \fBGetParam()\fP methods are used\&. For instance, to see if the user passed the flag (boolean) 'naive':
+.PP
+.PP
+.nf
+if (CLI::HasParam("naive"))
+{
+  Log::Info << "Naive has been passed!" << std::endl;
+}
+.fi
+.PP
+.PP
+To get the value of a parameter, such as a string, use GetParam:
+.PP
+.PP
+.nf
+const std::string filename = CLI::GetParam<std::string>("filename");
+.fi
+.PP
+.PP
+\fBNote:\fP
+.RS 4
+Options should only be defined in files which define \fCmain()\fP (that is, main executables)\&. If options are defined elsewhere, they may be spuriously included into other executables and confuse users\&. Similarly, if your executable has options which you did not define, it is probably because the option is defined somewhere else and included in your executable\&.
+.RE
+.PP
+\fBBug\fP
+.RS 4
+The \fBCOUNTER\fP variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros\&. However, not all compilers have this support--most notably, gcc < 4\&.3\&. In that case, the \fBLINE\fP macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages\&. See https://github.com/mlpack/mlpack/issues/100 for more information\&. 
+.RE
+.PP
+
+.PP
+Definition at line 175 of file cli\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::CLI::~CLI ()"
+
+.PP
+Destructor\&. 
+.SS "mlpack::CLI::CLI ()\fC [private]\fP"
+
+.PP
+Make the constructor private, to preclude unauthorized instances\&. 
+.SS "mlpack::CLI::CLI (const \fBCLI\fP & other)\fC [private]\fP"
+
+.PP
+Private copy constructor; we don't want copies floating around\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "template<class T > static void mlpack::CLI::Add (const T & defaultValue, const \fBstd::string\fP & identifier, const \fBstd::string\fP & description, const char alias = \fC'\\0'\fP, const bool required = \fCfalse\fP, const bool input = \fCtrue\fP, const bool noTranspose = \fCfalse\fP)\fC [static]\fP"
+
+.PP
+Adds a parameter to the hierarchy; use the PARAM_*() macros instead of this (i\&.e\&. PARAM_INT())\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIidentifier\fP The name of the parameter\&. 
+.br
+\fIdescription\fP Short string description of the parameter\&. 
+.br
+\fIalias\fP An alias for the parameter, defaults to '\\0' (no alias)\&. 
+.br
+\fIrequired\fP Indicates if parameter must be set on command line\&. 
+.br
+\fIinput\fP If true, the parameter is an input (not output) parameter\&. 
+.br
+\fInoTranspose\fP If the parameter is a matrix and this is true, then the matrix will not be transposed on loading\&. 
+.RE
+.PP
+
+.SS "static void mlpack::CLI::AddAlias (const \fBstd::string\fP & alias, const \fBstd::string\fP & original)\fC [static]\fP, \fC [private]\fP"
+
+.PP
+Maps a given alias to a given parameter\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIalias\fP The name of the alias to be mapped\&. 
+.br
+\fIoriginal\fP The name of the parameter to be mapped\&. 
+.RE
+.PP
+
+.SS "template<typename T > void mlpack::CLI::AddOption (const char * optId, const char * descr, const typename \fBstd::enable_if_t\fP<!\fButil::IsStdVector\fP< T >::value > * = \fC0\fP)\fC [private]\fP"
+
+.PP
+Add an option if it is not a vector type\&. This is a utility function used by \fBCLI::Add\fP\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIType\fP of parameter\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIoptId\fP Name of parameter\&. 
+.br
+\fIdescr\fP Description\&. 
+.RE
+.PP
+
+.SS "template<typename T > void mlpack::CLI::AddOption (const char * optId, const char * descr, const typename \fBstd::enable_if_t\fP< \fButil::IsStdVector\fP< T >::value > * = \fC0\fP)\fC [private]\fP"
+
+.PP
+Add an option if it is a vector type\&. This is a utility function used by \fBCLI::Add\fP\&.
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIType\fP of parameter\&. 
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIoptId\fP Name of parameter\&. 
+.br
+\fIdescr\fP Description\&. 
+.RE
+.PP
+
+.SS "static char mlpack::CLI::AliasReverseLookup (const \fBstd::string\fP & value)\fC [static]\fP, \fC [private]\fP"
+
+.PP
+Returns an alias, if given the name of the original\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIvalue\fP The value in a key:value pair where the key is an alias\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The alias associated with value\&. 
+.RE
+.PP
+
+.SS "static void mlpack::CLI::Destroy ()\fC [static]\fP"
+
+.PP
+Destroy the \fBCLI\fP object\&. This resets the pointer to the singleton, so in case someone tries to access it after destruction, a new one will be made (the program will not fail)\&. 
+.SS "template<typename T > static T& mlpack::CLI::GetParam (const \fBstd::string\fP & identifier)\fC [static]\fP"
+
+.PP
+Grab the value of type T found while parsing\&. You can set the value using this reference safely\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIidentifier\fP The name of the parameter in question\&. 
+.RE
+.PP
+
+.SS "template<typename T > static T& mlpack::CLI::GetRawParam (const \fBstd::string\fP & identifier)\fC [static]\fP"
+
+.PP
+Get the raw value of the parameter before the processing that \fBGetParam()\fP would normally do\&. Note that this does not perform any data loading or manipulation like \fBGetParam()\fP does\&. So if you want to access a matrix or model (or similar) parameter before it is loaded, this is the method to use\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIidentifier\fP The name of the parameter in question\&. 
+.RE
+.PP
+
+.SS "static \fBCLI\fP& mlpack::CLI::GetSingleton ()\fC [static]\fP"
+
+.PP
+Retrieve the singleton\&. Not exposed to the outside, so as to spare users some ungainly x\&.GetSingleton()\&.foo() syntax\&.
+.PP
+In this case, the singleton is used to store data for the static methods, as there is no point in defining static methods only to have users call private instance methods\&.
+.PP
+\fBReturns:\fP
+.RS 4
+The singleton instance for use in the static methods\&. 
+.RE
+.PP
+
+.SS "template<typename T > static \fButil::ParameterType\fP<T>::type& mlpack::CLI::GetUnmappedParam (const \fBstd::string\fP & identifier)\fC [static]\fP"
+
+.PP
+Get the unmapped (i\&.e\&. what the user specifies on the command-line) value of type ParameterType<T>::value found while parsing\&. You can set the value using this reference safely\&. You should not need to use this function unless you are doing something tricky (like getting the filename a user specified for a matrix parameter or something)\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIidentifier\fP The name of the parameter in question\&. 
+.RE
+.PP
+
+.SS "static bool mlpack::CLI::HasParam (const \fBstd::string\fP & identifier)\fC [static]\fP"
+
+.PP
+See if the specified flag was found while parsing\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIidentifier\fP The name of the parameter in question\&. 
+.RE
+.PP
+
+.SS "static \fBstd::string\fP mlpack::CLI::HyphenateString (const \fBstd::string\fP & str, int padding)\fC [static]\fP"
+
+.PP
+Hyphenate a string or split it onto multiple 80-character lines, with some amount of padding on each line\&. This is ued for option output\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIstr\fP String to hyphenate (splits are on ' ')\&. 
+.br
+\fIpadding\fP Amount of padding on the left for each new line\&. 
+.RE
+.PP
+
+.SS "static void mlpack::CLI::ParseCommandLine (int argc, char ** argv)\fC [static]\fP"
+
+.PP
+Parses the commandline for arguments\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIargc\fP The number of arguments on the commandline\&. 
+.br
+\fIargv\fP The array of arguments as strings\&. 
+.RE
+.PP
+
+.SS "static void mlpack::CLI::PrintHelp (const \fBstd::string\fP & param = \fC''\fP)\fC [static]\fP"
+
+.PP
+Print out the help info for the given parameter (or all parameters if no argument is specified)\&. 
+.SS "static void mlpack::CLI::RegisterProgramDoc (\fButil::ProgramDoc\fP * doc)\fC [static]\fP"
+
+.PP
+Registers a ProgramDoc object, which contains documentation about the program\&. If this method has been called before (that is, if two ProgramDocs are instantiated in the program), a fatal error will occur\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdoc\fP Pointer to the ProgramDoc object\&. 
+.RE
+.PP
+
+.SH "Member Data Documentation"
+.PP 
+.SS "std::map<char, \fBstd::string\fP> mlpack::CLI::aliases\fC [private]\fP"
+
+.PP
+Convenience map from alias values to names\&. 
+.PP
+Definition at line 310 of file cli\&.hpp\&.
+.SS "po::options_description mlpack::CLI::desc\fC [private]\fP"
+
+.PP
+The documentation and names of options\&. 
+.PP
+Definition at line 300 of file cli\&.hpp\&.
+.SS "bool mlpack::CLI::didParse\fC [private]\fP"
+
+.PP
+True, if \fBCLI\fP was used to parse command line options\&. 
+.PP
+Definition at line 319 of file cli\&.hpp\&.
+.SS "\fButil::ProgramDoc\fP* mlpack::CLI::doc"
+
+.PP
+Pointer to the ProgramDoc object\&. 
+.PP
+Definition at line 333 of file cli\&.hpp\&.
+.SS "std::list<\fBstd::string\fP> mlpack::CLI::outputOptions\fC [private]\fP"
+
+.PP
+Convenience list of output options\&. 
+.PP
+Definition at line 306 of file cli\&.hpp\&.
+.SS "std::map<\fBstd::string\fP, \fButil::ParamData\fP> mlpack::CLI::parameters\fC [private]\fP"
+
+.PP
+Map of parameters\&. 
+.PP
+Definition at line 313 of file cli\&.hpp\&.
+.SS "\fBstd::string\fP mlpack::CLI::programName\fC [private]\fP"
+
+.PP
+Holds the name of the program for --version\&. This is the true program name (argv[0]) not what is given in ProgramDoc\&. 
+.PP
+Definition at line 323 of file cli\&.hpp\&.
+.SS "std::list<\fBstd::string\fP> mlpack::CLI::requiredOptions\fC [private]\fP"
+
+.PP
+Convenience list of required options\&. 
+.PP
+Definition at line 308 of file cli\&.hpp\&.
+.SS "\fBCLI\fP* mlpack::CLI::singleton\fC [static]\fP, \fC [private]\fP"
+
+.PP
+The singleton itself\&. 
+.PP
+Definition at line 316 of file cli\&.hpp\&.
+.SS "\fBTimers\fP mlpack::CLI::timer\fC [private]\fP"
+
+.PP
+Holds the timer objects\&. 
+.PP
+Definition at line 326 of file cli\&.hpp\&.
+.SS "po::variables_map mlpack::CLI::vmap\fC [private]\fP"
+
+.PP
+Values of the options given by user\&. 
+.PP
+Definition at line 303 of file cli\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,174 @@
+.TH "mlpack::hmm::HMMModel" 3 "Sat Mar 25 2017" "Version master" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::hmm::HMMModel \- A serializable \fBHMM\fP model that also stores the type\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBHMMModel\fP ()"
+.br
+.RI "\fIConstruct an uninitialized model\&. \fP"
+.ti -1c
+.RI "\fBHMMModel\fP (const \fBHMMType\fP \fBtype\fP)"
+.br
+.RI "\fIConstruct a model of the given type\&. \fP"
+.ti -1c
+.RI "\fBHMMModel\fP (const \fBHMMModel\fP &other)"
+.br
+.RI "\fICopy another model\&. \fP"
+.ti -1c
+.RI "\fBHMMModel\fP (\fBHMMModel\fP &&other)"
+.br
+.RI "\fITake ownership of another model\&. \fP"
+.ti -1c
+.RI "\fB~HMMModel\fP ()"
+.br
+.RI "\fIClean memory\&. \fP"
+.ti -1c
+.RI "\fBHMMModel\fP & \fBoperator=\fP (const \fBHMMModel\fP &other)"
+.br
+.RI "\fICopy assignment operator\&. \fP"
+.ti -1c
+.RI "template<typename ActionType , typename ExtraInfoType > void \fBPerformAction\fP (ExtraInfoType *x)"
+.br
+.RI "\fIGiven a functor type, perform that functor with the optional extra info on the \fBHMM\fP\&. \fP"
+.ti -1c
+.RI "template<typename Archive > void \fBSerialize\fP (Archive &ar, const unsigned int)"
+.br
+.RI "\fISerialize the model\&. \fP"
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "\fBHMM\fP< \fBdistribution::DiscreteDistribution\fP > * \fBdiscreteHMM\fP"
+.br
+.RI "\fINot used if type is not DiscreteHMM\&. \fP"
+.ti -1c
+.RI "\fBHMM\fP< \fBdistribution::GaussianDistribution\fP > * \fBgaussianHMM\fP"
+.br
+.RI "\fINot used if type is not GaussianHMM\&. \fP"
+.ti -1c
+.RI "\fBHMM\fP< \fBgmm::GMM\fP > * \fBgmmHMM\fP"
+.br
+.RI "\fINot used if type is not GaussianMixtureModelHMM\&. \fP"
+.ti -1c
+.RI "\fBHMMType\fP \fBtype\fP"
+.br
+.RI "\fIThe type of the \fBHMM\fP\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+A serializable \fBHMM\fP model that also stores the type\&. 
+.PP
+Definition at line 26 of file hmm_model\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "mlpack::hmm::HMMModel::HMMModel ()\fC [inline]\fP"
+
+.PP
+Construct an uninitialized model\&. 
+.PP
+Definition at line 40 of file hmm_model\&.hpp\&.
+.SS "mlpack::hmm::HMMModel::HMMModel (const \fBHMMType\fP type)\fC [inline]\fP"
+
+.PP
+Construct a model of the given type\&. 
+.PP
+Definition at line 50 of file hmm_model\&.hpp\&.
+.PP
+References mlpack::hmm::DiscreteHMM, mlpack::hmm::GaussianHMM, and mlpack::hmm::GaussianMixtureModelHMM\&.
+.SS "mlpack::hmm::HMMModel::HMMModel (const \fBHMMModel\fP & other)\fC [inline]\fP"
+
+.PP
+Copy another model\&. 
+.PP
+Definition at line 65 of file hmm_model\&.hpp\&.
+.PP
+References mlpack::hmm::DiscreteHMM, discreteHMM, mlpack::hmm::GaussianHMM, gaussianHMM, mlpack::hmm::GaussianMixtureModelHMM, and gmmHMM\&.
+.SS "mlpack::hmm::HMMModel::HMMModel (\fBHMMModel\fP && other)\fC [inline]\fP"
+
+.PP
+Take ownership of another model\&. 
+.PP
+Definition at line 82 of file hmm_model\&.hpp\&.
+.PP
+References mlpack::hmm::DiscreteHMM\&.
+.SS "mlpack::hmm::HMMModel::~HMMModel ()\fC [inline]\fP"
+
+.PP
+Clean memory\&. 
+.PP
+Definition at line 119 of file hmm_model\&.hpp\&.
+.PP
+References discreteHMM, gaussianHMM, and gmmHMM\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "\fBHMMModel\fP& mlpack::hmm::HMMModel::operator= (const \fBHMMModel\fP & other)\fC [inline]\fP"
+
+.PP
+Copy assignment operator\&. 
+.PP
+Definition at line 95 of file hmm_model\&.hpp\&.
+.PP
+References mlpack::hmm::DiscreteHMM, discreteHMM, mlpack::hmm::GaussianHMM, gaussianHMM, mlpack::hmm::GaussianMixtureModelHMM, gmmHMM, and type\&.
+.SS "template<typename ActionType , typename ExtraInfoType > void mlpack::hmm::HMMModel::PerformAction (ExtraInfoType * x)\fC [inline]\fP"
+
+.PP
+Given a functor type, perform that functor with the optional extra info on the \fBHMM\fP\&. 
+.PP
+Definition at line 132 of file hmm_model\&.hpp\&.
+.PP
+References mlpack::hmm::DiscreteHMM, mlpack::hmm::GaussianHMM, and mlpack::hmm::GaussianMixtureModelHMM\&.
+.SS "template<typename Archive > void mlpack::hmm::HMMModel::Serialize (Archive & ar, const unsigned int)\fC [inline]\fP"
+
+.PP
+Serialize the model\&. 
+.PP
+Definition at line 144 of file hmm_model\&.hpp\&.
+.PP
+References mlpack::data::CreateNVP(), mlpack::hmm::DiscreteHMM, discreteHMM, mlpack::hmm::GaussianHMM, gaussianHMM, mlpack::hmm::GaussianMixtureModelHMM, and gmmHMM\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "\fBHMM\fP<\fBdistribution::DiscreteDistribution\fP>* mlpack::hmm::HMMModel::discreteHMM\fC [private]\fP"
+
+.PP
+Not used if type is not DiscreteHMM\&. 
+.PP
+Definition at line 32 of file hmm_model\&.hpp\&.
+.PP
+Referenced by HMMModel(), operator=(), Serialize(), and ~HMMModel()\&.
+.SS "\fBHMM\fP<\fBdistribution::GaussianDistribution\fP>* mlpack::hmm::HMMModel::gaussianHMM\fC [private]\fP"
+
+.PP
+Not used if type is not GaussianHMM\&. 
+.PP
+Definition at line 34 of file hmm_model\&.hpp\&.
+.PP
+Referenced by HMMModel(), operator=(), Serialize(), and ~HMMModel()\&.
+.SS "\fBHMM\fP<\fBgmm::GMM\fP>* mlpack::hmm::HMMModel::gmmHMM\fC [private]\fP"
+
+.PP
+Not used if type is not GaussianMixtureModelHMM\&. 
+.PP
+Definition at line 36 of file hmm_model\&.hpp\&.
+.PP
+Referenced by HMMModel(), operator=(), Serialize(), and ~HMMModel()\&.
+.SS "\fBHMMType\fP mlpack::hmm::HMMModel::type\fC [private]\fP"
+
+.PP
+The type of the \fBHMM\fP\&. 
+.PP
+Definition at line 30 of file hmm_model\&.hpp\&.
+.PP
+Referenced by operator=()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.
