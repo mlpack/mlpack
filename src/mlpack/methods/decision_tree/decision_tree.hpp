@@ -82,6 +82,44 @@ class DecisionTree :
                const size_t minimumLeafSize = 10);
 
   /**
+   * Construct the decision tree on the given data and labels, assuming that the
+   * data is all of the numeric type. This constructor moves data to avoid copies,
+   * and the data will be deleted after training. Setting minimumLeafSize too small may
+   * cause the tree to overfit, but setting it too large may cause it to
+   * underfit.
+   *
+   * @param data Dataset to train on.
+   * @param datasetInfo Type information for each dimension of the dataset.
+   * @param labels Labels for each training point.
+   * @param numClasses Number of classes in the dataset.
+   * @param minimumLeafSize Minimum number of points in each leaf node.
+   */
+  template<typename MatType>
+  DecisionTree(MatType&& data,
+               const data::DatasetInfo& datasetInfo,
+               arma::Row<size_t>&& labels,
+               const size_t numClasses,
+               const size_t minimumLeafSize = 10);
+
+  /**
+   * Construct the decision tree on the given data and labels, assuming that the
+   * data is all of the numeric type. This constructor moves data to avoid copies,
+   * and the data will be deleted after training. Setting minimumLeafSize too small may
+   * cause the tree to overfit, but setting it too large may cause it to
+   * underfit.
+   *
+   * @param data Dataset to train on.
+   * @param labels Labels for each training point.
+   * @param numClasses Number of classes in the dataset.
+   * @param minimumLeafSize Minimum number of points in each leaf node.
+   */
+  template<typename MatType>
+  DecisionTree(MatType&& data,
+               arma::Row<size_t>&& labels,
+               const size_t numClasses,
+               const size_t minimumLeafSize = 10);
+
+  /**
    * Construct a decision tree without training it.  It will be a leaf node with
    * equal probabilities for each class.
    *
@@ -157,6 +195,44 @@ class DecisionTree :
   template<typename MatType>
   void Train(const MatType& data,
              const arma::Row<size_t>& labels,
+             const size_t numClasses,
+             const size_t minimumLeafSize = 10);
+
+    /**
+   * Train the decision tree on the given data.  This will overwrite the
+   * existing model. This method moves data to avoid copies, and the data will be 
+   * deleted after training. The data may have numeric and categorical types, specified
+   * by the datasetInfo parameter.  Setting minimumLeafSize too small may cause
+   * the tree to overfit, but setting it too large may cause it to underfit.
+   *
+   * @param data Dataset to train on.
+   * @param datasetInfo Type information for each dimension.
+   * @param labels Labels for each training point.
+   * @param numClasses Number of classes in the dataset.
+   * @param minimumLeafSize Minimum number of points in each leaf node.
+   */
+  template<typename MatType>
+  void Train(MatType&& data,
+             const data::DatasetInfo& datasetInfo,
+             arma::Row<size_t>&& labels,
+             const size_t numClasses,
+             const size_t minimumLeafSize = 10);
+
+  /**
+   * Train the decision tree on the given data, assuming that all dimensions are
+   * numeric.  This will overwrite the given model. This method moves data to avoid 
+   * copies, and the data will be deleted after training. Setting minimumLeafSize too
+   * small may cause the tree to overfit, but setting it too large may cause it
+   * to underfit.
+   *
+   * @param data Dataset to train on.
+   * @param labels Labels for each training point.
+   * @param numClasses Number of classes in the dataset.
+   * @param minimumLeafSize Minimum number of points in each leaf node.
+   */
+  template<typename MatType>
+  void Train(MatType&& data,
+             arma::Row<size_t>&& labels,
              const size_t numClasses,
              const size_t minimumLeafSize = 10);
 
@@ -264,6 +340,86 @@ class DecisionTree :
   template<typename RowType>
   void CalculateClassProbabilities(const RowType& labels,
                                    const size_t numClasses);
+
+  /**
+   * Corresponding to the public constructor. 
+   * This method is designed for avoiding unnecessary copies during training.
+   *
+   * @param data Dataset to train on.
+   * @param begin Index of the starting point in the dataset that belongs to this node.
+   * @param count Number of points in this node.
+   * @param datasetInfo Type information for each dimension of the dataset.
+   * @param labels Labels for each training point.
+   * @param numClasses Number of classes in the dataset.
+   * @param minimumLeafSize Minimum number of points in each leaf node.
+   */
+  template<typename MatType>
+  DecisionTree(MatType& data,
+               const size_t begin,
+               const size_t count,
+               const data::DatasetInfo& datasetInfo,
+               arma::Row<size_t>& labels,
+               const size_t numClasses,
+               const size_t minimumLeafSize = 10);
+
+  /**
+   * Corresponding to the public constructor. 
+   * This method is designed for avoiding unnecessary copies during training.
+   *
+   * @param data Dataset to train on.
+   * @param begin Index of the starting point in the dataset that belongs to this node.
+   * @param count Number of points in this node.
+   * @param labels Labels for each training point.
+   * @param numClasses Number of classes in the dataset.
+   * @param minimumLeafSize Minimum number of points in each leaf node.
+   */
+  template<typename MatType>
+  DecisionTree(MatType& data,
+               const size_t begin,
+               const size_t count,
+               arma::Row<size_t>& labels,
+               const size_t numClasses,
+               const size_t minimumLeafSize = 10);
+
+  /**
+   * Corresponding to the public Train method. 
+   * This method is designed for avoiding unnecessary copies during training.
+   *
+   * @param data Dataset to train on.
+   * @param begin Index of the starting point in the dataset that belongs to this node.
+   * @param count Number of points in this node.
+   * @param datasetInfo Type information for each dimension.
+   * @param labels Labels for each training point.
+   * @param numClasses Number of classes in the dataset.
+   * @param minimumLeafSize Minimum number of points in each leaf node.
+   */
+  template<typename MatType>
+  void Train(MatType& data,
+             const size_t begin,
+             const size_t count,
+             const data::DatasetInfo& datasetInfo,
+             arma::Row<size_t>& labels,
+             const size_t numClasses,
+             const size_t minimumLeafSize = 10);
+
+  /**
+   * Corresponding to the public Train method. 
+   * This method is designed for avoiding unnecessary copies during training.
+   *
+   * @param data Dataset to train on.
+   * @param begin Index of the starting point in the dataset that belongs to this node.
+   * @param count Number of points in this node.
+   * @param labels Labels for each training point.
+   * @param numClasses Number of classes in the dataset.
+   * @param minimumLeafSize Minimum number of points in each leaf node.
+   */
+  template<typename MatType>
+  void Train(MatType& data,
+             const size_t begin,
+             const size_t count,
+             arma::Row<size_t>& labels,
+             const size_t numClasses,
+             const size_t minimumLeafSize = 10);
 };
 
 /**
