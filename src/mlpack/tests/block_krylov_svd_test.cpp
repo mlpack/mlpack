@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE(RandomizedBlockKrylovSVDNoisyLowRankTest)
   arma::mat U1, U2, V1, V2;
   arma::vec s1, s2, s3;
 
-  // arma::svd_econ(U1, s1, V1, data);
+  arma::svd_econ(U1, s1, V1, data);
 
   // svd::RandomizedBlockKrylovSVD rSVDA(data, U2, s2, V2, 5, rank, 5);
 
