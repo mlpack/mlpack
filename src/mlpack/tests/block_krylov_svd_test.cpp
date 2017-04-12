@@ -39,7 +39,8 @@ void CreateNoisyLowRankMatrix(arma::mat& data,
       arma::exp(-1.0 * arma::pow((ids / rank), 2)));
   arma::vec tail = strength * arma::exp(-0.1 * ids / rank);
 
-  arma::mat s = arma::eye<arma::mat>(n, n) * (lowRank + tail);
+  arma::mat s = arma::zeros<arma::mat>(n, n);
+  s.diag() = lowRank + tail;
   data = (U * s) * V.t();
 }
 
@@ -102,7 +103,7 @@ BOOST_AUTO_TEST_CASE(RandomizedBlockKrylovSVDNoisyLowRankTest)
 
   arma::svd_econ(U1, s1, V1, data);
 
-  svd::RandomizedBlockKrylovSVD rSVDA(data, U2, s2, V2, 1, rank, 5);
+  svd::RandomizedBlockKrylovSVD rSVDA(data, U2, s2, V2, 5, rank, 5);
 
   double error = arma::max(arma::abs(s1.subvec(0, rank) - s2.subvec(0, rank)));
   BOOST_REQUIRE_SMALL(error, 0.1);
