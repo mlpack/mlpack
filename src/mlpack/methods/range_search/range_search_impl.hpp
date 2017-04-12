@@ -21,49 +21,25 @@
 namespace mlpack {
 namespace range {
 
-template<typename TreeType>
+template<typename TreeType, typename MatType>
 TreeType* BuildTree(
-    typename TreeType::Mat& dataset,
+    MatType&& dataset,
     std::vector<size_t>& oldFromNew,
-    typename std::enable_if_t<
-        tree::TreeTraits<TreeType>::RearrangesDataset, TreeType
-    >* = 0)
+    const typename std::enable_if<
+        tree::TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
 {
-  return new TreeType(dataset, oldFromNew);
+  return new TreeType(std::forward<MatType>(dataset), oldFromNew);
 }
 
 //! Call the tree constructor that does not do mapping.
-template<typename TreeType>
+template<typename TreeType, typename MatType>
 TreeType* BuildTree(
-    const typename TreeType::Mat& dataset,
+    MatType&& dataset,
     const std::vector<size_t>& /* oldFromNew */,
-    const typename std::enable_if_t<
-        !tree::TreeTraits<TreeType>::RearrangesDataset, TreeType
-    >* = 0)
+    const typename std::enable_if<
+        !tree::TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
 {
-  return new TreeType(dataset);
-}
-
-template<typename TreeType>
-TreeType* BuildTree(
-    typename TreeType::Mat&& dataset,
-    std::vector<size_t>& oldFromNew,
-    const typename std::enable_if_t<
-        tree::TreeTraits<TreeType>::RearrangesDataset, TreeType
-    >* = 0)
-{
-  return new TreeType(std::move(dataset), oldFromNew);
-}
-
-template<typename TreeType>
-TreeType* BuildTree(
-    typename TreeType::Mat&& dataset,
-    const std::vector<size_t>& /* oldFromNew */,
-    const typename std::enable_if_t<
-        !tree::TreeTraits<TreeType>::RearrangesDataset, TreeType
-    >* = 0)
-{
-  return new TreeType(std::move(dataset));
+  return new TreeType(std::forward<MatType>(dataset));
 }
 
 template<typename MetricType,
@@ -76,8 +52,8 @@ RangeSearch<MetricType, MatType, TreeType>::RangeSearch(
     const bool naive,
     const bool singleMode,
     const MetricType metric) :
-    referenceTree(naive ? NULL : BuildTree<Tree>(
-        const_cast<MatType&>(referenceSetIn), oldFromNewReferences)),
+    referenceTree(naive ? NULL : BuildTree<Tree>(referenceSetIn,
+        oldFromNewReferences)),
     referenceSet(naive ? &referenceSetIn : &referenceTree->Dataset()),
     treeOwner(!naive), // If in naive mode, we are not building any trees.
     setOwner(false),
@@ -497,8 +473,7 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
     // Build the query tree.
     Timer::Stop("range_search/computing_neighbors");
     Timer::Start("range_search/tree_building");
-    Tree* queryTree = BuildTree<Tree>(const_cast<MatType&>(querySet),
-        oldFromNewQueries);
+    Tree* queryTree = BuildTree<Tree>(querySet, oldFromNewQueries);
     Timer::Stop("range_search/tree_building");
     Timer::Start("range_search/computing_neighbors");
 
