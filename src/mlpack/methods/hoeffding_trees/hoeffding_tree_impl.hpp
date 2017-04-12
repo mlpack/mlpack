@@ -509,9 +509,9 @@ while (!stack.empty())
 {  
    HoeffdingTree<>* node = stack.top();
    stack.pop();
-   nodes += node.NumChildren();
-   for (size_t i = 0; i < node.NumChildren(); ++i)
-            stack.push(&node.Child(i));
+   nodes += node->NumChildren();
+   for (size_t i = 0; i < node->NumChildren(); ++i)
+            stack.push(&node->Child(i));
 }
 return nodes;
 }
