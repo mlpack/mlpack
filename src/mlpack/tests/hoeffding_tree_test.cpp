@@ -148,6 +148,32 @@ BOOST_AUTO_TEST_CASE(InformationGainPerfectSimpleTest)
   BOOST_REQUIRE_SMALL(InformationGain::Evaluate(counts), 1e-10);
 }
 
+
+BOOST_AUTO_TEST_CASE(NumDescendantsTest)
+{
+  // Generate data.
+  arma::mat dataset(3, 500);
+  arma::Row<size_t> labels(500);
+  data::DatasetInfo info(3); // All features are numeric.
+  for (size_t i = 0; i <500; i ++)
+  {
+    dataset(0, i) = mlpack::math::Random();
+    dataset(1, i) = mlpack::math::Random();
+    dataset(2, i) = mlpack::math::Random();
+    labels[i] = 0;
+  }
+
+  // Now train streaming decision tree;
+  typedef HoeffdingTree<GiniImpurity, HoeffdingDoubleNumericSplit> TreeType;
+  TreeType streamTree(info, 3);
+  for (size_t i = 0; i < 500; ++i)
+    streamTree.Train(dataset.col(i), labels[i]);
+
+  BOOST_REQUIRE_EQUAL(streamTree.NumDescendants(), 1);   //there is just one label
+
+}
+
+
 BOOST_AUTO_TEST_CASE(InformationGainImperfectSimpleTest)
 {
   // Make a simple test where a split will give us perfect classification.
