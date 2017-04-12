@@ -1,9 +1,0 @@
-<map id="src/mlpack/core/tree/space_split/midpoint_space_split.hpp" name="src/mlpack/core/tree/space_split/midpoint_space_split.hpp">
-<area shape="rect" id="node2" href="$spill__tree_2spill__tree_8hpp.html" title="src/mlpack/core/tree\l/spill_tree/spill_tree.hpp" alt="" coords="171,109,330,151"/>
-<area shape="rect" id="node8" href="$core_2tree_2spill__tree_2typedef_8hpp.html" title="src/mlpack/core/tree\l/spill_tree/typedef.hpp" alt="" coords="463,109,614,151"/>
-<area shape="rect" id="node3" href="$is__spill__tree_8hpp.html" title="Definition of IsSpillTree. " alt="" coords="5,199,147,255"/>
-<area shape="rect" id="node4" href="$spill__tree_8hpp.html" title="src/mlpack/core/tree\l/spill_tree.hpp" alt="" coords="187,303,328,344"/>
-<area shape="rect" id="node6" href="$spill__single__tree__traverser_8hpp.html" title="src/mlpack/core/tree\l/spill_tree/spill_single\l_tree_traverser.hpp" alt="" coords="245,199,392,255"/>
-<area shape="rect" id="node7" href="$spill__dual__tree__traverser_8hpp.html" title="src/mlpack/core/tree\l/spill_tree/spill_dual\l_tree_traverser.hpp" alt="" coords="416,199,557,255"/>
-<area shape="rect" id="node5" href="$ns__model_8hpp.html" title="src/mlpack/methods\l/neighbor_search/ns\l_model.hpp" alt="" coords="187,392,327,448"/>
-</map>

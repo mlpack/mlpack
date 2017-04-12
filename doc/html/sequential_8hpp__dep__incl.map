@@ -1,7 +1,0 @@
-<map id="src/mlpack/methods/ann/layer/sequential.hpp" name="src/mlpack/methods/ann/layer/sequential.hpp">
-<area shape="rect" id="node2" href="$dropconnect_8hpp.html" title="src/mlpack/methods\l/ann/layer/dropconnect.hpp" alt="" coords="5,102,184,143"/>
-<area shape="rect" id="node3" href="$layer_8hpp.html" title="src/mlpack/methods\l/ann/layer/layer.hpp" alt="" coords="259,199,399,240"/>
-<area shape="rect" id="node4" href="$lstm_8hpp.html" title="src/mlpack/methods\l/ann/layer/lstm.hpp" alt="" coords="259,102,399,143"/>
-<area shape="rect" id="node5" href="$recurrent_8hpp.html" title="src/mlpack/methods\l/ann/layer/recurrent.hpp" alt="" coords="423,102,582,143"/>
-<area shape="rect" id="node6" href="$recurrent__attention_8hpp.html" title="src/mlpack/methods\l/ann/layer/recurrent\l_attention.hpp" alt="" coords="606,95,746,151"/>
-</map>

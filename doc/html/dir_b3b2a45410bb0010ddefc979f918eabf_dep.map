@@ -1,9 +1,0 @@
-<map id="src/mlpack/methods/rann" name="src/mlpack/methods/rann">
-<area shape="rect" id="node1" href="dir_b3b2a45410bb0010ddefc979f918eabf.html" title="rann" alt="" coords="76,52,148,100"/>
-<area shape="rect" id="node2" href="dir_1d65ca8da19f261ef402f02c2090e4b8.html" title="neighbor_search" alt="" coords="5,148,123,196"/>
-<area shape="rect" id="edge1-headlabel" href="dir_000082_000033.html" title="4" alt="" coords="88,128,96,143"/>
-<area shape="rect" id="node3" href="dir_f7ac9cdfd28b2e882eb44d163e3b98b4.html" title="core" alt="" coords="76,244,148,292"/>
-<area shape="rect" id="edge2-headlabel" href="dir_000082_000005.html" title="10" alt="" coords="128,222,143,237"/>
-<area shape="rect" id="edge3-headlabel" href="dir_000033_000005.html" title="10" alt="" coords="92,217,107,231"/>
-<area shape="rect" id="clust1" href="dir_3cfbf900288ec2fe8dd2c2c8482f216e.html" title="methods" alt="" coords="65,16,159,111"/>
-</map>

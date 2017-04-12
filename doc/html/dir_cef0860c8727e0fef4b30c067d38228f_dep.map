@@ -1,8 +1,0 @@
-<map id="src/mlpack/core/optimizers/sdp" name="src/mlpack/core/optimizers/sdp">
-<area shape="rect" id="node1" href="dir_cef0860c8727e0fef4b30c067d38228f.html" title="sdp" alt="" coords="81,52,153,100"/>
-<area shape="rect" id="node2" href="dir_ae31c4a0b67a7e5a42573da2deb29693.html" title="aug_lagrangian" alt="" coords="5,148,115,196"/>
-<area shape="rect" id="edge1-headlabel" href="dir_000023_000016.html" title="2" alt="" coords="87,130,95,144"/>
-<area shape="rect" id="node3" href="dir_c99ddc62a84c9c2eac1febe115accba9.html" title="math" alt="" coords="139,148,211,196"/>
-<area shape="rect" id="edge2-headlabel" href="dir_000023_000011.html" title="1" alt="" coords="154,121,162,135"/>
-<area shape="rect" id="clust1" href="dir_c92267e6eea9957c44bb2efde721ca22.html" title="optimizers" alt="" coords="71,16,164,111"/>
-</map>

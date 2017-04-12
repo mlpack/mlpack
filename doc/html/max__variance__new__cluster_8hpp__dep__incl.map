@@ -1,9 +1,0 @@
-<map id="src/mlpack/methods/kmeans/max_variance_new_cluster.hpp" name="src/mlpack/methods/kmeans/max_variance_new_cluster.hpp">
-<area shape="rect" id="node2" href="$kmeans_8hpp.html" title="src/mlpack/methods\l/kmeans/kmeans.hpp" alt="" coords="101,109,248,151"/>
-<area shape="rect" id="node3" href="$em__fit_8hpp.html" title="src/mlpack/methods\l/gmm/em_fit.hpp" alt="" coords="13,206,153,247"/>
-<area shape="rect" id="node6" href="$kmeans__selection_8hpp.html" title="src/mlpack/methods\l/nystroem_method/kmeans\l_selection.hpp" alt="" coords="177,199,357,255"/>
-<area shape="rect" id="node4" href="$gmm_8hpp.html" title="src/mlpack/methods\l/gmm/gmm.hpp" alt="" coords="13,310,153,351"/>
-<area shape="rect" id="node5" href="$hmm__model_8hpp.html" title="src/mlpack/methods\l/hmm/hmm_model.hpp" alt="" coords="5,414,160,455"/>
-<area shape="rect" id="node7" href="$kernel__pca_2kernel__rules_2nystroem__method_8hpp.html" title="src/mlpack/methods\l/kernel_pca/kernel_rules\l/nystroem_method.hpp" alt="" coords="212,407,375,463"/>
-<area shape="rect" id="node8" href="$nystroem__method_2nystroem__method_8hpp.html" title="src/mlpack/methods\l/nystroem_method/nystroem\l_method.hpp" alt="" coords="266,303,454,359"/>
-</map>
