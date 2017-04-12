@@ -93,13 +93,13 @@ BOOST_AUTO_TEST_CASE(RandomizedBlockKrylovSVDReconstructionError)
  */
 BOOST_AUTO_TEST_CASE(RandomizedBlockKrylovSVDNoisyLowRankTest)
 {
-  // arma::mat data;
-  // CreateNoisyLowRankMatrix(data, 100, 1000, 5, 0.5);
+  arma::mat data;
+  CreateNoisyLowRankMatrix(data, 100, 1000, 5, 0.5);
 
-  // const size_t rank = 5;
+  const size_t rank = 5;
 
-  // arma::mat U1, U2, V1, V2;
-  // arma::vec s1, s2, s3;
+  arma::mat U1, U2, V1, V2;
+  arma::vec s1, s2, s3;
 
   // arma::svd_econ(U1, s1, V1, data);
 
