@@ -103,7 +103,7 @@ BOOST_AUTO_TEST_CASE(RandomizedBlockKrylovSVDNoisyLowRankTest)
 
   arma::svd_econ(U1, s1, V1, data);
 
-  // svd::RandomizedBlockKrylovSVD rSVDA(data, U2, s2, V2, 5, rank, 5);
+  svd::RandomizedBlockKrylovSVD rSVDA(data, U2, s2, V2, 5, rank, 5);
 
   // double error = arma::max(arma::abs(s1.subvec(0, rank) - s2.subvec(0, rank)));
   // BOOST_REQUIRE_SMALL(error, 0.1);
