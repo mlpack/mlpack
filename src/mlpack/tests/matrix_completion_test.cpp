@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/core/data/load_impl.hpp>
 #include <mlpack/methods/matrix_completion/matrix_completion.hpp>
 
 #include <boost/test/unit_test.hpp>
