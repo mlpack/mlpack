@@ -1,3 +1,8 @@
+### mlpack 2.2.1
+###### 2017-04-13
+  * Compilation fix for mlpack_nca and mlpack_test on older Armadillo versions
+    (#984).
+
 ### mlpack 2.2.0
 ###### 2017-03-21
   * Bugfix for mlpack_knn program (#816).
