@@ -27,8 +27,7 @@ namespace tree /** Trees and tree-building procedures. */ {
  *     axis. The partition algorithm tries to find a partition along each axis,
  *     evaluates each partition and chooses the best one.
  */
-template<typename SplitPolicyType,
-         template<typename> class SweepType>
+template<typename SplitPolicyType, template<typename> class SweepType>
 class RPlusTreeSplit
 {
  public:
@@ -131,4 +130,4 @@ class RPlusTreeSplit
 // Include implementation
 #include "r_plus_tree_split_impl.hpp"
 
-#endif  // MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_TREE_SPLIT_HPP
+#endif // MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_TREE_SPLIT_HPP

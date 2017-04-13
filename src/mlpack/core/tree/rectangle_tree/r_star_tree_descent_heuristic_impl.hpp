@@ -2,7 +2,8 @@
  * @file r_star_tree_descent_heuristic_impl.hpp
  * @author Andrew Wells
  *
- * Implementation of RStarTreeDescentHeuristic, a class that chooses the best child of a node in
+ * Implementation of RStarTreeDescentHeuristic, a class that chooses the best
+ * child of a node in
  * an R tree when inserting a new point.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -19,9 +20,8 @@ namespace mlpack {
 namespace tree {
 
 template<typename TreeType>
-inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
-    const TreeType* node,
-    const size_t point)
+inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(const TreeType* node,
+                                                           const size_t point)
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
@@ -47,22 +47,25 @@ inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
           for (size_t k = 0; k < node->Bound().Dim(); k++)
           {
             ElemType newHigh = std::max(node->Dataset().col(point)[k],
-                node->Child(i).Bound()[k].Hi());
+                                        node->Child(i).Bound()[k].Hi());
             ElemType newLow = std::min(node->Dataset().col(point)[k],
-                node->Child(i).Bound()[k].Lo());
+                                       node->Child(i).Bound()[k].Lo());
             overlap *= node->Child(i).Bound()[k].Hi() <
-                node->Child(j).Bound()[k].Lo() ||
-                node->Child(i).Bound()[k].Lo() >
-                node->Child(j).Bound()[k].Hi() ? 0 :
-                  std::min(node->Child(i).Bound()[k].Hi(),
-                           node->Child(j).Bound()[k].Hi()) -
-                  std::max(node->Child(i).Bound()[k].Lo(),
-                           node->Child(j).Bound()[k].Lo());
+                                   node->Child(j).Bound()[k].Lo() ||
+                               node->Child(i).Bound()[k].Lo() >
+                                   node->Child(j).Bound()[k].Hi()
+                           ? 0
+                           : std::min(node->Child(i).Bound()[k].Hi(),
+                                      node->Child(j).Bound()[k].Hi()) -
+                                 std::max(node->Child(i).Bound()[k].Lo(),
+                                          node->Child(j).Bound()[k].Lo());
 
-            newOverlap *= newHigh < node->Child(j).Bound()[k].Lo() ||
-                newLow > node->Child(j).Bound()[k].Hi() ? 0 :
-                std::min(newHigh, node->Child(j).Bound()[k].Hi()) -
-                std::max(newLow, node->Child(j).Bound()[k].Lo());
+            newOverlap *=
+                newHigh < node->Child(j).Bound()[k].Lo() ||
+                        newLow > node->Child(j).Bound()[k].Hi()
+                    ? 0
+                    : std::min(newHigh, node->Child(j).Bound()[k].Hi()) -
+                          std::max(newLow, node->Child(j).Bound()[k].Lo());
           }
           sc += newOverlap - overlap;
         }
@@ -80,8 +83,7 @@ inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
       }
     }
 
-    if (!tiedOne)
-      return bestIndex;
+    if (!tiedOne) return bestIndex;
   }
 
   // We do this if it is not on the second level or if there was a tie.
@@ -107,12 +109,14 @@ inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
       for (size_t j = 0; j < node->Bound().Dim(); j++)
       {
         v1 *= node->Child(i).Bound()[j].Width();
-        v2 *= node->Child(i).Bound()[j].Contains(
-            node->Dataset().col(point)[j]) ?
-            node->Child(i).Bound()[j].Width() :
-            (node->Child(i).Bound()[j].Hi() < node->Dataset().col(point)[j] ?
-              (node->Dataset().col(point)[j] - node->Child(i).Bound()[j].Lo()) :
-              (node->Child(i).Bound()[j].Hi() - node->Dataset().col(point)[j]));
+        v2 *= node->Child(i).Bound()[j].Contains(node->Dataset().col(point)[j])
+                  ? node->Child(i).Bound()[j].Width()
+                  : (node->Child(i).Bound()[j].Hi() <
+                             node->Dataset().col(point)[j]
+                         ? (node->Dataset().col(point)[j] -
+                            node->Child(i).Bound()[j].Lo())
+                         : (node->Child(i).Bound()[j].Hi() -
+                            node->Dataset().col(point)[j]));
       }
 
       assert(v2 - v1 >= 0);
@@ -161,8 +165,7 @@ inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
  */
 template<typename TreeType>
 inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
-    const TreeType* node,
-    const TreeType* insertedNode)
+    const TreeType* node, const TreeType* insertedNode)
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
@@ -180,13 +183,16 @@ inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
     for (size_t j = 0; j < node->Child(i).Bound().Dim(); j++)
     {
       v1 *= node->Child(i).Bound()[j].Width();
-      v2 *= node->Child(i).Bound()[j].Contains(insertedNode->Bound()[j]) ?
-          node->Child(i).Bound()[j].Width() :
-          (insertedNode->Bound()[j].Contains(node->Child(i).Bound()[j]) ?
-            insertedNode->Bound()[j].Width() :
-            (insertedNode->Bound()[j].Lo() < node->Child(i).Bound()[j].Lo() ?
-            (node->Child(i).Bound()[j].Hi() - insertedNode->Bound()[j].Lo()) :
-            (insertedNode->Bound()[j].Hi() - node->Child(i).Bound()[j].Lo())));
+      v2 *= node->Child(i).Bound()[j].Contains(insertedNode->Bound()[j])
+                ? node->Child(i).Bound()[j].Width()
+                : (insertedNode->Bound()[j].Contains(node->Child(i).Bound()[j])
+                       ? insertedNode->Bound()[j].Width()
+                       : (insertedNode->Bound()[j].Lo() <
+                                  node->Child(i).Bound()[j].Lo()
+                              ? (node->Child(i).Bound()[j].Hi() -
+                                 insertedNode->Bound()[j].Lo())
+                              : (insertedNode->Bound()[j].Hi() -
+                                 node->Child(i).Bound()[j].Lo())));
     }
 
     assert(v2 - v1 >= 0);

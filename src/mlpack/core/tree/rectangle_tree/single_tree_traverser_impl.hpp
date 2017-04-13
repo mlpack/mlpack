@@ -29,12 +29,16 @@ template<typename MetricType,
          typename DescentType,
          template<typename> class AuxiliaryInformationType>
 template<typename RuleType>
-RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
-              AuxiliaryInformationType>::
-SingleTreeTraverser<RuleType>::SingleTreeTraverser(RuleType& rule) :
-    rule(rule),
-    numPrunes(0)
-{ /* Nothing to do */ }
+RectangleTree<MetricType,
+              StatisticType,
+              MatType,
+              SplitType,
+              DescentType,
+              AuxiliaryInformationType>::SingleTreeTraverser<RuleType>::
+    SingleTreeTraverser(RuleType& rule)
+    : rule(rule), numPrunes(0)
+{ /* Nothing to do */
+}
 
 template<typename MetricType,
          typename StatisticType,
@@ -43,13 +47,14 @@ template<typename MetricType,
          typename DescentType,
          template<typename> class AuxiliaryInformationType>
 template<typename RuleType>
-void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
-                   AuxiliaryInformationType>::
-SingleTreeTraverser<RuleType>::Traverse(
-    const size_t queryIndex,
-    const RectangleTree& referenceNode)
+void RectangleTree<MetricType,
+                   StatisticType,
+                   MatType,
+                   SplitType,
+                   DescentType,
+                   AuxiliaryInformationType>::SingleTreeTraverser<RuleType>::
+    Traverse(const size_t queryIndex, const RectangleTree& referenceNode)
 {
-
   // If we reach a leaf node, we need to run the base case.
   if (referenceNode.IsLeaf())
   {
@@ -75,7 +80,7 @@ SingleTreeTraverser<RuleType>::Traverse(
   for (size_t i = 0; i < referenceNode.NumChildren(); i++)
   {
     if (rule.Rescore(queryIndex, *nodesAndScores[i].node,
-        nodesAndScores[i].score) != DBL_MAX)
+                     nodesAndScores[i].score) != DBL_MAX)
     {
       Traverse(queryIndex, *nodesAndScores[i].node);
     }

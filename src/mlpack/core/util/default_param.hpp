@@ -22,8 +22,9 @@ std::string DefaultParamImpl(
     const typename boost::disable_if<IsStdVector<T>>::type* = 0,
     const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
     const typename boost::disable_if<std::is_same<T, std::string>>::type* = 0,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* = 0);
+    const typename boost::disable_if<
+        std::is_same<T, std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::
+        type* = 0);
 
 /**
  * Return the default value of a vector option.
@@ -41,11 +42,11 @@ template<typename T>
 std::string DefaultParamImpl(
     const ParamData& data,
     const typename boost::enable_if_c<
-        arma::is_arma_type<T>::value ||
-        data::HasSerialize<T>::value ||
-        std::is_same<T, std::tuple<mlpack::data::DatasetInfo,
-                                   arma::mat>>::value ||
-        std::is_same<T, std::string>::value>::type* /* junk */ = 0);
+        arma::is_arma_type<T>::value || data::HasSerialize<T>::value ||
+        std::is_same<T,
+                     std::tuple<mlpack::data::DatasetInfo, arma::mat>>::value ||
+        std::is_same<T, std::string>::value>::type* /* junk */
+    = 0);
 
 /**
  * Return the default value of an option.  This is the function that will be

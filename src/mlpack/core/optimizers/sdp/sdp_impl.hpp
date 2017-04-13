@@ -16,42 +16,33 @@
 namespace mlpack {
 namespace optimization {
 
-template <typename ObjectiveMatrixType>
-SDP<ObjectiveMatrixType>::SDP() :
-    c(),
-    sparseA(),
-    sparseB(),
-    denseA(),
-    denseB()
+template<typename ObjectiveMatrixType>
+SDP<ObjectiveMatrixType>::SDP() : c(), sparseA(), sparseB(), denseA(), denseB()
 {
-
 }
 
-template <typename ObjectiveMatrixType>
+template<typename ObjectiveMatrixType>
 SDP<ObjectiveMatrixType>::SDP(const size_t n,
                               const size_t numSparseConstraints,
-                              const size_t numDenseConstraints) :
-    c(n, n),
-    sparseA(numSparseConstraints),
-    sparseB(numSparseConstraints),
-    denseA(numDenseConstraints),
-    denseB(numDenseConstraints)
+                              const size_t numDenseConstraints)
+    : c(n, n),
+      sparseA(numSparseConstraints),
+      sparseB(numSparseConstraints),
+      denseA(numDenseConstraints),
+      denseB(numDenseConstraints)
 {
-  for (size_t i = 0; i < numSparseConstraints; i++)
-    sparseA[i].zeros(n, n);
-  for (size_t i = 0; i < numDenseConstraints; i++)
-    denseA[i].zeros(n, n);
+  for (size_t i = 0; i < numSparseConstraints; i++) sparseA[i].zeros(n, n);
+  for (size_t i = 0; i < numDenseConstraints; i++) denseA[i].zeros(n, n);
 }
 
-template <typename ObjectiveMatrixType>
+template<typename ObjectiveMatrixType>
 bool SDP<ObjectiveMatrixType>::HasLinearlyIndependentConstraints() const
 {
   // Very inefficient, should only be used for testing/debugging
 
   const size_t n2bar = N2bar();
   arma::mat A(NumConstraints(), n2bar);
-  if (A.n_rows > n2bar)
-    return false;
+  if (A.n_rows > n2bar) return false;
 
   for (size_t i = 0; i < NumSparseConstraints(); i++)
   {

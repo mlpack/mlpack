@@ -27,12 +27,14 @@ struct IsSpillTree
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         template<typename HyperplaneMetricType>
-            class HyperplaneType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitMetricType, typename SplitMatType>
-            class SplitType>
-struct IsSpillTree<tree::SpillTree<MetricType, StatisticType, MatType,
-    HyperplaneType, SplitType>>
+         class SplitType>
+struct IsSpillTree<tree::SpillTree<MetricType,
+                                   StatisticType,
+                                   MatType,
+                                   HyperplaneType,
+                                   SplitType>>
 {
   static const bool value = true;
 };

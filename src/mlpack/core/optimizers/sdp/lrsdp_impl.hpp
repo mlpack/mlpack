@@ -18,15 +18,16 @@
 namespace mlpack {
 namespace optimization {
 
-template <typename SDPType>
+template<typename SDPType>
 LRSDP<SDPType>::LRSDP(const size_t numSparseConstraints,
                       const size_t numDenseConstraints,
-                      const arma::mat& initialPoint) :
-    function(numSparseConstraints, numDenseConstraints, initialPoint),
-    augLag(function)
-{ }
+                      const arma::mat& initialPoint)
+    : function(numSparseConstraints, numDenseConstraints, initialPoint),
+      augLag(function)
+{
+}
 
-template <typename SDPType>
+template<typename SDPType>
 double LRSDP<SDPType>::Optimize(arma::mat& coordinates)
 {
   augLag.Sigma() = 10;

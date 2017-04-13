@@ -48,9 +48,9 @@ template<typename MetricType,
          typename StatisticType = EmptyStatistic,
          typename MatType = arma::mat,
          template<typename BoundMetricType, typename...> class BoundType =
-            bound::HRectBound,
+             bound::HRectBound,
          template<typename SplitBoundType, typename SplitMatType>
-            class SplitType = MidpointSplit>
+         class SplitType = MidpointSplit>
 class BinarySpaceTree
 {
  public:
@@ -157,8 +157,7 @@ class BinarySpaceTree
    * @param data Dataset to create tree from.
    * @param maxLeafSize Size of each leaf in the tree.
    */
-  BinarySpaceTree(MatType&& data,
-                  const size_t maxLeafSize = 20);
+  BinarySpaceTree(MatType&& data, const size_t maxLeafSize = 20);
 
   /**
    * Construct this as the root node of a binary space tree using the given
@@ -403,7 +402,9 @@ class BinarySpaceTree
   BinarySpaceTree& Child(const size_t child) const;
 
   BinarySpaceTree*& ChildPtr(const size_t child)
-  { return (child == 0) ? left : right; }
+  {
+    return (child == 0) ? left : right;
+  }
 
   //! Return the number of points in this node (0 if not a leaf).
   size_t NumPoints() const;
@@ -454,27 +455,27 @@ class BinarySpaceTree
 
   //! Return the minimum distance to another point.
   template<typename VecType>
-  ElemType MinDistance(const VecType& point,
-                       typename std::enable_if_t<IsVector<VecType>::value>* = 0)
-      const
+  ElemType MinDistance(
+      const VecType& point,
+      typename std::enable_if_t<IsVector<VecType>::value>* = 0) const
   {
     return bound.MinDistance(point);
   }
 
   //! Return the maximum distance to another point.
   template<typename VecType>
-  ElemType MaxDistance(const VecType& point,
-                       typename std::enable_if_t<IsVector<VecType>::value>* = 0)
-      const
+  ElemType MaxDistance(
+      const VecType& point,
+      typename std::enable_if_t<IsVector<VecType>::value>* = 0) const
   {
     return bound.MaxDistance(point);
   }
 
   //! Return the minimum and maximum distance to another point.
   template<typename VecType>
-  math::RangeType<ElemType>
-  RangeDistance(const VecType& point,
-                typename std::enable_if_t<IsVector<VecType>::value>* = 0) const
+  math::RangeType<ElemType> RangeDistance(
+      const VecType& point,
+      typename std::enable_if_t<IsVector<VecType>::value>* = 0) const
   {
     return bound.RangeDistance(point);
   }

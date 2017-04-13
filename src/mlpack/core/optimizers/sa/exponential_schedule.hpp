@@ -37,7 +37,7 @@ class ExponentialSchedule
    *
    * @param lambda Cooling speed.
    */
-  ExponentialSchedule(const double lambda = 0.001) : lambda(lambda) { }
+  ExponentialSchedule(const double lambda = 0.001) : lambda(lambda) {}
 
   /**
    * Returns the next temperature given current status.  The current system's
@@ -46,9 +46,8 @@ class ExponentialSchedule
    * @param currentTemperature Current temperature of system.
    * @param currentEnergy Current energy of system (not used).
    */
-  double NextTemperature(
-      const double currentTemperature,
-      const double /* currentEnergy */)
+  double NextTemperature(const double currentTemperature,
+                         const double /* currentEnergy */)
   {
     return (1 - lambda) * currentTemperature;
   }

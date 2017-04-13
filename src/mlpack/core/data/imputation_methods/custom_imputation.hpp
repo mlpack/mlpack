@@ -20,12 +20,11 @@ namespace data {
  * A simple custom imputation class
  * @tparam T Type of armadillo matrix
  */
-template <typename T>
+template<typename T>
 class CustomImputation
 {
  public:
-  CustomImputation(T customValue):
-      customValue(std::move(customValue))
+  CustomImputation(T customValue) : customValue(std::move(customValue))
   {
     // nothing to initialize here
   }

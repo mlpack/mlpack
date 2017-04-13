@@ -35,10 +35,11 @@ class EpanechnikovKernel
    *
    * @param bandwidth Bandwidth of the kernel.
    */
-  EpanechnikovKernel(const double bandwidth = 1.0) :
-      bandwidth(bandwidth),
-      inverseBandwidthSquared(1.0 / (bandwidth * bandwidth))
-  {  }
+  EpanechnikovKernel(const double bandwidth = 1.0)
+      : bandwidth(bandwidth),
+        inverseBandwidthSquared(1.0 / (bandwidth * bandwidth))
+  {
+  }
 
   /**
    * Evaluate the Epanechnikov kernel on the given two inputs.
@@ -100,7 +101,6 @@ class EpanechnikovKernel
   double bandwidth;
   //! Cached value of the inverse bandwidth squared (to speed up computation).
   double inverseBandwidthSquared;
-
 };
 
 //! Kernel traits for the Epanechnikov kernel.

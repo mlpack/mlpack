@@ -113,8 +113,7 @@ class IncrementPolicy
       size_t& numMappings = maps[dimension].second;
 
       // Change type of the feature to categorical.
-      if (numMappings == 0)
-        types[dimension] = Datatype::categorical;
+      if (numMappings == 0) types[dimension] = Datatype::categorical;
 
       typedef boost::bimap<std::string, MappedType>::value_type PairType;
       maps[dimension].first.insert(PairType(string, numMappings));

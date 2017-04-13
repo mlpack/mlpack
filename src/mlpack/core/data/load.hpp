@@ -198,12 +198,11 @@ bool Load(const std::string& filename,
           const bool fatal = false,
           const bool transpose = true);
 
-extern template bool Load<int, IncrementPolicy>(
-    const std::string&,
-    arma::Mat<int>&,
-    DatasetMapper<IncrementPolicy>&,
-    const bool,
-    const bool);
+extern template bool Load<int, IncrementPolicy>(const std::string&,
+                                                arma::Mat<int>&,
+                                                DatasetMapper<IncrementPolicy>&,
+                                                const bool,
+                                                const bool);
 
 extern template bool Load<arma::u32, IncrementPolicy>(
     const std::string&,

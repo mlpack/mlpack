@@ -27,15 +27,15 @@ RMSProp<DecomposableFunctionType>::RMSProp(DecomposableFunctionType& function,
                                            const double epsilon,
                                            const size_t maxIterations,
                                            const double tolerance,
-                                           const bool shuffle) :
-    optimizer(function,
-              stepSize,
-              maxIterations,
-              tolerance,
-              shuffle,
-              RMSPropUpdate(epsilon,
-                            alpha))
-{ /* Nothing to do. */ }
+                                           const bool shuffle)
+    : optimizer(function,
+                stepSize,
+                maxIterations,
+                tolerance,
+                shuffle,
+                RMSPropUpdate(epsilon, alpha))
+{ /* Nothing to do. */
+}
 
 } // namespace optimization
 } // namespace mlpack

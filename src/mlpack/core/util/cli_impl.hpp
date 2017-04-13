@@ -48,21 +48,21 @@ void CLI::Add(const T& defaultValue,
               const bool input,
               const bool noTranspose)
 {
-  // Temporarily define color code escape sequences.
-  #ifndef _WIN32
-    #define BASH_RED "\033[0;31m"
-    #define BASH_CLEAR "\033[0m"
-  #else
-    #define BASH_RED ""
-    #define BASH_CLEAR ""
-  #endif
+// Temporarily define color code escape sequences.
+#ifndef _WIN32
+#define BASH_RED "\033[0;31m"
+#define BASH_CLEAR "\033[0m"
+#else
+#define BASH_RED ""
+#define BASH_CLEAR ""
+#endif
 
   // Temporary outstream object for detecting duplicate identifiers.
-  util::PrefixedOutStream outstr(std::cerr,
-        BASH_RED "[FATAL] " BASH_CLEAR, false, true /* fatal */);
+  util::PrefixedOutStream outstr(std::cerr, BASH_RED "[FATAL] " BASH_CLEAR,
+                                 false, true /* fatal */);
 
-  #undef BASH_RED
-  #undef BASH_CLEAR
+#undef BASH_RED
+#undef BASH_CLEAR
 
   // Define identifier and alias maps.
   std::map<std::string, util::ParamData>& parameters =
@@ -130,12 +130,12 @@ void CLI::Add(const T& defaultValue,
   // Now add the parameter name to boost::program_options.
   po::options_description& desc = CLI::GetSingleton().desc;
   // Must make use of boost syntax here.
-  std::string progOptId = (alias != '\0') ? data.boostName + ","
-      + std::string(1, alias) : data.boostName;
+  std::string progOptId = (alias != '\0')
+                              ? data.boostName + "," + std::string(1, alias)
+                              : data.boostName;
 
   // Add the alias, if necessary.
-  if (alias != '\0')
-    GetSingleton().aliases[alias] = identifier;
+  if (alias != '\0') GetSingleton().aliases[alias] = identifier;
 
   // Add the option to boost program_options.
   if (data.isFlag)
@@ -145,13 +145,11 @@ void CLI::Add(const T& defaultValue,
         progOptId.c_str(), description.c_str());
 
   // If the option is required, add it to the required options list.
-  if (required)
-    GetSingleton().requiredOptions.push_front(identifier);
+  if (required) GetSingleton().requiredOptions.push_front(identifier);
 
   // Depending on whether or not the option is input or output, add it to the
   // appropriate list.
-  if (!input)
-    GetSingleton().outputOptions.push_front(identifier);
+  if (!input) GetSingleton().outputOptions.push_front(identifier);
 }
 
 /**
@@ -172,19 +170,20 @@ T& CLI::GetParam(const std::string& identifier)
   std::string key =
       (GetSingleton().parameters.count(identifier) == 0 &&
        identifier.length() == 1 && GetSingleton().aliases.count(identifier[0]))
-      ? GetSingleton().aliases[identifier[0]] : identifier;
+          ? GetSingleton().aliases[identifier[0]]
+          : identifier;
 
   if (GetSingleton().parameters.count(key) == 0)
     Log::Fatal << "Parameter --" << key << " does not exist in this program!"
-        << std::endl;
+               << std::endl;
 
   util::ParamData& d = GetSingleton().parameters[key];
 
   // Make sure the types are correct.
   if (TYPENAME(T) != d.tname)
     Log::Fatal << "Attempted to access parameter --" << key << " as type "
-        << TYPENAME(T) << ", but its true type is " << d.tname << "!"
-        << std::endl;
+               << TYPENAME(T) << ", but its true type is " << d.tname << "!"
+               << std::endl;
 
   // We already know that required options have been passed, so we have a valid
   // value to return.  Because the parameters held are sometimes different types
@@ -209,19 +208,20 @@ typename util::ParameterType<T>::type& CLI::GetUnmappedParam(
 {
   std::string key =
       (identifier.length() == 1 && GetSingleton().aliases.count(identifier[0]))
-      ? GetSingleton().aliases[identifier[0]] : identifier;
+          ? GetSingleton().aliases[identifier[0]]
+          : identifier;
 
   if (GetSingleton().parameters.count(key) == 0)
     Log::Fatal << "Parameter --" << key << " does not exist in this program!"
-        << std::endl;
+               << std::endl;
 
   util::ParamData& d = GetSingleton().parameters[key];
 
   // Make sure the types are correct.
   if (TYPENAME(T) != d.tname)
     Log::Fatal << "Attempted to access parameter --" << key << " as type "
-        << TYPENAME(T) << ", but its true type is " << d.tname << "!"
-        << std::endl;
+               << TYPENAME(T) << ", but its true type is " << d.tname << "!"
+               << std::endl;
 
   return *boost::any_cast<typename util::ParameterType<T>::type>(&d.value);
 }
@@ -233,19 +233,20 @@ T& CLI::GetRawParam(const std::string& identifier)
   std::string key =
       (GetSingleton().parameters.count(identifier) == 0 &&
        identifier.length() == 1 && GetSingleton().aliases.count(identifier[0]))
-      ? GetSingleton().aliases[identifier[0]] : identifier;
+          ? GetSingleton().aliases[identifier[0]]
+          : identifier;
 
   if (GetSingleton().parameters.count(key) == 0)
     Log::Fatal << "Parameter --" << key << " does not exist in this program!"
-        << std::endl;
+               << std::endl;
 
   util::ParamData& d = GetSingleton().parameters[key];
 
   // Make sure the types are correct.
   if (TYPENAME(T) != d.tname)
     Log::Fatal << "Attempted to access parameter --" << key << " as type "
-        << TYPENAME(T) << ", but its true type is " << d.tname << "!"
-        << std::endl;
+               << TYPENAME(T) << ", but its true type is " << d.tname << "!"
+               << std::endl;
 
   // We already know that required options have been passed, so we have a valid
   // value to return.  Because the parameters held are sometimes different types

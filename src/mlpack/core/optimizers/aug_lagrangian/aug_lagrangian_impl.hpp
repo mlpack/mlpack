@@ -21,22 +21,19 @@ namespace mlpack {
 namespace optimization {
 
 template<typename LagrangianFunction>
-AugLagrangian<LagrangianFunction>::AugLagrangian(LagrangianFunction& function) :
-    function(function),
-    augfunc(function),
-    lbfgsInternal(augfunc),
-    lbfgs(lbfgsInternal)
+AugLagrangian<LagrangianFunction>::AugLagrangian(LagrangianFunction& function)
+    : function(function),
+      augfunc(function),
+      lbfgsInternal(augfunc),
+      lbfgs(lbfgsInternal)
 {
   lbfgs.MaxIterations() = 1000;
 }
 
 template<typename LagrangianFunction>
 AugLagrangian<LagrangianFunction>::AugLagrangian(
-    AugLagrangianFunction<LagrangianFunction>& augfunc,
-    L_BFGSType& lbfgs) :
-    function(augfunc.Function()),
-    augfunc(augfunc),
-    lbfgs(lbfgs)
+    AugLagrangianFunction<LagrangianFunction>& augfunc, L_BFGSType& lbfgs)
+    : function(augfunc.Function()), augfunc(augfunc), lbfgs(lbfgs)
 {
   // Nothing to do.  lbfgsInternal isn't used in this case.
 }
@@ -70,7 +67,7 @@ bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
     penalty += std::pow(function.EvaluateConstraint(i, coordinates), 2);
 
   Log::Debug << "Penalty is " << penalty << " (threshold " << penaltyThreshold
-      << ")." << std::endl;
+             << ")." << std::endl;
 
   // The odd comparison allows user to pass maxIterations = 0 (i.e. no limit on
   // number of iterations).
@@ -78,11 +75,11 @@ bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
   for (it = 0; it != (maxIterations - 1); it++)
   {
     Log::Info << "AugLagrangian on iteration " << it
-        << ", starting with objective "  << lastObjective << "." << std::endl;
+              << ", starting with objective " << lastObjective << "."
+              << std::endl;
 
     if (!lbfgs.Optimize(coordinates))
-      Log::Info << "L-BFGS reported an error during optimization."
-          << std::endl;
+      Log::Info << "L-BFGS reported an error during optimization." << std::endl;
 
     // Check if we are done with the entire optimization (the threshold we are
     // comparing with is arbitrary).
@@ -101,19 +98,20 @@ bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
     for (size_t i = 0; i < function.NumConstraints(); i++)
     {
       penalty += std::pow(function.EvaluateConstraint(i, coordinates), 2);
-//      Log::Debug << "Constraint " << i << " is " <<
-//          function.EvaluateConstraint(i, coordinates) << std::endl;
+      //      Log::Debug << "Constraint " << i << " is " <<
+      //          function.EvaluateConstraint(i, coordinates) << std::endl;
     }
 
-    Log::Info << "Penalty is " << penalty << " (threshold "
-        << penaltyThreshold << ")." << std::endl;
+    Log::Info << "Penalty is " << penalty << " (threshold " << penaltyThreshold
+              << ")." << std::endl;
 
     for (size_t i = 0; i < function.NumConstraints(); ++i)
     {
-//      arma::mat tmpgrad;
-//      function.GradientConstraint(i, coordinates, tmpgrad);
-//      Log::Debug << "Gradient of constraint " << i << " is " << std::endl;
-//      Log::Debug << tmpgrad << std::endl;
+      //      arma::mat tmpgrad;
+      //      function.GradientConstraint(i, coordinates, tmpgrad);
+      //      Log::Debug << "Gradient of constraint " << i << " is " <<
+      //      std::endl;
+      //      Log::Debug << tmpgrad << std::endl;
     }
 
     if (penalty < penaltyThreshold) // We update lambda.
@@ -121,8 +119,8 @@ bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
       // We use the update: lambda_{k + 1} = lambda_k - sigma * c(coordinates),
       // but we have to write a loop to do this for each constraint.
       for (size_t i = 0; i < function.NumConstraints(); i++)
-        augfunc.Lambda()[i] -= augfunc.Sigma() *
-            function.EvaluateConstraint(i, coordinates);
+        augfunc.Lambda()[i] -=
+            augfunc.Sigma() * function.EvaluateConstraint(i, coordinates);
 
       // We also update the penalty threshold to be a factor of the current
       // penalty.  TODO: this factor should be a parameter (from CLI).  The
@@ -147,4 +145,3 @@ bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
 } // namespace mlpack
 
 #endif // MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_IMPL_HPP
-

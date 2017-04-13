@@ -31,14 +31,14 @@ static ProgramDoc emptyProgramDoc = ProgramDoc("", "");
 
 /* Constructors, Destructors, Copy */
 /* Make the constructor private, to preclude unauthorized instances */
-CLI::CLI() : desc("Allowed Options") , didParse(false), doc(&emptyProgramDoc)
+CLI::CLI() : desc("Allowed Options"), didParse(false), doc(&emptyProgramDoc)
 {
   return;
 }
 
 // Private copy constructor; don't want copies floating around.
-CLI::CLI(const CLI& other) : desc(other.desc),
-    didParse(false), doc(&emptyProgramDoc)
+CLI::CLI(const CLI& other)
+    : desc(other.desc), didParse(false), doc(&emptyProgramDoc)
 {
   return;
 }
@@ -66,8 +66,7 @@ CLI::~CLI()
        ++it2)
   {
     std::string i = (*it2).first;
-    if (timer.GetState(i) == 1)
-      Timer::Stop(i);
+    if (timer.GetState(i) == 1) Timer::Stop(i);
   }
 
   // Did the user ask for verbose output?  If so we need to print everything.
@@ -97,7 +96,7 @@ CLI::~CLI()
     Log::Info << "Program timers:" << std::endl;
     std::map<std::string, std::chrono::microseconds>::iterator it;
     for (it = timer.GetAllTimers().begin(); it != timer.GetAllTimers().end();
-        ++it)
+         ++it)
     {
       std::string i = (*it).first;
       Log::Info << "  " << i << ": ";
@@ -108,8 +107,7 @@ CLI::~CLI()
   // Notify the user if we are debugging, but only if we actually parsed the
   // options.  This way this output doesn't show up inexplicably for someone who
   // may not have wanted it there, such as in Boost unit tests.
-  if (didParse)
-    Log::Debug << "Compiled with debugging symbols." << std::endl;
+  if (didParse) Log::Debug << "Compiled with debugging symbols." << std::endl;
 }
 
 /**
@@ -147,7 +145,7 @@ bool CLI::HasParam(const std::string& key)
 
     if (!parameters.count(usedKey))
       Log::Fatal << "Parameter '--" << key << "' does not exist in this "
-          << "program." << std::endl;
+                 << "program." << std::endl;
   }
   const std::string& checkKey = usedKey;
 
@@ -164,8 +162,7 @@ bool CLI::HasParam(const std::string& key)
 std::string CLI::HyphenateString(const std::string& str, int padding)
 {
   size_t margin = 80 - padding;
-  if (str.length() < margin)
-    return str;
+  if (str.length() < margin) return str;
   std::string out("");
   unsigned int pos = 0;
   // First try to look as far as possible.
@@ -196,8 +193,7 @@ std::string CLI::HyphenateString(const std::string& str, int padding)
     }
 
     pos = splitpos;
-    if (str[pos] == ' ' || str[pos] == '\n')
-      pos++;
+    if (str[pos] == ' ' || str[pos] == '\n') pos++;
   }
   return out;
 }
@@ -205,8 +201,7 @@ std::string CLI::HyphenateString(const std::string& str, int padding)
 // Returns the sole instance of this class.
 CLI& CLI::GetSingleton()
 {
-  if (singleton == NULL)
-    singleton = new CLI();
+  if (singleton == NULL) singleton = new CLI();
 
   return *singleton;
 }
@@ -240,8 +235,9 @@ void CLI::ParseCommandLine(int argc, char** line)
       for (unsigned int j = i + 1; j < bpo.options.size(); j++)
       {
         if ((bpo.options[i].string_key == bpo.options[j].string_key) &&
-            (desc.find(bpo.options[i].string_key, false).
-                semantic()->max_tokens() <= 1))
+            (desc.find(bpo.options[i].string_key, false)
+                 .semantic()
+                 ->max_tokens() <= 1))
         {
           // If a duplicate is found, check to see if either one has a value.
           if (bpo.options[i].value.size() == 0 &&
@@ -260,7 +256,7 @@ void CLI::ParseCommandLine(int argc, char** line)
             // from the string_key, because the string_key is the parameter
             // after aliases have been expanded.
             Log::Fatal << "\"" << bpo.options[j].original_tokens[0] << "\""
-                << " is defined multiple times." << std::endl;
+                       << " is defined multiple times." << std::endl;
           }
         }
       }
@@ -285,7 +281,7 @@ void CLI::ParseCommandLine(int argc, char** line)
   if (HasParam("version"))
   {
     std::cout << GetSingleton().programName << ": part of "
-        << util::GetVersion() << std::endl;
+              << util::GetVersion() << std::endl;
     exit(0);
   }
 
@@ -336,7 +332,7 @@ void CLI::ParseCommandLine(int argc, char** line)
     const std::string& boostName = parameters[*iter].boostName;
     if (!vmap.count(parameters[*iter].boostName))
       Log::Fatal << "Required option --" << boostName << " is undefined."
-          << std::endl;
+                 << std::endl;
   }
 
   // Iterate through vmap, and overwrite default values with anything found on
@@ -389,8 +385,8 @@ void CLI::PrintHelp(const std::string& param)
   if (usedParam != "" && parameters.count(usedParam))
   {
     util::ParamData& data = parameters[usedParam];
-    std::string alias = (data.alias != '\0') ? " (-"
-        + std::string(1, data.alias) + ")" : "";
+    std::string alias =
+        (data.alias != '\0') ? " (-" + std::string(1, data.alias) + ")" : "";
 
     // Figure out the name of the type.
     std::string type = " [" + data.stringTypeFunction() + "]";
@@ -409,8 +405,7 @@ void CLI::PrintHelp(const std::string& param)
   else if (usedParam != "")
   {
     // User passed a single variable, but it doesn't exist.
-    std::cerr << "Parameter --" << usedParam << " does not exist."
-        << std::endl;
+    std::cerr << "Parameter --" << usedParam << " does not exist." << std::endl;
     exit(1); // Nothing left to do.
   }
 
@@ -419,7 +414,7 @@ void CLI::PrintHelp(const std::string& param)
   {
     std::cout << docs.programName << std::endl << std::endl;
     std::cout << "  " << HyphenateString(docs.documentation, 2) << std::endl
-        << std::endl;
+              << std::endl;
   }
   else
     std::cout << "[undocumented program]" << std::endl << std::endl;
@@ -434,8 +429,9 @@ void CLI::PrintHelp(const std::string& param)
       util::ParamData& data = iter->second;
       std::string key = data.boostName;
       std::string desc = data.desc;
-      std::string alias = (iter->second.alias != '\0') ?
-          std::string(1, iter->second.alias) : "";
+      std::string alias = (iter->second.alias != '\0')
+                              ? std::string(1, iter->second.alias)
+                              : "";
       alias = alias.length() ? " (-" + alias + ")" : alias;
 
       // Filter un-printed options.
@@ -448,8 +444,7 @@ void CLI::PrintHelp(const std::string& param)
 
       // For reverse compatibility: this can be removed when these options are
       // gone in mlpack 3.0.0.  We don't want to print the deprecated options.
-      if (data.name == "inputFile")
-        continue;
+      if (data.name == "inputFile") continue;
 
       if (!printedHeader)
       {
@@ -477,16 +472,19 @@ void CLI::PrintHelp(const std::string& param)
       std::cout << HyphenateString(desc, 32) << std::endl;
     }
 
-    if (printedHeader)
-      std::cout << std::endl;
+    if (printedHeader) std::cout << std::endl;
   }
 
   // Helpful information at the bottom of the help output, to point the user to
   // citations and better documentation (if necessary).  See ticket #201.
-  std::cout << HyphenateString("For further information, including relevant "
-      "papers, citations, and theory, consult the documentation found at "
-      "http://www.mlpack.org or included with your distribution of mlpack.", 0)
-      << std::endl;
+  std::cout << HyphenateString(
+                   "For further information, including relevant "
+                   "papers, citations, and theory, consult the documentation "
+                   "found at "
+                   "http://www.mlpack.org or included with your distribution "
+                   "of mlpack.",
+                   0)
+            << std::endl;
 }
 
 /**
@@ -499,13 +497,14 @@ void CLI::RegisterProgramDoc(ProgramDoc* doc)
 {
   // Only register the doc if it is not the dummy object we created at the
   // beginning of the file (as a default value in case this is never called).
-  if (doc != &emptyProgramDoc)
-    GetSingleton().doc = doc;
+  if (doc != &emptyProgramDoc) GetSingleton().doc = doc;
 }
 
 // Add default parameters that are included in every program.
 PARAM_FLAG("help", "Default help info.", "h");
 PARAM_STRING_IN("info", "Get help on a specific module or option.", "", "");
-PARAM_FLAG("verbose", "Display informational messages and the full list of "
-    "parameters and timers at the end of execution.", "v");
+PARAM_FLAG("verbose",
+           "Display informational messages and the full list of "
+           "parameters and timers at the end of execution.",
+           "v");
 PARAM_FLAG("version", "Display the version of mlpack.", "V");

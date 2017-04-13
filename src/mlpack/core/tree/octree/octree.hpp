@@ -226,9 +226,8 @@ class Octree
    * @param ar Archive to load tree from.  Must be an iarchive, not an oarchive.
    */
   template<typename Archive>
-  Octree(
-      Archive& ar,
-      const typename std::enable_if_t<Archive::is_loading::value>* = 0);
+  Octree(Archive& ar,
+         const typename std::enable_if_t<Archive::is_loading::value>* = 0);
 
   /**
    * Destroy the tree.

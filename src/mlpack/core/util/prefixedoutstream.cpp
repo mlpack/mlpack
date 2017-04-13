@@ -36,7 +36,7 @@ PrefixedOutStream& PrefixedOutStream::operator<<(short val)
 
 PrefixedOutStream& PrefixedOutStream::operator<<(unsigned short val)
 {
- BaseLogic<unsigned short>(val);
+  BaseLogic<unsigned short>(val);
   return *this;
 }
 
@@ -120,7 +120,7 @@ PrefixedOutStream& PrefixedOutStream::operator<<(std::ios& (*pf)(std::ios&))
 }
 
 PrefixedOutStream& PrefixedOutStream::operator<<(
-    std::ios_base& (*pf) (std::ios_base&))
+    std::ios_base& (*pf)(std::ios_base&))
 {
   BaseLogic<std::ios_base& (*)(std::ios_base&)>(pf);
   return *this;

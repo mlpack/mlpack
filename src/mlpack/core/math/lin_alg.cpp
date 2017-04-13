@@ -26,8 +26,8 @@ void mlpack::math::VectorPower(arma::vec& vec, const double power)
   for (size_t i = 0; i < vec.n_elem; i++)
   {
     if (std::abs(vec(i)) > 1e-12)
-      vec(i) = (vec(i) > 0) ? std::pow(vec(i), (double) power) :
-          -std::pow(-vec(i), (double) power);
+      vec(i) = (vec(i) > 0) ? std::pow(vec(i), (double)power)
+                            : -std::pow(-vec(i), (double)power);
     else
       vec(i) = 0;
   }
@@ -112,14 +112,14 @@ void mlpack::math::RandVector(arma::vec& v)
     double b = Random();
     double first_term = sqrt(-2 * log(a));
     double second_term = 2 * M_PI * b;
-    v[i]     = first_term * cos(second_term);
+    v[i] = first_term * cos(second_term);
     v[i + 1] = first_term * sin(second_term);
   }
 
   if ((v.n_elem % 2) == 1)
   {
-    v[v.n_elem - 1] = sqrt(-2 * log(math::Random())) * cos(2 * M_PI *
-        math::Random());
+    v[v.n_elem - 1] =
+        sqrt(-2 * log(math::Random())) * cos(2 * M_PI * math::Random());
   }
 
   v /= sqrt(dot(v, v));
@@ -150,10 +150,7 @@ void mlpack::math::Orthogonalize(const arma::mat& x, arma::mat& W)
  * Orthogonalize x in-place.  This could be sped up by a custom
  * implementation.
  */
-void mlpack::math::Orthogonalize(arma::mat& x)
-{
-  Orthogonalize(x, x);
-}
+void mlpack::math::Orthogonalize(arma::mat& x) { Orthogonalize(x, x); }
 
 /**
  * Remove a certain set of rows in a matrix while copying to a second matrix.
@@ -191,14 +188,13 @@ void mlpack::math::RemoveRows(const arma::mat& input,
     // penultimate row.
     while (removeInd < nRemove - 1)
     {
-      const size_t height = rowsToRemove[removeInd + 1] -
-          rowsToRemove[removeInd] - 1;
+      const size_t height =
+          rowsToRemove[removeInd + 1] - rowsToRemove[removeInd] - 1;
 
       if (height > 0)
       {
-        output.rows(curRow, curRow + height - 1) =
-            input.rows(rowsToRemove[removeInd] + 1,
-                       rowsToRemove[removeInd + 1] - 1);
+        output.rows(curRow, curRow + height - 1) = input.rows(
+            rowsToRemove[removeInd] + 1, rowsToRemove[removeInd + 1] - 1);
         curRow += height;
       }
 
@@ -209,8 +205,8 @@ void mlpack::math::RemoveRows(const arma::mat& input,
     // row.
     if (rowsToRemove[removeInd] < input.n_rows - 1)
     {
-      output.rows(curRow, nKeep - 1) = input.rows(rowsToRemove[removeInd] + 1,
-          input.n_rows - 1);
+      output.rows(curRow, nKeep - 1) =
+          input.rows(rowsToRemove[removeInd] + 1, input.n_rows - 1);
     }
   }
 }
@@ -246,8 +242,7 @@ void mlpack::math::Svec(const arma::sp_mat& input, arma::sp_vec& output)
   {
     const size_t i = it.row();
     const size_t j = it.col();
-    if (i > j)
-      continue;
+    if (i > j) continue;
     if (i == j)
       output(SvecIndex(i, j, n)) = *it;
     else
@@ -257,7 +252,8 @@ void mlpack::math::Svec(const arma::sp_mat& input, arma::sp_vec& output)
 
 void mlpack::math::Smat(const arma::vec& input, arma::mat& output)
 {
-  const size_t n = static_cast<size_t>(ceil((-1. + sqrt(1. + 8. * input.n_elem))/2.));
+  const size_t n =
+      static_cast<size_t>(ceil((-1. + sqrt(1. + 8. * input.n_elem)) / 2.));
 
   output.zeros(n, n);
 
@@ -289,14 +285,11 @@ void mlpack::math::SymKronId(const arma::mat& A, arma::mat& op)
     {
       for (size_t k = 0; k < n; k++)
       {
-        op(idx, SvecIndex(k, j, n)) +=
-          ((k == j) ? 1. : M_SQRT1_2) * A(i, k);
-        op(idx, SvecIndex(i, k, n)) +=
-          ((k == i) ? 1. : M_SQRT1_2) * A(k, j);
+        op(idx, SvecIndex(k, j, n)) += ((k == j) ? 1. : M_SQRT1_2) * A(i, k);
+        op(idx, SvecIndex(i, k, n)) += ((k == i) ? 1. : M_SQRT1_2) * A(k, j);
       }
       op.row(idx) *= 0.5;
-      if (i != j)
-        op.row(idx) *= M_SQRT2;
+      if (i != j) op.row(idx) *= M_SQRT2;
       idx++;
     }
   }

@@ -2,7 +2,8 @@
  * @file hilbert_r_tree_split.hpp
  * @author Mikhail Lozhnikov
  *
- * Definition of the HilbertRTreeSplit class, a class that splits the nodes of an R
+ * Definition of the HilbertRTreeSplit class, a class that splits the nodes of
+ * an R
  * tree, starting at a leaf node and moving upwards if necessary.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -97,4 +98,3 @@ class HilbertRTreeSplit
 #include "hilbert_r_tree_split_impl.hpp"
 
 #endif
-

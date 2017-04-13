@@ -19,21 +19,20 @@ namespace mlpack {
 namespace optimization {
 
 template<typename FunctionType>
-GradientDescent<FunctionType>::GradientDescent(
-    FunctionType& function,
-    const double stepSize,
-    const size_t maxIterations,
-    const double tolerance) :
-    function(function),
-    stepSize(stepSize),
-    maxIterations(maxIterations),
-    tolerance(tolerance)
-{ /* Nothing to do. */ }
+GradientDescent<FunctionType>::GradientDescent(FunctionType& function,
+                                               const double stepSize,
+                                               const size_t maxIterations,
+                                               const double tolerance)
+    : function(function),
+      stepSize(stepSize),
+      maxIterations(maxIterations),
+      tolerance(tolerance)
+{ /* Nothing to do. */
+}
 
 //! Optimize the function (minimize).
 template<typename FunctionType>
-double GradientDescent<FunctionType>::Optimize(
-    arma::mat& iterate)
+double GradientDescent<FunctionType>::Optimize(arma::mat& iterate)
 {
   // To keep track of where we are and how things are going.
   double overallObjective = function.Evaluate(iterate);
@@ -45,20 +44,21 @@ double GradientDescent<FunctionType>::Optimize(
   {
     // Output current objective function.
     Log::Info << "Gradient Descent: iteration " << i << ", objective "
-        << overallObjective << "." << std::endl;
+              << overallObjective << "." << std::endl;
 
     if (std::isnan(overallObjective) || std::isinf(overallObjective))
     {
       Log::Warn << "Gradient Descent: converged to " << overallObjective
-          << "; terminating" << " with failure.  Try a smaller step size?"
-          << std::endl;
+                << "; terminating"
+                << " with failure.  Try a smaller step size?" << std::endl;
       return overallObjective;
     }
 
     if (std::abs(lastObjective - overallObjective) < tolerance)
     {
-      Log::Info << "Gradient Descent: minimized within tolerance "
-          << tolerance << "; " << "terminating optimization." << std::endl;
+      Log::Info << "Gradient Descent: minimized within tolerance " << tolerance
+                << "; "
+                << "terminating optimization." << std::endl;
       return overallObjective;
     }
 
@@ -75,7 +75,8 @@ double GradientDescent<FunctionType>::Optimize(
   }
 
   Log::Info << "Gradient Descent: maximum iterations (" << maxIterations
-      << ") reached; " << "terminating optimization." << std::endl;
+            << ") reached; "
+            << "terminating optimization." << std::endl;
   return overallObjective;
 }
 

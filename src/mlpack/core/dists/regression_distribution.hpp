@@ -39,7 +39,7 @@ class RegressionDistribution
   /**
    * Default constructor, which creates a Gaussian with zero dimension.
    */
-  RegressionDistribution() { /* nothing to do */ }
+  RegressionDistribution() { /* nothing to do */}
 
   /**
    * Create a Conditional Gaussian distribution with conditional mean function
@@ -49,8 +49,8 @@ class RegressionDistribution
    * @param responses Vector of responses (y).
    */
   RegressionDistribution(const arma::mat& predictors,
-                         const arma::vec& responses) :
-      rf(regression::LinearRegression(predictors, responses))
+                         const arma::vec& responses)
+      : rf(regression::LinearRegression(predictors, responses))
   {
     err = GaussianDistribution(1);
     arma::mat cov(1, 1);
@@ -64,8 +64,8 @@ class RegressionDistribution
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(rf, "rf");
-    ar & data::CreateNVP(err, "err");
+    ar& data::CreateNVP(rf, "rf");
+    ar& data::CreateNVP(err, "err");
   }
 
   //! Return regression function.
@@ -104,7 +104,8 @@ class RegressionDistribution
   *
   * @param observation point to evaluate log probability at
   */
-  double LogProbability(const arma::vec& observation) const {
+  double LogProbability(const arma::vec& observation) const
+  {
     return log(Probability(observation));
   }
 
@@ -122,7 +123,6 @@ class RegressionDistribution
   //! Return the dimensionality
   size_t Dimensionality() const { return rf.Parameters().n_elem; }
 };
-
 
 } // namespace distribution
 } // namespace mlpack

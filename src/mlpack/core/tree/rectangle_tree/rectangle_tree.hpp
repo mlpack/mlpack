@@ -49,12 +49,13 @@ template<typename MetricType = metric::EuclideanDistance,
          typename MatType = arma::mat,
          typename SplitType = RTreeSplit,
          typename DescentType = RTreeDescentHeuristic,
-         template<typename> class AuxiliaryInformationType = NoAuxiliaryInformation>
+         template<typename> class AuxiliaryInformationType =
+             NoAuxiliaryInformation>
 class RectangleTree
 {
   // The metric *must* be the euclidean distance.
   static_assert(boost::is_same<MetricType, metric::EuclideanDistance>::value,
-      "RectangleTree: MetricType must be metric::EuclideanDistance.");
+                "RectangleTree: MetricType must be metric::EuclideanDistance.");
 
  public:
   //! So other classes can use TreeType::Mat.
@@ -63,6 +64,7 @@ class RectangleTree
   typedef typename MatType::elem_type ElemType;
   //! The auxiliary information type held by the tree.
   typedef AuxiliaryInformationType<RectangleTree> AuxiliaryInformation;
+
  private:
   //! The max number of child nodes a non-leaf node can have.
   size_t maxNumChildren;
@@ -306,11 +308,15 @@ class RectangleTree
   StatisticType& Stat() { return stat; }
 
   //! Return the auxiliary information object of this node.
-  const AuxiliaryInformationType<RectangleTree> &AuxiliaryInfo() const
-  { return auxiliaryInfo; }
+  const AuxiliaryInformationType<RectangleTree>& AuxiliaryInfo() const
+  {
+    return auxiliaryInfo;
+  }
   //! Modify the split object of this node.
   AuxiliaryInformationType<RectangleTree>& AuxiliaryInfo()
-  { return auxiliaryInfo; }
+  {
+    return auxiliaryInfo;
+  }
 
   //! Return whether or not this node is a leaf (true if it has no children).
   bool IsLeaf() const;
@@ -428,10 +434,7 @@ class RectangleTree
    *
    * @param child Index of child to return.
    */
-  inline RectangleTree& Child(const size_t child)
-  {
-    return *children[child];
-  }
+  inline RectangleTree& Child(const size_t child) { return *children[child]; }
 
   //! Return the number of points in this node (returns 0 if this node is not a
   //! leaf).
@@ -487,18 +490,18 @@ class RectangleTree
 
   //! Return the minimum distance to another point.
   template<typename VecType>
-  ElemType MinDistance(const VecType& point,
-                       typename std::enable_if_t<IsVector<VecType>::value>* = 0)
-      const
+  ElemType MinDistance(
+      const VecType& point,
+      typename std::enable_if_t<IsVector<VecType>::value>* = 0) const
   {
     return bound.MinDistance(point);
   }
 
   //! Return the maximum distance to another point.
   template<typename VecType>
-  ElemType MaxDistance(const VecType& point,
-                       typename std::enable_if_t<IsVector<VecType>::value>* = 0)
-      const
+  ElemType MaxDistance(
+      const VecType& point,
+      typename std::enable_if_t<IsVector<VecType>::value>* = 0) const
   {
     return bound.MaxDistance(point);
   }

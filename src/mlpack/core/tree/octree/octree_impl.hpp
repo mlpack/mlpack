@@ -22,13 +22,13 @@ namespace tree {
 //! Construct the tree.
 template<typename MetricType, typename StatisticType, typename MatType>
 Octree<MetricType, StatisticType, MatType>::Octree(const MatType& dataset,
-                                                   const size_t maxLeafSize) :
-    begin(0),
-    count(dataset.n_cols),
-    bound(dataset.n_rows),
-    dataset(new MatType(dataset)),
-    parent(NULL),
-    parentDistance(0.0)
+                                                   const size_t maxLeafSize)
+    : begin(0),
+      count(dataset.n_cols),
+      bound(dataset.n_rows),
+      dataset(new MatType(dataset)),
+      parent(NULL),
+      parentDistance(0.0)
 {
   if (count > 0)
   {
@@ -60,17 +60,16 @@ template<typename MetricType, typename StatisticType, typename MatType>
 Octree<MetricType, StatisticType, MatType>::Octree(
     const MatType& dataset,
     std::vector<size_t>& oldFromNew,
-    const size_t maxLeafSize) :
-    begin(0),
-    count(dataset.n_cols),
-    bound(dataset.n_rows),
-    dataset(new MatType(dataset)),
-    parent(NULL),
-    parentDistance(0.0)
+    const size_t maxLeafSize)
+    : begin(0),
+      count(dataset.n_cols),
+      bound(dataset.n_rows),
+      dataset(new MatType(dataset)),
+      parent(NULL),
+      parentDistance(0.0)
 {
   oldFromNew.resize(this->dataset->n_cols);
-  for (size_t i = 0; i < this->dataset->n_cols; ++i)
-    oldFromNew[i] = i;
+  for (size_t i = 0; i < this->dataset->n_cols; ++i) oldFromNew[i] = i;
 
   if (count > 0)
   {
@@ -103,17 +102,16 @@ Octree<MetricType, StatisticType, MatType>::Octree(
     const MatType& dataset,
     std::vector<size_t>& oldFromNew,
     std::vector<size_t>& newFromOld,
-    const size_t maxLeafSize) :
-    begin(0),
-    count(dataset.n_cols),
-    bound(dataset.n_rows),
-    dataset(new MatType(dataset)),
-    parent(NULL),
-    parentDistance(0.0)
+    const size_t maxLeafSize)
+    : begin(0),
+      count(dataset.n_cols),
+      bound(dataset.n_rows),
+      dataset(new MatType(dataset)),
+      parent(NULL),
+      parentDistance(0.0)
 {
   oldFromNew.resize(this->dataset->n_cols);
-  for (size_t i = 0; i < this->dataset->n_cols; ++i)
-    oldFromNew[i] = i;
+  for (size_t i = 0; i < this->dataset->n_cols; ++i) oldFromNew[i] = i;
 
   if (count > 0)
   {
@@ -148,13 +146,13 @@ Octree<MetricType, StatisticType, MatType>::Octree(
 //! Construct the tree.
 template<typename MetricType, typename StatisticType, typename MatType>
 Octree<MetricType, StatisticType, MatType>::Octree(MatType&& dataset,
-                                                   const size_t maxLeafSize) :
-    begin(0),
-    count(dataset.n_cols),
-    bound(dataset.n_rows),
-    dataset(new MatType(std::move(dataset))),
-    parent(NULL),
-    parentDistance(0.0)
+                                                   const size_t maxLeafSize)
+    : begin(0),
+      count(dataset.n_cols),
+      bound(dataset.n_rows),
+      dataset(new MatType(std::move(dataset))),
+      parent(NULL),
+      parentDistance(0.0)
 {
   if (count > 0)
   {
@@ -186,17 +184,16 @@ template<typename MetricType, typename StatisticType, typename MatType>
 Octree<MetricType, StatisticType, MatType>::Octree(
     MatType&& dataset,
     std::vector<size_t>& oldFromNew,
-    const size_t maxLeafSize) :
-    begin(0),
-    count(dataset.n_cols),
-    bound(dataset.n_rows),
-    dataset(new MatType(std::move(dataset))),
-    parent(NULL),
-    parentDistance(0.0)
+    const size_t maxLeafSize)
+    : begin(0),
+      count(dataset.n_cols),
+      bound(dataset.n_rows),
+      dataset(new MatType(std::move(dataset))),
+      parent(NULL),
+      parentDistance(0.0)
 {
   oldFromNew.resize(this->dataset->n_cols);
-  for (size_t i = 0; i < this->dataset->n_cols; ++i)
-    oldFromNew[i] = i;
+  for (size_t i = 0; i < this->dataset->n_cols; ++i) oldFromNew[i] = i;
 
   if (count > 0)
   {
@@ -229,17 +226,16 @@ Octree<MetricType, StatisticType, MatType>::Octree(
     MatType&& dataset,
     std::vector<size_t>& oldFromNew,
     std::vector<size_t>& newFromOld,
-    const size_t maxLeafSize) :
-    begin(0),
-    count(dataset.n_cols),
-    bound(dataset.n_rows),
-    dataset(new MatType(std::move(dataset))),
-    parent(NULL),
-    parentDistance(0.0)
+    const size_t maxLeafSize)
+    : begin(0),
+      count(dataset.n_cols),
+      bound(dataset.n_rows),
+      dataset(new MatType(std::move(dataset))),
+      parent(NULL),
+      parentDistance(0.0)
 {
   oldFromNew.resize(this->dataset->n_cols);
-  for (size_t i = 0; i < this->dataset->n_cols; ++i)
-    oldFromNew[i] = i;
+  for (size_t i = 0; i < this->dataset->n_cols; ++i) oldFromNew[i] = i;
 
   if (count > 0)
   {
@@ -273,18 +269,17 @@ Octree<MetricType, StatisticType, MatType>::Octree(
 
 //! Construct a child node.
 template<typename MetricType, typename StatisticType, typename MatType>
-Octree<MetricType, StatisticType, MatType>::Octree(
-    Octree* parent,
-    const size_t begin,
-    const size_t count,
-    const arma::vec& center,
-    const double width,
-    const size_t maxLeafSize) :
-    begin(begin),
-    count(count),
-    bound(parent->dataset->n_rows),
-    dataset(parent->dataset),
-    parent(parent)
+Octree<MetricType, StatisticType, MatType>::Octree(Octree* parent,
+                                                   const size_t begin,
+                                                   const size_t count,
+                                                   const arma::vec& center,
+                                                   const double width,
+                                                   const size_t maxLeafSize)
+    : begin(begin),
+      count(count),
+      bound(parent->dataset->n_rows),
+      dataset(parent->dataset),
+      parent(parent)
 {
   // Calculate empirical center of data.
   bound |= dataset->cols(begin, begin + count - 1);
@@ -314,12 +309,12 @@ Octree<MetricType, StatisticType, MatType>::Octree(
     std::vector<size_t>& oldFromNew,
     const arma::vec& center,
     const double width,
-    const size_t maxLeafSize) :
-    begin(begin),
-    count(count),
-    bound(parent->dataset->n_rows),
-    dataset(parent->dataset),
-    parent(parent)
+    const size_t maxLeafSize)
+    : begin(begin),
+      count(count),
+      bound(parent->dataset->n_rows),
+      dataset(parent->dataset),
+      parent(parent)
 {
   // Calculate empirical center of data.
   bound |= dataset->cols(begin, begin + count - 1);
@@ -342,16 +337,16 @@ Octree<MetricType, StatisticType, MatType>::Octree(
 
 //! Copy the given tree.
 template<typename MetricType, typename StatisticType, typename MatType>
-Octree<MetricType, StatisticType, MatType>::Octree(const Octree& other) :
-    begin(other.begin),
-    count(other.count),
-    bound(other.bound),
-    dataset((other.parent == NULL) ? new MatType(*other.dataset) : NULL),
-    parent(NULL),
-    stat(other.stat),
-    parentDistance(other.parentDistance),
-    furthestDescendantDistance(other.furthestDescendantDistance),
-    metric(other.metric)
+Octree<MetricType, StatisticType, MatType>::Octree(const Octree& other)
+    : begin(other.begin),
+      count(other.count),
+      bound(other.bound),
+      dataset((other.parent == NULL) ? new MatType(*other.dataset) : NULL),
+      parent(NULL),
+      stat(other.stat),
+      parentDistance(other.parentDistance),
+      furthestDescendantDistance(other.furthestDescendantDistance),
+      metric(other.metric)
 {
   // If we have any children, we need to create them, and then ensure that their
   // parent links are set right.
@@ -365,21 +360,20 @@ Octree<MetricType, StatisticType, MatType>::Octree(const Octree& other) :
 
 //! Move the given tree.
 template<typename MetricType, typename StatisticType, typename MatType>
-Octree<MetricType, StatisticType, MatType>::Octree(Octree&& other) :
-    children(std::move(other.children)),
-    begin(other.begin),
-    count(other.count),
-    bound(std::move(other.bound)),
-    dataset(other.dataset),
-    parent(other.parent),
-    stat(std::move(other.stat)),
-    parentDistance(other.parentDistance),
-    furthestDescendantDistance(other.furthestDescendantDistance),
-    metric(std::move(other.metric))
+Octree<MetricType, StatisticType, MatType>::Octree(Octree&& other)
+    : children(std::move(other.children)),
+      begin(other.begin),
+      count(other.count),
+      bound(std::move(other.bound)),
+      dataset(other.dataset),
+      parent(other.parent),
+      stat(std::move(other.stat)),
+      parentDistance(other.parentDistance),
+      furthestDescendantDistance(other.furthestDescendantDistance),
+      metric(std::move(other.metric))
 {
   // Update the parent pointers of the direct children.
-  for (size_t i = 0; i < children.size(); ++i)
-    children[i]->parent = this;
+  for (size_t i = 0; i < children.size(); ++i) children[i]->parent = this;
 
   other.begin = 0;
   other.count = 0;
@@ -390,14 +384,14 @@ Octree<MetricType, StatisticType, MatType>::Octree(Octree&& other) :
 }
 
 template<typename MetricType, typename StatisticType, typename MatType>
-Octree<MetricType, StatisticType, MatType>::Octree() :
-    begin(0),
-    count(0),
-    bound(0),
-    dataset(new MatType()),
-    parent(NULL),
-    parentDistance(0.0),
-    furthestDescendantDistance(0.0)
+Octree<MetricType, StatisticType, MatType>::Octree()
+    : begin(0),
+      count(0),
+      bound(0),
+      dataset(new MatType()),
+      parent(NULL),
+      parentDistance(0.0),
+      furthestDescendantDistance(0.0)
 {
   // Nothing to do.
 }
@@ -406,8 +400,8 @@ template<typename MetricType, typename StatisticType, typename MatType>
 template<typename Archive>
 Octree<MetricType, StatisticType, MatType>::Octree(
     Archive& ar,
-    const typename std::enable_if_t<Archive::is_loading::value>*) :
-    Octree() // Create an empty tree.
+    const typename std::enable_if_t<Archive::is_loading::value>*)
+    : Octree() // Create an empty tree.
 {
   // De-serialize the tree into this object.
   ar >> data::CreateNVP(*this, "tree");
@@ -417,12 +411,10 @@ template<typename MetricType, typename StatisticType, typename MatType>
 Octree<MetricType, StatisticType, MatType>::~Octree()
 {
   // Delete the dataset if we aren't the parent.
-  if (!parent)
-    delete dataset;
+  if (!parent) delete dataset;
 
   // Now delete each of the children.
-  for (size_t i = 0; i < children.size(); ++i)
-    delete children[i];
+  for (size_t i = 0; i < children.size(); ++i) delete children[i];
   children.clear();
 }
 
@@ -522,8 +514,7 @@ size_t Octree<MetricType, StatisticType, MatType>::GetFurthestChild(
 
 template<typename MetricType, typename StatisticType, typename MatType>
 typename Octree<MetricType, StatisticType, MatType>::ElemType
-Octree<MetricType, StatisticType, MatType>::FurthestPointDistance()
-    const
+Octree<MetricType, StatisticType, MatType>::FurthestPointDistance() const
 {
   // If we are not a leaf, then this distance is 0.  Otherwise, return the
   // furthest descendant distance.
@@ -565,32 +556,32 @@ size_t Octree<MetricType, StatisticType, MatType>::Descendant(
 }
 
 template<typename MetricType, typename StatisticType, typename MatType>
-size_t Octree<MetricType, StatisticType, MatType>::Point(const size_t index)
-    const
+size_t Octree<MetricType, StatisticType, MatType>::Point(
+    const size_t index) const
 {
   return begin + index;
 }
 
 template<typename MetricType, typename StatisticType, typename MatType>
 typename Octree<MetricType, StatisticType, MatType>::ElemType
-Octree<MetricType, StatisticType, MatType>::MinDistance(const Octree& other)
-    const
+Octree<MetricType, StatisticType, MatType>::MinDistance(
+    const Octree& other) const
 {
   return bound.MinDistance(other.Bound());
 }
 
 template<typename MetricType, typename StatisticType, typename MatType>
 typename Octree<MetricType, StatisticType, MatType>::ElemType
-Octree<MetricType, StatisticType, MatType>::MaxDistance(const Octree& other)
-    const
+Octree<MetricType, StatisticType, MatType>::MaxDistance(
+    const Octree& other) const
 {
   return bound.MaxDistance(other.Bound());
 }
 
 template<typename MetricType, typename StatisticType, typename MatType>
 math::RangeType<typename Octree<MetricType, StatisticType, MatType>::ElemType>
-Octree<MetricType, StatisticType, MatType>::RangeDistance(const Octree& other)
-    const
+Octree<MetricType, StatisticType, MatType>::RangeDistance(
+    const Octree& other) const
 {
   return bound.RangeDistance(other.Bound());
 }
@@ -615,7 +606,6 @@ Octree<MetricType, StatisticType, MatType>::MaxDistance(
   return bound.MaxDistance(point);
 }
 
-
 template<typename MetricType, typename StatisticType, typename MatType>
 template<typename VecType>
 math::RangeType<typename Octree<MetricType, StatisticType, MatType>::ElemType>
@@ -630,29 +620,26 @@ Octree<MetricType, StatisticType, MatType>::RangeDistance(
 template<typename MetricType, typename StatisticType, typename MatType>
 template<typename Archive>
 void Octree<MetricType, StatisticType, MatType>::Serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+    Archive& ar, const unsigned int /* version */)
 {
   using data::CreateNVP;
 
   // If we're loading and we have children, they need to be deleted.
   if (Archive::is_loading::value)
   {
-    for (size_t i = 0; i < children.size(); ++i)
-      delete children[i];
+    for (size_t i = 0; i < children.size(); ++i) delete children[i];
     children.clear();
 
-    if (!parent)
-      delete dataset;
+    if (!parent) delete dataset;
   }
 
-  ar & CreateNVP(begin, "begin");
-  ar & CreateNVP(count, "count");
-  ar & CreateNVP(bound, "bound");
-  ar & CreateNVP(stat, "stat");
-  ar & CreateNVP(parentDistance, "parentDistance");
-  ar & CreateNVP(furthestDescendantDistance, "furthestDescendantDistance");
-  ar & CreateNVP(metric, "metric");
+  ar& CreateNVP(begin, "begin");
+  ar& CreateNVP(count, "count");
+  ar& CreateNVP(bound, "bound");
+  ar& CreateNVP(stat, "stat");
+  ar& CreateNVP(parentDistance, "parentDistance");
+  ar& CreateNVP(furthestDescendantDistance, "furthestDescendantDistance");
+  ar& CreateNVP(metric, "metric");
 
   // Due to quirks of boost::serialization, depending on how the user
   // serializes the tree, it's possible that the root of the tree will
@@ -664,32 +651,29 @@ void Octree<MetricType, StatisticType, MatType>::Serialize(
   {
     Octree* fakeParent = NULL;
     hasFakeParent = true;
-    ar & CreateNVP(fakeParent, "parent");
-    ar & CreateNVP(hasFakeParent, "hasFakeParent");
+    ar& CreateNVP(fakeParent, "parent");
+    ar& CreateNVP(hasFakeParent, "hasFakeParent");
   }
   else
   {
-    ar & CreateNVP(parent, "parent");
-    ar & CreateNVP(hasFakeParent, "hasFakeParent");
+    ar& CreateNVP(parent, "parent");
+    ar& CreateNVP(hasFakeParent, "hasFakeParent");
   }
 
   // Only serialize the dataset if we don't have a fake parent.  Otherwise, the
   // real parent will come and set it later.
-  if (!hasFakeParent)
-    ar & CreateNVP(dataset, "dataset");
+  if (!hasFakeParent) ar& CreateNVP(dataset, "dataset");
 
   size_t numChildren = 0;
-  if (Archive::is_saving::value)
-    numChildren = children.size();
-  ar & CreateNVP(numChildren, "numChildren");
-  if (Archive::is_loading::value)
-    children.resize(numChildren);
+  if (Archive::is_saving::value) numChildren = children.size();
+  ar& CreateNVP(numChildren, "numChildren");
+  if (Archive::is_loading::value) children.resize(numChildren);
 
   for (size_t i = 0; i < numChildren; ++i)
   {
     std::ostringstream oss;
     oss << "child" << i;
-    ar & CreateNVP(children[i], oss.str());
+    ar& CreateNVP(children[i], oss.str());
   }
 
   // Fix the child pointers, if they were set to a fake parent.
@@ -706,17 +690,14 @@ void Octree<MetricType, StatisticType, MatType>::Serialize(
 //! Split the node.
 template<typename MetricType, typename StatisticType, typename MatType>
 void Octree<MetricType, StatisticType, MatType>::SplitNode(
-    const arma::vec& center,
-    const double width,
-    const size_t maxLeafSize)
+    const arma::vec& center, const double width, const size_t maxLeafSize)
 {
   // No need to split if we have fewer than the maximum number of points in this
   // node.
-  if (count <= maxLeafSize)
-    return;
+  if (count <= maxLeafSize) return;
 
   // This will hold the index of the first point in each child.
-  arma::Col<size_t> childBegins(((size_t) 1 << dataset->n_rows) + 1);
+  arma::Col<size_t> childBegins(((size_t)1 << dataset->n_rows) + 1);
   childBegins[0] = begin;
   childBegins[childBegins.n_elem - 1] = begin + count;
 
@@ -724,7 +705,7 @@ void Octree<MetricType, StatisticType, MatType>::SplitNode(
   // dimension.  The tuple holds { dim, begin, count, leftChildIndex }.
   std::stack<std::tuple<size_t, size_t, size_t, size_t>> stack;
   stack.push(std::tuple<size_t, size_t, size_t, size_t>(dataset->n_rows - 1,
-      begin, count, 0));
+                                                        begin, count, 0));
 
   while (!stack.empty())
   {
@@ -741,12 +722,12 @@ void Octree<MetricType, StatisticType, MatType>::SplitNode(
     // all points belonging to children of index 2^(d - 1) and above will be on
     // the right side.
     SplitInfo s(d, center);
-    const size_t firstRight = split::PerformSplit<MatType, SplitInfo>(*dataset,
-        childBegin, childCount, s);
+    const size_t firstRight = split::PerformSplit<MatType, SplitInfo>(
+        *dataset, childBegin, childCount, s);
 
     // We can set the first index of the right child.  The first index of the
     // left child is already set.
-    const size_t rightChildIndex = leftChildIndex + ((size_t) 1 << d);
+    const size_t rightChildIndex = leftChildIndex + ((size_t)1 << d);
     childBegins[rightChildIndex] = firstRight;
 
     // Now we have to recurse, if this was not the last dimension.
@@ -754,8 +735,8 @@ void Octree<MetricType, StatisticType, MatType>::SplitNode(
     {
       if (firstRight > childBegin)
       {
-        stack.push(std::tuple<size_t, size_t, size_t, size_t>(d - 1, childBegin,
-            firstRight - childBegin, leftChildIndex));
+        stack.push(std::tuple<size_t, size_t, size_t, size_t>(
+            d - 1, childBegin, firstRight - childBegin, leftChildIndex));
       }
       else
       {
@@ -766,8 +747,9 @@ void Octree<MetricType, StatisticType, MatType>::SplitNode(
 
       if (firstRight < childBegin + childCount)
       {
-        stack.push(std::tuple<size_t, size_t, size_t, size_t>(d - 1, firstRight,
-            childCount - (firstRight - childBegin), rightChildIndex));
+        stack.push(std::tuple<size_t, size_t, size_t, size_t>(
+            d - 1, firstRight, childCount - (firstRight - childBegin),
+            rightChildIndex));
       }
       else
       {
@@ -785,8 +767,7 @@ void Octree<MetricType, StatisticType, MatType>::SplitNode(
   for (size_t i = 0; i < childBegins.n_elem - 1; ++i)
   {
     // If the child has no points, don't create it.
-    if (childBegins[i + 1] - childBegins[i] == 0)
-      continue;
+    if (childBegins[i + 1] - childBegins[i] == 0) continue;
 
     // Create the correct center.
     for (size_t d = 0; d < center.n_elem; ++d)
@@ -799,8 +780,8 @@ void Octree<MetricType, StatisticType, MatType>::SplitNode(
     }
 
     children.push_back(new Octree(this, childBegins[i],
-        childBegins[i + 1] - childBegins[i], childCenter, childWidth,
-        maxLeafSize));
+                                  childBegins[i + 1] - childBegins[i],
+                                  childCenter, childWidth, maxLeafSize));
   }
 }
 
@@ -814,11 +795,10 @@ void Octree<MetricType, StatisticType, MatType>::SplitNode(
 {
   // No need to split if we have fewer than the maximum number of points in this
   // node.
-  if (count <= maxLeafSize)
-    return;
+  if (count <= maxLeafSize) return;
 
   // This will hold the index of the first point in each child.
-  arma::Col<size_t> childBegins(((size_t) 1 << dataset->n_rows) + 1);
+  arma::Col<size_t> childBegins(((size_t)1 << dataset->n_rows) + 1);
   childBegins[0] = begin;
   childBegins[childBegins.n_elem - 1] = begin + count;
 
@@ -826,7 +806,7 @@ void Octree<MetricType, StatisticType, MatType>::SplitNode(
   // dimension.  The tuple holds { dim, begin, count, leftChildIndex }.
   std::stack<std::tuple<size_t, size_t, size_t, size_t>> stack;
   stack.push(std::tuple<size_t, size_t, size_t, size_t>(dataset->n_rows - 1,
-      begin, count, 0));
+                                                        begin, count, 0));
 
   while (!stack.empty())
   {
@@ -843,12 +823,12 @@ void Octree<MetricType, StatisticType, MatType>::SplitNode(
     // all points belonging to children of index 2^(d - 1) and above will be on
     // the right side.
     SplitInfo s(d, center);
-    const size_t firstRight = split::PerformSplit<MatType, SplitInfo>(*dataset,
-        childBegin, childCount, s, oldFromNew);
+    const size_t firstRight = split::PerformSplit<MatType, SplitInfo>(
+        *dataset, childBegin, childCount, s, oldFromNew);
 
     // We can set the first index of the right child.  The first index of the
     // left child is already set.
-    const size_t rightChildIndex = leftChildIndex + ((size_t) 1 << d);
+    const size_t rightChildIndex = leftChildIndex + ((size_t)1 << d);
     childBegins[rightChildIndex] = firstRight;
 
     // Now we have to recurse, if this was not the last dimension.
@@ -856,8 +836,8 @@ void Octree<MetricType, StatisticType, MatType>::SplitNode(
     {
       if (firstRight > childBegin)
       {
-        stack.push(std::tuple<size_t, size_t, size_t, size_t>(d - 1, childBegin,
-            firstRight - childBegin, leftChildIndex));
+        stack.push(std::tuple<size_t, size_t, size_t, size_t>(
+            d - 1, childBegin, firstRight - childBegin, leftChildIndex));
       }
       else
       {
@@ -868,8 +848,9 @@ void Octree<MetricType, StatisticType, MatType>::SplitNode(
 
       if (firstRight < childBegin + childCount)
       {
-        stack.push(std::tuple<size_t, size_t, size_t, size_t>(d - 1, firstRight,
-            childCount - (firstRight - childBegin), rightChildIndex));
+        stack.push(std::tuple<size_t, size_t, size_t, size_t>(
+            d - 1, firstRight, childCount - (firstRight - childBegin),
+            rightChildIndex));
       }
       else
       {
@@ -887,8 +868,7 @@ void Octree<MetricType, StatisticType, MatType>::SplitNode(
   for (size_t i = 0; i < childBegins.n_elem - 1; ++i)
   {
     // If the child has no points, don't create it.
-    if (childBegins[i + 1] - childBegins[i] == 0)
-      continue;
+    if (childBegins[i + 1] - childBegins[i] == 0) continue;
 
     // Create the correct center.
     for (size_t d = 0; d < center.n_elem; ++d)
@@ -900,9 +880,9 @@ void Octree<MetricType, StatisticType, MatType>::SplitNode(
         childCenter[d] = center[d] + childWidth;
     }
 
-    children.push_back(new Octree(this, childBegins[i],
-        childBegins[i + 1] - childBegins[i], oldFromNew, childCenter,
-        childWidth, maxLeafSize));
+    children.push_back(
+        new Octree(this, childBegins[i], childBegins[i + 1] - childBegins[i],
+                   oldFromNew, childCenter, childWidth, maxLeafSize));
   }
 }
 

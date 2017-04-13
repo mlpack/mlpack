@@ -33,8 +33,7 @@ namespace kernel {
  * @param b Index of string and dataset for second string.
  */
 template<typename VecType>
-double PSpectrumStringKernel::Evaluate(const VecType& a,
-                                       const VecType& b) const
+double PSpectrumStringKernel::Evaluate(const VecType& a, const VecType& b) const
 {
   // Get the map of substrings for the two strings we are interested in.
   const std::map<std::string, int>& aMap = counts[a[0]][a[1]];

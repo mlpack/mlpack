@@ -29,15 +29,16 @@ template<typename MetricType,
          typename DescentType,
          template<typename> class AuxiliaryInformationType>
 template<typename RuleType>
-RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
-              AuxiliaryInformationType>::
-DualTreeTraverser<RuleType>::DualTreeTraverser(RuleType& rule) :
-    rule(rule),
-    numPrunes(0),
-    numVisited(0),
-    numScores(0),
-    numBaseCases(0)
-{ /* Nothing to do */ }
+RectangleTree<MetricType,
+              StatisticType,
+              MatType,
+              SplitType,
+              DescentType,
+              AuxiliaryInformationType>::DualTreeTraverser<RuleType>::
+    DualTreeTraverser(RuleType& rule)
+    : rule(rule), numPrunes(0), numVisited(0), numScores(0), numBaseCases(0)
+{ /* Nothing to do */
+}
 
 template<typename MetricType,
          typename StatisticType,
@@ -46,10 +47,13 @@ template<typename MetricType,
          typename DescentType,
          template<typename> class AuxiliaryInformationType>
 template<typename RuleType>
-void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
-                   AuxiliaryInformationType>::
-DualTreeTraverser<RuleType>::Traverse(RectangleTree& queryNode,
-                                      RectangleTree& referenceNode)
+void RectangleTree<MetricType,
+                   StatisticType,
+                   MatType,
+                   SplitType,
+                   DescentType,
+                   AuxiliaryInformationType>::DualTreeTraverser<RuleType>::
+    Traverse(RectangleTree& queryNode, RectangleTree& referenceNode)
 {
   // Increment the visit counter.
   ++numVisited;
@@ -72,13 +76,13 @@ DualTreeTraverser<RuleType>::Traverse(RectangleTree& queryNode,
     {
       // Restore the traversal information.
       rule.TraversalInfo() = traversalInfo;
-      const double childScore = rule.Score(queryNode.Point(query),
-          referenceNode);
+      const double childScore =
+          rule.Score(queryNode.Point(query), referenceNode);
 
       if (childScore == DBL_MAX)
-        continue;  // We don't require a search in this reference node.
+        continue; // We don't require a search in this reference node.
 
-      for(size_t ref = 0; ref < referenceNode.Count(); ++ref)
+      for (size_t ref = 0; ref < referenceNode.Count(); ++ref)
         rule.BaseCase(queryNode.Point(query), referenceNode.Point(ref));
 
       numBaseCases += referenceNode.Count();
@@ -109,8 +113,8 @@ DualTreeTraverser<RuleType>::Traverse(RectangleTree& queryNode,
     {
       rule.TraversalInfo() = traversalInfo;
       nodesAndScores[i].node = &(referenceNode.Child(i));
-      nodesAndScores[i].score = rule.Score(queryNode,
-          *(nodesAndScores[i].node));
+      nodesAndScores[i].score =
+          rule.Score(queryNode, *(nodesAndScores[i].node));
       nodesAndScores[i].travInfo = rule.TraversalInfo();
     }
     std::sort(nodesAndScores.begin(), nodesAndScores.end(), nodeComparator);
@@ -120,7 +124,7 @@ DualTreeTraverser<RuleType>::Traverse(RectangleTree& queryNode,
     {
       rule.TraversalInfo() = nodesAndScores[i].travInfo;
       if (rule.Rescore(queryNode, *(nodesAndScores[i].node),
-          nodesAndScores[i].score) < DBL_MAX)
+                       nodesAndScores[i].score) < DBL_MAX)
       {
         Traverse(queryNode, *(nodesAndScores[i].node));
       }
@@ -144,8 +148,8 @@ DualTreeTraverser<RuleType>::Traverse(RectangleTree& queryNode,
       {
         rule.TraversalInfo() = traversalInfo;
         nodesAndScores[i].node = &(referenceNode.Child(i));
-        nodesAndScores[i].score = rule.Score(queryNode.Child(j),
-            *nodesAndScores[i].node);
+        nodesAndScores[i].score =
+            rule.Score(queryNode.Child(j), *nodesAndScores[i].node);
         nodesAndScores[i].travInfo = rule.TraversalInfo();
       }
       std::sort(nodesAndScores.begin(), nodesAndScores.end(), nodeComparator);
@@ -155,7 +159,7 @@ DualTreeTraverser<RuleType>::Traverse(RectangleTree& queryNode,
       {
         rule.TraversalInfo() = nodesAndScores[i].travInfo;
         if (rule.Rescore(queryNode.Child(j), *(nodesAndScores[i].node),
-            nodesAndScores[i].score) < DBL_MAX)
+                         nodesAndScores[i].score) < DBL_MAX)
         {
           Traverse(queryNode.Child(j), *(nodesAndScores[i].node));
         }

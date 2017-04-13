@@ -32,9 +32,7 @@ class AxisParallelProjVector
    *
    * @param dim Dimension to be considered.
    */
-  AxisParallelProjVector(size_t dim = 0) :
-      dim(dim)
-  {};
+  AxisParallelProjVector(size_t dim = 0) : dim(dim){};
 
   /**
    * Project the given point on the projection vector.
@@ -80,7 +78,7 @@ class AxisParallelProjVector
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(dim, "dim");
+    ar& data::CreateNVP(dim, "dim");
   };
 };
 
@@ -97,18 +95,14 @@ class ProjVector
   /**
    * Empty Constructor.
    */
-  ProjVector() :
-      projVect()
-  {};
+  ProjVector() : projVect(){};
 
   /**
    * Create the projection vector based on the specified vector.
    *
    * @param vect Vector to be considered.
    */
-  ProjVector(const arma::vec& vect) :
-      projVect(arma::normalise(vect))
-  {};
+  ProjVector(const arma::vec& vect) : projVect(arma::normalise(vect)){};
 
   /**
    * Project the given point on the projection vector.
@@ -144,7 +138,7 @@ class ProjVector
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(projVect, "projVect");
+    ar& data::CreateNVP(projVect, "projVect");
   };
 };
 

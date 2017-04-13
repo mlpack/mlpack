@@ -21,17 +21,16 @@ namespace data {
 
 // Default constructor.
 template<typename PolicyType>
-inline DatasetMapper<PolicyType>::DatasetMapper(const size_t dimensionality) :
-    types(dimensionality, Datatype::numeric)
+inline DatasetMapper<PolicyType>::DatasetMapper(const size_t dimensionality)
+    : types(dimensionality, Datatype::numeric)
 {
   // Nothing to initialize here.
 }
 
 template<typename PolicyType>
 inline DatasetMapper<PolicyType>::DatasetMapper(PolicyType& policy,
-    const size_t dimensionality) :
-    types(dimensionality, Datatype::numeric),
-    policy(std::move(policy))
+                                                const size_t dimensionality)
+    : types(dimensionality, Datatype::numeric), policy(std::move(policy))
 {
   // Nothing to initialize here.
 }
@@ -82,8 +81,7 @@ inline T DatasetMapper<PolicyType>::MapString(const std::string& string,
 // Return the string corresponding to a value in a given dimension.
 template<typename PolicyType>
 inline const std::string& DatasetMapper<PolicyType>::UnmapString(
-    const size_t value,
-    const size_t dimension)
+    const size_t value, const size_t dimension)
 {
   // Throw an exception if the value doesn't exist.
   if (maps[dimension].first.right.count(value) == 0)
@@ -100,8 +98,7 @@ inline const std::string& DatasetMapper<PolicyType>::UnmapString(
 // Return the value corresponding to a string in a given dimension.
 template<typename PolicyType>
 inline typename PolicyType::MappedType DatasetMapper<PolicyType>::UnmapValue(
-    const std::string& string,
-    const size_t dimension)
+    const std::string& string, const size_t dimension)
 {
   // Throw an exception if the value doesn't exist.
   if (maps[dimension].first.left.count(string) == 0)
@@ -133,15 +130,14 @@ inline Datatype DatasetMapper<PolicyType>::Type(const size_t dimension) const
 template<typename PolicyType>
 inline Datatype& DatasetMapper<PolicyType>::Type(const size_t dimension)
 {
-  if (dimension >= types.size())
-    types.resize(dimension + 1, Datatype::numeric);
+  if (dimension >= types.size()) types.resize(dimension + 1, Datatype::numeric);
 
   return types[dimension];
 }
 
 template<typename PolicyType>
-inline
-size_t DatasetMapper<PolicyType>::NumMappings(const size_t dimension) const
+inline size_t DatasetMapper<PolicyType>::NumMappings(
+    const size_t dimension) const
 {
   return (maps.count(dimension) == 0) ? 0 : maps.at(dimension).second;
 }
@@ -169,8 +165,6 @@ inline void DatasetMapper<PolicyType>::Policy(PolicyType&& policy)
 {
   this->policy = std::forward<PolicyType>(policy);
 }
-
-
 
 } // namespace data
 } // namespace mlpack

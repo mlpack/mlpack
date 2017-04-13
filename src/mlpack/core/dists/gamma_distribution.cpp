@@ -23,8 +23,7 @@ GammaDistribution::GammaDistribution(const size_t dimensionality)
   beta.zeros(dimensionality);
 }
 
-GammaDistribution::GammaDistribution(const arma::mat& data,
-                                     const double tol)
+GammaDistribution::GammaDistribution(const arma::mat& data, const double tol)
 {
   Train(data, tol);
 }
@@ -51,8 +50,7 @@ inline bool GammaDistribution::Converged(const double aOld,
 void GammaDistribution::Train(const arma::mat& rdata, const double tol)
 {
   // If fittingSet is empty, nothing to do.
-  if (arma::size(rdata) == arma::size(arma::mat()))
-    return;
+  if (arma::size(rdata) == arma::size(arma::mat())) return;
 
   // Calculate log(mean(x)) and mean(log(x)) of each dataset row.
   const arma::vec meanLogxVec = arma::mean(arma::log(rdata), 1);
@@ -64,14 +62,13 @@ void GammaDistribution::Train(const arma::mat& rdata, const double tol)
   Train(logMeanxVec, meanLogxVec, meanxVec, tol);
 }
 
-//Fits an alpha and beta parameter according to observation probabilities.
+// Fits an alpha and beta parameter according to observation probabilities.
 void GammaDistribution::Train(const arma::mat& rdata,
                               const arma::vec& probabilities,
                               const double tol)
 {
   // If fittingSet is empty, nothing to do.
-  if (arma::size(rdata) == arma::size(arma::mat()))
-    return;
+  if (arma::size(rdata) == arma::size(arma::mat())) return;
 
   arma::vec meanLogxVec(rdata.n_rows, arma::fill::zeros);
   arma::vec meanxVec(rdata.n_rows, arma::fill::zeros);
@@ -142,14 +139,16 @@ void GammaDistribution::Train(const arma::vec& logMeanxVec,
 
       // Protect against division by 0.
       if (denominator == 0)
-        throw std::logic_error("GammaDistribution::Train() attempted division"
+        throw std::logic_error(
+            "GammaDistribution::Train() attempted division"
             " by 0.");
 
       aEst = 1.0 / ((1.0 / aEst) + nominator / denominator);
 
       // Protect against nan values (aEst will be passed to logarithm).
       if (aEst <= 0)
-        throw std::logic_error("GammaDistribution::Train(): estimated invalid "
+        throw std::logic_error(
+            "GammaDistribution::Train(): estimated invalid "
             "negative value for parameter alpha!");
 
     } while (!Converged(aEst, aOld, tol));
@@ -192,7 +191,7 @@ void GammaDistribution::Probability(const arma::mat& observations,
 double GammaDistribution::Probability(double x, size_t dim) const
 {
   return std::pow(x, alpha(dim) - 1) * std::exp(-x / beta(dim)) /
-      (std::tgamma(alpha(dim)) * std::pow(beta(dim), alpha(dim)));
+         (std::tgamma(alpha(dim)) * std::pow(beta(dim), alpha(dim)));
 }
 
 // Returns the log probability of the provided observations.
@@ -219,7 +218,7 @@ void GammaDistribution::LogProbability(const arma::mat& observations,
       double factor = std::exp(-observations(d, i) / beta(d));
       double numerator = std::pow(observations(d, i), alpha(d) - 1);
 
-      LogProbabilities(i) += std::log( numerator * factor / denominators(d));
+      LogProbabilities(i) += std::log(numerator * factor / denominators(d));
     }
   }
 }

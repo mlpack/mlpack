@@ -85,7 +85,8 @@ void RemoveRows(const arma::mat& input,
  * Upper triangular representation of a symmetric matrix, scaled such that,
  * dot(Svec(A), Svec(B)) == dot(A, B) for symmetric A, B. Specifically,
  *
- * Svec(K) = [ K_11, sqrt(2) K_12, ..., sqrt(2) K_1n, K_22, ..., sqrt(2) K_2n, ..., K_nn ]^T
+ * Svec(K) = [ K_11, sqrt(2) K_12, ..., sqrt(2) K_1n, K_22, ..., sqrt(2) K_2n,
+ * ..., K_nn ]^T
  *
  * @param input A symmetric matrix
  * @param output

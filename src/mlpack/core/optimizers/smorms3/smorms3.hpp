@@ -39,7 +39,8 @@ namespace optimization {
  * @endcode
  *
  *
- * For SMORMS3 to work, a DecomposableFunctionType template parameter is required.
+ * For SMORMS3 to work, a DecomposableFunctionType template parameter is
+ * required.
  * This class must implement the following function:
  *
  *   size_t NumFunctions();
@@ -73,7 +74,8 @@ class SMORMS3
    *
    * @param function Function to be optimized (minimized).
    * @param stepSize Step size for each iteration.
-   * @param epsilon Value used to initialise the mean squared gradient parameter.
+   * @param epsilon Value used to initialise the mean squared gradient
+   * parameter.
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *        limit).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
@@ -81,14 +83,14 @@ class SMORMS3
    *        function is visited in linear order.
    */
   SMORMS3(DecomposableFunctionType& function,
-      const double stepSize = 0.001,
-      const double epsilon = 1e-16,
-      const size_t maxIterations = 100000,
-      const double tolerance = 1e-5,
-      const bool shuffle = true);
+          const double stepSize = 0.001,
+          const double epsilon = 1e-16,
+          const size_t maxIterations = 100000,
+          const double tolerance = 1e-5,
+          const bool shuffle = true);
 
   /**
-   * Optimize the given function using SMORMS3. The given starting point will 
+   * Optimize the given function using SMORMS3. The given starting point will
    * be modified to store the finishing point of the algorithm, and the final
    * objective value is returned.
    *
@@ -98,7 +100,10 @@ class SMORMS3
   double Optimize(arma::mat& iterate) { return optimizer.Optimize(iterate); }
 
   //! Get the instantiated function to be optimized.
-  const DecomposableFunctionType& Function() const { return optimizer.Function(); }
+  const DecomposableFunctionType& Function() const
+  {
+    return optimizer.Function();
+  }
   //! Modify the instantiated function.
   DecomposableFunctionType& Function() { return optimizer.Function(); }
 

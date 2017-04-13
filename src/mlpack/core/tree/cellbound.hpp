@@ -117,17 +117,19 @@ class CellBound
   math::RangeType<ElemType>& operator[](const size_t i) { return bounds[i]; }
   //! Modify the range for a particular dimension.  No bounds checking.
   const math::RangeType<ElemType>& operator[](const size_t i) const
-  { return bounds[i]; }
+  {
+    return bounds[i];
+  }
 
   //! Get lower address.
   arma::Col<AddressElemType>& LoAddress() { return loAddress; }
   //! Modify lower address.
-  const arma::Col<AddressElemType>& LoAddress() const {return loAddress; }
+  const arma::Col<AddressElemType>& LoAddress() const { return loAddress; }
 
   //! Get high address.
   arma::Col<AddressElemType>& HiAddress() { return hiAddress; }
   //! Modify high address.
-  const arma::Col<AddressElemType>& HiAddress() const {return hiAddress; }
+  const arma::Col<AddressElemType>& HiAddress() const { return hiAddress; }
 
   //! Get lower bound of each subrectangle.
   const arma::Mat<ElemType>& LoBound() const { return loBound; }
@@ -155,9 +157,9 @@ class CellBound
    * @param point Point to which the minimum distance is requested.
    */
   template<typename VecType>
-  ElemType MinDistance(const VecType& point,
-                       typename std::enable_if_t<IsVector<VecType>::value>* = 0)
-      const;
+  ElemType MinDistance(
+      const VecType& point,
+      typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
 
   /**
    * Calculates minimum bound-to-bound distance.
@@ -172,9 +174,9 @@ class CellBound
    * @param point Point to which the maximum distance is requested.
    */
   template<typename VecType>
-  ElemType MaxDistance(const VecType& point,
-                       typename std::enable_if_t<IsVector<VecType>::value>* = 0)
-      const;
+  ElemType MaxDistance(
+      const VecType& point,
+      typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
 
   /**
    * Computes maximum distance.
@@ -313,4 +315,3 @@ struct BoundTraits<CellBound<MetricType, ElemType>>
 #include "cellbound_impl.hpp"
 
 #endif // MLPACK_CORE_TREE_CELLBOUND_HPP
-

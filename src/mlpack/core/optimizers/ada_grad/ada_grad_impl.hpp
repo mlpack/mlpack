@@ -24,14 +24,15 @@ AdaGrad<DecomposableFunctionType>::AdaGrad(DecomposableFunctionType& function,
                                            const double epsilon,
                                            const size_t maxIterations,
                                            const double tolerance,
-                                           const bool shuffle) :
-    optimizer(function,
-              stepSize,
-              maxIterations,
-              tolerance,
-              shuffle,
-              AdaGradUpdate(epsilon))
-{ /* Nothing to do. */ }
+                                           const bool shuffle)
+    : optimizer(function,
+                stepSize,
+                maxIterations,
+                tolerance,
+                shuffle,
+                AdaGradUpdate(epsilon))
+{ /* Nothing to do. */
+}
 
 } // namespace optimization
 } // namespace mlpack

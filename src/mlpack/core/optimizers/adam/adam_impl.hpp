@@ -30,17 +30,18 @@ Adam<DecomposableFunctionType>::Adam(DecomposableFunctionType& function,
                                      const size_t maxIterations,
                                      const double tolerance,
                                      const bool shuffle,
-                                     const bool adaMax) :
-    function(function),
-    stepSize(stepSize),
-    beta1(beta1),
-    beta2(beta2),
-    eps(eps),
-    maxIterations(maxIterations),
-    tolerance(tolerance),
-    shuffle(shuffle),
-    adaMax(adaMax)
-{ /* Nothing to do. */ }
+                                     const bool adaMax)
+    : function(function),
+      stepSize(stepSize),
+      beta1(beta1),
+      beta2(beta2),
+      eps(eps),
+      maxIterations(maxIterations),
+      tolerance(tolerance),
+      shuffle(shuffle),
+      adaMax(adaMax)
+{ /* Nothing to do. */
+}
 
 //! Optimize the function (minimize).
 template<typename DecomposableFunctionType>
@@ -52,8 +53,8 @@ double Adam<DecomposableFunctionType>::Optimize(arma::mat& iterate)
   // This is used only if shuffle is true.
   arma::Col<size_t> visitationOrder;
   if (shuffle)
-    visitationOrder = arma::shuffle(arma::linspace<arma::Col<size_t>>(0,
-        (numFunctions - 1), numFunctions));
+    visitationOrder = arma::shuffle(
+        arma::linspace<arma::Col<size_t>>(0, (numFunctions - 1), numFunctions));
 
   // To keep track of where we are and how things are going.
   size_t currentFunction = 0;
@@ -92,20 +93,20 @@ double Adam<DecomposableFunctionType>::Optimize(arma::mat& iterate)
     {
       // Output current objective function.
       Log::Info << "Adam: iteration " << i << ", objective " << overallObjective
-          << "." << std::endl;
+                << "." << std::endl;
 
       if (std::isnan(overallObjective) || std::isinf(overallObjective))
       {
         Log::Warn << "Adam: converged to " << overallObjective
-            << "; terminating with failure. Try a smaller step size?"
-            << std::endl;
+                  << "; terminating with failure. Try a smaller step size?"
+                  << std::endl;
         return overallObjective;
       }
 
       if (std::abs(lastObjective - overallObjective) < tolerance)
       {
         Log::Info << "Adam: minimized within tolerance " << tolerance << "; "
-            << "terminating optimization." << std::endl;
+                  << "terminating optimization." << std::endl;
         return overallObjective;
       }
 
@@ -140,8 +141,8 @@ double Adam<DecomposableFunctionType>::Optimize(arma::mat& iterate)
       v += (1 - beta2) * (gradient % gradient);
     }
 
-    const double biasCorrection1 = 1.0 - std::pow(beta1, (double) i);
-    const double biasCorrection2 = 1.0 - std::pow(beta2, (double) i);
+    const double biasCorrection1 = 1.0 - std::pow(beta1, (double)i);
+    const double biasCorrection2 = 1.0 - std::pow(beta2, (double)i);
 
     if (adaMax)
     {
@@ -155,20 +156,20 @@ double Adam<DecomposableFunctionType>::Optimize(arma::mat& iterate)
        * following expression is an approximation of the following actual term;
        * m / (arma::sqrt(v) + (arma::sqrt(biasCorrection2) * eps).
        */
-      iterate -= (stepSize * std::sqrt(biasCorrection2) / biasCorrection1) *
-                  m / (arma::sqrt(v) + eps);
+      iterate -= (stepSize * std::sqrt(biasCorrection2) / biasCorrection1) * m /
+                 (arma::sqrt(v) + eps);
     }
 
     // Now add that to the overall objective function.
     if (shuffle)
-      overallObjective += function.Evaluate(iterate,
-          visitationOrder[currentFunction]);
+      overallObjective +=
+          function.Evaluate(iterate, visitationOrder[currentFunction]);
     else
       overallObjective += function.Evaluate(iterate, currentFunction);
   }
 
   Log::Info << "Adam: maximum iterations (" << maxIterations << ") reached; "
-      << "terminating optimization." << std::endl;
+            << "terminating optimization." << std::endl;
   // Calculate final objective.
   overallObjective = 0;
   for (size_t i = 0; i < numFunctions; ++i)

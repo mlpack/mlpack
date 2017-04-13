@@ -20,14 +20,14 @@ namespace mlpack {
 namespace tree {
 
 template<typename TreeType>
-size_t RPlusPlusTreeDescentHeuristic::ChooseDescentNode(
-    TreeType* node, const size_t point)
+size_t RPlusPlusTreeDescentHeuristic::ChooseDescentNode(TreeType* node,
+                                                        const size_t point)
 {
   // Find the node whose maximum bounding rectangle contains the point.
   for (size_t bestIndex = 0; bestIndex < node->NumChildren(); bestIndex++)
   {
     if (node->Child(bestIndex).AuxiliaryInfo().OuterBound().Contains(
-        node->Dataset().col(point)))
+            node->Dataset().col(point)))
       return bestIndex;
   }
 

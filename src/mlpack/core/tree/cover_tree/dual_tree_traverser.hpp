@@ -18,12 +18,10 @@
 namespace mlpack {
 namespace tree {
 
-template<
-    typename MetricType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename RootPointPolicy>
 template<typename RuleType>
 class CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     DualTreeTraverser
@@ -86,20 +84,19 @@ class CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
   /**
    * Helper function for traversal of the two trees.
    */
-  void Traverse(CoverTree& queryNode,
-                std::map<int, std::vector<DualCoverTreeMapEntry> >&
-                    referenceMap);
+  void Traverse(
+      CoverTree& queryNode,
+      std::map<int, std::vector<DualCoverTreeMapEntry> >& referenceMap);
 
   //! Prepare map for recursion.
-  void PruneMap(CoverTree& queryNode,
-                std::map<int, std::vector<DualCoverTreeMapEntry> >&
-                    referenceMap,
-                std::map<int, std::vector<DualCoverTreeMapEntry> >&
-                    childMap);
+  void PruneMap(
+      CoverTree& queryNode,
+      std::map<int, std::vector<DualCoverTreeMapEntry> >& referenceMap,
+      std::map<int, std::vector<DualCoverTreeMapEntry> >& childMap);
 
-  void ReferenceRecursion(CoverTree& queryNode,
-                          std::map<int, std::vector<DualCoverTreeMapEntry> >&
-                              referenceMap);
+  void ReferenceRecursion(
+      CoverTree& queryNode,
+      std::map<int, std::vector<DualCoverTreeMapEntry> >& referenceMap);
 };
 
 } // namespace tree

@@ -26,14 +26,15 @@ AdaDelta<DecomposableFunctionType>::AdaDelta(DecomposableFunctionType& function,
                                              const double epsilon,
                                              const size_t maxIterations,
                                              const double tolerance,
-                                             const bool shuffle) :
-    optimizer(function,
-              stepSize,
-              maxIterations,
-              tolerance,
-              shuffle,
-              AdaDeltaUpdate(rho, epsilon))
-{ /* Nothing to do. */ }
+                                             const bool shuffle)
+    : optimizer(function,
+                stepSize,
+                maxIterations,
+                tolerance,
+                shuffle,
+                AdaDeltaUpdate(rho, epsilon))
+{ /* Nothing to do. */
+}
 
 } // namespace optimization
 } // namespace mlpack

@@ -22,11 +22,17 @@ namespace util {
 
 //! Metaprogramming structure for vector detection.
 template<typename T>
-struct IsStdVector { const static bool value = false; };
+struct IsStdVector
+{
+  const static bool value = false;
+};
 
 //! Metaprogramming structure for vector detection.
 template<typename T, typename A>
-struct IsStdVector<std::vector<T, A>> { const static bool value = true; };
+struct IsStdVector<std::vector<T, A>>
+{
+  const static bool value = true;
+};
 
 // Default: HasSerialize = false.
 template<bool HasSerialize, typename T>
@@ -50,8 +56,8 @@ struct ParameterTypeDeducer<true, T>
 template<typename T>
 struct ParameterType
 {
-  typedef typename ParameterTypeDeducer<data::HasSerialize<T>::value, T>::type
-      type;
+  typedef
+      typename ParameterTypeDeducer<data::HasSerialize<T>::value, T>::type type;
 };
 
 /**
@@ -77,7 +83,8 @@ struct ParameterType<arma::Col<eT>>
 };
 
 /**
- * For row vector types, boost::program_options will accept a std::string, not an
+ * For row vector types, boost::program_options will accept a std::string, not
+ * an
  * arma::Row<eT> (since it is not clear how to specify a vector on the
  * command-line).
  */
@@ -91,8 +98,8 @@ struct ParameterType<arma::Row<eT>>
  * For matrix+dataset info types, we should accept a std::string.
  */
 template<typename eT, typename PolicyType>
-struct ParameterType<std::tuple<mlpack::data::DatasetMapper<PolicyType>,
-                     arma::Mat<eT>>>
+struct ParameterType<
+    std::tuple<mlpack::data::DatasetMapper<PolicyType>, arma::Mat<eT>>>
 {
   typedef std::string type;
 };
@@ -168,8 +175,9 @@ std::string MapParameterName(
     const std::string& identifier,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* = 0);
+    const typename boost::disable_if<
+        std::is_same<T, std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::
+        type* = 0);
 
 //! This must be overloaded for matrices.
 template<typename T>
@@ -177,9 +185,10 @@ std::string MapParameterName(
     const std::string& identifier,
     const typename boost::enable_if_c<
         arma::is_arma_type<T>::value ||
-        std::is_same<T, std::tuple<mlpack::data::DatasetInfo,
-                                   arma::mat>>::value ||
-        data::HasSerialize<T>::value>::type* /* junk */ = 0);
+        std::is_same<T,
+                     std::tuple<mlpack::data::DatasetInfo, arma::mat>>::value ||
+        data::HasSerialize<T>::value>::type* /* junk */
+    = 0);
 
 /**
  * If needed, map 'trueValue' to the right type and return it.  This is called
@@ -191,8 +200,9 @@ T& HandleParameter(
     util::ParamData& d,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* = 0);
+    const typename boost::disable_if<
+        std::is_same<T, std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::
+        type* = 0);
 
 //! This must be overloaded for matrices.
 template<typename T>
@@ -206,8 +216,9 @@ template<typename T>
 T& HandleParameter(
     typename util::ParameterType<T>::type& value,
     util::ParamData& d,
-    const typename boost::enable_if<std::is_same<T,
-        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* = 0);
+    const typename boost::enable_if<
+        std::is_same<T, std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::
+        type* = 0);
 
 //! This must be overloaded for serializable objects.
 template<typename T>
@@ -223,8 +234,8 @@ T& HandleRawParameter(
     util::ParamData& /* d */,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
+    const typename boost::disable_if<
+        std::is_same<T, std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
 {
   return value;
 }
@@ -254,8 +265,8 @@ template<typename T>
 T& HandleRawParameter(
     typename util::ParameterType<T>::type& /* value */,
     util::ParamData& d,
-    const typename boost::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
+    const typename boost::enable_if<
+        std::is_same<T, std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
 {
   return *boost::any_cast<T>(&d.mappedValue);
 }

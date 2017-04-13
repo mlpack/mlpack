@@ -54,7 +54,6 @@ class BallBound
   bool ownsMetric;
 
  public:
-
   //! Empty Constructor.
   BallBound();
 

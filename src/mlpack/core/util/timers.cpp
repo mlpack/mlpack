@@ -44,20 +44,14 @@ microseconds Timer::Get(const std::string& name)
   return CLI::GetSingleton().timer.GetTimer(name);
 }
 
-std::map<std::string, microseconds>& Timers::GetAllTimers()
-{
-  return timers;
-}
+std::map<std::string, microseconds>& Timers::GetAllTimers() { return timers; }
 
 microseconds Timers::GetTimer(const std::string& timerName)
 {
   return timers[timerName];
 }
 
-bool Timers::GetState(std::string timerName)
-{
-  return timerState[timerName];
-}
+bool Timers::GetState(std::string timerName) { return timerState[timerName]; }
 
 void Timers::PrintTimer(const std::string& timerName)
 {
@@ -67,7 +61,7 @@ void Timers::PrintTimer(const std::string& timerName)
   microseconds totalDurationMicroSec =
       duration_cast<microseconds>(totalDuration % seconds(1));
   Log::Info << totalDurationSec.count() << "." << std::setw(6)
-      << std::setfill('0') << totalDurationMicroSec.count() << "s";
+            << std::setfill('0') << totalDurationMicroSec.count() << "s";
 
   // Also output convenient day/hr/min/sec.
   // The following line is a custom duration for a day.
@@ -91,26 +85,23 @@ void Timers::PrintTimer(const std::string& timerName)
 
     if (h.count() > 0)
     {
-      if (output)
-        Log::Info << ", ";
+      if (output) Log::Info << ", ";
       Log::Info << h.count() << " hrs";
       output = true;
     }
 
     if (m.count() > 0)
     {
-      if (output)
-        Log::Info << ", ";
+      if (output) Log::Info << ", ";
       Log::Info << m.count() << " mins";
       output = true;
     }
 
     if (s.count() > 0)
     {
-      if (output)
-        Log::Info << ", ";
+      if (output) Log::Info << ", ";
       Log::Info << s.count() << "." << std::setw(1)
-          << (totalDurationMicroSec.count() / 100000) << " secs";
+                << (totalDurationMicroSec.count() / 100000) << " secs";
       output = true;
     }
 
@@ -131,7 +122,7 @@ void Timers::StartTimer(const std::string& timerName)
   {
     std::ostringstream error;
     error << "Timer::Start(): timer '" << timerName
-        << "' has already been started";
+          << "' has already been started";
     throw std::runtime_error(error.str());
   }
 
@@ -142,7 +133,7 @@ void Timers::StartTimer(const std::string& timerName)
   // If the timer is added first time
   if (timers.count(timerName) == 0)
   {
-    timers[timerName] = (microseconds) 0;
+    timers[timerName] = (microseconds)0;
   }
 
   timerStartTime[timerName] = currTime;
@@ -154,7 +145,7 @@ void Timers::StopTimer(const std::string& timerName)
   {
     std::ostringstream error;
     error << "Timer::Stop(): timer '" << timerName
-        << "' has already been stopped";
+          << "' has already been stopped";
     throw std::runtime_error(error.str());
   }
 
@@ -163,6 +154,6 @@ void Timers::StopTimer(const std::string& timerName)
   high_resolution_clock::time_point currTime = GetTime();
 
   // Calculate the delta time.
-  timers[timerName] += duration_cast<microseconds>(currTime -
-      timerStartTime[timerName]);
+  timers[timerName] +=
+      duration_cast<microseconds>(currTime - timerStartTime[timerName]);
 }

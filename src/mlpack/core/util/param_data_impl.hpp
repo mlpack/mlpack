@@ -20,8 +20,9 @@ std::string MapParameterName(
     const std::string& identifier,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
     const typename boost::disable_if<data::HasSerialize<T>>::type* /* junk */,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* /* junk */)
+    const typename boost::disable_if<
+        std::is_same<T, std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::
+        type* /* junk */)
 {
   return identifier;
 }
@@ -33,8 +34,8 @@ std::string MapParameterName(
     const std::string& identifier,
     const typename boost::enable_if_c<
         arma::is_arma_type<T>::value ||
-        std::is_same<T, std::tuple<mlpack::data::DatasetInfo,
-                                   arma::mat>>::value ||
+        std::is_same<T,
+                     std::tuple<mlpack::data::DatasetInfo, arma::mat>>::value ||
         data::HasSerialize<T>::value>::type* /* junk */)
 {
   return identifier + "_file";
@@ -47,8 +48,9 @@ T& HandleParameter(
     ParamData& /* d */,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
     const typename boost::disable_if<data::HasSerialize<T>>::type* /* junk */,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* /* junk */)
+    const typename boost::disable_if<
+        std::is_same<T, std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::
+        type* /* junk */)
 {
   return value;
 }
@@ -83,18 +85,19 @@ template<typename T>
 T& HandleParameter(
     typename util::ParameterType<T>::type& value,
     util::ParamData& d,
-    const typename boost::enable_if<std::is_same<T,
-        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* /* junk */)
+    const typename boost::enable_if<
+        std::is_same<T, std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::
+        type* /* junk */)
 {
   // If this is an input parameter, we need to load both the matrix and the
   // dataset info.
   std::tuple<mlpack::data::DatasetInfo, arma::mat>& tuple =
-      *boost::any_cast<std::tuple<mlpack::data::DatasetInfo,
-      arma::mat>>(&d.mappedValue);
+      *boost::any_cast<std::tuple<mlpack::data::DatasetInfo, arma::mat>>(
+          &d.mappedValue);
   if (d.input && !d.loaded)
   {
     data::Load(value, std::get<1>(tuple), std::get<0>(tuple), true,
-        !d.noTranspose);
+               !d.noTranspose);
     d.loaded = true;
   }
 

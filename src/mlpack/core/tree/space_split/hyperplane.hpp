@@ -46,9 +46,7 @@ class HyperplaneBase
   /**
    * Empty Constructor. By default will consider all points to the left.
    */
-  HyperplaneBase() :
-      splitVal(DBL_MAX)
-  {};
+  HyperplaneBase() : splitVal(DBL_MAX){};
 
   /**
    * Create the hyperplane with the specified projection vector and split value.
@@ -56,10 +54,8 @@ class HyperplaneBase
    * @param projVect Projection vector.
    * @param splitVal Split value.
    */
-  HyperplaneBase(const ProjVectorType& projVect, double splitVal) :
-      projVect(projVect),
-      splitVal(splitVal)
-  {};
+  HyperplaneBase(const ProjVectorType& projVect, double splitVal)
+      : projVect(projVect), splitVal(splitVal){};
 
   /**
    * Project the given point on the projection vector and subtract the
@@ -71,8 +67,7 @@ class HyperplaneBase
   double Project(const VecType& point,
                  typename std::enable_if_t<IsVector<VecType>::value>* = 0) const
   {
-    if (splitVal == DBL_MAX)
-      return 0;
+    if (splitVal == DBL_MAX) return 0;
     return projVect.Project(point) - splitVal;
   };
 
@@ -97,7 +92,7 @@ class HyperplaneBase
    */
   template<typename VecType>
   bool Right(const VecType& point,
-            typename std::enable_if_t<IsVector<VecType>::value>* = 0) const
+             typename std::enable_if_t<IsVector<VecType>::value>* = 0) const
   {
     return Project(point) > 0;
   };
@@ -109,8 +104,7 @@ class HyperplaneBase
    */
   bool Left(const BoundType& bound) const
   {
-    if (splitVal == DBL_MAX)
-      return true;
+    if (splitVal == DBL_MAX) return true;
     return projVect.Project(bound).Hi() <= splitVal;
   };
 
@@ -121,8 +115,7 @@ class HyperplaneBase
    */
   bool Right(const BoundType& bound) const
   {
-    if (splitVal == DBL_MAX)
-      return false;
+    if (splitVal == DBL_MAX) return false;
     return projVect.Project(bound).Lo() > splitVal;
   };
 
@@ -132,8 +125,8 @@ class HyperplaneBase
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(projVect, "projVect");
-    ar & data::CreateNVP(splitVal, "splitVal");
+    ar& data::CreateNVP(projVect, "projVect");
+    ar& data::CreateNVP(splitVal, "splitVal");
   };
 };
 
@@ -141,8 +134,8 @@ class HyperplaneBase
  * AxisOrthogonalHyperplane represents a hyperplane orthogonal to an axis.
  */
 template<typename MetricType>
-using AxisOrthogonalHyperplane = HyperplaneBase<bound::HRectBound<MetricType>,
-    AxisParallelProjVector>;
+using AxisOrthogonalHyperplane =
+    HyperplaneBase<bound::HRectBound<MetricType>, AxisParallelProjVector>;
 
 /**
  * Hyperplane represents a general hyperplane (not necessarily axis-orthogonal).

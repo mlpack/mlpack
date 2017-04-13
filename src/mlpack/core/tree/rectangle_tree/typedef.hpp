@@ -82,7 +82,8 @@ using RStarTree = RectangleTree<MetricType,
  * @inproceedings{berchtold1996r,
  *   title = {The X-Tree: An Index Structure for High--Dimensional Data},
  *   author = {Berchtold, Stefan and Keim, Daniel A. and Kriegel, Hans-Peter},
- *   booktitle = {Proc. 22th Int. Conf. on Very Large Databases (VLDB'96), Bombay, India},
+ *   booktitle = {Proc. 22th Int. Conf. on Very Large Databases (VLDB'96),
+ * Bombay, India},
  *   editor = {Vijayaraman, T. and Buchmann, Alex and Mohan, C. and Sarda, N.},
  *   pages = {28--39},
  *   year = {1996},
@@ -108,7 +109,8 @@ using XTree = RectangleTree<MetricType,
  * @inproceedings{kamel1994r,
  *   author = {Kamel, Ibrahim and Faloutsos, Christos},
  *   title = {Hilbert R-tree: An Improved R-tree Using Fractals},
- *   booktitle = {Proceedings of the 20th International Conference on Very Large Data Bases},
+ *   booktitle = {Proceedings of the 20th International Conference on Very Large
+ * Data Bases},
  *   series = {VLDB '94},
  *   year = {1994},
  *   isbn = {1-55860-153-8},
@@ -125,15 +127,15 @@ using XTree = RectangleTree<MetricType,
  */
 template<typename TreeType>
 using DiscreteHilbertRTreeAuxiliaryInformation =
-      HilbertRTreeAuxiliaryInformation<TreeType,DiscreteHilbertValue>;
+    HilbertRTreeAuxiliaryInformation<TreeType, DiscreteHilbertValue>;
 
 template<typename MetricType, typename StatisticType, typename MatType>
 using HilbertRTree = RectangleTree<MetricType,
-                            StatisticType,
-                            MatType,
-                            HilbertRTreeSplit<2>,
-                            HilbertRTreeDescentHeuristic,
-                            DiscreteHilbertRTreeAuxiliaryInformation>;
+                                   StatisticType,
+                                   MatType,
+                                   HilbertRTreeSplit<2>,
+                                   HilbertRTreeDescentHeuristic,
+                                   DiscreteHilbertRTreeAuxiliaryInformation>;
 
 /**
  * The R+ tree, a variant of the R tree that avoids overlapping rectangles.
@@ -159,13 +161,13 @@ using HilbertRTree = RectangleTree<MetricType,
  * @see @ref trees, RTree, RTree, RPlusTree
  */
 template<typename MetricType, typename StatisticType, typename MatType>
-using RPlusTree = RectangleTree<MetricType,
-                            StatisticType,
-                            MatType,
-                            RPlusTreeSplit<RPlusTreeSplitPolicy,
-                                           MinimalCoverageSweep>,
-                            RPlusTreeDescentHeuristic,
-                            NoAuxiliaryInformation>;
+using RPlusTree =
+    RectangleTree<MetricType,
+                  StatisticType,
+                  MatType,
+                  RPlusTreeSplit<RPlusTreeSplitPolicy, MinimalCoverageSweep>,
+                  RPlusTreeDescentHeuristic,
+                  NoAuxiliaryInformation>;
 
 /**
  * The R++ tree, a variant of the R+ tree with maximum buonding rectangles.
@@ -186,14 +188,14 @@ using RPlusTree = RectangleTree<MetricType,
  * @endcode
  *
  * @see @ref trees, RTree, RTree, RPlusTree, RPlusPlusTree
- */template<typename MetricType, typename StatisticType, typename MatType>
-using RPlusPlusTree = RectangleTree<MetricType,
-                            StatisticType,
-                            MatType,
-                            RPlusTreeSplit<RPlusPlusTreeSplitPolicy,
-                                           MinimalSplitsNumberSweep>,
-                            RPlusPlusTreeDescentHeuristic,
-                            RPlusPlusTreeAuxiliaryInformation>;
+ */ template<typename MetricType, typename StatisticType, typename MatType>
+using RPlusPlusTree = RectangleTree<
+    MetricType,
+    StatisticType,
+    MatType,
+    RPlusTreeSplit<RPlusPlusTreeSplitPolicy, MinimalSplitsNumberSweep>,
+    RPlusPlusTreeDescentHeuristic,
+    RPlusPlusTreeAuxiliaryInformation>;
 } // namespace tree
 } // namespace mlpack
 

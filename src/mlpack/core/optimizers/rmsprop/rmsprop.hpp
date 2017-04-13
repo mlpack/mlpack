@@ -80,7 +80,8 @@ class RMSProp
    * @param stepSize Step size for each iteration.
    * @param alpha Smoothing constant, similar to that used in AdaDelta and
    *        momentum methods.
-   * @param epsilon Value used to initialise the mean squared gradient parameter.
+   * @param epsilon Value used to initialise the mean squared gradient
+   * parameter.
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *        limit).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
@@ -111,7 +112,7 @@ class RMSProp
     return optimizer.Function();
   }
   //! Modify the instantiated function.
-  DecomposableFunctionType& Function() { return  optimizer.Function(); }
+  DecomposableFunctionType& Function() { return optimizer.Function(); }
 
   //! Get the step size.
   double StepSize() const { return optimizer.StepSize(); }

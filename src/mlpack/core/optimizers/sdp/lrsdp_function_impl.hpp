@@ -19,49 +19,51 @@
 namespace mlpack {
 namespace optimization {
 
-template <typename SDPType>
+template<typename SDPType>
 LRSDPFunction<SDPType>::LRSDPFunction(const SDPType& sdp,
-                                      const arma::mat& initialPoint):
-    sdp(sdp),
-    initialPoint(initialPoint)
+                                      const arma::mat& initialPoint)
+    : sdp(sdp), initialPoint(initialPoint)
 {
   if (initialPoint.n_rows < initialPoint.n_cols)
-    Log::Warn << "LRSDPFunction::LRSDPFunction(): solution matrix will have "
+    Log::Warn
+        << "LRSDPFunction::LRSDPFunction(): solution matrix will have "
         << "more columns than rows.  It may be more efficient to find the "
         << "transposed solution." << std::endl;
 }
 
-template <typename SDPType>
+template<typename SDPType>
 LRSDPFunction<SDPType>::LRSDPFunction(const size_t numSparseConstraints,
                                       const size_t numDenseConstraints,
-                                      const arma::mat& initialPoint):
-    sdp(initialPoint.n_rows, numSparseConstraints, numDenseConstraints),
-    initialPoint(initialPoint)
+                                      const arma::mat& initialPoint)
+    : sdp(initialPoint.n_rows, numSparseConstraints, numDenseConstraints),
+      initialPoint(initialPoint)
 {
   if (initialPoint.n_rows < initialPoint.n_cols)
-    Log::Warn << "LRSDPFunction::LRSDPFunction(): solution matrix will have "
+    Log::Warn
+        << "LRSDPFunction::LRSDPFunction(): solution matrix will have "
         << "more columns than rows.  It may be more efficient to find the "
         << "transposed solution." << std::endl;
 }
 
-template <typename SDPType>
+template<typename SDPType>
 double LRSDPFunction<SDPType>::Evaluate(const arma::mat& coordinates) const
 {
   const arma::mat rrt = coordinates * trans(coordinates);
   return accu(SDP().C() % rrt);
 }
 
-template <typename SDPType>
+template<typename SDPType>
 void LRSDPFunction<SDPType>::Gradient(const arma::mat& /* coordinates */,
                                       arma::mat& /* gradient */) const
 {
-  Log::Fatal << "LRSDPFunction::Gradient() not implemented for arbitrary optimizers!"
+  Log::Fatal
+      << "LRSDPFunction::Gradient() not implemented for arbitrary optimizers!"
       << std::endl;
 }
 
-template <typename SDPType>
-double LRSDPFunction<SDPType>::EvaluateConstraint(const size_t index,
-                                                  const arma::mat& coordinates) const
+template<typename SDPType>
+double LRSDPFunction<SDPType>::EvaluateConstraint(
+    const size_t index, const arma::mat& coordinates) const
 {
   const arma::mat rrt = coordinates * trans(coordinates);
   if (index < SDP().NumSparseConstraints())
@@ -70,26 +72,27 @@ double LRSDPFunction<SDPType>::EvaluateConstraint(const size_t index,
   return accu(SDP().DenseA()[index1] % rrt) - SDP().DenseB()[index1];
 }
 
-template <typename SDPType>
-void LRSDPFunction<SDPType>::GradientConstraint(const size_t /* index */,
-                                                const arma::mat& /* coordinates */,
-                                                arma::mat& /* gradient */) const
+template<typename SDPType>
+void LRSDPFunction<SDPType>::GradientConstraint(
+    const size_t /* index */,
+    const arma::mat& /* coordinates */,
+    arma::mat& /* gradient */) const
 {
-  Log::Fatal << "LRSDPFunction::GradientConstraint() not implemented for arbitrary "
+  Log::Fatal
+      << "LRSDPFunction::GradientConstraint() not implemented for arbitrary "
       << "optimizers!" << std::endl;
 }
 
 //! Utility function for calculating part of the objective when AugLagrangian is
 //! used with an LRSDPFunction.
-template <typename MatrixType>
-static inline void
-UpdateObjective(double& objective,
-                const arma::mat& rrt,
-                const std::vector<MatrixType>& ais,
-                const arma::vec& bis,
-                const arma::vec& lambda,
-                const size_t lambdaOffset,
-                const double sigma)
+template<typename MatrixType>
+static inline void UpdateObjective(double& objective,
+                                   const arma::mat& rrt,
+                                   const std::vector<MatrixType>& ais,
+                                   const arma::vec& bis,
+                                   const arma::vec& lambda,
+                                   const size_t lambdaOffset,
+                                   const double sigma)
 {
   for (size_t i = 0; i < ais.size(); ++i)
   {
@@ -102,15 +105,14 @@ UpdateObjective(double& objective,
 
 //! Utility function for calculating part of the gradient when AugLagrangian is
 //! used with an LRSDPFunction.
-template <typename MatrixType>
-static inline void
-UpdateGradient(arma::mat& s,
-               const arma::mat& rrt,
-               const std::vector<MatrixType>& ais,
-               const arma::vec& bis,
-               const arma::vec& lambda,
-               const size_t lambdaOffset,
-               const double sigma)
+template<typename MatrixType>
+static inline void UpdateGradient(arma::mat& s,
+                                  const arma::mat& rrt,
+                                  const std::vector<MatrixType>& ais,
+                                  const arma::vec& bis,
+                                  const arma::vec& lambda,
+                                  const size_t lambdaOffset,
+                                  const double sigma)
 {
   for (size_t i = 0; i < ais.size(); ++i)
   {
@@ -120,12 +122,11 @@ UpdateGradient(arma::mat& s,
   }
 }
 
-template <typename SDPType>
-static inline double
-EvaluateImpl(const LRSDPFunction<SDPType>& function,
-             const arma::mat& coordinates,
-             const arma::vec& lambda,
-             const double sigma)
+template<typename SDPType>
+static inline double EvaluateImpl(const LRSDPFunction<SDPType>& function,
+                                  const arma::mat& coordinates,
+                                  const arma::vec& lambda,
+                                  const double sigma)
 {
   // We can calculate the entire objective in a smart way.
   // L(R, y, s) = Tr(C * (R R^T)) -
@@ -144,21 +145,21 @@ EvaluateImpl(const LRSDPFunction<SDPType>& function,
   double objective = accu(function.SDP().C() % rrt);
 
   // Now each constraint.
-  UpdateObjective(objective, rrt, function.SDP().SparseA(), function.SDP().SparseB(),
-      lambda, 0, sigma);
-  UpdateObjective(objective, rrt, function.SDP().DenseA(), function.SDP().DenseB(), lambda,
-      function.SDP().NumSparseConstraints(), sigma);
+  UpdateObjective(objective, rrt, function.SDP().SparseA(),
+                  function.SDP().SparseB(), lambda, 0, sigma);
+  UpdateObjective(objective, rrt, function.SDP().DenseA(),
+                  function.SDP().DenseB(), lambda,
+                  function.SDP().NumSparseConstraints(), sigma);
 
   return objective;
 }
 
-template <typename SDPType>
-static inline void
-GradientImpl(const LRSDPFunction<SDPType>& function,
-             const arma::mat& coordinates,
-             const arma::vec& lambda,
-             const double sigma,
-             arma::mat& gradient)
+template<typename SDPType>
+static inline void GradientImpl(const LRSDPFunction<SDPType>& function,
+                                const arma::mat& coordinates,
+                                const arma::vec& lambda,
+                                const double sigma,
+                                arma::mat& gradient)
 {
   // We can calculate the gradient in a smart way.
   // L'(R, y, s) = 2 * S' * R
@@ -168,12 +169,10 @@ GradientImpl(const LRSDPFunction<SDPType>& function,
   const arma::mat rrt = coordinates * trans(coordinates);
   arma::mat s(function.SDP().C());
 
-  UpdateGradient(
-      s, rrt, function.SDP().SparseA(), function.SDP().SparseB(),
-      lambda, 0, sigma);
-  UpdateGradient(
-      s, rrt, function.SDP().DenseA(), function.SDP().DenseB(),
-      lambda, function.SDP().NumSparseConstraints(), sigma);
+  UpdateGradient(s, rrt, function.SDP().SparseA(), function.SDP().SparseB(),
+                 lambda, 0, sigma);
+  UpdateGradient(s, rrt, function.SDP().DenseA(), function.SDP().DenseB(),
+                 lambda, function.SDP().NumSparseConstraints(), sigma);
 
   gradient = 2 * s * coordinates;
 }
@@ -181,32 +180,30 @@ GradientImpl(const LRSDPFunction<SDPType>& function,
 // Template specializations for function and gradient evaluation.
 // Note that C++ does not allow partial specialization of class members,
 // so we have to go about this in a somewhat round-about way.
-template <>
+template<>
 inline double AugLagrangianFunction<LRSDPFunction<SDP<arma::sp_mat>>>::Evaluate(
     const arma::mat& coordinates) const
 {
   return EvaluateImpl(function, coordinates, lambda, sigma);
 }
 
-template <>
+template<>
 inline double AugLagrangianFunction<LRSDPFunction<SDP<arma::mat>>>::Evaluate(
     const arma::mat& coordinates) const
 {
   return EvaluateImpl(function, coordinates, lambda, sigma);
 }
 
-template <>
+template<>
 inline void AugLagrangianFunction<LRSDPFunction<SDP<arma::sp_mat>>>::Gradient(
-    const arma::mat& coordinates,
-    arma::mat& gradient) const
+    const arma::mat& coordinates, arma::mat& gradient) const
 {
   GradientImpl(function, coordinates, lambda, sigma, gradient);
 }
 
-template <>
+template<>
 inline void AugLagrangianFunction<LRSDPFunction<SDP<arma::mat>>>::Gradient(
-    const arma::mat& coordinates,
-    arma::mat& gradient) const
+    const arma::mat& coordinates, arma::mat& gradient) const
 {
   GradientImpl(function, coordinates, lambda, sigma, gradient);
 }

@@ -18,7 +18,7 @@ namespace math {
 
 void RandomBasis(mat& basis, const size_t d)
 {
-  while(true)
+  while (true)
   {
     // [Q, R] = qr(randn(d, d));
     // Q = Q * diag(sign(diag(R)));
@@ -39,8 +39,7 @@ void RandomBasis(mat& basis, const size_t d)
       basis *= diagmat(rDiag);
 
       // Check if the determinant is positive.
-      if (det(basis) >= 0)
-        break;
+      if (det(basis) >= 0) break;
     }
   }
 }

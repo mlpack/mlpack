@@ -20,19 +20,16 @@ namespace mlpack {
 namespace tree {
 
 template<typename TreeType>
-RPlusPlusTreeAuxiliaryInformation<TreeType>::
-RPlusPlusTreeAuxiliaryInformation() :
-    outerBound(0)
+RPlusPlusTreeAuxiliaryInformation<TreeType>::RPlusPlusTreeAuxiliaryInformation()
+    : outerBound(0)
 {
-
 }
 
 template<typename TreeType>
-RPlusPlusTreeAuxiliaryInformation<TreeType>::
-RPlusPlusTreeAuxiliaryInformation(const TreeType* tree) :
-    outerBound(tree->Parent() ?
-               tree->Parent()->AuxiliaryInfo().OuterBound() :
-               tree->Bound().Dim())
+RPlusPlusTreeAuxiliaryInformation<TreeType>::RPlusPlusTreeAuxiliaryInformation(
+    const TreeType* tree)
+    : outerBound(tree->Parent() ? tree->Parent()->AuxiliaryInfo().OuterBound()
+                                : tree->Bound().Dim())
 {
   // Initialize the maximum bounding rectangle if the node is the root
   if (!tree->Parent())
@@ -44,22 +41,19 @@ RPlusPlusTreeAuxiliaryInformation(const TreeType* tree) :
 }
 
 template<typename TreeType>
-RPlusPlusTreeAuxiliaryInformation<TreeType>::
-RPlusPlusTreeAuxiliaryInformation(
+RPlusPlusTreeAuxiliaryInformation<TreeType>::RPlusPlusTreeAuxiliaryInformation(
     const RPlusPlusTreeAuxiliaryInformation& other,
     TreeType* /* tree */,
-    bool /* deepCopy */) :
-    outerBound(other.OuterBound())
+    bool /* deepCopy */)
+    : outerBound(other.OuterBound())
 {
-
 }
 
 template<typename TreeType>
-RPlusPlusTreeAuxiliaryInformation<TreeType>::
-RPlusPlusTreeAuxiliaryInformation(RPlusPlusTreeAuxiliaryInformation&& other) :
-    outerBound(std::move(other.outerBound))
+RPlusPlusTreeAuxiliaryInformation<TreeType>::RPlusPlusTreeAuxiliaryInformation(
+    RPlusPlusTreeAuxiliaryInformation&& other)
+    : outerBound(std::move(other.outerBound))
 {
-
 }
 
 template<typename TreeType>
@@ -123,7 +117,6 @@ void RPlusPlusTreeAuxiliaryInformation<TreeType>::SplitAuxiliaryInfo(
 template<typename TreeType>
 void RPlusPlusTreeAuxiliaryInformation<TreeType>::NullifyData()
 {
-
 }
 
 /**
@@ -131,12 +124,12 @@ void RPlusPlusTreeAuxiliaryInformation<TreeType>::NullifyData()
  */
 template<typename TreeType>
 template<typename Archive>
-void RPlusPlusTreeAuxiliaryInformation<TreeType>::
-Serialize(Archive& ar, const unsigned int /* version */)
+void RPlusPlusTreeAuxiliaryInformation<TreeType>::Serialize(
+    Archive& ar, const unsigned int /* version */)
 {
   using data::CreateNVP;
 
-  ar & CreateNVP(outerBound, "outerBound");
+  ar& CreateNVP(outerBound, "outerBound");
 }
 
 } // namespace tree

@@ -26,27 +26,30 @@ template<typename MetricType,
          typename MatType,
          template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitMetricType, typename SplitMatType>
-             class SplitType>
+         class SplitType>
 template<typename RuleType, bool Defeatist>
 SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
-SpillSingleTreeTraverser<RuleType, Defeatist>::SpillSingleTreeTraverser(
-    RuleType& rule) :
-    rule(rule),
-    numPrunes(0)
-{ /* Nothing to do. */ }
+    SpillSingleTreeTraverser<RuleType, Defeatist>::SpillSingleTreeTraverser(
+        RuleType& rule)
+    : rule(rule), numPrunes(0)
+{ /* Nothing to do. */
+}
 
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitMetricType, typename SplitMatType>
-             class SplitType>
+         class SplitType>
 template<typename RuleType, bool Defeatist>
 void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
-SpillSingleTreeTraverser<RuleType, Defeatist>::Traverse(
-    const size_t queryIndex,
-    SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>&
-        referenceNode)
+    SpillSingleTreeTraverser<RuleType, Defeatist>::Traverse(
+        const size_t queryIndex,
+        SpillTree<MetricType,
+                  StatisticType,
+                  MatType,
+                  HyperplaneType,
+                  SplitType>& referenceNode)
 {
   // If we are a leaf, run the base case as necessary.
   if (referenceNode.IsLeaf())
@@ -75,8 +78,8 @@ SpillSingleTreeTraverser<RuleType, Defeatist>::Traverse(
         Traverse(queryIndex, *referenceNode.Left());
 
         // Is it still valid to recurse to the right?
-        rightScore = rule.Rescore(queryIndex, *referenceNode.Right(),
-            rightScore);
+        rightScore =
+            rule.Rescore(queryIndex, *referenceNode.Right(), rightScore);
 
         if (rightScore != DBL_MAX)
           Traverse(queryIndex, *referenceNode.Right()); // Recurse to the right.
@@ -108,8 +111,8 @@ SpillSingleTreeTraverser<RuleType, Defeatist>::Traverse(
           Traverse(queryIndex, *referenceNode.Left());
 
           // Is it still valid to recurse to the right?
-          rightScore = rule.Rescore(queryIndex, *referenceNode.Right(),
-              rightScore);
+          rightScore =
+              rule.Rescore(queryIndex, *referenceNode.Right(), rightScore);
 
           if (rightScore != DBL_MAX)
             Traverse(queryIndex, *referenceNode.Right());

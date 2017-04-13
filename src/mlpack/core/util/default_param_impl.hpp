@@ -22,8 +22,9 @@ std::string DefaultParamImpl(
     const typename boost::disable_if<IsStdVector<T>>::type* /* junk */,
     const typename boost::disable_if<data::HasSerialize<T>>::type* /* junk */,
     const typename boost::disable_if<std::is_same<T, std::string>>::type*,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* /* junk */)
+    const typename boost::disable_if<
+        std::is_same<T, std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::
+        type* /* junk */)
 {
   std::ostringstream oss;
   oss << boost::any_cast<T>(data.value);
@@ -42,8 +43,7 @@ std::string DefaultParamImpl(
   std::ostringstream oss;
   const T& vector = boost::any_cast<T>(data.value);
   oss << "[";
-  for (size_t i = 0; i < vector.size() - 1; ++i)
-    oss << vector[i] << " ";
+  for (size_t i = 0; i < vector.size() - 1; ++i) oss << vector[i] << " ";
   oss << vector[vector.size() - 1] << "]";
   return oss.str();
 }
@@ -56,10 +56,9 @@ template<typename T>
 std::string DefaultParamImpl(
     const ParamData& data,
     const typename boost::enable_if_c<
-        arma::is_arma_type<T>::value ||
-        data::HasSerialize<T>::value ||
-        std::is_same<T, std::tuple<mlpack::data::DatasetInfo,
-                                   arma::mat>>::value ||
+        arma::is_arma_type<T>::value || data::HasSerialize<T>::value ||
+        std::is_same<T,
+                     std::tuple<mlpack::data::DatasetInfo, arma::mat>>::value ||
         std::is_same<T, std::string>::value>::type* /* junk */)
 {
   // Get the filename and return it, or return an empty string.

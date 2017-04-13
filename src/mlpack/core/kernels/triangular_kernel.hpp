@@ -35,7 +35,7 @@ class TriangularKernel
    *
    * @param bandwidth Bandwidth of the triangular kernel.
    */
-  TriangularKernel(const double bandwidth = 1.0) : bandwidth(bandwidth) { }
+  TriangularKernel(const double bandwidth = 1.0) : bandwidth(bandwidth) {}
 
   /**
    * Evaluate the triangular kernel for the two given vectors.
@@ -48,8 +48,8 @@ class TriangularKernel
   template<typename VecTypeA, typename VecTypeB>
   double Evaluate(const VecTypeA& a, const VecTypeB& b) const
   {
-    return std::max(0.0, (1 - metric::EuclideanDistance::Evaluate(a, b) /
-        bandwidth));
+    return std::max(
+        0.0, (1 - metric::EuclideanDistance::Evaluate(a, b) / bandwidth));
   }
 
   /**
@@ -70,12 +70,18 @@ class TriangularKernel
    *
    * @param distance The distance between the two points.
    */
-  double Gradient(const double distance) const {
-    if (distance < 1) {
+  double Gradient(const double distance) const
+  {
+    if (distance < 1)
+    {
       return -1.0 / bandwidth;
-    } else if (distance > 1) {
+    }
+    else if (distance > 1)
+    {
       return 0;
-    } else {
+    }
+    else
+    {
       return arma::datum::nan;
     }
   }
@@ -89,7 +95,7 @@ class TriangularKernel
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(bandwidth, "bandwidth");
+    ar& data::CreateNVP(bandwidth, "bandwidth");
   }
 
  private:

@@ -55,10 +55,10 @@ bool Load(const std::string& filename,
     {
       if (fatal)
         Log::Fatal << "Unable to detect type of '" << filename << "'; incorrect"
-            << " extension?" << std::endl;
+                   << " extension?" << std::endl;
       else
         Log::Warn << "Unable to detect type of '" << filename << "'; load "
-            << "failed.  Incorrect extension?" << std::endl;
+                  << "failed.  Incorrect extension?" << std::endl;
 
       return false;
     }
@@ -79,10 +79,10 @@ bool Load(const std::string& filename,
   {
     if (fatal)
       Log::Fatal << "Unable to open file '" << filename << "' to load object '"
-          << name << "'." << std::endl;
+                 << name << "'." << std::endl;
     else
       Log::Warn << "Unable to open file '" << filename << "' to load object '"
-          << name << "'." << std::endl;
+                << name << "'." << std::endl;
 
     return false;
   }

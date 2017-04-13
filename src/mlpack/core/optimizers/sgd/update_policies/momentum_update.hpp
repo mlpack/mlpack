@@ -69,8 +69,8 @@ class MomentumUpdate
    *
    * @param momentum The momentum decay hyperparameter
    */
-  MomentumUpdate(const double momentum = 0.5) : momentum(momentum)
-  { /* Do nothing. */ };
+  MomentumUpdate(const double momentum = 0.5)
+      : momentum(momentum){/* Do nothing. */};
 
   /**
    * The Initialize method is called by SGD Optimizer method before the start of
@@ -81,10 +81,9 @@ class MomentumUpdate
    * @param n_rows number of rows in the gradient matrix.
    * @param n_cols number of columns in the gradient matrix.
    */
-  void Initialize(const size_t n_rows,
-                  const size_t n_cols)
+  void Initialize(const size_t n_rows, const size_t n_cols)
   {
-    //Initialize am empty velocity matrix.
+    // Initialize am empty velocity matrix.
     velocity = arma::zeros<arma::mat>(n_rows, n_cols);
   }
 

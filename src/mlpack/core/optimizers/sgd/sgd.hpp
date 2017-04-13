@@ -70,14 +70,13 @@ namespace optimization {
  *
  * @tparam DecomposableFunctionType Decomposable objective function type to be
  *     minimized.
- * @tparam UpdatePolicyType update policy used by SGD during the iterative update
+ * @tparam UpdatePolicyType update policy used by SGD during the iterative
+ * update
  *     process. By default vanilla update policy (see
  *     mlpack::optimization::VanillaUpdate) is used.
  */
-template<
-    typename DecomposableFunctionType,
-    typename UpdatePolicyType = VanillaUpdate
->
+template<typename DecomposableFunctionType,
+         typename UpdatePolicyType = VanillaUpdate>
 class SGD
 {
  public:

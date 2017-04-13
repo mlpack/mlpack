@@ -76,7 +76,7 @@ class MidpointSplit
                              const SplitInfo& splitInfo)
   {
     return split::PerformSplit<MatType, MidpointSplit>(data, begin, count,
-        splitInfo);
+                                                       splitInfo);
   }
 
   /**
@@ -102,7 +102,7 @@ class MidpointSplit
                              std::vector<size_t>& oldFromNew)
   {
     return split::PerformSplit<MatType, MidpointSplit>(data, begin, count,
-        splitInfo, oldFromNew);
+                                                       splitInfo, oldFromNew);
   }
 
   /**
@@ -112,8 +112,7 @@ class MidpointSplit
    * @param splitInfo An information about the split.
    */
   template<typename VecType>
-  static bool AssignToLeftNode(const VecType& point,
-                               const SplitInfo& splitInfo)
+  static bool AssignToLeftNode(const VecType& point, const SplitInfo& splitInfo)
   {
     return point[splitInfo.splitDimension] < splitInfo.splitVal;
   }

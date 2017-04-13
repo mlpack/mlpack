@@ -16,10 +16,9 @@
 using namespace mlpack;
 using namespace mlpack::distribution;
 
-
 GaussianDistribution::GaussianDistribution(const arma::vec& mean,
                                            const arma::mat& covariance)
-  : mean(mean)
+    : mean(mean)
 {
   Covariance(covariance);
 }
@@ -38,13 +37,13 @@ void GaussianDistribution::Covariance(arma::mat&& covariance)
 
 void GaussianDistribution::FactorCovariance()
 {
-  // On Armadillo < 4.500, the "lower" option isn't available.
-  #if (ARMA_VERSION_MAJOR < 4) || \
-      ((ARMA_VERSION_MAJOR == 4) && (ARMA_VERSION_MINOR < 500))
-    covLower = arma::chol(covariance).t(); // This is less efficient.
-  #else
-    covLower = arma::chol(covariance, "lower");
-  #endif
+// On Armadillo < 4.500, the "lower" option isn't available.
+#if (ARMA_VERSION_MAJOR < 4) || \
+    ((ARMA_VERSION_MAJOR == 4) && (ARMA_VERSION_MINOR < 500))
+  covLower = arma::chol(covariance).t(); // This is less efficient.
+#else
+  covLower = arma::chol(covariance, "lower");
+#endif
 
   // Comment from rcurtin:
   //
@@ -104,8 +103,7 @@ void GaussianDistribution::Train(const arma::mat& observations)
   }
 
   // Calculate the mean.
-  for (size_t i = 0; i < observations.n_cols; i++)
-    mean += observations.col(i);
+  for (size_t i = 0; i < observations.n_cols; i++) mean += observations.col(i);
 
   // Normalize the mean.
   mean /= observations.n_cols;
@@ -168,8 +166,7 @@ void GaussianDistribution::Train(const arma::mat& observations,
   }
 
   // Normalize.
-  if (sumProb > 0)
-    mean /= sumProb;
+  if (sumProb > 0) mean /= sumProb;
 
   // Now find the covariance.
   for (size_t i = 0; i < observations.n_cols; i++)
@@ -179,8 +176,7 @@ void GaussianDistribution::Train(const arma::mat& observations,
   }
 
   // This is probably biased, but I don't know how to unbias it.
-  if (sumProb > 0)
-    covariance /= sumProb;
+  if (sumProb > 0) covariance /= sumProb;
 
   // Ensure that the covariance is positive definite.
   gmm::PositiveDefiniteConstraint::ApplyConstraint(covariance);

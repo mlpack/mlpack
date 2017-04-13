@@ -46,12 +46,12 @@ namespace mlpack {
 class Backtrace
 {
  public:
-  /**
-   * Constructor initialize fields and call GetAddress to retrieve addresses
-   * for each frame of backtrace.
-   *
-   * @param maxDepth Maximum depth of backtrace. Default 32 steps.
-   */
+/**
+ * Constructor initialize fields and call GetAddress to retrieve addresses
+ * for each frame of backtrace.
+ *
+ * @param maxDepth Maximum depth of backtrace. Default 32 steps.
+ */
 #ifdef HAS_BFD_DL
   Backtrace(int maxDepth = 32);
 #else
@@ -81,7 +81,7 @@ class Backtrace
   //! Backtrace datastructure.
   struct Frames
   {
-    void *address;
+    void* address;
     const char* function;
     const char* file;
     unsigned line;
@@ -91,6 +91,6 @@ class Backtrace
   static std::vector<Frames> stack;
 };
 
-}; //namespace mlpack
+}; // namespace mlpack
 
 #endif

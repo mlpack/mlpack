@@ -20,25 +20,24 @@ namespace tree {
 
 template<typename MetricType, typename StatisticType, typename MatType>
 template<typename RuleType>
-Octree<MetricType, StatisticType, MatType>::SingleTreeTraverser<RuleType>::
-    SingleTreeTraverser(RuleType& rule) :
-    rule(rule)
+Octree<MetricType, StatisticType, MatType>::SingleTreeTraverser<
+    RuleType>::SingleTreeTraverser(RuleType& rule)
+    : rule(rule)
 {
   // Nothing to do.
 }
 
 template<typename MetricType, typename StatisticType, typename MatType>
 template<typename RuleType>
-void Octree<MetricType, StatisticType, MatType>::SingleTreeTraverser<RuleType>::
-    Traverse(const size_t queryIndex, Octree& referenceNode)
+void Octree<MetricType, StatisticType, MatType>::SingleTreeTraverser<
+    RuleType>::Traverse(const size_t queryIndex, Octree& referenceNode)
 {
   // If we are a leaf, run the base cases.
   if (referenceNode.NumChildren() == 0)
   {
     const size_t refBegin = referenceNode.Point(0);
     const size_t refEnd = refBegin + referenceNode.NumPoints();
-    for (size_t r = refBegin; r < refEnd; ++r)
-      rule.BaseCase(queryIndex, r);
+    for (size_t r = refBegin; r < refEnd; ++r) rule.BaseCase(queryIndex, r);
   }
   else
   {

@@ -37,11 +37,10 @@ size_t MinimalSplitsNumberSweep<SplitPolicy>::SweepNonLeafNode(
 
   // Sort candidates in order to check balancing.
   std::sort(sorted.begin(), sorted.end(),
-      [] (const std::pair<ElemType, size_t>& s1,
-          const std::pair<ElemType, size_t>& s2)
-      {
-        return s1.first < s2.first;
-      });
+            [](const std::pair<ElemType, size_t>& s1,
+               const std::pair<ElemType, size_t>& s2) {
+              return s1.first < s2.first;
+            });
 
   size_t minCost = SIZE_MAX;
 
@@ -70,13 +69,14 @@ size_t MinimalSplitsNumberSweep<SplitPolicy>::SweepNonLeafNode(
     }
 
     // Check if the split is possible.
-    if (numTreeOneChildren <= node->MaxNumChildren() && numTreeOneChildren > 0 &&
+    if (numTreeOneChildren <= node->MaxNumChildren() &&
+        numTreeOneChildren > 0 &&
         numTreeTwoChildren <= node->MaxNumChildren() && numTreeTwoChildren > 0)
     {
       // Evaluate the cost using the number of splits and balancing.
       size_t balance;
 
-      if (sorted.size() / 2 > i )
+      if (sorted.size() / 2 > i)
         balance = sorted.size() / 2 - i;
       else
         balance = i - sorted.size() / 2;
@@ -102,16 +102,12 @@ size_t MinimalSplitsNumberSweep<SplitPolicy>::SweepLeafNode(
   // Split along the median.
   axisCut = (node->Bound()[axis].Lo() + node->Bound()[axis].Hi()) * 0.5;
 
-  if (node->Bound()[axis].Lo() == axisCut)
-    return SIZE_MAX;
+  if (node->Bound()[axis].Lo() == axisCut) return SIZE_MAX;
 
   return 0;
 }
 
-
 } // namespace tree
 } // namespace mlpack
 
-#endif  //  MLPACK_CORE_TREE_RECTANGLE_TREE_MINIMAL_SPLITS_NUMBER_SWEEP_IMPL_HPP
-
-
+#endif //  MLPACK_CORE_TREE_RECTANGLE_TREE_MINIMAL_SPLITS_NUMBER_SWEEP_IMPL_HPP

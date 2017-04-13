@@ -64,13 +64,13 @@ class Log
   static void Assert(bool condition,
                      const std::string& message = "Assert Failed.");
 
-  /**
-   * MLPACK_EXPORT is required for global variables, so that they are properly
-   * exported by the Windows compiler.
-   */
+/**
+ * MLPACK_EXPORT is required for global variables, so that they are properly
+ * exported by the Windows compiler.
+ */
 
-  // We only use PrefixedOutStream if the program is compiled with debug
-  // symbols.
+// We only use PrefixedOutStream if the program is compiled with debug
+// symbols.
 #ifdef DEBUG
   //! Prints debug output with the appropriate tag: [DEBUG].
   static MLPACK_EXPORT util::PrefixedOutStream Debug;
@@ -93,6 +93,6 @@ class Log
   static std::ostream& cout;
 };
 
-}; //namespace mlpack
+}; // namespace mlpack
 
 #endif

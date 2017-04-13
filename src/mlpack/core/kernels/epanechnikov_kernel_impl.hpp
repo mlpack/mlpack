@@ -22,11 +22,13 @@ namespace mlpack {
 namespace kernel {
 
 template<typename VecTypeA, typename VecTypeB>
-inline double EpanechnikovKernel::Evaluate(const VecTypeA& a, const VecTypeB& b)
-    const
+inline double EpanechnikovKernel::Evaluate(const VecTypeA& a,
+                                           const VecTypeB& b) const
 {
-  return std::max(0.0, 1.0 - metric::SquaredEuclideanDistance::Evaluate(a, b)
-      * inverseBandwidthSquared);
+  return std::max(0.0,
+                  1.0 -
+                      metric::SquaredEuclideanDistance::Evaluate(a, b) *
+                          inverseBandwidthSquared);
 }
 
 /**
@@ -45,8 +47,7 @@ double EpanechnikovKernel::ConvolutionIntegral(const VecTypeA& a,
                                                const VecTypeB& b)
 {
   double distance = sqrt(metric::SquaredEuclideanDistance::Evaluate(a, b));
-  if (distance >= 2.0 * bandwidth)
-    return 0.0;
+  if (distance >= 2.0 * bandwidth) return 0.0;
 
   double volumeSquared = std::pow(Normalizer(a.n_rows), 2.0);
 
@@ -54,23 +55,25 @@ double EpanechnikovKernel::ConvolutionIntegral(const VecTypeA& a,
   {
     case 1:
       return 1.0 / volumeSquared *
-          (16.0 / 15.0 * bandwidth - 4.0 * distance * distance /
-          (3.0 * bandwidth) + 2.0 * distance * distance * distance /
-          (3.0 * bandwidth * bandwidth) -
-          std::pow(distance, 5.0) / (30.0 * std::pow(bandwidth, 4.0)));
+             (16.0 / 15.0 * bandwidth -
+              4.0 * distance * distance / (3.0 * bandwidth) +
+              2.0 * distance * distance * distance /
+                  (3.0 * bandwidth * bandwidth) -
+              std::pow(distance, 5.0) / (30.0 * std::pow(bandwidth, 4.0)));
       break;
     case 2:
       return 1.0 / volumeSquared *
-          ((2.0 / 3.0 * bandwidth * bandwidth - distance * distance) *
-          asin(sqrt(1.0 - std::pow(distance / (2.0 * bandwidth), 2.0))) +
-          sqrt(4.0 * bandwidth * bandwidth - distance * distance) *
-          (distance / 6.0 + 2.0 / 9.0 * distance *
-          std::pow(distance / bandwidth, 2.0) - distance / 72.0 *
-          std::pow(distance / bandwidth, 4.0)));
+             ((2.0 / 3.0 * bandwidth * bandwidth - distance * distance) *
+                  asin(
+                      sqrt(1.0 - std::pow(distance / (2.0 * bandwidth), 2.0))) +
+              sqrt(4.0 * bandwidth * bandwidth - distance * distance) *
+                  (distance / 6.0 +
+                   2.0 / 9.0 * distance * std::pow(distance / bandwidth, 2.0) -
+                   distance / 72.0 * std::pow(distance / bandwidth, 4.0)));
       break;
     default:
       Log::Fatal << "EpanechnikovKernel::ConvolutionIntegral(): dimension "
-          << a.n_rows << " not supported.";
+                 << a.n_rows << " not supported.";
       return -1.0; // This line will not execute.
       break;
   }
@@ -81,8 +84,8 @@ template<typename Archive>
 void EpanechnikovKernel::Serialize(Archive& ar,
                                    const unsigned int /* version */)
 {
-  ar & data::CreateNVP(bandwidth, "bandwidth");
-  ar & data::CreateNVP(inverseBandwidthSquared, "inverseBandwidthSquared");
+  ar& data::CreateNVP(bandwidth, "bandwidth");
+  ar& data::CreateNVP(inverseBandwidthSquared, "inverseBandwidthSquared");
 }
 
 } // namespace kernel

@@ -17,7 +17,7 @@
 #include "prefixedoutstream.hpp"
 
 #ifdef HAS_BFD_DL
-  #include "backtrace.hpp"
+#include "backtrace.hpp"
 #endif
 
 #include <iostream>
@@ -58,7 +58,8 @@ PrefixedOutStream::BaseLogic(const T& val)
     if (!ignoreInput)
     {
       destination << "Failed type conversion to string for output; output not "
-          "shown." << std::endl;
+                     "shown."
+                  << std::endl;
       newlined = true;
     }
   }
@@ -100,18 +101,16 @@ PrefixedOutStream::BaseLogic(const T& val)
     if (pos != line.length()) // We need to display the rest.
     {
       PrefixIfNeeded();
-      if (!ignoreInput)
-        destination << line.substr(pos);
+      if (!ignoreInput) destination << line.substr(pos);
     }
   }
 
   // If we displayed a newline and we need to throw afterwards, do that.
   if (fatal && newlined)
   {
-    if (!ignoreInput)
-      destination << std::endl;
+    if (!ignoreInput) destination << std::endl;
 
-    // Print a backtrace, if we can.
+// Print a backtrace, if we can.
 #ifdef HAS_BFD_DL
     if (fatal && !ignoreInput)
     {
@@ -175,8 +174,7 @@ PrefixedOutStream::BaseLogic(const T& val)
     const arma::Mat<typename T::elem_type>& absVal(arma::abs(printVal));
     double maxVal = absVal.max();
 
-    if (maxVal == 0.0)
-      maxVal = 1;
+    if (maxVal == 0.0) maxVal = 1;
 
     int maxLog = log10(maxVal);
     maxLog = (maxLog > 0) ? floor(maxLog) + 1 : 1;
@@ -191,7 +189,8 @@ PrefixedOutStream::BaseLogic(const T& val)
     if (!ignoreInput)
     {
       destination << "Failed type conversion to string for output; output not "
-          "shown." << std::endl;
+                     "shown."
+                  << std::endl;
       newlined = true;
     }
   }
@@ -233,18 +232,16 @@ PrefixedOutStream::BaseLogic(const T& val)
     if (pos != line.length()) // We need to display the rest.
     {
       PrefixIfNeeded();
-      if (!ignoreInput)
-        destination << line.substr(pos);
+      if (!ignoreInput) destination << line.substr(pos);
     }
   }
 
   // If we displayed a newline and we need to throw afterwards, do that.
   if (fatal && newlined)
   {
-    if (!ignoreInput)
-      destination << std::endl;
+    if (!ignoreInput) destination << std::endl;
 
-    // Print a backtrace, if we can.
+// Print a backtrace, if we can.
 #ifdef HAS_BFD_DL
     if (fatal && !ignoreInput)
     {

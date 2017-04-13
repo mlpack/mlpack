@@ -38,9 +38,12 @@ template<typename MetricType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
-             class SplitType>
+         class SplitType>
 template<typename RuleType>
-class BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
+class BinarySpaceTree<MetricType,
+                      StatisticType,
+                      MatType,
+                      BoundType,
                       SplitType>::BreadthFirstDualTreeTraverser
 {
  public:
@@ -59,8 +62,7 @@ class BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
    * @param referenceNode The reference node to be traversed.
    * @param score The score of the current node combination.
    */
-  void Traverse(BinarySpaceTree& queryNode,
-                BinarySpaceTree& referenceNode);
+  void Traverse(BinarySpaceTree& queryNode, BinarySpaceTree& referenceNode);
   void Traverse(BinarySpaceTree& queryNode,
                 std::priority_queue<QueueFrameType>& referenceQueue);
 
@@ -112,4 +114,3 @@ class BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
 #include "breadth_first_dual_tree_traverser_impl.hpp"
 
 #endif // MLPACK_CORE_TREE_BINARY_SPACE_TREE_BREADTH_FIRST_DUAL_TREE_TRAVERSER_HPP
-

@@ -91,10 +91,14 @@ class PSpectrumStringKernel
 
   //! Access the lists of substrings.
   const std::vector<std::vector<std::map<std::string, int> > >& Counts() const
-  { return counts; }
+  {
+    return counts;
+  }
   //! Modify the lists of substrings.
   std::vector<std::vector<std::map<std::string, int> > >& Counts()
-  { return counts; }
+  {
+    return counts;
+  }
 
   //! Access the value of p.
   size_t P() const { return p; }

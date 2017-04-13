@@ -24,14 +24,15 @@ SMORMS3<DecomposableFunctionType>::SMORMS3(DecomposableFunctionType& function,
                                            const double epsilon,
                                            const size_t maxIterations,
                                            const double tolerance,
-                                           const bool shuffle) :
-    optimizer(function,
-              stepSize,
-              maxIterations,
-              tolerance,
-              shuffle,
-              SMORMS3Update(epsilon))
-{ /* Nothing to do. */ }
+                                           const bool shuffle)
+    : optimizer(function,
+                stepSize,
+                maxIterations,
+                tolerance,
+                shuffle,
+                SMORMS3Update(epsilon))
+{ /* Nothing to do. */
+}
 
 } // namespace optimization
 } // namespace mlpack

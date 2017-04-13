@@ -5,10 +5,8 @@ using namespace boost::spirit;
 namespace mlpack {
 namespace data {
 
-LoadCSV::LoadCSV(const std::string& file) :
-  extension(Extension(file)),
-  filename(file),
-  inFile(file)
+LoadCSV::LoadCSV(const std::string& file)
+    : extension(Extension(file)), filename(file), inFile(file)
 {
   // Attempt to open stream.
   CheckOpen();
@@ -29,8 +27,8 @@ LoadCSV::LoadCSV(const std::string& file) :
   {
     // Extract a single comma as the delimiter, catching whitespace on either
     // side.
-    delimiterRule = qi::raw[(*qi::char_(" ") >> qi::char_(",") >>
-        *qi::char_(" "))];
+    delimiterRule =
+        qi::raw[(*qi::char_(" ") >> qi::char_(",") >> *qi::char_(" "))];
   }
   else if (extension == "txt")
   {
@@ -41,8 +39,8 @@ LoadCSV::LoadCSV(const std::string& file) :
   else // TSV.
   {
     // Catch a tab character, possibly with whitespace on either side.
-    delimiterRule = qi::raw[(*qi::char_(" ") >> qi::char_("\t") >>
-        *qi::char_(" "))];
+    delimiterRule =
+        qi::raw[(*qi::char_(" ") >> qi::char_("\t") >> *qi::char_(" "))];
   }
 }
 
