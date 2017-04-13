@@ -78,6 +78,7 @@ Copyright:
   Copyright 2017, Sagar B Hathwar <sagarbhathwar@gmail.com>
   Copyright 2017, Nishanth Hegde <hegde.nishanth@gmail.com>
   Copyright 2017, Parminder Singh <parmsingh101@gmail.com>
+  Copyright 2017, CodeAi <benjamin.bales@assrc.us>
 
 License: BSD-3-clause
   All rights reserved.
