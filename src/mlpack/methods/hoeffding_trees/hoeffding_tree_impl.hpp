@@ -505,7 +505,7 @@ size_t NumDescendants()
 {
 size_t nodes = 0;
 std::stack<HoeffdingTree<>*> stack;
-stack.push(*this); // push the current tree
+stack.push(&this); // push the current tree
 while (!stack.empty())
 {  
    HoeffdingTree<>* node = stack.top();
