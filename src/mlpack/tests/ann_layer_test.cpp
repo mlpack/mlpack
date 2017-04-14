@@ -315,7 +315,8 @@ BOOST_AUTO_TEST_CASE(JacobianConstantLayerTest)
 
 /**
  * Tests the BatchNorm Layer, compares the layers parameters with
- * the values from another implementation.
+ * the values from another implementation. 
+ * Link to the implementation - http://cthorey.github.io./backpropagation/
  */
 BOOST_AUTO_TEST_CASE(BatchNormTest)
 {
