@@ -26,7 +26,7 @@ namespace pca {
  */
 class ExactSVDPolicy
 {
-  public:
+ public:
   /**
    * Apply Principal Component Analysis to the provided data set using the
    * exact SVD method.
