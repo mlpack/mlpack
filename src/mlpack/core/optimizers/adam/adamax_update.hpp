@@ -36,7 +36,8 @@ namespace optimization {
  *   author    = {Diederik P. Kingma and Jimmy Ba},
  *   title     = {Adam: {A} Method for Stochastic Optimization},
  *   journal   = {CoRR},
- *   year      = {2014}
+ *   year      = {2014},
+ *   url       = {http://arxiv.org/abs/1412.6980}
  * }
  * @endcode
  */
