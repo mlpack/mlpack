@@ -21,63 +21,25 @@ template<typename FitnessFunction,
          template<typename> class CategoricalSplitType,
          typename ElemType,
          bool NoRecursion>
-template<typename MatType>
-DecisionTree<FitnessFunction,
-             NumericSplitType,
-             CategoricalSplitType,
-             ElemType,
-             NoRecursion>::DecisionTree(const MatType& data,
-                                        const data::DatasetInfo& datasetInfo,
-                                        const arma::Row<size_t>& labels,
-                                        const size_t numClasses,
-                                        const size_t minimumLeafSize)
-{
-  // Pass off work to the Train() method.
-  Train(data, datasetInfo, labels, numClasses, minimumLeafSize);
-}
-
-//! Construct and train.
-template<typename FitnessFunction,
-         template<typename> class NumericSplitType,
-         template<typename> class CategoricalSplitType,
-         typename ElemType,
-         bool NoRecursion>
-template<typename MatType>
-DecisionTree<FitnessFunction,
-             NumericSplitType,
-             CategoricalSplitType,
-             ElemType,
-             NoRecursion>::DecisionTree(const MatType& data,
-                                        const arma::Row<size_t>& labels,
-                                        const size_t numClasses,
-                                        const size_t minimumLeafSize)
-{
-  // Pass off work to the Train() method.
-  Train(data, labels, numClasses, minimumLeafSize);
-}
-
-//! Construct and train.
-template<typename FitnessFunction,
-         template<typename> class NumericSplitType,
-         template<typename> class CategoricalSplitType,
-         typename ElemType,
-         bool NoRecursion>
-template<typename MatType>
+template<typename MatType, typename LabelsType>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
              ElemType,
              NoRecursion>::DecisionTree(MatType&& data,
                                         const data::DatasetInfo& datasetInfo,
-                                        arma::Row<size_t>&& labels,
+                                        LabelsType&& labels,
                                         const size_t numClasses,
                                         const size_t minimumLeafSize)
 {
-  // move the data to avoid copy
-  MatType tmpData = std::move(data);
-  arma::Row<size_t> tmpLabels = std::move(labels);
+  // copy or move data
+  typedef typename std::remove_reference<MatType>::type TrueMatType;
+  typedef typename std::remove_reference<LabelsType>::type TrueLabelsType;
+  TrueMatType tmpData(std::forward<MatType>(data));
+  TrueLabelsType tmpLabels(std::forward<LabelsType>(labels));
   // Pass off work to the Train() method.
-  Train(tmpData, 0, tmpData.n_cols, datasetInfo, tmpLabels, numClasses, minimumLeafSize);
+  Train(tmpData, 0, tmpData.n_cols, datasetInfo, 
+    tmpLabels, numClasses, minimumLeafSize);
 }
 
 //! Construct and train.
@@ -86,21 +48,24 @@ template<typename FitnessFunction,
          template<typename> class CategoricalSplitType,
          typename ElemType,
          bool NoRecursion>
-template<typename MatType>
+template<typename MatType, typename LabelsType>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
              ElemType,
              NoRecursion>::DecisionTree(MatType&& data,
-                                        arma::Row<size_t>&& labels,
+                                        LabelsType&& labels,
                                         const size_t numClasses,
                                         const size_t minimumLeafSize)
 {
-  // move the data to avoid copy
-  MatType tmpData = std::move(data);
-  arma::Row<size_t> tmpLabels = std::move(labels);
+  // copy or move data
+  typedef typename std::remove_reference<MatType>::type TrueMatType;
+  typedef typename std::remove_reference<LabelsType>::type TrueLabelsType;
+  TrueMatType tmpData(std::forward<MatType>(data));
+  TrueLabelsType tmpLabels(std::forward<LabelsType>(labels));
   // Pass off work to the Train() method.
-  Train(tmpData, 0, tmpData.n_cols, tmpLabels, numClasses, minimumLeafSize);
+  Train(tmpData, 0, tmpData.n_cols, 
+    tmpLabels, numClasses, minimumLeafSize);
 }
 
 //! Construct and train.
@@ -308,14 +273,14 @@ template<typename FitnessFunction,
          template<typename> class CategoricalSplitType,
          typename ElemType,
          bool NoRecursion>
-template<typename MatType>
+template<typename MatType, typename LabelsType>
 void DecisionTree<FitnessFunction,
                   NumericSplitType,
                   CategoricalSplitType,
                   ElemType,
-                  NoRecursion>::Train(const MatType& data,
+                  NoRecursion>::Train(MatType&& data,
                                       const data::DatasetInfo& datasetInfo,
-                                      const arma::Row<size_t>& labels,
+                                      LabelsType&& labels,
                                       const size_t numClasses,
                                       const size_t minimumLeafSize)
 {
@@ -328,10 +293,12 @@ void DecisionTree<FitnessFunction,
         << std::endl;
     throw std::invalid_argument(oss.str());
   }
-
-  // Copy the data
-  MatType tmpData = data;
-  arma::Row<size_t> tmpLabels = labels;
+  // copy or move data
+  typedef typename std::remove_reference<MatType>::type TrueMatType;
+  typedef typename std::remove_reference<LabelsType>::type TrueLabelsType;
+  TrueMatType tmpData(std::forward<MatType>(data));
+  TrueLabelsType tmpLabels(std::forward<LabelsType>(labels));
+  // Pass off work to the Train() method.
   Train(tmpData, 0, tmpData.n_cols, datasetInfo, tmpLabels, numClasses, minimumLeafSize);
 }
 
@@ -341,46 +308,13 @@ template<typename FitnessFunction,
          template<typename> class CategoricalSplitType,
          typename ElemType,
          bool NoRecursion>
-template<typename MatType>
-void DecisionTree<FitnessFunction,
-                  NumericSplitType,
-                  CategoricalSplitType,
-                  ElemType,
-                  NoRecursion>::Train(const MatType& data,
-                                      const arma::Row<size_t>& labels,
-                                      const size_t numClasses,
-                                      const size_t minimumLeafSize)
-{
-  // Sanity check on data.
-  if (data.n_cols != labels.n_elem)
-  {
-    std::ostringstream oss;
-    oss << "DecisionTree::Train(): number of points (" << data.n_cols << ") "
-        << "does not match number of labels (" << labels.n_elem << ")!"
-        << std::endl;
-    throw std::invalid_argument(oss.str());
-  }
-
-  // Copy the data
-  MatType tmpData = data;
-  arma::Row<size_t> tmpLabels = labels;
-  Train(tmpData, 0, tmpData.n_cols, tmpLabels, numClasses, minimumLeafSize);
-}
-
-//! Train on the given data.
-template<typename FitnessFunction,
-         template<typename> class NumericSplitType,
-         template<typename> class CategoricalSplitType,
-         typename ElemType,
-         bool NoRecursion>
-template<typename MatType>
+template<typename MatType, typename LabelsType>
 void DecisionTree<FitnessFunction,
                   NumericSplitType,
                   CategoricalSplitType,
                   ElemType,
                   NoRecursion>::Train(MatType&& data,
-                                      const data::DatasetInfo& datasetInfo,
-                                      arma::Row<size_t>&& labels,
+                                      LabelsType&& labels,
                                       const size_t numClasses,
                                       const size_t minimumLeafSize)
 {
@@ -393,41 +327,14 @@ void DecisionTree<FitnessFunction,
         << std::endl;
     throw std::invalid_argument(oss.str());
   }
-  // move the data to avoid copy
-  MatType tmpData = std::move(data);
-  arma::Row<size_t> tmpLabels = std::move(labels);
-  Train(tmpData, 0, tmpData.n_cols, datasetInfo, tmpLabels, numClasses, minimumLeafSize);
-}
-
-//! Train on the given data, assuming all dimensions are numeric.
-template<typename FitnessFunction,
-         template<typename> class NumericSplitType,
-         template<typename> class CategoricalSplitType,
-         typename ElemType,
-         bool NoRecursion>
-template<typename MatType>
-void DecisionTree<FitnessFunction,
-                  NumericSplitType,
-                  CategoricalSplitType,
-                  ElemType,
-                  NoRecursion>::Train(MatType&& data,
-                                      arma::Row<size_t>&& labels,
-                                      const size_t numClasses,
-                                      const size_t minimumLeafSize)
-{
-  // Sanity check on data.
-  if (data.n_cols != labels.n_elem)
-  {
-    std::ostringstream oss;
-    oss << "DecisionTree::Train(): number of points (" << data.n_cols << ") "
-        << "does not match number of labels (" << labels.n_elem << ")!"
-        << std::endl;
-    throw std::invalid_argument(oss.str());
-  }
-  // move the data to avoid copy
-  MatType tmpData = std::move(data);
-  arma::Row<size_t> tmpLabels = std::move(labels);
-  Train(tmpData, 0, tmpData.n_cols, tmpLabels, numClasses, minimumLeafSize);
+  // copy or move data
+  typedef typename std::remove_reference<MatType>::type TrueMatType;
+  typedef typename std::remove_reference<LabelsType>::type TrueLabelsType;
+  TrueMatType tmpData(std::forward<MatType>(data));
+  TrueLabelsType tmpLabels(std::forward<LabelsType>(labels));
+  // Pass off work to the Train() method.
+  Train(tmpData, 0, tmpData.n_cols,
+    tmpLabels, numClasses, minimumLeafSize);
 }
 
 //! Train on the given data.
