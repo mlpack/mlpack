@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<installer-gui-script minSpecVersion="2">
+    <pkg-ref id="org.mlpack.pkg.osx"/>
+    <title>mlpack</title>
+    <organization>mlpack.org</organization>
+    <options customize="never" require-scripts="false"/>
+    <!-- <welcome file="README.md" mime-type="text/html" /> -->
+    <license file="LICENSE.txt" mime-type="text/html" />
+    <conclusion file="conclusion.txt" mime-type="text/html" />
+
+    <volume-check>
+        <allowed-os-versions>
+            <os-version min="10.9"/>
+        </allowed-os-versions>
+    </volume-check>
+    <choices-outline>
+        <line choice="install"/>
+    </choices-outline>
+    
+    <choice id="install" visible="true" title="Install Rust" description="Install the Rust compiler, package manager and documentation."
+        customLocation="/usr/local">
+        <pkg-ref id="org.mlpack.install"/>
+    </choice>
+
+    <pkg-ref id="org.mlpack.install" version="0" onConclusion="none">mlpacktools.pkg</pkg-ref>
+</installer-gui-script>
