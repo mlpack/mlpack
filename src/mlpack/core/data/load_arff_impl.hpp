@@ -221,6 +221,8 @@ void LoadARFF(const std::string& filename,
     }
     ++row;
   }
+  //close the file after operation
+  ifs.close(filename);
 }
 
 } // namespace data
