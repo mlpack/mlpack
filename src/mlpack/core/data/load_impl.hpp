@@ -16,6 +16,7 @@
 
 #include <exception>
 #include <algorithm>
+#include <mlpack/core/data/file_reader/csv_reader.hpp>
 #include <mlpack/core/util/timers.hpp>
 
 #include "load_csv.hpp"
@@ -32,6 +33,31 @@ namespace mlpack {
 namespace data {
 
 namespace details{
+
+template<typename TrimPolicy, typename T>
+bool ParseTextFile(std::string const &filename, std::string const &separator,
+                   arma::Mat<T> &matrix)
+{
+  bool success = true;
+  try{
+    size_t rows, cols;
+    io::CSVReader<TrimPolicy>::FileDimension(filename, separator, rows, cols);
+    matrix.set_size(rows, cols);
+    io::CSVReader<> reader(cols, filename);
+    size_t row = 0, col = 0;
+    std::vector<T> vals(cols);
+    while(reader.ReadRow(vals)){
+      for(auto const val : vals){
+        matrix(row, col++) = val;
+      }
+      col = 0; ++row;
+    }
+  }catch(std::exception const&){
+    success = false;
+  }
+
+  return success;
+}
 
 template<typename Tokenizer>
 std::vector<std::string> ToTokens(Tokenizer &lineTok)
@@ -292,10 +318,16 @@ bool Load(const std::string& filename,
 
   // We can't use the stream if the type is HDF5.
   bool success;
-  if (loadType != arma::hdf5_binary)
-    success = matrix.load(stream, loadType);
-  else
+  if(loadType != arma::hdf5_binary){
+    if(loadType == arma::csv_ascii){
+      success = details::ParseTextFile<io::TrimChars<' ', '\t'>>(filename, ",", matrix);
+    }else{
+      success = matrix.load(stream, loadType);
+    }
+  }
+  else{
     success = matrix.load(filename, loadType);
+  }
 
   if (!success)
   {
