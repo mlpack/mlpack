@@ -71,14 +71,14 @@ void RandomizedBlockKrylovSVD::Apply(const arma::mat& data,
       blockOffset += block.n_elem)
   {
     // Temporary working matrix to store the result in the correct place.
-    blockIteration = arma::mat(K.memptr() + blockOffset, data.n_rows,
-        blockSize, false);
+    blockIteration = arma::mat(K.memptr() + blockOffset, block.n_rows,
+        block.n_cols, false, false);
 
     arma::qr_econ(blockIteration, R, data * (data.t() * block));
 
     // Update working matrix for the next iteration.
-    block = arma::mat(K.memptr() + blockOffset, data.n_rows, blockSize, false,
-        false);
+    block = arma::mat(K.memptr() + blockOffset, block.n_rows, block.n_cols,
+        false, false);
   }
 
   arma::qr_econ(Q, R, K);
