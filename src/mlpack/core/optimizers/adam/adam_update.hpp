@@ -96,8 +96,8 @@ class AdamUpdate
     v *= beta2;
     v += (1 - beta2) * (gradient % gradient);
 
-    const double biasCorrection1 = 1.0 - std::pow(beta1, (double) iteration);
-    const double biasCorrection2 = 1.0 - std::pow(beta2, (double) iteration);
+    const double biasCorrection1 = 1.0 - std::pow(beta1, iteration);
+    const double biasCorrection2 = 1.0 - std::pow(beta2, iteration);
 
     /**
      * It should be noted that the term, m / (arma::sqrt(v) + eps), in the
