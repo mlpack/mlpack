@@ -42,23 +42,23 @@ namespace optimization {
  *
  * @code
  * @article{rumelhart1988learning,
- *   title={Learning representations by back-propagating errors},
- *   author={Rumelhart, David E. and Hinton, Geoffrey E. and
- *        Williams, Ronald J.},
- *   journal={Cognitive Modeling},
- *   volume={5},
- *   number={3},
- *   pages={1},
- *   year={1988}
+ *   title   = {Learning representations by back-propagating errors},
+ *   author  = {Rumelhart, David E. and Hinton, Geoffrey E. and
+ *              Williams, Ronald J.},
+ *   journal = {Cognitive Modeling},
+ *   volume  = {5},
+ *   number  = {3},
+ *   pages   = {1},
+ *   year    = {1988}
  * }
  *
  * @code
  * @book{Goodfellow-et-al-2016,
- *  title={Deep Learning},
- *  author={Ian Goodfellow and Yoshua Bengio and Aaron Courville},
- *  publisher={MIT Press},
- *  note={\url{http://www.deeplearningbook.org}},
- *  year={2016}
+ *  title     = {Deep Learning},
+ *  author    = {Ian Goodfellow and Yoshua Bengio and Aaron Courville},
+ *  publisher = {MIT Press},
+ *  note      = {\url{http://www.deeplearningbook.org}},
+ *  year      = {2016}
  * }
  */
 class MomentumUpdate
@@ -78,14 +78,14 @@ class MomentumUpdate
    * matrix is initialized to the zeros matrix with the same size as the
    * gradient matrix (see mlpack::optimization::SGD::Optimizer )
    *
-   * @param n_rows number of rows in the gradient matrix.
-   * @param n_cols number of columns in the gradient matrix.
+   * @param rows Number of rows in the gradient matrix.
+   * @param cols Number of columns in the gradient matrix.
    */
-  void Initialize(const size_t n_rows,
-                  const size_t n_cols)
+  void Initialize(const size_t rows,
+                  const size_t cols)
   {
     //Initialize am empty velocity matrix.
-    velocity = arma::zeros<arma::mat>(n_rows, n_cols);
+    velocity = arma::zeros<arma::mat>(rows, cols);
   }
 
   /**

@@ -35,9 +35,9 @@ namespace optimization {
  *
  * @code
  * @misc{tieleman2012,
- *   title={Lecture 6.5 - rmsprop, COURSERA: Neural Networks for Machine
- *   Learning},
- *   year={2012}
+ *   title = {Lecture 6.5 - rmsprop, COURSERA: Neural Networks for Machine
+ *            Learning},
+ *   year  = {2012}
  * }
  * @endcode
  */
@@ -63,8 +63,8 @@ class RMSPropUpdate
    * The Initialize method is called by SGD Optimizer method before the start of
    * the iteration update process.
    *
-   * @param rows number of rows in the gradient matrix.
-   * @param cols number of columns in the gradient matrix.
+   * @param rows Number of rows in the gradient matrix.
+   * @param cols Number of columns in the gradient matrix.
    */
   void Initialize(const size_t rows,
                   const size_t cols)
@@ -86,7 +86,8 @@ class RMSPropUpdate
   {
     meanSquaredGradient *= alpha;
     meanSquaredGradient += (1 - alpha) * (gradient % gradient);
-    iterate -= stepSize * gradient / (arma::sqrt(meanSquaredGradient) + epsilon);
+    iterate -= stepSize * gradient / (arma::sqrt(meanSquaredGradient) +
+        epsilon);
   }
 
   //! Get the value used to initialise the squared gradient parameter.

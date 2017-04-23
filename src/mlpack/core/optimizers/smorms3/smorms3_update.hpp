@@ -26,10 +26,10 @@ namespace optimization {
  *
  * @code
  * @misc{Funk2015,
- *   author    = {Simon Funk},
- *   title     = {RMSprop loses to SMORMS3 - Beware the Epsilon!},
- *   year      = {2015}
- *   url       = {http://sifter.org/~simon/journal/20150420.html}
+ *   author = {Simon Funk},
+ *   title  = {RMSprop loses to SMORMS3 - Beware the Epsilon!},
+ *   year   = {2015}
+ *   url    = {http://sifter.org/~simon/journal/20150420.html}
  * }
  * @endcode
  */
@@ -40,23 +40,18 @@ class SMORMS3Update
   /**
    * Construct the SMORMS3 update policy with given epsilon parameter.
    *
-   * @param epsilon Value used to initialise the mean squared gradient parameter.
+   * @param epsilon Value used to initialise the mean squared gradient
+   *        parameter.
    */
-  SMORMS3Update(const double epsilon = 1e-16) :
-    epsilon(epsilon)
+  SMORMS3Update(const double epsilon = 1e-16) : epsilon(epsilon)
   { /* Do nothing. */ }
-
-  //! Get the value used to initialise the mean squared gradient parameter.
-  double Epsilon() const { return epsilon; }
-  //! Modify the value used to initialise the mean squared gradient parameter.
-  double& Epsilon() { return epsilon; }
 
   /**
    * The Initialize method is called by SGD::Optimize method with UpdatePolicy
    * SMORMS3Update before the start of the iteration update process.
    *
-   * @param rows number of rows in the gradient matrix.
-   * @param cols number of columns in the gradient matrix.
+   * @param rows Number of rows in the gradient matrix.
+   * @param cols Number of columns in the gradient matrix.
    */
   void Initialize(const size_t rows,
                   const size_t cols)
@@ -96,10 +91,16 @@ class SMORMS3Update
     mem %= (1 - x);
     mem += 1;
   }
+
+  //! Get the value used to initialise the mean squared gradient parameter.
+  double Epsilon() const { return epsilon; }
+  //! Modify the value used to initialise the mean squared gradient parameter.
+  double& Epsilon() { return epsilon; }
+
  private:
    //! The value used to initialise the mean squared gradient parameter.
    double epsilon;
-   
+
    // The parameters mem, g and g2.
    arma::mat mem, g, g2;
 };

@@ -31,11 +31,11 @@ namespace optimization {
  *
  * @code
  * @article{Kingma2014,
- *   author    = {Diederik P. Kingma and Jimmy Ba},
- *   title     = {Adam: {A} Method for Stochastic Optimization},
- *   journal   = {CoRR},
- *   year      = {2014},
- *   url       = {http://arxiv.org/abs/1412.6980}
+ *   author  = {Diederik P. Kingma and Jimmy Ba},
+ *   title   = {Adam: {A} Method for Stochastic Optimization},
+ *   journal = {CoRR},
+ *   year    = {2014},
+ *   url     = {http://arxiv.org/abs/1412.6980}
  * }
  * @endcode
  */
@@ -65,8 +65,8 @@ class AdamUpdate
    * The Initialize method is called by SGD Optimizer method before the start of
    * the iteration update process.
    *
-   * @param rows number of rows in the gradient matrix.
-   * @param cols number of columns in the gradient matrix.
+   * @param rows Number of rows in the gradient matrix.
+   * @param cols Number of columns in the gradient matrix.
    */
   void Initialize(const size_t rows,
                   const size_t cols)
@@ -105,7 +105,7 @@ class AdamUpdate
      * m / (arma::sqrt(v) + (arma::sqrt(biasCorrection2) * eps).
      */
     iterate -= (stepSize * std::sqrt(biasCorrection2) / biasCorrection1) *
-                m / (arma::sqrt(v) + epsilon);
+        m / (arma::sqrt(v) + epsilon);
   }
 
   //! Get the value used to initialise the squared gradient parameter.

@@ -58,8 +58,8 @@ class AdaGradUpdate
    * gradient matrix is initialized to the zeros matrix with the same size as
    * gradient matrix (see mlpack::optimization::SGD::Optimizer).
    *
-   * @param rows number of rows in the gradient matrix.
-   * @param cols number of columns in the gradient matrix.
+   * @param rows Number of rows in the gradient matrix.
+   * @param cols Number of columns in the gradient matrix.
    */
   void Initialize(const size_t rows,
                   const size_t cols)

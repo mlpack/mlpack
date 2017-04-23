@@ -38,9 +38,9 @@ namespace optimization {
  *
  * @code
  * @misc{tieleman2012,
- *   title={Lecture 6.5 - rmsprop, COURSERA: Neural Networks for Machine
- *   Learning},
- *   year={2012}
+ *   title = {Lecture 6.5 - rmsprop, COURSERA: Neural Networks for Machine
+ *            Learning},
+ *   year  = {2012}
  * }
  * @endcode
  *
