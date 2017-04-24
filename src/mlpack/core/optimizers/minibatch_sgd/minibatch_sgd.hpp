@@ -109,13 +109,13 @@ class MiniBatchSGDType
    * @param decayPolicy Instantiated decay policy used to adjust the step size.
    */
   MiniBatchSGDType(DecomposableFunctionType& function,
-               const size_t batchSize = 1000,
-               const double stepSize = 0.01,
-               const size_t maxIterations = 100000,
-               const double tolerance = 1e-5,
-               const bool shuffle = true,
-               const UpdatePolicyType& updatePolicy = UpdatePolicyType(),
-               const DecayPolicyType& decayPolicy = DecayPolicyType());
+                   const size_t batchSize = 1000,
+                   const double stepSize = 0.01,
+                   const size_t maxIterations = 100000,
+                   const double tolerance = 1e-5,
+                   const bool shuffle = true,
+                   const UpdatePolicyType& updatePolicy = UpdatePolicyType(),
+                   const DecayPolicyType& decayPolicy = DecayPolicyType());
 
   /**
    * Optimize the given function using mini-batch SGD.  The given starting point
@@ -156,6 +156,16 @@ class MiniBatchSGDType
   bool Shuffle() const { return shuffle; }
   //! Modify whether or not the individual functions are shuffled.
   bool& Shuffle() { return shuffle; }
+
+  //! Get the update policy.
+  UpdatePolicyType UpdatePolicy() const { return updatePolicy; }
+  //! Modify the update policy.
+  UpdatePolicyType& UpdatePolicy() { return updatePolicy; }
+
+  //! Get the decay policy.
+  DecayPolicyType DecayPolicy() const { return decayPolicy; }
+  //! Modify the decay policy.
+  DecayPolicyType& DecayPolicy() { return decayPolicy; }
 
  private:
   //! The instantiated function.

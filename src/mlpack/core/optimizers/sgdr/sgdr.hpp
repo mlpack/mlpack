@@ -89,6 +89,7 @@ class SGDR
    * @param shuffle If true, the mini-batch order is shuffled; otherwise, each
    *        mini-batch is visited in linear order.
    * @param snapshots Maximum number of snapshots.
+   * @param accumulate Accumulate the snapshot parameter (default true).
    * @param updatePolicy Instantiated update policy used to adjust the given
    *        parameters.
    */
@@ -102,6 +103,7 @@ class SGDR
       const double tolerance = 1e-5,
       const bool shuffle = true,
       const size_t snapshots = 5,
+      const bool accumulate = true,
       const UpdatePolicyType& updatePolicy = UpdatePolicyType(),
       const typename std::enable_if_t<std::is_same<
           PolicyType, SnapshotEnsembles>::value>* junk = 0);
@@ -149,7 +151,6 @@ class SGDR
    */
   template<typename PolicyType = DecayPolicyType>
   double Optimize(arma::mat& iterate,
-                  const bool accumulate = true,
                   const typename std::enable_if_t<std::is_same<
                       PolicyType, SnapshotEnsembles>::value>* junk = 0);
 
@@ -205,14 +206,14 @@ class SGDR
   typename std::enable_if<
       std::is_same<PolicyType, SnapshotEnsembles>::value,
       std::vector<arma::mat> >::type
-  Snapshots() const { return decayPolicy.Snapshots(); }
+  Snapshots() const { return optimizer.DecayPolicy().Snapshots(); }
 
   //! Modify the snapshots.
   template<typename PolicyType = DecayPolicyType>
   typename std::enable_if<
       std::is_same<PolicyType, SnapshotEnsembles>::value,
       std::vector<arma::mat>& >::type
-  Snapshots() { return decayPolicy.snapshots(); }
+  Snapshots() { return optimizer.DecayPolicy().Snapshots(); }
 
   //! Get the snapshots.
   std::vector<arma::mat> Snapshots() const { return junk; }
@@ -226,18 +227,8 @@ class SGDR
   //! The size of each mini-batch.
   size_t batchSize;
 
-  //! The maximum number of allowed iterations.
-  size_t maxIterations;
-
-  //! The tolerance for termination.
-  double tolerance;
-
-  //! Controls whether or not the individual functions are shuffled when
-  //! iterating.
-  bool shuffle;
-
-  //! The decay method used to update the step size in each iteration.
-  DecayPolicyType decayPolicy;
+  //! Whether or not to accumulate the snapshots.
+  bool accumulate;
 
   //! Locally-stored optimizer instance.
   OptimizerType optimizer;

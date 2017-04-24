@@ -28,21 +28,21 @@ MiniBatchSGDType<
     UpdatePolicyType,
     DecayPolicyType
 >::MiniBatchSGDType(DecomposableFunctionType& function,
-                const size_t batchSize,
-                const double stepSize,
-                const size_t maxIterations,
-                const double tolerance,
-                const bool shuffle,
-                const UpdatePolicyType& updatePolicy,
-                const DecayPolicyType& decayPolicy) :
-                function(function),
-                batchSize(batchSize),
-                stepSize(stepSize),
-                maxIterations(maxIterations),
-                tolerance(tolerance),
-                shuffle(shuffle),
-                updatePolicy(updatePolicy),
-                decayPolicy(decayPolicy)
+                    const size_t batchSize,
+                    const double stepSize,
+                    const size_t maxIterations,
+                    const double tolerance,
+                    const bool shuffle,
+                    const UpdatePolicyType& updatePolicy,
+                    const DecayPolicyType& decayPolicy) :
+                    function(function),
+                    batchSize(batchSize),
+                    stepSize(stepSize),
+                    maxIterations(maxIterations),
+                    tolerance(tolerance),
+                    shuffle(shuffle),
+                    updatePolicy(updatePolicy),
+                    decayPolicy(decayPolicy)
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
@@ -166,7 +166,7 @@ double MiniBatchSGDType<
     }
 
     // Now update the learning rate if requested by the user.
-    decayPolicy.Update(stepSize, i - 1, currentBatch, iterate);
+    decayPolicy.Update(iterate, stepSize, gradient);
   }
 
   Log::Info << "Mini-batch SGD: maximum iterations (" << maxIterations << ") "

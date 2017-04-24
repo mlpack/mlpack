@@ -34,15 +34,13 @@ class NoDecay
   /**
    * This function is called in each iteration after the policy update.
    *
-   * @param stepSize The stepSize to be adjusted.
-   * @param epoch The current epoch.
-   * @param batch The current batch.
-   * @param iterate Function parameters.
-   */
-  void Update(double& /* stepSize */,
-              const size_t /* epoch */,
-              const size_t /* batch */,
-              const arma::mat& /* iterate */)
+  * @param iterate Parameters that minimize the function.
+  * @param stepSize Step size to be used for the given iteration.
+  * @param gradient The gradient matrix.
+  */
+  void Update(arma::mat& /* iterate */,
+              const double /* stepSize */,
+              const arma::mat& /* gradient */)
   {
    // Nothing to do here.
   }

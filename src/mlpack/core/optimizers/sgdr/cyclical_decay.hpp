@@ -63,21 +63,20 @@ class CyclicalDecay
       constStepSize(stepSize),
       nextRestart(epochRestart),
       batchRestart(0),
-      epochBatches(numFunctions / (double) batchSize)
+      epochBatches(numFunctions / (double) batchSize),
+      epoch(0)
   { /* Nothing to do here */ }
 
   /**
    * This function is called in each iteration after the policy update.
    *
-   * @param stepSize The stepSize to be adjusted.
-   * @param epoch The current epoch.
-   * @param batch The current batch.
-   * @param iterate Function parameters.
+   * @param iterate Parameters that minimize the function.
+   * @param stepSize Step size to be used for the given iteration.
+   * @param gradient The gradient matrix.
    */
-  void Update(double& stepSize,
-              const size_t epoch,
-              const size_t /* batch */,
-              const arma::mat& /* iterate */)
+  void Update(arma::mat& /* iterate */,
+              double& stepSize,
+              const arma::mat& /* gradient */)
   {
     // Time to adjust the step size.
     if (epoch >= epochRestart)
@@ -101,6 +100,8 @@ class CyclicalDecay
       // Update the time for the next restart.
       nextRestart += epochRestart;
     }
+
+    epoch++;
   }
 
   //! Get the step size.
@@ -130,6 +131,9 @@ class CyclicalDecay
 
   //! Locally-stored restart fraction.
   double epochBatches;
+
+  //! Locally-stored epoch.
+  size_t epoch;
 };
 
 } // namespace optimization
