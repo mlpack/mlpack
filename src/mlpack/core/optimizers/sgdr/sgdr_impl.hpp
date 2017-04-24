@@ -37,18 +37,13 @@ SGDR<
         const double tolerance,
         const bool shuffle,
         const size_t snapshots,
+        const bool accumulate,
         const UpdatePolicyType& updatePolicy,
         const typename std::enable_if_t<std::is_same<
             PolicyType, SnapshotEnsembles>::value>* /* junk */) :
     function(function),
     batchSize(batchSize),
-    decayPolicy(SnapshotEnsembles(epochRestart,
-                                  multFactor,
-                                  stepSize,
-                                  batchSize,
-                                  function.NumFunctions(),
-                                  maxIterations,
-                                  snapshots)),
+    accumulate(accumulate),
     optimizer(OptimizerType(function,
                             batchSize,
                             stepSize,
@@ -56,7 +51,14 @@ SGDR<
                             tolerance,
                             shuffle,
                             updatePolicy,
-                            decayPolicy))
+                            SnapshotEnsembles(
+                                epochRestart,
+                                multFactor,
+                                stepSize,
+                                batchSize,
+                                function.NumFunctions(),
+                                maxIterations,
+                                snapshots)))
 {
   /* Nothing to do here */
 }
@@ -84,11 +86,7 @@ SGDR<
             PolicyType, CyclicalDecay>::value>* /* junk */) :
     function(function),
     batchSize(batchSize),
-    decayPolicy(CyclicalDecay(epochRestart,
-                              multFactor,
-                              stepSize,
-                              batchSize,
-                              function.NumFunctions())),
+    accumulate(true),
     optimizer(OptimizerType(function,
                             batchSize,
                             stepSize,
@@ -96,7 +94,12 @@ SGDR<
                             tolerance,
                             shuffle,
                             updatePolicy,
-                            decayPolicy))
+                            CyclicalDecay(
+                                epochRestart,
+                                multFactor,
+                                stepSize,
+                                batchSize,
+                                function.NumFunctions())))
 {
   /* Nothing to do here */
 }
@@ -112,15 +115,14 @@ double SGDR<
     UpdatePolicyType,
     DecayPolicyType
 >::Optimize(arma::mat& iterate,
-            const bool accumulate,
             const typename std::enable_if_t<std::is_same<
                 PolicyType, SnapshotEnsembles>::value>* /* junk */)
 {
   // If a user changed the step size he hasn't update the step size of the
   // cyclical decay instantiation, so we have to do here.
-  if (optimizer.StepSize() != decayPolicy.StepSize())
+  if (optimizer.StepSize() != optimizer.DecayPolicy().StepSize())
   {
-    decayPolicy.StepSize() = optimizer.StepSize();
+    optimizer.DecayPolicy().StepSize() = optimizer.StepSize();
   }
 
   // If a user changed the batch size we have to update the restart fraction
@@ -128,7 +130,7 @@ double SGDR<
   if (optimizer.BatchSize() != batchSize)
   {
     batchSize = optimizer.BatchSize();
-    decayPolicy.EpochBatches() = function.NumFunctions() /
+    optimizer.DecayPolicy().EpochBatches() = function.NumFunctions() /
         double(batchSize);
   }
 
@@ -137,11 +139,11 @@ double SGDR<
   // Accumulate snapshots.
   if (accumulate)
   {
-    for (size_t i = 0; i < decayPolicy.Snapshots().size(); ++i)
+    for (size_t i = 0; i < optimizer.DecayPolicy().Snapshots().size(); ++i)
     {
-      iterate += decayPolicy.Snapshots()[i];
+      iterate += optimizer.DecayPolicy().Snapshots()[i];
     }
-    iterate /= (decayPolicy.Snapshots().size() + 1);
+    iterate /= (optimizer.DecayPolicy().Snapshots().size() + 1);
 
     // Calculate final objective.
     overallObjective = 0;
@@ -168,9 +170,9 @@ double SGDR<
 {
   // If a user changed the step size he hasn't update the step size of the
   // cyclical decay instantiation, so we have to do here.
-  if (optimizer.StepSize() != decayPolicy.StepSize())
+  if (optimizer.StepSize() != optimizer.DecayPolicy().StepSize())
   {
-    decayPolicy.StepSize() = optimizer.StepSize();
+    optimizer.DecayPolicy().StepSize() = optimizer.StepSize();
   }
 
   // If a user changed the batch size we have to update the restart fraction
@@ -178,7 +180,7 @@ double SGDR<
   if (optimizer.BatchSize() != batchSize)
   {
     batchSize = optimizer.BatchSize();
-    decayPolicy.EpochBatches() = function.NumFunctions() /
+    optimizer.DecayPolicy().EpochBatches() = function.NumFunctions() /
         double(batchSize);
   }
 
