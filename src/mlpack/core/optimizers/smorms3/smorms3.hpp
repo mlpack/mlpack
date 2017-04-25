@@ -1,53 +1,46 @@
 /**
- * @file adam.hpp
- * @author Ryan Curtin
- * @author Vasanth Kalingeri
- * @author Marcus Edel
+ * @file smorms3.hpp
  * @author Vivek Pal
  *
- * Adam and AdaMax optimizer. Adam is an an algorithm for first-order gradient-
- * -based optimization of stochastic objective functions, based on adaptive
- * estimates of lower-order moments. AdaMax is simply a variant of Adam based
- * on the infinity norm.
+ * SMORMS3 i.e. squared mean over root mean squared cubed optimizer. It is a
+ * hybrid of RMSprop, which estimates a safe and optimal distance based on
+ * curvature and Yann LeCun’s method in "No more pesky learning rates".
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_OPTIMIZERS_ADAM_ADAM_HPP
-#define MLPACK_CORE_OPTIMIZERS_ADAM_ADAM_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_SMORMS3_SMORMS3_HPP
+#define MLPACK_CORE_OPTIMIZERS_SMORMS3_SMORMS3_HPP
 
 #include <mlpack/prereqs.hpp>
-
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
-#include "adam_update.hpp"
-#include "adamax_update.hpp"
+
+#include "smorms3_update.hpp"
 
 namespace mlpack {
 namespace optimization {
 
 /**
- * Adam is an optimizer that computes individual adaptive learning rates for
- * different parameters from estimates of first and second moments of the
- * gradients. AdaMax is a variant of Adam based on the infinity norm as given
- * in the section 7 of the following paper.
+ * SMORMS3 is an optimizer that estimates a safe and optimal distance based on
+ * curvature and normalizing the stepsize in the parameter space. It is a hybrid
+ * of RMSprop and Yann LeCun’s method in "No more pesky learning rates".
  *
  * For more information, see the following.
  *
  * @code
- * @article{Kingma2014,
- *   author  = {Diederik P. Kingma and Jimmy Ba},
- *   title   = {Adam: {A} Method for Stochastic Optimization},
- *   journal = {CoRR},
- *   year    = {2014},
- *   url     = {http://arxiv.org/abs/1412.6980}
+ * @misc{Funk2015,
+ *   author = {Simon Funk},
+ *   title  = {RMSprop loses to SMORMS3 - Beware the Epsilon!},
+ *   year   = {2015}
+ *   url    = {http://sifter.org/~simon/journal/20150420.html}
  * }
  * @endcode
  *
  *
- * For Adam and AdaMax to work, a DecomposableFunctionType template parameter
- * is required. This class must implement the following function:
+ * For SMORMS3 to work, a DecomposableFunctionType template parameter is
+ * required. This class must implement the following function:
  *
  *   size_t NumFunctions();
  *   double Evaluate(const arma::mat& coordinates, const size_t i);
@@ -64,18 +57,14 @@ namespace optimization {
  * is held internally in the DecomposableFunctionType).
  *
  * @tparam DecomposableFunctionType Decomposable objective function type to be
- *     minimized.
- * @tparam UpdateRule Adam optimizer update rule to be used.
+ *         minimized.
  */
-template<
-    typename DecomposableFunctionType,
-    typename UpdateRule = AdamUpdate
->
-class AdamType
+template<typename DecomposableFunctionType>
+class SMORMS3
 {
  public:
   /**
-   * Construct the Adam optimizer with the given function and parameters. The
+   * Construct the SMORMS3 optimizer with the given function and parameters. The
    * defaults here are not necessarily good for the given problem, so it is
    * suggested that the values used be tailored to the task at hand.  The
    * maximum number of iterations refers to the maximum number of points that
@@ -84,34 +73,30 @@ class AdamType
    *
    * @param function Function to be optimized (minimized).
    * @param stepSize Step size for each iteration.
-   * @param beta1 Exponential decay rate for the first moment estimates.
-   * @param beta2 Exponential decay rate for the weighted infinity norm
-            estimates.
-   * @param eps Value used to initialise the mean squared gradient parameter.
+   * @param epsilon Value used to initialise the mean squared gradient
+   *        parameter.
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *        limit).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    * @param shuffle If true, the function order is shuffled; otherwise, each
    *        function is visited in linear order.
    */
-  AdamType(DecomposableFunctionType& function,
-           const double stepSize = 0.001,
-           const double beta1 = 0.9,
-           const double beta2 = 0.999,
-           const double eps = 1e-8,
-           const size_t maxIterations = 100000,
-           const double tolerance = 1e-5,
-           const bool shuffle = true);
+  SMORMS3(DecomposableFunctionType& function,
+          const double stepSize = 0.001,
+          const double epsilon = 1e-16,
+          const size_t maxIterations = 100000,
+          const double tolerance = 1e-5,
+          const bool shuffle = true);
 
   /**
-   * Optimize the given function using Adam. The given starting point will be
-   * modified to store the finishing point of the algorithm, and the final
+   * Optimize the given function using SMORMS3. The given starting point will
+   * be modified to store the finishing point of the algorithm, and the final
    * objective value is returned.
    *
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
-  double Optimize(arma::mat& iterate){ return optimizer.Optimize(iterate); }
+  double Optimize(arma::mat& iterate) { return optimizer.Optimize(iterate); }
 
   //! Get the instantiated function to be optimized.
   const DecomposableFunctionType& Function() const
@@ -125,16 +110,6 @@ class AdamType
   double StepSize() const { return optimizer.StepSize(); }
   //! Modify the step size.
   double& StepSize() { return optimizer.StepSize(); }
-
-  //! Get the smoothing parameter.
-  double Beta1() const { return optimizer.UpdatePolicy().Beta1(); }
-  //! Modify the smoothing parameter.
-  double& Beta1() { return optimizer.UpdatePolicy().Beta1(); }
-
-  //! Get the second moment coefficient.
-  double Beta2() const { return optimizer.UpdatePolicy().Beta2(); }
-  //! Modify the second moment coefficient.
-  double& Beta2() { return optimizer.UpdatePolicy().Beta2(); }
 
   //! Get the value used to initialise the mean squared gradient parameter.
   double Epsilon() const { return optimizer.UpdatePolicy().Epsilon(); }
@@ -157,20 +132,14 @@ class AdamType
   bool& Shuffle() { return optimizer.Shuffle(); }
 
  private:
-  //! The Stochastic Gradient Descent object with Adam policy.
-  SGD<DecomposableFunctionType, UpdateRule> optimizer;
+  //! The Stochastic Gradient Descent object with SMORMS3Update update policy.
+  SGD<DecomposableFunctionType, SMORMS3Update> optimizer;
 };
-
-template<typename DecomposableFunctionType>
-using Adam = AdamType<DecomposableFunctionType, AdamUpdate>;
-
-template<typename DecomposableFunctionType>
-using AdaMax = AdamType<DecomposableFunctionType, AdaMaxUpdate>;
 
 } // namespace optimization
 } // namespace mlpack
 
 // Include implementation.
-#include "adam_impl.hpp"
+#include "smorms3_impl.hpp"
 
 #endif

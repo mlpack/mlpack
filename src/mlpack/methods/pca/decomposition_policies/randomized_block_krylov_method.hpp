@@ -1,9 +1,9 @@
 /**
- * @file randomized_svd_method.hpp
+ * @file randomized_block_krylov_method.hpp
  * @author Marcus Edel
  *
- * Implementation of the randomized svd method for use in the Principal
- * Components Analysis method.
+ * Implementation of the randomized block krylov SVD method for use in the
+ * Principal Components Analysis method.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -11,41 +11,40 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_METHODS_PCA_DECOMPOSITION_POLICIES_RANDOMIZED_SVD_METHOD_HPP
-#define MLPACK_METHODS_PCA_DECOMPOSITION_POLICIES_RANDOMIZED_SVD_METHOD_HPP
+#ifndef MLPACK_METHODS_PCA_DECOMPOSITION_POLICIES_RANDOMIZED_BLOCK_KRYLOV_HPP
+#define MLPACK_METHODS_PCA_DECOMPOSITION_POLICIES_RANDOMIZED_BLOCK_KRYLOV_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/methods/randomized_svd/randomized_svd.hpp>
+#include <mlpack/methods/block_krylov_svd/randomized_block_krylov_svd.hpp>
 
 namespace mlpack {
 namespace pca {
 
 /**
- * Implementation of the randomized SVD policy.
+ * Implementation of the randomized block krylov SVD policy.
  */
-class RandomizedSVDPolicy
+class RandomizedBlockKrylovSVDPolicy
 {
  public:
   /**
-   * Use randomized SVD method to perform the principal components analysis
-   * (PCA).
+   * Use randomized block krylov SVD method to perform the principal components
+   * analysis (PCA).
    *
-   * @param iteratedPower Size of the normalized power iterations
-   *        (Default: rank + 2).
    * @param maxIterations Number of iterations for the power method
    *        (Default: 2).
+   * @param blockSize The block size, must be >= rank (Default: rank + 10).
    */
-  RandomizedSVDPolicy(const size_t iteratedPower = 0,
-                      const size_t maxIterations = 2) :
-      iteratedPower(iteratedPower),
-      maxIterations(maxIterations)
+  RandomizedBlockKrylovSVDPolicy(const size_t maxIterations = 2,
+                                 const size_t blockSize = 0) :
+      maxIterations(maxIterations),
+      blockSize(blockSize)
   {
     /* Nothing to do here */
   }
 
   /**
    * Apply Principal Component Analysis to the provided data set using the
-   * randomized SVD.
+   * randomized block krylov SVD method.
    *
    * @param data Data matrix.
    * @param centeredData Centered data matrix.
@@ -64,9 +63,10 @@ class RandomizedSVDPolicy
     // This matrix will store the right singular values; we do not need them.
     arma::mat v;
 
-    // Do singular value decomposition using the randomized SVD algorithm.
-    svd::RandomizedSVD rsvd(iteratedPower, maxIterations);
-    rsvd.Apply(data, eigvec, eigVal, v, rank);
+    // Do singular value decomposition using the randomized block krylov SVD
+    // algorithm.
+    svd::RandomizedBlockKrylovSVD rsvd(maxIterations, blockSize);
+    rsvd.Apply(centeredData, eigvec, eigVal, v, rank);
 
     // Now we must square the singular values to get the eigenvalues.
     // In addition we must divide by the number of points, because the
@@ -77,22 +77,22 @@ class RandomizedSVDPolicy
     transformedData = arma::trans(eigvec) * centeredData;
   }
 
-  //! Get the size of the normalized power iterations.
-  size_t IteratedPower() const { return iteratedPower; }
-  //! Modify the size of the normalized power iterations.
-  size_t& IteratedPower() { return iteratedPower; }
-
   //! Get the number of iterations for the power method.
   size_t MaxIterations() const { return maxIterations; }
   //! Modify the number of iterations for the power method.
   size_t& MaxIterations() { return maxIterations; }
 
- private:
-  //! Locally stored size of the normalized power iterations.
-  size_t iteratedPower;
+  //! Get the block size.
+  size_t BlockSize() const { return blockSize; }
+  //! Modify the block size.
+  size_t& BlockSize() { return blockSize; }
 
+ private:
   //! Locally stored number of iterations for the power method.
   size_t maxIterations;
+
+  //! Locally stored block size value.
+  size_t blockSize;
 };
 
 } // namespace pca

@@ -66,9 +66,9 @@ class GradientDescent
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    */
   GradientDescent(FunctionType& function,
-      const double stepSize = 0.01,
-      const size_t maxIterations = 100000,
-      const double tolerance = 1e-5);
+                  const double stepSize = 0.01,
+                  const size_t maxIterations = 100000,
+                  const double tolerance = 1e-5);
 
   /**
    * Optimize the given function using gradient descent.  The given starting

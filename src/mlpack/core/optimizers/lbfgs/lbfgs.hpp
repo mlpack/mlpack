@@ -94,11 +94,15 @@ class L_BFGS
    * finishing point of the algorithm, and the final objective value is
    * returned.
    *
+   * This overload will be removed in mlpack 3.0.0---you should set
+   * maxIterations in the constructor instead.
+   *
    * @param iterate Starting point (will be modified).
    * @param maxIterations Maximum number of iterations (0 specifies no limit).
    * @return Objective value of the final point.
    */
-  double Optimize(arma::mat& iterate, const size_t maxIterations);
+  mlpack_deprecated double Optimize(arma::mat& iterate,
+                                    const size_t maxIterations);
 
   //! Return the function that is being optimized.
   const FunctionType& Function() const { return function; }

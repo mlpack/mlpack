@@ -1,8 +1,7 @@
 set(SOURCES
-  adam.hpp
-  adam_impl.hpp
-  adam_update.hpp
-  adamax_update.hpp
+  smorms3.hpp
+  smorms3_impl.hpp
+  smorms3_update.hpp
 )
 
 set(DIR_SRCS)

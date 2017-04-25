@@ -1,8 +1,8 @@
 /**
- * @file rmsprop_test.cpp
- * @author Marcus Edel
+ * @file smorms3_test.cpp
+ * @author Vivek Pal
  *
- * Tests the RMSProp optimizer.
+ * Tests the SMORMS3 optimizer.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -11,34 +11,34 @@
  */
 #include <mlpack/core.hpp>
 
-#include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
+#include <mlpack/core/optimizers/smorms3/smorms3.hpp>
 #include <mlpack/core/optimizers/sgd/test_function.hpp>
-
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
 using namespace arma;
-using namespace mlpack;
 using namespace mlpack::optimization;
 using namespace mlpack::optimization::test;
 
 using namespace mlpack::distribution;
 using namespace mlpack::regression;
 
-BOOST_AUTO_TEST_SUITE(RMSPropTest);
+using namespace mlpack;
+
+BOOST_AUTO_TEST_SUITE(SMORMS3Test);
 
 /**
- * Tests the RMSProp optimizer using a simple test function.
+ * Tests the SMORMS3 optimizer using a simple test function.
  */
-BOOST_AUTO_TEST_CASE(SimpleRMSPropTestFunction)
+BOOST_AUTO_TEST_CASE(SimpleSMORMS3TestFunction)
 {
   SGDTestFunction f;
-  RMSProp<SGDTestFunction> optimizer(f, 1e-3, 0.99, 1e-8, 5000000, 1e-9, true);
+  SMORMS3<SGDTestFunction> s(f, 0.001, 1e-16, 5000000, 1e-9, true);
 
   arma::mat coordinates = f.GetInitialPoint();
-  optimizer.Optimize(coordinates);
+  s.Optimize(coordinates);
 
   BOOST_REQUIRE_SMALL(coordinates[0], 0.1);
   BOOST_REQUIRE_SMALL(coordinates[1], 0.1);
@@ -46,9 +46,9 @@ BOOST_AUTO_TEST_CASE(SimpleRMSPropTestFunction)
 }
 
 /**
- * Run RMSProp on logistic regression and make sure the results are acceptable.
+ * Run SMORMS3 on logistic regression and make sure the results are acceptable.
  */
-BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
+BOOST_AUTO_TEST_CASE(SMORMS3LogisticRegressionTest)
 {
   // Generate a two-Gaussian dataset.
   GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
@@ -95,8 +95,8 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
   LogisticRegression<> lr(shuffledData.n_rows, 0.5);
 
   LogisticRegressionFunction<> lrf(shuffledData, shuffledResponses, 0.5);
-  RMSProp<LogisticRegressionFunction<> > rmsprop(lrf);
-  lr.Train(rmsprop);
+  SMORMS3<LogisticRegressionFunction<> > smorms3(lrf);
+  lr.Train(smorms3);
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses);

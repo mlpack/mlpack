@@ -12,6 +12,7 @@ add_executable(mlpack_test
   armadillo_svd_test.cpp
   aug_lagrangian_test.cpp
   binarize_test.cpp
+  block_krylov_svd_test.cpp
   cf_test.cpp
   cli_test.cpp
   convolution_test.cpp
@@ -82,6 +83,7 @@ add_executable(mlpack_test
   serialization.hpp
   serialization.cpp
   serialization_test.cpp
+  smorms3_test.cpp
   softmax_regression_test.cpp
   sort_policy_test.cpp
   sparse_autoencoder_test.cpp

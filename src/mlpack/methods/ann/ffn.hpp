@@ -93,7 +93,7 @@ class FFN
    */
   template<
       template<typename, typename...> class OptimizerType =
-          mlpack::optimization::RMSprop,
+          mlpack::optimization::RMSProp,
       typename... OptimizerTypeArgs
   >
   void Train(const arma::mat& predictors,
@@ -102,7 +102,7 @@ class FFN
 
   /**
    * Train the feedforward network on the given input data. By default, the
-   * RMSprop optimization algorithm is used, but others can be specified
+   * RMSProp optimization algorithm is used, but others can be specified
    * (such as mlpack::optimization::SGD).
    *
    * This will use the existing model parameters as a starting point for the
@@ -114,7 +114,7 @@ class FFN
    * @param responses Outputs results from input training variables.
    */
   template<
-      template<typename...> class OptimizerType = mlpack::optimization::RMSprop
+      template<typename...> class OptimizerType = mlpack::optimization::RMSProp
   >
   void Train(const arma::mat& predictors, const arma::mat& responses);
 
@@ -204,7 +204,7 @@ private:
   void Gradient();
 
   /**
-   * Reset the module infomration (weights/parameters).
+   * Reset the module information (weights/parameters).
    */
   void ResetParameters();
 
