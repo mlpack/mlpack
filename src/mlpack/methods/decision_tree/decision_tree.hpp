@@ -266,11 +266,13 @@ class DecisionTree :
                                    const size_t numClasses);
 
   /**
-   * Corresponding to the public constructor. 
-   * This method is designed for avoiding unnecessary copies during training.
+   * Corresponding to the public constructor, this method is designed for
+   * avoiding unnecessary copies during training.  This constructor is called to
+   * create children.
    *
    * @param data Dataset to train on.
-   * @param begin Index of the starting point in the dataset that belongs to this node.
+   * @param begin Index of the starting point in the dataset that belongs to
+   *      this node.
    * @param count Number of points in this node.
    * @param datasetInfo Type information for each dimension of the dataset.
    * @param labels Labels for each training point.
@@ -287,11 +289,13 @@ class DecisionTree :
                const size_t minimumLeafSize = 10);
 
   /**
-   * Corresponding to the public constructor. 
-   * This method is designed for avoiding unnecessary copies during training.
+   * Corresponding to the public constructor, this method is designed for
+   * avoiding unnecessary copies during training.  This constructor is called to
+   * create children.
    *
    * @param data Dataset to train on.
-   * @param begin Index of the starting point in the dataset that belongs to this node.
+   * @param begin Index of the starting point in the dataset that belongs to
+   *      this node.
    * @param count Number of points in this node.
    * @param labels Labels for each training point.
    * @param numClasses Number of classes in the dataset.
@@ -306,11 +310,13 @@ class DecisionTree :
                const size_t minimumLeafSize = 10);
 
   /**
-   * Corresponding to the public Train method. 
-   * This method is designed for avoiding unnecessary copies during training.
+   * Corresponding to the public Train() method, this method is designed for
+   * avoiding unnecessary copies during training.  This function is called to
+   * train children.
    *
    * @param data Dataset to train on.
-   * @param begin Index of the starting point in the dataset that belongs to this node.
+   * @param begin Index of the starting point in the dataset that belongs to
+   *      this node.
    * @param count Number of points in this node.
    * @param datasetInfo Type information for each dimension.
    * @param labels Labels for each training point.
@@ -327,11 +333,13 @@ class DecisionTree :
              const size_t minimumLeafSize = 10);
 
   /**
-   * Corresponding to the public Train method. 
-   * This method is designed for avoiding unnecessary copies during training.
+   * Corresponding to the public Train() method, this method is designed for
+   * avoiding unnecessary copies during training.  This method is called for
+   * training children.
    *
    * @param data Dataset to train on.
-   * @param begin Index of the starting point in the dataset that belongs to this node.
+   * @param begin Index of the starting point in the dataset that belongs to
+   *      this node.
    * @param count Number of points in this node.
    * @param labels Labels for each training point.
    * @param numClasses Number of classes in the dataset.
