@@ -377,7 +377,7 @@ Search(const MatType& querySet,
 
       Log::Info << "Single-tree traversal complete." << std::endl;
       Log::Info << "Average number of distance calculations per query point: "
-          << (traverser.NumBaseCases() / querySet.n_cols) << "."
+          << (rules.NumDistComputations() / querySet.n_cols) << "."
           << std::endl;
     }
 
@@ -406,7 +406,7 @@ Search(const MatType& querySet,
 
     Log::Info << "Dual-tree traversal complete." << std::endl;
     Log::Info << "Average number of distance calculations per query point: "
-        << (traverser.NumBaseCases() / querySet.n_cols) << "." << std::endl;
+        << (rules.NumDistComputations() / querySet.n_cols) << "." << std::endl;
 
     rules.GetResults(*neighborPtr, *distancePtr);
 
