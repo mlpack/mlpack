@@ -64,6 +64,7 @@ RASearchRules(const arma::mat& referenceSet,
 
   // Initialize some statistics to be collected during the search.
   numSamplesMade = arma::zeros<arma::Col<size_t> >(querySet.n_cols);
+  numDistComputations = 0;
   samplingRatio = (double) numSamplesReqd / (double) n;
 
   Log::Info << "Minimum samples required per query: " << numSamplesReqd <<
@@ -133,6 +134,9 @@ double RASearchRules<SortPolicy, MetricType, TreeType>::BaseCase(
   InsertNeighbor(queryIndex, referenceIndex, distance);
 
   numSamplesMade[queryIndex]++;
+
+  // TO REMOVE
+  numDistComputations++;
 
   return distance;
 }
