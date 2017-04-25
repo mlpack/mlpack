@@ -39,7 +39,7 @@ DecisionTree<FitnessFunction,
   TrueLabelsType tmpLabels(std::forward<LabelsType>(labels));
   // Pass off work to the Train() method.
   Train(tmpData, 0, tmpData.n_cols, datasetInfo, 
-    tmpLabels, numClasses, minimumLeafSize);
+      tmpLabels, numClasses, minimumLeafSize);
 }
 
 //! Construct and train.
@@ -65,7 +65,7 @@ DecisionTree<FitnessFunction,
   TrueLabelsType tmpLabels(std::forward<LabelsType>(labels));
   // Pass off work to the Train() method.
   Train(tmpData, 0, tmpData.n_cols, 
-    tmpLabels, numClasses, minimumLeafSize);
+      tmpLabels, numClasses, minimumLeafSize);
 }
 
 //! Construct and train.
@@ -334,7 +334,7 @@ void DecisionTree<FitnessFunction,
   TrueLabelsType tmpLabels(std::forward<LabelsType>(labels));
   // Pass off work to the Train() method.
   Train(tmpData, 0, tmpData.n_cols,
-    tmpLabels, numClasses, minimumLeafSize);
+      tmpLabels, numClasses, minimumLeafSize);
 }
 
 //! Train on the given data.
@@ -368,24 +368,24 @@ void DecisionTree<FitnessFunction,
   // classProbabilities to the empirical class probabilities if we do not split.
 
   double bestGain = FitnessFunction::Evaluate(
-    labels.subvec(begin, begin + count - 1), numClasses);
+      labels.subvec(begin, begin + count - 1), numClasses);
   size_t bestDim = datasetInfo.Dimensionality(); // This means "no split".
   for (size_t i = 0; i < datasetInfo.Dimensionality(); ++i)
   {
     double dimGain = -DBL_MAX;
     if (datasetInfo.Type(i) == data::Datatype::categorical)
       dimGain = CategoricalSplit::SplitIfBetter(bestGain, 
-        data.cols(begin, begin + count - 1).row(i), 
-        datasetInfo.NumMappings(i), 
-        labels.subvec(begin, begin + count - 1), 
-        numClasses, minimumLeafSize,
-        classProbabilities, *this);
+          data.cols(begin, begin + count - 1).row(i), 
+          datasetInfo.NumMappings(i), 
+          labels.subvec(begin, begin + count - 1), 
+          numClasses, minimumLeafSize,
+          classProbabilities, *this);
     else if (datasetInfo.Type(i) == data::Datatype::numeric)
       dimGain = NumericSplit::SplitIfBetter(bestGain, 
-        data.cols(begin, begin + count - 1).row(i), 
-        labels.subvec(begin, begin + count - 1), 
-        numClasses, minimumLeafSize,
-        classProbabilities, *this);
+          data.cols(begin, begin + count - 1).row(i), 
+          labels.subvec(begin, begin + count - 1), 
+          numClasses, minimumLeafSize,
+          classProbabilities, *this);
 
     // Was there an improvement?  If so mark that it's the new best dimension.
     if (dimGain > bestGain)
@@ -413,24 +413,24 @@ void DecisionTree<FitnessFunction,
       numChildren = NumericSplit::NumChildren(classProbabilities, *this);
 
     // Calculate all child assignments.
-    arma::Row<size_t> childAssignments(data.n_cols);
+    arma::Row<size_t> childAssignments(count);
     if (datasetInfo.Type(bestDim) == data::Datatype::categorical)
     {
       for (size_t j = begin; j < begin + count; ++j)
-        childAssignments[j] = CategoricalSplit::CalculateDirection(
+        childAssignments[j - begin] = CategoricalSplit::CalculateDirection(
             data(bestDim, j), classProbabilities, *this);
     }
     else
     {
       for (size_t j = begin; j < begin + count; ++j)
-        childAssignments[j] = NumericSplit::CalculateDirection(data(bestDim, j),
+        childAssignments[j - begin] = NumericSplit::CalculateDirection(data(bestDim, j),
             classProbabilities, *this);
     }
 
     // Figure out counts of children.
     arma::Row<size_t> childCounts(numClasses, arma::fill::zeros);
     for (size_t i = begin; i < begin + count; ++i)
-      childCounts[childAssignments[i]]++;
+      childCounts[childAssignments[i - begin]]++;
 
     // Split into children.
     size_t currentCol = begin;
@@ -439,9 +439,9 @@ void DecisionTree<FitnessFunction,
       size_t currentChildBegin = currentCol;
       for (size_t j = currentChildBegin; j < begin + count; ++j)
       {
-        if (childAssignments[j] == i)
+        if (childAssignments[j - begin] == i)
         {
-          childAssignments.swap_cols(currentCol, j);
+          childAssignments.swap_cols(currentCol - begin, j - begin);
           data.swap_cols(currentCol, j);
           labels.swap_cols(currentCol, j);
           ++currentCol;
@@ -451,12 +451,12 @@ void DecisionTree<FitnessFunction,
       // Now build the child recursively.
       if (NoRecursion)
         children.push_back(new DecisionTree(data, currentChildBegin, 
-          currentCol - currentChildBegin, datasetInfo,
-          labels, numClasses, currentCol - currentChildBegin));
+            currentCol - currentChildBegin, datasetInfo,
+            labels, numClasses, currentCol - currentChildBegin));
       else
         children.push_back(new DecisionTree(data, currentChildBegin, 
-          currentCol - currentChildBegin, datasetInfo,
-          labels, numClasses, minimumLeafSize));
+            currentCol - currentChildBegin, datasetInfo,
+            labels, numClasses, minimumLeafSize));
     }
   }
   else
@@ -502,7 +502,7 @@ void DecisionTree<FitnessFunction,
   // information.  Later we'll overwrite classProbabilities to the empirical
   // class probabilities if we do not split.
   double bestGain = FitnessFunction::Evaluate(
-    labels.subvec(begin, begin + count - 1), numClasses);
+      labels.subvec(begin, begin + count - 1), numClasses);
   size_t bestDim = data.n_rows; // This means "no split".
   for (size_t i = 0; i < data.n_rows; ++i)
   {
@@ -531,17 +531,17 @@ void DecisionTree<FitnessFunction,
     dimensionTypeOrMajorityClass = (size_t) data::Datatype::numeric;
 
     // Calculate all child assignments.
-    arma::Row<size_t> childAssignments(data.n_cols);
+    arma::Row<size_t> childAssignments(count);
 
     for (size_t j = begin; j < begin + count; ++j)
-      childAssignments[j] = NumericSplit::CalculateDirection(data(bestDim, j),
+      childAssignments[j - begin] = NumericSplit::CalculateDirection(data(bestDim, j),
           classProbabilities, *this);
 
     // Calculate counts of children in each node.
     arma::Row<size_t> childCounts(numChildren);
     childCounts.zeros();
     for (size_t j = begin; j < begin + count; ++j)
-      childCounts[childAssignments[j]]++;
+      childCounts[childAssignments[j - begin]]++;
 
     size_t currentCol = begin;
     for (size_t i = 0; i < numChildren; ++i)
@@ -549,9 +549,9 @@ void DecisionTree<FitnessFunction,
       size_t currentChildBegin = currentCol;
       for (size_t j = currentChildBegin; j < begin + count; ++j)
       {
-        if (childAssignments[j] == i)
+        if (childAssignments[j - begin] == i)
         {
-          childAssignments.swap_cols(currentCol, j);
+          childAssignments.swap_cols(currentCol - begin, j - begin);
           data.swap_cols(currentCol, j);
           labels.swap_cols(currentCol, j);
           ++currentCol;
@@ -561,12 +561,12 @@ void DecisionTree<FitnessFunction,
       // Now build the child recursively.
       if (NoRecursion)
         children.push_back(new DecisionTree(data, currentChildBegin, 
-          currentCol - currentChildBegin,
-          labels, numClasses, currentCol - currentChildBegin));
+            currentCol - currentChildBegin,
+            labels, numClasses, currentCol - currentChildBegin));
       else
         children.push_back(new DecisionTree(data, currentChildBegin, 
-          currentCol - currentChildBegin,
-          labels, numClasses, minimumLeafSize));
+            currentCol - currentChildBegin,
+            labels, numClasses, minimumLeafSize));
     }
   }
   else
