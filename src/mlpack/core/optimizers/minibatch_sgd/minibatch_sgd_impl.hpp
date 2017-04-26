@@ -44,11 +44,9 @@ double MiniBatchSGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
   if (numFunctions % batchSize != 0)
     ++numBatches; // Capture last few.
 
-  // This is only used if shuffle is true.
-  arma::Col<size_t> visitationOrder;
-  if (shuffle)
-    visitationOrder = arma::shuffle(arma::linspace<arma::Col<size_t>>(0,
-        (numBatches - 1), numBatches));
+  // Batch visitation order.
+  arma::Col<size_t> visitationOrder = arma::shuffle(
+      arma::linspace<arma::Col<size_t>>(0, (numBatches - 1), numBatches));
 
   // To keep track of where we are and how things are going.
   size_t currentBatch = 0;
@@ -95,8 +93,7 @@ double MiniBatchSGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
     }
 
     // Evaluate the gradient for this mini-batch.
-    const size_t offset = (shuffle) ? batchSize * visitationOrder[currentBatch]
-        : batchSize * currentBatch;
+    const size_t offset = batchSize * visitationOrder[currentBatch];
     function.Gradient(iterate, offset, gradient);
     if (visitationOrder[currentBatch] != numBatches - 1)
     {
