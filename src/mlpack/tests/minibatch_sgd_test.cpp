@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_CASE(SGDSimilarityTest)
   arma::mat msCoord = f.GetInitialPoint();
 
   const double sResult = s.Optimize(sCoord);
-  const double msResult = s.Optimize(msCoord);
+  const double msResult = ms.Optimize(msCoord);
 
   BOOST_REQUIRE_CLOSE(sResult, msResult, 1e-8);
   BOOST_REQUIRE_CLOSE(sCoord[0], msCoord[0], 1e-8);
