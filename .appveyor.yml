@@ -1,8 +1,16 @@
-clone_depth: 30
+clone_depth: 10
+
 environment:
-  VisualStudioVersion: 14.0
+  matrix:
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      VSVER: Visual Studio 14 2015 Win64
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      VSVER: Visual Studio 15 2017 Win64
+
 configuration: Release
+
 os: Visual Studio 2015
+
 install:
   - ps: nuget install boost -o "${env:APPVEYOR_BUILD_FOLDER}" -Version 1.60.0
   - ps: nuget install boost_unit_test_framework-vc140 -o "${env:APPVEYOR_BUILD_FOLDER}" -Version 1.60.0
@@ -11,6 +19,7 @@ install:
   - ps: nuget install boost_serialization-vc140 -o "${env:APPVEYOR_BUILD_FOLDER}" -Version 1.60.0
   - ps: nuget install boost_math_c99-vc140 -o "${env:APPVEYOR_BUILD_FOLDER}" -Version 1.60.0
   - ps: nuget install OpenBLAS -o "${env:APPVEYOR_BUILD_FOLDER}"
+
 build_script:
   - mkdir boost_libs
   - ps: cp C:\projects\mlpack\boost_program_options-vc140.1.60.0.0\lib\native\address-model-64\lib\*.* C:\projects\mlpack\boost_libs\
