@@ -38,8 +38,8 @@ BOOST_AUTO_TEST_SUITE(MiniBatchSGDTest);
 BOOST_AUTO_TEST_CASE(SGDSimilarityTest)
 {
   SGDTestFunction f;
-  StandardSGD<SGDTestFunction> s(f, 0.0003, 5000000, 1e-9, false);
-  MiniBatchSGD<SGDTestFunction> ms(f, 1, 0.0003, 5000000, 1e-9, false);
+  StandardSGD<SGDTestFunction> s(f, 0.0003, 100000, 1e-4, false);
+  MiniBatchSGD<SGDTestFunction> ms(f, 1, 0.0003, 100000, 1e-4, false);
 
   arma::mat sCoord = f.GetInitialPoint();
   arma::mat msCoord = f.GetInitialPoint();
@@ -47,10 +47,10 @@ BOOST_AUTO_TEST_CASE(SGDSimilarityTest)
   const double sResult = s.Optimize(sCoord);
   const double msResult = ms.Optimize(msCoord);
 
-  BOOST_REQUIRE_CLOSE(sResult, msResult, 1e-8);
-  BOOST_REQUIRE_CLOSE(sCoord[0], msCoord[0], 1e-8);
-  BOOST_REQUIRE_CLOSE(sCoord[1], msCoord[1], 1e-8);
-  BOOST_REQUIRE_CLOSE(sCoord[2], msCoord[2], 1e-8);
+  BOOST_REQUIRE_CLOSE(sResult, msResult, 1e-2);
+  BOOST_REQUIRE_CLOSE(sCoord[0], msCoord[0], 1e-2);
+  BOOST_REQUIRE_CLOSE(sCoord[1], msCoord[1], 1e-2);
+  BOOST_REQUIRE_CLOSE(sCoord[2], msCoord[2], 1e-2);
 }
 
 /*
