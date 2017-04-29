@@ -21,20 +21,6 @@
 namespace mlpack {
 namespace rl {
 
-namespace cart_pole_details {
-// Some constants of Cart Pole task
-constexpr double gravity = 9.8;
-constexpr double massCart = 1.0;
-constexpr double massPole = 0.1;
-constexpr double totalMass = massCart + massPole;
-constexpr double length = 0.5;
-constexpr double poleMassLength = massPole * length;
-constexpr double forceMag = 10.0;
-constexpr double tau = 0.02;
-constexpr double thetaThresholdRadians = 12 * 2 * 3.1416 / 360;
-constexpr double xThreshold = 2.4;
-}
-
 /**
  * Implementation of Cart Pole task
  */
@@ -53,69 +39,40 @@ class CartPole
     State() : data(4) { }
 
     //! Construct a state instance from given data
-    State(arma::colvec data) : data(data) { }
+    State(const arma::colvec& data) : data(data) { }
+
+    /**
+     * Set the internal data to given value
+     * @param data desired internal data
+     */
+    void Set(const arma::colvec& data) { this->data = data; }
 
     //! Get position
-    double X() const
-    {
-      return data[0];
-    }
+    double Position() const { return data[0]; }
 
     //! Modify position
-    double& X()
-    {
-      return data[0];
-    }
+    double& Position() { return data[0]; }
 
     //! Get velocity
-    double XDot() const
-    {
-      return data[1];
-    }
+    double Velocity() const { return data[1]; }
 
     //! Modify velocity
-    double& XDot()
-    {
-      return data[1];
-    }
+    double& Velocity() { return data[1]; }
 
     //! Get angle
-    double Theta() const
-    {
-      return data[2];
-    }
+    double Angle() const { return data[2]; }
 
     //! Modify angle
-    double& Theta()
-    {
-      return data[2];
-    }
+    double& Angle() { return data[2]; }
 
     //! Get angular velocity
-    double ThetaDot() const
-    {
-      return data[3];
-    }
+    double AngularVelocity() const { return data[3]; }
 
     //! Modify angular velocity
-    double& ThetaDot()
-    {
-      return data[3];
-    }
+    double& AngularVelocity() { return data[3]; }
 
     //! Encode the state to a column vector
-    const arma::colvec& Encode() const
-    {
-      return data;
-    }
-
-    //! Whether current state is terminal state
-    bool IsTerminal() const
-    {
-      using namespace cart_pole_details;
-      return std::abs(X()) > xThreshold ||
-             std::abs(Theta()) > thetaThresholdRadians;
-    }
+    const arma::colvec& Encode() const { return data; }
 
    private:
     //! Locally-stored (position, velocity, angle, angular velocity)
@@ -125,55 +82,117 @@ class CartPole
   /**
    * Implementation of action of Cart Pole
    */
-  class Action
+  enum Action
   {
-   public:
-    enum Actions
-    {
-      backward,
-      forward
-    };
+    backward,
+    forward,
 
-    //! # of actions
-    static constexpr size_t count = 2;
+    // Track the size of the action space
+    size
   };
 
   /**
+   * Construct a Cart Pole instance
+   * @param gravity gravity
+   * @param massCart mass of the cart
+   * @param massPole mass of the pole
+   * @param length length of the pole
+   * @param forceMag magnitude of the applied force
+   * @param tau time interval
+   * @param thetaThresholdRadians maximum angle
+   * @param xThreshold maximum position
+   */
+  CartPole(double gravity = 9.8, double massCart = 1.0, double massPole = 0.1, double length = 0.5, double forceMag = 10.0,
+      double tau = 0.02, double thetaThresholdRadians = 12 * 2 * 3.1416 / 360, double xThreshold = 2.4) :
+      gravity(gravity), massCart(massCart), massPole(massPole), totalMass(massCart + massPole),
+      length(length), poleMassLength(massPole * length), forceMag(forceMag), tau(tau),
+      thetaThresholdRadians(thetaThresholdRadians), xThreshold(xThreshold) { }
+
+  /**
    * Dynamics of Cart Pole
-   * Get next state and next action based on current state and current action
+   * Get reward and next state based on current state and current action
    * @param state Current state
    * @param action Current action
    * @param nextState Next state
-   * @param reward Reward is always 1
+   * @return reward, it's always 1.0
    */
-  void Sample(const State& state, const Action::Actions& action,
-              State& nextState, double& reward)
+  double Sample(const State& state, const Action& action, State& nextState) const
   {
-    using namespace cart_pole_details;
     double force = action ? forceMag : -forceMag;
-    double cosTheta = std::cos(state.Theta());
-    double sinTheta = std::sin(state.Theta());
-    double temp = (force + poleMassLength * state.ThetaDot() * state.ThetaDot() * sinTheta) / totalMass;
+    double cosTheta = std::cos(state.Angle());
+    double sinTheta = std::sin(state.Angle());
+    double temp = (force + poleMassLength * state.AngularVelocity() * state.AngularVelocity() * sinTheta) / totalMass;
     double thetaAcc = (gravity * sinTheta - cosTheta * temp) /
             (length * (4.0 / 3.0 - massPole * cosTheta * cosTheta / totalMass));
     double xAcc = temp - poleMassLength * thetaAcc * cosTheta / totalMass;
-    nextState.X() = state.X() + tau * state.XDot();
-    nextState.XDot() = state.XDot() + tau * xAcc;
-    nextState.Theta() = state.Theta() + tau * state.ThetaDot();
-    nextState.ThetaDot() = state.ThetaDot() + tau * thetaAcc;
+    nextState.Position() = state.Position() + tau * state.Velocity();
+    nextState.Velocity() = state.Velocity() + tau * xAcc;
+    nextState.Angle() = state.Angle() + tau * state.AngularVelocity();
+    nextState.AngularVelocity() = state.AngularVelocity() + tau * thetaAcc;
 
-    reward = 1.0;
+    return 1.0;
+  }
+
+  /**
+   * Dynamics of Cart Pole
+   * Get reward based on current state and current action
+   * @param state Current state
+   * @param action Current action
+   * @return reward, it's always 1.0
+   */
+  double Sample(const State& state, const Action& action) const
+  {
+    State nextState;
+    return Sample(state, action, nextState);
   }
 
   /**
    * Initial state representation is randomly generated within [-0.05, 0.05]
    * @return Initial state for each episode
    */
-  State InitialSample()
+  State InitialSample() const { return State((arma::randu<arma::colvec>(4) - 0.5) / 10.0); }
+
+  /**
+   * Whether given state is terminal state
+   * @param state desired state
+   * @return true if @state is terminal state, otherwise false
+   */
+  bool IsTerminal(const State& state) const
   {
-    return State((arma::randu<arma::colvec>(4) - 0.5) / 10.0);
+    return std::abs(state.Position()) > xThreshold ||
+           std::abs(state.Angle()) > thetaThresholdRadians;
   }
 
+ private:
+  //! Locally-stored gravity
+  double gravity;
+
+  //! Locally-stored mass of the cart
+  double massCart;
+
+  //! Locally-stored mass of the pole
+  double massPole;
+
+  //! Locally-stored total mass
+  double totalMass;
+
+  //! Locally-stored length of the pole
+  double length;
+
+  //! Locally-stored moment of pole
+  double poleMassLength;
+
+  //! Locally-stored magnitude of the applied force
+  double forceMag;
+
+  //! Locally-stored time interval
+  double tau;
+
+  //! Locally-stored maximum angle
+  double thetaThresholdRadians;
+
+  //! Locally-stored maximum position
+  double xThreshold;
 };
 
 } // namespace rl
