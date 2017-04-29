@@ -45,8 +45,11 @@ double MiniBatchSGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
     ++numBatches; // Capture last few.
 
   // Batch visitation order.
-  arma::Col<size_t> visitationOrder = arma::shuffle(
-      arma::linspace<arma::Col<size_t>>(0, (numBatches - 1), numBatches));
+  arma::Col<size_t> visitationOrder = arma::linspace<arma::Col<size_t>>(0,
+      (numBatches - 1), numBatches);
+
+  if (shuffle)
+    visitationOrder = arma::shuffle(visitationOrder);
 
   // To keep track of where we are and how things are going.
   size_t currentBatch = 0;
