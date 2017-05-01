@@ -5,8 +5,6 @@
  * Definition of the Snapshot ensembles technique described in:
  * "Snapshot ensembles: Train 1, get m for free" by G. Huang et al.
  *
- * You should define your own decay update that looks like EmptyDecay.
- *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see

@@ -26,8 +26,6 @@ class NoDecay
  public:
   /**
    * This constructor is called before the first iteration.
-   *
-   * @param node Node which this corresponds to.
    */
   NoDecay() { }
 
@@ -39,7 +37,7 @@ class NoDecay
   * @param gradient The gradient matrix.
   */
   void Update(arma::mat& /* iterate */,
-              const double /* stepSize */,
+              double& /* stepSize */,
               const arma::mat& /* gradient */)
   {
    // Nothing to do here.
