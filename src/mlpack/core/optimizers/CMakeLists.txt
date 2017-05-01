@@ -4,6 +4,7 @@ set(DIRS
   adam
   aug_lagrangian
   cmaes
+  bigbatch_sgd
   cne
   fw
   gradient_descent
