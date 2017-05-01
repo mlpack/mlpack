@@ -2,7 +2,7 @@
  * @file rl_environment_test.hpp
  * @author Shangtong Zhang
  *
- * Basic test for the reinforcement learning task environment
+ * Basic test for the reinforcement learning task environment.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -23,22 +23,22 @@ using namespace mlpack::rl;
 
 BOOST_AUTO_TEST_SUITE(RLEnvironmentTest)
 
-BOOST_AUTO_TEST_CASE(MountainCarTest)
+BOOST_AUTO_TEST_CASE(SimpleMountainCarTest)
 {
-  const auto task = MountainCar();
-  auto state = task.InitialSample();
-  auto action = MountainCar::Action::backward;
-  auto reward = task.Sample(state, action);
+  const MountainCar task = MountainCar();
+  MountainCar::State state = task.InitialSample();
+  MountainCar::Action action = MountainCar::Action::backward;
+  double reward = task.Sample(state, action);
   BOOST_REQUIRE(!task.IsTerminal(state));
   BOOST_REQUIRE_EQUAL(3, MountainCar::Action::size);
 }
 
-BOOST_AUTO_TEST_CASE(CartPoleTest)
+BOOST_AUTO_TEST_CASE(SimpleCartPoleTest)
 {
-  const auto task = CartPole();
-  auto state = task.InitialSample();
-  auto action = CartPole::Action::backward;
-  auto reward = task.Sample(state, action);
+  const CartPole task = CartPole();
+  CartPole::State state = task.InitialSample();
+  CartPole::Action action = CartPole::Action::backward;
+  double reward = task.Sample(state, action);
   BOOST_REQUIRE(!task.IsTerminal(state));
   BOOST_REQUIRE_EQUAL(2, CartPole::Action::size);
 }
