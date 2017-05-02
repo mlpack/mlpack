@@ -35,29 +35,31 @@ void RStarTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
 
   if (tree->Count() <= tree->MaxLeafSize())
     return;
+//  std::cout << "split leaf node " << tree << " with parent " << tree->Parent()
+//<< "\n";
 
   // If we are splitting the root node, we need will do things differently so
   // that the constructor and other methods don't confuse the end user by giving
   // an address of another node.
-  if (tree->Parent() == NULL)
-  {
+//  if (tree->Parent() == NULL)
+//  {
     // We actually want to copy this way.  Pointers and everything.
-    TreeType* copy = new TreeType(*tree, false);
-    copy->Parent() = tree;
-    tree->Count() = 0;
-    tree->NullifyData();
+//    TreeType* copy = new TreeType(*tree, false);
+//    copy->Parent() = tree;
+//    tree->Count() = 0;
+//    tree->NullifyData();
     // Because this was a leaf node, numChildren must be 0.
-    tree->children[(tree->NumChildren())++] = copy;
-    assert(tree->NumChildren() == 1);
+//    tree->children[(tree->NumChildren())++] = copy;
+//    assert(tree->NumChildren() == 1);
 
-    RStarTreeSplit::SplitLeafNode(copy,relevels);
-    return;
-  }
+//    RStarTreeSplit::SplitLeafNode(copy,relevels);
+//    return;
+//  }
 
   // If we haven't yet reinserted on this level, we try doing so now.
-  if (relevels[tree->TreeDepth()])
+  if (relevels[tree->TreeDepth() - 1])
   {
-    relevels[tree->TreeDepth()] = false;
+    relevels[tree->TreeDepth() - 1] = false;
 
     // We sort the points by decreasing distance to the centroid of the bound.
     // We then remove the first p entries and reinsert them at the root.
@@ -81,8 +83,8 @@ void RStarTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
       sorted[i].second = i;
     }
 
-    std::sort(sorted.begin(), sorted.end(), PairComp<ElemType>);
-    std::vector<size_t> pointIndices(p);
+    std::sort(sorted.begin(), sorted.end(), PairComp<ElemType, size_t>);
+    std::vector<size_t> pointIndices(sorted.size());
 
     for (size_t i = 0; i < p; i++)
     {
@@ -119,7 +121,7 @@ void RStarTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
       sorted[i].second = i;
     }
 
-    std::sort(sorted.begin(), sorted.end(), PairComp<ElemType>);
+    std::sort(sorted.begin(), sorted.end(), PairComp<ElemType, size_t>);
 
     // We'll store each of the three scores for each distribution.
     std::vector<ElemType> areas(tree->MaxLeafSize() - 2 * tree->MinLeafSize() +
@@ -195,56 +197,134 @@ void RStarTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
   for (size_t i = 0; i < sorted.size(); i++)
   {
     sorted[i].first = tree->Dataset().col(tree->Point(i))[bestAxis];
-    sorted[i].second = i;
+    sorted[i].second = tree->Point(i);
   }
 
-  std::sort(sorted.begin(), sorted.end(), PairComp<ElemType>);
+  std::sort(sorted.begin(), sorted.end(), PairComp<ElemType, size_t>);
 
-  TreeType* treeOne = new TreeType(tree->Parent());
-  TreeType* treeTwo = new TreeType(tree->Parent());
-
-  if (tiedOnOverlap)
+  if (tree->Parent())
   {
-    for (size_t i = 0; i < tree->Count(); i++)
+//    std::cout << "first check parent " << tree->Parent() << " numDescendants "
+//<< tree->Parent()->NumDescendants() <<
+//" with " << tree->Parent()->NumChildren() << " children\n";
+//    size_t manualCount = 0;
+//    for (size_t i = 0; i < tree->Parent()->NumChildren(); ++i)
+//    {
+//      std::cout << "(" << &(tree->Parent()->Child(i)) << ") ";
+//      manualCount += tree->Parent()->Child(i).NumDescendants();
+//      std::cout << tree->Parent()->Child(i).NumDescendants() << " ";
+//    }
+//    std::cout << "\n";
+  //  TreeType* treeOne = new TreeType(tree->Parent());
+    // Now clean the node, and we will re-use this.
+    const size_t oldDescendants = tree->numDescendants;
+    const size_t numPoints = tree->count;
+    tree->numChildren = 0;
+    tree->numDescendants = 0;
+    tree->bound.Clear();
+    tree->count = 0;
+    tree->begin = 0;
+
+    TreeType* treeTwo = new TreeType(tree->Parent());
+
+    if (tiedOnOverlap)
     {
-      if (i < bestAreaIndexOnBestAxis + tree->MinLeafSize())
-        treeOne->InsertPoint(tree->Point(sorted[i].second));
-      else
-        treeTwo->InsertPoint(tree->Point(sorted[i].second));
+      for (size_t i = 0; i < numPoints; i++)
+      {
+        if (i < bestAreaIndexOnBestAxis + tree->MinLeafSize())
+          tree->InsertPoint(sorted[i].second);
+        else
+          treeTwo->InsertPoint(sorted[i].second);
+      }
     }
+    else
+    {
+      for (size_t i = 0; i < numPoints; i++)
+      {
+        if (i < bestOverlapIndexOnBestAxis + tree->MinLeafSize())
+          tree->InsertPoint(sorted[i].second);
+        else
+          treeTwo->InsertPoint(sorted[i].second);
+      }
+    }
+
+    // Insert the new tree node.
+    TreeType* par = tree->Parent();
+    par->children[par->NumChildren()++] = treeTwo;
+
+    // We only add one at a time, so we should only need to test for equality
+    // just in case, we use an assert.
+//    std::cout << "x: " << oldDescendants << " == " << tree->NumDescendants() <<
+//" + " << treeTwo->NumDescendants() << " (" << tree->NumDescendants() +
+//treeTwo->NumDescendants() << ")\n";
+    assert(oldDescendants == tree->NumDescendants() + treeTwo->NumDescendants());
+//    std::cout << "check parent " << par << " numDescendants " << par->NumDescendants() <<
+//" with " << par->NumChildren() << " children\n";
+//    manualCount = 0;
+//    for (size_t i = 0; i < par->NumChildren(); ++i)
+//    {
+//      std::cout << "(" << &(par->Child(i)) << ") ";
+//      manualCount += par->Child(i).NumDescendants();
+//      std::cout << par->Child(i).NumDescendants() << " ";
+//    }
+//    std::cout << "\n";
+//    assert(par->NumDescendants() == manualCount);
+    assert(par->NumChildren() <= par->MaxNumChildren() + 1);
+    if (par->NumChildren() == par->MaxNumChildren() + 1)
+      RStarTreeSplit::SplitNonLeafNode(par, relevels);
+
+    assert(tree->Parent()->NumChildren() <= tree->MaxNumChildren());
+    assert(tree->Parent()->NumChildren() >= tree->MinNumChildren());
+    assert(treeTwo->Parent()->NumChildren() <= treeTwo->MaxNumChildren());
+    assert(treeTwo->Parent()->NumChildren() >= treeTwo->MinNumChildren());
   }
   else
   {
-    for (size_t i = 0; i < tree->Count(); i++)
+    TreeType* treeOne = new TreeType(tree);
+    TreeType* treeTwo = new TreeType(tree);
+
+    const size_t oldNumDescendants = tree->NumDescendants();
+    const size_t numPoints = tree->Count();
+    tree->numChildren = 0;
+    tree->bound.Clear();
+    tree->count = 0;
+    tree->begin = 0;
+    tree->numDescendants = 0;
+
+    if (tiedOnOverlap)
     {
-      if (i < bestOverlapIndexOnBestAxis + tree->MinLeafSize())
-        treeOne->InsertPoint(tree->Point(sorted[i].second));
-      else
-        treeTwo->InsertPoint(tree->Point(sorted[i].second));
+      for (size_t i = 0; i < numPoints; ++i)
+      {
+        if (i < bestAreaIndexOnBestAxis + tree->MinLeafSize())
+          treeOne->InsertPoint(sorted[i].second);
+        else
+          treeTwo->InsertPoint(sorted[i].second);
+      }
     }
+    else
+    {
+      for (size_t i = 0; i < numPoints; ++i)
+      {
+        if (i < bestOverlapIndexOnBestAxis + tree->MinLeafSize())
+          treeOne->InsertPoint(sorted[i].second);
+        else
+          treeTwo->InsertPoint(sorted[i].second);
+      }
+    }
+
+    InsertNodeIntoTree(tree, treeOne);
+    InsertNodeIntoTree(tree, treeTwo);
+
+//    std::cout << "y: " << oldNumDescendants << ": " << treeOne->NumDescendants()
+//<< " + " << treeTwo->NumDescendants() << " (" << tree->NumDescendants() <<
+//")\n";
+//    std::cout << "tree left " << treeOne->NumDescendants() << ", right " <<
+//treeTwo->NumDescendants() << ", parent " << tree->NumDescendants() << "\n";
+//    for (size_t i = 0; i < tree->NumChildren(); ++i)
+//      std::cout << tree->Child(i).NumDescendants() << " ";
+//    std::cout << " (that's the children of the parent)\n";
+    assert(oldNumDescendants == tree->NumDescendants());
   }
-
-  // Remove this node and insert treeOne and treeTwo.
-  TreeType* par = tree->Parent();
-  size_t index = 0;
-  while (par->children[index] != tree) { index++; }
-
-  assert(index != par->NumChildren());
-  par->children[index] = treeOne;
-  par->children[par->NumChildren()++] = treeTwo;
-
-  // We only add one at a time, so we should only need to test for equality
-  // just in case, we use an assert.
-  assert(par->NumChildren() <= par->MaxNumChildren() + 1);
-  if (par->NumChildren() == par->MaxNumChildren() + 1)
-    RStarTreeSplit::SplitNonLeafNode(par,relevels);
-
-  assert(treeOne->Parent()->NumChildren() <= treeOne->MaxNumChildren());
-  assert(treeOne->Parent()->NumChildren() >= treeOne->MinNumChildren());
-  assert(treeTwo->Parent()->NumChildren() <= treeTwo->MaxNumChildren());
-  assert(treeTwo->Parent()->NumChildren() >= treeTwo->MinNumChildren());
-
-  tree->SoftDelete();
 }
 
 /**
@@ -257,6 +337,8 @@ void RStarTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
 template<typename TreeType>
 bool RStarTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
 {
+//  std::cout << "split nonleaf node " << tree << " with parent " <<
+//tree->Parent() << "\n";
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
   typedef bound::HRectBound<metric::EuclideanDistance, ElemType> BoundType;
@@ -264,19 +346,19 @@ bool RStarTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels
   // If we are splitting the root node, we need will do things differently so
   // that the constructor and other methods don't confuse the end user by giving
   // an address of another node.
-  if (tree->Parent() == NULL)
-  {
+//  if (tree->Parent() == NULL)
+//  {
     // We actually want to copy this way.  Pointers and everything.
-    TreeType* copy = new TreeType(*tree, false);
+//    TreeType* copy = new TreeType(*tree, false);
 
-    copy->Parent() = tree;
-    tree->NumChildren() = 0;
-    tree->NullifyData();
-    tree->children[(tree->NumChildren())++] = copy;
+//    copy->Parent() = tree;
+//    tree->NumChildren() = 0;
+//    tree->NullifyData();
+//    tree->children[(tree->NumChildren())++] = copy;
 
-    RStarTreeSplit::SplitNonLeafNode(copy,relevels);
-    return true;
-  }
+//    RStarTreeSplit::SplitNonLeafNode(copy,relevels);
+//    return true;
+//  }
 
  /*
   // If we haven't yet reinserted on this level, we try doing so now.
@@ -358,7 +440,7 @@ bool RStarTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels
       sorted[i].second = i;
     }
 
-    std::sort(sorted.begin(), sorted.end(), PairComp<ElemType>);
+    std::sort(sorted.begin(), sorted.end(), PairComp<ElemType, size_t>);
 
     // We'll store each of the three scores for each distribution.
     std::vector<ElemType> areas(tree->MaxNumChildren() -
@@ -441,7 +523,7 @@ bool RStarTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels
       sorted[i].second = i;
     }
 
-    std::sort(sorted.begin(), sorted.end(), PairComp<ElemType>);
+    std::sort(sorted.begin(), sorted.end(), PairComp<ElemType, size_t>);
 
     // We'll store each of the three scores for each distribution.
     std::vector<ElemType> areas(tree->MaxNumChildren() -
@@ -514,13 +596,13 @@ bool RStarTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels
     }
   }
 
-  std::vector<std::pair<ElemType, size_t>> sorted(tree->NumChildren());
+  std::vector<std::pair<ElemType, TreeType*>> sorted(tree->NumChildren());
   if (lowIsBest)
   {
     for (size_t i = 0; i < sorted.size(); i++)
     {
       sorted[i].first = tree->Child(i).Bound()[bestAxis].Lo();
-      sorted[i].second = i;
+      sorted[i].second = &tree->Child(i);
     }
   }
   else
@@ -528,67 +610,161 @@ bool RStarTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels
     for (size_t i = 0; i < sorted.size(); i++)
     {
       sorted[i].first = tree->Child(i).Bound()[bestAxis].Hi();
-      sorted[i].second = i;
+      sorted[i].second = &tree->Child(i);
     }
   }
 
-  std::sort(sorted.begin(), sorted.end(), PairComp<ElemType>);
+  std::sort(sorted.begin(), sorted.end(), PairComp<ElemType, TreeType*>);
 
-  TreeType* treeOne = new TreeType(tree->Parent());
-  TreeType* treeTwo = new TreeType(tree->Parent());
-
-  if (tiedOnOverlap)
+  if (tree->Parent() != NULL)
   {
-    for (size_t i = 0; i < tree->NumChildren(); i++)
+    const size_t oldNumDescendants = tree->NumDescendants();
+//    for (size_t i = 0; i < tree->NumChildren(); ++i)
+//      std::cout << tree->Child(i).NumDescendants() << " ";
+//    std::cout << " (total " << tree->NumDescendants() << ", count " <<
+//tree->count << "\n";
+    const size_t oldNumChildren = tree->NumChildren();
+    tree->numChildren = 0;
+    tree->bound.Clear();
+    tree->count = 0;
+    tree->begin = 0;
+    tree->numDescendants = 0;
+    TreeType* treeTwo = new TreeType(tree->Parent());
+
+    if (tiedOnOverlap)
     {
-      if (i < bestAreaIndexOnBestAxis + tree->MinNumChildren())
-        InsertNodeIntoTree(treeOne, &(tree->Child(sorted[i].second)));
-      else
-        InsertNodeIntoTree(treeTwo, &(tree->Child(sorted[i].second)));
+      for (size_t i = 0; i < oldNumChildren; i++)
+      {
+        if (i < bestAreaIndexOnBestAxis + tree->MinNumChildren())
+        {
+//          std::cout << "insert " << sorted[i].second->NumDescendants() << " into tree"
+//              << "\n";
+          InsertNodeIntoTree(tree, sorted[i].second);
+        }
+        else
+        {
+//          std::cout << "insert " << sorted[i].second->NumDescendants() << " into treeTwo\n";
+          InsertNodeIntoTree(treeTwo, sorted[i].second);
+        }
+      }
     }
+    else
+    {
+      for (size_t i = 0; i < oldNumChildren; i++)
+      {
+        if (i < bestOverlapIndexOnBestAxis + tree->MinNumChildren())
+        {
+//          std::cout << "insert " << sorted[i].second->NumDescendants() << " into tree\n";
+          InsertNodeIntoTree(tree, sorted[i].second);
+        }
+        else
+        {
+//          std::cout << "insert " << sorted[i].second->NumDescendants() << " into treeTwo\n";
+          InsertNodeIntoTree(treeTwo, sorted[i].second);
+        }
+      }
+    }
+
+    // Insert the new node into the tree.
+    TreeType* par = tree->Parent();
+    par->children[par->NumChildren()++] = treeTwo;
+
+    // We only add one at a time, so we should only need to test for equality
+    // just in case, we use an assert.
+    assert(par->NumChildren() <= par->MaxNumChildren() + 1);
+    if (par->NumChildren() == par->MaxNumChildren() + 1)
+      RStarTreeSplit::SplitNonLeafNode(par,relevels);
+
+    // We have to update the children of each of these new nodes so that they
+    // record the correct parent.
+    for (size_t i = 0; i < tree->NumChildren(); i++)
+      tree->children[i]->Parent() = tree;
+
+    for (size_t i = 0; i < treeTwo->NumChildren(); i++)
+      treeTwo->children[i]->Parent() = treeTwo;
+
+//    std::cout << "tree left " << tree->NumDescendants() << ", right " <<
+//treeTwo->NumDescendants() << ", parent " << par->NumDescendants() << "\n";
+//    for (size_t i = 0; i < par->NumChildren(); ++i)
+//      std::cout << par->Child(i).NumDescendants() << " ";
+//    std::cout << " (that's the children of the parent)\n";
+    assert(oldNumDescendants == (tree->NumDescendants() +
+treeTwo->NumDescendants()));
+
+
+    assert(tree->Parent()->NumChildren() <= tree->MaxNumChildren());
+    assert(tree->Parent()->NumChildren() >= tree->MinNumChildren());
+    assert(treeTwo->Parent()->NumChildren() <= treeTwo->MaxNumChildren());
+    assert(treeTwo->Parent()->NumChildren() >= treeTwo->MinNumChildren());
+
+    assert(tree->MaxNumChildren() < 7);
+    assert(treeTwo->MaxNumChildren() < 7);
   }
   else
   {
-    for (size_t i = 0; i < tree->NumChildren(); i++)
+    const size_t oldDescendants = tree->NumDescendants();
+//    for (size_t i = 0; i < tree->NumChildren(); ++i)
+//      std::cout << tree->Child(i).NumDescendants() << " ";
+//    std::cout << " (total " << tree->NumDescendants() << ", count " <<
+//tree->count << "\n";
+    TreeType* treeOne = new TreeType(tree);
+    TreeType* treeTwo = new TreeType(tree);
+
+    const size_t oldNumChildren = tree->NumChildren();
+    tree->count = 0;
+    tree->numChildren = 0;
+    tree->bound.Clear();
+    tree->numDescendants = 0;
+
+    if (tiedOnOverlap)
     {
-      if (i < bestOverlapIndexOnBestAxis + tree->MinNumChildren())
-        InsertNodeIntoTree(treeOne, &(tree->Child(sorted[i].second)));
-      else
-        InsertNodeIntoTree(treeTwo, &(tree->Child(sorted[i].second)));
+      for (size_t i = 0; i < oldNumChildren; i++)
+      {
+        if (i < bestAreaIndexOnBestAxis + tree->MinNumChildren())
+        {
+//          std::cout << "insert " << sorted[i].second->NumDescendants() << " into treeOne\n";
+          InsertNodeIntoTree(treeOne, sorted[i].second);
+        }
+        else
+        {
+//          std::cout << "insert " << sorted[i].second->NumDescendants() << " into treeTwo\n";
+          InsertNodeIntoTree(treeTwo, sorted[i].second);
+        }
+      }
     }
+    else
+    {
+      for (size_t i = 0; i < oldNumChildren; i++)
+      {
+        if (i < bestOverlapIndexOnBestAxis + tree->MinNumChildren())
+        {
+//          std::cout << "insert " << sorted[i].second->NumDescendants() << " into treeOne\n";
+          InsertNodeIntoTree(treeOne, sorted[i].second);
+        }
+        else
+        {
+//          std::cout << "insert " << sorted[i].second->NumDescendants() << " into treeTwo\n";
+          InsertNodeIntoTree(treeTwo, sorted[i].second);
+        }
+      }
+    }
+
+    InsertNodeIntoTree(tree, treeOne);
+    InsertNodeIntoTree(tree, treeTwo);
+
+//    std::cout << oldDescendants << "; " << treeOne->numDescendants << ", " <<
+//treeTwo->numDescendants << " --> " << tree->numDescendants << "\n";
+    assert(oldDescendants == (treeOne->numDescendants +
+        treeTwo->numDescendants));
+
+    // We have to update the children of each of these new nodes so that they
+    // record the correct parent.
+    for (size_t i = 0; i < treeOne->NumChildren(); i++)
+      treeOne->children[i]->Parent() = treeOne;
+
+    for (size_t i = 0; i < treeTwo->NumChildren(); i++)
+      treeTwo->children[i]->Parent() = treeTwo;
   }
-
-  // Remove this node and insert treeOne and treeTwo
-  TreeType* par = tree->Parent();
-  size_t index = 0;
-  while (par->children[index] != tree) { index++; }
-
-  par->children[index] = treeOne;
-  par->children[par->NumChildren()++] = treeTwo;
-
-  // We only add one at a time, so we should only need to test for equality
-  // just in case, we use an assert.
-  assert(par->NumChildren() <= par->MaxNumChildren() + 1);
-  if (par->NumChildren() == par->MaxNumChildren() + 1)
-    RStarTreeSplit::SplitNonLeafNode(par,relevels);
-
-  // We have to update the children of each of these new nodes so that they
-  // record the correct parent.
-  for (size_t i = 0; i < treeOne->NumChildren(); i++)
-    treeOne->children[i]->Parent() = treeOne;
-
-  for (size_t i = 0; i < treeTwo->NumChildren(); i++)
-    treeTwo->children[i]->Parent() = treeTwo;
-
-  assert(treeOne->Parent()->NumChildren() <= treeOne->MaxNumChildren());
-  assert(treeOne->Parent()->NumChildren() >= treeOne->MinNumChildren());
-  assert(treeTwo->Parent()->NumChildren() <= treeTwo->MaxNumChildren());
-  assert(treeTwo->Parent()->NumChildren() >= treeTwo->MinNumChildren());
-
-  assert(treeOne->MaxNumChildren() < 7);
-  assert(treeTwo->MaxNumChildren() < 7);
-
-  tree->SoftDelete();
 
   return false;
 }
@@ -600,9 +776,21 @@ bool RStarTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels
 template<typename TreeType>
 void RStarTreeSplit::InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode)
 {
+//  std::cout << "insert " << srcNode << " into " << destTree << "\n";
+
   destTree->Bound() |= srcNode->Bound();
   destTree->numDescendants += srcNode->numDescendants;
   destTree->children[destTree->NumChildren()++] = srcNode;
+
+//  std::cout << "dest now has " << destTree->NumDescendants() << "\n";
+//  size_t manualCount = 0;
+//  for (size_t i = 0; i < destTree->NumChildren(); ++i)
+//  {
+//    manualCount += destTree->Child(i).NumDescendants();
+//    std::cout << destTree->Child(i).NumDescendants() << " ";
+//  }
+//  std::cout << "\n";
+//  assert(manualCount == destTree->NumDescendants());
 }
 
 } // namespace tree
