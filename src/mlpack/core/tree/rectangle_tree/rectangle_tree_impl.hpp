@@ -986,7 +986,6 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
         // This will check the minFill of the parent.
         parent->CondenseTree(point, relevels, usePoint);
         // Now it should be safe to delete this node.
-        std::cout << "soft delete " << this << "\n";
         SoftDelete();
 
         return;
@@ -1048,7 +1047,6 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
           // This will check the minFill of the point.
           parent->CondenseTree(point, relevels, usePoint);
           // Now it should be safe to delete this node.
-          std::cout << "soft delete " << this << " 2\n";
           SoftDelete();
 
           return;
