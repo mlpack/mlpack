@@ -19,7 +19,7 @@ namespace mlpack {
 namespace optimization {
 
 /**
- * Defenition of the adaptive stepize technique, a non-monotonic stepsize scheme
+ * Definition of the adaptive stepize technique, a non-monotonic stepsize scheme
  * that uses curvature estimates to propose new stepsize choices.
  * direction.
  *
