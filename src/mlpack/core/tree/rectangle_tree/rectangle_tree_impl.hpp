@@ -275,7 +275,6 @@ RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
 
   if (ownsDataset)
     delete dataset;
-
 }
 
 /**
@@ -336,9 +335,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
 
   numDescendants++;
 
-  std::vector<bool> lvls(TreeDepth());
-  for (size_t i = 0; i < lvls.size(); i++)
-    lvls[i] = true;
+  std::vector<bool> lvls(TreeDepth(), true);
 
   // If this is a leaf node, we stop here and add the point.
   if (numChildren == 0)
@@ -452,9 +449,7 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   while (root->Parent() != NULL)
     root = root->Parent();
 
-  std::vector<bool> lvls(root->TreeDepth());
-  for (size_t i = 0; i < lvls.size(); i++)
-    lvls[i] = true;
+  std::vector<bool> lvls(root->TreeDepth(), true);
 
   if (numChildren == 0)
   {
@@ -1067,15 +1062,17 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
       if (child->NumChildren() > maxNumChildren)
       {
         maxNumChildren = child->MaxNumChildren();
-        children.resize(maxNumChildren+1);
+        children.resize(maxNumChildren + 1);
       }
 
       for (size_t i = 0; i < child->NumChildren(); i++) {
         children[i] = child->children[i];
         children[i]->Parent() = this;
+        child->children[i] = NULL;
       }
 
       numChildren = child->NumChildren();
+      child->NumChildren() = 0;
 
       for (size_t i = 0; i < child->Count(); i++)
       {
@@ -1086,7 +1083,9 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
       auxiliaryInfo = child->AuxiliaryInfo();
 
       count = child->Count();
-      child->SoftDelete();
+      child->Count() = 0;
+
+      delete child;
       return;
     }
   }

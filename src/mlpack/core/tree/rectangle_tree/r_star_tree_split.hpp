@@ -41,6 +41,19 @@ class RStarTreeSplit
   template <typename TreeType>
   static bool SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels);
 
+  /**
+   * Reinsert any points into the tree, if needed.  This returns the number of
+   * points reinserted.
+   */
+  template<typename TreeType>
+  static size_t ReinsertPoints(TreeType* tree, std::vector<bool>& relevels);
+
+  /**
+   * Given a node, return the best dimension and the best index to split on.
+   */
+  template<typename TreeType>
+  static void PickLeafSplit(TreeType* tree, size_t& bestAxis, size_t& bestIndex);
+
  private:
   /**
    * Insert a node into another node.
@@ -52,9 +65,9 @@ class RStarTreeSplit
    * Comparator for sorting with std::pair. This comparator works a little bit
    * faster then the default comparator.
    */
-  template<typename ElemType>
-  static bool PairComp(const std::pair<ElemType, size_t>& p1,
-                       const std::pair<ElemType, size_t>& p2)
+  template<typename ElemType, typename TreeType>
+  static bool PairComp(const std::pair<ElemType, TreeType>& p1,
+                       const std::pair<ElemType, TreeType>& p2)
   {
     return p1.first < p2.first;
   }
