@@ -41,6 +41,19 @@ class RStarTreeSplit
   template <typename TreeType>
   static bool SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels);
 
+  /**
+   * Reinsert any points into the tree, if needed.  This returns the number of
+   * points reinserted.
+   */
+  template<typename TreeType>
+  static size_t ReinsertPoints(TreeType* tree, std::vector<bool>& relevels);
+
+  /**
+   * Given a node, return the best dimension and the best index to split on.
+   */
+  template<typename TreeType>
+  static void PickLeafSplit(TreeType* tree, size_t& bestAxis, size_t& bestIndex);
+
  private:
   /**
    * Insert a node into another node.
