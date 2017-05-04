@@ -21,24 +21,17 @@ namespace mlpack {
 namespace tree {
 
 /**
- * We call GetPointSeeds to get the two points which will be the initial points
- * in the new nodes We then call AssignPointDestNode to assign the remaining
- * points to the two new nodes.  Finally, we delete the old node and insert the
- * new nodes into the tree, spliting the parent if necessary.
+ * Reinsert any points into the tree, if needed.  This returns the number of
+ * points reinserted.
  */
 template<typename TreeType>
-void RStarTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
+size_t RStarTreeSplit::ReinsertPoints(TreeType* tree,
+                                      std::vector<bool>& relevels)
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
-  typedef bound::HRectBound<metric::EuclideanDistance, ElemType> BoundType;
 
-  // If there's no need to split, don't.
-  if (tree->Count() <= tree->MaxLeafSize())
-    return;
-
-  // If we haven't yet checked if we need to reinsert on this level, we try
-  // doing so now.
+  // Check if we need to reinsert.
   if (relevels[tree->TreeDepth() - 1])
   {
     relevels[tree->TreeDepth() - 1] = false;
@@ -60,7 +53,7 @@ void RStarTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
       for (size_t i = 0; i < sorted.size(); i++)
       {
         sorted[i].first = tree->Metric().Evaluate(center,
-            tree->dataset->col(tree->Point(i)));
+            tree->Dataset().col(tree->Point(i)));
         sorted[i].second = tree->Point(i);
       }
 
@@ -74,15 +67,28 @@ void RStarTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
       // the center first.
       for (size_t i = p; i > 0; --i)
         root->InsertPoint(sorted[sorted.size() - i].second, relevels);
-
-      // Any reinsertions take care of splitting.
-      return;
     }
+
+    return p;
   }
 
-  // We don't need to reinsert.  Instead, we need to split the node.
-  size_t bestAxis = 0;
-  size_t bestSplitIndex = 0;
+  return 0;
+}
+
+/**
+ * Given a node, return the best dimension and the best index to split on.
+ */
+template<typename TreeType>
+void RStarTreeSplit::PickLeafSplit(TreeType* tree,
+                                   size_t& bestAxis,
+                                   size_t& bestIndex)
+{
+  // Convenience typedef.
+  typedef typename TreeType::ElemType ElemType;
+  typedef bound::HRectBound<metric::EuclideanDistance, ElemType> BoundType;
+
+  bestAxis = 0;
+  bestIndex = 0;
   ElemType bestScore = std::numeric_limits<ElemType>::max();
 
   /**
@@ -156,9 +162,36 @@ void RStarTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
       }
 
       // Select the best index for splitting.
-      bestSplitIndex = (tiedOnOverlap ? areaIndex : overlapIndex);
+      bestIndex = (tiedOnOverlap ? areaIndex : overlapIndex);
     }
   }
+}
+
+/**
+ * We call GetPointSeeds to get the two points which will be the initial points
+ * in the new nodes We then call AssignPointDestNode to assign the remaining
+ * points to the two new nodes.  Finally, we delete the old node and insert the
+ * new nodes into the tree, spliting the parent if necessary.
+ */
+template<typename TreeType>
+void RStarTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
+{
+  // Convenience typedef.
+  typedef typename TreeType::ElemType ElemType;
+
+  // If there's no need to split, don't.
+  if (tree->Count() <= tree->MaxLeafSize())
+    return;
+
+  // If we haven't yet checked if we need to reinsert on this level, we try
+  // doing so now.
+  if (ReinsertPoints(tree, relevels) > 0)
+    return;
+
+  // We don't need to reinsert.  Instead, we need to split the node.
+  size_t bestAxis;
+  size_t bestIndex;
+  PickLeafSplit(tree, bestAxis, bestIndex);
 
   /**
    * Now that we have found the best dimension to split on, re-sort in that
@@ -201,7 +234,7 @@ void RStarTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
   // Insert the points into the appropriate tree.
   for (size_t i = 0; i < numPoints; i++)
   {
-    if (i < bestSplitIndex + tree->MinLeafSize())
+    if (i < bestIndex + tree->MinLeafSize())
       treeOne->InsertPoint(sorted[i].second);
     else
       treeTwo->InsertPoint(sorted[i].second);
