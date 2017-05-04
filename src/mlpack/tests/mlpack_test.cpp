@@ -45,14 +45,14 @@ struct TestsVisitor : boost::unit_test::test_tree_visitor
    */
   bool test_suite_start(boost::unit_test::test_suite const& suite)
   {
-    // Add new suite to the suits list.
-    suits.push_back(suite.p_name);
+    // Add new suite to the suites list.
+    suites.push_back(suite.p_name);
 
     // Generate tests hierarchy.
     hierarchy = "";
-    for (size_t i = 1; i < suits.size(); ++i)
+    for (size_t i = 1; i < suites.size(); ++i)
     {
-      hierarchy += suits[i] + "/";
+      hierarchy += suites[i] + "/";
     }
 
     return true;
@@ -66,11 +66,11 @@ struct TestsVisitor : boost::unit_test::test_tree_visitor
   void test_suite_finish(boost::unit_test::test_suite const& /* suite */)
   {
     // Remove last suite.
-    suits.pop_back();
+    suites.pop_back();
   }
 
   //! Test suite names.
-  std::vector<std::string> suits;
+  std::vector<std::string> suites;
 
   //! Current Boost test hierarchy.
   std::string hierarchy;
