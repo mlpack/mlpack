@@ -149,7 +149,8 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
   for (size_t i = lastDim + 1; i < axes.size(); i++)
   {
     for (size_t j = 0; j < tree->NumChildren(); j++)
-      axes[i] &= tree->Child(j).AuxiliaryInfo().SplitHistory().history[i];
+      axes[i] = axes[i] &
+          tree->Child(j).AuxiliaryInfo().SplitHistory().history[i];
     if (axes[i] == true)
     {
       minOverlapSplitDimension = i;
@@ -466,8 +467,8 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
     }
 
     // If the split was not good enough, then we try the minimal overlap split.
-    // If that fails, we create a "super node" (more accurately we resize this one
-    // to make it a super node).
+    // If that fails, we create a "super node" (more accurately we resize this
+    // one to make it a super node).
     if (useMinOverlapSplit)
     {
       // If there is a dimension that might work, try that.
@@ -506,13 +507,13 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
       else
       {
         // We don't create a supernode that would be the only child of the root.
-        // (Note that if you did try to do so you would need to update the parent
-        // field on each child of this new node as creating a supernode causes the
-        // function to return before that is done.
+        // (Note that if you did try to do so you would need to update the
+        // parent field on each child of this new node as creating a supernode
+        // causes the function to return before that is done.
 
-        // I thought commenting out the bellow would make the tree less efficient
-        // but would still work.  It doesn't.  I should look into that to see if
-        // there is another bug.
+        // I thought commenting out the bellow would make the tree less
+        // efficient but would still work.  It doesn't.  I should look into that
+        // to see if there is another bug.
 
         if ((tree->Parent()->Parent() == NULL) &&
             (tree->Parent()->NumChildren() == 1))
@@ -558,7 +559,7 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
     TreeType* par = tree->Parent();
     par->children[par->NumChildren()++] = treeTwo;
 
-    // we only add one at a time, so we should only need to test for equality
+    // We only add one at a time, so we should only need to test for equality
     // just in case, we use an assert.
     if (!(par->NumChildren() <= par->MaxNumChildren() + 1))
       Log::Debug << "error " << par->NumChildren() << ", "
