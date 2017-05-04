@@ -15,6 +15,8 @@
  */
 #include "cf.hpp"
 
+#include <queue>
+
 namespace mlpack {
 namespace cf {
 

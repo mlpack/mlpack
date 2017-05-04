@@ -48,6 +48,8 @@
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/methods/neighbor_search/sort_policies/nearest_neighbor_sort.hpp>
 
+#include <queue>
+
 namespace mlpack {
 namespace neighbor {
 

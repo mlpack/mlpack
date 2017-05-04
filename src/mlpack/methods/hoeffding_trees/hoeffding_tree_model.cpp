@@ -6,6 +6,8 @@
  */
 #include "hoeffding_tree_model.hpp"
 
+#include <queue>
+
 using namespace mlpack;
 using namespace mlpack::tree;
 
