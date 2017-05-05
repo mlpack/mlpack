@@ -12,7 +12,7 @@
 <p align="center">
   <em>
     Download:
-    <a href="http://www.mlpack.org/files/mlpack-2.2.1.tar.gz">current stable version (2.2.1)</a>
+    <a href="http://www.mlpack.org/files/mlpack-2.2.2.tar.gz">current stable version (2.2.2)</a>
   </em>
 </p>
 
