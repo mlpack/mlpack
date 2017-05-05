@@ -1,3 +1,12 @@
+### mlpack 2.2.2
+###### 2017-05-04
+  * Install backwards-compatibility mlpack_allknn and mlpack_allkfn programs;
+    note they are deprecated and will be removed in mlpack 3.0.0 (#992).
+
+  * Fix RStarTree bug that surfaced on OS X only (#964).
+
+  * Small fixes for MiniBatchSGD and SGD and tests.
+
 ### mlpack 2.2.1
 ###### 2017-04-13
   * Compilation fix for mlpack_nca and mlpack_test on older Armadillo versions
