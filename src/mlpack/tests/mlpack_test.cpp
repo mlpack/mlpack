@@ -19,8 +19,11 @@
   #define BOOST_AUTO_TEST_MAIN
 #endif
 
-#include <boost/test/tree/visitor.hpp>
-#include <boost/test/tree/traverse.hpp>
+#if BOOST_VERSION >= 105900
+  #include <boost/test/tree/visitor.hpp>
+  #include <boost/test/tree/traverse.hpp>
+#endif
+
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
