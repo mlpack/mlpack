@@ -8,7 +8,8 @@
 #define MLPACK_METHODS_ADABOOST_ADABOOST_MODEL_HPP
 
 #include <mlpack/core.hpp>
-#include "adaboost.hpp"
+
+class AdaBoost;
 
 namespace mlpack {
 namespace adaboost {

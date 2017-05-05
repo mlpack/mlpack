@@ -22,7 +22,6 @@
 #include <mlpack/core.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
 
 namespace mlpack {
 
