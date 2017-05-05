@@ -45,7 +45,10 @@ if (BUILD_CLI_EXECUTABLES)
   add_custom_command(TARGET mlpack_krann POST_BUILD
       COMMAND ${CMAKE_COMMAND} -E copy
       $<TARGET_FILE:mlpack_krann>
-      $<TARGET_FILE_DIR:mlpack_krann>/mlpack_allkrann${kfn_ext}
+      $<TARGET_FILE_DIR:mlpack_krann>/mlpack_allkrann${krann_ext}
   )
+
+  install(PROGRAMS $<TARGET_FILE_DIR:mlpack_kfn>/mlpack_allkrann${krann_ext}
+      DESTINATION bin)
 endif ()
 
