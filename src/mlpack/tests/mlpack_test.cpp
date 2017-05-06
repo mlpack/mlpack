@@ -40,7 +40,8 @@ struct TestsVisitor : boost::unit_test::test_tree_visitor
    */
   void visit(boost::unit_test::test_case const& test)
   {
-    std::cout << hierarchy + std::string(test.p_name) << std::endl;
+    std::cout << std::string(indentations, ' ') << std::string(test.p_name)
+        << "*" << std::endl;
   }
 
   /*
@@ -50,15 +51,18 @@ struct TestsVisitor : boost::unit_test::test_tree_visitor
    */
   bool test_suite_start(boost::unit_test::test_suite const& suite)
   {
-    // Add new suite to the suites list.
-    suites.push_back(suite.p_name);
-
-    // Generate tests hierarchy.
-    hierarchy = "";
-    for (size_t i = 1; i < suites.size(); ++i)
+    // For backward compatibility we omit the master suite.
+    if (first)
     {
-      hierarchy += suites[i] + "/";
+      first = false;
+      return true;
     }
+
+    std::cout << std::string(indentations, ' ') << std::string(suite.p_name)
+        << "*" << std::endl;
+
+    // Increase tab width (4 spaces).
+    indentations += 4;
 
     return true;
   }
@@ -70,15 +74,15 @@ struct TestsVisitor : boost::unit_test::test_tree_visitor
    */
   void test_suite_finish(boost::unit_test::test_suite const& /* suite */)
   {
-    // Remove last suite.
-    suites.pop_back();
+    // Decrease tab width (4 spaces).
+    indentations -= 4;
   }
 
-  //! Test suite names.
-  std::vector<std::string> suites;
+  //! The indentation level.
+  size_t indentations = 0;
 
-  //! Current Boost test hierarchy.
-  std::string hierarchy;
+  //! To keep track of where we are.
+  bool first = true;
 };
 
 /**
@@ -114,7 +118,7 @@ struct GlobalFixture
           boost::unit_test::framework::master_test_suite().argv[i]);
 
       // Print Boost test hierarchy.
-      if (argument == "tests")
+      if (argument == "--list_content")
       {
         TestsVisitor testsVisitor;
         traverse_test_tree(boost::unit_test::framework::master_test_suite(),
