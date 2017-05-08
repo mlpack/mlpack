@@ -32,7 +32,8 @@ namespace optimization {
  *                John E. Hopcroft, and Kilian Q. Weinberger},
  *   booktitle = {Proceedings of the International Conference on Learning
  *                Representations (ICLR)},
- *   year      = {2017}
+ *   year      = {2017},
+ *   url       = {https://arxiv.org/abs/1704.00109}
  * }
  * @endcode
  */

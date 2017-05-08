@@ -32,7 +32,8 @@ namespace optimization {
  *   author  = {Ilya Loshchilov and Frank Hutter},
  *   title   = {{SGDR:} Stochastic Gradient Descent with Restarts},
  *   journal = {CoRR},
- *   year    = {2016}
+ *   year    = {2016},
+ *   url     = {https://arxiv.org/abs/1608.03983}
  * }
  * @endcode
  */
