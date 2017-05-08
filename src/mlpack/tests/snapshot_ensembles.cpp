@@ -11,7 +11,7 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/optimizers/sgdr/snapshot_ensembles.hpp>
-#include <mlpack/core/optimizers/sgdr/sgdr.hpp>
+#include <mlpack/core/optimizers/sgdr/snapshot_sgdr.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
 
 #include <boost/test/unit_test.hpp>

@@ -3,6 +3,8 @@ set(SOURCES
   sgdr.hpp
   sgdr_impl.hpp
   snapshot_ensembles.hpp
+  snapshot_sgdr.hpp
+  snapshot_sgdr_impl.hpp
 )
 
 set(DIR_SRCS)

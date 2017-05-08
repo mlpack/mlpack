@@ -111,6 +111,7 @@ class CyclicalDecay
   double EpochBatches() const { return epochBatches; }
   //! Modify the restart fraction.
   double& EpochBatches() { return epochBatches; }
+
  private:
   //! Epoch where decay is applied.
   size_t epochRestart;

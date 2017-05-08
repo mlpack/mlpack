@@ -18,75 +18,19 @@
 namespace mlpack {
 namespace optimization {
 
-template<
-    typename DecomposableFunctionType,
-    typename UpdatePolicyType,
-    typename DecayPolicyType
->
-template<typename PolicyType>
-SGDR<
-    DecomposableFunctionType,
-    UpdatePolicyType,
-    DecayPolicyType
->::SGDR(DecomposableFunctionType& function,
-        const size_t epochRestart,
-        const double multFactor,
-        const size_t batchSize,
-        const double stepSize,
-        const size_t maxIterations,
-        const double tolerance,
-        const bool shuffle,
-        const size_t snapshots,
-        const bool accumulate,
-        const UpdatePolicyType& updatePolicy,
-        const typename std::enable_if_t<std::is_same<
-            PolicyType, SnapshotEnsembles>::value>* /* junk */) :
+template<typename DecomposableFunctionType, typename UpdatePolicyType>
+SGDR<DecomposableFunctionType, UpdatePolicyType>::SGDR(
+    DecomposableFunctionType& function,
+    const size_t epochRestart,
+    const double multFactor,
+    const size_t batchSize,
+    const double stepSize,
+    const size_t maxIterations,
+    const double tolerance,
+    const bool shuffle,
+    const UpdatePolicyType& updatePolicy) :
     function(function),
     batchSize(batchSize),
-    accumulate(accumulate),
-    optimizer(OptimizerType(function,
-                            batchSize,
-                            stepSize,
-                            maxIterations,
-                            tolerance,
-                            shuffle,
-                            updatePolicy,
-                            SnapshotEnsembles(
-                                epochRestart,
-                                multFactor,
-                                stepSize,
-                                batchSize,
-                                function.NumFunctions(),
-                                maxIterations,
-                                snapshots)))
-{
-  /* Nothing to do here */
-}
-
-template<
-    typename DecomposableFunctionType,
-    typename UpdatePolicyType,
-    typename DecayPolicyType
->
-template<typename PolicyType>
-SGDR<
-    DecomposableFunctionType,
-    UpdatePolicyType,
-    DecayPolicyType
->::SGDR(DecomposableFunctionType& function,
-        const size_t epochRestart,
-        const double multFactor,
-        const size_t batchSize,
-        const double stepSize,
-        const size_t maxIterations,
-        const double tolerance,
-        const bool shuffle,
-        const UpdatePolicyType& updatePolicy,
-        const typename std::enable_if_t<std::is_same<
-            PolicyType, CyclicalDecay>::value>* /* junk */) :
-    function(function),
-    batchSize(batchSize),
-    accumulate(true),
     optimizer(OptimizerType(function,
                             batchSize,
                             stepSize,
@@ -104,72 +48,12 @@ SGDR<
   /* Nothing to do here */
 }
 
-template<
-    typename DecomposableFunctionType,
-    typename UpdatePolicyType,
-    typename DecayPolicyType
->
-template<typename PolicyType>
-double SGDR<
-    DecomposableFunctionType,
-    UpdatePolicyType,
-    DecayPolicyType
->::Optimize(arma::mat& iterate,
-            const typename std::enable_if_t<std::is_same<
-                PolicyType, SnapshotEnsembles>::value>* /* junk */)
+template<typename DecomposableFunctionType, typename UpdatePolicyType>
+double SGDR<DecomposableFunctionType, UpdatePolicyType>::Optimize(
+    arma::mat& iterate)
 {
   // If a user changed the step size he hasn't update the step size of the
-  // cyclical decay instantiation, so we have to do here.
-  if (optimizer.StepSize() != optimizer.DecayPolicy().StepSize())
-  {
-    optimizer.DecayPolicy().StepSize() = optimizer.StepSize();
-  }
-
-  // If a user changed the batch size we have to update the restart fraction
-  // of the cyclical decay instantiation.
-  if (optimizer.BatchSize() != batchSize)
-  {
-    batchSize = optimizer.BatchSize();
-    optimizer.DecayPolicy().EpochBatches() = function.NumFunctions() /
-        double(batchSize);
-  }
-
-  double overallObjective = optimizer.Optimize(iterate);
-
-  // Accumulate snapshots.
-  if (accumulate)
-  {
-    for (size_t i = 0; i < optimizer.DecayPolicy().Snapshots().size(); ++i)
-    {
-      iterate += optimizer.DecayPolicy().Snapshots()[i];
-    }
-    iterate /= (optimizer.DecayPolicy().Snapshots().size() + 1);
-
-    // Calculate final objective.
-    overallObjective = 0;
-    for (size_t i = 0; i < function.NumFunctions(); ++i)
-      overallObjective += function.Evaluate(iterate, i);
-  }
-
-  return overallObjective;
-}
-
-template<
-    typename DecomposableFunctionType,
-    typename UpdatePolicyType,
-    typename DecayPolicyType
->
-template<typename PolicyType>
-double SGDR<
-    DecomposableFunctionType,
-    UpdatePolicyType,
-    DecayPolicyType
->::Optimize(arma::mat& iterate,
-            const typename std::enable_if_t<std::is_same<
-                PolicyType, CyclicalDecay>::value>* /* junk */)
-{
-  // If a user changed the step size he hasn't update the step size of the
-  // cyclical decay instantiation, so we have to do here.
+  // cyclical decay instantiation, so we have to do it here.
   if (optimizer.StepSize() != optimizer.DecayPolicy().StepSize())
   {
     optimizer.DecayPolicy().StepSize() = optimizer.StepSize();
