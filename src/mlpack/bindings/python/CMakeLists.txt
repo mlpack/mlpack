@@ -40,6 +40,7 @@ set(CYTHON_SOURCES
   mlpack/cli.pxd
   mlpack/cli_util.hpp
   mlpack/move.hpp
+  tests/dataset_info_test.py
 )
 
 # Generate Python setuptools file.
