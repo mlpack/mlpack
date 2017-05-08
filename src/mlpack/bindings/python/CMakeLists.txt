@@ -40,7 +40,9 @@ set(CYTHON_SOURCES
   mlpack/cli.pxd
   mlpack/cli_util.hpp
   mlpack/move.hpp
+  mlpack/matrix_utils.py
   tests/dataset_info_test.py
+  setup.cfg
 )
 
 # Generate Python setuptools file.
@@ -88,7 +90,8 @@ add_custom_command(TARGET python POST_BUILD
             mlpack/arma_util.hpp
             mlpack/cli.pxd
             mlpack/cli_util.hpp
-            mlpack)
+            mlpack
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)
 
 install(CODE "execute_process(COMMAND ${PYTHON}
     ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py install
@@ -123,3 +126,13 @@ if (BUILD_PYTHON_BINDINGS)
   add_dependencies(python generate_pyx_${name})
 endif ()
 endmacro ()
+
+# Add a test.
+if (BUILD_PYTHON_BINDINGS)
+  add_test(NAME python_bindings_test
+      COMMAND ${PYTHON} ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py
+          test
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)
+  set_tests_properties(python_bindings_test
+      PROPERTIES ENVIRONMENT "NO_BUILD=1")
+endif ()
