@@ -175,7 +175,51 @@ void PrintInputProcessing(
     const typename boost::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
 {
-  // TODO: figure this out.
+  // The user should pass in a matrix type of some sort.
+  const std::string prefix(indent, ' ');
+
+  /** We want to generate code like the following:
+   *
+   * if param_name is not None:
+   *   param_name_tuple = to_matrix_with_info(param_name)
+   *   param_name_mat = arma_numpy.numpy_to_matrix_d(param_name_tuple[0])
+   *   SetParamWithInfo[mat](<const string> 'param_name',
+   *       dereference(param_name_mat), &param_name_tuple[1][0])
+   *   CLI.SetPassed(<const string> 'param_name')
+   */
+  std::cout << prefix << "cdef np.ndarray " << d.name << "_dims" << std::endl;
+  std::cout << prefix << "# Detect if the parameter was passed; set if so."
+      << std::endl;
+  if (!d.required)
+  {
+    std::cout << prefix << "if " << d.name << " is not None:" << std::endl;
+    std::cout << prefix << "  " << d.name << "_tuple = to_matrix_with_info("
+        << d.name << ")" << std::endl;
+    std::cout << prefix << "  " << d.name << "_mat = arma_numpy.numpy_to_mat_d("
+        << d.name << "_tuple[0])" << std::endl;
+    std::cout << prefix << "  " << d.name << "_dims = " << d.name << "_tuple[1]"
+        << std::endl;
+    std::cout << prefix << "  SetParamWithInfo[arma.Mat[double]](<const string>"
+        << " '" << d.name << "', dereference(" << d.name << "_mat), <const "
+        << "bool*> " << d.name << "_dims.data)" << std::endl;
+    std::cout << prefix << "  CLI.SetPassed(<const string> '" << d.name << "')"
+        << std::endl;
+  }
+  else
+  {
+    std::cout << prefix << d.name << "_tuple = to_matrix_with_info(" << d.name
+        << ")" << std::endl;
+    std::cout << prefix << d.name << "_mat = arma_numpy.numpy_to_mat_d("
+        << d.name << "_tuple[0])" << std::endl;
+    std::cout << prefix << d.name << "_dims = " << d.name << "_tuple[1]"
+        << std::endl;
+    std::cout << prefix << "SetParamWithInfo[arma.Mat[double]](<const string>"
+        << " '" << d.name << "', dereference(" << d.name << "_mat), <const "
+        << "bool*> " << d.name << "_dims.data)" << std::endl;
+    std::cout << prefix << "CLI.SetPassed(<const string> '" << d.name << "')"
+        << std::endl;
+  }
+  std::cout << std::endl;
 }
 
 /**

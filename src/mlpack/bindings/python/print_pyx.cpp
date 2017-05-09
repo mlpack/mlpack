@@ -71,10 +71,13 @@ void PrintPYX(const ProgramDoc& programInfo,
   cout << "cimport arma" << endl;
   cout << "cimport arma_numpy" << endl;
   cout << "from cli cimport CLI" << endl;
-  cout << "from cli cimport SetParam" << endl;
+  cout << "from cli cimport SetParam, SetParamWithInfo" << endl;
   cout << "from cli cimport EnableVerbose" << endl;
   cout << "from cli cimport MoveFromPtr, MoveToPtr" << endl;
-  cout << "from matrix_utils import to_matrix" << endl;
+  cout << "from matrix_utils import to_matrix, to_matrix_with_info" << endl;
+  cout << endl;
+  cout << "import numpy as np" << endl;
+  cout << "cimport numpy as np" << endl;
   cout << endl;
   cout << "from libcpp.string cimport string" << endl;
   cout << "from libcpp cimport bool" << endl;
