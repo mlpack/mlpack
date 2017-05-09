@@ -4,6 +4,14 @@
 </h1>
 
 <p align="center">
+  <a href="http://mlpack.org">Home</a> |
+  <a href="http://www.mlpack.org/docs/mlpack-git/doxygen.php">Documentation</a> |
+  <a href="www.mlpack.org/involved.html">Community</a> |
+  <a href="www.mlpack.org/help.html">Help</a> |
+  <a href="http://webchat.freenode.net/?channels=mlpack">IRC Chat</a>
+</p>
+
+<p align="center">
   <a href="http://masterblaster.mlpack.org/job/mlpack%20-%20git%20commit%20test/"><img src="https://img.shields.io/jenkins/s/http/masterblaster.mlpack.org/job/mlpack%20-%20git%20commit%20test.svg?label=Linux%20build" alt="Jenkins"></a>
   <a href="https://ci.appveyor.com/project/mlpack/mlpack"><img src="https://img.shields.io/appveyor/ci/mlpack/mlpack/master.svg?label=Windows%20build" alt="Appveyor"></a>
   <a href="https://coveralls.io/github/mlpack/mlpack?branch=master"><img src="https://img.shields.io/coveralls/mlpack/mlpack/master.svg" alt="Coveralls"></a>
