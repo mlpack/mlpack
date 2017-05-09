@@ -9,6 +9,7 @@
 
 #include <mlpack/core.hpp>
 
+// Use forward declaration instead of include to accelerate compilation.
 class AdaBoost;
 
 namespace mlpack {
