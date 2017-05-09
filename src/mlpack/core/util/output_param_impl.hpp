@@ -9,6 +9,7 @@
 
 #include "output_param.hpp"
 #include <mlpack/core/data/save.hpp>
+#include <iostream>
 
 namespace mlpack {
 namespace util {

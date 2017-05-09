@@ -8,7 +8,9 @@
 #define MLPACK_METHODS_ADABOOST_ADABOOST_MODEL_HPP
 
 #include <mlpack/core.hpp>
-#include "adaboost.hpp"
+
+// Use forward declaration instead of include to accelerate compilation.
+class AdaBoost;
 
 namespace mlpack {
 namespace adaboost {
