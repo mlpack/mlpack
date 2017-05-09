@@ -418,7 +418,6 @@ FFN<OutputLayerType, InitializationRuleType>&
 FFN<OutputLayerType, InitializationRuleType>::operator = (const FFN& network)
 {
   // Replicate layers from source network
-  // TODO: deal with incompatible layers
   TrivialCopy(network);
   for (size_t i = 0; i < network.network.size(); ++i)
   {

@@ -240,7 +240,7 @@ private:
   /**
    * Copy trivial things for copy ctor and assignment ctor
    */
-  void TrivialCopy(const NetworkType& network);
+  void TrivialCopy(const FFN& network);
 
   //! Instantiated outputlayer used to evaluate the network.
   OutputLayerType outputLayer;

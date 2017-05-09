@@ -28,7 +28,7 @@ inline void AssignVisitor::operator () (LayerType* layer1, LayerType* layer2) co
 template <typename LayerType1, typename LayerType2>
 inline void AssignVisitor::operator () (LayerType1*, LayerType2*) const
 {
-  // TODO: deal with incompatible layers
+  Log::Fatal << "Incompatible layer can't be assigned to each other." << std::endl;
 };
 
 } // namespace ann
