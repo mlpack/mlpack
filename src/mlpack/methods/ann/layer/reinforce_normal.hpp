@@ -91,7 +91,7 @@ class ReinforceNormal
 
  private:
   //! Standard deviation used during the forward and backward pass.
-  const double stdev;
+  double stdev;
 
   //! Locally-stored reward parameter.
   double reward;

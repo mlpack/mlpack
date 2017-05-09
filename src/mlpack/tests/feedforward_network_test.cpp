@@ -410,4 +410,17 @@ BOOST_AUTO_TEST_CASE(DropConnectNetworkTest)
       (dataset, labels, dataset, labels, 2, 10, 50, 0.2);
 }
 
+/**
+ * Test copy CTOR and assignment operator of FFN
+ */
+BOOST_AUTO_TEST_CASE(FFNMiscTest)
+{
+  FFN<MeanSquaredError<>> model;
+  model.Add<Linear<>>(2, 3);
+  model.Add<ReLULayer<>>();
+
+  auto newModel(model);
+  newModel = model;
+}
+
 BOOST_AUTO_TEST_SUITE_END();

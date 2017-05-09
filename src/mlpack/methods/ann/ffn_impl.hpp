@@ -68,6 +68,22 @@ FFN<OutputLayerType, InitializationRuleType>::~FFN()
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
+void FFN<OutputLayerType, InitializationRuleType>::SetTrainingData(const arma::mat &predictors,
+                                                                   const arma::mat &responses)
+{
+  numFunctions = responses.n_cols;
+  this->predictors = std::move(predictors);
+  this->responses = std::move(responses);
+  this->deterministic = true;
+  ResetDeterministic();
+
+  if (!reset)
+  {
+    ResetParameters();
+  }
+}
+
+template<typename OutputLayerType, typename InitializationRuleType>
 template<
     template<typename, typename...> class OptimizerType,
     typename... OptimizerTypeArgs
@@ -77,18 +93,7 @@ void FFN<OutputLayerType, InitializationRuleType>::Train(
       const arma::mat& responses,
       OptimizerType<NetworkType, OptimizerTypeArgs...>& optimizer)
 {
-  numFunctions = responses.n_cols;
-
-  this->predictors = std::move(predictors);
-  this->responses = std::move(responses);
-
-  this->deterministic = true;
-  ResetDeterministic();
-
-  if (!reset)
-  {
-    ResetParameters();
-  }
+  SetTrainingData(predictors, responses);
 
   // Train the model.
   Timer::Start("ffn_optimization");
@@ -378,6 +383,49 @@ void FFN<OutputLayerType, InitializationRuleType>::Serialize(
     }
   }
 }
+
+template<typename OutputLayerType, typename InitializationRuleType>
+void FFN<OutputLayerType, InitializationRuleType>::TrivialCopy(const NetworkType& network)
+{
+  // Copy variables from source network
+  outputLayer = network.outputLayer;
+  initializeRule = network.initializeRule;
+  width = network.width;
+  height = network.height;
+  reset = network.reset;
+  predictors = network.predictors;
+  responses = network.responses;
+  parameter = network.parameter;
+  numFunctions = network.numFunctions;
+  error = network.error;
+  currentInput = network.currentInput;
+  currentTarget = network.currentTarget;
+}
+
+template<typename OutputLayerType, typename InitializationRuleType>
+FFN<OutputLayerType, InitializationRuleType>::FFN(const FFN& network)
+{
+  // Build new layers according to source network
+  TrivialCopy(network);
+  for (size_t i = 0; i < network.network.size(); ++i)
+  {
+    this->network.push_back(boost::apply_visitor(copyVisitor, network.network[i]));
+  }
+};
+
+template<typename OutputLayerType, typename InitializationRuleType>
+FFN<OutputLayerType, InitializationRuleType>&
+FFN<OutputLayerType, InitializationRuleType>::operator = (const FFN& network)
+{
+  // Replicate layers from source network
+  // TODO: deal with incompatible layers
+  TrivialCopy(network);
+  for (size_t i = 0; i < network.network.size(); ++i)
+  {
+    boost::apply_visitor(assignVisitor, this->network[i], network.network[i]);
+  }
+  return *this;
+};
 
 } // namespace ann
 } // namespace mlpack

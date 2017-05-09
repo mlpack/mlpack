@@ -78,7 +78,7 @@ class MultiplyConstant
 
  private:
   //! Locally-stored constant scalar value.
-  const double scalar;
+  double scalar;
 
   //! Locally-stored delta object.
   OutputDataType delta;

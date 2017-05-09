@@ -1,6 +1,7 @@
 /**
  * @file ffn.hpp
  * @author Marcus Edel
+ * @author Shangtong Zhang
  *
  * Definition of the FFN class, which implements feed forward neural networks.
  *
@@ -21,6 +22,8 @@
 #include "visitor/output_width_visitor.hpp"
 #include "visitor/reset_visitor.hpp"
 #include "visitor/weight_size_visitor.hpp"
+#include "visitor/assign_visitor.hpp"
+#include "visitor/copy_visitor.hpp"
 
 #include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
@@ -57,6 +60,12 @@ class FFN
    */
   FFN(OutputLayerType&& outputLayer = OutputLayerType(),
       InitializationRuleType initializeRule = InitializationRuleType());
+
+  //! Copy CTOR
+  FFN(const FFN&);
+
+  //! Assignment CTOR
+  FFN& operator = (const FFN&);
 
   /**
    * Create the FFN object with the given predictors and responses set (this is
@@ -177,6 +186,20 @@ class FFN
   //! Modify the initial point for the optimization.
   arma::mat& Parameters() { return parameter; }
 
+  /**
+   * Make the network ready for the given training data.
+   * This function won't actually trigger training process.
+   *
+   * @param predictors Input training variables.
+   * @param responses Outputs results from input training variables.
+   */
+  void SetTrainingData(const arma::mat& predictors, const arma::mat& responses);
+
+  /**
+   * Reset the module infomration (weights/parameters).
+   */
+  void ResetParameters();
+
   //! Serialize the model.
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
@@ -204,11 +227,6 @@ private:
   void Gradient();
 
   /**
-   * Reset the module information (weights/parameters).
-   */
-  void ResetParameters();
-
-  /**
    * Reset the module status by setting the current deterministic parameter
    * for all modules that implement the Deterministic function.
    */
@@ -218,6 +236,11 @@ private:
    * Reset the gradient for all modules that implement the Gradient function.
    */
   void ResetGradients(arma::mat& gradient);
+
+  /**
+   * Copy trivial things for copy ctor and assignment ctor
+   */
+  void TrivialCopy(const NetworkType& network);
 
   //! Instantiated outputlayer used to evaluate the network.
   OutputLayerType outputLayer;
@@ -294,6 +317,14 @@ private:
 
   //! Locally-stored gradient parameter.
   arma::mat gradient;
+
+  //! Locally-stored assignment visitor
+  AssignVisitor assignVisitor;
+
+  //! Locally-stored copy visitor
+  CopyVisitor copyVisitor;
+
+
 }; // class FFN
 
 } // namespace ann

@@ -111,7 +111,7 @@ class KathirvalavakumarSubavathiInitialization
   arma::rowvec dataSum;
 
   //! Parameter that defines the active region.
-  const double s;
+  double s;
 }; // class KathirvalavakumarSubavathiInitialization
 
 
