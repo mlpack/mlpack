@@ -29,41 +29,44 @@ class MountainCar
  public:
 
   /**
-   * Implementation of state of Mountain Car.
-   * Each state is a (velocity, position) pair.
+   * Implementation of state of Mountain Car. Each state is a
+   * (velocity, position) vector.
    */
   class State
   {
    public:
-    //! Construct a state instance.
-    State(): data(2, arma::fill::zeros) { }
+    /**
+     * Construct a state instance.
+     */
+    State(): data(2, arma::fill::zeros)
+    { /* Nothing to do here. */ }
 
     /**
-     * Construct a state based on given data.
-     * @param data desired internal data.
+     * Construct a state based on the given data.
+     *
+     * @param data Data for the velocityand position.
      */
-    State(const arma::colvec& data): data(data) { }
-
-    //! Encode the state to a column vector.
-    const arma::colvec& Encode() const { return data; }
+    State(const arma::colvec& data): data(data)
+    { /* Nothing to do here. */ }
 
     //! Modify the internal representation of the state.
     arma::colvec& Data() { return data; }
 
-    //! Get velocity.
+    //! Get the velocity.
     double Velocity() const { return data[0]; }
-
-    //! Modify velocity.
+    //! Modify the velocity.
     double& Velocity() { return data[0]; }
 
-    //! Get position.
+    //! Get the position.
     double Position() const { return data[1]; }
-
-    //! Modify position.
+    //! Modify the position.
     double& Position() { return data[1]; }
 
+    //! Encode the state to a column vector.
+    const arma::colvec& Encode() const { return data; }
+
    private:
-    //! Locally-stored velocity and position.
+    //! Locally-stored velocity and position vector.
     arma::colvec data;
   };
 
@@ -81,31 +84,47 @@ class MountainCar
   };
 
   /**
-   * Construct a Mountain Car instance.
-   * @param positionMin minimum legal position.
-   * @param positionMax maximum legal position.
-   * @param velocityMin minimum legal velocity.
-   * @param velocityMax maximum legal velocity.
+   * Construct a Mountain Car instance using the given constant.
+   *
+   * @param positionMin Minimum legal position.
+   * @param positionMax Maximum legal position.
+   * @param velocityMin Minimum legal velocity.
+   * @param velocityMax Maximum legal velocity.
    */
-  MountainCar(double positionMin = -1.2, double positionMax = 0.5, double velocityMin = -0.07, double velocityMax = 0.07):
-      positionMin(positionMin), positionMax(positionMax), velocityMin(velocityMin), velocityMax(velocityMax) { }
+  MountainCar(const double positionMin = -1.2,
+              const double positionMax = 0.5,
+              const double velocityMin = -0.07,
+              const double velocityMax = 0.07) :
+      positionMin(positionMin),
+      positionMax(positionMax),
+      velocityMin(velocityMin),
+      velocityMax(velocityMax)
+  { /* Nothing to do here */ }
 
   /**
-   * Dynamics of Mountain Car.
-   * Get reward and next state based on current state and current action.
-   * @param state Current state.
-   * @param action Current action.
-   * @param nextState Next state.
+   * Dynamics of Mountain Car. Get reward and next state based on current state
+   * and current action.
+   *
+   * @param state The current state.
+   * @param action The current action.
+   * @param nextState The next state.
    * @return reward, it's always -1.0.
    */
-  double Sample(const State& state, const Action& action, State& nextState) const
+  double Sample(const State& state,
+                const Action& action,
+                State& nextState) const
   {
+    // Calculate acceleration.
     int direction = action - 1;
-    nextState.Velocity() = state.Velocity() + 0.001 * direction - 0.0025 * std::cos(3 * state.Position());
-    nextState.Velocity() = std::min(std::max(nextState.Velocity(), velocityMin), velocityMax);
+    nextState.Velocity() = state.Velocity() + 0.001 * direction - 0.0025 *
+        std::cos(3 * state.Position());
+    nextState.Velocity() = std::min(
+        std::max(nextState.Velocity(), velocityMin), velocityMax);
 
+    // Update states.
     nextState.Position() = state.Position() + nextState.Velocity();
-    nextState.Position() = std::min(std::max(nextState.Position(), positionMin), positionMax);
+    nextState.Position() = std::min(
+        std::max(nextState.Position(), positionMin), positionMax);
 
     if (std::abs(nextState.Position() - positionMin) <= 1e-5)
     {
@@ -116,10 +135,11 @@ class MountainCar
   }
 
   /**
-   * Dynamics of Mountain Car.
-   * Get reward based on current state and current action.
-   * @param state Current state.
-   * @param action Current action.
+   * Dynamics of Mountain Car. Get reward based on current state and current
+   * action.
+   *
+   * @param state The current state.
+   * @param action The current action.
    * @return reward, it's always -1.0.
    */
   double Sample(const State& state, const Action& action) const
@@ -131,6 +151,7 @@ class MountainCar
   /**
    * Initial position is randomly generated within [-0.6, -0.4].
    * Initial velocity is 0.
+   *
    * @return Initial state for each episode.
    */
   State InitialSample() const
@@ -142,9 +163,10 @@ class MountainCar
   }
 
   /**
-   * Whether given state is terminal state.
+   * Whether given state is a terminal state.
+   *
    * @param state desired state.
-   * @return true if @state is terminal state, otherwise false.
+   * @return true if state is a terminal state, otherwise false.
    */
   bool IsTerminal(const State& state) const
   {
@@ -163,7 +185,6 @@ class MountainCar
 
   //! Locally-stored maximum legal velocity.
   double velocityMax;
-
 };
 
 } // namespace rl
