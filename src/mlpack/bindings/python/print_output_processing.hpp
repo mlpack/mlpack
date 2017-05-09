@@ -105,7 +105,9 @@ void PrintOutputProcessing(
         std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
 {
   // Print the output with the matrix type.
-  // not sure how to do this yet
+  // We don't have any output of this type, so this is not implemented yet.
+  // Let's just make something that will throw an error.
+  std::cout << "invalid Python! see PrintOutputProcessing()!" << std::endl;
 }
 
 /**
