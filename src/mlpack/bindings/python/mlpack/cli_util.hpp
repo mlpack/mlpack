@@ -14,6 +14,7 @@
 #define MLPACK_BINDINGS_PYTHON_CYTHON_CLI_UTIL_HPP
 
 #include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/data/dataset_mapper.hpp>
 
 namespace mlpack {
 namespace util {
@@ -31,6 +32,54 @@ template<typename T>
 inline void SetParam(const std::string& identifier, const T& value)
 {
   CLI::GetParam<T>(identifier) = value;
+}
+
+/**
+ * Set the parameter (which is a matrix/DatasetInfo tuple) to the given value.
+ */
+template<typename T>
+inline void SetParamWithInfo(const std::string& identifier,
+                             const T& matrix,
+                             const bool* dims)
+{
+  typedef typename std::tuple<T, data::DatasetInfo> TupleType;
+  typedef typename T::elem_type eT;
+
+  // The true type of the parameter is std::tuple<T, DatasetInfo>.
+  std::get<0>(CLI::GetParam<TupleType>(identifier)) = matrix;
+  data::DatasetInfo& di = std::get<1>(CLI::GetParam<TupleType>(identifier));
+  di = data::DatasetInfo(matrix.n_rows);
+
+  bool hasCategoricals = false;
+  for (size_t i = 0; i < matrix.n_rows; ++i)
+  {
+    if (dims[i])
+    {
+      std::get<1>(CLI::GetParam<TupleType>(identifier)).Type(i) =
+          data::Datatype::categorical;
+      hasCategoricals = true;
+    }
+  }
+
+  // Do we need to find how many categories we have?
+  if (hasCategoricals)
+  {
+    arma::vec maxs = arma::max(matrix, 1);
+
+    for (size_t i = 0; i < matrix.n_rows; ++i)
+    {
+      if (dims[i])
+      {
+        // Map the right number of objects.
+        for (size_t j = 0; j < (size_t) maxs[i]; ++j)
+        {
+          std::ostringstream oss;
+          oss << j;
+          di.MapString<eT>(oss.str(), i);
+        }
+      }
+    }
+  }
 }
 
 /**

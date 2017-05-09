@@ -13,6 +13,7 @@ http://www.opensource.org/licenses/BSD-3-Clause for more information.
 cimport cython
 
 from libcpp.string cimport string
+from libcpp cimport bool
 
 cdef extern from "<mlpack/core/util/cli.hpp>" namespace "mlpack" nogil:
   cdef cppclass CLI:
@@ -37,6 +38,7 @@ cdef extern from "<mlpack/core/util/cli.hpp>" namespace "mlpack" nogil:
 cdef extern from "<mlpack/bindings/python/mlpack/cli_util.hpp>" \
     namespace "mlpack::util" nogil:
   void SetParam[T](string, const T&) nogil
+  void SetParamWithInfo[T](string, const T&, const bool*) nogil
   void EnableVerbose() nogil
 
 cdef extern from "<mlpack/bindings/python/mlpack/move.hpp>" \
