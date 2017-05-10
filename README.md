@@ -1,13 +1,13 @@
 <h1 align="center">
-  <a href="http://mlpack.org"><img src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="background-color:rgba(0,0,0,0);" height=280 alt="mlpack: a scalable C++ machine learning library"></a>
+  <a href="http://mlpack.org"><img src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="background-color:rgba(0,0,0,0);" height=260 alt="mlpack: a scalable C++ machine learning library"></a>
   <br>a scalable C++ machine learning library<br>
 </h1>
 
 <p align="center">
   <a href="http://mlpack.org">Home</a> |
   <a href="http://www.mlpack.org/docs/mlpack-git/doxygen.php">Documentation</a> |
-  <a href="www.mlpack.org/involved.html">Community</a> |
-  <a href="www.mlpack.org/help.html">Help</a> |
+  <a href="http://www.mlpack.org/involved.html">Community</a> |
+  <a href="http://www.mlpack.org/help.html">Help</a> |
   <a href="http://webchat.freenode.net/?channels=mlpack">IRC Chat</a>
 </p>
 
