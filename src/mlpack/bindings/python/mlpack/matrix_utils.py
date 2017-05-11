@@ -14,7 +14,7 @@ http://www.opensource.org/licenses/BSD-3-Clause for more information.
 import numpy as np
 import pandas as pd
 
-def to_matrix(x):
+def to_matrix(x, dtype=np.double):
   """
   Given some array-like X, return a numpy ndarray of the same type.
   """
@@ -24,7 +24,7 @@ def to_matrix(x):
       not hasattr(x, '__array__'):
     raise TypeError("given argument is not array-like")
 
-  return np.array(x, copy=False)
+  return np.array(x, copy=False, dtype=dtype)
 
 def to_matrix_with_info(x, dtype):
   """
