@@ -41,8 +41,12 @@ set(CYTHON_SOURCES
   mlpack/cli_util.hpp
   mlpack/move.hpp
   mlpack/matrix_utils.py
-  tests/dataset_info_test.py
   setup.cfg
+)
+
+set(TEST_SOURCES
+  tests/dataset_info_test.py
+  tests/test_python_binding.py
 )
 
 # Generate Python setuptools file.
@@ -55,8 +59,7 @@ find_python_module(distutils REQUIRED)
 find_python_module(Cython REQUIRED)
 find_python_module(numpy REQUIRED)
 
-# Configure the .pyx files that are needed.
-set (MLPACK_PYXS "arma_numpy.pyx" PARENT_SCOPE)
+# Set the include directories correctly.
 get_property(CYTHON_INCLUDE_DIRECTORIES DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     PROPERTY INCLUDE_DIRECTORIES)
 set (CYTHON_INCLDIRS "${CYTHON_INCLUDE_DIRECTORIES}")
@@ -80,6 +83,15 @@ foreach(cython_file ${CYTHON_SOURCES})
           ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/)
 endforeach()
 
+if (BUILD_TESTS)
+  foreach(test_file ${TEST_SOURCES})
+    add_custom_command(TARGET python PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} ARGS -E copy
+            ${CMAKE_CURRENT_SOURCE_DIR}/${test_file}
+            ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/tests/)
+  endforeach ()
+endif ()
+
 # Then do the actual build.
 add_custom_command(TARGET python POST_BUILD
     COMMAND ${PYTHON} ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py
@@ -90,6 +102,8 @@ add_custom_command(TARGET python POST_BUILD
             mlpack/arma_util.hpp
             mlpack/cli.pxd
             mlpack/cli_util.hpp
+            mlpack/move.hpp
+            mlpack/matrix_utils.py
             mlpack
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)
 
@@ -123,7 +137,18 @@ if (BUILD_PYTHON_BINDINGS)
           -DPYX_OUTPUT_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/${name}.pyx
           -P ${CMAKE_SOURCE_DIR}/CMake/GeneratePYX.cmake)
 
-  add_dependencies(python generate_pyx_${name})
+  # Build the pyx.  Since distutils doesn't support a parallel build, we'll
+  # enforce it here.  Although this will always be rebuilt, that's okay because
+  # distutils will determine whether or not it *actually* needs to be rebuilt.
+  add_custom_target(build_pyx_${name}
+      ${PYTHON} ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py
+          build_ext --module=${name}.pyx
+      DEPENDS generate_pyx_${name}
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/
+      COMMENT "Building Cython binding ${name}.so...")
+
+  add_dependencies(python build_pyx_${name})
+  add_dependencies(build_pyx_${name} generate_pyx_${name})
 endif ()
 endmacro ()
 
@@ -136,3 +161,9 @@ if (BUILD_PYTHON_BINDINGS)
   set_tests_properties(python_bindings_test
       PROPERTIES ENVIRONMENT "NO_BUILD=1")
 endif ()
+
+if (BUILD_TESTS)
+  add_subdirectory(tests)
+endif ()
+
+set(MLPACK_PYXS "arma_numpy.pyx" ${MLPACK_PYXS} PARENT_SCOPE)
