@@ -222,6 +222,16 @@ void FFN<OutputLayerType, InitializationRuleType>::Gradient(
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
+arma::mat FFN<OutputLayerType, InitializationRuleType>::Gradient(
+  const arma::mat& predictors, const arma::mat& responses)
+{
+  SetTrainingData(predictors, responses);
+  arma::mat gradients;
+  Gradient(Parameters(), 0, gradients);
+  return gradients;
+};
+
+template<typename OutputLayerType, typename InitializationRuleType>
 void FFN<OutputLayerType, InitializationRuleType>::ResetParameters()
 {
   ResetDeterministic();
@@ -385,28 +395,50 @@ void FFN<OutputLayerType, InitializationRuleType>::Serialize(
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-void FFN<OutputLayerType, InitializationRuleType>::TrivialCopy(const NetworkType& network)
+void FFN<OutputLayerType, InitializationRuleType>::Swap(FFN& network)
 {
-  // Copy variables from source network
-  outputLayer = network.outputLayer;
-  initializeRule = network.initializeRule;
-  width = network.width;
-  height = network.height;
-  reset = network.reset;
-  predictors = network.predictors;
-  responses = network.responses;
-  parameter = network.parameter;
-  numFunctions = network.numFunctions;
-  error = network.error;
-  currentInput = network.currentInput;
-  currentTarget = network.currentTarget;
-}
+  std::swap(outputLayer, network.outputLayer);
+  std::swap(initializeRule, network.initializeRule);
+  std::swap(width, network.width);
+  std::swap(height, network.height);
+  std::swap(reset, network.reset);
+  std::swap(this->network, network.network);
+  std::swap(predictors, network.predictors);
+  std::swap(responses, network.responses);
+  std::swap(parameter, network.parameter);
+  std::swap(numFunctions, network.numFunctions);
+  std::swap(error, network.error);
+  std::swap(currentInput, network.currentInput);
+  std::swap(currentTarget, network.currentTarget);
+  std::swap(deterministic, network.deterministic);
+  std::swap(delta, network.delta);
+  std::swap(inputParameter, network.inputParameter);
+  std::swap(outputParameter, network.outputParameter);
+  std::swap(gradient, network.gradient);
+};
 
 template<typename OutputLayerType, typename InitializationRuleType>
-FFN<OutputLayerType, InitializationRuleType>::FFN(const FFN& network)
+FFN<OutputLayerType, InitializationRuleType>::FFN(
+    const FFN& network):
+    outputLayer(network.outputLayer),
+    initializeRule(network.initializeRule),
+    width(network.width),
+    height(network.height),
+    reset(network.reset),
+    predictors(network.predictors),
+    responses(network.responses),
+    parameter(network.parameter),
+    numFunctions(network.numFunctions),
+    error(network.error),
+    currentInput(network.currentInput),
+    currentTarget(network.currentTarget),
+    deterministic(network.deterministic),
+    delta(network.delta),
+    inputParameter(network.inputParameter),
+    outputParameter(network.outputParameter),
+    gradient(network.gradient)
 {
   // Build new layers according to source network
-  TrivialCopy(network);
   for (size_t i = 0; i < network.network.size(); ++i)
   {
     this->network.push_back(boost::apply_visitor(copyVisitor, network.network[i]));
@@ -414,15 +446,34 @@ FFN<OutputLayerType, InitializationRuleType>::FFN(const FFN& network)
 };
 
 template<typename OutputLayerType, typename InitializationRuleType>
-FFN<OutputLayerType, InitializationRuleType>&
-FFN<OutputLayerType, InitializationRuleType>::operator = (const FFN& network)
+FFN<OutputLayerType, InitializationRuleType>::FFN(
+    FFN&& network):
+    outputLayer(std::move(network.outputLayer)),
+    initializeRule(std::move(network.initializeRule)),
+    width(network.width),
+    height(network.height),
+    reset(network.reset),
+    predictors(std::move(network.predictors)),
+    responses(std::move(network.responses)),
+    parameter(std::move(network.parameter)),
+    numFunctions(network.numFunctions),
+    error(std::move(network.error)),
+    currentInput(std::move(network.currentInput)),
+    currentTarget(std::move(network.currentTarget)),
+    deterministic(network.deterministic),
+    delta(std::move(network.delta)),
+    inputParameter(std::move(network.inputParameter)),
+    outputParameter(std::move(network.outputParameter)),
+    gradient(std::move(network.gradient))
 {
-  // Replicate layers from source network
-  TrivialCopy(network);
-  for (size_t i = 0; i < network.network.size(); ++i)
-  {
-    boost::apply_visitor(assignVisitor, this->network[i], network.network[i]);
-  }
+  this->network = std::move(network.network);
+};
+
+template<typename OutputLayerType, typename InitializationRuleType>
+FFN<OutputLayerType, InitializationRuleType>&
+FFN<OutputLayerType, InitializationRuleType>::operator = (FFN network)
+{
+  Swap(network);
   return *this;
 };
 

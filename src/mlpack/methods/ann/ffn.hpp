@@ -22,7 +22,6 @@
 #include "visitor/output_width_visitor.hpp"
 #include "visitor/reset_visitor.hpp"
 #include "visitor/weight_size_visitor.hpp"
-#include "visitor/assign_visitor.hpp"
 #include "visitor/copy_visitor.hpp"
 
 #include <mlpack/methods/ann/layer/layer_types.hpp>
@@ -61,11 +60,14 @@ class FFN
   FFN(OutputLayerType&& outputLayer = OutputLayerType(),
       InitializationRuleType initializeRule = InitializationRuleType());
 
-  //! Copy CTOR
+  //! Copy constructor.
   FFN(const FFN&);
 
-  //! Assignment CTOR
-  FFN& operator = (const FFN&);
+  //! Move constructor.
+  FFN(FFN&&);
+
+  //! Copy/move assignment operator.
+  FFN& operator = (FFN);
 
   /**
    * Create the FFN object with the given predictors and responses set (this is
@@ -163,6 +165,15 @@ class FFN
                 const size_t i,
                 arma::mat& gradient);
 
+  /**
+   * Compute the gradient of the feedforward network based on given input and target.
+   * @param predictors Input training variables.
+   * @param responses Outputs results from input training variables.
+   * @return Desired gradients of the feedforward network.
+   */
+  arma::mat Gradient(const arma::mat& predictors,
+                     const arma::mat& responses);
+
   /*
    * Add a new module to the model.
    *
@@ -187,15 +198,6 @@ class FFN
   arma::mat& Parameters() { return parameter; }
 
   /**
-   * Make the network ready for the given training data.
-   * This function won't actually trigger training process.
-   *
-   * @param predictors Input training variables.
-   * @param responses Outputs results from input training variables.
-   */
-  void SetTrainingData(const arma::mat& predictors, const arma::mat& responses);
-
-  /**
    * Reset the module infomration (weights/parameters).
    */
   void ResetParameters();
@@ -213,6 +215,15 @@ private:
    * @param input Data sequence to compute probabilities for.
    */
   void Forward(arma::mat&& input);
+
+  /**
+   * Prepare the network for the given training data.
+   * This function won't actually trigger training process.
+   *
+   * @param predictors Input training variables.
+   * @param responses Outputs results from input training variables.
+   */
+  void SetTrainingData(const arma::mat& predictors, const arma::mat& responses);
 
   /**
    * The Backward algorithm (part of the Forward-Backward algorithm). Computes
@@ -238,9 +249,10 @@ private:
   void ResetGradients(arma::mat& gradient);
 
   /**
-   * Copy trivial things for copy ctor and assignment ctor
+   * Swap the content of this network with given network.
+   * @param network Desired source network.
    */
-  void TrivialCopy(const FFN& network);
+  void Swap(FFN& network);
 
   //! Instantiated outputlayer used to evaluate the network.
   OutputLayerType outputLayer;
@@ -318,12 +330,8 @@ private:
   //! Locally-stored gradient parameter.
   arma::mat gradient;
 
-  //! Locally-stored assignment visitor
-  AssignVisitor assignVisitor;
-
   //! Locally-stored copy visitor
   CopyVisitor copyVisitor;
-
 
 }; // class FFN
 

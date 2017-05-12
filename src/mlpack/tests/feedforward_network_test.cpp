@@ -419,8 +419,10 @@ BOOST_AUTO_TEST_CASE(FFNMiscTest)
   model.Add<Linear<>>(2, 3);
   model.Add<ReLULayer<>>();
 
-  auto newModel(model);
-  newModel = model;
+  auto copiedModel(model);
+  copiedModel = model;
+  auto movedModel(std::move(model));
+
 }
 
 BOOST_AUTO_TEST_SUITE_END();
