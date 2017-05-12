@@ -411,7 +411,8 @@ BOOST_AUTO_TEST_CASE(DropConnectNetworkTest)
 }
 
 /**
- * Test miscellaneous things of FFN.
+ * Test miscellaneous things of FFN,
+ * e.g. copy/move constructor, assignment operator.
  */
 BOOST_AUTO_TEST_CASE(FFNMiscTest)
 {
@@ -422,6 +423,7 @@ BOOST_AUTO_TEST_CASE(FFNMiscTest)
   auto copiedModel(model);
   copiedModel = model;
   auto movedModel(std::move(model));
+  movedModel = std::move(copiedModel);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
