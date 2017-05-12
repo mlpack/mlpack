@@ -68,8 +68,8 @@ FFN<OutputLayerType, InitializationRuleType>::~FFN()
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-void FFN<OutputLayerType, InitializationRuleType>::SetTrainingData(const arma::mat &predictors,
-                                                                   const arma::mat &responses)
+void FFN<OutputLayerType, InitializationRuleType>::ResetData(const arma::mat &predictors,
+                                                             const arma::mat &responses)
 {
   numFunctions = responses.n_cols;
   this->predictors = std::move(predictors);
@@ -93,7 +93,7 @@ void FFN<OutputLayerType, InitializationRuleType>::Train(
       const arma::mat& responses,
       OptimizerType<NetworkType, OptimizerTypeArgs...>& optimizer)
 {
-  SetTrainingData(predictors, responses);
+  ResetData(predictors, responses);
 
   // Train the model.
   Timer::Start("ffn_optimization");
@@ -225,7 +225,7 @@ template<typename OutputLayerType, typename InitializationRuleType>
 arma::mat FFN<OutputLayerType, InitializationRuleType>::Gradient(
   const arma::mat& predictors, const arma::mat& responses)
 {
-  SetTrainingData(predictors, responses);
+  ResetData(predictors, responses);
   arma::mat gradients;
   Gradient(Parameters(), 0, gradients);
   return gradients;

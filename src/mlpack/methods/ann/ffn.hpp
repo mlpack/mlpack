@@ -217,13 +217,13 @@ private:
   void Forward(arma::mat&& input);
 
   /**
-   * Prepare the network for the given training data.
+   * Prepare the network for the given data.
    * This function won't actually trigger training process.
    *
-   * @param predictors Input training variables.
-   * @param responses Outputs results from input training variables.
+   * @param predictors Input data variables.
+   * @param responses Outputs results from input datagit variables.
    */
-  void SetTrainingData(const arma::mat& predictors, const arma::mat& responses);
+  void ResetData(const arma::mat& predictors, const arma::mat& responses);
 
   /**
    * The Backward algorithm (part of the Forward-Backward algorithm). Computes
