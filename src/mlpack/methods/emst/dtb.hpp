@@ -147,6 +147,9 @@ class DualTreeBoruvka
    * naive computation, construct a tree with all the points in one leaf (i.e.
    * leafSize = number of points).
    *
+   * Deprecated. This will be removed in mlpack 3.0.0!
+   * Constructors taking a reference to the tree are preferred.
+   *
    * @note
    * Because tree-building (at least with BinarySpaceTree) modifies the ordering
    * of a matrix, be sure you pass the modified matrix to this object!  In
@@ -157,8 +160,54 @@ class DualTreeBoruvka
    * @param tree Pre-built tree.
    * @param metric An optional instantiated metric to use.
    */
-  DualTreeBoruvka(Tree* tree,
+  mlpack_deprecated DualTreeBoruvka(Tree* tree,
+                                    const MetricType metric = MetricType());
+
+  /**
+   * Create the DualTreeBoruvka object with an already initialized tree.  This
+   * will not copy the dataset, and can save a little processing power.  Naive
+   * mode is not available as an option for this constructor; instead, to run
+   * naive computation, construct a tree with all the points in one leaf (i.e.
+   * leafSize = number of points).
+   *
+   * This method will copy the given tree.  You can avoid this copy by using the
+   * construct that takes a rvalue reference to the tree.
+   *
+   * @note
+   * Because tree-building (at least with BinarySpaceTree) modifies the ordering
+   * of a matrix, be sure you pass the modified matrix to this object!  In
+   * addition, mapping the points of the matrix back to their original indices
+   * is not done when this constructor is used.
+   * @endnote
+   *
+   * @param tree Pre-built tree.
+   * @param dataset Dataset corresponding to the pre-built tree.
+   */
+  DualTreeBoruvka(const Tree& tree,
                   const MetricType metric = MetricType());
+
+  /**
+   * Create the DualTreeBoruvka object with an already initialized tree.  This
+   * will not copy the dataset, and can save a little processing power.  Naive
+   * mode is not available as an option for this constructor; instead, to run
+   * naive computation, construct a tree with all the points in one leaf (i.e.
+   * leafSize = number of points).
+   *
+   * This method will take ownership of the given tree.
+   *
+   * @note
+   * Because tree-building (at least with BinarySpaceTree) modifies the ordering
+   * of a matrix, be sure you pass the modified matrix to this object!  In
+   * addition, mapping the points of the matrix back to their original indices
+   * is not done when this constructor is used.
+   * @endnote
+   *
+   * @param tree Pre-built tree.
+   * @param dataset Dataset corresponding to the pre-built tree.
+   */
+  DualTreeBoruvka(Tree&& tree,
+                  const MetricType metric = MetricType());
+
 
   /**
    * Delete the tree, if it was created inside the object.
@@ -195,8 +244,18 @@ class DualTreeBoruvka
   /**
    * This function resets the values in the nodes of the tree nearest neighbor
    * distance, and checks for fully connected nodes.
+   *
+   * Deprecated. This method will be removed in mlpack 3.0.0!
+   * The CleanupHelper() method taking a reference to the tree is preferred.
+   *
    */
-  void CleanupHelper(Tree* tree);
+  mlpack_deprecated void CleanupHelper(Tree* tree);
+  
+  /**
+   * This function resets the values in the nodes of the tree nearest neighbor
+   * distance, and checks for fully connected nodes.
+   */
+  void CleanupHelper(Tree& tree);
 
   /**
    * The values stored in the tree must be reset on each iteration.

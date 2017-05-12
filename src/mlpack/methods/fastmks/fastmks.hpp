@@ -111,12 +111,56 @@ class FastMKS
    * can be specified.  Brute-force search is not available with this
    * constructor since a tree is given (use one of the other constructors).
    *
+   * This method won't take ownership of the given tree. There is no copying of
+   * the data matrices in this constructor (because  tree-building is not
+   * necessary), so this is the constructor to use when copies absolutely must
+   * be avoided.
+   *
+   * Deprecated. This will be removed in mlpack 3.0.0!
+   * Constructor taking a reference to the reference tree are preferred.
+   *
    * @param referenceTree Tree built on reference data.
    * @param single Whether or not to run single-tree search.
    * @param naive Whether or not to run brute-force (naive) search.
    */
-  FastMKS(Tree* referenceTree,
+  mlpack_deprecated FastMKS(Tree* referenceTree,
+                            const bool singleMode = false);
+
+  /**
+   * Create the FastMKS object with an already-initialized tree built on the
+   * reference points.  Be sure that the tree is built with the metric type
+   * IPMetric<KernelType>.  Optionally, whether or not to run single-tree search
+   * can be specified.  Brute-force search is not available with this
+   * constructor since a tree is given (use one of the other constructors).
+   *
+   * This method will copy the given tree. You can avoid this copy by using the
+   * construct that takes a rvalue reference to the tree
+   *
+   * @param referenceTree Tree built on reference data.
+   * @param single Whether or not to run single-tree search.
+   * @param naive Whether or not to run brute-force (naive) search.
+   */
+  FastMKS(const Tree& referenceTree,
           const bool singleMode = false);
+   
+  /**
+   * Create the FastMKS object with an already-initialized tree built on the
+   * reference points.  Be sure that the tree is built with the metric type
+   * IPMetric<KernelType>.  Optionally, whether or not to run single-tree search
+   * can be specified.  Brute-force search is not available with this
+   * constructor since a tree is given (use one of the other constructors).
+   *
+   * This method will take ownership of the tree. There is no copying of
+   * the data matrices (because tree-building is not necessary), so this is the
+   * constructor to use when copies absolutely must be avoided.
+   *
+   * @param referenceTree Tree built on reference data.
+   * @param single Whether or not to run single-tree search.
+   * @param naive Whether or not to run brute-force (naive) search.
+   */
+  FastMKS(Tree&& referenceTree,
+          const bool singleMode = false);   
+          
 
   /**
    * Copy the parameters of the given model.
@@ -159,9 +203,34 @@ class FastMKS
    * of the tree, so you do not need to delete it!  This will throw an exception
    * if the model is searching in naive mode (i.e. if Naive() == true).
    *
+   * Deprecated. This method will be removed in mlpack 3.0.0!
+   * The Train() method taking a reference to the reference tree is preferred.
+   *
    * @param tree Tree to use as reference data.
    */
-  void Train(Tree* referenceTree);
+  mlpack_deprecated void Train(Tree* referenceTree);
+  
+  /**
+   * Train the FastMKS model on the given reference tree. This will throw an
+   * exception if the model is searching in naive mode (i.e. if Naive() == true).
+   *
+   * This method will copy the given tree. You can avoid this copy by using the
+   * Train() method that takes a rvalue reference to the tree.
+   *
+   * @param tree Tree to use as reference data.
+   */
+  void Train(const Tree& referenceTree);
+  
+  /**
+   * Train the FastMKS model on the given reference tree.  This takes ownership
+   * of the tree, so you do not need to delete it!  This will throw an exception
+   * if the model is searching in naive mode (i.e. if Naive() == true).
+   *
+   * This method will take ownership of the given tree.
+   *
+   * @param tree Tree to use as reference data.
+   */
+  void Train(Tree&& referenceTree);
 
   /**
    * Search for the points in the reference set with maximum kernel evaluation
@@ -205,12 +274,42 @@ class FastMKS
    * here are with respect to the modified input matrix (that is,
    * queryTree->Dataset()).
    *
+   * Deprecated. This method will be removed in mlpack 3.0.0!
+   * The Search() method taking a reference to the query tree is preferred.
+   *
    * @param queryTree Tree built on query points.
    * @param k The number of maximum kernels to find.
    * @param indices Matrix to store resulting indices of max-kernel search in.
    * @param kernels Matrix to store resulting max-kernel values in.
    */
-  void Search(Tree* querySet,
+  mlpack_deprecated void Search(Tree* querySet,
+                                const size_t k,
+                                arma::Mat<size_t>& indices,
+                                arma::mat& kernels);
+
+  /**
+   * Search for the points in the reference set with maximum kernel evaluation
+   * to each point in the query set corresponding to the given pre-built query
+   * tree.  The resulting kernel evaluations are stored in the kernels matrix,
+   * and the corresponding point indices are stored in the indices matrix. The
+   * results for each point in the query set are stored in the corresponding
+   * column of the kernels and products matrices; for instance, the index of the
+   * point with maximum kernel evaluation to point 4 in the query set will be
+   * stored in row 0 and column 4 of the indices matrix.
+   *
+   * This will throw an exception if called while the FastMKS object has
+   * 'single' set to true.
+   *
+   * Be aware that if your tree modifies the original input matrix, the results
+   * here are with respect to the modified input matrix (that is,
+   * queryTree->Dataset()).
+   *
+   * @param queryTree Tree built on query points.
+   * @param k The number of maximum kernels to find.
+   * @param indices Matrix to store resulting indices of max-kernel search in.
+   * @param kernels Matrix to store resulting max-kernel values in.
+   */
+  void Search(Tree& queryTree,
               const size_t k,
               arma::Mat<size_t>& indices,
               arma::mat& kernels);
