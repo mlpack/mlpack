@@ -4,6 +4,7 @@ set(SOURCES
   random_init.hpp
   oivs_init.hpp
   kathirvalavakumar_subavathi_init.hpp
+  network_init.hpp
   nguyen_widrow_init.hpp
   zero_init.hpp
   gaussian_init.hpp

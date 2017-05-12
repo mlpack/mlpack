@@ -22,7 +22,6 @@
 #include "visitor/gradient_visitor.hpp"
 #include "visitor/set_input_height_visitor.hpp"
 #include "visitor/set_input_width_visitor.hpp"
-#include "visitor/weight_set_visitor.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -221,23 +220,9 @@ void FFN<OutputLayerType, InitializationRuleType>::ResetParameters()
 {
   ResetDeterministic();
 
-  size_t weights = 0;
-  for (size_t i = 0; i < network.size(); ++i)
-  {
-    weights += boost::apply_visitor(weightSizeVisitor, network[i]);
-  }
-
-  parameter.set_size(weights, 1);
-  initializeRule.Initialize(parameter, parameter.n_elem, 1);
-
-  size_t offset = 0;
-  for (size_t i = 0; i < network.size(); ++i)
-  {
-    offset += boost::apply_visitor(WeightSetVisitor(std::move(parameter),
-        offset), network[i]);
-
-    boost::apply_visitor(resetVisitor, network[i]);
-  }
+  // Reset the network parameter with the given initialization rule.
+  NetworkInitialization<InitializationRuleType> networkInit(initializeRule);
+  networkInit.Initialize(network, parameter);
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>

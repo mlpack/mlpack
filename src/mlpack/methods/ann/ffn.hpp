@@ -22,6 +22,8 @@
 #include "visitor/reset_visitor.hpp"
 #include "visitor/weight_size_visitor.hpp"
 
+#include "init_rules/network_init.hpp"
+
 #include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 #include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
