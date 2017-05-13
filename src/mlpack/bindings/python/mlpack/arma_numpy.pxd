@@ -24,36 +24,36 @@ cimport arma
 Convert a numpy ndarray to a matrix.
 """
 cdef arma.Mat[double]* numpy_to_mat_d(numpy.ndarray[numpy.double_t, ndim=2] X)
-cdef arma.Mat[size_t]* numpy_to_mat_s(numpy.ndarray[numpy.uintp_t, ndim=2] X)
+cdef arma.Mat[size_t]* numpy_to_mat_s(numpy.ndarray[long, ndim=2] X)
 
 """
 Convert an Armadillo object to a numpy ndarray of the given type.
 """
 cdef numpy.ndarray[numpy.double_t, ndim=2] mat_to_numpy_d(arma.Mat[double]& X)
-cdef numpy.ndarray[numpy.uintp_t, ndim=2] mat_to_numpy_s(arma.Mat[size_t]& X)
+cdef numpy.ndarray[long, ndim=2] mat_to_numpy_s(arma.Mat[size_t]& X)
 
 """
 Convert a numpy one-dimensional ndarray to a row of the given type.
 """
 cdef arma.Row[double]* numpy_to_row_d(numpy.ndarray[numpy.double_t, ndim=1] X)
-cdef arma.Row[size_t]* numpy_to_row_s(numpy.ndarray[numpy.uintp_t, ndim=1] X)
+cdef arma.Row[size_t]* numpy_to_row_s(numpy.ndarray[long, ndim=1] X)
 
 """
 Convert an Armadillo row vector to a one-dimensional numpy ndarray of the
 given type.
 """
 cdef numpy.ndarray[numpy.double_t, ndim=1] row_to_numpy_d(arma.Row[double]& X)
-cdef numpy.ndarray[numpy.uintp_t, ndim=1] row_to_numpy_s(arma.Row[size_t]& X)
+cdef numpy.ndarray[long, ndim=1] row_to_numpy_s(arma.Row[size_t]& X)
 
 """
 Convert a numpy one-dimensional ndarray to a column vector of the given type.
 """
 cdef arma.Col[double]* numpy_to_col_d(numpy.ndarray[numpy.double_t, ndim=1] X)
-cdef arma.Col[size_t]* numpy_to_col_s(numpy.ndarray[numpy.uintp_t, ndim=1] X)
+cdef arma.Col[size_t]* numpy_to_col_s(numpy.ndarray[long, ndim=1] X)
 
 """
 Convert an Armadillo column vector to a one-dimensional numpy ndarray of the
 given type.
 """
 cdef numpy.ndarray[numpy.double_t, ndim=1] col_to_numpy_d(arma.Col[double]& X)
-cdef numpy.ndarray[numpy.uintp_t, ndim=1] col_to_numpy_s(arma.Col[size_t]& X)
+cdef numpy.ndarray[long, ndim=1] col_to_numpy_s(arma.Col[size_t]& X)

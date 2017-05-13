@@ -35,7 +35,7 @@ cdef arma.Mat[double]* numpy_to_mat_d(numpy.ndarray[numpy.double_t, ndim=2] X):
   cdef arma.Mat[double]* m = new arma.Mat[double](<double*> X.data, X.shape[1], X.shape[0], False, True)
   return m
 
-cdef arma.Mat[size_t]* numpy_to_mat_s(numpy.ndarray[numpy.uintp_t, ndim=2] X):
+cdef arma.Mat[size_t]* numpy_to_mat_s(numpy.ndarray[long, ndim=2] X):
   """
   Convert a numpy ndarray to a matrix.
   """
@@ -64,7 +64,7 @@ cdef numpy.ndarray[numpy.double_t, ndim=2] mat_to_numpy_d(arma.Mat[double]& X):
 
   return output
 
-cdef numpy.ndarray[numpy.uintp_t, ndim=2] mat_to_numpy_s(arma.Mat[size_t]& X):
+cdef numpy.ndarray[long, ndim=2] mat_to_numpy_s(arma.Mat[size_t]& X):
   """
   Convert an Armadillo object to a numpy ndarray.
   """
@@ -72,8 +72,8 @@ cdef numpy.ndarray[numpy.uintp_t, ndim=2] mat_to_numpy_s(arma.Mat[size_t]& X):
   cdef numpy.npy_intp dims[2]
   dims[0] = <numpy.npy_intp> X.n_cols
   dims[1] = <numpy.npy_intp> X.n_rows
-  cdef numpy.ndarray[numpy.uintp_t, ndim=2] output = \
-      numpy.PyArray_SimpleNewFromData(2, &dims[0], numpy.NPY_UINTP, X.memptr())
+  cdef numpy.ndarray[long, ndim=2] output = \
+      numpy.PyArray_SimpleNewFromData(2, &dims[0], numpy.NPY_LONG, X.memptr())
 
   # Transfer memory ownership.
   SetMemState[arma.Mat[size_t]](X, 1)
@@ -93,7 +93,7 @@ cdef arma.Row[double]* numpy_to_row_d(numpy.ndarray[numpy.double_t, ndim=1] X):
       False, True)
   return m
 
-cdef arma.Row[size_t]* numpy_to_row_s(numpy.ndarray[numpy.uintp_t, ndim=1] X):
+cdef arma.Row[size_t]* numpy_to_row_s(numpy.ndarray[long, ndim=1] X):
   """
   Convert a numpy one-dimensional ndarray to a row.
   """
@@ -120,14 +120,14 @@ cdef numpy.ndarray[numpy.double_t, ndim=1] row_to_numpy_d(arma.Row[double]& X):
 
   return output
 
-cdef numpy.ndarray[numpy.uintp_t, ndim=1] row_to_numpy_s(arma.Row[size_t]& X):
+cdef numpy.ndarray[long, ndim=1] row_to_numpy_s(arma.Row[size_t]& X):
   """
   Convert an Armadillo row vector to a one-dimensional numpy ndarray.
   """
   # Extract dimensions.
   cdef numpy.npy_intp dim = <numpy.npy_intp> X.n_elem
-  cdef numpy.ndarray[numpy.uintp_t, ndim=1] output = \
-      numpy.PyArray_SimpleNewFromData(1, &dim, numpy.NPY_UINTP, X.memptr())
+  cdef numpy.ndarray[long, ndim=1] output = \
+      numpy.PyArray_SimpleNewFromData(1, &dim, numpy.NPY_LONG, X.memptr())
 
   # Transfer memory ownership.
   SetMemState[arma.Row[size_t]](X, 1)
@@ -147,7 +147,7 @@ cdef arma.Col[double]* numpy_to_col_d(numpy.ndarray[numpy.double_t, ndim=1] X):
       False, True)
   return m
 
-cdef arma.Col[size_t]* numpy_to_col_s(numpy.ndarray[numpy.uintp_t, ndim=1] X):
+cdef arma.Col[size_t]* numpy_to_col_s(numpy.ndarray[long, ndim=1] X):
   """
   Convert a numpy one-dimensional ndarray to a column vector.
   """
@@ -174,14 +174,14 @@ cdef numpy.ndarray[numpy.double_t, ndim=1] col_to_numpy_d(arma.Col[double]& X):
 
   return output
 
-cdef numpy.ndarray[numpy.uintp_t, ndim=1] col_to_numpy_s(arma.Col[size_t]& X):
+cdef numpy.ndarray[long, ndim=1] col_to_numpy_s(arma.Col[size_t]& X):
   """
   Convert an Armadillo column vector to a one-dimensional numpy ndarray.
   """
   # Extract dimension.
   cdef numpy.npy_intp dim = <numpy.npy_intp> X.n_elem
-  cdef numpy.ndarray[numpy.uintp_t, ndim=1] output = \
-      numpy.PyArray_SimpleNewFromData(1, &dim, numpy.NPY_UINTP, X.memptr())
+  cdef numpy.ndarray[long, ndim=1] output = \
+      numpy.PyArray_SimpleNewFromData(1, &dim, numpy.NPY_LONG, X.memptr())
 
   # Transfer memory ownership.
   SetMemState[arma.Col[size_t]](X, 1)
