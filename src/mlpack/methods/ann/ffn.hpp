@@ -167,6 +167,7 @@ class FFN
 
   /**
    * Compute the gradient of the feedforward network based on given input and target.
+   *
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
    * @return Desired gradients of the feedforward network.
@@ -221,7 +222,7 @@ private:
    * This function won't actually trigger training process.
    *
    * @param predictors Input data variables.
-   * @param responses Outputs results from input datagit variables.
+   * @param responses Outputs results from input data variables.
    */
   void ResetData(const arma::mat& predictors, const arma::mat& responses);
 
@@ -250,6 +251,7 @@ private:
 
   /**
    * Swap the content of this network with given network.
+   *
    * @param network Desired source network.
    */
   void Swap(FFN& network);
