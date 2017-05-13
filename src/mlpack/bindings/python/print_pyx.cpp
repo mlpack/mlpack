@@ -81,6 +81,7 @@ void PrintPYX(const ProgramDoc& programInfo,
   cout << endl;
   cout << "from libcpp.string cimport string" << endl;
   cout << "from libcpp cimport bool" << endl;
+  cout << "from libcpp.vector cimport vector" << endl;
   cout << endl;
   cout << "from cython.operator import dereference" << endl;
   cout << endl;

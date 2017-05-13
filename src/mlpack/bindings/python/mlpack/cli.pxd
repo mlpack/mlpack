@@ -39,6 +39,7 @@ cdef extern from "<mlpack/bindings/python/mlpack/cli_util.hpp>" \
     namespace "mlpack::util" nogil:
   void SetParam[T](string, const T&) nogil
   void SetParamWithInfo[T](string, const T&, const bool*) nogil
+  (T&) GetParamWithInfo[T](string) nogil
   void EnableVerbose() nogil
 
 cdef extern from "<mlpack/bindings/python/mlpack/move.hpp>" \

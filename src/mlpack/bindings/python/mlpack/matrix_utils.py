@@ -39,19 +39,20 @@ def to_matrix_with_info(x, dtype):
 
   if isinstance(x, np.ndarray):
     # It is already an ndarray, so the vector of info is all 0s (all numeric).
-    d = np.zeros([x.shape[1]])
+    d = np.zeros([x.shape[1]], dtype=np.bool)
     return (x, d)
 
   if isinstance(x, pd.DataFrame) or isinstance(x, pd.Series):
     # It's a pandas dataframe.  So we need to see if any of the dtypes are
     # categorical or object, and if so, we need to convert them.  First see if
     # we can take a shortcut without copying.
-    if not 'category' in x.dtypes.values and \
+    if not any(isinstance(t, pd.types.dtypes.CategoricalDtype)
+        for t in x.dtypes.values) and \
        not 'object' in x.dtypes.values and \
        not 'str' in x.dtypes.values and \
        not 'unicode' in x.dtypes.values:
         # We can just return the matrix as-is; it's all numeric.
-        d = np.zeros([x.shape[1], 1])
+        d = np.zeros([x.shape[1]], dtype=np.bool)
         return (to_matrix(x), d)
 
     if 'str' in x.dtypes.values or 'unicode' in x.dtypes.values:
@@ -64,17 +65,16 @@ def to_matrix_with_info(x, dtype):
     # so go ahead and copy the dataframe and we'll work with y to make
     # modifications.
     y = x
-    d = np.zeros([x.shape[1]])
+    d = np.zeros([x.shape[1]], dtype=np.bool)
 
     # Convert any 'object', 'str', or 'unicode' types to categorical.
     convertColumns = x.select_dtypes(['object'])
     if not convertColumns.empty:
-      print("cols: ", convertColumns)
       y[convertColumns] = y[convertColumns].astype('category')
 
-    if 'category' in x.dtypes.values:
+    catColumns = x.select_dtypes(['category']).columns
+    if len(catColumns) > 0:
       # Do actual conversion to numeric types.  This converts to an int type.
-      catColumns = x.select_dtypes(['category']).columns
       y = x # Copy it... not great...
 
       # Note that this will map NaNs (missing values or unknown categories) to
