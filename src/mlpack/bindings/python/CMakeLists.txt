@@ -12,6 +12,8 @@ endif ()
 set(BINDING_SOURCES
   generate_pyx.hpp
   generate_pyx.cpp
+  get_arma_type.hpp
+  get_numpy_type.hpp
   get_numpy_type_char.hpp
   get_param.hpp
   get_printable_param.hpp
@@ -95,7 +97,7 @@ endif ()
 # Then do the actual build.
 add_custom_command(TARGET python POST_BUILD
     COMMAND ${PYTHON} ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py
-        build
+        build_ext --inplace
     DEPENDS mlpack/arma_numpy.pxd
             mlpack/arma_numpy.pyx
             mlpack/arma.pxd
@@ -142,7 +144,7 @@ if (BUILD_PYTHON_BINDINGS)
   # distutils will determine whether or not it *actually* needs to be rebuilt.
   add_custom_target(build_pyx_${name}
       ${PYTHON} ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py
-          build_ext --module=${name}.pyx
+          build_ext --inplace --module=${name}.pyx
       DEPENDS generate_pyx_${name}
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/
       COMMENT "Building Cython binding ${name}.so...")

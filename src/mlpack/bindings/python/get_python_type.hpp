@@ -86,10 +86,10 @@ inline std::string GetPythonType<bool>(
 
 template<typename T>
 inline std::string GetPythonType(
-    const util::ParamData& /* d */,
+    const util::ParamData& d,
     const typename boost::enable_if<IsStdVector<T>>::type* = 0)
 {
-  return "array";
+  return "vector[" + GetPythonType<typename T::value_type>(d) + "]";
 }
 
 template<typename T>
@@ -97,7 +97,13 @@ inline std::string GetPythonType(
     const util::ParamData& d,
     const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
 {
-  return "arma.Mat[" + GetPythonType<typename T::elem_type>(d) + "]";
+  std::string type = "Mat";
+  if (T::is_row)
+    type = "Row";
+  else if (T::is_col)
+    type = "Col";
+
+  return "arma." + type + "[" + GetPythonType<typename T::elem_type>(d) + "]";
 }
 
 template<typename T>
