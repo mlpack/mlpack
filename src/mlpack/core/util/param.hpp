@@ -764,8 +764,8 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * collisions are still possible, and they produce bizarre error messages.  See
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
-#define PARAM_VECTOR_OUT(T, ID) \
-    PARAM_OUT(std::vector<T>, ID, DESC, "", std::vector<T>(), false)
+#define PARAM_VECTOR_OUT(T, ID, DESC, ALIAS) \
+    PARAM_OUT(std::vector<T>, ID, DESC, ALIAS, std::vector<T>(), false)
 
 /**
  * Define an input DatasetInfo/matrix parameter.  From the command line, the
