@@ -9,6 +9,8 @@
 #define MLPACK_BINDINGS_PYTHON_PRINT_OUTPUT_PROCESSING_HPP
 
 #include <mlpack/prereqs.hpp>
+#include "get_arma_type.hpp"
+#include "get_numpy_type_char.hpp"
 
 namespace mlpack {
 namespace bindings {
@@ -72,9 +74,9 @@ void PrintOutputProcessing(
      *
      * where X indicates the type to convert to.
      */
-    std::cout << prefix << "result = arma_numpy.mat_to_numpy_"
-        << GetNumpyTypeChar<T>() << "(CLI.GetParam[" << GetPythonType<T>(d)
-        << "](\"" << d.name << "\"))" << std::endl;
+    std::cout << prefix << "result = arma_numpy." << GetArmaType<T>()
+        << "_to_numpy_" << GetNumpyTypeChar<T>() << "(CLI.GetParam["
+        << GetPythonType<T>(d) << "](\"" << d.name << "\"))" << std::endl;
   }
   else
   {
@@ -87,9 +89,9 @@ void PrintOutputProcessing(
      * where X indicates the type to convert to.
      */
     std::cout << prefix << "result['" << d.name
-        << "'] = arma_numpy.mat_to_numpy_" << GetNumpyTypeChar<T>()
-        << "(CLI.GetParam[" << GetPythonType<T>(d) << "]('" << d.name << "'))"
-        << std::endl;
+        << "'] = arma_numpy." << GetArmaType<T>() << "_to_numpy_"
+        << GetNumpyTypeChar<T>() << "(CLI.GetParam[" << GetPythonType<T>(d)
+        << "]('" << d.name << "'))" << std::endl;
   }
 }
 
@@ -104,10 +106,35 @@ void PrintOutputProcessing(
     const typename boost::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
 {
-  // Print the output with the matrix type.
-  // We don't have any output of this type, so this is not implemented yet.
-  // Let's just make something that will throw an error.
-  std::cout << "invalid Python! see PrintOutputProcessing()!" << std::endl;
+  const std::string prefix(indent, ' ');
+
+  // Print the output with the matrix type.  The dimension information doesn't
+  // need to go back.
+  if (onlyOutput)
+  {
+    /**
+     * This gives us code like:
+     *
+     * result = arma_numpy.mat_to_numpy_X(GetParamWithInfo[mat]('name'))
+     */
+    std::cout << prefix << "result = arma_numpy.mat_to_numpy_"
+        << GetNumpyTypeChar<arma::mat>()
+        << "(GetParamWithInfo[arma.Mat[double]]('" << d.name << "'))"
+        << std::endl;
+  }
+  else
+  {
+    /**
+     * This gives us code like:
+     *
+     * result['param_name'] =
+     *     arma_numpy.mat_to_numpy_X(GetParamWithInfo[mat]('name'))
+     */
+    std::cout << prefix << "result['" << d.name
+        << "'] = arma_numpy.mat_to_numpy_" << GetNumpyTypeChar<arma::mat>()
+        << "(GetParamWithInfo[arma.Mat[double]]('" << d.name << "'))"
+        << std::endl;
+  }
 }
 
 /**

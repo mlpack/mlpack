@@ -8,6 +8,8 @@
 #define MLPACK_BINDINGS_PYTHON_PRINT_INPUT_PROCESSING_HPP
 
 #include <mlpack/prereqs.hpp>
+#include "get_arma_type.hpp"
+#include "get_numpy_type.hpp"
 #include "get_numpy_type_char.hpp"
 #include "strip_type.hpp"
 
@@ -96,9 +98,10 @@ void PrintInputProcessing(
   {
     std::cout << prefix << "if " << d.name << " is not None:" << std::endl;
 
-    std::cout << prefix << "  " << d.name << "_mat = arma_numpy.numpy_to_mat_"
-        << GetNumpyTypeChar<T>() << "(to_matrix(" << d.name << ", "
-        << "dtype=np.double))" << std::endl;
+    std::cout << prefix << "  " << d.name << "_mat = arma_numpy.numpy_to_"
+        << GetArmaType<T>() << "_" << GetNumpyTypeChar<T>() << "(to_matrix("
+        << d.name << ", " << "dtype=" << GetNumpyType<typename T::elem_type>()
+        << "))" << std::endl;
     std::cout << prefix << "  SetParam[" << GetPythonType<T>(d) << "](<const "
         << "string> '" << d.name << "', dereference(" << d.name << "_mat))"
         << std::endl;
@@ -107,9 +110,10 @@ void PrintInputProcessing(
   }
   else
   {
-    std::cout << prefix << d.name << "_mat = arma_numpy.numpy_to_mat_"
-        << GetNumpyTypeChar<T>() << "(to_matrix(" << d.name << ", "
-        << "dtype=np.double))" << std::endl;
+    std::cout << prefix << d.name << "_mat = arma_numpy.numpy_to_"
+        << GetArmaType<T>() << "_" << GetNumpyTypeChar<T>() << "(to_matrix("
+        << d.name << ", " << "dtype=" << GetNumpyType<typename T::elem_type>()
+        << "))" << std::endl;
     std::cout << prefix << "SetParam[" << GetPythonType<T>(d) << "](<const "
         << "string> '" << d.name << "', dereference(" << d.name << "_mat))"
         << std::endl;
@@ -194,7 +198,7 @@ void PrintInputProcessing(
   {
     std::cout << prefix << "if " << d.name << " is not None:" << std::endl;
     std::cout << prefix << "  " << d.name << "_tuple = to_matrix_with_info("
-        << d.name << ")" << std::endl;
+        << d.name << ", dtype=np.double)" << std::endl;
     std::cout << prefix << "  " << d.name << "_mat = arma_numpy.numpy_to_mat_d("
         << d.name << "_tuple[0])" << std::endl;
     std::cout << prefix << "  " << d.name << "_dims = " << d.name << "_tuple[1]"
@@ -208,7 +212,7 @@ void PrintInputProcessing(
   else
   {
     std::cout << prefix << d.name << "_tuple = to_matrix_with_info(" << d.name
-        << ")" << std::endl;
+        << ", dtype=np.double)" << std::endl;
     std::cout << prefix << d.name << "_mat = arma_numpy.numpy_to_mat_d("
         << d.name << "_tuple[0])" << std::endl;
     std::cout << prefix << d.name << "_dims = " << d.name << "_tuple[1]"
