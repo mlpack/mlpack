@@ -116,7 +116,8 @@ install(CODE "execute_process(COMMAND ${PYTHON}
 # Add a macro to build a python binding.
 macro (add_python_binding name)
 if (BUILD_PYTHON_BINDINGS)
-  set (MLPACK_PYXS ${MLPACK_PYXS} "${name}.pyx" PARENT_SCOPE)
+  set (MLPACK_PYXS ${MLPACK_PYXS} "${name}.pyx")
+  set (MLPACK_PYXS ${MLPACK_PYXS} PARENT_SCOPE)
   add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/generate_pyx_${name}.cpp
       COMMAND ${CMAKE_COMMAND}
           -DGENERATE_CPP_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/generate_pyx.cpp.in
