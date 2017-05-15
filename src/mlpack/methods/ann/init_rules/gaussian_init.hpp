@@ -31,8 +31,8 @@ class GaussianInitialization
   /**
    * Initialize the gaussian with the given mean and variance.
    *
-   * @param mean Mean of the gaussian
-   * @param variance Variance of the gaussian
+   * @param mean Mean of the gaussian.
+   * @param variance Variance of the gaussian.
    */
   GaussianInitialization(const double mean = 0, const double variance = 1) :
       mean(mean), variance(variance)
