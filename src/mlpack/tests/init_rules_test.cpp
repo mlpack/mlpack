@@ -197,27 +197,6 @@ BOOST_AUTO_TEST_CASE(GaussianInitTest)
   BOOST_REQUIRE_EQUAL(weights3d.n_slices, slices);
 }
 
-// Build a simple network to test the initialization rules.
-template<typename InitializationRuleType>
-void BuildNetwork(
-    arma::mat& parameters,
-    arma::mat& input,
-    const InitializationRuleType& initializeRule = InitializationRuleType())
-{
-  arma::mat response;
-  NegativeLogLikelihood<> outputLayer;
-
-  FFN<NegativeLogLikelihood<>, InitializationRuleType> model(
-      std::move(outputLayer), initializeRule);
-  model.Add<IdentityLayer<> >();
-  model.Add<Linear<> >(5, 5);
-  model.Add<Linear<> >(5, 2);
-  model.Add<LogSoftMax<> >();
-  model.Predict(input, response);
-
-  parameters = model.Parameters();
-}
-
 /**
  * Simple test of the NetworkInitialization class, we test it with every
  * implemented initialization rule and make sure the output is reasonable.
@@ -225,51 +204,84 @@ void BuildNetwork(
 BOOST_AUTO_TEST_CASE(NetworkInitTest)
 {
   arma::mat input = arma::ones(5, 1);
+  arma::mat response;
+  NegativeLogLikelihood<> outputLayer;
 
   // Create a simple network and use the RandomInitialization rule to
   // initialize the network parameters.
-  arma::mat randomInitparameters;
   RandomInitialization randomInit(0.5, 0.5);
-  BuildNetwork<RandomInitialization>(randomInitparameters, input, randomInit);
 
-  bool b = arma::all(arma::vectorise(randomInitparameters) == 0.5);
+  FFN<NegativeLogLikelihood<>, RandomInitialization> randomModel(
+      std::move(outputLayer), randomInit);
+  randomModel.Add<IdentityLayer<> >();
+  randomModel.Add<Linear<> >(5, 5);
+  randomModel.Add<Linear<> >(5, 2);
+  randomModel.Add<LogSoftMax<> >();
+  randomModel.Predict(input, response);
+
+  bool b = arma::all(arma::vectorise(randomModel.Parameters()) == 0.5);
   BOOST_REQUIRE_EQUAL(b, 1);
-  BOOST_REQUIRE_EQUAL(randomInitparameters.n_elem, 42);
+  BOOST_REQUIRE_EQUAL(randomModel.Parameters().n_elem, 42);
 
   // Create a simple network and use the OrthogonalInitialization rule to
   // initialize the network parameters.
-  arma::mat orthogonalInitparameters;
-  BuildNetwork<OrthogonalInitialization>(orthogonalInitparameters, input);
-  BOOST_REQUIRE_EQUAL(orthogonalInitparameters.n_elem, 42);
+  FFN<NegativeLogLikelihood<>, OrthogonalInitialization> orthogonalModel;
+  orthogonalModel.Add<IdentityLayer<> >();
+  orthogonalModel.Add<Linear<> >(5, 5);
+  orthogonalModel.Add<Linear<> >(5, 2);
+  orthogonalModel.Add<LogSoftMax<> >();
+  orthogonalModel.Predict(input, response);
+
+  BOOST_REQUIRE_EQUAL(orthogonalModel.Parameters().n_elem, 42);
 
   // Create a simple network and use the ZeroInitialization rule to
   // initialize the network parameters.
-  arma::mat zeroInitparameters;
-  BuildNetwork<ZeroInitialization>(zeroInitparameters, input);
-  BOOST_REQUIRE_EQUAL(arma::accu(zeroInitparameters), 0);
-  BOOST_REQUIRE_EQUAL(orthogonalInitparameters.n_elem, 42);
+  FFN<NegativeLogLikelihood<>, ZeroInitialization> zeroModel;
+  zeroModel.Add<IdentityLayer<> >();
+  zeroModel.Add<Linear<> >(5, 5);
+  zeroModel.Add<Linear<> >(5, 2);
+  zeroModel.Add<LogSoftMax<> >();
+  zeroModel.Predict(input, response);
+
+  BOOST_REQUIRE_EQUAL(arma::accu(zeroModel.Parameters()), 0);
+  BOOST_REQUIRE_EQUAL(zeroModel.Parameters().n_elem, 42);
 
   // Create a simple network and use the
   // KathirvalavakumarSubavathiInitialization rule to initialize the network
   // parameters.
-  arma::mat ksInitparameters;
   KathirvalavakumarSubavathiInitialization kathirvalavakumarSubavathiInit(
       input, 1.5);
-  BuildNetwork<KathirvalavakumarSubavathiInitialization>(ksInitparameters,
-      input, kathirvalavakumarSubavathiInit);
-  BOOST_REQUIRE_EQUAL(ksInitparameters.n_elem, 42);
+  FFN<NegativeLogLikelihood<>, KathirvalavakumarSubavathiInitialization>
+      ksModel(std::move(outputLayer), kathirvalavakumarSubavathiInit);
+  ksModel.Add<IdentityLayer<> >();
+  ksModel.Add<Linear<> >(5, 5);
+  ksModel.Add<Linear<> >(5, 2);
+  ksModel.Add<LogSoftMax<> >();
+  ksModel.Predict(input, response);
+
+  BOOST_REQUIRE_EQUAL(ksModel.Parameters().n_elem, 42);
 
   // Create a simple network and use the OivsInitialization rule to
   // initialize the network parameters.
-  arma::mat oivsInitparameters;
-  BuildNetwork<OivsInitialization<> >(oivsInitparameters, input);
-  BOOST_REQUIRE_EQUAL(oivsInitparameters.n_elem, 42);
+  FFN<NegativeLogLikelihood<>, OivsInitialization<> > oivsModel;
+  oivsModel.Add<IdentityLayer<> >();
+  oivsModel.Add<Linear<> >(5, 5);
+  oivsModel.Add<Linear<> >(5, 2);
+  oivsModel.Add<LogSoftMax<> >();
+  oivsModel.Predict(input, response);
+
+  BOOST_REQUIRE_EQUAL(oivsModel.Parameters().n_elem, 42);
 
   // Create a simple network and use the GaussianInitialization rule to
   // initialize the network parameters.
-  arma::mat gaussianInitparameters;
-  BuildNetwork<GaussianInitialization>(gaussianInitparameters, input);
-  BOOST_REQUIRE_EQUAL(gaussianInitparameters.n_elem, 42);
+  FFN<NegativeLogLikelihood<>, GaussianInitialization> gaussianModel;
+  gaussianModel.Add<IdentityLayer<> >();
+  gaussianModel.Add<Linear<> >(5, 5);
+  gaussianModel.Add<Linear<> >(5, 2);
+  gaussianModel.Add<LogSoftMax<> >();
+  gaussianModel.Predict(input, response);
+
+  BOOST_REQUIRE_EQUAL(gaussianModel.Parameters().n_elem, 42);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
