@@ -17,7 +17,9 @@ class ProgramDoc
  public:
   /**
    * Construct a ProgramDoc object.  When constructed, it will register itself
-   * with CLI.
+   * with CLI, and when the user calls --help (or whatever the option is named
+   * for the given binding type), the given function that returns a std::string
+   * will be returned.
    *
    * @param programName Short string representing the name of the program.
    * @param documentation Long string containing documentation on how to use the
@@ -25,12 +27,12 @@ class ProgramDoc
    *     taken care of by CLI later.
    */
   ProgramDoc(const std::string& programName,
-             const std::string& documentation);
+             const std::function<std::string()>& documentation);
 
   //! The name of the program.
   std::string programName;
   //! Documentation for what the program does.
-  std::string documentation;
+  std::function<std::string()> documentation;
 };
 
 } // namespace util

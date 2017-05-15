@@ -10,6 +10,8 @@ set(SOURCES
   get_raw_param.hpp
   get_printable_param.hpp
   get_printable_param_impl.hpp
+  get_printable_param_name.hpp
+  get_printable_param_name_impl.hpp
   map_parameter_name.hpp
   output_param.hpp
   output_param_impl.hpp

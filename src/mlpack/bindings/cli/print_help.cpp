@@ -65,7 +65,7 @@ void PrintHelp(const std::string& param)
   if (docs.programName != "")
   {
     std::cout << docs.programName << std::endl << std::endl;
-    std::cout << "  " << util::HyphenateString(docs.documentation, 2)
+    std::cout << "  " << util::HyphenateString(docs.documentation(), 2)
         << std::endl << std::endl;
   }
   else

@@ -71,7 +71,8 @@ using Option = mlpack::bindings::tests::TestOption<T>;
 
 #undef PROGRAM_INFO
 #define PROGRAM_INFO(NAME, DESC) static mlpack::util::ProgramDoc \
-    cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, DESC); \
+    cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, \
+        []() { return DESC; }); \
     namespace mlpack { \
     namespace bindings { \
     namespace tests { \
@@ -97,7 +98,8 @@ using Option = mlpack::bindings::python::PyOption<T>;
 
 #undef PROGRAM_INFO
 #define PROGRAM_INFO(NAME, DESC) static mlpack::util::ProgramDoc \
-    cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, DESC); \
+    cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, \
+        []() { return DESC; }); \
     namespace mlpack { \
     namespace bindings { \
     namespace python { \

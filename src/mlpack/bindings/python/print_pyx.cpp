@@ -136,7 +136,7 @@ void PrintPYX(const ProgramDoc& programInfo,
   cout << "  \"\"\"" << endl;
   cout << "  " << programInfo.programName << endl;
   cout << endl;
-  cout << "  " << HyphenateString(programInfo.documentation, 2) << endl;
+  cout << "  " << HyphenateString(programInfo.documentation(), 2) << endl;
   cout << endl << endl;
   cout << "  Parameters:" << endl;
   cout << endl;

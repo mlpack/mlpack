@@ -47,7 +47,8 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  *     new paragraphs).
  */
 #define PROGRAM_INFO(NAME, DESC) static mlpack::util::ProgramDoc \
-    cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, DESC);
+    cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, \
+    []() { return DESC; })
 
 /**
  * Define a flag parameter.

@@ -30,7 +30,7 @@ using namespace std;
  * @param defaultModule Name of the default module.
  */
 ProgramDoc::ProgramDoc(const std::string& programName,
-                       const std::string& documentation) :
+                       const std::function<std::string()>& documentation) :
     programName(programName),
     documentation(documentation)
 {

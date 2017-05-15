@@ -26,6 +26,7 @@
 #include "get_raw_param.hpp"
 #include "map_parameter_name.hpp"
 #include "set_param.hpp"
+#include "get_printable_param_name.hpp"
 
 namespace mlpack {
 namespace bindings {
@@ -143,6 +144,8 @@ class CLIOption
     CLI::GetSingleton().functionMap[tname]["MapParameterName"] =
         &MapParameterName<N>;
     CLI::GetSingleton().functionMap[tname]["SetParam"] = &SetParam<N>;
+    CLI::GetSingleton().functionMap[tname]["GetPrintableParamName"] =
+        &GetPrintableParamName<N>;
   }
 };
 
