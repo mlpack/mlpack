@@ -28,6 +28,7 @@
 
 #include <mlpack/prereqs.hpp>
 
+#include "init_rules_traits.hpp"
 #include "random_init.hpp"
 
 namespace mlpack {
@@ -109,6 +110,15 @@ class NguyenWidrowInitialization
   //! The number used as upper bound.
   const double upperBound;
 }; // class NguyenWidrowInitialization
+
+//! Initialization traits of the Nguyen-Widrow initialization rule.
+template<>
+class InitTraits<NguyenWidrowInitialization>
+{
+ public:
+  //! The Nguyen-Widrow initialization rule is applied over the entire network.
+  static const bool UseLayer = false;
+};
 
 
 } // namespace ann
