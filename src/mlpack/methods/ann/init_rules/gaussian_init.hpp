@@ -76,10 +76,10 @@ class GaussianInitialization
 
  private:
   //! Mean of the gaussian.
-  const double mean;
+  double mean;
 
   //! Variance of the gaussian.
-  const double variance;
+  double variance;
 }; // class GaussianInitialization
 
 } // namespace ann

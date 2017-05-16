@@ -114,13 +114,13 @@ class OivsInitialization
 
  private:
   //! Parameter to control the activation region width.
-  const int k;
+  int k;
 
   //! Parameter to define the uniform random range.
-  const double gamma;
+  double gamma;
 
   //! Parameter to control the activation region.
-  const double b;
+  double b;
 }; // class OivsInitialization
 
 

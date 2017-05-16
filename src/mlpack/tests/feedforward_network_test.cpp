@@ -410,4 +410,20 @@ BOOST_AUTO_TEST_CASE(DropConnectNetworkTest)
       (dataset, labels, dataset, labels, 2, 10, 50, 0.2);
 }
 
+/**
+ * Test miscellaneous things of FFN,
+ * e.g. copy/move constructor, assignment operator.
+ */
+BOOST_AUTO_TEST_CASE(FFNMiscTest)
+{
+  FFN<MeanSquaredError<>> model;
+  model.Add<Linear<>>(2, 3);
+  model.Add<ReLULayer<>>();
+
+  auto copiedModel(model);
+  copiedModel = model;
+  auto movedModel(std::move(model));
+  movedModel = std::move(copiedModel);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
