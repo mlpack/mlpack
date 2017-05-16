@@ -1,4 +1,6 @@
 set(SOURCES
+  linear_constraint.hpp
+  linear_constraint_impl.hpp
   lrsdp.hpp
   lrsdp_impl.hpp
   lrsdp_function.hpp
