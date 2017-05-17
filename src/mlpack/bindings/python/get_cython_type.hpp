@@ -1,12 +1,12 @@
 /**
- * @file get_python_type.hpp
+ * @file get_cython_type.hpp
  * @author Ryan Curtin
  *
- * Template metaprogramming to return the string representation of the Python
- * type for a given Python binding parameter.
+ * Template metaprogramming to return the string representation of the Cython
+ * type for a given Cython binding parameter.
  */
-#ifndef MLPACK_BINDINGS_PYTHON_GET_PYTHON_TYPE_HPP
-#define MLPACK_BINDINGS_PYTHON_GET_PYTHON_TYPE_HPP
+#ifndef MLPACK_BINDINGS_PYTHON_GET_CYTHON_TYPE_HPP
+#define MLPACK_BINDINGS_PYTHON_GET_CYTHON_TYPE_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -15,7 +15,7 @@ namespace bindings {
 namespace python {
 
 template<typename T>
-inline std::string GetPythonType(
+inline std::string GetCythonType(
     const util::ParamData& /* d */,
     const typename boost::disable_if<IsStdVector<T>>::type* = 0,
     const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
@@ -25,7 +25,7 @@ inline std::string GetPythonType(
 }
 
 template<>
-inline std::string GetPythonType<int>(
+inline std::string GetCythonType<int>(
     const util::ParamData& /* d */,
     const typename boost::disable_if<IsStdVector<int>>::type*,
     const typename boost::disable_if<data::HasSerialize<int>>::type*,
@@ -35,18 +35,17 @@ inline std::string GetPythonType<int>(
 }
 
 template<>
-inline std::string GetPythonType<float>(
+inline std::string GetCythonType<float>(
     const util::ParamData& /* d */,
     const typename boost::disable_if<IsStdVector<float>>::type*,
     const typename boost::disable_if<data::HasSerialize<float>>::type*,
     const typename boost::disable_if<arma::is_arma_type<float>>::type*)
 {
-
   return "float";
 }
 
 template<>
-inline std::string GetPythonType<double>(
+inline std::string GetCythonType<double>(
     const util::ParamData& /* d */,
     const typename boost::disable_if<IsStdVector<double>>::type*,
     const typename boost::disable_if<data::HasSerialize<double>>::type*,
@@ -56,7 +55,7 @@ inline std::string GetPythonType<double>(
 }
 
 template<>
-inline std::string GetPythonType<std::string>(
+inline std::string GetCythonType<std::string>(
     const util::ParamData& /* d */,
     const typename boost::disable_if<IsStdVector<std::string>>::type*,
     const typename boost::disable_if<data::HasSerialize<std::string>>::type*,
@@ -66,7 +65,7 @@ inline std::string GetPythonType<std::string>(
 }
 
 template<>
-inline std::string GetPythonType<size_t>(
+inline std::string GetCythonType<size_t>(
     const util::ParamData& /* d */,
     const typename boost::disable_if<IsStdVector<size_t>>::type*,
     const typename boost::disable_if<data::HasSerialize<size_t>>::type*,
@@ -76,7 +75,7 @@ inline std::string GetPythonType<size_t>(
 }
 
 template<>
-inline std::string GetPythonType<bool>(
+inline std::string GetCythonType<bool>(
     const util::ParamData& /* d */,
     const typename boost::disable_if<IsStdVector<bool>>::type*,
     const typename boost::disable_if<data::HasSerialize<bool>>::type*,
@@ -86,33 +85,33 @@ inline std::string GetPythonType<bool>(
 }
 
 template<typename T>
-inline std::string GetPythonType(
+inline std::string GetCythonType(
     const util::ParamData& d,
     const typename boost::enable_if<IsStdVector<T>>::type* = 0)
 {
-  return "list of " + GetPythonType<typename T::value_type>(d) + "s";
+  return "vector[" + GetCythonType<typename T::value_type>(d) + "]";
 }
 
 template<typename T>
-inline std::string GetPythonType(
+inline std::string GetCythonType(
     const util::ParamData& d,
     const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
 {
-  std::string type = "matrix";
+  std::string type = "Mat";
   if (T::is_row)
-    type = "row vector";
+    type = "Row";
   else if (T::is_col)
-    type = "column vector";
+    type = "Col";
 
-  return type;
+  return "arma." + type + "[" + GetCythonType<typename T::elem_type>(d) + "]";
 }
 
 template<typename T>
-inline std::string GetPythonType(
+inline std::string GetCythonType(
     const util::ParamData& d,
     const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
 {
-  return d.cppType + "Type";
+  return d.cppType;
 }
 
 } // namespace python

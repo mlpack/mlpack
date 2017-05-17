@@ -11,6 +11,7 @@
 #include <mlpack/prereqs.hpp>
 #include "get_arma_type.hpp"
 #include "get_numpy_type_char.hpp"
+#include "get_cython_type.hpp"
 
 namespace mlpack {
 namespace bindings {
@@ -38,7 +39,7 @@ void PrintOutputProcessing(
      *
      * result = CLI.GetParam[int]('param_name')
      */
-    std::cout << prefix << "result = CLI.GetParam[" << GetPythonType<T>(d)
+    std::cout << prefix << "result = CLI.GetParam[" << GetCythonType<T>(d)
         << "](\"" << d.name << "\")";
   }
   else
@@ -46,10 +47,10 @@ void PrintOutputProcessing(
     /**
      * This gives us code like:
      *
-     * result['param_name'] = CLI.GetParam[int]('param_name')
+     * result['param_name'] = CLI.CetParam[int]('param_name')
      */
     std::cout << prefix << "result['" << d.name << "'] = CLI.GetParam["
-        << GetPythonType<T>(d) << "]('" << d.name << "')" << std::endl;
+        << GetCythonType<T>(d) << "]('" << d.name << "')" << std::endl;
   }
 }
 
@@ -76,7 +77,7 @@ void PrintOutputProcessing(
      */
     std::cout << prefix << "result = arma_numpy." << GetArmaType<T>()
         << "_to_numpy_" << GetNumpyTypeChar<T>() << "(CLI.GetParam["
-        << GetPythonType<T>(d) << "](\"" << d.name << "\"))" << std::endl;
+        << GetCythonType<T>(d) << "](\"" << d.name << "\"))" << std::endl;
   }
   else
   {
@@ -90,7 +91,7 @@ void PrintOutputProcessing(
      */
     std::cout << prefix << "result['" << d.name
         << "'] = arma_numpy." << GetArmaType<T>() << "_to_numpy_"
-        << GetNumpyTypeChar<T>() << "(CLI.GetParam[" << GetPythonType<T>(d)
+        << GetNumpyTypeChar<T>() << "(CLI.GetParam[" << GetCythonType<T>(d)
         << "]('" << d.name << "'))" << std::endl;
   }
 }

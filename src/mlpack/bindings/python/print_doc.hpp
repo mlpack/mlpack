@@ -33,8 +33,9 @@ void PrintDoc(const util::ParamData& d,
               void* /* output */)
 {
   const size_t indent = *((size_t*) input);
-  std::cout << d.name << " (" << GetPythonType<T>(d) << "): "
-      << util::HyphenateString(d.desc, indent + 4);
+  std::ostringstream oss;
+  oss << " - " << d.name << " (" << GetPythonType<T>(d) << "): " << d.desc;
+  std::cout << util::HyphenateString(oss.str(), indent + 4);
 }
 
 } // namespace python

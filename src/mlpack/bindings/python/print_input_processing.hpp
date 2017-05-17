@@ -11,6 +11,8 @@
 #include "get_arma_type.hpp"
 #include "get_numpy_type.hpp"
 #include "get_numpy_type_char.hpp"
+#include "get_cython_type.hpp"
+#include "get_python_type.hpp"
 #include "strip_type.hpp"
 
 namespace mlpack {
@@ -53,7 +55,7 @@ void PrintInputProcessing(
     std::cout << prefix << "if " << name << " is not " << def << ":"
         << std::endl;
 
-    std::cout << prefix << "  SetParam[" << GetPythonType<T>(d) << "](<const "
+    std::cout << prefix << "  SetParam[" << GetCythonType<T>(d) << "](<const "
         << "string> '" << d.name << "', " << name << ")" << std::endl;
     std::cout << prefix << "  CLI.SetPassed(<const string> '" << d.name
         << "')" << std::endl;
@@ -64,7 +66,7 @@ void PrintInputProcessing(
   }
   else
   {
-    std::cout << prefix << "SetParam[" << GetPythonType<T>(d) << "](<const "
+    std::cout << prefix << "SetParam[" << GetCythonType<T>(d) << "](<const "
         << "string> '" << d.name << "', " << name << ")" << std::endl;
     std::cout << prefix << "CLI.SetPassed(<const string> '" << d.name << "')"
         << std::endl;
@@ -102,7 +104,7 @@ void PrintInputProcessing(
         << GetArmaType<T>() << "_" << GetNumpyTypeChar<T>() << "(to_matrix("
         << d.name << ", " << "dtype=" << GetNumpyType<typename T::elem_type>()
         << "))" << std::endl;
-    std::cout << prefix << "  SetParam[" << GetPythonType<T>(d) << "](<const "
+    std::cout << prefix << "  SetParam[" << GetCythonType<T>(d) << "](<const "
         << "string> '" << d.name << "', dereference(" << d.name << "_mat))"
         << std::endl;
     std::cout << prefix << "  CLI.SetPassed(<const string> '" << d.name << "')"
@@ -114,7 +116,7 @@ void PrintInputProcessing(
         << GetArmaType<T>() << "_" << GetNumpyTypeChar<T>() << "(to_matrix("
         << d.name << ", " << "dtype=" << GetNumpyType<typename T::elem_type>()
         << "))" << std::endl;
-    std::cout << prefix << "SetParam[" << GetPythonType<T>(d) << "](<const "
+    std::cout << prefix << "SetParam[" << GetCythonType<T>(d) << "](<const "
         << "string> '" << d.name << "', dereference(" << d.name << "_mat))"
         << std::endl;
     std::cout << prefix << "CLI.SetPassed(<const string> '" << d.name << "')"

@@ -13,6 +13,7 @@ set(BINDING_SOURCES
   generate_pyx.hpp
   generate_pyx.cpp
   get_arma_type.hpp
+  get_cython_type.hpp
   get_numpy_type.hpp
   get_numpy_type_char.hpp
   get_param.hpp

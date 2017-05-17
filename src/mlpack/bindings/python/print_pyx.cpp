@@ -144,7 +144,7 @@ void PrintPYX(const ProgramDoc& programInfo,
   {
     const util::ParamData& d = parameters.at(inputOptions[i]);
 
-    cout << "    ";
+    cout << "  ";
     size_t indent = 4;
     CLI::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
         NULL);
