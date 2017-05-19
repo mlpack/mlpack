@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(LinearRegressionTestCase)
   arma::vec responses(10);
 
   // The values we get back when we predict for points.
-  arma::vec predictions(10);
+  arma::rowvec predictions(10);
 
   // We'll randomly select some coefficients for the linear response.
   arma::vec coeffs;
@@ -121,7 +121,7 @@ BOOST_AUTO_TEST_CASE(RidgeRegressionTest)
   LinearRegression lr(data, responses, 0.0001);
 
   // Now just make sure that it predicts some more zeros.
-  arma::vec predictedResponses;
+  arma::rowvec predictedResponses;
   lr.Predict(data, predictedResponses);
 
   for (size_t i = 0; i < 5000; ++i)
@@ -143,7 +143,7 @@ BOOST_AUTO_TEST_CASE(RidgeRegressionTestCase)
   arma::vec responses(10);
 
   // The values we get back when we predict for points.
-  arma::vec predictions(10);
+  arma::rowvec predictions(10);
 
   // We'll randomly select some coefficients for the linear response.
   arma::vec coeffs;

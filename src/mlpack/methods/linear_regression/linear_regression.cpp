@@ -102,6 +102,14 @@ void LinearRegression::Train(const arma::mat& predictors,
 void LinearRegression::Predict(const arma::mat& points, arma::vec& predictions)
     const
 {
+  arma::rowvec rowPredictions;
+  Predict(points, rowPredictions);
+  predictions = arma::trans(rowPredictions);
+}
+
+void LinearRegression::Predict(const arma::mat& points,
+    arma::rowvec& predictions) const
+{
   if (intercept)
   {
     // We want to be sure we have the correct number of dimensions in the
@@ -109,8 +117,8 @@ void LinearRegression::Predict(const arma::mat& points, arma::vec& predictions)
     Log::Assert(points.n_rows == parameters.n_rows - 1);
     // Get the predictions, but this ignores the intercept value
     // (parameters[0]).
-    predictions = arma::trans(arma::trans(parameters.subvec(1,
-        parameters.n_elem - 1)) * points);
+    predictions = arma::trans(parameters.subvec(1, parameters.n_elem - 1))
+        * points;
     // Now add the intercept.
     predictions += parameters(0);
   }
@@ -118,7 +126,7 @@ void LinearRegression::Predict(const arma::mat& points, arma::vec& predictions)
   {
     // We want to be sure we have the correct number of dimensions in the dataset.
     Log::Assert(points.n_rows == parameters.n_rows);
-    predictions = arma::trans(arma::trans(parameters) * points);
+    predictions = arma::trans(parameters) * points;
   }
 
 }

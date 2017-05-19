@@ -183,7 +183,7 @@ int main(int argc, char* argv[])
     }
 
     // Perform the predictions using our model.
-    vec predictions;
+    rowvec predictions;
     Timer::Start("prediction");
     lr.Predict(points, predictions);
     Timer::Stop("prediction");
