@@ -23,27 +23,32 @@ using namespace mlpack;
 using namespace mlpack::neighbor;
 
 // Information about the program itself.
-PROGRAM_INFO("All K-Approximate-Nearest-Neighbor Search with LSH",
+PROGRAM_INFO("K-Approximate-Nearest-Neighbor Search with LSH",
     "This program will calculate the k approximate-nearest-neighbors of a set "
     "of points using locality-sensitive hashing. You may specify a separate set"
     " of reference points and query points, or just a reference set which will "
     "be used as both the reference and query set. "
     "\n\n"
     "For example, the following will return 5 neighbors from the data for each "
-    "point in 'input.csv' and store the distances in 'distances.csv' and the "
-    "neighbors in the file 'neighbors.csv':"
+    "point in " + PRINT_DATASET("input") + " and store the distances in " +
+    PRINT_DATASET("distances") + " and the neighbors in " +
+    PRINT_DATASET("neighbors") + ":"
+    "\n\n" +
+    PRINT_CALL("lsh", "k", 5, "reference", "input", "distances", "distances",
+        "neighbors", "neighbors") +
     "\n\n"
-    "$ lsh -k 5 -r input.csv -d distances.csv -n neighbors.csv "
-    "\n\n"
-    "The output files are organized such that row i and column j in the "
-    "neighbors output file corresponds to the index of the point in the "
-    "reference set which is the i'th nearest neighbor from the point in the "
-    "query set with index j.  Row i and column j in the distances output file "
-    "corresponds to the distance between those two points."
+    "The output is organized such that row i and column j in the neighbors "
+    "output corresponds to the index of the point in the reference set which "
+    "is the j'th nearest neighbor from the point in the query set with index "
+    "i.  Row j and column i in the distances output file corresponds to the "
+    "distance between those two points."
     "\n\n"
     "Because this is approximate-nearest-neighbors search, results may be "
-    "different from run to run.  Thus, the --seed option can be specified to "
-    "set the random seed.");
+    "different from run to run.  Thus, the " + PRINT_PARAM_STRING("seed") +
+    " parameter can be specified to set the random seed."
+    "\n\n"
+    "This program also has many other parameters to control its functionality;"
+    " see the parameter-specific documentation for more information.");
 
 // Define our input parameters that this program will take.
 PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");

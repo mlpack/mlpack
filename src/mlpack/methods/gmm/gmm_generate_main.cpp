@@ -20,11 +20,18 @@ using namespace mlpack::gmm;
 
 PROGRAM_INFO("GMM Sample Generator",
     "This program is able to generate samples from a pre-trained GMM (use "
-    "gmm_train to train a GMM).  It loads a GMM from the file specified with "
-    "--input_model_file (-m), and generates a number of samples from that "
-    "model; the number of samples is specified by the --samples (-n) parameter."
-    "The output samples are saved in the file specified by --output_file "
-    "(-o).");
+    "gmm_train to train a GMM).  The pre-trained GMM must be specified with "
+    "the " + PRINT_PARAM_STRING("input_model") + " parameter.  The number "
+    "of samples to generate is specified by the " +
+    PRINT_PARAM_STRING("samples") + " parameter.  Output samples may be "
+    "saved with the " + PRINT_PARAM_STRING("output") + " output parameter."
+    "\n\n"
+    "The following command can be used to generate 100 samples from the pre-"
+    "trained GMM " + PRINT_MODEL("gmm") + " and store those generated "
+    "samples in " + PRINT_DATASET("samples") + ":"
+    "\n\n" +
+    PRINT_CALL("gmm_generate", "input_model", "gmm", "samples", 100, "output",
+        "samples"));
 
 PARAM_MODEL_IN_REQ(GMM, "input_model", "Input GMM model to generate samples "
     "from.", "m");

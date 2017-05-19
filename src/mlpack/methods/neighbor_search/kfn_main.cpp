@@ -32,23 +32,24 @@ using namespace mlpack::metric;
 typedef NSModel<FurthestNeighborSort> KFNModel;
 
 // Information about the program itself.
-PROGRAM_INFO("All K-Furthest-Neighbors",
-    "This program will calculate the all k-furthest-neighbors of a set of "
+PROGRAM_INFO("k-Furthest-Neighbors Search",
+    "This program will calculate the k-furthest-neighbors of a set of "
     "points. You may specify a separate set of reference points and query "
     "points, or just a reference set which will be used as both the reference "
     "and query set."
     "\n\n"
     "For example, the following will calculate the 5 furthest neighbors of each"
-    "point in 'input.csv' and store the distances in 'distances.csv' and the "
-    "neighbors in the file 'neighbors.csv':"
-    "\n\n"
-    "$ mlpack_kfn --k=5 --reference_file=input.csv "
-    "--distances_file=distances.csv\n --neighbors_file=neighbors.csv"
+    "point in " + PRINT_DATASET("input") + " and store the distances in " +
+    PRINT_DATASET("distances") + " and the neighbors in " +
+    PRINT_DATASET("neighbors") + ": "
+    "\n\n" +
+    PRINT_CALL("kfn", "k", 5, "reference", "input", "distances", "distances",
+        "neighbors", "neighbors") +
     "\n\n"
     "The output files are organized such that row i and column j in the "
-    "neighbors output file corresponds to the index of the point in the "
-    "reference set which is the i'th furthest neighbor from the point in the "
-    "query set with index j.  Row i and column j in the distances output file "
+    "neighbors output matrix corresponds to the index of the point in the "
+    "reference set which is the j'th furthest neighbor from the point in the "
+    "query set with index i.  Row i and column j in the distances output file "
     "corresponds to the distance between those two points.");
 
 // Define our input parameters that this program will take.

@@ -1,5 +1,5 @@
 /**
- * @file lcc_main.cpp
+ * @file local_coordinate_coding_main.cpp
  * @author Nishant Mehta
  *
  * Executable for Local Coordinate Coding.
@@ -41,18 +41,32 @@ PROGRAM_INFO("Local Coordinate Coding",
     "\n\n"
     "To run this program, the input matrix X must be specified (with -i), along"
     " with the number of atoms in the dictionary (-k).  An initial dictionary "
-    "may also be specified with the --initial_dictionary option.  The l1-norm "
-    "regularization parameter is specified with -l.  For example, to run LCC on"
-    " the dataset in data.csv using 200 atoms and an l1-regularization "
-    "parameter of 0.1, saving the dictionary into dict.csv and the codes into "
-    "codes.csv, use "
+    "may also be specified with the " +
+    PRINT_PARAM_STRING("initial_dictionary") + " parameter.  The l1-norm "
+    "regularization parameter is specified with the " +
+    PRINT_PARAM_STRING("lambda") + " parameter.  For example, to run LCC on "
+    "the dataset " + PRINT_DATASET("data") + " using 200 atoms and an "
+    "l1-regularization parameter of 0.1, saving the dictionary " +
+    PRINT_PARAM_STRING("dictionary") + " and the codes into " +
+    PRINT_PARAM_STRING("codes") + ", use"
+    "\n\n" +
+    PRINT_CALL("local_coordinate_coding", "training", "data", "atoms", 200,
+        "lambda", 0.1, "dictionary", "dict", "codes", "codes") +
     "\n\n"
-    "$ local_coordinate_coding -i data.csv -k 200 -l 0.1 -d dict.csv -c "
-    "codes.csv"
-    "\n\n"
-    "The maximum number of iterations may be specified with the -n option. "
+    "The maximum number of iterations may be specified with the " +
+    PRINT_PARAM_STRING("max_iterations") + " parameter. "
     "Optionally, the input data matrix X can be normalized before coding with "
-    "the -N option.");
+    "the " + PRINT_PARAM_STRING("normalize") + " parameter."
+    "\n\n"
+    "An LCC model may be saved using the " +
+    PRINT_PARAM_STRING("output_model") + " output parameter.  Then, to encode "
+    "new points from the dataset " + PRINT_DATASET("points") + " with the "
+    "previously saved model " + PRINT_MODEL("lcc_model") + ", saving the new "
+    "codes to " + PRINT_DATASET("new_codes") + ", the following command can "
+    "be used:"
+    "\n\n" +
+    PRINT_CALL("local_coordinate_coding", "input_model", "lcc_model", "test",
+        "points", "codes", "new_codes"));
 
 // Training parameters.
 PARAM_MATRIX_IN("training", "Matrix of training data (X).", "t");

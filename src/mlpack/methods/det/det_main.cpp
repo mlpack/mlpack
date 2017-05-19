@@ -21,22 +21,25 @@ using namespace std;
 PROGRAM_INFO("Density Estimation With Density Estimation Trees",
     "This program performs a number of functions related to Density Estimation "
     "Trees.  The optimal Density Estimation Tree (DET) can be trained on a set "
-    "of data (specified by --training_file or -t) using cross-validation (with "
-    "number of folds specified by --folds).  This trained density estimation "
-    "tree may then be saved to a model file with the --output_model_file (-M) "
-    "option."
+    "of data (specified by " + PRINT_PARAM_STRING("training") + ") using "
+    "cross-validation (with number of folds specified with the " +
+    PRINT_PARAM_STRING("folds") + " parameter).  This trained density "
+    "estimation tree may then be saved with the " +
+    PRINT_PARAM_STRING("output_model") + " output parameter."
     "\n\n"
-    "The variable importances of each dimension may be saved with the "
-    "--vi_file (-i) option, and the density estimates on each training point "
-    "may be saved to the file specified with the --training_set_estimates_file "
-    "(-e) option."
+    "The variable importances (that is, the feature importance values for each "
+    "dimension) may be saved with the " + PRINT_PARAM_STRING("vi") + " output"
+    " parameter, and the density estimates for each training point may be saved"
+    " with the " + PRINT_PARAM_STRING("training_set_estimates") + " output "
+    "parameter."
     "\n\n"
     "This program also can provide density estimates for a set of test points, "
-    "specified in the --test_file (-T) file.  The density estimation tree used "
-    "for this task will be the tree that was trained on the given training "
-    "points, or a tree stored in the file given with the --input_model_file "
-    "(-m) parameter.  The density estimates for the test points may be saved "
-    "into the file specified with the --test_set_estimates_file (-E) option.");
+    "specified in the " + PRINT_PARAM_STRING("test") + " parameter.  The "
+    "density estimation tree used for this task will be the tree that was "
+    "trained on the given training points, or a tree given as the parameter " +
+    PRINT_PARAM_STRING("input_model") + ".  The density estimates for the test"
+    " points may be saved using the " +
+    PRINT_PARAM_STRING("test_set_estimates") + " output parameter.");
 
 // Input data files.
 PARAM_MATRIX_IN("training", "The data set on which to build a density "

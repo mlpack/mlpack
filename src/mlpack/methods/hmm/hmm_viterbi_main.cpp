@@ -28,10 +28,20 @@ using namespace arma;
 using namespace std;
 
 PROGRAM_INFO("Hidden Markov Model (HMM) Viterbi State Prediction", "This "
-    "utility takes an already-trained HMM (--model_file) and evaluates the "
-    "most probably hidden state sequence of a given sequence of observations "
-    "(--input_file), using the Viterbi algorithm.  The computed state sequence "
-    "is saved to the specified output file (--output_file).");
+    "utility takes an already-trained HMM, specified as " +
+    PRINT_PARAM_STRING("input_model") + ", and evaluates the most probable "
+    "hidden state sequence of a given sequence of observations (specified as "
+    "'" + PRINT_PARAM_STRING("input") + ", using the Viterbi algorithm.  The "
+    "computed state sequence may be saved using the " +
+    PRINT_PARAM_STRING("output") + " output parameter."
+    "\n\n"
+    "For example, to predict the state sequence of the observations " +
+    PRINT_DATASET("obs") + " using the HMM " + PRINT_MODEL("hmm") + ", "
+    "storing the predicted state sequence to " + PRINT_DATASET("states") +
+    ", the following command could be used:"
+    "\n\n" +
+    PRINT_CALL("hmm_viterbi", "input", "obs", "input_model", "hmm", "output",
+        "states"));
 
 PARAM_MATRIX_IN_REQ("input", "Matrix containing observations,", "i");
 PARAM_MODEL_IN_REQ(HMMModel, "input_model", "Trained HMM to use.", "m");

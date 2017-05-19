@@ -27,9 +27,17 @@ using namespace arma;
 using namespace std;
 
 PROGRAM_INFO("Hidden Markov Model (HMM) Sequence Log-Likelihood", "This "
-    "utility takes an already-trained HMM (--model_file) and evaluates the "
-    "log-likelihood of a given sequence of observations (--input_file).  The "
-    "computed log-likelihood is given directly to stdout.");
+    "utility takes an already-trained HMM, specified with the " +
+    PRINT_PARAM_STRING("input_model") + " parameter, and evaluates the "
+    "log-likelihood of a sequence of observations, given with the " +
+    PRINT_PARAM_STRING("input") + " parameter.  The computed log-likelihood is"
+    " given as output."
+    "\n\n"
+    "For example, to compute the log-likelihood of the sequence " +
+    PRINT_DATASET("seq") + " with the pre-trained HMM " + PRINT_MODEL("hmm") +
+    ", the following command may be used: "
+    "\n\n" +
+    PRINT_CALL("hmm_loglik", "input", "seq", "input_model", "hmm"));
 
 PARAM_MATRIX_IN_REQ("input", "File containing observations,", "i");
 PARAM_MODEL_IN_REQ(HMMModel, "input_model", "File containing HMM.", "m");

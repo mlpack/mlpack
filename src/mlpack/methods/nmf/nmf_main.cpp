@@ -35,7 +35,8 @@ PROGRAM_INFO("Non-negative Matrix Factorization", "This program performs "
     "\n\n"
     "where all elements in W and H are non-negative.  If V is of size (n x m),"
     " then W will be of size (n x r) and H will be of size (r x m), where r is "
-    "the rank of the factorization (specified by --rank)."
+    "the rank of the factorization (specified by the " +
+    PRINT_PARAM_STRING("rank") + " parameter)."
     "\n\n"
     "Optionally, the desired update rules for each NMF iteration can be chosen "
     "from the following list:"
@@ -46,9 +47,18 @@ PROGRAM_INFO("Non-negative Matrix Factorization", "This program performs "
     "1999)\n"
     " - als: alternating least squares update rules (Paatero and Tapper 1994)"
     "\n\n"
-    "The maximum number of iterations is specified with --max_iterations, and "
-    "the minimum residue required for algorithm termination is specified with "
-    "--min_residue.");
+    "The maximum number of iterations is specified with " +
+    PRINT_PARAM_STRING("max_iterations") + ", and the minimum residue "
+    "required for algorithm termination is specified with the " +
+    PRINT_PARAM_STRING("min_residue") + " parameter."
+    "\n\n"
+    "For example, to run NMF on the input matrix " + PRINT_DATASET("V") + " "
+    "using the 'multdist' update rules with a rank-10 decomposition and "
+    "storing the decomposed matrices into " + PRINT_DATASET("W") + " and " +
+    PRINT_DATASET("H") + ", the following command could be used: "
+    "\n\n" +
+    PRINT_CALL("nmf", "input", "V", "w", "W", "h", "H", "rank", 10,
+        "update_rules", "multdist"));
 
 // Parameters for program.
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform NMF on.", "i");

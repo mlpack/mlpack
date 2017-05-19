@@ -30,14 +30,33 @@
 
 #include "dtb.hpp"
 
-PROGRAM_INFO("Fast Euclidean Minimum Spanning Tree", "This program can compute "
-    "the Euclidean minimum spanning tree of a set of input points using the "
-    "dual-tree Boruvka algorithm."
+PROGRAM_INFO("Fast Euclidean Minimum Spanning Tree",
+    "This program can compute the Euclidean minimum spanning tree of a set of "
+    "input points using the dual-tree Boruvka algorithm."
     "\n\n"
-    "The output is saved in a three-column matrix, where each row indicates an "
-    "edge.  The first column corresponds to the lesser index of the edge; the "
-    "second column corresponds to the greater index of the edge; and the third "
-    "column corresponds to the distance between the two points.");
+    "The set to calculate the minimum spanning tree of is specified with the " +
+    PRINT_PARAM_STRING("input") + " parameter, and the output may be saved with"
+    " the " + PRINT_PARAM_STRING("output") + " output parameter."
+    "\n\n"
+    "The " + PRINT_PARAM_STRING("leaf_size") + " parameter controls the leaf "
+    "size of the kd-tree that is used to calculate the minimum spanning tree, "
+    "and if the " + PRINT_PARAM_STRING("naive") + " option is given, then "
+    "brute-force search is used (this is typically much slower in low "
+    "dimensions).  The leaf size does not affect the results, but it may have "
+    "some effect on the runtime of the algorithm."
+    "\n\n"
+    "For example, the minimum spanning tree of the input dataset " +
+    PRINT_DATASET("data") + " can be calculated with a leaf size of 20 and "
+    "stored as " + PRINT_DATASET("spanning_tree") + " using the following "
+    "command:"
+    "\n\n" +
+    PRINT_CALL("emst", "input", "data", "leaf_size", 20, "output",
+        "spanning_tree") +
+    "\n\n"
+    "The output matrix is a three-dimensional matrix, where each row indicates "
+    "an edge.  The first dimension corresponds to the lesser index of the edge;"
+    " the second dimension corresponds to the greater index of the edge; and "
+    "the third column corresponds to the distance between the two points.");
 
 PARAM_MATRIX_IN_REQ("input", "Input data matrix.", "i");
 PARAM_MATRIX_OUT("output", "Output data.  Stored as an edge list.", "o");

@@ -29,44 +29,52 @@ PROGRAM_INFO("Perceptron",
     "network. The perceptron makes its predictions based on a linear predictor "
     "function combining a set of weights with the feature vector.  The "
     "perceptron learning rule is able to converge, given enough iterations "
-    "using the --max_iterations (-n) parameter, if the data supplied is "
-    "linearly separable.  The perceptron is parameterized by a matrix of weight"
-    " vectors that denote the numerical weights of the neural network."
+    "(specified using the " + PRINT_PARAM_STRING("max_iterations") +
+    " parameter), if the data supplied is linearly separable.  The perceptron "
+    "is parameterized by a matrix of weight vectors that denote the numerical "
+    "weights of the neural network."
     "\n\n"
-    "This program allows loading a perceptron from a model (-m) or training a "
-    "perceptron given training data (-t), or both those things at once.  In "
-    "addition, this program allows classification on a test dataset (-T) and "
-    "will save the classification results to the given output file (-o).  The "
-    "perceptron model itself may be saved with a file specified using the -M "
-    "option."
+    "This program allows loading a perceptron from a model (via the " +
+    PRINT_PARAM_STRING("input_model") + " parameter) or training a perceptron "
+    "given training data (via the " + PRINT_PARAM_STRING("training") +
+    " parameter), or both those things at once.  In addition, this program "
+    "allows classification on a test dataset (via the " +
+    PRINT_PARAM_STRING("test") + " parameter) and the classification results "
+    "on the test set may be saved with the " + PRINT_PARAM_STRING("output") +
+    "output parameter.  The perceptron model may be saved with the " +
+    PRINT_PARAM_STRING("output_model") + " output parameter."
     "\n\n"
-    "The training data given with the -t option should have class labels as its"
-    " last dimension (so, if the training data is in CSV format, labels should "
-    "be the last column).  Alternately, the -l (--labels_file) option may be "
-    "used to specify a separate file of labels."
+    "The training data given with the " + PRINT_PARAM_STRING("training") +
+    " option may have class labels as its last dimension (so, if the training "
+    "data is in CSV format, labels should be the last column).  Alternately, "
+    "the " + PRINT_PARAM_STRING("labels") + " parameter may be used to specify "
+    "a separate matrix of labels."
     "\n\n"
     "All these options make it easy to train a perceptron, and then re-use that"
     " perceptron for later classification.  The invocation below trains a "
-    "perceptron on 'training_data.csv' (and 'training_labels.csv)' and saves "
-    "the model to 'perceptron.xml'."
+    "perceptron on " + PRINT_DATASET("training_data") + " with labels " +
+    PRINT_DATASET("training_labels") + ", and saves the model to " +
+    PRINT_MODEL("perceptron") + "."
+    "\n\n" +
+    PRINT_CALL("perceptron", "training", "training_data", "labels",
+        "training_labels", "output_model", "perceptron") +
     "\n\n"
-    "$ perceptron -t training_data.csv -l training_labels.csv -M perceptron.xml"
-    "\n\n"
-    "Then, this model can be re-used for classification on 'test_data.csv'.  "
-    "The example below does precisely that, saving the predicted classes to "
-    "'predictions.csv'."
-    "\n\n"
-    "$ perceptron -m perceptron.xml -T test_data.csv -o predictions.csv"
+    "Then, this model can be re-used for classification on the test data " +
+    PRINT_DATASET("test_data") + ".  The example below does precisely that, "
+    "saving the predicted classes to " + PRINT_DATASET("predictions") + "."
+    "\n\n" +
+    PRINT_CALL("perceptron", "input_model", "perceptron", "test", "test_data",
+        "output", "predictions") +
     "\n\n"
     "Note that all of the options may be specified at once: predictions may be "
     "calculated right after training a model, and model training can occur even"
-    " if an existing perceptron model is passed with -m (--input_model_file).  "
-    "However, note that the number of classes and the dimensionality of all "
-    "data must match.  So you cannot pass a perceptron model trained on 2 "
-    "classes and then re-train with a 4-class dataset.  Similarly, attempting "
-    "classification on a 3-dimensional dataset with a perceptron that has been "
-    "trained on 8 dimensions will cause an error."
-    );
+    " if an existing perceptron model is passed with the " +
+    PRINT_PARAM_STRING("input_model") + " parameter.  However, note that the "
+    "number of classes and the dimensionality of all data must match.  So you "
+    "cannot pass a perceptron model trained on 2 classes and then re-train with"
+    " a 4-class dataset.  Similarly, attempting classification on a "
+    "3-dimensional dataset with a perceptron that has been trained on 8 "
+    "dimensions will cause an error.");
 
 // When we save a model, we must also save the class mappings.  So we use this
 // auxiliary structure to store both the perceptron and the mapping, and we'll

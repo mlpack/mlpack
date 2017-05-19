@@ -24,8 +24,24 @@ using namespace std;
 // Define parameters for the executable.
 PROGRAM_INFO("Mean Shift Clustering", "This program performs mean shift "
     "clustering on the given dataset, storing the learned cluster assignments "
-    "either as a column of labels in the file containing the input dataset or "
-    "in a separate file.");
+    "either as a column of labels in the input dataset or separately."
+    "\n\n"
+    "The input dataset should be specified with the " +
+    PRINT_PARAM_STRING("input") + " parameter, and the radius used for search"
+    " can be specified with the " + PRINT_PARAM_STRING("radius") + " "
+    "parameter.  The maximum number of iterations before algorithm termination "
+    "is controlled with the " + PRINT_PARAM_STRING("max_iterations") + " "
+    "parameter."
+    "\n\n"
+    "The output labels may be saved with the " + PRINT_PARAM_STRING("output") +
+    " output parameter and the centroids of each cluster may be saved with the"
+    " " + PRINT_PARAM_STRING("centroid") + " output parameter."
+    "\n\n"
+    "For example, to run mean shift clustering on the dataset " +
+    PRINT_DATASET("data") + " and store the centroids to " +
+    PRINT_DATASET("centroids") + ", the following command may be used: "
+    "\n\n" +
+    PRINT_CALL("mean_shift", "input", "data", "centroid", "centroids"));
 
 // Required options.
 PARAM_MATRIX_IN("input", "Input dataset to perform clustering on.", "i");
@@ -33,7 +49,7 @@ PARAM_MATRIX_IN("input", "Input dataset to perform clustering on.", "i");
 // Output options.
 PARAM_FLAG("in_place", "If specified, a column containing the learned cluster "
     "assignments will be added to the input dataset file.  In this case, "
-    "--output_file is overridden.", "P");
+    "--output_file is overridden.  (Do not use with Python.)", "P");
 PARAM_FLAG("labels_only", "If specified, only the output labels will be "
     "written to the file specified by --output_file.", "l");
 PARAM_MATRIX_OUT("output", "Matrix to write output labels or labeled data to.",
