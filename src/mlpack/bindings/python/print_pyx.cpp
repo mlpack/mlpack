@@ -138,7 +138,7 @@ void PrintPYX(const ProgramDoc& programInfo,
   cout << endl;
   cout << "  " << HyphenateString(programInfo.documentation(), 2) << endl;
   cout << endl << endl;
-  cout << "  Parameters:" << endl;
+  cout << "  Input parameters:" << endl;
   cout << endl;
   for (size_t i = 0; i < inputOptions.size(); ++i)
   {
@@ -150,6 +150,22 @@ void PrintPYX(const ProgramDoc& programInfo,
         NULL);
     cout << endl;
   }
+  cout << endl;
+  cout << "  Output parameters:" << endl;
+  cout << endl;
+  for (size_t i = 0; i < outputOptions.size(); ++i)
+  {
+    const util::ParamData& d = parameters.at(outputOptions[i]);
+
+    cout << "  ";
+    size_t indent = 4;
+    CLI::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
+        NULL);
+    cout << endl;
+  }
+  cout << endl;
+  cout << "A dict containing each of the named output parameters will be "
+      << "returned." << endl;
   cout << "  \"\"\"" << endl;
 
   // Restore the parameters.
