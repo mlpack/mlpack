@@ -90,12 +90,13 @@ void CLI::Add(ParamData&& data)
       GetSingleton().parameters;
   std::map<char, std::string>& aliases = GetSingleton().aliases;
 
-  // If found in current map, print fatal error and terminate the program.
-  if (parameters.count(data.name))
+  // If found in current map, print fatal error and terminate the program, but
+  // only if the parameter is not consistent.
+  if (parameters.count(data.name) && !data.persistent)
     outstr << "Parameter --" << data.name << " (-" << data.alias << ") "
            << "is defined multiple times with the same identifiers."
            << std::endl;
-  if (data.alias != '\0' && aliases.count(data.alias))
+  if (data.alias != '\0' && aliases.count(data.alias) && !data.persistent)
     outstr << "Parameter --" << data.name << " (-" << data.alias << ") "
            << "is defined multiple times with the same alias." << std::endl;
 
@@ -222,13 +223,25 @@ void CLI::ClearSettings()
   // Check for any parameters we need to keep.
   std::map<std::string, util::ParamData> persistent;
   std::map<char, std::string> persistentAliases;
+  FunctionMapType persistentFunctions;
+
+  // For the function mappings we have to preserve, we have to collect the
+  // types.
+  std::vector<std::string> persistentTypes;
+
   std::map<std::string, util::ParamData>::const_iterator it =
       GetSingleton().parameters.begin();
   while (it != GetSingleton().parameters.end())
   {
     // Is the parameter persistent?
     if (it->second.persistent)
+    {
       persistent[it->first] = it->second; // Save the parameter.
+      // Add to the list of types, if it hasn't already been added.
+      if (std::find(persistentTypes.begin(), persistentTypes.end(),
+          it->second.tname) == persistentTypes.end())
+        persistentTypes.push_back(it->second.tname);
+    }
 
     ++it;
   }
@@ -245,9 +258,15 @@ void CLI::ClearSettings()
     ++it2;
   }
 
+  for (size_t i = 0; i < persistentTypes.size(); ++i)
+  {
+    // Add to persistent function map.
+    persistentFunctions[persistentTypes[i]] =
+        GetSingleton().functionMap[persistentTypes[i]];
+  }
+
   // Save only the persistent parameters.
   GetSingleton().parameters = persistent;
   GetSingleton().aliases = persistentAliases;
-  GetSingleton().functionMap.clear();
-
+  GetSingleton().functionMap = persistentFunctions;
 }
