@@ -42,10 +42,10 @@ std::string GetPrintableParam(
   return oss.str();
 }
 
-//! Print a matrix option (this just prints the filename).
+//! Print a matrix option (this just prints 'matrix type').
 template<typename T>
 std::string GetPrintableParam(
-    const util::ParamData& data,
+    const util::ParamData& /* data */,
     const typename boost::enable_if<arma::is_arma_type<T>>::type* /* junk */)
 {
   return "matrix type";
@@ -63,10 +63,10 @@ std::string GetPrintableParam(
   return oss.str();
 }
 
-//! Print a mapped matrix option (this just prints the filename).
+//! Print a mapped matrix option (this just prints 'matrix/DatasetInfo tuple').
 template<typename T>
 std::string GetPrintableParam(
-    const util::ParamData& data,
+    const util::ParamData& /* data */,
     const typename boost::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>>::type* /* junk */)
 {
