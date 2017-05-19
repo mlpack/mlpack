@@ -26,6 +26,12 @@
 #if (BINDING_TYPE == BINDING_TYPE_CLI) // This is a command-line executable.
 
 #include <mlpack/bindings/cli/cli_option.hpp>
+#include <mlpack/bindings/cli/example_string.hpp>
+
+#define PRINT_PARAM_STRING mlpack::bindings::cli::ParamString
+#define PRINT_CALL mlpack::bindings::cli::ProgramCall
+#define PRINT_DATASET mlpack::bindings::cli::PrintDataset
+#define PRINT_MODEL mlpack::bindings::cli::PrintModel
 
 namespace mlpack {
 namespace util {
@@ -58,6 +64,12 @@ int main(int argc, char** argv)
 
 #include <mlpack/bindings/tests/test_option.hpp>
 
+// These functions will do nothing.
+#define PRINT_PARAM_STRING(A) std::string(" ")
+#define PRINT_DATASET(A) std::string(" ")
+#define PRINT_MODEL(A) std::string(" ")
+#define PRINT_CALL(...) std::string(" ")
+
 namespace mlpack {
 namespace util {
 
@@ -84,6 +96,12 @@ using Option = mlpack::bindings::tests::TestOption<T>;
 #elif (BINDING_TYPE == BINDING_TYPE_PYX) // This is a Python binding.
 
 #include <mlpack/bindings/python/py_option.hpp>
+#include <mlpack/bindings/python/example_string.hpp>
+
+#define PRINT_PARAM_STRING mlpack::bindings::python::ParamString
+#define PRINT_DATASET mlpack::bindings::python::PrintDataset
+#define PRINT_MODEL mlpack::bindings::python::PrintModel
+#define PRINT_CALL mlpack::bindings::python::ProgramCall
 
 namespace mlpack {
 namespace util {
@@ -108,8 +126,8 @@ using Option = mlpack::bindings::python::PyOption<T>;
     } \
     }
 
-//PARAM_FLAG("verbose", "Display informational messages and the full list of "
-//    "parameters and timers at the end of execution.", "v");
+PARAM_FLAG("verbose", "Display informational messages and the full list of "
+    "parameters and timers at the end of execution.", "v");
 
 // Nothing else needs to be defined---the binding will use mlpackMain() as-is.
 
