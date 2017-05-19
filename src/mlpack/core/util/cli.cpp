@@ -219,7 +219,35 @@ void CLI::RestoreSettings(const std::string& name, const bool fatal)
 // Clear settings.
 void CLI::ClearSettings()
 {
-  GetSingleton().parameters.clear();
-  GetSingleton().aliases.clear();
+  // Check for any parameters we need to keep.
+  std::map<std::string, util::ParamData> persistent;
+  std::map<char, std::string> persistentAliases;
+  std::map<std::string, util::ParamData>::const_iterator it =
+      GetSingleton().parameters.begin();
+  while (it != GetSingleton().parameters.end())
+  {
+    // Is the parameter persistent?
+    if (it->second.persistent)
+      persistent[it->first] = it->second; // Save the parameter.
+
+    ++it;
+  }
+
+  // Now check if there are any persistent aliases.
+  std::map<char, std::string>::const_iterator it2 =
+      GetSingleton().aliases.begin();
+  while (it2 != GetSingleton().aliases.end())
+  {
+    // Is this an alias to a persistent parameter?
+    if (GetSingleton().parameters.count(it2->second) > 0)
+      persistentAliases[it2->first] = it2->second; // Save it.
+
+    ++it2;
+  }
+
+  // Save only the persistent parameters.
+  GetSingleton().parameters = persistent;
+  GetSingleton().aliases = persistentAliases;
   GetSingleton().functionMap.clear();
+
 }

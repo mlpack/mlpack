@@ -69,6 +69,9 @@ struct ParamData
   //! If this is an input parameter that needs extra loading, this indicates
   //! whether or not it has been loaded.
   bool loaded;
+  //! If this should be preserved across different settings (i.e. if it should
+  //! exist for every binding), this should be set to true.
+  bool persistent;
   //! The actual value that is held.  If the user has passed a different type,
   //! this may be a tuple containing multiple values.
   boost::any value;

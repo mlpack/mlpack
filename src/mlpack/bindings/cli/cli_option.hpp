@@ -27,6 +27,7 @@
 #include "map_parameter_name.hpp"
 #include "set_param.hpp"
 #include "get_printable_param_name.hpp"
+#include "get_printable_param_value.hpp"
 
 namespace mlpack {
 namespace bindings {
@@ -81,6 +82,7 @@ class CLIOption
     data.required = required;
     data.input = input;
     data.loaded = false;
+    data.persistent = false; // All CLI parameters are not persistent.
     data.cppType = cppName;
 
     // Apply default value.
@@ -146,6 +148,8 @@ class CLIOption
     CLI::GetSingleton().functionMap[tname]["SetParam"] = &SetParam<N>;
     CLI::GetSingleton().functionMap[tname]["GetPrintableParamName"] =
         &GetPrintableParamName<N>;
+    CLI::GetSingleton().functionMap[tname]["GetPrintableParamValue"] =
+        &GetPrintableParamValue<N>;
   }
 };
 

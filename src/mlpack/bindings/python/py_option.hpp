@@ -56,6 +56,11 @@ class PyOption
     data.required = required;
     data.input = input;
     data.loaded = false;
+    // Only "verbose" will be persistent.
+    if (identifier == "verbose")
+      data.persistent = true;
+    else
+      data.persistent = false;
     data.cppType = cppName;
 
     // Every parameter we'll get from Python will have the correct type.
