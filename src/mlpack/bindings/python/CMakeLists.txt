@@ -35,7 +35,7 @@ set(BINDING_SOURCES
 # These are all the files we need to compile Cython bindings for mlpack that are
 # not a part of mlpack itself.
 set(CYTHON_SOURCES
-  mlpack/__init__.py
+  # mlpack/__init__.py is not included here---that is copied separately.
   mlpack/arma_numpy.pxd
   mlpack/arma_numpy.pyx
   mlpack/arma.pxd
@@ -114,6 +114,10 @@ install(CODE "execute_process(COMMAND ${PYTHON}
     ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py install
     --prefix=${CMAKE_INSTALL_PREFIX})")
 
+# Prepare __init__.py for having all of the convenience imports appended to it.
+file(COPY mlpack/__init__.py DESTINATION
+    ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/)
+
 # Add a macro to build a python binding.
 macro (add_python_binding name)
 if (BUILD_PYTHON_BINDINGS)
@@ -153,6 +157,11 @@ if (BUILD_PYTHON_BINDINGS)
 
   add_dependencies(python build_pyx_${name})
   add_dependencies(build_pyx_${name} generate_pyx_${name})
+
+  # Add the convenience import to __init__.py.  Note that this happens during
+  # configuration.
+  file(APPEND ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/__init__.py
+      "from ${name} import ${name}\n")
 endif ()
 endmacro ()
 
