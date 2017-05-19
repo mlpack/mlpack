@@ -95,7 +95,7 @@ inline std::string GetPythonType(
 
 template<typename T>
 inline std::string GetPythonType(
-    const util::ParamData& d,
+    const util::ParamData& /* d */,
     const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
 {
   std::string type = "matrix";
