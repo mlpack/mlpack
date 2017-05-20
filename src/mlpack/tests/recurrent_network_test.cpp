@@ -87,7 +87,7 @@ BOOST_AUTO_TEST_CASE(SequenceClassificationTest)
       labels.col(i).fill(value);
     }
 
-    /*
+    /**
      * Construct a network with 1 input unit, 4 hidden units and 10 output
      * units. The hidden layer is connected to itself. The network structure
      * looks like:
@@ -301,8 +301,8 @@ void ReberGrammarTestNetwork(bool embedded = false)
               << 'P' << 'V' << '3' << '5' << arma::endr
               << 'E' << 'E' << '0' << '0' << arma::endr;
 
-  const size_t trainReberGrammarCount = 1000;
-  const size_t testReberGrammarCount = 1000;
+  const size_t trainReberGrammarCount = 800;
+  const size_t testReberGrammarCount = 400;
 
   std::string trainReber, testReber;
   arma::field<arma::mat> trainInput(1, trainReberGrammarCount);
@@ -359,76 +359,93 @@ void ReberGrammarTestNetwork(bool embedded = false)
    *            .     .
    *            .......
    */
-  const size_t outputSize = 7;
-  const size_t inputSize = 7;
-  const size_t rho = trainInput.at(0, 0).n_elem / inputSize;
-
-  RNN<MeanSquaredError<> > model(rho);
-
-  model.Add<IdentityLayer<> >();
-  model.Add<Linear<> >(inputSize, 20);
-  model.Add<LSTM<> >(20, 7, rho);
-  model.Add<Linear<> >(7, outputSize);
-  model.Add<SigmoidLayer<> >();
-
-  StandardSGD<decltype(model)> opt(model, 0.1, 2, -50000);
-
-  arma::mat inputTemp, labelsTemp;
-  for (size_t i = 0; i < 40; i++)
+  // It isn't guaranteed that the recurrent network will converge in the
+  // specified number of iterations using random weights. If this works 1 of 5
+  // times, I'm fine with that. All I want to know is that the network is able
+  // to escape from local minima and to solve the task.
+  size_t successes = 0;
+  size_t offset = 0;
+  for (size_t trial = 0; trial < 5; ++trial)
   {
-    for (size_t j = 0; j < trainReberGrammarCount; j++)
+    const size_t outputSize = 7;
+    const size_t inputSize = 7;
+    const size_t rho = trainInput.at(0, 0).n_elem / inputSize;
+
+    RNN<MeanSquaredError<> > model(rho);
+
+    model.Add<IdentityLayer<> >();
+    model.Add<Linear<> >(inputSize, 14);
+    model.Add<LSTM<> >(14, 7, rho);
+    model.Add<Linear<> >(7, outputSize);
+    model.Add<SigmoidLayer<> >();
+
+    StandardSGD<decltype(model)> opt(model, 0.1, 2, -50000);
+
+    arma::mat inputTemp, labelsTemp;
+    for (size_t i = 0; i < (10 + offset); i++)
     {
-      inputTemp = trainInput.at(0, j);
-      labelsTemp = trainLabels.at(0, j);
+      for (size_t j = 0; j < trainReberGrammarCount; j++)
+      {
+        inputTemp = trainInput.at(0, j);
+        labelsTemp = trainLabels.at(0, j);
 
-      model.Train(inputTemp, labelsTemp, opt);
-    }
-  }
-
-  double error = 0;
-
-  // Ask the network to predict the next Reber grammar in the given sequence.
-  for (size_t i = 0; i < testReberGrammarCount; i++)
-  {
-    arma::mat output, prediction;
-    arma::mat input = testInput.at(0, i);
-
-    model.Predict(input, prediction);
-    data::Binarize(prediction, output, 0.5);
-
-    const size_t reberGrammerSize = 7;
-    std::string inputReber = "";
-
-    size_t reberError = 0;
-    for (size_t j = 0; j < (output.n_elem / reberGrammerSize); j++)
-    {
-      if (arma::sum(arma::sum(output.submat(j * reberGrammerSize, 0, (j + 1) *
-          reberGrammerSize - 1, 0))) != 1) break;
-
-      char predictedSymbol, inputSymbol;
-      std::string reberChoices;
-
-      ReberReverseTranslation(output.submat(j * reberGrammerSize, 0, (j + 1) *
-          reberGrammerSize - 1, 0), predictedSymbol);
-      ReberReverseTranslation(input.submat(j * reberGrammerSize, 0, (j + 1) *
-          reberGrammerSize - 1, 0), inputSymbol);
-      inputReber += inputSymbol;
-
-      if (embedded)
-        GenerateNextEmbeddedReber(transitions, inputReber, reberChoices);
-      else
-        GenerateNextReber(transitions, inputReber, reberChoices);
-
-      if (reberChoices.find(predictedSymbol) != std::string::npos)
-        reberError++;
+        model.Train(inputTemp, labelsTemp, opt);
+      }
     }
 
-    if (reberError != (output.n_elem / reberGrammerSize))
-      error += 1;
+    double error = 0;
+
+    // Ask the network to predict the next Reber grammar in the given sequence.
+    for (size_t i = 0; i < testReberGrammarCount; i++)
+    {
+      arma::mat output, prediction;
+      arma::mat input = testInput.at(0, i);
+
+      model.Predict(input, prediction);
+      data::Binarize(prediction, output, 0.5);
+
+      const size_t reberGrammerSize = 7;
+      std::string inputReber = "";
+
+      size_t reberError = 0;
+      for (size_t j = 0; j < (output.n_elem / reberGrammerSize); j++)
+      {
+        if (arma::sum(arma::sum(output.submat(j * reberGrammerSize, 0, (j + 1) *
+            reberGrammerSize - 1, 0))) != 1) break;
+
+        char predictedSymbol, inputSymbol;
+        std::string reberChoices;
+
+        ReberReverseTranslation(output.submat(j * reberGrammerSize, 0, (j + 1) *
+            reberGrammerSize - 1, 0), predictedSymbol);
+        ReberReverseTranslation(input.submat(j * reberGrammerSize, 0, (j + 1) *
+            reberGrammerSize - 1, 0), inputSymbol);
+        inputReber += inputSymbol;
+
+        if (embedded)
+          GenerateNextEmbeddedReber(transitions, inputReber, reberChoices);
+        else
+          GenerateNextReber(transitions, inputReber, reberChoices);
+
+        if (reberChoices.find(predictedSymbol) != std::string::npos)
+          reberError++;
+      }
+
+      if (reberError != (output.n_elem / reberGrammerSize))
+        error += 1;
+    }
+
+    error /= testReberGrammarCount;
+    if (error <= 0.2)
+    {
+      ++successes;
+      break;
+    }
+
+    offset += 3;
   }
 
-  error /= testReberGrammarCount;
-  BOOST_REQUIRE_LE(error, 0.2);
+  BOOST_REQUIRE_GE(successes, 1);
 }
 
 /**
@@ -509,8 +526,8 @@ void GenerateDistractedSequence(arma::mat& input, arma::mat& output)
  */
 void DistractedSequenceRecallTestNetwork()
 {
-  const size_t trainDistractedSequenceCount = 1000;
-  const size_t testDistractedSequenceCount = 1000;
+  const size_t trainDistractedSequenceCount = 800;
+  const size_t testDistractedSequenceCount = 400;
 
   arma::field<arma::mat> trainInput(1, trainDistractedSequenceCount);
   arma::field<arma::mat> trainLabels(1, trainDistractedSequenceCount);
@@ -545,50 +562,67 @@ void DistractedSequenceRecallTestNetwork()
   const size_t inputSize = 10;
   const size_t rho = trainInput.at(0, 0).n_elem / inputSize;
 
-  RNN<MeanSquaredError<> > model(rho);
-  model.Add<IdentityLayer<> >();
-  model.Add<Linear<> >(inputSize, 20);
-  model.Add<LSTM<> >(20, 7, rho);
-  model.Add<Linear<> >(7, outputSize);
-  model.Add<SigmoidLayer<> >();
-
-  StandardSGD<decltype(model)> opt(model, 0.1, 2, -50000);
-
-  arma::mat inputTemp, labelsTemp;
-  for (size_t i = 0; i < 40; i++)
+  // It isn't guaranteed that the recurrent network will converge in the
+  // specified number of iterations using random weights. If this works 1 of 5
+  // times, I'm fine with that. All I want to know is that the network is able
+  // to escape from local minima and to solve the task.
+  size_t successes = 0;
+  size_t offset = 0;
+  for (size_t trial = 0; trial < 5; ++trial)
   {
-    for (size_t j = 0; j < trainDistractedSequenceCount; j++)
+    RNN<MeanSquaredError<> > model(rho);
+    model.Add<IdentityLayer<> >();
+    model.Add<Linear<> >(inputSize, 14);
+    model.Add<LSTM<> >(14, 7, rho);
+    model.Add<Linear<> >(7, outputSize);
+    model.Add<SigmoidLayer<> >();
+
+    StandardSGD<decltype(model)> opt(model, 0.1, 2, -50000);
+
+    arma::mat inputTemp, labelsTemp;
+    for (size_t i = 0; i < (10 + offset); i++)
     {
-      inputTemp = trainInput.at(0, j);
-      labelsTemp = trainLabels.at(0, j);
+      for (size_t j = 0; j < trainDistractedSequenceCount; j++)
+      {
+        inputTemp = trainInput.at(0, j);
+        labelsTemp = trainLabels.at(0, j);
 
-      model.Train(inputTemp, labelsTemp, opt);
+        model.Train(inputTemp, labelsTemp, opt);
+      }
     }
+
+    double error = 0;
+
+    // Ask the network to predict the targets in the given sequence at the
+    // prompts.
+    for (size_t i = 0; i < testDistractedSequenceCount; i++)
+    {
+      arma::mat output;
+      arma::mat input = testInput.at(0, i);
+
+      model.Predict(input, output);
+      data::Binarize(output, output, 0.5);
+
+      if (arma::accu(arma::abs(testLabels.at(0, i) - output)) != 0)
+        error += 1;
+    }
+
+    error /= testDistractedSequenceCount;
+
+    // Can we reproduce the results from the paper. They provide an 95% accuracy
+    // on a test set of 1000 randomly selected sequences.
+    // Ensure that this is within tolerance, which is at least as good as the
+    // paper's results (plus a little bit for noise).
+    if (error <= 0.3)
+    {
+      ++successes;
+      break;
+    }
+
+    offset += 2;
   }
 
-  double error = 0;
-
-  // Ask the network to predict the targets in the given sequence at the
-  // prompts.
-  for (size_t i = 0; i < testDistractedSequenceCount; i++)
-  {
-    arma::mat output;
-    arma::mat input = testInput.at(0, i);
-
-    model.Predict(input, output);
-    data::Binarize(output, output, 0.5);
-
-    if (arma::accu(arma::abs(testLabels.at(0, i) - output)) != 0)
-      error += 1;
-  }
-
-  error /= testDistractedSequenceCount;
-
-  // Can we reproduce the results from the paper. They provide an 95% accuracy
-  // on a test set of 1000 randomly selected sequences.
-  // Ensure that this is within tolerance, which is at least as good as the
-  // paper's results (plus a little bit for noise).
-  BOOST_REQUIRE_LE(error, 0.3);
+  BOOST_REQUIRE_GE(successes, 1);
 }
 
 /**

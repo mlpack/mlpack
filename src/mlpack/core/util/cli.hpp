@@ -28,7 +28,6 @@
 #include "cli_deleter.hpp" // To make sure we can delete the singleton.
 #include "version.hpp"
 
-
 #include "param_data.hpp"
 
 namespace mlpack {

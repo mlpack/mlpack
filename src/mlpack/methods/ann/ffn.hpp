@@ -1,6 +1,7 @@
 /**
  * @file ffn.hpp
  * @author Marcus Edel
+ * @author Shangtong Zhang
  *
  * Definition of the FFN class, which implements feed forward neural networks.
  *
@@ -21,6 +22,9 @@
 #include "visitor/output_width_visitor.hpp"
 #include "visitor/reset_visitor.hpp"
 #include "visitor/weight_size_visitor.hpp"
+#include "visitor/copy_visitor.hpp"
+
+#include "init_rules/network_init.hpp"
 
 #include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
@@ -58,6 +62,15 @@ class FFN
   FFN(OutputLayerType&& outputLayer = OutputLayerType(),
       InitializationRuleType initializeRule = InitializationRuleType());
 
+  //! Copy constructor.
+  FFN(const FFN&);
+
+  //! Move constructor.
+  FFN(FFN&&);
+
+  //! Copy/move assignment operator.
+  FFN& operator = (FFN);
+
   /**
    * Create the FFN object with the given predictors and responses set (this is
    * the set that is used to train the network) and the given optimizer.
@@ -93,7 +106,7 @@ class FFN
    */
   template<
       template<typename, typename...> class OptimizerType =
-          mlpack::optimization::RMSprop,
+          mlpack::optimization::RMSProp,
       typename... OptimizerTypeArgs
   >
   void Train(const arma::mat& predictors,
@@ -102,7 +115,7 @@ class FFN
 
   /**
    * Train the feedforward network on the given input data. By default, the
-   * RMSprop optimization algorithm is used, but others can be specified
+   * RMSProp optimization algorithm is used, but others can be specified
    * (such as mlpack::optimization::SGD).
    *
    * This will use the existing model parameters as a starting point for the
@@ -114,7 +127,7 @@ class FFN
    * @param responses Outputs results from input training variables.
    */
   template<
-      template<typename...> class OptimizerType = mlpack::optimization::RMSprop
+      template<typename...> class OptimizerType = mlpack::optimization::RMSProp
   >
   void Train(const arma::mat& predictors, const arma::mat& responses);
 
@@ -154,6 +167,16 @@ class FFN
                 const size_t i,
                 arma::mat& gradient);
 
+  /**
+   * Compute the gradient of the feedforward network based on given input and target.
+   *
+   * @param predictors Input training variables.
+   * @param responses Outputs results from input training variables.
+   * @return Desired gradients of the feedforward network.
+   */
+  arma::mat Gradient(const arma::mat& predictors,
+                     const arma::mat& responses);
+
   /*
    * Add a new module to the model.
    *
@@ -177,6 +200,11 @@ class FFN
   //! Modify the initial point for the optimization.
   arma::mat& Parameters() { return parameter; }
 
+  /**
+   * Reset the module infomration (weights/parameters).
+   */
+  void ResetParameters();
+
   //! Serialize the model.
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
@@ -192,6 +220,15 @@ private:
   void Forward(arma::mat&& input);
 
   /**
+   * Prepare the network for the given data.
+   * This function won't actually trigger training process.
+   *
+   * @param predictors Input data variables.
+   * @param responses Outputs results from input data variables.
+   */
+  void ResetData(const arma::mat& predictors, const arma::mat& responses);
+
+  /**
    * The Backward algorithm (part of the Forward-Backward algorithm). Computes
    * backward pass for module.
    */
@@ -204,11 +241,6 @@ private:
   void Gradient();
 
   /**
-   * Reset the module infomration (weights/parameters).
-   */
-  void ResetParameters();
-
-  /**
    * Reset the module status by setting the current deterministic parameter
    * for all modules that implement the Deterministic function.
    */
@@ -218,6 +250,13 @@ private:
    * Reset the gradient for all modules that implement the Gradient function.
    */
   void ResetGradients(arma::mat& gradient);
+
+  /**
+   * Swap the content of this network with given network.
+   *
+   * @param network Desired source network.
+   */
+  void Swap(FFN& network);
 
   //! Instantiated outputlayer used to evaluate the network.
   OutputLayerType outputLayer;
@@ -294,6 +333,10 @@ private:
 
   //! Locally-stored gradient parameter.
   arma::mat gradient;
+
+  //! Locally-stored copy visitor
+  CopyVisitor copyVisitor;
+
 }; // class FFN
 
 } // namespace ann

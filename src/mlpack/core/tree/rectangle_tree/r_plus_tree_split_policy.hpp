@@ -61,7 +61,7 @@ class RPlusTreeSplitPolicy
    * Return the minimum bounding rectangle of the node.
    * This method should always return the bound that is used for the
    * decision-making in GetSplitPolicy().
-   * 
+   *
    * @param node The node whose bound is requested.
     */
   template<typename TreeType>

@@ -111,10 +111,10 @@ class VRClassReward
 
  private:
   //! Locally-stored value to scale the reward.
-  const double scale;
+  double scale;
 
   //! If true take the average over all batches.
-  const bool sizeAverage;
+  bool sizeAverage;
 
   //! Locally stored reward parameter.
   double reward;

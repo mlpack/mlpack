@@ -13,7 +13,6 @@
 #define MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_TREE_SPLIT_IMPL_HPP
 
 #include "r_plus_tree_split.hpp"
-#include "rectangle_tree.hpp"
 #include "r_plus_plus_tree_auxiliary_information.hpp"
 #include "r_plus_tree_split_policy.hpp"
 #include "r_plus_plus_tree_split_policy.hpp"

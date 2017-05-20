@@ -82,12 +82,12 @@ T b2n_asymptotic(int n)
    const T nx = static_cast<T>(n);
    const T nx2(nx * nx);
 
-   const T approximate_log_of_bernoulli_bn = 
+   const T approximate_log_of_bernoulli_bn =
         ((boost::math::constants::half<T>() + nx) * log(nx))
         + ((boost::math::constants::half<T>() - nx) * log(boost::math::constants::pi<T>()))
         + (((T(3) / 2) - nx) * boost::math::constants::ln_two<T>())
         + ((nx * (T(2) - (nx2 * 7) * (1 + ((nx2 * 30) * ((nx2 * 12) - 1))))) / (((nx2 * nx2) * nx2) * 2520));
-   return ((n / 2) & 1 ? 1 : -1) * (approximate_log_of_bernoulli_bn > tools::log_max_value<T>() 
+   return ((n / 2) & 1 ? 1 : -1) * (approximate_log_of_bernoulli_bn > tools::log_max_value<T>()
       ? policies::raise_overflow_error<T>("boost::math::bernoulli_b2n<%1%>(std::size_t)", 0, nx, Policy())
       : static_cast<T>(exp(approximate_log_of_bernoulli_bn)));
 }
@@ -114,12 +114,12 @@ T t2n_asymptotic(int n)
 // us to elude a great deal of runtime checking for values below
 // n, and only perform the full overflow checks when we know that we're
 // getting close to the point where our calculations will overflow.
-// We use Luschny's LogB3 formula (http://www.luschny.de/math/primes/bernincl.html) 
+// We use Luschny's LogB3 formula (http://www.luschny.de/math/primes/bernincl.html)
 // to find the limit, and since we're dealing with the log of the Bernoulli numbers
 // we need only perform the calculation at double precision and not with T
 // (which may be a multiprecision type).  The limit returned is within 1 of the true
 // limit for all the types tested.  Note that although the code below is basically
-// the same as b2n_asymptotic above, it has been recast as a continuous real-valued 
+// the same as b2n_asymptotic above, it has been recast as a continuous real-valued
 // function as this makes the root finding go smoother/faster.  It also omits the
 // sign of the Bernoulli number.
 //
@@ -241,10 +241,10 @@ struct fixed_vector : private std::allocator<T>
    typedef T* iterator;
    typedef const T* const_iterator;
    fixed_vector() : m_used(0)
-   { 
+   {
       std::size_t overflow_limit = 5 + b2n_overflow_limit<T, policies::policy<> >();
       m_capacity = static_cast<unsigned>((std::min)(overflow_limit, static_cast<std::size_t>(100000u)));
-      m_data = this->allocate(m_capacity); 
+      m_data = this->allocate(m_capacity);
    }
    ~fixed_vector()
    {
@@ -402,7 +402,7 @@ public:
       // There are basically 3 thread safety options:
       //
       // 1) There are no threads (BOOST_HAS_THREADS is not defined).
-      // 2) There are threads, but we do not have a true atomic integer type, 
+      // 2) There are threads, but we do not have a true atomic integer type,
       //    in this case we just use a mutex to guard against race conditions.
       // 3) There are threads, and we have an atomic integer: in this case we can
       //    use the double-checked locking pattern to avoid thread synchronisation
@@ -504,7 +504,7 @@ public:
       // There are basically 3 thread safety options:
       //
       // 1) There are no threads (BOOST_HAS_THREADS is not defined).
-      // 2) There are threads, but we do not have a true atomic integer type, 
+      // 2) There are threads, but we do not have a true atomic integer type,
       //    in this case we just use a mutex to guard against race conditions.
       // 3) There are threads, and we have an atomic integer: in this case we can
       //    use the double-checked locking pattern to avoid thread synchronisation

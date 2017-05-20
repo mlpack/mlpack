@@ -24,29 +24,27 @@ namespace mlpack {
 namespace kmeans {
 
 //! Call the tree constructor that does mapping.
-template<typename TreeType>
+template<typename TreeType, typename MatType>
 TreeType* BuildTree(
-    const typename TreeType::Mat& dataset,
+    MatType&& dataset,
     std::vector<size_t>& oldFromNew,
-    const typename std::enable_if_t<
-        tree::TreeTraits<TreeType>::RearrangesDataset, TreeType
-    >* = 0)
+    const typename std::enable_if<
+        tree::TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
 {
   // This is a hack.  I know this will be BinarySpaceTree, so force a leaf size
   // of two.
-  return new TreeType(dataset, oldFromNew, 1);
+  return new TreeType(std::forward<MatType>(dataset), oldFromNew, 1);
 }
 
 //! Call the tree constructor that does not do mapping.
-template<typename TreeType>
+template<typename TreeType, typename MatType>
 TreeType* BuildTree(
-    const typename TreeType::Mat& dataset,
+    MatType&& dataset,
     const std::vector<size_t>& /* oldFromNew */,
-    const typename std::enable_if_t<
-        !tree::TreeTraits<TreeType>::RearrangesDataset, TreeType
-    >* = 0)
+    const typename std::enable_if<
+        !tree::TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
 {
-  return new TreeType(dataset);
+  return new TreeType(std::forward<MatType>(dataset));
 }
 
 template<typename MetricType,

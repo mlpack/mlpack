@@ -12,6 +12,10 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/math/random.hpp>
 
+#include <mlpack/methods/ann/layer/layer.hpp>
+#include <mlpack/methods/ann/layer/layer_types.hpp>
+#include <mlpack/methods/ann/ffn.hpp>
+
 #include <mlpack/methods/ann/init_rules/kathirvalavakumar_subavathi_init.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/init_rules/oivs_init.hpp>
@@ -19,7 +23,6 @@
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 #include <mlpack/methods/ann/init_rules/zero_init.hpp>
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
-
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -29,7 +32,9 @@ using namespace mlpack::ann;
 
 BOOST_AUTO_TEST_SUITE(InitRulesTest);
 
-// Test the RandomInitialization class with a constant value.
+/**
+ * Test the RandomInitialization class with a constant value.
+ */
 BOOST_AUTO_TEST_CASE(ConstantInitTest)
 {
   arma::mat weights;
@@ -40,7 +45,10 @@ BOOST_AUTO_TEST_CASE(ConstantInitTest)
   BOOST_REQUIRE_EQUAL(b, 1);
 }
 
-// Test the OrthogonalInitialization class.
+/**
+ * Simple test of the OrthogonalInitialization class with two different
+ * sizes.
+ */
 BOOST_AUTO_TEST_CASE(OrthogonalInitTest)
 {
   arma::mat weights;
@@ -62,7 +70,9 @@ BOOST_AUTO_TEST_CASE(OrthogonalInitTest)
       BOOST_REQUIRE_SMALL(weights.at(i, j) - orthogonalWeights.at(i, j), 1e-3);
 }
 
-// Test the OrthogonalInitialization class with a non default gain.
+/**
+ * Test the OrthogonalInitialization class with a non default gain.
+ */
 BOOST_AUTO_TEST_CASE(OrthogonalInitGainTest)
 {
   arma::mat weights;
@@ -80,9 +90,11 @@ BOOST_AUTO_TEST_CASE(OrthogonalInitGainTest)
       BOOST_REQUIRE_SMALL(weights.at(i, j) - orthogonalWeights.at(i, j), 1e-3);
 }
 
-// Test the ZeroInitialization class. If you think about it, it's kind of
-// ridiculous to test the zero init rule. But at least we make sure it
-// builds without any problems.
+/**
+ * Test the ZeroInitialization class. If you think about it, it's kind of
+ * ridiculous to test the zero init rule. But at least we make sure it
+ * builds without any problems.
+ */
 BOOST_AUTO_TEST_CASE(ZeroInitTest)
 {
   arma::mat weights;
@@ -93,7 +105,10 @@ BOOST_AUTO_TEST_CASE(ZeroInitTest)
   BOOST_REQUIRE_EQUAL(b, 1);
 }
 
-// Test the KathirvalavakumarSubavathiInitialization class.
+/*
+ * Simple test of the KathirvalavakumarSubavathiInitialization class with
+ * two different sizes.
+ */
 BOOST_AUTO_TEST_CASE(KathirvalavakumarSubavathiInitTest)
 {
   arma::mat data = arma::randu<arma::mat>(100, 1);
@@ -115,7 +130,9 @@ BOOST_AUTO_TEST_CASE(KathirvalavakumarSubavathiInitTest)
   BOOST_REQUIRE_EQUAL(weights3d.n_slices, 2);
 }
 
-// Test the NguyenWidrowInitialization class.
+/**
+ * Simple test of the NguyenWidrowInitialization class.
+ */
 BOOST_AUTO_TEST_CASE(NguyenWidrowInitTest)
 {
   arma::mat weights;
@@ -134,7 +151,9 @@ BOOST_AUTO_TEST_CASE(NguyenWidrowInitTest)
   BOOST_REQUIRE_EQUAL(weights3d.n_slices, 2);
 }
 
-// Test the OivsInitialization class.
+/**
+ * Simple test of the OivsInitialization class with two different sizes.
+ */
 BOOST_AUTO_TEST_CASE(OivsInitTest)
 {
   arma::mat weights;
@@ -153,7 +172,9 @@ BOOST_AUTO_TEST_CASE(OivsInitTest)
   BOOST_REQUIRE_EQUAL(weights3d.n_slices, 2);
 }
 
-// Test the GaussianInitialization class.
+/**
+ * Simple test of the GaussianInitialization class.
+ */
 BOOST_AUTO_TEST_CASE(GaussianInitTest)
 {
   const size_t rows = 7;
@@ -174,6 +195,93 @@ BOOST_AUTO_TEST_CASE(GaussianInitTest)
   BOOST_REQUIRE_EQUAL(weights3d.n_rows, rows);
   BOOST_REQUIRE_EQUAL(weights3d.n_cols, cols);
   BOOST_REQUIRE_EQUAL(weights3d.n_slices, slices);
+}
+
+/**
+ * Simple test of the NetworkInitialization class, we test it with every
+ * implemented initialization rule and make sure the output is reasonable.
+ */
+BOOST_AUTO_TEST_CASE(NetworkInitTest)
+{
+  arma::mat input = arma::ones(5, 1);
+  arma::mat response;
+  NegativeLogLikelihood<> outputLayer;
+
+  // Create a simple network and use the RandomInitialization rule to
+  // initialize the network parameters.
+  RandomInitialization randomInit(0.5, 0.5);
+
+  FFN<NegativeLogLikelihood<>, RandomInitialization> randomModel(
+      std::move(outputLayer), randomInit);
+  randomModel.Add<IdentityLayer<> >();
+  randomModel.Add<Linear<> >(5, 5);
+  randomModel.Add<Linear<> >(5, 2);
+  randomModel.Add<LogSoftMax<> >();
+  randomModel.Predict(input, response);
+
+  bool b = arma::all(arma::vectorise(randomModel.Parameters()) == 0.5);
+  BOOST_REQUIRE_EQUAL(b, 1);
+  BOOST_REQUIRE_EQUAL(randomModel.Parameters().n_elem, 42);
+
+  // Create a simple network and use the OrthogonalInitialization rule to
+  // initialize the network parameters.
+  FFN<NegativeLogLikelihood<>, OrthogonalInitialization> orthogonalModel;
+  orthogonalModel.Add<IdentityLayer<> >();
+  orthogonalModel.Add<Linear<> >(5, 5);
+  orthogonalModel.Add<Linear<> >(5, 2);
+  orthogonalModel.Add<LogSoftMax<> >();
+  orthogonalModel.Predict(input, response);
+
+  BOOST_REQUIRE_EQUAL(orthogonalModel.Parameters().n_elem, 42);
+
+  // Create a simple network and use the ZeroInitialization rule to
+  // initialize the network parameters.
+  FFN<NegativeLogLikelihood<>, ZeroInitialization> zeroModel;
+  zeroModel.Add<IdentityLayer<> >();
+  zeroModel.Add<Linear<> >(5, 5);
+  zeroModel.Add<Linear<> >(5, 2);
+  zeroModel.Add<LogSoftMax<> >();
+  zeroModel.Predict(input, response);
+
+  BOOST_REQUIRE_EQUAL(arma::accu(zeroModel.Parameters()), 0);
+  BOOST_REQUIRE_EQUAL(zeroModel.Parameters().n_elem, 42);
+
+  // Create a simple network and use the
+  // KathirvalavakumarSubavathiInitialization rule to initialize the network
+  // parameters.
+  KathirvalavakumarSubavathiInitialization kathirvalavakumarSubavathiInit(
+      input, 1.5);
+  FFN<NegativeLogLikelihood<>, KathirvalavakumarSubavathiInitialization>
+      ksModel(std::move(outputLayer), kathirvalavakumarSubavathiInit);
+  ksModel.Add<IdentityLayer<> >();
+  ksModel.Add<Linear<> >(5, 5);
+  ksModel.Add<Linear<> >(5, 2);
+  ksModel.Add<LogSoftMax<> >();
+  ksModel.Predict(input, response);
+
+  BOOST_REQUIRE_EQUAL(ksModel.Parameters().n_elem, 42);
+
+  // Create a simple network and use the OivsInitialization rule to
+  // initialize the network parameters.
+  FFN<NegativeLogLikelihood<>, OivsInitialization<> > oivsModel;
+  oivsModel.Add<IdentityLayer<> >();
+  oivsModel.Add<Linear<> >(5, 5);
+  oivsModel.Add<Linear<> >(5, 2);
+  oivsModel.Add<LogSoftMax<> >();
+  oivsModel.Predict(input, response);
+
+  BOOST_REQUIRE_EQUAL(oivsModel.Parameters().n_elem, 42);
+
+  // Create a simple network and use the GaussianInitialization rule to
+  // initialize the network parameters.
+  FFN<NegativeLogLikelihood<>, GaussianInitialization> gaussianModel;
+  gaussianModel.Add<IdentityLayer<> >();
+  gaussianModel.Add<Linear<> >(5, 5);
+  gaussianModel.Add<Linear<> >(5, 2);
+  gaussianModel.Add<LogSoftMax<> >();
+  gaussianModel.Predict(input, response);
+
+  BOOST_REQUIRE_EQUAL(gaussianModel.Parameters().n_elem, 42);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

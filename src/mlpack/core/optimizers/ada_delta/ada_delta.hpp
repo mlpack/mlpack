@@ -34,10 +34,10 @@ namespace optimization {
  *
  * @code
  * @article{Zeiler2012,
- *   author    = {Matthew D. Zeiler},
- *   title     = {{ADADELTA:} An Adaptive Learning Rate Method},
- *   journal   = {CoRR},
- *   year      = {2012}
+ *   author  = {Matthew D. Zeiler},
+ *   title   = {{ADADELTA:} An Adaptive Learning Rate Method},
+ *   journal = {CoRR},
+ *   year    = {2012}
  * }
  * @endcode
  *

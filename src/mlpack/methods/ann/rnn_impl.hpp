@@ -22,7 +22,6 @@
 #include "visitor/deterministic_set_visitor.hpp"
 #include "visitor/gradient_set_visitor.hpp"
 #include "visitor/gradient_visitor.hpp"
-#include "visitor/weight_set_visitor.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -70,12 +69,6 @@ RNN<OutputLayerType, InitializationRuleType>::RNN(
 
   this->deterministic = true;
   ResetDeterministic();
-
-  if (!reset)
-  {
-    ResetParameters();
-    reset = true;
-  }
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
@@ -317,23 +310,11 @@ void RNN<OutputLayerType, InitializationRuleType>::Gradient(
 template<typename OutputLayerType, typename InitializationRuleType>
 void RNN<OutputLayerType, InitializationRuleType>::ResetParameters()
 {
-  size_t weights = 0;
-  for (LayerTypes& layer : network)
-  {
-    weights += boost::apply_visitor(weightSizeVisitor, layer);
-  }
+  ResetDeterministic();
 
-  parameter.set_size(weights, 1);
-  initializeRule.Initialize(parameter, parameter.n_elem, 1);
-
-  size_t offset = 0;
-  for (LayerTypes& layer : network)
-  {
-    offset += boost::apply_visitor(WeightSetVisitor(std::move(parameter),
-        offset), layer);
-
-    boost::apply_visitor(resetVisitor, layer);
-  }
+  // Reset the network parameter with the given initialization rule.
+  NetworkInitialization<InitializationRuleType> networkInit(initializeRule);
+  networkInit.Initialize(network, parameter);
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>

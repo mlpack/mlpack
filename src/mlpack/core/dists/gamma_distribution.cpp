@@ -29,7 +29,7 @@ GammaDistribution::GammaDistribution(const arma::mat& data,
   Train(data, tol);
 }
 
-GammaDistribution::GammaDistribution(const arma::vec& alpha, 
+GammaDistribution::GammaDistribution(const arma::vec& alpha,
                                      const arma::vec& beta)
 {
   if (beta.n_elem != alpha.n_elem)
@@ -142,7 +142,7 @@ void GammaDistribution::Train(const arma::vec& logMeanxVec,
 
       // Protect against division by 0.
       if (denominator == 0)
-        throw std::logic_error("GammaDistribution::Train() attempted division" 
+        throw std::logic_error("GammaDistribution::Train() attempted division"
             " by 0.");
 
       aEst = 1.0 / ((1.0 / aEst) + nominator / denominator);
@@ -160,7 +160,7 @@ void GammaDistribution::Train(const arma::vec& logMeanxVec,
 }
 
 // Returns the probability of the provided observations.
-void GammaDistribution::Probability(const arma::mat& observations, 
+void GammaDistribution::Probability(const arma::mat& observations,
                                     arma::vec& probabilities) const
 {
   size_t numObs = observations.n_cols;
@@ -191,12 +191,12 @@ void GammaDistribution::Probability(const arma::mat& observations,
 // dimensions.
 double GammaDistribution::Probability(double x, size_t dim) const
 {
-  return std::pow(x, alpha(dim) - 1) * std::exp(-x / beta(dim)) / 
+  return std::pow(x, alpha(dim) - 1) * std::exp(-x / beta(dim)) /
       (std::tgamma(alpha(dim)) * std::pow(beta(dim), alpha(dim)));
 }
 
 // Returns the log probability of the provided observations.
-void GammaDistribution::LogProbability(const arma::mat& observations, 
+void GammaDistribution::LogProbability(const arma::mat& observations,
                                        arma::vec& LogProbabilities) const
 {
   size_t numObs = observations.n_cols;

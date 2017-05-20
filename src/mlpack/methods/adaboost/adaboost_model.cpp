@@ -4,6 +4,7 @@
  *
  * A serializable AdaBoost model, used by the main program.
  */
+#include "adaboost.hpp"
 #include "adaboost_model.hpp"
 
 using namespace mlpack;

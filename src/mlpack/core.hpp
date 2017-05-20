@@ -219,6 +219,8 @@
  *   - Sagar B Hathwar <sagarbhathwar@gmail.com>
  *   - Nishanth Hegde <hegde.nishanth@gmail.com>
  *   - Parminder Singh <parmsingh101@gmail.com>
+ *   - CodeAi (deep learning bug detector) <benjamin.bales@assrc.us>
+ *   - Franciszek Stokowacki <franek.stokowacki@gmail.com>
  */
 
 // First, include all of the prerequisites.

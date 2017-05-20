@@ -85,7 +85,7 @@ bool UBTreeSplit<BoundType, MatType>::SplitNode(BoundType& bound,
 
     for (; row < data.n_rows; row++)
       for (; bit < order; bit++)
-        lo[row] |= ((AddressElemType) 1 << (order - 1 - bit)); 
+        lo[row] |= ((AddressElemType) 1 << (order - 1 - bit));
   }
 
   // The bound shouldn't contain too many subrectangles.
@@ -128,7 +128,7 @@ bool UBTreeSplit<BoundType, MatType>::SplitNode(BoundType& bound,
 
     for (; row < data.n_rows; row++)
       for (; bit < order; bit++)
-        hi[row] &= ~((AddressElemType) 1 << (order - 1 - bit)); 
+        hi[row] &= ~((AddressElemType) 1 << (order - 1 - bit));
   }
 
   // Set the minimum and the maximum addresses.

@@ -1,7 +1,15 @@
 <h1 align="center">
-  <a href="http://mlpack.org"><img src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="background-color:rgba(0,0,0,0);" height=280 alt="mlpack: a scalable C++ machine learning library"></a>
+  <a href="http://mlpack.org"><img src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="background-color:rgba(0,0,0,0);" height=260 alt="mlpack: a scalable C++ machine learning library"></a>
   <br>a scalable C++ machine learning library<br>
 </h1>
+
+<p align="center">
+  <a href="http://mlpack.org">Home</a> |
+  <a href="http://www.mlpack.org/docs/mlpack-git/doxygen.php">Documentation</a> |
+  <a href="http://www.mlpack.org/involved.html">Community</a> |
+  <a href="http://www.mlpack.org/help.html">Help</a> |
+  <a href="http://webchat.freenode.net/?channels=mlpack">IRC Chat</a>
+</p>
 
 <p align="center">
   <a href="http://masterblaster.mlpack.org/job/mlpack%20-%20git%20commit%20test/"><img src="https://img.shields.io/jenkins/s/http/masterblaster.mlpack.org/job/mlpack%20-%20git%20commit%20test.svg?label=Linux%20build" alt="Jenkins"></a>
@@ -12,7 +20,7 @@
 <p align="center">
   <em>
     Download:
-    <a href="http://www.mlpack.org/files/mlpack-2.2.0.tar.gz">current stable version (2.2.0)</a>
+    <a href="http://www.mlpack.org/files/mlpack-2.2.2.tar.gz">current stable version (2.2.2)</a>
   </em>
 </p>
 
@@ -232,10 +240,10 @@ development team will try to quickly resolve your issue.
 In addition, mailing lists are available.  The mlpack discussion list is
 available at
 
-  [mlpack discussion list](https://lists.mlpack.org/mailman/listinfo/mlpack)
+  [mlpack discussion list](http://lists.mlpack.org/mailman/listinfo/mlpack)
 
 and the git commit list is available at
 
-  [commit list](https://lists.mlpack.org/mailman/listinfo/mlpack-git)
+  [commit list](http://lists.mlpack.org/mailman/listinfo/mlpack-git)
 
 Lastly, the IRC channel ```#mlpack``` on Freenode can be used to get help.

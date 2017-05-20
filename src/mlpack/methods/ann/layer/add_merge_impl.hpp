@@ -14,7 +14,7 @@
 #define MLPACK_METHODS_ANN_LAYER_ADD_MERGE_IMPL_HPP
 
 // In case it hasn't yet been included.
-#include "add_merge_impl.hpp"
+#include "add_merge.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {

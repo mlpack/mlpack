@@ -18,6 +18,7 @@
 #include <mlpack/methods/pca/decomposition_policies/exact_svd_method.hpp>
 #include <mlpack/methods/pca/decomposition_policies/quic_svd_method.hpp>
 #include <mlpack/methods/pca/decomposition_policies/randomized_svd_method.hpp>
+#include <mlpack/methods/pca/decomposition_policies/randomized_block_krylov_method.hpp>
 
 using namespace mlpack;
 using namespace mlpack::pca;
@@ -25,10 +26,11 @@ using namespace std;
 
 // Document program.
 PROGRAM_INFO("Principal Components Analysis", "This program performs principal "
-    "components analysis on the given dataset using the exact, randomized or "
-    "QUIC SVD method. It will transform the data onto its principal components,"
-    " optionally performing dimensionality reduction by ignoring the principal "
-    "components with the smallest eigenvalues."
+    "components analysis on the given dataset using the exact, randomized, "
+    "randomized block Krylov, or QUIC SVD method. It will transform the data "
+    "onto its principal components, optionally performing dimensionality "
+    "reduction by ignoring the principal components with the smallest "
+    "eigenvalues."
     "\n\n"
     "To specify the dataset to perform PCA on, the " + PRINT_DATASET("input") +
     " parameter may be used.  A desired new dimensionality may be specified "
@@ -62,8 +64,9 @@ PARAM_DOUBLE_IN("var_to_retain", "Amount of variance to retain; should be "
 PARAM_FLAG("scale", "If set, the data will be scaled before running PCA, such "
     "that the variance of each feature is 1.", "s");
 
-PARAM_STRING_IN("decomposition_method", "Method used for the principal"
-    "components analysis: 'exact', 'randomized', 'quic'.", "c", "exact");
+PARAM_STRING_IN("decomposition_method", "Method used for the principal "
+    "components analysis: 'exact', 'randomized', 'randomized-block-krylov', "
+    "'quic'.", "c", "exact");
 
 
 //! Run RunPCA on the specified dataset with the given decomposition method.
@@ -135,6 +138,11 @@ void mlpackMain()
   {
     RunPCA<RandomizedSVDPolicy>(dataset, newDimension, scale, varToRetain);
   }
+  else if (decompositionMethod == "randomized-block-krylov")
+  {
+    RunPCA<RandomizedBlockKrylovSVDPolicy>(dataset, newDimension, scale,
+        varToRetain);
+  }
   else if (decompositionMethod == "quic")
   {
     RunPCA<QUICSVDPolicy>(dataset, newDimension, scale, varToRetain);
@@ -143,7 +151,8 @@ void mlpackMain()
   {
     // Invalid decomposition method.
     Log::Fatal << "Invalid decomposition method ('" << decompositionMethod
-        << "'); valid choices are 'exact', 'randomized', 'quic'." << endl;
+        << "'); valid choices are 'exact', 'randomized', "
+        << "'randomized-block-krylov', 'quic'." << endl;
   }
 
   // Now save the results.
