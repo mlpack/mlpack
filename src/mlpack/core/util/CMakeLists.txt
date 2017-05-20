@@ -12,6 +12,7 @@ set(SOURCES
   cli_impl.hpp
   deprecated.hpp
   hyphenate_string.hpp
+  is_std_vector.hpp
   log.hpp
   log.cpp
   nulloutstream.hpp

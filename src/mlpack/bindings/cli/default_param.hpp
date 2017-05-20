@@ -9,7 +9,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/param_data.hpp>
-#include "is_std_vector.hpp"
+#include <mlpack/core/util/is_std_vector.hpp>
 
 namespace mlpack {
 namespace bindings {
@@ -22,7 +22,7 @@ template<typename T>
 std::string DefaultParamImpl(
     const util::ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::disable_if<IsStdVector<T>>::type* = 0,
+    const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
     const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
     const typename boost::disable_if<std::is_same<T, std::string>>::type* = 0,
     const typename boost::disable_if<std::is_same<T,
@@ -34,7 +34,7 @@ std::string DefaultParamImpl(
 template<typename T>
 std::string DefaultParamImpl(
     const util::ParamData& data,
-    const typename boost::enable_if<IsStdVector<T>>::type* = 0);
+    const typename boost::enable_if<util::IsStdVector<T>>::type* = 0);
 
 /**
  * Return the default value of a string option.

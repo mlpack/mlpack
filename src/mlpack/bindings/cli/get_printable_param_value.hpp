@@ -10,7 +10,6 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/param_data.hpp>
-#include "is_std_vector.hpp"
 
 namespace mlpack {
 namespace bindings {

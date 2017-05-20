@@ -19,7 +19,7 @@ namespace cli {
 template<typename T>
 std::string StringTypeParamImpl(
     const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
-    const typename boost::disable_if<IsStdVector<T>>::type* /* junk */,
+    const typename boost::disable_if<util::IsStdVector<T>>::type* /* junk */,
     const typename boost::disable_if<data::HasSerialize<T>>::type* /* junk */)
 {
   // Don't know what type this is.
@@ -31,7 +31,7 @@ std::string StringTypeParamImpl(
  */
 template<typename T>
 std::string StringTypeParamImpl(
-    const typename boost::enable_if<IsStdVector<T>>::type* /* junk */)
+    const typename boost::enable_if<util::IsStdVector<T>>::type* /* junk */)
 {
   return "vector";
 }

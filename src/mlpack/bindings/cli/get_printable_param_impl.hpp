@@ -18,7 +18,7 @@ template<typename T>
 std::string GetPrintableParam(
     const util::ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
-    const typename boost::disable_if<IsStdVector<T>>::type* /* junk */,
+    const typename boost::disable_if<util::IsStdVector<T>>::type* /* junk */,
     const typename boost::disable_if<data::HasSerialize<T>>::type* /* junk */,
     const typename boost::disable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>>::type* /* junk */)
@@ -32,7 +32,8 @@ std::string GetPrintableParam(
 template<typename T>
 std::string GetPrintableParam(
     const util::ParamData& data,
-    const typename boost::enable_if<IsStdVector<T>>::type* /* junk */)
+    const typename std::enable_if<util::IsStdVector<T>::value>::type*
+        /* junk */)
 {
   const T& t = boost::any_cast<T>(data.value);
 
@@ -42,42 +43,14 @@ std::string GetPrintableParam(
   return oss.str();
 }
 
-//! Print a matrix option (this just prints the filename).
+//! Print a matrix/model/tuple option (this just prints the filename).
 template<typename T>
 std::string GetPrintableParam(
     const util::ParamData& data,
-    const typename boost::enable_if<arma::is_arma_type<T>>::type* /* junk */)
-{
-  // Extract the string from the tuple that's being held.
-  typedef std::tuple<T, typename ParameterType<T>::type> TupleType;
-  const TupleType* tuple = boost::any_cast<TupleType>(&data.value);
-
-  std::ostringstream oss;
-  oss << std::get<1>(*tuple);
-  return oss.str();
-}
-
-//! Print a model option (this just prints the filename).
-template<typename T>
-std::string GetPrintableParam(
-    const util::ParamData& data,
-    const typename boost::enable_if<data::HasSerialize<T>>::type* /* junk */)
-{
-  // Extract the string from the tuple that's being held.
-  typedef std::tuple<T, typename ParameterType<T>::type> TupleType;
-  const TupleType* tuple = boost::any_cast<TupleType>(&data.value);
-
-  std::ostringstream oss;
-  oss << std::get<1>(*tuple);
-  return oss.str();
-}
-
-//! Print a mapped matrix option (this just prints the filename).
-template<typename T>
-std::string GetPrintableParam(
-    const util::ParamData& data,
-    const typename boost::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* /* junk */)
+    const typename std::enable_if<arma::is_arma_type<T>::value ||
+                                  data::HasSerialize<T>::value ||
+                                  std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* /* junk */)
 {
   // Extract the string from the tuple that's being held.
   typedef std::tuple<T, typename ParameterType<T>::type> TupleType;

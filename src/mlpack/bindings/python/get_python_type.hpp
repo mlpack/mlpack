@@ -9,6 +9,7 @@
 #define MLPACK_BINDINGS_PYTHON_GET_PYTHON_TYPE_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/is_std_vector.hpp>
 
 namespace mlpack {
 namespace bindings {
@@ -17,7 +18,7 @@ namespace python {
 template<typename T>
 inline std::string GetPythonType(
     const util::ParamData& /* d */,
-    const typename boost::disable_if<IsStdVector<T>>::type* = 0,
+    const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
     const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0)
 {
@@ -27,7 +28,7 @@ inline std::string GetPythonType(
 template<>
 inline std::string GetPythonType<int>(
     const util::ParamData& /* d */,
-    const typename boost::disable_if<IsStdVector<int>>::type*,
+    const typename boost::disable_if<util::IsStdVector<int>>::type*,
     const typename boost::disable_if<data::HasSerialize<int>>::type*,
     const typename boost::disable_if<arma::is_arma_type<int>>::type*)
 {
@@ -37,7 +38,7 @@ inline std::string GetPythonType<int>(
 template<>
 inline std::string GetPythonType<float>(
     const util::ParamData& /* d */,
-    const typename boost::disable_if<IsStdVector<float>>::type*,
+    const typename boost::disable_if<util::IsStdVector<float>>::type*,
     const typename boost::disable_if<data::HasSerialize<float>>::type*,
     const typename boost::disable_if<arma::is_arma_type<float>>::type*)
 {
@@ -48,7 +49,7 @@ inline std::string GetPythonType<float>(
 template<>
 inline std::string GetPythonType<double>(
     const util::ParamData& /* d */,
-    const typename boost::disable_if<IsStdVector<double>>::type*,
+    const typename boost::disable_if<util::IsStdVector<double>>::type*,
     const typename boost::disable_if<data::HasSerialize<double>>::type*,
     const typename boost::disable_if<arma::is_arma_type<double>>::type*)
 {
@@ -58,7 +59,7 @@ inline std::string GetPythonType<double>(
 template<>
 inline std::string GetPythonType<std::string>(
     const util::ParamData& /* d */,
-    const typename boost::disable_if<IsStdVector<std::string>>::type*,
+    const typename boost::disable_if<util::IsStdVector<std::string>>::type*,
     const typename boost::disable_if<data::HasSerialize<std::string>>::type*,
     const typename boost::disable_if<arma::is_arma_type<std::string>>::type*)
 {
@@ -68,7 +69,7 @@ inline std::string GetPythonType<std::string>(
 template<>
 inline std::string GetPythonType<size_t>(
     const util::ParamData& /* d */,
-    const typename boost::disable_if<IsStdVector<size_t>>::type*,
+    const typename boost::disable_if<util::IsStdVector<size_t>>::type*,
     const typename boost::disable_if<data::HasSerialize<size_t>>::type*,
     const typename boost::disable_if<arma::is_arma_type<size_t>>::type*)
 {
@@ -78,7 +79,7 @@ inline std::string GetPythonType<size_t>(
 template<>
 inline std::string GetPythonType<bool>(
     const util::ParamData& /* d */,
-    const typename boost::disable_if<IsStdVector<bool>>::type*,
+    const typename boost::disable_if<util::IsStdVector<bool>>::type*,
     const typename boost::disable_if<data::HasSerialize<bool>>::type*,
     const typename boost::disable_if<arma::is_arma_type<bool>>::type*)
 {
@@ -88,7 +89,7 @@ inline std::string GetPythonType<bool>(
 template<typename T>
 inline std::string GetPythonType(
     const util::ParamData& d,
-    const typename boost::enable_if<IsStdVector<T>>::type* = 0)
+    const typename boost::enable_if<util::IsStdVector<T>>::type* = 0)
 {
   return "list of " + GetPythonType<typename T::value_type>(d) + "s";
 }

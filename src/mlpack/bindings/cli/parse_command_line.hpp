@@ -181,8 +181,10 @@ void ParseCommandLine(int argc, char** argv)
           (void*) &boostName);
 
       if (!vmap.count(boostName))
+      {
         Log::Fatal << "Required option --" << boostName << " is undefined."
             << std::endl;
+      }
     }
   }
 }

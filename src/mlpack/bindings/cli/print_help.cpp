@@ -141,7 +141,7 @@ void PrintHelp(const std::string& param)
   }
 
   // Helpful information at the bottom of the help output, to point the user to
-  // citations and better documentation (if necessary).  See ticket #201.
+  // citations and better documentation (if necessary).  See ticket #195.
   std::cout << util::HyphenateString("For further information, including "
       "relevant papers, citations, and theory, consult the documentation found "
       "at http://www.mlpack.org or included with your distribution of mlpack.", 

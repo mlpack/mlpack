@@ -19,7 +19,7 @@ template<typename T>
 void OutputParamImpl(
     const util::ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
-    const typename boost::disable_if<IsStdVector<T>>::type* /* junk */,
+    const typename boost::disable_if<util::IsStdVector<T>>::type* /* junk */,
     const typename boost::disable_if<data::HasSerialize<T>>::type* /* junk */,
     const typename boost::disable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>>::type* /* junk */)
@@ -32,7 +32,7 @@ void OutputParamImpl(
 template<typename T>
 void OutputParamImpl(
     const util::ParamData& data,
-    const typename boost::enable_if<IsStdVector<T>>::type* /* junk */)
+    const typename boost::enable_if<util::IsStdVector<T>>::type* /* junk */)
 {
   std::cout << data.name << ": ";
   const T& t = *boost::any_cast<T>(&data.value);

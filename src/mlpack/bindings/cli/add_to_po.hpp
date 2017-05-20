@@ -10,7 +10,7 @@
 
 #include <mlpack/core/util/param_data.hpp>
 #include <boost/program_options.hpp>
-#include "is_std_vector.hpp"
+#include <mlpack/core/util/is_std_vector.hpp>
 #include "map_parameter_name.hpp"
 
 namespace mlpack {
@@ -20,14 +20,15 @@ namespace cli {
 /**
  * Add a non-vector option to boost::program_options.
  *
- * @param d Parameter data.
+ * @param boostName The name of the option to add to boost::program_options.
+ * @param descr Description string for parameter.
  * @param desc Options description to add parameter to.
  */
 template<typename T>
 void AddToPO(const std::string& boostName,
              const std::string& descr,
              boost::program_options::options_description& desc,
-             const typename boost::disable_if<IsStdVector<T>>::type* = 0,
+             const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
              const typename boost::disable_if<std::is_same<T, bool>>::type* = 0)
 {
   desc.add_options()(boostName.c_str(), boost::program_options::value<T>(),
@@ -38,14 +39,15 @@ void AddToPO(const std::string& boostName,
  * Add a vector option to boost::program_options.  This overload will use the
  * multitoken() option.
  *
- * @param d Parameter data.
+ * @param boostName The name of the option to add to boost::program_options.
+ * @param descr Description string for parameter.
  * @param desc Options description to add parameter to.
  */
 template<typename T>
 void AddToPO(const std::string& boostName,
              const std::string& descr,
              boost::program_options::options_description& desc,
-             const typename boost::enable_if<IsStdVector<T>>::type* = 0,
+             const typename boost::enable_if<util::IsStdVector<T>>::type* = 0,
              const typename boost::disable_if<std::is_same<T, bool>>::type* = 0)
 {
   desc.add_options()(boostName.c_str(),
@@ -55,14 +57,15 @@ void AddToPO(const std::string& boostName,
 /**
  * Add a boolean option to boost::program_options.
  *
- * @param d Parameter data.
+ * @param boostName The name of the option to add to boost::program_options.
+ * @param descr Description string for parameter.
  * @param desc Options description to add parameter to.
  */
 template<typename T>
 void AddToPO(const std::string& boostName,
              const std::string& descr,
              boost::program_options::options_description& desc,
-             const typename boost::disable_if<IsStdVector<T>>::type* = 0,
+             const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
              const typename boost::enable_if<std::is_same<T, bool>>::type* = 0)
 {
   desc.add_options()(boostName.c_str(), descr.c_str());
@@ -73,8 +76,8 @@ void AddToPO(const std::string& boostName,
  * used in the CLI function map.
  *
  * @param d Parameter data.
- * @param input Void pointer to options_description object.
- * @param output Unused void pointer.
+ * @param input Unused void pointer.
+ * @param output Void pointer to options_description object.
  */
 template<typename T>
 void AddToPO(const util::ParamData& d,

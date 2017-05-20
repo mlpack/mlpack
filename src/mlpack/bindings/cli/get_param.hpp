@@ -17,6 +17,8 @@ namespace cli {
 /**
  * This overload is called when nothing special needs to happen to the name of
  * the parameter.
+ *
+ * @param d ParamData object to get parameter value from.
  */
 template<typename T>
 T& GetParam(
@@ -32,6 +34,8 @@ T& GetParam(
 
 /**
  * Return a matrix parameter.
+ *
+ * @param d ParamData object to get parameter value from.
  */
 template<typename T>
 T& GetParam(
@@ -61,6 +65,8 @@ T& GetParam(
 
 /**
  * Return a matrix/dataset info parameter.
+ *
+ * @param d ParamData object to get parameter value from.
  */
 template<typename T>
 T& GetParam(
@@ -85,6 +91,8 @@ T& GetParam(
 
 /**
  * Return a serializable object.
+ *
+ * @param d ParamData object to get parameter value from.
  */
 template<typename T>
 T& GetParam(

@@ -15,7 +15,10 @@ namespace mlpack {
 namespace bindings {
 namespace python {
 
-// This is used for arma::Mat<> types; it will return "mat".
+/**
+ * This is used for arma::Mat<> types; it will return "mat" for matrices, "row"
+ * for row vectors, and "col" for column vectors.
+ */
 template<typename T>
 inline std::string GetArmaType()
 {

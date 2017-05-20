@@ -10,7 +10,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/param_data.hpp>
-#include "is_std_vector.hpp"
+#include <mlpack/core/util/is_std_vector.hpp>
 
 namespace mlpack {
 namespace bindings {
@@ -22,7 +22,7 @@ namespace cli {
 template<typename T>
 std::string StringTypeParamImpl(
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::disable_if<IsStdVector<T>>::type* = 0,
+    const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
     const typename boost::disable_if<data::HasSerialize<T>>::type* = 0);
 
 /**
@@ -30,7 +30,7 @@ std::string StringTypeParamImpl(
  */
 template<typename T>
 std::string StringTypeParamImpl(
-    const typename boost::enable_if<IsStdVector<T>>::type* = 0);
+    const typename boost::enable_if<util::IsStdVector<T>>::type* = 0);
 
 /**
  * Return a string containing the type of the parameter, for matrix options.

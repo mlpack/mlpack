@@ -20,7 +20,7 @@ template<typename T>
 std::string DefaultParamImpl(
     const util::ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
-    const typename boost::disable_if<IsStdVector<T>>::type* /* junk */,
+    const typename boost::disable_if<util::IsStdVector<T>>::type* /* junk */,
     const typename boost::disable_if<data::HasSerialize<T>>::type* /* junk */,
     const typename boost::disable_if<std::is_same<T, std::string>>::type*,
     const typename boost::disable_if<std::is_same<T,
@@ -37,7 +37,7 @@ std::string DefaultParamImpl(
 template<typename T>
 std::string DefaultParamImpl(
     const util::ParamData& data,
-    const typename boost::enable_if<IsStdVector<T>>::type* /* junk */)
+    const typename boost::enable_if<util::IsStdVector<T>>::type* /* junk */)
 {
   // Print each element in an array delimited by square brackets.
   std::ostringstream oss;

@@ -46,47 +46,20 @@ void SetParam(
 }
 
 /**
- * Return a matrix parameter.
+ * Set a matrix parameter, a matrix/dataset info parameter, or a serializable
+ * object.  These set the filename referring to the parameter.
  */
 template<typename T>
 void SetParam(
     util::ParamData& d,
     const boost::any& value,
-    const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
+    const typename std::enable_if<arma::is_arma_type<T>::value ||
+                                  data::HasSerialize<T>::value ||
+                                  std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
 {
   // We're setting the string filename.
   typedef std::tuple<T, typename ParameterType<T>::type> TupleType;
-  TupleType& tuple = *boost::any_cast<TupleType>(&d.value);
-  std::get<1>(tuple) = boost::any_cast<std::string>(value);
-}
-
-/**
- * Return a matrix/dataset info parameter.
- */
-template<typename T>
-void SetParam(
-    util::ParamData& d,
-    const boost::any& value,
-    const typename boost::enable_if<std::is_same<T,
-        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* = 0)
-{
-  // We're setting the string filename.
-  typedef std::tuple<T, std::string> TupleType;
-  TupleType& tuple = *boost::any_cast<TupleType>(&d.value);
-  std::get<1>(tuple) = boost::any_cast<std::string>(value);
-}
-
-/**
- * Return a serializable object.
- */
-template<typename T>
-void SetParam(
-    util::ParamData& d,
-    const boost::any& value,
-    const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
-{
-  // We're setting the string filename.
-  typedef std::tuple<T, std::string> TupleType;
   TupleType& tuple = *boost::any_cast<TupleType>(&d.value);
   std::get<1>(tuple) = boost::any_cast<std::string>(value);
 }
