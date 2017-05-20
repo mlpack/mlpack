@@ -26,7 +26,7 @@
 #if (BINDING_TYPE == BINDING_TYPE_CLI) // This is a command-line executable.
 
 #include <mlpack/bindings/cli/cli_option.hpp>
-#include <mlpack/bindings/cli/example_string.hpp>
+#include <mlpack/bindings/cli/print_doc_functions.hpp>
 
 #define PRINT_PARAM_STRING mlpack::bindings::cli::ParamString
 #define PRINT_CALL mlpack::bindings::cli::ProgramCall
@@ -96,7 +96,7 @@ using Option = mlpack::bindings::tests::TestOption<T>;
 #elif (BINDING_TYPE == BINDING_TYPE_PYX) // This is a Python binding.
 
 #include <mlpack/bindings/python/py_option.hpp>
-#include <mlpack/bindings/python/example_string.hpp>
+#include <mlpack/bindings/python/print_doc_functions.hpp>
 
 #define PRINT_PARAM_STRING mlpack::bindings::python::ParamString
 #define PRINT_DATASET mlpack::bindings::python::PrintDataset

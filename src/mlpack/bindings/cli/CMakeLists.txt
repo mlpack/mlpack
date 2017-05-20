@@ -19,6 +19,8 @@ set(SOURCES
   output_param_impl.hpp
   parameter_type.hpp
   parse_command_line.hpp
+  print_doc_functions.hpp
+  print_doc_functions_impl.hpp
   print_help.hpp
   print_help.cpp
   string_type_param.hpp

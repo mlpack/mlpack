@@ -23,6 +23,8 @@ set(BINDING_SOURCES
   print_class_defn.hpp
   print_defn.hpp
   print_doc.hpp
+  print_doc_functions.hpp
+  print_doc_functions_impl.hpp
   print_input_processing.hpp
   print_output_processing.hpp
   print_pyx.hpp

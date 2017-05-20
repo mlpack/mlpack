@@ -1,13 +1,13 @@
 /**
- * @file example_string.hpp
+ * @file print_doc_functions_impl.hpp
  * @author Ryan Curtin
  *
  * This will generate a string representing what a user should type to invoke a
  * given option.  For the command-line bindings, this will generate strings like
  * '--param_name=x' or '--param_name'.
  */
-#ifndef MLPACK_BINDINGS_CLI_EXAMPLE_STRING_HPP
-#define MLPACK_BINDINGS_CLI_EXAMPLE_STRING_HPP
+#ifndef MLPACK_BINDINGS_CLI_PRINT_DOC_FUNCTIONS_IMPL_HPP
+#define MLPACK_BINDINGS_CLI_PRINT_DOC_FUCNTIONS_IMPL_HPP
 
 #include <mlpack/core/util/hyphenate_string.hpp>
 
@@ -47,7 +47,7 @@ inline std::string PrintModel(const std::string& model)
 }
 
 // Base case for recursion.
-std::string ProcessOptions() { return ""; }
+inline std::string ProcessOptions() { return ""; }
 
 /**
  * Print an option for a command-line argument.
@@ -107,23 +107,6 @@ std::string ProgramCall(const std::string& programName, Args... args)
 }
 
 /**
- * Given a program name, print what its invocation would be.
- */
-inline std::string ProgramCall(const std::string& programName)
-{
-  return "$ " + programName + " ";
-}
-
-/**
- * Close a program call; for a CLI binding, there is nothing that needs to be
- * printed here.
- */
-inline std::string ProgramCallClose()
-{
-  return "";
-}
-
-/**
  * Print what a user would type to invoke the given option name.  Note that the
  * name *must* exist in the CLI module.  (Note that because of the way
  * ProgramInfo is structured, this doesn't mean that all of the PARAM_*()
@@ -148,17 +131,9 @@ inline std::string ParamString(const std::string& paramName)
   }
   else
   {
-    // Make this more consistent... TODO
-    throw std::runtime_error("Parameter '" + paramName + "' not known!");
+    throw std::runtime_error("Parameter '" + paramName + "' not known!  Check "
+        "PROGRAM_INFO() definition.");
   }
-}
-
-template<typename T>
-inline std::string ParamString(const std::string& paramName, const T& value)
-{
-  std::ostringstream oss;
-  oss << ParamString(paramName) << "=" << value;
-  return oss.str();
 }
 
 } // namespace cli

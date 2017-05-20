@@ -1,12 +1,12 @@
 /**
- * @file print_documentation_functions.hpp
+ * @file print_doc_functions_impl.hpp
  * @author Ryan Curtin
  *
  * This file contains functions useful for printing documentation strings
  * related to Python bindings.
  */
-#ifndef MLPACK_BINDINGS_PYTHON_EXAMPLE_STRING_HPP
-#define MLPACK_BINDINGS_PYTHON_EXAMPLE_STRING_HPP
+#ifndef MLPACK_BINDINGS_PYTHON_PRINT_DOC_FUNCTIONS_IMPL_HPP
+#define MLPACK_BINDINGS_PYTHON_PRINT_DOC_FUNCTIONS_IMPL_HPP
 
 #include <mlpack/core/util/hyphenate_string.hpp>
 
@@ -89,7 +89,7 @@ std::string PrintInputOptions(const std::string& paramName,
 }
 
 // Recursion base case.
-std::string PrintOutputOptions() { return ""; }
+inline std::string PrintOutputOptions() { return ""; }
 
 template<typename T, typename... Args>
 std::string PrintOutputOptions(const std::string& paramName,
