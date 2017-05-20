@@ -7,12 +7,16 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
+#include <mlpack/core/kernels/gaussian_kernel.hpp>
 
 using namespace std;
 using namespace mlpack;
+using namespace mlpack::kernel;
 
 PROGRAM_INFO("Python binding test",
-    "A simple program to test Python binding functionality.");
+    "A simple program to test Python binding functionality.  You can build "
+    "mlpack with the BUILD_TESTS option set to off, and this binding will "
+    "no longer be built.");
 
 PARAM_STRING_IN_REQ("string_in", "Input string, must be 'hello'.", "s");
 PARAM_INT_IN_REQ("int_in", "Input int, must be 12.", "i");
@@ -28,6 +32,8 @@ PARAM_UROW_IN("urow_in", "Input unsigned row.", "");
 PARAM_MATRIX_AND_INFO_IN("matrix_and_info_in", "Input matrix and info.", "");
 PARAM_VECTOR_IN(int, "vector_in", "Input vector of numbers.", "");
 PARAM_VECTOR_IN(string, "str_vector_in", "Input vector of strings.", "");
+PARAM_MODEL_IN(GaussianKernel, "model_in", "Input model.", "");
+PARAM_FLAG("build_model", "If true, a model will be returned.", "");
 
 PARAM_STRING_OUT("string_out", "Output string, will be 'hello2'.", "S");
 PARAM_INT_OUT("int_out", "Output int, will be 13.");
@@ -42,6 +48,9 @@ PARAM_MATRIX_OUT("matrix_and_info_out", "Output matrix and info; all numeric "
     "elements multiplied by 3.", "");
 PARAM_VECTOR_OUT(int, "vector_out", "Output vector.", "");
 PARAM_VECTOR_OUT(string, "str_vector_out", "Output string vector.", "");
+PARAM_MODEL_OUT(GaussianKernel, "model_out", "Output model, with twice the "
+    "bandwidth.", "");
+PARAM_DOUBLE_OUT("model_bw_out", "The bandwidth of the model.");
 
 void mlpackMain()
 {
@@ -158,5 +167,18 @@ void mlpackMain()
     }
 
     CLI::GetParam<arma::mat>("matrix_and_info_out") = move(m);
+  }
+
+  // If we got a request to build a model, then build it.
+  if (CLI::HasParam("build_model"))
+  {
+    CLI::GetParam<GaussianKernel>("model_out") = GaussianKernel(10.0);
+  }
+
+  // If we got an input model, double the bandwidth and output that.
+  if (CLI::HasParam("model_in"))
+  {
+    CLI::GetParam<double>("model_bw_out") =
+        CLI::GetParam<GaussianKernel>("model_in").Bandwidth() * 2.0;
   }
 }

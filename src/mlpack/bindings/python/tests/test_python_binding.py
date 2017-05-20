@@ -328,5 +328,22 @@ class TestPythonBinding(unittest.TestCase):
     self.assertEqual(output['str_vector_out'],
         ['one', 'two', 'three', 'four'])
 
+  def testModel(self):
+    """
+    First create a GaussianKernel object, then send it back and make sure we get
+    the right double value.
+    """
+    output = test_python_binding(string_in='hello',
+                                 int_in=12,
+                                 double_in=4.0,
+                                 build_model=True)
+
+    output2 = test_python_binding(string_in='hello',
+                                  int_in=12,
+                                  double_in=4.0,
+                                  model_in=output['model_out'])
+
+    self.assertEqual(output2['model_bw_out'], 20.0)
+
 if __name__ == '__main__':
   unittest.main()
