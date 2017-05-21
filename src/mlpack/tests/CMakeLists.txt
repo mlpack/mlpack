@@ -11,6 +11,7 @@ add_executable(mlpack_test
   armadillo_svd_test.cpp
   arma_extend_test.cpp
   aug_lagrangian_test.cpp
+  augmented_rnns_tasks_test.cpp
   binarize_test.cpp
   block_krylov_svd_test.cpp
   cf_test.cpp
