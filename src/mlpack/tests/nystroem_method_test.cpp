@@ -170,7 +170,7 @@ BOOST_AUTO_TEST_CASE(GermanTest)
   {
     // We will repeat each trial 20 times.
     double avgError = 0.0;
-    for (size_t z = 0; z < 20; ++z)
+    for (size_t z = 1; z < 21; ++z)
     {
       NystroemMethod<GaussianKernel, KMeansSelection<> > nm(dataset, gk,
           size_t((double((trial + 1) * 2) / 100.0) * dataset.n_cols));
