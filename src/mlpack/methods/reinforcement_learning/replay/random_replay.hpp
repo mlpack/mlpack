@@ -60,10 +60,10 @@ class RandomReplay
       capacity(capacity),
       position(0),
       states(dimension, capacity),
-      actions(dimension, capacity),
-      rewards(dimension, capacity),
+      actions(capacity),
+      rewards(capacity),
       nextStates(dimension, capacity),
-      isTerminal(dimension, capacity),
+      isTerminal(capacity),
       full(false)
   { /* Nothing to do here. */ }
 

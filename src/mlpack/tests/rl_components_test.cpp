@@ -64,21 +64,20 @@ BOOST_AUTO_TEST_CASE(SimpleCartPoleTest)
  */
 BOOST_AUTO_TEST_CASE(RandomReplayTest)
 {
-  RandomReplay<MountainCar> replay(1, 1);
+  RandomReplay<MountainCar> replay(1, 3);
   MountainCar env;
   MountainCar::State state = env.InitialSample();
   MountainCar::Action action = MountainCar::Action::forward;
   MountainCar::State nextState;
   double reward = env.Sample(state, action, nextState);
-  for (size_t i = 0; i < 4; ++i)
-  {
-    replay.Store(state, action, reward, nextState, env.IsTerminal(nextState));
-  }
+  replay.Store(state, action, reward, nextState, env.IsTerminal(nextState));
   arma::mat sampledState;
   arma::icolvec sampledAction;
   arma::colvec sampledReward;
   arma::mat sampledNextState;
   arma::icolvec sampledTerminal;
+
+  //! So far there should be only one record in the memory
   replay.Sample(sampledState, sampledAction, sampledReward, sampledNextState, sampledTerminal);
   CheckMatrices(state.Encode(), sampledState);
   BOOST_REQUIRE_EQUAL(action, arma::as_scalar(sampledAction));
@@ -86,6 +85,20 @@ BOOST_AUTO_TEST_CASE(RandomReplayTest)
   CheckMatrices(nextState.Encode(), sampledNextState);
   BOOST_REQUIRE_EQUAL(false, arma::as_scalar(sampledTerminal));
   BOOST_REQUIRE_EQUAL(1, replay.Size());
+
+  //! Overwrite the memory with a nonsense record
+  for (size_t i = 0; i < 5; ++i) {
+    replay.Store(nextState, action, reward, state, true);
+  }
+  BOOST_REQUIRE_EQUAL(3, replay.Size());
+
+  //! Sample several times, the original record shouldn't appear
+  for (size_t i = 0; i < 30; ++i) {
+    replay.Sample(sampledState, sampledAction, sampledReward, sampledNextState, sampledTerminal);
+    CheckMatrices(state.Encode(), sampledNextState);
+    CheckMatrices(nextState.Encode(), sampledState);
+    BOOST_REQUIRE_EQUAL(true, arma::as_scalar(sampledTerminal));
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END()
