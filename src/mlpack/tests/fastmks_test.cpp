@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE(DualTreeVsNaive)
 {
   // First create a random dataset.
   arma::mat data;
-  data.randn(10, 5000);
+  data.randn(10, 2000);
   LinearKernel lk;
 
   // Now run FastMKS naively.
@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE(DualTreeVsSingleTree)
 {
   // First create a random dataset.
   arma::mat data;
-  data.randu(8, 5000);
+  data.randu(8, 2000);
   PolynomialKernel pk(5.0, 2.5);
 
   FastMKS<PolynomialKernel> single(data, pk, true);
