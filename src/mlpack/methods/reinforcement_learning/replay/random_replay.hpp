@@ -88,7 +88,8 @@ class RandomReplay
     nextStates.col(position) = nextState.Encode();
     isTerminal(position) = isEnd;
     position++;
-    if (position == capacity) {
+    if (position == capacity)
+    {
       full = true;
       position = 0;
     }
