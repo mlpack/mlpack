@@ -49,8 +49,8 @@ class RandomReplay
   /**
    * Construct an instance of random experience replay class.
    *
-   * @param batchSize # of examples returned at each sample.
-   * @param capacity Total memory size in terms of # of examples.
+   * @param batchSize Number of examples returned at each sample.
+   * @param capacity Total memory size in terms of number of examples.
    * @param dimension The dimension of an encoded state.
    */
   RandomReplay(const size_t batchSize,
