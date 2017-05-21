@@ -20,6 +20,23 @@ namespace rl {
 /**
  * Implementation of random experience replay.
  *
+ * At each time step, interactions between the agent and the
+ * environment will be saved to a memory buffer. When necessary,
+ * we can simply sample previous experiences from the buffer to
+ * train the agent. Typically this would be a random sample and
+ * the memory will be a First-In-First-Out buffer.
+ *
+ * For more information, see the following.
+ *
+ * @code
+ * @phdthesis {lin1993reinforcement,
+ *  title  =  {Reinforcement learning for robots using neural networks},
+ *  author =  {Lin, Long-Ji},
+ *  year   =  {1993},
+ *  school =  {Fujitsu Laboratories Ltd}
+ * }
+ * @endcode
+ *
  * @tparam EnvironmentType Desired task.
  */
 template <typename EnvironmentType>
@@ -36,14 +53,18 @@ class RandomReplay
    * @param capacity Total memory size in terms of # of examples.
    * @param dimension The dimension of an encoded state.
    */
-  RandomReplay(size_t batchSize,
-               size_t capacity,
-               size_t dimension = StateType::dimension) :
+  RandomReplay(const size_t batchSize,
+               const size_t capacity,
+               const size_t dimension = StateType::dimension) :
       batchSize(batchSize),
       capacity(capacity),
       position(0),
-      states(dimension, 0),
-      nextStates(dimension, 0)
+      states(dimension, capacity),
+      actions(dimension, capacity),
+      rewards(dimension, capacity),
+      nextStates(dimension, capacity),
+      isTerminal(dimension, capacity),
+      full(false)
   { /* Nothing to do here. */ }
 
   /**
@@ -55,24 +76,22 @@ class RandomReplay
    * @param nextState Given next state.
    * @param isEnd Whether next state is terminal state.
    */
-  void Store(const StateType& state, ActionType action,
-             double reward, const StateType& nextState, bool isEnd)
+  void Store(const StateType& state,
+             ActionType action,
+             double reward,
+             const StateType& nextState,
+             bool isEnd)
   {
-    if (isTerminal.n_elem < capacity)
-    {
-      states.insert_cols(position, 1);
-      actions.insert_rows(position, 1);
-      rewards.insert_rows(position, 1);
-      nextStates.insert_cols(position, 1);
-      isTerminal.insert_rows(position, 1);
-    }
     states.col(position) = state.Encode();
     actions(position) = action;
     rewards(position) = reward;
     nextStates.col(position) = nextState.Encode();
     isTerminal(position) = isEnd;
     position++;
-    position %= capacity;
+    if (position == capacity) {
+      full = true;
+      position = 0;
+    }
   }
 
   /**
@@ -90,7 +109,7 @@ class RandomReplay
               arma::mat& sampledNextStates,
               arma::icolvec& isTerminal)
   {
-    size_t upperBound = this->isTerminal.n_elem == capacity ? capacity : position;
+    size_t upperBound = full ? capacity : position;
     arma::uvec sampledIndices =
         arma::randi<arma::uvec>(batchSize, arma::distr_param(0, upperBound - 1));
     sampledStates = states.cols(sampledIndices);
@@ -101,17 +120,17 @@ class RandomReplay
   }
 
   /**
-   * Get the # of transitions in the memory.
+   * Get the number of transitions in the memory.
    *
-   * @return Actual memory size
+   * @return Actual used memory size
    */
-  size_t Size()
+  const size_t& Size()
   {
-    return isTerminal.n_elem == capacity ? capacity : position;
+    return full ? capacity : position;
   }
 
  private:
-  //! Locally-stored # of examples of each sample.
+  //! Locally-stored number of examples of each sample.
   size_t batchSize;
 
   //! Locally-stored total memory limit.
@@ -134,6 +153,9 @@ class RandomReplay
 
   //! Locally-stored termination information of previous experience.
   arma::icolvec isTerminal;
+
+  //! Locally-stored indicator that whether the memory is full or not
+  bool full;
 };
 
 } // namespace rl

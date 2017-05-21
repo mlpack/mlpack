@@ -59,14 +59,6 @@ BOOST_AUTO_TEST_CASE(SimpleCartPoleTest)
 }
 
 /**
- * Compare two matrix
- */
-bool Equal(const arma::mat& m1, const arma::mat& m2)
-{
-  return arma::mean(arma::mean(arma::abs(m1 - m2))) < 1e-5;
-}
-
-/**
  * Construct a random replay instance and check if it works as
  * it should be.
  */
@@ -88,10 +80,10 @@ BOOST_AUTO_TEST_CASE(RandomReplayTest)
   arma::mat sampledNextState;
   arma::icolvec sampledTerminal;
   replay.Sample(sampledState, sampledAction, sampledReward, sampledNextState, sampledTerminal);
-  BOOST_REQUIRE(Equal(state.Encode(), sampledState));
+  CheckMatrices(state.Encode(), sampledState);
   BOOST_REQUIRE_EQUAL(action, arma::as_scalar(sampledAction));
   BOOST_REQUIRE_CLOSE(reward, arma::as_scalar(sampledReward), 1e-5);
-  BOOST_REQUIRE(Equal(nextState.Encode(), sampledNextState));
+  CheckMatrices(nextState.Encode(), sampledNextState);
   BOOST_REQUIRE_EQUAL(false, arma::as_scalar(sampledTerminal));
   BOOST_REQUIRE_EQUAL(1, replay.Size());
 }
