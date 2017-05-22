@@ -54,7 +54,8 @@ void SparseCoding::Encode(const arma::mat& data, arma::mat& codes)
     // place the result directly into that; then we will not need to have an
     // extra copy.
     arma::vec code = codes.unsafe_col(i);
-    lars.Train(dictionary, data.unsafe_col(i), code, false);
+    arma::rowvec responses = data.unsafe_col(i).t();
+    lars.Train(dictionary, responses, code, false);
   }
 }
 

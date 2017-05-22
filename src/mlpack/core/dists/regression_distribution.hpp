@@ -49,12 +49,13 @@ class RegressionDistribution
    * @param responses Vector of responses (y).
    */
   RegressionDistribution(const arma::mat& predictors,
-                         const arma::vec& responses) :
-      rf(regression::LinearRegression(predictors, responses))
+                         const arma::vec& responses)
   {
+    arma::rowvec rowResponses = responses.t();
+    rf.Train(predictors, rowResponses);
     err = GaussianDistribution(1);
     arma::mat cov(1, 1);
-    cov(0, 0) = rf.ComputeError(predictors, responses);
+    cov(0, 0) = rf.ComputeError(predictors, rowResponses);
     err.Covariance(std::move(cov));
   }
 
