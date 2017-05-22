@@ -215,8 +215,21 @@ class LARS
    * @param points The data points to regress on.
    * @param predictions y, which will contained calculated values on completion.
    */
+  mlpack_deprecated void Predict(const arma::mat& points,
+                                 arma::vec& predictions,
+                                 const bool rowMajor = false) const;
+
+  /**
+   * Predict y_i for each data point in the given data matrix using the
+   * currently-trained LARS model.
+   *
+   * @param points The data points to regress on.
+   * @param predictions y, which will contained calculated values on completion.
+   * @param rowMajor Should be true if the data points matrix is row-major and
+   *     false otherwise.
+   */
   void Predict(const arma::mat& points,
-               arma::vec& predictions,
+               arma::rowvec& predictions,
                const bool rowMajor = false) const;
 
   //! Access the set of active dimensions.

@@ -180,9 +180,9 @@ BOOST_AUTO_TEST_CASE(PredictTest)
         // Calculate what the actual error should be with these regression
         // parameters.
         arma::vec betaOptPred = (X * X.t()) * betaOpt;
-        arma::vec predictions;
+        arma::rowvec predictions;
         lars.Predict(X, predictions);
-        arma::vec adjPred = X * predictions;
+        arma::vec adjPred = X * predictions.t();
 
         BOOST_REQUIRE_EQUAL(predictions.n_elem, 1000);
         for (size_t i = 0; i < betaOptPred.n_elem; ++i)
@@ -211,7 +211,7 @@ BOOST_AUTO_TEST_CASE(PredictRowMajorTest)
 
   // Get both row-major and column-major predictions.  Make sure they are the
   // same.
-  arma::vec rowMajorPred, colMajorPred;
+  arma::rowvec rowMajorPred, colMajorPred;
 
   lars.Predict(X, colMajorPred);
   lars.Predict(X.t(), rowMajorPred, true);

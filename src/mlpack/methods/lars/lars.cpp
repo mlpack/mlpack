@@ -387,11 +387,20 @@ void LARS::Predict(const arma::mat& points,
                    arma::vec& predictions,
                    const bool rowMajor) const
 {
+  arma::rowvec rowPredictions;
+  Predict(points, rowPredictions, rowMajor);
+  predictions = rowPredictions.t();
+}
+
+void LARS::Predict(const arma::mat& points,
+                   arma::rowvec& predictions,
+                   const bool rowMajor) const
+{
   // We really only need to store beta internally...
   if (rowMajor)
-    predictions = points * betaPath.back();
+    predictions = trans(points * betaPath.back());
   else
-    predictions = (betaPath.back().t() * points).t();
+    predictions = betaPath.back().t() * points;
 }
 
 // Private functions.

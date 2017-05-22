@@ -159,12 +159,12 @@ int main(int argc, char* argv[])
           << "is not equal to the dimensionality of the model ("
           << lars.BetaPath().back().n_elem << ")!" << endl;
 
-    arma::vec predictions;
+    arma::rowvec predictions;
     lars.Predict(testPoints.t(), predictions, false);
 
-    // Save test predictions.  One per line, so, don't transpose on save.
+    // Save test predictions (one per line).
     if (CLI::HasParam("output_predictions"))
-      CLI::GetParam<arma::mat>("output_predictions") = std::move(predictions);
+      CLI::GetParam<arma::mat>("output_predictions") = predictions.t();
   }
 
   if (CLI::HasParam("output_model"))
