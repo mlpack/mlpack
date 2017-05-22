@@ -128,9 +128,9 @@ int main(int argc, char* argv[])
     mat matY = std::move(CLI::GetParam<arma::mat>("responses"));
 
     // Make sure y is oriented the right way.
-    if (matY.n_rows == 1)
+    if (matY.n_cols == 1)
       matY = trans(matY);
-    if (matY.n_cols > 1)
+    if (matY.n_rows > 1)
       Log::Fatal << "Only one column or row allowed in responses file!" << endl;
 
     if (matY.n_elem != matX.n_rows)
@@ -138,7 +138,8 @@ int main(int argc, char* argv[])
           << endl;
 
     vec beta;
-    lars.Train(matX, matY.unsafe_col(0), beta, false /* do not transpose */);
+    arma::rowvec y = std::move(matY);
+    lars.Train(matX, y, beta, false /* do not transpose */);
   }
   else // We must have --input_model_file.
   {
