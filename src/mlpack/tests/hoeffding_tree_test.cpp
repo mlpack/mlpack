@@ -169,7 +169,7 @@ BOOST_AUTO_TEST_CASE(NumDescendantsTest)
   for (size_t i = 0; i < 500; ++i)
     streamTree.Train(dataset.col(i), labels[i]);
 
-  BOOST_REQUIRE_EQUAL(streamTree.NumDescendants(), 1);   //there is just one label
+  BOOST_REQUIRE_EQUAL(streamTree.NumDescendants(), 0);   //as there is just one label (just one root)
 
 }
 
