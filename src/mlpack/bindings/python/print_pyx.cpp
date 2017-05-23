@@ -194,11 +194,8 @@ void PrintPYX(const ProgramDoc& programInfo,
   cout << "  mlpackMain()" << endl;
 
   // Do any output processing and return.
-//  if (outputOptions.size() > 1)
-  {
-    cout << "  # Initialize result dictionary." << endl;
-    cout << "  result = {}" << endl;
-  }
+  cout << "  # Initialize result dictionary." << endl;
+  cout << "  result = {}" << endl;
   cout << endl;
 
   for (size_t i = 0; i < outputOptions.size(); ++i)
@@ -215,10 +212,7 @@ void PrintPYX(const ProgramDoc& programInfo,
   cout << "  CLI.ClearSettings()" << endl;
   cout << endl;
 
-//  if (outputOptions.size() > 1)
-  {
-    cout << "  return result" << endl;
-  }
+  cout << "  return result" << endl;
 }
 
 } // namespace python
