@@ -1,4 +1,6 @@
 set(SOURCES
+  adaptive_stepsize.hpp
+  backtracking_line_search.hpp
   bigbatch_sgd.hpp
   bigbatch_sgd_impl.hpp
 )
