@@ -81,6 +81,8 @@ add_executable(mlpack_test
   sa_test.cpp
   sdp_primal_dual_test.cpp
   sgd_test.cpp
+  sgdr_test.cpp
+  snapshot_ensembles.cpp
   serialization.hpp
   serialization.cpp
   serialization_test.cpp
