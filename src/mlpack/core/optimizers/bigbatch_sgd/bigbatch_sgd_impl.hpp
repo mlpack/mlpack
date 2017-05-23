@@ -18,8 +18,8 @@
 namespace mlpack {
 namespace optimization {
 
-template<typename DecomposableFunctionType>
-BigBatchSGD<DecomposableFunctionType>::BigBatchSGD(
+template<typename DecomposableFunctionType, typename UpdatePolicyType>
+BigBatchSGD<DecomposableFunctionType, UpdatePolicyType>::BigBatchSGD(
     DecomposableFunctionType& function,
     const size_t batchSize,
     const double stepSize,
@@ -33,12 +33,14 @@ BigBatchSGD<DecomposableFunctionType>::BigBatchSGD(
     batchDelta(batchDelta),
     maxIterations(maxIterations),
     tolerance(tolerance),
-    shuffle(shuffle)
+    shuffle(shuffle),
+    updatePolicy(UpdatePolicyType(function))
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
-template<typename DecomposableFunctionType>
-double BigBatchSGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
+template<typename DecomposableFunctionType, typename UpdatePolicyType>
+double BigBatchSGD<DecomposableFunctionType, UpdatePolicyType>::Optimize(
+    arma::mat& iterate)
 {
   // Find the number of functions.
   const size_t numFunctions = function.NumFunctions();
@@ -60,6 +62,7 @@ double BigBatchSGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
   double lastObjective = DBL_MAX;
   double vB = 0;
   double gB = 0;
+  bool reset = false;
 
   // Calculate the first objective function.
   for (size_t i = 0; i < numFunctions; ++i)
@@ -122,6 +125,10 @@ double BigBatchSGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
             2.0), 2.0);
       }
 
+      // Reset the batch size update process counter.
+      reset = false;
+
+      // Update batch size.
       while (gB <= ((1 / ((double) batchSize - 1) * vB) / batchSize))
       {
         // Increase batch size at least by one.
@@ -178,17 +185,24 @@ double BigBatchSGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
 
         if ((currentBatch % numBatches) == 0 || currentBatch >= numBatches)
           currentBatch = 0;
+
+        // Batch size updated.
+        reset = true;
       }
 
-      // Now update the iterate.
-      iterate -= (stepSize / batchSize) * gradient;
+      size_t backtrackingBatchSize = batchSize;
+      if ((offset + batchSize) > numFunctions)
+        backtrackingBatchSize = numFunctions - offset;
+
+      updatePolicy.Update(stepSize, iterate, gradient, gB, vB, offset,
+          batchSize, backtrackingBatchSize, reset);
+
+      // Update the iterate.
+      iterate -= stepSize * gradient;
 
       // Add that to the overall objective function.
-      for (size_t j = 0; j < batchSize; ++j)
-      {
-        if ((offset + j) < numFunctions)
-          overallObjective += function.Evaluate(iterate, offset + j);
-      }
+      for (size_t j = 0; j < backtrackingBatchSize; ++j)
+        overallObjective += function.Evaluate(iterate, offset + j);
     }
     else
     {
@@ -218,6 +232,8 @@ double BigBatchSGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
       for (size_t j = 0; j < lastBatchSize; ++j)
         overallObjective += function.Evaluate(iterate, offset + j);
     }
+
+
   }
 
   Log::Info << "Big-batch SGD: maximum iterations (" << maxIterations << ") "

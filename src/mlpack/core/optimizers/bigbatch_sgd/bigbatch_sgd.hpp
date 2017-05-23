@@ -16,6 +16,9 @@
 
 #include <mlpack/prereqs.hpp>
 
+#include "adaptive_stepsize.hpp"
+#include "backtracking_line_search.hpp"
+
 namespace mlpack {
 namespace optimization {
 
@@ -86,7 +89,10 @@ namespace optimization {
  * @tparam DecomposableFunctionType Decomposable objective function type to be
  *         minimized.
  */
-template<typename DecomposableFunctionType>
+template<
+    typename DecomposableFunctionType,
+    typename UpdatePolicyType = AdaptiveStepsize<DecomposableFunctionType>
+>
 class BigBatchSGD
 {
  public:
@@ -100,7 +106,7 @@ class BigBatchSGD
    * @param function Function to be optimized (minimized).
    * @param batchSize Initial batch size.
    * @param stepSize Step size for each iteration.
-   @ param batchDelta Factor for the batch update step.
+   * @param batchDelta Factor for the batch update step.
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *        limit).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
@@ -108,13 +114,12 @@ class BigBatchSGD
    *        batch is visited in linear order.
    */
   BigBatchSGD(DecomposableFunctionType& function,
-               const size_t batchSize = 1000,
-               const double stepSize = 0.01,
-               const double batchDelta = 0.1,
-               const size_t maxIterations = 100000,
-               const double tolerance = 1e-5,
-               const bool shuffle = true);
-
+              const size_t batchSize = 1000,
+              const double stepSize = 0.01,
+              const double batchDelta = 0.1,
+              const size_t maxIterations = 100000,
+              const double tolerance = 1e-5,
+              const bool shuffle = true);
   /**
    * Optimize the given function using big-batch SGD.  The given starting point
    * will be modified to store the finishing point of the algorithm, and the
@@ -160,6 +165,11 @@ class BigBatchSGD
   //! Modify whether or not the individual functions are shuffled.
   bool& Shuffle() { return shuffle; }
 
+  //! Get the update policy.
+  UpdatePolicyType UpdatePolicy() const { return updatePolicy; }
+  //! Modify the update policy.
+  UpdatePolicyType& UpdatePolicy() { return updatePolicy; }
+
  private:
   //! The instantiated function.
   DecomposableFunctionType& function;
@@ -182,7 +192,20 @@ class BigBatchSGD
   //! Controls whether or not the individual functions are shuffled when
   //! iterating.
   bool shuffle;
+
+  //! The update policy used to update the parameters in each iteration.
+  UpdatePolicyType updatePolicy;
 };
+
+template<typename DecomposableFunctionType>
+using BBS_Armijo = BigBatchSGD<
+    DecomposableFunctionType,
+    BacktrackingLineSearch<DecomposableFunctionType> >;
+
+template<typename DecomposableFunctionType>
+using BBS_BB = BigBatchSGD<
+    DecomposableFunctionType,
+    AdaptiveStepsize<DecomposableFunctionType> >;
 
 } // namespace optimization
 } // namespace mlpack
