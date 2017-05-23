@@ -29,11 +29,11 @@ namespace rl {
  * For more information, see the following.
  *
  * @code
- * @phdthesis {lin1993reinforcement,
- *  title  =  {Reinforcement learning for robots using neural networks},
- *  author =  {Lin, Long-Ji},
- *  year   =  {1993},
- *  school =  {Fujitsu Laboratories Ltd}
+ * @phdthesis{lin1993reinforcement,
+ *  title  = {Reinforcement learning for robots using neural networks},
+ *  author = {Lin, Long-Ji},
+ *  year   = {1993},
+ *  school = {Fujitsu Laboratories Ltd}
  * }
  * @endcode
  *
