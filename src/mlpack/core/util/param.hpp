@@ -935,7 +935,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy>;
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_DOUBLE_IN_REQ(ID, DESC, ALIAS) \
-    PARAM_IN(double, ID, DESC, ALIAS, 0.0d, true)
+    PARAM_IN(double, ID, DESC, ALIAS, 0.0, true)
 
 /**
  * Define a required string parameter.
