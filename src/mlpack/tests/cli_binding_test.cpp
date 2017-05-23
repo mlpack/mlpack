@@ -211,9 +211,12 @@ BOOST_AUTO_TEST_CASE(GetParamDatasetInfoMatTest)
       (void*) NULL, (void*) &output);
 
   BOOST_REQUIRE_EQUAL(get<0>(*output).Dimensionality(), 3);
-  BOOST_REQUIRE_EQUAL(get<0>(*output).Type(0), data::Datatype::numeric);
-  BOOST_REQUIRE_EQUAL(get<0>(*output).Type(1), data::Datatype::numeric);
-  BOOST_REQUIRE_EQUAL(get<0>(*output).Type(2), data::Datatype::categorical);
+  BOOST_REQUIRE_EQUAL((int) get<0>(*output).Type(0),
+      (int) data::Datatype::numeric);
+  BOOST_REQUIRE_EQUAL((int) get<0>(*output).Type(1),
+      (int) data::Datatype::numeric);
+  BOOST_REQUIRE_EQUAL((int) get<0>(*output).Type(2),
+      (int) data::Datatype::categorical);
   BOOST_REQUIRE_EQUAL(get<1>(*output).n_rows, 3);
   BOOST_REQUIRE_EQUAL(get<1>(*output).n_cols, 7);
 
