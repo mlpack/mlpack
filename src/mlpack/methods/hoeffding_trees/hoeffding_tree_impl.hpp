@@ -501,7 +501,15 @@ size_t HoeffdingTree<
   else
     return 0; // Not sure what to do here...
 }
-size_t NumDescendants()
+        
+template<typename FitnessFunction,
+         template<typename> class NumericSplitType,
+         template<typename> class CategoricalSplitType>
+size_t HoeffdingTree<
+    FitnessFunction,
+    NumericSplitType,
+    CategoricalSplitType
+>::NumDescendants()
 {
 size_t nodes = 0;
 std::stack<HoeffdingTree<>*> stack;
