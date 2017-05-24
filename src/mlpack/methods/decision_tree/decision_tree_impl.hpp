@@ -292,8 +292,8 @@ void DecisionTree<FitnessFunction,
     double dimGain = -DBL_MAX;
     if (datasetInfo.Type(i) == data::Datatype::categorical)
       dimGain = CategoricalSplit::template SplitIfBetter<UseWeights>(bestGain, data.row(i),
-           datasetInfo.NumMappings(i), labels, numClasses, minimumLeafSize, weights,
-           classProbabilities, *this);
+          datasetInfo.NumMappings(i), labels, numClasses, minimumLeafSize, weights,
+          classProbabilities, *this);
     else if (datasetInfo.Type(i) == data::Datatype::numeric)
       dimGain = NumericSplit::template SplitIfBetter<UseWeights>(bestGain, data.row(i), labels,
           numClasses, minimumLeafSize, weights, classProbabilities, *this);
@@ -350,22 +350,43 @@ void DecisionTree<FitnessFunction,
       MatType childPoints(data.n_rows, childCounts[i]);
       arma::Row<size_t> childLabels(childCounts[i]);
       size_t currentCol = 0;
+
+      // Initialize weights if needed.
+      arma::rowvec childWeights;
+      if (UseWeights)
+        childWeights.set_size(childCounts[i]);
+
       for (size_t j = 0; j < data.n_cols; ++j)
       {
         if (childAssignments[j] == i)
         {
           childPoints.col(currentCol) = data.col(j);
           childLabels[currentCol++] = labels[j];
+
+          if (UseWeights)
+            childWeights[currentCol - 1] = weights[j];
         }
       }
 
-      // Now build the child recursively.
-      if (NoRecursion)
-        children.push_back(new DecisionTree(childPoints, datasetInfo,
-            childLabels, numClasses, childPoints.n_cols));
+      // Now build the child recursively, with or without weights.
+      if (UseWeights)
+      {
+        if (NoRecursion)
+          children.push_back(new DecisionTree(childPoints, datasetInfo,
+              childLabels, numClasses, childWeights, childPoints.n_cols));
+        else
+          children.push_back(new DecisionTree(childPoints, datasetInfo,
+              childLabels, numClasses, childWeights, minimumLeafSize));
+      }
       else
-        children.push_back(new DecisionTree(childPoints, datasetInfo,
-            childLabels, numClasses, minimumLeafSize));
+      {
+        if (NoRecursion)
+          children.push_back(new DecisionTree(childPoints, datasetInfo,
+              childLabels, numClasses, childPoints.n_cols));
+        else
+          children.push_back(new DecisionTree(childPoints, datasetInfo,
+              childLabels, numClasses, minimumLeafSize));
+      }
     }
   }
   else
@@ -375,7 +396,7 @@ void DecisionTree<FitnessFunction,
     CategoricalAuxiliarySplitInfo::operator=(CategoricalAuxiliarySplitInfo());
 
     // Calculate class probabilities because we are a leaf.
-    CalculateClassProbabilities(labels, numClasses);
+    CalculateClassProbabilities<UseWeights>(labels, numClasses, weights);
   }
 }
 
@@ -453,6 +474,12 @@ void DecisionTree<FitnessFunction,
       // Now that we have the size of the matrix we need to extract, extract it.
       MatType childPoints(data.n_rows, childCounts[i]);
       arma::Row<size_t> childLabels(childCounts[i]);
+
+      // Initialize weights if necessary.
+      arma::rowvec childWeights;
+      if (UseWeights)
+        childWeights.set_size(childCounts[i]);
+
       size_t currentCol = 0;
       for (size_t j = 0; j < data.n_cols; ++j)
       {
@@ -460,16 +487,31 @@ void DecisionTree<FitnessFunction,
         {
           childPoints.col(currentCol) = data.col(j);
           childLabels[currentCol++] = labels[j];
+
+          if (UseWeights)
+            childWeights[currentCol - 1] = weights[j];
         }
       }
 
-      // Now build the child recursively.
-      if (NoRecursion)
-        children.push_back(new DecisionTree(childPoints, childLabels,
-            numClasses, childPoints.n_cols));
+      // Now build the child recursively, with or without weights.
+      if (UseWeights)
+      {
+        if (NoRecursion)
+          children.push_back(new DecisionTree(childPoints, childLabels,
+              numClasses, childWeights, childPoints.n_cols));
+        else
+          children.push_back(new DecisionTree(childPoints, childLabels,
+              numClasses, childWeights, minimumLeafSize));
+      }
       else
-        children.push_back(new DecisionTree(childPoints, childLabels,
-            numClasses, minimumLeafSize));
+      {
+        if (NoRecursion)
+          children.push_back(new DecisionTree(childPoints, childLabels,
+              numClasses, childPoints.n_cols));
+        else
+          children.push_back(new DecisionTree(childPoints, childLabels,
+              numClasses, minimumLeafSize));
+      }
     }
   }
   else
@@ -478,7 +520,7 @@ void DecisionTree<FitnessFunction,
     NumericAuxiliarySplitInfo::operator=(NumericAuxiliarySplitInfo());
 
     // Calculate class probabilities because we are a leaf.
-    CalculateClassProbabilities(labels, numClasses);
+    CalculateClassProbabilities<UseWeights>(labels, numClasses, weights);
   }
 }
 
@@ -665,21 +707,33 @@ template<typename FitnessFunction,
          template<typename> class CategoricalSplitType,
          typename ElemType,
          bool NoRecursion>
-template<typename RowType>
+template<bool UseWeights, typename RowType, typename WeightsRowType>
 void DecisionTree<FitnessFunction,
                   NumericSplitType,
                   CategoricalSplitType,
                   ElemType,
                   NoRecursion>::CalculateClassProbabilities(
     const RowType& labels,
-    const size_t numClasses)
+    const size_t numClasses,
+    const WeightsRowType& weights)
 {
   classProbabilities.zeros(numClasses);
+  double sumWeights = 0.0;
   for (size_t i = 0; i < labels.n_elem; ++i)
-    classProbabilities[labels[i]]++;
+  {
+    if (UseWeights)
+    {
+      classProbabilities[labels[i]] += weights[i];
+      sumWeights += weights[i];
+    }
+    else
+    {
+      classProbabilities[labels[i]]++;
+    }
+  }
 
   // Now normalize into probabilities.
-  classProbabilities /= labels.n_elem;
+  classProbabilities /= UseWeights ? sumWeights : labels.n_elem;
   arma::uword maxIndex;
   classProbabilities.max(maxIndex);
   dimensionTypeOrMajorityClass = (size_t) maxIndex;

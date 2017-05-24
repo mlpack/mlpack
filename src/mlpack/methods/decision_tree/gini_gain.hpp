@@ -45,7 +45,7 @@ class GiniGain
       return 0.0;
 
      // Count the number of elements in each class.
-     arma::Col<double> counts(numClasses);
+     arma::vec counts(numClasses);
      counts.zeros();
 
     // Calculate the Gini impurity of the un-split node.
@@ -57,13 +57,17 @@ class GiniGain
       // sum all the weights up
       double accWeights = 0.0;
 
-      for (size_t i=0; i < labels.n_elem; ++i)
+      for (size_t i = 0; i < labels.n_elem; ++i)
       {
         // We just plus one if it's 'no weighted label' and plus 'weight'
         // if the label had correspond label.
         counts[labels[i]] += weights[i];
         accWeights += weights[i];
       }
+
+      // Catch edge case: if there are no weights, the impurity is zero.
+      if (accWeights == 0.0)
+        return 0.0;
 
       for (size_t i = 0; i < numClasses; ++i)
       {

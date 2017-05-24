@@ -30,10 +30,24 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
 {
   // Count the number of elements in each potential child.
   const double epsilon = 1e-7; // Tolerance for floating-point errors.
-  arma::Col<size_t> counts(numCategories);
-  counts.zeros();
+  arma::Col<size_t> counts(numCategories, arma::fill::zeros);
+
+  // If we are using weighted training, learn the weights for each child too.
+  arma::vec childWeightSums;
+  double sumWeight = 0.0;
+  if (UseWeights)
+    childWeightSums.zeros(numCategories);
+
   for (size_t i = 0; i < data.n_elem; ++i)
+  {
     counts[(size_t) data[i]]++;
+
+    if (UseWeights)
+    {
+      childWeightSums[(size_t) data[i]] += weights[i];
+      sumWeight += weights[i];
+    }
+  }
 
   // If each child will have the minimum number of points in it, we can split.
   // Otherwise we can't.
@@ -49,7 +63,8 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
   {
     // Labels and weights should have same length.
     childLabels[i].zeros(counts[i]);
-    childWeights[i].zeros(counts[i]);
+    if (UseWeights)
+      childWeights[i].zeros(counts[i]);
   }
 
   // Extract labels for each child.
@@ -60,7 +75,7 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
     if (UseWeights)
     {
       childLabels[category][childPositions[category]] = labels[i];
-      childWeights[category][childPositions[category]++] = weights[i] ? weights[i] : 0;
+      childWeights[category][childPositions[category]++] = weights[i];
     }
     else
     {
@@ -72,7 +87,9 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
   for (size_t i = 0; i < counts.n_elem; ++i)
   {
     // Calculate the gain of this child.
-    const double childPct = double(counts[i]) / double(data.n_elem);
+    const double childPct = UseWeights ?
+        double(childWeightSums[i]) / sumWeight :
+        double(counts[i]) / double(data.n_elem);
     const double childGain = FitnessFunction::template Evaluate<UseWeights>(childLabels[i],
         numClasses, childWeights[i]);
 

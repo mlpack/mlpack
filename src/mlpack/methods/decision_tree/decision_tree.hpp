@@ -306,9 +306,10 @@ class DecisionTree :
   /**
    * Calculate the class probabilities of the given labels.
    */
-  template<typename RowType>
+  template<bool UseWeights, typename RowType, typename WeightsRowType>
   void CalculateClassProbabilities(const RowType& labels,
-                                   const size_t numClasses);
+                                   const size_t numClasses,
+                                   const WeightsRowType& weights);
 };
 
 /**

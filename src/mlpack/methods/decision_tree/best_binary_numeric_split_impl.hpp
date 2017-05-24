@@ -34,12 +34,14 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
   // Next, sort the data.
   arma::uvec sortedIndices = arma::sort_index(data);
   arma::Row<size_t> sortedLabels(labels.n_elem);
-  arma::Row<size_t> sortedWeights(labels.n_elem);
-  sortedWeights.zeros();
+  arma::Row<size_t> sortedWeights;
   for (size_t i = 0; i < sortedLabels.n_elem; ++i)
     sortedLabels[sortedIndices[i]] = labels[i];
+
+  // Only initialize if we are using weights.
   if (UseWeights)
   {
+    sortedWeights.set_size(sortedLabels.n_elem);
     // The weights must keep the same order of labels
     for (size_t i = 0; i < sortedLabels.n_elem; ++i)
       sortedWeights[sortedIndices[i]] = weights[i];
@@ -55,19 +57,40 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     if (data[sortedIndices[index]] == data[sortedIndices[index - 1]])
       continue;
 
-    // Calculate the gain for the left and right child.
-    const double leftGain = FitnessFunction::template Evaluate<UseWeights>(sortedLabels.subvec(0,
-        index - 1), numClasses, sortedWeights.subvec(0, index - 1));
-    const double rightGain = FitnessFunction::template Evaluate<UseWeights>(sortedLabels.subvec(
-        index, sortedLabels.n_elem - 1), numClasses, 
-        sortedWeights.subvec(index, sortedLabels.n_elem - 1));
+    // Calculate the gain for the left and right child.  Only use weights if
+    // needed.
+    const double leftGain = UseWeights ?
+        FitnessFunction::template Evaluate<true>(sortedLabels.subvec(0,
+            index - 1), numClasses, sortedWeights.subvec(0, index - 1)) :
+        FitnessFunction::template Evaluate<false>(sortedLabels.subvec(0,
+            index - 1), numClasses, sortedWeights /* ignored */);
+    const double rightGain = UseWeights ?
+        FitnessFunction::template Evaluate<true>(sortedLabels.subvec(index,
+            sortedLabels.n_elem - 1), numClasses, sortedWeights.subvec(index,
+            sortedLabels.n_elem - 1)) :
+        FitnessFunction::template Evaluate<false>(sortedLabels.subvec(index,
+            sortedLabels.n_elem - 1), numClasses, sortedWeights /* ignored */);
 
-    // Calculate the fraction of points in the left and right children.
-    const double leftRatio = double(index) / double(sortedLabels.n_elem);
-    const double rightRatio = 1.0 - leftRatio;
+    double gain;
+    if (UseWeights)
+    {
+      const double leftWeights = arma::accu(sortedWeights.subvec(0, index - 1));
+      const double rightWeights = arma::accu(sortedWeights.subvec(index,
+          sortedWeights.n_elem - 1));
+      const double fullWeight = leftWeights + rightWeights;
 
-    // Calculate the gain at this split point.
-    const double gain = leftRatio * leftGain + rightRatio * rightGain;
+      gain = (leftWeights / fullWeight) * leftGain +
+          (rightWeights / fullWeight) * rightGain;
+    }
+    else
+    {
+      // Calculate the fraction of points in the left and right children.
+      const double leftRatio = double(index) / double(sortedLabels.n_elem);
+      const double rightRatio = 1.0 - leftRatio;
+
+      // Calculate the gain at this split point.
+      gain = leftRatio * leftGain + rightRatio * rightGain;
+    }
 
     // Corner case: is this the best possible split?
     if (gain == 0.0)
