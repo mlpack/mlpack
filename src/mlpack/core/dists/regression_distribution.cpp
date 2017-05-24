@@ -38,12 +38,18 @@ void RegressionDistribution::Train(const arma::mat& observations)
 void RegressionDistribution::Train(const arma::mat& observations,
                                    const arma::vec& weights)
 {
+  Train(observations, arma::rowvec(weights.t()));
+}
+
+void RegressionDistribution::Train(const arma::mat& observations,
+                                   const arma::rowvec& weights)
+{
   regression::LinearRegression lr(observations.rows(1, observations.n_rows - 1),
       arma::rowvec(observations.row(0)), weights, 0, true);
   rf = lr;
   arma::rowvec fitted;
   lr.Predict(observations.rows(1, observations.n_rows - 1), fitted);
-  err.Train(observations.row(0) - fitted, weights);
+  err.Train(observations.row(0) - fitted, weights.t());
 }
 
 /**
@@ -62,6 +68,12 @@ void RegressionDistribution::Predict(const arma::mat& points,
                                      arma::vec& predictions) const
 {
   arma::rowvec rowPredictions;
-  rf.Predict(points, rowPredictions);
+  Predict(points, rowPredictions);
   predictions = rowPredictions.t();
+}
+
+void RegressionDistribution::Predict(const arma::mat& points,
+                                     arma::rowvec& predictions) const
+{
+  rf.Predict(points, predictions);
 }

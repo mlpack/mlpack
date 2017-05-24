@@ -295,8 +295,8 @@ BOOST_AUTO_TEST_CASE(RegressionDistributionTest)
   // Generate some random data.
   mat data;
   data.randn(15, 800);
-  vec responses;
-  responses.randn(800, 1);
+  rowvec responses;
+  responses.randn(800);
 
   RegressionDistribution rd(data, responses);
   RegressionDistribution xmlRd, textRd, binaryRd;
