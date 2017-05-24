@@ -148,8 +148,12 @@ BOOST_AUTO_TEST_CASE(InformationGainPerfectSimpleTest)
   BOOST_REQUIRE_SMALL(InformationGain::Evaluate(counts), 1e-10);
 }
 
+// This is used in the next test.
+template<typename FitnessFunction>
+using HoeffdingSizeTNumericSplit = HoeffdingNumericSplit<FitnessFunction,
+    size_t>;
 
-BOOST_AUTO_TEST_CASE(NumDescendantsTest)
+BOOST_AUTO_TEST_CASE(NumDescendantsTest1)
 {
   // Generate data.
   arma::mat dataset(3, 500);
@@ -171,6 +175,51 @@ BOOST_AUTO_TEST_CASE(NumDescendantsTest)
 
   BOOST_REQUIRE_EQUAL(streamTree.NumDescendants(), 0);   //as there is just one label (just one root)
 
+}
+
+BOOST_AUTO_TEST_CASE(NumDescendantsTest2)
+{
+  DatasetInfo info(3);
+  info.MapString("cat0", 0);
+  info.MapString("cat1", 0);
+  info.MapString("cat2", 0);
+  info.MapString("cat3", 0);
+  info.MapString("cat4", 0);
+  info.MapString("cat5", 0);
+  info.MapString("cat6", 0);
+  info.MapString("cat0", 1);
+  info.MapString("cat1", 1);
+  info.MapString("cat2", 1);
+  info.MapString("cat0", 2);
+  info.MapString("cat1", 2);
+
+  // generate data.
+  arma::Mat<size_t> dataset(3, 9000);
+  arma::Row<size_t> labels(9000);
+  for (size_t i = 2; i < 9000; i += 3)
+  {
+    dataset(0, i) = mlpack::math::RandInt(7);
+    dataset(1, i) = 0;
+    dataset(2, i) = mlpack::math::RandInt(2);
+    labels(i) = 0;
+
+    dataset(0, i - 1) = mlpack::math::RandInt(7);
+    dataset(1, i - 1) = 2;
+    dataset(2, i - 1) = mlpack::math::RandInt(2);
+    labels(i - 1) = 1;
+
+    dataset(0, i - 2) = mlpack::math::RandInt(7);
+    dataset(1, i - 2) = 1;
+    dataset(2, i - 2) = mlpack::math::RandInt(2);
+    labels(i - 2) = 2;
+  }
+
+  // Now train the streaming decision tree; 
+  typedef HoeffdingTree<GiniImpurity, HoeffdingSizeTNumericSplit,
+      HoeffdingCategoricalSplit> TreeType;
+  TreeType batchTree(dataset, info, labels, 3, false);
+
+  BOOST_REQUIRE_EQUAL(batchTree.NumDescendants(), 3);
 }
 
 
