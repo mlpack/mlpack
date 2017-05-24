@@ -511,19 +511,20 @@ size_t HoeffdingTree<
     CategoricalSplitType
 >::NumDescendants()
 {
-size_t nodes = 0;
-std::stack<HoeffdingTree<>*> stack;
-stack.push(this); // push the current tree
-while (!stack.empty())
-{  
-   HoeffdingTree<>* node = stack.top();
-   stack.pop();
-   nodes += node->NumChildren();
-   for (size_t i = 0; i < node->NumChildren(); ++i)
-            stack.push(&node->Child(i));
+  size_t nodes = 0;
+  std::stack<HoeffdingTree<>*> stack;
+  stack.push(this); // push the current tree
+  while (!stack.empty())
+  {  
+    HoeffdingTree<>* node = stack.top();
+    stack.pop();
+    nodes += node->NumChildren();
+    for (size_t i = 0; i < node->NumChildren(); ++i)
+      stack.push(&node->Child(i));
+  }
+  return nodes;
 }
-return nodes;
-}
+         
 template<
     typename FitnessFunction,
     template<typename> class NumericSplitType,
