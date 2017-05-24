@@ -274,7 +274,7 @@ BOOST_AUTO_TEST_CASE(LinearRegressionTest)
   // Generate some random data.
   mat data;
   data.randn(15, 800);
-  vec responses;
+  rowvec responses;
   responses.randn(800, 1);
 
   LinearRegression lr(data, responses, 0.05); // Train the model.
@@ -295,8 +295,8 @@ BOOST_AUTO_TEST_CASE(RegressionDistributionTest)
   // Generate some random data.
   mat data;
   data.randn(15, 800);
-  vec responses;
-  responses.randn(800, 1);
+  rowvec responses;
+  responses.randn(800);
 
   RegressionDistribution rd(data, responses);
   RegressionDistribution xmlRd, textRd, binaryRd;
@@ -1288,7 +1288,7 @@ BOOST_AUTO_TEST_CASE(LARSTest)
   // Create a dataset.
   arma::mat X = arma::randn(75, 250);
   arma::vec beta = arma::randn(75, 1);
-  arma::vec y = trans(X) * beta;
+  arma::rowvec y = beta.t() * X;
 
   LARS lars(true, 0.1, 0.1);
   arma::vec betaOpt;
@@ -1301,14 +1301,14 @@ BOOST_AUTO_TEST_CASE(LARSTest)
   // Train textLars.
   arma::mat textX = arma::randn(25, 150);
   arma::vec textBeta = arma::randn(25, 1);
-  arma::vec textY = trans(textX) * textBeta;
+  arma::rowvec textY = textBeta.t() * textX;
   arma::vec textBetaOpt;
   textLars.Train(textX, textY, textBetaOpt);
 
   SerializeObjectAll(lars, xmlLars, binaryLars, textLars);
 
   // Now, check that predictions are the same.
-  arma::vec pred, xmlPred, textPred, binaryPred;
+  arma::rowvec pred, xmlPred, textPred, binaryPred;
   lars.Predict(X, pred);
   xmlLars.Predict(X, xmlPred);
   textLars.Predict(X, textPred);
