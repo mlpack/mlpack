@@ -39,7 +39,7 @@ PROGRAM_INFO("Simple Linear Regression and Prediction",
 
 PARAM_MATRIX_IN("training", "Matrix containing training set X (regressors).",
     "t");
-PARAM_COL_IN("training_responses", "Optional vector containing y "
+PARAM_ROW_IN("training_responses", "Optional vector containing y "
     "(responses). If not given, the responses are assumed to be the last row "
     "of the input file.", "r");
 
@@ -140,7 +140,7 @@ int main(int argc, char* argv[])
     {
       // The initial predictors for y, Nx1.
       Timer::Start("load_responses");
-      responses = CLI::GetParam<vec>("training_responses").t();
+      responses = CLI::GetParam<rowvec>("training_responses");
       Timer::Stop("load_responses");
 
       if (responses.n_cols != regressors.n_cols)
