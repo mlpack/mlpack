@@ -204,7 +204,7 @@ int main(int argc, char** argv)
 
     // Do we need to save outputs?
     if (CLI::HasParam("predictions_file"))
-      data::Save(CLI::GetParam<std::string>("prediction_file"), predictions);
+      data::Save(CLI::GetParam<std::string>("predictions_file"), predictions);
     if (CLI::HasParam("probabilities_file"))
       data::Save(CLI::GetParam<std::string>("probabilities_file"),
           probabilities);
