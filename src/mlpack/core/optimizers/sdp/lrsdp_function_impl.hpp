@@ -55,8 +55,8 @@ template <typename SDPType>
 void LRSDPFunction<SDPType>::Gradient(const arma::mat& /* coordinates */,
                                       arma::mat& /* gradient */) const
 {
-  Log::Fatal << "LRSDPFunction::Gradient() not implemented for arbitrary 
-       optimizers!" << std::endl;
+  Log::Fatal << "LRSDPFunction::Gradient() not implemented for arbitrary "
+      << "optimizers!" << std::endl;
 }
 
 template <typename SDPType>
