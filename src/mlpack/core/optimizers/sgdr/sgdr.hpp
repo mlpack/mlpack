@@ -76,7 +76,7 @@ class SGDR
    * @param updatePolicy Instantiated update policy used to adjust the given
    *        parameters.
    */
- SGDR(DecomposableFunctionType& function,
+  SGDR(DecomposableFunctionType& function,
       const size_t epochRestart = 50,
       const double multFactor = 2.0,
       const size_t batchSize = 1000,

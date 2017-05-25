@@ -91,7 +91,7 @@ class SnapshotSGDR
    * @param updatePolicy Instantiated update policy used to adjust the given
    *        parameters.
    */
- SnapshotSGDR(DecomposableFunctionType& function,
+  SnapshotSGDR(DecomposableFunctionType& function,
               const size_t epochRestart = 50,
               const double multFactor = 2.0,
               const size_t batchSize = 1000,

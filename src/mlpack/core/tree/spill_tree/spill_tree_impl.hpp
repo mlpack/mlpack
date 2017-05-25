@@ -230,7 +230,7 @@ SpillTree(SpillTree&& other) :
   other.dataset = NULL;
   other.localDataset = false;
 
-  //Set new parent.
+  // Set new parent.
   if (left)
     left->parent = this;
   if (right)
