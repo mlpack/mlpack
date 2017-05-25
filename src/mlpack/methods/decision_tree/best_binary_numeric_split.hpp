@@ -56,8 +56,8 @@ class BestBinaryNumericSplit
       const VecType& data,
       const arma::Row<size_t>& labels,
       const size_t numClasses,
-      const size_t minimumLeafSize,
       const WeightVecType& weights,
+      const size_t minimumLeafSize,
       arma::Col<typename VecType::elem_type>& classProbabilities,
       AuxiliarySplitInfo<typename VecType::elem_type>& aux);
 
