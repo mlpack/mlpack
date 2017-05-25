@@ -52,7 +52,10 @@ class RStarTreeSplit
    * Given a node, return the best dimension and the best index to split on.
    */
   template<typename TreeType>
-  static void PickLeafSplit(TreeType* tree, size_t& bestAxis, size_t& bestIndex);
+  static void PickLeafSplit(
+      TreeType* tree,
+      size_t& bestAxis,
+      size_t& bestIndex);
 
  private:
   /**

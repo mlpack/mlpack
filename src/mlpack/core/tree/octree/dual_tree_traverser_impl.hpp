@@ -135,7 +135,8 @@ void Octree<MetricType, StatisticType, MatType>::DualTreeTraverser<RuleType>::
       {
         if (scores[scoreOrder[i]] == DBL_MAX)
         {
-          // We don't need to check any more---all children past here are pruned.
+          // We don't need to check any more
+          // All children past here are pruned.
           numPrunes += scoreOrder.n_elem - i;
           break;
         }

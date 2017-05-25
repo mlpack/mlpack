@@ -268,7 +268,9 @@ void RStarTreeSplit::SplitLeafNode(TreeType *tree, std::vector<bool>& relevels)
  * higher up the tree because they were already updated if necessary.
  */
 template<typename TreeType>
-bool RStarTreeSplit::SplitNonLeafNode(TreeType *tree, std::vector<bool>& relevels)
+bool RStarTreeSplit::SplitNonLeafNode(
+    TreeType *tree,
+    std::vector<bool>& relevels)
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
