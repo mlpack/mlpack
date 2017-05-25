@@ -163,4 +163,4 @@ class RPlusPlusTreeAuxiliaryInformation
 
 #include "r_plus_plus_tree_auxiliary_information_impl.hpp"
 
-#endif//MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_PLUS_TREE_AUXILIARY_INFORMATION_HPP
+#endif // MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_PLUS_TREE_AUXILIARY_INFORMATION_HPP

@@ -386,7 +386,8 @@ double L_BFGS<FunctionType>::Optimize(arma::mat& iterate)
         function.Evaluate(iterate) << ", gradient norm " <<
         arma::norm(gradient, 2) << ", " <<
         ((prevFunctionValue - functionValue) /
-         std::max(std::max(fabs(prevFunctionValue), fabs(functionValue)), 1.0)) << "." << std::endl;
+         std::max(std::max(fabs(prevFunctionValue), fabs(functionValue)), 1.0))
+        << "." << std::endl;
 
     prevFunctionValue = functionValue;
 
@@ -452,7 +453,6 @@ double L_BFGS<FunctionType>::Optimize(arma::mat& iterate)
 
     // Overwrite an old basis set.
     UpdateBasisSet(itNum, iterate, oldIterate, gradient, oldGradient);
-
   } // End of the optimization loop.
 
   return function.Evaluate(iterate);

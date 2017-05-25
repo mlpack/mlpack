@@ -182,7 +182,8 @@ void LoadARFF(const std::string& filename,
         // Strip spaces before mapping.
         std::string token = *it;
         boost::trim(token);
-        matrix(col, row) = info.template MapString<eT>(token, col); // We load transposed.
+        // We load transposed. 
+        matrix(col, row) = info.template MapString<eT>(token, col);
       }
       else if (info.Type(col) == Datatype::numeric)
       {

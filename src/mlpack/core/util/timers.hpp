@@ -18,7 +18,7 @@
 #include <chrono> // chrono library for cross platform timer calculation
 
 #if defined(_WIN32)
- // uint64_t isn't defined on every windows.
+  // uint64_t isn't defined on every windows.
   #if !defined(HAVE_UINT64_T)
     #if SIZEOF_UNSIGNED_LONG == 8
       typedef unsigned long uint64_t;

@@ -147,4 +147,4 @@ class HilbertRTreeAuxiliaryInformation
 
 #include "hilbert_r_tree_auxiliary_information_impl.hpp"
 
-#endif//MLPACK_CORE_TREE_RECTANGLE_TREE_HILBERT_R_TREE_AUXILIARY_INFORMATION_HPP
+#endif // MLPACK_CORE_TREE_RECTANGLE_TREE_HILBERT_R_TREE_AUXILIARY_INFORMATION_HPP

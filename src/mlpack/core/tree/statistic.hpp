@@ -23,7 +23,7 @@ namespace tree {
  */
 class EmptyStatistic
 {
-  public:
+ public:
     EmptyStatistic() { }
     ~EmptyStatistic() { }
 

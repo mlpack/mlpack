@@ -27,7 +27,6 @@ template <typename SDPType>
 class LRSDPFunction
 {
  public:
-
   /**
    * Construct the LRSDPFunction from the given SDP.
    *
@@ -90,7 +89,6 @@ class LRSDPFunction
   SDPType& SDP() { return sdp; }
 
  private:
-
   //! SDP object representing the problem
   SDPType sdp;
 

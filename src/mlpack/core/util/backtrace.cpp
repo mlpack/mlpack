@@ -94,10 +94,10 @@ void Backtrace::GetAddress(int maxDepth)
   {
     Dl_info addressHandler;
 
-    //No backtrace will be printed if no compile flags: -g -rdynamic
+    // No backtrace will be printed if no compile flags: -g -rdynamic
     if (TRACE_CONDITION_1)
     {
-      return ;
+      return;
     }
 
     frame.address = addressHandler.dli_saddr;
@@ -130,13 +130,13 @@ void Backtrace::DecodeAddress(long addr)
       return;
     }
 
-    bfd_check_format(abfd,bfd_object);
+    bfd_check_format(abfd, bfd_object);
 
     unsigned storage_needed = bfd_get_symtab_upper_bound(abfd);
     syms = (asymbol **) malloc(storage_needed);
 
     text = bfd_get_section_by_name(abfd, ".text");
-   }
+  }
 
   long offset = addr - text->vma;
 
