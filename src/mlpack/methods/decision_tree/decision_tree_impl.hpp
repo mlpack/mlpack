@@ -285,18 +285,20 @@ void DecisionTree<FitnessFunction,
   // numericAux and categoricalAux (and clear them later if we make not split),
   // and use classProbabilities as auxiliary information.  Later we'll overwrite
   // classProbabilities to the empirical class probabilities if we do not split.
-  double bestGain = FitnessFunction::template Evaluate<UseWeights>(labels, numClasses, weights);
+  double bestGain = FitnessFunction::template Evaluate<UseWeights>(labels,
+      numClasses, weights);
   size_t bestDim = datasetInfo.Dimensionality(); // This means "no split".
   for (size_t i = 0; i < datasetInfo.Dimensionality(); ++i)
   {
     double dimGain = -DBL_MAX;
     if (datasetInfo.Type(i) == data::Datatype::categorical)
-      dimGain = CategoricalSplit::template SplitIfBetter<UseWeights>(bestGain, data.row(i),
-          datasetInfo.NumMappings(i), labels, numClasses, minimumLeafSize, weights,
-          classProbabilities, *this);
+      dimGain = CategoricalSplit::template SplitIfBetter<UseWeights>(bestGain,
+          data.row(i), datasetInfo.NumMappings(i), labels, numClasses,
+          minimumLeafSize, weights, classProbabilities, *this);
     else if (datasetInfo.Type(i) == data::Datatype::numeric)
-      dimGain = NumericSplit::template SplitIfBetter<UseWeights>(bestGain, data.row(i), labels,
-          numClasses, minimumLeafSize, weights, classProbabilities, *this);
+      dimGain = NumericSplit::template SplitIfBetter<UseWeights>(bestGain,
+          data.row(i), labels, numClasses, minimumLeafSize, weights,
+          classProbabilities, *this);
 
     // Was there an improvement?  If so mark that it's the new best dimension.
     if (dimGain > bestGain)
@@ -430,13 +432,14 @@ void DecisionTree<FitnessFunction,
   // later if we don't make a split), and use classProbabilities as auxiliary
   // information.  Later we'll overwrite classProbabilities to the empirical
   // class probabilities if we do not split.
-  double bestGain = FitnessFunction::template Evaluate<UseWeights>(labels, numClasses, weights);
+  double bestGain = FitnessFunction::template Evaluate<UseWeights>(labels,
+      numClasses, weights);
   size_t bestDim = data.n_rows; // This means "no split".
   for (size_t i = 0; i < data.n_rows; ++i)
   {
-    double dimGain = NumericSplitType<FitnessFunction>::template SplitIfBetter<UseWeights>(bestGain,
-         data.row(i), labels, numClasses, minimumLeafSize, weights, classProbabilities,
-         *this);
+    double dimGain = NumericSplitType<FitnessFunction>::template
+        SplitIfBetter<UseWeights>(bestGain, data.row(i), labels, numClasses,
+        minimumLeafSize, weights, classProbabilities, *this);
 
     if (dimGain > bestGain)
     {
@@ -568,7 +571,8 @@ void DecisionTree<FitnessFunction,
     return;
   }
 
-  children[CalculateDirection(point)]->Classify(point, prediction, probabilities);
+  children[CalculateDirection(point)]->Classify(point, prediction,
+      probabilities);
 }
 
 //! Return the class for a set of points.

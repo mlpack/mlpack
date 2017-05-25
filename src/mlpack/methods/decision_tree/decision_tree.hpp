@@ -82,10 +82,10 @@ class DecisionTree :
                const size_t minimumLeafSize = 10);
 
   /**
-   * Construct the decision tree on the given data and labels with weight, where the data
-   * can be both numeric and categorical.  Setting minimumLeafSize too small may
-   * cause the tree to overfit, but setting it too large may cause it to
-   * underfit.
+   * Construct the decision tree on the given data and labels with weights,
+   * where the data can be both numeric and categorical.  Setting
+   * minimumLeafSize too small may cause the tree to overfit, but setting it too
+   * large may cause it to underfit.
    *
    * @param data Dataset to train on.
    * @param datasetInfo Type information for each dimension of the dataset.
@@ -103,10 +103,10 @@ class DecisionTree :
                const size_t minimumLeafSize = 10);
 
   /**
-   * Construct the decision tree on the given data and labels with weight, assuming that the
-   * data is all of the numeric type.  Setting minimumLeafSize too small may
-   * cause the tree to overfit, but setting it too large may cause it to
-   * underfit.
+   * Construct the decision tree on the given data and labels with weights,
+   * assuming that the data is all of the numeric type.  Setting minimumLeafSize
+   * too small may cause the tree to overfit, but setting it too large may cause
+   * it to underfit.
    *
    * @param data Dataset to train on.
    * @param labels Labels for each training point.

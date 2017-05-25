@@ -44,23 +44,19 @@ class GiniGain
     if (labels.n_elem == 0)
       return 0.0;
 
-     // Count the number of elements in each class.
-     arma::vec counts(numClasses);
-     counts.zeros();
+    // Count the number of elements in each class.
+    arma::vec counts(numClasses, arma::fill::zeros);
 
     // Calculate the Gini impurity of the un-split node.
     double impurity = 0.0;
 
     if (UseWeights)
     {
-
-      // sum all the weights up
+      // Sum all the weights up.
       double accWeights = 0.0;
 
       for (size_t i = 0; i < labels.n_elem; ++i)
       {
-        // We just plus one if it's 'no weighted label' and plus 'weight'
-        // if the label had correspond label.
         counts[labels[i]] += weights[i];
         accWeights += weights[i];
       }
