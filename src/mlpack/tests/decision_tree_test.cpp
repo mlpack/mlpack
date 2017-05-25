@@ -376,10 +376,10 @@ BOOST_AUTO_TEST_CASE(BestBinaryNumericSplitSimpleSplitTest)
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 2, weights);
   const double gain = BestBinaryNumericSplit<GiniGain>::SplitIfBetter<false>(
-      bestGain, values, labels, 2, 3, weights, classProbabilities, aux);
+      bestGain, values, labels, 2, weights, 3, classProbabilities, aux);
   const double weightedGain =
       BestBinaryNumericSplit<GiniGain>::SplitIfBetter<true>(bestGain, values,
-      labels, 2, 3, weights, classProbabilities, aux);
+      labels, 2, weights, 3, classProbabilities, aux);
 
   // Make sure that a split was made.
   BOOST_REQUIRE_GT(gain, bestGain);
@@ -413,11 +413,11 @@ BOOST_AUTO_TEST_CASE(BestBinaryNumericSplitMinSamplesTest)
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 2, weights);
   const double gain = BestBinaryNumericSplit<GiniGain>::SplitIfBetter<false>(
-      bestGain, values, labels, 2, 8, weights, classProbabilities, aux);
+      bestGain, values, labels, 2, weights, 8, classProbabilities, aux);
   // This should make no difference because it won't split at all. 
   const double weightedGain =
       BestBinaryNumericSplit<GiniGain>::SplitIfBetter<true>(bestGain, values,
-      labels, 2, 8, weights, classProbabilities, aux);
+      labels, 2, weights, 8, classProbabilities, aux);
 
   // Make sure that no split was made.
   BOOST_REQUIRE_EQUAL(gain, bestGain);
@@ -448,7 +448,7 @@ BOOST_AUTO_TEST_CASE(BestBinaryNumericSplitNoGainTest)
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 2, weights);
   const double gain = BestBinaryNumericSplit<GiniGain>::SplitIfBetter<false>(
-      bestGain, values, labels, 2, 10, weights, classProbabilities, aux);
+      bestGain, values, labels, 2, weights, 10, classProbabilities, aux);
 
   // Make sure there was no split.
   BOOST_REQUIRE_EQUAL(gain, bestGain);
@@ -472,10 +472,10 @@ BOOST_AUTO_TEST_CASE(AllCategoricalSplitSimpleSplitTest)
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 3, weights);
   const double gain = AllCategoricalSplit<GiniGain>::SplitIfBetter<false>(
-      bestGain, values, 4, labels, 3, 3, weights, classProbabilities, aux);
+      bestGain, values, 4, labels, 3, weights, 3, classProbabilities, aux);
   const double weightedGain =
       AllCategoricalSplit<GiniGain>::SplitIfBetter<true>(bestGain, values, 4,
-      labels, 3, 3, weights, classProbabilities, aux);
+      labels, 3, weights, 3, classProbabilities, aux);
 
   // Make sure that a split was made.
   BOOST_REQUIRE_GT(gain, bestGain);
@@ -507,7 +507,7 @@ BOOST_AUTO_TEST_CASE(AllCategoricalSplitMinSamplesTest)
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 3, weights);
   const double gain = AllCategoricalSplit<GiniGain>::SplitIfBetter<false>(
-      bestGain, values, 4, labels, 3, 4, weights, classProbabilities, aux);
+      bestGain, values, 4, labels, 3, weights, 4, classProbabilities, aux);
 
   // Make sure it's not split.
   BOOST_REQUIRE_EQUAL(gain, bestGain);
@@ -539,10 +539,10 @@ BOOST_AUTO_TEST_CASE(AllCategoricalSplitNoGainTest)
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 3, weights);
   const double gain = AllCategoricalSplit<GiniGain>::SplitIfBetter<false>(
-      bestGain, values, 10, labels, 3, 10, weights, classProbabilities, aux);
+      bestGain, values, 10, labels, 3, weights, 10, classProbabilities, aux);
   const double weightedGain =
       AllCategoricalSplit<GiniGain>::SplitIfBetter<true>(bestGain, values, 10,
-      labels, 3, 10, weights, classProbabilities, aux);
+      labels, 3, weights, 10, classProbabilities, aux);
 
   // Make sure that there was no split.
   BOOST_REQUIRE_EQUAL(gain, bestGain);
@@ -703,8 +703,7 @@ BOOST_AUTO_TEST_CASE(SimpleGeneralizationTest)
     BOOST_FAIL("Cannot load labels for vc2_labels.txt");
 
   // Initialize an all-ones weight matrix.
-  arma::mat weights = arma::ones<arma::Mat<double>>(labels.n_rows,
-      labels.n_cols);
+  arma::rowvec weights(labels.n_cols, arma::fill::ones);
 
   // Build decision tree.
   DecisionTree<> d(inputData, labels, 3, 10); // Leaf size of 10.
