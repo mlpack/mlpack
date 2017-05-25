@@ -129,7 +129,7 @@ BOOST_AUTO_TEST_SUITE(DecisionTreeTest);
  */
 BOOST_AUTO_TEST_CASE(GiniGainPerfectTest)
 {
-  arma::rowvec weights(10);
+  arma::rowvec weights(10, arma::fill::ones);
   arma::Row<size_t> labels;
   labels.zeros(10);
 
@@ -689,7 +689,7 @@ BOOST_AUTO_TEST_CASE(SimpleGeneralizationTest)
   if (!data::Load("vc2_labels.txt", labels))
     BOOST_FAIL("Cannot load labels for vc2_labels.txt");
 
-  // init a weight martix
+  // Initialize an all-ones weight matrix.
   arma::mat weights = arma::ones<arma::Mat<double>>(labels.n_rows, labels.n_cols);
 
   // Build decision tree.
@@ -826,6 +826,224 @@ BOOST_AUTO_TEST_CASE(DecisionStumpTest)
   // Check that its children doesn't have children.
   BOOST_REQUIRE_EQUAL(stump.Child(0).NumChildren(), 0);
   BOOST_REQUIRE_EQUAL(stump.Child(1).NumChildren(), 0);
+}
+
+/**
+ * Test that we can build a decision tree using weighted data (where the
+ * low-weighted data is random noise), and that the tree still builds correctly
+ * enough to get good results.
+ */
+BOOST_AUTO_TEST_CASE(WeightedDecisionTreeTest)
+{
+  arma::mat dataset;
+  arma::Row<size_t> labels;
+  data::Load("vc2.csv", dataset);
+  data::Load("vc2_labels.txt", labels);
+
+  // Add some noise.
+  arma::mat noise(dataset.n_rows, 1000, arma::fill::randu);
+  arma::Row<size_t> noiseLabels(1000);
+  for (size_t i = 0; i < noiseLabels.n_elem; ++i)
+    noiseLabels[i] = math::RandInt(3); // Random label.
+
+  // Concatenate data matrices.
+  arma::mat data = arma::join_rows(dataset, noise);
+  arma::Row<size_t> fullLabels = arma::join_rows(labels, noiseLabels);
+
+  // Now set weights.
+  arma::rowvec weights(dataset.n_cols + 1000);
+  for (size_t i = 0; i < dataset.n_cols; ++i)
+    weights[i] = math::Random(0.9, 1.0);
+  for (size_t i = dataset.n_cols; i < dataset.n_cols + 1000; ++i)
+    weights[i] = math::Random(0.0, 0.01); // Low weights for false points.
+
+  // Now build the decision tree.  I think the syntax is right here.
+  DecisionTree<> d(data, fullLabels, 3, weights, 10);
+
+  // Now we can check that we get good performance on the VC2 test set.
+  arma::mat testData;
+  arma::Row<size_t> testLabels;
+  data::Load("vc2_test.csv", testData);
+  data::Load("vc2_test_labels.txt", testLabels);
+
+  arma::Row<size_t> predictions;
+  d.Classify(testData, predictions);
+
+  BOOST_REQUIRE_EQUAL(predictions.n_elem, testData.n_cols);
+
+  // Figure out the accuracy.
+  double correct = 0.0;
+  for (size_t i = 0; i < predictions.n_elem; ++i)
+    if (predictions[i] == testLabels[i])
+      ++correct;
+  correct /= predictions.n_elem;
+
+  BOOST_REQUIRE_GT(correct, 0.75);
+}
+/**
+ * Test that we can build a decision tree on a simple categorical dataset using
+ * weights, with low-weight noise added.
+ */
+BOOST_AUTO_TEST_CASE(CategoricalWeightedBuildTest)
+{
+  arma::mat d;
+  arma::Row<size_t> l;
+  data::DatasetInfo di;
+  MockCategoricalData(d, l, di);
+
+  // Split into a training set and a test set.
+  arma::mat trainingData = d.cols(0, 4999);
+  arma::mat testData = d.cols(5000, 9999);
+  arma::Row<size_t> trainingLabels = l.subvec(0, 4999);
+  arma::Row<size_t> testLabels = l.subvec(5000, 9999);
+
+  // Now create random points.
+  arma::mat randomNoise(4, 10000);
+  arma::Row<size_t> randomLabels(10000);
+  for (size_t i = 0; i < 10000; ++i)
+  {
+    randomNoise(0, i) = math::Random();
+    randomNoise(1, i) = math::Random();
+    randomNoise(2, i) = math::RandInt(4);
+    randomNoise(3, i) = math::RandInt(2);
+    randomLabels[i] = math::RandInt(5);
+  }
+
+  // Generate weights.
+  arma::rowvec weights(20000);
+  for (size_t i = 0; i < 10000; ++i)
+    weights[i] = math::Random(0.9, 1.0);
+  for (size_t i = 10000; i < 20000; ++i)
+    weights[i] = math::Random(0.0, 0.001);
+
+  arma::mat fullData = arma::join_rows(trainingData, randomNoise);
+  arma::Row<size_t> fullLabels = arma::join_rows(trainingLabels, randomLabels);
+
+  // Build the tree.
+  DecisionTree<> tree(fullData, di, fullLabels, 5, weights, 10);
+
+  // Now evaluate the accuracy of the tree.
+  arma::Row<size_t> predictions;
+  tree.Classify(testData, predictions);
+
+  BOOST_REQUIRE_EQUAL(predictions.n_elem, testData.n_cols);
+  size_t correct = 0;
+  for (size_t i = 0; i < testData.n_cols; ++i)
+    if (testLabels[i] == predictions[i])
+      ++correct;
+
+  // Make sure we got at least 70% accuracy.
+  const double correctPct = double(correct) / double(testData.n_cols);
+  BOOST_REQUIRE_GT(correctPct, 0.70);
+}
+
+/**
+ * Test that we can build a decision tree using weighted data (where the
+ * low-weighted data is random noise) with information gain, and that the tree
+ * still builds correctly enough to get good results.
+ */
+BOOST_AUTO_TEST_CASE(WeightedDecisionTreeInformationGainTest)
+{
+  arma::mat dataset;
+  arma::Row<size_t> labels;
+  data::Load("vc2.csv", dataset);
+  data::Load("vc2_labels.txt", labels);
+
+  // Add some noise.
+  arma::mat noise(dataset.n_rows, 1000, arma::fill::randu);
+  arma::Row<size_t> noiseLabels(1000);
+  for (size_t i = 0; i < noiseLabels.n_elem; ++i)
+    noiseLabels[i] = math::RandInt(3); // Random label.
+
+  // Concatenate data matrices.
+  arma::mat data = arma::join_rows(dataset, noise);
+  arma::Row<size_t> fullLabels = arma::join_rows(labels, noiseLabels);
+
+  // Now set weights.
+  arma::rowvec weights(dataset.n_cols + 1000);
+  for (size_t i = 0; i < dataset.n_cols; ++i)
+    weights[i] = math::Random(0.9, 1.0);
+  for (size_t i = dataset.n_cols; i < dataset.n_cols + 1000; ++i)
+    weights[i] = math::Random(0.0, 0.01); // Low weights for false points.
+
+  // Now build the decision tree.  I think the syntax is right here.
+  DecisionTree<InformationGain> d(data, fullLabels, 3, weights, 10);
+
+  // Now we can check that we get good performance on the VC2 test set.
+  arma::mat testData;
+  arma::Row<size_t> testLabels;
+  data::Load("vc2_test.csv", testData);
+  data::Load("vc2_test_labels.txt", testLabels);
+
+  arma::Row<size_t> predictions;
+  d.Classify(testData, predictions);
+
+  BOOST_REQUIRE_EQUAL(predictions.n_elem, testData.n_cols);
+
+  // Figure out the accuracy.
+  double correct = 0.0;
+  for (size_t i = 0; i < predictions.n_elem; ++i)
+    if (predictions[i] == testLabels[i])
+      ++correct;
+  correct /= predictions.n_elem;
+
+  BOOST_REQUIRE_GT(correct, 0.75);
+}
+/**
+ * Test that we can build a decision tree using information gain on a simple
+ * categorical dataset using weights, with low-weight noise added.
+ */
+BOOST_AUTO_TEST_CASE(CategoricalInformationGainWeightedBuildTest)
+{
+  arma::mat d;
+  arma::Row<size_t> l;
+  data::DatasetInfo di;
+  MockCategoricalData(d, l, di);
+
+  // Split into a training set and a test set.
+  arma::mat trainingData = d.cols(0, 4999);
+  arma::mat testData = d.cols(5000, 9999);
+  arma::Row<size_t> trainingLabels = l.subvec(0, 4999);
+  arma::Row<size_t> testLabels = l.subvec(5000, 9999);
+
+  // Now create random points.
+  arma::mat randomNoise(4, 10000);
+  arma::Row<size_t> randomLabels(10000);
+  for (size_t i = 0; i < 10000; ++i)
+  {
+    randomNoise(0, i) = math::Random();
+    randomNoise(1, i) = math::Random();
+    randomNoise(2, i) = math::RandInt(4);
+    randomNoise(3, i) = math::RandInt(2);
+    randomLabels[i] = math::RandInt(5);
+  }
+
+  // Generate weights.
+  arma::rowvec weights(20000);
+  for (size_t i = 0; i < 10000; ++i)
+    weights[i] = math::Random(0.9, 1.0);
+  for (size_t i = 10000; i < 20000; ++i)
+    weights[i] = math::Random(0.0, 0.001);
+
+  arma::mat fullData = arma::join_rows(trainingData, randomNoise);
+  arma::Row<size_t> fullLabels = arma::join_rows(trainingLabels, randomLabels);
+
+  // Build the tree.
+  DecisionTree<InformationGain> tree(fullData, di, fullLabels, 5, weights, 10);
+
+  // Now evaluate the accuracy of the tree.
+  arma::Row<size_t> predictions;
+  tree.Classify(testData, predictions);
+
+  BOOST_REQUIRE_EQUAL(predictions.n_elem, testData.n_cols);
+  size_t correct = 0;
+  for (size_t i = 0; i < testData.n_cols; ++i)
+    if (testLabels[i] == predictions[i])
+      ++correct;
+
+  // Make sure we got at least 70% accuracy.
+  const double correctPct = double(correct) / double(testData.n_cols);
+  BOOST_REQUIRE_GT(correctPct, 0.70);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
