@@ -60,6 +60,10 @@ class InformationGain
         accWeights += weights[i];
       }
 
+      // Corner case: return 0 if no weight.
+      if (accWeights == 0.0)
+        return 0.0;
+
       for (size_t i = 0; i < numClasses; ++i)
       {
         const double f = ((double) counts[i] / (double) accWeights);
