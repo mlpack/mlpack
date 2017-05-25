@@ -1096,7 +1096,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
       parent != NULL)
     parent->CondenseTree(point, relevels, usePoint);
   else if (!usePoint &&
-           (ShrinkBoundForBound(bound) || 
+           (ShrinkBoundForBound(bound) ||
            auxiliaryInfo.UpdateAuxiliaryInfo(this)) &&
            parent != NULL)
     parent->CondenseTree(point, relevels, usePoint);

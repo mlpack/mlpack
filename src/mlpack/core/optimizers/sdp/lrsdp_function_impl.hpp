@@ -77,7 +77,7 @@ void LRSDPFunction<SDPType>::GradientConstraint(
     const arma::mat& /* coordinates */,
     arma::mat& /* gradient */) const
 {
-  Log::Fatal << "LRSDPFunction::GradientConstraint() not implemented " 
+  Log::Fatal << "LRSDPFunction::GradientConstraint() not implemented "
       << "for arbitrary optimizers!" << std::endl;
 }
 

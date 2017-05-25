@@ -129,9 +129,9 @@ class DiscreteDistribution
     // Ensure the observation has the same dimension with the probabilities
     if (observation.n_elem != probabilities.size())
     {
-      Log::Debug << "the obversation must has the same dimension with the " 
-          << "probabilities the observation's dimension is " 
-          << observation.n_elem << " but the dimension of probabilities is " 
+      Log::Debug << "the obversation must has the same dimension with the "
+          << "probabilities the observation's dimension is "
+          << observation.n_elem << " but the dimension of probabilities is "
           << probabilities.size() << std::endl;
       return probability;
     }
@@ -145,8 +145,8 @@ class DiscreteDistribution
       if (obs >= probabilities[dimension].n_elem)
       {
         Log::Debug << "DiscreteDistribution::Probability(): received observation "
-             << obs << "; observation must be in [0, " 
-             << probabilities[dimension].n_elem << "] for this distribution." 
+             << obs << "; observation must be in [0, "
+             << probabilities[dimension].n_elem << "] for this distribution."
              << std::endl;
       }
       probability *= probabilities[dimension][obs];
