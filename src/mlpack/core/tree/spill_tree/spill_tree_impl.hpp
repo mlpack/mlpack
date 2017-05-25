@@ -671,8 +671,8 @@ bool SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
     }
   }
 
-  const double p1 = double (left + rightFrontier) / points.n_elem;
-  const double p2 = double (right + leftFrontier) / points.n_elem;
+  const double p1 = (double) (left + rightFrontier) / points.n_elem;
+  const double p2 = (double) (right + leftFrontier) / points.n_elem;
 
   if ((p1 <= rho || rightFrontier == 0) &&
       (p2 <= rho || leftFrontier == 0))
