@@ -76,7 +76,7 @@ add_executable(mlpack_test
   recurrent_network_test.cpp
   rectangle_tree_test.cpp
   regularized_svd_test.cpp
-  rl_environment_test.cpp
+  rl_components_test.cpp
   rmsprop_test.cpp
   sa_test.cpp
   sdp_primal_dual_test.cpp

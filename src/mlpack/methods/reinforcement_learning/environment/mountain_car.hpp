@@ -38,7 +38,7 @@ class MountainCar
     /**
      * Construct a state instance.
      */
-    State(): data(2, arma::fill::zeros)
+    State(): data(dimension, arma::fill::zeros)
     { /* Nothing to do here. */ }
 
     /**
@@ -64,6 +64,9 @@ class MountainCar
 
     //! Encode the state to a column vector.
     const arma::colvec& Encode() const { return data; }
+
+    //! Dimension of the encoded state.
+    static constexpr size_t dimension = 2;
 
    private:
     //! Locally-stored velocity and position vector.
