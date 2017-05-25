@@ -44,14 +44,14 @@ void MockCategoricalData(arma::mat& d, arma::Row<size_t>& l, data::DatasetInfo& 
     c2[i] = DiscreteDistribution(probs);
   }
 
-  arma::mat spiralDataset(4, 10000);
-  arma::Row<size_t> labels(10000);
-  for (size_t i = 0; i < 10000; ++i)
+  arma::mat spiralDataset(4, 4000);
+  arma::Row<size_t> labels(4000);
+  for (size_t i = 0; i < 4000; ++i)
   {
-    // One circle every 20000 samples.  Plus some noise.
-    const double magnitude = 2.0 + (double(i) / 2000.0) +
+    // One circle every 2000 samples.  Plus some noise.
+    const double magnitude = 2.0 + (double(i) / 200.0) +
         0.5 * mlpack::math::Random();
-    const double angle = (i % 2000) * (2 * M_PI) + mlpack::math::Random();
+    const double angle = (i % 200) * (2 * M_PI) + mlpack::math::Random();
 
     const double x = magnitude * cos(angle);
     const double y = magnitude * sin(angle);
@@ -60,25 +60,25 @@ void MockCategoricalData(arma::mat& d, arma::Row<size_t>& l, data::DatasetInfo& 
     spiralDataset(1, i) = y;
 
     // Set categorical features c1 and c2.
-    if (i < 2000)
+    if (i < 800)
     {
       spiralDataset(2, i) = c1[1].Random()[0];
       spiralDataset(3, i) = c2[1].Random()[0];
       labels[i] = 1;
     }
-    else if (i < 4000)
+    else if (i < 1600)
     {
       spiralDataset(2, i) = c1[3].Random()[0];
       spiralDataset(3, i) = c2[3].Random()[0];
       labels[i] = 3;
     }
-    else if (i < 6000)
+    else if (i < 2400)
     {
       spiralDataset(2, i) = c1[2].Random()[0];
       spiralDataset(3, i) = c2[2].Random()[0];
       labels[i] = 2;
     }
-    else if (i < 8000)
+    else if (i < 3200)
     {
       spiralDataset(2, i) = c1[0].Random()[0];
       spiralDataset(3, i) = c2[0].Random()[0];
@@ -105,21 +105,15 @@ void MockCategoricalData(arma::mat& d, arma::Row<size_t>& l, data::DatasetInfo& 
   datasetInfo.MapString<double>("1", 3);
 
   // Now shuffle the dataset.
-  arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0, 9999,
-      10000));
-  d = arma::mat(4, 10000);
-  l = arma::Row<size_t>(10000);
-  for (size_t i = 0; i < 10000; ++i)
+  arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0, 3999,
+      4000));
+  d = arma::mat(4, 4000);
+  l = arma::Row<size_t>(4000);
+  for (size_t i = 0; i < 4000; ++i)
   {
     d.col(i) = spiralDataset.col(indices[i]);
     l[i] = labels[indices[i]];
   }
-
-  // Split into a training set and a test set.
-  arma::mat trainingData = d.cols(0, 4999);
-  arma::mat testData = d.cols(5000, 9999);
-  arma::Row<size_t> trainingLabels = l.subvec(0, 4999);
-  arma::Row<size_t> testLabels = l.subvec(5000, 9999);
 }
 
 BOOST_AUTO_TEST_SUITE(DecisionTreeTest);
@@ -747,10 +741,10 @@ BOOST_AUTO_TEST_CASE(CategoricalBuildTest)
   MockCategoricalData(d, l, di);
   
   // Split into a training set and a test set.
-  arma::mat trainingData = d.cols(0, 4999);
-  arma::mat testData = d.cols(5000, 9999);
-  arma::Row<size_t> trainingLabels = l.subvec(0, 4999);
-  arma::Row<size_t> testLabels = l.subvec(5000, 9999);
+  arma::mat trainingData = d.cols(0, 1999);
+  arma::mat testData = d.cols(2000, 3999);
+  arma::Row<size_t> trainingLabels = l.subvec(0, 1999);
+  arma::Row<size_t> testLabels = l.subvec(2000, 3999);
 
   // Build the tree.
   DecisionTree<> tree(trainingData, di, trainingLabels, 5, 10);
@@ -781,10 +775,10 @@ BOOST_AUTO_TEST_CASE(CategoricalBuildTestWithWeight)
   MockCategoricalData(d, l, di);
   
   // Split into a training set and a test set.
-  arma::mat trainingData = d.cols(0, 4999);
-  arma::mat testData = d.cols(5000, 9999);
-  arma::Row<size_t> trainingLabels = l.subvec(0, 4999);
-  arma::Row<size_t> testLabels = l.subvec(5000, 9999);
+  arma::mat trainingData = d.cols(0, 1999);
+  arma::mat testData = d.cols(2000, 3999);
+  arma::Row<size_t> trainingLabels = l.subvec(0, 1999);
+  arma::Row<size_t> testLabels = l.subvec(2000, 3999);
 
   arma::Row<double> weights = arma::ones<arma::Row<double>>(trainingLabels.n_elem);
 
@@ -892,15 +886,15 @@ BOOST_AUTO_TEST_CASE(CategoricalWeightedBuildTest)
   MockCategoricalData(d, l, di);
 
   // Split into a training set and a test set.
-  arma::mat trainingData = d.cols(0, 4999);
-  arma::mat testData = d.cols(5000, 9999);
-  arma::Row<size_t> trainingLabels = l.subvec(0, 4999);
-  arma::Row<size_t> testLabels = l.subvec(5000, 9999);
+  arma::mat trainingData = d.cols(0, 1999);
+  arma::mat testData = d.cols(2000, 3999);
+  arma::Row<size_t> trainingLabels = l.subvec(0, 1999);
+  arma::Row<size_t> testLabels = l.subvec(2000, 3999);
 
   // Now create random points.
-  arma::mat randomNoise(4, 10000);
-  arma::Row<size_t> randomLabels(10000);
-  for (size_t i = 0; i < 10000; ++i)
+  arma::mat randomNoise(4, 2000);
+  arma::Row<size_t> randomLabels(2000);
+  for (size_t i = 0; i < 2000; ++i)
   {
     randomNoise(0, i) = math::Random();
     randomNoise(1, i) = math::Random();
@@ -910,10 +904,10 @@ BOOST_AUTO_TEST_CASE(CategoricalWeightedBuildTest)
   }
 
   // Generate weights.
-  arma::rowvec weights(20000);
-  for (size_t i = 0; i < 10000; ++i)
+  arma::rowvec weights(4000);
+  for (size_t i = 0; i < 2000; ++i)
     weights[i] = math::Random(0.9, 1.0);
-  for (size_t i = 10000; i < 20000; ++i)
+  for (size_t i = 2000; i < 4000; ++i)
     weights[i] = math::Random(0.0, 0.001);
 
   arma::mat fullData = arma::join_rows(trainingData, randomNoise);
@@ -1001,15 +995,15 @@ BOOST_AUTO_TEST_CASE(CategoricalInformationGainWeightedBuildTest)
   MockCategoricalData(d, l, di);
 
   // Split into a training set and a test set.
-  arma::mat trainingData = d.cols(0, 4999);
-  arma::mat testData = d.cols(5000, 9999);
-  arma::Row<size_t> trainingLabels = l.subvec(0, 4999);
-  arma::Row<size_t> testLabels = l.subvec(5000, 9999);
+  arma::mat trainingData = d.cols(0, 1999);
+  arma::mat testData = d.cols(2000, 3999);
+  arma::Row<size_t> trainingLabels = l.subvec(0, 1999);
+  arma::Row<size_t> testLabels = l.subvec(2000, 3999);
 
   // Now create random points.
-  arma::mat randomNoise(4, 10000);
-  arma::Row<size_t> randomLabels(10000);
-  for (size_t i = 0; i < 10000; ++i)
+  arma::mat randomNoise(4, 2000);
+  arma::Row<size_t> randomLabels(2000);
+  for (size_t i = 0; i < 2000; ++i)
   {
     randomNoise(0, i) = math::Random();
     randomNoise(1, i) = math::Random();
@@ -1019,10 +1013,10 @@ BOOST_AUTO_TEST_CASE(CategoricalInformationGainWeightedBuildTest)
   }
 
   // Generate weights.
-  arma::rowvec weights(20000);
-  for (size_t i = 0; i < 10000; ++i)
+  arma::rowvec weights(4000);
+  for (size_t i = 0; i < 2000; ++i)
     weights[i] = math::Random(0.9, 1.0);
-  for (size_t i = 10000; i < 20000; ++i)
+  for (size_t i = 2000; i < 4000; ++i)
     weights[i] = math::Random(0.0, 0.001);
 
   arma::mat fullData = arma::join_rows(trainingData, randomNoise);
