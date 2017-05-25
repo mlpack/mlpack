@@ -153,14 +153,14 @@ int main(int argc, char** argv)
     // Create decision tree with weighted labels.
     if (CLI::HasParam("weights"))
     {
-      const arma::Row<double> weights= std::move(CLI::GetParam<arma::Mat<double>>("weights"));
-      model.tree = DecisionTree<>(dataset, labels.row(0), numClasses, 
+      arma::Row<double> weights =
+          std::move(CLI::GetParam<arma::Mat<double>>("weights"));
+      model.tree = DecisionTree<>(dataset, labels, numClasses,
           weights, minLeafSize);
     }
-
     else
     {
-      model.tree = DecisionTree<>(dataset, labels.row(0), numClasses, minLeafSize);
+      model.tree = DecisionTree<>(dataset, labels, numClasses, minLeafSize);
     }
 
     // Do we need to print training error?
