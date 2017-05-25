@@ -90,8 +90,8 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
     const double childPct = UseWeights ?
         double(childWeightSums[i]) / sumWeight :
         double(counts[i]) / double(data.n_elem);
-    const double childGain = FitnessFunction::template Evaluate<UseWeights>(childLabels[i],
-        numClasses, childWeights[i]);
+    const double childGain = FitnessFunction::template Evaluate<UseWeights>(
+        childLabels[i], numClasses, childWeights[i]);
 
     overallGain += childPct * childGain;
   }
