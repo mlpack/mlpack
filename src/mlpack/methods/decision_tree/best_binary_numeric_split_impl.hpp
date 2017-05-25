@@ -34,9 +34,9 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
   // Next, sort the data.
   arma::uvec sortedIndices = arma::sort_index(data);
   arma::Row<size_t> sortedLabels(labels.n_elem);
-  arma::Row<size_t> sortedWeights;
+  arma::rowvec sortedWeights;
   for (size_t i = 0; i < sortedLabels.n_elem; ++i)
-    sortedLabels[sortedIndices[i]] = labels[i];
+    sortedLabels[i] = labels[sortedIndices[i]];
 
   // Only initialize if we are using weights.
   if (UseWeights)
@@ -44,7 +44,7 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     sortedWeights.set_size(sortedLabels.n_elem);
     // The weights must keep the same order of labels
     for (size_t i = 0; i < sortedLabels.n_elem; ++i)
-      sortedWeights[sortedIndices[i]] = weights[i];
+      sortedWeights[i] = weights[sortedIndices[i]];
   }
 
   // Loop through all possible split points, choosing the best one.  Also, force
