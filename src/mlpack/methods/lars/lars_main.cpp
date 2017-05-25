@@ -128,9 +128,9 @@ int main(int argc, char* argv[])
     mat matY = std::move(CLI::GetParam<arma::mat>("responses"));
 
     // Make sure y is oriented the right way.
-    if (matY.n_rows == 1)
+    if (matY.n_cols == 1)
       matY = trans(matY);
-    if (matY.n_cols > 1)
+    if (matY.n_rows > 1)
       Log::Fatal << "Only one column or row allowed in responses file!" << endl;
 
     if (matY.n_elem != matX.n_rows)
@@ -138,7 +138,8 @@ int main(int argc, char* argv[])
           << endl;
 
     vec beta;
-    lars.Train(matX, matY.unsafe_col(0), beta, false /* do not transpose */);
+    arma::rowvec y = std::move(matY);
+    lars.Train(matX, y, beta, false /* do not transpose */);
   }
   else // We must have --input_model_file.
   {
@@ -159,12 +160,12 @@ int main(int argc, char* argv[])
           << "is not equal to the dimensionality of the model ("
           << lars.BetaPath().back().n_elem << ")!" << endl;
 
-    arma::vec predictions;
+    arma::rowvec predictions;
     lars.Predict(testPoints.t(), predictions, false);
 
-    // Save test predictions.  One per line, so, don't transpose on save.
+    // Save test predictions (one per line).
     if (CLI::HasParam("output_predictions"))
-      CLI::GetParam<arma::mat>("output_predictions") = std::move(predictions);
+      CLI::GetParam<arma::mat>("output_predictions") = predictions.t();
   }
 
   if (CLI::HasParam("output_model"))

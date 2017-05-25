@@ -229,7 +229,7 @@ int main(int argc, char *argv[])
 
     Row<size_t> results;
     data::RevertLabels(predictedLabels, m.Mappings(), results);
-    
+
     if (CLI::HasParam("output"))
       CLI::GetParam<arma::Row<size_t>>("output") = std::move(results);
   }

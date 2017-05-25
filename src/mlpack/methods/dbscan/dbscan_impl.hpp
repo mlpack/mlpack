@@ -35,7 +35,7 @@ DBSCAN<RangeSearchType, PointSelectionPolicy>::DBSCAN(
 }
 
 /**
- * Performs DBSCAN clustering on the data, returning number of clusters 
+ * Performs DBSCAN clustering on the data, returning number of clusters
  * and also the centroid of each cluster.
  */
 template<typename RangeSearchType, typename PointSelectionPolicy>
@@ -53,7 +53,7 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
 }
 
 /**
- * Performs DBSCAN clustering on the data, returning number of clusters, 
+ * Performs DBSCAN clustering on the data, returning number of clusters,
  * the centroid of each cluster and also the list of cluster assignments.
  */
 template<typename RangeSearchType, typename PointSelectionPolicy>
@@ -89,7 +89,7 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
 }
 
 /**
- * Performs DBSCAN clustering on the data, returning number of clusters 
+ * Performs DBSCAN clustering on the data, returning number of clusters
  * and also the list of cluster assignments.
  */
 template<typename RangeSearchType, typename PointSelectionPolicy>

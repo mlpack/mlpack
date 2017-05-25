@@ -45,7 +45,7 @@ namespace nca /** Neighborhood Components Analysis. */ {
  * @endcode
  */
 template<typename MetricType = metric::SquaredEuclideanDistance,
-         template<typename> class OptimizerType = optimization::StandardSGD>
+         template<typename...> class OptimizerType = optimization::StandardSGD>
 class NCA
 {
  public:

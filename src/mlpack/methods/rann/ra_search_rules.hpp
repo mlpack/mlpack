@@ -16,6 +16,8 @@
 
 #include <mlpack/core/tree/traversal_info.hpp>
 
+#include <queue>
+
 namespace mlpack {
 namespace neighbor {
 
@@ -270,25 +272,25 @@ class RASearchRules
   //! The instantiated metric.
   MetricType& metric;
 
-  //! Whether to sample at leaves or just use all of it
+  //! Whether to sample at leaves or just use all of it.
   bool sampleAtLeaves;
 
-  //! Whether to do exact computation on the first leaf before any sampling
+  //! Whether to do exact computation on the first leaf before any sampling.
   bool firstLeafExact;
 
-  //! The limit on the largest node that can be approximated by sampling
+  //! The limit on the largest node that can be approximated by sampling.
   size_t singleSampleLimit;
 
-  //! The minimum number of samples required per query
+  //! The minimum number of samples required per query.
   size_t numSamplesReqd;
 
-  //! The number of samples made for every query
+  //! The number of samples made for every query.
   arma::Col<size_t> numSamplesMade;
 
-  //! The sampling ratio
+  //! The sampling ratio.
   double samplingRatio;
 
-  // TO REMOVE: just for testing
+  //! The number of distance calculations performed during search.
   size_t numDistComputations;
 
   //! If the query and reference set are identical, this is true.

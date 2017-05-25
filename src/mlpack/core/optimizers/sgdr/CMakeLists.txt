@@ -1,6 +1,10 @@
 set(SOURCES
-  ada_delta.hpp
-  ada_delta_impl.hpp
+  cyclical_decay.hpp
+  sgdr.hpp
+  sgdr_impl.hpp
+  snapshot_ensembles.hpp
+  snapshot_sgdr.hpp
+  snapshot_sgdr_impl.hpp
 )
 
 set(DIR_SRCS)

@@ -1573,7 +1573,7 @@ void CheckRPTreeSplit(const TreeType& tree)
       BOOST_REQUIRE_LE(maxDist, dist *
           (1.0 + 10.0 * std::numeric_limits<ElemType>::epsilon()));
     }
-    
+
   }
 
   CheckRPTreeSplit<TreeType, MetricType>(*tree.Left());

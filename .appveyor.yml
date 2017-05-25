@@ -1,8 +1,16 @@
-clone_depth: 30
+clone_depth: 10
+
 environment:
-  VisualStudioVersion: 14.0
+  matrix:
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      VSVER: Visual Studio 14 2015 Win64
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      VSVER: Visual Studio 15 2017 Win64
+
 configuration: Release
+
 os: Visual Studio 2015
+
 install:
   - ps: nuget install boost -o "${env:APPVEYOR_BUILD_FOLDER}" -Version 1.60.0
   - ps: nuget install boost_unit_test_framework-vc140 -o "${env:APPVEYOR_BUILD_FOLDER}" -Version 1.60.0
@@ -11,6 +19,7 @@ install:
   - ps: nuget install boost_serialization-vc140 -o "${env:APPVEYOR_BUILD_FOLDER}" -Version 1.60.0
   - ps: nuget install boost_math_c99-vc140 -o "${env:APPVEYOR_BUILD_FOLDER}" -Version 1.60.0
   - ps: nuget install OpenBLAS -o "${env:APPVEYOR_BUILD_FOLDER}"
+
 build_script:
   - mkdir boost_libs
   - ps: cp C:\projects\mlpack\boost_program_options-vc140.1.60.0.0\lib\native\address-model-64\lib\*.* C:\projects\mlpack\boost_libs\
@@ -18,13 +27,13 @@ build_script:
   - ps: cp C:\projects\mlpack\boost_random-vc140.1.60.0.0\lib\native\address-model-64\lib\*.* C:\projects\mlpack\boost_libs\
   - ps: cp C:\projects\mlpack\boost_serialization-vc140.1.60.0.0\lib\native\address-model-64\lib\*.* C:\projects\mlpack\boost_libs\
   - ps: cp C:\projects\mlpack\boost_unit_test_framework-vc140.1.60.0.0\lib\native\address-model-64\lib\*.* C:\projects\mlpack\boost_libs\
-  - if not exist armadillo.tar.gz appveyor DownloadFile "http://sourceforge.net/projects/arma/files/armadillo-6.500.5.tar.gz" -FileName armadillo.tar.gz
-  - 7z x armadillo.tar.gz -so | 7z x -si -ttar > nul
-  - cd armadillo-6.500.5 && mkdir build && cd build
+  - if not exist armadillo.tar.xz appveyor DownloadFile "http://sourceforge.net/projects/arma/files/armadillo-7.800.2.tar.xz" -FileName armadillo.tar.xz
+  - 7z x armadillo.tar.xz -so | 7z x -si -ttar > nul
+  - cd armadillo-7.800.2 && mkdir build && cd build
   - cmake -G "Visual Studio 14 2015 Win64" -DBLAS_LIBRARY:FILEPATH="%APPVEYOR_BUILD_FOLDER%/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a" -DLAPACK_LIBRARY:FILEPATH="%APPVEYOR_BUILD_FOLDER%/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a" -DCMAKE_PREFIX:FILEPATH="%APPVEYOR_BUILD_FOLDER%/armadillo" -DBUILD_SHARED_LIBS=OFF ..
-  - '"C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe" "C:\projects\mlpack\armadillo-6.500.5\build\armadillo.sln" /m /verbosity:quiet /p:Configuration=Release;Platform=x64'
+  - '"C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe" "C:\projects\mlpack\armadillo-7.800.2\build\armadillo.sln" /m /verbosity:quiet /p:Configuration=Release;Platform=x64'
   - cd C:\projects\mlpack && mkdir build && cd build
-  - cmake -G "Visual Studio 14 2015 Win64" -DBLAS_LIBRARY:FILEPATH="%APPVEYOR_BUILD_FOLDER%/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a" -DLAPACK_LIBRARY:FILEPATH="%APPVEYOR_BUILD_FOLDER%/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a" -DARMADILLO_INCLUDE_DIR="C:/projects/mlpack/armadillo-6.500.5/include" -DARMADILLO_LIBRARY:FILEPATH="C:\projects\mlpack\armadillo-6.500.5\build\Debug\armadillo.lib" -DBOOST_INCLUDEDIR:PATH="C:\projects\mlpack\boost.1.60.0.0\lib\native\include" -DBOOST_LIBRARYDIR:PATH="C:\projects\mlpack\boost_libs" -DDEBUG=ON -DPROFILE=ON ..
+  - cmake -G "Visual Studio 14 2015 Win64" -DBLAS_LIBRARY:FILEPATH="%APPVEYOR_BUILD_FOLDER%/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a" -DLAPACK_LIBRARY:FILEPATH="%APPVEYOR_BUILD_FOLDER%/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a" -DARMADILLO_INCLUDE_DIR="C:/projects/mlpack/armadillo-7.800.2/include" -DARMADILLO_LIBRARY:FILEPATH="C:\projects\mlpack\armadillo-7.800.2\build\Debug\armadillo.lib" -DBOOST_INCLUDEDIR:PATH="C:\projects\mlpack\boost.1.60.0.0\lib\native\include" -DBOOST_LIBRARYDIR:PATH="C:\projects\mlpack\boost_libs" -DDEBUG=ON -DPROFILE=ON ..
   - '"C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe" "C:\projects\mlpack\build\mlpack.sln" /m /verbosity:minimal /nologo /p:BuildInParallel=true /p:Configuration=Release;Platform=x64'
   - 7z a mlpack-windows-no-libs.zip "%APPVEYOR_BUILD_FOLDER%\build\Release\*.exe"
   - 7z a mlpack-windows.zip "%APPVEYOR_BUILD_FOLDER%\build\Release\*.*" "%APPVEYOR_BUILD_FOLDER%/OpenBLAS.0.2.14.1/lib/native/lib/x64/*.*"
@@ -42,7 +51,7 @@ notifications:
 
 cache:
   - packages -> **\packages.config
-  - armadillo.tar.gz -> appveyor.yaml
+  - armadillo.tar.xz -> appveyor.yaml
 
 # All plans have maximum build job execution time of 60 minutes. But right, now
 # the machine takes 30 minutes to build the code and at least 50 minutes to run

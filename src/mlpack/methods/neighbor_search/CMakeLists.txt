@@ -49,4 +49,9 @@ if (BUILD_CLI_EXECUTABLES)
       COMMAND ${CMAKE_COMMAND} -E copy
       $<TARGET_FILE:mlpack_kfn> $<TARGET_FILE_DIR:mlpack_kfn>/mlpack_allkfn${kfn_ext}
   )
+
+  install(PROGRAMS $<TARGET_FILE_DIR:mlpack_kfn>/mlpack_allkfn${kfn_ext}
+      DESTINATION bin)
+  install(PROGRAMS $<TARGET_FILE_DIR:mlpack_knn>/mlpack_allknn${knn_ext}
+      DESTINATION bin)
 endif ()

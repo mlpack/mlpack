@@ -73,6 +73,13 @@ Copyright:
   Copyright 2017, Lakshya Agrawal <zeeshan.lakshya@gmail.com>
   Copyright 2017, Praveen Ch <chvsp972911@gmail.com>
   Copyright 2017, Kirill Mishchenko <ki.mishchenko@gmail.com>
+  Copyright 2017, Abhinav Moudgil <abhinavmoudgil95@gmail.com>
+  Copyright 2017, Thyrix Yang <thyrixyang@gmail.com>
+  Copyright 2017, Sagar B Hathwar <sagarbhathwar@gmail.com>
+  Copyright 2017, Nishanth Hegde <hegde.nishanth@gmail.com>
+  Copyright 2017, Parminder Singh <parmsingh101@gmail.com>
+  Copyright 2017, CodeAi <benjamin.bales@assrc.us>
+  Copyright 2017, Franciszek Stokowacki <franek.stokowacki@gmail.com>
 
 License: BSD-3-clause
   All rights reserved.

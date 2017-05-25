@@ -22,7 +22,6 @@
 #include "visitor/deterministic_set_visitor.hpp"
 #include "visitor/gradient_set_visitor.hpp"
 #include "visitor/gradient_visitor.hpp"
-#include "visitor/weight_set_visitor.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -70,12 +69,6 @@ RNN<OutputLayerType, InitializationRuleType>::RNN(
 
   this->deterministic = true;
   ResetDeterministic();
-
-  if (!reset)
-  {
-    ResetParameters();
-    reset = true;
-  }
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
@@ -88,11 +81,14 @@ RNN<OutputLayerType, InitializationRuleType>::~RNN()
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-template<template<typename> class OptimizerType>
+template<
+    template<typename, typename...> class OptimizerType,
+    typename... OptimizerTypeArgs
+>
 void RNN<OutputLayerType, InitializationRuleType>::Train(
     const arma::mat& predictors,
     const arma::mat& responses,
-    OptimizerType<NetworkType>& optimizer)
+    OptimizerType<NetworkType, OptimizerTypeArgs...>& optimizer)
 {
   numFunctions = responses.n_cols;
 
@@ -118,7 +114,7 @@ void RNN<OutputLayerType, InitializationRuleType>::Train(
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-template<template<typename> class OptimizerType>
+template<template<typename...> class OptimizerType>
 void RNN<OutputLayerType, InitializationRuleType>::Train(
     const arma::mat& predictors, const arma::mat& responses)
 {
@@ -149,7 +145,7 @@ void RNN<OutputLayerType, InitializationRuleType>::Train(
 
 template<typename OutputLayerType, typename InitializationRuleType>
 void RNN<OutputLayerType, InitializationRuleType>::Predict(
-    arma::mat& predictors, arma::mat& responses)
+    arma::mat& predictors, arma::mat& results)
 {
   if (parameter.is_empty())
   {
@@ -162,22 +158,22 @@ void RNN<OutputLayerType, InitializationRuleType>::Predict(
     ResetDeterministic();
   }
 
-  responses = arma::zeros<arma::mat>(outputSize * rho, predictors.n_cols);
-  arma::mat responsesTemp = responses.col(0);
+  results = arma::zeros<arma::mat>(outputSize * rho, predictors.n_cols);
+  arma::mat resultsTemp = results.col(0);
 
   for (size_t i = 0; i < predictors.n_cols; i++)
   {
     SinglePredict(
         arma::mat(predictors.colptr(i), predictors.n_rows, 1, false, true),
-        responsesTemp);
+        resultsTemp);
 
-    responses.col(i) = responsesTemp;
+    results.col(i) = resultsTemp;
   }
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
 void RNN<OutputLayerType, InitializationRuleType>::SinglePredict(
-    const arma::mat& predictors, arma::mat& responses)
+    const arma::mat& predictors, arma::mat& results)
 {
   for (size_t seqNum = 0; seqNum < rho; ++seqNum)
   {
@@ -185,7 +181,7 @@ void RNN<OutputLayerType, InitializationRuleType>::SinglePredict(
         (seqNum + 1) * inputSize - 1);
     Forward(std::move(currentInput));
 
-    responses.rows(seqNum * outputSize, (seqNum + 1) * outputSize - 1) =
+    results.rows(seqNum * outputSize, (seqNum + 1) * outputSize - 1) =
         boost::apply_visitor(outputParameterVisitor, network.back());
   }
 }
@@ -314,23 +310,11 @@ void RNN<OutputLayerType, InitializationRuleType>::Gradient(
 template<typename OutputLayerType, typename InitializationRuleType>
 void RNN<OutputLayerType, InitializationRuleType>::ResetParameters()
 {
-  size_t weights = 0;
-  for (LayerTypes& layer : network)
-  {
-    weights += boost::apply_visitor(weightSizeVisitor, layer);
-  }
+  ResetDeterministic();
 
-  parameter.set_size(weights, 1);
-  initializeRule.Initialize(parameter, parameter.n_elem, 1);
-
-  size_t offset = 0;
-  for (LayerTypes& layer : network)
-  {
-    offset += boost::apply_visitor(WeightSetVisitor(std::move(parameter),
-        offset), layer);
-
-    boost::apply_visitor(resetVisitor, layer);
-  }
+  // Reset the network parameter with the given initialization rule.
+  NetworkInitialization<InitializationRuleType> networkInit(initializeRule);
+  networkInit.Initialize(network, parameter);
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>

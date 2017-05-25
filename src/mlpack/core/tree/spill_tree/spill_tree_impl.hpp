@@ -14,6 +14,8 @@
 // In case it wasn't included already for some reason.
 #include "spill_tree.hpp"
 
+#include <queue>
+
 namespace mlpack {
 namespace tree {
 

@@ -1,10 +1,14 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  random_init.hpp
-  oivs_init.hpp
+  gaussian_init.hpp
+  init_rules_traits.hpp
   kathirvalavakumar_subavathi_init.hpp
+  network_init.hpp
   nguyen_widrow_init.hpp
+  oivs_init.hpp
+  orthogonal_init.hpp
+  random_init.hpp
   zero_init.hpp
 )
 

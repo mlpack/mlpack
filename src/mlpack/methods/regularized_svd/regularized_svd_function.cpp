@@ -130,7 +130,8 @@ namespace mlpack {
 namespace optimization {
 
 template<>
-double StandardSGD<mlpack::svd::RegularizedSVDFunction>::Optimize(arma::mat& parameters)
+double StandardSGD<mlpack::svd::RegularizedSVDFunction>::Optimize(
+    arma::mat& parameters)
 {
   // Find the number of functions to use.
   const size_t numFunctions = function.NumFunctions();

@@ -6,6 +6,8 @@
  */
 #include "hoeffding_tree_model.hpp"
 
+#include <queue>
+
 using namespace mlpack;
 using namespace mlpack::tree;
 
@@ -68,13 +70,13 @@ HoeffdingTreeModel& HoeffdingTreeModel::operator=(
 
   // Create the right tree.
   type = other.type;
-  if (type == GINI_HOEFFDING)
+  if (other.giniHoeffdingTree && (type == GINI_HOEFFDING))
     giniHoeffdingTree = new GiniHoeffdingTreeType(*other.giniHoeffdingTree);
-  else if (type == GINI_BINARY)
+  else if (other.giniBinaryTree && (type == GINI_BINARY))
     giniBinaryTree = new GiniBinaryTreeType(*other.giniBinaryTree);
-  else if (type == INFO_HOEFFDING)
+  else if (other.infoHoeffdingTree && (type == INFO_HOEFFDING))
     infoHoeffdingTree = new InfoHoeffdingTreeType(*other.infoHoeffdingTree);
-  else if (type == INFO_BINARY)
+  else if (other.infoBinaryTree && (type == INFO_BINARY))
     infoBinaryTree = new InfoBinaryTreeType(*other.infoBinaryTree);
 
   return *this;

@@ -4,6 +4,7 @@ add_executable(mlpack_test
   adaboost_test.cpp
   adam_test.cpp
   ada_delta_test.cpp
+  ada_grad_test.cpp
   akfn_test.cpp
   aknn_test.cpp
   ann_layer_test.cpp
@@ -11,6 +12,7 @@ add_executable(mlpack_test
   armadillo_svd_test.cpp
   aug_lagrangian_test.cpp
   binarize_test.cpp
+  block_krylov_svd_test.cpp
   cf_test.cpp
   cli_test.cpp
   convolution_test.cpp
@@ -74,13 +76,17 @@ add_executable(mlpack_test
   recurrent_network_test.cpp
   rectangle_tree_test.cpp
   regularized_svd_test.cpp
+  rl_components_test.cpp
   rmsprop_test.cpp
   sa_test.cpp
   sdp_primal_dual_test.cpp
   sgd_test.cpp
+  sgdr_test.cpp
+  snapshot_ensembles.cpp
   serialization.hpp
   serialization.cpp
   serialization_test.cpp
+  smorms3_test.cpp
   softmax_regression_test.cpp
   sort_policy_test.cpp
   sparse_autoencoder_test.cpp

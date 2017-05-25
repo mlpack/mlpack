@@ -18,7 +18,8 @@
 #include "visitor/delta_visitor.hpp"
 #include "visitor/output_parameter_visitor.hpp"
 #include "visitor/reset_visitor.hpp"
-#include "visitor/weight_size_visitor.hpp"
+
+#include "init_rules/network_init.hpp"
 
 #include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
@@ -98,11 +99,13 @@ class RNN
    * @param optimizer Instantiated optimizer used to train the model.
    */
   template<
-      template<typename> class OptimizerType = mlpack::optimization::StandardSGD
+      template<typename, typename...> class OptimizerType =
+          mlpack::optimization::StandardSGD,
+      typename... OptimizerTypeArgs
   >
   void Train(const arma::mat& predictors,
              const arma::mat& responses,
-             OptimizerType<NetworkType>& optimizer);
+             OptimizerType<NetworkType, OptimizerTypeArgs...>& optimizer);
 
   /**
    * Train the recurrent neural network on the given input data. By default, the
@@ -118,7 +121,8 @@ class RNN
    * @param responses Outputs results from input training variables.
    */
   template<
-      template<typename> class OptimizerType = mlpack::optimization::StandardSGD
+      template<typename...> class OptimizerType =
+          mlpack::optimization::StandardSGD
   >
   void Train(const arma::mat& predictors, const arma::mat& responses);
 
@@ -128,9 +132,9 @@ class RNN
    * output layer function.
    *
    * @param predictors Input predictors.
-   * @param responses Matrix to put output predictions of responses into.
+   * @param results Matrix to put output predictions of responses into.
    */
-  void Predict(arma::mat& predictors, arma::mat& responses);
+  void Predict(arma::mat& predictors, arma::mat& results);
 
   /**
    * Evaluate the recurrent neural network with the given parameters. This
@@ -220,9 +224,9 @@ class RNN
    * Predict the response of the given input sequence.
    *
    * @param predictors Input predictors.
-   * @param responses Vector to put output prediction of a response into.
+   * @param results Vector to put output prediction of a response into.
    */
-  void SinglePredict(const arma::mat& predictors, arma::mat& responses);
+  void SinglePredict(const arma::mat& predictors, arma::mat& results);
 
   /**
    * Reset the module infomration (weights/parameters).

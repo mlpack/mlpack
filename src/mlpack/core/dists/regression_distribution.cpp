@@ -23,11 +23,11 @@ using namespace mlpack::distribution;
 void RegressionDistribution::Train(const arma::mat& observations)
 {
   regression::LinearRegression lr(observations.rows(1, observations.n_rows - 1),
-      (observations.row(0)).t(), 0, true);
+      arma::rowvec(observations.row(0)), 0, true);
   rf = lr;
-  arma::vec fitted;
+  arma::rowvec fitted;
   lr.Predict(observations.rows(1, observations.n_rows - 1), fitted);
-  err.Train(observations.row(0) - fitted.t());
+  err.Train(observations.row(0) - fitted);
 }
 
 /**
@@ -38,12 +38,18 @@ void RegressionDistribution::Train(const arma::mat& observations)
 void RegressionDistribution::Train(const arma::mat& observations,
                                    const arma::vec& weights)
 {
+  Train(observations, arma::rowvec(weights.t()));
+}
+
+void RegressionDistribution::Train(const arma::mat& observations,
+                                   const arma::rowvec& weights)
+{
   regression::LinearRegression lr(observations.rows(1, observations.n_rows - 1),
-      (observations.row(0)).t(), 0, true, weights);
+      arma::rowvec(observations.row(0)), weights, 0, true);
   rf = lr;
-  arma::vec fitted;
+  arma::rowvec fitted;
   lr.Predict(observations.rows(1, observations.n_rows - 1), fitted);
-  err.Train(observations.row(0) - fitted.t(), weights);
+  err.Train(observations.row(0) - fitted, weights.t());
 }
 
 /**
@@ -53,13 +59,21 @@ void RegressionDistribution::Train(const arma::mat& observations,
  */
 double RegressionDistribution::Probability(const arma::vec& observation) const
 {
-  arma::vec fitted;
+  arma::rowvec fitted;
   rf.Predict(observation.rows(1, observation.n_rows-1), fitted);
-  return err.Probability(observation(0)-fitted);
+  return err.Probability(observation(0)-fitted.t());
 }
 
 void RegressionDistribution::Predict(const arma::mat& points,
                                      arma::vec& predictions) const
+{
+  arma::rowvec rowPredictions;
+  Predict(points, rowPredictions);
+  predictions = rowPredictions.t();
+}
+
+void RegressionDistribution::Predict(const arma::mat& points,
+                                     arma::rowvec& predictions) const
 {
   rf.Predict(points, predictions);
 }

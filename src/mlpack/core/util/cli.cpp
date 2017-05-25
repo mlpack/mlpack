@@ -17,6 +17,9 @@
 #include "cli.hpp"
 #include "log.hpp"
 
+#include "cli_deleter.hpp" // To make sure we can delete the singleton.
+#include "version.hpp"
+
 #include <mlpack/core/data/load.hpp>
 #include <mlpack/core/data/save.hpp>
 

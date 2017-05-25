@@ -62,9 +62,9 @@ class XTreeSplit
    * Comparator for sorting with std::pair. This comparator works a little bit
    * faster then the default comparator.
    */
-  template<typename ElemType>
-  static bool PairComp(const std::pair<ElemType, size_t>& p1,
-                       const std::pair<ElemType, size_t>& p2)
+  template<typename ElemType, typename SecondType>
+  static bool PairComp(const std::pair<ElemType, SecondType>& p1,
+                       const std::pair<ElemType, SecondType>& p2)
   {
     return p1.first < p2.first;
   }

@@ -135,7 +135,6 @@ double RASearchRules<SortPolicy, MetricType, TreeType>::BaseCase(
 
   numSamplesMade[queryIndex]++;
 
-  // TO REMOVE
   numDistComputations++;
 
   return distance;

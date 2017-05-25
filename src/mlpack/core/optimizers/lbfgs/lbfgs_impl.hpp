@@ -326,9 +326,11 @@ L_BFGS<FunctionType>::MinPointIterate() const
 }
 
 template<typename FunctionType>
-inline double L_BFGS<FunctionType>::Optimize(arma::mat& iterate)
+inline double L_BFGS<FunctionType>::Optimize(arma::mat& iterate,
+                                             const size_t maxIterations)
 {
-  return Optimize(iterate, maxIterations);
+  this->maxIterations = maxIterations;
+  return Optimize(iterate);
 }
 
 /**
@@ -341,8 +343,7 @@ inline double L_BFGS<FunctionType>::Optimize(arma::mat& iterate)
  * @param iterate Starting point (will be modified)
  */
 template<typename FunctionType>
-double L_BFGS<FunctionType>::Optimize(arma::mat& iterate,
-                                      const size_t maxIterations)
+double L_BFGS<FunctionType>::Optimize(arma::mat& iterate)
 {
   // Ensure that the cubes holding past iterations' information are the right
   // size.  Also set the current best point value to the maximum.

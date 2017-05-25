@@ -88,7 +88,7 @@ class GammaDistribution
      *
      * @param rdata Reference data to fit parameters to.
      * @param tol Convergence tolerance. This is *not* an absolute measure:
-     *    It will stop the approximation once the *change* in the value is 
+     *    It will stop the approximation once the *change* in the value is
      *    smaller than tol.
      */
     void Train(const arma::mat& rdata, const double tol = 1e-8);
@@ -101,7 +101,7 @@ class GammaDistribution
      * @param probabilities The probability of each observation. One value per
      *     column of the observations matrix.
      * @param tol Convergence tolerance. This is *not* an absolute measure:
-     *    It will stop the approximation once the *change* in the value is 
+     *    It will stop the approximation once the *change* in the value is
      *    smaller than tol.
      */
     void Train(const arma::mat& observations,

@@ -413,4 +413,262 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionOptimizerTrainTest)
   }
 }
 
+BOOST_AUTO_TEST_CASE(SoftmaxRegressionClassifySinglePointTest)
+{
+  const size_t points = 5000;
+  const size_t inputSize = 5;
+  const size_t numClasses = 5;
+  const double lambda = 0.5;
+
+  // Generate five-Gaussian dataset.
+  arma::mat identity = arma::eye<arma::mat>(5, 5);
+  GaussianDistribution g1(arma::vec("1.0 9.0 1.0 2.0 2.0"), identity);
+  GaussianDistribution g2(arma::vec("4.0 3.0 4.0 2.0 2.0"), identity);
+  GaussianDistribution g3(arma::vec("3.0 2.0 7.0 0.0 5.0"), identity);
+  GaussianDistribution g4(arma::vec("4.0 1.0 1.0 2.0 7.0"), identity);
+  GaussianDistribution g5(arma::vec("1.0 0.0 1.0 8.0 3.0"), identity);
+
+  arma::mat data(inputSize, points);
+  arma::Row<size_t> labels(points);
+
+  for (size_t i = 0; i < points / 5; i++)
+  {
+    data.col(i) = g1.Random();
+    labels(i) = 0;
+  }
+  for (size_t i = points / 5; i < (2 * points) / 5; i++)
+  {
+    data.col(i) = g2.Random();
+    labels(i) = 1;
+  }
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
+  {
+    data.col(i) = g3.Random();
+    labels(i) = 2;
+  }
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
+  {
+    data.col(i) = g4.Random();
+    labels(i) = 3;
+  }
+  for (size_t i = (4 * points) / 5; i < points; i++)
+  {
+    data.col(i) = g5.Random();
+    labels(i) = 4;
+  }
+
+  // Train softmax regression object.
+  SoftmaxRegression<> sr(data, labels, numClasses, lambda);
+
+  // Create test dataset.
+  for (size_t i = 0; i < points / 5; i++)
+  {
+    data.col(i) = g1.Random();
+    labels(i) = 0;
+  }
+  for (size_t i = points / 5; i < (2 * points) / 5; i++)
+  {
+    data.col(i) = g2.Random();
+    labels(i) = 1;
+  }
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
+  {
+    data.col(i) = g3.Random();
+    labels(i) = 2;
+  }
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
+  {
+    data.col(i) = g4.Random();
+    labels(i) = 3;
+  }
+  for (size_t i = (4 * points) / 5; i < points; i++)
+  {
+    data.col(i) = g5.Random();
+    labels(i) = 4;
+  }
+
+  sr.Classify(data, labels);
+
+  for(size_t i = 0; i < data.n_cols; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(sr.Classify(data.col(i)), labels(i));
+  }
+}
+
+BOOST_AUTO_TEST_CASE(SoftmaxRegressionComputeProbabilitiesTest)
+{
+  const size_t points = 5000;
+  const size_t inputSize = 5;
+  const size_t numClasses = 5;
+  const double lambda = 0.5;
+
+  // Generate five-Gaussian dataset.
+  arma::mat identity = arma::eye<arma::mat>(5, 5);
+  GaussianDistribution g1(arma::vec("1.0 9.0 1.0 2.0 2.0"), identity);
+  GaussianDistribution g2(arma::vec("4.0 3.0 4.0 2.0 2.0"), identity);
+  GaussianDistribution g3(arma::vec("3.0 2.0 7.0 0.0 5.0"), identity);
+  GaussianDistribution g4(arma::vec("4.0 1.0 1.0 2.0 7.0"), identity);
+  GaussianDistribution g5(arma::vec("1.0 0.0 1.0 8.0 3.0"), identity);
+
+  arma::mat data(inputSize, points);
+  arma::Row<size_t> labels(points);
+
+  for (size_t i = 0; i < points / 5; i++)
+  {
+    data.col(i) = g1.Random();
+    labels(i) = 0;
+  }
+  for (size_t i = points / 5; i < (2 * points) / 5; i++)
+  {
+    data.col(i) = g2.Random();
+    labels(i) = 1;
+  }
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
+  {
+    data.col(i) = g3.Random();
+    labels(i) = 2;
+  }
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
+  {
+    data.col(i) = g4.Random();
+    labels(i) = 3;
+  }
+  for (size_t i = (4 * points) / 5; i < points; i++)
+  {
+    data.col(i) = g5.Random();
+    labels(i) = 4;
+  }
+
+  // Train softmax regression object.
+  SoftmaxRegression<> sr(data, labels, numClasses, lambda);
+
+  // Create test dataset.
+  for (size_t i = 0; i < points / 5; i++)
+  {
+    data.col(i) = g1.Random();
+    labels(i) = 0;
+  }
+  for (size_t i = points / 5; i < (2 * points) / 5; i++)
+  {
+    data.col(i) = g2.Random();
+    labels(i) = 1;
+  }
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
+  {
+    data.col(i) = g3.Random();
+    labels(i) = 2;
+  }
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
+  {
+    data.col(i) = g4.Random();
+    labels(i) = 3;
+  }
+  for (size_t i = (4 * points) / 5; i < points; i++)
+  {
+    data.col(i) = g5.Random();
+    labels(i) = 4;
+  }
+
+  arma::mat probabilities;
+  sr.Classify(data, probabilities);
+
+  BOOST_REQUIRE_EQUAL(probabilities.n_cols, data.n_cols);
+  BOOST_REQUIRE_EQUAL(probabilities.n_rows, sr.NumClasses());
+
+  for(size_t i = 0; i < data.n_cols; ++i)
+  {
+    BOOST_REQUIRE_CLOSE(arma::sum(probabilities.col(i)), 1.0, 1e-5);
+  }
+}
+
+BOOST_AUTO_TEST_CASE(SoftmaxRegressionComputeProbabilitiesAndLabelsTest)
+{
+  const size_t points = 5000;
+  const size_t inputSize = 5;
+  const size_t numClasses = 5;
+  const double lambda = 0.5;
+
+  // Generate five-Gaussian dataset.
+  arma::mat identity = arma::eye<arma::mat>(5, 5);
+  GaussianDistribution g1(arma::vec("1.0 9.0 1.0 2.0 2.0"), identity);
+  GaussianDistribution g2(arma::vec("4.0 3.0 4.0 2.0 2.0"), identity);
+  GaussianDistribution g3(arma::vec("3.0 2.0 7.0 0.0 5.0"), identity);
+  GaussianDistribution g4(arma::vec("4.0 1.0 1.0 2.0 7.0"), identity);
+  GaussianDistribution g5(arma::vec("1.0 0.0 1.0 8.0 3.0"), identity);
+
+  arma::mat data(inputSize, points);
+  arma::Row<size_t> labels(points);
+
+  for (size_t i = 0; i < points / 5; i++)
+  {
+    data.col(i) = g1.Random();
+    labels(i) = 0;
+  }
+  for (size_t i = points / 5; i < (2 * points) / 5; i++)
+  {
+    data.col(i) = g2.Random();
+    labels(i) = 1;
+  }
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
+  {
+    data.col(i) = g3.Random();
+    labels(i) = 2;
+  }
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
+  {
+    data.col(i) = g4.Random();
+    labels(i) = 3;
+  }
+  for (size_t i = (4 * points) / 5; i < points; i++)
+  {
+    data.col(i) = g5.Random();
+    labels(i) = 4;
+  }
+
+  // Train softmax regression object.
+  SoftmaxRegression<> sr(data, labels, numClasses, lambda);
+
+  // Create test dataset.
+  for (size_t i = 0; i < points / 5; i++)
+  {
+    data.col(i) = g1.Random();
+    labels(i) = 0;
+  }
+  for (size_t i = points / 5; i < (2 * points) / 5; i++)
+  {
+    data.col(i) = g2.Random();
+    labels(i) = 1;
+  }
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
+  {
+    data.col(i) = g3.Random();
+    labels(i) = 2;
+  }
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
+  {
+    data.col(i) = g4.Random();
+    labels(i) = 3;
+  }
+  for (size_t i = (4 * points) / 5; i < points; i++)
+  {
+    data.col(i) = g5.Random();
+    labels(i) = 4;
+  }
+
+  arma::mat probabilities;
+  arma::Row<size_t> testLabels;
+
+  sr.Classify(data, labels);
+  sr.Classify(data, testLabels, probabilities);
+
+  BOOST_REQUIRE_EQUAL(probabilities.n_cols, data.n_cols);
+  BOOST_REQUIRE_EQUAL(probabilities.n_rows, sr.NumClasses());
+
+  for(size_t i = 0; i < data.n_cols; ++i)
+  {
+    BOOST_REQUIRE_CLOSE(arma::sum(probabilities.col(i)), 1.0, 1e-5);
+    BOOST_REQUIRE_EQUAL(testLabels(i), labels(i));
+  }
+}
+
 BOOST_AUTO_TEST_SUITE_END();

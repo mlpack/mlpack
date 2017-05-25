@@ -20,10 +20,20 @@ template bool Load<int>(const std::string&,
                         const bool,
                         const bool);
 
-template bool Load<size_t>(const std::string&,
-                           arma::Mat<size_t>&,
-                           const bool,
-                           const bool);
+template bool Load<unsigned int>(const std::string&,
+                                 arma::Mat<unsigned int>&,
+                                 const bool,
+                                 const bool);
+
+template bool Load<unsigned long>(const std::string&,
+                                  arma::Mat<unsigned long>&,
+                                  const bool,
+                                  const bool);
+
+template bool Load<unsigned long long>(const std::string&,
+                                       arma::Mat<unsigned long long>&,
+                                       const bool,
+                                       const bool);
 
 template bool Load<float>(const std::string&,
                           arma::Mat<float>&,
@@ -35,22 +45,32 @@ template bool Load<double>(const std::string&,
                            const bool,
                            const bool);
 
-template bool Load<unsigned long long>(const std::string&,
-                                       arma::Mat<unsigned long long>&,
-                                       const bool,
-                                       const bool);
-
 template bool Load<int, IncrementPolicy>(const std::string&,
                                          arma::Mat<int>&,
                                          DatasetMapper<IncrementPolicy>&,
                                          const bool,
                                          const bool);
 
-template bool Load<size_t, IncrementPolicy>(const std::string&,
-                                            arma::Mat<size_t>&,
-                                            DatasetMapper<IncrementPolicy>&,
-                                            const bool,
-                                            const bool);
+template bool Load<unsigned int, IncrementPolicy>(
+    const std::string&,
+    arma::Mat<unsigned int>&,
+    DatasetMapper<IncrementPolicy>&,
+    const bool,
+    const bool);
+
+template bool Load<unsigned long, IncrementPolicy>(
+    const std::string&,
+    arma::Mat<unsigned long>&,
+    DatasetMapper<IncrementPolicy>&,
+    const bool,
+    const bool);
+
+template bool Load<unsigned long long, IncrementPolicy>(
+    const std::string&,
+    arma::Mat<unsigned long long>&,
+    DatasetMapper<IncrementPolicy>&,
+    const bool,
+    const bool);
 
 template bool Load<float, IncrementPolicy>(const std::string&,
                                            arma::Mat<float>&,
@@ -63,15 +83,6 @@ template bool Load<double, IncrementPolicy>(const std::string&,
                                             DatasetMapper<IncrementPolicy>&,
                                             const bool,
                                             const bool);
-
-#ifndef  _WIN32
-template bool Load<unsigned long long, IncrementPolicy>(
-    const std::string&,
-    arma::Mat<unsigned long long>&,
-    DatasetMapper<IncrementPolicy>&,
-    const bool,
-    const bool);
-#endif
 
 } // namespace data
 } // namespace mlpack

@@ -36,10 +36,10 @@ class VanillaUpdate
    * the iteration update process.  The vanilla update doesn't initialize
    * anything.
    *
-   * @param n_rows number of rows in the gradient matrix.
-   * @param n_cols number of columns in the gradient matrix.
+   * @param rows Number of rows in the gradient matrix.
+   * @param cols Number of columns in the gradient matrix.
    */
-  void Initialize(const size_t /* n_rows */, const size_t /* n_cols */)
+  void Initialize(const size_t /* rows */, const size_t /* cols */)
   { /* Do nothing. */ }
 
  /**

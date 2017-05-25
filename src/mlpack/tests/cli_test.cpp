@@ -136,17 +136,15 @@ BOOST_AUTO_TEST_CASE(TestBooleanOption)
 
   // Now, if we specify this flag, it should be true.
   int argc = 2;
-  char* argv[2];
-  argv[0] = strcpy(new char[strlen("programname") + 1], "programname");
-  argv[1] = strcpy(new char[strlen("--flag_test") + 1], "--flag_test");
+  const char* argv[2];
+  argv[0] = "programname";
+  argv[1] = "--flag_test";
 
-  CLI::ParseCommandLine(argc, argv);
+  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
 
   BOOST_REQUIRE_EQUAL(CLI::GetParam<bool>("flag_test"), true);
   BOOST_REQUIRE_EQUAL(CLI::HasParam("flag_test"), true);
 
-  delete[] argv[0];
-  delete[] argv[1];
 }
 
 /**
