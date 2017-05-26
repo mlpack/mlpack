@@ -493,7 +493,7 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree, std::vector<bool>& relevels)
           }
         }
         std::sort(sorted2.begin(), sorted2.end(),
-                  PairComp<ElemType, TreeType*>);
+            PairComp<ElemType, TreeType*>);
 
         tree->numDescendants = 0;
         tree->bound.Clear();
@@ -654,7 +654,7 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree, std::vector<bool>& relevels)
           }
         }
         std::sort(sorted2.begin(), sorted2.end(),
-                  PairComp<ElemType, TreeType*>);
+            PairComp<ElemType, TreeType*>);
 
         for (size_t i = 0; i < numChildren; i++)
         {

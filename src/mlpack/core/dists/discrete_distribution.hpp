@@ -145,7 +145,7 @@ class DiscreteDistribution
       if (obs >= probabilities[dimension].n_elem)
       {
         Log::Debug << "DiscreteDistribution::Probability(): "
-             << "received observation " << obs << "; observation must be"
+             << " received observation " << obs << "; observation must be "
              << "in [0, " << probabilities[dimension].n_elem << "] for this "
              << "distribution." << std::endl;
       }
