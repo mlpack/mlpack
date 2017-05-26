@@ -592,15 +592,20 @@ void DecisionTree<FitnessFunction,
       }
 
       // Now build the child recursively.
-      children.push_back(new DecisionTree());
+      DecisionTree* child = new DecisionTree();
       if (NoRecursion)
-        children.back()->Train<UseWeights>(data, currentChildBegin,
+      {
+        child->Train<UseWeights>(data, currentChildBegin,
             currentCol - currentChildBegin, datasetInfo, labels, numClasses,
             weights, currentCol - currentChildBegin);
+      }
       else
-        children.back()->Train<UseWeights>(data, currentChildBegin,
+      {
+        child->Train<UseWeights>(data, currentChildBegin,
             currentCol - currentChildBegin, datasetInfo, labels, numClasses,
             weights, minimumLeafSize);
+      }
+      children.push_back(child);
     }
   }
   else
@@ -718,15 +723,20 @@ void DecisionTree<FitnessFunction,
       }
 
       // Now build the child recursively.
-      children.push_back(new DecisionTree());
+      DecisionTree* child = new DecisionTree();
       if (NoRecursion)
-        children.back()->Train<UseWeights>(data, currentChildBegin,
-            currentCol - currentChildBegin,
-            labels, numClasses, weights, currentCol - currentChildBegin);
+      {
+        child->Train<UseWeights>(data, currentChildBegin,
+            currentCol - currentChildBegin, labels, numClasses, weights,
+            currentCol - currentChildBegin);
+      }
       else
-        children.back()->Train<UseWeights>(data, currentChildBegin,
+      {
+        child->Train<UseWeights>(data, currentChildBegin,
             currentCol - currentChildBegin, labels, numClasses, weights,
             minimumLeafSize);
+      }
+      children.push_back(child);
     }
   }
   else
