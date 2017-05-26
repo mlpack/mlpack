@@ -48,7 +48,8 @@
 // Easier to read Backtrace::DecodeAddress().
 #ifdef HAS_BFD_DL
   #define TRACE_CONDITION_1 (!dladdr(trace[i], &addressHandler))
-  #define FIND_LINE (bfd_find_nearest_line(abfd, text, syms, offset, &frame.file, &frame.function, &frame.line) && frame.file)
+  #define FIND_LINE (bfd_find_nearest_line(abfd, text, syms, offset, \
+        &frame.file, &frame.function, &frame.line) && frame.file)
 #endif
 
 using namespace mlpack;
