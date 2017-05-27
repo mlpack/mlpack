@@ -13,6 +13,8 @@
 
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
+
+#include <mlpack/methods/ann/init_rules/random_init.hpp>
 #include <mlpack/methods/ann/rnn.hpp>
 #include <mlpack/core/data/binarize.hpp>
 
@@ -491,33 +493,45 @@ BOOST_AUTO_TEST_CASE(EmbeddedReberGrammarTest)
  *
  * @param input The generated input sequence.
  * @param input The generated output sequence.
+ * @param sequences Number of samples.
  */
-void GenerateDistractedSequence(arma::mat& input, arma::mat& output)
+void GenerateDistractedSequence(arma::mat& input,
+                                arma::mat& output,
+                                const size_t sequences)
 {
-  input = arma::zeros<arma::mat>(10, 10);
-  output = arma::zeros<arma::mat>(3, 10);
+  input = arma::zeros<arma::mat>(100, sequences);
+  output = arma::zeros<arma::mat>(30, sequences);
 
-  arma::Col<size_t> index = arma::shuffle(arma::linspace<arma::Col<size_t> >(
-      0, 7, 8));
-
-  // Set the target in the input sequence and the corresponding targets in the
-  // output sequence by following the correct order.
-  for (size_t i = 0; i < 2; i++)
+  for (size_t i = 0; i < sequences; ++i)
   {
-    size_t idx = rand() % 2;
-    input(idx, index(i)) = 1;
-    output(idx, index(i) > index(i == 0) ? 9 : 8) = 1;
+    arma::mat inputTemp = arma::zeros<arma::mat>(10, 10);
+    arma::mat outputTemp = arma::zeros<arma::mat>(3, 10);
+
+    arma::Col<size_t> index = arma::shuffle(
+        arma::linspace<arma::Col<size_t> >(0, 7, 8));
+
+    // Set the target in the input sequence and the corresponding targets in the
+    // output sequence by following the correct order.
+    for (size_t i = 0; i < 2; i++)
+    {
+      size_t idx = rand() % 2;
+      inputTemp(idx, index(i)) = 1;
+      outputTemp(idx, index(i) > index(i == 0) ? 9 : 8) = 1;
+    }
+
+    for (size_t i = 2; i < 8; i++)
+      inputTemp(2 + rand() % 6, index(i)) = 1;
+
+    // Set the prompts which direct the network to give an answer.
+    inputTemp(8, 8) = 1;
+    inputTemp(9, 9) = 1;
+
+    inputTemp.reshape(inputTemp.n_elem, 1);
+    outputTemp.reshape(outputTemp.n_elem, 1);
+
+    input.col(i) = inputTemp;
+    output.col(i) = outputTemp;
   }
-
-  for (size_t i = 2; i < 8; i++)
-    input(2 + rand() % 6, index(i)) = 1;
-
-  // Set the prompts which direct the network to give an answer.
-  input(8, 8) = 1;
-  input(9, 9) = 1;
-
-  input.reshape(input.n_elem, 1);
-  output.reshape(output.n_elem, 1);
 }
 
 /**
@@ -529,18 +543,15 @@ void DistractedSequenceRecallTestNetwork()
   const size_t trainDistractedSequenceCount = 800;
   const size_t testDistractedSequenceCount = 400;
 
-  arma::field<arma::mat> trainInput(1, trainDistractedSequenceCount);
-  arma::field<arma::mat> trainLabels(1, trainDistractedSequenceCount);
-  arma::field<arma::mat> testInput(1, testDistractedSequenceCount);
-  arma::field<arma::mat> testLabels(1, testDistractedSequenceCount);
+  arma::mat trainInput, trainLabels, testInput, testLabels;
 
   // Generate the training data.
-  for (size_t i = 0; i < trainDistractedSequenceCount; i++)
-    GenerateDistractedSequence(trainInput(0, i), trainLabels(0, i));
+  GenerateDistractedSequence(trainInput, trainLabels,
+      trainDistractedSequenceCount);
 
   // Generate the test data.
-  for (size_t i = 0; i < testDistractedSequenceCount; i++)
-    GenerateDistractedSequence(testInput(0, i), testLabels(0, i));
+  GenerateDistractedSequence(testInput, testLabels,
+      testDistractedSequenceCount);
 
   /*
    * Construct a network with 10 input units, layerSize hidden units and 3
@@ -560,7 +571,7 @@ void DistractedSequenceRecallTestNetwork()
    */
   const size_t outputSize = 3;
   const size_t inputSize = 10;
-  const size_t rho = trainInput.at(0, 0).n_elem / inputSize;
+  const size_t rho = trainInput.col(0).n_elem / inputSize;
 
   // It isn't guaranteed that the recurrent network will converge in the
   // specified number of iterations using random weights. If this works 1 of 5
@@ -570,26 +581,21 @@ void DistractedSequenceRecallTestNetwork()
   size_t offset = 0;
   for (size_t trial = 0; trial < 5; ++trial)
   {
-    RNN<MeanSquaredError<> > model(rho);
+    RandomInitialization init(-0.5, 0.5);
+    MeanSquaredError<> output;
+    RNN<MeanSquaredError<>, RandomInitialization> model(
+        rho, false, output, init);
     model.Add<IdentityLayer<> >();
-    model.Add<Linear<> >(inputSize, 14);
-    model.Add<LSTM<> >(14, 7, rho);
+    model.Add<Linear<> >(inputSize, 16);
+    model.Add<LSTM<> >(16, 7, rho);
     model.Add<Linear<> >(7, outputSize);
     model.Add<SigmoidLayer<> >();
 
-    StandardSGD<decltype(model)> opt(model, 0.1, 2, -50000);
+    StandardSGD<decltype(model)> opt(model, 0.1,
+        trainDistractedSequenceCount * (6 + offset), -1);
 
     arma::mat inputTemp, labelsTemp;
-    for (size_t i = 0; i < (10 + offset); i++)
-    {
-      for (size_t j = 0; j < trainDistractedSequenceCount; j++)
-      {
-        inputTemp = trainInput.at(0, j);
-        labelsTemp = trainLabels.at(0, j);
-
-        model.Train(inputTemp, labelsTemp, opt);
-      }
-    }
+    model.Train(trainInput, trainLabels, opt);
 
     double error = 0;
 
@@ -598,12 +604,12 @@ void DistractedSequenceRecallTestNetwork()
     for (size_t i = 0; i < testDistractedSequenceCount; i++)
     {
       arma::mat output;
-      arma::mat input = testInput.at(0, i);
+      arma::mat input = testInput.col(i);
 
       model.Predict(input, output);
       data::Binarize(output, output, 0.5);
 
-      if (arma::accu(arma::abs(testLabels.at(0, i) - output)) != 0)
+      if (arma::accu(arma::abs(testLabels.col(i) - output)) != 0)
         error += 1;
     }
 
