@@ -275,7 +275,7 @@ BOOST_AUTO_TEST_CASE(LinearRegressionTest)
   mat data;
   data.randn(15, 800);
   rowvec responses;
-  responses.randn(800, 1);
+  responses.randn(800);
 
   LinearRegression lr(data, responses, 0.05); // Train the model.
   LinearRegression xmlLr, textLr, binaryLr;
