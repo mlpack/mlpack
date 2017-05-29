@@ -52,7 +52,6 @@ class RectangleTree<MetricType, StatisticType, MatType, SplitType,
   size_t& NumPrunes() { return numPrunes; }
 
  private:
-
   // We use this class and this function to make the sorting and scoring easy
   // and efficient:
   struct NodeAndScore

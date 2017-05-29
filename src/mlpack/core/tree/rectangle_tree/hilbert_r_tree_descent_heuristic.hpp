@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_HILBERT_R_TREE_DESCENT_HEURISTIC_HPP
-#define MLPACK_CORE_TREE_RECTANGLE_TREE_HILBERT_R_TREE_DESCENT_HEURISTIC_HPP
+#ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_HR_TREE_DESCENT_HEURISTIC_HPP
+#define MLPACK_CORE_TREE_RECTANGLE_TREE_HR_TREE_DESCENT_HEURISTIC_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -55,4 +55,4 @@ class HilbertRTreeDescentHeuristic
 
 #include "hilbert_r_tree_descent_heuristic_impl.hpp"
 
-#endif // MLPACK_CORE_TREE_RECTANGLE_TREE_HILBERT_R_TREE_DESCENT_HEURISTIC_HPP
+#endif // MLPACK_CORE_TREE_RECTANGLE_TREE_HR_TREE_DESCENT_HEURISTIC_HPP

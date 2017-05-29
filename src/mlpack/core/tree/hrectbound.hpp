@@ -39,7 +39,7 @@ struct IsLMetric<metric::LMetric<Power, TakeRoot>>
   static const bool Value = true;
 };
 
-} // namespace util
+} // namespace meta
 
 /**
  * Hyper-rectangle bound for an L-metric.  This should be used in conjunction

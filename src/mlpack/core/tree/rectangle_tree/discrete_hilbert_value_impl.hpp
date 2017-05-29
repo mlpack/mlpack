@@ -166,7 +166,7 @@ CalculateValue(const VecType& pt,
   for (size_t i = 0; i < pt.n_rows; i++)
   {
     int e;
-    VecElemType normalizedVal = std::frexp(pt(i),&e);
+    VecElemType normalizedVal = std::frexp(pt(i), &e);
     bool sgn = std::signbit(normalizedVal);
 
     if (pt(i) == 0)
@@ -325,7 +325,7 @@ CompareWith(const VecType& pt,
   if (numValues == 0)
     return -1;
 
-  return CompareValues(localHilbertValues->col(numValues - 1),val);
+  return CompareValues(localHilbertValues->col(numValues - 1), val);
 }
 
 template<typename TreeElemType>
@@ -384,7 +384,7 @@ void DiscreteHilbertValue<TreeElemType>::InsertNode(TreeType* node)
 {
   DiscreteHilbertValue &val = node->AuxiliaryInfo().HilbertValue();
 
-  if (CompareWith(node,val) < 0)
+  if (CompareWith(node, val) < 0)
   {
     localHilbertValues = val.LocalHilbertValues();
     numValues = val.NumValues();
@@ -396,7 +396,6 @@ template<typename TreeType>
 void DiscreteHilbertValue<TreeElemType>::
 DeletePoint(TreeType* /* node */, const size_t localIndex)
 {
-
   // Delete the Hilbert value from the local dataset
   for (size_t i = numValues - 1; i > localIndex; i--)
     localHilbertValues->col(i - 1) = localHilbertValues->col(i);

@@ -49,7 +49,6 @@ SingleTreeTraverser<RuleType>::Traverse(
     const size_t queryIndex,
     const RectangleTree& referenceNode)
 {
-
   // If we reach a leaf node, we need to run the base case.
   if (referenceNode.IsLeaf())
   {

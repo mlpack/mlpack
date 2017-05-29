@@ -46,9 +46,7 @@ PrimalDualSolver<SDPType>::PrimalDualSolver(const SDPType& sdp)
     primalInfeasTol(1e-7),
     dualInfeasTol(1e-7),
     maxIterations(1000)
-{
-
-}
+{ /* Nothing to do. */ }
 
 template <typename SDPType>
 PrimalDualSolver<SDPType>::PrimalDualSolver(const SDPType& sdp,

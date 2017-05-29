@@ -112,7 +112,7 @@ RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
 RectangleTree(
     RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
                   AuxiliaryInformationType>*
-        parentNode,const size_t numMaxChildren) :
+        parentNode, const size_t numMaxChildren) :
     maxNumChildren(numMaxChildren > 0 ? numMaxChildren :
                                         parentNode->MaxNumChildren()),
     minNumChildren(parentNode->MinNumChildren()),
@@ -385,7 +385,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   // If it is not a leaf node, we use the DescentHeuristic to choose a child
   // to which we recurse.
   auxiliaryInfo.HandlePointInsertion(this, point);
-  const size_t descentNode = DescentType::ChooseDescentNode(this,point);
+  const size_t descentNode = DescentType::ChooseDescentNode(this, point);
   children[descentNode]->InsertPoint(point, relevels);
 }
 
@@ -879,7 +879,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
     // node contains only one point.
 
     // The SplitType takes care of this and of moving up the tree if necessary.
-    SplitType::SplitLeafNode(this,relevels);
+    SplitType::SplitLeafNode(this, relevels);
   }
   else
   {
@@ -889,7 +889,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
 
     // If we are full, then we need to split (or at least try).  The SplitType
     // takes care of this and of moving up the tree if necessary.
-    SplitType::SplitNonLeafNode(this,relevels);
+    SplitType::SplitNonLeafNode(this, relevels);
   }
 }
 
@@ -1004,7 +1004,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
         if (parent->children[j] == this)
         {
           // Decrement numChildren.
-          if (!auxiliaryInfo.HandleNodeRemoval(parent,j))
+          if (!auxiliaryInfo.HandleNodeRemoval(parent, j))
           {
             parent->children[j] = parent->children[--parent->NumChildren()];
           }
@@ -1096,7 +1096,8 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
       parent != NULL)
     parent->CondenseTree(point, relevels, usePoint);
   else if (!usePoint &&
-           (ShrinkBoundForBound(bound) || auxiliaryInfo.UpdateAuxiliaryInfo(this)) &&
+           (ShrinkBoundForBound(bound) ||
+           auxiliaryInfo.UpdateAuxiliaryInfo(this)) &&
            parent != NULL)
     parent->CondenseTree(point, relevels, usePoint);
 }
@@ -1261,7 +1262,6 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
 
     if (ownsDataset && dataset)
       delete dataset;
-
   }
 
   ar & CreateNVP(maxNumChildren, "maxNumChildren");
