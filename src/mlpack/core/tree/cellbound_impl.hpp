@@ -867,10 +867,8 @@ CellBound<MetricType, ElemType>::RangeDistance(
  */
 template<typename MetricType, typename ElemType>
 template<typename MatType>
-inline CellBound<
-    MetricType,
-    ElemType>& CellBound<MetricType, ElemType>::operator|=(
-    const MatType& data)
+inline CellBound<MetricType, ElemType>&
+CellBound<MetricType, ElemType>::operator|=(const MatType& data)
 {
   Log::Assert(data.n_rows == dim);
 
@@ -898,10 +896,8 @@ inline CellBound<
  * Expands this region to encompass another bound.
  */
 template<typename MetricType, typename ElemType>
-inline CellBound<
-    MetricType,
-    ElemType>& CellBound<MetricType, ElemType>::operator|=(
-    const CellBound& other)
+inline CellBound<MetricType, ElemType>&
+CellBound<MetricType, ElemType>::operator|=(const CellBound& other)
 {
   assert(other.dim == dim);
 

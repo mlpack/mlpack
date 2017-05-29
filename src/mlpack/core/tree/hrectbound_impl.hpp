@@ -507,10 +507,8 @@ HRectBound<MetricType, ElemType>::RangeDistance(
  */
 template<typename MetricType, typename ElemType>
 template<typename MatType>
-inline HRectBound<
-    MetricType,
-    ElemType>& HRectBound<MetricType, ElemType>::operator|=(
-    const MatType& data)
+inline HRectBound<MetricType, ElemType>&
+HRectBound<MetricType, ElemType>::operator|=(const MatType& data)
 {
   Log::Assert(data.n_rows == dim);
 
@@ -533,10 +531,8 @@ inline HRectBound<
  * Expands this region to encompass another bound.
  */
 template<typename MetricType, typename ElemType>
-inline HRectBound<
-    MetricType,
-    ElemType>& HRectBound<MetricType, ElemType>::operator|=(
-    const HRectBound& other)
+inline HRectBound<MetricType, ElemType>&
+HRectBound<MetricType, ElemType>::operator|=(const HRectBound& other)
 {
   assert(other.dim == dim);
 
@@ -593,8 +589,8 @@ inline bool HRectBound<MetricType, ElemType>::Contains(
  * Returns the intersection of this bound and another.
  */
 template<typename MetricType, typename ElemType>
-inline HRectBound<MetricType, ElemType> HRectBound<MetricType, ElemType>::
-operator&(const HRectBound& bound) const
+inline HRectBound<MetricType, ElemType>
+HRectBound<MetricType, ElemType>::operator&(const HRectBound& bound) const
 {
   HRectBound<MetricType, ElemType> result(dim);
 
@@ -610,8 +606,8 @@ operator&(const HRectBound& bound) const
  * Intersects this bound with another.
  */
 template<typename MetricType, typename ElemType>
-inline HRectBound<MetricType, ElemType>& HRectBound<MetricType, ElemType>::
-operator&=(const HRectBound& bound)
+inline HRectBound<MetricType, ElemType>&
+HRectBound<MetricType, ElemType>::operator&=(const HRectBound& bound)
 {
   for (size_t k = 0; k < dim; k++)
   {

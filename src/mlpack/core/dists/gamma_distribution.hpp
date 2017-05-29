@@ -214,7 +214,7 @@ class GammaDistribution
                           const double tol);
 };
 
-} // namespace distribution.
-} // namespace mlpack.
+} // namespace distribution
+} // namespace mlpack
 
 #endif
