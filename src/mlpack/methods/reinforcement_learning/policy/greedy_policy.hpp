@@ -21,7 +21,7 @@ namespace rl {
  * Implementation for epsilon greedy policy.
  *
  * In general we will select an action greedily based on the action value,
- * however under sometimes we will also randomly select an action to
+ * however sometimes we will also randomly select an action to
  * encourage exploration.
  *
  * @tparam EnvironmentType The reinforcement learning task.
@@ -37,9 +37,9 @@ class GreedyPolicy {
    * @param annealInterval The steps during which the probability to explore will anneal.
    * @param minEpsilon Epsilon will never be less than this value.
    */
-  GreedyPolicy(double initialEpsilon,
-               size_t annealInterval,
-               double minEpsilon) :
+  GreedyPolicy(const double initialEpsilon,
+               const size_t annealInterval,
+               const double minEpsilon) :
       epsilon(initialEpsilon),
       minEpsilon(minEpsilon),
       delta((initialEpsilon - minEpsilon) / annealInterval)
@@ -59,17 +59,8 @@ class GreedyPolicy {
       return static_cast<ActionType>(math::RandInt(ActionType::size));
 
     // Select the action greedily.
-    size_t bestAction = 0;
-    double maxActionValue = actionValue[0];
-    for (size_t action = 1; action < ActionType::size; ++action)
-    {
-      if (maxActionValue < actionValue[action])
-      {
-        maxActionValue = actionValue[action];
-        bestAction = action;
-      }
-    }
-    return static_cast<ActionType>(bestAction);
+    return static_cast<ActionType>(
+        arma::as_scalar(arma::find(actionValue == actionValue.max(), 1)));
   };
 
   /**

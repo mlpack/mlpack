@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE(RandomReplayTest)
 BOOST_AUTO_TEST_CASE(GreedyPolicyTest)
 {
   GreedyPolicy<CartPole> policy(1.0, 10, 0.0);
-  for (int i = 0; i < 15; ++i)
+  for (size_t i = 0; i < 15; ++i)
     policy.Anneal();
   BOOST_REQUIRE_CLOSE(0.0, policy.Epsilon(), 1e-5);
   arma::colvec actionValue = arma::randn<arma::colvec>(CartPole::Action::size);
