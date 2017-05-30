@@ -60,7 +60,7 @@ int main(int argc, char** argv)
   mlpack::bindings::cli::EndProgram();
 }
 
-#elif (BINDING_TYPE == BINDING_TYPE_TEST) // This is a unit test.
+#elif(BINDING_TYPE == BINDING_TYPE_TEST) // This is a unit test.
 
 #include <mlpack/bindings/tests/test_option.hpp>
 
@@ -93,7 +93,7 @@ using Option = mlpack::bindings::tests::TestOption<T>;
     } \
     }
 
-#elif (BINDING_TYPE == BINDING_TYPE_PYX) // This is a Python binding.
+#elif(BINDING_TYPE == BINDING_TYPE_PYX) // This is a Python binding.
 
 #include <mlpack/bindings/python/py_option.hpp>
 #include <mlpack/bindings/python/print_doc_functions.hpp>
