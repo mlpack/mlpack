@@ -21,18 +21,20 @@ namespace rl {
  * Implementation for epsilon greedy policy.
  *
  * In general we will select an action greedily based on the action value,
- * however sometimes we will also randomly select an action to
- * encourage exploration.
+ * however sometimes we will also randomly select an action to encourage
+ * exploration.
  *
  * @tparam EnvironmentType The reinforcement learning task.
  */
 template <typename EnvironmentType>
-class GreedyPolicy {
+class GreedyPolicy
+{
  public:
   using ActionType = typename EnvironmentType::Action;
 
   /**
    * Constructor for epsilon greedy policy class.
+   *
    * @param initialEpsilon The initial probability to explore (select a random action).
    * @param annealInterval The steps during which the probability to explore will anneal.
    * @param minEpsilon Epsilon will never be less than this value.
@@ -47,8 +49,9 @@ class GreedyPolicy {
 
   /**
    * Sample an action based on given action values.
+   *
    * @param actionValue Values for each action.
-   * @return Sampled action
+   * @return Sampled action.
    */
   ActionType Sample(const arma::colvec& actionValue)
   {
@@ -61,7 +64,7 @@ class GreedyPolicy {
     // Select the action greedily.
     return static_cast<ActionType>(
         arma::as_scalar(arma::find(actionValue == actionValue.max(), 1)));
-  };
+  }
 
   /**
    * Exploration probability will anneal at each step.
