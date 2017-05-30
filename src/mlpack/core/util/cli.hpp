@@ -355,6 +355,12 @@ class CLI
 
   //! Private copy constructor; we don't want copies floating around.
   CLI(const CLI& other);
+  //! Private copy operator.
+  CLI& operator=(const CLI& other);
+  //! Private move constructor.
+  CLI(CLI&& other);
+  //! Private move operator.
+  CLI& operator=(CLI&& other);
 
   /**
    * Add an option if it is not a vector type.  This is a utility function used

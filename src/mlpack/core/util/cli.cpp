@@ -39,13 +39,6 @@ CLI::CLI() : desc("Allowed Options") , didParse(false), doc(&emptyProgramDoc)
   return;
 }
 
-// Private copy constructor; don't want copies floating around.
-CLI::CLI(const CLI& other) : desc(other.desc),
-    didParse(false), doc(&emptyProgramDoc)
-{
-  return;
-}
-
 CLI::~CLI()
 {
   // We only need to print output parameters if we're not printing any help or
