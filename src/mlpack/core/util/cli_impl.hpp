@@ -65,16 +65,16 @@ void CLI::Add(const T& defaultValue,
   #undef BASH_CLEAR
 
   // Define identifier and alias maps.
-  std::map<std::string, util::ParamData>& parameters =
+  std::map<std::string, util::ParamData>& localParameters =
       GetSingleton().parameters;
-  std::map<char, std::string>& aliases = GetSingleton().aliases;
+  std::map<char, std::string>& localAliases = GetSingleton().aliases;
 
   // If found in current map, print fatal error and terminate the program.
-  if (parameters.count(identifier))
+  if (localParameters.count(identifier))
     outstr << "Parameter --" << identifier << " (-" << alias << ") "
            << "is defined multiple times with the same identifiers."
            << std::endl;
-  if (alias != '\0' && aliases.count(alias))
+  if (alias != '\0' && localAliases.count(alias))
     outstr << "Parameter --" << identifier << " (-" << alias << ") "
            << "is defined multiple times with the same alias." << std::endl;
 
@@ -114,8 +114,8 @@ void CLI::Add(const T& defaultValue,
 
   // Sanity check: ensure that the boost name is not already in use.
   std::map<std::string, util::ParamData>::const_iterator it =
-      parameters.begin();
-  while (it != parameters.end())
+      localParameters.begin();
+  while (it != localParameters.end())
   {
     if ((*it).second.boostName == data.boostName ||
         (*it).second.name == data.boostName)
@@ -125,21 +125,21 @@ void CLI::Add(const T& defaultValue,
     ++it;
   }
 
-  GetSingleton().parameters[identifier] = data;
+  localParameters[identifier] = data;
 
   // Now add the parameter name to boost::program_options.
-  po::options_description& desc = CLI::GetSingleton().desc;
+  po::options_description& localDesc = CLI::GetSingleton().desc;
   // Must make use of boost syntax here.
   std::string progOptId = (alias != '\0') ? data.boostName + ","
       + std::string(1, alias) : data.boostName;
 
   // Add the alias, if necessary.
   if (alias != '\0')
-    GetSingleton().aliases[alias] = identifier;
+    localAliases[alias] = identifier;
 
   // Add the option to boost program_options.
   if (data.isFlag)
-    desc.add_options()(progOptId.c_str(), description.c_str());
+    localDesc.add_options()(progOptId.c_str(), description.c_str());
   else
     GetSingleton().AddOption<typename util::ParameterType<T>::type>(
         progOptId.c_str(), description.c_str());
