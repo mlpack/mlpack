@@ -60,9 +60,12 @@ find_program(PYTHON "python" REQUIRED)
 
 # Import find_python_module.
 include(${CMAKE_SOURCE_DIR}/CMake/FindPythonModule.cmake)
-find_python_module(distutils REQUIRED)
-find_python_module(Cython REQUIRED)
-find_python_module(numpy REQUIRED)
+set(DISTUTILS_FIND_REQUIRED 1)
+set(CYTHON_FIND_REQUIRED 1)
+set(NUMPY_FIND_REQUIRED 1)
+find_python_module(distutils)
+find_python_module(Cython)
+find_python_module(numpy)
 
 # Set the include directories correctly.
 get_property(CYTHON_INCLUDE_DIRECTORIES DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
