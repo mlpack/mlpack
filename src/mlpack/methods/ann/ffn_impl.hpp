@@ -168,6 +168,15 @@ void FFN<OutputLayerType, InitializationRuleType>::Predict(
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
+arma::mat FFN<OutputLayerType, InitializationRuleType>::Predict(
+    arma::mat predictors)
+{
+  arma::mat results;
+  Predict(predictors, results);
+  return results;
+};
+
+template<typename OutputLayerType, typename InitializationRuleType>
 double FFN<OutputLayerType, InitializationRuleType>::Evaluate(
     const arma::mat& /* parameters */, const size_t i, const bool deterministic)
 {

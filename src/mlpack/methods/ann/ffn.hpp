@@ -142,6 +142,16 @@ class FFN
   void Predict(arma::mat& predictors, arma::mat& results);
 
   /**
+   * Predict the responses to a given set of predictors. The responses will
+   * reflect the output of the given output layer as returned by the
+   * output layer function.
+   *
+   * @param predictors Input predictors.
+   * @return Output predictions of responses into.
+   */
+  arma::mat Predict(arma::mat predictors);
+
+  /**
    * Evaluate the feedforward network with the given parameters. This function
    * is usually called by the optimizer to train the model.
    *
