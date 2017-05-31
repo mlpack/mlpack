@@ -833,8 +833,8 @@ BOOST_AUTO_TEST_CASE(DecisionStumpTest)
     labels[i] = i % 3; // 3 classes.
 
   // Build a decision stump.
-  DecisionTree<GiniGain, BestBinaryNumericSplit, AllCategoricalSplit, double,
-      true> stump(dataset, labels, 3, 1);
+  DecisionTree<GiniGain, BestBinaryNumericSplit, AllCategoricalSplit,
+      AllDimensionSelect, double, true> stump(dataset, labels, 3, 1);
 
   // Check that it has children.
   BOOST_REQUIRE_EQUAL(stump.NumChildren(), 2);
