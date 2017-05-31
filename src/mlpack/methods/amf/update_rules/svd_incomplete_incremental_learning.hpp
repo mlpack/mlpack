@@ -53,7 +53,7 @@ class SVDIncompleteIncrementalLearning
   SVDIncompleteIncrementalLearning(double u = 0.001,
                                    double kw = 0,
                                    double kh = 0)
-          : u(u), kw(kw), kh(kh)
+          : u(u), kw(kw), kh(kh), currentUserIndex(0)
   {
     // Nothing to do.
   }

@@ -75,6 +75,8 @@ BallBound<MetricType, VecType>& BallBound<MetricType, VecType>::operator=(
   center = other.center;
   metric = other.metric;
   ownsMetric = false;
+
+  return *this;
 }
 
 //! Move constructor.

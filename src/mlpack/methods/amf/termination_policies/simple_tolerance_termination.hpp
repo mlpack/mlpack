@@ -56,8 +56,6 @@ class SimpleToleranceTermination
 
     c_index = 0;
     c_indexOld = 0;
-
-    reverseStepCount = 0;
   }
 
   /**

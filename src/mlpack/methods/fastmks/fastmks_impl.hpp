@@ -189,6 +189,8 @@ FastMKS<KernelType, MatType, TreeType>::operator=(const FastMKS& other)
 
   singleMode = other.singleMode;
   naive = other.naive;
+
+  return *this;
 }
 
 template<typename KernelType,

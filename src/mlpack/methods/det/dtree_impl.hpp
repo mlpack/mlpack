@@ -213,7 +213,7 @@ DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(
 
   // Copy the children.
   left = ((obj.left == NULL) ? NULL : new DTree(*obj.left));
-  left = ((obj.right == NULL) ? NULL : new DTree(*obj.right));
+  right = ((obj.right == NULL) ? NULL : new DTree(*obj.right));
 
   return *this;
 }

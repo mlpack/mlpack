@@ -96,8 +96,8 @@ double SparseCoding::OptimizeDictionary(const arma::mat& data,
       inactiveAtoms.push_back(j);
   }
 
-  const size_t nInactiveAtoms = inactiveAtoms.size();
-  const size_t nActiveAtoms = atoms - nInactiveAtoms;
+  size_t nInactiveAtoms = inactiveAtoms.size();
+  size_t nActiveAtoms = atoms - nInactiveAtoms;
 
   // Efficient construction of Z restricted to active atoms.
   arma::mat matActiveZ;
@@ -105,6 +105,9 @@ double SparseCoding::OptimizeDictionary(const arma::mat& data,
   {
     math::RemoveRows(codes, inactiveAtoms, matActiveZ);
   }
+
+  nInactiveAtoms = inactiveAtoms.size();
+  nActiveAtoms = atoms - nInactiveAtoms;
 
   if (nInactiveAtoms > 0)
   {

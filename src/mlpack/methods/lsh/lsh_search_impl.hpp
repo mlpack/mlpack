@@ -203,7 +203,7 @@ void LSHSearch<SortPolicy>::Train(const arma::mat& referenceSet,
                                   const double hashWidthIn,
                                   const size_t secondHashSize,
                                   const size_t bucketSize,
-                                  const arma::cube &projection)
+                                  const arma::cube& projection)
 {
   // Set new reference set.
   if (this->referenceSet && ownsSet)

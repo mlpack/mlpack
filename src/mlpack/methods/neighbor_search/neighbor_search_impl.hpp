@@ -303,6 +303,8 @@ NeighborSearch<SortPolicy,
   baseCases = other.baseCases;
   scores = other.scores;
   treeNeedsReset = false;
+
+  return *this;
 }
 
 // Move operator.
@@ -356,6 +358,8 @@ NeighborSearch<SortPolicy,
   other.baseCases = 0;
   other.scores = 0;
   other.treeNeedsReset = false;
+
+  return *this;
 }
 
 // Clean memory.

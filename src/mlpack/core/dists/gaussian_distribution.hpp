@@ -42,7 +42,7 @@ class GaussianDistribution
   /**
    * Default constructor, which creates a Gaussian with zero dimension.
    */
-  GaussianDistribution() { /* nothing to do */ }
+  GaussianDistribution() : logDetCov(0) { /* nothing to do */ }
 
   /**
    * Create a Gaussian distribution with zero mean and identity covariance with

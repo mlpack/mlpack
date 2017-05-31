@@ -776,6 +776,7 @@ void HoeffdingTree<
       children.resize(numChildren, NULL);
       for (size_t i = 0; i < numChildren; ++i)
         children[i] = new HoeffdingTree(data::DatasetInfo(0), 0);
+      numChildren = children.size();
     }
 
     for (size_t i = 0; i < numChildren; ++i)

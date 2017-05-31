@@ -76,7 +76,6 @@ void HilbertRTreeSplit<splitOrder>::SplitLeafNode(TreeType* tree,
   firstSibling = (lastSibling > splitOrder ? lastSibling - splitOrder : 0);
 
   assert(lastSibling - firstSibling <= splitOrder);
-  assert(firstSibling >= 0);
   assert(lastSibling < parent->NumChildren());
 
   // Redistribute the points among (splitOrder + 1) cooperating siblings evenly.
@@ -141,7 +140,6 @@ SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
                   lastSibling - splitOrder : 0);
 
   assert(lastSibling - firstSibling <= splitOrder);
-  assert(firstSibling >= 0);
   assert(lastSibling < parent->NumChildren());
 
   // Redistribute children among (splitOrder + 1) cooperating siblings evenly.
@@ -203,7 +201,6 @@ bool HilbertRTreeSplit<splitOrder>::FindCooperatingSiblings(
   }
 
   assert(lastSibling - firstSibling <= splitOrder - 1);
-  assert(firstSibling >= 0);
   assert(lastSibling < parent->NumChildren());
 
   return true;

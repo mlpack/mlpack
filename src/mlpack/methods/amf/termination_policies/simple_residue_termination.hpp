@@ -40,8 +40,14 @@ class SimpleResidueTermination
    * @param maxIterations Maximum number of iterations.
    */
   SimpleResidueTermination(const double minResidue = 1e-5,
-                           const size_t maxIterations = 10000)
-      : minResidue(minResidue), maxIterations(maxIterations) { }
+                           const size_t maxIterations = 10000) :
+      minResidue(minResidue),
+      maxIterations(maxIterations),
+      residue(DBL_MAX),
+      iteration(1),
+      normOld(0),
+      nm(0)
+  { }
 
   /**
    * Initializes the termination policy before stating the factorization.
