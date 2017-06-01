@@ -48,7 +48,7 @@ void HilbertRTreeSplit<splitOrder>::SplitLeafNode(TreeType* tree,
 
   TreeType* parent = tree->Parent();
   size_t iTree = 0;
-  for (iTree = 0; parent->children[iTree] != tree; iTree++);
+  for (iTree = 0; parent->children[iTree] != tree; iTree++) { }
 
   // Try to find splitOrder cooperating siblings in order to redistribute points
   // among them and avoid split.
@@ -112,7 +112,7 @@ SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
   TreeType* parent = tree->Parent();
 
   size_t iTree = 0;
-  for (iTree = 0; parent->children[iTree] != tree; iTree++);
+  for (iTree = 0; parent->children[iTree] != tree; iTree++) { }
 
   // Try to find splitOrder cooperating siblings in order to redistribute
   // children among them and avoid split.

@@ -49,7 +49,8 @@ template<typename MetricType = metric::EuclideanDistance,
          typename MatType = arma::mat,
          typename SplitType = RTreeSplit,
          typename DescentType = RTreeDescentHeuristic,
-         template<typename> class AuxiliaryInformationType = NoAuxiliaryInformation>
+         template<typename> class AuxiliaryInformationType =
+             NoAuxiliaryInformation>
 class RectangleTree
 {
   // The metric *must* be the euclidean distance.

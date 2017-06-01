@@ -1,4 +1,3 @@
-include_directories(..) # <mlpack/[whatever]>
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/..) # mlpack/mlpack_export.hpp
 
 # Add core.hpp to list of sources.

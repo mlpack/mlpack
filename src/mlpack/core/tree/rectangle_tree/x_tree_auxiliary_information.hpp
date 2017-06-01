@@ -231,7 +231,6 @@ class XTreeAuxiliaryInformation
     ar & CreateNVP(normalNodeMaxNumChildren, "normalNodeMaxNumChildren");
     ar & CreateNVP(splitHistory, "splitHistory");
   }
-
 };
 
 } // namespace tree

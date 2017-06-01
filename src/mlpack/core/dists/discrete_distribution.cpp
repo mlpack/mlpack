@@ -128,9 +128,9 @@ void DiscreteDistribution::Train(const arma::mat& observations,
   {
     for (size_t i = 0; i < dimensions; i++)
     {
-      // Add the probability of each observation.  The addition of 0.5 to the
-      // observation is to turn the default flooring operation of the size_t cast
-      // into a rounding observation.
+      // Add the probability of each observation. The addition of 0.5
+      // to the observation is to turn the default flooring operation
+      // of the size_t cast into a rounding observation.
       const size_t obs = size_t(observations(i, r) + 0.5);
 
       // Ensure that the observation is within the bounds.

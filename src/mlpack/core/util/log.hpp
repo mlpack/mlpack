@@ -93,6 +93,6 @@ class Log
   static std::ostream& cout;
 };
 
-}; //namespace mlpack
+}; // namespace mlpack
 
 #endif

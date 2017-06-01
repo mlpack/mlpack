@@ -20,4 +20,7 @@ notifications:
   email:
     - mlpack-git@lists.mlpack.org
   irc:
-    - "chat.freenode.net#mlpack"
+    channels:
+      - "chat.freenode.net#mlpack"
+    on_success: change
+    on_failure: always

@@ -50,7 +50,7 @@ namespace distribution {
  */
 class GammaDistribution
 {
-  public:
+ public:
     /**
      * Construct the Gamma distribution with the given number of dimensions
      * (default 0); each parameter will be initialized to 0.
@@ -80,7 +80,7 @@ class GammaDistribution
     /**
      * Destructor.
      */
-    ~GammaDistribution() {};
+    ~GammaDistribution() {}
 
     /**
      * This function trains (fits distribution parameters) to new data or the
@@ -192,7 +192,7 @@ class GammaDistribution
     //! Get the dimensionality of the distribution.
     size_t Dimensionality() const { return alpha.n_elem; }
 
-  private:
+ private:
     //! Array of fitted alphas.
     arma::vec alpha;
     //! Array of fitted betas.
@@ -214,7 +214,7 @@ class GammaDistribution
                           const double tol);
 };
 
-} // namespace distributions.
-} // namespace mlpack.
+} // namespace distribution
+} // namespace mlpack
 
 #endif

@@ -82,7 +82,9 @@ inline CellBound<MetricType, ElemType>::CellBound(
  * Same as the copy constructor.
  */
 template<typename MetricType, typename ElemType>
-inline CellBound<MetricType, ElemType>& CellBound<MetricType, ElemType>::operator=(
+inline CellBound<
+    MetricType,
+    ElemType>& CellBound<MetricType, ElemType>::operator=(
     const CellBound<MetricType, ElemType>& other)
 {
   if (dim != other.Dim())
@@ -486,9 +488,10 @@ inline ElemType CellBound<MetricType, ElemType>::MinDistance(
       lower = loBound(d, i) - point[d];
       higher = point[d] - hiBound(d, i);
 
-      // Since only one of 'lower' or 'higher' is negative, if we add each's
-      // absolute value to itself and then sum those two, our result is the
-      // nonnegative half of the equation times two; then we raise to power Power.
+      // Since only one of 'lower' or 'higher' is negative, if we add
+      // each's absolute value to itself and then sum those two, our
+      // result is the non negative half of the equation times two;
+      // then we raise to power Power.
       if (MetricType::Power == 1)
         sum += lower + std::fabs(lower) + higher + std::fabs(higher);
       else if (MetricType::Power == 2)
@@ -864,8 +867,8 @@ CellBound<MetricType, ElemType>::RangeDistance(
  */
 template<typename MetricType, typename ElemType>
 template<typename MatType>
-inline CellBound<MetricType, ElemType>& CellBound<MetricType, ElemType>::operator|=(
-    const MatType& data)
+inline CellBound<MetricType, ElemType>&
+CellBound<MetricType, ElemType>::operator|=(const MatType& data)
 {
   Log::Assert(data.n_rows == dim);
 
@@ -893,8 +896,8 @@ inline CellBound<MetricType, ElemType>& CellBound<MetricType, ElemType>::operato
  * Expands this region to encompass another bound.
  */
 template<typename MetricType, typename ElemType>
-inline CellBound<MetricType, ElemType>& CellBound<MetricType, ElemType>::operator|=(
-    const CellBound& other)
+inline CellBound<MetricType, ElemType>&
+CellBound<MetricType, ElemType>::operator|=(const CellBound& other)
 {
   assert(other.dim == dim);
 
@@ -930,7 +933,8 @@ inline CellBound<MetricType, ElemType>& CellBound<MetricType, ElemType>::operato
  */
 template<typename MetricType, typename ElemType>
 template<typename VecType>
-inline bool CellBound<MetricType, ElemType>::Contains(const VecType& point) const
+inline bool CellBound<MetricType, ElemType>::Contains(
+    const VecType& point) const
 {
   for (size_t i = 0; i < point.n_elem; i++)
   {
