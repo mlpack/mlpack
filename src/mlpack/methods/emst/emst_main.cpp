@@ -26,7 +26,7 @@
  */
 #include "dtb.hpp"
 
-#include <mlpack/prereqs.hpp>
+
 #include <mlpack/core/util/cli.hpp>
 
 PROGRAM_INFO("Fast Euclidean Minimum Spanning Tree", "This program can compute "
