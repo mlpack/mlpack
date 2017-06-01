@@ -3,6 +3,7 @@ add_executable(mlpack_test
   activation_functions_test.cpp
   adaboost_test.cpp
   adam_test.cpp
+  adagrad_test.cpp
   ada_delta_test.cpp
   ada_grad_test.cpp
   akfn_test.cpp
