@@ -28,6 +28,7 @@ set(DIRS
   decision_tree
   det
   emst
+  elm
   fastmks
   gmm
   hmm
