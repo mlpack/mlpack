@@ -82,6 +82,11 @@ All of those should be available in your distribution's package manager.  If
 not, you will have to compile each of them by hand.  See the documentation for
 each of those packages for more information.
 
+In Ubuntu and Debian, you can get all of these dependencies through apt:
+
+    $ apt-get install cmake libboost-math-dev libboost-program-options-dev
+    libboost-test-dev libboost-serialization-dev libarmadillo-dev binutils-dev
+
 If you are compiling Armadillo by hand, ensure that LAPACK and BLAS are enabled.
 
 ### 4. Building mlpack from source
