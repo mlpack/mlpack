@@ -26,10 +26,18 @@ namespace rl {
  *
  * For more details, see the following:
  * @code
- * @inproceedings{van2016deep,
- *   title   =   {Deep Reinforcement Learning with Double Q-Learning.},
- *   author  =   {Van Hasselt, Hado and Guez, Arthur and Silver, David},
- *   year    =   {2016}
+ * @article{Mnih2013,
+ *  author    = {Volodymyr Mnih and
+ *               Koray Kavukcuoglu and
+ *               David Silver and
+ *               Alex Graves and
+ *               Ioannis Antonoglou and
+ *               Daan Wierstra and
+ *               Martin A. Riedmiller},
+ *  title     = {Playing Atari with Deep Reinforcement Learning},
+ *  journal   = {CoRR},
+ *  year      = {2013},
+ *  url       = {http://arxiv.org/abs/1312.5602}
  * }
  * @endcode
  *

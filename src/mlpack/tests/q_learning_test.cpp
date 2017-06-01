@@ -12,11 +12,8 @@
 
 #include <mlpack/core.hpp>
 
-#include <mlpack/core/optimizers/adam/adam.hpp>
-#include <mlpack/core/optimizers/sgd/sgd.hpp>
 #include <mlpack/core/optimizers/gradient_descent/gradient_descent.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
-#include <mlpack/methods/ann/init_rules/orthogonal_init.hpp>
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/reinforcement_learning/q_learning.hpp>
@@ -37,8 +34,6 @@ BOOST_AUTO_TEST_SUITE(QLearningTest);
 //! Test DQN in Cart Pole task.
 BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
 {
-  arma::arma_rng::set_seed(0);
-
   // Set up the network.
   FFN<MeanSquaredError<>, GaussianInitialization> model;
   model.Add<Linear<>>(4, 128);
@@ -56,7 +51,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
 
   // Set up DQN agent.
   QLearning<CartPole, decltype(model), decltype(opt), decltype(policy)>
-          agent(model, opt, 0.9, policy, replayMethod, 100, 100);
+          agent(model, opt, 0.9, policy, replayMethod, 100, 100, false, 200);
 
   arma::running_stat<double> averageReturn;
   while (true)
@@ -85,8 +80,6 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
 //! Test Double DQN in Cart Pole task.
 BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
 {
-  arma::arma_rng::set_seed(0);
-
   // Set up the network.
   FFN<MeanSquaredError<>, GaussianInitialization> model;
   model.Add<Linear<>>(4, 128);
@@ -104,7 +97,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
 
   // Set up the DQN agent.
   QLearning<CartPole, decltype(model), decltype(opt), decltype(policy)>
-      agent(model, opt, 0.9, policy, replayMethod, 100, 100, true);
+      agent(model, opt, 0.9, policy, replayMethod, 100, 100, true, 200);
 
   arma::running_stat<double> averageReturn;
   while (true)

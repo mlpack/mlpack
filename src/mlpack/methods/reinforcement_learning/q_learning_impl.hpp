@@ -132,16 +132,22 @@ double QLearning<
 
   arma::icolvec bestActions;
   if (doubleQLearning)
+  {
     // If use double Q-Learning, use learning network to select the best action.
     bestActions = BestAction(learningNetwork.Predict(sampledNextStates));
+  }
   else
+  {
     bestActions = BestAction(nextActionValues);
+  }
 
   // Compute the update target.
   arma::mat target = learningNetwork.Predict(sampledStates);
   for (size_t i = 0; i < sampledNextStates.n_cols; ++i)
+  {
     target(sampledActions[i], i) = sampledRewards[i] +
         discount * (isTerminal[i] ? 0.0 : nextActionValues(bestActions[i], i));
+  }
 
   // Learn form experience.
   learningNetwork.Train(sampledStates, target, optimizer);
@@ -173,7 +179,7 @@ double QLearning<
   // Track the return of this episode.
   double totalReturn = 0.0;
 
-  // Running until get ot the terminal state.
+  // Running until get to the terminal state.
   while (!environment.IsTerminal(state))
   {
     if (stepLimit && steps >= stepLimit)
