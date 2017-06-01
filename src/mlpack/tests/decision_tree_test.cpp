@@ -13,6 +13,8 @@
 #include <mlpack/methods/decision_tree/decision_tree.hpp>
 #include <mlpack/methods/decision_tree/information_gain.hpp>
 #include <mlpack/methods/decision_tree/gini_gain.hpp>
+#include <mlpack/methods/decision_tree/random_dimension_select.hpp>
+#include <mlpack/methods/decision_tree/multiple_random_dimension_select.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -1059,6 +1061,68 @@ BOOST_AUTO_TEST_CASE(CategoricalInformationGainWeightedBuildTest)
   // Make sure we got at least 70% accuracy.
   const double correctPct = double(correct) / double(testData.n_cols);
   BOOST_REQUIRE_GT(correctPct, 0.70);
+}
+
+/**
+ * Make sure that the random dimension selector only has one element.
+ */
+BOOST_AUTO_TEST_CASE(RandomDimensionSelectTest)
+{
+  RandomDimensionSelect r(10);
+
+  BOOST_REQUIRE_LT(r.Begin(), 10);
+  BOOST_REQUIRE_EQUAL(r.Next(), r.End());
+  BOOST_REQUIRE_EQUAL(r.Next(), r.End());
+  BOOST_REQUIRE_EQUAL(r.Next(), r.End());
+}
+
+/**
+ * Make sure that the random dimension selector selects different values.
+ */
+BOOST_AUTO_TEST_CASE(RandomDimensionSelectRandomTest)
+{
+  // We'll check that 4 values are not all the same.
+  RandomDimensionSelect r1(100000), r2(100000), r3(100000), r4(100000);
+
+  BOOST_REQUIRE((r1.Begin() != r2.Begin()) ||
+                (r1.Begin() != r3.Begin()) ||
+                (r1.Begin() != r4.Begin()));
+}
+
+/**
+ * Make sure that the multiple random dimension select only has the right number
+ * of elements.
+ */
+BOOST_AUTO_TEST_CASE(MultipleRandomDimensionSelectTest)
+{
+  MultipleRandomDimensionSelect<5> r(10);
+
+  // Make sure we get five elements.
+  BOOST_REQUIRE_LT(r.Begin(), 10);
+  BOOST_REQUIRE_LT(r.Next(), 10);
+  BOOST_REQUIRE_LT(r.Next(), 10);
+  BOOST_REQUIRE_LT(r.Next(), 10);
+  BOOST_REQUIRE_LT(r.Next(), 10);
+  BOOST_REQUIRE_EQUAL(r.Next(), r.End());
+}
+
+/**
+ * Make sure we get every element from the distribution.
+ */
+BOOST_AUTO_TEST_CASE(MultipleRandomDimensionAllSelectTest)
+{
+  MultipleRandomDimensionSelect<3> r(3);
+
+  bool found[3];
+  found[0] = found[1] = found[2] = false;
+
+  found[r.Begin()] = true;
+  found[r.Next()] = true;
+  found[r.Next()] = true;
+
+  BOOST_REQUIRE_EQUAL(found[0], true);
+  BOOST_REQUIRE_EQUAL(found[1], true);
+  BOOST_REQUIRE_EQUAL(found[2], true);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
