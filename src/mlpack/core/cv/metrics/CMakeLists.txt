@@ -3,6 +3,8 @@
 set(SOURCES
   accuracy.hpp
   accuracy_impl.hpp
+  mse.hpp
+  mse_impl.hpp
 )
 
 # Add directory name to sources.

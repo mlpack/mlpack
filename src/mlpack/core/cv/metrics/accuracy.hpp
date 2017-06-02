@@ -24,17 +24,18 @@ namespace cv {
  */
 class Accuracy
 {
-public:
+ public:
   /**
    * Run classification and calculate accuracy.
    *
-   * @param model A test classification model.
-   * @data Column-major data containing test items.
-   * @labels Ground truth (correct) labels for the test items.
+   * @param model A classification model.
+   * @param data Column-major data containing test items.
+   * @param labels Ground truth (correct) labels for the test items.
    */
-  template<class MLAlgorithm, class DataType>
-  static double Evaluate(MLAlgorithm& model, const DataType& data,
-      const arma::Row<size_t>& labels);
+  template<typename MLAlgorithm, typename DataType>
+  static double Evaluate(MLAlgorithm& model,
+                         const DataType& data,
+                         const arma::Row<size_t>& labels);
 
   /**
    * Information for hyper-parameter tuning code. It indicates that we want

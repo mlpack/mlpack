@@ -15,9 +15,10 @@
 namespace mlpack {
 namespace cv {
 
-template<class MLAlgorithm, class DataType>
-double Accuracy::Evaluate(MLAlgorithm& model, const DataType& data,
-    const arma::Row<size_t>& labels)
+template<typename MLAlgorithm, typename DataType>
+double Accuracy::Evaluate(MLAlgorithm& model,
+                          const DataType& data,
+                          const arma::Row<size_t>& labels)
 {
   if (data.n_cols != labels.n_elem)
   {
