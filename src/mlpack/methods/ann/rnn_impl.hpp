@@ -145,7 +145,7 @@ void RNN<OutputLayerType, InitializationRuleType>::Train(
 
 template<typename OutputLayerType, typename InitializationRuleType>
 void RNN<OutputLayerType, InitializationRuleType>::Predict(
-    arma::mat& predictors, arma::mat& results)
+    const arma::mat& predictors, arma::mat& results)
 {
   if (parameter.is_empty())
   {
@@ -163,10 +163,7 @@ void RNN<OutputLayerType, InitializationRuleType>::Predict(
 
   for (size_t i = 0; i < predictors.n_cols; i++)
   {
-    SinglePredict(
-        arma::mat(predictors.colptr(i), predictors.n_rows, 1, false, true),
-        resultsTemp);
-
+    SinglePredict(predictors.col(i), resultsTemp);
     results.col(i) = resultsTemp;
   }
 }
@@ -202,8 +199,7 @@ double RNN<OutputLayerType, InitializationRuleType>::Evaluate(
     ResetDeterministic();
   }
 
-  arma::mat input = arma::mat(predictors.colptr(i), predictors.n_rows,
-      1, false, true);
+  arma::mat input = predictors.col(i);
   arma::mat target = arma::mat(responses.colptr(i), responses.n_rows,
       1, false, true);
 
