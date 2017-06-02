@@ -1125,4 +1125,29 @@ BOOST_AUTO_TEST_CASE(MultipleRandomDimensionAllSelectTest)
   BOOST_REQUIRE_EQUAL(found[2], true);
 }
 
+/**
+ * Make sure the right number of classes is returned for an empty tree (1).
+ */
+BOOST_AUTO_TEST_CASE(NumClassesEmptyTreeTest)
+{
+  DecisionTree<> dt;
+  BOOST_REQUIRE_EQUAL(dt.NumClasses(), 1);
+}
+
+/**
+ * Make sure the right number of classes is returned for a nonempty tree.
+ */
+BOOST_AUTO_TEST_CASE(NumClassesTest)
+{
+  // Load a dataset to train with.
+  arma::mat dataset;
+  arma::Row<size_t> labels;
+  data::Load("vc2.csv", dataset);
+  data::Load("vc2_labels.txt", labels);
+
+  DecisionTree<> dt(dataset, labels, 3);
+
+  BOOST_REQUIRE_EQUAL(dt.NumClasses(), 3);
+}
+
 BOOST_AUTO_TEST_SUITE_END();

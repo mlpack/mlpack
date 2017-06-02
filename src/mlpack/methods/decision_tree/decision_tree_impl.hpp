@@ -980,6 +980,28 @@ size_t DecisionTree<FitnessFunction,
         classProbabilities, *this);
 }
 
+// Get the number of classes in the tree.
+template<typename FitnessFunction,
+         template<typename> class NumericSplitType,
+         template<typename> class CategoricalSplitType,
+         typename DimensionSelectionType,
+         typename ElemType,
+         bool NoRecursion>
+size_t DecisionTree<FitnessFunction,
+                    NumericSplitType,
+                    CategoricalSplitType,
+                    DimensionSelectionType,
+                    ElemType,
+                    NoRecursion>::NumClasses() const
+{
+  // Recurse to the nearest child and return the number of elements in the
+  // probability vector.
+  if (children.size() == 0)
+    return classProbabilities.n_elem;
+  else
+    return children[0]->NumClasses();
+}
+
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
