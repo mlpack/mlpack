@@ -139,7 +139,7 @@ class FFN
    * @param predictors Input predictors.
    * @param results Matrix to put output predictions of responses into.
    */
-  void Predict(const arma::mat& predictors, arma::mat& results);
+  void Predict(arma::mat& predictors, arma::mat& results);
 
   /**
    * Predict the responses to a given set of predictors. The responses will
