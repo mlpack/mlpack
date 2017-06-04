@@ -195,7 +195,7 @@ void RNN<OutputLayerType, InitializationRuleType>::Predict(
 
 template<typename OutputLayerType, typename InitializationRuleType>
 void RNN<OutputLayerType, InitializationRuleType>::Predict(
-        const arma::mat& predictors, arma::mat& results)
+    const arma::mat& predictors, arma::mat& results)
 {
   arma::mat predictorsCopy(predictors);
   Predict(std::move(predictorsCopy), results);

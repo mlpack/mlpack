@@ -83,8 +83,8 @@ FFN<OutputLayerType, InitializationRuleType>::~FFN()
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-void FFN<OutputLayerType, InitializationRuleType>::ResetData(const arma::mat &predictors,
-                                                             const arma::mat &responses)
+void FFN<OutputLayerType, InitializationRuleType>::ResetData(
+    const arma::mat& predictors, const arma::mat& responses)
 {
   numFunctions = responses.n_cols;
   this->predictors = std::move(predictors);
