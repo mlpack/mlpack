@@ -88,6 +88,23 @@ class FFN
       OutputLayerType&& outputLayer = OutputLayerType(),
       InitializationRuleType initializeRule = InitializationRuleType());
 
+  /**
+   * Create the FFN object with the given predictors and responses set (this is
+   * the set that is used to train the network) and the given optimizer.
+   * Optionally, specify which initialize rule and performance function should
+   * be used.
+   *
+   * @param predictors Input training variables.
+   * @param responses Outputs results from input training variables.
+   * @param outputLayer Output layer used to evaluate the network.
+   * @param initializeRule Optional instantiated InitializationRule object
+   *        for initializing the network parameter.
+   */
+  FFN(arma::mat&& predictors,
+      arma::mat&& responses,
+      OutputLayerType&& outputLayer = OutputLayerType(),
+      InitializationRuleType initializeRule = InitializationRuleType());
+
   //! Destructor to release allocated memory.
   ~FFN();
 
@@ -139,7 +156,7 @@ class FFN
    * @param predictors Input predictors.
    * @param results Matrix to put output predictions of responses into.
    */
-  void Predict(arma::mat& predictors, arma::mat& results);
+  void Predict(arma::mat&& predictors, arma::mat& results);
 
   /**
    * Predict the responses to a given set of predictors. The responses will
@@ -147,9 +164,9 @@ class FFN
    * output layer function.
    *
    * @param predictors Input predictors.
-   * @return Output predictions of responses into.
+   * @param results Matrix to put output predictions of responses into.
    */
-  arma::mat Predict(arma::mat predictors);
+  void Predict(const arma::mat& predictors, arma::mat& results);
 
   /**
    * Evaluate the feedforward network with the given parameters. This function

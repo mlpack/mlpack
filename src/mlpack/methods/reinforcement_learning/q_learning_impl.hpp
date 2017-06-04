@@ -98,7 +98,8 @@ double QLearning<
 >::Step()
 {
   // Get the action value for each action at current state.
-  arma::colvec actionValue = learningNetwork.Predict(state.Encode());
+  arma::colvec actionValue;
+  learningNetwork.Predict(state.Encode(), actionValue);
 
   // Select an action according to the behavior policy.
   ActionType action = policy.Sample(actionValue, deterministic);
@@ -128,13 +129,16 @@ double QLearning<
                       sampledNextStates, isTerminal);
 
   // Compute action value for next state with target network.
-  arma::mat nextActionValues = targetNetwork.Predict(sampledNextStates);
+  arma::mat nextActionValues;
+  targetNetwork.Predict(sampledNextStates, nextActionValues);
 
   arma::icolvec bestActions;
   if (doubleQLearning)
   {
     // If use double Q-Learning, use learning network to select the best action.
-    bestActions = BestAction(learningNetwork.Predict(sampledNextStates));
+    arma::mat nextActionValues;
+    learningNetwork.Predict(sampledNextStates, nextActionValues);
+    bestActions = BestAction(nextActionValues);
   }
   else
   {
@@ -142,7 +146,8 @@ double QLearning<
   }
 
   // Compute the update target.
-  arma::mat target = learningNetwork.Predict(sampledStates);
+  arma::mat target;
+  learningNetwork.Predict(sampledStates, target);
   for (size_t i = 0; i < sampledNextStates.n_cols; ++i)
   {
     target(sampledActions[i], i) = sampledRewards[i] +

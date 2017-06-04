@@ -49,14 +49,30 @@ FFN<OutputLayerType, InitializationRuleType>::FFN(
     initializeRule(initializeRule),
     width(0),
     height(0),
-    reset(false)
+    reset(false),
+    predictors(predictors),
+    responses(responses),
+    deterministic(true)
 {
-  numFunctions = responses.n_cols;
+  numFunctions = this->responses.n_cols;
+}
 
-  this->predictors = std::move(predictors);
-  this->responses = std::move(responses);
-
-  this->deterministic = true;
+template<typename OutputLayerType, typename InitializationRuleType>
+FFN<OutputLayerType, InitializationRuleType>::FFN(
+    arma::mat&& predictors,
+    arma::mat&& responses,
+    OutputLayerType&& outputLayer,
+    InitializationRuleType initializeRule) :
+    outputLayer(std::move(outputLayer)),
+    initializeRule(initializeRule),
+    width(0),
+    height(0),
+    reset(false),
+    predictors(predictors),
+    responses(responses),
+    deterministic(true)
+{
+  numFunctions = this->responses.n_cols;
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
@@ -134,7 +150,7 @@ void FFN<OutputLayerType, InitializationRuleType>::Train(
 
 template<typename OutputLayerType, typename InitializationRuleType>
 void FFN<OutputLayerType, InitializationRuleType>::Predict(
-    arma::mat& predictors, arma::mat& results)
+    arma::mat&& predictors, arma::mat& results)
 {
   if (parameter.is_empty())
   {
@@ -168,12 +184,11 @@ void FFN<OutputLayerType, InitializationRuleType>::Predict(
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-arma::mat FFN<OutputLayerType, InitializationRuleType>::Predict(
-    arma::mat predictors)
+void FFN<OutputLayerType, InitializationRuleType>::Predict(
+    const arma::mat& predictors, arma::mat& results)
 {
-  arma::mat results;
-  Predict(predictors, results);
-  return results;
+  arma::mat predictorsCopy(predictors);
+  Predict(std::move(predictorsCopy), results);
 };
 
 template<typename OutputLayerType, typename InitializationRuleType>

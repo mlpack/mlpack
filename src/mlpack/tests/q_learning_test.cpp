@@ -59,16 +59,16 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
     double episodeReturn = agent.Episode();
     averageReturn(episodeReturn);
     /**
-     * Reaching running average return 60 is enough to show it works.
+     * Reaching running average return 35 is enough to show it works.
      * For the speed of the test case, I didn't set high criterion.
      */
     Log::Debug << "Average return: " << averageReturn.mean() << " Episode return: "
         << episodeReturn << std::endl;
-    if (averageReturn.mean() > 60)
+    if (averageReturn.mean() > 35)
     {
       agent.Deterministic() = true;
       arma::running_stat<double> testReturn;
-      for (size_t i = 0; i < 30; ++i)
+      for (size_t i = 0; i < 10; ++i)
         testReturn(agent.Episode());
       Log::Debug << "Average return in deterministic test: " << testReturn.mean()
           << std::endl;
@@ -105,16 +105,16 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
     double episodeReturn = agent.Episode();
     averageReturn(episodeReturn);
     /**
-     * Reaching running average return 40 is enough to show it works.
+     * Reaching running average return 35 is enough to show it works.
      * For the speed of the test case, I didn't set high criterion.
      */
     Log::Debug << "Average return: " << averageReturn.mean() << " Episode return: "
         << episodeReturn << std::endl;
-    if (averageReturn.mean() > 40)
+    if (averageReturn.mean() > 35)
     {
       agent.Deterministic() = true;
       arma::running_stat<double> testReturn;
-      for (size_t i = 0; i < 30; ++i)
+      for (size_t i = 0; i < 10; ++i)
         testReturn(agent.Episode());
       Log::Debug << "Average return in deterministic test: " << testReturn.mean()
           << std::endl;
