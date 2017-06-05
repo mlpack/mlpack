@@ -40,7 +40,7 @@ class NoDecay
               double& /* stepSize */,
               const arma::mat& /* gradient */)
   {
-   // Nothing to do here.
+    // Nothing to do here.
   }
 };
 

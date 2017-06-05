@@ -134,7 +134,7 @@ class RNN
    * @param predictors Input predictors.
    * @param results Matrix to put output predictions of responses into.
    */
-  void Predict(arma::mat& predictors, arma::mat& results);
+  void Predict(const arma::mat& predictors, arma::mat& results);
 
   /**
    * Evaluate the recurrent neural network with the given parameters. This

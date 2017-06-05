@@ -15,6 +15,7 @@
 #include <mlpack/methods/reinforcement_learning/environment/mountain_car.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
 #include <mlpack/methods/reinforcement_learning/replay/random_replay.hpp>
+#include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -87,18 +88,34 @@ BOOST_AUTO_TEST_CASE(RandomReplayTest)
   BOOST_REQUIRE_EQUAL(1, replay.Size());
 
   //! Overwrite the memory with a nonsense record
-  for (size_t i = 0; i < 5; ++i) {
+  for (size_t i = 0; i < 5; ++i)
     replay.Store(nextState, action, reward, state, true);
-  }
+
   BOOST_REQUIRE_EQUAL(3, replay.Size());
 
   //! Sample several times, the original record shouldn't appear
-  for (size_t i = 0; i < 30; ++i) {
+  for (size_t i = 0; i < 30; ++i)
+  {
     replay.Sample(sampledState, sampledAction, sampledReward, sampledNextState, sampledTerminal);
     CheckMatrices(state.Encode(), sampledNextState);
     CheckMatrices(nextState.Encode(), sampledState);
     BOOST_REQUIRE_EQUAL(true, arma::as_scalar(sampledTerminal));
   }
+}
+
+/**
+ * Construct a greedy policy instance and check if it works as
+ * it should be.
+ */
+BOOST_AUTO_TEST_CASE(GreedyPolicyTest)
+{
+  GreedyPolicy<CartPole> policy(1.0, 10, 0.0);
+  for (size_t i = 0; i < 15; ++i)
+    policy.Anneal();
+  BOOST_REQUIRE_CLOSE(0.0, policy.Epsilon(), 1e-5);
+  arma::colvec actionValue = arma::randn<arma::colvec>(CartPole::Action::size);
+  CartPole::Action action = policy.Sample(actionValue);
+  BOOST_REQUIRE_CLOSE(actionValue[action], actionValue.max(), 1e-5);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

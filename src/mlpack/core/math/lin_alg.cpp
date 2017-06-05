@@ -257,7 +257,9 @@ void mlpack::math::Svec(const arma::sp_mat& input, arma::sp_vec& output)
 
 void mlpack::math::Smat(const arma::vec& input, arma::mat& output)
 {
-  const size_t n = static_cast<size_t>(ceil((-1. + sqrt(1. + 8. * input.n_elem))/2.));
+  const size_t n = static_cast<size_t>
+      (ceil((-1. + sqrt(1. + 8. * input.n_elem))/2.));
+
 
   output.zeros(n, n);
 

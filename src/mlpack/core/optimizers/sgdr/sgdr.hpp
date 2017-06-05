@@ -76,15 +76,15 @@ class SGDR
    * @param updatePolicy Instantiated update policy used to adjust the given
    *        parameters.
    */
- SGDR(DecomposableFunctionType& function,
-      const size_t epochRestart = 50,
-      const double multFactor = 2.0,
-      const size_t batchSize = 1000,
-      const double stepSize = 0.01,
-      const size_t maxIterations = 100000,
-      const double tolerance = 1e-5,
-      const bool shuffle = true,
-      const UpdatePolicyType& updatePolicy = UpdatePolicyType());
+  SGDR(DecomposableFunctionType& function,
+       const size_t epochRestart = 50,
+       const double multFactor = 2.0,
+       const size_t batchSize = 1000,
+       const double stepSize = 0.01,
+       const size_t maxIterations = 100000,
+       const double tolerance = 1e-5,
+       const bool shuffle = true,
+       const UpdatePolicyType& updatePolicy = UpdatePolicyType());
 
   /**
    * Optimize the given function using SGDR.  The given starting point

@@ -68,7 +68,7 @@ class SphericalKernel
     }
     double volumeSquared = pow(Normalizer(a.n_rows), 2.0);
 
-    switch(a.n_rows)
+    switch (a.n_rows)
     {
       case 1:
         return 1.0 / volumeSquared * (2.0 * bandwidth - distance);

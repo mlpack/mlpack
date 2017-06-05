@@ -137,7 +137,7 @@ SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
     tree->NullifyData();
     tree->children[(tree->NumChildren())++] = copy;
 
-    RPlusTreeSplit::SplitNonLeafNode(copy,relevels);
+    RPlusTreeSplit::SplitNonLeafNode(copy, relevels);
     return true;
   }
   size_t cutAxis = tree->Bound().Dim();

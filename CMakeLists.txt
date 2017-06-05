@@ -318,8 +318,8 @@ endif ()
 # some reason.
 include(CMake/TargetDistclean.cmake OPTIONAL)
 
-include_directories(${CMAKE_SOURCE_DIR})
-include_directories(${MLPACK_INCLUDE_DIRS})
+include_directories(BEFORE ${MLPACK_INCLUDE_DIRS})
+include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src/)
 
 # On Windows, things end up under Debug/ or Release/.
 if (WIN32)

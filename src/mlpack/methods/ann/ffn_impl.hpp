@@ -67,8 +67,8 @@ FFN<OutputLayerType, InitializationRuleType>::~FFN()
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-void FFN<OutputLayerType, InitializationRuleType>::ResetData(const arma::mat &predictors,
-                                                             const arma::mat &responses)
+void FFN<OutputLayerType, InitializationRuleType>::ResetData(
+    const arma::mat& predictors, const arma::mat& responses)
 {
   numFunctions = responses.n_cols;
   this->predictors = std::move(predictors);
@@ -134,7 +134,7 @@ void FFN<OutputLayerType, InitializationRuleType>::Train(
 
 template<typename OutputLayerType, typename InitializationRuleType>
 void FFN<OutputLayerType, InitializationRuleType>::Predict(
-    arma::mat& predictors, arma::mat& results)
+    const arma::mat& predictors, arma::mat& results)
 {
   if (parameter.is_empty())
   {
@@ -148,8 +148,7 @@ void FFN<OutputLayerType, InitializationRuleType>::Predict(
   }
 
   arma::mat resultsTemp;
-  Forward(std::move(arma::mat(predictors.colptr(0),
-      predictors.n_rows, 1, false, true)));
+  Forward(std::move(predictors.col(0)));
   resultsTemp = boost::apply_visitor(outputParameterVisitor,
       network.back()).col(0);
 
@@ -158,8 +157,7 @@ void FFN<OutputLayerType, InitializationRuleType>::Predict(
 
   for (size_t i = 1; i < predictors.n_cols; i++)
   {
-    Forward(std::move(arma::mat(predictors.colptr(i),
-        predictors.n_rows, 1, false, true)));
+    Forward(std::move(predictors.col(i)));
 
     resultsTemp = boost::apply_visitor(outputParameterVisitor,
         network.back());

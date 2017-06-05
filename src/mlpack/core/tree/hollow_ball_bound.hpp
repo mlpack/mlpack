@@ -55,7 +55,6 @@ class HollowBallBound
   bool ownsMetric;
 
  public:
-
   //! Empty Constructor.
   HollowBallBound();
 

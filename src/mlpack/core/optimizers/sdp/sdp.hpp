@@ -39,7 +39,6 @@ template <typename ObjectiveMatrixType>
 class SDP
 {
  public:
-
   typedef ObjectiveMatrixType objective_matrix_type;
 
   /**
