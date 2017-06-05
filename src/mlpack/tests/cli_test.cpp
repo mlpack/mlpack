@@ -959,7 +959,7 @@ BOOST_AUTO_TEST_CASE(MatrixAndDatasetInfoTest)
   f << endl;
   f << "@attribute three STRING" << endl;
   f << endl;
-  f << "\\% a comment line " << endl;
+  f << "%% a comment line " << endl;
   f << endl;
   f << "@data" << endl;
   f << "hello, 1, moo" << endl;
@@ -1056,7 +1056,7 @@ BOOST_AUTO_TEST_CASE(RawDatasetInfoLoadParameter)
   f << endl;
   f << "@attribute three STRING" << endl;
   f << endl;
-  f << "\\% a comment line " << endl;
+  f << "%% a comment line " << endl;
   f << endl;
   f << "@data" << endl;
   f << "hello, 1, moo" << endl;
