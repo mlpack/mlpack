@@ -15,10 +15,6 @@
 // In case it hasn't been included yet.
 #include "copy.hpp"
 
-#include <iostream>
-
-using std::cerr;
-
 namespace mlpack {
 namespace ann /* Artificial Neural Network */ {
 namespace augmented /* Augmented neural network */ {
@@ -29,56 +25,6 @@ CopyTask::CopyTask(int maxLength, int nRepeats) :
     nRepeats(nRepeats)
 {
   // Just storing task-specific paramters.
-}
-
-template<typename ModelType>
-double CopyTask::Evaluate(ModelType& model) {
-  int trainSize = 5, testSize = 5;
-  int nEpochs = 10;
-  arma::field<arma::irowvec> trainInput(trainSize);
-  arma::field<arma::irowvec> trainLabels(trainSize);
-  arma::field<arma::irowvec> testInput(testSize);
-  arma::field<arma::irowvec> testLabels(testSize);
-  GenerateData(trainInput, trainLabels, trainSize);
-  GenerateData(testInput, testLabels, testSize);
-  for (size_t epoch = 0; epoch < nEpochs; epoch++)
-  {
-    for (size_t el = 0; el < trainSize; el++)
-    {
-      arma::field<arma::irowvec> inputTemp;
-      inputTemp = trainInput.rows(el, el);
-      arma::field<arma::irowvec> labelsTemp;
-      labelsTemp = trainLabels.rows(el, el);
-
-      model.Train(inputTemp, labelsTemp);
-    }
-  }
-  double score = 0;
-  for (size_t i = 0; i < testSize; i++)
-  {
-    arma::irowvec prediction;
-    auto input = testInput.at(i);
-    auto output = testLabels.at(i);
-
-    model.Predict(input, prediction);
-
-    if (IsCorrect(output, prediction)) ++score;
-  }
-  score /= testSize;
-  return score;
-}
-
-bool CopyTask::IsCorrect(
-    arma::irowvec& trueOutput,
-    arma::irowvec& predOutput) {
-  if (trueOutput.n_elem != predOutput.n_elem) {
-    return false;
-  }
-  if (trueOutput.n_elem != predOutput.n_elem) return false;
-  for (int j = 0; j < predOutput.n_elem; ++j) {
-    if (trueOutput.at(j) != predOutput.at(j)) return false;
-  }
-  return true;
 }
 
 void CopyTask::GenerateData(
