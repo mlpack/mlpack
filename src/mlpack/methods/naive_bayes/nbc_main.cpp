@@ -77,8 +77,8 @@ PARAM_FLAG("incremental_variance", "The variance of each class will be "
 PARAM_MATRIX_IN("test", "A matrix containing the test set.", "T");
 PARAM_UROW_OUT("output", "The matrix in which the predicted labels for the"
     " test set will be written.", "o");
-PARAM_MATRIX_OUT("output_probs", "The matrix in which the predicted probability of labels for the"
-    " test set will be written.", "p");
+PARAM_MATRIX_OUT("output_probs", "The matrix in which the predicted probability"
+    " of labels for the test set will be written.", "p");
 
 int main(int argc, char* argv[])
 {
