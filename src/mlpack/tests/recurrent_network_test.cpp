@@ -289,6 +289,7 @@ void GenerateNextEmbeddedReber(const arma::Mat<char>& transitions,
 /**
  * Train the specified network and the construct a Reber grammar dataset.
  */
+template<typename RecurrentLayerType>
 void ReberGrammarTestNetwork(bool embedded = false)
 {
   // Reber state transition matrix. (The last two columns are the indices to the
@@ -375,7 +376,7 @@ void ReberGrammarTestNetwork(bool embedded = false)
 
     model.Add<IdentityLayer<> >();
     model.Add<Linear<> >(inputSize, 14);
-    model.Add<LSTM<> >(14, 7, rho);
+    model.Add<RecurrentLayerType>(14, 7, rho);
     model.Add<Linear<> >(7, outputSize);
     model.Add<SigmoidLayer<> >();
 
@@ -388,7 +389,6 @@ void ReberGrammarTestNetwork(bool embedded = false)
       {
         inputTemp = trainInput.at(0, j);
         labelsTemp = trainLabels.at(0, j);
-
         model.Train(inputTemp, labelsTemp, opt);
       }
     }
@@ -451,17 +451,33 @@ void ReberGrammarTestNetwork(bool embedded = false)
 /**
  * Train the specified networks on a Reber grammar dataset.
  */
-BOOST_AUTO_TEST_CASE(ReberGrammarTest)
+BOOST_AUTO_TEST_CASE(LSTMReberGrammarTest)
 {
-  ReberGrammarTestNetwork(false);
+  ReberGrammarTestNetwork<LSTM<>>(false);
 }
 
 /**
  * Train the specified networks on an embedded Reber grammar dataset.
  */
-BOOST_AUTO_TEST_CASE(EmbeddedReberGrammarTest)
+BOOST_AUTO_TEST_CASE(LSTMEmbeddedReberGrammarTest)
 {
-  ReberGrammarTestNetwork(true);
+  ReberGrammarTestNetwork<LSTM<>>(true);
+}
+
+/**
+ * Train the specified networks on a Reber grammar dataset.
+ */
+BOOST_AUTO_TEST_CASE(GRUReberGrammarTest)
+{
+  ReberGrammarTestNetwork<GRU<>>(false);
+}
+
+/**
+ * Train the specified networks on an embedded Reber grammar dataset.
+ */
+BOOST_AUTO_TEST_CASE(GRUEmbeddedReberGrammarTest)
+{
+  ReberGrammarTestNetwork<GRU<>>(true);
 }
 
 /*
@@ -524,6 +540,7 @@ void GenerateDistractedSequence(arma::mat& input, arma::mat& output)
  * Train the specified network and the construct distracted sequence recall
  * dataset.
  */
+template<typename RecurrentLayerType>
 void DistractedSequenceRecallTestNetwork()
 {
   const size_t trainDistractedSequenceCount = 800;
@@ -572,8 +589,8 @@ void DistractedSequenceRecallTestNetwork()
   {
     RNN<MeanSquaredError<> > model(rho);
     model.Add<IdentityLayer<> >();
-    model.Add<Linear<> >(inputSize, 14);
-    model.Add<LSTM<> >(14, 7, rho);
+    model.Add<Linear<> >(inputSize, 16);
+    model.Add<RecurrentLayerType>(14, 7, rho);
     model.Add<Linear<> >(7, outputSize);
     model.Add<SigmoidLayer<> >();
 
@@ -629,9 +646,18 @@ void DistractedSequenceRecallTestNetwork()
  * Train the specified networks on the Derek D. Monner's distracted sequence
  * recall task.
  */
-BOOST_AUTO_TEST_CASE(DistractedSequenceRecallTest)
+BOOST_AUTO_TEST_CASE(LSTMDistractedSequenceRecallTest)
 {
-  DistractedSequenceRecallTestNetwork();
+  DistractedSequenceRecallTestNetwork<LSTM<>>();
+}
+
+/**
+ * Train the specified networks on the Derek D. Monner's distracted sequence
+ * recall task.
+ */
+BOOST_AUTO_TEST_CASE(GRUDistractedSequenceRecallTest)
+{
+  DistractedSequenceRecallTestNetwork<GRU<>>();
 }
 
 BOOST_AUTO_TEST_SUITE_END();
