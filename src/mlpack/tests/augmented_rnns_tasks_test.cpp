@@ -10,17 +10,22 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <iostream>
+#include <vector>
 
 #include <mlpack/core.hpp>
 
 #include <mlpack/methods/ann/augmented/tasks/copy.hpp>
+#include <mlpack/methods/ann/augmented/tasks/sort.hpp>
+#include <mlpack/methods/ann/augmented/tasks/score.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
 using std::cerr;
+using std::vector;
 
 using namespace mlpack::ann::augmented::tasks;
+using namespace mlpack::ann::augmented::scorers;
 
 // The dummy model that simply copies the sequence the required number of times
 // (yes, no ML here, we're unit testing :)
@@ -44,8 +49,36 @@ public:
       labels.at(i) = predictors.at(i % len);
     }
   }
+  void Predict(
+      arma::field<arma::irowvec>& predictors,
+      arma::field<arma::irowvec>& labels) {
+    auto sz = predictors.n_elem;
+    labels = arma::field<arma::irowvec>(sz);
+    for (int i = 0; i < sz; ++i) {
+      Predict(predictors.at(i), labels.at(i));
+    }
+  }
 private:
   int nRepeats;
+};
+
+class HardCodedSortModel {
+public:
+  HardCodedSortModel() {}
+  void Train(
+      arma::field<arma::imat>& predictors,
+      arma::field<arma::imat>& labels) {
+    bitLen = predictors.at(0).n_cols;
+  }
+  void Predict(
+      arma::imat& predictors,
+      arma::imat& labels) {
+    int len = predictors.n_elem;
+    labels.zeros(len, bitLen);
+    // TODO
+  }
+private:
+  int bitLen;
 };
 
 BOOST_AUTO_TEST_SUITE(AugmentedRNNsTasks);
@@ -58,9 +91,16 @@ BOOST_AUTO_TEST_CASE(CopyTaskTest)
     // .. and various numbers of repetitions.
     for (int nRepeats = 1; nRepeats <= 10; ++nRepeats) {
       CopyTask task(maxLen, nRepeats);
+      arma::field<arma::irowvec> trainPredictor, trainResponse;
+      task.GenerateData(trainPredictor, trainResponse, 8);
+      arma::field<arma::irowvec> testPredictor, testResponse;
+      task.GenerateData(testPredictor, testResponse, 8);
       HardCodedCopyModel model;
+      model.Train(trainPredictor, trainResponse);
+      arma::field<arma::irowvec> predResponse;
+      model.Predict(testPredictor, predResponse);
       // A single failure is a failure.
-      if (task.Evaluate(model) < 0.99) {
+      if (SequencePrecision(testResponse, predResponse) < 0.99) {
         ok = false;
         break;
       }
@@ -69,5 +109,19 @@ BOOST_AUTO_TEST_CASE(CopyTaskTest)
   }
   BOOST_REQUIRE(ok);
 }
+/*
+BOOST_AUTO_TEST_CASE(SortTaskTest) {
+  bool ok = true;
+  for (int maxLen = 2; maxLen <= 16; ++maxLen) {
+    SortTask task(maxLen);
+    HardCodedSortModel model;
+    if (task.Evaluate(model) < 0.99) {
+      ok = false;
+      break;
+    }
+  }
 
+  BOOST_REQUIRE(ok);
+}
+*/
 BOOST_AUTO_TEST_SUITE_END();
