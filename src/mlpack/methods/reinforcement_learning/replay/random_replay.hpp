@@ -111,8 +111,9 @@ class RandomReplay
               arma::icolvec& isTerminal)
   {
     size_t upperBound = full ? capacity : position;
-    arma::uvec sampledIndices =
-        arma::randi<arma::uvec>(batchSize, arma::distr_param(0, upperBound - 1));
+    arma::uvec sampledIndices = arma::randi<arma::uvec>(
+        batchSize, arma::distr_param(0, upperBound - 1));
+
     sampledStates = states.cols(sampledIndices);
     sampledActions = actions.elem(sampledIndices);
     sampledRewards = rewards.elem(sampledIndices);

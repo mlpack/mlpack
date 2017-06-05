@@ -162,7 +162,7 @@ class DropConnect
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
 
-private:
+ private:
   //! The probability of setting a value to zero.
   double ratio;
 

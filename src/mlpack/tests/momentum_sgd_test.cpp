@@ -30,7 +30,8 @@ BOOST_AUTO_TEST_CASE(MomentumSGDSpeedUpTestFunction)
 {
   SGDTestFunction f;
   MomentumUpdate momentumUpdate(0.7);
-  MomentumSGD<SGDTestFunction> s(f, 0.0003, 2500000, 1e-9, true, momentumUpdate);
+  MomentumSGD<SGDTestFunction> s(
+      f, 0.0003, 2500000, 1e-9, true, momentumUpdate);
 
   arma::mat coordinates = f.GetInitialPoint();
   double result = s.Optimize(coordinates);
@@ -53,7 +54,6 @@ BOOST_AUTO_TEST_CASE(MomentumSGDSpeedUpTestFunction)
   BOOST_REQUIRE_SMALL(coordinates1[1], 1e-7);
   BOOST_REQUIRE_SMALL(coordinates1[2], 1e-7);
 
-
   BOOST_REQUIRE_LE(result,result1);
 }
 
@@ -65,7 +65,8 @@ BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
     // Create the generalized Rosenbrock function.
     GeneralizedRosenbrockFunction f(i);
     MomentumUpdate momentumUpdate(0.4);
-    MomentumSGD<GeneralizedRosenbrockFunction> s(f, 0.001, 0, 1e-15, true, momentumUpdate);
+    MomentumSGD<GeneralizedRosenbrockFunction> s(
+        f, 0.001, 0, 1e-15, true, momentumUpdate);
 
     arma::mat coordinates = f.GetInitialPoint();
     double result = s.Optimize(coordinates);

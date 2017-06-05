@@ -129,7 +129,6 @@ class DTBRules
   size_t baseCases;
   //! The number of node combinations that have been scored.
   size_t scores;
-
 }; // class DTBRules
 
 } // emst namespace

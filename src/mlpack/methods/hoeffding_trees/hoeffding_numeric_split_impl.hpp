@@ -184,7 +184,6 @@ double HoeffdingNumericSplit<FitnessFunction, ObservationType>::
 
     return double(classCounts.max()) / double(arma::sum(classCounts));
   }
-
 }
 
 template<typename FitnessFunction, typename ObservationType>

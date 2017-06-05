@@ -82,7 +82,6 @@ template <
 class Glimpse
 {
  public:
-
   /**
    * Create the GlimpseLayer object using the specified ratio and rescale
    * parameter.
@@ -145,7 +144,7 @@ class Glimpse
     this->location = location;
   }
 
-   //! Get the input width.
+  //! Get the input width.
   size_t const& InputWidth() const { return inputWidth; }
   //! Modify input the width.
   size_t& InputWidth() { return inputWidth; }
@@ -222,7 +221,6 @@ class Glimpse
                const arma::Mat<eT>& input,
                arma::Mat<eT>& output)
   {
-
     const size_t rStep = kSize;
     const size_t cStep = kSize;
 

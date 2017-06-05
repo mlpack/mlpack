@@ -201,7 +201,6 @@ class NaiveConvolution
           output.slice(i), dW, dH);
     }
   }
-
 };  // class NaiveConvolution
 
 } // namespace ann

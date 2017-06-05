@@ -86,8 +86,6 @@ class IdentityFunction
   {
     x.ones(y.n_rows, y.n_cols, y.n_slices);
   }
-
-
 }; // class IdentityFunction
 
 } // namespace ann

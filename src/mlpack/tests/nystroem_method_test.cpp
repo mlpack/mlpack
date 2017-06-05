@@ -96,12 +96,12 @@ BOOST_AUTO_TEST_CASE(Rank10Test)
   size_t successes = 0;
   for (size_t testTrial = 0; testTrial < 5; ++testTrial)
   {
-    // Now use the linear kernel to get a Nystroem approximation; try this several
-    // times.
+    // Now use the linear kernel to get a Nystroem approximation;
+    // try this several times.
     double normalizedFroAverage = 0.0;
     for (size_t trial = 0; trial < 20; ++trial)
     {
-      while(true)
+      while (true)
       {
         LinearKernel lk;
         NystroemMethod<LinearKernel, RandomSelection> nm(dataMod, lk, 10);

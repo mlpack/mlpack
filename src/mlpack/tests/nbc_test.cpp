@@ -145,7 +145,10 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierIncrementalTest)
 
   for (size_t i = 0; i < testResProba.n_cols; ++i)
     for (size_t j = 0; j < testResProba.n_rows; ++j)
-      BOOST_REQUIRE_CLOSE(testResProba(j, i) + .00001, calcProbs(j, i) + .00001, 0.01);
+    {
+      BOOST_REQUIRE_CLOSE(
+          testResProba(j, i) + .00001, calcProbs(j, i) + .00001, 0.01);
+    }
 }
 
 /**

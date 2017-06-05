@@ -35,14 +35,14 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionEvaluate)
 
   // Create random class labels.
   arma::Row<size_t> labels(points);
-  for(size_t i = 0; i < points; i++)
+  for (size_t i = 0; i < points; i++)
     labels(i) = math::RandInt(0, numClasses);
 
   // Create a SoftmaxRegressionFunction. Regularization term ignored.
   SoftmaxRegressionFunction srf(data, labels, numClasses, 0);
 
   // Run a number of trials.
-  for(size_t i = 0; i < trials; i++)
+  for (size_t i = 0; i < trials; i++)
   {
     // Create a random set of parameters.
     arma::mat parameters;
@@ -51,7 +51,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionEvaluate)
     double logLikelihood = 0;
 
     // Compute error for each training example.
-    for(size_t j = 0; j < points; j++)
+    for (size_t j = 0; j < points; j++)
     {
       arma::mat hypothesis, probabilities;
 
@@ -80,7 +80,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionRegularizationEvaluate)
 
   // Create random class labels.
   arma::Row<size_t> labels(points);
-  for(size_t i = 0; i < points; i++)
+  for (size_t i = 0; i < points; i++)
     labels(i) = math::RandInt(0, numClasses);
 
   // 3 objects for comparing regularization costs.
@@ -121,7 +121,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionGradient)
 
   // Create random class labels.
   arma::Row<size_t> labels(points);
-  for(size_t i = 0; i < points; i++)
+  for (size_t i = 0; i < points; i++)
     labels(i) = math::RandInt(0, numClasses);
 
   // 2 objects for 2 terms in the cost function. Each term contributes towards
@@ -489,7 +489,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionClassifySinglePointTest)
 
   sr.Classify(data, labels);
 
-  for(size_t i = 0; i < data.n_cols; ++i)
+  for (size_t i = 0; i < data.n_cols; ++i)
   {
     BOOST_REQUIRE_EQUAL(sr.Classify(data.col(i)), labels(i));
   }
@@ -575,7 +575,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionComputeProbabilitiesTest)
   BOOST_REQUIRE_EQUAL(probabilities.n_cols, data.n_cols);
   BOOST_REQUIRE_EQUAL(probabilities.n_rows, sr.NumClasses());
 
-  for(size_t i = 0; i < data.n_cols; ++i)
+  for (size_t i = 0; i < data.n_cols; ++i)
   {
     BOOST_REQUIRE_CLOSE(arma::sum(probabilities.col(i)), 1.0, 1e-5);
   }
@@ -664,7 +664,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionComputeProbabilitiesAndLabelsTest)
   BOOST_REQUIRE_EQUAL(probabilities.n_cols, data.n_cols);
   BOOST_REQUIRE_EQUAL(probabilities.n_rows, sr.NumClasses());
 
-  for(size_t i = 0; i < data.n_cols; ++i)
+  for (size_t i = 0; i < data.n_cols; ++i)
   {
     BOOST_REQUIRE_CLOSE(arma::sum(probabilities.col(i)), 1.0, 1e-5);
     BOOST_REQUIRE_EQUAL(testLabels(i), labels(i));

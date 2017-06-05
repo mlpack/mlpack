@@ -45,7 +45,7 @@ template <
 >
 class Convolution
 {
-public:
+ public:
   //! Create the Convolution object.
   Convolution();
 
@@ -168,7 +168,6 @@ public:
   void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-
   /*
    * Return the convolution output size.
    *

@@ -70,7 +70,6 @@ size_t mlpack::neighbor::RAUtil::MinimumSamplesReqd(const size_t n,
       }
     }
     m = (ub + lb) / 2;
-
   } while (!done);
 
   return (std::min(m + 1, n));
@@ -89,7 +88,6 @@ double mlpack::neighbor::RAUtil::SuccessProbability(const size_t n,
     double eps = (double) t / (double) n;
 
     return 1.0 - std::pow(1.0 - eps, (double) m);
-
   } // Faster implementation for topK = 1.
   else
   {
@@ -153,7 +151,7 @@ double mlpack::neighbor::RAUtil::SuccessProbability(const size_t n,
       else
         jTrans = m - j;
 
-      for(size_t i = 2; i <= jTrans; i++)
+      for (size_t i = 2; i <= jTrans; i++)
       {
         mCj *= (double) (m - (i - 1));
         mCj /= (double) i;

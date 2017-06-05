@@ -384,7 +384,6 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
 
   for (int i = 0; i < 3; i++)
   {
-
     switch (i)
     {
       case 0: // Use the dual-tree method.
@@ -649,7 +648,6 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
     BOOST_REQUIRE_CLOSE(distances(8, newFromOld[10]), 3.00, 1e-5);
     BOOST_REQUIRE_EQUAL(neighbors(9, newFromOld[10]), newFromOld[4]);
     BOOST_REQUIRE_CLOSE(distances(9, newFromOld[10]), 4.05, 1e-5);
-
   }
 }
 

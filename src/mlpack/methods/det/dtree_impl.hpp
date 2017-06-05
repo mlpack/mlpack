@@ -34,8 +34,7 @@ namespace details
   {
     static_assert(
       std::is_same<typename MatType::elem_type, ElemType>::value == true,
-      "The ElemType does not correspond to the matrix's element type."
-                  );
+      "The ElemType does not correspond to the matrix's element type.");
 
     typedef std::pair<ElemType, size_t> SplitItem;
     const typename MatType::row_type dimVec =
@@ -118,9 +117,10 @@ namespace details
       const ElemType newVal = valsVec[i];
       if (lastVal < ElemType(0) && newVal > ElemType(0) && zeroes > 0)
       {
-        Log::Assert(padding == 0); // we should arrive here once!
+        Log::Assert(padding == 0); // We should arrive here once!
 
-        // the minLeafSize > 0 also guarantees we're not entering right at the start.
+        // The minLeafSize > 0 also guarantees we're not entering right at the
+        // start.
         if (i >= minLeafSize && i <= n_elem - minLeafSize)
           splitVec.push_back(SplitItem(lastVal / 2.0, i));
 
@@ -145,7 +145,7 @@ namespace details
       lastVal = newVal;
     }
   }
-};
+}; //namespace details
 
 template <typename MatType, typename TagType>
 DTree<MatType, TagType>::DTree() :
@@ -412,7 +412,7 @@ double DTree<MatType, TagType>::LogNegativeError(const size_t totalPoints) const
                2 * std::log((double) totalPoints);
 
   StatType valDiffs = maxVals - minVals;
-  for (size_t i = 0;i < valDiffs.n_elem; ++i)
+  for (size_t i = 0; i < valDiffs.n_elem; ++i)
   {
     // Ignore very small dimensions to prevent overflow.
     if (valDiffs[i] > 1e-50)
@@ -475,8 +475,9 @@ bool DTree<MatType, TagType>::FindSplit(const MatType& data,
     // Get the values for splitting. The old implementation:
     //   dimVec = data.row(dim).subvec(start, end - 1);
     //   dimVec = arma::sort(dimVec);
-    // could be quite inefficient for sparse matrices, due to copy operations (3).
-    // This one has custom implementation for dense and sparse matrices.
+    // could be quite inefficient for sparse matrices, due to
+    // copy operations (3). This one has custom implementation for dense and
+    // sparse matrices.
 
     std::vector<SplitItem> splitVec;
     details::ExtractSplits<ElemType>(splitVec, data, dim, start, end, minLeafSize);
@@ -709,7 +710,7 @@ double DTree<MatType, TagType>::Grow(MatType& data,
     if (useVolReg)
     {
       // This is wrong for now!
-      gT = alphaUpper;// / (subtreeLeavesVTInv - vTInv);
+      gT = alphaUpper; // / (subtreeLeavesVTInv - vTInv);
     }
     else
     {
@@ -740,7 +741,7 @@ double DTree<MatType, TagType>::PruneAndUpdate(const double oldAlpha,
     // Compute gT value for node t.
     volatile double gT;
     if (useVolReg)
-      gT = alphaUpper;// - std::log(subtreeLeavesVTInv - vTInv);
+      gT = alphaUpper; // - std::log(subtreeLeavesVTInv - vTInv);
     else
       gT = alphaUpper - std::log((double) (subtreeLeaves - 1));
 
@@ -869,7 +870,8 @@ double DTree<MatType, TagType>::ComputeValue(const VecType& query) const
   }
   else
   {
-    // Return either of the two children - left or right, depending on the splitValue
+    // Return either of the two children - left or right, depending on the
+    // splitValue
     return (query[splitDim] <= splitValue) ?
       left->ComputeValue(query) :
       right->ComputeValue(query);
@@ -877,7 +879,6 @@ double DTree<MatType, TagType>::ComputeValue(const VecType& query) const
 
   return 0.0;
 }
-
 
 // Index the buckets for possible usage later.
 template <typename MatType, typename TagType>
@@ -894,7 +895,6 @@ TagType DTree<MatType, TagType>::TagTree(const TagType& tag)
     return right->TagTree(left->TagTree(tag));
   }
 }
-
 
 template <typename MatType, typename TagType>
 TagType DTree<MatType, TagType>::FindBucket(const VecType& query) const
@@ -924,7 +924,7 @@ DTree<MatType, TagType>::ComputeVariableImportance(arma::vec& importances) const
   std::stack<const DTree*> nodes;
   nodes.push(this);
 
-  while(!nodes.empty())
+  while (!nodes.empty())
   {
     const DTree& curNode = *nodes.top();
     nodes.pop();
@@ -945,7 +945,8 @@ DTree<MatType, TagType>::ComputeVariableImportance(arma::vec& importances) const
 
 template <typename MatType, typename TagType>
 template <typename Archive>
-void DTree<MatType, TagType>::Serialize(Archive& ar, const unsigned int /* version */)
+void DTree<MatType, TagType>::Serialize(Archive& ar,
+                                        const unsigned int /* version */)
 {
   using data::CreateNVP;
 
