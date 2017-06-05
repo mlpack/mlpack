@@ -86,6 +86,7 @@ add_executable(mlpack_test
   serialization.hpp
   serialization.cpp
   serialization_test.cpp
+  sfinae_test.cpp
   smorms3_test.cpp
   softmax_regression_test.cpp
   sort_policy_test.cpp
