@@ -30,19 +30,6 @@ public:
   * @param nRepeats Number of repeates required to solve the task.
   */
   CopyTask(int maxLength, int nRepeats);
-
-  /**
-  * Train the model on the task data and evaluates it.
-  * Return average precision of model
-  * (number of correctly predicted sequences to
-  * total number of sequences)
-  *
-  * @tparam ModelType The evaluated model type.
-  * @param model The model to be evaluated.
-  */
-  template<typename ModelType>
-  double Evaluate(ModelType& model);
-private: 
   /**
   * Generate dataset of a given size.
   *
@@ -54,15 +41,8 @@ private:
     arma::field<arma::irowvec>& input,
     arma::field<arma::irowvec>& labels,
     int batchSize
-  ); 
-  /**
-  * Function that validates the model's answer against ground truth answer.
-  *
-  * @param trueOutput Ground truth sequence.
-  * @param predOutput Sequence predicted by model.
-  */
-  bool IsCorrect(arma::irowvec& trueOutput,
-                 arma::irowvec& predOutput);
+  );
+private:
   // Maximum length of a sequence.
   int maxLength;
   // Nomber of repeats the model has to perform to complete the task.
