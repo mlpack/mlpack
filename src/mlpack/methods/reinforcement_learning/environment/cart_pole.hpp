@@ -36,7 +36,7 @@ class CartPole
     /**
      * Construct a state instance.
      */
-    State() : data(4)
+    State() : data(dimension)
     { /* Nothing to do here. */ }
 
     /**
@@ -72,6 +72,9 @@ class CartPole
 
     //! Encode the state to a column vector.
     const arma::colvec& Encode() const { return data; }
+
+    //! Dimension of the encoded state.
+    static constexpr size_t dimension = 4;
 
    private:
     //! Locally-stored (position, velocity, angle, angular velocity).
