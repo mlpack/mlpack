@@ -145,7 +145,7 @@ namespace details
       lastVal = newVal;
     }
   }
-}; //namespace details
+}; // namespace details
 
 template <typename MatType, typename TagType>
 DTree<MatType, TagType>::DTree() :
@@ -480,7 +480,8 @@ bool DTree<MatType, TagType>::FindSplit(const MatType& data,
     // sparse matrices.
 
     std::vector<SplitItem> splitVec;
-    details::ExtractSplits<ElemType>(splitVec, data, dim, start, end, minLeafSize);
+    details::ExtractSplits<ElemType>(splitVec, data, dim, start, end,
+        minLeafSize);
 
     // Iterate on all the splits for this dimension
     for (typename std::vector<SplitItem>::iterator i = splitVec.begin();
@@ -523,7 +524,7 @@ bool DTree<MatType, TagType>::FindSplit(const MatType& data,
       - 2 * std::log((double) data.n_cols)
       - volumeWithoutDim;
 
-#pragma omp critical (DTreeFindUpdate)
+#pragma omp critical(DTreeFindUpdate)
     if ((actualMinDimError > minError) && dimSplitFound)
     {
       // Calculate actual error (in logspace) by adding terms back to our

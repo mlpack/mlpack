@@ -131,8 +131,8 @@ class DTBRules
   size_t scores;
 }; // class DTBRules
 
-} // emst namespace
-} // mlpack namespace
+} // namespace emst
+} // namespace mlpack
 
 #include "dtb_rules_impl.hpp"
 

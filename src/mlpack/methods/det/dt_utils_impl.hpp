@@ -270,7 +270,7 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
       cvRegularizationConstants[prunedSequence.size() - 2] += 2.0 * cvVal
         / (double) cvData.n_cols;
 
-    #pragma omp critical (DTreeCVUpdate)
+    #pragma omp critical(DTreeCVUpdate)
     regularizationConstants += cvRegularizationConstants;
   }
   Timer::Stop("cross_validation");

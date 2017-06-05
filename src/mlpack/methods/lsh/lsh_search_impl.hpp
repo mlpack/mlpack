@@ -694,8 +694,9 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
 
       // Shift operation on Ai (replace max with max+1).
       std::vector<bool> As = Ai;
+
+      // Don't add invalid sets.
       if (PerturbationShift(As) && PerturbationValid(As))
-        // Don't add invalid sets.
       {
         perturbationSets.push_back(As); // add shifted set to sets
         minHeap.push(
@@ -705,6 +706,7 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
 
       // Expand operation on Ai (add max+1 to set).
       std::vector<bool> Ae = Ai;
+
       // Don't add invalid sets.
       if (PerturbationExpand(Ae) && PerturbationValid(Ae))
       {
@@ -831,9 +833,11 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
         size_t tableRow = bucketRowInHashTable[hashInd];
 
         if (tableRow < secondHashSize && bucketContentSize[tableRow] > 0)
+        {
           // Pick the indices in the bucket corresponding to hashInd.
           for (size_t j = 0; j < bucketContentSize[tableRow]; ++j)
             refPointsConsidered[ secondHashTable[tableRow](j) ]++;
+        }
       }
     }
 
@@ -860,9 +864,11 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
         const size_t tableRow = bucketRowInHashTable[hashInd];
 
         if (tableRow < secondHashSize)
-         // Store all secondHashTable points in the candidates set.
-         for (size_t j = 0; j < bucketContentSize[tableRow]; ++j)
-           refPointsConsideredSmall(start++) = secondHashTable[tableRow](j);
+        {
+          // Store all secondHashTable points in the candidates set.
+          for (size_t j = 0; j < bucketContentSize[tableRow]; ++j)
+            refPointsConsideredSmall(start++) = secondHashTable[tableRow](j);
+       }
       }
     }
 

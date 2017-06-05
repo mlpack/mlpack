@@ -54,7 +54,7 @@ BOOST_AUTO_TEST_CASE(MomentumSGDSpeedUpTestFunction)
   BOOST_REQUIRE_SMALL(coordinates1[1], 1e-7);
   BOOST_REQUIRE_SMALL(coordinates1[2], 1e-7);
 
-  BOOST_REQUIRE_LE(result,result1);
+  BOOST_REQUIRE_LE(result, result1);
 }
 
 BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)

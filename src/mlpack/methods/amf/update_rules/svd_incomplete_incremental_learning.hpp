@@ -188,7 +188,7 @@ inline void SVDIncompleteIncrementalLearning::HUpdate<arma::sp_mat>(
   arma::mat deltaH(H.n_rows, 1);
   deltaH.zeros();
 
-  for(arma::sp_mat::const_iterator it = V.begin_col(currentUserIndex);
+  for (arma::sp_mat::const_iterator it = V.begin_col(currentUserIndex);
       it != V.end_col(currentUserIndex); it++)
   {
     double val = *it;
@@ -205,7 +205,7 @@ inline void SVDIncompleteIncrementalLearning::HUpdate<arma::sp_mat>(
   currentUserIndex = currentUserIndex % V.n_cols;
 }
 
-} // namepsace amf
+} // namespace amf
 } // namespace mlpack
 
 #endif

@@ -290,7 +290,8 @@ BOOST_AUTO_TEST_CASE(InputRowVectorParamTest)
 {
   AddRequiredCLIOptions();
 
-  CLI::Add<arma::rowvec>(arma::rowvec(), "row", "Test vector", 'l', false, true, false);
+  CLI::Add<arma::rowvec>(arma::rowvec(), "row", "Test vector", 'l', false,
+      true, false);
 
   // Fake arguments.
   const char* argv[3];
@@ -327,7 +328,8 @@ BOOST_AUTO_TEST_CASE(InputUngignedRowVectorParamTest)
 {
   AddRequiredCLIOptions();
 
-  CLI::Add<arma::Row<size_t>>(arma::Row<size_t>(), "row", "Test vector", 'l', false, true, false);
+  CLI::Add<arma::Row<size_t>>(arma::Row<size_t>(), "row", "Test vector", 'l',
+      false, true, false);
 
   // Fake arguments.
   const char* argv[3];
@@ -412,8 +414,8 @@ BOOST_AUTO_TEST_CASE(OutputUnsignedColParamTest)
   AddRequiredCLIOptions();
 
   // --vector is an output parameter.
-  CLI::Add<arma::Col<size_t>>(arma::Col<size_t>(), "vector", "Test vector", 'l', false, false,
-      false);
+  CLI::Add<arma::Col<size_t>>(arma::Col<size_t>(), "vector", "Test vector", 'l',
+      false, false, false);
 
   // Set some fake arguments.
   const char* argv[3];
@@ -459,8 +461,8 @@ BOOST_AUTO_TEST_CASE(OutputRowParamTest)
   AddRequiredCLIOptions();
 
   // --row is an output parameter.
-  CLI::Add<arma::rowvec>(arma::rowvec(), "row", "Test vector", 'l', false, false,
-      false);
+  CLI::Add<arma::rowvec>(arma::rowvec(), "row", "Test vector", 'l',
+      false, false, false);
 
   // Set some fake arguments.
   const char* argv[3];
@@ -506,8 +508,8 @@ BOOST_AUTO_TEST_CASE(OutputUnsignedRowParamTest)
   AddRequiredCLIOptions();
 
   // --row is an output parameter.
-  CLI::Add<arma::Row<size_t>>(arma::Row<size_t>(), "row", "Test vector", 'l', false, false,
-      false);
+  CLI::Add<arma::Row<size_t>>(arma::Row<size_t>(), "row", "Test vector", 'l',
+      false, false, false);
 
   // Set some fake arguments.
   const char* argv[3];
