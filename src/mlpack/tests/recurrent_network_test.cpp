@@ -175,7 +175,7 @@ void GenerateReber(const arma::Mat<char>& transitions, std::string& reber)
 
   do
   {
-    const int grammerIdx = rand_r() % 2;
+    const int grammerIdx = rand() % 2;
     reber += arma::as_scalar(transitions.submat(idx, grammerIdx, idx,
         grammerIdx));
 
@@ -196,7 +196,7 @@ void GenerateEmbeddedReber(const arma::Mat<char>& transitions,
                            std::string& reber)
 {
   GenerateReber(transitions, reber);
-  const char c = (rand_r() % 2) == 1 ? 'P' : 'T';
+  const char c = (rand() % 2) == 1 ? 'P' : 'T';
   reber = c + reber + c;
   reber = "B" + reber + "E";
 }
@@ -504,13 +504,13 @@ void GenerateDistractedSequence(arma::mat& input, arma::mat& output)
   // output sequence by following the correct order.
   for (size_t i = 0; i < 2; i++)
   {
-    size_t idx = rand_r() % 2;
+    size_t idx = rand() % 2;
     input(idx, index(i)) = 1;
     output(idx, index(i) > index(i == 0) ? 9 : 8) = 1;
   }
 
   for (size_t i = 2; i < 8; i++)
-    input(2 + rand_r() % 6, index(i)) = 1;
+    input(2 + rand() % 6, index(i)) = 1;
 
   // Set the prompts which direct the network to give an answer.
   input(8, 8) = 1;

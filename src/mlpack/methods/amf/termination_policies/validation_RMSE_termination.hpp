@@ -72,8 +72,8 @@ class ValidationRMSETermination
       // pick a random non-zero entry
       do
       {
-        t_row = rand_r() % n;
-        t_col = rand_r() % m;
+        t_row = rand() % n;
+        t_col = rand() % m;
       } while ((t_val = V(t_row, t_col)) == 0);
 
       // add the entry to the validation set
