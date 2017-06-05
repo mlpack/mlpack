@@ -22,6 +22,8 @@ set(SOURCES
   elu_impl.hpp
   glimpse.hpp
   glimpse_impl.hpp
+  gru.hpp
+  gru_impl.hpp
   hard_tanh.hpp
   hard_tanh_impl.hpp
   join.hpp

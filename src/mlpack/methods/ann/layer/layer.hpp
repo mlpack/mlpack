@@ -21,6 +21,7 @@
 #include "linear.hpp"
 #include "linear_no_bias.hpp"
 #include "lstm.hpp"
+#include "gru.hpp"
 #include "recurrent.hpp"
 #include "recurrent_attention.hpp"
 #include "sequential.hpp"
