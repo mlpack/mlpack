@@ -43,19 +43,6 @@ class MSE
    * to minimize the measurement.
    */
   static const bool NeedsMinimization = true;
-
- private:
-  /* Predict rowvec responses with the model. */
-  template<typename MLAlgorithm, typename DataType>
-  static void Predict(MLAlgorithm& model,
-                      const DataType& data,
-                      arma::rowvec& responses);
-
-  /* Predict mat responses with the model. */
-  template<typename MLAlgorithm, typename DataType>
-  static void Predict(MLAlgorithm& model,
-                      const DataType& data,
-                      arma::mat& responses);
 };
 
 } // namespace cv

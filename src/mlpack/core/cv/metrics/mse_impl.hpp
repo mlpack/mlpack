@@ -30,28 +30,10 @@ double MSE::Evaluate(MLAlgorithm& model,
   }
 
   ResponsesType predictedResponses;
-  Predict(model, data, predictedResponses);
+  model.Predict(data, predictedResponses);
   double sum = arma::accu(arma::square(responses - predictedResponses));
 
   return sum / responses.n_elem;
-}
-
-template<typename MLAlgorithm, typename DataType>
-void MSE::Predict(MLAlgorithm& model,
-                  const DataType& data,
-                  arma::rowvec& responses)
-{
-  model.Predict(data, responses);
-}
-
-template<typename MLAlgorithm, typename DataType>
-void MSE::Predict(MLAlgorithm& model,
-                  const DataType& data,
-                  arma::mat& responses)
-{
-  // In the case of neural networks data should be passed without const
-  DataType nonConstData = data;
-  model.Predict(nonConstData, responses);
 }
 
 } // namespace cv
