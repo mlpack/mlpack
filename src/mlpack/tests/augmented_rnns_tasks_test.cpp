@@ -45,7 +45,7 @@ public:
     int len = predictors.n_elem;
     auto totalLen = nRepeats*len;
     labels.zeros(totalLen);
-    for (int i = 0; i < totalLen; ++i) {
+    for (size_t i = 0; i < totalLen; ++i) {
       labels.at(i) = predictors.at(i % len);
     }
   }
@@ -54,31 +54,33 @@ public:
       arma::field<arma::irowvec>& labels) {
     auto sz = predictors.n_elem;
     labels = arma::field<arma::irowvec>(sz);
-    for (int i = 0; i < sz; ++i) {
+    for (size_t i = 0; i < sz; ++i) {
       Predict(predictors.at(i), labels.at(i));
     }
   }
 private:
-  int nRepeats;
+  size_t nRepeats;
 };
 
 class HardCodedSortModel {
 public:
   HardCodedSortModel() {}
-  void Train(
-      arma::field<arma::imat>& predictors,
-      arma::field<arma::imat>& labels) {
+  void Train(arma::field<arma::imat>& predictors,
+             arma::field<arma::imat>& labels)
+  {
+    assert(predictors.n_elem == labels.n_elem);
     bitLen = predictors.at(0).n_cols;
   }
   void Predict(
       arma::imat& predictors,
-      arma::imat& labels) {
-    int len = predictors.n_elem;
+      arma::imat& labels)
+  {
+    size_t len = predictors.n_elem;
     labels.zeros(len, bitLen);
     // TODO
   }
 private:
-  int bitLen;
+  size_t bitLen;
 };
 
 BOOST_AUTO_TEST_SUITE(AugmentedRNNsTasks);
@@ -87,9 +89,9 @@ BOOST_AUTO_TEST_CASE(CopyTaskTest)
 {
   bool ok = true;
   // Check the setup on vrious lengths...
-  for (int maxLen = 2; maxLen <= 16; ++maxLen) {
+  for (size_t maxLen = 2; maxLen <= 16; ++maxLen) {
     // .. and various numbers of repetitions.
-    for (int nRepeats = 1; nRepeats <= 10; ++nRepeats) {
+    for (size_t nRepeats = 1; nRepeats <= 10; ++nRepeats) {
       CopyTask task(maxLen, nRepeats);
       arma::field<arma::irowvec> trainPredictor, trainResponse;
       task.GenerateData(trainPredictor, trainResponse, 8);

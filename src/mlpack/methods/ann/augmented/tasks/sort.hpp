@@ -23,21 +23,19 @@ namespace tasks /* Task utilities for augmented */ {
 class SortTask
 {
 public:
-  SortTask(int maxLength, int bitLen);
+  SortTask(size_t maxLength, size_t bitLen);
 
-  void GenerateData(
-    arma::field<arma::imat>& input,
-    arma::field<arma::imat>& labels,
-    int batchSize
-  );
+  void GenerateData(arma::field<arma::imat>& input,
+                    arma::field<arma::imat>& labels,
+                    size_t batchSize);
 private:
-  int maxLength;
-  int bitLen;
+  size_t maxLength;
+  size_t bitLen;
 };
-}
-}
-}
-}
+} // namespace tasks 
+} // namespace augmented
+} // namespace ann
+} // namespace mlpack 
 
 #include "sort_impl.hpp"
 #endif

@@ -29,7 +29,7 @@ public:
   * @param maxLength Maximum length of sequence that has to be repeated by model.
   * @param nRepeats Number of repeates required to solve the task.
   */
-  CopyTask(int maxLength, int nRepeats);
+  CopyTask(size_t maxLength, size_t nRepeats);
   /**
   * Generate dataset of a given size.
   *
@@ -37,21 +37,19 @@ public:
   * @param labels The variable to store output sequences.
   * @param batchSize The dataset size.
   */
-  void GenerateData(
-    arma::field<arma::irowvec>& input,
-    arma::field<arma::irowvec>& labels,
-    int batchSize
-  );
+  void GenerateData(arma::field<arma::irowvec>& input,
+                    arma::field<arma::irowvec>& labels,
+                    size_t batchSize);
 private:
   // Maximum length of a sequence.
-  int maxLength;
-  // Nomber of repeats the model has to perform to complete the task.
-  int nRepeats;
+  size_t maxLength;
+  // Number of repeats the model has to perform to complete the task.
+  size_t nRepeats;
 };
-}
-}
-}
-}
+} // namespace tasks 
+} // namespace augmented
+} // namespace ann
+} // namespace mlpack 
 
 #include "copy_impl.hpp"
 
