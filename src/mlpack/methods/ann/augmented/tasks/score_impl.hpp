@@ -34,10 +34,12 @@ double SequencePrecision(arma::field<arma::irowvec> trueOutputs,
 
     bool ok = true;
 
-    if (output.n_elem != prediction.n_elem) {
+    if (output.n_elem != prediction.n_elem)
+    {
       ok = false;
     }
-    else {
+    else
+    {
       for (size_t j = 0; j < prediction.n_elem; ++j) {
         if (output.at(j) != prediction.at(j)) {
           ok = false;
