@@ -1682,7 +1682,7 @@ BOOST_AUTO_TEST_CASE(SimpleARFFCategoricalTest)
   f << endl;
   f << "@attribute three STRING" << endl;
   f << endl;
-  f << "%% a comment line " << endl;
+  f << "% a comment line " << endl;
   f << endl;
   f << "@data" << endl;
   f << "hello, 1, moo" << endl;
@@ -1738,15 +1738,15 @@ BOOST_AUTO_TEST_CASE(HarderARFFTest)
   f << endl;
   f << "@attribute @@@@flfl numeric" << endl;
   f << endl;
-  f << "%% comment" << endl;
+  f << "% comment" << endl;
   f << "@attribute \"hello world\" string" << endl;
   f << "@attribute 12345 integer" << endl;
   f << "@attribute real real" << endl;
-  f << "@attribute \"blah blah blah     \t \" numeric %% comment" << endl;
-  f << "%% comment" << endl;
+  f << "@attribute \"blah blah blah     \t \" numeric % comment" << endl;
+  f << "% comment" << endl;
   f << "@data" << endl;
   f << "1, one, 3, 4.5, 6" << endl;
-  f << "2, two, 4, 5.5, 7 %% comment" << endl;
+  f << "2, two, 4, 5.5, 7 % comment" << endl;
   f << "3, \"three five, six\", 5, 6.5, 8" << endl;
   f.close();
 
@@ -1803,15 +1803,15 @@ BOOST_AUTO_TEST_CASE(BadDatasetInfoARFFTest)
   f << endl;
   f << "@attribute @@@@flfl numeric" << endl;
   f << endl;
-  f << "%% comment" << endl;
+  f << "% comment" << endl;
   f << "@attribute \"hello world\" string" << endl;
   f << "@attribute 12345 integer" << endl;
   f << "@attribute real real" << endl;
-  f << "@attribute \"blah blah blah     \t \" numeric %% comment" << endl;
-  f << "%% comment" << endl;
+  f << "@attribute \"blah blah blah     \t \" numeric % comment" << endl;
+  f << "% comment" << endl;
   f << "@data" << endl;
   f << "1, one, 3, 4.5, 6" << endl;
-  f << "2, two, 4, 5.5, 7 %% comment" << endl;
+  f << "2, two, 4, 5.5, 7 % comment" << endl;
   f << "3, \"three five, six\", 5, 6.5, 8" << endl;
   f.close();
 
