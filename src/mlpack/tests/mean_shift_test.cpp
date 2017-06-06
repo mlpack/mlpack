@@ -57,8 +57,8 @@ arma::mat meanShiftData("  0.0   0.0;" // Class 1.
 /**
  * 30-point 3-class test case for Mean Shift.
  */
-BOOST_AUTO_TEST_CASE(MeanShiftSimpleTest) {
-
+BOOST_AUTO_TEST_CASE(MeanShiftSimpleTest)
+{
   MeanShift<> meanShift;
 
   arma::Col<size_t> assignments;
@@ -88,7 +88,6 @@ BOOST_AUTO_TEST_CASE(MeanShiftSimpleTest) {
 
   for (size_t i = 20; i < 30; i++)
     BOOST_REQUIRE_EQUAL(assignments(i), thirdClass);
-
 }
 
 // Generate samples from four Gaussians, and make sure mean shift nearly

@@ -181,7 +181,7 @@ BOOST_AUTO_TEST_CASE(CosineTreeModifiedGramSchmidt)
   CosineNodeQueue basisQueue;
   CosineTree dummyTree(data, epsilon, delta);
 
-  for(size_t i = 0; i < numCols; i++)
+  for (size_t i = 0; i < numCols; i++)
   {
     // Make a new CosineNode object.
     CosineTree* basisNode;
@@ -198,7 +198,7 @@ BOOST_AUTO_TEST_CASE(CosineTreeModifiedGramSchmidt)
     CosineNodeQueue::const_iterator j = basisQueue.begin();
     CosineTree* currentNode;
 
-    for(; j != basisQueue.end(); j++)
+    for (; j != basisQueue.end(); j++)
     {
       currentNode = *j;
       BOOST_REQUIRE_SMALL(arma::dot(currentNode->BasisVector(), newBasisVector),
@@ -212,7 +212,7 @@ BOOST_AUTO_TEST_CASE(CosineTreeModifiedGramSchmidt)
   }
 
   // Deallocate memory given to the objects.
-  for(size_t i = 0; i < numCols; i++)
+  for (size_t i = 0; i < numCols; i++)
   {
     CosineTree* currentNode;
     currentNode = basisQueue.top();

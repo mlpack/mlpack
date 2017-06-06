@@ -47,7 +47,6 @@ BOOST_AUTO_TEST_CASE(AddressTest)
     for (size_t k = 0; k < dataset.n_rows; k++)
       BOOST_REQUIRE_CLOSE(dataset(k, i), point[k], 1e-13);
   }
-
 }
 
 template<typename TreeType>

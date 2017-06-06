@@ -584,7 +584,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
 
   typedef NeighborSearchRules<SortPolicy, MetricType, Tree> RuleType;
 
-  switch(searchMode)
+  switch (searchMode)
   {
     case NAIVE_MODE:
     {

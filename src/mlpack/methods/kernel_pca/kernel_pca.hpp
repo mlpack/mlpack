@@ -122,7 +122,6 @@ class KernelPCA
   //! If true, the data will be scaled (by standard deviation) when Apply() is
   //! run.
   bool centerTransformedData;
-
 }; // class KernelPCA
 
 } // namespace kpca

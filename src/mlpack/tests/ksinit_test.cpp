@@ -242,7 +242,7 @@ BOOST_AUTO_TEST_CASE(IrisDataset)
   // Normalization used in the paper.
   dataset /= 10;
 
-  //Counter for the number of failures.
+  // Counter for the number of failures.
   size_t numFails = 0;
 
   // It isn't guaranteed that the network will converge in the specified number

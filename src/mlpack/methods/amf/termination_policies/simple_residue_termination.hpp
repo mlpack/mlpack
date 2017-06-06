@@ -99,7 +99,7 @@ class SimpleResidueTermination
   const double& MinResidue() const { return minResidue; }
   double& MinResidue() { return minResidue; }
 
-public:
+ public:
   //! residue threshold
   double minResidue;
   //! iteration threshold

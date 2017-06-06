@@ -136,7 +136,7 @@ class Perceptron
   //! Modify the biases.  You had better know what you are doing!
   arma::vec& Biases() { return biases; }
 
-private:
+ private:
   //! The maximum number of iterations during training.
   size_t maxIterations;
 

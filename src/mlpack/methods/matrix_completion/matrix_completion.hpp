@@ -112,7 +112,10 @@ class MatrixCompletion
   void Recover(arma::mat& recovered);
 
   //! Return the underlying SDP.
-  const optimization::LRSDP<optimization::SDP<arma::sp_mat>>& Sdp() const { return sdp; }
+  const optimization::LRSDP<optimization::SDP<arma::sp_mat>>& Sdp() const
+  {
+    return sdp;
+  }
   //! Modify the underlying SDP.
   optimization::LRSDP<optimization::SDP<arma::sp_mat>>& Sdp() { return sdp; }
 
