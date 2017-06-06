@@ -20,10 +20,8 @@ namespace ann /* Artificial Neural Network */ {
 namespace augmented /* Augmented neural network */ {
 namespace scorers /* Scoring utilities for augmented */ {
 
-double SequencePrecision(
-    arma::field<arma::irowvec> trueOutputs,
-    arma::field<arma::irowvec> predOutputs
-)
+double SequencePrecision(arma::field<arma::irowvec> trueOutputs,
+                         arma::field<arma::irowvec> predOutputs)
 {
   double score = 0;
   auto testSize = trueOutputs.n_elem;
@@ -40,7 +38,7 @@ double SequencePrecision(
       ok = false;
     }
     else {
-      for (int j = 0; j < prediction.n_elem; ++j) {
+      for (size_t j = 0; j < prediction.n_elem; ++j) {
         if (output.at(j) != prediction.at(j)) {
           ok = false;
           break;
@@ -53,9 +51,10 @@ double SequencePrecision(
   score /= testSize;
   return score;
 }
-}
-}
-}
-}
+
+} // namespace scorers 
+} // namespace augmented
+} // namespace ann
+} // namespace mlpack 
 
 #endif

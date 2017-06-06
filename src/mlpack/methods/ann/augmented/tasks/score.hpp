@@ -28,15 +28,13 @@ namespace scorers /* Scoring utilities for augmented */ {
 * @param trueOutputs Ground truth sequences.
 * @param predOutputs Sequences predicted by model.
 */
-double SequencePrecision(
-    arma::field<arma::irowvec> trueOutputs,
-    arma::field<arma::irowvec> predOutputs
-);
+double SequencePrecision(arma::field<arma::irowvec> trueOutputs,
+    					 arma::field<arma::irowvec> predOutputs);
 
-}
-}
-}
-}
+} // namespace scorers 
+} // namespace augmented
+} // namespace ann
+} // namespace mlpack 
 
 #include "score_impl.hpp"
 
