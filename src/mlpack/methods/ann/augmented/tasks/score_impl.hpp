@@ -54,6 +54,43 @@ double SequencePrecision(arma::field<arma::irowvec> trueOutputs,
   return score;
 }
 
+double SequencePrecision(arma::field<arma::imat> trueOutputs,
+                         arma::field<arma::imat> predOutputs)
+{
+  double score = 0;
+  auto testSize = trueOutputs.n_elem;
+  assert(testSize == predOutputs.n_elem);
+
+  for (size_t i = 0; i < testSize; i++)
+  {
+    auto prediction = trueOutputs.at(i);
+    auto output = predOutputs.at(i);
+
+    bool ok = true;
+
+    if (output.n_rows != prediction.n_rows ||
+        output.n_cols != prediction.n_cols)
+    {
+      ok = false;
+    }
+    else
+    {
+      for (size_t j = 0; j < prediction.n_rows; ++j) {
+        for (size_t k = 0; k < prediction.n_cols; ++k) {
+          if (output.at(j, k) != prediction.at(j, k)) {
+            ok = false;
+            break;
+          }
+        }
+      }
+    }
+
+    if (ok) score++;
+  }
+  score /= testSize;
+  return score;
+}
+
 } // namespace scorers 
 } // namespace augmented
 } // namespace ann

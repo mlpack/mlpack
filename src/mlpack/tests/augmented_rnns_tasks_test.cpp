@@ -9,8 +9,9 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <iostream>
 #include <vector>
+#include <algorithm>
+#include <utility>
 
 #include <mlpack/core.hpp>
 
@@ -21,8 +22,9 @@
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
-using std::cerr;
 using std::vector;
+using std::pair;
+using std::make_pair;
 
 using namespace mlpack::ann::augmented::tasks;
 using namespace mlpack::ann::augmented::scorers;
@@ -75,9 +77,30 @@ public:
       arma::imat& predictors,
       arma::imat& labels)
   {
-    size_t len = predictors.n_elem;
+    size_t len = predictors.n_rows;
     labels.zeros(len, bitLen);
-    // TODO
+    vector<pair<int, int>> vals(len);
+    for (size_t j = 0; j < len; ++j) {
+      int val = 0;
+      for (size_t k = 0; k < bitLen; ++k) {
+        val <<= 1;
+        val += predictors.at(j, k);
+      }
+      vals[j] = make_pair(val, j);
+    }
+    sort(vals.begin(), vals.end());
+    for (size_t j = 0; j < len; ++j) {
+      labels.row(j) = predictors.row(vals[j].second);
+    }
+  } 
+  void Predict(
+      arma::field<arma::imat>& predictors,
+      arma::field<arma::imat>& labels) {
+    auto sz = predictors.n_elem;
+    labels = arma::field<arma::imat>(sz);
+    for (size_t i = 0; i < sz; ++i) {
+      Predict(predictors.at(i), labels.at(i));
+    }
   }
 private:
   size_t bitLen;
@@ -111,13 +134,22 @@ BOOST_AUTO_TEST_CASE(CopyTaskTest)
   }
   BOOST_REQUIRE(ok);
 }
-/*
+
 BOOST_AUTO_TEST_CASE(SortTaskTest) {
   bool ok = true;
-  for (int maxLen = 2; maxLen <= 16; ++maxLen) {
-    SortTask task(maxLen);
+  size_t bitLen = 5;
+  for (size_t maxLen = 2; maxLen <= 16; ++maxLen) {
+    SortTask task(maxLen, bitLen);
+    arma::field<arma::imat> trainPredictor, trainResponse;
+    task.GenerateData(trainPredictor, trainResponse, 8);
+    arma::field<arma::imat> testPredictor, testResponse;
+    task.GenerateData(testPredictor, testResponse, 8);
     HardCodedSortModel model;
-    if (task.Evaluate(model) < 0.99) {
+    model.Train(trainPredictor, trainResponse);
+    arma::field<arma::imat> predResponse;
+    model.Predict(testPredictor, predResponse);
+    // A single failure is a failure.
+    if (SequencePrecision(testResponse, predResponse) < 0.99) {
       ok = false;
       break;
     }
@@ -125,5 +157,5 @@ BOOST_AUTO_TEST_CASE(SortTaskTest) {
 
   BOOST_REQUIRE(ok);
 }
-*/
+
 BOOST_AUTO_TEST_SUITE_END();
