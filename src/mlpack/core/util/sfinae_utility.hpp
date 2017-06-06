@@ -116,8 +116,8 @@ template<typename T, typename ResultType = void>
 using EnableIfCompilable =
     typename std::enable_if<True<T>::value, ResultType>::type;
 
-}
-}
+} // namespace sfinae
+} // namespace mlpack
 
 /*
  * Constructs a template supporting the SFINAE pattern.

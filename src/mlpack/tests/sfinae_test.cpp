@@ -19,7 +19,7 @@ BOOST_AUTO_TEST_SUITE(SFINAETest);
 
 class A
 {
-public:
+ public:
   void M(const arma::mat&, const arma::Row<size_t>&, double);
   void M(const arma::mat&, const arma::Row<size_t>&, double, double);
   void M(const arma::vec&, size_t, double);
@@ -27,7 +27,7 @@ public:
 
 class B
 {
-public:
+ public:
   void M(const arma::mat&, const arma::rowvec&);
 };
 
