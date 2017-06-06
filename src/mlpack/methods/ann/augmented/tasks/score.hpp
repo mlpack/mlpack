@@ -24,12 +24,25 @@ namespace scorers /* Scoring utilities for augmented */ {
 * Function that computes the sequences precision
 * (number of correct sequences / number of sequences)
 * of model's answer against ground truth answer.
-*
+* This version works with sequences of bits.
+* 
 * @param trueOutputs Ground truth sequences.
 * @param predOutputs Sequences predicted by model.
 */
 double SequencePrecision(arma::field<arma::irowvec> trueOutputs,
-    					 arma::field<arma::irowvec> predOutputs);
+                         arma::field<arma::irowvec> predOutputs);
+
+/**
+* Function that computes the sequences precision
+* (number of correct sequences / number of sequences)
+* of model's answer against ground truth answer.
+* This version works with sequences of binary numbers.
+*
+* @param trueOutputs Ground truth sequences.
+* @param predOutputs Sequences predicted by model.
+*/
+double SequencePrecision(arma::field<arma::imat> trueOutputs,
+                         arma::field<arma::imat> predOutputs);
 
 } // namespace scorers 
 } // namespace augmented
