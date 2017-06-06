@@ -18,6 +18,8 @@
 #include <vector>
 #include <algorithm>
 #include <utility>
+#include <cstdlib>
+#include <ctime>
 
 using std::vector;
 using std::pair;
@@ -28,40 +30,40 @@ namespace ann /* Artificial Neural Network */ {
 namespace augmented /* Augmented neural network */ {
 namespace tasks /* Task utilities for augmented */ {
 
-SortTask::SortTask(int maxLength, int bitLen) : maxLength(maxLength), bitLen(bitLen) {}
+SortTask::SortTask(size_t maxLength, size_t bitLen) : maxLength(maxLength), bitLen(bitLen) {}
 
-void SortTask::GenerateData(
-  arma::field<arma::imat>& input,
-  arma::field<arma::imat>& labels,
-  int batchSize
-) {
+void SortTask::GenerateData(arma::field<arma::imat>& input,
+                            arma::field<arma::imat>& labels,
+                            size_t batchSize)
+{
   input = arma::field<arma::imat>(batchSize);
   labels = arma::field<arma::imat>(batchSize);
-  for (int i = 0; i < batchSize; ++i) {
-    size_t size = maxLength;
-    arma::imat item = arma::randi<arma::imat>(maxLength, bitLen, arma::distr_param(0, 1));
+  std::srand(unsigned(std::time(0)));
+  for (size_t i = 0; i < batchSize; ++i) {
+    // Random uniform length from [2..maxLength]
+    size_t size = 2 + std::rand() % (maxLength - 1);
+    arma::imat item = arma::randi<arma::imat>(size, bitLen, arma::distr_param(0, 1));
     input(i) = item;
-    arma::imat item_ans = arma::imat(maxLength, bitLen);
-    vector<pair<int, int>> vals(maxLength);
-    for (int j = 0; j < maxLength; ++j) {
+    arma::imat item_ans = arma::imat(size, bitLen);
+    vector<pair<int, int>> vals(size);
+    for (size_t j = 0; j < size; ++j) {
       int val = 0;
-      for (int k = 0; k < bitLen; ++k) {
+      for (size_t k = 0; k < bitLen; ++k) {
         val <<= 1;
         val += item.at(j, k);
       }
       vals[j] = make_pair(val, j);
     }
     sort(vals.begin(), vals.end());
-    for (int j = 0; j < maxLength; ++j) {
+    for (size_t j = 0; j < size; ++j) {
       item_ans.row(j) = item.row(vals[j].second);
     }
     labels(i) = item_ans;
   }
 }
 
-}
-}
-}
-}
-
+} // namespace tasks 
+} // namespace augmented
+} // namespace ann
+} // namespace mlpack 
 #endif
