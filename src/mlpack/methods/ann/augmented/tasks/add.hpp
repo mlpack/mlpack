@@ -22,7 +22,6 @@ namespace augmented /* Augmented neural network */ {
 namespace tasks /* Task utilities for augmented */ {
 class AddTask
 {
-
  public:
   AddTask(size_t bitLen);
 
