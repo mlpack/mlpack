@@ -22,7 +22,6 @@ namespace augmented /* Augmented neural network */ {
 namespace tasks /* Task utilities for augmented */ {
 class CopyTask
 {
-
  public:
   /**
   * Creates an instance of the sequence copy task.

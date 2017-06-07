@@ -22,7 +22,6 @@ namespace augmented /* Augmented neural network */ {
 namespace tasks /* Task utilities for augmented */ {
 class SortTask
 {
-
  public:
   SortTask(size_t maxLength, size_t bitLen);
 
