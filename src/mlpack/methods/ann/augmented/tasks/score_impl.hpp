@@ -1,8 +1,8 @@
 /**
- * @file copy_impl.hpp
+ * @file score_impl.hpp
  * @author Konstantin Sidorov
  *
- * Implementation of CopyTask class
+ * Implementation of scoring functions
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
