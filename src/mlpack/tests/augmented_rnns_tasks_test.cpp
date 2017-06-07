@@ -109,7 +109,7 @@ class HardCodedSortModel {
 };
 
 class HardCodedAddModel {
-public:
+ public:
   HardCodedAddModel() {}
   void Train(arma::field<arma::irowvec>& predictors,
              arma::field<arma::irowvec>& labels)
