@@ -44,8 +44,12 @@ void AddTask::GenerateData(arma::field<arma::irowvec>& input,
     // Random uniform length from [2..bitLen]
     size_t size_A = 2 + std::rand() % (bitLen - 1);
     size_t size_B = 2 + std::rand() % (bitLen - 1);
-    // Construct sequence of the form (binary number with size_A bits) + '+' + (binary number with size_B bits)
-    input(i) = arma::randi<arma::irowvec>(size_A + size_B + 1, arma::distr_param(0, 1));
+    // Construct sequence of the form
+    // (binary number with size_A bits) + '+'
+    // + (binary number with size_B bits)
+    input(i) = arma::randi<arma::irowvec>(
+      size_A + size_B + 1, arma::distr_param(0, 1)
+    );
     input(i).at(size_A) = +100;
     int val_A = 0;
     for (size_t k = 0; k < size_A; ++k) {

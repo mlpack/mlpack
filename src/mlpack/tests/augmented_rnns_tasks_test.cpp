@@ -124,7 +124,8 @@ public:
       auto digit = predictors.at(i);
       if (digit != 0 && digit != 1)
       {
-        // We should not see two separators - we are adding *two* numbers in the task
+        // We should not see two separators
+        // since we are adding *two* numbers in the task
         assert(!num); 
         num = true;
       }
