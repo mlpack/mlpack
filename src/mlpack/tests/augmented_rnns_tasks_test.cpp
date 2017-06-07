@@ -122,17 +122,21 @@ public:
     auto len = predictors.n_elem;
     for (size_t i = 0; i < len; ++i) {
       auto digit = predictors.at(i);
-      if (digit != 0 && digit != 1) {
+      if (digit != 0 && digit != 1)
+      {
         // We should not see two separators - we are adding *two* numbers in the task
         assert(!num); 
         num = true;
       }
-      else {
-        if (num) {
+      else
+      {
+        if (num)
+        {
           num_B <<= 1;
           num_B += digit;
         }
-        else {
+        else
+        {
           num_A <<= 1;
           num_A += digit;
         }
