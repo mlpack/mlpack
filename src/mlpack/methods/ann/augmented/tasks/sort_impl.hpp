@@ -60,7 +60,6 @@ void SortTask::GenerateData(arma::field<arma::imat>& input,
     }
     labels(i) = item_ans;
   }
-
 }
 
 } // namespace tasks
