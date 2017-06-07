@@ -63,8 +63,8 @@ void SortTask::GenerateData(arma::field<arma::imat>& input,
 
 }
 
-} // namespace tasks 
+} // namespace tasks
 } // namespace augmented
 } // namespace ann
-} // namespace mlpack 
+} // namespace mlpack
 #endif

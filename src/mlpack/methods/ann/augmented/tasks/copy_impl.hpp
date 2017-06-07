@@ -50,9 +50,9 @@ void CopyTask::GenerateData(arma::field<arma::irowvec>& input,
   }
 }
 
-} // namespace tasks 
+} // namespace tasks
 } // namespace augmented
 } // namespace ann
-} // namespace mlpack 
+} // namespace mlpack
 
 #endif

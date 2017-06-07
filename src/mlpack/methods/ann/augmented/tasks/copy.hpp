@@ -22,7 +22,8 @@ namespace augmented /* Augmented neural network */ {
 namespace tasks /* Task utilities for augmented */ {
 class CopyTask
 {
-public:
+
+ public:
   /**
   * Creates an instance of the sequence copy task.
   *
@@ -40,16 +41,17 @@ public:
   void GenerateData(arma::field<arma::irowvec>& input,
                     arma::field<arma::irowvec>& labels,
                     size_t batchSize);
-private:
+
+ private:
   // Maximum length of a sequence.
   size_t maxLength;
   // Number of repeats the model has to perform to complete the task.
   size_t nRepeats;
 };
-} // namespace tasks 
+} // namespace tasks
 } // namespace augmented
 } // namespace ann
-} // namespace mlpack 
+} // namespace mlpack
 
 #include "copy_impl.hpp"
 

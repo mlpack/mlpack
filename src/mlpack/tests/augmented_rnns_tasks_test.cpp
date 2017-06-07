@@ -33,7 +33,7 @@ using namespace mlpack::ann::augmented::scorers;
 // The dummy model that simply copies the sequence the required number of times
 // (yes, no ML here, we're unit testing :)
 class HardCodedCopyModel {
-public:
+ public:
   HardCodedCopyModel() : nRepeats(1) {}
   void Train(
       arma::field<arma::irowvec>& predictors,
@@ -61,12 +61,13 @@ public:
       Predict(predictors.at(i), labels.at(i));
     }
   }
-private:
+
+ private:
   size_t nRepeats;
 };
 
 class HardCodedSortModel {
-public:
+ public:
   HardCodedSortModel() {}
   void Train(arma::field<arma::imat>& predictors,
              arma::field<arma::imat>& labels)
@@ -93,7 +94,7 @@ public:
     for (size_t j = 0; j < len; ++j) {
       labels.row(j) = predictors.row(vals[j].second);
     }
-  } 
+  }
   void Predict(arma::field<arma::imat>& predictors,
                arma::field<arma::imat>& labels) {
     auto sz = predictors.n_elem;
@@ -102,7 +103,8 @@ public:
       Predict(predictors.at(i), labels.at(i));
     }
   }
-private:
+
+ private:
   size_t bitLen;
 };
 
@@ -126,7 +128,7 @@ public:
       {
         // We should not see two separators
         // since we are adding *two* numbers in the task
-        assert(!num); 
+        assert(!num);
         num = true;
       }
       else
@@ -154,7 +156,7 @@ public:
     for (size_t j = 0; j < tot_len; ++j) {
       labels.at(j) = binary_seq[tot_len-j-1];
     }
-  } 
+  }
   void Predict(
       arma::field<arma::irowvec>& predictors,
       arma::field<arma::irowvec>& labels) {
@@ -164,7 +166,8 @@ public:
       Predict(predictors.at(i), labels.at(i));
     }
   }
-private:
+
+ private:
   size_t bitLen;
 };
 
