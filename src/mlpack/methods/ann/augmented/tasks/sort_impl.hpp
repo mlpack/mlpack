@@ -1,5 +1,5 @@
 /**
- * @file copy_impl.hpp
+ * @file sort_impl.hpp
  * @author Konstantin Sidorov
  *
  * Implementation of SortTask class
@@ -42,15 +42,7 @@ void SortTask::GenerateData(arma::field<arma::imat>& input,
   for (size_t i = 0; i < batchSize; ++i) {
     // Random uniform length from [2..maxLength]
     size_t size = 2 + std::rand() % (maxLength - 1);
-    // For some reason, arma::randi<arma::irowvec>(size, bitLen, arma::distr_param(0, 1));
-    // gove sequences of 00000 and 11111 only.
-    auto input_var = arma::imat(size, bitLen);
-    for (size_t j = 0; j < size; ++j) {
-      for (size_t k = 0; k < bitLen; ++k) {
-        input_var.at(j, k) = std::rand() % 2;
-      }
-    }
-    input(i) = input_var;
+    input(i) = arma::randi<arma::imat>(size, bitLen, arma::distr_param(0, 1));
     arma::imat item_ans = arma::imat(size, bitLen);
     vector<pair<int, int>> vals(size);
     for (size_t j = 0; j < size; ++j) {

@@ -17,6 +17,7 @@
 
 #include <mlpack/methods/ann/augmented/tasks/copy.hpp>
 #include <mlpack/methods/ann/augmented/tasks/sort.hpp>
+#include <mlpack/methods/ann/augmented/tasks/add.hpp>
 #include <mlpack/methods/ann/augmented/tasks/score.hpp>
 
 #include <boost/test/unit_test.hpp>
@@ -93,11 +94,67 @@ public:
       labels.row(j) = predictors.row(vals[j].second);
     }
   } 
-  void Predict(
-      arma::field<arma::imat>& predictors,
-      arma::field<arma::imat>& labels) {
+  void Predict(arma::field<arma::imat>& predictors,
+               arma::field<arma::imat>& labels) {
     auto sz = predictors.n_elem;
     labels = arma::field<arma::imat>(sz);
+    for (size_t i = 0; i < sz; ++i) {
+      Predict(predictors.at(i), labels.at(i));
+    }
+  }
+private:
+  size_t bitLen;
+};
+
+class HardCodedAddModel {
+public:
+  HardCodedAddModel() {}
+  void Train(arma::field<arma::irowvec>& predictors,
+             arma::field<arma::irowvec>& labels)
+  {
+    return;
+  }
+  void Predict(arma::irowvec& predictors,
+               arma::irowvec& labels)
+  {
+    int num_A = 0, num_B = 0;
+    bool num = false; // true iff we have already seen the separating symbol
+    auto len = predictors.n_elem;
+    for (size_t i = 0; i < len; ++i) {
+      auto digit = predictors.at(i);
+      if (digit != 0 && digit != 1) {
+        // We should not see two separators - we are adding *two* numbers in the task
+        assert(!num); 
+        num = true;
+      }
+      else {
+        if (num) {
+          num_B <<= 1;
+          num_B += digit;
+        }
+        else {
+          num_A <<= 1;
+          num_A += digit;
+        }
+      }
+    }
+    int total = num_A + num_B;
+    vector<int> binary_seq;
+    while (total > 0) {
+      binary_seq.push_back(total & 1);
+      total >>= 1;
+    }
+    auto tot_len = binary_seq.size();
+    labels = arma::irowvec(tot_len);
+    for (size_t j = 0; j < tot_len; ++j) {
+      labels.at(j) = binary_seq[tot_len-j-1];
+    }
+  } 
+  void Predict(
+      arma::field<arma::irowvec>& predictors,
+      arma::field<arma::irowvec>& labels) {
+    auto sz = predictors.n_elem;
+    labels = arma::field<arma::irowvec>(sz);
     for (size_t i = 0; i < sz; ++i) {
       Predict(predictors.at(i), labels.at(i));
     }
@@ -147,6 +204,28 @@ BOOST_AUTO_TEST_CASE(SortTaskTest) {
     HardCodedSortModel model;
     model.Train(trainPredictor, trainResponse);
     arma::field<arma::imat> predResponse;
+    model.Predict(testPredictor, predResponse);
+    // A single failure is a failure.
+    if (SequencePrecision(testResponse, predResponse) < 0.99) {
+      ok = false;
+      break;
+    }
+  }
+
+  BOOST_REQUIRE(ok);
+}
+
+BOOST_AUTO_TEST_CASE(AddTaskTest) {
+  bool ok = true;
+  for (size_t bitLen = 2; bitLen <= 16; ++bitLen) {
+    AddTask task(bitLen);
+    arma::field<arma::irowvec> trainPredictor, trainResponse;
+    task.GenerateData(trainPredictor, trainResponse, 8);
+    arma::field<arma::irowvec> testPredictor, testResponse;
+    task.GenerateData(testPredictor, testResponse, 8);
+    HardCodedAddModel model;
+    model.Train(trainPredictor, trainResponse);
+    arma::field<arma::irowvec> predResponse;
     model.Predict(testPredictor, predResponse);
     // A single failure is a failure.
     if (SequencePrecision(testResponse, predResponse) < 0.99) {
