@@ -22,19 +22,21 @@ namespace augmented /* Augmented neural network */ {
 namespace tasks /* Task utilities for augmented */ {
 class AddTask
 {
-public:
+
+ public:
   AddTask(size_t bitLen);
 
   void GenerateData(arma::field<arma::irowvec>& input,
                     arma::field<arma::irowvec>& labels,
                     size_t batchSize);
-private:
+
+ private:
   size_t bitLen;
 };
-} // namespace tasks 
+} // namespace tasks
 } // namespace augmented
 } // namespace ann
-} // namespace mlpack 
+} // namespace mlpack
 
 #include "add_impl.hpp"
 #endif
