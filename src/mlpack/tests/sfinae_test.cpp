@@ -40,6 +40,9 @@ using MForm2 = void(Class::*)(const arma::mat&, const arma::rowvec&, T...);
 
 HAS_METHOD_FORM(M, HasM);
 
+/*
+ * Test the presence of methods of the specified forms at compile time.
+ */
 BOOST_AUTO_TEST_CASE(HasMethodFormTest)
 {
   static_assert(!HasM<A, MForm1, 0>::value, "value should be false");
