@@ -91,9 +91,9 @@ double SequencePrecision(arma::field<arma::imat> trueOutputs,
   return score;
 }
 
-} // namespace scorers 
+} // namespace scorers
 } // namespace augmented
 } // namespace ann
-} // namespace mlpack 
+} // namespace mlpack
 
 #endif

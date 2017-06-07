@@ -22,20 +22,22 @@ namespace augmented /* Augmented neural network */ {
 namespace tasks /* Task utilities for augmented */ {
 class SortTask
 {
-public:
+
+ public:
   SortTask(size_t maxLength, size_t bitLen);
 
   void GenerateData(arma::field<arma::imat>& input,
                     arma::field<arma::imat>& labels,
                     size_t batchSize);
-private:
+
+ private:
   size_t maxLength;
   size_t bitLen;
 };
-} // namespace tasks 
+} // namespace tasks
 } // namespace augmented
 } // namespace ann
-} // namespace mlpack 
+} // namespace mlpack
 
 #include "sort_impl.hpp"
 #endif

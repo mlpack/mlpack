@@ -44,10 +44,10 @@ double SequencePrecision(arma::field<arma::irowvec> trueOutputs,
 double SequencePrecision(arma::field<arma::imat> trueOutputs,
                          arma::field<arma::imat> predOutputs);
 
-} // namespace scorers 
+} // namespace scorers
 } // namespace augmented
 } // namespace ann
-} // namespace mlpack 
+} // namespace mlpack
 
 #include "score_impl.hpp"
 
