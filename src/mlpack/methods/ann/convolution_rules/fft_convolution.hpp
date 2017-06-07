@@ -212,7 +212,6 @@ class FFTConvolution
       output.slice(i) = convOutput;
     }
   }
-
 };  // class FFTConvolution
 
 } // namespace ann

@@ -28,7 +28,7 @@ namespace ann /** Artificial Neural Network. */ {
  */
 class TanhFunction
 {
-  public:
+ public:
   /**
    * Computes the tanh function.
    *

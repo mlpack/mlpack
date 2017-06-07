@@ -158,7 +158,8 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
   std::vector<std::pair<double, double> > prunedSequence;
   while (dtree.SubtreeLeaves() > 1)
   {
-    std::pair<double, double> treeSeq(oldAlpha, dtree.SubtreeLeavesLogNegError());
+    std::pair<double, double> treeSeq(oldAlpha,
+        dtree.SubtreeLeavesLogNegError());
     prunedSequence.push_back(treeSeq);
     oldAlpha = alpha;
     alpha = dtree.PruneAndUpdate(oldAlpha, dataset.n_cols, useVolumeReg);
@@ -269,7 +270,7 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
       cvRegularizationConstants[prunedSequence.size() - 2] += 2.0 * cvVal
         / (double) cvData.n_cols;
 
-    #pragma omp critical (DTreeCVUpdate)
+    #pragma omp critical(DTreeCVUpdate)
     regularizationConstants += cvRegularizationConstants;
   }
   Timer::Stop("cross_validation");

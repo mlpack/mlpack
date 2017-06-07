@@ -65,8 +65,8 @@ size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
   // Take that point and add it to the empty cluster.
   newCentroids.col(maxVarCluster) *= (double(clusterCounts[maxVarCluster]) /
       double(clusterCounts[maxVarCluster] - 1));
-  newCentroids.col(maxVarCluster) -= (1.0 / (clusterCounts[maxVarCluster] - 1.0)) *
-      arma::vec(data.col(furthestPoint));
+  newCentroids.col(maxVarCluster) -= (1.0 / (clusterCounts[maxVarCluster] -
+      1.0)) * arma::vec(data.col(furthestPoint));
   clusterCounts[maxVarCluster]--;
   clusterCounts[emptyCluster]++;
   newCentroids.col(emptyCluster) = arma::vec(data.col(furthestPoint));
@@ -87,7 +87,8 @@ size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
   else
   {
     variances[maxVarCluster] = (1.0 / clusterCounts[maxVarCluster]) *
-      ((clusterCounts[maxVarCluster] + 1) * variances[maxVarCluster] - maxDistance);
+        ((clusterCounts[maxVarCluster] + 1) * variances[maxVarCluster] -
+        maxDistance);
   }
 
   // Output some debugging information.

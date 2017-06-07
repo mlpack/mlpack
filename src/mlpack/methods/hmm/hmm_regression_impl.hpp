@@ -115,7 +115,7 @@ void HMMRegression::Filter(const arma::mat& predictors,
   filterSeq.resize(responses.n_elem - ahead);
   filterSeq.zeros();
   arma::vec nextSeq;
-  for(size_t i = 0; i < emission.size(); i++)
+  for (size_t i = 0; i < emission.size(); i++)
   {
     emission[i].Predict(predictors.cols(ahead, predictors.n_cols-1), nextSeq);
     filterSeq = filterSeq + nextSeq%(forwardProb.row(i).t());
@@ -137,12 +137,11 @@ void HMMRegression::Smooth(const arma::mat& predictors,
   smoothSeq.resize(responses.n_elem);
   smoothSeq.zeros();
   arma::vec nextSeq;
-  for(size_t i = 0; i < emission.size(); i++)
+  for (size_t i = 0; i < emission.size(); i++)
   {
     emission[i].Predict(predictors, nextSeq);
     smoothSeq = smoothSeq + nextSeq%(stateProb.row(i).t());
   }
-
 }
 
 /**
@@ -174,7 +173,7 @@ void HMMRegression::StackData(const std::vector<arma::mat>& predictors,
                               std::vector<arma::mat>& dataSeq) const
 {
   arma::mat nextSeq;
-  for(size_t i = 0; i < predictors.size(); i++)
+  for (size_t i = 0; i < predictors.size(); i++)
   {
     nextSeq = predictors[i];
     nextSeq.insert_rows(0, responses[i].t());

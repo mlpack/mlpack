@@ -105,7 +105,6 @@ BOOST_AUTO_TEST_CASE(TestArmadilloPrefixedOutStream)
       BASH_GREEN "[INFO ] " BASH_CLEAR "hello   1.0000   1.5000   2.0000\n"
       BASH_GREEN "[INFO ] " BASH_CLEAR "   2.5000   3.0000   3.5000\n"
       BASH_GREEN "[INFO ] " BASH_CLEAR "   4.0000   4.5000   5.0000\n");
-
 }
 
 /**

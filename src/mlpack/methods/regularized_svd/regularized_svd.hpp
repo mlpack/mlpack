@@ -60,7 +60,6 @@ template<
 class RegularizedSVD
 {
  public:
-
   /**
    * Constructor for Regularized SVD. Obtains the user and item matrices after
    * training on the passed data. The constructor initiates an object of class

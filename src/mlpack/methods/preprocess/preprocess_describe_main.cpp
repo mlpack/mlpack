@@ -144,7 +144,7 @@ double Kurtosis(const arma::rowvec& input,
  */
 double StandardError(const size_t size, const double& fStd)
 {
-   return fStd / sqrt(size);
+  return fStd / sqrt(size);
 }
 
 int main(int argc, char** argv)

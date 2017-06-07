@@ -23,7 +23,8 @@ using namespace mlpack::regression;
 
 BOOST_AUTO_TEST_SUITE(LARSTest);
 
-void GenerateProblem(arma::mat& X, arma::rowvec& y, size_t nPoints, size_t nDims)
+void GenerateProblem(
+    arma::mat& X, arma::rowvec& y, size_t nPoints, size_t nDims)
 {
   X = arma::randn(nDims, nPoints);
   arma::vec beta = arma::randn(nDims, 1);
@@ -34,7 +35,7 @@ void LARSVerifyCorrectness(arma::vec beta, arma::vec errCorr, double lambda)
 {
   size_t nDims = beta.n_elem;
   const double tol = 1e-10;
-  for(size_t j = 0; j < nDims; j++)
+  for (size_t j = 0; j < nDims; j++)
   {
     if (beta(j) == 0)
     {

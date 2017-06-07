@@ -46,7 +46,6 @@ template <
 class Sequential
 {
  public:
-
   /**
    * Create the Sequential object using the specified parameters.
    *

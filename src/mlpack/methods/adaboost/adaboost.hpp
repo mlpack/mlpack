@@ -161,7 +161,7 @@ class AdaBoost
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
 
-private:
+ private:
   //! The number of classes in the model.
   size_t classes;
   // The tolerance for change in rt and when to stop.
@@ -174,7 +174,6 @@ private:
 
   //! To check for the bound for the Hamming loss.
   double ztProduct;
-
 }; // class AdaBoost
 
 } // namespace adaboost

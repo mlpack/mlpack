@@ -287,12 +287,8 @@ void Convolution<
         outMap, outMap));
   }
 
-  // gradient.submat(0, 0, weight.n_elem - 1, 0) = arma::vectorise(gradientTemp);
   gradient.submat(0, 0, weight.n_elem - 1, 0) = arma::Mat<eT>(
       gradientTemp.memptr(), gradientTemp.n_elem, 1, false, false);
-
-
-  // arma::vectorise(gradientTemp);
 }
 
 template<

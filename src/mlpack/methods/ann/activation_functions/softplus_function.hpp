@@ -42,8 +42,7 @@ namespace ann /** Artificial Neural Network. */ {
  */
 class SoftplusFunction
 {
-  public:
-
+ public:
   /**
    * Computes the softplus function.
    *

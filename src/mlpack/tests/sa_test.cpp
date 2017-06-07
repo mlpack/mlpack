@@ -61,7 +61,7 @@ BOOST_AUTO_TEST_CASE(RosenbrockTest)
 {
   RosenbrockFunction f;
   ExponentialSchedule schedule(1e-5);
-  SA<RosenbrockFunction> //sa(f, schedule); // All default parameters.
+  SA<RosenbrockFunction> // sa(f, schedule); // All default parameters.
       sa(f, schedule, 10000000, 1000., 1000, 100, 1e-11, 3, 20, 0.3, 0.3);
   arma::mat coordinates = f.GetInitialPoint();
 
@@ -114,7 +114,7 @@ BOOST_AUTO_TEST_CASE(RastrigrinFunctionTest)
   {
     RastrigrinFunction f;
     ExponentialSchedule schedule(3e-6);
-    SA<RastrigrinFunction> //sa(f, schedule);
+    SA<RastrigrinFunction> // sa(f, schedule);
         sa(f, schedule, 20000000, 100, 50, 1000, 1e-12, 2, 0.2, 0.01, 0.1);
     arma::mat coordinates = f.GetInitialPoint();
 

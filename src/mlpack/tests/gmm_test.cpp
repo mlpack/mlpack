@@ -494,7 +494,7 @@ BOOST_AUTO_TEST_CASE(GMMLoadSaveTest)
   }
 
   // Remove clutter.
-  //remove("test-gmm-save.xml");
+  // remove("test-gmm-save.xml");
 
   BOOST_REQUIRE_EQUAL(gmm.Gaussians(), gmm2.Gaussians());
   BOOST_REQUIRE_EQUAL(gmm.Dimensionality(), gmm2.Dimensionality());
@@ -552,11 +552,10 @@ BOOST_AUTO_TEST_CASE(PositiveDefiniteConstraintTest)
     arma::mat c;
     #if (ARMA_VERSION_MAJOR < 4) || \
         ((ARMA_VERSION_MAJOR == 4) && (ARMA_VERSION_MINOR < 500))
-    BOOST_REQUIRE(arma::chol(c, cov));
+      BOOST_REQUIRE(arma::chol(c, cov));
     #else
-    BOOST_REQUIRE(arma::chol(c, cov, "lower"));
+      BOOST_REQUIRE(arma::chol(c, cov, "lower"));
     #endif
-
   }
 }
 

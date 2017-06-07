@@ -46,7 +46,7 @@ namespace ann /** Artificial Neural Network. */ {
  */
 class SoftsignFunction
 {
-  public:
+ public:
   /**
    * Computes the softsign function.
    *

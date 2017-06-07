@@ -51,7 +51,7 @@ template <
 >
 class MaxPooling
 {
-public:
+ public:
   //! Create the MaxPooling object.
   MaxPooling();
 
@@ -141,7 +141,6 @@ public:
   void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-
  /**
    * Apply pooling to the input and store the results.
    *

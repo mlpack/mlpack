@@ -48,7 +48,7 @@ LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
     responses(responses),
     lambda(lambda)
 {
-  //to check if initialPoint is compatible with predictors
+  // To check if initialPoint is compatible with predictors.
   if (initialPoint.n_rows != (predictors.n_rows + 1) ||
       initialPoint.n_cols != 1)
     this->initialPoint = arma::zeros<arma::mat>(predictors.n_rows + 1, 1);

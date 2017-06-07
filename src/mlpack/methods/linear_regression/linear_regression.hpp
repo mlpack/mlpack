@@ -230,7 +230,7 @@ class LinearRegression
   bool intercept;
 };
 
-} // namespace linear_regression
+} // namespace regression
 } // namespace mlpack
 
 #endif // MLPACK_METHODS_LINEAR_REGRESSION_HPP
