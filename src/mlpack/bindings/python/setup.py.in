@@ -4,6 +4,7 @@ A file to generate a setup.py.
 """
 import os
 import sys
+import numpy as np
 
 # Process input argument --module={name} first if needed.
 module = None
@@ -29,6 +30,7 @@ else:
                       name],
                   language='c++',
                   include_dirs=[ \
+                      np.get_include(), \
                       '${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/'] +
                       '${CYTHON_INCLUDE_DIRECTORIES}'.split(';'),
                   libraries=['mlpack'],
