@@ -187,7 +187,7 @@ struct NAME                                                                    \
   /* Making short aliases for template parameters */                           \
   template<typename C, typename...Args>                                        \
   using MF = MethodForm<C, Args...>;                                           \
-  static const int N = AdditionalArgsCount;                                    \
+  static const size_t N = AdditionalArgsCount;                                 \
                                                                                \
   /* Making short aliases for tools from mlpack::sfinae */                     \
   template<typename C, template<typename...> class MF, int N>                  \
