@@ -596,18 +596,18 @@ BOOST_AUTO_TEST_CASE(NumDescendantsTest1)
 BOOST_AUTO_TEST_CASE(NumDescendantsTest2)
 {
   DatasetInfo info(3);
-  info.MapString(string("cat0"),size_t(0));
-  info.MapString(string("cat1"),size_t(0));
-  info.MapString(string("cat2"),size_t(0));
-  info.MapString(string("cat3"),size_t(0));
-  info.MapString(string("cat4"),size_t(0));
-  info.MapString(string("cat5"),size_t(0));
-  info.MapString(string("cat6"),size_t(0));
-  info.MapString(string("cat0"),size_t(0));
-  info.MapString(string("cat1"),size_t(0));
-  info.MapString(string("cat2"),size_t(0));
-  info.MapString(string("cat0"),size_t(0));
-  info.MapString(string("cat1"),size_t(0));
+  info.MapString<double>("cat0", 0);
+  info.MapString<double>("cat1", 0);
+  info.MapString<double>("cat2", 0);
+  info.MapString<double>("cat3", 0);
+  info.MapString<double>("cat4", 0);
+  info.MapString<double>("cat5", 0);
+  info.MapString<double>("cat6", 0);
+  info.MapString<double>("cat0", 0);
+  info.MapString<double>("cat1", 0);
+  info.MapString<double>("cat2", 0);
+  info.MapString<double>("cat0", 0);
+  info.MapString<double>("cat1", 0);
 
   // generate data.
   arma::Mat<size_t> dataset(3, 9000);
