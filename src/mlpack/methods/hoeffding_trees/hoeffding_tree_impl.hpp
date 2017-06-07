@@ -663,6 +663,37 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType
 >
+size_t HoeffdingTree<
+    FitnessFunction,
+    NumericSplitType,
+    CategoricalSplitType
+>::NumDescendants()
+{
+  std::stack< HoeffdingTree<FitnessFunction,
+                            NumericSplitType,
+                            CategoricalSplitType>*> stack;
+  stack.push(this); // Push the current tree
+  size_t nodes = 0;
+  while (!stack.empty())
+  {
+    HoeffdingTree<FitnessFunction,
+                            NumericSplitType,
+                            CategoricalSplitType>* node = stack.top();
+    stack.pop();
+    nodes += node->NumChildren();
+    for (size_t i = 0; i < node->NumChildren(); ++i)
+      {
+        stack.push(&(node->Child(i)));
+      }
+  }
+  return nodes;
+}
+
+template<
+    typename FitnessFunction,
+    template<typename> class NumericSplitType,
+    template<typename> class CategoricalSplitType
+>
 template<typename Archive>
 void HoeffdingTree<
     FitnessFunction,

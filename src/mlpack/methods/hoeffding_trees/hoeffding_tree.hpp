@@ -18,6 +18,7 @@
 #include "gini_impurity.hpp"
 #include "hoeffding_numeric_split.hpp"
 #include "hoeffding_categorical_split.hpp"
+#include <stack>
 
 namespace mlpack {
 namespace tree {
@@ -192,6 +193,9 @@ class HoeffdingTree
 
   //! Get the number of children.
   size_t NumChildren() const { return children.size(); }
+
+  //! Get the number of descendants.
+  size_t NumDescendants();
 
   //! Get a child.
   const HoeffdingTree& Child(const size_t i) const { return *children[i]; }
