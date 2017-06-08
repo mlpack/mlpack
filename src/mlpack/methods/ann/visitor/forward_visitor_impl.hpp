@@ -20,8 +20,8 @@ namespace ann {
 
 //! ForwardVisitor visitor class.
 inline ForwardVisitor::ForwardVisitor(arma::mat&& input, arma::mat&& output) :
-  input(std::move(input)),
-  output(std::move(output))
+    input(std::move(input)),
+    output(std::move(output))
 {
   /* Nothing to do here. */
 }

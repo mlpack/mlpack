@@ -88,7 +88,7 @@ void LinearRegression::Train(const arma::mat& predictors,
   // intercept = false to get a penalized intercept.
   if (intercept)
   {
-    p.insert_rows(0, arma::ones<arma::mat>(1,nCols));
+    p.insert_rows(0, arma::ones<arma::mat>(1, nCols));
   }
 
   if (weights.n_elem > 0)
@@ -122,7 +122,7 @@ void LinearRegression::Train(const arma::mat& predictors,
   else
   {
     // Copy responses into larger vector.
-    r.insert_cols(nCols,p.n_cols - nCols);
+    r.insert_cols(nCols, p.n_cols - nCols);
     arma::solve(parameters, R, arma::trans(r * Q));
   }
 }
@@ -152,11 +152,11 @@ void LinearRegression::Predict(const arma::mat& points,
   }
   else
   {
-    // We want to be sure we have the correct number of dimensions in the dataset.
+    // We want to be sure we have the correct number of dimensions in
+    // the dataset.
     Log::Assert(points.n_rows == parameters.n_rows);
     predictions = arma::trans(parameters) * points;
   }
-
 }
 
 //! Compute the L2 squared error on the given predictors and responses.

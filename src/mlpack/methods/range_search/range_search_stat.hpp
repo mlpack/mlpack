@@ -56,7 +56,7 @@ class RangeSearchStat
   double lastDistance;
 };
 
-} // namespace neighbor
+} // namespace range
 } // namespace mlpack
 
 #endif

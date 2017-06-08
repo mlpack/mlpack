@@ -139,7 +139,7 @@ class FFN
    * @param predictors Input predictors.
    * @param results Matrix to put output predictions of responses into.
    */
-  void Predict(arma::mat& predictors, arma::mat& results);
+  void Predict(const arma::mat& predictors, arma::mat& results);
 
   /**
    * Evaluate the feedforward network with the given parameters. This function
@@ -209,7 +209,7 @@ class FFN
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
 
-private:
+ private:
   // Helper functions.
   /**
    * The Forward algorithm (part of the Forward-Backward algorithm).  Computes
@@ -336,7 +336,6 @@ private:
 
   //! Locally-stored copy visitor
   CopyVisitor copyVisitor;
-
 }; // class FFN
 
 } // namespace ann

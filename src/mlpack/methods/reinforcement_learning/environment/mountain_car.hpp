@@ -27,7 +27,6 @@ namespace rl {
 class MountainCar
 {
  public:
-
   /**
    * Implementation of state of Mountain Car. Each state is a
    * (velocity, position) vector.

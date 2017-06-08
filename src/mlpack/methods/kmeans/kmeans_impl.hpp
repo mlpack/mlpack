@@ -241,7 +241,6 @@ Cluster(const MatType& data,
         << cNorm << ".\n";
     if (std::isnan(cNorm) || std::isinf(cNorm))
       cNorm = 1e-4; // Keep iterating.
-
   } while (cNorm > 1e-5 && iteration != maxIterations);
 
   // If we ended on an even iteration, then the centroids are in the

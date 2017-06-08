@@ -78,7 +78,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris)
 
   arma::Mat<size_t> labels;
 
-  if (!data::Load("iris_labels.txt",labels))
+  if (!data::Load("iris_labels.txt", labels))
     BOOST_FAIL("Cannot load labels for iris iris_labels.txt");
 
   // Define your own weak learner, perceptron in this case.
@@ -125,7 +125,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn)
     BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   arma::Mat<size_t> labels;
-  if (!data::Load("vc2_labels.txt",labels))
+  if (!data::Load("vc2_labels.txt", labels))
     BOOST_FAIL("Cannot load labels for vc2_labels.txt");
 
   // Define your own weak learner, perceptron in this case.
@@ -163,7 +163,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn)
     BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   arma::Mat<size_t> labels;
-  if (!data::Load("vc2_labels.txt",labels))
+  if (!data::Load("vc2_labels.txt", labels))
     BOOST_FAIL("Cannot load labels for vc2_labels.txt");
 
   // Define your own weak learner, perceptron in this case.
@@ -210,7 +210,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData)
     BOOST_FAIL("Cannot load test dataset train_nonlinsep.txt!");
 
   arma::Mat<size_t> labels;
-  if (!data::Load("train_labels_nonlinsep.txt",labels))
+  if (!data::Load("train_labels_nonlinsep.txt", labels))
     BOOST_FAIL("Cannot load labels for train_labels_nonlinsep.txt");
 
   // Define your own weak learner, perceptron in this case.
@@ -248,7 +248,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData)
     BOOST_FAIL("Cannot load test dataset train_nonlinsep.txt!");
 
   arma::Mat<size_t> labels;
-  if (!data::Load("train_labels_nonlinsep.txt",labels))
+  if (!data::Load("train_labels_nonlinsep.txt", labels))
     BOOST_FAIL("Cannot load labels for train_labels_nonlinsep.txt");
 
   // Define your own weak learner, perceptron in this case.
@@ -295,7 +295,7 @@ BOOST_AUTO_TEST_CASE(HammingLossIris_DS)
     BOOST_FAIL("Cannot load test dataset iris.csv!");
 
   arma::Mat<size_t> labels;
-  if (!data::Load("iris_labels.txt",labels))
+  if (!data::Load("iris_labels.txt", labels))
     BOOST_FAIL("Cannot load labels for iris_labels.txt");
 
   // Define your own weak learner, decision stumps in this case.
@@ -386,7 +386,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn_DS)
     BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   arma::Mat<size_t> labels;
-  if (!data::Load("vc2_labels.txt",labels))
+  if (!data::Load("vc2_labels.txt", labels))
     BOOST_FAIL("Cannot load labels for vc2_labels.txt");
 
   // Define your own weak learner, decision stumps in this case.
@@ -475,7 +475,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData_DS)
     BOOST_FAIL("Cannot load test dataset train_nonlinsep.txt!");
 
   arma::Mat<size_t> labels;
-  if (!data::Load("train_labels_nonlinsep.txt",labels))
+  if (!data::Load("train_labels_nonlinsep.txt", labels))
     BOOST_FAIL("Cannot load labels for train_labels_nonlinsep.txt");
 
   // Define your own weak learner, decision stumps in this case.
@@ -516,7 +516,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData_DS)
     BOOST_FAIL("Cannot load test dataset train_nonlinsep.txt!");
 
   arma::Mat<size_t> labels;
-  if (!data::Load("train_labels_nonlinsep.txt",labels))
+  if (!data::Load("train_labels_nonlinsep.txt", labels))
     BOOST_FAIL("Cannot load labels for train_labels_nonlinsep.txt");
 
   // Define your own weak learner, decision stumps in this case.
@@ -565,7 +565,7 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_VERTEBRALCOL)
     BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   arma::Mat<size_t> labels;
-  if (!data::Load("vc2_labels.txt",labels))
+  if (!data::Load("vc2_labels.txt", labels))
     BOOST_FAIL("Cannot load labels for vc2_labels.txt");
 
   // Define your own weak learner, perceptron in this case.
@@ -579,7 +579,7 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_VERTEBRALCOL)
 
   arma::Mat<size_t> trueTestLabels;
 
-  if (!data::Load("vc2_test_labels.txt",trueTestLabels))
+  if (!data::Load("vc2_test_labels.txt", trueTestLabels))
     BOOST_FAIL("Cannot load labels for vc2_test_labels.txt");
 
   Row<size_t> perceptronPrediction(labels.n_cols);

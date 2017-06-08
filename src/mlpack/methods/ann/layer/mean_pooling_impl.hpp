@@ -75,10 +75,7 @@ void MeanPooling<InputDataType, OutputDataType>::Forward(
       slices);
 
   for (size_t s = 0; s < inputTemp.n_slices; s++)
-  {
-
     Pooling(inputTemp.slice(s), outputTemp.slice(s));
-  }
 
   output = arma::Mat<eT>(outputTemp.memptr(), outputTemp.n_elem, 1);
 

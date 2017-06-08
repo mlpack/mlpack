@@ -55,7 +55,7 @@ class RandomPartition
   void Serialize(Archive& /* ar */, const unsigned int /* version */) { }
 };
 
-}
-}
+} // namespace kmeans
+} // namespace mlpack
 
 #endif

@@ -22,7 +22,6 @@ namespace svd {
 class RegularizedSVDFunction
 {
  public:
-
   /**
    * Constructor for RegularizedSVDFunction class. The constructor calculates
    * the number of users and items in the passed data. It also randomly

@@ -26,7 +26,6 @@ namespace rl {
 class CartPole
 {
  public:
-
   /**
    * Implementation of the state of Cart Pole. Each state is a tuple vector
    * (position, velocity, angle, angular velocity).

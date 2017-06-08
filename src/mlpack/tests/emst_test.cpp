@@ -247,7 +247,6 @@ BOOST_AUTO_TEST_CASE(CoverTreeTest)
     BOOST_REQUIRE_EQUAL(bstResults(1, i), coverResults(1, i));
     BOOST_REQUIRE_CLOSE(bstResults(2, i), coverResults(2, i), 1e-5);
   }
-
 }
 
 /**
@@ -277,7 +276,6 @@ BOOST_AUTO_TEST_CASE(BallTreeTest)
     BOOST_REQUIRE_EQUAL(bstResults(1, i), ballResults(1, i));
     BOOST_REQUIRE_CLOSE(bstResults(2, i), ballResults(2, i), 1e-5);
   }
-
 }
 
 BOOST_AUTO_TEST_SUITE_END();

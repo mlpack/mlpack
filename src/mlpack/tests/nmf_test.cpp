@@ -60,8 +60,7 @@ BOOST_AUTO_TEST_CASE(NMFAcolDistTest)
   const size_t r = 12;
 
   SimpleResidueTermination srt(1e-7, 10000);
-  AMF<SimpleResidueTermination,RandomAcolInitialization<> >
-        nmf(srt);
+  AMF<SimpleResidueTermination, RandomAcolInitialization<> > nmf(srt);
   nmf.Apply(v, r, w, h);
 
   mat wh = w * h;

@@ -160,7 +160,7 @@ DecisionTree<FitnessFunction,
   // Pass off work to the weighted Train() method.
   Train<true>(tmpData, 0, tmpData.n_cols, tmpLabels, numClasses, tmpWeights,
       minimumLeafSize);
- }
+}
 
 //! Construct, don't train.
 template<typename FitnessFunction,
@@ -618,8 +618,10 @@ void DecisionTree<FitnessFunction,
     else
     {
       for (size_t j = begin; j < begin + count; ++j)
-        childAssignments[j - begin] = NumericSplit::CalculateDirection(data(bestDim, j),
-            classProbabilities, *this);
+      {
+        childAssignments[j - begin] = NumericSplit::CalculateDirection(
+            data(bestDim, j), classProbabilities, *this);
+      }
     }
 
     // Figure out counts of children.
@@ -752,8 +754,10 @@ void DecisionTree<FitnessFunction,
     arma::Row<size_t> childAssignments(count);
 
     for (size_t j = begin; j < begin + count; ++j)
-      childAssignments[j - begin] = NumericSplit::CalculateDirection(data(bestDim, j),
-          classProbabilities, *this);
+    {
+      childAssignments[j - begin] = NumericSplit::CalculateDirection(
+          data(bestDim, j), classProbabilities, *this);
+    }
 
     // Calculate counts of children in each node.
     arma::Row<size_t> childCounts(numChildren);
@@ -806,7 +810,6 @@ void DecisionTree<FitnessFunction,
         numClasses,
         UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
   }
-
 }
 
 //! Return the class.

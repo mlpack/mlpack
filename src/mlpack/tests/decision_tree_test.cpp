@@ -57,11 +57,13 @@ BOOST_AUTO_TEST_CASE(GiniGainEvenSplitTest)
   // Test that it's -0.5 regardless of the number of classes.
   for (size_t c = 2; c < 10; ++c)
   {
-    BOOST_REQUIRE_CLOSE(GiniGain::Evaluate<false>(labels, c, weights), -0.5, 1e-5);
+    BOOST_REQUIRE_CLOSE(
+        GiniGain::Evaluate<false>(labels, c, weights), -0.5, 1e-5);
     double weightedGain = GiniGain::Evaluate<true>(labels, c, weights);
 
     // The weighted gain should stay the same with unweight one
-    BOOST_REQUIRE_EQUAL(GiniGain::Evaluate<false>(labels, c, weights), weightedGain);
+    BOOST_REQUIRE_EQUAL(
+        GiniGain::Evaluate<false>(labels, c, weights), weightedGain);
   }
 }
 
@@ -75,7 +77,7 @@ BOOST_AUTO_TEST_CASE(GiniGainEmptyTest)
   arma::Row<size_t> labels;
   for (size_t c = 1; c < 10; ++c)
     BOOST_REQUIRE_SMALL(GiniGain::Evaluate<false>(labels, c, weights), 1e-5);
-  
+
   for (size_t c = 1; c < 10; ++c)
     BOOST_REQUIRE_SMALL(GiniGain::Evaluate<true>(labels, c, weights), 1e-5);
 }
@@ -127,26 +129,28 @@ BOOST_AUTO_TEST_CASE(GiniGainManyPoints)
   }
 }
 
-/** 
+
+/**
  * To make sure the Gini gain can been cacluate proporately with weight.
  */
- BOOST_AUTO_TEST_CASE(GiniGainWithWeight)
- {
-    arma::Row<size_t> labels(10);
-    arma::rowvec weights(10);
-    for (size_t i = 0; i < 5; ++i)
-    {
-      labels[i] = 0;
-      weights[i] = 0.3;
-    }
-    for (size_t i = 5; i < 10; ++i)
-    {
-      labels[i] = 1;
-      weights[i] = 0.7;
-    }
+BOOST_AUTO_TEST_CASE(GiniGainWithWeight)
+{
+  arma::Row<size_t> labels(10);
+  arma::rowvec weights(10);
+  for (size_t i = 0; i < 5; ++i)
+  {
+    labels[i] = 0;
+    weights[i] = 0.3;
+  }
+  for (size_t i = 5; i < 10; ++i)
+  {
+    labels[i] = 1;
+    weights[i] = 0.7;
+  }
 
-    BOOST_REQUIRE_CLOSE(GiniGain::Evaluate<true>(labels, 2, weights), -0.42, 1e-5);
- }
+  BOOST_REQUIRE_CLOSE(
+      GiniGain::Evaluate<true>(labels, 2, weights), -0.42, 1e-5);
+}
 
 /**
  * The information gain should be zero when the labels are perfect.
@@ -159,7 +163,10 @@ BOOST_AUTO_TEST_CASE(InformationGainPerfectTest)
 
   // Test that it's perfect regardless of number of classes.
   for (size_t c = 1; c < 10; ++c)
-    BOOST_REQUIRE_SMALL(InformationGain::Evaluate<false>(labels, c, weights), 1e-5);
+  {
+    BOOST_REQUIRE_SMALL(
+        InformationGain::Evaluate<false>(labels, c, weights), 1e-5);
+  }
 }
 
 /**
@@ -233,9 +240,10 @@ BOOST_AUTO_TEST_CASE(InformationWithWeight)
   for (size_t i = 5; i < 10; ++i)
     labels[i] = 1;
 
-  // Zero is not a good result as gain, but we just need to prove cacluation works.
-  BOOST_REQUIRE_CLOSE(InformationGain::Evaluate<true>(labels, 2, weights), 0, 1e-5);
-  
+  // Zero is not a good result as gain, but we just need to prove
+  // cacluation works.
+  BOOST_REQUIRE_CLOSE(
+      InformationGain::Evaluate<true>(labels, 2, weights), 0, 1e-5);
 }
 
 
@@ -318,7 +326,7 @@ BOOST_AUTO_TEST_CASE(BestBinaryNumericSplitMinSamplesTest)
   const double bestGain = GiniGain::Evaluate<false>(labels, 2, weights);
   const double gain = BestBinaryNumericSplit<GiniGain>::SplitIfBetter<false>(
       bestGain, values, labels, 2, weights, 8, classProbabilities, aux);
-  // This should make no difference because it won't split at all. 
+  // This should make no difference because it won't split at all.
   const double weightedGain =
       BestBinaryNumericSplit<GiniGain>::SplitIfBetter<true>(bestGain, values,
       labels, 2, weights, 8, classProbabilities, aux);
@@ -662,7 +670,7 @@ BOOST_AUTO_TEST_CASE(CategoricalBuildTest)
   arma::Row<size_t> l;
   data::DatasetInfo di;
   MockCategoricalData(d, l, di);
-  
+
   // Split into a training set and a test set.
   arma::mat trainingData = d.cols(0, 1999);
   arma::mat testData = d.cols(2000, 3999);

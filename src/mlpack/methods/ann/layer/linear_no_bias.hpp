@@ -119,7 +119,6 @@ class LinearNoBias
   void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-
   //! Locally-stored number of input units.
   size_t inSize;
 

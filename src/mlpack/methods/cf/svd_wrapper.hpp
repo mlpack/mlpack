@@ -41,8 +41,11 @@ class SVDWrapper
 {
  public:
   // empty constructor
-  SVDWrapper(const Factorizer& factorizer = Factorizer())
-    : factorizer(factorizer) {};
+  SVDWrapper(const Factorizer& factorizer = Factorizer()) :
+      factorizer(factorizer)
+  {
+    // Nothing to do here.
+  }
 
   /**
    * Factorizer function which takes SVD of the given matrix and returns the

@@ -26,8 +26,8 @@ namespace mlpack {
 namespace pca {
 
 template<typename DecompositionPolicy>
-PCAType<DecompositionPolicy>::PCAType(const bool scaleData,
-                                      const DecompositionPolicy& decomposition) :
+PCAType<DecompositionPolicy>::PCAType(
+    const bool scaleData, const DecompositionPolicy& decomposition) :
     scaleData(scaleData),
     decomposition(decomposition)
 { }

@@ -202,7 +202,6 @@ class DualTreeBoruvka
    * The values stored in the tree must be reset on each iteration.
    */
   void Cleanup();
-
 }; // class DualTreeBoruvka
 
 } // namespace emst
