@@ -109,7 +109,8 @@ double QLearning<
   double reward = environment.Sample(state, action, nextState);
 
   // Store the transition for replay.
-  replayMethod.Store(state, action, reward, nextState, environment.IsTerminal(nextState));
+  replayMethod.Store(state, action, reward,
+      nextState, environment.IsTerminal(nextState));
 
   // Update current state.
   state = nextState;

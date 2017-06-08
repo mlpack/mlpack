@@ -51,7 +51,8 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
 
   // Set up DQN agent.
   QLearning<CartPole, decltype(model), decltype(opt), decltype(policy)>
-      agent(model, opt, 0.9, std::move(policy), std::move(replayMethod), 100, 100, false, 200);
+      agent(model, opt, 0.9, std::move(policy),
+          std::move(replayMethod), 100, 100, false, 200);
 
   arma::running_stat<double> averageReturn;
   size_t episodes = 0;
@@ -60,23 +61,27 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
     double episodeReturn = agent.Episode();
     averageReturn(episodeReturn);
     episodes += 1;
-    if (episodes > 1000) {
+
+    if (episodes > 1000)
+    {
       Log::Fatal << "Cart Pole with DQN failed." << std::endl;
+      break;
     }
+
     /**
      * Reaching running average return 35 is enough to show it works.
      * For the speed of the test case, I didn't set high criterion.
      */
-    Log::Debug << "Average return: " << averageReturn.mean() << " Episode return: "
-        << episodeReturn << std::endl;
+    Log::Debug << "Average return: " << averageReturn.mean()
+        << " Episode return: " << episodeReturn << std::endl;
     if (averageReturn.mean() > 35)
     {
       agent.Deterministic() = true;
       arma::running_stat<double> testReturn;
       for (size_t i = 0; i < 10; ++i)
         testReturn(agent.Episode());
-      Log::Debug << "Average return in deterministic test: " << testReturn.mean()
-          << std::endl;
+      Log::Debug << "Average return in deterministic test: "
+          << testReturn.mean() << std::endl;
       break;
     }
   }
@@ -102,7 +107,8 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
 
   // Set up the DQN agent.
   QLearning<CartPole, decltype(model), decltype(opt), decltype(policy)>
-      agent(model, opt, 0.9, policy, replayMethod, 100, 100, true, 200);
+      agent(model, opt, 0.9, std::move(policy),
+          std::move(replayMethod), 100, 100, true, 200);
 
   arma::running_stat<double> averageReturn;
   size_t episodes = 0;
@@ -113,21 +119,22 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
     episodes += 1;
     if (episodes > 1000) {
       Log::Fatal << "Cart Pole with DQN failed." << std::endl;
+      break;
     }
     /**
      * Reaching running average return 35 is enough to show it works.
      * For the speed of the test case, I didn't set high criterion.
      */
-    Log::Debug << "Average return: " << averageReturn.mean() << " Episode return: "
-        << episodeReturn << std::endl;
+    Log::Debug << "Average return: " << averageReturn.mean()
+        << " Episode return: " << episodeReturn << std::endl;
     if (averageReturn.mean() > 35)
     {
       agent.Deterministic() = true;
       arma::running_stat<double> testReturn;
       for (size_t i = 0; i < 10; ++i)
         testReturn(agent.Episode());
-      Log::Debug << "Average return in deterministic test: " << testReturn.mean()
-          << std::endl;
+      Log::Debug << "Average return in deterministic test: "
+          << testReturn.mean() << std::endl;
       break;
     }
   }
