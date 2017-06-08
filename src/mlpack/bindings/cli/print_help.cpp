@@ -144,7 +144,7 @@ void PrintHelp(const std::string& param)
   // citations and better documentation (if necessary).  See ticket #195.
   std::cout << util::HyphenateString("For further information, including "
       "relevant papers, citations, and theory, consult the documentation found "
-      "at http://www.mlpack.org or included with your distribution of mlpack.", 
+      "at http://www.mlpack.org or included with your distribution of mlpack.",
       0) << std::endl;
 }
 

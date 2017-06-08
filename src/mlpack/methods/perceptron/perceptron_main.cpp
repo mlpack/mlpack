@@ -217,9 +217,9 @@ void mlpackMain()
       if (max(labels) + 1 > p.P().Weights().n_cols)
       {
         Log::Fatal << "Perceptron from '"
-            << CLI::GetPrintableParam<PerceptronModel>("input_model") << "' has "
-            << p.P().Weights().n_cols << " classes, but the training data has "
-            << max(labels) + 1 << " classes!" << endl;
+            << CLI::GetPrintableParam<PerceptronModel>("input_model") << "' "
+            << "has " << p.P().Weights().n_cols << " classes, but the training "
+            << "data has " << max(labels) + 1 << " classes!" << endl;
       }
 
       // Now train.

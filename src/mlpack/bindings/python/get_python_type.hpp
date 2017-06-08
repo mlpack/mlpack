@@ -42,7 +42,6 @@ inline std::string GetPythonType<float>(
     const typename boost::disable_if<data::HasSerialize<float>>::type*,
     const typename boost::disable_if<arma::is_arma_type<float>>::type*)
 {
-
   return "float";
 }
 

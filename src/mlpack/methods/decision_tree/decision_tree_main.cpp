@@ -32,7 +32,7 @@ PROGRAM_INFO("Decision tree",
     "\n\n"
     "When a model is trained, the " + PRINT_PARAM_STRING("output_model") + " "
     "output parameter may be used to save the trained model.  A model may be "
-    "loaded for predictions with the " + PRINT_PARAM_STRING("input_model") + 
+    "loaded for predictions with the " + PRINT_PARAM_STRING("input_model") +
     "' parameter.  The " + PRINT_PARAM_STRING("input_model") + " parameter "
     "may not be specified when the " + PRINT_PARAM_STRING("training") + " "
     "parameter is specified.  The " + PRINT_PARAM_STRING("minimum_leaf_size") +

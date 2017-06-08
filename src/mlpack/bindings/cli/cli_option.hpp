@@ -183,7 +183,7 @@ class ProgramDoc
 };
 
 } // namespace cli
-} // namespace util
+} // namespace bindings
 } // namespace mlpack
 
 #endif

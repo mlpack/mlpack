@@ -73,7 +73,7 @@ std::string GetPrintableParam(
   return "matrix/DatatsetInfo tuple";
 }
 
-} // namespace cli
+} // namespace tests
 } // namespace bindings
 } // namespace mlpack
 

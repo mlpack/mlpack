@@ -28,7 +28,7 @@ PROGRAM_INFO("GMM Probability Calculator",
     "\n\n"
     "So, for example, to calculate the probabilities of each point in " +
     PRINT_DATASET("points") + " coming from the pre-trained GMM " +
-    PRINT_MODEL("gmm") + ", while storing those probabilities in " + 
+    PRINT_MODEL("gmm") + ", while storing those probabilities in " +
     PRINT_DATASET("probs") + ", the following command could be used:"
     "\n\n" +
     PRINT_CALL("gmm_probability", "input_model", "gmm", "input", "points",

@@ -127,8 +127,8 @@ class ProgramDoc
   std::string documentation;
 };
 
-} // namespace cli
-} // namespace util
+} // namespace tests
+} // namespace bindings
 } // namespace mlpack
 
 #endif

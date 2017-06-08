@@ -39,7 +39,7 @@ void GetParam(const util::ParamData& d, const void* /* input */, void* output)
   *((T**) output) = &GetParam<T>(const_cast<util::ParamData&>(d));
 }
 
-} // namespace cli
+} // namespace tests
 } // namespace bindings
 } // namespace mlpack
 

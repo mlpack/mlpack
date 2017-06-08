@@ -74,7 +74,7 @@ void GetPrintableParam(const util::ParamData& data,
   *((std::string*) output) = GetPrintableParam<T>(data);
 }
 
-} // namespace cli
+} // namespace tests
 } // namespace bindings
 } // namespace mlpack
 

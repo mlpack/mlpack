@@ -31,7 +31,7 @@ PROGRAM_INFO("DBSCAN clustering",
     "\n\n"
     "The input dataset to be clustered may be specified with the " +
     PRINT_PARAM_STRING("input") + " parameter; the radius of each range "
-    "search may be specified with the " + PRINT_PARAM_STRING("epsilon") + 
+    "search may be specified with the " + PRINT_PARAM_STRING("epsilon") +
     " parameters, and the minimum number of points in a cluster may be "
     "specified with the " + PRINT_PARAM_STRING("min_size") + " parameter."
     "\n\n"

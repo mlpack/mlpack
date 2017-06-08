@@ -30,7 +30,7 @@ PROGRAM_INFO("Binarize Data", "This utility takes a dataset and binarizes the "
     "dataset " + PRINT_DATASET("X") + " to 1 and variables less than or equal "
     "to 5.0 to 0, and save the result to " + PRINT_DATASET("Y") + ", we could "
     "run"
-    "\n\n" + 
+    "\n\n" +
     PRINT_CALL("preprocess_binarize", "input", "X", "threshold", 5.0, "output",
         "Y") +
     "\n\n"

@@ -77,7 +77,7 @@ void mlpackMain()
   }
 
   // Input matrices should be at least 5 rows; the 5th row will be dropped and
-  // the 3rd row will be multiplied by two. 
+  // the 3rd row will be multiplied by two.
   if (CLI::HasParam("matrix_in"))
   {
     arma::mat out = move(CLI::GetParam<arma::mat>("matrix_in"));
