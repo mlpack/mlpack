@@ -37,7 +37,7 @@ class SortTask
   * @param labels The variable to store output sequences.
   * @param batchSize The dataset size.
   */
-  void GenerateData(arma::field<arma::imat>& input,
+  void Generate(arma::field<arma::imat>& input,
                     arma::field<arma::imat>& labels,
                     size_t batchSize);
 

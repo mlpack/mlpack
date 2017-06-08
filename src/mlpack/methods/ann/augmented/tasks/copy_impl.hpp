@@ -31,7 +31,7 @@ CopyTask::CopyTask(size_t maxLength, size_t nRepeats) :
   // Just storing task-specific parameters.
 }
 
-void CopyTask::GenerateData(arma::field<arma::irowvec>& input,
+void CopyTask::Generate(arma::field<arma::irowvec>& input,
                             arma::field<arma::irowvec>& labels,
                             size_t batchSize)
 {

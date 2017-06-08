@@ -33,7 +33,7 @@ namespace tasks /* Task utilities for augmented */ {
 
 AddTask::AddTask(size_t bitLen) : bitLen(bitLen) {}
 
-void AddTask::GenerateData(arma::field<arma::irowvec>& input,
+void AddTask::Generate(arma::field<arma::irowvec>& input,
                            arma::field<arma::irowvec>& labels,
                            size_t batchSize)
 {

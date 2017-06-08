@@ -37,7 +37,7 @@ class CopyTask
   * @param labels The variable to store output sequences.
   * @param batchSize The dataset size.
   */
-  void GenerateData(arma::field<arma::irowvec>& input,
+  void Generate(arma::field<arma::irowvec>& input,
                     arma::field<arma::irowvec>& labels,
                     size_t batchSize);
 

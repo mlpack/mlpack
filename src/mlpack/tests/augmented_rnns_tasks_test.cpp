@@ -182,9 +182,9 @@ BOOST_AUTO_TEST_CASE(CopyTaskTest)
     for (size_t nRepeats = 1; nRepeats <= 10; ++nRepeats) {
       CopyTask task(maxLen, nRepeats);
       arma::field<arma::irowvec> trainPredictor, trainResponse;
-      task.GenerateData(trainPredictor, trainResponse, 8);
+      task.Generate(trainPredictor, trainResponse, 8);
       arma::field<arma::irowvec> testPredictor, testResponse;
-      task.GenerateData(testPredictor, testResponse, 8);
+      task.Generate(testPredictor, testResponse, 8);
       HardCodedCopyModel model;
       model.Train(trainPredictor, trainResponse);
       arma::field<arma::irowvec> predResponse;
@@ -206,9 +206,9 @@ BOOST_AUTO_TEST_CASE(SortTaskTest) {
   for (size_t maxLen = 2; maxLen <= 16; ++maxLen) {
     SortTask task(maxLen, bitLen);
     arma::field<arma::imat> trainPredictor, trainResponse;
-    task.GenerateData(trainPredictor, trainResponse, 8);
+    task.Generate(trainPredictor, trainResponse, 8);
     arma::field<arma::imat> testPredictor, testResponse;
-    task.GenerateData(testPredictor, testResponse, 8);
+    task.Generate(testPredictor, testResponse, 8);
     HardCodedSortModel model;
     model.Train(trainPredictor, trainResponse);
     arma::field<arma::imat> predResponse;
@@ -228,9 +228,9 @@ BOOST_AUTO_TEST_CASE(AddTaskTest) {
   for (size_t bitLen = 2; bitLen <= 16; ++bitLen) {
     AddTask task(bitLen);
     arma::field<arma::irowvec> trainPredictor, trainResponse;
-    task.GenerateData(trainPredictor, trainResponse, 8);
+    task.Generate(trainPredictor, trainResponse, 8);
     arma::field<arma::irowvec> testPredictor, testResponse;
-    task.GenerateData(testPredictor, testResponse, 8);
+    task.Generate(testPredictor, testResponse, 8);
     HardCodedAddModel model;
     model.Train(trainPredictor, trainResponse);
     arma::field<arma::irowvec> predResponse;
