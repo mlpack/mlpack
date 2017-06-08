@@ -1777,6 +1777,11 @@ BOOST_AUTO_TEST_CASE(BinarySpaceTreeMoveConstructorTest)
 
   BOOST_REQUIRE_EQUAL(tree.NumChildren(), 0);
   BOOST_REQUIRE_EQUAL(tree2.NumChildren(), 2);
+
+  tree = std::move(tree2);
+
+  BOOST_REQUIRE_EQUAL(tree2.NumChildren(), 0);
+  BOOST_REQUIRE_EQUAL(tree.NumChildren(), 2);
 }
 
 template<typename TreeType>
@@ -2112,8 +2117,9 @@ BOOST_AUTO_TEST_CASE(BinarySpaceTreeCopyConstructor)
   b.Right()->Begin() = 40;
   b.Right()->Count() = 20;
 
-  // Copy the tree.
+  // Copy the tree using both operators.
   TreeType c(b);
+  TreeType d = b;
 
   // Ensure everything copied correctly.
   BOOST_REQUIRE_EQUAL(b.Begin(), c.Begin());
@@ -2135,6 +2141,27 @@ BOOST_AUTO_TEST_CASE(BinarySpaceTreeCopyConstructor)
   BOOST_REQUIRE_EQUAL(b.Right()->Left(), c.Right()->Left());
   BOOST_REQUIRE_EQUAL(b.Right()->Right(), (TreeType*) NULL);
   BOOST_REQUIRE_EQUAL(b.Right()->Right(), c.Right()->Right());
+
+  // Ensure everything copied correctly.
+  BOOST_REQUIRE_EQUAL(b.Begin(), d.Begin());
+  BOOST_REQUIRE_EQUAL(b.Count(), d.Count());
+  BOOST_REQUIRE_NE(b.Left(), d.Left());
+  BOOST_REQUIRE_NE(b.Right(), d.Right());
+
+  // Check the children.
+  BOOST_REQUIRE_EQUAL(b.Left()->Begin(), d.Left()->Begin());
+  BOOST_REQUIRE_EQUAL(b.Left()->Count(), d.Left()->Count());
+  BOOST_REQUIRE_EQUAL(b.Left()->Left(), (TreeType*) NULL);
+  BOOST_REQUIRE_EQUAL(b.Left()->Left(), d.Left()->Left());
+  BOOST_REQUIRE_EQUAL(b.Left()->Right(), (TreeType*) NULL);
+  BOOST_REQUIRE_EQUAL(b.Left()->Right(), d.Left()->Right());
+
+  BOOST_REQUIRE_EQUAL(b.Right()->Begin(), d.Right()->Begin());
+  BOOST_REQUIRE_EQUAL(b.Right()->Count(), d.Right()->Count());
+  BOOST_REQUIRE_EQUAL(b.Right()->Left(), (TreeType*) NULL);
+  BOOST_REQUIRE_EQUAL(b.Right()->Left(), d.Right()->Left());
+  BOOST_REQUIRE_EQUAL(b.Right()->Right(), (TreeType*) NULL);
+  BOOST_REQUIRE_EQUAL(b.Right()->Right(), d.Right()->Right());
 }
 
 //! Count the number of leaves under this node.

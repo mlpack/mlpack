@@ -278,10 +278,24 @@ class BinarySpaceTree
   BinarySpaceTree(const BinarySpaceTree& other);
 
   /**
+   * Copy operator for binary space tree.  Be careful!  This can take a long
+   * time and use a lot of memory.
+   *
+   * @param other Tree to be copied.
+   */
+  BinarySpaceTree& operator=(const BinarySpaceTree& other);
+
+  /**
    * Move constructor for a BinarySpaceTree; possess all the members of the
    * given tree.
    */
   BinarySpaceTree(BinarySpaceTree&& other);
+
+  /**
+   * Move operator for a BinarySpaceTree; possess all the members of the given
+   * tree.
+   */
+  BinarySpaceTree& operator=(BinarySpaceTree&& other);
 
   /**
    * Initialize the tree from a boost::serialization archive.

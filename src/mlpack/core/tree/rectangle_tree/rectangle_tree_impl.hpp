@@ -181,6 +181,51 @@ RectangleTree(
     children = other.children;
 }
 
+/**
+ * Copy constructor.
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+              AuxiliaryInformationType>&
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+              AuxiliaryInformationType>::operator=(const RectangleTree& other)
+{
+  // Clear the existing tree.
+  for (size_t i = 0; i < numChildren; ++i)
+    delete children[i];
+
+  // Copy the values of the other tree.
+  maxNumChildren = other.maxNumChildren;
+  minNumChildren = other.minNumChildren;
+  numChildren = other.numChildren;
+  parent = other.parent;
+  begin = other.begin;
+  count = other.count;
+  numDescendants = other.numDescendnats;
+  maxLeafSize = other.maxLeafSize;
+  minLeafSize = other.minLeafSize;
+  bound = other.bound;
+  parentDistance = other.parentDistance;
+  // The dataset pointer will be reset later.
+  dataset = (parent == NULL) ? new MatType(*other.dataset) : other.dataset;
+  ownsDataset = (parent == NULL);
+  points = other.points;
+  auxiliaryInfo = AuxiliaryInformation(other.auxiliaryInfo, this, true);
+
+  if (numChildren > 0)
+  {
+    for (size_t i = 0; i < numChildren; ++i)
+      children[i] = new RectangleTree(other.Child(i), true, this);
+  }
+
+  return *this;
+}
+
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
@@ -232,6 +277,57 @@ RectangleTree(RectangleTree&& other) :
   other.parentDistance = 0;
   other.dataset = NULL;
   other.ownsDataset = false;
+}
+
+//! Move operator.
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+    AuxiliaryInformationType>&
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+    AuxiliaryInformationType>::operator=(RectangleTree&& other)
+{
+  // Clear the existing tree.
+  for (size_t i = 0; i < numChildren; ++i)
+    delete children[i];
+
+  // Take the values of the other tree.
+  maxNumChildren = other.maxNumChildren;
+  minNumChildren = other.minNumChildren;
+  numChildren = other.numChildren;
+  children = std::move(other.children);
+  parent = other.parent;
+  begin = other.begin;
+  count = other.count;
+  numDescendants = other.numDescendants;
+  maxLeafSize = other.maxLeafSize;
+  minLeafSize = other.minLeafSize;
+  bound = other.bound;
+  parentDistance = other.parentDistance;
+  dataset = other.dataset;
+  ownsDataset = other.ownsDataset;
+  points = std::move(other.points);
+  auxiliaryInfo = std::move(other.auxiliaryInfo);
+
+  // Clear other data.
+  other.maxNumChildren = 0;
+  other.minNumChildren = 0;
+  other.numChildren = 0;
+  other.parent = NULL;
+  other.begin = 0;
+  other.count = 0;
+  other.numDescendants = 0;
+  other.maxLeafSize = 0;
+  other.minLeafSize = 0;
+  other.parentDistance = 0;
+  other.dataset = NULL;
+  other.ownsDataset = false;
+
+  return *this;
 }
 
 /**

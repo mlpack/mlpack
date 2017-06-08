@@ -916,6 +916,12 @@ BOOST_AUTO_TEST_CASE(HilbertRTeeCopyConstructorTest)
 
   TreeType tree(dataset, 20, 6, 5, 2, 0);
   TreeType copy(tree);
+  TreeType copy2 = tree;
+
+  BOOST_REQUIRE_EQUAL(tree.NumDescendants(), copy.NumDescendants());
+  BOOST_REQUIRE_EQUAL(tree.NumDescendants(), copy2.NumDescendants());
+  BOOST_REQUIRE_EQUAL(tree.NumChildren(), copy.NumChildren());
+  BOOST_REQUIRE_EQUAL(tree.NumChildren(), copy2.NumChildren());
 
   CheckHilbertValue(copy);
   CheckDiscreteHilbertValueSync(copy);
@@ -924,9 +930,17 @@ BOOST_AUTO_TEST_CASE(HilbertRTeeCopyConstructorTest)
   CheckExactContainment(copy);
   CheckHierarchy(copy);
   CheckNumDescendants(copy);
+
+  CheckHilbertValue(copy2);
+  CheckDiscreteHilbertValueSync(copy2);
+  CheckHilbertOrdering(copy2);
+  CheckContainment(copy2);
+  CheckExactContainment(copy2);
+  CheckHierarchy(copy2);
+  CheckNumDescendants(copy2);
 }
 
-BOOST_AUTO_TEST_CASE(HilbertRTeeMoveConstructorTest)
+BOOST_AUTO_TEST_CASE(HilbertRTreeMoveConstructorTest)
 {
   typedef HilbertRTree<EuclideanDistance,
       NeighborSearchStat<NearestNeighborSort>, arma::mat> TreeType;
@@ -935,7 +949,16 @@ BOOST_AUTO_TEST_CASE(HilbertRTeeMoveConstructorTest)
   dataset.randu(8, 1000); // 1000 points in 8 dimensions.
 
   TreeType tree(dataset, 20, 6, 5, 2, 0);
+
+  const size_t oldDesc = tree.NumDescendants();
+  const size_t oldChildren = tree.NumChildren();
+
   TreeType copy(std::move(tree));
+
+  BOOST_REQUIRE_EQUAL(tree.NumDescendants(), 0);
+  BOOST_REQUIRE_EQUAL(tree.NumChildren(), 0);
+  BOOST_REQUIRE_EQUAL(copy.NumDescendants(), oldDesc);
+  BOOST_REQUIRE_EQUAL(copy.NumChildren(), oldChildren);
 
   CheckHilbertValue(copy);
   CheckDiscreteHilbertValueSync(copy);
@@ -944,6 +967,21 @@ BOOST_AUTO_TEST_CASE(HilbertRTeeMoveConstructorTest)
   CheckExactContainment(copy);
   CheckHierarchy(copy);
   CheckNumDescendants(copy);
+
+  tree = std::move(copy);
+
+  BOOST_REQUIRE_EQUAL(copy.NumDescendants(), 0);
+  BOOST_REQUIRE_EQUAL(copy.NumChildren(), 0);
+  BOOST_REQUIRE_EQUAL(tree.NumDescendants(), oldDesc);
+  BOOST_REQUIRE_EQUAL(tree.NumChildren(), oldChildren);
+
+  CheckHilbertValue(tree);
+  CheckDiscreteHilbertValueSync(tree);
+  CheckHilbertOrdering(tree);
+  CheckContainment(tree);
+  CheckExactContainment(tree);
+  CheckHierarchy(tree);
+  CheckNumDescendants(tree);
 }
 
 template<typename TreeType>

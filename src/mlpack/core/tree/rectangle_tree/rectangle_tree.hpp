@@ -64,6 +64,7 @@ class RectangleTree
   typedef typename MatType::elem_type ElemType;
   //! The auxiliary information type held by the tree.
   typedef AuxiliaryInformationType<RectangleTree> AuxiliaryInformation;
+
  private:
   //! The max number of child nodes a non-leaf node can have.
   size_t maxNumChildren;
@@ -179,11 +180,21 @@ class RectangleTree
                 RectangleTree* newParent = NULL);
 
   /**
+   * Copy the given tree.
+   */
+  RectangleTree& operator=(const RectangleTree& other);
+
+  /**
    * Create a rectangle tree by moving the other tree.
    *
    * @param other The tree to be copied.
    */
   RectangleTree(RectangleTree&& other);
+
+  /**
+   * Take ownership of the given tree.
+   */
+  RectangleTree& operator=(RectangleTree&& other);
 
   /**
    * Construct the tree from a boost::serialization archive.

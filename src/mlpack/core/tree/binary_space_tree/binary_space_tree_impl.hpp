@@ -330,8 +330,7 @@ template<typename MetricType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
-BinarySpaceTree(
-    const BinarySpaceTree& other) :
+BinarySpaceTree(const BinarySpaceTree& other) :
     left(NULL),
     right(NULL),
     parent(other.parent),
@@ -380,6 +379,75 @@ BinarySpaceTree(
 }
 
 /**
+ * Copy operator.
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename BoundMetricType, typename...> class BoundType,
+         template<typename SplitBoundType, typename SplitMatType>
+             class SplitType>
+BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>&
+BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
+operator=(const BinarySpaceTree& other)
+{
+  // Clean any existing memory.
+  delete left;
+  delete right;
+
+  left = NULL;
+  right = NULL;
+
+  // Copy internal members.
+  parent = other.parent; // Either NULL or will be overwritten.
+  begin = other.begin;
+  count = other.count;
+  bound = other.bound;
+  stat = other.stat;
+  parentDistance = other.parentDistance;
+  furthestDescendantDistance = other.furthestDescendantDistance;
+  // Copy matrix, but only if we are the root.
+  dataset = (other.parent == NULL) ? new MatType(*other.dataset) : NULL;
+
+  // Copy the other children if needed.
+  if (other.Left())
+  {
+    left = new BinarySpaceTree(*other.Left());
+    left->Parent() = this;
+  }
+
+  if (other.Right())
+  {
+    right = new BinarySpaceTree(*other.Right());
+    right->Parent() = this;
+  }
+
+  // Propagate matrix, but only if we are the root.
+  if (parent == NULL)
+  {
+    std::queue<BinarySpaceTree*> queue;
+    if (left)
+      queue.push(left);
+    if (right)
+      queue.push(right);
+
+    while(!queue.empty())
+    {
+      BinarySpaceTree* node = queue.front();
+      queue.pop();
+
+      node->dataset = dataset;
+      if (node->left)
+        queue.push(node->left);
+      if (node->right)
+        queue.push(node->right);
+    }
+  }
+
+  return *this;
+}
+
+/**
  * Move constructor.
  */
 template<typename MetricType,
@@ -418,6 +486,56 @@ BinarySpaceTree(BinarySpaceTree&& other) :
     left->parent = this;
   if (right)
     right->parent = this;
+}
+
+/**
+ * Move operator.
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename BoundMetricType, typename...> class BoundType,
+         template<typename SplitBoundType, typename SplitMatType>
+             class SplitType>
+BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>&
+BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
+operator=(BinarySpaceTree&& other)
+{
+  // Clean this tree if needed.
+  delete left;
+  delete right;
+
+  // Take the other tree's data.
+  left = other.left;
+  right = other.right;
+  parent = other.parent;
+  begin = other.begin;
+  count = other.count;
+  bound = std::move(other.bound);
+  stat = std::move(other.stat);
+  parentDistance = other.parentDistance;
+  furthestDescendantDistance = other.furthestDescendantDistance;
+  minimumBoundDistance = other.minimumBoundDistance;
+  dataset = other.dataset;
+
+  // Now we are a clone of the other tree.  But we must also clear the other
+  // tree's contents, so it doesn't delete anything when it is destructed.
+  other.left = NULL;
+  other.right = NULL;
+  other.begin = 0;
+  other.count = 0;
+  other.parentDistance = 0.0;
+  other.furthestDescendantDistance = 0.0;
+  other.minimumBoundDistance = 0.0;
+  other.dataset = NULL;
+
+  // Set new parent.
+  if (left)
+    left->parent = this;
+  if (right)
+    right->parent = this;
+
+  return *this;
 }
 
 /**
