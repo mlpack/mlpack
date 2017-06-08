@@ -46,9 +46,12 @@ class RNN
 
   /**
    * Create the RNN object with the given predictors and responses set (this is
-   * the set that is used to train the network) and the given optimizer.
+   * the set that is used to train the network).
    * Optionally, specify which initialize rule and performance function should
    * be used.
+   *
+   * If you want to pass in a parameter and discard the original parameter
+   * object, be sure to use std::move to avoid unnecessary copy.
    *
    * @param rho Maximum number of steps to backpropagate through time (BPTT).
    * @param single Predict only the last element of the input sequence.
@@ -63,9 +66,12 @@ class RNN
 
   /**
    * Create the RNN object with the given predictors and responses set (this is
-   * the set that is used to train the network) and the given optimizer.
+   * the set that is used to train the network).
    * Optionally, specify which initialize rule and performance function should
    * be used.
+   *
+   * If you want to pass in a parameter and discard the original parameter
+   * object, be sure to use std::move to avoid unnecessary copy.
    *
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
@@ -75,29 +81,8 @@ class RNN
    * @param initializeRule Optional instantiated InitializationRule object
    *        for initializing the network parameter.
    */
-  RNN(const arma::mat& predictors,
-      const arma::mat& responses,
-      const size_t rho,
-      const bool single = false,
-      OutputLayerType outputLayer = OutputLayerType(),
-      InitializationRuleType initializeRule = InitializationRuleType());
-
-  /**
-   * Create the RNN object with the given predictors and responses set (this is
-   * the set that is used to train the network) and the given optimizer.
-   * Optionally, specify which initialize rule and performance function should
-   * be used.
-   *
-   * @param predictors Input training variables.
-   * @param responses Outputs results from input training variables.
-   * @param rho Maximum number of steps to backpropagate through time (BPTT).
-   * @param single Predict only the last element of the input sequence.
-   * @param outputLayer Output layer used to evaluate the network.
-   * @param initializeRule Optional instantiated InitializationRule object
-   *        for initializing the network parameter.
-   */
-  RNN(arma::mat&& predictors,
-      arma::mat&& responses,
+  RNN(arma::mat predictors,
+      arma::mat responses,
       const size_t rho,
       const bool single = false,
       OutputLayerType outputLayer = OutputLayerType(),
@@ -114,6 +99,9 @@ class RNN
    * optimization. If this is not what you want, then you should access the
    * parameters vector directly with Parameters() and modify it as desired.
    *
+   * If you want to pass in a parameter and discard the original parameter
+   * object, be sure to use std::move to avoid unnecessary copy.
+   *
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
@@ -124,8 +112,8 @@ class RNN
           mlpack::optimization::StandardSGD,
       typename... OptimizerTypeArgs
   >
-  void Train(const arma::mat& predictors,
-             const arma::mat& responses,
+  void Train(arma::mat predictors,
+             arma::mat responses,
              OptimizerType<NetworkType, OptimizerTypeArgs...>& optimizer);
 
   /**
@@ -137,6 +125,9 @@ class RNN
    * optimization. If this is not what you want, then you should access the
    * parameters vector directly with Parameters() and modify it as desired.
    *
+   * If you want to pass in a parameter and discard the original parameter
+   * object, be sure to use std::move to avoid unnecessary copy.
+   *
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
@@ -145,27 +136,20 @@ class RNN
       template<typename...> class OptimizerType =
           mlpack::optimization::StandardSGD
   >
-  void Train(const arma::mat& predictors, const arma::mat& responses);
+  void Train(arma::mat predictors, arma::mat responses);
 
   /**
    * Predict the responses to a given set of predictors. The responses will
    * reflect the output of the given output layer as returned by the
    * output layer function.
    *
-   * @param predictors Input predictors.
-   * @param results Matrix to put output predictions of responses into.
-   */
-  void Predict(const arma::mat& predictors, arma::mat& results);
-
-  /**
-   * Predict the responses to a given set of predictors. The responses will
-   * reflect the output of the given output layer as returned by the
-   * output layer function.
+   * If you want to pass in a parameter and discard the original parameter
+   * object, be sure to use std::move to avoid unnecessary copy.
    *
    * @param predictors Input predictors.
    * @param results Matrix to put output predictions of responses into.
    */
-  void Predict(arma::mat&& predictors, arma::mat& results);
+  void Predict(arma::mat predictors, arma::mat& results);
 
   /**
    * Evaluate the recurrent neural network with the given parameters. This

@@ -29,9 +29,9 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename OutputLayerType, typename InitializationRuleType>
 FFN<OutputLayerType, InitializationRuleType>::FFN(
-    OutputLayerType&& outputLayer, InitializationRuleType initializeRule) :
+    OutputLayerType outputLayer, InitializationRuleType initializeRule) :
     outputLayer(std::move(outputLayer)),
-    initializeRule(initializeRule),
+    initializeRule(std::move(initializeRule)),
     width(0),
     height(0),
     reset(false)
@@ -41,35 +41,17 @@ FFN<OutputLayerType, InitializationRuleType>::FFN(
 
 template<typename OutputLayerType, typename InitializationRuleType>
 FFN<OutputLayerType, InitializationRuleType>::FFN(
-    const arma::mat& predictors,
-    const arma::mat& responses,
-    OutputLayerType&& outputLayer,
+    arma::mat predictors,
+    arma::mat responses,
+    OutputLayerType outputLayer,
     InitializationRuleType initializeRule) :
     outputLayer(std::move(outputLayer)),
-    initializeRule(initializeRule),
+    initializeRule(std::move(initializeRule)),
     width(0),
     height(0),
     reset(false),
-    predictors(predictors),
-    responses(responses),
-    deterministic(true)
-{
-  numFunctions = this->responses.n_cols;
-}
-
-template<typename OutputLayerType, typename InitializationRuleType>
-FFN<OutputLayerType, InitializationRuleType>::FFN(
-    arma::mat&& predictors,
-    arma::mat&& responses,
-    OutputLayerType&& outputLayer,
-    InitializationRuleType initializeRule) :
-    outputLayer(std::move(outputLayer)),
-    initializeRule(initializeRule),
-    width(0),
-    height(0),
-    reset(false),
-    predictors(predictors),
-    responses(responses),
+    predictors(std::move(predictors)),
+    responses(std::move(responses)),
     deterministic(true)
 {
   numFunctions = this->responses.n_cols;
@@ -84,7 +66,7 @@ FFN<OutputLayerType, InitializationRuleType>::~FFN()
 
 template<typename OutputLayerType, typename InitializationRuleType>
 void FFN<OutputLayerType, InitializationRuleType>::ResetData(
-    const arma::mat& predictors, const arma::mat& responses)
+    arma::mat predictors, arma::mat responses)
 {
   numFunctions = responses.n_cols;
   this->predictors = std::move(predictors);
@@ -104,11 +86,11 @@ template<
     typename... OptimizerTypeArgs
 >
 void FFN<OutputLayerType, InitializationRuleType>::Train(
-      const arma::mat& predictors,
-      const arma::mat& responses,
+      arma::mat predictors,
+      arma::mat responses,
       OptimizerType<NetworkType, OptimizerTypeArgs...>& optimizer)
 {
-  ResetData(predictors, responses);
+  ResetData(std::move(predictors), std::move(responses));
 
   // Train the model.
   Timer::Start("ffn_optimization");
@@ -122,7 +104,7 @@ void FFN<OutputLayerType, InitializationRuleType>::Train(
 template<typename OutputLayerType, typename InitializationRuleType>
 template<template<typename...> class OptimizerType>
 void FFN<OutputLayerType, InitializationRuleType>::Train(
-    const arma::mat& predictors, const arma::mat& responses)
+    arma::mat predictors, arma::mat responses)
 {
   numFunctions = responses.n_cols;
 
@@ -150,7 +132,7 @@ void FFN<OutputLayerType, InitializationRuleType>::Train(
 
 template<typename OutputLayerType, typename InitializationRuleType>
 void FFN<OutputLayerType, InitializationRuleType>::Predict(
-    arma::mat&& predictors, arma::mat& results)
+    arma::mat predictors, arma::mat& results)
 {
   if (parameter.is_empty())
   {
@@ -182,14 +164,6 @@ void FFN<OutputLayerType, InitializationRuleType>::Predict(
     results.col(i) = resultsTemp.col(0);
   }
 }
-
-template<typename OutputLayerType, typename InitializationRuleType>
-void FFN<OutputLayerType, InitializationRuleType>::Predict(
-    const arma::mat& predictors, arma::mat& results)
-{
-  arma::mat predictorsCopy(predictors);
-  Predict(std::move(predictorsCopy), results);
-};
 
 template<typename OutputLayerType, typename InitializationRuleType>
 double FFN<OutputLayerType, InitializationRuleType>::Evaluate(

@@ -66,6 +66,9 @@ class QLearning
   /**
    * Create the QLearning object with given settings.
    *
+   * If you want to pass in a parameter and discard the original parameter
+   * object, be sure to use std::move to avoid unnecessary copy.
+   *
    * @param network The network to compute action value.
    * @param optimizer The optimizer to train the network.
    * @param discount Discount for future return.
@@ -117,7 +120,7 @@ class QLearning
    * @param actionValues Action values.
    * @return Selected actions.
    */
-  arma::icolvec BestAction(const arma::mat& actionValues);
+  arma::Col<size_t> BestAction(const arma::mat& actionValues);
 
   //! Reference of the learning network.
   NetworkType& learningNetwork;

@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
   model.Add<ReLULayer<>>();
   model.Add<Linear<>>(128, 2);
 
-  // Set up the optimizer.
+  // Set up the optimizer generator.
   StandardSGD<decltype(model)> opt(model, 0.0001, 2);
 
   // Set up the policy and replay method.
@@ -51,13 +51,18 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
 
   // Set up DQN agent.
   QLearning<CartPole, decltype(model), decltype(opt), decltype(policy)>
-          agent(model, opt, 0.9, policy, replayMethod, 100, 100, false, 200);
+      agent(model, opt, 0.9, std::move(policy), std::move(replayMethod), 100, 100, false, 200);
 
   arma::running_stat<double> averageReturn;
+  size_t episodes = 0;
   while (true)
   {
     double episodeReturn = agent.Episode();
     averageReturn(episodeReturn);
+    episodes += 1;
+    if (episodes > 1000) {
+      Log::Fatal << "Cart Pole with DQN failed." << std::endl;
+    }
     /**
      * Reaching running average return 35 is enough to show it works.
      * For the speed of the test case, I didn't set high criterion.
@@ -100,10 +105,15 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
       agent(model, opt, 0.9, policy, replayMethod, 100, 100, true, 200);
 
   arma::running_stat<double> averageReturn;
+  size_t episodes = 0;
   while (true)
   {
     double episodeReturn = agent.Episode();
     averageReturn(episodeReturn);
+    episodes += 1;
+    if (episodes > 1000) {
+      Log::Fatal << "Cart Pole with DQN failed." << std::endl;
+    }
     /**
      * Reaching running average return 35 is enough to show it works.
      * For the speed of the test case, I didn't set high criterion.

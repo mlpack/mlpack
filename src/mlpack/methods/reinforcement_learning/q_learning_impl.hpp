@@ -66,7 +66,7 @@ template <
   typename PolicyType,
   typename ReplayType
 >
-arma::icolvec QLearning<
+arma::Col<size_t> QLearning<
   EnvironmentType,
   NetworkType,
   OptimizerType,
@@ -74,7 +74,7 @@ arma::icolvec QLearning<
   ReplayType
 >::BestAction(const arma::mat& actionValues)
 {
-  arma::icolvec bestActions(actionValues.n_cols);
+  arma::Col<size_t> bestActions(actionValues.n_cols);
   arma::rowvec maxActionValues = arma::max(actionValues, 0);
   for (size_t i = 0; i < actionValues.n_cols; ++i)
     bestActions(i) = arma::as_scalar(
@@ -132,7 +132,7 @@ double QLearning<
   arma::mat nextActionValues;
   targetNetwork.Predict(sampledNextStates, nextActionValues);
 
-  arma::icolvec bestActions;
+  arma::Col<size_t> bestActions;
   if (doubleQLearning)
   {
     // If use double Q-Learning, use learning network to select the best action.
