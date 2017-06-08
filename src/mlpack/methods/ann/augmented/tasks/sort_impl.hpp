@@ -33,7 +33,7 @@ namespace tasks /* Task utilities for augmented */ {
 SortTask::SortTask(size_t maxLength, size_t bitLen)
   : maxLength(maxLength), bitLen(bitLen) {}
 
-void SortTask::GenerateData(arma::field<arma::imat>& input,
+void SortTask::Generate(arma::field<arma::imat>& input,
                             arma::field<arma::imat>& labels,
                             size_t batchSize)
 {
