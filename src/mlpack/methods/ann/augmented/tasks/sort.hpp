@@ -23,14 +23,28 @@ namespace tasks /* Task utilities for augmented */ {
 class SortTask
 {
  public:
+  /**
+  * Creates an instance of the sequence sort task.
+  *
+  * @param maxLength Maximum length of the number sequence.
+  * @param bitLen Binary length of sorted numbers.
+  */
   SortTask(size_t maxLength, size_t bitLen);
-
+  /**
+  * Generate dataset of a given size.
+  *
+  * @param input The variable to store input sequences.
+  * @param labels The variable to store output sequences.
+  * @param batchSize The dataset size.
+  */
   void GenerateData(arma::field<arma::imat>& input,
                     arma::field<arma::imat>& labels,
                     size_t batchSize);
 
  private:
+  // Maximum length of the sequence.
   size_t maxLength;
+  // Binary length of sorted numbers.
   size_t bitLen;
 };
 } // namespace tasks

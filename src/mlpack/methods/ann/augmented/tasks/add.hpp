@@ -3,7 +3,7 @@
  * @author Konstantin Sidorov
  *
  * Definition of the AddTask class, which implements a generator of
- * instances of sequence addition task.
+ * instances of binary addition task.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -23,13 +23,25 @@ namespace tasks /* Task utilities for augmented */ {
 class AddTask
 {
  public:
+  /**
+  * Creates an instance of the binary addition task.
+  *
+  * @param bitLen Maximum binary length of added numbers.
+  */
   AddTask(size_t bitLen);
-
+  /**
+  * Generate dataset of a given size.
+  *
+  * @param input The variable to store input sequences.
+  * @param labels The variable to store output sequences.
+  * @param batchSize The dataset size.
+  */
   void GenerateData(arma::field<arma::irowvec>& input,
                     arma::field<arma::irowvec>& labels,
                     size_t batchSize);
 
  private:
+  // Maximum binary length of numbers.
   size_t bitLen;
 };
 } // namespace tasks
