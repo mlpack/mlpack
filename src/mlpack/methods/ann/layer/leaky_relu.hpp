@@ -165,7 +165,6 @@ class LeakyReLU
 
   //! Leakyness Parameter in the range 0 <alpha< 1
   double alpha;
-
 }; // class LeakyReLU
 
 } // namespace ann

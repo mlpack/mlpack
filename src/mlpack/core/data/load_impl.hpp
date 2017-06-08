@@ -55,13 +55,13 @@ void TransposeTokens(std::vector<std::vector<std::string>> const &input,
                      size_t index)
 {
   output.clear();
-  for(size_t i = 0; i != input.size(); ++i)
+  for (size_t i = 0; i != input.size(); ++i)
   {
     output.emplace_back(input[i][index]);
   }
 }
 
-} //namespace details
+} // namespace details
 
 template<typename eT>
 bool inline inplace_transpose(arma::Mat<eT>& X)
@@ -171,7 +171,7 @@ bool Load(const std::string& filename,
 
     // This is taken from load_auto_detect() in diskio_meat.hpp
     const std::string ARMA_MAT_TXT = "ARMA_MAT_TXT";
-    //char* rawHeader = new char[ARMA_MAT_TXT.length() + 1];
+    // char* rawHeader = new char[ARMA_MAT_TXT.length() + 1];
     std::string rawHeader(ARMA_MAT_TXT.length(), '\0');
     std::streampos pos = stream.tellg();
 

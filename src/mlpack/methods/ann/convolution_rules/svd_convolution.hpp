@@ -198,7 +198,6 @@ class SVDConvolution
       output.slice(i) = convOutput;
     }
   }
-
 };  // class SVDConvolution
 
 } // namespace ann

@@ -38,7 +38,7 @@ BOOST_AUTO_TEST_CASE(SVDIncompleteIncrementalConvergenceTest)
       RandomInitialization,
       SVDIncompleteIncrementalLearning> amf(iit, RandomInitialization(), svd);
 
-  mat m1,m2;
+  mat m1, m2;
   amf.Apply(data, 2, m1, m2);
 
   BOOST_REQUIRE_NE(amf.TerminationPolicy().Iteration(),
@@ -61,7 +61,7 @@ BOOST_AUTO_TEST_CASE(SVDCompleteIncrementalConvergenceTest)
       SVDCompleteIncrementalLearning<sp_mat> > amf(iit,
                                                    RandomInitialization(),
                                                    svd);
-  mat m1,m2;
+  mat m1, m2;
   amf.Apply(data, 2, m1, m2);
 
   BOOST_REQUIRE_NE(amf.TerminationPolicy().Iteration(),

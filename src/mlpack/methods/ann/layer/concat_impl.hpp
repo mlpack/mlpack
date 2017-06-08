@@ -143,7 +143,8 @@ void Concat<InputDataType, OutputDataType>::Gradient(
 {
   for (size_t i = 0; i < network.size(); ++i)
   {
-    boost::apply_visitor(GradientVisitor(std::move(input), std::move(error)), network[i]);
+    boost::apply_visitor(GradientVisitor(std::move(input),
+        std::move(error)), network[i]);
   }
 }
 

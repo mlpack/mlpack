@@ -86,7 +86,6 @@ class Imputer
 
   // save columnMajor as a member variable since it is rarely changed.
   bool columnMajor;
-
 }; // class Imputer
 
 } // namespace data

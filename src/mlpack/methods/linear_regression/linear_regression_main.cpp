@@ -66,7 +66,7 @@ PROGRAM_INFO("Simple Linear Regression and Prediction",
 
 PARAM_MATRIX_IN("training", "Matrix containing training set X (regressors).",
     "t");
-PARAM_COL_IN("training_responses", "Optional vector containing y "
+PARAM_ROW_IN("training_responses", "Optional vector containing y "
     "(responses). If not given, the responses are assumed to be the last row "
     "of the input file.", "r");
 
@@ -93,7 +93,7 @@ void mlpackMain()
         << "(-T) is not specified." << endl;
 
   mat regressors;
-  vec responses;
+  rowvec responses;
 
   LinearRegression lr;
   lr.Lambda() = lambda;
@@ -164,10 +164,10 @@ void mlpackMain()
     {
       // The initial predictors for y, Nx1.
       Timer::Start("load_responses");
-      responses = std::move(CLI::GetParam<vec>("training_responses"));
+      responses = CLI::GetParam<rowvec>("training_responses");
       Timer::Stop("load_responses");
 
-      if (responses.n_rows != regressors.n_cols)
+      if (responses.n_cols != regressors.n_cols)
         Log::Fatal << "The responses must have the same number of rows as the "
             "training file." << endl;
     }
@@ -207,7 +207,7 @@ void mlpackMain()
     }
 
     // Perform the predictions using our model.
-    vec predictions;
+    rowvec predictions;
     Timer::Start("prediction");
     lr.Predict(points, predictions);
     Timer::Stop("prediction");

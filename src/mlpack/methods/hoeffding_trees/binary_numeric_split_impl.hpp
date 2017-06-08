@@ -126,7 +126,7 @@ void BinaryNumericSplit<FitnessFunction, ObservationType>::Split(
   double min = DBL_MAX;
   double max = -DBL_MAX;
   for (typename std::multimap<ObservationType, size_t>::const_iterator it =
-      sortedElements.begin();// (*it).first < bestSplit; ++it)
+      sortedElements.begin(); // (*it).first < bestSplit; ++it)
       it != sortedElements.end(); ++it)
   {
     // Move the point to the correct side of the split.

@@ -132,7 +132,6 @@ class RPTreeMeanSplit
   }
 
  private:
-
   /**
    * Get the average distance between points in the dataset.
    *

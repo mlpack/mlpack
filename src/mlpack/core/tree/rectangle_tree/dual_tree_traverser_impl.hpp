@@ -78,7 +78,7 @@ DualTreeTraverser<RuleType>::Traverse(RectangleTree& queryNode,
       if (childScore == DBL_MAX)
         continue;  // We don't require a search in this reference node.
 
-      for(size_t ref = 0; ref < referenceNode.Count(); ++ref)
+      for (size_t ref = 0; ref < referenceNode.Count(); ++ref)
         rule.BaseCase(queryNode.Point(query), referenceNode.Point(ref));
 
       numBaseCases += referenceNode.Count();

@@ -104,8 +104,8 @@ class PerceptronModel
 PARAM_MATRIX_IN("training", "A matrix containing the training set.", "t");
 PARAM_UROW_IN("labels", "A matrix containing labels for the training set.",
     "l");
-PARAM_INT_IN("max_iterations","The maximum number of iterations the perceptron "
-    "is to be run", "n", 1000);
+PARAM_INT_IN("max_iterations", "The maximum number of iterations the "
+    "perceptron is to be run", "n", 1000);
 
 // Model loading/saving.
 PARAM_MODEL_IN(PerceptronModel, "input_model", "Input perceptron model.", "m");

@@ -49,8 +49,8 @@ void LoadARFF(const std::string& filename,
     if (line[0] == '@')
     {
       typedef boost::tokenizer<boost::escaped_list_separator<char>> Tokenizer;
-      std::string separators = " \t\%"; // Split on comments too.
-      boost::escaped_list_separator<char> sep("\\", separators, "\"{");
+      std::string separators = " \t%"; // Split on comments too.
+      boost::escaped_list_separator<char> sep("\\", separators, "{\"");
       Tokenizer tok(line, sep);
       Tokenizer::iterator it = tok.begin();
 
@@ -182,7 +182,8 @@ void LoadARFF(const std::string& filename,
         // Strip spaces before mapping.
         std::string token = *it;
         boost::trim(token);
-        matrix(col, row) = info.template MapString<eT>(token, col); // We load transposed.
+        // We load transposed.
+        matrix(col, row) = info.template MapString<eT>(token, col);
       }
       else if (info.Type(col) == Datatype::numeric)
       {

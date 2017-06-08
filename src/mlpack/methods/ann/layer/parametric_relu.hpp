@@ -202,7 +202,6 @@ class PReLU
 
   //! Leakyness Parameter given by user in the range 0 < alpha < 1.
   double user_alpha;
-
 }; // class PReLU
 
 } // namespace ann

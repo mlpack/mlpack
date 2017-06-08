@@ -96,7 +96,6 @@ void RunPCA(arma::mat& dataset,
 
   Log::Info << (varRetained * 100) << "% of variance retained (" <<
       dataset.n_rows << " dimensions)." << endl;
-
 }
 
 void mlpackMain()

@@ -26,7 +26,7 @@ class CopyVisitor : public boost::static_visitor<LayerTypes>
 {
  public:
   template <typename LayerType>
-  LayerTypes operator () (LayerType* ) const;
+  LayerTypes operator()(LayerType*) const;
 };
 
 } // namespace ann

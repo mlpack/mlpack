@@ -27,9 +27,8 @@ SoftmaxRegression(const size_t inputSize,
     lambda(0.0001),
     fitIntercept(fitIntercept)
 {
-   SoftmaxRegressionFunction::InitializeWeights(parameters,
-                                                inputSize, numClasses,
-                                                fitIntercept);
+  SoftmaxRegressionFunction::InitializeWeights(
+      parameters, inputSize, numClasses, fitIntercept);
 }
 
 template<template<typename> class OptimizerType>

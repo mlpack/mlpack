@@ -35,7 +35,7 @@ RSModel::RSModel(const RSModel& other) :
     randomBasis(other.randomBasis),
     rSearch(other.rSearch)
 {
-
+  // Nothing to do.
 }
 
 // Move constructor.
@@ -128,7 +128,7 @@ void RSModel::BuildModel(arma::mat&& referenceSet,
       break;
 
     case R_TREE:
-      rSearch = new RSType<tree::RTree>(naive,singleMode);
+      rSearch = new RSType<tree::RTree>(naive, singleMode);
       break;
 
     case R_STAR_TREE:

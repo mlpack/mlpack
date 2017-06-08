@@ -26,7 +26,7 @@ namespace tree {
  * new nodes into the tree, spliting the parent if necessary.
  */
 template<typename TreeType>
-void XTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
+void XTreeSplit::SplitLeafNode(TreeType *tree, std::vector<bool>& relevels)
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
@@ -110,7 +110,7 @@ void XTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
 
   // If we overflowed the parent, split it.
   if (par && par->NumChildren() == par->MaxNumChildren() + 1)
-    XTreeSplit::SplitNonLeafNode(par,relevels);
+    XTreeSplit::SplitNonLeafNode(par, relevels);
 }
 
 /**
@@ -121,7 +121,7 @@ void XTreeSplit::SplitLeafNode(TreeType *tree,std::vector<bool>& relevels)
  * higher up the tree because they were already updated if necessary.
  */
 template<typename TreeType>
-bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
+bool XTreeSplit::SplitNonLeafNode(TreeType *tree, std::vector<bool>& relevels)
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
@@ -492,7 +492,8 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
             sorted2[i].second = sorted[i].second;
           }
         }
-        std::sort(sorted2.begin(), sorted2.end(), PairComp<ElemType, TreeType*>);
+        std::sort(sorted2.begin(), sorted2.end(),
+            PairComp<ElemType, TreeType*>);
 
         tree->numDescendants = 0;
         tree->bound.Clear();
@@ -520,7 +521,7 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
         {
           // We make the root a supernode instead.
           tree->Parent()->MaxNumChildren() = tree->MaxNumChildren() +
-                                tree->AuxiliaryInfo().NormalNodeMaxNumChildren();
+              tree->AuxiliaryInfo().NormalNodeMaxNumChildren();
           tree->Parent()->children.resize(tree->Parent()->MaxNumChildren() + 1);
           tree->Parent()->NumChildren() = tree->NumChildren();
           for (size_t i = 0; i < numChildren; ++i)
@@ -538,7 +539,7 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
 
         // If we don't have to worry about the root, we just enlarge this node.
         tree->MaxNumChildren() +=
-                                tree->AuxiliaryInfo().NormalNodeMaxNumChildren();
+            tree->AuxiliaryInfo().NormalNodeMaxNumChildren();
         tree->children.resize(tree->MaxNumChildren() + 1);
         tree->numChildren = numChildren;
         for (size_t i = 0; i < numChildren; i++)
@@ -567,7 +568,7 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
     assert(par->NumChildren() <= par->MaxNumChildren() + 1);
 
     if (par->NumChildren() == par->MaxNumChildren() + 1)
-      XTreeSplit::SplitNonLeafNode(par,relevels);
+      XTreeSplit::SplitNonLeafNode(par, relevels);
 
     // We have to update the children of each of these new nodes so that they
     // record the correct parent.
@@ -627,8 +628,8 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
     }
 
     // If the split was not good enough, then we try the minimal overlap split.
-    // If that fails, we create a "super node" (more accurately we resize this one
-    // to make it a super node).
+    // If that fails, we create a "super node" (more accurately we resize this
+    // one to make it a super node).
     if (useMinOverlapSplit)
     {
       // If there is a dimension that might work, try that.
@@ -652,7 +653,8 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
             sorted2[i].second = sorted[i].second;
           }
         }
-        std::sort(sorted2.begin(), sorted2.end(), PairComp<ElemType, TreeType*>);
+        std::sort(sorted2.begin(), sorted2.end(),
+            PairComp<ElemType, TreeType*>);
 
         for (size_t i = 0; i < numChildren; i++)
         {
@@ -666,7 +668,7 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels)
       {
         // Make this node a supernode.
         tree->MaxNumChildren() +=
-                                tree->AuxiliaryInfo().NormalNodeMaxNumChildren();
+            tree->AuxiliaryInfo().NormalNodeMaxNumChildren();
         tree->children.resize(tree->MaxNumChildren() + 1);
         tree->numChildren = numChildren;
         for (size_t i = 0; i < numChildren; i++)

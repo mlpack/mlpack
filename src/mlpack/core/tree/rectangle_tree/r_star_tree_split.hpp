@@ -32,14 +32,14 @@ class RStarTreeSplit
    * necessary, this split will propagate upwards through the tree.
    */
   template <typename TreeType>
-  static void SplitLeafNode(TreeType *tree,std::vector<bool>& relevels);
+  static void SplitLeafNode(TreeType *tree, std::vector<bool>& relevels);
 
   /**
    * Split a non-leaf node using the "default" algorithm.  If this is a root
    * node, the tree increases in depth.
    */
   template <typename TreeType>
-  static bool SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels);
+  static bool SplitNonLeafNode(TreeType *tree, std::vector<bool>& relevels);
 
   /**
    * Reinsert any points into the tree, if needed.  This returns the number of
@@ -52,7 +52,10 @@ class RStarTreeSplit
    * Given a node, return the best dimension and the best index to split on.
    */
   template<typename TreeType>
-  static void PickLeafSplit(TreeType* tree, size_t& bestAxis, size_t& bestIndex);
+  static void PickLeafSplit(
+      TreeType* tree,
+      size_t& bestAxis,
+      size_t& bestIndex);
 
  private:
   /**

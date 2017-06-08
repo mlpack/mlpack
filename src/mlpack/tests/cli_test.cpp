@@ -164,7 +164,6 @@ BOOST_AUTO_TEST_CASE(TestBooleanOption)
 
   BOOST_REQUIRE_EQUAL(CLI::GetParam<bool>("flag_test"), true);
   BOOST_REQUIRE_EQUAL(CLI::HasParam("flag_test"), true);
-
 }
 
 /**
@@ -245,12 +244,12 @@ BOOST_AUTO_TEST_CASE(InputColVectorParamTest)
 
   int argc = 3;
 
-   // The const-cast is a little hacky but should be fine...
+  // The const-cast is a little hacky but should be fine...
   Log::Fatal.ignoreInput = true;
   ParseCommandLine(argc, const_cast<char**>(argv));
   Log::Fatal.ignoreInput = false;
 
-   // The --vector parameter should exist.
+  // The --vector parameter should exist.
   BOOST_REQUIRE(CLI::HasParam("vector"));
   // The --vector_file parameter should not exist (it should be transparent from
   // inside the program).
@@ -274,7 +273,7 @@ BOOST_AUTO_TEST_CASE(InputUnsignedColVectorParamTest)
 
   PARAM_UCOL_IN("vector", "Test vector", "l");
 
-  //fake aruguments
+  // Fake arguments.
   const char* argv[3];
   argv[0] = "./test";
   argv[1] = "-l";
@@ -282,12 +281,12 @@ BOOST_AUTO_TEST_CASE(InputUnsignedColVectorParamTest)
 
   int argc = 3;
 
-   // The const-cast is a little hacky but should be fine...
+  // The const-cast is a little hacky but should be fine...
   Log::Fatal.ignoreInput = true;
   ParseCommandLine(argc, const_cast<char**>(argv));
   Log::Fatal.ignoreInput = false;
 
-   // The --vector parameter should exist.
+  // The --vector parameter should exist.
   BOOST_REQUIRE(CLI::HasParam("vector"));
   // The --vector_file parameter should not exist (it should be transparent from
   // inside the program).
@@ -311,7 +310,7 @@ BOOST_AUTO_TEST_CASE(InputRowVectorParamTest)
 
   PARAM_ROW_IN("row", "Test vector", "l");
 
-  //fake aruguments
+  // Fake arguments.
   const char* argv[3];
   argv[0] = "./test";
   argv[1] = "-l";
@@ -319,12 +318,12 @@ BOOST_AUTO_TEST_CASE(InputRowVectorParamTest)
 
   int argc = 3;
 
-   // The const-cast is a little hacky but should be fine...
+  // The const-cast is a little hacky but should be fine...
   Log::Fatal.ignoreInput = true;
   ParseCommandLine(argc, const_cast<char**>(argv));
   Log::Fatal.ignoreInput = false;
 
-   // The --vector parameter should exist.
+  // The --vector parameter should exist.
   BOOST_REQUIRE(CLI::HasParam("row"));
   // The --vector_file parameter should not exist (it should be transparent from
   // inside the program).
@@ -348,7 +347,7 @@ BOOST_AUTO_TEST_CASE(InputUnsignedRowVectorParamTest)
 
   PARAM_UROW_IN("row", "Test vector", "l");
 
-  //fake aruguments
+  // Fake arguments.
   const char* argv[3];
   argv[0] = "./test";
   argv[1] = "-l";
@@ -356,12 +355,12 @@ BOOST_AUTO_TEST_CASE(InputUnsignedRowVectorParamTest)
 
   int argc = 3;
 
-   // The const-cast is a little hacky but should be fine...
+  // The const-cast is a little hacky but should be fine...
   Log::Fatal.ignoreInput = true;
   ParseCommandLine(argc, const_cast<char**>(argv));
   Log::Fatal.ignoreInput = false;
 
-   // The --vector parameter should exist.
+  // The --vector parameter should exist.
   BOOST_REQUIRE(CLI::HasParam("row"));
   // The --vector_file parameter should not exist (it should be transparent from
   // inside the program).
@@ -951,7 +950,7 @@ BOOST_AUTO_TEST_CASE(MatrixAndDatasetInfoTest)
   f << endl;
   f << "@attribute three STRING" << endl;
   f << endl;
-  f << "\% a comment line " << endl;
+  f << "%% a comment line " << endl;
   f << endl;
   f << "@data" << endl;
   f << "hello, 1, moo" << endl;
@@ -1047,7 +1046,7 @@ BOOST_AUTO_TEST_CASE(RawDatasetInfoLoadParameter)
   f << endl;
   f << "@attribute three STRING" << endl;
   f << endl;
-  f << "\% a comment line " << endl;
+  f << "%% a comment line " << endl;
   f << endl;
   f << "@data" << endl;
   f << "hello, 1, moo" << endl;

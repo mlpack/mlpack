@@ -16,23 +16,38 @@ namespace mlpack {
 namespace tree {
 
 template<typename FitnessFunction>
-template<typename VecType>
+template<bool UseWeights, typename VecType, typename WeightVecType>
 double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
     const double bestGain,
     const VecType& data,
     const size_t numCategories,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
+    const WeightVecType& weights,
     const size_t minimumLeafSize,
     arma::Col<typename VecType::elem_type>& classProbabilities,
     AuxiliarySplitInfo<typename VecType::elem_type>& /* aux */)
 {
   // Count the number of elements in each potential child.
   const double epsilon = 1e-7; // Tolerance for floating-point errors.
-  arma::Col<size_t> counts(numCategories);
-  counts.zeros();
+  arma::Col<size_t> counts(numCategories, arma::fill::zeros);
+
+  // If we are using weighted training, learn the weights for each child too.
+  arma::vec childWeightSums;
+  double sumWeight = 0.0;
+  if (UseWeights)
+    childWeightSums.zeros(numCategories);
+
   for (size_t i = 0; i < data.n_elem; ++i)
+  {
     counts[(size_t) data[i]]++;
+
+    if (UseWeights)
+    {
+      childWeightSums[(size_t) data[i]] += weights[i];
+      sumWeight += weights[i];
+    }
+  }
 
   // If each child will have the minimum number of points in it, we can split.
   // Otherwise we can't.
@@ -43,23 +58,40 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
   // that would be assigned to each child.
   arma::uvec childPositions(numCategories, arma::fill::zeros);
   std::vector<arma::Row<size_t>> childLabels(numCategories);
+  std::vector<arma::Row<double>> childWeights(numCategories);
   for (size_t i = 0; i < numCategories; ++i)
+  {
+    // Labels and weights should have same length.
     childLabels[i].zeros(counts[i]);
+    if (UseWeights)
+      childWeights[i].zeros(counts[i]);
+  }
 
   // Extract labels for each child.
   for (size_t i = 0; i < data.n_elem; ++i)
   {
     const size_t category = (size_t) data[i];
-    childLabels[category][childPositions[category]++] = labels[i];
+
+    if (UseWeights)
+    {
+      childLabels[category][childPositions[category]] = labels[i];
+      childWeights[category][childPositions[category]++] = weights[i];
+    }
+    else
+    {
+      childLabels[category][childPositions[category]++] = labels[i];
+    }
   }
 
   double overallGain = 0.0;
   for (size_t i = 0; i < counts.n_elem; ++i)
   {
     // Calculate the gain of this child.
-    const double childPct = double(counts[i]) / double(data.n_elem);
-    const double childGain = FitnessFunction::Evaluate(childLabels[i],
-        numClasses);
+    const double childPct = UseWeights ?
+        double(childWeightSums[i]) / sumWeight :
+        double(counts[i]) / double(data.n_elem);
+    const double childGain = FitnessFunction::template Evaluate<UseWeights>(
+        childLabels[i], numClasses, childWeights[i]);
 
     overallGain += childPct * childGain;
   }

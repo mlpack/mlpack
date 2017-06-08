@@ -23,9 +23,7 @@ SDP<ObjectiveMatrixType>::SDP() :
     sparseB(),
     denseA(),
     denseB()
-{
-
-}
+{ /* Nothing to do. */ }
 
 template <typename ObjectiveMatrixType>
 SDP<ObjectiveMatrixType>::SDP(const size_t n,

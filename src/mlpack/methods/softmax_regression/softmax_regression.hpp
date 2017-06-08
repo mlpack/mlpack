@@ -155,8 +155,9 @@ class SoftmaxRegression
    * @param labels Predicted labels for each point.
    * @param probabilities Class probabilities for each point.
    */
-   void Classify(const arma::mat& dataset, arma::Row<size_t>& labels,
-                 arma::mat& probabilites) const;
+  void Classify(const arma::mat& dataset,
+                arma::Row<size_t>& labels,
+                arma::mat& probabilites) const;
 
   /**
    * Classify the given points, returning class probabilities for each point.
@@ -195,7 +196,8 @@ class SoftmaxRegression
    * @param numClasses Number of classes for classification.
    * @return Objective value of the final point.
    */
-  double Train(const arma::mat& data, const arma::Row<size_t>& labels,
+  double Train(const arma::mat& data,
+               const arma::Row<size_t>& labels,
                const size_t numClasses);
 
   //! Sets the number of classes.

@@ -146,7 +146,7 @@ void Recurrent<InputDataType, OutputDataType>::Backward(
     boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
         outputParameterVisitor, feedbackModule)), std::move(
         boost::apply_visitor(deltaVisitor, recurrentModule)), std::move(
-        boost::apply_visitor(deltaVisitor, feedbackModule))),feedbackModule);
+        boost::apply_visitor(deltaVisitor, feedbackModule))), feedbackModule);
   }
   else
   {

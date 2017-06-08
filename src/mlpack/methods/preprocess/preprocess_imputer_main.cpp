@@ -154,7 +154,8 @@ void mlpackMain()
     else if (strategy == "custom")
     {
       CustomImputation<double> strat(customValue);
-      Imputer<double, MapperType, CustomImputation<double>> imputer(info, strat);
+      Imputer<double, MapperType, CustomImputation<double>> imputer(
+          info, strat);
     }
     else
     {

@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE(DualTreeVsNaive)
 {
   // First create a random dataset.
   arma::mat data;
-  data.randn(10, 5000);
+  data.randn(10, 2000);
   LinearKernel lk;
 
   // Now run FastMKS naively.
@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE(DualTreeVsSingleTree)
 {
   // First create a random dataset.
   arma::mat data;
-  data.randu(8, 5000);
+  data.randu(8, 2000);
   PolynomialKernel pk(5.0, 2.5);
 
   FastMKS<PolynomialKernel> single(data, pk, true);
@@ -174,12 +174,19 @@ BOOST_AUTO_TEST_CASE(SparsePolynomialFastMKSTest)
 
   for (size_t i = 0; i < 100; ++i)
     for (size_t j = 0; j < 100; ++j)
+    {
       if (std::abs(pk.Evaluate(dataset.col(i), dataset.col(j))) < 1e-10)
-        BOOST_REQUIRE_SMALL(pk.Evaluate(denseset.col(i), denseset.col(j)), 1e-10);
+      {
+        BOOST_REQUIRE_SMALL(
+            pk.Evaluate(denseset.col(i), denseset.col(j)), 1e-10);
+      }
       else
-        BOOST_REQUIRE_CLOSE(pk.Evaluate(dataset.col(i), dataset.col(j)),
-                            pk.Evaluate(denseset.col(i), denseset.col(j)),
-                            1e-5);
+      {
+        BOOST_REQUIRE_CLOSE(
+            pk.Evaluate(dataset.col(i), dataset.col(j)),
+            pk.Evaluate(denseset.col(i), denseset.col(j)), 1e-5);
+      }
+    }
 
   FastMKS<PolynomialKernel, arma::sp_mat> sparsepoly(dataset);
   FastMKS<PolynomialKernel> densepoly(denseset);

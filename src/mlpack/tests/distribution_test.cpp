@@ -357,7 +357,6 @@ BOOST_AUTO_TEST_CASE(GaussianMultivariateProbabilityTest)
   g.Mean() *= -1;
   BOOST_REQUIRE_CLOSE(g.Probability(-x), 1.4673143531128877e-06, 1e-5);
   BOOST_REQUIRE_CLOSE(g.Probability(x), 7.7404143494891786e-09, 1e-8);
-
 }
 
 /**

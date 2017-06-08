@@ -18,25 +18,44 @@
 namespace mlpack {
 namespace optimization {
 
-template<typename DecomposableFunctionType>
-MiniBatchSGD<DecomposableFunctionType>::MiniBatchSGD(
-    DecomposableFunctionType& function,
-    const size_t batchSize,
-    const double stepSize,
-    const size_t maxIterations,
-    const double tolerance,
-    const bool shuffle) :
-    function(function),
-    batchSize(batchSize),
-    stepSize(stepSize),
-    maxIterations(maxIterations),
-    tolerance(tolerance),
-    shuffle(shuffle)
+template<
+    typename DecomposableFunctionType,
+    typename UpdatePolicyType,
+    typename DecayPolicyType
+>
+MiniBatchSGDType<
+    DecomposableFunctionType,
+    UpdatePolicyType,
+    DecayPolicyType
+>::MiniBatchSGDType(DecomposableFunctionType& function,
+                    const size_t batchSize,
+                    const double stepSize,
+                    const size_t maxIterations,
+                    const double tolerance,
+                    const bool shuffle,
+                    const UpdatePolicyType& updatePolicy,
+                    const DecayPolicyType& decayPolicy) :
+                    function(function),
+                    batchSize(batchSize),
+                    stepSize(stepSize),
+                    maxIterations(maxIterations),
+                    tolerance(tolerance),
+                    shuffle(shuffle),
+                    updatePolicy(updatePolicy),
+                    decayPolicy(decayPolicy)
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
-template<typename DecomposableFunctionType>
-double MiniBatchSGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
+template<
+    typename DecomposableFunctionType,
+    typename UpdatePolicyType,
+    typename DecayPolicyType
+>
+double MiniBatchSGDType<
+    DecomposableFunctionType,
+    UpdatePolicyType,
+    DecayPolicyType
+>::Optimize(arma::mat& iterate)
 {
   // Find the number of functions.
   const size_t numFunctions = function.NumFunctions();
@@ -59,6 +78,9 @@ double MiniBatchSGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
   // Calculate the first objective function.
   for (size_t i = 0; i < numFunctions; ++i)
     overallObjective += function.Evaluate(iterate, i);
+
+  // Initialize the update policy.
+  updatePolicy.Initialize(iterate.n_rows, iterate.n_cols);
 
   // Now iterate!
   arma::mat gradient(iterate.n_rows, iterate.n_cols);
@@ -108,7 +130,7 @@ double MiniBatchSGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
       }
 
       // Now update the iterate.
-      iterate -= (stepSize / batchSize) * gradient;
+      updatePolicy.Update(iterate, stepSize / batchSize, gradient);
 
       // Add that to the overall objective function.
       for (size_t j = 0; j < batchSize; ++j)
@@ -130,18 +152,21 @@ double MiniBatchSGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
       if (lastBatchSize > 0)
       {
         // Now update the iterate.
-        iterate -= (stepSize / lastBatchSize) * gradient;
+        updatePolicy.Update(iterate, stepSize / lastBatchSize, gradient);
       }
       else
       {
         // Now update the iterate.
-        iterate -= stepSize * gradient;
+        updatePolicy.Update(iterate, stepSize, gradient);
       }
 
       // Add that to the overall objective function.
       for (size_t j = 0; j < lastBatchSize; ++j)
         overallObjective += function.Evaluate(iterate, offset + j);
     }
+
+    // Now update the learning rate if requested by the user.
+    decayPolicy.Update(iterate, stepSize, gradient);
   }
 
   Log::Info << "Mini-batch SGD: maximum iterations (" << maxIterations << ") "
