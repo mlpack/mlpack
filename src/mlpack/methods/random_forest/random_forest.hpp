@@ -117,6 +117,9 @@ class RandomForest
 
   size_t NumTrees() const { return trees.size(); }
 
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */);
+
  private:
   /**
    * Perform the training of the decision tree.  The template bool parameters

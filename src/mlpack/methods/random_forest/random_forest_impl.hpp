@@ -366,6 +366,42 @@ template<
     template<typename> class CategoricalSplitType,
     typename ElemType
 >
+template<typename Archive>
+void RandomForest<
+    FitnessFunction,
+    DimensionSelectionType,
+    NumericSplitType,
+    CategoricalSplitType,
+    ElemType
+>::Serialize(Archive& ar, const unsigned int /* version */)
+{
+  size_t numTrees;
+  if (Archive::is_loading::value)
+    trees.clear();
+  else
+    numTrees = trees.size();
+
+  ar & data::CreateNVP(numTrees, "numTrees");
+
+  // Allocate space if needed.
+  if (Archive::is_loading::value)
+    trees.resize(numTrees);
+
+  for (size_t i = 0; i < numTrees; ++i)
+  {
+    std::ostringstream oss;
+    oss << "tree" << i;
+    ar & data::CreateNVP(trees[i], oss.str());
+  }
+}
+
+template<
+    typename FitnessFunction,
+    typename DimensionSelectionType,
+    template<typename> class NumericSplitType,
+    template<typename> class CategoricalSplitType,
+    typename ElemType
+>
 template<bool UseWeights, bool UseDatasetInfo, typename MatType>
 void RandomForest<
     FitnessFunction,

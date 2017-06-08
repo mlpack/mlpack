@@ -333,7 +333,8 @@ BOOST_AUTO_TEST_CASE(LeafSizeDatasetTest)
   arma::Row<size_t> labels;
   data::Load("vc2_labels.txt", labels);
 
-  // Build a random forest with a leaf size of 1.
+  // Build a random forest with a leaf size equal to the number of points in the
+  // dataset.
   RandomForest<> rf(dataset, labels, 3, 10 /* 10 trees */, dataset.n_cols);
 
   // Calculate majority probabilities.
@@ -361,5 +362,37 @@ BOOST_AUTO_TEST_CASE(LeafSizeDatasetTest)
   }
 }
 
+// Make sure we can serialize a random forest.
+BOOST_AUTO_TEST_CASE(SerializationTest)
+{
+  // Load the vc2 dataset.
+  arma::mat dataset;
+  data::Load("vc2.csv", dataset);
+  arma::Row<size_t> labels;
+  data::Load("vc2_labels.txt", labels);
+
+  RandomForest<> rf(dataset, labels, 3, 10 /* 10 trees */, 10);
+
+  arma::Row<size_t> beforePredictions;
+  arma::mat beforeProbabilities;
+  rf.Classify(dataset, beforePredictions, beforeProbabilities);
+
+  RandomForest<> xmlForest, textForest, binaryForest;
+  binaryForest.Train(dataset, labels, 3, 3, 50);
+  SerializeObjectAll(rf, xmlForest, textForest, binaryForest);
+
+  // Now check that we get the same results serializing other things.
+  arma::Row<size_t> xmlPredictions, textPredictions, binaryPredictions;
+  arma::mat xmlProbabilities, textProbabilities, binaryProbabilities;
+
+  xmlForest.Classify(dataset, xmlPredictions, xmlProbabilities);
+  textForest.Classify(dataset, textPredictions, textProbabilities);
+  binaryForest.Classify(dataset, binaryPredictions, binaryProbabilities);
+
+  CheckMatrices(beforePredictions, xmlPredictions, textPredictions,
+      binaryPredictions);
+  CheckMatrices(beforeProbabilities, xmlProbabilities, textProbabilities,
+      binaryProbabilities);
+}
 
 BOOST_AUTO_TEST_SUITE_END();
