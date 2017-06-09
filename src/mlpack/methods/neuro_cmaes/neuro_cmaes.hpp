@@ -1,9 +1,11 @@
-#ifndef MLPACK_CORE_OPTIMIZERS_CMAES_CMAES_HPP
-#define MLPACK_CORE_OPTIMIZERS_CMAES_CMAES_HPP
+#ifndef MLPACK_METHODS_NEURO_CMAES_NEURO_CMAES_HPP
+#define MLPACK_METHODS_NEURO_CMAES_NEURO_CMAES_HPP
 
  /**
  * @file neuro_cmaes.hpp
  * @author www.github.com/Kartik-Nighania
+ *
+ * implementation of CMAES with feed forward neural networks
  */
 
 #include <cstddef>
@@ -27,7 +29,7 @@
 
 
 namespace mlpack {
-namespace optimization {
+namespace neuro_cmaes {
 
 template<typename T> class CMAES;
 
@@ -908,7 +910,7 @@ public:
 };
 
 
-}  // namespace optimization
+}  // namespace neuro_cmaes
 }  // namespace mlpack
 
-#endif  // MLPACK_CORE_OPTIMIZERS_CMAES_CMAES_HPP
+#endif  // MLPACK_METHODS_NEURO_CMAES_NEURO_CMAES_HPP
