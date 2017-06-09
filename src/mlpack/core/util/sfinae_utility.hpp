@@ -226,4 +226,10 @@ struct NAME                                                                    \
   static const bool value = WithGreaterOrEqualNumberOfAdditionalArgs<0>::value;\
 };
 
+/*
+ * A macro that can be used for passing arguments containing commas to other
+ * macros.
+ */
+#define SINGLE_ARG(...) __VA_ARGS__
+
 #endif

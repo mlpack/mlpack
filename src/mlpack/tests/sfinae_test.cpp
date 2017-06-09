@@ -29,6 +29,12 @@ class B
 {
  public:
   void M(const arma::mat&, const arma::rowvec&);
+
+  template<typename MatType>
+  void M(const MatType&, const arma::rowvec&, double);
+
+  template<typename MatType, typename PredictionsType>
+  void M(const MatType&, const PredictionsType&, const arma::rowvec&, int, int);
 };
 
 template<typename Class, typename...T>
@@ -38,7 +44,14 @@ using MForm1 =
 template<typename Class, typename...T>
 using MForm2 = void(Class::*)(const arma::mat&, const arma::rowvec&, T...);
 
+template<typename Class, typename...T>
+using MForm3 = void(Class::*)(const arma::mat&, const arma::rowvec&,
+    const arma::rowvec&, T...);
+
 HAS_METHOD_FORM(M, HasM);
+HAS_METHOD_FORM(template M<arma::mat>, HasTemplatedM);
+HAS_METHOD_FORM(SINGLE_ARG(template M<arma::mat, arma::rowvec>),
+    HasVeryTemplatedM);
 
 /*
  * Test at compile time the presence of methods of the specified forms with the
@@ -73,6 +86,20 @@ BOOST_AUTO_TEST_CASE(HasMethodFormWithNAdditionalArgsTest)
       "value should be false");
   static_assert(!HasM<B, MForm2>::WithNAdditionalArgs<2>::value,
       "value should be false");
+
+  static_assert(!HasTemplatedM<B, MForm2>::WithNAdditionalArgs<0>::value,
+      "value should be false");
+  static_assert(HasTemplatedM<B, MForm2>::WithNAdditionalArgs<1>::value,
+      "value should be true");
+  static_assert(!HasTemplatedM<B, MForm2>::WithNAdditionalArgs<2>::value,
+      "value should be false");
+
+  static_assert(!HasVeryTemplatedM<B, MForm3>::WithNAdditionalArgs<0>::value,
+      "value should be false");
+  static_assert(!HasVeryTemplatedM<B, MForm3>::WithNAdditionalArgs<1>::value,
+      "value should be false");
+  static_assert(HasVeryTemplatedM<B, MForm3>::WithNAdditionalArgs<2>::value,
+      "value should be true");
 }
 
 /*
@@ -87,6 +114,10 @@ BOOST_AUTO_TEST_CASE(HasMethodFormTest)
   static_assert(!HasM<A, MForm2>::value, "value should be false");
 
   static_assert(HasM<B, MForm2>::value, "value should be true");
+
+  static_assert(HasTemplatedM<B, MForm2>::value, "value should be true");
+
+  static_assert(HasVeryTemplatedM<B, MForm3>::value, "value should be true");
 }
 
 BOOST_AUTO_TEST_SUITE_END();
