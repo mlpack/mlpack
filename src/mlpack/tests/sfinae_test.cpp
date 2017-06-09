@@ -21,7 +21,9 @@ class A
 {
  public:
   void M(const arma::mat&, const arma::Row<size_t>&, double);
+
   void M(const arma::mat&, const arma::Row<size_t>&, double, double);
+
   void M(const arma::vec&, size_t, double);
 };
 
@@ -38,8 +40,7 @@ class B
 };
 
 template<typename Class, typename...T>
-using MForm1 =
-    void(Class::*)(const arma::mat&, const arma::Row<size_t>&, T...);
+using MForm1 = void(Class::*)(const arma::mat&, const arma::Row<size_t>&, T...);
 
 template<typename Class, typename...T>
 using MForm2 = void(Class::*)(const arma::mat&, const arma::rowvec&, T...);
