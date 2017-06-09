@@ -41,25 +41,38 @@ using MForm2 = void(Class::*)(const arma::mat&, const arma::rowvec&, T...);
 HAS_METHOD_FORM(M, HasM);
 
 /*
- * Test the presence of methods of the specified forms at compile time.
+ * Test at compile time the presence of methods of the specified forms with the
+ * stated number of additional arguments.
  */
-BOOST_AUTO_TEST_CASE(HasMethodFormTest)
+BOOST_AUTO_TEST_CASE(HasMethodFormWithNAdditionalArgsTest)
 {
-  static_assert(!HasM<A, MForm1, 0>::value, "value should be false");
-  static_assert(HasM<A, MForm1, 1>::value, "value should be true");
-  static_assert(HasM<A, MForm1, 2>::value, "value should be true");
+  static_assert(!HasM<A, MForm1>::WithNAdditionalArgs<0>::value,
+      "value should be false");
+  static_assert(HasM<A, MForm1>::WithNAdditionalArgs<1>::value,
+      "value should be true");
+  static_assert(HasM<A, MForm1>::WithNAdditionalArgs<2>::value,
+      "value should be true");
 
-  static_assert(!HasM<B, MForm1, 0>::value, "value should be false");
-  static_assert(!HasM<B, MForm1, 1>::value, "value should be false");
-  static_assert(!HasM<B, MForm1, 2>::value, "value should be false");
+  static_assert(!HasM<B, MForm1>::WithNAdditionalArgs<0>::value,
+      "value should be false");
+  static_assert(!HasM<B, MForm1>::WithNAdditionalArgs<1>::value,
+      "value should be false");
+  static_assert(!HasM<B, MForm1>::WithNAdditionalArgs<2>::value,
+      "value should be false");
 
-  static_assert(!HasM<A, MForm2, 0>::value, "value should be false");
-  static_assert(!HasM<A, MForm2, 1>::value, "value should be false");
-  static_assert(!HasM<A, MForm2, 2>::value, "value should be false");
+  static_assert(!HasM<A, MForm2>::WithNAdditionalArgs<0>::value,
+      "value should be false");
+  static_assert(!HasM<A, MForm2>::WithNAdditionalArgs<1>::value,
+      "value should be false");
+  static_assert(!HasM<A, MForm2>::WithNAdditionalArgs<2>::value,
+      "value should be false");
 
-  static_assert(HasM<B, MForm2, 0>::value, "value should be true");
-  static_assert(!HasM<B, MForm2, 1>::value, "value should be false");
-  static_assert(!HasM<B, MForm2, 2>::value, "value should be false");
+  static_assert(HasM<B, MForm2>::WithNAdditionalArgs<0>::value,
+      "value should be true");
+  static_assert(!HasM<B, MForm2>::WithNAdditionalArgs<1>::value,
+      "value should be false");
+  static_assert(!HasM<B, MForm2>::WithNAdditionalArgs<2>::value,
+      "value should be false");
 }
 
 BOOST_AUTO_TEST_SUITE_END();

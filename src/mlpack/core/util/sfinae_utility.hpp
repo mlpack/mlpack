@@ -180,14 +180,12 @@ struct NAME {                                                                  \
  */
 #define HAS_METHOD_FORM(METHOD, NAME)                                          \
 template<typename Class,                                                       \
-         template<typename...> class MethodForm,                               \
-         size_t AdditionalArgsCount>                                           \
+         template<typename...> class MethodForm>                               \
 struct NAME                                                                    \
 {                                                                              \
-  /* Making short aliases for template parameters */                           \
+  /* Making a short alias for MethodForm */                                    \
   template<typename C, typename...Args>                                        \
   using MF = MethodForm<C, Args...>;                                           \
-  static const size_t N = AdditionalArgsCount;                                 \
                                                                                \
   /* Making short aliases for tools from mlpack::sfinae */                     \
   template<typename C, template<typename...> class MF, int N>                  \
@@ -195,15 +193,19 @@ struct NAME                                                                    \
   template<typename T, typename ResultType>                                    \
   using EnableIfComp = mlpack::sfinae::EnableIfCompilable<T, ResultType>;      \
                                                                                \
-  using yes = char[1];                                                         \
-  using no = char[2];                                                          \
+  template<size_t N>                                                           \
+  struct WithNAdditionalArgs                                                   \
+  {                                                                            \
+    using yes = char[1];                                                       \
+    using no = char[2];                                                        \
                                                                                \
-  template<typename C>                                                         \
-  static EnableIfComp<decltype(MFD<C, MF, N>()(&C::METHOD)), yes&> chk(int);   \
-  template<typename>                                                           \
-  static no& chk(...);                                                         \
+    template<typename C>                                                       \
+    static EnableIfComp<decltype(MFD<C, MF, N>()(&C::METHOD)), yes&> chk(int); \
+    template<typename>                                                         \
+    static no& chk(...);                                                       \
                                                                                \
-  static bool const value = sizeof(chk<Class>(0)) == sizeof(yes);              \
+    static const bool value = sizeof(chk<Class>(0)) == sizeof(yes);            \
+  };                                                                           \
 };
 
 #endif
