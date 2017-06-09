@@ -318,6 +318,8 @@ void RandomForest<
             arma::Row<size_t>& predictions) const
 {
   predictions.set_size(data.n_cols);
+
+  #pragma omp parallel for
   for (size_t i = 0; i < data.n_cols; ++i)
     predictions[i] = Classify(data.col(i));
 }
@@ -419,6 +421,8 @@ void RandomForest<
 {
   // Train each tree individually.
   trees.resize(numTrees); // This will fill the vector with untrained trees.
+
+  #pragma omp parallel for
   for (size_t i = 0; i < numTrees; ++i)
   {
     MatType bootstrapDataset;
