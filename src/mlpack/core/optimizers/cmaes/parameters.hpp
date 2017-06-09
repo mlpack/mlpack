@@ -1,5 +1,5 @@
-#ifndef MLPACK_METHODS_NEURO_CMAES_PARAMETERS_HPP
-#define MLPACK_METHODS_NEURO_CMAES_PARAMETERS_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_CMAES_PARAMETERS_HPP
+#define MLPACK_CORE_OPTIMIZERS_CMAES_PARAMETERS_HPP
 
 #include <cmath>
 #include <limits>
@@ -10,7 +10,7 @@
 
 
 namespace mlpack {
-namespace neuro_cmaes {
+namespace optimization{
 /**
  * @class Parameters
  * Holds all parameters that can be adjusted by the user.
@@ -423,7 +423,7 @@ private:
 };
 
 
-}  // namespace neuro_cmaes
+}  // namespace optimization
 }  // namespace mlpack
 
-#endif  // MLPACK_METHODS_NEURO_CMAES_PARAMETERS_HPP
+#endif  //MLPACK_CORE_OPTIMIZERS_CMAES_PARAMETERS_HPP
