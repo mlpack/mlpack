@@ -172,7 +172,7 @@ struct NAME {                                                                  \
  * we can check whether the class A has a Train method of the specified form:
  *
  * HAS_METHOD_FORM(Train, HasTrain);
- * static_assert(HasTrain<TrainFrom, A>::value, "value should be true");
+ * static_assert(HasTrain<A, TrainFrom>::value, "value should be true");
  *
  * The implementation is analogous to implementation of the macro HAS_MEM_FUNC.
  *
