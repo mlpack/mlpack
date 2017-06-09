@@ -100,24 +100,6 @@ struct MethodFormDetector<Class, MethodForm, 7>
   void operator()(MethodForm<Class, T1, T2, T3, T4, T5, T6, T7>);
 };
 
-/*
- * A type function that always produces true (if the template parameter can be
- * evaluated).
- */
-template<typename>
-struct True
-{
-  const static bool value = true;
-};
-
-/*
- * A type function that returns ResultType if T can be
- * evaluated (compiled).
- */
-template<typename T, typename ResultType = void>
-using EnableIfCompilable =
-    typename std::enable_if<True<T>::value, ResultType>::type;
-
 } // namespace sfinae
 } // namespace mlpack
 
@@ -188,11 +170,9 @@ struct NAME                                                                    \
   template<typename C, typename...Args>                                        \
   using MF = MethodForm<C, Args...>;                                           \
                                                                                \
-  /* Making short aliases for tools from mlpack::sfinae */                     \
+  /* Making a short alias for MethodFormDetector */                            \
   template<typename C, template<typename...> class MF, int N>                  \
   using MFD = mlpack::sfinae::MethodFormDetector<C, MF, N>;                    \
-  template<typename T, typename ResultType>                                    \
-  using EnableIfComp = mlpack::sfinae::EnableIfCompilable<T, ResultType>;      \
   static const size_t MaxMFDAdditionalArgsCount =                              \
       mlpack::sfinae::MaxMFDAdditionalArgsCount;                               \
                                                                                \
@@ -201,6 +181,10 @@ struct NAME                                                                    \
   {                                                                            \
     using yes = char[1];                                                       \
     using no = char[2];                                                        \
+                                                                               \
+    template<typename T, typename ResultType>                                  \
+    using EnableIfComp =                                                       \
+        typename std::enable_if<std::is_void<T>::value, ResultType>::type;     \
                                                                                \
     template<typename C>                                                       \
     static EnableIfComp<decltype(MFD<C, MF, N>()(&C::METHOD)), yes&> chk(int); \
