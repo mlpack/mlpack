@@ -183,11 +183,11 @@ struct NAME                                                                    \
     using no = char[2];                                                        \
                                                                                \
     template<typename T, typename ResultType>                                  \
-    using EnableIfComp =                                                       \
+    using EnableIfVoid =                                                       \
         typename std::enable_if<std::is_void<T>::value, ResultType>::type;     \
                                                                                \
     template<typename C>                                                       \
-    static EnableIfComp<decltype(MFD<C, MF, N>()(&C::METHOD)), yes&> chk(int); \
+    static EnableIfVoid<decltype(MFD<C, MF, N>()(&C::METHOD)), yes&> chk(int); \
     template<typename>                                                         \
     static no& chk(...);                                                       \
                                                                                \
