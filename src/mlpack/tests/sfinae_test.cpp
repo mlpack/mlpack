@@ -75,4 +75,18 @@ BOOST_AUTO_TEST_CASE(HasMethodFormWithNAdditionalArgsTest)
       "value should be false");
 }
 
+/*
+ * Test at compile time the presence of methods of the specified forms.
+ */
+BOOST_AUTO_TEST_CASE(HasMethodFormTest)
+{
+  static_assert(HasM<A, MForm1>::value, "value should be true");
+
+  static_assert(!HasM<B, MForm1>::value, "value should be false");
+
+  static_assert(!HasM<A, MForm2>::value, "value should be false");
+
+  static_assert(HasM<B, MForm2>::value, "value should be true");
+}
+
 BOOST_AUTO_TEST_SUITE_END();

@@ -43,6 +43,8 @@ template<typename Class,
          size_t AdditionalArgsCount>
 struct MethodFormDetecter;
 
+static const size_t MaxMFDAdditionalArgsCount = 7;
+
 template<typename Class, template<typename...> class MethodForm>
 struct MethodFormDetecter<Class, MethodForm, 0>
 {
@@ -150,8 +152,8 @@ struct NAME {                                                                  \
 
 /*
  * HAS_METHOD_FORM generates a template that allows to check at compile time
- * whether a given class has a method of the requested form with the specified
- * number of additional arguments. For example, for the following class
+ * whether a given class has a method of the requested form. For example, for
+ * the following class
  *
  * class A
  * {
@@ -167,11 +169,10 @@ struct NAME {                                                                  \
  * using TrainForm =
  *     void(Class::*)(const arma::mat&, const arma::Row<size_t>&, Ts...);
  *
- * we can check whether the class A has a Train method of the specified form
- * with one additional argument:
+ * we can check whether the class A has a Train method of the specified form:
  *
  * HAS_METHOD_FORM(Train, HasTrain);
- * static_assert(HasTrain<TrainFrom, A, 1>::value, "value should be true");
+ * static_assert(HasTrain<TrainFrom, A>::value, "value should be true");
  *
  * The implementation is analogous to implementation of the macro HAS_MEM_FUNC.
  *
@@ -192,6 +193,8 @@ struct NAME                                                                    \
   using MFD = mlpack::sfinae::MethodFormDetecter<C, MF, N>;                    \
   template<typename T, typename ResultType>                                    \
   using EnableIfComp = mlpack::sfinae::EnableIfCompilable<T, ResultType>;      \
+  static const size_t MaxMFDAdditionalArgsCount =                              \
+      mlpack::sfinae::MaxMFDAdditionalArgsCount;                               \
                                                                                \
   template<size_t N>                                                           \
   struct WithNAdditionalArgs                                                   \
@@ -206,6 +209,21 @@ struct NAME                                                                    \
                                                                                \
     static const bool value = sizeof(chk<Class>(0)) == sizeof(yes);            \
   };                                                                           \
+                                                                               \
+  template<size_t N>                                                           \
+  struct WithGreaterOrEqualNumberOfAdditionalArgs                              \
+  {                                                                            \
+    using type = typename std::conditional<                                    \
+        WithNAdditionalArgs<N>::value,                                         \
+        std::true_type,                                                        \
+        typename std::conditional<                                             \
+            N < MaxMFDAdditionalArgsCount,                                     \
+            WithGreaterOrEqualNumberOfAdditionalArgs<N + 1>,                   \
+            std::false_type>::type>::type;                                     \
+    static const bool value = type::value;                                     \
+  };                                                                           \
+                                                                               \
+  static const bool value = WithGreaterOrEqualNumberOfAdditionalArgs<0>::value;\
 };
 
 #endif
