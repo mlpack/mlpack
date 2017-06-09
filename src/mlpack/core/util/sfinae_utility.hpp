@@ -21,8 +21,8 @@ namespace mlpack {
 namespace sfinae {
 
 /*
- * MethodFormDetecter is a tool that helps to find out whether a given class has
- * a method of the requested form. For that purpose MethodFormDetecter defines
+ * MethodFormDetector is a tool that helps to find out whether a given class has
+ * a method of the requested form. For that purpose MethodFormDetector defines
  * an operator() that accepts a class member pointer for the given class. If the
  * operator()(&Class::Method) call can be compiled, then the given class has a
  * method of the requested form. For any provided AdditionalArgsCount, the check
@@ -41,60 +41,60 @@ namespace sfinae {
 template<typename Class,
          template<typename...> class MethodForm,
          size_t AdditionalArgsCount>
-struct MethodFormDetecter;
+struct MethodFormDetector;
 
 static const size_t MaxMFDAdditionalArgsCount = 7;
 
 template<typename Class, template<typename...> class MethodForm>
-struct MethodFormDetecter<Class, MethodForm, 0>
+struct MethodFormDetector<Class, MethodForm, 0>
 {
   void operator()(MethodForm<Class>);
 };
 
 template<typename Class, template<typename...> class MethodForm>
-struct MethodFormDetecter<Class, MethodForm, 1>
+struct MethodFormDetector<Class, MethodForm, 1>
 {
   template<class T1>
   void operator()(MethodForm<Class, T1>);
 };
 
 template<typename Class, template<typename...> class MethodForm>
-struct MethodFormDetecter<Class, MethodForm, 2>
+struct MethodFormDetector<Class, MethodForm, 2>
 {
   template<class T1, class T2>
   void operator()(MethodForm<Class, T1, T2>);
 };
 
 template<typename Class, template<typename...> class MethodForm>
-struct MethodFormDetecter<Class, MethodForm, 3>
+struct MethodFormDetector<Class, MethodForm, 3>
 {
   template<class T1, class T2, class T3>
   void operator()(MethodForm<Class, T1, T2, T3>);
 };
 
 template<typename Class, template<typename...> class MethodForm>
-struct MethodFormDetecter<Class, MethodForm, 4>
+struct MethodFormDetector<Class, MethodForm, 4>
 {
   template<class T1, class T2, class T3, class T4>
   void operator()(MethodForm<Class, T1, T2, T3, T4>);
 };
 
 template<typename Class, template<typename...> class MethodForm>
-struct MethodFormDetecter<Class, MethodForm, 5>
+struct MethodFormDetector<Class, MethodForm, 5>
 {
   template<class T1, class T2, class T3, class T4, class T5>
   void operator()(MethodForm<Class, T1, T2, T3, T4, T5>);
 };
 
 template<typename Class, template<typename...> class MethodForm>
-struct MethodFormDetecter<Class, MethodForm, 6>
+struct MethodFormDetector<Class, MethodForm, 6>
 {
   template<class T1, class T2, class T3, class T4, class T5, class T6>
   void operator()(MethodForm<Class, T1, T2, T3, T4, T5, T6>);
 };
 
 template<typename Class, template<typename...> class MethodForm>
-struct MethodFormDetecter<Class, MethodForm, 7>
+struct MethodFormDetector<Class, MethodForm, 7>
 {
   template<class T1, class T2, class T3, class T4, class T5, class T6, class T7>
   void operator()(MethodForm<Class, T1, T2, T3, T4, T5, T6, T7>);
@@ -190,7 +190,7 @@ struct NAME                                                                    \
                                                                                \
   /* Making short aliases for tools from mlpack::sfinae */                     \
   template<typename C, template<typename...> class MF, int N>                  \
-  using MFD = mlpack::sfinae::MethodFormDetecter<C, MF, N>;                    \
+  using MFD = mlpack::sfinae::MethodFormDetector<C, MF, N>;                    \
   template<typename T, typename ResultType>                                    \
   using EnableIfComp = mlpack::sfinae::EnableIfCompilable<T, ResultType>;      \
   static const size_t MaxMFDAdditionalArgsCount =                              \
