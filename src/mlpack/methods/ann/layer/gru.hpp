@@ -1,8 +1,21 @@
 /**
  * @file gru.hpp
- * @author Sumedh Ghaisas
+ * @authorSumedh Ghaisas
  *
- * Definition of the GRU layer
+ * Definition of the GRU layer.
+ *
+ * For more information, read the following paper:
+ *
+ * @code
+ * @inproceedings{chung2015gated,
+ *    title     = {Gated Feedback Recurrent Neural Networks.},
+ *    author    = {Chung, Junyoung and G{\"u}l{\c{c}}ehre, Caglar and Cho, 
+                  Kyunghyun and Bengio, Yoshua},
+ *    booktitle = {ICML},
+ *    pages     = {2067--2075},
+ *    year      = {2015}
+ * }
+ * @endcode
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
