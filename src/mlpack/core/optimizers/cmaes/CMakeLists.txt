@@ -1,6 +1,7 @@
 set(SOURCES
   cmaes.hpp
   parameters.hpp
+  test.cpp
 )
 
 set(DIR_SRCS)

@@ -1,13 +1,18 @@
+/**
+ * @file cmaes.h
+ * @author Kartik Nighania
+ *
+ * Covariance Matrix Adaptation Evolution Strategy
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
 #ifndef MLPACK_CORE_OPTIMIZERS_CMAES_CMAES_HPP
 #define MLPACK_CORE_OPTIMIZERS_CMAES_CMAES_HPP
 
- /**
- * @file neuro_cmaes.hpp
- * @author www.github.com/Kartik-Nighania
- */
-
-#include <cstddef>
-#include <mlpack/core.hpp>
+#include "parameters.hpp"
 #include <cassert>
 #include <cmath>
 #include <cstdio>
@@ -19,77 +24,56 @@
 #include <stdexcept>
 #include <string>
 #include <armadillo>
+#include <iostream>
 
-#include "genome.hpp"
-#include "neuron_gene.hpp"
-#include "link_gene.hpp"
-#include "parameters.hpp"
-
+//2 eigen values check for column values
+//index sort mabye we can use sort
+//get stop message
+//return value in a specific way
 
 namespace mlpack {
 namespace optimization {
 
-template<typename T> class CMAES;
-
-
 template<typename T>
-class CMAES{
+class CMAES
+{
 public:
 
-//USER FUNCTIONS TO GET PARAMETER IN VALUES AND ARRAYS
-
-T axisRatio()
-{
- return maxElement(rgD, params.N) / minElement(rgD, params.N);
-};
-
-T evaluation(){ return countevals; }
-
-T fitness(){ return functionValues[index[0]];}
-
-T fitnessBestEver(){ return xBestEver[params.N];}
-
-T generation(){ return gen;}
-
-T maxEvaluation(){ return params.stopMaxFunEvals;}
-
-T maxIteration(){ return std::ceil(params.stopMaxIter); }
-
-T maxAxisLength(){ return sigma*std::sqrt(maxEW);}
-
-T minAxisLength(){ return sigma*std::sqrt(minEW); }
-
-T maxStdDev(){return sigma*std::sqrt(maxdiagC);}
-
-T minStdDev(){return sigma*std::sqrt(mindiagC);}
-
-T dimension(){return params.N;}
-
-T sampleSize(){return params.lambda;}
-
-T sigmaValue(){return sigma;}
-
-  T* diagonalCovariance()
+  /**
+   * Keys for get().
+   */
+  enum GetScalar
   {
-     for(int i = 0; i < params.N; ++i)
-          output[i] = C[i][i];
-        return output;
-  }
+    NoScalar = 0,
+    AxisRatio = 1,
+    Eval = 2, Evaluations = 2,
+    FctValue = 3, FuncValue = 3, FunValue = 3, Fitness = 3,
+    FBestEver = 4,
+    Generation = 5, Iteration = 5,
+    MaxEval = 6, MaxFunEvals = 6, StopMaxFunEvals = 6,
+    MaxGen = 7, MaxIter = 7, StopMaxIter = 7,
+    MaxAxisLength = 8,
+    MinAxisLength = 9,
+    MaxStdDev = 10,
+    MinStdDev = 11,
+    Dim = 12, Dimension = 12,
+    Lambda = 13, SampleSize = 13, PopSize = 13,
+    Sigma = 14
+  };
 
-  T* diagonalD(){ return rgD; }
-
-  T* standardDeviation()
+  /**
+   * Keys for getPtr()
+   */
+  enum GetVector
   {
-    for(int i = 0; i < params.N; ++i)
-          output[i] = sigma*std::sqrt(C[i][i]);
-        return output;
-  }
-
- T* XBestEver(){ return xBestEver;}
-
-T* XBest(){return population[index[0]];}
-
-T* XMean(){return xmean;}
+    NoVector = 0,
+    DiagC = 1,
+    DiagD = 2,
+    StdDev = 3,
+    XBestEver = 4,
+    XBest = 5,
+    XMean = 6
+  };
 
 private:
 
@@ -116,7 +100,6 @@ private:
   T** B;
   //! Axis lengths.
   T* rgD;
-
   //! Anisotropic evolution path (for covariance).
   T* pc;
   //! Isotropic evolution path (for step length).
@@ -146,21 +129,22 @@ private:
   T minEW;
 
   bool eigensysIsUptodate;
-  bool doCheckEigen; //!< control via signals.par
+  bool doCheckEigen;
   T genOfEigensysUpdate;
 
   T dMaxSignifKond;
+
   T dLastMinEWgroesserNull;
 
   std::string stopMessage; //!< A message that contains all matched stop criteria.
 
   /**
    * Calculating eigenvalues and vectors.
-   * Also checks for successful eigen decomposition.
-   * @param diag (output) N eigenvalues.
+   * @param rgtmp (input) N+1-dimensional vector for temporal use. 
+   * @param diag (output) N eigenvalues. 
    * @param Q (output) Columns are normalized eigenvectors.
    */
-  void eigen(T* diag, T** Q)
+void eigen(T* diag, T** Q)
   { 
 
      arma::vec eV;
@@ -171,8 +155,7 @@ private:
       for(int j=0; j<=i; j++) cov(i,j)=cov(j,i)=C[i][j];
 
 
-   if(!arma::eig_sym(eV, eigMat, cov))
-        assert("eigen decomposition failed in neuro_cmaes::eigen()");
+   if(!arma::eig_sym(eV, eigMat, cov)) assert("eigen decomposition failed in neuro_cmaes::eigen()");
 
      for(int i=0; i<params.N; i++)
      {
@@ -182,10 +165,51 @@ private:
         Q[i][j]=eigMat(i,j);
       
      }
-  
   }
- 
-  //index sort.
+
+  /** 
+   * Exhaustive test of the output of the eigendecomposition, needs O(n^3)
+   * operations writes to error file.
+   * @return number of detected inaccuracies
+   */
+  int checkEigen(T* diag, T** Q)
+  {
+    // compute Q diag Q^T and Q Q^T to check
+    int res = 0;
+    for(int i = 0; i < params.N; ++i)
+      for(int j = 0; j < params.N; ++j) {
+        T cc = 0., dd = 0.;
+        for(int k = 0; k < params.N; ++k)
+        {
+          cc += diag[k]*Q[i][k]*Q[j][k];
+          dd += Q[i][k]*Q[j][k];
+        }
+        // check here, is the normalization the right one?
+        const bool cond1 = fabs(cc - C[i > j ? i : j][i > j ? j : i]) / sqrt(C[i][i]* C[j][j]) > T(1e-10);
+        const bool cond2 = fabs(cc - C[i > j ? i : j][i > j ? j : i]) > T(3e-14);
+        if(cond1 && cond2)
+        {
+          std::stringstream s;
+          s << i << " " << j << ": " << cc << " " << C[i > j ? i : j][i > j ? j : i]
+              << ", " << cc - C[i > j ? i : j][i > j ? j : i];
+       
+            std::cout << "eigen(): imprecise result detected " << s.str()
+                << std::endl;
+          ++res;
+        }
+        if(std::fabs(dd - (i == j)) > T(1e-10))
+        {
+          std::stringstream s;
+          s << i << " " << j << " " << dd;
+
+          std::cout << "eigen(): imprecise result detected (Q not orthog.)"
+                << s.str() << std::endl;
+          ++res;
+        }
+      }
+    return res;
+  }
+
 
   void sortIndex(const T* rgFunVal, int* iindex, int n)
   {
@@ -196,7 +220,7 @@ private:
       {
         if(rgFunVal[iindex[j - 1]] < rgFunVal[i])
           break;
-        iindex[j] = iindex[j - 1]; 
+        iindex[j] = iindex[j - 1];
       }
       iindex[j] = i;
     }
@@ -277,17 +301,13 @@ private:
     }
   }
 
+
 public:
 
-  T countevals;
-
-  CMAES()
-  {
-  }
+  T countevals; //!< objective function evaluations
 
   /**
-   * Releases the dynamically allocated memory, including that of the return
-   * value of init().
+   * Free the memory.
    */
   ~CMAES()
   {
@@ -318,10 +338,9 @@ public:
 
   /**
    * Initializes the CMA-ES algorithm.
-   * @param parameters The CMA-ES parameters.
+   * @param parameters The CMA-ES parameters in the parameters.h file
    * @return Array of size lambda that can be used to assign fitness values and
-   *         pass them to updateDistribution(). Not that after the desctructor
-   *         was called, the array is deleted.
+   *         pass them to updateDistribution()
    */
   T* init(const Parameters<T>& parameters)
   {
@@ -343,7 +362,7 @@ public:
     for(dtest = T(1); dtest && dtest < T(1.1)*dtest; dtest *= T(2))
       if(dtest == dtest + T(1))
         break;
-    dMaxSignifKond = dtest / T(1000); // not sure whether this is really safe, 100 does not work well enough
+    dMaxSignifKond = dtest / T(1000);
 
     gen = 0;
     countevals = 0;
@@ -397,7 +416,6 @@ public:
         population[i][j] = 0.0;
     }
 
-    // initialize newed space
     for(int i = 0; i < params.lambda; i++)
     {
       functionValues[i] = std::numeric_limits<T>::max();
@@ -429,7 +447,7 @@ public:
 
     for(int i = 0; i < params.N; ++i)
       xmean[i] = xold[i] = params.xstart[i];
-    // use in case xstart as typicalX
+    
     if(params.typicalXcase)
       for(int i = 0; i < params.N; ++i)
         xmean[i] += sigma*rgD[i]*(arma::randu(1));
@@ -437,6 +455,15 @@ public:
     return publicFitness;
   }
 
+	T maxElement(const T* rgd, int len)
+	{
+	  return *std::max_element(rgd, rgd + len);
+	}
+
+	T minElement(const T* rgd, int len)
+	{
+	  return *std::min_element(rgd, rgd + len);
+	}
 
   /**
    * The search space vectors have a special form: they are arrays with N+1
@@ -457,10 +484,11 @@ public:
       {
         for(int i = 0; i < params.N; ++i)
           rgD[i] = std::sqrt(C[i][i]);
-        minEW = square(minElement(rgD, params.N));
-        maxEW = square(maxElement(rgD, params.N));
+        minEW = minElement(rgD, params.N);
+        minEW *= minEW;
+        maxEW = maxElement(rgD, params.N);
+        maxEW *= maxEW;
         eigensysIsUptodate = true;
-
       }
     }
 
@@ -495,7 +523,9 @@ public:
    * Can be called after samplePopulation() to resample single solutions of the
    * population as often as desired. Useful to implement a box constraints
    * (boundary) handling.
-   * @param i Index to an element of the returned value of samplePopulation()
+   * @param i Index to an element of the returned value of samplePopulation().
+   *          population[index] will be resampled where \f$0\leq i<\lambda\f$
+   *          must hold.
    * @return A pointer to the resampled "population".
    */
   T* const* reSampleSingle(int i)
@@ -553,8 +583,9 @@ public:
    * @param x Solution vector that gets sampled a new value. If x == NULL new
    *          memory is allocated and must be released by the user using
    *          delete[] x.
-   * @param pxmean Mean vector for perturbation.
-   * @param eps Scale factor for perturbation:
+   * @param pxmean Mean vector \f$\mu\f$ for perturbation.
+   * @param eps Scale factor \f$\epsilon\f$ for perturbation:
+   *            \f$x \sim \mu + \epsilon \sigma N(0,C)\f$.
    * @return A pointer to the perturbed solution vector, equals input x for
    *         x != NULL.
    */
@@ -571,7 +602,7 @@ public:
    * Core procedure of the CMA-ES algorithm. Sets a new mean value and estimates
    * the new covariance matrix and a new step size for the normal search
    * distribution.
-   * @param fitnessValues An array of lambda function values.
+   * @param fitnessValues An array of \f$\lambda\f$ function values.
    * @return Mean value of the new distribution.
    */
   T* updateDistribution(const T* fitnessValues)
@@ -585,8 +616,7 @@ public:
 
     if(state == SAMPLED) // function values are delivered here
       countevals += params.lambda;
-    else if(params.logWarnings)
-      params.logStream <<  "updateDistribution(): unexpected state" << std::endl;
+    else std::cout<<  "updateDistribution(): unexpected state" << std::endl;
 
     // assign function values
     for(int i = 0; i < params.lambda; ++i)
@@ -599,11 +629,10 @@ public:
     if(fitnessValues[index[0]] == fitnessValues[index[(int) params.lambda / 2]])
     {
       sigma *= std::exp(T(0.2) + params.cs / params.damps);
-      if(params.logWarnings)
-      {
-        params.logStream << "Warning: sigma increased due to equal function values"
-            << std::endl << "   Reconsider the formulation of the objective function";
-      }
+     
+        std::cout << "Warning: sigma increased due to equal function values"
+         << std::endl << "   Reconsider the formulation of the objective function";
+  
     }
 
     // update function value history
@@ -689,8 +718,121 @@ public:
     return xmean;
   }
 
+    /**
+   * Request a scalar parameter from CMA-ES.
+   * @param key Key of the requested scalar.
+   * @return The desired value.
+   */
+  T get(GetScalar key)
+  {
+    switch(key)
+    {
+      case AxisRatio:
+        return maxElement(rgD, params.N) / minElement(rgD, params.N);
+      case Eval:
+        return countevals;
+      case Fitness:
+        return functionValues[index[0]];
+      case FBestEver:
+        return xBestEver[params.N];
+      case Generation:
+        return gen;
+      case MaxEval:
+        return params.stopMaxFunEvals;
+      case MaxIter:
+        return std::ceil(params.stopMaxIter);
+      case MaxAxisLength:
+        return sigma*std::sqrt(maxEW);
+      case MinAxisLength:
+        return sigma*std::sqrt(minEW);
+      case MaxStdDev:
+        return sigma*std::sqrt(maxdiagC);
+      case MinStdDev:
+        return sigma*std::sqrt(mindiagC);
+      case Dimension:
+        return params.N;
+      case SampleSize:
+        return params.lambda;
+      case Sigma:
+        return sigma;
+      default:
+        throw std::runtime_error("get(): No match found for key");
+    }
+  }
 
+  /**
+   * Request a vector parameter from CMA-ES.
+   * @param key Key of the requested vector.
+   * @return Pointer to the desired value array. Its content might be
+   *         overwritten during the next call to any member functions other
+   *         than get().
+   */
+  const T* getPtr(GetVector key)
+  {
+    switch(key)
+    {
+      case DiagC:
+      {
+        for(int i = 0; i < params.N; ++i)
+          output[i] = C[i][i];
+        return output;
+      }
+      case DiagD:
+        return rgD;
+      case StdDev:
+      {
+        for(int i = 0; i < params.N; ++i)
+          output[i] = sigma*std::sqrt(C[i][i]);
+        return output;
+      }
+      case XBestEver:
+        return xBestEver;
+      case XBest:
+        return population[index[0]];
+      case XMean:
+        return xmean;
+      default:
+        throw std::runtime_error("getPtr(): No match found for key");
+    }
+  }
 
+  /**
+   * Request a vector parameter from CMA-ES.
+   * @param key Key of the requested vector.
+   * @return Pointer to the desired value array with unlimited reading and
+   *         writing access to its elements. The memory must be explicitly
+   *         released using delete[].
+   */
+  T* getNew(GetVector key)
+  {
+    return getInto(key, 0);
+  }
+
+  /**
+   * Request a vector parameter from CMA-ES.
+   * @param key Key of the requested vector.
+   * @param res Memory of size N == dimension, where the desired values are
+   *            written into. For mem == NULL new memory is allocated as with
+   *            calling getNew() and must be released by the user at some point.
+   */
+  T* getInto(GetVector key, T* res)
+  {
+    T const* res0 = getPtr(key);
+    if(!res)
+      res = new T[params.N];
+    for(int i = 0; i < params.N; ++i)
+      res[i] = res0[i];
+    return res;
+  }
+
+  /**
+   * Some stopping criteria can be set in initials.par, with names starting
+   * with stop... Internal stopping criteria include a maximal condition number
+   * of about 10^15 for the covariance matrix and situations where the numerical
+   * discretisation error in x-space becomes noticeably. You can get a message
+   * that contains the matched stop criteria via getStopMessage().
+   * @return Does any stop criterion match?
+   */
   bool testForTermination()
   {
     T range, fac;
@@ -698,14 +840,10 @@ public:
     int diag = params.diagonalCov == 1 || params.diagonalCov >= gen;
     int N = params.N;
     std::stringstream message;
-    std::string msg;
 
     if(stopMessage != "")
     {
       message << stopMessage << std::endl;
-
-      msg = message.str();
-      std::cout << msg <<"\n";
     }
 
     // function value reached
@@ -714,11 +852,6 @@ public:
     {
       message << "Fitness: function value " << functionValues[index[0]]
           << " <= stopFitness (" << params.stStopFitness.val << ")" << std::endl;
-      
-    
-      msg = message.str();
-      std::cout << msg <<"\n";
-
     }
 
     // TolFun
@@ -731,9 +864,6 @@ public:
     {
       message << "TolFun: function value differences " << range
           << " < stopTolFun=" << params.stopTolFun << std::endl;
-
-      msg = message.str();
-      std::cout << msg <<"\n";    
     }
 
     // TolFunHist
@@ -744,10 +874,7 @@ public:
       if(range <= params.stopTolFunHist)
         message << "TolFunHist: history of function value changes " << range
             << " stopTolFunHist=" << params.stopTolFunHist << std::endl;
-
-      msg = message.str();
-      std::cout << msg <<"\n";   
-       }
+    }
 
     // TolX
     int cTemp = 0;
@@ -759,10 +886,7 @@ public:
     if(cTemp == 2*N)
     {
       message << "TolX: object variable changes below " << params.stopTolX << std::endl;
-
-      msg = message.str();
-      std::cout << msg <<"\n";   
-       }
+    }
 
     // TolUpX
     for(int i = 0; i < N; ++i)
@@ -772,10 +896,7 @@ public:
         message << "TolUpX: standard deviation increased by more than "
             << params.stopTolUpXFactor << ", larger initial standard deviation recommended."
             << std::endl;
-
-      msg = message.str();
-      std::cout << msg <<"\n";        
-      break;
+        break;
       }
     }
 
@@ -785,10 +906,7 @@ public:
       message << "ConditionNumber: maximal condition number " << dMaxSignifKond
           << " reached. maxEW=" << maxEW <<  ",minEW=" << minEW << ",maxdiagC="
           << maxdiagC << ",mindiagC=" << mindiagC << std::endl;
-
-      msg = message.str();
-      std::cout << msg <<"\n";   
-       }
+    }
 
     // Principal axis i has no effect on xmean, ie. x == x + 0.1* sigma* rgD[i]* B[i]
     if(!diag)
@@ -805,11 +923,7 @@ public:
         {
           message << "NoEffectAxis: standard deviation 0.1*" << (fac / 0.1)
               << " in principal axis " << iAchse << " without effect" << std::endl;
-
-      msg = message.str();
-      std::cout << msg <<"\n";          
-      break;
-
+          break;
         }
       }
     }
@@ -821,10 +935,7 @@ public:
         message << "NoEffectCoordinate: standard deviation 0.2*"
             << (sigma*std::sqrt(C[iKoo][iKoo])) << " in coordinate " << iKoo
             << " without effect" << std::endl;
-
-      msg = message.str();
-      std::cout << msg <<"\n";        
-      break;
+        break;
       }
     }
 
@@ -832,19 +943,11 @@ public:
     {
       message << "MaxFunEvals: conducted function evaluations " << countevals
           << " >= " << params.stopMaxFunEvals << std::endl;
-
-      msg = message.str();
-      std::cout << msg <<"\n";
-
     }
-
     if(gen >= params.stopMaxIter)
     {
       message << "MaxIter: number of iterations " << gen << " >= "
           << params.stopMaxIter << std::endl;
-
-      msg = message.str();
-      std::cout << msg <<"\n";    
     }
 
     stopMessage = message.str();
@@ -860,9 +963,16 @@ public:
     return stopMessage;
   }
 
+
+  /**
+   * Conducts the eigendecomposition of C into B and D such that
+   * \f$C = B \cdot D \cdot D \cdot B^T\f$ and \f$B \cdot B^T = I\f$
+   * and D diagonal and positive.
+   * @param force For force == true the eigendecomposion is conducted even if
+   *              eigenvector and values seem to be up to date.
+   */
   void updateEigensystem(bool force)
   {
-
     if(!force)
     {
       if(eigensysIsUptodate)
@@ -870,7 +980,6 @@ public:
       // return on modulo generation number
       if(gen < genOfEigensysUpdate + params.updateCmode.modulo)
         return;
-
     }
 
     eigen(rgD, B);
@@ -878,6 +987,9 @@ public:
     // find largest and smallest eigenvalue, they are supposed to be sorted anyway
     minEW = minElement(rgD, params.N);
     maxEW = maxElement(rgD, params.N);
+
+    if(doCheckEigen) // needs O(n^3)! writes, in case, error message in error file
+      checkEigen(rgD, B);
 
     for(int i = 0; i < params.N; ++i)
       rgD[i] = std::sqrt(rgD[i]);
@@ -905,10 +1017,8 @@ public:
 
     return newxmean;
   }
-};
+}; //CLASS
 
-
-}  // namespace optimization
-}  // namespace mlpack
-
-#endif  // MLPACK_CORE_OPTIMIZERS_CMAES_CMAES_HPP
+} //OPTIMIZER
+}
+#endif
