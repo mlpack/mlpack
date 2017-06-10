@@ -20,6 +20,10 @@
 #include <mlpack/methods/ann/augmented/tasks/add.hpp>
 #include <mlpack/methods/ann/augmented/tasks/score.hpp>
 
+#include <mlpack/core/optimizers/sgd/sgd.hpp>
+#include <mlpack/methods/ann/layer/layer.hpp>
+#include <mlpack/methods/ann/rnn.hpp>
+
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
@@ -30,21 +34,24 @@ using std::make_pair;
 using namespace mlpack::ann::augmented::tasks;
 using namespace mlpack::ann::augmented::scorers;
 
+using namespace mlpack::ann;
+using namespace mlpack::optimization;
+
 // The dummy model that simply copies the sequence the required number of times
 // (yes, no ML here, we're unit testing :)
 class HardCodedCopyModel {
  public:
   HardCodedCopyModel() : nRepeats(1) {}
   void Train(
-      arma::field<arma::irowvec>& predictors,
-      arma::field<arma::irowvec>& labels) {
+      arma::field<arma::colvec>& predictors,
+      arma::field<arma::colvec>& labels) {
     auto input = predictors.at(0);
     auto output = labels.at(0);
     nRepeats = output.n_elem / input.n_elem;
   }
   void Predict(
-      arma::irowvec& predictors,
-      arma::irowvec& labels) {
+      arma::colvec& predictors,
+      arma::colvec& labels) {
     int len = predictors.n_elem;
     auto totalLen = nRepeats*len;
     labels.zeros(totalLen);
@@ -53,10 +60,10 @@ class HardCodedCopyModel {
     }
   }
   void Predict(
-      arma::field<arma::irowvec>& predictors,
-      arma::field<arma::irowvec>& labels) {
+      arma::field<arma::colvec>& predictors,
+      arma::field<arma::colvec>& labels) {
     auto sz = predictors.n_elem;
-    labels = arma::field<arma::irowvec>(sz);
+    labels = arma::field<arma::colvec>(sz);
     for (size_t i = 0; i < sz; ++i) {
       Predict(predictors.at(i), labels.at(i));
     }
@@ -69,36 +76,36 @@ class HardCodedCopyModel {
 class HardCodedSortModel {
  public:
   HardCodedSortModel() {}
-  void Train(arma::field<arma::imat>& predictors,
-             arma::field<arma::imat>& labels)
+  void Train(arma::field<arma::mat>& predictors,
+             arma::field<arma::mat>& labels)
   {
     assert(predictors.n_elem == labels.n_elem);
-    bitLen = predictors.at(0).n_cols;
+    bitLen = predictors.at(0).n_rows;
   }
   void Predict(
-      arma::imat& predictors,
-      arma::imat& labels)
+      arma::mat& predictors,
+      arma::mat& labels)
   {
-    size_t len = predictors.n_rows;
-    labels.zeros(len, bitLen);
+    size_t len = predictors.n_cols;
+    labels.zeros(bitLen, len);
     vector<pair<int, int>> vals(len);
     for (size_t j = 0; j < len; ++j) {
       int val = 0;
       for (size_t k = 0; k < bitLen; ++k) {
         val <<= 1;
-        val += predictors.at(j, k);
+        val += predictors.at(k, j);
       }
       vals[j] = make_pair(val, j);
     }
     sort(vals.begin(), vals.end());
     for (size_t j = 0; j < len; ++j) {
-      labels.row(j) = predictors.row(vals[j].second);
+      labels.col(j) = predictors.col(vals[j].second);
     }
   }
-  void Predict(arma::field<arma::imat>& predictors,
-               arma::field<arma::imat>& labels) {
+  void Predict(arma::field<arma::mat>& predictors,
+               arma::field<arma::mat>& labels) {
     auto sz = predictors.n_elem;
-    labels = arma::field<arma::imat>(sz);
+    labels = arma::field<arma::mat>(sz);
     for (size_t i = 0; i < sz; ++i) {
       Predict(predictors.at(i), labels.at(i));
     }
@@ -111,13 +118,13 @@ class HardCodedSortModel {
 class HardCodedAddModel {
  public:
   HardCodedAddModel() {}
-  void Train(arma::field<arma::irowvec>& predictors,
-             arma::field<arma::irowvec>& labels)
+  void Train(arma::field<arma::colvec>& predictors,
+             arma::field<arma::colvec>& labels)
   {
     return;
   }
-  void Predict(arma::irowvec& predictors,
-               arma::irowvec& labels)
+  void Predict(arma::colvec& predictors,
+               arma::colvec& labels)
   {
     int num_A = 0, num_B = 0;
     bool num = false; // true iff we have already seen the separating symbol
@@ -152,16 +159,16 @@ class HardCodedAddModel {
       total >>= 1;
     }
     auto tot_len = binary_seq.size();
-    labels = arma::irowvec(tot_len);
+    labels = arma::colvec(tot_len);
     for (size_t j = 0; j < tot_len; ++j) {
       labels.at(j) = binary_seq[tot_len-j-1];
     }
   }
   void Predict(
-      arma::field<arma::irowvec>& predictors,
-      arma::field<arma::irowvec>& labels) {
+      arma::field<arma::colvec>& predictors,
+      arma::field<arma::colvec>& labels) {
     auto sz = predictors.n_elem;
-    labels = arma::field<arma::irowvec>(sz);
+    labels = arma::field<arma::colvec>(sz);
     for (size_t i = 0; i < sz; ++i) {
       Predict(predictors.at(i), labels.at(i));
     }
@@ -181,13 +188,13 @@ BOOST_AUTO_TEST_CASE(CopyTaskTest)
     // .. and various numbers of repetitions.
     for (size_t nRepeats = 1; nRepeats <= 10; ++nRepeats) {
       CopyTask task(maxLen, nRepeats);
-      arma::field<arma::irowvec> trainPredictor, trainResponse;
+      arma::field<arma::colvec> trainPredictor, trainResponse;
       task.Generate(trainPredictor, trainResponse, 8);
-      arma::field<arma::irowvec> testPredictor, testResponse;
+      arma::field<arma::colvec> testPredictor, testResponse;
       task.Generate(testPredictor, testResponse, 8);
       HardCodedCopyModel model;
       model.Train(trainPredictor, trainResponse);
-      arma::field<arma::irowvec> predResponse;
+      arma::field<arma::colvec> predResponse;
       model.Predict(testPredictor, predResponse);
       // A single failure is a failure.
       if (SequencePrecision(testResponse, predResponse) < 0.99) {
@@ -205,13 +212,13 @@ BOOST_AUTO_TEST_CASE(SortTaskTest) {
   size_t bitLen = 5;
   for (size_t maxLen = 2; maxLen <= 16; ++maxLen) {
     SortTask task(maxLen, bitLen);
-    arma::field<arma::imat> trainPredictor, trainResponse;
+    arma::field<arma::mat> trainPredictor, trainResponse;
     task.Generate(trainPredictor, trainResponse, 8);
-    arma::field<arma::imat> testPredictor, testResponse;
+    arma::field<arma::mat> testPredictor, testResponse;
     task.Generate(testPredictor, testResponse, 8);
     HardCodedSortModel model;
     model.Train(trainPredictor, trainResponse);
-    arma::field<arma::imat> predResponse;
+    arma::field<arma::mat> predResponse;
     model.Predict(testPredictor, predResponse);
     // A single failure is a failure.
     if (SequencePrecision(testResponse, predResponse) < 0.99) {
@@ -227,13 +234,13 @@ BOOST_AUTO_TEST_CASE(AddTaskTest) {
   bool ok = true;
   for (size_t bitLen = 2; bitLen <= 16; ++bitLen) {
     AddTask task(bitLen);
-    arma::field<arma::irowvec> trainPredictor, trainResponse;
+    arma::field<arma::colvec> trainPredictor, trainResponse;
     task.Generate(trainPredictor, trainResponse, 8);
-    arma::field<arma::irowvec> testPredictor, testResponse;
+    arma::field<arma::colvec> testPredictor, testResponse;
     task.Generate(testPredictor, testResponse, 8);
     HardCodedAddModel model;
     model.Train(trainPredictor, trainResponse);
-    arma::field<arma::irowvec> predResponse;
+    arma::field<arma::colvec> predResponse;
     model.Predict(testPredictor, predResponse);
     // A single failure is a failure.
     if (SequencePrecision(testResponse, predResponse) < 0.99) {
@@ -244,5 +251,61 @@ BOOST_AUTO_TEST_CASE(AddTaskTest) {
 
   BOOST_REQUIRE(ok);
 }
+
+/*
+BOOST_AUTO_TEST_CASE(LSTMBaselineTest) {
+  bool ok = true;
+
+  Add<> add(4);
+  Linear<> lookup(1, 4);
+  SigmoidLayer<> sigmoidLayer;
+  Linear<> linear(4, 4);
+  Recurrent<> recurrent(add, lookup, linear, sigmoidLayer, 10);
+
+  RNN<> model(10);
+  model.Add<IdentityLayer<> >();
+  model.Add(recurrent);
+  model.Add<Linear<> >(4, 1);
+
+  StandardSGD<decltype(model)> opt(model, 0.1, 1000, -100);
+
+  int maxLen = 3, nRepeats = 1;
+  CopyTask task(maxLen, nRepeats);
+  arma::field<arma::irowvec> trainPredictor, trainResponse;
+  task.Generate(trainPredictor, trainResponse, 8);
+  arma::field<arma::irowvec> testPredictor, testResponse;
+  task.Generate(testPredictor, testResponse, 8);
+  for (size_t epoch = 0; epoch < 100; ++epoch) {
+    for (size_t example = 0; example < trainPredictor.n_elem; ++example) {
+      std::cerr << "In the loop.\n";
+      arma::imat predictor(1, trainPredictor.at(example).n_elem);
+      predictor.row(0) = trainPredictor.at(example);
+      std::cerr << "Recorded train data.\n";
+      arma::imat response(1, trainResponse.at(example).n_elem);
+      response.row(0) = trainResponse.at(example);
+      std::cerr << "Recorded test data.\n";
+      arma::mat floatPred = arma::conv_to<arma::mat>::from(predictor);
+      arma::mat floatResp = arma::conv_to<arma::mat>::from(response);
+      model.Train(floatPred, floatResp, opt);
+    }
+    std::cerr << "Executed epoch " << epoch+1 << "\n";
+  }
+
+  for (size_t example = 0; example < testPredictor.n_elem; ++example) {
+    arma::imat predictor(1, testPredictor.at(example).n_elem);
+    predictor.row(0) = testPredictor.at(example);
+    arma::imat response(1, testResponse.at(example).n_elem);
+    response.row(0) = testResponse.at(example);
+    arma::imat predResponse(1, testResponse.at(example).n_elem);
+    arma::mat floatPred = arma::conv_to<arma::mat>::from(predictor);
+    arma::mat floatPredResp = arma::conv_to<arma::mat>::from(predResponse);
+    model.Predict(floatPred, floatPredResp);
+    std::cerr << floatPred << " -> " << floatPredResp
+              << "\nGround truth: " << response << "\n";
+  }
+
+  BOOST_REQUIRE(ok);
+}
+*/
 
 BOOST_AUTO_TEST_SUITE_END();

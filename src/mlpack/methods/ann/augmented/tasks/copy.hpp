@@ -29,7 +29,7 @@ class CopyTask
   * @param maxLength Maximum length of sequence that has to be repeated by model.
   * @param nRepeats Number of repeates required to solve the task.
   */
-  CopyTask(size_t maxLength, size_t nRepeats);
+  CopyTask(const size_t maxLength, const size_t nRepeats);
   /**
   * Generate dataset of a given size.
   *
@@ -37,9 +37,9 @@ class CopyTask
   * @param labels The variable to store output sequences.
   * @param batchSize The dataset size.
   */
-  void Generate(arma::field<arma::irowvec>& input,
-                    arma::field<arma::irowvec>& labels,
-                    size_t batchSize);
+  void Generate(arma::field<arma::colvec>& input,
+                arma::field<arma::colvec>& labels,
+                const size_t batchSize);
 
  private:
   // Maximum length of a sequence.

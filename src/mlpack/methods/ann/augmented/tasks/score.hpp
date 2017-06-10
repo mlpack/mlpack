@@ -29,8 +29,8 @@ namespace scorers /* Scoring utilities for augmented */ {
 * @param trueOutputs Ground truth sequences.
 * @param predOutputs Sequences predicted by model.
 */
-double SequencePrecision(arma::field<arma::irowvec> trueOutputs,
-                         arma::field<arma::irowvec> predOutputs);
+double SequencePrecision(arma::field<arma::colvec> trueOutputs,
+                         arma::field<arma::colvec> predOutputs);
 
 /**
 * Function that computes the sequences precision
@@ -41,8 +41,8 @@ double SequencePrecision(arma::field<arma::irowvec> trueOutputs,
 * @param trueOutputs Ground truth sequences.
 * @param predOutputs Sequences predicted by model.
 */
-double SequencePrecision(arma::field<arma::imat> trueOutputs,
-                         arma::field<arma::imat> predOutputs);
+double SequencePrecision(arma::field<arma::mat> trueOutputs,
+                         arma::field<arma::mat> predOutputs);
 
 } // namespace scorers
 } // namespace augmented
