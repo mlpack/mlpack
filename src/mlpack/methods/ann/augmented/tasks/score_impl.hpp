@@ -20,8 +20,8 @@ namespace ann /* Artificial Neural Network */ {
 namespace augmented /* Augmented neural network */ {
 namespace scorers /* Scoring utilities for augmented */ {
 
-double SequencePrecision(arma::field<arma::irowvec> trueOutputs,
-                         arma::field<arma::irowvec> predOutputs)
+double SequencePrecision(arma::field<arma::colvec> trueOutputs,
+                         arma::field<arma::colvec> predOutputs)
 {
   double score = 0;
   auto testSize = trueOutputs.n_elem;
@@ -54,8 +54,8 @@ double SequencePrecision(arma::field<arma::irowvec> trueOutputs,
   return score;
 }
 
-double SequencePrecision(arma::field<arma::imat> trueOutputs,
-                         arma::field<arma::imat> predOutputs)
+double SequencePrecision(arma::field<arma::mat> trueOutputs,
+                         arma::field<arma::mat> predOutputs)
 {
   double score = 0;
   auto testSize = trueOutputs.n_elem;

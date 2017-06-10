@@ -15,15 +15,14 @@
 // In case it hasn't been included yet.
 #include "copy.hpp"
 
-#include <cstdlib>
-#include <ctime>
+using mlpack::math::RandInt;
 
 namespace mlpack {
 namespace ann /* Artificial Neural Network */ {
 namespace augmented /* Augmented neural network */ {
 namespace tasks /* Task utilities for augmented */ {
 
-CopyTask::CopyTask(size_t maxLength, size_t nRepeats) :
+CopyTask::CopyTask(const size_t maxLength, const size_t nRepeats) :
     maxLength(maxLength),
     nRepeats(nRepeats)
 {
@@ -31,21 +30,19 @@ CopyTask::CopyTask(size_t maxLength, size_t nRepeats) :
   // Just storing task-specific parameters.
 }
 
-void CopyTask::Generate(arma::field<arma::irowvec>& input,
-                            arma::field<arma::irowvec>& labels,
-                            size_t batchSize)
+void CopyTask::Generate(arma::field<arma::colvec>& input,
+                        arma::field<arma::colvec>& labels,
+                        const size_t batchSize)
 {
-  input = arma::field<arma::irowvec>(batchSize);
-  labels = arma::field<arma::irowvec>(batchSize);
-  std::srand(unsigned(std::time(0)));
+  input = arma::field<arma::colvec>(batchSize);
+  labels = arma::field<arma::colvec>(batchSize);
   for (size_t i = 0; i < batchSize; ++i) {
     // Random uniform length from [2..maxLength]
-    size_t size = 2 + std::rand() % (maxLength - 1);
-    input(i) = arma::randi<arma::irowvec>(size, arma::distr_param(0, 1));
-    arma::irowvec item_ans = arma::irowvec(nRepeats * size);
-    for (size_t r = 0; r < nRepeats; ++r) {
-        item_ans.cols(r*size, (r+1)*size-1) = input(i);
-    }
+    size_t size = RandInt(2, maxLength+1);
+    input(i) = arma::randi<arma::colvec>(size, arma::distr_param(0, 1));
+    arma::colvec item_ans = arma::conv_to<arma::colvec>::from(
+      arma::repmat(input(i), nRepeats, 1)
+    );
     labels(i) = item_ans;
   }
 }

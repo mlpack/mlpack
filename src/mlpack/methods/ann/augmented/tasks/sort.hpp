@@ -29,7 +29,7 @@ class SortTask
   * @param maxLength Maximum length of the number sequence.
   * @param bitLen Binary length of sorted numbers.
   */
-  SortTask(size_t maxLength, size_t bitLen);
+  SortTask(const size_t maxLength, const size_t bitLen);
   /**
   * Generate dataset of a given size.
   *
@@ -37,9 +37,9 @@ class SortTask
   * @param labels The variable to store output sequences.
   * @param batchSize The dataset size.
   */
-  void Generate(arma::field<arma::imat>& input,
-                    arma::field<arma::imat>& labels,
-                    size_t batchSize);
+  void Generate(arma::field<arma::mat>& input,
+                arma::field<arma::mat>& labels,
+                const size_t batchSize);
 
  private:
   // Maximum length of the sequence.
