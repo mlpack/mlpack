@@ -26,28 +26,29 @@ using std::vector;
 using std::pair;
 using std::make_pair;
 
+using mlpack::math::RandInt;
+
 namespace mlpack {
 namespace ann /* Artificial Neural Network */ {
 namespace augmented /* Augmented neural network */ {
 namespace tasks /* Task utilities for augmented */ {
 
-AddTask::AddTask(size_t bitLen) : bitLen(bitLen) {}
+AddTask::AddTask(const size_t bitLen) : bitLen(bitLen) {}
 
-void AddTask::Generate(arma::field<arma::irowvec>& input,
-                           arma::field<arma::irowvec>& labels,
-                           size_t batchSize)
+void AddTask::Generate(arma::field<arma::colvec>& input,
+                       arma::field<arma::colvec>& labels,
+                       const size_t batchSize)
 {
-  input = arma::field<arma::irowvec>(batchSize);
-  labels = arma::field<arma::irowvec>(batchSize);
-  std::srand(unsigned(std::time(0)));
+  input = arma::field<arma::colvec>(batchSize);
+  labels = arma::field<arma::colvec>(batchSize);
   for (size_t i = 0; i < batchSize; ++i) {
     // Random uniform length from [2..bitLen]
-    size_t size_A = 2 + std::rand() % (bitLen - 1);
-    size_t size_B = 2 + std::rand() % (bitLen - 1);
+    size_t size_A = RandInt(2, bitLen + 1);
+    size_t size_B = RandInt(2, bitLen + 1);
     // Construct sequence of the form
     // (binary number with size_A bits) + '+'
     // + (binary number with size_B bits)
-    input(i) = arma::randi<arma::irowvec>(
+    input(i) = arma::randi<arma::colvec>(
       size_A + size_B + 1, arma::distr_param(0, 1));
     input(i).at(size_A) = +100;
     int val_A = 0;
@@ -67,7 +68,7 @@ void AddTask::Generate(arma::field<arma::irowvec>& input,
       tot >>= 1;
     }
     auto tot_len = binary_seq.size();
-    labels(i) = arma::irowvec(tot_len);
+    labels(i) = arma::colvec(tot_len);
     for (size_t j = 0; j < tot_len; ++j) {
       labels(i).at(j) = binary_seq[tot_len-j-1];
     }

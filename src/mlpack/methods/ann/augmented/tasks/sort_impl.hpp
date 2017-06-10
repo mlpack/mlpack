@@ -30,33 +30,32 @@ namespace ann /* Artificial Neural Network */ {
 namespace augmented /* Augmented neural network */ {
 namespace tasks /* Task utilities for augmented */ {
 
-SortTask::SortTask(size_t maxLength, size_t bitLen)
+SortTask::SortTask(const size_t maxLength, const size_t bitLen)
   : maxLength(maxLength), bitLen(bitLen) {}
 
-void SortTask::Generate(arma::field<arma::imat>& input,
-                            arma::field<arma::imat>& labels,
-                            size_t batchSize)
+void SortTask::Generate(arma::field<arma::mat>& input,
+                        arma::field<arma::mat>& labels,
+                        const size_t batchSize)
 {
-  input = arma::field<arma::imat>(batchSize);
-  labels = arma::field<arma::imat>(batchSize);
-  std::srand(unsigned(std::time(0)));
+  input = arma::field<arma::mat>(batchSize);
+  labels = arma::field<arma::mat>(batchSize);
   for (size_t i = 0; i < batchSize; ++i) {
     // Random uniform length from [2..maxLength]
-    size_t size = 2 + std::rand() % (maxLength - 1);
-    input(i) = arma::randi<arma::imat>(size, bitLen, arma::distr_param(0, 1));
-    arma::imat item_ans = arma::imat(size, bitLen);
+    size_t size = RandInt(2, maxLength+1);
+    input(i) = arma::randi<arma::mat>(bitLen, size, arma::distr_param(0, 1));
+    arma::mat item_ans = arma::mat(bitLen, size);
     vector<pair<int, int>> vals(size);
     for (size_t j = 0; j < size; ++j) {
       int val = 0;
       for (size_t k = 0; k < bitLen; ++k) {
         val <<= 1;
-        val += input(i).at(j, k);
+        val += input(i).at(k, j);
       }
       vals[j] = make_pair(val, j);
     }
     sort(vals.begin(), vals.end());
     for (size_t j = 0; j < size; ++j) {
-      item_ans.row(j) = input(i).row(vals[j].second);
+      item_ans.col(j) = input(i).col(vals[j].second);
     }
     labels(i) = item_ans;
   }

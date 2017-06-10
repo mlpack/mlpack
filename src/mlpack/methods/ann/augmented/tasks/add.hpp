@@ -28,7 +28,7 @@ class AddTask
   *
   * @param bitLen Maximum binary length of added numbers.
   */
-  AddTask(size_t bitLen);
+  AddTask(const size_t bitLen);
   /**
   * Generate dataset of a given size.
   *
@@ -36,9 +36,9 @@ class AddTask
   * @param labels The variable to store output sequences.
   * @param batchSize The dataset size.
   */
-  void Generate(arma::field<arma::irowvec>& input,
-                    arma::field<arma::irowvec>& labels,
-                    size_t batchSize);
+  void Generate(arma::field<arma::colvec>& input,
+                arma::field<arma::colvec>& labels,
+                const size_t batchSize);
 
  private:
   // Maximum binary length of numbers.
