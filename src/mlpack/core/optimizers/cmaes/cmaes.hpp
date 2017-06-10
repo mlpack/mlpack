@@ -31,6 +31,10 @@
 //get stop message
 //return value in a specific way
 
+//random number generator
+// enum work
+// eignevalue column vs row check
+
 namespace mlpack {
 namespace optimization {
 
@@ -210,6 +214,13 @@ void eigen(T* diag, T** Q)
     return res;
   }
 
+   double gauss(void)
+   {
+    arma::mat gauss = arma::randu<arma::mat>(1,1);
+    return gauss(0);
+
+   }
+
 
   void sortIndex(const T* rgFunVal, int* iindex, int n)
   {
@@ -291,7 +302,7 @@ void eigen(T* diag, T** Q)
   void addMutation(T* x, T eps = 1.0)
   {
     for(int i = 0; i < params.N; ++i)
-      tempRandom[i] = rgD[i]*(arma::randu(1));
+      tempRandom[i] = rgD[i]*gauss();
     for(int i = 0; i < params.N; ++i)
     {
       T sum = 0.0;
@@ -450,7 +461,7 @@ public:
     
     if(params.typicalXcase)
       for(int i = 0; i < params.N; ++i)
-        xmean[i] += sigma*rgD[i]*(arma::randu(1));
+        xmean[i] += sigma*rgD[i]*gauss();
 
     return publicFitness;
   }
@@ -499,9 +510,9 @@ public:
       T* rgrgxink = population[iNk];
       for(int i = 0; i < params.N; ++i)
         if(diag)
-          rgrgxink[i] = xmean[i] + sigma*rgD[i]*(arma::randu(1));
+          rgrgxink[i] = xmean[i] + sigma*rgD[i]*gauss();
         else
-          tempRandom[i] = rgD[i]*(arma::randu(1));
+          tempRandom[i] = rgD[i]*gauss();
       if(!diag)
         for(int i = 0; i < params.N; ++i) // add mutation sigma*B*(D*z)
         {
