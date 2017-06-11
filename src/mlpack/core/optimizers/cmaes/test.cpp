@@ -5,14 +5,15 @@
 
 #include <stdlib.h>
 #include <iostream>
-#include "cmaes.hpp"
 #include <math.h>
+
+#include "cmaes.hpp"
 
 using namespace mlpack;
 using namespace mlpack::optimization;
 /**
-*
- */
+* fitness function defined
+*/
 double fitfun(double const *x, int N)
 {
   double func = (pow(x[0]-5, 2))*(pow(x[1]-3, 2)) ; // function = (x-5)^2 * (y-3)^2 (minima at x=5 y=3)
@@ -33,7 +34,7 @@ int main(int, char**)
 
   for(int i=0; i<dim; i++) xstart[i] = 0.5;
   double stddev[dim];
-  for(int i=0; i<dim; i++) stddev[i] = 2;
+  for(int i=0; i<dim; i++) stddev[i] = 0.5;
 
   Parameters<double> parameters;
 

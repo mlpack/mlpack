@@ -13,6 +13,7 @@
 #define MLPACK_CORE_OPTIMIZERS_CMAES_CMAES_HPP
 
 #include "parameters.hpp"
+#include "random.hpp"
 #include <cassert>
 #include <cmath>
 #include <cstdio>
@@ -84,6 +85,8 @@ private:
   //!< CMA-ES parameters.
   Parameters<T> params;
 
+  Random<T> rand;
+
   //! Step size.
   T sigma;
   //! Mean x vector, "parent".
@@ -144,11 +147,11 @@ private:
 
   /**
    * Calculating eigenvalues and vectors.
-   * @param rgtmp (input) N+1-dimensional vector for temporal use. 
-   * @param diag (output) N eigenvalues. 
+   * Also checks for successful eigen decomposition.
+   * @param diag (output) N eigenvalues.
    * @param Q (output) Columns are normalized eigenvectors.
    */
-void eigen(T* diag, T** Q)
+  void eigen(T* diag, T** Q)
   { 
 
      arma::vec eV;
@@ -159,7 +162,8 @@ void eigen(T* diag, T** Q)
       for(int j=0; j<=i; j++) cov(i,j)=cov(j,i)=C[i][j];
 
 
-   if(!arma::eig_sym(eV, eigMat, cov)) assert("eigen decomposition failed in neuro_cmaes::eigen()");
+   if(!arma::eig_sym(eV, eigMat, cov))
+        assert("eigen decomposition failed in neuro_cmaes::eigen()");
 
      for(int i=0; i<params.N; i++)
      {
@@ -169,6 +173,7 @@ void eigen(T* diag, T** Q)
         Q[i][j]=eigMat(i,j);
       
      }
+  
   }
 
   /** 
@@ -196,8 +201,8 @@ void eigen(T* diag, T** Q)
           std::stringstream s;
           s << i << " " << j << ": " << cc << " " << C[i > j ? i : j][i > j ? j : i]
               << ", " << cc - C[i > j ? i : j][i > j ? j : i];
-       
-            std::cout << "eigen(): imprecise result detected " << s.str()
+          if(params.logWarnings)
+            params.logStream << "eigen(): imprecise result detected " << s.str()
                 << std::endl;
           ++res;
         }
@@ -205,21 +210,14 @@ void eigen(T* diag, T** Q)
         {
           std::stringstream s;
           s << i << " " << j << " " << dd;
-
-          std::cout << "eigen(): imprecise result detected (Q not orthog.)"
+          if(params.logWarnings)
+            params.logStream << "eigen(): imprecise result detected (Q not orthog.)"
                 << s.str() << std::endl;
           ++res;
         }
       }
     return res;
   }
-
-   double gauss(void)
-   {
-    arma::mat gauss = arma::randu<arma::mat>(1,1);
-    return gauss(0);
-
-   }
 
 
   void sortIndex(const T* rgFunVal, int* iindex, int n)
@@ -302,7 +300,7 @@ void eigen(T* diag, T** Q)
   void addMutation(T* x, T eps = 1.0)
   {
     for(int i = 0; i < params.N; ++i)
-      tempRandom[i] = rgD[i]*gauss();
+      tempRandom[i] = rgD[i]*rand.gauss();
     for(int i = 0; i < params.N; ++i)
     {
       T sum = 0.0;
@@ -461,7 +459,7 @@ public:
     
     if(params.typicalXcase)
       for(int i = 0; i < params.N; ++i)
-        xmean[i] += sigma*rgD[i]*gauss();
+        xmean[i] += sigma*rgD[i]*rand.gauss();
 
     return publicFitness;
   }
@@ -510,9 +508,9 @@ public:
       T* rgrgxink = population[iNk];
       for(int i = 0; i < params.N; ++i)
         if(diag)
-          rgrgxink[i] = xmean[i] + sigma*rgD[i]*gauss();
+          rgrgxink[i] = xmean[i] + sigma*rgD[i]*rand.gauss();
         else
-          tempRandom[i] = rgD[i]*gauss();
+          tempRandom[i] = rgD[i]*rand.gauss();
       if(!diag)
         for(int i = 0; i < params.N; ++i) // add mutation sigma*B*(D*z)
         {
@@ -1030,6 +1028,6 @@ public:
   }
 }; //CLASS
 
-} //OPTIMIZER
-}
+} //cmaes
+} // optimizer
 #endif

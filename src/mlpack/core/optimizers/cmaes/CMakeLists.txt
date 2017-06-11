@@ -1,6 +1,7 @@
 set(SOURCES
   cmaes.hpp
   parameters.hpp
+  random.hpp
   test.cpp
 )
 

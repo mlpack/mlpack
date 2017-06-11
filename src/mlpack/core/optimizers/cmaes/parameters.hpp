@@ -409,7 +409,6 @@ private:
       throw std::runtime_error("setWeights(): invalid setting of mu or lambda");
   }
 };
-
-}
-  }
-  #endif
+} //cmaes
+} // optimizer
+#endif
