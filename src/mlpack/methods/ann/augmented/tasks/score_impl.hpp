@@ -30,7 +30,6 @@ double SequencePrecision(arma::field<eT> trueOutputs,
 
   for (size_t i = 0; i < testSize; i++)
   {
-
     if (arma::approx_equal(
           trueOutputs.at(i), predOutputs.at(i),
           "absdiff", 1e-4))
