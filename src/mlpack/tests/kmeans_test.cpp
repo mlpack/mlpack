@@ -713,7 +713,8 @@ BOOST_AUTO_TEST_CASE(ParallelKMeansSimpleTest)
   // This test was originally written to use RandomPartition, and is left that
   // way because RandomPartition gives better initializations here.
   // Use the parallel implementation of LloydStepType
-  KMeans<EuclideanDistance, RandomPartition, ParallelNaiveKMeans> kmeans;
+  KMeans<EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
+         ParallelNaiveKMeans> kmeans;
 
   arma::Row<size_t> assignments;
   kmeans.Cluster((arma::mat) trans(kMeansData), 3, assignments);
