@@ -63,10 +63,12 @@ GRU<InputDataType, OutputDataType>::GRU(
   network.push_back(hiddenStateModule);
   network.push_back(forgetGateModule);
 
-  prevOutput = arma::zeros<arma::mat>(outSize, 1);
   prevError = arma::zeros<arma::mat>(3 * outSize, 1);
 
   outParameter.reserve(rho);
+  outParameter.push_back(arma::zeros<arma::mat>(outSize, 1));
+  
+  prevOutput = outParameter.begin();
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -74,18 +76,13 @@ template<typename eT>
 void GRU<InputDataType, OutputDataType>::Forward(
     arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
-  if (!deterministic)
-  {
-    outParameter.push_back(prevOutput);
-  }
-  
   // Process the input linearly(zt, rt, ot).
   boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
       boost::apply_visitor(outputParameterVisitor, input2GateModule))),
       input2GateModule);
 
   // Process the output(zt, rt) linearly.
-  boost::apply_visitor(ForwardVisitor(std::move(prevOutput), std::move(
+  boost::apply_visitor(ForwardVisitor(std::move(*prevOutput), std::move(
       boost::apply_visitor(outputParameterVisitor, output2GateModule))),
       output2GateModule);
       
@@ -105,7 +102,7 @@ void GRU<InputDataType, OutputDataType>::Forward(
       outputParameterVisitor, forgetGateModule))), forgetGateModule);
       
   arma::mat modInput = (boost::apply_visitor(outputParameterVisitor, 
-      forgetGateModule) % prevOutput);
+      forgetGateModule) % *prevOutput);
       
   // Pass that through the outputHidden2GateModule
   boost::apply_visitor(ForwardVisitor(std::move(modInput), std::move(
@@ -126,19 +123,34 @@ void GRU<InputDataType, OutputDataType>::Forward(
   // Wwhere cmul1 is input gate * prevOutput and
   // cmul2 is (1 - input gate) * hidden gate.
   output = (boost::apply_visitor(outputParameterVisitor, inputGateModule) 
-      % prevOutput) + 
+      % *prevOutput) + 
       ((arma::ones<arma::vec>(outSize) - 
       boost::apply_visitor(outputParameterVisitor, inputGateModule)) % 
       boost::apply_visitor(outputParameterVisitor,
       hiddenStateModule));
-      
-  prevOutput = output;
 
   forwardStep++;
   if (forwardStep == rho)
   {
     forwardStep = 0;
-    prevOutput.zeros();
+    if (!deterministic) 
+    {
+      outParameter.push_back(arma::zeros<arma::mat>(outSize, 1));
+      prevOutput = --outParameter.end();
+    }
+    else
+    {
+      *prevOutput = arma::zeros<arma::mat>(outSize, 1);
+    }
+  }
+  else if (!deterministic)
+  {
+    outParameter.push_back(output);
+    prevOutput = --outParameter.end();
+  }
+  else 
+  {
+    *prevOutput = output;
   }
 }
 
@@ -154,7 +166,7 @@ void GRU<InputDataType, OutputDataType>::Backward(
   
   // Delta zt.
   arma::mat d_zt = gy % (outParameter[outParameter.size() -
-      backwardStep - 1] - boost::apply_visitor(outputParameterVisitor,
+      backwardStep - 2] - boost::apply_visitor(outputParameterVisitor,
       hiddenStateModule));
       
   // Delta ot.
@@ -182,7 +194,7 @@ void GRU<InputDataType, OutputDataType>::Backward(
       
   // Delta rt.
   arma::mat d_rt = boost::apply_visitor(deltaVisitor, outputHidden2GateModule) %
-      outParameter[outParameter.size() - backwardStep - 1];
+      outParameter[outParameter.size() - backwardStep - 2];
       
   // Delta of forget gate.
   boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
@@ -244,12 +256,12 @@ void GRU<InputDataType, OutputDataType>::Gradient(
       input2GateModule);
 
   boost::apply_visitor(GradientVisitor(
-      std::move(outParameter[outParameter.size() - gradientStep - 1]),
+      std::move(outParameter[outParameter.size() - gradientStep - 2]),
       std::move(prevError.submat(0, 0, 2 * outSize - 1, 0))), 
       output2GateModule);
       
   boost::apply_visitor(GradientVisitor(
-      std::move(outParameter[outParameter.size() - gradientStep - 1]),
+      std::move(outParameter[outParameter.size() - gradientStep - 2]),
       std::move(prevError.submat(2 * outSize, 0, 3 * outSize - 1, 0))), 
       outputHidden2GateModule);
 
@@ -258,6 +270,8 @@ void GRU<InputDataType, OutputDataType>::Gradient(
   {
     gradientStep = 0;
     outParameter.clear();
+    outParameter.push_back(arma::zeros<arma::mat>(outSize, 1));
+    prevOutput = outParameter.begin();
   }
 }
 

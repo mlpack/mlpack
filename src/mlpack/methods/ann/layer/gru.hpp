@@ -153,7 +153,7 @@ class GRU
   OutputDataType weights;
 
   //! Locally-stored previous output.
-  arma::mat prevOutput;
+  //arma::mat prevOutput;
 
   //! Locally-stored input 2 gate module.
   LayerTypes input2GateModule;
@@ -193,6 +193,8 @@ class GRU
 
   //! Locally-stored output parameters.
   std::vector<arma::mat> outParameter;
+  
+  std::vector<arma::mat>::iterator prevOutput;
 
   //! Locally-stored previous error.
   arma::mat prevError;
