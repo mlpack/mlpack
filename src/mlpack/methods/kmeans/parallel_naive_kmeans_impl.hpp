@@ -1,10 +1,12 @@
 /**
- * @file naive_kmeans_impl.hpp
+ * @file parallel_naive_kmeans_impl.hpp
  * @author Ryan Curtin
+ * @author Shikhar Bhardwaj
  *
  * An implementation of a naively-implemented step of the Lloyd algorithm for
- * k-means clustering.  This may still be the best choice for small datasets or
- * datasets with very high dimensionality.
+ * k-means clustering, using OpenMP for parallelization over multiple threads.
+ * This may still be the best choice for small datasets or datasets with very
+ * high dimensionality.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -21,8 +23,8 @@ namespace mlpack {
 namespace kmeans {
 
 template<typename MetricType, typename MatType>
-ParallelNaiveKMeans<MetricType, MatType>::ParallelNaiveKMeans(const MatType& dataset,
-                                              MetricType& metric) :
+ParallelNaiveKMeans<MetricType, MatType>::ParallelNaiveKMeans(
+    const MatType& dataset, MetricType& metric) :
     dataset(dataset),
     metric(metric),
     distanceCalculations(0)
@@ -30,9 +32,10 @@ ParallelNaiveKMeans<MetricType, MatType>::ParallelNaiveKMeans(const MatType& dat
 
 // Run a single iteration.
 template<typename MetricType, typename MatType>
-double ParallelNaiveKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
-                                                 arma::mat& newCentroids,
-                                                 arma::Col<size_t>& counts)
+double ParallelNaiveKMeans<MetricType, MatType>::Iterate(
+                                                  const arma::mat& centroids,
+                                                  arma::mat& newCentroids,
+                                                  arma::Col<size_t>& counts)
 {
   newCentroids.zeros(centroids.n_rows, centroids.n_cols);
   counts.zeros(centroids.n_cols);
@@ -41,12 +44,21 @@ double ParallelNaiveKMeans<MetricType, MatType>::Iterate(const arma::mat& centro
   // Computed in parallel over the complete dataset
   #pragma omp parallel
   {
+    // The current state of the K-means is private for each thread
     arma::mat localCentroids(centroids.n_rows, centroids.n_cols,
                              arma::fill::zeros);
     arma::Col<size_t> localCounts(centroids.n_cols, arma::fill::zeros);
 
-    #pragma omp for
-    for (size_t i = 0; i < dataset.n_cols; i++)
+#ifdef _WIN32
+  // Tiny workaround: Visual Studio only implements OpenMP 2.0, which doesn't
+  // support unsigned loop variables. If we're building for Visual Studio, use
+  // the intmax_t type instead.
+  #pragma omp for
+    for (intmax_t i = 0; i < (intmax_t) dataset.n_cols; ++i)
+#else
+  #pragma omp for
+    for (size_t i = 0; i < dataset.n_cols; ++i)
+#endif
     {
       // Find the closest centroid to this point.
       double minDistance = std::numeric_limits<double>::infinity();
@@ -69,6 +81,7 @@ double ParallelNaiveKMeans<MetricType, MatType>::Iterate(const arma::mat& centro
       localCentroids.col(closestCluster) += arma::vec(dataset.col(i));
       localCounts(closestCluster)++;
     }
+    // Combine calculated state from each thread
     #pragma omp critical
     {
       newCentroids += localCentroids;
