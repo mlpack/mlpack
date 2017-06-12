@@ -11,8 +11,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_KMEANS_NAIVE_KMEANS_HPP
-#define MLPACK_METHODS_KMEANS_NAIVE_KMEANS_HPP
+#ifndef MLPACK_METHODS_PARALLEL_KMEANS_NAIVE_KMEANS_HPP
+#define MLPACK_METHODS_PARALLEL_KMEANS_NAIVE_KMEANS_HPP
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
@@ -28,16 +28,16 @@ namespace kmeans {
  * @param MatType Matrix type (arma::mat or arma::sp_mat).
  */
 template<typename MetricType, typename MatType>
-class NaiveKMeans
+class ParallelNaiveKMeans
 {
  public:
   /**
-   * Construct the NaiveKMeans object with the given dataset and metric.
+   * Construct the ParallelNaiveKMeans object with the given dataset and metric.
    *
    * @param dataset Dataset.
    * @param metric Instantiated metric.
    */
-  NaiveKMeans(const MatType& dataset, MetricType& metric);
+  ParallelNaiveKMeans(const MatType& dataset, MetricType& metric);
 
   /**
    * Run a single iteration of the Lloyd algorithm, updating the given centroids
@@ -69,6 +69,6 @@ class NaiveKMeans
 } // namespace mlpack
 
 // Include implementation.
-#include "naive_kmeans_impl.hpp"
+#include "parallel_naive_kmeans_impl.hpp"
 
 #endif
