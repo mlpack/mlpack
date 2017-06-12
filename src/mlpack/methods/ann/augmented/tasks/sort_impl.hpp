@@ -18,8 +18,6 @@
 #include <vector>
 #include <algorithm>
 #include <utility>
-#include <cstdlib>
-#include <ctime>
 
 using std::vector;
 using std::pair;
@@ -43,21 +41,21 @@ void SortTask::Generate(arma::field<arma::mat>& input,
     // Random uniform length from [2..maxLength]
     size_t size = RandInt(2, maxLength+1);
     input(i) = arma::randi<arma::mat>(bitLen, size, arma::distr_param(0, 1));
-    arma::mat item_ans = arma::mat(bitLen, size);
-    vector<pair<int, int>> vals(size);
+    arma::mat itemAns = arma::mat(bitLen, size);
+    arma::colvec vals(size);
     for (size_t j = 0; j < size; ++j) {
       int val = 0;
       for (size_t k = 0; k < bitLen; ++k) {
         val <<= 1;
         val += input(i).at(k, j);
       }
-      vals[j] = make_pair(val, j);
+      vals[j] = val;
     }
-    sort(vals.begin(), vals.end());
+    arma::uvec indices = arma::sort_index(vals);
     for (size_t j = 0; j < size; ++j) {
-      item_ans.col(j) = input(i).col(vals[j].second);
+      itemAns.col(j) = input(i).col(indices.at(j));
     }
-    labels(i) = item_ans;
+    labels(i) = itemAns;
   }
 }
 
