@@ -37,7 +37,8 @@ using namespace mlpack::ann::augmented::scorers;
 using namespace mlpack::ann;
 using namespace mlpack::optimization;
 
-// The dummy model that simply copies the sequence the required number of times
+// The dummy model that simply copies the sequence
+// the required number of times
 // (yes, no ML here, we're unit testing :)
 class HardCodedCopyModel {
  public:
@@ -197,7 +198,8 @@ BOOST_AUTO_TEST_CASE(CopyTaskTest)
       arma::field<arma::colvec> predResponse;
       model.Predict(testPredictor, predResponse);
       // A single failure is a failure.
-      if (SequencePrecision(testResponse, predResponse) < 0.99) {
+      if (SequencePrecision<arma::colvec>(
+            testResponse, predResponse) < 0.99) {
         ok = false;
         break;
       }
@@ -221,7 +223,7 @@ BOOST_AUTO_TEST_CASE(SortTaskTest) {
     arma::field<arma::mat> predResponse;
     model.Predict(testPredictor, predResponse);
     // A single failure is a failure.
-    if (SequencePrecision(testResponse, predResponse) < 0.99) {
+    if (SequencePrecision<arma::mat>(testResponse, predResponse) < 0.99) {
       ok = false;
       break;
     }
@@ -243,7 +245,7 @@ BOOST_AUTO_TEST_CASE(AddTaskTest) {
     arma::field<arma::colvec> predResponse;
     model.Predict(testPredictor, predResponse);
     // A single failure is a failure.
-    if (SequencePrecision(testResponse, predResponse) < 0.99) {
+    if (SequencePrecision<arma::colvec>(testResponse, predResponse) < 0.99) {
       ok = false;
       break;
     }
@@ -251,61 +253,5 @@ BOOST_AUTO_TEST_CASE(AddTaskTest) {
 
   BOOST_REQUIRE(ok);
 }
-
-/*
-BOOST_AUTO_TEST_CASE(LSTMBaselineTest) {
-  bool ok = true;
-
-  Add<> add(4);
-  Linear<> lookup(1, 4);
-  SigmoidLayer<> sigmoidLayer;
-  Linear<> linear(4, 4);
-  Recurrent<> recurrent(add, lookup, linear, sigmoidLayer, 10);
-
-  RNN<> model(10);
-  model.Add<IdentityLayer<> >();
-  model.Add(recurrent);
-  model.Add<Linear<> >(4, 1);
-
-  StandardSGD<decltype(model)> opt(model, 0.1, 1000, -100);
-
-  int maxLen = 3, nRepeats = 1;
-  CopyTask task(maxLen, nRepeats);
-  arma::field<arma::irowvec> trainPredictor, trainResponse;
-  task.Generate(trainPredictor, trainResponse, 8);
-  arma::field<arma::irowvec> testPredictor, testResponse;
-  task.Generate(testPredictor, testResponse, 8);
-  for (size_t epoch = 0; epoch < 100; ++epoch) {
-    for (size_t example = 0; example < trainPredictor.n_elem; ++example) {
-      std::cerr << "In the loop.\n";
-      arma::imat predictor(1, trainPredictor.at(example).n_elem);
-      predictor.row(0) = trainPredictor.at(example);
-      std::cerr << "Recorded train data.\n";
-      arma::imat response(1, trainResponse.at(example).n_elem);
-      response.row(0) = trainResponse.at(example);
-      std::cerr << "Recorded test data.\n";
-      arma::mat floatPred = arma::conv_to<arma::mat>::from(predictor);
-      arma::mat floatResp = arma::conv_to<arma::mat>::from(response);
-      model.Train(floatPred, floatResp, opt);
-    }
-    std::cerr << "Executed epoch " << epoch+1 << "\n";
-  }
-
-  for (size_t example = 0; example < testPredictor.n_elem; ++example) {
-    arma::imat predictor(1, testPredictor.at(example).n_elem);
-    predictor.row(0) = testPredictor.at(example);
-    arma::imat response(1, testResponse.at(example).n_elem);
-    response.row(0) = testResponse.at(example);
-    arma::imat predResponse(1, testResponse.at(example).n_elem);
-    arma::mat floatPred = arma::conv_to<arma::mat>::from(predictor);
-    arma::mat floatPredResp = arma::conv_to<arma::mat>::from(predResponse);
-    model.Predict(floatPred, floatPredResp);
-    std::cerr << floatPred << " -> " << floatPredResp
-              << "\nGround truth: " << response << "\n";
-  }
-
-  BOOST_REQUIRE(ok);
-}
-*/
 
 BOOST_AUTO_TEST_SUITE_END();

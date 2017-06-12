@@ -40,9 +40,8 @@ void CopyTask::Generate(arma::field<arma::colvec>& input,
     // Random uniform length from [2..maxLength]
     size_t size = RandInt(2, maxLength+1);
     input(i) = arma::randi<arma::colvec>(size, arma::distr_param(0, 1));
-    arma::colvec item_ans = arma::conv_to<arma::colvec>::from(
+    labels(i) = arma::conv_to<arma::colvec>::from(
       arma::repmat(input(i), nRepeats, 1));
-    labels(i) = item_ans;
   }
 }
 

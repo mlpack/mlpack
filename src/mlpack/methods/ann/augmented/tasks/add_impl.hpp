@@ -67,7 +67,7 @@ void AddTask::Generate(arma::field<arma::colvec>& input,
       binary_seq.push_back(tot & 1);
       tot >>= 1;
     }
-    auto tot_len = binary_seq.size();
+    size_t tot_len = binary_seq.size();
     labels(i) = arma::colvec(tot_len);
     for (size_t j = 0; j < tot_len; ++j) {
       labels(i).at(j) = binary_seq[tot_len-j-1];
