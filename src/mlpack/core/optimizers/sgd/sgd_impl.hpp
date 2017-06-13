@@ -42,6 +42,7 @@ SGD<DecomposableFunctionType, UpdatePolicyType>::SGD(
 //! Optimize the function (minimize).
 template<typename DecomposableFunctionType, typename UpdatePolicyType>
 double SGD<DecomposableFunctionType, UpdatePolicyType>::Optimize(
+    DecomposableFunctionType& function,
     arma::mat& iterate)
 {
   // Find the number of functions to use.
