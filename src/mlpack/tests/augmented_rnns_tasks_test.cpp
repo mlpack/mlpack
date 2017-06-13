@@ -291,7 +291,7 @@ BOOST_AUTO_TEST_CASE(LSTMBaselineTest)
       arma::mat response(trainResponse.at(example).n_elem, 1);
       response.col(0) = trainResponse.at(example);
 
-      // TODO How to change model's rho? 
+      // TODO How to change model's rho?
 
       /*if (epoch == 0) {
         std::cout << "Input:\n";
@@ -305,7 +305,7 @@ BOOST_AUTO_TEST_CASE(LSTMBaselineTest)
   }
 
   // Evaluate the model
-  //std::cout << "Evaluating stage.\n";
+  // std::cout << "Evaluating stage.\n";
   arma::field<arma::colvec> modelOutput(testSize);
   for (size_t example = 0; example < testSize; ++example) {
     arma::colvec softOutput;
