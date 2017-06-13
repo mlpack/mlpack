@@ -122,6 +122,13 @@ add_custom_command(TARGET mlpack_test
   WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
 )
 
+# The list of long running parallel tests
+set(parallel_tests
+  "SdpPrimalDualTest;SVDIncrementalTest;SVDBatchTest;"
+  "LocalCoordinateCodingTest;FeedForwardNetworkTest;SparseAutoencoderTest;"
+  "GMMTest;CFTest;ConvolutionalNetworkTest;HMMTest;LARSTest;"
+  "LogisticRegressionTest")
+
 # Add tests to the testing framework
 # Get the list of sources from the test target
 get_target_property(test_sources mlpack_test SOURCES)
@@ -137,7 +144,7 @@ foreach(test_file ${test_sources})
     string(LENGTH ${test_name} end_idx)
     math(EXPR end_idx "${end_idx} - 2")
     string(SUBSTRING ${test_name} "1" ${end_idx} test)
-    # Add the test to the testing tool, test is the names of the test suite
+    # Add the test to the testing tool, test is the name of the test suite
     add_test(NAME ${test} COMMAND mlpack_test -t ${test} WORKING_DIRECTORY
       ${CMAKE_BINARY_DIR})
   endif()
@@ -153,3 +160,6 @@ foreach(test_file ${test_sources})
       ${CMAKE_BINARY_DIR})
   endif()
 endforeach()
+
+# Use RUN_SERIAL for long running parallel tests
+set_tests_properties(${parallel_tests} PROPERTIES RUN_SERIAL TRUE)
