@@ -60,47 +60,29 @@ HAS_METHOD_FORM(SINGLE_ARG(template M<arma::mat, arma::rowvec>),
  */
 BOOST_AUTO_TEST_CASE(HasMethodFormWithNAdditionalArgsTest)
 {
-  static_assert(!HasM<A, MForm1>::WithNAdditionalArgs<0>::value,
-      "value should be false");
-  static_assert(HasM<A, MForm1>::WithNAdditionalArgs<1>::value,
-      "value should be true");
-  static_assert(HasM<A, MForm1>::WithNAdditionalArgs<2>::value,
-      "value should be true");
+  BOOST_REQUIRE((!HasM<A, MForm1>::WithNAdditionalArgs<0>::value));
+  BOOST_REQUIRE((HasM<A, MForm1>::WithNAdditionalArgs<1>::value));
+  BOOST_REQUIRE((HasM<A, MForm1>::WithNAdditionalArgs<2>::value));
 
-  static_assert(!HasM<B, MForm1>::WithNAdditionalArgs<0>::value,
-      "value should be false");
-  static_assert(!HasM<B, MForm1>::WithNAdditionalArgs<1>::value,
-      "value should be false");
-  static_assert(!HasM<B, MForm1>::WithNAdditionalArgs<2>::value,
-      "value should be false");
+  BOOST_REQUIRE((!HasM<B, MForm1>::WithNAdditionalArgs<0>::value));
+  BOOST_REQUIRE((!HasM<B, MForm1>::WithNAdditionalArgs<1>::value));
+  BOOST_REQUIRE((!HasM<B, MForm1>::WithNAdditionalArgs<2>::value));
 
-  static_assert(!HasM<A, MForm2>::WithNAdditionalArgs<0>::value,
-      "value should be false");
-  static_assert(!HasM<A, MForm2>::WithNAdditionalArgs<1>::value,
-      "value should be false");
-  static_assert(!HasM<A, MForm2>::WithNAdditionalArgs<2>::value,
-      "value should be false");
+  BOOST_REQUIRE((!HasM<A, MForm2>::WithNAdditionalArgs<0>::value));
+  BOOST_REQUIRE((!HasM<A, MForm2>::WithNAdditionalArgs<1>::value));
+  BOOST_REQUIRE((!HasM<A, MForm2>::WithNAdditionalArgs<2>::value));
 
-  static_assert(HasM<B, MForm2>::WithNAdditionalArgs<0>::value,
-      "value should be true");
-  static_assert(!HasM<B, MForm2>::WithNAdditionalArgs<1>::value,
-      "value should be false");
-  static_assert(!HasM<B, MForm2>::WithNAdditionalArgs<2>::value,
-      "value should be false");
+  BOOST_REQUIRE((HasM<B, MForm2>::WithNAdditionalArgs<0>::value));
+  BOOST_REQUIRE((!HasM<B, MForm2>::WithNAdditionalArgs<1>::value));
+  BOOST_REQUIRE((!HasM<B, MForm2>::WithNAdditionalArgs<2>::value));
 
-  static_assert(!HasTemplatedM<B, MForm2>::WithNAdditionalArgs<0>::value,
-      "value should be false");
-  static_assert(HasTemplatedM<B, MForm2>::WithNAdditionalArgs<1>::value,
-      "value should be true");
-  static_assert(!HasTemplatedM<B, MForm2>::WithNAdditionalArgs<2>::value,
-      "value should be false");
+  BOOST_REQUIRE((!HasTemplatedM<B, MForm2>::WithNAdditionalArgs<0>::value));
+  BOOST_REQUIRE((HasTemplatedM<B, MForm2>::WithNAdditionalArgs<1>::value));
+  BOOST_REQUIRE((!HasTemplatedM<B, MForm2>::WithNAdditionalArgs<2>::value));
 
-  static_assert(!HasVeryTemplatedM<B, MForm3>::WithNAdditionalArgs<0>::value,
-      "value should be false");
-  static_assert(!HasVeryTemplatedM<B, MForm3>::WithNAdditionalArgs<1>::value,
-      "value should be false");
-  static_assert(HasVeryTemplatedM<B, MForm3>::WithNAdditionalArgs<2>::value,
-      "value should be true");
+  BOOST_REQUIRE((!HasVeryTemplatedM<B, MForm3>::WithNAdditionalArgs<0>::value));
+  BOOST_REQUIRE((!HasVeryTemplatedM<B, MForm3>::WithNAdditionalArgs<1>::value));
+  BOOST_REQUIRE((HasVeryTemplatedM<B, MForm3>::WithNAdditionalArgs<2>::value));
 }
 
 /*
@@ -108,17 +90,17 @@ BOOST_AUTO_TEST_CASE(HasMethodFormWithNAdditionalArgsTest)
  */
 BOOST_AUTO_TEST_CASE(HasMethodFormTest)
 {
-  static_assert(HasM<A, MForm1>::value, "value should be true");
+  BOOST_REQUIRE((HasM<A, MForm1>::value));
 
-  static_assert(!HasM<B, MForm1>::value, "value should be false");
+  BOOST_REQUIRE((!HasM<B, MForm1>::value));
 
-  static_assert(!HasM<A, MForm2>::value, "value should be false");
+  BOOST_REQUIRE((!HasM<A, MForm2>::value));
 
-  static_assert(HasM<B, MForm2>::value, "value should be true");
+  BOOST_REQUIRE((HasM<B, MForm2>::value));
 
-  static_assert(HasTemplatedM<B, MForm2>::value, "value should be true");
+  BOOST_REQUIRE((HasTemplatedM<B, MForm2>::value));
 
-  static_assert(HasVeryTemplatedM<B, MForm3>::value, "value should be true");
+  BOOST_REQUIRE((HasVeryTemplatedM<B, MForm3>::value));
 }
 
 BOOST_AUTO_TEST_SUITE_END();
