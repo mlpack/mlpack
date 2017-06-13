@@ -158,18 +158,18 @@ private:
      arma::mat eigMat;
 
      arma::mat cov(params.N,params.N);
-     for(int i=0; i<params.N; i++)
-      for(int j=0; j<=i; j++) cov(i,j)=cov(j,i)=C[i][j];
+     for (int i=0; i<params.N; i++)
+      for (int j=0; j<=i; j++) cov(i,j)=cov(j,i)=C[i][j];
 
 
-   if(!arma::eig_sym(eV, eigMat, cov))
+   if (!arma::eig_sym(eV, eigMat, cov))
         assert("eigen decomposition failed in neuro_cmaes::eigen()");
 
-     for(int i=0; i<params.N; i++)
+     for (int i=0; i<params.N; i++)
      {
       diag[i]=eV(i);
 
-        for(int j=0; j<params.N; j++)
+        for (int j=0; j<params.N; j++)
         Q[i][j]=eigMat(i,j);
       
      }
@@ -185,10 +185,10 @@ private:
   {
     // compute Q diag Q^T and Q Q^T to check
     int res = 0;
-    for(int i = 0; i < params.N; ++i)
-      for(int j = 0; j < params.N; ++j) {
+    for (int i = 0; i < params.N; ++i)
+      for (int j = 0; j < params.N; ++j) {
         T cc = 0., dd = 0.;
-        for(int k = 0; k < params.N; ++k)
+        for (int k = 0; k < params.N; ++k)
         {
           cc += diag[k]*Q[i][k]*Q[j][k];
           dd += Q[i][k]*Q[j][k];
@@ -196,21 +196,21 @@ private:
         // check here, is the normalization the right one?
         const bool cond1 = fabs(cc - C[i > j ? i : j][i > j ? j : i]) / sqrt(C[i][i]* C[j][j]) > T(1e-10);
         const bool cond2 = fabs(cc - C[i > j ? i : j][i > j ? j : i]) > T(3e-14);
-        if(cond1 && cond2)
+        if (cond1 && cond2)
         {
           std::stringstream s;
           s << i << " " << j << ": " << cc << " " << C[i > j ? i : j][i > j ? j : i]
               << ", " << cc - C[i > j ? i : j][i > j ? j : i];
-          if(params.logWarnings)
+          if (params.logWarnings)
             params.logStream << "eigen(): imprecise result detected " << s.str()
                 << std::endl;
           ++res;
         }
-        if(std::fabs(dd - (i == j)) > T(1e-10))
+        if (std::fabs(dd - (i == j)) > T(1e-10))
         {
           std::stringstream s;
           s << i << " " << j << " " << dd;
-          if(params.logWarnings)
+          if (params.logWarnings)
             params.logStream << "eigen(): imprecise result detected (Q not orthog.)"
                 << s.str() << std::endl;
           ++res;
@@ -223,11 +223,11 @@ private:
   void sortIndex(const T* rgFunVal, int* iindex, int n)
   {
     int i, j;
-    for(i = 1, iindex[0] = 0; i < n; ++i)
+    for (i = 1, iindex[0] = 0; i < n; ++i)
     {
-      for(j = i; j > 0; --j)
+      for (j = i; j > 0; --j)
       {
-        if(rgFunVal[iindex[j - 1]] < rgFunVal[i])
+        if (rgFunVal[iindex[j - 1]] < rgFunVal[i])
           break;
         iindex[j] = iindex[j - 1];
       }
@@ -240,7 +240,7 @@ private:
     const int N = params.N;
     bool diag = params.diagonalCov == 1 || params.diagonalCov >= gen;
 
-    if(params.ccov != T(0))
+    if (params.ccov != T(0))
     {
       // definitions for speeding up inner-most loop
       const T mucovinv = T(1)/params.mucov;
@@ -254,12 +254,12 @@ private:
       eigensysIsUptodate = false;
 
       // update covariance matrix
-      for(int i = 0; i < N; ++i)
-        for(int j = diag ? i : 0; j <= i; ++j)
+      for (int i = 0; i < N; ++i)
+        for (int j = diag ? i : 0; j <= i; ++j)
         {
           T& Cij = C[i][j];
           Cij = onemccov1ccovmu*Cij + ccov1 * (pc[i]*pc[j] + longFactor*Cij);
-          for(int k = 0; k < params.mu; ++k)
+          for (int k = 0; k < params.mu; ++k)
           { // additional rank mu update
             const T* rgrgxindexk = population[index[k]];
             Cij += ccovmu*params.weights[k] * (rgrgxindexk[i] - xold[i])
@@ -268,12 +268,12 @@ private:
         }
       // update maximal and minimal diagonal value
       maxdiagC = mindiagC = C[0][0];
-      for(int i = 1; i < N; ++i)
+      for (int i = 1; i < N; ++i)
       {
         const T& Cii = C[i][i];
-        if(maxdiagC < Cii)
+        if (maxdiagC < Cii)
           maxdiagC = Cii;
-        else if(mindiagC > Cii)
+        else if (mindiagC > Cii)
           mindiagC = Cii;
       }
     }
@@ -284,11 +284,11 @@ private:
    */
   void testMinStdDevs(void)
   {
-    if(!this->params.rgDiffMinChange)
+    if (!this->params.rgDiffMinChange)
       return;
 
-    for(int i = 0; i < params.N; ++i)
-      while(this->sigma*std::sqrt(this->C[i][i]) < this->params.rgDiffMinChange[i])
+    for (int i = 0; i < params.N; ++i)
+      while (this->sigma*std::sqrt(this->C[i][i]) < this->params.rgDiffMinChange[i])
         this->sigma *= std::exp(T(0.05) + this->params.cs / this->params.damps);
   }
 
@@ -299,12 +299,12 @@ private:
    */
   void addMutation(T* x, T eps = 1.0)
   {
-    for(int i = 0; i < params.N; ++i)
+    for (int i = 0; i < params.N; ++i)
       tempRandom[i] = rgD[i]*rand.gauss();
-    for(int i = 0; i < params.N; ++i)
+    for (int i = 0; i < params.N; ++i)
     {
       T sum = 0.0;
-      for(int j = 0; j < params.N; ++j)
+      for (int j = 0; j < params.N; ++j)
         sum += B[i][j]*tempRandom[j];
       x[i] = xmean[i] + eps*sigma*sum;
     }
@@ -358,7 +358,7 @@ public:
     stopMessage = "";
 
     T trace(0);
-    for(int i = 0; i < params.N; ++i)
+    for (int i = 0; i < params.N; ++i)
       trace += params.rgInitialStds[i]*params.rgInitialStds[i];
     sigma = std::sqrt(trace/params.N);
 
@@ -368,8 +368,8 @@ public:
     genOfEigensysUpdate = 0;
 
     T dtest;
-    for(dtest = T(1); dtest && dtest < T(1.1)*dtest; dtest *= T(2))
-      if(dtest == dtest + T(1))
+    for (dtest = T(1); dtest && dtest < T(1.1)*dtest; dtest *= T(2))
+      if (dtest == dtest + T(1))
         break;
     dMaxSignifKond = dtest / T(1000);
 
@@ -407,37 +407,37 @@ public:
     funcValueHistory[0] = (T) historySize;
     funcValueHistory++;
 
-    for(int i = 0; i < params.N; ++i)
+    for (int i = 0; i < params.N; ++i)
     {
       C[i] = new T[i+1];
       B[i] = new T[params.N];
     }
     index = new int[params.lambda];
-    for(int i = 0; i < params.lambda; ++i)
+    for (int i = 0; i < params.lambda; ++i)
         index[i] = i;
     population = new T*[params.lambda];
-    for(int i = 0; i < params.lambda; ++i)
+    for (int i = 0; i < params.lambda; ++i)
     {
       population[i] = new T[params.N+2];
       population[i][0] = params.N;
       population[i]++;
-      for(int j = 0; j < params.N; j++)
+      for (int j = 0; j < params.N; j++)
         population[i][j] = 0.0;
     }
 
-    for(int i = 0; i < params.lambda; i++)
+    for (int i = 0; i < params.lambda; i++)
     {
       functionValues[i] = std::numeric_limits<T>::max();
     }
-    for(int i = 0; i < historySize; i++)
+    for (int i = 0; i < historySize; i++)
     {
       funcValueHistory[i] = std::numeric_limits<T>::max();
     }
-    for(int i = 0; i < params.N; ++i)
-      for(int j = 0; j < i; ++j)
+    for (int i = 0; i < params.N; ++i)
+      for (int j = 0; j < i; ++j)
         C[i][j] = B[i][j] = B[j][i] = 0.;
 
-    for(int i = 0; i < params.N; ++i)
+    for (int i = 0; i < params.N; ++i)
     {
       B[i][i] = T(1);
       C[i][i] = rgD[i] = params.rgInitialStds[i]*std::sqrt(params.N/trace);
@@ -450,15 +450,15 @@ public:
     maxEW = maxEW*maxEW;
 
     maxdiagC = C[0][0];
-    for(int i = 1; i < params.N; ++i) if(maxdiagC < C[i][i]) maxdiagC = C[i][i];
+    for (int i = 1; i < params.N; ++i) if (maxdiagC < C[i][i]) maxdiagC = C[i][i];
     mindiagC = C[0][0];
-    for(int i = 1; i < params.N; ++i) if(mindiagC > C[i][i]) mindiagC = C[i][i];
+    for (int i = 1; i < params.N; ++i) if (mindiagC > C[i][i]) mindiagC = C[i][i];
 
-    for(int i = 0; i < params.N; ++i)
+    for (int i = 0; i < params.N; ++i)
       xmean[i] = xold[i] = params.xstart[i];
     
-    if(params.typicalXcase)
-      for(int i = 0; i < params.N; ++i)
+    if (params.typicalXcase)
+      for (int i = 0; i < params.N; ++i)
         xmean[i] += sigma*rgD[i]*rand.gauss();
 
     return publicFitness;
@@ -485,13 +485,13 @@ public:
     bool diag = params.diagonalCov == 1 || params.diagonalCov >= gen;
 
     // calculate eigensystem
-    if(!eigensysIsUptodate)
+    if (!eigensysIsUptodate)
     {
-      if(!diag)
+      if (!diag)
         updateEigensystem(false);
       else
       {
-        for(int i = 0; i < params.N; ++i)
+        for (int i = 0; i < params.N; ++i)
           rgD[i] = std::sqrt(C[i][i]);
         minEW = minElement(rgD, params.N);
         minEW *= minEW;
@@ -503,25 +503,25 @@ public:
 
     testMinStdDevs();
 
-    for(int iNk = 0; iNk < params.lambda; ++iNk)
+    for (int iNk = 0; iNk < params.lambda; ++iNk)
     { // generate scaled random vector D*z
       T* rgrgxink = population[iNk];
-      for(int i = 0; i < params.N; ++i)
-        if(diag)
+      for (int i = 0; i < params.N; ++i)
+        if (diag)
           rgrgxink[i] = xmean[i] + sigma*rgD[i]*rand.gauss();
         else
           tempRandom[i] = rgD[i]*rand.gauss();
-      if(!diag)
-        for(int i = 0; i < params.N; ++i) // add mutation sigma*B*(D*z)
+      if (!diag)
+        for (int i = 0; i < params.N; ++i) // add mutation sigma*B*(D*z)
         {
           T sum = 0.0;
-          for(int j = 0; j < params.N; ++j)
+          for (int j = 0; j < params.N; ++j)
             sum += B[i][j]*tempRandom[j];
           rgrgxink[i] = xmean[i] + sigma*sum;
         }
     }
 
-    if(state == UPDATED || gen == 0)
+    if (state == UPDATED || gen == 0)
       ++gen;
     state = SAMPLED;
 
@@ -563,7 +563,7 @@ public:
    */
   T* sampleSingleInto(T* x)
   {
-    if(!x)
+    if (!x)
       x = new T[params.N];
     addMutation(x);
     return x;
@@ -600,7 +600,7 @@ public:
    */
   T* perturbSolutionInto(T* x, T const* pxmean, T eps)
   {
-    if(!x)
+    if (!x)
       x = new T[params.N];
     assert(pxmean && "perturbSolutionInto(): pxmean was not given");
     addMutation(x, eps);
@@ -623,19 +623,19 @@ public:
           "samplePopulation() before update can take place.");
     assert(fitnessValues && "updateDistribution(): No fitness function value array input.");
 
-    if(state == SAMPLED) // function values are delivered here
+    if (state == SAMPLED) // function values are delivered here
       countevals += params.lambda;
     else std::cout<<  "updateDistribution(): unexpected state" << std::endl;
 
     // assign function values
-    for(int i = 0; i < params.lambda; ++i)
+    for (int i = 0; i < params.lambda; ++i)
       population[i][N] = functionValues[i] = fitnessValues[i];
 
     // Generate index
     sortIndex(fitnessValues, index, params.lambda);
 
     // Test if function values are identical, escape flat fitness
-    if(fitnessValues[index[0]] == fitnessValues[index[(int) params.lambda / 2]])
+    if (fitnessValues[index[0]] == fitnessValues[index[(int) params.lambda / 2]])
     {
       sigma *= std::exp(T(0.2) + params.cs / params.damps);
      
@@ -645,13 +645,13 @@ public:
     }
 
     // update function value history
-    for(int i = (int) *(funcValueHistory - 1) - 1; i > 0; --i)
+    for (int i = (int) *(funcValueHistory - 1) - 1; i > 0; --i)
       funcValueHistory[i] = funcValueHistory[i - 1];
     funcValueHistory[0] = fitnessValues[index[0]];
 
     // update xbestever
-    if(xBestEver[N] > population[index[0]][N] || gen == 1)
-      for(int i = 0; i <= N; ++i)
+    if (xBestEver[N] > population[index[0]][N] || gen == 1)
+      for (int i = 0; i <= N; ++i)
       {
         xBestEver[i] = population[index[0]][i];
         xBestEver[N+1] = countevals;
@@ -659,25 +659,25 @@ public:
 
     const T sqrtmueffdivsigma = std::sqrt(params.mueff) / sigma;
     // calculate xmean and rgBDz~N(0,C)
-    for(int i = 0; i < N; ++i)
+    for (int i = 0; i < N; ++i)
     {
       xold[i] = xmean[i];
       xmean[i] = 0.;
-      for(int iNk = 0; iNk < params.mu; ++iNk)
+      for (int iNk = 0; iNk < params.mu; ++iNk)
         xmean[i] += params.weights[iNk]*population[index[iNk]][i];
       BDz[i] = sqrtmueffdivsigma*(xmean[i]-xold[i]);
     }
 
     // calculate z := D^(-1)* B^(-1)* rgBDz into rgdTmp
-    for(int i = 0; i < N; ++i)
+    for (int i = 0; i < N; ++i)
     {
       T sum;
-      if(diag)
+      if (diag)
         sum = BDz[i];
       else
       {
         sum = 0.;
-        for(int j = 0; j < N; ++j)
+        for (int j = 0; j < N; ++j)
           sum += B[j][i]*BDz[j];
       }
       tempRandom[i] = sum/rgD[i];
@@ -689,13 +689,13 @@ public:
     for(int i = 0; i < N; ++i)
     {
       T sum;
-      if(diag)
+      if (diag)
         sum = tempRandom[i];
       else
       {
         sum = T(0);
         T* Bi = B[i];
-        for(int j = 0; j < N; ++j)
+        for (int j = 0; j < N; ++j)
           sum += Bi[j]*tempRandom[j];
       }
       ps[i] = invps*ps[i] + sqrtFactor*sum;
@@ -703,7 +703,7 @@ public:
 
     // calculate norm(ps)^2
     T psxps(0);
-    for(int i = 0; i < N; ++i)
+    for (int i = 0; i < N; ++i)
     {
       const T& rgpsi = ps[i];
       psxps += rgpsi*rgpsi;
@@ -714,7 +714,7 @@ public:
         / chiN < T(1.4) + T(2) / (N + 1);
     const T ccumcovinv = 1.-params.ccumcov;
     const T hsigFactor = hsig*std::sqrt(params.ccumcov*(T(2)-params.ccumcov));
-    for(int i = 0; i < N; ++i)
+    for (int i = 0; i < N; ++i)
       pc[i] = ccumcovinv*pc[i] + hsigFactor*BDz[i];
 
     // update of C
@@ -734,7 +734,7 @@ public:
    */
   T get(GetScalar key)
   {
-    switch(key)
+    switch (key)
     {
       case AxisRatio:
         return maxElement(rgD, params.N) / minElement(rgD, params.N);
@@ -778,11 +778,11 @@ public:
    */
   const T* getPtr(GetVector key)
   {
-    switch(key)
+    switch (key)
     {
       case DiagC:
       {
-        for(int i = 0; i < params.N; ++i)
+        for (int i = 0; i < params.N; ++i)
           output[i] = C[i][i];
         return output;
       }
@@ -790,7 +790,7 @@ public:
         return rgD;
       case StdDev:
       {
-        for(int i = 0; i < params.N; ++i)
+        for (int i = 0; i < params.N; ++i)
           output[i] = sigma*std::sqrt(C[i][i]);
         return output;
       }
@@ -827,9 +827,9 @@ public:
   T* getInto(GetVector key, T* res)
   {
     T const* res0 = getPtr(key);
-    if(!res)
+    if (!res)
       res = new T[params.N];
-    for(int i = 0; i < params.N; ++i)
+    for (int i = 0; i < params.N; ++i)
       res[i] = res0[i];
     return res;
   }
@@ -850,13 +850,13 @@ public:
     int N = params.N;
     std::stringstream message;
 
-    if(stopMessage != "")
+    if (stopMessage != "")
     {
       message << stopMessage << std::endl;
     }
 
     // function value reached
-    if((gen > 1 || state > SAMPLED) && params.stStopFitness.flg &&
+    if ((gen > 1 || state > SAMPLED) && params.stStopFitness.flg &&
         functionValues[index[0]] <= params.stStopFitness.val)
     {
       message << "Fitness: function value " << functionValues[index[0]]
@@ -869,38 +869,38 @@ public:
         std::min(minElement(funcValueHistory, (int) std::min(gen, *(funcValueHistory - 1))),
         minElement(functionValues, params.lambda));
 
-    if(gen > 0 && range <= params.stopTolFun)
+    if (gen > 0 && range <= params.stopTolFun)
     {
       message << "TolFun: function value differences " << range
           << " < stopTolFun=" << params.stopTolFun << std::endl;
     }
 
     // TolFunHist
-    if(gen > *(funcValueHistory - 1))
+    if (gen > *(funcValueHistory - 1))
     {
       range = maxElement(funcValueHistory, (int) *(funcValueHistory - 1))
           - minElement(funcValueHistory, (int) *(funcValueHistory - 1));
-      if(range <= params.stopTolFunHist)
+      if (range <= params.stopTolFunHist)
         message << "TolFunHist: history of function value changes " << range
             << " stopTolFunHist=" << params.stopTolFunHist << std::endl;
     }
 
     // TolX
     int cTemp = 0;
-    for(int i = 0; i < N; ++i)
+    for (int i = 0; i < N; ++i)
     {
       cTemp += (sigma*std::sqrt(C[i][i]) < params.stopTolX) ? 1 : 0;
       cTemp += (sigma*pc[i] < params.stopTolX) ? 1 : 0;
     }
-    if(cTemp == 2*N)
+    if (cTemp == 2*N)
     {
       message << "TolX: object variable changes below " << params.stopTolX << std::endl;
     }
 
     // TolUpX
-    for(int i = 0; i < N; ++i)
+    for (int i = 0; i < N; ++i)
     {
-      if(sigma*std::sqrt(C[i][i]) > params.stopTolUpXFactor*params.rgInitialStds[i])
+      if (sigma*std::sqrt(C[i][i]) > params.stopTolUpXFactor*params.rgInitialStds[i])
       {
         message << "TolUpX: standard deviation increased by more than "
             << params.stopTolUpXFactor << ", larger initial standard deviation recommended."
@@ -910,7 +910,7 @@ public:
     }
 
     // Condition of C greater than dMaxSignifKond
-    if(maxEW >= minEW* dMaxSignifKond)
+    if (maxEW >= minEW* dMaxSignifKond)
     {
       message << "ConditionNumber: maximal condition number " << dMaxSignifKond
           << " reached. maxEW=" << maxEW <<  ",minEW=" << minEW << ",maxdiagC="
@@ -918,17 +918,17 @@ public:
     }
 
     // Principal axis i has no effect on xmean, ie. x == x + 0.1* sigma* rgD[i]* B[i]
-    if(!diag)
+    if (!diag)
     {
-      for(iAchse = 0; iAchse < N; ++iAchse)
+      for (iAchse = 0; iAchse < N; ++iAchse)
       {
         fac = 0.1* sigma* rgD[iAchse];
-        for(iKoo = 0; iKoo < N; ++iKoo)
+        for (iKoo = 0; iKoo < N; ++iKoo)
         {
-          if(xmean[iKoo] != xmean[iKoo] + fac* B[iKoo][iAchse])
+          if (xmean[iKoo] != xmean[iKoo] + fac* B[iKoo][iAchse])
             break;
         }
-        if(iKoo == N)
+        if (iKoo == N)
         {
           message << "NoEffectAxis: standard deviation 0.1*" << (fac / 0.1)
               << " in principal axis " << iAchse << " without effect" << std::endl;
@@ -937,9 +937,9 @@ public:
       }
     }
     // Component of xmean is not changed anymore
-    for(iKoo = 0; iKoo < N; ++iKoo)
+    for (iKoo = 0; iKoo < N; ++iKoo)
     {
-      if(xmean[iKoo] == xmean[iKoo] + sigma*std::sqrt(C[iKoo][iKoo])/T(5))
+      if (xmean[iKoo] == xmean[iKoo] + sigma*std::sqrt(C[iKoo][iKoo])/T(5))
       {
         message << "NoEffectCoordinate: standard deviation 0.2*"
             << (sigma*std::sqrt(C[iKoo][iKoo])) << " in coordinate " << iKoo
@@ -948,12 +948,12 @@ public:
       }
     }
 
-    if(countevals >= params.stopMaxFunEvals)
+    if (countevals >= params.stopMaxFunEvals)
     {
       message << "MaxFunEvals: conducted function evaluations " << countevals
           << " >= " << params.stopMaxFunEvals << std::endl;
     }
-    if(gen >= params.stopMaxIter)
+    if (gen >= params.stopMaxIter)
     {
       message << "MaxIter: number of iterations " << gen << " >= "
           << params.stopMaxIter << std::endl;
@@ -982,12 +982,12 @@ public:
    */
   void updateEigensystem(bool force)
   {
-    if(!force)
+    if (!force)
     {
-      if(eigensysIsUptodate)
+      if (eigensysIsUptodate)
         return;
       // return on modulo generation number
-      if(gen < genOfEigensysUpdate + params.updateCmode.modulo)
+      if (gen < genOfEigensysUpdate + params.updateCmode.modulo)
         return;
     }
 
@@ -997,10 +997,10 @@ public:
     minEW = minElement(rgD, params.N);
     maxEW = maxElement(rgD, params.N);
 
-    if(doCheckEigen) // needs O(n^3)! writes, in case, error message in error file
+    if (doCheckEigen) // needs O(n^3)! writes, in case, error message in error file
       checkEigen(rgD, B);
 
-    for(int i = 0; i < params.N; ++i)
+    for (int i = 0; i < params.N; ++i)
       rgD[i] = std::sqrt(rgD[i]);
 
     eigensysIsUptodate = true;
@@ -1018,7 +1018,7 @@ public:
     assert(state != SAMPLED && "setMean: mean cannot be set inbetween the calls"
         "of samplePopulation and updateDistribution");
 
-    if(newxmean && newxmean != xmean)
+    if (newxmean && newxmean != xmean)
       for(int i = 0; i < params.N; ++i)
         xmean[i] = newxmean[i];
     else
@@ -1028,6 +1028,6 @@ public:
   }
 }; //CLASS
 
-} //cmaes
-} // optimizer
+} //namespace optimizer
+} // Namespace cmaes
 #endif

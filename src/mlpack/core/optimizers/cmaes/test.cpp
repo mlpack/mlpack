@@ -32,9 +32,9 @@ int main(int, char**)
 
   double xstart[dim];
 
-  for(int i=0; i<dim; i++) xstart[i] = 0.5;
+  for (int i=0; i<dim; i++) xstart[i] = 0.5;
   double stddev[dim];
-  for(int i=0; i<dim; i++) stddev[i] = 0.5;
+  for (int i=0; i<dim; i++) stddev[i] = 0.5;
 
   Parameters<double> parameters;
 
@@ -42,7 +42,7 @@ int main(int, char**)
 
   arFunvals = evo.init(parameters);
 
-  while(!evo.testForTermination())
+  while (!evo.testForTermination())
   {
     // Generate lambda new search points, sample population
     pop = evo.samplePopulation();
