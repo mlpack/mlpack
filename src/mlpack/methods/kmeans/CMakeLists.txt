@@ -18,8 +18,6 @@ set(SOURCES
   max_variance_new_cluster_impl.hpp
   naive_kmeans.hpp
   naive_kmeans_impl.hpp
-  parallel_naive_kmeans.hpp
-  parallel_naive_kmeans_impl.hpp
   pelleg_moore_kmeans.hpp
   pelleg_moore_kmeans_impl.hpp
   pelleg_moore_kmeans_rules.hpp

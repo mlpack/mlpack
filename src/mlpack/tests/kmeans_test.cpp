@@ -18,7 +18,6 @@
 #include <mlpack/methods/kmeans/dual_tree_kmeans.hpp>
 #include <mlpack/methods/kmeans/sample_initialization.hpp>
 #include <mlpack/methods/kmeans/random_partition.hpp>
-#include <mlpack/methods/kmeans/parallel_naive_kmeans.hpp>
 
 #include <mlpack/core/tree/cover_tree/cover_tree.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
@@ -703,45 +702,6 @@ BOOST_AUTO_TEST_CASE(SampleInitializationTest)
 
     BOOST_REQUIRE_LT(j, dataset.n_cols);
   }
-}
-
-/**
- * 30-point 3-class test case for K-Means with the parallel Lloyd step.
- */
-BOOST_AUTO_TEST_CASE(ParallelKMeansSimpleTest)
-{
-  // This test was originally written to use RandomPartition, and is left that
-  // way because RandomPartition gives better initializations here.
-  // Use the parallel implementation of LloydStepType
-  KMeans<EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
-         ParallelNaiveKMeans> kmeans;
-
-  arma::Row<size_t> assignments;
-  kmeans.Cluster((arma::mat) trans(kMeansData), 3, assignments);
-
-  // Now make sure we got it all right.  There is no restriction on how the
-  // clusters are ordered, so we have to be careful about that.
-  size_t firstClass = assignments(0);
-
-  for (size_t i = 1; i < 13; i++)
-    BOOST_REQUIRE_EQUAL(assignments(i), firstClass);
-
-  size_t secondClass = assignments(13);
-
-  // To ensure that class 1 != class 2.
-  BOOST_REQUIRE_NE(firstClass, secondClass);
-
-  for (size_t i = 13; i < 20; i++)
-    BOOST_REQUIRE_EQUAL(assignments(i), secondClass);
-
-  size_t thirdClass = assignments(20);
-
-  // To ensure that this is the third class which we haven't seen yet.
-  BOOST_REQUIRE_NE(firstClass, thirdClass);
-  BOOST_REQUIRE_NE(secondClass, thirdClass);
-
-  for (size_t i = 20; i < 30; i++)
-    BOOST_REQUIRE_EQUAL(assignments(i), thirdClass);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
