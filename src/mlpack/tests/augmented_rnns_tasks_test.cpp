@@ -254,4 +254,79 @@ BOOST_AUTO_TEST_CASE(AddTaskTest) {
   BOOST_REQUIRE(ok);
 }
 
+BOOST_AUTO_TEST_CASE(LSTMBaselineTest)
+{
+  bool ok = true;
+
+  const size_t outputSize = 1;
+  const size_t inputSize = 1;
+  const size_t rho = 2;
+  const size_t maxRho = 16;
+
+  RNN<MeanSquaredError<> > model(rho);
+
+  model.Add<IdentityLayer<> >();
+  model.Add<Linear<> >(inputSize, 20);
+
+  LayerTypes lstm = new LSTM<>(20, 7, maxRho);
+  model.Add(lstm);
+
+  model.Add<Linear<> >(7, outputSize);
+  model.Add<SigmoidLayer<> >();
+
+  StandardSGD<decltype(model)> opt(model, 0.1, 2, -50000);
+
+  const size_t maxLen = 3, nRepeats = 1;
+  CopyTask task(maxLen, nRepeats);
+  arma::field<arma::colvec> trainPredictor, trainResponse;
+  const size_t trainSize = 8;
+  task.Generate(trainPredictor, trainResponse, trainSize);
+  const size_t testSize = 8;
+  arma::field<arma::colvec> testPredictor, testResponse;
+  task.Generate(testPredictor, testResponse, testSize);
+  for (size_t epoch = 0; epoch < 100; ++epoch) {
+    for (size_t example = 0; example < trainPredictor.n_elem; ++example) {
+      arma::mat predictor(trainPredictor.at(example).n_elem, 1);
+      predictor.col(0) = trainPredictor.at(example);
+      arma::mat response(trainResponse.at(example).n_elem, 1);
+      response.col(0) = trainResponse.at(example);
+
+      // TODO How to change model's rho? 
+
+      /*if (epoch == 0) {
+        std::cout << "Input:\n";
+        std::cout << predictor.t() << std::endl;
+        std::cout << "Output:\n";
+        std::cout << response.t() << std::endl;
+      }*/
+
+      model.Train(predictor, response, opt);
+    }
+  }
+
+  // Evaluate the model
+  //std::cout << "Evaluating stage.\n";
+  arma::field<arma::colvec> modelOutput(testSize);
+  for (size_t example = 0; example < testSize; ++example) {
+    arma::colvec softOutput;
+    model.Predict(
+      testPredictor.at(example),
+      softOutput);
+    modelOutput.at(example) = softOutput;
+    for (size_t i = 0; i < softOutput.n_elem; ++i) {
+      modelOutput.at(example).at(i) =
+        (modelOutput.at(example).at(i)) < 0.5 ? 0 : 1;
+    }
+    /*std::cout << "Input:\n";
+    std::cout << testPredictor.at(example).t() << std::endl;
+    std::cout << "Model output:\n";
+    std::cout << modelOutput.at(example).t() << std::endl;
+    std::cout << "True output:\n";
+    std::cout << testResponse.at(example).t() << std::endl;*/
+  }
+  std::cout << "Final score: "
+       << SequencePrecision<arma::colvec>(testResponse, modelOutput)
+       << "\n";
+}
+
 BOOST_AUTO_TEST_SUITE_END();
