@@ -254,7 +254,7 @@ BOOST_AUTO_TEST_CASE(AddTaskTest) {
   BOOST_REQUIRE(ok);
 }
 
-BOOST_AUTO_TEST_CASE(LSTMBaselineTest)
+BOOST_AUTO_TEST_CASE(LSTMBaselineTestCopy)
 {
   bool ok = true;
 
@@ -275,7 +275,7 @@ BOOST_AUTO_TEST_CASE(LSTMBaselineTest)
 
   StandardSGD<decltype(model)> opt(model, 0.1, 2, -50000);
 
-  const size_t maxLen = 3, nRepeats = 2;
+  const size_t maxLen = 3, nRepeats = 1;
   CopyTask task(maxLen, nRepeats);
   arma::field<arma::colvec> trainPredictor, trainResponse;
   const size_t trainSize = 8;
@@ -294,8 +294,6 @@ BOOST_AUTO_TEST_CASE(LSTMBaselineTest)
     }
   }
 
-  // Evaluate the model
-  std::cout << "Evaluating stage.\n";
   arma::field<arma::colvec> modelOutput(testSize);
   for (size_t example = 0; example < testSize; ++example) {
     arma::colvec softOutput;
@@ -308,16 +306,87 @@ BOOST_AUTO_TEST_CASE(LSTMBaselineTest)
       modelOutput.at(example).at(i) =
         (modelOutput.at(example).at(i)) < 0.5 ? 0 : 1;
     }
-    std::cout << "Input:\n";
-    std::cout << testPredictor.at(example).t() << std::endl;
-    std::cout << "Model output:\n";
-    std::cout << modelOutput.at(example).t() << std::endl;
-    std::cout << "True output:\n";
-    std::cout << testResponse.at(example).t() << std::endl;
   }
   std::cout << "Final score: "
        << SequencePrecision<arma::colvec>(testResponse, modelOutput)
        << "\n";
 }
+
+arma::field<arma::mat> binarizeAdd(arma::field<arma::colvec> data) {
+  arma::field<arma::mat> procData(data.n_elem);
+  for (size_t i = 0; i < data.n_elem; ++i) {
+    procData.at(i) = arma::zeros(
+      3, data.at(i).n_elem);
+    for (size_t j = 0; j < data.at(i).n_elem; ++j) {
+      int val = data.at(i).at(j);
+      procData.at(i).at(val, j) = 1;
+    }
+  }
+  return procData;
+}
+
+BOOST_AUTO_TEST_CASE(LSTMBaselineTestAdd)
+{
+  bool ok = true;
+
+  const size_t outputSize = 3;
+  const size_t inputSize = 3;
+  const size_t rho = 2;
+  const size_t maxRho = 16;
+
+  RNN<MeanSquaredError<> > model(rho);
+
+  model.Add<IdentityLayer<> >();
+  model.Add<Linear<> >(inputSize, 20);
+
+  model.Add<LSTM<> >(20, 7, maxRho);
+
+  model.Add<Linear<> >(7, outputSize);
+  model.Add<SigmoidLayer<> >();
+
+  StandardSGD<decltype(model)> opt(model, 0.1, 2, -50000);
+
+  const size_t bitLen = 4;
+  AddTask task(bitLen);
+  arma::field<arma::colvec> trainPredictorRaw, trainResponseRaw;
+  const size_t trainSize = 8;
+  task.Generate(trainPredictorRaw, trainResponseRaw, trainSize);
+  arma::field<arma::mat> trainPredictor = binarizeAdd(trainPredictorRaw);
+  arma::field<arma::mat> trainResponse = binarizeAdd(trainResponseRaw);
+  const size_t testSize = 8;
+  arma::field<arma::colvec> testPredictorRaw, testResponseRaw;
+  task.Generate(testPredictorRaw, testResponseRaw, testSize);
+  arma::field<arma::mat> testPredictor = binarizeAdd(testPredictorRaw);
+  arma::field<arma::mat> testResponse = binarizeAdd(testResponseRaw);
+  for (size_t epoch = 0; epoch < 100; ++epoch) {
+    for (size_t example = 0; example < trainPredictor.n_elem; ++example) {
+      arma::mat predictor = trainPredictor.at(example);
+      arma::mat response = trainResponse.at(example);
+      model.Rho() = predictor.n_cols;
+      std::cerr << "\n\n" <<  predictor << "\n" << response << "\n";
+      model.Train(predictor, response, opt);
+      if (epoch != 0) continue;
+      std::cerr << "\n" << predictor << "\n" << response << "\n";
+    }
+  }
+  std::cerr << "Evaluation stage\n";
+  arma::field<arma::colvec> modelOutput(testSize);
+  for (size_t example = 0; example < testSize; ++example) {
+    arma::mat softOutput;
+    model.Rho() = testPredictor.at(example).n_rows;
+    model.Predict(
+      testPredictor.at(example),
+      softOutput);
+    modelOutput.at(example) = arma::zeros(softOutput.n_rows);
+    for (size_t i = 0; i < softOutput.n_rows; ++i) {
+      modelOutput.at(example).at(i) = arma::as_scalar(arma::find(
+        arma::max(softOutput.row(i)) == softOutput.row(i), 1));
+    }
+  }
+  std::cerr << "Final score: "
+       << SequencePrecision<arma::colvec>(testResponseRaw, modelOutput)
+       << "\n";
+}
+
 
 BOOST_AUTO_TEST_SUITE_END();
