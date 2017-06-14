@@ -66,7 +66,7 @@ double NaiveKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
       for (size_t j = 0; j < centroids.n_cols; j++)
       {
         const double distance = metric.Evaluate(dataset.col(i),
-                                                centroids.col(j));
+                                                centroids.unsafe_col(j));
         if (distance < minDistance)
         {
           minDistance = distance;
@@ -77,7 +77,7 @@ double NaiveKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
       Log::Assert(closestCluster != centroids.n_cols);
 
       // We now have the minimum distance centroid index.  Update that centroid.
-      localCentroids.col(closestCluster) += arma::vec(dataset.col(i));
+      localCentroids.unsafe_col(closestCluster) += dataset.col(i);
       localCounts(closestCluster)++;
     }
     // Combine calculated state from each thread
