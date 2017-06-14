@@ -31,8 +31,8 @@ QLearning<
   OptimizerType,
   PolicyType,
   ReplayType
->::QLearning(NetworkType& network,
-             OptimizerType& optimizer,
+>::QLearning(NetworkType network,
+             OptimizerType optimizer,
              double discount,
              PolicyType policy,
              ReplayType replayMethod,
@@ -41,8 +41,8 @@ QLearning<
              bool doubleQLearning,
              size_t stepLimit,
              EnvironmentType environment):
-    learningNetwork(network),
-    optimizer(optimizer),
+    learningNetwork(std::move(network)),
+    optimizer(std::move(optimizer)),
     discount(discount),
     policy(std::move(policy)),
     replayMethod(std::move(replayMethod)),

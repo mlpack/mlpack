@@ -104,7 +104,7 @@ void RNN<OutputLayerType, InitializationRuleType>::Train(
 
   // Train the model.
   Timer::Start("rnn_optimization");
-  const double out = optimizer.Optimize(parameter);
+  const double out = optimizer.Optimize(*this, parameter);
   Timer::Stop("rnn_optimization");
 
   Log::Info << "RNN::RNN(): final objective of trained model is " << out
@@ -134,7 +134,7 @@ void RNN<OutputLayerType, InitializationRuleType>::Train(
 
   // Train the model.
   Timer::Start("rnn_optimization");
-  const double out = optimizer.Optimize(parameter);
+  const double out = optimizer.Optimize(*this, parameter);
   Timer::Stop("rnn_optimization");
 
   Log::Info << "RNN::RNN(): final objective of trained model is " << out

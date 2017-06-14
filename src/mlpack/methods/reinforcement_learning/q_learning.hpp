@@ -80,8 +80,8 @@ class QLearning
    * @param stepLimit Maximum steps in each episode, 0 means no limit.
    * @param environment Reinforcement learning task.
    */
-  QLearning(NetworkType& network,
-            OptimizerType& optimizer,
+  QLearning(NetworkType network,
+            OptimizerType optimizer,
             double discount,
             PolicyType policy,
             ReplayType replayMethod,
@@ -122,14 +122,14 @@ class QLearning
    */
   arma::Col<size_t> BestAction(const arma::mat& actionValues);
 
-  //! Reference of the learning network.
-  NetworkType& learningNetwork;
+  //! Locally-stored learning network.
+  NetworkType learningNetwork;
 
   //! Locally-stored target network.
   NetworkType targetNetwork;
 
-  //! Reference of the optimizer.
-  OptimizerType& optimizer;
+  //! Locally-stored optimizer.
+  OptimizerType optimizer;
 
   //! Discount factor of future return.
   double discount;

@@ -94,7 +94,7 @@ void FFN<OutputLayerType, InitializationRuleType>::Train(
 
   // Train the model.
   Timer::Start("ffn_optimization");
-  const double out = optimizer.Optimize(parameter);
+  const double out = optimizer.Optimize(*this, parameter);
   Timer::Stop("ffn_optimization");
 
   Log::Info << "FFN::FFN(): final objective of trained model is " << out
@@ -123,7 +123,7 @@ void FFN<OutputLayerType, InitializationRuleType>::Train(
 
   // Train the model.
   Timer::Start("ffn_optimization");
-  const double out = optimizer.Optimize(parameter);
+  const double out = optimizer.Optimize(*this, parameter);
   Timer::Stop("ffn_optimization");
 
   Log::Info << "FFN::FFN(): final objective of trained model is " << out

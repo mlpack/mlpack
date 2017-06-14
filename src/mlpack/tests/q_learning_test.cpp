@@ -51,7 +51,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
 
   // Set up DQN agent.
   QLearning<CartPole, decltype(model), decltype(opt), decltype(policy)>
-      agent(model, opt, 0.9, std::move(policy),
+      agent(std::move(model), std::move(opt), 0.9, std::move(policy),
           std::move(replayMethod), 100, 100, false, 200);
 
   arma::running_stat<double> averageReturn;
@@ -107,7 +107,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
 
   // Set up the DQN agent.
   QLearning<CartPole, decltype(model), decltype(opt), decltype(policy)>
-      agent(model, opt, 0.9, std::move(policy),
+      agent(std::move(model), std::move(opt), 0.9, std::move(policy),
           std::move(replayMethod), 100, 100, true, 200);
 
   arma::running_stat<double> averageReturn;
