@@ -50,7 +50,7 @@ void AddTask::Generate(arma::field<arma::colvec>& input,
     // + (binary number with size_B bits)
     input(i) = arma::randi<arma::colvec>(
       size_A + size_B + 1, arma::distr_param(0, 1));
-    input(i).at(size_A) = +100;
+    input(i).at(size_A) = 2; // special value for '+' delimiter
     int val_A = 0;
     for (size_t k = 0; k < size_A; ++k) {
       val_A <<= 1;
