@@ -5,6 +5,8 @@ set(SOURCES
   ffn_impl.hpp
   rnn.hpp
   rnn_impl.hpp
+  vanilla_rbm.hpp
+  vanilla_rbm_impl.hpp
 )
 
 # Add directory name to sources.

@@ -923,4 +923,38 @@ BOOST_AUTO_TEST_CASE(SimpleLogSoftmaxLayerTest)
   BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
 }
 
+/**
+ * Simple add module test.
+ */
+BOOST_AUTO_TEST_CASE(SimpleBinaryRbmLayerTest)
+{
+
+  arma::mat output, input, outputModule, inputModule;
+  // Network 1 
+  VisibleLayer<> module(2, 4);
+  module.Parameters().ones();
+  module.Reset();
+
+  // Network 2
+  LinearNoBias<> linear(2, 4);
+  Add<> add(4);
+  SigmoidLayer<> sigmoid;
+  linear.Parameters().ones();
+  add.Parameters().ones();
+  linear.Reset();
+
+  // Test the Forward function.
+  input = arma::mat("0.5 0.5").t();
+  inputModule = arma::mat("0.5 0.5").t();
+  module.Forward(std::move(inputModule), std::move(outputModule));
+  
+  linear.Forward(std::move(input), std::move(output));
+  add.Forward(std::move(output), std::move(output));
+  sigmoid.Forward(std::move(output), std::move(output));
+  
+  for(size_t i = 0; i < output.size(); i++)
+    BOOST_REQUIRE_EQUAL(output(i), outputModule(i));
+
+}
+
 BOOST_AUTO_TEST_SUITE_END();
