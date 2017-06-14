@@ -25,6 +25,8 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_GRU_HPP
 #define MLPACK_METHODS_ANN_LAYER_GRU_HPP
 
+#include <list>
+
 #include <mlpack/prereqs.hpp>
 
 #include <boost/ptr_container/ptr_vector.hpp>
@@ -192,9 +194,11 @@ class GRU
   size_t gradientStep;
 
   //! Locally-stored output parameters.
-  std::vector<arma::mat> outParameter;
+  std::list<arma::mat> outParameter;
   
-  std::vector<arma::mat>::iterator prevOutput;
+  std::list<arma::mat>::iterator prevOutput;
+  std::list<arma::mat>::iterator backIterator;
+  std::list<arma::mat>::iterator gradIterator;
 
   //! Locally-stored previous error.
   arma::mat prevError;

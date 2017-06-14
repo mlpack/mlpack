@@ -65,10 +65,12 @@ GRU<InputDataType, OutputDataType>::GRU(
 
   prevError = arma::zeros<arma::mat>(3 * outSize, 1);
 
-  outParameter.reserve(rho);
+  //outParameter.reserve(rho);
   outParameter.push_back(arma::zeros<arma::mat>(outSize, 1));
   
   prevOutput = outParameter.begin();
+  backIterator = outParameter.end();
+  gradIterator = outParameter.end();
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -163,10 +165,14 @@ void GRU<InputDataType, OutputDataType>::Backward(
   {
     gy += boost::apply_visitor(deltaVisitor, output2GateModule);
   }
+  else if (backIterator == outParameter.end())
+  {
+    backIterator = --(--outParameter.end());
+  }
   
   // Delta zt.
-  arma::mat d_zt = gy % (outParameter[outParameter.size() -
-      backwardStep - 2] - boost::apply_visitor(outputParameterVisitor,
+  arma::mat d_zt = gy % (*backIterator - 
+      boost::apply_visitor(outputParameterVisitor,
       hiddenStateModule));
       
   // Delta ot.
@@ -194,7 +200,7 @@ void GRU<InputDataType, OutputDataType>::Backward(
       
   // Delta rt.
   arma::mat d_rt = boost::apply_visitor(deltaVisitor, outputHidden2GateModule) %
-      outParameter[outParameter.size() - backwardStep - 2];
+      *backIterator;
       
   // Delta of forget gate.
   boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
@@ -237,9 +243,11 @@ void GRU<InputDataType, OutputDataType>::Backward(
       input2GateModule);
       
   backwardStep++;
+  backIterator--;
   if (backwardStep == rho)
   {
     backwardStep = 0;
+    backIterator = outParameter.end();
   }
 
   g = boost::apply_visitor(deltaVisitor, input2GateModule);
@@ -252,24 +260,31 @@ void GRU<InputDataType, OutputDataType>::Gradient(
     arma::Mat<eT>&& /* error */,
     arma::Mat<eT>&& /* gradient */)
 {
+  if (gradientStep == 0 && gradIterator == outParameter.end())
+  {
+    gradIterator = --(--outParameter.end());
+  }
+
   boost::apply_visitor(GradientVisitor(std::move(input), std::move(prevError)),
       input2GateModule);
 
   boost::apply_visitor(GradientVisitor(
-      std::move(outParameter[outParameter.size() - gradientStep - 2]),
+      std::move(*gradIterator),
       std::move(prevError.submat(0, 0, 2 * outSize - 1, 0))), 
       output2GateModule);
       
   boost::apply_visitor(GradientVisitor(
-      std::move(outParameter[outParameter.size() - gradientStep - 2]),
+      std::move(*gradIterator),
       std::move(prevError.submat(2 * outSize, 0, 3 * outSize - 1, 0))), 
       outputHidden2GateModule);
 
   gradientStep++;
+  gradIterator--;
   if (gradientStep == rho)
   {
     gradientStep = 0;
     outParameter.clear();
+    gradIterator = outParameter.end();
     outParameter.push_back(arma::zeros<arma::mat>(outSize, 1));
     prevOutput = outParameter.begin();
   }
