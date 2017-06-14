@@ -202,7 +202,7 @@ void DualTreeBoruvka<MetricType, MatType, TreeType>::AddAllEdges()
     size_t outEdge = neighborsOutComponent[component];
     if (connections.Find(inEdge) != connections.Find(outEdge))
     {
-      //totalDist = totalDist + dist;
+      // totalDist = totalDist + dist;
       // changed to make this agree with the cover tree code
       totalDist += neighborsDistances[component];
       AddEdge(inEdge, outEdge, neighborsDistances[component]);

@@ -84,7 +84,7 @@ RASearchRules(const arma::mat& referenceSet,
   for (size_t i = 0; i < querySet.n_cols; i++)
     candidates.push_back(pqueue);
 
-  if (naive)// No tree traversal; just do naive sampling here.
+  if (naive) // No tree traversal; just do naive sampling here.
   {
     // Sample enough points.
     arma::uvec distinctSamples;

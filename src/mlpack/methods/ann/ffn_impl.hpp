@@ -424,7 +424,8 @@ FFN<OutputLayerType, InitializationRuleType>::FFN(
   // Build new layers according to source network
   for (size_t i = 0; i < network.network.size(); ++i)
   {
-    this->network.push_back(boost::apply_visitor(copyVisitor, network.network[i]));
+    this->network.push_back(boost::apply_visitor(copyVisitor,
+        network.network[i]));
   }
 };
 

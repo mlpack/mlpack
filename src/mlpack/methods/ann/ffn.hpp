@@ -224,7 +224,7 @@ class FFN
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
 
-private:
+ private:
   // Helper functions.
   /**
    * The Forward algorithm (part of the Forward-Backward algorithm).  Computes
@@ -351,7 +351,6 @@ private:
 
   //! Locally-stored copy visitor
   CopyVisitor copyVisitor;
-
 }; // class FFN
 
 } // namespace ann

@@ -25,7 +25,7 @@ template<typename InputDataType, typename OutputDataType>
 PReLU<InputDataType, OutputDataType>::PReLU(
     const double user_alpha) : user_alpha(user_alpha)
 {
-  alpha.set_size(1,1);
+  alpha.set_size(1, 1);
   alpha(0) = user_alpha;
 }
 

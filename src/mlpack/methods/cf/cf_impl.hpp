@@ -91,7 +91,7 @@ CF::CF(const arma::sp_mat& data,
   {
     Log::Warn << "CF::CF(): neighbourhood size should be > 0("
         << numUsersForSimilarity << " given). Setting value to 5.\n";
-    //Setting Default Value of 5
+    // Setting Default Value of 5
     this->numUsersForSimilarity = 5;
   }
 
@@ -168,7 +168,7 @@ void CF::Serialize(Archive& ar, const unsigned int /* version */)
   ar & CreateNVP(cleanedData, "cleanedData");
 }
 
-} // namespace mlpack
 } // namespace cf
+} // namespace mlpack
 
 #endif

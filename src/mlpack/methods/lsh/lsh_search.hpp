@@ -472,7 +472,6 @@ class LSHSearch
   //! Use a priority queue to represent the list of candidate neighbors.
   typedef std::priority_queue<Candidate, std::vector<Candidate>, CandidateCmp>
       CandidateList;
-
 }; // class LSHSearch
 
 } // namespace neighbor

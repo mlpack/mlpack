@@ -144,7 +144,6 @@ BOOST_AUTO_TEST_CASE(TestBooleanOption)
 
   BOOST_REQUIRE_EQUAL(CLI::GetParam<bool>("flag_test"), true);
   BOOST_REQUIRE_EQUAL(CLI::HasParam("flag_test"), true);
-
 }
 
 /**
@@ -215,9 +214,10 @@ BOOST_AUTO_TEST_CASE(InputColVectorParamTest)
 {
   AddRequiredCLIOptions();
 
-  CLI::Add<arma::vec>(arma::vec(), "vector", "Test vector", 'l', false, true, false);
+  CLI::Add<arma::vec>(
+      arma::vec(), "vector", "Test vector", 'l', false, true, false);
 
-  //fake aruguments
+  // Fake arguments.
   const char* argv[3];
   argv[0] = "./test";
   argv[1] = "-l";
@@ -225,12 +225,12 @@ BOOST_AUTO_TEST_CASE(InputColVectorParamTest)
 
   int argc = 3;
 
-   // The const-cast is a little hacky but should be fine...
+  // The const-cast is a little hacky but should be fine...
   Log::Fatal.ignoreInput = true;
   CLI::ParseCommandLine(argc, const_cast<char**>(argv));
   Log::Fatal.ignoreInput = false;
 
-   // The --vector parameter should exist.
+  // The --vector parameter should exist.
   BOOST_REQUIRE(CLI::HasParam("vector"));
   // The --vector_file parameter should not exist (it should be transparent from
   // inside the program).
@@ -252,9 +252,10 @@ BOOST_AUTO_TEST_CASE(InputUnsignedColVectorParamTest)
 {
   AddRequiredCLIOptions();
 
-  CLI::Add<arma::Col<size_t>>(arma::Col<size_t>(), "vector", "Test vector", 'l', false, true, false);
+  CLI::Add<arma::Col<size_t>>(
+      arma::Col<size_t>(), "vector", "Test vector", 'l', false, true, false);
 
-  //fake aruguments
+  // Fake arguments.
   const char* argv[3];
   argv[0] = "./test";
   argv[1] = "-l";
@@ -262,12 +263,12 @@ BOOST_AUTO_TEST_CASE(InputUnsignedColVectorParamTest)
 
   int argc = 3;
 
-   // The const-cast is a little hacky but should be fine...
+  // The const-cast is a little hacky but should be fine...
   Log::Fatal.ignoreInput = true;
   CLI::ParseCommandLine(argc, const_cast<char**>(argv));
   Log::Fatal.ignoreInput = false;
 
-   // The --vector parameter should exist.
+  // The --vector parameter should exist.
   BOOST_REQUIRE(CLI::HasParam("vector"));
   // The --vector_file parameter should not exist (it should be transparent from
   // inside the program).
@@ -289,9 +290,10 @@ BOOST_AUTO_TEST_CASE(InputRowVectorParamTest)
 {
   AddRequiredCLIOptions();
 
-  CLI::Add<arma::rowvec>(arma::rowvec(), "row", "Test vector", 'l', false, true, false);
+  CLI::Add<arma::rowvec>(arma::rowvec(), "row", "Test vector", 'l', false,
+      true, false);
 
-  //fake aruguments
+  // Fake arguments.
   const char* argv[3];
   argv[0] = "./test";
   argv[1] = "-l";
@@ -299,12 +301,12 @@ BOOST_AUTO_TEST_CASE(InputRowVectorParamTest)
 
   int argc = 3;
 
-   // The const-cast is a little hacky but should be fine...
+  // The const-cast is a little hacky but should be fine...
   Log::Fatal.ignoreInput = true;
   CLI::ParseCommandLine(argc, const_cast<char**>(argv));
   Log::Fatal.ignoreInput = false;
 
-   // The --vector parameter should exist.
+  // The --vector parameter should exist.
   BOOST_REQUIRE(CLI::HasParam("row"));
   // The --vector_file parameter should not exist (it should be transparent from
   // inside the program).
@@ -326,9 +328,10 @@ BOOST_AUTO_TEST_CASE(InputUngignedRowVectorParamTest)
 {
   AddRequiredCLIOptions();
 
-  CLI::Add<arma::Row<size_t>>(arma::Row<size_t>(), "row", "Test vector", 'l', false, true, false);
+  CLI::Add<arma::Row<size_t>>(arma::Row<size_t>(), "row", "Test vector", 'l',
+      false, true, false);
 
-  //fake aruguments
+  // Fake arguments.
   const char* argv[3];
   argv[0] = "./test";
   argv[1] = "-l";
@@ -336,12 +339,12 @@ BOOST_AUTO_TEST_CASE(InputUngignedRowVectorParamTest)
 
   int argc = 3;
 
-   // The const-cast is a little hacky but should be fine...
+  // The const-cast is a little hacky but should be fine...
   Log::Fatal.ignoreInput = true;
   CLI::ParseCommandLine(argc, const_cast<char**>(argv));
   Log::Fatal.ignoreInput = false;
 
-   // The --vector parameter should exist.
+  // The --vector parameter should exist.
   BOOST_REQUIRE(CLI::HasParam("row"));
   // The --vector_file parameter should not exist (it should be transparent from
   // inside the program).
@@ -411,8 +414,8 @@ BOOST_AUTO_TEST_CASE(OutputUnsignedColParamTest)
   AddRequiredCLIOptions();
 
   // --vector is an output parameter.
-  CLI::Add<arma::Col<size_t>>(arma::Col<size_t>(), "vector", "Test vector", 'l', false, false,
-      false);
+  CLI::Add<arma::Col<size_t>>(arma::Col<size_t>(), "vector", "Test vector", 'l',
+      false, false, false);
 
   // Set some fake arguments.
   const char* argv[3];
@@ -458,8 +461,8 @@ BOOST_AUTO_TEST_CASE(OutputRowParamTest)
   AddRequiredCLIOptions();
 
   // --row is an output parameter.
-  CLI::Add<arma::rowvec>(arma::rowvec(), "row", "Test vector", 'l', false, false,
-      false);
+  CLI::Add<arma::rowvec>(arma::rowvec(), "row", "Test vector", 'l',
+      false, false, false);
 
   // Set some fake arguments.
   const char* argv[3];
@@ -505,8 +508,8 @@ BOOST_AUTO_TEST_CASE(OutputUnsignedRowParamTest)
   AddRequiredCLIOptions();
 
   // --row is an output parameter.
-  CLI::Add<arma::Row<size_t>>(arma::Row<size_t>(), "row", "Test vector", 'l', false, false,
-      false);
+  CLI::Add<arma::Row<size_t>>(arma::Row<size_t>(), "row", "Test vector", 'l',
+      false, false, false);
 
   // Set some fake arguments.
   const char* argv[3];
@@ -956,7 +959,7 @@ BOOST_AUTO_TEST_CASE(MatrixAndDatasetInfoTest)
   f << endl;
   f << "@attribute three STRING" << endl;
   f << endl;
-  f << "\% a comment line " << endl;
+  f << "%% a comment line " << endl;
   f << endl;
   f << "@data" << endl;
   f << "hello, 1, moo" << endl;
@@ -1053,7 +1056,7 @@ BOOST_AUTO_TEST_CASE(RawDatasetInfoLoadParameter)
   f << endl;
   f << "@attribute three STRING" << endl;
   f << endl;
-  f << "\% a comment line " << endl;
+  f << "%% a comment line " << endl;
   f << endl;
   f << "@data" << endl;
   f << "hello, 1, moo" << endl;

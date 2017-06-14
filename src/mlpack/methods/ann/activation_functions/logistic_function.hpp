@@ -28,7 +28,7 @@ namespace ann /** Artificial Neural Network. */ {
  */
 class LogisticFunction
 {
-  public:
+ public:
   /**
    * Computes the logistic function.
    *

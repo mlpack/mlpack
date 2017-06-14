@@ -177,7 +177,7 @@ int main(int argc, char** argv)
           ++correct;
 
       // Print number of correct points.
-      Log::Info << double(correct) / double(dataset.n_cols) * 100 << "\% "
+      Log::Info << double(correct) / double(dataset.n_cols) * 100 << "%% "
           << "correct on training set (" << correct << " / " << dataset.n_cols
           << ")." << endl;
     }
@@ -209,7 +209,7 @@ int main(int argc, char** argv)
           ++correct;
 
       // Print number of correct points.
-      Log::Info << double(correct) / double(testPoints.n_cols) * 100 << "\% "
+      Log::Info << double(correct) / double(testPoints.n_cols) * 100 << "%% "
           << "correct on test set (" << correct << " / " << testPoints.n_cols
           << ")." << endl;
     }

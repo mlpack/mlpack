@@ -30,7 +30,7 @@ void SCVerifyCorrectness(vec beta, vec errCorr, double lambda)
 {
   const double tol = 1e-12;
   size_t nDims = beta.n_elem;
-  for(size_t j = 0; j < nDims; j++)
+  for (size_t j = 0; j < nDims; j++)
   {
     if (beta(j) == 0)
     {
@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestCodingStepElasticNet)
 
   mat D = sc.Dictionary();
 
-  for(uword i = 0; i < nPoints; ++i)
+  for (uword i = 0; i < nPoints; ++i)
   {
     vec errCorr =
       (trans(D) * D + lambda2 * eye(nAtoms, nAtoms)) * Z.unsafe_col(i)
