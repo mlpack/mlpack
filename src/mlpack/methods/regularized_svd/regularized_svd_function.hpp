@@ -111,6 +111,7 @@ namespace optimization {
    */
   template<>
   double StandardSGD<mlpack::svd::RegularizedSVDFunction>::Optimize(
+      mlpack::svd::RegularizedSVDFunction& function,
       arma::mat& parameters);
 
 } // namespace optimization
