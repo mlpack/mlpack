@@ -24,10 +24,12 @@ template<typename RangeSearchType, typename PointSelectionPolicy>
 DBSCAN<RangeSearchType, PointSelectionPolicy>::DBSCAN(
     const double epsilon,
     const size_t minPoints,
+    const bool batchMode,
     RangeSearchType rangeSearch,
     PointSelectionPolicy pointSelector) :
     epsilon(epsilon),
     minPoints(minPoints),
+    batchMode(batchMode),
     rangeSearch(rangeSearch),
     pointSelector(pointSelector)
 {
@@ -89,8 +91,8 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
 }
 
 /**
- * Performs DBSCAN clustering on the data, returning number of clusters 
- * and also the list of cluster assignments.
+ * Performs DBSCAN clustering on the data, returning the number of clusters and
+ * also the list of cluster assignments.
  */
 template<typename RangeSearchType, typename PointSelectionPolicy>
 template<typename MatType>
@@ -98,83 +100,101 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
     const MatType& data,
     arma::Row<size_t>& assignments)
 {
-  assignments.set_size(data.n_cols);
-  assignments.fill(SIZE_MAX);
-
-  size_t currentCluster = 0;
-
-  // For each point, find the points in epsilon-nighborhood and their distances.
-  std::vector<std::vector<size_t>> neighbors;
-  std::vector<std::vector<double>> distances;
-  Log::Debug << "Performing range search." << std::endl;
+  // Initialize the UnionFind object.
+  emst::UnionFind uf(data.n_cols);
   rangeSearch.Train(data);
-  rangeSearch.Search(data, math::Range(0.0, epsilon), neighbors, distances);
-  Log::Debug << "Range search complete." << std::endl;
 
-  // Initialize to all true; false means it's been visited.
-  boost::dynamic_bitset<> unvisited(data.n_cols);
-  unvisited.set();
-  while (unvisited.any())
+  if (batchMode)
+    BatchCluster(data, uf);
+  else
+    PointwiseCluster(data, uf);
+
+  // Now set assignments.
+  assignments.set_size(data.n_cols);
+  for (size_t i = 0; i < data.n_cols; ++i)
+    assignments[i] = uf.Find(i);
+
+  // Get a count of all clusters.
+  const size_t numClusters = arma::max(assignments) + 1;
+  arma::Col<size_t> counts(numClusters, arma::fill::zeros);
+  for (size_t i = 0; i < assignments.n_elem; ++i)
+    counts[assignments[i]]++;
+
+  // Now assign clusters to new indices.
+  size_t currentCluster = 0;
+  arma::Col<size_t> newAssignments(numClusters);
+  for (size_t i = 0; i < counts.n_elem; ++i)
   {
-    // Select the next unvisited point.
-    const size_t nextIndex = pointSelector.Select(unvisited, data);
-    Log::Debug << "Inspect point " << nextIndex << "; " << unvisited.count()
-        << " unvisited points remain." << std::endl;
-
-    // currentCluster will only be incremented if a cluster was created.
-    currentCluster = ProcessPoint(data, unvisited, nextIndex, assignments,
-        currentCluster, neighbors, distances);
+    if (counts[i] >= minPoints)
+      newAssignments[i] = currentCluster++;
+    else
+      newAssignments[i] = SIZE_MAX;
   }
+
+  // Now reassign.
+  for (size_t i = 0; i < assignments.n_elem; ++i)
+    assignments[i] = newAssignments[assignments[i]];
+
+  Log::Info << currentCluster << " clusters found." << std::endl;
 
   return currentCluster;
 }
 
 /**
- * This function processes the point at index. It marks the point as visited,
- * checks if the given point is core or non-core. If it is a core point, it
- * expands the cluster, otherwise it returns.
+ * Performs DBSCAN clustering on the data, returning the number of clusters and
+ * also the list of cluster assignments.  This searches each point iteratively,
+ * and can save on RAM usage.  It may be slower than the batch search with a
+ * dual-tree algorithm.
  */
 template<typename RangeSearchType, typename PointSelectionPolicy>
 template<typename MatType>
-size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::ProcessPoint(
+void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
     const MatType& data,
-    boost::dynamic_bitset<>& unvisited,
-    const size_t index,
-    arma::Row<size_t>& assignments,
-    const size_t currentCluster,
-    const std::vector<std::vector<size_t>>& neighbors,
-    const std::vector<std::vector<double>>& distances,
-    const bool topLevel)
+    emst::UnionFind& uf)
 {
-  // We've now visited this point.
-  unvisited[index] = false;
+  std::vector<std::vector<size_t>> neighbors;
+  std::vector<std::vector<double>> distances;
 
-  if ((neighbors[index].size() < minPoints) && topLevel)
+  for (size_t i = 0; i < data.n_cols; ++i)
   {
-    // Mark the point as noise (leave assignments[index] unset) and return.
-    unvisited[index] = false;
-    return currentCluster;
+    if (i % 10000 == 0 && i > 0)
+      Log::Info << "DBSCAN clustering on point " << i << "..." << std::endl;
+
+    // Do the range search for only this point.
+    rangeSearch.Search(data.col(i), math::Range(0.0, epsilon), neighbors,
+        distances);
+
+    // Union to all neighbors.
+    for (size_t j = 0; j < neighbors[0].size(); ++j)
+      uf.Union(i, neighbors[0][j]);
   }
-  else
+}
+
+/**
+ * Performs DBSCAN clustering on the data, returning number of clusters
+ * and also the list of cluster assignments.  This can perform search in batch,
+ * naive search).
+ */
+template<typename RangeSearchType, typename PointSelectionPolicy>
+template<typename MatType>
+void DBSCAN<RangeSearchType, PointSelectionPolicy>::BatchCluster(
+    const MatType& data,
+    emst::UnionFind& uf)
+{
+  // For each point, find the points in epsilon-nighborhood and their distances.
+  std::vector<std::vector<size_t>> neighbors;
+  std::vector<std::vector<double>> distances;
+  Log::Info << "Performing range search." << std::endl;
+  rangeSearch.Train(data);
+  rangeSearch.Search(data, math::Range(0.0, epsilon), neighbors, distances);
+  Log::Info << "Range search complete." << std::endl;
+
+  // Now loop over all points.
+  for (size_t i = 0; i < data.n_cols; ++i)
   {
-    assignments[index] = currentCluster;
-
-    // New cluster.
-    for (size_t j = 0; j < neighbors[index].size(); ++j)
-    {
-      // Add each point to the cluster and mark it as visited, but only if it
-      // has not been visited yet.
-      if (!unvisited[neighbors[index][j]])
-        continue;
-
-      assignments[neighbors[index][j]] = currentCluster;
-      unvisited[neighbors[index][j]] = false;
-
-      // Recurse into this point.
-      ProcessPoint(data, unvisited, neighbors[index][j], assignments,
-          currentCluster, neighbors, distances, false);
-    }
-    return currentCluster + 1;
+    // Union to all neighbors.
+    for (size_t j = 0; j < neighbors[i].size(); ++j)
+      uf.Union(i, neighbors[i][j]);
   }
 }
 

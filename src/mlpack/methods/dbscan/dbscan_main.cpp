@@ -43,14 +43,14 @@ PROGRAM_INFO("DBSCAN clustering",
     " tree used for range search; this can take a variety of values: 'kd', 'r',"
     " 'r-star', 'x', 'hilbert-r', 'r-plus', 'r-plus-plus', 'cover', 'ball'. "
     "The --single_mode option will force single-tree search (as opposed to the "
-    "default dual-tree search), and --naive will force brute-force range "
-    "search."
+    "default dual-tree search).  --single_mode can be useful when the RAM usage"
+    " of batch search is too high.  The --naive option will force brute-force "
+    "range search."
     "\n\n"
     "An example usage to run DBSCAN on the dataset in input.csv with a radius "
     "of 0.5 and a minimum cluster size of 5 is given below:"
     "\n\n"
     "  $ mlpack_dbscan -i input.csv -e 0.5 -m 5");
-
 
 PARAM_STRING_IN_REQ("input_file", "Input dataset to cluster.", "i");
 PARAM_STRING_OUT("assignments_file", "Output file for assignments of each "
@@ -82,7 +82,8 @@ void RunDBSCAN(RangeSearchType rs = RangeSearchType())
   const double epsilon = CLI::GetParam<double>("epsilon");
   const size_t minSize = (size_t) CLI::GetParam<int>("min_size");
 
-  DBSCAN<RangeSearchType> d(epsilon, minSize, rs);
+  DBSCAN<RangeSearchType> d(epsilon, minSize, !CLI::HasParam("single_mode"),
+      rs);
 
   // If possible, avoid the overhead of calculating centroids.
   arma::Row<size_t> assignments;
@@ -100,7 +101,8 @@ void RunDBSCAN(RangeSearchType rs = RangeSearchType())
   }
 
   if (CLI::HasParam("assignments_file"))
-    data::Save(CLI::GetParam<string>("assignments_file"), assignments, false);
+    data::Save(CLI::GetParam<string>("assignments_file"), assignments, false,
+        false /* no transpose */);
 }
 
 int main(int argc, char** argv)
