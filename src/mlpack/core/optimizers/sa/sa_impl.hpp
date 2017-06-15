@@ -47,7 +47,7 @@ SA<CoolingScheduleType>::SA(
 template<typename CoolingScheduleType>
 template<typename FunctionType>
 double SA<CoolingScheduleType>::Optimize(FunctionType& function,
-                                         arma::mat &iterate)
+                                         arma::mat& iterate)
 {
   const size_t rows = iterate.n_rows;
   const size_t cols = iterate.n_cols;

@@ -41,8 +41,8 @@ namespace optimization {
  * The system is considered "frozen" when its score fails to change more then
  * tolerance for maxToleranceSweep consecutive sweeps.
  *
- * For SA to work, the FunctionType parameter must implement the following
- * two methods:
+ * For SA to work, the FunctionType template class, used by the Optimize()
+ * method, must implement the following two methods:
  *
  *   double Evaluate(const arma::mat& coordinates);
  *   arma::mat& GetInitialPoint();
@@ -92,6 +92,8 @@ class SA
    * point will be modified to store the finishing point of the algorithm, and
    * the final objective value is returned.
    *
+   * @tparam FunctionType Type of function to optimize.
+   * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
