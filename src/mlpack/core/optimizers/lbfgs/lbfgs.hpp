@@ -23,24 +23,21 @@ namespace optimization {
  * algorithm to minimize a function.  The parameters for the algorithm (number
  * of memory points, maximum step size, and so forth) are all configurable via
  * either the constructor or standalone modifier functions.  A function which
- * can be optimized by this class must implement the following methods:
+ * can be optimized by this class's Optimize() method must implement the
+ * following methods:
  *
  *  - a default constructor
  *  - double Evaluate(const arma::mat& coordinates);
  *  - void Gradient(const arma::mat& coordinates, arma::mat& gradient);
  *  - arma::mat& GetInitialPoint();
  */
-template<typename FunctionType>
 class L_BFGS
 {
  public:
   /**
-   * Initialize the L-BFGS object.  Store a reference to the function we will be
-   * optimizing and set the size of the memory for the algorithm.  There are
-   * many parameters that can be set for the optimization, but default values
-   * are given for each of them.
+   * Initialize the L-BFGS object.  There are many parameters that can be set
+   * for the optimization, but default values are given for each of them.
    *
-   * @param function Instance of function to be optimized.
    * @param numBasis Number of memory points to be stored (default 5).
    * @param maxIterations Maximum number of iterations for the optimization
    *     (0 means no limit and may run indefinitely).
@@ -54,8 +51,7 @@ class L_BFGS
    * @param minStep The minimum step of the line search.
    * @param maxStep The maximum step of the line search.
    */
-  L_BFGS(FunctionType& function,
-         const size_t numBasis = 10, /* same default as scipy */
+  L_BFGS(const size_t numBasis = 10, /* same default as scipy */
          const size_t maxIterations = 10000, /* many but not infinite */
          const double armijoConstant = 1e-4,
          const double wolfe = 0.9,
@@ -81,33 +77,13 @@ class L_BFGS
    * given starting point will be modified to store the finishing point of the
    * algorithm, and the final objective value is returned.
    *
+   * @tparam FunctionType Type of the function to be optimized.
+   * @param function Function to optimize; must have Evaluate() and Gradient().
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
-  double Optimize(arma::mat& iterate);
-
-  /**
-   * Use L-BFGS to optimize (minimize) the given function, starting at the given
-   * iterate point, and performing no more than the given maximum number of
-   * iterations (the class variable maxIterations is ignored for this run, but
-   * not modified).  The given starting point will be modified to store the
-   * finishing point of the algorithm, and the final objective value is
-   * returned.
-   *
-   * This overload will be removed in mlpack 3.0.0---you should set
-   * maxIterations in the constructor instead.
-   *
-   * @param iterate Starting point (will be modified).
-   * @param maxIterations Maximum number of iterations (0 specifies no limit).
-   * @return Objective value of the final point.
-   */
-  mlpack_deprecated double Optimize(arma::mat& iterate,
-                                    const size_t maxIterations);
-
-  //! Return the function that is being optimized.
-  const FunctionType& Function() const { return function; }
-  //! Modify the function that is being optimized.
-  FunctionType& Function() { return function; }
+  template<typename FunctionType>
+  double Optimize(FunctionType& function, arma::mat& iterate);
 
   //! Get the memory size.
   size_t NumBasis() const { return numBasis; }
@@ -155,16 +131,6 @@ class L_BFGS
   double& MaxStep() { return maxStep; }
 
  private:
-  //! Internal reference to the function we are optimizing.
-  FunctionType& function;
-
-  //! Position of the new iterate.
-  arma::mat newIterateTmp;
-  //! Stores all the s matrices in memory.
-  arma::cube s;
-  //! Stores all the y matrices in memory.
-  arma::cube y;
-
   //! Size of memory for this L-BFGS optimizer.
   size_t numBasis;
   //! Maximum number of iterations.
@@ -184,16 +150,16 @@ class L_BFGS
   //! Maximum step of the line search.
   double maxStep;
 
-  //! Best point found so far.
-  std::pair<arma::mat, double> minPointIterate;
-
   /**
    * Evaluate the function at the given iterate point and store the result if it
    * is a new minimum.
    *
    * @return The value of the function.
    */
-  double Evaluate(const arma::mat& iterate);
+  template<typename FunctionType>
+  double Evaluate(FunctionType& function,
+                  const arma::mat& iterate,
+                  std::pair<arma::mat, double>& minPointIterate);
 
   /**
    * Calculate the scaling factor, gamma, which is used to scale the Hessian
@@ -203,7 +169,9 @@ class L_BFGS
    * @return The calculated scaling factor.
    */
   double ChooseScalingFactor(const size_t iterationNum,
-                             const arma::mat& gradient);
+                             const arma::mat& gradient,
+                             const arma::cube& s,
+                             const arma::cube& y);
 
   /**
    * Check to make sure that the norm of the gradient is not smaller than 1e-5.
@@ -226,9 +194,13 @@ class L_BFGS
    *
    * @return false if no step size is suitable, true otherwise.
    */
-  bool LineSearch(double& functionValue,
+  template<typename FunctionType>
+  bool LineSearch(FunctionType& function,
+                  double& functionValue,
                   arma::mat& iterate,
                   arma::mat& gradient,
+                  arma::mat& newIterateTmp,
+                  std::pair<arma::mat, double>& minPointIterate,
                   const arma::mat& searchDirection);
 
   /**
@@ -242,6 +214,8 @@ class L_BFGS
   void SearchDirection(const arma::mat& gradient,
                        const size_t iterationNum,
                        const double scalingFactor,
+                       const arma::cube& s,
+                       const arma::cube& y,
                        arma::mat& searchDirection);
 
   /**
@@ -259,7 +233,9 @@ class L_BFGS
                       const arma::mat& iterate,
                       const arma::mat& oldIterate,
                       const arma::mat& gradient,
-                      const arma::mat& oldGradient);
+                      const arma::mat& oldGradient,
+                      arma::cube& s,
+                      arma::cube& y);
 };
 
 } // namespace optimization

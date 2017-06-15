@@ -22,7 +22,7 @@ namespace optimization {
  *
  * @tparam SDPType
  */
-template <typename SDPType>
+template<typename SDPType>
 class PrimalDualSolver
 {
  public:
