@@ -82,13 +82,13 @@ class QLearning
    */
   QLearning(NetworkType network,
             OptimizerType optimizer,
-            double discount,
+            const double discount,
             PolicyType policy,
             ReplayType replayMethod,
-            size_t targetNetworkSyncInterval,
-            size_t explorationSteps,
-            bool doubleQLearning = false,
-            size_t stepLimit = 0,
+            const size_t targetNetworkSyncInterval,
+            const size_t explorationSteps,
+            const bool doubleQLearning = false,
+            const size_t stepLimit = 0,
             EnvironmentType environment = EnvironmentType());
 
   /**

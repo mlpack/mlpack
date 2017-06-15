@@ -33,13 +33,13 @@ QLearning<
   ReplayType
 >::QLearning(NetworkType network,
              OptimizerType optimizer,
-             double discount,
+             const double discount,
              PolicyType policy,
              ReplayType replayMethod,
-             size_t targetNetworkSyncInterval,
-             size_t explorationsSteps,
-             bool doubleQLearning,
-             size_t stepLimit,
+             const size_t targetNetworkSyncInterval,
+             const size_t explorationsSteps,
+             const bool doubleQLearning,
+             const size_t stepLimit,
              EnvironmentType environment):
     learningNetwork(std::move(network)),
     optimizer(std::move(optimizer)),
@@ -77,8 +77,10 @@ arma::Col<size_t> QLearning<
   arma::Col<size_t> bestActions(actionValues.n_cols);
   arma::rowvec maxActionValues = arma::max(actionValues, 0);
   for (size_t i = 0; i < actionValues.n_cols; ++i)
+  {
     bestActions(i) = arma::as_scalar(
         arma::find(actionValues.col(i) == maxActionValues[i], 1));
+  }
   return bestActions;
 };
 
