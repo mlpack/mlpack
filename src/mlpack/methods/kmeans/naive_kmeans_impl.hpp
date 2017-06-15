@@ -48,16 +48,8 @@ double NaiveKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
                              arma::fill::zeros);
     arma::Col<size_t> localCounts(centroids.n_cols, arma::fill::zeros);
 
-    #ifdef _WIN32
-    // Tiny workaround: Visual Studio only implements OpenMP 2.0, which doesn't
-    // support unsigned loop variables. If we're building for Visual Studio, use
-    // the intmax_t type instead.
     #pragma omp for
-    for (intmax_t i = 0; i < (intmax_t) dataset.n_cols; ++i)
-    #else
-    #pragma omp for
-    for (size_t i = 0; i < dataset.n_cols; ++i)
-    #endif
+    for (omp_size_t i = 0; i < (omp_size_t) dataset.n_cols; ++i)
     {
       // Find the closest centroid to this point.
       double minDistance = std::numeric_limits<double>::infinity();
