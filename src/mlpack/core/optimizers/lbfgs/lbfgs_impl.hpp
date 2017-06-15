@@ -282,12 +282,7 @@ double L_BFGS::Optimize(FunctionType& function, arma::mat& iterate)
     }
 
     // Overwrite an old basis set.
-<<<<<<< Updated upstream
-    UpdateBasisSet(itNum, iterate, oldIterate, gradient, oldGradient);
-=======
     UpdateBasisSet(itNum, iterate, oldIterate, gradient, oldGradient, s, y);
-
->>>>>>> Stashed changes
   } // End of the optimization loop.
 
   return function.Evaluate(iterate);
