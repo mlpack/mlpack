@@ -283,13 +283,18 @@ BOOST_AUTO_TEST_CASE(LSTMBaselineTestCopy)
   const size_t testSize = 8;
   arma::field<arma::colvec> testPredictor, testResponse;
   task.Generate(testPredictor, testResponse, testSize);
-  for (size_t epoch = 0; epoch < 100; ++epoch) {
+  for (size_t epoch = 0; epoch < 1000; ++epoch) {
     for (size_t example = 0; example < trainPredictor.n_elem; ++example) {
-      arma::mat predictor(trainPredictor.at(example).n_elem, 1);
-      predictor.col(0) = trainPredictor.at(example);
-      arma::mat response(trainResponse.at(example).n_elem, 1);
-      response.col(0) = trainResponse.at(example);
-      model.Rho() = predictor.n_elem;
+      size_t totSize =
+        trainPredictor.at(example).n_elem + trainResponse.at(example).n_elem;
+      arma::mat predictor = arma::zeros(totSize, 1);
+      predictor.col(0).rows(0,trainPredictor.at(example).n_elem-1) =
+        trainPredictor.at(example);
+      //predictor.col(1) = arma::ones(totSize);
+      arma::mat response = arma::zeros(totSize, 1);
+      response.col(0).rows(trainPredictor.at(example).n_elem,totSize-1) =
+      trainResponse.at(example);
+      model.Rho() = totSize;
       model.Train(predictor, response, opt);
     }
   }
@@ -297,21 +302,35 @@ BOOST_AUTO_TEST_CASE(LSTMBaselineTestCopy)
   arma::field<arma::colvec> modelOutput(testSize);
   for (size_t example = 0; example < testSize; ++example) {
     arma::colvec softOutput;
-    model.Rho() = testPredictor.at(example).n_elem;
+    size_t totSize =
+        testPredictor.at(example).n_elem + testResponse.at(example).n_elem;
+    arma::mat predictor = arma::zeros(totSize, 1);
+    predictor.col(0).rows(0,testPredictor.at(example).n_elem-1) =
+      testPredictor.at(example);
+    //predictor.col(1) = arma::ones(totSize);
+    model.Rho() = predictor.n_rows;
     model.Predict(
-      testPredictor.at(example),
+      predictor,
       softOutput);
-    modelOutput.at(example) = softOutput;
+    modelOutput.at(example) = softOutput.rows(
+      testPredictor.at(example).n_elem,
+      softOutput.n_rows-1);
     for (size_t i = 0; i < softOutput.n_elem; ++i) {
       modelOutput.at(example).at(i) =
         (modelOutput.at(example).at(i)) < 0.5 ? 0 : 1;
     }
+    std::cerr  << "Predictor:\n"
+               << testPredictor.at(example).t()
+               << "Response:\n"
+               << testResponse.at(example).t()
+               << "Model response:\n"
+               << modelOutput.at(example);
   }
   std::cout << "Final score: "
        << SequencePrecision<arma::colvec>(testResponse, modelOutput)
        << "\n";
 }
-
+/*
 arma::field<arma::mat> binarizeAdd(arma::field<arma::colvec> data) {
   arma::field<arma::mat> procData(data.n_elem);
   for (size_t i = 0; i < data.n_elem; ++i) {
@@ -386,7 +405,7 @@ BOOST_AUTO_TEST_CASE(LSTMBaselineTestAdd)
   std::cerr << "Final score: "
        << SequencePrecision<arma::colvec>(testResponseRaw, modelOutput)
        << "\n";
-}
+}*/
 
 
 BOOST_AUTO_TEST_SUITE_END();
