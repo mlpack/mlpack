@@ -23,7 +23,8 @@ namespace optimization {
  * algorithm to minimize a function.  The parameters for the algorithm (number
  * of memory points, maximum step size, and so forth) are all configurable via
  * either the constructor or standalone modifier functions.  A function which
- * can be optimized by this class must implement the following methods:
+ * can be optimized by this class's Optimize() method must implement the
+ * following methods:
  *
  *  - a default constructor
  *  - double Evaluate(const arma::mat& coordinates);

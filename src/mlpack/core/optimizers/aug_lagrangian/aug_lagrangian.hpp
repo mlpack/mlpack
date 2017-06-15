@@ -28,8 +28,8 @@ namespace optimization {
  * optimization.  In this scheme, a penalty term is added to the Lagrangian.
  * This method is also called the "method of multipliers".
  *
- * The template class LagrangianFunction must implement the following five
- * methods:
+ * The template class LagrangianFunctionType, used by the Optimize() method,
+ * must implement the following five methods:
  *
  * - double Evaluate(const arma::mat& coordinates);
  * - void Gradient(const arma::mat& coordinates, arma::mat& gradient);
@@ -50,16 +50,12 @@ class AugLagrangian
    * Initialize the Augmented Lagrangian with the default L-BFGS optimizer.  We
    * limit the number of L-BFGS iterations to 1000, rather than the unlimited
    * default L-BFGS.
-   *
-   * @param function The function to be optimized.
    */
   AugLagrangian();
 
   /**
    * Initialize the Augmented Lagrangian with a custom L-BFGS optimizer.
    *
-   * @param function The function to be optimized.  This must be a pre-created
-   *    utility AugLagrangianFunction.
    * @param lbfgs The custom L-BFGS optimizer to be used.  This should have
    *    already been initialized with the given AugLagrangianFunction.
    */
@@ -72,10 +68,10 @@ class AugLagrangian
    *
    * @tparam LagrangianFunctionType Function which can be optimized by this
    *     class.
+   * @param function The function to optimize.
    * @param coordinates Output matrix to store the optimized coordinates in.
    * @param maxIterations Maximum number of iterations of the Augmented
    *     Lagrangian algorithm.  0 indicates no maximum.
-   * @param sigma Initial penalty parameter.
    */
   template<typename LagrangianFunctionType>
   bool Optimize(LagrangianFunctionType& function,
@@ -87,6 +83,9 @@ class AugLagrangian
    * multipliers.  The vector of Lagrange multipliers will be modified to
    * contain the Lagrange multipliers of the final solution (if one is found).
    *
+   * @tparam LagrangianFunctionType Function which can be optimized by this
+   *      class.
+   * @param function The function to optimize.
    * @param coordinates Output matrix to store the optimized coordinates in.
    * @param initLambda Vector of initial Lagrange multipliers.  Should have
    *     length equal to the number of constraints.
@@ -128,6 +127,10 @@ class AugLagrangian
   //! Penalty parameter.
   double sigma;
 
+  /**
+   * Internal optimization function: given an initialized AugLagrangianFunction,
+   * perform the optimization itself.
+   */
   template<typename LagrangianFunctionType>
   bool Optimize(AugLagrangianFunction<LagrangianFunctionType>& augfunc,
                 arma::mat& coordinates,
