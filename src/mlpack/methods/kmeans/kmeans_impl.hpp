@@ -314,8 +314,16 @@ Cluster(const MatType& data,
   // Calculate final assignments in parallel over the entire dataset.
   assignments.set_size(data.n_cols);
 
+  #ifdef _WIN32
+  // Tiny workaround: Visual Studio only implements OpenMP 2.0, which doesn't
+  // support unsigned loop variables. If we're building for Visual Studio, use
+  // the intmax_t type instead.
+  #pragma omp parallel for
+  for (intmax_t i = 0; i < (intmax_t) data.n_cols; ++i)
+  #else
   #pragma omp parallel for
   for (size_t i = 0; i < data.n_cols; ++i)
+  #endif
   {
     // Find the closest centroid to this point.
     double minDistance = std::numeric_limits<double>::infinity();
