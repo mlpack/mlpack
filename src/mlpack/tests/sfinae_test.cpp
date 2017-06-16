@@ -41,7 +41,7 @@ class B
 
 class C
 {
-public:
+ public:
   double M(const arma::mat&, const arma::rowvec&, double);
 };
 
