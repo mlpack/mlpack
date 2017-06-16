@@ -44,10 +44,10 @@ void BuildVanillaNetwork(MatType& trainData,
    * +-----+       +-----+     
    *        
    */
-  VisibleLayer<> visible(trainData.n_rows, hiddenLayerSize);
-  VisibleLayer<> hidden(hiddenLayerSize, trainData.n_rows);
+  BinaryLayer<> visible(trainData.n_rows, hiddenLayerSize, 1);
+  BinaryLayer<> hidden(hiddenLayerSize, trainData.n_rows, 0);
   GaussianInitialization gaussian(0,1);
-  VanillaRBM<GaussianInitialization, VisibleLayer<>, VisibleLayer<> > model(gaussian,visible, hidden);
+  RBM<GaussianInitialization, BinaryLayer<>, BinaryLayer<> > model(gaussian,visible, hidden);
 
   // Test the Sample function
   arma::mat output;

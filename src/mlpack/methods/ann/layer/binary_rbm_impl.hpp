@@ -19,61 +19,63 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-VisibleLayer<InputDataType, OutputDataType>::VisibleLayer(
+BinaryLayer<InputDataType, OutputDataType>::BinaryLayer(
   const size_t inSize,
-	const size_t outSize):
+	const size_t outSize,
+  const bool typeVisible):
   inSize(inSize), 
-  outSize(outSize)
+  outSize(outSize),
+  typeVisible(typeVisible)
 {
   weights.set_size(outSize * inSize + inSize, 1);
 }
 
 template<typename InputDataType, typename OutputDataType>
-void VisibleLayer<InputDataType, OutputDataType>::Reset()
+void BinaryLayer<InputDataType, OutputDataType>::Reset()
 {
-  
-  weight = arma::mat(weights.memptr(), outSize, inSize, false, false);
-  ownBias = arma::mat(weights.memptr() + weight.n_elem, inSize, false, false);
-  otherBias = arma::mat(weight.memptr() + weight.n_elem + inSize, outSize, false, false);
-
+  if(typeVisible)
+  {
+    weight = arma::mat(weights.memptr(), outSize, inSize, false, false);
+    ownBias = arma::mat(weights.memptr() + weight.n_elem, inSize, 1, false, false);
+    otherBias = arma::mat(weights.memptr() + weight.n_elem + inSize, outSize, 1, false, false);
+  }
+  else
+  {
+    weight = arma::mat(weights.memptr(), outSize, inSize, false, false).t();
+    ownBias = arma::mat(weights.memptr() + weight.n_elem + inSize, outSize, 1, false, false);
+    otherBias = arma::mat(weights.memptr() + weight.n_elem, inSize, 1, false, false);
+  }
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void VisibleLayer<InputDataType, OutputDataType>::Forward(
-  arma::Mat<eT>&& input, 
-  arma::Mat<eT>&& output)
+void BinaryLayer<InputDataType, OutputDataType>::Forward(
+  InputDataType&& input, 
+  OutputDataType&& output)
 { 
   if(Parameters().empty())
     Reset();
   else
-    LogisticFunction::Fn(weight * input + otherBias, output);
-}
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void VisibleLayer<InputDataType, OutputDataType>::Sample(arma::Mat<eT>&& input, arma::Mat<eT>&& output)
-{
-    Forward(std::move(input), std::move(output));
-    for(size_t i = 0; i < output.n_elem; i++)
-      if (mlpack::math::Random() > output(i))
-        output(i) = 1;
-      else
-        output(i) = 0;
+      LogisticFunction::Fn(weight * input + otherBias, output);
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-double VisibleLayer<InputDataType, OutputDataType>::FreeEnergy(arma::Mat<eT>&& input)
+void BinaryLayer<InputDataType, OutputDataType>::Sample(InputDataType&& input, OutputDataType&& output)
 {
-  arma::Mat<eT> output(input.n_elem);
-  for(size_t i = 0; i < weight.n_cols; i++)
-    output(i) = SoftplusFunction::Fn(arma::accu(weight.cols(i) % input));
+    Forward(std::move(input), std::move(output));
+    math::BinomialRandom<>(std::move(input), std::move(output));
+}
+
+template<typename InputDataType, typename OutputDataType>
+double BinaryLayer<InputDataType, OutputDataType>::FreeEnergy(const InputDataType&& input)
+{
+  OutputDataType output(input.n_elem);
+  output = SoftplusFunction::Fn(arma::accu(weight.t() * input));
   return arma::dot(input, ownBias) + arma::accu(output);
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void VisibleLayer<InputDataType, OutputDataType>::Serialize(
+void BinaryLayer<InputDataType, OutputDataType>::Serialize(
     Archive& ar, const unsigned int /* version */)
 {
   ar & data::CreateNVP(weights, "weights");

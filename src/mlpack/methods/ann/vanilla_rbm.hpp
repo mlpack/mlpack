@@ -26,11 +26,11 @@ namespace ann /** Artificial Neural Network. */ {
 template<typename InitializationRuleType,
          typename VisibleLayerType,
          typename HiddenLayerType>
-class VanillaRBM
+class RBM
 {
  public:
 
-  using NetworkType =VanillaRBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>;
+  using NetworkType =RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>;
 
   /* 
    * Intalise all the parameters of the network
@@ -40,7 +40,7 @@ class VanillaRBM
    * @tparam: VisibleLayerType visible layer 
    * @tparam: HiddenLyaerType hidden layer
    */
-  VanillaRBM(InitializationRuleType initializeRule, VisibleLayerType visible, HiddenLayerType hidden);
+  RBM(InitializationRuleType initializeRule, VisibleLayerType visible, HiddenLayerType hidden);
 
   // Reset the network
   void Reset();
@@ -53,9 +53,21 @@ class VanillaRBM
    * @param: optimizer Optimizer type
    * @param: Args arguments for the optimizers
    */
-  template<template <typename, typename...> class Optimizer, typename... OptimizerTypeArgs>
-  void Train(const arma::mat& predictors, Optimizer<NetworkType, OptimizerTypeArgs...> optimizer);
- /* 
+  template<template <typename> class Optimizer>
+  void Train(const arma::mat& predictors, Optimizer<NetworkType>& optimizer);
+
+ /**
+  * Evaluate the rbm network with the given parameters. This function
+  * is usually called by the optimizer to train the model.
+  * The function computes the pseudo likelihood
+  *
+  * @param parameters Matrix model parameters.
+  * @param i Index of point to use for objective function evaluation.
+  * 
+  */
+  double Evaluate(const arma::mat& parameters, const size_t i);
+
+ /** 
   * This function calculates
   * the free energy of the model
   * @param: input data point 
@@ -169,10 +181,6 @@ class VanillaRBM
   DeleteVisitor deleteVisitor;
   //! The matrix of data points (predictors).
   arma::mat predictors;
-  // Network
-  std::vector<LayerTypes> network;
-  // Dataset
-  arma::mat dataset;
   // Samples
   arma::mat samples;
   // Intialiser
@@ -181,6 +189,10 @@ class VanillaRBM
   SoftplusFunction softplus;
   //! Locally-stored delete visitor.
   arma::mat state;
+  //! Locally-stored reset variable
+  bool reset = 0;
+  //! Locally-stored number of functions varaiable
+  size_t numFunctions;
 
 };
 } // artificial neural network

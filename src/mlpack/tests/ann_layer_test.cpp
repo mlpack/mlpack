@@ -931,7 +931,7 @@ BOOST_AUTO_TEST_CASE(SimpleBinaryRbmLayerTest)
 
   arma::mat output, input, outputModule, inputModule;
   // Network 1 
-  VisibleLayer<> module(2, 4);
+  BinaryLayer<> module(2, 4);
   module.Parameters().ones();
   module.Reset();
 

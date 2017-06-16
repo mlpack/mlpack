@@ -23,7 +23,7 @@ template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-class VisibleLayer
+class BinaryLayer
 {
  public:
   /* The visible layer of the rbm
@@ -32,7 +32,7 @@ class VisibleLayer
    * @param: inSize: num of visible neurons
    * @param: outSize: num of hidden neurons
    */
-  VisibleLayer(const size_t inSize, const size_t outSize);
+  BinaryLayer(const size_t inSize, const size_t outSize, bool typeVisible = true);
 
   // Reset the variables
   void Reset();
@@ -44,8 +44,7 @@ class VisibleLayer
     * @param input Input data used for evaluating the specified function.
     * @param output Resulting output activation.
     */
-  template<typename eT>
-  void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(InputDataType&& input, OutputDataType&& output);
 
   /**
    * Sample the output given the input parameters
@@ -55,29 +54,24 @@ class VisibleLayer
    * @param input the input parameters for 
    * @param output samples from the parameters
    */
-  template<typename eT>
-  void Sample(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Sample(InputDataType&& input, OutputDataType&& output);
 
-  /**
-   * Calculate the free energy of the system
-   *
-   * @param input the data point
+  /** 
+   * This function calculates
+   * the free energy of the model
+   * @param: input data point 
    */
-  template<typename eT>
-  double FreeEnergy(arma::Mat<eT>&& input);
-
-  /**
-   * This function calculates the 
-   * free energy of the system given
-   * data point
-   */
-  template<typename eT>
-  double FreeEnergy(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  double FreeEnergy(const InputDataType&& input);
 
   //! Get the parameters.
   OutputDataType const& Parameters() const { return weights; }
   //! Modify the parameters.
   OutputDataType& Parameters() { return weights; }
+
+  //! Get the parameters.
+  OutputDataType const& Bias() const { return ownBias; }
+  //! Modify the parameters.
+  OutputDataType& Bias() { return ownBias; }
 
   //! Get the input parameter.
   InputDataType const& InputParameter() const { return inputParameter; }
@@ -103,16 +97,19 @@ private:
   //! Locally-stored number of output units.
   const size_t outSize;
 
+  //! Locally-stored type of layer
+  const bool typeVisible;
+
   //! Locally-stored weight object.
   OutputDataType weights;
 
   //! Locally-stored weight paramters.
   OutputDataType weight;
 
-  //! Locally-stored weight paramters .
+  //! Locally-stored bias paramters .
   OutputDataType ownBias;
 
-  //! Locally-stored bias of the other layer.
+  //! Locally-stored bias parmaeters
   OutputDataType otherBias;
 
   //! Locally-stored input parameter object.
@@ -121,7 +118,7 @@ private:
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 
-}; // class VisibleLayer
+}; // class BinaryLayer
 } // namespace mlpack
 } // namespace ann
 // Include implementation.

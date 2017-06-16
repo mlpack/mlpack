@@ -32,7 +32,7 @@ namespace ann /** Artificial Neural Network. */ {
 
 // Intialise a linear layer and sigmoid layer
 template<typename InitializationRuleType, typename VisibleLayerType, typename HiddenLayerType>
-VanillaRBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::VanillaRBM(
+RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::RBM(
   InitializationRuleType initializeRule, 
   VisibleLayerType visible, 
   HiddenLayerType hidden):
@@ -40,7 +40,7 @@ VanillaRBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::VanillaRB
 {/*Nothing to do here */}
 
 template<typename InitializationRuleType, typename VisibleLayerType, typename HiddenLayerType>
-void VanillaRBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::Reset()
+void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::Reset()
 {
   // Since we are dealing with a static stucture no need for visitor
   // Reset the parameters of all the layers
@@ -49,25 +49,23 @@ void VanillaRBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::Rese
 
   parameter.set_size(weight, 1);
   initializeRule.Initialize(parameter, parameter.n_elem, 1);
-  visible.Parameters() = arma::mat(parameter.memptr(), 1, weight, false, false);
-  // set the hidden parameters to point to visible layers switch the biases parameters
-  hidden.Parameters() = arma::mat(visible.Parameters().memptr(), 1, visible.Parameters().n_elem, false, false);
-
+  visible.Parameters() = arma::mat(parameter.memptr(), weight, 1, false, false);
+  hidden.Parameters() = arma::mat(parameter.memptr(), weight, 1, false, false);
   
   visible.Reset();
   hidden.Reset();
+  reset = 1;
 
 }
-/*
+
 template<typename InitializationRuleType,
          typename VisibleLayerType,
          typename HiddenLayerType>
-template< template<typename, typename...> class Optimizer, typename... OptimizerTypeArgs>
-void VanillaRBM<InitializationRuleType, 
+template<template<typename> class Optimizer>
+void RBM<InitializationRuleType, 
            VisibleLayerType, 
            HiddenLayerType>::Train(const arma::mat& predictors, 
-                                   Optimizer<NetworkType, 
-                                   OptimizerTypeArgs...>& optimizer)
+                                   Optimizer<NetworkType>& optimizer)
 {
 
   numFunctions = predictors.n_cols;
@@ -76,7 +74,7 @@ void VanillaRBM<InitializationRuleType,
 
   if (!reset)
   {
-    ResetParameters();
+    Reset();
   }
 
   // Train the model.
@@ -84,37 +82,57 @@ void VanillaRBM<InitializationRuleType,
   const double out = optimizer.Optimize(parameter);
   Timer::Stop("rbm_optimization");
 }
-*/
-/* 
-* This function calculates
-* the free energy of the model
-*/
+
+
+ /* 
+  * This function calculates
+  * the free energy of the model
+  */
 template<typename InitializationRuleType,
          typename VisibleLayerType,
          typename HiddenLayerType>
-double VanillaRBM<InitializationRuleType, 
+double RBM<InitializationRuleType, 
            VisibleLayerType, 
            HiddenLayerType>::FreeEnergy(const arma::mat&& input)
 {
-  visible.FreeEnergy(input);
+  return visible.FreeEnergy(std::move(input));
+}
+
+template<typename InitializationRuleType,
+  typename VisibleLayerType,
+  typename HiddenLayerType>
+double RBM<InitializationRuleType, 
+  VisibleLayerType, 
+  HiddenLayerType>::Evaluate(const arma::mat& /* parameters*/, const size_t i)
+{
+  arma::mat freeEnergy, freeEnergyCorrupted, output;
+  LogSoftMax<> logSoftMax;
+  // Do not use unsafe col predictor as we change the input
+  auto currentInput = predictors(i);
+  size_t idx = math::RandInt(0, visible.Bias().n_elem);
+  FreeEnergy(std::move(currentInput) , std::move(freeEnergy)); 
+  currentInput(idx) =  1 - predictors(idx);
+  FreeEnergy(std::move(currentInput), std::move(freeEnergyCorrupted));
+  logSoftMax.Forward(freeEnergyCorrupted - freeEnergy, std::move(output));
+  return output * visible.Bias().n_elem;
 }
 
 template<typename InitializationRuleType, typename VisibleLayerType, typename HiddenLayerType>
-void VanillaRBM<InitializationRuleType, VisibleLayerType, 
+void RBM<InitializationRuleType, VisibleLayerType, 
   HiddenLayerType>::SampleHidden(arma::mat&& input, arma::mat&& output)
 {
   visible.Sample(std::move(input), std::move(output));
 }
 
 template<typename InitializationRuleType, typename VisibleLayerType, typename HiddenLayerType>
-void VanillaRBM<InitializationRuleType, VisibleLayerType, 
+void RBM<InitializationRuleType, VisibleLayerType, 
   HiddenLayerType>::SampleVisible(arma::mat&& input, arma::mat&& output)
 {
   hidden.Sample(std::move(input), std::move(output));
 }
 
 template<typename InitializationRuleType, typename VisibleLayerType, typename HiddenLayerType>
-void VanillaRBM<InitializationRuleType, VisibleLayerType, 
+void RBM<InitializationRuleType, VisibleLayerType, 
   HiddenLayerType>::Gibbs(arma::mat&& input, arma::mat&& negative_sample, size_t num_steps , bool persistence)
 {
   arma::mat temp1;
@@ -134,7 +152,7 @@ void VanillaRBM<InitializationRuleType, VisibleLayerType,
 }
 
 template<typename InitializationRuleType, typename VisibleLayerType, typename HiddenLayerType>
-void VanillaRBM<InitializationRuleType, VisibleLayerType, 
+void RBM<InitializationRuleType, VisibleLayerType, 
   HiddenLayerType>::Gradient(arma::mat input, const size_t k, const bool persistence, arma::mat& output)
 {
     arma::mat positive_gradient, negative_gradient, negative_sample;
@@ -155,7 +173,7 @@ template<typename InitializationRuleType,
          typename VisibleLayerType,
          typename HiddenLayerType>
 template<typename Archive>
-void VanillaRBM<InitializationRuleType, 
+void RBM<InitializationRuleType, 
            VisibleLayerType, 
            HiddenLayerType>::Serialize(Archive& ar, const unsigned int /* version */)
 {
