@@ -10,7 +10,6 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
 #ifndef MLPACK_METHODS_RL_Q_LEARNING_HPP
 #define MLPACK_METHODS_RL_Q_LEARNING_HPP
 
@@ -74,7 +73,8 @@ class QLearning
    * @param discount Discount for future return.
    * @param policy Behavior policy of the agent.
    * @param replayMethod Experience replay method.
-   * @param targetNetworkSyncInterval Interval (steps) to sync the target network.
+   * @param targetNetworkSyncInterval Interval (steps) to sync the target
+   *        network.
    * @param explorationSteps Steps before starting to learn.
    * @param doubleQLearning Whether to use double Q-Learning.
    * @param stepLimit Maximum steps in each episode, 0 means no limit.
@@ -110,7 +110,6 @@ class QLearning
 
   //! Modify the training mode / test mode indicator.
   bool& Deterministic() { return deterministic; }
-
   //! Get the indicator of training mode / test mode.
   const bool& Deterministic() const { return deterministic; }
 
