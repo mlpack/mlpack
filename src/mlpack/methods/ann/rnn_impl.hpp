@@ -184,7 +184,7 @@ void RNN<OutputLayerType, InitializationRuleType>::SinglePredict(
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-double RNN<OutputLayerType, InitializationRuleType>::Evaluate(
+double RNN<OutputLayerType, InitializationRuleType>::ForwardCall(
     const arma::mat& /* parameters */, const size_t i, const bool deterministic)
 {
   if (parameter.is_empty())
@@ -209,7 +209,7 @@ double RNN<OutputLayerType, InitializationRuleType>::Evaluate(
     targetSize = target.n_elem / rho;
   }
 
-  double performance = 0;
+  currentCost = 0;
 
   for (size_t seqNum = 0; seqNum < rho; ++seqNum)
   {
@@ -228,7 +228,7 @@ double RNN<OutputLayerType, InitializationRuleType>::Evaluate(
       }
     }
 
-    performance += outputLayer.Forward(std::move(boost::apply_visitor(
+    currentCost += outputLayer.Forward(std::move(boost::apply_visitor(
         outputParameterVisitor, network.back())), std::move(currentTarget));
   }
 
@@ -238,7 +238,19 @@ double RNN<OutputLayerType, InitializationRuleType>::Evaluate(
         network.back()).n_elem;
   }
 
-  return performance;
+  return currentCost;
+}
+
+template<typename OutputLayerType, typename InitializationRuleType>
+double RNN<OutputLayerType, InitializationRuleType>::Evaluate(
+    const arma::mat& parameters, const size_t i, const bool deterministic)
+{
+  if (currentCost == -1)
+  {
+    return ForwardCall(parameters, i, deterministic);
+  }
+  
+  return currentCost;
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
@@ -260,7 +272,7 @@ void RNN<OutputLayerType, InitializationRuleType>::Gradient(
     gradient.zeros();
   }
 
-  Evaluate(parameters, i, false);
+  ForwardCall(parameters, i, false);
 
   arma::mat currentGradient = arma::zeros<arma::mat>(parameter.n_rows,
       parameter.n_cols);

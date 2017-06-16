@@ -166,7 +166,7 @@ void FFN<OutputLayerType, InitializationRuleType>::Predict(
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-double FFN<OutputLayerType, InitializationRuleType>::Evaluate(
+double FFN<OutputLayerType, InitializationRuleType>::ForwardCall(
     const arma::mat& /* parameters */, const size_t i, const bool deterministic)
 {
   if (parameter.is_empty())
@@ -184,10 +184,22 @@ double FFN<OutputLayerType, InitializationRuleType>::Evaluate(
   currentTarget = responses.unsafe_col(i);
 
   Forward(std::move(currentInput));
-  double res = outputLayer.Forward(std::move(boost::apply_visitor(
+  currentCost = outputLayer.Forward(std::move(boost::apply_visitor(
       outputParameterVisitor, network.back())), std::move(currentTarget));
 
-  return res;
+  return currentCost;
+}
+
+template<typename OutputLayerType, typename InitializationRuleType>
+double FFN<OutputLayerType, InitializationRuleType>::Evaluate(
+    const arma::mat& parameters, const size_t i, const bool deterministic)
+{
+  if (currentCost == -1)
+  {
+    return ForwardCall(parameters, i, deterministic);
+  }
+  
+  return currentCost;
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
@@ -208,7 +220,7 @@ void FFN<OutputLayerType, InitializationRuleType>::Gradient(
     gradient.zeros();
   }
 
-  Evaluate(parameters, i, false);
+  ForwardCall(parameters, i, false);
 
   outputLayer.Backward(std::move(boost::apply_visitor(outputParameterVisitor,
       network.back())), std::move(currentTarget), std::move(error));
