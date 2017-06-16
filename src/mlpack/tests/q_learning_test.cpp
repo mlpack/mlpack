@@ -56,6 +56,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
 
   arma::running_stat<double> averageReturn;
   size_t episodes = 0;
+  bool converged = true;
   while (true)
   {
     double episodeReturn = agent.Episode();
@@ -64,7 +65,8 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
 
     if (episodes > 1000)
     {
-      Log::Fatal << "Cart Pole with DQN failed." << std::endl;
+      Log::Debug << "Cart Pole with DQN failed." << std::endl;
+      converged = false;
       break;
     }
 
@@ -85,6 +87,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
       break;
     }
   }
+  BOOST_REQUIRE(converged);
 }
 
 //! Test Double DQN in Cart Pole task.
@@ -112,13 +115,15 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
 
   arma::running_stat<double> averageReturn;
   size_t episodes = 0;
+  bool converged = true;
   while (true)
   {
     double episodeReturn = agent.Episode();
     averageReturn(episodeReturn);
     episodes += 1;
     if (episodes > 1000) {
-      Log::Fatal << "Cart Pole with DQN failed." << std::endl;
+      converged = false;
+      Log::Debug << "Cart Pole with DQN failed." << std::endl;
       break;
     }
     /**
@@ -138,6 +143,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
       break;
     }
   }
+  BOOST_REQUIRE(converged);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
