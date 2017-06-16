@@ -187,6 +187,8 @@ template<typename OutputLayerType, typename InitializationRuleType>
 double RNN<OutputLayerType, InitializationRuleType>::ForwardCall(
     const arma::mat& /* parameters */, const size_t i, const bool deterministic)
 {
+  currentFunctionIndex = i;
+  
   if (parameter.is_empty())
   {
     ResetParameters();
@@ -245,7 +247,7 @@ template<typename OutputLayerType, typename InitializationRuleType>
 double RNN<OutputLayerType, InitializationRuleType>::Evaluate(
     const arma::mat& parameters, const size_t i, const bool deterministic)
 {
-  if (currentCost == -1)
+  if (currentCost == -1 || numFunctions == 1 || currentFunctionIndex != i)
   {
     return ForwardCall(parameters, i, deterministic);
   }

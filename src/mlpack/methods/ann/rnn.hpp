@@ -303,6 +303,9 @@ class RNN
   
   //! Cost achieved in the last Forward call
   double currentCost = -1;
+  
+  //! Objective function index used for the last evaluation call
+  size_t currentFunctionIndex = 0;
 
   //! THe current input of the forward/backward pass.
   arma::mat currentInput;
