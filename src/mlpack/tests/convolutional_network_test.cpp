@@ -92,7 +92,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
 
   RMSProp<decltype(model)> opt(model, 0.001, 0.88, 1e-8, 5000, -1);
 
-  model.Train(std::move(X), std::move(Y), opt);
+  model.Train(X, Y, opt);
 
   arma::mat predictionTemp;
   model.Predict(X, predictionTemp);

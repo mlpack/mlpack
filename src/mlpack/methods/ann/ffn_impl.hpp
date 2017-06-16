@@ -29,9 +29,9 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename OutputLayerType, typename InitializationRuleType>
 FFN<OutputLayerType, InitializationRuleType>::FFN(
-    OutputLayerType&& outputLayer, InitializationRuleType initializeRule) :
+    OutputLayerType outputLayer, InitializationRuleType initializeRule) :
     outputLayer(std::move(outputLayer)),
-    initializeRule(initializeRule),
+    initializeRule(std::move(initializeRule)),
     width(0),
     height(0),
     reset(false)
@@ -41,22 +41,20 @@ FFN<OutputLayerType, InitializationRuleType>::FFN(
 
 template<typename OutputLayerType, typename InitializationRuleType>
 FFN<OutputLayerType, InitializationRuleType>::FFN(
-    const arma::mat& predictors,
-    const arma::mat& responses,
-    OutputLayerType&& outputLayer,
+    arma::mat predictors,
+    arma::mat responses,
+    OutputLayerType outputLayer,
     InitializationRuleType initializeRule) :
     outputLayer(std::move(outputLayer)),
-    initializeRule(initializeRule),
+    initializeRule(std::move(initializeRule)),
     width(0),
     height(0),
-    reset(false)
+    reset(false),
+    predictors(std::move(predictors)),
+    responses(std::move(responses)),
+    deterministic(true)
 {
-  numFunctions = responses.n_cols;
-
-  this->predictors = std::move(predictors);
-  this->responses = std::move(responses);
-
-  this->deterministic = true;
+  numFunctions = this->responses.n_cols;
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
@@ -68,7 +66,7 @@ FFN<OutputLayerType, InitializationRuleType>::~FFN()
 
 template<typename OutputLayerType, typename InitializationRuleType>
 void FFN<OutputLayerType, InitializationRuleType>::ResetData(
-    const arma::mat& predictors, const arma::mat& responses)
+    arma::mat predictors, arma::mat responses)
 {
   numFunctions = responses.n_cols;
   this->predictors = std::move(predictors);
@@ -88,15 +86,15 @@ template<
     typename... OptimizerTypeArgs
 >
 void FFN<OutputLayerType, InitializationRuleType>::Train(
-      const arma::mat& predictors,
-      const arma::mat& responses,
+      arma::mat predictors,
+      arma::mat responses,
       OptimizerType<NetworkType, OptimizerTypeArgs...>& optimizer)
 {
-  ResetData(predictors, responses);
+  ResetData(std::move(predictors), std::move(responses));
 
   // Train the model.
   Timer::Start("ffn_optimization");
-  const double out = optimizer.Optimize(parameter);
+  const double out = optimizer.Optimize(*this, parameter);
   Timer::Stop("ffn_optimization");
 
   Log::Info << "FFN::FFN(): final objective of trained model is " << out
@@ -106,7 +104,7 @@ void FFN<OutputLayerType, InitializationRuleType>::Train(
 template<typename OutputLayerType, typename InitializationRuleType>
 template<template<typename...> class OptimizerType>
 void FFN<OutputLayerType, InitializationRuleType>::Train(
-    const arma::mat& predictors, const arma::mat& responses)
+    arma::mat predictors, arma::mat responses)
 {
   numFunctions = responses.n_cols;
 
@@ -125,7 +123,7 @@ void FFN<OutputLayerType, InitializationRuleType>::Train(
 
   // Train the model.
   Timer::Start("ffn_optimization");
-  const double out = optimizer.Optimize(parameter);
+  const double out = optimizer.Optimize(*this, parameter);
   Timer::Stop("ffn_optimization");
 
   Log::Info << "FFN::FFN(): final objective of trained model is " << out
@@ -134,7 +132,7 @@ void FFN<OutputLayerType, InitializationRuleType>::Train(
 
 template<typename OutputLayerType, typename InitializationRuleType>
 void FFN<OutputLayerType, InitializationRuleType>::Predict(
-    const arma::mat& predictors, arma::mat& results)
+    arma::mat predictors, arma::mat& results)
 {
   if (parameter.is_empty())
   {
@@ -148,7 +146,8 @@ void FFN<OutputLayerType, InitializationRuleType>::Predict(
   }
 
   arma::mat resultsTemp;
-  Forward(std::move(predictors.col(0)));
+  Forward(std::move(arma::mat(predictors.colptr(0),
+      predictors.n_rows, 1, false, true)));
   resultsTemp = boost::apply_visitor(outputParameterVisitor,
       network.back()).col(0);
 
@@ -157,7 +156,8 @@ void FFN<OutputLayerType, InitializationRuleType>::Predict(
 
   for (size_t i = 1; i < predictors.n_cols; i++)
   {
-    Forward(std::move(predictors.col(i)));
+    Forward(std::move(arma::mat(predictors.colptr(i),
+        predictors.n_rows, 1, false, true)));
 
     resultsTemp = boost::apply_visitor(outputParameterVisitor,
         network.back());

@@ -51,14 +51,15 @@ class GreedyPolicy
    * Sample an action based on given action values.
    *
    * @param actionValue Values for each action.
+   * @param deterministic Always select the action greedily.
    * @return Sampled action.
    */
-  ActionType Sample(const arma::colvec& actionValue)
+  ActionType Sample(const arma::colvec& actionValue, bool deterministic = false)
   {
     double exploration = math::Random();
 
     // Select the action randomly.
-    if (exploration < epsilon)
+    if (!deterministic && exploration < epsilon)
       return static_cast<ActionType>(math::RandInt(ActionType::size));
 
     // Select the action greedily.
