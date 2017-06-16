@@ -33,7 +33,7 @@ GradientDescent<FunctionType>::GradientDescent(
 //! Optimize the function (minimize).
 template<typename FunctionType>
 double GradientDescent<FunctionType>::Optimize(
-    arma::mat& iterate)
+    FunctionType& function, arma::mat& iterate)
 {
   // To keep track of where we are and how things are going.
   double overallObjective = function.Evaluate(iterate);

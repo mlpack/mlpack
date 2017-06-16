@@ -55,7 +55,7 @@ double MiniBatchSGDType<
     DecomposableFunctionType,
     UpdatePolicyType,
     DecayPolicyType
->::Optimize(arma::mat& iterate)
+>::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
 {
   // Find the number of functions.
   const size_t numFunctions = function.NumFunctions();

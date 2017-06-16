@@ -15,6 +15,7 @@
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/range_search/range_search.hpp>
+#include <mlpack/methods/emst/union_find.hpp>
 #include "random_point_selection.hpp"
 #include <boost/dynamic_bitset.hpp>
 
@@ -52,15 +53,21 @@ class DBSCAN
 {
  public:
   /**
-   * Construct the DBSCAN object with the given parameters.
+   * Construct the DBSCAN object with the given parameters.  The batchMode
+   * parameter should be set to false in the case where RAM issues will be
+   * encountered (i.e. if the dataset is very large or if epsilon is large).
+   * When batchMode is false, each point will be searched iteratively, which
+   * could be slower but will use less memory.
    *
    * @param epsilon Size of range query.
    * @param minPoints Minimum number of points for each cluster.
+   * @param batchMode If true, all points are searched in batch.
    * @param rangeSearch Optional instantiated RangeSearch object.
    * @param pointSelector OptionL instantiated PointSelectionPolicy object.
    */
   DBSCAN(const double epsilon,
          const size_t minPoints,
+         const bool batchMode = true,
          RangeSearchType rangeSearch = RangeSearchType(),
          PointSelectionPolicy pointSelector = PointSelectionPolicy());
 
@@ -112,6 +119,9 @@ class DBSCAN
   //! itself) for the point to be a core-point.
   size_t minPoints;
 
+  //! Whether or not to perform the search in batch mode.  If false, single
+  bool batchMode;
+
   //! Instantiated range search policy.
   RangeSearchType rangeSearch;
 
@@ -119,33 +129,31 @@ class DBSCAN
   PointSelectionPolicy pointSelector;
 
   /**
-   * This function processes the point at index. It  marks the point as visited,
-   * checks if the given point is core or non-core.  If it is a core point, it
-   * expands the cluster, otherwise it returns.
+   * Performs DBSCAN clustering on the data, returning the number of clusters and
+   * also the list of cluster assignments.  This searches each point iteratively,
+   * and can save on RAM usage.  It may be slower than the batch search with a
+   * dual-tree algorithm.
    *
-   * @tparam MatType Type of matrix (arma::mat or arma::sp_mat).
    * @param data Dataset to cluster.
-   * @param unvisited Remembers if a point has been visited.
-   * @param index Index of point to be visited now.
-   * @param assignments Vector to store cluster assignments.
-   * @param currentCluster Index of cluster which will be  assigned to points in
-   *     current cluster.
-   * @param neighbors Matrix containing list of neighbors for each point which
-   *     fall in its epsilon-neighborhood.
-   * @param distances Matrix containing list of distances for each point which
-   *     fall in its epsilon-neighborhood.
-   * @param topLevel If true, then current point is the first point in the
-   *     current cluster, helps in detecting noise.
+   * @param assignments Assignments for each point.
+   * @param uf UnionFind structure that will be modified.
    */
   template<typename MatType>
-  size_t ProcessPoint(const MatType& data,
-                      boost::dynamic_bitset<>& unvisited,
-                      const size_t index,
-                      arma::Row<size_t>& assignments,
-                      const size_t currentCluster,
-                      const std::vector<std::vector<size_t>>& neighbors,
-                      const std::vector<std::vector<double>>& distances,
-                      const bool topLevel = true);
+  void PointwiseCluster(const MatType& data,
+                        emst::UnionFind& uf);
+
+  /**
+   * Performs DBSCAN clustering on the data, returning number of clusters
+   * and also the list of cluster assignments.  This can perform search in batch,
+   * so it is well suited for dual-tree or naive search.
+   *
+   * @param data Dataset to cluster.
+   * @param assignments Assignments for each point.
+   * @param uf UnionFind structure that will be modified.
+   */
+  template<typename MatType>
+  void BatchCluster(const MatType& data,
+                    emst::UnionFind& uf);
 };
 
 } // namespace dbscan
