@@ -16,7 +16,7 @@ using namespace mlpack::optimization;
 */
 double fitfun(double const *x, int N)
 {
-  double func = (pow(x[0]-5, 2))*(pow(x[1]-3, 2)) ; // function = (x-5)^2 * (y-3)^2 (minima at x=5 y=3)
+  double func = (pow(x[0]-5, 2))*(pow(x[1]-3, 2)); // function = (x-5)^2 * (y-3)^2 (minima at x=5 y=3)
   return func;
 }
 
