@@ -13,6 +13,8 @@
 #include <algorithm>
 #include <utility>
 
+#include <fstream>
+
 #include <mlpack/core.hpp>
 
 #include <mlpack/methods/ann/augmented/tasks/copy.hpp>
@@ -20,8 +22,9 @@
 #include <mlpack/methods/ann/augmented/tasks/add.hpp>
 #include <mlpack/methods/ann/augmented/tasks/score.hpp>
 
-#include <mlpack/core/optimizers/sgd/sgd.hpp>
+#include <mlpack/core/optimizers/adam/adam.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
+#include <mlpack/methods/ann/layer/leaky_relu.hpp>
 #include <mlpack/methods/ann/rnn.hpp>
 
 #include <boost/test/unit_test.hpp>
@@ -30,6 +33,8 @@
 using std::vector;
 using std::pair;
 using std::make_pair;
+
+using std::ofstream;
 
 using namespace mlpack::ann::augmented::tasks;
 using namespace mlpack::ann::augmented::scorers;
@@ -256,79 +261,99 @@ BOOST_AUTO_TEST_CASE(AddTaskTest) {
 
 BOOST_AUTO_TEST_CASE(LSTMBaselineTestCopy)
 {
-  bool ok = true;
+  ofstream fout;
+  fout.open("output.log");
+  fout << "Report for aligned representation.\n";
+  fout << "Training epochs = " << 20 << "\n";
+  int maxNRepeat[] = {10, 10, 10, 6, 4, 3, 3, 3, 2, 2, 2};
+  for (size_t maxLen = 2; maxLen <= 10; ++maxLen) {
+    for (size_t nRepeats = 1; nRepeats <= maxNRepeat[maxLen]; ++nRepeats) {
+      bool ok = true;
 
-  const size_t outputSize = 1;
-  const size_t inputSize = 1;
-  const size_t rho = 2;
-  const size_t maxRho = 16;
+      const size_t outputSize = 1;
+      const size_t inputSize = 1;
+      const size_t rho = 2;
+      const size_t maxRho = 128;
 
-  RNN<MeanSquaredError<> > model(rho);
+      RNN<MeanSquaredError<> > model(rho);
 
-  model.Add<IdentityLayer<> >();
-  model.Add<Linear<> >(inputSize, 20);
+      model.Add<IdentityLayer<> >();
+      model.Add<Linear<> >(inputSize, 30);
+      model.Add<LSTM<> >(30, 15, maxRho);
+      model.Add<LeakyReLU<> >();
+      model.Add<Linear<> >(15, outputSize);
+      model.Add<SigmoidLayer<> >();
 
-  model.Add<LSTM<> >(20, 7, maxRho);
+      Adam<decltype(model)> opt(model);
 
-  model.Add<Linear<> >(7, outputSize);
-  model.Add<SigmoidLayer<> >();
+      CopyTask task(maxLen, nRepeats);
 
-  StandardSGD<decltype(model)> opt(model, 0.1, 2, -50000);
+      arma::field<arma::colvec> trainPredictor, trainResponse;
+      size_t trainSize = 15 + 5 * maxLen;
+      task.Generate(trainPredictor, trainResponse, trainSize);
+      size_t testSize = 15 + 5 * maxLen;
+      arma::field<arma::colvec> testPredictor, testResponse;
+      task.Generate(testPredictor, testResponse, testSize);
+      for (size_t epoch = 0; epoch < 20; ++epoch) {
+        for (size_t example = 0; example < trainPredictor.n_elem; ++example) {
+          size_t totSize =
+            trainPredictor.at(example).n_elem + trainResponse.at(example).n_elem;
+          arma::mat predictor = arma::zeros(totSize, 1);
+          predictor.col(0).rows(0,trainPredictor.at(example).n_elem-1) =
+            trainPredictor.at(example);
+          //predictor.col(1) = arma::ones(totSize);
+          arma::mat response = arma::zeros(totSize, 1);
+          response.col(0).rows(trainPredictor.at(example).n_elem,totSize-1) =
+          trainResponse.at(example);
+          model.Rho() = totSize;
+          model.Train(predictor, response, opt);
+        }
+        std::cerr << "Finished running training epoch #"
+                  << epoch+1 << "\n";
+      }
 
-  const size_t maxLen = 3, nRepeats = 1;
-  CopyTask task(maxLen, nRepeats);
-  arma::field<arma::colvec> trainPredictor, trainResponse;
-  const size_t trainSize = 8;
-  task.Generate(trainPredictor, trainResponse, trainSize);
-  const size_t testSize = 8;
-  arma::field<arma::colvec> testPredictor, testResponse;
-  task.Generate(testPredictor, testResponse, testSize);
-  for (size_t epoch = 0; epoch < 1000; ++epoch) {
-    for (size_t example = 0; example < trainPredictor.n_elem; ++example) {
-      size_t totSize =
-        trainPredictor.at(example).n_elem + trainResponse.at(example).n_elem;
-      arma::mat predictor = arma::zeros(totSize, 1);
-      predictor.col(0).rows(0,trainPredictor.at(example).n_elem-1) =
-        trainPredictor.at(example);
-      //predictor.col(1) = arma::ones(totSize);
-      arma::mat response = arma::zeros(totSize, 1);
-      response.col(0).rows(trainPredictor.at(example).n_elem,totSize-1) =
-      trainResponse.at(example);
-      model.Rho() = totSize;
-      model.Train(predictor, response, opt);
+      arma::field<arma::colvec> modelOutput(testSize);
+      for (size_t example = 0; example < testSize; ++example) {
+        arma::colvec softOutput;
+        size_t totSize =
+            testPredictor.at(example).n_elem + testResponse.at(example).n_elem;
+        arma::mat predictor = arma::zeros(totSize, 1);
+        predictor.col(0).rows(0,testPredictor.at(example).n_elem-1) =
+          testPredictor.at(example);
+        //predictor.col(1) = arma::ones(totSize);
+        model.Rho() = predictor.n_rows;
+        model.Predict(
+          predictor,
+          softOutput);
+        modelOutput.at(example) = softOutput.rows(
+          testPredictor.at(example).n_elem,
+          softOutput.n_rows-1);
+        for (size_t i = 0; i < softOutput.n_elem; ++i) {
+          modelOutput.at(example).at(i) =
+            (modelOutput.at(example).at(i)) < 0.5 ? 0 : 1;
+        }
+        // TODO Check this one!
+        std::cerr  << "Predictor:\n"
+                   << predictor
+                   << "Model response:\n"
+                   << softOutput;
+      }
+      std::cerr << "Final score for ("
+                << maxLen << ","
+                << nRepeats << "): "
+                << SequencePrecision<arma::colvec>(testResponse, modelOutput)
+                << "\n";
+
+      fout      << "Final score for ("
+                << maxLen << ","
+                << nRepeats << "): "
+                << SequencePrecision<arma::colvec>(testResponse, modelOutput)
+                << "\n";
+      fout << "Sample size = " << trainSize << "\n";
+      fout.flush();
     }
   }
-
-  arma::field<arma::colvec> modelOutput(testSize);
-  for (size_t example = 0; example < testSize; ++example) {
-    arma::colvec softOutput;
-    size_t totSize =
-        testPredictor.at(example).n_elem + testResponse.at(example).n_elem;
-    arma::mat predictor = arma::zeros(totSize, 1);
-    predictor.col(0).rows(0,testPredictor.at(example).n_elem-1) =
-      testPredictor.at(example);
-    //predictor.col(1) = arma::ones(totSize);
-    model.Rho() = predictor.n_rows;
-    model.Predict(
-      predictor,
-      softOutput);
-    modelOutput.at(example) = softOutput.rows(
-      testPredictor.at(example).n_elem,
-      softOutput.n_rows-1);
-    for (size_t i = 0; i < softOutput.n_elem; ++i) {
-      modelOutput.at(example).at(i) =
-        (modelOutput.at(example).at(i)) < 0.5 ? 0 : 1;
-    }
-    std::cerr  << "Predictor:\n"
-               << testPredictor.at(example).t()
-               << "Response:\n"
-               << testResponse.at(example).t()
-               << "Model response:\n"
-               << modelOutput.at(example);
-  }
-  std::cout << "Final score: "
-       << SequencePrecision<arma::colvec>(testResponse, modelOutput)
-       << "\n";
+  fout.close();
 }
 /*
 arma::field<arma::mat> binarizeAdd(arma::field<arma::colvec> data) {
