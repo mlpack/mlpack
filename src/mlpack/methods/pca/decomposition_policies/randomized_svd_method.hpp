@@ -4,14 +4,18 @@
  *
  * Implementation of the randomized svd method for use in the Principal
  * Components Analysis method.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
 #ifndef MLPACK_METHODS_PCA_DECOMPOSITION_POLICIES_RANDOMIZED_SVD_METHOD_HPP
 #define MLPACK_METHODS_PCA_DECOMPOSITION_POLICIES_RANDOMIZED_SVD_METHOD_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/methods/randomized_svd/randomized_svd.hpp>
-#include <mlpack/methods/ann/init_rules/random_init.hpp>
 
 namespace mlpack {
 namespace pca {
@@ -21,7 +25,7 @@ namespace pca {
  */
 class RandomizedSVDPolicy
 {
-  public:
+ public:
   /**
    * Use randomized SVD method to perform the principal components analysis
    * (PCA).
@@ -83,12 +87,12 @@ class RandomizedSVDPolicy
   //! Modify the number of iterations for the power method.
   size_t& MaxIterations() { return maxIterations; }
 
-  private:
-    //! Locally stored size of the normalized power iterations.
-    size_t iteratedPower;
+ private:
+  //! Locally stored size of the normalized power iterations.
+  size_t iteratedPower;
 
-    //! Locally stored number of iterations for the power method.
-    size_t maxIterations;
+  //! Locally stored number of iterations for the power method.
+  size_t maxIterations;
 };
 
 } // namespace pca

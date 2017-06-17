@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * Test file for minibatch SGD.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
@@ -33,19 +38,19 @@ BOOST_AUTO_TEST_SUITE(MiniBatchSGDTest);
 BOOST_AUTO_TEST_CASE(SGDSimilarityTest)
 {
   SGDTestFunction f;
-  SGD<SGDTestFunction> s(f, 0.0003, 5000000, 1e-9, false);
-  MiniBatchSGD<SGDTestFunction> ms(f, 1, 0.0003, 5000000, 1e-9, false);
+  StandardSGD<SGDTestFunction> s(f, 0.0003, 100000, 1e-4, false);
+  MiniBatchSGD<SGDTestFunction> ms(f, 1, 0.0003, 100000, 1e-4, false);
 
   arma::mat sCoord = f.GetInitialPoint();
   arma::mat msCoord = f.GetInitialPoint();
 
   const double sResult = s.Optimize(sCoord);
-  const double msResult = s.Optimize(msCoord);
+  const double msResult = ms.Optimize(msCoord);
 
-  BOOST_REQUIRE_CLOSE(sResult, msResult, 1e-8);
-  BOOST_REQUIRE_CLOSE(sCoord[0], msCoord[0], 1e-8);
-  BOOST_REQUIRE_CLOSE(sCoord[1], msCoord[1], 1e-8);
-  BOOST_REQUIRE_CLOSE(sCoord[2], msCoord[2], 1e-8);
+  BOOST_REQUIRE_CLOSE(sResult, msResult, 1e-2);
+  BOOST_REQUIRE_CLOSE(sCoord[0], msCoord[0], 1e-2);
+  BOOST_REQUIRE_CLOSE(sCoord[1], msCoord[1], 1e-2);
+  BOOST_REQUIRE_CLOSE(sCoord[2], msCoord[2], 1e-2);
 }
 
 /*
@@ -75,14 +80,14 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
   GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
   GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
 
-  arma::mat data(3, 1000);
-  arma::Row<size_t> responses(1000);
-  for (size_t i = 0; i < 500; ++i)
+  arma::mat data(3, 500);
+  arma::Row<size_t> responses(500);
+  for (size_t i = 0; i < 250; ++i)
   {
     data.col(i) = g1.Random();
     responses[i] = 0;
   }
-  for (size_t i = 500; i < 1000; ++i)
+  for (size_t i = 250; i < 500; ++i)
   {
     data.col(i) = g2.Random();
     responses[i] = 1;
@@ -91,8 +96,8 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
   // Shuffle the dataset.
   arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0,
       data.n_cols - 1, data.n_cols));
-  arma::mat shuffledData(3, 1000);
-  arma::Row<size_t> shuffledResponses(1000);
+  arma::mat shuffledData(3, 500);
+  arma::Row<size_t> shuffledResponses(500);
   for (size_t i = 0; i < data.n_cols; ++i)
   {
     shuffledData.col(i) = data.col(indices[i]);
@@ -100,14 +105,14 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
   }
 
   // Create a test set.
-  arma::mat testData(3, 1000);
-  arma::Row<size_t> testResponses(1000);
-  for (size_t i = 0; i < 500; ++i)
+  arma::mat testData(3, 500);
+  arma::Row<size_t> testResponses(500);
+  for (size_t i = 0; i < 250; ++i)
   {
     testData.col(i) = g1.Random();
     testResponses[i] = 0;
   }
-  for (size_t i = 500; i < 1000; ++i)
+  for (size_t i = 250; i < 500; ++i)
   {
     testData.col(i) = g2.Random();
     testResponses[i] = 1;

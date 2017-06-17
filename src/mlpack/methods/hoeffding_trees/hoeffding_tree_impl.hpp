@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * Implementation of the HoeffdingTree class.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_HOEFFDING_TREES_HOEFFDING_TREE_IMPL_HPP
 #define MLPACK_METHODS_HOEFFDING_TREES_HOEFFDING_TREE_IMPL_HPP
@@ -170,7 +175,7 @@ HoeffdingTree<FitnessFunction, NumericSplitType, CategoricalSplitType>::
 {
   // Copy each of the children.
   for (size_t i = 0; i < other.children.size(); ++i)
-    children.push_back(new HoeffdingTree(other.children[i]));
+    children.push_back(new HoeffdingTree(*other.children[i]));
 }
 
 template<typename FitnessFunction,
@@ -643,7 +648,6 @@ void HoeffdingTree<
       children.push_back(new HoeffdingTree(*datasetInfo, numClasses,
           successProbability, maxSamples, checkInterval, minSamples,
           categoricalSplits[0], numericSplits[0], dimensionMappings));
-
     }
 
     children[i]->MajorityClass() = childMajorities[i];

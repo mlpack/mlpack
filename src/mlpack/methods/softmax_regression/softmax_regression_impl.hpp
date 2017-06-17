@@ -3,6 +3,11 @@
  * @author Siddharth Agrawal
  *
  * Implementation of softmax regression.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_SOFTMAX_REGRESSION_SOFTMAX_REGRESSION_IMPL_HPP
 #define MLPACK_METHODS_SOFTMAX_REGRESSION_SOFTMAX_REGRESSION_IMPL_HPP
@@ -22,17 +27,17 @@ SoftmaxRegression(const size_t inputSize,
     lambda(0.0001),
     fitIntercept(fitIntercept)
 {
-   SoftmaxRegressionFunction::InitializeWeights(parameters,
-                                                inputSize, numClasses,
-                                                fitIntercept);
+  SoftmaxRegressionFunction::InitializeWeights(
+      parameters, inputSize, numClasses, fitIntercept);
 }
 
 template<template<typename> class OptimizerType>
-SoftmaxRegression<OptimizerType>::SoftmaxRegression(const arma::mat& data,
-                                                    const arma::Row<size_t>& labels,
-                                                    const size_t numClasses,
-                                                    const double lambda,
-                                                    const bool fitIntercept) :
+SoftmaxRegression<OptimizerType>::SoftmaxRegression(
+    const arma::mat& data,
+    const arma::Row<size_t>& labels,
+    const size_t numClasses,
+    const double lambda,
+    const bool fitIntercept) :
     numClasses(numClasses),
     lambda(lambda),
     fitIntercept(fitIntercept)
@@ -61,16 +66,95 @@ void SoftmaxRegression<OptimizerType>::Predict(const arma::mat& testData,
                                                arma::Row<size_t>& predictions)
     const
 {
-  if (testData.n_rows != FeatureSize())
+  Classify(testData, predictions);
+}
+
+template<template<typename> class OptimizerType>
+void SoftmaxRegression<OptimizerType>::Classify(const arma::mat& dataset,
+                                                arma::Row<size_t>& labels)
+    const
+{
+  arma::mat probabilities;
+  Classify(dataset, probabilities);
+
+  // Prepare necessary data.
+  labels.zeros(dataset.n_cols);
+  double maxProbability = 0;
+
+  // For each test input.
+  for (size_t i = 0; i < dataset.n_cols; i++)
+  {
+    // For each class.
+    for (size_t j = 0; j < numClasses; j++)
+    {
+      // If a higher class probability is encountered, change prediction.
+      if (probabilities(j, i) > maxProbability)
+      {
+        maxProbability = probabilities(j, i);
+        labels(i) = j;
+      }
+    }
+
+    // Set maximum probability to zero for the next input.
+    maxProbability = 0;
+  }
+}
+
+template<template<typename> class OptimizerType>
+template<typename VecType>
+size_t SoftmaxRegression<OptimizerType>::Classify(const VecType& point) const
+{
+  arma::Row<size_t> label(1);
+  Classify(point, label);
+  return size_t(label(0));
+}
+
+template<template<typename> class OptimizerType>
+void SoftmaxRegression<OptimizerType>::Classify(const arma::mat& dataset,
+                                                arma::Row<size_t>& labels,
+                                                arma::mat& probabilities)
+    const
+{
+  Classify(dataset, probabilities);
+
+  // Prepare necessary data.
+  labels.zeros(dataset.n_cols);
+  double maxProbability = 0;
+
+  // For each test input.
+  for (size_t i = 0; i < dataset.n_cols; i++)
+  {
+    // For each class.
+    for (size_t j = 0; j < numClasses; j++)
+    {
+      // If a higher class probability is encountered, change prediction.
+      if (probabilities(j, i) > maxProbability)
+      {
+        maxProbability = probabilities(j, i);
+        labels(i) = j;
+      }
+    }
+
+    // Set maximum probability to zero for the next input.
+    maxProbability = 0;
+  }
+}
+
+template<template<typename> class OptimizerType>
+void SoftmaxRegression<OptimizerType>::Classify(const arma::mat& dataset,
+                                                arma::mat& probabilities)
+    const
+{
+  if (dataset.n_rows != FeatureSize())
   {
     std::ostringstream oss;
-    oss << "SoftmaxRegression::Predict(): test data has " << testData.n_rows
+    oss << "SoftmaxRegression::Classify(): dataset has " << dataset.n_rows
         << " dimensions, but model has " << FeatureSize() << "dimensions";
     throw std::invalid_argument(oss.str());
   }
 
   // Calculate the probabilities for each test input.
-  arma::mat hypothesis, probabilities;
+  arma::mat hypothesis;
   if (fitIntercept)
   {
     // In order to add the intercept term, we should compute following matrix:
@@ -80,38 +164,16 @@ void SoftmaxRegression<OptimizerType>::Predict(const arma::mat& testData,
     // Since the cost of join maybe high due to the copy of original data,
     // split the hypothesis computation to two components.
     hypothesis = arma::exp(
-      arma::repmat(parameters.col(0), 1, testData.n_cols) +
-      parameters.cols(1, parameters.n_cols - 1) * testData);
+      arma::repmat(parameters.col(0), 1, dataset.n_cols) +
+      parameters.cols(1, parameters.n_cols - 1) * dataset);
   }
   else
   {
-    hypothesis = arma::exp(parameters * testData);
+    hypothesis = arma::exp(parameters * dataset);
   }
 
   probabilities = hypothesis / arma::repmat(arma::sum(hypothesis, 0),
                                             numClasses, 1);
-
-  // Prepare necessary data.
-  predictions.zeros(testData.n_cols);
-  double maxProbability = 0;
-
-  // For each test input.
-  for (size_t i = 0; i < testData.n_cols; i++)
-  {
-    // For each class.
-    for (size_t j = 0; j < numClasses; j++)
-    {
-      // If a higher class probability is encountered, change prediction.
-      if (probabilities(j, i) > maxProbability)
-      {
-        maxProbability = probabilities(j, i);
-        predictions(i) = j;
-      }
-    }
-
-    // Set maximum probability to zero for the next input.
-    maxProbability = 0;
-  }
 }
 
 template<template<typename> class OptimizerType>
@@ -122,7 +184,7 @@ double SoftmaxRegression<OptimizerType>::ComputeAccuracy(
   arma::Row<size_t> predictions;
 
   // Get predictions for the provided data.
-  Predict(testData, predictions);
+  Classify(testData, predictions);
 
   // Increment count for every correctly predicted label.
   size_t count = 0;

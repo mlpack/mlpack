@@ -19,11 +19,16 @@
  *   pages = {297--336},
  * }
  * @endcode
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_ADABOOST_ADABOOST_HPP
 #define MLPACK_METHODS_ADABOOST_ADABOOST_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/methods/perceptron/perceptron.hpp>
 #include <mlpack/methods/decision_stump/decision_stump.hpp>
 
@@ -156,7 +161,7 @@ class AdaBoost
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
 
-private:
+ private:
   //! The number of classes in the model.
   size_t classes;
   // The tolerance for change in rt and when to stop.
@@ -169,7 +174,6 @@ private:
 
   //! To check for the bound for the Hamming loss.
   double ztProduct;
-
 }; // class AdaBoost
 
 } // namespace adaboost

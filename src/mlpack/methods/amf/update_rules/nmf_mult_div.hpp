@@ -3,11 +3,16 @@
  * @author Mohan Rajendran
  *
  * Update rules for the Non-negative Matrix Factorization.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_LMF_UPDATE_RULES_NMF_MULT_DIV_HPP
 #define MLPACK_METHODS_LMF_UPDATE_RULES_NMF_MULT_DIV_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace amf {
@@ -88,7 +93,7 @@ class NMFMultiplicativeDivergenceUpdate
         // Writing this as a single expression does not work as of Armadillo
         // 3.920.  This should be fixed in a future release, and then the code
         // below can be fixed.
-        //t2 = H.row(j) % V.row(i) / t1.row(i);
+        // t2 = H.row(j) % V.row(i) / t1.row(i);
         t2.set_size(H.n_cols);
         for (size_t k = 0; k < t2.n_elem; ++k)
         {
@@ -132,14 +137,14 @@ class NMFMultiplicativeDivergenceUpdate
         // Writing this as a single expression does not work as of Armadillo
         // 3.920.  This should be fixed in a future release, and then the code
         // below can be fixed.
-        //t2 = W.col(i) % V.col(j) / t1.col(j);
+        // t2 = W.col(i) % V.col(j) / t1.col(j);
         t2.set_size(W.n_rows);
         for (size_t k = 0; k < t2.n_elem; ++k)
         {
           t2(k) = W(k, i) * V(k, j) / t1(k, j);
         }
 
-        H(i,j) = H(i,j) * sum(t2) / sum(W.col(i));
+        H(i, j) = H(i, j) * sum(t2) / sum(W.col(i));
       }
     }
   }

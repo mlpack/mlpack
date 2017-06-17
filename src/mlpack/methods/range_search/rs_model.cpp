@@ -3,8 +3,14 @@
  * @author Ryan Curtin
  *
  * Implementation of the range search model class.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "rs_model.hpp"
+#include <mlpack/core/math/random_basis.hpp>
 
 using namespace std;
 using namespace mlpack;
@@ -16,24 +22,72 @@ using namespace mlpack::range;
  */
 RSModel::RSModel(TreeTypes treeType, bool randomBasis) :
     treeType(treeType),
-    randomBasis(randomBasis),
-    kdTreeRS(NULL),
-    coverTreeRS(NULL),
-    rTreeRS(NULL),
-    rStarTreeRS(NULL),
-    ballTreeRS(NULL),
-    xTreeRS(NULL),
-    hilbertRTreeRS(NULL),
-    rPlusTreeRS(NULL),
-    rPlusPlusTreeRS(NULL)
+    leafSize(0),
+    randomBasis(randomBasis)
 {
   // Nothing to do.
+}
+
+// Copy constructor.
+RSModel::RSModel(const RSModel& other) :
+    treeType(other.treeType),
+    leafSize(other.leafSize),
+    randomBasis(other.randomBasis),
+    rSearch(other.rSearch)
+{
+  // Nothing to do.
+}
+
+// Move constructor.
+RSModel::RSModel(RSModel&& other) :
+    treeType(other.treeType),
+    leafSize(other.leafSize),
+    randomBasis(other.randomBasis),
+    rSearch(other.rSearch)
+{
+  // Reset other model.
+  other.treeType = TreeTypes::KD_TREE;
+  other.leafSize = 0;
+  other.randomBasis = false;
+  other.rSearch = decltype(other.rSearch)();
+}
+
+// Copy operator.
+RSModel& RSModel::operator=(const RSModel& other)
+{
+  boost::apply_visitor(DeleteVisitor(), rSearch);
+
+  treeType = other.treeType;
+  leafSize = other.leafSize;
+  randomBasis = other.randomBasis;
+  rSearch = other.rSearch;
+
+  return *this;
+}
+
+// Move operator.
+RSModel& RSModel::operator=(RSModel&& other)
+{
+  boost::apply_visitor(DeleteVisitor(), rSearch);
+
+  treeType = other.treeType;
+  leafSize = other.leafSize;
+  randomBasis = other.randomBasis;
+  rSearch = other.rSearch;
+
+  // Reset other model.
+  other.treeType = TreeTypes::KD_TREE;
+  other.leafSize = 0;
+  other.randomBasis = false;
+  other.rSearch = decltype(other.rSearch)();
+
+  return *this;
 }
 
 // Clean memory, if necessary.
 RSModel::~RSModel()
 {
-  CleanMemory();
+  boost::apply_visitor(DeleteVisitor(), rSearch);
 }
 
 void RSModel::BuildModel(arma::mat&& referenceSet,
@@ -48,8 +102,10 @@ void RSModel::BuildModel(arma::mat&& referenceSet,
     math::RandomBasis(q, referenceSet.n_rows);
   }
 
+  this->leafSize = leafSize;
+
   // Clean memory, if necessary.
-  CleanMemory();
+  boost::apply_visitor(DeleteVisitor(), rSearch);
 
   // Do we need to modify the reference set?
   if (randomBasis)
@@ -64,83 +120,64 @@ void RSModel::BuildModel(arma::mat&& referenceSet,
   switch (treeType)
   {
     case KD_TREE:
-      // If necessary, build the tree.
-      if (naive)
-      {
-        kdTreeRS = new RSType<tree::KDTree>(move(referenceSet), naive,
-            singleMode);
-      }
-      else
-      {
-        vector<size_t> oldFromNewReferences;
-        RSType<tree::KDTree>::Tree* kdTree = new RSType<tree::KDTree>::Tree(
-            move(referenceSet), oldFromNewReferences, leafSize);
-        kdTreeRS = new RSType<tree::KDTree>(kdTree, singleMode);
-
-        // Give the model ownership of the tree and the mappings.
-        kdTreeRS->treeOwner = true;
-        kdTreeRS->oldFromNewReferences = move(oldFromNewReferences);
-      }
-
+      rSearch = new RSType<tree::KDTree> (naive, singleMode);
       break;
 
     case COVER_TREE:
-      coverTreeRS = new RSType<tree::StandardCoverTree>(move(referenceSet),
-          naive, singleMode);
+      rSearch = new RSType<tree::StandardCoverTree>(naive, singleMode);
       break;
 
     case R_TREE:
-      rTreeRS = new RSType<tree::RTree>(move(referenceSet), naive,
-          singleMode);
+      rSearch = new RSType<tree::RTree>(naive, singleMode);
       break;
 
     case R_STAR_TREE:
-      rStarTreeRS = new RSType<tree::RStarTree>(move(referenceSet), naive,
-          singleMode);
+      rSearch = new RSType<tree::RStarTree>(naive, singleMode);
       break;
 
     case BALL_TREE:
-      // If necessary, build the ball tree.
-      if (naive)
-      {
-        ballTreeRS = new RSType<tree::BallTree>(move(referenceSet), naive,
-            singleMode);
-      }
-      else
-      {
-        vector<size_t> oldFromNewReferences;
-        RSType<tree::BallTree>::Tree* ballTree =
-            new RSType<tree::BallTree>::Tree(move(referenceSet),
-            oldFromNewReferences, leafSize);
-        ballTreeRS = new RSType<tree::BallTree>(ballTree, singleMode);
-
-        // Give the model ownership of the tree and the mappings.
-        ballTreeRS->treeOwner = true;
-        ballTreeRS->oldFromNewReferences = move(oldFromNewReferences);
-      }
-
+      rSearch = new RSType<tree::BallTree>(naive, singleMode);
       break;
 
     case X_TREE:
-      xTreeRS = new RSType<tree::XTree>(move(referenceSet), naive,
-          singleMode);
+      rSearch = new RSType<tree::XTree>(naive, singleMode);
       break;
 
     case HILBERT_R_TREE:
-      hilbertRTreeRS = new RSType<tree::HilbertRTree>(move(referenceSet), naive,
-          singleMode);
+      rSearch = new RSType<tree::HilbertRTree>(naive, singleMode);
       break;
 
     case R_PLUS_TREE:
-      rPlusTreeRS = new RSType<tree::RPlusTree>(move(referenceSet), naive,
-          singleMode);
+      rSearch = new RSType<tree::RPlusTree>(naive, singleMode);
       break;
 
     case R_PLUS_PLUS_TREE:
-      rPlusPlusTreeRS = new RSType<tree::RPlusPlusTree>(move(referenceSet), naive,
-          singleMode);
+      rSearch = new RSType<tree::RPlusPlusTree>(naive, singleMode);
+      break;
+
+    case VP_TREE:
+      rSearch = new RSType<tree::VPTree>(naive, singleMode);
+      break;
+
+    case RP_TREE:
+      rSearch = new RSType<tree::RPTree>(naive, singleMode);
+      break;
+
+    case MAX_RP_TREE:
+      rSearch = new RSType<tree::MaxRPTree>(naive, singleMode);
+      break;
+
+    case UB_TREE:
+      rSearch = new RSType<tree::UBTree>(naive, singleMode);
+      break;
+
+    case OCTREE:
+      rSearch = new RSType<tree::Octree>(naive, singleMode);
       break;
   }
+
+  TrainVisitor tn(std::move(referenceSet), leafSize);
+  boost::apply_visitor(tn, rSearch);
 
   if (!naive)
   {
@@ -168,100 +205,10 @@ void RSModel::Search(arma::mat&& querySet,
   else
     Log::Info << "brute-force (naive) search..." << endl;
 
-  switch (treeType)
-  {
-    case KD_TREE:
-      if (!kdTreeRS->Naive() && !kdTreeRS->SingleMode())
-      {
-        // Build a second tree and search.
-        Timer::Start("tree_building");
-        Log::Info << "Building query tree..." << endl;
-        vector<size_t> oldFromNewQueries;
-        RSType<tree::KDTree>::Tree queryTree(move(querySet), oldFromNewQueries,
-            leafSize);
-        Log::Info << "Tree built." << endl;
-        Timer::Stop("tree_building");
 
-        vector<vector<size_t>> neighborsOut;
-        vector<vector<double>> distancesOut;
-        kdTreeRS->Search(&queryTree, range, neighborsOut, distancesOut);
-
-        // Remap the query points.
-        neighbors.resize(queryTree.Dataset().n_cols);
-        distances.resize(queryTree.Dataset().n_cols);
-        for (size_t i = 0; i < queryTree.Dataset().n_cols; ++i)
-        {
-          neighbors[oldFromNewQueries[i]] = neighborsOut[i];
-          distances[oldFromNewQueries[i]] = distancesOut[i];
-        }
-      }
-      else
-      {
-        // Search without building a second tree.
-        kdTreeRS->Search(querySet, range, neighbors, distances);
-      }
-      break;
-
-    case COVER_TREE:
-      coverTreeRS->Search(querySet, range, neighbors, distances);
-      break;
-
-    case R_TREE:
-      rTreeRS->Search(querySet, range, neighbors, distances);
-      break;
-
-    case R_STAR_TREE:
-      rStarTreeRS->Search(querySet, range, neighbors, distances);
-      break;
-
-    case BALL_TREE:
-      if (!ballTreeRS->Naive() && !ballTreeRS->SingleMode())
-      {
-        // Build a second tree and search.
-        Timer::Start("tree_building");
-        Log::Info << "Building query tree..." << endl;
-        vector<size_t> oldFromNewQueries;
-        RSType<tree::BallTree>::Tree queryTree(move(querySet),
-            oldFromNewQueries, leafSize);
-        Log::Info << "Tree built." << endl;
-        Timer::Stop("tree_building");
-
-        vector<vector<size_t>> neighborsOut;
-        vector<vector<double>> distancesOut;
-        ballTreeRS->Search(&queryTree, range, neighborsOut, distancesOut);
-
-        // Remap the query points.
-        neighbors.resize(queryTree.Dataset().n_cols);
-        distances.resize(queryTree.Dataset().n_cols);
-        for (size_t i = 0; i < queryTree.Dataset().n_cols; ++i)
-        {
-          neighbors[oldFromNewQueries[i]] = neighborsOut[i];
-          distances[oldFromNewQueries[i]] = distancesOut[i];
-        }
-      }
-      else
-      {
-        // Search without building a second tree.
-        ballTreeRS->Search(querySet, range, neighbors, distances);
-      }
-      break;
-
-    case X_TREE:
-      xTreeRS->Search(querySet, range, neighbors, distances);
-      break;
-
-    case HILBERT_R_TREE:
-      hilbertRTreeRS->Search(querySet, range, neighbors, distances);
-      break;
-
-    case R_PLUS_TREE:
-      rPlusTreeRS->Search(querySet, range, neighbors, distances);
-      break;
-
-    case R_PLUS_PLUS_TREE:
-      rPlusPlusTreeRS->Search(querySet, range, neighbors, distances);
-      break;
-  }
+  BiSearchVisitor search(querySet, range, neighbors, distances,
+      leafSize);
+  boost::apply_visitor(search, rSearch);
 }
 
 // Perform range search (monochromatic case).
@@ -278,44 +225,8 @@ void RSModel::Search(const math::Range& range,
   else
     Log::Info << "brute-force (naive) search..." << endl;
 
-  switch (treeType)
-  {
-    case KD_TREE:
-      kdTreeRS->Search(range, neighbors, distances);
-      break;
-
-    case COVER_TREE:
-      coverTreeRS->Search(range, neighbors, distances);
-      break;
-
-    case R_TREE:
-      rTreeRS->Search(range, neighbors, distances);
-      break;
-
-    case R_STAR_TREE:
-      rStarTreeRS->Search(range, neighbors, distances);
-      break;
-
-    case BALL_TREE:
-      ballTreeRS->Search(range, neighbors, distances);
-      break;
-
-    case X_TREE:
-      xTreeRS->Search(range, neighbors, distances);
-      break;
-
-    case HILBERT_R_TREE:
-      hilbertRTreeRS->Search(range, neighbors, distances);
-      break;
-
-    case R_PLUS_TREE:
-      rPlusTreeRS->Search(range, neighbors, distances);
-      break;
-
-    case R_PLUS_PLUS_TREE:
-      rPlusPlusTreeRS->Search(range, neighbors, distances);
-      break;
-  }
+  MonoSearchVisitor search(range, neighbors, distances);
+  boost::apply_visitor(search, rSearch);
 }
 
 // Get the name of the tree type.
@@ -341,6 +252,16 @@ std::string RSModel::TreeName() const
       return "R+ tree";
     case R_PLUS_PLUS_TREE:
       return "R++ tree";
+    case VP_TREE:
+      return "vantage point tree";
+    case RP_TREE:
+      return "random projection tree (mean split)";
+    case MAX_RP_TREE:
+      return "random projection tree (max split)";
+    case UB_TREE:
+      return "UB tree";
+    case OCTREE:
+      return "octree";
     default:
       return "unknown tree";
   }
@@ -349,32 +270,5 @@ std::string RSModel::TreeName() const
 // Clean memory.
 void RSModel::CleanMemory()
 {
-  if (kdTreeRS)
-    delete kdTreeRS;
-  if (coverTreeRS)
-    delete coverTreeRS;
-  if (rTreeRS)
-    delete rTreeRS;
-  if (rStarTreeRS)
-    delete rStarTreeRS;
-  if (ballTreeRS)
-    delete ballTreeRS;
-  if (xTreeRS)
-    delete xTreeRS;
-  if (hilbertRTreeRS)
-    delete hilbertRTreeRS;
-  if (rPlusTreeRS)
-    delete rPlusTreeRS;
-  if (rPlusPlusTreeRS)
-    delete rPlusPlusTreeRS;
-
-  kdTreeRS = NULL;
-  coverTreeRS = NULL;
-  rTreeRS = NULL;
-  rStarTreeRS = NULL;
-  ballTreeRS = NULL;
-  xTreeRS = NULL;
-  hilbertRTreeRS = NULL;
-  rPlusTreeRS = NULL;
-  rPlusPlusTreeRS = NULL;
+  boost::apply_visitor(DeleteVisitor(), rSearch);
 }

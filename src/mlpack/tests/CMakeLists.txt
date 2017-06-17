@@ -1,22 +1,30 @@
 # mlpack test executable.
 add_executable(mlpack_test
-  mlpack_test.cpp
   activation_functions_test.cpp
   adaboost_test.cpp
   adam_test.cpp
   ada_delta_test.cpp
+  ada_grad_test.cpp
+  akfn_test.cpp
+  aknn_test.cpp
+  ann_layer_test.cpp
   arma_extend_test.cpp
+  armadillo_svd_test.cpp
   aug_lagrangian_test.cpp
   binarize_test.cpp
+  block_krylov_svd_test.cpp
   cf_test.cpp
   cli_test.cpp
   convolution_test.cpp
   convolutional_network_test.cpp
   cosine_tree_test.cpp
+  cv_test.cpp
   dbscan_test.cpp
   decision_stump_test.cpp
+  decision_tree_test.cpp
   det_test.cpp
   distribution_test.cpp
+  drusilla_select_test.cpp
   emst_test.cpp
   fastmks_test.cpp
   feedforward_network_test.cpp
@@ -24,17 +32,18 @@ add_executable(mlpack_test
   hdbscan_test.cpp
   hmm_test.cpp
   hoeffding_tree_test.cpp
+  hyperplane_test.cpp
+  imputation_test.cpp
   ind2sub_test.cpp
   init_rules_test.cpp
   kernel_test.cpp
   kernel_pca_test.cpp
   kernel_traits_test.cpp
   kfn_test.cpp
-  akfn_test.cpp
   kmeans_test.cpp
   knn_test.cpp
   krann_search_test.cpp
-  aknn_test.cpp
+  ksinit_test.cpp
   lars_test.cpp
   lbfgs_test.cpp
   lin_alg_test.cpp
@@ -51,12 +60,17 @@ add_executable(mlpack_test
   mean_shift_test.cpp
   metric_test.cpp
   minibatch_sgd_test.cpp
+  mlpack_test.cpp
+  momentum_sgd_test.cpp
   nbc_test.cpp
   nca_test.cpp
-  network_util_test.cpp
   nmf_test.cpp
+  nystroem_method_test.cpp
+  octree_test.cpp
   pca_test.cpp
   perceptron_test.cpp
+  q_learning_test.cpp
+  qdafn_test.cpp
   quic_svd_test.cpp
   radical_test.cpp
   randomized_svd_test.cpp
@@ -64,18 +78,26 @@ add_executable(mlpack_test
   recurrent_network_test.cpp
   rectangle_tree_test.cpp
   regularized_svd_test.cpp
+  rl_components_test.cpp
   rmsprop_test.cpp
   sa_test.cpp
   sdp_primal_dual_test.cpp
   sgd_test.cpp
+  sgdr_test.cpp
+  snapshot_ensembles.cpp
   serialization.hpp
   serialization.cpp
   serialization_test.cpp
+  sfinae_test.cpp
+  smorms3_test.cpp
   softmax_regression_test.cpp
   sort_policy_test.cpp
   sparse_autoencoder_test.cpp
   sparse_coding_test.cpp
+  spill_tree_test.cpp
   split_data_test.cpp
+  svd_batch_test.cpp
+  svd_incremental_test.cpp
   termination_policy_test.cpp
   tree_test.cpp
   tree_traits_test.cpp
@@ -84,6 +106,10 @@ add_executable(mlpack_test
   svd_incremental_test.cpp
   nystroem_method_test.cpp
   armadillo_svd_test.cpp
+  ub_tree_test.cpp
+  vantage_point_tree_test.cpp
+  prefixedoutstream_test.cpp
+  timer_test.cpp
 )
 # Link dependencies of test executable.
 target_link_libraries(mlpack_test

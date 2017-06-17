@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * Miscellaneous utility functions for serialization tests.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_TESTS_SERIALIZATION_HPP
 #define MLPACK_TESTS_SERIALIZATION_HPP
@@ -67,17 +72,21 @@ void TestArmadilloSerialization(arma::Cube<CubeType>& x)
   BOOST_REQUIRE_EQUAL(x.n_slices, orig.n_slices);
   BOOST_REQUIRE_EQUAL(x.n_elem, orig.n_elem);
 
-  for(size_t slice = 0; slice != x.n_slices; ++slice){
-	auto const &orig_slice = orig.slice(slice);
-	auto const &x_slice = x.slice(slice);
-    for (size_t i = 0; i < x.n_cols; ++i){
-      for (size_t j = 0; j < x.n_rows; ++j){
-        if (double(orig_slice(j, i)) == 0.0)
-          BOOST_REQUIRE_SMALL(double(x_slice(j, i)), 1e-8);
+  for (size_t slice = 0; slice != x.n_slices; ++slice)
+  {
+    const auto& origSlice = orig.slice(slice);
+    const auto& xSlice = x.slice(slice);
+    for (size_t i = 0; i < x.n_cols; ++i)
+    {
+      for (size_t j = 0; j < x.n_rows; ++j)
+      {
+        if (double(origSlice(j, i)) == 0.0)
+          BOOST_REQUIRE_SMALL(double(xSlice(j, i)), 1e-8);
         else
-          BOOST_REQUIRE_CLOSE(double(orig_slice(j, i)), double(x_slice(j, i)), 1e-8);
-	  }
-	}
+          BOOST_REQUIRE_CLOSE(double(origSlice(j, i)), double(xSlice(j, i)),
+              1e-8);
+      }
+    }
   }
 
   remove("test");

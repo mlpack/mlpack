@@ -3,6 +3,11 @@
  * @author Nilay Jain
  *
  * Test the backported Armadillo ind2sub() and sub2ind() functions.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 #include <boost/test/unit_test.hpp>
@@ -11,12 +16,12 @@
 BOOST_AUTO_TEST_SUITE(ind2subTest);
 
 /**
- * This test checks whether ind2sub and sub2ind are 
+ * This test checks whether ind2sub and sub2ind are
  * compiled successfully and that they function properly.
  */
 BOOST_AUTO_TEST_CASE(ind2sub_test)
 {
-  arma::mat A = arma::randu(4,5);
+  arma::mat A = arma::randu(4, 5);
   size_t index = 13;
   arma::uvec u = arma::ind2sub(arma::size(A), index);
 

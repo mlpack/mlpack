@@ -20,6 +20,11 @@ using namespace arma;
 
 /**
  * Test for convergence of incomplete incremenal learning
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 BOOST_AUTO_TEST_CASE(SVDIncompleteIncrementalConvergenceTest)
 {
@@ -33,7 +38,7 @@ BOOST_AUTO_TEST_CASE(SVDIncompleteIncrementalConvergenceTest)
       RandomInitialization,
       SVDIncompleteIncrementalLearning> amf(iit, RandomInitialization(), svd);
 
-  mat m1,m2;
+  mat m1, m2;
   amf.Apply(data, 2, m1, m2);
 
   BOOST_REQUIRE_NE(amf.TerminationPolicy().Iteration(),
@@ -56,7 +61,7 @@ BOOST_AUTO_TEST_CASE(SVDCompleteIncrementalConvergenceTest)
       SVDCompleteIncrementalLearning<sp_mat> > amf(iit,
                                                    RandomInitialization(),
                                                    svd);
-  mat m1,m2;
+  mat m1, m2;
   amf.Apply(data, 2, m1, m2);
 
   BOOST_REQUIRE_NE(amf.TerminationPolicy().Iteration(),

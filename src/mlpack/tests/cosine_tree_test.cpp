@@ -3,6 +3,11 @@
  * @author Siddharth Agrawal
  *
  * Test file for CosineTree class.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
 #include <mlpack/core.hpp>
@@ -176,7 +181,7 @@ BOOST_AUTO_TEST_CASE(CosineTreeModifiedGramSchmidt)
   CosineNodeQueue basisQueue;
   CosineTree dummyTree(data, epsilon, delta);
 
-  for(size_t i = 0; i < numCols; i++)
+  for (size_t i = 0; i < numCols; i++)
   {
     // Make a new CosineNode object.
     CosineTree* basisNode;
@@ -193,7 +198,7 @@ BOOST_AUTO_TEST_CASE(CosineTreeModifiedGramSchmidt)
     CosineNodeQueue::const_iterator j = basisQueue.begin();
     CosineTree* currentNode;
 
-    for(; j != basisQueue.end(); j++)
+    for (; j != basisQueue.end(); j++)
     {
       currentNode = *j;
       BOOST_REQUIRE_SMALL(arma::dot(currentNode->BasisVector(), newBasisVector),
@@ -207,7 +212,7 @@ BOOST_AUTO_TEST_CASE(CosineTreeModifiedGramSchmidt)
   }
 
   // Deallocate memory given to the objects.
-  for(size_t i = 0; i < numCols; i++)
+  for (size_t i = 0; i < numCols; i++)
   {
     CosineTree* currentNode;
     currentNode = basisQueue.top();

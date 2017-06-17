@@ -4,8 +4,15 @@
  *
  * Implementation of Sparse Coding with Dictionary Learning using l1 (LASSO) or
  * l1+l2 (Elastic Net) regularization.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "sparse_coding.hpp"
+#include <mlpack/core/math/lin_alg.hpp>
+#include <mlpack/core/util/param.hpp>
 
 namespace mlpack {
 namespace sparse_coding {
@@ -47,7 +54,8 @@ void SparseCoding::Encode(const arma::mat& data, arma::mat& codes)
     // place the result directly into that; then we will not need to have an
     // extra copy.
     arma::vec code = codes.unsafe_col(i);
-    lars.Train(dictionary, data.unsafe_col(i), code, false);
+    arma::rowvec responses = data.unsafe_col(i).t();
+    lars.Train(dictionary, responses, code, false);
   }
 }
 
@@ -112,17 +120,17 @@ double SparseCoding::OptimizeDictionary(const arma::mat& data,
   // numerically stable than just using inv(A) for everything.
   arma::vec dualVars = arma::zeros<arma::vec>(nActiveAtoms);
 
-  //vec dualVars = 1e-14 * ones<vec>(nActiveAtoms);
+  // vec dualVars = 1e-14 * ones<vec>(nActiveAtoms);
 
   // Method used by feature sign code - fails miserably here.  Perhaps the
   // MATLAB optimizer fmincon does something clever?
-  //vec dualVars = 10.0 * randu(nActiveAtoms, 1);
+  // vec dualVars = 10.0 * randu(nActiveAtoms, 1);
 
-  //vec dualVars = diagvec(solve(dictionary, data * trans(codes))
+  // vec dualVars = diagvec(solve(dictionary, data * trans(codes))
   //    - codes * trans(codes));
-  //for (size_t i = 0; i < dualVars.n_elem; i++)
-  //  if (dualVars(i) < 0)
-  //    dualVars(i) = 0;
+  // for (size_t i = 0; i < dualVars.n_elem; i++)
+  //   if (dualVars(i) < 0)
+  //     dualVars(i) = 0;
 
   bool converged = false;
 
@@ -155,7 +163,6 @@ double SparseCoding::OptimizeDictionary(const arma::mat& data,
     arma::mat hessian = -(-2 * (matAInvZXT * trans(matAInvZXT)) % inv(A));
 
     arma::vec searchDirection = -solve(hessian, gradient);
-    //printf("%e\n", norm(searchDirection, 2));
 
     // Armijo line search.
     const double c = 1e-4;

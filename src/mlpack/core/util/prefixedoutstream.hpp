@@ -4,21 +4,16 @@
  * @author Matthew Amidon
  *
  * Declaration of the PrefixedOutStream class.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_UTIL_PREFIXEDOUTSTREAM_HPP
 #define MLPACK_CORE_UTIL_PREFIXEDOUTSTREAM_HPP
 
-#include <iostream>
-#include <iomanip>
-#include <string>
-#include <streambuf>
-#include <stdexcept>
-
-#include <boost/lexical_cast.hpp>
-#include <boost/utility/enable_if.hpp>
-#include <boost/type_traits.hpp>
-
-#include <mlpack/core/util/sfinae_utility.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace util {
@@ -112,7 +107,7 @@ class PrefixedOutStream
   template<typename T>
   PrefixedOutStream& operator<<(const T& s);
 
-  //! The output stream that all data is to be sent too; example: std::cout.
+  //! The output stream that all data is to be sent to; example: std::cout.
   std::ostream& destination;
 
   //! Discards input, prints nothing if true.
@@ -123,11 +118,29 @@ class PrefixedOutStream
    * Conducts the base logic required in all the operator << overloads.  Mostly
    * just a good idea to reduce copy-pasta.
    *
+   * This overload is for non-Armadillo objects, which need special handling
+   * during printing.
+   *
    * @tparam T The type of the data to output.
    * @param val The The data to be output.
    */
   template<typename T>
-  void BaseLogic(const T& val);
+  typename std::enable_if<!arma::is_arma_type<T>::value>::type
+  BaseLogic(const T& val);
+
+  /**
+   * Conducts the base logic required in all the operator << overloads.  Mostly
+   * just a good idea to reduce copy-pasta.
+   *
+   * This overload is for Armadillo objects, which need special handling during
+   * printing.
+   *
+   * @tparam T The type of the data to output.
+   * @param val The The data to be output.
+   */
+  template<typename T>
+  typename std::enable_if<arma::is_arma_type<T>::value>::type
+  BaseLogic(const T& val);
 
   /**
    * Output the prefix, but only if we need to and if we are allowed to.

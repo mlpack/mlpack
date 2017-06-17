@@ -2,13 +2,18 @@
  * @file discrete_hilbert_value.hpp
  * @author Mikhail Lozhnikov
  *
- * Defintion of the DiscreteHilbertValue class, a class that calculates
+ * Definition of the DiscreteHilbertValue class, a class that calculates
  * the ordering of points using the Hilbert curve.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_DISCRETE_HILBERT_VALUE_HPP
 #define MLPACK_CORE_TREE_RECTANGLE_TREE_DISCRETE_HILBERT_VALUE_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {
@@ -45,9 +50,21 @@ class DiscreteHilbertValue
   /**
    * Create a Hilbert value object by copying from another one.
    *
-   * @param other The Hilbert value object from which the value will be copied.
+   * @param other The object from which the value will be copied.
+   * @param tree The node that holds the Hilbert value.
+   * @param deepCopy If false, the dataset will not be copied.
    */
-  DiscreteHilbertValue(const DiscreteHilbertValue& other);
+  template<typename TreeType>
+  DiscreteHilbertValue(const DiscreteHilbertValue& other,
+                       TreeType* tree,
+                       bool deepCopy);
+
+  /**
+   * Create a Hilbert value object by moving another one.
+   *
+   * @param other The Hilbert value object from which the value will be moved.
+   */
+  DiscreteHilbertValue(DiscreteHilbertValue&& other);
 
   //! Free memory
   ~DiscreteHilbertValue();
@@ -62,9 +79,11 @@ class DiscreteHilbertValue
    * @param pt2 The second point.
    */
   template<typename VecType1, typename VecType2>
-  static int ComparePoints(const VecType1& pt1, const VecType2& pt2,
-                           typename boost::enable_if<IsVector<VecType1>>* = 0,
-                           typename boost::enable_if<IsVector<VecType2>>* = 0);
+  static int ComparePoints(
+      const VecType1& pt1,
+      const VecType2& pt2,
+      typename std::enable_if_t<IsVector<VecType1>::value>* = 0,
+      typename std::enable_if_t<IsVector<VecType2>::value>* = 0);
 
   /**
    * Compare two Hilbert values. It returns 1 if the first value is greater than
@@ -97,8 +116,9 @@ class DiscreteHilbertValue
    * @param pt The point to compare with.
    */
   template<typename VecType>
-  int CompareWith(const VecType& pt,
-                  typename boost::enable_if<IsVector<VecType>>* = 0) const;
+  int CompareWith(
+      const VecType& pt,
+      typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
 
   /**
    * Compare the Hilbert value of the cached point with the Hilbert value of the
@@ -113,7 +133,7 @@ class DiscreteHilbertValue
   template<typename VecType>
   int CompareWithCachedPoint(
       const VecType& pt,
-      typename boost::enable_if<IsVector<VecType>>* = 0) const;
+      typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
 
   /**
    * Update the largest Hilbert value of the node and insert the point in the
@@ -125,7 +145,7 @@ class DiscreteHilbertValue
   template<typename TreeType, typename VecType>
   size_t InsertPoint(TreeType *node,
                      const VecType& pt,
-                     typename boost::enable_if<IsVector<VecType>>* = 0);
+                     typename std::enable_if_t<IsVector<VecType>::value>* = 0);
 
   /**
    * Update the largest Hilbert value of the node.
@@ -199,7 +219,7 @@ class DiscreteHilbertValue
   template<typename VecType>
   static arma::Col<HilbertElemType> CalculateValue(
       const VecType& pt,
-      typename boost::enable_if<IsVector<VecType>>* = 0);
+      typename std::enable_if_t<IsVector<VecType>::value>* = 0);
 
   /**
    * Compare two Hilbert values. It returns 1 if the first value is greater than
@@ -224,12 +244,21 @@ class DiscreteHilbertValue
   arma::Mat<HilbertElemType>*& LocalHilbertValues()
   { return localHilbertValues; }
 
+  //! Return the ownsLocalHilbertValues variable.
+  bool OwnsLocalHilbertValues() const { return ownsLocalHilbertValues; }
+  //! Modify the ownsLocalHilbertValues variable.
+  bool& OwnsLocalHilbertValues() { return ownsLocalHilbertValues; }
+
   //! Return the cached point (valueToInsert).
   const arma::Col<HilbertElemType>* ValueToInsert() const
   { return valueToInsert; }
   //! Modify the cached point (valueToInsert).
   arma::Col<HilbertElemType>* ValueToInsert() { return valueToInsert; }
 
+  //! Return the ownsValueToInsert variable.
+  bool OwnsValueToInsert() const { return ownsValueToInsert; }
+  //! Modify the ownsValueToInsert variable.
+  bool& OwnsValueToInsert() { return ownsValueToInsert; }
  private:
   //! The number of bits that we can store.
   static constexpr size_t order = sizeof(HilbertElemType) * CHAR_BIT;

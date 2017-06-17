@@ -5,6 +5,11 @@
  *
  * Implementation of the LRSDPFunction class, and also template specializations
  * for faster execution with the AugLagrangian optimizer.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_OPTIMIZERS_SDP_LRSDP_FUNCTION_IMPL_HPP
 #define MLPACK_CORE_OPTIMIZERS_SDP_LRSDP_FUNCTION_IMPL_HPP
@@ -50,13 +55,14 @@ template <typename SDPType>
 void LRSDPFunction<SDPType>::Gradient(const arma::mat& /* coordinates */,
                                       arma::mat& /* gradient */) const
 {
-  Log::Fatal << "LRSDPFunction::Gradient() not implemented for arbitrary optimizers!"
-      << std::endl;
+  Log::Fatal << "LRSDPFunction::Gradient() not implemented for arbitrary "
+      << "optimizers!" << std::endl;
 }
 
 template <typename SDPType>
-double LRSDPFunction<SDPType>::EvaluateConstraint(const size_t index,
-                                                  const arma::mat& coordinates) const
+double LRSDPFunction<SDPType>::EvaluateConstraint(
+    const size_t index,
+    const arma::mat& coordinates) const
 {
   const arma::mat rrt = coordinates * trans(coordinates);
   if (index < SDP().NumSparseConstraints())
@@ -66,12 +72,13 @@ double LRSDPFunction<SDPType>::EvaluateConstraint(const size_t index,
 }
 
 template <typename SDPType>
-void LRSDPFunction<SDPType>::GradientConstraint(const size_t /* index */,
-                                                const arma::mat& /* coordinates */,
-                                                arma::mat& /* gradient */) const
+void LRSDPFunction<SDPType>::GradientConstraint(
+    const size_t /* index */,
+    const arma::mat& /* coordinates */,
+    arma::mat& /* gradient */) const
 {
-  Log::Fatal << "LRSDPFunction::GradientConstraint() not implemented for arbitrary "
-      << "optimizers!" << std::endl;
+  Log::Fatal << "LRSDPFunction::GradientConstraint() not implemented "
+      << "for arbitrary optimizers!" << std::endl;
 }
 
 //! Utility function for calculating part of the objective when AugLagrangian is
@@ -139,10 +146,11 @@ EvaluateImpl(const LRSDPFunction<SDPType>& function,
   double objective = accu(function.SDP().C() % rrt);
 
   // Now each constraint.
-  UpdateObjective(objective, rrt, function.SDP().SparseA(), function.SDP().SparseB(),
-      lambda, 0, sigma);
-  UpdateObjective(objective, rrt, function.SDP().DenseA(), function.SDP().DenseB(), lambda,
-      function.SDP().NumSparseConstraints(), sigma);
+  UpdateObjective(objective, rrt, function.SDP().SparseA(),
+      function.SDP().SparseB(), lambda, 0, sigma);
+  UpdateObjective(objective, rrt, function.SDP().DenseA(),
+      function.SDP().DenseB(), lambda, function.SDP().NumSparseConstraints(),
+      sigma);
 
   return objective;
 }

@@ -3,9 +3,16 @@
  * @author Nishant Mehta
  *
  * Implementation of Radical class
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
 #include "radical.hpp"
+#include <mlpack/core/util/log.hpp>
+#include <mlpack/core/util/timers.hpp>
 
 using namespace std;
 using namespace arma;
@@ -119,7 +126,7 @@ void Radical::DoRadical(const mat& matXT, mat& matY, mat& matW)
   // In the RADICAL code, they do not copy and perturb initially, although the
   // paper does.  We follow the code as it should match their reported results
   // and likely does a better job bouncing out of local optima.
-  //GeneratePerturbedX(X, X);
+  // GeneratePerturbedX(X, X);
 
   // Initialize the unmixing matrix to the whitening matrix.
   Timer::Start("radical_do_radical");

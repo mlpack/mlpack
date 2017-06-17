@@ -3,6 +3,11 @@
  *
  * Include all of the base components required to write MLPACK methods, and the
  * main MLPACK Doxygen documentation.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_HPP
 #define MLPACK_CORE_HPP
@@ -51,8 +56,10 @@
  * A full list of executables is given below:
  *
  * - mlpack_adaboost
+ * - mlpack_approx_kfn
  * - mlpack_cf
  * - mlpack_decision_stump
+ * - mlpack_decision_tree
  * - mlpack_det
  * - mlpack_emst
  * - mlpack_fastmks
@@ -194,6 +201,26 @@
  *   - Keon Kim <kwk236@gmail.com>
  *   - Nilay Jain <nilayjain13@gmail.com>
  *   - Peter Lehner <peter.lehner@dlr.de>
+ *   - Anuraj Kanodia <akanuraj200@gmail.com>
+ *   - Ivan Georgiev <ivan@jonan.info>
+ *   - Shikhar Bhardwaj <shikharbhardwaj68@gmail.com>
+ *   - Yashu Seth <yashuseth2503@gmail.com>
+ *   - Mike Izbicki <mike@izbicki.me>
+ *   - Sudhanshu Ranjan <sranjan.sud@gmail.com>
+ *   - Piyush Jaiswal <piyush.jaiswal@st.niituniversity.in>
+ *   - Dinesh Raj <dinu.iota@gmail.com>
+ *   - Prasanna Patil <prasannapatil08@gmail.com>
+ *   - Lakshya Agrawal <zeeshan.lakshya@gmail.com>
+ *   - Vivek Pal <vivekpal.dtu@gmail.com>
+ *   - Praveen Ch <chvsp972911@gmail.com>
+ *   - Kirill Mishchenko <ki.mishchenko@gmail.com>
+ *   - Abhinav Moudgil <abhinavmoudgil95@gmail.com>
+ *   - Thyrix Yang <thyrixyang@gmail.com>
+ *   - Sagar B Hathwar <sagarbhathwar@gmail.com>
+ *   - Nishanth Hegde <hegde.nishanth@gmail.com>
+ *   - Parminder Singh <parmsingh101@gmail.com>
+ *   - CodeAi (deep learning bug detector) <benjamin.bales@assrc.us>
+ *   - Franciszek Stokowacki <franek.stokowacki@gmail.com>
  */
 
 // First, include all of the prerequisites.
@@ -203,6 +230,7 @@
 #include <mlpack/core/util/arma_traits.hpp>
 #include <mlpack/core/util/log.hpp>
 #include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/deprecated.hpp>
 #include <mlpack/core/data/load.hpp>
 #include <mlpack/core/data/save.hpp>
 #include <mlpack/core/data/normalize_labels.hpp>
@@ -215,7 +243,9 @@
 #include <mlpack/core/dists/discrete_distribution.hpp>
 #include <mlpack/core/dists/gaussian_distribution.hpp>
 #include <mlpack/core/dists/laplace_distribution.hpp>
-//mlpack::backtrace only for linux
+#include <mlpack/core/dists/gamma_distribution.hpp>
+
+// mlpack::backtrace only for linux
 #ifdef HAS_BFD_DL
   #include <mlpack/core/util/backtrace.hpp>
 #endif

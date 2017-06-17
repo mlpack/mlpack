@@ -3,8 +3,14 @@
  * @author Nishant Mehta
  *
  * Implementation of Local Coordinate Coding.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "lcc.hpp"
+#include <mlpack/core/math/lin_alg.hpp>
 
 namespace mlpack {
 namespace lcc {
@@ -51,7 +57,8 @@ void LocalCoordinateCoding::Encode(const arma::mat& data, arma::mat& codes)
     // Run LARS for this point, by making an alias of the point and passing
     // that.
     arma::vec beta = codes.unsafe_col(i);
-    lars.Train(dictPrime, data.unsafe_col(i), beta, false);
+    arma::rowvec responses = data.unsafe_col(i).t();
+    lars.Train(dictPrime, responses, beta, false);
     beta %= invW; // Remember, beta is an alias of codes.col(i).
   }
 }

@@ -3,8 +3,27 @@
  * @author Ajinkya Kale <kaleajinkya@gmail.com>
  *
  * Executable for Kernel PCA.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/math/random.hpp>
+#include <mlpack/core/kernels/kernel_traits.hpp>
+#include <mlpack/core/kernels/linear_kernel.hpp>
+#include <mlpack/core/kernels/polynomial_kernel.hpp>
+#include <mlpack/core/kernels/cosine_distance.hpp>
+#include <mlpack/core/kernels/gaussian_kernel.hpp>
+#include <mlpack/core/kernels/epanechnikov_kernel.hpp>
+#include <mlpack/core/kernels/hyperbolic_tangent_kernel.hpp>
+#include <mlpack/core/kernels/laplacian_kernel.hpp>
+#include <mlpack/core/kernels/pspectrum_string_kernel.hpp>
+#include <mlpack/core/kernels/spherical_kernel.hpp>
+#include <mlpack/core/kernels/triangular_kernel.hpp>
+#include <mlpack/methods/hoeffding_trees/hoeffding_tree.hpp>
 #include <mlpack/methods/nystroem_method/ordered_selection.hpp>
 #include <mlpack/methods/nystroem_method/random_selection.hpp>
 #include <mlpack/methods/nystroem_method/kmeans_selection.hpp>
@@ -62,16 +81,16 @@ PROGRAM_INFO("Kernel Principal Components Analysis",
     "options --bandwidth, --kernel_scale, --offset, or --degree (or a "
     "combination of those options)."
     "\n\n"
-    "Optionally, the nystr\u00F6m method (\"Using the Nystroem method to speed up"
-    " kernel machines\", 2001) can be used to calculate the kernel matrix by "
+    "Optionally, the nystr\u00F6m method (\"Using the Nystroem method to speed "
+    "up kernel machines\", 2001) can be used to calculate the kernel matrix by "
     "specifying the --nystroem_method (-n) option. This approach works by using"
-    " a subset of the data as basis to reconstruct the kernel matrix; to specify"
-    " the sampling scheme, the --sampling parameter is used, the sampling scheme"
-    " for the nystr\u00F6m method can be chosen from the following list: kmeans,"
-    " random, ordered.");
+    " a subset of the data as basis to reconstruct the kernel matrix; to "
+    "specify the sampling scheme, the --sampling parameter is used, the "
+    "sampling scheme for the nystr\u00F6m method can be chosen from the "
+    "following list: kmeans, random, ordered.");
 
-PARAM_STRING_IN_REQ("input_file", "Input dataset to perform KPCA on.", "i");
-PARAM_STRING_OUT("output_file", "File to save modified dataset to.", "o");
+PARAM_MATRIX_IN_REQ("input", "Input dataset to perform KPCA on.", "i");
+PARAM_MATRIX_OUT("output", "Matrix to save modified dataset to.", "o");
 PARAM_STRING_IN_REQ("kernel", "The kernel to use; see the above documentation "
     "for the list of usable kernels.", "k");
 
@@ -144,14 +163,12 @@ int main(int argc, char** argv)
   // Parse command line options.
   CLI::ParseCommandLine(argc, argv);
 
-  if (!CLI::HasParam("output_file"))
+  if (!CLI::HasParam("output"))
     Log::Warn << "--output_file is not specified; no output will be saved!"
         << endl;
 
   // Load input dataset.
-  mat dataset;
-  const string inputFile = CLI::GetParam<string>("input_file");
-  data::Load(inputFile, dataset, true); // Fatal on failure.
+  mat dataset = std::move(CLI::GetParam<arma::mat>("input"));
 
   // Get the new dimensionality, if it is necessary.
   size_t newDim = dataset.n_rows;
@@ -237,7 +254,6 @@ int main(int argc, char** argv)
   }
 
   // Save the output dataset.
-  const string outputFile = CLI::GetParam<string>("output_file");
-  if (outputFile != "")
-    data::Save(outputFile, dataset, true); // Fatal on failure.
+  if (CLI::HasParam("output"))
+    CLI::GetParam<arma::mat>("output") = std::move(dataset);
 }

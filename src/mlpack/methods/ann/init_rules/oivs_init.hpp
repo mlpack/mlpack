@@ -18,11 +18,16 @@
  *   year={1994}
  * }
  * @endcode
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_ANN_INIT_RULES_OIVS_INIT_HPP
 #define MLPACK_METHODS_ANN_INIT_RULES_OIVS_INIT_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
 
 #include "random_init.hpp"
@@ -65,8 +70,8 @@ class OivsInitialization
                      const int k = 5,
                      const double gamma = 0.9) :
       k(k), gamma(gamma),
-      b(std::abs(ActivationFunction::inv(1 - epsilon) -
-                 ActivationFunction::inv(epsilon)))
+      b(std::abs(ActivationFunction::Inv(1 - epsilon) -
+                 ActivationFunction::Inv(epsilon)))
   {
   }
 
@@ -109,13 +114,13 @@ class OivsInitialization
 
  private:
   //! Parameter to control the activation region width.
-  const int k;
+  int k;
 
   //! Parameter to define the uniform random range.
-  const double gamma;
+  double gamma;
 
   //! Parameter to control the activation region.
-  const double b;
+  double b;
 }; // class OivsInitialization
 
 

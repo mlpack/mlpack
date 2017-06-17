@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * Implementation of save functionality.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_DATA_SAVE_IMPL_HPP
 #define MLPACK_CORE_DATA_SAVE_IMPL_HPP
@@ -20,6 +25,23 @@
 
 namespace mlpack {
 namespace data {
+
+template<typename eT>
+bool Save(const std::string& filename,
+          const arma::Col<eT>& vec,
+          const bool fatal)
+{
+  // Don't transpose: one observation per line (for CSVs at least).
+  return Save(filename, vec, fatal, false);
+}
+
+template<typename eT>
+bool Save(const std::string& filename,
+          const arma::Row<eT>& rowvec,
+          const bool fatal)
+{
+  return Save(filename, rowvec, fatal, true);
+}
 
 template<typename eT>
 bool Save(const std::string& filename,

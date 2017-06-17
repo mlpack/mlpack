@@ -2,6 +2,11 @@
  * @file sparse_coding_test.cpp
  *
  * Test for Sparse Coding
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
 // Note: We don't use BOOST_REQUIRE_CLOSE in the code below because we need
@@ -25,7 +30,7 @@ void SCVerifyCorrectness(vec beta, vec errCorr, double lambda)
 {
   const double tol = 1e-12;
   size_t nDims = beta.n_elem;
-  for(size_t j = 0; j < nDims; j++)
+  for (size_t j = 0; j < nDims; j++)
   {
     if (beta(j) == 0)
     {
@@ -94,7 +99,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestCodingStepElasticNet)
 
   mat D = sc.Dictionary();
 
-  for(uword i = 0; i < nPoints; ++i)
+  for (uword i = 0; i < nPoints; ++i)
   {
     vec errCorr =
       (trans(D) * D + lambda2 * eye(nAtoms, nAtoms)) * Z.unsafe_col(i)

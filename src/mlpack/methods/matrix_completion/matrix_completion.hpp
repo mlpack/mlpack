@@ -4,6 +4,11 @@
  *
  * A thin wrapper around nuclear norm minimization to solve
  * low rank matrix completion problems.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_MATRIX_COMPLETION_MATRIX_COMPLETION_HPP
 #define MLPACK_METHODS_MATRIX_COMPLETION_MATRIX_COMPLETION_HPP
@@ -107,7 +112,10 @@ class MatrixCompletion
   void Recover(arma::mat& recovered);
 
   //! Return the underlying SDP.
-  const optimization::LRSDP<optimization::SDP<arma::sp_mat>>& Sdp() const { return sdp; }
+  const optimization::LRSDP<optimization::SDP<arma::sp_mat>>& Sdp() const
+  {
+    return sdp;
+  }
   //! Modify the underlying SDP.
   optimization::LRSDP<optimization::SDP<arma::sp_mat>>& Sdp() { return sdp; }
 

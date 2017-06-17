@@ -3,12 +3,28 @@
  * @author Ryan Curtin
  *
  * A utility struct to contain all the possible FastMKS models.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_FASTMKS_FASTMKS_MODEL_HPP
 #define MLPACK_METHODS_FASTMKS_FASTMKS_MODEL_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include "fastmks.hpp"
+#include <mlpack/core/kernels/kernel_traits.hpp>
+#include <mlpack/core/kernels/linear_kernel.hpp>
+#include <mlpack/core/kernels/polynomial_kernel.hpp>
+#include <mlpack/core/kernels/cosine_distance.hpp>
+#include <mlpack/core/kernels/gaussian_kernel.hpp>
+#include <mlpack/core/kernels/epanechnikov_kernel.hpp>
+#include <mlpack/core/kernels/hyperbolic_tangent_kernel.hpp>
+#include <mlpack/core/kernels/laplacian_kernel.hpp>
+#include <mlpack/core/kernels/pspectrum_string_kernel.hpp>
+#include <mlpack/core/kernels/spherical_kernel.hpp>
+#include <mlpack/core/kernels/triangular_kernel.hpp>
 
 namespace mlpack {
 namespace fastmks {
@@ -34,6 +50,15 @@ class FastMKSModel
    * Create the FastMKSModel with the given kernel type.
    */
   FastMKSModel(const int kernelType = LINEAR_KERNEL);
+
+  //! Copy constructor.
+  FastMKSModel(const FastMKSModel& other);
+
+  //! Move constructor.
+  FastMKSModel(FastMKSModel&& other);
+
+  //! Copy assignment operator.
+  FastMKSModel& operator=(const FastMKSModel& other);
 
   /**
    * Clean memory.

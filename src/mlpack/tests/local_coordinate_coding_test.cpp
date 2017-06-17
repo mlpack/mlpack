@@ -3,6 +3,11 @@
  * @author Nishant Mehta
  *
  * Test for Local Coordinate Coding.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
 // Note: We don't use BOOST_REQUIRE_CLOSE in the code below because we need
@@ -24,7 +29,7 @@ void VerifyCorrectness(vec beta, vec errCorr, double lambda)
 {
   const double tol = 1e-12;
   size_t nDims = beta.n_elem;
-  for(size_t j = 0; j < nDims; j++)
+  for (size_t j = 0; j < nDims; j++)
   {
     if (beta(j) == 0)
     {
@@ -61,7 +66,7 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateCodingTestCodingStep)
   }
 
   mat Z;
-  LocalCoordinateCoding lcc(X, nAtoms, lambda1);
+  LocalCoordinateCoding lcc(X, nAtoms, lambda1, 150);
   lcc.Encode(X, Z);
 
   mat D = lcc.Dictionary();
@@ -100,7 +105,7 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateCodingTestDictionaryStep)
   }
 
   mat Z;
-  LocalCoordinateCoding lcc(X, nAtoms, lambda);
+  LocalCoordinateCoding lcc(X, nAtoms, lambda, 150);
   lcc.Encode(X, Z);
   uvec adjacencies = find(Z);
   lcc.OptimizeDictionary(X, Z, adjacencies);
@@ -123,7 +128,7 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   mat X = randu<mat>(100, 100);
   size_t nAtoms = 25;
 
-  LocalCoordinateCoding lcc(nAtoms, 0.05);
+  LocalCoordinateCoding lcc(nAtoms, 0.05, 150);
   lcc.Train(X);
 
   mat Y = randu<mat>(100, 200);

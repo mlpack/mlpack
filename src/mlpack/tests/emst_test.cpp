@@ -2,6 +2,11 @@
  * @file emst_test.cpp
  *
  * Test file for EMST methods.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/emst/dtb.hpp>
@@ -242,7 +247,6 @@ BOOST_AUTO_TEST_CASE(CoverTreeTest)
     BOOST_REQUIRE_EQUAL(bstResults(1, i), coverResults(1, i));
     BOOST_REQUIRE_CLOSE(bstResults(2, i), coverResults(2, i), 1e-5);
   }
-
 }
 
 /**
@@ -272,7 +276,6 @@ BOOST_AUTO_TEST_CASE(BallTreeTest)
     BOOST_REQUIRE_EQUAL(bstResults(1, i), ballResults(1, i));
     BOOST_REQUIRE_CLOSE(bstResults(2, i), ballResults(2, i), 1e-5);
   }
-
 }
 
 BOOST_AUTO_TEST_SUITE_END();

@@ -4,7 +4,10 @@
  * Implementation of hyper-rectangle bound policy class.
  * Template parameter Power is the metric to use; use 2 for Euclidean (L2).
  *
- * @experimental
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_HRECTBOUND_IMPL_HPP
 #define MLPACK_CORE_TREE_HRECTBOUND_IMPL_HPP
@@ -57,8 +60,10 @@ inline HRectBound<MetricType, ElemType>::HRectBound(
  * Same as the copy constructor.
  */
 template<typename MetricType, typename ElemType>
-inline HRectBound<MetricType, ElemType>& HRectBound<MetricType, ElemType>::operator=(
-    const HRectBound<MetricType, ElemType>& other)
+inline HRectBound<
+    MetricType,
+    ElemType>& HRectBound<MetricType,
+    ElemType>::operator=(const HRectBound<MetricType, ElemType>& other)
 {
   if (dim != other.Dim())
   {
@@ -160,7 +165,7 @@ template<typename MetricType, typename ElemType>
 template<typename VecType>
 inline ElemType HRectBound<MetricType, ElemType>::MinDistance(
     const VecType& point,
-    typename boost::enable_if<IsVector<VecType>>* /* junk */) const
+    typename std::enable_if_t<IsVector<VecType>::value>* /* junk */) const
 {
   Log::Assert(point.n_elem == dim);
 
@@ -175,18 +180,41 @@ inline ElemType HRectBound<MetricType, ElemType>::MinDistance(
     // Since only one of 'lower' or 'higher' is negative, if we add each's
     // absolute value to itself and then sum those two, our result is the
     // nonnegative half of the equation times two; then we raise to power Power.
-    sum += pow((lower + fabs(lower)) + (higher + fabs(higher)),
-        (ElemType) MetricType::Power);
+    if (MetricType::Power == 1)
+      sum += (lower + std::fabs(lower)) + (higher + std::fabs(higher));
+    else if (MetricType::Power == 2)
+    {
+      ElemType dist = (lower + std::fabs(lower)) + (higher + std::fabs(higher));
+      sum += dist * dist;
+    }
+    else
+    {
+      sum += pow((lower + fabs(lower)) + (higher + fabs(higher)),
+          (ElemType) MetricType::Power);
+    }
   }
 
   // Now take the Power'th root (but make sure our result is squared if it needs
   // to be); then cancel out the constant of 2 (which may have been squared now)
   // that was introduced earlier.  The compiler should optimize out the if
   // statement entirely.
-  if (MetricType::TakeRoot)
-    return (ElemType) pow((double) sum, 1.0 / (double) MetricType::Power) / 2.0;
+  if (MetricType::Power == 1)
+    return sum * 0.5;
+  else if (MetricType::Power == 2)
+  {
+    if (MetricType::TakeRoot)
+      return (ElemType) std::sqrt(sum) * 0.5;
+    else
+      return sum * 0.25;
+  }
   else
-    return sum / pow(2.0, MetricType::Power);
+  {
+    if (MetricType::TakeRoot)
+      return (ElemType) pow((double) sum,
+          1.0 / (double) MetricType::Power) / 2.0;
+    else
+      return sum / pow(2.0, MetricType::Power);
+  }
 }
 
 /**
@@ -210,8 +238,20 @@ ElemType HRectBound<MetricType, ElemType>::MinDistance(const HRectBound& other)
     // We invoke the following:
     //   x + fabs(x) = max(x * 2, 0)
     //   (x * 2)^2 / 4 = x^2
-    sum += pow((lower + fabs(lower)) + (higher + fabs(higher)),
-        (ElemType) MetricType::Power);
+
+    // The compiler should optimize out this if statement entirely.
+    if (MetricType::Power == 1)
+      sum += (lower + std::fabs(lower)) + (higher + std::fabs(higher));
+    else if (MetricType::Power == 2)
+    {
+      ElemType dist = (lower + std::fabs(lower)) + (higher + std::fabs(higher));
+      sum += dist * dist;
+    }
+    else
+    {
+      sum += pow((lower + fabs(lower)) + (higher + fabs(higher)),
+          (ElemType) MetricType::Power);
+    }
 
     // Move bound pointers.
     mbound++;
@@ -219,10 +259,23 @@ ElemType HRectBound<MetricType, ElemType>::MinDistance(const HRectBound& other)
   }
 
   // The compiler should optimize out this if statement entirely.
-  if (MetricType::TakeRoot)
-    return (ElemType) pow((double) sum, 1.0 / (double) MetricType::Power) / 2.0;
+  if (MetricType::Power == 1)
+    return sum * 0.5;
+  else if (MetricType::Power == 2)
+  {
+    if (MetricType::TakeRoot)
+      return (ElemType) std::sqrt(sum) * 0.5;
+    else
+      return sum * 0.25;
+  }
   else
-    return sum / pow(2.0, MetricType::Power);
+  {
+    if (MetricType::TakeRoot)
+      return (ElemType) pow((double) sum,
+          1.0 / (double) MetricType::Power) / 2.0;
+    else
+      return sum / pow(2.0, MetricType::Power);
+  }
 }
 
 /**
@@ -232,7 +285,7 @@ template<typename MetricType, typename ElemType>
 template<typename VecType>
 inline ElemType HRectBound<MetricType, ElemType>::MaxDistance(
     const VecType& point,
-    typename boost::enable_if<IsVector<VecType> >* /* junk */) const
+    typename std::enable_if_t<IsVector<VecType>::value>* /* junk */) const
 {
   ElemType sum = 0;
 
@@ -242,12 +295,26 @@ inline ElemType HRectBound<MetricType, ElemType>::MaxDistance(
   {
     ElemType v = std::max(fabs(point[d] - bounds[d].Lo()),
         fabs(bounds[d].Hi() - point[d]));
-    sum += pow(v, (ElemType) MetricType::Power);
+
+    // The compiler should optimize out this if statement entirely.
+    if (MetricType::Power == 1)
+      sum += v; // v is non-negative.
+    else if (MetricType::Power == 2)
+      sum += v * v;
+    else
+      sum += std::pow(v, (ElemType) MetricType::Power);
   }
 
   // The compiler should optimize out this if statement entirely.
   if (MetricType::TakeRoot)
-    return (ElemType) pow((double) sum, 1.0 / (double) MetricType::Power);
+  {
+    if (MetricType::Power == 1)
+      return sum;
+    else if (MetricType::Power == 2)
+      return (ElemType) std::sqrt(sum);
+    else
+      return (ElemType) pow((double) sum, 1.0 / (double) MetricType::Power);
+  }
   else
     return sum;
 }
@@ -269,12 +336,26 @@ inline ElemType HRectBound<MetricType, ElemType>::MaxDistance(
   {
     v = std::max(fabs(other.bounds[d].Hi() - bounds[d].Lo()),
         fabs(bounds[d].Hi() - other.bounds[d].Lo()));
-    sum += pow(v, (ElemType) MetricType::Power); // v is non-negative.
+
+    // The compiler should optimize out this if statement entirely.
+    if (MetricType::Power == 1)
+      sum += v; // v is non-negative.
+    else if (MetricType::Power == 2)
+      sum += v * v;
+    else
+      sum += std::pow(v, (ElemType) MetricType::Power);
   }
 
   // The compiler should optimize out this if statement entirely.
   if (MetricType::TakeRoot)
-    return (ElemType) pow((double) sum, 1.0 / (double) MetricType::Power);
+  {
+    if (MetricType::Power == 1)
+      return sum;
+    else if (MetricType::Power == 2)
+      return (ElemType) std::sqrt(sum);
+    else
+      return (ElemType) pow((double) sum, 1.0 / (double) MetricType::Power);
+  }
   else
     return sum;
 }
@@ -309,14 +390,38 @@ HRectBound<MetricType, ElemType>::RangeDistance(
       vLo = (v2 > 0) ? v2 : 0; // Force to be 0 if negative.
     }
 
-    loSum += pow(vLo, (ElemType) MetricType::Power);
-    hiSum += pow(vHi, (ElemType) MetricType::Power);
+    // The compiler should optimize out this if statement entirely.
+    if (MetricType::Power == 1)
+    {
+      loSum += vLo; // vLo is non-negative.
+      hiSum += vHi; // vHi is non-negative.
+    }
+    else if (MetricType::Power == 2)
+    {
+      loSum += vLo * vLo;
+      hiSum += vHi * vHi;
+    }
+    else
+    {
+      loSum += std::pow(vLo, (ElemType) MetricType::Power);
+      hiSum += std::pow(vHi, (ElemType) MetricType::Power);
+    }
   }
 
   if (MetricType::TakeRoot)
-    return math::RangeType<ElemType>(
-        (ElemType) pow((double) loSum, 1.0 / (double) MetricType::Power),
-        (ElemType) pow((double) hiSum, 1.0 / (double) MetricType::Power));
+  {
+    if (MetricType::Power == 1)
+      return math::RangeType<ElemType>(loSum, hiSum);
+    else if (MetricType::Power == 2)
+      return math::RangeType<ElemType>((ElemType) std::sqrt(loSum),
+                                       (ElemType) std::sqrt(hiSum));
+    else
+    {
+      return math::RangeType<ElemType>(
+          (ElemType) pow((double) loSum, 1.0 / (double) MetricType::Power),
+          (ElemType) pow((double) hiSum, 1.0 / (double) MetricType::Power));
+    }
+  }
   else
     return math::RangeType<ElemType>(loSum, hiSum);
 }
@@ -329,7 +434,7 @@ template<typename VecType>
 inline math::RangeType<ElemType>
 HRectBound<MetricType, ElemType>::RangeDistance(
     const VecType& point,
-    typename boost::enable_if<IsVector<VecType>>* /* junk */) const
+    typename std::enable_if_t<IsVector<VecType>::value>* /* junk */) const
 {
   ElemType loSum = 0;
   ElemType hiSum = 0;
@@ -361,14 +466,38 @@ HRectBound<MetricType, ElemType>::RangeDistance(
       }
     }
 
-    loSum += pow(vLo, (ElemType) MetricType::Power);
-    hiSum += pow(vHi, (ElemType) MetricType::Power);
+    // The compiler should optimize out this if statement entirely.
+    if (MetricType::Power == 1)
+    {
+      loSum += vLo; // vLo is non-negative.
+      hiSum += vHi; // vHi is non-negative.
+    }
+    else if (MetricType::Power == 2)
+    {
+      loSum += vLo * vLo;
+      hiSum += vHi * vHi;
+    }
+    else
+    {
+      loSum += std::pow(vLo, (ElemType) MetricType::Power);
+      hiSum += std::pow(vHi, (ElemType) MetricType::Power);
+    }
   }
 
   if (MetricType::TakeRoot)
-    return math::RangeType<ElemType>(
-        (ElemType) pow((double) loSum, 1.0 / (double) MetricType::Power),
-        (ElemType) pow((double) hiSum, 1.0 / (double) MetricType::Power));
+  {
+    if (MetricType::Power == 1)
+      return math::RangeType<ElemType>(loSum, hiSum);
+    else if (MetricType::Power == 2)
+      return math::RangeType<ElemType>((ElemType) std::sqrt(loSum),
+                                       (ElemType) std::sqrt(hiSum));
+    else
+    {
+      return math::RangeType<ElemType>(
+          (ElemType) pow((double) loSum, 1.0 / (double) MetricType::Power),
+          (ElemType) pow((double) hiSum, 1.0 / (double) MetricType::Power));
+    }
+  }
   else
     return math::RangeType<ElemType>(loSum, hiSum);
 }
@@ -378,8 +507,8 @@ HRectBound<MetricType, ElemType>::RangeDistance(
  */
 template<typename MetricType, typename ElemType>
 template<typename MatType>
-inline HRectBound<MetricType, ElemType>& HRectBound<MetricType, ElemType>::operator|=(
-    const MatType& data)
+inline HRectBound<MetricType, ElemType>&
+HRectBound<MetricType, ElemType>::operator|=(const MatType& data)
 {
   Log::Assert(data.n_rows == dim);
 
@@ -402,8 +531,8 @@ inline HRectBound<MetricType, ElemType>& HRectBound<MetricType, ElemType>::opera
  * Expands this region to encompass another bound.
  */
 template<typename MetricType, typename ElemType>
-inline HRectBound<MetricType, ElemType>& HRectBound<MetricType, ElemType>::operator|=(
-    const HRectBound& other)
+inline HRectBound<MetricType, ElemType>&
+HRectBound<MetricType, ElemType>::operator|=(const HRectBound& other)
 {
   assert(other.dim == dim);
 
@@ -424,7 +553,8 @@ inline HRectBound<MetricType, ElemType>& HRectBound<MetricType, ElemType>::opera
  */
 template<typename MetricType, typename ElemType>
 template<typename VecType>
-inline bool HRectBound<MetricType, ElemType>::Contains(const VecType& point) const
+inline bool HRectBound<MetricType, ElemType>::Contains(
+    const VecType& point) const
 {
   for (size_t i = 0; i < point.n_elem; i++)
   {
@@ -447,7 +577,8 @@ inline bool HRectBound<MetricType, ElemType>::Contains(
     const math::RangeType<ElemType>& r_a = bounds[i];
     const math::RangeType<ElemType>& r_b = bound.bounds[i];
 
-    if (r_a.Hi() <= r_b.Lo() || r_a.Lo() >= r_b.Hi()) // If a does not overlap b at all.
+    // If a does not overlap b at all.
+    if (r_a.Hi() <= r_b.Lo() || r_a.Lo() >= r_b.Hi())
       return false;
   }
 
@@ -458,8 +589,8 @@ inline bool HRectBound<MetricType, ElemType>::Contains(
  * Returns the intersection of this bound and another.
  */
 template<typename MetricType, typename ElemType>
-inline HRectBound<MetricType, ElemType> HRectBound<MetricType, ElemType>::
-operator&(const HRectBound& bound) const
+inline HRectBound<MetricType, ElemType>
+HRectBound<MetricType, ElemType>::operator&(const HRectBound& bound) const
 {
   HRectBound<MetricType, ElemType> result(dim);
 
@@ -475,8 +606,8 @@ operator&(const HRectBound& bound) const
  * Intersects this bound with another.
  */
 template<typename MetricType, typename ElemType>
-inline HRectBound<MetricType, ElemType>& HRectBound<MetricType, ElemType>::
-operator&=(const HRectBound& bound)
+inline HRectBound<MetricType, ElemType>&
+HRectBound<MetricType, ElemType>::operator&=(const HRectBound& bound)
 {
   for (size_t k = 0; k < dim; k++)
   {

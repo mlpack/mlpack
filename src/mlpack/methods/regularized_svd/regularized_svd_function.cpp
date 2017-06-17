@@ -3,9 +3,15 @@
  * @author Siddharth Agrawal
  *
  * An implementation of the RegularizedSVDFunction class.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
 #include "regularized_svd_function.hpp"
+#include <mlpack/core/optimizers/sgd/sgd.hpp>
 
 namespace mlpack {
 namespace svd {
@@ -36,7 +42,7 @@ double RegularizedSVDFunction::Evaluate(const arma::mat& parameters) const
 
   double cost = 0.0;
 
-  for(size_t i = 0; i < data.n_cols; i++)
+  for (size_t i = 0; i < data.n_cols; i++)
   {
     // Indices for accessing the the correct parameter columns.
     const size_t user = data(0, i);
@@ -96,7 +102,7 @@ void RegularizedSVDFunction::Gradient(const arma::mat& parameters,
 
   gradient.zeros(rank, numUsers + numItems);
 
-  for(size_t i = 0; i < data.n_cols; i++)
+  for (size_t i = 0; i < data.n_cols; i++)
   {
     // Indices for accessing the the correct parameter columns.
     const size_t user = data(0, i);
@@ -124,7 +130,9 @@ namespace mlpack {
 namespace optimization {
 
 template<>
-double SGD<mlpack::svd::RegularizedSVDFunction>::Optimize(arma::mat& parameters)
+double StandardSGD<mlpack::svd::RegularizedSVDFunction>::Optimize(
+    mlpack::svd::RegularizedSVDFunction& function,
+    arma::mat& parameters)
 {
   // Find the number of functions to use.
   const size_t numFunctions = function.NumFunctions();
@@ -134,16 +142,16 @@ double SGD<mlpack::svd::RegularizedSVDFunction>::Optimize(arma::mat& parameters)
   double overallObjective = 0;
 
   // Calculate the first objective function.
-  for(size_t i = 0; i < numFunctions; i++)
+  for (size_t i = 0; i < numFunctions; i++)
     overallObjective += function.Evaluate(parameters, i);
 
   const arma::mat data = function.Dataset();
 
   // Now iterate!
-  for(size_t i = 1; i != maxIterations; i++, currentFunction++)
+  for (size_t i = 1; i != maxIterations; i++, currentFunction++)
   {
     // Is this iteration the start of a sequence?
-    if((currentFunction % numFunctions) == 0)
+    if ((currentFunction % numFunctions) == 0)
     {
       // Reset the counter variables.
       overallObjective = 0;

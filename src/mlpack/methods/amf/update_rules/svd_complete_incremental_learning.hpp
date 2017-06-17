@@ -3,11 +3,16 @@
  * @author Sumedh Ghaisas
  *
  * SVD factorizer used in AMF (Alternating Matrix Factorization).
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_AMF_SVD_COMPLETE_INCREMENTAL_LEARNING_HPP
 #define MLPACK_METHODS_AMF_SVD_COMPLETE_INCREMENTAL_LEARNING_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack
 {
@@ -87,7 +92,7 @@ class SVDCompleteIncrementalLearning
     deltaW.zeros(1, W.n_cols);
 
     // Loop until a non-zero entry is found.
-    while(true)
+    while (true)
     {
       const double val = V(currentItemIndex, currentUserIndex);
       // Update feature vector if current entry is non-zero and break the loop.
@@ -163,7 +168,7 @@ class SVDCompleteIncrementalLearning
 template<>
 class SVDCompleteIncrementalLearning<arma::sp_mat>
 {
-  public:
+ public:
   SVDCompleteIncrementalLearning(double u = 0.01,
                                  double kw = 0,
                                  double kh = 0)
@@ -198,10 +203,10 @@ class SVDCompleteIncrementalLearning<arma::sp_mat>
                       arma::mat& W,
                       const arma::mat& H)
   {
-    if(!isStart) (*it)++;
+    if (!isStart) (*it)++;
     else isStart = false;
 
-    if(*it == V.end())
+    if (*it == V.end())
     {
         delete it;
         it = new arma::sp_mat::const_iterator(V.begin());
@@ -213,9 +218,9 @@ class SVDCompleteIncrementalLearning<arma::sp_mat>
     arma::mat deltaW(1, W.n_cols);
     deltaW.zeros();
 
-    deltaW += (**it - arma::dot(W.row(currentItemIndex), H.col(currentUserIndex)))
-                                      * arma::trans(H.col(currentUserIndex));
-    if(kw != 0) deltaW -= kw * W.row(currentItemIndex);
+    deltaW += (**it - arma::dot(W.row(currentItemIndex),
+        H.col(currentUserIndex))) * arma::trans(H.col(currentUserIndex));
+    if (kw != 0) deltaW -= kw * W.row(currentItemIndex);
 
     W.row(currentItemIndex) += u*deltaW;
   }
@@ -241,9 +246,9 @@ class SVDCompleteIncrementalLearning<arma::sp_mat>
     size_t currentUserIndex = it->col();
     size_t currentItemIndex = it->row();
 
-    deltaH += (**it - arma::dot(W.row(currentItemIndex), H.col(currentUserIndex)))
-                                        * arma::trans(W.row(currentItemIndex));
-    if(kh != 0) deltaH -= kh * H.col(currentUserIndex);
+    deltaH += (**it - arma::dot(W.row(currentItemIndex),
+        H.col(currentUserIndex))) * arma::trans(W.row(currentItemIndex));
+    if (kh != 0) deltaH -= kh * H.col(currentUserIndex);
 
     H.col(currentUserIndex) += u * deltaH;
   }

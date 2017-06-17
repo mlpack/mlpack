@@ -3,6 +3,11 @@
  * @author Sumedh Ghaisas
  *
  * Implementation of the LogisticRegressionFunction class.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_LOGISTIC_REGRESSION_FUNCTION_IMPL_HPP
 #define MLPACK_METHODS_LOGISTIC_REGRESSION_FUNCTION_IMPL_HPP
@@ -43,7 +48,7 @@ LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
     responses(responses),
     lambda(lambda)
 {
-  //to check if initialPoint is compatible with predictors
+  // To check if initialPoint is compatible with predictors.
   if (initialPoint.n_rows != (predictors.n_rows + 1) ||
       initialPoint.n_cols != 1)
     this->initialPoint = arma::zeros<arma::mat>(predictors.n_rows + 1, 1);

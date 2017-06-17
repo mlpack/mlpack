@@ -2,6 +2,11 @@
  * @file nbc_test.cpp
  *
  * Test for the Naive Bayes classifier.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/naive_bayes/naive_bayes_classifier.hpp>
@@ -20,6 +25,7 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierTest)
   const char* testFilename = "testSet.csv";
   const char* trainResultFilename = "trainRes.csv";
   const char* testResultFilename = "testRes.csv";
+  const char* testResultProbsFilename = "testResProbs.csv";
   size_t classes = 2;
 
   arma::mat trainData, trainRes, calcMat;
@@ -55,16 +61,28 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierTest)
 
   arma::mat testData;
   arma::Mat<size_t> testRes;
+  arma::mat testResProbs;
   arma::Row<size_t> calcVec;
+  arma::mat calcProbs;
   data::Load(testFilename, testData, true);
   data::Load(testResultFilename, testRes, true);
+  data::Load(testResultProbsFilename, testResProbs, true);
 
   testData.shed_row(testData.n_rows - 1); // Remove the labels.
 
-  nbcTest.Classify(testData, calcVec);
+  nbcTest.Classify(testData, calcVec, calcProbs);
 
   for (size_t i = 0; i < testData.n_cols; i++)
     BOOST_REQUIRE_EQUAL(testRes(i), calcVec(i));
+
+  for (size_t i = 0; i < testResProbs.n_cols; ++i)
+  {
+    for (size_t j = 0; j < testResProbs.n_rows; ++j)
+    {
+      BOOST_REQUIRE_CLOSE(testResProbs(j, i) + 0.0001, calcProbs(j, i) + 0.0001,
+          0.01);
+    }
+  }
 }
 
 // The same test, but this one uses the incremental algorithm to calculate
@@ -75,6 +93,7 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierIncrementalTest)
   const char* testFilename = "testSet.csv";
   const char* trainResultFilename = "trainRes.csv";
   const char* testResultFilename = "testRes.csv";
+  const char* testResultProbsFilename = "testResProbs.csv";
   size_t classes = 2;
 
   arma::mat trainData, trainRes, calcMat;
@@ -104,22 +123,32 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierIncrementalTest)
   for (size_t i = 0; i < classes; i++)
     calcMat(2 * dimension, i) = nbcTest.Probabilities()(i);
 
-  for (size_t i = 0; i < calcMat.n_rows; i++)
+  for (size_t i = 0; i < calcMat.n_cols; i++)
     for (size_t j = 0; j < classes; j++)
-      BOOST_REQUIRE_CLOSE(trainRes(i, j) + .00001, calcMat(i, j), 0.01);
+      BOOST_REQUIRE_CLOSE(trainRes(j, i) + .00001, calcMat(j, i), 0.01);
 
   arma::mat testData;
   arma::Mat<size_t> testRes;
+  arma::mat testResProba;
   arma::Row<size_t> calcVec;
+  arma::mat calcProbs;
   data::Load(testFilename, testData, true);
   data::Load(testResultFilename, testRes, true);
+  data::Load(testResultProbsFilename, testResProba, true);
 
   testData.shed_row(testData.n_rows - 1); // Remove the labels.
 
-  nbcTest.Classify(testData, calcVec);
+  nbcTest.Classify(testData, calcVec, calcProbs);
 
   for (size_t i = 0; i < testData.n_cols; i++)
     BOOST_REQUIRE_EQUAL(testRes(i), calcVec(i));
+
+  for (size_t i = 0; i < testResProba.n_cols; ++i)
+    for (size_t j = 0; j < testResProba.n_rows; ++j)
+    {
+      BOOST_REQUIRE_CLOSE(
+          testResProba(j, i) + .00001, calcProbs(j, i) + .00001, 0.01);
+    }
 }
 
 /**

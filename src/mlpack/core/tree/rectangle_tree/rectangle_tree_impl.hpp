@@ -3,6 +3,11 @@
  * @author Andrew Wells
  *
  * Implementation of generalized rectangle tree.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_RECTANGLE_TREE_IMPL_HPP
 #define MLPACK_CORE_TREE_RECTANGLE_TREE_RECTANGLE_TREE_IMPL_HPP
@@ -107,8 +112,8 @@ RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
 RectangleTree(
     RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
                   AuxiliaryInformationType>*
-        parentNode,const size_t numMaxChildren) :
-    maxNumChildren(numMaxChildren > 0 ? numMaxChildren : 
+        parentNode, const size_t numMaxChildren) :
+    maxNumChildren(numMaxChildren > 0 ? numMaxChildren :
                                         parentNode->MaxNumChildren()),
     minNumChildren(parentNode->MinNumChildren()),
     numChildren(0),
@@ -143,12 +148,13 @@ RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
               AuxiliaryInformationType>::
 RectangleTree(
     const RectangleTree& other,
-    const bool deepCopy) :
+    const bool deepCopy,
+    RectangleTree* newParent) :
     maxNumChildren(other.MaxNumChildren()),
     minNumChildren(other.MinNumChildren()),
     numChildren(other.NumChildren()),
-    children(maxNumChildren + 1),
-    parent(other.Parent()),
+    children(maxNumChildren + 1, NULL),
+    parent(deepCopy ? newParent : other.Parent()),
     begin(other.Begin()),
     count(other.Count()),
     numDescendants(other.numDescendants),
@@ -156,21 +162,76 @@ RectangleTree(
     minLeafSize(other.MinLeafSize()),
     bound(other.bound),
     parentDistance(other.ParentDistance()),
-    dataset(deepCopy ? new MatType(*other.dataset) : &other.Dataset()),
-    ownsDataset(deepCopy),
+    dataset(deepCopy ?
+        (parent ? parent->dataset : new MatType(*other.dataset)) :
+        &other.Dataset()),
+    ownsDataset(deepCopy && (!parent)),
     points(other.points),
-    auxiliaryInfo(other.auxiliaryInfo)
+    auxiliaryInfo(other.auxiliaryInfo, this, deepCopy)
 {
   if (deepCopy)
   {
     if (numChildren > 0)
     {
       for (size_t i = 0; i < numChildren; i++)
-        children[i] = new RectangleTree(other.Child(i));
+        children[i] = new RectangleTree(other.Child(i), true, this);
     }
   }
   else
     children = other.children;
+}
+
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+              AuxiliaryInformationType>::
+RectangleTree(RectangleTree&& other) :
+    maxNumChildren(other.MaxNumChildren()),
+    minNumChildren(other.MinNumChildren()),
+    numChildren(other.NumChildren()),
+    children(std::move(other.children)),
+    parent(other.Parent()),
+    begin(other.Begin()),
+    count(other.Count()),
+    numDescendants(other.numDescendants),
+    maxLeafSize(other.MaxLeafSize()),
+    minLeafSize(other.MinLeafSize()),
+    bound(std::move(other.bound)),
+    parentDistance(other.ParentDistance()),
+    dataset(other.dataset),
+    ownsDataset(other.ownsDataset),
+    points(std::move(other.points)),
+    auxiliaryInfo(std::move(other.auxiliaryInfo))
+{
+  if (parent)
+  {
+    size_t iChild = 0;
+    while (parent->children[iChild] != (&other))
+      iChild++;
+    assert(iChild < numChildren);
+    parent->children[iChild] = this;
+  }
+  if (!IsLeaf())
+  {
+    for (size_t i = 0; i < numChildren; i++)
+      children[i]->parent = this;
+  }
+  other.maxNumChildren = 0;
+  other.minNumChildren = 0;
+  other.numChildren = 0;
+  other.parent = NULL;
+  other.begin = 0;
+  other.count = 0;
+  other.numDescendants = 0;
+  other.maxLeafSize = 0;
+  other.minLeafSize = 0;
+  other.parentDistance = 0;
+  other.dataset = NULL;
+  other.ownsDataset = false;
 }
 
 /**
@@ -187,7 +248,7 @@ RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
               AuxiliaryInformationType>::
 RectangleTree(
     Archive& ar,
-    const typename boost::enable_if<typename Archive::is_loading>::type*) :
+    const typename std::enable_if_t<Archive::is_loading::value>*) :
     RectangleTree() // Use default constructor.
 {
   // Now serialize.
@@ -214,7 +275,6 @@ RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
 
   if (ownsDataset)
     delete dataset;
-
 }
 
 /**
@@ -275,9 +335,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
 
   numDescendants++;
 
-  std::vector<bool> lvls(TreeDepth());
-  for (size_t i = 0; i < lvls.size(); i++)
-    lvls[i] = true;
+  std::vector<bool> lvls(TreeDepth(), true);
 
   // If this is a leaf node, we stop here and add the point.
   if (numChildren == 0)
@@ -327,7 +385,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   // If it is not a leaf node, we use the DescentHeuristic to choose a child
   // to which we recurse.
   auxiliaryInfo.HandlePointInsertion(this, point);
-  const size_t descentNode = DescentType::ChooseDescentNode(this,point);
+  const size_t descentNode = DescentType::ChooseDescentNode(this, point);
   children[descentNode]->InsertPoint(point, relevels);
 }
 
@@ -391,9 +449,7 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   while (root->Parent() != NULL)
     root = root->Parent();
 
-  std::vector<bool> lvls(root->TreeDepth());
-  for (size_t i = 0; i < lvls.size(); i++)
-    lvls[i] = true;
+  std::vector<bool> lvls(root->TreeDepth(), true);
 
   if (numChildren == 0)
   {
@@ -564,6 +620,132 @@ inline bool RectangleTree<MetricType, StatisticType, MatType, SplitType,
 }
 
 /**
+ * Return the index of the nearest child node to the given query point.  If
+ * this is a leaf node, it will return NumChildren() (invalid index).
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+template<typename VecType>
+size_t RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+    AuxiliaryInformationType>::GetNearestChild(
+    const VecType& point,
+    typename std::enable_if_t<IsVector<VecType>::value>*)
+{
+  if (IsLeaf())
+    return 0;
+
+  ElemType bestDistance = std::numeric_limits<ElemType>::max();
+  size_t bestIndex = 0;
+  for (size_t i = 0; i < NumChildren(); ++i)
+  {
+    ElemType distance = Child(i).MinDistance(point);
+    if (distance <= bestDistance)
+    {
+      bestDistance = distance;
+      bestIndex = i;
+    }
+  }
+  return bestIndex;
+}
+
+/**
+ * Return the index of the furthest child node to the given query point.  If
+ * this is a leaf node, it will return NumChildren() (invalid index).
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+template<typename VecType>
+size_t RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+    AuxiliaryInformationType>::GetFurthestChild(
+    const VecType& point,
+    typename std::enable_if_t<IsVector<VecType>::value>*)
+{
+  if (IsLeaf())
+    return 0;
+
+  ElemType bestDistance = 0;
+  size_t bestIndex = 0;
+  for (size_t i = 0; i < NumChildren(); ++i)
+  {
+    ElemType distance = Child(i).MaxDistance(point);
+    if (distance >= bestDistance)
+    {
+      bestDistance = distance;
+      bestIndex = i;
+    }
+  }
+  return bestIndex;
+}
+
+/**
+ * Return the index of the nearest child node to the given query node.  If it
+ * can't decide, it will return NumChildren() (invalid index).
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+size_t RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+    AuxiliaryInformationType>::GetNearestChild(const RectangleTree& queryNode)
+{
+  if (IsLeaf())
+    return 0;
+
+  ElemType bestDistance = std::numeric_limits<ElemType>::max();
+  size_t bestIndex = 0;
+  for (size_t i = 0; i < NumChildren(); ++i)
+  {
+    ElemType distance = Child(i).MinDistance(queryNode);
+    if (distance <= bestDistance)
+    {
+      bestDistance = distance;
+      bestIndex = i;
+    }
+  }
+  return bestIndex;
+}
+
+/**
+ * Return the index of the furthest child node to the given query node.  If it
+ * can't decide, it will return NumChildren() (invalid index).
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+size_t RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+    AuxiliaryInformationType>::GetFurthestChild(const RectangleTree& queryNode)
+{
+  if (IsLeaf())
+    return 0;
+
+  ElemType bestDistance = 0;
+  size_t bestIndex = 0;
+  for (size_t i = 0; i < NumChildren(); ++i)
+  {
+    ElemType distance = Child(i).MaxDistance(queryNode);
+    if (distance >= bestDistance)
+    {
+      bestDistance = distance;
+      bestIndex = i;
+    }
+  }
+  return bestIndex;
+}
+
+/**
  * Return a bound on the furthest point in the node form the centroid.
  * This returns 0 unless the node is a leaf.
  */
@@ -697,7 +879,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
     // node contains only one point.
 
     // The SplitType takes care of this and of moving up the tree if necessary.
-    SplitType::SplitLeafNode(this,relevels);
+    SplitType::SplitLeafNode(this, relevels);
   }
   else
   {
@@ -707,7 +889,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
 
     // If we are full, then we need to split (or at least try).  The SplitType
     // takes care of this and of moving up the tree if necessary.
-    SplitType::SplitNonLeafNode(this,relevels);
+    SplitType::SplitNonLeafNode(this, relevels);
   }
 }
 
@@ -822,7 +1004,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
         if (parent->children[j] == this)
         {
           // Decrement numChildren.
-          if (!auxiliaryInfo.HandleNodeRemoval(parent,j))
+          if (!auxiliaryInfo.HandleNodeRemoval(parent, j))
           {
             parent->children[j] = parent->children[--parent->NumChildren()];
           }
@@ -880,15 +1062,17 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
       if (child->NumChildren() > maxNumChildren)
       {
         maxNumChildren = child->MaxNumChildren();
-        children.resize(maxNumChildren+1);
+        children.resize(maxNumChildren + 1);
       }
 
       for (size_t i = 0; i < child->NumChildren(); i++) {
         children[i] = child->children[i];
         children[i]->Parent() = this;
+        child->children[i] = NULL;
       }
 
       numChildren = child->NumChildren();
+      child->NumChildren() = 0;
 
       for (size_t i = 0; i < child->Count(); i++)
       {
@@ -899,7 +1083,9 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
       auxiliaryInfo = child->AuxiliaryInfo();
 
       count = child->Count();
-      child->SoftDelete();
+      child->Count() = 0;
+
+      delete child;
       return;
     }
   }
@@ -910,7 +1096,8 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
       parent != NULL)
     parent->CondenseTree(point, relevels, usePoint);
   else if (!usePoint &&
-           (ShrinkBoundForBound(bound) || auxiliaryInfo.UpdateAuxiliaryInfo(this)) &&
+           (ShrinkBoundForBound(bound) ||
+           auxiliaryInfo.UpdateAuxiliaryInfo(this)) &&
            parent != NULL)
     parent->CondenseTree(point, relevels, usePoint);
 }
@@ -1075,7 +1262,6 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
 
     if (ownsDataset && dataset)
       delete dataset;
-
   }
 
   ar & CreateNVP(maxNumChildren, "maxNumChildren");

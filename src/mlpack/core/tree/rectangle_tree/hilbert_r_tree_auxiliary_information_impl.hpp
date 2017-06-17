@@ -4,9 +4,14 @@
  *
  * Implementation of the HilbertRTreeAuxiliaryInformation class, a class that
  * provides some Hilbert r-tree specific information about the nodes.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_HILBERT_R_TREE_AUXILIARY_INFORMATION_IMPL_HPP
-#define MLPACK_CORE_TREE_RECTANGLE_TREE_HILBERT_R_TREE_AUXILIARY_INFORMATION_IMPL_HPP
+#ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_HR_TREE_AUXILIARY_INFO_IMPL_HPP
+#define MLPACK_CORE_TREE_RECTANGLE_TREE_HR_TREE_AUXILIARY_INFO_IMPL_HPP
 
 #include "hilbert_r_tree_auxiliary_information.hpp"
 
@@ -30,9 +35,28 @@ template<typename TreeType,
          template<typename> class HilbertValueType>
 HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::
 HilbertRTreeAuxiliaryInformation(
-    const HilbertRTreeAuxiliaryInformation& other) :
-    hilbertValue(other.HilbertValue())
+    const HilbertRTreeAuxiliaryInformation& other,
+    TreeType* tree,
+    bool deepCopy) :
+    hilbertValue(other.HilbertValue(), tree, deepCopy)
 { }
+
+template<typename TreeType,
+         template<typename> class HilbertValueType>
+HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::
+HilbertRTreeAuxiliaryInformation(HilbertRTreeAuxiliaryInformation&& other) :
+    hilbertValue(std::move(other.hilbertValue))
+{ }
+
+template<typename TreeType,
+         template<typename> class HilbertValueType>
+HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>&
+HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::operator=(
+    const HilbertRTreeAuxiliaryInformation& other)
+{
+  hilbertValue = other.hilbertValue;
+  return *this;
+}
 
 template<typename TreeType,
          template<typename> class HilbertValueType>
@@ -102,7 +126,7 @@ bool HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::
 HandlePointDeletion(TreeType* node, const size_t localIndex)
 {
   // Update the largest Hilbert value.
-  hilbertValue.DeletePoint(node,localIndex);
+  hilbertValue.DeletePoint(node, localIndex);
 
   for (size_t i = localIndex + 1; localIndex < node->NumPoints(); i++)
     node->Point(i - 1) = node->Point(i);
@@ -117,7 +141,7 @@ bool HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::
 HandleNodeRemoval(TreeType* node, const size_t nodeIndex)
 {
   // Update the largest Hilbert value.
-  hilbertValue.RemoveNode(node,nodeIndex);
+  hilbertValue.RemoveNode(node, nodeIndex);
 
   for (size_t i = nodeIndex + 1; nodeIndex < node->NumChildren(); i++)
     node->children[i - 1] = node->children[i];
@@ -154,7 +178,7 @@ NullifyData()
 template<typename TreeType,
          template<typename> class HilbertValueType>
 template<typename Archive>
-void HilbertRTreeAuxiliaryInformation<TreeType ,HilbertValueType>::
+void HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::
 Serialize(Archive& ar, const unsigned int /* version */)
 {
   using data::CreateNVP;
@@ -166,4 +190,4 @@ Serialize(Archive& ar, const unsigned int /* version */)
 } // namespace tree
 } // namespace mlpack
 
-#endif//MLPACK_CORE_TREE_RECTANGLE_TREE_HILBERT_R_TREE_AUXILIARY_INFORMATION_IMPL_HPP
+#endif // MLPACK_CORE_TREE_RECTANGLE_TREE_HR_TREE_AUXILIARY_INFO_IMPL_HPP

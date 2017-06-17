@@ -5,16 +5,21 @@
  * Load an Armadillo matrix from file.  This is necessary because Armadillo does
  * not transpose matrices on input, and it allows us to give better error
  * output.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_DATA_LOAD_HPP
 #define MLPACK_CORE_DATA_LOAD_HPP
 
+#include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/log.hpp>
-#include <mlpack/core/arma_extend/arma_extend.hpp> // Includes Armadillo.
 #include <string>
 
 #include "format.hpp"
-#include "dataset_info.hpp"
+#include "dataset_mapper.hpp"
 
 namespace mlpack {
 namespace data /** Functions to load and save matrices and models. */ {
@@ -59,12 +64,107 @@ bool Load(const std::string& filename,
           const bool fatal = false,
           const bool transpose = true);
 
+extern template bool Load<int>(const std::string&,
+                               arma::Mat<int>&,
+                               const bool,
+                               const bool);
+
+// size_t and uword should be one of these three typedefs.
+extern template bool Load<unsigned int>(const std::string&,
+                                        arma::Mat<unsigned int>&,
+                                        const bool,
+                                        const bool);
+
+extern template bool Load<unsigned long>(const std::string&,
+                                         arma::Mat<unsigned long>&,
+                                         const bool,
+                                         const bool);
+
+extern template bool Load<unsigned long long>(const std::string&,
+                                              arma::Mat<unsigned long long>&,
+                                              const bool,
+                                              const bool);
+
+extern template bool Load<float>(const std::string&,
+                                 arma::Mat<float>&,
+                                 const bool,
+                                 const bool);
+
+extern template bool Load<double>(const std::string&,
+                                  arma::Mat<double>&,
+                                  const bool,
+                                  const bool);
+
+/**
+ * Load a column vector from a file, guessing the filetype from the extension.
+ *
+ * The supported types of files are the same as found in Armadillo:
+ *
+ *  - CSV (csv_ascii), denoted by .csv, or optionally .txt
+ *  - TSV (raw_ascii), denoted by .tsv, .csv, or .txt
+ *  - ASCII (raw_ascii), denoted by .txt
+ *  - Armadillo ASCII (arma_ascii), also denoted by .txt
+ *  - PGM (pgm_binary), denoted by .pgm
+ *  - PPM (ppm_binary), denoted by .ppm
+ *  - Raw binary (raw_binary), denoted by .bin
+ *  - Armadillo binary (arma_binary), denoted by .bin
+ *  - HDF5, denoted by .hdf, .hdf5, .h5, or .he5
+ *
+ * If the file extension is not one of those types, an error will be given.
+ * This is preferable to Armadillo's default behavior of loading an unknown
+ * filetype as raw_binary, which can have very confusing effects.
+ *
+ * If the parameter 'fatal' is set to true, a std::runtime_error exception will
+ * be thrown if the matrix does not load successfully.
+ *
+ * @param filename Name of file to load.
+ * @param colvec Column vector to load contents of file into.
+ * @param fatal If an error should be reported as fatal (default false).
+ * @return Boolean value indicating success or failure of load.
+ */
+template<typename eT>
+bool Load(const std::string& filename,
+          arma::Col<eT>& vec,
+          const bool fatal = false);
+
+/**
+ * Load a row vector from a file, guessing the filetype from the extension.
+ *
+ * The supported types of files are the same as found in Armadillo:
+ *
+ *  - CSV (csv_ascii), denoted by .csv, or optionally .txt
+ *  - TSV (raw_ascii), denoted by .tsv, .csv, or .txt
+ *  - ASCII (raw_ascii), denoted by .txt
+ *  - Armadillo ASCII (arma_ascii), also denoted by .txt
+ *  - PGM (pgm_binary), denoted by .pgm
+ *  - PPM (ppm_binary), denoted by .ppm
+ *  - Raw binary (raw_binary), denoted by .bin
+ *  - Armadillo binary (arma_binary), denoted by .bin
+ *  - HDF5, denoted by .hdf, .hdf5, .h5, or .he5
+ *
+ * If the file extension is not one of those types, an error will be given.
+ * This is preferable to Armadillo's default behavior of loading an unknown
+ * filetype as raw_binary, which can have very confusing effects.
+ *
+ * If the parameter 'fatal' is set to true, a std::runtime_error exception will
+ * be thrown if the matrix does not load successfully.
+ *
+ * @param filename Name of file to load.
+ * @param colvec Column vector to load contents of file into.
+ * @param fatal If an error should be reported as fatal (default false).
+ * @return Boolean value indicating success or failure of load.
+ */
+template<typename eT>
+bool Load(const std::string& filename,
+          arma::Row<eT>& rowvec,
+          const bool fatal = false);
+
 /**
  * Loads a matrix from a file, guessing the filetype from the extension and
- * mapping categorical features with a DatasetInfo object.  This will transpose
- * the matrix (unless the transpose parameter is set to false).  This particular
- * overload of Load() can only load text-based formats, such as those given
- * below:
+ * mapping categorical features with a DatasetMapper object.  This will
+ * transpose the matrix (unless the transpose parameter is set to false).
+ * This particular overload of Load() can only load text-based formats, such as
+ * those given below:
  *
  * - CSV (csv_ascii), denoted by .csv, or optionally .txt
  * - TSV (raw_ascii), denoted by .tsv, .csv, or .txt
@@ -81,22 +181,57 @@ bool Load(const std::string& filename,
  * mlpack requires column-major matrices, this should be left at its default
  * value of 'true'.
  *
- * The DatasetInfo object passed to this function will be re-created, so any
+ * The DatasetMapper object passed to this function will be re-created, so any
  * mappings from previous loads will be lost.
  *
  * @param filename Name of file to load.
  * @param matrix Matrix to load contents of file into.
- * @param info DatasetInfo object to populate with mappings and data types.
+ * @param info DatasetMapper object to populate with mappings and data types.
  * @param fatal If an error should be reported as fatal (default false).
  * @param transpose If true, transpose the matrix after loading.
  * @return Boolean value indicating success or failure of load.
  */
-template<typename eT>
+template<typename eT, typename PolicyType>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
-          DatasetInfo& info,
+          DatasetMapper<PolicyType>& info,
           const bool fatal = false,
           const bool transpose = true);
+
+extern template bool Load<int, IncrementPolicy>(
+    const std::string&,
+    arma::Mat<int>&,
+    DatasetMapper<IncrementPolicy>&,
+    const bool,
+    const bool);
+
+extern template bool Load<arma::u32, IncrementPolicy>(
+    const std::string&,
+    arma::Mat<arma::u32>&,
+    DatasetMapper<IncrementPolicy>&,
+    const bool,
+    const bool);
+
+extern template bool Load<arma::u64, IncrementPolicy>(
+    const std::string&,
+    arma::Mat<arma::u64>&,
+    DatasetMapper<IncrementPolicy>&,
+    const bool,
+    const bool);
+
+extern template bool Load<float, IncrementPolicy>(
+    const std::string&,
+    arma::Mat<float>&,
+    DatasetMapper<IncrementPolicy>&,
+    const bool,
+    const bool);
+
+extern template bool Load<double, IncrementPolicy>(
+    const std::string&,
+    arma::Mat<double>&,
+    DatasetMapper<IncrementPolicy>&,
+    const bool,
+    const bool);
 
 /**
  * Load a model from a file, guessing the filetype from the extension, or,
@@ -133,7 +268,9 @@ bool Load(const std::string& filename,
 } // namespace data
 } // namespace mlpack
 
-// Include implementation.
-#include "load_impl.hpp"
+// Include implementation of model-loading Load() overload.
+#include "load_model_impl.hpp"
+// Include implementation of Load() for vectors.
+#include "load_vec_impl.hpp"
 
 #endif

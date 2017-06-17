@@ -9,10 +9,8 @@ set(SOURCES
   ns_model.hpp
   ns_model_impl.hpp
   sort_policies/nearest_neighbor_sort.hpp
-  sort_policies/nearest_neighbor_sort.cpp
   sort_policies/nearest_neighbor_sort_impl.hpp
   sort_policies/furthest_neighbor_sort.hpp
-  sort_policies/furthest_neighbor_sort.cpp
   sort_policies/furthest_neighbor_sort_impl.hpp
   typedef.hpp
   unmap.hpp
@@ -51,4 +49,9 @@ if (BUILD_CLI_EXECUTABLES)
       COMMAND ${CMAKE_COMMAND} -E copy
       $<TARGET_FILE:mlpack_kfn> $<TARGET_FILE_DIR:mlpack_kfn>/mlpack_allkfn${kfn_ext}
   )
+
+  install(PROGRAMS $<TARGET_FILE_DIR:mlpack_kfn>/mlpack_allkfn${kfn_ext}
+      DESTINATION bin)
+  install(PROGRAMS $<TARGET_FILE_DIR:mlpack_knn>/mlpack_allknn${knn_ext}
+      DESTINATION bin)
 endif ()

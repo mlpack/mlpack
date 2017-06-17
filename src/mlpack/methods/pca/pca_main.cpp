@@ -4,13 +4,20 @@
  * @author Marcus Edel
  *
  * Main executable to run PCA.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/cli.hpp>
 
 #include "pca.hpp"
 #include <mlpack/methods/pca/decomposition_policies/exact_svd_method.hpp>
 #include <mlpack/methods/pca/decomposition_policies/quic_svd_method.hpp>
 #include <mlpack/methods/pca/decomposition_policies/randomized_svd_method.hpp>
+#include <mlpack/methods/pca/decomposition_policies/randomized_block_krylov_method.hpp>
 
 using namespace mlpack;
 using namespace mlpack::pca;
@@ -18,14 +25,15 @@ using namespace std;
 
 // Document program.
 PROGRAM_INFO("Principal Components Analysis", "This program performs principal "
-    "components analysis on the given dataset using the exact, randomized or "
-    "QUIC SVD method. It will transform the data onto its principal components,"
-    " optionally performing dimensionality reduction by ignoring the principal "
-    "components with the smallest eigenvalues.");
+    "components analysis on the given dataset using the exact, randomized, "
+    "randomized block krylov or QUIC SVD method. It will transform the data "
+    "onto its principal components, optionally performing dimensionality "
+    "reduction by ignoring the principal components with the smallest "
+    "eigenvalues.");
 
 // Parameters for program.
-PARAM_STRING_IN_REQ("input_file", "Input dataset to perform PCA on.", "i");
-PARAM_STRING_OUT("output_file", "File to save modified dataset to.", "o");
+PARAM_MATRIX_IN_REQ("input", "Input dataset to perform PCA on.", "i");
+PARAM_MATRIX_OUT("output", "Matrix to save modified dataset to.", "o");
 PARAM_INT_IN("new_dimensionality", "Desired dimensionality of output dataset. "
     "If 0, no dimensionality reduction is performed.", "d", 0);
 PARAM_DOUBLE_IN("var_to_retain", "Amount of variance to retain; should be "
@@ -34,8 +42,9 @@ PARAM_DOUBLE_IN("var_to_retain", "Amount of variance to retain; should be "
 PARAM_FLAG("scale", "If set, the data will be scaled before running PCA, such "
     "that the variance of each feature is 1.", "s");
 
-PARAM_STRING_IN("decomposition_method", "Method used for the principal"
-    "components analysis: 'exact', 'randomized', 'quic'.", "c", "exact");
+PARAM_STRING_IN("decomposition_method", "Method used for the principal "
+    "components analysis: 'exact', 'randomized', 'randomized-block-krylov', "
+    "'quic'.", "c", "exact");
 
 
 //! Run RunPCA on the specified dataset with the given decomposition method.
@@ -65,7 +74,6 @@ void RunPCA(arma::mat& dataset,
 
   Log::Info << (varRetained * 100) << "% of variance retained (" <<
       dataset.n_rows << " dimensions)." << endl;
-
 }
 
 int main(int argc, char** argv)
@@ -74,12 +82,10 @@ int main(int argc, char** argv)
   CLI::ParseCommandLine(argc, argv);
 
   // Load input dataset.
-  string inputFile = CLI::GetParam<string>("input_file");
-  arma::mat dataset;
-  data::Load(inputFile, dataset);
+  arma::mat& dataset = CLI::GetParam<arma::mat>("input");
 
   // Issue a warning if the user did not specify an output file.
-  if (!CLI::HasParam("output_file"))
+  if (!CLI::HasParam("output"))
     Log::Warn << "--output_file is not specified; no output will be "
         << "saved." << endl;
 
@@ -108,11 +114,16 @@ int main(int argc, char** argv)
   {
     RunPCA<ExactSVDPolicy>(dataset, newDimension, scale, varToRetain);
   }
-  else if(decompositionMethod == "randomized")
+  else if (decompositionMethod == "randomized")
   {
     RunPCA<RandomizedSVDPolicy>(dataset, newDimension, scale, varToRetain);
   }
-  else if(decompositionMethod == "quic")
+  else if (decompositionMethod == "randomized-block-krylov")
+  {
+    RunPCA<RandomizedBlockKrylovSVDPolicy>(dataset, newDimension, scale,
+        varToRetain);
+  }
+  else if (decompositionMethod == "quic")
   {
     RunPCA<QUICSVDPolicy>(dataset, newDimension, scale, varToRetain);
   }
@@ -120,11 +131,11 @@ int main(int argc, char** argv)
   {
     // Invalid decomposition method.
     Log::Fatal << "Invalid decomposition method ('" << decompositionMethod
-        << "'); valid choices are 'exact', 'randomized', 'quic'." << endl;
+        << "'); valid choices are 'exact', 'randomized', "
+        << "'randomized-block-krylov', 'quic'." << endl;
   }
 
   // Now save the results.
-  string outputFile = CLI::GetParam<string>("output_file");
-  if (outputFile != "")
-    data::Save(outputFile, dataset);
+  if (CLI::HasParam("output"))
+    CLI::GetParam<arma::mat>("output") = std::move(dataset);
 }

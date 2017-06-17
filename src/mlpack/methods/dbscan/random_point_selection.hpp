@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * Randomly select the next point for DBSCAN.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_DBSCAN_RANDOM_POINT_SELECTION_HPP
 #define MLPACK_METHODS_DBSCAN_RANDOM_POINT_SELECTION_HPP
@@ -13,11 +18,17 @@
 namespace mlpack {
 namespace dbscan {
 
+/**
+ * This class can be used to randomly select the next point to use for DBSCAN.
+ */
 class RandomPointSelection
 {
  public:
   /**
    * Select the next point to use, randomly.
+   *
+   * @param unvisited Bitset indicating which points are unvisited.
+   * @param data Unused data.
    */
   template<typename MatType>
   static size_t Select(const boost::dynamic_bitset<>& unvisited,

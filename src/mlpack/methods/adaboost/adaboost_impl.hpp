@@ -17,6 +17,11 @@
  *   pages = {297--336},
  * }
  * @endcode
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_ADABOOST_ADABOOST_IMPL_HPP
 #define MLPACK_METHODS_ADABOOST_ADABOOST_IMPL_HPP
@@ -129,6 +134,15 @@ void AdaBoost<WeakLearnerType, MatType>::Train(
 
     if ((i > 0) && (std::abs(rt - crt) < tolerance))
       break;
+
+    // Check if model has converged.
+    if (rt >= 1.0)
+    {
+      // Save the weak learner and terminate.
+      alpha.push_back(1.0);
+      wl.push_back(w);
+      break;
+    }
 
     crt = rt;
 

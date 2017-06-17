@@ -7,7 +7,7 @@ Source:
 
 Files: *
 Copyright:
-  Copyright 2008-2016, Ryan Curtin <ryan@ratml.org>
+  Copyright 2008-2017, Ryan Curtin <ryan@ratml.org>
   Copyright 2008-2013, Bill March <march@gatech.edu>
   Copyright 2008-2012, Dongryeol Lee <dongryel@cc.gatech.edu>
   Copyright 2008-2013, Nishant Mehta <niche@cc.gatech.edu>
@@ -22,7 +22,7 @@ Copyright:
   Copyright 2012, Rajendran Mohan <rmohan88@gatech.edu>
   Copyright 2012, Trironk Kiatkungwanglai <trironk@gmail.com>
   Copyright 2012, Patrick Mason <patrick.s.mason@gmail.com>
-  Copyright 2013-2016, Marcus Edel <marcus.edel@fu-berlin.de>
+  Copyright 2013-2017, Marcus Edel <marcus.edel@fu-berlin.de>
   Copyright 2013, Mudit Raj Gupta <mudit.raaj.gupta@gmail.com>
   Copyright 2013, Sumedh Ghaisas <sumedhghaisas@gmail.com>
   Copyright 2014, Michael Fox <michaelfox99@gmail.com>
@@ -37,13 +37,13 @@ Copyright:
   Copyright 2014, Udit Saxena <saxenda.udit@gmail.com>
   Copyright 2014-2015, Stephen Tu <tu.stephenl@gmail.com>
   Copyright 2014-2015, Jaskaran Singh <jaskaranvirdi@ymail.com>
-  Copyright 2015, Shangtong Zhang <zhangshangtong.cpp@icloud.com>
+  Copyright 2015&2017, Shangtong Zhang <zhangshangtong.cpp@gmail.com>
   Copyright 2015, Hritik Jain <hritik.jain.cse13@itbhu.ac.in>
   Copyright 2015, Vladimir Glazachev <glazachev.vladimir@gmail.com>
   Copyright 2015, QiaoAn Chen <kazenoyumechen@gmail.com>
   Copyright 2015, Janzen Brewer <jahabrewer@gmail.com>
   Copyright 2015, Trung Dinh <dinhanhtrung@gmail.com>
-  Copyright 2015-2016, Tham Ngap Wei <thamngapwei@gmail.com>
+  Copyright 2015-2017, Tham Ngap Wei <thamngapwei@gmail.com>
   Copyright 2015, Grzegorz Krajewski <krajekg@gmail.com>
   Copyright 2015, Joseph Mariadassou <joe.mariadassou@gmail.com>
   Copyright 2015, Pavel Zhigulin <pashaworking@gmail.com>
@@ -60,6 +60,27 @@ Copyright:
   Copyright 2016, Keon Kim <kwk236@gmail.com>
   Copyright 2016, Nilay Jain <nilayjain13@gmail.com>
   Copyright 2016, Peter Lehner <peter.lehner@dlr.de>
+  Copyright 2016, Anuraj Kanodia <akanuraj200@gmail.com>
+  Copyright 2016, Ivan Georgiev <ivan@jonan.info>
+  Copyright 2016, Shikhar Bhardwaj <shikharbhardwaj68@gmail.com>
+  Copyright 2016, Yashu Seth <yashuseth2503@gmail.com>
+  Copyright 2016, Mike Izbicki <mike@izbicki.me>
+  Copyright 2017, Sudhanshu Ranjan <sranjan.sud@gmail.com>
+  Copyright 2017, Piyush Jaiswal <piyush.jaiswal@st.niituniversity.in>
+  Copyright 2017, Dinesh Raj <dinu.iota@gmail.com>
+  Copyright 2017, Vivek Pal <vivekpal.dtu@gmail.com>
+  Copyright 2017, Prasanna Patil <prasannapatil08@gmail.com>
+  Copyright 2017, Lakshya Agrawal <zeeshan.lakshya@gmail.com>
+  Copyright 2017, Praveen Ch <chvsp972911@gmail.com>
+  Copyright 2017, Kirill Mishchenko <ki.mishchenko@gmail.com>
+  Copyright 2017, Abhinav Moudgil <abhinavmoudgil95@gmail.com>
+  Copyright 2017, Thyrix Yang <thyrixyang@gmail.com>
+  Copyright 2017, Sagar B Hathwar <sagarbhathwar@gmail.com>
+  Copyright 2017, Nishanth Hegde <hegde.nishanth@gmail.com>
+  Copyright 2017, Parminder Singh <parmsingh101@gmail.com>
+  Copyright 2017, CodeAi <benjamin.bales@assrc.us>
+  Copyright 2017, Franciszek Stokowacki <franek.stokowacki@gmail.com>
+
 License: BSD-3-clause
   All rights reserved.
   .

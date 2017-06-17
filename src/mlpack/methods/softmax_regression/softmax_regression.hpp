@@ -3,11 +3,16 @@
  * @author Siddharth Agrawal
  *
  * An implementation of softmax regression.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_SOFTMAX_REGRESSION_SOFTMAX_REGRESSION_HPP
 #define MLPACK_METHODS_SOFTMAX_REGRESSION_SOFTMAX_REGRESSION_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
 
 #include "softmax_regression_function.hpp"
@@ -50,8 +55,8 @@ namespace regression {
  * arma::vec predictions1, predictions2; // Vectors to store predictions in.
  *
  * // Obtain predictions from both the learned models.
- * regressor1.Predict(test_data, predictions1);
- * regressor2.Predict(test_data, predictions2);
+ * regressor1.Classify(test_data, predictions1);
+ * regressor2.Classify(test_data, predictions2);
  * @endcode
  */
 template<
@@ -62,15 +67,15 @@ class SoftmaxRegression
  public:
   /**
    * Initialize the SoftmaxRegression without performing training.  Default
-   * value of lambda is 0.0001.  Be sure to use Train() before calling Predict()
-   * or ComputeAccuracy(), otherwise the results may be meaningless.
+   * value of lambda is 0.0001.  Be sure to use Train() before calling
+   * Classify() or ComputeAccuracy(), otherwise the results may be meaningless.
    *
    * @param inputSize Size of the input feature vector.
    * @param numClasses Number of classes for classification.
    * @param fitIntercept add intercept term or not.
    */
-  SoftmaxRegression(const size_t inputSize,
-                    const size_t numClasses,
+  SoftmaxRegression(const size_t inputSize = 0,
+                    const size_t numClasses = 0,
                     const bool fitIntercept = false);
 
   /**
@@ -108,10 +113,60 @@ class SoftmaxRegression
    * calculates the probabilities for every class, given a data point. It then
    * chooses the class which has the highest probability among all.
    *
+   * This method is deprecated and will be removed in mlpack 3.0.0. You should
+   * use Classify() instead.
+   *
    * @param testData Matrix of data points for which predictions are to be made.
    * @param predictions Vector to store the predictions in.
    */
-  void Predict(const arma::mat& testData, arma::Row<size_t>& predictions) const;
+  mlpack_deprecated void Predict(const arma::mat& testData,
+                                 arma::Row<size_t>& predictions) const;
+
+  /**
+   * Classify the given points, returning the predicted labels for each point.
+   * The function calculates the probabilities for every class, given a data
+   * point. It then chooses the class which has the highest probability among
+   * all.
+   *
+   * @param dataset Set of points to classify.
+   * @param labels Predicted labels for each point.
+   */
+  void Classify(const arma::mat& dataset, arma::Row<size_t>& labels) const;
+
+  /**
+   * Classify the given point. The predicted class label is returned.
+   * The function calculates the probabilites for every class, given the point.
+   * It then chooses the class which has the highest probability among all.
+   *
+   * @param point Point to be classified.
+   * @return Predicted class label of the point.
+   */
+  template<typename VecType>
+  size_t Classify(const VecType& point) const;
+
+  /**
+   * Classify the given points, returning class probabilities and predicted
+   * class label for each point.
+   * The function calculates the probabilities for every class, given a data
+   * point. It then chooses the class which has the highest probability among
+   * all.
+   *
+   * @param dataset Matrix of data points to be classified.
+   * @param labels Predicted labels for each point.
+   * @param probabilities Class probabilities for each point.
+   */
+  void Classify(const arma::mat& dataset,
+                arma::Row<size_t>& labels,
+                arma::mat& probabilites) const;
+
+  /**
+   * Classify the given points, returning class probabilities for each point.
+   *
+   * @param dataset Matrix of data points to be classified.
+   * @param probabilities Class probabilities for each point.
+   */
+  void Classify(const arma::mat& dataset,
+                arma::mat& probabilities) const;
 
   /**
    * Computes accuracy of the learned model given the feature data and the
@@ -141,7 +196,8 @@ class SoftmaxRegression
    * @param numClasses Number of classes for classification.
    * @return Objective value of the final point.
    */
-  double Train(const arma::mat &data, const arma::Row<size_t>& labels,
+  double Train(const arma::mat& data,
+               const arma::Row<size_t>& labels,
                const size_t numClasses);
 
   //! Sets the number of classes.

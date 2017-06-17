@@ -3,6 +3,11 @@
  * @author Siddharth Agrawal
  *
  * Test the RegularizedSVDFunction class.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/regularized_svd/regularized_svd.hpp>
@@ -221,7 +226,7 @@ BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionOptimize)
 
   // Make the Reg SVD function and the optimizer.
   RegularizedSVDFunction rSVDFunc(data, rank, lambda);
-  mlpack::optimization::SGD<RegularizedSVDFunction> optimizer(rSVDFunc,
+  mlpack::optimization::StandardSGD <RegularizedSVDFunction> optimizer(rSVDFunc,
       alpha, iterations * numRatings);
 
   // Obtain optimized parameters after training.

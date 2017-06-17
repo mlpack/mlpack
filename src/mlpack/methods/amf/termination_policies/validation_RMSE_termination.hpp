@@ -3,11 +3,16 @@
  * @author Sumedh Ghaisas
  *
  * Termination policy used in AMF (Alternating Matrix Factorization).
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef _MLPACK_METHODS_AMF_VALIDATIONRMSETERMINATION_HPP_INCLUDED
 #define _MLPACK_METHODS_AMF_VALIDATIONRMSETERMINATION_HPP_INCLUDED
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack
 {
@@ -58,7 +63,7 @@ class ValidationRMSETermination
     test_points.zeros(num_test_points, 3);
 
     // fill validation set matrix with random chosen entries
-    for(size_t i = 0; i < num_test_points; i++)
+    for (size_t i = 0; i < num_test_points; i++)
     {
       double t_val;
       size_t t_row;
@@ -69,7 +74,7 @@ class ValidationRMSETermination
       {
         t_row = rand() % n;
         t_col = rand() % m;
-      } while((t_val = V(t_row, t_col)) == 0);
+      } while ((t_val = V(t_row, t_col)) == 0);
 
       // add the entry to the validation set
       test_points(i, 0) = t_row;
@@ -117,7 +122,7 @@ class ValidationRMSETermination
     {
       rmseOld = rmse;
       rmse = 0;
-      for(size_t i = 0; i < num_test_points; i++)
+      for (size_t i = 0; i < num_test_points; i++)
       {
         size_t t_row = test_points(i, 0);
         size_t t_col = test_points(i, 1);
@@ -134,10 +139,10 @@ class ValidationRMSETermination
     iteration++;
 
     // if RMSE tolerance is not satisfied
-    if((rmseOld - rmse) / rmseOld < tolerance && iteration > 4)
+    if ((rmseOld - rmse) / rmseOld < tolerance && iteration > 4)
     {
       // check if this is a first of successive drops
-      if(reverseStepCount == 0 && isCopy == false)
+      if (reverseStepCount == 0 && isCopy == false)
       {
         // store a copy of W and H matrix
         isCopy = true;
@@ -156,18 +161,18 @@ class ValidationRMSETermination
       // initialize successive drop count
       reverseStepCount = 0;
       // if residue is droped below minimum scrap stored values
-      if(rmse <= c_indexOld && isCopy == true)
+      if (rmse <= c_indexOld && isCopy == true)
       {
         isCopy = false;
       }
     }
 
     // check if termination criterion is met
-    if(reverseStepCount == reverseStepTolerance || iteration > maxIterations)
+    if (reverseStepCount == reverseStepTolerance || iteration > maxIterations)
     {
       // if stored values are present replace them with current value as they
       // represent the minimum residue point
-      if(isCopy)
+      if (isCopy)
       {
         W = this->W;
         H = this->H;

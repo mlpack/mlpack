@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * Test serialization of mlpack objects.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 
@@ -151,7 +156,8 @@ BOOST_AUTO_TEST_CASE(DiscreteDistributionTest)
   // straightforward.
   vec prob;
   prob.randu(12);
-  DiscreteDistribution t(prob);
+  std::vector<arma::vec> prob_vector = std::vector<arma::vec>(1, prob);
+  DiscreteDistribution t(prob_vector);
 
   DiscreteDistribution xmlT, textT, binaryT;
 
@@ -268,8 +274,8 @@ BOOST_AUTO_TEST_CASE(LinearRegressionTest)
   // Generate some random data.
   mat data;
   data.randn(15, 800);
-  vec responses;
-  responses.randn(800, 1);
+  rowvec responses;
+  responses.randn(800);
 
   LinearRegression lr(data, responses, 0.05); // Train the model.
   LinearRegression xmlLr, textLr, binaryLr;
@@ -289,8 +295,8 @@ BOOST_AUTO_TEST_CASE(RegressionDistributionTest)
   // Generate some random data.
   mat data;
   data.randn(15, 800);
-  vec responses;
-  responses.randn(800, 1);
+  rowvec responses;
+  responses.randn(800);
 
   RegressionDistribution rd(data, responses);
   RegressionDistribution xmlRd, textRd, binaryRd;
@@ -806,7 +812,7 @@ BOOST_AUTO_TEST_CASE(KNNTest)
   using neighbor::KNN;
   arma::mat dataset = arma::randu<arma::mat>(5, 2000);
 
-  KNN knn(dataset, false, false);
+  KNN knn(dataset, DUAL_TREE_MODE);
 
   KNN knnXml, knnText, knnBinary;
 
@@ -853,18 +859,19 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTest)
 BOOST_AUTO_TEST_CASE(DETTest)
 {
   using det::DTree;
+  typedef DTree<arma::mat>   DTreeX;
 
   // Create a density estimation tree on a random dataset.
   arma::mat dataset = arma::randu<arma::mat>(25, 5000);
 
-  DTree tree(dataset);
+  DTreeX tree(dataset);
 
   arma::mat otherDataset = arma::randu<arma::mat>(5, 100);
-  DTree xmlTree, binaryTree, textTree(otherDataset);
+  DTreeX xmlTree, binaryTree, textTree(otherDataset);
 
   SerializeObjectAll(tree, xmlTree, binaryTree, textTree);
 
-  std::stack<DTree*> stack, xmlStack, binaryStack, textStack;
+  std::stack<DTreeX*> stack, xmlStack, binaryStack, textStack;
   stack.push(&tree);
   xmlStack.push(&xmlTree);
   binaryStack.push(&binaryTree);
@@ -873,10 +880,10 @@ BOOST_AUTO_TEST_CASE(DETTest)
   while (!stack.empty())
   {
     // Get the top node from the stack.
-    DTree* node = stack.top();
-    DTree* xmlNode = xmlStack.top();
-    DTree* binaryNode = binaryStack.top();
-    DTree* textNode = textStack.top();
+    DTreeX* node = stack.top();
+    DTreeX* xmlNode = xmlStack.top();
+    DTreeX* binaryNode = binaryStack.top();
+    DTreeX* textNode = textStack.top();
 
     stack.pop();
     xmlStack.pop();
@@ -1281,7 +1288,7 @@ BOOST_AUTO_TEST_CASE(LARSTest)
   // Create a dataset.
   arma::mat X = arma::randn(75, 250);
   arma::vec beta = arma::randn(75, 1);
-  arma::vec y = trans(X) * beta;
+  arma::rowvec y = beta.t() * X;
 
   LARS lars(true, 0.1, 0.1);
   arma::vec betaOpt;
@@ -1294,14 +1301,14 @@ BOOST_AUTO_TEST_CASE(LARSTest)
   // Train textLars.
   arma::mat textX = arma::randn(25, 150);
   arma::vec textBeta = arma::randn(25, 1);
-  arma::vec textY = trans(textX) * textBeta;
+  arma::rowvec textY = textBeta.t() * textX;
   arma::vec textBetaOpt;
   textLars.Train(textX, textY, textBetaOpt);
 
   SerializeObjectAll(lars, xmlLars, binaryLars, textLars);
 
   // Now, check that predictions are the same.
-  arma::vec pred, xmlPred, textPred, binaryPred;
+  arma::rowvec pred, xmlPred, textPred, binaryPred;
   lars.Predict(X, pred);
   xmlLars.Predict(X, xmlPred);
   textLars.Predict(X, textPred);
@@ -1494,8 +1501,8 @@ BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitTest)
 BOOST_AUTO_TEST_CASE(HoeffdingTreeBeforeSplitTest)
 {
   data::DatasetInfo info(5);
-  info.MapString("0", 2); // Dimension 1 is categorical.
-  info.MapString("1", 2);
+  info.MapString<double>("0", 2); // Dimension 1 is categorical.
+  info.MapString<double>("1", 2);
   HoeffdingTree<> split(info, 2, 0.99, 15000, 1);
 
   // Train for 2 samples.
@@ -1503,14 +1510,14 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeBeforeSplitTest)
   split.Train(arma::vec("-0.3 0.0 0 0.7 0.8"), 1);
 
   data::DatasetInfo wrongInfo(3);
-  wrongInfo.MapString("1", 1);
+  wrongInfo.MapString<double>("1", 1);
   HoeffdingTree<> xmlSplit(wrongInfo, 7, 0.1, 10, 1);
 
   // Force the binarySplit to split.
   data::DatasetInfo binaryInfo(2);
-  binaryInfo.MapString("cat0", 0);
-  binaryInfo.MapString("cat1", 0);
-  binaryInfo.MapString("cat0", 1);
+  binaryInfo.MapString<double>("cat0", 0);
+  binaryInfo.MapString<double>("cat1", 0);
+  binaryInfo.MapString<double>("cat0", 1);
 
   HoeffdingTree<> binarySplit(info, 2, 0.95, 5000, 1);
 
@@ -1546,9 +1553,9 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeAfterSplitTest)
 {
   // Force the split to split.
   data::DatasetInfo info(2);
-  info.MapString("cat0", 0);
-  info.MapString("cat1", 0);
-  info.MapString("cat0", 1);
+  info.MapString<double>("cat0", 0);
+  info.MapString<double>("cat1", 0);
+  info.MapString<double>("cat0", 1);
 
   HoeffdingTree<> split(info, 2, 0.95, 5000, 1);
 
@@ -1562,12 +1569,12 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeAfterSplitTest)
   BOOST_REQUIRE_NE(split.SplitDimension(), size_t(-1));
 
   data::DatasetInfo wrongInfo(3);
-  wrongInfo.MapString("1", 1);
+  wrongInfo.MapString<double>("1", 1);
   HoeffdingTree<> xmlSplit(wrongInfo, 7, 0.1, 10, 1);
 
   data::DatasetInfo binaryInfo(5);
-  binaryInfo.MapString("0", 2); // Dimension 2 is categorical.
-  binaryInfo.MapString("1", 2);
+  binaryInfo.MapString<double>("0", 2); // Dimension 2 is categorical.
+  binaryInfo.MapString<double>("1", 2);
   HoeffdingTree<> binarySplit(binaryInfo, 2, 0.99, 15000, 1);
 
   // Train for 2 samples.
@@ -1639,14 +1646,14 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeTest)
   }
   // Make the features categorical.
   data::DatasetInfo info(2);
-  info.MapString("a", 0);
-  info.MapString("b", 0);
-  info.MapString("c", 0);
-  info.MapString("d", 0);
-  info.MapString("a", 1);
-  info.MapString("b", 1);
-  info.MapString("c", 1);
-  info.MapString("d", 1);
+  info.MapString<double>("a", 0);
+  info.MapString<double>("b", 0);
+  info.MapString<double>("c", 0);
+  info.MapString<double>("d", 0);
+  info.MapString<double>("a", 1);
+  info.MapString<double>("b", 1);
+  info.MapString<double>("c", 1);
+  info.MapString<double>("d", 1);
 
   HoeffdingTree<> tree(dataset, info, labels, 2, false /* no batch mode */);
 

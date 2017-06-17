@@ -3,11 +3,16 @@
  * @author Marcus Edel
  *
  * Definition and implementation of the identity function.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_ANN_ACTIVATION_FUNCTIONS_IDENTITY_FUNCTION_HPP
 #define MLPACK_METHODS_ANN_ACTIVATION_FUNCTIONS_IDENTITY_FUNCTION_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -29,7 +34,7 @@ class IdentityFunction
    * @param x Input data.
    * @return f(x).
    */
-  static double fn(const double x)
+  static double Fn(const double x)
   {
     return x;
   }
@@ -41,7 +46,7 @@ class IdentityFunction
    * @param y The resulting output activation.
    */
   template<typename InputVecType, typename OutputVecType>
-  static void fn(const InputVecType& x, OutputVecType& y)
+  static void Fn(const InputVecType& x, OutputVecType& y)
   {
     y = x;
   }
@@ -52,7 +57,7 @@ class IdentityFunction
    * @param x Input data.
    * @return f'(x)
    */
-  static double deriv(const double /* unused */)
+  static double Deriv(const double /* unused */)
   {
     return 1.0;
   }
@@ -64,7 +69,7 @@ class IdentityFunction
    * @param x The resulting derivatives.
    */
   template<typename InputVecType, typename OutputVecType>
-  static void deriv(const InputVecType& y, OutputVecType& x)
+  static void Deriv(const InputVecType& y, OutputVecType& x)
   {
     x.ones(y.n_elem);
   }
@@ -77,12 +82,10 @@ class IdentityFunction
    * @param x The resulting derivatives.
    */
   template<typename eT>
-  static void deriv(const arma::Cube<eT>& y, arma::Cube<eT>& x)
+  static void Deriv(const arma::Cube<eT>& y, arma::Cube<eT>& x)
   {
     x.ones(y.n_rows, y.n_cols, y.n_slices);
   }
-
-
 }; // class IdentityFunction
 
 } // namespace ann

@@ -3,8 +3,15 @@
  * @author Keon Kim
  *
  * split data CLI executable
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/math/random.hpp>
+#include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/data/split_data.hpp>
 
 PROGRAM_INFO("Split Data", "This utility takes a dataset and optionally labels "
@@ -39,18 +46,20 @@ PROGRAM_INFO("Split Data", "This utility takes a dataset and optionally labels "
     "> -L test_labels.csv");
 
 // Define parameters for data.
-PARAM_STRING_IN_REQ("input_file", "File containing data,", "i");
-PARAM_STRING_OUT("training_file", "File name to save train data", "t");
-PARAM_STRING_OUT("test_file", "File name to save test data", "T");
+PARAM_MATRIX_IN_REQ("input", "Matrix containing data.", "i");
+PARAM_MATRIX_OUT("training", "Matrix to save training data to.", "t");
+PARAM_MATRIX_OUT("test", "Matrix to save test data to.", "T");
 
 // Define optional parameters.
-PARAM_STRING_IN("input_labels_file", "File containing labels", "I", "");
-PARAM_STRING_OUT("training_labels_file", "File name to save train label", "l");
-PARAM_STRING_OUT("test_labels_file", "File name to save test label", "L");
+PARAM_UMATRIX_IN("input_labels", "Matrix containing labels.", "I");
+PARAM_UMATRIX_OUT("training_labels", "Matrix to save train labels to.", "l");
+PARAM_UMATRIX_OUT("test_labels", "Matrix to save test labels to.", "L");
 
 // Define optional test ratio, default is 0.2 (Test 20% Train 80%).
 PARAM_DOUBLE_IN("test_ratio", "Ratio of test set; if not set,"
     "the ratio defaults to 0.2", "r", 0.2);
+
+PARAM_INT_IN("seed", "Random seed (0 for std::time(NULL)).", "s", 0);
 
 using namespace mlpack;
 using namespace arma;
@@ -60,31 +69,30 @@ int main(int argc, char** argv)
 {
   // Parse command line options.
   CLI::ParseCommandLine(argc, argv);
-  const string inputFile = CLI::GetParam<string>("input_file");
-  const string inputLabels = CLI::GetParam<string>("input_labels_file");
-  const string trainingFile = CLI::GetParam<string>("training_file");
-  const string testFile = CLI::GetParam<string>("test_file");
-  const string trainingLabelsFile = CLI::GetParam<string>("training_labels_file");
-  const string testLabelsFile = CLI::GetParam<string>("test_labels_file");
   const double testRatio = CLI::GetParam<double>("test_ratio");
 
+  if (CLI::GetParam<int>("seed") == 0)
+    mlpack::math::RandomSeed(std::time(NULL));
+  else
+    mlpack::math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
+
   // Make sure the user specified output filenames.
-  if (trainingFile == "")
+  if (!CLI::HasParam("training"))
     Log::Warn << "--training_file (-t) is not specified; no training set will "
         << "be saved!" << endl;
-  if (testFile == "")
+  if (!CLI::HasParam("test"))
     Log::Warn << "--test_file (-T) is not specified; no test set will be saved!"
         << endl;
 
   // Check on label parameters.
-  if (CLI::HasParam("input_labels_file"))
+  if (CLI::HasParam("input_labels"))
   {
-    if (!CLI::HasParam("training_labels_file"))
+    if (!CLI::HasParam("training_labels"))
     {
       Log::Warn << "--training_labels_file (-l) is not specified; no training "
           << "set labels will be saved!" << endl;
     }
-    if (!CLI::HasParam("test_labels_file"))
+    if (!CLI::HasParam("test_labels"))
     {
       Log::Warn << "--test_labels_file (-L) is not specified; no test set "
           << "labels will be saved!" << endl;
@@ -92,10 +100,10 @@ int main(int argc, char** argv)
   }
   else
   {
-    if (CLI::HasParam("training_labels_file"))
+    if (CLI::HasParam("training_labels"))
       Log::Warn << "--training_labels_file ignored because --input_labels is "
           << "not specified." << endl;
-    if (CLI::HasParam("test_labels_file"))
+    if (CLI::HasParam("test_labels"))
       Log::Warn << "--test_labels_file ignored because --input_labels is not "
           << "specified." << endl;
   }
@@ -116,15 +124,14 @@ int main(int argc, char** argv)
   }
 
   // Load the data.
-  arma::mat data;
-  data::Load(inputFile, data, true);
+  arma::mat& data = CLI::GetParam<arma::mat>("input");
 
   // If parameters for labels exist, we must split the labels too.
-  if (CLI::HasParam("input_labels_file"))
+  if (CLI::HasParam("input_labels"))
   {
-    arma::mat labels;
-    data::Load(inputLabels, labels, true);
-    arma::rowvec labelsRow = labels.row(0);
+    arma::Mat<size_t>& labels =
+        CLI::GetParam<arma::Mat<size_t>>("input_labels");
+    arma::Row<size_t> labelsRow = labels.row(0);
 
     const auto value = data::Split(data, labelsRow, testRatio);
     Log::Info << "Training data contains " << get<0>(value).n_cols << " points."
@@ -132,14 +139,16 @@ int main(int argc, char** argv)
     Log::Info << "Test data contains " << get<1>(value).n_cols << " points."
         << endl;
 
-    if (trainingFile != "")
-      data::Save(trainingFile, get<0>(value), false);
-    if (testFile != "")
-      data::Save(testFile, get<1>(value), false);
-    if (trainingLabelsFile != "")
-      data::Save(trainingLabelsFile, get<2>(value), false);
-    if (testLabelsFile != "")
-      data::Save(testLabelsFile, get<3>(value), false);
+    if (CLI::HasParam("training"))
+      CLI::GetParam<arma::mat>("training") = std::move(get<0>(value));
+    if (CLI::HasParam("test"))
+      CLI::GetParam<arma::mat>("test") = std::move(get<1>(value));
+    if (CLI::HasParam("training_labels"))
+      CLI::GetParam<arma::Mat<size_t>>("training_labels") =
+          std::move(get<2>(value));
+    if (CLI::HasParam("test_labels"))
+      CLI::GetParam<arma::Mat<size_t>>("test_labels") =
+          std::move(get<3>(value));
   }
   else // We have no labels, so just split the dataset.
   {
@@ -149,9 +158,9 @@ int main(int argc, char** argv)
     Log::Info << "Test data contains " << get<1>(value).n_cols << " points."
         << endl;
 
-    if (trainingFile != "")
-      data::Save(trainingFile, get<0>(value), false);
-    if (testFile != "")
-      data::Save(testFile, get<1>(value), false);
+    if (CLI::HasParam("training"))
+      CLI::GetParam<arma::mat>("training") = std::move(get<0>(value));
+    if (CLI::HasParam("test"))
+      CLI::GetParam<arma::mat>("test") = std::move(get<1>(value));
   }
 }

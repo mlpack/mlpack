@@ -3,11 +3,16 @@
  * @author Ryan Curtin
  *
  * A dual-tree traverser for the cover tree.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_COVER_TREE_DUAL_TREE_TRAVERSER_IMPL_HPP
 #define MLPACK_CORE_TREE_COVER_TREE_DUAL_TREE_TRAVERSER_IMPL_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <queue>
 
 namespace mlpack {
@@ -292,7 +297,8 @@ DualTreeTraverser<RuleType>::ReferenceRecursion(
       break;
 
     // Get a reference to the current largest scale.
-    std::vector<DualCoverTreeMapEntry>& scaleVector = (*referenceMap.rbegin()).second;
+    std::vector<DualCoverTreeMapEntry>& scaleVector =
+        (*referenceMap.rbegin()).second;
 
     // Before traversing all the points in this scale, sort by score.
     std::sort(scaleVector.begin(), scaleVector.end());

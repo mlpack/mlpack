@@ -3,11 +3,16 @@
  * @author Udit Saxena
  *
  * Definition of Perceptron class.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_PERCEPTRON_PERCEPTRON_HPP
 #define MLPACK_METHODS_PERCEPTRON_PERCEPTRON_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 #include "initialization_methods/zero_init.hpp"
 #include "initialization_methods/random_init.hpp"
@@ -73,7 +78,7 @@ class Perceptron
    * @param D Weight vector to use while training. For boosting purposes.
    * @param labels The labels of data.
    */
-  Perceptron(const Perceptron<>& other,
+  Perceptron(const Perceptron& other,
              const MatType& data,
              const arma::Row<size_t>& labels,
              const arma::rowvec& instanceWeights);
@@ -131,7 +136,7 @@ class Perceptron
   //! Modify the biases.  You had better know what you are doing!
   arma::vec& Biases() { return biases; }
 
-private:
+ private:
   //! The maximum number of iterations during training.
   size_t maxIterations;
 

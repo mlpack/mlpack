@@ -1,13 +1,22 @@
 /**
  * @file sgd.hpp
  * @author Ryan Curtin
+ * @author Arun Reddy
+ * @author Abhinav Moudgil
  *
  * Stochastic Gradient Descent (SGD).
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_OPTIMIZERS_SGD_SGD_HPP
 #define MLPACK_CORE_OPTIMIZERS_SGD_SGD_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/optimizers/sgd/update_policies/vanilla_update.hpp>
+#include <mlpack/core/optimizers/sgd/update_policies/momentum_update.hpp>
 
 namespace mlpack {
 namespace optimization {
@@ -21,19 +30,14 @@ namespace optimization {
  * \f]
  *
  * and our task is to minimize \f$ A \f$.  Stochastic gradient descent iterates
- * over each function \f$ f_i(A) \f$, producing the following update scheme:
- *
- * \f[
- * A_{j + 1} = A_j + \alpha \nabla f_i(A)
- * \f]
- *
- * where \f$ \alpha \f$ is a parameter which specifies the step size.  \f$ i \f$
- * is chosen according to \f$ j \f$ (the iteration number).  The SGD class
- * supports either scanning through each of the \f$ n \f$ functions \f$ f_i(A)
- * \f$ linearly, or in a random sequence.  The algorithm continues until \f$ j
- * \f$ reaches the maximum number of iterations---or when a full sequence of
- * updates through each of the \f$ n \f$ functions \f$ f_i(A) \f$ produces an
- * improvement within a certain tolerance \f$ \epsilon \f$.  That is,
+ * over each function \f$ f_i(A) \f$, based on the specified update policy. By
+ * default vanilla update policy (see mlpack::optimization::VanillaUpdate) is
+ * used. The SGD class supports either scanning through each of the \f$ n \f$
+ * functions \f$ f_i(A)\f$ linearly, or in a random sequence.  The algorithm
+ * continues until \f$ j\f$ reaches the maximum number of iterations---or when a
+ * full sequence of updates through each of the \f$ n \f$ functions \f$ f_i(A)
+ * \f$ produces an improvement within a certain tolerance \f$ \epsilon \f$.
+ * That is,
  *
  * \f[
  * | f(A_{j + n}) - f(A_j) | < \epsilon.
@@ -66,8 +70,14 @@ namespace optimization {
  *
  * @tparam DecomposableFunctionType Decomposable objective function type to be
  *     minimized.
+ * @tparam UpdatePolicyType update policy used by SGD during the iterative update
+ *     process. By default vanilla update policy (see
+ *     mlpack::optimization::VanillaUpdate) is used.
  */
-template<typename DecomposableFunctionType>
+template<
+    typename DecomposableFunctionType,
+    typename UpdatePolicyType = VanillaUpdate
+>
 class SGD
 {
  public:
@@ -91,7 +101,19 @@ class SGD
       const double stepSize = 0.01,
       const size_t maxIterations = 100000,
       const double tolerance = 1e-5,
-      const bool shuffle = true);
+      const bool shuffle = true,
+      const UpdatePolicyType updatePolicy = UpdatePolicyType());
+
+  /**
+   * Optimize the given function using stochastic gradient descent.  The given
+   * starting point will be modified to store the finishing point of the
+   * algorithm, and the final objective value is returned.
+   *
+   * @param function Function to optimize.
+   * @param iterate Starting point (will be modified).
+   * @return Objective value of the final point.
+   */
+  double Optimize(DecomposableFunctionType& function, arma::mat& iterate);
 
   /**
    * Optimize the given function using stochastic gradient descent.  The given
@@ -101,7 +123,10 @@ class SGD
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
-  double Optimize(arma::mat& iterate);
+  double Optimize(arma::mat& iterate)
+  {
+    return Optimize(this->function, iterate);
+  }
 
   //! Get the instantiated function to be optimized.
   const DecomposableFunctionType& Function() const { return function; }
@@ -128,6 +153,11 @@ class SGD
   //! Modify whether or not the individual functions are shuffled.
   bool& Shuffle() { return shuffle; }
 
+  //! Get the update policy.
+  UpdatePolicyType UpdatePolicy() const { return updatePolicy; }
+  //! Modify the update policy.
+  UpdatePolicyType& UpdatePolicy() { return updatePolicy; }
+
  private:
   //! The instantiated function.
   DecomposableFunctionType& function;
@@ -144,7 +174,16 @@ class SGD
   //! Controls whether or not the individual functions are shuffled when
   //! iterating.
   bool shuffle;
+
+  //! The update policy used to update the parameters in each iteration.
+  UpdatePolicyType updatePolicy;
 };
+
+template<typename DecomposableFunctionType>
+using StandardSGD = SGD<DecomposableFunctionType, VanillaUpdate>;
+
+template<typename DecomposableFunctionType>
+using MomentumSGD = SGD<DecomposableFunctionType, MomentumUpdate>;
 
 } // namespace optimization
 } // namespace mlpack

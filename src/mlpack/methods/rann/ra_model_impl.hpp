@@ -3,12 +3,18 @@
  * @author Ryan Curtin
  *
  * Implementation of the RAModel class.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_RANN_RA_MODEL_IMPL_HPP
 #define MLPACK_METHODS_RANN_RA_MODEL_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "ra_model.hpp"
+#include <mlpack/core/math/random_basis.hpp>
 
 namespace mlpack {
 namespace neighbor {
@@ -25,30 +31,188 @@ RAModel<SortPolicy>::RAModel(const TreeTypes treeType, const bool randomBasis) :
     xTreeRA(NULL),
     hilbertRTreeRA(NULL),
     rPlusTreeRA(NULL),
-    rPlusPlusTreeRA(NULL)
+    rPlusPlusTreeRA(NULL),
+    ubTreeRA(NULL),
+    octreeRA(NULL)
 {
   // Nothing to do.
+}
+
+// Copy constructor.
+template<typename SortPolicy>
+RAModel<SortPolicy>::RAModel(const RAModel& other) :
+    treeType(other.treeType),
+    leafSize(other.leafSize),
+    randomBasis(other.randomBasis),
+    kdTreeRA(NULL),
+    coverTreeRA(NULL),
+    rTreeRA(NULL),
+    rStarTreeRA(NULL),
+    xTreeRA(NULL),
+    hilbertRTreeRA(NULL),
+    rPlusTreeRA(NULL),
+    rPlusPlusTreeRA(NULL),
+    ubTreeRA(NULL),
+    octreeRA(NULL)
+{
+  if (other.kdTreeRA)
+    kdTreeRA = new RAType<tree::KDTree>(*other.kdTreeRA);
+  if (other.coverTreeRA)
+    coverTreeRA = new RAType<tree::StandardCoverTree>(*other.coverTreeRA);
+  if (other.rTreeRA)
+    rTreeRA = new RAType<tree::RTree>(*other.rTreeRA);
+  if (other.rStarTreeRA)
+    rStarTreeRA = new RAType<tree::RStarTree>(*other.rStarTreeRA);
+  if (other.xTreeRA)
+    xTreeRA = new RAType<tree::XTree>(*other.xTreeRA);
+  if (other.hilbertRTreeRA)
+    hilbertRTreeRA = new RAType<tree::HilbertRTree>(*other.hilbertRTreeRA);
+  if (other.rPlusTreeRA)
+    rPlusTreeRA = new RAType<tree::RPlusTree>(*other.rPlusTreeRA);
+  if (other.rPlusPlusTreeRA)
+    rPlusPlusTreeRA = new RAType<tree::RPlusPlusTree>(*other.rPlusPlusTreeRA);
+  if (other.ubTreeRA)
+    ubTreeRA = new RAType<tree::UBTree>(*other.ubTreeRA);
+  if (other.octreeRA)
+    octreeRA = new RAType<tree::Octree>(*other.octreeRA);
+}
+
+// Move constructor.
+template<typename SortPolicy>
+RAModel<SortPolicy>::RAModel(RAModel&& other) :
+    treeType(other.treeType),
+    leafSize(other.leafSize),
+    randomBasis(other.randomBasis),
+    kdTreeRA(other.kdTreeRA),
+    coverTreeRA(other.coverTreeRA),
+    rTreeRA(other.rTreeRA),
+    rStarTreeRA(other.rStarTreeRA),
+    xTreeRA(other.xTreeRA),
+    hilbertRTreeRA(other.hilbertRTreeRA),
+    rPlusTreeRA(other.rPlusTreeRA),
+    rPlusPlusTreeRA(other.rPlusPlusTreeRA),
+    ubTreeRA(other.ubTreeRA),
+    octreeRA(other.octreeRA)
+{
+  // Clear other model.
+  other.treeType = TreeTypes::KD_TREE;
+  other.leafSize = 20;
+  other.randomBasis = false;
+  other.kdTreeRA = NULL;
+  other.coverTreeRA = NULL;
+  other.rTreeRA = NULL;
+  other.rStarTreeRA = NULL;
+  other.xTreeRA = NULL;
+  other.hilbertRTreeRA = NULL;
+  other.rPlusTreeRA = NULL;
+  other.rPlusPlusTreeRA = NULL;
+  other.ubTreeRA = NULL;
+  other.octreeRA = NULL;
+}
+
+// Copy operator.
+template<typename SortPolicy>
+RAModel<SortPolicy>& RAModel<SortPolicy>::operator=(const RAModel& other)
+{
+  // Clear current model.
+  delete kdTreeRA;
+  delete coverTreeRA;
+  delete rTreeRA;
+  delete rStarTreeRA;
+  delete xTreeRA;
+  delete hilbertRTreeRA;
+  delete rPlusTreeRA;
+  delete rPlusPlusTreeRA;
+  delete ubTreeRA;
+  delete octreeRA;
+
+  treeType = other.treeType;
+  leafSize = other.leafSize;
+  randomBasis = other.randomBasis;
+
+  if (other.kdTreeRA)
+    kdTreeRA = new RAType<tree::KDTree>(*other.kdTreeRA);
+  if (other.coverTreeRA)
+    coverTreeRA = new RAType<tree::StandardCoverTree>(*other.coverTreeRA);
+  if (other.rTreeRA)
+    rTreeRA = new RAType<tree::RTree>(*other.rTreeRA);
+  if (other.rStarTreeRA)
+    rStarTreeRA = new RAType<tree::RStarTree>(*other.rStarTreeRA);
+  if (other.xTreeRA)
+    xTreeRA = new RAType<tree::XTree>(*other.xTreeRA);
+  if (other.hilbertRTreeRA)
+    hilbertRTreeRA = new RAType<tree::HilbertRTree>(*other.hilbertRTreeRA);
+  if (other.rPlusTreeRA)
+    rPlusTreeRA = new RAType<tree::RPlusTree>(*other.rPlusTreeRA);
+  if (other.rPlusPlusTreeRA)
+    rPlusPlusTreeRA = new RAType<tree::RPlusPlusTree>(*other.rPlusPlusTreeRA);
+  if (other.ubTreeRA)
+    ubTreeRA = new RAType<tree::UBTree>(*other.ubTreeRA);
+  if (other.octreeRA)
+    octreeRA = new RAType<tree::Octree>(*other.octreeRA);
+
+  return *this;
+}
+
+template<typename SortPolicy>
+RAModel<SortPolicy>& RAModel<SortPolicy>::operator=(RAModel&& other)
+{
+  delete kdTreeRA;
+  delete coverTreeRA;
+  delete rTreeRA;
+  delete rStarTreeRA;
+  delete xTreeRA;
+  delete hilbertRTreeRA;
+  delete rPlusTreeRA;
+  delete rPlusPlusTreeRA;
+  delete ubTreeRA;
+  delete octreeRA;
+
+  treeType = other.treeType;
+  leafSize = other.leafSize;
+  randomBasis = other.randomBasis;
+  kdTreeRA = other.kdTreeRA;
+  coverTreeRA = other.coverTreeRA;
+  rTreeRA = other.rTreeRA;
+  rStarTreeRA = other.rStarTreeRA;
+  xTreeRA = other.xTreeRA;
+  hilbertRTreeRA = other.hilbertRTreeRA;
+  rPlusTreeRA = other.rPlusTreeRA;
+  rPlusPlusTreeRA = other.rPlusPlusTreeRA;
+  ubTreeRA = other.ubTreeRA;
+  octreeRA = other.octreeRA;
+
+  // Reset other model.
+  other.treeType = TreeTypes::KD_TREE;
+  other.leafSize = 20;
+  other.randomBasis = false;
+  other.kdTreeRA = NULL;
+  other.coverTreeRA = NULL;
+  other.rTreeRA = NULL;
+  other.rStarTreeRA = NULL;
+  other.xTreeRA = NULL;
+  other.hilbertRTreeRA = NULL;
+  other.rPlusTreeRA = NULL;
+  other.rPlusPlusTreeRA = NULL;
+  other.ubTreeRA = NULL;
+  other.octreeRA = NULL;
+
+  return *this;
 }
 
 template<typename SortPolicy>
 RAModel<SortPolicy>::~RAModel()
 {
-  if (kdTreeRA)
-    delete kdTreeRA;
-  if (coverTreeRA)
-    delete coverTreeRA;
-  if (rTreeRA)
-    delete rTreeRA;
-  if (rStarTreeRA)
-    delete rStarTreeRA;
-  if (xTreeRA)
-    delete xTreeRA;
-  if (hilbertRTreeRA)
-    delete hilbertRTreeRA;
-  if (rPlusTreeRA)
-    delete rPlusTreeRA;
-  if (rPlusPlusTreeRA)
-    delete rPlusPlusTreeRA;
+  delete kdTreeRA;
+  delete coverTreeRA;
+  delete rTreeRA;
+  delete rStarTreeRA;
+  delete xTreeRA;
+  delete hilbertRTreeRA;
+  delete rPlusTreeRA;
+  delete rPlusPlusTreeRA;
+  delete ubTreeRA;
+  delete octreeRA;
 }
 
 template<typename SortPolicy>
@@ -63,22 +227,16 @@ void RAModel<SortPolicy>::Serialize(Archive& ar,
   // This should never happen, but just in case, be clean with memory.
   if (Archive::is_loading::value)
   {
-    if (kdTreeRA)
-      delete kdTreeRA;
-    if (coverTreeRA)
-      delete coverTreeRA;
-    if (rTreeRA)
-      delete rTreeRA;
-    if (rStarTreeRA)
-      delete rStarTreeRA;
-    if (xTreeRA)
-      delete xTreeRA;
-    if (hilbertRTreeRA)
-      delete hilbertRTreeRA;
-    if (rPlusTreeRA)
-      delete rPlusTreeRA;
-    if (rPlusPlusTreeRA)
-      delete rPlusPlusTreeRA;
+    delete kdTreeRA;
+    delete coverTreeRA;
+    delete rTreeRA;
+    delete rStarTreeRA;
+    delete xTreeRA;
+    delete hilbertRTreeRA;
+    delete rPlusTreeRA;
+    delete rPlusPlusTreeRA;
+    delete ubTreeRA;
+    delete octreeRA;
 
     // Set all the pointers to NULL.
     kdTreeRA = NULL;
@@ -89,6 +247,7 @@ void RAModel<SortPolicy>::Serialize(Archive& ar,
     hilbertRTreeRA = NULL;
     rPlusPlusTreeRA = NULL;
     rPlusTreeRA = NULL;
+    ubTreeRA = NULL;
   }
 
   // We only need to serialize one of the kRANN objects.
@@ -118,6 +277,12 @@ void RAModel<SortPolicy>::Serialize(Archive& ar,
     case R_PLUS_PLUS_TREE:
       ar & data::CreateNVP(rPlusPlusTreeRA, "ra_model");
       break;
+    case UB_TREE:
+      ar & data::CreateNVP(ubTreeRA, "ra_model");
+      break;
+    case OCTREE:
+      ar & data::CreateNVP(octreeRA, "ra_model");
+      break;
   }
 }
 
@@ -140,6 +305,10 @@ const arma::mat& RAModel<SortPolicy>::Dataset() const
     return rPlusTreeRA->ReferenceSet();
   else if (rPlusPlusTreeRA)
     return rPlusPlusTreeRA->ReferenceSet();
+  else if (ubTreeRA)
+    return ubTreeRA->ReferenceSet();
+  else if (octreeRA)
+    return octreeRA->ReferenceSet();
 
   throw std::runtime_error("no rank-approximate nearest neighbor search model "
       "initialized");
@@ -164,6 +333,10 @@ bool RAModel<SortPolicy>::Naive() const
     return rPlusTreeRA->Naive();
   else if (rPlusPlusTreeRA)
     return rPlusPlusTreeRA->Naive();
+  else if (ubTreeRA)
+    return ubTreeRA->Naive();
+  else if (octreeRA)
+    return octreeRA->Naive();
 
   throw std::runtime_error("no rank-approximate nearest neighbor search model "
       "initialized");
@@ -188,6 +361,10 @@ bool& RAModel<SortPolicy>::Naive()
     return rPlusTreeRA->Naive();
   else if (rPlusPlusTreeRA)
     return rPlusPlusTreeRA->Naive();
+  else if (ubTreeRA)
+    return ubTreeRA->Naive();
+  else if (octreeRA)
+    return octreeRA->Naive();
 
   throw std::runtime_error("no rank-approximate nearest neighbor search model "
       "initialized");
@@ -212,6 +389,10 @@ bool RAModel<SortPolicy>::SingleMode() const
     return rPlusTreeRA->SingleMode();
   else if (rPlusPlusTreeRA)
     return rPlusPlusTreeRA->SingleMode();
+  else if (ubTreeRA)
+    return ubTreeRA->SingleMode();
+  else if (octreeRA)
+    return octreeRA->SingleMode();
 
   throw std::runtime_error("no rank-approximate nearest neighbor search model "
       "initialized");
@@ -236,6 +417,10 @@ bool& RAModel<SortPolicy>::SingleMode()
     return rPlusTreeRA->SingleMode();
   else if (rPlusPlusTreeRA)
     return rPlusPlusTreeRA->SingleMode();
+  else if (ubTreeRA)
+    return ubTreeRA->SingleMode();
+  else if (octreeRA)
+    return octreeRA->SingleMode();
 
   throw std::runtime_error("no rank-approximate nearest neighbor search model "
       "initialized");
@@ -260,6 +445,10 @@ double RAModel<SortPolicy>::Tau() const
     return rPlusTreeRA->Tau();
   else if (rPlusPlusTreeRA)
     return rPlusPlusTreeRA->Tau();
+  else if (ubTreeRA)
+    return ubTreeRA->Tau();
+  else if (octreeRA)
+    return octreeRA->Tau();
 
   throw std::runtime_error("no rank-approximate nearest neighbor search model "
       "initialized");
@@ -284,6 +473,10 @@ double& RAModel<SortPolicy>::Tau()
     return rPlusTreeRA->Tau();
   else if (rPlusPlusTreeRA)
     return rPlusPlusTreeRA->Tau();
+  else if (ubTreeRA)
+    return ubTreeRA->Tau();
+  else if (octreeRA)
+    return octreeRA->Tau();
 
   throw std::runtime_error("no rank-approximate nearest neighbor search model "
       "initialized");
@@ -308,6 +501,10 @@ double RAModel<SortPolicy>::Alpha() const
     return rPlusTreeRA->Alpha();
   else if (rPlusPlusTreeRA)
     return rPlusPlusTreeRA->Alpha();
+  else if (ubTreeRA)
+    return ubTreeRA->Alpha();
+  else if (octreeRA)
+    return octreeRA->Alpha();
 
   throw std::runtime_error("no rank-approximate nearest neighbor search model "
       "initialized");
@@ -332,6 +529,10 @@ double& RAModel<SortPolicy>::Alpha()
     return rPlusTreeRA->Alpha();
   else if (rPlusPlusTreeRA)
     return rPlusPlusTreeRA->Alpha();
+  else if (ubTreeRA)
+    return ubTreeRA->Alpha();
+  else if (octreeRA)
+    return octreeRA->Alpha();
 
   throw std::runtime_error("no rank-approximate nearest neighbor search model "
       "initialized");
@@ -356,6 +557,10 @@ bool RAModel<SortPolicy>::SampleAtLeaves() const
     return rPlusTreeRA->SampleAtLeaves();
   else if (rPlusPlusTreeRA)
     return rPlusPlusTreeRA->SampleAtLeaves();
+  else if (ubTreeRA)
+    return ubTreeRA->SampleAtLeaves();
+  else if (octreeRA)
+    return octreeRA->SampleAtLeaves();
 
   throw std::runtime_error("no rank-approximate nearest neighbor search model "
       "initialized");
@@ -380,6 +585,10 @@ bool& RAModel<SortPolicy>::SampleAtLeaves()
     return rPlusTreeRA->SampleAtLeaves();
   else if (rPlusPlusTreeRA)
     return rPlusPlusTreeRA->SampleAtLeaves();
+  else if (ubTreeRA)
+    return ubTreeRA->SampleAtLeaves();
+  else if (octreeRA)
+    return octreeRA->SampleAtLeaves();
 
   throw std::runtime_error("no rank-approximate nearest neighbor search model "
       "initialized");
@@ -404,6 +613,10 @@ bool RAModel<SortPolicy>::FirstLeafExact() const
     return rPlusTreeRA->FirstLeafExact();
   else if (rPlusPlusTreeRA)
     return rPlusPlusTreeRA->FirstLeafExact();
+  else if (ubTreeRA)
+    return ubTreeRA->FirstLeafExact();
+  else if (octreeRA)
+    return octreeRA->FirstLeafExact();
 
   throw std::runtime_error("no rank-approximate nearest neighbor search model "
       "initialized");
@@ -428,6 +641,10 @@ bool& RAModel<SortPolicy>::FirstLeafExact()
     return rPlusTreeRA->FirstLeafExact();
   else if (rPlusPlusTreeRA)
     return rPlusPlusTreeRA->FirstLeafExact();
+  else if (ubTreeRA)
+    return ubTreeRA->FirstLeafExact();
+  else if (octreeRA)
+    return octreeRA->FirstLeafExact();
 
   throw std::runtime_error("no rank-approximate nearest neighbor search model "
       "initialized");
@@ -452,6 +669,10 @@ size_t RAModel<SortPolicy>::SingleSampleLimit() const
     return rPlusTreeRA->SingleSampleLimit();
   else if (rPlusPlusTreeRA)
     return rPlusPlusTreeRA->SingleSampleLimit();
+  else if (ubTreeRA)
+    return ubTreeRA->SingleSampleLimit();
+  else if (octreeRA)
+    return octreeRA->SingleSampleLimit();
 
   throw std::runtime_error("no rank-approximate nearest neighbor search model "
       "initialized");
@@ -476,6 +697,10 @@ size_t& RAModel<SortPolicy>::SingleSampleLimit()
     return rPlusTreeRA->SingleSampleLimit();
   else if (rPlusPlusTreeRA)
     return rPlusPlusTreeRA->SingleSampleLimit();
+  else if (ubTreeRA)
+    return ubTreeRA->SingleSampleLimit();
+  else if (octreeRA)
+    return octreeRA->SingleSampleLimit();
 
   throw std::runtime_error("no rank-approximate nearest neighbor search model "
       "initialized");
@@ -531,22 +756,18 @@ void RAModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
   }
 
   // Clean memory, if necessary.
-  if (kdTreeRA)
-    delete kdTreeRA;
-  if (coverTreeRA)
-    delete coverTreeRA;
-  if (rTreeRA)
-    delete rTreeRA;
-  if (rStarTreeRA)
-    delete rStarTreeRA;
-  if (xTreeRA)
-    delete xTreeRA;
-  if (hilbertRTreeRA)
-    delete hilbertRTreeRA;
-  if (rPlusTreeRA)
-    delete rPlusTreeRA;
-  if (rPlusPlusTreeRA)
-    delete rPlusPlusTreeRA;
+  delete kdTreeRA;
+  delete coverTreeRA;
+  delete rTreeRA;
+  delete rStarTreeRA;
+  delete xTreeRA;
+  delete hilbertRTreeRA;
+  delete rPlusTreeRA;
+  delete rPlusPlusTreeRA;
+  delete ubTreeRA;
+  delete octreeRA;
+
+  this->leafSize = leafSize;
 
   if (randomBasis)
     referenceSet = q * referenceSet;
@@ -606,6 +827,30 @@ void RAModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
     case R_PLUS_PLUS_TREE:
       rPlusPlusTreeRA = new RAType<tree::RPlusPlusTree>(std::move(referenceSet),
           naive, singleMode);
+      break;
+    case UB_TREE:
+      ubTreeRA = new RAType<tree::UBTree>(std::move(referenceSet),
+          naive, singleMode);
+      break;
+    case OCTREE:
+      // Build tree, if necessary.
+      if (naive)
+      {
+        octreeRA = new RAType<tree::Octree>(std::move(referenceSet), naive,
+            singleMode);
+      }
+      else
+      {
+        std::vector<size_t> oldFromNewReferences;
+        typename RAType<tree::Octree>::Tree* octree =
+            new typename RAType<tree::Octree>::Tree(std::move(referenceSet),
+            oldFromNewReferences, leafSize);
+        octreeRA = new RAType<tree::Octree>(octree, singleMode);
+
+        // Give the model ownership of the tree.
+        octreeRA->treeOwner = true;
+        octreeRA->oldFromNewReferences = oldFromNewReferences;
+      }
       break;
   }
 
@@ -696,6 +941,41 @@ void RAModel<SortPolicy>::Search(arma::mat&& querySet,
       // No mapping necessary.
       rPlusPlusTreeRA->Search(querySet, k, neighbors, distances);
       break;
+    case UB_TREE:
+      // No mapping necessary.
+      ubTreeRA->Search(querySet, k, neighbors, distances);
+      break;
+    case OCTREE:
+      if (!octreeRA->Naive() && !octreeRA->SingleMode())
+      {
+        // Build a second tree and search.
+        Timer::Start("tree_building");
+        Log::Info << "Building query tree..." << std::endl;
+        std::vector<size_t> oldFromNewQueries;
+        typename RAType<tree::Octree>::Tree queryTree(std::move(querySet),
+            oldFromNewQueries, leafSize);
+        Log::Info << "Tree built." << std::endl;
+        Timer::Stop("tree_building");
+
+        arma::Mat<size_t> neighborsOut;
+        arma::mat distancesOut;
+        octreeRA->Search(&queryTree, k, neighborsOut, distancesOut);
+
+        // Unmap the query points.
+        distances.set_size(distancesOut.n_rows, distancesOut.n_cols);
+        neighbors.set_size(neighborsOut.n_rows, neighborsOut.n_cols);
+        for (size_t i = 0; i < neighborsOut.n_cols; ++i)
+        {
+          neighbors.col(oldFromNewQueries[i]) = neighborsOut.col(i);
+          distances.col(oldFromNewQueries[i]) = distancesOut.col(i);
+        }
+      }
+      else
+      {
+        // Search without building a second tree.
+        octreeRA->Search(querySet, k, neighbors, distances);
+      }
+      break;
   }
 }
 
@@ -739,6 +1019,12 @@ void RAModel<SortPolicy>::Search(const size_t k,
     case R_PLUS_PLUS_TREE:
       rPlusPlusTreeRA->Search(k, neighbors, distances);
       break;
+    case UB_TREE:
+      ubTreeRA->Search(k, neighbors, distances);
+      break;
+    case OCTREE:
+      octreeRA->Search(k, neighbors, distances);
+      break;
   }
 }
 
@@ -763,6 +1049,10 @@ std::string RAModel<SortPolicy>::TreeName() const
       return "R+ tree";
     case R_PLUS_PLUS_TREE:
       return "R++ tree";
+    case UB_TREE:
+      return "UB tree";
+    case OCTREE:
+      return "octree";
     default:
       return "unknown tree";
   }

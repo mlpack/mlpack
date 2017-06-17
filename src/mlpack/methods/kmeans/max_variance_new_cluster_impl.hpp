@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * Implementation of MaxVarianceNewCluster class.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_KMEANS_MAX_VARIANCE_NEW_CLUSTER_IMPL_HPP
 #define MLPACK_METHODS_KMEANS_MAX_VARIANCE_NEW_CLUSTER_IMPL_HPP
@@ -60,8 +65,8 @@ size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
   // Take that point and add it to the empty cluster.
   newCentroids.col(maxVarCluster) *= (double(clusterCounts[maxVarCluster]) /
       double(clusterCounts[maxVarCluster] - 1));
-  newCentroids.col(maxVarCluster) -= (1.0 / (clusterCounts[maxVarCluster] - 1.0)) *
-      arma::vec(data.col(furthestPoint));
+  newCentroids.col(maxVarCluster) -= (1.0 / (clusterCounts[maxVarCluster] -
+      1.0)) * arma::vec(data.col(furthestPoint));
   clusterCounts[maxVarCluster]--;
   clusterCounts[emptyCluster]++;
   newCentroids.col(emptyCluster) = arma::vec(data.col(furthestPoint));
@@ -82,7 +87,8 @@ size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
   else
   {
     variances[maxVarCluster] = (1.0 / clusterCounts[maxVarCluster]) *
-      ((clusterCounts[maxVarCluster] + 1) * variances[maxVarCluster] - maxDistance);
+        ((clusterCounts[maxVarCluster] + 1) * variances[maxVarCluster] -
+        maxDistance);
   }
 
   // Output some debugging information.

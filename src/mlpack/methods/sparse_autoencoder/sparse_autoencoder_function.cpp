@@ -3,6 +3,11 @@
  * @author Siddharth Agrawal
  *
  * Implementation of function to be optimized for sparse autoencoders.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "sparse_autoencoder_function.hpp"
 
@@ -59,7 +64,7 @@ const arma::mat SparseAutoencoderFunction::InitializeWeights()
   // layers. The formula used is r = sqrt(6) / sqrt(vSize + hSize + 1).
   const double range = sqrt(6) / sqrt(visibleSize + hiddenSize + 1);
 
-  //Shift range of w1 and w2 values from [0, 1] to [-r, r].
+  // Shift range of w1 and w2 values from [0, 1] to [-r, r].
   parameters.submat(0, 0, 2 * hiddenSize - 1, visibleSize - 1) = 2 * range *
       (parameters.submat(0, 0, 2 * hiddenSize - 1, visibleSize - 1) - 0.5);
 

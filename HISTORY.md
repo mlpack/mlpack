@@ -1,5 +1,79 @@
+### mlpack ?.?.?
+###### ????-??-??
+  * Speed and memory improvements for DBSCAN.  --single_mode can now be used for
+    situations where previously RAM usage was too high.
+
+### mlpack 2.2.3
+###### 2017-05-24
+  * Bug fix for --predictions_file in mlpack_decision_tree program.
+
+### mlpack 2.2.2
+###### 2017-05-04
+  * Install backwards-compatibility mlpack_allknn and mlpack_allkfn programs;
+    note they are deprecated and will be removed in mlpack 3.0.0 (#992).
+
+  * Fix RStarTree bug that surfaced on OS X only (#964).
+
+  * Small fixes for MiniBatchSGD and SGD and tests.
+
+### mlpack 2.2.1
+###### 2017-04-13
+  * Compilation fix for mlpack_nca and mlpack_test on older Armadillo versions
+    (#984).
+
+### mlpack 2.2.0
+###### 2017-03-21
+  * Bugfix for mlpack_knn program (#816).
+
+  * Add decision tree implementation in methods/decision_tree/.  This is very
+    similar to a C4.5 tree learner.
+
+  * Add DBSCAN implementation in methods/dbscan/.
+
+  * Add support for multidimensional discrete distributions (#810, #830).
+
+  * Better output for Log::Debug/Log::Info/Log::Warn/Log::Fatal for Armadillo
+    objects (#895, #928).
+
+  * Refactor categorical CSV loading with boost::spirit for faster loading
+    (#681).
+
+### mlpack 2.1.1
+###### 2016-12-22
+  * HMMs now use random initialization; this should fix some convergence issues
+    (#828).
+
+  * HMMs now initialize emissions according to the distribution of observations
+    (#833).
+
+  * Minor fix for formatted output (#814).
+
+  * Fix DecisionStump to properly work with any input type.
+
+### mlpack 2.1.0
+###### 2016-10-31
+  * Fixed CoverTree to properly handle single-point datasets.
+
+  * Fixed a bug in CosineTree (and thus QUIC-SVD) that caused split failures for
+    some datasets (#717).
+
+  * Added mlpack_preprocess_describe program, which can be used to print
+    statistics on a given dataset (#742).
+
+  * Fix prioritized recursion for k-furthest-neighbor search (mlpack_kfn and the
+    KFN class), leading to orders-of-magnitude speedups in some cases.
+
+  * Bump minimum required version of Armadillo to 4.200.0.
+
+  * Added simple Gradient Descent optimizer, found in
+    src/mlpack/core/optimizers/gradient_descent/ (#792).
+
+  * Added approximate furthest neighbor search algorithms QDAFN and
+    DrusillaSelect in src/mlpack/methods/approx_kfn/, with command-line program
+    mlpack_approx_kfn.
+
 ### mlpack 2.0.3
-###### 2016-??-??
+###### 2016-07-21
   * Added multiprobe LSH (#691).  The parameter 'T' to LSHSearch::Search() can
     now be used to control the number of extra bins that are probed, as can the
     -T (--num_probes) option to mlpack_lsh.

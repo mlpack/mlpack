@@ -3,11 +3,16 @@
  * @author Michael Fox
  *
  * Definition of HMMRegression class.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_HMM_HMM_REGRESSION_HPP
 #define MLPACK_METHODS_HMM_HMM_REGRESSION_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/core/dists/regression_distribution.hpp>
 #include "hmm.hpp"
 
@@ -282,13 +287,13 @@ class HMMRegression : public HMM<distribution::RegressionDistribution>
   /**
    * Utility functions to facilitate the use of the HMM class for HMMR.
    */
-   void StackData(const std::vector<arma::mat>& predictors,
-                  const std::vector<arma::vec>& responses,
-                  std::vector<arma::mat>& dataSeq) const;
+  void StackData(const std::vector<arma::mat>& predictors,
+                 const std::vector<arma::vec>& responses,
+                 std::vector<arma::mat>& dataSeq) const;
 
-   void StackData(const arma::mat& predictors,
-                  const arma::vec& responses,
-                  arma::mat& dataSeq) const;
+  void StackData(const arma::mat& predictors,
+                 const arma::vec& responses,
+                 arma::mat& dataSeq) const;
 
   /**
    * The Forward algorithm (part of the Forward-Backward algorithm).  Computes
@@ -322,8 +327,6 @@ class HMMRegression : public HMM<distribution::RegressionDistribution>
                 const arma::vec& responses,
                 const arma::vec& scales,
                 arma::mat& backwardProb) const;
-
-
 };
 
 } // namespace hmm

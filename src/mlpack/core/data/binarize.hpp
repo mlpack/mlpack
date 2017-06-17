@@ -4,11 +4,16 @@
  *
  * Defines Binarize(), a utility function, sets values to 0 or 1
  * to a given threshold.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_DATA_BINARIZE_HPP
 #define MLPACK_CORE_DATA_BINARIZE_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace data {
@@ -45,12 +50,7 @@ void Binarize(const arma::Mat<T>& input,
 
   #pragma omp parallel for
   for (int i = 0; i < totalElems; ++i)
-  {
-    if (inPtr[i] > threshold)
-      outPtr[i] = 1;
-    else
-      outPtr[i] = 0;
-  }
+    outPtr[i] = inPtr[i] > threshold;
 }
 
 /**
@@ -85,12 +85,7 @@ void Binarize(const arma::Mat<T>& input,
 
   #pragma omp parallel for
   for (int i = 0; i < totalCols; ++i)
-  {
-    if (input(dimension, i) > threshold)
-      output(dimension, i) = 1;
-    else
-      output(dimension, i) = 0;
-  }
+    output(dimension, i) = input(dimension, i) > threshold;
 }
 
 } // namespace data

@@ -1,13 +1,16 @@
 set(DIRS
-  adadelta
+  ada_delta
+  ada_grad
   adam
   aug_lagrangian
+  gradient_descent
   lbfgs
   minibatch_sgd
   rmsprop
   sa
   sdp
   sgd
+  smorms3
 )
 
 foreach(dir ${DIRS})

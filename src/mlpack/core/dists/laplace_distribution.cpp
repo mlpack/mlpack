@@ -3,8 +3,13 @@
  * @author Zhihao Lou
  *
  * Implementation of Laplace distribution.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 #include "laplace_distribution.hpp"
 
@@ -16,7 +21,8 @@ using namespace mlpack::distribution;
  */
 double LaplaceDistribution::LogProbability(const arma::vec& observation) const
 {
-  // Evaluate the PDF of the Laplace distribution to determine the log probability.
+  // Evaluate the PDF of the Laplace distribution to determine
+  // the log probability.
   return -log(2. * scale) - arma::norm(observation - mean, 2) / scale;
 }
 

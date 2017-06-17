@@ -3,6 +3,11 @@
  * @author Sumedh Ghaisas
  *
  * Implementation of the SVD wrapper class.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 template<class Factorizer>
 double mlpack::cf::SVDWrapper<Factorizer>::Apply(const arma::mat& V,
@@ -17,7 +22,7 @@ double mlpack::cf::SVDWrapper<Factorizer>::Apply(const arma::mat& V,
   // construct sigma matrix
   sigma.zeros(V.n_rows, V.n_cols);
 
-  for(size_t i = 0;i < sigma.n_rows && i < sigma.n_cols;i++)
+  for (size_t i = 0; i < sigma.n_rows && i < sigma.n_cols; i++)
     sigma(i, i) = E(i, 0);
 
   arma::mat V_rec = W * sigma * arma::trans(H);
@@ -39,7 +44,7 @@ double mlpack::cf::SVDWrapper<DummyClass>::Apply(const arma::mat& V,
   // construct sigma matrix
   sigma.zeros(V.n_rows, V.n_cols);
 
-  for(size_t i = 0;i < sigma.n_rows && i < sigma.n_cols;i++)
+  for (size_t i = 0; i < sigma.n_rows && i < sigma.n_cols; i++)
     sigma(i, i) = E(i, 0);
 
   arma::mat V_rec = W * sigma * arma::trans(H);
@@ -55,9 +60,11 @@ double mlpack::cf::SVDWrapper<Factorizer>::Apply(const arma::mat& V,
                          arma::mat& H) const
 {
   // check if the given rank is valid
-  if(r > V.n_rows || r > V.n_cols)
+  if (r > V.n_rows || r > V.n_cols)
   {
-    Log::Info << "Rank " << r << ", given for decomposition is invalid." << std::endl;
+    Log::Info << "Rank " << r << ", given for decomposition is invalid."
+        << std::endl;
+
     r = (V.n_rows > V.n_cols) ? V.n_cols : V.n_rows;
     Log::Info << "Setting decomposition rank to " << r << std::endl;
   }
@@ -94,9 +101,11 @@ double mlpack::cf::SVDWrapper<DummyClass>::Apply(const arma::mat& V,
                                      arma::mat& H) const
 {
   // check if the given rank is valid
-  if(r > V.n_rows || r > V.n_cols)
+  if (r > V.n_rows || r > V.n_cols)
   {
-    Log::Info << "Rank " << r << ", given for decomposition is invalid." << std::endl;
+    Log::Info << "Rank " << r << ", given for decomposition is invalid."
+        << std::endl;
+
     r = (V.n_rows > V.n_cols) ? V.n_cols : V.n_rows;
     Log::Info << "Setting decomposition rank to " << r << std::endl;
   }

@@ -1,6 +1,11 @@
 /**
  * @file mean_shift_test.cpp
  * @author Shangtong Zhang
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
 #include <mlpack/core.hpp>
@@ -52,8 +57,8 @@ arma::mat meanShiftData("  0.0   0.0;" // Class 1.
 /**
  * 30-point 3-class test case for Mean Shift.
  */
-BOOST_AUTO_TEST_CASE(MeanShiftSimpleTest) {
-
+BOOST_AUTO_TEST_CASE(MeanShiftSimpleTest)
+{
   MeanShift<> meanShift;
 
   arma::Col<size_t> assignments;
@@ -83,7 +88,6 @@ BOOST_AUTO_TEST_CASE(MeanShiftSimpleTest) {
 
   for (size_t i = 20; i < 30; i++)
     BOOST_REQUIRE_EQUAL(assignments(i), thirdClass);
-
 }
 
 // Generate samples from four Gaussians, and make sure mean shift nearly
@@ -114,8 +118,6 @@ BOOST_AUTO_TEST_CASE(GaussianClustering)
 
   BOOST_REQUIRE_EQUAL(centroids.n_cols, 4);
   BOOST_REQUIRE_EQUAL(centroids.n_rows, 3);
-
-  std::cout << centroids.t();
 
   // Check that each centroid is close to only one mean.
   arma::vec centroidDistances(4);

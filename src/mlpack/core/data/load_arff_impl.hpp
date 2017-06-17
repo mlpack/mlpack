@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * Load an ARFF dataset.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_DATA_LOAD_ARFF_IMPL_HPP
 #define MLPACK_CORE_DATA_LOAD_ARFF_IMPL_HPP
@@ -10,15 +15,15 @@
 // In case it hasn't been included yet.
 #include "load_arff.hpp"
 
-#include <boost/algorithm/string.hpp>
+#include <boost/algorithm/string/trim.hpp>
 
 namespace mlpack {
 namespace data {
 
-template<typename eT>
+template<typename eT, typename PolicyType>
 void LoadARFF(const std::string& filename,
               arma::Mat<eT>& matrix,
-              DatasetInfo& info)
+              DatasetMapper<PolicyType>& info)
 {
   // First, open the file.
   std::ifstream ifs;
@@ -44,20 +49,22 @@ void LoadARFF(const std::string& filename,
     if (line[0] == '@')
     {
       typedef boost::tokenizer<boost::escaped_list_separator<char>> Tokenizer;
-      std::string separators = " \t\%"; // Split on comments too.
-      boost::escaped_list_separator<char> sep("\\", separators, "\"{");
+      std::string separators = " \t%"; // Split on comments too.
+      boost::escaped_list_separator<char> sep("\\", separators, "{\"");
       Tokenizer tok(line, sep);
       Tokenizer::iterator it = tok.begin();
 
       // Get the annotation we are looking at.
       std::string annotation(*it);
+      std::transform(annotation.begin(), annotation.end(), annotation.begin(),
+            ::tolower);
 
-      if (*tok.begin() == "@relation")
+      if (annotation == "@relation")
       {
         // We don't actually have anything to do with the name of the dataset.
         continue;
       }
-      else if (*tok.begin() == "@attribute")
+      else if (annotation == "@attribute")
       {
         ++dimensionality;
         // We need to mark this dimension with its according type.
@@ -79,7 +86,7 @@ void LoadARFF(const std::string& filename,
           throw std::logic_error("list of ARFF values not yet supported");
         }
       }
-      else if (*tok.begin() == "@data")
+      else if (annotation == "@data")
       {
         // We are in the data section.  So we can move out of this loop.
         break;
@@ -98,7 +105,7 @@ void LoadARFF(const std::string& filename,
   // Reset the DatasetInfo object, if needed.
   if (info.Dimensionality() == 0)
   {
-    info = DatasetInfo(dimensionality);
+    info = DatasetMapper<PolicyType>(dimensionality);
   }
   else if (info.Dimensionality() != dimensionality)
   {
@@ -172,7 +179,11 @@ void LoadARFF(const std::string& filename,
       // What should this token be?
       if (info.Type(col) == Datatype::categorical)
       {
-        matrix(col, row) = info.MapString(*it, col); // We load transposed.
+        // Strip spaces before mapping.
+        std::string token = *it;
+        boost::trim(token);
+        // We load transposed.
+        matrix(col, row) = info.template MapString<eT>(token, col);
       }
       else if (info.Type(col) == Datatype::numeric)
       {

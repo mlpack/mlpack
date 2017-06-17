@@ -2,12 +2,18 @@
  * @file ada_delta_test.cpp
  * @author Marcus Edel
  * @author Vasanth Kalingeri
+ * @author Abhinav Moudgil
  *
  * Tests the AdaDelta optimizer
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 
-#include <mlpack/core/optimizers/adadelta/ada_delta.hpp>
+#include <mlpack/core/optimizers/ada_delta/ada_delta.hpp>
 #include <mlpack/core/optimizers/sgd/test_function.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
 
@@ -31,7 +37,7 @@ BOOST_AUTO_TEST_SUITE(AdaDeltaTest);
 BOOST_AUTO_TEST_CASE(SimpleAdaDeltaTestFunction)
 {
   SGDTestFunction f;
-  AdaDelta<SGDTestFunction> optimizer(f, 0.99, 1e-8, 5000000, 1e-9, true);
+  AdaDelta<SGDTestFunction> optimizer(f, 1.0, 0.99, 1e-8, 5000000, 1e-9, true);
 
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(coordinates);

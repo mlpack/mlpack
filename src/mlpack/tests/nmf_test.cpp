@@ -3,6 +3,11 @@
  * @author Mohan Rajendran
  *
  * Test file for NMF class.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/amf/amf.hpp>
@@ -55,8 +60,7 @@ BOOST_AUTO_TEST_CASE(NMFAcolDistTest)
   const size_t r = 12;
 
   SimpleResidueTermination srt(1e-7, 10000);
-  AMF<SimpleResidueTermination,RandomAcolInitialization<> >
-        nmf(srt);
+  AMF<SimpleResidueTermination, RandomAcolInitialization<> > nmf(srt);
   nmf.Apply(v, r, w, h);
 
   mat wh = w * h;

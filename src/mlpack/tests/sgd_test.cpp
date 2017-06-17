@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * Test file for SGD (stochastic gradient descent).
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
@@ -23,7 +28,7 @@ BOOST_AUTO_TEST_SUITE(SGDTest);
 BOOST_AUTO_TEST_CASE(SimpleSGDTestFunction)
 {
   SGDTestFunction f;
-  SGD<SGDTestFunction> s(f, 0.0003, 5000000, 1e-9, true);
+  StandardSGD<SGDTestFunction> s(f, 0.0003, 5000000, 1e-9, true);
 
   arma::mat coordinates = f.GetInitialPoint();
   double result = s.Optimize(coordinates);
@@ -42,7 +47,7 @@ BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
     // Create the generalized Rosenbrock function.
     GeneralizedRosenbrockFunction f(i);
 
-    SGD<GeneralizedRosenbrockFunction> s(f, 0.001, 0, 1e-15, true);
+    StandardSGD<GeneralizedRosenbrockFunction> s(f, 0.001, 0, 1e-15, true);
 
     arma::mat coordinates = f.GetInitialPoint();
     double result = s.Optimize(coordinates);

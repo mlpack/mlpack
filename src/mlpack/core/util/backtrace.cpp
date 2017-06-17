@@ -3,6 +3,11 @@
  * @author Grzegorz Krajewski
  *
  * Implementation of the Backtrace class.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <sstream>
 
@@ -37,14 +42,14 @@
   #include <dlfcn.h>
 #endif
 
-#include "prefixedoutstream.hpp"
 #include "backtrace.hpp"
 #include "log.hpp"
 
 // Easier to read Backtrace::DecodeAddress().
 #ifdef HAS_BFD_DL
   #define TRACE_CONDITION_1 (!dladdr(trace[i], &addressHandler))
-  #define FIND_LINE (bfd_find_nearest_line(abfd, text, syms, offset, &frame.file, &frame.function, &frame.line) && frame.file)
+  #define FIND_LINE (bfd_find_nearest_line(abfd, text, syms, offset, \
+        &frame.file, &frame.function, &frame.line) && frame.file)
 #endif
 
 using namespace mlpack;
@@ -90,10 +95,10 @@ void Backtrace::GetAddress(int maxDepth)
   {
     Dl_info addressHandler;
 
-    //No backtrace will be printed if no compile flags: -g -rdynamic
-    if(TRACE_CONDITION_1)
+    // No backtrace will be printed if no compile flags: -g -rdynamic
+    if (TRACE_CONDITION_1)
     {
-      return ;
+      return;
     }
 
     frame.address = addressHandler.dli_saddr;
@@ -126,13 +131,13 @@ void Backtrace::DecodeAddress(long addr)
       return;
     }
 
-    bfd_check_format(abfd,bfd_object);
+    bfd_check_format(abfd, bfd_object);
 
     unsigned storage_needed = bfd_get_symtab_upper_bound(abfd);
     syms = (asymbol **) malloc(storage_needed);
 
     text = bfd_get_section_by_name(abfd, ".text");
-   }
+  }
 
   long offset = addr - text->vma;
 
@@ -141,7 +146,7 @@ void Backtrace::DecodeAddress(long addr)
     if (FIND_LINE)
     {
       DemangleFunction();
-      // Save retrieved informations.
+      // Save retrieved information.
       stack.push_back(frame);
     }
   }
@@ -173,7 +178,7 @@ std::string Backtrace::ToString()
   std::ostringstream lineOss;
   std::ostringstream it;
 
-  if(stack.size() <= 0)
+  if (stack.size() <= 0)
   {
     stackStr = "Cannot give backtrace because program was compiled";
     stackStr += " without: -g -rdynamic\nFor a backtrace,";

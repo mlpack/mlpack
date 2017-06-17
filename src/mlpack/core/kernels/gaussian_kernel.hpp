@@ -5,12 +5,18 @@
  * @author Ryan Curtin
  *
  * Implementation of the Gaussian kernel (GaussianKernel).
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_KERNELS_GAUSSIAN_KERNEL_HPP
 #define MLPACK_CORE_KERNELS_GAUSSIAN_KERNEL_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
+#include <mlpack/core/kernels/kernel_traits.hpp>
 
 namespace mlpack {
 namespace kernel {
@@ -120,8 +126,8 @@ class GaussianKernel
   template<typename VecTypeA, typename VecTypeB>
   double ConvolutionIntegral(const VecTypeA& a, const VecTypeB& b)
   {
-    return Evaluate(sqrt(metric::SquaredEuclideanDistance::Evaluate(a, b) / 2.0)) /
-        (Normalizer(a.n_rows) * pow(2.0, (double) a.n_rows / 2.0));
+    return Evaluate(sqrt(metric::SquaredEuclideanDistance::Evaluate(a, b) /
+        2.0)) / (Normalizer(a.n_rows) * pow(2.0, (double) a.n_rows / 2.0));
   }
 
 

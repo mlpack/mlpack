@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * Ensure that fast max-kernel search is correct.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/fastmks/fastmks.hpp>
@@ -62,7 +67,7 @@ BOOST_AUTO_TEST_CASE(DualTreeVsNaive)
 {
   // First create a random dataset.
   arma::mat data;
-  data.randn(10, 5000);
+  data.randn(10, 2000);
   LinearKernel lk;
 
   // Now run FastMKS naively.
@@ -96,7 +101,7 @@ BOOST_AUTO_TEST_CASE(DualTreeVsSingleTree)
 {
   // First create a random dataset.
   arma::mat data;
-  data.randu(8, 5000);
+  data.randu(8, 2000);
   PolynomialKernel pk(5.0, 2.5);
 
   FastMKS<PolynomialKernel> single(data, pk, true);
@@ -169,12 +174,19 @@ BOOST_AUTO_TEST_CASE(SparsePolynomialFastMKSTest)
 
   for (size_t i = 0; i < 100; ++i)
     for (size_t j = 0; j < 100; ++j)
+    {
       if (std::abs(pk.Evaluate(dataset.col(i), dataset.col(j))) < 1e-10)
-        BOOST_REQUIRE_SMALL(pk.Evaluate(denseset.col(i), denseset.col(j)), 1e-10);
+      {
+        BOOST_REQUIRE_SMALL(
+            pk.Evaluate(denseset.col(i), denseset.col(j)), 1e-10);
+      }
       else
-        BOOST_REQUIRE_CLOSE(pk.Evaluate(dataset.col(i), dataset.col(j)),
-                            pk.Evaluate(denseset.col(i), denseset.col(j)),
-                            1e-5);
+      {
+        BOOST_REQUIRE_CLOSE(
+            pk.Evaluate(dataset.col(i), dataset.col(j)),
+            pk.Evaluate(denseset.col(i), denseset.col(j)), 1e-5);
+      }
+    }
 
   FastMKS<PolynomialKernel, arma::sp_mat> sparsepoly(dataset);
   FastMKS<PolynomialKernel> densepoly(denseset);
@@ -950,6 +962,123 @@ BOOST_AUTO_TEST_CASE(FastMKSModelTriangularTest)
       BOOST_REQUIRE_CLOSE(kernels[i], mNaiveKernels[i], 1e-5);
       BOOST_REQUIRE_CLOSE(kernels[i], mSingleKernels[i], 1e-5);
     }
+  }
+}
+
+BOOST_AUTO_TEST_CASE(CopyConstructorTest)
+{
+  // Create a FastMKS model, then copy it and make sure the results are valid.
+  LinearKernel lk;
+  arma::mat dataset = arma::randu<arma::mat>(1000, 10);
+
+  FastMKS<LinearKernel>* f = new FastMKS<LinearKernel>(dataset, lk);
+
+  // Copy the model.
+  FastMKS<LinearKernel> newF(*f);
+
+  // Get predictions from the first model.
+  arma::Mat<size_t> indices;
+  arma::mat kernels;
+  f->Search(3, indices, kernels);
+
+  // Delete the first model (exposing any memory problems) then search with the
+  // second.
+  delete f;
+
+  arma::Mat<size_t> newIndices;
+  arma::mat newKernels;
+  newF.Search(3, newIndices, newKernels);
+
+  BOOST_REQUIRE_EQUAL(newIndices.n_rows, indices.n_rows);
+  BOOST_REQUIRE_EQUAL(newIndices.n_cols, indices.n_cols);
+  BOOST_REQUIRE_EQUAL(newKernels.n_rows, kernels.n_rows);
+  BOOST_REQUIRE_EQUAL(newKernels.n_cols, kernels.n_cols);
+
+  for (size_t i = 0; i < newIndices.n_elem; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(newIndices[i], indices[i]);
+    if (std::abs(kernels[i]) > 1e-5)
+      BOOST_REQUIRE_CLOSE(kernels[i], newKernels[i], 1e-5);
+    else
+      BOOST_REQUIRE_SMALL(newKernels[i], 1e-5);
+  }
+}
+
+BOOST_AUTO_TEST_CASE(MoveConstructorTest)
+{
+  // Create a FastMKS object, get results, then move it and make sure the
+  // results stay the same.
+  LinearKernel lk;
+  arma::mat dataset = arma::randu<arma::mat>(1000, 10);
+
+  FastMKS<LinearKernel>* f = new FastMKS<LinearKernel>(dataset, lk);
+
+  // Get predictions.
+  arma::Mat<size_t> indices;
+  arma::mat kernels;
+  f->Search(3, indices, kernels);
+
+  // Use the move constructor.
+  FastMKS<LinearKernel> mf(std::move(*f));
+
+  delete f;
+
+  arma::Mat<size_t> newIndices;
+  arma::mat newKernels;
+  mf.Search(3, newIndices, newKernels);
+
+  BOOST_REQUIRE_EQUAL(newIndices.n_rows, indices.n_rows);
+  BOOST_REQUIRE_EQUAL(newIndices.n_cols, indices.n_cols);
+  BOOST_REQUIRE_EQUAL(newKernels.n_rows, kernels.n_rows);
+  BOOST_REQUIRE_EQUAL(newKernels.n_cols, kernels.n_cols);
+
+  for (size_t i = 0; i < newIndices.n_elem; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(newIndices[i], indices[i]);
+    if (std::abs(kernels[i]) > 1e-5)
+      BOOST_REQUIRE_CLOSE(kernels[i], newKernels[i], 1e-5);
+    else
+      BOOST_REQUIRE_SMALL(newKernels[i], 1e-5);
+  }
+}
+
+BOOST_AUTO_TEST_CASE(CopyAssignmentTest)
+{
+  // This is the same as the copy constructor test, except that it uses the
+  // assignment operator.
+  LinearKernel lk;
+  arma::mat dataset = arma::randu<arma::mat>(1000, 10);
+
+  FastMKS<LinearKernel>* f = new FastMKS<LinearKernel>(dataset, lk);
+
+  // Copy the model.
+  FastMKS<LinearKernel> newF = *f;
+
+  // Get predictions from the first model.
+  arma::Mat<size_t> indices;
+  arma::mat kernels;
+  f->Search(3, indices, kernels);
+
+  // Delete the first model (exposing any memory problems) then search with the
+  // second.
+  delete f;
+
+  arma::Mat<size_t> newIndices;
+  arma::mat newKernels;
+  newF.Search(3, newIndices, newKernels);
+
+  BOOST_REQUIRE_EQUAL(newIndices.n_rows, indices.n_rows);
+  BOOST_REQUIRE_EQUAL(newIndices.n_cols, indices.n_cols);
+  BOOST_REQUIRE_EQUAL(newKernels.n_rows, kernels.n_rows);
+  BOOST_REQUIRE_EQUAL(newKernels.n_cols, kernels.n_cols);
+
+  for (size_t i = 0; i < newIndices.n_elem; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(newIndices[i], indices[i]);
+    if (std::abs(kernels[i]) > 1e-5)
+      BOOST_REQUIRE_CLOSE(kernels[i], newKernels[i], 1e-5);
+    else
+      BOOST_REQUIRE_SMALL(newKernels[i], 1e-5);
   }
 }
 

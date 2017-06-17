@@ -18,6 +18,11 @@ using namespace arma;
 
 /**
  * Make sure the SVD Batch lerning is converging.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 BOOST_AUTO_TEST_CASE(SVDBatchConvergenceElementTest)
 {
@@ -86,7 +91,7 @@ BOOST_AUTO_TEST_CASE(SVDBatchMomentumTest)
   // Create the initial matrices.
   SpecificRandomInitialization sri(cleanedData.n_rows, 2, cleanedData.n_cols);
 
-  ValidationRMSETermination<sp_mat> vrt(cleanedData, 2000);
+  ValidationRMSETermination<sp_mat> vrt(cleanedData, 500);
   AMF<ValidationRMSETermination<sp_mat>,
       SpecificRandomInitialization,
       SVDBatchLearning> amf1(vrt, sri, SVDBatchLearning(0.0009, 0, 0, 0));
