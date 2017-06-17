@@ -101,20 +101,6 @@ typename VecTypeA::elem_type LMetric<INT_MAX, false>::Evaluate(
   return arma::as_scalar(arma::max(arma::abs(a - b)));
 }
 
-// L-infinity (Chebyshev distance) specialization
-template<>
-template<typename VecTypeA, typename VecTypeB>
-typename VecTypeA::elem_type LMetric<3, false>::Evaluate(
-    const VecTypeA& a,
-    const VecTypeB& b)
-{
-  typename VecTypeA::elem_type dcoreA = a(a.n_rows-1);
-  typename VecTypeB::elem_type dcoreB = b(b.n_rows-1);
-  typename VecTypeB::elem_type dist = sqrt(arma::accu(arma::square(a - b) - (dcoreA - dcoreB)*(dcoreA - dcoreB)));
-
-  return std::max(std::max(dcoreA, dcoreB), dist);
-}
-
 } // namespace metric
 } // namespace mlpack
 

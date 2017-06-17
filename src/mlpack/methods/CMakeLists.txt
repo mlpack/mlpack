@@ -27,6 +27,7 @@ set(DIRS
   emst
   fastmks
   gmm
+  hdbscan
   hmm
   hoeffding_trees
   kernel_pca
@@ -57,7 +58,6 @@ set(DIRS
   sparse_autoencoder
   sparse_coding
   nystroem_method
-  hdbscan
 )
 
 foreach(dir ${DIRS})

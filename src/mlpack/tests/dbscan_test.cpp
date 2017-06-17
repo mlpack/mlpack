@@ -7,9 +7,6 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/dbscan/dbscan.hpp>
 
-#include <mlpack/methods/hdbscan/hdbscan.hpp>
-
-
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
@@ -17,22 +14,8 @@ using namespace mlpack;
 using namespace mlpack::dbscan;
 using namespace mlpack::distribution;
 
-using namespace mlpack::hdbscan;
-
-
 BOOST_AUTO_TEST_SUITE(DBSCANTest);
 
-BOOST_AUTO_TEST_CASE(try1)
-{
-  arma::mat points(10, 200, arma::fill::randu);
-
-  HDBSCAN<> d(10);
-
-  arma::Row<size_t> assignments;
-  const size_t clusters = d.Cluster(points, assignments );
-
-  BOOST_REQUIRE_EQUAL(clusters, 1);
-}
 
 BOOST_AUTO_TEST_CASE(OneClusterTest)
 {
@@ -111,7 +94,7 @@ BOOST_AUTO_TEST_CASE(GaussiansTest)
   for (size_t i = 200; i < 300; ++i)
     points.col(i) = g3.Random();
 
-  DBSCAN<> d(1.0, 3);
+  DBSCAN<> d(2.0, 3);
 
   arma::Row<size_t> assignments;
   arma::mat centroids;
@@ -123,19 +106,21 @@ BOOST_AUTO_TEST_CASE(GaussiansTest)
   matches.fill(3);
   for (size_t j = 0; j < 3; ++j)
   {
-    if (arma::norm(g1.Mean() - centroids.col(j)) < 1.0)
-      matches(j) = 0;
-    else if (arma::norm(g2.Mean() - centroids.col(j)) < 1.0)
-      matches(j) = 1;
-    else if (arma::norm(g3.Mean() - centroids.col(j)) < 1.0)
-      matches(j) = 2;
-
-    BOOST_REQUIRE_NE(matches(j), 3);
+    if (arma::norm(g1.Mean() - centroids.col(j)) < 3.0)
+      matches(0) = j;
+    else if (arma::norm(g2.Mean() - centroids.col(j)) < 3.0)
+      matches(1) = j;
+    else if (arma::norm(g3.Mean() - centroids.col(j)) < 3.0)
+      matches(2) = j;
   }
 
   BOOST_REQUIRE_NE(matches(0), matches(1));
   BOOST_REQUIRE_NE(matches(1), matches(2));
   BOOST_REQUIRE_NE(matches(2), matches(0));
+
+  BOOST_REQUIRE_NE(matches(0), 3);
+  BOOST_REQUIRE_NE(matches(1), 3);
+  BOOST_REQUIRE_NE(matches(2), 3);
 
   for (size_t i = 0; i < 100; ++i)
   {

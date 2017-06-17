@@ -1,11 +1,9 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  mutualReachabilityMetric.hpp
-  mutualReachabilityMetric_impl.hpp
   hdbscan.hpp
   hdbscan_impl.hpp
-  random_point_selection.hpp
+  hdbscan_main.cpp
 )
 
 # Add directory name to sources.
