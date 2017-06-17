@@ -60,13 +60,15 @@ CDK<RBMType>::CDK(
     {
       if (shuffle) // Determine order of visitation.
         visitationOrder = arma::shuffle(visitationOrder);
+      
+      currentFunction = 0;
     }
 
     // Evaluate the gradient for this iteration.
     if (shuffle)
-      rbm.Gradient(iterate, visitationOrder[currentFunction], gradient);
+      rbm.Gradient(visitationOrder[currentFunction], k, persistent, gradient);
     else
-      rbm.Gradient(iterate, currentFunction, gradient);
+      rbm.Gradient(currentFunction, k, persistent,  gradient);
 
     // Use the update policy to take a step.
     iterate += stepSize * gradient;

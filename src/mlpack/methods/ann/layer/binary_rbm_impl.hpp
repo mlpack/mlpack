@@ -27,7 +27,7 @@ BinaryLayer<InputDataType, OutputDataType>::BinaryLayer(
   outSize(outSize),
   typeVisible(typeVisible)
 {
-  weights.set_size(outSize * inSize + inSize, 1);
+  weights.set_size(outSize * inSize + inSize + outSize, 1);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -41,9 +41,9 @@ void BinaryLayer<InputDataType, OutputDataType>::Reset()
   }
   else
   {
-    weight = arma::mat(weights.memptr(), outSize, inSize, false, false).t();
-    ownBias = arma::mat(weights.memptr() + weight.n_elem + inSize, outSize, 1, false, false);
-    otherBias = arma::mat(weights.memptr() + weight.n_elem, inSize, 1, false, false);
+    weight = arma::mat(weights.memptr(), inSize, outSize, false, false);
+    ownBias = arma::mat(weights.memptr() + weight.n_elem, inSize, 1, false, false);
+    otherBias = arma::mat(weights.memptr() + weight.n_elem + inSize, outSize, 1, false, false);
   }
 }
 
@@ -68,7 +68,7 @@ void BinaryLayer<InputDataType, OutputDataType>::Sample(InputDataType&& input, O
 template<typename InputDataType, typename OutputDataType>
 double BinaryLayer<InputDataType, OutputDataType>::FreeEnergy(const InputDataType&& input)
 {
-  OutputDataType output(input.n_elem);
+  OutputDataType output;
   output = SoftplusFunction::Fn(arma::accu(weight.t() * input));
   return arma::dot(input, ownBias) + arma::accu(output);
 }

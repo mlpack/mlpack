@@ -13,7 +13,6 @@ add_executable(mlpack_test
   aug_lagrangian_test.cpp
   binarize_test.cpp
   block_krylov_svd_test.cpp
-  cdk_test.cpp
   cf_test.cpp
   cli_test.cpp
   convolution_test.cpp

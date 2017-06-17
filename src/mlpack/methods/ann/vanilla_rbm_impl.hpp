@@ -33,11 +33,15 @@ namespace ann /** Artificial Neural Network. */ {
 // Intialise a linear layer and sigmoid layer
 template<typename InitializationRuleType, typename VisibleLayerType, typename HiddenLayerType>
 RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::RBM(
+  arma::mat predictors,
   InitializationRuleType initializeRule, 
   VisibleLayerType visible, 
   HiddenLayerType hidden):
-  visible(visible), hidden(hidden), initializeRule(initializeRule)
-{/*Nothing to do here */}
+  visible(visible), hidden(hidden), initializeRule(initializeRule),reset(false)
+{
+  numFunctions = predictors.n_cols;
+  this->predictors = std::move(predictors);
+}
 
 template<typename InitializationRuleType, typename VisibleLayerType, typename HiddenLayerType>
 void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::Reset()
@@ -46,7 +50,6 @@ void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::Reset()
   // Reset the parameters of all the layers
   size_t weight = 0;
   weight+= visible.Parameters().n_elem;
-
   parameter.set_size(weight, 1);
   initializeRule.Initialize(parameter, parameter.n_elem, 1);
   visible.Parameters() = arma::mat(parameter.memptr(), weight, 1, false, false);
@@ -54,7 +57,7 @@ void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::Reset()
   
   visible.Reset();
   hidden.Reset();
-  reset = 1;
+  reset = true;
 
 }
 
@@ -69,7 +72,6 @@ void RBM<InitializationRuleType,
 {
 
   numFunctions = predictors.n_cols;
-
   this->predictors = std::move(predictors);
 
   if (!reset)
@@ -79,7 +81,7 @@ void RBM<InitializationRuleType,
 
   // Train the model.
   Timer::Start("rbm_optimization");
-  const double out = optimizer.Optimize(parameter);
+  optimizer.Optimize(parameter);
   Timer::Stop("rbm_optimization");
 }
 
@@ -105,16 +107,16 @@ double RBM<InitializationRuleType,
   VisibleLayerType, 
   HiddenLayerType>::Evaluate(const arma::mat& /* parameters*/, const size_t i)
 {
-  arma::mat freeEnergy, freeEnergyCorrupted, output;
-  LogSoftMax<> logSoftMax;
+  double freeEnergy, freeEnergyCorrupted;
+  arma::mat output, input(1,1);
   // Do not use unsafe col predictor as we change the input
-  auto currentInput = predictors(i);
+  auto currentInput = predictors.col(i);
   size_t idx = math::RandInt(0, visible.Bias().n_elem);
-  FreeEnergy(std::move(currentInput) , std::move(freeEnergy)); 
+  freeEnergy = FreeEnergy(std::move(currentInput)); 
   currentInput(idx) =  1 - predictors(idx);
-  FreeEnergy(std::move(currentInput), std::move(freeEnergyCorrupted));
-  logSoftMax.Forward(freeEnergyCorrupted - freeEnergy, std::move(output));
-  return output * visible.Bias().n_elem;
+  freeEnergyCorrupted = FreeEnergy(std::move(currentInput));
+  std::cout << log(LogisticFunction::Fn(freeEnergyCorrupted - freeEnergy)) * visible.Bias().n_elem << std::endl;
+  return log(LogisticFunction::Fn(freeEnergyCorrupted - freeEnergy)) * visible.Bias().n_elem;
 }
 
 template<typename InitializationRuleType, typename VisibleLayerType, typename HiddenLayerType>
@@ -153,17 +155,17 @@ void RBM<InitializationRuleType, VisibleLayerType,
 
 template<typename InitializationRuleType, typename VisibleLayerType, typename HiddenLayerType>
 void RBM<InitializationRuleType, VisibleLayerType, 
-  HiddenLayerType>::Gradient(arma::mat input, const size_t k, const bool persistence, arma::mat& output)
+  HiddenLayerType>::Gradient(const size_t input, const size_t k, const bool persistence, arma::mat& output)
 {
     arma::mat positive_gradient, negative_gradient, negative_sample;
     // Collect the positive gradients
-    CalcGradient(std::move(input), positive_gradient);
+    CalcGradient(std::move(predictors.col(input)), std::move(positive_gradient));
 
     // Collect the negative samples
-    Gibbs(input, negative_sample, k, persistence);
+    Gibbs(std::move(predictors.col(input)), std::move(negative_sample), k, persistence);
 
     // Collect the negative gradients
-    CalcGradient(std::move(negative_sample), negative_gradient);
+    CalcGradient(std::move(negative_sample), std::move(negative_gradient));
 
     output = positive_gradient - negative_gradient;
 }

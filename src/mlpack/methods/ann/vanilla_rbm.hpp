@@ -40,7 +40,10 @@ class RBM
    * @tparam: VisibleLayerType visible layer 
    * @tparam: HiddenLyaerType hidden layer
    */
-  RBM(InitializationRuleType initializeRule, VisibleLayerType visible, HiddenLayerType hidden);
+  RBM(arma::mat predictors,
+    InitializationRuleType initializeRule, 
+    VisibleLayerType visible, 
+    HiddenLayerType hidden);
 
   // Reset the network
   void Reset();
@@ -109,16 +112,19 @@ class RBM
   /*
    * Calculates the gradients for the rbm network
    *
-   * @param input the visible layer/data point
+   * @param input index the visible layer/data point
    * @param neg_input stores the negative samples computed usign the gibbs 
    * @param k number of steps for gibbs sampling
    * @param persistence pcdk / not 
    * @param output store the gradients
    */
-  void Gradient(arma::mat input, 
+  void Gradient(const size_t input, 
                 const size_t k, 
                 const bool persistence, 
                 arma::mat& output);
+
+  //! Return the number of separable functions (the number of predictor points).
+  size_t NumFunctions() const { return numFunctions; }
 
   //! Return the initial point for the optimization.
   const arma::mat& Parameters() const { return parameter; };
@@ -140,7 +146,7 @@ class RBM
    */
   void ForwardVisible(arma::mat&& input, arma::mat&& output)
   {
-    visible.Forward(input, output);
+    visible.Forward(std::move(input), std::move(output));
   };
 
   /* 
@@ -152,7 +158,7 @@ class RBM
    */
   void ForwardHidden(arma::mat&& input, arma::mat&& output)
   {
-    hidden.Forward(input, output);
+    hidden.Forward(std::move(input), std::move(output));
   };
 
   /*
@@ -163,8 +169,8 @@ class RBM
   void CalcGradient(arma::mat&& input, arma::mat&& output)
   {
     arma::mat temp;
-    ForwardVisible(input, temp); 
-    output = arma::join_cols(arma::join_cols(temp * input, temp ), input);
+    ForwardVisible(std::move(input), std::move(temp)); 
+    output = arma::vectorise(arma::join_cols(arma::join_cols(temp * input.t(), temp.t()), input.t()));
   };
 
   // Parameter weights of the network
@@ -190,7 +196,7 @@ class RBM
   //! Locally-stored delete visitor.
   arma::mat state;
   //! Locally-stored reset variable
-  bool reset = 0;
+  bool reset;
   //! Locally-stored number of functions varaiable
   size_t numFunctions;
 

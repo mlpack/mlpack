@@ -14,12 +14,14 @@
 
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/vanilla_rbm.hpp>
+#include <mlpack/core/optimizers/cdk/cdk.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
+using namespace mlpack::optimization;
 
 BOOST_AUTO_TEST_SUITE(RBMNetworkTest);
 
@@ -44,18 +46,15 @@ void BuildVanillaNetwork(MatType& trainData,
    * +-----+       +-----+     
    *        
    */
+  arma::mat output;
   BinaryLayer<> visible(trainData.n_rows, hiddenLayerSize, 1);
   BinaryLayer<> hidden(hiddenLayerSize, trainData.n_rows, 0);
   GaussianInitialization gaussian(0,1);
-  RBM<GaussianInitialization, BinaryLayer<>, BinaryLayer<> > model(gaussian,visible, hidden);
-
-  // Test the Sample function
-  arma::mat output;
-  model.Reset();
-  arma::mat temp = trainData.cols(0, 0);
-  model.SampleHidden(std::move(temp), std::move(output));
-  model.SampleVisible(std::move(output), std::move(output));
-  
+  RBM<GaussianInitialization, BinaryLayer<>, BinaryLayer<> > model(trainData, gaussian,visible, hidden);
+  CDK<RBM<GaussianInitialization, BinaryLayer<>, BinaryLayer<> >> cdk(model, 10, 1e-6, 5000, true, true);
+  model.Train(trainData, cdk);
+  model.SampleHidden(std::move(trainData.col(0)), std::move(output));
+  output.print();
 }
 
 /**
@@ -64,17 +63,14 @@ void BuildVanillaNetwork(MatType& trainData,
 BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
 {
   arma::mat dataset;
-  dataset.load("r10.txt");
+  dataset.load("mnist_first250_training_4s_and_9s.arm");
 
   // Normalize each point since these are images.
   for (size_t i = 0; i < dataset.n_cols; ++i)
     dataset.col(i) /= norm(dataset.col(i), 2);
 
   // Vanilla neural net with logistic activation function.
-  BuildVanillaNetwork<>
-      (dataset,10);
-
-  //std::cout << "here" << std::endl;
+  BuildVanillaNetwork<>(dataset,10);
 
 }
 BOOST_AUTO_TEST_SUITE_END();
