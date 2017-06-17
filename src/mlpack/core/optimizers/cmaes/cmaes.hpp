@@ -22,6 +22,8 @@
 #include <armadillo>
 #include <iostream>
 
+#include "random.hpp"
+
 namespace mlpack {
 namespace optimization {
 
@@ -35,11 +37,19 @@ class CMAES
 public:
 
   //! constructor to initialize the algorithm parameters
-    CMAES(funcType func, size_t dimension, T *start, T *stdDeviation)
+    CMAES(funcType func, size_t dimension = 0, T *start = 0, T *stdDeviation = 0)
   {
     double fitToFind[dimension];
-    int(dimension, start, stdDeviation, fitToFind);
+    init(fitToFind, dimension, start, stdDeviation);
   }
+
+   /**
+   * Determines the method used to initialize the weights.
+   */
+  enum Weights
+  {
+    UNINITIALIZED_WEIGHTS, LINEAR_WEIGHTS, EQUAL_WEIGHTS, LOG_WEIGHTS
+  } weightMode;
 
 
   //USER FUNCTIONS TO GET PARAMETER IN VALUES AND ARRAYS
@@ -113,19 +123,25 @@ void stopMinFuntionHistoryDifference(T difference)
     return stopTolX;
   }
 
+/**
+   * A message that contains a detailed description of the matched stop
+   * criteria.
+   */
+  std::string getStopMessage(){return stopMessage;}
+
   //! other variable parameters
 
-  void sampleSize(T l){lambda = l;}
+void sampleSize(T l){lambda = l;}
 
-  T getSampleSize(void){ return lambda; }
+T getSampleSize(void){ return lambda; }
 
-  void mu(T ind){ mu = ind;}
+void setMu(T ind){ mu = ind;}
 
-  T getMu(void){ return mu;}
+T getMu(void){ return mu;}
 
-  void muEffective(T ind){ mueff = ind;}
+void muEffective(T ind){ mueff = ind;}
 
-  T getMuEffective(void){ return mueff;}
+T getMuEffective(void){ return mueff;}
 
 T axisRatio() { return maxElement(rgD,N) / minElement(rgD,N);};
 
@@ -158,7 +174,7 @@ void diagonalCovariance(T *arr, size_t N)
     for(int i = 0; i < N; ++i) arr[i] = sigma*std::sqrt(C[i][i]);
   }
 
-void XMean(T arr*, size_t N){ for(int i=0; i<N; i++) arr[i] = xmean[i]; }
+void XMean(T *arr, size_t N){ for(int i=0; i<N; i++) arr[i] = xmean[i]; }
 
   ~CMAES()
   {
@@ -200,7 +216,7 @@ void XMean(T arr*, size_t N){ for(int i=0; i<N; i++) arr[i] = xmean[i]; }
 
 private:
 
-void init(int dimension = 0, const T* inxstart = 0, const T* inrgsigma = 0);
+void init(T *arr, T dimension, T* inxstart, T* inrgsigma);
 
 void eigen(T* diag, T** Q);
 
@@ -212,8 +228,29 @@ void adaptC2(const int hsig);
 
 void testMinStdDevs(void);
 
- void addMutation(T* x, T eps = 1.0);
+void addMutation(T* x, T eps);
 
+ T maxElement(const T* rgd, int len);
+
+ T minElement(const T* rgd, int len);
+
+ T* const* samplePopulation(void);
+
+ T* const* reSampleSingle(int i);
+
+ T* sampleSingleInto(T* x);
+
+ T const* reSampleSingleOld(T* x);
+
+ T* perturbSolutionInto(T* x, T const* pxmean, T eps);
+
+ T* updateDistribution(const T* fitnessValues);
+
+ bool testForTermination(void);
+
+ void updateEigensystem(bool force);
+
+ T const* setMean(const T* newxmean);
 
   //! Problem dimension, must stay constant. 
   int N;
@@ -280,13 +317,6 @@ void testMinStdDevs(void);
   T diagonalCov;
   struct { T modulo; T maxtime; } updateCmode;
   T facupdateCmode;
-  /**
-   * Determines the method used to initialize the weights.
-   */
-  enum Weights
-  {
-    UNINITIALIZED_WEIGHTS, LINEAR_WEIGHTS, EQUAL_WEIGHTS, LOG_WEIGHTS
-  } weightMode;
 
  Random<T> rand;
 
@@ -331,6 +361,9 @@ void testMinStdDevs(void);
   T gen;
   //! Algorithm state.
   enum {INITIALIZED, SAMPLED, UPDATED} state;
+
+    //! Minimal fitness value. Only activated if flg is true.
+  struct { bool flg; T val; } stStopFitness;
 
   // repeatedly used for output
   T maxdiagC;
