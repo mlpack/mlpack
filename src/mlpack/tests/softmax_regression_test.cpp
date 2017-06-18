@@ -362,12 +362,8 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTrainTest)
 
   // This should be the same as the default parameters given by
   // SoftmaxRegression.
-  SoftmaxRegressionFunction srf(dataset, labels, 2, 0.0001, false);
-  L_BFGS<SoftmaxRegressionFunction> lbfgs(srf);
-  SoftmaxRegression<> sr(lbfgs);
-
+  SoftmaxRegression<> sr(dataset, labels, 2, 0.0001, false);
   SoftmaxRegression<> sr2(dataset.n_rows, 2);
-  sr2.Parameters() = srf.GetInitialPoint(); // Start from the same place.
   sr2.Train(dataset, labels, 2);
 
   // Ensure that the parameters are the same.
@@ -392,14 +388,13 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionOptimizerTrainTest)
   for (size_t i = 500; i < 1000; ++i)
     labels[i] = size_t(1.0);
 
-  SoftmaxRegressionFunction srf(dataset, labels, 2, 0.01, true);
-  L_BFGS<SoftmaxRegressionFunction> lbfgs(srf);
-  SoftmaxRegression<> sr(lbfgs);
+  L_BFGS lbfgs;
+  SoftmaxRegression<> sr(dataset, labels, 2, lbfgs, 0.01, true);
 
+  L_BFGS lbfgs2;
   SoftmaxRegression<> sr2(dataset.n_rows, 2, true);
-  L_BFGS<SoftmaxRegressionFunction> lbfgs2(srf);
-  sr2.Parameters() = srf.GetInitialPoint();
-  sr2.Train(lbfgs2);
+  sr2.Lambda() = 0.01;
+  sr2.Train(dataset, labels, 2, lbfgs2);
 
   // Ensure that the parameters are the same.
   BOOST_REQUIRE_EQUAL(sr.Parameters().n_rows, sr2.Parameters().n_rows);

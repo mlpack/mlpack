@@ -18,7 +18,7 @@
 namespace mlpack {
 namespace nn {
 
-template<template<typename> class OptimizerType>
+template<typename OptimizerType>
 SparseAutoencoder<OptimizerType>::SparseAutoencoder(const arma::mat& data,
                                                     const size_t visibleSize,
                                                     const size_t hiddenSize,
@@ -33,38 +33,47 @@ SparseAutoencoder<OptimizerType>::SparseAutoencoder(const arma::mat& data,
 {
   SparseAutoencoderFunction encoderFunction(data, visibleSize, hiddenSize,
                                             lambda, beta, rho);
-  OptimizerType<SparseAutoencoderFunction> optimizer(encoderFunction);
+  OptimizerType optimizer;
 
   parameters = encoderFunction.GetInitialPoint();
 
   // Train the model.
   Timer::Start("sparse_autoencoder_optimization");
-  const double out = optimizer.Optimize(parameters);
+  const double out = optimizer.Optimize(encoderFunction, parameters);
   Timer::Stop("sparse_autoencoder_optimization");
 
   Log::Info << "SparseAutoencoder::SparseAutoencoder(): final objective of "
       << "trained model is " << out << "." << std::endl;
 }
 
-template<template<typename> class OptimizerType>
-SparseAutoencoder<OptimizerType>::SparseAutoencoder(
-    OptimizerType<SparseAutoencoderFunction> &optimizer) :
-    parameters(optimizer.Function().GetInitialPoint()),
-    visibleSize(optimizer.Function().VisibleSize()),
-    hiddenSize(optimizer.Function().HiddenSize()),
-    lambda(optimizer.Function().Lambda()),
-    beta(optimizer.Function().Beta()),
-    rho(optimizer.Function().Rho())
+template<typename OptimizerType>
+SparseAutoencoder<OptimizerType>::SparseAutoencoder(const arma::mat& data,
+                                                    const size_t visibleSize,
+                                                    const size_t hiddenSize,
+                                                    OptimizerType& optimizer,
+                                                    double lambda,
+                                                    double beta,
+                                                    double rho) :
+    visibleSize(visibleSize),
+    hiddenSize(hiddenSize),
+    lambda(lambda),
+    beta(beta),
+    rho(rho)
 {
+  SparseAutoencoderFunction encoderFunction(data, visibleSize, hiddenSize,
+                                            lambda, beta, rho);
+  parameters = encoderFunction.GetInitialPoint();
+
+  // Train the model.
   Timer::Start("sparse_autoencoder_optimization");
-  const double out = optimizer.Optimize(parameters);
+  const double out = optimizer.Optimize(encoderFunction, parameters);
   Timer::Stop("sparse_autoencoder_optimization");
 
   Log::Info << "SparseAutoencoder::SparseAutoencoder(): final objective of "
-      << "trained model is " << out << "." << std::endl;
+            << "trained model is " << out << "." << std::endl;
 }
 
-template<template<typename> class OptimizerType>
+template<typename OptimizerType>
 void SparseAutoencoder<OptimizerType>::GetNewFeatures(arma::mat& data,
                                                       arma::mat& features)
 {

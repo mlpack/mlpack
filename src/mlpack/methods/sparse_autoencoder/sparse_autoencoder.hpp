@@ -62,9 +62,7 @@ namespace nn {
  * @tparam OptimizerType The optimizer to use; by default this is L-BFGS.  Any
  *     mlpack optimizer can be used here.
  */
-template<
-  template<typename> class OptimizerType = mlpack::optimization::L_BFGS
->
+template<typename OptimizerType = mlpack::optimization::L_BFGS>
 class SparseAutoencoder
 {
  public:
@@ -90,14 +88,25 @@ class SparseAutoencoder
 
   /**
    * Construct the sparse autoencoder model with the given training data. This
-   * will train the model. This overload takes an already instantiated optimizer
-   * and uses it to train the model. The optimizer should hold an instantiated
-   * SparseAutoencoderFunction object for the function to operate upon. This
-   * option should be preferred when the optimizer options are to be changed.
+   * will train the model. The parameters 'lambda', 'beta' and 'rho' can be set
+   * optionally. Changing these parameters will have an effect on regularization
+   * and sparsity of the model.
    *
-   * @param optimizer Instantiated optimizer with instantiated error function.
+   * @param data Input data with each column as one example.
+   * @param visibleSize Size of input vector expected at the visible layer.
+   * @param hiddenSize Size of input vector expected at the hidden layer.
+   * @param optimizer Desired optimizer.
+   * @param lambda L2-regularization parameter.
+   * @param beta KL divergence parameter.
+   * @param rho Sparsity parameter.
    */
-  SparseAutoencoder(OptimizerType<SparseAutoencoderFunction>& optimizer);
+  SparseAutoencoder(const arma::mat& data,
+                    const size_t visibleSize,
+                    const size_t hiddenSize,
+                    OptimizerType& optimizer,
+                    const double lambda = 0.0001,
+                    const double beta = 3,
+                    const double rho = 0.01);
 
   /**
    * Transforms the provided data into the representation learned by the sparse

@@ -81,14 +81,11 @@ void FFN<OutputLayerType, InitializationRuleType>::ResetData(
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-template<
-    template<typename, typename...> class OptimizerType,
-    typename... OptimizerTypeArgs
->
+template<typename OptimizerType>
 void FFN<OutputLayerType, InitializationRuleType>::Train(
       arma::mat predictors,
       arma::mat responses,
-      OptimizerType<NetworkType, OptimizerTypeArgs...>& optimizer)
+      OptimizerType& optimizer)
 {
   ResetData(std::move(predictors), std::move(responses));
 
@@ -102,7 +99,7 @@ void FFN<OutputLayerType, InitializationRuleType>::Train(
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-template<template<typename...> class OptimizerType>
+template<typename OptimizerType>
 void FFN<OutputLayerType, InitializationRuleType>::Train(
     arma::mat predictors, arma::mat responses)
 {
@@ -119,7 +116,7 @@ void FFN<OutputLayerType, InitializationRuleType>::Train(
     ResetParameters();
   }
 
-  OptimizerType<decltype(*this)> optimizer(*this);
+  OptimizerType optimizer;
 
   // Train the model.
   Timer::Start("ffn_optimization");

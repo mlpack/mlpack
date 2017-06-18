@@ -77,7 +77,7 @@ BOOST_AUTO_TEST_CASE(MSEMatResponsesTest)
   ffn.Add<Linear<>>(1, 2);
   ffn.Add<IdentityLayer<>>();
 
-  RMSProp<decltype(ffn)> opt(ffn, 0.2);
+  RMSProp opt(0.2);
   opt.Shuffle() = false;
   ffn.Train(data, trainingResponses, opt);
 

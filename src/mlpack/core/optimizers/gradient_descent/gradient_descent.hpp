@@ -45,11 +45,7 @@ namespace optimization {
  *   double Evaluate(const arma::mat& coordinates);
  *   void Gradient(const arma::mat& coordinates,
  *                 arma::mat& gradient);
- *
- * @tparam FunctionType Decomposable objective function type to be
- *     minimized.
  */
-template<typename FunctionType>
 class GradientDescent
 {
  public:
@@ -65,8 +61,7 @@ class GradientDescent
    *     limit).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    */
-  GradientDescent(FunctionType& function,
-                  const double stepSize = 0.01,
+  GradientDescent(const double stepSize = 0.01,
                   const size_t maxIterations = 100000,
                   const double tolerance = 1e-5);
 
@@ -79,25 +74,8 @@ class GradientDescent
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
+  template<typename FunctionType>
   double Optimize(FunctionType& function, arma::mat& iterate);
-
-  /**
-   * Optimize the given function using gradient descent.  The given starting
-   * point will be modified to store the finishing point of the algorithm, and
-   * the final objective value is returned.
-   *
-   * @param iterate Starting point (will be modified).
-   * @return Objective value of the final point.
-   */
-  double Optimize(arma::mat& iterate)
-  {
-    return Optimize(this->function, iterate);
-  }
-
-  //! Get the instantiated function to be optimized.
-  const FunctionType& Function() const { return function; }
-  //! Modify the instantiated function.
-  FunctionType& Function() { return function; }
 
   //! Get the step size.
   double StepSize() const { return stepSize; }
@@ -115,9 +93,6 @@ class GradientDescent
   double& Tolerance() { return tolerance; }
 
  private:
-  //! The instantiated function.
-  FunctionType& function;
-
   //! The step size for each example.
   double stepSize;
 
@@ -131,7 +106,6 @@ class GradientDescent
 } // namespace optimization
 } // namespace mlpack
 
-// Include implementation.
 #include "gradient_descent_impl.hpp"
 
 #endif
