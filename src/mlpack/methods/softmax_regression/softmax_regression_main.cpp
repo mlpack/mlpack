@@ -243,12 +243,10 @@ unique_ptr<Model> TrainSoftmax(const size_t maxIterations)
 
     const bool intercept = CLI::HasParam("no_intercept") ? false : true;
 
-    SRF smFunction(trainData, trainLabels, numClasses, intercept,
-        CLI::GetParam<double>("lambda"));
-
     const size_t numBasis = 5;
-    optimization::L_BFGS<SRF> optimizer(smFunction, numBasis, maxIterations);
-    sm.reset(new Model(optimizer));
+    optimization::L_BFGS optimizer(numBasis, maxIterations);
+    sm.reset(new Model(trainData, trainLabels, numClasses, optimizer,
+        CLI::GetParam<double>("lambda"), intercept));
   }
 
   return sm;
