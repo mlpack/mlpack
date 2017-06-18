@@ -168,9 +168,11 @@ class RBM
    */
   void CalcGradient(arma::mat&& input, arma::mat&& output)
   {
-    arma::mat temp;
-    ForwardVisible(std::move(input), std::move(temp)); 
-    output = arma::vectorise(arma::join_cols(arma::join_cols(temp * input.t(), temp.t()), input.t()));
+    arma::mat temp1, temp2;
+    ForwardVisible(std::move(input), std::move(temp1));
+    temp2 = temp1 * input.t();
+    temp2.reshape(temp2.n_rows * temp2.n_cols, 1);
+    output = arma::join_cols(arma::join_cols(temp2, temp1), input);
   };
 
   // Parameter weights of the network

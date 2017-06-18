@@ -55,21 +55,24 @@ void BinaryLayer<InputDataType, OutputDataType>::Forward(
   if(Parameters().empty())
     Reset();
   else
+    if(typeVisible)
       LogisticFunction::Fn(weight * input + otherBias, output);
+    else
+      LogisticFunction::Fn(weight.t() * input + otherBias, output);
 }
 
 template<typename InputDataType, typename OutputDataType>
 void BinaryLayer<InputDataType, OutputDataType>::Sample(InputDataType&& input, OutputDataType&& output)
 {
     Forward(std::move(input), std::move(output));
-    math::BinomialRandom<>(std::move(input), std::move(output));
+    math::RandomBernoulli<>(std::move(output), std::move(output));
 }
 
 template<typename InputDataType, typename OutputDataType>
 double BinaryLayer<InputDataType, OutputDataType>::FreeEnergy(const InputDataType&& input)
 {
   OutputDataType output;
-  output = SoftplusFunction::Fn(arma::accu(weight.t() * input));
+  output = SoftplusFunction::Fn(arma::accu(weight * input));
   return arma::dot(input, ownBias) + arma::accu(output);
 }
 

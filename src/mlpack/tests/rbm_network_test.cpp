@@ -51,8 +51,9 @@ void BuildVanillaNetwork(MatType& trainData,
   BinaryLayer<> hidden(hiddenLayerSize, trainData.n_rows, 0);
   GaussianInitialization gaussian(0,1);
   RBM<GaussianInitialization, BinaryLayer<>, BinaryLayer<> > model(trainData, gaussian,visible, hidden);
-  CDK<RBM<GaussianInitialization, BinaryLayer<>, BinaryLayer<> >> cdk(model, 10, 1e-6, 5000, true, true);
+  CDK<RBM<GaussianInitialization, BinaryLayer<>, BinaryLayer<> >> cdk(model, 100, 1e-6, 5000, true, true);
   model.Train(trainData, cdk);
+  std::cout << trainData.col(0).n_rows << std::endl;
   model.SampleHidden(std::move(trainData.col(0)), std::move(output));
   output.print();
 }
@@ -63,7 +64,7 @@ void BuildVanillaNetwork(MatType& trainData,
 BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
 {
   arma::mat dataset;
-  dataset.load("mnist_first250_training_4s_and_9s.arm");
+  dataset.load("r10.txt");
 
   // Normalize each point since these are images.
   for (size_t i = 0; i < dataset.n_cols; ++i)

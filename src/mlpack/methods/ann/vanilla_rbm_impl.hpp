@@ -116,6 +116,7 @@ double RBM<InitializationRuleType,
   currentInput(idx) =  1 - predictors(idx);
   freeEnergyCorrupted = FreeEnergy(std::move(currentInput));
   std::cout << log(LogisticFunction::Fn(freeEnergyCorrupted - freeEnergy)) * visible.Bias().n_elem << std::endl;
+  // Concerned here for neumerical stability.
   return log(LogisticFunction::Fn(freeEnergyCorrupted - freeEnergy)) * visible.Bias().n_elem;
 }
 
