@@ -30,13 +30,16 @@ template <typename EnvironmentType>
 class GreedyPolicy
 {
  public:
+  //! Convenient typedef for action.
   using ActionType = typename EnvironmentType::Action;
 
   /**
    * Constructor for epsilon greedy policy class.
    *
-   * @param initialEpsilon The initial probability to explore (select a random action).
-   * @param annealInterval The steps during which the probability to explore will anneal.
+   * @param initialEpsilon The initial probability to explore
+   *        (select a random action).
+   * @param annealInterval The steps during which the probability to explore
+   *        will anneal.
    * @param minEpsilon Epsilon will never be less than this value.
    */
   GreedyPolicy(const double initialEpsilon,

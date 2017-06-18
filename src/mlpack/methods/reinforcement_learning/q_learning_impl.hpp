@@ -9,7 +9,6 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
 #ifndef MLPACK_METHODS_RL_Q_LEARNING_IMPL_HPP
 #define MLPACK_METHODS_RL_Q_LEARNING_IMPL_HPP
 
@@ -57,7 +56,6 @@ QLearning<
   learningNetwork.ResetParameters();
   targetNetwork = learningNetwork;
 }
-
 
 template <
   typename EnvironmentType,
@@ -129,7 +127,7 @@ double QLearning<
   arma::mat sampledNextStates;
   arma::icolvec isTerminal;
   replayMethod.Sample(sampledStates, sampledActions, sampledRewards,
-                      sampledNextStates, isTerminal);
+      sampledNextStates, isTerminal);
 
   // Compute action value for next state with target network.
   arma::mat nextActionValues;
@@ -208,6 +206,7 @@ double QLearning<
     if (totalSteps > explorationSteps)
       policy.Anneal();
   }
+
   return totalReturn;
 }
 
