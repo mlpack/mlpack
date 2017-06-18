@@ -64,7 +64,6 @@ double SGDR<UpdatePolicyType>::Optimize(
   if (optimizer.BatchSize() != batchSize)
   {
     batchSize = optimizer.BatchSize();
-
   }
 
   return optimizer.Optimize(function, iterate);

@@ -30,7 +30,8 @@ bool AugLagrangian::Optimize(LagrangianFunctionType& function,
   lambda = initLambda;
   sigma = initSigma;
 
-  AugLagrangianFunction<LagrangianFunctionType> augfunc(function, lambda, sigma);
+  AugLagrangianFunction<LagrangianFunctionType> augfunc(function,
+      lambda, sigma);
 
   return Optimize(augfunc, coordinates, maxIterations);
 }

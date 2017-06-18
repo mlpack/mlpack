@@ -43,7 +43,8 @@ BOOST_AUTO_TEST_CASE(SnapshotEnsemblesResetTest)
     {
       double epochStepSize = stepSize;
 
-      SnapshotEnsembles snapshotEnsembles(restart, double(mult), stepSize, 1000, 2);
+      SnapshotEnsembles snapshotEnsembles(restart,
+          double(mult), stepSize, 1000, 2);
 
       snapshotEnsembles.EpochBatches() = 10 / (double)1000;
       // Create all restart epochs.

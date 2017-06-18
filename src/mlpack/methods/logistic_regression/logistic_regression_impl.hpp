@@ -73,7 +73,6 @@ void LogisticRegression<MatType>::Train(const MatType& predictors,
 {
   OptimizerType optimizer;
   Train(predictors, responses, optimizer);
-
 }
 
 template<typename MatType>
