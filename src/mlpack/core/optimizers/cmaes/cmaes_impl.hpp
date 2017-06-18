@@ -28,19 +28,19 @@
 #include "cmaes.hpp"
 #include "random.hpp"
 
-//2 eigen values check for column values
-//index sort mabye we can use sort
-//get stop message
-//return value in a specific way
+// 2 eigen values check for column values
+// index sort mabye we can use sort
+// get stop message
+// return value in a specific way
 
-//random number generator
+// random number generator
 // enum work
 
-//INCLUDE RANDIM 2)
+// INCLUDE RANDIM 2)
 //
-//segregate functions 1)
+// segregate functions 1)
 // make the evaluate and numfunc etc 4)
-//test 
+// test 
 
 namespace mlpack {
 namespace optimization {
@@ -49,7 +49,7 @@ template<typename funcType, typename T>
 void CMAES<funcType,T>::setWeights(Weights mode)
   {
     //if called later delete the existing ones
-    delete[] weights;
+   // delete[] weights;
     weights = new T[mu];
 
     switch(mode)
@@ -83,18 +83,19 @@ void CMAES<funcType,T>::setWeights(Weights mode)
   }
 
   template<typename funcType, typename T>
-  void CMAES<funcType,T>::init(T *arr, T dimension, T* inxstart, T* inrgsigma)
+  T* CMAES<funcType,T>::init(T dimension, T* inxstart, T* inrgsigma)
   {
     
       if (!inxstart)
-        std::cout << "Warning: initialX undefined. typicalX = 0.5...0.5." << std::endl;
+        std::cout << "Warning: initialX undefined. typicalX = 0.5...0.5." 
+        << std::endl;
 
       if (!inrgsigma)
-        std::cout << "Warning: initialStandardDeviations undefined. 0.3...0.3." << std::endl;
+        std::cout << "Warning: initialStandardDeviations undefined. 0.3...0.3."
+         << std::endl;
 
-      if (dimension <= 0) throw std::runtime_error("Problem dimension N undefined.");
-        else
-          if(dimension%1 > 0) throw std::runtime_error("Problem dimension N incorrectly defined");
+      if (dimension <= 0)
+        { throw std::runtime_error("Problem dimension N undefined.");}
           else
             if (dimension > 0) N = dimension;
 
@@ -119,7 +120,7 @@ void CMAES<funcType,T>::setWeights(Weights mode)
       else
         for (int i = 0; i < N; ++i) rgInitialStds[i] = T(0.3);
 
-      rgDiffMinChange(0);
+      rgDiffMinChange = 0;
 
       lambda = 4 + (int) (3.0*log((double) N));
 
@@ -145,7 +146,7 @@ void CMAES<funcType,T>::setWeights(Weights mode)
 
       ccov = t2;
 
-      facmaxeval(1.0);
+      facmaxeval = 1.0;
       stopMaxFunEvals = facmaxeval * 900 * (N + 3)*(N + 3);
 
       stopMaxIter = ceil((double) (stopMaxFunEvals / lambda));
@@ -159,7 +160,7 @@ void CMAES<funcType,T>::setWeights(Weights mode)
 
       updateCmode.modulo = 1. / ccov / (double) N / 10.;
 
-      facupdateCmode(1);
+      facupdateCmode = 1;
       updateCmode.modulo *= facupdateCmode;
       updateCmode.maxtime = 0.20;
 
@@ -278,9 +279,42 @@ void CMAES<funcType,T>::setWeights(Weights mode)
     stStopFitness.flg = false;
     stStopFitness.val = -std::numeric_limits<T>::max();
 
-    for(int i=0; i<N; i++) arr[i] = publicFitness[i];
+    return publicFitness;
   
   }
+
+//! Optimize the function (minimize).
+template<typename funcType, typename T>
+T CMAES<funcType, T>::Optimize(funcType& func, T *iterate)
+{
+  // numof functions for the N and the evaluate for the function
+  // return the final answer  and the xfinal in the iterate itself
+  //TEST FOR TERMINATE SAMPLE AND UPDATE
+
+// Iterate until stop criterion holds
+  while(!testForTermination())
+  { 
+    double *const*pop;
+    // Generate lambda new search points, sample population
+    pop = samplePopulation();
+
+    const size_t numFunctions = func.NumFunctions();
+
+    // evaluate the new search points using evaluate function given by the user
+    for (int i = 0; i < lambda; ++i)
+     functionFitness[i] = func.Evaluate(pop[i]);
+
+    // update the search distribution used for sampleDistribution()
+    updateDistribution(functionFitness);
+  }
+
+  std::cout << "Stop:" << getStopMessage();
+
+  // get best estimator for the optimum, xmean
+   for(int i=0; i<N; i++) iterate[i] = xmean[i]; // "XBestEver" might be used as well
+   
+   return 0;
+}
 
  
 
@@ -288,9 +322,8 @@ void CMAES<funcType,T>::setWeights(Weights mode)
 successful eigen decomposition.    * @param diag (output) N eigenvalues.    *
 @param Q (output) Columns are normalized eigenvectors.    */
 template<typename funcType, typename T>   
-void CMAES<funcType,T>::eigen(T* diag, T** Q)  
+void CMAES<funcType,T>::eigen(T* diag , T** Q)  
 {
-
      arma::vec eV;
      arma::mat eigMat;
 

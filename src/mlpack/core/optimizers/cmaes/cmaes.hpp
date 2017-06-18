@@ -26,7 +26,8 @@
 
 namespace mlpack {
 namespace optimization {
-
+//vector use of pop
+//cmaes as init
 /**
  * @class CMAES 
  * all the function parameters available to the user
@@ -37,11 +38,13 @@ class CMAES
 public:
 
   //! constructor to initialize the algorithm parameters
-    CMAES(funcType func, size_t dimension = 0, T *start = 0, T *stdDeviation = 0)
-  {
-    double fitToFind[dimension];
-    init(fitToFind, dimension, start, stdDeviation);
+    CMAES(funcType& func, T *start = 0, T *stdDeviation = 0)
+  { 
+     size_t dimension = func.NumFunctions();
+     functionFitness = init(dimension, start, stdDeviation);
   }
+
+  T Optimize(funcType& func, T *iterate);
 
    /**
    * Determines the method used to initialize the weights.
@@ -212,11 +215,12 @@ void XMean(T *arr, size_t N){ for(int i=0; i<N; i++) arr[i] = xmean[i]; }
     delete[] publicFitness;
     delete[] --functionValues;
     delete[] --funcValueHistory;
+    
   }
 
 private:
 
-void init(T *arr, T dimension, T* inxstart, T* inrgsigma);
+T* init(T dimension, T* inxstart, T* inrgsigma);
 
 void eigen(T* diag, T** Q);
 
@@ -264,6 +268,7 @@ void addMutation(T* x, T eps);
   T* rgInitialStds;
   T* rgDiffMinChange;
 
+  T* functionFitness;
   /* Termination parameters. */
   //! Maximal number of objective function evaluations.
   T stopMaxFunEvals;
