@@ -135,4 +135,4 @@ double SGD<UpdatePolicyType>::Optimize(
 } // namespace optimization
 } // namespace mlpack
 
-#endif
+#endif/ 
