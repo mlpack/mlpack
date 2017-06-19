@@ -92,7 +92,6 @@ if (shuffle)
 
   Log::Info << "CDK: maximum iterations (" << maxIterations << ") reached; "
       << "terminating optimization." << std::endl;
-
 };
 } // namespace optimization
 } // namespace mlpack

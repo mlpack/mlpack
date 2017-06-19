@@ -928,7 +928,6 @@ BOOST_AUTO_TEST_CASE(SimpleLogSoftmaxLayerTest)
  */
 BOOST_AUTO_TEST_CASE(SimpleBinaryRbmLayerTest)
 {
-
   arma::mat output, input, outputModule, inputModule;
   // Network 1
   BinaryLayer<> module(2, 4);
@@ -950,7 +949,7 @@ BOOST_AUTO_TEST_CASE(SimpleBinaryRbmLayerTest)
   linear.Forward(std::move(input), std::move(output));
   add.Forward(std::move(output), std::move(output));
   sigmoid.Forward(std::move(output), std::move(output));
-    
+
   for (size_t i = 0; i < output.size(); i++)
     BOOST_REQUIRE_EQUAL(output(i), outputModule(i));
 }

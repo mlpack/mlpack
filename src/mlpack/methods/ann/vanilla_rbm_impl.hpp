@@ -57,7 +57,7 @@ void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::Reset()
   initializeRule.Initialize(parameter, parameter.n_elem, 1);
   visible.Parameters() = arma::mat(parameter.memptr(), weight, 1, false, false);
   hidden.Parameters() = arma::mat(parameter.memptr(), weight, 1, false, false);
-  
+
   visible.Reset();
   hidden.Reset();
   reset = true;
@@ -148,7 +148,7 @@ void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
 
   if (persistence && !state.is_empty())
     input = state;
-  
+
   for (size_t j = 0; j < numSteps - 1; j++)
   {
     // Use probabilties for updation till the last step(section 3 hinton)

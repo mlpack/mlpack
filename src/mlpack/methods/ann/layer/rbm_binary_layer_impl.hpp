@@ -35,7 +35,7 @@ void BinaryLayer<InputDataType, OutputDataType>::Reset()
   if (typeVisible)
   {
     weight = arma::mat(weights.memptr(), outSize, inSize, false, false);
-    ownBias = arma::mat(weights.memptr() + weight.n_elem, inSize, 1, false, 
+    ownBias = arma::mat(weights.memptr() + weight.n_elem, inSize, 1, false,
         false);
     otherBias = arma::mat(weights.memptr() + weight.n_elem + inSize, outSize,
         1, false, false);
@@ -57,7 +57,7 @@ void BinaryLayer<InputDataType, OutputDataType>::Forward(
 {
   if (Parameters().empty())
     Reset();
-  
+
   if (typeVisible)
     LogisticFunction::Fn(weight * input + otherBias, output);
   else

@@ -70,7 +70,7 @@ inline double Random(const double lo, const double hi)
  */
 inline double RandomBernoulli(const int input)
 {
-  if(Random() > input)
+  if (Random() > input)
     return 1;
   else
     return 0;
@@ -80,10 +80,11 @@ inline double RandomBernoulli(const int input)
  * Generates a binomial random number in the specified range.
  */
 template<typename InputDatatype, typename OutputDatatype>
-inline void RandomBernoulli(const InputDatatype&& input, OutputDatatype&& output)
+inline void RandomBernoulli(const InputDatatype&& input,
+                            OutputDatatype&& output)
 {
-  for(size_t i = 0; i < input.size(); i++)
-    if(Random() > input(i))
+  for (size_t i = 0; i < input.size(); i++)
+    if (Random() > input(i))
       output(i) = 1;
     else
       output(i) = 0;
