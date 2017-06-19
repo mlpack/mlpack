@@ -298,7 +298,7 @@ T CMAES<funcType, T>::Optimize(funcType& func, T *iterate)
     // Generate lambda new search points, sample population
     pop = samplePopulation();
 
-    const size_t numFunctions = func.NumFunctions();
+    //const size_t numFunctions = func.NumFunctions();
 
     // evaluate the new search points using evaluate function given by the user
     for (int i = 0; i < lambda; ++i)
