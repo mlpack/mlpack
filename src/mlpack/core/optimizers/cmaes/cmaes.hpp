@@ -40,7 +40,7 @@ public:
   //! constructor to initialize the algorithm parameters
     CMAES(funcType& func, T *start = 0, T *stdDeviation = 0)
   { 
-     size_t dimension = func.NumFunctions();
+     //size_t dimension = func.NumFunctions();
      functionFitness = init(dimension, start, stdDeviation);
   }
 
