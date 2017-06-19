@@ -60,6 +60,7 @@ class CyclicalDecay
       constStepSize(stepSize),
       nextRestart(epochRestart),
       batchRestart(0),
+      epochBatches(0),
       epoch(0)
   { /* Nothing to do here */ }
 
