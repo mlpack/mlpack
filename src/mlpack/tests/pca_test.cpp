@@ -238,7 +238,6 @@ BOOST_AUTO_TEST_CASE(QUICPCADimensionalityReductionTest)
   size_t successes = 0;
   for (size_t trial = 0; trial < 5; ++trial)
   {
-
     PCAType<ExactSVDPolicy> exactPCA;
     const double varRetainedExact = exactPCA.Apply(data, 1);
 
@@ -306,8 +305,8 @@ BOOST_AUTO_TEST_CASE(PCAScalingTest)
   BOOST_REQUIRE_CLOSE(std::abs(eigvec(2, 1)), 1.0, 0.2);
 
   // The third component should have the same absolute value characteristics as
-  // the first.
-  BOOST_REQUIRE_CLOSE(std::abs(eigvec(0, 0)), sqrt(2) / 2, 0.2); // 20% tolerance.
+  // the first (plus 20% tolerance).
+  BOOST_REQUIRE_CLOSE(std::abs(eigvec(0, 0)), sqrt(2) / 2, 0.2);
   BOOST_REQUIRE_CLOSE(std::abs(eigvec(1, 0)), sqrt(2) / 2, 0.2);
   BOOST_REQUIRE_SMALL(eigvec(2, 0), 0.08); // Large tolerance for noise.
 

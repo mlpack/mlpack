@@ -22,7 +22,6 @@ namespace svd {
 class RegularizedSVDFunction
 {
  public:
-
   /**
    * Constructor for RegularizedSVDFunction class. The constructor calculates
    * the number of users and items in the passed data. It also randomly
@@ -112,6 +111,7 @@ namespace optimization {
    */
   template<>
   double StandardSGD<mlpack::svd::RegularizedSVDFunction>::Optimize(
+      mlpack::svd::RegularizedSVDFunction& function,
       arma::mat& parameters);
 
 } // namespace optimization

@@ -48,6 +48,8 @@
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/methods/neighbor_search/sort_policies/nearest_neighbor_sort.hpp>
 
+#include <queue>
+
 namespace mlpack {
 namespace neighbor {
 
@@ -470,7 +472,6 @@ class LSHSearch
   //! Use a priority queue to represent the list of candidate neighbors.
   typedef std::priority_queue<Candidate, std::vector<Candidate>, CandidateCmp>
       CandidateList;
-
 }; // class LSHSearch
 
 } // namespace neighbor

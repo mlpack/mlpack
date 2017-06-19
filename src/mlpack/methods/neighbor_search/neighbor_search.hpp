@@ -26,9 +26,9 @@
 #include "neighbor_search_rules.hpp"
 
 namespace mlpack {
-namespace neighbor /** Neighbor-search routines.  These include
-                    * all-nearest-neighbors and all-furthest-neighbors
-                    * searches. */ {
+// Neighbor-search routines. These include all-nearest-neighbors and
+// all-furthest-neighbors searches.
+namespace neighbor  {
 
 // Forward declaration.
 template<typename SortPolicy>

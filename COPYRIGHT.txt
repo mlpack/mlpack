@@ -37,7 +37,7 @@ Copyright:
   Copyright 2014, Udit Saxena <saxenda.udit@gmail.com>
   Copyright 2014-2015, Stephen Tu <tu.stephenl@gmail.com>
   Copyright 2014-2015, Jaskaran Singh <jaskaranvirdi@ymail.com>
-  Copyright 2015, Shangtong Zhang <zhangshangtong.cpp@icloud.com>
+  Copyright 2015&2017, Shangtong Zhang <zhangshangtong.cpp@gmail.com>
   Copyright 2015, Hritik Jain <hritik.jain.cse13@itbhu.ac.in>
   Copyright 2015, Vladimir Glazachev <glazachev.vladimir@gmail.com>
   Copyright 2015, QiaoAn Chen <kazenoyumechen@gmail.com>
@@ -79,6 +79,7 @@ Copyright:
   Copyright 2017, Nishanth Hegde <hegde.nishanth@gmail.com>
   Copyright 2017, Parminder Singh <parmsingh101@gmail.com>
   Copyright 2017, CodeAi <benjamin.bales@assrc.us>
+  Copyright 2017, Franciszek Stokowacki <franek.stokowacki@gmail.com>
 
 License: BSD-3-clause
   All rights reserved.

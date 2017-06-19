@@ -316,7 +316,6 @@ class DTree
   void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-
   // Utility methods.
 
   /**
@@ -336,7 +335,6 @@ class DTree
                    const size_t splitDim,
                    const ElemType splitValue,
                    arma::Col<size_t>& oldFromNew) const;
-
 };
 
 } // namespace det

@@ -88,7 +88,7 @@ void BuildVanillaNetwork(MatType& trainData,
   RMSProp<decltype(model)> opt(model, 0.01, 0.88, 1e-8,
       maxEpochs * trainData.n_cols, 1e-18);
 
-  model.Train(std::move(trainData), std::move(trainLabels), opt);
+  model.Train(trainData, trainLabels, opt);
 
   MatType prediction;
 
@@ -242,7 +242,7 @@ BOOST_AUTO_TEST_CASE(IrisDataset)
   // Normalization used in the paper.
   dataset /= 10;
 
-  //Counter for the number of failures.
+  // Counter for the number of failures.
   size_t numFails = 0;
 
   // It isn't guaranteed that the network will converge in the specified number

@@ -68,6 +68,9 @@ LSTM<InputDataType, OutputDataType>::LSTM(
   prevCell = arma::zeros<arma::mat>(outSize, 1);
   prevError = arma::zeros<arma::mat>(4 * outSize, 1);
   cellActivationError = arma::zeros<arma::mat>(outSize, 1);
+
+  cellParameter.reserve(rho);
+  outParameter.reserve(rho);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -80,10 +83,6 @@ void LSTM<InputDataType, OutputDataType>::Forward(
     cellParameter.push_back(prevCell);
     outParameter.push_back(prevOutput);
   }
-
-  arma::mat output1;
-  arma::mat output2;
-  arma::mat output3;
 
   boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
       boost::apply_visitor(outputParameterVisitor, input2GateModule))),
@@ -112,21 +111,16 @@ void LSTM<InputDataType, OutputDataType>::Forward(
       3 * outSize, 0, 4 * outSize - 1, 0)), std::move(boost::apply_visitor(
       outputParameterVisitor, outputGateModule))), outputGateModule);
 
-  arma::mat cell = prevCell;
-
-  // Input gate * hidden state.
-  arma::mat cmul1 = boost::apply_visitor(outputParameterVisitor,
+  // Update the cell (nextCell): cmul1 + cmul2
+  // where cmul1 is input gate * hidden state and
+  // cmul2 is forget gate * cell (prevCell).
+  prevCell = (boost::apply_visitor(outputParameterVisitor,
       inputGateModule) % boost::apply_visitor(outputParameterVisitor,
-      hiddenStateModule);
+      hiddenStateModule)) + (boost::apply_visitor(outputParameterVisitor,
+      forgetGateModule) % prevCell);
 
-  // Forget gate * cell.
-  arma::mat cmul2 = boost::apply_visitor(outputParameterVisitor,
-      forgetGateModule) % cell;
-
-  arma::mat nextCell = cmul1 + cmul2;
-
-  boost::apply_visitor(ForwardVisitor(std::move(nextCell), std::move(
-    boost::apply_visitor(outputParameterVisitor, cellModule))), cellModule);
+  boost::apply_visitor(ForwardVisitor(std::move(prevCell), std::move(
+      boost::apply_visitor(outputParameterVisitor, cellModule))), cellModule);
 
   boost::apply_visitor(ForwardVisitor(std::move(boost::apply_visitor(
       outputParameterVisitor, cellModule)), std::move(boost::apply_visitor(
@@ -136,7 +130,6 @@ void LSTM<InputDataType, OutputDataType>::Forward(
       cellActivationModule) % boost::apply_visitor(outputParameterVisitor,
       outputGateModule);
 
-  prevCell = nextCell;
   prevOutput = output;
 
   forwardStep++;

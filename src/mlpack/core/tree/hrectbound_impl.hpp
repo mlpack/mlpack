@@ -60,8 +60,10 @@ inline HRectBound<MetricType, ElemType>::HRectBound(
  * Same as the copy constructor.
  */
 template<typename MetricType, typename ElemType>
-inline HRectBound<MetricType, ElemType>& HRectBound<MetricType, ElemType>::operator=(
-    const HRectBound<MetricType, ElemType>& other)
+inline HRectBound<
+    MetricType,
+    ElemType>& HRectBound<MetricType,
+    ElemType>::operator=(const HRectBound<MetricType, ElemType>& other)
 {
   if (dim != other.Dim())
   {
@@ -208,7 +210,8 @@ inline ElemType HRectBound<MetricType, ElemType>::MinDistance(
   else
   {
     if (MetricType::TakeRoot)
-      return (ElemType) pow((double) sum, 1.0 / (double) MetricType::Power) / 2.0;
+      return (ElemType) pow((double) sum,
+          1.0 / (double) MetricType::Power) / 2.0;
     else
       return sum / pow(2.0, MetricType::Power);
   }
@@ -268,7 +271,8 @@ ElemType HRectBound<MetricType, ElemType>::MinDistance(const HRectBound& other)
   else
   {
     if (MetricType::TakeRoot)
-      return (ElemType) pow((double) sum, 1.0 / (double) MetricType::Power) / 2.0;
+      return (ElemType) pow((double) sum,
+          1.0 / (double) MetricType::Power) / 2.0;
     else
       return sum / pow(2.0, MetricType::Power);
   }
@@ -503,8 +507,8 @@ HRectBound<MetricType, ElemType>::RangeDistance(
  */
 template<typename MetricType, typename ElemType>
 template<typename MatType>
-inline HRectBound<MetricType, ElemType>& HRectBound<MetricType, ElemType>::operator|=(
-    const MatType& data)
+inline HRectBound<MetricType, ElemType>&
+HRectBound<MetricType, ElemType>::operator|=(const MatType& data)
 {
   Log::Assert(data.n_rows == dim);
 
@@ -527,8 +531,8 @@ inline HRectBound<MetricType, ElemType>& HRectBound<MetricType, ElemType>::opera
  * Expands this region to encompass another bound.
  */
 template<typename MetricType, typename ElemType>
-inline HRectBound<MetricType, ElemType>& HRectBound<MetricType, ElemType>::operator|=(
-    const HRectBound& other)
+inline HRectBound<MetricType, ElemType>&
+HRectBound<MetricType, ElemType>::operator|=(const HRectBound& other)
 {
   assert(other.dim == dim);
 
@@ -549,7 +553,8 @@ inline HRectBound<MetricType, ElemType>& HRectBound<MetricType, ElemType>::opera
  */
 template<typename MetricType, typename ElemType>
 template<typename VecType>
-inline bool HRectBound<MetricType, ElemType>::Contains(const VecType& point) const
+inline bool HRectBound<MetricType, ElemType>::Contains(
+    const VecType& point) const
 {
   for (size_t i = 0; i < point.n_elem; i++)
   {
@@ -572,7 +577,8 @@ inline bool HRectBound<MetricType, ElemType>::Contains(
     const math::RangeType<ElemType>& r_a = bounds[i];
     const math::RangeType<ElemType>& r_b = bound.bounds[i];
 
-    if (r_a.Hi() <= r_b.Lo() || r_a.Lo() >= r_b.Hi()) // If a does not overlap b at all.
+    // If a does not overlap b at all.
+    if (r_a.Hi() <= r_b.Lo() || r_a.Lo() >= r_b.Hi())
       return false;
   }
 
@@ -583,8 +589,8 @@ inline bool HRectBound<MetricType, ElemType>::Contains(
  * Returns the intersection of this bound and another.
  */
 template<typename MetricType, typename ElemType>
-inline HRectBound<MetricType, ElemType> HRectBound<MetricType, ElemType>::
-operator&(const HRectBound& bound) const
+inline HRectBound<MetricType, ElemType>
+HRectBound<MetricType, ElemType>::operator&(const HRectBound& bound) const
 {
   HRectBound<MetricType, ElemType> result(dim);
 
@@ -600,8 +606,8 @@ operator&(const HRectBound& bound) const
  * Intersects this bound with another.
  */
 template<typename MetricType, typename ElemType>
-inline HRectBound<MetricType, ElemType>& HRectBound<MetricType, ElemType>::
-operator&=(const HRectBound& bound)
+inline HRectBound<MetricType, ElemType>&
+HRectBound<MetricType, ElemType>::operator&=(const HRectBound& bound)
 {
   for (size_t k = 0; k < dim; k++)
   {

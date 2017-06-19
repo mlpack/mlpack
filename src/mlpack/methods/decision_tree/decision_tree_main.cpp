@@ -48,7 +48,8 @@ PROGRAM_INFO("Decision tree",
 PARAM_MATRIX_IN("training", "Matrix of training points.", "t");
 PARAM_UROW_IN("labels", "Training labels.", "l");
 PARAM_MATRIX_IN("test", "Matrix of test points.", "T");
-PARAM_UROW_IN("test_labels", "Test point labels, if accuracy calculation "
+PARAM_MATRIX_IN("weights", "The weight of labels", "w");
+PARAM_UMATRIX_IN("test_labels", "Test point labels, if accuracy calculation "
     "is desired.", "L");
 
 // Training parameters.
@@ -149,8 +150,18 @@ int main(int argc, char** argv)
     // Now build the tree.
     const size_t minLeafSize = (size_t) CLI::GetParam<int>("minimum_leaf_size");
 
-    model.tree = DecisionTree<>(dataset, labels, numClasses,
-        minLeafSize);
+    // Create decision tree with weighted labels.
+    if (CLI::HasParam("weights"))
+    {
+      arma::Row<double> weights =
+          std::move(CLI::GetParam<arma::Mat<double>>("weights"));
+      model.tree = DecisionTree<>(dataset, labels, numClasses,
+          weights, minLeafSize);
+    }
+    else
+    {
+      model.tree = DecisionTree<>(dataset, labels, numClasses, minLeafSize);
+    }
 
     // Do we need to print training error?
     if (CLI::HasParam("print_training_error"))
@@ -166,7 +177,7 @@ int main(int argc, char** argv)
           ++correct;
 
       // Print number of correct points.
-      Log::Info << double(correct) / double(dataset.n_cols) * 100 << "\% "
+      Log::Info << double(correct) / double(dataset.n_cols) * 100 << "%% "
           << "correct on training set (" << correct << " / " << dataset.n_cols
           << ")." << endl;
     }
@@ -198,7 +209,7 @@ int main(int argc, char** argv)
           ++correct;
 
       // Print number of correct points.
-      Log::Info << double(correct) / double(testPoints.n_cols) * 100 << "\% "
+      Log::Info << double(correct) / double(testPoints.n_cols) * 100 << "%% "
           << "correct on test set (" << correct << " / " << testPoints.n_cols
           << ")." << endl;
     }

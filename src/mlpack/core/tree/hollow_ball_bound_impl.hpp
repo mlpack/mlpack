@@ -33,7 +33,8 @@ HollowBallBound<TMetricType, ElemType>::HollowBallBound() :
  * @param dimension Dimensionality of ball bound.
  */
 template<typename TMetricType, typename ElemType>
-HollowBallBound<TMetricType, ElemType>::HollowBallBound(const size_t dimension) :
+HollowBallBound<TMetricType, ElemType>::
+HollowBallBound(const size_t dimension) :
     radii(std::numeric_limits<ElemType>::lowest(),
           std::numeric_limits<ElemType>::lowest()),
     center(dimension),

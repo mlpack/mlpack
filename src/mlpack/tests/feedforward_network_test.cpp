@@ -69,7 +69,7 @@ void BuildVanillaNetwork(MatType& trainData,
   RMSProp<decltype(model)> opt(model, 0.01, 0.88, 1e-8,
       maxEpochs * trainData.n_cols, -1);
 
-  model.Train(std::move(trainData), std::move(trainLabels), opt);
+  model.Train(trainData, trainLabels, opt);
 
   MatType predictionTemp;
   model.Predict(testData, predictionTemp);
@@ -197,7 +197,7 @@ void BuildDropoutNetwork(MatType& trainData,
   RMSProp<decltype(model)> opt(model, 0.01, 0.88, 1e-8,
       maxEpochs * trainData.n_cols, -1);
 
-  model.Train(std::move(trainData), std::move(trainLabels), opt);
+  model.Train(trainData, trainLabels, opt);
 
   MatType predictionTemp;
   model.Predict(testData, predictionTemp);
@@ -327,7 +327,7 @@ void BuildDropConnectNetwork(MatType& trainData,
   RMSProp<decltype(model)> opt(model, 0.01, 0.88, 1e-8,
       maxEpochs * trainData.n_cols, -1);
 
-  model.Train(std::move(trainData), std::move(trainLabels), opt);
+  model.Train(trainData, trainLabels, opt);
 
   MatType predictionTemp;
   model.Predict(testData, predictionTemp);
@@ -408,6 +408,22 @@ BOOST_AUTO_TEST_CASE(DropConnectNetworkTest)
   // Vanilla neural net with logistic activation function.
   BuildDropConnectNetwork<>
       (dataset, labels, dataset, labels, 2, 10, 50, 0.2);
+}
+
+/**
+ * Test miscellaneous things of FFN,
+ * e.g. copy/move constructor, assignment operator.
+ */
+BOOST_AUTO_TEST_CASE(FFNMiscTest)
+{
+  FFN<MeanSquaredError<>> model;
+  model.Add<Linear<>>(2, 3);
+  model.Add<ReLULayer<>>();
+
+  auto copiedModel(model);
+  copiedModel = model;
+  auto movedModel(std::move(model));
+  movedModel = std::move(copiedModel);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

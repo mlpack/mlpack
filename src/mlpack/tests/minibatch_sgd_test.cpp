@@ -80,14 +80,14 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
   GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
   GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
 
-  arma::mat data(3, 1000);
-  arma::Row<size_t> responses(1000);
-  for (size_t i = 0; i < 500; ++i)
+  arma::mat data(3, 500);
+  arma::Row<size_t> responses(500);
+  for (size_t i = 0; i < 250; ++i)
   {
     data.col(i) = g1.Random();
     responses[i] = 0;
   }
-  for (size_t i = 500; i < 1000; ++i)
+  for (size_t i = 250; i < 500; ++i)
   {
     data.col(i) = g2.Random();
     responses[i] = 1;
@@ -96,8 +96,8 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
   // Shuffle the dataset.
   arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0,
       data.n_cols - 1, data.n_cols));
-  arma::mat shuffledData(3, 1000);
-  arma::Row<size_t> shuffledResponses(1000);
+  arma::mat shuffledData(3, 500);
+  arma::Row<size_t> shuffledResponses(500);
   for (size_t i = 0; i < data.n_cols; ++i)
   {
     shuffledData.col(i) = data.col(indices[i]);
@@ -105,14 +105,14 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
   }
 
   // Create a test set.
-  arma::mat testData(3, 1000);
-  arma::Row<size_t> testResponses(1000);
-  for (size_t i = 0; i < 500; ++i)
+  arma::mat testData(3, 500);
+  arma::Row<size_t> testResponses(500);
+  for (size_t i = 0; i < 250; ++i)
   {
     testData.col(i) = g1.Random();
     testResponses[i] = 0;
   }
-  for (size_t i = 500; i < 1000; ++i)
+  for (size_t i = 250; i < 500; ++i)
   {
     testData.col(i) = g2.Random();
     testResponses[i] = 1;

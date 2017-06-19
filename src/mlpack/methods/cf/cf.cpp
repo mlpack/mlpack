@@ -15,6 +15,8 @@
  */
 #include "cf.hpp"
 
+#include <queue>
+
 namespace mlpack {
 namespace cf {
 
@@ -257,5 +259,5 @@ void CF::CleanData(const arma::mat& data, arma::sp_mat& cleanedData)
   cleanedData = arma::sp_mat(locations, values, maxItemID, maxUserID);
 }
 
-} // namespace mlpack
 } // namespace cf
+} // namespace mlpack

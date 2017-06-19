@@ -140,7 +140,7 @@ class ExampleKernel
   static double Normalizer() { return 0; }
 
   // Modified to remove unused variable "dimension"
-  //static double Normalizer(size_t dimension=1) { return 0; }
+  // static double Normalizer(size_t dimension=1) { return 0; }
 };
 
 } // namespace kernel

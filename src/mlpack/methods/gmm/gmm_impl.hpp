@@ -59,7 +59,8 @@ double GMM::Train(const arma::mat& observations,
 
     bestLikelihood = LogLikelihood(observations, dists, weights);
 
-    Log::Info << "GMM::Train(): Log-likelihood of trial 0 is " << bestLikelihood        << "." << std::endl;
+    Log::Info << "GMM::Train(): Log-likelihood of trial 0 is "
+        << bestLikelihood << "." << std::endl;
 
     // Now the temporary model.
     std::vector<distribution::GaussianDistribution> distsTrial(gaussians,
@@ -159,7 +160,8 @@ double GMM::Train(const arma::mat& observations,
         weightsTrial = weightsOrig;
       }
 
-      fitter.Estimate(observations, probabilities, distsTrial, weightsTrial, useExistingModel);
+      fitter.Estimate(observations, probabilities, distsTrial, weightsTrial,
+          useExistingModel);
 
       // Check to see if the log-likelihood of this one is better.
       double newLikelihood = LogLikelihood(observations, distsTrial,

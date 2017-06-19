@@ -22,7 +22,6 @@
 #include "visitor/deterministic_set_visitor.hpp"
 #include "visitor/gradient_set_visitor.hpp"
 #include "visitor/gradient_visitor.hpp"
-#include "visitor/weight_set_visitor.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -35,8 +34,8 @@ RNN<OutputLayerType, InitializationRuleType>::RNN(
     OutputLayerType outputLayer,
     InitializationRuleType initializeRule) :
     rho(rho),
-    outputLayer(outputLayer),
-    initializeRule(initializeRule),
+    outputLayer(std::move(outputLayer)),
+    initializeRule(std::move(initializeRule)),
     inputSize(0),
     outputSize(0),
     targetSize(0),
@@ -48,27 +47,25 @@ RNN<OutputLayerType, InitializationRuleType>::RNN(
 
 template<typename OutputLayerType, typename InitializationRuleType>
 RNN<OutputLayerType, InitializationRuleType>::RNN(
-    const arma::mat& predictors,
-    const arma::mat& responses,
+    arma::mat predictors,
+    arma::mat responses,
     const size_t rho,
     const bool single,
     OutputLayerType outputLayer,
     InitializationRuleType initializeRule) :
     rho(rho),
-    outputLayer(outputLayer),
-    initializeRule(initializeRule),
+    outputLayer(std::move(outputLayer)),
+    initializeRule(std::move(initializeRule)),
     inputSize(0),
     outputSize(0),
     targetSize(0),
     reset(false),
-    single(single)
+    single(single),
+    predictors(std::move(predictors)),
+    responses(std::move(responses)),
+    deterministic(true)
 {
-  numFunctions = responses.n_cols;
-
-  this->predictors = std::move(predictors);
-  this->responses = std::move(responses);
-
-  this->deterministic = true;
+  numFunctions = this->responses.n_cols;
   ResetDeterministic();
 }
 
@@ -87,8 +84,8 @@ template<
     typename... OptimizerTypeArgs
 >
 void RNN<OutputLayerType, InitializationRuleType>::Train(
-    const arma::mat& predictors,
-    const arma::mat& responses,
+    arma::mat predictors,
+    arma::mat responses,
     OptimizerType<NetworkType, OptimizerTypeArgs...>& optimizer)
 {
   numFunctions = responses.n_cols;
@@ -107,7 +104,7 @@ void RNN<OutputLayerType, InitializationRuleType>::Train(
 
   // Train the model.
   Timer::Start("rnn_optimization");
-  const double out = optimizer.Optimize(parameter);
+  const double out = optimizer.Optimize(*this, parameter);
   Timer::Stop("rnn_optimization");
 
   Log::Info << "RNN::RNN(): final objective of trained model is " << out
@@ -117,7 +114,7 @@ void RNN<OutputLayerType, InitializationRuleType>::Train(
 template<typename OutputLayerType, typename InitializationRuleType>
 template<template<typename...> class OptimizerType>
 void RNN<OutputLayerType, InitializationRuleType>::Train(
-    const arma::mat& predictors, const arma::mat& responses)
+    arma::mat predictors, arma::mat responses)
 {
   numFunctions = responses.n_cols;
 
@@ -137,7 +134,7 @@ void RNN<OutputLayerType, InitializationRuleType>::Train(
 
   // Train the model.
   Timer::Start("rnn_optimization");
-  const double out = optimizer.Optimize(parameter);
+  const double out = optimizer.Optimize(*this, parameter);
   Timer::Stop("rnn_optimization");
 
   Log::Info << "RNN::RNN(): final objective of trained model is " << out
@@ -146,7 +143,7 @@ void RNN<OutputLayerType, InitializationRuleType>::Train(
 
 template<typename OutputLayerType, typename InitializationRuleType>
 void RNN<OutputLayerType, InitializationRuleType>::Predict(
-    arma::mat& predictors, arma::mat& results)
+    arma::mat predictors, arma::mat& results)
 {
   if (parameter.is_empty())
   {
@@ -313,23 +310,9 @@ void RNN<OutputLayerType, InitializationRuleType>::ResetParameters()
 {
   ResetDeterministic();
 
-  size_t weights = 0;
-  for (LayerTypes& layer : network)
-  {
-    weights += boost::apply_visitor(weightSizeVisitor, layer);
-  }
-
-  parameter.set_size(weights, 1);
-  initializeRule.Initialize(parameter, parameter.n_elem, 1);
-
-  size_t offset = 0;
-  for (LayerTypes& layer : network)
-  {
-    offset += boost::apply_visitor(WeightSetVisitor(std::move(parameter),
-        offset), layer);
-
-    boost::apply_visitor(resetVisitor, layer);
-  }
+  // Reset the network parameter with the given initialization rule.
+  NetworkInitialization<InitializationRuleType> networkInit(initializeRule);
+  networkInit.Initialize(network, parameter);
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>

@@ -109,7 +109,7 @@ class PrimalDualSolver
   arma::vec initialYdense;
 
   //! Starting point for Z, the complementary slack variable. Needs to be
-  //positive definite.
+  //! positive definite.
   arma::mat initialZ;
 
   //! The step size modulating factor. Needs to be a scalar in (0, 1).

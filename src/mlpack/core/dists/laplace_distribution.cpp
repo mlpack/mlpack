@@ -21,7 +21,8 @@ using namespace mlpack::distribution;
  */
 double LaplaceDistribution::LogProbability(const arma::vec& observation) const
 {
-  // Evaluate the PDF of the Laplace distribution to determine the log probability.
+  // Evaluate the PDF of the Laplace distribution to determine
+  // the log probability.
   return -log(2. * scale) - arma::norm(observation - mean, 2) / scale;
 }
 

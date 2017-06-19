@@ -98,11 +98,11 @@ class SMORMS3Update
   double& Epsilon() { return epsilon; }
 
  private:
-   //! The value used to initialise the mean squared gradient parameter.
-   double epsilon;
+  //! The value used to initialise the mean squared gradient parameter.
+  double epsilon;
 
-   // The parameters mem, g and g2.
-   arma::mat mem, g, g2;
+  // The parameters mem, g and g2.
+  arma::mat mem, g, g2;
 };
 
 } // namespace optimization

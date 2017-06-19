@@ -155,7 +155,6 @@ class LaplaceDistribution
   arma::vec mean;
   //! Scale parameter of the distribution.
   double scale;
-
 };
 
 } // namespace distribution

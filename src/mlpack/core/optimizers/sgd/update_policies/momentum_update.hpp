@@ -84,7 +84,7 @@ class MomentumUpdate
   void Initialize(const size_t rows,
                   const size_t cols)
   {
-    //Initialize am empty velocity matrix.
+    // Initialize am empty velocity matrix.
     velocity = arma::zeros<arma::mat>(rows, cols);
   }
 

@@ -34,7 +34,7 @@ void LogSoftMax<InputDataType, OutputDataType>::Forward(
 
   // Approximation of the hyperbolic tangent. The acuracy however is
   // about 0.00001 lower as using tanh. Credits go to Leon Bottou.
-  output.transform( [](double x)
+  output.transform([](double x)
   {
     //! Fast approximation of exp(-x) for x positive.
     static constexpr double A0 = 1.0;
@@ -55,7 +55,7 @@ void LogSoftMax<InputDataType, OutputDataType>::Forward(
     }
 
     return 0.0;
-  } );
+  });
 
   output = input - (maxInput + std::log(arma::accu(output)));
 }

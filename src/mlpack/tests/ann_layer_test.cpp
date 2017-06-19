@@ -32,7 +32,7 @@ void ResetFunction(
     T& layer,
     typename std::enable_if<HasResetCheck<T, void(T::*)()>::value>::type* = 0)
 {
-   layer.Reset();
+  layer.Reset();
 }
 
 template<class T>
@@ -134,7 +134,7 @@ double JacobianPerformanceTest(ModuleType& module,
     inputTemp(i) = inputTemp(i) - (2 * eps);
     double outputB = module.Forward(std::move(input), std::move(target));
 
-    centralDifferenceTemp(i) = (outputA - outputB) / ( 2 * eps);
+    centralDifferenceTemp(i) = (outputA - outputB) / (2 * eps);
     inputTemp(i) = inputTemp(i) + eps;
   }
 
@@ -956,3 +956,4 @@ BOOST_AUTO_TEST_CASE(SimpleBinaryRbmLayerTest)
 }
 
 BOOST_AUTO_TEST_SUITE_END();
+

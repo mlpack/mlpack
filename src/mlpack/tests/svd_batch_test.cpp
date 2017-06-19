@@ -91,7 +91,7 @@ BOOST_AUTO_TEST_CASE(SVDBatchMomentumTest)
   // Create the initial matrices.
   SpecificRandomInitialization sri(cleanedData.n_rows, 2, cleanedData.n_cols);
 
-  ValidationRMSETermination<sp_mat> vrt(cleanedData, 2000);
+  ValidationRMSETermination<sp_mat> vrt(cleanedData, 500);
   AMF<ValidationRMSETermination<sp_mat>,
       SpecificRandomInitialization,
       SVDBatchLearning> amf1(vrt, sri, SVDBatchLearning(0.0009, 0, 0, 0));

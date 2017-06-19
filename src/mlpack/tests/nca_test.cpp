@@ -320,7 +320,6 @@ BOOST_AUTO_TEST_CASE(NCALBFGSSimpleDataset)
   // The solution is not unique, so the best we can do is ensure the gradient
   // norm is close to 0.
   BOOST_REQUIRE_LT(arma::norm(finalGradient, 2), 1e-6);
-
 }
 
 BOOST_AUTO_TEST_SUITE_END();

@@ -15,38 +15,14 @@
 #include <mlpack/core.hpp>
 #include <boost/version.hpp>
 
-// This is only necessary for pre-1.36 Boost.Test.
-#if BOOST_VERSION < 103600
-
-#include <boost/test/floating_point_comparison.hpp>
-#include <boost/test/auto_unit_test.hpp>
-
-// This depends on other macros.  Probably not a great idea... but it works, and
-// we only need it for ancient Boost versions.
-#define BOOST_REQUIRE_GE( L, R ) \
-    BOOST_REQUIRE_EQUAL( (L >= R), true )
-
-#define BOOST_REQUIRE_NE( L, R ) \
-    BOOST_REQUIRE_EQUAL( (L != R), true )
-
-#define BOOST_REQUIRE_LE( L, R ) \
-    BOOST_REQUIRE_EQUAL( (L <= R), true )
-
-#define BOOST_REQUIRE_LT( L, R ) \
-    BOOST_REQUIRE_EQUAL( (L < R), true )
-
-#define BOOST_REQUIRE_GT( L, R ) \
-    BOOST_REQUIRE_EQUAL( (L > R), true )
-
-#endif
-
 // Require the approximation L to be within a relative error of E respect to the
 // actual value R.
-#define REQUIRE_RELATIVE_ERR( L, R, E ) \
-    BOOST_REQUIRE_LE( std::abs((R) - (L)), (E) * std::abs(R))
+#define REQUIRE_RELATIVE_ERR(L, R, E) \
+    BOOST_REQUIRE_LE(std::abs((R) - (L)), (E) * std::abs(R))
 
 // Check the values of two matrices.
-inline void CheckMatrices(const arma::mat& a, const arma::mat& b,
+inline void CheckMatrices(const arma::mat& a,
+                          const arma::mat& b,
                           double tolerance = 1e-5)
 {
   BOOST_REQUIRE_EQUAL(a.n_rows, b.n_rows);
@@ -62,7 +38,8 @@ inline void CheckMatrices(const arma::mat& a, const arma::mat& b,
 }
 
 // Check the values of two unsigned matrices.
-inline void CheckMatrices(const arma::Mat<size_t>& a, const arma::Mat<size_t>& b)
+inline void CheckMatrices(const arma::Mat<size_t>& a,
+                          const arma::Mat<size_t>& b)
 {
   BOOST_REQUIRE_EQUAL(a.n_rows, b.n_rows);
   BOOST_REQUIRE_EQUAL(a.n_cols, b.n_cols);

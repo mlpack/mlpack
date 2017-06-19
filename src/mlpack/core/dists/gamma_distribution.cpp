@@ -64,7 +64,7 @@ void GammaDistribution::Train(const arma::mat& rdata, const double tol)
   Train(logMeanxVec, meanLogxVec, meanxVec, tol);
 }
 
-//Fits an alpha and beta parameter according to observation probabilities.
+// Fits an alpha and beta parameter according to observation probabilities.
 void GammaDistribution::Train(const arma::mat& rdata,
                               const arma::vec& probabilities,
                               const double tol)
@@ -151,7 +151,6 @@ void GammaDistribution::Train(const arma::vec& logMeanxVec,
       if (aEst <= 0)
         throw std::logic_error("GammaDistribution::Train(): estimated invalid "
             "negative value for parameter alpha!");
-
     } while (!Converged(aEst, aOld, tol));
 
     alpha(row) = aEst;
@@ -219,7 +218,7 @@ void GammaDistribution::LogProbability(const arma::mat& observations,
       double factor = std::exp(-observations(d, i) / beta(d));
       double numerator = std::pow(observations(d, i), alpha(d) - 1);
 
-      LogProbabilities(i) += std::log( numerator * factor / denominators(d));
+      LogProbabilities(i) += std::log(numerator * factor / denominators(d));
     }
   }
 }

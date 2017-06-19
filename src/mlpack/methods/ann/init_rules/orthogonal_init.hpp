@@ -72,7 +72,7 @@ class OrthogonalInitialization
 
  private:
   //! The number used as gain.
-  const double gain;
+  double gain;
 }; // class OrthogonalInitialization
 
 

@@ -126,7 +126,7 @@ void Radical::DoRadical(const mat& matXT, mat& matY, mat& matW)
   // In the RADICAL code, they do not copy and perturb initially, although the
   // paper does.  We follow the code as it should match their reported results
   // and likely does a better job bouncing out of local optima.
-  //GeneratePerturbedX(X, X);
+  // GeneratePerturbedX(X, X);
 
   // Initialize the unmixing matrix to the whitening matrix.
   Timer::Start("radical_do_radical");

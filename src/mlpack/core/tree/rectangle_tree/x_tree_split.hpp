@@ -42,14 +42,14 @@ class XTreeSplit
    * necessary, this split will propagate upwards through the tree.
    */
   template<typename TreeType>
-  static void SplitLeafNode(TreeType *tree,std::vector<bool>& relevels);
+  static void SplitLeafNode(TreeType *tree, std::vector<bool>& relevels);
 
   /**
    * Split a non-leaf node using the "default" algorithm.  If this is a root
    * node, the tree increases in depth.
    */
   template<typename TreeType>
-  static bool SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels);
+  static bool SplitNonLeafNode(TreeType *tree, std::vector<bool>& relevels);
 
  private:
   /**
@@ -68,7 +68,6 @@ class XTreeSplit
   {
     return p1.first < p2.first;
   }
-
 };
 
 } // namespace tree

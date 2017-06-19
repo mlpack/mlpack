@@ -31,8 +31,8 @@ class GaussianInitialization
   /**
    * Initialize the gaussian with the given mean and variance.
    *
-   * @param mean Mean of the gaussian
-   * @param variance Variance of the gaussian
+   * @param mean Mean of the gaussian.
+   * @param variance Variance of the gaussian.
    */
   GaussianInitialization(const double mean = 0, const double variance = 1) :
       mean(mean), variance(variance)
@@ -51,7 +51,10 @@ class GaussianInitialization
                   const size_t rows,
                   const size_t cols)
   {
-    W = arma::mat(rows, cols);
+    if (W.is_empty())
+    {
+      W = arma::mat(rows, cols);
+    }
     W.imbue( [&]() { return arma::as_scalar(RandNormal(mean, variance)); } );
   }
 
@@ -76,10 +79,10 @@ class GaussianInitialization
 
  private:
   //! Mean of the gaussian.
-  const double mean;
+  double mean;
 
   //! Variance of the gaussian.
-  const double variance;
+  double variance;
 }; // class GaussianInitialization
 
 } // namespace ann

@@ -63,8 +63,7 @@ PROGRAM_INFO("Perceptron",
     "data must match.  So you cannot pass a perceptron model trained on 2 "
     "classes and then re-train with a 4-class dataset.  Similarly, attempting "
     "classification on a 3-dimensional dataset with a perceptron that has been "
-    "trained on 8 dimensions will cause an error."
-    );
+    "trained on 8 dimensions will cause an error.");
 
 // When we save a model, we must also save the class mappings.  So we use this
 // auxiliary structure to store both the perceptron and the mapping, and we'll
@@ -94,8 +93,8 @@ class PerceptronModel
 PARAM_MATRIX_IN("training", "A matrix containing the training set.", "t");
 PARAM_UROW_IN("labels", "A matrix containing labels for the training set.",
     "l");
-PARAM_INT_IN("max_iterations","The maximum number of iterations the perceptron "
-    "is to be run", "n", 1000);
+PARAM_INT_IN("max_iterations", "The maximum number of iterations the "
+    "perceptron is to be run", "n", 1000);
 
 // Model loading/saving.
 PARAM_MODEL_IN(PerceptronModel, "input_model", "Input perceptron model.", "m");

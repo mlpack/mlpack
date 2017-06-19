@@ -9,7 +9,7 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
- #include "softmax_regression_function.hpp"
+#include "softmax_regression_function.hpp"
 
 using namespace mlpack;
 using namespace mlpack::regression;
@@ -73,8 +73,8 @@ void SoftmaxRegressionFunction::InitializeWeights(
  * labels. The output is in the form of a matrix, which leads to simpler
  * calculations in the Evaluate() and Gradient() methods.
  */
-void SoftmaxRegressionFunction::GetGroundTruthMatrix(const arma::Row<size_t>& labels,
-                                                     arma::sp_mat& groundTruth)
+void SoftmaxRegressionFunction::GetGroundTruthMatrix(
+    const arma::Row<size_t>& labels, arma::sp_mat& groundTruth)
 {
   // Calculate the ground truth matrix according to the labels passed. The
   // ground truth matrix is a matrix of dimensions 'numClasses * numExamples',
@@ -87,7 +87,7 @@ void SoftmaxRegressionFunction::GetGroundTruthMatrix(const arma::Row<size_t>& la
 
   // Row pointers are the labels of the examples, and column pointers are the
   // number of cumulative entries made uptil that column.
-  for(size_t i = 0; i < labels.n_elem; i++)
+  for (size_t i = 0; i < labels.n_elem; i++)
   {
     rowPointers(i) = labels(i);
     colPointers(i+1) = i + 1;

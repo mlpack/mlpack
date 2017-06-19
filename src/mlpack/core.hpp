@@ -220,6 +220,7 @@
  *   - Nishanth Hegde <hegde.nishanth@gmail.com>
  *   - Parminder Singh <parmsingh101@gmail.com>
  *   - CodeAi (deep learning bug detector) <benjamin.bales@assrc.us>
+ *   - Franciszek Stokowacki <franek.stokowacki@gmail.com>
  */
 
 // First, include all of the prerequisites.
@@ -243,7 +244,8 @@
 #include <mlpack/core/dists/gaussian_distribution.hpp>
 #include <mlpack/core/dists/laplace_distribution.hpp>
 #include <mlpack/core/dists/gamma_distribution.hpp>
-//mlpack::backtrace only for linux
+
+// mlpack::backtrace only for linux
 #ifdef HAS_BFD_DL
   #include <mlpack/core/util/backtrace.hpp>
 #endif

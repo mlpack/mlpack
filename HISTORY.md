@@ -1,5 +1,11 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Speed and memory improvements for DBSCAN.  --single_mode can now be used for
+    situations where previously RAM usage was too high.
+
+### mlpack 2.2.3
+###### 2017-05-24
+  * Bug fix for --predictions_file in mlpack_decision_tree program.
 
 ### mlpack 2.2.2
 ###### 2017-05-04

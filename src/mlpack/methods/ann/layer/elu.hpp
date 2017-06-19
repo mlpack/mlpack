@@ -189,7 +189,6 @@ class ELU
 
   //! ELU Hyperparameter (0 < alpha)
   double alpha;
-
 }; // class ELU
 
 } // namespace ann

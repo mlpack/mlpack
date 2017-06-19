@@ -1,6 +1,7 @@
 /**
  * @file ffn.hpp
  * @author Marcus Edel
+ * @author Shangtong Zhang
  *
  * Definition of the FFN class, which implements feed forward neural networks.
  *
@@ -21,6 +22,9 @@
 #include "visitor/output_width_visitor.hpp"
 #include "visitor/reset_visitor.hpp"
 #include "visitor/weight_size_visitor.hpp"
+#include "visitor/copy_visitor.hpp"
+
+#include "init_rules/network_init.hpp"
 
 #include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
@@ -47,22 +51,37 @@ class FFN
 
   /**
    * Create the FFN object with the given predictors and responses set (this is
-   * the set that is used to train the network) and the given optimizer.
+   * the set that is used to train the network).
    * Optionally, specify which initialize rule and performance function should
    * be used.
+   *
+   * If you want to pass in a parameter and discard the original parameter
+   * object, be sure to use std::move to avoid unnecessary copy.
    *
    * @param outputLayer Output layer used to evaluate the network.
    * @param initializeRule Optional instantiated InitializationRule object
    *        for initializing the network parameter.
    */
-  FFN(OutputLayerType&& outputLayer = OutputLayerType(),
+  FFN(OutputLayerType outputLayer = OutputLayerType(),
       InitializationRuleType initializeRule = InitializationRuleType());
+
+  //! Copy constructor.
+  FFN(const FFN&);
+
+  //! Move constructor.
+  FFN(FFN&&);
+
+  //! Copy/move assignment operator.
+  FFN& operator = (FFN);
 
   /**
    * Create the FFN object with the given predictors and responses set (this is
-   * the set that is used to train the network) and the given optimizer.
+   * the set that is used to train the network).
    * Optionally, specify which initialize rule and performance function should
    * be used.
+   *
+   * If you want to pass in a parameter and discard the original parameter
+   * object, be sure to use std::move to avoid unnecessary copy.
    *
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
@@ -70,9 +89,9 @@ class FFN
    * @param initializeRule Optional instantiated InitializationRule object
    *        for initializing the network parameter.
    */
-  FFN(const arma::mat& predictors,
-      const arma::mat& responses,
-      OutputLayerType&& outputLayer = OutputLayerType(),
+  FFN(arma::mat predictors,
+      arma::mat responses,
+      OutputLayerType outputLayer = OutputLayerType(),
       InitializationRuleType initializeRule = InitializationRuleType());
 
   //! Destructor to release allocated memory.
@@ -86,6 +105,9 @@ class FFN
    * optimization. If this is not what you want, then you should access the
    * parameters vector directly with Parameters() and modify it as desired.
    *
+   * If you want to pass in a parameter and discard the original parameter
+   * object, be sure to use std::move to avoid unnecessary copy.
+   *
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
@@ -96,8 +118,8 @@ class FFN
           mlpack::optimization::RMSProp,
       typename... OptimizerTypeArgs
   >
-  void Train(const arma::mat& predictors,
-             const arma::mat& responses,
+  void Train(arma::mat predictors,
+             arma::mat responses,
              OptimizerType<NetworkType, OptimizerTypeArgs...>& optimizer);
 
   /**
@@ -109,6 +131,9 @@ class FFN
    * optimization. If this is not what you want, then you should access the
    * parameters vector directly with Parameters() and modify it as desired.
    *
+   * If you want to pass in a parameter and discard the original parameter
+   * object, be sure to use std::move to avoid unnecessary copy.
+   *
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
@@ -116,17 +141,20 @@ class FFN
   template<
       template<typename...> class OptimizerType = mlpack::optimization::RMSProp
   >
-  void Train(const arma::mat& predictors, const arma::mat& responses);
+  void Train(arma::mat predictors, arma::mat responses);
 
   /**
    * Predict the responses to a given set of predictors. The responses will
    * reflect the output of the given output layer as returned by the
    * output layer function.
    *
+   * If you want to pass in a parameter and discard the original parameter
+   * object, be sure to use std::move to avoid unnecessary copy.
+   *
    * @param predictors Input predictors.
    * @param results Matrix to put output predictions of responses into.
    */
-  void Predict(arma::mat& predictors, arma::mat& results);
+  void Predict(arma::mat predictors, arma::mat& results);
 
   /**
    * Evaluate the feedforward network with the given parameters. This function
@@ -154,6 +182,16 @@ class FFN
                 const size_t i,
                 arma::mat& gradient);
 
+  /**
+   * Compute the gradient of the feedforward network based on given input and target.
+   *
+   * @param predictors Input training variables.
+   * @param responses Outputs results from input training variables.
+   * @return Desired gradients of the feedforward network.
+   */
+  arma::mat Gradient(const arma::mat& predictors,
+                     const arma::mat& responses);
+
   /*
    * Add a new module to the model.
    *
@@ -177,11 +215,16 @@ class FFN
   //! Modify the initial point for the optimization.
   arma::mat& Parameters() { return parameter; }
 
+  /**
+   * Reset the module infomration (weights/parameters).
+   */
+  void ResetParameters();
+
   //! Serialize the model.
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
 
-private:
+ private:
   // Helper functions.
   /**
    * The Forward algorithm (part of the Forward-Backward algorithm).  Computes
@@ -190,6 +233,15 @@ private:
    * @param input Data sequence to compute probabilities for.
    */
   void Forward(arma::mat&& input);
+
+  /**
+   * Prepare the network for the given data.
+   * This function won't actually trigger training process.
+   *
+   * @param predictors Input data variables.
+   * @param responses Outputs results from input data variables.
+   */
+  void ResetData(arma::mat predictors, arma::mat responses);
 
   /**
    * The Backward algorithm (part of the Forward-Backward algorithm). Computes
@@ -204,11 +256,6 @@ private:
   void Gradient();
 
   /**
-   * Reset the module information (weights/parameters).
-   */
-  void ResetParameters();
-
-  /**
    * Reset the module status by setting the current deterministic parameter
    * for all modules that implement the Deterministic function.
    */
@@ -218,6 +265,13 @@ private:
    * Reset the gradient for all modules that implement the Gradient function.
    */
   void ResetGradients(arma::mat& gradient);
+
+  /**
+   * Swap the content of this network with given network.
+   *
+   * @param network Desired source network.
+   */
+  void Swap(FFN& network);
 
   //! Instantiated outputlayer used to evaluate the network.
   OutputLayerType outputLayer;
@@ -294,6 +348,9 @@ private:
 
   //! Locally-stored gradient parameter.
   arma::mat gradient;
+
+  //! Locally-stored copy visitor
+  CopyVisitor copyVisitor;
 }; // class FFN
 
 } // namespace ann

@@ -93,7 +93,8 @@ BOOST_AUTO_TEST_CASE(AdaGradLogisticRegressionTest)
   LogisticRegression<> lr(shuffledData.n_rows, 0.5);
 
   LogisticRegressionFunction<> lrf(shuffledData, shuffledResponses, 0.5);
-  AdaGrad<LogisticRegressionFunction<> > adagrad(lrf, 0.99, 1e-8, 5000000, 1e-9, true);
+  AdaGrad<LogisticRegressionFunction<> > adagrad(
+      lrf, 0.99, 1e-8, 5000000, 1e-9, true);
   lr.Train(adagrad);
 
   // Ensure that the error is close to zero.

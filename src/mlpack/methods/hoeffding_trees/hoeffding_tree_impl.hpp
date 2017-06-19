@@ -648,7 +648,6 @@ void HoeffdingTree<
       children.push_back(new HoeffdingTree(*datasetInfo, numClasses,
           successProbability, maxSamples, checkInterval, minSamples,
           categoricalSplits[0], numericSplits[0], dimensionMappings));
-
     }
 
     children[i]->MajorityClass() = childMajorities[i];
