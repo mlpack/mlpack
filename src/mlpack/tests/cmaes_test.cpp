@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/core/optimizers/cmaes/sgd.hpp>
+#include <mlpack/core/optimizers/cmaes/cmaes.hpp>
 #include <mlpack/core/optimizers/lbfgs/test_functions.hpp>
 #include <mlpack/core/optimizers/cmaes/test_function.hpp>
 
@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
     CMAES<GeneralizedRosenbrockFunction> fo(f);
 
     double arr[i];
-    double result = fo.Optimize(func, arr);
+    double result = fo.Optimize(f, arr);
 
     BOOST_REQUIRE_SMALL(result, 1e-10);
     for (size_t j = 0; j < i; ++j)
