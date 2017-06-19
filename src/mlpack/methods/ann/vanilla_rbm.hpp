@@ -12,11 +12,10 @@
 #include <mlpack/core.hpp>
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/math/random.hpp>
+
 #include "layer/layer.hpp"
 #include "layer/base_layer.hpp"
-#include "visitor/weight_set_visitor.hpp"
-#include "visitor/forward_visitor.hpp"
-#include "visitor/weight_size_visitor.hpp"
+
 #include "activation_functions/softplus_function.hpp"
 #include "init_rules/gaussian_init.hpp"
 
@@ -68,7 +67,7 @@ class RBM
   * @param i Index of point to use for objective function evaluation.
   * 
   */
-  double Evaluate(const arma::mat& parameters, const size_t i);
+  double Evaluate(const arma::mat& parameters, arma::vec& orderFunction);
 
  /** 
   * This function calculates

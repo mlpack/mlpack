@@ -22,12 +22,14 @@ CDK<RBMType>::CDK(
   const size_t k,
   const double stepSize,
   const size_t maxIterations,
+  const size_t batchSize,
   const bool shuffle,
   const bool persistent) :
   rbm(rbm),
   k(k),
   stepSize(stepSize),
   maxIterations(maxIterations),
+  batchSize(batchSize),
   shuffle(shuffle),
   persistent(persistent)
   {
@@ -44,6 +46,7 @@ CDK<RBMType>::CDK(
   // This is used only if shuffle is true.
   arma::Col<size_t> visitationOrder;
   size_t currentFunction = 0;
+  arma::vec orderFunction(batchSize);
 
   if (shuffle)
   {
@@ -51,8 +54,11 @@ CDK<RBMType>::CDK(
         (numFunctions - 1), numFunctions));
   }
 
+
   // Now iterate!
   arma::mat gradient(iterate.n_rows, iterate.n_cols);
+  arma::mat cumgradient(iterate.n_rows, iterate.n_cols);
+
   for (size_t i = 1; i != maxIterations; ++i, ++currentFunction)
   {
     // Is this iteration the start of a sequence?
@@ -60,7 +66,6 @@ CDK<RBMType>::CDK(
     {
       if (shuffle) // Determine order of visitation.
         visitationOrder = arma::shuffle(visitationOrder);
-      
       currentFunction = 0;
     }
 
@@ -70,17 +75,20 @@ CDK<RBMType>::CDK(
     else
       rbm.Gradient(currentFunction, k, persistent,  gradient);
 
-    // Use the update policy to take a step.
-    iterate += stepSize * gradient;
-
-    // Now add that to the overall objective function.
-    if (shuffle)
+    if(i % batchSize == 0)
     {
-      rbm.Evaluate(iterate, visitationOrder[currentFunction]);
+      std::cout << rbm.Evaluate(iterate, orderFunction) << std::endl;
+      // Update the step
+      iterate += stepSize * cumgradient; 
+      cumgradient.zeros();
     }
     else
     {
-      rbm.Evaluate(iterate, currentFunction);
+      cumgradient += gradient;
+      if (shuffle)
+        orderFunction(i % batchSize - 1) = visitationOrder[currentFunction];
+      else
+        orderFunction(i % batchSize - 1) = currentFunction;
     }
     
   }

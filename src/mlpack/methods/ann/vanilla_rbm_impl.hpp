@@ -17,14 +17,12 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/math/random.hpp>
 
+
 #include "layer/layer.hpp"
 #include "layer/base_layer.hpp"
-#include "visitor/weight_set_visitor.hpp"
-#include "visitor/delete_visitor.hpp"
-#include "visitor/forward_visitor.hpp"
-#include "visitor/weight_size_visitor.hpp"
+
 #include "init_rules/gaussian_init.hpp"
-#include "visitor/reset_visitor.hpp"
+#include "activation_functions/softplus_function.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -79,6 +77,7 @@ void RBM<InitializationRuleType,
     Reset();
   }
 
+
   // Train the model.
   Timer::Start("rbm_optimization");
   optimizer.Optimize(parameter);
@@ -97,7 +96,10 @@ double RBM<InitializationRuleType,
            VisibleLayerType, 
            HiddenLayerType>::FreeEnergy(const arma::mat&& input)
 {
-  return visible.FreeEnergy(std::move(input));
+  arma::mat output;
+  visible.Forward(std::move(input), std::move(output));
+  SoftplusFunction::Fn(output, output);
+  return  -arma::dot(input, visible.Bias()) - arma::accu(output);
 }
 
 template<typename InitializationRuleType,
@@ -105,19 +107,22 @@ template<typename InitializationRuleType,
   typename HiddenLayerType>
 double RBM<InitializationRuleType, 
   VisibleLayerType, 
-  HiddenLayerType>::Evaluate(const arma::mat& /* parameters*/, const size_t i)
+  HiddenLayerType>::Evaluate(const arma::mat& /* parameters*/, arma::vec& orderFunction)
 {
   double freeEnergy, freeEnergyCorrupted;
-  arma::mat output, input(1,1);
-  // Do not use unsafe col predictor as we change the input
-  auto currentInput = predictors.col(i);
-  size_t idx = math::RandInt(0, visible.Bias().n_elem);
-  freeEnergy = FreeEnergy(std::move(currentInput)); 
-  currentInput(idx) =  1 - predictors(idx);
-  freeEnergyCorrupted = FreeEnergy(std::move(currentInput));
-  std::cout << log(LogisticFunction::Fn(freeEnergyCorrupted - freeEnergy)) * visible.Bias().n_elem << std::endl;
+  arma::Col<double> output(orderFunction.n_elem);
+  size_t corruptIdx = math::RandInt(0, visible.Bias().n_elem);
+  for(auto i: orderFunction)
+  {
+    // Do not use unsafe col predictor as we change the input
+    arma::vec currentInput = predictors.col(i);
+    freeEnergy = FreeEnergy(std::move(currentInput)); 
+    currentInput(corruptIdx) =  1 - predictors(corruptIdx);
+    freeEnergyCorrupted = FreeEnergy(std::move(currentInput));
+    output(i) = SoftplusFunction::Fn(freeEnergyCorrupted - freeEnergy + 1);
+  }
   // Concerned here for neumerical stability.
-  return log(LogisticFunction::Fn(freeEnergyCorrupted - freeEnergy)) * visible.Bias().n_elem;
+  return arma::accu(output) * visible.Bias().n_elem;
 }
 
 template<typename InitializationRuleType, typename VisibleLayerType, typename HiddenLayerType>
@@ -138,18 +143,24 @@ template<typename InitializationRuleType, typename VisibleLayerType, typename Hi
 void RBM<InitializationRuleType, VisibleLayerType, 
   HiddenLayerType>::Gibbs(arma::mat&& input, arma::mat&& negative_sample, size_t num_steps , bool persistence)
 {
-  arma::mat temp1;
+  arma::mat temp, temp1;
+  temp = input;
 
   if(persistence && !state.is_empty())
     input = state;
   
-  for(size_t j = 0; j < num_steps; j++)
+  for(size_t j = 0; j < num_steps - 1; j++)
   {
-    SampleHidden(std::move(input), std::move(temp1));
-    SampleVisible(std::move(temp1), std::move(input));
+    // Use probabilties for updation till the last step(section 3 hinton)
+    ForwardVisible(std::move(temp), std::move(temp1));
+    ForwardHidden(std::move(temp1), std::move(temp));
   }
 
-  state = input;
+  // Finall samples should use the sampling
+  SampleHidden(std::move(temp), std::move(temp1));
+  SampleVisible(std::move(temp1), std::move(temp));
+
+  state = temp;
   negative_sample = state;
 
 }

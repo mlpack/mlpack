@@ -13,7 +13,6 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
-#include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
 
 
 namespace mlpack{
@@ -44,7 +43,7 @@ class BinaryLayer
     * @param input Input data used for evaluating the specified function.
     * @param output Resulting output activation.
     */
-  void Forward(InputDataType&& input, OutputDataType&& output);
+  void Forward(const InputDataType&& input, OutputDataType&& output);
 
   /**
    * Sample the output given the input parameters
@@ -55,13 +54,6 @@ class BinaryLayer
    * @param output samples from the parameters
    */
   void Sample(InputDataType&& input, OutputDataType&& output);
-
-  /** 
-   * This function calculates
-   * the free energy of the model
-   * @param: input data point 
-   */
-  double FreeEnergy(const InputDataType&& input);
 
   //! Get the parameters.
   OutputDataType const& Parameters() const { return weights; }

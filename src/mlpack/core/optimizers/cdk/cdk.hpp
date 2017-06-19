@@ -42,6 +42,7 @@ class CDK
       const size_t k=1, 
       const double stepSize = 0.01,
       const size_t maxIterations = 100000,
+      const size_t batchSize = 20,
       const bool shuffle = true,
       const bool persistent = false);
 
@@ -90,13 +91,17 @@ class CDK
   RBMType& rbm;
 
   // k: The size of gibbs sampling chain
-  const bool k;
+  const size_t k;
 
   //! The step size for each example.
   const double stepSize;
 
   //! The maximum number of allowed iterations.
   const size_t maxIterations;
+
+  //! Batch size.
+  const size_t batchSize;
+
   //! Controls whether or not the individual functions are shuffled when
   //! iterating.
   const bool shuffle;

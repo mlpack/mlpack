@@ -13,7 +13,6 @@
 
 #include <mlpack/core/math/random.hpp>
 #include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
-#include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -49,7 +48,7 @@ void BinaryLayer<InputDataType, OutputDataType>::Reset()
 
 template<typename InputDataType, typename OutputDataType>
 void BinaryLayer<InputDataType, OutputDataType>::Forward(
-  InputDataType&& input, 
+  const InputDataType&& input, 
   OutputDataType&& output)
 { 
   if(Parameters().empty())
@@ -66,14 +65,6 @@ void BinaryLayer<InputDataType, OutputDataType>::Sample(InputDataType&& input, O
 {
     Forward(std::move(input), std::move(output));
     math::RandomBernoulli<>(std::move(output), std::move(output));
-}
-
-template<typename InputDataType, typename OutputDataType>
-double BinaryLayer<InputDataType, OutputDataType>::FreeEnergy(const InputDataType&& input)
-{
-  OutputDataType output;
-  output = SoftplusFunction::Fn(arma::accu(weight * input));
-  return arma::dot(input, ownBias) + arma::accu(output);
 }
 
 template<typename InputDataType, typename OutputDataType>
