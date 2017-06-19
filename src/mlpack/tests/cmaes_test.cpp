@@ -52,7 +52,7 @@ BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
     // Create the generalized Rosenbrock function.
     GeneralizedRosenbrockFunction f(i);
 
-    CMAES<GeneralizedRosenbrockFunction> fo(f);
+    CMAES<GeneralizedRosenbrockFunction, double> fo(f);
 
     double arr[i];
     double result = fo.Optimize(f, arr);
