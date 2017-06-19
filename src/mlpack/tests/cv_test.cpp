@@ -113,7 +113,7 @@ void CheckPredictionsType()
 BOOST_AUTO_TEST_CASE(PredictionsTypeTest)
 {
   CheckPredictionsType<LinearRegression, arma::rowvec>();
-  CheckPredictionsType<FFN<>, arma::mat>();
+  // CheckPredictionsType<FFN<>, arma::mat>();
 
   CheckPredictionsType<LogisticRegression<>, arma::Row<size_t>>();
   CheckPredictionsType<SoftmaxRegression<>, arma::Row<size_t>>();
