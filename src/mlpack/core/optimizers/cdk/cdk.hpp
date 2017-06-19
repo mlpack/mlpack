@@ -29,7 +29,7 @@ namespace optimization /** Artificial Neural Network. */ {
 template<typename RBMType>
 class CDK
 {
- public: 
+ public:
   /**
    * The default constructor for the CD-k aglorithm
    *
@@ -38,8 +38,8 @@ class CDK
    * @param: k: chain length of gibbs sampler
    * @param: persistent: PCD-k or CD-k
    */
-  CDK(RBMType& rbm, 
-      const size_t k=1, 
+  CDK(RBMType& rbm,
+      const size_t k=1,
       const double stepSize = 0.01,
       const size_t maxIterations = 100000,
       const size_t batchSize = 20,
@@ -111,9 +111,8 @@ class CDK
 
   // negative_sample: The negative sample
   arma::mat negative_sample;
-
 };
-} /*mlpack*/
-} /** Artificial Neural Network. */
+} // optimization
+} // mlpack
 #include "cdk_impl.hpp"
 #endif

@@ -23,26 +23,25 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InitializationRuleType,
-         typename VisibleLayerType,
-         typename HiddenLayerType>
+    typename VisibleLayerType,
+    typename HiddenLayerType>
 class RBM
 {
  public:
-
-  using NetworkType =RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>;
+  using NetworkType = RBM<InitializationRuleType, VisibleLayerType,
+      HiddenLayerType>;
 
   /* 
    * Intalise all the parameters of the network
    * using the intialise rule. 
    *
-   * @tparam: IntialiserType rule to intialise the parameters of the netwokr
+   * @tparam: IntialiserType rule to intialise the parameters of the network
    * @tparam: VisibleLayerType visible layer 
    * @tparam: HiddenLyaerType hidden layer
    */
-  RBM(arma::mat predictors,
-    InitializationRuleType initializeRule, 
-    VisibleLayerType visible, 
-    HiddenLayerType hidden);
+  RBM(arma::mat& predictors, InitializationRuleType initializeRule,
+      VisibleLayerType visible,
+      HiddenLayerType hidden);
 
   // Reset the network
   void Reset();
@@ -102,10 +101,10 @@ class RBM
   * @param num_step number of steps in gibbs sampling
   * @param persistnce start chain at input or the previous negative_sample
   */
-  void Gibbs(arma::mat&& input, 
-             arma::mat&& negative_sample, 
-             size_t num_steps = 1, 
-             bool persistence = false);
+  void Gibbs(arma::mat&& input,
+      arma::mat&& negative_sample,
+      size_t numSteps = 1,
+      bool persistence = false);
 
 
   /*
@@ -117,25 +116,23 @@ class RBM
    * @param persistence pcdk / not 
    * @param output store the gradients
    */
-  void Gradient(const size_t input, 
-                const size_t k, 
-                const bool persistence, 
-                arma::mat& output);
+  void Gradient(const size_t input,
+      const size_t k,
+      const bool persistence,
+      arma::mat& output);
 
   //! Return the number of separable functions (the number of predictor points).
   size_t NumFunctions() const { return numFunctions; }
 
   //! Return the initial point for the optimization.
-  const arma::mat& Parameters() const { return parameter; };
+  const arma::mat& Parameters() const { return parameter; }
   //! Modify the initial point for the optimization.
-  arma::mat& Parameters() { return parameter; };
-  
+  arma::mat& Parameters() { return parameter; }
   //! Serialize the model.
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-
   /* 
    * ForwardVisible layer compute the forward
    * activations given the visible layer
@@ -200,9 +197,8 @@ class RBM
   bool reset;
   //! Locally-stored number of functions varaiable
   size_t numFunctions;
-
 };
-} // artificial neural network
-} // mlpack
+} // namespace ann
+} // namespace mlpack
 #include "vanilla_rbm_impl.hpp"
 #endif

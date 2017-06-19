@@ -49,9 +49,11 @@ void BuildVanillaNetwork(MatType& trainData,
   arma::mat output;
   BinaryLayer<> visible(trainData.n_rows, hiddenLayerSize, 1);
   BinaryLayer<> hidden(hiddenLayerSize, trainData.n_rows, 0);
-  GaussianInitialization gaussian(0,0.1);
-  RBM<GaussianInitialization, BinaryLayer<>, BinaryLayer<> > model(trainData, gaussian,visible, hidden);
-  CDK<RBM<GaussianInitialization, BinaryLayer<>, BinaryLayer<> >> cdk(model, 100, 1e-6, 15 * trainData.n_cols, 20, true, true);
+  GaussianInitialization gaussian(0, 0.1);
+  RBM<GaussianInitialization, BinaryLayer<>, BinaryLayer<> > model(trainData,
+      gaussian, visible, hidden);
+  CDK<RBM<GaussianInitialization, BinaryLayer<>, BinaryLayer<> >> cdk(model,
+      100, 0.1, 15 * trainData.n_cols, 20, true, true);
   model.Train(trainData, cdk);
   std::cout << trainData.col(0).n_rows << std::endl;
   model.SampleHidden(std::move(trainData.col(0)), std::move(output));
@@ -70,7 +72,6 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
     dataset.col(i) /= norm(dataset.col(i), 2);
 
   // Vanilla neural net with logistic activation function.
-  BuildVanillaNetwork<>(dataset,784);
-
+  BuildVanillaNetwork<>(dataset, 784);
 }
 BOOST_AUTO_TEST_SUITE_END();

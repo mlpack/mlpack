@@ -930,7 +930,7 @@ BOOST_AUTO_TEST_CASE(SimpleBinaryRbmLayerTest)
 {
 
   arma::mat output, input, outputModule, inputModule;
-  // Network 1 
+  // Network 1
   BinaryLayer<> module(2, 4);
   module.Parameters().ones();
   module.Reset();
@@ -947,14 +947,12 @@ BOOST_AUTO_TEST_CASE(SimpleBinaryRbmLayerTest)
   input = arma::mat("0.5 0.5").t();
   inputModule = arma::mat("0.5 0.5").t();
   module.Forward(std::move(inputModule), std::move(outputModule));
-  
   linear.Forward(std::move(input), std::move(output));
   add.Forward(std::move(output), std::move(output));
   sigmoid.Forward(std::move(output), std::move(output));
-  
-  for(size_t i = 0; i < output.size(); i++)
+    
+  for (size_t i = 0; i < output.size(); i++)
     BOOST_REQUIRE_EQUAL(output(i), outputModule(i));
-
 }
 
 BOOST_AUTO_TEST_SUITE_END();

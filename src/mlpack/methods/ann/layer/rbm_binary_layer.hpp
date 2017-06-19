@@ -6,8 +6,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_BINARY_RBM_HPP
-#define MLPACK_METHODS_ANN_LAYER_BINARY_RBM_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_RBM_BINARY_LAYER_HPP
+#define MLPACK_METHODS_ANN_LAYER_RBM_BINARY_LAYER_HPP
 
 #include "layer_types.hpp"
 
@@ -31,7 +31,8 @@ class BinaryLayer
    * @param: inSize: num of visible neurons
    * @param: outSize: num of hidden neurons
    */
-  BinaryLayer(const size_t inSize, const size_t outSize, bool typeVisible = true);
+  BinaryLayer(const size_t inSize, const size_t outSize, 
+      bool typeVisible = true);
 
   // Reset the variables
   void Reset();
@@ -82,7 +83,7 @@ class BinaryLayer
   void Serialize(Archive& ar, const unsigned int /* version */);
 
 
-private:
+ private:
   //! Locally-stored number of input units.
   const size_t inSize;
 
@@ -109,11 +110,9 @@ private:
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-
 }; // class BinaryLayer
-} // namespace mlpack
 } // namespace ann
+} // namespace mlpack
 // Include implementation.
-#include "binary_rbm_impl.hpp"
-
+#include "rbm_binary_layer_impl.hpp"
 #endif
