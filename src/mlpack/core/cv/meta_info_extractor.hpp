@@ -38,7 +38,7 @@ template<typename MatType,
          bool NumClasses>
 struct TrainForm;
 
-template<typename PT, typename WT, typename...SignatureParams>
+template<typename PT, typename WT, typename... SignatureParams>
 struct TrainFormBase
 {
   using PredictionsType = PT;
@@ -47,7 +47,7 @@ struct TrainFormBase
   /* A minimum number of parameters that should be inferred */
   static const size_t MinNumberOfAdditionalArgs = 1;
 
-  template<typename Class, typename RT, typename...Ts>
+  template<typename Class, typename RT, typename... Ts>
   using Type = RT(Class::*)(SignatureParams..., Ts...);
 };
 
@@ -101,20 +101,20 @@ struct NotFoundMethodForm
  * combination succeeds, or when there are no more combinations.
  */
 template<typename MLAlgorithm,
-         template<class, template<class...> class, size_t> class...HMFs>
+         template<class, template<class...> class, size_t> class... HMFs>
 struct SelectMethodForm;
 
 template<typename MLAlgorithm,
          template<class, template<class...> class, size_t> class HasMethodForm,
-         template<class, template<class...> class, size_t> class...HMFs>
+         template<class, template<class...> class, size_t> class... HMFs>
 struct SelectMethodForm<MLAlgorithm, HasMethodForm, HMFs...>
 {
-  template<typename...Forms>
+  template<typename... Forms>
   class From
   {
     /* Declaration and definition of Implementation for the case when
      * RemainingForms are empty */
-    template<typename...RemainingForms>
+    template<typename... RemainingForms>
     struct Implementation
     {
       using NextSMF = SelectMethodForm<MLAlgorithm, HMFs...>;
@@ -122,7 +122,7 @@ struct SelectMethodForm<MLAlgorithm, HasMethodForm, HMFs...>
     };
 
     /* The case when there is at least one remaining form */
-    template<typename Form, typename...RemainingForms>
+    template<typename Form, typename... RemainingForms>
     struct Implementation<Form, RemainingForms...>
     {
       using Type = typename std::conditional<
@@ -140,7 +140,7 @@ struct SelectMethodForm<MLAlgorithm, HasMethodForm, HMFs...>
 template<typename MLAlgorithm>
 struct SelectMethodForm<MLAlgorithm>
 {
-  template<typename...Forms>
+  template<typename... Forms>
   struct From
   {
     using Type = NotFoundMethodForm;
@@ -207,12 +207,12 @@ class MetaInfoExtractor
   using WTF5 = TrainForm<MT, PT, WT, true, true>;
 
   /* A short alias for a type function that selects a right method form */
-  template<typename...MethodForms>
+  template<typename... MethodForms>
   using Select = typename SelectMethodForm<MLAlgorithm, HasTrain, HasTTrain,
       HasMTrain, HasMPTrain, HasMPWTrain>::template From<MethodForms...>;
 
   /* An indication whether a method form is selected */
-  template<typename...MFs /* MethodForms */>
+  template<typename... MFs /* MethodForms */>
   using Selects = typename std::conditional<
       std::is_same<typename Select<MFs...>::Type, NotFoundMethodForm>::value,
       std::false_type, std::true_type>::type;
