@@ -69,7 +69,6 @@ template<template<typename> class Optimizer>
 void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
     Train(const arma::mat& predictors, Optimizer<NetworkType>& optimizer)
 {
-
   numFunctions = predictors.n_cols;
   this->predictors = std::move(predictors);
 
@@ -107,7 +106,7 @@ double RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
   double freeEnergy, freeEnergyCorrupted;
   arma::Col<double> output(orderFunction.n_elem);
   size_t corruptIdx = math::RandInt(0, visible.Bias().n_elem);
-  for(auto i : orderFunction)
+  for (auto i : orderFunction)
   {
     // Do not use unsafe col predictor as we change the input
     arma::vec currentInput = predictors.col(i);
@@ -120,9 +119,9 @@ double RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
   return arma::accu(output) * visible.Bias().n_elem;
 }
 
-template<typename InitializationRuleType, typename VisibleLayerType, 
+template<typename InitializationRuleType, typename VisibleLayerType,
     typename HiddenLayerType>
-void RBM<InitializationRuleType, VisibleLayerType,HiddenLayerType>::
+void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
     SampleHidden(arma::mat&& input, arma::mat&& output)
 {
   visible.Sample(std::move(input), std::move(output));
@@ -130,7 +129,7 @@ void RBM<InitializationRuleType, VisibleLayerType,HiddenLayerType>::
 
 template<typename InitializationRuleType, typename VisibleLayerType,
     typename HiddenLayerType>
-void RBM<InitializationRuleType, VisibleLayerType,HiddenLayerType>::
+void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
     SampleVisible(arma::mat&& input, arma::mat&& output)
 {
   hidden.Sample(std::move(input), std::move(output));
@@ -138,7 +137,7 @@ void RBM<InitializationRuleType, VisibleLayerType,HiddenLayerType>::
 
 template<typename InitializationRuleType, typename VisibleLayerType,
     typename HiddenLayerType>
-void RBM<InitializationRuleType, VisibleLayerType,HiddenLayerType>::
+void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
     Gibbs(arma::mat&& input,
     arma::mat&& negativeSamples,
     size_t numSteps,
@@ -194,7 +193,7 @@ template<typename Archive>
 void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
     Serialize(Archive& ar, const unsigned int /* version */)
 {
-  // Todo: Save other parameters 
+  // Todo: Save other parameters
   ar & data::CreateNVP(parameter, "parameter");
 }
 } // namespace ann

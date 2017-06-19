@@ -39,7 +39,7 @@ class CDK
    * @param: persistent: PCD-k or CD-k
    */
   CDK(RBMType& rbm,
-      const size_t k=1,
+      const size_t k = 1,
       const double stepSize = 0.01,
       const size_t maxIterations = 100000,
       const size_t batchSize = 20,
@@ -112,7 +112,7 @@ class CDK
   // negative_sample: The negative sample
   arma::mat negative_sample;
 };
-} // optimization
-} // mlpack
+} // namespace optimization
+} // namespace mlpack
 #include "cdk_impl.hpp"
 #endif

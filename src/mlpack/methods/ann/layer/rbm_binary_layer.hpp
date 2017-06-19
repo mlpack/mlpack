@@ -31,7 +31,7 @@ class BinaryLayer
    * @param: inSize: num of visible neurons
    * @param: outSize: num of hidden neurons
    */
-  BinaryLayer(const size_t inSize, const size_t outSize, 
+  BinaryLayer(const size_t inSize, const size_t outSize,
       bool typeVisible = true);
 
   // Reset the variables

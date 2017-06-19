@@ -43,9 +43,9 @@ void BinaryLayer<InputDataType, OutputDataType>::Reset()
   else
   {
     weight = arma::mat(weights.memptr(), inSize, outSize, false, false);
-    ownBias = arma::mat(weights.memptr() + weight.n_elem, inSize, 1, 
+    ownBias = arma::mat(weights.memptr() + weight.n_elem, inSize, 1,
         false, false);
-    otherBias = arma::mat(weights.memptr() + weight.n_elem + inSize, outSize, 1, 
+    otherBias = arma::mat(weights.memptr() + weight.n_elem + inSize, outSize, 1,
         false, false);
   }
 }
@@ -65,7 +65,7 @@ void BinaryLayer<InputDataType, OutputDataType>::Forward(
 }
 
 template<typename InputDataType, typename OutputDataType>
-void BinaryLayer<InputDataType, OutputDataType>::Sample(InputDataType&& input, 
+void BinaryLayer<InputDataType, OutputDataType>::Sample(InputDataType&& input,
     OutputDataType&& output)
 {
   Forward(std::move(input), std::move(output));
