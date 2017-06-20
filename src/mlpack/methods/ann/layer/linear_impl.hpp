@@ -69,7 +69,8 @@ void Linear<InputDataType, OutputDataType>::Gradient(
 {
   gradient.submat(0, 0, weight.n_elem - 1, 0) = arma::vectorise(
       error * input.t());
-  gradient.submat(weight.n_elem, 0, gradient.n_elem - 1, 0) = arma::mean(error, 1);
+  gradient.submat(weight.n_elem, 0, gradient.n_elem - 1, 0) =
+      arma::mean(error, 1);
 }
 
 template<typename InputDataType, typename OutputDataType>

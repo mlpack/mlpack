@@ -149,8 +149,8 @@ void FFN<OutputLayerType, InitializationRuleType>::Forward(
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-    double FFN<OutputLayerType, InitializationRuleType>::Backward(
-        arma::mat targets, arma::mat& gradients)
+double FFN<OutputLayerType, InitializationRuleType>::Backward(
+    arma::mat targets, arma::mat& gradients)
 {
   currentTarget = std::move(targets);
   double res = outputLayer.Forward(std::move(boost::apply_visitor(

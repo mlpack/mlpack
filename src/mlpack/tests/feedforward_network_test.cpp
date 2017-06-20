@@ -186,7 +186,8 @@ BOOST_AUTO_TEST_CASE(ForwardBackwardTest)
     size_t batchStart = 0;
     while (batchStart < dataset.n_cols)
     {
-      size_t batchEnd = std::min(batchStart + batchSize, (size_t)dataset.n_cols);
+      size_t batchEnd = std::min(batchStart + batchSize,
+          (size_t)dataset.n_cols);
       arma::mat currentData = dataset.cols(batchStart, batchEnd - 1);
       arma::mat currentLabels = labels.cols(batchStart, batchEnd - 1);
       arma::mat currentResuls;
