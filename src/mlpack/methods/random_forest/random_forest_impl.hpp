@@ -293,7 +293,7 @@ void RandomForest<
 
   // Find maximum element after renormalizing probabilities.
   probabilities /= trees.size();
-  arma::uword maxIndex;
+  arma::uword maxIndex = 0;
   probabilities.max(maxIndex);
 
   // Set prediction.
@@ -354,6 +354,7 @@ void RandomForest<
 
   probabilities.set_size(trees[0].NumClasses(), data.n_cols);
   predictions.set_size(data.n_cols);
+  #pragma omp parallel for
   for (size_t i = 0; i < data.n_cols; ++i)
   {
     arma::vec probs = probabilities.unsafe_col(i);

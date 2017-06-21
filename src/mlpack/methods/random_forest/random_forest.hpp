@@ -26,8 +26,23 @@ class RandomForest
   typedef DecisionTree<FitnessFunction, NumericSplitType, CategoricalSplitType,
       DimensionSelectionType, ElemType> DecisionTreeType;
 
+  /**
+   * Construct the random forest without any training or specifying the number
+   * of trees.  Predict() will throw an exception until Train() is called.
+   */
   RandomForest() { }
 
+  /**
+   * Create a random forest, training on the given labeled training data with
+   * the given number of trees.  The minimumLeafSize parameter is given to each
+   * individual decision tree during tree building.
+   *
+   * @param dataset Dataset to train on.
+   * @param labels Labels for dataset.
+   * @param numClasses Number of classes in dataset.
+   * @param numTrees Number of trees in the forest.
+   * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
+   */
   template<typename MatType>
   RandomForest(const MatType& dataset,
                const arma::Row<size_t>& labels,
@@ -36,7 +51,17 @@ class RandomForest
                const size_t minimumLeafSize = 20);
 
   /**
-   * Construct the random forest on the given dataset with the given labels.
+   * Create a random forest, training on the given labeled training data with
+   * the given dataset info and the given number of trees.  The minimumLeafSize
+   * parameter is given to each individual decision tree during tree building.
+   * This constructor can be used to train on categorical data.
+   *
+   * @param dataset Dataset to train on.
+   * @param datasetInfo Dimension info for the dataset.
+   * @param labels Labels for dataset.
+   * @param numClasses Number of classes in dataset.
+   * @param numTrees Number of trees in the forest.
+   * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
    */
   template<typename MatType>
   RandomForest(const MatType& dataset,
@@ -46,6 +71,18 @@ class RandomForest
                const size_t numTrees = 50,
                const size_t minimumLeafSize = 20);
 
+  /**
+   * Create a random forest, training on the given weighted labeled training
+   * data with the given number of trees.  The minimumLeafSize parameter is
+   * given to each individual decision tree during tree building.
+   *
+   * @param dataset Dataset to train on.
+   * @param labels Labels for dataset.
+   * @param numClasses Number of classes in dataset.
+   * @param weights Weights (importances) of each point in the dataset.
+   * @param numTrees Number of trees in the forest.
+   * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
+   */
   template<typename MatType>
   RandomForest(const MatType& dataset,
                const arma::Row<size_t>& labels,
@@ -54,6 +91,20 @@ class RandomForest
                const size_t numTrees = 50,
                const size_t minimumLeafSize = 20);
 
+  /**
+   * Create a random forest, training on the given weighted labeled training
+   * data with the given dataset info and the given number of trees.  The
+   * minimumLeafSize parameter is given to each individual decision tree during
+   * tree building.  This can be used for categorical weighted training.
+   *
+   * @param dataset Dataset to train on.
+   * @param datasetInfo Dimension info for the dataset.
+   * @param labels Labels for dataset.
+   * @param numClasses Number of classes in dataset.
+   * @param weights Weights (importances) of each point in the dataset.
+   * @param numTrees Number of trees in the forest.
+   * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
+   */
   template<typename MatType>
   RandomForest(const MatType& dataset,
                const data::DatasetInfo& datasetInfo,
@@ -63,6 +114,17 @@ class RandomForest
                const size_t numTrees = 50,
                const size_t minimumLeafSize = 20);
 
+  /**
+   * Train the random forest on the given labeled training data with the given
+   * number of trees.  The minimumLeafSize parameter is given to each individual
+   * decision tree during tree building.
+   *
+   * @param dataset Dataset to train on.
+   * @param labels Labels for dataset.
+   * @param numClasses Number of classes in dataset.
+   * @param numTrees Number of trees in the forest.
+   * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
+   */
   template<typename MatType>
   void Train(const MatType& data,
              const arma::Row<size_t>& labels,
@@ -70,6 +132,19 @@ class RandomForest
              const size_t numTrees = 50,
              const size_t minimumLeafSize = 20);
 
+  /**
+   * Train the random forest on the given labeled training data with the given
+   * dataset info and the given number of trees.  The minimumLeafSize parameter
+   * is given to each individual decision tree during tree building.  This
+   * overload can be used to train on categorical data.
+   *
+   * @param dataset Dataset to train on.
+   * @param datasetInfo Dimension info for the dataset.
+   * @param labels Labels for dataset.
+   * @param numClasses Number of classes in dataset.
+   * @param numTrees Number of trees in the forest.
+   * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
+   */
   template<typename MatType>
   void Train(const MatType& data,
              const data::DatasetInfo& datasetInfo,
@@ -78,6 +153,18 @@ class RandomForest
              const size_t numTrees = 50,
              const size_t minimumLeafSize = 20);
 
+  /**
+   * Train the random forest on the given weighted labeled training data with
+   * the given number of trees.  The minimumLeafSize parameter is given to each
+   * individual decision tree during tree building.
+   *
+   * @param dataset Dataset to train on.
+   * @param labels Labels for dataset.
+   * @param numClasses Number of classes in dataset.
+   * @param weights Weights (importances) of each point in the dataset.
+   * @param numTrees Number of trees in the forest.
+   * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
+   */
   template<typename MatType>
   void Train(const MatType& data,
              const arma::Row<size_t>& labels,
@@ -86,6 +173,20 @@ class RandomForest
              const size_t numTrees = 50,
              const size_t minimumLeafSize = 20);
 
+  /**
+   * Train the random forest on the given weighted labeled training data with
+   * the given dataset info and the given number of trees.  The minimumLeafSize
+   * parameter is given to each individual decision tree during tree building.
+   * This overload can be used for categorical weighted training.
+   *
+   * @param dataset Dataset to train on.
+   * @param datasetInfo Dimension info for the dataset.
+   * @param labels Labels for dataset.
+   * @param numClasses Number of classes in dataset.
+   * @param weights Weights (importances) of each point in the dataset.
+   * @param numTrees Number of trees in the forest.
+   * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
+   */
   template<typename MatType>
   void Train(const MatType& data,
              const data::DatasetInfo& datasetInfo,
@@ -95,28 +196,65 @@ class RandomForest
              const size_t numTrees = 50,
              const size_t minimumLeafSize = 20);
 
+  /**
+   * Predict the class of the given point.  If the random forest has not been
+   * trained, this will throw an exception.
+   *
+   * @param point Point to be classified.
+   */
   template<typename VecType>
   size_t Classify(const VecType& point) const;
 
+  /**
+   * Predict the class of the given point and return the predicted class
+   * probabilities for each class.  If the random forest has not been trained,
+   * this will throw an exception.
+   *
+   * @param point Point to be classified.
+   * @param prediction size_t to store predicted class in.
+   * @param probabilities Output vector of class probabilities.
+   */
   template<typename VecType>
   void Classify(const VecType& point,
                 size_t& prediction,
                 arma::vec& probabilities) const;
 
+  /**
+   * Predict the classes of each point in the given dataset.  If the random
+   * forest has not been trained, this will throw an exception.
+   *
+   * @param data Dataset to be classified.
+   * @param predictions Output predictions for each point in the dataset.
+   */
   template<typename MatType>
   void Classify(const MatType& data,
                 arma::Row<size_t>& predictions) const;
 
+  /**
+   * Predict the classes of each point in the given dataset, also returning the
+   * predicted class probabilities for each point.  If the random forest has not
+   * been trained, this will throw an exception.
+   *
+   * @param data Dataset to be classified.
+   * @param predictions Output predictions for each point in the dataset.
+   * @param probabilities Output matrix of class probabilities for each point.
+   */
   template<typename MatType>
   void Classify(const MatType& data,
                 arma::Row<size_t>& predictions,
                 arma::mat& probabilities) const;
 
-  DecisionTreeType& Tree(const size_t i) { return trees[i]; }
+  //! Access a tree in the forest.
   const DecisionTreeType& Tree(const size_t i) const { return trees[i]; }
+  //! Modify a tree in the forest (be careful!).
+  DecisionTreeType& Tree(const size_t i) { return trees[i]; }
 
+  //! Get the number of trees in the forest.
   size_t NumTrees() const { return trees.size(); }
 
+  /**
+   * Serialize the random forest.
+   */
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
 
@@ -146,6 +284,7 @@ class RandomForest
              const size_t numTrees,
              const size_t minimumLeafSize);
 
+  //! The trees in the forest.
   std::vector<DecisionTreeType> trees;
 };
 
