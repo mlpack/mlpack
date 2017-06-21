@@ -42,7 +42,7 @@ class ResetCellVisitor : public boost::static_visitor<void>
   // the Reset() or Model() function.
   template<typename T>
   typename std::enable_if<
-      !HasResetCheck<T, void(T::*)()>::value, void>::type
+      !HasResetCellCheck<T, void(T::*)()>::value, void>::type
   ResetCell(T* layer) const;
 };
 

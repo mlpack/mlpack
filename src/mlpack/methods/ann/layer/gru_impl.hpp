@@ -65,7 +65,6 @@ GRU<InputDataType, OutputDataType>::GRU(
 
   prevError = arma::zeros<arma::mat>(3 * outSize, 1);
 
-  //outParameter.reserve(rho);
   outParameter.push_back(arma::zeros<arma::mat>(outSize, 1));
   
   prevOutput = outParameter.begin();
@@ -161,11 +160,12 @@ template<typename eT>
 void GRU<InputDataType, OutputDataType>::Backward(
   const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
-  if (backwardStep > 0)
+  if ((outParameter.size() - backwardStep  - 1) % rho != 0 && backwardStep != 0)
   {
     gy += boost::apply_visitor(deltaVisitor, output2GateModule);
   }
-  else if (backIterator == outParameter.end())
+  
+  if (backIterator == outParameter.end())
   {
     backIterator = --(--outParameter.end());
   }
@@ -244,11 +244,6 @@ void GRU<InputDataType, OutputDataType>::Backward(
       
   backwardStep++;
   backIterator--;
-  if (backwardStep == rho)
-  {
-    backwardStep = 0;
-    backIterator = outParameter.end();
-  }
 
   g = boost::apply_visitor(deltaVisitor, input2GateModule);
 }
@@ -260,7 +255,7 @@ void GRU<InputDataType, OutputDataType>::Gradient(
     arma::Mat<eT>&& /* error */,
     arma::Mat<eT>&& /* gradient */)
 {
-  if (gradientStep == 0 && gradIterator == outParameter.end())
+  if (gradIterator == outParameter.end())
   {
     gradIterator = --(--outParameter.end());
   }
@@ -278,16 +273,22 @@ void GRU<InputDataType, OutputDataType>::Gradient(
       std::move(prevError.submat(2 * outSize, 0, 3 * outSize - 1, 0))), 
       outputHidden2GateModule);
 
-  gradientStep++;
   gradIterator--;
-  if (gradientStep == rho)
-  {
-    gradientStep = 0;
-    outParameter.clear();
-    gradIterator = outParameter.end();
-    outParameter.push_back(arma::zeros<arma::mat>(outSize, 1));
-    prevOutput = outParameter.begin();
-  }
+}
+
+template<typename InputDataType, typename OutputDataType>
+void GRU<InputDataType, OutputDataType>::ResetCell()
+{
+  outParameter.clear();
+  outParameter.push_back(arma::zeros<arma::mat>(outSize, 1));
+  
+  prevOutput = outParameter.begin();
+  backIterator = outParameter.end();
+  gradIterator = outParameter.end();
+  
+  forwardStep = 0;
+  backwardStep = 0;
+  gradientStep = 0;
 }
 
 template<typename InputDataType, typename OutputDataType>

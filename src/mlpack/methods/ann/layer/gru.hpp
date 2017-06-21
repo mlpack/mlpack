@@ -95,6 +95,8 @@ class GRU
   void Gradient(arma::Mat<eT>&& input,
                 arma::Mat<eT>&& /* error */,
                 arma::Mat<eT>&& /* gradient */);
+                
+  void ResetCell();
 
   //! The value of the deterministic parameter.
   bool Deterministic() const { return deterministic; }
