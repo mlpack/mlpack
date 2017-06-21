@@ -389,7 +389,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionOptimizerTrainTest)
     labels[i] = size_t(1.0);
 
   L_BFGS lbfgs;
-  SoftmaxRegression sr(dataset, labels, 2, lbfgs, 0.01, true);
+  SoftmaxRegression sr(dataset, labels, 2, 0.01, true, std::move(lbfgs));
 
   L_BFGS lbfgs2;
   SoftmaxRegression sr2(dataset.n_rows, 2, true);

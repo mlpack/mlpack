@@ -81,25 +81,6 @@ class SoftmaxRegression
    * passed, which controls the amount of L2-regularization in the objective
    * function. By default, the model takes a small value.
    *
-   * @param data Input training features. Each column associate with one sample
-   * @param labels Labels associated with the feature data.
-   * @param inputSize Size of the input feature vector.
-   * @param numClasses Number of classes for classification.
-   * @param lambda L2-regularization constant.
-   * @param fitIntercept add intercept term or not.
-   */
-  SoftmaxRegression(const arma::mat& data,
-                    const arma::Row<size_t>& labels,
-                    const size_t numClasses,
-                    const double lambda = 0.0001,
-                    const bool fitIntercept = false);
-
-  /**
-   * Construct the SoftmaxRegression class with the provided data and labels.
-   * This will train the model. Optionally, the parameter 'lambda' can be
-   * passed, which controls the amount of L2-regularization in the objective
-   * function. By default, the model takes a small value.
-   *
    * @tparam OptimizerType Desired optimizer type.
    * @param data Input training features. Each column associate with one sample
    * @param labels Labels associated with the feature data.
@@ -113,9 +94,9 @@ class SoftmaxRegression
   SoftmaxRegression(const arma::mat& data,
                     const arma::Row<size_t>& labels,
                     const size_t numClasses,
-                    OptimizerType& optimizer,
                     const double lambda = 0.0001,
-                    const bool fitIntercept = false);
+                    const bool fitIntercept = false,
+                    OptimizerType optimizer = OptimizerType());
 
   /**
    * Predict the class labels for the provided feature points. The function
@@ -190,21 +171,7 @@ class SoftmaxRegression
 
   /**
    * Train the softmax regression with the given training data.
-   * 
-   * @tparam OptimizerType Desired optimizer type.
-   * @param data Input data with each column as one example.
-   * @param labels Labels associated with the feature data.
-   * @param numClasses Number of classes for classification.
-   * @return Objective value of the final point.
-   */
-  template<typename OptimizerType = mlpack::optimization::L_BFGS>
-  double Train(const arma::mat& data,
-               const arma::Row<size_t>& labels,
-               const size_t numClasses);
-
-  /**
-   * Train the softmax regression with the given training data.
-   * 
+   *
    * @tparam OptimizerType Desired optimizer type.
    * @param data Input data with each column as one example.
    * @param labels Labels associated with the feature data.
@@ -212,11 +179,11 @@ class SoftmaxRegression
    * @param optimizer Desired optimizer.
    * @return Objective value of the final point.
    */
-  template<typename OptimizerType>
+  template<typename OptimizerType = mlpack::optimization::L_BFGS>
   double Train(const arma::mat& data,
                const arma::Row<size_t>& labels,
                const size_t numClasses,
-               OptimizerType& optimizer);
+               OptimizerType optimizer = OptimizerType());
 
   //! Sets the number of classes.
   size_t& NumClasses() { return numClasses; }

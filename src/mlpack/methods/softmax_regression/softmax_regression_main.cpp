@@ -245,8 +245,8 @@ unique_ptr<Model> TrainSoftmax(const size_t maxIterations)
 
     const size_t numBasis = 5;
     optimization::L_BFGS optimizer(numBasis, maxIterations);
-    sm.reset(new Model(trainData, trainLabels, numClasses, optimizer,
-        CLI::GetParam<double>("lambda"), intercept));
+    sm.reset(new Model(trainData, trainLabels, numClasses,
+        CLI::GetParam<double>("lambda"), intercept, std::move(optimizer)));
   }
 
   return sm;

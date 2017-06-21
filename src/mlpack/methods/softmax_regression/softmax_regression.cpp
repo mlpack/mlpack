@@ -27,19 +27,6 @@ SoftmaxRegression(const size_t inputSize,
       parameters, inputSize, numClasses, fitIntercept);
 }
 
-SoftmaxRegression::SoftmaxRegression(
-    const arma::mat& data,
-    const arma::Row<size_t>& labels,
-    const size_t numClasses,
-    const double lambda,
-    const bool fitIntercept) :
-    numClasses(numClasses),
-    lambda(lambda),
-    fitIntercept(fitIntercept)
-{
-  Train(data, labels, numClasses);
-}
-
 void SoftmaxRegression::Predict(const arma::mat& testData,
                                 arma::Row<size_t>& predictions)
     const

@@ -23,9 +23,9 @@ SoftmaxRegression::SoftmaxRegression(
     const arma::mat& data,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
-    OptimizerType& optimizer,
     const double lambda,
-    const bool fitIntercept) :
+    const bool fitIntercept,
+    OptimizerType optimizer) :
     numClasses(numClasses),
     lambda(lambda),
     fitIntercept(fitIntercept)
@@ -44,17 +44,8 @@ size_t SoftmaxRegression::Classify(const VecType& point) const
 template<typename OptimizerType>
 double SoftmaxRegression::Train(const arma::mat& data,
                                 const arma::Row<size_t>& labels,
-                                const size_t numClasses)
-{
-  OptimizerType optimizer;
-  return Train(data, labels, numClasses, optimizer);
-}
-
-template<typename OptimizerType>
-double SoftmaxRegression::Train(const arma::mat& data,
-                                const arma::Row<size_t>& labels,
                                 const size_t numClasses,
-                                OptimizerType& optimizer)
+                                OptimizerType optimizer)
 {
   SoftmaxRegressionFunction regressor(data, labels, numClasses,
                                       lambda, fitIntercept);
