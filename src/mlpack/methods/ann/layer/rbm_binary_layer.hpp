@@ -82,6 +82,15 @@ class BinaryLayer
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
 
+  /**
+    * Calculate the pre-acivations and send to the hidden layer.
+    * input if of the format datapoint + bias(other layer)
+    *
+    * @param input Input data used for evaluating the specified function.
+    * @param output Resulting output from the linear function.
+    */
+  void ForwardPreActivation(const InputDataType&& input,
+      OutputDataType&& output);
 
  private:
   //! Locally-stored number of input units.

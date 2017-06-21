@@ -39,12 +39,10 @@ class CDK
    * @param: persistent: PCD-k or CD-k
    */
   CDK(RBMType& rbm,
-      const size_t k = 1,
       const double stepSize = 0.01,
       const size_t maxIterations = 100000,
       const size_t batchSize = 20,
-      const bool shuffle = true,
-      const bool persistent = false);
+      const bool shuffle = true);
 
   /**
    * Optimize the given function using cd-k.  The given
@@ -76,22 +74,9 @@ class CDK
   //! Modify whether or not the individual functions are shuffled.
   bool& Shuffle() { return shuffle; }
 
-  //! Get whether or not the individual functions are shuffled.
-  bool Persistent() const { return persistent; }
-  //! Modify whether or not the individual functions are shuffled.
-  bool& Persistent() { return persistent; }
-
-  //! Get whether or not the individual functions are shuffled.
-  bool NumSteps() const { return k; }
-  //! Modify whether or not the individual functions are shuffled.
-  bool& NumSteps() { return k; }
-
  private:
   //! The instantiated function.
   RBMType& rbm;
-
-  // k: The size of gibbs sampling chain
-  const size_t k;
 
   //! The step size for each example.
   const double stepSize;
@@ -105,9 +90,6 @@ class CDK
   //! Controls whether or not the individual functions are shuffled when
   //! iterating.
   const bool shuffle;
-
-  // Persistent: THe gibbs sampling using persistent state or not
-  const bool persistent;
 
   // negative_sample: The negative sample
   arma::mat negative_sample;

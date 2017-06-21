@@ -18,6 +18,7 @@
 
 #include "activation_functions/softplus_function.hpp"
 #include "init_rules/gaussian_init.hpp"
+#include "init_rules/random_init.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -75,7 +76,7 @@ class RBM
   * the free energy of the model
   * @param: input data point 
   */
-  double FreeEnergy(arma::mat&& input);
+  double FreeEnergy(arma::mat& input);
 
  /*
   * This functions samples the hidden
@@ -102,7 +103,7 @@ class RBM
   * @param input: input to the gibbs function
   * @param output: stores the negative sample
   */
-  void Gibbs(arma::mat input, arma::mat&& output);
+  void Gibbs(arma::mat input, arma::mat&& output, size_t steps = 1);
 
   /*
    * Calculates the gradients for the rbm network
@@ -117,6 +118,9 @@ class RBM
 
   //! Return the number of separable functions (the number of predictor points).
   size_t NumFunctions() const { return numFunctions; }
+
+  //! Return the number of separable functions (the number of predictor points).
+  size_t NumSteps() const { return numSteps; }
 
   //! Return the initial point for the optimization.
   const arma::mat& Parameters() const { return parameter; }
@@ -162,12 +166,11 @@ class RBM
    */
   void CalcGradient(arma::mat&& input, arma::mat&& output)
   {
-    arma::mat temp1;
-    ForwardVisible(std::move(input), std::move(temp1));
-    output = temp1 * input.t();
-    output.reshape(output.n_rows * output.n_cols, 1);
+    ForwardVisible(std::move(input), std::move(inputForward));
+    output = inputForward * input.t();
     // Weights, hidden bias, visible bias
-    output = arma::join_cols(arma::join_cols(output, temp1), input);
+    output = arma::join_cols(arma::join_cols(arma::vectorise(output),
+        inputForward), input);
   };
 
   // Parameter weights of the network
@@ -200,6 +203,8 @@ class RBM
   const bool persistence;
   //! Locally-stored reset variable
   bool reset;
+  //! Locally-stored Forward output variable for positive phase
+  arma::mat inputForward;
 };
 } // namespace ann
 } // namespace mlpack

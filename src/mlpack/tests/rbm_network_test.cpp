@@ -49,17 +49,17 @@ void BuildVanillaNetwork(MatType& trainData,
   arma::mat output;
   BinaryLayer<> visible(trainData.n_rows, hiddenLayerSize, 1);
   BinaryLayer<> hidden(hiddenLayerSize, trainData.n_rows, 0);
-  GaussianInitialization gaussian(0, 0.1);
-  RBM<GaussianInitialization, BinaryLayer<>, BinaryLayer<> > model(trainData,
-      gaussian, visible, hidden);
-  CDK<RBM<GaussianInitialization, BinaryLayer<>, BinaryLayer<> >> cdk(model,
-      10, 0.1, 1000, 20, true, true);
+  RandomInitialization random(-1e-2, +1e-2);
+  RBM<RandomInitialization, BinaryLayer<>, BinaryLayer<> > model(trainData,
+      random, visible, hidden, 15, true);
+  CDK<RBM<RandomInitialization, BinaryLayer<>, BinaryLayer<> >> cdk(model,
+      0.01, 15 * trainData.n_cols);
   model.Reset();
-  model.VisibleLayer().Bias().zeros();
-  model.HiddenLayer().Bias().zeros();
+  model.VisibleLayer().Bias().ones();
+  model.HiddenLayer().Bias().ones();
   // test the reset function
   model.Train(trainData, cdk);
-  model.SampleHidden(std::move(trainData.col(46)), std::move(output));
+  model.Gibbs(std::move(trainData.col(0)), std::move(output), 200);
   std::cout << output << std::endl;
 }
 
@@ -69,7 +69,7 @@ void BuildVanillaNetwork(MatType& trainData,
 BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
 {
   arma::mat dataset;
-  dataset.load("/Users/kris/Desktop/GsoC/mlpack/src/mlpack/tests/data/mnist_first250_training_4s_and_9s.arm");
+  dataset.load("mnist_first250_training_4s_and_9s.arm");
 
   // Normalize each point since these are images.
   for (size_t i = 0; i < dataset.n_cols; ++i)

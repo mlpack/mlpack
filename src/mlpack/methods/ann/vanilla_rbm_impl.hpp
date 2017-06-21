@@ -22,6 +22,7 @@
 #include "layer/base_layer.hpp"
 
 #include "init_rules/gaussian_init.hpp"
+#include "init_rules/random_init.hpp"
 #include "activation_functions/softplus_function.hpp"
 
 namespace mlpack {
@@ -94,12 +95,12 @@ void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
 template<typename InitializationRuleType, typename VisibleLayerType,
     typename HiddenLayerType>
 double RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
-    FreeEnergy(arma::mat&& input)
+    FreeEnergy(arma::mat& input)
 {
   arma::mat output;
-  visible.Forward(std::move(input), std::move(output));
+  visible.ForwardPreActivation(std::move(input), std::move(output));
   SoftplusFunction::Fn(output, output);
-  return  -arma::accu(output) -arma::dot(input, visible.Bias());
+  return  -(arma::accu(output) + arma::dot(input, visible.Bias()));
 }
 
 template<typename InitializationRuleType, typename VisibleLayerType,
@@ -107,16 +108,15 @@ template<typename InitializationRuleType, typename VisibleLayerType,
 double RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
     Evaluate(const arma::mat& /* parameters*/, const size_t i)
 {
-  
-    double freeEnergy, freeEnergyChain;
-    arma::mat negativeSample;
-    arma::vec currentInput = predictors.unsafe_col(i);
-    // Do not use unsafe col predictor as we change the input
-    freeEnergy = FreeEnergy(std::move(currentInput));
-    Gibbs(currentInput, std::move(negativeSample));
-    freeEnergyChain = FreeEnergy(std::move(negativeSample));
+  double freeEnergy, freeEnergyChain;
+  arma::mat negativeSample;
+  arma::vec currentInput = predictors.unsafe_col(i);
+  // Do not use unsafe col predictor as we change the input
+  freeEnergy = FreeEnergy(currentInput);
+  Gibbs(currentInput, std::move(negativeSample));
+  freeEnergyChain = FreeEnergy(negativeSample);
 
-    return arma::mean(freeEnergy) - arma::mean(freeEnergyChain);
+  return arma::mean(freeEnergy) - arma::mean(freeEnergyChain);
 }
 
 template<typename InitializationRuleType, typename VisibleLayerType,
@@ -138,12 +138,14 @@ void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
 template<typename InitializationRuleType, typename VisibleLayerType,
     typename HiddenLayerType>
 void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
-    Gibbs(arma::mat input, arma::mat&& output)
+    Gibbs(arma::mat input, arma::mat&& output, size_t steps)
 {
+  steps = (steps == 1)?this-> numSteps: steps;
   if (persistence && !state.is_empty())
     input = state;
-
-  for (size_t j = 0; j < numSteps; j++)
+  if (steps != this->numSteps)
+    std::cout << steps << std::endl;
+  for (size_t j = 0; j < steps; j++)
   {
     // Use probabilties for updation till the last step(section 3 hinton)
     SampleHidden(std::move(input), std::move(output));
@@ -168,7 +170,7 @@ void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
   // Collect the negative gradients
   CalcGradient(std::move(negativeSamples), std::move(negativeGradient));
 
-  output = positiveGradient - negativeGradient;
+  output = (positiveGradient - negativeGradient);
 }
 
 //! Serialize the model.

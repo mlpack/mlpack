@@ -19,18 +19,15 @@ namespace optimization /** Artificial Neural Network. */ {
 
 
 template<typename RBMType>
-CDK<RBMType>::CDK(RBMType& rbm, const size_t k, const double stepSize,
+CDK<RBMType>::CDK(RBMType& rbm, const double stepSize,
     const size_t maxIterations,
     const size_t batchSize,
-    const bool shuffle,
-    const bool persistent) :
+    const bool shuffle) :
     rbm(rbm),
-    k(k),
     stepSize(stepSize),
     maxIterations(maxIterations),
     batchSize(batchSize),
-    shuffle(shuffle),
-    persistent(persistent)
+    shuffle(shuffle)
     {}
 
 template<typename RBMType>
@@ -55,6 +52,7 @@ void CDK<RBMType>::Optimize(arma::mat& iterate)
   // Now iterate!
   arma::mat gradient(iterate.n_rows, iterate.n_cols);
   arma::mat cumgradient(iterate.n_rows, iterate.n_cols);
+  cumgradient.zeros();
 
   for (size_t i = 1; i != maxIterations; ++i, ++currentFunction)
   {
@@ -72,20 +70,25 @@ void CDK<RBMType>::Optimize(arma::mat& iterate)
     else
       rbm.Gradient(currentFunction, gradient);
 
+    cumgradient += gradient;
+
+    if (shuffle)
+      overallCost +=rbm.Evaluate(iterate, visitationOrder[currentFunction]);
+    else
+      overallCost +=rbm.Evaluate(iterate, currentFunction);
+
     if (i % batchSize == 0)
     {
-      std::cout << overallCost << std::endl;
       // Update the step
-      iterate -= stepSize * (cumgradient / batchSize);
+      iterate += stepSize * (cumgradient / batchSize);
       cumgradient.zeros();
     }
-    else
+
+    if (i % numFunctions == 0)
     {
-      cumgradient += gradient;
-      if (shuffle)
-        overallCost +=rbm.Evaluate(iterate, visitationOrder[currentFunction]);
-      else
-        overallCost +=rbm.Evaluate(iterate, currentFunction);
+      overallCost /= numFunctions;
+      std::cout << overallCost << std::endl;
+      overallCost = 0;
     }
   }
 

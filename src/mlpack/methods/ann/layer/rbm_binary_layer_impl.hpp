@@ -35,7 +35,7 @@ void BinaryLayer<InputDataType, OutputDataType>::Reset()
   if (typeVisible)
   {
     weight = arma::mat(weights.memptr(), outSize, inSize, false, false);
-    ownBias = arma::mat(weights.memptr() + weight.n_elem + outSize, 
+    ownBias = arma::mat(weights.memptr() + weight.n_elem + outSize,
         inSize, 1, false, false);
     otherBias = arma::mat(weights.memptr() + weight.n_elem , outSize,
         1, false, false);
@@ -52,16 +52,23 @@ void BinaryLayer<InputDataType, OutputDataType>::Reset()
 
 template<typename InputDataType, typename OutputDataType>
 void BinaryLayer<InputDataType, OutputDataType>::Forward(
-    const InputDataType&& input,
-    OutputDataType&& output)
+    const InputDataType&& input, OutputDataType&& output)
 {
-  if (Parameters().empty())
-    Reset();
+    ForwardPreActivation(std::move(input), std::move(output));
+    LogisticFunction::Fn(output, output);
+}
 
-  if (typeVisible)
-    LogisticFunction::Fn(weight * input + otherBias, output);
-  else
-    LogisticFunction::Fn(weight.t() * input + otherBias, output);
+template<typename InputDataType, typename OutputDataType>
+void BinaryLayer<InputDataType, OutputDataType>::ForwardPreActivation(
+    const InputDataType&& input, OutputDataType&& output)
+{
+    if (Parameters().empty())
+      Reset();
+
+    if (typeVisible)
+      output = weight * input + otherBias;
+    else
+      output = weight.t() * input + otherBias;
 }
 
 template<typename InputDataType, typename OutputDataType>

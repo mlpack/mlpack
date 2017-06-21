@@ -945,7 +945,6 @@ BOOST_AUTO_TEST_CASE(SimpleBinaryRbmLayerTest)
   // Check reset function
   BOOST_REQUIRE_EQUAL(module.Bias().size(), 2);
   BOOST_REQUIRE_EQUAL(arma::accu(module.Bias() - arma::ones(2)), 0);
-  
 
   // Test the Forward function.
   input = arma::vec("0.5 0.5");
