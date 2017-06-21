@@ -44,7 +44,7 @@ BOOST_AUTO_TEST_CASE(CyclicalResetTest)
       double epochStepSize = stepSize;
 
       CyclicalDecay cyclicalDecay(restart, double(mult), stepSize);
-      cyclicalDecay.EpochBatches() = (double)1000 / 10;
+      cyclicalDecay.EpochBatches() = (double) 1000 / 10;
 
       // Create all restart epochs.
       arma::Col<size_t> nextRestart(1000 / 10 /  mult);

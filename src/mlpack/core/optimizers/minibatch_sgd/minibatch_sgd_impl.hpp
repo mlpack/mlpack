@@ -46,7 +46,7 @@ template<
     typename UpdatePolicyType,
     typename DecayPolicyType
 >
-template <typename DecomposableFunctionType>
+template<typename DecomposableFunctionType>
 double MiniBatchSGDType<
     UpdatePolicyType,
     DecayPolicyType

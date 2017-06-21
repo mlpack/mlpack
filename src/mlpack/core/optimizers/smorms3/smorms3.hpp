@@ -87,6 +87,7 @@ class SMORMS3
    * be modified to store the finishing point of the algorithm, and the final
    * objective value is returned.
    *
+   * @tparam DecomposableFunctionType Type of the function to be optimized.
    * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.

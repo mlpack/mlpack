@@ -38,8 +38,8 @@ SGD<UpdatePolicyType>::SGD(
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
-template <typename UpdatePolicyType>
-template <typename DecomposableFunctionType>
+template<typename UpdatePolicyType>
+template<typename DecomposableFunctionType>
 double SGD<UpdatePolicyType>::Optimize(
     DecomposableFunctionType& function,
     arma::mat& iterate)

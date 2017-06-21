@@ -65,7 +65,7 @@ namespace optimization {
  *
  * @tparam UpdateRule Adam optimizer update rule to be used.
  */
-template <typename UpdateRule = AdamUpdate>
+template<typename UpdateRule = AdamUpdate>
 class AdamType
 {
  public:
@@ -101,11 +101,12 @@ class AdamType
    * modified to store the finishing point of the algorithm, and the final
    * objective value is returned.
    *
+   * @tparam DecomposableFunctionType Type of the function to optimize.
    * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
-  template <typename DecomposableFunctionType>
+  template<typename DecomposableFunctionType>
   double Optimize(DecomposableFunctionType& function, arma::mat& iterate)
   {
     return optimizer.Optimize(function, iterate);

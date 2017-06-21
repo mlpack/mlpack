@@ -122,7 +122,7 @@ class LogisticRegression
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
    */
-  template <typename OptimizerType = mlpack::optimization::L_BFGS>
+  template<typename OptimizerType = mlpack::optimization::L_BFGS>
   void Train(const MatType& predictors,
              const arma::Row<size_t>& responses);
 
@@ -142,7 +142,7 @@ class LogisticRegression
    * @param responses Outputs results from input training variables.
    * @param optimizer Instantiated optimizer with instantiated error function.
    */
-  template <typename OptimizerType>
+  template<typename OptimizerType>
   void Train(const MatType& predictors,
              const arma::Row<size_t>& responses,
              OptimizerType& optimizer);

@@ -109,7 +109,8 @@ namespace optimization {
    * affects only a small number of parameters per example, and thus the normal
    * abstraction does not work as fast as we might like it to.
    */
-  template <> template <>
+  template<>
+  template<>
   double StandardSGD::Optimize(
       mlpack::svd::RegularizedSVDFunction& function,
       arma::mat& parameters);

@@ -18,7 +18,7 @@
 namespace mlpack {
 namespace optimization {
 
-template <typename UpdatePolicyType>
+template<typename UpdatePolicyType>
 SGDR<UpdatePolicyType>::SGDR(
     const size_t epochRestart,
     const double multFactor,
@@ -43,8 +43,8 @@ SGDR<UpdatePolicyType>::SGDR(
   /* Nothing to do here */
 }
 
-template <typename UpdatePolicyType>
-template <typename DecomposableFunctionType>
+template<typename UpdatePolicyType>
+template<typename DecomposableFunctionType>
 double SGDR<UpdatePolicyType>::Optimize(
     DecomposableFunctionType& function,
     arma::mat& iterate)

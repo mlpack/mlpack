@@ -44,7 +44,7 @@ namespace optimization {
  *         process. By default the momentum update policy
  *         (see mlpack::optimization::MomentumUpdate) is used.
  */
-template <typename UpdatePolicyType = MomentumUpdate>
+template<typename UpdatePolicyType = MomentumUpdate>
 class SGDR
 {
  public:
@@ -83,11 +83,12 @@ class SGDR
    * will be modified to store the finishing point of the algorithm, and the
    * final objective value is returned.
    *
+   * @tparam DecomposableFunctionType Type of the function to be optimized.
    * @param function Function to be optimized.
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
-  template <typename DecomposableFunctionType>
+  template<typename DecomposableFunctionType>
   double Optimize(DecomposableFunctionType& function, arma::mat& iterate);
 
   //! Get the batch size.
