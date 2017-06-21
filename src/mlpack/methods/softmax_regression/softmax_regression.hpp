@@ -59,7 +59,6 @@ namespace regression {
  * regressor2.Classify(test_data, predictions2);
  * @endcode
  */
-template<typename OptimizerType = mlpack::optimization::L_BFGS>
 class SoftmaxRegression
 {
  public:
@@ -101,6 +100,7 @@ class SoftmaxRegression
    * passed, which controls the amount of L2-regularization in the objective
    * function. By default, the model takes a small value.
    *
+   * @tparam OptimizerType Desired optimizer type.
    * @param data Input training features. Each column associate with one sample
    * @param labels Labels associated with the feature data.
    * @param inputSize Size of the input feature vector.
@@ -109,6 +109,7 @@ class SoftmaxRegression
    * @param lambda L2-regularization constant.
    * @param fitIntercept add intercept term or not.
    */
+  template<typename OptimizerType = mlpack::optimization::L_BFGS>
   SoftmaxRegression(const arma::mat& data,
                     const arma::Row<size_t>& labels,
                     const size_t numClasses,
@@ -189,23 +190,29 @@ class SoftmaxRegression
 
   /**
    * Train the softmax regression with the given training data.
+   * 
+   * @tparam OptimizerType Desired optimizer type.
    * @param data Input data with each column as one example.
    * @param labels Labels associated with the feature data.
    * @param numClasses Number of classes for classification.
    * @return Objective value of the final point.
    */
+  template<typename OptimizerType = mlpack::optimization::L_BFGS>
   double Train(const arma::mat& data,
                const arma::Row<size_t>& labels,
                const size_t numClasses);
 
   /**
    * Train the softmax regression with the given training data.
+   * 
+   * @tparam OptimizerType Desired optimizer type.
    * @param data Input data with each column as one example.
    * @param labels Labels associated with the feature data.
    * @param numClasses Number of classes for classification.
    * @param optimizer Desired optimizer.
    * @return Objective value of the final point.
    */
+  template<typename OptimizerType>
   double Train(const arma::mat& data,
                const arma::Row<size_t>& labels,
                const size_t numClasses,
