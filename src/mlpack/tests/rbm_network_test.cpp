@@ -53,10 +53,14 @@ void BuildVanillaNetwork(MatType& trainData,
   RBM<GaussianInitialization, BinaryLayer<>, BinaryLayer<> > model(trainData,
       gaussian, visible, hidden);
   CDK<RBM<GaussianInitialization, BinaryLayer<>, BinaryLayer<> >> cdk(model,
-      100, 0.1, 15 * trainData.n_cols, 20, true, true);
+      10, 0.1, 1000, 20, true, true);
+  model.Reset();
+  model.VisibleLayer().Bias().zeros();
+  model.HiddenLayer().Bias().zeros();
+  // test the reset function
   model.Train(trainData, cdk);
-  std::cout << trainData.col(0).n_rows << std::endl;
-  model.SampleHidden(std::move(trainData.col(0)), std::move(output));
+  model.SampleHidden(std::move(trainData.col(46)), std::move(output));
+  std::cout << output << std::endl;
 }
 
 /**
@@ -65,13 +69,11 @@ void BuildVanillaNetwork(MatType& trainData,
 BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
 {
   arma::mat dataset;
-  dataset.load("mnist_first250_training_4s_and_9s.arm");
+  dataset.load("/Users/kris/Desktop/GsoC/mlpack/src/mlpack/tests/data/mnist_first250_training_4s_and_9s.arm");
 
   // Normalize each point since these are images.
   for (size_t i = 0; i < dataset.n_cols; ++i)
     dataset.col(i) /= norm(dataset.col(i), 2);
-
-  // Vanilla neural net with logistic activation function.
-  BuildVanillaNetwork<>(dataset, 784);
+  BuildVanillaNetwork<>(dataset, 500);
 }
 BOOST_AUTO_TEST_SUITE_END();

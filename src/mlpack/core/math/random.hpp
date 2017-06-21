@@ -66,30 +66,15 @@ inline double Random(const double lo, const double hi)
 }
 
 /**
- * Generates a binomial random number in the specified range.
+ * Generates a 0/1 specified by the input.
  */
-inline double RandomBernoulli(const int input)
+inline double RandomBernoulli(const double input)
 {
-  if (Random() > input)
+  if (Random() < input)
     return 1;
   else
     return 0;
 }
-
-/**
- * Generates a binomial random number in the specified range.
- */
-template<typename InputDatatype, typename OutputDatatype>
-inline void RandomBernoulli(const InputDatatype&& input,
-                            OutputDatatype&& output)
-{
-  for (size_t i = 0; i < input.size(); i++)
-    if (Random() > input(i))
-      output(i) = 1;
-    else
-      output(i) = 0;
-}
-
 
 /**
  * Generates a uniform random integer.

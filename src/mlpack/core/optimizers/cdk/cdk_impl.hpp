@@ -31,27 +31,26 @@ CDK<RBMType>::CDK(RBMType& rbm, const size_t k, const double stepSize,
     batchSize(batchSize),
     shuffle(shuffle),
     persistent(persistent)
-    {
-      // Nothing to do here
-    }
+    {}
 
 template<typename RBMType>
 void CDK<RBMType>::Optimize(arma::mat& iterate)
 {
-// Find the number of functions to use.
-const size_t numFunctions = rbm.NumFunctions();
+  // Find the number of functions to use.
+  const size_t numFunctions = rbm.NumFunctions();
 
-// This is used only if shuffle is true.
-arma::Col<size_t> visitationOrder;
-size_t currentFunction = 0;
-arma::vec orderFunction(batchSize);
+  // Batch cost
+  double overallCost = 0;
 
-if (shuffle)
-{
-  visitationOrder = arma::shuffle(arma::linspace<arma::Col<size_t>>(0,
-      (numFunctions - 1), numFunctions));
-}
+  // This is used only if shuffle is true.
+  arma::Col<size_t> visitationOrder;
+  size_t currentFunction = 0;
 
+  if (shuffle)
+  {
+    visitationOrder = arma::shuffle(arma::linspace<arma::Col<size_t>>(0,
+        (numFunctions - 1), numFunctions));
+  }
 
   // Now iterate!
   arma::mat gradient(iterate.n_rows, iterate.n_cols);
@@ -69,24 +68,24 @@ if (shuffle)
 
     // Evaluate the gradient for this iteration.
     if (shuffle)
-      rbm.Gradient(visitationOrder[currentFunction], k, persistent, gradient);
+      rbm.Gradient(visitationOrder[currentFunction], gradient);
     else
-      rbm.Gradient(currentFunction, k, persistent,  gradient);
+      rbm.Gradient(currentFunction, gradient);
 
     if (i % batchSize == 0)
     {
-      std::cout << rbm.Evaluate(iterate, orderFunction) << std::endl;
+      std::cout << overallCost << std::endl;
       // Update the step
-      iterate += stepSize * cumgradient;
+      iterate -= stepSize * (cumgradient / batchSize);
       cumgradient.zeros();
     }
     else
     {
       cumgradient += gradient;
       if (shuffle)
-        orderFunction(i % batchSize - 1) = visitationOrder[currentFunction];
+        overallCost +=rbm.Evaluate(iterate, visitationOrder[currentFunction]);
       else
-        orderFunction(i % batchSize - 1) = currentFunction;
+        overallCost +=rbm.Evaluate(iterate, currentFunction);
     }
   }
 

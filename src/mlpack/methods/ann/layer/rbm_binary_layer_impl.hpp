@@ -35,9 +35,9 @@ void BinaryLayer<InputDataType, OutputDataType>::Reset()
   if (typeVisible)
   {
     weight = arma::mat(weights.memptr(), outSize, inSize, false, false);
-    ownBias = arma::mat(weights.memptr() + weight.n_elem, inSize, 1, false,
-        false);
-    otherBias = arma::mat(weights.memptr() + weight.n_elem + inSize, outSize,
+    ownBias = arma::mat(weights.memptr() + weight.n_elem + outSize, 
+        inSize, 1, false, false);
+    otherBias = arma::mat(weights.memptr() + weight.n_elem , outSize,
         1, false, false);
   }
   else
@@ -69,7 +69,8 @@ void BinaryLayer<InputDataType, OutputDataType>::Sample(InputDataType&& input,
     OutputDataType&& output)
 {
   Forward(std::move(input), std::move(output));
-  math::RandomBernoulli<>(std::move(output), std::move(output));
+  for (size_t i = 0; i < output.n_elem; i++)
+    output(i) = math::RandomBernoulli(output(i));
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -80,6 +81,7 @@ void BinaryLayer<InputDataType, OutputDataType>::Serialize(
   ar & data::CreateNVP(weights, "weights");
   ar & data::CreateNVP(inSize, "inSize");
   ar & data::CreateNVP(outSize, "outSize");
+  ar & data::CreateNVP(typeVisible, "typeVisible");
 }
 } // namespace ann
 } // namespace mlpack

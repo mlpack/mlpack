@@ -39,9 +39,11 @@ class RBM
    * @tparam: VisibleLayerType visible layer 
    * @tparam: HiddenLyaerType hidden layer
    */
-  RBM(arma::mat& predictors, InitializationRuleType initializeRule,
+  RBM(arma::mat predictors, InitializationRuleType initializeRule,
       VisibleLayerType visible,
-      HiddenLayerType hidden);
+      HiddenLayerType hidden,
+      const size_t numSteps = 1,
+      const bool persistence = false);
 
   // Reset the network
   void Reset();
@@ -66,14 +68,14 @@ class RBM
   * @param i Index of point to use for objective function evaluation.
   * 
   */
-  double Evaluate(const arma::mat& parameters, arma::vec& orderFunction);
+  double Evaluate(const arma::mat& parameters, const size_t i);
 
  /** 
   * This function calculates
   * the free energy of the model
   * @param: input data point 
   */
-  double FreeEnergy(const arma::mat&& input);
+  double FreeEnergy(arma::mat&& input);
 
  /*
   * This functions samples the hidden
@@ -97,15 +99,10 @@ class RBM
   * This function does the k-step
   * gibbs sampling.
   *
-  * @param negative_sample: stores the negative sample
-  * @param num_step number of steps in gibbs sampling
-  * @param persistnce start chain at input or the previous negative_sample
+  * @param input: input to the gibbs function
+  * @param output: stores the negative sample
   */
-  void Gibbs(arma::mat&& input,
-      arma::mat&& negative_sample,
-      size_t numSteps = 1,
-      bool persistence = false);
-
+  void Gibbs(arma::mat input, arma::mat&& output);
 
   /*
    * Calculates the gradients for the rbm network
@@ -116,10 +113,7 @@ class RBM
    * @param persistence pcdk / not 
    * @param output store the gradients
    */
-  void Gradient(const size_t input,
-      const size_t k,
-      const bool persistence,
-      arma::mat& output);
+  void Gradient(const size_t input, arma::mat& output);
 
   //! Return the number of separable functions (the number of predictor points).
   size_t NumFunctions() const { return numFunctions; }
@@ -128,6 +122,10 @@ class RBM
   const arma::mat& Parameters() const { return parameter; }
   //! Modify the initial point for the optimization.
   arma::mat& Parameters() { return parameter; }
+
+  VisibleLayerType& VisibleLayer() { return visible; }
+  HiddenLayerType& HiddenLayer() { return hidden; }
+
   //! Serialize the model.
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
@@ -164,11 +162,12 @@ class RBM
    */
   void CalcGradient(arma::mat&& input, arma::mat&& output)
   {
-    arma::mat temp1, temp2;
+    arma::mat temp1;
     ForwardVisible(std::move(input), std::move(temp1));
-    temp2 = temp1 * input.t();
-    temp2.reshape(temp2.n_rows * temp2.n_cols, 1);
-    output = arma::join_cols(arma::join_cols(temp2, temp1), input);
+    output = temp1 * input.t();
+    output.reshape(output.n_rows * output.n_cols, 1);
+    // Weights, hidden bias, visible bias
+    output = arma::join_cols(arma::join_cols(output, temp1), input);
   };
 
   // Parameter weights of the network
@@ -193,10 +192,14 @@ class RBM
   SoftplusFunction softplus;
   //! Locally-stored delete visitor.
   arma::mat state;
-  //! Locally-stored reset variable
-  bool reset;
   //! Locally-stored number of functions varaiable
   size_t numFunctions;
+  //! Locally-stored number of steps in gibbs sampling
+  const size_t numSteps;
+  //! Locally-stored persistent cd-k or not
+  const bool persistence;
+  //! Locally-stored reset variable
+  bool reset;
 };
 } // namespace ann
 } // namespace mlpack

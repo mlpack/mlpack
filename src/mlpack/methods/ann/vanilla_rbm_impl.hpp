@@ -32,13 +32,17 @@ namespace ann /** Artificial Neural Network. */ {
 template<typename InitializationRuleType, typename VisibleLayerType,
     typename HiddenLayerType>
 RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::RBM(
-    arma::mat& predictors,
+    arma::mat predictors,
     InitializationRuleType initializeRule,
     VisibleLayerType visible,
-    HiddenLayerType hidden):
+    HiddenLayerType hidden,
+    const size_t numSteps,
+    const bool persistence):
     visible(visible),
     hidden(hidden),
     initializeRule(initializeRule),
+    numSteps(numSteps),
+    persistence(persistence),
     reset(false)
 {
   numFunctions = predictors.n_cols;
@@ -90,33 +94,29 @@ void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
 template<typename InitializationRuleType, typename VisibleLayerType,
     typename HiddenLayerType>
 double RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
-    FreeEnergy(const arma::mat&& input)
+    FreeEnergy(arma::mat&& input)
 {
   arma::mat output;
   visible.Forward(std::move(input), std::move(output));
   SoftplusFunction::Fn(output, output);
-  return  -arma::dot(input, visible.Bias()) - arma::accu(output);
+  return  -arma::accu(output) -arma::dot(input, visible.Bias());
 }
 
 template<typename InitializationRuleType, typename VisibleLayerType,
     typename HiddenLayerType>
 double RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
-    Evaluate(const arma::mat& /* parameters*/, arma::vec& orderFunction)
+    Evaluate(const arma::mat& /* parameters*/, const size_t i)
 {
-  double freeEnergy, freeEnergyCorrupted;
-  arma::Col<double> output(orderFunction.n_elem);
-  size_t corruptIdx = math::RandInt(0, visible.Bias().n_elem);
-  for (auto i : orderFunction)
-  {
+  
+    double freeEnergy, freeEnergyChain;
+    arma::mat negativeSample;
+    arma::vec currentInput = predictors.unsafe_col(i);
     // Do not use unsafe col predictor as we change the input
-    arma::vec currentInput = predictors.col(i);
     freeEnergy = FreeEnergy(std::move(currentInput));
-    currentInput(corruptIdx) =  1 - predictors(corruptIdx);
-    freeEnergyCorrupted = FreeEnergy(std::move(currentInput));
-    output(i) = SoftplusFunction::Fn(freeEnergyCorrupted - freeEnergy + 1);
-  }
-  // Concerned here for neumerical stability.
-  return arma::accu(output) * visible.Bias().n_elem;
+    Gibbs(currentInput, std::move(negativeSample));
+    freeEnergyChain = FreeEnergy(std::move(negativeSample));
+
+    return arma::mean(freeEnergy) - arma::mean(freeEnergyChain);
 }
 
 template<typename InitializationRuleType, typename VisibleLayerType,
@@ -138,47 +138,32 @@ void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
 template<typename InitializationRuleType, typename VisibleLayerType,
     typename HiddenLayerType>
 void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
-    Gibbs(arma::mat&& input,
-    arma::mat&& negativeSamples,
-    size_t numSteps,
-    bool persistence)
+    Gibbs(arma::mat input, arma::mat&& output)
 {
-  arma::mat temp, temp1;
-  temp = input;
-
   if (persistence && !state.is_empty())
     input = state;
 
-  for (size_t j = 0; j < numSteps - 1; j++)
+  for (size_t j = 0; j < numSteps; j++)
   {
     // Use probabilties for updation till the last step(section 3 hinton)
-    ForwardVisible(std::move(temp), std::move(temp1));
-    ForwardHidden(std::move(temp1), std::move(temp));
+    SampleHidden(std::move(input), std::move(output));
+    SampleVisible(std::move(output), std::move(input));
   }
-
-  // Finall samples should use the sampling
-  SampleHidden(std::move(temp), std::move(temp1));
-  SampleVisible(std::move(temp1), std::move(temp));
-
-  state = temp;
-  negativeSamples = state;
+  output = input;
+  state = input;
 }
 
 template<typename InitializationRuleType, typename VisibleLayerType,
     typename HiddenLayerType>
 void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
-    Gradient(const size_t input,
-        const size_t k,
-        const bool persistence,
-        arma::mat& output)
+    Gradient(const size_t input, arma::mat& output)
 {
   arma::mat positiveGradient, negativeGradient, negativeSamples;
   // Collect the positive gradients
   CalcGradient(std::move(predictors.col(input)), std::move(positiveGradient));
 
   // Collect the negative samples
-  Gibbs(std::move(predictors.col(input)), std::move(negativeSamples), k,
-      persistence);
+  Gibbs(std::move(predictors.col(input)), std::move(negativeSamples));
 
   // Collect the negative gradients
   CalcGradient(std::move(negativeSamples), std::move(negativeGradient));
@@ -193,8 +178,23 @@ template<typename Archive>
 void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
     Serialize(Archive& ar, const unsigned int /* version */)
 {
-  // Todo: Save other parameters
   ar & data::CreateNVP(parameter, "parameter");
+
+  // If we are loading, we need to initialize the weights.
+  if (Archive::is_loading::value)
+  {
+    reset = false;
+
+    size_t weight = 0;
+    weight+= visible.Parameters().n_elem;
+    visible.Parameters() = arma::mat(parameter.memptr(), weight, 1, false,
+       false);
+    hidden.Parameters() = arma::mat(parameter.memptr(), weight, 1, false,
+        false);
+
+    visible.Reset();
+    hidden.Reset();
+  }
 }
 } // namespace ann
 } // namespace mlpack

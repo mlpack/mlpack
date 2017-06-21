@@ -99,7 +99,7 @@ class BinaryLayer
   //! Locally-stored weight paramters.
   OutputDataType weight;
 
-  //! Locally-stored bias paramters .
+  //! Locally-stored bias paramters.
   OutputDataType ownBias;
 
   //! Locally-stored bias parmaeters
