@@ -53,27 +53,37 @@ class HardCodedCopyModel {
  public:
   HardCodedCopyModel() : nRepeats(1) {}
   void Train(
-      arma::field<arma::colvec>& predictors,
-      arma::field<arma::colvec>& labels) {
+      arma::field<arma::mat>& predictors,
+      arma::field<arma::mat>& labels) {
     auto input = predictors.at(0);
     auto output = labels.at(0);
-    nRepeats = output.n_elem / input.n_elem;
-  }
-  void Predict(
-      arma::colvec& predictors,
-      arma::colvec& labels) {
-    int len = predictors.n_elem;
-    auto totalLen = nRepeats*len;
-    labels.zeros(totalLen);
-    for (size_t i = 0; i < totalLen; ++i) {
-      labels.at(i) = predictors.at(i % len);
+    size_t zeroCnt = 0, oneCnt = 0;
+    for (size_t i = 1; i < input.n_rows; i += 2) {
+      size_t& addVar = (input.at(i, 0) == 0) ? zeroCnt : oneCnt;
+      ++addVar;
     }
+    assert(oneCnt % zeroCnt == 0);
+    nRepeats = oneCnt / zeroCnt;
+    std::cerr << "Repeats: " << nRepeats << "\n";
   }
   void Predict(
-      arma::field<arma::colvec>& predictors,
-      arma::field<arma::colvec>& labels) {
-    auto sz = predictors.n_elem;
-    labels = arma::field<arma::colvec>(sz);
+      arma::mat& predictors,
+      arma::mat& labels) {
+    size_t seqLen = (predictors.n_rows / 2) / (nRepeats + 1);
+    size_t outputLen = nRepeats * seqLen;
+    assert(2 * (seqLen + outputLen) == predictors.n_rows);
+    labels.zeros(predictors.n_rows / 2, 1);
+    for (size_t i = 0; i < outputLen; ++i) {
+      labels.at(seqLen+i) = predictors.at(2 * (i % seqLen));
+    }
+    std::cerr << "Predictors:\n" << predictors.t();
+    std::cerr << "Labels:\n" << labels.t();
+  }
+  void Predict(
+      arma::field<arma::mat>& predictors,
+      arma::field<arma::mat>& labels) {
+    size_t sz = predictors.n_elem;
+    labels = arma::field<arma::mat>(sz);
     for (size_t i = 0; i < sz; ++i) {
       Predict(predictors.at(i), labels.at(i));
     }
@@ -198,16 +208,16 @@ BOOST_AUTO_TEST_CASE(CopyTaskTest)
     // .. and various numbers of repetitions.
     for (size_t nRepeats = 1; nRepeats <= 10; ++nRepeats) {
       CopyTask task(maxLen, nRepeats);
-      arma::field<arma::colvec> trainPredictor, trainResponse;
+      arma::field<arma::mat> trainPredictor, trainResponse;
       task.Generate(trainPredictor, trainResponse, 8);
-      arma::field<arma::colvec> testPredictor, testResponse;
+      arma::field<arma::mat> testPredictor, testResponse;
       task.Generate(testPredictor, testResponse, 8);
       HardCodedCopyModel model;
       model.Train(trainPredictor, trainResponse);
-      arma::field<arma::colvec> predResponse;
+      arma::field<arma::mat> predResponse;
       model.Predict(testPredictor, predResponse);
       // A single failure is a failure.
-      if (SequencePrecision<arma::colvec>(
+      if (SequencePrecision<arma::mat>(
             testResponse, predResponse) < 0.99) {
         ok = false;
         break;
@@ -264,7 +274,7 @@ BOOST_AUTO_TEST_CASE(AddTaskTest) {
 }
 
 
-BOOST_AUTO_TEST_CASE(LSTMBaselineTestCopyRepeatRepr)
+BOOST_AUTO_TEST_CASE(LSTMBaselineTestCopy)
 {
   ofstream fout;
   fout.open("output-aug.log");
@@ -294,73 +304,50 @@ BOOST_AUTO_TEST_CASE(LSTMBaselineTestCopyRepeatRepr)
 
       CopyTask task(maxLen, nRepeats);
 
-      arma::field<arma::colvec> trainPredictor, trainResponse;
+      arma::field<arma::mat> trainPredictor, trainResponse;
       size_t trainSize = 15 + 5 * maxLen;
       task.Generate(trainPredictor, trainResponse, trainSize);
       size_t testSize = 15 + 5 * maxLen;
-      arma::field<arma::colvec> testPredictor, testResponse;
+      arma::field<arma::mat> testPredictor, testResponse;
       task.Generate(testPredictor, testResponse, testSize);
       for (size_t epoch = 0; epoch < 20; ++epoch) {
         for (size_t example = 0; example < trainPredictor.n_elem; ++example) {
-          size_t totSize =
-            trainPredictor.at(example).n_elem + trainResponse.at(example).n_elem;
-          arma::mat predictor = arma::zeros(totSize, 2);
-          predictor.col(0).rows(0,trainPredictor.at(example).n_elem-1) =
-            trainPredictor.at(example);
-          predictor.col(1).rows(trainPredictor.at(example).n_elem,totSize-1) =
-            arma::ones(totSize-trainPredictor.at(example).n_elem);
-          predictor = predictor.t();
-          predictor.reshape(predictor.n_elem, 1);
-          arma::mat response = arma::zeros(totSize, 1);
-          response.col(0).rows(trainPredictor.at(example).n_elem,totSize-1) =
-            trainResponse.at(example);
-          model.Rho() = totSize;
+          arma::mat predictor = trainPredictor.at(example);
+          arma::mat response = trainResponse.at(example);
+          model.Rho() = predictor.n_elem / inputSize;
           model.Train(predictor, response, opt);
         }
         std::cerr << "Finished running training epoch #"
                   << epoch+1 << "\n";
       }
 
-      arma::field<arma::colvec> modelOutput(testSize);
+      arma::field<arma::mat> modelOutput(testSize);
       for (size_t example = 0; example < testSize; ++example) {
-        arma::colvec softOutput;
-        size_t totSize =
-            testPredictor.at(example).n_elem + testResponse.at(example).n_elem;
-        arma::mat predictor = arma::zeros(totSize, 2);
-        predictor.col(0).rows(0,testPredictor.at(example).n_elem-1) =
-          testPredictor.at(example);
-        assert(predictor.n_rows == totSize);
-        predictor.col(1).rows(testPredictor.at(example).n_elem, totSize-1) =
-          arma::ones(totSize-testPredictor.at(example).n_elem);
-        predictor = predictor.t();
-        predictor.reshape(predictor.n_elem, 1);
-        model.Rho() = totSize;
+        arma::mat predictor = testPredictor.at(example);
+        arma::mat response = testResponse.at(example);
+        model.Rho() = predictor.n_elem / inputSize;
+        arma::mat softOutput;
         model.Predict(
           predictor,
           softOutput);
         modelOutput.at(example) = softOutput.rows(
-          testPredictor.at(example).n_elem,
+          predictor.n_elem / (inputSize * (nRepeats + 1)),
+          softOutput.n_rows-1);
+        testResponse.at(example) = testResponse.at(example).rows(
+          predictor.n_elem / (inputSize * (nRepeats + 1)),
           softOutput.n_rows-1);
         Binarize<double>(modelOutput.at(example), modelOutput.at(example), 0.5);
-        std::cerr  << "Predictor:\n"
-                   << predictor
-                   << "Model response:\n"
-                   << softOutput;
-        std::cerr  << "Original data:\n"
-                   << testPredictor.at(example)
-                   << "Test response:\n"
-                   << testResponse.at(example);
       }
       std::cerr << "Final score for ("
                 << maxLen << ","
                 << nRepeats << "): "
-                << SequencePrecision<arma::colvec>(testResponse, modelOutput)
+                << SequencePrecision<arma::mat>(testResponse, modelOutput)
                 << "\n";
 
       fout      << "Final score for ("
                 << maxLen << ","
                 << nRepeats << "): "
-                << SequencePrecision<arma::colvec>(testResponse, modelOutput)
+                << SequencePrecision<arma::mat>(testResponse, modelOutput)
                 << "\n";
       fout << "Sample size = " << trainSize << "\n";
       fout.flush();
