@@ -36,7 +36,7 @@ ResetCellVisitor::ResetCell(T* layer) const
 template<typename T>
 inline typename std::enable_if<
     !HasResetCellCheck<T, void(T::*)()>::value, void>::type
-ResetCellVisitor::ResetCellParameter(T* /* layer */) const
+ResetCellVisitor::ResetCell(T* /* layer */) const
 {
   /* Nothing to do here. */
 }

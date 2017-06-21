@@ -183,7 +183,7 @@ void GenerateReber(const arma::Mat<char>& transitions, std::string& reber)
         grammerIdx + 2)) - '0';
   } while (idx != 0);
 
-  reber =  "BPTVVE";
+  //reber =  "BPTVVE";
 }
 
 /**
@@ -336,6 +336,9 @@ void ReberGrammarTestNetwork(bool embedded = false)
       GenerateEmbeddedReber(transitions, testReber);
     else
       GenerateReber(transitions, testReber);
+      
+    if(i < 3)
+      std::cout << testReber << std::endl;
 
     for (size_t j = 0; j < testReber.length() - 1; j++)
     {
@@ -370,13 +373,12 @@ void ReberGrammarTestNetwork(bool embedded = false)
   {
     const size_t outputSize = 7;
     const size_t inputSize = 7;
-    const size_t rho = trainInput.at(0, 0).n_elem / inputSize;
 
-    RNN<MeanSquaredError<> > model(rho);
+    RNN<MeanSquaredError<> > model(5);
 
     model.Add<IdentityLayer<> >();
     model.Add<Linear<> >(inputSize, 14);
-    model.Add<RecurrentLayerType>(14, 7, rho);
+    model.Add<RecurrentLayerType>(14, 7, 10000);
     model.Add<Linear<> >(7, outputSize);
     model.Add<SigmoidLayer<> >();
 
@@ -389,6 +391,7 @@ void ReberGrammarTestNetwork(bool embedded = false)
       {
         inputTemp = trainInput.at(0, j);
         labelsTemp = trainLabels.at(0, j);
+        model.Rho() = inputTemp.n_elem / inputSize;
         model.Train(inputTemp, labelsTemp, opt);
       }
     }
@@ -406,12 +409,12 @@ void ReberGrammarTestNetwork(bool embedded = false)
 
       const size_t reberGrammerSize = 7;
       std::string inputReber = "";
-
+      
       size_t reberError = 0;
       for (size_t j = 0; j < (output.n_elem / reberGrammerSize); j++)
       {
-        if (arma::sum(arma::sum(output.submat(j * reberGrammerSize, 0, (j + 1) *
-            reberGrammerSize - 1, 0))) != 1) break;
+        //if (arma::sum(arma::sum(output.submat(j * reberGrammerSize, 0, (j + 1) *
+        //    reberGrammerSize - 1, 0))) != 1) break;
 
         char predictedSymbol, inputSymbol;
         std::string reberChoices;
@@ -434,8 +437,9 @@ void ReberGrammarTestNetwork(bool embedded = false)
       if (reberError != (output.n_elem / reberGrammerSize))
         error += 1;
     }
-
+    
     error /= testReberGrammarCount;
+    std::cout << error << std::endl;
     if (error <= 0.2)
     {
       ++successes;
@@ -446,6 +450,29 @@ void ReberGrammarTestNetwork(bool embedded = false)
   }
 
   BOOST_REQUIRE_GE(successes, 1);
+}
+
+BOOST_AUTO_TEST_CASE(GRUForwardTest)
+{
+  arma::Mat<char> transitions;
+  transitions << 'T' << 'P' << '1' << '2' << arma::endr
+              << 'X' << 'S' << '3' << '1' << arma::endr
+              << 'V' << 'T' << '4' << '2' << arma::endr
+              << 'X' << 'S' << '2' << '5' << arma::endr
+              << 'P' << 'V' << '3' << '5' << arma::endr
+              << 'E' << 'E' << '0' << '0' << arma::endr;
+
+  std::string testReber = "BPTVVE";
+  arma::mat testInput;
+  arma::colvec translation;
+  
+  for (size_t j = 0; j < testReber.length() - 1; j++)
+  {
+    ReberTranslation(testReber[j], translation);
+    testInput = arma::join_cols(testInput, translation);
+  }
+  
+  GRU<> gru(14, 7, 4);
 }
 
 /**

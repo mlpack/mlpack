@@ -130,6 +130,8 @@ class RNN
    */
   template<typename OptimizerType = mlpack::optimization::StandardSGD>
   void Train(arma::mat predictors, arma::mat responses);
+  
+  void ResetCells();
 
   /**
    * Predict the responses to a given set of predictors. The responses will
@@ -201,6 +203,8 @@ class RNN
   const arma::mat& Parameters() const { return parameter; }
   //! Modify the initial point for the optimization.
   arma::mat& Parameters() { return parameter; }
+  
+  size_t& Rho() { return rho; }
 
   //! Serialize the model.
   template<typename Archive>
