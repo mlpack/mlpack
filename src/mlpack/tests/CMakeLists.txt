@@ -101,6 +101,7 @@ add_executable(mlpack_test
   termination_policy_test.cpp
   tree_test.cpp
   tree_traits_test.cpp
+  trust_region_newton_test.cpp
   union_find_test.cpp
   svd_batch_test.cpp
   svd_incremental_test.cpp
