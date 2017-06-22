@@ -1,6 +1,7 @@
 /**
  * @file logistic_regression_function.cpp
  * @author Sumedh Ghaisas
+ * @author Marcus Edel
  *
  * Implementation of the LogisticRegressionFunction class.
  *
@@ -168,6 +169,46 @@ void LogisticRegressionFunction<MatType>::Gradient(
   gradient[0] = -(responses[i] - sigmoid);
   gradient.col(0).subvec(1, parameters.n_elem - 1) = -predictors.col(i)
       * (responses[i] - sigmoid) + regularization;
+}
+
+//! Evaluate the gradient of the logistic regression objective function.
+template<typename MatType>
+void LogisticRegressionFunction<MatType>::Gradient(
+    const arma::mat& parameters,
+    arma::mat& gradient,
+    arma::mat& derivative)
+{
+  // Regularization term.
+  arma::mat regularization;
+  regularization = lambda * parameters.col(0).subvec(1, parameters.n_elem - 1);
+
+  const arma::rowvec sigmoids = (1 / (1 + arma::exp(-parameters(0, 0)
+      - parameters.col(0).subvec(1, parameters.n_elem - 1).t() * predictors)));
+
+  derivative = sigmoids % (1 - sigmoids);
+
+  gradient.set_size(parameters.n_elem);
+  gradient[0] = -arma::accu(responses - sigmoids);
+  gradient.col(0).subvec(1, parameters.n_elem - 1) = -predictors * (responses -
+      sigmoids).t() + regularization;
+}
+
+//! Evaluate the hessian of the logistic regression function.
+template<typename MatType>
+void LogisticRegressionFunction<MatType>::Hessian(
+    const arma::mat& parameters,
+    const arma::mat& gradient,
+    const arma::mat& derivative,
+    arma::mat& hessian) const
+{
+  hessian.set_size(gradient.n_elem);
+  hessian(0) = gradient(0) * parameters(0);
+
+  arma::mat hessianTemp = arma::mat(
+      hessian.colptr(0) + 1, 1, gradient.n_elem - 1, false, true);
+  hessianTemp = (lambda * (gradient.col(0).subvec(1, parameters.n_elem - 1).t() *
+      predictors % derivative)) * predictors.t() +
+      gradient.col(0).subvec(1, parameters.n_elem - 1).t();
 }
 
 } // namespace regression

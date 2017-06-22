@@ -1,6 +1,7 @@
 /**
  * @file logistic_regression_function.hpp
  * @author Sumedh Ghaisas
+ * @author Marcus Edel
  *
  * Implementation of the logistic regression function, which is meant to be
  * optimized by a separate optimizer class that takes LogisticRegressionFunction
@@ -28,14 +29,33 @@ template<typename MatType = arma::mat>
 class LogisticRegressionFunction
 {
  public:
+  /**
+   * Construct the LogisticRegressionFunction class with the given labeled
+   * training data.  Optionally, specify lambda, which is the penalty parameter
+   * for L2-regularization.  If not specified, it is set to 1,
+   *
+   * @param predictors Input training variables.
+   * @param responses Outputs results from input training variables.
+   * @param lambda L2-regularization parameter.
+   */
   LogisticRegressionFunction(const MatType& predictors,
                              const arma::Row<size_t>& responses,
-                             const double lambda = 0);
+                             const double lambda = 1);
 
+  /**
+   * Construct the LogisticRegressionFunction class with the given labeled
+   * training data.  Optionally, specify lambda, which is the penalty parameter
+   * for L2-regularization.  If not specified, it is set to 1,
+   *
+   * @param predictors Input training variables.
+   * @param responses Outputs results from input training variables.
+   * @param initialPoint Initial model to train with.
+   * @param lambda L2-regularization parameter.
+   */
   LogisticRegressionFunction(const MatType& predictors,
                              const arma::Row<size_t>& responses,
                              const arma::vec& initialPoint,
-                             const double lambda = 0);
+                             const double lambda = 1);
 
   //! Return the initial point for the optimization.
   const arma::mat& InitialPoint() const { return initialPoint; }
@@ -104,6 +124,32 @@ class LogisticRegressionFunction
                 const size_t i,
                 arma::mat& gradient) const;
 
+  /**
+   * Evaluate the gradient of the logistic regression log-likelihood function
+   * with the given parameters.
+   *
+   * @param parameters Vector of logistic regression parameters.
+   * @param gradient Vector to output gradient into.
+   * @param derivative Vector to output derivative into.
+   */
+  void Gradient(const arma::mat& parameters,
+                arma::mat& gradient,
+                arma::mat& derivative);
+
+  /**
+   * Evaluate the hessian of the logistic regression log-likelihood function
+   * with the given gradient and derivative.
+   *
+   * @param parameters Vector of logistic regression parameters.
+   * @param gradient Vector of logistic regression gradient parameters.
+   * @param derivative Vector of logistic regression derivative parameters.
+   * @param hessian Vector to output hessian into.
+   */
+  void Hessian(const arma::mat& parameters,
+               const arma::mat& gradient,
+               const arma::mat& derivative,
+               arma::mat& hessian) const;
+
   //! Return the initial point for the optimization.
   const arma::mat& GetInitialPoint() const { return initialPoint; }
 
@@ -113,10 +159,13 @@ class LogisticRegressionFunction
  private:
   //! The initial point, from which to start the optimization.
   arma::mat initialPoint;
+
   //! The matrix of data points (predictors).
   const MatType& predictors;
+
   //! The vector of responses to the input data points.
   const arma::Row<size_t>& responses;
+
   //! The regularization parameter for L2-regularization.
   double lambda;
 };
