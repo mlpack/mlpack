@@ -206,7 +206,8 @@ void LogisticRegressionFunction<MatType>::Hessian(
 
   arma::mat hessianTemp = arma::mat(
       hessian.colptr(0) + 1, 1, gradient.n_elem - 1, false, true);
-  hessianTemp = (lambda * (gradient.col(0).subvec(1, parameters.n_elem - 1).t() *
+  hessianTemp = (lambda *
+      (gradient.col(0).subvec(1, parameters.n_elem - 1).t() *
       predictors % derivative)) * predictors.t() +
       gradient.col(0).subvec(1, parameters.n_elem - 1).t();
 }
