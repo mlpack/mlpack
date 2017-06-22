@@ -29,7 +29,10 @@ namespace augmented /* Augmented neural network */ {
 namespace tasks /* Task utilities for augmented */ {
 
 SortTask::SortTask(const size_t maxLength, const size_t bitLen)
-  : maxLength(maxLength), bitLen(bitLen) {}
+  : maxLength(maxLength), bitLen(bitLen) {
+  assert(maxLength > 1);
+  assert(bitLen > 0);
+}
 
 void SortTask::Generate(arma::field<arma::mat>& input,
                         arma::field<arma::mat>& labels,
