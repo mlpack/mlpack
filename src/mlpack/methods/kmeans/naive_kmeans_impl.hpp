@@ -45,7 +45,7 @@ double NaiveKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
   {
     // The current state of the K-means is private for each thread
     arma::mat localCentroids(centroids.n_rows, centroids.n_cols,
-                             arma::fill::zeros);
+        arma::fill::zeros);
     arma::Col<size_t> localCounts(centroids.n_cols, arma::fill::zeros);
 
     #pragma omp for
@@ -58,7 +58,7 @@ double NaiveKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
       for (size_t j = 0; j < centroids.n_cols; j++)
       {
         const double distance = metric.Evaluate(dataset.col(i),
-                                                centroids.unsafe_col(j));
+            centroids.unsafe_col(j));
         if (distance < minDistance)
         {
           minDistance = distance;
