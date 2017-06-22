@@ -506,8 +506,8 @@ template<
     typename FitnessFunction,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType
->
-size_t mlpack::tree::HoeffdingTree<
+>   
+size_t HoeffdingTree<
     FitnessFunction,
     NumericSplitType, 
     CategoricalSplitType
