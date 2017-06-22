@@ -19,7 +19,7 @@ namespace optimization{
 class ConstantStep{
  public:
   ConstantStep(double initalStep) : step(initalStep) {}
-  double getStepSize(size_t /* n_epoch */){
+  double StepSize(size_t /* n_epoch */){
     return step;
   }
  private:
