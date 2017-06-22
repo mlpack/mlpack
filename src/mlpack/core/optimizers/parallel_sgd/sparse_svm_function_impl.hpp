@@ -23,6 +23,15 @@ SparseSVMLossFunction::SparseSVMLossFunction(
   GenerateVisitationOrder();
 }
 
+double SparseSVMLossFunction::Evaluate(arma::mat& weights)
+{
+  double eval = 0;
+  for(size_t i = 0; i < numFunctions; ++i){
+    eval += std::max(0.0, 1 - labels(i) * arma::dot(weights, dataset.col(i)));
+  }
+  return eval;
+}
+
 void SparseSVMLossFunction::GenerateVisitationOrder()
 {
   visitationOrder = arma::shuffle(arma::linspace<arma::Col<size_t>>(0,
@@ -52,7 +61,7 @@ arma::vec SparseSVMLossFunction::Gradient(
 {
   double dot = 1 - labels(id) * arma::dot(weights, dataset.unsafe_col(id));
   return (dot < 0) ? arma::vec(weights.n_elem, arma::fill::zeros) : 
-    -1 * weights labels(id);
+    (-1 * dataset.unsafe_col(id) * labels(id));
 }
 arma::Col<size_t> SparseSVMLossFunction::Components(size_t id)
 {

@@ -17,6 +17,7 @@
 class SparseSVMLossFunction{
  public:
   SparseSVMLossFunction(arma::mat& dataset, arma::vec& labels);
+  double Evaluate(arma::mat &weights);
   arma::vec Gradient(arma::mat& weights, size_t component);
   arma::Col<size_t> VisitationOrder(size_t thread_id, size_t max_threads);
   arma::Col<size_t> Components(size_t id);

@@ -39,19 +39,23 @@ double ParallelSGD<SparseFunctionType, StepsizePolicyType>::Optimize(
     SparseFunctionType& function, 
     arma::mat& iterate)
 {
-  for (size_t i = 0; i < maxIterations; ++i){
+  double overallObjective = 0;
+  double lastObjective = DBL_MAX;
+
+  for (size_t i = 1; i != maxIterations; ++i){
+    overallObjective = 0;
     double stepSize = stepPolicy.StepSize(i);
-    function.Initialize();
+    function.GenerateVisitationOrder();
     #pragma omp parallel
     {
       // Each processor gets a subset of the instances
       arma::Col<size_t> instances =
-        function.RandomInstanceSet(omp_get_thread_num(), omp_get_num_threads());
+        function.RandomInstanceSet(omp_get_thread_num(),
+            omp_get_num_threads());
       for (size_t i = 0; i < instances.n_elem; ++i){
         // Each instance affects only some components of the decision variable
         arma::Col<size_t> components = function.Components(instances[i]);
         // Evaluate the gradient
-        // FIXME: Should evaluate only at the components required
         arma::vec gradient = function.Gradient(iterate, instances[i]);
 
         for(size_t j = 0; j < components.n_elem; ++i){
@@ -60,7 +64,14 @@ double ParallelSGD<SparseFunctionType, StepsizePolicyType>::Optimize(
         }
       }
     }
+    // Evaluate the function
+    overallObjective = function.Evaluate(iterate);
+    if(std::abs(overallObjective - lastObjective) < tolerance){
+      return overallObjective;
+    }
+    lastObjective = overallObjective;
   }
+  return overallObjective;
 }
 
 }
