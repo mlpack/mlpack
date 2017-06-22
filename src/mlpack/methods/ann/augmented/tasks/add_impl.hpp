@@ -33,7 +33,9 @@ namespace ann /* Artificial Neural Network */ {
 namespace augmented /* Augmented neural network */ {
 namespace tasks /* Task utilities for augmented */ {
 
-AddTask::AddTask(const size_t bitLen) : bitLen(bitLen) {}
+AddTask::AddTask(const size_t bitLen) : bitLen(bitLen) {
+  assert(bitLen > 0);
+}
 
 void AddTask::Generate(arma::field<arma::colvec>& input,
                        arma::field<arma::colvec>& labels,

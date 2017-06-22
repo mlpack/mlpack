@@ -27,6 +27,7 @@ CopyTask::CopyTask(const size_t maxLength, const size_t nRepeats) :
     nRepeats(nRepeats)
 {
   assert(maxLength > 1);
+  assert(nRepeats > 0);
   // Just storing task-specific parameters.
 }
 
@@ -39,19 +40,20 @@ void CopyTask::Generate(arma::field<arma::mat>& input,
   for (size_t i = 0; i < batchSize; ++i) {
     // Random uniform length from [2..maxLength]
     size_t size = RandInt(2, maxLength+1);
-    arma::colvec vecInput = arma::randi<arma::colvec>(size, arma::distr_param(0, 1));
+    arma::colvec vecInput = arma::randi<arma::colvec>(
+      size, arma::distr_param(0, 1));
     arma::colvec vecLabel = arma::conv_to<arma::colvec>::from(
       arma::repmat(vecInput, nRepeats, 1));
     size_t totSize = vecInput.n_elem + vecLabel.n_elem;
     input(i) = arma::zeros(totSize, 2);
-    input(i).col(0).rows(0,vecInput.n_elem-1) =
+    input(i).col(0).rows(0, vecInput.n_elem-1) =
       vecInput;
-    input(i).col(1).rows(vecInput.n_elem,totSize-1) =
+    input(i).col(1).rows(vecInput.n_elem, totSize-1) =
       arma::ones(totSize-vecInput.n_elem);
     input(i) = input(i).t();
     input(i).reshape(input(i).n_elem, 1);
     labels(i) = arma::zeros(totSize, 1);
-    labels(i).col(0).rows(vecInput.n_elem,totSize-1) =
+    labels(i).col(0).rows(vecInput.n_elem, totSize-1) =
       vecLabel;
   }
 }
