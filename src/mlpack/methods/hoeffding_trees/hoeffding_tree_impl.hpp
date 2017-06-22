@@ -505,7 +505,10 @@ size_t HoeffdingTree<
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType>
-size_t HoeffdingTree<>::NumDescendants()
+size_t mlpack::tree::HoeffdingTree<FitnessFunction,
+    NumericSplitType, 
+    CategoricalSplitType
+>::NumDescendants()
 {
   size_t nodes = 0;
   std::stack<HoeffdingTree*> stack;
