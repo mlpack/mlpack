@@ -589,8 +589,7 @@ BOOST_AUTO_TEST_CASE(NumDescendantsTest1)
   for (size_t i = 0; i < 500; ++i)
     streamTree.Train(dataset.col(i), labels[i]);
 
-  BOOST_REQUIRE_EQUAL(streamTree.NumDescendants(), 0);   //as there is just one label (just one root)
-
+  BOOST_REQUIRE_EQUAL(streamTree.NumDescendants(), 0); // one label
 }
 
 BOOST_AUTO_TEST_CASE(NumDescendantsTest2)
@@ -608,7 +607,6 @@ BOOST_AUTO_TEST_CASE(NumDescendantsTest2)
   info.MapString<size_t>("cat2", 1);
   info.MapString<size_t>("cat0", 2);
   info.MapString<size_t>("cat1", 2);
-  
   // generate data.
   arma::Mat<size_t> dataset(3, 9000);
   arma::Row<size_t> labels(9000);
@@ -630,7 +628,7 @@ BOOST_AUTO_TEST_CASE(NumDescendantsTest2)
     labels(i - 2) = 2;
   }
 
-  // Now train the streaming decision tree; 
+  // Now train the streaming decision tree
   typedef HoeffdingTree<GiniImpurity, HoeffdingSizeTNumericSplit,
       HoeffdingCategoricalSplit> TreeType;
   TreeType batchTree(dataset, info, labels, 3, false);
