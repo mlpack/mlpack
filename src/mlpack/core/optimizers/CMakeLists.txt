@@ -11,6 +11,7 @@ set(DIRS
   sdp
   sgd
   smorms3
+  trust_region_newton
 )
 
 foreach(dir ${DIRS})
