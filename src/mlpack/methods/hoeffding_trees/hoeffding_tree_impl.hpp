@@ -502,10 +502,13 @@ size_t HoeffdingTree<
     return 0; // Not sure what to do here...
 }
         
-template<typename FitnessFunction,
-         template<typename> class NumericSplitType,
-         template<typename> class CategoricalSplitType>
-size_t mlpack::tree::HoeffdingTree<FitnessFunction,
+template<
+    typename FitnessFunction,
+    template<typename> class NumericSplitType,
+    template<typename> class CategoricalSplitType
+>
+size_t mlpack::tree::HoeffdingTree<
+    FitnessFunction,
     NumericSplitType, 
     CategoricalSplitType
 >::NumDescendants()
