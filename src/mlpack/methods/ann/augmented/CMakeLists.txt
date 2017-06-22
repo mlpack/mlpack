@@ -1,11 +1,6 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
-set(SOURCES
-  ffn.hpp
-  ffn_impl.hpp
-  rnn.hpp
-  rnn_impl.hpp
-)
+set(SOURCES)
 
 # Add directory name to sources.
 set(DIR_SRCS)
@@ -16,9 +11,4 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_subdirectory(visitor)
-add_subdirectory(activation_functions)
-add_subdirectory(init_rules)
-add_subdirectory(layer)
-add_subdirectory(convolution_rules)
-add_subdirectory(augmented)
+add_subdirectory(tasks)

@@ -13,8 +13,6 @@
 #include <algorithm>
 #include <utility>
 
-#include <fstream>
-
 #include <mlpack/core.hpp>
 
 #include <mlpack/core/data/binarize.hpp>
@@ -35,8 +33,6 @@
 using std::vector;
 using std::pair;
 using std::make_pair;
-
-using std::ofstream;
 
 using namespace mlpack::ann::augmented::tasks;
 using namespace mlpack::ann::augmented::scorers;
@@ -271,104 +267,6 @@ BOOST_AUTO_TEST_CASE(AddTaskTest) {
   }
 
   BOOST_REQUIRE(ok);
-}
-
-
-BOOST_AUTO_TEST_CASE(LSTMBaselineTestCopy)
-{
-  ofstream fout;
-  fout.open("output-aug.log");
-  fout << "Report for augmented representation.\n";
-  fout << "Training epochs = " << 20 << "\n";
-  
-  int maxNRepeat[] = {10, 10, 10, 6, 4, 3, 3, 3, 2, 2, 2};
-  for (size_t maxLen = 2; maxLen <= 8; ++maxLen) {
-    for (size_t nRepeats = 1; nRepeats <= maxNRepeat[maxLen]; ++nRepeats) {
-      bool ok = true;
-
-      const size_t outputSize = 1;
-      const size_t inputSize = 2;
-      const size_t rho = 2;
-      const size_t maxRho = 128;
-
-      RNN<MeanSquaredError<> > model(rho);
-
-      model.Add<IdentityLayer<> >();
-      model.Add<Linear<> >(inputSize, 30);
-      model.Add<LSTM<> >(30, 15, maxRho);
-      model.Add<LeakyReLU<> >();
-      model.Add<Linear<> >(15, outputSize);
-      model.Add<SigmoidLayer<> >();
-
-      Adam<decltype(model)> opt(model);
-
-      CopyTask task(maxLen, nRepeats);
-
-      arma::field<arma::mat> trainPredictor, trainResponse;
-      size_t trainSize = 15 + 5 * maxLen;
-      task.Generate(trainPredictor, trainResponse, trainSize);
-      size_t testSize = 15 + 5 * maxLen;
-      arma::field<arma::mat> testPredictor, testResponse;
-      task.Generate(testPredictor, testResponse, testSize);
-      for (size_t epoch = 0; epoch < 20; ++epoch) {
-        for (size_t example = 0; example < trainPredictor.n_elem; ++example) {
-          arma::mat predictor = trainPredictor.at(example);
-          arma::mat response = trainResponse.at(example);
-          model.Rho() = predictor.n_elem / inputSize;
-          model.Train(predictor, response, opt);
-        }
-        std::cerr << "Finished running training epoch #"
-                  << epoch+1 << "\n";
-      }
-
-      arma::field<arma::mat> modelOutput(testSize);
-      for (size_t example = 0; example < testSize; ++example) {
-        arma::mat predictor = testPredictor.at(example);
-        arma::mat response = testResponse.at(example);
-        model.Rho() = predictor.n_elem / inputSize;
-        arma::mat softOutput;
-        model.Predict(
-          predictor,
-          softOutput);
-        modelOutput.at(example) = softOutput.rows(
-          predictor.n_elem / (inputSize * (nRepeats + 1)),
-          softOutput.n_rows-1);
-        testResponse.at(example) = testResponse.at(example).rows(
-          predictor.n_elem / (inputSize * (nRepeats + 1)),
-          softOutput.n_rows-1);
-        Binarize<double>(modelOutput.at(example), modelOutput.at(example), 0.5);
-      }
-      std::cerr << "Final score for ("
-                << maxLen << ","
-                << nRepeats << "): "
-                << SequencePrecision<arma::mat>(testResponse, modelOutput)
-                << "\n";
-
-      fout      << "Final score for ("
-                << maxLen << ","
-                << nRepeats << "): "
-                << SequencePrecision<arma::mat>(testResponse, modelOutput)
-                << "\n";
-      fout << "Sample size = " << trainSize << "\n";
-      fout.flush();
-    }
-  }
-  fout.close();
-}
-
-arma::field<arma::colvec> binarizeAdd(arma::field<arma::colvec> data) {
-  arma::field<arma::colvec> procData(data.n_elem);
-  for (size_t i = 0; i < data.n_elem; ++i) {
-    arma::colvec temp = arma::zeros(
-      3, data.at(i).n_elem);
-    for (size_t j = 0; j < data.at(i).n_elem; ++j) {
-      int val = data.at(i).at(j);
-      temp.at(val, j) = 1;
-    }
-    temp.reshape(temp.n_elem, 1);
-    procData.at(i) = temp;
-  }
-  return procData;
 }
 
 BOOST_AUTO_TEST_SUITE_END();
