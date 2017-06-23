@@ -442,29 +442,6 @@ void ReberGrammarTestNetwork(bool embedded = false)
   BOOST_REQUIRE_GE(successes, 1);
 }
 
-BOOST_AUTO_TEST_CASE(GRUForwardTest)
-{
-  arma::Mat<char> transitions;
-  transitions << 'T' << 'P' << '1' << '2' << arma::endr
-              << 'X' << 'S' << '3' << '1' << arma::endr
-              << 'V' << 'T' << '4' << '2' << arma::endr
-              << 'X' << 'S' << '2' << '5' << arma::endr
-              << 'P' << 'V' << '3' << '5' << arma::endr
-              << 'E' << 'E' << '0' << '0' << arma::endr;
-
-  std::string testReber = "BPTVVE";
-  arma::mat testInput;
-  arma::colvec translation;
-  
-  for (size_t j = 0; j < testReber.length() - 1; j++)
-  {
-    ReberTranslation(testReber[j], translation);
-    testInput = arma::join_cols(testInput, translation);
-  }
-  
-  GRU<> gru(14, 7, 4);
-}
-
 /**
  * Train the specified networks on a Reber grammar dataset.
  */

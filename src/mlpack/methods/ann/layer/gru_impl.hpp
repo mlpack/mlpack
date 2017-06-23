@@ -288,7 +288,6 @@ void GRU<InputDataType, OutputDataType>::ResetCell()
   
   forwardStep = 0;
   backwardStep = 0;
-  gradientStep = 0;
 }
 
 template<typename InputDataType, typename OutputDataType>
