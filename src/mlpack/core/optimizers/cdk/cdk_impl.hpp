@@ -38,6 +38,7 @@ void CDK<RBMType>::Optimize(arma::mat& iterate)
 
   // Batch cost
   double overallCost = 0;
+  double overallmCost = 0;
 
   // This is used only if shuffle is true.
   arma::Col<size_t> visitationOrder;
@@ -53,6 +54,7 @@ void CDK<RBMType>::Optimize(arma::mat& iterate)
   arma::mat gradient(iterate.n_rows, iterate.n_cols);
   arma::mat cumgradient(iterate.n_rows, iterate.n_cols);
   cumgradient.zeros();
+  gradient.zeros();
 
   for (size_t i = 1; i != maxIterations; ++i, ++currentFunction)
   {
@@ -73,9 +75,15 @@ void CDK<RBMType>::Optimize(arma::mat& iterate)
     cumgradient += gradient;
 
     if (shuffle)
-      overallCost +=rbm.Evaluate(iterate, visitationOrder[currentFunction]);
+    {
+      overallCost += rbm.Evaluate(iterate, visitationOrder[currentFunction]);
+      overallmCost += rbm.MonitoringCost(visitationOrder[currentFunction]);
+    }
     else
+    {
       overallCost +=rbm.Evaluate(iterate, currentFunction);
+      overallmCost += rbm.MonitoringCost(currentFunction);
+    }
 
     if (i % batchSize == 0)
     {
@@ -87,8 +95,12 @@ void CDK<RBMType>::Optimize(arma::mat& iterate)
     if (i % numFunctions == 0)
     {
       overallCost /= numFunctions;
-      std::cout << overallCost << std::endl;
+      overallmCost /= numFunctions;
+      std::cout << "Cost" << overallCost << std::endl;
+      std::cout << "MCost" << overallmCost << std::endl;
       overallCost = 0;
+      overallmCost = 0;
+
     }
   }
 

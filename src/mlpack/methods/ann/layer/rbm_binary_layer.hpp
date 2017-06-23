@@ -63,6 +63,9 @@ class BinaryLayer
 
   //! Get the parameters.
   OutputDataType const& Bias() const { return ownBias; }
+
+  // Remove this
+  OutputDataType const& Weight() const { return weight; }
   //! Modify the parameters.
   OutputDataType& Bias() { return ownBias; }
 

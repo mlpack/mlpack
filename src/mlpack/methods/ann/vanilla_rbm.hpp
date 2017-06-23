@@ -71,12 +71,23 @@ class RBM
   */
   double Evaluate(const arma::mat& parameters, const size_t i);
 
+  /**
+  * Monitor Cost this function is needed for checking
+  * the progress of the training. Cross-Entropy is 
+  * needed when peristence is false and pseudo-likelihood
+  * is needed when persistence is true
+  *
+  * @param i Index of point to use for objective function evaluation.
+  * 
+  */
+  double MonitoringCost(const size_t i);
+
  /** 
   * This function calculates
   * the free energy of the model
   * @param: input data point 
   */
-  double FreeEnergy(arma::mat& input);
+  double FreeEnergy(arma::mat input);
 
  /*
   * This functions samples the hidden
@@ -116,25 +127,6 @@ class RBM
    */
   void Gradient(const size_t input, arma::mat& output);
 
-  //! Return the number of separable functions (the number of predictor points).
-  size_t NumFunctions() const { return numFunctions; }
-
-  //! Return the number of separable functions (the number of predictor points).
-  size_t NumSteps() const { return numSteps; }
-
-  //! Return the initial point for the optimization.
-  const arma::mat& Parameters() const { return parameter; }
-  //! Modify the initial point for the optimization.
-  arma::mat& Parameters() { return parameter; }
-
-  VisibleLayerType& VisibleLayer() { return visible; }
-  HiddenLayerType& HiddenLayer() { return hidden; }
-
-  //! Serialize the model.
-  template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
-
- private:
   /* 
    * ForwardVisible layer compute the forward
    * activations given the visible layer
@@ -173,6 +165,26 @@ class RBM
         inputForward), input);
   };
 
+  //! Return the number of separable functions (the number of predictor points).
+  size_t NumFunctions() const { return numFunctions; }
+
+  //! Return the number of separable functions (the number of predictor points).
+  size_t NumSteps() const { return numSteps; }
+
+  //! Return the initial point for the optimization.
+  const arma::mat& Parameters() const { return parameter; }
+  //! Modify the initial point for the optimization.
+  arma::mat& Parameters() { return parameter; }
+
+  VisibleLayerType& VisibleLayer() { return visible; }
+  HiddenLayerType& HiddenLayer() { return hidden; }
+
+  //! Serialize the model.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */);
+
+ private:
+
   // Parameter weights of the network
   arma::mat parameter;
   // Visible layer
@@ -193,7 +205,7 @@ class RBM
   InitializationRuleType initializeRule;
   // Softplus function
   SoftplusFunction softplus;
-  //! Locally-stored delete visitor.
+  //! Locally-stored state of the persistent cdk.
   arma::mat state;
   //! Locally-stored number of functions varaiable
   size_t numFunctions;

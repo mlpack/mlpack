@@ -26,7 +26,7 @@ BinaryLayer<InputDataType, OutputDataType>::BinaryLayer(
     outSize(outSize),
     typeVisible(typeVisible)
 {
-  weights.set_size(outSize * inSize + inSize + outSize, 1);
+  weights.set_size((outSize * inSize) + inSize + outSize, 1);
 }
 
 template<typename InputDataType, typename OutputDataType>

@@ -1,7 +1,5 @@
 /**
  * @file rbm_network_test.cpp
- * @author Marcus Edel
- * @author Palash Ahuja
  *
  * Tests the feed forward network.
  *
@@ -12,9 +10,13 @@
  */
 #include <mlpack/core.hpp>
 
+#include <mlpack/core/optimizers/cdk/cdk.hpp>
+#include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
+#include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/vanilla_rbm.hpp>
-#include <mlpack/core/optimizers/cdk/cdk.hpp>
+#include <mlpack/methods/softmax_regression/softmax_regression.hpp>
+#include <mlpack/core/optimizers/sgd/sgd.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -22,6 +24,7 @@
 using namespace mlpack;
 using namespace mlpack::ann;
 using namespace mlpack::optimization;
+using namespace mlpack::regression;
 
 BOOST_AUTO_TEST_SUITE(RBMNetworkTest);
 
@@ -29,7 +32,7 @@ BOOST_AUTO_TEST_SUITE(RBMNetworkTest);
  * Train and evaluate a vanilla network with the specified structure.
  */
 template<typename MatType = arma::mat>
-void BuildVanillaNetwork(MatType& trainData,
+arma::mat BuildVanillaNetwork(MatType& trainData,
                          const size_t hiddenLayerSize)
 {
   /*
@@ -46,21 +49,23 @@ void BuildVanillaNetwork(MatType& trainData,
    * +-----+       +-----+     
    *        
    */
-  arma::mat output;
+  arma::mat output, datasetRBM(trainData.n_cols, hiddenLayerSize);
   BinaryLayer<> visible(trainData.n_rows, hiddenLayerSize, 1);
   BinaryLayer<> hidden(hiddenLayerSize, trainData.n_rows, 0);
-  RandomInitialization random(-1e-2, +1e-2);
-  RBM<RandomInitialization, BinaryLayer<>, BinaryLayer<> > model(trainData,
-      random, visible, hidden, 15, true);
-  CDK<RBM<RandomInitialization, BinaryLayer<>, BinaryLayer<> >> cdk(model,
-      0.01, 15 * trainData.n_cols);
+  GaussianInitialization gaussian(0, 0.1);
+  RBM<GaussianInitialization, BinaryLayer<>, BinaryLayer<> > model(trainData,
+      gaussian, visible, hidden, 1, true);
+  CDK<RBM<GaussianInitialization, BinaryLayer<>, BinaryLayer<> >> cdk(model,
+      0.06, trainData.n_cols * 20, 10, true);
   model.Reset();
   model.VisibleLayer().Bias().ones();
   model.HiddenLayer().Bias().ones();
   // test the reset function
   model.Train(trainData, cdk);
-  model.Gibbs(std::move(trainData.col(0)), std::move(output), 200);
-  std::cout << output << std::endl;
+
+  for (size_t i = 0; i < trainData.n_cols; i++)
+    model.SampleHidden(std::move(trainData.col(i)), std::move(datasetRBM.col(i)));
+  return datasetRBM;
 }
 
 /**
@@ -68,12 +73,43 @@ void BuildVanillaNetwork(MatType& trainData,
  */
 BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
 {
-  arma::mat dataset;
-  dataset.load("mnist_first250_training_4s_and_9s.arm");
+  // Normalised dataset
+  arma::mat X, Y;
+  arma::Row<size_t> Xlabel, Ylabel;
+  data::Load("mnist_regression.txt", X, true);
+  data::Load("mnist_regression_label.txt", Xlabel, true);
+  data::Load("mnist_regression_test.txt", Y, true);
+  data::Load("mnist_regression_test_label.txt", Ylabel, true);
+  
 
-  // Normalize each point since these are images.
-  for (size_t i = 0; i < dataset.n_cols; ++i)
-    dataset.col(i) /= norm(dataset.col(i), 2);
-  BuildVanillaNetwork<>(dataset, 500);
+  arma::mat XRbm = BuildVanillaNetwork<>(X, 100);
+  arma::mat YRbm = BuildVanillaNetwork<>(Y, 100);
+  std::cout << XRbm.n_cols << std::endl;
+  std::cout << XRbm.n_rows << std::endl;
+
+   
+   const size_t inputSize = 64; // Size of input feature vector.
+   const size_t numClasses = 10; // Number of classes.
+ 
+   const size_t numBasis = 5; // Parameter required for L-BFGS algorithm.
+   const size_t numIterations = 100; // Maximum number of iterations.
+  
+   // Use an instantiated optimizer for the training.
+   SoftmaxRegressionFunction srf(X, Xlabel, numClasses, 0.001);
+   L_BFGS<SoftmaxRegressionFunction> optimizer(srf, numBasis, numIterations);
+   SoftmaxRegression<L_BFGS> regressor2(optimizer);
+ 
+   arma::Row<size_t> predictions1, predictions2; // Vectors to store predictions in.
+
+   double classificationAccuray = regressor2.ComputeAccuracy(Y, Ylabel);
+   std::cout << "classificationAccuray" << classificationAccuray << std::endl;
+
+
+   SoftmaxRegressionFunction srf1(XRbm, Xlabel, numClasses, 0.001);
+   L_BFGS<SoftmaxRegressionFunction> optimizer1(srf1, numBasis, numIterations);
+   SoftmaxRegression<L_BFGS> regressor1(optimizer1);
+   double classificationAccuray1 = regressor1.ComputeAccuracy(YRbm, Ylabel);  
+   std::cout << "classificationAccuray1" << classificationAccuray1 << std::endl;
+
 }
 BOOST_AUTO_TEST_SUITE_END();

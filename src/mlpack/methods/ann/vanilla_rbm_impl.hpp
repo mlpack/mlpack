@@ -59,6 +59,7 @@ void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::Reset()
   size_t weight = 0;
   weight+= visible.Parameters().n_elem;
   parameter.set_size(weight, 1);
+  parameter.zeros();
   initializeRule.Initialize(parameter, parameter.n_elem, 1);
   visible.Parameters() = arma::mat(parameter.memptr(), weight, 1, false, false);
   hidden.Parameters() = arma::mat(parameter.memptr(), weight, 1, false, false);
@@ -95,7 +96,7 @@ void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
 template<typename InitializationRuleType, typename VisibleLayerType,
     typename HiddenLayerType>
 double RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
-    FreeEnergy(arma::mat& input)
+    FreeEnergy(arma::mat input)
 {
   arma::mat output;
   visible.ForwardPreActivation(std::move(input), std::move(output));
@@ -117,6 +118,32 @@ double RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
   freeEnergyChain = FreeEnergy(negativeSample);
 
   return arma::mean(freeEnergy) - arma::mean(freeEnergyChain);
+}
+
+template<typename InitializationRuleType, typename VisibleLayerType,
+    typename HiddenLayerType>
+double RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
+    MonitoringCost(const size_t i)
+{
+  arma::mat corruptInput, output;
+  corruptInput = predictors.col(i);
+  if(persistence)
+  {
+    arma::mat corruptFe, inputFe;
+    size_t idx = RandInt(0, predictors.n_rows);
+    corruptInput.row(idx) = 1 - corruptInput.row(idx);
+    // Use mean when showing the if more than one input
+    return std::log(LogisticFunction::Fn(FreeEnergy(corruptInput) - 
+        FreeEnergy(predictors.col(i)))) * predictors.n_rows;
+  }
+  else
+  {
+    visible.Forward(std::move(predictors.col(i)), std::move(output));
+    // Use mean when showing the if more than one input
+    return arma::mean(arma::accu( predictors.col(i) * arma::log(output).t() + 
+        (1 - predictors.col(i)) * arma::log(1 - output).t()));
+  }
+
 }
 
 template<typename InitializationRuleType, typename VisibleLayerType,
@@ -143,16 +170,18 @@ void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
   steps = (steps == 1)?this-> numSteps: steps;
   if (persistence && !state.is_empty())
     input = state;
-  if (steps != this->numSteps)
-    std::cout << steps << std::endl;
+
   for (size_t j = 0; j < steps; j++)
   {
     // Use probabilties for updation till the last step(section 3 hinton)
-    SampleHidden(std::move(input), std::move(output));
-    SampleVisible(std::move(output), std::move(input));
+    ForwardVisible(std::move(input), std::move(output));
+    ForwardHidden(std::move(output), std::move(input));
   }
+  // Set state to binarised output
+  SampleVisible(std::move(output), std::move(state));
+  // Return Probabilites
   output = input;
-  state = input;
+  
 }
 
 template<typename InitializationRuleType, typename VisibleLayerType,
