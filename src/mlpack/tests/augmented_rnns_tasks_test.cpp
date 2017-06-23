@@ -60,7 +60,6 @@ class HardCodedCopyModel {
     }
     assert(oneCnt % zeroCnt == 0);
     nRepeats = oneCnt / zeroCnt;
-    std::cerr << "Repeats: " << nRepeats << "\n";
   }
   void Predict(
       arma::mat& predictors,
@@ -72,8 +71,6 @@ class HardCodedCopyModel {
     for (size_t i = 0; i < outputLen; ++i) {
       labels.at(seqLen+i) = predictors.at(2 * (i % seqLen));
     }
-    std::cerr << "Predictors:\n" << predictors.t();
-    std::cerr << "Labels:\n" << labels.t();
   }
   void Predict(
       arma::field<arma::mat>& predictors,
@@ -134,19 +131,20 @@ class HardCodedSortModel {
 class HardCodedAddModel {
  public:
   HardCodedAddModel() {}
-  void Train(arma::field<arma::colvec>& predictors,
-             arma::field<arma::colvec>& labels)
+  void Train(arma::field<arma::mat>& predictors,
+             arma::field<arma::mat>& labels)
   {
     return;
   }
-  void Predict(arma::colvec& predictors,
-               arma::colvec& labels)
+  void Predict(arma::mat& predictors,
+               arma::mat& labels)
   {
+    assert(predictors.n_rows == 3);
     int num_A = 0, num_B = 0;
     bool num = false; // true iff we have already seen the separating symbol
-    auto len = predictors.n_elem;
+    size_t len = predictors.n_cols;
     for (size_t i = 0; i < len; ++i) {
-      auto digit = predictors.at(i);
+      auto digit = arma::as_scalar(arma::find(1 == predictors.col(i), 1));
       if (digit != 0 && digit != 1)
       {
         // We should not see two separators
@@ -175,16 +173,16 @@ class HardCodedAddModel {
       total >>= 1;
     }
     auto tot_len = binary_seq.size();
-    labels = arma::colvec(tot_len);
+    labels = arma::zeros(3, tot_len);
     for (size_t j = 0; j < tot_len; ++j) {
-      labels.at(j) = binary_seq[tot_len-j-1];
+      labels.at(binary_seq[tot_len-j-1], j) = 1;
     }
   }
   void Predict(
-      arma::field<arma::colvec>& predictors,
-      arma::field<arma::colvec>& labels) {
+      arma::field<arma::mat>& predictors,
+      arma::field<arma::mat>& labels) {
     auto sz = predictors.n_elem;
-    labels = arma::field<arma::colvec>(sz);
+    labels = arma::field<arma::mat>(sz);
     for (size_t i = 0; i < sz; ++i) {
       Predict(predictors.at(i), labels.at(i));
     }
@@ -251,16 +249,16 @@ BOOST_AUTO_TEST_CASE(AddTaskTest) {
   bool ok = true;
   for (size_t bitLen = 2; bitLen <= 16; ++bitLen) {
     AddTask task(bitLen);
-    arma::field<arma::colvec> trainPredictor, trainResponse;
+    arma::field<arma::mat> trainPredictor, trainResponse;
     task.Generate(trainPredictor, trainResponse, 8);
-    arma::field<arma::colvec> testPredictor, testResponse;
+    arma::field<arma::mat> testPredictor, testResponse;
     task.Generate(testPredictor, testResponse, 8);
     HardCodedAddModel model;
     model.Train(trainPredictor, trainResponse);
-    arma::field<arma::colvec> predResponse;
+    arma::field<arma::mat> predResponse;
     model.Predict(testPredictor, predResponse);
     // A single failure is a failure.
-    if (SequencePrecision<arma::colvec>(testResponse, predResponse) < 0.99) {
+    if (SequencePrecision<arma::mat>(testResponse, predResponse) < 0.99) {
       ok = false;
       break;
     }
