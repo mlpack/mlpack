@@ -93,6 +93,8 @@ class LSTM
   void Gradient(arma::Mat<eT>&& input,
                 arma::Mat<eT>&& /* error */,
                 arma::Mat<eT>&& /* gradient */);
+                
+  void ResetCell();
 
   //! The value of the deterministic parameter.
   bool Deterministic() const { return deterministic; }
@@ -152,10 +154,10 @@ class LSTM
   OutputDataType weights;
 
   //! Locally-stored previous output.
-  arma::mat prevOutput;
+  std::list<arma::mat>::iterator prevOutput;
 
   //! Locally-stored previous cell state.
-  arma::mat prevCell;
+  std::list<arma::mat>::iterator prevCell;
 
   //! Locally-stored input 2 gate module.
   LayerTypes input2GateModule;
@@ -200,16 +202,16 @@ class LSTM
   size_t gradientStep;
 
   //! Locally-stored cell parameters.
-  std::vector<arma::mat> cellParameter;
+  std::list<arma::mat> cellParameter;
 
   //! Locally-stored output parameters.
-  std::vector<arma::mat> outParameter;
+  std::list<arma::mat> outParameter;
+  
+  std::list<arma::mat>::iterator backIterator;
+  std::list<arma::mat>::iterator gradIterator;
 
   //! Locally-stored previous error.
   arma::mat prevError;
-
-  //! Locally-stored cell activation error.
-  arma::mat cellActivationError;
 
   //! Locally-stored foget gate error.
   arma::mat forgetGateError;
