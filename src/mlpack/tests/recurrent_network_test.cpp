@@ -182,8 +182,6 @@ void GenerateReber(const arma::Mat<char>& transitions, std::string& reber)
     idx = arma::as_scalar(transitions.submat(idx, grammerIdx + 2, idx,
         grammerIdx + 2)) - '0';
   } while (idx != 0);
-
-  //reber =  "BPTVVE";
 }
 
 /**
@@ -336,9 +334,6 @@ void ReberGrammarTestNetwork(bool embedded = false)
       GenerateEmbeddedReber(transitions, testReber);
     else
       GenerateReber(transitions, testReber);
-      
-    if(i < 3)
-      std::cout << testReber << std::endl;
 
     for (size_t j = 0; j < testReber.length() - 1; j++)
     {
@@ -376,7 +371,6 @@ void ReberGrammarTestNetwork(bool embedded = false)
 
     RNN<MeanSquaredError<> > model(5);
 
-    model.Add<IdentityLayer<> >();
     model.Add<Linear<> >(inputSize, 14);
     model.Add<RecurrentLayerType>(14, 7, 10000);
     model.Add<Linear<> >(7, outputSize);
@@ -403,9 +397,9 @@ void ReberGrammarTestNetwork(bool embedded = false)
     {
       arma::mat output, prediction;
       arma::mat input = testInput.at(0, i);
-
+      
+      model.Rho() = input.n_elem / inputSize;
       model.Predict(input, prediction);
-      data::Binarize(prediction, output, 0.5);
 
       const size_t reberGrammerSize = 7;
       std::string inputReber = "";
@@ -413,9 +407,6 @@ void ReberGrammarTestNetwork(bool embedded = false)
       size_t reberError = 0;
       for (size_t j = 0; j < (output.n_elem / reberGrammerSize); j++)
       {
-        //if (arma::sum(arma::sum(output.submat(j * reberGrammerSize, 0, (j + 1) *
-        //    reberGrammerSize - 1, 0))) != 1) break;
-
         char predictedSymbol, inputSymbol;
         std::string reberChoices;
 
@@ -439,7 +430,6 @@ void ReberGrammarTestNetwork(bool embedded = false)
     }
     
     error /= testReberGrammarCount;
-    std::cout << error << std::endl;
     if (error <= 0.2)
     {
       ++successes;
