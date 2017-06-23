@@ -167,6 +167,7 @@ class SA
    *
    * @param iterate Current optimization position.
    * @param accept Matrix representing which parameters have had accepted moves.
+   * @param moveSize Strides for a move.
    * @param energy Current energy of the system.
    * @param idx Current parameter to modify.
    * @param sweepCounter Current counter representing how many sweeps have been
