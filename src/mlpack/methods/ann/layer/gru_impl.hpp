@@ -131,7 +131,7 @@ void GRU<InputDataType, OutputDataType>::Forward(
       hiddenStateModule));
 
   forwardStep++;
-  if (forwardStep == rho && !deterministic)
+  if (forwardStep == rho)
   {
     forwardStep = 0;
     if (!deterministic) 
