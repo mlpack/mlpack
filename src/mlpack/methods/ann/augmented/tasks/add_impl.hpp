@@ -37,12 +37,12 @@ AddTask::AddTask(const size_t bitLen) : bitLen(bitLen) {
   assert(bitLen > 0);
 }
 
-void AddTask::Generate(arma::field<arma::colvec>& input,
-                       arma::field<arma::colvec>& labels,
+void AddTask::Generate(arma::field<arma::mat>& input,
+                       arma::field<arma::mat>& labels,
                        const size_t batchSize)
 {
-  input = arma::field<arma::colvec>(batchSize);
-  labels = arma::field<arma::colvec>(batchSize);
+  arma::field<arma::vec> vecInput = arma::field<arma::colvec>(batchSize);
+  arma::field<arma::vec> vecLabels = arma::field<arma::colvec>(batchSize);
   for (size_t i = 0; i < batchSize; ++i) {
     // Random uniform length from [2..bitLen]
     size_t size_A = RandInt(2, bitLen + 1);
@@ -50,18 +50,18 @@ void AddTask::Generate(arma::field<arma::colvec>& input,
     // Construct sequence of the form
     // (binary number with size_A bits) + '+'
     // + (binary number with size_B bits)
-    input(i) = arma::randi<arma::colvec>(
+    vecInput(i) = arma::randi<arma::colvec>(
       size_A + size_B + 1, arma::distr_param(0, 1));
-    input(i).at(size_A) = 2; // special value for '+' delimiter
+    vecInput(i).at(size_A) = 2; // special value for '+' delimiter
     int val_A = 0;
     for (size_t k = 0; k < size_A; ++k) {
       val_A <<= 1;
-      val_A += input(i).at(k);
+      val_A += vecInput(i).at(k);
     }
     int val_B = 0;
     for (size_t k = size_A+1; k < size_A+1+size_B; ++k) {
       val_B <<= 1;
-      val_B += input(i).at(k);
+      val_B += vecInput(i).at(k);
     }
     int tot = val_A + val_B;
     vector<int> binary_seq;
@@ -70,12 +70,29 @@ void AddTask::Generate(arma::field<arma::colvec>& input,
       tot >>= 1;
     }
     size_t tot_len = binary_seq.size();
-    labels(i) = arma::colvec(tot_len);
+    vecLabels(i) = arma::colvec(tot_len);
     for (size_t j = 0; j < tot_len; ++j) {
-      labels(i).at(j) = binary_seq[tot_len-j-1];
+      vecLabels(i).at(j) = binary_seq[tot_len-j-1];
     }
   }
+  input = Binarize(vecInput);
+  labels = Binarize(vecLabels);
 }
+
+arma::field<arma::mat> AddTask::Binarize(arma::field<arma::vec> data)
+{
+  arma::field<arma::mat> procData(data.n_elem);
+  for (size_t i = 0; i < data.n_elem; ++i) {
+    arma::mat temp = arma::zeros(3, data.at(i).n_elem);    
+    for (size_t j = 0; j < data.at(i).n_elem; ++j) {  
+     int val = data.at(i).at(j);
+     temp.at(val, j) = 1;
+    }
+    procData.at(i) = temp;
+  }
+  return procData;
+}
+
 
 } // namespace tasks
 } // namespace augmented
