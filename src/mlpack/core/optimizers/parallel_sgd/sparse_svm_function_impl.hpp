@@ -20,47 +20,18 @@ SparseSVMLossFunction::SparseSVMLossFunction(
     arma::mat& dataset, arma::vec& labels) : dataset(dataset), labels(labels)
 {
   numFunctions = dataset.n_cols;
-  GenerateVisitationOrder();
 }
 
-double SparseSVMLossFunction::Evaluate(arma::mat& weights)
+double SparseSVMLossFunction::Evaluate(arma::mat& weights, size_t id)
 {
-  double eval = 0;
-  for(size_t i = 0; i < numFunctions; ++i){
-    eval += std::max(0.0, 1 - labels(i) * arma::dot(weights, dataset.col(i)));
-  }
-  return eval;
+  return std::max(0.0, 1 - labels(id) * arma::dot(weights, dataset.col(id)));
 }
 
-void SparseSVMLossFunction::GenerateVisitationOrder()
-{
-  visitationOrder = arma::shuffle(arma::linspace<arma::Col<size_t>>(0,
-        (numFunctions - 1), numFunctions));
-}
-
-arma::Col<size_t> SparseSVMLossFunction::VisitationOrder(
-    size_t thread_id, size_t max_threads)
-{
-  arma::Col<size_t> threadShare;
-  if (thread_id == max_threads - 1){
-    // The last thread gets the remaining instances
-    threadShare = visitationOrder.subvec(thread_id * (numFunctions /
-        max_threads), numFunctions - 1);
-  }
-  else 
-  {
-    // An equal distribution of data
-    threadShare = visitationOrder.subvec(thread_id * (numFunctions /
-        max_threads), (thread_id + 1) * (numFunctions / max_threads) - 1);
-  }
-  return threadShare;
-}
-
-arma::vec SparseSVMLossFunction::Gradient(
-    arma::mat& weights, size_t id)
+void SparseSVMLossFunction::Gradient(
+    arma::mat& weights, size_t id, arma::mat& gradient)
 {
   double dot = 1 - labels(id) * arma::dot(weights, dataset.unsafe_col(id));
-  return (dot < 0) ? arma::vec(weights.n_elem, arma::fill::zeros) : 
+  gradient = (dot < 0) ? arma::vec(weights.n_elem, arma::fill::zeros) : 
     (-1 * dataset.unsafe_col(id) * labels(id));
 }
 arma::Col<size_t> SparseSVMLossFunction::Components(size_t id)

@@ -17,15 +17,12 @@
 class SparseSVMLossFunction{
  public:
   SparseSVMLossFunction(arma::mat& dataset, arma::vec& labels);
-  double Evaluate(arma::mat &weights);
-  arma::vec Gradient(arma::mat& weights, size_t component);
-  arma::Col<size_t> VisitationOrder(size_t thread_id, size_t max_threads);
+  double Evaluate(arma::mat &weights, size_t id);
+  void Gradient(arma::mat& weights, size_t id, arma::mat& gradient);
   arma::Col<size_t> Components(size_t id);
-  void GenerateVisitationOrder();
  private:
   arma::mat dataset;
   arma::vec labels;
-  arma::Col<size_t> visitationOrder;
   size_t numFunctions;
 };
 

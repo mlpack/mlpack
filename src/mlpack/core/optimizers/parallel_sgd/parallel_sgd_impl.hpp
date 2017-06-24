@@ -35,6 +35,36 @@ ParallelSGD<SparseFunctionType, StepsizePolicyType>::ParallelSGD(
 { /* Nothing to do. */ }
 
 template <typename SparseFunctionType, typename StepsizePolicyType>
+void ParallelSGD<
+    SparseFunctionType,
+    StepsizePolicyType>::GenerateVisitationOrder()
+{
+  visitationOrder = arma::shuffle(arma::linspace<arma::Col<size_t>>(0,
+        (function.numFunctions() - 1), function.NumFunctions()));
+}
+
+template <typename SparseFunctionType, typename StepsizePolicyType>
+arma::Col<size_t> ParallelSGD<
+    SparseFunctionType,
+    StepsizePolicyType>::ThreadShare(size_t thread_id, size_t max_threads)
+{
+  arma::Col<size_t> threadShare;
+  size_t examplesPerThread = std::floor(function.NumFunctions() / max_threads);
+  if (thread_id == max_threads - 1){
+    // The last thread gets the remaining instances
+    threadShare = visitationOrder.subvec(thread_id * examplesPerThread,
+        function.numFunctions() - 1);
+  }
+  else 
+  {
+    // An equal distribution of data
+    threadShare = visitationOrder.subvec(thread_id * examplesPerThread,
+        (thread_id + 1) * examplesPerThread - 1);
+  }
+  return threadShare;
+}
+
+template <typename SparseFunctionType, typename StepsizePolicyType>
 double ParallelSGD<SparseFunctionType, StepsizePolicyType>::Optimize(
     SparseFunctionType& function, 
     arma::mat& iterate)
@@ -45,27 +75,32 @@ double ParallelSGD<SparseFunctionType, StepsizePolicyType>::Optimize(
   for (size_t i = 1; i != maxIterations; ++i){
     overallObjective = 0;
     double stepSize = stepPolicy.StepSize(i);
-    function.GenerateVisitationOrder();
+    GenerateVisitationOrder();
     #pragma omp parallel
     {
       // Each processor gets a subset of the instances
-      arma::Col<size_t> instances =
-        function.RandomInstanceSet(omp_get_thread_num(),
+      arma::Col<size_t> instances = ThreadShare(omp_get_thread_num(),
             omp_get_num_threads());
-      for (size_t i = 0; i < instances.n_elem; ++i){
+      for (size_t j = 0; j < instances.n_elem; ++j)
+      {
         // Each instance affects only some components of the decision variable
-        arma::Col<size_t> components = function.Components(instances[i]);
+        arma::Col<size_t> components = function.Components(instances[j]);
         // Evaluate the gradient
-        arma::vec gradient = function.Gradient(iterate, instances[i]);
+        arma::vec gradient;
+        function.Gradient(iterate, instances[j], gradient);
 
-        for(size_t j = 0; j < components.n_elem; ++i){
+        for(size_t k = 0; k < components.n_elem; ++k)
+        {
           #pragma omp atomic
-          iterate[components[j]] -= stepSize * gradient[components[j]];
+          iterate[components[k]] -= stepSize * gradient[components[k]];
         }
       }
     }
     // Evaluate the function
-    overallObjective = function.Evaluate(iterate);
+    overallObjective = 0;
+    for(size_t j = 0; j < function.NumFunctions(); ++j){
+      overallObjective += function.Evaluate(iterate, j);
+    }
     if(std::abs(overallObjective - lastObjective) < tolerance){
       return overallObjective;
     }
