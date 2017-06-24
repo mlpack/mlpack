@@ -11,7 +11,7 @@
 #define MLPACK_METHODS_ANN_VANILLA_RBM_IMPL_HPP
 
 // In case it hasn't been included yet.
-#include "vanilla_rbm.hpp"
+#include "rbm.hpp"
 
 #include <mlpack/core.hpp>
 #include <mlpack/prereqs.hpp>
@@ -38,11 +38,13 @@ RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::RBM(
     VisibleLayerType visible,
     HiddenLayerType hidden,
     const size_t numSteps,
+    const bool useMonitoringCost,
     const bool persistence):
     visible(visible),
     hidden(hidden),
     initializeRule(initializeRule),
     numSteps(numSteps),
+    useMonitoringCost(useMonitoringCost),
     persistence(persistence),
     reset(false)
 {
@@ -59,13 +61,37 @@ void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::Reset()
   size_t weight = 0;
   weight+= visible.Parameters().n_elem;
   parameter.set_size(weight, 1);
-  parameter.zeros();
   initializeRule.Initialize(parameter, parameter.n_elem, 1);
   visible.Parameters() = arma::mat(parameter.memptr(), weight, 1, false, false);
   hidden.Parameters() = arma::mat(parameter.memptr(), weight, 1, false, false);
 
   visible.Reset();
   hidden.Reset();
+  positiveGradient.set_size(weight, 1);
+  negativeGradient.set_size(weight, 1);
+
+  weightNegativeGrad = arma::mat(negativeGradient.memptr(),
+      visible.Weight().n_rows,
+      visible.Weight().n_cols, false, false);
+
+  hiddenBiasNegativeGrad = arma::mat(negativeGradient.memptr() +
+      weightNegativeGrad.n_elem,
+      hidden.Bias().n_rows, 1, false, false);
+
+  visibleBiasNegativeGrad = arma::mat(negativeGradient.memptr() +
+      weightNegativeGrad.n_elem + hiddenBiasNegativeGrad.n_elem,
+      visible.Bias().n_rows, 1, false, false);
+
+  weightPositiveGrad = arma::mat(positiveGradient.memptr(),
+      visible.Weight().n_rows, visible.Weight().n_cols, false, false);
+
+  hiddenBiasPositiveGrad = arma::mat(positiveGradient.memptr() +
+      weightPositiveGrad.n_elem, hidden.Bias().n_rows, 1, false, false);
+
+  visibleBiasPositiveGrad = arma::mat(positiveGradient.memptr() +
+      weightPositiveGrad.n_elem + hiddenBiasPositiveGrad.n_elem,
+      visible.Bias().n_rows, 1, false, false);
+
   reset = true;
 }
 
@@ -95,8 +121,9 @@ void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
   */
 template<typename InitializationRuleType, typename VisibleLayerType,
     typename HiddenLayerType>
+template<typename VectorType>
 double RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
-    FreeEnergy(arma::mat input)
+    FreeEnergy(VectorType& input)
 {
   arma::mat output;
   visible.ForwardPreActivation(std::move(input), std::move(output));
@@ -109,41 +136,33 @@ template<typename InitializationRuleType, typename VisibleLayerType,
 double RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
     Evaluate(const arma::mat& /* parameters*/, const size_t i)
 {
-  double freeEnergy, freeEnergyChain;
-  arma::mat negativeSample;
+  arma::mat tempInput;
   arma::vec currentInput = predictors.unsafe_col(i);
-  // Do not use unsafe col predictor as we change the input
-  freeEnergy = FreeEnergy(currentInput);
-  Gibbs(currentInput, std::move(negativeSample));
-  freeEnergyChain = FreeEnergy(negativeSample);
-
-  return arma::mean(freeEnergy) - arma::mean(freeEnergyChain);
-}
-
-template<typename InitializationRuleType, typename VisibleLayerType,
-    typename HiddenLayerType>
-double RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
-    MonitoringCost(const size_t i)
-{
-  arma::mat corruptInput, output;
-  corruptInput = predictors.col(i);
-  if(persistence)
+  if (!useMonitoringCost)
   {
-    arma::mat corruptFe, inputFe;
-    size_t idx = RandInt(0, predictors.n_rows);
-    corruptInput.row(idx) = 1 - corruptInput.row(idx);
-    // Use mean when showing the if more than one input
-    return std::log(LogisticFunction::Fn(FreeEnergy(corruptInput) - 
-        FreeEnergy(predictors.col(i)))) * predictors.n_rows;
+    // Do not use unsafe col predictor as we change the input
+    Gibbs(i, std::move(tempInput));
+    return FreeEnergy(currentInput) - FreeEnergy(tempInput);
   }
   else
   {
-    visible.Forward(std::move(predictors.col(i)), std::move(output));
-    // Use mean when showing the if more than one input
-    return arma::mean(arma::accu( predictors.col(i) * arma::log(output).t() + 
-        (1 - predictors.col(i)) * arma::log(1 - output).t()));
+    if(persistence)
+    {
+      size_t idx = RandInt(0, currentInput.n_rows);
+      tempInput = currentInput;
+      tempInput.row(idx) = 1 - currentInput.row(idx);
+      // Use mean when showing the if more than one input
+      return std::log(LogisticFunction::Fn(FreeEnergy(tempInput) -
+          FreeEnergy(currentInput))) * predictors.n_rows;
+    }
+    else
+    {
+      visible.Forward(std::move(predictors.col(i)), std::move(tempInput));
+      // Use mean when showing the if more than one input
+      return arma::accu( predictors.col(i) * arma::log(tempInput).t() +
+          (1 - predictors.col(i)) * arma::log(1 - tempInput).t());
+    }
   }
-
 }
 
 template<typename InitializationRuleType, typename VisibleLayerType,
@@ -165,23 +184,32 @@ void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
 template<typename InitializationRuleType, typename VisibleLayerType,
     typename HiddenLayerType>
 void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
-    Gibbs(arma::mat input, arma::mat&& output, size_t steps)
+    Gibbs(const size_t i, arma::mat&& output, size_t steps)
 {
+  // Do not use unsafe col
+  gibbsInput = predictors.col(i);
   steps = (steps == 1)?this-> numSteps: steps;
   if (persistence && !state.is_empty())
-    input = state;
+    gibbsInput = state;
 
-  for (size_t j = 0; j < steps; j++)
+  if (steps == 1)
   {
-    // Use probabilties for updation till the last step(section 3 hinton)
-    ForwardVisible(std::move(input), std::move(output));
-    ForwardHidden(std::move(output), std::move(input));
+    this->VisibleLayer().Sample(std::move(gibbsInput), std::move(output));
+    this->HiddenLayer().Sample(std::move(output), std::move(output));
   }
-  // Set state to binarised output
-  SampleVisible(std::move(output), std::move(state));
-  // Return Probabilites
-  output = input;
-  
+  else
+  {
+    for (size_t j = 0; j < steps - 1 ; j++)
+    {
+      // Use probabilties for updation till the last step(section 3 hinton)
+      SampleHidden(std::move(gibbsInput), std::move(output));
+      SampleVisible(std::move(output), std::move(gibbsInput));
+    }
+    // Set state to binarised output
+    this->VisibleLayer().Forward(std::move(gibbsInput), std::move(state));
+    this->HiddenLayer().Forward(std::move(state), std::move(state));
+    output = gibbsInput;
+  }
 }
 
 template<typename InitializationRuleType, typename VisibleLayerType,
@@ -189,17 +217,23 @@ template<typename InitializationRuleType, typename VisibleLayerType,
 void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
     Gradient(const size_t input, arma::mat& output)
 {
-  arma::mat positiveGradient, negativeGradient, negativeSamples;
-  // Collect the positive gradients
-  CalcGradient(std::move(predictors.col(input)), std::move(positiveGradient));
+  arma::mat negativeSamples;
+  currentInput = predictors.col(input);
+  // Collect the negative gradients
+  VisibleLayer().Forward(std::move(currentInput),
+      std::move(hiddenBiasPositiveGrad));
+  weightPositiveGrad = currentInput * hiddenBiasPositiveGrad.t();
+  visibleBiasPositiveGrad = currentInput;
 
   // Collect the negative samples
-  Gibbs(std::move(predictors.col(input)), std::move(negativeSamples));
+  Gibbs(input, std::move(negativeSamples));
 
   // Collect the negative gradients
-  CalcGradient(std::move(negativeSamples), std::move(negativeGradient));
-
-  output = (positiveGradient - negativeGradient);
+  VisibleLayer().Forward(std::move(negativeSamples),
+      std::move(hiddenBiasNegativeGrad));
+  weightNegativeGrad =  hiddenBiasNegativeGrad * negativeSamples.t();
+  visibleBiasNegativeGrad = negativeSamples;
+  output = positiveGradient - negativeGradient;
 }
 
 //! Serialize the model.

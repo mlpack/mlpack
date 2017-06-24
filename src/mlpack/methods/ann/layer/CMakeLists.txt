@@ -6,6 +6,8 @@ set(SOURCES
   add_merge.hpp
   add_merge_impl.hpp
   base_layer.hpp
+  binary_layer.hpp
+  binary_layer_impl.hpp
   concat.hpp
   concat_impl.hpp
   concat_performance.hpp
@@ -53,8 +55,6 @@ set(SOURCES
   negative_log_likelihood_impl.hpp
   parametric_relu.hpp
   parametric_relu_impl.hpp
-  rbm_binary_layer.hpp
-  rbm_binary_layer_impl.hpp
   recurrent.hpp
   recurrent_impl.hpp
   recurrent_attention.hpp

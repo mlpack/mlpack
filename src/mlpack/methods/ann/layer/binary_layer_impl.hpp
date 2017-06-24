@@ -9,7 +9,7 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_RBM_BINARY_LAYER_IMPL_HPP
 #define MLPACK_METHODS_ANN_LAYER_RBM_BINARY_LAYER_IMPL_HPP
 // In case it hasn't yet been included.
-#include "rbm_binary_layer.hpp"
+#include "binary_layer.hpp"
 
 #include <mlpack/core/math/random.hpp>
 #include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
@@ -77,7 +77,7 @@ void BinaryLayer<InputDataType, OutputDataType>::Sample(InputDataType&& input,
 {
   Forward(std::move(input), std::move(output));
   for (size_t i = 0; i < output.n_elem; i++)
-    output(i) = math::RandomBernoulli(output(i));
+    output(i) = math::RandBernoulli(output(i));
 }
 
 template<typename InputDataType, typename OutputDataType>

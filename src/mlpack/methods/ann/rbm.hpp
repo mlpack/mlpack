@@ -44,6 +44,7 @@ class RBM
       VisibleLayerType visible,
       HiddenLayerType hidden,
       const size_t numSteps = 1,
+      const bool useMonitoringCost = true,
       const bool persistence = false);
 
   // Reset the network
@@ -71,23 +72,13 @@ class RBM
   */
   double Evaluate(const arma::mat& parameters, const size_t i);
 
-  /**
-  * Monitor Cost this function is needed for checking
-  * the progress of the training. Cross-Entropy is 
-  * needed when peristence is false and pseudo-likelihood
-  * is needed when persistence is true
-  *
-  * @param i Index of point to use for objective function evaluation.
-  * 
-  */
-  double MonitoringCost(const size_t i);
-
  /** 
   * This function calculates
   * the free energy of the model
   * @param: input data point 
   */
-  double FreeEnergy(arma::mat input);
+  template<typename VectorType>
+  double FreeEnergy(VectorType& input);
 
  /*
   * This functions samples the hidden
@@ -114,7 +105,7 @@ class RBM
   * @param input: input to the gibbs function
   * @param output: stores the negative sample
   */
-  void Gibbs(arma::mat input, arma::mat&& output, size_t steps = 1);
+  void Gibbs(const size_t i, arma::mat&& output, size_t steps = 1);
 
   /*
    * Calculates the gradients for the rbm network
@@ -126,44 +117,6 @@ class RBM
    * @param output store the gradients
    */
   void Gradient(const size_t input, arma::mat& output);
-
-  /* 
-   * ForwardVisible layer compute the forward
-   * activations given the visible layer
-   *
-   * @param input the visible layer
-   * @param output the acitvation function
-   */
-  void ForwardVisible(arma::mat&& input, arma::mat&& output)
-  {
-    visible.Forward(std::move(input), std::move(output));
-  };
-
-  /* 
-   * ForwardHidden layer compute the forward
-   * activations given the hidden layer
-   *
-   * @param input the visible layer
-   * @param output the acitvation function
-   */
-  void ForwardHidden(arma::mat&& input, arma::mat&& output)
-  {
-    hidden.Forward(std::move(input), std::move(output));
-  };
-
-  /*
-   * Helper function for Gradient
-   * calculates the gradients for both
-   * positive and negative samples.
-   */
-  void CalcGradient(arma::mat&& input, arma::mat&& output)
-  {
-    ForwardVisible(std::move(input), std::move(inputForward));
-    output = inputForward * input.t();
-    // Weights, hidden bias, visible bias
-    output = arma::join_cols(arma::join_cols(arma::vectorise(output),
-        inputForward), input);
-  };
 
   //! Return the number of separable functions (the number of predictor points).
   size_t NumFunctions() const { return numFunctions; }
@@ -184,7 +137,6 @@ class RBM
   void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-
   // Parameter weights of the network
   arma::mat parameter;
   // Visible layer
@@ -193,10 +145,6 @@ class RBM
   HiddenLayerType hidden;
   // Sigmoid Layer
   LayerTypes sigmoid;
-  // ResetVisitor
-  ResetVisitor resetVisitor;
-  // DeleteVistor
-  DeleteVisitor deleteVisitor;
   //! The matrix of data points (predictors).
   arma::mat predictors;
   // Samples
@@ -207,18 +155,42 @@ class RBM
   SoftplusFunction softplus;
   //! Locally-stored state of the persistent cdk.
   arma::mat state;
+  //! Locally-stored input for gibbs
+  arma::mat gibbsInput;
+  //! Locally-stored state of the persistent cdk.
+  arma::mat currentInput;
   //! Locally-stored number of functions varaiable
   size_t numFunctions;
   //! Locally-stored number of steps in gibbs sampling
   const size_t numSteps;
+  //! Locally-stored bool to use MonitorinCost
+  const bool useMonitoringCost;
   //! Locally-stored persistent cd-k or not
   const bool persistence;
   //! Locally-stored reset variable
   bool reset;
   //! Locally-stored Forward output variable for positive phase
   arma::mat inputForward;
+  //! Locally-stored negative Gradient variables
+  arma::mat negativeGradient;
+  //! Locally-stored positive Gradient variables
+  arma::mat positiveGradient;
+
+  //! Locally-stored negative weight Gradient
+  arma::mat weightNegativeGrad;
+  //! Locally-stored negative hidden bias Gradient
+  arma::mat hiddenBiasNegativeGrad;
+  //! Locally-stored negative hidden bias Gradient
+  arma::mat visibleBiasNegativeGrad;
+
+  //! Locally-stored positive weight Gradient
+  arma::mat weightPositiveGrad;
+  //! Locally-stored positive hidden bias Gradient
+  arma::mat hiddenBiasPositiveGrad;
+  //! Locally-stored positive hidden bias Gradient
+  arma::mat visibleBiasPositiveGrad;
 };
 } // namespace ann
 } // namespace mlpack
-#include "vanilla_rbm_impl.hpp"
+#include "rbm_impl.hpp"
 #endif

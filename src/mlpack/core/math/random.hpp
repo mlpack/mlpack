@@ -68,7 +68,7 @@ inline double Random(const double lo, const double hi)
 /**
  * Generates a 0/1 specified by the input.
  */
-inline double RandomBernoulli(const double input)
+inline double RandBernoulli(const double input)
 {
   if (Random() < input)
     return 1;

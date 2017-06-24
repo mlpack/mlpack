@@ -126,5 +126,5 @@ class BinaryLayer
 } // namespace ann
 } // namespace mlpack
 // Include implementation.
-#include "rbm_binary_layer_impl.hpp"
+#include "binary_layer_impl.hpp"
 #endif

@@ -26,7 +26,7 @@
 #include "sequential.hpp"
 #include "concat.hpp"
 #include "vr_class_reward.hpp"
-#include "rbm_binary_layer.hpp"
+#include "binary_layer.hpp"
 
 
 #endif
