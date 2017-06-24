@@ -39,6 +39,12 @@ class B
   void M(const MatType&, const PredictionsType&, const arma::rowvec&, int, int);
 };
 
+class C
+{
+ public:
+  double M(const arma::mat&, const arma::rowvec&, double);
+};
+
 template<typename Class, typename...T>
 using MForm1 = void(Class::*)(const arma::mat&, const arma::Row<size_t>&, T...);
 
@@ -48,6 +54,9 @@ using MForm2 = void(Class::*)(const arma::mat&, const arma::rowvec&, T...);
 template<typename Class, typename...T>
 using MForm3 = void(Class::*)(const arma::mat&, const arma::rowvec&,
     const arma::rowvec&, T...);
+
+template<typename Class, typename RT, typename...T>
+using MForm4 = RT(Class::*)(const arma::mat&, const arma::rowvec&, T...);
 
 HAS_METHOD_FORM(M, HasM);
 HAS_METHOD_FORM(template M<arma::mat>, HasTemplatedM);
@@ -119,6 +128,10 @@ BOOST_AUTO_TEST_CASE(HasMethodFormTest)
   static_assert(HasTemplatedM<B, MForm2>::value, "value should be true");
 
   static_assert(HasVeryTemplatedM<B, MForm3>::value, "value should be true");
+
+  static_assert(HasM<C, MForm4, 1>::value, "value should be true");
+
+  static_assert(HasTemplatedM<B, MForm4, 1>::value, "value should be true");
 }
 
 BOOST_AUTO_TEST_SUITE_END();
