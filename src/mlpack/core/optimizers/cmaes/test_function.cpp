@@ -11,6 +11,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "test_function.hpp"
+#include <armadillo>
 
 using namespace mlpack;
 using namespace mlpack::optimization;
@@ -18,7 +19,7 @@ using namespace mlpack::optimization::test;
 
 size_t cmaesTestFunction::NumFunctions(){ return 3; }
 
-double camesTestFunction::Evaluate(double arma::mat& coordinates)
+double camesTestFunction::Evaluate(arma::mat& coordinates)
 {
  	return -std::exp(-std::abs(coordinates[0])) + 
             std::pow(coordinates[1], 2) + 
