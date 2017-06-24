@@ -31,18 +31,16 @@ void SparseSVMLossFunction::Gradient(
     arma::mat& weights, size_t id, arma::mat& gradient)
 {
   double dot = 1 - labels(id) * arma::dot(weights, dataset.unsafe_col(id));
-  gradient = (dot < 0) ? arma::vec(weights.n_elem, arma::fill::zeros) : 
+  gradient = (dot < 0) ? arma::vec(weights.n_elem, arma::fill::zeros) :
     (-1 * dataset.unsafe_col(id) * labels(id));
 }
 arma::Col<size_t> SparseSVMLossFunction::Components(size_t id)
 {
   std::vector<size_t> nonZeroComponents;
-  for(size_t i = 0; i < dataset.n_rows; ++i)
+  for (size_t i = 0; i < dataset.n_rows; ++i)
   {
-    if(dataset(i, id) != 0.f)
-    {
+    if (dataset(i, id) != 0.f)
       nonZeroComponents.push_back(i);
-    }
   }
   return arma::Col<size_t>(nonZeroComponents);
 }

@@ -75,8 +75,8 @@ class ParallelSGD
    * @param tolerance Maximum absolute tolerance to terminate the algorithm.
    * @param decayPolicy The step size update policy to use.
   */
-  ParallelSGD(SparseFunctionType& function, 
-              const size_t maxIterations = 100, 
+  ParallelSGD(SparseFunctionType& function,
+              const size_t maxIterations = 100,
               const size_t batchSize = 10000,
               const double tolerance = 1e-5,
               const DecayPolicyType& decayPolicy = DecayPolicyType());
@@ -162,7 +162,7 @@ class ParallelSGD
 
   //! The maximum number of allowed iterations.
   size_t maxIterations;
-  
+
   //! The number of datapoints to be processed in one iteration by each thread.
   size_t batchSize;
 
@@ -171,11 +171,10 @@ class ParallelSGD
 
   //! The step size decay policy.
   DecayPolicyType& decayPolicy;
-
 };
 
-}
-}
+} // namespace optimization
+} // namespace mlpack
 
 // Include implementation.
 #include "parallel_sgd_impl.hpp"

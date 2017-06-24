@@ -25,7 +25,8 @@ class ConstantStep{
  private:
   double step;
 };
-}
-}
+
+} // namespace optimization
+} // namespace mlpack
 
 #endif

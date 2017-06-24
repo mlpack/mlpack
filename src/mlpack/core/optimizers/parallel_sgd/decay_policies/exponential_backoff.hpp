@@ -45,7 +45,7 @@ class ExponentialBackoff{
    * @param step The initial stepsize(gamma).
    * @param beta The reduction factor.
    */
-  ExponentialBackoff(size_t firstBackoffEpoch, double step, double beta) : 
+  ExponentialBackoff(size_t firstBackoffEpoch, double step, double beta) :
     firstBackoffEpoch(firstBackoffEpoch), step(step), beta(beta)
   {
       cutoffEpoch = firstBackoffEpoch;
@@ -64,11 +64,13 @@ class ExponentialBackoff{
     }
     return step;
   }
+
  private:
   size_t firstBackoffEpoch, cutoffEpoch;
   double step, beta;
 };
-}
-}
+
+} // namespace optimization
+} // namespace mlpack
 
 #endif

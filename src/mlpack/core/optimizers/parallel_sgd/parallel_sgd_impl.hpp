@@ -22,8 +22,8 @@ namespace optimization {
 
 template <typename SparseFunctionType, typename DecayPolicyType>
 ParallelSGD<SparseFunctionType, DecayPolicyType>::ParallelSGD(
-    SparseFunctionType& function, 
-    const size_t maxIterations, 
+    SparseFunctionType& function,
+    const size_t maxIterations,
     const size_t batchSize,
     const double tolerance,
     const DecayPolicyType& decayPolicy) :
@@ -38,7 +38,7 @@ ParallelSGD<SparseFunctionType, DecayPolicyType>::ParallelSGD(
 
 template <typename SparseFunctionType, typename DecayPolicyType>
 double ParallelSGD<SparseFunctionType, DecayPolicyType>::Optimize(
-    SparseFunctionType& function, 
+    SparseFunctionType& function,
     arma::mat& iterate)
 {
   double overallObjective = 0;
@@ -66,7 +66,7 @@ double ParallelSGD<SparseFunctionType, DecayPolicyType>::Optimize(
         arma::vec gradient;
         function.Gradient(iterate, instances[j], gradient);
 
-        for(size_t k = 0; k < components.n_elem; ++k)
+        for (size_t k = 0; k < components.n_elem; ++k)
         {
           #pragma omp atomic
           iterate[components[k]] -= stepSize * gradient[components[k]];
@@ -76,12 +76,12 @@ double ParallelSGD<SparseFunctionType, DecayPolicyType>::Optimize(
 
     // Evaluate the function
     overallObjective = 0;
-    for(size_t j = 0; j < function.NumFunctions(); ++j)
+    for (size_t j = 0; j < function.NumFunctions(); ++j)
     {
       overallObjective += function.Evaluate(iterate, j);
     }
 
-    if(std::abs(overallObjective - lastObjective) < tolerance)
+    if (std::abs(overallObjective - lastObjective) < tolerance)
     {
       return overallObjective;
     }
@@ -106,12 +106,12 @@ arma::Col<size_t> ParallelSGD<
     DecayPolicyType>::ThreadShare(size_t thread_id,
                                      const arma::Col<size_t>& visitationOrder)
 {
-  if(thread_id * batchSize >= visitationOrder.n_elem)
+  if (thread_id * batchSize >= visitationOrder.n_elem)
   {
     // No data for this thread.
     return arma::Col<size_t>();
   }
-  else if((thread_id + 1) * batchSize >= visitationOrder.n_elem)
+  else if ((thread_id + 1) * batchSize >= visitationOrder.n_elem)
   {
     // The last few elements.
     return visitationOrder.subvec(thread_id * batchSize,
@@ -125,10 +125,7 @@ arma::Col<size_t> ParallelSGD<
   }
 }
 
-}
-}
-
-// Include implementation.
-#include "parallel_sgd_impl.hpp"
+} // namespace optimization
+} // namespace mlpack
 
 #endif
