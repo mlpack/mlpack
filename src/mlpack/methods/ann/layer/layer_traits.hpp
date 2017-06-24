@@ -64,8 +64,8 @@ HAS_MEM_FUNC(Gradient, HasGradientCheck);
 // function.
 HAS_MEM_FUNC(Deterministic, HasDeterministicCheck);
 
-// This gives us a HasParametersCheck<T, U> type (where U is a function pointer) we
-// can use with SFINAE to catch when a type has a Parameters() function.
+// This gives us a HasParametersCheck<T, U> type (where U is a function pointer)
+// we can use with SFINAE to catch when a type has a Parameters() function.
 HAS_MEM_FUNC(Parameters, HasParametersCheck);
 
 // This gives us a HasAddCheck<T, U> type (where U is a function pointer) we

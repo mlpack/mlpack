@@ -64,22 +64,16 @@ LSTM<InputDataType, OutputDataType>::LSTM(
   network.push_back(cellModule);
   network.push_back(cellActivationModule);
 
-  //prevOutput = arma::zeros<arma::mat>(outSize, 1);
-  //prevCell = arma::zeros<arma::mat>(outSize, 1);
   prevError = arma::zeros<arma::mat>(4 * outSize, 1);
-  //cellActivationError = arma::zeros<arma::mat>(outSize, 1);
-  
+
   outParameter.push_back(arma::zeros<arma::mat>(outSize, 1));
   cellParameter.push_back(arma::zeros<arma::mat>(outSize, 1));
-  
+
   prevOutput = outParameter.begin();
   prevCell = cellParameter.begin();
-  
+
   backIterator = cellParameter.end();
   gradIterator = outParameter.end();
-
-  //cellParameter.reserve(rho);
-  //outParameter.reserve(rho);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -173,7 +167,7 @@ void LSTM<InputDataType, OutputDataType>::Backward(
   {
     gy += boost::apply_visitor(deltaVisitor, output2GateModule);
   }
-  
+
   if (backIterator == cellParameter.end())
   {
     backIterator = --(--cellParameter.end());
@@ -281,16 +275,16 @@ void LSTM<InputDataType, OutputDataType>::ResetCell()
 {
   outParameter.clear();
   outParameter.push_back(arma::zeros<arma::mat>(outSize, 1));
-  
+
   cellParameter.clear();
   cellParameter.push_back(arma::zeros<arma::mat>(outSize, 1));
-  
+
   prevOutput = outParameter.begin();
   prevCell = cellParameter.begin();
-  
+
   backIterator = cellParameter.end();
   gradIterator = outParameter.end();
-  
+
   forwardStep = 0;
   backwardStep = 0;
 }
