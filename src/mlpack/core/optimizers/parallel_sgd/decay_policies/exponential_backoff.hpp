@@ -1,8 +1,8 @@
 /**
- * @file constant_step.hpp
+ * @file exponential_backoff.hpp
  * @author Shikhar Bhardwaj
  *
- * Exponential backoff step size policy for parallel Stochastic Gradient
+ * Exponential backoff step size decay policy for parallel Stochastic Gradient
  * Descent.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -55,7 +55,7 @@ class ExponentialBackoff{
    *
    * @param n_epoch The iteration number of the current update.
    */
-  double getStepSize(size_t n_epoch)
+  double GetStepSize(size_t n_epoch)
   {
     if (n_epoch >= cutoffEpoch)
     {

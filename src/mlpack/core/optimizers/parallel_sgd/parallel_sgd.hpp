@@ -14,8 +14,6 @@
 
 #include <mlpack/prereqs.hpp>
 
-#include "stepsize_policies/constant_step.hpp"
-
 namespace mlpack {
 namespace optimization {
 
@@ -81,23 +79,7 @@ class ParallelSGD
               const size_t maxIterations = 100, 
               const size_t batchSize = 10000,
               const double tolerance = 1e-5,
-              const DecayPolicyType decayPolicy = DecayPolicyType());
-
-  /**
-   * Generate the indices to be visited by each thread before iteration.
-   * Generates a randomly shuffled vector of datapoint indices (range 0 to
-   * function.NumFunctions()).
-   */
-  void GenerateVisitationOrder();
-
-  /**
-   * Get the share of datapoint indices to be updated by the thread with given
-   * thread id.
-   *
-   * @param thread_id The id of the current thread. Range 0-OMP_NUM_THREADS.
-   * @return Vector of datapoint indices to be visited by the current thread.
-   */
-  arma::Col<size_t> ThreadShare(size_t thread_id);
+              const DecayPolicyType& decayPolicy = DecayPolicyType());
 
   /**
    * Optimize the given function using the parallel SGD algorithm. The given
@@ -152,6 +134,29 @@ class ParallelSGD
   DecayPolicyType& DecayPolicy() { return decayPolicy; }
 
  private:
+  /**
+   * Generate the indices to be visited by each thread before iteration.
+   * Generates a randomly shuffled vector of datapoint indices (range 0 to
+   * function.NumFunctions()).
+   *
+   * @param visitationOrder Out param with the indices of the datapoints for the
+   *    current iteration.
+   */
+  void GenerateVisitationOrder(arma::Col<size_t>& visitationOrder);
+
+  /**
+   * Get the share of datapoint indices to be updated by the thread with given
+   * thread id.
+   *
+   * @param thread_id The id of the current thread. Range 0-OMP_NUM_THREADS.
+   * @param visitationOrder The random list of datapoint indices for the current
+   *    iteration.
+   * @return Vector of datapoint indices to be visited by the current thread.
+   */
+  arma::Col<size_t> ThreadShare(size_t thread_id,
+                                const arma::Col<size_t>& visitationOrder);
+
+
   //! The instantiated function.
   SparseFunctionType& function;
 
@@ -166,6 +171,7 @@ class ParallelSGD
 
   //! The step size decay policy.
   DecayPolicyType& decayPolicy;
+
 };
 
 }

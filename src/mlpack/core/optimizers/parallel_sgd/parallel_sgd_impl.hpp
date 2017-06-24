@@ -14,55 +14,27 @@
 
 #include <mlpack/prereqs.hpp>
 
-#include "stepsize_policies/constant_step.hpp"
-
 // In case it hasn't been included yet.
 #include "parallel_sgd.hpp"
 
 namespace mlpack {
 namespace optimization {
 
-template <typename SparseFunctionType, typename StepsizePolicyType>
-ParallelSGD<SparseFunctionType, StepsizePolicyType>::ParallelSGD(
+template <typename SparseFunctionType, typename DecayPolicyType>
+ParallelSGD<SparseFunctionType, DecayPolicyType>::ParallelSGD(
     SparseFunctionType& function, 
     const size_t maxIterations, 
+    const size_t batchSize,
     const double tolerance,
-    const StepsizePolicyType stepPolicy) :
+    const DecayPolicyType& decayPolicy) :
     function(function),
     maxIterations(maxIterations),
+    batchSize(batchSize),
     tolerance(tolerance),
-    stepPolicy(stepPolicy)
+    decayPolicy(decayPolicy)
 { /* Nothing to do. */ }
 
-template <typename SparseFunctionType, typename StepsizePolicyType>
-void ParallelSGD<
-    SparseFunctionType,
-    StepsizePolicyType>::GenerateVisitationOrder()
-{
-  visitationOrder = arma::shuffle(arma::linspace<arma::Col<size_t>>(0,
-        (function.numFunctions() - 1), function.NumFunctions()));
-}
 
-template <typename SparseFunctionType, typename StepsizePolicyType>
-arma::Col<size_t> ParallelSGD<
-    SparseFunctionType,
-    StepsizePolicyType>::ThreadShare(size_t thread_id, size_t max_threads)
-{
-  arma::Col<size_t> threadShare;
-  size_t examplesPerThread = std::floor(function.NumFunctions() / max_threads);
-  if (thread_id == max_threads - 1){
-    // The last thread gets the remaining instances
-    threadShare = visitationOrder.subvec(thread_id * examplesPerThread,
-        function.numFunctions() - 1);
-  }
-  else 
-  {
-    // An equal distribution of data
-    threadShare = visitationOrder.subvec(thread_id * examplesPerThread,
-        (thread_id + 1) * examplesPerThread - 1);
-  }
-  return threadShare;
-}
 
 template <typename SparseFunctionType, typename StepsizePolicyType>
 double ParallelSGD<SparseFunctionType, StepsizePolicyType>::Optimize(
@@ -74,13 +46,18 @@ double ParallelSGD<SparseFunctionType, StepsizePolicyType>::Optimize(
 
   for (size_t i = 1; i != maxIterations; ++i){
     overallObjective = 0;
-    double stepSize = stepPolicy.StepSize(i);
-    GenerateVisitationOrder();
+
+    // Get the stepsize for this iteration
+    double stepSize = decayPolicy.StepSize(i);
+    arma::Col<size_t> visitationOrder;
+    GenerateVisitationOrder(visitationOrder);
+
     #pragma omp parallel
     {
       // Each processor gets a subset of the instances
+      // Each subset is of size batchSize
       arma::Col<size_t> instances = ThreadShare(omp_get_thread_num(),
-            omp_get_num_threads());
+          visitationOrder);
       for (size_t j = 0; j < instances.n_elem; ++j)
       {
         // Each instance affects only some components of the decision variable
@@ -96,17 +73,56 @@ double ParallelSGD<SparseFunctionType, StepsizePolicyType>::Optimize(
         }
       }
     }
+
     // Evaluate the function
     overallObjective = 0;
-    for(size_t j = 0; j < function.NumFunctions(); ++j){
+    for(size_t j = 0; j < function.NumFunctions(); ++j)
+    {
       overallObjective += function.Evaluate(iterate, j);
     }
-    if(std::abs(overallObjective - lastObjective) < tolerance){
+
+    if(std::abs(overallObjective - lastObjective) < tolerance)
+    {
       return overallObjective;
     }
     lastObjective = overallObjective;
   }
   return overallObjective;
+}
+
+template <typename SparseFunctionType, typename StepsizePolicyType>
+void ParallelSGD<
+    SparseFunctionType,
+    StepsizePolicyType>::GenerateVisitationOrder(
+        arma::Col<size_t>& visitationOrder)
+{
+  visitationOrder = arma::shuffle(arma::linspace<arma::Col<size_t>>(0,
+        (function.NumFunctions() - 1), function.NumFunctions()));
+}
+
+template <typename SparseFunctionType, typename StepsizePolicyType>
+arma::Col<size_t> ParallelSGD<
+    SparseFunctionType,
+    StepsizePolicyType>::ThreadShare(size_t thread_id,
+                                     const arma::Col<size_t>& visitationOrder)
+{
+  if(thread_id * batchSize >= visitationOrder.n_elem)
+  {
+    // No data for this thread.
+    return arma::Col<size_t>();
+  }
+  else if((thread_id + 1) * batchSize >= visitationOrder.n_elem)
+  {
+    // The last few elements.
+    return visitationOrder.subvec(thread_id * batchSize,
+        visitationOrder.n_elem - 1);
+  }
+  else
+  {
+    // Equal distribution of batchSize examples to each thread.
+    return visitationOrder.subvec(thread_id * batchSize,
+        (thread_id + 1) * batchSize - 1);
+  }
 }
 
 }
