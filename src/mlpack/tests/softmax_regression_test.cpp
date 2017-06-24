@@ -362,7 +362,8 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTrainTest)
   SoftmaxRegression sr2(dataset.n_rows, 2);
   sr.Parameters() = sr2.Parameters();
   sr.Train(dataset, labels, 2);
-  sr2.Train(dataset, labels, 2);
+  L_BFGS lbfgs;
+  sr2.Train(dataset, labels, 2, std::move(lbfgs));
 
   // Ensure that the parameters are the same.
   BOOST_REQUIRE_EQUAL(sr.Parameters().n_rows, sr2.Parameters().n_rows);
