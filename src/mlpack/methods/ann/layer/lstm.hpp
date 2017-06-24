@@ -93,7 +93,10 @@ class LSTM
   void Gradient(arma::Mat<eT>&& input,
                 arma::Mat<eT>&& /* error */,
                 arma::Mat<eT>&& /* gradient */);
-                
+
+  /*
+   * Resets the cell(BPTT) to accept a new input.
+   */
   void ResetCell();
 
   //! The value of the deterministic parameter.
@@ -206,8 +209,11 @@ class LSTM
 
   //! Locally-stored output parameters.
   std::list<arma::mat> outParameter;
-  
+
+  //! Iterator pointed to the last cell output processed by backward
   std::list<arma::mat>::iterator backIterator;
+
+  //! Iterator pointed to the last output processed by gradient
   std::list<arma::mat>::iterator gradIterator;
 
   //! Locally-stored previous error.

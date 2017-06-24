@@ -95,7 +95,10 @@ class GRU
   void Gradient(arma::Mat<eT>&& input,
                 arma::Mat<eT>&& /* error */,
                 arma::Mat<eT>&& /* gradient */);
-                
+
+  /*
+   * Resets the cell(BPTT) to accept a new input.
+   */
   void ResetCell();
 
   //! The value of the deterministic parameter.
@@ -164,7 +167,7 @@ class GRU
 
   //! Locally-stored output 2 gate module.
   LayerTypes output2GateModule;
-  
+
   //! Locally-stored output hidden state 2 gate module.
   LayerTypes outputHidden2GateModule;
 
@@ -197,9 +200,14 @@ class GRU
 
   //! Locally-stored output parameters.
   std::list<arma::mat> outParameter;
-  
+
+  //! Iterator pointed to the last output produced by the cell
   std::list<arma::mat>::iterator prevOutput;
+
+  //! Iterator pointed to the last output processed by backward 
   std::list<arma::mat>::iterator backIterator;
+
+  //! Iterator pointed to the last output processed by gradient
   std::list<arma::mat>::iterator gradIterator;
 
   //! Locally-stored previous error.
