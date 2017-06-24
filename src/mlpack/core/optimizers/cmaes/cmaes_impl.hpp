@@ -28,308 +28,223 @@
 #include "cmaes.hpp"
 #include "random.hpp"
 
-// 2 eigen values check for column values
-// index sort mabye we can use sort
-// get stop message
-// return value in a specific way
-
-// random number generator
-// enum work
-
-// INCLUDE RANDIM 2)
-//
-// segregate functions 1)
-// make the evaluate and numfunc etc 4)
-// test 
-
 namespace mlpack {
 namespace optimization {
 
-template<typename funcType, typename T>   
-void CMAES<funcType,T>::setWeights(Weights mode)
+  template<typename funcType>
+  CMAES<funcType>::CMAES(funcType& function, arma::mat& start, arma::mat& stdDivs)
+      : function(function),
+        N(-1),
+        typicalXcase(false),
+        rgInitialStds(0),
+        rgDiffMinChange(0),
+        stopMaxFunEvals(-1),
+        facmaxeval(1.0),
+        stopMaxIter(-1.0),
+        stopTolFun(1e-15),
+        stopTolFunHist(1e-15),
+        stopTolX(0), // 1e-11*insigma would also be reasonable
+        stopTolUpXFactor(1e3),
+        lambda(-1),
+        mu(-1),
+        mucov(-1),
+        mueff(-1),
+        weights(0),
+        damps(-1),
+        cs(-1),
+        ccumcov(-1),
+        ccov(-1),
+        facupdateCmode(1),
+        weightMode(UNINITIALIZED_WEIGHTS)
   {
-    //if called later delete the existing ones
-   // delete[] weights;
-    weights = new T[mu];
+    stStopFitness.flg = false;
+    stStopFitness.val = -std::numeric_limits<double>::max();
+    updateCmode.modulo = -1;
+    updateCmode.maxtime = -1;
 
-    switch(mode)
-    {
-    case LINEAR_WEIGHTS:
-      for (int i = 0; i < mu; ++i) weights[i] = mu - i;
-      break;
-    case EQUAL_WEIGHTS:
-      for (int i = 0; i < mu; ++i) weights[i] = 1;
-      break;
-    case LOG_WEIGHTS:
-    default:
-      for (int i = 0; i < mu; ++i) weights[i] = log(mu + 1.) - log(i + 1.);
-      break;
-    }
-
-    // normalize weights vector and set mueff
-    T s1 = 0, s2 = 0;
-    for (int i = 0; i < mu; ++i)
-    {
-      s1 += weights[i];
-      s2 += weights[i] * weights[i];
-    }
-
-    mueff = s1*s1/s2;
-
-    for (int i = 0; i < mu; ++i) weights[i] /= s1;
-
-    if (mu < 1 || mu > lambda || (mu == lambda && weights[0] == weights[mu - 1]))
-      throw std::runtime_error("setWeights(): invalid setting of mu or lambda");
-  }
-
-  template<typename funcType, typename T>
-  T* CMAES<funcType,T>::init(T dimension, T* inxstart, T* inrgsigma)
-  {
+     N = function.NumFunctions();
+    if( N <= 0)
+      throw std::runtime_error("Problem dimension N undefined.");
     
-      if (!inxstart)
-        std::cout << "Warning: initialX undefined. typicalX = 0.5...0.5." 
-        << std::endl;
+    bool startP  = true;
+    bool initDev = true;
 
-      if (!inrgsigma)
-        std::cout << "Warning: initialStandardDeviations undefined. 0.3...0.3."
-         << std::endl;
+    for(int i=0; i<N; i++)
+    {
+     if(start[i]   < 1.0e-200) startP  = false;
+     if(stdDivs[i] < 1.0e-200) initDev = false;
+    }
 
-      if (dimension <= 0)
-        { throw std::runtime_error("Problem dimension N undefined.");}
-          else
-            if (dimension > 0) N = dimension;
-
-      diagonalCov = 0;
-
-      xstart = new T[N];
-
-      if (inxstart)
-      {
-        for (int i = 0; i < N; ++i)
-          xstart[i] = inxstart[i];
-      }
-      else
-      {
-        typicalXcase = true;
-        for (int i = 0; i < N; i++) xstart[i] = 0.5;
-      }
   
-      rgInitialStds = new T[N];
+   if(!startP)
+        std::cout << " WARNING: initial start point undefined. Please specify if incorrect results detected. DEFAULT = 0.5...0.5." << std::endl;
+   if(!initDev)
+        std::cout << "WARNING: initialStandardDeviations undefined. Please specify if incorrect results detected. DEFAULT = 0.3...0.3." << std::endl;
+    
+   
 
-      if (inrgsigma) for (int i = 0; i < N; ++i) rgInitialStds[i] = inrgsigma[i];
-      else
-        for (int i = 0; i < N; ++i) rgInitialStds[i] = T(0.3);
-
-      rgDiffMinChange = 0;
-
-      lambda = 4 + (int) (3.0*log((double) N));
-
-      mu = lambda / 2;
-
+    if(weightMode == UNINITIALIZED_WEIGHTS)
       weightMode = LOG_WEIGHTS;
 
-      setWeights(weightMode);
+    diagonalCov = 0; // default is 0, but this might change in future
 
-      if (cs <= 0 || cs >= 1) cs = (mueff + 2.) / (N + mueff + 3.);
+      xstart = new double[N];
+      if(startP)
+      {
+        for(int i = 0; i < N; ++i) xstart[i] = start[i];
+      }
+     else
+      {
+        typicalXcase = true;
+        for(int i = 0; i < N; i++) xstart[i] = 0.5;
+      }
+  
 
+    rgInitialStds = new double[N];
+    if(initDev)
+      {
+        for(int i = 0; i < N; ++i) rgInitialStds[i] = stdDivs[i];
+      }
+      else
+      {
+        for(int i = 0; i < N; ++i) rgInitialStds[i] = double(0.3);
+      }
+
+
+    if(lambda < 2)
+      lambda = 4 + (int) (3.0*log((double) N));
+    if(mu <= 0)
+      mu = lambda / 2;
+    if(!weights)
+     {
+     if(weights)
+        delete[] weights;
+      weights = new double[mu];
+      switch(weightMode)
+      {
+      case LINEAR_WEIGHTS:
+        for(int i = 0; i < mu; ++i) weights[i] = mu - i;
+        break;
+      case EQUAL_WEIGHTS:
+        for(int i = 0; i < mu; ++i) weights[i] = 1;
+        break;
+      case LOG_WEIGHTS:
+      default:
+        for(int i = 0; i < mu; ++i) weights[i] = log(mu + 1.) - log(i + 1.);
+        break;
+      }
+
+      // normalize weights vector and set mueff
+      double s1 = 0, s2 = 0;
+      for(int i = 0; i < mu; ++i)
+      {
+        s1 += weights[i];
+        s2 += weights[i]*weights[i];
+      }
+      mueff = s1*s1/s2;
+      for(int i = 0; i < mu; ++i)
+        weights[i] /= s1;
+
+      if(mu < 1 || mu > lambda || (mu == lambda && weights[0] == weights[mu - 1]))
+        throw std::runtime_error("setWeights(): invalid setting of mu or lambda");
+    }
+
+    if(cs > 0)
+      cs *= (mueff + 2.) / (N + mueff + 3.);
+    if(cs <= 0 || cs >= 1)
+      cs = (mueff + 2.) / (N + mueff + 3.);
+
+    if(ccumcov <= 0 || ccumcov > 1)
       ccumcov = 4. / (N + 4);
 
-      mucov = mueff = -1;
-
-      T t1 = 2. / ((N + 1.4142)*(N + 1.4142));
-
-      T t2 = (2.* mueff - 1.) / ((N + 2.)*(N + 2.) + mueff);
-      
-      t2 = (t2 > 1) ? 1 : t2;
-      
-      t2 = (1. / mucov)* t1 + (1. - 1. / mucov)* t2;
-
+    if(mucov < 1)
+      mucov = mueff;
+    double t1 = 2. / ((N + 1.4142)*(N + 1.4142));
+    double t2 = (2.* mueff - 1.) / ((N + 2.)*(N + 2.) + mueff);
+    t2 = (t2 > 1) ? 1 : t2;
+    t2 = (1. / mucov)* t1 + (1. - 1. / mucov)* t2;
+    if(ccov >= 0)
+      ccov *= t2;
+    if(ccov < 0 || ccov > 1)
       ccov = t2;
 
-      facmaxeval = 1.0;
-      stopMaxFunEvals = facmaxeval * 900 * (N + 3)*(N + 3);
+    if(diagonalCov < 0)
+      diagonalCov = 2 + 100. * N / sqrt((double) lambda);
 
+    if(stopMaxFunEvals <= 0)
+      stopMaxFunEvals = facmaxeval * 900 * (N + 3)*(N + 3);
+    else
+      stopMaxFunEvals *= facmaxeval;
+
+    if(stopMaxIter <= 0)
       stopMaxIter = ceil((double) (stopMaxFunEvals / lambda));
 
-      damps = T(1);
+    if(damps < double(0))
+      damps = double(1);
+    damps = damps
+        * (double(1) + double(2)*std::max(double(0), std::sqrt((mueff - double(1)) / (N + double(1))) - double(1)))
+        * (double) std::max(double(0.3), double(1) - // modify for short runs
+          (double) N / (double(1e-6) + std::min(stopMaxIter, stopMaxFunEvals / lambda)))
+        + cs;
 
-      damps = damps
-        * (T(1) + T(2)*std::max(T(0), std::sqrt((mueff - T(1)) / (N + T(1))) - T(1)))
-        * (T) std::max(T(0.3), T(1)
-        - (T) N / (T(1e-6) + std::min(stopMaxIter, stopMaxFunEvals / lambda))) + cs;
-
+    if(updateCmode.modulo < 0)
       updateCmode.modulo = 1. / ccov / (double) N / 10.;
-
-      facupdateCmode = 1;
-      updateCmode.modulo *= facupdateCmode;
-      updateCmode.maxtime = 0.20;
-
-      //! DEFAULT termination criterias 
-      stopTolFun = 1e-12;
-      stopTolFunHist = 1e-13;
-      stopTolX = 0;
-      stopTolUpXFactor = 1e3;
-
-    stopMessage = "";
-
-    T trace(0);
-    for (int i = 0; i <N; ++i)
-      trace += rgInitialStds[i]*rgInitialStds[i];
-    sigma = std::sqrt(trace/N);
-
-    chiN = std::sqrt((T)N) * (T(1) - T(1)/(T(4)*N) + T(1)/(T(21)*N*N));
-    eigensysIsUptodate = true;
-    doCheckEigen = false;
-    genOfEigensysUpdate = 0;
-
-    T dtest;
-    for (dtest = T(1); dtest && dtest < T(1.1)*dtest; dtest *= T(2))
-      if (dtest == dtest + T(1))
-        break;
-    dMaxSignifKond = dtest / T(1000);
-
-    gen = 0;
-    countevals = 0;
-    state = INITIALIZED;
-    dLastMinEWgroesserNull = T(1);
-
-    pc = new T[N];
-    ps = new T[N];
-    tempRandom = new T[N+1];
-    BDz = new T[N];
-    xmean = new T[N+2];
-    xmean[0] =N;
-    ++xmean;
-    xold = new T[N+2];
-    xold[0] = N;
-    ++xold;
-    xBestEver = new T[N+3];
-    xBestEver[0] = N;
-    ++xBestEver;
-    xBestEver[N] = std::numeric_limits<T>::max();
-    output = new T[N+2];
-    output[0] = N;
-    ++output;
-    rgD = new T[N];
-    C = new T*[N];
-    B = new T*[N];
-    publicFitness = new T[lambda];
-    functionValues = new T[lambda+1];
-    functionValues[0] = lambda;
-    ++functionValues;
-    const int historySize = 10 + (int) ceil(3.*10.*N/lambda);
-    funcValueHistory = new T[historySize + 1];
-    funcValueHistory[0] = (T) historySize;
-    funcValueHistory++;
-
-    for (int i = 0; i <N; ++i)
-    {
-      C[i] = new T[i+1];
-      B[i] = new T[N];
-    }
-    index = new int[lambda];
-    for (int i = 0; i <lambda; ++i)
-        index[i] = i;
-    population = new T*[lambda];
-    for (int i = 0; i <lambda; ++i)
-    {
-      population[i] = new T[N+2];
-      population[i][0] = N;
-      population[i]++;
-      for (int j = 0; j <N; j++)
-        population[i][j] = 0.0;
-    }
-
-    for (int i = 0; i <lambda; i++)
-    {
-      functionValues[i] = std::numeric_limits<T>::max();
-    }
-    for (int i = 0; i < historySize; i++)
-    {
-      funcValueHistory[i] = std::numeric_limits<T>::max();
-    }
-    for (int i = 0; i <N; ++i)
-      for (int j = 0; j < i; ++j)
-        C[i][j] = B[i][j] = B[j][i] = 0.;
-
-    for (int i = 0; i <N; ++i)
-    {
-      B[i][i] = T(1);
-      C[i][i] = rgD[i] = rgInitialStds[i]*std::sqrt(N/trace);
-      C[i][i] *= C[i][i];
-      pc[i] = ps[i] = T(0);
-    }
-    minEW = minElement(rgD,N);
-    minEW = minEW*minEW;
-    maxEW = maxElement(rgD,N);
-    maxEW = maxEW*maxEW;
-
-    maxdiagC = C[0][0];
-    for (int i = 1; i < N; ++i) if (maxdiagC < C[i][i]) maxdiagC = C[i][i];
-    mindiagC = C[0][0];
-    for (int i = 1; i < N; ++i) if (mindiagC > C[i][i]) mindiagC = C[i][i];
-
-    for (int i = 0; i <N; ++i)
-      xmean[i] = xold[i] = xstart[i];
-    
-    if (typicalXcase)
-      for (int i = 0; i < N; ++i)
-        xmean[i] += sigma*rgD[i]*rand.gauss();
-
-    stStopFitness.flg = false;
-    stStopFitness.val = -std::numeric_limits<T>::max();
-
-    return publicFitness;
+    updateCmode.modulo *= facupdateCmode;
+    if(updateCmode.maxtime < 0)
+      updateCmode.maxtime = 0.20; // maximal 20% of CPU-time
   
   }
 
-//! Optimize the function (minimize).
-template<typename funcType, typename T>
-T CMAES<funcType, T>::Optimize(funcType& func, T *iterate)
-{
-  // numof functions for the N and the evaluate for the function
-  // return the final answer  and the xfinal in the iterate itself
-  //TEST FOR TERMINATE SAMPLE AND UPDATE
+  template<typename funcType>
+  double CMAES<funcType>::Optimize(arma::mat& arr)
+  {
 
-// Iterate until stop criterion holds
+  arFunvals = init();
+
   while(!testForTermination())
-  { 
-    double *const*pop;
+  {
     // Generate lambda new search points, sample population
     pop = samplePopulation();
 
-    //const size_t numFunctions = func.NumFunctions();
+    arma::mat fit(1,N);
 
-    // evaluate the new search points using evaluate function given by the user
+    // evaluate the new search points using the given evaluate function by the user
     for (int i = 0; i < lambda; ++i)
-     functionFitness[i] = func.Evaluate(pop[i]);
+    {
+      for(int j=0; j<N; j++) fit(0,j) = pop[i][j];
+
+      arFunvals[i] = function.Evaluate(fit);
+    }
 
     // update the search distribution used for sampleDistribution()
-    updateDistribution(functionFitness);
+      updateDistribution(arFunvals);
   }
 
-  std::cout << "Stop:" << getStopMessage();
+  std::cout << "Stop:" << std::endl << getStopMessage();
 
-  // get best estimator for the optimum, xmean
-   for(int i=0; i<N; i++) iterate[i] = xmean[i]; // "XBestEver" might be used as well
-   
-   return 0;
-}
+  // get best estimator for the optimum
+  for(int i=0; i<N; i++) arr[i] = xmean[i]; 
 
- 
+  return xBestEver[N];
 
-  /**    * Calculating eigenvalues and vectors.    * Also checks for
-successful eigen decomposition.    * @param diag (output) N eigenvalues.    *
-@param Q (output) Columns are normalized eigenvectors.    */
-template<typename funcType, typename T>   
-void CMAES<funcType,T>::eigen(T* diag , T** Q)  
-{
+  }
+
+/**
+   * Calculating eigenvalues and vectors.
+   * Also checks for successful eigen decomposition.
+   * @param diag (output) N eigenvalues.
+   * @param Q (output) Columns are normalized eigenvectors.
+   */
+   template<typename funcType>
+  void CMAES<funcType>::eigen(double* diag, double** Q)
+  { 
+
      arma::vec eV;
      arma::mat eigMat;
 
      arma::mat cov(N,N);
-     for (int i=0; i<N; i++)
-      for (int j=0; j<=i; j++) cov(i,j)=cov(j,i)=C[i][j];
+     for(int i=0; i<N; i++)
+      for(int j=0; j<=i; j++) cov(i,j)=cov(j,i)=C[i][j];
 
 
    if (!arma::eig_sym(eV, eigMat, cov))
@@ -351,51 +266,55 @@ void CMAES<funcType,T>::eigen(T* diag , T** Q)
    * operations writes to error file.
    * @return number of detected inaccuracies
    */
-  template<typename funcType, typename T>  
-  int CMAES<funcType,T>::checkEigen(T* diag, T** Q)
+   template<typename funcType>
+  int CMAES<funcType>::checkEigen(double* diag, double** Q)
   {
     // compute Q diag Q^T and Q Q^T to check
     int res = 0;
     for (int i = 0; i < N; ++i)
       for (int j = 0; j < N; ++j) {
-        T cc = 0., dd = 0.;
-        for (int k = 0; k < N; ++k)
+        double cc = 0., dd = 0.;
+        for(int k = 0; k < N; ++k)
         {
           cc += diag[k]*Q[i][k]*Q[j][k];
           dd += Q[i][k]*Q[j][k];
         }
         // check here, is the normalization the right one?
-        const bool cond1 = fabs(cc - C[i > j ? i : j][i > j ? j : i]) / sqrt(C[i][i]* C[j][j]) > T(1e-10);
-        const bool cond2 = fabs(cc - C[i > j ? i : j][i > j ? j : i]) > T(3e-14);
-        if (cond1 && cond2)
+        const bool cond1 = fabs(cc - C[i > j ? i : j][i > j ? j : i]) / sqrt(C[i][i]* C[j][j]) > double(1e-10);
+        const bool cond2 = fabs(cc - C[i > j ? i : j][i > j ? j : i]) > double(3e-14);
+        if(cond1 && cond2)
         {
           std::stringstream s;
           s << i << " " << j << ": " << cc << " " << C[i > j ? i : j][i > j ? j : i]
               << ", " << cc - C[i > j ? i : j][i > j ? j : i];
-         
-          std::cout << "eigen(): imprecise result detected " << s.str() << std::endl;
+          
+          std::cout << "eigen(): imprecise result detected " << s.str()
+                << std::endl;
           ++res;
         }
-        if (std::fabs(dd - (i == j)) > T(1e-10))
+        if(std::fabs(dd - (i == j)) > double(1e-10))
         {
           std::stringstream s;
           s << i << " " << j << " " << dd;
-          std::cout << "eigen(): imprecise result detected (Q not orthog.)" << s.str() << std::endl;
+          
+            std::cout << "eigen(): imprecise result detected (Q not orthog.)"
+                << s.str() << std::endl;
           ++res;
         }
       }
     return res;
   }
 
-  template<typename funcType, typename T>
-  void CMAES<funcType,T>::sortIndex(const T* rgFunVal, int* iindex, int n)
+
+   template<typename funcType>
+  void CMAES<funcType>::sortIndex(const double* rgFunVal, int* iindex, int n)
   {
     int i, j;
-    for (i = 1, iindex[0] = 0; i < n; ++i)
+    for(i = 1, iindex[0] = 0; i < n; ++i)
     {
-      for (j = i; j > 0; --j)
+      for(j = i; j > 0; --j)
       {
-        if (rgFunVal[iindex[j - 1]] < rgFunVal[i])
+        if(rgFunVal[iindex[j - 1]] < rgFunVal[i])
           break;
         iindex[j] = iindex[j - 1];
       }
@@ -403,45 +322,45 @@ void CMAES<funcType,T>::eigen(T* diag , T** Q)
     }
   }
 
-  template<typename funcType, typename T>
-  void CMAES<funcType, T>::adaptC2(const int hsig)
+  template<typename funcType>
+  void CMAES<funcType>::adaptC2(const int hsig)
   {
     bool diag = diagonalCov == 1 || diagonalCov >= gen;
 
-    if (ccov != T(0))
+    if(ccov != double(0))
     {
       // definitions for speeding up inner-most loop
-      const T mucovinv = T(1)/mucov;
-      const T commonFactor = ccov * (diag ? (N + T(1.5)) / T(3) : T(1));
-      const T ccov1 = std::min(commonFactor*mucovinv, T(1));
-      const T ccovmu = std::min(commonFactor*(T(1)-mucovinv), T(1)-ccov1);
-      const T sigmasquare = sigma*sigma;
-      const T onemccov1ccovmu = T(1)-ccov1-ccovmu;
-      const T longFactor = (T(1)-hsig)*ccumcov*(T(2)-ccumcov);
+      const double mucovinv = double(1)/mucov;
+      const double commonFactor = ccov * (diag ? (N + double(1.5)) / double(3) : double(1));
+      const double ccov1 = std::min(commonFactor*mucovinv, double(1));
+      const double ccovmu = std::min(commonFactor*(double(1)-mucovinv), double(1)-ccov1);
+      const double sigmasquare = sigma*sigma;
+      const double onemccov1ccovmu = double(1)-ccov1-ccovmu;
+      const double longFactor = (double(1)-hsig)*ccumcov*(double(2)-ccumcov);
 
       eigensysIsUptodate = false;
 
       // update covariance matrix
-      for (int i = 0; i < N; ++i)
-        for (int j = diag ? i : 0; j <= i; ++j)
+      for(int i = 0; i < N; ++i)
+        for(int j = diag ? i : 0; j <= i; ++j)
         {
-          T& Cij = C[i][j];
+          double& Cij = C[i][j];
           Cij = onemccov1ccovmu*Cij + ccov1 * (pc[i]*pc[j] + longFactor*Cij);
-          for (int k = 0; k < mu; ++k)
+          for(int k = 0; k < mu; ++k)
           { // additional rank mu update
-            const T* rgrgxindexk = population[index[k]];
+            const double* rgrgxindexk = population[index[k]];
             Cij += ccovmu*weights[k] * (rgrgxindexk[i] - xold[i])
                 * (rgrgxindexk[j] - xold[j]) / sigmasquare;
           }
         }
       // update maximal and minimal diagonal value
       maxdiagC = mindiagC = C[0][0];
-      for (int i = 1; i < N; ++i)
+      for(int i = 1; i < N; ++i)
       {
-        const T& Cii = C[i][i];
-        if (maxdiagC < Cii)
+        const double& Cii = C[i][i];
+        if(maxdiagC < Cii)
           maxdiagC = Cii;
-        else if (mindiagC > Cii)
+        else if(mindiagC > Cii)
           mindiagC = Cii;
       }
     }
@@ -450,15 +369,15 @@ void CMAES<funcType,T>::eigen(T* diag , T** Q)
   /**
    * Treats minimal standard deviations and numeric problems. Increases sigma.
    */
-  template<typename funcType, typename T>
-  void CMAES<funcType, T>::testMinStdDevs(void)
+  template<typename funcType>
+  void CMAES<funcType>::testMinStdDevs(void)
   {
-    if (!this->rgDiffMinChange)
+    if(!this->rgDiffMinChange)
       return;
 
-    for (int i = 0; i < N; ++i)
-      while (this->sigma*std::sqrt(this->C[i][i]) < this->rgDiffMinChange[i])
-        this->sigma *= std::exp(T(0.05) + this->cs / this->damps);
+    for(int i = 0; i < N; ++i)
+      while(this->sigma*std::sqrt(this->C[i][i]) < this->rgDiffMinChange[i])
+        this->sigma *= std::exp(double(0.05) + this->cs / this->damps);
   }
 
   /**
@@ -466,30 +385,138 @@ void CMAES<funcType,T>::eigen(T* diag , T** Q)
    * @param x Search space vector.
    * @param eps Mutation factor.
    */
-  template<typename funcType, typename T>
-  void CMAES<funcType, T>::addMutation(T* x, T eps)
+  template<typename funcType>
+  void CMAES<funcType>::addMutation(double* x, double eps)
   {
-    for (int i = 0; i < N; ++i)
+    for(int i = 0; i < N; ++i)
       tempRandom[i] = rgD[i]*rand.gauss();
-    for (int i = 0; i < N; ++i)
+    for(int i = 0; i < N; ++i)
     {
-      T sum = 0.0;
-      for (int j = 0; j < N; ++j)
+      double sum = 0.0;
+      for(int j = 0; j < N; ++j)
         sum += B[i][j]*tempRandom[j];
       x[i] = xmean[i] + eps*sigma*sum;
     }
   }
 
-template<typename funcType, typename T>
-	T CMAES<funcType, T>::maxElement(const T* rgd, int len)
-	{
-	  return *std::max_element(rgd, rgd + len);
-	}
-template<typename funcType, typename T>
-  T CMAES<funcType, T>::minElement(const T* rgd, int len)
-	{
-	  return *std::min_element(rgd, rgd + len);
-	}
+  /**
+   * Initializes the CMA-ES algorithm.
+   * @param parameters The CMA-ES parameters in the parameters.h file
+   * @return Array of size lambda that can be used to assign fitness values and
+   *         pass them to updateDistribution()
+   */
+  template<typename funcType>
+  double* CMAES<funcType>::init()
+  {
+
+    stopMessage = "";
+
+    double trace(0);
+    for(int i = 0; i < N; ++i)
+      trace += rgInitialStds[i]*rgInitialStds[i];
+    sigma = std::sqrt(trace/N);
+
+    chiN = std::sqrt((double) N) * (double(1) - double(1)/(double(4)*N) + double(1)/(double(21)*N*N));
+    eigensysIsUptodate = true;
+    doCheckEigen = false;
+    genOfEigensysUpdate = 0;
+
+    double dtest;
+    for(dtest = double(1); dtest && dtest < double(1.1)*dtest; dtest *= double(2))
+      if(dtest == dtest + double(1))
+        break;
+    dMaxSignifKond = dtest / double(1000);
+
+    gen = 0;
+    countevals = 0;
+    state = INITIALIZED;
+    dLastMinEWgroesserNull = double(1);
+
+    pc = new double[N];
+    ps = new double[N];
+    tempRandom = new double[N+1];
+    BDz = new double[N];
+    xmean = new double[N+2];
+    xmean[0] = N;
+    ++xmean;
+    xold = new double[N+2];
+    xold[0] = N;
+    ++xold;
+    xBestEver = new double[N+3];
+    xBestEver[0] = N;
+    ++xBestEver;
+    xBestEver[N] = std::numeric_limits<double>::max();
+    output = new double[N+2];
+    output[0] = N;
+    ++output;
+    rgD = new double[N];
+    C = new double*[N];
+    B = new double*[N];
+    publicFitness = new double[lambda];
+    functionValues = new double[lambda+1];
+    functionValues[0] = lambda;
+    ++functionValues;
+    const int historySize = 10 + (int) ceil(3.*10.*N/lambda);
+    funcValueHistory = new double[historySize + 1];
+    funcValueHistory[0] = (double) historySize;
+    funcValueHistory++;
+
+    for(int i = 0; i < N; ++i)
+    {
+      C[i] = new double[i+1];
+      B[i] = new double[N];
+    }
+    index = new int[lambda];
+    for(int i = 0; i < lambda; ++i)
+        index[i] = i;
+    population = new double*[lambda];
+    for(int i = 0; i < lambda; ++i)
+    {
+      population[i] = new double[N+2];
+      population[i][0] = N;
+      population[i]++;
+      for(int j = 0; j < N; j++)
+        population[i][j] = 0.0;
+    }
+
+    for(int i = 0; i < lambda; i++)
+    {
+      functionValues[i] = std::numeric_limits<double>::max();
+    }
+    for(int i = 0; i < historySize; i++)
+    {
+      funcValueHistory[i] = std::numeric_limits<double>::max();
+    }
+    for(int i = 0; i < N; ++i)
+      for(int j = 0; j < i; ++j)
+        C[i][j] = B[i][j] = B[j][i] = 0.;
+
+    for(int i = 0; i < N; ++i)
+    {
+      B[i][i] = double(1);
+      C[i][i] = rgD[i] = rgInitialStds[i]*std::sqrt(N/trace);
+      C[i][i] *= C[i][i];
+      pc[i] = ps[i] = double(0);
+    }
+    minEW = minElement(rgD, N);
+    minEW = minEW*minEW;
+    maxEW = maxElement(rgD, N);
+    maxEW = maxEW*maxEW;
+
+    maxdiagC = C[0][0];
+    for(int i = 1; i < N; ++i) if(maxdiagC < C[i][i]) maxdiagC = C[i][i];
+    mindiagC = C[0][0];
+    for(int i = 1; i < N; ++i) if(mindiagC > C[i][i]) mindiagC = C[i][i];
+
+    for(int i = 0; i < N; ++i)
+      xmean[i] = xold[i] = xstart[i];
+    
+    if(typicalXcase)
+      for(int i = 0; i < N; ++i)
+        xmean[i] += sigma*rgD[i]*rand.gauss();
+
+    return publicFitness;
+  }
 
   /**
    * The search space vectors have a special form: they are arrays with N+1
@@ -497,19 +524,19 @@ template<typename funcType, typename T>
    * @return A pointer to a "population" of lambda N-dimensional multivariate
    * normally distributed samples.
    */
-  template<typename funcType, typename T>
-  T* const* CMAES<funcType, T>::samplePopulation()
+   template<typename funcType>
+  double* const* CMAES<funcType>::samplePopulation()
   {
     bool diag = diagonalCov == 1 || diagonalCov >= gen;
 
     // calculate eigensystem
-    if (!eigensysIsUptodate)
+    if(!eigensysIsUptodate)
     {
-      if (!diag)
+      if(!diag)
         updateEigensystem(false);
       else
       {
-        for (int i = 0; i < N; ++i)
+        for(int i = 0; i < N; ++i)
           rgD[i] = std::sqrt(C[i][i]);
         minEW = minElement(rgD, N);
         minEW *= minEW;
@@ -521,25 +548,25 @@ template<typename funcType, typename T>
 
     testMinStdDevs();
 
-    for (int iNk = 0; iNk <lambda; ++iNk)
+    for(int iNk = 0; iNk < lambda; ++iNk)
     { // generate scaled random vector D*z
-      T* rgrgxink = population[iNk];
-      for (int i = 0; i < N; ++i)
-        if (diag)
+      double* rgrgxink = population[iNk];
+      for(int i = 0; i < N; ++i)
+        if(diag)
           rgrgxink[i] = xmean[i] + sigma*rgD[i]*rand.gauss();
         else
           tempRandom[i] = rgD[i]*rand.gauss();
-      if (!diag)
-        for (int i = 0; i < N; ++i) // add mutation sigma*B*(D*z)
+      if(!diag)
+        for(int i = 0; i < N; ++i) // add mutation sigma*B*(D*z)
         {
-          T sum = 0.0;
-          for (int j = 0; j < N; ++j)
+          double sum = 0.0;
+          for(int j = 0; j < N; ++j)
             sum += B[i][j]*tempRandom[j];
           rgrgxink[i] = xmean[i] + sigma*sum;
         }
     }
 
-    if (state == UPDATED || gen == 0)
+    if(state == UPDATED || gen == 0)
       ++gen;
     state = SAMPLED;
 
@@ -555,14 +582,14 @@ template<typename funcType, typename T>
    *          must hold.
    * @return A pointer to the resampled "population".
    */
-  template<typename funcType, typename T>
-  T* const* CMAES<funcType, T>::reSampleSingle(int i)
+   template<typename funcType>
+  double* const* CMAES<funcType>::reSampleSingle(int i)
   {
-    T* x;
-    assert(i >= 0 && i <lambda &&
+    double* x;
+    assert(i >= 0 && i < lambda &&
         "reSampleSingle(): index must be between 0 and sp.lambda");
     x = population[i];
-    addMutation(x, 1.0); //1 for epselon
+    addMutation(x);
     return population;
   }
 
@@ -580,12 +607,12 @@ template<typename funcType, typename T>
    * @return A pointer to the resampled solution vector, equals input x for
    *         x != NULL on input.
    */
-  template<typename funcType, typename T>
-  T* CMAES<funcType, T>::sampleSingleInto(T* x)
+   template<typename funcType>
+  double* CMAES<funcType>::sampleSingleInto(double* x)
   {
-    if (!x)
-      x = new T[N];
-    addMutation(x, 1.0);
+    if(!x)
+      x = new double[N];
+    addMutation(x);
     return x;
   }
 
@@ -598,11 +625,11 @@ template<typename funcType, typename T>
    *          sampled a new value.
    * @return A pointer to the resampled "population" member.
    */
-  template<typename funcType, typename T>
-  T const* CMAES<funcType, T>::reSampleSingleOld(T* x)
+   template<typename funcType>
+  double const* CMAES<funcType>::reSampleSingleOld(double* x)
   {
     assert(x && "reSampleSingleOld(): Missing input x");
-    addMutation(x, 1.0);
+    addMutation(x);
     return x;
   }
 
@@ -619,11 +646,11 @@ template<typename funcType, typename T>
    * @return A pointer to the perturbed solution vector, equals input x for
    *         x != NULL.
    */
-  template<typename funcType, typename T>
-  T* CMAES<funcType, T>::perturbSolutionInto(T* x, T const* pxmean, T eps)
+   template<typename funcType>
+  double* CMAES<funcType>:: perturbSolutionInto(double* x, double const* pxmean, double eps)
   {
-    if (!x)
-      x = new T[N];
+    if(!x)
+      x = new double[N];
     assert(pxmean && "perturbSolutionInto(): pxmean was not given");
     addMutation(x, eps);
     return x;
@@ -636,30 +663,31 @@ template<typename funcType, typename T>
    * @param fitnessValues An array of \f$\lambda\f$ function values.
    * @return Mean value of the new distribution.
    */
-  template<typename funcType, typename T>
-  T* CMAES<funcType, T>::updateDistribution(const T* fitnessValues)
+   template<typename funcType>
+  double* CMAES<funcType>::updateDistribution(const double* fitnessValues)
   {
+
     bool diag = diagonalCov == 1 || diagonalCov >= gen;
 
     assert(state != UPDATED && "updateDistribution(): You need to call "
           "samplePopulation() before update can take place.");
     assert(fitnessValues && "updateDistribution(): No fitness function value array input.");
 
-    if (state == SAMPLED) // function values are delivered here
+    if(state == SAMPLED) // function values are delivered here
       countevals += lambda;
     else std::cout<<  "updateDistribution(): unexpected state" << std::endl;
 
     // assign function values
-    for (int i = 0; i < lambda; ++i)
+    for(int i = 0; i < lambda; ++i)
       population[i][N] = functionValues[i] = fitnessValues[i];
 
     // Generate index
-    sortIndex(fitnessValues, index,lambda);
+    sortIndex(fitnessValues, index, lambda);
 
     // Test if function values are identical, escape flat fitness
-    if (fitnessValues[index[0]] == fitnessValues[index[(int) lambda / 2]])
+    if(fitnessValues[index[0]] == fitnessValues[index[(int) lambda / 2]])
     {
-      sigma *= std::exp(T(0.2) + cs / damps);
+      sigma *= std::exp(double(0.2) + cs / damps);
      
         std::cout << "Warning: sigma increased due to equal function values"
          << std::endl << "   Reconsider the formulation of the objective function";
@@ -667,83 +695,83 @@ template<typename funcType, typename T>
     }
 
     // update function value history
-    for (int i = (int) *(funcValueHistory - 1) - 1; i > 0; --i)
+    for(int i = (int) *(funcValueHistory - 1) - 1; i > 0; --i)
       funcValueHistory[i] = funcValueHistory[i - 1];
     funcValueHistory[0] = fitnessValues[index[0]];
 
     // update xbestever
-    if (xBestEver[N] > population[index[0]][N] || gen == 1)
-      for (int i = 0; i <= N; ++i)
+    if(xBestEver[N] > population[index[0]][N] || gen == 1)
+      for(int i = 0; i <= N; ++i)
       {
         xBestEver[i] = population[index[0]][i];
         xBestEver[N+1] = countevals;
       }
 
-    const T sqrtmueffdivsigma = std::sqrt(mueff) / sigma;
+    const double sqrtmueffdivsigma = std::sqrt(mueff) / sigma;
     // calculate xmean and rgBDz~N(0,C)
-    for (int i = 0; i < N; ++i)
+    for(int i = 0; i < N; ++i)
     {
       xold[i] = xmean[i];
       xmean[i] = 0.;
-      for (int iNk = 0; iNk < mu; ++iNk)
+      for(int iNk = 0; iNk < mu; ++iNk)
         xmean[i] += weights[iNk]*population[index[iNk]][i];
       BDz[i] = sqrtmueffdivsigma*(xmean[i]-xold[i]);
     }
 
     // calculate z := D^(-1)* B^(-1)* rgBDz into rgdTmp
-    for (int i = 0; i < N; ++i)
+    for(int i = 0; i < N; ++i)
     {
-      T sum;
-      if (diag)
+      double sum;
+      if(diag)
         sum = BDz[i];
       else
       {
         sum = 0.;
-        for (int j = 0; j < N; ++j)
+        for(int j = 0; j < N; ++j)
           sum += B[j][i]*BDz[j];
       }
       tempRandom[i] = sum/rgD[i];
     }
 
     // cumulation for sigma (ps) using B*z
-    const T sqrtFactor = std::sqrt(cs*(T(2)-cs));
-    const T invps = T(1)-cs;
+    const double sqrtFactor = std::sqrt(cs*(double(2)-cs));
+    const double invps = double(1)-cs;
     for(int i = 0; i < N; ++i)
     {
-      T sum;
-      if (diag)
+      double sum;
+      if(diag)
         sum = tempRandom[i];
       else
       {
-        sum = T(0);
-        T* Bi = B[i];
-        for (int j = 0; j < N; ++j)
+        sum = double(0);
+        double* Bi = B[i];
+        for(int j = 0; j < N; ++j)
           sum += Bi[j]*tempRandom[j];
       }
       ps[i] = invps*ps[i] + sqrtFactor*sum;
     }
 
     // calculate norm(ps)^2
-    T psxps(0);
-    for (int i = 0; i < N; ++i)
+    double psxps(0);
+    for(int i = 0; i < N; ++i)
     {
-      const T& rgpsi = ps[i];
+      const double& rgpsi = ps[i];
       psxps += rgpsi*rgpsi;
     }
 
     // cumulation for covariance matrix (pc) using B*D*z~N(0,C)
-    int hsig = std::sqrt(psxps) / std::sqrt(T(1) - std::pow(T(1) - cs, T(2)* gen))
-        / chiN < T(1.4) + T(2) / (N + 1);
-    const T ccumcovinv = 1.-ccumcov;
-    const T hsigFactor = hsig*std::sqrt(ccumcov*(T(2)-ccumcov));
-    for (int i = 0; i < N; ++i)
+    int hsig = std::sqrt(psxps) / std::sqrt(double(1) - std::pow(double(1) - cs, double(2)* gen))
+        / chiN < double(1.4) + double(2) / (N + 1);
+    const double ccumcovinv = 1.-ccumcov;
+    const double hsigFactor = hsig*std::sqrt(ccumcov*(double(2)-ccumcov));
+    for(int i = 0; i < N; ++i)
       pc[i] = ccumcovinv*pc[i] + hsigFactor*BDz[i];
 
     // update of C
     adaptC2(hsig);
 
     // update of sigma
-    sigma *= std::exp(((std::sqrt(psxps) / chiN) - T(1))* cs / damps);
+    sigma *= std::exp(((std::sqrt(psxps) / chiN) - double(1))* cs / damps);
 
     state = UPDATED;
     return xmean;
@@ -757,22 +785,22 @@ template<typename funcType, typename T>
    * that contains the matched stop criteria via getStopMessage().
    * @return Does any stop criterion match?
    */
-  template<typename funcType, typename T>
-  bool CMAES<funcType, T>::testForTermination()
+   template<typename funcType>
+   bool CMAES<funcType>::testForTermination()
   {
-    T range, fac;
+    double range, fac;
     int iAchse, iKoo;
     int diag = diagonalCov == 1 || diagonalCov >= gen;
 
     std::stringstream message;
 
-    if (stopMessage != "")
+    if(stopMessage != "")
     {
       message << stopMessage << std::endl;
     }
 
     // function value reached
-    if ((gen > 1 || state > SAMPLED) && stStopFitness.flg &&
+    if((gen > 1 || state > SAMPLED) && stStopFitness.flg &&
         functionValues[index[0]] <= stStopFitness.val)
     {
       message << "Fitness: function value " << functionValues[index[0]]
@@ -785,38 +813,38 @@ template<typename funcType, typename T>
         std::min(minElement(funcValueHistory, (int) std::min(gen, *(funcValueHistory - 1))),
         minElement(functionValues, lambda));
 
-    if (gen > 0 && range <= stopTolFun)
+    if(gen > 0 && range <= stopTolFun)
     {
       message << "TolFun: function value differences " << range
           << " < stopTolFun=" << stopTolFun << std::endl;
     }
 
     // TolFunHist
-    if (gen > *(funcValueHistory - 1))
+    if(gen > *(funcValueHistory - 1))
     {
       range = maxElement(funcValueHistory, (int) *(funcValueHistory - 1))
           - minElement(funcValueHistory, (int) *(funcValueHistory - 1));
-      if (range <= stopTolFunHist)
+      if(range <= stopTolFunHist)
         message << "TolFunHist: history of function value changes " << range
             << " stopTolFunHist=" << stopTolFunHist << std::endl;
     }
 
     // TolX
     int cTemp = 0;
-    for (int i = 0; i < N; ++i)
+    for(int i = 0; i < N; ++i)
     {
       cTemp += (sigma*std::sqrt(C[i][i]) < stopTolX) ? 1 : 0;
       cTemp += (sigma*pc[i] < stopTolX) ? 1 : 0;
     }
-    if (cTemp == 2*N)
+    if(cTemp == 2*N)
     {
       message << "TolX: object variable changes below " << stopTolX << std::endl;
     }
 
     // TolUpX
-    for (int i = 0; i < N; ++i)
+    for(int i = 0; i < N; ++i)
     {
-      if (sigma*std::sqrt(C[i][i]) > stopTolUpXFactor*rgInitialStds[i])
+      if(sigma*std::sqrt(C[i][i]) > stopTolUpXFactor*rgInitialStds[i])
       {
         message << "TolUpX: standard deviation increased by more than "
             << stopTolUpXFactor << ", larger initial standard deviation recommended."
@@ -826,7 +854,7 @@ template<typename funcType, typename T>
     }
 
     // Condition of C greater than dMaxSignifKond
-    if (maxEW >= minEW* dMaxSignifKond)
+    if(maxEW >= minEW* dMaxSignifKond)
     {
       message << "ConditionNumber: maximal condition number " << dMaxSignifKond
           << " reached. maxEW=" << maxEW <<  ",minEW=" << minEW << ",maxdiagC="
@@ -834,17 +862,17 @@ template<typename funcType, typename T>
     }
 
     // Principal axis i has no effect on xmean, ie. x == x + 0.1* sigma* rgD[i]* B[i]
-    if (!diag)
+    if(!diag)
     {
-      for (iAchse = 0; iAchse < N; ++iAchse)
+      for(iAchse = 0; iAchse < N; ++iAchse)
       {
         fac = 0.1* sigma* rgD[iAchse];
-        for (iKoo = 0; iKoo < N; ++iKoo)
+        for(iKoo = 0; iKoo < N; ++iKoo)
         {
-          if (xmean[iKoo] != xmean[iKoo] + fac* B[iKoo][iAchse])
+          if(xmean[iKoo] != xmean[iKoo] + fac* B[iKoo][iAchse])
             break;
         }
-        if (iKoo == N)
+        if(iKoo == N)
         {
           message << "NoEffectAxis: standard deviation 0.1*" << (fac / 0.1)
               << " in principal axis " << iAchse << " without effect" << std::endl;
@@ -853,9 +881,9 @@ template<typename funcType, typename T>
       }
     }
     // Component of xmean is not changed anymore
-    for (iKoo = 0; iKoo < N; ++iKoo)
+    for(iKoo = 0; iKoo < N; ++iKoo)
     {
-      if (xmean[iKoo] == xmean[iKoo] + sigma*std::sqrt(C[iKoo][iKoo])/T(5))
+      if(xmean[iKoo] == xmean[iKoo] + sigma*std::sqrt(C[iKoo][iKoo])/double(5))
       {
         message << "NoEffectCoordinate: standard deviation 0.2*"
             << (sigma*std::sqrt(C[iKoo][iKoo])) << " in coordinate " << iKoo
@@ -864,12 +892,12 @@ template<typename funcType, typename T>
       }
     }
 
-    if (countevals >= stopMaxFunEvals)
+    if(countevals >= stopMaxFunEvals)
     {
       message << "MaxFunEvals: conducted function evaluations " << countevals
           << " >= " << stopMaxFunEvals << std::endl;
     }
-    if (gen >= stopMaxIter)
+    if(gen >= stopMaxIter)
     {
       message << "MaxIter: number of iterations " << gen << " >= "
           << stopMaxIter << std::endl;
@@ -886,16 +914,15 @@ template<typename funcType, typename T>
    * @param force For force == true the eigendecomposion is conducted even if
    *              eigenvector and values seem to be up to date.
    */
-
-   template<typename funcType, typename T>
-  void CMAES<funcType, T>::updateEigensystem(bool force)
+   template<typename funcType>
+   void CMAES<funcType>::updateEigensystem(bool force)
   {
-    if (!force)
+    if(!force)
     {
-      if (eigensysIsUptodate)
+      if(eigensysIsUptodate)
         return;
       // return on modulo generation number
-      if (gen < genOfEigensysUpdate + updateCmode.modulo)
+      if(gen < genOfEigensysUpdate + updateCmode.modulo)
         return;
     }
 
@@ -905,10 +932,10 @@ template<typename funcType, typename T>
     minEW = minElement(rgD, N);
     maxEW = maxElement(rgD, N);
 
-    if (doCheckEigen) // needs O(n^3)! writes, in case, error message in error file
+    if(doCheckEigen) // needs O(n^3)! writes, in case, error message in error file
       checkEigen(rgD, B);
 
-    for (int i = 0; i < N; ++i)
+    for(int i = 0; i < N; ++i)
       rgD[i] = std::sqrt(rgD[i]);
 
     eigensysIsUptodate = true;
@@ -921,13 +948,13 @@ template<typename funcType, typename T>
    * @param newxmean new mean, if it is NULL, it will be set to the current mean
    * @return new mean
    */
-   template<typename funcType, typename T>
-  T const* CMAES<funcType, T>::setMean(const T* newxmean)
+   template<typename funcType>
+  double const* CMAES<funcType>:: setMean(const double* newxmean)
   {
     assert(state != SAMPLED && "setMean: mean cannot be set inbetween the calls"
         "of samplePopulation and updateDistribution");
 
-    if (newxmean && newxmean != xmean)
+    if(newxmean && newxmean != xmean)
       for(int i = 0; i < N; ++i)
         xmean[i] = newxmean[i];
     else
@@ -935,6 +962,45 @@ template<typename funcType, typename T>
 
     return newxmean;
   }
+
+    /**
+   * Free the memory.
+   */
+   template<typename funcType>
+   CMAES<funcType>::~CMAES()
+  {
+    delete[] pc;
+    delete[] ps;
+    delete[] tempRandom;
+    delete[] BDz;
+    delete[] --xmean;
+    delete[] --xold;
+    delete[] --xBestEver;
+    delete[] --output;
+    delete[] rgD;
+    for(int i = 0; i < N; ++i)
+    {
+      delete[] C[i];
+      delete[] B[i];
+    }
+    for(int i = 0; i < lambda; ++i)
+      delete[] --population[i];
+    delete[] population;
+    delete[] C;
+    delete[] B;
+    delete[] index;
+    delete[] publicFitness;
+    delete[] --functionValues;
+    delete[] --funcValueHistory;
+
+    if(rgInitialStds)
+      delete[] rgInitialStds;
+    if(rgDiffMinChange)
+      delete[] rgDiffMinChange;
+    if(weights)
+      delete[] weights;
+  }
+
 
 } //namespace optimizer
 } //namespace cmaes

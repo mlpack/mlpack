@@ -1,5 +1,5 @@
 /**
- * @file cmaes.h
+ * @file cmaes.hpp
  * @author Kartik Nighania (GSoC 17 mentor Marcus Edel)
  *
  * Covariance Matrix Adaptation Evolution Strategy
@@ -12,13 +12,16 @@
 #ifndef MLPACK_CORE_OPTIMIZERS_CMAES_CMAES_HPP
 #define MLPACK_CORE_OPTIMIZERS_CMAES_CMAES_HPP
 
+#include <cassert>
 #include <cmath>
+#include <cstdio>
+#include <cstring>
+#include <fstream>
 #include <limits>
-#include <ostream>
-#include <iostream>
+#include <iomanip>
+#include <sstream>
 #include <stdexcept>
 #include <string>
-#include <iostream>
 #include <armadillo>
 #include <iostream>
 
@@ -26,104 +29,152 @@
 
 namespace mlpack {
 namespace optimization {
-//vector use of pop
-//cmaes as init
-/**
- * @class CMAES 
- * all the function parameters available to the user
- */
-template<typename funcType, typename T>
+
+template<typename funcType>
 class CMAES
 {
 public:
 
-  //! constructor to initialize the algorithm parameters
-    CMAES(funcType& func, T *start = 0, T *stdDeviation = 0)
-  { 
-     size_t dimension = func.NumFunctions();
-     functionFitness = init(dimension, start, stdDeviation);
-  }
+  CMAES(funcType& function, arma::mat& start, arma::mat& stdDivs);
 
-  T Optimize(funcType& func, T *iterate);
-
-   /**
-   * Determines the method used to initialize the weights.
-   */
-  enum Weights
-  {
-    UNINITIALIZED_WEIGHTS, LINEAR_WEIGHTS, EQUAL_WEIGHTS, LOG_WEIGHTS
-  } weightMode;
-
-
-  //USER FUNCTIONS TO GET PARAMETER IN VALUES AND ARRAYS
+  double Optimize(arma::mat& arr);
 
   size_t getDimension(void){ return N;}
 
-  void getInitialStart(T *arr, size_t dimension)
+  void getInitialStart(double *arr, size_t dimension)
   { 
     for(int i=0; i<N; i++) arr[i] = xstart[i];
   }
   
-   void getInitialStandardDeviations(T *arr, size_t dimension)
+   void getInitialStandardDeviations(double *arr, size_t dimension)
   { 
 
     for(int i=0; i<N; i++) arr[i] = rgInitialStds[i];
   }
 
-  void setWeights(Weights mode);
+    void getStandardDeviations(double *arr)
+  { 
+  
+    for(int i = 0; i < N; ++i)
+    arr[i] = sigma*std::sqrt(C[i][i]);    
+  }
+
+  void getXBestEver(double *arr)
+  { 
+    for(int i = 0; i < N; ++i) arr[i] = xBestEver[i];    
+  }
 
 
-  // User defined termination criterias 
-    
-    void stopMaxFuncEvaluations(T evaluations)
+    void stopMaxFuncEvaluations(double evaluations)
   {
      stopMaxFunEvals = evaluations;
   }
 
-  T getStopMaxFuncEvaluations(void)
+  double getStopMaxFuncEvaluations(void)
   {
     return  stopMaxFunEvals;
   }
 
-  void stopMaxIterations(T iterations)
+  void stopMaxIterations(double iterations)
   {
     stopMaxIter = iterations;
   }
 
-  T getStopMaxIterations(void)
+  double getStopMaxIterations(void)
   {
     return stopMaxIter;
   }
 
 
-  void stopMinFuntionDifference(T difference)
+  void stopMinFuntionDifference(double difference)
   {
     stopTolFun = difference;
   }
 
-  T getStopMinFunctionDifference(void)
+  double getStopMinFunctionDifference(void)
   {
     return stopTolFun;
   }
 
-void stopMinFuntionHistoryDifference(T difference)
+void stopMinFuntionHistoryDifference(double difference)
   {
     stopTolFunHist = difference;
   }
 
-  T getStopMinFunctionHistoryDifference(void)
+  double getStopMinFunctionHistoryDifference(void)
   {
     return stopTolFunHist;
   }
 
-  void stopMinStepSize(T size)
+  void stopMinStepSize(double size)
   {
     stopTolX = size;
   }
 
-  T getStopMinStepSize(void)
+  double getStopMinStepSize(void)
   {
     return stopTolX;
+  }
+
+  //! other variable parameters
+
+void sampleSize(double l){lambda = l;}
+
+int getSampleSize(void){ return lambda; }
+
+void setMu(double ind){ mu = ind;}
+
+double getMu(void){ return mu;}
+
+void muEffective(double ind){ mueff = ind;}
+
+double getMuEffective(void){ return mueff;}
+
+double axisRatio() { return maxElement(rgD,N) / minElement(rgD,N);};
+
+double evaluation(){ return countevals; }
+
+double fitness(){ return functionValues[index[0]];}
+
+double fitnessBestEver(){ return xBestEver[N];}
+
+double generation(){ return gen;}
+
+double maxAxisLength(){ return sigma*std::sqrt(maxEW);}
+
+double minAxisLength(){ return sigma*std::sqrt(minEW); }
+
+double maxStdDev(){return sigma*std::sqrt(maxdiagC);}
+
+double minStdDev(){return sigma*std::sqrt(mindiagC);}
+
+void diagonalCovariance(double *arr)
+  {
+     for(int i = 0; i < N; ++i) arr[i] = C[i][i];
+  }
+
+  void diagonalD(double *arr, size_t N) { for(int i = 0; i < N; ++i) arr[i] = rgD[i]; }
+
+  void standardDeviation(double *arr, size_t N)
+  {
+    for(int i = 0; i < N; ++i) arr[i] = sigma*std::sqrt(C[i][i]);
+  }
+
+void getFittestMean(double *arr)
+{ 
+  for(int i=0; i<N; i++) arr[i] = xmean[i]; 
+}
+
+ 
+
+  double maxElement(const double* rgd, int len)
+  {
+    return *std::max_element(rgd, rgd + len);
+  }
+
+  double minElement(const double* rgd, int len)
+  {
+    return *std::min_element(rgd, rgd + len);
   }
 
 /**
@@ -132,157 +183,55 @@ void stopMinFuntionHistoryDifference(T difference)
    */
   std::string getStopMessage(){return stopMessage;}
 
-  //! other variable parameters
-
-void sampleSize(T l){lambda = l;}
-
-T getSampleSize(void){ return lambda; }
-
-void setMu(T ind){ mu = ind;}
-
-T getMu(void){ return mu;}
-
-void muEffective(T ind){ mueff = ind;}
-
-T getMuEffective(void){ return mueff;}
-
-T axisRatio() { return maxElement(rgD,N) / minElement(rgD,N);};
-
-T evaluation(){ return countevals; }
-
-T fitness(){ return functionValues[index[0]];}
-
-T fitnessBestEver(){ return xBestEver[N];}
-
-T generation(){ return gen;}
-
-T maxAxisLength(){ return sigma*std::sqrt(maxEW);}
-
-T minAxisLength(){ return sigma*std::sqrt(minEW); }
-
-T maxStdDev(){return sigma*std::sqrt(maxdiagC);}
-
-T minStdDev(){return sigma*std::sqrt(mindiagC);}
-
-void diagonalCovariance(T *arr, size_t N)
+ /**
+   * Determines the method used to initialize the weights.
+   */
+  enum Weights
   {
-     for(int i = 0; i < N; ++i)
-          arr[i] = C[i][i];
-  }
+    UNINITIALIZED_WEIGHTS, LINEAR_WEIGHTS, EQUAL_WEIGHTS, LOG_WEIGHTS
+  } weightMode;
 
-  void diagonalD(T *arr, size_t N) { for(int i = 0; i < N; ++i) arr[i] = rgD[i]; }
+  void setWeights(Weights mode);
 
-  void standardDeviation(T *arr, size_t N)
-  {
-    for(int i = 0; i < N; ++i) arr[i] = sigma*std::sqrt(C[i][i]);
-  }
-
-void XMean(T *arr, size_t N){ for(int i=0; i<N; i++) arr[i] = xmean[i]; }
-
-  ~CMAES()
-  {
-    if (xstart)
-      delete[] xstart;
-    if (typicalX)
-      delete[] typicalX;
-    if (rgInitialStds)
-      delete[] rgInitialStds;
-    if (rgDiffMinChange)
-      delete[] rgDiffMinChange;
-    if (weights)
-      delete[] weights;
-
-    delete[] pc;
-    delete[] ps;
-    delete[] tempRandom;
-    delete[] BDz;
-    delete[] --xmean;
-    delete[] --xold;
-    delete[] --xBestEver;
-    delete[] --output;
-    delete[] rgD;
-    for(int i = 0; i < N; ++i)
-    {
-      delete[] C[i];
-      delete[] B[i];
-    }
-    for(int i = 0; i < lambda; ++i)
-      delete[] --population[i];
-    delete[] population;
-    delete[] C;
-    delete[] B;
-    delete[] index;
-    delete[] publicFitness;
-    delete[] --functionValues;
-    delete[] --funcValueHistory;
-    
-  }
+  ~CMAES();
 
 private:
 
-T* init(T dimension, T* inxstart, T* inrgsigma);
+  /* Input parameters. */
+  //! The instantiated function.
+  funcType& function;
 
-void eigen(T* diag, T** Q);
+  double *arFunvals;
 
-int checkEigen(T* diag, T** Q);
-
-void sortIndex(const T* rgFunVal, int* iindex, int n);
-
-void adaptC2(const int hsig);
-
-void testMinStdDevs(void);
-
-void addMutation(T* x, T eps);
-
- T maxElement(const T* rgd, int len);
-
- T minElement(const T* rgd, int len);
-
- T* const* samplePopulation(void);
-
- T* const* reSampleSingle(int i);
-
- T* sampleSingleInto(T* x);
-
- T const* reSampleSingleOld(T* x);
-
- T* perturbSolutionInto(T* x, T const* pxmean, T eps);
-
- T* updateDistribution(const T* fitnessValues);
-
- bool testForTermination(void);
-
- void updateEigensystem(bool force);
-
- T const* setMean(const T* newxmean);
-
-  //! Problem dimension, must stay constant. 
+  double *const*pop;
+  //! Problem dimension, must stay constant.
   int N;
   //! Initial search space vector.
-  T* xstart;
+  double* xstart;
   //! A typical value for a search space vector.
-  T* typicalX;
+  double* typicalX;
   //! Indicates that the typical x is the initial point.
   bool typicalXcase;
   //! Initial standard deviations.
-  T* rgInitialStds;
-  T* rgDiffMinChange;
+  double* rgInitialStds;
+  double* rgDiffMinChange;
 
-  T* functionFitness;
   /* Termination parameters. */
   //! Maximal number of objective function evaluations.
-  T stopMaxFunEvals;
-  T facmaxeval;
+  double stopMaxFunEvals;
+  double facmaxeval;
   //! Maximal number of iterations.
-  T stopMaxIter;
+  double stopMaxIter;
+  //! Minimal fitness value. Only activated if flg is true.
+  struct { bool flg; double val; } stStopFitness;
   //! Minimal value difference.
-  T stopTolFun;
+  double stopTolFun;
   //! Minimal history value difference.
-  T stopTolFunHist;
+  double stopTolFunHist;
   //! Minimal search space step size.
-  T stopTolX;
+  double stopTolX;
   //! Defines the maximal condition number.
-  T stopTolUpXFactor;
+  double stopTolUpXFactor;
 
   /* internal evolution strategy parameters */
   /**
@@ -294,100 +243,116 @@ void addMutation(T* x, T eps);
    * Number of individuals used to recompute the mean.
    */
   int mu;
-  T mucov;
+  double mucov;
   /**
    * Variance effective selection mass, should be lambda/4.
    */
-  T mueff;
+  double mueff;
   /**
    * Weights used to recombinate the mean sum up to one.
    */
-  T* weights;
+  double* weights;
   /**
    * Damping parameter for step-size adaption, d = inifinity or 0 means adaption
    * is turned off, usually close to one.
    */
-  T damps;
+  double damps;
   /**
    * cs^-1 (approx. n/3) is the backward time horizon for the evolution path
    * ps and larger than one.
    */
-  T cs;
-  T ccumcov;
+  double cs;
+  double ccumcov;
   /**
    * ccov^-1 (approx. n/4) is the backward time horizon for the evolution path
    * pc and larger than one.
    */
-  T ccov;
-  T diagonalCov;
-  struct { T modulo; T maxtime; } updateCmode;
-  T facupdateCmode;
+  double ccov;
+  double diagonalCov;
+  struct { double modulo; double maxtime; } updateCmode;
+  double facupdateCmode;
 
- Random<T> rand;
+  Random<double> rand;
 
   //! Step size.
-  T sigma;
+  double sigma;
   //! Mean x vector, "parent".
-  T* xmean;
+  double* xmean;
   //! Best sample ever.
-  T* xBestEver;
+  double* xBestEver;
   //! x-vectors, lambda offspring.
-  T** population;
+  double** population;
   //! Sorting index of sample population.
   int* index;
   //! History of function values.
-  T* funcValueHistory;
+  double* funcValueHistory;
 
-  T chiN;
+  double chiN;
   //! Lower triangular matrix: i>=j for C[i][j].
-  T** C;
+  double** C;
   //! Matrix with normalize eigenvectors in columns.
-  T** B;
+  double** B;
   //! Axis lengths.
-  T* rgD;
+  double* rgD;
   //! Anisotropic evolution path (for covariance).
-  T* pc;
+  double* pc;
   //! Isotropic evolution path (for step length).
-  T* ps;
+  double* ps;
   //! Last mean.
-  T* xold;
+  double* xold;
   //! Output vector.
-  T* output;
+  double* output;
   //! B*D*z.
-  T* BDz;
+  double* BDz;
   //! Temporary (random) vector used in different places.
-  T* tempRandom;
+  double* tempRandom;
   //! Objective function values of the population.
-  T* functionValues;
+  double* functionValues;
   //!< Public objective function value array returned by init().
-  T* publicFitness;
+  double* publicFitness;
 
   //! Generation number.
-  T gen;
+  double gen;
   //! Algorithm state.
   enum {INITIALIZED, SAMPLED, UPDATED} state;
 
-    //! Minimal fitness value. Only activated if flg is true.
-  struct { bool flg; T val; } stStopFitness;
-
   // repeatedly used for output
-  T maxdiagC;
-  T mindiagC;
-  T maxEW;
-  T minEW;
+  double maxdiagC;
+  double mindiagC;
+  double maxEW;
+  double minEW;
 
   bool eigensysIsUptodate;
   bool doCheckEigen;
-  T genOfEigensysUpdate;
+  double genOfEigensysUpdate;
 
-  T dMaxSignifKond;
+  double dMaxSignifKond;
 
-  T dLastMinEWgroesserNull;
+  double dLastMinEWgroesserNull;
 
-  T countevals;
+  double countevals; //!< objective function evaluations
 
   std::string stopMessage; //!< A message that contains all matched stop criteria.
   
+  void eigen(double* diag, double** Q);
+  void updateEigensystem(bool force);
+  void sortIndex(const double* rgFunVal, int* iindex, int n);
+  void adaptC2(const int hsig);
+  void testMinStdDevs(void);
+  void addMutation(double* x, double eps = 1.0);
+
+   double* init();
+   double* const* samplePopulation();
+   double* const* reSampleSingle(int i);
+   double* sampleSingleInto(double* x);
+   double const* reSampleSingleOld(double* x);
+   double* perturbSolutionInto(double* x, double const* pxmean, double eps);
+   double* updateDistribution(const double* fitnessValues);
+   double const* setMean(const double* newxmean);
+
+   bool testForTermination();
+   int  checkEigen(double* diag, double** Q);
+
 };
 } // namespace optimization
 } // namespace mlpack

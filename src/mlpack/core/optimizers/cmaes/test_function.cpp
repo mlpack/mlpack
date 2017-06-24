@@ -1,6 +1,6 @@
 /**
  * @file test_function.cpp
- * @author Ryan Curtin
+ * @author Kartik Nighania (Mentor Marcus Edel)
  *
  * Implementation of very simple test for 
  * COVARIANCE MATRIX ADAPTATION EVOLUTION STRATEGY
@@ -16,17 +16,11 @@ using namespace mlpack;
 using namespace mlpack::optimization;
 using namespace mlpack::optimization::test;
 
-size_t cmaesTestFunction::NumFunctions() const { return 3; }
+size_t cmaesTestFunction::NumFunctions(){ return 3; }
 
-arma::mat cmaesTestFunction::GetInitialPoint() const { return arma::mat("6; -45.6; 6.2"); }
-
-arma::mat cmaesTestFunction::GetInitialStdDev() const { return arma::mat("3; 3; 3"); }
-
-double camesTestFunction::Evaluate(double const *coordinates)
-    const
+double camesTestFunction::Evaluate(double arma::mat& coordinates)
 {
- 
-    return -std::exp(-std::abs(coordinates[0])) + 
+ 	return -std::exp(-std::abs(coordinates[0])) + 
             std::pow(coordinates[1], 2) + 
             std::pow(coordinates[2], 4) + 3 * std::pow(coordinates[2], 2);
 }

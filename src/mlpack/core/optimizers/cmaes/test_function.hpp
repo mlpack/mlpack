@@ -13,6 +13,7 @@
 #define MLPACK_CORE_OPTIMIZERS_CMAES_TEST_FUNCTION_HPP
 
 #include <mlpack/core.hpp>
+#include <armadillo>
 
 namespace mlpack {
 namespace optimization {
@@ -32,14 +33,8 @@ class cmaesTestFunction
   //! Return 3 (the number of functions) = the variable N in CMAES class for dimension
   size_t NumFunctions() const;
 
-  //! Get the starting point = CMAES class xstart array of dimension given by NumFunctions()
-  arma::mat GetInitialPoint() const;
-
-  //! Get the intial standard devaition = CMAES class stddiv array of dimenison given by NumFunction()
-  arma::mat GetInitialStdDev() const;
-
   //! Evaluate a function.
-  double Evaluate( double const *coordinates) const;
+  double Evaluate(double ) const;
 };
 
 } // namespace test

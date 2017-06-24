@@ -1,8 +1,9 @@
 set(SOURCES
   cmaes.hpp
-  parameters.hpp
+  cmaes_impl.hpp
   random.hpp
-  test.cpp
+  test_function.cpp
+  test_function.hpp
 )
 
 set(DIR_SRCS)
