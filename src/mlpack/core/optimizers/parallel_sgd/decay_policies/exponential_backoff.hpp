@@ -55,7 +55,7 @@ class ExponentialBackoff{
    *
    * @param n_epoch The iteration number of the current update.
    */
-  double GetStepSize(size_t n_epoch)
+  double StepSize(size_t n_epoch)
   {
     if (n_epoch >= cutoffEpoch)
     {

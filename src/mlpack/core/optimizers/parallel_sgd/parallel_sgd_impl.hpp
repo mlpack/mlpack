@@ -36,8 +36,8 @@ ParallelSGD<SparseFunctionType, DecayPolicyType>::ParallelSGD(
 
 
 
-template <typename SparseFunctionType, typename StepsizePolicyType>
-double ParallelSGD<SparseFunctionType, StepsizePolicyType>::Optimize(
+template <typename SparseFunctionType, typename DecayPolicyType>
+double ParallelSGD<SparseFunctionType, DecayPolicyType>::Optimize(
     SparseFunctionType& function, 
     arma::mat& iterate)
 {
@@ -90,20 +90,20 @@ double ParallelSGD<SparseFunctionType, StepsizePolicyType>::Optimize(
   return overallObjective;
 }
 
-template <typename SparseFunctionType, typename StepsizePolicyType>
+template <typename SparseFunctionType, typename DecayPolicyType>
 void ParallelSGD<
     SparseFunctionType,
-    StepsizePolicyType>::GenerateVisitationOrder(
+    DecayPolicyType>::GenerateVisitationOrder(
         arma::Col<size_t>& visitationOrder)
 {
   visitationOrder = arma::shuffle(arma::linspace<arma::Col<size_t>>(0,
         (function.NumFunctions() - 1), function.NumFunctions()));
 }
 
-template <typename SparseFunctionType, typename StepsizePolicyType>
+template <typename SparseFunctionType, typename DecayPolicyType>
 arma::Col<size_t> ParallelSGD<
     SparseFunctionType,
-    StepsizePolicyType>::ThreadShare(size_t thread_id,
+    DecayPolicyType>::ThreadShare(size_t thread_id,
                                      const arma::Col<size_t>& visitationOrder)
 {
   if(thread_id * batchSize >= visitationOrder.n_elem)
