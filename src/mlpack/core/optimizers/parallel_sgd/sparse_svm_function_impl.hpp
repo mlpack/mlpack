@@ -17,22 +17,21 @@
 #include "sparse_svm_function.hpp"
 
 SparseSVMLossFunction::SparseSVMLossFunction(
-    arma::mat& dataset, arma::vec& labels) : dataset(dataset), labels(labels)
-{
-  numFunctions = dataset.n_cols;
-}
+    arma::SpMat<double>& dataset, arma::vec& labels) :
+  dataset(dataset), labels(labels)
+{ /* Nothing to do */ }
 
-double SparseSVMLossFunction::Evaluate(arma::mat& weights, size_t id)
+double SparseSVMLossFunction::Evaluate(arma::vec& weights, size_t id)
 {
-  return std::max(0.0, 1 - labels(id) * arma::dot(weights, dataset.col(id)));
+  return std::max(0.0, 1 - labels(id) * arma::dot(dataset.col(id), weights));
 }
 
 void SparseSVMLossFunction::Gradient(
-    arma::mat& weights, size_t id, arma::mat& gradient)
+    arma::vec& weights, size_t id, arma::mat& gradient)
 {
-  double dot = 1 - labels(id) * arma::dot(weights, dataset.unsafe_col(id));
+  double dot = 1 - labels(id) * arma::dot(weights, dataset.col(id));
   gradient = (dot < 0) ? arma::vec(weights.n_elem, arma::fill::zeros) :
-    (-1 * dataset.unsafe_col(id) * labels(id));
+    (-1 * dataset.col(id) * labels(id));
 }
 arma::Col<size_t> SparseSVMLossFunction::Components(size_t id)
 {
@@ -44,5 +43,10 @@ arma::Col<size_t> SparseSVMLossFunction::Components(size_t id)
   }
   return arma::Col<size_t>(nonZeroComponents);
 }
+size_t SparseSVMLossFunction::NumFunctions()
+{
+  return dataset.n_cols;
+}
+
 
 #endif
