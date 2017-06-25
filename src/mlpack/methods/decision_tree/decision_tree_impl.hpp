@@ -72,6 +72,7 @@ DecisionTree<FitnessFunction,
       typename std::remove_reference<MatType>::type>::type;
   using TrueLabelsType = typename std::remove_const<
       typename std::remove_reference<LabelsType>::type>::type;
+
   TrueMatType tmpData(std::forward<MatType>(data));
   TrueLabelsType tmpLabels(std::forward<LabelsType>(labels));
 
