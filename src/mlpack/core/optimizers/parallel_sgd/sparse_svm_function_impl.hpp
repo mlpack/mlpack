@@ -21,17 +21,17 @@ SparseSVMLossFunction::SparseSVMLossFunction(
   dataset(dataset), labels(labels)
 { /* Nothing to do */ }
 
-double SparseSVMLossFunction::Evaluate(arma::vec& weights, size_t id)
+double SparseSVMLossFunction::Evaluate(const arma::vec& weights, size_t id)
 {
   return std::max(0.0, 1 - labels(id) * arma::dot(dataset.col(id), weights));
 }
 
 void SparseSVMLossFunction::Gradient(
-    arma::vec& weights, size_t id, arma::mat& gradient)
+    const arma::vec& weights, size_t id, arma::mat& gradient)
 {
   double dot = 1 - labels(id) * arma::dot(weights, dataset.col(id));
   gradient = (dot < 0) ? arma::vec(weights.n_elem, arma::fill::zeros) :
-    (-1 * dataset.col(id) * labels(id));
+    (-1 * arma::vec(dataset.col(id) * labels(id)));
 }
 arma::Col<size_t> SparseSVMLossFunction::Components(size_t id)
 {

@@ -18,8 +18,8 @@ class SparseSVMLossFunction{
  public:
   SparseSVMLossFunction() = default;
   SparseSVMLossFunction(arma::SpMat<double>& dataset, arma::vec& labels);
-  double Evaluate(arma::vec& weights, size_t id);
-  void Gradient(arma::vec& weights, size_t id, arma::mat& gradient);
+  double Evaluate(const arma::vec& weights, size_t id);
+  void Gradient(const arma::vec& weights, size_t id, arma::mat& gradient);
   arma::Col<size_t> Components(size_t id);
 
   const arma::SpMat<double>& Dataset() const { return dataset; }

@@ -44,6 +44,8 @@ double ParallelSGD<SparseFunctionType, DecayPolicyType>::Optimize(
   double overallObjective = 0;
   double lastObjective = DBL_MAX;
 
+  Log::Info << std::endl;
+
   for (size_t i = 1; i != maxIterations; ++i){
     overallObjective = 0;
 
@@ -81,11 +83,15 @@ double ParallelSGD<SparseFunctionType, DecayPolicyType>::Optimize(
       overallObjective += function.Evaluate(iterate, j);
     }
 
+    Log::Info << "\nObjective : " << overallObjective << " Iteration : " << i;
     if (std::abs(overallObjective - lastObjective) < tolerance)
     {
+      Log::Info << "\n Parallel SGD terminated with objective : " 
+          << overallObjective << std::endl;
       return overallObjective;
     }
     lastObjective = overallObjective;
+    std::flush(std::cout);
   }
   return overallObjective;
 }

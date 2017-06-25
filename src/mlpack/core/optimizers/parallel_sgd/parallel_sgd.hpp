@@ -170,7 +170,7 @@ class ParallelSGD
   double tolerance;
 
   //! The step size decay policy.
-  DecayPolicyType& decayPolicy;
+  DecayPolicyType decayPolicy;
 };
 
 } // namespace optimization
