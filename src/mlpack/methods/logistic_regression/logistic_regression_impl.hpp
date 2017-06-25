@@ -35,6 +35,18 @@ template<typename MatType>
 LogisticRegression<MatType>::LogisticRegression(
     const MatType& predictors,
     const arma::Row<size_t>& responses,
+    const size_t numClasses,
+    const double lambda) :
+    parameters(arma::zeros<arma::vec>(predictors.n_rows + 1)),
+    lambda(lambda)
+{
+  Train(predictors, responses, numClasses);
+}
+
+template<typename MatType>
+LogisticRegression<MatType>::LogisticRegression(
+    const MatType& predictors,
+    const arma::Row<size_t>& responses,
     const arma::vec& initialPoint,
     const double lambda) :
     parameters(initialPoint),
@@ -68,8 +80,16 @@ LogisticRegression<MatType>::LogisticRegression(
 template<typename MatType>
 template<template<typename...> class OptimizerType>
 void LogisticRegression<MatType>::Train(const MatType& predictors,
-                                        const arma::Row<size_t>& responses)
+                                        const arma::Row<size_t>& responses,
+                                        const size_t numClasses)
 {
+  if (numClasses != 2)
+  {
+    throw std::invalid_argument("LogisticRegression::Train(): numClasses must "
+        "always be 2; for multiclass logistic regression use "
+        "SoftmaxRegression");
+  }
+
   LogisticRegressionFunction<MatType> errorFunction(predictors, responses,
       lambda);
   errorFunction.InitialPoint() = parameters;

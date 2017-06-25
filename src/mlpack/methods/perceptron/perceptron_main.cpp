@@ -180,6 +180,7 @@ int main(int argc, char** argv)
     // Normalize the labels.
     Row<size_t> labels;
     data::NormalizeLabels(labelsIn, labels, p.Map());
+    const size_t numClasses = p.Map().n_elem;
 
     // Now, if we haven't already created a perceptron, do it.  Otherwise, make
     // sure the dimensions are right, then continue training.
@@ -187,8 +188,7 @@ int main(int argc, char** argv)
     {
       // Create and train the classifier.
       Timer::Start("training");
-      p.P() = Perceptron<>(trainingData, labels, max(labels) + 1,
-          maxIterations);
+      p.P() = Perceptron<>(trainingData, labels, numClasses, maxIterations);
       Timer::Stop("training");
     }
     else
@@ -205,18 +205,18 @@ int main(int argc, char** argv)
       }
 
       // Check the number of labels.
-      if (max(labels) + 1 > p.P().Weights().n_cols)
+      if (numClasses > p.P().Weights().n_cols)
       {
         Log::Fatal << "Perceptron from '"
             << CLI::GetUnmappedParam<PerceptronModel>("input_model") << "' has "
             << p.P().Weights().n_cols << " classes, but the training data has "
-            << max(labels) + 1 << " classes!" << endl;
+            << numClasses + 1 << " classes!" << endl;
       }
 
       // Now train.
       Timer::Start("training");
       p.P().MaxIterations() = maxIterations;
-      p.P().Train(trainingData, labels.t());
+      p.P().Train(trainingData, labels.t(), numClasses);
       Timer::Stop("training");
     }
   }

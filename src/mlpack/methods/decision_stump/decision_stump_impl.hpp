@@ -9,7 +9,6 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
 #ifndef MLPACK_METHODS_DECISION_STUMP_DECISION_STUMP_IMPL_HPP
 #define MLPACK_METHODS_DECISION_STUMP_DECISION_STUMP_IMPL_HPP
 
@@ -24,15 +23,15 @@ namespace decision_stump {
  *
  * @param data Input, training data.
  * @param labels Labels of data.
- * @param classes Number of distinct classes in labels.
+ * @param numClasses Number of distinct classes in labels.
  * @param bucketSize Minimum size of bucket when splitting.
  */
 template<typename MatType>
 DecisionStump<MatType>::DecisionStump(const MatType& data,
                                       const arma::Row<size_t>& labels,
-                                      const size_t classes,
+                                      const size_t numClasses,
                                       const size_t bucketSize) :
-    classes(classes),
+    numClasses(numClasses),
     bucketSize(bucketSize)
 {
   arma::rowvec weights;
@@ -44,7 +43,7 @@ DecisionStump<MatType>::DecisionStump(const MatType& data,
  */
 template<typename MatType>
 DecisionStump<MatType>::DecisionStump() :
-    classes(1),
+    numClasses(1),
     bucketSize(0),
     splitDimension(0),
     split(1),
@@ -60,10 +59,10 @@ DecisionStump<MatType>::DecisionStump() :
 template<typename MatType>
 void DecisionStump<MatType>::Train(const MatType& data,
                                    const arma::Row<size_t>& labels,
-                                   const size_t classes,
+                                   const size_t numClasses,
                                    const size_t bucketSize)
 {
-  this->classes = classes;
+  this->numClasses = numClasses;
   this->bucketSize = bucketSize;
 
   // Pass to unweighted training function.
@@ -80,10 +79,10 @@ template<typename MatType>
 void DecisionStump<MatType>::Train(const MatType& data,
                                    const arma::Row<size_t>& labels,
                                    const arma::rowvec& weights,
-                                   const size_t classes,
+                                   const size_t numClasses,
                                    const size_t bucketSize)
 {
-  this->classes = classes;
+  this->numClasses = numClasses;
   this->bucketSize = bucketSize;
 
   // Pass to weighted training function.
@@ -186,8 +185,9 @@ template<typename MatType>
 DecisionStump<MatType>::DecisionStump(const DecisionStump<>& other,
                                       const MatType& data,
                                       const arma::Row<size_t>& labels,
+                                      const size_t numClasses,
                                       const arma::rowvec& weights) :
-    classes(other.classes),
+    numClasses(numClasses),
     bucketSize(other.bucketSize)
 {
   Train<true>(data, labels, weights);
@@ -205,7 +205,7 @@ void DecisionStump<MatType>::Serialize(Archive& ar,
 
   // This is straightforward; just serialize all of the members of the class.
   // None need special handling.
-  ar & CreateNVP(classes, "classes");
+  ar & CreateNVP(numClasses, "classes");
   ar & CreateNVP(bucketSize, "bucketSize");
   ar & CreateNVP(splitDimension, "splitDimension");
   ar & CreateNVP(split, "split");
@@ -469,7 +469,7 @@ double DecisionStump<MatType>::CalculateEntropy(
   double entropy = 0.0;
   size_t j;
 
-  arma::rowvec numElem(classes);
+  arma::rowvec numElem(numClasses);
   numElem.fill(0);
 
   // Variable to accumulate the weight in this subview_row.
@@ -484,7 +484,7 @@ double DecisionStump<MatType>::CalculateEntropy(
       accWeight += weights(j);
     }
 
-    for (j = 0; j < classes; j++)
+    for (j = 0; j < numClasses; j++)
     {
       const double p1 = ((double) numElem(j) / accWeight);
 
@@ -499,7 +499,7 @@ double DecisionStump<MatType>::CalculateEntropy(
     for (j = 0; j < labels.n_elem; j++)
       numElem(labels(j))++;
 
-    for (j = 0; j < classes; j++)
+    for (j = 0; j < numClasses; j++)
     {
       const double p1 = ((double) numElem(j) / labels.n_elem);
 
