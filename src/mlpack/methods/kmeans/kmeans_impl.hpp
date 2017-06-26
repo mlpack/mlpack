@@ -311,9 +311,11 @@ Cluster(const MatType& data,
   Cluster(data, clusters, centroids,
       initialAssignmentGuess || initialCentroidGuess);
 
-  // Calculate final assignments.
+  // Calculate final assignments in parallel over the entire dataset.
   assignments.set_size(data.n_cols);
-  for (size_t i = 0; i < data.n_cols; ++i)
+
+  #pragma omp parallel for
+  for (omp_size_t i = 0; i < (omp_size_t) data.n_cols; ++i)
   {
     // Find the closest centroid to this point.
     double minDistance = std::numeric_limits<double>::infinity();
