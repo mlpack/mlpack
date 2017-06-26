@@ -1,8 +1,8 @@
 /**
- * @file lstm_impl.hpp
+ * @file gru_impl.hpp
  * @author Sumedh Ghaisas
  *
- * Implementation of the LSTM class, which implements a lstm network
+ * Implementation of the GRU class, which implements a gru network
  * layer.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -14,7 +14,7 @@
 #define MLPACK_METHODS_ANN_LAYER_GRU_IMPL_HPP
 
 // In case it hasn't yet been included.
-#include "linear.hpp"
+#include "gru.hpp"
 
 #include "../visitor/forward_visitor.hpp"
 #include "../visitor/backward_visitor.hpp"
@@ -97,7 +97,7 @@ void GRU<InputDataType, OutputDataType>::Forward(
       0, 0, 1 * outSize - 1, 0)), std::move(boost::apply_visitor(
       outputParameterVisitor, inputGateModule))), inputGateModule);
 
-  // Pass the second through forgetGate
+  // Pass the second through forgetGate.
   boost::apply_visitor(ForwardVisitor(std::move(output.submat(
       1 * outSize, 0, 2 * outSize - 1, 0)), std::move(boost::apply_visitor(
       outputParameterVisitor, forgetGateModule))), forgetGateModule);
@@ -105,7 +105,7 @@ void GRU<InputDataType, OutputDataType>::Forward(
   arma::mat modInput = (boost::apply_visitor(outputParameterVisitor, 
       forgetGateModule) % *prevOutput);
 
-  // Pass that through the outputHidden2GateModule
+  // Pass that through the outputHidden2GateModule.
   boost::apply_visitor(ForwardVisitor(std::move(modInput), std::move(
       boost::apply_visitor(outputParameterVisitor, outputHidden2GateModule))),
       outputHidden2GateModule);
@@ -121,7 +121,7 @@ void GRU<InputDataType, OutputDataType>::Forward(
       hiddenStateModule);
 
   // Update the output (nextOutput): cmul1 + cmul2
-  // Wwhere cmul1 is input gate * prevOutput and
+  // Where cmul1 is input gate * prevOutput and
   // cmul2 is (1 - input gate) * hidden gate.
   output = (boost::apply_visitor(outputParameterVisitor, inputGateModule) 
       % *prevOutput) + 
