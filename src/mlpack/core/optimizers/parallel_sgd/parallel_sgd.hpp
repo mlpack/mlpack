@@ -47,9 +47,14 @@ namespace optimization {
  * would refer to the index of the datapoint(or training example).
  * The data is distributed uniformly among the threads made available to the
  * program by the OpenMP runtime.
+ *
  * The class is expected to implement a Components function, which takes in the
  * index of a datapoint and returns a list of component indices(of the decision
  * variable) for which the decision variable needs to be updated.
+ *
+ * If the function is not found, the gradient update will iterate through the
+ * entire gradient and update each component of the decision variable if the
+ * gradient is non-zero in that component.
  *
  * @tparam SparseFunctionType Sparse, Decomposable objective function type to be
  *     minimized.

@@ -50,10 +50,10 @@ class SparseTestFunction
   // first order term is stored.
 
   //! The vector storing the intercepts
-  arma::vec intercepts = {20, 12, 15, 100};
+  arma::vec intercepts = {{20, 12, 15, 100}};
 
   //! The vector having coefficients of the first order term
-  arma::vec bi = {-4, -2, -3, -8};
+  arma::vec bi = {{-4, -2, -3, -8}};
 };
 
 } // namespace test
