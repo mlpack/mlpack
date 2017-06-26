@@ -32,8 +32,6 @@ ParallelSGD<SparseFunctionType, DecayPolicyType>::ParallelSGD(
     decayPolicy(decayPolicy)
 { /* Nothing to do. */ }
 
-
-
 template <typename SparseFunctionType, typename DecayPolicyType>
 double ParallelSGD<SparseFunctionType, DecayPolicyType>::Optimize(
     SparseFunctionType& function,
@@ -60,7 +58,6 @@ double ParallelSGD<SparseFunctionType, DecayPolicyType>::Optimize(
       for (size_t j = 0; j < instances.n_elem; ++j)
       {
         // Each instance affects only some components of the decision variable
-        // TODO: SFINAE here
         arma::Col<size_t> components = function.Components(instances[j]);
         // Evaluate the gradient
         arma::vec gradient;

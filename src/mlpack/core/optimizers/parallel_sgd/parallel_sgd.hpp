@@ -13,6 +13,7 @@
 #define MLPACK_CORE_OPTIMIZERS_PARALLEL_SGD_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/sfinae_utility.hpp>
 
 namespace mlpack {
 namespace optimization {
@@ -65,8 +66,7 @@ class ParallelSGD
   /**
    * Construct the parallel SGD optimizer to optimize the given function with
    * the given parameters. One iteration means one batch of datapoints processed
-   * by each thread. The default values given here are just for reference, it is
-   * suggested that the values are set according to the task at hand.
+   * by each thread.
    *
    * @param function Function to be optimized(minimized).
    * @param maxIterations Maximum number of iterations allowed.
@@ -79,7 +79,7 @@ class ParallelSGD
               const size_t maxIterations,
               const size_t batchSize,
               const double tolerance,
-              const DecayPolicyType& decayPolicy = DecayPolicyType());
+              const DecayPolicyType& decayPolicy);
 
   /**
    * Optimize the given function using the parallel SGD algorithm. The given

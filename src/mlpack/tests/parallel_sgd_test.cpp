@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_CASE(SimpleParallelSGDTest)
 {
   SparseTestFunction f;
 
-  ConstantStep decayPolicy(0.1);
+  ConstantStep decayPolicy(0.5);
 
   ParallelSGD<SparseTestFunction, ConstantStep> s(f, 10000, 1, 1e-5,
       decayPolicy);
@@ -48,10 +48,10 @@ BOOST_AUTO_TEST_CASE(SimpleParallelSGDTest)
   BOOST_REQUIRE_CLOSE(result, 123.75, 0.01);
 
   // The co-ordinates should be the vertices of the parabolae.
-  BOOST_REQUIRE_CLOSE(coordinates[0], 2, 0.1);
-  BOOST_REQUIRE_CLOSE(coordinates[1], 1, 0.1);
-  BOOST_REQUIRE_CLOSE(coordinates[2], 1.5, 0.1);
-  BOOST_REQUIRE_CLOSE(coordinates[3], 4, 0.1);
+  BOOST_REQUIRE_CLOSE(coordinates[0], 2, 0.02);
+  BOOST_REQUIRE_CLOSE(coordinates[1], 1, 0.02);
+  BOOST_REQUIRE_CLOSE(coordinates[2], 1.5, 0.02);
+  BOOST_REQUIRE_CLOSE(coordinates[3], 4, 0.02);
 }
 
 /**
@@ -61,15 +61,15 @@ BOOST_AUTO_TEST_CASE(ExponentialBackoffDecayTest)
 {
   ExponentialBackoff decayPolicy(100, 100, 0.9);
 
-  // At the first iteration, the decay should be unchanged
+  // At the first iteration, stepsize should be unchanged
   BOOST_REQUIRE_EQUAL(decayPolicy.StepSize(1), 100);
-  // At the 99th iteration
+  // At the 99th iteration, stepsize should be unchanged
   BOOST_REQUIRE_EQUAL(decayPolicy.StepSize(99), 100);
-  // At the 100th iteration, decay should be changed
+  // At the 100th iteration, stepsize should be changed
   BOOST_REQUIRE_EQUAL(decayPolicy.StepSize(100), 90);
-  // At the 210th iteration, decay should be unchanged
+  // At the 210th iteration, stepsize should be unchanged
   BOOST_REQUIRE_EQUAL(decayPolicy.StepSize(210), 90);
-  // At the 211th iteration, decay should be changed
+  // At the 211th iteration, stepsize should be changed
   BOOST_REQUIRE_EQUAL(decayPolicy.StepSize(211), 81);
 }
 

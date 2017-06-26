@@ -67,8 +67,17 @@ class ExponentialBackoff{
   }
 
  private:
-  size_t firstBackoffEpoch, cutoffEpoch;
-  double step, beta;
+  //! The first iteration at which the stepsize should be reduced.
+  size_t firstBackoffEpoch;
+
+  //! The iteration at which the next decay will be performed.
+  size_t cutoffEpoch;
+
+  //! The initial stepsize.
+  double step;
+  
+  //! The reduction factor, should be in range (0, 1).
+  double beta;
 };
 
 } // namespace optimization

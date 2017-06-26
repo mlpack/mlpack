@@ -16,13 +16,27 @@
 
 namespace mlpack{
 namespace optimization{
+
+/**
+ * Implementation of the ConstantStep stepsize decay policy for parallel SGD.
+ */
 class ConstantStep{
  public:
-  ConstantStep(double initalStep) : step(initalStep) {}
-  double StepSize(size_t /* n_epoch */){
+  ConstantStep(double initalStep) : step(initalStep) { /* Nothing to do */ }
+
+  /**
+   * This function is called in each iteration before the gradient update.
+   *
+   * @param n_epoch The iteration number for which the stepsize is to be
+   *    calculated.
+   * @return The step size for the current iteration.
+   */
+  double StepSize(size_t /* n_epoch */)
+  {
     return step;
   }
  private:
+  //! The initial stepsize, which remains unchanged
   double step;
 };
 
