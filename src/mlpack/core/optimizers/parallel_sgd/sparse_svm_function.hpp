@@ -16,22 +16,39 @@
 
 class SparseSVMLossFunction{
  public:
-  SparseSVMLossFunction() = default;
+  //! Nothing to do for the default constructor.
+  SparseSVMLossFunction();
+
+  //! Member initialization constructor.
   SparseSVMLossFunction(arma::SpMat<double>& dataset, arma::vec& labels);
+
+  //! Evaluate a function.
   double Evaluate(const arma::vec& weights, size_t id);
+
+  //! Evaluate the gradient of a function.
   void Gradient(const arma::vec& weights, size_t id, arma::mat& gradient);
+
+  //! Get the list of non-zero components of the gradient of a function.
   arma::Col<size_t> Components(size_t id);
 
+  //! Get the dataset.
   const arma::SpMat<double>& Dataset() const { return dataset; }
+  //! Modify the dataset.
   arma::SpMat<double>& Dataset() { return dataset; }
 
+  //! Get the labels.
   const arma::vec& Labels() const { return labels; }
+  //! Modify the labels.
   arma::vec& Labels() { return labels; }
 
+  //! Return the number of functions.
   size_t NumFunctions();
 
  private:
+  //! The datapoints for training.
   arma::SpMat<double> dataset;
+
+  //! The labels, y_i.
   arma::vec labels;
 };
 

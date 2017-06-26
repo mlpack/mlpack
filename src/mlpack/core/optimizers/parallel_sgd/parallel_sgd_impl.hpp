@@ -12,8 +12,6 @@
 #ifndef MLPACK_CORE_OPTIMIZERS_PARALLEL_SGD_IMPL_HPP
 #define MLPACK_CORE_OPTIMIZERS_PARALLEL_SGD_IMPL_HPP
 
-#include <mlpack/prereqs.hpp>
-
 // In case it hasn't been included yet.
 #include "parallel_sgd.hpp"
 
@@ -44,13 +42,12 @@ double ParallelSGD<SparseFunctionType, DecayPolicyType>::Optimize(
   double overallObjective = 0;
   double lastObjective = DBL_MAX;
 
-  Log::Info << std::endl;
-
-  for (size_t i = 1; i != maxIterations; ++i){
+  for (size_t i = 1; i <= maxIterations; ++i){
     overallObjective = 0;
 
     // Get the stepsize for this iteration
     double stepSize = decayPolicy.StepSize(i);
+
     arma::Col<size_t> visitationOrder;
     GenerateVisitationOrder(visitationOrder);
 
@@ -63,6 +60,7 @@ double ParallelSGD<SparseFunctionType, DecayPolicyType>::Optimize(
       for (size_t j = 0; j < instances.n_elem; ++j)
       {
         // Each instance affects only some components of the decision variable
+        // TODO: SFINAE here
         arma::Col<size_t> components = function.Components(instances[j]);
         // Evaluate the gradient
         arma::vec gradient;
@@ -86,13 +84,14 @@ double ParallelSGD<SparseFunctionType, DecayPolicyType>::Optimize(
     Log::Info << "\nObjective : " << overallObjective << " Iteration : " << i;
     if (std::abs(overallObjective - lastObjective) < tolerance)
     {
-      Log::Info << "\n Parallel SGD terminated with objective : "
-          << overallObjective << std::endl;
+      Log::Info << "\nParallel SGD terminated with objective delta "
+        << " within tolerance : " << overallObjective << std::endl;
       return overallObjective;
     }
     lastObjective = overallObjective;
-    std::flush(std::cout);
   }
+  Log::Info << "\n Parallel SGD terminated with objective : "
+    << overallObjective << std::endl;
   return overallObjective;
 }
 

@@ -76,9 +76,9 @@ class ParallelSGD
    * @param decayPolicy The step size update policy to use.
   */
   ParallelSGD(SparseFunctionType& function,
-              const size_t maxIterations = 100,
-              const size_t batchSize = 10000,
-              const double tolerance = 1e-5,
+              const size_t maxIterations,
+              const size_t batchSize,
+              const double tolerance,
               const DecayPolicyType& decayPolicy = DecayPolicyType());
 
   /**
