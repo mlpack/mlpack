@@ -75,7 +75,7 @@ class ExponentialBackoff{
 
   //! The initial stepsize.
   double step;
-  
+
   //! The reduction factor, should be in range (0, 1).
   double beta;
 };

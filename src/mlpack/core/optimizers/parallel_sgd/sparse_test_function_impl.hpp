@@ -19,6 +19,13 @@ namespace mlpack {
 namespace optimization {
 namespace test {
 
+//! The default constructor sets the members.
+SparseTestFunction::SparseTestFunction()
+{
+  intercepts = arma::vec("20 12 15 100");
+  bi = arma::vec("-4 -2 -3 -8");
+}
+
 //! Evaluate a function.
 double SparseTestFunction::Evaluate(
     const arma::mat& coordinates, const size_t i) const

@@ -35,9 +35,16 @@ BOOST_AUTO_TEST_CASE(SimpleParallelSGDTest)
 {
   SparseTestFunction f;
 
-  ConstantStep decayPolicy(0.5);
+  ConstantStep decayPolicy(0.4);
 
-  ParallelSGD<SparseTestFunction, ConstantStep> s(f, 10000, 1, 1e-5,
+  // The batch size for this test should be chosen according to the threads
+  // available on the system. If the update does not touch each datapoint, the
+  // test will fail.
+
+  size_t threadsAvailable = omp_get_max_threads();
+  size_t batchSize = std::ceil((float) f.NumFunctions() / threadsAvailable);
+
+  ParallelSGD<SparseTestFunction, ConstantStep> s(f, 10000, batchSize, 1e-5,
       decayPolicy);
 
   arma::mat coordinates = f.GetInitialPoint();

@@ -26,8 +26,8 @@ namespace test {
 class SparseTestFunction
 {
  public:
-  //! Nothing to do for the constructor.
-  SparseTestFunction() {  }
+  //! Set members in the default constructor.
+  SparseTestFunction();
 
   //! Return 6 (the number of functions).
   size_t NumFunctions() const { return 4; }
@@ -50,10 +50,10 @@ class SparseTestFunction
   // first order term is stored.
 
   //! The vector storing the intercepts
-  arma::vec intercepts = {{20, 12, 15, 100}};
+  arma::vec intercepts;
 
   //! The vector having coefficients of the first order term
-  arma::vec bi = {{-4, -2, -3, -8}};
+  arma::vec bi;
 };
 
 } // namespace test
