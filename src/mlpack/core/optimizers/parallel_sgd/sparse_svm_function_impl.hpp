@@ -33,16 +33,17 @@ void SparseSVMLossFunction::Gradient(
   gradient = (dot < 0) ? arma::vec(weights.n_elem, arma::fill::zeros) :
     (-1 * arma::vec(dataset.col(id) * labels(id)));
 }
+
 arma::Col<size_t> SparseSVMLossFunction::Components(size_t id)
 {
   std::vector<size_t> nonZeroComponents;
-  for (size_t i = 0; i < dataset.n_rows; ++i)
+  for (auto cur = dataset.begin_col(id); cur != dataset.end_col(id); ++cur)
   {
-    if (dataset(i, id) != 0.f)
-      nonZeroComponents.push_back(i);
+    nonZeroComponents.push_back(cur.row());
   }
   return arma::Col<size_t>(nonZeroComponents);
 }
+
 size_t SparseSVMLossFunction::NumFunctions()
 {
   return dataset.n_cols;

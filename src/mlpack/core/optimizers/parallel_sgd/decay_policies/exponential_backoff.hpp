@@ -54,12 +54,13 @@ class ExponentialBackoff{
    * Get the step size for the current gradient update.
    *
    * @param n_epoch The iteration number of the current update.
+   * @return The stepsize for the current iteration.
    */
   double StepSize(size_t n_epoch)
   {
     if (n_epoch >= cutoffEpoch)
     {
-      step /= beta;
+      step *= beta;
       cutoffEpoch += firstBackoffEpoch / beta;
     }
     return step;

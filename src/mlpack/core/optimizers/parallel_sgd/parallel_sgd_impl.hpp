@@ -86,7 +86,7 @@ double ParallelSGD<SparseFunctionType, DecayPolicyType>::Optimize(
     Log::Info << "\nObjective : " << overallObjective << " Iteration : " << i;
     if (std::abs(overallObjective - lastObjective) < tolerance)
     {
-      Log::Info << "\n Parallel SGD terminated with objective : " 
+      Log::Info << "\n Parallel SGD terminated with objective : "
           << overallObjective << std::endl;
       return overallObjective;
     }
