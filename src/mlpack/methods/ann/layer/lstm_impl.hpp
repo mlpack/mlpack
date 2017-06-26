@@ -14,7 +14,7 @@
 #define MLPACK_METHODS_ANN_LAYER_LSTM_IMPL_HPP
 
 // In case it hasn't yet been included.
-#include "linear.hpp"
+#include "lstm.hpp"
 
 #include "../visitor/forward_visitor.hpp"
 #include "../visitor/backward_visitor.hpp"

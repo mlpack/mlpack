@@ -41,6 +41,18 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
+/**
+ * An implementation of a gru network layer.
+ *
+ * This class allows specification of the type of the activation functions used
+ * for the gates and cells and also of the type of the function used to
+ * initialize and update the peephole weights.
+ *
+ * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
+ * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
+ */
 template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
