@@ -58,8 +58,6 @@ class SnapshotEnsembles
   SnapshotEnsembles(const size_t epochRestart,
                     const double multFactor,
                     const double stepSize,
-                    const size_t numFunctions,
-                    const size_t batchSize,
                     const size_t maxIterations,
                     const size_t snapshots) :
     epochRestart(epochRestart),
@@ -67,7 +65,6 @@ class SnapshotEnsembles
     constStepSize(stepSize),
     nextRestart(epochRestart),
     batchRestart(0),
-    epochBatches(numFunctions / (double) batchSize),
     epoch(0)
   {
     snapshotEpochs = 0;

@@ -38,14 +38,14 @@ BOOST_AUTO_TEST_SUITE(MiniBatchSGDTest);
 BOOST_AUTO_TEST_CASE(SGDSimilarityTest)
 {
   SGDTestFunction f;
-  StandardSGD<SGDTestFunction> s(f, 0.0003, 100000, 1e-4, false);
-  MiniBatchSGD<SGDTestFunction> ms(f, 1, 0.0003, 100000, 1e-4, false);
+  StandardSGD s(0.0003, 100000, 1e-4, false);
+  MiniBatchSGD ms(1, 0.0003, 100000, 1e-4, false);
 
   arma::mat sCoord = f.GetInitialPoint();
   arma::mat msCoord = f.GetInitialPoint();
 
-  const double sResult = s.Optimize(sCoord);
-  const double msResult = ms.Optimize(msCoord);
+  const double sResult = s.Optimize(f, sCoord);
+  const double msResult = ms.Optimize(f, msCoord);
 
   BOOST_REQUIRE_CLOSE(sResult, msResult, 1e-2);
   BOOST_REQUIRE_CLOSE(sCoord[0], msCoord[0], 1e-2);
@@ -121,11 +121,8 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
   // Now run mini-batch SGD with a couple of batch sizes.
   for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
   {
-    LogisticRegression<> lr(shuffledData.n_rows, 0.5);
-
-    LogisticRegressionFunction<> lrf(shuffledData, shuffledResponses, 0.5);
-    MiniBatchSGD<LogisticRegressionFunction<>> mbsgd(lrf, batchSize);
-    lr.Train(mbsgd);
+    MiniBatchSGD mbsgd(batchSize);
+    LogisticRegression<> lr(shuffledData, shuffledResponses, mbsgd, 0.5);
 
     // Ensure that the error is close to zero.
     const double acc = lr.ComputeAccuracy(data, responses);
@@ -149,11 +146,10 @@ BOOST_AUTO_TEST_CASE(ZeroBatchSizeTest)
   // Create the generalized Rosenbrock function.
   GeneralizedRosenbrockFunction f(10);
 
-  MiniBatchSGD<GeneralizedRosenbrockFunction> s(
-      f, f.NumFunctions() - 1, 0.01, 3);
+  MiniBatchSGD s(f.NumFunctions() - 1, 0.01, 3);
 
   arma::mat coordinates = f.GetInitialPoint();
-  s.Optimize(coordinates);
+  s.Optimize(f, coordinates);
 
   const bool finite = coordinates.is_finite();
   BOOST_REQUIRE_EQUAL(finite, true);

@@ -1,6 +1,7 @@
 set(SOURCES
   lbfgs_impl.hpp
   lbfgs.hpp
+  lbfgs.cpp
   test_functions.hpp
   test_functions.cpp
 )

@@ -1,6 +1,6 @@
 set(SOURCES
   ada_delta.hpp
-  ada_delta_impl.hpp
+  ada_delta.cpp
   ada_delta_update.hpp
 )
 

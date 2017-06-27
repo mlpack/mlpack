@@ -844,11 +844,11 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTest)
   for (size_t i = 500; i < 1000; ++i)
     labels[i] = 1;
 
-  SoftmaxRegression<> sr(dataset, labels, 2);
+  SoftmaxRegression sr(dataset, labels, 2);
 
-  SoftmaxRegression<> srXml(dataset.n_rows, 2);
-  SoftmaxRegression<> srText(dataset.n_rows, 2);
-  SoftmaxRegression<> srBinary(dataset.n_rows, 2);
+  SoftmaxRegression srXml(dataset.n_rows, 2);
+  SoftmaxRegression srText(dataset.n_rows, 2);
+  SoftmaxRegression srBinary(dataset.n_rows, 2);
 
   SerializeObjectAll(sr, srXml, srText, srBinary);
 

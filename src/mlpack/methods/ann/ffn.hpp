@@ -113,14 +113,10 @@ class FFN
    * @param responses Outputs results from input training variables.
    * @param optimizer Instantiated optimizer used to train the model.
    */
-  template<
-      template<typename, typename...> class OptimizerType =
-          mlpack::optimization::RMSProp,
-      typename... OptimizerTypeArgs
-  >
+  template<typename OptimizerType>
   void Train(arma::mat predictors,
              arma::mat responses,
-             OptimizerType<NetworkType, OptimizerTypeArgs...>& optimizer);
+             OptimizerType& optimizer);
 
   /**
    * Train the feedforward network on the given input data. By default, the
@@ -138,9 +134,7 @@ class FFN
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
    */
-  template<
-      template<typename...> class OptimizerType = mlpack::optimization::RMSProp
-  >
+  template<typename OptimizerType = mlpack::optimization::RMSProp>
   void Train(arma::mat predictors, arma::mat responses);
 
   /**

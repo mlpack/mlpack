@@ -226,12 +226,11 @@ BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionOptimize)
 
   // Make the Reg SVD function and the optimizer.
   RegularizedSVDFunction rSVDFunc(data, rank, lambda);
-  mlpack::optimization::StandardSGD <RegularizedSVDFunction> optimizer(rSVDFunc,
-      alpha, iterations * numRatings);
+  mlpack::optimization::StandardSGD optimizer(alpha, iterations * numRatings);
 
   // Obtain optimized parameters after training.
   arma::mat optParameters = arma::randu(rank, numUsers + numItems);
-  optimizer.Optimize(optParameters);
+  optimizer.Optimize(rSVDFunc, optParameters);
 
   // Get predicted ratings from optimized parameters.
   arma::mat predictedData(1, numRatings);
