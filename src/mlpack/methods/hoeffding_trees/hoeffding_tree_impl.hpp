@@ -14,6 +14,7 @@
 
 // In case it hasn't been included yet.
 #include "hoeffding_tree.hpp"
+#include <stack>
 
 namespace mlpack {
 namespace tree {
@@ -499,6 +500,29 @@ size_t HoeffdingTree<
     return categoricalSplit.CalculateDirection(point[splitDimension]);
   else
     return 0; // Not sure what to do here...
+}
+
+template<typename FitnessFunction,
+         template<typename> class NumericSplitType,
+         template<typename> class CategoricalSplitType>
+size_t HoeffdingTree<
+    FitnessFunction,
+    NumericSplitType,
+    CategoricalSplitType
+>::NumDescendants() const
+{
+  size_t nodes = 0;
+  std::stack<const HoeffdingTree*> stack;
+  stack.push(this); // Push the current tree.
+  while (!stack.empty())
+  {
+    const HoeffdingTree* node = stack.top();
+    stack.pop();
+    nodes += node->NumChildren();
+    for (size_t i = 0; i < node->NumChildren(); ++i)
+      stack.push(&node->Child(i));
+  }
+  return nodes;
 }
 
 template<
