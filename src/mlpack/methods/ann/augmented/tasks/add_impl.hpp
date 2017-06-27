@@ -69,6 +69,10 @@ void AddTask::Generate(arma::field<arma::mat>& input,
       binary_seq.push_back(tot & 1);
       tot >>= 1;
     }
+    if (binary_seq.empty()) {
+      assert(val_A + val_B == 0);
+      binary_seq.push_back(0);
+    }
     size_t tot_len = binary_seq.size();
     vecLabels(i) = arma::colvec(tot_len);
     for (size_t j = 0; j < tot_len; ++j) {

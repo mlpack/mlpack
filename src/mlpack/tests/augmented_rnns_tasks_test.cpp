@@ -172,6 +172,10 @@ class HardCodedAddModel {
       binary_seq.push_back(total & 1);
       total >>= 1;
     }
+    if (binary_seq.empty()) {
+      assert(num_A + num_B == 0);
+      binary_seq.push_back(0);
+    }
     auto tot_len = binary_seq.size();
     labels = arma::zeros(3, tot_len);
     for (size_t j = 0; j < tot_len; ++j) {
