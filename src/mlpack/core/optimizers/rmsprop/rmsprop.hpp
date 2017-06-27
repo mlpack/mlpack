@@ -100,6 +100,20 @@ class RMSProp
    * modified to store the finishing point of the algorithm, and the final
    * objective value is returned.
    *
+   * @param function Function to optimize.
+   * @param iterate Starting point (will be modified).
+   * @return Objective value of the final point.
+   */
+  double Optimize(DecomposableFunctionType& function, arma::mat& iterate)
+  {
+    return optimizer.Optimize(function, iterate);
+  }
+
+  /**
+   * Optimize the given function using RMSProp. The given starting point will be
+   * modified to store the finishing point of the algorithm, and the final
+   * objective value is returned.
+   *
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */

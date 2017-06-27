@@ -32,7 +32,7 @@ template <
 >
 class MeanPooling
 {
-public:
+ public:
   //! Create the MeanPooling object.
   MeanPooling();
 
@@ -121,7 +121,6 @@ public:
   void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-
   /**
    * Apply pooling to the input and store the results.
    *
@@ -208,13 +207,13 @@ public:
   //! Locally-stored output height.
   size_t outputHeight;
 
-   //! Locally-stored reset parameter used to initialize the module once.
+  //! Locally-stored reset parameter used to initialize the module once.
   bool reset;
 
   //! Rounding operation used.
   bool floor;
 
-   //! If true use maximum a posteriori during the forward pass.
+  //! If true use maximum a posteriori during the forward pass.
   bool deterministic;
 
   //! Locally-stored stored rounding offset.

@@ -17,6 +17,7 @@
 #include "gini_gain.hpp"
 #include "best_binary_numeric_split.hpp"
 #include "all_categorical_split.hpp"
+#include "all_dimension_select.hpp"
 #include <type_traits>
 
 namespace mlpack {
@@ -32,6 +33,7 @@ namespace tree {
 template<typename FitnessFunction = GiniGain,
          template<typename> class NumericSplitType = BestBinaryNumericSplit,
          template<typename> class CategoricalSplitType = AllCategoricalSplit,
+         typename DimensionSelectionType = AllDimensionSelect,
          typename ElemType = double,
          bool NoRecursion = false>
 class DecisionTree :
@@ -45,6 +47,8 @@ class DecisionTree :
   typedef NumericSplitType<FitnessFunction> NumericSplit;
   //! Allow access to the categorical split type.
   typedef CategoricalSplitType<FitnessFunction> CategoricalSplit;
+  //! Allow access to the dimension selection type.
+  typedef DimensionSelectionType DimensionSelection;
 
   /**
    * Construct the decision tree on the given data and labels, where the data
@@ -414,10 +418,12 @@ class DecisionTree :
 template<typename FitnessFunction = GiniGain,
          template<typename> class NumericSplitType = BestBinaryNumericSplit,
          template<typename> class CategoricalSplitType = AllCategoricalSplit,
+         typename DimensionSelectType = AllDimensionSelect,
          typename ElemType = double>
 using DecisionStump = DecisionTree<FitnessFunction,
                                    NumericSplitType,
                                    CategoricalSplitType,
+                                   DimensionSelectType,
                                    ElemType,
                                    false>;
 

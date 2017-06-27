@@ -87,7 +87,6 @@ class DTBStat
   int ComponentMembership() const { return componentMembership; }
   //! Modify the component membership of this node.
   int& ComponentMembership() { return componentMembership; }
-
 }; // class DTBStat
 
 } // namespace emst

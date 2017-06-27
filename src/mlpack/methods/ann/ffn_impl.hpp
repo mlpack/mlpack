@@ -29,9 +29,9 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename OutputLayerType, typename InitializationRuleType>
 FFN<OutputLayerType, InitializationRuleType>::FFN(
-    OutputLayerType&& outputLayer, InitializationRuleType initializeRule) :
+    OutputLayerType outputLayer, InitializationRuleType initializeRule) :
     outputLayer(std::move(outputLayer)),
-    initializeRule(initializeRule),
+    initializeRule(std::move(initializeRule)),
     width(0),
     height(0),
     reset(false)
@@ -41,22 +41,20 @@ FFN<OutputLayerType, InitializationRuleType>::FFN(
 
 template<typename OutputLayerType, typename InitializationRuleType>
 FFN<OutputLayerType, InitializationRuleType>::FFN(
-    const arma::mat& predictors,
-    const arma::mat& responses,
-    OutputLayerType&& outputLayer,
+    arma::mat predictors,
+    arma::mat responses,
+    OutputLayerType outputLayer,
     InitializationRuleType initializeRule) :
     outputLayer(std::move(outputLayer)),
-    initializeRule(initializeRule),
+    initializeRule(std::move(initializeRule)),
     width(0),
     height(0),
-    reset(false)
+    reset(false),
+    predictors(std::move(predictors)),
+    responses(std::move(responses)),
+    deterministic(true)
 {
-  numFunctions = responses.n_cols;
-
-  this->predictors = std::move(predictors);
-  this->responses = std::move(responses);
-
-  this->deterministic = true;
+  numFunctions = this->responses.n_cols;
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
@@ -67,8 +65,8 @@ FFN<OutputLayerType, InitializationRuleType>::~FFN()
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-void FFN<OutputLayerType, InitializationRuleType>::ResetData(const arma::mat &predictors,
-                                                             const arma::mat &responses)
+void FFN<OutputLayerType, InitializationRuleType>::ResetData(
+    arma::mat predictors, arma::mat responses)
 {
   numFunctions = responses.n_cols;
   this->predictors = std::move(predictors);
@@ -88,15 +86,15 @@ template<
     typename... OptimizerTypeArgs
 >
 void FFN<OutputLayerType, InitializationRuleType>::Train(
-      const arma::mat& predictors,
-      const arma::mat& responses,
+      arma::mat predictors,
+      arma::mat responses,
       OptimizerType<NetworkType, OptimizerTypeArgs...>& optimizer)
 {
-  ResetData(predictors, responses);
+  ResetData(std::move(predictors), std::move(responses));
 
   // Train the model.
   Timer::Start("ffn_optimization");
-  const double out = optimizer.Optimize(parameter);
+  const double out = optimizer.Optimize(*this, parameter);
   Timer::Stop("ffn_optimization");
 
   Log::Info << "FFN::FFN(): final objective of trained model is " << out
@@ -106,7 +104,7 @@ void FFN<OutputLayerType, InitializationRuleType>::Train(
 template<typename OutputLayerType, typename InitializationRuleType>
 template<template<typename...> class OptimizerType>
 void FFN<OutputLayerType, InitializationRuleType>::Train(
-    const arma::mat& predictors, const arma::mat& responses)
+    arma::mat predictors, arma::mat responses)
 {
   numFunctions = responses.n_cols;
 
@@ -125,7 +123,7 @@ void FFN<OutputLayerType, InitializationRuleType>::Train(
 
   // Train the model.
   Timer::Start("ffn_optimization");
-  const double out = optimizer.Optimize(parameter);
+  const double out = optimizer.Optimize(*this, parameter);
   Timer::Stop("ffn_optimization");
 
   Log::Info << "FFN::FFN(): final objective of trained model is " << out
@@ -134,7 +132,7 @@ void FFN<OutputLayerType, InitializationRuleType>::Train(
 
 template<typename OutputLayerType, typename InitializationRuleType>
 void FFN<OutputLayerType, InitializationRuleType>::Predict(
-    arma::mat& predictors, arma::mat& results)
+    arma::mat predictors, arma::mat& results)
 {
   if (parameter.is_empty())
   {
@@ -426,7 +424,8 @@ FFN<OutputLayerType, InitializationRuleType>::FFN(
   // Build new layers according to source network
   for (size_t i = 0; i < network.network.size(); ++i)
   {
-    this->network.push_back(boost::apply_visitor(copyVisitor, network.network[i]));
+    this->network.push_back(boost::apply_visitor(copyVisitor,
+        network.network[i]));
   }
 };
 

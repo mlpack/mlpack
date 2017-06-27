@@ -206,18 +206,18 @@ void SerializeVisitor<Archive>::operator()(RSType* rs) const
 template<typename RSType>
 bool& SingleModeVisitor::operator()(RSType* rs) const
 {
- if (rs)
-   return rs->SingleMode();
- throw std::runtime_error("no range search model initialized");
+  if (rs)
+    return rs->SingleMode();
+  throw std::runtime_error("no range search model initialized");
 }
 
 //! Exposes Naive() function of given RSType
 template<typename RSType>
 bool& NaiveVisitor::operator()(RSType* rs) const
 {
- if (rs)
-   return rs->Naive();
- throw std::runtime_error("no range search model initialized");
+  if (rs)
+    return rs->Naive();
+  throw std::runtime_error("no range search model initialized");
 }
 
 // Serialize the model.

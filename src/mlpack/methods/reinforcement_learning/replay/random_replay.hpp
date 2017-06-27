@@ -43,7 +43,10 @@ template <typename EnvironmentType>
 class RandomReplay
 {
  public:
+  //! Convenient typedef for action.
   using ActionType = typename EnvironmentType::Action;
+
+  //! Convenient typedef for state.
   using StateType = typename EnvironmentType::State;
 
   /**
@@ -102,7 +105,8 @@ class RandomReplay
    * @param sampledActions Sampled actions.
    * @param sampledRewards Sampled rewards.
    * @param sampledNextStates Sampled encoded next states.
-   * @param isTerminal Indicate whether corresponding next state is terminal state.
+   * @param isTerminal Indicate whether corresponding next state is terminal
+   *        state.
    */
   void Sample(arma::mat& sampledStates,
               arma::icolvec& sampledActions,
@@ -111,8 +115,9 @@ class RandomReplay
               arma::icolvec& isTerminal)
   {
     size_t upperBound = full ? capacity : position;
-    arma::uvec sampledIndices =
-        arma::randi<arma::uvec>(batchSize, arma::distr_param(0, upperBound - 1));
+    arma::uvec sampledIndices = arma::randi<arma::uvec>(
+        batchSize, arma::distr_param(0, upperBound - 1));
+
     sampledStates = states.cols(sampledIndices);
     sampledActions = actions.elem(sampledIndices);
     sampledRewards = rewards.elem(sampledIndices);

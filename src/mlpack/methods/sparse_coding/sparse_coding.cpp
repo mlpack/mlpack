@@ -120,17 +120,17 @@ double SparseCoding::OptimizeDictionary(const arma::mat& data,
   // numerically stable than just using inv(A) for everything.
   arma::vec dualVars = arma::zeros<arma::vec>(nActiveAtoms);
 
-  //vec dualVars = 1e-14 * ones<vec>(nActiveAtoms);
+  // vec dualVars = 1e-14 * ones<vec>(nActiveAtoms);
 
   // Method used by feature sign code - fails miserably here.  Perhaps the
   // MATLAB optimizer fmincon does something clever?
-  //vec dualVars = 10.0 * randu(nActiveAtoms, 1);
+  // vec dualVars = 10.0 * randu(nActiveAtoms, 1);
 
-  //vec dualVars = diagvec(solve(dictionary, data * trans(codes))
+  // vec dualVars = diagvec(solve(dictionary, data * trans(codes))
   //    - codes * trans(codes));
-  //for (size_t i = 0; i < dualVars.n_elem; i++)
-  //  if (dualVars(i) < 0)
-  //    dualVars(i) = 0;
+  // for (size_t i = 0; i < dualVars.n_elem; i++)
+  //   if (dualVars(i) < 0)
+  //     dualVars(i) = 0;
 
   bool converged = false;
 
@@ -163,7 +163,6 @@ double SparseCoding::OptimizeDictionary(const arma::mat& data,
     arma::mat hessian = -(-2 * (matAInvZXT * trans(matAInvZXT)) % inv(A));
 
     arma::vec searchDirection = -solve(hessian, gradient);
-    //printf("%e\n", norm(searchDirection, 2));
 
     // Armijo line search.
     const double c = 1e-4;

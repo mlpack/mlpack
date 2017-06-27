@@ -109,10 +109,24 @@ class SGD
    * starting point will be modified to store the finishing point of the
    * algorithm, and the final objective value is returned.
    *
+   * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
-  double Optimize(arma::mat& iterate);
+  double Optimize(DecomposableFunctionType& function, arma::mat& iterate);
+
+  /**
+   * Optimize the given function using stochastic gradient descent.  The given
+   * starting point will be modified to store the finishing point of the
+   * algorithm, and the final objective value is returned.
+   *
+   * @param iterate Starting point (will be modified).
+   * @return Objective value of the final point.
+   */
+  double Optimize(arma::mat& iterate)
+  {
+    return Optimize(this->function, iterate);
+  }
 
   //! Get the instantiated function to be optimized.
   const DecomposableFunctionType& Function() const { return function; }

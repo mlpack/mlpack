@@ -41,19 +41,19 @@ PROGRAM_INFO("DBSCAN clustering",
     " tree used for range search; this can take a variety of values: 'kd', 'r',"
     " 'r-star', 'x', 'hilbert-r', 'r-plus', 'r-plus-plus', 'cover', 'ball'. "
     "The --single_mode option will force single-tree search (as opposed to the "
-    "default dual-tree search), and --naive will force brute-force range "
-    "search."
+    "default dual-tree search).  --single_mode can be useful when the RAM usage"
+    " of batch search is too high.  The --naive option will force brute-force "
+    "range search."
     "\n\n"
     "An example usage to run DBSCAN on the dataset in input.csv with a radius "
     "of 0.5 and a minimum cluster size of 5 is given below:"
     "\n\n"
     "  $ mlpack_dbscan -i input.csv -e 0.5 -m 5");
 
-
-PARAM_STRING_IN_REQ("input_file", "Input dataset to cluster.", "i");
-PARAM_STRING_OUT("assignments_file", "Output file for assignments of each "
+PARAM_MATRIX_IN_REQ("input", "Input dataset to cluster.", "i");
+PARAM_UROW_OUT("assignments", "Output vector for assignments of each "
     "point.", "a");
-PARAM_STRING_OUT("centroids_file", "File to save output centroids to.", "C");
+PARAM_MATRIX_OUT("centroids", "Matrix to save output centroids to.", "C");
 
 PARAM_DOUBLE_IN("epsilon", "Radius of each range search.", "e", 1.0);
 PARAM_INT_IN("min_size", "Minimum number of points for a cluster.", "m", 5);
@@ -74,39 +74,38 @@ void RunDBSCAN(RangeSearchType rs = RangeSearchType())
     rs.SingleMode() = true;
 
   // Load dataset.
-  arma::mat dataset;
-  data::Load(CLI::GetParam<string>("input_file"), dataset);
+  arma::mat dataset = std::move(CLI::GetParam<arma::mat>("input"));
 
   const double epsilon = CLI::GetParam<double>("epsilon");
   const size_t minSize = (size_t) CLI::GetParam<int>("min_size");
 
-  DBSCAN<RangeSearchType> d(epsilon, minSize, rs);
+  DBSCAN<RangeSearchType> d(epsilon, minSize, !CLI::HasParam("single_mode"),
+      rs);
 
   // If possible, avoid the overhead of calculating centroids.
   arma::Row<size_t> assignments;
-  if (CLI::HasParam("centroids_file"))
+  if (CLI::HasParam("centroids"))
   {
     arma::mat centroids;
 
     d.Cluster(dataset, assignments, centroids);
 
-    data::Save(CLI::GetParam<string>("centroids_file"), centroids, false);
+    CLI::GetParam<arma::mat>("centroids") = std::move(centroids);
   }
   else
   {
     d.Cluster(dataset, assignments);
   }
 
-  if (CLI::HasParam("assignments_file"))
-    data::Save(CLI::GetParam<string>("assignments_file"), assignments, false,
-        false); // No transpose.
+  if (CLI::HasParam("assignments"))
+    CLI::GetParam<arma::Row<size_t>>("assignments") = std::move(assignments);
 }
 
 int main(int argc, char** argv)
 {
   CLI::ParseCommandLine(argc, argv);
 
-  if (!CLI::HasParam("assignments_file") && !CLI::HasParam("centroids_file"))
+  if (!CLI::HasParam("assignments") && !CLI::HasParam("centroids"))
     Log::Warn << "Neither --assignments_file nor --centroids_file are "
         << "specified; no output will be saved!" << endl;
 
@@ -145,4 +144,6 @@ int main(int argc, char** argv)
         << "'cover', 'r', 'r-star', 'x', 'hilbert-r', 'r-plus', 'r-plus-plus',"
         << " and 'ball'." << endl;
   }
+
+  CLI::Destroy();
 }

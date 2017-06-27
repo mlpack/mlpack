@@ -17,11 +17,12 @@
 
 // Require the approximation L to be within a relative error of E respect to the
 // actual value R.
-#define REQUIRE_RELATIVE_ERR( L, R, E ) \
-    BOOST_REQUIRE_LE( std::abs((R) - (L)), (E) * std::abs(R))
+#define REQUIRE_RELATIVE_ERR(L, R, E) \
+    BOOST_REQUIRE_LE(std::abs((R) - (L)), (E) * std::abs(R))
 
 // Check the values of two matrices.
-inline void CheckMatrices(const arma::mat& a, const arma::mat& b,
+inline void CheckMatrices(const arma::mat& a,
+                          const arma::mat& b,
                           double tolerance = 1e-5)
 {
   BOOST_REQUIRE_EQUAL(a.n_rows, b.n_rows);
@@ -37,7 +38,8 @@ inline void CheckMatrices(const arma::mat& a, const arma::mat& b,
 }
 
 // Check the values of two unsigned matrices.
-inline void CheckMatrices(const arma::Mat<size_t>& a, const arma::Mat<size_t>& b)
+inline void CheckMatrices(const arma::Mat<size_t>& a,
+                          const arma::Mat<size_t>& b)
 {
   BOOST_REQUIRE_EQUAL(a.n_rows, b.n_rows);
   BOOST_REQUIRE_EQUAL(a.n_cols, b.n_cols);

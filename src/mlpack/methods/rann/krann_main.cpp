@@ -31,10 +31,10 @@ PROGRAM_INFO("K-Rank-Approximate-Nearest-Neighbors (kRANN)",
     "This program will calculate the k rank-approximate-nearest-neighbors of a "
     "set of points. You may specify a separate set of reference points and "
     "query points, or just a reference set which will be used as both the "
-    "reference and query set. You must specify the rank approximation (in \%) "
+    "reference and query set. You must specify the rank approximation (in %) "
     "(and optionally the success probability)."
     "\n\n"
-    "For example, the following will return 5 neighbors from the top 0.1\% of "
+    "For example, the following will return 5 neighbors from the top 0.1% of "
     "the data (with probability 0.95) for each point in 'input.csv' and store "
     "the distances in 'distances.csv' and the neighbors in the file "
     "'neighbors.csv':"
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
     math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
   else
     math::RandomSeed((size_t) std::time(NULL));
- // A user cannot specify both reference data and a model.
+  // A user cannot specify both reference data and a model.
   if (CLI::HasParam("reference") && CLI::HasParam("input_model"))
     Log::Fatal << "Only one of --reference_file (-r) or --input_model_file (-m)"
         << " may be specified!" << endl;

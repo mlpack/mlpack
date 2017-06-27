@@ -28,10 +28,10 @@ PROGRAM_INFO("Parametric Naive Bayes Classifier",
     "training set, or loads a model from the given model file, and then may use"
     " that trained model to classify the points in a given test set."
     "\n\n"
-    "Labels are expected to be the last row of the training set (--training_file),"
-    " but labels can also be passed in separately as their own file "
-    "(--labels_file).  If training is not desired, a pre-existing model can be "
-    "loaded with the --input_model_file (-m) option."
+    "Labels are expected to be the last row of the training set "
+    "(--training_file), but labels can also be passed in separately as their "
+    "own file (--labels_file).  If training is not desired, a pre-existing "
+    "model can be loaded with the --input_model_file (-m) option."
     "\n\n"
     "The '--incremental_variance' option can be used to force the training to "
     "use an incremental algorithm for calculating variance.  This is slower, "
@@ -77,8 +77,8 @@ PARAM_FLAG("incremental_variance", "The variance of each class will be "
 PARAM_MATRIX_IN("test", "A matrix containing the test set.", "T");
 PARAM_UROW_OUT("output", "The matrix in which the predicted labels for the"
     " test set will be written.", "o");
-PARAM_MATRIX_OUT("output_probs", "The matrix in which the predicted probability of labels for the"
-    " test set will be written.", "p");
+PARAM_MATRIX_OUT("output_probs", "The matrix in which the predicted probability"
+    " of labels for the test set will be written.", "p");
 
 int main(int argc, char* argv[])
 {

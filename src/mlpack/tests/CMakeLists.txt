@@ -18,6 +18,7 @@ add_executable(mlpack_test
   convolutional_network_test.cpp
   convolution_test.cpp
   cosine_tree_test.cpp
+  cv_test.cpp
   dbscan_test.cpp
   decision_stump_test.cpp
   decision_tree_test.cpp
@@ -69,6 +70,7 @@ add_executable(mlpack_test
   pca_test.cpp
   perceptron_test.cpp
   prefixedoutstream_test.cpp
+  q_learning_test.cpp
   qdafn_test.cpp
   quic_svd_test.cpp
   radical_test.cpp
@@ -86,6 +88,7 @@ add_executable(mlpack_test
   serialization_test.cpp
   sgdr_test.cpp
   sgd_test.cpp
+  sfinae_test.cpp
   smorms3_test.cpp
   snapshot_ensembles.cpp
   softmax_regression_test.cpp
