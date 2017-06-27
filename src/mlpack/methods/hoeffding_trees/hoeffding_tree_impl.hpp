@@ -512,7 +512,7 @@ size_t HoeffdingTree<
 {
   size_t nodes = 0;
   std::stack<HoeffdingTree*> stack;
-  stack.push(this); // push the current tree
+  stack.push(this); // Push the current tree.
   while (!stack.empty())
   {
     HoeffdingTree* node = stack.top();
