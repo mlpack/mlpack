@@ -628,7 +628,7 @@ BOOST_AUTO_TEST_CASE(NumDescendantsTest2)
     labels(i - 2) = 2;
   }
 
-  // Now train the streaming decision tree
+  // Now train the streaming decision tree.
   typedef HoeffdingTree<GiniImpurity, HoeffdingSizeTNumericSplit,
       HoeffdingCategoricalSplit> TreeType;
   TreeType batchTree(dataset, info, labels, 3, false);
