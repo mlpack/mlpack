@@ -19,8 +19,8 @@ namespace mlpack {
 namespace optimization {
 
 template<
-    typename FunctionType, 
-    typename LinearConstrSolverType, 
+    typename FunctionType,
+    typename LinearConstrSolverType,
     typename UpdateRuleType
 >
 FrankWolfe<FunctionType, LinearConstrSolverType, UpdateRuleType>::FrankWolfe(
@@ -37,14 +37,14 @@ FrankWolfe<FunctionType, LinearConstrSolverType, UpdateRuleType>::FrankWolfe(
 { /* Nothing to do*/ }
 
 
-//! Optimize the function (minimize).  
+//! Optimize the function (minimize).
 template<
-    typename FunctionType, 
-    typename LinearConstrSolverType, 
+    typename FunctionType,
+    typename LinearConstrSolverType,
     typename UpdateRuleType
 >
-double FrankWolfe<FunctionType, LinearConstrSolverType, UpdateRuleType>::Optimize(
-    arma::mat& iterate)
+double FrankWolfe<FunctionType, LinearConstrSolverType, UpdateRuleType>
+::Optimize(arma::mat& iterate)
 {
     // To keep track of the function value
     double CurrentObjective = function.Evaluate(iterate);
@@ -55,42 +55,40 @@ double FrankWolfe<FunctionType, LinearConstrSolverType, UpdateRuleType>::Optimiz
     arma::mat iterate_new(iterate.n_rows, iterate.n_cols);
     double gap = 0;
 
-    for(size_t i=1; i != maxIterations; ++i)
+    for (size_t i=1; i != maxIterations; ++i)
     {
-	//Output current objective function
-	Log::Info << "Iteration " << i << ", objective "
-	    << CurrentObjective << "." << std::endl;
+    // Output current objective function
+    Log::Info << "Iteration " << i << ", objective "
+        << CurrentObjective << "." << std::endl;
 
-	// Reset counter variables.
-	PreviousObjective = CurrentObjective;
-	
-	// Calculate the gradient
-	function.Gradient(iterate, gradient);
+    // Reset counter variables.
+    PreviousObjective = CurrentObjective;
 
-	// Solve linear constrained problem, solution saved in s.
-	linear_constr_solver.Optimize(gradient, s);
+    // Calculate the gradient
+    function.Gradient(iterate, gradient);
 
-	// Check duality gap for return condition
-	gap = std::fabs(dot(iterate-s, gradient));
-	if (gap < tolerance)
-	{
-	    Log::Info << "FrankWolfe: minimized within tolerance "
-		<< tolerance << "; " << "terminating optimization." << std::endl;
-	    return CurrentObjective;
-	}
+    // Solve linear constrained problem, solution saved in s.
+    linear_constr_solver.Optimize(gradient, s);
+
+    // Check duality gap for return condition
+    gap = std::fabs(dot(iterate-s, gradient));
+    if (gap < tolerance)
+    {
+        Log::Info << "FrankWolfe: minimized within tolerance "
+        << tolerance << "; " << "terminating optimization." << std::endl;
+        return CurrentObjective;
+    }
 
 
-	// Update solution, save in iterate_new
-	update_rule.Update(iterate, s, iterate_new, i);
+    // Update solution, save in iterate_new
+    update_rule.Update(iterate, s, iterate_new, i);
 
-	
-	iterate = iterate_new;
-	CurrentObjective = function.Evaluate(iterate);
+    iterate = iterate_new;
+    CurrentObjective = function.Evaluate(iterate);
     }
   Log::Info << "Frank Wolfe: maximum iterations (" << maxIterations
       << ") reached; " << "terminating optimization." << std::endl;
   return CurrentObjective;
-
 }
 
 

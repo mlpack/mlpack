@@ -86,8 +86,8 @@ namespace optimization {
  *
  */
 template<
-    typename FunctionType, 
-    typename LinearConstrSolverType, 
+    typename FunctionType,
+    typename LinearConstrSolverType,
     typename UpdateRuleType
 >
 class FrankWolfe
@@ -106,8 +106,8 @@ class FrankWolfe
    *     limit).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    */
-  FrankWolfe( FunctionType& function,
-	const LinearConstrSolverType linear_constr_solver,
+  FrankWolfe(FunctionType& function,
+    const LinearConstrSolverType linear_constr_solver,
         const UpdateRuleType update_rule,
         const size_t maxIterations = 100000,
         const double tolerance = 1e-10);
@@ -123,12 +123,13 @@ class FrankWolfe
   double Optimize(arma::mat& iterate);
 
   //! Get the instantiated function to be optimized.
-  const FunctionType& Function() const { return function; } 
+  const FunctionType& Function() const { return function; }
   //! Modify the instantiated function.
   FunctionType& Function() { return function; }
 
   //! Get the linear constrained solver.
-  LinearConstrSolverType LinearConstrSolver() const { return linear_constr_solver; }
+  LinearConstrSolverType LinearConstrSolver() 
+      const { return linear_constr_solver; }
   //! Modify the linear constrained solver.
   LinearConstrSolverType& LinearConstrSolver() { return linear_constr_solver; }
 
@@ -150,7 +151,7 @@ class FrankWolfe
  private:
   //! The instantiated function.
   FunctionType& function;
-  
+
   //! The solver for constrained linear problem in first step.
   LinearConstrSolverType linear_constr_solver;
 

@@ -62,37 +62,35 @@ class ConstrLpBallSolver
   * @param s Output optimal solution in the constrained domain (lp ball).
   */
   void Optimize(const arma::mat& v,
-	  arma::mat& s)
+      arma::mat& s)
   {
-
-      if (p==-1.0)
+      if (p == -1.0)
       {
-	  // l-inf ball
-	  s = -sign(v);
-	  return;
+      // l-inf ball
+      s = -sign(v);
+      return;
       }
-      else if(p>1.0)
+      else if (p > 1.0)
       {
-	  // lp ball with 1<p<inf
-	  s = -sign(v) % pow(abs(v), p-1);
-	  return;
+      // lp ball with 1<p<inf
+      s = -sign(v) % pow(abs(v), p-1);
+      return;
       }
-      else if(p==1.0)
+      else if (p == 1.0)
       {
-	  // l1 ball, used in OMP
-	  arma::mat tmp = abs(v);
-	  arma::uword k = tmp.index_max();  // linear index of matrix
-	  tmp = 0 * tmp;
-	  tmp(k) = v(k);
-	  s = -sign(tmp);
-	  return;
+      // l1 ball, used in OMP
+      arma::mat tmp = abs(v);
+      arma::uword k = tmp.index_max();  // linear index of matrix
+      tmp = 0 * tmp;
+      tmp(k) = v(k);
+      s = -sign(tmp);
+      return;
       }
       else
       {
-	  Log::Fatal << "Wrong norm p!" << std::endl;
-	  return;
+      Log::Fatal << "Wrong norm p!" << std::endl;
+      return;
       }
-
   }
 
  private:

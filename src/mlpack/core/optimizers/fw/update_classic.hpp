@@ -64,9 +64,9 @@ class UpdateClassic
   * @param num_iter current iteration number
   */
   void Update(const arma::mat& old_coords,
-	  const arma::mat& s,
-	  arma::mat& new_coords,
-	  const size_t num_iter)
+      const arma::mat& s,
+      arma::mat& new_coords,
+      const size_t num_iter)
   {
       double gamma = 2.0/(num_iter + 2.0);
       new_coords = (1.0-gamma)*old_coords + gamma*s;
@@ -79,8 +79,7 @@ class UpdateClassic
 
  private:
   //! The instantiated function.
-  FunctionType& function; 
-
+  FunctionType& function;
 };
 
 } // namespace optimization

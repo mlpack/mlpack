@@ -4,7 +4,7 @@
  *
  * Simple test function for classic Frank Wolfe Algorithm:
  *
- * \f$ f(x) = (x1 - 0.1)^4 + (x2 - 0.2)^4 + (x3 - 0.3)^4 \f$
+ * \f$ f(x) = (x1 - 0.1)^2 + (x2 - 0.2)^2 + (x3 - 0.3)^2 \f$
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -27,19 +27,18 @@ class TestFuncFW
 
      double Evaluate(const arma::mat& coords)
      {
-	 double f = std::pow(coords[0]-0.1, 2);
-	 f += std::pow(coords[1]-0.2, 2);
-	 f += std::pow(coords[2]-0.3, 2);
-	 return f;
+     double f = std::pow(coords[0]-0.1, 2);
+     f += std::pow(coords[1]-0.2, 2);
+     f += std::pow(coords[2]-0.3, 2);
+     return f;
      }
 
      void Gradient(const arma::mat& coords, arma::mat& gradient)
      {
-	 gradient[0] = coords[0]-0.1;
-	 gradient[1] = coords[1]-0.2;
-	 gradient[2] = coords[2]-0.3;
+     gradient[0] = coords[0]-0.1;
+     gradient[1] = coords[1]-0.2;
+     gradient[2] = coords[2]-0.3;
      }
-
 };
 
 }  // namespace optimization

@@ -50,18 +50,19 @@ BOOST_AUTO_TEST_CASE(OMPTest)
     BOOST_REQUIRE_SMALL(coordinates[2], 1e-10);
     for (int ii = 0; ii<k; ++ii)
     {
-	BOOST_REQUIRE_SMALL(coordinates[ii+3], 1e-10);
+    BOOST_REQUIRE_SMALL(coordinates[ii+3], 1e-10);
     }
 }
 
 BOOST_AUTO_TEST_CASE(ClassicFW)
 {
-
     TestFuncFW f;
-    ConstrLpBallSolver linear_constr_solver(1);
+    double p = 1;   // constraint set is unit lp ball
+    ConstrLpBallSolver linear_constr_solver(p);
     UpdateClassic<TestFuncFW> update_rule(f);
 
-    FrankWolfe<TestFuncFW, ConstrLpBallSolver, UpdateClassic<TestFuncFW>> s(f, linear_constr_solver, update_rule);
+    FrankWolfe<TestFuncFW, ConstrLpBallSolver, UpdateClassic<TestFuncFW>>
+        s(f, linear_constr_solver, update_rule);
 
     vec coordinates = zeros<vec>(3);
     double result = s.Optimize(coordinates);

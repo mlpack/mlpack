@@ -45,7 +45,7 @@ class UpdateSpan
    *
    * @param function Function to be optimized in FrankWolfe algorithm.
    */
-  UpdateSpan(FunctionType& function): function(function)    
+  UpdateSpan(FunctionType& function): function(function)
   { /* Do nothing. */ }
 
  /**
@@ -58,11 +58,11 @@ class UpdateSpan
   * @param num_iter current iteration number
   */
   void Update(const arma::mat& old_coords,
-	  const arma::mat& s,
-	  arma::mat& new_coords,
-	  const size_t num_iter)
+      const arma::mat& s,
+      arma::mat& new_coords,
+      const size_t num_iter)
   {
-      //Need to add atom here
+      // add atom here
       arma::uvec ind = find(s, 1);
       arma::uword d = ind(0);
       AddAtom(d);
@@ -90,22 +90,23 @@ class UpdateSpan
   //! Modify the current atoms.
   arma::mat& CurrentAtoms() { return atoms_current; }
 
-  //! Add atom into the solution space, modify the current_indices and atoms_current.
-  void AddAtom(const arma::uword k) 
+  //! Add atom into the solution space.
+  void AddAtom(const arma::uword k)
   {
-      if (isEmpty){
-	  CurrentIndices() = k;
-	  CurrentAtoms() = (function.MatrixA()).col(k);
-	  isEmpty = false;
+      if (isEmpty)
+      {
+          CurrentIndices() = k;
+          CurrentAtoms() = (function.MatrixA()).col(k);
+          isEmpty = false;
       }
-      else{
-	  arma::uvec vk(1);
-	  vk = k;
-	  current_indices.insert_rows(0, vk);  
+      else
+      {
+          arma::uvec vk(1);
+          vk = k;
+          current_indices.insert_rows(0, vk);
 
-	  arma::mat atom = (function.MatrixA()).col(k);
-	  atoms_current.insert_cols(0, atom);
-	  
+          arma::mat atom = (function.MatrixA()).col(k);
+          atoms_current.insert_cols(0, atom);
       }
   }
 
@@ -117,7 +118,7 @@ class UpdateSpan
       arma::uword len = current_indices.size();
       for (size_t ii = 0; ii < len; ++ii)
       {
-	  y(current_indices(ii)) = x(ii);
+      y(current_indices(ii)) = x(ii);
       }
 
       return y;
@@ -128,14 +129,13 @@ class UpdateSpan
   FunctionType& function;
 
   //! Current indices.
-  arma::uvec current_indices;		
+  arma::uvec current_indices;
 
   //! Current atoms.
   arma::mat atoms_current;
 
   //! Flag current indices is empty
-  bool isEmpty=true;
-
+  bool isEmpty = true;
 };
 
 } // namespace optimization

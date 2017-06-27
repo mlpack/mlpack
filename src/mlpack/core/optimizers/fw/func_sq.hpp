@@ -20,14 +20,14 @@ namespace optimization {
 class FuncSq
 {
  public:
-  FuncSq(const arma::mat A, const arma::mat b ) : A(A), b(b)
+  FuncSq(const arma::mat A, const arma::mat b) : A(A), b(b)
   {/* Nothing to do. */}
 
   double Evaluate(const arma::mat& coords)
   {
       arma::vec r = A*coords - b;
       arma::mat y = (r.t() * r) * 0.5;
-      return y(0,0);
+      return y(0, 0);
   }
 
   void Gradient(const arma::mat& coords, arma::mat& gradient)
@@ -46,7 +46,6 @@ class FuncSq
  private:
   arma::mat A;  // matrix
   arma::vec b;  // vector
-
 };
 
 } // namespace optimization
