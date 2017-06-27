@@ -237,7 +237,7 @@ class HoeffdingTree
    */
   template<typename VecType>
   size_t Classify(const VecType& point) const;
-  //! Get the size of the Hoeffding tree.
+  // Get the size of the Hoeffding tree.
   size_t NumDescendants();
 
   /**
