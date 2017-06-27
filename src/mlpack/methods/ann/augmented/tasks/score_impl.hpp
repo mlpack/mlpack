@@ -30,9 +30,12 @@ double SequencePrecision(arma::field<eT> trueOutputs,
 
   for (size_t i = 0; i < testSize; i++)
   {
-    if (arma::approx_equal(
-          trueOutputs.at(i), predOutputs.at(i),
-          "absdiff", 1e-4))
+    eT delta = arma::abs(trueOutputs.at(i) - predOutputs.at(i));
+    delta.reshape(delta.n_elem, 1);
+    arma::vec deltaVec = arma::conv_to<arma::vec>::from(delta);
+    double maxDelta = arma::max(deltaVec);
+    double eps = 1e-4;
+    if (maxDelta < eps)
     {
       score++;
     }
