@@ -128,7 +128,7 @@ class FrankWolfe
   FunctionType& Function() { return function; }
 
   //! Get the linear constrained solver.
-  LinearConstrSolverType LinearConstrSolver() 
+  LinearConstrSolverType LinearConstrSolver()
       const { return linear_constr_solver; }
   //! Modify the linear constrained solver.
   LinearConstrSolverType& LinearConstrSolver() { return linear_constr_solver; }
