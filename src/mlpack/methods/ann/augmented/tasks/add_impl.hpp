@@ -87,8 +87,8 @@ arma::field<arma::mat> AddTask::Binarize(arma::field<arma::vec> data)
 {
   arma::field<arma::mat> procData(data.n_elem);
   for (size_t i = 0; i < data.n_elem; ++i) {
-    arma::mat temp = arma::zeros(3, data.at(i).n_elem);    
-    for (size_t j = 0; j < data.at(i).n_elem; ++j) {  
+    arma::mat temp = arma::zeros(3, data.at(i).n_elem);
+    for (size_t j = 0; j < data.at(i).n_elem; ++j) {
      int val = data.at(i).at(j);
      temp.at(val, j) = 1;
     }
