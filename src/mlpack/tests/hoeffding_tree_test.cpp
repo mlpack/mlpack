@@ -569,6 +569,9 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeSimpleDatasetTest)
   }
 }
 
+/**
+ * Make sure that a tree that does not split on anything.
+ */
 BOOST_AUTO_TEST_CASE(NumDescendantsTest1)
 {
   // Generate data.
@@ -589,9 +592,12 @@ BOOST_AUTO_TEST_CASE(NumDescendantsTest1)
   for (size_t i = 0; i < 500; ++i)
     streamTree.Train(dataset.col(i), labels[i]);
   // As there is just one label, there are no descendants.
-  BOOST_REQUIRE_EQUAL(streamTree.NumDescendants(), 0); 
+  BOOST_REQUIRE_EQUAL(streamTree.NumDescendants(), 0);
 }
 
+/**
+ * Test that a tree that does split has some descendants.
+ */
 BOOST_AUTO_TEST_CASE(NumDescendantsTest2)
 {
   DatasetInfo info(3);
@@ -607,7 +613,7 @@ BOOST_AUTO_TEST_CASE(NumDescendantsTest2)
   info.MapString<size_t>("cat2", 1);
   info.MapString<size_t>("cat0", 2);
   info.MapString<size_t>("cat1", 2);
-  // generate data.
+  // Generate data.
   arma::Mat<size_t> dataset(3, 9000);
   arma::Row<size_t> labels(9000);
   for (size_t i = 2; i < 9000; i += 3)
@@ -628,7 +634,8 @@ BOOST_AUTO_TEST_CASE(NumDescendantsTest2)
     labels(i - 2) = 2;
   }
 
-  // Now train the streaming decision tree.
+  // Now train the streaming decision tree.  This should split because splitting
+  // on dimension 2 gives a perfect split.
   typedef HoeffdingTree<GiniImpurity, HoeffdingSizeTNumericSplit,
       HoeffdingCategoricalSplit> TreeType;
   TreeType batchTree(dataset, info, labels, 3, false);
