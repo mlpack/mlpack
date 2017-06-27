@@ -588,8 +588,8 @@ BOOST_AUTO_TEST_CASE(NumDescendantsTest1)
   TreeType streamTree(info, 3);
   for (size_t i = 0; i < 500; ++i)
     streamTree.Train(dataset.col(i), labels[i]);
-
-  BOOST_REQUIRE_EQUAL(streamTree.NumDescendants(), 0); // one label
+  // As there is just one label, there are no descendants.
+  BOOST_REQUIRE_EQUAL(streamTree.NumDescendants(), 0); 
 }
 
 BOOST_AUTO_TEST_CASE(NumDescendantsTest2)
