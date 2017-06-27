@@ -13,7 +13,9 @@
 #include <mlpack/core/optimizers/fw/frank_wolfe.hpp>
 #include <mlpack/core/optimizers/fw/constr_lpball.hpp>
 #include <mlpack/core/optimizers/fw/update_span.hpp>
-#include <mlpack/core/optimizers/fw/test_func_sq.hpp>
+#include <mlpack/core/optimizers/fw/update_classic.hpp>
+#include <mlpack/core/optimizers/fw/func_sq.hpp>
+#include <mlpack/core/optimizers/fw/test_func_fw.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -22,30 +24,52 @@ using namespace std;
 using namespace arma;
 using namespace mlpack;
 using namespace mlpack::optimization;
-//using namespace mlpack::optimization::test;
 
 BOOST_AUTO_TEST_SUITE(FrankWolfeTest);
 
 BOOST_AUTO_TEST_CASE(OMPTest)
 {
-  mat A("1, 0, 0, 0.2, -0.15; 0, 1, 0, -0.03, -0.3; 0, 0, 1, 0.1, 0.1");
-  vec b("1; 1; 0");
+    int k = 5;
+    mat B1 = eye(3, 3);
+    mat B2 = 0.1*randn(3, k);
+    mat A = join_horiz(B1, B2);
+    vec b("1; 1; 0");
 
-  TestFuncSq f(A, b);
-  ConstrLpBallSolver linear_constr_solver(1);
-  UpdateSpan<TestFuncSq> update_rule(f);
+    FuncSq f(A, b);
+    ConstrLpBallSolver linear_constr_solver(1);
+    UpdateSpan<FuncSq> update_rule(f);
 
-  OMP s(f, linear_constr_solver, update_rule);
+    OMP s(f, linear_constr_solver, update_rule);
 
-  arma::vec coordinates("0; 0; 0; 0; 0");
-  double result = s.Optimize(coordinates);
+    vec coordinates = zeros<vec>(k+3);
+    double result = s.Optimize(coordinates);
 
-  BOOST_REQUIRE_SMALL(result, 1e-10);
-  BOOST_REQUIRE_SMALL(coordinates[0]-1, 1e-10);
-  BOOST_REQUIRE_SMALL(coordinates[1]-1, 1e-10);
-  BOOST_REQUIRE_SMALL(coordinates[2], 1e-10);
-  BOOST_REQUIRE_SMALL(coordinates[3], 1e-10);
-  BOOST_REQUIRE_SMALL(coordinates[4], 1e-10);
+    BOOST_REQUIRE_SMALL(result, 1e-10);
+    BOOST_REQUIRE_SMALL(coordinates[0]-1, 1e-10);
+    BOOST_REQUIRE_SMALL(coordinates[1]-1, 1e-10);
+    BOOST_REQUIRE_SMALL(coordinates[2], 1e-10);
+    for (int ii = 0; ii<k; ++ii)
+    {
+	BOOST_REQUIRE_SMALL(coordinates[ii+3], 1e-10);
+    }
+}
+
+BOOST_AUTO_TEST_CASE(ClassicFW)
+{
+
+    TestFuncFW f;
+    ConstrLpBallSolver linear_constr_solver(1);
+    UpdateClassic<TestFuncFW> update_rule(f);
+
+    FrankWolfe<TestFuncFW, ConstrLpBallSolver, UpdateClassic<TestFuncFW>> s(f, linear_constr_solver, update_rule);
+
+    vec coordinates = zeros<vec>(3);
+    double result = s.Optimize(coordinates);
+
+    BOOST_REQUIRE_SMALL(result, 1e-4);
+    BOOST_REQUIRE_SMALL(coordinates[0]-0.1, 1e-4);
+    BOOST_REQUIRE_SMALL(coordinates[1]-0.2, 1e-4);
+    BOOST_REQUIRE_SMALL(coordinates[2]-0.3, 1e-4);
 }
 
 

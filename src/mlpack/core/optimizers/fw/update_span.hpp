@@ -47,7 +47,6 @@ class UpdateSpan
    */
   UpdateSpan(FunctionType& function): function(function)    
   { /* Do nothing. */ }
-  // Chenzhe: should we use reference to function? what's the difference? 
 
  /**
   * Update rule for FrankWolfe, reoptimize in the span of original solution space.

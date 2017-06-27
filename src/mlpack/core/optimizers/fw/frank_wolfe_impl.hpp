@@ -71,7 +71,7 @@ double FrankWolfe<FunctionType, LinearConstrSolverType, UpdateRuleType>::Optimiz
 	linear_constr_solver.Optimize(gradient, s);
 
 	// Check duality gap for return condition
-	gap = dot(iterate-s, gradient);
+	gap = std::fabs(dot(iterate-s, gradient));
 	if (gap < tolerance)
 	{
 	    Log::Info << "FrankWolfe: minimized within tolerance "

@@ -4,7 +4,8 @@ set(SOURCES
   constr_lpball.hpp
   update_classic.hpp
   update_span.hpp
-  test_func_sq.hpp
+  func_sq.hpp
+  test_func_fw.hpp
 )
 
 set(DIR_SRCS)
