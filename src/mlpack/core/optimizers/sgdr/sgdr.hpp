@@ -40,22 +40,16 @@ namespace optimization {
  * }
  * @endcode
  *
- * @tparam DecomposableFunctionType Decomposable objective function type to be
- *         minimized.
  * @tparam UpdatePolicyType Update policy used during the iterative update
  *         process. By default the momentum update policy
  *         (see mlpack::optimization::MomentumUpdate) is used.
  */
-template<
-    typename DecomposableFunctionType,
-    typename UpdatePolicyType = MomentumUpdate
->
+template<typename UpdatePolicyType = MomentumUpdate>
 class SGDR
 {
  public:
   //! Convenience typedef for the internal optimizer construction.
-  using OptimizerType = MiniBatchSGDType<
-      DecomposableFunctionType, UpdatePolicyType, CyclicalDecay>;
+  using OptimizerType = MiniBatchSGDType<UpdatePolicyType, CyclicalDecay>;
 
   /**
    * Construct the SGDR optimizer with the given function and
@@ -65,7 +59,6 @@ class SGDR
    * mini-batches that are processed.
    *
    * @param epochRestart Initial epoch where decay is applied.
-   * @param function Function to be optimized (minimized).
    * @param batchSize Size of each mini-batch.
    * @param stepSize Step size for each iteration.
    * @param maxIterations Maximum number of iterations allowed (0 means no
@@ -76,8 +69,7 @@ class SGDR
    * @param updatePolicy Instantiated update policy used to adjust the given
    *        parameters.
    */
-  SGDR(DecomposableFunctionType& function,
-       const size_t epochRestart = 50,
+  SGDR(const size_t epochRestart = 50,
        const double multFactor = 2.0,
        const size_t batchSize = 1000,
        const double stepSize = 0.01,
@@ -91,19 +83,13 @@ class SGDR
    * will be modified to store the finishing point of the algorithm, and the
    * final objective value is returned.
    *
+   * @tparam DecomposableFunctionType Type of the function to be optimized.
+   * @param function Function to be optimized.
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
-  double Optimize(arma::mat& iterate);
-
-  //! Get the instantiated function to be optimized.
-  const DecomposableFunctionType& Function() const
-  {
-    return optimizer.Function();
-  }
-
-  //! Modify the instantiated function.
-  DecomposableFunctionType& Function() { return optimizer.Function(); }
+  template<typename DecomposableFunctionType>
+  double Optimize(DecomposableFunctionType& function, arma::mat& iterate);
 
   //! Get the batch size.
   size_t BatchSize() const { return optimizer.BatchSize(); }
@@ -131,9 +117,6 @@ class SGDR
   bool& Shuffle() { return optimizer.Shuffle(); }
 
  private:
-  //! The instantiated function.
-  DecomposableFunctionType& function;
-
   //! The size of each mini-batch.
   size_t batchSize;
 

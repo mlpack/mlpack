@@ -21,9 +21,8 @@
 namespace mlpack {
 namespace optimization {
 
-template<typename DecomposableFunctionType, typename UpdateRule>
-AdamType<DecomposableFunctionType, UpdateRule>::AdamType(
-    DecomposableFunctionType& function,
+template<typename UpdateRule>
+AdamType<UpdateRule>::AdamType(
     const double stepSize,
     const double beta1,
     const double beta2,
@@ -31,8 +30,7 @@ AdamType<DecomposableFunctionType, UpdateRule>::AdamType(
     const size_t maxIterations,
     const double tolerance,
     const bool shuffle) :
-    optimizer(function,
-              stepSize,
+    optimizer(stepSize,
               maxIterations,
               tolerance,
               shuffle,

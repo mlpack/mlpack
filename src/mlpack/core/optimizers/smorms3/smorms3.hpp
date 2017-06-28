@@ -55,11 +55,7 @@ namespace optimization {
  * of points in the dataset, and Evaluate(coordinates, 0) will evaluate the
  * objective function on the first point in the dataset (presumably, the dataset
  * is held internally in the DecomposableFunctionType).
- *
- * @tparam DecomposableFunctionType Decomposable objective function type to be
- *         minimized.
  */
-template<typename DecomposableFunctionType>
 class SMORMS3
 {
  public:
@@ -71,7 +67,6 @@ class SMORMS3
    * are processed (i.e., one iteration equals one point; one iteration does not
    * equal one pass over the dataset).
    *
-   * @param function Function to be optimized (minimized).
    * @param stepSize Step size for each iteration.
    * @param epsilon Value used to initialise the mean squared gradient
    *        parameter.
@@ -81,8 +76,7 @@ class SMORMS3
    * @param shuffle If true, the function order is shuffled; otherwise, each
    *        function is visited in linear order.
    */
-  SMORMS3(DecomposableFunctionType& function,
-          const double stepSize = 0.001,
+  SMORMS3(const double stepSize = 0.001,
           const double epsilon = 1e-16,
           const size_t maxIterations = 100000,
           const double tolerance = 1e-5,
@@ -93,32 +87,16 @@ class SMORMS3
    * be modified to store the finishing point of the algorithm, and the final
    * objective value is returned.
    *
+   * @tparam DecomposableFunctionType Type of the function to be optimized.
    * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
+  template<typename DecomposableFunctionType>
   double Optimize(DecomposableFunctionType& function, arma::mat& iterate)
   {
     return optimizer.Optimize(function, iterate);
   }
-
-  /**
-   * Optimize the given function using SMORMS3. The given starting point will
-   * be modified to store the finishing point of the algorithm, and the final
-   * objective value is returned.
-   *
-   * @param iterate Starting point (will be modified).
-   * @return Objective value of the final point.
-   */
-  double Optimize(arma::mat& iterate) { return optimizer.Optimize(iterate); }
-
-  //! Get the instantiated function to be optimized.
-  const DecomposableFunctionType& Function() const
-  {
-    return optimizer.Function();
-  }
-  //! Modify the instantiated function.
-  DecomposableFunctionType& Function() { return optimizer.Function(); }
 
   //! Get the step size.
   double StepSize() const { return optimizer.StepSize(); }
@@ -147,13 +125,10 @@ class SMORMS3
 
  private:
   //! The Stochastic Gradient Descent object with SMORMS3Update update policy.
-  SGD<DecomposableFunctionType, SMORMS3Update> optimizer;
+  SGD<SMORMS3Update> optimizer;
 };
 
 } // namespace optimization
 } // namespace mlpack
-
-// Include implementation.
-#include "smorms3_impl.hpp"
 
 #endif

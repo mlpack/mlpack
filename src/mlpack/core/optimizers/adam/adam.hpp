@@ -63,14 +63,9 @@ namespace optimization {
  * objective function on the first point in the dataset (presumably, the dataset
  * is held internally in the DecomposableFunctionType).
  *
- * @tparam DecomposableFunctionType Decomposable objective function type to be
- *     minimized.
  * @tparam UpdateRule Adam optimizer update rule to be used.
  */
-template<
-    typename DecomposableFunctionType,
-    typename UpdateRule = AdamUpdate
->
+template<typename UpdateRule = AdamUpdate>
 class AdamType
 {
  public:
@@ -82,7 +77,6 @@ class AdamType
    * are processed (i.e., one iteration equals one point; one iteration does not
    * equal one pass over the dataset).
    *
-   * @param function Function to be optimized (minimized).
    * @param stepSize Step size for each iteration.
    * @param beta1 Exponential decay rate for the first moment estimates.
    * @param beta2 Exponential decay rate for the weighted infinity norm
@@ -94,8 +88,7 @@ class AdamType
    * @param shuffle If true, the function order is shuffled; otherwise, each
    *        function is visited in linear order.
    */
-  AdamType(DecomposableFunctionType& function,
-           const double stepSize = 0.001,
+  AdamType(const double stepSize = 0.001,
            const double beta1 = 0.9,
            const double beta2 = 0.999,
            const double eps = 1e-8,
@@ -108,32 +101,16 @@ class AdamType
    * modified to store the finishing point of the algorithm, and the final
    * objective value is returned.
    *
+   * @tparam DecomposableFunctionType Type of the function to optimize.
    * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
+  template<typename DecomposableFunctionType>
   double Optimize(DecomposableFunctionType& function, arma::mat& iterate)
   {
     return optimizer.Optimize(function, iterate);
   }
-
-  /**
-   * Optimize the given function using Adam. The given starting point will be
-   * modified to store the finishing point of the algorithm, and the final
-   * objective value is returned.
-   *
-   * @param iterate Starting point (will be modified).
-   * @return Objective value of the final point.
-   */
-  double Optimize(arma::mat& iterate){ return optimizer.Optimize(iterate); }
-
-  //! Get the instantiated function to be optimized.
-  const DecomposableFunctionType& Function() const
-  {
-    return optimizer.Function();
-  }
-  //! Modify the instantiated function.
-  DecomposableFunctionType& Function() { return optimizer.Function(); }
 
   //! Get the step size.
   double StepSize() const { return optimizer.StepSize(); }
@@ -172,14 +149,12 @@ class AdamType
 
  private:
   //! The Stochastic Gradient Descent object with Adam policy.
-  SGD<DecomposableFunctionType, UpdateRule> optimizer;
+  SGD<UpdateRule> optimizer;
 };
 
-template<typename DecomposableFunctionType>
-using Adam = AdamType<DecomposableFunctionType, AdamUpdate>;
+using Adam = AdamType<AdamUpdate>;
 
-template<typename DecomposableFunctionType>
-using AdaMax = AdamType<DecomposableFunctionType, AdaMaxUpdate>;
+using AdaMax = AdamType<AdaMaxUpdate>;
 
 } // namespace optimization
 } // namespace mlpack

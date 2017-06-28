@@ -28,10 +28,10 @@ BOOST_AUTO_TEST_SUITE(GradientDescentTest);
 BOOST_AUTO_TEST_CASE(SimpleGDTestFunction)
 {
   GDTestFunction f;
-  GradientDescent<GDTestFunction> s(f, 0.01, 5000000, 1e-9);
+  GradientDescent s(0.01, 5000000, 1e-9);
 
   arma::vec coordinates = f.GetInitialPoint();
-  double result = s.Optimize(coordinates);
+  double result = s.Optimize(f, coordinates);
 
   BOOST_REQUIRE_SMALL(result, 1e-4);
   BOOST_REQUIRE_SMALL(coordinates[0], 1e-2);
@@ -44,10 +44,10 @@ BOOST_AUTO_TEST_CASE(RosenbrockTest)
   // Create the Rosenbrock function.
   RosenbrockFunction f;
 
-  GradientDescent<RosenbrockFunction> s(f, 0.001, 0, 1e-15);
+  GradientDescent s(0.001, 0, 1e-15);
 
   arma::mat coordinates = f.GetInitialPoint();
-  double result = s.Optimize(coordinates);
+  double result = s.Optimize(f, coordinates);
 
   BOOST_REQUIRE_SMALL(result, 1e-10);
   for (size_t j = 0; j < 2; ++j)

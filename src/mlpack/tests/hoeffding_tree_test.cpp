@@ -570,6 +570,80 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeSimpleDatasetTest)
 }
 
 /**
+ * Make sure that a tree that does not split on anything.
+ */
+BOOST_AUTO_TEST_CASE(NumDescendantsTest1)
+{
+  // Generate data.
+  arma::mat dataset(3, 500);
+  arma::Row<size_t> labels(500);
+  data::DatasetInfo info(3); // All features are numeric.
+  for (size_t i = 0; i <500; i ++)
+  {
+    dataset(0, i) = mlpack::math::Random();
+    dataset(1, i) = mlpack::math::Random();
+    dataset(2, i) = mlpack::math::Random();
+    labels[i] = 0;
+  }
+
+  // Now train streaming decision tree;
+  typedef HoeffdingTree<GiniImpurity, HoeffdingDoubleNumericSplit> TreeType;
+  TreeType streamTree(info, 3);
+  for (size_t i = 0; i < 500; ++i)
+    streamTree.Train(dataset.col(i), labels[i]);
+  // As there is just one label, there are no descendants.
+  BOOST_REQUIRE_EQUAL(streamTree.NumDescendants(), 0);
+}
+
+/**
+ * Test that a tree that does split has some descendants.
+ */
+BOOST_AUTO_TEST_CASE(NumDescendantsTest2)
+{
+  DatasetInfo info(3);
+  info.MapString<size_t>("cat0", 0);
+  info.MapString<size_t>("cat1", 0);
+  info.MapString<size_t>("cat2", 0);
+  info.MapString<size_t>("cat3", 0);
+  info.MapString<size_t>("cat4", 0);
+  info.MapString<size_t>("cat5", 0);
+  info.MapString<size_t>("cat6", 0);
+  info.MapString<size_t>("cat0", 1);
+  info.MapString<size_t>("cat1", 1);
+  info.MapString<size_t>("cat2", 1);
+  info.MapString<size_t>("cat0", 2);
+  info.MapString<size_t>("cat1", 2);
+  // Generate data.
+  arma::Mat<size_t> dataset(3, 9000);
+  arma::Row<size_t> labels(9000);
+  for (size_t i = 2; i < 9000; i += 3)
+  {
+    dataset(0, i) = mlpack::math::RandInt(7);
+    dataset(1, i) = 0;
+    dataset(2, i) = mlpack::math::RandInt(2);
+    labels(i) = 0;
+
+    dataset(0, i - 1) = mlpack::math::RandInt(7);
+    dataset(1, i - 1) = 2;
+    dataset(2, i - 1) = mlpack::math::RandInt(2);
+    labels(i - 1) = 1;
+
+    dataset(0, i - 2) = mlpack::math::RandInt(7);
+    dataset(1, i - 2) = 1;
+    dataset(2, i - 2) = mlpack::math::RandInt(2);
+    labels(i - 2) = 2;
+  }
+
+  // Now train the streaming decision tree.  This should split because splitting
+  // on dimension 2 gives a perfect split.
+  typedef HoeffdingTree<GiniImpurity, HoeffdingSizeTNumericSplit,
+      HoeffdingCategoricalSplit> TreeType;
+  TreeType batchTree(dataset, info, labels, 3, false);
+
+  BOOST_REQUIRE_EQUAL(batchTree.NumDescendants(), 3);
+}
+
+/**
  * Test that the HoeffdingNumericSplit class has a fitness function value of 0
  * before it's seen enough points.
  */

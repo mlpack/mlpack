@@ -43,7 +43,8 @@ BOOST_AUTO_TEST_CASE(CyclicalResetTest)
     {
       double epochStepSize = stepSize;
 
-      CyclicalDecay cyclicalDecay(restart, double(mult), stepSize, 10, 1000);
+      CyclicalDecay cyclicalDecay(restart, double(mult), stepSize);
+      cyclicalDecay.EpochBatches() = (double) 1000 / 10;
 
       // Create all restart epochs.
       arma::Col<size_t> nextRestart(1000 / 10 /  mult);
@@ -113,11 +114,8 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
   // Now run SGDR with a couple of batch sizes.
   for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
   {
-    LogisticRegression<> lr(shuffledData.n_rows, 0.5);
-
-    LogisticRegressionFunction<> lrf(shuffledData, shuffledResponses, 0.5);
-    SGDR<LogisticRegressionFunction<> > sgdr(lrf, 50, 2.0, batchSize);
-    lr.Train(sgdr);
+    SGDR<> sgdr(50, 2.0, batchSize);
+    LogisticRegression<> lr(shuffledData, shuffledResponses, sgdr, 0.5);
 
     // Ensure that the error is close to zero.
     const double acc = lr.ComputeAccuracy(data, responses);

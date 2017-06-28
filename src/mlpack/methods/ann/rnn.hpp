@@ -107,14 +107,10 @@ class RNN
    * @param responses Outputs results from input training variables.
    * @param optimizer Instantiated optimizer used to train the model.
    */
-  template<
-      template<typename, typename...> class OptimizerType =
-          mlpack::optimization::StandardSGD,
-      typename... OptimizerTypeArgs
-  >
+  template<typename OptimizerType>
   void Train(arma::mat predictors,
              arma::mat responses,
-             OptimizerType<NetworkType, OptimizerTypeArgs...>& optimizer);
+             OptimizerType& optimizer);
 
   /**
    * Train the recurrent neural network on the given input data. By default, the
@@ -132,10 +128,7 @@ class RNN
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
    */
-  template<
-      template<typename...> class OptimizerType =
-          mlpack::optimization::StandardSGD
-  >
+  template<typename OptimizerType = mlpack::optimization::StandardSGD>
   void Train(arma::mat predictors, arma::mat responses);
 
   /**
