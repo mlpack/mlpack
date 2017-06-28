@@ -35,16 +35,13 @@ class SparseTestFunction
   //! Get the starting point.
   arma::mat GetInitialPoint() const { return arma::mat("0; 0; 0; 0;"); }
 
-  //! Get the list of non-zero components of the gradient of a function.
-  arma::Col<size_t> Components(size_t id);
-
   //! Evaluate a function.
   double Evaluate(const arma::mat& coordinates, const size_t i) const;
 
   //! Evaluate the gradient of a function.
   void Gradient(const arma::mat& coordinates,
                 const size_t i,
-                arma::mat& gradient) const;
+                arma::sp_mat& gradient) const;
  private:
   // Each quadratic polynomial is monic. The intercept and coefficient of the
   // first order term is stored.

@@ -51,22 +51,26 @@ double ParallelSGD<SparseFunctionType, DecayPolicyType>::Optimize(
 
     #pragma omp parallel
     {
-      // Each processor gets a subset of the instances
-      // Each subset is of size batchSize
+      // Each processor gets a subset of the instances.
+      // Each subset is of size batchSize.
       arma::Col<size_t> instances = ThreadShare(omp_get_thread_num(),
           visitationOrder);
       for (size_t j = 0; j < instances.n_elem; ++j)
       {
-        // Each instance affects only some components of the decision variable
-        arma::Col<size_t> components = function.Components(instances[j]);
-        // Evaluate the gradient
-        arma::vec gradient;
+        // Each instance affects only some components of the decision variable.
+        // So the gradient is sparse.
+        arma::sp_mat gradient;
+
+        // Evaluate the sparse gradient.
         function.Gradient(iterate, instances[j], gradient);
 
-        for (size_t k = 0; k < components.n_elem; ++k)
+        // Update the decision variable with non-zero components of the
+        // gradient.
+        for (auto cur = gradient.begin_col(0); cur != gradient.end_col(0);
+            ++cur)
         {
           #pragma omp atomic
-          iterate[components[k]] -= stepSize * gradient[components[k]];
+          iterate[cur.row()] -= stepSize * gradient[cur.row()];
         }
       }
     }

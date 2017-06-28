@@ -37,15 +37,10 @@ double SparseTestFunction::Evaluate(
   //! Evaluate the gradient of a function.
 void SparseTestFunction::Gradient(const arma::mat& coordinates,
     const size_t i,
-    arma::mat& gradient) const
+    arma::sp_mat& gradient) const
 {
-  gradient = arma::vec(coordinates.n_rows, 1, arma::fill::zeros);
+  gradient = arma::sp_mat(coordinates.n_rows, 1);
   gradient[i] = 2 * coordinates[i] + bi[i];
-}
-
-arma::Col<size_t> SparseTestFunction::Components(size_t id)
-{
-  return arma::Col<size_t>({ id });
 }
 
 } // namespace test

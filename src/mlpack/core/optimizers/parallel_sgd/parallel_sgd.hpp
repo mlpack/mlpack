@@ -39,8 +39,7 @@ namespace optimization {
  *   double Evaluate(const arma::mat& coordinates, const size_t i);
  *   void Gradient(const arma::mat& coordinates,
  *                 const size_t i,
- *                 arma::mat& gradient);
- *   arma::Col<size_t> Components(size_t id);
+ *                 arma::sp_mat& gradient);
  *
  * In these functions the parameter id refers to which individual function (or
  * gradient) is being evaluated. In case of a data-dependent function, the id
@@ -48,13 +47,10 @@ namespace optimization {
  * The data is distributed uniformly among the threads made available to the
  * program by the OpenMP runtime.
  *
- * The class is expected to implement a Components function, which takes in the
- * index of a datapoint and returns a list of component indices(of the decision
- * variable) for which the decision variable needs to be updated.
- *
- * If the function is not found, the gradient update will iterate through the
- * entire gradient and update each component of the decision variable if the
- * gradient is non-zero in that component.
+ * The Gradient function interface is slightly changed from the
+ * DecomposableFunctionType interface, it takes in a sparse matrix as the
+ * out-param for the gradient. As ParallelSGD is only expected to be relevant in
+ * situations where the computed gradient is sparse.
  *
  * @tparam SparseFunctionType Sparse, Decomposable objective function type to be
  *     minimized.
@@ -142,7 +138,7 @@ class ParallelSGD
   /**
    * Generate the indices to be visited by each thread before iteration.
    * Generates a randomly shuffled vector of datapoint indices (range 0 to
-   * function.NumFunctions()).
+   * function.NumFunctions() - 1).
    *
    * @param visitationOrder Out param with the indices of the datapoints for the
    *    current iteration.
