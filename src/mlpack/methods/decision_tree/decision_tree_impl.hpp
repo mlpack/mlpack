@@ -34,10 +34,8 @@ DecisionTree<FitnessFunction,
                                         const size_t numClasses,
                                         const size_t minimumLeafSize)
 {
-  using TrueMatType = typename std::remove_const<
-      typename std::remove_reference<MatType>::type>::type;
-  using TrueLabelsType = typename std::remove_const<
-      typename std::remove_reference<LabelsType>::type>::type;
+  using TrueMatType = typename std::decay<MatType>::type;
+  using TrueLabelsType = typename std::decay<LabelsType>::type;
 
   // Copy or move data.
   TrueMatType tmpData(std::forward<MatType>(data));
@@ -67,10 +65,8 @@ DecisionTree<FitnessFunction,
                                         const size_t numClasses,
                                         const size_t minimumLeafSize)
 {
-  using TrueMatType = typename std::remove_const<
-      typename std::remove_reference<MatType>::type>::type;
-  using TrueLabelsType = typename std::remove_const<
-      typename std::remove_reference<LabelsType>::type>::type;
+  using TrueMatType = typename std::decay<MatType>::type;
+  using TrueLabelsType = typename std::decay<LabelsType>::type;
 
   // Copy or move data.
   TrueMatType tmpData(std::forward<MatType>(data));
@@ -106,12 +102,9 @@ DecisionTree<FitnessFunction,
                                             typename std::remove_reference<
                                             WeightsType>::type>::value>*)
 {
-  using TrueMatType = typename std::remove_const<
-      typename std::remove_reference<MatType>::type>::type;
-  using TrueLabelsType = typename std::remove_const<
-      typename std::remove_reference<LabelsType>::type>::type;
-  using TrueWeightsType = typename std::remove_const<
-      typename std::remove_reference<WeightsType>::type>::type;
+  using TrueMatType = typename std::decay<MatType>::type;
+  using TrueLabelsType = typename std::decay<LabelsType>::type;
+  using TrueWeightsType = typename std::decay<WeightsType>::type;
 
   // Copy or move data.
   TrueMatType tmpData(std::forward<MatType>(data));
@@ -146,12 +139,9 @@ DecisionTree<FitnessFunction,
                                             typename std::remove_reference<
                                             WeightsType>::type>::value>*)
 {
-  using TrueMatType = typename std::remove_const<
-      typename std::remove_reference<MatType>::type>::type;
-  using TrueLabelsType = typename std::remove_const<
-      typename std::remove_reference<LabelsType>::type>::type;
-  using TrueWeightsType = typename std::remove_const<
-      typename std::remove_reference<WeightsType>::type>::type;
+  using TrueMatType = typename std::decay<MatType>::type;
+  using TrueLabelsType = typename std::decay<LabelsType>::type;
+  using TrueWeightsType = typename std::decay<WeightsType>::type;
 
   // Copy or move data.
   TrueMatType tmpData(std::forward<MatType>(data));
@@ -360,10 +350,8 @@ void DecisionTree<FitnessFunction,
     throw std::invalid_argument(oss.str());
   }
 
-  using TrueMatType = typename std::remove_const<
-      typename std::remove_reference<MatType>::type>::type;
-  using TrueLabelsType = typename std::remove_const<
-      typename std::remove_reference<LabelsType>::type>::type;
+  using TrueMatType = typename std::decay<MatType>::type;
+  using TrueLabelsType = typename std::decay<LabelsType>::type;
 
   // Copy or move data.
   TrueMatType tmpData(std::forward<MatType>(data));
@@ -403,10 +391,8 @@ void DecisionTree<FitnessFunction,
     throw std::invalid_argument(oss.str());
   }
 
-  using TrueMatType = typename std::remove_const<
-      typename std::remove_reference<MatType>::type>::type;
-  using TrueLabelsType = typename std::remove_const<
-      typename std::remove_reference<LabelsType>::type>::type;
+  using TrueMatType = typename std::decay<MatType>::type;
+  using TrueLabelsType = typename std::decay<LabelsType>::type;
 
   // Copy or move data.
   TrueMatType tmpData(std::forward<MatType>(data));
@@ -451,12 +437,9 @@ void DecisionTree<FitnessFunction,
     throw std::invalid_argument(oss.str());
   }
 
-  using TrueMatType = typename std::remove_const<
-      typename std::remove_reference<MatType>::type>::type;
-  using TrueLabelsType = typename std::remove_const<
-      typename std::remove_reference<LabelsType>::type>::type;
-  using TrueWeightsType = typename std::remove_const<
-      typename std::remove_reference<WeightsType>::type>::type;
+  using TrueMatType = typename std::decay<MatType>::type;
+  using TrueLabelsType = typename std::decay<LabelsType>::type;
+  using TrueWeightsType = typename std::decay<WeightsType>::type;
 
   // Copy or move data.
   TrueMatType tmpData(std::forward<MatType>(data));
@@ -500,12 +483,9 @@ void DecisionTree<FitnessFunction,
     throw std::invalid_argument(oss.str());
   }
 
-  using TrueMatType = typename std::remove_const<
-      typename std::remove_reference<MatType>::type>::type;
-  using TrueLabelsType = typename std::remove_const<
-      typename std::remove_reference<LabelsType>::type>::type;
-  using TrueWeightsType = typename std::remove_const<
-      typename std::remove_reference<WeightsType>::type>::type;
+  using TrueMatType = typename std::decay<MatType>::type;
+  using TrueLabelsType = typename std::decay<LabelsType>::type;
+  using TrueWeightsType = typename std::decay<WeightsType>::type;
 
   // Copy or move data.
   TrueMatType tmpData(std::forward<MatType>(data));
