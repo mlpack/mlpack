@@ -88,7 +88,7 @@ void GRU<InputDataType, OutputDataType>::Forward(
       output2GateModule);
 
   // Merge the outputs(zt and rt).
-  output = (boost::apply_visitor(outputParameterVisitor, 
+  output = (boost::apply_visitor(outputParameterVisitor,
       input2GateModule).submat(0, 0, 2 * outSize - 1, 0) +
       boost::apply_visitor(outputParameterVisitor, output2GateModule));
 
@@ -102,7 +102,7 @@ void GRU<InputDataType, OutputDataType>::Forward(
       1 * outSize, 0, 2 * outSize - 1, 0)), std::move(boost::apply_visitor(
       outputParameterVisitor, forgetGateModule))), forgetGateModule);
 
-  arma::mat modInput = (boost::apply_visitor(outputParameterVisitor, 
+  arma::mat modInput = (boost::apply_visitor(outputParameterVisitor,
       forgetGateModule) % *prevOutput);
 
   // Pass that through the outputHidden2GateModule.
@@ -111,22 +111,22 @@ void GRU<InputDataType, OutputDataType>::Forward(
       outputHidden2GateModule);
 
   // Merge for ot.
-  arma::mat outputH = boost::apply_visitor(outputParameterVisitor, 
-      input2GateModule).submat(2 * outSize, 0, 3 * outSize - 1, 0) + 
+  arma::mat outputH = boost::apply_visitor(outputParameterVisitor,
+      input2GateModule).submat(2 * outSize, 0, 3 * outSize - 1, 0) +
       boost::apply_visitor(outputParameterVisitor, outputHidden2GateModule);
 
   // Pass it through hiddenGate.
   boost::apply_visitor(ForwardVisitor(std::move(outputH), std::move(
-      boost::apply_visitor(outputParameterVisitor, hiddenStateModule))), 
+      boost::apply_visitor(outputParameterVisitor, hiddenStateModule))),
       hiddenStateModule);
 
   // Update the output (nextOutput): cmul1 + cmul2
   // Where cmul1 is input gate * prevOutput and
   // cmul2 is (1 - input gate) * hidden gate.
-  output = (boost::apply_visitor(outputParameterVisitor, inputGateModule) 
-      % *prevOutput) + 
-      ((arma::ones<arma::vec>(outSize) - 
-      boost::apply_visitor(outputParameterVisitor, inputGateModule)) % 
+  output = (boost::apply_visitor(outputParameterVisitor, inputGateModule)
+      % *prevOutput) +
+      ((arma::ones<arma::vec>(outSize) -
+      boost::apply_visitor(outputParameterVisitor, inputGateModule)) %
       boost::apply_visitor(outputParameterVisitor,
       hiddenStateModule));
 
@@ -134,7 +134,7 @@ void GRU<InputDataType, OutputDataType>::Forward(
   if (forwardStep == rho)
   {
     forwardStep = 0;
-    if (!deterministic) 
+    if (!deterministic)
     {
       outParameter.push_back(arma::zeros<arma::mat>(outSize, 1));
       prevOutput = --outParameter.end();
@@ -149,7 +149,7 @@ void GRU<InputDataType, OutputDataType>::Forward(
     outParameter.push_back(output);
     prevOutput = --outParameter.end();
   }
-  else 
+  else
   {
     *prevOutput = output;
   }
@@ -171,12 +171,12 @@ void GRU<InputDataType, OutputDataType>::Backward(
   }
 
   // Delta zt.
-  arma::mat d_zt = gy % (*backIterator - 
+  arma::mat d_zt = gy % (*backIterator -
       boost::apply_visitor(outputParameterVisitor,
       hiddenStateModule));
 
   // Delta ot.
-  arma::mat d_ot = gy % (arma::ones<arma::vec>(outSize) - 
+  arma::mat d_ot = gy % (arma::ones<arma::vec>(outSize) -
       boost::apply_visitor(outputParameterVisitor, inputGateModule));
 
   // Delta of input gate.
@@ -193,7 +193,7 @@ void GRU<InputDataType, OutputDataType>::Backward(
 
   // Delta of outputHidden2GateModule.
   boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-      outputParameterVisitor, outputHidden2GateModule)), 
+      outputParameterVisitor, outputHidden2GateModule)),
       std::move(boost::apply_visitor(deltaVisitor, hiddenStateModule)),
       std::move(boost::apply_visitor(deltaVisitor, outputHidden2GateModule))),
       outputHidden2GateModule);
@@ -222,13 +222,13 @@ void GRU<InputDataType, OutputDataType>::Backward(
 
   // Get delta ht - 1 for input gate and forget gate.
   boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-      outputParameterVisitor, input2GateModule)), 
+      outputParameterVisitor, input2GateModule)),
       std::move(prevError.submat(0, 0, 2 * outSize - 1, 0)),
       std::move(boost::apply_visitor(deltaVisitor, output2GateModule))),
-      output2GateModule);   
+      output2GateModule);
 
   // Add delta ht - 1 from hidden state.
-  boost::apply_visitor(deltaVisitor, output2GateModule) += 
+  boost::apply_visitor(deltaVisitor, output2GateModule) +=
       boost::apply_visitor(deltaVisitor, outputHidden2GateModule) %
       boost::apply_visitor(outputParameterVisitor, forgetGateModule);
 
@@ -265,12 +265,12 @@ void GRU<InputDataType, OutputDataType>::Gradient(
 
   boost::apply_visitor(GradientVisitor(
       std::move(*gradIterator),
-      std::move(prevError.submat(0, 0, 2 * outSize - 1, 0))), 
+      std::move(prevError.submat(0, 0, 2 * outSize - 1, 0))),
       output2GateModule);
 
   boost::apply_visitor(GradientVisitor(
       std::move(*gradIterator),
-      std::move(prevError.submat(2 * outSize, 0, 3 * outSize - 1, 0))), 
+      std::move(prevError.submat(2 * outSize, 0, 3 * outSize - 1, 0))),
       outputHidden2GateModule);
 
   gradIterator--;

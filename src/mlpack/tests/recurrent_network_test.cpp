@@ -397,13 +397,13 @@ void ReberGrammarTestNetwork(bool embedded = false)
     {
       arma::mat output, prediction;
       arma::mat input = testInput.at(0, i);
-      
+
       model.Rho() = input.n_elem / inputSize;
       model.Predict(input, prediction);
 
       const size_t reberGrammerSize = 7;
       std::string inputReber = "";
-      
+
       size_t reberError = 0;
       for (size_t j = 0; j < (output.n_elem / reberGrammerSize); j++)
       {
@@ -428,7 +428,7 @@ void ReberGrammarTestNetwork(bool embedded = false)
       if (reberError != (output.n_elem / reberGrammerSize))
         error += 1;
     }
-    
+
     error /= testReberGrammarCount;
     if (error <= 0.2)
     {
