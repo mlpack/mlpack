@@ -130,8 +130,6 @@ class RNN
    */
   template<typename OptimizerType = mlpack::optimization::StandardSGD>
   void Train(arma::mat predictors, arma::mat responses);
-  
-  void ResetCells();
 
   /**
    * Predict the responses to a given set of predictors. The responses will
@@ -219,6 +217,11 @@ class RNN
    * @param input Data sequence to compute probabilities for.
    */
   void Forward(arma::mat&& input);
+
+  /**
+   * Reset the state of RNN cells in the network for new input sequence.
+   */
+  void ResetCells();
 
   /**
    * The Backward algorithm (part of the Forward-Backward algorithm). Computes

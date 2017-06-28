@@ -9,7 +9,7 @@
  * @code
  * @inproceedings{chung2015gated,
  *    title     = {Gated Feedback Recurrent Neural Networks.},
- *    author    = {Chung, Junyoung and G{\"u}l{\c{c}}ehre, Caglar and Cho, 
+ *    author    = {Chung, Junyoung and G{\"u}l{\c{c}}ehre, Caglar and Cho,
                   Kyunghyun and Bengio, Yoshua},
  *    booktitle = {ICML},
  *    pages     = {2067--2075},
@@ -216,7 +216,7 @@ class GRU
   //! Iterator pointed to the last output produced by the cell
   std::list<arma::mat>::iterator prevOutput;
 
-  //! Iterator pointed to the last output processed by backward 
+  //! Iterator pointed to the last output processed by backward
   std::list<arma::mat>::iterator backIterator;
 
   //! Iterator pointed to the last output processed by gradient

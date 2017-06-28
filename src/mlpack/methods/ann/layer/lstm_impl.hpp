@@ -131,7 +131,7 @@ void LSTM<InputDataType, OutputDataType>::Forward(
   if (forwardStep == rho)
   {
     forwardStep = 0;
-    if (!deterministic) 
+    if (!deterministic)
     {
       outParameter.push_back(arma::zeros<arma::mat>(outSize, 1));
       cellParameter.push_back(arma::zeros<arma::mat>(outSize, 1));
@@ -151,7 +151,7 @@ void LSTM<InputDataType, OutputDataType>::Forward(
     prevOutput = --outParameter.end();
     prevCell = --cellParameter.end();
   }
-  else 
+  else
   {
     *prevOutput = output;
     *prevCell = std::move(tempPrevCell);
