@@ -201,7 +201,7 @@ class RNN
   const arma::mat& Parameters() const { return parameter; }
   //! Modify the initial point for the optimization.
   arma::mat& Parameters() { return parameter; }
-  
+
   size_t& Rho() { return rho; }
 
   //! Serialize the model.

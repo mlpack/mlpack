@@ -158,7 +158,6 @@ class GRU
   void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-
   //! Locally-stored number of input units.
   size_t inSize;
 
@@ -170,9 +169,6 @@ class GRU
 
   //! Locally-stored weight object.
   OutputDataType weights;
-
-  //! Locally-stored previous output.
-  //arma::mat prevOutput;
 
   //! Locally-stored input 2 gate module.
   LayerTypes input2GateModule;
