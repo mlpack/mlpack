@@ -7,8 +7,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_METHODS_ANN_VANILLA_RBM_IMPL_HPP
-#define MLPACK_METHODS_ANN_VANILLA_RBM_IMPL_HPP
+#ifndef MLPACK_METHODS_ANN_RBM_IMPL_HPP
+#define MLPACK_METHODS_ANN_RBM_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "rbm.hpp"
@@ -16,20 +16,19 @@
 #include <mlpack/core.hpp>
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/math/random.hpp>
+#include <mlpack/core/optimizers/sgd/update_policies/vanilla_update.hpp>
+#include <mlpack/core/optimizers/minibatch_sgd/decay_policies/no_decay.hpp>
 
 
 #include "layer/layer.hpp"
 #include "layer/base_layer.hpp"
 
-#include "init_rules/gaussian_init.hpp"
-#include "init_rules/random_init.hpp"
 #include "activation_functions/softplus_function.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 
-// Intialise a linear layer and sigmoid layer
 template<typename InitializationRuleType, typename VisibleLayerType,
     typename HiddenLayerType>
 RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::RBM(
@@ -76,27 +75,35 @@ void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::Reset()
 
   positiveGradient.set_size(weight, 1);
   negativeGradient.set_size(weight, 1);
+
+  // Variable for Negative grad wrt weights
   weightNegativeGrad = arma::mat(
       negativeGradient.memptr(),
       visible.Weight().n_rows,
       visible.Weight().n_cols, false, false);
+
+  // Variable for Negative grad wrt HiddenBias
   hiddenBiasNegativeGrad = arma::mat(
       negativeGradient.memptr() + weightNegativeGrad.n_elem,
       numHidden, 1, false, false);
 
+  // Variable for Negative grad wrt VisibleBias
   visibleBiasNegativeGrad = arma::mat(
       negativeGradient.memptr() + weightNegativeGrad.n_elem +
       hiddenBiasNegativeGrad.n_elem,
       numVisible, 1, false, false);
 
+  // Variable for Positive grad wrt weights
   weightPositiveGrad = arma::mat(positiveGradient.memptr(),
     visible.Weight().n_rows,
     visible.Weight().n_cols, false, false);
 
+  // Variable for Positive grad wrt hidden bias
   hiddenBiasPositiveGrad = arma::mat(
     positiveGradient.memptr() + weightPositiveGrad.n_elem,
     numHidden, 1, false, false);
   
+  // Variable for Positive grad wrt visible bias
   visibleBiasPositiveGrad = arma::mat(
       positiveGradient.memptr() + weightPositiveGrad.n_elem +
       hiddenBiasPositiveGrad.n_elem,
@@ -112,9 +119,9 @@ void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::Reset()
 
 template<typename InitializationRuleType, typename VisibleLayerType,
     typename HiddenLayerType>
-template<template<typename> class Optimizer>
+template<typename OptimizerType>
 void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
-    Train(const arma::mat& predictors, Optimizer<NetworkType>& optimizer)
+    Train(const arma::mat& predictors, OptimizerType& optimizer)
 {
   numFunctions = predictors.n_cols;
   this->predictors = std::move(predictors);
@@ -126,22 +133,18 @@ void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
 
   // Train the model.
   Timer::Start("rbm_optimization");
-  optimizer.Optimize(parameter);
+  const double out = optimizer.Optimize(*this, parameter);
   Timer::Stop("rbm_optimization");
 }
 
- /* 
-  * This function calculates
-  * the free energy of the model
-  */
 template<typename InitializationRuleType, typename VisibleLayerType,
     typename HiddenLayerType>
 double RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
     FreeEnergy(arma::mat&& input)
 {
   visible.ForwardPreActivation(std::move(input), std::move(preActivation));
-  SoftplusFunction::Fn(preActivation, activation);
-  return  -(arma::accu(activation) + arma::dot(input, visible.Bias()));
+  SoftplusFunction::Fn(preActivation, preActivation);
+  return  -(arma::accu(preActivation) + arma::dot(input, visible.Bias()));
 }
 
 template<typename InitializationRuleType, typename VisibleLayerType,
@@ -171,9 +174,16 @@ double RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
     {
       // Cross entropy loss
       visible.Forward(std::move(predictors.col(i)),
-        std::move(activation));
-      return arma::accu( predictors.col(i) * arma::log(activation).t() +
-          (1 - predictors.col(i)) * arma::log(1 - activation).t());
+        std::move(preActivation));
+      preActivation = -preActivation;
+      SoftplusFunction::Fn(preActivation, softOutput);
+      softOutput = -softOutput;
+      preActivation = -preActivation - 1;
+      SoftplusFunction::Fn(preActivation, softOutput);
+      softOutput = -softOutput;
+      return arma::accu( 
+          predictors.col(i) * softOutput.t() + (1 - predictors.col(i)) *
+          preActivation.t());
     }
   }
 }
@@ -217,15 +227,16 @@ void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
     SampleHidden(std::move(output), std::move(gibbsTemporary));
     SampleVisible(std::move(gibbsTemporary), std::move(output));
   }
-  state = output;
+  if (persistence)
+    state = output;
 }
 
 template<typename InitializationRuleType, typename VisibleLayerType,
     typename HiddenLayerType>
 void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
-    Gradient(const size_t input, arma::mat& output)
+    Gradient(arma::mat& /*parameters*/, const size_t input, arma::mat& output)
 {
-  ForwardVisible(std::move(predictors.col(input)),
+  visible.Forward(std::move(predictors.col(input)),
       std::move(hiddenBiasPositiveGrad));
   weightPositiveGrad = hiddenBiasPositiveGrad * predictors.col(input).t();
   visibleBiasPositiveGrad = predictors.col(input);
@@ -234,7 +245,8 @@ void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
   Gibbs(std::move(predictors.col(input)), std::move(negativeSamples));
 
   // Collect the negative gradients
-  ForwardVisible(std::move(negativeSamples), std::move(hiddenBiasNegativeGrad));
+  visible.Forward(std::move(negativeSamples), 
+      std::move(hiddenBiasNegativeGrad));
   weightNegativeGrad = hiddenBiasNegativeGrad * negativeSamples.t();
   visibleBiasNegativeGrad = negativeSamples;
 
@@ -249,6 +261,8 @@ void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
     Serialize(Archive& ar, const unsigned int /* version */)
 {
   ar & data::CreateNVP(parameter, "parameter");
+  ar & data::CreateNVP(visible, "visible");
+  ar & data::CreateNVP(hidden, "hidden");
 
   // If we are loading, we need to initialize the weights.
   if (Archive::is_loading::value)

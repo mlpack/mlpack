@@ -69,16 +69,6 @@ class BinaryLayer
   //! Modify the parameters.
   OutputDataType& Bias() { return ownBias; }
 
-  //! Get the input parameter.
-  InputDataType const& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
-
-  //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
-
   /**
    * Serialize the layer
    */
@@ -105,23 +95,17 @@ class BinaryLayer
   //! Locally-stored type of layer
   const bool typeVisible;
 
-  //! Locally-stored weight object.
+  //! Locally-stored weight object of the layer.
   OutputDataType weights;
 
-  //! Locally-stored weight paramters.
+  //! Locally-stored weight paramters of the layer.
   OutputDataType weight;
 
-  //! Locally-stored bias paramters.
+  //! Locally-stored bias paramters belonging to the layer
   OutputDataType ownBias;
 
-  //! Locally-stored bias parmaeters
+  //! Locally-store bias paremeter belonging to the other layer.
   OutputDataType otherBias;
-
-  //! Locally-stored input parameter object.
-  InputDataType inputParameter;
-
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
 }; // class BinaryLayer
 } // namespace ann
 } // namespace mlpack

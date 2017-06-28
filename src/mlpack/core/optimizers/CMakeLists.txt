@@ -2,7 +2,6 @@ set(DIRS
   ada_delta
   ada_grad
   adam
-  cdk
   aug_lagrangian
   gradient_descent
   lbfgs
