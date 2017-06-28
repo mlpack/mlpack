@@ -86,8 +86,8 @@ struct TrainForm<MT, PT, WT, true, true> : public TrainFormBase<PT, WT,
 /* A struct for indication that a right method form can't be found */
 struct NotFoundMethodForm
 {
-  using PredictionsType = void;
-  using WeightsType = void;
+  using PredictionsType = void*;
+  using WeightsType = void*;
 };
 
 /*
@@ -219,18 +219,29 @@ class MetaInfoExtractor
 
  public:
   /*
-   * The type of predictions used in MLAlgorithm. It is equal to void if the
+   * The type of predictions used in MLAlgorithm. It is equal to void* if the
    * extraction fails.
    */
   using PredictionsType =
       typename Select<TF1, TF2, TF3, TF4, TF5>::Type::PredictionsType;
 
   /*
-   * The type of weights used in MLAlgorithm. It is equal to void if the
+   * The type of weights used in MLAlgorithm. It is equal to void* if the
    * extraction fails.
    */
   using WeightsType =
       typename Select<WTF1, WTF2, WTF3, WTF4, WTF5>::Type::WeightsType;
+
+  /*
+   * An indication whether PredictionsType has been identified (i.e. MLAlgorithm
+   * is supported by MetaInfoExtractor).
+   */
+  static const bool IsSupported = !std::is_same<PredictionsType, void*>::value;
+
+  /*
+   * An indication whether MLAlgorithm supports weighted learning.
+   */
+  static const bool SupportsWeights = !std::is_same<WeightsType, void*>::value;
 
   /*
    * An indication whether MLAlgorithm takes a data::DatasetInfo parameter.
