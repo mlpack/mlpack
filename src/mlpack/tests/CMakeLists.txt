@@ -19,6 +19,8 @@ add_executable(mlpack_test
   convolutional_network_test.cpp
   cosine_tree_test.cpp
   cv_test.cpp
+  data_facilities.cpp
+  data_facilities.hpp
   dbscan_test.cpp
   decision_stump_test.cpp
   decision_tree_test.cpp
