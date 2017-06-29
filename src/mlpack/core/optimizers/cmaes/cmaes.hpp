@@ -43,25 +43,25 @@ public:
 
   void getInitialStart(double *arr, size_t dimension)
   { 
-    for(int i=0; i<N; i++) arr[i] = xstart[i];
+    for (int i=0; i<N; i++) arr[i] = xstart[i];
   }
   
    void getInitialStandardDeviations(double *arr, size_t dimension)
   { 
 
-    for(int i=0; i<N; i++) arr[i] = rgInitialStds[i];
+    for (int i=0; i<N; i++) arr[i] = rgInitialStds[i];
   }
 
     void getStandardDeviations(double *arr)
   { 
   
-    for(int i = 0; i < N; ++i)
+    for (int i = 0; i < N; ++i)
     arr[i] = sigma*std::sqrt(C[i][i]);    
   }
 
   void getXBestEver(double *arr)
   { 
-    for(int i = 0; i < N; ++i) arr[i] = xBestEver[i];    
+    for (int i = 0; i < N; ++i) arr[i] = xBestEver[i];    
   }
 
 
@@ -150,19 +150,19 @@ double minStdDev(){return sigma*std::sqrt(mindiagC);}
 
 void diagonalCovariance(double *arr)
   {
-     for(int i = 0; i < N; ++i) arr[i] = C[i][i];
+     for (int i = 0; i < N; ++i) arr[i] = C[i][i];
   }
 
-  void diagonalD(double *arr, size_t N) { for(int i = 0; i < N; ++i) arr[i] = rgD[i]; }
+  void diagonalD(double *arr, size_t N) { for (int i = 0; i < N; ++i) arr[i] = rgD[i]; }
 
   void standardDeviation(double *arr, size_t N)
   {
-    for(int i = 0; i < N; ++i) arr[i] = sigma*std::sqrt(C[i][i]);
+    for (int i = 0; i < N; ++i) arr[i] = sigma*std::sqrt(C[i][i]);
   }
 
 void getFittestMean(double *arr)
 { 
-  for(int i=0; i<N; i++) arr[i] = xmean[i]; 
+  for (int i=0; i<N; i++) arr[i] = xmean[i]; 
 }
 
  
@@ -193,7 +193,6 @@ void getFittestMean(double *arr)
 
   void setWeights(Weights mode);
 
-  ~CMAES();
 
 private:
 
@@ -201,21 +200,16 @@ private:
   //! The instantiated function.
   funcType& function;
 
-  double *arFunvals;
+  arma::vec arFunvals;
 
-  double *const*pop;
   //! Problem dimension, must stay constant.
   int N;
   //! Initial search space vector.
-  double* xstart;
-  //! A typical value for a search space vector.
-  double* typicalX;
+  arma::vec xstart;
   //! Indicates that the typical x is the initial point.
   bool typicalXcase;
   //! Initial standard deviations.
-  double* rgInitialStds;
-  double* rgDiffMinChange;
-
+  arma::vec rgInitialStds;
   /* Termination parameters. */
   //! Maximal number of objective function evaluations.
   double stopMaxFunEvals;
@@ -251,7 +245,7 @@ private:
   /**
    * Weights used to recombinate the mean sum up to one.
    */
-  double* weights;
+  arma::vec weights;
   /**
    * Damping parameter for step-size adaption, d = inifinity or 0 means adaption
    * is turned off, usually close to one.
@@ -277,9 +271,9 @@ private:
   //! Step size.
   double sigma;
   //! Mean x vector, "parent".
-  double* xmean;
+  arma::vec xmean;
   //! Best sample ever.
-  double* xBestEver;
+  arma::vec xBestEver;
   //! x-vectors, lambda offspring.
   double** population;
   //! Sorting index of sample population.
@@ -295,17 +289,15 @@ private:
   //! Axis lengths.
   double* rgD;
   //! Anisotropic evolution path (for covariance).
-  double* pc;
+  arma::vec pc;
   //! Isotropic evolution path (for step length).
-  double* ps;
+  arma::vec ps;
   //! Last mean.
-  double* xold;
-  //! Output vector.
-  double* output;
+  arma::vec xold;
   //! B*D*z.
-  double* BDz;
+  arma::vec BDz;
   //! Temporary (random) vector used in different places.
-  double* tempRandom;
+  arma::vec tempRandom;
   //! Objective function values of the population.
   double* functionValues;
   //!< Public objective function value array returned by init().
@@ -336,19 +328,14 @@ private:
   
   void eigen(double* diag, double** Q);
   void updateEigensystem(bool force);
-  void sortIndex(const double* rgFunVal, int* iindex, int n);
+  void sortIndex(const arma::vec rgFunVal, int* iindex, int n);
   void adaptC2(const int hsig);
-  void testMinStdDevs(void);
   void addMutation(double* x, double eps = 1.0);
 
-   double* init();
-   double* const* samplePopulation();
-   double* const* reSampleSingle(int i);
-   double* sampleSingleInto(double* x);
-   double const* reSampleSingleOld(double* x);
+   void init(arma::vec& func);
+   void samplePopulation();
    double* perturbSolutionInto(double* x, double const* pxmean, double eps);
-   double* updateDistribution(const double* fitnessValues);
-   double const* setMean(const double* newxmean);
+   void updateDistribution(const arma::vec fitnessValues);
 
    bool testForTermination();
    int  checkEigen(double* diag, double** Q);

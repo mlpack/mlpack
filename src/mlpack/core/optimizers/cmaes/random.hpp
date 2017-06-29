@@ -39,14 +39,14 @@ public:
   {
     stored = false;
     startseed = seed;
-    if(seed < 1) seed = 1;
+    if (seed < 1) seed = 1;
     aktseed = seed;
-    for(int i = 39; i >= 0; --i)
+    for (int i = 39; i >= 0; --i)
     {
       long tmp = aktseed / 127773;
       aktseed = 16807* (aktseed - tmp* 127773) - 2836* tmp;
-      if(aktseed < 0) aktseed += 2147483647;
-      if(i < 32) rgrand[i] = aktseed;
+      if (aktseed < 0) aktseed += 2147483647;
+      if (i < 32) rgrand[i] = aktseed;
     }
     aktrand = rgrand[0];
   }
@@ -55,7 +55,7 @@ public:
    */
   T gauss(void)
   {
-    if(stored)
+    if (stored)
     {
       stored = false;
       return hold;
@@ -78,7 +78,7 @@ public:
   {
     long tmp = aktseed / 127773;
     aktseed = 16807 * (aktseed - tmp * 127773) - 2836 * tmp;
-    if(aktseed < 0)
+    if (aktseed < 0)
       aktseed += 2147483647;
     tmp = aktrand / 67108865;
     aktrand = rgrand[tmp];

@@ -31,10 +31,10 @@ class cmaesTestFunction
   cmaesTestFunction() { }
 
   //! Return 3 (the number of functions) = the variable N in CMAES class for dimension
-  size_t NumFunctions();
+  size_t NumFunctions() const;
 
   //! Evaluate a function.
-  double Evaluate(arma::mat& coordinates);
+  double Evaluate(double arma::mat& coordinates);
 };
 
 } // namespace test
