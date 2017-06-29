@@ -43,7 +43,7 @@ void BuildVanillaNetwork(MatType& trainData,
   GaussianInitialization gaussian(0, 0.1);
   RBM<GaussianInitialization, BinaryLayer<>, BinaryLayer<>> model(trainData,
       gaussian, visible, hidden, 1,  true);
-  MiniBatchSGD msgd(10,0.06, trainData.n_cols * 20, 0, true);
+  MiniBatchSGD msgd(10, 0.06, trainData.n_cols * 20, 0, true);
   model.Train(trainData, msgd);
   model.Reset();
   // Set the parmaeters from a learned rbm
@@ -53,7 +53,7 @@ void BuildVanillaNetwork(MatType& trainData,
                         -0.59922456, -0.60003836,
                         -0.6, -0.625, -0.475};
   // Check Weight Shared
-  BOOST_REQUIRE_CLOSE(arma::accu(model.VisibleLayer().Weight() - 
+  BOOST_REQUIRE_CLOSE(arma::accu(model.VisibleLayer().Weight() -
       model.HiddenLayer().Weight()), 0, 1e-2);
 
   // Check free energy
@@ -68,7 +68,6 @@ void BuildVanillaNetwork(MatType& trainData,
   }
 
   BOOST_REQUIRE_LE(arma::accu(calcultedFreeEnergy - freeEnergy), 1);
-  
 }
 BOOST_AUTO_TEST_CASE(MiscTest)
 {
@@ -102,7 +101,7 @@ BOOST_AUTO_TEST_CASE(ClassificationTest)
       trainLabelsTemp.n_rows);
   arma::Row<size_t> testLabels = arma::zeros<arma::Row<size_t>>(1,
       testLabelsTemp.n_rows);
-  
+
   for (size_t i = 0; i < trainLabelsTemp.n_rows; ++i)
   {
     trainLabels(i) = arma::as_scalar(trainLabelsTemp.row(i));
@@ -115,18 +114,18 @@ BOOST_AUTO_TEST_CASE(ClassificationTest)
   trainData = trainData.t();
   testData = testData.t();
 
-  arma::mat output, XRbm(hiddenLayerSize, trainData.n_cols), 
+  arma::mat output, XRbm(hiddenLayerSize, trainData.n_cols),
       YRbm(hiddenLayerSize, trainLabels.n_cols);
 
   XRbm.zeros();
   YRbm.zeros();
-  
+
   BinaryLayer<> visible(trainData.n_rows, hiddenLayerSize, 1);
   BinaryLayer<> hidden(hiddenLayerSize, trainData.n_rows, 0);
   GaussianInitialization gaussian(0, 0.1);
   RBM<GaussianInitialization, BinaryLayer<>, BinaryLayer<> > model(trainData,
       gaussian, visible, hidden, 1,  true, true);
-  MiniBatchSGD msgd(10,0.06, trainData.n_cols * 20, 0, true);
+  MiniBatchSGD msgd(10, 0.06, trainData.n_cols * 20, 0, true);
   model.Reset();
   model.VisibleLayer().Bias().ones();
   model.HiddenLayer().Bias().ones();
@@ -135,7 +134,7 @@ BOOST_AUTO_TEST_CASE(ClassificationTest)
 
   for (size_t i = 0; i < trainData.n_cols; i++)
   {
-    model.VisibleLayer().Forward(std::move(trainData.col(i)), 
+    model.VisibleLayer().Forward(std::move(trainData.col(i)),
         std::move(output));
     XRbm.col(i) = output;
   }
@@ -148,19 +147,19 @@ BOOST_AUTO_TEST_CASE(ClassificationTest)
   const size_t numClasses = 10; // Number of classes.
   const size_t numBasis = 5; // Parameter required for L-BFGS algorithm.
   const size_t numIterations = 100; // Maximum number of iterations.
-  
+
   // Use an instantiated optimizer for the training.
   L_BFGS optimizer(numBasis, numIterations);
   SoftmaxRegression regressor2(trainData, trainLabels,
       numClasses, 0.001, false, optimizer);
- 
+
   arma::Row<size_t> predictions1, predictions2;
   // Vectors to store predictions in.
 
   double classificationAccuray = regressor2.ComputeAccuracy(testData,
    testLabels);
   std::cout << classificationAccuray << std::endl;
-  
+
   L_BFGS optimizer1(numBasis, numIterations);
   SoftmaxRegression regressor1(XRbm, trainLabels, numClasses,
         0.001, false, optimizer1);

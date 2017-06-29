@@ -12,8 +12,6 @@
 #include <mlpack/core.hpp>
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/math/random.hpp>
-#include <mlpack/core/optimizers/sgd/update_policies/vanilla_update.hpp>
-#include <mlpack/core/optimizers/minibatch_sgd/decay_policies/no_decay.hpp>
 
 #include "layer/layer.hpp"
 #include "layer/base_layer.hpp"
@@ -145,7 +143,6 @@ class RBM
   void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-
   // Parameter weights of the network
   arma::mat parameter;
   // Visible layer
@@ -188,7 +185,7 @@ class RBM
   arma::mat hiddenBiasPositiveGrad;
   //! Locally-stored gradient wrt visible bias for positive phase
   arma::mat visibleBiasPositiveGrad;
-  
+
   //! Locally-stored temporary output of gibbs chain
   arma::mat gibbsTemporary;
   //! Locally-stored output of the preActivation function used in FreeEnergy
@@ -197,7 +194,6 @@ class RBM
   arma::mat corruptInput;
   //! Locally-stored softplus output used for Cross-Entropy Loss
   arma::mat softOutput;
-
 };
 } // namespace ann
 } // namespace mlpack

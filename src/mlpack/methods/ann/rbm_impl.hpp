@@ -16,8 +16,6 @@
 #include <mlpack/core.hpp>
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/math/random.hpp>
-#include <mlpack/core/optimizers/sgd/update_policies/vanilla_update.hpp>
-#include <mlpack/core/optimizers/minibatch_sgd/decay_policies/no_decay.hpp>
 
 
 #include "layer/layer.hpp"
@@ -102,7 +100,7 @@ void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::Reset()
   hiddenBiasPositiveGrad = arma::mat(
     positiveGradient.memptr() + weightPositiveGrad.n_elem,
     numHidden, 1, false, false);
-  
+
   // Variable for Positive grad wrt visible bias
   visibleBiasPositiveGrad = arma::mat(
       positiveGradient.memptr() + weightPositiveGrad.n_elem +
@@ -157,7 +155,7 @@ double RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
   {
     // Do not use unsafe col predictor as we change the input
     Gibbs(std::move(predictors.col(i)), std::move(negativeSamples));
-    return (FreeEnergy(std::move(predictors.col(i))) - 
+    return (FreeEnergy(std::move(predictors.col(i))) -
         FreeEnergy(std::move(negativeSamples)));
   }
   else
@@ -181,7 +179,7 @@ double RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
       preActivation = -preActivation - 1;
       SoftplusFunction::Fn(preActivation, softOutput);
       softOutput = -softOutput;
-      return arma::accu( 
+      return arma::accu(
           predictors.col(i) * softOutput.t() + (1 - predictors.col(i)) *
           preActivation.t());
     }
@@ -245,7 +243,7 @@ void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
   Gibbs(std::move(predictors.col(input)), std::move(negativeSamples));
 
   // Collect the negative gradients
-  visible.Forward(std::move(negativeSamples), 
+  visible.Forward(std::move(negativeSamples),
       std::move(hiddenBiasNegativeGrad));
   weightNegativeGrad = hiddenBiasNegativeGrad * negativeSamples.t();
   visibleBiasNegativeGrad = negativeSamples;
