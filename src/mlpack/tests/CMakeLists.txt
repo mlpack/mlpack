@@ -166,8 +166,4 @@ foreach(test_file ${test_sources})
 endforeach()
 
 # Use RUN_SERIAL for long running parallel tests
-<<<<<<< a9a33645e43c13e2bea0cf699078cb82fa206baf
 set_tests_properties(${parallel_tests} PROPERTIES RUN_SERIAL TRUE)
-=======
-set_tests_properties(${parallel_tests} PROPERTIES RUN_SERIAL TRUE)
->>>>>>> edit cmake list
