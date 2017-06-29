@@ -1713,10 +1713,6 @@ BOOST_AUTO_TEST_CASE(RBMTest)
   Rbm.VisibleLayer().Bias().ones();
   Rbm.HiddenLayer().Bias().ones();
 
-  RbmXml.Reset();
-  RbmXml.VisibleLayer().Bias().zeros();
-  RbmXml.HiddenLayer().Bias().zeros();
-
   
   SerializeObjectAll(Rbm, RbmXml, RbmText, RbmBinary);
   Rbm.VisibleLayer().Bias().print();

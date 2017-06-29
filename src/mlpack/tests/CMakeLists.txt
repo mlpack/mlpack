@@ -77,7 +77,6 @@ add_executable(mlpack_test
   randomized_svd_test.cpp
   range_search_test.cpp
   rbm_network_test.cpp
-  recurrent_network_test.cpp
   rectangle_tree_test.cpp
   recurrent_network_test.cpp
   regularized_svd_test.cpp
