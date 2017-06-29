@@ -54,9 +54,8 @@ public:
 
     void getStandardDeviations(double *arr)
   { 
-  
     for (int i = 0; i < N; ++i)
-    arr[i] = sigma*std::sqrt(C[i][i]);    
+    arr[i] = sigma*std::sqrt(C(i,i));    
   }
 
   void getXBestEver(double *arr)
@@ -150,22 +149,15 @@ double minStdDev(){return sigma*std::sqrt(mindiagC);}
 
 void diagonalCovariance(double *arr)
   {
-     for (int i = 0; i < N; ++i) arr[i] = C[i][i];
+     for (int i = 0; i < N; ++i) arr[i] = C(i,i);
   }
 
-  void diagonalD(double *arr, size_t N) { for (int i = 0; i < N; ++i) arr[i] = rgD[i]; }
-
-  void standardDeviation(double *arr, size_t N)
-  {
-    for (int i = 0; i < N; ++i) arr[i] = sigma*std::sqrt(C[i][i]);
-  }
+void diagonalD(double *arr, size_t N) { for (int i = 0; i < N; ++i) arr[i] = rgD[i]; }
 
 void getFittestMean(double *arr)
 { 
   for (int i=0; i<N; i++) arr[i] = xmean[i]; 
 }
-
- 
 
   double maxElement(const double* rgd, int len)
   {
@@ -275,7 +267,7 @@ private:
   //! Best sample ever.
   arma::vec xBestEver;
   //! x-vectors, lambda offspring.
-  double** population;
+  arma::mat population;
   //! Sorting index of sample population.
   int* index;
   //! History of function values.
@@ -283,11 +275,11 @@ private:
 
   double chiN;
   //! Lower triangular matrix: i>=j for C[i][j].
-  double** C;
+  arma::mat C;
   //! Matrix with normalize eigenvectors in columns.
-  double** B;
+  arma::mat B;
   //! Axis lengths.
-  double* rgD;
+  arma::vec rgD;
   //! Anisotropic evolution path (for covariance).
   arma::vec pc;
   //! Isotropic evolution path (for step length).
@@ -301,7 +293,7 @@ private:
   //! Objective function values of the population.
   double* functionValues;
   //!< Public objective function value array returned by init().
-  double* publicFitness;
+  arma::vec publicFitness;
 
   //! Generation number.
   double gen;
@@ -326,7 +318,6 @@ private:
 
   std::string stopMessage; //!< A message that contains all matched stop criteria.
   
-  void eigen(double* diag, double** Q);
   void updateEigensystem(bool force);
   void sortIndex(const arma::vec rgFunVal, int* iindex, int n);
   void adaptC2(const int hsig);
@@ -338,7 +329,7 @@ private:
    void updateDistribution(const arma::vec fitnessValues);
 
    bool testForTermination();
-   int  checkEigen(double* diag, double** Q);
+   int  checkEigen(arma::vec diag, arma::mat Q);
 
 };
 } // namespace optimization

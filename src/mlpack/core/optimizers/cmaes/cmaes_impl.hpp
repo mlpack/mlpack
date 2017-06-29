@@ -205,7 +205,7 @@ namespace optimization {
     // evaluate the new search points using the given evaluate function by the user
     for (int i = 0; i < lambda; ++i)
     {
-      for (int j=0; j<N; j++) fit(0,j) = population[i][j];
+      for (int j=0; j<N; j++) fit(0,j) = population(i,j);
 
       arFunvals[i] = function.Evaluate(fit);
     }
@@ -223,64 +223,33 @@ namespace optimization {
 
   }
 
-/**
-   * Calculating eigenvalues and vectors.
-   * Also checks for successful eigen decomposition.
-   * @param diag (output) N eigenvalues.
-   * @param Q (output) Columns are normalized eigenvectors.
-   */
-   template<typename funcType>
-  void CMAES<funcType>::eigen(double* diag, double** Q)
-  { 
-
-     arma::vec eV;
-     arma::mat eigMat;
-
-     arma::mat cov(N,N);
-     for (int i=0; i<N; i++)
-      for (int j=0; j<=i; j++) cov(i,j)=cov(j,i)=C[i][j];
-
-
-   if (!arma::eig_sym(eV, eigMat, cov))
-        assert("eigen decomposition failed in neuro_cmaes::eigen()");
-
-     for (int i=0; i<N; i++)
-     {
-      diag[i]=eV(i);
-
-        for (int j=0; j<N; j++)
-        Q[i][j]=eigMat(i,j);
-      
-     }
-  
-  }
-
   /** 
    * Exhaustive test of the output of the eigendecomposition, needs O(n^3)
    * operations writes to error file.
    * @return number of detected inaccuracies
    */
    template<typename funcType>
-  int CMAES<funcType>::checkEigen(double* diag, double** Q)
+  int CMAES<funcType>::checkEigen(arma::vec diag, arma::mat Q)
   {
     // compute Q diag Q^T and Q Q^T to check
     int res = 0;
-    for (int i = 0; i < N; ++i)
-      for (int j = 0; j < N; ++j) {
+    for (double i = 0; i < N; i+=1)
+      for (double j = 0; j < N; j+=1) 
+      {
         double cc = 0., dd = 0.;
         for (int k = 0; k < N; ++k)
         {
-          cc += diag[k]*Q[i][k]*Q[j][k];
-          dd += Q[i][k]*Q[j][k];
+          cc += diag[k]*Q(i,k)*Q(j,k);
+          dd += Q(i,k)*Q(j,k);
         }
         // check here, is the normalization the right one?
-        const bool cond1 = fabs(cc - C[i > j ? i : j][i > j ? j : i]) / sqrt(C[i][i]* C[j][j]) > double(1e-10);
-        const bool cond2 = fabs(cc - C[i > j ? i : j][i > j ? j : i]) > double(3e-14);
+        const bool cond1 = fabs(cc - C(i > j ? i : j , i > j ? j : i)) / sqrt(C(i,i)* C(j,j)) > double(1e-10);
+        const bool cond2 = fabs(cc - C(i > j ? i : j , i > j ? j : i)) > double(3e-14);
         if (cond1 && cond2)
         {
           std::stringstream s;
-          s << i << " " << j << ": " << cc << " " << C[i > j ? i : j][i > j ? j : i]
-              << ", " << cc - C[i > j ? i : j][i > j ? j : i];
+          s << i << " " << j << ": " << cc << " " << C(i > j ? i : j , i > j ? j : i)
+              << ", " << cc - C( i > j ? i : j , i > j ? j : i);
           
           std::cout << "eigen(): imprecise result detected " << s.str()
                 << std::endl;
@@ -338,20 +307,19 @@ namespace optimization {
       for (int i = 0; i < N; ++i)
         for (int j = diag ? i : 0; j <= i; ++j)
         {
-          double& Cij = C[i][j];
+          double& Cij = C(i,j);
           Cij = onemccov1ccovmu*Cij + ccov1 * (pc[i]*pc[j] + longFactor*Cij);
           for (int k = 0; k < mu; ++k)
           { // additional rank mu update
-            const double* rgrgxindexk = population[index[k]];
-            Cij += ccovmu*weights[k] * (rgrgxindexk[i] - xold[i])
-                * (rgrgxindexk[j] - xold[j]) / sigmasquare;
+            Cij += ccovmu*weights[k] * (population(index[k] , i) - xold[i])
+                * (population(index[k] , j) - xold[j]) / sigmasquare;
           }
         }
       // update maximal and minimal diagonal value
-      maxdiagC = mindiagC = C[0][0];
+      maxdiagC = mindiagC = C(0,0);
       for (int i = 1; i < N; ++i)
       {
-        const double& Cii = C[i][i];
+        const double& Cii = C(i,i);
         if (maxdiagC < Cii)
           maxdiagC = Cii;
         else if (mindiagC > Cii)
@@ -375,7 +343,7 @@ namespace optimization {
     {
       double sum = 0.0;
       for (int j = 0; j < N; ++j)
-        sum += B[i][j]*tempRandom[j];
+        sum += B(i,j)*tempRandom[j];
       x[i] = xmean[i] + eps*sigma*sum;
     }
   }
@@ -425,10 +393,10 @@ namespace optimization {
     xBestEver[0] = N;
     ++xBestEver;
     xBestEver[N] = std::numeric_limits<double>::max();
-    rgD = new double[N];
-    C = new double*[N];
-    B = new double*[N];
-    publicFitness = new double[lambda];
+    rgD.set_size(N);
+    C.set_size(N,N);
+    B.set_size(N,N);
+    publicFitness.set_size(lambda);
     functionValues = new double[lambda+1];
     functionValues[0] = lambda;
     ++functionValues;
@@ -436,25 +404,10 @@ namespace optimization {
     funcValueHistory = new double[historySize + 1];
     funcValueHistory[0] = (double) historySize;
     funcValueHistory++;
-
-    for (int i = 0; i < N; ++i)
-    {
-      C[i] = new double[i+1];
-      B[i] = new double[N];
-    }
     index = new int[lambda];
     for (int i = 0; i < lambda; ++i)
         index[i] = i;
-    population = new double*[lambda];
-    for (int i = 0; i < lambda; ++i)
-    {
-      population[i] = new double[N+2];
-      population[i][0] = N;
-      population[i]++;
-      for (int j = 0; j < N; j++)
-        population[i][j] = 0.0;
-    }
-
+    population.zeros(lambda, N+2);
     for (int i = 0; i < lambda; i++)
     {
       functionValues[i] = std::numeric_limits<double>::max();
@@ -463,26 +416,27 @@ namespace optimization {
     {
       funcValueHistory[i] = std::numeric_limits<double>::max();
     }
-    for (int i = 0; i < N; ++i)
-      for (int j = 0; j < i; ++j)
-        C[i][j] = B[i][j] = B[j][i] = 0.;
+    
+    C.zeros();
+    B.zeros();
 
     for (int i = 0; i < N; ++i)
     {
-      B[i][i] = double(1);
-      C[i][i] = rgD[i] = rgInitialStds[i]*std::sqrt(N/trace);
-      C[i][i] *= C[i][i];
+      B.diag().ones();
+
+      C(i,i) = rgD[i] = rgInitialStds[i]*std::sqrt(N/trace);
+      C(i,i) *= C(i,i);
       pc[i] = ps[i] = double(0);
     }
-    minEW = minElement(rgD, N);
+    minEW = rgD.min();
     minEW = minEW*minEW;
-    maxEW = maxElement(rgD, N);
+    maxEW = rgD.max();
     maxEW = maxEW*maxEW;
 
-    maxdiagC = C[0][0];
-    for (int i = 1; i < N; ++i) if (maxdiagC < C[i][i]) maxdiagC = C[i][i];
-    mindiagC = C[0][0];
-    for (int i = 1; i < N; ++i) if (mindiagC > C[i][i]) mindiagC = C[i][i];
+    maxdiagC = C(0,0);
+    for (int i = 1; i < N; ++i) if (maxdiagC < C(i,i)) maxdiagC = C(i,i);
+    mindiagC = C(0,0);
+    for (int i = 1; i < N; ++i) if (mindiagC > C(i,i)) mindiagC = C(i,i);
 
     for (int i = 0; i < N; ++i)
       xmean[i] = xold[i] = xstart[i];
@@ -513,10 +467,10 @@ namespace optimization {
       else
       {
         for (int i = 0; i < N; ++i)
-          rgD[i] = std::sqrt(C[i][i]);
-        minEW = minElement(rgD, N);
+          rgD[i] = std::sqrt(C(i,i));
+        minEW = rgD.min();
         minEW *= minEW;
-        maxEW = maxElement(rgD, N);
+        maxEW = rgD.max();
         maxEW *= maxEW;
         eigensysIsUptodate = true;
       }
@@ -524,10 +478,9 @@ namespace optimization {
 
     for (int iNk = 0; iNk < lambda; ++iNk)
     { // generate scaled random vector D*z
-      double* rgrgxink = population[iNk];
       for (int i = 0; i < N; ++i)
         if (diag)
-          rgrgxink[i] = xmean[i] + sigma*rgD[i]*rand.gauss();
+          population(iNk,i) = xmean[i] + sigma*rgD[i]*rand.gauss();
         else
           tempRandom[i] = rgD[i]*rand.gauss();
       if (!diag)
@@ -535,8 +488,8 @@ namespace optimization {
         {
           double sum = 0.0;
           for (int j = 0; j < N; ++j)
-            sum += B[i][j]*tempRandom[j];
-          rgrgxink[i] = xmean[i] + sigma*sum;
+            sum += B(i,j)*tempRandom[j];
+          population(iNk , i) = xmean[i] + sigma*sum;
         }
     }
 
@@ -591,7 +544,7 @@ namespace optimization {
 
     // assign function values
     for (int i = 0; i < lambda; ++i)
-      population[i][N] = functionValues[i] = fitnessValues[i];
+      population(i,N) = functionValues[i] = fitnessValues[i];
 
     // Generate index
     sortIndex(fitnessValues, index, lambda);
@@ -612,10 +565,10 @@ namespace optimization {
     funcValueHistory[0] = fitnessValues[index[0]];
 
     // update xbestever
-    if (xBestEver[N] > population[index[0]][N] || gen == 1)
+    if (xBestEver[N] > population(index[0],N) || gen == 1)
       for (int i = 0; i <= N; ++i)
       {
-        xBestEver[i] = population[index[0]][i];
+        xBestEver[i] = population(index[0] , i);
         xBestEver[N+1] = countevals;
       }
 
@@ -626,7 +579,7 @@ namespace optimization {
       xold[i] = xmean[i];
       xmean[i] = 0.;
       for (int iNk = 0; iNk < mu; ++iNk)
-        xmean[i] += weights[iNk]*population[index[iNk]][i];
+        xmean[i] += weights[iNk]*population(index[iNk] , i);
       BDz[i] = sqrtmueffdivsigma*(xmean[i]-xold[i]);
     }
 
@@ -640,7 +593,7 @@ namespace optimization {
       {
         sum = 0.;
         for (int j = 0; j < N; ++j)
-          sum += B[j][i]*BDz[j];
+          sum += B(j,i)*BDz[j];
       }
       tempRandom[i] = sum/rgD[i];
     }
@@ -656,9 +609,8 @@ namespace optimization {
       else
       {
         sum = double(0);
-        double* Bi = B[i];
         for (int j = 0; j < N; ++j)
-          sum += Bi[j]*tempRandom[j];
+          sum += B(i,j)*tempRandom[j];
       }
       ps[i] = invps*ps[i] + sqrtFactor*sum;
     }
@@ -744,7 +696,7 @@ namespace optimization {
     int cTemp = 0;
     for (int i = 0; i < N; ++i)
     {
-      cTemp += (sigma*std::sqrt(C[i][i]) < stopTolX) ? 1 : 0;
+      cTemp += (sigma*std::sqrt(C(i,i)) < stopTolX) ? 1 : 0;
       cTemp += (sigma*pc[i] < stopTolX) ? 1 : 0;
     }
     if (cTemp == 2*N)
@@ -755,7 +707,7 @@ namespace optimization {
     // TolUpX
     for (int i = 0; i < N; ++i)
     {
-      if (sigma*std::sqrt(C[i][i]) > stopTolUpXFactor*rgInitialStds[i])
+      if (sigma*std::sqrt(C(i,i)) > stopTolUpXFactor*rgInitialStds[i])
       {
         message << "TolUpX: standard deviation increased by more than "
             << stopTolUpXFactor << ", larger initial standard deviation recommended."
@@ -780,7 +732,7 @@ namespace optimization {
         fac = 0.1* sigma* rgD[iAchse];
         for (iKoo = 0; iKoo < N; ++iKoo)
         {
-          if (xmean[iKoo] != xmean[iKoo] + fac* B[iKoo][iAchse])
+          if (xmean[iKoo] != xmean[iKoo] + fac* B(iKoo,iAchse))
             break;
         }
         if (iKoo == N)
@@ -794,10 +746,10 @@ namespace optimization {
     // Component of xmean is not changed anymore
     for (iKoo = 0; iKoo < N; ++iKoo)
     {
-      if (xmean[iKoo] == xmean[iKoo] + sigma*std::sqrt(C[iKoo][iKoo])/double(5))
+      if (xmean[iKoo] == xmean[iKoo] + sigma*std::sqrt( C(iKoo,iKoo) )/double(5))
       {
         message << "NoEffectCoordinate: standard deviation 0.2*"
-            << (sigma*std::sqrt(C[iKoo][iKoo])) << " in coordinate " << iKoo
+            << (sigma*std::sqrt( C(iKoo , iKoo) ) ) << " in coordinate " << iKoo
             << " without effect" << std::endl;
         break;
       }
@@ -837,11 +789,12 @@ namespace optimization {
         return;
     }
 
-    eigen(rgD, B);
+     if (!arma::eig_sym(rgD, B, C))
+        assert("eigen decomposition failed in neuro_cmaes::eigen()");
 
     // find largest and smallest eigenvalue, they are supposed to be sorted anyway
-    minEW = minElement(rgD, N);
-    maxEW = maxElement(rgD, N);
+    minEW = rgD.min();
+    maxEW = rgD.max();
 
     if (doCheckEigen) // needs O(n^3)! writes, in case, error message in error file
       checkEigen(rgD, B);
