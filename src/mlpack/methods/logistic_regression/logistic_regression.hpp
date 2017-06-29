@@ -98,12 +98,16 @@ class LogisticRegression
    * predictors and responses and initial point are all taken from the error
    * function contained in the optimizer.
    *
+   * @param predictors Input training variables.
+   * @param responses Outputs results from input training variables.
    * @param optimizer Instantiated optimizer with instantiated error function.
+   * @param lambda L2-regularization parameter.
    */
-  template<template<typename, typename ...> class OptimizerType,
-           typename ... OptimizerTypeArgs>
-  LogisticRegression(OptimizerType<LogisticRegressionFunction<MatType>,
-                                   OptimizerTypeArgs...>& optimizer);
+  template<typename OptimizerType>
+  LogisticRegression(const MatType& predictors,
+                     const arma::Row<size_t>& responses,
+                     OptimizerType& optimizer,
+                     const double lambda);
 
   /**
    * Train the LogisticRegression model on the given input data.  By default,
@@ -118,9 +122,7 @@ class LogisticRegression
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
    */
-  template<
-      template<typename...> class OptimizerType = mlpack::optimization::L_BFGS
-  >
+  template<typename OptimizerType = mlpack::optimization::L_BFGS>
   void Train(const MatType& predictors,
              const arma::Row<size_t>& responses);
 
@@ -136,17 +138,14 @@ class LogisticRegression
    * optimizer.Function().GetInitialPoint() to the current parameters vector,
    * accessible via Parameters().
    *
+   * @param predictors Input training variables.
+   * @param responses Outputs results from input training variables.
    * @param optimizer Instantiated optimizer with instantiated error function.
-   * @tparam OptimizerTypeArgs Optimizer arguments to customize the behavior of
-   *     the optimizer.
    */
-  template<
-      template<typename,
-               typename...> class OptimizerType = mlpack::optimization::L_BFGS,
-      typename... OptimizerTypeArgs
-  >
-  void Train(OptimizerType<LogisticRegressionFunction<MatType>,
-                           OptimizerTypeArgs...>& optimizer);
+  template<typename OptimizerType>
+  void Train(const MatType& predictors,
+             const arma::Row<size_t>& responses,
+             OptimizerType& optimizer);
 
   //! Return the parameters (the b vector).
   const arma::vec& Parameters() const { return parameters; }

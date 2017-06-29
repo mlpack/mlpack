@@ -59,9 +59,6 @@ namespace regression {
  * regressor2.Classify(test_data, predictions2);
  * @endcode
  */
-template<
-  template<typename> class OptimizerType = mlpack::optimization::L_BFGS
->
 class SoftmaxRegression
 {
  public:
@@ -84,29 +81,22 @@ class SoftmaxRegression
    * passed, which controls the amount of L2-regularization in the objective
    * function. By default, the model takes a small value.
    *
+   * @tparam OptimizerType Desired optimizer type.
    * @param data Input training features. Each column associate with one sample
    * @param labels Labels associated with the feature data.
    * @param inputSize Size of the input feature vector.
    * @param numClasses Number of classes for classification.
+   * @param optimizer Desired optimizer.
    * @param lambda L2-regularization constant.
    * @param fitIntercept add intercept term or not.
    */
+  template<typename OptimizerType = mlpack::optimization::L_BFGS>
   SoftmaxRegression(const arma::mat& data,
                     const arma::Row<size_t>& labels,
                     const size_t numClasses,
                     const double lambda = 0.0001,
-                    const bool fitIntercept = false);
-
-  /**
-   * Construct the softmax regression model with the given training data. This
-   * will train the model. This overload takes an already instantiated optimizer
-   * and uses it to train the model. The optimizer should hold an instantiated
-   * SoftmaxRegressionFunction object for the function to operate upon. This
-   * option should be preferred when the optimizer options are to be changed.
-   *
-   * @param optimizer Instantiated optimizer with instantiated error function.
-   */
-  SoftmaxRegression(OptimizerType<SoftmaxRegressionFunction>& optimizer);
+                    const bool fitIntercept = false,
+                    OptimizerType optimizer = OptimizerType());
 
   /**
    * Predict the class labels for the provided feature points. The function
@@ -180,25 +170,20 @@ class SoftmaxRegression
                          const arma::Row<size_t>& labels) const;
 
   /**
-   * Train the softmax regression model with the given optimizer.
-   * The optimizer should hold an instantiated
-   * SoftmaxRegressionFunction object for the function to operate upon. This
-   * option should be preferred when the optimizer options are to be changed.
-   * @param optimizer Instantiated optimizer with instantiated error function.
-   * @return Objective value of the final point.
-   */
-  double Train(OptimizerType<SoftmaxRegressionFunction>& optimizer);
-
-  /**
    * Train the softmax regression with the given training data.
+   *
+   * @tparam OptimizerType Desired optimizer type.
    * @param data Input data with each column as one example.
    * @param labels Labels associated with the feature data.
    * @param numClasses Number of classes for classification.
+   * @param optimizer Desired optimizer.
    * @return Objective value of the final point.
    */
+  template<typename OptimizerType = mlpack::optimization::L_BFGS>
   double Train(const arma::mat& data,
                const arma::Row<size_t>& labels,
-               const size_t numClasses);
+               const size_t numClasses,
+               OptimizerType optimizer = OptimizerType());
 
   //! Sets the number of classes.
   size_t& NumClasses() { return numClasses; }

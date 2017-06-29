@@ -80,7 +80,8 @@ Copyright:
   Copyright 2017, Parminder Singh <parmsingh101@gmail.com>
   Copyright 2017, CodeAi <benjamin.bales@assrc.us>
   Copyright 2017, Franciszek Stokowacki <franek.stokowacki@gmail.com>
-
+  Copyright 2017, Samikshya Chand <samikshya289@gmail.com>
+  
 License: BSD-3-clause
   All rights reserved.
   .

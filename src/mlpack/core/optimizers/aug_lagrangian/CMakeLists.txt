@@ -1,5 +1,6 @@
 set(SOURCES
   aug_lagrangian.hpp
+  aug_lagrangian.cpp
   aug_lagrangian_impl.hpp
   aug_lagrangian_function.hpp
   aug_lagrangian_function_impl.hpp

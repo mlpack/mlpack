@@ -35,10 +35,10 @@ BOOST_AUTO_TEST_SUITE(RMSPropTest);
 BOOST_AUTO_TEST_CASE(SimpleRMSPropTestFunction)
 {
   SGDTestFunction f;
-  RMSProp<SGDTestFunction> optimizer(f, 1e-3, 0.99, 1e-8, 5000000, 1e-9, true);
+  RMSProp optimizer(1e-3, 0.99, 1e-8, 5000000, 1e-9, true);
 
   arma::mat coordinates = f.GetInitialPoint();
-  optimizer.Optimize(coordinates);
+  optimizer.Optimize(f, coordinates);
 
   BOOST_REQUIRE_SMALL(coordinates[0], 0.1);
   BOOST_REQUIRE_SMALL(coordinates[1], 0.1);
@@ -92,11 +92,8 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
     testResponses[i] = 1;
   }
 
-  LogisticRegression<> lr(shuffledData.n_rows, 0.5);
-
-  LogisticRegressionFunction<> lrf(shuffledData, shuffledResponses, 0.5);
-  RMSProp<LogisticRegressionFunction<> > rmsprop(lrf);
-  lr.Train(rmsprop);
+  RMSProp rmsprop;
+  LogisticRegression<> lr(shuffledData, shuffledResponses, rmsprop, 0.5);
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses);

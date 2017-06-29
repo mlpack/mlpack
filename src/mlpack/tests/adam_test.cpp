@@ -36,11 +36,11 @@ BOOST_AUTO_TEST_SUITE(AdamTest);
 BOOST_AUTO_TEST_CASE(SimpleAdamTestFunction)
 {
   SGDTestFunction f;
-  Adam<SGDTestFunction> optimizer(f, 1e-3, 0.9, 0.999, 1e-8, 5000000, 1e-9,
-                                  true);
+  Adam optimizer(1e-3, 0.9, 0.999, 1e-8, 5000000, 1e-9,
+                 true);
 
   arma::mat coordinates = f.GetInitialPoint();
-  optimizer.Optimize(coordinates);
+  optimizer.Optimize(f, coordinates);
 
   BOOST_REQUIRE_SMALL(coordinates[0], 0.1);
   BOOST_REQUIRE_SMALL(coordinates[1], 0.1);
@@ -53,11 +53,11 @@ BOOST_AUTO_TEST_CASE(SimpleAdamTestFunction)
 BOOST_AUTO_TEST_CASE(SimpleAdaMaxTestFunction)
 {
   SGDTestFunction f;
-  AdaMax<SGDTestFunction> optimizer(f, 2e-3, 0.9, 0.999, 1e-8, 5000000, 1e-9,
-                                    true);
+  AdaMax optimizer(2e-3, 0.9, 0.999, 1e-8, 5000000, 1e-9,
+                   true);
 
   arma::mat coordinates = f.GetInitialPoint();
-  optimizer.Optimize(coordinates);
+  optimizer.Optimize(f, coordinates);
 
   BOOST_REQUIRE_SMALL(coordinates[0], 0.1);
   BOOST_REQUIRE_SMALL(coordinates[1], 0.1);
@@ -111,11 +111,8 @@ BOOST_AUTO_TEST_CASE(AdamLogisticRegressionTest)
     testResponses[i] = 1;
   }
 
-  LogisticRegression<> lr(shuffledData.n_rows, 0.5);
-
-  LogisticRegressionFunction<> lrf(shuffledData, shuffledResponses, 0.5);
-  Adam<LogisticRegressionFunction<> > adam(lrf);
-  lr.Train(adam);
+  Adam adam;
+  LogisticRegression<> lr(shuffledData, shuffledResponses, adam, 0.5);
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses);
@@ -172,13 +169,8 @@ BOOST_AUTO_TEST_CASE(AdaMaxLogisticRegressionTest)
     testResponses[i] = 1;
   }
 
-  LogisticRegression<> lr(shuffledData.n_rows, 0.5);
-
-  LogisticRegressionFunction<> lrf(shuffledData, shuffledResponses, 0.5);
-  AdaMax<LogisticRegressionFunction<> > adamax(lrf, 1e-3, 0.9, 0.999, 1e-8,
-                                               5000000, 1e-9, true);
-
-  lr.Train(adamax);
+  AdaMax adamax(1e-3, 0.9, 0.999, 1e-8, 5000000, 1e-9, true);
+  LogisticRegression<> lr(shuffledData, shuffledResponses, adamax, 0.5);
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses);

@@ -79,14 +79,11 @@ RNN<OutputLayerType, InitializationRuleType>::~RNN()
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-template<
-    template<typename, typename...> class OptimizerType,
-    typename... OptimizerTypeArgs
->
+template<typename OptimizerType>
 void RNN<OutputLayerType, InitializationRuleType>::Train(
     arma::mat predictors,
     arma::mat responses,
-    OptimizerType<NetworkType, OptimizerTypeArgs...>& optimizer)
+    OptimizerType& optimizer)
 {
   numFunctions = responses.n_cols;
 
@@ -112,7 +109,7 @@ void RNN<OutputLayerType, InitializationRuleType>::Train(
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-template<template<typename...> class OptimizerType>
+template<typename OptimizerType>
 void RNN<OutputLayerType, InitializationRuleType>::Train(
     arma::mat predictors, arma::mat responses)
 {
@@ -130,7 +127,7 @@ void RNN<OutputLayerType, InitializationRuleType>::Train(
     reset = true;
   }
 
-  OptimizerType<decltype(*this)> optimizer(*this);
+  OptimizerType optimizer;
 
   // Train the model.
   Timer::Start("rnn_optimization");
