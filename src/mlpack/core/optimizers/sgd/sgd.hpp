@@ -74,10 +74,7 @@ namespace optimization {
  *     process. By default vanilla update policy (see
  *     mlpack::optimization::VanillaUpdate) is used.
  */
-template<
-    typename DecomposableFunctionType,
-    typename UpdatePolicyType = VanillaUpdate
->
+template<typename UpdatePolicyType = VanillaUpdate>
 class SGD
 {
  public:
@@ -89,7 +86,6 @@ class SGD
    * are processed (i.e., one iteration equals one point; one iteration does not
    * equal one pass over the dataset).
    *
-   * @param function Function to be optimized (minimized).
    * @param stepSize Step size for each iteration.
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *     limit).
@@ -97,8 +93,7 @@ class SGD
    * @param shuffle If true, the function order is shuffled; otherwise, each
    *     function is visited in linear order.
    */
-  SGD(DecomposableFunctionType& function,
-      const double stepSize = 0.01,
+  SGD(const double stepSize = 0.01,
       const size_t maxIterations = 100000,
       const double tolerance = 1e-5,
       const bool shuffle = true,
@@ -109,15 +104,13 @@ class SGD
    * starting point will be modified to store the finishing point of the
    * algorithm, and the final objective value is returned.
    *
+   * @tparam DecomposableFunctionType Type of the function to be optimized.
+   * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
-  double Optimize(arma::mat& iterate);
-
-  //! Get the instantiated function to be optimized.
-  const DecomposableFunctionType& Function() const { return function; }
-  //! Modify the instantiated function.
-  DecomposableFunctionType& Function() { return function; }
+  template<typename DecomposableFunctionType>
+  double Optimize(DecomposableFunctionType& function, arma::mat& iterate);
 
   //! Get the step size.
   double StepSize() const { return stepSize; }
@@ -145,9 +138,6 @@ class SGD
   UpdatePolicyType& UpdatePolicy() { return updatePolicy; }
 
  private:
-  //! The instantiated function.
-  DecomposableFunctionType& function;
-
   //! The step size for each example.
   double stepSize;
 
@@ -165,11 +155,9 @@ class SGD
   UpdatePolicyType updatePolicy;
 };
 
-template<typename DecomposableFunctionType>
-using StandardSGD = SGD<DecomposableFunctionType, VanillaUpdate>;
+using StandardSGD = SGD<VanillaUpdate>;
 
-template<typename DecomposableFunctionType>
-using MomentumSGD = SGD<DecomposableFunctionType, MomentumUpdate>;
+using MomentumSGD = SGD<MomentumUpdate>;
 
 } // namespace optimization
 } // namespace mlpack

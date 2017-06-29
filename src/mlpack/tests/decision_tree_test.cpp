@@ -1060,4 +1060,26 @@ BOOST_AUTO_TEST_CASE(NumClassesTest)
   BOOST_REQUIRE_EQUAL(dt.NumClasses(), 3);
 }
 
+/*
+ * Test that we can pass const data into DecisionTree constructors.
+ */
+BOOST_AUTO_TEST_CASE(ConstDataTest)
+{
+  arma::mat data;
+  arma::Row<size_t> labels;
+  data::DatasetInfo datasetInfo;
+  MockCategoricalData(data, labels, datasetInfo);
+
+  const arma::mat& constData = data;
+  const arma::Row<size_t>& constLabels = labels;
+  const arma::rowvec constWeights(labels.n_elem, arma::fill::randu);
+  const size_t numClasses = 5;
+
+  DecisionTree<> dt(constData, constLabels, numClasses);
+  DecisionTree<> dt2(constData, datasetInfo, constLabels, numClasses);
+  DecisionTree<> dt3(constData, constLabels, numClasses, constWeigths);
+  DecisionTree<> dt4(constData, datasetInfo, constLabels, numClasses,
+      constWeights);
+}
+
 BOOST_AUTO_TEST_SUITE_END();

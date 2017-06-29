@@ -34,8 +34,8 @@ RNN<OutputLayerType, InitializationRuleType>::RNN(
     OutputLayerType outputLayer,
     InitializationRuleType initializeRule) :
     rho(rho),
-    outputLayer(outputLayer),
-    initializeRule(initializeRule),
+    outputLayer(std::move(outputLayer)),
+    initializeRule(std::move(initializeRule)),
     inputSize(0),
     outputSize(0),
     targetSize(0),
@@ -47,27 +47,25 @@ RNN<OutputLayerType, InitializationRuleType>::RNN(
 
 template<typename OutputLayerType, typename InitializationRuleType>
 RNN<OutputLayerType, InitializationRuleType>::RNN(
-    const arma::mat& predictors,
-    const arma::mat& responses,
+    arma::mat predictors,
+    arma::mat responses,
     const size_t rho,
     const bool single,
     OutputLayerType outputLayer,
     InitializationRuleType initializeRule) :
     rho(rho),
-    outputLayer(outputLayer),
-    initializeRule(initializeRule),
+    outputLayer(std::move(outputLayer)),
+    initializeRule(std::move(initializeRule)),
     inputSize(0),
     outputSize(0),
     targetSize(0),
     reset(false),
-    single(single)
+    single(single),
+    predictors(std::move(predictors)),
+    responses(std::move(responses)),
+    deterministic(true)
 {
-  numFunctions = responses.n_cols;
-
-  this->predictors = std::move(predictors);
-  this->responses = std::move(responses);
-
-  this->deterministic = true;
+  numFunctions = this->responses.n_cols;
   ResetDeterministic();
 }
 
@@ -81,14 +79,11 @@ RNN<OutputLayerType, InitializationRuleType>::~RNN()
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-template<
-    template<typename, typename...> class OptimizerType,
-    typename... OptimizerTypeArgs
->
+template<typename OptimizerType>
 void RNN<OutputLayerType, InitializationRuleType>::Train(
-    const arma::mat& predictors,
-    const arma::mat& responses,
-    OptimizerType<NetworkType, OptimizerTypeArgs...>& optimizer)
+    arma::mat predictors,
+    arma::mat responses,
+    OptimizerType& optimizer)
 {
   numFunctions = responses.n_cols;
 
@@ -106,7 +101,7 @@ void RNN<OutputLayerType, InitializationRuleType>::Train(
 
   // Train the model.
   Timer::Start("rnn_optimization");
-  const double out = optimizer.Optimize(parameter);
+  const double out = optimizer.Optimize(*this, parameter);
   Timer::Stop("rnn_optimization");
 
   Log::Info << "RNN::RNN(): final objective of trained model is " << out
@@ -114,9 +109,9 @@ void RNN<OutputLayerType, InitializationRuleType>::Train(
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-template<template<typename...> class OptimizerType>
+template<typename OptimizerType>
 void RNN<OutputLayerType, InitializationRuleType>::Train(
-    const arma::mat& predictors, const arma::mat& responses)
+    arma::mat predictors, arma::mat responses)
 {
   numFunctions = responses.n_cols;
 
@@ -132,11 +127,11 @@ void RNN<OutputLayerType, InitializationRuleType>::Train(
     reset = true;
   }
 
-  OptimizerType<decltype(*this)> optimizer(*this);
+  OptimizerType optimizer;
 
   // Train the model.
   Timer::Start("rnn_optimization");
-  const double out = optimizer.Optimize(parameter);
+  const double out = optimizer.Optimize(*this, parameter);
   Timer::Stop("rnn_optimization");
 
   Log::Info << "RNN::RNN(): final objective of trained model is " << out
@@ -145,7 +140,7 @@ void RNN<OutputLayerType, InitializationRuleType>::Train(
 
 template<typename OutputLayerType, typename InitializationRuleType>
 void RNN<OutputLayerType, InitializationRuleType>::Predict(
-    const arma::mat& predictors, arma::mat& results)
+    arma::mat predictors, arma::mat& results)
 {
   if (parameter.is_empty())
   {
@@ -163,7 +158,10 @@ void RNN<OutputLayerType, InitializationRuleType>::Predict(
 
   for (size_t i = 0; i < predictors.n_cols; i++)
   {
-    SinglePredict(predictors.col(i), resultsTemp);
+    SinglePredict(
+        arma::mat(predictors.colptr(i), predictors.n_rows, 1, false, true),
+        resultsTemp);
+
     results.col(i) = resultsTemp;
   }
 }
@@ -199,7 +197,8 @@ double RNN<OutputLayerType, InitializationRuleType>::Evaluate(
     ResetDeterministic();
   }
 
-  arma::mat input = predictors.col(i);
+  arma::mat input = arma::mat(predictors.colptr(i), predictors.n_rows,
+      1, false, true);
   arma::mat target = arma::mat(responses.colptr(i), responses.n_rows,
       1, false, true);
 
