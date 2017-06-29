@@ -75,8 +75,10 @@ BOOST_AUTO_TEST_CASE(MiscTest)
    * Train and evaluate a vanilla network with the specified structure.
    */
 
-  arma::mat X;
-  X = {{0, 0, 0}, {0, 1, 1}, {1, 0, 1}, {1, 1, 1}};
+  arma::mat X = arma::mat("0, 0, 0;"
+                          "0, 1, 1;"
+                          "1, 0, 1;"
+                          "1, 1, 1;");
   X = X.t();
   BuildVanillaNetwork<>(X, 2);
 }
