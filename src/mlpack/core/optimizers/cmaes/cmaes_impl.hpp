@@ -270,7 +270,7 @@ namespace optimization {
 
 
    template<typename funcType>
-  void CMAES<funcType>::sortIndex(const arma::vec rgFunVal, int* iindex, int n)
+  void CMAES<funcType>::sortIndex(const arma::vec rgFunVal, arma::vec& iindex, int n)
   {
     int i, j;
     for (i = 1, iindex[0] = 0; i < n; ++i)
@@ -316,15 +316,9 @@ namespace optimization {
           }
         }
       // update maximal and minimal diagonal value
-      maxdiagC = mindiagC = C(0,0);
-      for (int i = 1; i < N; ++i)
-      {
-        const double& Cii = C(i,i);
-        if (maxdiagC < Cii)
-          maxdiagC = Cii;
-        else if (mindiagC > Cii)
-          mindiagC = Cii;
-      }
+      maxdiagC = arma::max(C.diag());
+      mindiagC = arma::min(C.diag());
+     
     }
   }
 
@@ -404,9 +398,7 @@ namespace optimization {
     funcValueHistory = new double[historySize + 1];
     funcValueHistory[0] = (double) historySize;
     funcValueHistory++;
-    index = new int[lambda];
-    for (int i = 0; i < lambda; ++i)
-        index[i] = i;
+    index = arma::linspace<arma::vec>(0, lambda-1, lambda);
     population.zeros(lambda, N+2);
     for (int i = 0; i < lambda; i++)
     {
@@ -433,10 +425,8 @@ namespace optimization {
     maxEW = rgD.max();
     maxEW = maxEW*maxEW;
 
-    maxdiagC = C(0,0);
-    for (int i = 1; i < N; ++i) if (maxdiagC < C(i,i)) maxdiagC = C(i,i);
-    mindiagC = C(0,0);
-    for (int i = 1; i < N; ++i) if (mindiagC > C(i,i)) mindiagC = C(i,i);
+    maxdiagC = arma::max(C.diag());
+    mindiagC = arma::min(C.diag());
 
     for (int i = 0; i < N; ++i)
       xmean[i] = xold[i] = xstart[i];
@@ -497,29 +487,6 @@ namespace optimization {
       ++gen;
     state = SAMPLED;
 
-  }
-
-  /**
-   * Used to reevaluate a slightly disturbed solution for an uncertaintly
-   * measurement. In case if x == NULL on input, the memory of the returned x
-   * must be released.
-   * @param x Solution vector that gets sampled a new value. If x == NULL new
-   *          memory is allocated and must be released by the user using
-   *          delete[] x.
-   * @param pxmean Mean vector \f$\mu\f$ for perturbation.
-   * @param eps Scale factor \f$\epsilon\f$ for perturbation:
-   *            \f$x \sim \mu + \epsilon \sigma N(0,C)\f$.
-   * @return A pointer to the perturbed solution vector, equals input x for
-   *         x != NULL.
-   */
-   template<typename funcType>
-  double* CMAES<funcType>:: perturbSolutionInto(double* x, double const* pxmean, double eps)
-  {
-    if (!x)
-      x = new double[N];
-    assert(pxmean && "perturbSolutionInto(): pxmean was not given");
-    addMutation(x, eps);
-    return x;
   }
 
   /**
@@ -664,9 +631,9 @@ namespace optimization {
 
     // function value reached
     if ((gen > 1 || state > SAMPLED) && stStopFitness.flg &&
-        functionValues[index[0]] <= stStopFitness.val)
+        functionValues[(int)index[0]] <= stStopFitness.val)
     {
-      message << "Fitness: function value " << functionValues[index[0]]
+      message << "Fitness: function value " << functionValues[(int)index[0]]
           << " <= stopFitness (" << stStopFitness.val << ")" << std::endl;
     }
 
