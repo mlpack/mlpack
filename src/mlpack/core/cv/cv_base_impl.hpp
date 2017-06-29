@@ -1,0 +1,421 @@
+/**
+ * @file cv_base_impl.hpp
+ * @author Kirill Mishchenko
+ *
+ * The implementation of the class CVBase.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
+#ifndef MLPACK_CORE_CV_CV_BASE_IMPL_HPP
+#define MLPACK_CORE_CV_CV_BASE_IMPL_HPP
+
+namespace mlpack {
+namespace cv {
+
+template<typename MLAlgorithm,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+template<typename MT, typename PT>
+CVBase<MLAlgorithm,
+       MatType,
+       PredictionsType,
+       WeightsType>::CVBase(const MT&,
+                            const PT&) :
+    isDatasetInfoPassed(false)
+{
+  static_assert(!MIE::TakesNumClasses,
+      "The ML algorithm should not take the numClasses parameter");
+}
+
+template<typename MLAlgorithm,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+template<typename MT, typename PT>
+CVBase<MLAlgorithm,
+       MatType,
+       PredictionsType,
+       WeightsType>::CVBase(const MT&,
+                            const PT&,
+                            const size_t numClasses) :
+    isDatasetInfoPassed(false),
+    numClasses(numClasses)
+{
+  static_assert(MIE::TakesNumClasses,
+      "The ML algorithm should take the numClasses parameter");
+}
+
+template<typename MLAlgorithm,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+template<typename MT, typename PT>
+CVBase<MLAlgorithm,
+       MatType,
+       PredictionsType,
+       WeightsType>::CVBase(const MT&,
+                            const data::DatasetInfo& datasetInfo,
+                            const PT&,
+                            const size_t numClasses) :
+    datasetInfo(datasetInfo),
+    isDatasetInfoPassed(true),
+    numClasses(numClasses)
+{
+  static_assert(MIE::TakesNumClasses,
+      "The ML algorithm should take the numClasses parameter");
+  static_assert(MIE::TakesDatasetInfo,
+      "The ML algorithm should accept a data::DatasetInfo parameter");
+}
+
+template<typename MLAlgorithm,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+template<typename MT, typename PT, typename T>
+CVBase<MLAlgorithm,
+       MatType,
+       PredictionsType,
+       WeightsType>::CVBase(const MT&,
+                            const PT&,
+                            const T&) :
+    isDatasetInfoPassed(false)
+{
+  static_assert(!MIE::TakesNumClasses,
+      "The ML algorithm should not take the numClasses parameter");
+  static_assert(MIE::SupportsWeights,
+      "The ML algorithm should support weighted learning");
+}
+
+template<typename MLAlgorithm,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+template<typename MT, typename PT, typename T>
+CVBase<MLAlgorithm,
+       MatType,
+       PredictionsType,
+       WeightsType>::CVBase(const MT&,
+                            const PT&,
+                            const size_t numClasses,
+                            const T&) :
+    isDatasetInfoPassed(false),
+    numClasses(numClasses)
+{
+  static_assert(MIE::TakesNumClasses,
+      "The ML algorithm should take the numClasses parameter");
+  static_assert(MIE::SupportsWeights,
+      "The ML algorithm should support weighted learning");
+}
+
+template<typename MLAlgorithm,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+template<typename MT, typename PT, typename T>
+CVBase<MLAlgorithm,
+       MatType,
+       PredictionsType,
+       WeightsType>::CVBase(const MT&,
+                            const data::DatasetInfo& datasetInfo,
+                            const PT&,
+                            const size_t numClasses,
+                            const T&) :
+    datasetInfo(datasetInfo),
+    isDatasetInfoPassed(true),
+    numClasses(numClasses)
+{
+  static_assert(MIE::TakesNumClasses,
+      "The ML algorithm should take the numClasses parameter");
+  static_assert(MIE::TakesDatasetInfo,
+      "The ML algorithm should accept a data::DatasetInfo parameter");
+  static_assert(MIE::SupportsWeights,
+      "The ML algorithm should support weighted learning");
+}
+
+template<typename MLAlgorithm,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+template<typename... MLAlgorithmArgs>
+std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
+                                    MatType,
+                                    PredictionsType,
+                                    WeightsType>::Train(
+    const MatType& xs,
+    const PredictionsType& ys,
+    const MLAlgorithmArgs&... args)
+{
+  return TrainModel(xs, ys, args...);
+}
+
+template<typename MLAlgorithm,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+template<typename... MLAlgorithmArgs>
+std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
+                                    MatType,
+                                    PredictionsType,
+                                    WeightsType>::Train(
+    const MatType& xs,
+    const PredictionsType& ys,
+    const WeightsType& weights,
+    const MLAlgorithmArgs&... args)
+{
+  return TrainModel(xs, ys, weights, args...);
+}
+
+template<typename MLAlgorithm,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+void CVBase<MLAlgorithm,
+            MatType,
+            PredictionsType,
+            WeightsType>::AssertDataConsistency(const MatType& xs,
+                                                const PredictionsType& ys)
+{
+  AssertSizeEquality(xs, ys);
+}
+
+template<typename MLAlgorithm,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+void CVBase<MLAlgorithm,
+            MatType,
+            PredictionsType,
+            WeightsType>::AssertDataConsistency(const MatType& xs,
+                                                const PredictionsType& ys,
+                                                const WeightsType& weights)
+{
+  AssertSizeEquality(xs, ys);
+  AssertWeightsSize(xs, weights);
+}
+
+template<typename MLAlgorithm,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+void CVBase<MLAlgorithm,
+            MatType,
+            PredictionsType,
+            WeightsType>::AssertSizeEquality(const MatType& xs,
+                                             const PredictionsType& ys)
+{
+  if (xs.n_cols != ys.n_cols)
+  {
+    std::ostringstream oss;
+    oss << "CVBase::AssertSizeEquality(): number of data points (" << xs.n_cols
+        << ") does not match number of predictions (" << ys.n_cols << ")!"
+        << std::endl;
+    throw std::invalid_argument(oss.str());
+  }
+}
+
+template<typename MLAlgorithm,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+void CVBase<MLAlgorithm,
+            MatType,
+            PredictionsType,
+            WeightsType>::AssertWeightsSize(const MatType& xs,
+                                            const WeightsType& weights)
+{
+  if (weights.n_elem != xs.n_cols)
+  {
+    std::ostringstream oss;
+    oss << "CVBase::AssertWeightsSize(): number of weights ("
+        << weights.n_elem << ") does not match number of data points ("
+        << xs.n_cols << ")!" << std::endl;
+    throw std::invalid_argument(oss.str());
+  }
+}
+
+template<typename MLAlgorithm,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+template<typename... MLAlgorithmArgs, bool, typename>
+std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
+                                    MatType,
+                                    PredictionsType,
+                                    WeightsType>::TrainModel(
+    const MatType& xs,
+    const PredictionsType& ys,
+    const MLAlgorithmArgs&... args)
+{
+  static_assert(
+      std::is_constructible<MLAlgorithm, const MatType&, const PredictionsType&,
+          MLAlgorithmArgs...>::value,
+      "MLAlgorithm should be constructible from the passed arguments");
+
+  return std::unique_ptr<MLAlgorithm>(new MLAlgorithm(xs, ys, args...));
+}
+
+template<typename MLAlgorithm,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+template<typename... MLAlgorithmArgs, bool, typename, typename>
+std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
+                                    MatType,
+                                    PredictionsType,
+                                    WeightsType>::TrainModel(
+    const MatType& xs,
+    const PredictionsType& ys,
+    const MLAlgorithmArgs&... args)
+{
+  static_assert(
+      std::is_constructible<MLAlgorithm, const MatType&, const PredictionsType&,
+          const size_t, MLAlgorithmArgs...>::value,
+      "MLAlgorithm should be constructible from the passed arguments");
+
+  return std::unique_ptr<MLAlgorithm>(
+      new MLAlgorithm(xs, ys, numClasses, args...));
+}
+
+template<typename MLAlgorithm,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+template<typename... MLAlgorithmArgs, bool, typename, typename, typename>
+std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
+                                    MatType,
+                                    PredictionsType,
+                                    WeightsType>::TrainModel(
+    const MatType& xs,
+    const PredictionsType& ys,
+    const MLAlgorithmArgs&... args)
+{
+  static_assert(
+      std::is_constructible<MLAlgorithm, const MatType&,
+          const data::DatasetInfo, const PredictionsType&, const size_t,
+              MLAlgorithmArgs...>::value,
+      "MLAlgorithm should be constructible with a data::DatasetInfo parameter");
+
+  static const bool constructableWithoutDatasetInfo =
+      std::is_constructible<MLAlgorithm, const MatType&, const PredictionsType&,
+          const size_t, MLAlgorithmArgs...>::value;
+  return TrainModel<constructableWithoutDatasetInfo>(xs, ys, args...);
+}
+
+template<typename MLAlgorithm,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+template<typename... MLAlgorithmArgs, bool, typename>
+std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
+                                    MatType,
+                                    PredictionsType,
+                                    WeightsType>::TrainModel(
+    const MatType& xs,
+    const PredictionsType& ys,
+    const WeightsType& weights,
+    const MLAlgorithmArgs&... args)
+{
+  static_assert(
+      std::is_constructible<MLAlgorithm, const MatType&, const PredictionsType&,
+          const WeightsType&, MLAlgorithmArgs...>::value,
+      "MLAlgorithm should be constructible from the passed arguments");
+
+  return std::unique_ptr<MLAlgorithm>(
+      new MLAlgorithm(xs, ys, weights, args...));
+}
+
+template<typename MLAlgorithm,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+template<typename... MLAlgorithmArgs, bool, typename, typename>
+std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
+                                    MatType,
+                                    PredictionsType,
+                                    WeightsType>::TrainModel(
+    const MatType& xs,
+    const PredictionsType& ys,
+    const WeightsType& weights,
+    const MLAlgorithmArgs&... args)
+{
+  static_assert(
+      std::is_constructible<MLAlgorithm, const MatType&, const PredictionsType&,
+          const size_t, const WeightsType&, MLAlgorithmArgs...>::value,
+      "MLAlgorithm should be constructible from the passed arguments");
+
+  return std::unique_ptr<MLAlgorithm>(
+      new MLAlgorithm(xs, ys, numClasses, weights, args...));
+}
+
+template<typename MLAlgorithm,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+template<typename... MLAlgorithmArgs, bool, typename, typename, typename>
+std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
+                                    MatType,
+                                    PredictionsType,
+                                    WeightsType>::TrainModel(
+    const MatType& xs,
+    const PredictionsType& ys,
+    const WeightsType& weights,
+    const MLAlgorithmArgs&... args)
+{
+  static_assert(
+      std::is_constructible<MLAlgorithm, const MatType&,
+          const data::DatasetInfo, const PredictionsType&, const size_t,
+              const WeightsType&, MLAlgorithmArgs...>::value,
+      "MLAlgorithm should be constructible with a data::DatasetInfo parameter");
+
+  static const bool constructableWithoutDatasetInfo =
+      std::is_constructible<MLAlgorithm, const MatType&, const PredictionsType&,
+          const size_t, const WeightsType&, MLAlgorithmArgs...>::value;
+  return TrainModel<constructableWithoutDatasetInfo>(xs, ys, weights, args...);
+}
+
+template<typename MLAlgorithm,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+template<bool, typename... MLAlgorithmArgs, typename>
+std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
+                                    MatType,
+                                    PredictionsType,
+                                    WeightsType>::TrainModel(
+    const MatType& xs,
+    const PredictionsType& ys,
+    const MLAlgorithmArgs&... args)
+{
+  if (isDatasetInfoPassed)
+    return std::unique_ptr<MLAlgorithm>(
+        new MLAlgorithm(xs, datasetInfo, ys, numClasses, args...));
+  else
+    return std::unique_ptr<MLAlgorithm>(
+        new MLAlgorithm(xs, ys, numClasses, args...));
+}
+
+template<typename MLAlgorithm,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+template<bool, typename... MLAlgorithmArgs, typename, typename>
+std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
+                                    MatType,
+                                    PredictionsType,
+                                    WeightsType>::TrainModel(
+    const MatType& xs,
+    const PredictionsType& ys,
+    const MLAlgorithmArgs&... args)
+{
+  return std::unique_ptr<MLAlgorithm>(
+      new MLAlgorithm(xs, datasetInfo, ys, numClasses, args...));
+}
+
+} // namespace cv
+} // namespace mlpack
+
+#endif
