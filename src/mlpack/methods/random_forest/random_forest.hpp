@@ -119,7 +119,7 @@ class RandomForest
    * number of trees.  The minimumLeafSize parameter is given to each individual
    * decision tree during tree building.
    *
-   * @param dataset Dataset to train on.
+   * @param data Dataset to train on.
    * @param labels Labels for dataset.
    * @param numClasses Number of classes in dataset.
    * @param numTrees Number of trees in the forest.
@@ -138,7 +138,7 @@ class RandomForest
    * is given to each individual decision tree during tree building.  This
    * overload can be used to train on categorical data.
    *
-   * @param dataset Dataset to train on.
+   * @param data Dataset to train on.
    * @param datasetInfo Dimension info for the dataset.
    * @param labels Labels for dataset.
    * @param numClasses Number of classes in dataset.
@@ -158,7 +158,7 @@ class RandomForest
    * the given number of trees.  The minimumLeafSize parameter is given to each
    * individual decision tree during tree building.
    *
-   * @param dataset Dataset to train on.
+   * @param data Dataset to train on.
    * @param labels Labels for dataset.
    * @param numClasses Number of classes in dataset.
    * @param weights Weights (importances) of each point in the dataset.
@@ -179,7 +179,7 @@ class RandomForest
    * parameter is given to each individual decision tree during tree building.
    * This overload can be used for categorical weighted training.
    *
-   * @param dataset Dataset to train on.
+   * @param data Dataset to train on.
    * @param datasetInfo Dimension info for the dataset.
    * @param labels Labels for dataset.
    * @param numClasses Number of classes in dataset.
