@@ -47,17 +47,16 @@ void BuildVanillaNetwork(MatType& trainData,
   model.Train(trainData, msgd);
   model.Reset();
   // Set the parmaeters from a learned rbm
-  model.Parameters() = {-0.23224054, -0.23000632,
-                        -0.25701271, -0.25122418,
-                        -0.20716651,  -0.20962217,
-                        -0.59922456, -0.60003836,
-                        -0.6, -0.625, -0.475};
+  model.Parameters() = arma::mat(
+      "-0.23224054, -0.23000632, -0.25701271, -0.25122418, -0.20716651"
+      "-0.20962217, -0.59922456, -0.60003836, -0.6, -0.625, -0.475;");
   // Check Weight Shared
   BOOST_REQUIRE_CLOSE(arma::accu(model.VisibleLayer().Weight() -
       model.HiddenLayer().Weight()), 0, 1e-2);
 
   // Check free energy
-  arma::vec freeEnergy = {-0.87523715, 0.50615066, 0.46923476, 1.21509084};
+  arma::vec freeEnergy = arma::mat(
+      "-0.87523715, 0.50615066, 0.46923476, 1.21509084;");
   arma::vec calcultedFreeEnergy(4);
   calcultedFreeEnergy.zeros();
   for (size_t i = 0; i < trainData.n_cols; i++)

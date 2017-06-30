@@ -1694,7 +1694,6 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeTest)
 
 BOOST_AUTO_TEST_CASE(RBMTest)
 {
-  /*
   arma::mat data;
   size_t hiddenLayerSize = 5;
   data.randu(3, 100);
@@ -1710,14 +1709,14 @@ BOOST_AUTO_TEST_CASE(RBMTest)
   RBM<GaussianInitialization, BinaryLayer<>, BinaryLayer<> > RbmBinary(data,
       gaussian, visible, hidden, 1,  true, true);
   Rbm.Reset();
-  Rbm.VisibleLayer().Bias().ones();
-  Rbm.HiddenLayer().Bias().ones();
 
-  
   SerializeObjectAll(Rbm, RbmXml, RbmText, RbmBinary);
-  Rbm.VisibleLayer().Bias().print();
-  RbmXml.VisibleLayer().Bias().print();
-  */
+  CheckMatrices(Rbm.Parameters(),RbmXml.Parameters(), RbmText.Parameters(),
+      RbmBinary.Parameters());
+
+  CheckMatrices(Rbm.VisibleLayer().Bias(), RbmXml.VisibleLayer().Bias());
+  CheckMatrices(Rbm.VisibleLayer().Bias(), RbmText.VisibleLayer().Bias());
+  CheckMatrices(Rbm.VisibleLayer().Bias(), RbmBinary.VisibleLayer().Bias());
 }
 
 BOOST_AUTO_TEST_SUITE_END();

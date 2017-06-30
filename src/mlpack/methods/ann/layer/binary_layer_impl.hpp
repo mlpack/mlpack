@@ -19,9 +19,9 @@ namespace ann { /** Artificial Neural Network. */
 
 template<typename InputDataType, typename OutputDataType>
 BinaryLayer<InputDataType, OutputDataType>::BinaryLayer(
-    const size_t inSize,
-    const size_t outSize,
-    const bool typeVisible):
+    size_t inSize,
+    size_t outSize,
+    bool typeVisible):
     inSize(inSize),
     outSize(outSize),
     typeVisible(typeVisible)

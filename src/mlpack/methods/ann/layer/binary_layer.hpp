@@ -31,7 +31,7 @@ class BinaryLayer
    * @param: inSize: num of visible neurons
    * @param: outSize: num of hidden neurons
    */
-  BinaryLayer(const size_t inSize, const size_t outSize,
+  BinaryLayer(size_t inSize, size_t outSize,
       bool typeVisible = true);
 
   // Reset the variables
@@ -87,13 +87,13 @@ class BinaryLayer
 
  private:
   //! Locally-stored number of input units.
-  const size_t inSize;
+  size_t inSize;
 
   //! Locally-stored number of output units.
-  const size_t outSize;
+  size_t outSize;
 
   //! Locally-stored type of layer
-  const bool typeVisible;
+  bool typeVisible;
 
   //! Locally-stored weight object of the layer.
   OutputDataType weights;
