@@ -22,7 +22,7 @@ namespace cv {
  * The class SimpleCV splits data into training and validation sets, runs
  * training on the training set and evaluates performance on the validation set.
  *
- * @tparam MLAlgorithm A machine learning algorithm to investigate.
+ * @tparam MLAlgorithm A machine learning algorithm.
  * @tparam Metric A metric to assess the quality of a trained model.
  * @tparam MatType The type of data.
  * @tparam PredictionsType The type of predictions (should be passed when the
