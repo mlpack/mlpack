@@ -329,7 +329,7 @@ void RandomForest<
   predictions.set_size(data.n_cols);
 
   #pragma omp parallel for
-  for (size_t i = 0; i < data.n_cols; ++i)
+  for (omp_size_t i = 0; i < data.n_cols; ++i)
     predictions[i] = Classify(data.col(i));
 }
 
@@ -364,7 +364,7 @@ void RandomForest<
   probabilities.set_size(trees[0].NumClasses(), data.n_cols);
   predictions.set_size(data.n_cols);
   #pragma omp parallel for
-  for (size_t i = 0; i < data.n_cols; ++i)
+  for (omp_size_t i = 0; i < data.n_cols; ++i)
   {
     arma::vec probs = probabilities.unsafe_col(i);
     Classify(data.col(i), predictions[i], probs);
@@ -433,7 +433,7 @@ void RandomForest<
   trees.resize(numTrees); // This will fill the vector with untrained trees.
 
   #pragma omp parallel for
-  for (size_t i = 0; i < numTrees; ++i)
+  for (omp_size_t i = 0; i < numTrees; ++i)
   {
     MatType bootstrapDataset;
     arma::Row<size_t> bootstrapLabels;
