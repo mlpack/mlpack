@@ -28,10 +28,10 @@ BOOST_AUTO_TEST_SUITE(SGDTest);
 BOOST_AUTO_TEST_CASE(SimpleSGDTestFunction)
 {
   SGDTestFunction f;
-  StandardSGD<SGDTestFunction> s(f, 0.0003, 5000000, 1e-9, true);
+  StandardSGD s(0.0003, 5000000, 1e-9, true);
 
   arma::mat coordinates = f.GetInitialPoint();
-  double result = s.Optimize(coordinates);
+  double result = s.Optimize(f, coordinates);
 
   BOOST_REQUIRE_CLOSE(result, -1.0, 0.05);
   BOOST_REQUIRE_SMALL(coordinates[0], 1e-3);
@@ -47,10 +47,10 @@ BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
     // Create the generalized Rosenbrock function.
     GeneralizedRosenbrockFunction f(i);
 
-    StandardSGD<GeneralizedRosenbrockFunction> s(f, 0.001, 0, 1e-15, true);
+    StandardSGD s(0.001, 0, 1e-15, true);
 
     arma::mat coordinates = f.GetInitialPoint();
-    double result = s.Optimize(coordinates);
+    double result = s.Optimize(f, coordinates);
 
     BOOST_REQUIRE_SMALL(result, 1e-10);
     for (size_t j = 0; j < i; ++j)

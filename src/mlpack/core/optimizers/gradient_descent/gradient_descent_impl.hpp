@@ -18,21 +18,9 @@
 namespace mlpack {
 namespace optimization {
 
-template<typename FunctionType>
-GradientDescent<FunctionType>::GradientDescent(
-    FunctionType& function,
-    const double stepSize,
-    const size_t maxIterations,
-    const double tolerance) :
-    function(function),
-    stepSize(stepSize),
-    maxIterations(maxIterations),
-    tolerance(tolerance)
-{ /* Nothing to do. */ }
-
 //! Optimize the function (minimize).
 template<typename FunctionType>
-double GradientDescent<FunctionType>::Optimize(
+double GradientDescent::Optimize(
     FunctionType& function, arma::mat& iterate)
 {
   // To keep track of where we are and how things are going.

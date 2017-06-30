@@ -20,44 +20,50 @@
 namespace mlpack {
 namespace optimization {
 
-template<typename LagrangianFunction>
-AugLagrangian<LagrangianFunction>::AugLagrangian(LagrangianFunction& function) :
-    function(function),
-    augfunc(function),
-    lbfgsInternal(augfunc),
-    lbfgs(lbfgsInternal)
+template<typename LagrangianFunctionType>
+bool AugLagrangian::Optimize(LagrangianFunctionType& function,
+                             arma::mat& coordinates,
+                             const arma::vec& initLambda,
+                             const double initSigma,
+                             const size_t maxIterations)
 {
-  lbfgs.MaxIterations() = 1000;
+  lambda = initLambda;
+  sigma = initSigma;
+
+  AugLagrangianFunction<LagrangianFunctionType> augfunc(function,
+      lambda, sigma);
+
+  return Optimize(augfunc, coordinates, maxIterations);
 }
 
-template<typename LagrangianFunction>
-AugLagrangian<LagrangianFunction>::AugLagrangian(
-    AugLagrangianFunction<LagrangianFunction>& augfunc,
-    L_BFGSType& lbfgs) :
-    function(augfunc.Function()),
-    augfunc(augfunc),
-    lbfgs(lbfgs)
+template<typename LagrangianFunctionType>
+bool AugLagrangian::Optimize(LagrangianFunctionType& function,
+                             arma::mat& coordinates,
+                             const size_t maxIterations)
 {
-  // Nothing to do.  lbfgsInternal isn't used in this case.
+  // If the user did not specify the right size for sigma and lambda, we will
+  // use defaults.
+  if (!lambda.is_empty())
+  {
+    AugLagrangianFunction<LagrangianFunctionType> augfunc(function, lambda,
+        sigma);
+    return Optimize(augfunc, coordinates, maxIterations);
+  }
+  else
+  {
+    AugLagrangianFunction<LagrangianFunctionType> augfunc(function);
+    return Optimize(augfunc, coordinates, maxIterations);
+  }
 }
 
-// This overload just sets the lambda and sigma and calls the other overload.
-template<typename LagrangianFunction>
-bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
-                                                 const arma::vec& initLambda,
-                                                 const double initSigma,
-                                                 const size_t maxIterations)
+template<typename LagrangianFunctionType>
+bool AugLagrangian::Optimize(
+    AugLagrangianFunction<LagrangianFunctionType>& augfunc,
+    arma::mat& coordinates,
+    const size_t maxIterations)
 {
-  augfunc.Lambda() = initLambda;
-  augfunc.Sigma() = initSigma;
+  LagrangianFunctionType& function = augfunc.Function();
 
-  return Optimize(coordinates, maxIterations);
-}
-
-template<typename LagrangianFunction>
-bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
-                                                 const size_t maxIterations)
-{
   // Ensure that we update lambda immediately.
   double penaltyThreshold = DBL_MAX;
 
@@ -80,7 +86,7 @@ bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
     Log::Info << "AugLagrangian on iteration " << it
         << ", starting with objective "  << lastObjective << "." << std::endl;
 
-    if (!lbfgs.Optimize(coordinates))
+    if (!lbfgs.Optimize(augfunc, coordinates))
       Log::Info << "L-BFGS reported an error during optimization."
           << std::endl;
 
@@ -88,7 +94,11 @@ bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
     // comparing with is arbitrary).
     if (std::abs(lastObjective - function.Evaluate(coordinates)) < 1e-10 &&
         augfunc.Sigma() > 500000)
+    {
+      lambda = std::move(augfunc.Lambda());
+      sigma = augfunc.Sigma();
       return true;
+    }
 
     lastObjective = function.Evaluate(coordinates);
 
@@ -101,20 +111,10 @@ bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
     for (size_t i = 0; i < function.NumConstraints(); i++)
     {
       penalty += std::pow(function.EvaluateConstraint(i, coordinates), 2);
-//      Log::Debug << "Constraint " << i << " is " <<
-//          function.EvaluateConstraint(i, coordinates) << std::endl;
     }
 
     Log::Info << "Penalty is " << penalty << " (threshold "
         << penaltyThreshold << ")." << std::endl;
-
-    for (size_t i = 0; i < function.NumConstraints(); ++i)
-    {
-//      arma::mat tmpgrad;
-//      function.GradientConstraint(i, coordinates, tmpgrad);
-//      Log::Debug << "Gradient of constraint " << i << " is " << std::endl;
-//      Log::Debug << tmpgrad << std::endl;
-    }
 
     if (penalty < penaltyThreshold) // We update lambda.
     {

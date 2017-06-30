@@ -60,11 +60,7 @@ namespace optimization {
  * of points in the dataset, and Evaluate(coordinates, 0) will evaluate the
  * objective function on the first point in the dataset (presumably, the dataset
  * is held internally in the DecomposableFunctionType).
- *
- * @tparam DecomposableFunctionType Decomposable objective function type to be
- *     minimized.
  */
-template<typename DecomposableFunctionType>
 class RMSProp
 {
  public:
@@ -76,7 +72,6 @@ class RMSProp
    * are processed (i.e., one iteration equals one point; one iteration does not
    * equal one pass over the dataset).
    *
-   * @param function Function to be optimized (minimized).
    * @param stepSize Step size for each iteration.
    * @param alpha Smoothing constant, similar to that used in AdaDelta and
    *        momentum methods.
@@ -87,8 +82,7 @@ class RMSProp
    * @param shuffle If true, the function order is shuffled; otherwise, each
    *        function is visited in linear order.
    */
-  RMSProp(DecomposableFunctionType& function,
-          const double stepSize = 0.01,
+  RMSProp(const double stepSize = 0.01,
           const double alpha = 0.99,
           const double epsilon = 1e-8,
           const size_t maxIterations = 100000,
@@ -100,32 +94,16 @@ class RMSProp
    * modified to store the finishing point of the algorithm, and the final
    * objective value is returned.
    *
+   * @tparam DecomposableFunctionType Type of the function to be optimized.
    * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
+  template<typename DecomposableFunctionType>
   double Optimize(DecomposableFunctionType& function, arma::mat& iterate)
   {
     return optimizer.Optimize(function, iterate);
   }
-
-  /**
-   * Optimize the given function using RMSProp. The given starting point will be
-   * modified to store the finishing point of the algorithm, and the final
-   * objective value is returned.
-   *
-   * @param iterate Starting point (will be modified).
-   * @return Objective value of the final point.
-   */
-  double Optimize(arma::mat& iterate) { return optimizer.Optimize(iterate); }
-
-  //! Get the instantiated function to be optimized.
-  const DecomposableFunctionType& Function() const
-  {
-    return optimizer.Function();
-  }
-  //! Modify the instantiated function.
-  DecomposableFunctionType& Function() { return  optimizer.Function(); }
 
   //! Get the step size.
   double StepSize() const { return optimizer.StepSize(); }
@@ -159,13 +137,10 @@ class RMSProp
 
  private:
   //! The Stochastic Gradient Descent object with RMSPropUpdate policy.
-  SGD<DecomposableFunctionType, RMSPropUpdate> optimizer;
+  SGD<RMSPropUpdate> optimizer;
 };
 
 } // namespace optimization
 } // namespace mlpack
-
-// Include implementation.
-#include "rmsprop_impl.hpp"
 
 #endif

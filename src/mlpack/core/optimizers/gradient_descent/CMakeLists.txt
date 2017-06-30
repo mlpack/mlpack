@@ -1,5 +1,6 @@
 set(SOURCES
   gradient_descent.hpp
+  gradient_descent.cpp
   gradient_descent_impl.hpp
   test_function.hpp
   test_function.cpp

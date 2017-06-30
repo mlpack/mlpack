@@ -43,7 +43,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
   model.Add<Linear<>>(128, 2);
 
   // Set up the optimizer generator.
-  StandardSGD<decltype(model)> opt(model, 0.0001, 2);
+  StandardSGD opt(0.0001, 2);
 
   // Set up the policy and replay method.
   GreedyPolicy<CartPole> policy(1.0, 1000, 0.1);
@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
     model.Add<Linear<>>(20, 2);
 
     // Set up the optimizer.
-    StandardSGD<decltype(model)> opt(model, 0.0001, 2);
+    StandardSGD opt(0.0001, 2);
 
     // Set up the policy and replay method.
     GreedyPolicy<CartPole> policy(1.0, 1000, 0.1);
