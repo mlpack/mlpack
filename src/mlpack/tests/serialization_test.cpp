@@ -1711,7 +1711,7 @@ BOOST_AUTO_TEST_CASE(RBMTest)
   Rbm.Reset();
 
   SerializeObjectAll(Rbm, RbmXml, RbmText, RbmBinary);
-  CheckMatrices(Rbm.Parameters(),RbmXml.Parameters(), RbmText.Parameters(),
+  CheckMatrices(Rbm.Parameters(), RbmXml.Parameters(), RbmText.Parameters(),
       RbmBinary.Parameters());
 
   CheckMatrices(Rbm.VisibleLayer().Bias(), RbmXml.VisibleLayer().Bias());
