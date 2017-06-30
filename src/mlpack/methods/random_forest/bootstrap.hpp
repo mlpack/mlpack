@@ -31,13 +31,14 @@ void Bootstrap(const MatType& dataset,
     bootstrapWeights.set_size(weights.n_elem);
 
   // Random sampling with replacement.
+  arma::uvec indices = arma::randi<arma::uvec>(dataset.n_cols,
+      arma::distr_param(0, dataset.n_cols - 1));
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
-    const size_t index = math::RandInt(dataset.n_cols);
-    bootstrapDataset.col(i) = dataset.col(index);
-    bootstrapLabels[i] = labels[index];
+    bootstrapDataset.col(i) = dataset.col(indices[i]);
+    bootstrapLabels[i] = labels[indices[i]];
     if (UseWeights)
-      bootstrapWeights[i] = weights[index];
+      bootstrapWeights[i] = weights[indices[i]];
   }
 }
 
