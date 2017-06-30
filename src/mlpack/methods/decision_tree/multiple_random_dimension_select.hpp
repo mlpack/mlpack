@@ -50,7 +50,7 @@ class MultipleRandomDimensionSelect
       values[i] = value;
     }
 
-    values[NumDimensions] = size_t(-1);
+    values[NumDimensions] = std::numeric_limits<size_t>::max();
   }
 
   /**
