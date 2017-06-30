@@ -92,37 +92,32 @@ class GiniGain
       }
       else if (labels.n_elem % 4 == 2)
       {
-        const double weight1 = weights[labels.n_elem - 1];
-        const double weight2 = weights[labels.n_elem - 2];
+        const double weight1 = weights[labels.n_elem - 2];
+        const double weight2 = weights[labels.n_elem - 1];
 
-        counts[labels[labels.n_elem - 1]] += weight1;
-        counts2[labels[labels.n_elem - 2]] += weight2;
+        counts[labels[labels.n_elem - 2]] += weight1;
+        counts2[labels[labels.n_elem - 1]] += weight2;
 
         accWeights[0] += weight1;
         accWeights[1] += weight2;
       }
       else if (labels.n_elem % 4 == 3)
       {
-        const double weight1 = weights[labels.n_elem - 1];
+        const double weight1 = weights[labels.n_elem - 3];
         const double weight2 = weights[labels.n_elem - 2];
-        const double weight3 = weights[labels.n_elem - 3];
+        const double weight3 = weights[labels.n_elem - 1];
 
-        counts[labels[labels.n_elem - 1]] += weight1;
+        counts[labels[labels.n_elem - 3]] += weight1;
         counts2[labels[labels.n_elem - 2]] += weight2;
-        counts3[labels[labels.n_elem - 3]] += weight3;
+        counts3[labels[labels.n_elem - 1]] += weight3;
 
         accWeights[0] += weight1;
         accWeights[1] += weight2;
         accWeights[2] += weight3;
       }
 
-      accWeights[0] += accWeights[1];
-      accWeights[0] += accWeights[2];
-      accWeights[0] += accWeights[3];
-
-      counts += counts2;
-      counts += counts3;
-      counts += counts4;
+      accWeights[0] += accWeights[1] + accWeights[2] + accWeights[3];
+      counts += counts2 + counts3 + counts4;
 
       // Catch edge case: if there are no weights, the impurity is zero.
       if (accWeights[0] == 0.0)
@@ -153,19 +148,17 @@ class GiniGain
       }
       else if (labels.n_elem % 4 == 2)
       {
-        counts[labels[labels.n_elem - 1]]++;
-        counts2[labels[labels.n_elem - 2]]++;
+        counts[labels[labels.n_elem - 2]]++;
+        counts2[labels[labels.n_elem - 1]]++;
       }
       else if (labels.n_elem % 4 == 3)
       {
-        counts[labels[labels.n_elem - 1]]++;
+        counts[labels[labels.n_elem - 3]]++;
         counts2[labels[labels.n_elem - 2]]++;
-        counts3[labels[labels.n_elem - 3]]++;
+        counts3[labels[labels.n_elem - 1]]++;
       }
 
-      counts += counts2;
-      counts += counts3;
-      counts += counts4;
+      counts += counts2 + counts3 + counts4;
 
       for (size_t i = 0; i < numClasses; ++i)
       {
