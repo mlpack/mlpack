@@ -1077,7 +1077,7 @@ BOOST_AUTO_TEST_CASE(ConstDataTest)
 
   DecisionTree<> dt(constData, constLabels, numClasses);
   DecisionTree<> dt2(constData, datasetInfo, constLabels, numClasses);
-  DecisionTree<> dt3(constData, constLabels, numClasses, constWeigths);
+  DecisionTree<> dt3(constData, constLabels, numClasses, constWeights);
   DecisionTree<> dt4(constData, datasetInfo, constLabels, numClasses,
       constWeights);
 }

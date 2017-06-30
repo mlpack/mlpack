@@ -317,6 +317,15 @@ void RandomForest<
 >::Classify(const MatType& data,
             arma::Row<size_t>& predictions) const
 {
+  // Check edge case.
+  if (trees.size() == 0)
+  {
+    predictions.clear();
+
+    throw std::invalid_argument("RandomForest::Classify(): no random forest "
+        "trained!");
+  }
+
   predictions.set_size(data.n_cols);
 
   #pragma omp parallel for
