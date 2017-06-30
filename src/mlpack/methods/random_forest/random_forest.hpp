@@ -288,7 +288,7 @@ class RandomForest
   std::vector<DecisionTreeType> trees;
 };
 
-} // namespace rf
+} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

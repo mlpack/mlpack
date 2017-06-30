@@ -48,7 +48,8 @@ class GiniGain
     // to exploit SIMD instructions if possible.
     arma::vec countSpace(4 * numClasses, arma::fill::zeros);
     arma::vec counts(countSpace.memptr(), numClasses, false, true);
-    arma::vec counts2(countSpace.memptr() + numClasses, numClasses, false, true);
+    arma::vec counts2(countSpace.memptr() + numClasses, numClasses, false,
+        true);
     arma::vec counts3(countSpace.memptr() + 2 * numClasses, numClasses, false,
         true);
     arma::vec counts4(countSpace.memptr() + 3 * numClasses, numClasses, false,
