@@ -28,6 +28,7 @@ set(DIRS
   decision_tree
   det
   emst
+  edge_boxes
   fastmks
   gmm
   hmm

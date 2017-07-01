@@ -64,6 +64,7 @@ namespace arma {
 
   // index to subscript and vice versa
   #include "fn_ind2sub.hpp"
+
   // inplace_reshape()
   #include "fn_inplace_reshape.hpp"
 
