@@ -318,7 +318,6 @@ class CVBase
   std::unique_ptr<MLAlgorithm> TrainModel(const MatType& xs,
                                           const PredictionsType& ys,
                                           const MLAlgorithmArgs&... args);
-
 };
 
 } // namespace cv

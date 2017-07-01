@@ -43,7 +43,7 @@ template<typename MLAlgorithm,
 class SimpleCV :
     private CVBase<MLAlgorithm, MatType, PredictionsType, WeightsType>
 {
-public:
+ public:
   /**
    * This constructor splits data into training and validation sets.
    *
