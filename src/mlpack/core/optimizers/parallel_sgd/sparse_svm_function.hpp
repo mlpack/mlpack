@@ -1,5 +1,5 @@
 /**
- * @file parallel_sgd_impl.hpp
+ * @file sparse_svm_function.hpp
  * @author Shikhar Bhardwaj
  *
  * Implementation of the hinge loss function for training a sparse SVM with the
@@ -23,10 +23,10 @@ class SparseSVMLossFunction{
   SparseSVMLossFunction(arma::sp_mat& dataset, arma::vec& labels);
 
   //! Evaluate a function.
-  double Evaluate(const arma::vec& weights, size_t id);
+  double Evaluate(const arma::mat& weights, size_t id);
 
   //! Evaluate the gradient of a function.
-  void Gradient(const arma::vec& weights, size_t id, arma::sp_mat& gradient);
+  void Gradient(const arma::mat& weights, size_t id, arma::sp_mat& gradient);
 
   //! Get the dataset.
   const arma::sp_mat& Dataset() const { return dataset; }

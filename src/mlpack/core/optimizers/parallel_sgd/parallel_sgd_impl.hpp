@@ -66,11 +66,15 @@ double ParallelSGD<SparseFunctionType, DecayPolicyType>::Optimize(
 
         // Update the decision variable with non-zero components of the
         // gradient.
-        for (auto cur = gradient.begin_col(0); cur != gradient.end_col(0);
-            ++cur)
+        for(size_t i = 0; i < gradient.n_cols; ++i)
         {
-          #pragma omp atomic
-          iterate[cur.row()] -= stepSize * gradient[cur.row()];
+          // Iterate over the non-zero elements.
+          for (auto cur = gradient.begin_col(i); cur != gradient.end_col(i);
+              ++cur)
+          {
+            #pragma omp atomic
+            iterate(cur.row(), i) -= stepSize * gradient(cur.row(), i);
+          }
         }
       }
     }
