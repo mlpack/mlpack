@@ -14,6 +14,11 @@
 #define MLPACK_CORE_OPTIMIZERS_PARALLEL_SGD_SPARSE_MC_HPP
 #include <mlpack/prereqs.hpp>
 
+/**
+ * An implementation of the matrix completion example from HOGWILD!, based on
+ * empirical risk minimization in a sparse setting.
+ */
+
 class SparseMCLossFunction{
  public:
   //! Nothing to do for the default constructor.
@@ -56,16 +61,25 @@ class SparseMCLossFunction{
   size_t NumFunctions();
 
  private:
+  //! Calculate the frequency tables and mean rating before calling Evaluate
+  //! or Gradient.
   void CalculateStatistics();
 
-  //! The training data.
+  //! The row index of the datapoints.
   arma::uvec rows;
+
+  //! The column index of the datapoints.
   arma::uvec cols;
+
+  //! The rating of the datapoints.
   arma::vec ratings;
 
-  //! The statistics.
+  //! The frequency of the columns.
   arma::uvec colCnt;
+
+  //! The frequency of the rows.
   arma::uvec rowCnt;
+
   //! Mean rating.
   double meanRating;
 
