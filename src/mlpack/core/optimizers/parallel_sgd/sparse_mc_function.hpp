@@ -20,11 +20,11 @@ class SparseMCLossFunction{
   SparseMCLossFunction() = default;
 
   //! Member initialization constructor.
-  SparseMCLossFunction(arma::uvec& rows, arma::uvec& cols, arma::vec& ratings,
-      size_t rank);
+  SparseMCLossFunction(const arma::uvec& rows, const arma::uvec& cols,
+                       const arma::vec& ratings, double mu, size_t rank);
 
   //! Special Initialization constructor.
-  SparseMCLossFunction(arma::sp_mat& dataset, size_t rank);
+  SparseMCLossFunction(const arma::sp_mat& dataset, double mu, size_t rank);
 
   //! Evaluate a function.
   double Evaluate(const arma::mat& weights, size_t id);
@@ -41,6 +41,11 @@ class SparseMCLossFunction{
   size_t NumCols() const { return numCols; }
   //! Modify the width of the sparse matrix.
   size_t& NumCols() { return numCols; }
+
+  //! Get the regularization parameter.
+  double Mu() const { return mu; }
+  //! Modify the regularization parameter.
+  double& Mu() { return mu; }
 
   //! Get the rank.
   size_t Rank() const { return rank; }
@@ -63,6 +68,9 @@ class SparseMCLossFunction{
   arma::uvec rowCnt;
   //! Mean rating.
   double meanRating;
+
+  //! The regularization parameter.
+  double mu;
 
   //! The height of the sparse matrix
   size_t numRows;

@@ -66,7 +66,7 @@ double ParallelSGD<SparseFunctionType, DecayPolicyType>::Optimize(
 
         // Update the decision variable with non-zero components of the
         // gradient.
-        for(size_t i = 0; i < gradient.n_cols; ++i)
+        for (size_t i = 0; i < gradient.n_cols; ++i)
         {
           // Iterate over the non-zero elements.
           for (auto cur = gradient.begin_col(i); cur != gradient.end_col(i);
