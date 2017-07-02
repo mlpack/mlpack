@@ -13,7 +13,6 @@
 #define MLPACK_CORE_OPTIMIZERS_PARALLEL_SGD_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/sfinae_utility.hpp>
 
 namespace mlpack {
 namespace optimization {
@@ -52,15 +51,10 @@ namespace optimization {
  * out-param for the gradient. As ParallelSGD is only expected to be relevant in
  * situations where the computed gradient is sparse.
  *
- * @tparam SparseFunctionType Sparse, Decomposable objective function type to be
- *     minimized.
  * @tparam DecayPolicyType Step size update policy used by parallel SGD
  *     to update the stepsize after each iteration.
  */
-template <
-  typename SparseFunctionType,
-  typename DecayPolicyType
->
+template <typename DecayPolicyType>
 class ParallelSGD
 {
  public:
@@ -69,15 +63,13 @@ class ParallelSGD
    * the given parameters. One iteration means one batch of datapoints processed
    * by each thread.
    *
-   * @param function Function to be optimized(minimized).
    * @param maxIterations Maximum number of iterations allowed.
    * @param batchSize Number of datapoints to be processed in one iteration by
    *     each thread.
    * @param tolerance Maximum absolute tolerance to terminate the algorithm.
    * @param decayPolicy The step size update policy to use.
   */
-  ParallelSGD(SparseFunctionType& function,
-              const size_t maxIterations,
+  ParallelSGD(const size_t maxIterations,
               const size_t batchSize,
               const double tolerance,
               const DecayPolicyType& decayPolicy);
@@ -88,29 +80,13 @@ class ParallelSGD
    * algorithm, and the value of the loss function at the final point is
    * returned.
    *
-   * @param function Function to be opmtimized(minimized).
+   * @tparam SparseFunctionType Type of function to be optimized.
+   * @param function Function to be optimized(minimized).
    * @param iterate Starting point(will be modified).
    * @return Objective value at the final point.
    */
+  template <typename SparseFunctionType>
   double Optimize(SparseFunctionType& function, arma::mat& iterate);
-
-  /**
-   * Optimize the given function using stochastic gradient descent.  The given
-   * starting point will be modified to store the finishing point of the
-   * algorithm, and the final objective value is returned.
-   *
-   * @param iterate Starting point (will be modified).
-   * @return Objective value of the final point.
-   */
-  double Optimize(arma::mat& iterate)
-  {
-    return Optimize(this->function, iterate);
-  }
-
-  //! Get the instantiated function to be optimized.
-  const SparseFunctionType& Function() const { return function; }
-  //! Modify the instantiated function.
-  SparseFunctionType& Function() { return function; }
 
   //! Get the maximum number of iterations (0 indicates no limits).
   size_t MaxIterations() const { return maxIterations; }
@@ -142,8 +118,10 @@ class ParallelSGD
    *
    * @param visitationOrder Out param with the indices of the datapoints for the
    *    current iteration.
+   * @param numFunctions The number of separable functions in the objective.
    */
-  void GenerateVisitationOrder(arma::Col<size_t>& visitationOrder);
+  void GenerateVisitationOrder(arma::Col<size_t>& visitationOrder,
+      size_t numFunctions);
 
   /**
    * Get the share of datapoint indices to be updated by the thread with given
@@ -156,10 +134,6 @@ class ParallelSGD
    */
   arma::Col<size_t> ThreadShare(size_t thread_id,
                                 const arma::Col<size_t>& visitationOrder);
-
-
-  //! The instantiated function.
-  SparseFunctionType& function;
 
   //! The maximum number of allowed iterations.
   size_t maxIterations;

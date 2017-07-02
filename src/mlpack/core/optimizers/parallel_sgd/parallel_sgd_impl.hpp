@@ -18,22 +18,21 @@
 namespace mlpack {
 namespace optimization {
 
-template <typename SparseFunctionType, typename DecayPolicyType>
-ParallelSGD<SparseFunctionType, DecayPolicyType>::ParallelSGD(
-    SparseFunctionType& function,
+template <typename DecayPolicyType>
+ParallelSGD<DecayPolicyType>::ParallelSGD(
     const size_t maxIterations,
     const size_t batchSize,
     const double tolerance,
     const DecayPolicyType& decayPolicy) :
-    function(function),
     maxIterations(maxIterations),
     batchSize(batchSize),
     tolerance(tolerance),
     decayPolicy(decayPolicy)
 { /* Nothing to do. */ }
 
-template <typename SparseFunctionType, typename DecayPolicyType>
-double ParallelSGD<SparseFunctionType, DecayPolicyType>::Optimize(
+template <typename DecayPolicyType>
+template <typename SparseFunctionType>
+double ParallelSGD<DecayPolicyType>::Optimize(
     SparseFunctionType& function,
     arma::mat& iterate)
 {
@@ -47,7 +46,7 @@ double ParallelSGD<SparseFunctionType, DecayPolicyType>::Optimize(
     double stepSize = decayPolicy.StepSize(i);
 
     arma::Col<size_t> visitationOrder;
-    GenerateVisitationOrder(visitationOrder);
+    GenerateVisitationOrder(visitationOrder, function.NumFunctions());
 
     #pragma omp parallel
     {
@@ -100,21 +99,17 @@ double ParallelSGD<SparseFunctionType, DecayPolicyType>::Optimize(
   return overallObjective;
 }
 
-template <typename SparseFunctionType, typename DecayPolicyType>
-void ParallelSGD<
-    SparseFunctionType,
-    DecayPolicyType>::GenerateVisitationOrder(
-        arma::Col<size_t>& visitationOrder)
+template <typename DecayPolicyType>
+void ParallelSGD<DecayPolicyType>::GenerateVisitationOrder(
+        arma::Col<size_t>& visitationOrder, size_t numFunctions)
 {
   visitationOrder = arma::shuffle(arma::linspace<arma::Col<size_t>>(0,
-        (function.NumFunctions() - 1), function.NumFunctions()));
+      (numFunctions - 1), numFunctions));
 }
 
-template <typename SparseFunctionType, typename DecayPolicyType>
-arma::Col<size_t> ParallelSGD<
-    SparseFunctionType,
-    DecayPolicyType>::ThreadShare(size_t thread_id,
-                                     const arma::Col<size_t>& visitationOrder)
+template <typename DecayPolicyType>
+arma::Col<size_t> ParallelSGD<DecayPolicyType>::ThreadShare(
+    size_t thread_id, const arma::Col<size_t>& visitationOrder)
 {
   if (thread_id * batchSize >= visitationOrder.n_elem)
   {

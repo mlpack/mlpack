@@ -26,7 +26,7 @@ class SparseMCLossFunction{
 
   //! Member initialization constructor.
   SparseMCLossFunction(const arma::uvec& rows, const arma::uvec& cols,
-                       const arma::vec& ratings, double mu, size_t rank);
+      const arma::vec& ratings, double mu, size_t rank);
 
   //! Special Initialization constructor.
   SparseMCLossFunction(const arma::sp_mat& dataset, double mu, size_t rank);
