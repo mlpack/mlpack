@@ -63,7 +63,6 @@ void SparseMCLossFunction::CalculateStatistics()
     rowCnt(rows(i))++;
     colCnt(cols(i))++;
   }
-  meanRating = arma::mean(ratings);
 }
 
 double SparseMCLossFunction::Evaluate(const arma::mat& weights, size_t id)
@@ -82,15 +81,22 @@ double SparseMCLossFunction::Evaluate(const arma::mat& weights, size_t id)
 
   // Add the regularisation term.
   if (rowCnt(rows(id)) > 1)
-    loss += mu * arma::norm(weights.col(rowId)) / (2 * (rowCnt(rows(id)) - 1));
+  {
+    double rowNorm = arma::norm(weights.col(rowId));
+    loss += (mu * rowNorm * rowNorm) / (2 * (rowCnt(rows(id)) - 1));
+  }
   if (colCnt(cols(id)) > 1)
-    loss += mu * arma::norm(weights.col(colId)) / (2 * (colCnt(cols(id)) - 1));
+  {
+    double colNorm = arma::norm(weights.col(colId));
+    loss += (mu * colNorm * colNorm) / (2 * (colCnt(cols(id)) - 1));
+  }
 
   return loss;
 }
 
+template <typename GradType>
 void SparseMCLossFunction::Gradient(const arma::mat& weights, size_t id,
-                                    arma::sp_mat& gradient)
+                                    GradType& gradient)
 {
   // Index of the column corresponding to the row and column of the current
   // example in the decision variable.

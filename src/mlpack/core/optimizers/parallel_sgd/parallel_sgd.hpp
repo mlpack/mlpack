@@ -25,8 +25,8 @@ namespace optimization {
  * @misc{1106.5730,
  *   Author = {Feng Niu and Benjamin Recht and Christopher Re and Stephen J.
  *             Wright},
- *   Title = {HOGWILD!: A Lock-Free Approach to Parallelizing Stochastic Gradient
- *            Descent},
+ *   Title = {HOGWILD!: A Lock-Free Approach to Parallelizing Stochastic
+ *            Gradient Descent},
  *   Year = {2011},
  *   Eprint = {arXiv:1106.5730},
  * }

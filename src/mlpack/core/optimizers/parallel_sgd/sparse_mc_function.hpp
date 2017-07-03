@@ -24,18 +24,49 @@ class SparseMCLossFunction{
   //! Nothing to do for the default constructor.
   SparseMCLossFunction() = default;
 
-  //! Member initialization constructor.
+  /**
+   * Member initialization constructor.
+   *
+   * @param rows The row indices of the data points.
+   * @param cols The column indices of the data points.
+   * @param ratings The ratings of the data points.
+   * @param mu The regularization parameter.
+   * @param rank The width of the first factor.
+   */
   SparseMCLossFunction(const arma::uvec& rows, const arma::uvec& cols,
       const arma::vec& ratings, double mu, size_t rank);
 
-  //! Special Initialization constructor.
+  /**
+   * Special initialization constructor.
+   *
+   * @param dataset The sparse matrix containing the datapoints.
+   * @param mu The regularization parameter.
+   * @param rank The width of the first factor.
+   */
   SparseMCLossFunction(const arma::sp_mat& dataset, double mu, size_t rank);
 
-  //! Evaluate a function.
+  /**
+   * Evaluate the squared error function with the given parameters at the id-th
+   * data point.
+   *
+   * @param weights The decision variable at which the function is to be
+   *     evaluated.
+   * @param id Index of point to use for objective function evaluation.
+   * @return The value of the loss function at the given parameter.
+   */
   double Evaluate(const arma::mat& weights, size_t id);
 
-  //! Evaluate the gradient of a function.
-  void Gradient(const arma::mat& weights, size_t id, arma::sp_mat& gradient);
+  /**
+   * Evaluate the gradient of the squared error with the given parameters.
+   *
+   * @tparam GradType The type of the gradient parameter.
+   * @param weights The decision variable at which the gradient is to be
+   *     evaluated.
+   * @param id Index of point to use for objective function evaluation.
+   * @param gradient Out param for the gradient.
+   */
+  template <typename GradType>
+  void Gradient(const arma::mat& weights, size_t id, GradType& gradient);
 
   //! Get the height of the sparse matrix.
   size_t NumRows() const { return numRows; }
@@ -79,9 +110,6 @@ class SparseMCLossFunction{
 
   //! The frequency of the rows.
   arma::uvec rowCnt;
-
-  //! Mean rating.
-  double meanRating;
 
   //! The regularization parameter.
   double mu;

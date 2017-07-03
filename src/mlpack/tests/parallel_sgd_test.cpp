@@ -14,6 +14,7 @@
 #include <mlpack/core/optimizers/parallel_sgd/decay_policies/constant_step.hpp>
 #include <mlpack/core/optimizers/parallel_sgd/decay_policies/exponential_backoff.hpp>
 #include <mlpack/core/optimizers/parallel_sgd/sparse_test_function.hpp>
+#include <mlpack/core/optimizers/lbfgs/test_functions.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -58,6 +59,33 @@ BOOST_AUTO_TEST_CASE(SimpleParallelSGDTest)
   BOOST_REQUIRE_CLOSE(coordinates[1], 1, 0.02);
   BOOST_REQUIRE_CLOSE(coordinates[2], 1.5, 0.02);
   BOOST_REQUIRE_CLOSE(coordinates[3], 4, 0.02);
+}
+
+/**
+ * When run with a single thread, parallel SGD should be identical to normal
+ * SGD.
+ */
+BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
+{
+  // Loop over several variants.
+  for (size_t i = 10; i < 50; i += 5)
+  {
+    // Create the generalized Rosenbrock function.
+    GeneralizedRosenbrockFunction f(i);
+
+    ConstantStep decayPolicy(0.001);
+
+    ParallelSGD<ConstantStep> s(0, f.NumFunctions(), 1e-12, decayPolicy);
+
+    arma::mat coordinates = f.GetInitialPoint();
+
+    omp_set_num_threads(1);
+    double result = s.Optimize(f, coordinates);
+
+    BOOST_REQUIRE_SMALL(result, 1e-8);
+    for (size_t j = 0; j < i; ++j)
+      BOOST_REQUIRE_CLOSE(coordinates[j], (double) 1.0, 0.01);
+  }
 }
 
 /**

@@ -39,7 +39,7 @@ double ParallelSGD<DecayPolicyType>::Optimize(
   double overallObjective = 0;
   double lastObjective = DBL_MAX;
 
-  for (size_t i = 1; i <= maxIterations; ++i){
+  for (size_t i = 1; i != maxIterations; ++i){
     overallObjective = 0;
 
     // Get the stepsize for this iteration
