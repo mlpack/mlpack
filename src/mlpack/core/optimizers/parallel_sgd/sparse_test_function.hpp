@@ -29,7 +29,7 @@ class SparseTestFunction
   //! Set members in the default constructor.
   SparseTestFunction();
 
-  //! Return 6 (the number of functions).
+  //! Return 4 (the number of functions).
   size_t NumFunctions() const { return 4; }
 
   //! Get the starting point.

@@ -109,24 +109,24 @@ void ParallelSGD<DecayPolicyType>::GenerateVisitationOrder(
 
 template <typename DecayPolicyType>
 arma::Col<size_t> ParallelSGD<DecayPolicyType>::ThreadShare(
-    size_t thread_id, const arma::Col<size_t>& visitationOrder)
+    size_t threadId, const arma::Col<size_t>& visitationOrder)
 {
-  if (thread_id * batchSize >= visitationOrder.n_elem)
+  if (threadId * batchSize >= visitationOrder.n_elem)
   {
     // No data for this thread.
     return arma::Col<size_t>();
   }
-  else if ((thread_id + 1) * batchSize >= visitationOrder.n_elem)
+  else if ((threadId + 1) * batchSize >= visitationOrder.n_elem)
   {
     // The last few elements.
-    return visitationOrder.subvec(thread_id * batchSize,
+    return visitationOrder.subvec(threadId * batchSize,
         visitationOrder.n_elem - 1);
   }
   else
   {
     // Equal distribution of batchSize examples to each thread.
-    return visitationOrder.subvec(thread_id * batchSize,
-        (thread_id + 1) * batchSize - 1);
+    return visitationOrder.subvec(threadId * batchSize,
+        (threadId + 1) * batchSize - 1);
   }
 }
 

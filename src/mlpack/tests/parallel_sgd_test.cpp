@@ -10,11 +10,14 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/core/optimizers/parallel_sgd/parallel_sgd.hpp>
 #include <mlpack/core/optimizers/parallel_sgd/decay_policies/constant_step.hpp>
 #include <mlpack/core/optimizers/parallel_sgd/decay_policies/exponential_backoff.hpp>
 #include <mlpack/core/optimizers/parallel_sgd/sparse_test_function.hpp>
 #include <mlpack/core/optimizers/lbfgs/test_functions.hpp>
+// We need some thorough testing
+#define private public
+#include <mlpack/core/optimizers/parallel_sgd/parallel_sgd.hpp>
+#undef private
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -86,6 +89,42 @@ BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
     for (size_t j = 0; j < i; ++j)
       BOOST_REQUIRE_CLOSE(coordinates[j], (double) 1.0, 0.01);
   }
+}
+
+/**
+ * Test if the data points are divided correctly among the threads.
+ */
+BOOST_AUTO_TEST_CASE(ThreadSharingTest)
+{
+  ConstantStep decayPolicy(0);
+
+  // Each thread gets a batch of size 4.
+  ParallelSGD<ConstantStep> s(0, 4, 1e-10, decayPolicy);
+
+  // Generate a random visitation order.
+  arma::Col<size_t> visitationOrder;
+  s.GenerateVisitationOrder(visitationOrder, 10);
+
+  // Lets count how many times each example is handed out in an iteration.
+  arma::Col<size_t> count(10, arma::fill::zeros);
+
+  for (size_t threadId = 0; threadId < 4; ++threadId)
+  {
+    arma::Col<size_t> share = s.ThreadShare(threadId, visitationOrder);
+    for (size_t i = 0; i < share.n_elem; ++i)
+      count(share(i))++;
+
+    // The last thread to have some data.
+    if (threadId == 2)
+      BOOST_REQUIRE_EQUAL(share.n_elem, 2);
+
+    // Only the first 3 threads get data.
+    if (threadId > 2)
+      BOOST_REQUIRE_EQUAL(share.n_elem, 0);
+  }
+
+  // If everything is correct, each count should be 1 for each data point.
+  CheckMatrices(count, arma::Col<size_t>(10, arma::fill::ones));
 }
 
 /**

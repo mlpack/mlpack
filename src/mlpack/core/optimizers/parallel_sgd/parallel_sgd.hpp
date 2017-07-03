@@ -132,7 +132,7 @@ class ParallelSGD
    *    iteration.
    * @return Vector of datapoint indices to be visited by the current thread.
    */
-  arma::Col<size_t> ThreadShare(size_t thread_id,
+  arma::Col<size_t> ThreadShare(size_t threadId,
                                 const arma::Col<size_t>& visitationOrder);
 
   //! The maximum number of allowed iterations.
