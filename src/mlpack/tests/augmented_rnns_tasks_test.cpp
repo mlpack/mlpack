@@ -51,8 +51,8 @@ class HardCodedCopyModel {
   void Train(
       arma::field<arma::mat>& predictors,
       arma::field<arma::mat>& labels) {
-    auto input = predictors.at(0);
-    auto output = labels.at(0);
+    arma::mat input = predictors.at(0);
+    arma::mat output = labels.at(0);
     size_t zeroCnt = 0, oneCnt = 0;
     for (size_t i = 1; i < input.n_rows; i += 2) {
       size_t& addVar = (input.at(i, 0) == 0) ? zeroCnt : oneCnt;
@@ -147,7 +147,7 @@ class HardCodedAddModel {
     bool num = false; // true iff we have already seen the separating symbol
     size_t len = predictors.n_cols;
     for (size_t i = 0; i < len; ++i) {
-      auto digit = arma::as_scalar(arma::find(1 == predictors.col(i), 1));
+      double digit = arma::as_scalar(arma::find(1 == predictors.col(i), 1));
       if (digit != 0 && digit != 1)
       {
         // We should not see two separators
@@ -179,7 +179,7 @@ class HardCodedAddModel {
       assert(num_A + num_B == 0);
       binary_seq.push_back(0);
     }
-    auto tot_len = binary_seq.size();
+    size_t tot_len = binary_seq.size();
     labels = arma::zeros(3, tot_len);
     for (size_t j = 0; j < tot_len; ++j) {
       labels.at(binary_seq[tot_len-j-1], j) = 1;
@@ -189,7 +189,7 @@ class HardCodedAddModel {
   void Predict(
       arma::field<arma::mat>& predictors,
       arma::field<arma::mat>& labels) {
-    auto sz = predictors.n_elem;
+    size_t sz = predictors.n_elem;
     labels = arma::field<arma::mat>(sz);
     for (size_t i = 0; i < sz; ++i) {
       Predict(predictors.at(i), labels.at(i));
