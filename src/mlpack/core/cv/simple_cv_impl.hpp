@@ -135,29 +135,17 @@ size_t SimpleCV<MLAlgorithm,
     const size_t total)
 {
   if (validationSize < 0.0F || validationSize > 1.0F)
-  {
-    std::ostringstream oss;
-    oss << "SimpleCV: the validationSize parameter should be "
-        << "more than 0 and less than 1" << std::endl;
-    throw std::invalid_argument(oss.str());
-  }
+    throw std::invalid_argument("SimpleCV: the validationSize parameter should "
+        "be more than 0 and less than 1");
 
   if (total < 2)
-  {
-    std::ostringstream oss;
-    oss << "SimpleCV: 2 or more data points are expected" << std::endl;
-    throw std::invalid_argument(oss.str());
-  }
+    throw std::invalid_argument("SimpleCV: 2 or more data points are expected");
 
   size_t trainingPoints = roundf(total * (1.0F - validationSize));
 
   if (trainingPoints == 0 || trainingPoints == total)
-  {
-    std::ostringstream oss;
-    oss << "SimpleCV: the validationSize parameter is either too small "
-        << "or too big" << std::endl;
-    throw std::invalid_argument(oss.str());
-  }
+    throw std::invalid_argument("SimpleCV: the validationSize parameter is "
+        "either too small or too big");
 
   return trainingPoints;
 }
