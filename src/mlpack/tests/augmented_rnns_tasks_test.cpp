@@ -139,6 +139,9 @@ class HardCodedAddModel {
   void Predict(arma::mat& predictors,
                arma::mat& labels)
   {
+    assert(predictors.n_elem % 3 == 0);
+    predictors = predictors.t();
+    predictors.reshape(3, predictors.n_elem / 3);
     assert(predictors.n_rows == 3);
     int num_A = 0, num_B = 0;
     bool num = false; // true iff we have already seen the separating symbol
@@ -181,6 +184,7 @@ class HardCodedAddModel {
     for (size_t j = 0; j < tot_len; ++j) {
       labels.at(binary_seq[tot_len-j-1], j) = 1;
     }
+    labels.reshape(predictors.n_elem, 1);
   }
   void Predict(
       arma::field<arma::mat>& predictors,

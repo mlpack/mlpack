@@ -81,6 +81,10 @@ void AddTask::Generate(arma::field<arma::mat>& input,
   }
   input = Binarize(vecInput);
   labels = Binarize(vecLabels);
+  assert(input.n_rows == labels.n_rows);
+  for (size_t i = 0; i < input.n_rows; ++i) {
+    labels.at(i).reshape(input.at(i).n_elem, 1);
+  }
 }
 
 arma::field<arma::mat> AddTask::Binarize(arma::field<arma::vec> data)
@@ -93,6 +97,7 @@ arma::field<arma::mat> AddTask::Binarize(arma::field<arma::vec> data)
      temp.at(val, j) = 1;
     }
     procData.at(i) = temp;
+    procData.at(i).reshape(procData.at(i).n_elem, 1);
   }
   return procData;
 }
