@@ -19,18 +19,8 @@
 TreeMemory<T>::TreeMemory(size_t size, J joiner, W writer) {
   memorySize = size;
   // Rounding size to the next highest power of 2.
-  // WARNING: this is a hack that works only for 32-bit integers.
-  // In practice we don't really want to 
-  // allocate 1e12 memory cells anyway, though.
   assert(0 < size && size < static_cast<size_t>(1 << 31));
-  actualMemorySize = size - 1;
-  actualMemorySize |= actualMemorySize >> 1;
-  actualMemorySize |= actualMemorySize >> 2;
-  actualMemorySize |= actualMemorySize >> 4;
-  actualMemorySize |= actualMemorySize >> 8;
-  actualMemorySize |= actualMemorySize >> 16;
-  actualMemorySize |= actualMemorySize >> 32;
-  actualMemorySize++;
+  actualMemorySize = ceil(log2((double) size))
   assert(memorySize <= actualMemorySize);
   // Allocating enough memory to store all leaf values AND inner node values.
   memory.resize(2 * actualMemorySize - 1);
