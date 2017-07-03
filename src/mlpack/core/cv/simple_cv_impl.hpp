@@ -27,7 +27,8 @@ SimpleCV<MLAlgorithm,
         Metric,
         MatType,
         PredictionsType,
-        WeightsType>::SimpleCV(const float validationSize, CVBaseArgs... args) :
+        WeightsType>::SimpleCV(const float validationSize,
+                               const CVBaseArgs&... args) :
     Base(args...)
 {
   Init(validationSize, Base::ExtractDataArgs(args...));

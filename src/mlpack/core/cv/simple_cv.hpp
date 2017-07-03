@@ -53,7 +53,7 @@ class SimpleCV :
    *     constructors for reference).
    */
   template<typename... CVBaseArgs>
-  SimpleCV(const float validationSize, CVBaseArgs...args);
+  SimpleCV(const float validationSize, const CVBaseArgs&... args);
 
   /**
    * Train on the training set and assess performance on the validation set by
