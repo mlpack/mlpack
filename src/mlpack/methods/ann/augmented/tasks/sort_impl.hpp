@@ -15,13 +15,6 @@
 #include "sort.hpp"
 
 #include <cassert>
-#include <vector>
-#include <algorithm>
-#include <utility>
-
-using std::vector;
-using std::pair;
-using std::make_pair;
 
 namespace mlpack {
 namespace ann /* Artificial Neural Network */ {

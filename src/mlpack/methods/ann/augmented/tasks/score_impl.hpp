@@ -20,9 +20,9 @@ namespace ann /* Artificial Neural Network */ {
 namespace augmented /* Augmented neural network */ {
 namespace scorers /* Scoring utilities for augmented */ {
 
-template<typename eT>
-double SequencePrecision(arma::field<eT> trueOutputs,
-                         arma::field<eT> predOutputs)
+template<typename MatType>
+double SequencePrecision(arma::field<MatType> trueOutputs,
+                         arma::field<MatType> predOutputs)
 {
   double score = 0;
   size_t testSize = trueOutputs.n_elem;
@@ -30,7 +30,7 @@ double SequencePrecision(arma::field<eT> trueOutputs,
 
   for (size_t i = 0; i < testSize; i++)
   {
-    eT delta = arma::abs(trueOutputs.at(i) - predOutputs.at(i));
+    MatType delta = arma::abs(trueOutputs.at(i) - predOutputs.at(i));
     delta.reshape(delta.n_elem, 1);
     arma::vec deltaVec = arma::conv_to<arma::vec>::from(delta);
     double maxDelta = arma::max(deltaVec);
