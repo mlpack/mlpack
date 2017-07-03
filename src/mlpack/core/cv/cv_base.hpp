@@ -44,12 +44,12 @@ class CVBase
    * @param ys Predictions (labels for classification algorithms and responses
    *     for regression algorithms) for each point from the dataset.
    *
-   * @tparam MT A type that can be converted to MatType.
-   * @tparam PT A type that can be converted to PredictionsType.
+   * @tparam MatInType A type that can be converted to MatType.
+   * @tparam PredictionsInType A type that can be converted to PredictionsType.
    */
-  template<typename MT, typename PT>
-  CVBase(const MT& xs,
-         const PT& ys);
+  template<typename MatInType, typename PredictionsInType>
+  CVBase(const MatInType& xs,
+         const PredictionsInType& ys);
 
   /**
    * This constructor can be used for multiclass classification algorithms.
@@ -58,12 +58,12 @@ class CVBase
    * @param ys Labels for each point from the dataset.
    * @param numClasses Number of classes in the dataset.
    *
-   * @tparam MT A type that can be converted to MatType.
-   * @tparam PT A type that can be converted to PredictionsType.
+   * @tparam MatInType A type that can be converted to MatType.
+   * @tparam PredictionsInType A type that can be converted to PredictionsType.
    */
-  template<typename MT, typename PT>
-  CVBase(const MT& xs,
-         const PT& ys,
+  template<typename MatInType, typename PredictionsInType>
+  CVBase(const MatInType& xs,
+         const PredictionsInType& ys,
          const size_t numClasses);
 
   /**
@@ -75,13 +75,13 @@ class CVBase
    * @param ys Labels for each point from the dataset.
    * @param numClasses Number of classes in the dataset.
    *
-   * @tparam MT A type that can be converted to MatType.
-   * @tparam PT A type that can be converted to PredictionsType.
+   * @tparam MatInType A type that can be converted to MatType.
+   * @tparam PredictionsInType A type that can be converted to PredictionsType.
    */
-  template<typename MT, typename PT>
-  CVBase(const MT& xs,
+  template<typename MatInType, typename PredictionsInType>
+  CVBase(const MatInType& xs,
          const data::DatasetInfo& datasetInfo,
-         const PT& ys,
+         const PredictionsInType& ys,
          const size_t numClasses);
 
   /**
@@ -93,14 +93,16 @@ class CVBase
    *     for regression algorithms) for each point from the dataset.
    * @param weights Observation weights (for boosting).
    *
-   * @tparam MT A type that can be converted to MatType.
-   * @tparam PT A type that can be converted to PredictionsType.
-   * @tparam WT A type that can be converted to WeightsType.
+   * @tparam MatInType A type that can be converted to MatType.
+   * @tparam PredictionsInType A type that can be converted to PredictionsType.
+   * @tparam WeightsInType A type that can be converted to WeightsType.
    */
-  template<typename MT, typename PT, typename WT>
-  CVBase(const MT& xs,
-         const PT& ys,
-         const WT& weights);
+  template<typename MatInType,
+           typename PredictionsInType,
+           typename WeightsInType>
+  CVBase(const MatInType& xs,
+         const PredictionsInType& ys,
+         const WeightsInType& weights);
 
   /**
    * This constructor can be used for multiclass classification algorithms that
@@ -111,15 +113,17 @@ class CVBase
    * @param numClasses Number of classes in the dataset.
    * @param weights Observation weights (for boosting).
    *
-   * @tparam MT A type that can be converted to MatType.
-   * @tparam PT A type that can be converted to PredictionsType.
-   * @tparam WT A type that can be converted to WeightsType.
+   * @tparam MatInType A type that can be converted to MatType.
+   * @tparam PredictionsInType A type that can be converted to PredictionsType.
+   * @tparam WeightsInType A type that can be converted to WeightsType.
    */
-  template<typename MT, typename PT, typename WT>
-  CVBase(const MT& xs,
-         const PT& ys,
+  template<typename MatInType,
+           typename PredictionsInType,
+           typename WeightsInType>
+  CVBase(const MatInType& xs,
+         const PredictionsInType& ys,
          const size_t numClasses,
-         const WT& weights);
+         const WeightsInType& weights);
 
   /**
    * This constructor can be used for multiclass classification algorithms that
@@ -131,16 +135,18 @@ class CVBase
    * @param numClasses Number of classes in the dataset.
    * @param weights Observation weights (for boosting).
    *
-   * @tparam MT A type that can be converted to MatType.
-   * @tparam PT A type that can be converted to PredictionsType.
-   * @tparam WT A type that can be converted to WeightsType.
+   * @tparam MatInType A type that can be converted to MatType.
+   * @tparam PredictionsInType A type that can be converted to PredictionsType.
+   * @tparam WeightsInType A type that can be converted to WeightsType.
    */
-  template<typename MT, typename PT, typename WT>
-  CVBase(const MT& xs,
+  template<typename MatInType,
+           typename PredictionsInType,
+           typename WeightsInType>
+  CVBase(const MatInType& xs,
          const data::DatasetInfo& datasetInfo,
-         const PT& ys,
+         const PredictionsInType& ys,
          const size_t numClasses,
-         const WT& weights);
+         const WeightsInType& weights);
 
  protected:
   using MIE =
@@ -153,50 +159,71 @@ class CVBase
    * A set of methods for extracting input data arguments. It is supposed to be
    * called with variadic template arguments like ExtractDataArgs(args...).
    */
-  template<typename MT, typename PT>
-  static std::tuple<const MT&, const PT&> ExtractDataArgs(
-      const MT& xs,
-      const PT& ys)
-  { return std::tuple<const MT&, const PT&>(xs, ys); }
+  template<typename MatInType, typename PredictionsInType>
+  static std::tuple<const MatInType&, const PredictionsInType&> ExtractDataArgs(
+      const MatInType& xs,
+      const PredictionsInType& ys)
+  { return std::tuple<const MatInType&, const PredictionsInType&>(xs, ys); }
 
-  template<typename MT, typename PT>
-  static std::tuple<const MT&, const PT&> ExtractDataArgs(
-      const MT& xs,
-      const PT& ys,
+  template<typename MatInType, typename PredictionsInType>
+  static std::tuple<const MatInType&, const PredictionsInType&> ExtractDataArgs(
+      const MatInType& xs,
+      const PredictionsInType& ys,
       const size_t /* numClasses */)
-  { return std::tuple<const MT&, const PT&>(xs, ys); }
+  { return std::tuple<const MatInType&, const PredictionsInType&>(xs, ys); }
 
-  template<typename MT, typename PT>
-  static std::tuple<const MT&, const PT&> ExtractDataArgs(
-      const MT& xs,
+  template<typename MatInType, typename PredictionsInType>
+  static std::tuple<const MatInType&, const PredictionsInType&> ExtractDataArgs(
+      const MatInType& xs,
       const data::DatasetInfo& /* datasetInfo */,
-      const PT& ys,
+      const PredictionsInType& ys,
       const size_t /* numClasses */)
-  { return std::tuple<const MT&, const PT&>(xs, ys); }
+  { return std::tuple<const MatInType&, const PredictionsInType&>(xs, ys); }
 
-  template<typename MT, typename PT, typename WT>
-  static std::tuple<const MT&, const PT&, const WT&> ExtractDataArgs(
-      const MT& xs,
-      const PT& ys,
-      const WT& weights)
-  { return std::tuple<const MT&, const PT&, const WT&>(xs, ys, weights); }
+  template<typename MatInType,
+           typename PredictionsInType,
+           typename WeightsInType>
+  static std::tuple<const MatInType&,
+                    const PredictionsInType&,
+                    const WeightsInType&> ExtractDataArgs(
+      const MatInType& xs,
+      const PredictionsInType& ys,
+      const WeightsInType& weights)
+  {
+    return std::tuple<const MatInType&, const PredictionsInType&,
+        const WeightsInType&>(xs, ys, weights);
+  }
 
-  template<typename MT, typename PT, typename WT>
-  static std::tuple<const MT&, const PT&, const WT&> ExtractDataArgs(
-      const MT& xs,
-      const PT& ys,
+  template<typename MatInType,
+           typename PredictionsInType,
+           typename WeightsInType>
+  static std::tuple<const MatInType&,
+                    const PredictionsInType&,
+                    const WeightsInType&> ExtractDataArgs(
+      const MatInType& xs,
+      const PredictionsInType& ys,
       const size_t /* numClasses */,
-      const WT& weights)
-  { return std::tuple<const MT&, const PT&, const WT&>(xs, ys, weights); }
+      const WeightsInType& weights)
+  {
+    return std::tuple<const MatInType&, const PredictionsInType&,
+        const WeightsInType&>(xs, ys, weights);
+  }
 
-  template<typename MT, typename PT, typename WT>
-  static std::tuple<const MT&, const PT&, const WT&> ExtractDataArgs(
-      const MT& xs,
+  template<typename MatInType,
+           typename PredictionsInType,
+           typename WeightsInType>
+  static std::tuple<const MatInType&,
+                    const PredictionsInType&,
+                    const WeightsInType&> ExtractDataArgs(
+      const MatInType& xs,
       const data::DatasetInfo& /* datasetInfo */,
-      const PT& ys,
+      const PredictionsInType& ys,
       const size_t /* numClasses */,
-      const WT& weights)
-  { return std::tuple<const MT&, const PT&, const WT&>(xs, ys, weights); }
+      const WeightsInType& weights)
+  {
+    return std::tuple<const MatInType&, const PredictionsInType&,
+        const WeightsInType&>(xs, ys, weights);
+  }
 
   /**
    * Assert there is an equal number of data points and predictions.

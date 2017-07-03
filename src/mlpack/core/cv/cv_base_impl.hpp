@@ -19,12 +19,12 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename MT, typename PT>
+template<typename MatInType, typename PredictionsInType>
 CVBase<MLAlgorithm,
        MatType,
        PredictionsType,
-       WeightsType>::CVBase(const MT&,
-                            const PT&) :
+       WeightsType>::CVBase(const MatInType&,
+                            const PredictionsInType&) :
     isDatasetInfoPassed(false)
 {
   static_assert(!MIE::TakesNumClasses,
@@ -35,12 +35,12 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename MT, typename PT>
+template<typename MatInType, typename PredictionsInType>
 CVBase<MLAlgorithm,
        MatType,
        PredictionsType,
-       WeightsType>::CVBase(const MT&,
-                            const PT&,
+       WeightsType>::CVBase(const MatInType&,
+                            const PredictionsInType&,
                             const size_t numClasses) :
     isDatasetInfoPassed(false),
     numClasses(numClasses)
@@ -53,13 +53,13 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename MT, typename PT>
+template<typename MatInType, typename PredictionsInType>
 CVBase<MLAlgorithm,
        MatType,
        PredictionsType,
-       WeightsType>::CVBase(const MT&,
+       WeightsType>::CVBase(const MatInType&,
                             const data::DatasetInfo& datasetInfo,
-                            const PT&,
+                            const PredictionsInType&,
                             const size_t numClasses) :
     datasetInfo(datasetInfo),
     isDatasetInfoPassed(true),
@@ -75,13 +75,13 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename MT, typename PT, typename T>
+template<typename MatInType, typename PredictionsInType, typename WeightsInType>
 CVBase<MLAlgorithm,
        MatType,
        PredictionsType,
-       WeightsType>::CVBase(const MT&,
-                            const PT&,
-                            const T&) :
+       WeightsType>::CVBase(const MatInType&,
+                            const PredictionsInType&,
+                            const WeightsInType&) :
     isDatasetInfoPassed(false)
 {
   static_assert(!MIE::TakesNumClasses,
@@ -94,14 +94,14 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename MT, typename PT, typename T>
+template<typename MatInType, typename PredictionsInType, typename WeightsInType>
 CVBase<MLAlgorithm,
        MatType,
        PredictionsType,
-       WeightsType>::CVBase(const MT&,
-                            const PT&,
+       WeightsType>::CVBase(const MatInType&,
+                            const PredictionsInType&,
                             const size_t numClasses,
-                            const T&) :
+                            const WeightsInType&) :
     isDatasetInfoPassed(false),
     numClasses(numClasses)
 {
@@ -115,15 +115,15 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename MT, typename PT, typename T>
+template<typename MatInType, typename PredictionsInType, typename WeightsInType>
 CVBase<MLAlgorithm,
        MatType,
        PredictionsType,
-       WeightsType>::CVBase(const MT&,
+       WeightsType>::CVBase(const MatInType&,
                             const data::DatasetInfo& datasetInfo,
-                            const PT&,
+                            const PredictionsInType&,
                             const size_t numClasses,
-                            const T&) :
+                            const WeightsInType&) :
     datasetInfo(datasetInfo),
     isDatasetInfoPassed(true),
     numClasses(numClasses)
