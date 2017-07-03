@@ -37,12 +37,12 @@ BOOST_AUTO_TEST_CASE(OMPTest)
 
     FuncSq f(A, b);
     ConstrLpBallSolver linear_constr_solver(1);
-    UpdateSpan<FuncSq> update_rule(f);
+    UpdateSpan update_rule;
 
-    OMP s(f, linear_constr_solver, update_rule);
+    OMP s(linear_constr_solver, update_rule);
 
     vec coordinates = zeros<vec>(k+3);
-    double result = s.Optimize(coordinates);
+    double result = s.Optimize(f, coordinates);
 
     BOOST_REQUIRE_SMALL(result, 1e-10);
     BOOST_REQUIRE_SMALL(coordinates[0]-1, 1e-10);
@@ -59,13 +59,13 @@ BOOST_AUTO_TEST_CASE(ClassicFW)
     TestFuncFW f;
     double p = 1;   // constraint set is unit lp ball
     ConstrLpBallSolver linear_constr_solver(p);
-    UpdateClassic<TestFuncFW> update_rule(f);
+    UpdateClassic update_rule;
 
-    FrankWolfe<TestFuncFW, ConstrLpBallSolver, UpdateClassic<TestFuncFW>>
-        s(f, linear_constr_solver, update_rule);
+    FrankWolfe<ConstrLpBallSolver, UpdateClassic>
+        s(linear_constr_solver, update_rule);
 
     vec coordinates = zeros<vec>(3);
-    double result = s.Optimize(coordinates);
+    double result = s.Optimize(f, coordinates);
 
     BOOST_REQUIRE_SMALL(result, 1e-4);
     BOOST_REQUIRE_SMALL(coordinates[0]-0.1, 1e-4);

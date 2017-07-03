@@ -25,32 +25,14 @@ namespace optimization {
  * x_{k+1} = (1-\gamma) x_k + \gamma s
  * \f]
  *
- * For UpdateClassic to work, FunctionType template parameters are required.
- * This class must implement the following functions:
- *
- * FunctionType:
- *
- *   double Evaluate(const arma::mat& coordinates);
- *   void Gradient(const arma::mat& coordinates,
- *                 arma::mat& gradient);
- *
- *
- * Although the function is not used in classic update rule, we still put it
- * here since we want the same template code interface.
- *
- * @tparam FunctionType Objective function type to be minimized in FrankWolfe algorithm.
  */
-template<typename FunctionType>
 class UpdateClassic
 {
  public:
   /**
-   * Construct the classic update rule. The function to be optimized is 
-   * input here, although not used.
-   *
-   * @param function Function to be optimized in FrankWolfe algorithm.
+   * Construct the classic update rule for FrankWolfe algorithm.
    */
-  UpdateClassic(FunctionType& function): function(function)
+  UpdateClassic()
   { /* Do nothing. */ }
 
  /**
@@ -63,7 +45,9 @@ class UpdateClassic
   * @param new_coords new output solution coords.
   * @param num_iter current iteration number
   */
-  void Update(const arma::mat& old_coords,
+  template<typename FunctionType>
+  void Update(FunctionType& function,
+      const arma::mat& old_coords,
       const arma::mat& s,
       arma::mat& new_coords,
       const size_t num_iter)
@@ -71,15 +55,6 @@ class UpdateClassic
       double gamma = 2.0/(num_iter + 2.0);
       new_coords = (1.0-gamma)*old_coords + gamma*s;
   }
-
-  //! Get the instantiated function to be optimized.
-  const FunctionType& Function() const { return function; }
-  //! Modify the instantiated function.
-  FunctionType& Function() { return function; }
-
- private:
-  //! The instantiated function.
-  FunctionType& function;
 };
 
 } // namespace optimization

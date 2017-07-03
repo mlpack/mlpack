@@ -86,7 +86,6 @@ namespace optimization {
  *
  */
 template<
-    typename FunctionType,
     typename LinearConstrSolverType,
     typename UpdateRuleType
 >
@@ -99,15 +98,13 @@ class FrankWolfe
    * at the initialization of linear_constr_solver, the function to be  
    * optimized is stored in update_rule.
    *
-   * @param function Function to be optimized
    * @param linear_constr_solver Solver for linear constrained problem.
    * @param update_rule Rule for updating solution in each iteration.
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *     limit).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    */
-  FrankWolfe(FunctionType& function,
-    const LinearConstrSolverType linear_constr_solver,
+  FrankWolfe(const LinearConstrSolverType linear_constr_solver,
         const UpdateRuleType update_rule,
         const size_t maxIterations = 100000,
         const double tolerance = 1e-10);
@@ -117,15 +114,12 @@ class FrankWolfe
    * point will be modified to store the finishing point of the algorithm, and
    * the final objective value is returned.
    *
+   * @tparam function Function to be optimized.
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
-  double Optimize(arma::mat& iterate);
-
-  //! Get the instantiated function to be optimized.
-  const FunctionType& Function() const { return function; }
-  //! Modify the instantiated function.
-  FunctionType& Function() { return function; }
+  template<typename FunctionType>
+  double Optimize(FunctionType& function,arma::mat& iterate);
 
   //! Get the linear constrained solver.
   LinearConstrSolverType LinearConstrSolver()
@@ -149,9 +143,6 @@ class FrankWolfe
   double& Tolerance() { return tolerance; }
 
  private:
-  //! The instantiated function.
-  FunctionType& function;
-
   //! The solver for constrained linear problem in first step.
   LinearConstrSolverType linear_constr_solver;
 
@@ -166,7 +157,7 @@ class FrankWolfe
 };
 
 //! Orthogonal Matching Pursuit
-using OMP = FrankWolfe<FuncSq, ConstrLpBallSolver, UpdateSpan<FuncSq>>;
+using OMP = FrankWolfe<ConstrLpBallSolver, UpdateSpan>;
 
 } // namespace optimization
 } // namespace mlpack

@@ -19,17 +19,14 @@ namespace mlpack {
 namespace optimization {
 
 template<
-    typename FunctionType,
     typename LinearConstrSolverType,
     typename UpdateRuleType
 >
-FrankWolfe<FunctionType, LinearConstrSolverType, UpdateRuleType>::FrankWolfe(
-    FunctionType& function,
+FrankWolfe<LinearConstrSolverType, UpdateRuleType>::FrankWolfe(
     const LinearConstrSolverType linear_constr_solver,
     const UpdateRuleType update_rule,
     const size_t maxIterations,
     const double tolerance) :
-    function(function),
     linear_constr_solver(linear_constr_solver),
     update_rule(update_rule),
     maxIterations(maxIterations),
@@ -39,12 +36,12 @@ FrankWolfe<FunctionType, LinearConstrSolverType, UpdateRuleType>::FrankWolfe(
 
 //! Optimize the function (minimize).
 template<
-    typename FunctionType,
     typename LinearConstrSolverType,
     typename UpdateRuleType
 >
-double FrankWolfe<FunctionType, LinearConstrSolverType, UpdateRuleType>
-::Optimize(arma::mat& iterate)
+template<typename FunctionType>
+double FrankWolfe<LinearConstrSolverType, UpdateRuleType>
+::Optimize(FunctionType& function, arma::mat& iterate)
 {
     // To keep track of the function value
     double CurrentObjective = function.Evaluate(iterate);
@@ -81,9 +78,9 @@ double FrankWolfe<FunctionType, LinearConstrSolverType, UpdateRuleType>
 
 
     // Update solution, save in iterate_new
-    update_rule.Update(iterate, s, iterate_new, i);
+    update_rule.Update(function, iterate, s, iterate_new, i);
 
-    iterate = iterate_new;
+    iterate = std::move(iterate_new);
     CurrentObjective = function.Evaluate(iterate);
     }
   Log::Info << "Frank Wolfe: maximum iterations (" << maxIterations

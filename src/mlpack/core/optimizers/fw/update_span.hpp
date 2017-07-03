@@ -31,11 +31,12 @@ namespace optimization {
  *   double Evaluate(const arma::mat& coordinates);
  *   void Gradient(const arma::mat& coordinates,
  *                 arma::mat& gradient);
+ *   arma::mat MatrixA()
+ *   arma::vec Vectorb()
  *
  *
  * @tparam FunctionType Objective function type to be minimized in FrankWolfe algorithm.
  */
-template<typename FunctionType>
 class UpdateSpan
 {
  public:
@@ -45,19 +46,22 @@ class UpdateSpan
    *
    * @param function Function to be optimized in FrankWolfe algorithm.
    */
-  UpdateSpan(FunctionType& function): function(function)
+  UpdateSpan()
   { /* Do nothing. */ }
 
  /**
   * Update rule for FrankWolfe, reoptimize in the span of original solution space.
   *
   *
+  * @tparam function function to be optimized.
   * @param old_coords previous solution coords.
   * @param s current linear_constr_solution result.
   * @param new_coords new output solution coords.
   * @param num_iter current iteration number
   */
-  void Update(const arma::mat& old_coords,
+  template<typename FunctionType>
+  void Update(FunctionType& function,
+      const arma::mat& old_coords,
       const arma::mat& s,
       arma::mat& new_coords,
       const size_t num_iter)
@@ -65,20 +69,13 @@ class UpdateSpan
       // add atom here
       arma::uvec ind = find(s, 1);
       arma::uword d = ind(0);
-      AddAtom(d);
+      AddAtom(function, d);
 
       arma::vec b = function.Vectorb();
       arma::mat x = solve(atoms_current, b);
 
-      new_coords = RecoverVector(x);
+      new_coords = RecoverVector(function, x);
   }
-
-
-
-  //! Get the instantiated function to be optimized.
-  FunctionType Function() const { return function; }
-  //! Modify the instantiated function.
-  FunctionType& Function() { return function; }
 
   //! Get the current atom indices.
   arma::uvec CurrentIndices() const { return current_indices; }
@@ -90,8 +87,21 @@ class UpdateSpan
   //! Modify the current atoms.
   arma::mat& CurrentAtoms() { return atoms_current; }
 
+
+
+ private:
+  //! Current indices.
+  arma::uvec current_indices;
+
+  //! Current atoms.
+  arma::mat atoms_current;
+
+  //! Flag current indices is empty
+  bool isEmpty = true;
+
   //! Add atom into the solution space.
-  void AddAtom(const arma::uword k)
+  template<typename FunctionType>
+  void AddAtom(FunctionType& function, const arma::uword k)
   {
       if (isEmpty)
       {
@@ -110,7 +120,8 @@ class UpdateSpan
       }
   }
 
-  arma::vec RecoverVector(const arma::vec& x )
+  template<typename FunctionType>
+  arma::vec RecoverVector(FunctionType& function, const arma::vec& x)
   {
       int n = (function.MatrixA()).n_cols;
       arma::vec y = arma::zeros<arma::vec>(n);
@@ -123,19 +134,6 @@ class UpdateSpan
 
       return y;
   }
-
- private:
-  //! The instantiated function.
-  FunctionType& function;
-
-  //! Current indices.
-  arma::uvec current_indices;
-
-  //! Current atoms.
-  arma::mat atoms_current;
-
-  //! Flag current indices is empty
-  bool isEmpty = true;
 };
 
 } // namespace optimization

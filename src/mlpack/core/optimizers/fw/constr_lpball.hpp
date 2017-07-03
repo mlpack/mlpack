@@ -64,7 +64,7 @@ class ConstrLpBallSolver
   void Optimize(const arma::mat& v,
       arma::mat& s)
   {
-      if (p == -1.0)
+      if (p == std::numeric_limits<double>::infinity())
       {
       // l-inf ball
       s = -sign(v);
@@ -79,11 +79,10 @@ class ConstrLpBallSolver
       else if (p == 1.0)
       {
       // l1 ball, used in OMP
-      arma::mat tmp = abs(v);
+      arma::mat tmp = arma::abs(v);
       arma::uword k = tmp.index_max();  // linear index of matrix
-      tmp = 0 * tmp;
-      tmp(k) = v(k);
-      s = -sign(tmp);
+      s.zeros(v.n_rows, v.n_cols);
+      s(k) = -sign_double(v(k));
       return;
       }
       else
@@ -94,8 +93,12 @@ class ConstrLpBallSolver
   }
 
  private:
-  // lp norm, take 1<p<inf, use -1 for inf norm.
+  //! lp norm, take 1<p<inf,
+  // use std::numeric_limits<double>::infinity() for inf norm.
   double p;
+
+  //! Signum function for double.
+  double sign_double(const double x) const {return (x > 0) - (x < 0);}
 };
 
 } // namespace optimization
