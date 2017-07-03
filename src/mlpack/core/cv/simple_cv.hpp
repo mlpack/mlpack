@@ -65,19 +65,27 @@ class SimpleCV :
   template<typename... MLAlgorithmArgs>
   double Evaluate(const MLAlgorithmArgs& ...args);
 
-  //! Access and modify the trained model.
+  //! Access and modify the last trained model.
   MLAlgorithm& Model();
 
  private:
+  //! A short alias for CVBase.
   using Base = CVBase<MLAlgorithm, MatType, PredictionsType, WeightsType>;
 
+  /**
+   * Variables for storing a training dataset.
+   */
   MatType trainingXs;
   PredictionsType trainingYs;
   WeightsType trainingWeights;
 
+  /**
+   * Variables for storing a validation dataset.
+   */
   MatType validationXs;
   PredictionsType validationYs;
 
+  //! A pointer to the last trained model.
   std::unique_ptr<MLAlgorithm> modelPtr;
 
   /**
@@ -97,9 +105,15 @@ class SimpleCV :
            typename = void>
   void Init(const float validationSize, const DataArgsTupleT& dataArgsTuple);
 
+  /**
+   * Calculate the number of training points and assert it is legitimate.
+   */
   size_t CalculateAndAssertNumberOfTrainingPoints(const float validationSize,
                                                   const size_t total);
 
+  /**
+   * Initialize training and validation sets.
+   */
   void InitTrainingAndValidationSets(const MatType& xs,
                                      const PredictionsType& ys,
                                      const size_t numberOfTrainingPoints);

@@ -258,13 +258,22 @@ class CVBase
                                      const MLAlgorithmArgs&... args);
 
  private:
+  //! A variable for storing a data::DatasetInfo parameter if it is passed.
   const data::DatasetInfo datasetInfo;
+  //! An indicator whether a data::DatasetInfo parameter has been passed.
   const bool isDatasetInfoPassed;
+  //! A variable for storing the numClasses parameter if it is passed.
   size_t numClasses;
 
+  /**
+   * Assert there is an equal number of data points and predictions.
+   */
   static void AssertSizeEquality(const MatType& xs,
                                  const PredictionsType& ys);
 
+  /**
+   * Assert the number of weights is the same as the number of data points.
+   */
   static void AssertWeightsSize(const MatType& xs,
                                 const WeightsType& weights);
 
