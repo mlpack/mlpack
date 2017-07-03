@@ -17,7 +17,7 @@
 namespace mlpack {
 namespace cv {
 
-/*
+/**
  * A base class for cross-validation. It serves to handle basic non-data
  * constructor parameters of a machine learning algorithm (like datasetInfo or
  * numClasses) and to assert that the machine learning algorithm and data
@@ -36,7 +36,7 @@ template<typename MLAlgorithm,
 class CVBase
 {
  public:
-  /*
+  /**
    * This constructor can be used for regression algorithms and for binary
    * classification algorithms.
    *
@@ -51,7 +51,7 @@ class CVBase
   CVBase(const MT& xs,
          const PT& ys);
 
-  /*
+  /**
    * This constructor can be used for multiclass classification algorithms.
    *
    * @param xs Dataset to cross-validate on.
@@ -66,7 +66,7 @@ class CVBase
          const PT& ys,
          const size_t numClasses);
 
-  /*
+  /**
    * This constructor can be used for multiclass classification algorithms that
    * can take a data::DatasetInfo parameter.
    *
@@ -84,7 +84,7 @@ class CVBase
          const PT& ys,
          const size_t numClasses);
 
-  /*
+  /**
    * This constructor can be used for regression and binary classification
    * algorithms that support weighted learning.
    *
@@ -102,7 +102,7 @@ class CVBase
          const PT& ys,
          const WT& weights);
 
-  /*
+  /**
    * This constructor can be used for multiclass classification algorithms that
    * support weighted learning.
    *
@@ -121,7 +121,7 @@ class CVBase
          const size_t numClasses,
          const WT& weights);
 
-  /*
+  /**
    * This constructor can be used for multiclass classification algorithms that
    * can take a data::DatasetInfo parameter and support weighted learning.
    *
@@ -149,7 +149,7 @@ class CVBase
   static_assert(MIE::IsSupported,
       "MLAlgorithm should be supported by MetaInfoExtractor");
 
-  /*
+  /**
    * A set of methods for extracting input data arguments. It is supposed to be
    * called with variadic template arguments like ExtractDataArgs(args...).
    */
@@ -198,20 +198,20 @@ class CVBase
       const WT& weights)
   { return std::tuple<const MT&, const PT&, const WT&>(xs, ys, weights); }
 
-  /*
+  /**
    * Assert there is an equal number of data points and predictions.
    */
   static void AssertDataConsistency(const MatType& xs,
                                     const PredictionsType& ys);
 
-  /*
+  /**
    * Assert there is an equal number of data points, predictions, and weights.
    */
   static void AssertDataConsistency(const MatType& xs,
                                     const PredictionsType& ys,
                                     const WeightsType& weights);
 
-  /*
+  /**
    * Train MLAlgorithm with given data points, predictions, and hyperparameters
    * depending on what CVBase constructor has been called.
    */
@@ -220,7 +220,7 @@ class CVBase
                                      const PredictionsType& ys,
                                      const MLAlgorithmArgs&... args);
 
-  /*
+  /**
    * Train MLAlgorithm with given data points, predictions, weights, and
    * hyperparameters depending on what CVBase constructor has been called.
    */
@@ -241,7 +241,7 @@ class CVBase
   static void AssertWeightsSize(const MatType& xs,
                                 const WeightsType& weights);
 
-  /*
+  /**
    * A set of methods for training models depending on what parameters are
    * optional and what parameters are required for MLAlgorithm.
    */
@@ -296,7 +296,7 @@ class CVBase
                                           const WeightsType& weights,
                                           const MLAlgorithmArgs&... args);
 
-  /*
+  /**
    * When MLAlgorithm supports a data::DatasetInfo parameter, training should be
    * treated separately - there are models that can be constructed with and
    * without a data:DatasetInfo parameter and models that can be constructed

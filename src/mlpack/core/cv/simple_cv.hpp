@@ -80,7 +80,7 @@ class SimpleCV :
 
   std::unique_ptr<MLAlgorithm> modelPtr;
 
-  /*
+  /**
    * Initialize without weights.
    */
   template<typename DataArgsTupleT,
@@ -88,7 +88,7 @@ class SimpleCV :
                std::tuple_size<DataArgsTupleT>::value == 2>::type>
   void Init(const float validationSize, const DataArgsTupleT& dataArgsTuple);
 
-  /*
+  /**
    * Initialize with weights.
    */
   template<typename DataArgsTupleT,
@@ -104,7 +104,7 @@ class SimpleCV :
                                      const PredictionsType& ys,
                                      const size_t numberOfTrainingPoints);
 
-  /*
+  /**
    * Train and run evaluation in the case of non-weighted learning.
    */
   template<typename...MLAlgorithmArgs,
@@ -112,7 +112,7 @@ class SimpleCV :
            typename = typename std::enable_if<Enabled>::type>
   double TrainAndEvaluate(const MLAlgorithmArgs& ...mlAlgorithmArgs);
 
-  /*
+  /**
    * Train and run evaluation in the case of supporting weighted learning.
    */
   template<typename...MLAlgorithmArgs,
