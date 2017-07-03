@@ -371,9 +371,9 @@ void ReberGrammarTestNetwork(bool embedded = false)
 
     RNN<MeanSquaredError<> > model(5);
 
-    model.Add<Linear<> >(inputSize, 14);
-    model.Add<RecurrentLayerType>(14, 7, 10000);
-    model.Add<Linear<> >(7, outputSize);
+    model.Add<Linear<> >(inputSize, 1);
+    model.Add<RecurrentLayerType>(1, 1, 10000);
+    model.Add<Linear<> >(1, outputSize);
     model.Add<SigmoidLayer<> >();
 
     StandardSGD opt(0.1, 2, -50000);
@@ -583,9 +583,9 @@ void DistractedSequenceRecallTestNetwork()
   {
     RNN<MeanSquaredError<> > model(rho);
     model.Add<IdentityLayer<> >();
-    model.Add<Linear<> >(inputSize, 16);
-    model.Add<RecurrentLayerType>(14, 7, rho);
-    model.Add<Linear<> >(7, outputSize);
+    model.Add<Linear<> >(inputSize, 3);
+    model.Add<RecurrentLayerType>(3, 3, rho);
+    model.Add<Linear<> >(3, outputSize);
     model.Add<SigmoidLayer<> >();
 
     StandardSGD opt(0.1, 2, -50000);

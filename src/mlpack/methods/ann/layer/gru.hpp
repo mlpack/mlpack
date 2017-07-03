@@ -1,6 +1,6 @@
 /**
  * @file gru.hpp
- * @authorSumedh Ghaisas
+ * @author Sumedh Ghaisas
  *
  * Definition of the GRU layer.
  *
@@ -44,9 +44,7 @@ namespace ann /** Artificial Neural Network. */ {
 /**
  * An implementation of a gru network layer.
  *
- * This class allows specification of the type of the activation functions used
- * for the gates and cells and also of the type of the function used to
- * initialize and update the peephole weights.
+ * This cell can be used in RNN networks.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
