@@ -71,14 +71,14 @@ double SparseMCLossFunction::Evaluate(const arma::mat& weights, size_t id)
   // The decision variable is expected to be stored as follows.
   // The first numRows columns have the first factor matrix, the next numCols
   // columns have the second factor matrix. The decision variable matrix is
-  // thus of size (numRows + numCols) x rank.
+  // thus of size rank x (numCols + numRows).
 
   size_t colId = numRows + cols(id);
   size_t rowId = rows(id);
 
-  float error = arma::dot(weights.col(rowId), weights.col(colId)) +
-      meanRating - ratings(id);
-  float loss = error * error;
+  double error = arma::dot(weights.col(rowId), weights.col(colId)) -
+    ratings(id);
+  double loss = error * error;
 
   // Add the regularisation term.
   if (rowCnt(rows(id)) > 1)
@@ -97,10 +97,9 @@ void SparseMCLossFunction::Gradient(const arma::mat& weights, size_t id,
   size_t colId = numRows + cols(id);
   size_t rowId = rows(id);
 
-  gradient = arma::sp_mat(numRows + numCols, rank);
-
-  double error = arma::dot(weights.col(rowId), weights.col(colId))
-      + meanRating - ratings(id);
+  gradient = arma::sp_mat(rank, numCols + numRows);
+  double error = arma::dot(weights.col(rowId), weights.col(colId)) -
+    ratings(id);
 
   // Calculate gradient for the first factor.
   // Add the regularisation term.
