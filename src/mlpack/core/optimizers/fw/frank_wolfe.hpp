@@ -119,7 +119,7 @@ class FrankWolfe
    * @return Objective value of the final point.
    */
   template<typename FunctionType>
-  double Optimize(FunctionType& function,arma::mat& iterate);
+  double Optimize(FunctionType& function, arma::mat& iterate);
 
   //! Get the linear constrained solver.
   LinearConstrSolverType LinearConstrSolver()
