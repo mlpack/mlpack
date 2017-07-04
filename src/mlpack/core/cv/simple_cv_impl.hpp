@@ -24,11 +24,11 @@ template<typename MLAlgorithm,
          typename WeightsType>
 template<typename... CVBaseArgs>
 SimpleCV<MLAlgorithm,
-        Metric,
-        MatType,
-        PredictionsType,
-        WeightsType>::SimpleCV(const float validationSize,
-                               const CVBaseArgs&... args) :
+         Metric,
+         MatType,
+         PredictionsType,
+         WeightsType>::SimpleCV(const float validationSize,
+                                const CVBaseArgs&... args) :
     Base(args...)
 {
   Init(validationSize, Base::ExtractDataArgs(args...));
@@ -193,10 +193,10 @@ template<typename MLAlgorithm,
          typename PredictionsType,
          typename WeightsType>
 void SimpleCV<MLAlgorithm,
-                Metric,
-                MatType,
-                PredictionsType,
-                WeightsType>::InitTrainingAndValidationSets(
+              Metric,
+              MatType,
+              PredictionsType,
+              WeightsType>::InitTrainingAndValidationSets(
     const MatType& xs,
     const PredictionsType& ys,
     const size_t numberOfTrainingPoints)
