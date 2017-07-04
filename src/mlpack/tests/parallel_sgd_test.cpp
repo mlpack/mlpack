@@ -46,22 +46,28 @@ BOOST_AUTO_TEST_CASE(SimpleParallelSGDTest)
   // test will fail.
 
   size_t threadsAvailable = omp_get_max_threads();
-  size_t batchSize = std::ceil((float) f.NumFunctions() / threadsAvailable);
 
-  ParallelSGD<ConstantStep> s(10000, batchSize, 1e-5, decayPolicy);
+  for (size_t i = threadsAvailable; i > 0; --i)
+  {
+    omp_set_num_threads(i);
 
-  arma::mat coordinates = f.GetInitialPoint();
-  double result = s.Optimize(f, coordinates);
+    size_t batchSize = std::ceil((float) f.NumFunctions() / i);
 
-  // The final value of the objective function should be close to the optimal
-  // value, that is the sum of values at the vertices of the parabolas.
-  BOOST_REQUIRE_CLOSE(result, 123.75, 0.01);
+    ParallelSGD<ConstantStep> s(10000, batchSize, 1e-5, decayPolicy);
 
-  // The co-ordinates should be the vertices of the parabolas.
-  BOOST_REQUIRE_CLOSE(coordinates[0], 2, 0.02);
-  BOOST_REQUIRE_CLOSE(coordinates[1], 1, 0.02);
-  BOOST_REQUIRE_CLOSE(coordinates[2], 1.5, 0.02);
-  BOOST_REQUIRE_CLOSE(coordinates[3], 4, 0.02);
+    arma::mat coordinates = f.GetInitialPoint();
+    double result = s.Optimize(f, coordinates);
+
+    // The final value of the objective function should be close to the optimal
+    // value, that is the sum of values at the vertices of the parabolas.
+    BOOST_REQUIRE_CLOSE(result, 123.75, 0.01);
+
+    // The co-ordinates should be the vertices of the parabolas.
+    BOOST_REQUIRE_CLOSE(coordinates[0], 2, 0.02);
+    BOOST_REQUIRE_CLOSE(coordinates[1], 1, 0.02);
+    BOOST_REQUIRE_CLOSE(coordinates[2], 1.5, 0.02);
+    BOOST_REQUIRE_CLOSE(coordinates[3], 4, 0.02);
+  }
 }
 
 /**
