@@ -187,6 +187,10 @@ BOOST_AUTO_TEST_CASE(TakesNumClassesTest)
       "Value should be false");
 }
 
+/**
+ * Test the simple cross-validation strategy implementation with the Accuracy
+ * metric.
+ */
 BOOST_AUTO_TEST_CASE(SimpleCVAccuracyTest)
 {
   // Using the first half of data for training and the rest for validation.
@@ -200,6 +204,9 @@ BOOST_AUTO_TEST_CASE(SimpleCVAccuracyTest)
   BOOST_REQUIRE_CLOSE(cv.Evaluate(), 0.75, 1e-5);
 }
 
+/**
+ * Test the simple cross-validation strategy implementation with the MSE metric.
+ */
 BOOST_AUTO_TEST_CASE(SimpleCVMSETest)
 {
   // Using the first two points for training and remaining three for validation.
@@ -246,6 +253,10 @@ arma::Row<size_t> PredictLabelsWithDT(const arma::mat& data,
   return predictedLabels;
 }
 
+/**
+ * Test the simple cross-validation strategy implementation with decision trees
+ * constructed in multiple ways.
+ */
 BOOST_AUTO_TEST_CASE(SimpleCVWithDTTest)
 {
   arma::mat data;
