@@ -15,8 +15,6 @@
 
 #include <vector>
 
-using std::vector;
-
 namespace mlpack {
 namespace ann /* Artificial Neural Network */ {
 namespace augmented /* Augmented neural network */ {
@@ -25,18 +23,20 @@ class TreeMemory {
 public:
   TreeMemory(size_t size, J joiner, W writer);
 
-  void Initialize(vector<T>& leafValues);
+  void Initialize(std::vector<T>& leafValues);
 
   void Update(size_t pos, T el);
 
   T Get(size_t index);
+  T GetCell(size_t memIndex);
 
   inline size_t Root();
   inline size_t Left(size_t origin);
   inline size_t Right(size_t origin);
   inline size_t Parent(size_t child);
+  inline size_t LeafIndex(size_t leafPos);
 private:
-  vector<T> memory;
+  std::vector<T> memory;
   J joinFunction;
   W writeFunction;
   size_t memorySize;
