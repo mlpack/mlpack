@@ -131,7 +131,7 @@ void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
 
   // Train the model.
   Timer::Start("rbm_optimization");
-  const double out = optimizer.Optimize(*this, parameter);
+  optimizer.Optimize(*this, parameter);
   Timer::Stop("rbm_optimization");
 }
 
@@ -248,7 +248,7 @@ void RBM<InitializationRuleType, VisibleLayerType, HiddenLayerType>::
   weightNegativeGrad = hiddenBiasNegativeGrad * negativeSamples.t();
   visibleBiasNegativeGrad = negativeSamples;
 
-  output = (positiveGradient - negativeGradient);
+  output = (negativeGradient - positiveGradient);
 }
 
 //! Serialize the model.

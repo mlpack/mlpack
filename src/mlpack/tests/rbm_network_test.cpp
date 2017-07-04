@@ -43,16 +43,14 @@ void BuildVanillaNetwork(MatType& trainData,
   GaussianInitialization gaussian(0, 0.1);
   RBM<GaussianInitialization, BinaryLayer<>, BinaryLayer<>> model(trainData,
       gaussian, visible, hidden, 1,  true);
-  MiniBatchSGD msgd(10, 0.06, trainData.n_cols * 20, 0, true);
-  model.Train(trainData, msgd);
   model.Reset();
-  // Set the parmaeters from a learned rbm
+  // Set the parmaeters from a learned rbm sklearn random state 23
   model.Parameters() = arma::mat(
-      "-0.23224054, -0.23000632, -0.25701271, -0.25122418, -0.20716651"
+      "-0.23224054, -0.23000632, -0.25701271, -0.25122418, -0.20716651,"
       "-0.20962217, -0.59922456, -0.60003836, -0.6, -0.625, -0.475;");
   // Check Weight Shared
   BOOST_REQUIRE_CLOSE(arma::accu(model.VisibleLayer().Weight() -
-      model.HiddenLayer().Weight()), 0, 1e-2);
+      model.HiddenLayer().Weight()), 0, 1e-14);
 
   // Check free energy
   arma::vec freeEnergy = arma::mat(
@@ -65,8 +63,8 @@ void BuildVanillaNetwork(MatType& trainData,
         std::move(output));
     calcultedFreeEnergy(i) = model.FreeEnergy(std::move(trainData.col(i)));
   }
-
-  BOOST_REQUIRE_LE(arma::accu(calcultedFreeEnergy - freeEnergy), 1);
+  for (size_t i = 0; i < freeEnergy.n_elem; i++)
+    BOOST_REQUIRE_CLOSE(calcultedFreeEnergy(i), freeEnergy(i), 1e-5);
 }
 BOOST_AUTO_TEST_CASE(MiscTest)
 {
@@ -78,6 +76,8 @@ BOOST_AUTO_TEST_CASE(MiscTest)
                           "0, 1, 1;"
                           "1, 0, 1;"
                           "1, 1, 1;");
+  std::cout << X.n_rows << std::endl;
+  std::cout << X.n_cols << std::endl;
   X = X.t();
   BuildVanillaNetwork<>(X, 2);
 }
@@ -104,14 +104,14 @@ BOOST_AUTO_TEST_CASE(ClassificationTest)
       testLabelsTemp.n_rows);
 
   for (size_t i = 0; i < trainLabelsTemp.n_rows; ++i)
-  {
     trainLabels(i) = arma::as_scalar(trainLabelsTemp.row(i));
-  }
 
-  for (size_t i = 0; i < testLabels.n_rows; ++i)
-  {
-    testLabels(i) = arma::as_scalar(testLabels.row(i));
-  }
+  for (size_t i = 0; i < testLabelsTemp.n_rows; ++i)
+    testLabels(i) = arma::as_scalar(testLabelsTemp.row(i));
+
+  std::cout << arma::size(trainLabels) << std::endl;
+  std::cout << arma::size(testLabels) << std::endl;
+
   trainData = trainData.t();
   testData = testData.t();
 
@@ -159,13 +159,13 @@ BOOST_AUTO_TEST_CASE(ClassificationTest)
 
   double classificationAccuray = regressor2.ComputeAccuracy(testData,
    testLabels);
-  std::cout << classificationAccuray << std::endl;
+  std::cout << "Softmax Accuracy" << classificationAccuray << std::endl;
 
   L_BFGS optimizer1(numBasis, numIterations);
   SoftmaxRegression regressor1(XRbm, trainLabels, numClasses,
         0.001, false, optimizer1);
   double classificationAccuray1 = regressor1.ComputeAccuracy(YRbm, testLabels);
-  std::cout << classificationAccuray1 << std::endl;
+  std::cout << "RBM Accuracy" <<classificationAccuray1 << std::endl;
   BOOST_REQUIRE_GE(classificationAccuray1, classificationAccuray);
 }
 
