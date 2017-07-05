@@ -1,6 +1,6 @@
 set(SOURCES
   smorms3.hpp
-  smorms3_impl.hpp
+  smorms3.cpp
   smorms3_update.hpp
 )
 

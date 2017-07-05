@@ -2,6 +2,7 @@
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
   sparse_autoencoder.hpp
+  sparse_autoencoder.cpp
   sparse_autoencoder_impl.hpp
   sparse_autoencoder_function.hpp
   sparse_autoencoder_function.cpp

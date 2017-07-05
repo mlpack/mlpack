@@ -115,7 +115,8 @@ BOOST_AUTO_TEST_CASE(TestDuplicateFlag)
   argv[2] = "--test";
 
   // This should not throw an exception.
-  ParseCommandLine(argc, const_cast<char**>(argv));
+  BOOST_REQUIRE_NO_THROW(
+      ParseCommandLine(argc, const_cast<char**>(argv)));
 }
 
 /**

@@ -17,12 +17,8 @@
 namespace mlpack {
 namespace optimization {
 
-template<
-    typename FunctionType,
-    typename CoolingScheduleType
->
-SA<FunctionType, CoolingScheduleType>::SA(
-    FunctionType& function,
+template<typename CoolingScheduleType>
+SA<CoolingScheduleType>::SA(
     CoolingScheduleType& coolingSchedule,
     const size_t maxIterations,
     const double initT,
@@ -33,7 +29,6 @@ SA<FunctionType, CoolingScheduleType>::SA(
     const double maxMoveCoef,
     const double initMoveCoef,
     const double gain) :
-    function(function),
     coolingSchedule(coolingSchedule),
     maxIterations(maxIterations),
     temperature(initT),
@@ -41,47 +36,44 @@ SA<FunctionType, CoolingScheduleType>::SA(
     moveCtrlSweep(moveCtrlSweep),
     tolerance(tolerance),
     maxToleranceSweep(maxToleranceSweep),
+    maxMoveCoef(maxMoveCoef),
+    initMoveCoef(initMoveCoef),
     gain(gain)
 {
-  const size_t rows = function.GetInitialPoint().n_rows;
-  const size_t cols = function.GetInitialPoint().n_cols;
-
-  maxMove.set_size(rows, cols);
-  maxMove.fill(maxMoveCoef);
-  moveSize.set_size(rows, cols);
-  moveSize.fill(initMoveCoef);
+  // Nothing to do.
 }
 
 //! Optimize the function (minimize).
-template<
-    typename FunctionType,
-    typename CoolingScheduleType
->
-double SA<FunctionType, CoolingScheduleType>::Optimize(arma::mat &iterate)
+template<typename CoolingScheduleType>
+template<typename FunctionType>
+double SA<CoolingScheduleType>::Optimize(FunctionType& function,
+                                         arma::mat& iterate)
 {
-  const size_t rows = function.GetInitialPoint().n_rows;
-  const size_t cols = function.GetInitialPoint().n_cols;
+  const size_t rows = iterate.n_rows;
+  const size_t cols = iterate.n_cols;
 
   size_t frozenCount = 0;
   double energy = function.Evaluate(iterate);
   double oldEnergy = energy;
-  math::RandomSeed(std::time(NULL));
 
   size_t idx = 0;
   size_t sweepCounter = 0;
 
-  arma::mat accept(rows, cols);
-  accept.zeros();
+  arma::mat accept(rows, cols, arma::fill::zeros);
+  arma::mat moveSize(rows, cols);
+  moveSize.fill(initMoveCoef);
 
   // Initial moves to get rid of dependency of initial states.
   for (size_t i = 0; i < initMoves; ++i)
-    GenerateMove(iterate, accept, energy, idx, sweepCounter);
+    GenerateMove(function, iterate, accept, moveSize, energy, idx,
+        sweepCounter);
 
   // Iterating and cooling.
   for (size_t i = 0; i != maxIterations; ++i)
   {
     oldEnergy = energy;
-    GenerateMove(iterate, accept, energy, idx, sweepCounter);
+    GenerateMove(function, iterate, accept, moveSize, energy, idx,
+        sweepCounter);
     temperature = coolingSchedule.NextTemperature(temperature, energy);
 
     // Determine if the optimization has entered (or continues to be in) a
@@ -114,13 +106,13 @@ double SA<FunctionType, CoolingScheduleType>::Optimize(arma::mat &iterate)
  * resets idx and increments sweepCounter. When sweepCounter reaches
  * moveCtrlSweep, it performs moveControl and resets sweepCounter.
  */
-template<
-    typename FunctionType,
-    typename CoolingScheduleType
->
-void SA<FunctionType, CoolingScheduleType>::GenerateMove(
+template<typename CoolingScheduleType>
+template<typename FunctionType>
+void SA<CoolingScheduleType>::GenerateMove(
+    FunctionType& function,
     arma::mat& iterate,
     arma::mat& accept,
+    arma::mat& moveSize,
     double& energy,
     size_t& idx,
     size_t& sweepCounter)
@@ -163,7 +155,7 @@ void SA<FunctionType, CoolingScheduleType>::GenerateMove(
 
   if (sweepCounter == moveCtrlSweep) // Do MoveControl().
   {
-    MoveControl(moveCtrlSweep, accept);
+    MoveControl(moveCtrlSweep, accept, moveSize);
     sweepCounter = 0;
   }
 }
@@ -182,12 +174,10 @@ void SA<FunctionType, CoolingScheduleType>::GenerateMove(
  * Jean-Marc Delosme. `An efficient simulated annealing schedule: derivation'.
  * Technical Report 8816, Yale University, 1988.
  */
-template<
-    typename FunctionType,
-    typename CoolingScheduleType
->
-void SA<FunctionType, CoolingScheduleType>::MoveControl(const size_t nMoves,
-                                                        arma::mat& accept)
+template<typename CoolingScheduleType>
+inline void SA<CoolingScheduleType>::MoveControl(const size_t nMoves,
+                                                 arma::mat& accept,
+                                                 arma::mat& moveSize)
 {
   arma::mat target;
   target.copy_size(accept);
@@ -199,7 +189,7 @@ void SA<FunctionType, CoolingScheduleType>::MoveControl(const size_t nMoves,
   // To avoid the use of element-wise arma::min(), which is only available in
   // Armadillo after v3.930, we use a for loop here instead.
   for (size_t i = 0; i < accept.n_elem; ++i)
-    moveSize(i) = (moveSize(i) > maxMove(i)) ? maxMove(i) : moveSize(i);
+    moveSize(i) = (moveSize(i) > maxMoveCoef) ? maxMoveCoef : moveSize(i);
 
   accept.zeros();
 }

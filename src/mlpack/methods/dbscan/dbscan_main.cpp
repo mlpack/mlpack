@@ -83,37 +83,36 @@ void RunDBSCAN(RangeSearchType rs = RangeSearchType())
     rs.SingleMode() = true;
 
   // Load dataset.
-  arma::mat dataset;
-  data::Load(CLI::GetParam<string>("input_file"), dataset);
+  arma::mat dataset = std::move(CLI::GetParam<arma::mat>("input"));
 
   const double epsilon = CLI::GetParam<double>("epsilon");
   const size_t minSize = (size_t) CLI::GetParam<int>("min_size");
 
-  DBSCAN<RangeSearchType> d(epsilon, minSize, rs);
+  DBSCAN<RangeSearchType> d(epsilon, minSize, !CLI::HasParam("single_mode"),
+      rs);
 
   // If possible, avoid the overhead of calculating centroids.
   arma::Row<size_t> assignments;
-  if (CLI::HasParam("centroids_file"))
+  if (CLI::HasParam("centroids"))
   {
     arma::mat centroids;
 
     d.Cluster(dataset, assignments, centroids);
 
-    data::Save(CLI::GetParam<string>("centroids_file"), centroids, false);
+    CLI::GetParam<arma::mat>("centroids") = std::move(centroids);
   }
   else
   {
     d.Cluster(dataset, assignments);
   }
 
-  if (CLI::HasParam("assignments_file"))
-    data::Save(CLI::GetParam<string>("assignments_file"), assignments, false,
-        false); // No transpose.
+  if (CLI::HasParam("assignments"))
+    CLI::GetParam<arma::Row<size_t>>("assignments") = std::move(assignments);
 }
 
 void mlpackMain()
 {
-  if (!CLI::HasParam("assignments_file") && !CLI::HasParam("centroids_file"))
+  if (!CLI::HasParam("assignments") && !CLI::HasParam("centroids"))
     Log::Warn << "Neither --assignments_file nor --centroids_file are "
         << "specified; no output will be saved!" << endl;
 
@@ -152,4 +151,6 @@ void mlpackMain()
         << "'cover', 'r', 'r-star', 'x', 'hilbert-r', 'r-plus', 'r-plus-plus',"
         << " and 'ball'." << endl;
   }
+
+  CLI::Destroy();
 }

@@ -66,10 +66,9 @@ void BuildVanillaNetwork(MatType& trainData,
   model.Add<Linear<> >(hiddenLayerSize, outputSize);
   model.Add<LogSoftMax<> >();
 
-  RMSProp<decltype(model)> opt(model, 0.01, 0.88, 1e-8,
-      maxEpochs * trainData.n_cols, -1);
+  RMSProp opt(0.01, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
 
-  model.Train(std::move(trainData), std::move(trainLabels), opt);
+  model.Train(trainData, trainLabels, opt);
 
   MatType predictionTemp;
   model.Predict(testData, predictionTemp);
@@ -194,10 +193,9 @@ void BuildDropoutNetwork(MatType& trainData,
   model.Add<Linear<> >(hiddenLayerSize, outputSize);
   model.Add<LogSoftMax<> >();
 
-  RMSProp<decltype(model)> opt(model, 0.01, 0.88, 1e-8,
-      maxEpochs * trainData.n_cols, -1);
+  RMSProp opt(0.01, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
 
-  model.Train(std::move(trainData), std::move(trainLabels), opt);
+  model.Train(trainData, trainLabels, opt);
 
   MatType predictionTemp;
   model.Predict(testData, predictionTemp);
@@ -324,10 +322,9 @@ void BuildDropConnectNetwork(MatType& trainData,
   model.Add<DropConnect<> >(hiddenLayerSize, outputSize);
   model.Add<LogSoftMax<> >();
 
-  RMSProp<decltype(model)> opt(model, 0.01, 0.88, 1e-8,
-      maxEpochs * trainData.n_cols, -1);
+  RMSProp opt(0.01, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
 
-  model.Train(std::move(trainData), std::move(trainLabels), opt);
+  model.Train(trainData, trainLabels, opt);
 
   MatType predictionTemp;
   model.Predict(testData, predictionTemp);

@@ -73,16 +73,15 @@ class LRSDP
   LRSDPFunction<SDPType>& Function() { return function; }
 
   //! Return the augmented Lagrangian object.
-  const AugLagrangian<LRSDPFunction<SDPType>>& AugLag() const { return augLag; }
+  const AugLagrangian& AugLag() const { return augLag; }
   //! Modify the augmented Lagrangian object.
-  AugLagrangian<LRSDPFunction<SDPType>>& AugLag() { return augLag; }
+  AugLagrangian& AugLag() { return augLag; }
 
  private:
+  //! Augmented lagrangian optimizer.
+  AugLagrangian augLag;
   //! Function to optimize, which the AugLagrangian object holds.
   LRSDPFunction<SDPType> function;
-
-  //! The AugLagrangian object which will be used for optimization.
-  AugLagrangian<LRSDPFunction<SDPType>> augLag;
 };
 
 } // namespace optimization

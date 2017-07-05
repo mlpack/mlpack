@@ -19,23 +19,19 @@ namespace mlpack {
 namespace optimization {
 
 template<
-    typename DecomposableFunctionType,
     typename UpdatePolicyType,
     typename DecayPolicyType
 >
 MiniBatchSGDType<
-    DecomposableFunctionType,
     UpdatePolicyType,
     DecayPolicyType
->::MiniBatchSGDType(DecomposableFunctionType& function,
-                    const size_t batchSize,
+>::MiniBatchSGDType(const size_t batchSize,
                     const double stepSize,
                     const size_t maxIterations,
                     const double tolerance,
                     const bool shuffle,
                     const UpdatePolicyType& updatePolicy,
                     const DecayPolicyType& decayPolicy) :
-                    function(function),
                     batchSize(batchSize),
                     stepSize(stepSize),
                     maxIterations(maxIterations),
@@ -47,15 +43,14 @@ MiniBatchSGDType<
 
 //! Optimize the function (minimize).
 template<
-    typename DecomposableFunctionType,
     typename UpdatePolicyType,
     typename DecayPolicyType
 >
+template<typename DecomposableFunctionType>
 double MiniBatchSGDType<
-    DecomposableFunctionType,
     UpdatePolicyType,
     DecayPolicyType
->::Optimize(arma::mat& iterate)
+>::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
 {
   // Find the number of functions.
   const size_t numFunctions = function.NumFunctions();

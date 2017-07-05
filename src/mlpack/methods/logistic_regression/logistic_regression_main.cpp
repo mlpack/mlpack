@@ -252,31 +252,30 @@ void mlpackMain()
   // Now, do the training.
   if (CLI::HasParam("training"))
   {
-    LogisticRegressionFunction<> lrf(regressors, responses, model.Parameters());
     if (optimizerType == "sgd")
     {
-      SGD<LogisticRegressionFunction<>> sgdOpt(lrf);
+      SGD<> sgdOpt;
       sgdOpt.MaxIterations() = maxIterations;
       sgdOpt.Tolerance() = tolerance;
       sgdOpt.StepSize() = stepSize;
       Log::Info << "Training model with SGD optimizer." << endl;
 
       // This will train the model.
-      model.Train(sgdOpt);
+      model.Train(regressors, responses, sgdOpt);
     }
     else if (optimizerType == "lbfgs")
     {
-      L_BFGS<LogisticRegressionFunction<>> lbfgsOpt(lrf);
+      L_BFGS lbfgsOpt;
       lbfgsOpt.MaxIterations() = maxIterations;
       lbfgsOpt.MinGradientNorm() = tolerance;
       Log::Info << "Training model with L-BFGS optimizer." << endl;
 
       // This will train the model.
-      model.Train(lbfgsOpt);
+      model.Train(regressors, responses, lbfgsOpt);
     }
     else if (optimizerType == "minibatch-sgd")
     {
-      MiniBatchSGD<LogisticRegressionFunction<>> mbsgdOpt(lrf);
+      MiniBatchSGD mbsgdOpt;
       mbsgdOpt.BatchSize() = batchSize;
       mbsgdOpt.Tolerance() = tolerance;
       mbsgdOpt.StepSize() = stepSize;
@@ -284,7 +283,7 @@ void mlpackMain()
       Log::Info << "Training model with mini-batch SGD optimizer (batch size "
           << batchSize << ")." << endl;
 
-      model.Train(mbsgdOpt);
+      model.Train(regressors, responses, mbsgdOpt);
     }
   }
 

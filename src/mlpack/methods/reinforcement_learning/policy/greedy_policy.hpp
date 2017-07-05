@@ -30,13 +30,16 @@ template <typename EnvironmentType>
 class GreedyPolicy
 {
  public:
+  //! Convenient typedef for action.
   using ActionType = typename EnvironmentType::Action;
 
   /**
    * Constructor for epsilon greedy policy class.
    *
-   * @param initialEpsilon The initial probability to explore (select a random action).
-   * @param annealInterval The steps during which the probability to explore will anneal.
+   * @param initialEpsilon The initial probability to explore
+   *        (select a random action).
+   * @param annealInterval The steps during which the probability to explore
+   *        will anneal.
    * @param minEpsilon Epsilon will never be less than this value.
    */
   GreedyPolicy(const double initialEpsilon,
@@ -51,14 +54,15 @@ class GreedyPolicy
    * Sample an action based on given action values.
    *
    * @param actionValue Values for each action.
+   * @param deterministic Always select the action greedily.
    * @return Sampled action.
    */
-  ActionType Sample(const arma::colvec& actionValue)
+  ActionType Sample(const arma::colvec& actionValue, bool deterministic = false)
   {
     double exploration = math::Random();
 
     // Select the action randomly.
-    if (exploration < epsilon)
+    if (!deterministic && exploration < epsilon)
       return static_cast<ActionType>(math::RandInt(ActionType::size));
 
     // Select the action greedily.

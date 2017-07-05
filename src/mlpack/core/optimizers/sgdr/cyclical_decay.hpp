@@ -54,15 +54,13 @@ class CyclicalDecay
    */
   CyclicalDecay(const size_t epochRestart,
                 const double multFactor,
-                const double stepSize,
-                const size_t batchSize,
-                const size_t numFunctions) :
+                const double stepSize) :
       epochRestart(epochRestart),
       multFactor(multFactor),
       constStepSize(stepSize),
       nextRestart(epochRestart),
       batchRestart(0),
-      epochBatches(numFunctions / (double) batchSize),
+      epochBatches(0),
       epoch(0)
   { /* Nothing to do here */ }
 

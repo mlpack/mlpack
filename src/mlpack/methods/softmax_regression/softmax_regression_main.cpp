@@ -79,9 +79,9 @@ PARAM_UROW_IN("labels", "A matrix containing labels (0 or 1) for the points "
     "in the training set (y). The labels must order as a row.", "l");
 
 // Model loading/saving.
-PARAM_MODEL_IN(SoftmaxRegression<>, "input_model", "File containing existing "
+PARAM_MODEL_IN(SoftmaxRegression, "input_model", "File containing existing "
     "model (parameters).", "m");
-PARAM_MODEL_OUT(SoftmaxRegression<>, "output_model", "File to save trained "
+PARAM_MODEL_OUT(SoftmaxRegression, "output_model", "File to save trained "
     "softmax regression model to.", "M");
 
 // Testing.
@@ -137,7 +137,7 @@ void mlpackMain()
     Log::Warn << "Neither --output_model_file nor --predictions_file are set; "
         << "no results from this program will be saved." << endl;
 
-  using SM = SoftmaxRegression<>;
+  using SM = SoftmaxRegression;
   unique_ptr<SM> sm = TrainSoftmax<SM>(maxIterations);
 
   TestClassifyAcc(sm->NumClasses(), *sm);
@@ -262,12 +262,10 @@ unique_ptr<Model> TrainSoftmax(const size_t maxIterations)
 
     const bool intercept = CLI::HasParam("no_intercept") ? false : true;
 
-    SRF smFunction(trainData, trainLabels, numClasses, intercept,
-        CLI::GetParam<double>("lambda"));
-
     const size_t numBasis = 5;
-    optimization::L_BFGS<SRF> optimizer(smFunction, numBasis, maxIterations);
-    sm.reset(new Model(optimizer));
+    optimization::L_BFGS optimizer(numBasis, maxIterations);
+    sm.reset(new Model(trainData, trainLabels, numClasses,
+        CLI::GetParam<double>("lambda"), intercept, std::move(optimizer)));
   }
 
   return sm;
