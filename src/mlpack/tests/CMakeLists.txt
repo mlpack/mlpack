@@ -70,12 +70,9 @@ add_executable(mlpack_test
   octree_test.cpp
   pca_test.cpp
   perceptron_test.cpp
-<<<<<<< HEAD
   python_binding_test.cpp
-=======
   prefixedoutstream_test.cpp
   q_learning_test.cpp
->>>>>>> master
   qdafn_test.cpp
   quic_svd_test.cpp
   radical_test.cpp
@@ -111,12 +108,7 @@ add_executable(mlpack_test
   ub_tree_test.cpp
   union_find_test.cpp
   vantage_point_tree_test.cpp
-<<<<<<< HEAD
-  prefixedoutstream_test.cpp
-  timer_test.cpp
   main_tests/pca_test.cpp
-=======
->>>>>>> master
 )
 # Link dependencies of test executable.
 target_link_libraries(mlpack_test
