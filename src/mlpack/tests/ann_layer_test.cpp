@@ -14,6 +14,7 @@
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
+#include <mlpack/methods/ann/init_rules/unit_init.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/rnn.hpp>
@@ -820,6 +821,51 @@ BOOST_AUTO_TEST_CASE(GradientGRULayerTest)
 
   BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
 }
+
+/**
+ * GRU layer manual forward test.
+ */
+BOOST_AUTO_TEST_CASE(ForwardGRULayerTest)
+{
+  GRU<> gru(3, 3, 5);
+
+  NetworkInitialization<UnitInitialization> networkInit;
+  networkInit.Initialize(gru.Model(), gru.Parameters());
+
+  arma::mat input = arma::ones(3, 1);
+  arma::mat output;
+  gru.Forward(std::move(input), std::move(output));
+
+  arma::mat expectedOutput = arma::ones(3, 1);
+  expectedOutput *= -4;
+  expectedOutput = arma::exp(expectedOutput);
+  expectedOutput.for_each([](arma::mat::elem_type& val)
+    { val = 1.0 / (1 + val); });
+  expectedOutput.for_each([](arma::mat::elem_type& val)
+    { val = val * (1 - val); });
+
+  BOOST_REQUIRE_LE(arma::as_scalar(arma::trans(output) * expectedOutput), 1e-2);
+
+  expectedOutput = output;
+
+  gru.Forward(std::move(input), std::move(output));
+
+  double s = arma::as_scalar(arma::sum(expectedOutput));
+  arma::mat z_t = arma::ones(3, 1);
+  z_t *= -(s + 4);
+  z_t = arma::exp(z_t);
+  z_t.for_each([](arma::mat::elem_type& val) { val = (1.0 / (1 + val)); });
+
+  arma::mat o_t = arma::ones(3, 1);
+  o_t *= -(arma::as_scalar(arma::sum(expectedOutput % z_t)) + 4);
+  o_t = arma::exp(o_t);
+  o_t.for_each([](arma::mat::elem_type& val) { val = (1.0 / (1 + val)); });
+
+  expectedOutput = z_t % expectedOutput + (arma::ones(3, 1) - z_t) % o_t;
+
+  BOOST_REQUIRE_LE(arma::as_scalar(arma::trans(output) * expectedOutput), 1e-2);
+}
+
 
 /**
  * Simple concat module test.

@@ -9,6 +9,7 @@ set(SOURCES
   oivs_init.hpp
   orthogonal_init.hpp
   random_init.hpp
+  unit_init.hpp
   zero_init.hpp
 )
 
