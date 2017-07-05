@@ -76,9 +76,9 @@ namespace optimization {
 
   
    if (!startP)
-        std::cout << " WARNING: initial start point undefined. Please specify if incorrect results detected. DEFAULT = 0.5...0.5." << std::endl;
+        Log::Warn << " WARNING: initial start point undefined. Please specify if incorrect results detected. DEFAULT = 0.5...0.5." << std::endl;
    if (!initDev)
-        std::cout << "WARNING: initialStandardDeviations undefined. Please specify if incorrect results detected. DEFAULT = 0.3...0.3." << std::endl;
+        Log::Warn << "WARNING: initialStandardDeviations undefined. Please specify if incorrect results detected. DEFAULT = 0.3...0.3." << std::endl;
     
    
 
@@ -216,8 +216,6 @@ namespace optimization {
       updateDistribution(arFunvals);
   }
 
-  std::cout << "Stop:" << std::endl << getStopMessage();
-
   // get best estimator for the optimum
   for (int i=0; i<N; i++) arr[i] = xmean[i]; 
 
@@ -253,7 +251,7 @@ namespace optimization {
           s << i << " " << j << ": " << cc << " " << C(i > j ? i : j , i > j ? j : i)
               << ", " << cc - C( i > j ? i : j , i > j ? j : i);
           
-          std::cout << "eigen(): imprecise result detected " << s.str()
+          Log::Warn << "eigen(): imprecise result detected " << s.str()
                 << std::endl;
           ++res;
         }
@@ -262,7 +260,7 @@ namespace optimization {
           std::stringstream s;
           s << i << " " << j << " " << dd;
           
-            std::cout << "eigen(): imprecise result detected (Q not orthog.)"
+            Log::Warn << "eigen(): imprecise result detected (Q not orthog.)"
                 << s.str() << std::endl;
           ++res;
         }
@@ -353,9 +351,6 @@ namespace optimization {
   template<typename funcType>
   void CMAES<funcType>::init(arma::vec& func)
   {
-
-    stopMessage = "";
-
     double trace = arma::accu(arma::pow(rgInitialStds, 2));
     sigma = std::sqrt(trace/N);
 
@@ -499,7 +494,7 @@ namespace optimization {
 
     if (state == SAMPLED) // function values are delivered here
       countevals += lambda;
-    else std::cout<<  "updateDistribution(): unexpected state" << std::endl;
+    else Log::Warn <<  "updateDistribution(): unexpected state" << std::endl;
 
     // assign function values
       population.col(N) = functionValues = fitnessValues;
@@ -512,7 +507,7 @@ namespace optimization {
     {
       sigma *= std::exp(double(0.2) + cs / damps);
      
-        std::cout << "Warning: sigma increased due to equal function values"
+        Log::Warn << "Warning: sigma increased due to equal function values"
          << std::endl << "   Reconsider the formulation of the objective function";
   
     }
@@ -607,19 +602,15 @@ namespace optimization {
     int iAchse, iKoo;
     int diag = diagonalCov == 1 || diagonalCov >= gen;
 
-    std::stringstream message;
-
-    if (stopMessage != "")
-    {
-      message << stopMessage << std::endl;
-    }
+    bool end = false;
 
     // function value reached
     if ((gen > 1 || state > SAMPLED) && stStopFitness.flg &&
         functionValues[(int)index[0]] <= stStopFitness.val)
     {
-      message << "Fitness: function value " << functionValues[(int)index[0]]
+      Log::Info << "Fitness: function value " << functionValues[(int)index[0]]
           << " <= stopFitness (" << stStopFitness.val << ")" << std::endl;
+      end = true;
     }
 
     // TolFun
@@ -630,8 +621,9 @@ namespace optimization {
 
     if (gen > 0 && range <= stopTolFun)
     {
-      message << "TolFun: function value differences " << range
+       Log::Info << "TolFun: function value differences " << range
           << " < stopTolFun=" << stopTolFun << std::endl;
+       end = true;
     }
 
     // TolFunHist
@@ -640,8 +632,9 @@ namespace optimization {
       range = maxElement(funcValueHistory, (int)funcValueHistory.size())
           - minElement(funcValueHistory, (int)funcValueHistory.size());
       if (range <= stopTolFunHist)
-        message << "TolFunHist: history of function value changes " << range
+         Log::Info << "TolFunHist: history of function value changes " << range
             << " stopTolFunHist=" << stopTolFunHist << std::endl;
+         end = true;
     }
 
     // TolX
@@ -653,7 +646,8 @@ namespace optimization {
     }
     if (cTemp == 2*N)
     {
-      message << "TolX: object variable changes below " << stopTolX << std::endl;
+       Log::Info << "TolX: object variable changes below " << stopTolX << std::endl;
+       end = true;
     }
 
     // TolUpX
@@ -661,9 +655,10 @@ namespace optimization {
     {
       if (sigma*std::sqrt(C(i,i)) > stopTolUpXFactor*rgInitialStds[i])
       {
-        message << "TolUpX: standard deviation increased by more than "
+         Log::Info << "TolUpX: standard deviation increased by more than "
             << stopTolUpXFactor << ", larger initial standard deviation recommended."
             << std::endl;
+            end = true;
         break;
       }
     }
@@ -671,9 +666,10 @@ namespace optimization {
     // Condition of C greater than dMaxSignifKond
     if (maxEW >= minEW* dMaxSignifKond)
     {
-      message << "ConditionNumber: maximal condition number " << dMaxSignifKond
+       Log::Info << "ConditionNumber: maximal condition number " << dMaxSignifKond
           << " reached. maxEW=" << maxEW <<  ",minEW=" << minEW << ",maxdiagC="
           << maxdiagC << ",mindiagC=" << mindiagC << std::endl;
+        end = true;
     }
 
     // Principal axis i has no effect on xmean, ie. x == x + 0.1* sigma* rgD[i]* B[i]
@@ -689,8 +685,9 @@ namespace optimization {
         }
         if (iKoo == N)
         {
-          message << "NoEffectAxis: standard deviation 0.1*" << (fac / 0.1)
+           Log::Info << "NoEffectAxis: standard deviation 0.1*" << (fac / 0.1)
               << " in principal axis " << iAchse << " without effect" << std::endl;
+           end = true;
           break;
         }
       }
@@ -700,26 +697,28 @@ namespace optimization {
     {
       if (xmean[iKoo] == xmean[iKoo] + sigma*std::sqrt( C(iKoo,iKoo) )/double(5))
       {
-        message << "NoEffectCoordinate: standard deviation 0.2*"
+         Log::Info << "NoEffectCoordinate: standard deviation 0.2*"
             << (sigma*std::sqrt( C(iKoo , iKoo) ) ) << " in coordinate " << iKoo
             << " without effect" << std::endl;
+        end = true;
         break;
       }
     }
 
     if (countevals >= stopMaxFunEvals)
     {
-      message << "MaxFunEvals: conducted function evaluations " << countevals
+       Log::Info << "MaxFunEvals: conducted function evaluations " << countevals
           << " >= " << stopMaxFunEvals << std::endl;
+       end = true;
     }
     if (gen >= stopMaxIter)
     {
-      message << "MaxIter: number of iterations " << gen << " >= "
+       Log::Info << "MaxIter: number of iterations " << gen << " >= "
           << stopMaxIter << std::endl;
+      end = true;
     }
 
-    stopMessage = message.str();
-    return stopMessage != "";
+    return end;
   }
 
   /**

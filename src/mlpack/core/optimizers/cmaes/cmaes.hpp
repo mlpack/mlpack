@@ -174,13 +174,7 @@ void getFittestMean(double *arr)
     for(int i=0; i<len; i++) if (rgd[i] < ans) ans=rgd[i];
       return ans;
   }
-
-/**
-   * A message that contains a detailed description of the matched stop
-   * criteria.
-   */
-  std::string getStopMessage(){return stopMessage;}
-
+  
  /**
    * Determines the method used to initialize the weights.
    */
@@ -321,8 +315,6 @@ private:
   double dLastMinEWgroesserNull;
 
   double countevals; //!< objective function evaluations
-
-  std::string stopMessage; //!< A message that contains all matched stop criteria.
   
   void updateEigensystem(bool force);
   void sortIndex(const arma::vec rgFunVal, arma::vec& iindex, int n);
