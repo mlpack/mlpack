@@ -12,6 +12,7 @@
 #ifndef MLPACK_CORE_OPTIMIZERS_CMAES_CMAES_HPP
 #define MLPACK_CORE_OPTIMIZERS_CMAES_CMAES_HPP
 
+#include <mlpack/core.hpp>
 #include <cassert>
 #include <cmath>
 #include <cstdio>
@@ -25,7 +26,6 @@
 #include <armadillo>
 #include <iostream>
 #include <cfloat>
-#include <mlpack/core/util/log.hpp>
 
 #include "random.hpp"
 
@@ -175,6 +175,12 @@ void getFittestMean(double *arr)
       return ans;
   }
 
+/**
+   * A message that contains a detailed description of the matched stop
+   * criteria.
+   */
+  std::string getStopMessage(){return stopMessage;}
+
  /**
    * Determines the method used to initialize the weights.
    */
@@ -311,8 +317,12 @@ private:
   double genOfEigensysUpdate;
 
   double dMaxSignifKond;
+
   double dLastMinEWgroesserNull;
+
   double countevals; //!< objective function evaluations
+
+  std::string stopMessage; //!< A message that contains all matched stop criteria.
   
   void updateEigensystem(bool force);
   void sortIndex(const arma::vec rgFunVal, arma::vec& iindex, int n);
@@ -321,7 +331,7 @@ private:
 
    void init(arma::vec& func);
    void samplePopulation();
-   void updateDistribution(const arma::vec fitnessValues);
+   void updateDistribution(const arma::vec& fitnessValues);
 
    bool testForTermination();
    int  checkEigen(arma::vec diag, arma::mat Q);

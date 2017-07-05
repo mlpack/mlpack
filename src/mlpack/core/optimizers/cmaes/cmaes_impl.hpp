@@ -12,6 +12,7 @@
 #ifndef MLPACK_CORE_OPTIMIZERS_CMAES_CMAES_IMPL_HPP
 #define MLPACK_CORE_OPTIMIZERS_CMAES_CMAES_IMPL_HPP
 
+#include <mlpack/core.hpp>
 #include <cassert>
 #include <cmath>
 #include <cstdio>
@@ -25,7 +26,6 @@
 #include <armadillo>
 #include <iostream>
 #include <cfloat>
-#include <mlpack/core/util/log.hpp>
 
 #include "cmaes.hpp"
 #include "random.hpp"
@@ -216,6 +216,8 @@ namespace optimization {
       updateDistribution(arFunvals);
   }
 
+  std::cout << "Stop:" << std::endl << getStopMessage();
+
   // get best estimator for the optimum
   for (int i=0; i<N; i++) arr[i] = xmean[i]; 
 
@@ -332,7 +334,7 @@ namespace optimization {
   void CMAES<funcType>::addMutation(double* x, double eps)
   {
     for (int i = 0; i < N; ++i)
-      tempRandom[i] = rgD[i]*rand.gauss();
+      tempRandom[i] = rgD[i] * rand.gauss();
     for (int i = 0; i < N; ++i)
     {
       double sum = 0.0;
@@ -375,7 +377,7 @@ namespace optimization {
 
     pc.set_size(N);
     ps.set_size(N);
-    tempRandom.set_size(N+1);
+    tempRandom.set_size(N);
     BDz.set_size(N);
     xmean.set_size(N+2);
     xold.set_size(N+2);
@@ -446,8 +448,7 @@ namespace optimization {
         updateEigensystem(false);
       else
       {
-        for (int i = 0; i < N; ++i)
-          rgD[i] = std::sqrt(C(i,i));
+        rgD = arma::sqrt(C.diag());
         minEW = rgD.min();
         minEW *= minEW;
         maxEW = rgD.max();
@@ -460,17 +461,18 @@ namespace optimization {
     { // generate scaled random vector D*z
       for (int i = 0; i < N; ++i)
         if (diag)
-          population(iNk,i) = xmean[i] + sigma*rgD[i]*rand.gauss();
+          population(iNk,i) = xmean[i] + sigma*rgD[i] * rand.gauss();
         else
-          tempRandom[i] = rgD[i]*rand.gauss();
+          tempRandom[i] = rgD[i]* rand.gauss();
       if (!diag)
-        for (int i = 0; i < N; ++i) // add mutation sigma*B*(D*z)
+        for (int i = 0; i < N; ++i)
+      { // add mutation sigma*B*(D*z)
+        double sum = 0.0;
         {
-          double sum = 0.0;
-          for (int j = 0; j < N; ++j)
-            sum += B(i,j)*tempRandom[j];
+          sum = arma::dot(B.row(i),tempRandom);
           population(iNk , i) = xmean[i] + sigma*sum;
         }
+      }
     }
 
     if (state == UPDATED || gen == 0)
@@ -487,7 +489,7 @@ namespace optimization {
    * @return Mean value of the new distribution.
    */
    template<typename funcType>
-  void CMAES<funcType>::updateDistribution(arma::vec fitnessValues)
+  void CMAES<funcType>::updateDistribution(const arma::vec& fitnessValues)
   {
 
     bool diag = diagonalCov == 1 || diagonalCov >= gen;
@@ -522,11 +524,10 @@ namespace optimization {
 
     // update xbestever
     if (xBestEver[N] > population(index[0],N) || gen == 1)
-      for (int i = 0; i <= N; ++i)
-      {
-        xBestEver[i] = population(index[0] , i);
+    {
+        xBestEver.subvec(0,N-1) = population.submat(index[0], 0, index[0], N-1).t();
         xBestEver[N+1] = countevals;
-      }
+    }
 
     const double sqrtmueffdivsigma = std::sqrt(mueff) / sigma;
     // calculate xmean and rgBDz~N(0,C)
@@ -572,12 +573,7 @@ namespace optimization {
     }
 
     // calculate norm(ps)^2
-    double psxps(0);
-    for (int i = 0; i < N; ++i)
-    {
-      const double& rgpsi = ps[i];
-      psxps += rgpsi*rgpsi;
-    }
+    double psxps = std::pow(arma::norm(ps),2);
 
     // cumulation for covariance matrix (pc) using B*D*z~N(0,C)
     int hsig = std::sqrt(psxps) / std::sqrt(double(1) - std::pow(double(1) - cs, double(2)* gen))
@@ -611,15 +607,19 @@ namespace optimization {
     int iAchse, iKoo;
     int diag = diagonalCov == 1 || diagonalCov >= gen;
 
-    bool termination = false;
+    std::stringstream message;
+
+    if (stopMessage != "")
+    {
+      message << stopMessage << std::endl;
+    }
 
     // function value reached
     if ((gen > 1 || state > SAMPLED) && stStopFitness.flg &&
         functionValues[(int)index[0]] <= stStopFitness.val)
     {
-      Log::Info << "Fitness: function value " << functionValues[(int)index[0]]
+      message << "Fitness: function value " << functionValues[(int)index[0]]
           << " <= stopFitness (" << stStopFitness.val << ")" << std::endl;
-        termination = true;
     }
 
     // TolFun
@@ -630,9 +630,8 @@ namespace optimization {
 
     if (gen > 0 && range <= stopTolFun)
     {
-      Log::Info << "TolFun: function value differences " << range
+      message << "TolFun: function value differences " << range
           << " < stopTolFun=" << stopTolFun << std::endl;
-          termination = true;
     }
 
     // TolFunHist
@@ -640,11 +639,9 @@ namespace optimization {
     {
       range = maxElement(funcValueHistory, (int)funcValueHistory.size())
           - minElement(funcValueHistory, (int)funcValueHistory.size());
-     
       if (range <= stopTolFunHist)
-        Log::Info << "TolFunHist: history of function value changes " << range
+        message << "TolFunHist: history of function value changes " << range
             << " stopTolFunHist=" << stopTolFunHist << std::endl;
-            termination = true;
     }
 
     // TolX
@@ -656,8 +653,7 @@ namespace optimization {
     }
     if (cTemp == 2*N)
     {
-      Log::Info << "TolX: object variable changes below " << stopTolX << std::endl;
-      termination = true;
+      message << "TolX: object variable changes below " << stopTolX << std::endl;
     }
 
     // TolUpX
@@ -665,10 +661,9 @@ namespace optimization {
     {
       if (sigma*std::sqrt(C(i,i)) > stopTolUpXFactor*rgInitialStds[i])
       {
-        Log::Info << "TolUpX: standard deviation increased by more than "
+        message << "TolUpX: standard deviation increased by more than "
             << stopTolUpXFactor << ", larger initial standard deviation recommended."
             << std::endl;
-            termination = true;
         break;
       }
     }
@@ -676,10 +671,9 @@ namespace optimization {
     // Condition of C greater than dMaxSignifKond
     if (maxEW >= minEW* dMaxSignifKond)
     {
-      Log::Info << "ConditionNumber: maximal condition number " << dMaxSignifKond
+      message << "ConditionNumber: maximal condition number " << dMaxSignifKond
           << " reached. maxEW=" << maxEW <<  ",minEW=" << minEW << ",maxdiagC="
           << maxdiagC << ",mindiagC=" << mindiagC << std::endl;
-          termination = true;
     }
 
     // Principal axis i has no effect on xmean, ie. x == x + 0.1* sigma* rgD[i]* B[i]
@@ -695,9 +689,8 @@ namespace optimization {
         }
         if (iKoo == N)
         {
-          Log::Info << "NoEffectAxis: standard deviation 0.1*" << (fac / 0.1)
+          message << "NoEffectAxis: standard deviation 0.1*" << (fac / 0.1)
               << " in principal axis " << iAchse << " without effect" << std::endl;
-              termination = true;
           break;
         }
       }
@@ -707,28 +700,26 @@ namespace optimization {
     {
       if (xmean[iKoo] == xmean[iKoo] + sigma*std::sqrt( C(iKoo,iKoo) )/double(5))
       {
-        Log::Info << "NoEffectCoordinate: standard deviation 0.2*"
+        message << "NoEffectCoordinate: standard deviation 0.2*"
             << (sigma*std::sqrt( C(iKoo , iKoo) ) ) << " in coordinate " << iKoo
             << " without effect" << std::endl;
-             termination = true;
         break;
       }
     }
 
     if (countevals >= stopMaxFunEvals)
     {
-      Log::Info << "MaxFunEvals: conducted function evaluations " << countevals
+      message << "MaxFunEvals: conducted function evaluations " << countevals
           << " >= " << stopMaxFunEvals << std::endl;
-      termination = true;
     }
     if (gen >= stopMaxIter)
     {
-     Log::Info << "MaxIter: number of iterations " << gen << " >= "
-      << stopMaxIter << std::endl;
-       termination = true;
+      message << "MaxIter: number of iterations " << gen << " >= "
+          << stopMaxIter << std::endl;
     }
 
-    return termination;
+    stopMessage = message.str();
+    return stopMessage != "";
   }
 
   /**
