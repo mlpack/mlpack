@@ -267,7 +267,8 @@ void GRU<InputDataType, OutputDataType>::Gradient(
       output2GateModule);
 
   boost::apply_visitor(GradientVisitor(
-      std::move(*gradIterator),
+      *gradIterator % boost::apply_visitor(outputParameterVisitor,
+      forgetGateModule),
       std::move(prevError.submat(2 * outSize, 0, 3 * outSize - 1, 0))),
       outputHidden2GateModule);
 
