@@ -124,11 +124,9 @@ void GRU<InputDataType, OutputDataType>::Forward(
   // Where cmul1 is input gate * prevOutput and
   // cmul2 is (1 - input gate) * hidden gate.
   output = (boost::apply_visitor(outputParameterVisitor, inputGateModule)
-      % *prevOutput) +
-      ((arma::ones<arma::vec>(outSize) -
-      boost::apply_visitor(outputParameterVisitor, inputGateModule)) %
-      boost::apply_visitor(outputParameterVisitor,
-      hiddenStateModule));
+      % (*prevOutput - boost::apply_visitor(outputParameterVisitor,
+      hiddenStateModule))) + boost::apply_visitor(outputParameterVisitor,
+      hiddenStateModule);
 
   forwardStep++;
   if (forwardStep == rho)
