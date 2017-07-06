@@ -28,7 +28,7 @@ inline std::string GetNumpyType<double>()
 template<>
 inline std::string GetNumpyType<size_t>()
 {
-  return "np.long";
+  return "np.intp";
 }
 
 } // namespace python

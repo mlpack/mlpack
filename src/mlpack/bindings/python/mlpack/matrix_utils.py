@@ -24,7 +24,10 @@ def to_matrix(x, dtype=np.double):
       not hasattr(x, '__array__'):
     raise TypeError("given argument is not array-like")
 
-  return np.array(x, copy=False, dtype=dtype)
+  if (x.dtype == dtype):
+    return x
+  else:
+    return np.array(x, copy=True, dtype=dtype)
 
 def to_matrix_with_info(x, dtype):
   """
