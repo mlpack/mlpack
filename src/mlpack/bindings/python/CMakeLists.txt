@@ -81,13 +81,14 @@ if (DEBUG)
 endif ()
 
 add_custom_target(python ALL DEPENDS mlpack)
+add_custom_target(python_copy ALL DEPENDS mlpack)
 
 # Copy necessary files after making the mlpack/ directory.
-add_custom_command(TARGET python PRE_BUILD
+add_custom_command(TARGET python_copy PRE_BUILD
     COMMAND ${CMAKE_COMMAND} -E make_directory
         ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/)
 foreach(cython_file ${CYTHON_SOURCES})
-  add_custom_command(TARGET python PRE_BUILD
+  add_custom_command(TARGET python_copy PRE_BUILD
       COMMAND ${CMAKE_COMMAND} ARGS -E copy
           ${CMAKE_CURRENT_SOURCE_DIR}/${cython_file}
           ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/)
@@ -95,7 +96,7 @@ endforeach()
 
 if (BUILD_TESTS)
   foreach(test_file ${TEST_SOURCES})
-    add_custom_command(TARGET python PRE_BUILD
+    add_custom_command(TARGET python_copy PRE_BUILD
         COMMAND ${CMAKE_COMMAND} ARGS -E copy
             ${CMAKE_CURRENT_SOURCE_DIR}/${test_file}
             ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/tests/)
@@ -116,6 +117,8 @@ add_custom_command(TARGET python POST_BUILD
             mlpack/matrix_utils.py
             mlpack
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)
+
+add_dependencies(python python_copy)
 
 install(CODE "execute_process(COMMAND ${PYTHON}
     ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py install
@@ -164,6 +167,7 @@ if (BUILD_PYTHON_BINDINGS)
 
   add_dependencies(python build_pyx_${name})
   add_dependencies(build_pyx_${name} generate_pyx_${name})
+  add_dependencies(generate_pyx_${name} python_copy)
 
   # Add the convenience import to __init__.py.  Note that this happens during
   # configuration.
