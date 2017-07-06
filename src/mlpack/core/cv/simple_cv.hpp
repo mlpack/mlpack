@@ -73,14 +73,14 @@ class SimpleCV :
   using Base = CVBase<MLAlgorithm, MatType, PredictionsType, WeightsType>;
 
   /**
-   * Variables for storing a training dataset.
+   * Variables for storing the training dataset.
    */
   MatType trainingXs;
   PredictionsType trainingYs;
   WeightsType trainingWeights;
 
   /**
-   * Variables for storing a validation dataset.
+   * Variables for storing the validation dataset.
    */
   MatType validationXs;
   PredictionsType validationYs;
