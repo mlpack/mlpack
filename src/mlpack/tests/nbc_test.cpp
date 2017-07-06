@@ -147,14 +147,14 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierIncrementalTest)
 
   arma::mat testData;
   arma::Mat<size_t> testRes;
-  arma::mat testResProba;
+  arma::mat testResProbs;
   data::Load(testFilename, testData, true);
   data::Load(testResultFilename, testRes, true);
-  data::Load(testResultProbsFilename, testResProba, true);
+  data::Load(testResultProbsFilename, testResProbs, true);
 
   testData.shed_row(testData.n_rows - 1); // Remove the labels.
 
-  CheckLabelsAndProbabilities(testData, testRes, testResProba, nbcTest);
+  CheckLabelsAndProbabilities(testData, testRes, testResProbs, nbcTest);
 }
 
 /**
