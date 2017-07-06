@@ -72,14 +72,22 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierTest)
 
   nbcTest.Classify(testData, calcVec, calcProbs);
 
-  for (size_t i = 0; i < testData.n_cols; i++)
-    BOOST_REQUIRE_EQUAL(testRes(i), calcVec(i));
+  size_t label;
+  arma::vec probsVec;
 
-  for (size_t i = 0; i < testResProbs.n_cols; ++i)
+  for (size_t i = 0; i < testData.n_cols; ++i)
   {
+    nbcTest.Classify(testData.col(i), label, probsVec);
+
+    BOOST_REQUIRE_EQUAL(testRes(i), calcVec(i));
+    BOOST_REQUIRE_EQUAL(testRes(i), label);
+    BOOST_REQUIRE_EQUAL(testRes(i), nbcTest.Classify(testData.col(i)));
+
     for (size_t j = 0; j < testResProbs.n_rows; ++j)
     {
       BOOST_REQUIRE_CLOSE(testResProbs(j, i) + 0.0001, calcProbs(j, i) + 0.0001,
+          0.01);
+      BOOST_REQUIRE_CLOSE(testResProbs(j, i) + 0.0001, probsVec(j) + 0.0001,
           0.01);
     }
   }
@@ -140,15 +148,25 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierIncrementalTest)
 
   nbcTest.Classify(testData, calcVec, calcProbs);
 
-  for (size_t i = 0; i < testData.n_cols; i++)
-    BOOST_REQUIRE_EQUAL(testRes(i), calcVec(i));
+  size_t label;
+  arma::vec probsVec;
 
-  for (size_t i = 0; i < testResProba.n_cols; ++i)
+  for (size_t i = 0; i < testData.n_cols; ++i)
+  {
+    nbcTest.Classify(testData.col(i), label, probsVec);
+
+    BOOST_REQUIRE_EQUAL(testRes(i), calcVec(i));
+    BOOST_REQUIRE_EQUAL(testRes(i), label);
+    BOOST_REQUIRE_EQUAL(testRes(i), nbcTest.Classify(testData.col(i)));
+
     for (size_t j = 0; j < testResProba.n_rows; ++j)
     {
       BOOST_REQUIRE_CLOSE(
           testResProba(j, i) + .00001, calcProbs(j, i) + .00001, 0.01);
+      BOOST_REQUIRE_CLOSE(
+          testResProba(j, i) + 0.0001, probsVec(j) + 0.0001, 0.01);
     }
+  }
 }
 
 /**
