@@ -39,14 +39,18 @@ AddTask::AddTask(const size_t bitLen) : bitLen(bitLen) {
 
 void AddTask::Generate(arma::field<arma::mat>& input,
                        arma::field<arma::mat>& labels,
-                       const size_t batchSize)
+                       const size_t batchSize,
+                       bool fixedLength = false)
 {
   arma::field<arma::vec> vecInput = arma::field<arma::colvec>(batchSize);
   arma::field<arma::vec> vecLabels = arma::field<arma::colvec>(batchSize);
+  size_t size_A = bitLen, size_B = bitLen;
   for (size_t i = 0; i < batchSize; ++i) {
-    // Random uniform length from [2..bitLen]
-    size_t size_A = RandInt(2, bitLen + 1);
-    size_t size_B = RandInt(2, bitLen + 1);
+    if (!fixedLength) {
+      // Random uniform length from [2..bitLen]
+      size_t size_A = RandInt(2, bitLen + 1);
+      size_t size_B = RandInt(2, bitLen + 1);
+    }
     // Construct sequence of the form
     // (binary number with size_A bits) + '+'
     // + (binary number with size_B bits)
@@ -87,14 +91,29 @@ void AddTask::Generate(arma::field<arma::mat>& input,
   }
 }
 
-arma::field<arma::mat> AddTask::Binarize(arma::field<arma::vec> data)
+void AddTask::Generate(arma::mat& input, arma::mat& labels,
+                       const size_t batchSize)
 {
+  arma::field<arma::mat> fieldInput, fieldLabels;
+  Generate(fieldInput, fieldLabels, batchSize, true);
+  size_t input_rows = fieldInput(0).n_rows;
+  size_t label_rows = fieldLabels(0).n_rows;
+  size_t cols = batchSize;
+  input = arma::zeros(input_rows, cols);
+  labels = arma::zeros(label_rows, cols);
+  for (size_t i = 0; i < cols; ++i) {
+    input.col(i) = fieldInput.at(i);
+    labels.col(i) = fieldLabels.at(i);
+  }
+}
+
+arma::field<arma::mat> AddTask::Binarize(arma::field<arma::vec> data) {
   arma::field<arma::mat> procData(data.n_elem);
   for (size_t i = 0; i < data.n_elem; ++i) {
     procData.at(i) = arma::zeros(3, data.at(i).n_elem);
     for (size_t j = 0; j < data.at(i).n_elem; ++j) {
-     int val = data.at(i).at(j);
-     procData.at(i).at(val, j) = 1;
+      int val = data.at(i).at(j);
+      procData.at(i).at(val, j) = 1;
     }
     procData.at(i).reshape(procData.at(i).n_elem, 1);
   }
