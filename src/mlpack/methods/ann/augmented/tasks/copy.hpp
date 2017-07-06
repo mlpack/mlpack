@@ -30,7 +30,7 @@ class CopyTask
   * @param nRepeats Number of repeates required to solve the task.
   */
   CopyTask(const size_t maxLength, const size_t nRepeats,
-           bool addSeparator);
+           bool addSeparator = false);
   /**
   * Generate dataset of a given size.
   *
@@ -41,7 +41,7 @@ class CopyTask
   void Generate(arma::field<arma::mat>& input,
                 arma::field<arma::mat>& labels,
                 const size_t batchSize, 
-                bool fixedLength);
+                bool fixedLength = false);
 
   void Generate(arma::mat& input,
                 arma::mat& labels,

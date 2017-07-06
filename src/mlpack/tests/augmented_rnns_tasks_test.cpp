@@ -22,8 +22,6 @@
 #include <mlpack/methods/ann/augmented/tasks/add.hpp>
 #include <mlpack/methods/ann/augmented/tasks/score.hpp>
 
-#include <mlpack/methods/ann/augmented/tree_memory.hpp>
-
 #include <mlpack/core/optimizers/adam/adam.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/layer/leaky_relu.hpp>
@@ -276,89 +274,6 @@ BOOST_AUTO_TEST_CASE(AddTaskTest) {
   }
 
   BOOST_REQUIRE(ok);
-}
-
-template<typename T>
-struct ReplaceWriter {
-  T operator() (T a, T b) { return b; }
-};
-
-template<typename T>
-struct AddJoiner {
-  T operator() (T a, T b) { return a + b; }
-};
-
-BOOST_AUTO_TEST_CASE(TreeMemoryTestMinimum) {
-  AddJoiner<double> J;
-  ReplaceWriter<double> W;
-  // With these definitions, mem is exactly one of the well-known data structres
-  // in competitive programming - segment tree.
-  TreeMemory<double, AddJoiner<double>, ReplaceWriter<double>> mem(1, J, W);
-  std::vector<double> initMem = {0};
-  mem.Initialize(initMem);
-  BOOST_REQUIRE_EQUAL(mem.Get(0), 0.);
-  mem.Update(0, 12.);
-  BOOST_REQUIRE_EQUAL(mem.Get(0), 12.);
-}
-
-BOOST_AUTO_TEST_CASE(TreeMemoryTestPowerOfTwo) {
-  AddJoiner<double> J;
-  ReplaceWriter<double> W;
-  TreeMemory<double, AddJoiner<double>, ReplaceWriter<double>> mem(8, J, W);
-  std::vector<double> initMem = {0, 0, 0, 0, 0, 0, 0, 0};
-  mem.Initialize(initMem);
-  for (size_t idx = 0; idx < 15; ++idx)
-    BOOST_REQUIRE_EQUAL(mem.GetCell(idx), 0);
-  mem.Update(0, 1);
-  mem.Update(1, 2);
-  BOOST_REQUIRE_EQUAL(mem.Get(0), 1);
-  BOOST_REQUIRE_EQUAL(mem.Get(1), 2);
-  BOOST_REQUIRE_EQUAL(mem.GetCell(
-    mem.Parent(mem.LeafIndex(0))), 3);
-  BOOST_REQUIRE_EQUAL(mem.GetCell(
-    mem.Parent(mem.Parent(mem.LeafIndex(0)))), 3);  
-  BOOST_REQUIRE_EQUAL(mem.GetCell(
-    mem.Parent(mem.Parent(mem.Parent(mem.LeafIndex(0))))), 3); 
-}
-
-BOOST_AUTO_TEST_CASE(TreeMemoryTestArbitrary) {
-  AddJoiner<double> J;
-  ReplaceWriter<double> W;
-  TreeMemory<double, AddJoiner<double>, ReplaceWriter<double>> mem(9, J, W);
-  std::vector<double> initMem = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-  mem.Initialize(initMem);
-  for (size_t idx = 0; idx < 31; ++idx)
-    BOOST_REQUIRE_EQUAL(mem.GetCell(idx), 0);
-  mem.Update(0, 1);
-  mem.Update(1, 2);
-  mem.Update(8, -3);
-  BOOST_REQUIRE_EQUAL(mem.Get(0), 1);
-  BOOST_REQUIRE_EQUAL(mem.Get(1), 2);
-  BOOST_REQUIRE_EQUAL(mem.GetCell(
-    mem.Parent(mem.LeafIndex(0))), 3);
-  BOOST_REQUIRE_EQUAL(mem.GetCell(
-    mem.Parent(mem.Parent(mem.LeafIndex(0)))), 3);
-  BOOST_REQUIRE_EQUAL(mem.GetCell(
-    mem.Parent(mem.Parent(mem.Parent(mem.LeafIndex(0))))), 3); 
-  BOOST_REQUIRE_EQUAL(mem.GetCell(
-    mem.Parent(mem.Parent(mem.Parent(mem.Parent(mem.LeafIndex(0)))))), 0);
-  BOOST_REQUIRE_EQUAL(mem.Get(8), -3);
-  BOOST_REQUIRE_EQUAL(mem.GetCell(
-    mem.Parent(mem.LeafIndex(8))), -3);
-  BOOST_REQUIRE_EQUAL(mem.GetCell(
-    mem.Parent(mem.Parent(mem.LeafIndex(8)))), -3);
-  BOOST_REQUIRE_EQUAL(mem.GetCell(
-    mem.Parent(mem.Parent(mem.Parent(mem.LeafIndex(8))))), -3); 
-  BOOST_REQUIRE_EQUAL(mem.Parent(mem.LeafIndex(0)),
-                      mem.Parent(mem.LeafIndex(1)));
-  for (size_t i = 0; i < 9; ++i) {
-    // Not quite compliant with the style guide,
-    // but at least it fits in 80 charactes.
-    BOOST_REQUIRE_EQUAL(
-      mem.Parent(mem.Parent(mem.Parent(mem.Parent(mem.LeafIndex(i))))),
-      mem.Root()
-    );
-  }
 }
 
 BOOST_AUTO_TEST_SUITE_END();

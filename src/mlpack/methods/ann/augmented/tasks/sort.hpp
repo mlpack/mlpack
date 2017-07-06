@@ -30,7 +30,7 @@ class SortTask
   * @param bitLen Binary length of sorted numbers.
   */
   SortTask(const size_t maxLength, const size_t bitLen,
-           bool addSeparator);
+           bool addSeparator = false);
   /**
   * Generate dataset of a given size.
   *
@@ -41,7 +41,7 @@ class SortTask
   void Generate(arma::field<arma::mat>& input,
                 arma::field<arma::mat>& labels,
                 const size_t batchSize, 
-                bool fixedLength);
+                bool fixedLength = false);
 
   void Generate(arma::mat& input,
                 arma::mat& labels,

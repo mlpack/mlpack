@@ -22,7 +22,7 @@ namespace augmented /* Augmented neural network */ {
 namespace tasks /* Task utilities for augmented */ {
 
 SortTask::SortTask(const size_t maxLength, const size_t bitLen,
-                   bool addSeparator = false)
+                   bool addSeparator)
   : maxLength(maxLength), bitLen(bitLen), addSeparator(addSeparator) {
   assert(maxLength > 1);
   assert(bitLen > 0);
@@ -31,7 +31,7 @@ SortTask::SortTask(const size_t maxLength, const size_t bitLen,
 void SortTask::Generate(arma::field<arma::mat>& input,
                         arma::field<arma::mat>& labels,
                         const size_t batchSize,
-                        bool fixedLength = false)
+                        bool fixedLength)
 {
   input = arma::field<arma::mat>(batchSize);
   labels = arma::field<arma::mat>(batchSize);
@@ -87,6 +87,7 @@ void SortTask::Generate(arma::mat& input, arma::mat& labels,
   for (size_t i = 0; i < cols; ++i) {
     input.col(i) = fieldInput.at(i);
     labels.col(i) = fieldLabels.at(i);
+  }
 }
 
 } // namespace tasks

@@ -39,7 +39,7 @@ class AddTask
   void Generate(arma::field<arma::mat>& input,
                 arma::field<arma::mat>& labels,
                 const size_t batchSize, 
-                bool fixedLength);
+                bool fixedLength = false);
 
   void Generate(arma::mat& input,
                 arma::mat& labels,
