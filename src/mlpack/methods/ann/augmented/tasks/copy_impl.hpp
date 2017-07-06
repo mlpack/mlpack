@@ -23,7 +23,7 @@ namespace augmented /* Augmented neural network */ {
 namespace tasks /* Task utilities for augmented */ {
 
 CopyTask::CopyTask(const size_t maxLength, const size_t nRepeats,
-                   bool addSeparator = false) :
+                   bool addSeparator) :
     maxLength(maxLength),
     nRepeats(nRepeats),
     addSeparator(addSeparator)
@@ -36,7 +36,7 @@ CopyTask::CopyTask(const size_t maxLength, const size_t nRepeats,
 void CopyTask::Generate(arma::field<arma::mat>& input,
                         arma::field<arma::mat>& labels,
                         const size_t batchSize,
-                        bool fixedLength = false)
+                        bool fixedLength)
 {
   input = arma::field<arma::mat>(batchSize);
   labels = arma::field<arma::mat>(batchSize);

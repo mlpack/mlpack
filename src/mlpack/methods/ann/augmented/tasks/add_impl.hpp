@@ -40,7 +40,7 @@ AddTask::AddTask(const size_t bitLen) : bitLen(bitLen) {
 void AddTask::Generate(arma::field<arma::mat>& input,
                        arma::field<arma::mat>& labels,
                        const size_t batchSize,
-                       bool fixedLength = false)
+                       bool fixedLength)
 {
   arma::field<arma::vec> vecInput = arma::field<arma::colvec>(batchSize);
   arma::field<arma::vec> vecLabels = arma::field<arma::colvec>(batchSize);
