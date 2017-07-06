@@ -839,10 +839,8 @@ BOOST_AUTO_TEST_CASE(ForwardGRULayerTest)
   arma::mat expectedOutput = arma::ones(3, 1);
   expectedOutput *= -4;
   expectedOutput = arma::exp(expectedOutput);
-  expectedOutput.for_each([](arma::mat::elem_type& val)
-    { val = 1.0 / (1 + val); });
-  expectedOutput.for_each([](arma::mat::elem_type& val)
-    { val = val * (1 - val); });
+  expectedOutput = arma::ones(3, 1) / (arma::ones(3, 1) + expectedOutput);
+  expectedOutput = (arma::ones(3, 1)  - expectedOutput) % expectedOutput;
 
   BOOST_REQUIRE_LE(arma::as_scalar(arma::trans(output) * expectedOutput), 1e-2);
 
@@ -854,12 +852,12 @@ BOOST_AUTO_TEST_CASE(ForwardGRULayerTest)
   arma::mat z_t = arma::ones(3, 1);
   z_t *= -(s + 4);
   z_t = arma::exp(z_t);
-  z_t.for_each([](arma::mat::elem_type& val) { val = (1.0 / (1 + val)); });
+  z_t = arma::ones(3, 1) / (arma::ones(3, 1) + z_t);
 
   arma::mat o_t = arma::ones(3, 1);
   o_t *= -(arma::as_scalar(arma::sum(expectedOutput % z_t)) + 4);
   o_t = arma::exp(o_t);
-  o_t.for_each([](arma::mat::elem_type& val) { val = (1.0 / (1 + val)); });
+  o_t = arma::ones(3, 1) / (arma::ones(3, 1) + o_t);
 
   expectedOutput = z_t % expectedOutput + (arma::ones(3, 1) - z_t) % o_t;
 
