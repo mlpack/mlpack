@@ -29,7 +29,8 @@ class CopyTask
   * @param maxLength Maximum length of sequence that has to be repeated by model.
   * @param nRepeats Number of repeates required to solve the task.
   */
-  CopyTask(const size_t maxLength, const size_t nRepeats);
+  CopyTask(const size_t maxLength, const size_t nRepeats,
+           bool addSeparator);
   /**
   * Generate dataset of a given size.
   *
@@ -39,13 +40,20 @@ class CopyTask
   */
   void Generate(arma::field<arma::mat>& input,
                 arma::field<arma::mat>& labels,
-                const size_t batchSize);
+                const size_t batchSize, 
+                bool fixedLength);
 
+  void Generate(arma::mat& input,
+                arma::mat& labels,
+                const size_t batchSize);
  private:
   // Maximum length of a sequence.
   size_t maxLength;
   // Number of repeats the model has to perform to complete the task.
   size_t nRepeats;
+  // Flag indicating whether generator should produce
+  // separator as part of the sequence
+  bool addSeparator;
 };
 } // namespace tasks
 } // namespace augmented
