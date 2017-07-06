@@ -48,8 +48,8 @@ template<typename MatType = arma::mat>
 class NaiveBayesClassifier
 {
  public:
-   //! A short alias for the data point type.
-   using VecType = arma::Col<typename MatType::value_type>;
+  //! A short alias for the data point type.
+  using VecType = arma::Col<typename MatType::value_type>;
 
   /**
    * Initializes the classifier as per the input and then trains it by

@@ -45,7 +45,6 @@ void CheckLabelsAndProbabilities(const arma::mat& testData,
           0.01);
     }
   }
-
 }
 
 
