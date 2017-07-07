@@ -41,8 +41,8 @@ namespace optimization {
         stopMaxFunEvals(-1),
         facmaxeval(1.0),
         stopMaxIter(-1.0),
-        stopTolFun(1e-16),
-        stopTolFunHist(1e-16),
+        stopTolFun(1e-15),
+        stopTolFunHist(1e-15),
         stopTolX(0), // 1e-11*insigma would also be reasonable
         stopTolUpXFactor(1e3),
         lambda(-1),
