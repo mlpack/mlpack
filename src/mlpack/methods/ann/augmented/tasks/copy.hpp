@@ -26,8 +26,11 @@ class CopyTask
   /**
   * Creates an instance of the sequence copy task.
   *
-  * @param maxLength Maximum length of sequence that has to be repeated by model.
+  * @param maxLength Maximum length of sequence
+  * that has to be repeated by model.
   * @param nRepeats Number of repeates required to solve the task.
+  * @param addSeparator Flag indicating whether generator
+  * should emit separating symbol after input sequence
   */
   CopyTask(const size_t maxLength, const size_t nRepeats,
            bool addSeparator = false);

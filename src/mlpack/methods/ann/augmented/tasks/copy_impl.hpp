@@ -42,8 +42,9 @@ void CopyTask::Generate(arma::field<arma::mat>& input,
   labels = arma::field<arma::mat>(batchSize);
   size_t size = maxLength;
   for (size_t i = 0; i < batchSize; ++i) {
-    if (!fixedLength) {
-      // Random uniform length from [2..maxLength]
+    if (!fixedLength)
+    {
+      // Generate random uniform length from [2..maxLength].
       size = RandInt(2, maxLength+1);
     }
     arma::colvec vecInput = arma::randi<arma::colvec>(
@@ -68,7 +69,6 @@ void CopyTask::Generate(arma::field<arma::mat>& input,
 
 void CopyTask::Generate(arma::mat& input, arma::mat& labels,
                         const size_t batchSize) {
-  std::cerr << "Generating\n";
   arma::field<arma::mat> fieldInput, fieldLabels;
   Generate(fieldInput, fieldLabels, batchSize, true);
   size_t input_rows = fieldInput(0).n_rows;
@@ -76,7 +76,8 @@ void CopyTask::Generate(arma::mat& input, arma::mat& labels,
   size_t cols = batchSize;
   input = arma::zeros(input_rows, cols);
   labels = arma::zeros(label_rows, cols);
-  for (size_t i = 0; i < cols; ++i) {
+  for (size_t i = 0; i < cols; ++i)
+  {
     input.col(i) = fieldInput.at(i);
     labels.col(i) = fieldLabels.at(i);
   }
