@@ -24,9 +24,3 @@ typedef Row<elem_type>   row_type;
 /*
  * Add row_col_iterator and row_col_const_iterator to arma::Mat.
  */
-
-/*
- * row_col_iterator for Mat<eT>. This iterator can return row and column index
- * of the entry its pointing too. The functionality of this iterator is similar
- * to sparse matrix iterators.
- */

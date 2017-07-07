@@ -23,8 +23,3 @@ void serialize(Archive& ar, const unsigned int version);
 typedef SpCol<elem_type>   vec_type;
 typedef SpCol<elem_type>   col_type;
 typedef SpRow<elem_type>   row_type;
-
-/*
- * Extra functions for SpMat<eT>
- * Adding definition of row_col_iterator to generalize with Mat<eT>::row_col_iterator
- */
