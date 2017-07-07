@@ -81,15 +81,15 @@ void SimpleCV<MLAlgorithm,
               WeightsType>::Init(const float validationSize,
                                  const DataArgsTupleT& dataArgsTuple)
 {
-  const MatType& xs = std::get<0>(dataArgsTuple);
-  const PredictionsType& ys = std::get<1>(dataArgsTuple);
+  xs = std::get<0>(dataArgsTuple);
+  ys = std::get<1>(dataArgsTuple);
 
   Base::AssertDataConsistency(xs, ys);
 
   size_t numberOfTrainingPoints = CalculateAndAssertNumberOfTrainingPoints(
       validationSize, xs.n_cols);
 
-  InitTrainingAndValidationSets(xs, ys, numberOfTrainingPoints);
+  InitTrainingAndValidationSets(numberOfTrainingPoints);
 }
 
 template<typename MLAlgorithm,
@@ -107,18 +107,18 @@ void SimpleCV<MLAlgorithm,
               WeightsType>::Init(const float validationSize,
                                  const DataArgsTupleT& dataArgsTuple)
 {
-  const MatType& xs = std::get<0>(dataArgsTuple);
-  const PredictionsType& ys = std::get<1>(dataArgsTuple);
-  const WeightsType& weights = std::get<2>(dataArgsTuple);
+  xs = std::get<0>(dataArgsTuple);
+  ys = std::get<1>(dataArgsTuple);
+  weights = std::get<2>(dataArgsTuple);
 
   Base::AssertDataConsistency(xs, ys, weights);
 
   size_t numberOfTrainingPoints = CalculateAndAssertNumberOfTrainingPoints(
       validationSize, xs.n_cols);
 
-  InitTrainingAndValidationSets(xs, ys, numberOfTrainingPoints);
+  InitTrainingAndValidationSets(numberOfTrainingPoints);
 
-  trainingWeights = weights.cols(0, numberOfTrainingPoints - 1);
+  trainingWeights = GetSubset(weights, 0, numberOfTrainingPoints - 1);
 }
 
 template<typename MLAlgorithm,
@@ -197,15 +197,13 @@ void SimpleCV<MLAlgorithm,
               MatType,
               PredictionsType,
               WeightsType>::InitTrainingAndValidationSets(
-    const MatType& xs,
-    const PredictionsType& ys,
     const size_t numberOfTrainingPoints)
 {
-  trainingXs = xs.cols(0, numberOfTrainingPoints - 1);
-  trainingYs = ys.cols(0, numberOfTrainingPoints - 1);
+  trainingXs = GetSubset(xs, 0, numberOfTrainingPoints - 1);
+  trainingYs = GetSubset(ys, 0, numberOfTrainingPoints - 1);
 
-  validationXs = xs.cols(numberOfTrainingPoints, xs.n_cols - 1);
-  validationYs = ys.cols(numberOfTrainingPoints, xs.n_cols - 1);
+  validationXs = GetSubset(xs, numberOfTrainingPoints, xs.n_cols - 1);
+  validationYs = GetSubset(ys, numberOfTrainingPoints, xs.n_cols - 1);
 }
 
 } // namespace cv

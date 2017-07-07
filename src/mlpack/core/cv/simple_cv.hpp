@@ -73,6 +73,13 @@ class SimpleCV :
   using Base = CVBase<MLAlgorithm, MatType, PredictionsType, WeightsType>;
 
   /**
+   * Variables for storing the whole dataset.
+   */
+  MatType xs;
+  PredictionsType ys;
+  WeightsType weights;
+
+  /**
    * Variables for storing the training dataset.
    */
   MatType trainingXs;
@@ -114,9 +121,7 @@ class SimpleCV :
   /**
    * Initialize training and validation sets.
    */
-  void InitTrainingAndValidationSets(const MatType& xs,
-                                     const PredictionsType& ys,
-                                     const size_t numberOfTrainingPoints);
+  void InitTrainingAndValidationSets(const size_t numberOfTrainingPoints);
 
   /**
    * Train and run evaluation in the case of non-weighted learning.
@@ -134,6 +139,30 @@ class SimpleCV :
            typename = typename std::enable_if<Enabled>::type,
            typename = void>
   double TrainAndEvaluate(const MLAlgorithmArgs& ...mlAlgorithmArgs);
+
+  /**
+   * Get the specified submatrix without coping the data.
+   */
+  template<typename ElementType>
+  arma::Mat<ElementType> GetSubset(arma::Mat<ElementType>& m,
+                                   const size_t firstCol,
+                                   const size_t lastCol)
+  {
+    return arma::Mat<ElementType>(m.colptr(firstCol), m.n_rows,
+        lastCol - firstCol + 1, false, true);
+  }
+
+  /**
+   * Get the specified subrow without coping the data.
+   */
+  template<typename ElementType>
+  arma::Row<ElementType> GetSubset(arma::Row<ElementType>& r,
+                                   const size_t firstCol,
+                                   const size_t lastCol)
+  {
+    return arma::Row<ElementType>(r.colptr(firstCol), lastCol - firstCol + 1,
+        false, true);
+  }
 };
 
 } // namespace cv
