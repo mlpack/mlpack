@@ -86,10 +86,7 @@ void SimpleCV<MLAlgorithm,
 
   Base::AssertDataConsistency(xs, ys);
 
-  size_t numberOfTrainingPoints = CalculateAndAssertNumberOfTrainingPoints(
-      validationSize, xs.n_cols);
-
-  InitTrainingAndValidationSets(numberOfTrainingPoints);
+  InitTrainingAndValidationSets(validationSize);
 }
 
 template<typename MLAlgorithm,
@@ -113,12 +110,9 @@ void SimpleCV<MLAlgorithm,
 
   Base::AssertDataConsistency(xs, ys, weights);
 
-  size_t numberOfTrainingPoints = CalculateAndAssertNumberOfTrainingPoints(
-      validationSize, xs.n_cols);
+  InitTrainingAndValidationSets(validationSize);
 
-  InitTrainingAndValidationSets(numberOfTrainingPoints);
-
-  trainingWeights = GetSubset(weights, 0, numberOfTrainingPoints - 1);
+  trainingWeights = GetSubset(weights, 0, trainingXs.n_cols - 1);
 }
 
 template<typename MLAlgorithm,
@@ -131,19 +125,18 @@ size_t SimpleCV<MLAlgorithm,
                 MatType,
                 PredictionsType,
                 WeightsType>::CalculateAndAssertNumberOfTrainingPoints(
-    const float validationSize,
-    const size_t total)
+    const float validationSize)
 {
   if (validationSize < 0.0F || validationSize > 1.0F)
     throw std::invalid_argument("SimpleCV: the validationSize parameter should "
         "be more than 0 and less than 1");
 
-  if (total < 2)
+  if (xs.n_cols < 2)
     throw std::invalid_argument("SimpleCV: 2 or more data points are expected");
 
-  size_t trainingPoints = roundf(total * (1.0F - validationSize));
+  size_t trainingPoints = roundf(xs.n_cols * (1.0F - validationSize));
 
-  if (trainingPoints == 0 || trainingPoints == total)
+  if (trainingPoints == 0 || trainingPoints == xs.n_cols)
     throw std::invalid_argument("SimpleCV: the validationSize parameter is "
         "either too small or too big");
 
@@ -197,8 +190,11 @@ void SimpleCV<MLAlgorithm,
               MatType,
               PredictionsType,
               WeightsType>::InitTrainingAndValidationSets(
-    const size_t numberOfTrainingPoints)
+    const float validationSize)
 {
+  size_t numberOfTrainingPoints = CalculateAndAssertNumberOfTrainingPoints(
+      validationSize);
+
   trainingXs = GetSubset(xs, 0, numberOfTrainingPoints - 1);
   trainingYs = GetSubset(ys, 0, numberOfTrainingPoints - 1);
 
