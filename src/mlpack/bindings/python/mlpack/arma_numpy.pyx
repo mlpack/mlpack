@@ -3,7 +3,14 @@
 arma_numpy.pyx: Armadillo/numpy interface functionality.
 
 This file defines a number of functions useful for converting between Armadillo
-and numpy objects without actually copying memory.
+and numpy objects without actually copying memory.  Note that if a numpy matrix
+is converted to an Armadillo object, then the Armadillo object will "own" the
+matrix and free the memory upon destruction (and the numpy object will no longer
+"own" the matrix).  Similarly, if an Armadillo object is converted to a numpy
+object, then the numpy object will "own" the matrix.
+
+Thus, know that if you convert a matrix type, remember that the resulting type
+is what "owns" the allocated memory.
 
 mlpack is free software; you may redistribute it and/or modify it under the
 terms of the 3-clause BSD license.  You should have received a copy of the
@@ -20,6 +27,7 @@ cimport arma
 
 cdef extern from "numpy/arrayobject.h":
   void PyArray_ENABLEFLAGS(numpy.ndarray arr, int flags)
+  void PyArray_CLEARFLAGS(numpy.ndarray arr, int flags)
 
 cdef extern from "<mlpack/bindings/python/mlpack/arma_util.hpp>":
   void SetMemState[T](T& m, int state)
@@ -33,6 +41,11 @@ cdef arma.Mat[double]* numpy_to_mat_d(numpy.ndarray[numpy.double_t, ndim=2] X):
     X = X.copy(order="C")
 
   cdef arma.Mat[double]* m = new arma.Mat[double](<double*> X.data, X.shape[1], X.shape[0], False, True)
+
+  # Transfer ownership to the Armadillo matrix.
+  PyArray_CLEARFLAGS(X, numpy.NPY_OWNDATA)
+  SetMemState[arma.Mat[double]](m[0], 0)
+
   return m
 
 cdef arma.Mat[size_t]* numpy_to_mat_s(numpy.ndarray[numpy.npy_intp, ndim=2] X):
@@ -45,6 +58,11 @@ cdef arma.Mat[size_t]* numpy_to_mat_s(numpy.ndarray[numpy.npy_intp, ndim=2] X):
 
   cdef arma.Mat[size_t]* m = new arma.Mat[size_t](<size_t*> X.data, X.shape[1],
       X.shape[0], False, True)
+
+  # Transfer ownership to the Armadillo matrix.
+  PyArray_CLEARFLAGS(X, numpy.NPY_OWNDATA)
+  SetMemState[arma.Mat[size_t]](m[0], 0)
+
   return m
 
 cdef numpy.ndarray[numpy.double_t, ndim=2] mat_to_numpy_d(arma.Mat[double]& X):
@@ -91,6 +109,11 @@ cdef arma.Row[double]* numpy_to_row_d(numpy.ndarray[numpy.double_t, ndim=1] X):
 
   cdef arma.Row[double]* m = new arma.Row[double](<double*> X.data, X.shape[0],
       False, True)
+
+  # Transfer ownership to the Armadillo matrix.
+  PyArray_CLEARFLAGS(X, numpy.NPY_OWNDATA)
+  SetMemState[arma.Row[double]](m[0], 0)
+
   return m
 
 cdef arma.Row[size_t]* numpy_to_row_s(numpy.ndarray[numpy.npy_intp, ndim=1] X):
@@ -103,6 +126,11 @@ cdef arma.Row[size_t]* numpy_to_row_s(numpy.ndarray[numpy.npy_intp, ndim=1] X):
 
   cdef arma.Row[size_t]* m = new arma.Row[size_t](<size_t*> X.data, X.shape[0],
       False, True)
+
+  # Transfer ownership to the Armadillo matrix.
+  PyArray_CLEARFLAGS(X, numpy.NPY_OWNDATA)
+  SetMemState[arma.Row[size_t]](m[0], 0)
+
   return m
 
 cdef numpy.ndarray[numpy.double_t, ndim=1] row_to_numpy_d(arma.Row[double]& X):
@@ -145,6 +173,11 @@ cdef arma.Col[double]* numpy_to_col_d(numpy.ndarray[numpy.double_t, ndim=1] X):
 
   cdef arma.Col[double]* m = new arma.Col[double](<double*> X.data, X.shape[0],
       False, True)
+
+  # Transfer ownership to the Armadillo matrix.
+  PyArray_CLEARFLAGS(X, numpy.NPY_OWNDATA)
+  SetMemState[arma.Col[double]](m[0], 0)
+
   return m
 
 cdef arma.Col[size_t]* numpy_to_col_s(numpy.ndarray[numpy.npy_intp, ndim=1] X):
@@ -157,6 +190,11 @@ cdef arma.Col[size_t]* numpy_to_col_s(numpy.ndarray[numpy.npy_intp, ndim=1] X):
 
   cdef arma.Col[size_t]* m = new arma.Col[size_t](<size_t*> X.data, X.shape[0],
       False, True)
+
+  # Transfer ownership to the Armadillo matrix.
+  PyArray_CLEARFLAGS(X, numpy.NPY_OWNDATA)
+  SetMemState[arma.Col[size_t]](m[0], 0)
+
   return m
 
 cdef numpy.ndarray[numpy.double_t, ndim=1] col_to_numpy_d(arma.Col[double]& X):
