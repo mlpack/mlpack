@@ -120,6 +120,28 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
+void SimpleCV<MLAlgorithm,
+              Metric,
+              MatType,
+              PredictionsType,
+              WeightsType>::InitTrainingAndValidationSets(
+    const float validationSize)
+{
+  size_t numberOfTrainingPoints = CalculateAndAssertNumberOfTrainingPoints(
+      validationSize);
+
+  trainingXs = GetSubset(xs, 0, numberOfTrainingPoints - 1);
+  trainingYs = GetSubset(ys, 0, numberOfTrainingPoints - 1);
+
+  validationXs = GetSubset(xs, numberOfTrainingPoints, xs.n_cols - 1);
+  validationYs = GetSubset(ys, numberOfTrainingPoints, xs.n_cols - 1);
+}
+
+template<typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
 size_t SimpleCV<MLAlgorithm,
                 Metric,
                 MatType,
@@ -178,28 +200,6 @@ double SimpleCV<MLAlgorithm,
     modelPtr = this->Train(trainingXs, trainingYs, args...);
 
   return Metric::Evaluate(*modelPtr, validationXs, validationYs);
-}
-
-template<typename MLAlgorithm,
-         typename Metric,
-         typename MatType,
-         typename PredictionsType,
-         typename WeightsType>
-void SimpleCV<MLAlgorithm,
-              Metric,
-              MatType,
-              PredictionsType,
-              WeightsType>::InitTrainingAndValidationSets(
-    const float validationSize)
-{
-  size_t numberOfTrainingPoints = CalculateAndAssertNumberOfTrainingPoints(
-      validationSize);
-
-  trainingXs = GetSubset(xs, 0, numberOfTrainingPoints - 1);
-  trainingYs = GetSubset(ys, 0, numberOfTrainingPoints - 1);
-
-  validationXs = GetSubset(xs, numberOfTrainingPoints, xs.n_cols - 1);
-  validationYs = GetSubset(ys, numberOfTrainingPoints, xs.n_cols - 1);
 }
 
 } // namespace cv

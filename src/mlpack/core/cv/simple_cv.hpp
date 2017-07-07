@@ -113,14 +113,14 @@ class SimpleCV :
   void Init(const float validationSize, const DataArgsTupleT& dataArgsTuple);
 
   /**
-   * Calculate the number of training points and assert it is legitimate.
-   */
-  size_t CalculateAndAssertNumberOfTrainingPoints(const float validationSize);
-
-  /**
    * Initialize training and validation sets.
    */
   void InitTrainingAndValidationSets(const float validationSize);
+
+  /**
+   * Calculate the number of training points and assert it is legitimate.
+   */
+  size_t CalculateAndAssertNumberOfTrainingPoints(const float validationSize);
 
   /**
    * Train and run evaluation in the case of non-weighted learning.
