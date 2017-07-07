@@ -34,7 +34,6 @@ add_executable(mlpack_test
   hoeffding_tree_test.cpp
   hyperplane_test.cpp
   imputation_test.cpp
-  ind2sub_test.cpp
   init_rules_test.cpp
   kernel_pca_test.cpp
   kernel_test.cpp

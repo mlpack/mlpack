@@ -170,8 +170,6 @@ BOOST_AUTO_TEST_CASE(MatRowColIteratorDecrementOperatorTest)
 
 // These tests don't work when the sparse iterators hold references and not
 // pointers internally because of the lack of default constructor.
-#if ARMA_VERSION_MAJOR > 4 || \
-    (ARMA_VERSION_MAJOR == 4 && ARMA_VERSION_MINOR > 320)
 
 /**
  * Test sparse const_row_col_iterator for basic functionality.
@@ -262,7 +260,5 @@ BOOST_AUTO_TEST_CASE(SpRowColIteratorTest)
 
   BOOST_REQUIRE_EQUAL(count, 1);
 }
-
-#endif
 
 BOOST_AUTO_TEST_SUITE_END();
