@@ -36,11 +36,29 @@ class AddTask
   * @param labels The variable to store output sequences.
   * @param batchSize The dataset size.
   */
+
+  /**
+   * Generate dataset of a given size.
+   *
+   * @param input The variable to store input sequences.
+   * @param labels The variable to store output sequences.
+   * @param batchSize The dataset size.
+   * @param fixedLength Flag that indicates whether
+   * the method should return sequences of even length.
+   */
   void Generate(arma::field<arma::mat>& input,
                 arma::field<arma::mat>& labels,
                 const size_t batchSize, 
-                bool fixedLength = false);
+                const bool fixedLength = false);
 
+  /**
+   * Generate dataset of a given size and store it in
+   * arma::mat object.
+   * 
+   * @param input The variable to store input sequences.
+   * @param labels The variable to store output sequences.
+   * @param batchSize The dataset size.
+   */
   void Generate(arma::mat& input,
                 arma::mat& labels,
                 const size_t batchSize);
@@ -48,8 +66,9 @@ class AddTask
  private:
   // Maximum binary length of numbers.
   size_t bitLen;
-
-  arma::field<arma::mat> Binarize(arma::field<arma::vec> data);
+  
+  void Binarize(const arma::field<arma::vec>& input,
+                arma::field<arma::mat>& output);
 };
 } // namespace tasks
 } // namespace augmented

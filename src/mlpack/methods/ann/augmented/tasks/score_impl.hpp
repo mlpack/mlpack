@@ -22,7 +22,8 @@ namespace scorers /* Scoring utilities for augmented */ {
 
 template<typename MatType>
 double SequencePrecision(arma::field<MatType> trueOutputs,
-                         arma::field<MatType> predOutputs)
+                         arma::field<MatType> predOutputs,
+                         double tol)
 {
   double score = 0;
   size_t testSize = trueOutputs.n_elem;
@@ -30,11 +31,11 @@ double SequencePrecision(arma::field<MatType> trueOutputs,
 
   for (size_t i = 0; i < testSize; i++)
   {
-    MatType delta = arma::abs(trueOutputs.at(i) - predOutputs.at(i));
-    delta.reshape(delta.n_elem, 1);
-    arma::vec deltaVec = arma::conv_to<arma::vec>::from(delta);
-    double maxDelta = arma::max(deltaVec);
-    double eps = 1e-4;
+    arma::vec delta = arma::vectorise(arma::abs(
+      trueOutputs.at(i) - predOutputs.at(i)));
+    //arma::vec deltaVec = arma::conv_to<arma::vec>::from(delta);
+    double maxDelta = arma::max(delta);
+    double eps = tol;
     if (maxDelta < eps)
     {
       score++;
