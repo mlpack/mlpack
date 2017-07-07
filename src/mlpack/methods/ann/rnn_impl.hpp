@@ -22,11 +22,8 @@
 #include "visitor/deterministic_set_visitor.hpp"
 #include "visitor/gradient_set_visitor.hpp"
 #include "visitor/gradient_visitor.hpp"
-<<<<<<< bba7704723aca043c4076008cca07eff8267671b
-=======
 #include "visitor/weight_set_visitor.hpp"
 #include "visitor/rho_set_visitor.hpp"
->>>>>>> Fixed LSTM baseline bug
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -39,14 +36,8 @@ RNN<OutputLayerType, InitializationRuleType>::RNN(
     OutputLayerType outputLayer,
     InitializationRuleType initializeRule) :
     rho(rho),
-<<<<<<< bba7704723aca043c4076008cca07eff8267671b
     outputLayer(std::move(outputLayer)),
     initializeRule(std::move(initializeRule)),
-=======
-    prevRho(0),
-    outputLayer(outputLayer),
-    initializeRule(initializeRule),
->>>>>>> Fixed LSTM baseline bug
     inputSize(0),
     outputSize(0),
     targetSize(0),
