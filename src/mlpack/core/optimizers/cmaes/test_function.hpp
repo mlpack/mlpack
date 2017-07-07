@@ -34,7 +34,7 @@ class cmaesTestFunction
   size_t NumFunctions() const;
 
   //! Evaluate a function.
-  double Evaluate(double arma::mat& coordinates);
+  double Evaluate(arma::mat& coordinates);
 };
 
 } // namespace test
