@@ -49,19 +49,20 @@ def to_matrix_with_info(x, dtype):
     # It's a pandas dataframe.  So we need to see if any of the dtypes are
     # categorical or object, and if so, we need to convert them.  First see if
     # we can take a shortcut without copying.
+    dtype_array = x.dtypes.values if len(x.dtypes) > 0 else [x.dtypes]
     if not any(isinstance(t, pd.types.dtypes.CategoricalDtype)
-        for t in x.dtypes.values) and \
-       not 'object' in x.dtypes.values and \
-       not 'str' in x.dtypes.values and \
-       not 'unicode' in x.dtypes.values:
+        for t in dtype_array) and \
+       not 'object' in dtype_array and \
+       not 'str' in dtype_array and \
+       not 'unicode' in dtype_array:
         # We can just return the matrix as-is; it's all numeric.
         d = np.zeros([x.shape[1]], dtype=np.bool)
         return (to_matrix(x), d)
 
-    if 'str' in x.dtypes.values or 'unicode' in x.dtypes.values:
+    if 'str' in dtype_array or 'unicode' in dtype_array:
       raise TypeError('cannot convert matrices with string types')
 
-    if 'buffer' in x.dtypes.values:
+    if 'buffer' in dtype_array:
       raise TypeError("'buffer' dtype not supported")
 
     # If we get to here, then we are going to need to do some type conversion,
