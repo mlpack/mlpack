@@ -1,3 +1,23 @@
+/**
+ * @file feedforward_network_test.cpp
+ * @author Kris Singh
+ *
+ * Tests the rbm Network
+ *
+ * digits dataset source:
+ * @misc{Lichman:2013 ,
+ * author = "M. Lichman",
+ * year = "2013",
+ * title = "{UCI} Machine Learning Repository",
+ * url = "http://archive.ics.uci.edu/ml",
+ * institution = "University of California,
+ * Irvine, School of Information and Computer Sciences" } 
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
 #include <mlpack/core.hpp>
 
 #include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
@@ -87,36 +107,33 @@ BOOST_AUTO_TEST_CASE(ClassificationTest)
   // Normalised dataset
   int hiddenLayerSize = 100;
   arma::mat trainData, testData, dataset;
-  arma::vec trainLabelsTemp, testLabelsTemp;
-  data::Load("mnist_data_small.csv", dataset, true);
-  trainData = dataset.submat(0, 0,
-      dataset.n_rows - 102, dataset.n_cols - 2);
-  testData = dataset.submat(dataset.n_rows - 102, 0 ,
-      dataset.n_rows - 2, dataset.n_cols - 2);
-  trainLabelsTemp = dataset.submat(0, dataset.n_cols - 1,
-      dataset.n_rows - 102, dataset.n_cols - 1);
-  testLabelsTemp = dataset.submat(dataset.n_rows - 102, dataset.n_cols - 1,
-      dataset.n_rows - 2, dataset.n_cols - 1);
+  arma::mat trainLabelsTemp, testLabelsTemp;
+  trainData.load("digits_train.arm");
+  testData.load("digits_test.arm");
+  trainLabelsTemp.load("digits_train_label.arm");
+  testLabelsTemp.load("digits_test_label.arm");
+
+  std::cout << arma::size(testLabelsTemp) << std::endl;
+  std::cout << arma::size(trainLabelsTemp) << std::endl;
 
   arma::Row<size_t> trainLabels = arma::zeros<arma::Row<size_t>>(1,
-      trainLabelsTemp.n_rows);
+      trainLabelsTemp.n_cols);
   arma::Row<size_t> testLabels = arma::zeros<arma::Row<size_t>>(1,
-      testLabelsTemp.n_rows);
+      testLabelsTemp.n_cols);
 
-  for (size_t i = 0; i < trainLabelsTemp.n_rows; ++i)
-    trainLabels(i) = arma::as_scalar(trainLabelsTemp.row(i));
+  for (size_t i = 0; i < trainLabelsTemp.n_cols; ++i)
+    trainLabels(i) = arma::as_scalar(trainLabelsTemp.col(i));
 
-  for (size_t i = 0; i < testLabelsTemp.n_rows; ++i)
-    testLabels(i) = arma::as_scalar(testLabelsTemp.row(i));
+  for (size_t i = 0; i < testLabelsTemp.n_cols; ++i)
+    testLabels(i) = arma::as_scalar(testLabelsTemp.col(i));
 
+  std::cout << arma::size(trainData) << std::endl;
+  std::cout << arma::size(testData) << std::endl;
   std::cout << arma::size(trainLabels) << std::endl;
   std::cout << arma::size(testLabels) << std::endl;
 
-  trainData = trainData.t();
-  testData = testData.t();
-
   arma::mat output, XRbm(hiddenLayerSize, trainData.n_cols),
-      YRbm(hiddenLayerSize, trainLabels.n_cols);
+      YRbm(hiddenLayerSize, testLabels.n_cols);
 
   XRbm.zeros();
   YRbm.zeros();
