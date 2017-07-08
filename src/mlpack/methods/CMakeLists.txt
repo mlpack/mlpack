@@ -54,6 +54,7 @@ set(DIRS
   randomized_svd
   range_search
   rann
+  rbm
   regularized_svd
   softmax_regression
   sparse_autoencoder
