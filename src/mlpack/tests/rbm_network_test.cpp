@@ -96,8 +96,6 @@ BOOST_AUTO_TEST_CASE(MiscTest)
                           "0, 1, 1;"
                           "1, 0, 1;"
                           "1, 1, 1;");
-  std::cout << X.n_rows << std::endl;
-  std::cout << X.n_cols << std::endl;
   X = X.t();
   BuildVanillaNetwork<>(X, 2);
 }
@@ -126,11 +124,6 @@ BOOST_AUTO_TEST_CASE(ClassificationTest)
 
   for (size_t i = 0; i < testLabelsTemp.n_cols; ++i)
     testLabels(i) = arma::as_scalar(testLabelsTemp.col(i));
-
-  std::cout << arma::size(trainData) << std::endl;
-  std::cout << arma::size(testData) << std::endl;
-  std::cout << arma::size(trainLabels) << std::endl;
-  std::cout << arma::size(testLabels) << std::endl;
 
   arma::mat output, XRbm(hiddenLayerSize, trainData.n_cols),
       YRbm(hiddenLayerSize, testLabels.n_cols);
