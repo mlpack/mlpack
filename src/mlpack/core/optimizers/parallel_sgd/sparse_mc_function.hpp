@@ -68,6 +68,14 @@ class SparseMCLossFunction{
   template <typename GradType>
   void Gradient(const arma::mat& weights, size_t id, GradType& gradient);
 
+  /**
+   * Get the recovered matrix from the iterate.
+   * @param weights The decision variable at which the gradient is to be
+   *     evaluated.
+   * @return The recovered matrix after completion.
+   */
+  arma::mat Recover(const arma::mat& weights);
+
   //! Get the height of the sparse matrix.
   size_t NumRows() const { return numRows; }
   //! Modify the height of the sparse matrix.

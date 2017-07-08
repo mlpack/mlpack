@@ -122,6 +122,12 @@ void SparseMCLossFunction::Gradient(const arma::mat& weights, size_t id,
   gradient.col(colId) += error * weights.col(rowId);
 }
 
+arma::mat SparseMCLossFunction::Recover(const arma::mat& weights)
+{
+  return arma::trans(weights.cols(0, numRows - 1)) * weights.cols(numRows,
+      numRows + numCols - 1);
+}
+
 size_t SparseMCLossFunction::NumFunctions()
 {
   return rows.n_elem;

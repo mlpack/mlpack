@@ -72,7 +72,7 @@ double ParallelSGD<DecayPolicyType>::Optimize(
               ++cur)
           {
             #pragma omp atomic
-            iterate(cur.row(), i) -= stepSize * gradient(cur.row(), i);
+            iterate(cur.row(), i) -= stepSize * (*cur);
           }
         }
       }
