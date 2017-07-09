@@ -41,8 +41,8 @@ namespace optimization {
         stopMaxFunEvals(-1),
         facmaxeval(1.0),
         stopMaxIter(-1.0),
-        stopTolFun(1e-15),
-        stopTolFunHist(1e-15),
+        stopTolFun(1e-14),
+        stopTolFunHist(1e-14),
         stopTolX(0), // 1e-11*insigma would also be reasonable
         stopTolUpXFactor(1e3),
         lambda(-1),
@@ -218,7 +218,7 @@ namespace optimization {
   // get best estimator for the optimum
    arr = xmean; 
 
-  return xBestEver[N];
+  return function.Evaluate(xmean);
 
   }
 
@@ -584,9 +584,11 @@ namespace optimization {
     {
       range = arma::max(funcValueHistory) - arma::min(funcValueHistory);
       if (range <= stopTolFunHist)
+      {
          Log::Info << "TolFunHist: history of function value changes " << range
             << " stopTolFunHist=" << stopTolFunHist << std::endl;
          end = true;
+      }
     }
 
     // TolX
