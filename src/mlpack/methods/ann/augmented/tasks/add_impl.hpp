@@ -116,7 +116,8 @@ void AddTask::Generate(arma::mat& input, arma::mat& labels,
   }
 }
 
-void Binarize(const arma::field<arma::vec>& input, arma::field<arma::mat>& output)
+void AddTask::Binarize(const arma::field<arma::vec>& input,
+                       arma::field<arma::mat>& output)
 {
   arma::field<arma::mat> procData(input.n_elem);
   for (size_t i = 0; i < input.n_elem; ++i)
