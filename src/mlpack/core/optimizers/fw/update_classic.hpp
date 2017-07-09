@@ -43,8 +43,8 @@ class UpdateClassic
    * @param function function to be optimized, not used in this update rule.
    * @param oldCoords previous solution coords.
    * @param s current linear_constr_solution result.
-   * @param new_coords new output solution coords.
-   * @param num_iter current iteration number
+   * @param newCoords output new solution coords.
+   * @param numIter current iteration number
    */
   template<typename FunctionType>
   void Update(FunctionType& function,

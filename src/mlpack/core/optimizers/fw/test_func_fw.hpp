@@ -19,12 +19,22 @@
 namespace mlpack {
 namespace optimization {
 
+/**
+ * Simple test function for classic Frank Wolfe Algorithm:
+ *
+ * \f$ f(x) = (x1 - 0.1)^2 + (x2 - 0.2)^2 + (x3 - 0.3)^2 \f$.
+ */
 class TestFuncFW
 {
  public:
   TestFuncFW()
   {/* Nothing to do. */}
 
+  /**
+   * Evaluation of the function.
+   *
+   * @param coords input vector x.
+   */
   double Evaluate(const arma::mat& coords)
   {
     double f = std::pow(coords[0]-0.1, 2);
@@ -33,6 +43,12 @@ class TestFuncFW
     return f;
   }
 
+  /**
+   * Gradient of the function.
+   *
+   * @param coords input vector x.
+   * @param gradient output gradient vector.
+   */
   void Gradient(const arma::mat& coords, arma::mat& gradient)
   {
     gradient[0] = coords[0]-0.1;

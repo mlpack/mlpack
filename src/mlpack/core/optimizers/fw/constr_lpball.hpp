@@ -76,7 +76,7 @@ class ConstrLpBallSolver
     }
     else if (p == 1.0)
     {
-      // l1 ball, used in OMP.
+      // l1 ball, also used in OMP.
       arma::mat tmp = arma::abs(v);
       arma::uword k = tmp.index_max();  // linear index of matrix.
       s.zeros(v.n_rows, v.n_cols);

@@ -51,21 +51,15 @@ namespace optimization {
  * g(x):= \max_{s\in D} <x-s, \nabla f(x)> \quad \leq \epsilon,
  * \f]
  *
- * we also know that \f$ g(x) \geq f(x) - f(x^*) \f$, where \f$ x^* \f$ is the optimal 
+ * we also know that \f$ g(x) \geq f(x) - f(x^*) \f$, where \f$ x^* \f$ is the optimal
  * solution.
  *
  * The parameter \f$ \epsilon \f$ is specified by the tolerance parameter to the
  * constructor.
  *
- * For FrankWolfe to work, FunctionType, LinearConstrSolverType and UpdateRuleType 
+ * For FrankWolfe to work, LinearConstrSolverType and UpdateRuleType 
  * template parameters are required.
  * These classes must implement the following functions:
- *
- * FunctionType:
- *
- *   double Evaluate(const arma::mat& coordinates);
- *   void Gradient(const arma::mat& coordinates,
- *                 arma::mat& gradient);
  *
  * LinearConstrSolverType:
  *
@@ -79,8 +73,6 @@ namespace optimization {
  *               arma::mat& new_coords,
  *               const size_t num_iter);
  *
- * @tparam FunctionType Objective function type to be
- *     minimized.
  * @tparam LinearConstrSolverType Solver for the linear constrained problem.
  * @tparam UpdateRuleType Rule to update the solution in each iteration.
  *
@@ -110,12 +102,19 @@ class FrankWolfe
 
   /**
    * Optimize the given function using FrankWolfe.  The given starting
-   * point will be modified to store the finishing point of the algorithm, and
+   * point will be modified to store the finishing point of the algorithm,
    * the final objective value is returned.
    *
-   * @tparam function Function to be optimized.
-   * @param iterate Starting point (will be modified).
-   * @return Objective value of the final point.
+   * FunctionType template class must provide the following functions:
+   *
+   *   double Evaluate(const arma::mat& coordinates);
+   *   void Gradient(const arma::mat& coordinates,
+   *                 arma::mat& gradient);
+   *
+   * @param function Function to be optimized.
+   * @param iterate Input with starting point, and will be modified to save 
+   *                the output optimial solution coordinates.
+   * @return Objective value at the final solution.
    */
   template<typename FunctionType>
   double Optimize(FunctionType& function, arma::mat& iterate);

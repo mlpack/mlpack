@@ -18,6 +18,7 @@
 namespace mlpack {
 namespace optimization {
 
+//! Constructor of the FrankWolfe class.
 template<
     typename LinearConstrSolverType,
     typename UpdateRuleType>
@@ -41,7 +42,7 @@ template<typename FunctionType>
 double FrankWolfe<LinearConstrSolverType, UpdateRuleType>::
 Optimize(FunctionType& function, arma::mat& iterate)
 {
-  // To keep track of the function value
+  // To keep track of the function value.
   double CurrentObjective = function.Evaluate(iterate);
   double PreviousObjective = DBL_MAX;
 
@@ -81,6 +82,7 @@ Optimize(FunctionType& function, arma::mat& iterate)
     iterate = std::move(iterateNew);
     CurrentObjective = function.Evaluate(iterate);
   }
+
   Log::Info << "Frank Wolfe: maximum iterations (" << maxIterations
       << ") reached; " << "terminating optimization." << std::endl;
   return CurrentObjective;

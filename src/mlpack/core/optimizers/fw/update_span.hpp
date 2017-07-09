@@ -14,29 +14,17 @@
 #define MLPACK_CORE_OPTIMIZERS_FW_UPDATE_SPAN_HPP
 
 #include <mlpack/prereqs.hpp>
+#include "func_sq.hpp"
 
 namespace mlpack {
 namespace optimization {
 
 /**
- * Recalculate the optimal solution in the span of all previous solution space, 
+ * Recalculate the optimal solution in the span of all previous solution space,
  * used as update step for FrankWolfe algorithm.
  *
+ * Currently only works for function in FuncSq class.
  *
- * For UpdateSpan to work, FunctionType template parameters are required.
- * This class must implement the following functions:
- *
- * FunctionType:
- *
- *   double Evaluate(const arma::mat& coordinates);
- *   void Gradient(const arma::mat& coordinates,
- *                 arma::mat& gradient);
- *   arma::mat MatrixA()
- *   arma::vec Vectorb()
- *
- *
- * @tparam FunctionType Objective function type to be minimized in 
- *                      FrankWolfe algorithm.
  */
 class UpdateSpan
 {
@@ -51,31 +39,33 @@ class UpdateSpan
   { /* Do nothing. */ }
 
   /**
-   * Update rule for FrankWolfe, reoptimize in the span of original 
+   * Update rule for FrankWolfe, reoptimize in the span of current
    * solution space.
    *
-   * @tparam function function to be optimized.
+   * @param function function to be optimized.
    * @param oldCoords previous solution coords, not used in this update rule.
    * @param s current linearConstrSolution result.
-   * @param newCoords new output solution coords.
+   * @param newCoords output new solution coords.
    * @param numIter current iteration number.
    */
-  template<typename FunctionType>
-  void Update(FunctionType& function,
+  void Update(FuncSq& function,
               const arma::mat& oldCoords,
               const arma::mat& s,
               arma::mat& newCoords,
               const size_t numIter)
   {
-    // Add atom here.
+    // Add new atom into soluton space.
     arma::uvec ind = find(s, 1);
     arma::uword d = ind(0);
     AddAtom(function, d);
 
+    // Reoptimize the solution in the current space.
     arma::vec b = function.Vectorb();
     arma::mat x = solve(currentAtoms, b);
 
-    newCoords = RecoverVector(function, x);
+    // x has coords of only the current atoms, recover the solution
+    // to the original size.
+    newCoords = RecoverVector((function.MatrixA()).n_cols, x);
   }
 
   //! Get the current atom indices.
@@ -89,18 +79,17 @@ class UpdateSpan
   arma::mat& CurrentAtoms() { return currentAtoms; }
 
  private:
-  //! Current indices.
+  //! Indices of the atoms in the current solution space.
   arma::uvec currentIndices;
 
-  //! Current atoms.
+  //! Current atoms in the solution space, ordered as currentIndices.
   arma::mat currentAtoms;
 
   //! Flag current indices is empty.
   bool isEmpty = true;
 
   //! Add atom into the solution space.
-  template<typename FunctionType>
-  void AddAtom(FunctionType& function, const arma::uword k)
+  void AddAtom(FuncSq& function, const arma::uword k)
   {
     if (isEmpty)
     {
@@ -119,10 +108,14 @@ class UpdateSpan
     }
   }
 
-  template<typename FunctionType>
-  arma::vec RecoverVector(FunctionType& function, const arma::vec& x)
+  /**
+   * Recover the solution coordinate from the coefficients of current atoms.
+   *
+   * @param n dimension of original solution space.
+   * @param x coefficients of current atoms.
+   */
+  arma::vec RecoverVector(const size_t n, const arma::vec& x)
   {
-    int n = (function.MatrixA()).n_cols;
     arma::vec y = arma::zeros<arma::vec>(n);
 
     arma::uword len = currentIndices.size();
