@@ -164,10 +164,10 @@ double maxElement(const arma::vec rgd, int len)
 {
 double ans = DBL_MIN;
 
-for (int i=0; i<len; i++) 
-  if (rgd[i] > ans) 
+for (int i=0; i<len; i++)
+  if (rgd[i] > ans)
   {
-    ans=rgd[i];
+    ans = rgd[i];
   }
 
 return ans;
@@ -180,7 +180,7 @@ double ans = DBL_MAX;
 for (int i=0; i<len; i++)
   if (rgd[i] < ans)
   {
-    ans=rgd[i];
+    ans = rgd[i];
   }
 
 return ans;
