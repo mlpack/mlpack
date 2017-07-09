@@ -97,14 +97,14 @@ class FrankWolfe
    * at the initialization of linear_constr_solver, the function to be  
    * optimized is stored in update_rule.
    *
-   * @param linear_constr_solver Solver for linear constrained problem.
-   * @param update_rule Rule for updating solution in each iteration.
+   * @param linearConstrSolver Solver for linear constrained problem.
+   * @param updateRule Rule for updating solution in each iteration.
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *     limit).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    */
-  FrankWolfe(const LinearConstrSolverType linear_constr_solver,
-             const UpdateRuleType update_rule,
+  FrankWolfe(const LinearConstrSolverType linearConstrSolver,
+             const UpdateRuleType updateRule,
              const size_t maxIterations = 100000,
              const double tolerance = 1e-10);
 
@@ -122,14 +122,14 @@ class FrankWolfe
 
   //! Get the linear constrained solver.
   LinearConstrSolverType LinearConstrSolver()
-      const { return linear_constr_solver; }
+      const { return linearConstrSolver; }
   //! Modify the linear constrained solver.
-  LinearConstrSolverType& LinearConstrSolver() { return linear_constr_solver; }
+  LinearConstrSolverType& LinearConstrSolver() { return linearConstrSolver; }
 
   //! Get the update rule.
-  UpdateRuleType UpdateRule() const { return update_rule; }
+  UpdateRuleType UpdateRule() const { return updateRule; }
   //! Modify the update rule.
-  UpdateRuleType& UpdateRule() { return update_rule; }
+  UpdateRuleType& UpdateRule() { return updateRule; }
 
   //! Get the maximum number of iterations (0 indicates no limit).
   size_t MaxIterations() const { return maxIterations; }
@@ -143,10 +143,10 @@ class FrankWolfe
 
  private:
   //! The solver for constrained linear problem in first step.
-  LinearConstrSolverType linear_constr_solver;
+  LinearConstrSolverType linearConstrSolver;
 
   //! The rule to update, used in the second step.
-  UpdateRuleType update_rule;
+  UpdateRuleType updateRule;
 
   //! The maximum number of allowed iterations.
   size_t maxIterations;

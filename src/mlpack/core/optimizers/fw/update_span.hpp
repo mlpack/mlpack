@@ -35,7 +35,8 @@ namespace optimization {
  *   arma::vec Vectorb()
  *
  *
- * @tparam FunctionType Objective function type to be minimized in FrankWolfe algorithm.
+ * @tparam FunctionType Objective function type to be minimized in 
+ *                      FrankWolfe algorithm.
  */
 class UpdateSpan
 {
@@ -50,21 +51,21 @@ class UpdateSpan
   { /* Do nothing. */ }
 
   /**
-   * Update rule for FrankWolfe, reoptimize in the span of original solution space.
-   *
+   * Update rule for FrankWolfe, reoptimize in the span of original 
+   * solution space.
    *
    * @tparam function function to be optimized.
-   * @param old_coords previous solution coords.
-   * @param s current linear_constr_solution result.
-   * @param new_coords new output solution coords.
-   * @param num_iter current iteration number
+   * @param oldCoords previous solution coords, not used in this update rule.
+   * @param s current linearConstrSolution result.
+   * @param newCoords new output solution coords.
+   * @param numIter current iteration number.
    */
   template<typename FunctionType>
   void Update(FunctionType& function,
-              const arma::mat& old_coords,
+              const arma::mat& oldCoords,
               const arma::mat& s,
-              arma::mat& new_coords,
-              const size_t num_iter)
+              arma::mat& newCoords,
+              const size_t numIter)
   {
     // Add atom here.
     arma::uvec ind = find(s, 1);
@@ -72,27 +73,27 @@ class UpdateSpan
     AddAtom(function, d);
 
     arma::vec b = function.Vectorb();
-    arma::mat x = solve(atoms_current, b);
+    arma::mat x = solve(currentAtoms, b);
 
-    new_coords = RecoverVector(function, x);
+    newCoords = RecoverVector(function, x);
   }
 
   //! Get the current atom indices.
-  arma::uvec CurrentIndices() const { return current_indices; }
+  arma::uvec CurrentIndices() const { return currentIndices; }
   //! Modify the current atom indices.
-  arma::uvec& CurrentIndices() { return current_indices; }
+  arma::uvec& CurrentIndices() { return currentIndices; }
 
   //! Get the current atoms.
-  arma::mat CurrentAtoms() const { return atoms_current; }
+  arma::mat CurrentAtoms() const { return currentAtoms; }
   //! Modify the current atoms.
-  arma::mat& CurrentAtoms() { return atoms_current; }
+  arma::mat& CurrentAtoms() { return currentAtoms; }
 
  private:
   //! Current indices.
-  arma::uvec current_indices;
+  arma::uvec currentIndices;
 
   //! Current atoms.
-  arma::mat atoms_current;
+  arma::mat currentAtoms;
 
   //! Flag current indices is empty.
   bool isEmpty = true;
@@ -111,10 +112,10 @@ class UpdateSpan
     {
       arma::uvec vk(1);
       vk = k;
-      current_indices.insert_rows(0, vk);
+      currentIndices.insert_rows(0, vk);
 
       arma::mat atom = (function.MatrixA()).col(k);
-      atoms_current.insert_cols(0, atom);
+      currentAtoms.insert_cols(0, atom);
     }
   }
 
@@ -124,9 +125,9 @@ class UpdateSpan
     int n = (function.MatrixA()).n_cols;
     arma::vec y = arma::zeros<arma::vec>(n);
 
-    arma::uword len = current_indices.size();
+    arma::uword len = currentIndices.size();
     for (size_t ii = 0; ii < len; ++ii)
-      y(current_indices(ii)) = x(ii);
+      y(currentIndices(ii)) = x(ii);
 
     return y;
   }

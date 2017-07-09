@@ -22,12 +22,12 @@ template<
     typename LinearConstrSolverType,
     typename UpdateRuleType>
 FrankWolfe<LinearConstrSolverType, UpdateRuleType>::
-FrankWolfe(const LinearConstrSolverType linear_constr_solver,
-           const UpdateRuleType update_rule,
+FrankWolfe(const LinearConstrSolverType linearConstrSolver,
+           const UpdateRuleType updateRule,
            const size_t maxIterations,
            const double tolerance) :
-    linear_constr_solver(linear_constr_solver),
-    update_rule(update_rule),
+    linearConstrSolver(linearConstrSolver),
+    updateRule(updateRule),
     maxIterations(maxIterations),
     tolerance(tolerance)
 { /* Nothing to do*/ }
@@ -47,7 +47,7 @@ Optimize(FunctionType& function, arma::mat& iterate)
 
   arma::mat gradient(iterate.n_rows, iterate.n_cols);
   arma::mat s(iterate.n_rows, iterate.n_cols);
-  arma::mat iterate_new(iterate.n_rows, iterate.n_cols);
+  arma::mat iterateNew(iterate.n_rows, iterate.n_cols);
   double gap = 0;
 
   for (size_t i=1; i != maxIterations; ++i)
@@ -63,7 +63,7 @@ Optimize(FunctionType& function, arma::mat& iterate)
     function.Gradient(iterate, gradient);
 
     // Solve linear constrained problem, solution saved in s.
-    linear_constr_solver.Optimize(gradient, s);
+    linearConstrSolver.Optimize(gradient, s);
 
     // Check duality gap for return condition.
     gap = std::fabs(dot(iterate-s, gradient));
@@ -75,10 +75,10 @@ Optimize(FunctionType& function, arma::mat& iterate)
     }
 
 
-    // Update solution, save in iterate_new.
-    update_rule.Update(function, iterate, s, iterate_new, i);
+    // Update solution, save in iterateNew.
+    updateRule.Update(function, iterate, s, iterateNew, i);
 
-    iterate = std::move(iterate_new);
+    iterate = std::move(iterateNew);
     CurrentObjective = function.Evaluate(iterate);
   }
   Log::Info << "Frank Wolfe: maximum iterations (" << maxIterations

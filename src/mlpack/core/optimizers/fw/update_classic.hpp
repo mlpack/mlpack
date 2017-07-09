@@ -40,20 +40,21 @@ class UpdateClassic
    *
    * \f$ x_{k+1} = (1-\gamma)x_k + \gamma s \f$, where \f$ \gamma = 2/(k+2) \f$
    *
-   * @param old_coords previous solution coords.
+   * @param function function to be optimized, not used in this update rule.
+   * @param oldCoords previous solution coords.
    * @param s current linear_constr_solution result.
    * @param new_coords new output solution coords.
    * @param num_iter current iteration number
    */
   template<typename FunctionType>
   void Update(FunctionType& function,
-              const arma::mat& old_coords,
+              const arma::mat& oldCoords,
               const arma::mat& s,
-              arma::mat& new_coords,
-              const size_t num_iter)
+              arma::mat& newCoords,
+              const size_t numIter)
   {
-    double gamma = 2.0 / (num_iter + 2.0);
-    new_coords = (1.0 - gamma) * old_coords + gamma * s;
+    double gamma = 2.0 / (numIter + 2.0);
+    newCoords = (1.0 - gamma) * oldCoords + gamma * s;
   }
 };
 
