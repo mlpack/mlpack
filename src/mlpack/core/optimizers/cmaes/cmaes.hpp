@@ -49,10 +49,9 @@ public:
   }
   
    void getInitialStandardDeviations(double *arr, size_t dimension)
-  { 
-
+   {      
     for (int i=0; i<N; i++) arr[i] = rgInitialStds[i];
-  }
+   }
 
     void getStandardDeviations(double *arr)
   { 
@@ -85,7 +84,6 @@ public:
   {
     return stopMaxIter;
   }
-
 
   void stopMinFuntionDifference(double difference)
   {
@@ -164,15 +162,15 @@ void getFittestMean(double *arr)
   double maxElement(const arma::vec rgd, int len)
   { 
     double ans = DBL_MIN;
-    for(int i=0; i<len; i++) if (rgd[i] > ans) ans=rgd[i];
-      return ans;
+    for (int i=0; i<len; i++) if (rgd[i] > ans) ans=rgd[i];
+    return ans;
   }
 
   double minElement(const arma::vec rgd, int len)
   {
-     double ans = DBL_MAX;
-    for(int i=0; i<len; i++) if (rgd[i] < ans) ans=rgd[i];
-      return ans;
+    double ans = DBL_MAX;
+    for (int i=0; i<len; i++) if (rgd[i] < ans) ans=rgd[i];
+    return ans;
   }
   
  /**

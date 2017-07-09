@@ -19,22 +19,22 @@ namespace optimization {
 namespace test {
 
 //! Its a derivative free optimization resulting in no use of gradient
-//! like in stochastic gradient descent and instead uses search points taken randomly
-//! of a normal distribution and moving the mean of the population towards the best 
-//! fitness offsprings.
+//! like in stochastic gradient descent and instead uses search points
+//! taken randomly of a normal distribution and moving the mean of
+//! the population towards the best fitness offsprings.
 class cmaesTestFunction
 {
-
  public:
-  //! Return 3 (the number of functions) = the variable N in CMAES class for dimension
- ssize_t NumFunctions() const { return 3; }
+  //! Return 3 (the number of functions) = the variable N in 
+  //! CMAES class for dimension
+ssize_t NumFunctions() const { return 3; }
 
- double Evaluate(const arma::mat& coordinates) const
-	{
-	   return (-std::exp(-std::abs(coordinates[0])) + 
-	            std::pow(coordinates[1], 2) + 
-	            std::pow(coordinates[2], 4) + 3 * std::pow(coordinates[2], 2));
-	}
+double Evaluate(const arma::mat& coordinates) const
+{
+  return (-std::exp(-std::abs(coordinates[0])) + 
+           std::pow(coordinates[1], 2) + 
+           std::pow(coordinates[2], 4) + 3 * std::pow(coordinates[2], 2));
+}
 
 };
 

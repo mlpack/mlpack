@@ -18,14 +18,15 @@ class Random
   // variables for gauss()
   bool stored;
   T hold;
-public:
+
+ public:
   /**
    * @param seed use clock if 0
    */
   Random(long unsigned seed = 0) : hold(0.0)
   {
     stored = false;
-    if(seed < 1)
+    if (seed < 1)
     {
       long int t = 100*time(0) + clock();
       seed = (long unsigned) (t < 0 ? -t : t);
@@ -66,7 +67,7 @@ public:
       x1 = 2.0*uniform() - 1.0;
       x2 = 2.0*uniform() - 1.0;
       rquad = x1*x1 + x2*x2;
-    } while(rquad >= 1 || rquad <= 0);
+    } while (rquad >= 1 || rquad <= 0);
     const register T fac = std::sqrt(T(-2)*std::log(rquad)/rquad);
     hold = fac*x1;
     return fac*x2;

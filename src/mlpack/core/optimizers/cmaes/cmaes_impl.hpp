@@ -34,8 +34,10 @@ namespace mlpack {
 namespace optimization {
 
   template<typename funcType>
-  CMAES<funcType>::CMAES(funcType& function, arma::mat& start, arma::mat& stdDivs)
-      : function(function),
+  CMAES<funcType>::CMAES(funcType& function, 
+       arma::mat& start, arma::mat& stdDivs)
+      : 
+        function(function),
         N(-1),
         typicalXcase(false),
         stopMaxFunEvals(-1),
@@ -74,11 +76,13 @@ namespace optimization {
      if (stdDivs[i] < 1.0e-200) initDev = false;
     }
 
-  
    if (!startP)
-        Log::Warn << " WARNING: initial start point undefined. Please specify if incorrect results detected. DEFAULT = 0.5...0.5." << std::endl;
+   Log::Warn << " WARNING: initial start point undefined." <<
+   "Please specify if incorrect results detected. DEFAULT = 0.5...0.5." << std::endl;
+   
    if (!initDev)
-        Log::Warn << "WARNING: initialStandardDeviations undefined. Please specify if incorrect results detected. DEFAULT = 0.3...0.3." << std::endl;
+   Log::Warn << "WARNING: initialStandardDeviations undefined."
+   << " Please specify if incorrect results detected. DEFAULT = 0.3...0.3." << std::endl;
     
    
 
@@ -109,14 +113,13 @@ namespace optimization {
         for (int i = 0; i < N; ++i) rgInitialStds[i] = double(0.3);
       }
 
-
     if (lambda < 2)
       lambda = 4 + (int) (3.0*log((double) N));
     if (mu <= 0)
       mu = lambda / 2;
 
       weights.set_size(mu);
-      switch(weightMode)
+      switch (weightMode)
       {
       case LINEAR_WEIGHTS:
         for (int i = 0; i < mu; ++i) weights[i] = mu - i;
@@ -142,7 +145,7 @@ namespace optimization {
         weights[i] /= s1;
 
       if (mu < 1 || mu > lambda || (mu == lambda && weights[0] == weights[mu - 1]))
-        throw std::runtime_error("setWeights(): invalid setting of mu or lambda");
+      throw std::runtime_error("setWeights(): invalid setting of mu or lambda");
     
 
     if (cs > 0)
@@ -175,13 +178,12 @@ namespace optimization {
     if (stopMaxIter <= 0)
       stopMaxIter = ceil((double) (stopMaxFunEvals / lambda));
 
-    if (damps < double(0))
-      damps = double(1);
-    damps = damps
-        * (double(1) + double(2)*std::max(double(0), std::sqrt((mueff - double(1)) / (N + double(1))) - double(1)))
-        * (double) std::max(double(0.3), double(1) - // modify for short runs
-          (double) N / (double(1e-6) + std::min(stopMaxIter, stopMaxFunEvals / lambda)))
-        + cs;
+    if (damps < double(0))   damps = double(1); damps = damps *
+    (double(1) + double(2)*std::max(double(0), std::sqrt((mueff -
+    double(1)) / (N + double(1))) - double(1))) * (double)
+    std::max(double(0.3), double(1) - // modify for short runs
+    (double) N / (double(1e-6) + std::min(stopMaxIter, stopMaxFunEvals
+    / lambda))) + cs;
 
     if (updateCmode.modulo < 0)
       updateCmode.modulo = 1. / ccov / (double) N / 10.;
@@ -197,14 +199,15 @@ namespace optimization {
     arFunvals.set_size(lambda);
     init(arFunvals);
 
-  while(!testForTermination())
+  while (!testForTermination())
   {
     // Generate lambda new search points, sample population
     samplePopulation();
 
     arma::mat x(N,1);
 
-    // evaluate the new search points using the given evaluate function by the user
+    // evaluate the new search points using the given evaluate
+    //function by the user
     for (int i = 0; i < lambda; ++i)
     {
       x = population.submat(i, 0, i, N-1);
@@ -429,18 +432,13 @@ namespace optimization {
 
   }
 
-  /**
-   * Core procedure of the CMA-ES algorithm. Sets a new mean value and estimates
-   * the new covariance matrix and a new step size for the normal search
-   * distribution.
-   * @param fitnessValues An array of \f$\lambda\f$ function values.
-   * @return Mean value of the new distribution.
-   */
-   template<typename funcType>
-  void CMAES<funcType>::updateDistribution(const arma::vec& fitnessValues)
-  {
-
-    bool diag = diagonalCov == 1 || diagonalCov >= gen;
+  /**    * Core procedure of the CMA-ES algorithm. Sets a new mean
+value and estimates    * the new covariance matrix and a new step size
+for the normal search    * distribution.    * @param fitnessValues An
+array of \f$\lambda\f$ function values.    * @return Mean value of the
+new distribution.    */    template<typename funcType>   void
+CMAES<funcType>::updateDistribution(const arma::vec& fitnessValues)
+{     bool diag = diagonalCov == 1 || diagonalCov >= gen;
 
     assert(state != UPDATED && "updateDistribution(): You need to call "
           "samplePopulation() before update can take place.");
@@ -461,7 +459,7 @@ namespace optimization {
       sigma *= std::exp(double(0.2) + cs / damps);
      
         Log::Warn << "Warning: sigma increased due to equal function values"
-         << std::endl << "   Reconsider the formulation of the objective function";
+         << std::endl << "Reconsider the formulation of the objective function";
   
     }
 
@@ -567,9 +565,11 @@ namespace optimization {
     }
 
     // TolFun
-    range = std::max(maxElement(funcValueHistory, (int) std::min(gen, (double)funcValueHistory.size())),
+    range = std::max(maxElement(funcValueHistory, 
+      (int) std::min(gen, (double)funcValueHistory.size())),
         arma::max(functionValues)) -
-        std::min(minElement(funcValueHistory, (int) std::min(gen, (double)funcValueHistory.size())),
+        std::min(minElement(funcValueHistory, 
+        (int) std::min(gen, (double)funcValueHistory.size())),
         arma::min(functionValues));
 
     if (gen > 0 && range <= stopTolFun)
@@ -707,7 +707,7 @@ namespace optimization {
 
 
 
-} //namespace optimizer
-} //namespace cmaes
+} //namespace optimization
+} //namespace mlpack
 
 #endif
