@@ -27,15 +27,15 @@ BOOST_AUTO_TEST_SUITE(CMAESTest);
 BOOST_AUTO_TEST_CASE(SimpleCMAESTestFunction)
 {
   cmaesTestFunction test;
-  
+
   int N = test.NumFunctions();
 
-  arma::mat start(N,1); start.fill(0.5); 
+  arma::mat start(N, 1); start.fill(0.5);
   arma::mat initialStdDeviations(N,1); initialStdDeviations.fill(1.5);
 
-  CMAES<cmaesTestFunction> s(test,start,initialStdDeviations);
+  CMAES<cmaesTestFunction> s(test, start, initialStdDeviations);
 
-  arma::mat coordinates(N,1);
+  arma::mat coordinates(N, 1);
   double result = s.Optimize(coordinates);
 
   BOOST_REQUIRE_CLOSE(result, -1.0, 0.05);
