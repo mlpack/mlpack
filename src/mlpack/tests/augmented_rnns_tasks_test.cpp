@@ -89,17 +89,18 @@ class HardCodedCopyModel {
 
 class HardCodedSortModel {
  public:
-  HardCodedSortModel() {}
+  HardCodedSortModel(size_t bitLen) : bitLen(bitLen) {}
   void Train(arma::field<arma::mat>& predictors,
              arma::field<arma::mat>& labels)
   {
     assert(predictors.n_elem == labels.n_elem);
-    bitLen = predictors.at(0).n_rows;
   }
   void Predict(
       arma::mat& predictors,
       arma::mat& labels)
   {
+    predictors = predictors.t();
+    predictors.reshape(bitLen, predictors.n_elem / bitLen);
     size_t len = predictors.n_cols;
     labels.zeros(bitLen, len);
     vector<pair<int, int>> vals(len);
@@ -115,6 +116,7 @@ class HardCodedSortModel {
     for (size_t j = 0; j < len; ++j) {
       labels.col(j) = predictors.col(vals[j].second);
     }
+    labels.reshape(predictors.n_elem, 1);
   }
   void Predict(arma::field<arma::mat>& predictors,
                arma::field<arma::mat>& labels) {
@@ -240,7 +242,7 @@ BOOST_AUTO_TEST_CASE(SortTaskTest) {
     task.Generate(trainPredictor, trainResponse, 8);
     arma::field<arma::mat> testPredictor, testResponse;
     task.Generate(testPredictor, testResponse, 8);
-    HardCodedSortModel model;
+    HardCodedSortModel model(bitLen);
     model.Train(trainPredictor, trainResponse);
     arma::field<arma::mat> predResponse;
     model.Predict(testPredictor, predResponse);
