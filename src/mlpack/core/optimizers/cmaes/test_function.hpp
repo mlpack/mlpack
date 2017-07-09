@@ -25,17 +25,16 @@ namespace test {
 class cmaesTestFunction
 {
  public:
-  //! Return 3 (the number of functions) = the variable N in 
+  //! Return 3 (the number of functions) = the variable N in
   //! CMAES class for dimension
 ssize_t NumFunctions() const { return 3; }
 
 double Evaluate(const arma::mat& coordinates) const
 {
-  return (-std::exp(-std::abs(coordinates[0])) + 
-           std::pow(coordinates[1], 2) + 
+  return (-std::exp(-std::abs(coordinates[0])) +
+           std::pow(coordinates[1], 2) +
            std::pow(coordinates[2], 4) + 3 * std::pow(coordinates[2], 2));
 }
-
 };
 
 } // namespace test

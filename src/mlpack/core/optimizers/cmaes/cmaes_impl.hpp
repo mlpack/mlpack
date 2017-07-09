@@ -34,9 +34,9 @@ namespace mlpack {
 namespace optimization {
 
   template<typename funcType>
-  CMAES<funcType>::CMAES(funcType& function, 
+  CMAES<funcType>::CMAES(funcType& function,
        arma::mat& start, arma::mat& stdDivs)
-      : 
+      :
         function(function),
         N(-1),
         typicalXcase(false),
@@ -66,7 +66,6 @@ namespace optimization {
      N = function.NumFunctions();
     if ( N <= 0)
       throw std::runtime_error("Problem dimension N undefined.");
-    
     bool startP  = true;
     bool initDev = true;
 
@@ -76,15 +75,14 @@ namespace optimization {
      if (stdDivs[i] < 1.0e-200) initDev = false;
     }
 
-   if (!startP)
-   Log::Warn << " WARNING: initial start point undefined." <<
-   "Please specify if incorrect results detected. DEFAULT = 0.5...0.5." << std::endl;
-   
-   if (!initDev)
-   Log::Warn << "WARNING: initialStandardDeviations undefined."
-   << " Please specify if incorrect results detected. DEFAULT = 0.3...0.3." << std::endl;
-    
-   
+if (!startP)
+Log::Warn << " WARNING: initial start point undefined." <<
+"Please specify if incorrect results detected. DEFAULT = 0.5...0.5." << std::endl;
+
+if (!initDev)
+Log::Warn << "WARNING: initialStandardDeviations undefined."
+<< " Please specify if incorrect results detected. DEFAULT = 0.3...0.3."
+<< std::endl;
 
     if (weightMode == UNINITIALIZED_WEIGHTS)
       weightMode = LOG_WEIGHTS;
@@ -101,7 +99,6 @@ namespace optimization {
         typicalXcase = true;
         for (int i = 0; i < N; i++) xstart[i] = 0.5;
       }
-  
 
     rgInitialStds.set_size(N);
     if (initDev)
@@ -144,9 +141,9 @@ namespace optimization {
       for (int i = 0; i < mu; ++i)
         weights[i] /= s1;
 
-      if (mu < 1 || mu > lambda || (mu == lambda && weights[0] == weights[mu - 1]))
+      if (mu < 1 || mu > lambda || (mu == lambda 
+        && weights[0] == weights[mu - 1]))
       throw std::runtime_error("setWeights(): invalid setting of mu or lambda");
-    
 
     if (cs > 0)
       cs *= (mueff + 2.) / (N + mueff + 3.);
@@ -178,19 +175,21 @@ namespace optimization {
     if (stopMaxIter <= 0)
       stopMaxIter = ceil((double) (stopMaxFunEvals / lambda));
 
-    if (damps < double(0))   damps = double(1); damps = damps *
+    if (damps < double(0))
+    {
+    damps = double(1); damps = damps *
     (double(1) + double(2)*std::max(double(0), std::sqrt((mueff -
     double(1)) / (N + double(1))) - double(1))) * (double)
     std::max(double(0.3), double(1) - // modify for short runs
     (double) N / (double(1e-6) + std::min(stopMaxIter, stopMaxFunEvals
     / lambda))) + cs;
+    }
 
     if (updateCmode.modulo < 0)
       updateCmode.modulo = 1. / ccov / (double) N / 10.;
     updateCmode.modulo *= facupdateCmode;
     if (updateCmode.maxtime < 0)
-      updateCmode.maxtime = 0.20; // maximal 20% of CPU-time
-  
+      updateCmode.maxtime = 0.20;
   }
 
   template<typename funcType>
@@ -204,10 +203,10 @@ namespace optimization {
     // Generate lambda new search points, sample population
     samplePopulation();
 
-    arma::mat x(N,1);
+    arma::mat x(N, 1);
 
     // evaluate the new search points using the given evaluate
-    //function by the user
+    // function by the user
     for (int i = 0; i < lambda; ++i)
     {
       x = population.submat(i, 0, i, N-1);
@@ -219,14 +218,14 @@ namespace optimization {
   }
 
   // get best estimator for the optimum
-   arr = xmean; 
+arr = xmean;
 
   return function.Evaluate(xmean);
-
   }
 
-   template<typename funcType>
-  void CMAES<funcType>::sortIndex(const arma::vec rgFunVal, arma::vec& iindex, int n)
+template<typename funcType>
+void CMAES<funcType>::sortIndex(const arma::vec rgFunVal,
+arma::vec& iindex, int n)
   {
     int i, j;
     for (i = 1, iindex[0] = 0; i < n; ++i)
@@ -250,12 +249,22 @@ namespace optimization {
     {
       // definitions for speeding up inner-most loop
       const double mucovinv = double(1)/mucov;
-      const double commonFactor = ccov * (diag ? (N + double(1.5)) / double(3) : double(1));
-      const double ccov1 = std::min(commonFactor*mucovinv, double(1));
-      const double ccovmu = std::min(commonFactor*(double(1)-mucovinv), double(1)-ccov1);
+      
+      const double commonFactor = ccov *
+      (diag ? (N + double(1.5)) / double(3) : double(1));
+
+      const double ccov1 = std::min(commonFactor*
+        mucovinv, double(1));
+      
+      const double ccovmu = std::min(commonFactor*
+        (double(1)-mucovinv), double(1)-ccov1);
+      
       const double sigmasquare = sigma*sigma;
+      
       const double onemccov1ccovmu = double(1)-ccov1-ccovmu;
-      const double longFactor = (double(1)-hsig)*ccumcov*(double(2)-ccumcov);
+      
+      const double longFactor = (double(1)-hsig)*
+      ccumcov*(double(2)-ccumcov);
 
       eigensysIsUptodate = false;
 
@@ -263,7 +272,7 @@ namespace optimization {
       for (int i = 0; i < N; ++i)
         for (int j = diag ? i : 0; j <= i; ++j)
         {
-          double& Cij = C(i,j);
+          double& Cij = C(i, j);
           Cij = onemccov1ccovmu*Cij + ccov1 * (pc[i]*pc[j] + longFactor*Cij);
           for (int k = 0; k < mu; ++k)
           { // additional rank mu update
@@ -274,7 +283,6 @@ namespace optimization {
       // update maximal and minimal diagonal value
       maxdiagC = arma::max(C.diag());
       mindiagC = arma::min(C.diag());
-     
     }
   }
 
@@ -293,7 +301,7 @@ namespace optimization {
     {
       double sum = 0.0;
       for (int j = 0; j < N; ++j)
-        sum += B(i,j)*tempRandom[j];
+        sum += B(i, j)*tempRandom[j];
       x[i] = xmean[i] + eps*sigma*sum;
     }
   }
@@ -316,7 +324,8 @@ namespace optimization {
     genOfEigensysUpdate = 0;
 
     double dtest;
-    for (dtest = double(1); dtest && dtest < double(1.1)*dtest; dtest *= double(2))
+    for (dtest = double(1); dtest && dtest < double(1.1)*dtest;
+    dtest *= double(2))
       if (dtest == dtest + double(1))
         break;
     dMaxSignifKond = dtest / double(1000);
@@ -339,8 +348,8 @@ namespace optimization {
     ++xBestEver;
     xBestEver[N] = std::numeric_limits<double>::max();
     rgD.set_size(N);
-    C.set_size(N,N);
-    B.set_size(N,N);
+    C.set_size(N, N);
+    B.set_size(N, N);
     publicFitness.set_size(lambda);
     functionValues.set_size(lambda+1);
     functionValues[0] = lambda;
@@ -353,14 +362,13 @@ namespace optimization {
     funcValueHistory.fill(DBL_MAX);
     funcValueHistory[0] = (double) historySize;
     funcValueHistory++;
-  
     C.zeros();
     B.zeros();
     B.diag().ones();
 
     rgD = rgInitialStds * std::sqrt(N / trace);
     C.diag() = rgD;
-    arma::pow(C.diag(),2);
+    arma::pow(C.diag(), 2);
     pc.zeros();
     ps.zeros();
 
@@ -371,10 +379,10 @@ namespace optimization {
 
     maxdiagC = arma::max(C.diag());
     mindiagC = arma::min(C.diag());
-  
+
       xmean = xold;
       xmean = xstart;
-    
+
     if (typicalXcase)
      xmean += sigma * rgD * rand.gauss();
 
@@ -387,8 +395,8 @@ namespace optimization {
    * @return A pointer to a "population" of lambda N-dimensional multivariate
    * normally distributed samples.
    */
-   template<typename funcType>
-   void CMAES<funcType>::samplePopulation()
+template<typename funcType>
+void CMAES<funcType>::samplePopulation()
   {
     bool diag = diagonalCov == 1 || diagonalCov >= gen;
 
@@ -412,24 +420,25 @@ namespace optimization {
     { // generate scaled random vector D*z
       for (int i = 0; i < N; ++i)
         if (diag)
-          population(iNk,i) = xmean[i] + sigma*rgD[i] * rand.gauss();
+          population(iNk, i) = xmean[i] + sigma*rgD[i] * rand.gauss();
         else
           tempRandom[i] = rgD[i]* rand.gauss();
       if (!diag)
+      {
         for (int i = 0; i < N; ++i)
       { // add mutation sigma*B*(D*z)
         double sum = 0.0;
         {
-          sum = arma::dot(B.row(i),tempRandom);
+          sum = arma::dot(B.row(i), tempRandom);
           population(iNk , i) = xmean[i] + sigma*sum;
         }
       }
+    }
     }
 
     if (state == UPDATED || gen == 0)
       ++gen;
     state = SAMPLED;
-
   }
 
   /**    * Core procedure of the CMA-ES algorithm. Sets a new mean
@@ -546,8 +555,8 @@ CMAES<funcType>::updateDistribution(const arma::vec& fitnessValues)
    * that contains the matched stop criteria via getStopMessage().
    * @return Does any stop criterion match?
    */
-   template<typename funcType>
-   bool CMAES<funcType>::testForTermination()
+template<typename funcType>
+bool CMAES<funcType>::testForTermination()
   {
     double range, fac;
     int iAchse, iKoo;
@@ -565,10 +574,10 @@ CMAES<funcType>::updateDistribution(const arma::vec& fitnessValues)
     }
 
     // TolFun
-    range = std::max(maxElement(funcValueHistory, 
+    range = std::max(maxElement(funcValueHistory,
       (int) std::min(gen, (double)funcValueHistory.size())),
-        arma::max(functionValues)) -
-        std::min(minElement(funcValueHistory, 
+        arma::max(functionValues))-
+        std::min(minElement(funcValueHistory,
         (int) std::min(gen, (double)funcValueHistory.size())),
         arma::min(functionValues));
 
@@ -598,17 +607,19 @@ CMAES<funcType>::updateDistribution(const arma::vec& fitnessValues)
 
     if (cTemp == 2*N)
     {
-       Log::Info << "TolX: object variable changes below " << stopTolX << std::endl;
+       Log::Info << "TolX: object variable changes below "
+       << stopTolX << std::endl;
        end = true;
     }
 
     // TolUpX
     for (int i = 0; i < N; ++i)
     {
-      if (sigma*std::sqrt(C(i,i)) > stopTolUpXFactor*rgInitialStds[i])
+      if (sigma*std::sqrt(C(i, i)) > stopTolUpXFactor*rgInitialStds[i])
       {
          Log::Info << "TolUpX: standard deviation increased by more than "
-            << stopTolUpXFactor << ", larger initial standard deviation recommended."
+            << stopTolUpXFactor << ", larger initial standard"
+            << "deviation recommended."
             << std::endl;
             end = true;
         break;
@@ -618,13 +629,15 @@ CMAES<funcType>::updateDistribution(const arma::vec& fitnessValues)
     // Condition of C greater than dMaxSignifKond
     if (maxEW >= minEW* dMaxSignifKond)
     {
-       Log::Info << "ConditionNumber: maximal condition number " << dMaxSignifKond
-          << " reached. maxEW=" << maxEW <<  ",minEW=" << minEW << ",maxdiagC="
-          << maxdiagC << ",mindiagC=" << mindiagC << std::endl;
+       Log::Info << "ConditionNumber: maximal condition number " <<
+       dMaxSignifKond << " reached. maxEW=" << maxEW <<  ",minEW="
+       << minEW << ",maxdiagC=" << maxdiagC << ",mindiagC=" 
+       << mindiagC << std::endl;
         end = true;
     }
 
-    // Principal axis i has no effect on xmean, ie. x == x + 0.1* sigma* rgD[i]* B[i]
+    // Principal axis i has no effect on xmean
+    // ie. x == x + 0.1* sigma* rgD[i]* B[i]
     if (!diag)
     {
       for (iAchse = 0; iAchse < N; ++iAchse)
@@ -632,13 +645,14 @@ CMAES<funcType>::updateDistribution(const arma::vec& fitnessValues)
         fac = 0.1* sigma* rgD[iAchse];
         for (iKoo = 0; iKoo < N; ++iKoo)
         {
-          if (xmean[iKoo] != xmean[iKoo] + fac* B(iKoo,iAchse))
+          if (xmean[iKoo] != xmean[iKoo] + fac* B(iKoo, iAchse))
             break;
         }
         if (iKoo == N)
         {
            Log::Info << "NoEffectAxis: standard deviation 0.1*" << (fac / 0.1)
-              << " in principal axis " << iAchse << " without effect" << std::endl;
+           << " in principal axis " << iAchse << " without effect"
+           << std::endl;
            end = true;
           break;
         }
@@ -647,7 +661,8 @@ CMAES<funcType>::updateDistribution(const arma::vec& fitnessValues)
     // Component of xmean is not changed anymore
     for (iKoo = 0; iKoo < N; ++iKoo)
     {
-      if (xmean[iKoo] == xmean[iKoo] + sigma*std::sqrt( C(iKoo,iKoo) )/double(5))
+      if (xmean[iKoo] == xmean[iKoo] + sigma*
+        std::sqrt(C(iKoo, iKoo))/double(5))
       {
          Log::Info << "NoEffectCoordinate: standard deviation 0.2*"
             << (sigma*std::sqrt( C(iKoo , iKoo) ) ) << " in coordinate " << iKoo
@@ -680,8 +695,8 @@ CMAES<funcType>::updateDistribution(const arma::vec& fitnessValues)
    * @param force For force == true the eigendecomposion is conducted even if
    *              eigenvector and values seem to be up to date.
    */
-   template<typename funcType>
-   void CMAES<funcType>::updateEigensystem(bool force)
+template<typename funcType>
+void CMAES<funcType>::updateEigensystem(bool force)
   {
     if (!force)
     {
@@ -695,7 +710,8 @@ CMAES<funcType>::updateDistribution(const arma::vec& fitnessValues)
      if (!arma::eig_sym(rgD, B, C))
         Log::Warn << "eigen decomposition failed in neuro_cmaes::eigen()";
 
-    // find largest and smallest eigenvalue, they are supposed to be sorted anyway
+    // find largest and smallest eigenvalue, they are
+    // supposed to be sorted anyway
     minEW = rgD.min();
     maxEW = rgD.max();
 
@@ -707,7 +723,7 @@ CMAES<funcType>::updateDistribution(const arma::vec& fitnessValues)
 
 
 
-} //namespace optimization
-} //namespace mlpack
+} // namespace optimization
+} // namespace mlpack
 
 #endif

@@ -36,84 +36,82 @@ template<typename funcType>
 class CMAES
 {
 public:
+CMAES(funcType& function, arma::mat& start, arma::mat& stdDivs);
 
-  CMAES(funcType& function, arma::mat& start, arma::mat& stdDivs);
+double Optimize(arma::mat& arr);
 
-  double Optimize(arma::mat& arr);
+size_t getDimension(void){ return N;}
 
-  size_t getDimension(void){ return N;}
+void getInitialStart(double *arr, size_t dimension)
+{ 
+for (int i=0; i<N; i++) arr[i] = xstart[i];
+}
 
-  void getInitialStart(double *arr, size_t dimension)
-  { 
-    for (int i=0; i<N; i++) arr[i] = xstart[i];
-  }
-  
-   void getInitialStandardDeviations(double *arr, size_t dimension)
-   {      
-    for (int i=0; i<N; i++) arr[i] = rgInitialStds[i];
-   }
+void getInitialStandardDeviations(double *arr, size_t dimension)
+{      
+for (int i=0; i<N; i++) arr[i] = rgInitialStds[i];
+}
 
-    void getStandardDeviations(double *arr)
-  { 
-    for (int i = 0; i < N; ++i)
-    arr[i] = sigma*std::sqrt(C(i,i));    
-  }
+void getStandardDeviations(double *arr)
+{ 
+for (int i = 0; i < N; ++i)
+arr[i] = sigma*std::sqrt(C(i, i));    
+}
 
-  void getXBestEver(double *arr)
-  { 
-    for (int i = 0; i < N; ++i) arr[i] = xBestEver[i];    
-  }
+void getXBestEver(double *arr)
+{ 
+for (int i = 0; i < N; ++i) arr[i] = xBestEver[i];    
+}
 
+  void stopMaxFuncEvaluations(double evaluations)
+{
+   stopMaxFunEvals = evaluations;
+}
 
-    void stopMaxFuncEvaluations(double evaluations)
-  {
-     stopMaxFunEvals = evaluations;
-  }
+double getStopMaxFuncEvaluations(void)
+{
+  return  stopMaxFunEvals;
+}
 
-  double getStopMaxFuncEvaluations(void)
-  {
-    return  stopMaxFunEvals;
-  }
+void stopMaxIterations(double iterations)
+{
+  stopMaxIter = iterations;
+}
 
-  void stopMaxIterations(double iterations)
-  {
-    stopMaxIter = iterations;
-  }
+double getStopMaxIterations(void)
+{
+  return stopMaxIter;
+}
 
-  double getStopMaxIterations(void)
-  {
-    return stopMaxIter;
-  }
+void stopMinFuntionDifference(double difference)
+{
+  stopTolFun = difference;
+}
 
-  void stopMinFuntionDifference(double difference)
-  {
-    stopTolFun = difference;
-  }
-
-  double getStopMinFunctionDifference(void)
-  {
-    return stopTolFun;
-  }
+double getStopMinFunctionDifference(void)
+{
+  return stopTolFun;
+}
 
 void stopMinFuntionHistoryDifference(double difference)
-  {
-    stopTolFunHist = difference;
-  }
+{
+  stopTolFunHist = difference;
+}
 
-  double getStopMinFunctionHistoryDifference(void)
-  {
-    return stopTolFunHist;
-  }
+double getStopMinFunctionHistoryDifference(void)
+{
+  return stopTolFunHist;
+}
 
-  void stopMinStepSize(double size)
-  {
-    stopTolX = size;
-  }
+void stopMinStepSize(double size)
+{
+  stopTolX = size;
+}
 
-  double getStopMinStepSize(void)
-  {
-    return stopTolX;
-  }
+double getStopMinStepSize(void)
+{
+  return stopTolX;
+}
 
   //! other variable parameters
 
@@ -129,7 +127,7 @@ void muEffective(double ind){ mueff = ind;}
 
 double getMuEffective(void){ return mueff;}
 
-double axisRatio() { return maxElement(rgD,N) / minElement(rgD,N);};
+double axisRatio() { return maxElement(rgD, N) / minElement(rgD, N);}
 
 double evaluation(){ return countevals; }
 
@@ -148,184 +146,187 @@ double maxStdDev(){return sigma*std::sqrt(maxdiagC);}
 double minStdDev(){return sigma*std::sqrt(mindiagC);}
 
 void diagonalCovariance(double *arr)
-  {
-     for (int i = 0; i < N; ++i) arr[i] = C(i,i);
-  }
+{
+for (int i = 0; i < N; ++i) arr[i] = C(i, i);
+}
 
-void diagonalD(double *arr, size_t N) { for (int i = 0; i < N; ++i) arr[i] = rgD[i]; }
+void diagonalD(double *arr, size_t N)
+{
+for (int i = 0; i < N; ++i) arr[i] = rgD[i];
+}
 
 void getFittestMean(double *arr)
 { 
-  for (int i=0; i<N; i++) arr[i] = xmean[i]; 
+for (int i=0; i<N; i++) arr[i] = xmean[i];
 }
 
-  double maxElement(const arma::vec rgd, int len)
-  { 
-    double ans = DBL_MIN;
-    for (int i=0; i<len; i++) if (rgd[i] > ans) ans=rgd[i];
-    return ans;
-  }
+double maxElement(const arma::vec rgd, int len)
+{ 
+double ans = DBL_MIN;
+for (int i=0; i<len; i++) if (rgd[i] > ans) ans=rgd[i];
 
-  double minElement(const arma::vec rgd, int len)
-  {
-    double ans = DBL_MAX;
-    for (int i=0; i<len; i++) if (rgd[i] < ans) ans=rgd[i];
-    return ans;
-  }
+return ans;
+}
+
+double minElement(const arma::vec rgd, int len)
+{
+double ans = DBL_MAX;
+for (int i=0; i<len; i++) if (rgd[i] < ans) ans=rgd[i];
+
+return ans;
+}
   
- /**
-   * Determines the method used to initialize the weights.
-   */
-  enum Weights
-  {
-    UNINITIALIZED_WEIGHTS, LINEAR_WEIGHTS, EQUAL_WEIGHTS, LOG_WEIGHTS
-  } weightMode;
+/**
+ * Determines the method used to initialize the weights.
+ */
+enum Weights
+{
+  UNINITIALIZED_WEIGHTS, LINEAR_WEIGHTS, EQUAL_WEIGHTS, LOG_WEIGHTS
+} weightMode;
 
-  void setWeights(Weights mode);
+void setWeights(Weights mode);
 
 
-private:
+ private:
+/* Input parameters. */
+//! The instantiated function.
+funcType& function;
 
-  /* Input parameters. */
-  //! The instantiated function.
-  funcType& function;
+arma::vec arFunvals;
 
-  arma::vec arFunvals;
+//! Problem dimension, must stay constant.
+int N;
+//! Initial search space vector.
+arma::vec xstart;
+//! Indicates that the typical x is the initial point.
+bool typicalXcase;
+//! Initial standard deviations.
+arma::vec rgInitialStds;
+/* Termination parameters. */
+//! Maximal number of objective function evaluations.
+double stopMaxFunEvals;
+double facmaxeval;
+//! Maximal number of iterations.
+double stopMaxIter;
+//! Minimal fitness value. Only activated if flg is true.
+struct { bool flg; double val; } stStopFitness;
+//! Minimal value difference.
+double stopTolFun;
+//! Minimal history value difference.
+double stopTolFunHist;
+//! Minimal search space step size.
+double stopTolX;
+//! Defines the maximal condition number.
+double stopTolUpXFactor;
 
-  //! Problem dimension, must stay constant.
-  int N;
-  //! Initial search space vector.
-  arma::vec xstart;
-  //! Indicates that the typical x is the initial point.
-  bool typicalXcase;
-  //! Initial standard deviations.
-  arma::vec rgInitialStds;
-  /* Termination parameters. */
-  //! Maximal number of objective function evaluations.
-  double stopMaxFunEvals;
-  double facmaxeval;
-  //! Maximal number of iterations.
-  double stopMaxIter;
-  //! Minimal fitness value. Only activated if flg is true.
-  struct { bool flg; double val; } stStopFitness;
-  //! Minimal value difference.
-  double stopTolFun;
-  //! Minimal history value difference.
-  double stopTolFunHist;
-  //! Minimal search space step size.
-  double stopTolX;
-  //! Defines the maximal condition number.
-  double stopTolUpXFactor;
+/* internal evolution strategy parameters */
+/**
+ * Population size. Number of samples per iteration, at least two,
+ * generally > 4.
+ */
+int lambda;
+/**
+ * Number of individuals used to recompute the mean.
+ */
+int mu;
+double mucov;
+/**
+ * Variance effective selection mass, should be lambda/4.
+ */
+double mueff;
+/**
+ * Weights used to recombinate the mean sum up to one.
+ */
+arma::vec weights;
+/**
+ * Damping parameter for step-size adaption, d = inifinity or 0 means adaption
+ * is turned off, usually close to one.
+ */
+double damps;
+/**
+ * cs^-1 (approx. n/3) is the backward time horizon for the evolution path
+ * ps and larger than one.
+ */
+double cs;
+double ccumcov;
+/**
+ * ccov^-1 (approx. n/4) is the backward time horizon for the evolution path
+ * pc and larger than one.
+ */
+double ccov;
+double diagonalCov;
+struct { double modulo; double maxtime; } updateCmode;
+double facupdateCmode;
 
-  /* internal evolution strategy parameters */
-  /**
-   * Population size. Number of samples per iteration, at least two,
-   * generally > 4.
-   */
-  int lambda;
-  /**
-   * Number of individuals used to recompute the mean.
-   */
-  int mu;
-  double mucov;
-  /**
-   * Variance effective selection mass, should be lambda/4.
-   */
-  double mueff;
-  /**
-   * Weights used to recombinate the mean sum up to one.
-   */
-  arma::vec weights;
-  /**
-   * Damping parameter for step-size adaption, d = inifinity or 0 means adaption
-   * is turned off, usually close to one.
-   */
-  double damps;
-  /**
-   * cs^-1 (approx. n/3) is the backward time horizon for the evolution path
-   * ps and larger than one.
-   */
-  double cs;
-  double ccumcov;
-  /**
-   * ccov^-1 (approx. n/4) is the backward time horizon for the evolution path
-   * pc and larger than one.
-   */
-  double ccov;
-  double diagonalCov;
-  struct { double modulo; double maxtime; } updateCmode;
-  double facupdateCmode;
+Random<double> rand;
 
-  Random<double> rand;
+//! Step size.
+double sigma;
+//! Mean x vector, "parent".
+arma::vec xmean;
+//! Best sample ever.
+arma::vec xBestEver;
+//! x-vectors, lambda offspring.
+arma::mat population;
+//! Sorting index of sample population.
+arma::uvec index;
+//! History of function values.
+arma::vec funcValueHistory;
 
-  //! Step size.
-  double sigma;
-  //! Mean x vector, "parent".
-  arma::vec xmean;
-  //! Best sample ever.
-  arma::vec xBestEver;
-  //! x-vectors, lambda offspring.
-  arma::mat population;
-  //! Sorting index of sample population.
-  arma::uvec index;
-  //! History of function values.
-  arma::vec funcValueHistory;
+double chiN;
+//! Lower triangular matrix: i>=j for C[i][j].
+arma::mat C;
+//! Matrix with normalize eigenvectors in columns.
+arma::mat B;
+//! Axis lengths.
+arma::vec rgD;
+//! Anisotropic evolution path (for covariance).
+arma::vec pc;
+//! Isotropic evolution path (for step length).
+arma::vec ps;
+//! Last mean.
+arma::vec xold;
+//! B*D*z.
+arma::vec BDz;
+//! Temporary (random) vector used in different places.
+arma::vec tempRandom;
+//! Objective function values of the population.
+arma::vec functionValues;
+//!< Public objective function value array returned by init().
+arma::vec publicFitness;
 
-  double chiN;
-  //! Lower triangular matrix: i>=j for C[i][j].
-  arma::mat C;
-  //! Matrix with normalize eigenvectors in columns.
-  arma::mat B;
-  //! Axis lengths.
-  arma::vec rgD;
-  //! Anisotropic evolution path (for covariance).
-  arma::vec pc;
-  //! Isotropic evolution path (for step length).
-  arma::vec ps;
-  //! Last mean.
-  arma::vec xold;
-  //! B*D*z.
-  arma::vec BDz;
-  //! Temporary (random) vector used in different places.
-  arma::vec tempRandom;
-  //! Objective function values of the population.
-  arma::vec functionValues;
-  //!< Public objective function value array returned by init().
-  arma::vec publicFitness;
+//! Generation number.
+double gen;
+//! Algorithm state.
+enum {INITIALIZED, SAMPLED, UPDATED} state;
 
-  //! Generation number.
-  double gen;
-  //! Algorithm state.
-  enum {INITIALIZED, SAMPLED, UPDATED} state;
+// repeatedly used for output
+double maxdiagC;
+double mindiagC;
+double maxEW;
+double minEW;
 
-  // repeatedly used for output
-  double maxdiagC;
-  double mindiagC;
-  double maxEW;
-  double minEW;
+bool eigensysIsUptodate;
+bool doCheckEigen;
+double genOfEigensysUpdate;
 
-  bool eigensysIsUptodate;
-  bool doCheckEigen;
-  double genOfEigensysUpdate;
+double dMaxSignifKond;
 
-  double dMaxSignifKond;
+double dLastMinEWgroesserNull;
 
-  double dLastMinEWgroesserNull;
+double countevals; //!< objective function evaluations
 
-  double countevals; //!< objective function evaluations
-  
-  void updateEigensystem(bool force);
-  void sortIndex(const arma::vec rgFunVal, arma::vec& iindex, int n);
-  void adaptC2(const int hsig);
-  void addMutation(double* x, double eps = 1.0);
+void updateEigensystem(bool force);
+void sortIndex(const arma::vec rgFunVal, arma::vec& iindex, int n);
+void adaptC2(const int hsig);
+void addMutation(double* x, double eps = 1.0);
 
-   void init(arma::vec& func);
-   void samplePopulation();
-   void updateDistribution(const arma::vec& fitnessValues);
+void init(arma::vec& func);
+void samplePopulation();
+void updateDistribution(const arma::vec& fitnessValues);
 
-   bool testForTermination();
-   int  checkEigen(arma::vec diag, arma::mat Q);
-
+bool testForTermination();
+int  checkEigen(arma::vec diag, arma::mat Q);
 };
 } // namespace optimization
 } // namespace mlpack
