@@ -35,7 +35,7 @@ namespace optimization {
 template<typename funcType>
 class CMAES
 {
-public:
+ public:
 CMAES(funcType& function, arma::mat& start, arma::mat& stdDivs);
 
 double Optimize(arma::mat& arr);
@@ -43,29 +43,29 @@ double Optimize(arma::mat& arr);
 size_t getDimension(void){ return N;}
 
 void getInitialStart(double *arr, size_t dimension)
-{ 
+{
 for (int i=0; i<N; i++) arr[i] = xstart[i];
 }
 
 void getInitialStandardDeviations(double *arr, size_t dimension)
-{      
+{
 for (int i=0; i<N; i++) arr[i] = rgInitialStds[i];
 }
 
 void getStandardDeviations(double *arr)
-{ 
+{
 for (int i = 0; i < N; ++i)
-arr[i] = sigma*std::sqrt(C(i, i));    
+arr[i] = sigma*std::sqrt(C(i, i));
 }
 
 void getXBestEver(double *arr)
-{ 
-for (int i = 0; i < N; ++i) arr[i] = xBestEver[i];    
+{
+for (int i = 0; i < N; ++i) arr[i] = xBestEver[i];
 }
 
   void stopMaxFuncEvaluations(double evaluations)
 {
-   stopMaxFunEvals = evaluations;
+stopMaxFunEvals = evaluations;
 }
 
 double getStopMaxFuncEvaluations(void)
@@ -156,14 +156,19 @@ for (int i = 0; i < N; ++i) arr[i] = rgD[i];
 }
 
 void getFittestMean(double *arr)
-{ 
+{
 for (int i=0; i<N; i++) arr[i] = xmean[i];
 }
 
 double maxElement(const arma::vec rgd, int len)
-{ 
+{
 double ans = DBL_MIN;
-for (int i=0; i<len; i++) if (rgd[i] > ans) ans=rgd[i];
+
+for (int i=0; i<len; i++) 
+  if (rgd[i] > ans) 
+  {
+    ans=rgd[i];
+  }
 
 return ans;
 }
@@ -171,11 +176,16 @@ return ans;
 double minElement(const arma::vec rgd, int len)
 {
 double ans = DBL_MAX;
-for (int i=0; i<len; i++) if (rgd[i] < ans) ans=rgd[i];
+
+for (int i=0; i<len; i++)
+  if (rgd[i] < ans)
+  {
+    ans=rgd[i];
+  }
 
 return ans;
 }
-  
+
 /**
  * Determines the method used to initialize the weights.
  */

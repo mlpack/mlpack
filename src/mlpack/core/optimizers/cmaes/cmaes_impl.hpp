@@ -77,7 +77,8 @@ namespace optimization {
 
 if (!startP)
 Log::Warn << " WARNING: initial start point undefined." <<
-"Please specify if incorrect results detected. DEFAULT = 0.5...0.5." << std::endl;
+"Please specify if incorrect results detected."
+<< "DEFAULT = 0.5...0.5." << std::endl;
 
 if (!initDev)
 Log::Warn << "WARNING: initialStandardDeviations undefined."
@@ -141,7 +142,7 @@ Log::Warn << "WARNING: initialStandardDeviations undefined."
       for (int i = 0; i < mu; ++i)
         weights[i] /= s1;
 
-      if (mu < 1 || mu > lambda || (mu == lambda 
+      if (mu < 1 || mu > lambda || (mu == lambda
         && weights[0] == weights[mu - 1]))
       throw std::runtime_error("setWeights(): invalid setting of mu or lambda");
 
@@ -249,20 +250,20 @@ arma::vec& iindex, int n)
     {
       // definitions for speeding up inner-most loop
       const double mucovinv = double(1)/mucov;
-      
+
       const double commonFactor = ccov *
       (diag ? (N + double(1.5)) / double(3) : double(1));
 
       const double ccov1 = std::min(commonFactor*
         mucovinv, double(1));
-      
+
       const double ccovmu = std::min(commonFactor*
         (double(1)-mucovinv), double(1)-ccov1);
-      
+
       const double sigmasquare = sigma*sigma;
-      
+
       const double onemccov1ccovmu = double(1)-ccov1-ccovmu;
-      
+
       const double longFactor = (double(1)-hsig)*
       ccumcov*(double(2)-ccumcov);
 
@@ -631,7 +632,7 @@ bool CMAES<funcType>::testForTermination()
     {
        Log::Info << "ConditionNumber: maximal condition number " <<
        dMaxSignifKond << " reached. maxEW=" << maxEW <<  ",minEW="
-       << minEW << ",maxdiagC=" << maxdiagC << ",mindiagC=" 
+       << minEW << ",maxdiagC=" << maxdiagC << ",mindiagC="
        << mindiagC << std::endl;
         end = true;
     }
@@ -665,7 +666,7 @@ bool CMAES<funcType>::testForTermination()
         std::sqrt(C(iKoo, iKoo))/double(5))
       {
          Log::Info << "NoEffectCoordinate: standard deviation 0.2*"
-            << (sigma*std::sqrt( C(iKoo , iKoo) ) ) << " in coordinate " << iKoo
+            << (sigma*std::sqrt(C(iKoo , iKoo))) << " in coordinate " << iKoo
             << " without effect" << std::endl;
         end = true;
         break;
