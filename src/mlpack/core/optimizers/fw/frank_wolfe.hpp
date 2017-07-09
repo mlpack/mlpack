@@ -87,8 +87,7 @@ namespace optimization {
  */
 template<
     typename LinearConstrSolverType,
-    typename UpdateRuleType
->
+    typename UpdateRuleType>
 class FrankWolfe
 {
  public:
@@ -105,9 +104,9 @@ class FrankWolfe
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    */
   FrankWolfe(const LinearConstrSolverType linear_constr_solver,
-        const UpdateRuleType update_rule,
-        const size_t maxIterations = 100000,
-        const double tolerance = 1e-10);
+             const UpdateRuleType update_rule,
+             const size_t maxIterations = 100000,
+             const double tolerance = 1e-10);
 
   /**
    * Optimize the given function using FrankWolfe.  The given starting
