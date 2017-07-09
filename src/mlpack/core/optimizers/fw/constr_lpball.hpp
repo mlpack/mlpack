@@ -55,46 +55,44 @@ class ConstrLpBallSolver
   ConstrLpBallSolver(const double p) : p(p)
   { /* Do nothing. */ }
 
- /**
-  * Optimizer of Linear Constrained Problem for FrankWolfe.
-  *
-  * @param v Input local gradient.
-  * @param s Output optimal solution in the constrained domain (lp ball).
-  */
+  /**
+   * Optimizer of Linear Constrained Problem for FrankWolfe.
+   *
+   * @param v Input local gradient.
+   * @param s Output optimal solution in the constrained domain (lp ball).
+   */
   void Optimize(const arma::mat& v,
-      arma::mat& s)
+                arma::mat& s)
   {
-      if (p == std::numeric_limits<double>::infinity())
-      {
+    if (p == std::numeric_limits<double>::infinity())
+    {
       // l-inf ball
       s = -sign(v);
-      return;
-      }
-      else if (p > 1.0)
-      {
+    }
+    else if (p > 1.0)
+    {
       // lp ball with 1<p<inf
       s = -sign(v) % pow(abs(v), p-1);
-      return;
-      }
-      else if (p == 1.0)
-      {
+    }
+    else if (p == 1.0)
+    {
       // l1 ball, used in OMP
       arma::mat tmp = arma::abs(v);
       arma::uword k = tmp.index_max();  // linear index of matrix
       s.zeros(v.n_rows, v.n_cols);
       s(k) = -sign_double(v(k));
-      return;
-      }
-      else
-      {
+    }
+    else
+    {
       Log::Fatal << "Wrong norm p!" << std::endl;
-      return;
-      }
+    }
+
+    return;
   }
 
  private:
-  //! lp norm, take 1<p<inf,
-  // use std::numeric_limits<double>::infinity() for inf norm.
+  //! lp norm, 1<=p<=inf;
+  //! use std::numeric_limits<double>::infinity() for inf norm.
   double p;
 
   //! Signum function for double.

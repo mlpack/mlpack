@@ -156,7 +156,7 @@ class FrankWolfe
   double tolerance;
 };
 
-//! Orthogonal Matching Pursuit
+//! Orthogonal Matching Pursuit.
 using OMP = FrankWolfe<ConstrLpBallSolver, UpdateSpan>;
 
 } // namespace optimization

@@ -49,32 +49,32 @@ class UpdateSpan
   UpdateSpan()
   { /* Do nothing. */ }
 
- /**
-  * Update rule for FrankWolfe, reoptimize in the span of original solution space.
-  *
-  *
-  * @tparam function function to be optimized.
-  * @param old_coords previous solution coords.
-  * @param s current linear_constr_solution result.
-  * @param new_coords new output solution coords.
-  * @param num_iter current iteration number
-  */
+  /**
+   * Update rule for FrankWolfe, reoptimize in the span of original solution space.
+   *
+   *
+   * @tparam function function to be optimized.
+   * @param old_coords previous solution coords.
+   * @param s current linear_constr_solution result.
+   * @param new_coords new output solution coords.
+   * @param num_iter current iteration number
+   */
   template<typename FunctionType>
   void Update(FunctionType& function,
-      const arma::mat& old_coords,
-      const arma::mat& s,
-      arma::mat& new_coords,
-      const size_t num_iter)
+              const arma::mat& old_coords,
+              const arma::mat& s,
+              arma::mat& new_coords,
+              const size_t num_iter)
   {
-      // add atom here
-      arma::uvec ind = find(s, 1);
-      arma::uword d = ind(0);
-      AddAtom(function, d);
+    // Add atom here.
+    arma::uvec ind = find(s, 1);
+    arma::uword d = ind(0);
+    AddAtom(function, d);
 
-      arma::vec b = function.Vectorb();
-      arma::mat x = solve(atoms_current, b);
+    arma::vec b = function.Vectorb();
+    arma::mat x = solve(atoms_current, b);
 
-      new_coords = RecoverVector(function, x);
+    new_coords = RecoverVector(function, x);
   }
 
   //! Get the current atom indices.
@@ -87,8 +87,6 @@ class UpdateSpan
   //! Modify the current atoms.
   arma::mat& CurrentAtoms() { return atoms_current; }
 
-
-
  private:
   //! Current indices.
   arma::uvec current_indices;
@@ -96,43 +94,41 @@ class UpdateSpan
   //! Current atoms.
   arma::mat atoms_current;
 
-  //! Flag current indices is empty
+  //! Flag current indices is empty.
   bool isEmpty = true;
 
   //! Add atom into the solution space.
   template<typename FunctionType>
   void AddAtom(FunctionType& function, const arma::uword k)
   {
-      if (isEmpty)
-      {
-          CurrentIndices() = k;
-          CurrentAtoms() = (function.MatrixA()).col(k);
-          isEmpty = false;
-      }
-      else
-      {
-          arma::uvec vk(1);
-          vk = k;
-          current_indices.insert_rows(0, vk);
+    if (isEmpty)
+    {
+      CurrentIndices() = k;
+      CurrentAtoms() = (function.MatrixA()).col(k);
+      isEmpty = false;
+    }
+    else
+    {
+      arma::uvec vk(1);
+      vk = k;
+      current_indices.insert_rows(0, vk);
 
-          arma::mat atom = (function.MatrixA()).col(k);
-          atoms_current.insert_cols(0, atom);
-      }
+      arma::mat atom = (function.MatrixA()).col(k);
+      atoms_current.insert_cols(0, atom);
+    }
   }
 
   template<typename FunctionType>
   arma::vec RecoverVector(FunctionType& function, const arma::vec& x)
   {
-      int n = (function.MatrixA()).n_cols;
-      arma::vec y = arma::zeros<arma::vec>(n);
+    int n = (function.MatrixA()).n_cols;
+    arma::vec y = arma::zeros<arma::vec>(n);
 
-      arma::uword len = current_indices.size();
-      for (size_t ii = 0; ii < len; ++ii)
-      {
+    arma::uword len = current_indices.size();
+    for (size_t ii = 0; ii < len; ++ii)
       y(current_indices(ii)) = x(ii);
-      }
 
-      return y;
+    return y;
   }
 };
 

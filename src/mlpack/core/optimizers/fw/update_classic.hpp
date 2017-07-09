@@ -35,25 +35,25 @@ class UpdateClassic
   UpdateClassic()
   { /* Do nothing. */ }
 
- /**
-  * Classic update rule for FrankWolfe.
-  *
-  * \f$ x_{k+1} = (1-\gamma)x_k + \gamma s \f$, where \f$ \gamma = 2/(k+2) \f$
-  *
-  * @param old_coords previous solution coords.
-  * @param s current linear_constr_solution result.
-  * @param new_coords new output solution coords.
-  * @param num_iter current iteration number
-  */
+  /**
+   * Classic update rule for FrankWolfe.
+   *
+   * \f$ x_{k+1} = (1-\gamma)x_k + \gamma s \f$, where \f$ \gamma = 2/(k+2) \f$
+   *
+   * @param old_coords previous solution coords.
+   * @param s current linear_constr_solution result.
+   * @param new_coords new output solution coords.
+   * @param num_iter current iteration number
+   */
   template<typename FunctionType>
   void Update(FunctionType& function,
-      const arma::mat& old_coords,
-      const arma::mat& s,
-      arma::mat& new_coords,
-      const size_t num_iter)
+              const arma::mat& old_coords,
+              const arma::mat& s,
+              arma::mat& new_coords,
+              const size_t num_iter)
   {
-      double gamma = 2.0/(num_iter + 2.0);
-      new_coords = (1.0-gamma)*old_coords + gamma*s;
+    double gamma = 2.0 / (num_iter + 2.0);
+    new_coords = (1.0 - gamma) * old_coords + gamma * s;
   }
 };
 
