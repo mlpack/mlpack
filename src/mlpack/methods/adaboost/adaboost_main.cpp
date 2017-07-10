@@ -202,7 +202,8 @@ int main(int argc, char *argv[])
     else if (weakLearner == "perceptron")
       m.WeakLearnerType() = AdaBoostModel::WeakLearnerTypes::PERCEPTRON;
 
-    const size_t numClasses = arma::max(labels) + 1;
+    const size_t numClasses = m.Mappings().n_elem;
+    Log::Info << numClasses << " classes in dataset." << endl;
 
     Timer::Start("adaboost_training");
     m.Train(trainingData, labels, numClasses, iterations, tolerance);
