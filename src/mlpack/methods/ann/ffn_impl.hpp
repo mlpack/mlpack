@@ -128,6 +128,44 @@ void FFN<OutputLayerType, InitializationRuleType>::Train(
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
+void FFN<OutputLayerType, InitializationRuleType>::Forward(
+    arma::mat inputs, arma::mat& results)
+{
+  if (parameter.is_empty())
+    ResetParameters();
+
+  if (!deterministic)
+  {
+    deterministic = true;
+    ResetDeterministic();
+  }
+
+  currentInput = std::move(inputs);
+  Forward(std::move(currentInput));
+  results = boost::apply_visitor(outputParameterVisitor, network.back());
+}
+
+template<typename OutputLayerType, typename InitializationRuleType>
+double FFN<OutputLayerType, InitializationRuleType>::Backward(
+    arma::mat targets, arma::mat& gradients)
+{
+  currentTarget = std::move(targets);
+  double res = outputLayer.Forward(std::move(boost::apply_visitor(
+      outputParameterVisitor, network.back())), std::move(currentTarget));
+
+  outputLayer.Backward(std::move(boost::apply_visitor(outputParameterVisitor,
+      network.back())), std::move(currentTarget), std::move(error));
+
+  gradients = arma::zeros<arma::mat>(parameter.n_rows, parameter.n_cols);
+
+  Backward();
+  ResetGradients(gradients);
+  Gradient();
+
+  return res;
+}
+
+template<typename OutputLayerType, typename InitializationRuleType>
 void FFN<OutputLayerType, InitializationRuleType>::Predict(
     arma::mat predictors, arma::mat& results)
 {
@@ -214,16 +252,6 @@ void FFN<OutputLayerType, InitializationRuleType>::Gradient(
   ResetGradients(gradient);
   Gradient();
 }
-
-template<typename OutputLayerType, typename InitializationRuleType>
-arma::mat FFN<OutputLayerType, InitializationRuleType>::Gradient(
-  const arma::mat& predictors, const arma::mat& responses)
-{
-  ResetData(predictors, responses);
-  arma::mat gradients;
-  Gradient(Parameters(), 0, gradients);
-  return gradients;
-};
 
 template<typename OutputLayerType, typename InitializationRuleType>
 void FFN<OutputLayerType, InitializationRuleType>::ResetParameters()

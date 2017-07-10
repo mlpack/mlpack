@@ -57,7 +57,8 @@ void LogSoftMax<InputDataType, OutputDataType>::Forward(
     return 0.0;
   });
 
-  output = input - (maxInput + std::log(arma::accu(output)));
+  maxInput.each_row() += arma::log(arma::sum(output));
+  output = input - maxInput;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -67,7 +68,7 @@ void LogSoftMax<InputDataType, OutputDataType>::Backward(
     arma::Mat<eT>&& gy,
     arma::Mat<eT>&& g)
 {
-  g = gy - arma::exp(input) * arma::accu(gy);
+  g = arma::exp(input) + gy;
 }
 
 template<typename InputDataType, typename OutputDataType>
