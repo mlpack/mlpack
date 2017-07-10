@@ -91,7 +91,6 @@ Log::Warn << "WARNING: initialStandardDeviations undefined."
       rgInitialStds = stdDivs;
     else
       rgInitialStds.fill(0.3);
-  
 
     if (lambda < 2)
       lambda = 4 + (int) (3.0*log((double) N));
@@ -116,7 +115,7 @@ Log::Warn << "WARNING: initialStandardDeviations undefined."
       // normalize weights vector and set mueff
       double s1 = arma::accu(weights);
       double s2 = arma::accu(weights % weights);
-      
+
       mueff = s1*s1/s2;
       weights /= s1;
 
@@ -181,7 +180,7 @@ Log::Warn << "WARNING: initialStandardDeviations undefined."
   {
     // Generate lambda new search points, sample population
     samplePopulation();
-    
+
     // evaluate the new search points using the given evaluate
     // function by the user
     for (int i = 0; i < lambda; ++i)
