@@ -36,7 +36,8 @@ template<typename funcType>
 class CMAES
 {
  public:
-CMAES(funcType& function, arma::mat& start, arma::mat& stdDivs);
+CMAES(funcType& function, arma::mat& start, arma::mat& stdDivs,
+double iters = -1.0, double evalDiff = 1e-14);
 
 double Optimize(arma::mat& arr);
 

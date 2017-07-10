@@ -35,17 +35,16 @@ namespace optimization {
 
   template<typename funcType>
   CMAES<funcType>::CMAES(funcType& function,
-       arma::mat& start, arma::mat& stdDivs)
+arma::mat& start, arma::mat& stdDivs, 
+double iters, double evalDiff)
       :
         function(function),
         N(-1),
         typicalXcase(false),
         stopMaxFunEvals(-1),
         facmaxeval(1.0),
-        stopMaxIter(-1.0),
-        stopTolFun(1e-14),
         stopTolFunHist(1e-14),
-        stopTolX(0), // 1e-11*insigma would also be reasonable
+        stopTolX(0),
         stopTolUpXFactor(1e3),
         lambda(-1),
         mu(-1),
@@ -74,6 +73,10 @@ namespace optimization {
      if (start[i]   < 1.0e-200) startP  = false;
      if (stdDivs[i] < 1.0e-200) initDev = false;
     }
+
+    if (evalDiff =! 1e-14) stopTolFun = evalDiff;
+    else
+      stopTolFun = 1e-14;
 
 if (!startP)
 Log::Warn << " WARNING: initial start point undefined." <<
@@ -173,8 +176,10 @@ Log::Warn << "WARNING: initialStandardDeviations undefined."
     else
       stopMaxFunEvals *= facmaxeval;
 
-    if (stopMaxIter <= 0)
+    if (iters <= 0)
       stopMaxIter = ceil((double) (stopMaxFunEvals / lambda));
+      else
+        stopMaxIter = iters;
 
     if (damps < double(0))
     {
@@ -681,7 +686,7 @@ bool CMAES<funcType>::testForTermination()
     }
     if (gen >= stopMaxIter)
     {
-       Log::Info << "MaxIter: number of iterations " << gen << " >= "
+       std::cout << "MaxIter: number of iterations " << gen << " >= "
           << stopMaxIter << std::endl;
       end = true;
     }
