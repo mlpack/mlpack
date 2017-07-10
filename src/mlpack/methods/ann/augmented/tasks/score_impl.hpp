@@ -33,7 +33,6 @@ double SequencePrecision(arma::field<MatType> trueOutputs,
   {
     arma::vec delta = arma::vectorise(arma::abs(
       trueOutputs.at(i) - predOutputs.at(i)));
-    //arma::vec deltaVec = arma::conv_to<arma::vec>::from(delta);
     double maxDelta = arma::max(delta);
     double eps = tol;
     if (maxDelta < eps)

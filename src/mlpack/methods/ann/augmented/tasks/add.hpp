@@ -48,7 +48,7 @@ class AddTask
    */
   void Generate(arma::field<arma::mat>& input,
                 arma::field<arma::mat>& labels,
-                const size_t batchSize, 
+                const size_t batchSize,
                 const bool fixedLength = false);
 
   /**
@@ -66,7 +66,7 @@ class AddTask
  private:
   // Maximum binary length of numbers.
   size_t bitLen;
-  
+
   void Binarize(const arma::field<arma::vec>& input,
                 arma::field<arma::mat>& output);
 };
