@@ -160,6 +160,8 @@ Log::Warn << "WARNING: initialStandardDeviations undefined."
     init(arFunvals);
 
     arma::mat x(N, 1);
+    double funs;
+    double numFun = function.NumFunctions();
 
   while (!testForTermination())
   {
@@ -171,7 +173,12 @@ Log::Warn << "WARNING: initialStandardDeviations undefined."
     for (int i = 0; i < lambda; ++i)
     {
       x = population.submat(i, 0, i, N-1);
-      arFunvals[i] = function.Evaluate(x);
+
+      funs = 0;
+      for (ssize_t j = 0; j < numFun; j++)
+      funs += function.Evaluate(x, j);
+
+      arFunvals[i] = funs;
     }
 
     // update the search distribution used for sampleDistribution()
@@ -179,9 +186,13 @@ Log::Warn << "WARNING: initialStandardDeviations undefined."
   }
 
   // get best estimator for the optimum
-arr = xmean;
+    arr = xmean;
 
-  return function.Evaluate(xmean);
+   funs = 0;
+   for (ssize_t j = 0; j < numFun; j++)
+      funs += function.Evaluate(xmean, j);
+
+    return funs;
   }
 
 template<typename funcType>

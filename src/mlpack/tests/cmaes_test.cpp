@@ -12,6 +12,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/optimizers/cmaes/cmaes.hpp>
 #include <mlpack/core/optimizers/cmaes/test_function.hpp>
+#include <mlpack/core/optimizers/lbfgs/test_functions.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -44,5 +45,32 @@ BOOST_AUTO_TEST_CASE(SimpleCMAESTestFunction)
   BOOST_REQUIRE_SMALL(coordinates[2], 1e-7);
 }
 
+BOOST_AUTO_TEST_CASE(CMAES_GeneralizedRosenbrockTest)
+{
+  // Loop over several variants.
+  for (size_t i = 10; i < 50; i += 5)
+  {
+    // Create the generalized Rosenbrock function.
+    GeneralizedRosenbrockFunction test(i);
+
+    int N = test.NumFunctions();
+
+  arma::mat start(N, 1); start.fill(0.5);
+  arma::mat initialStdDeviations(N, 1); initialStdDeviations.fill(1.5);
+
+    CMAES<GeneralizedRosenbrockFunction> s(test, start, initialStdDeviations, 10000, 1e-18);
+
+    arma::mat coordinates(N, 1);
+    coordinates = test.GetInitialPoint();
+    
+    double result = s.Optimize(coordinates);
+
+    BOOST_REQUIRE_SMALL(result, 1e-10);
+    for (size_t j = 0; j < i; ++j)
+      BOOST_REQUIRE_CLOSE(coordinates[j], (double) 1.0, 1e-3);
+  }
+}
+
 BOOST_AUTO_TEST_SUITE_END();
+
 
