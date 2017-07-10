@@ -35,7 +35,7 @@ namespace optimization {
 
   template<typename funcType>
   CMAES<funcType>::CMAES(funcType& function,
-arma::mat& start, arma::mat& stdDivs, 
+arma::mat& start, arma::mat& stdDivs,
 double iters, double evalDiff)
       :
         function(function),
@@ -74,9 +74,9 @@ double iters, double evalDiff)
      if (stdDivs[i] < 1.0e-200) initDev = false;
     }
 
-    if (evalDiff =! 1e-14) stopTolFun = evalDiff;
-    else
-      stopTolFun = 1e-14;
+     if (evalDiff = 1e-14) stopTolFun = 1e-14;
+      else
+        stopTolFun = evalDiff;
 
 if (!startP)
 Log::Warn << " WARNING: initial start point undefined." <<
@@ -178,7 +178,7 @@ Log::Warn << "WARNING: initialStandardDeviations undefined."
 
     if (iters <= 0)
       stopMaxIter = ceil((double) (stopMaxFunEvals / lambda));
-      else
+    else
         stopMaxIter = iters;
 
     if (damps < double(0))
