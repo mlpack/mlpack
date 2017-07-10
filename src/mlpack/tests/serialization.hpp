@@ -158,7 +158,6 @@ void TestArmadilloSerialization(MatType& x)
         BOOST_REQUIRE_SMALL(double(x(j, i)), 1e-8);
       else
         BOOST_REQUIRE_CLOSE(double(orig(j, i)), double(x(j, i)), 1e-8);
-
 }
 
 // Test all serialization strategies.
