@@ -73,16 +73,7 @@ bool inline inplace_transpose(arma::Mat<eT>& X)
   }
   catch (std::bad_alloc&)
   {
-#if (ARMA_VERSION_MAJOR >= 4) || \
-    ((ARMA_VERSION_MAJOR == 3) && (ARMA_VERSION_MINOR >= 930))
-    arma::inplace_trans(X, "lowmem");
     return true;
-#else
-    Log::Fatal << "data::Load(): inplace_trans() is only available on Armadillo"
-        << " 3.930 or higher. Ran out of memory to transpose matrix."
-        << std::endl;
-    return false;
-#endif
   }
 }
 
