@@ -12,21 +12,6 @@
 #ifndef MLPACK_CORE_OPTIMIZERS_CMAES_CMAES_HPP
 #define MLPACK_CORE_OPTIMIZERS_CMAES_CMAES_HPP
 
-#include <mlpack/core.hpp>
-#include <cassert>
-#include <cmath>
-#include <cstdio>
-#include <cstring>
-#include <fstream>
-#include <limits>
-#include <iomanip>
-#include <sstream>
-#include <stdexcept>
-#include <string>
-#include <armadillo>
-#include <iostream>
-#include <cfloat>
-
 #include "random.hpp"
 
 namespace mlpack {
@@ -43,28 +28,12 @@ double Optimize(arma::mat& arr);
 
 size_t getDimension(void){ return N;}
 
-void getInitialStart(double *arr, size_t dimension)
-{
-for (int i=0; i<N; i++) arr[i] = xstart[i];
-}
-
-void getInitialStandardDeviations(double *arr, size_t dimension)
-{
-for (int i=0; i<N; i++) arr[i] = rgInitialStds[i];
-}
-
-void getStandardDeviations(double *arr)
-{
-for (int i = 0; i < N; ++i)
-arr[i] = sigma*std::sqrt(C(i, i));
-}
-
 void getXBestEver(double *arr)
 {
 for (int i = 0; i < N; ++i) arr[i] = xBestEver[i];
 }
 
-  void stopMaxFuncEvaluations(double evaluations)
+void stopMaxFuncEvaluations(double evaluations)
 {
 stopMaxFunEvals = evaluations;
 }

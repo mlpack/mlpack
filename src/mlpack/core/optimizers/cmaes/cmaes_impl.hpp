@@ -12,23 +12,7 @@
 #ifndef MLPACK_CORE_OPTIMIZERS_CMAES_CMAES_IMPL_HPP
 #define MLPACK_CORE_OPTIMIZERS_CMAES_CMAES_IMPL_HPP
 
-#include <mlpack/core.hpp>
-#include <cassert>
-#include <cmath>
-#include <cstdio>
-#include <cstring>
-#include <fstream>
-#include <limits>
-#include <iomanip>
-#include <sstream>
-#include <stdexcept>
-#include <string>
-#include <armadillo>
-#include <iostream>
-#include <cfloat>
-
 #include "cmaes.hpp"
-#include "random.hpp"
 
 namespace mlpack {
 namespace optimization {
@@ -95,24 +79,19 @@ Log::Warn << "WARNING: initialStandardDeviations undefined."
 
       xstart.set_size(N);
       if (startP)
-      {
-        for (int i = 0; i < N; ++i) xstart[i] = start[i];
-      }
-     else
+      xstart = start;
+      else
       {
         typicalXcase = true;
-        for (int i = 0; i < N; i++) xstart[i] = 0.5;
+        xstart.fill(0.5);
       }
 
     rgInitialStds.set_size(N);
     if (initDev)
-      {
-        for (int i = 0; i < N; ++i) rgInitialStds[i] = stdDivs[i];
-      }
-      else
-      {
-        for (int i = 0; i < N; ++i) rgInitialStds[i] = double(0.3);
-      }
+      rgInitialStds = stdDivs;
+    else
+      rgInitialStds.fill(0.3);
+  
 
     if (lambda < 2)
       lambda = 4 + (int) (3.0*log((double) N));
@@ -135,19 +114,11 @@ Log::Warn << "WARNING: initialStandardDeviations undefined."
       }
 
       // normalize weights vector and set mueff
-      double s1 = 0, s2 = 0;
-      for (int i = 0; i < mu; ++i)
-      {
-        s1 += weights[i];
-        s2 += weights[i]*weights[i];
-      }
+      double s1 = arma::accu(weights);
+      double s2 = arma::accu(weights % weights);
+      
       mueff = s1*s1/s2;
-      for (int i = 0; i < mu; ++i)
-        weights[i] /= s1;
-
-      if (mu < 1 || mu > lambda || (mu == lambda
-        && weights[0] == weights[mu - 1]))
-      throw std::runtime_error("setWeights(): invalid setting of mu or lambda");
+      weights /= s1;
 
     if (cs > 0)
       cs *= (mueff + 2.) / (N + mueff + 3.);
@@ -204,13 +175,13 @@ Log::Warn << "WARNING: initialStandardDeviations undefined."
     arFunvals.set_size(lambda);
     init(arFunvals);
 
+    arma::mat x(N, 1);
+
   while (!testForTermination())
   {
     // Generate lambda new search points, sample population
     samplePopulation();
-
-    arma::mat x(N, 1);
-
+    
     // evaluate the new search points using the given evaluate
     // function by the user
     for (int i = 0; i < lambda; ++i)
@@ -686,7 +657,7 @@ bool CMAES<funcType>::testForTermination()
     }
     if (gen >= stopMaxIter)
     {
-       std::cout << "MaxIter: number of iterations " << gen << " >= "
+       Log::Info << "MaxIter: number of iterations " << gen << " >= "
           << stopMaxIter << std::endl;
       end = true;
     }
