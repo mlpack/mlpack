@@ -75,7 +75,7 @@ double iters, double evalDiff)
     }
 
      if (evalDiff = 1e-14) stopTolFun = 1e-14;
-      else
+     else
         stopTolFun = evalDiff;
 
 if (!startP)
