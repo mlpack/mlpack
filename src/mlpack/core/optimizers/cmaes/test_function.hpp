@@ -31,15 +31,14 @@ ssize_t NumFunctions() const { return 3; }
 
 double Evaluate(const arma::mat& coordinates, ssize_t i) const
 {
-  switch(i)
-  {
-  	case 0: return -std::exp(-std::abs(coordinates[0]));
-  		break;
-  	case 1: return std::pow(coordinates[1], 2) ;
-  		break;
-  	case 2: return std::pow(coordinates[2], 4) + 3 * std::pow(coordinates[2], 2);
- 
-  }         
+  switch (i)
+{
+case 0: return -std::exp(-std::abs(coordinates[0]));
+break;
+case 1: return std::pow(coordinates[1], 2);
+break;
+case 2: return std::pow(coordinates[2], 4) + 3 * std::pow(coordinates[2], 2);
+}
 }
 };
 

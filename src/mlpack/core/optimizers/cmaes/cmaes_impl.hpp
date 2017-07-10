@@ -187,9 +187,8 @@ Log::Warn << "WARNING: initialStandardDeviations undefined."
 
   // get best estimator for the optimum
     arr = xmean;
-
-   funs = 0;
-   for (ssize_t j = 0; j < numFun; j++)
+    funs = 0;
+    for (ssize_t j = 0; j < numFun; j++)
       funs += function.Evaluate(xmean, j);
 
     return funs;

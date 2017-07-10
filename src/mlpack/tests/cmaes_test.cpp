@@ -58,11 +58,11 @@ BOOST_AUTO_TEST_CASE(CMAES_GeneralizedRosenbrockTest)
   arma::mat start(N, 1); start.fill(0.5);
   arma::mat initialStdDeviations(N, 1); initialStdDeviations.fill(1.5);
 
-    CMAES<GeneralizedRosenbrockFunction> s(test, start, initialStdDeviations, 10000, 1e-18);
+    CMAES<GeneralizedRosenbrockFunction> s(test, start,
+    initialStdDeviations, 10000, 1e-18);
 
     arma::mat coordinates(N, 1);
     coordinates = test.GetInitialPoint();
-    
     double result = s.Optimize(coordinates);
 
     BOOST_REQUIRE_SMALL(result, 1e-10);
