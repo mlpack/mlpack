@@ -38,8 +38,7 @@ double iters, double evalDiff)
         cs(-1),
         ccumcov(-1),
         ccov(-1),
-        facupdateCmode(1),
-        weightMode(UNINITIALIZED_WEIGHTS)
+        facupdateCmode(1)
   {
     stStopFitness.flg = false;
     stStopFitness.val = -std::numeric_limits<double>::max();
@@ -72,9 +71,6 @@ Log::Warn << "WARNING: initialStandardDeviations undefined."
 << " Please specify if incorrect results detected. DEFAULT = 0.3...0.3."
 << std::endl;
 
-    if (weightMode == UNINITIALIZED_WEIGHTS)
-      weightMode = LOG_WEIGHTS;
-
     diagonalCov = 0; // default is 0, but this might change in future
 
       xstart.set_size(N);
@@ -98,19 +94,8 @@ Log::Warn << "WARNING: initialStandardDeviations undefined."
       mu = lambda / 2;
 
       weights.set_size(mu);
-      switch (weightMode)
-      {
-      case LINEAR_WEIGHTS:
-        for (int i = 0; i < mu; ++i) weights[i] = mu - i;
-        break;
-      case EQUAL_WEIGHTS:
-        for (int i = 0; i < mu; ++i) weights[i] = 1;
-        break;
-      case LOG_WEIGHTS:
-      default:
-        for (int i = 0; i < mu; ++i) weights[i] = log(mu + 1.) - log(i + 1.);
-        break;
-      }
+      for (int i = 0; i < mu; ++i) weights[i] = log(mu + 1.) - log(i + 1.);
+
 
       // normalize weights vector and set mueff
       double s1 = arma::accu(weights);

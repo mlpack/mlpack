@@ -97,7 +97,7 @@ void muEffective(double ind){ mueff = ind;}
 
 double getMuEffective(void){ return mueff;}
 
-double axisRatio() { return maxElement(rgD, N) / minElement(rgD, N);}
+double axisRatio() { return rgD.subvec(0, N) / rgD.subvec(0, N);}
 
 double evaluation(){ return countevals; }
 
@@ -155,17 +155,6 @@ for (int i=0; i<len; i++)
 
 return ans;
 }
-
-/**
- * Determines the method used to initialize the weights.
- */
-enum Weights
-{
-  UNINITIALIZED_WEIGHTS, LINEAR_WEIGHTS, EQUAL_WEIGHTS, LOG_WEIGHTS
-} weightMode;
-
-void setWeights(Weights mode);
-
 
  private:
 /* Input parameters. */
