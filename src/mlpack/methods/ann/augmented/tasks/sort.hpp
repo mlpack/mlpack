@@ -40,7 +40,7 @@ class SortTask
   */
   void Generate(arma::field<arma::mat>& input,
                 arma::field<arma::mat>& labels,
-                const size_t batchSize, 
+                const size_t batchSize,
                 bool fixedLength = false);
 
   void Generate(arma::mat& input,
