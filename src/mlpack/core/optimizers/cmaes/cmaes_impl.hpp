@@ -545,10 +545,10 @@ bool CMAES<funcType>::testForTermination()
     }
 
     // TolFun
-    range = std::max(arma::max(funcValueHistory.subvec(0, (int)std::min(gen,
-    (double)funcValueHistory.size()-1))), arma::max(functionValues))
-    - std::min(arma::max(funcValueHistory.subvec(0, (int)std::min(gen,
-    (double)funcValueHistory.size()-1))), arma::min(functionValues));
+    int rangeIndex = std::min(gen, (double)funcValueHistory.size()-1);
+    range = std::max(arma::max(funcValueHistory.subvec(0, rangeIndex)),
+    arma::max(functionValues))
+    - std::min(arma::max(funcValueHistory.subvec(0, rangeIndex)), arma::min(functionValues));
 
     if (gen > 0 && range <= stopTolFun)
     {
