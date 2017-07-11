@@ -10,6 +10,7 @@ add_executable(mlpack_test
   ann_layer_test.cpp
   armadillo_svd_test.cpp
   arma_extend_test.cpp
+  async_learning_test.cpp
   aug_lagrangian_test.cpp
   binarize_test.cpp
   block_krylov_svd_test.cpp

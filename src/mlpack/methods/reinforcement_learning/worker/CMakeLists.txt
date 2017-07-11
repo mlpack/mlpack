@@ -1,10 +1,7 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  async_learning.hpp
-  async_learning_impl.hpp
-  q_learning.hpp
-  q_learning_impl.hpp
+  one_step_q_learning.hpp
 )
 
 # Add directory name to sources.
@@ -15,7 +12,3 @@ endforeach()
 # Append sources (with directory name) to list of all mlpack sources (used at
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
-
-add_subdirectory(environment)
-add_subdirectory(estimator)
-add_subdirectory(policy)
