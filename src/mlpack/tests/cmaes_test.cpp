@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_CASE(SimpleCMAESTestFunction)
 {
   cmaesTestFunction test;
 
-  int N = test.NumFunctions();
+  ssize_t N = test.NumFunctions();
 
   arma::mat start(N, 1); start.fill(0.5);
   arma::mat initialStdDeviations(N, 1); initialStdDeviations.fill(1.5);

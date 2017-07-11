@@ -27,9 +27,9 @@ class cmaesTestFunction
  public:
   //! Return 3 (the number of functions) = the variable N in
   //! CMAES class for dimension
-ssize_t NumFunctions() const { return 3; }
+ssize_t NumFunctions(void) { return 3; }
 
-double Evaluate(const arma::mat& coordinates, ssize_t i) const
+double Evaluate(arma::mat& coordinates, ssize_t i)
 {
   switch (i)
 {

@@ -160,7 +160,7 @@ Log::Warn << "WARNING: initialStandardDeviations undefined."
     init(arFunvals);
 
     arma::mat x(N, 1);
-    double funs;
+    double funs = 0;
     double numFun = function.NumFunctions();
 
   while (!testForTermination())
@@ -545,12 +545,10 @@ bool CMAES<funcType>::testForTermination()
     }
 
     // TolFun
-    range = std::max(maxElement(funcValueHistory,
-      (int) std::min(gen, (double)funcValueHistory.size())),
-        arma::max(functionValues))-
-        std::min(minElement(funcValueHistory,
-        (int) std::min(gen, (double)funcValueHistory.size())),
-        arma::min(functionValues));
+    range = std::max(arma::max(funcValueHistory.subvec(0, (int)std::min(gen,
+    (double)funcValueHistory.size()-1))), arma::max(functionValues))
+    - std::min(arma::max(funcValueHistory.subvec(0, (int)std::min(gen,
+    (double)funcValueHistory.size()-1))), arma::min(functionValues));
 
     if (gen > 0 && range <= stopTolFun)
     {
