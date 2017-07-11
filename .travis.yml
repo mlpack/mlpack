@@ -10,7 +10,7 @@ before_install:
   - printenv
   - sudo apt-get install libopenblas-dev && sudo apt-get install liblapack-dev
   - sudo apt-get install -qq g++-4.8 libboost1.54-all-dev
-  - curl https://distfiles.macports.org/armadillo/armadillo-6.500.5.tar.gz | tar xvz && cd armadillo*
+  - curl http://masterblaster.mlpack.org:5005/armadillo-6.500.5.tar.gz | tar xvz && cd armadillo*
   - cmake . && make && sudo make install && cd ..
   - sudo cp .travis/config.hpp /usr/include/armadillo_bits/config.hpp
 install:
