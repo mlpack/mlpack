@@ -33,6 +33,7 @@ template<typename CubeType,
 void TestArmadilloSerialization(arma::Cube<CubeType>& x)
 {
   // First save it.
+  // Use type_info name to get unique file name for serialization test files.
   std::string fileName = FilterFileName(typeid(IArchiveType).name());
   std::ofstream ofs(fileName, std::ios::binary);
   OArchiveType o(ofs);
