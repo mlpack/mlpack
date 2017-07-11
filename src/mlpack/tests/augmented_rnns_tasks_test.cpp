@@ -205,10 +205,12 @@ class HardCodedAddModel {
 
 BOOST_AUTO_TEST_SUITE(AugmentedRNNsTasks);
 
+// Test of CopyTask instance generator.
+// The data from generator is fed to the dummy hard-coded model above
+// that should be able to solve the task perfectly.
 BOOST_AUTO_TEST_CASE(CopyTaskTest)
 {
-  bool ok = true;
-  // Check the setup on vrious lengths...
+  // Check the setup on various lengths...
   for (size_t maxLen = 2; maxLen <= 16; ++maxLen) {
     // .. and various numbers of repetitions.
     for (size_t nRepeats = 1; nRepeats <= 10; ++nRepeats) {
@@ -222,19 +224,16 @@ BOOST_AUTO_TEST_CASE(CopyTaskTest)
       arma::field<arma::mat> predResponse;
       model.Predict(testPredictor, predResponse);
       // A single failure is a failure.
-      if (SequencePrecision<arma::mat>(
-            testResponse, predResponse) < 0.99) {
-        ok = false;
-        break;
-      }
+      BOOST_REQUIRE_GE(SequencePrecision<arma::mat>(testResponse, predResponse),
+                       0.99);
     }
-    if (!ok) break;
   }
-  BOOST_REQUIRE(ok);
 }
 
+// Test of SortTask instance generator.
+// The data from generator is fed to the dummy hard-coded model above
+// that should be able to solve the task perfectly.
 BOOST_AUTO_TEST_CASE(SortTaskTest) {
-  bool ok = true;
   size_t bitLen = 5;
   for (size_t maxLen = 2; maxLen <= 16; ++maxLen) {
     SortTask task(maxLen, bitLen);
@@ -247,17 +246,15 @@ BOOST_AUTO_TEST_CASE(SortTaskTest) {
     arma::field<arma::mat> predResponse;
     model.Predict(testPredictor, predResponse);
     // A single failure is a failure.
-    if (SequencePrecision<arma::mat>(testResponse, predResponse) < 0.99) {
-      ok = false;
-      break;
-    }
+    BOOST_REQUIRE_GE(SequencePrecision<arma::mat>(testResponse, predResponse),
+                     0.99);
   }
-
-  BOOST_REQUIRE(ok);
 }
 
+// Test of AddTask instance generator.
+// The data from generator is fed to the dummy hard-coded model above
+// that should be able to solve the task perfectly.
 BOOST_AUTO_TEST_CASE(AddTaskTest) {
-  bool ok = true;
   for (size_t bitLen = 2; bitLen <= 16; ++bitLen) {
     AddTask task(bitLen);
     arma::field<arma::mat> trainPredictor, trainResponse;
@@ -269,13 +266,9 @@ BOOST_AUTO_TEST_CASE(AddTaskTest) {
     arma::field<arma::mat> predResponse;
     model.Predict(testPredictor, predResponse);
     // A single failure is a failure.
-    if (SequencePrecision<arma::mat>(testResponse, predResponse) < 0.99) {
-      ok = false;
-      break;
-    }
+    BOOST_REQUIRE_GE(SequencePrecision<arma::mat>(testResponse, predResponse),
+                     0.99);
   }
-
-  BOOST_REQUIRE(ok);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

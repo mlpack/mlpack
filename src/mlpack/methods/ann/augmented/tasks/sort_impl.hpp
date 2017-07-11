@@ -14,25 +14,36 @@
 
 #include "sort.hpp"
 
-#include <cassert>
-
 namespace mlpack {
 namespace ann /* Artificial Neural Network */ {
 namespace augmented /* Augmented neural network */ {
 namespace tasks /* Task utilities for augmented */ {
 
-SortTask::SortTask(const size_t maxLength, const size_t bitLen,
+SortTask::SortTask(const size_t maxLength,
+                   const size_t bitLen,
                    bool addSeparator)
   : maxLength(maxLength), bitLen(bitLen), addSeparator(addSeparator)
 {
-  assert(maxLength > 1);
-  assert(bitLen > 0);
+  if (maxLength <= 1) {
+    std::ostringstream oss;
+    oss << "SortTask::SortTask(): maximum sequence length (" << maxLength << ") "
+        << "should be at least 2!"
+        << std::endl;
+    throw std::invalid_argument(oss.str());
+  }
+  if (bitLen <= 0) {
+    std::ostringstream oss;
+    oss << "SortTask::SortTask(): binary length (" << bitLen << ") "
+        << "is not positive!"
+        << std::endl;
+    throw std::invalid_argument(oss.str());
+  }
 }
 
-void SortTask::Generate(arma::field<arma::mat>& input,
-                        arma::field<arma::mat>& labels,
-                        const size_t batchSize,
-                        bool fixedLength)
+const void SortTask::Generate(arma::field<arma::mat>& input,
+                              arma::field<arma::mat>& labels,
+                              const size_t batchSize,
+                              bool fixedLength)
 {
   input = arma::field<arma::mat>(batchSize);
   labels = arma::field<arma::mat>(batchSize);
@@ -42,7 +53,7 @@ void SortTask::Generate(arma::field<arma::mat>& input,
     if (!fixedLength)
     {
       // Generate random uniform length from [2..maxLength].
-      size = RandInt(2, maxLength+1);
+      size = mlpack::math::RandInt(2, maxLength+1);
     }
     input(i) = arma::randi<arma::mat>(bitLen, size, arma::distr_param(0, 1));
     arma::mat itemAns(bitLen, size);
@@ -83,16 +94,17 @@ void SortTask::Generate(arma::field<arma::mat>& input,
   }
 }
 
-void SortTask::Generate(arma::mat& input, arma::mat& labels,
-                        const size_t batchSize)
+const void SortTask::Generate(arma::mat& input,
+                              arma::mat& labels,
+                              const size_t batchSize)
 {
   arma::field<arma::mat> fieldInput, fieldLabels;
   Generate(fieldInput, fieldLabels, batchSize, true);
-  size_t input_rows = fieldInput(0).n_rows;
-  size_t label_rows = fieldLabels(0).n_rows;
+  size_t inputRows = fieldInput(0).n_rows;
+  size_t labelRows = fieldLabels(0).n_rows;
   size_t cols = batchSize;
-  input = arma::zeros(input_rows, cols);
-  labels = arma::zeros(label_rows, cols);
+  input = arma::zeros(inputRows, cols);
+  labels = arma::zeros(labelRows, cols);
   for (size_t i = 0; i < cols; ++i)
   {
     input.col(i) = fieldInput.at(i);

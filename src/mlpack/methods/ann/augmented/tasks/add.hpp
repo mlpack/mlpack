@@ -20,6 +20,23 @@ namespace mlpack {
 namespace ann /* Artificial Neural Network */ {
 namespace augmented /* Augmented neural network */ {
 namespace tasks /* Task utilities for augmented */ {
+
+/**
+ * Generator of instances of the binary addition task.
+ * The parameters are:
+ * - macimum binary length;
+ * 
+ * Every element of sequence is encoded as 3-dimensional vector
+ * (one-hot vector for elements {0, 1, +}).
+ * Generated datasets are compliant with mlpack format -
+ * every dataset element is shaped as a vector of
+ * length 3 * (sequence length),
+ * 
+ * Example of generated dataset (binary length = 2):
+ * - Input sequence: [0,1,0,0,0,1,0,1,0,1,0,0]
+ * - Output sequences: [0,1,0,0,1,0]
+ * 
+ */
 class AddTask
 {
  public:
@@ -29,13 +46,6 @@ class AddTask
   * @param bitLen Maximum binary length of added numbers.
   */
   AddTask(const size_t bitLen);
-  /**
-  * Generate dataset of a given size.
-  *
-  * @param input The variable to store input sequences.
-  * @param labels The variable to store output sequences.
-  * @param batchSize The dataset size.
-  */
 
   /**
    * Generate dataset of a given size.
@@ -44,12 +54,12 @@ class AddTask
    * @param labels The variable to store output sequences.
    * @param batchSize The dataset size.
    * @param fixedLength Flag that indicates whether
-   * the method should return sequences of even length.
+   *                    the method should return sequences of even length.
    */
-  void Generate(arma::field<arma::mat>& input,
-                arma::field<arma::mat>& labels,
-                const size_t batchSize,
-                const bool fixedLength = false);
+  const void Generate(arma::field<arma::mat>& input,
+                      arma::field<arma::mat>& labels,
+                      const size_t batchSize,
+                      const bool fixedLength = false);
 
   /**
    * Generate dataset of a given size and store it in
@@ -59,16 +69,26 @@ class AddTask
    * @param labels The variable to store output sequences.
    * @param batchSize The dataset size.
    */
-  void Generate(arma::mat& input,
-                arma::mat& labels,
-                const size_t batchSize);
+  const void Generate(arma::mat& input,
+                      arma::mat& labels,
+                      const size_t batchSize);
 
  private:
   // Maximum binary length of numbers.
   size_t bitLen;
 
-  void Binarize(const arma::field<arma::vec>& input,
-                arma::field<arma::mat>& output);
+  /**
+   * Function for converting intermediate sequence representation
+   * to one-hot representation produced
+   * on the final stage of Generate function.
+   * 
+   * @param input Reference parameter with intermediate representations,
+   *              in which 0 and 1 corrrespond to the corresponding number bits,
+   *              and 2 corresponds to `+` sign, which acts as a separator.
+   * @param output Reference parameter for storing final representations. 
+   */
+  const void Binarize(const arma::field<arma::vec>& input,
+                      arma::field<arma::mat>& output);
 };
 } // namespace tasks
 } // namespace augmented
@@ -77,6 +97,3 @@ class AddTask
 
 #include "add_impl.hpp"
 #endif
-
-
-

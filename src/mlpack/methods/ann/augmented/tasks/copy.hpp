@@ -20,6 +20,30 @@ namespace mlpack {
 namespace ann /* Artificial Neural Network */ {
 namespace augmented /* Augmented neural network */ {
 namespace tasks /* Task utilities for augmented */ {
+
+/**
+ * Generator of instances of the binary sequence copy task.
+ * The parameters are:
+ * - maximum sequence length;
+ * - number of sequence repetitions.
+ * 
+ * Input/output sequences are aligned to have the same length:
+ * input sequence is padded with zeros from the right end,
+ * output sequence is padded with zeros from the left end.
+ * The sequences are formed of 2-dimensional vectors
+ * of the format [sequence element, input flag],
+ * where input flag = 0 iff first vector element is a sequence element.
+ * 
+ * Generated datasets are compliant with mlpack format -
+ * every dataset element is shaped as a vector of
+ * length (elem-length) * (input sequence length + target sequence length),
+ * where elem-lemgth is 2 for input sequences and 1 for output sequences.
+ * 
+ * Example of generated dataset (sequence length = 3, repetition count = 2):
+ * - Input sequence: [1,0,0,0,1,0,0,1,0,1,0,1,0,1,0,1,0,1]
+ * - Output sequences: [0,0,0,1,0,1,1,0,1]
+ * 
+ */
 class CopyTask
 {
  public:
@@ -27,12 +51,13 @@ class CopyTask
   * Creates an instance of the sequence copy task.
   *
   * @param maxLength Maximum length of sequence
-  * that has to be repeated by model.
+  *                  that has to be repeated by model.
   * @param nRepeats Number of repeates required to solve the task.
   * @param addSeparator Flag indicating whether generator
-  * should emit separating symbol after input sequence
+  *                     should emit separating symbol after input sequence
   */
-  CopyTask(const size_t maxLength, const size_t nRepeats,
+  CopyTask(const size_t maxLength,
+           const size_t nRepeats,
            bool addSeparator = false);
   /**
   * Generate dataset of a given size.
@@ -41,14 +66,22 @@ class CopyTask
   * @param labels The variable to store output sequences.
   * @param batchSize The dataset size.
   */
-  void Generate(arma::field<arma::mat>& input,
-                arma::field<arma::mat>& labels,
-                const size_t batchSize,
-                bool fixedLength = false);
-
-  void Generate(arma::mat& input,
-                arma::mat& labels,
-                const size_t batchSize);
+  const void Generate(arma::field<arma::mat>& input,
+                      arma::field<arma::mat>& labels,
+                      const size_t batchSize,
+                      bool fixedLength = false);
+  
+  /**
+   * Generate dataset of a given size and store it in
+   * arma::mat object.
+   * 
+   * @param input The variable to store input sequences.
+   * @param labels The variable to store output sequences.
+   * @param batchSize The dataset size.
+   */
+  const void Generate(arma::mat& input,
+                      arma::mat& labels,
+                      const size_t batchSize);
  private:
   // Maximum length of a sequence.
   size_t maxLength;

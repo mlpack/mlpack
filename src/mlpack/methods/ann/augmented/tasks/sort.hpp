@@ -20,6 +20,22 @@ namespace mlpack {
 namespace ann /* Artificial Neural Network */ {
 namespace augmented /* Augmented neural network */ {
 namespace tasks /* Task utilities for augmented */ {
+
+/**
+ * Generator of instances of the sequence sort task.
+ * The parameters are:
+ * - maximum sequence length;
+ * - binary length of sequence elements.
+ * 
+ * Generated datasets are compliant with mlpack format -
+ * every dataset element is shaped as a vector of
+ * length (binary length) * (sequence length).
+ * 
+ * Example of generated dataset (sequence length = 3, binary length = 2):
+ * - Input sequences: [ [1,1,0,0,0,1], [0,0,0,0,1,1] ]
+ * - Output sequences: [ [0,0,0,1,1,1], [0,0,0,0,1,1] ]
+ * 
+ */
 class SortTask
 {
  public:
@@ -29,7 +45,8 @@ class SortTask
   * @param maxLength Maximum length of the number sequence.
   * @param bitLen Binary length of sorted numbers.
   */
-  SortTask(const size_t maxLength, const size_t bitLen,
+  SortTask(const size_t maxLength,
+           const size_t bitLen,
            bool addSeparator = false);
   /**
   * Generate dataset of a given size.
@@ -38,14 +55,21 @@ class SortTask
   * @param labels The variable to store output sequences.
   * @param batchSize The dataset size.
   */
-  void Generate(arma::field<arma::mat>& input,
-                arma::field<arma::mat>& labels,
-                const size_t batchSize,
-                bool fixedLength = false);
-
-  void Generate(arma::mat& input,
-                arma::mat& labels,
-                const size_t batchSize);
+  const void Generate(arma::field<arma::mat>& input,
+                      arma::field<arma::mat>& labels,
+                      const size_t batchSize,
+                      bool fixedLength = false);
+  /**
+   * Generate dataset of a given size and store it in
+   * arma::mat object.
+   * 
+   * @param input The variable to store input sequences.
+   * @param labels The variable to store output sequences.
+   * @param batchSize The dataset size.
+   */
+  const void Generate(arma::mat& input,
+                      arma::mat& labels,
+                      const size_t batchSize);
 
  private:
   // Maximum length of the sequence.
