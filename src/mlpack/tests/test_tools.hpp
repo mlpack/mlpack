@@ -48,6 +48,7 @@ inline void CheckMatrices(const arma::Mat<size_t>& a,
     BOOST_REQUIRE_EQUAL(a[i], b[i]);
 }
 
+// Filter typeinfo string to generate unique filenames for serialization tests.
 inline std::string FilterFileName(const std::string& inputString)
 {
   // Take the last valid 32 characters for the filename.
