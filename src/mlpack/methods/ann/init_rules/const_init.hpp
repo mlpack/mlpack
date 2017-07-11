@@ -1,9 +1,9 @@
 /**
- * @file unit_init.hpp
+ * @file const_init.hpp
  * @author Sumedh Ghaisas
  *
  * Intialization rule for the neural networks. This simple initialization is
- * performed by assigning a unit matrix (matrix of all ones) to the weight
+ * performed by assigning a matrix of all constant values to the weight
  * matrix.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -11,8 +11,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_INIT_RULES_UNIT_INIT_HPP
-#define MLPACK_METHODS_ANN_INIT_RULES_UNIT_INIT_HPP
+#ifndef MLPACK_METHODS_ANN_INIT_RULES_CONST_INIT_HPP
+#define MLPACK_METHODS_ANN_INIT_RULES_CONST_INIT_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -20,15 +20,16 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * This class is used to initialize randomly the weight matrix.
+ * This class is used to initialize weight matrix with constant values.
  */
-class UnitInitialization
+class ConstInitialization
 {
  public:
   /**
-   *  Create the UnitInitialization object.
+   *  Create the ConstantInitialization object.
    */
-  UnitInitialization() { /* Nothing to do here */ }
+  ConstInitialization(const double initVal) : initVal(initVal)
+  { /* Nothing to do here */ }
 
   /**
    * Initialize the elements of the specified weight matrix.
@@ -40,7 +41,8 @@ class UnitInitialization
   template<typename eT>
   void Initialize(arma::Mat<eT>& W, const size_t rows, const size_t cols)
   {
-    W = arma::ones<arma::Mat<eT> >(rows, cols);
+    W.set_size(rows, cols);
+    W.fill(initVal);
   }
 
   /**
@@ -56,9 +58,20 @@ class UnitInitialization
                   const size_t cols,
                   const size_t slices)
   {
-    W = arma::ones<arma::Cube<eT> >(rows, cols, slices);
+    W.set_size(rows, cols, slices);
+    W.fill(initVal);
   }
-}; // class UnitInitialization
+
+  //! Get the initialization value.
+  double const& InitValue() const { return initVal; }
+  //! Modify the initialization value.
+  double& initValue() { return initVal; }
+
+ private:
+  //! Value to be initialized with
+  double initVal;
+
+}; // class ConstInitialization
 
 } // namespace ann
 } // namespace mlpack

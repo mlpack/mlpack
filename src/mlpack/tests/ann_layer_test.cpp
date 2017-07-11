@@ -14,7 +14,7 @@
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
-#include <mlpack/methods/ann/init_rules/unit_init.hpp>
+#include <mlpack/methods/ann/init_rules/const_init.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/rnn.hpp>
@@ -829,7 +829,8 @@ BOOST_AUTO_TEST_CASE(ForwardGRULayerTest)
 {
   GRU<> gru(3, 3, 5);
 
-  NetworkInitialization<UnitInitialization> networkInit;
+  NetworkInitialization<ConstInitialization>
+    networkInit(ConstInitialization(1));
   networkInit.Initialize(gru.Model(), gru.Parameters());
 
   arma::mat input = arma::ones(3, 1);
