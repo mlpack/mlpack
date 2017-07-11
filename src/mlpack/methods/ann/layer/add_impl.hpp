@@ -31,7 +31,8 @@ template<typename eT>
 void Add<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
-  output = input + weights;
+  output = input;
+  output.each_col() += weights;
 }
 
 template<typename InputDataType, typename OutputDataType>
