@@ -15,37 +15,52 @@
 // In case it hasn't been included yet.
 #include "copy.hpp"
 
-using mlpack::math::RandInt;
-
 namespace mlpack {
 namespace ann /* Artificial Neural Network */ {
 namespace augmented /* Augmented neural network */ {
 namespace tasks /* Task utilities for augmented */ {
 
-CopyTask::CopyTask(const size_t maxLength, const size_t nRepeats,
+CopyTask::CopyTask(const size_t maxLength,
+                   const size_t nRepeats,
                    bool addSeparator) :
     maxLength(maxLength),
     nRepeats(nRepeats),
     addSeparator(addSeparator)
 {
-  assert(maxLength > 1);
-  assert(nRepeats > 0);
+  if (maxLength <= 1) 
+  {
+    std::ostringstream oss;
+    oss << "CopyTask::CopyTask(): maximum sequence length ("
+        << maxLength << ") "
+        << "should be at least 2!"
+        << std::endl;
+    throw std::invalid_argument(oss.str());
+  }
+  if (nRepeats <= 0)
+  {
+    std::ostringstream oss;
+    oss << "CopyTask::CopyTask(): repetition count (" << nRepeats << ") "
+        << "is not positive!"
+        << std::endl;
+    throw std::invalid_argument(oss.str());
+  }
   // Just storing task-specific parameters.
 }
 
-void CopyTask::Generate(arma::field<arma::mat>& input,
-                        arma::field<arma::mat>& labels,
-                        const size_t batchSize,
-                        bool fixedLength)
+const void CopyTask::Generate(arma::field<arma::mat>& input,
+                              arma::field<arma::mat>& labels,
+                              const size_t batchSize,
+                              bool fixedLength)
 {
   input = arma::field<arma::mat>(batchSize);
   labels = arma::field<arma::mat>(batchSize);
   size_t size = maxLength;
-  for (size_t i = 0; i < batchSize; ++i) {
+  for (size_t i = 0; i < batchSize; ++i)
+  {
     if (!fixedLength)
     {
       // Generate random uniform length from [2..maxLength].
-      size = RandInt(2, maxLength+1);
+      size = mlpack::math::RandInt(2, maxLength+1);
     }
     arma::colvec vecInput = arma::randi<arma::colvec>(
       size, arma::distr_param(0, 1));
@@ -67,15 +82,15 @@ void CopyTask::Generate(arma::field<arma::mat>& input,
   }
 }
 
-void CopyTask::Generate(arma::mat& input, arma::mat& labels,
-                        const size_t batchSize) {
+const void CopyTask::Generate(arma::mat& input,
+                              arma::mat& labels,
+                              const size_t batchSize)
+{
   arma::field<arma::mat> fieldInput, fieldLabels;
   Generate(fieldInput, fieldLabels, batchSize, true);
-  size_t input_rows = fieldInput(0).n_rows;
-  size_t label_rows = fieldLabels(0).n_rows;
   size_t cols = batchSize;
-  input = arma::zeros(input_rows, cols);
-  labels = arma::zeros(label_rows, cols);
+  input = arma::zeros(fieldInput(0).n_rows, cols);
+  labels = arma::zeros(fieldLabels(0).n_rows, cols);
   for (size_t i = 0; i < cols; ++i)
   {
     input.col(i) = fieldInput.at(i);
