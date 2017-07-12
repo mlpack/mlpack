@@ -8,15 +8,15 @@ add_executable(mlpack_test
   akfn_test.cpp
   aknn_test.cpp
   ann_layer_test.cpp
-  arma_extend_test.cpp
   armadillo_svd_test.cpp
+  arma_extend_test.cpp
   aug_lagrangian_test.cpp
   binarize_test.cpp
   block_krylov_svd_test.cpp
   cf_test.cpp
   cli_test.cpp
-  convolution_test.cpp
   convolutional_network_test.cpp
+  convolution_test.cpp
   cosine_tree_test.cpp
   cv_test.cpp
   dbscan_test.cpp
@@ -36,8 +36,8 @@ add_executable(mlpack_test
   imputation_test.cpp
   ind2sub_test.cpp
   init_rules_test.cpp
-  kernel_test.cpp
   kernel_pca_test.cpp
+  kernel_test.cpp
   kernel_traits_test.cpp
   kfn_test.cpp
   kmeans_test.cpp
@@ -50,8 +50,8 @@ add_executable(mlpack_test
   linear_regression_test.cpp
   load_save_test.cpp
   local_coordinate_coding_test.cpp
-  log_test.cpp
   logistic_regression_test.cpp
+  log_test.cpp
   lrsdp_test.cpp
   lsh_test.cpp
   math_test.cpp
@@ -69,27 +69,28 @@ add_executable(mlpack_test
   octree_test.cpp
   pca_test.cpp
   perceptron_test.cpp
+  prefixedoutstream_test.cpp
   q_learning_test.cpp
   qdafn_test.cpp
   quic_svd_test.cpp
   radical_test.cpp
   randomized_svd_test.cpp
   range_search_test.cpp
-  recurrent_network_test.cpp
   rectangle_tree_test.cpp
+  recurrent_network_test.cpp
   regularized_svd_test.cpp
   rl_components_test.cpp
   rmsprop_test.cpp
   sa_test.cpp
   sdp_primal_dual_test.cpp
-  sgd_test.cpp
-  sgdr_test.cpp
-  snapshot_ensembles.cpp
   serialization.hpp
   serialization.cpp
   serialization_test.cpp
+  sgdr_test.cpp
+  sgd_test.cpp
   sfinae_test.cpp
   smorms3_test.cpp
+  snapshot_ensembles.cpp
   softmax_regression_test.cpp
   sort_policy_test.cpp
   sparse_autoencoder_test.cpp
@@ -99,17 +100,12 @@ add_executable(mlpack_test
   svd_batch_test.cpp
   svd_incremental_test.cpp
   termination_policy_test.cpp
+  timer_test.cpp
   tree_test.cpp
   tree_traits_test.cpp
-  union_find_test.cpp
-  svd_batch_test.cpp
-  svd_incremental_test.cpp
-  nystroem_method_test.cpp
-  armadillo_svd_test.cpp
   ub_tree_test.cpp
+  union_find_test.cpp
   vantage_point_tree_test.cpp
-  prefixedoutstream_test.cpp
-  timer_test.cpp
 )
 # Link dependencies of test executable.
 target_link_libraries(mlpack_test
@@ -129,8 +125,44 @@ add_custom_command(TARGET mlpack_test
   WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
 )
 
-# For 'make test'.
-add_test (NAME mlpack_test
-  COMMAND mlpack_test "--log_level=test_suite" # Set UTF runtime param
-  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/ # This is where test files are put.
-)
+# The list of long running parallel tests
+set(parallel_tests
+  "SdpPrimalDualTest;SVDIncrementalTest;SVDBatchTest;"
+  "LocalCoordinateCodingTest;FeedForwardNetworkTest;SparseAutoencoderTest;"
+  "GMMTest;CFTest;ConvolutionalNetworkTest;HMMTest;LARSTest;"
+  "LogisticRegressionTest")
+
+# Add tests to the testing framework
+# Get the list of sources from the test target
+get_target_property(test_sources mlpack_test SOURCES)
+
+# Go through the list of test sources and parse the test suite name
+foreach(test_file ${test_sources})
+  # Regex for parsing files with AUTO_TEST_SUITE
+  file(STRINGS ${test_file} test_suite REGEX "BOOST_AUTO_TEST_SUITE\\(.*")
+  if(NOT "${test_suite}" STREQUAL "")
+    # Get the substring of test_suite within brackets in test_name
+    string(REGEX MATCH "\\(.*\\)" test_name ${test_suite})
+    # Get the substring excluding the brackets, by calculating the indices
+    string(LENGTH ${test_name} end_idx)
+    math(EXPR end_idx "${end_idx} - 2")
+    string(SUBSTRING ${test_name} "1" ${end_idx} test)
+    # Add the test to the testing tool, test is the name of the test suite
+    add_test(NAME ${test} COMMAND mlpack_test -t ${test} WORKING_DIRECTORY
+      ${CMAKE_BINARY_DIR})
+  endif()
+  # Regex for parsing files with FIXTURE_TEST_SUITE similarly
+  file(STRINGS ${test_file} test_suite REGEX "BOOST_FIXTURE_TEST_SUITE\\(.*,")
+  if(NOT "${test_suite}" STREQUAL "")
+    # Get the substring of test_suite within brackets and comma in test_name
+    string(REGEX MATCH "\\(.*," test_name ${test_suite})
+    string(LENGTH ${test_name} end_idx)
+    math(EXPR end_idx "${end_idx} - 2")
+    string(SUBSTRING ${test_name} "1" ${end_idx} test)
+    add_test(NAME ${test} COMMAND mlpack_test -t ${test} WORKING_DIRECTORY
+      ${CMAKE_BINARY_DIR})
+  endif()
+endforeach()
+
+# Use RUN_SERIAL for long running parallel tests
+set_tests_properties(${parallel_tests} PROPERTIES RUN_SERIAL TRUE)

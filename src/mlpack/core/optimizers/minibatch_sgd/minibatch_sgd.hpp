@@ -82,7 +82,6 @@ namespace optimization {
  *     be adjusted.
  */
 template<
-    typename DecomposableFunctionType,
     typename UpdatePolicyType = VanillaUpdate,
     typename DecayPolicyType = NoDecay
 >
@@ -96,7 +95,6 @@ class MiniBatchSGDType
    * at hand.  The maximum number of iterations refers to the maximum number of
    * mini-batches that are processed.
    *
-   * @param function Function to be optimized (minimized).
    * @param batchSize Size of each mini-batch.
    * @param stepSize Step size for each iteration.
    * @param maxIterations Maximum number of iterations allowed (0 means no
@@ -108,8 +106,7 @@ class MiniBatchSGDType
    *     parameters.
    * @param decayPolicy Instantiated decay policy used to adjust the step size.
    */
-  MiniBatchSGDType(DecomposableFunctionType& function,
-                   const size_t batchSize = 1000,
+  MiniBatchSGDType(const size_t batchSize = 1000,
                    const double stepSize = 0.01,
                    const size_t maxIterations = 100000,
                    const double tolerance = 1e-5,
@@ -122,29 +119,13 @@ class MiniBatchSGDType
    * will be modified to store the finishing point of the algorithm, and the
    * final objective value is returned.
    *
+   * @tparam DecomposableFunctionType Type of the function to be optimized.
    * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
+  template<typename DecomposableFunctionType>
   double Optimize(DecomposableFunctionType& function, arma::mat& iterate);
-
-  /**
-   * Optimize the given function using mini-batch SGD.  The given starting point
-   * will be modified to store the finishing point of the algorithm, and the
-   * final objective value is returned.
-   *
-   * @param iterate Starting point (will be modified).
-   * @return Objective value of the final point.
-   */
-  double Optimize(arma::mat& iterate)
-  {
-    return Optimize(this->function, iterate);
-  }
-
-  //! Get the instantiated function to be optimized.
-  const DecomposableFunctionType& Function() const { return function; }
-  //! Modify the instantiated function.
-  DecomposableFunctionType& Function() { return function; }
 
   //! Get the batch size.
   size_t BatchSize() const { return batchSize; }
@@ -182,9 +163,6 @@ class MiniBatchSGDType
   DecayPolicyType& DecayPolicy() { return decayPolicy; }
 
  private:
-  //! The instantiated function.
-  DecomposableFunctionType& function;
-
   //! The size of each mini-batch.
   size_t batchSize;
 
@@ -208,9 +186,7 @@ class MiniBatchSGDType
   DecayPolicyType decayPolicy;
 };
 
-template<typename DecomposableFunctionType>
-using MiniBatchSGD = MiniBatchSGDType<
-    DecomposableFunctionType, VanillaUpdate, NoDecay>;
+using MiniBatchSGD = MiniBatchSGDType<VanillaUpdate, NoDecay>;
 
 } // namespace optimization
 } // namespace mlpack

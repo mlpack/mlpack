@@ -54,9 +54,7 @@ namespace svd {
  * rSVD.Apply(data, rank, u, v);
  * @endcode
  */
-template<
-  template<typename...> class OptimizerType = mlpack::optimization::StandardSGD
->
+template<typename OptimizerType = mlpack::optimization::StandardSGD>
 class RegularizedSVD
 {
  public:

@@ -22,17 +22,16 @@ template <typename SDPType>
 LRSDP<SDPType>::LRSDP(const size_t numSparseConstraints,
                       const size_t numDenseConstraints,
                       const arma::mat& initialPoint) :
-    function(numSparseConstraints, numDenseConstraints, initialPoint),
-    augLag(function)
+    function(numSparseConstraints, numDenseConstraints, initialPoint)
 { }
 
 template <typename SDPType>
 double LRSDP<SDPType>::Optimize(arma::mat& coordinates)
 {
   augLag.Sigma() = 10;
-  augLag.Optimize(coordinates, 1000);
+  augLag.Optimize(function, coordinates, 1000);
 
-  return augLag.Function().Evaluate(coordinates);
+  return function.Evaluate(coordinates);
 }
 
 } // namespace optimization

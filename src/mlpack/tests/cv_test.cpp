@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE(MSEMatResponsesTest)
   ffn.Add<Linear<>>(1, 2);
   ffn.Add<IdentityLayer<>>();
 
-  RMSProp<decltype(ffn)> opt(ffn, 0.2);
+  RMSProp opt(0.2);
   opt.Shuffle() = false;
   ffn.Train(data, trainingResponses, opt);
 
@@ -116,7 +116,7 @@ BOOST_AUTO_TEST_CASE(PredictionsTypeTest)
   // CheckPredictionsType<FFN<>, arma::mat>();
 
   CheckPredictionsType<LogisticRegression<>, arma::Row<size_t>>();
-  CheckPredictionsType<SoftmaxRegression<>, arma::Row<size_t>>();
+  CheckPredictionsType<SoftmaxRegression, arma::Row<size_t>>();
   CheckPredictionsType<HoeffdingTree<>, arma::Row<size_t>, arma::mat>();
   CheckPredictionsType<HoeffdingTree<>, arma::Row<size_t>, arma::imat>();
   CheckPredictionsType<DecisionTree<>, arma::Row<size_t>, arma::mat,
@@ -156,7 +156,7 @@ BOOST_AUTO_TEST_CASE(TakesDatasetInfoTest)
       "Value should be true");
   static_assert(!MetaInfoExtractor<LinearRegression>::TakesDatasetInfo,
       "Value should be false");
-  static_assert(!MetaInfoExtractor<SoftmaxRegression<>>::TakesDatasetInfo,
+  static_assert(!MetaInfoExtractor<SoftmaxRegression>::TakesDatasetInfo,
       "Value should be false");
 }
 
@@ -164,7 +164,7 @@ BOOST_AUTO_TEST_CASE(TakesNumClassesTest)
 {
   static_assert(MetaInfoExtractor<DecisionTree<>>::TakesNumClasses,
       "Value should be true");
-  static_assert(MetaInfoExtractor<SoftmaxRegression<>>::TakesNumClasses,
+  static_assert(MetaInfoExtractor<SoftmaxRegression>::TakesNumClasses,
       "Value should be true");
   static_assert(!MetaInfoExtractor<LinearRegression>::TakesNumClasses,
       "Value should be false");

@@ -18,9 +18,8 @@
 namespace mlpack {
 namespace optimization {
 
-template<typename DecomposableFunctionType, typename UpdatePolicyType>
-SGDR<DecomposableFunctionType, UpdatePolicyType>::SGDR(
-    DecomposableFunctionType& function,
+template<typename UpdatePolicyType>
+SGDR<UpdatePolicyType>::SGDR(
     const size_t epochRestart,
     const double multFactor,
     const size_t batchSize,
@@ -29,10 +28,8 @@ SGDR<DecomposableFunctionType, UpdatePolicyType>::SGDR(
     const double tolerance,
     const bool shuffle,
     const UpdatePolicyType& updatePolicy) :
-    function(function),
     batchSize(batchSize),
-    optimizer(OptimizerType(function,
-                            batchSize,
+    optimizer(OptimizerType(batchSize,
                             stepSize,
                             maxIterations,
                             tolerance,
@@ -41,15 +38,15 @@ SGDR<DecomposableFunctionType, UpdatePolicyType>::SGDR(
                             CyclicalDecay(
                                 epochRestart,
                                 multFactor,
-                                stepSize,
-                                batchSize,
-                                function.NumFunctions())))
+                                stepSize)))
 {
   /* Nothing to do here */
 }
 
-template<typename DecomposableFunctionType, typename UpdatePolicyType>
-double SGDR<DecomposableFunctionType, UpdatePolicyType>::Optimize(
+template<typename UpdatePolicyType>
+template<typename DecomposableFunctionType>
+double SGDR<UpdatePolicyType>::Optimize(
+    DecomposableFunctionType& function,
     arma::mat& iterate)
 {
   // If a user changed the step size he hasn't update the step size of the
@@ -59,16 +56,17 @@ double SGDR<DecomposableFunctionType, UpdatePolicyType>::Optimize(
     optimizer.DecayPolicy().StepSize() = optimizer.StepSize();
   }
 
+  optimizer.DecayPolicy().EpochBatches() = function.NumFunctions() /
+      double(optimizer.BatchSize());
+
   // If a user changed the batch size we have to update the restart fraction
   // of the cyclical decay instantiation.
   if (optimizer.BatchSize() != batchSize)
   {
     batchSize = optimizer.BatchSize();
-    optimizer.DecayPolicy().EpochBatches() = function.NumFunctions() /
-        double(batchSize);
   }
 
-  return optimizer.Optimize(iterate);
+  return optimizer.Optimize(function, iterate);
 }
 
 } // namespace optimization

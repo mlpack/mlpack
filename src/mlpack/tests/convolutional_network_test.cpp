@@ -90,7 +90,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
   model.Add<Linear<> >(10, 2);
   model.Add<LogSoftMax<> >();
 
-  RMSProp<decltype(model)> opt(model, 0.001, 0.88, 1e-8, 5000, -1);
+  RMSProp opt(0.001, 0.88, 1e-8, 5000, -1);
 
   model.Train(X, Y, opt);
 

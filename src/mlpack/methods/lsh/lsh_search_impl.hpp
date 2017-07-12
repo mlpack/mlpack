@@ -935,22 +935,11 @@ void LSHSearch<SortPolicy>::Search(const arma::mat& querySet,
   Timer::Start("computing_neighbors");
 
   // Parallelization to process more than one query at a time.
-#ifdef _WIN32
-  // Tiny workaround: Visual Studio only implements OpenMP 2.0, which doesn't
-  // support unsigned loop variables. If we're building for Visual Studio, use
-  // the intmax_t type instead.
   #pragma omp parallel for \
       shared(resultingNeighbors, distances) \
       schedule(dynamic)\
       reduction(+:avgIndicesReturned)
-  for (intmax_t i = 0; i < (intmax_t) querySet.n_cols; ++i)
-#else
-  #pragma omp parallel for \
-      shared(resultingNeighbors, distances) \
-      schedule(dynamic)\
-      reduction(+:avgIndicesReturned)
-  for (size_t i = 0; i < querySet.n_cols; ++i)
-#endif
+  for (omp_size_t i = 0; i < (omp_size_t) querySet.n_cols; ++i)
   {
     // Go through every query point.
     // Hash every query into every hash table and eventually into the
@@ -1012,22 +1001,11 @@ Search(const size_t k,
   Timer::Start("computing_neighbors");
 
   // Parallelization to process more than one query at a time.
-#ifdef _WIN32
-  // Tiny workaround: Visual Studio only implements OpenMP 2.0, which doesn't
-  // support unsigned loop variables. If we're building for Visual Studio, use
-  // the intmax_t type instead.
   #pragma omp parallel for \
       shared(resultingNeighbors, distances) \
       schedule(dynamic)\
       reduction(+:avgIndicesReturned)
-  for (intmax_t i = 0; i < (intmax_t) referenceSet->n_cols; ++i)
-#else
-  #pragma omp parallel for \
-      shared(resultingNeighbors, distances) \
-      schedule(dynamic)\
-      reduction(+:avgIndicesReturned)
-  for (size_t i = 0; i < referenceSet->n_cols; ++i)
-#endif
+  for (omp_size_t i = 0; i < (omp_size_t) referenceSet->n_cols; ++i)
   {
     // Go through every query point.
     // Hash every query into every hash table and eventually into the

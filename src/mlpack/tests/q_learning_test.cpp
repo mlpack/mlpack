@@ -12,7 +12,6 @@
 
 #include <mlpack/core.hpp>
 
-#include <mlpack/core/optimizers/gradient_descent/gradient_descent.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
@@ -20,6 +19,8 @@
 #include <mlpack/methods/reinforcement_learning/environment/mountain_car.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
 #include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
+#include <mlpack/core/optimizers/adam/adam_update.hpp>
+#include <mlpack/core/optimizers/rmsprop/rmsprop_update.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -35,23 +36,21 @@ BOOST_AUTO_TEST_SUITE(QLearningTest);
 BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
 {
   // Set up the network.
-  FFN<MeanSquaredError<>, GaussianInitialization> model;
+  FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
+      GaussianInitialization(0, 0.001));
   model.Add<Linear<>>(4, 128);
   model.Add<ReLULayer<>>();
   model.Add<Linear<>>(128, 128);
   model.Add<ReLULayer<>>();
   model.Add<Linear<>>(128, 2);
 
-  // Set up the optimizer generator.
-  StandardSGD<decltype(model)> opt(model, 0.0001, 2);
-
   // Set up the policy and replay method.
   GreedyPolicy<CartPole> policy(1.0, 1000, 0.1);
   RandomReplay<CartPole> replayMethod(10, 10000);
 
   // Set up DQN agent.
-  QLearning<CartPole, decltype(model), decltype(opt), decltype(policy)>
-      agent(std::move(model), std::move(opt), 0.9, std::move(policy),
+  QLearning<CartPole, decltype(model), AdamUpdate, decltype(policy)>
+      agent(std::move(model), 0.01, 0.9, std::move(policy),
           std::move(replayMethod), 100, 100, false, 200);
 
   arma::running_stat<double> averageReturn;
@@ -102,23 +101,21 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
   for (size_t trial = 0; trial < 4; ++trial)
   {
     // Set up the network.
-    FFN<MeanSquaredError<>, GaussianInitialization> model;
+    FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
+        GaussianInitialization(0, 0.001));
     model.Add<Linear<>>(4, 20);
     model.Add<ReLULayer<>>();
     model.Add<Linear<>>(20, 20);
     model.Add<ReLULayer<>>();
     model.Add<Linear<>>(20, 2);
 
-    // Set up the optimizer.
-    StandardSGD<decltype(model)> opt(model, 0.0001, 2);
-
     // Set up the policy and replay method.
     GreedyPolicy<CartPole> policy(1.0, 1000, 0.1);
     RandomReplay<CartPole> replayMethod(10, 10000);
 
     // Set up the DQN agent.
-    QLearning<CartPole, decltype(model), decltype(opt), decltype(policy)>
-        agent(std::move(model), std::move(opt), 0.9, std::move(policy),
+    QLearning<CartPole, decltype(model), RMSPropUpdate, decltype(policy)>
+        agent(std::move(model), 0.01, 0.9, std::move(policy),
             std::move(replayMethod), 100, 100, true, 200);
 
     arma::running_stat<double> averageReturn;
@@ -134,7 +131,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
        */
       Log::Debug << "Average return: " << averageReturn.mean()
           << " Episode return: " << episodeReturn << std::endl;
-      if (averageReturn.mean() > 30)
+      if (averageReturn.mean() > 40)
       {
         agent.Deterministic() = true;
         arma::running_stat<double> testReturn;

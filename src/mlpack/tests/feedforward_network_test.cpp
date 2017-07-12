@@ -13,6 +13,7 @@
 #include <mlpack/core.hpp>
 
 #include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
+#include <mlpack/core/optimizers/sgd/update_policies/vanilla_update.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 
@@ -66,8 +67,7 @@ void BuildVanillaNetwork(MatType& trainData,
   model.Add<Linear<> >(hiddenLayerSize, outputSize);
   model.Add<LogSoftMax<> >();
 
-  RMSProp<decltype(model)> opt(model, 0.01, 0.88, 1e-8,
-      maxEpochs * trainData.n_cols, -1);
+  RMSProp opt(0.01, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
 
   model.Train(trainData, trainLabels, opt);
 
@@ -152,6 +152,81 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
       (dataset, labels, dataset, labels, 2, 10, 50, 0.2);
 }
 
+BOOST_AUTO_TEST_CASE(ForwardBackwardTest)
+{
+  arma::mat dataset;
+  dataset.load("mnist_first250_training_4s_and_9s.arm");
+
+  // Normalize each point since these are images.
+  for (size_t i = 0; i < dataset.n_cols; ++i)
+    dataset.col(i) /= norm(dataset.col(i), 2);
+
+  arma::mat labels = arma::zeros(1, dataset.n_cols);
+  labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
+  labels += 1;
+
+  FFN<NegativeLogLikelihood<> > model;
+  model.Add<Linear<> >(dataset.n_rows, 50);
+  model.Add<SigmoidLayer<> >();
+  model.Add<Linear<> >(50, 10);
+  model.Add<LogSoftMax<> >();
+
+  VanillaUpdate opt;
+  model.ResetParameters();
+  opt.Initialize(model.Parameters().n_rows, model.Parameters().n_cols);
+  double stepSize = 0.01;
+  size_t batchSize = 10;
+
+  size_t iteration = 0;
+  bool converged = false;
+  while (iteration < 1000)
+  {
+    arma::running_stat<double> error;
+    size_t batchStart = 0;
+    while (batchStart < dataset.n_cols)
+    {
+      size_t batchEnd = std::min(batchStart + batchSize,
+          (size_t)dataset.n_cols);
+      arma::mat currentData = dataset.cols(batchStart, batchEnd - 1);
+      arma::mat currentLabels = labels.cols(batchStart, batchEnd - 1);
+      arma::mat currentResuls;
+      model.Forward(currentData, currentResuls);
+      arma::mat gradients;
+      model.Backward(currentLabels, gradients);
+      opt.Update(model.Parameters(), stepSize, gradients);
+      batchStart = batchEnd;
+
+      arma::mat prediction = arma::zeros<arma::mat>(1, currentResuls.n_cols);
+
+      for (size_t i = 0; i < currentResuls.n_cols; ++i)
+      {
+        prediction(i) = arma::as_scalar(arma::find(
+            arma::max(currentResuls.col(i)) == currentResuls.col(i), 1)) + 1;
+      }
+
+      size_t correct = 0;
+      for (size_t i = 0; i < currentLabels.n_cols; i++)
+      {
+        if (int(arma::as_scalar(prediction.col(i))) ==
+            int(arma::as_scalar(currentLabels.col(i))))
+        {
+          correct++;
+        }
+      }
+
+      error(1 - (double)correct / batchSize);
+    }
+    Log::Debug << "Current training error: " << error.mean() << std::endl;
+    iteration++;
+    if (error.mean() < 0.01)
+    {
+      converged = true;
+      break;
+    }
+  }
+  BOOST_REQUIRE(converged);
+}
+
 /**
  * Train and evaluate a Dropout network with the specified structure.
  */
@@ -194,8 +269,7 @@ void BuildDropoutNetwork(MatType& trainData,
   model.Add<Linear<> >(hiddenLayerSize, outputSize);
   model.Add<LogSoftMax<> >();
 
-  RMSProp<decltype(model)> opt(model, 0.01, 0.88, 1e-8,
-      maxEpochs * trainData.n_cols, -1);
+  RMSProp opt(0.01, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
 
   model.Train(trainData, trainLabels, opt);
 
@@ -324,8 +398,7 @@ void BuildDropConnectNetwork(MatType& trainData,
   model.Add<DropConnect<> >(hiddenLayerSize, outputSize);
   model.Add<LogSoftMax<> >();
 
-  RMSProp<decltype(model)> opt(model, 0.01, 0.88, 1e-8,
-      maxEpochs * trainData.n_cols, -1);
+  RMSProp opt(0.01, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
 
   model.Train(trainData, trainLabels, opt);
 

@@ -113,14 +113,10 @@ class FFN
    * @param responses Outputs results from input training variables.
    * @param optimizer Instantiated optimizer used to train the model.
    */
-  template<
-      template<typename, typename...> class OptimizerType =
-          mlpack::optimization::RMSProp,
-      typename... OptimizerTypeArgs
-  >
+  template<typename OptimizerType>
   void Train(arma::mat predictors,
              arma::mat responses,
-             OptimizerType<NetworkType, OptimizerTypeArgs...>& optimizer);
+             OptimizerType& optimizer);
 
   /**
    * Train the feedforward network on the given input data. By default, the
@@ -138,9 +134,7 @@ class FFN
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
    */
-  template<
-      template<typename...> class OptimizerType = mlpack::optimization::RMSProp
-  >
+  template<typename OptimizerType = mlpack::optimization::RMSProp>
   void Train(arma::mat predictors, arma::mat responses);
 
   /**
@@ -182,16 +176,6 @@ class FFN
                 const size_t i,
                 arma::mat& gradient);
 
-  /**
-   * Compute the gradient of the feedforward network based on given input and target.
-   *
-   * @param predictors Input training variables.
-   * @param responses Outputs results from input training variables.
-   * @return Desired gradients of the feedforward network.
-   */
-  arma::mat Gradient(const arma::mat& predictors,
-                     const arma::mat& responses);
-
   /*
    * Add a new module to the model.
    *
@@ -223,6 +207,31 @@ class FFN
   //! Serialize the model.
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
+
+  /**
+   * Perform the forward pass of the data in real batch mode.
+   *
+   * Forward and Backward should be used as a pair, and they are designed mainly
+   * for advanced users. User should try to use Predict and Train unless those
+   * two functions can't satisfy some special requirements.
+   *
+   * @param inputs The input data.
+   * @param results The predicted results.
+   */
+  void Forward(arma::mat inputs, arma::mat& results);
+
+  /**
+   * Perform the backward pass of the data in real batch mode.
+   *
+   * Forward and Backward should be used as a pair, and they are designed mainly
+   * for advanced users. User should try to use Predict and Train unless those
+   * two functions can't satisfy some special requirements.
+   *
+   * @param targets The training target.
+   * @param gradients Computed gradients.
+   * @return Training error of the current pass.
+   */
+  double Backward(arma::mat targets, arma::mat& gradients);
 
  private:
   // Helper functions.

@@ -35,10 +35,10 @@ BOOST_AUTO_TEST_SUITE(SMORMS3Test);
 BOOST_AUTO_TEST_CASE(SimpleSMORMS3TestFunction)
 {
   SGDTestFunction f;
-  SMORMS3<SGDTestFunction> s(f, 0.001, 1e-16, 5000000, 1e-9, true);
+  SMORMS3 s(0.001, 1e-16, 5000000, 1e-9, true);
 
   arma::mat coordinates = f.GetInitialPoint();
-  s.Optimize(coordinates);
+  s.Optimize(f, coordinates);
 
   BOOST_REQUIRE_SMALL(coordinates[0], 0.1);
   BOOST_REQUIRE_SMALL(coordinates[1], 0.1);
@@ -92,11 +92,8 @@ BOOST_AUTO_TEST_CASE(SMORMS3LogisticRegressionTest)
     testResponses[i] = 1;
   }
 
-  LogisticRegression<> lr(shuffledData.n_rows, 0.5);
-
-  LogisticRegressionFunction<> lrf(shuffledData, shuffledResponses, 0.5);
-  SMORMS3<LogisticRegressionFunction<> > smorms3(lrf);
-  lr.Train(smorms3);
+  SMORMS3 smorms3;
+  LogisticRegression<> lr(shuffledData, shuffledResponses, smorms3, 0.5);
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses);

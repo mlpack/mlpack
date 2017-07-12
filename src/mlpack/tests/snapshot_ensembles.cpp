@@ -43,9 +43,10 @@ BOOST_AUTO_TEST_CASE(SnapshotEnsemblesResetTest)
     {
       double epochStepSize = stepSize;
 
-      SnapshotEnsembles snapshotEnsembles(restart, double(mult), stepSize,
-          10, 1000, 1000, 2);
+      SnapshotEnsembles snapshotEnsembles(restart,
+          double(mult), stepSize, 1000, 2);
 
+      snapshotEnsembles.EpochBatches() = 10 / (double)1000;
       // Create all restart epochs.
       arma::Col<size_t> nextRestart(1000 / 10 /  mult);
       nextRestart(0) = restart;
@@ -117,11 +118,8 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
   // Now run SGDR with snapshot ensembles on a couple of batch sizes.
   for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
   {
-    LogisticRegression<> lr(shuffledData.n_rows, 0.5);
-
-    LogisticRegressionFunction<> lrf(shuffledData, shuffledResponses, 0.5);
-    SnapshotSGDR<LogisticRegressionFunction<> > sgdr(lrf, 50, 2.0, batchSize);
-    lr.Train(sgdr);
+    SnapshotSGDR<> sgdr(50, 2.0, batchSize);
+    LogisticRegression<> lr(shuffledData, shuffledResponses, sgdr, 0.5);
 
     // Ensure that the error is close to zero.
     const double acc = lr.ComputeAccuracy(data, responses);
