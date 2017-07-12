@@ -100,9 +100,9 @@ void SpikeSlabLayer<InputDataType, OutputDataType>::Pvgivensh(arma::mat&& slab,
 {
   variance = arma::diagmat(lambdaBias.col(0)).i();
   mean = arma::zeros(variance.n_rows, 1);
-  for (size_t i = 0; i < slabBias.n_cols; i++)
+  for (size_t i = 0; i < weight.n_slices; i++)
   {
-    mean += weight.slice(i).t() * slabBias.col(i) * arma::as_scalar(hidden(i));
+    mean += weight.slice(i).t() * slab.col(i) * arma::as_scalar(hidden(i));
   }
   mean = variance * mean;
   GaussianDistribution dist(mean, variance);

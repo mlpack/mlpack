@@ -62,6 +62,8 @@ void RBM<InitializationRuleType, RBMPolicy>
   negativeGradient.set_size(weight, 1);
   parameter.set_size(weight, 1);
   parameter.zeros();
+  positiveGradient.zeros();
+  negativeGradient.zeros();
   initializeRule.Initialize(parameter, parameter.n_elem, 1);
   rbmPolicy.Parameters() = arma::mat(parameter.memptr(), weight, 1, false,
       false);
@@ -71,10 +73,12 @@ void RBM<InitializationRuleType, RBMPolicy>
       false, false);
 
   rbmPolicy.Reset();
-
   gibbsTemporary.set_size(rbmPolicy.VisibleLayer().InSize(), 1);
-  negativeSamples.set_size(rbmPolicy.VisibleLayer().InSize(), 1);
+  negativeSamples.set_size(rbmPolicy.VisibleLayer().InSize(), mSteps);
   corruptInput.set_size(rbmPolicy.VisibleLayer().InSize(), 1);
+  gibbsTemporary.zeros();
+  corruptInput.zeros();
+  negativeSamples.zeros();
   reset = true;
 }
 
@@ -87,10 +91,7 @@ void RBM<InitializationRuleType, RBMPolicy>::
   this->predictors = std::move(predictors);
 
   if (!reset)
-  {
-    std::cout << "Train Reset" << std::endl;
     Reset();
-  }
 
   // Train the model.
   Timer::Start("rbm_optimization");
@@ -191,9 +192,11 @@ void RBM<InitializationRuleType, RBMPolicy>::
 {
   // Collect the negative samples
   rbmPolicy.PositivePhase(std::move(predictors.col(input)));
-  negativeSamples.set_size(predictors.n_rows, mSteps);
   for (size_t i = 0; i < mSteps; i++)
-    Gibbs(std::move(predictors.col(input)), std::move(negativeSamples.col(i)));
+  {
+    Gibbs(std::move(predictors.col(input)), std::move(tempNegativeSmaples));
+    negativeSamples.col(i) = tempNegativeSmaples;
+  }
   rbmPolicy.NegativePhase(std::move(negativeSamples));
   output = (negativeGradient - positiveGradient);
 }

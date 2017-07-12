@@ -162,6 +162,8 @@ class RBM
 
   //! Locally-stored negative samples from gibbs Distribution
   arma::mat negativeSamples;
+  //! Locally-stored temporary negative samples
+  arma::mat tempNegativeSmaples;
   //! Locally-stored gradient for  negative phase
   arma::mat negativeGradient;
   //! Locally-stored gradient for positive phase

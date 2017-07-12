@@ -249,8 +249,7 @@ class ssRBM
   SpikeSlabLayer<> visible;
   //! Locally stored hidden layer
   SpikeSlabLayer<> hidden;
-  //! Locally stored parameters number of visible neurons
-  bool reset;
+  //! Locally stored parmeter used in freeEnergy calculation
   double freeEnergySum;
   //! Locally stored temp Hidden layer value used in free energy
   arma::mat tempHidden;

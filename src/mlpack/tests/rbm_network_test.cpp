@@ -222,10 +222,6 @@ void BuildSsRbmNetwork(arma::mat& trainData,
 }
 BOOST_AUTO_TEST_CASE(ssRBMMiscTest)
 {
-  /**
-   * Train and evaluate a vanilla network with the specified structure.
-   */
-
   arma::mat X = arma::mat("0, 0, 0;"
                           "0, 1, 1;"
                           "1, 0, 1;"
@@ -233,5 +229,4 @@ BOOST_AUTO_TEST_CASE(ssRBMMiscTest)
   X = X.t();
   BuildSsRbmNetwork<>(X, 2);
 }
-
 BOOST_AUTO_TEST_SUITE_END();
