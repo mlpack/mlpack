@@ -3,6 +3,8 @@
 set(SOURCES
   ffn.hpp
   ffn_impl.hpp
+  rbm.hpp
+  rbm_impl.hpp
   rnn.hpp
   rnn_impl.hpp
 )
