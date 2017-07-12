@@ -162,6 +162,22 @@ class EMFit
                            dists,
                        const arma::vec& weights) const;
 
+  /**
+   * Use the Armadillo gmm_diag clusterer to train a GMM with diagonal
+   * covariance.  If InitialClusteringType == kmeans::KMeans<>, this will use
+   * Armadillo's initialization also.
+   *
+   * @param observations Data to train on.
+   * @param dists Distributions to store model in.
+   * @param weights Prior weights.
+   * @param useInitialModel If true, the existing model will be used.
+   */
+  void ArmadilloGMMWrapper(
+      const arma::mat& observations,
+      std::vector<distribution::GaussianDistribution>& dists,
+      arma::vec& weights,
+      const bool useInitialModel);
+
   //! Maximum iterations of EM algorithm.
   size_t maxIterations;
   //! Tolerance for convergence of EM.
