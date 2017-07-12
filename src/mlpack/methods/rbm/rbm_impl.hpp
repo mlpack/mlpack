@@ -69,7 +69,7 @@ void RBM<InitializationRuleType, RBMPolicy>
       false, false);
   rbmPolicy.NegativeGradient() = arma::mat(negativeGradient.memptr(), weight, 1,
       false, false);
-  
+
   rbmPolicy.Reset();
 
   gibbsTemporary.set_size(rbmPolicy.VisibleLayer().InSize(), 1);

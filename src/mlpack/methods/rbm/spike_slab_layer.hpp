@@ -32,7 +32,7 @@ class SpikeSlabLayer
    * @param: outSize num of hidden neurons
    * @param: poolSize num of pooling hidden neurons
    */
-  SpikeSlabLayer(const size_t inSize, const size_t outSize, 
+  SpikeSlabLayer(const size_t inSize, const size_t outSize,
       const size_t poolSize, const double radius, const bool typeVisible);
 
   // Reset the variables
@@ -49,7 +49,7 @@ class SpikeSlabLayer
    * @param output samples from the parameters
    */
   void Sample(InputDataType&& input, OutputDataType&& output);
- 
+
  /**
   * This function computes the P(v | s,h)
   * N(mean, variance)
@@ -153,14 +153,14 @@ class SpikeSlabLayer
   arma::mat state;
   //! Locally-stored temp visible variable
   arma::mat visibleTemp;
-  //! Locally-stored mean parameters for normal distribution 
+  //! Locally-stored mean parameters for normal distribution
   arma::mat mean;
   //! Locally-stored variance parmaeters for normal distribution
   arma::mat variance;
   //! Locally-stored samples from the distribution
   arma::mat sample;
 }; // class SpikeSlabHidden
-} // namespace ann
+} // namespace rbm
 } // namespace mlpack
 // Include implementation.
 #include "spike_slab_layer_impl.hpp"

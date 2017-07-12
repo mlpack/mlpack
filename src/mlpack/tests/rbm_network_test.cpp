@@ -84,8 +84,8 @@ void BuildVanillaNetwork(MatType& trainData,
   calcultedFreeEnergy.zeros();
   for (size_t i = 0; i < trainData.n_cols; i++)
   {
-    model.Policy().VisibleLayer().ForwardPreActivation(std::move(trainData.col(i)),
-        std::move(output));
+    model.Policy().VisibleLayer().ForwardPreActivation(
+        std::move(trainData.col(i)), std::move(output));
     calcultedFreeEnergy(i) = model.FreeEnergy(std::move(trainData.col(i)));
   }
 

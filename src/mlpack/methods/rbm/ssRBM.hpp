@@ -33,7 +33,6 @@ class ssRBM
   // Reset function
   void Reset()
   {
-
   size_t weight = 0;
   numVisible = visible.InSize();
   numHidden = visible.OutSize();
@@ -100,7 +99,6 @@ class ssRBM
 
     hiddenBiasPositiveGrad.set_size(1, numHidden);
     hiddenBiasNegativeGrad.set_size(1, numHidden);
-
   }
 
   /**
@@ -128,7 +126,7 @@ class ssRBM
     for (size_t i = 0; i < numHidden; i++)
     {
       for (size_t j = 0; j < hidden.SlabBias().n_cols; j++)
-        freeEnergySum += 
+        freeEnergySum +=
             SoftplusFunction::Fn(arma::as_scalar(hidden.SpikeBias().col(i)) +
             std::pow(arma::as_scalar(visible.Weight().slice(i).row(j) *
                 input), 2) / arma::as_scalar(hidden.SlabBias().col(i).row(j)));
@@ -149,7 +147,7 @@ class ssRBM
     positiveGradient.zeros();
     // positive phase
     visible.Sample(std::move(input), std::move(tempHidden));
-    
+
     visible.Psgivenvh(std::move(input), std::move(tempHidden),
         std::move(tempMean), std::move(tempSlab));
 
@@ -160,7 +158,7 @@ class ssRBM
           arma::as_scalar(tempHidden.row(i));
     }
 
-    // positive hidden bias gradient 
+    // positive hidden bias gradient
     for (size_t i = 0; i < visible.Weight().n_slices; i++)
       hiddenBiasPositiveGrad.col(i) = -((
           visible.Weight().slice(i) *input).t() *
@@ -177,7 +175,7 @@ class ssRBM
     weightNegativeGrad.zeros();
     for (size_t i = 0; i < negativeSamples.n_cols; i++)
     {
-      visible.Sample(std::move(negativeSamples.col(i)),std::move(tempHidden));
+      visible.Sample(std::move(negativeSamples.col(i)), std::move(tempHidden));
       visible.Psgivenvh(std::move(negativeSamples.col(i)),
           std::move(tempHidden),
           std::move(tempMean), std::move(tempSlab));

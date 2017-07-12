@@ -58,7 +58,7 @@ void SpikeSlabLayer<InputDataType, OutputDataType>::Reset()
   // slabBias shape = k * n ==> diagMat(slabBias.col(i)) = k * k
   slabBias = arma::mat(weights.memptr() + weight.n_elem,
       poolSize, hiddenSize, false, false);
-  
+
   // lambdaBias shape = d * 1 ==> diagMat(lambdaBias.col(0)) = d * d
   lambdaBias = arma::mat(weights.memptr() + weight.n_elem + slabBias.n_elem,
       visibleSize, 1, false, false);
@@ -66,7 +66,6 @@ void SpikeSlabLayer<InputDataType, OutputDataType>::Reset()
   // spikeBias shape = 1 * N
   spikeBias = arma::mat(weights.memptr() + weight.n_elem + slabBias.n_elem +
       lambdaBias.n_elem, 1, hiddenSize, false, false);
-
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -109,8 +108,7 @@ void SpikeSlabLayer<InputDataType, OutputDataType>::Pvgivensh(arma::mat&& slab,
   GaussianDistribution dist(mean, variance);
   sample = dist.Random();
   // Rejection sampling
-  
-  while( arma::norm(sample) > radius)
+  while (arma::norm(sample) > radius)
     sample = dist.Random();
   output = sample;
   outMean = mean;
@@ -142,6 +140,6 @@ void SpikeSlabLayer<InputDataType, OutputDataType>::Serialize(
   ar & data::CreateNVP(hiddenSize, "outSize");
   ar & data::CreateNVP(poolSize, "poolSize");
 }
-} // namespace ann
+} // namespace rbm
 } // namespace mlpack
 #endif

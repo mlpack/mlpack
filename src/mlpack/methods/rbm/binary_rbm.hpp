@@ -95,7 +95,6 @@ class BinaryRBM
    */
   void PositivePhase(arma::mat&& input)
   {
-
     visible.Forward(std::move(input), std::move(hiddenBiasPositiveGrad));
     weightPositiveGrad = hiddenBiasPositiveGrad * input.t();
     visibleBiasPositiveGrad = input;
@@ -108,7 +107,7 @@ class BinaryRBM
    * @param input the negative samples sampled from gibbs distribution
    */
   void NegativePhase(arma::mat&& negativeSamples)
-  { 
+  {
     // Collect the negative gradients
     for (size_t i = 0; i < negativeSamples.n_cols; i++)
     {
@@ -187,7 +186,6 @@ class BinaryRBM
   //! Locally-stored output of the preActivation function used in FreeEnergy
   arma::mat preActivation;
   //! Locally-stored corrupInput used for Pseudo-Likelihood
-  
 };
 } // namespace rbm
 } // namespace mlpack
