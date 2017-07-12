@@ -1,8 +1,8 @@
 /**
- * @file sgd_test.cpp
- * @author Ryan Curtin
+ * @file cmaes_test.cpp
+ * @author Ryan Curtin 
  *
- * Test file for SGD (stochastic gradient descent).
+ * Test file for CMAES (stochastic gradient descent).
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -11,7 +11,8 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/optimizers/cmaes/cmaes.hpp>
-#include <mlpack/core/optimizers/cmaes/test_function.hpp>
+#include <mlpack/core/optimizers/lbfgs/test_functions.hpp>
+#include <mlpack/core/optimizers/sgd/test_function.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -26,14 +27,14 @@ BOOST_AUTO_TEST_SUITE(CMAESTest);
 
 BOOST_AUTO_TEST_CASE(SimpleCMAESTestFunction)
 {
-  cmaesTestFunction test;
+  SGDTestFunction test;
 
-  ssize_t N = test.NumFunctions();
+  size_t N = test.NumFunctions();
 
   arma::mat start(N, 1); start.fill(0.5);
   arma::mat initialStdDeviations(N, 1); initialStdDeviations.fill(1.5);
 
-  CMAES<cmaesTestFunction> s(test, start, initialStdDeviations, 10000, 1e-18);
+  CMAES<SGDTestFunction> s(test, start, initialStdDeviations, 10000, 1e-18);
 
   arma::mat coordinates(N, 1);
   double result = s.Optimize(coordinates);
