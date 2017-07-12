@@ -1,17 +1,15 @@
-<h1 align="center">
-  <a href="http://mlpack.org"><img src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="background-color:rgba(0,0,0,0);" height=240 alt="mlpack: a scalable C++ machine learning library"></a>
+<h2 align="center">
+  <a href="http://mlpack.org"><img src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="background-color:rgba(0,0,0,0);" height=230 alt="mlpack: a scalable C++ machine learning library"></a>
   <br>a scalable C++ machine learning library<br>
-</h1>
+</h2>
 
-<p align="center">
-  <h4>
-    <a href="http://mlpack.org">Home</a> |
-    <a href="http://www.mlpack.org/docs/mlpack-git/doxygen.php">Documentation</a> |
-    <a href="http://www.mlpack.org/involved.html">Community</a> |
-    <a href="http://www.mlpack.org/help.html">Help</a> |
-    <a href="http://webchat.freenode.net/?channels=mlpack">IRC Chat</a>
-  </h4>
-</p>
+<h4 align="center">
+  <a href="http://mlpack.org">Home</a> |
+  <a href="http://www.mlpack.org/docs/mlpack-git/doxygen.php">Documentation</a> |
+  <a href="http://www.mlpack.org/involved.html">Community</a> |
+  <a href="http://www.mlpack.org/help.html">Help</a> |
+  <a href="http://webchat.freenode.net/?channels=mlpack">IRC Chat</a>
+</h4>
 
 <p align="center">
   <a href="http://masterblaster.mlpack.org/job/mlpack%20-%20git%20commit%20test/"><img src="https://img.shields.io/jenkins/s/http/masterblaster.mlpack.org/job/mlpack%20-%20git%20commit%20test.svg?label=Linux%20build" alt="Jenkins"></a>
