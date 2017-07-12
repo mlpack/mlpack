@@ -72,48 +72,80 @@ int main(int argc, char** argv)
 
   // Check for incompatible input parameters.
   if (CLI::HasParam("training") && CLI::HasParam("input_model"))
+  {
     Log::Fatal << "Cannot specify both --training_file and --input_model_file!"
         << endl;
+  }
+
   if (CLI::HasParam("print_training_accuracy") && !CLI::HasParam("training"))
+  {
     Log::Warn << "--print_training_accuracy ignored because no model is being "
         << "trained." << endl;
+  }
+
   if (!CLI::HasParam("training") && !CLI::HasParam("input_model"))
+  {
     Log::Fatal << "Either --training_file or --input_model_file must be "
         << "specified!" << endl;
+  }
+
   if (CLI::HasParam("test") &&
       !CLI::HasParam("probabilities") &&
       !CLI::HasParam("predictions") &&
       !CLI::HasParam("test_labels"))
+  {
     Log::Warn << "Neither --probabilities_file nor --predictions_file are "
         << "specified; no test output will be saved!" << endl;
+  }
+
   if (!CLI::HasParam("test") && CLI::HasParam("test_labels"))
+  {
     Log::Warn << "--test_labels_file ignored because --test_file not given."
         << endl;
+  }
+
   if (!CLI::HasParam("test") &&
       !CLI::HasParam("output_model") &&
       !CLI::HasParam("print_training_accuracy"))
+  {
     Log::Warn << "Neither --test_file nor --output_model_file is specified, "
         << "and --print_training_accuracy is also not given.  The trained "
         << "model will not be used or saved." << endl;
+  }
+
   if (CLI::HasParam("training") && !CLI::HasParam("labels"))
+  {
     Log::Fatal << "If --training_file is specified, then --labels_file must be "
         << "specified!" << endl;
+  }
+
   if (CLI::HasParam("training") &&
       CLI::HasParam("num_trees") &&
       CLI::GetParam<int>("num_trees") <= 0)
+  {
     Log::Fatal << "Invalid number of trees (" << CLI::GetParam<int>("num_trees")
         << "); must be greater than 0!" << endl;
+  }
+
   if (CLI::HasParam("predictions") && !CLI::HasParam("test"))
+  {
     Log::Warn << "--predictions_file ignored because --test_file not specified."
         << endl;
+  }
+
   if (CLI::HasParam("probabilities") && !CLI::HasParam("test"))
+  {
     Log::Warn << "--probabilities_file ignored because --test_file not "
         << "specified." << endl;
+  }
+
   if (CLI::HasParam("minimum_leaf_size") &&
       CLI::GetParam<int>("minimum_leaf_size") <= 0)
+  {
     Log::Fatal << "Invalid minimum leaf size ("
         << CLI::GetParam<int>("minimum_leaf_size")
         << "); must be greater than 0!" << endl;
+  }
 
   RandomForestModel rfModel;
   if (CLI::HasParam("training"))
