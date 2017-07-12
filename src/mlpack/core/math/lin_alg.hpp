@@ -129,7 +129,7 @@ void SymKronId(const arma::mat& A, arma::mat& op);
  * Return 1 if x>0; return 0 if x=0; return -1 if x<0.
  * Return type are the same as input type.
  *
- * @param x
+ * @param x Number of any type.
  */
 template <typename T>
 T Sign(const T x)
