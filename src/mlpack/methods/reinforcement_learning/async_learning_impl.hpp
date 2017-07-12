@@ -63,16 +63,9 @@ void AsyncLearning<WorkerType, EnvironmentType, NetworkType, UpdaterType, Policy
     while (!stop)
     {
       if (i < nWorkers)
-      {
-        double reward = Episode(learningNetwork, targetNetwork, stop, totalSteps, policy, false, WorkerType());
-        if (i == 0)
-          Log::Debug << "Worker 0 episode reward: " << reward << std::endl;
-      }
+        Episode(learningNetwork, targetNetwork, stop, totalSteps, policy, false, WorkerType());
       else
-      {
-        double reward = Episode(learningNetwork, targetNetwork, stop, totalSteps, policy, true, WorkerType());
-        stop = measure(reward);
-      }
+        stop = measure(Episode(learningNetwork, targetNetwork, stop, totalSteps, policy, true, WorkerType()));
     }
   }
   this->learningNetwork = std::move(learningNetwork);

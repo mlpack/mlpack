@@ -34,27 +34,30 @@ BOOST_AUTO_TEST_CASE(OneStepQLearningTest)
 
   // Set up the policy.
   using Policy = GreedyPolicy<CartPole>;
-//  AggregatedPolicy<Policy> policy({Policy(0.7, 5000, 0.1),
-//                                   Policy(0.7, 5000, 0.01),
-//                                   Policy(0.7, 5000, 0.5)},
-//                                  arma::colvec("0.4 0.3 0.3"));
-  Policy policy(1.0, 5000, 0.1);
+  AggregatedPolicy<Policy> policy({Policy(0.7, 5000, 0.1),
+                                   Policy(0.7, 5000, 0.01),
+                                   Policy(0.7, 5000, 0.5)},
+                                  arma::colvec("0.4 0.3 0.3"));
 
-  OneStepQLearning<CartPole, decltype(model), AdamUpdate, decltype(policy)>
-  agent(std::move(model), 0.001, 0.99, 16, 6, 200, 200, std::move(policy));
+  OneStepQLearning<CartPole, decltype(model), VanillaUpdate, decltype(policy)>
+  agent(std::move(model), 0.0001, 0.99, 16, 6, 200, 200, std::move(policy));
 
-  arma::running_stat<double> averageReturn;
+  std::vector<double> rewards;
   size_t testEpisodes = 0;
 
-  agent.Train([&averageReturn, &testEpisodes](double reward) {
-//    size_t maxEpisode = 100;
-//    if (testEpisodes > maxEpisode)
-//      BOOST_REQUIRE(false);
+  agent.Train([&rewards, &testEpisodes](double reward) {
+    size_t maxEpisode = 50000;
+    if (testEpisodes > maxEpisode)
+      BOOST_REQUIRE(false);
     testEpisodes++;
-    averageReturn(reward);
-//    Log::Debug << "Average return: " << averageReturn.mean()
-//               << " Episode return: " << reward << std::endl;
-    if (averageReturn.mean() > 60)
+    rewards.push_back(reward);
+    size_t windowSize = 20;
+    if (rewards.size() > windowSize)
+      rewards.erase(rewards.begin());
+    double avgReward = std::accumulate(rewards.begin(), rewards.end(), 0.0) / windowSize;
+    Log::Debug << "Average return: " << avgReward
+               << " Episode return: " << reward << std::endl;
+    if (avgReward > 60)
       return true;
     return false;
   });
