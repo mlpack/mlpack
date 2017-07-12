@@ -10,14 +10,17 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_RBM_BINARY_LAYER_HPP
 #define MLPACK_METHODS_ANN_LAYER_RBM_BINARY_LAYER_HPP
 
-#include "layer_types.hpp"
+#include <mlpack/methods/ann/layer/layer.hpp>
+#include <mlpack/methods/ann/layer/base_layer.hpp>
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
 
+using namespace mlpack;
+using namespace mlpack::ann;
 
 namespace mlpack{
-namespace ann{
+namespace rbm{
 
 template <
     typename InputDataType = arma::mat,
@@ -70,6 +73,11 @@ class BinaryLayer
   //! Modify the parameters.
   OutputDataType& Bias() { return ownBias; }
 
+  //! Get the insize.
+  size_t const& InSize() const { return inSize; }
+  //! Get the outsize.
+  size_t const& OutSize() const { return outSize; }
+
   /**
    * Serialize the layer
    */
@@ -108,7 +116,7 @@ class BinaryLayer
   //! Locally-store bias paremeter belonging to the other layer.
   OutputDataType otherBias;
 }; // class BinaryLayer
-} // namespace ann
+} // namespace rbm
 } // namespace mlpack
 // Include implementation.
 #include "binary_layer_impl.hpp"

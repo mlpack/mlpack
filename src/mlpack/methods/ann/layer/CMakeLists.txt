@@ -6,8 +6,6 @@ set(SOURCES
   add_merge.hpp
   add_merge_impl.hpp
   base_layer.hpp
-  binary_layer.hpp
-  binary_layer_impl.hpp
   concat.hpp
   concat_impl.hpp
   concat_performance.hpp

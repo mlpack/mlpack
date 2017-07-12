@@ -15,8 +15,11 @@
 #include <mlpack/core/math/random.hpp>
 #include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
 
+using namespace mlpack;
+using namespace mlpack::ann;
+
 namespace mlpack {
-namespace ann { /** Artificial Neural Network. */
+namespace rbm { /** Artificial Neural Network. */
 
 template<typename InputDataType, typename OutputDataType>
 BinaryLayer<InputDataType, OutputDataType>::BinaryLayer(
@@ -91,6 +94,6 @@ void BinaryLayer<InputDataType, OutputDataType>::Serialize(
   ar & data::CreateNVP(outSize, "outSize");
   ar & data::CreateNVP(typeVisible, "typeVisible");
 }
-} // namespace ann
+} // namespace rbm
 } // namespace mlpack
 #endif

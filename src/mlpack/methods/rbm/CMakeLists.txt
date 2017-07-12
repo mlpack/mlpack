@@ -1,8 +1,14 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  binary_layer.hpp
+  binary_layer_impl.hpp
+  binary_rbm.hpp 
+  rbm.hpp
+  rbm_impl.hpp
   spike_slab_layer.hpp
   spike_slab_layer_impl.hpp
+  ssRBM.hpp
 )
 
 # Add directory name to sources.

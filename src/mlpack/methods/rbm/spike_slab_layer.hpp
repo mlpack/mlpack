@@ -33,7 +33,7 @@ class SpikeSlabLayer
    * @param: poolSize num of pooling hidden neurons
    */
   SpikeSlabLayer(const size_t inSize, const size_t outSize, 
-      const size_t poolSize, const bool typeVisible);
+      const size_t poolSize, const double radius, const bool typeVisible);
 
   // Reset the variables
   void Reset();
@@ -61,8 +61,10 @@ class SpikeSlabLayer
   * @param slab the slab variable(KxN)
   * @param hidden the spike variables(1xN)
   * @param output the sampled visible variable
+  * @param returnMean return the mean of the distribution 
   */
-  void Pvgivensh(arma::mat&& slab, arma::mat&& hidden, arma::mat&& output);
+  void Pvgivensh(arma::mat&& slab, arma::mat&& hidden, arma::mat&& outMean,
+      arma::mat&& output);
   /**
   * This function computes the P(s | v, h)
   * \pi N(h_i * \alpha_i^-1 * w_i^T * v, \alpha_i^-1)
@@ -73,8 +75,10 @@ class SpikeSlabLayer
   * @param visible the visible neuron(Dx1)
   * @param hidden the hidden layer (Nx1)
   * @param output the slab layer
+  * @param returnMean return the mean of the distribution
   */
-  void Psgivenvh(arma::mat&& visible, arma::mat&& hidden, arma::mat&& output);
+  void Psgivenvh(arma::mat&& visible, arma::mat&& hidden, arma::mat&& outMean,
+      arma::mat&& output);
 
   //! Get the parameters.
   arma::mat const& Parameters() const { return weights; }
@@ -97,6 +101,13 @@ class SpikeSlabLayer
   arma::mat const& LambdaBias() const { return lambdaBias; }
   arma::mat & LambdaBias() { return lambdaBias; }
 
+  //! Get the insize.
+  size_t const& InSize() const { return inSize; }
+  //! Get the outsize.
+  size_t const& OutSize() const { return outSize; }
+  //! Get the poolSize.
+  size_t const& PoolSize() const { return poolSize; }
+
   /**
    * Serialize the layer
    */
@@ -106,13 +117,21 @@ class SpikeSlabLayer
  private:
   //! Locally-stored number of input units.
   const size_t inSize;
+  //! Locally-stored number of visible units.
+  size_t visibleSize;
 
   //! Locally-stored number of output units.
   const size_t outSize;
 
+  //! Locally-stored number of hidden units.
+  size_t hiddenSize;
+
   //! Locally-stored number of output units.
   const size_t poolSize;
 
+  //! Locally stored radius for rejection sampling
+  const double radius;
+  //! Locally stored boolean variable indication type of layer
   const bool typeVisible;
 
   //! Locally-stored weight object.
@@ -140,8 +159,6 @@ class SpikeSlabLayer
   arma::mat variance;
   //! Locally-stored samples from the distribution
   arma::mat sample;
-  //! Locally stored radius for rejection sampling
-  const double radius;
 }; // class SpikeSlabHidden
 } // namespace ann
 } // namespace mlpack

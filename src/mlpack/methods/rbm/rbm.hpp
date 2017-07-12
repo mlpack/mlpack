@@ -14,40 +14,38 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/math/random.hpp>
 
-#include "layer/layer.hpp"
-#include "layer/base_layer.hpp"
+#include <mlpack/methods/ann/layer/layer.hpp>
+#include <mlpack/methods/ann/layer/base_layer.hpp>
 
-#include "activation_functions/softplus_function.hpp"
-#include "init_rules/gaussian_init.hpp"
-#include "init_rules/random_init.hpp"
+#include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
+#include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
+#include <mlpack/methods/ann/init_rules/random_init.hpp>
+
+using namespace mlpack;
+using namespace mlpack::ann;
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
+namespace rbm /** Restricted Boltzmann Machine.  */ {
 
-template<typename InitializationRuleType,
-    typename VisibleLayerType,
-    typename HiddenLayerType>
+template<typename InitializationRuleType, typename RBMPolicy>
 class RBM
 {
  public:
-  using NetworkType = RBM<InitializationRuleType, VisibleLayerType,
-      HiddenLayerType>;
+  using NetworkType = RBM<InitializationRuleType, RBMPolicy>;
 
   /* 
    * Intalise all the parameters of the network
    * using the intialise rule. 
    *
    * @tparam IntialiserType rule to intialise the parameters of the network
-   * @tparam VisibleLayerType visible layer 
-   * @tparam HiddenLyaerType hidden layer
    * @param numSteps Number of gibbs steps sampling
    * @param useMonitoringCost evaluation function to use
    * @param persistence indicates to use persistent CD
    */
   RBM(arma::mat predictors, InitializationRuleType initializeRule,
-      VisibleLayerType visible,
-      HiddenLayerType hidden,
+      RBMPolicy rbmPolicy,
       const size_t numSteps = 1,
+      const size_t mSteps = 1,
       const bool useMonitoringCost = true,
       const bool persistence = false);
 
@@ -129,27 +127,20 @@ class RBM
   //! Modify the initial point for the optimization.
   arma::mat& Parameters() { return parameter; }
 
-  //! Modify the visible layer of the network
-  VisibleLayerType& VisibleLayer()  { return visible; }
-  //! Modify the hidden layer of the network
-  HiddenLayerType& HiddenLayer()  { return hidden; }
-
-  //! Retrun the visible layer of the network
-  const VisibleLayerType& VisibleLayer() const { return visible; }
-  //! Return the hidden layer of the network
-  const HiddenLayerType& HiddenLayer() const { return hidden; }
+  //! Return the initial point for the optimization.
+  const RBMPolicy& Policy() const { return rbmPolicy; }
+  //! Modify the initial point for the optimization.
+  RBMPolicy& Policy() { return rbmPolicy; }
 
   //! Serialize the model.
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-  // Parameter weights of the network
+  // Locally stored parameters of the network
   arma::mat parameter;
-  // Visible layer
-  VisibleLayerType visible;
-  // Hidden Layer
-  HiddenLayerType hidden;
+  // Policy type of RBM
+  RBMPolicy rbmPolicy;
   //! The matrix of data points (predictors).
   arma::mat predictors;
   // Intialiser
@@ -160,6 +151,8 @@ class RBM
   size_t numFunctions;
   //! Locally-stored number of steps in gibbs sampling
   const size_t numSteps;
+  //! Locally-stored number of negative samples used in ssRBM
+  const size_t mSteps;
   //! Locally-stored monitoring cost
   const bool useMonitoringCost;
   //! Locally-stored persistent cd-k or not
@@ -173,20 +166,6 @@ class RBM
   arma::mat negativeGradient;
   //! Locally-stored gradient for positive phase
   arma::mat positiveGradient;
-  //! Locally-stored gradient wrt weight for negative phase
-  arma::mat weightNegativeGrad;
-  //! Locally-stored gradient wrt hidden bias for negative phase
-  arma::mat hiddenBiasNegativeGrad;
-  //! Locally-stored gradient wrt visible bias for negative phase
-  arma::mat visibleBiasNegativeGrad;
-
-  //! Locally-stored gradient wrt weight for positive phase
-  arma::mat weightPositiveGrad;
-  //! Locally-stored gradient wrt hidden bias for positive phase
-  arma::mat hiddenBiasPositiveGrad;
-  //! Locally-stored gradient wrt visible bias for positive phase
-  arma::mat visibleBiasPositiveGrad;
-
   //! Locally-stored temporary output of gibbs chain
   arma::mat gibbsTemporary;
   //! Locally-stored output of the preActivation function used in FreeEnergy
@@ -196,7 +175,7 @@ class RBM
   //! Locally-stored softplus output used for Cross-Entropy Loss
   arma::mat softOutput;
 };
-} // namespace ann
+} // namespace rbm
 } // namespace mlpack
 #include "rbm_impl.hpp"
 #endif
