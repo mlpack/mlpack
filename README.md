@@ -3,13 +3,13 @@
   <br>a scalable C++ machine learning library<br>
 </h2>
 
-<h4 align="center">
+<h5 align="center">
   <a href="http://mlpack.org">Home</a> |
   <a href="http://www.mlpack.org/docs/mlpack-git/doxygen.php">Documentation</a> |
   <a href="http://www.mlpack.org/involved.html">Community</a> |
   <a href="http://www.mlpack.org/help.html">Help</a> |
   <a href="http://webchat.freenode.net/?channels=mlpack">IRC Chat</a>
-</h4>
+</h5>
 
 <p align="center">
   <a href="http://masterblaster.mlpack.org/job/mlpack%20-%20git%20commit%20test/"><img src="https://img.shields.io/jenkins/s/http/masterblaster.mlpack.org/job/mlpack%20-%20git%20commit%20test.svg?label=Linux%20build&style=flat-square" alt="Jenkins"></a>
