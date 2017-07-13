@@ -18,9 +18,8 @@
 namespace mlpack {
 namespace optimization {
 
-template<typename DecomposableFunctionType, typename UpdatePolicyType>
-SnapshotSGDR<DecomposableFunctionType, UpdatePolicyType>::SnapshotSGDR(
-    DecomposableFunctionType& function,
+template<typename UpdatePolicyType>
+SnapshotSGDR<UpdatePolicyType>::SnapshotSGDR(
     const size_t epochRestart,
     const double multFactor,
     const size_t batchSize,
@@ -31,11 +30,9 @@ SnapshotSGDR<DecomposableFunctionType, UpdatePolicyType>::SnapshotSGDR(
     const size_t snapshots,
     const bool accumulate,
     const UpdatePolicyType& updatePolicy) :
-    function(function),
     batchSize(batchSize),
     accumulate(accumulate),
-    optimizer(OptimizerType(function,
-                            batchSize,
+    optimizer(OptimizerType(batchSize,
                             stepSize,
                             maxIterations,
                             tolerance,
@@ -45,16 +42,16 @@ SnapshotSGDR<DecomposableFunctionType, UpdatePolicyType>::SnapshotSGDR(
                                 epochRestart,
                                 multFactor,
                                 stepSize,
-                                batchSize,
-                                function.NumFunctions(),
                                 maxIterations,
                                 snapshots)))
 {
   /* Nothing to do here */
 }
 
-template<typename DecomposableFunctionType, typename UpdatePolicyType>
-double SnapshotSGDR<DecomposableFunctionType, UpdatePolicyType>::Optimize(
+template<typename UpdatePolicyType>
+template<typename DecomposableFunctionType>
+double SnapshotSGDR<UpdatePolicyType>::Optimize(
+    DecomposableFunctionType& function,
     arma::mat& iterate)
 {
   // If a user changed the step size he hasn't update the step size of the
@@ -64,16 +61,17 @@ double SnapshotSGDR<DecomposableFunctionType, UpdatePolicyType>::Optimize(
     optimizer.DecayPolicy().StepSize() = optimizer.StepSize();
   }
 
+  optimizer.DecayPolicy().EpochBatches() = function.NumFunctions() /
+      double(batchSize);
+
   // If a user changed the batch size we have to update the restart fraction
   // of the cyclical decay instantiation.
   if (optimizer.BatchSize() != batchSize)
   {
     batchSize = optimizer.BatchSize();
-    optimizer.DecayPolicy().EpochBatches() = function.NumFunctions() /
-        double(batchSize);
   }
 
-  double overallObjective = optimizer.Optimize(iterate);
+  double overallObjective = optimizer.Optimize(function, iterate);
 
   // Accumulate snapshots.
   if (accumulate)

@@ -159,7 +159,8 @@ namespace mlpack {
 namespace optimization {
 
 template<>
-double StandardSGD<mlpack::svd::RegularizedSVDFunction>::Optimize(
+template<>
+double StandardSGD::Optimize(
     mlpack::svd::RegularizedSVDFunction& function,
     arma::mat& parameters)
 {

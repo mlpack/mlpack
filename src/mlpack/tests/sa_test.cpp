@@ -41,10 +41,10 @@ BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
   while (result > 1e-6)
   {
     ExponentialSchedule schedule(1e-5);
-    SA<GeneralizedRosenbrockFunction, ExponentialSchedule>
-        sa(f, schedule, 10000000, 1000., 1000, 100, 1e-10, 3, 20, 0.3, 0.3);
+    SA<ExponentialSchedule> sa(schedule, 10000000, 1000., 1000, 100, 1e-10, 3,
+        20, 0.3, 0.3);
     coordinates = f.GetInitialPoint();
-    result = sa.Optimize(coordinates);
+    result = sa.Optimize(f, coordinates);
     ++iteration;
 
     BOOST_REQUIRE_LT(iteration, 4); // No more than three tries.
@@ -61,11 +61,10 @@ BOOST_AUTO_TEST_CASE(RosenbrockTest)
 {
   RosenbrockFunction f;
   ExponentialSchedule schedule(1e-5);
-  SA<RosenbrockFunction> // sa(f, schedule); // All default parameters.
-      sa(f, schedule, 10000000, 1000., 1000, 100, 1e-11, 3, 20, 0.3, 0.3);
+  SA<> sa(schedule, 10000000, 1000., 1000, 100, 1e-11, 3, 20, 0.3, 0.3);
   arma::mat coordinates = f.GetInitialPoint();
 
-  const double result = sa.Optimize(coordinates);
+  const double result = sa.Optimize(f, coordinates);
 
   BOOST_REQUIRE_SMALL(result, 1e-6);
   BOOST_REQUIRE_CLOSE(coordinates[0], 1.0, 1e-3);
@@ -114,11 +113,10 @@ BOOST_AUTO_TEST_CASE(RastrigrinFunctionTest)
   {
     RastrigrinFunction f;
     ExponentialSchedule schedule(3e-6);
-    SA<RastrigrinFunction> // sa(f, schedule);
-        sa(f, schedule, 20000000, 100, 50, 1000, 1e-12, 2, 0.2, 0.01, 0.1);
+    SA<> sa(schedule, 20000000, 100, 50, 1000, 1e-12, 2, 0.2, 0.01, 0.1);
     arma::mat coordinates = f.GetInitialPoint();
 
-    const double result = sa.Optimize(coordinates);
+    const double result = sa.Optimize(f, coordinates);
 
     if ((std::abs(result) < 1e-3) &&
         (std::abs(coordinates[0]) < 1e-3) &&

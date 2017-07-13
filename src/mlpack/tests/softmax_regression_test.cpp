@@ -198,7 +198,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTwoClasses)
   }
 
   // Train softmax regression object.
-  SoftmaxRegression<> sr(data, labels, numClasses, lambda);
+  SoftmaxRegression sr(data, labels, numClasses, lambda);
 
   // Compare training accuracy to 100.
   const double acc = sr.ComputeAccuracy(data, labels);
@@ -242,7 +242,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFitIntercept)
   }
 
   // Now train a logistic regression object on it.
-  SoftmaxRegression<> lr(data, responses, 2, 0.01, true);
+  SoftmaxRegression lr(data, responses, 2, 0.01, true);
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses);
@@ -310,7 +310,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionMultipleClasses)
   }
 
   // Train softmax regression object.
-  SoftmaxRegression<> sr(data, labels, numClasses, lambda);
+  SoftmaxRegression sr(data, labels, numClasses, lambda);
 
   // Compare training accuracy to 100.
   const double acc = sr.ComputeAccuracy(data, labels);
@@ -350,8 +350,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionMultipleClasses)
 
 BOOST_AUTO_TEST_CASE(SoftmaxRegressionTrainTest)
 {
-  // Make sure a SoftmaxRegression object trained with Train() operates the same
-  // as a SoftmaxRegression object trained in the constructor.
+  // Test the stability of the SoftmaxRegression
   arma::mat dataset = arma::randu<arma::mat>(5, 1000);
   arma::Row<size_t> labels(1000);
   for (size_t i = 0; i < 500; ++i)
@@ -359,16 +358,12 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTrainTest)
   for (size_t i = 500; i < 1000; ++i)
     labels[i] = size_t(1.0);
 
-
-  // This should be the same as the default parameters given by
-  // SoftmaxRegression.
-  SoftmaxRegressionFunction srf(dataset, labels, 2, 0.0001, false);
-  L_BFGS<SoftmaxRegressionFunction> lbfgs(srf);
-  SoftmaxRegression<> sr(lbfgs);
-
-  SoftmaxRegression<> sr2(dataset.n_rows, 2);
-  sr2.Parameters() = srf.GetInitialPoint(); // Start from the same place.
-  sr2.Train(dataset, labels, 2);
+  SoftmaxRegression sr(dataset.n_rows, 2);
+  SoftmaxRegression sr2(dataset.n_rows, 2);
+  sr.Parameters() = sr2.Parameters();
+  sr.Train(dataset, labels, 2);
+  L_BFGS lbfgs;
+  sr2.Train(dataset, labels, 2, std::move(lbfgs));
 
   // Ensure that the parameters are the same.
   BOOST_REQUIRE_EQUAL(sr.Parameters().n_rows, sr2.Parameters().n_rows);
@@ -392,14 +387,17 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionOptimizerTrainTest)
   for (size_t i = 500; i < 1000; ++i)
     labels[i] = size_t(1.0);
 
-  SoftmaxRegressionFunction srf(dataset, labels, 2, 0.01, true);
-  L_BFGS<SoftmaxRegressionFunction> lbfgs(srf);
-  SoftmaxRegression<> sr(lbfgs);
+  L_BFGS lbfgs;
+  SoftmaxRegression sr(dataset.n_rows, 2, true);
 
-  SoftmaxRegression<> sr2(dataset.n_rows, 2, true);
-  L_BFGS<SoftmaxRegressionFunction> lbfgs2(srf);
-  sr2.Parameters() = srf.GetInitialPoint();
-  sr2.Train(lbfgs2);
+  L_BFGS lbfgs2;
+  SoftmaxRegression sr2(dataset.n_rows, 2, true);
+
+  sr.Lambda() = sr2.Lambda() = 0.01;
+  sr.Parameters() = sr2.Parameters();
+
+  sr.Train(dataset, labels, 2, lbfgs);
+  sr2.Train(dataset, labels, 2, lbfgs2);
 
   // Ensure that the parameters are the same.
   BOOST_REQUIRE_EQUAL(sr.Parameters().n_rows, sr2.Parameters().n_rows);
@@ -458,7 +456,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionClassifySinglePointTest)
   }
 
   // Train softmax regression object.
-  SoftmaxRegression<> sr(data, labels, numClasses, lambda);
+  SoftmaxRegression sr(data, labels, numClasses, lambda);
 
   // Create test dataset.
   for (size_t i = 0; i < points / 5; i++)
@@ -540,7 +538,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionComputeProbabilitiesTest)
   }
 
   // Train softmax regression object.
-  SoftmaxRegression<> sr(data, labels, numClasses, lambda);
+  SoftmaxRegression sr(data, labels, numClasses, lambda);
 
   // Create test dataset.
   for (size_t i = 0; i < points / 5; i++)
@@ -626,7 +624,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionComputeProbabilitiesAndLabelsTest)
   }
 
   // Train softmax regression object.
-  SoftmaxRegression<> sr(data, labels, numClasses, lambda);
+  SoftmaxRegression sr(data, labels, numClasses, lambda);
 
   // Create test dataset.
   for (size_t i = 0; i < points / 5; i++)

@@ -11,24 +11,19 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_OPTIMIZERS_ADA_DELTA_ADA_DELTA_IMPL_HPP
-#define MLPACK_CORE_OPTIMIZERS_ADA_DELTA_ADA_DELTA_IMPL_HPP
 
 #include "ada_delta.hpp"
 
 namespace mlpack {
 namespace optimization {
 
-template<typename DecomposableFunctionType>
-AdaDelta<DecomposableFunctionType>::AdaDelta(DecomposableFunctionType& function,
-                                             const double stepSize,
-                                             const double rho,
-                                             const double epsilon,
-                                             const size_t maxIterations,
-                                             const double tolerance,
-                                             const bool shuffle) :
-    optimizer(function,
-              stepSize,
+AdaDelta::AdaDelta(const double stepSize,
+                   const double rho,
+                   const double epsilon,
+                   const size_t maxIterations,
+                   const double tolerance,
+                   const bool shuffle) :
+    optimizer(stepSize,
               maxIterations,
               tolerance,
               shuffle,
@@ -37,5 +32,3 @@ AdaDelta<DecomposableFunctionType>::AdaDelta(DecomposableFunctionType& function,
 
 } // namespace optimization
 } // namespace mlpack
-
-#endif

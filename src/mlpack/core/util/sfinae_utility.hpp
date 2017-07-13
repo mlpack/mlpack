@@ -163,16 +163,13 @@ struct NAME {                                                                  \
  */
 #define HAS_METHOD_FORM(METHOD, NAME)                                          \
 template<typename Class,                                                       \
-         template<typename...> class MethodForm>                               \
+         template<typename...> class MF /* MethodForm */,                      \
+         size_t MinN = 0 /* MinNumberOfAdditionalArgs */>                      \
 struct NAME                                                                    \
 {                                                                              \
-  /* Making a short alias for MethodForm */                                    \
-  template<typename C, typename...Args>                                        \
-  using MF = MethodForm<C, Args...>;                                           \
-                                                                               \
   /* Making a short alias for MethodFormDetector */                            \
-  template<typename C, template<typename...> class MF, int N>                  \
-  using MFD = mlpack::sfinae::MethodFormDetector<C, MF, N>;                    \
+  template<typename C, template<typename...> class MethodForm, int N>          \
+  using MFD = mlpack::sfinae::MethodFormDetector<C, MethodForm, N>;            \
   static const size_t MaxMFDAdditionalArgsCount =                              \
       mlpack::sfinae::MaxMFDAdditionalArgsCount;                               \
                                                                                \
@@ -207,7 +204,8 @@ struct NAME                                                                    \
     static const bool value = type::value;                                     \
   };                                                                           \
                                                                                \
-  static const bool value = WithGreaterOrEqualNumberOfAdditionalArgs<0>::value;\
+  static const bool value =                                                    \
+      WithGreaterOrEqualNumberOfAdditionalArgs<MinN>::value;                   \
 };
 
 /*

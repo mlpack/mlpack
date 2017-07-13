@@ -1,6 +1,6 @@
 set(SOURCES
   ada_grad.hpp
-  ada_grad_impl.hpp
+  ada_grad.cpp
   ada_grad_update.hpp
 )
 
