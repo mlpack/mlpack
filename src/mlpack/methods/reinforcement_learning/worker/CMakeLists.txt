@@ -1,7 +1,7 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  one_step_q_learning.hpp
+  one_step_q_learning_worker.hpp
 )
 
 # Add directory name to sources.

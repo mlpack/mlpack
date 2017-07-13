@@ -5,6 +5,7 @@ set(SOURCES
   async_learning_impl.hpp
   q_learning.hpp
   q_learning_impl.hpp
+  training_config.hpp
 )
 
 # Add directory name to sources.

@@ -15,11 +15,11 @@
 #define MLPACK_METHODS_RL_ASYNC_LEARNING_HPP
 
 #include <mlpack/prereqs.hpp>
+#include "worker/one_step_q_learning_worker.hpp"
+#include "training_config.hpp"
 
 namespace mlpack {
 namespace rl {
-
-class OneStepQLearningWorker {};
 
 /**
  * Implementation of various asynchronous learning algorithms,
@@ -37,16 +37,10 @@ class AsyncLearning
 {
  public:
 
-  AsyncLearning(NetworkType network,
-                const double stepSize,
-                const double discount,
-                const size_t nWorkers,
-                const size_t updateInterval,
-                const size_t targetNetworkSyncInterval,
-                const size_t stepLimit,
+  AsyncLearning(TrainingConfig config,
+                NetworkType network,
                 PolicyType policy,
                 UpdaterType updater = UpdaterType(),
-                const double gradientLimit = 40,
                 EnvironmentType environment = EnvironmentType());
 
   /**
@@ -56,33 +50,10 @@ class AsyncLearning
   void Train(const Measure& measure);
 
  private:
-
-  double Episode(NetworkType& learningNetwork,
-                 NetworkType& targetNetwork,
-                 bool& stop,
-                 size_t& totalSteps,
-                 PolicyType& policy,
-                 bool deterministic,
-                 OneStepQLearningWorker);
-
-  //! Convenient typedef for state
-  using StateType = typename EnvironmentType::State;
-
-  //! Convenient typedef for action
-  using ActionType = typename EnvironmentType::Action;
-
-  //! Locally-stored parallelization factor
-
+  TrainingConfig config;
   NetworkType learningNetwork;
-  double stepSize;
-  double discount;
-  size_t nWorkers;
-  size_t updateInterval;
-  size_t targetNetworkSyncInterval;
-  size_t stepLimit;
   PolicyType policy;
   UpdaterType updater;
-  double gradientLimit;
   EnvironmentType environment;
 };
 
@@ -99,5 +70,5 @@ using OneStepQLearning = AsyncLearning<OneStepQLearningWorker, EnvironmentType, 
 
 // Include implementation
 #include "async_learning_impl.hpp"
-#include "worker/one_step_q_learning.hpp"
+#include "mlpack/methods/reinforcement_learning/worker/one_step_q_learning_worker.hpp"
 #endif

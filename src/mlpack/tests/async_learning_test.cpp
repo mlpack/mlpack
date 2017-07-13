@@ -10,6 +10,7 @@
 #include <mlpack/core/optimizers/adam/adam_update.hpp>
 #include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
 #include <mlpack/methods/reinforcement_learning/policy/aggregated_policy.hpp>
+#include <mlpack/methods/reinforcement_learning/training_config.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -39,8 +40,16 @@ BOOST_AUTO_TEST_CASE(OneStepQLearningTest)
                                    Policy(0.7, 5000, 0.5)},
                                   arma::colvec("0.4 0.3 0.3"));
 
+  TrainingConfig config;
+  config.StepSize() = 0.0001;
+  config.Discount() = 0.99;
+  config.NumOfWorkers() = 16;
+  config.UpdateInterval() = 6;
+  config.StepLimit() = 200;
+  config.TargetNetworkSyncInterval() = 200;
+
   OneStepQLearning<CartPole, decltype(model), VanillaUpdate, decltype(policy)>
-  agent(std::move(model), 0.0001, 0.99, 16, 6, 200, 200, std::move(policy));
+  agent(std::move(config), std::move(model), std::move(policy));
 
   std::vector<double> rewards;
   size_t testEpisodes = 0;

@@ -14,26 +14,15 @@ template <
         typename PolicyType
 >
 AsyncLearning<WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType>::
-        AsyncLearning(NetworkType network,
-                      const double stepSize,
-                      const double discount,
-                      const size_t nWorkers,
-                      const size_t updateInterval,
-                      const size_t targetNetworkSyncInterval,
-                      const size_t stepLimit,
+        AsyncLearning(TrainingConfig config,
+                      NetworkType network,
                       PolicyType policy,
                       UpdaterType updater,
-                      const double gradientLimit,
                       EnvironmentType environment):
+        config(std::move(config)),
         learningNetwork(std::move(network)),
-        stepSize(stepSize), discount(discount),
-        nWorkers(nWorkers),
-        updateInterval(updateInterval),
-        targetNetworkSyncInterval(targetNetworkSyncInterval),
-        stepLimit(stepLimit),
         policy(std::move(policy)),
         updater(std::move(updater)),
-        gradientLimit(gradientLimit),
         environment(std::move(environment))
         {};
 
@@ -56,16 +45,16 @@ void AsyncLearning<WorkerType, EnvironmentType, NetworkType, UpdaterType, Policy
   PolicyType policy = this->policy;
 
   omp_set_dynamic(0);
-  omp_set_num_threads(nWorkers + 1);
+  omp_set_num_threads(config.NumOfWorkers() + 1);
   #pragma omp parallel for shared(learningNetwork, targetNetwork, stop, totalSteps, policy)
-  for (size_t i = 0; i <= nWorkers; ++i)
+  for (size_t i = 0; i <= config.NumOfWorkers(); ++i)
   {
     while (!stop)
     {
-      if (i < nWorkers)
-        Episode(learningNetwork, targetNetwork, stop, totalSteps, policy, false, WorkerType());
+      if (i < config.NumOfWorkers())
+        WorkerType::Episode(learningNetwork, targetNetwork, stop, totalSteps, policy, updater, environment, config, false);
       else
-        stop = measure(Episode(learningNetwork, targetNetwork, stop, totalSteps, policy, true, WorkerType()));
+        stop = measure(WorkerType::Episode(learningNetwork, targetNetwork, stop, totalSteps, policy, updater, environment, config, true));
     }
   }
   this->learningNetwork = std::move(learningNetwork);
