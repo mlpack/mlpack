@@ -2,7 +2,6 @@ set(SOURCES
   cmaes.hpp
   cmaes_impl.hpp
   random.hpp
-  test_function.hpp
 )
 
 set(DIR_SRCS)

@@ -175,7 +175,7 @@ Log::Warn << "WARNING: initialStandardDeviations undefined."
       x = population.submat(i, 0, i, N-1);
 
       funs = 0;
-      for (ssize_t j = 0; j < numFun; j++)
+      for (size_t j = 0; j < numFun; j++)
       funs += function.Evaluate(x, j);
 
       arFunvals[i] = funs;
@@ -188,7 +188,7 @@ Log::Warn << "WARNING: initialStandardDeviations undefined."
   // get best estimator for the optimum
     arr = xmean;
     funs = 0;
-    for (ssize_t j = 0; j < numFun; j++)
+    for (size_t j = 0; j < numFun; j++)
       funs += function.Evaluate(xmean, j);
 
     return funs;
