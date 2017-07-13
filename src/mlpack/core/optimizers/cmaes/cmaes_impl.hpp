@@ -166,7 +166,7 @@ Log::Warn << "WARNING: initialStandardDeviations undefined."
   {
     // Generate lambda new search points, sample population
     samplePopulation();
-    
+
     arFunvals.fill(0);
     // evaluate the new search points using the given evaluate
     // function by the user
@@ -388,7 +388,8 @@ void CMAES<funcType>::samplePopulation()
     { // generate scaled random vector D*z
       for (int i = 0; i < N; ++i)
         if (diag)
-          population(iNk, i) = xmean[i] + sigma*rgD[i] * mlpack::math::RandNormal();
+          population(iNk, i) = xmean[i] + sigma*rgD[i]
+          * mlpack::math::RandNormal();
         else
           tempRandom[i] = rgD[i]* mlpack::math::RandNormal();
       if (!diag)
