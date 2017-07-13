@@ -107,7 +107,7 @@ class RegularizedSVDFunction
 
  private:
   //! Rating data.
-  const arma::mat& data;
+  const MatType& data;
   //! Initial parameter point.
   arma::mat initialPoint;
   //! Rank used for matrix factorization.
@@ -131,13 +131,15 @@ namespace optimization {
    * affects only a small number of parameters per example, and thus the normal
    * abstraction does not work as fast as we might like it to.
    */
-  template<>
-  template<>
-  double StandardSGD::Optimize(
-      mlpack::svd::RegularizedSVDFunction& function,
+  template <>
+  template <>
+  inline double StandardSGD::Optimize(
+      mlpack::svd::RegularizedSVDFunction<arma::mat>& function,
       arma::mat& parameters);
 
 } // namespace optimization
 } // namespace mlpack
+
+#include "regularized_svd_function_impl.hpp"
 
 #endif

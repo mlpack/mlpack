@@ -10,8 +10,11 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
+
+#ifndef MLPACK_METHODS_REGULARIZED_SVD_REGULARIZED_FUNCTION_SVD_IMPL_HPP
+#define MLPACK_METHODS_REGULARIZED_SVD_REGULARIZED_FUNCTION_SVD_IMPL_HPP
+
 #include "regularized_svd_function.hpp"
-#include <mlpack/core/optimizers/sgd/sgd.hpp>
 
 namespace mlpack {
 namespace svd {
@@ -158,10 +161,10 @@ void RegularizedSVDFunction<MatType>::Gradient(const arma::mat &parameters,
 namespace mlpack {
 namespace optimization {
 
-template<>
-template<>
+template <>
+template <>
 double StandardSGD::Optimize(
-    mlpack::svd::RegularizedSVDFunction& function,
+    mlpack::svd::RegularizedSVDFunction<arma::mat>& function,
     arma::mat& parameters)
 {
   // Find the number of functions to use.
@@ -217,3 +220,5 @@ double StandardSGD::Optimize(
 
 } // namespace optimization
 } // namespace mlpack
+
+#endif
