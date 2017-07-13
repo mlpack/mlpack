@@ -25,7 +25,7 @@ namespace rl {
 template <typename PolicyType>
 class AggregatedPolicy
 {
-public:
+ public:
   //! Convenient typedef for action.
   using ActionType = typename PolicyType::ActionType;
 
@@ -64,13 +64,12 @@ public:
       policy.Anneal();
   }
 
-private:
+ private:
   //! Locally-stored child policies.
   std::vector<PolicyType> policies;
 
   //! Locally-stored distribution for each child policy.
   arma::colvec distribution;
-
 };
 
 } // namespace rl

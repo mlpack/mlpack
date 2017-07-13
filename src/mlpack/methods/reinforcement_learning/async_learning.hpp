@@ -112,7 +112,8 @@ template <
   typename UpdaterType,
   typename PolicyType
 >
-using OneStepQLearning = AsyncLearning<OneStepQLearningWorker, EnvironmentType, NetworkType, UpdaterType, PolicyType>;
+using OneStepQLearning = AsyncLearning<OneStepQLearningWorker,
+    EnvironmentType, NetworkType, UpdaterType, PolicyType>;
 
 } // namespace rl
 } // namespace mlpack

@@ -76,7 +76,8 @@ void AsyncLearning<
   omp_set_num_threads(config.NumOfWorkers() + 1);
 
   // All the variables that doesn't show up in this list will be copied.
-  #pragma omp parallel for shared(learningNetwork, targetNetwork, stop, totalSteps, policy)
+  #pragma omp parallel for shared(learningNetwork, targetNetwork, \
+      stop, totalSteps, policy)
   for (size_t i = 0; i <= config.NumOfWorkers(); ++i)
   {
     while (!stop)

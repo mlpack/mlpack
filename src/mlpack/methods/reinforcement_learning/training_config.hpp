@@ -18,7 +18,7 @@ namespace rl {
 
 class TrainingConfig
 {
-public:
+ public:
   TrainingConfig() : stepLimit(0), gradientLimit(40), doubleQLearning(false)
   { /* Nothing to do here. */ }
 
@@ -26,7 +26,7 @@ public:
    * Get and modify the number workers.
    * This is valid only for async RL agent.
    **/
-  const size_t NumOfWorkers() const { return numOfWorkers; }
+  size_t NumOfWorkers() const { return numOfWorkers; }
   size_t& NumOfWorkers() { return numOfWorkers; }
 
   /**
@@ -34,14 +34,15 @@ public:
    * however the update is done one by one.
    * This is valid only for async RL agent.
    */
-  const size_t UpdateInterval() const { return updateInterval; }
+  size_t UpdateInterval() const { return updateInterval; }
   size_t& UpdateInterval() { return updateInterval; }
 
   /**
    * Get and modify the interval for syncing target network.
    * This is valid for both async RL agent and q-learning agent.
    */
-  const size_t TargetNetworkSyncInterval() const { return targetNetworkSyncInterval; }
+  size_t TargetNetworkSyncInterval() const
+  { return targetNetworkSyncInterval; }
   size_t& TargetNetworkSyncInterval() { return targetNetworkSyncInterval; }
 
   /**
@@ -49,7 +50,7 @@ public:
    * Setting it to 0 means no limit.
    * This is valid for both async RL agent and q-learning agent.
    */
-  const size_t StepLimit() const { return stepLimit; }
+  size_t StepLimit() const { return stepLimit; }
   size_t& StepLimit() { return stepLimit; }
 
   /**
@@ -57,38 +58,38 @@ public:
    * The agent won't start learn until those steps have passed.
    * This is valid only for q-learning agent.
    */
-  const size_t ExplorationSteps() const { return explorationSteps; }
+  size_t ExplorationSteps() const { return explorationSteps; }
   size_t& ExplorationSteps() { return explorationSteps; }
 
   /**
    * Get and modify the step size of the optimizer.
    * This is valid for both async RL agent and q-learning agent.
    */
-  const double StepSize() const { return stepSize; }
+  double StepSize() const { return stepSize; }
   double& StepSize() { return stepSize; }
 
   /**
    * Get and modify the discount rate for future reward.
    * This is valid for both async RL agent and q-learning agent.
    */
-  const double Discount() const { return discount; }
+  double Discount() const { return discount; }
   double& Discount() { return discount; }
 
   /**
    * Get and modify the limit of update gradient.
    * This is valid only for async RL agent.
    */
-  const double GradientLimit() const { return gradientLimit; }
+  double GradientLimit() const { return gradientLimit; }
   double& GradientLimit() { return gradientLimit; }
 
   /**
    * Get and modify the indicator of double q-learning.
    * This is valid only for q-learning agent.
    */
-  const bool DoubleQLearning() const { return doubleQLearning; }
+  bool DoubleQLearning() const { return doubleQLearning; }
   bool& DoubleQLearning() { return doubleQLearning; }
 
-private:
+ private:
   //! Locally-stored number of workers.
   size_t numOfWorkers;
 

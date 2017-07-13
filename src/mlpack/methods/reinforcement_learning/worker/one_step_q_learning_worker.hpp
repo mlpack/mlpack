@@ -58,7 +58,8 @@ class OneStepQLearningWorker
     using ActionType = typename EnvironmentType::Action;
     using TransitionType = std::tuple<StateType, ActionType, double, StateType>;
 
-    updater.Initialize(learningNetwork.Parameters().n_rows, learningNetwork.Parameters().n_cols);
+    updater.Initialize(learningNetwork.Parameters().n_rows,
+        learningNetwork.Parameters().n_cols);
 
     // Construct the local network from global network.
     NetworkType network = learningNetwork;
@@ -103,18 +104,23 @@ class OneStepQLearningWorker
       // Do update.
       if (terminal || pending.size() >= config.UpdateInterval()) {
         // Initialize the gradient storage.
-        arma::mat totalGradients(learningNetwork.Parameters().n_rows, learningNetwork.Parameters().n_cols);
+        arma::mat totalGradients(learningNetwork.Parameters().n_rows,
+            learningNetwork.Parameters().n_cols);
         for (size_t i = 0; i < pending.size(); ++i) {
           TransitionType &transition = pending[i];
 
           // Compute the target state-action value.
           arma::colvec actionValue;
           #pragma omp critical
-          { targetNetwork.Predict(std::get<3>(transition).Encode(), actionValue); };
+          {
+            targetNetwork.Predict(
+                std::get<3>(transition).Encode(), actionValue);
+          };
           double targetActionValue = actionValue.max();
           if (terminal && i == pending.size() - 1)
             targetActionValue = 0;
-          targetActionValue = std::get<2>(transition) + config.Discount() * targetActionValue;
+          targetActionValue = std::get<2>(transition) +
+              config.Discount() * targetActionValue;
 
           // Compute the training target for current state.
           network.Forward(std::get<0>(transition).Encode(), actionValue);
@@ -129,10 +135,12 @@ class OneStepQLearningWorker
         }
 
         // Clamp the accumulated gradients.
-        totalGradients = arma::clamp(totalGradients, -config.GradientLimit(), config.GradientLimit());
+        totalGradients = arma::clamp(totalGradients,
+            -config.GradientLimit(), config.GradientLimit());
 
         // Perform async update of the global network.
-        updater.Update(learningNetwork.Parameters(), config.StepSize(), totalGradients);
+        updater.Update(learningNetwork.Parameters(),
+            config.StepSize(), totalGradients);
 
         // Sync the local network with the global network.
         network = learningNetwork;

@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(OneStepQLearningTest)
   config.TargetNetworkSyncInterval() = 200;
 
   OneStepQLearning<CartPole, decltype(model), VanillaUpdate, decltype(policy)>
-  agent(std::move(config), std::move(model), std::move(policy));
+      agent(std::move(config), std::move(model), std::move(policy));
 
   std::vector<double> rewards;
   size_t testEpisodes = 0;
@@ -63,14 +63,14 @@ BOOST_AUTO_TEST_CASE(OneStepQLearningTest)
     size_t windowSize = 20;
     if (rewards.size() > windowSize)
       rewards.erase(rewards.begin());
-    double avgReward = std::accumulate(rewards.begin(), rewards.end(), 0.0) / windowSize;
+    double avgReward = std::accumulate(
+        rewards.begin(), rewards.end(), 0.0) / windowSize;
     Log::Debug << "Average return: " << avgReward
                << " Episode return: " << reward << std::endl;
     if (avgReward > 60)
       return true;
     return false;
   });
-
 }
 
 BOOST_AUTO_TEST_SUITE_END();
