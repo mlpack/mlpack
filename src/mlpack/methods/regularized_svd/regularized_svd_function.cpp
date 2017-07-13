@@ -16,9 +16,10 @@
 namespace mlpack {
 namespace svd {
 
-RegularizedSVDFunction::RegularizedSVDFunction(const arma::mat& data,
-                                               const size_t rank,
-                                               const double lambda) :
+template <typename MatType>
+RegularizedSVDFunction<MatType>::RegularizedSVDFunction(const MatType& data,
+                                                        const size_t rank,
+                                                        const double lambda) :
     data(data),
     rank(rank),
     lambda(lambda)
@@ -31,7 +32,9 @@ RegularizedSVDFunction::RegularizedSVDFunction(const arma::mat& data,
   initialPoint.randu(rank, numUsers + numItems);
 }
 
-double RegularizedSVDFunction::Evaluate(const arma::mat& parameters) const
+template <typename MatType>
+double RegularizedSVDFunction<MatType>::Evaluate(const arma::mat& parameters)
+const
 {
   // The cost for the optimization is as follows:
   //          f(u, v) = sum((rating(i, j) - u(i).t() * v(j))^2)
@@ -66,8 +69,9 @@ double RegularizedSVDFunction::Evaluate(const arma::mat& parameters) const
   return cost;
 }
 
-double RegularizedSVDFunction::Evaluate(const arma::mat& parameters,
-                                        const size_t i) const
+template <typename MatType>
+double RegularizedSVDFunction<MatType>::Evaluate(const arma::mat& parameters,
+                                                 const size_t i) const
 {
   // Indices for accessing the the correct parameter columns.
   const size_t user = data(0, i);
@@ -88,8 +92,9 @@ double RegularizedSVDFunction::Evaluate(const arma::mat& parameters,
   return (ratingErrorSquared + regularizationError);
 }
 
-void RegularizedSVDFunction::Gradient(const arma::mat& parameters,
-                                      arma::mat& gradient) const
+template <typename MatType>
+void RegularizedSVDFunction<MatType>::Gradient(const arma::mat& parameters,
+                                               arma::mat& gradient) const
 {
   // For an example with rating corresponding to user 'i' and item 'j', the
   // gradients for the parameters is as follows:
@@ -120,6 +125,30 @@ void RegularizedSVDFunction::Gradient(const arma::mat& parameters,
     gradient.col(item) += 2 * (lambda * parameters.col(item) -
                                ratingError * parameters.col(user));
   }
+}
+
+template <typename MatType>
+template <typename GradType>
+void RegularizedSVDFunction<MatType>::Gradient(const arma::mat &parameters,
+                                               size_t id,
+                                               GradType &gradient) const
+{
+  gradient.zeros(rank, numUsers + numItems);
+
+  const size_t user = data(0, id);
+  const size_t item = data(1, id) + numUsers;
+
+  // Prediction error for the example.
+  const double rating = data(2, id);
+  double ratingError = rating - arma::dot(parameters.col(user),
+                                          parameters.col(item));
+
+  // Gradient is non-zero only for the parameter columns corresponding to the
+  // example.
+  gradient.col(user) += 2 * (lambda * parameters.col(user) -
+                             ratingError * parameters.col(item));
+  gradient.col(item) += 2 * (lambda * parameters.col(item) -
+                             ratingError * parameters.col(user));
 }
 
 } // namespace svd

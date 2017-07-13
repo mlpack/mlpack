@@ -19,6 +19,13 @@
 namespace mlpack {
 namespace svd {
 
+/**
+ * The data is stored in a matrix of type MatType, so that this class can be
+ * used with both dense and sparse matrix types.
+ *
+ * @tparam MatType The matrix type of the dataset.
+ */
+template <typename MatType>
 class RegularizedSVDFunction
 {
  public:
@@ -31,7 +38,7 @@ class RegularizedSVDFunction
    * @param rank Rank used for matrix factorization.
    * @param lambda Regularization parameter used for optimization.
    */
-  RegularizedSVDFunction(const arma::mat& data,
+  RegularizedSVDFunction(const MatType& data,
                          const size_t rank,
                          const double lambda);
 
@@ -61,6 +68,21 @@ class RegularizedSVDFunction
    */
   void Gradient(const arma::mat& parameters,
                 arma::mat& gradient) const;
+
+  /**
+   * Evaluates the gradient of the cost function over one training example.
+   * This function is useful for optimizers like SGD. The type of the gradient
+   * parameter is a template to allow the computation of a sparse gradient.
+   *
+   * @tparam GradType The type of the gradient out-param.
+   * @param parameters Parameters(user/item matrices) of the decomposition.
+   * @param id The index of the training example.
+   * @param gradient Calculated gradient for the parameters.
+   */
+  template <typename GradType>
+  void Gradient(const arma::mat& parameters,
+                size_t id,
+                GradType& gradient) const;
 
   //! Return the initial point for the optimization.
   const arma::mat& GetInitialPoint() const { return initialPoint; }
