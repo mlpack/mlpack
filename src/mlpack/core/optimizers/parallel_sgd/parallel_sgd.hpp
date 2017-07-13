@@ -64,13 +64,13 @@ class ParallelSGD
    * by each thread.
    *
    * @param maxIterations Maximum number of iterations allowed.
-   * @param batchSize Number of datapoints to be processed in one iteration by
-   *     each thread.
+   * @param threadShareSize Number of datapoints to be processed in one
+   *     iteration by each thread.
    * @param tolerance Maximum absolute tolerance to terminate the algorithm.
    * @param decayPolicy The step size update policy to use.
   */
   ParallelSGD(const size_t maxIterations,
-              const size_t batchSize,
+              const size_t threadShareSize,
               const double tolerance,
               const DecayPolicyType& decayPolicy);
 
@@ -95,10 +95,10 @@ class ParallelSGD
 
   //! Get the number of datapoints to be processed in one iteration by each
   //! thread.
-  size_t BatchSize() const { return batchSize; }
+  size_t ThreadShareSize() const { return threadShareSize; }
   //! Modify the number of datapoints to be processed in one iteration by each
   //! thread.
-  size_t& BatchSize() { return batchSize; }
+  size_t& ThreadShareSize() { return threadShareSize; }
 
   //! Get the tolerance for termination.
   double Tolerance() const { return tolerance; }
@@ -139,7 +139,7 @@ class ParallelSGD
   size_t maxIterations;
 
   //! The number of datapoints to be processed in one iteration by each thread.
-  size_t batchSize;
+  size_t threadShareSize;
 
   //! The tolerance for termination.
   double tolerance;

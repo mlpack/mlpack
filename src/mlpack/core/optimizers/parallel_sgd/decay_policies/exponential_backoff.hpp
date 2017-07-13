@@ -15,8 +15,8 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack{
-namespace optimization{
+namespace mlpack {
+namespace optimization {
 
 /**
  * Exponential backoff stepsize reduction policy for parallel SGD.
@@ -35,7 +35,8 @@ namespace optimization{
  * This stepsize update scheme gives robust 1/k convergence rates to the
  * implementation of parallel SGD.
  */
-class ExponentialBackoff{
+class ExponentialBackoff
+{
  public:
   /**
    * Construct the exponential backoff policy with the required parameters.

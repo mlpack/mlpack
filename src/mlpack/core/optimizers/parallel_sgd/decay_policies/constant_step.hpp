@@ -14,13 +14,14 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack{
-namespace optimization{
+namespace mlpack {
+namespace optimization {
 
 /**
  * Implementation of the ConstantStep stepsize decay policy for parallel SGD.
  */
-class ConstantStep{
+class ConstantStep
+{
  public:
   ConstantStep(double initalStep) : step(initalStep) { /* Nothing to do */ }
 

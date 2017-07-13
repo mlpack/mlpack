@@ -21,11 +21,11 @@ namespace optimization {
 template <typename DecayPolicyType>
 ParallelSGD<DecayPolicyType>::ParallelSGD(
     const size_t maxIterations,
-    const size_t batchSize,
+    const size_t threadShareSize,
     const double tolerance,
     const DecayPolicyType& decayPolicy) :
     maxIterations(maxIterations),
-    batchSize(batchSize),
+    threadShareSize(threadShareSize),
     tolerance(tolerance),
     decayPolicy(decayPolicy)
 { /* Nothing to do. */ }
@@ -111,22 +111,22 @@ template <typename DecayPolicyType>
 arma::Col<size_t> ParallelSGD<DecayPolicyType>::ThreadShare(
     size_t threadId, const arma::Col<size_t>& visitationOrder)
 {
-  if (threadId * batchSize >= visitationOrder.n_elem)
+  if (threadId * threadShareSize >= visitationOrder.n_elem)
   {
     // No data for this thread.
     return arma::Col<size_t>();
   }
-  else if ((threadId + 1) * batchSize >= visitationOrder.n_elem)
+  else if ((threadId + 1) * threadShareSize >= visitationOrder.n_elem)
   {
     // The last few elements.
-    return visitationOrder.subvec(threadId * batchSize,
+    return visitationOrder.subvec(threadId * threadShareSize ,
         visitationOrder.n_elem - 1);
   }
   else
   {
     // Equal distribution of batchSize examples to each thread.
-    return visitationOrder.subvec(threadId * batchSize,
-        (threadId + 1) * batchSize - 1);
+    return visitationOrder.subvec(threadId * threadShareSize,
+        (threadId + 1) * threadShareSize - 1);
   }
 }
 
