@@ -149,6 +149,7 @@ class HardCodedAddModel {
     int num_A = 0, num_B = 0;
     bool num = false; // true iff we have already seen the separating symbol
     size_t len = predictors.n_cols;
+    size_t cnt = 0;
     for (size_t i = 0; i < len; ++i) {
       double digit = arma::as_scalar(arma::find(1 == predictors.col(i), 1));
       if (digit != 0 && digit != 1)
@@ -157,19 +158,19 @@ class HardCodedAddModel {
         // since we are adding *two* numbers in the task
         assert(!num);
         num = true;
+        cnt = 0;
       }
       else
       {
         if (num)
         {
-          num_B <<= 1;
-          num_B += digit;
+          num_B += static_cast<int>(digit) << cnt;
         }
         else
         {
-          num_A <<= 1;
-          num_A += digit;
+          num_A += static_cast<int>(digit) << cnt;
         }
+        ++cnt;
       }
     }
     int total = num_A + num_B;
@@ -185,7 +186,7 @@ class HardCodedAddModel {
     size_t tot_len = binary_seq.size();
     labels = arma::zeros(3, tot_len);
     for (size_t j = 0; j < tot_len; ++j) {
-      labels.at(binary_seq[tot_len-j-1], j) = 1;
+      labels.at(binary_seq[j], j) = 1;
     }
     labels.reshape(predictors.n_elem, 1);
   }
