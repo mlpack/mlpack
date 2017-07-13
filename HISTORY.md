@@ -6,6 +6,7 @@
 ### mlpack 2.2.3
 ###### 2017-05-24
   * Bug fix for --predictions_file in mlpack_decision_tree program.
+  * Bump minimum required version of Armadillo to 6.500.0.
 
 ### mlpack 2.2.2
 ###### 2017-05-04
