@@ -36,11 +36,38 @@ double ParallelSGD<DecayPolicyType>::Optimize(
     SparseFunctionType& function,
     arma::mat& iterate)
 {
-  double overallObjective = 0;
-  double lastObjective = DBL_MAX;
+  double overallObjective = DBL_MAX;
+  double lastObjective;
 
-  for (size_t i = 1; i != maxIterations; ++i){
+  for (size_t i = 1; i != maxIterations; ++i)
+  {
+    // Calculate the overall objective.
+    lastObjective = overallObjective;
     overallObjective = 0;
+
+    for(size_t j = 0; j < function.NumFunctions(); ++j)
+    {
+      overallObjective += function.Evaluate(iterate, j);
+    }
+
+    // Output current objective function.
+    Log::Info << "Parallel SGD: iteration " << i << ", objective "
+      << overallObjective << "." << std::endl;
+
+    if (std::isnan(overallObjective) || std::isinf(overallObjective))
+    {
+      Log::Warn << "Parallel SGD: converged to " << overallObjective
+        << "; terminating" << " with failure.  Try a smaller step size?"
+        << std::endl;
+      return overallObjective;
+    }
+
+    if (std::abs(lastObjective - overallObjective) < tolerance)
+    {
+      Log::Info << "SGD: minimized within tolerance " << tolerance << "; "
+        << "terminating optimization." << std::endl;
+      return overallObjective;
+    }
 
     // Get the stepsize for this iteration
     double stepSize = decayPolicy.StepSize(i);
@@ -77,22 +104,6 @@ double ParallelSGD<DecayPolicyType>::Optimize(
         }
       }
     }
-
-    // Evaluate the function
-    overallObjective = 0;
-    for (size_t j = 0; j < function.NumFunctions(); ++j)
-    {
-      overallObjective += function.Evaluate(iterate, j);
-    }
-
-    Log::Info << "\nObjective : " << overallObjective << " Iteration : " << i;
-    if (std::abs(overallObjective - lastObjective) < tolerance)
-    {
-      Log::Info << "\nParallel SGD terminated with objective delta "
-        << " within tolerance : " << overallObjective << std::endl;
-      return overallObjective;
-    }
-    lastObjective = overallObjective;
   }
   Log::Info << "\n Parallel SGD terminated with objective : "
     << overallObjective << std::endl;
