@@ -58,15 +58,13 @@ const void AddTask::Generate(arma::field<arma::mat>& input,
     int valA = 0;
     for (size_t k = 0; k < sizeA; ++k)
     {
-      valA <<= 1;
-      valA += vecInput(i).at(k);
+      valA += static_cast<int>(vecInput(i).at(k)) << k;
     }
 
     int valB = 0;
     for (size_t k = sizeA + 1; k < sizeA + 1 + sizeB; ++k)
     {
-      valB <<= 1;
-      valB += vecInput(i).at(k);
+      valB += static_cast<int>(vecInput(i).at(k)) << (k - sizeA - 1);
     }
 
     int tot = valA + valB;
@@ -91,7 +89,7 @@ const void AddTask::Generate(arma::field<arma::mat>& input,
     vecLabels(i) = arma::colvec(totLen);
     for (size_t j = 0; j < totLen; ++j)
     {
-      vecLabels(i).at(j) = binarySeq[totLen-j-1];
+      vecLabels(i).at(j) = binarySeq[j];
     }
   }
   Binarize(vecInput, input);

@@ -14,6 +14,8 @@ set(SOURCES
   constant_impl.hpp
   convolution.hpp
   convolution_impl.hpp
+  cross_entropy_error.hpp
+  cross_entropy_error_impl.hpp
   dropconnect.hpp
   dropconnect_impl.hpp
   dropout.hpp
