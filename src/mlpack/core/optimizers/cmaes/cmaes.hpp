@@ -12,7 +12,7 @@
 #ifndef MLPACK_CORE_OPTIMIZERS_CMAES_CMAES_HPP
 #define MLPACK_CORE_OPTIMIZERS_CMAES_CMAES_HPP
 
-#include "random.hpp"
+#include <mlpack/core/math/random.hpp>
 
 namespace mlpack {
 namespace optimization {
@@ -36,9 +36,8 @@ double Optimize(arma::mat& arr);
 /* Input parameters. */
 //! The instantiated function.
 funcType& function;
-
+//! stores the fitness values of functions
 arma::vec arFunvals;
-
 //! Problem dimension, must stay constant.
 int N;
 //! Initial search space vector.
@@ -102,8 +101,6 @@ double ccov;
 double diagonalCov;
 struct { double modulo; double maxtime; } updateCmode;
 double facupdateCmode;
-
-Random<double> rand;
 
 //! Step size.
 double sigma;

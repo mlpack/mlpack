@@ -160,25 +160,22 @@ Log::Warn << "WARNING: initialStandardDeviations undefined."
     init(arFunvals);
 
     arma::mat x(N, 1);
-    double funs = 0;
     double numFun = function.NumFunctions();
 
   while (!testForTermination())
   {
     // Generate lambda new search points, sample population
     samplePopulation();
-
+    
+    arFunvals.fill(0);
     // evaluate the new search points using the given evaluate
     // function by the user
     for (int i = 0; i < lambda; ++i)
     {
       x = population.submat(i, 0, i, N-1);
 
-      funs = 0;
       for (size_t j = 0; j < numFun; j++)
-      funs += function.Evaluate(x, j);
-
-      arFunvals[i] = funs;
+      arFunvals[i] += function.Evaluate(x, j);
     }
 
     // update the search distribution used for sampleDistribution()
@@ -187,7 +184,7 @@ Log::Warn << "WARNING: initialStandardDeviations undefined."
 
   // get best estimator for the optimum
     arr = xmean;
-    funs = 0;
+    double funs = 0;
     for (size_t j = 0; j < numFun; j++)
       funs += function.Evaluate(xmean, j);
 
@@ -267,7 +264,7 @@ arma::vec& iindex, int n)
   void CMAES<funcType>::addMutation(double* x, double eps)
   {
     for (int i = 0; i < N; ++i)
-      tempRandom[i] = rgD[i] * rand.gauss();
+      tempRandom[i] = rgD[i] * mlpack::math::RandNormal();
     for (int i = 0; i < N; ++i)
     {
       double sum = 0.0;
@@ -355,7 +352,7 @@ arma::vec& iindex, int n)
       xmean = xstart;
 
     if (typicalXcase)
-     xmean += sigma * rgD * rand.gauss();
+     xmean += sigma * rgD * mlpack::math::RandNormal();
 
     func.subvec(0, lambda - 1) = publicFitness.subvec(0, lambda - 1);
   }
@@ -391,9 +388,9 @@ void CMAES<funcType>::samplePopulation()
     { // generate scaled random vector D*z
       for (int i = 0; i < N; ++i)
         if (diag)
-          population(iNk, i) = xmean[i] + sigma*rgD[i] * rand.gauss();
+          population(iNk, i) = xmean[i] + sigma*rgD[i] * mlpack::math::RandNormal();
         else
-          tempRandom[i] = rgD[i]* rand.gauss();
+          tempRandom[i] = rgD[i]* mlpack::math::RandNormal();
       if (!diag)
       {
         for (int i = 0; i < N; ++i)
