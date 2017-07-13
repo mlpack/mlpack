@@ -45,7 +45,7 @@ double ParallelSGD<DecayPolicyType>::Optimize(
     lastObjective = overallObjective;
     overallObjective = 0;
 
-    for(size_t j = 0; j < function.NumFunctions(); ++j)
+    for (size_t j = 0; j < function.NumFunctions(); ++j)
     {
       overallObjective += function.Evaluate(iterate, j);
     }
@@ -114,6 +114,7 @@ template <typename DecayPolicyType>
 void ParallelSGD<DecayPolicyType>::GenerateVisitationOrder(
         arma::Col<size_t>& visitationOrder, size_t numFunctions)
 {
+  // Generate a random vector of function indices.
   visitationOrder = arma::shuffle(arma::linspace<arma::Col<size_t>>(0,
       (numFunctions - 1), numFunctions));
 }

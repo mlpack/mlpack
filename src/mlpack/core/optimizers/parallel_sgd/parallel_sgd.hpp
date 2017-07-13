@@ -48,7 +48,7 @@ namespace optimization {
  *
  * The Gradient function interface is slightly changed from the
  * DecomposableFunctionType interface, it takes in a sparse matrix as the
- * out-param for the gradient. As ParallelSGD is only expected to be relevant in
+ * out-param for the gradient, as ParallelSGD is only expected to be relevant in
  * situations where the computed gradient is sparse.
  *
  * @tparam DecayPolicyType Step size update policy used by parallel SGD
