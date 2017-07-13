@@ -3,7 +3,7 @@
  * @author Shangtong Zhang
  *
  * This file is the definition of AsyncLearning class,
- * which implements asynchronous learning algorithms.
+ * which is wrapper for various asynchronous learning algorithms.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -22,9 +22,28 @@ namespace mlpack {
 namespace rl {
 
 /**
- * Implementation of various asynchronous learning algorithms,
- * such as async one-step Q-learning, async one-step Sarsa,
- * async n-step Q-learning and A3C
+ * Wrapper of various asynchronous learning algorithms,
+ * e.g. async one-step Q-learning, async one-step Sarsa,
+ * async n-step Q-learning and async advantage actor-critic.
+ *
+ * For more details, see the following:
+ * @code
+ * @inproceedings{mnih2016asynchronous,
+ *   title     = {Asynchronous methods for deep reinforcement learning},
+ *   author    = {Mnih, Volodymyr and Badia, Adria Puigdomenech and Mirza,
+ *                Mehdi and Graves, Alex and Lillicrap, Timothy and Harley,
+ *                Tim and Silver, David and Kavukcuoglu, Koray},
+ *   booktitle = {International Conference on Machine Learning},
+ *   pages     = {1928--1937},
+ *   year      = {2016}
+ * }
+ * @endcode
+ *
+ * @tparam WorkerType The type of the worker.
+ * @tparam EnvironmentType The type of reinforcement learning task.
+ * @tparam NetworkType The type of the network model.
+ * @tparam UpdaterType The type of the optimizer.
+ * @tparam PolicyType The type of the behavior policy.
  */
 template <
   typename WorkerType,
@@ -36,7 +55,15 @@ template <
 class AsyncLearning
 {
  public:
-
+  /**
+   * Construct an instance of the given async learning algorithm.
+   *
+   * @param config Hyper-parameters for training.
+   * @param network The network model.
+   * @param policy The behavior policy.
+   * @param updater The optimizer.
+   * @param environment The reinforcement learning task.
+   */
   AsyncLearning(TrainingConfig config,
                 NetworkType network,
                 PolicyType policy,
@@ -44,19 +71,41 @@ class AsyncLearning
                 EnvironmentType environment = EnvironmentType());
 
   /**
-   * Start learning from interaction with the environment
+   * Starting async training.
+   *
+   * @tparam Measure The type of the measurement. It should be a
+   *   callable object like
+   *   @code
+   *   bool foo(double reward);
+   *   @endcode
+   *   where reward is the total reward of a deterministic test episode,
+   *   and the return value should indicate whether the training
+   *   process is completed.
+   * @param measure The measurement instance.
    */
   template <typename Measure>
   void Train(const Measure& measure);
 
  private:
+  //! Locally-stored hyper-parameters.
   TrainingConfig config;
+
+  //! Locally-stored global learning network.
   NetworkType learningNetwork;
+
+  //! Locally-stored policy.
   PolicyType policy;
+
+  //! Locally-stored optimizer.
   UpdaterType updater;
+
+  //! Locally-stored task.
   EnvironmentType environment;
 };
 
+class OneStepQLearningWorker;
+
+// Convenient typedef for async one step q-learning.
 template <
   typename EnvironmentType,
   typename NetworkType,
@@ -70,5 +119,5 @@ using OneStepQLearning = AsyncLearning<OneStepQLearningWorker, EnvironmentType, 
 
 // Include implementation
 #include "async_learning_impl.hpp"
-#include "mlpack/methods/reinforcement_learning/worker/one_step_q_learning_worker.hpp"
+
 #endif
