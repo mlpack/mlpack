@@ -72,7 +72,8 @@ class RegularizedSVDFunction
   /**
    * Evaluates the gradient of the cost function over one training example.
    * This function is useful for optimizers like SGD. The type of the gradient
-   * parameter is a template to allow the computation of a sparse gradient.
+   * parameter is a template argument to allow the computation of a sparse
+   * gradient.
    *
    * @tparam GradType The type of the gradient out-param.
    * @param parameters Parameters(user/item matrices) of the decomposition.
