@@ -16,7 +16,7 @@ using namespace mlpack;
 using namespace mlpack::optimization;
 using namespace mlpack::optimization::test;
 
-double SGDTestFunction::Shuffle()
+void SGDTestFunction::Shuffle()
 {
   visitationOrder = arma::shuffle(arma::linspace<arma::Col<size_t> >(0,
       (NumFunctions() - 1), NumFunctions()));
@@ -42,12 +42,12 @@ double SGDTestFunction::Evaluate(const arma::mat& coordinates, const size_t i)
 }
 
 double SGDTestFunction::Evaluate(const arma::mat& coordinates,
-                                 const size_t begin, 
+                                 const size_t begin,
                                  const size_t batchSize) const
 {
   double objective = 0;
-  
-  for(int i = begin; i < begin + batchSize; i++)
+
+  for (int i = begin; i < begin + batchSize; i++)
   {
       switch (visitationOrder(i))
       {
@@ -60,7 +60,8 @@ double SGDTestFunction::Evaluate(const arma::mat& coordinates,
           break;
 
         case 2:
-          objective += std::pow(coordinates[2], 4) + 3 * std::pow(coordinates[2], 2);
+          objective += std::pow(coordinates[2], 4) + \
+                       3 * std::pow(coordinates[2], 2);
           break;
       }
   }

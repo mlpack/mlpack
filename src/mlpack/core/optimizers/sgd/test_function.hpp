@@ -24,7 +24,7 @@ namespace test {
 //! iterations.
 class SGDTestFunction
 {
-private:
+ private:
   arma::Col<size_t> visitationOrder;
 
  public:
@@ -47,7 +47,7 @@ private:
   double Evaluate(const arma::mat& coordinates,
                   const size_t begin,
                   const size_t batchSize) const;
-  
+
   //! Evaluate the gradient of a function.
   void Gradient(const arma::mat& coordinates,
                 const size_t i,
