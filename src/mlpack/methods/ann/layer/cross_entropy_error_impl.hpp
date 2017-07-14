@@ -29,8 +29,8 @@ template<typename eT>
 double CrossEntropyError<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>&& input, const arma::Mat<eT>&& target)
 {
-  return -arma::sum(arma::sum(target % arma::log(input) +
-                              (1. - target) % arma::log(1. - input)));
+  return -arma::accu(target % arma::trunc_log(input) +
+                     (1. - target) % arma::trunc_log(1. - input));
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -40,8 +40,7 @@ void CrossEntropyError<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>&& target,
     arma::Mat<eT>&& output)
 {
-  output = (1. - target) / (1. - input) - target / input;
-  output.transform( [](eT val) { return std::min(std::max(val, -5.), 5.); } );
+  output = (1. - target) / (1. - input + 1e-2) - target / (input + 1e-2);
 }
 
 template<typename InputDataType, typename OutputDataType>
