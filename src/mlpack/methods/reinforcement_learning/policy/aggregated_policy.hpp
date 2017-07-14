@@ -32,13 +32,13 @@ class AggregatedPolicy
   /**
    * @param policies Child policies.
    * @param distribution Probability distribution for each child policy.
-   *   User should make sure its size is same as the number of policies
-   *   and the sum of its element is equal to 1.
+   *     User should make sure its size is same as the number of policies
+   *     and the sum of its element is equal to 1.
    */
   AggregatedPolicy(std::vector<PolicyType> policies,
                    arma::colvec distribution) :
-          policies(std::move(policies)),
-          distribution(std::move(distribution))
+      policies(std::move(policies)),
+      distribution(std::move(distribution))
   { /* Nothing to do here. */ };
 
   /**
@@ -60,7 +60,7 @@ class AggregatedPolicy
    */
   void Anneal()
   {
-    for (auto& policy : policies)
+    for (PolicyType& policy : policies)
       policy.Anneal();
   }
 
