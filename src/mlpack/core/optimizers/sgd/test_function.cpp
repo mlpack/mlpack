@@ -16,6 +16,12 @@ using namespace mlpack;
 using namespace mlpack::optimization;
 using namespace mlpack::optimization::test;
 
+double SGDTestFunction::Shuffle()
+{
+  visitationOrder = arma::shuffle(arma::linspace<arma::Col<size_t> >(0,
+      (NumFunctions() - 1), NumFunctions()));
+}
+
 double SGDTestFunction::Evaluate(const arma::mat& coordinates, const size_t i)
     const
 {
@@ -35,6 +41,32 @@ double SGDTestFunction::Evaluate(const arma::mat& coordinates, const size_t i)
   }
 }
 
+double SGDTestFunction::Evaluate(const arma::mat& coordinates,
+                                 const size_t begin, 
+                                 const size_t batchSize) const
+{
+  double objective = 0;
+  
+  for(int i = begin; i < begin + batchSize; i++)
+  {
+      switch (visitationOrder(i))
+      {
+        case 0:
+          objective -= std::exp(-std::abs(coordinates[0]));
+          break;
+
+        case 1:
+          objective += std::pow(coordinates[1], 2);
+          break;
+
+        case 2:
+          objective += std::pow(coordinates[2], 4) + 3 * std::pow(coordinates[2], 2);
+          break;
+      }
+  }
+
+  return objective;
+}
 void SGDTestFunction::Gradient(const arma::mat& coordinates,
                                const size_t i,
                                arma::mat& gradient) const
@@ -57,4 +89,36 @@ void SGDTestFunction::Gradient(const arma::mat& coordinates,
       gradient[2] = 4 * std::pow(coordinates[2], 3) + 6 * coordinates[2];
       break;
   }
+}
+
+
+void SGDTestFunction::Gradient(const arma::mat& coordinates,
+                               const size_t begin,
+                               const size_t batchSize,
+                               arma::mat& gradient) const
+{
+  gradient.zeros(3);
+
+  for (size_t i = begin; i < begin + batchSize; ++i)
+  {
+    switch (visitationOrder(i))
+    {
+      case 0:
+        if (coordinates[0] >= 0)
+          gradient[0] += std::exp(-coordinates[0]);
+        else
+          gradient[0] += -std::exp(coordinates[0]);
+        break;
+
+      case 1:
+        gradient[1] += 2 * coordinates[1];
+        break;
+
+      case 2:
+        gradient[2] += 4 * std::pow(coordinates[2], 3) + 6 * coordinates[2];
+        break;
+    }
+  }
+
+  gradient /= batchSize;
 }
