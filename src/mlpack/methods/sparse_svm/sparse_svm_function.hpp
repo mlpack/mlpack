@@ -40,7 +40,8 @@ class SparseSVMFunction{
    * @param id Index of the datapoint to use for the gradient evaluation.
    * @param gradient Sparse matrix to output the gradient into.
    */
-  void Gradient(const arma::mat& parameters, size_t id, arma::sp_mat& gradient);
+  template <typename GradType>
+  void Gradient(const arma::mat& parameters, size_t id, GradType& gradient);
 
   //! Return the initial point for the optimization.
   const arma::mat& InitialPoint() const { return initialPoint; }

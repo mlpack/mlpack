@@ -27,13 +27,14 @@ double SparseSVMFunction::Evaluate(const arma::mat& parameters, size_t id)
   return std::max(0.0, 1 - labels(id) * arma::dot(dataset.col(id), parameters));
 }
 
+template <typename GradType>
 void SparseSVMFunction::Gradient(
-    const arma::mat& parameters, size_t id, arma::sp_mat& gradient)
+    const arma::mat& parameters, size_t id, GradType& gradient)
 {
   // Evaluate the gradient of the hinge loss function.
   double dot = 1 - labels(id) * arma::dot(parameters, dataset.col(id));
-  gradient = (dot < 0) ? arma::sp_mat(parameters.n_rows, 1) :
-    (-1 * arma::sp_mat(dataset.col(id) * labels(id)));
+  gradient = (dot < 0) ? GradType(parameters.n_rows, 1) :
+    (-1 * GradType(dataset.col(id) * labels(id)));
 }
 
 size_t SparseSVMFunction::NumFunctions()
