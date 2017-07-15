@@ -67,15 +67,8 @@ inline double Random()
  */
 inline size_t RandomIndex(const arma::colvec& distribution)
 {
-  double oops = Random();
-  double density = distribution(0);
-  size_t index = 0;
-  while (oops >= density)
-  {
-    index++;
-    density += distribution(index);
-  }
-  return index;
+  std::discrete_distribution<size_t> gen(distribution.cbegin(), distribution.cend());
+  return gen(randGen);
 }
 
 /**
