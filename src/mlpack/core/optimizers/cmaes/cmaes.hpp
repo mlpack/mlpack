@@ -17,11 +17,10 @@
 namespace mlpack {
 namespace optimization {
 
-template<typename funcType>
 class CMAES
 {
  public:
-CMAES(funcType& function, arma::mat& start, arma::mat& stdDivs,
+CMAES(int objectDim, arma::mat& start, arma::mat& stdDivs,
 double iters = -1.0, double evalDiff = 1e-14);
 
 int getSampleSize(void){ return lambda;}
@@ -30,12 +29,11 @@ int getMu(void){ return mu;}
 
 void diagonalCovariance(arma::mat& arr){ arr = C.diag();}
 
-double Optimize(arma::mat& arr);
+template<typename funcType>
+double Optimize(funcType& function, arma::mat& arr);
 
  private:
 /* Input parameters. */
-//! The instantiated function.
-funcType& function;
 //! stores the fitness values of functions
 arma::vec arFunvals;
 //! Problem dimension, must stay constant.

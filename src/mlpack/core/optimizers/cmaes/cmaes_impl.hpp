@@ -16,13 +16,10 @@
 
 namespace mlpack {
 namespace optimization {
-
-  template<typename funcType>
-  CMAES<funcType>::CMAES(funcType& function,
+CMAES::CMAES(int objectDim,
 arma::mat& start, arma::mat& stdDivs,
 double iters, double evalDiff)
       :
-        function(function),
         N(-1),
         typicalXcase(false),
         stopMaxFunEvals(-1),
@@ -45,7 +42,7 @@ double iters, double evalDiff)
     updateCmode.modulo = -1;
     updateCmode.maxtime = -1;
 
-     N = function.NumFunctions();
+     N = objectDim;
     if ( N <= 0)
       throw std::runtime_error("Problem dimension N undefined.");
     bool startP  = true;
@@ -154,7 +151,7 @@ Log::Warn << "WARNING: initialStandardDeviations undefined."
   }
 
   template<typename funcType>
-  double CMAES<funcType>::Optimize(arma::mat& arr)
+  double CMAES::Optimize(funcType& function, arma::mat& arr)
   {
     arFunvals.set_size(lambda);
     init(arFunvals);
@@ -191,8 +188,8 @@ Log::Warn << "WARNING: initialStandardDeviations undefined."
     return funs;
   }
 
-template<typename funcType>
-void CMAES<funcType>::sortIndex(const arma::vec rgFunVal,
+
+void CMAES::sortIndex(const arma::vec rgFunVal,
 arma::vec& iindex, int n)
   {
     int i, j;
@@ -208,8 +205,8 @@ arma::vec& iindex, int n)
     }
   }
 
-  template<typename funcType>
-  void CMAES<funcType>::adaptC2(const int hsig)
+ 
+  void CMAES::adaptC2(const int hsig)
   {
     bool diag = diagonalCov == 1 || diagonalCov >= gen;
 
@@ -260,8 +257,8 @@ arma::vec& iindex, int n)
    * @param x Search space vector.
    * @param eps Mutation factor.
    */
-  template<typename funcType>
-  void CMAES<funcType>::addMutation(double* x, double eps)
+ 
+  void CMAES::addMutation(double* x, double eps)
   {
     for (int i = 0; i < N; ++i)
       tempRandom[i] = rgD[i] * mlpack::math::RandNormal();
@@ -278,10 +275,10 @@ arma::vec& iindex, int n)
    * Initializes the CMA-ES algorithm.
    * @param parameters The CMA-ES parameters in the parameters.h file
    * @return Array of size lambda that can be used to assign fitness values and
-   *         pass them to updateDistribution()
+   * pass them to updateDistribution()
    */
-  template<typename funcType>
-  void CMAES<funcType>::init(arma::vec& func)
+
+  void CMAES::init(arma::vec& func)
   {
     double trace = arma::accu(arma::pow(rgInitialStds, 2));
     sigma = std::sqrt(trace/N);
@@ -363,8 +360,8 @@ arma::vec& iindex, int n)
    * @return A pointer to a "population" of lambda N-dimensional multivariate
    * normally distributed samples.
    */
-template<typename funcType>
-void CMAES<funcType>::samplePopulation()
+
+void CMAES::samplePopulation()
   {
     bool diag = diagonalCov == 1 || diagonalCov >= gen;
 
@@ -410,12 +407,14 @@ void CMAES<funcType>::samplePopulation()
     state = SAMPLED;
   }
 
-  /**    * Core procedure of the CMA-ES algorithm. Sets a new mean
-value and estimates    * the new covariance matrix and a new step size
-for the normal search    * distribution.    * @param fitnessValues An
-array of \f$\lambda\f$ function values.    * @return Mean value of the
-new distribution.    */    template<typename funcType>   void
-CMAES<funcType>::updateDistribution(const arma::vec& fitnessValues)
+  /** Core procedure of the CMA-ES algorithm. Sets a new mean
+  value and estimates
+* the new covariance matrix and a new step sizefor the normal search
+  distribution.
+* @param fitnessValues An array of \f$\lambda\f$ function values.
+* @return Mean value of the new distribution. */
+
+void CMAES::updateDistribution(const arma::vec& fitnessValues)
 {     bool diag = diagonalCov == 1 || diagonalCov >= gen;
 
     assert(state != UPDATED && "updateDistribution(): You need to call "
@@ -436,8 +435,8 @@ CMAES<funcType>::updateDistribution(const arma::vec& fitnessValues)
     {
       sigma *= std::exp(double(0.2) + cs / damps);
      
-        Log::Warn << "Warning: sigma increased due to equal function values"
-         << std::endl << "Reconsider the formulation of the objective function";
+      Log::Warn << "Warning: sigma increased due to equal function values"
+      << std::endl << "Reconsider the formulation of the objective function";
   
     }
 
@@ -449,8 +448,8 @@ CMAES<funcType>::updateDistribution(const arma::vec& fitnessValues)
     // update xbestever
     if (xBestEver[N] > population(index[0],N) || gen == 1)
     {
-        xBestEver.subvec(0,N-1) = population.submat(index[0], 0, index[0], N-1).t();
-        xBestEver[N+1] = countevals;
+      xBestEver.subvec(0,N-1) = population.submat(index[0], 0, index[0], N-1).t();
+      xBestEver[N+1] = countevals;
     }
 
     const double sqrtmueffdivsigma = std::sqrt(mueff) / sigma;
@@ -524,8 +523,8 @@ CMAES<funcType>::updateDistribution(const arma::vec& fitnessValues)
    * that contains the matched stop criteria via getStopMessage().
    * @return Does any stop criterion match?
    */
-template<typename funcType>
-bool CMAES<funcType>::testForTermination()
+
+bool CMAES::testForTermination()
   {
     double range, fac;
     int iAchse, iKoo;
@@ -663,8 +662,8 @@ bool CMAES<funcType>::testForTermination()
    * @param force For force == true the eigendecomposion is conducted even if
    *              eigenvector and values seem to be up to date.
    */
-template<typename funcType>
-void CMAES<funcType>::updateEigensystem(bool force)
+
+void CMAES::updateEigensystem(bool force)
   {
     if (!force)
     {
