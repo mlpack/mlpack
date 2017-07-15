@@ -37,11 +37,11 @@ BOOST_AUTO_TEST_CASE(OneStepQLearningTest)
   // Set up the network.
   FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
       GaussianInitialization(0, 0.001));
-  model.Add<Linear<>>(4, 128);
+  model.Add<Linear<>>(4, 20);
   model.Add<ReLULayer<>>();
-  model.Add<Linear<>>(128, 128);
+  model.Add<Linear<>>(20, 20);
   model.Add<ReLULayer<>>();
-  model.Add<Linear<>>(128, 2);
+  model.Add<Linear<>>(20, 2);
 
   // Set up the policy.
   using Policy = GreedyPolicy<CartPole>;
@@ -65,7 +65,7 @@ BOOST_AUTO_TEST_CASE(OneStepQLearningTest)
   size_t testEpisodes = 0;
 
   agent.Train([&rewards, &testEpisodes](double reward) {
-    size_t maxEpisode = 50000;
+    size_t maxEpisode = 100000;
     if (testEpisodes > maxEpisode)
       BOOST_REQUIRE(false);
     testEpisodes++;
