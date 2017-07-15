@@ -99,8 +99,8 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTestWithCMAES)
   }
 
   int dim = shuffledData.n_rows + 1;
-  arma::mat start1(dim,1); start1.fill(0.5); 
-  arma::mat initialStdDeviations1(dim,1); initialStdDeviations1.fill(1.5);
+  arma::mat start1(dim, 1); start1.fill(0.5);
+  arma::mat initialStdDeviations1(dim, 1); initialStdDeviations1.fill(1.5);
 
   CMAES test1(dim, start1, initialStdDeviations1, 50000, 1e-7);
 
@@ -113,5 +113,4 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTestWithCMAES)
   const double testAcc = lr.ComputeAccuracy(testData, testResponses);
   BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6); // 0.6% error tolerance.
 }
-
 BOOST_AUTO_TEST_SUITE_END();

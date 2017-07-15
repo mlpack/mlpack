@@ -205,7 +205,7 @@ arma::vec& iindex, int n)
     }
   }
 
- 
+
   void CMAES::adaptC2(const int hsig)
   {
     bool diag = diagonalCov == 1 || diagonalCov >= gen;
@@ -257,7 +257,7 @@ arma::vec& iindex, int n)
    * @param x Search space vector.
    * @param eps Mutation factor.
    */
- 
+
   void CMAES::addMutation(double* x, double eps)
   {
     for (int i = 0; i < N; ++i)
@@ -415,8 +415,8 @@ void CMAES::samplePopulation()
 * @return Mean value of the new distribution. */
 
 void CMAES::updateDistribution(const arma::vec& fitnessValues)
-{     bool diag = diagonalCov == 1 || diagonalCov >= gen;
-
+{
+    bool diag = diagonalCov == 1 || diagonalCov >= gen;
     assert(state != UPDATED && "updateDistribution(): You need to call "
           "samplePopulation() before update can take place.");
 
@@ -434,10 +434,9 @@ void CMAES::updateDistribution(const arma::vec& fitnessValues)
     if (fitnessValues[index[0]] == fitnessValues[index[(int) lambda / 2]])
     {
       sigma *= std::exp(double(0.2) + cs / damps);
-     
+
       Log::Warn << "Warning: sigma increased due to equal function values"
       << std::endl << "Reconsider the formulation of the objective function";
-  
     }
 
     // update function value history
@@ -446,9 +445,10 @@ void CMAES::updateDistribution(const arma::vec& fitnessValues)
     funcValueHistory[0] = fitnessValues[index[0]];
 
     // update xbestever
-    if (xBestEver[N] > population(index[0],N) || gen == 1)
+    if (xBestEver[N] > population(index[0], N) || gen == 1)
     {
-      xBestEver.subvec(0,N-1) = population.submat(index[0], 0, index[0], N-1).t();
+      xBestEver.subvec(0, N-1) = population.submat(index[0], 0,
+      index[0], N-1).t();
       xBestEver[N+1] = countevals;
     }
 
@@ -473,7 +473,7 @@ void CMAES::updateDistribution(const arma::vec& fitnessValues)
       {
         sum = 0.;
         for (int j = 0; j < N; ++j)
-          sum += B(j,i)*BDz[j];
+          sum += B(j, i)*BDz[j];
       }
       tempRandom[i] = sum/rgD[i];
     }
@@ -490,16 +490,17 @@ void CMAES::updateDistribution(const arma::vec& fitnessValues)
       {
         sum = double(0);
         for (int j = 0; j < N; ++j)
-          sum += B(i,j)*tempRandom[j];
+          sum += B(i, j)*tempRandom[j];
       }
       ps[i] = invps*ps[i] + sqrtFactor*sum;
     }
 
     // calculate norm(ps)^2
-    double psxps = std::pow(arma::norm(ps),2);
+    double psxps = std::pow(arma::norm(ps), 2);
 
     // cumulation for covariance matrix (pc) using B*D*z~N(0,C)
-    int hsig = std::sqrt(psxps) / std::sqrt(double(1) - std::pow(double(1) - cs, double(2)* gen))
+    int hsig = std::sqrt(psxps) / std::sqrt(double(1)
+    - std::pow(double(1) - cs, double(2)* gen))
         / chiN < double(1.4) + double(2) / (N + 1);
     const double ccumcovinv = 1.-ccumcov;
     const double hsigFactor = hsig*std::sqrt(ccumcov*(double(2)-ccumcov));
