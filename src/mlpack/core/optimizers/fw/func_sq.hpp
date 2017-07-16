@@ -57,7 +57,7 @@ class FuncSq
    */
   void Gradient(const arma::mat& coords, arma::mat& gradient)
   {
-    arma::vec r = A*coords - b;
+    arma::vec r = A * coords - b;
     gradient = A.t() * r;
   }
 
