@@ -8,8 +8,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_METHODS_ANN_RBM_IMPL_HPP
-#define MLPACK_METHODS_ANN_RBM_IMPL_HPP
+#ifndef MLPACK_METHODS_RBM_RBM_IMPL_HPP
+#define MLPACK_METHODS_RBM_RBM_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "rbm.hpp"
@@ -23,6 +23,8 @@
 #include <mlpack/methods/ann/layer/base_layer.hpp>
 
 #include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
+#include <mlpack/methods/rbm/binary_rbm.hpp>
+#include <mlpack/methods/rbm/ssRBM.hpp>
 
 using namespace mlpack;
 using namespace mlpack::ann;
@@ -64,6 +66,7 @@ void RBM<InitializationRuleType, RBMPolicy>
   parameter.zeros();
   positiveGradient.zeros();
   negativeGradient.zeros();
+  tempNegativeGradient.zeros();
   initializeRule.Initialize(parameter, parameter.n_elem, 1);
   rbmPolicy.Parameters() = arma::mat(parameter.memptr(), weight, 1, false,
       false);
@@ -113,7 +116,6 @@ double RBM<InitializationRuleType, RBMPolicy>
   corruptInput = arma::round(predictors.col(i));
   if (!useMonitoringCost)
   {
-    // Do not use unsafe col predictor as we change the input
     Gibbs(std::move(predictors.col(i)), std::move(negativeSamples));
     return (FreeEnergy(std::move(predictors.col(i))) -
         FreeEnergy(std::move(negativeSamples)));
@@ -122,26 +124,17 @@ double RBM<InitializationRuleType, RBMPolicy>
   {
     if (persistence)
     {
-      size_t idx = RandInt(0, predictors.n_rows);
-      corruptInput.row(idx) = 1 - corruptInput.row(idx);
-      return std::log(LogisticFunction::Fn(FreeEnergy(std::move(corruptInput)) -
-          FreeEnergy(std::move(arma::round(predictors.col(i)))))) *
-          predictors.n_rows;
+      return rbmPolicy.Evaluate(predictors, i);
     }
     else
     {
-      // Cross entropy loss
-      rbmPolicy.VisibleLayer().Forward(std::move(predictors.col(i)),
-        std::move(preActivation));
-      preActivation = -preActivation;
-      SoftplusFunction::Fn(preActivation, softOutput);
-      softOutput = -softOutput;
-      preActivation = -preActivation - 1;
-      SoftplusFunction::Fn(preActivation, softOutput);
-      softOutput = -softOutput;
-      return arma::accu(
-          predictors.col(i) * softOutput.t() + (1 - predictors.col(i)) *
-          preActivation.t());
+      // Mean Squared Error
+      rbmPolicy.VisibleLayer().Sample(std::move(predictors.col(i)),
+        std::move(hiddenReconstruction));
+      rbmPolicy.HiddenLayer().Sample(std::move(hiddenReconstruction),
+          std::move(visibleReconstruction));
+      return arma::accu(arma::pow(visibleReconstruction - predictors.col(i),
+          2)) / hiddenReconstruction.n_rows;
     }
   }
 }
@@ -192,13 +185,39 @@ void RBM<InitializationRuleType, RBMPolicy>::
 {
   // Collect the negative samples
   rbmPolicy.PositivePhase(std::move(predictors.col(input)));
+  tempNegativeGradient.set_size(negativeGradient.n_rows,
+      negativeGradient.n_cols);
   for (size_t i = 0; i < mSteps; i++)
   {
-    Gibbs(std::move(predictors.col(input)), std::move(tempNegativeSmaples));
-    negativeSamples.col(i) = tempNegativeSmaples;
+    Gibbs(std::move(predictors.col(input)), std::move(negativeSamples));
+    rbmPolicy.NegativePhase(std::move(negativeSamples));
+    tempNegativeGradient += negativeGradient;
   }
-  rbmPolicy.NegativePhase(std::move(negativeSamples));
-  output = (negativeGradient - positiveGradient);
+  output = ((negativeGradient / mSteps) - positiveGradient);
+}
+
+//! Serialize the model.
+template<typename InitializationRuleType, typename RBMPolicy>
+template<typename Archive>
+void RBM<InitializationRuleType, RBMPolicy>::
+    Serialize(Archive& ar, const unsigned int /* version */)
+{
+  ar & data::CreateNVP(parameter, "parameter");
+  ar & data::CreateNVP(rbmPolicy, "rbmPolicy");
+  ar & data::CreateNVP(rbmPolicy.VisibleLayer(), "visible");
+  ar & data::CreateNVP(rbmPolicy.HiddenLayer(), "hidden");
+
+  // If we are loading, we need to initialize the weights.
+  if (Archive::is_loading::value)
+  {
+    reset = false;
+
+    size_t weight = 0;
+    weight+= rbmPolicy.VisibleLayer().Parameters().n_elem;
+    rbmPolicy.Parameters() = arma::mat(parameter.memptr(), weight, 1, false,
+      false);
+    rbmPolicy.Reset();
+  }
 }
 
 } // namespace rbm

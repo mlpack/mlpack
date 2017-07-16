@@ -1,5 +1,5 @@
 /**
- * @file feedforward_network_test.cpp
+ * @file rbm_network_test.cpp
  * @author Kris Singh
  *
  * Tests the rbm Network
@@ -184,7 +184,7 @@ BOOST_AUTO_TEST_CASE(ClassificationTest)
   BOOST_REQUIRE_GE(classificationAccuray1, classificationAccuray);
 }
 template<typename MatType = arma::mat>
-void BuildSsRbmNetwork(arma::mat& trainData,
+void BuildSSRbmNetwork(arma::mat& trainData,
                        const size_t hiddenLayerSize)
 {
   // Dummy Test to show that ssRBM is working
@@ -227,6 +227,6 @@ BOOST_AUTO_TEST_CASE(ssRBMMiscTest)
                           "1, 0, 1;"
                           "1, 1, 1;");
   X = X.t();
-  BuildSsRbmNetwork<>(X, 2);
+  BuildSSRbmNetwork<>(X, 2);
 }
 BOOST_AUTO_TEST_SUITE_END();

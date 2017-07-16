@@ -87,6 +87,15 @@ class BinaryRBM
     return  -(arma::accu(preActivation) + arma::dot(input, visible.Bias()));
   }
 
+  double Evaluate(arma::mat& predictors, size_t i)
+  {
+    size_t idx = RandInt(0, predictors.n_rows);
+    arma::mat temp = arma::round(predictors.col(i));
+    corruptInput.row(idx) = 1 - corruptInput.row(idx);
+    return std::log(LogisticFunction::Fn(FreeEnergy(std::move(corruptInput)) -
+        FreeEnergy(std::move(temp)))) * predictors.n_rows;
+  }
+
   /**
    * Positive Gradient function. This function calculates the positive
    * phase for the binary rbm gradient calculation
@@ -109,16 +118,10 @@ class BinaryRBM
   void NegativePhase(arma::mat&& negativeSamples)
   {
     // Collect the negative gradients
-    for (size_t i = 0; i < negativeSamples.n_cols; i++)
-    {
-      visible.Forward(std::move(negativeSamples.col(i)),
-          std::move(hiddenBiasNegativeGrad));
-      weightNegativeGrad = hiddenBiasNegativeGrad * negativeSamples.col(i).t();
-      visibleBiasNegativeGrad = negativeSamples.col(i);
-    }
-    hiddenBiasNegativeGrad /= negativeSamples.n_cols;
-    weightNegativeGrad /= negativeSamples.n_cols;
-    visibleBiasNegativeGrad /= negativeSamples.n_cols;
+    visible.Forward(std::move(negativeSamples),
+        std::move(hiddenBiasNegativeGrad));
+    weightNegativeGrad = hiddenBiasNegativeGrad * negativeSamples.t();
+    visibleBiasNegativeGrad = negativeSamples;
   }
 
   void SampleHidden(arma::mat&& input, arma::mat&& output)
@@ -129,6 +132,13 @@ class BinaryRBM
   void SampleVisible(arma::mat&& input, arma::mat&& output)
   {
     hidden.Sample(std::move(input), std::move(output));
+  }
+
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(visible, "visible");
+    ar & data::CreateNVP(hidden, "hidden");
   }
 
   //! Modify the visible layer of the network
@@ -175,7 +185,8 @@ class BinaryRBM
   arma::mat hiddenBiasNegativeGrad;
   //! Locally-stored gradient wrt visible bias for negative phase
   arma::mat visibleBiasNegativeGrad;
-
+  //! Locally-stored corrupInput used for Pseudo-Likelihood
+  arma::mat corruptInput;
   //! Locally-stored gradient wrt weight for positive phase
   arma::mat weightPositiveGrad;
   //! Locally-stored gradient wrt hidden bias for positive phase

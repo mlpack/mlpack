@@ -152,10 +152,10 @@ class ssRBM
         std::move(tempMean), std::move(tempSlab));
 
     // positive weight gradient
-    for (size_t i = 0 ; i < tempHidden.n_rows; i++)
+    for (size_t i = 0 ; i < tempHidden.n_elem; i++)
     {
       weightPositiveGrad.slice(i) = tempMean * input.t() *
-          arma::as_scalar(tempHidden.row(i));
+          tempHidden[i];
     }
 
     // positive hidden bias gradient
@@ -173,34 +173,28 @@ class ssRBM
   {
     negativeGradient.zeros();
     weightNegativeGrad.zeros();
-    for (size_t i = 0; i < negativeSamples.n_cols; i++)
-    {
-      visible.Sample(std::move(negativeSamples.col(i)), std::move(tempHidden));
-      visible.Psgivenvh(std::move(negativeSamples.col(i)),
-          std::move(tempHidden),
-          std::move(tempMean), std::move(tempSlab));
 
-      // negative weight gradient
-      for (size_t j = 0; j < tempHidden.n_rows; j++)
-        weightNegativeGrad.slice(j) +=  tempMean * negativeSamples.col(i).t() *
-            arma::as_scalar(tempHidden.row(j));
+    visible.Sample(std::move(negativeSamples), std::move(tempHidden));
+    visible.Psgivenvh(std::move(negativeSamples),
+        std::move(tempHidden),
+        std::move(tempMean), std::move(tempSlab));
 
-      // negative hidden bias gradient
-      for (size_t j = 0; j < visible.Weight().n_slices; j++)
-        hiddenBiasNegativeGrad.col(j) += -arma::as_scalar(
-            (visible.Weight().slice(j) * negativeSamples.col(i)).t() *
-            tempSlab.col(j) +
-            visible.SpikeBias().col(j));
+    // negative weight gradient
+    for (size_t j = 0; j < tempHidden.n_rows; j++)
+      weightNegativeGrad.slice(j) +=  tempMean * negativeSamples.t() *
+          tempHidden[j];
 
-      // positive lambda bias
-      arma::mat visibleBiasNegativeGradTemp = 0.5 *
-          negativeSamples.col(i) * negativeSamples.col(i).t();
-      visibleBiasNegativeGrad += visibleBiasNegativeGradTemp.diag();
-    }
+    // negative hidden bias gradient
+    for (size_t j = 0; j < visible.Weight().n_slices; j++)
+      hiddenBiasNegativeGrad.col(j) += -arma::as_scalar(
+          (visible.Weight().slice(j) * negativeSamples).t() *
+          tempSlab.col(j) +
+          visible.SpikeBias().col(j));
 
-    weightNegativeGrad /= negativeSamples.n_cols;
-    hiddenBiasNegativeGrad /= negativeSamples.n_cols;
-    visibleBiasNegativeGrad /= negativeSamples.n_cols;
+    // negative lambda bias gradient
+    arma::mat visibleBiasNegativeGradTemp = 0.5 *
+        negativeSamples * negativeSamples.t();
+    visibleBiasNegativeGrad += visibleBiasNegativeGradTemp.diag();
   }
 
   void SampleHidden(arma::mat&& input, arma::mat&& output)
@@ -212,6 +206,14 @@ class ssRBM
   {
     hidden.Sample(std::move(input), std::move(output));
   }
+
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(visible, "visible");
+    ar & data::CreateNVP(hidden, "hidden");
+  }
+
   //! Modify the visible layer of the network
   SpikeSlabLayer<>& VisibleLayer()  { return visible; }
   //! Modify the hidden layer of the network
@@ -252,7 +254,7 @@ class ssRBM
   //! Locally stored parmeter used in freeEnergy calculation
   double freeEnergySum;
   //! Locally stored temp Hidden layer value used in free energy
-  arma::mat tempHidden;
+  arma::vec tempHidden;
   //! Locally stored temp Mean valued for P(s|v,h) used in free energy
   arma::mat tempMean;
   //! Locally stored temp Slab valued for P(s|v,h) used in free energy

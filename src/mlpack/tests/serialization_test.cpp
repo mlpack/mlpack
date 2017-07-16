@@ -35,7 +35,10 @@
 #include <mlpack/methods/decision_stump/decision_stump.hpp>
 #include <mlpack/methods/lars/lars.hpp>
 #include <mlpack/methods/rbm/rbm.hpp>
+#include <mlpack/methods/rbm/binary_rbm.hpp>
+#include <mlpack/methods/rbm/ssRBM.hpp>
 #include <mlpack/methods/rbm/binary_layer.hpp>
+#include <mlpack/methods/rbm/spike_slab_layer.hpp>
 
 using namespace mlpack;
 using namespace mlpack::distribution;
@@ -1693,4 +1696,35 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeTest)
         binaryTree.Child(i).SplitDimension());
   }
 }
+
+BOOST_AUTO_TEST_CASE(RBMTest)
+{
+  arma::mat data;
+  size_t hiddenLayerSize = 5;
+  data.randu(3, 100);
+  BinaryLayer<> visible(data.n_rows, hiddenLayerSize, 1);
+  BinaryLayer<> hidden(hiddenLayerSize, data.n_rows, 0);
+  BinaryRBM binary_rbm(visible, hidden);
+  GaussianInitialization gaussian(0, 0.1);
+  RBM<GaussianInitialization, BinaryRBM > Rbm(data,
+      gaussian, binary_rbm, 1,  true, true);
+  RBM<GaussianInitialization, BinaryRBM > RbmXml(data,
+      gaussian, binary_rbm, 1,  true, true);
+  RBM<GaussianInitialization, BinaryRBM > RbmText(data,
+      gaussian, binary_rbm, 1,  true, true);
+  RBM<GaussianInitialization, BinaryRBM > RbmBinary(data,
+      gaussian, binary_rbm, 1,  true, true);
+  Rbm.Reset();
+
+  SerializeObjectAll(Rbm, RbmXml, RbmText, RbmBinary);
+  CheckMatrices(Rbm.Parameters(), RbmXml.Parameters(), RbmText.Parameters(),
+      RbmBinary.Parameters());
+  CheckMatrices(Rbm.Policy().VisibleLayer().Bias(),
+      RbmXml.Policy().VisibleLayer().Bias());
+  CheckMatrices(Rbm.Policy().VisibleLayer().Bias(),
+        RbmText.Policy().VisibleLayer().Bias());
+  CheckMatrices(Rbm.Policy().VisibleLayer().Bias(),
+        RbmBinary.Policy().VisibleLayer().Bias());
+}
+
 BOOST_AUTO_TEST_SUITE_END();

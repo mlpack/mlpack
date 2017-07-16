@@ -7,8 +7,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_RBM_HPP
-#define MLPACK_METHODS_ANN_RBM_HPP
+#ifndef MLPACK_METHODS_RBM_RBM_HPP
+#define MLPACK_METHODS_RBM_RBM_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/prereqs.hpp>
@@ -160,12 +160,18 @@ class RBM
   //! Locally-stored reset variable
   bool reset;
 
+  //! Locally-stored reset variable
+  arma::mat hiddenReconstruction;
+  arma::mat visibleReconstruction;
+
   //! Locally-stored negative samples from gibbs Distribution
   arma::mat negativeSamples;
   //! Locally-stored temporary negative samples
   arma::mat tempNegativeSmaples;
   //! Locally-stored gradient for  negative phase
   arma::mat negativeGradient;
+  //! Locally-stored temproray negative gradient used for negative phase
+  arma::mat tempNegativeGradient;
   //! Locally-stored gradient for positive phase
   arma::mat positiveGradient;
   //! Locally-stored temporary output of gibbs chain
