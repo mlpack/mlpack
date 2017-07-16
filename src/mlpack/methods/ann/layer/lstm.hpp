@@ -95,7 +95,8 @@ class LSTM
                 arma::Mat<eT>&& /* gradient */);
 
   /*
-   * Resets the cell(BPTT) to accept a new input.
+   * Resets the cell to accept a new input.
+   * This breaks the BPTT chain starts a new one.
    */
   void ResetCell();
 
@@ -209,6 +210,9 @@ class LSTM
 
   //! Locally-stored output parameters.
   std::list<arma::mat> outParameter;
+
+  //! Matrix of all zeroes to initialize the output and the cell
+  arma::mat allZeros;
 
   //! Iterator pointed to the last cell output processed by backward
   std::list<arma::mat>::iterator backIterator;

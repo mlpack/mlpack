@@ -107,7 +107,8 @@ class GRU
                 arma::Mat<eT>&& /* gradient */);
 
   /*
-   * Resets the cell(BPTT) to accept a new input.
+   * Resets the cell to accept a new input.
+   * This breaks the BPTT chain starts a new one.
    */
   void ResetCell();
 
@@ -206,6 +207,9 @@ class GRU
 
   //! Locally-stored output parameters.
   std::list<arma::mat> outParameter;
+
+  //! Matrix of all zeroes to initialize the output
+  arma::mat allZeros;
 
   //! Iterator pointed to the last output produced by the cell
   std::list<arma::mat>::iterator prevOutput;

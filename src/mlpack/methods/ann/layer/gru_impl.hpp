@@ -65,7 +65,10 @@ GRU<InputDataType, OutputDataType>::GRU(
 
   prevError = arma::zeros<arma::mat>(3 * outSize, 1);
 
-  outParameter.push_back(arma::zeros<arma::mat>(outSize, 1));
+  allZeros = arma::zeros<arma::mat>(outSize, 1);
+
+  outParameter.push_back(std::move(arma::mat(allZeros.memptr(),
+    allZeros.n_rows, allZeros.n_cols, false, true)));
 
   prevOutput = outParameter.begin();
   backIterator = outParameter.end();
@@ -77,6 +80,8 @@ template<typename eT>
 void GRU<InputDataType, OutputDataType>::Forward(
     arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
+  arma::mat temp = arma::zeros<arma::mat>(outSize, 1);
+
   // Process the input linearly(zt, rt, ot).
   boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
       boost::apply_visitor(outputParameterVisitor, input2GateModule))),
@@ -134,12 +139,14 @@ void GRU<InputDataType, OutputDataType>::Forward(
     forwardStep = 0;
     if (!deterministic)
     {
-      outParameter.push_back(arma::zeros<arma::mat>(outSize, 1));
+      outParameter.push_back(std::move(arma::mat(allZeros.memptr(),
+        allZeros.n_rows, allZeros.n_cols, false, true)));
       prevOutput = --outParameter.end();
     }
     else
     {
-      *prevOutput = arma::zeros<arma::mat>(outSize, 1);
+      *prevOutput = std::move(arma::mat(allZeros.memptr(),
+        allZeros.n_rows, allZeros.n_cols, false, true));
     }
   }
   else if (!deterministic)
@@ -149,7 +156,17 @@ void GRU<InputDataType, OutputDataType>::Forward(
   }
   else
   {
-    *prevOutput = output;
+    if (forwardStep == 1)
+    {
+      outParameter.clear();
+      outParameter.push_back(output);
+
+      prevOutput = outParameter.begin();
+    }
+    else
+    {
+      *prevOutput = output;
+    }
   }
 }
 
@@ -279,7 +296,8 @@ template<typename InputDataType, typename OutputDataType>
 void GRU<InputDataType, OutputDataType>::ResetCell()
 {
   outParameter.clear();
-  outParameter.push_back(arma::zeros<arma::mat>(outSize, 1));
+  outParameter.push_back(std::move(arma::mat(allZeros.memptr(),
+    allZeros.n_rows, allZeros.n_cols, false, true)));
 
   prevOutput = outParameter.begin();
   backIterator = outParameter.end();

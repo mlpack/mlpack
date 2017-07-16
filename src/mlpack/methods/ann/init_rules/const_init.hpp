@@ -70,7 +70,6 @@ class ConstInitialization
  private:
   //! Value to be initialized with
   double initVal;
-
 }; // class ConstInitialization
 
 } // namespace ann
