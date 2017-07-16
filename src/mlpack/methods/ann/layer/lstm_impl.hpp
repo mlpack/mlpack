@@ -66,8 +66,13 @@ LSTM<InputDataType, OutputDataType>::LSTM(
 
   prevError = arma::zeros<arma::mat>(4 * outSize, 1);
 
-  outParameter.push_back(arma::zeros<arma::mat>(outSize, 1));
-  cellParameter.push_back(arma::zeros<arma::mat>(outSize, 1));
+  allZeros = arma::zeros<arma::mat>(outSize, 1);
+
+  outParameter.push_back(std::move(arma::mat(allZeros.memptr(),
+    allZeros.n_rows, allZeros.n_cols, false, false)));
+
+  cellParameter.push_back(std::move(arma::mat(allZeros.memptr(),
+    allZeros.n_rows, allZeros.n_cols, false, false)));
 
   prevOutput = outParameter.begin();
   prevCell = cellParameter.begin();
@@ -133,15 +138,22 @@ void LSTM<InputDataType, OutputDataType>::Forward(
     forwardStep = 0;
     if (!deterministic)
     {
-      outParameter.push_back(arma::zeros<arma::mat>(outSize, 1));
-      cellParameter.push_back(arma::zeros<arma::mat>(outSize, 1));
+      outParameter.push_back(std::move(arma::mat(allZeros.memptr(),
+        allZeros.n_rows, allZeros.n_cols, false, false)));
+
+      cellParameter.push_back(std::move(arma::mat(allZeros.memptr(),
+        allZeros.n_rows, allZeros.n_cols, false, false)));
+
       prevOutput = --outParameter.end();
       prevCell = --cellParameter.end();
     }
     else
     {
-      *prevOutput = arma::zeros<arma::mat>(outSize, 1);
-      *prevCell = arma::zeros<arma::mat>(outSize, 1);
+      *prevOutput = std::move(arma::mat(allZeros.memptr(),
+        allZeros.n_rows, allZeros.n_cols, false, false));
+
+      *prevCell = std::move(arma::mat(allZeros.memptr(),
+        allZeros.n_rows, allZeros.n_cols, false, false));
     }
   }
   else if (!deterministic)
@@ -153,8 +165,22 @@ void LSTM<InputDataType, OutputDataType>::Forward(
   }
   else
   {
-    *prevOutput = output;
-    *prevCell = std::move(tempPrevCell);
+    if (forwardStep == 1)
+    {
+      outParameter.clear();
+      cellParameter.clear();
+
+      outParameter.push_back(output);
+      cellParameter.push_back(std::move(tempPrevCell));
+
+      prevOutput = outParameter.begin();
+      prevCell = cellParameter.begin();
+    }
+    else
+    {
+      *prevOutput = output;
+      *prevCell = std::move(tempPrevCell);
+    }
   }
 }
 
@@ -274,10 +300,12 @@ template<typename InputDataType, typename OutputDataType>
 void LSTM<InputDataType, OutputDataType>::ResetCell()
 {
   outParameter.clear();
-  outParameter.push_back(arma::zeros<arma::mat>(outSize, 1));
+  outParameter.push_back(std::move(arma::mat(allZeros.memptr(),
+    allZeros.n_rows, allZeros.n_cols, false, false)));
 
   cellParameter.clear();
-  cellParameter.push_back(arma::zeros<arma::mat>(outSize, 1));
+  cellParameter.push_back(std::move(arma::mat(allZeros.memptr(),
+    allZeros.n_rows, allZeros.n_cols, false, false)));
 
   prevOutput = outParameter.begin();
   prevCell = cellParameter.begin();
