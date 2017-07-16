@@ -31,7 +31,7 @@ class FuncSq
    * @param A matrix A.
    * @param b vector b.
    */
-  FuncSq(const arma::mat A, const arma::mat b) : A(A), b(b)
+  FuncSq(const arma::mat& A, const arma::vec& b) : A(A), b(b)
   {/* Nothing to do. */}
 
   /**
@@ -43,7 +43,7 @@ class FuncSq
    */
   double Evaluate(const arma::mat& coords)
   {
-    arma::vec r = A*coords - b;
+    arma::vec r = A * coords - b;
     arma::mat y = (r.t() * r) * 0.5;
     return y(0, 0);
   }

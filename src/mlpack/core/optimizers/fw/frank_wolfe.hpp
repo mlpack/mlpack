@@ -43,21 +43,22 @@ namespace optimization {
  * \f]
  *
  *
- * The algorithm continues until \f$ k \f$ reaches the maximum number of iterations, 
- * or when the duality gap is bounded by a certain tolerance \f$ \epsilon \f$. 
+ * The algorithm continues until \f$ k \f$ reaches the maximum number of
+ * iterations, or when the duality gap is bounded by a certain tolerance
+ * \f$ \epsilon \f$.
  * That is,
  *
  * \f[
  * g(x):= \max_{s\in D} <x-s, \nabla f(x)> \quad \leq \epsilon,
  * \f]
  *
- * we also know that \f$ g(x) \geq f(x) - f(x^*) \f$, where \f$ x^* \f$ is the optimal
- * solution.
+ * we also know that \f$ g(x) \geq f(x) - f(x^*) \f$, where \f$ x^* \f$ is the
+ * optimal solution.
  *
  * The parameter \f$ \epsilon \f$ is specified by the tolerance parameter to the
  * constructor.
  *
- * For FrankWolfe to work, LinearConstrSolverType and UpdateRuleType 
+ * For FrankWolfe to work, LinearConstrSolverType and UpdateRuleType
  * template parameters are required.
  * These classes must implement the following functions:
  *
@@ -120,13 +121,13 @@ class FrankWolfe
   double Optimize(FunctionType& function, arma::mat& iterate);
 
   //! Get the linear constrained solver.
-  LinearConstrSolverType LinearConstrSolver()
+  const LinearConstrSolverType& LinearConstrSolver()
       const { return linearConstrSolver; }
   //! Modify the linear constrained solver.
   LinearConstrSolverType& LinearConstrSolver() { return linearConstrSolver; }
 
   //! Get the update rule.
-  UpdateRuleType UpdateRule() const { return updateRule; }
+  const UpdateRuleType& UpdateRule() const { return updateRule; }
   //! Modify the update rule.
   UpdateRuleType& UpdateRule() { return updateRule; }
 
@@ -154,7 +155,13 @@ class FrankWolfe
   double tolerance;
 };
 
-//! Orthogonal Matching Pursuit.
+/** 
+ * Orthogonal Matching Pursuit. It is a sparse approximation algorithm which
+ * involves finding the "best matching" projections of multidimensional data
+ * onto the span of an over-complete dictionary. To use it, the dictionary is
+ * input as the columns of MatrixA() in FuncSq class, and the vector to be
+ * approximated is input as the Vectorb() in FuncSq class.
+ */
 using OMP = FrankWolfe<ConstrLpBallSolver, UpdateSpan>;
 
 } // namespace optimization

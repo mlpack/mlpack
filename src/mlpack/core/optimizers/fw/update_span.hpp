@@ -69,12 +69,12 @@ class UpdateSpan
   }
 
   //! Get the current atom indices.
-  arma::uvec CurrentIndices() const { return currentIndices; }
+  const arma::uvec& CurrentIndices() const { return currentIndices; }
   //! Modify the current atom indices.
   arma::uvec& CurrentIndices() { return currentIndices; }
 
   //! Get the current atoms.
-  arma::mat CurrentAtoms() const { return currentAtoms; }
+  const arma::mat& CurrentAtoms() const { return currentAtoms; }
   //! Modify the current atoms.
   arma::mat& CurrentAtoms() { return currentAtoms; }
 

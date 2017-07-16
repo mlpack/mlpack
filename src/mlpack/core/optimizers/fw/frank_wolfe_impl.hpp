@@ -43,8 +43,8 @@ double FrankWolfe<LinearConstrSolverType, UpdateRuleType>::
 Optimize(FunctionType& function, arma::mat& iterate)
 {
   // To keep track of the function value.
-  double CurrentObjective = function.Evaluate(iterate);
-  double PreviousObjective = DBL_MAX;
+  double currentObjective = function.Evaluate(iterate);
+  double previousObjective = DBL_MAX;
 
   arma::mat gradient(iterate.n_rows, iterate.n_cols);
   arma::mat s(iterate.n_rows, iterate.n_cols);
@@ -55,10 +55,10 @@ Optimize(FunctionType& function, arma::mat& iterate)
   {
     // Output current objective function.
     Log::Info << "Iteration " << i << ", objective "
-        << CurrentObjective << "." << std::endl;
+        << currentObjective << "." << std::endl;
 
     // Reset counter variables.
-    PreviousObjective = CurrentObjective;
+    previousObjective = currentObjective;
 
     // Calculate the gradient.
     function.Gradient(iterate, gradient);
@@ -72,7 +72,7 @@ Optimize(FunctionType& function, arma::mat& iterate)
     {
       Log::Info << "FrankWolfe: minimized within tolerance "
           << tolerance << "; " << "terminating optimization." << std::endl;
-      return CurrentObjective;
+      return currentObjective;
     }
 
 
@@ -80,12 +80,12 @@ Optimize(FunctionType& function, arma::mat& iterate)
     updateRule.Update(function, iterate, s, iterateNew, i);
 
     iterate = std::move(iterateNew);
-    CurrentObjective = function.Evaluate(iterate);
+    currentObjective = function.Evaluate(iterate);
   }
 
   Log::Info << "Frank Wolfe: maximum iterations (" << maxIterations
       << ") reached; " << "terminating optimization." << std::endl;
-  return CurrentObjective;
+  return currentObjective;
 }
 
 
