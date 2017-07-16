@@ -78,7 +78,8 @@ class ConstrLpBallSolver
     {
       // l1 ball, also used in OMP.
       arma::mat tmp = arma::abs(v);
-      arma::uword k = tmp.index_max();  // linear index of matrix.
+      arma::uword k;
+      tmp.max(k);  // k is the linear index of the largest element.
       s.zeros(v.n_rows, v.n_cols);
       s(k) = - mlpack::math::Sign(v(k));
     }
