@@ -217,6 +217,7 @@ void BuildSSRbmNetwork(arma::mat& trainData,
   }
   modelssRBM.Policy().PositivePhase(arma::mat(trainData.col(0)));
   modelssRBM.Policy().NegativePhase(arma::mat(trainData.col(0)));
+  modelssRBM.Train(trainData, msgd);
   BOOST_REQUIRE_EQUAL(modelssRBM.Policy().VisibleLayer().SlabBias().n_rows, 3);
   BOOST_REQUIRE_EQUAL(modelssRBM.Policy().VisibleLayer().SlabBias().n_cols, 2);
 }

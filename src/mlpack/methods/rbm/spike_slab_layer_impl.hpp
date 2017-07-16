@@ -107,11 +107,11 @@ void SpikeSlabLayer<InputDataType, OutputDataType>::Pvgivensh(arma::mat&& slab,
   }
   mean = variance * mean;
   for (size_t i = 0; i < mean.n_rows; i++)
-      sample(i) = math::RandNormal(mean(i), variance(i));
+      sample(i) = math::RandNormal(mean(i), variance(i, i));
   // Rejection sampling
   while (arma::norm(sample) > radius)
     for (size_t i = 0; i < mean.n_rows; i++)
-      sample(i) = math::RandNormal(mean(i), variance(i));
+      sample(i) = math::RandNormal(mean(i), variance(i, i));
   output = sample;
   outMean = mean;
   state = output;
@@ -121,15 +121,15 @@ void SpikeSlabLayer<InputDataType, OutputDataType>::Psgivenvh(
     arma::mat&& visible, arma::mat&& hidden, arma::mat&& outMean,
     arma::mat&& output)
 {
-  output = arma::zeros(poolSize, hiddenSize);
+  output = arma::zeros(slabBias.n_rows, slabBias.n_cols);
   for (size_t i = 0; i < slabBias.n_cols; i++)
   {
     variance = arma::diagmat(slabBias.col(i)).i();
     mean = arma::as_scalar(hidden(i)) * variance
         * weight.slice(i) * visible;
-    for (size_t j = 0; j < variance.n_rows; i++)
+    for (size_t j = 0; j < slabBias.n_rows; j++)
     {
-      output(j, i) = math::RandNormal(mean(i), variance(i));
+      output(j, i) = math::RandNormal(mean(j), variance(j, j));
     }
   }
   outMean = mean;

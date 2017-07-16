@@ -135,6 +135,11 @@ class ssRBM
     return temp + freeEnergySum;
   }
 
+  double Evaluate(arma::mat& predictors, size_t i)
+  {
+    return 0;
+  }
+
   /**
    * Gradient function calculates the gradient for the spike and
    * slab RBM.
