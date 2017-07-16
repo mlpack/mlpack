@@ -111,7 +111,7 @@ double SGD<UpdatePolicyType>::Optimize(
       function.Gradient(iterate, currentFunction, gradient);
 
     // Time to do something really dirty.
-    // gradient.transform( [](double val) { return std::min(std::max(val, -3.), 3.); } );
+    gradient.transform( [](double val) { return std::min(std::max(val, -3.), 3.); } );
 
     // Use the update policy to take a step.
     updatePolicy.Update(iterate, stepSize, gradient);

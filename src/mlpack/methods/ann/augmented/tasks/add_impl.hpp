@@ -53,7 +53,7 @@ const void AddTask::Generate(arma::field<arma::mat>& input,
     vecInput(i) = arma::randi<arma::colvec>(
         sizeA + sizeB + 1, arma::distr_param(0, 1));
     // Insert special value for '+' delimiter.
-    vecInput(i).at(sizeA) = 2;
+    vecInput(i).at(sizeA) = 0.5;
 
     int valA = 0;
     for (size_t k = 0; k < sizeA; ++k)
@@ -129,13 +129,14 @@ const void AddTask::Binarize(const arma::field<arma::vec>& input,
   output = arma::field<arma::mat>(input.n_elem);
   for (size_t i = 0; i < input.n_elem; ++i)
   {
-    output.at(i) = arma::zeros(3, input.at(i).n_elem);
+    /*output.at(i) = arma::zeros(3, input.at(i).n_elem);
     for (size_t j = 0; j < input.at(i).n_elem; ++j)
     {
       size_t val = input.at(i).at(j);
       output.at(i).at(val, j) = 1;
     }
-    output.at(i).reshape(output.at(i).n_elem, 1);
+    output.at(i).reshape(output.at(i).n_elem, 1);*/
+    output.at(i) = arma::conv_to<arma::mat>::from(input.at(i));
   }
 }
 
