@@ -13,6 +13,7 @@
 #define MLPACK_CORE_OPTIMIZERS_PARALLEL_SGD_HPP
 
 #include <mlpack/prereqs.hpp>
+#include "decay_policies/constant_step.hpp"
 
 namespace mlpack {
 namespace optimization {
@@ -54,7 +55,7 @@ namespace optimization {
  * @tparam DecayPolicyType Step size update policy used by parallel SGD
  *     to update the stepsize after each iteration.
  */
-template <typename DecayPolicyType>
+template <typename DecayPolicyType = ConstantStep>
 class ParallelSGD
 {
  public:
@@ -62,6 +63,9 @@ class ParallelSGD
    * Construct the parallel SGD optimizer to optimize the given function with
    * the given parameters. One iteration means one batch of datapoints processed
    * by each thread.
+   *
+   * The defaults here are not necessarily good for the given problem, so it is
+   * suggested that the values used be tailored to the task at hand.
    *
    * @param maxIterations Maximum number of iterations allowed.
    * @param threadShareSize Number of datapoints to be processed in one
@@ -71,8 +75,8 @@ class ParallelSGD
   */
   ParallelSGD(const size_t maxIterations,
               const size_t threadShareSize,
-              const double tolerance,
-              const DecayPolicyType& decayPolicy);
+              const double tolerance = 1e-5,
+              const DecayPolicyType& decayPolicy = DecayPolicyType());
 
   /**
    * Optimize the given function using the parallel SGD algorithm. The given
@@ -111,18 +115,6 @@ class ParallelSGD
   DecayPolicyType& DecayPolicy() { return decayPolicy; }
 
  private:
-  /**
-   * Generate the indices to be visited by each thread before iteration.
-   * Generates a randomly shuffled vector of datapoint indices (range 0 to
-   * function.NumFunctions() - 1).
-   *
-   * @param visitationOrder Out param with the indices of the datapoints for the
-   *    current iteration.
-   * @param numFunctions The number of separable functions in the objective.
-   */
-  void GenerateVisitationOrder(arma::Col<size_t>& visitationOrder,
-      size_t numFunctions);
-
   /**
    * Get the share of datapoint indices to be updated by the thread with given
    * thread id.

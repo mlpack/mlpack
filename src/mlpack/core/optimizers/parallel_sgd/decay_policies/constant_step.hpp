@@ -23,16 +23,24 @@ namespace optimization {
 class ConstantStep
 {
  public:
-  ConstantStep(double initalStep) : step(initalStep) { /* Nothing to do */ }
+  /**
+   * Member initialization constructor.
+   *
+   * The defaults here are not necessarily good for the given problem, so it is
+   * suggested that the values used be tailored to the task at hand.
+   *
+   * @param step The intial stepsize to use.
+   */
+  ConstantStep(const double step = 0.01) : step(step) { /* Nothing to do */ }
 
   /**
    * This function is called in each iteration before the gradient update.
    *
-   * @param n_epoch The iteration number for which the stepsize is to be
+   * @param numEpoch The iteration number for which the stepsize is to be
    *    calculated.
    * @return The step size for the current iteration.
    */
-  double StepSize(size_t /* n_epoch */)
+  double StepSize(size_t /* numEpoch */)
   {
     return step;
   }

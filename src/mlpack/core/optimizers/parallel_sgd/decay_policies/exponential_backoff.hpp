@@ -39,12 +39,13 @@ class ExponentialBackoff
 {
  public:
   /**
-   * Construct the exponential backoff policy with the required parameters.
+   * Member initializer constructor to construct the exponential backoff policy
+   * with the required parameters.
    *
    * @param firstBackoffEpoch The number of updates to run before the first
    * stepsize backoff.
    * @param step The initial stepsize(gamma).
-   * @param beta The reduction factor.
+   * @param beta The reduction factor. This should be a value in range (0, 1).
    */
   ExponentialBackoff(size_t firstBackoffEpoch, double step, double beta) :
     firstBackoffEpoch(firstBackoffEpoch), step(step), beta(beta)
@@ -54,12 +55,12 @@ class ExponentialBackoff
   /**
    * Get the step size for the current gradient update.
    *
-   * @param n_epoch The iteration number of the current update.
+   * @param numEpoch The iteration number of the current update.
    * @return The stepsize for the current iteration.
    */
-  double StepSize(size_t n_epoch)
+  double StepSize(size_t numEpoch)
   {
-    if (n_epoch >= cutoffEpoch)
+    if (numEpoch >= cutoffEpoch)
     {
       step *= beta;
       cutoffEpoch += firstBackoffEpoch / beta;

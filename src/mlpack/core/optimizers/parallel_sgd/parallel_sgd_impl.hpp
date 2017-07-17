@@ -39,6 +39,10 @@ double ParallelSGD<DecayPolicyType>::Optimize(
   double overallObjective = DBL_MAX;
   double lastObjective;
 
+  // The order in which the functions will be visited.
+  arma::Col<size_t> visitationOrder = arma::linspace<arma::Col<size_t>>(0,
+      (function.NumFunctions() - 1), function.NumFunctions());
+
   for (size_t i = 1; i != maxIterations; ++i)
   {
     // Calculate the overall objective.
@@ -72,13 +76,13 @@ double ParallelSGD<DecayPolicyType>::Optimize(
     // Get the stepsize for this iteration
     double stepSize = decayPolicy.StepSize(i);
 
-    arma::Col<size_t> visitationOrder;
-    GenerateVisitationOrder(visitationOrder, function.NumFunctions());
+    // Shuffle for uniform sampling of functions by each thread.
+    visitationOrder = arma::shuffle(visitationOrder);
 
     #pragma omp parallel
     {
       // Each processor gets a subset of the instances.
-      // Each subset is of size batchSize.
+      // Each subset is of size threadShareSize.
       arma::Col<size_t> instances = ThreadShare(omp_get_thread_num(),
           visitationOrder);
       for (size_t j = 0; j < instances.n_elem; ++j)
@@ -111,15 +115,6 @@ double ParallelSGD<DecayPolicyType>::Optimize(
 }
 
 template <typename DecayPolicyType>
-void ParallelSGD<DecayPolicyType>::GenerateVisitationOrder(
-        arma::Col<size_t>& visitationOrder, size_t numFunctions)
-{
-  // Generate a random vector of function indices.
-  visitationOrder = arma::shuffle(arma::linspace<arma::Col<size_t>>(0,
-      (numFunctions - 1), numFunctions));
-}
-
-template <typename DecayPolicyType>
 arma::Col<size_t> ParallelSGD<DecayPolicyType>::ThreadShare(
     size_t threadId, const arma::Col<size_t>& visitationOrder)
 {
@@ -136,7 +131,7 @@ arma::Col<size_t> ParallelSGD<DecayPolicyType>::ThreadShare(
   }
   else
   {
-    // Equal distribution of batchSize examples to each thread.
+    // Equal distribution of threadShareSize examples to each thread.
     return visitationOrder.subvec(threadId * threadShareSize,
         (threadId + 1) * threadShareSize - 1);
   }

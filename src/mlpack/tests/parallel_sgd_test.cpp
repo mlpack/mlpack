@@ -108,8 +108,8 @@ BOOST_AUTO_TEST_CASE(ThreadSharingTest)
   ParallelSGD<ConstantStep> s(0, 4, 1e-10, decayPolicy);
 
   // Generate a random visitation order.
-  arma::Col<size_t> visitationOrder;
-  s.GenerateVisitationOrder(visitationOrder, 10);
+  arma::Col<size_t> visitationOrder = arma::linspace<arma::Col<size_t>>(0,
+      9, 10);
 
   // Lets count how many times each example is handed out in an iteration.
   arma::Col<size_t> count(10, arma::fill::zeros);
