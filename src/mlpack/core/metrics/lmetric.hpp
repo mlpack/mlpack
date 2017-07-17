@@ -83,6 +83,12 @@ class LMetric
   static typename VecTypeA::elem_type Evaluate(const VecTypeA& a,
                                                const VecTypeB& b);
 
+ 
+  template<typename VecTypeA, typename VecTypeB>
+  static typename VecTypeA::elem_type Evaluate(const VecTypeA& a,
+                                               const VecTypeB& b,
+					       typename VecTypeA::elem_type bound);
+
   //! Serialize the metric (nothing to do).
   template<typename Archive>
   void Serialize(Archive& /* ar */, const unsigned int /* version */) { }
