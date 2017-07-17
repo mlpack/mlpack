@@ -67,7 +67,8 @@ class ParallelSGD
    * The defaults here are not necessarily good for the given problem, so it is
    * suggested that the values used be tailored to the task at hand.
    *
-   * @param maxIterations Maximum number of iterations allowed.
+   * @param maxIterations Maximum number of iterations allowed (0 means no
+   *     limit).
    * @param threadShareSize Number of datapoints to be processed in one
    *     iteration by each thread.
    * @param tolerance Maximum absolute tolerance to terminate the algorithm.

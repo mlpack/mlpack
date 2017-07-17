@@ -43,6 +43,9 @@ double ParallelSGD<DecayPolicyType>::Optimize(
   arma::Col<size_t> visitationOrder = arma::linspace<arma::Col<size_t>>(0,
       (function.NumFunctions() - 1), function.NumFunctions());
 
+  // Iterate till the objective is within tolerance or the maximum number of
+  // allowed iterations is reached. If maxIterations is 0, this will iterate
+  // till convergence.
   for (size_t i = 1; i != maxIterations; ++i)
   {
     // Calculate the overall objective.
@@ -61,7 +64,7 @@ double ParallelSGD<DecayPolicyType>::Optimize(
     if (std::isnan(overallObjective) || std::isinf(overallObjective))
     {
       Log::Warn << "Parallel SGD: converged to " << overallObjective
-        << "; terminating" << " with failure.  Try a smaller step size?"
+        << "; terminating with failure. Try a smaller step size?"
         << std::endl;
       return overallObjective;
     }
@@ -99,7 +102,7 @@ double ParallelSGD<DecayPolicyType>::Optimize(
         for (size_t i = 0; i < gradient.n_cols; ++i)
         {
           // Iterate over the non-zero elements.
-          for (auto cur = gradient.begin_col(i); cur != gradient.end_col(i);
+          for (arma::sp_mat::iterator cur = gradient.begin_col(i); cur != gradient.end_col(i);
               ++cur)
           {
             #pragma omp atomic

@@ -19,7 +19,7 @@ namespace optimization {
 namespace test {
 
 // A simple test function. Each dimension has a parabola with a
-// distinct minima. Each update is guaranteed to be sparse(only a single
+// distinct minimum. Each update is guaranteed to be sparse(only a single
 // dimension is updated in the decision variable by each thread). At the end of
 // a reasonable number of iterations, each value in the decision variable should
 // be at the vertex of the parabola in that dimension.
