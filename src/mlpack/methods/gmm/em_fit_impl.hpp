@@ -358,9 +358,8 @@ ArmadilloGMMWrapper(const arma::mat& observations,
       covs.col(i) = dists[i].Covariance().diag();
     }
 
-    g.set_means(std::move(means));
-    g.set_dcovs(std::move(covs));
-    g.set_hefts(std::move(weights));
+    g.reset(observations.n_rows, dists.size());
+    g.set_params(std::move(means), std::move(covs), weights.t());
 
     g.learn(observations, dists.size(), arma::eucl_dist, arma::keep_existing, 0,
         maxIterations, 1e-10, false /* no printing */);
@@ -369,12 +368,12 @@ ArmadilloGMMWrapper(const arma::mat& observations,
   {
     // Use Armadillo for the initial clustering.  We'll try and match mlpack
     // defaults.
-    g.learn(observations, dists.size(), arma::eucl_dist, arma::random_subset,
+    g.learn(observations, dists.size(), arma::eucl_dist, arma::static_subset,
         1000, maxIterations, 1e-10, false /* no printing */);
   }
 
   // Extract means, covariances, and weights.
-  weights = g.hefts;
+  weights = g.hefts.t();
   for (size_t i = 0; i < dists.size(); ++i)
   {
     dists[i].Mean() = g.means.col(i);
