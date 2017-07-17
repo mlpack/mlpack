@@ -29,6 +29,10 @@ namespace regression {
  * parameter; for instance, logistic regression can be performed on sparse
  * datasets by specifying arma::sp_mat as the MatType parameter.
  *
+ * LogisticRegression can be used for general classification tasks, but the
+ * class is restricted to support only two classes.  For multiclass logistic
+ * regression, see mlpack::regression::SoftmaxRegression.
+ *
  * @tparam MatType Type of data matrix.
  */
 template<typename MatType = arma::mat>
@@ -66,7 +70,8 @@ class LogisticRegression
    *
    * This constructor is necessary for the cross-validation code and
    * hyper-parameter tuner to work, but it isn't suggested for regular use since
-   * it requires the extra numClasses parameter (which must always be 2).
+   * it requires the extra numClasses parameter (which must always be 2 because
+   * LogisticRegression is a binary classifier).
    *
    * @param predictors Input training variables.
    * @param responses Outputs resulting from input training variables.
@@ -144,7 +149,8 @@ class LogisticRegression
    *
    * The numClasses parameter can be ignored: it is only required by the
    * cross-validation and hyper-parameter tuner.  Since it must always be set to
-   * 2 for LogisticRegression, it can always be omitted.
+   * 2 for LogisticRegression (because LogisticRegression is a binary
+   * classifier), it can always be omitted.
    *
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @param predictors Input training variables.
