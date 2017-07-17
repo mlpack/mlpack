@@ -56,16 +56,15 @@ class UpdateSpan
   {
     // Add new atom into soluton space.
     arma::uvec ind = find(s, 1);
-    arma::uword d = ind(0);
-    AddAtom(function, d);
+    AddAtom(function, ind(0));
 
     // Reoptimize the solution in the current space.
     arma::vec b = function.Vectorb();
-    arma::mat x = solve(currentAtoms, b);
+    arma::vec x = solve(currentAtoms, b);
 
     // x has coords of only the current atoms, recover the solution
     // to the original size.
-    newCoords = RecoverVector((function.MatrixA()).n_cols, x);
+    RecoverVector(x, function.MatrixA().n_cols, newCoords);
   }
 
   //! Get the current atom indices.
@@ -85,17 +84,13 @@ class UpdateSpan
   //! Current atoms in the solution space, ordered as currentIndices.
   arma::mat currentAtoms;
 
-  //! Flag current indices is empty.
-  bool isEmpty = true;
-
   //! Add atom into the solution space.
   void AddAtom(FuncSq& function, const arma::uword k)
   {
-    if (isEmpty)
+    if (currentIndices.is_empty())
     {
       CurrentIndices() = k;
       CurrentAtoms() = (function.MatrixA()).col(k);
-      isEmpty = false;
     }
     else
     {
@@ -111,18 +106,16 @@ class UpdateSpan
   /**
    * Recover the solution coordinate from the coefficients of current atoms.
    *
-   * @param n dimension of original solution space.
-   * @param x coefficients of current atoms.
+   * @param x input coefficients of current atoms.
+   * @param n dimension of the recovered vector.
+   * @param y output recovered vector.
    */
-  arma::vec RecoverVector(const size_t n, const arma::vec& x)
+  void RecoverVector(const arma::vec& x, const size_t n, arma::mat& y)
   {
-    arma::vec y = arma::zeros<arma::vec>(n);
-
+    y.zeros(n, 1);
     arma::uword len = currentIndices.size();
     for (size_t ii = 0; ii < len; ++ii)
       y(currentIndices(ii)) = x(ii);
-
-    return y;
   }
 };
 

@@ -44,21 +44,17 @@ Optimize(FunctionType& function, arma::mat& iterate)
 {
   // To keep track of the function value.
   double currentObjective = function.Evaluate(iterate);
-  double previousObjective = DBL_MAX;
 
   arma::mat gradient(iterate.n_rows, iterate.n_cols);
   arma::mat s(iterate.n_rows, iterate.n_cols);
   arma::mat iterateNew(iterate.n_rows, iterate.n_cols);
   double gap = 0;
 
-  for (size_t i=1; i != maxIterations; ++i)
+  for (size_t i = 1; i != maxIterations; ++i)
   {
     // Output current objective function.
     Log::Info << "Iteration " << i << ", objective "
         << currentObjective << "." << std::endl;
-
-    // Reset counter variables.
-    previousObjective = currentObjective;
 
     // Calculate the gradient.
     function.Gradient(iterate, gradient);
@@ -67,7 +63,7 @@ Optimize(FunctionType& function, arma::mat& iterate)
     linearConstrSolver.Optimize(gradient, s);
 
     // Check duality gap for return condition.
-    gap = std::fabs(dot(iterate-s, gradient));
+    gap = std::fabs(dot(iterate - s, gradient));
     if (gap < tolerance)
     {
       Log::Info << "FrankWolfe: minimized within tolerance "

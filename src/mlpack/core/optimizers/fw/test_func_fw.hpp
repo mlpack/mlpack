@@ -37,9 +37,9 @@ class TestFuncFW
    */
   double Evaluate(const arma::mat& coords)
   {
-    double f = std::pow(coords[0]-0.1, 2);
-    f += std::pow(coords[1]-0.2, 2);
-    f += std::pow(coords[2]-0.3, 2);
+    double f = std::pow(coords[0] - 0.1, 2);
+    f += std::pow(coords[1] - 0.2, 2);
+    f += std::pow(coords[2] - 0.3, 2);
     return f;
   }
 
@@ -51,9 +51,9 @@ class TestFuncFW
    */
   void Gradient(const arma::mat& coords, arma::mat& gradient)
   {
-    gradient[0] = coords[0]-0.1;
-    gradient[1] = coords[1]-0.2;
-    gradient[2] = coords[2]-0.3;
+    gradient[0] = coords[0] - 0.1;
+    gradient[1] = coords[1] - 0.2;
+    gradient[2] = coords[2] - 0.3;
   }
 };
 
