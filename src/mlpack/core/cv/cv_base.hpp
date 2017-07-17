@@ -23,6 +23,10 @@ namespace cv {
  * numClasses) and to assert that the machine learning algorithm and data
  * satisfy certain conditions.
  *
+ * This class is not meant to be used directly by users. Rather use the CVBase
+ * constructors as a reference for what additional arguments are accepted by
+ * cross-validation strategies like SimpleCV or KFoldCV.
+ *
  * @tparam MLAlgorithm A machine learning algorithm.
  * @tparam MatType The type of data.
  * @tparam PredictionsType The type of predictions (labels/responses).

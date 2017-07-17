@@ -19,18 +19,42 @@ namespace mlpack {
 namespace cv {
 
 /**
- * The class SimpleCV splits data into training and validation sets, runs
- * training on the training set and evaluates performance on the validation set.
+ * SimpleCV splits data into two sets - training and validation sets - and then
+ * runs training on the training set and evaluates performance on the validation
+ * set.
+ *
+ * To construct a SimpleCV object you need to pass the validationSize parameter
+ * and arguments that specify data. For the latter see the CVBase constructors
+ * as a reference - the CVBase constructors take exactly the same arguments as
+ * ones that are supposed to be passed after the validationSize parameter in the
+ * SimpleCV constructor.
+ *
+ * For example, SoftmaxRegression can be validated in the following way.
+ *
+ * arma::mat data = ...;
+ * arma::Row<size_t> labels = ...;
+ * size_t numClasses = 5;
+ *
+ * double validationSize = 0.2;
+ * SimpleCV<SoftmaxRegression<>, Accuracy> cv(validationSize, data, labels,
+ *     numClasses);
+ *
+ * double lambda = 0.1;
+ * double softmaxAccuracy = cv.Evaluate(lambda);
+ *
+ * In the example above, 80% of the passed dataset will be used for training,
+ * and remaining 20% will be used for calculating the accuracy metric.
  *
  * @tparam MLAlgorithm A machine learning algorithm.
  * @tparam Metric A metric to assess the quality of a trained model.
  * @tparam MatType The type of data.
  * @tparam PredictionsType The type of predictions (should be passed when the
- *     predictions type is a template parameter in Train methods of
- *     MLAlgorithm).
+ *     predictions type is a template parameter in Train methods of the given
+ *     MLAlgorithm; arma::Row<size_t> will be used otherwise).
  * @tparam WeightsType The type of weights (should be passed when weighted
  *     learning is supported, and the weights type is a template parameter in
- *     Train methods of MLAlgorithm).
+ *     Train methods of the given MLAlgorithm; arma::vec will be used
+ *     otherwise).
  */
 template<typename MLAlgorithm,
          typename Metric,
@@ -59,8 +83,8 @@ class SimpleCV :
    * Train on the training set and assess performance on the validation set by
    * using the class Metric.
    *
-   * @param args Arguments for MLAlgorithm (in addition to the passed
-   *     ones in the constructor).
+   * @param args Arguments for the given MLAlgorithm taken by its constructor
+   *     (in addition to the passed ones in the SimpleCV constructor).
    */
   template<typename... MLAlgorithmArgs>
   double Evaluate(const MLAlgorithmArgs& ...args);
