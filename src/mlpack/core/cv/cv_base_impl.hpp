@@ -28,7 +28,7 @@ CVBase<MLAlgorithm,
     isDatasetInfoPassed(false)
 {
   static_assert(!MIE::TakesNumClasses,
-      "The ML algorithm should not take the numClasses parameter");
+      "The given MLAlgorithm requires the numClasses parameter");
 }
 
 template<typename MLAlgorithm,
@@ -46,7 +46,7 @@ CVBase<MLAlgorithm,
     numClasses(numClasses)
 {
   static_assert(MIE::TakesNumClasses,
-      "The ML algorithm should take the numClasses parameter");
+      "The given MLAlgorithm does not take the numClasses parameter");
 }
 
 template<typename MLAlgorithm,
@@ -66,9 +66,9 @@ CVBase<MLAlgorithm,
     numClasses(numClasses)
 {
   static_assert(MIE::TakesNumClasses,
-      "The ML algorithm should take the numClasses parameter");
+      "The given MLAlgorithm does not take the numClasses parameter");
   static_assert(MIE::TakesDatasetInfo,
-      "The ML algorithm should accept a data::DatasetInfo parameter");
+      "The given MLAlgorithm does not accept a data::DatasetInfo parameter");
 }
 
 template<typename MLAlgorithm,
@@ -85,9 +85,9 @@ CVBase<MLAlgorithm,
     isDatasetInfoPassed(false)
 {
   static_assert(!MIE::TakesNumClasses,
-      "The ML algorithm should not take the numClasses parameter");
+      "The given MLAlgorithm requires the numClasses parameter");
   static_assert(MIE::SupportsWeights,
-      "The ML algorithm should support weighted learning");
+      "The given MLAlgorithm does not support weighted learning");
 }
 
 template<typename MLAlgorithm,
@@ -106,9 +106,9 @@ CVBase<MLAlgorithm,
     numClasses(numClasses)
 {
   static_assert(MIE::TakesNumClasses,
-      "The ML algorithm should take the numClasses parameter");
+      "The given MLAlgorithm does not take the numClasses parameter");
   static_assert(MIE::SupportsWeights,
-      "The ML algorithm should support weighted learning");
+      "The given MLAlgorithm does not support weighted learning");
 }
 
 template<typename MLAlgorithm,
@@ -129,11 +129,11 @@ CVBase<MLAlgorithm,
     numClasses(numClasses)
 {
   static_assert(MIE::TakesNumClasses,
-      "The ML algorithm should take the numClasses parameter");
+      "The given MLAlgorithm does not take the numClasses parameter");
   static_assert(MIE::TakesDatasetInfo,
-      "The ML algorithm should accept a data::DatasetInfo parameter");
+      "The given MLAlgorithm does not accept a data::DatasetInfo parameter");
   static_assert(MIE::SupportsWeights,
-      "The ML algorithm should support weighted learning");
+      "The given MLAlgorithm does not support weighted learning");
 }
 
 template<typename MLAlgorithm,
@@ -253,7 +253,7 @@ std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
   static_assert(
       std::is_constructible<MLAlgorithm, const MatType&, const PredictionsType&,
           MLAlgorithmArgs...>::value,
-      "MLAlgorithm should be constructible from the passed arguments");
+      "The given MLAlgorithm is not constructible from the passed arguments");
 
   return std::unique_ptr<MLAlgorithm>(new MLAlgorithm(xs, ys, args...));
 }
@@ -274,7 +274,7 @@ std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
   static_assert(
       std::is_constructible<MLAlgorithm, const MatType&, const PredictionsType&,
           const size_t, MLAlgorithmArgs...>::value,
-      "MLAlgorithm should be constructible from the passed arguments");
+      "The given MLAlgorithm is not constructible from the passed arguments");
 
   return std::unique_ptr<MLAlgorithm>(
       new MLAlgorithm(xs, ys, numClasses, args...));
@@ -297,7 +297,8 @@ std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
       std::is_constructible<MLAlgorithm, const MatType&,
           const data::DatasetInfo, const PredictionsType&, const size_t,
               MLAlgorithmArgs...>::value,
-      "MLAlgorithm should be constructible with a data::DatasetInfo parameter");
+      "The given MLAlgorithm is not constructible with a data::DatasetInfo "
+      "parameter and the passed arguments");
 
   static const bool constructableWithoutDatasetInfo =
       std::is_constructible<MLAlgorithm, const MatType&, const PredictionsType&,
@@ -322,7 +323,7 @@ std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
   static_assert(
       std::is_constructible<MLAlgorithm, const MatType&, const PredictionsType&,
           const WeightsType&, MLAlgorithmArgs...>::value,
-      "MLAlgorithm should be constructible from the passed arguments");
+      "The given MLAlgorithm is not constructible from the passed arguments");
 
   return std::unique_ptr<MLAlgorithm>(
       new MLAlgorithm(xs, ys, weights, args...));
@@ -345,7 +346,7 @@ std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
   static_assert(
       std::is_constructible<MLAlgorithm, const MatType&, const PredictionsType&,
           const size_t, const WeightsType&, MLAlgorithmArgs...>::value,
-      "MLAlgorithm should be constructible from the passed arguments");
+      "The given MLAlgorithm is not constructible from the passed arguments");
 
   return std::unique_ptr<MLAlgorithm>(
       new MLAlgorithm(xs, ys, numClasses, weights, args...));
@@ -369,7 +370,8 @@ std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
       std::is_constructible<MLAlgorithm, const MatType&,
           const data::DatasetInfo, const PredictionsType&, const size_t,
               const WeightsType&, MLAlgorithmArgs...>::value,
-      "MLAlgorithm should be constructible with a data::DatasetInfo parameter");
+      "The given MLAlgorithm is not constructible with a data::DatasetInfo "
+      "parameter and the passed arguments");
 
   static const bool constructableWithoutDatasetInfo =
       std::is_constructible<MLAlgorithm, const MatType&, const PredictionsType&,

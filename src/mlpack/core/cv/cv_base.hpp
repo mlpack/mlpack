@@ -153,7 +153,7 @@ class CVBase
       MetaInfoExtractor<MLAlgorithm, MatType, PredictionsType, WeightsType>;
 
   static_assert(MIE::IsSupported,
-      "MLAlgorithm should be supported by MetaInfoExtractor");
+      "The given MLAlgorithm is not supported by MetaInfoExtractor");
 
   /**
    * A set of methods for extracting input data arguments. It is supposed to be
