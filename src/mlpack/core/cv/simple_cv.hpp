@@ -53,7 +53,7 @@ class SimpleCV :
    *     constructors for reference).
    */
   template<typename... CVBaseArgs>
-  SimpleCV(const float validationSize, const CVBaseArgs&... args);
+  SimpleCV(const double validationSize, const CVBaseArgs&... args);
 
   /**
    * Train on the training set and assess performance on the validation set by
@@ -101,7 +101,7 @@ class SimpleCV :
   template<typename DataArgsTupleT,
            typename = typename std::enable_if<
                std::tuple_size<DataArgsTupleT>::value == 2>::type>
-  void Init(const float validationSize, const DataArgsTupleT& dataArgsTuple);
+  void Init(const double validationSize, const DataArgsTupleT& dataArgsTuple);
 
   /**
    * Initialize with weights.
@@ -110,17 +110,17 @@ class SimpleCV :
            typename = typename std::enable_if<
                std::tuple_size<DataArgsTupleT>::value == 3>::type,
            typename = void>
-  void Init(const float validationSize, const DataArgsTupleT& dataArgsTuple);
+  void Init(const double validationSize, const DataArgsTupleT& dataArgsTuple);
 
   /**
    * Initialize training and validation sets.
    */
-  void InitTrainingAndValidationSets(const float validationSize);
+  void InitTrainingAndValidationSets(const double validationSize);
 
   /**
    * Calculate the number of training points and assert it is legitimate.
    */
-  size_t CalculateAndAssertNumberOfTrainingPoints(const float validationSize);
+  size_t CalculateAndAssertNumberOfTrainingPoints(const double validationSize);
 
   /**
    * Train and run evaluation in the case of non-weighted learning.

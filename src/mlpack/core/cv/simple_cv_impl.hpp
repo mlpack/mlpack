@@ -27,7 +27,7 @@ SimpleCV<MLAlgorithm,
          Metric,
          MatType,
          PredictionsType,
-         WeightsType>::SimpleCV(const float validationSize,
+         WeightsType>::SimpleCV(const double validationSize,
                                 const CVBaseArgs&... args) :
     Base(args...)
 {
@@ -78,7 +78,7 @@ void SimpleCV<MLAlgorithm,
               Metric,
               MatType,
               PredictionsType,
-              WeightsType>::Init(const float validationSize,
+              WeightsType>::Init(const double validationSize,
                                  const DataArgsTupleT& dataArgsTuple)
 {
   xs = std::get<0>(dataArgsTuple);
@@ -101,7 +101,7 @@ void SimpleCV<MLAlgorithm,
               Metric,
               MatType,
               PredictionsType,
-              WeightsType>::Init(const float validationSize,
+              WeightsType>::Init(const double validationSize,
                                  const DataArgsTupleT& dataArgsTuple)
 {
   xs = std::get<0>(dataArgsTuple);
@@ -125,7 +125,7 @@ void SimpleCV<MLAlgorithm,
               MatType,
               PredictionsType,
               WeightsType>::InitTrainingAndValidationSets(
-    const float validationSize)
+    const double validationSize)
 {
   size_t numberOfTrainingPoints = CalculateAndAssertNumberOfTrainingPoints(
       validationSize);
@@ -147,7 +147,7 @@ size_t SimpleCV<MLAlgorithm,
                 MatType,
                 PredictionsType,
                 WeightsType>::CalculateAndAssertNumberOfTrainingPoints(
-    const float validationSize)
+    const double validationSize)
 {
   if (validationSize < 0.0F || validationSize > 1.0F)
     throw std::invalid_argument("SimpleCV: the validationSize parameter should "
