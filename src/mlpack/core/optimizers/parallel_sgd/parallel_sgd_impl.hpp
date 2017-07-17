@@ -102,8 +102,8 @@ double ParallelSGD<DecayPolicyType>::Optimize(
         for (size_t i = 0; i < gradient.n_cols; ++i)
         {
           // Iterate over the non-zero elements.
-          for (arma::sp_mat::iterator cur = gradient.begin_col(i); cur != gradient.end_col(i);
-              ++cur)
+          for (arma::sp_mat::iterator cur = gradient.begin_col(i);
+              cur != gradient.end_col(i); ++cur)
           {
             #pragma omp atomic
             iterate(cur.row(), i) -= stepSize * (*cur);
