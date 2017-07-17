@@ -413,6 +413,10 @@ std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
     const PredictionsType& ys,
     const MLAlgorithmArgs&... args)
 {
+  if (!isDatasetInfoPassed)
+    throw std::invalid_argument(
+        "The given MLAlgorithm requires a data::DatasetInfo parameter");
+
   return std::unique_ptr<MLAlgorithm>(
       new MLAlgorithm(xs, datasetInfo, ys, numClasses, args...));
 }
