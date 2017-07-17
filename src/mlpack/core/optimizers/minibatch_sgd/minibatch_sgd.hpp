@@ -131,7 +131,8 @@ class MiniBatchSGDType
    */
   template<typename DecomposableFunctionType>
   double Optimize(DecomposableFunctionType& function,
-                  arma::mat& iterate);
+                  arma::mat& iterate,
+                  bool resetPolicy);
 
   //! Get the batch size.
   size_t BatchSize() const { return batchSize; }
