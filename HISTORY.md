@@ -1,3 +1,10 @@
+### mlpack 2.2.4
+###### 2017-07-18
+  * Speed and memory improvements for DBSCAN. --single_mode can now be used for
+    situations where previously RAM usage was too high.
+
+  * Fix bug in CF causing incorrect recommendations.
+
 ### mlpack 2.2.3
 ###### 2017-05-24
   * Bug fix for --predictions_file in mlpack_decision_tree program.
