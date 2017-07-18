@@ -15,6 +15,7 @@
 #define MLPACK_METHODS_RL_POLICY_AGGREGATED_POLICY_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/dists/discrete_distribution.hpp>
 
 namespace mlpack {
 namespace rl {
@@ -36,9 +37,9 @@ class AggregatedPolicy
    *     and the sum of its element is equal to 1.
    */
   AggregatedPolicy(std::vector<PolicyType> policies,
-                   arma::colvec distribution) :
+                   const arma::colvec& distribution) :
       policies(std::move(policies)),
-      distribution(std::move(distribution))
+      sampler({distribution})
   { /* Nothing to do here. */ };
 
   /**
@@ -52,7 +53,8 @@ class AggregatedPolicy
   {
     if (deterministic)
       return policies.front().Sample(actionValue, true);
-    return policies[RandomIndex(distribution)].Sample(actionValue, false);
+    size_t selected = arma::as_scalar(sampler.Random());
+    return policies[selected].Sample(actionValue, false);
   }
 
   /**
@@ -68,8 +70,8 @@ class AggregatedPolicy
   //! Locally-stored child policies.
   std::vector<PolicyType> policies;
 
-  //! Locally-stored distribution for each child policy.
-  arma::colvec distribution;
+  //! Locally-stored sampler under the given distribution.
+  distribution::DiscreteDistribution sampler;
 };
 
 } // namespace rl
