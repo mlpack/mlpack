@@ -57,7 +57,7 @@ void AsyncLearning<
   NetworkType,
   UpdaterType,
   PolicyType
->::Train(const Measure& measure)
+>::Train(Measure& measure)
 {
   /**
    * OpenMP doesn't support shared class member variables.

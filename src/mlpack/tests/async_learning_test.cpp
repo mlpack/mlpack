@@ -63,9 +63,8 @@ BOOST_AUTO_TEST_CASE(OneStepQLearningTest)
 
   std::vector<double> rewards;
   size_t testEpisodes = 0;
-
-  agent.Train([&rewards, &testEpisodes](double reward) {
-    size_t maxEpisode = 100000;
+  auto measure = [&rewards, &testEpisodes](double reward) {
+    size_t maxEpisode = 20000;
     if (testEpisodes > maxEpisode)
       BOOST_REQUIRE(false);
     testEpisodes++;
@@ -80,7 +79,10 @@ BOOST_AUTO_TEST_CASE(OneStepQLearningTest)
     if (avgReward > 60)
       return true;
     return false;
-  });
+  };
+
+  agent.Train(measure);
+  Log::Debug << "Total test episodes: " << testEpisodes << std::endl;
 }
 
 BOOST_AUTO_TEST_SUITE_END();

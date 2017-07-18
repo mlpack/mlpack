@@ -84,7 +84,7 @@ class AsyncLearning
    * @param measure The measurement instance.
    */
   template <typename Measure>
-  void Train(const Measure& measure);
+  void Train(Measure& measure);
 
  private:
   //! Locally-stored hyper-parameters.
