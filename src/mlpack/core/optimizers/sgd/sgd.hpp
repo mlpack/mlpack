@@ -112,14 +112,11 @@ class SGD
    * @tparam DecomposableFunctionType Type of the function to be optimized.
    * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
-   * @param resetPolicy Flag indicating whether update policy
-   *                   should be reset before running optimization.
    * @return Objective value of the final point.
    */
   template<typename DecomposableFunctionType>
   double Optimize(DecomposableFunctionType& function,
-                  arma::mat& iterate,
-                  bool resetPolicy = true);
+                  arma::mat& iterate);
 
   //! Get the step size.
   double StepSize() const { return stepSize; }

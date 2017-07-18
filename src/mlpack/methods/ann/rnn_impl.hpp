@@ -85,8 +85,7 @@ template<typename OptimizerType>
 void RNN<OutputLayerType, InitializationRuleType>::Train(
     arma::mat predictors,
     arma::mat responses,
-    OptimizerType& optimizer,
-    bool resetPolicy)
+    OptimizerType& optimizer)
 {
   numFunctions = responses.n_cols;
 
@@ -104,7 +103,7 @@ void RNN<OutputLayerType, InitializationRuleType>::Train(
 
   // Train the model.
   Timer::Start("rnn_optimization");
-  const double out = optimizer.Optimize(*this, parameter, resetPolicy);
+  const double out = optimizer.Optimize(*this, parameter);
   Timer::Stop("rnn_optimization");
 
   Log::Info << "RNN::RNN(): final objective of trained model is " << out

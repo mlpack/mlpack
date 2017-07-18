@@ -142,16 +142,12 @@ class HardCodedAddModel {
   void Predict(arma::mat& predictors,
                arma::mat& labels)
   {
-    assert(predictors.n_elem % 3 == 0);
-    predictors = predictors.t();
-    predictors.reshape(3, predictors.n_elem / 3);
-    assert(predictors.n_rows == 3);
     int num_A = 0, num_B = 0;
     bool num = false; // true iff we have already seen the separating symbol
-    size_t len = predictors.n_cols;
+    size_t len = predictors.n_elem;
     size_t cnt = 0;
     for (size_t i = 0; i < len; ++i) {
-      double digit = arma::as_scalar(arma::find(1 == predictors.col(i), 1));
+      double digit = predictors.at(i);
       if (digit != 0 && digit != 1)
       {
         // We should not see two separators
@@ -184,9 +180,9 @@ class HardCodedAddModel {
       binary_seq.push_back(0);
     }
     size_t tot_len = binary_seq.size();
-    labels = arma::zeros(3, tot_len);
+    labels = arma::zeros(tot_len);
     for (size_t j = 0; j < tot_len; ++j) {
-      labels.at(binary_seq[j], j) = 1;
+      labels.at(j) = binary_seq[j];
     }
     labels.reshape(predictors.n_elem, 1);
   }

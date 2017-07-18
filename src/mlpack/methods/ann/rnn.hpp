@@ -105,15 +105,12 @@ class RNN
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
-   * @param resetPolicy Flag indicating whether update policy
-   *                   should be reset before running network training.
    * @param optimizer Instantiated optimizer used to train the model.
    */
   template<typename OptimizerType>
   void Train(arma::mat predictors,
              arma::mat responses,
-             OptimizerType& optimizer,
-             bool reset = true);
+             OptimizerType& optimizer);
 
   /**
    * Train the recurrent neural network on the given input data. By default, the

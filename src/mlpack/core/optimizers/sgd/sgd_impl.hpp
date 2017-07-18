@@ -44,8 +44,7 @@ template<typename UpdatePolicyType>
 template<typename DecomposableFunctionType>
 double SGD<UpdatePolicyType>::Optimize(
     DecomposableFunctionType& function,
-    arma::mat& iterate,
-    bool resetPolicy)
+    arma::mat& iterate)
 {
   // Find the number of functions to use.
   const size_t numFunctions = function.NumFunctions();
@@ -111,8 +110,17 @@ double SGD<UpdatePolicyType>::Optimize(
     else
       function.Gradient(iterate, currentFunction, gradient);
 
-    // Time to do something really dirty.
-    gradient.transform( [](double val) { return std::min(std::max(val, -3.), 3.); } );
+    // Clip the gradient.
+    if (clipGradient)
+    {
+      gradient.transform
+      (
+        [&](double val)
+        {
+          return std::min(std::max(val, minGradient), maxGradient);
+        }
+      );
+    }
 
     // Use the update policy to take a step.
     updatePolicy.Update(iterate, stepSize, gradient);
