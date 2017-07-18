@@ -113,7 +113,7 @@ void CF::GetRecommendations(const size_t numRecs,
 
 
       // Is the estimated value better than the worst candidate?
-      if (averages[i] > pqueue.top().first)
+      if (averages[j] > pqueue.top().first)
       {
         Candidate c = std::make_pair(averages[j], j);
         pqueue.pop();
