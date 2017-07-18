@@ -3,17 +3,9 @@ cmake_minimum_required(VERSION 2.8)
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  all_dimension_select.hpp
-  decision_tree.hpp
-  decision_tree_impl.hpp
-  all_categorical_split.hpp
-  all_categorical_split_impl.hpp
-  best_binary_numeric_split.hpp
-  best_binary_numeric_split_impl.hpp
-  gini_gain.hpp
-  information_gain.hpp
-  multiple_random_dimension_select.hpp
-  random_dimension_select.hpp
+  bootstrap.hpp
+  random_forest.hpp
+  random_forest_impl.hpp
 )
 
 # Add directory name to sources.
@@ -25,4 +17,4 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_cli_executable(decision_tree)
+add_cli_executable(random_forest)
