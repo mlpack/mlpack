@@ -58,21 +58,6 @@ inline double Random()
 }
 
 /**
- * Generate a random index within [0, N) under the given distribution,
- * where N is equal to the size of the distribution.
- *
- * @param distribution The probability distribution of each index, user must
- *   make sure the sum of its elements is 1.
- * @return the random index.
- */
-inline size_t RandomIndex(const arma::colvec& distribution)
-{
-  std::discrete_distribution<size_t> gen(distribution.cbegin(),
-      distribution.cend());
-  return gen(randGen);
-}
-
-/**
  * Generates a uniform random number in the specified range.
  */
 inline double Random(const double lo, const double hi)
