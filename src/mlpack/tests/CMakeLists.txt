@@ -128,6 +128,7 @@ add_custom_command(TARGET mlpack_test
 
 # The list of long running parallel tests
 set(parallel_tests
+  "AsyncLearningTest"
   "SdpPrimalDualTest;SVDIncrementalTest;SVDBatchTest;"
   "LocalCoordinateCodingTest;FeedForwardNetworkTest;SparseAutoencoderTest;"
   "GMMTest;CFTest;ConvolutionalNetworkTest;HMMTest;LARSTest;"

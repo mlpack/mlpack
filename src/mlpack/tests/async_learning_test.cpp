@@ -53,7 +53,7 @@ BOOST_AUTO_TEST_CASE(OneStepQLearningTest)
   TrainingConfig config;
   config.StepSize() = 0.0001;
   config.Discount() = 0.99;
-  config.NumOfWorkers() = 16;
+  config.NumOfWorkers() = 4;
   config.UpdateInterval() = 6;
   config.StepLimit() = 200;
   config.TargetNetworkSyncInterval() = 200;
