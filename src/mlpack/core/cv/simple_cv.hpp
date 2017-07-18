@@ -33,10 +33,10 @@ namespace cv {
  *
  * @code
  * // 100-point 5-dimensional random dataset.
- * arma::mat data = arma::randu<arma::mat>(5, 100);;
+ * arma::mat data = arma::randu<arma::mat>(5, 100);
  * // Random labels in the [0, 4] interval.
  * arma::Row<size_t> labels =
- *     arma::randi<arma::Row<size_t>>(100, arma::distr_param(0, 4));;
+ *     arma::randi<arma::Row<size_t>>(100, arma::distr_param(0, 4));
  * size_t numClasses = 5;
  *
  * double validationSize = 0.2;
