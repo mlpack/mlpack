@@ -87,7 +87,7 @@ class SimpleCV :
    *     (in addition to the passed ones in the SimpleCV constructor).
    */
   template<typename... MLAlgorithmArgs>
-  double Evaluate(const MLAlgorithmArgs& ...args);
+  double Evaluate(const MLAlgorithmArgs&... args);
 
   //! Access and modify the last trained model.
   MLAlgorithm& Model();
@@ -149,19 +149,19 @@ class SimpleCV :
   /**
    * Train and run evaluation in the case of non-weighted learning.
    */
-  template<typename...MLAlgorithmArgs,
+  template<typename... MLAlgorithmArgs,
            bool Enabled = !Base::MIE::SupportsWeights,
            typename = typename std::enable_if<Enabled>::type>
-  double TrainAndEvaluate(const MLAlgorithmArgs& ...mlAlgorithmArgs);
+  double TrainAndEvaluate(const MLAlgorithmArgs&... args);
 
   /**
    * Train and run evaluation in the case of supporting weighted learning.
    */
-  template<typename...MLAlgorithmArgs,
+  template<typename... MLAlgorithmArgs,
            bool Enabled = Base::MIE::SupportsWeights,
            typename = typename std::enable_if<Enabled>::type,
            typename = void>
-  double TrainAndEvaluate(const MLAlgorithmArgs& ...mlAlgorithmArgs);
+  double TrainAndEvaluate(const MLAlgorithmArgs&... args);
 
   /**
    * Get the specified submatrix without coping the data.
