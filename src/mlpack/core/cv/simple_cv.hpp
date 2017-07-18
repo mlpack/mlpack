@@ -31,8 +31,12 @@ namespace cv {
  *
  * For example, SoftmaxRegression can be validated in the following way.
  *
- * arma::mat data = ...;
- * arma::Row<size_t> labels = ...;
+ * @code
+ * // 100-point 5-dimensional random dataset.
+ * arma::mat data = arma::randu<arma::mat>(5, 100);;
+ * // Random labels in the [0, 4] interval.
+ * arma::Row<size_t> labels =
+ *     arma::randi<arma::Row<size_t>>(100, arma::distr_param(0, 4));;
  * size_t numClasses = 5;
  *
  * double validationSize = 0.2;
@@ -41,6 +45,7 @@ namespace cv {
  *
  * double lambda = 0.1;
  * double softmaxAccuracy = cv.Evaluate(lambda);
+ * @endcode
  *
  * In the example above, 80% of the passed dataset will be used for training,
  * and remaining 20% will be used for calculating the accuracy metric.
