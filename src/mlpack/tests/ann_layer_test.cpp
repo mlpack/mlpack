@@ -785,7 +785,6 @@ BOOST_AUTO_TEST_CASE(GradientLSTMLayerTest)
  */
 BOOST_AUTO_TEST_CASE(GradientGRULayerTest)
 {
-  // GRU function gradient instantiation.
   struct GradientFunction
   {
     GradientFunction()
@@ -798,6 +797,49 @@ BOOST_AUTO_TEST_CASE(GradientGRULayerTest)
       model->Add<IdentityLayer<> >();
       model->Add<Linear<> >(1, 10);
       model->Add<GRU<> >(10, 3, rho);
+      model->Add<LogSoftMax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      arma::mat output;
+      double error = model->Evaluate(model->Parameters(), 0);
+      model->Gradient(model->Parameters(), 0, gradient);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    RNN<NegativeLogLikelihood<> >* model;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+}
+
+/**
+ * Check if the gradients computed by GRU cell are close enough to the
+ * approximation of the gradients.
+ */
+BOOST_AUTO_TEST_CASE(GradientMemoryHeadLayerTest)
+{
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randu(5, 1);
+      target = arma::mat("1; 1; 1; 1; 1");
+      const size_t rho = 5;
+
+      model = new RNN<NegativeLogLikelihood<> >(input, target, rho);
+      model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(1, 10);
+      model->Add<MemoryHead<> >(10, 3, 3, 1);
       model->Add<LogSoftMax<> >();
     }
 
@@ -876,6 +918,44 @@ BOOST_AUTO_TEST_CASE(ForwardGRULayerTest)
   BOOST_REQUIRE_LE(arma::as_scalar(arma::trans(output) * expectedOutput), 1e-2);
 }
 
+BOOST_AUTO_TEST_CASE(ForwardMemoryHeadTest)
+{
+  MemoryHead<> mh(5, 5, 5, 1);
+
+  arma::mat memory = arma::ones(5, 5);
+  arma::mat input = arma::ones(5, 1);
+
+  NetworkInitialization<ConstInitialization> networkInit(ConstInitialization(1));
+  networkInit.Initialize(mh.Model(), mh.Parameters());
+
+  arma::mat weights;
+  mh.Forward(std::move(input), std::move(memory), std::move(weights));
+
+  // approximate k_t gate output
+  arma::mat k_t = arma::ones<arma::mat>(5, 1);
+
+  double b_t = 6.0;
+  double g_t = 1.0;
+  double gamma_t = 6.0;
+
+  arma::mat cosSimilarity = arma::normalise(memory, 1) * k_t /
+    arma::norm(k_t);
+
+  arma::mat w_c = arma::exp(b_t * cosSimilarity);
+  w_c = w_c / arma::as_scalar(arma::sum(arma::sum(w_c)));
+
+  // Build w_g with g_t
+  arma::mat w_g = g_t * w_c;
+
+  arma::mat shiftMatrix = arma::ones<arma::mat>(5, 5);
+  arma::mat w_tilde = arma::trans(arma::trans(w_g) * shiftMatrix);
+
+  arma::mat w_dash = arma::pow(w_tilde, gamma_t + 1);
+  w_dash = w_dash / arma::as_scalar(arma::sum(arma::sum(w_dash)));
+
+  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::trans(arma::normalise(w_dash)) *
+    arma::normalise(weights)), 1, 1e-2);
+}
 
 /**
  * Simple concat module test.
