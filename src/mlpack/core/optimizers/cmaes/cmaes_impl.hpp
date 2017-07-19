@@ -1,6 +1,7 @@
 /**
  * @file cmaes_impl.hpp
- * @author Kartik Nighania (GSoC 17 mentor Marcus Edel)
+ * @author Marcus Edel
+ * @author Kartik Nighania
  *
  * Covariance Matrix Adaptation Evolution Strategy
  *
@@ -16,6 +17,7 @@
 
 namespace mlpack {
 namespace optimization {
+
 CMAES::CMAES(int objectDim,
 arma::mat& start, arma::mat& stdDivs,
 double iters, double evalDiff)
@@ -188,24 +190,6 @@ Log::Warn << "WARNING: initialStandardDeviations undefined."
     return funs;
   }
 
-
-void CMAES::sortIndex(const arma::vec rgFunVal,
-arma::vec& iindex, int n)
-  {
-    int i, j;
-    for (i = 1, iindex[0] = 0; i < n; ++i)
-    {
-      for (j = i; j > 0; --j)
-      {
-        if (rgFunVal[iindex[j - 1]] < rgFunVal[i])
-          break;
-        iindex[j] = iindex[j - 1];
-      }
-      iindex[j] = i;
-    }
-  }
-
-
   void CMAES::adaptC2(const int hsig)
   {
     bool diag = diagonalCov == 1 || diagonalCov >= gen;
@@ -248,26 +232,6 @@ arma::vec& iindex, int n)
       // update maximal and minimal diagonal value
       maxdiagC = arma::max(C.diag());
       mindiagC = arma::min(C.diag());
-    }
-  }
-
-
-  /**
-   * Adds the mutation sigma*B*(D*z).
-   * @param x Search space vector.
-   * @param eps Mutation factor.
-   */
-
-  void CMAES::addMutation(double* x, double eps)
-  {
-    for (int i = 0; i < N; ++i)
-      tempRandom[i] = rgD[i] * mlpack::math::RandNormal();
-    for (int i = 0; i < N; ++i)
-    {
-      double sum = 0.0;
-      for (int j = 0; j < N; ++j)
-        sum += B(i, j)*tempRandom[j];
-      x[i] = xmean[i] + eps*sigma*sum;
     }
   }
 
@@ -531,15 +495,13 @@ bool CMAES::testForTermination()
     int iAchse, iKoo;
     int diag = diagonalCov == 1 || diagonalCov >= gen;
 
-    bool end = false;
-
     // function value reached
     if ((gen > 1 || state > SAMPLED) && stStopFitness.flg &&
         functionValues[(int)index[0]] <= stStopFitness.val)
     {
       Log::Info << "Fitness: function value " << functionValues[(int)index[0]]
           << " <= stopFitness (" << stStopFitness.val << ")" << std::endl;
-      end = true;
+      return true;
     }
 
     // TolFun
@@ -553,7 +515,7 @@ bool CMAES::testForTermination()
     {
        Log::Info << "TolFun: function value differences " << range
           << " < stopTolFun=" << stopTolFun << std::endl;
-       end = true;
+       return true;
     }
 
     // TolFunHist
@@ -564,7 +526,7 @@ bool CMAES::testForTermination()
       {
          Log::Info << "TolFunHist: history of function value changes " << range
             << " stopTolFunHist=" << stopTolFunHist << std::endl;
-         end = true;
+         return true;
       }
     }
 
@@ -577,7 +539,7 @@ bool CMAES::testForTermination()
     {
        Log::Info << "TolX: object variable changes below "
        << stopTolX << std::endl;
-       end = true;
+       return true;
     }
 
     // TolUpX
@@ -589,7 +551,7 @@ bool CMAES::testForTermination()
             << stopTolUpXFactor << ", larger initial standard"
             << "deviation recommended."
             << std::endl;
-            end = true;
+            return true;
         break;
       }
     }
@@ -601,7 +563,7 @@ bool CMAES::testForTermination()
        dMaxSignifKond << " reached. maxEW=" << maxEW <<  ",minEW="
        << minEW << ",maxdiagC=" << maxdiagC << ",mindiagC="
        << mindiagC << std::endl;
-        end = true;
+        return true;
     }
 
     // Principal axis i has no effect on xmean
@@ -621,7 +583,7 @@ bool CMAES::testForTermination()
            Log::Info << "NoEffectAxis: standard deviation 0.1*" << (fac / 0.1)
            << " in principal axis " << iAchse << " without effect"
            << std::endl;
-           end = true;
+           return true;
           break;
         }
       }
@@ -635,7 +597,7 @@ bool CMAES::testForTermination()
          Log::Info << "NoEffectCoordinate: standard deviation 0.2*"
             << (sigma*std::sqrt(C(iKoo , iKoo))) << " in coordinate " << iKoo
             << " without effect" << std::endl;
-        end = true;
+        return true;
         break;
       }
     }
@@ -644,16 +606,16 @@ bool CMAES::testForTermination()
     {
        Log::Info << "MaxFunEvals: conducted function evaluations " << countevals
           << " >= " << stopMaxFunEvals << std::endl;
-       end = true;
+       return true;
     }
     if (gen >= stopMaxIter)
     {
        Log::Info << "MaxIter: number of iterations " << gen << " >= "
           << stopMaxIter << std::endl;
-      end = true;
+      return true;
     }
 
-    return end;
+    return false;
   }
 
   /**
@@ -688,8 +650,6 @@ void CMAES::updateEigensystem(bool force)
     eigensysIsUptodate = true;
     genOfEigensysUpdate = gen;
   }
-
-
 
 } // namespace optimization
 } // namespace mlpack
