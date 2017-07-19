@@ -28,6 +28,7 @@ add_executable(mlpack_test
   emst_test.cpp
   fastmks_test.cpp
   feedforward_network_test.cpp
+  gan_test.cpp
   gmm_test.cpp
   gradient_descent_test.cpp
   hmm_test.cpp
