@@ -189,7 +189,7 @@ double dMaxSignifKond;
 //! objective function evaluations
 double countevals;
 
-//! eigen value decomposition and update 
+//! eigen value decomposition and update
 void updateEigensystem(bool force);
 //! adapt the covariance matrix to the new distribution
 void adaptC2(const int hsig);
