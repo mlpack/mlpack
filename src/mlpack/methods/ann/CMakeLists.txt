@@ -1,6 +1,7 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  gan.hpp
   ffn.hpp
   ffn_impl.hpp
   rnn.hpp

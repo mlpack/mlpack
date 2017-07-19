@@ -32,11 +32,7 @@ SpikeSlabLayer<InputDataType, OutputDataType>::SpikeSlabLayer(
     poolSize(poolSize),
     radius(radius),
     typeVisible(typeVisible)
-{
-  weights.set_size(
-      inSize * ((outSize * inSize) + (poolSize * poolSize) + 1) + outSize,
-      outSize * outSize);
-}
+{}
 
 template<typename InputDataType, typename OutputDataType>
 void SpikeSlabLayer<InputDataType, OutputDataType>::Reset()

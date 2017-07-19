@@ -23,9 +23,16 @@ class ssRBM
 {
  public:
   // Intialise the visible and hiddenl layer of the network
-  ssRBM(SpikeSlabLayer<> visible, SpikeSlabLayer<> hidden):
+  ssRBM(SpikeSlabLayer<>& visible, SpikeSlabLayer<>& hidden):
   visible(visible), hidden(hidden)
   {
+    std::cout << "in the ssRBM" << std::endl;
+    size_t inSize = visible.InSize();
+    size_t outSize = visible.OutSize();
+    size_t poolSize = visible.PoolSize();
+    visible.Parameters().set_size(
+      inSize * ((outSize * inSize) + (poolSize * poolSize) + 1) + outSize,
+      outSize * outSize);
     parameter.set_size(visible.Parameters().n_elem, 1);
     positiveGradient.set_size(visible.Parameters().n_elem, 1);
     negativeGradient.set_size(visible.Parameters().n_elem, 1);
@@ -137,6 +144,7 @@ class ssRBM
 
   double Evaluate(arma::mat& predictors, size_t i)
   {
+    // Return 0 here since we don't have evaluate in case of persistence
     return 0;
   }
 
