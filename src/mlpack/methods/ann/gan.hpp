@@ -47,8 +47,7 @@ class GenerativeAdversarialNetwork
       Generator& generator,
       Discriminator& discriminator,
       NoiseFunction& noise,
-      size_t batchSize)
-      {};
+      size_t batchSize);
 
   void Reset();
 
@@ -100,16 +99,20 @@ class GenerativeAdversarialNetwork
   IntializerType  initializeRule;
   //! Locally stored parameters of the network
   arma::mat parameter;
+  //! Locally stored generator
+  Generator& generator;
+  //! Locally stored discriminator
+  Discriminator& discriminator;
   //! Locally stored number of data points
   size_t numFunctions;
   //! Locally stored trainGenerator parmaeter
   bool trainGenerator;
   //! Locally stored noise function parameter
   NoiseFunction noise;
-  //! Locally stored reset parmaeter
-  bool reset;
   //! Locally stored batch size parameter
   size_t batchSize;
+  //! Locally stored reset parmaeter
+  bool reset;
   //! Locally stored parameter for training data
   arma::mat predictors;
   //! Locally stored responses
@@ -124,10 +127,6 @@ class GenerativeAdversarialNetwork
   arma::mat tempLabels;
   //! Locally-stored output parameter visitor.
   OutputParameterVisitor outputParameterVisitor;
-  //! Locally stored generator
-  Generator& generator;
-  //! Locally stored discriminator
-  Discriminator& discriminator;
   //! Locally stored gradient parameters
   arma::mat gradient;
   //! Locally stored gradient for discriminator
@@ -137,6 +136,10 @@ class GenerativeAdversarialNetwork
   //! Locally stored output of the generator network
   arma::mat ganOutput;
 };
-}
-}
-# endif
+} // namespace ann
+} // namespace mlpack
+
+// Include implementation.
+#include "gan_impl.hpp"
+
+#endif
