@@ -332,6 +332,11 @@ class DecisionTree :
   template<typename VecType>
   size_t CalculateDirection(const VecType& point) const;
 
+  /**
+   * Get the number of classes in the tree.
+   */
+  size_t NumClasses() const;
+
  private:
   //! The vector of children.
   std::vector<DecisionTree*> children;

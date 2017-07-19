@@ -222,6 +222,7 @@
  *   - CodeAi (deep learning bug detector) <benjamin.bales@assrc.us>
  *   - Franciszek Stokowacki <franek.stokowacki@gmail.com>
  *   - Samikshya Chand <samikshya289@gmail.com>
+ *   - N Rajiv Vaidyanathan <rajivvaidyanathan4@gmail.com>
  */
 
 // First, include all of the prerequisites.
