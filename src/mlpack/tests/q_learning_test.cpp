@@ -36,8 +36,8 @@ BOOST_AUTO_TEST_SUITE(QLearningTest);
 BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
 {
   // Set up the network.
-  FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
-      GaussianInitialization(0, 0.001));
+  FFN<MeanSquaredError<>, GaussianInitialization<>> model(MeanSquaredError<>(),
+      GaussianInitialization<>(0, 0.001));
   model.Add<Linear<>>(4, 128);
   model.Add<ReLULayer<>>();
   model.Add<Linear<>>(128, 128);
@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
   RandomReplay<CartPole> replayMethod(10, 10000);
 
   // Set up DQN agent.
-  QLearning<CartPole, decltype(model), AdamUpdate, decltype(policy)>
+  QLearning<CartPole, decltype(model), AdamUpdate<>, decltype(policy)>
       agent(std::move(model), 0.01, 0.9, std::move(policy),
           std::move(replayMethod), 100, 100, false, 200);
 
@@ -101,8 +101,8 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
   for (size_t trial = 0; trial < 4; ++trial)
   {
     // Set up the network.
-    FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
-        GaussianInitialization(0, 0.001));
+    FFN<MeanSquaredError<>, GaussianInitialization<>> model(MeanSquaredError<>(),
+        GaussianInitialization<>(0, 0.001));
     model.Add<Linear<>>(4, 20);
     model.Add<ReLULayer<>>();
     model.Add<Linear<>>(20, 20);

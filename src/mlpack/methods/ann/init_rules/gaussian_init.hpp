@@ -25,6 +25,9 @@ namespace ann /** Artificial Neural Network. */ {
 /**
  * This class is used to initialize weigth matrix with a gaussian.
  */
+template <
+    typename DataType = arma::mat
+>
 class GaussianInitialization
 {
  public:
@@ -47,13 +50,13 @@ class GaussianInitialization
    * @param rows Number of rows.
    * @param cols Number of columns.
    */
-  void Initialize(arma::mat& W,
+  void Initialize(DataType& W,
                   const size_t rows,
                   const size_t cols)
   {
     if (W.is_empty())
     {
-      W = arma::mat(rows, cols);
+      W = DataType(rows, cols);
     }
     W.imbue( [&]() { return arma::as_scalar(RandNormal(mean, variance)); } );
   }

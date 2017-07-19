@@ -184,7 +184,7 @@ BOOST_AUTO_TEST_CASE(GaussianInitTest)
   arma::mat weights;
   arma::cube weights3d;
 
-  GaussianInitialization t(0, 0.2);
+  GaussianInitialization<> t(0, 0.2);
 
   t.Initialize(weights, rows, cols);
   t.Initialize(weights3d, rows, cols, slices);
@@ -274,7 +274,7 @@ BOOST_AUTO_TEST_CASE(NetworkInitTest)
 
   // Create a simple network and use the GaussianInitialization rule to
   // initialize the network parameters.
-  FFN<NegativeLogLikelihood<>, GaussianInitialization> gaussianModel;
+  FFN<NegativeLogLikelihood<>, GaussianInitialization<>> gaussianModel;
   gaussianModel.Add<IdentityLayer<> >();
   gaussianModel.Add<Linear<> >(5, 5);
   gaussianModel.Add<Linear<> >(5, 2);

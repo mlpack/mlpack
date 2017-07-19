@@ -41,13 +41,14 @@ namespace ann /** Artificial Neural Network. */ {
  */
 template<
   typename OutputLayerType = NegativeLogLikelihood<>,
-  typename InitializationRuleType = RandomInitialization
+  typename InitializationRuleType = RandomInitialization,
+  typename MatrixType = arma::mat
 >
 class FFN
 {
  public:
   //! Convenience typedef for the internal model construction.
-  using NetworkType = FFN<OutputLayerType, InitializationRuleType>;
+  using NetworkType = FFN<OutputLayerType, InitializationRuleType, MatrixType>;
 
   /**
    * Create the FFN object with the given predictors and responses set (this is
@@ -89,8 +90,8 @@ class FFN
    * @param initializeRule Optional instantiated InitializationRule object
    *        for initializing the network parameter.
    */
-  FFN(arma::mat predictors,
-      arma::mat responses,
+  FFN(MatrixType predictors,
+      MatrixType responses,
       OutputLayerType outputLayer = OutputLayerType(),
       InitializationRuleType initializeRule = InitializationRuleType());
 
@@ -114,8 +115,8 @@ class FFN
    * @param optimizer Instantiated optimizer used to train the model.
    */
   template<typename OptimizerType>
-  void Train(arma::mat predictors,
-             arma::mat responses,
+  void Train(MatrixType predictors,
+             MatrixType responses,
              OptimizerType& optimizer);
 
   /**
@@ -135,7 +136,7 @@ class FFN
    * @param responses Outputs results from input training variables.
    */
   template<typename OptimizerType = mlpack::optimization::RMSProp>
-  void Train(arma::mat predictors, arma::mat responses);
+  void Train(MatrixType predictors, MatrixType responses);
 
   /**
    * Predict the responses to a given set of predictors. The responses will
@@ -148,7 +149,7 @@ class FFN
    * @param predictors Input predictors.
    * @param results Matrix to put output predictions of responses into.
    */
-  void Predict(arma::mat predictors, arma::mat& results);
+  void Predict(MatrixType predictors, MatrixType& results);
 
   /**
    * Evaluate the feedforward network with the given parameters. This function
@@ -159,7 +160,7 @@ class FFN
    * @param deterministic Whether or not to train or test the model. Note some
    *        layer act differently in training or testing mode.
    */
-  double Evaluate(const arma::mat& parameters,
+  double Evaluate(const MatrixType& parameters,
                   const size_t i,
                   const bool deterministic = true);
 
@@ -172,9 +173,9 @@ class FFN
    * @param i Index of points to use for objective function gradient evaluation.
    * @param gradient Matrix to output gradient into.
    */
-  void Gradient(const arma::mat& parameters,
+  void Gradient(const MatrixType& parameters,
                 const size_t i,
-                arma::mat& gradient);
+                MatrixType& gradient);
 
   /*
    * Add a new module to the model.
@@ -195,9 +196,9 @@ class FFN
   size_t NumFunctions() const { return numFunctions; }
 
   //! Return the initial point for the optimization.
-  const arma::mat& Parameters() const { return parameter; }
+  const MatrixType& Parameters() const { return parameter; }
   //! Modify the initial point for the optimization.
-  arma::mat& Parameters() { return parameter; }
+  MatrixType& Parameters() { return parameter; }
 
   /**
    * Reset the module infomration (weights/parameters).
@@ -218,7 +219,7 @@ class FFN
    * @param inputs The input data.
    * @param results The predicted results.
    */
-  void Forward(arma::mat inputs, arma::mat& results);
+  void Forward(MatrixType inputs, MatrixType& results);
 
   /**
    * Perform the backward pass of the data in real batch mode.
@@ -231,7 +232,7 @@ class FFN
    * @param gradients Computed gradients.
    * @return Training error of the current pass.
    */
-  double Backward(arma::mat targets, arma::mat& gradients);
+  double Backward(MatrixType targets, MatrixType& gradients);
 
  private:
   // Helper functions.
@@ -241,7 +242,7 @@ class FFN
    *
    * @param input Data sequence to compute probabilities for.
    */
-  void Forward(arma::mat&& input);
+  void Forward(MatrixType&& input);
 
   /**
    * Prepare the network for the given data.
@@ -250,7 +251,7 @@ class FFN
    * @param predictors Input data variables.
    * @param responses Outputs results from input data variables.
    */
-  void ResetData(arma::mat predictors, arma::mat responses);
+  void ResetData(MatrixType predictors, MatrixType responses);
 
   /**
    * The Backward algorithm (part of the Forward-Backward algorithm). Computes
@@ -273,7 +274,7 @@ class FFN
   /**
    * Reset the gradient for all modules that implement the Gradient function.
    */
-  void ResetGradients(arma::mat& gradient);
+  void ResetGradients(MatrixType& gradient);
 
   /**
    * Swap the content of this network with given network.
@@ -302,25 +303,25 @@ class FFN
   std::vector<LayerTypes> network;
 
   //! The matrix of data points (predictors).
-  arma::mat predictors;
+  MatrixType predictors;
 
   //! The matrix of responses to the input data points.
-  arma::mat responses;
+  MatrixType responses;
 
   //! Matrix of (trained) parameters.
-  arma::mat parameter;
+  MatrixType parameter;
 
   //! The number of separable functions (the number of predictor points).
   size_t numFunctions;
 
   //! The current error for the backward pass.
-  arma::mat error;
+  MatrixType error;
 
   //! THe current input of the forward/backward pass.
-  arma::mat currentInput;
+  MatrixType currentInput;
 
   //! THe current target of the forward/backward pass.
-  arma::mat currentTarget;
+  MatrixType currentTarget;
 
   //! Locally-stored delta visitor.
   DeltaVisitor deltaVisitor;
@@ -347,16 +348,16 @@ class FFN
   bool deterministic;
 
   //! Locally-stored delta object.
-  arma::mat delta;
+  MatrixType delta;
 
   //! Locally-stored input parameter object.
-  arma::mat inputParameter;
+  MatrixType inputParameter;
 
   //! Locally-stored output parameter object.
-  arma::mat outputParameter;
+  MatrixType outputParameter;
 
   //! Locally-stored gradient parameter.
-  arma::mat gradient;
+  MatrixType gradient;
 
   //! Locally-stored copy visitor
   CopyVisitor copyVisitor;
