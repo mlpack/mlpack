@@ -27,7 +27,11 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 
-template<typename OutputLayerType, typename InitializationRuleType, typename MatrixType>
+template<
+  typename OutputLayerType,
+  typename InitializationRuleType,
+  typename MatrixType
+>
 FFN<OutputLayerType, InitializationRuleType, MatrixType>::FFN(
     OutputLayerType outputLayer, InitializationRuleType initializeRule) :
     outputLayer(std::move(outputLayer)),
@@ -39,7 +43,11 @@ FFN<OutputLayerType, InitializationRuleType, MatrixType>::FFN(
   /* Nothing to do here */
 }
 
-template<typename OutputLayerType, typename InitializationRuleType, typename MatrixType>
+template<
+  typename OutputLayerType,
+  typename InitializationRuleType,
+  typename MatrixType
+>
 FFN<OutputLayerType, InitializationRuleType, MatrixType>::FFN(
     MatrixType predictors,
     MatrixType responses,
@@ -57,14 +65,22 @@ FFN<OutputLayerType, InitializationRuleType, MatrixType>::FFN(
   numFunctions = this->responses.n_cols;
 }
 
-template<typename OutputLayerType, typename InitializationRuleType, typename MatrixType>
+template<
+  typename OutputLayerType,
+  typename InitializationRuleType,
+  typename MatrixType
+>
 FFN<OutputLayerType, InitializationRuleType, MatrixType>::~FFN()
 {
   std::for_each(network.begin(), network.end(),
       boost::apply_visitor(deleteVisitor));
 }
 
-template<typename OutputLayerType, typename InitializationRuleType, typename MatrixType>
+template<
+  typename OutputLayerType,
+  typename InitializationRuleType,
+  typename MatrixType
+>
 void FFN<OutputLayerType, InitializationRuleType, MatrixType>::ResetData(
     MatrixType predictors, MatrixType responses)
 {
@@ -80,7 +96,11 @@ void FFN<OutputLayerType, InitializationRuleType, MatrixType>::ResetData(
   }
 }
 
-template<typename OutputLayerType, typename InitializationRuleType, typename MatrixType>
+template<
+  typename OutputLayerType,
+  typename InitializationRuleType,
+  typename MatrixType
+>
 template<typename OptimizerType>
 void FFN<OutputLayerType, InitializationRuleType, MatrixType>::Train(
       MatrixType predictors,
@@ -98,7 +118,11 @@ void FFN<OutputLayerType, InitializationRuleType, MatrixType>::Train(
       << "." << std::endl;
 }
 
-template<typename OutputLayerType, typename InitializationRuleType, typename MatrixType>
+template<
+  typename OutputLayerType,
+  typename InitializationRuleType,
+  typename MatrixType
+>
 template<typename OptimizerType>
 void FFN<OutputLayerType, InitializationRuleType, MatrixType>::Train(
     MatrixType predictors, MatrixType responses)
@@ -127,7 +151,11 @@ void FFN<OutputLayerType, InitializationRuleType, MatrixType>::Train(
       << "." << std::endl;
 }
 
-template<typename OutputLayerType, typename InitializationRuleType, typename MatrixType>
+template<
+  typename OutputLayerType,
+  typename InitializationRuleType,
+  typename MatrixType
+>
 void FFN<OutputLayerType, InitializationRuleType, MatrixType>::Forward(
     MatrixType inputs, MatrixType& results)
 {
@@ -145,7 +173,11 @@ void FFN<OutputLayerType, InitializationRuleType, MatrixType>::Forward(
   results = boost::apply_visitor(outputParameterVisitor, network.back());
 }
 
-template<typename OutputLayerType, typename InitializationRuleType, typename MatrixType>
+template<
+  typename OutputLayerType,
+  typename InitializationRuleType,
+  typename MatrixType
+>
 double FFN<OutputLayerType, InitializationRuleType, MatrixType>::Backward(
     MatrixType targets, MatrixType& gradients)
 {
@@ -165,7 +197,11 @@ double FFN<OutputLayerType, InitializationRuleType, MatrixType>::Backward(
   return res;
 }
 
-template<typename OutputLayerType, typename InitializationRuleType, typename MatrixType>
+template<
+  typename OutputLayerType,
+  typename InitializationRuleType,
+  typename MatrixType
+>
 void FFN<OutputLayerType, InitializationRuleType, MatrixType>::Predict(
     MatrixType predictors, MatrixType& results)
 {
@@ -200,9 +236,13 @@ void FFN<OutputLayerType, InitializationRuleType, MatrixType>::Predict(
   }
 }
 
-template<typename OutputLayerType, typename InitializationRuleType, typename MatrixType>
+template<
+  typename OutputLayerType,
+  typename InitializationRuleType,
+  typename MatrixType
+>
 double FFN<OutputLayerType, InitializationRuleType, MatrixType>::Evaluate(
-    const MatrixType& /* parameters */, const size_t i, const bool deterministic)
+    const MatrixType& /*parameters*/, const size_t i, const bool deterministic)
 {
   if (parameter.is_empty())
   {
@@ -225,7 +265,11 @@ double FFN<OutputLayerType, InitializationRuleType, MatrixType>::Evaluate(
   return res;
 }
 
-template<typename OutputLayerType, typename InitializationRuleType, typename MatrixType>
+template<
+  typename OutputLayerType,
+  typename InitializationRuleType,
+  typename MatrixType
+>
 void FFN<OutputLayerType, InitializationRuleType, MatrixType>::Gradient(
     const MatrixType& parameters, const size_t i, MatrixType& gradient)
 {
@@ -253,7 +297,11 @@ void FFN<OutputLayerType, InitializationRuleType, MatrixType>::Gradient(
   Gradient();
 }
 
-template<typename OutputLayerType, typename InitializationRuleType, typename MatrixType>
+template<
+  typename OutputLayerType,
+  typename InitializationRuleType,
+  typename MatrixType
+>
 void FFN<OutputLayerType, InitializationRuleType, MatrixType>::ResetParameters()
 {
   ResetDeterministic();
@@ -263,15 +311,24 @@ void FFN<OutputLayerType, InitializationRuleType, MatrixType>::ResetParameters()
   networkInit.Initialize(network, parameter);
 }
 
-template<typename OutputLayerType, typename InitializationRuleType, typename MatrixType>
-void FFN<OutputLayerType, InitializationRuleType, MatrixType>::ResetDeterministic()
+template<
+  typename OutputLayerType,
+  typename InitializationRuleType,
+  typename MatrixType
+>
+void FFN<OutputLayerType, InitializationRuleType,
+         MatrixType>::ResetDeterministic()
 {
   DeterministicSetVisitor deterministicSetVisitor(deterministic);
   std::for_each(network.begin(), network.end(),
       boost::apply_visitor(deterministicSetVisitor));
 }
 
-template<typename OutputLayerType, typename InitializationRuleType, typename MatrixType>
+template<
+  typename OutputLayerType,
+  typename InitializationRuleType,
+  typename MatrixType
+>
 void FFN<OutputLayerType, InitializationRuleType, MatrixType>::ResetGradients(
     MatrixType& gradient)
 {
@@ -283,8 +340,13 @@ void FFN<OutputLayerType, InitializationRuleType, MatrixType>::ResetGradients(
   }
 }
 
-template<typename OutputLayerType, typename InitializationRuleType, typename MatrixType>
-void FFN<OutputLayerType, InitializationRuleType, MatrixType>::Forward(MatrixType&& input)
+template<
+  typename OutputLayerType,
+  typename InitializationRuleType,
+  typename MatrixType
+>
+void FFN<OutputLayerType, InitializationRuleType,
+         MatrixType>::Forward(MatrixType&& input)
 {
   boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
       boost::apply_visitor(outputParameterVisitor, network.front()))),
@@ -340,7 +402,11 @@ void FFN<OutputLayerType, InitializationRuleType, MatrixType>::Forward(MatrixTyp
   }
 }
 
-template<typename OutputLayerType, typename InitializationRuleType, typename MatrixType>
+template<
+  typename OutputLayerType,
+  typename InitializationRuleType,
+  typename MatrixType
+>
 void FFN<OutputLayerType, InitializationRuleType, MatrixType>::Backward()
 {
   boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
@@ -357,7 +423,11 @@ void FFN<OutputLayerType, InitializationRuleType, MatrixType>::Backward()
   }
 }
 
-template<typename OutputLayerType, typename InitializationRuleType, typename MatrixType>
+template<
+  typename OutputLayerType,
+  typename InitializationRuleType,
+  typename MatrixType
+>
 void FFN<OutputLayerType, InitializationRuleType, MatrixType>::Gradient()
 {
   boost::apply_visitor(GradientVisitor(std::move(currentInput), std::move(
@@ -375,7 +445,11 @@ void FFN<OutputLayerType, InitializationRuleType, MatrixType>::Gradient()
       network[network.size() - 1]);
 }
 
-template<typename OutputLayerType, typename InitializationRuleType, typename MatrixType>
+template<
+  typename OutputLayerType,
+  typename InitializationRuleType,
+  typename MatrixType
+>
 template<typename Archive>
 void FFN<OutputLayerType, InitializationRuleType, MatrixType>::Serialize(
     Archive& ar, const unsigned int /* version */)
@@ -402,8 +476,13 @@ void FFN<OutputLayerType, InitializationRuleType, MatrixType>::Serialize(
   }
 }
 
-template<typename OutputLayerType, typename InitializationRuleType, typename MatrixType>
-void FFN<OutputLayerType, InitializationRuleType, MatrixType>::Swap(FFN& network)
+template<
+  typename OutputLayerType,
+  typename InitializationRuleType,
+  typename MatrixType
+>
+void FFN<OutputLayerType, InitializationRuleType,
+         MatrixType>::Swap(FFN& network)
 {
   std::swap(outputLayer, network.outputLayer);
   std::swap(initializeRule, network.initializeRule);
@@ -425,7 +504,11 @@ void FFN<OutputLayerType, InitializationRuleType, MatrixType>::Swap(FFN& network
   std::swap(gradient, network.gradient);
 };
 
-template<typename OutputLayerType, typename InitializationRuleType, typename MatrixType>
+template<
+  typename OutputLayerType,
+  typename InitializationRuleType,
+  typename MatrixType
+>
 FFN<OutputLayerType, InitializationRuleType, MatrixType>::FFN(
     const FFN& network):
     outputLayer(network.outputLayer),
@@ -454,7 +537,11 @@ FFN<OutputLayerType, InitializationRuleType, MatrixType>::FFN(
   }
 };
 
-template<typename OutputLayerType, typename InitializationRuleType, typename MatrixType>
+template<
+  typename OutputLayerType,
+  typename InitializationRuleType,
+  typename MatrixType
+>
 FFN<OutputLayerType, InitializationRuleType, MatrixType>::FFN(
     FFN&& network):
     outputLayer(std::move(network.outputLayer)),
@@ -478,9 +565,14 @@ FFN<OutputLayerType, InitializationRuleType, MatrixType>::FFN(
   this->network = std::move(network.network);
 };
 
-template<typename OutputLayerType, typename InitializationRuleType, typename MatrixType>
+template<
+  typename OutputLayerType,
+  typename InitializationRuleType,
+  typename MatrixType
+>
 FFN<OutputLayerType, InitializationRuleType, MatrixType>&
-FFN<OutputLayerType, InitializationRuleType, MatrixType>::operator = (FFN network)
+FFN<OutputLayerType, InitializationRuleType,
+    MatrixType>::operator = (FFN network)
 {
   Swap(network);
   return *this;
