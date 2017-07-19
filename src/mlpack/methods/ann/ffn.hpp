@@ -394,11 +394,13 @@ class FFN
 
   //! Locally-stored copy visitor
   CopyVisitor<CustomLayers...> copyVisitor;
+
+template<typename Model, typename IntializerType, class NoiseType>
+friend class GAN;
 }; // class FFN
 
 } // namespace ann
 } // namespace mlpack
-
 // Include implementation.
 #include "ffn_impl.hpp"
 
