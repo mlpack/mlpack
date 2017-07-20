@@ -178,79 +178,79 @@ class MemoryHead
   arma::mat prevError;
 
   //! Store the computed St gate values.
-  std::list<arma::vec> l_s_t;
+  std::list<arma::vec> lSt;
 
   //! Iterator to St gate values, used by backward.
-  std::list<arma::vec>::iterator b_s_t;
+  std::list<arma::vec>::iterator bSt;
 
   //! Store the generated shift matrices.
-  std::list<arma::mat> l_shiftMatrix;
+  std::list<arma::mat> lShiftMatrix;
 
   //! Iterator to shift matrices, used by backward.
-  std::list<arma::mat>::iterator b_shiftMatrix;
+  std::list<arma::mat>::iterator bShiftMatrix;
 
   //! Store the memory content used.
-  std::list<arma::mat> l_memory_t;
+  std::list<arma::mat> lMemoryT;
 
   //! Iterator to memory content, used by backward.
-  std::list<arma::mat>::iterator b_memory_t;
+  std::list<arma::mat>::iterator bMemoryT;
 
   //! Store We gate values.
-  std::list<arma::vec> l_w_e;
+  std::list<arma::vec> lWe;
 
   //! Iterator to We gate values, used by backward.
-  std::list<arma::vec>::iterator b_w_e;
+  std::list<arma::vec>::iterator bWe;
 
   //! Store Wc gate values.
-  std::list<arma::vec> l_w_c;
+  std::list<arma::vec> lWc;
 
   //! Iterator to Wc gate values, used by backward.
-  std::list<arma::vec>::iterator b_w_c;
+  std::list<arma::vec>::iterator bWc;
 
   //! Store Wg gate values.
-  std::list<arma::vec> l_w_g;
+  std::list<arma::vec> lWg;
 
   //! Iterator to Wg gate values, used by backward.
-  std::list<arma::vec>::iterator b_w_g;
+  std::list<arma::vec>::iterator bWg;
 
   //! Store W_tilde gate values.
-  std::list<arma::vec> l_w_tilde;
+  std::list<arma::vec> lWTilde;
 
   //! Iterator to W_tilde gate values, used by backward.
-  std::list<arma::vec>::iterator b_w_tilde;
+  std::list<arma::vec>::iterator bWTilde;
 
   //! Store W_dash gate values.
-  std::list<arma::vec> l_w_dash;
+  std::list<arma::vec> lWDash;
 
   //! Iterator to W_dash gate values, used by backward.
-  std::list<arma::vec>::iterator bWDash;
+  std::list<arma::vec>::iterator bWdash;
 
   //! Store cosine similarity values.
-  std::list<arma::vec> l_cosine_t;
+  std::list<arma::vec> lConsineT;
 
   //! Iterator to cosine similarity values, used by backward.
-  std::list<arma::vec>::iterator b_cosine_t;
+  std::list<arma::vec>::iterator bCosineT;
 
   //! Store gamma_t gate values.
-  std::list<double> l_gamma_t;
+  std::list<double> lGammaT;
 
   //! Iterator to gamma_t gate values, used by backward.
-  std::list<double>::iterator b_gamma_t;
+  std::list<double>::iterator bGammaT;
 
   //! Store gt gate values.
-  std::list<double> l_g_t;
+  std::list<double> lGt;
 
   //! Iterator to gt gate values, used by backward.
-  std::list<double>::iterator b_g_t;
+  std::list<double>::iterator bGt;
 
   //! Store bt gate values.
-  std::list<double> l_b_t;
+  std::list<double> lBt;
 
   //! Iterator to bt gate values, used by backward.
-  std::list<double>::iterator b_b_t;
+  std::list<double>::iterator bBt;
 
   //! Store the delta received with BPTT.
-  arma::vec prev_d_w;
+  arma::vec prevDW;
 
   //! Locally-stored weight object.
   OutputDataType weights;
@@ -262,13 +262,13 @@ class MemoryHead
   LayerTypes kTNonLinear;
 
   //! Locally-stored input gate module.
-  SoftplusFunction b_t_non_linear;
+  SoftplusFunction bTNonLinear;
 
   //! Locally-stored hidden state module.
-  SoftplusFunction g_t_non_linear;
+  SoftplusFunction gTNonLinear;
 
   //! Locally-stored forget gate module.
-  SoftplusFunction gamma_t_non_linear;
+  SoftplusFunction gammaTNonLinear;
 
   //! Locally-stored output parameter visitor.
   OutputParameterVisitor outputParameterVisitor;

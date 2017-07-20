@@ -823,10 +823,10 @@ BOOST_AUTO_TEST_CASE(GradientGRULayerTest)
 }
 
 /**
- * Check if the gradients computed by GRU cell are close enough to the
+ * Check if the gradients computed by MemoryHead cell are close enough to the
  * approximation of the gradients.
  */
-BOOST_AUTO_TEST_CASE(GradientMemoryHeadLayerTest)
+BOOST_AUTO_TEST_CASE(GradientMemoryHeadTest)
 {
   struct GradientFunction
   {
@@ -919,7 +919,9 @@ BOOST_AUTO_TEST_CASE(ForwardGRULayerTest)
   BOOST_REQUIRE_LE(arma::as_scalar(arma::trans(output) * expectedOutput), 1e-2);
 }
 
-/*
+/**
+ * MemoryHead manual forward test.
+ */
 BOOST_AUTO_TEST_CASE(ForwardMemoryHeadTest)
 {
   MemoryHead<> mh(5, 5, 5, 1);
@@ -943,22 +945,22 @@ BOOST_AUTO_TEST_CASE(ForwardMemoryHeadTest)
   arma::mat cosSimilarity = arma::normalise(memory, 1) * k_t /
     arma::norm(k_t);
 
-  //arma::mat w_c = arma::exp(b_t * cosSimilarity);
-  //w_c = w_c / arma::as_scalar(arma::sum(arma::sum(w_c)));
+  arma::mat w_c = arma::exp(b_t * cosSimilarity);
+  w_c = w_c / arma::as_scalar(arma::sum(arma::sum(w_c)));
 
   // Build w_g with g_t
-  //arma::mat w_g = g_t * w_c;
+  arma::mat w_g = g_t * w_c;
 
-  //arma::mat shiftMatrix = arma::ones<arma::mat>(5, 5);
-  //arma::mat w_tilde = arma::trans(arma::trans(w_g) * shiftMatrix);
+  arma::mat shiftMatrix = arma::ones<arma::mat>(5, 5);
+  arma::mat w_tilde = arma::trans(arma::trans(w_g) * shiftMatrix);
 
-  //arma::mat w_dash = arma::pow(w_tilde, gamma_t + 1);
-  //w_dash = w_dash / arma::as_scalar(arma::sum(arma::sum(w_dash)));
+  arma::mat w_dash = arma::pow(w_tilde, gamma_t + 1);
+  w_dash = w_dash / arma::as_scalar(arma::sum(arma::sum(w_dash)));
 
   BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::trans(arma::normalise(cosSimilarity)) *
     arma::normalise(weights)), 1, 1e-2);
 }
-*/
+
 /**
  * Simple concat module test.
  */
