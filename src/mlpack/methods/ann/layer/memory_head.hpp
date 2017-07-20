@@ -211,7 +211,7 @@ class MemoryHead
   SoftplusFunction b_t_non_linear;
 
   //! Locally-stored hidden state module.
-  LogisticFunction g_t_non_linear;
+  SoftplusFunction g_t_non_linear;
 
   //! Locally-stored forget gate module.
   SoftplusFunction gamma_t_non_linear;
