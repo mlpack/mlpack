@@ -45,8 +45,10 @@ BOOST_AUTO_TEST_CASE(OneStepQLearningTest)
 
   // Set up the policy.
   using Policy = GreedyPolicy<CartPole>;
-  AggregatedPolicy<Policy> policy({Policy(0.7, 5000, 0.1), Policy(0.7, 5000, 0.01),
-      Policy(0.7, 5000, 0.5)}, arma::colvec("0.4 0.3 0.3"));
+  AggregatedPolicy<Policy> policy({Policy(0.7, 5000, 0.1),
+                                  Policy(0.7, 5000, 0.01),
+                                  Policy(0.7, 5000, 0.5)},
+                                  arma::colvec("0.4 0.3 0.3"));
 
   TrainingConfig config;
   config.StepSize() = 0.0001;
