@@ -45,7 +45,8 @@ QLearning<
     totalSteps(0),
     deterministic(false)
 {
-  learningNetwork.ResetParameters();
+  if (learningNetwork.Parameters().is_empty())
+    learningNetwork.ResetParameters();
   this->updater.Initialize(learningNetwork.Parameters().n_rows,
       learningNetwork.Parameters().n_cols);
   targetNetwork = learningNetwork;

@@ -20,6 +20,9 @@
 #include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
 #include <mlpack/methods/reinforcement_learning/policy/aggregated_policy.hpp>
 #include <mlpack/methods/reinforcement_learning/training_config.hpp>
+#include <boost/serialization/serialization.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -42,6 +45,23 @@ BOOST_AUTO_TEST_CASE(OneStepQLearningTest)
   model.Add<Linear<>>(20, 20);
   model.Add<ReLULayer<>>();
   model.Add<Linear<>>(20, 2);
+
+  /**
+   * Load the pre-trained network.
+   * Notice that even you train the network from scratch, it should also be
+   * pretty fast in a modern laptop (e.g. 2s in a macbook pro 2016).
+   * Here we load the pre-trained network mainly for the mlpack test server.
+   */
+  std::string fileName("async_one_step_q_learning_network.bin");
+  bool loadNetwork = true;
+  bool storeNetwork = false;
+  if (loadNetwork)
+  {
+    std::ifstream ifs(fileName, std::ios::binary);
+    boost::archive::binary_iarchive i(ifs);
+    i >> data::CreateNVP(model, "network");
+    ifs.close();
+  }
 
   // Set up the policy.
   using Policy = GreedyPolicy<CartPole>;
@@ -71,6 +91,7 @@ BOOST_AUTO_TEST_CASE(OneStepQLearningTest)
     testEpisodes++;
     rewards[pos++] = reward;
     pos %= rewards.n_elem;
+    // Maybe underestimated.
     double avgReward = arma::mean(rewards);
     Log::Debug << "Average return: " << avgReward
                << " Episode return: " << reward << std::endl;
@@ -81,6 +102,15 @@ BOOST_AUTO_TEST_CASE(OneStepQLearningTest)
 
   agent.Train(measure);
   Log::Debug << "Total test episodes: " << testEpisodes << std::endl;
+
+  // Store the trained network.
+  if (storeNetwork)
+  {
+    std::ofstream ofs(fileName, std::ios::binary);
+    boost::archive::binary_oarchive o(ofs);
+    o << data::CreateNVP(agent.Network(), "network");
+    ofs.close();
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END();
