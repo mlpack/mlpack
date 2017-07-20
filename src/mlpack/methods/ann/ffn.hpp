@@ -345,11 +345,13 @@ class FFN
 
   //! Locally-stored copy visitor
   CopyVisitor copyVisitor;
+
+template<typename Generator, typename Discriminator, typename IntializerType>
+friend class GenerativeAdversarialNetwork;
 }; // class FFN
 
 } // namespace ann
 } // namespace mlpack
-
 // Include implementation.
 #include "ffn_impl.hpp"
 

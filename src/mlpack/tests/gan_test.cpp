@@ -27,42 +27,52 @@ using namespace mlpack::ann;
 using namespace mlpack::math;
 using namespace mlpack::optimization;
 using namespace mlpack::regression;
+using namespace std::placeholders;
 
 BOOST_AUTO_TEST_SUITE(GANNetworkTest);
 
 
 BOOST_AUTO_TEST_CASE(GanTest)
 {
-  arma::mat trainData(1, 100), trainLabels(1, 100);
-  trainData.randn();
-  trainLabels.ones();
-  size_t hiddenLayerSize = 10;
-  size_t outputSize = 1;
+  size_t hiddenLayerSize1 = 500;
+  size_t hiddenLayerSize2 = 500;
+  size_t gOutputSize = 64;
+  size_t gInputSize = 100;
+  size_t dOutputSize = 1;
   size_t maxEpochs = 10;
+  size_t batchSize = 10;
+  // Load the dataset
+  arma::mat trainData, dataset;
+  arma::mat trainLabels;
+  trainData.load("digits_train.arm");
+  trainLabels.load("digits_train_label.arm");
 
-  FFN<NegativeLogLikelihood<> > model;
-  model.Add<Linear<> >(trainData.n_rows, hiddenLayerSize);
-  model.Add<SigmoidLayer<> >();
-  model.Add<Linear<> >(hiddenLayerSize, outputSize);
-  model.Add<LogSoftMax<> >();
+  // Discriminator network
+  FFN<NegativeLogLikelihood<> > discriminator;
+  discriminator.Add<Linear<> >(trainData.n_rows, hiddenLayerSize1);
+  discriminator.Add<ReLULayer<>>();
+  discriminator.Add<Linear<> >(hiddenLayerSize1, hiddenLayerSize2);
+  discriminator.Add<ReLULayer<>>();
+  discriminator.Add<Linear<> >(hiddenLayerSize1, dOutputSize);
+  discriminator.Add<LogSoftMax<> >();
 
-  FFN<NegativeLogLikelihood<> > model1;
-  model1.Add<Linear<> >(trainData.n_rows, hiddenLayerSize);
-  model1.Add<SigmoidLayer<> >();
-  model1.Add<Linear<> >(hiddenLayerSize, outputSize);
-  model1.Add<LogSoftMax<> >();
-  arma::mat mean, variance;
-  mean.set_size(1, 1);
-  variance.set_size(1, 1);
-  mean.fill(0);
-  variance.fill(1);
-  GaussianDistribution noise(mean, variance);
+  // Generator network
+  FFN<NegativeLogLikelihood<>> generator;
+  generator.Add<Linear<> >(gInputSize, hiddenLayerSize1);
+  generator.Add<ReLULayer<> >();
+  generator.Add<Linear<> >(hiddenLayerSize1, hiddenLayerSize2);
+  generator.Add<ReLULayer<> >();
+  generator.Add<Linear<> >(hiddenLayerSize2, gOutputSize);
+  generator.Add<LogSoftMax<> >();
+
+  // Intialisation function
   GaussianInitialization gaussian(0, 0.1);
-  RMSProp opt(0.01, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
-  GenerativeAdversarialNetwork<FFN<>, FFN<>, GaussianDistribution,
-      GaussianInitialization> gan(
-          trainData, trainLabels, gaussian, model, model1, noise, 10);
-  BOOST_REQUIRE_EQUAL(1, 0);
-  // gan.Train(opt);
+  // Optimizer
+  MiniBatchSGD msgd(10, 0.06, trainData.n_cols * maxEpochs, 0.001, true);
+  // GAN model
+  GenerativeAdversarialNetwork<FFN<>, FFN<>,GaussianInitialization> gan(
+      trainData, trainLabels, gaussian, generator, discriminator, batchSize,
+      gInputSize);
+  gan.Train(msgd);
 }
 BOOST_AUTO_TEST_SUITE_END();

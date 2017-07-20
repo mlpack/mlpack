@@ -36,18 +36,16 @@ namespace ann /** Restricted Boltzmann Machine.  */ {
 template<
 typename Generator = FFN<>,
 typename Discriminator = FFN<>,
-typename NoiseFunction = GaussianDistribution,
 typename IntializerType = RandomInitialization>
 class GenerativeAdversarialNetwork
 {
  public:
-  GenerativeAdversarialNetwork(arma::mat trainData,
-      arma::mat trainLables,
+  GenerativeAdversarialNetwork(arma::mat trainData, arma::mat trainLables,
       IntializerType initializeRule,
       Generator& generator,
       Discriminator& discriminator,
-      NoiseFunction& noise,
-      size_t batchSize);
+      size_t batchSize,
+      size_t generatorInSize);
 
   void Reset();
 
@@ -107,10 +105,10 @@ class GenerativeAdversarialNetwork
   size_t numFunctions;
   //! Locally stored trainGenerator parmaeter
   bool trainGenerator;
-  //! Locally stored noise function parameter
-  NoiseFunction noise;
   //! Locally stored batch size parameter
   size_t batchSize;
+  //! Locally stored input size for generator
+  size_t generatorInSize;
   //! Locally stored reset parmaeter
   bool reset;
   //! Locally stored parameter for training data
