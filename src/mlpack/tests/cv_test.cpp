@@ -28,7 +28,7 @@
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include "data_facilities.hpp"
+#include "mock_categorical_data.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
