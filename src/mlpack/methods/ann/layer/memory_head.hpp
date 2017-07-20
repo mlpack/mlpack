@@ -2,8 +2,7 @@
  * @file memory_unit.hpp
  * @author Sumedh Ghaisas
  *
- * Definition of the LSTM class, which implements a lstm network
- * layer.
+ * Definition of Memory Head used Neural Turing Machine
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -29,11 +28,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * An implementation of a lstm network layer.
- *
- * This class allows specification of the type of the activation functions used
- * for the gates and cells and also of the type of the function used to
- * initialize and update the peephole weights.
+ * An implementation of a memory head used in NTM.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -48,28 +43,45 @@ class MemoryHead
 {
  public:
   /**
-   * Create the LSTM layer object using the specified parameters.
+   * Create the Memory Head layer object using the specified parameters.
    *
    * @param inSize The number of input units.
-   * @param outSize The number of output units.
-   * @param rho Maximum number of steps to backpropagate through time (BPTT).
+   * @param outSize Size of the output weight vector.
+   * @param memSize Memory size in each memory block.
+   * @param shiftSize Circular convolutional shift size used.
    */
-  MemoryHead(const size_t inSize, const size_t outSize, const size_t memSize, const size_t shiftSize);
+  MemoryHead(const size_t inSize,
+             const size_t outSize,
+             const size_t memSize,
+             const size_t shiftSize);
 
   /**
-   * Ordinary feed forward pass of a neural network, evaluating the function
-   * f(x) by propagating the activity forward through f.
+   * Feed forward pass of a neural network, evaluating the function
+   * f(x) by propagating the activity forward given the current memory content.
    *
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
+   * @param memory Current memory content.
    */
   template<typename eT>
   void Forward(arma::Mat<eT>&& input, arma::mat&& memory, arma::Mat<eT>&& output);
 
+  /**
+   * Feed forward pass of a neural network, evaluating the function
+   * f(x) by propagating the activity forward.
+   *
+   * Function used for testing the class. Creates fixed memory to be used in
+   * forward propagation.
+   *
+   * @param input Input data used for evaluating the specified function.
+   * @param output Resulting output activation.
+   * @param memory Current memory content.
+   */
   template<typename eT>
   void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output)
   {
-    Forward(std::move(input), arma::ones<arma::mat>(outSize, memSize), std::move(output));
+    Forward(std::move(input), arma::ones<arma::mat>(outSize, memSize),
+      std::move(output));
   }
 
   /**
@@ -150,62 +162,104 @@ class MemoryHead
   //! Locally-stored number of output units.
   size_t outSize;
 
-  //! Number of steps to backpropagate through time (BPTT).
+  //! Memory size in each memory block.
   size_t memSize;
 
+  //! Shifting size used in circular convolution.
   size_t shiftSize;
 
+  //! Store the previous output weights.
   std::list<arma::mat> prevWeights;
+
+  //! Iterator to previous output weights ,used by backward.
   std::list<arma::mat>::iterator weightsBackwardIterator;
 
+  //! Store the delta received at the linear input layer.
   arma::mat prevError;
 
+  //! Store the computed St gate values.
   std::list<arma::vec> l_s_t;
+
+  //! Iterator to St gate values, used by backward.
   std::list<arma::vec>::iterator b_s_t;
 
+  //! Store the generated shift matrices.
   std::list<arma::mat> l_shiftMatrix;
+
+  //! Iterator to shift matrices, used by backward.
   std::list<arma::mat>::iterator b_shiftMatrix;
 
+  //! Store the memory content used.
   std::list<arma::mat> l_memory_t;
+
+  //! Iterator to memory content, used by backward.
   std::list<arma::mat>::iterator b_memory_t;
 
+  //! Store We gate values.
   std::list<arma::vec> l_w_e;
+
+  //! Iterator to We gate values, used by backward.
   std::list<arma::vec>::iterator b_w_e;
 
+  //! Store Wc gate values.
   std::list<arma::vec> l_w_c;
+
+  //! Iterator to Wc gate values, used by backward.
   std::list<arma::vec>::iterator b_w_c;
 
+  //! Store Wg gate values.
   std::list<arma::vec> l_w_g;
+
+  //! Iterator to Wg gate values, used by backward.
   std::list<arma::vec>::iterator b_w_g;
 
+  //! Store W_tilde gate values.
   std::list<arma::vec> l_w_tilde;
+
+  //! Iterator to W_tilde gate values, used by backward.
   std::list<arma::vec>::iterator b_w_tilde;
 
+  //! Store W_dash gate values.
   std::list<arma::vec> l_w_dash;
-  std::list<arma::vec>::iterator b_w_dash;
 
+  //! Iterator to W_dash gate values, used by backward.
+  std::list<arma::vec>::iterator bWDash;
+
+  //! Store cosine similarity values.
   std::list<arma::vec> l_cosine_t;
+
+  //! Iterator to cosine similarity values, used by backward.
   std::list<arma::vec>::iterator b_cosine_t;
 
-  arma::vec prev_d_w;
-
+  //! Store gamma_t gate values.
   std::list<double> l_gamma_t;
+
+  //! Iterator to gamma_t gate values, used by backward.
   std::list<double>::iterator b_gamma_t;
 
+  //! Store gt gate values.
   std::list<double> l_g_t;
+
+  //! Iterator to gt gate values, used by backward.
   std::list<double>::iterator b_g_t;
 
+  //! Store bt gate values.
   std::list<double> l_b_t;
+
+  //! Iterator to bt gate values, used by backward.
   std::list<double>::iterator b_b_t;
+
+  //! Store the delta received with BPTT.
+  arma::vec prev_d_w;
 
   //! Locally-stored weight object.
   OutputDataType weights;
 
   //! Locally-stored input 2 gate module.
-  LayerTypes input_linear;
+  LayerTypes inputLinear;
 
   //! Locally-stored output 2 gate module.
-  LayerTypes k_t_non_linear;
+  LayerTypes kTNonLinear;
 
   //! Locally-stored input gate module.
   SoftplusFunction b_t_non_linear;
