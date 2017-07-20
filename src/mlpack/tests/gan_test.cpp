@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_CASE(GanTest)
   trainLabels.load("digits_train_label.arm");
 
   // Discriminator network
-  FFN<NegativeLogLikelihood<> > discriminator;
+  FFN<CrossEntropyError<> > discriminator;
   discriminator.Add<Linear<> >(trainData.n_rows, hiddenLayerSize1);
   discriminator.Add<ReLULayer<>>();
   discriminator.Add<Linear<> >(hiddenLayerSize1, hiddenLayerSize2);
@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(GanTest)
   discriminator.Add<LogSoftMax<> >();
 
   // Generator network
-  FFN<NegativeLogLikelihood<>> generator;
+  FFN<CrossEntropyError<>> generator;
   generator.Add<Linear<> >(gInputSize, hiddenLayerSize1);
   generator.Add<ReLULayer<> >();
   generator.Add<Linear<> >(hiddenLayerSize1, hiddenLayerSize2);
@@ -70,7 +70,8 @@ BOOST_AUTO_TEST_CASE(GanTest)
   // Optimizer
   MiniBatchSGD msgd(10, 0.06, trainData.n_cols * maxEpochs, 0.001, true);
   // GAN model
-  GenerativeAdversarialNetwork<FFN<>, FFN<>,GaussianInitialization> gan(
+  GenerativeAdversarialNetwork<FFN<CrossEntropyError<>>, FFN<CrossEntropyError<>>,
+      GaussianInitialization> gan(
       trainData, trainLabels, gaussian, generator, discriminator, batchSize,
       gInputSize);
   gan.Train(msgd);

@@ -90,8 +90,9 @@ void GenerativeAdversarialNetwork<Generator, Discriminator,IntializerType>
   if (!reset)
     Reset();
   size_t offset = 0;
-  for (size_t i = 0; i< predictors.n_cols / batchSize; i++)
+  for (size_t i = 0; i< 1; i++)
   {
+    std::cout << " training epoch =" << i << std::endl;
     // Generate fake data
     Generate(batchSize, std::move(fakeData));
     std::cout << "fake Data size = " << arma::size(fakeData) << std::endl;
@@ -113,13 +114,21 @@ void GenerativeAdversarialNetwork<Generator, Discriminator,IntializerType>
     // Train the discrminator network
     this->predictors = std::move(tempTrainData);
     this->responses = std::move(tempLabels);
-    numFunctions = this->predictors.n_cols;
-    std::cout << "numFunctions = " << numFunctions << std::endl;
+    numFunctions = predictors.n_cols;
+    discriminator.predictors = predictors;
+    discriminator.responses = responses;
+    generator.predictors = predictors;
+    generator.responses = responses;
+    std::cout << arma::size(discriminator.predictors) << std::endl;
+    std::cout << arma::size(predictors) << std::endl;
     Optimizer.Optimize(*this, parameter);
     trainGenerator = true;
     // Train the generator network
     Generate(predictors.n_cols, std::move(fakeData));
+    this->predictors = fakeData;
     this->responses = arma::ones(1, responses.n_cols);
+    discriminator.predictors = predictors;
+    discriminator.responses = responses;
     numFunctions = predictors.n_cols;
     std::cout << "predictors.n_cols" << predictors.n_cols << std::endl;
     std::cout << "NumFunctions = " << numFunctions << std::endl;
@@ -134,10 +143,10 @@ double GenerativeAdversarialNetwork<Generator, Discriminator,IntializerType>
 ::Evaluate(const arma::mat& /*parameters*/,
     const size_t i, const bool /*deterministic*/)
 {
+  /*
   arma::mat currentInput = predictors.unsafe_col(i);
   arma::mat currentTarget = responses.unsafe_col(i);
   discriminator.Forward(std::move(currentInput));
-  /*
   double res = discriminator.outputLayer.Forward(std::move(boost::apply_visitor(
       outputParameterVisitor, discriminator.network.back())),
       std::move(currentTarget));
