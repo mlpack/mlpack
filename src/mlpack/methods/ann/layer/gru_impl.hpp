@@ -80,8 +80,6 @@ template<typename eT>
 void GRU<InputDataType, OutputDataType>::Forward(
     arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
-  arma::mat temp = arma::zeros<arma::mat>(outSize, 1);
-
   // Process the input linearly(zt, rt, ot).
   boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
       boost::apply_visitor(outputParameterVisitor, input2GateModule))),
@@ -186,23 +184,23 @@ void GRU<InputDataType, OutputDataType>::Backward(
   }
 
   // Delta zt.
-  arma::mat d_zt = gy % (*backIterator -
+  arma::mat dZt = gy % (*backIterator -
       boost::apply_visitor(outputParameterVisitor,
       hiddenStateModule));
 
   // Delta ot.
-  arma::mat d_ot = gy % (arma::ones<arma::vec>(outSize) -
+  arma::mat dOt = gy % (arma::ones<arma::vec>(outSize) -
       boost::apply_visitor(outputParameterVisitor, inputGateModule));
 
   // Delta of input gate.
   boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-      outputParameterVisitor, inputGateModule)), std::move(d_zt),
+      outputParameterVisitor, inputGateModule)), std::move(dZt),
       std::move(boost::apply_visitor(deltaVisitor, inputGateModule))),
       inputGateModule);
 
   // Delta of hidden gate.
   boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-      outputParameterVisitor, hiddenStateModule)), std::move(d_ot),
+      outputParameterVisitor, hiddenStateModule)), std::move(dOt),
       std::move(boost::apply_visitor(deltaVisitor, hiddenStateModule))),
       hiddenStateModule);
 
@@ -214,12 +212,12 @@ void GRU<InputDataType, OutputDataType>::Backward(
       outputHidden2GateModule);
 
   // Delta rt.
-  arma::mat d_rt = boost::apply_visitor(deltaVisitor, outputHidden2GateModule) %
+  arma::mat dRt = boost::apply_visitor(deltaVisitor, outputHidden2GateModule) %
       *backIterator;
 
   // Delta of forget gate.
   boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-      outputParameterVisitor, forgetGateModule)), std::move(d_rt),
+      outputParameterVisitor, forgetGateModule)), std::move(dRt),
       std::move(boost::apply_visitor(deltaVisitor, forgetGateModule))),
       forgetGateModule);
 
