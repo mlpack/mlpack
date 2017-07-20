@@ -56,12 +56,7 @@ BOOST_AUTO_TEST_CASE(OneStepQLearningTest)
   bool loadNetwork = true;
   bool storeNetwork = false;
   if (loadNetwork)
-  {
-    std::ifstream ifs(fileName, std::ios::binary);
-    boost::archive::binary_iarchive i(ifs);
-    i >> data::CreateNVP(model, "network");
-    ifs.close();
-  }
+    data::Load(fileName, "network", model);
 
   // Set up the policy.
   using Policy = GreedyPolicy<CartPole>;
@@ -105,12 +100,7 @@ BOOST_AUTO_TEST_CASE(OneStepQLearningTest)
 
   // Store the trained network.
   if (storeNetwork)
-  {
-    std::ofstream ofs(fileName, std::ios::binary);
-    boost::archive::binary_oarchive o(ofs);
-    o << data::CreateNVP(agent.Network(), "network");
-    ofs.close();
-  }
+    data::Save(fileName, "network", agent.Network(), false);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
