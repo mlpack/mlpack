@@ -48,6 +48,9 @@ template<typename MatType = arma::mat>
 class NaiveBayesClassifier
 {
  public:
+  //! A short alias for the data point type.
+  using VecType = arma::Col<typename MatType::value_type>;
+
   /**
    * Initializes the classifier as per the input and then trains it by
    * calculating the sample mean and variances.
@@ -107,7 +110,6 @@ class NaiveBayesClassifier
    * @param point Data point to train on.
    * @param label Label of data point.
    */
-  template<typename VecType>
   void Train(const VecType& point, const size_t label);
 
   /**
@@ -116,7 +118,6 @@ class NaiveBayesClassifier
    *
    * @param point Point to classify.
    */
-  template<typename VecType>
   size_t Classify(const VecType& point) const;
 
   /**
@@ -129,7 +130,6 @@ class NaiveBayesClassifier
    * @param probabilities This will be filled with class probabilities for the
    *      point.
    */
-  template<typename VecType>
   void Classify(const VecType& point,
                 size_t& prediction,
                 arma::vec& probabilities) const;
@@ -209,7 +209,6 @@ class NaiveBayesClassifier
    * @param point Data point to compute posterior log probability of.
    * @param logLikelihoods Vector to store log likelihoods in.
    */
-  template<typename VecType>
   void LogLikelihood(const VecType& point, arma::vec& logLikelihoods) const;
 
   /**

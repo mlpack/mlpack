@@ -142,7 +142,6 @@ void NaiveBayesClassifier<MatType>::Train(const MatType& data,
 }
 
 template<typename MatType>
-template<typename VecType>
 void NaiveBayesClassifier<MatType>::Train(const VecType& point,
                                           const size_t label)
 {
@@ -163,7 +162,6 @@ void NaiveBayesClassifier<MatType>::Train(const VecType& point,
 }
 
 template<typename MatType>
-template<typename VecType>
 void NaiveBayesClassifier<MatType>::LogLikelihood(
     const VecType& point,
     arma::vec& logLikelihoods) const
@@ -208,7 +206,6 @@ void NaiveBayesClassifier<MatType>::LogLikelihood(
 }
 
 template<typename MatType>
-template<typename VecType>
 size_t NaiveBayesClassifier<MatType>::Classify(const VecType& point) const
 {
   // Find the label(class) with max log likelihood.
@@ -221,7 +218,6 @@ size_t NaiveBayesClassifier<MatType>::Classify(const VecType& point) const
 }
 
 template<typename MatType>
-template<typename VecType>
 void NaiveBayesClassifier<MatType>::Classify(const VecType& point,
                                              size_t& prediction,
                                              arma::vec& probabilities) const

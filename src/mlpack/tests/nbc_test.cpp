@@ -17,6 +17,37 @@
 using namespace mlpack;
 using namespace naive_bayes;
 
+void CheckLabelsAndProbabilities(const arma::mat& testData,
+                                 const arma::Row<size_t>& testLabels,
+                                 const arma::mat& testProbs,
+                                 const NaiveBayesClassifier<>& nbc)
+{
+  arma::Row<size_t> calcLabels;
+  arma::mat calcProbs;
+  size_t calcLabel;
+  arma::vec calcProbsVec;
+
+  nbc.Classify(testData, calcLabels, calcProbs);
+
+  for (size_t i = 0; i < testData.n_cols; ++i)
+  {
+    nbc.Classify(testData.col(i), calcLabel, calcProbsVec);
+
+    BOOST_REQUIRE_EQUAL(testLabels(i), calcLabels(i));
+    BOOST_REQUIRE_EQUAL(testLabels(i), calcLabel);
+    BOOST_REQUIRE_EQUAL(testLabels(i), nbc.Classify(testData.col(i)));
+
+    for (size_t j = 0; j < testProbs.n_rows; ++j)
+    {
+      BOOST_REQUIRE_CLOSE(testProbs(j, i) + 0.0001, calcProbs(j, i) + 0.0001,
+          0.01);
+      BOOST_REQUIRE_CLOSE(testProbs(j, i) + 0.0001, calcProbsVec(j) + 0.0001,
+          0.01);
+    }
+  }
+}
+
+
 BOOST_AUTO_TEST_SUITE(NBCTest);
 
 BOOST_AUTO_TEST_CASE(NaiveBayesClassifierTest)
@@ -62,27 +93,13 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierTest)
   arma::mat testData;
   arma::Mat<size_t> testRes;
   arma::mat testResProbs;
-  arma::Row<size_t> calcVec;
-  arma::mat calcProbs;
   data::Load(testFilename, testData, true);
   data::Load(testResultFilename, testRes, true);
   data::Load(testResultProbsFilename, testResProbs, true);
 
   testData.shed_row(testData.n_rows - 1); // Remove the labels.
 
-  nbcTest.Classify(testData, calcVec, calcProbs);
-
-  for (size_t i = 0; i < testData.n_cols; i++)
-    BOOST_REQUIRE_EQUAL(testRes(i), calcVec(i));
-
-  for (size_t i = 0; i < testResProbs.n_cols; ++i)
-  {
-    for (size_t j = 0; j < testResProbs.n_rows; ++j)
-    {
-      BOOST_REQUIRE_CLOSE(testResProbs(j, i) + 0.0001, calcProbs(j, i) + 0.0001,
-          0.01);
-    }
-  }
+  CheckLabelsAndProbabilities(testData, testRes, testResProbs, nbcTest);
 }
 
 // The same test, but this one uses the incremental algorithm to calculate
@@ -129,26 +146,14 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierIncrementalTest)
 
   arma::mat testData;
   arma::Mat<size_t> testRes;
-  arma::mat testResProba;
-  arma::Row<size_t> calcVec;
-  arma::mat calcProbs;
+  arma::mat testResProbs;
   data::Load(testFilename, testData, true);
   data::Load(testResultFilename, testRes, true);
-  data::Load(testResultProbsFilename, testResProba, true);
+  data::Load(testResultProbsFilename, testResProbs, true);
 
   testData.shed_row(testData.n_rows - 1); // Remove the labels.
 
-  nbcTest.Classify(testData, calcVec, calcProbs);
-
-  for (size_t i = 0; i < testData.n_cols; i++)
-    BOOST_REQUIRE_EQUAL(testRes(i), calcVec(i));
-
-  for (size_t i = 0; i < testResProba.n_cols; ++i)
-    for (size_t j = 0; j < testResProba.n_rows; ++j)
-    {
-      BOOST_REQUIRE_CLOSE(
-          testResProba(j, i) + .00001, calcProbs(j, i) + .00001, 0.01);
-    }
+  CheckLabelsAndProbabilities(testData, testRes, testResProbs, nbcTest);
 }
 
 /**
