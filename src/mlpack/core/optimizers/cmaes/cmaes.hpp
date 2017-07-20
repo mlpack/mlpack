@@ -108,9 +108,9 @@ double stopTolX;
 //! Defines the maximal condition number.
 double stopTolUpXFactor;
 //! Population size. Number of samples per iteration.
-size_t lambda;
+int lambda;
 //! Number of individuals used to recompute the mean.
-size_t mu;
+int mu;
 //! variable used to recompute the mean.
 double mucov;
 //! Variance effective selection mass, should be lambda/4.

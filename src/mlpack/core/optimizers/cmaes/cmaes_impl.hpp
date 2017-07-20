@@ -56,7 +56,7 @@ double iters, double evalDiff)
      if (stdDivs[i] < 1.0e-200) initDev = false;
     }
 
-     if (evalDiff = 1e-14) stopTolFun = 1e-14;
+     if (evalDiff == 1e-14) stopTolFun = 1e-14;
      else
         stopTolFun = evalDiff;
 
@@ -158,8 +158,7 @@ Log::Warn << "WARNING: initialStandardDeviations undefined."
     arFunvals.set_size(lambda);
     init(arFunvals);
 
-    arma::mat x(N, 1);
-    double numFun = function.NumFunctions();
+    arma::Col<double> x(N);
 
   while (!testForTermination())
   {
@@ -171,10 +170,10 @@ Log::Warn << "WARNING: initialStandardDeviations undefined."
     // function by the user
     for (int i = 0; i < lambda; ++i)
     {
-      x = population.submat(i, 0, i, N-1);
+      x = population.submat(i, 0, i, N-1).t();
 
-      for (size_t j = 0; j < numFun; j++)
-      arFunvals[i] += function.Evaluate(x, j);
+    for (size_t j = 0; j < N; j++)
+     arFunvals[i] += function.Evaluate(x, j);
     }
 
     // update the search distribution used for sampleDistribution()
@@ -182,10 +181,12 @@ Log::Warn << "WARNING: initialStandardDeviations undefined."
   }
 
   // get best estimator for the optimum
-    arr = xmean;
+    x = xmean.subvec(0, N-1);
+    arr = x;
+
     double funs = 0;
-    for (size_t j = 0; j < numFun; j++)
-      funs += function.Evaluate(xmean, j);
+    for (size_t j = 0; j < N; j++)
+    funs += function.Evaluate(x, j);
 
     return funs;
   }
