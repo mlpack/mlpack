@@ -27,11 +27,13 @@ namespace scorers /* Scoring utilities for augmented */ {
 *
 * @param trueOutputs Ground truth sequences.
 * @param predOutputs Sequences predicted by model.
+* @param tol Minimum absolute difference value
+*            which is considered as a model failure.
 */
 template<typename MatType>
-double SequencePrecision(arma::field<MatType> trueOutputs,
-                         arma::field<MatType> predOutputs,
-                         double tol = 1e-4);
+const double SequencePrecision(arma::field<MatType> trueOutputs,
+                               arma::field<MatType> predOutputs,
+                               double tol = 1e-4);
 } // namespace scorers
 } // namespace augmented
 } // namespace ann

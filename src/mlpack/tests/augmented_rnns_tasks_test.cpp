@@ -46,39 +46,43 @@ using mlpack::data::Binarize;
 // The dummy model that simply copies the sequence
 // the required number of times
 // (yes, no ML here, we're unit testing :)
-class HardCodedCopyModel {
+class HardCodedCopyModel
+{
  public:
   HardCodedCopyModel() : nRepeats(1) {}
-  void Train(
-      arma::field<arma::mat>& predictors,
-      arma::field<arma::mat>& labels) {
+  void Train(arma::field<arma::mat>& predictors,
+             arma::field<arma::mat>& labels)
+  {
     arma::mat input = predictors.at(0);
     arma::mat output = labels.at(0);
     size_t zeroCnt = 0, oneCnt = 0;
-    for (size_t i = 1; i < input.n_rows; i += 2) {
+    for (size_t i = 1; i < input.n_rows; i += 2)
+    {
       size_t& addVar = (input.at(i, 0) == 0) ? zeroCnt : oneCnt;
       ++addVar;
     }
     assert(oneCnt % zeroCnt == 0);
     nRepeats = oneCnt / zeroCnt;
   }
-  void Predict(
-      arma::mat& predictors,
-      arma::mat& labels) {
+  void Predict(arma::mat& predictors,
+               arma::mat& labels)
+  {
     size_t seqLen = (predictors.n_rows / 2) / (nRepeats + 1);
     size_t outputLen = nRepeats * seqLen;
     assert(2 * (seqLen + outputLen) == predictors.n_rows);
     labels.zeros(predictors.n_rows / 2, 1);
-    for (size_t i = 0; i < outputLen; ++i) {
+    for (size_t i = 0; i < outputLen; ++i)
+    {
       labels.at(seqLen+i) = predictors.at(2 * (i % seqLen));
     }
   }
-  void Predict(
-      arma::field<arma::mat>& predictors,
-      arma::field<arma::mat>& labels) {
+  void Predict(arma::field<arma::mat>& predictors,
+               arma::field<arma::mat>& labels)
+  {
     size_t sz = predictors.n_elem;
     labels = arma::field<arma::mat>(sz);
-    for (size_t i = 0; i < sz; ++i) {
+    for (size_t i = 0; i < sz; ++i)
+    {
       Predict(predictors.at(i), labels.at(i));
     }
   }
@@ -87,6 +91,7 @@ class HardCodedCopyModel {
   size_t nRepeats;
 };
 
+// The dummy model that simply sorts the sequence.
 class HardCodedSortModel {
  public:
   HardCodedSortModel(size_t bitLen) : bitLen(bitLen) {}
@@ -95,34 +100,38 @@ class HardCodedSortModel {
   {
     assert(predictors.n_elem == labels.n_elem);
   }
-  void Predict(
-      arma::mat& predictors,
-      arma::mat& labels)
+  void Predict(arma::mat& predictors,
+               arma::mat& labels)
   {
     predictors = predictors.t();
     predictors.reshape(bitLen, predictors.n_elem / bitLen);
     size_t len = predictors.n_cols;
     labels.zeros(bitLen, len);
     vector<pair<int, int>> vals(len);
-    for (size_t j = 0; j < len; ++j) {
+    for (size_t j = 0; j < len; ++j)
+    {
       int val = 0;
-      for (size_t k = 0; k < bitLen; ++k) {
+      for (size_t k = 0; k < bitLen; ++k)
+      {
         val <<= 1;
         val += predictors.at(k, j);
       }
       vals[j] = make_pair(val, j);
     }
     sort(vals.begin(), vals.end());
-    for (size_t j = 0; j < len; ++j) {
+    for (size_t j = 0; j < len; ++j)
+    {
       labels.col(j) = predictors.col(vals[j].second);
     }
     labels.reshape(predictors.n_elem, 1);
   }
   void Predict(arma::field<arma::mat>& predictors,
-               arma::field<arma::mat>& labels) {
+               arma::field<arma::mat>& labels)
+  {
     auto sz = predictors.n_elem;
     labels = arma::field<arma::mat>(sz);
-    for (size_t i = 0; i < sz; ++i) {
+    for (size_t i = 0; i < sz; ++i)
+    {
       Predict(predictors.at(i), labels.at(i));
     }
   }
@@ -131,22 +140,24 @@ class HardCodedSortModel {
   size_t bitLen;
 };
 
+// The dummy model that simply add two binary numbers.
 class HardCodedAddModel {
  public:
   HardCodedAddModel() {}
   void Train(arma::field<arma::mat>& predictors,
              arma::field<arma::mat>& labels)
   {
-    return;
+    // Nothing to do here.
   }
   void Predict(arma::mat& predictors,
                arma::mat& labels)
   {
-    int num_A = 0, num_B = 0;
+    int numA = 0, numB = 0;
     bool num = false; // true iff we have already seen the separating symbol
     size_t len = predictors.n_elem;
     size_t cnt = 0;
-    for (size_t i = 0; i < len; ++i) {
+    for (size_t i = 0; i < len; ++i)
+    {
       double digit = predictors.at(i);
       if (digit != 0 && digit != 1)
       {
@@ -160,28 +171,31 @@ class HardCodedAddModel {
       {
         if (num)
         {
-          num_B += static_cast<int>(digit) << cnt;
+          numB += static_cast<int>(digit) << cnt;
         }
         else
         {
-          num_A += static_cast<int>(digit) << cnt;
+          numA += static_cast<int>(digit) << cnt;
         }
         ++cnt;
       }
     }
-    int total = num_A + num_B;
+    int total = numA + numB;
     vector<int> binary_seq;
-    while (total > 0) {
+    while (total > 0)
+    {
       binary_seq.push_back(total & 1);
       total >>= 1;
     }
-    if (binary_seq.empty()) {
-      assert(num_A + num_B == 0);
+    if (binary_seq.empty())
+    {
+      assert(numA + numB == 0);
       binary_seq.push_back(0);
     }
-    size_t tot_len = binary_seq.size();
-    labels = arma::zeros(tot_len);
-    for (size_t j = 0; j < tot_len; ++j) {
+    size_t totLen = binary_seq.size();
+    labels = arma::zeros(totLen);
+    for (size_t j = 0; j < totLen; ++j)
+    {
       labels.at(j) = binary_seq[j];
     }
     labels.reshape(predictors.n_elem, 1);
@@ -191,7 +205,8 @@ class HardCodedAddModel {
       arma::field<arma::mat>& labels) {
     size_t sz = predictors.n_elem;
     labels = arma::field<arma::mat>(sz);
-    for (size_t i = 0; i < sz; ++i) {
+    for (size_t i = 0; i < sz; ++i)
+    {
       Predict(predictors.at(i), labels.at(i));
     }
   }
@@ -208,9 +223,11 @@ BOOST_AUTO_TEST_SUITE(AugmentedRNNsTasks);
 BOOST_AUTO_TEST_CASE(CopyTaskTest)
 {
   // Check the setup on various lengths...
-  for (size_t maxLen = 2; maxLen <= 16; ++maxLen) {
+  for (size_t maxLen = 2; maxLen <= 16; ++maxLen)
+  {
     // .. and various numbers of repetitions.
-    for (size_t nRepeats = 1; nRepeats <= 10; ++nRepeats) {
+    for (size_t nRepeats = 1; nRepeats <= 10; ++nRepeats)
+    {
       CopyTask task(maxLen, nRepeats);
       arma::field<arma::mat> trainPredictor, trainResponse;
       task.Generate(trainPredictor, trainResponse, 8);
@@ -230,9 +247,11 @@ BOOST_AUTO_TEST_CASE(CopyTaskTest)
 // Test of SortTask instance generator.
 // The data from generator is fed to the dummy hard-coded model above
 // that should be able to solve the task perfectly.
-BOOST_AUTO_TEST_CASE(SortTaskTest) {
+BOOST_AUTO_TEST_CASE(SortTaskTest)
+{
   size_t bitLen = 5;
-  for (size_t maxLen = 2; maxLen <= 16; ++maxLen) {
+  for (size_t maxLen = 2; maxLen <= 16; ++maxLen)
+  {
     SortTask task(maxLen, bitLen);
     arma::field<arma::mat> trainPredictor, trainResponse;
     task.Generate(trainPredictor, trainResponse, 8);
@@ -251,8 +270,10 @@ BOOST_AUTO_TEST_CASE(SortTaskTest) {
 // Test of AddTask instance generator.
 // The data from generator is fed to the dummy hard-coded model above
 // that should be able to solve the task perfectly.
-BOOST_AUTO_TEST_CASE(AddTaskTest) {
-  for (size_t bitLen = 2; bitLen <= 16; ++bitLen) {
+BOOST_AUTO_TEST_CASE(AddTaskTest)
+{
+  for (size_t bitLen = 2; bitLen <= 16; ++bitLen)
+  {
     AddTask task(bitLen);
     arma::field<arma::mat> trainPredictor, trainResponse;
     task.Generate(trainPredictor, trainResponse, 8);

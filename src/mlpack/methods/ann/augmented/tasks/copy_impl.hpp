@@ -22,7 +22,7 @@ namespace tasks /* Task utilities for augmented */ {
 
 CopyTask::CopyTask(const size_t maxLength,
                    const size_t nRepeats,
-                   bool addSeparator) :
+                   const bool addSeparator) :
     maxLength(maxLength),
     nRepeats(nRepeats),
     addSeparator(addSeparator)
@@ -72,13 +72,13 @@ const void CopyTask::Generate(arma::field<arma::mat>& input,
       vecInput;
     if (addSeparator)
       input(i).at(vecInput.n_elem, 0) = 0.5;
-    input(i).col(1).rows(addSeparator+vecInput.n_elem, totSize-1) =
-      arma::ones(totSize-vecInput.n_elem-addSeparator);
+    input(i).col(1).rows(addSeparator + vecInput.n_elem, totSize - 1) =
+        arma::ones(totSize-vecInput.n_elem - addSeparator);
     input(i) = input(i).t();
     input(i).reshape(input(i).n_elem, 1);
     labels(i) = arma::zeros(totSize, 1);
-    labels(i).col(0).rows(addSeparator+vecInput.n_elem, totSize-1) =
-      vecLabel;
+    labels(i).col(0).rows(addSeparator + vecInput.n_elem, totSize - 1) =
+        vecLabel;
   }
 }
 

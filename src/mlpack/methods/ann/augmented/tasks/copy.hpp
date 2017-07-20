@@ -54,11 +54,11 @@ class CopyTask
   *                  that has to be repeated by model.
   * @param nRepeats Number of repeates required to solve the task.
   * @param addSeparator Flag indicating whether generator
-  *                     should emit separating symbol after input sequence
+  *                     should emit separating symbol after input sequence.
   */
   CopyTask(const size_t maxLength,
            const size_t nRepeats,
-           bool addSeparator = false);
+           const bool addSeparator = false);
   /**
   * Generate dataset of a given size.
   *

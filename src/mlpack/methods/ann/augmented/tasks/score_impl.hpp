@@ -21,9 +21,9 @@ namespace augmented /* Augmented neural network */ {
 namespace scorers /* Scoring utilities for augmented */ {
 
 template<typename MatType>
-double SequencePrecision(arma::field<MatType> trueOutputs,
-                         arma::field<MatType> predOutputs,
-                         double tol)
+const double SequencePrecision(arma::field<MatType> trueOutputs,
+                               arma::field<MatType> predOutputs,
+                               double tol)
 {
   double score = 0;
   size_t testSize = trueOutputs.n_elem;
@@ -42,8 +42,7 @@ double SequencePrecision(arma::field<MatType> trueOutputs,
     arma::vec delta = arma::vectorise(arma::abs(
       trueOutputs.at(i) - predOutputs.at(i)));
     double maxDelta = arma::max(delta);
-    double eps = tol;
-    if (maxDelta < eps)
+    if (maxDelta < tol)
     {
       score++;
     }

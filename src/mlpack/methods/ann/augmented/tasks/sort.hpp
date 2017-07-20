@@ -44,6 +44,8 @@ class SortTask
   *
   * @param maxLength Maximum length of the number sequence.
   * @param bitLen Binary length of sorted numbers.
+  * @param addSeparator Flag indicating whether generator
+  *                     should emit separating symbol after input sequence.
   */
   SortTask(const size_t maxLength,
            const size_t bitLen,
@@ -54,6 +56,8 @@ class SortTask
   * @param input The variable to store input sequences.
   * @param labels The variable to store output sequences.
   * @param batchSize The dataset size.
+  * @param fixedLength Flag indicating whether generator
+  *                    should emit sequences of pairwise equal length.
   */
   const void Generate(arma::field<arma::mat>& input,
                       arma::field<arma::mat>& labels,

@@ -22,7 +22,8 @@ namespace tasks /* Task utilities for augmented */ {
 
 AddTask::AddTask(const size_t bitLen) : bitLen(bitLen)
 {
-  if (bitLen <= 0) {
+  if (bitLen <= 0)
+  {
     std::ostringstream oss;
     oss << "AddTask::AddTask(): binary length (" << bitLen << ") "
         << "is not positive!"
@@ -36,8 +37,8 @@ const void AddTask::Generate(arma::field<arma::mat>& input,
                              const size_t batchSize,
                              bool fixedLength)
 {
-  arma::field<arma::vec> vecInput = arma::field<arma::colvec>(batchSize);
-  arma::field<arma::vec> vecLabels = arma::field<arma::colvec>(batchSize);
+  input = arma::field<arma::mat>(batchSize);
+  labels = arma::field<arma::mat>(batchSize);
   size_t sizeA = bitLen, sizeB = bitLen;
   for (size_t i = 0; i < batchSize; ++i)
   {
@@ -50,21 +51,23 @@ const void AddTask::Generate(arma::field<arma::mat>& input,
     // Construct sequence of the form
     // (binary number with sizeA bits) + '+'
     // + (binary number with sizeB bits).
-    vecInput(i) = arma::randi<arma::colvec>(
-        sizeA + sizeB + 1, arma::distr_param(0, 1));
+    input(i) = arma::randi<arma::mat>(sizeA + sizeB + 1,
+                                      1,
+                                      arma::distr_param(0, 1));
     // Insert special value for '+' delimiter.
-    vecInput(i).at(sizeA) = 0.5;
-
+    labels(i) = arma::zeros(sizeA + sizeB + 1, 1);
+    input(i).at(sizeA, 0) = 0.5;
+    
     int valA = 0;
     for (size_t k = 0; k < sizeA; ++k)
     {
-      valA += static_cast<int>(vecInput(i).at(k)) << k;
+      valA += static_cast<int>(input(i).at(k, 0)) << k;
     }
 
     int valB = 0;
     for (size_t k = sizeA + 1; k < sizeA + 1 + sizeB; ++k)
     {
-      valB += static_cast<int>(vecInput(i).at(k)) << (k - sizeA - 1);
+      valB += static_cast<int>(input(i).at(k, 0)) << (k - sizeA - 1);
     }
 
     int tot = valA + valB;
@@ -85,26 +88,10 @@ const void AddTask::Generate(arma::field<arma::mat>& input,
       }
       binarySeq.push_back(0);
     }
-    size_t totLen = binarySeq.size();
-    vecLabels(i) = arma::colvec(totLen);
-    for (size_t j = 0; j < totLen; ++j)
+    for (size_t j = 0; j < binarySeq.size(); ++j)
     {
-      vecLabels(i).at(j) = binarySeq[j];
+      labels(i).at(j, 0) = binarySeq[j];
     }
-  }
-  Binarize(vecInput, input);
-  Binarize(vecLabels, labels);
-  if (input.n_rows != labels.n_rows) {
-      std::ostringstream oss;
-      oss << "AddTask::Generate(): sequences after application of "
-          << "Binarize() are not aligned ("
-          << input.n_rows << " and " << labels.n_rows << ")"
-          << std::endl;
-      throw std::logic_error(oss.str());
-  }
-  for (size_t i = 0; i < input.n_rows; ++i)
-  {
-    labels.at(i).reshape(input.at(i).n_elem, 1);
   }
 }
 
@@ -129,13 +116,6 @@ const void AddTask::Binarize(const arma::field<arma::vec>& input,
   output = arma::field<arma::mat>(input.n_elem);
   for (size_t i = 0; i < input.n_elem; ++i)
   {
-    /*output.at(i) = arma::zeros(3, input.at(i).n_elem);
-    for (size_t j = 0; j < input.at(i).n_elem; ++j)
-    {
-      size_t val = input.at(i).at(j);
-      output.at(i).at(val, j) = 1;
-    }
-    output.at(i).reshape(output.at(i).n_elem, 1);*/
     output.at(i) = arma::conv_to<arma::mat>::from(input.at(i));
   }
 }
