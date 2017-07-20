@@ -2,8 +2,7 @@
  * @file memory_unit_impl.hpp
  * @author Sumedh Ghaisas
  *
- * Implementation of the LSTM class, which implements a lstm network
- * layer.
+ * Implementation of memory head layer, used in Neural Turing Machine.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -38,20 +37,22 @@ MemoryHead<InputDataType, OutputDataType>::MemoryHead(
     deterministic(false)
 {
   // Build linear for K_t + B_t + G_t + S_t + Gamma_t
-  input_linear = new Linear<>(inSize, (memSize) + (1) + (1) + (2 * shiftSize + 1) + (1));//new Linear<>(inSize, (outSize) + (1) + (1) + (2 * shiftSize + 1) + (1));
+  inputLinear = new Linear<>(inSize, (memSize) + (1) + (1) +
+    (2 * shiftSize + 1) + (1));
 
-  // Build K_t.
-  k_t_non_linear = new TanHLayer<>();
+  // K_t non linearity.
+  kTNonLinear = new TanHLayer<>();
 
-  network.push_back(input_linear);
-  network.push_back(k_t_non_linear);
+  network.push_back(inputLinear);
+  network.push_back(kTNonLinear);
 
   prevWeights.push_back(arma::zeros<arma::mat>(outSize, 1));
   weightsBackwardIterator = prevWeights.end();
 
-  prevError = arma::zeros<arma::mat>((memSize) + (1) + (1) + (2 * shiftSize + 1) + (1), 1);//arma::zeros<arma::mat>((outSize) + (1) + (1) + (2 * shiftSize + 1) + (1), 1);
+  prevError = arma::zeros<arma::mat>((memSize) + (1) + (1) +
+    (2 * shiftSize + 1) + (1), 1);
 
-  b_w_dash = l_w_dash.end();
+  bWDash = l_w_dash.end();
   b_gamma_t = l_gamma_t.end();
   b_w_tilde = l_w_tilde.end();
   b_shiftMatrix = l_shiftMatrix.end();
@@ -72,16 +73,16 @@ void MemoryHead<InputDataType, OutputDataType>::Forward(
 {
   // Pass the input through linear layer.
   boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
-      boost::apply_visitor(outputParameterVisitor, input_linear))),
-      input_linear);
+      boost::apply_visitor(outputParameterVisitor, inputLinear))),
+      inputLinear);
 
-  arma::mat& lOutput = boost::apply_visitor(outputParameterVisitor, input_linear);
+  arma::mat& lOutput = boost::apply_visitor(outputParameterVisitor, inputLinear);
 
   // Build K_t with non linearity.
   boost::apply_visitor(ForwardVisitor(std::move(lOutput.submat(0, 0, memSize - 1, 0)),
-      std::move(boost::apply_visitor(outputParameterVisitor, k_t_non_linear))),
-      k_t_non_linear);
-  arma::mat& k_t = boost::apply_visitor(outputParameterVisitor, k_t_non_linear);
+      std::move(boost::apply_visitor(outputParameterVisitor, kTNonLinear))),
+      kTNonLinear);
+  arma::mat& k_t = boost::apply_visitor(outputParameterVisitor, kTNonLinear);
 
   // Build B_t with non linearity
   l_b_t.push_back(b_t_non_linear.Fn(arma::as_scalar(lOutput.submat(memSize, 0, memSize, 0))));
@@ -157,9 +158,14 @@ template<typename eT>
 void MemoryHead<InputDataType, OutputDataType>::Backward(
   const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
+  double sum = 0;
+  double sum2 = 0;
+
+  arma::vec d_w_dash(outSize, 1, arma::fill::none);
+
   if(b_memory_t == l_memory_t.end())
   {
-    b_w_dash = (--l_w_dash.end());
+    bWDash = (--l_w_dash.end());
     b_gamma_t = (--l_gamma_t.end());
     b_w_tilde = (--l_w_tilde.end());
     b_shiftMatrix = (--l_shiftMatrix.end());
@@ -173,14 +179,38 @@ void MemoryHead<InputDataType, OutputDataType>::Backward(
     b_memory_t = (--l_memory_t.end());
 
     weightsBackwardIterator = --(--prevWeights.end());
+
+    // W_t = (W_dash_t / sum(W_dash_t)).
+    sum = arma::as_scalar(arma::sum(*bWDash));
+
+    auto gyIt = gy.begin();
+
+    double sum2 = arma::as_scalar(arma::sum(*bWDash % gy)) / (sum * sum);
+    d_w_dash.for_each([&] (double& val)
+    {
+      val = (*gyIt / sum) - sum2;
+      gyIt++;
+    });
   }
   else
   {
-    gy += prev_d_w;
+    // W_t = (W_dash_t / sum(W_dash_t)).
+    double sum = arma::as_scalar(arma::sum(*bWDash));
+
+    auto gyIt = gy.begin();
+    auto predDWIt = prev_d_w.begin();
+
+    sum2 = arma::as_scalar(arma::sum(*bWDash % gy)) / (sum * sum);
+    d_w_dash.for_each([&] (double& val)
+    {
+      val = ((*gyIt + *predDWIt) / sum) - sum2;
+      gyIt++;
+      predDWIt++;
+    });
   }
 
   // Load parameters of this pass.
-  const arma::vec& w_dash = *b_w_dash;
+  const arma::vec& w_dash = *bWDash;
   const double& gamma_t = *b_gamma_t;
   const double& g_t = *b_g_t;
   const arma::vec& w_tilde = *b_w_tilde;
@@ -193,19 +223,10 @@ void MemoryHead<InputDataType, OutputDataType>::Backward(
   const arma::vec& cosine_t = *b_cosine_t;
   const arma::mat& memory_t = *b_memory_t;
 
-  // W_t = (W_dash_t / sum(W_dash_t)).
-  double sum = arma::as_scalar(arma::sum(w_dash));
-  arma::vec d_w_dash = gy / sum;
-  sum = -arma::as_scalar(arma::sum(w_dash % gy)) / (sum * sum);
-  d_w_dash.for_each([&] (double& val)
-  {
-    val += sum;
-  });
-
   arma::vec d_w_tilde = (gamma_t + 1) * (d_w_dash % arma::pow(w_tilde, gamma_t));
 
   // delta of gamma_t
-  prevError(outSize + 2 + 2 * shiftSize + 1, 0) = gamma_t_non_linear.Deriv(boost::apply_visitor(outputParameterVisitor, input_linear)(memSize + 2 + 2 * shiftSize + 1, 0)) * arma::as_scalar(arma::sum(d_w_dash % w_dash % arma::log(w_tilde)));
+  prevError(outSize + 2 + 2 * shiftSize + 1, 0) = gamma_t_non_linear.Deriv(boost::apply_visitor(outputParameterVisitor, inputLinear)(memSize + 2 + 2 * shiftSize + 1, 0)) * arma::as_scalar(arma::sum(d_w_dash % w_dash % arma::log(w_tilde)));
 
   arma::vec d_w_g = shiftMatrix * d_w_tilde;
 
@@ -247,7 +268,7 @@ void MemoryHead<InputDataType, OutputDataType>::Backward(
   prev_d_w = (1 - g_t) * d_w_g;
 
   //d_gt
-  prevError(memSize + 1, 0) = g_t_non_linear.Deriv(boost::apply_visitor(outputParameterVisitor, input_linear)(memSize + 1, 0)) * arma::as_scalar(arma::sum(d_w_g % (w_c - *weightsBackwardIterator)));
+  prevError(memSize + 1, 0) = g_t_non_linear.Deriv(boost::apply_visitor(outputParameterVisitor, inputLinear)(memSize + 1, 0)) * arma::as_scalar(arma::sum(d_w_g % (w_c - *weightsBackwardIterator)));
 
   sum = arma::as_scalar(arma::sum(w_e));
   arma::vec d_w_e = d_w_c / sum;
@@ -260,12 +281,12 @@ void MemoryHead<InputDataType, OutputDataType>::Backward(
   arma::vec d_cosine_t = (d_w_e % w_e) * b_t;
 
   // d_bt
-  prevError(memSize, 0) = b_t_non_linear.Deriv(boost::apply_visitor(outputParameterVisitor, input_linear)(memSize, 0)) * arma::as_scalar(arma::sum(d_w_e % cosine_t % w_e));
+  prevError(memSize, 0) = b_t_non_linear.Deriv(boost::apply_visitor(outputParameterVisitor, inputLinear)(memSize, 0)) * arma::as_scalar(arma::sum(d_w_e % cosine_t % w_e));
 
   // Derivative with normalisation.
   arma::vec d_k_t = arma::trans(memory_t) * d_cosine_t;
 
-  const arma::vec& k_t = boost::apply_visitor(outputParameterVisitor, k_t_non_linear);
+  const arma::vec& k_t = boost::apply_visitor(outputParameterVisitor, kTNonLinear);
 
   double k_t_norm = arma::norm(k_t);
 
@@ -273,20 +294,20 @@ void MemoryHead<InputDataType, OutputDataType>::Backward(
   d_k_t = arma::sum((arma::eye(memSize, memSize) - (k_t * arma::trans(k_t) / (k_t_norm * k_t_norm))) / k_t_norm, 1) % d_k_t;
 
   boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-      outputParameterVisitor, k_t_non_linear)), std::move(d_k_t),
-      std::move(boost::apply_visitor(deltaVisitor, k_t_non_linear))),
-      k_t_non_linear);
+      outputParameterVisitor, kTNonLinear)), std::move(d_k_t),
+      std::move(boost::apply_visitor(deltaVisitor, kTNonLinear))),
+      kTNonLinear);
 
-  prevError.submat(0, 0, memSize - 1, 0) = boost::apply_visitor(deltaVisitor, k_t_non_linear);
+  prevError.submat(0, 0, memSize - 1, 0) = boost::apply_visitor(deltaVisitor, kTNonLinear);
 
   boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-      outputParameterVisitor, input_linear)), std::move(prevError),
-      std::move(boost::apply_visitor(deltaVisitor, input_linear))),
-      input_linear);
+      outputParameterVisitor, inputLinear)), std::move(prevError),
+      std::move(boost::apply_visitor(deltaVisitor, inputLinear))),
+      inputLinear);
 
-  g = boost::apply_visitor(deltaVisitor, input_linear);
+  g = boost::apply_visitor(deltaVisitor, inputLinear);
 
-  b_w_dash--;
+  bWDash--;
   b_gamma_t--;
   b_w_tilde--;
   b_shiftMatrix--;
@@ -311,7 +332,7 @@ void MemoryHead<InputDataType, OutputDataType>::Gradient(
 {
 
   boost::apply_visitor(GradientVisitor(std::move(input), std::move(prevError)),
-      input_linear);
+      inputLinear);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -321,7 +342,8 @@ void MemoryHead<InputDataType, OutputDataType>::ResetCell()
   prevWeights.push_back(arma::zeros<arma::mat>(outSize, 1));
   weightsBackwardIterator = prevWeights.end();
 
-  prevError = arma::zeros<arma::mat>((memSize) + (1) + (1) + (2 * shiftSize + 1) + (1), 1); //arma::zeros<arma::mat>((outSize) + (1) + (1) + (2 * shiftSize + 1) + (1), 1);
+  prevError = arma::zeros<arma::mat>((memSize) + (1) + (1) +
+    (2 * shiftSize + 1) + (1), 1);
 
   l_w_dash.clear();
   l_gamma_t.clear();
@@ -336,7 +358,7 @@ void MemoryHead<InputDataType, OutputDataType>::ResetCell()
   l_cosine_t.clear();
   l_memory_t.clear();
 
-  b_w_dash = l_w_dash.end();
+  bWDash = l_w_dash.end();
   b_gamma_t = l_gamma_t.end();
   b_w_tilde = l_w_tilde.end();
   b_shiftMatrix = l_shiftMatrix.end();
