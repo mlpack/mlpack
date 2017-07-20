@@ -64,6 +64,13 @@ bool Load(const std::string& filename,
           const bool fatal = false,
           const bool transpose = true);
 
+/**
+ * Don't document these with doxygen; these declarations aren't helpful to
+ * users.
+ *
+ * @cond
+ */
+
 extern template bool Load<int>(const std::string&,
                                arma::Mat<int>&,
                                const bool,
@@ -94,6 +101,10 @@ extern template bool Load<double>(const std::string&,
                                   arma::Mat<double>&,
                                   const bool,
                                   const bool);
+
+/**
+ * @endcond
+ */
 
 /**
  * Load a column vector from a file, guessing the filetype from the extension.
@@ -198,6 +209,13 @@ bool Load(const std::string& filename,
           const bool fatal = false,
           const bool transpose = true);
 
+/**
+ * Don't document these with doxygen; they aren't helpful for users to know
+ * about.
+ *
+ * @cond
+ */
+
 extern template bool Load<int, IncrementPolicy>(
     const std::string&,
     arma::Mat<int>&,
@@ -232,6 +250,10 @@ extern template bool Load<double, IncrementPolicy>(
     DatasetMapper<IncrementPolicy>&,
     const bool,
     const bool);
+
+/**
+ * @endcond
+ */
 
 /**
  * Load a model from a file, guessing the filetype from the extension, or,

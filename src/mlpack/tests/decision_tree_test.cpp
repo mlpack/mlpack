@@ -13,113 +13,17 @@
 #include <mlpack/methods/decision_tree/decision_tree.hpp>
 #include <mlpack/methods/decision_tree/information_gain.hpp>
 #include <mlpack/methods/decision_tree/gini_gain.hpp>
+#include <mlpack/methods/decision_tree/random_dimension_select.hpp>
+#include <mlpack/methods/decision_tree/multiple_random_dimension_select.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 #include "serialization.hpp"
+#include "mock_categorical_data.hpp"
 
 using namespace mlpack;
 using namespace mlpack::tree;
 using namespace mlpack::distribution;
-
-/**
- * Create a mock categorical dataset for testing.
- */
-void MockCategoricalData(arma::mat& d,
-                         arma::Row<size_t>& l,
-                         data::DatasetInfo& datasetInfo)
-{
-  // We'll build a spiral dataset plus two noisy categorical features.  We need
-  // to build the distributions for the categorical features (they'll be
-  // discrete distributions).
-  DiscreteDistribution c1[5];
-  // The distribution will be automatically normalized.
-  for (size_t i = 0; i < 5; ++i)
-  {
-    std::vector<arma::vec> probs;
-    probs.push_back(arma::vec(4, arma::fill::randu));
-    c1[i] = DiscreteDistribution(probs);
-  }
-
-  DiscreteDistribution c2[5];
-  for (size_t i = 0; i < 5; ++i)
-  {
-    std::vector<arma::vec> probs;
-    probs.push_back(arma::vec(2, arma::fill::randu));
-    c2[i] = DiscreteDistribution(probs);
-  }
-
-  arma::mat spiralDataset(4, 4000);
-  arma::Row<size_t> labels(4000);
-  for (size_t i = 0; i < 4000; ++i)
-  {
-    // One circle every 2000 samples.  Plus some noise.
-    const double magnitude = 2.0 + (double(i) / 200.0) +
-        0.5 * mlpack::math::Random();
-    const double angle = (i % 200) * (2 * M_PI) + mlpack::math::Random();
-
-    const double x = magnitude * cos(angle);
-    const double y = magnitude * sin(angle);
-
-    spiralDataset(0, i) = x;
-    spiralDataset(1, i) = y;
-
-    // Set categorical features c1 and c2.
-    if (i < 800)
-    {
-      spiralDataset(2, i) = c1[1].Random()[0];
-      spiralDataset(3, i) = c2[1].Random()[0];
-      labels[i] = 1;
-    }
-    else if (i < 1600)
-    {
-      spiralDataset(2, i) = c1[3].Random()[0];
-      spiralDataset(3, i) = c2[3].Random()[0];
-      labels[i] = 3;
-    }
-    else if (i < 2400)
-    {
-      spiralDataset(2, i) = c1[2].Random()[0];
-      spiralDataset(3, i) = c2[2].Random()[0];
-      labels[i] = 2;
-    }
-    else if (i < 3200)
-    {
-      spiralDataset(2, i) = c1[0].Random()[0];
-      spiralDataset(3, i) = c2[0].Random()[0];
-      labels[i] = 0;
-    }
-    else
-    {
-      spiralDataset(2, i) = c1[4].Random()[0];
-      spiralDataset(3, i) = c2[4].Random()[0];
-      labels[i] = 4;
-    }
-  }
-
-  // Now create the dataset info.
-  datasetInfo = data::DatasetInfo(4);
-  datasetInfo.Type(2) = data::Datatype::categorical;
-  datasetInfo.Type(3) = data::Datatype::categorical;
-  // Set mappings.
-  datasetInfo.MapString<double>("0", 2);
-  datasetInfo.MapString<double>("1", 2);
-  datasetInfo.MapString<double>("2", 2);
-  datasetInfo.MapString<double>("3", 2);
-  datasetInfo.MapString<double>("0", 3);
-  datasetInfo.MapString<double>("1", 3);
-
-  // Now shuffle the dataset.
-  arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0, 3999,
-      4000));
-  d = arma::mat(4, 4000);
-  l = arma::Row<size_t>(4000);
-  for (size_t i = 0; i < 4000; ++i)
-  {
-    d.col(i) = spiralDataset.col(indices[i]);
-    l[i] = labels[indices[i]];
-  }
-}
 
 BOOST_AUTO_TEST_SUITE(DecisionTreeTest);
 
@@ -1069,6 +973,93 @@ BOOST_AUTO_TEST_CASE(CategoricalInformationGainWeightedBuildTest)
   BOOST_REQUIRE_GT(correctPct, 0.70);
 }
 
+/**
+ * Make sure that the random dimension selector only has one element.
+ */
+BOOST_AUTO_TEST_CASE(RandomDimensionSelectTest)
+{
+  RandomDimensionSelect r(10);
+
+  BOOST_REQUIRE_LT(r.Begin(), 10);
+  BOOST_REQUIRE_EQUAL(r.Next(), r.End());
+  BOOST_REQUIRE_EQUAL(r.Next(), r.End());
+  BOOST_REQUIRE_EQUAL(r.Next(), r.End());
+}
+
+/**
+ * Make sure that the random dimension selector selects different values.
+ */
+BOOST_AUTO_TEST_CASE(RandomDimensionSelectRandomTest)
+{
+  // We'll check that 4 values are not all the same.
+  RandomDimensionSelect r1(100000), r2(100000), r3(100000), r4(100000);
+
+  BOOST_REQUIRE((r1.Begin() != r2.Begin()) ||
+                (r1.Begin() != r3.Begin()) ||
+                (r1.Begin() != r4.Begin()));
+}
+
+/**
+ * Make sure that the multiple random dimension select only has the right number
+ * of elements.
+ */
+BOOST_AUTO_TEST_CASE(MultipleRandomDimensionSelectTest)
+{
+  MultipleRandomDimensionSelect<5> r(10);
+
+  // Make sure we get five elements.
+  BOOST_REQUIRE_LT(r.Begin(), 10);
+  BOOST_REQUIRE_LT(r.Next(), 10);
+  BOOST_REQUIRE_LT(r.Next(), 10);
+  BOOST_REQUIRE_LT(r.Next(), 10);
+  BOOST_REQUIRE_LT(r.Next(), 10);
+  BOOST_REQUIRE_EQUAL(r.Next(), r.End());
+}
+
+/**
+ * Make sure we get every element from the distribution.
+ */
+BOOST_AUTO_TEST_CASE(MultipleRandomDimensionAllSelectTest)
+{
+  MultipleRandomDimensionSelect<3> r(3);
+
+  bool found[3];
+  found[0] = found[1] = found[2] = false;
+
+  found[r.Begin()] = true;
+  found[r.Next()] = true;
+  found[r.Next()] = true;
+
+  BOOST_REQUIRE_EQUAL(found[0], true);
+  BOOST_REQUIRE_EQUAL(found[1], true);
+  BOOST_REQUIRE_EQUAL(found[2], true);
+}
+
+/**
+ * Make sure the right number of classes is returned for an empty tree (1).
+ */
+BOOST_AUTO_TEST_CASE(NumClassesEmptyTreeTest)
+{
+  DecisionTree<> dt;
+  BOOST_REQUIRE_EQUAL(dt.NumClasses(), 1);
+}
+
+/**
+ * Make sure the right number of classes is returned for a nonempty tree.
+ */
+BOOST_AUTO_TEST_CASE(NumClassesTest)
+{
+  // Load a dataset to train with.
+  arma::mat dataset;
+  arma::Row<size_t> labels;
+  data::Load("vc2.csv", dataset);
+  data::Load("vc2_labels.txt", labels);
+
+  DecisionTree<> dt(dataset, labels, 3);
+
+  BOOST_REQUIRE_EQUAL(dt.NumClasses(), 3);
+}
+
 /*
  * Test that we can pass const data into DecisionTree constructors.
  */
@@ -1081,14 +1072,14 @@ BOOST_AUTO_TEST_CASE(ConstDataTest)
 
   const arma::mat& constData = data;
   const arma::Row<size_t>& constLabels = labels;
-  const arma::rowvec constWeigths(labels.n_elem, arma::fill::randu);
+  const arma::rowvec constWeights(labels.n_elem, arma::fill::randu);
   const size_t numClasses = 5;
 
   DecisionTree<> dt(constData, constLabels, numClasses);
   DecisionTree<> dt2(constData, datasetInfo, constLabels, numClasses);
-  DecisionTree<> dt3(constData, constLabels, numClasses, constWeigths);
+  DecisionTree<> dt3(constData, constLabels, numClasses, constWeights);
   DecisionTree<> dt4(constData, datasetInfo, constLabels, numClasses,
-      constWeigths);
+      constWeights);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

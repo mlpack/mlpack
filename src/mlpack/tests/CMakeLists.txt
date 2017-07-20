@@ -34,7 +34,6 @@ add_executable(mlpack_test
   hoeffding_tree_test.cpp
   hyperplane_test.cpp
   imputation_test.cpp
-  ind2sub_test.cpp
   init_rules_test.cpp
   kernel_pca_test.cpp
   kernel_test.cpp
@@ -61,6 +60,7 @@ add_executable(mlpack_test
   metric_test.cpp
   minibatch_sgd_test.cpp
   mlpack_test.cpp
+  mock_categorical_data.hpp
   momentum_sgd_test.cpp
   nbc_test.cpp
   nca_test.cpp
@@ -74,6 +74,7 @@ add_executable(mlpack_test
   qdafn_test.cpp
   quic_svd_test.cpp
   radical_test.cpp
+  random_forest_test.cpp
   randomized_svd_test.cpp
   range_search_test.cpp
   rectangle_tree_test.cpp

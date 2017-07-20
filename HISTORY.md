@@ -2,6 +2,7 @@
 ###### ????-??-??
   * Speed and memory improvements for DBSCAN.  --single_mode can now be used for
     situations where previously RAM usage was too high.
+  * Bump minimum required version of Armadillo to 6.500.0.
 
 ### mlpack 2.2.3
 ###### 2017-05-24
