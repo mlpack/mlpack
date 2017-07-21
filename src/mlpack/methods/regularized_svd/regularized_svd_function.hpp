@@ -15,6 +15,8 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
+#include <mlpack/core/optimizers/parallel_sgd/parallel_sgd.hpp>
+#include <mlpack/core/optimizers/parallel_sgd/decay_policies/exponential_backoff.hpp>
 
 namespace mlpack {
 namespace svd {
@@ -128,13 +130,20 @@ namespace mlpack {
 namespace optimization {
 
   /**
-   * Template specialization for SGD optimizer. Used because the gradient
-   * affects only a small number of parameters per example, and thus the normal
-   * abstraction does not work as fast as we might like it to.
+   * Template specialization for the SGD and parallel SGD optimizer. Used
+   * because the gradient affects only a small number of parameters per example,
+   * and thus the normal abstraction does not work as fast as we might like it
+   * to.
    */
   template <>
   template <>
   inline double StandardSGD::Optimize(
+      mlpack::svd::RegularizedSVDFunction<arma::mat>& function,
+      arma::mat& parameters);
+
+  template <>
+  template <>
+  inline double ParallelSGD<ExponentialBackoff>::Optimize(
       mlpack::svd::RegularizedSVDFunction<arma::mat>& function,
       arma::mat& parameters);
 

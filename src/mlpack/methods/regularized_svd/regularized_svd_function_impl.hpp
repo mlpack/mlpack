@@ -218,6 +218,106 @@ double StandardSGD::Optimize(
   return overallObjective;
 }
 
+
+template <>
+template <>
+inline double ParallelSGD<ExponentialBackoff>::Optimize(
+    mlpack::svd::RegularizedSVDFunction<arma::mat>& function,
+    arma::mat& iterate)
+{
+  double overallObjective = DBL_MAX;
+  double lastObjective;
+
+  // The order in which the functions will be visited.
+  arma::Col<size_t> visitationOrder = arma::linspace<arma::Col<size_t>>(0,
+      (function.NumFunctions() - 1), function.NumFunctions());
+
+  const arma::mat data = function.Dataset();
+
+  // Iterate till the objective is within tolerance or the maximum number of
+  // allowed iterations is reached. If maxIterations is 0, this will iterate
+  // till convergence.
+  for (size_t i = 1; i != maxIterations; ++i)
+  {
+    // Calculate the overall objective.
+    lastObjective = overallObjective;
+    overallObjective = 0;
+
+    #pragma omp parallel for reduction(+:overallObjective)
+    for (size_t j = 0; j < function.NumFunctions(); ++j)
+    {
+      overallObjective += function.Evaluate(iterate, j);
+    }
+
+    // Output current objective function.
+    Log::Info << "Parallel SGD: iteration " << i << ", objective "
+      << overallObjective << "." << std::endl;
+
+    if (std::isnan(overallObjective) || std::isinf(overallObjective))
+    {
+      Log::Warn << "Parallel SGD: converged to " << overallObjective
+        << "; terminating with failure. Try a smaller step size?"
+        << std::endl;
+      return overallObjective;
+    }
+
+    if (std::abs(lastObjective - overallObjective) < tolerance)
+    {
+      Log::Info << "SGD: minimized within tolerance " << tolerance << "; "
+        << "terminating optimization." << std::endl;
+      return overallObjective;
+    }
+
+    // Get the stepsize for this iteration
+    double stepSize = decayPolicy.StepSize(i);
+
+    // Shuffle for uniform sampling of functions by each thread.
+    std::random_shuffle(visitationOrder.begin(), visitationOrder.end());
+
+    #pragma omp parallel
+    {
+      // Each processor gets a subset of the instances.
+      // Each subset is of size threadShareSize.
+      arma::Col<size_t> instances = ThreadShare(omp_get_thread_num(),
+          visitationOrder);
+      for (size_t j = 0; j < instances.n_elem; ++j)
+      {
+        const size_t numUsers = function.NumUsers();
+
+        // Indices for accessing the the correct parameter columns.
+        const size_t user = data(0, instances[j]);
+        const size_t item = data(1, instances[j]) + numUsers;
+
+        // Prediction error for the example.
+        const double rating = data(2, instances[j]);
+        double ratingError = rating - arma::dot(iterate.col(user),
+            iterate.col(item));
+
+        double lambda = function.Lambda();
+
+        arma::mat userUpdate = stepSize * (lambda * iterate.col(user) -
+            ratingError * iterate.col(item));
+        arma::mat itemUpdate = stepSize * (lambda * iterate.col(item) -
+            ratingError * iterate.col(user));
+
+        // Gradient is non-zero only for the parameter columns corresponding to
+        // the example.
+        for (size_t i = 0; i < iterate.n_rows; ++i)
+        {
+          #pragma omp atomic
+          iterate(i, user) -= userUpdate(i);
+          #pragma omp atomic
+          iterate(i, item) -= itemUpdate(i);
+        }
+      }
+    }
+  }
+  Log::Info << "\n Parallel SGD terminated with objective : "
+    << overallObjective << std::endl;
+
+  return overallObjective;
+}
+
 } // namespace optimization
 } // namespace mlpack
 
