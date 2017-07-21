@@ -241,7 +241,7 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename... MLAlgorithmArgs, bool, typename>
+template<typename... MLAlgorithmArgs, bool Enabled, typename>
 std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
                                     MatType,
                                     PredictionsType,
@@ -262,7 +262,7 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename... MLAlgorithmArgs, bool, typename, typename>
+template<typename... MLAlgorithmArgs, bool Enabled, typename, typename>
 std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
                                     MatType,
                                     PredictionsType,
@@ -284,7 +284,7 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename... MLAlgorithmArgs, bool, typename, typename, typename>
+template<typename... MLAlgorithmArgs, bool Enabled, typename, typename, typename>
 std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
                                     MatType,
                                     PredictionsType,
@@ -310,7 +310,7 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename... MLAlgorithmArgs, bool, typename>
+template<typename... MLAlgorithmArgs, bool Enabled, typename>
 std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
                                     MatType,
                                     PredictionsType,
@@ -333,7 +333,7 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename... MLAlgorithmArgs, bool, typename, typename>
+template<typename... MLAlgorithmArgs, bool Enabled, typename, typename>
 std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
                                     MatType,
                                     PredictionsType,
@@ -356,7 +356,7 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename... MLAlgorithmArgs, bool, typename, typename, typename>
+template<typename... MLAlgorithmArgs, bool Enabled, typename, typename, typename>
 std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
                                     MatType,
                                     PredictionsType,
@@ -383,7 +383,8 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<bool, typename... MLAlgorithmArgs, typename>
+template<bool ConstructableWithoutDatasetInfo, typename... MLAlgorithmArgs,
+    typename>
 std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
                                     MatType,
                                     PredictionsType,
@@ -404,7 +405,8 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<bool, typename... MLAlgorithmArgs, typename, typename>
+template<bool ConstructableWithoutDatasetInfo, typename... MLAlgorithmArgs,
+    typename, typename>
 std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
                                     MatType,
                                     PredictionsType,
