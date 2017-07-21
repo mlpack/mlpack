@@ -67,7 +67,7 @@ MemoryHead<InputDataType, OutputDataType>::MemoryHead(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-void MemoryHead<InputDataType, OutputDataType>::Forward(
+void MemoryHead<InputDataType, OutputDataType>::ForwardWithMemory(
     arma::Mat<eT>&& input, const arma::Mat<eT>&& memory, arma::Mat<eT>&& output)
 {
   // Pass the input through linear layer.
@@ -160,7 +160,7 @@ void MemoryHead<InputDataType, OutputDataType>::Forward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-void MemoryHead<InputDataType, OutputDataType>::Backward(
+void MemoryHead<InputDataType, OutputDataType>::BackwardWithMemory(
   const arma::Mat<eT>&& /* input */,
   const arma::Mat<eT>&& memory,
   arma::Mat<eT>&& gy, arma::Mat<eT>&& g)

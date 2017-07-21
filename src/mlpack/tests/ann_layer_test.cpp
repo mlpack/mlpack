@@ -935,7 +935,7 @@ BOOST_AUTO_TEST_CASE(ForwardMemoryHeadTest)
   networkInit.Initialize(mh.Model(), mh.Parameters());
 
   arma::mat weights;
-  mh.Forward(std::move(input), std::move(memory), std::move(weights));
+  mh.ForwardWithMemory(std::move(input), std::move(memory), std::move(weights));
 
   // approximate k_t gate output
   arma::mat k_t = arma::ones<arma::mat>(5, 1);

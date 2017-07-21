@@ -64,9 +64,9 @@ class MemoryHead
    * @param memory Current memory content.
    */
   template<typename eT>
-  void Forward(arma::Mat<eT>&& input,
-               const arma::Mat<eT>&& memory,
-               arma::Mat<eT>&& output);
+  void ForwardWithMemory(arma::Mat<eT>&& input,
+                         const arma::Mat<eT>&& memory,
+                         arma::Mat<eT>&& output);
 
   /**
    * Feed forward pass of a neural network, evaluating the function
@@ -83,7 +83,7 @@ class MemoryHead
   void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output)
   {
     arma::mat memory = arma::ones<arma::mat>(outSize, memSize);
-    Forward(std::move(input), std::move(memory), std::move(output));
+    ForwardWithMemory(std::move(input), std::move(memory), std::move(output));
   }
 
   /**
@@ -97,10 +97,10 @@ class MemoryHead
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
-                const arma::Mat<eT>&& memory,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void BackwardWithMemory(const arma::Mat<eT>&& /* input */,
+                          const arma::Mat<eT>&& memory,
+                          arma::Mat<eT>&& gy,
+                          arma::Mat<eT>&& g);
 
   template<typename eT>
   void Backward(const arma::Mat<eT>&& input,
@@ -108,7 +108,8 @@ class MemoryHead
                 arma::Mat<eT>&& g)
   {
     arma::mat memory = arma::ones<arma::mat>(outSize, memSize);
-    Backward(std::move(input), std::move(memory), std::move(gy), std::move(g));
+    BackwardWithMemory(std::move(input), std::move(memory), std::move(gy),
+        std::move(g));
   }
 
   /*
