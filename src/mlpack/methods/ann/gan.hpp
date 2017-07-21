@@ -88,9 +88,16 @@ class GenerativeAdversarialNetwork
    * @param numSamples number of samples to be generated from the distribution
    * @param args the aruments of the distribution to samples from
    */
-  void Generate(size_t numSamples, arma::mat&& fakeData);
+  void Generate(size_t numSamples, arma::mat&& fakeData, arma::mat&& noiseData);
+  //! Return the initial point for the optimization.
+  const arma::mat& Parameters() const { return parameter; }
+  //! Modify the initial point for the optimization.
+  arma::mat& Parameters() { return parameter; }
   //! Return the number of separable functions (the number of predictor points).
   size_t NumFunctions() const { return numFunctions; }
+  //! Serialize the model.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */);
   
  private:
   //! Locally stored Intialiser 
@@ -111,12 +118,16 @@ class GenerativeAdversarialNetwork
   size_t generatorInSize;
   //! Locally stored reset parmaeter
   bool reset;
+  //! Locally stored delta visitor
+  DeltaVisitor deltaVisitor;
   //! Locally stored parameter for training data
   arma::mat predictors;
   //! Locally stored responses
   arma::mat responses;
   //! Locally stored fake data used for training
   arma::mat fakeData;
+  //! Locally stored noise samples
+  arma::mat noiseData;
   //! Locally stored fake Labels used for training
   arma::mat fakeLables;
   //! Locally stored train data comprising of real and fake data
