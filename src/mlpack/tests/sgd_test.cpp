@@ -11,6 +11,8 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
+#include <mlpack/core/optimizers/sgd/update_policies/gradient_clipping.hpp>
+#include <mlpack/core/optimizers/sgd/update_policies/vanilla_update.hpp>
 #include <mlpack/core/optimizers/lbfgs/test_functions.hpp>
 #include <mlpack/core/optimizers/sgd/test_function.hpp>
 
@@ -28,6 +30,22 @@ BOOST_AUTO_TEST_SUITE(SGDTest);
 BOOST_AUTO_TEST_CASE(SimpleSGDTestFunction)
 {
   SGDTestFunction f;
+  StandardSGD s(0.0003, 5000000, 1e-9, true);
+
+  arma::mat coordinates = f.GetInitialPoint();
+  double result = s.Optimize(f, coordinates);
+
+  BOOST_REQUIRE_CLOSE(result, -1.0, 0.05);
+  BOOST_REQUIRE_SMALL(coordinates[0], 1e-3);
+  BOOST_REQUIRE_SMALL(coordinates[1], 1e-7);
+  BOOST_REQUIRE_SMALL(coordinates[2], 1e-7);
+}
+
+BOOST_AUTO_TEST_CASE(ClippedSGDTestFunction)
+{
+  SGDTestFunction f;
+  VanillaUpdate vanillaUpdate;
+  GradientClipping<VanillaUpdate> update(-3., +3., vanillaUpdate);
   StandardSGD s(0.0003, 5000000, 1e-9, true);
 
   arma::mat coordinates = f.GetInitialPoint();

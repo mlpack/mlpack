@@ -1,7 +1,10 @@
-#ifndef MLPACK_CORE_OPTIMIZERS_SGD_EMPTY_UPDATE_HPP
-#define MLPACK_CORE_OPTIMIZERS_SGD_EMPTY_UPDATE_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_SGD_GRADIENT_CLIPPING_HPP
+#define MLPACK_CORE_OPTIMIZERS_SGD_GRADIENT_CLIPPING_HPP
 
 #include <mlpack/prereqs.hpp>
+
+namespace mlpack {
+namespace optimization {
 
 template<typename UpdatePolicy>
 class GradientClipping
@@ -38,5 +41,8 @@ class GradientClipping
   double maxGradient;
   UpdatePolicy updatePolicy;
 };
+
+} // namespace optimization
+} // namespace mlpack
 
 #endif
