@@ -83,7 +83,7 @@ void SpikeSlabLayer<InputDataType, OutputDataType>::Sample(InputDataType&&
     {
       if (output.is_empty())
         output = arma::zeros(hiddenSize, 1);
-      output(i) = LogisticFunction::Fn(arma::as_scalar(input.t() *
+      output(i) = LogisticFunction::Fn(0.5 * arma::as_scalar(input.t() *
           weight.slice(i).t() * arma::diagmat(slabBias.col(i)).i() *
           weight.slice(i) * input + spikeBias.col(i)));
       output(i) = math::RandBernoulli(output(i));
@@ -105,9 +105,10 @@ void SpikeSlabLayer<InputDataType, OutputDataType>::Pvgivensh(arma::mat&& slab,
   for (size_t i = 0; i < mean.n_rows; i++)
       sample(i) = math::RandNormal(mean(i), variance(i, i));
   // Rejection sampling
-  while (arma::norm(sample) > radius)
-    for (size_t i = 0; i < mean.n_rows; i++)
-      sample(i) = math::RandNormal(mean(i), variance(i, i));
+  for (size_t i = 0; i < hiddenSize; i++)
+    if (arma::norm(sample) > radius)
+      for (size_t i = 0; i < mean.n_rows; i++)
+        sample(i) = math::RandNormal(mean(i), variance(i, i));
   output = sample;
   outMean = mean;
   state = output;

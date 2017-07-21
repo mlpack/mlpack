@@ -103,6 +103,7 @@ class ssRBM
 
     visibleBiasPositiveGrad.set_size(numVisible, 1);
     visibleBiasNegativeGrad.set_size(numVisible, 1);
+    visibleBiasNegativeGradTemp.set_size(numVisible, 1);
 
     hiddenBiasPositiveGrad.set_size(1, numHidden);
     hiddenBiasNegativeGrad.set_size(1, numHidden);
@@ -142,7 +143,7 @@ class ssRBM
     return temp + freeEnergySum;
   }
 
-  double Evaluate(arma::mat& predictors, size_t i)
+  double Evaluate(arma::mat& /*predictors*/, size_t /*i*/)
   {
     // Return 0 here since we don't have evaluate in case of persistence
     return 0;
@@ -178,8 +179,7 @@ class ssRBM
           tempSlab.col(i)) +
           arma::as_scalar(visible.SpikeBias().col(i));
     // positive lambda bias
-    visibleBiasPositiveGrad = (0.5 * input * input.t());
-    visibleBiasPositiveGrad = visibleBiasPositiveGrad.diag();
+    visibleBiasPositiveGrad.fill(arma::as_scalar(0.5 * input.t() * input));
   }
 
   void NegativePhase(arma::mat&& negativeSamples)
@@ -205,9 +205,9 @@ class ssRBM
           visible.SpikeBias().col(j));
 
     // negative lambda bias gradient
-    arma::mat visibleBiasNegativeGradTemp = 0.5 *
-        negativeSamples * negativeSamples.t();
-    visibleBiasNegativeGrad += visibleBiasNegativeGradTemp.diag();
+    visibleBiasNegativeGradTemp.fill(arma::as_scalar(0.5 *
+        negativeSamples.t() * negativeSamples));
+    visibleBiasNegativeGrad += visibleBiasNegativeGradTemp;
   }
 
   void SampleHidden(arma::mat&& input, arma::mat&& output)
@@ -284,7 +284,8 @@ class ssRBM
   arma::mat hiddenBiasNegativeGrad;
   //! Locally-stored gradient wrt visible bias for negative phase
   arma::mat visibleBiasNegativeGrad;
-
+  //! Locally-stored gradient wrt visible bias for negative phase
+  arma::mat visibleBiasNegativeGradTemp;
   //! Locally-stored gradient wrt weight for positive phase
   arma::cube weightPositiveGrad;
   //! Locally-stored gradient wrt hidden bias for positive phase

@@ -207,7 +207,7 @@ void BuildSSRbmNetwork(arma::mat& trainData,
       2, true, true);
   MiniBatchSGD msgd(10, 0.06, trainData.n_cols * 20, 0, true);
   modelssRBM.Reset();
-  modelssRBM.Policy().VisibleLayer().LambdaBias() = "10; 15; 20";
+  modelssRBM.Policy().VisibleLayer().LambdaBias() = "10; 10; 10";
   modelssRBM.Policy().VisibleLayer().SpikeBias().fill(-1);
   modelssRBM.Policy().VisibleLayer().SlabBias().fill(1.5);
   arma::vec calcultedFreeEnergy(4);
