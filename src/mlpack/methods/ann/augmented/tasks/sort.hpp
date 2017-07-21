@@ -32,8 +32,10 @@ namespace tasks /* Task utilities for augmented */ {
  * length (binary length) * (sequence length).
  * 
  * Example of generated dataset (sequence length = 3, binary length = 2):
- * - Input sequences: [ [1,1,0,0,0,1], [0,0,0,0,1,1] ]
- * - Output sequences: [ [0,0,0,1,1,1], [0,0,0,0,1,1] ]
+ * - Input sequences: [1,1,0,0,0,1]
+ * (three numbers in the sequence are 11, 00, and 01)
+ * - Output sequences: [0,0,0,1,1,1]
+ * (00, 01, 11 - reordering of the numbers above in the ascending order)
  * 
  */
 class SortTask

@@ -26,8 +26,9 @@ namespace tasks /* Task utilities for augmented */ {
  * The parameters are:
  * - macimum binary length;
  * 
- * Every element of sequence is encoded as 3-dimensional vector
- * (one-hot vector for elements {0, 1, +}).
+ * Every element of sequence is encoded as 1-dimensional vector
+ * (possible vector elements are {0, 1, 0.5} -
+ * the latter corresponds to '+' sign').
  * Generated datasets are compliant with mlpack format -
  * every dataset element is shaped as a vector of
  * length 3 * (sequence length),

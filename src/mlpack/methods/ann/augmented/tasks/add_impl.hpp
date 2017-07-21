@@ -54,6 +54,9 @@ const void AddTask::Generate(arma::field<arma::mat>& input,
     input(i) = arma::randi<arma::mat>(sizeA + sizeB + 1,
                                       1,
                                       arma::distr_param(0, 1));
+    // Adding leading 1 to make the distribution over numbers uniform.
+    input(i).at(sizeA - 1, 0) = 1;
+    input(i).at(sizeA + sizeB, 0) = 1;
     // Insert special value for '+' delimiter.
     labels(i) = arma::zeros(sizeA + sizeB + 1, 1);
     input(i).at(sizeA, 0) = 0.5;
