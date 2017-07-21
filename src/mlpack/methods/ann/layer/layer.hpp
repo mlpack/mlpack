@@ -23,6 +23,7 @@
 #include "lstm.hpp"
 #include "gru.hpp"
 #include "memory_head.hpp"
+#include "neural_turing_machine.hpp"
 #include "recurrent.hpp"
 #include "recurrent_attention.hpp"
 #include "sequential.hpp"

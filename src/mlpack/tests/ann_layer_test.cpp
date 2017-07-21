@@ -22,8 +22,6 @@
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
-#include <mlpack/methods/ann/layer/neural_turing_machine.hpp>
-
 using namespace mlpack;
 using namespace mlpack::ann;
 
@@ -842,6 +840,50 @@ BOOST_AUTO_TEST_CASE(GradientMemoryHeadTest)
       model->Add<IdentityLayer<> >();
       model->Add<Linear<> >(1, 10);
       model->Add<MemoryHead<> >(10, 3, 5, 1);
+      model->Add<Linear<> >(3, 3);
+      model->Add<LogSoftMax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      arma::mat output;
+      double error = model->Evaluate(model->Parameters(), 0);
+      model->Gradient(model->Parameters(), 0, gradient);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    RNN<NegativeLogLikelihood<> >* model;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+}
+
+/**
+ * Check if the gradients computed by MemoryHead cell are close enough to the
+ * approximation of the gradients.
+ */
+BOOST_AUTO_TEST_CASE(GradientNTMTest)
+{
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randu(5, 1);
+      target = arma::mat("1; 1; 1; 1; 1;");
+      const size_t rho = 5;
+
+      model = new RNN<NegativeLogLikelihood<> >(input, target, rho);
+      model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(1, 10);
+      model->Add<NeuralTuringMachine<> >(10, 3, 5, 1);
       model->Add<Linear<> >(3, 3);
       model->Add<LogSoftMax<> >();
     }

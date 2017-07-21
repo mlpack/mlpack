@@ -98,6 +98,12 @@ class NeuralTuringMachine
                 arma::Mat<eT>&& /* error */,
                 arma::Mat<eT>&& /* gradient */);
 
+  /*
+   * Resets the cell to accept a new input.
+   * This breaks the BPTT chain starts a new one.
+   */
+  void ResetCell();
+
   //! The value of the deterministic parameter.
   bool Deterministic() const { return deterministic; }
   //! Modify the value of the deterministic parameter.
@@ -160,6 +166,7 @@ class NeuralTuringMachine
   LayerTypes addGate;
 
   std::list<arma::mat> memoryHistory;
+  std::list<arma::mat>::iterator bMemoryHistory;
 
   std::list<arma::mat> lReads;
 

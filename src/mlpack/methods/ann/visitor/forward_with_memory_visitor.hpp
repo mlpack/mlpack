@@ -47,14 +47,16 @@ class ForwardWithMemoryVisitor : public boost::static_visitor<void>
   //! implements ForwardWithMemory() function
   template<typename T>
   typename std::enable_if<
-      HasForwardWithMemoryCheck<T, void(T::*)()>::value, void>::type
+      HasForwardWithMemoryCheck<T, void(T::*)(arma::mat&&, const arma::mat&&,
+      arma::mat&&)>::value, void>::type
   ForwardWithMemory(T* layer) const;
 
   //! Do not execute the ForwardWithMemory() function for a module which
   //! doesn't implement ForwardWithMemory() function.
   template<typename T>
   typename std::enable_if<
-      !HasForwardWithMemoryCheck<T, void(T::*)()>::value, void>::type
+      !HasForwardWithMemoryCheck<T, void(T::*)(arma::mat&&, const arma::mat&&,
+      arma::mat&&)>::value, void>::type
   ForwardWithMemory(T* layer) const;
 
   //! The input parameter set.

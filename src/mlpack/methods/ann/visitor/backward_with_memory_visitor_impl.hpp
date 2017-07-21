@@ -14,7 +14,7 @@
 #define MLPACK_METHODS_ANN_VISITOR_BACKWARD_WITH_MEMORY_VISITOR_IMPL_HPP
 
 // In case it hasn't been included yet.
-#include "Backward_with_memory_visitor.hpp"
+#include "backward_with_memory_visitor.hpp"
 
 namespace mlpack {
 namespace ann {
@@ -26,7 +26,7 @@ inline BackwardWithMemoryVisitor::BackwardWithMemoryVisitor(arma::mat&& input,
                                                             arma::mat&& delta) :
     input(std::move(input)),
     memory(std::move(memory)),
-    output(std::move(error)),
+    error(std::move(error)),
     delta(std::move(delta))
 {
   /* Nothing to do here. */
@@ -40,17 +40,20 @@ inline void BackwardWithMemoryVisitor::operator()(LayerType* layer) const
 
 template<typename T>
 inline typename std::enable_if<
-    HasBackwardWithMemoryCheck<T, void(T::*)()>::value, void>::type
+    HasBackwardWithMemoryCheck<T, void(T::*)(const arma::mat&&,
+    const arma::mat&&, arma::mat&&, arma::mat&&)>::value, void>::type
 BackwardWithMemoryVisitor::BackwardWithMemory(T* layer) const
 {
   layer->BackwardWithMemory(std::move(input),
                            std::move(memory),
-                           std::move(output));
+                           std::move(error),
+                           std::move(delta));
 }
 
 template<typename T>
 inline typename std::enable_if<
-    !HasBackwardWithMemoryCheck<T, void(T::*)()>::value, void>::type
+    !HasBackwardWithMemoryCheck<T, void(T::*)(const arma::mat&&,
+    const arma::mat&&, arma::mat&&, arma::mat&&)>::value, void>::type
 BackwardWithMemoryVisitor::BackwardWithMemory(T* /* layer */) const
 {
   /* Nothing to do here. */

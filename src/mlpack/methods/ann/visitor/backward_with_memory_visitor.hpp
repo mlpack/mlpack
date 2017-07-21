@@ -48,14 +48,16 @@ class BackwardWithMemoryVisitor : public boost::static_visitor<void>
   //! implements BackwardWithMemory() function
   template<typename T>
   typename std::enable_if<
-      HasBackwardWithMemoryCheck<T, void(T::*)()>::value, void>::type
+      HasBackwardWithMemoryCheck<T, void(T::*)(const arma::mat&&,
+      const arma::mat&&, arma::mat&&, arma::mat&&)>::value, void>::type
   BackwardWithMemory(T* layer) const;
 
   //! Do not execute the BackwardWithMemory() function for a module which
   //! doesn't implement ForwardWithMemory() function.
   template<typename T>
   typename std::enable_if<
-      !HasBackwardWithMemoryCheck<T, void(T::*)()>::value, void>::type
+      !HasBackwardWithMemoryCheck<T, void(T::*)(const arma::mat&&,
+      const arma::mat&&, arma::mat&&, arma::mat&&)>::value, void>::type
   BackwardWithMemory(T* layer) const;
 
   //! The input parameter set.

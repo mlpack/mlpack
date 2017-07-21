@@ -38,7 +38,8 @@ inline void ForwardWithMemoryVisitor::operator()(LayerType* layer) const
 
 template<typename T>
 inline typename std::enable_if<
-    HasForwardWithMemoryCheck<T, void(T::*)()>::value, void>::type
+    HasForwardWithMemoryCheck<T, void(T::*)(arma::mat&&, const arma::mat&&,
+    arma::mat&&)>::value, void>::type
 ForwardWithMemoryVisitor::ForwardWithMemory(T* layer) const
 {
   layer->ForwardWithMemory(std::move(input),
@@ -48,7 +49,8 @@ ForwardWithMemoryVisitor::ForwardWithMemory(T* layer) const
 
 template<typename T>
 inline typename std::enable_if<
-    !HasForwardWithMemoryCheck<T, void(T::*)()>::value, void>::type
+    !HasForwardWithMemoryCheck<T, void(T::*)(arma::mat&&, const arma::mat&&,
+    arma::mat&&)>::value, void>::type
 ForwardWithMemoryVisitor::ForwardWithMemory(T* /* layer */) const
 {
   /* Nothing to do here. */
