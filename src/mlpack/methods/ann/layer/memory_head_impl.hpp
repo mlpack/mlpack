@@ -63,13 +63,12 @@ MemoryHead<InputDataType, OutputDataType>::MemoryHead(
   bWc = lWc.end();
   bBt = lBt.end();
   bCosineT = lConsineT.end();
-  bMemoryT = lMemoryT.end();
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void MemoryHead<InputDataType, OutputDataType>::Forward(
-    arma::Mat<eT>&& input, arma::mat&& memory, arma::Mat<eT>&& output)
+    arma::Mat<eT>&& input, const arma::Mat<eT>&& memory, arma::Mat<eT>&& output)
 {
   // Pass the input through linear layer.
   boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
@@ -109,8 +108,7 @@ void MemoryHead<InputDataType, OutputDataType>::Forward(
   const double& gammaT = lGammaT.back();
 
   // Perform cosine similarity with memory content
-  lMemoryT.push_back(arma::normalise(memory));
-  lConsineT.push_back(lMemoryT.back() * arma::normalise(kT));
+  lConsineT.push_back(arma::normalise(memory) * arma::normalise(kT));
   const arma::vec& cosSimilarity = lConsineT.back();
 
   // Build wC with bT and softmax
@@ -163,14 +161,16 @@ void MemoryHead<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void MemoryHead<InputDataType, OutputDataType>::Backward(
-  const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
+  const arma::Mat<eT>&& /* input */,
+  const arma::Mat<eT>&& memory,
+  arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
   double sum = 0;
   double sum2 = 0;
 
   arma::vec dWDash(outSize, 1, arma::fill::none);
 
-  if(bMemoryT == lMemoryT.end())
+  if(weightsBackwardIterator == prevWeights.end())
   {
     bWdash = (--lWDash.end());
     bGammaT = (--lGammaT.end());
@@ -183,7 +183,6 @@ void MemoryHead<InputDataType, OutputDataType>::Backward(
     bWe = (--lWe.end());
     bBt = (--lBt.end());
     bCosineT = (--lConsineT.end());
-    bMemoryT = (--lMemoryT.end());
 
     weightsBackwardIterator = --(--prevWeights.end());
 
@@ -228,7 +227,6 @@ void MemoryHead<InputDataType, OutputDataType>::Backward(
   const arma::vec& wE = *bWe;
   const double& bT = *bBt;
   const arma::vec& consineT = *bCosineT;
-  const arma::mat& memoryT = *bMemoryT;
 
   arma::vec dWTilde = (gammaT + 1) * (dWDash % arma::pow(wTilde, gammaT));
 
@@ -306,7 +304,7 @@ void MemoryHead<InputDataType, OutputDataType>::Backward(
     arma::as_scalar(arma::sum(dWe % consineT % wE));
 
   // Derivative with normalisation.
-  arma::vec dKt = arma::trans(memoryT) * dCosineT;
+  arma::vec dKt = arma::trans(arma::normalise(memory)) * dCosineT;
 
   const arma::vec& kT = boost::apply_visitor(outputParameterVisitor,
     kTNonLinear);
@@ -343,7 +341,6 @@ void MemoryHead<InputDataType, OutputDataType>::Backward(
   bWe--;
   bBt--;
   bCosineT--;
-  bMemoryT--;
 
   weightsBackwardIterator--;
 }
@@ -381,7 +378,6 @@ void MemoryHead<InputDataType, OutputDataType>::ResetCell()
   lWc.clear();
   lBt.clear();
   lConsineT.clear();
-  lMemoryT.clear();
 
   bWdash = lWDash.end();
   bGammaT = lGammaT.end();
@@ -394,7 +390,6 @@ void MemoryHead<InputDataType, OutputDataType>::ResetCell()
   bWc = lWc.end();
   bBt = lBt.end();
   bCosineT = lConsineT.end();
-  bMemoryT = lMemoryT.end();
 }
 
 template<typename InputDataType, typename OutputDataType>

@@ -64,7 +64,9 @@ class MemoryHead
    * @param memory Current memory content.
    */
   template<typename eT>
-  void Forward(arma::Mat<eT>&& input, arma::mat&& memory, arma::Mat<eT>&& output);
+  void Forward(arma::Mat<eT>&& input,
+               const arma::Mat<eT>&& memory,
+               arma::Mat<eT>&& output);
 
   /**
    * Feed forward pass of a neural network, evaluating the function
@@ -80,8 +82,8 @@ class MemoryHead
   template<typename eT>
   void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output)
   {
-    Forward(std::move(input), arma::ones<arma::mat>(outSize, memSize),
-      std::move(output));
+    arma::mat memory = arma::ones<arma::mat>(outSize, memSize);
+    Forward(std::move(input), std::move(memory), std::move(output));
   }
 
   /**
@@ -90,13 +92,24 @@ class MemoryHead
    * forward pass.
    *
    * @param input The propagated input activation.
+   * @param memory The current memory content.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
   template<typename eT>
   void Backward(const arma::Mat<eT>&& /* input */,
+                const arma::Mat<eT>&& memory,
                 arma::Mat<eT>&& gy,
                 arma::Mat<eT>&& g);
+
+  template<typename eT>
+  void Backward(const arma::Mat<eT>&& input,
+                arma::Mat<eT>&& gy,
+                arma::Mat<eT>&& g)
+  {
+    arma::mat memory = arma::ones<arma::mat>(outSize, memSize);
+    Backward(std::move(input), std::move(memory), std::move(gy), std::move(g));
+  }
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -188,12 +201,6 @@ class MemoryHead
 
   //! Iterator to shift matrices, used by backward.
   std::list<arma::mat>::iterator bShiftMatrix;
-
-  //! Store the memory content used.
-  std::list<arma::mat> lMemoryT;
-
-  //! Iterator to memory content, used by backward.
-  std::list<arma::mat>::iterator bMemoryT;
 
   //! Store We gate values.
   std::list<arma::vec> lWe;
