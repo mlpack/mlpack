@@ -116,18 +116,6 @@ class ParallelSGD
   DecayPolicyType& DecayPolicy() { return decayPolicy; }
 
  private:
-  /**
-   * Get the share of datapoint indices to be updated by the thread with given
-   * thread id.
-   *
-   * @param thread_id The id of the current thread. Range 0-OMP_NUM_THREADS.
-   * @param visitationOrder The random list of datapoint indices for the current
-   *    iteration.
-   * @return Vector of datapoint indices to be visited by the current thread.
-   */
-  arma::Col<size_t> ThreadShare(size_t threadId,
-                                const arma::Col<size_t>& visitationOrder);
-
   //! The maximum number of allowed iterations.
   size_t maxIterations;
 

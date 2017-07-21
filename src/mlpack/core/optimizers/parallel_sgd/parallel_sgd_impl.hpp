@@ -86,16 +86,18 @@ double ParallelSGD<DecayPolicyType>::Optimize(
     {
       // Each processor gets a subset of the instances.
       // Each subset is of size threadShareSize.
-      arma::Col<size_t> instances = ThreadShare(omp_get_thread_num(),
-          visitationOrder);
-      for (size_t j = 0; j < instances.n_elem; ++j)
+      size_t threadId = omp_get_thread_num();
+
+      for (size_t j = threadId * threadShareSize;
+          j < (threadId + 1) * threadShareSize && j < visitationOrder.n_elem;
+          ++j)
       {
         // Each instance affects only some components of the decision variable.
         // So the gradient is sparse.
         arma::sp_mat gradient;
 
         // Evaluate the sparse gradient.
-        function.Gradient(iterate, instances[j], gradient);
+        function.Gradient(iterate, visitationOrder[j], gradient);
 
         // Update the decision variable with non-zero components of the
         // gradient.
@@ -115,29 +117,6 @@ double ParallelSGD<DecayPolicyType>::Optimize(
   Log::Info << "\n Parallel SGD terminated with objective : "
     << overallObjective << std::endl;
   return overallObjective;
-}
-
-template <typename DecayPolicyType>
-arma::Col<size_t> ParallelSGD<DecayPolicyType>::ThreadShare(
-    size_t threadId, const arma::Col<size_t>& visitationOrder)
-{
-  if (threadId * threadShareSize >= visitationOrder.n_elem)
-  {
-    // No data for this thread.
-    return arma::Col<size_t>();
-  }
-  else if ((threadId + 1) * threadShareSize >= visitationOrder.n_elem)
-  {
-    // The last few elements.
-    return visitationOrder.subvec(threadId * threadShareSize ,
-        visitationOrder.n_elem - 1);
-  }
-  else
-  {
-    // Equal distribution of threadShareSize examples to each thread.
-    return visitationOrder.subvec(threadId * threadShareSize,
-        (threadId + 1) * threadShareSize - 1);
-  }
 }
 
 } // namespace optimization

@@ -244,7 +244,7 @@ inline double ParallelSGD<ExponentialBackoff>::Optimize(
     overallObjective = 0;
 
     #pragma omp parallel for reduction(+:overallObjective)
-    for (size_t j = 0; j < function.NumFunctions(); ++j)
+    for (omp_size_t j = 0; j < (omp_size_t) function.NumFunctions(); ++j)
     {
       overallObjective += function.Evaluate(iterate, j);
     }
@@ -278,18 +278,20 @@ inline double ParallelSGD<ExponentialBackoff>::Optimize(
     {
       // Each processor gets a subset of the instances.
       // Each subset is of size threadShareSize.
-      arma::Col<size_t> instances = ThreadShare(omp_get_thread_num(),
-          visitationOrder);
-      for (size_t j = 0; j < instances.n_elem; ++j)
+      size_t threadId = omp_get_thread_num();
+
+      for (size_t j = threadId * threadShareSize;
+          j < (threadId + 1) * threadShareSize && j < visitationOrder.n_elem;
+          ++j)
       {
         const size_t numUsers = function.NumUsers();
 
         // Indices for accessing the the correct parameter columns.
-        const size_t user = data(0, instances[j]);
-        const size_t item = data(1, instances[j]) + numUsers;
+        const size_t user = data(0, visitationOrder[j]);
+        const size_t item = data(1, visitationOrder[j]) + numUsers;
 
         // Prediction error for the example.
-        const double rating = data(2, instances[j]);
+        const double rating = data(2, visitationOrder[j]);
         double ratingError = rating - arma::dot(iterate.col(user),
             iterate.col(item));
 
