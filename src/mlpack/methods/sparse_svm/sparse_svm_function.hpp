@@ -3,7 +3,7 @@
  * @author Shikhar Bhardwaj
  *
  * Implementation of the hinge loss function for training a sparse SVM with the
- * parallel SGD algorithm
+ * parallel SGD algorithm.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the

@@ -47,18 +47,22 @@ class ExponentialBackoff
    * @param step The initial stepsize(gamma).
    * @param beta The reduction factor. This should be a value in range (0, 1).
    */
-  ExponentialBackoff(size_t firstBackoffEpoch, double step, double beta) :
-    firstBackoffEpoch(firstBackoffEpoch), step(step), beta(beta)
-  {
-      cutoffEpoch = firstBackoffEpoch;
-  }
+  ExponentialBackoff(const size_t firstBackoffEpoch,
+                     const double step,
+                     const double beta) :
+                     firstBackoffEpoch(firstBackoffEpoch),
+                     cutoffEpoch(firstBackoffEpoch),
+                     step(step),
+                     beta(beta)
+  { /* Nothing to do. */ }
+
   /**
    * Get the step size for the current gradient update.
    *
    * @param numEpoch The iteration number of the current update.
    * @return The stepsize for the current iteration.
    */
-  double StepSize(size_t numEpoch)
+  double StepSize(const size_t numEpoch)
   {
     if (numEpoch >= cutoffEpoch)
     {

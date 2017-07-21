@@ -27,7 +27,7 @@ namespace svd {
  *
  * @tparam MatType The matrix type of the dataset.
  */
-template <typename MatType>
+template <typename MatType = arma::mat>
 class RegularizedSVDFunction
 {
  public:

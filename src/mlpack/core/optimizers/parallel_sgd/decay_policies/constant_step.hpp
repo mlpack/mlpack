@@ -40,7 +40,7 @@ class ConstantStep
    *    calculated.
    * @return The step size for the current iteration.
    */
-  double StepSize(size_t /* numEpoch */)
+  double StepSize(const size_t /* numEpoch */)
   {
     return step;
   }
