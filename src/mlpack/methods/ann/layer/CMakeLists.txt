@@ -57,6 +57,8 @@ set(SOURCES
   multiply_constant_impl.hpp
   negative_log_likelihood.hpp
   negative_log_likelihood_impl.hpp
+  neural_turing_machine.hpp
+  neural_turing_machine_impl.hpp
   parametric_relu.hpp
   parametric_relu_impl.hpp
   recurrent.hpp

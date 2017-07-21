@@ -22,7 +22,7 @@
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
-#include <mlpack/methods/ann/visitor/forward_with_memory_visitor.hpp>
+#include <mlpack/methods/ann/layer/neural_turing_machine.hpp>
 
 using namespace mlpack;
 using namespace mlpack::ann;
@@ -929,6 +929,8 @@ BOOST_AUTO_TEST_CASE(ForwardMemoryHeadTest)
   arma::mat memory = arma::ones(5, 5);
   arma::mat input = arma::ones(5, 1);
 
+  MemoryHead<> mh(5, 5, 5, 5);
+
   NetworkInitialization<ConstInitialization> networkInit(ConstInitialization(1));
   networkInit.Initialize(mh.Model(), mh.Parameters());
 
@@ -959,6 +961,20 @@ BOOST_AUTO_TEST_CASE(ForwardMemoryHeadTest)
 
   BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::trans(arma::normalise(cosSimilarity)) *
     arma::normalise(weights)), 1, 1e-2);
+}
+
+/**
+ * NeuralTuringMachine manual forward test.
+ */
+BOOST_AUTO_TEST_CASE(ForwardNeuralTuringMachineTest)
+{
+  arma::mat memory = arma::ones(5, 5);
+  arma::mat input = arma::ones(5, 1);
+
+  NeuralTuringMachine<> ntm(5, 5, 5, 5);
+
+  NetworkInitialization<ConstInitialization> networkInit(ConstInitialization(1));
+  networkInit.Initialize(ntm.Model(), ntm.Parameters());
 }
 
 /**
