@@ -72,7 +72,7 @@ BOOST_AUTO_TEST_CASE(OneStepQLearningTest)
    * When training from scratch, you should set proper number of
    * workers (e.g. 16).
    */
-  config.NumOfWorkers() = 0;
+  config.NumOfWorkers() = 1;
   config.UpdateInterval() = 6;
   config.StepLimit() = 200;
   config.TargetNetworkSyncInterval() = 200;
