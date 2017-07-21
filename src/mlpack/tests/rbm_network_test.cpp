@@ -183,6 +183,86 @@ BOOST_AUTO_TEST_CASE(ClassificationTest)
   std::cout << "RBM Accuracy" <<classificationAccuray1 << std::endl;
   BOOST_REQUIRE_GE(classificationAccuray1, classificationAccuray);
 }
+BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
+{
+  arma::mat tempData;
+  int hiddenLayerSize = 100;
+  double radius = 0;
+  double tempRadius = 0;
+  arma::mat trainData, testData, dataset;
+  arma::mat trainLabelsTemp, testLabelsTemp;
+  trainData.load("digits_train.arm");
+  testData.load("digits_test.arm");
+  trainLabelsTemp.load("digits_train_label.arm");
+  testLabelsTemp.load("digits_test_label.arm");
+  GaussianInitialization gaussian(0, 0.1);
+  tempData = arma::mat(trainData.memptr(), trainData.n_rows, 1000, false,
+    false);
+
+  arma::Row<size_t> trainLabels = arma::zeros<arma::Row<size_t>>(1,
+      trainLabelsTemp.n_cols);
+  arma::Row<size_t> testLabels = arma::zeros<arma::Row<size_t>>(1,
+      testLabelsTemp.n_cols);
+
+  for (size_t i = 0; i < trainLabelsTemp.n_cols; ++i)
+    trainLabels(i) = arma::as_scalar(trainLabelsTemp.col(i));
+
+  for (size_t i = 0; i < testLabelsTemp.n_cols; ++i)
+    testLabels(i) = arma::as_scalar(testLabelsTemp.col(i));
+
+  for (size_t i = 0; i < tempData.n_cols; i++)
+  {
+    tempRadius = arma::norm(tempData.col(i));
+    if (radius < tempRadius)
+      radius = tempRadius;
+  }
+
+  arma::mat output, XRbm(hiddenLayerSize, trainData.n_cols),
+      YRbm(hiddenLayerSize, testLabels.n_cols);
+
+  XRbm.zeros();
+  YRbm.zeros();
+  size_t poolSize = 3;
+  arma::mat slabBias(poolSize, hiddenLayerSize);
+  slabBias.fill(10.5);
+  std::cout << tempData.n_rows << std::endl;
+  SpikeSlabLayer<> spikeVisible(tempData.n_rows, hiddenLayerSize, poolSize,
+      slabBias, radius, 1);
+  SpikeSlabLayer<> spikeHidden(hiddenLayerSize, tempData.n_rows, poolSize,
+      slabBias, radius, 0);
+  ssRBM ss_rbm(spikeVisible, spikeHidden);
+  RBM<GaussianInitialization, ssRBM> modelssRBM(tempData, gaussian, ss_rbm,
+      2, true, true);
+  std::cout << tempData.n_cols << std::endl;
+  MiniBatchSGD msgd(100, 0.006, 200, 0, true);
+  modelssRBM.Reset();
+  modelssRBM.Policy().VisibleLayer().LambdaBias().fill(10);
+  modelssRBM.Policy().VisibleLayer().SpikeBias().fill(-4);
+  modelssRBM.Train(tempData, msgd);
+  for (size_t i = 0; i < trainData.n_cols; i++)
+  {
+    modelssRBM.Policy().VisibleLayer().Sample(std::move(trainData.col(i)),
+        std::move(output));
+    XRbm.col(i) = output;
+  }
+
+  for (size_t i = 0; i < testData.n_cols; i++)
+  {
+    modelssRBM.Policy().VisibleLayer().Sample(std::move(testData.col(i)),
+      std::move(output));
+    YRbm.col(i) = output;
+  }
+  const size_t numClasses = 10; // Number of classes.
+  const size_t numBasis = 5; // Parameter required for L-BFGS algorithm.
+  const size_t numIterations = 100; // Maximum number of iterations.
+
+  arma::Row<size_t> predictions1, predictions2;
+  L_BFGS optimizer1(numBasis, numIterations);
+  SoftmaxRegression regressor1(XRbm, trainLabels, numClasses,
+        0.001, false, optimizer1);
+  double classificationAccuray1 = regressor1.ComputeAccuracy(YRbm, testLabels);
+  std::cout << "ssRBM Accuracy" <<classificationAccuray1 << std::endl;
+}
 template<typename MatType = arma::mat>
 void BuildSSRbmNetwork(arma::mat& trainData,
                        const size_t hiddenLayerSize)
