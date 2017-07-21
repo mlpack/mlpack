@@ -15,6 +15,8 @@ set(SOURCES
   deterministic_set_visitor_impl.hpp
   forward_visitor.hpp
   forward_visitor_impl.hpp
+  forward_with_memory_visitor.hpp
+  forward_with_memory_visitor_impl.hpp
   gradient_set_visitor.hpp
   gradient_set_visitor_impl.hpp
   gradient_update_visitor.hpp

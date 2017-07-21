@@ -88,6 +88,11 @@ HAS_MEM_FUNC(Reset, HasResetCheck);
 // we can use with SFINAE to catch when a type has a ResetCell() function.
 HAS_MEM_FUNC(ResetCell, HasResetCellCheck);
 
+// This gives us a HasForwardWithMemoryCheck<T, U> type (where U is a function
+// pointer) we can use with SFINAE to catch when a type has a
+// ForwardWithMemory() function.
+HAS_MEM_FUNC(ForwardWithMemory, HasForwardWithMemoryCheck);
+
 // This gives us a HasRewardCheck<T, U> type (where U is a function pointer) we
 // can use with SFINAE to catch when a type has a Reward() function.
 HAS_MEM_FUNC(Reward, HasRewardCheck);

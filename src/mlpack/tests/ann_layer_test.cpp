@@ -22,6 +22,8 @@
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
+#include <mlpack/methods/ann/visitor/forward_with_memory_visitor.hpp>
+
 using namespace mlpack;
 using namespace mlpack::ann;
 
@@ -924,8 +926,6 @@ BOOST_AUTO_TEST_CASE(ForwardGRULayerTest)
  */
 BOOST_AUTO_TEST_CASE(ForwardMemoryHeadTest)
 {
-  MemoryHead<> mh(5, 5, 5, 1);
-
   arma::mat memory = arma::ones(5, 5);
   arma::mat input = arma::ones(5, 1);
 
