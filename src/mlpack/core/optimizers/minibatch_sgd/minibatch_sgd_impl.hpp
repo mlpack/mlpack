@@ -31,14 +31,16 @@ MiniBatchSGDType<
                     const double tolerance,
                     const bool shuffle,
                     const UpdatePolicyType& updatePolicy,
-                    const DecayPolicyType& decayPolicy) :
+                    const DecayPolicyType& decayPolicy,
+                    const bool resetPolicy) :
                     batchSize(batchSize),
                     stepSize(stepSize),
                     maxIterations(maxIterations),
                     tolerance(tolerance),
                     shuffle(shuffle),
                     updatePolicy(updatePolicy),
-                    decayPolicy(decayPolicy)
+                    decayPolicy(decayPolicy),
+                    resetPolicy(resetPolicy)
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
@@ -50,7 +52,8 @@ template<typename DecomposableFunctionType>
 double MiniBatchSGDType<
     UpdatePolicyType,
     DecayPolicyType
->::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
+>::Optimize(DecomposableFunctionType& function,
+            arma::mat& iterate)
 {
   // Find the number of functions.
   const size_t numFunctions = function.NumFunctions();
@@ -75,7 +78,8 @@ double MiniBatchSGDType<
     overallObjective += function.Evaluate(iterate, i);
 
   // Initialize the update policy.
-  updatePolicy.Initialize(iterate.n_rows, iterate.n_cols);
+  if (resetPolicy)
+    updatePolicy.Initialize(iterate.n_rows, iterate.n_cols);
 
   // Now iterate!
   arma::mat gradient(iterate.n_rows, iterate.n_cols);

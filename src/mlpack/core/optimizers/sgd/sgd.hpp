@@ -92,12 +92,26 @@ class SGD
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    * @param shuffle If true, the function order is shuffled; otherwise, each
    *     function is visited in linear order.
+   * @param updatePolicy Instantiated update policy used to adjust the given
+   *                     parameters.
+   * @param resetPolicy Flag that determines whether update policy parameters
+   *                    are reset before every Optimize call.
+   * @param clipGradient Flag that determines whether gradient should be
+   *                     clipped to some range before every SGD step.
+   * @param minGradient Minimum gradient value
+   *                    (affects optimization iff clipGradient flag is on).
+   * @param maxGradient Maximum gradient value
+   *                    (affects optimization iff clipGradient flag is on).
    */
   SGD(const double stepSize = 0.01,
       const size_t maxIterations = 100000,
       const double tolerance = 1e-5,
       const bool shuffle = true,
-      const UpdatePolicyType updatePolicy = UpdatePolicyType());
+      const UpdatePolicyType updatePolicy = UpdatePolicyType(),
+      const bool resetPolicy = true,
+      const bool clipGradient = false,
+      const double minGradient = 0.0,
+      const double maxGradient = 0.0);
 
   /**
    * Optimize the given function using stochastic gradient descent.  The given
@@ -110,7 +124,8 @@ class SGD
    * @return Objective value of the final point.
    */
   template<typename DecomposableFunctionType>
-  double Optimize(DecomposableFunctionType& function, arma::mat& iterate);
+  double Optimize(DecomposableFunctionType& function,
+                  arma::mat& iterate);
 
   //! Get the step size.
   double StepSize() const { return stepSize; }
@@ -132,8 +147,30 @@ class SGD
   //! Modify whether or not the individual functions are shuffled.
   bool& Shuffle() { return shuffle; }
 
+  //! Get whether or not the update policy parameters
+  //! are reset before Optimize call.
+  bool ResetPolicy() const { return resetPolicy; }
+  //! Modify whether or not the update policy parameters
+  //! are reset before Optimize call.
+  bool& ResetPolicy() { return resetPolicy; }
+
+  //! Get whether or not the gradient is clipped.
+  bool ClipGradient() const { return clipGradient; }
+  //! Modify whether or not the gradient is clipped.
+  bool& ClipGradient() { return clipGradient; }
+
+  //! Get minimum gradient value.
+  double MinGradient() const { return minGradient; }
+  //! Modify minimum gradient value.
+  double& MinGradient() { return minGradient; }
+
+  //! Get maximum gradient value.
+  double MaxGradient() const { return maxGradient; }
+  //! Modify maximum gradient value.
+  double& MaxGradient() { return maxGradient; }
+
   //! Get the update policy.
-  const UpdatePolicyType& UpdatePolicy() const { return updatePolicy; }
+  UpdatePolicyType UpdatePolicy() const { return updatePolicy; }
   //! Modify the update policy.
   UpdatePolicyType& UpdatePolicy() { return updatePolicy; }
 
@@ -153,6 +190,20 @@ class SGD
 
   //! The update policy used to update the parameters in each iteration.
   UpdatePolicyType updatePolicy;
+
+  //! Flag indicating whether update policy
+  //! should be reset before running optimization.
+  bool resetPolicy;
+
+  //! Flag that determines whether gradient should be clipped 
+  //! to some range before every SGD step.
+  bool clipGradient;
+
+  //! Minimum gradient value.
+  double minGradient;
+
+  //! Maximum gradient value.
+  double maxGradient;
 };
 
 using StandardSGD = SGD<VanillaUpdate>;

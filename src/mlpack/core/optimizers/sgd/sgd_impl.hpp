@@ -29,12 +29,20 @@ SGD<UpdatePolicyType>::SGD(
     const size_t maxIterations,
     const double tolerance,
     const bool shuffle,
-    const UpdatePolicyType updatePolicy) :
+    const UpdatePolicyType updatePolicy,
+    const bool resetPolicy,
+    const bool clipGradient,
+    const double minGradient,
+    const double maxGradient) :
     stepSize(stepSize),
     maxIterations(maxIterations),
     tolerance(tolerance),
     shuffle(shuffle),
-    updatePolicy(updatePolicy)
+    updatePolicy(updatePolicy),
+    resetPolicy(resetPolicy),
+    clipGradient(clipGradient),
+    minGradient(minGradient),
+    maxGradient(maxGradient)
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
@@ -65,7 +73,8 @@ double SGD<UpdatePolicyType>::Optimize(
     overallObjective += function.Evaluate(iterate, i);
 
   // Initialize the update policy.
-  updatePolicy.Initialize(iterate.n_rows, iterate.n_cols);
+  if (resetPolicy)
+    updatePolicy.Initialize(iterate.n_rows, iterate.n_cols);
 
   // Now iterate!
   arma::mat gradient(iterate.n_rows, iterate.n_cols);
@@ -106,6 +115,18 @@ double SGD<UpdatePolicyType>::Optimize(
       function.Gradient(iterate, visitationOrder[currentFunction], gradient);
     else
       function.Gradient(iterate, currentFunction, gradient);
+
+    // Clip the gradient.
+    if (clipGradient)
+    {
+      gradient.transform
+      (
+        [&](double val)
+        {
+          return std::min(std::max(val, minGradient), maxGradient);
+        }
+      );
+    }
 
     // Use the update policy to take a step.
     updatePolicy.Update(iterate, stepSize, gradient);
