@@ -79,12 +79,11 @@ void AsyncLearning<
   // All the variables that doesn't show up in this list will be copied.
   #pragma omp parallel for shared(learningNetwork, targetNetwork, \
       stop, totalSteps, policy)
-  // OpenMP only support signed index variable
-  for (int i = 0; i <= (int)config.NumOfWorkers(); ++i)
+  for (omp_size_t i = 0; i <= config.NumOfWorkers(); ++i)
   {
     while (!stop)
     {
-      if (i < (int)config.NumOfWorkers())
+      if (i < config.NumOfWorkers())
       {
         WorkerType::Episode(learningNetwork, targetNetwork, stop, totalSteps,
             policy, updater, environment, config, false);
