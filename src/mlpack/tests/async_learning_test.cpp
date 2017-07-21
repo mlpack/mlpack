@@ -68,7 +68,11 @@ BOOST_AUTO_TEST_CASE(OneStepQLearningTest)
   TrainingConfig config;
   config.StepSize() = 0.0001;
   config.Discount() = 0.99;
-  config.NumOfWorkers() = 4;
+  /**
+   * When training from scratch, you should set proper number of
+   * workers (e.g. 16).
+   */
+  config.NumOfWorkers() = 0;
   config.UpdateInterval() = 6;
   config.StepLimit() = 200;
   config.TargetNetworkSyncInterval() = 200;
