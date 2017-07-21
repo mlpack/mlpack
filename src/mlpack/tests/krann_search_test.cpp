@@ -708,7 +708,7 @@ BOOST_AUTO_TEST_CASE(RAModelTest)
 
       // assert that at most 5% of the queries fall out of this threshold
       // 5% of 100 queries is 5.
-      size_t maxNumQueriesFail = 25; // See #734 for why this is so high.
+      size_t maxNumQueriesFail = 50; // See #734 for why this is so high.
 
       BOOST_REQUIRE_LT(numQueriesFail, maxNumQueriesFail);
     }

@@ -1,8 +1,11 @@
-# Define the files we need to compile
+cmake_minimum_required(VERSION 2.8)
+
+# Define the files we need to compile.
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  aggregated_policy.hpp
-  greedy_policy.hpp
+  bootstrap.hpp
+  random_forest.hpp
+  random_forest_impl.hpp
 )
 
 # Add directory name to sources.
@@ -13,3 +16,5 @@ endforeach()
 # Append sources (with directory name) to list of all mlpack sources (used at
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
+
+add_cli_executable(random_forest)

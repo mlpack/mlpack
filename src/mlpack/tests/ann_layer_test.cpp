@@ -912,15 +912,18 @@ BOOST_AUTO_TEST_CASE(SimpleLogSoftmaxLayerTest)
   LogSoftMax<> module;
 
   // Test the Forward function.
-  input = arma::mat("0.5 0.5");
+  input = arma::mat("0.5; 0.5");
   module.Forward(std::move(input), std::move(output));
   BOOST_REQUIRE_SMALL(arma::accu(arma::abs(
-    arma::mat("-0.6931 -0.6931") - output)), 1e-3);
+    arma::mat("-0.6931; -0.6931") - output)), 1e-3);
 
   // Test the Backward function.
   error = arma::zeros(input.n_rows, input.n_cols);
+  // Assume LogSoftmax layer is always associated with NLL output layer.
+  error(1, 0) = -1;
   module.Backward(std::move(input), std::move(error), std::move(delta));
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
+  BOOST_REQUIRE_SMALL(arma::accu(arma::abs(
+      arma::mat("1.6487; 0.6487") - delta)), 1e-3);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
