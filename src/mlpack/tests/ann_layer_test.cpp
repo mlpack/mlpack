@@ -931,7 +931,8 @@ BOOST_AUTO_TEST_CASE(ForwardMemoryHeadTest)
 
   MemoryHead<> mh(5, 5, 5, 5);
 
-  NetworkInitialization<ConstInitialization> networkInit(ConstInitialization(1));
+  NetworkInitialization<ConstInitialization>
+      networkInit(ConstInitialization(1));
   networkInit.Initialize(mh.Model(), mh.Parameters());
 
   arma::mat weights;
@@ -959,8 +960,8 @@ BOOST_AUTO_TEST_CASE(ForwardMemoryHeadTest)
   arma::mat w_dash = arma::pow(w_tilde, gamma_t + 1);
   w_dash = w_dash / arma::as_scalar(arma::sum(arma::sum(w_dash)));
 
-  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::trans(arma::normalise(cosSimilarity)) *
-    arma::normalise(weights)), 1, 1e-2);
+  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::trans(
+      arma::normalise(cosSimilarity)) * arma::normalise(weights)), 1, 1e-2);
 }
 
 /**

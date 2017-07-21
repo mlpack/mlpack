@@ -2,8 +2,8 @@
  * @file forward_with_memory_visitor.hpp
  * @author Sumedh Ghaisas
  *
- * This file provides an abstraction for the Forward() function which also
- * accepts the current memory conten for different layers and automatically
+ * This file provides an abstraction for the ForwardWithMemory() function which
+ * also accepts the current memory conten for different layers and automatically
  * directs any parameter to the right layer type. This visitor is useful the
  * networks which deals with external memory content.
  *
@@ -24,8 +24,8 @@ namespace mlpack {
 namespace ann {
 
 /**
- * ForwardVisitor executes the ForwardWithMemory() function given the input,
- * memory and output parameter.
+ * ForwardWithMemoryVisitor executes the ForwardWithMemory() function given the
+ * input, memory and output parameter.
  */
 class ForwardWithMemoryVisitor : public boost::static_visitor<void>
 {
