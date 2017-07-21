@@ -76,7 +76,7 @@ void RBM<InitializationRuleType, RBMPolicy>
       false, false);
 
   rbmPolicy.Reset();
-  gibbsTemporary.set_size(rbmPolicy.VisibleLayer().InSize(), 1);
+  gibbsTemporary.set_size(rbmPolicy.VisibleLayer().OutSize(), 1);
   negativeSamples.set_size(rbmPolicy.VisibleLayer().InSize(), mSteps);
   corruptInput.set_size(rbmPolicy.VisibleLayer().InSize(), 1);
   gibbsTemporary.zeros();

@@ -25,11 +25,13 @@ SpikeSlabLayer<InputDataType, OutputDataType>::SpikeSlabLayer(
     const size_t inSize,
     const size_t outSize,
     const size_t poolSize,
+    const arma::mat slabBias,
     const double radius,
     const bool typeVisible):
     inSize(inSize),
     outSize(outSize),
     poolSize(poolSize),
+    slabBias(slabBias),
     radius(radius),
     typeVisible(typeVisible)
 {}
@@ -47,20 +49,19 @@ void SpikeSlabLayer<InputDataType, OutputDataType>::Reset()
     visibleSize = outSize;
     hiddenSize = inSize;
   }
+  std::cout << "visibleSize" <<  visibleSize << std::endl;
+  std::cout << "hiddenSize" << hiddenSize << std::endl;
   // Weight shape = k * d * n
   weight = arma::cube(weights.memptr(), poolSize,
       visibleSize, hiddenSize, false,
       false);
-  // slabBias shape = k * n ==> diagMat(slabBias.col(i)) = k * k
-  slabBias = arma::mat(weights.memptr() + weight.n_elem,
-      poolSize, hiddenSize, false, false);
 
   // lambdaBias shape = d * 1 ==> diagMat(lambdaBias.col(0)) = d * d
-  lambdaBias = arma::mat(weights.memptr() + weight.n_elem + slabBias.n_elem,
+  lambdaBias = arma::mat(weights.memptr() + weight.n_elem,
       visibleSize, 1, false, false);
 
   // spikeBias shape = 1 * N
-  spikeBias = arma::mat(weights.memptr() + weight.n_elem + slabBias.n_elem +
+  spikeBias = arma::mat(weights.memptr() + weight.n_elem +
       lambdaBias.n_elem, 1, hiddenSize, false, false);
 }
 

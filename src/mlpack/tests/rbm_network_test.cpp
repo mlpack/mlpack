@@ -198,27 +198,30 @@ void BuildSSRbmNetwork(arma::mat& trainData,
     if (radius < tempRadius)
       radius = tempRadius;
   }
-
-  SpikeSlabLayer<> spikeVisible(trainData.n_rows, hiddenLayerSize, 3, radius,
-      1);
-  SpikeSlabLayer<> spikeHidden(hiddenLayerSize, trainData.n_rows, 3, radius, 0);
+  // slab bias k * n
+  arma::mat slabBias(3, hiddenLayerSize);
+  slabBias.fill(1.5);
+  SpikeSlabLayer<> spikeVisible(trainData.n_rows, hiddenLayerSize, 3, slabBias,
+      radius, 1);
+  SpikeSlabLayer<> spikeHidden(hiddenLayerSize, trainData.n_rows, 3, slabBias,
+      radius, 0);
   ssRBM ss_rbm(spikeVisible, spikeHidden);
   RBM<GaussianInitialization, ssRBM> modelssRBM(trainData, gaussian, ss_rbm,
       2, true, true);
-  MiniBatchSGD msgd(10, 0.06, trainData.n_cols * 20, 0, true);
+  MiniBatchSGD msgd(10, 0.006, 2, 0, true);
   modelssRBM.Reset();
   modelssRBM.Policy().VisibleLayer().LambdaBias() = "10; 10; 10";
   modelssRBM.Policy().VisibleLayer().SpikeBias().fill(-1);
-  modelssRBM.Policy().VisibleLayer().SlabBias().fill(1.5);
   arma::vec calcultedFreeEnergy(4);
   calcultedFreeEnergy.zeros();
   for (size_t i = 0; i < trainData.n_cols; i++)
   {
     calcultedFreeEnergy(i) = modelssRBM.FreeEnergy(std::move(trainData.col(i)));
   }
+  std::cout << "Here" << std::endl;
   modelssRBM.Policy().PositivePhase(arma::mat(trainData.col(0)));
   modelssRBM.Policy().NegativePhase(arma::mat(trainData.col(0)));
-  modelssRBM.Train(trainData, msgd);
+  // modelssRBM.Train(trainData, msgd);
   BOOST_REQUIRE_EQUAL(modelssRBM.Policy().VisibleLayer().SlabBias().n_rows, 3);
   BOOST_REQUIRE_EQUAL(modelssRBM.Policy().VisibleLayer().SlabBias().n_cols, 2);
 }

@@ -33,7 +33,8 @@ class SpikeSlabLayer
    * @param: poolSize num of pooling hidden neurons
    */
   SpikeSlabLayer(const size_t inSize, const size_t outSize,
-      const size_t poolSize, const double radius, const bool typeVisible);
+      const size_t poolSize, const arma::mat slabBias, 
+      const double radius, const bool typeVisible);
 
   // Reset the variables
   void Reset();
@@ -95,7 +96,6 @@ class SpikeSlabLayer
 
   //! Get the regulaliser associated with slab variables
   arma::mat const& SlabBias() const { return slabBias; }
-  arma::mat & SlabBias()  { return slabBias; }
 
   //! Get the regulaliser associated with visible variables
   arma::mat const& LambdaBias() const { return lambdaBias; }
@@ -129,6 +129,9 @@ class SpikeSlabLayer
   //! Locally-stored number of output units.
   const size_t poolSize;
 
+  //! Locally-store slab parameters
+  const arma::mat slabBias;
+
   //! Locally stored radius for rejection sampling
   const double radius;
   //! Locally stored boolean variable indication type of layer
@@ -142,9 +145,6 @@ class SpikeSlabLayer
 
   //! Locally-stored spike parameters.
   arma::mat spikeBias;
-
-  //! Locally-store slab parameters
-  arma::mat slabBias;
 
   //! Locally-store slab parameters
   arma::mat lambdaBias;
