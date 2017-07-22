@@ -30,19 +30,13 @@ SGD<UpdatePolicyType>::SGD(
     const double tolerance,
     const bool shuffle,
     const UpdatePolicyType updatePolicy,
-    const bool resetPolicy,
-    const bool clipGradient,
-    const double minGradient,
-    const double maxGradient) :
+    const bool resetPolicy) :
     stepSize(stepSize),
     maxIterations(maxIterations),
     tolerance(tolerance),
     shuffle(shuffle),
     updatePolicy(updatePolicy),
-    resetPolicy(resetPolicy),
-    clipGradient(clipGradient),
-    minGradient(minGradient),
-    maxGradient(maxGradient)
+    resetPolicy(resetPolicy)
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
@@ -115,18 +109,6 @@ double SGD<UpdatePolicyType>::Optimize(
       function.Gradient(iterate, visitationOrder[currentFunction], gradient);
     else
       function.Gradient(iterate, currentFunction, gradient);
-
-    // Clip the gradient.
-    if (clipGradient)
-    {
-      gradient.transform
-      (
-        [&](double val)
-        {
-          return std::min(std::max(val, minGradient), maxGradient);
-        }
-      );
-    }
 
     // Use the update policy to take a step.
     updatePolicy.Update(iterate, stepSize, gradient);

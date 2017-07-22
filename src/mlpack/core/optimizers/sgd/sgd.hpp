@@ -108,10 +108,7 @@ class SGD
       const double tolerance = 1e-5,
       const bool shuffle = true,
       const UpdatePolicyType updatePolicy = UpdatePolicyType(),
-      const bool resetPolicy = true,
-      const bool clipGradient = false,
-      const double minGradient = 0.0,
-      const double maxGradient = 0.0);
+      const bool resetPolicy = true);
 
   /**
    * Optimize the given function using stochastic gradient descent.  The given
@@ -154,21 +151,6 @@ class SGD
   //! are reset before Optimize call.
   bool& ResetPolicy() { return resetPolicy; }
 
-  //! Get whether or not the gradient is clipped.
-  bool ClipGradient() const { return clipGradient; }
-  //! Modify whether or not the gradient is clipped.
-  bool& ClipGradient() { return clipGradient; }
-
-  //! Get minimum gradient value.
-  double MinGradient() const { return minGradient; }
-  //! Modify minimum gradient value.
-  double& MinGradient() { return minGradient; }
-
-  //! Get maximum gradient value.
-  double MaxGradient() const { return maxGradient; }
-  //! Modify maximum gradient value.
-  double& MaxGradient() { return maxGradient; }
-
   //! Get the update policy.
   UpdatePolicyType UpdatePolicy() const { return updatePolicy; }
   //! Modify the update policy.
@@ -194,16 +176,6 @@ class SGD
   //! Flag indicating whether update policy
   //! should be reset before running optimization.
   bool resetPolicy;
-
-  //! Flag that determines whether gradient should be clipped 
-  //! to some range before every SGD step.
-  bool clipGradient;
-
-  //! Minimum gradient value.
-  double minGradient;
-
-  //! Maximum gradient value.
-  double maxGradient;
 };
 
 using StandardSGD = SGD<VanillaUpdate>;

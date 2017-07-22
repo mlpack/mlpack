@@ -163,7 +163,7 @@ class MiniBatchSGDType
   bool ResetPolicy() const { return resetPolicy; }
   //! Modify whether or not the update policy parameters
   //! are reset before Optimize call.
-  bool& ResetPolicy() { return resetPolicy; } 
+  bool& ResetPolicy() { return resetPolicy; }
 
   //! Get the update policy.
   UpdatePolicyType UpdatePolicy() const { return updatePolicy; }

@@ -73,13 +73,9 @@ class GradientClipping
               const arma::mat& gradient)
   {
     // First, clip the gradient.
-    gradient.transform
-    (
-      [&](double val)
-      {
-        return std::min(std::max(val, minGradient), maxGradient);
-      }
-    );
+    gradient.transform(
+        [&](double val)
+        { return std::min(std::max(val, minGradient), maxGradient); });
     // And only then do the update.
     updatePolicy.Update(iterate, stepSize, gradient);
   }
