@@ -41,6 +41,7 @@ BOOST_AUTO_TEST_CASE(SimpleSGDTestFunction)
   BOOST_REQUIRE_SMALL(coordinates[2], 1e-7);
 }
 
+// Test checking that gradient clipping works with vanilla SGD.
 BOOST_AUTO_TEST_CASE(ClippedSGDTestFunction)
 {
   SGDTestFunction f;
