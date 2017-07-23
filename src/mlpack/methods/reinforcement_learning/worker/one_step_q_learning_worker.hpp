@@ -90,17 +90,15 @@ class OneStepQLearningWorker
       {
         if (terminal)
           break;
-        else
-        {
-          state = nextState;
-          continue;
-        }
+        state = nextState;
+        continue;
       }
 
       #pragma omp atomic
       totalSteps++;
 
-      pending[pendingIndex++] = std::make_tuple(state, action, reward, nextState);
+      pending[pendingIndex] = std::make_tuple(state, action, reward, nextState);
+      pendingIndex++;
 
       // Do update.
       if (terminal || pendingIndex >= config.UpdateInterval())
