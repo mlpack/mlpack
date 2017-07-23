@@ -71,7 +71,8 @@ class OneStepQLearningWorker
     double totalReturn = 0.0;
 
     // Store pending transitions for update later on.
-    std::vector<TransitionType> pending;
+    std::vector<TransitionType> pending(config.UpdateInterval());
+    size_t pendingIndex = 0;
 
     while (!stop && (!config.StepLimit() || steps < config.StepLimit())) {
       // Interact with the environment.
@@ -99,10 +100,11 @@ class OneStepQLearningWorker
       #pragma omp atomic
       totalSteps++;
 
-      pending.push_back(std::make_tuple(state, action, reward, nextState));
+      pending[pendingIndex++] = std::make_tuple(state, action, reward, nextState);
 
       // Do update.
-      if (terminal || pending.size() >= config.UpdateInterval()) {
+      if (terminal || pendingIndex >= config.UpdateInterval())
+      {
         // Initialize the gradient storage.
         arma::mat totalGradients(learningNetwork.Parameters().n_rows,
             learningNetwork.Parameters().n_cols);
@@ -135,8 +137,10 @@ class OneStepQLearningWorker
         }
 
         // Clamp the accumulated gradients.
-        totalGradients = arma::clamp(totalGradients,
-            -config.GradientLimit(), config.GradientLimit());
+        totalGradients.transform(
+            [&](double gradient)
+            { return std::min(std::max(gradient, -config.GradientLimit()),
+            config.GradientLimit()); });
 
         // Perform async update of the global network.
         updater.Update(learningNetwork.Parameters(),
@@ -145,7 +149,7 @@ class OneStepQLearningWorker
         // Sync the local network with the global network.
         network = learningNetwork;
 
-        pending.clear();
+        pendingIndex = 0;
       }
 
       if (terminal)

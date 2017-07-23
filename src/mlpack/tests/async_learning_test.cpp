@@ -84,7 +84,7 @@ BOOST_AUTO_TEST_CASE(OneStepQLearningTest)
   size_t pos = 0;
   size_t testEpisodes = 0;
   auto measure = [&rewards, &pos, &testEpisodes](double reward) {
-    size_t maxEpisode = 20000;
+    size_t maxEpisode = 100000;
     if (testEpisodes > maxEpisode)
       BOOST_REQUIRE(false);
     testEpisodes++;
