@@ -47,10 +47,12 @@ class GenerativeAdversarialNetwork
       size_t batchSize,
       size_t generatorInSize);
 
+  // Reset function
   void Reset();
 
+  // Train function
   template<typename OptimizerType>
-  void Train(OptimizerType& Optimizer);
+  void Train(OptimizerType& Optimizer, size_t iterations, size_t k);
 
   double Evaluate(const arma::mat& parameters,
                   const size_t i,
@@ -124,6 +126,10 @@ class GenerativeAdversarialNetwork
   arma::mat predictors;
   //! Locally stored responses
   arma::mat responses;
+  //! Locally stored current input
+  arma::mat currentInput;
+  //! Locally stored current target
+  arma::mat currentTarget;
   //! Locally stored fake data used for training
   arma::mat fakeData;
   //! Locally stored noise samples
