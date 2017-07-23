@@ -61,19 +61,43 @@ template<typename Generator, typename Discriminator, typename IntializerType>
 void GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
 ::Reset()
 {
+  size_t weightsGenerator = 0;
+  size_t weightsDiscriminator = 0;
+  size_t offset = 0;
+  for (size_t i = 0; i < generator.network.size(); ++i)
+    weightsGenerator += boost::apply_visitor(weightSizeVisitor,
+        generator.network[i]);
+
+  for (size_t i = 0; i < discriminator.network.size(); ++i)
+    weightsDiscriminator += boost::apply_visitor(weightSizeVisitor,
+        discriminator.network[i]);
+
+  parameter.set_size(weightsGenerator + weightsDiscriminator, 1);
   // Call the reset function of both the Generator and Discriminator Network
-  generator.ResetParameters();
-  discriminator.ResetParameters();
-  parameter.set_size(generator.Parameters().n_rows + 
-      discriminator.Parameters().n_rows,
-      generator.Parameters().n_cols + generator.Parameters().n_cols);
   initializeRule.Initialize(parameter, parameter.n_elem, 1);
-  generator.Parameters() = arma::mat(parameter.memptr(),
-      generator.Parameters().n_rows, generator.Parameters().n_cols,
-      false, false);
+
+  generator.Parameters() = arma::mat(parameter.memptr(), weightsGenerator,
+      1, false, false);
+
   discriminator.Parameters() = arma::mat(parameter.memptr(),
-    discriminator.Parameters().n_rows, discriminator.Parameters().n_cols,
-    false, false);
+      weightsDiscriminator, 1, false, false);
+
+  for (size_t i = 0; i < generator.network.size(); ++i)
+  {
+    offset += boost::apply_visitor(WeightSetVisitor(std::move(parameter),
+        offset), generator.network[i]);
+
+    boost::apply_visitor(resetVisitor, generator.network[i]);
+  }
+
+  for (size_t i = 0; i < discriminator.network.size(); ++i)
+  {
+    offset += boost::apply_visitor(WeightSetVisitor(std::move(parameter),
+        offset), discriminator.network[i]);
+
+    boost::apply_visitor(resetVisitor, discriminator.network[i]);
+  }
+
   reset = true;
 }
 
@@ -121,7 +145,7 @@ void GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
           fakeLables.memptr() + offset, fakeLables.n_rows, batchSize,
           false, false);
       tempLabels.cols(batchSize, tempLabels.n_cols - 1) = arma::mat(
-          responses.memptr() + offset,responses.n_rows, batchSize,
+          responses.memptr() + offset, responses.n_rows, batchSize,
           false, false);
       offset += batchSize * k;
       // Training discriminator
@@ -178,8 +202,7 @@ void GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
       Reset();
     }
     gradient = arma::zeros<arma::mat>(generator.Parameters().n_rows +
-        discriminator.Parameters().n_rows, generator.Parameters().n_cols +
-        discriminator.Parameters().n_cols);
+        discriminator.Parameters().n_rows, 1);
   }
   else
   {
@@ -236,7 +259,7 @@ void GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
 }
 
 template<typename Generator, typename Discriminator, typename IntializerType>
-void GenerativeAdversarialNetwork<Generator, Discriminator,IntializerType>
+void GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
 ::Predict(arma::mat&& input, arma::mat& output)
 {
   if (!reset)

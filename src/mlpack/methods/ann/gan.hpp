@@ -18,7 +18,9 @@
 #include <mlpack/methods/ann/layer/base_layer.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/visitor/output_parameter_visitor.hpp>
-
+#include <mlpack/methods/ann/visitor/reset_visitor.hpp>
+#include <mlpack/methods/ann/visitor/weight_size_visitor.hpp>
+#include <mlpack/methods/ann/visitor/weight_set_visitor.hpp>
 
 #include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
@@ -142,6 +144,10 @@ class GenerativeAdversarialNetwork
   arma::mat tempLabels;
   //! Locally-stored output parameter visitor.
   OutputParameterVisitor outputParameterVisitor;
+  //! Locally-stored weight size visitor.
+  WeightSizeVisitor weightSizeVisitor;
+  //! Locally-stored reset visitor.
+  ResetVisitor resetVisitor;
   //! Locally stored gradient parameters
   arma::mat gradient;
   //! Locally stored gradient for discriminator
