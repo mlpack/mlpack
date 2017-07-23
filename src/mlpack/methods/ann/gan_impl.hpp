@@ -36,7 +36,7 @@ using namespace mlpack::distribution;
 namespace mlpack {
 namespace ann /** artifical neural network  */ {
 template<typename Generator, typename Discriminator, typename IntializerType>
-GenerativeAdversarialNetwork<Generator, Discriminator,IntializerType>
+GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
 ::GenerativeAdversarialNetwork(arma::mat trainData,
     arma::mat trainLables,
     IntializerType initializeRule,
@@ -58,7 +58,7 @@ GenerativeAdversarialNetwork<Generator, Discriminator,IntializerType>
 }
 
 template<typename Generator, typename Discriminator, typename IntializerType>
-void GenerativeAdversarialNetwork<Generator, Discriminator,IntializerType>
+void GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
 ::Reset()
 {
   // Call the reset function of both the Generator and Discriminator Network
@@ -79,7 +79,7 @@ void GenerativeAdversarialNetwork<Generator, Discriminator,IntializerType>
 
 template<typename Generator, typename Discriminator, typename IntializerType>
 template<typename OptimizerType>
-void GenerativeAdversarialNetwork<Generator, Discriminator,IntializerType>
+void GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
 ::Train(OptimizerType& Optimizer, size_t iterations, size_t k)
 {
   if (!reset)
@@ -109,7 +109,7 @@ void GenerativeAdversarialNetwork<Generator, Discriminator,IntializerType>
         offset -= (batchSize - predictors.n_cols);
 
       // Generate fake data for discrminator to train on.
-      Generate( batchSize, std::move(fakeData), std::move(noiseData));
+      Generate(batchSize, std::move(fakeData), std::move(noiseData));
       fakeLables.zeros(1, batchSize);
       // Create training data for discrminator
       tempTrainData.cols(0, batchSize - 1) = arma::mat(fakeData.memptr(),
@@ -154,11 +154,10 @@ void GenerativeAdversarialNetwork<Generator, Discriminator,IntializerType>
 }
 
 template<typename Generator, typename Discriminator, typename IntializerType>
-double GenerativeAdversarialNetwork<Generator, Discriminator,IntializerType>
+double GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
 ::Evaluate(const arma::mat& /*parameters*/,
     const size_t i, const bool /*deterministic*/)
 {
-
   currentInput = discriminator.predictors.unsafe_col(i);
   currentTarget = discriminator.responses.unsafe_col(i);
   discriminator.Forward(std::move(currentInput));
@@ -169,7 +168,7 @@ double GenerativeAdversarialNetwork<Generator, Discriminator,IntializerType>
 }
 
 template<typename Generator, typename Discriminator, typename IntializerType>
-void GenerativeAdversarialNetwork<Generator, Discriminator,IntializerType>
+void GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
 ::Gradient(const arma::mat& parameters, const size_t i, arma::mat& gradient)
 {
   if (gradient.is_empty())
@@ -225,7 +224,7 @@ void GenerativeAdversarialNetwork<Generator, Discriminator,IntializerType>
 }
 
 template<typename Generator, typename Discriminator, typename IntializerType>
-void GenerativeAdversarialNetwork<Generator, Discriminator,IntializerType>
+void GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
 ::Forward(arma::mat&& input)
 {
   if (!reset)
@@ -248,7 +247,7 @@ void GenerativeAdversarialNetwork<Generator, Discriminator,IntializerType>
 }
 
 template<typename Generator, typename Discriminator, typename IntializerType>
-void GenerativeAdversarialNetwork<Generator, Discriminator,IntializerType>
+void GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
 ::Generate(size_t numSamples, arma::mat&& fakeData, arma::mat&& noiseData)
 {
   if (!reset)
@@ -265,7 +264,6 @@ void GenerativeAdversarialNetwork<Generator, Discriminator,IntializerType>
     noiseData.col(i) = noise;
     noise.zeros();
   }
-  
 }
 } // namespace ann
 } // namespace mlpack

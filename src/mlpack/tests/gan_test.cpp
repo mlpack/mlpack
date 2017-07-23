@@ -70,7 +70,8 @@ BOOST_AUTO_TEST_CASE(GanTest)
   // Optimizer
   MiniBatchSGD msgd(batchSize, 0.06, 2, 0.001, true);
   // GAN model
-  GenerativeAdversarialNetwork<FFN<CrossEntropyError<>>, FFN<CrossEntropyError<>>,
+  GenerativeAdversarialNetwork<FFN<CrossEntropyError<>>,
+      FFN<CrossEntropyError<>>,
       GaussianInitialization> gan(
       trainData, trainLabels, gaussian, generator, discriminator, batchSize,
       gInputSize);

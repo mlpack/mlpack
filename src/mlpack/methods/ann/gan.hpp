@@ -100,9 +100,9 @@ class GenerativeAdversarialNetwork
   //! Serialize the model.
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
-  
+
  private:
-  //! Locally stored Intialiser 
+  //! Locally stored Intialiser
   IntializerType  initializeRule;
   //! Locally stored parameters of the network
   arma::mat parameter;
