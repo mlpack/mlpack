@@ -271,8 +271,8 @@ inline double ParallelSGD<ExponentialBackoff>::Optimize(
     // Get the stepsize for this iteration
     double stepSize = decayPolicy.StepSize(i);
 
-    // Shuffle for uniform sampling of functions by each thread.
-    std::random_shuffle(visitationOrder.begin(), visitationOrder.end());
+    if (shuffle) // Determine order of visitation.
+      visitationOrder = arma::shuffle(visitationOrder);
 
     #pragma omp parallel
     {

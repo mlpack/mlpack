@@ -72,11 +72,14 @@ class ParallelSGD
    * @param threadShareSize Number of datapoints to be processed in one
    *     iteration by each thread.
    * @param tolerance Maximum absolute tolerance to terminate the algorithm.
+   * @param shuffle If true, the function order is shuffled; otherwise, each
+   *     function is visited in linear order.
    * @param decayPolicy The step size update policy to use.
   */
   ParallelSGD(const size_t maxIterations,
               const size_t threadShareSize,
               const double tolerance = 1e-5,
+              const bool shuffle = true,
               const DecayPolicyType& decayPolicy = DecayPolicyType());
 
   /**
@@ -110,6 +113,11 @@ class ParallelSGD
   //! Modify the tolerance for termination.
   double& Tolerance() { return tolerance; }
 
+  //! Get whether or not the individual functions are shuffled.
+  bool Shuffle() const { return shuffle; }
+  //! Modify whether or not the individual functions are shuffled.
+  bool& Shuffle() { return shuffle; }
+
   //! Get the step size decay policy.
   DecayPolicyType& DecayPolicy() const { return decayPolicy; }
   //! Modify the step size decay policy.
@@ -124,6 +132,10 @@ class ParallelSGD
 
   //! The tolerance for termination.
   double tolerance;
+
+  //! Controls whether or not the individual functions are shuffled when
+  //! iterating.
+  bool shuffle;
 
   //! The step size decay policy.
   DecayPolicyType decayPolicy;

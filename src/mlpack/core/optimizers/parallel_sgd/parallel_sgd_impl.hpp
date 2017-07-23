@@ -23,10 +23,12 @@ ParallelSGD<DecayPolicyType>::ParallelSGD(
     const size_t maxIterations,
     const size_t threadShareSize,
     const double tolerance,
+    const bool shuffle,
     const DecayPolicyType& decayPolicy) :
     maxIterations(maxIterations),
     threadShareSize(threadShareSize),
     tolerance(tolerance),
+    shuffle(shuffle),
     decayPolicy(decayPolicy)
 { /* Nothing to do. */ }
 
@@ -80,7 +82,9 @@ double ParallelSGD<DecayPolicyType>::Optimize(
     double stepSize = decayPolicy.StepSize(i);
 
     // Shuffle for uniform sampling of functions by each thread.
-    visitationOrder = arma::shuffle(visitationOrder);
+
+    if (shuffle) // Determine order of visitation.
+      visitationOrder = arma::shuffle(visitationOrder);
 
     #pragma omp parallel
     {

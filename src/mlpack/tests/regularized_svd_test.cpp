@@ -290,7 +290,7 @@ BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionOptimizeHOGWILD)
   // The threadShareSize is chosen such that each function gets optimized.
   ParallelSGD<ConstantStep> optimizer(0,
       std::ceil((float) rSVDFunc.NumFunctions() / omp_get_max_threads()), 1e-5,
-      decayPolicy);
+      true, decayPolicy);
 
   // Obtain optimized parameters after training.
   arma::mat optParameters = arma::randu(rank, numUsers + numItems);

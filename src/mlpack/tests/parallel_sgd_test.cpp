@@ -53,7 +53,7 @@ BOOST_AUTO_TEST_CASE(SimpleParallelSGDTest)
 
     size_t batchSize = std::ceil((float) f.NumFunctions() / i);
 
-    ParallelSGD<ConstantStep> s(10000, batchSize, 1e-5, decayPolicy);
+    ParallelSGD<ConstantStep> s(10000, batchSize, 1e-5, true, decayPolicy);
 
     arma::mat coordinates = f.GetInitialPoint();
     double result = s.Optimize(f, coordinates);
@@ -84,7 +84,7 @@ BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
 
     ConstantStep decayPolicy(0.001);
 
-    ParallelSGD<ConstantStep> s(0, f.NumFunctions(), 1e-12, decayPolicy);
+    ParallelSGD<ConstantStep> s(0, f.NumFunctions(), 1e-12, true, decayPolicy);
 
     arma::mat coordinates = f.GetInitialPoint();
 
