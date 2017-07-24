@@ -150,13 +150,13 @@ class RBM
   //! Locally-stored number of functions varaiable
   size_t numFunctions;
   //! Locally-stored number of steps in gibbs sampling
-  const size_t numSteps;
+  size_t numSteps;
   //! Locally-stored number of negative samples used in ssRBM
-  const size_t mSteps;
+  size_t mSteps;
   //! Locally-stored monitoring cost
-  const bool useMonitoringCost;
+  bool useMonitoringCost;
   //! Locally-stored persistent cd-k or not
-  const bool persistence;
+  bool persistence;
   //! Locally-stored reset variable
   bool reset;
 
@@ -167,8 +167,6 @@ class RBM
   //! Locally-stored negative samples from gibbs Distribution
   arma::mat negativeSamples;
   //! Locally-stored temporary negative samples
-  arma::mat tempNegativeSmaples;
-  //! Locally-stored gradient for  negative phase
   arma::mat negativeGradient;
   //! Locally-stored temproray negative gradient used for negative phase
   arma::mat tempNegativeGradient;
@@ -178,10 +176,6 @@ class RBM
   arma::mat gibbsTemporary;
   //! Locally-stored output of the preActivation function used in FreeEnergy
   arma::mat preActivation;
-  //! Locally-stored corrupInput used for Pseudo-Likelihood
-  arma::mat corruptInput;
-  //! Locally-stored softplus output used for Cross-Entropy Loss
-  arma::mat softOutput;
 };
 } // namespace rbm
 } // namespace mlpack

@@ -23,8 +23,6 @@
 #include <mlpack/methods/ann/layer/base_layer.hpp>
 
 #include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
-#include <mlpack/methods/rbm/binary_rbm.hpp>
-#include <mlpack/methods/rbm/ssRBM.hpp>
 
 using namespace mlpack;
 using namespace mlpack::ann;
@@ -58,30 +56,24 @@ template<typename InitializationRuleType, typename RBMPolicy>
 void RBM<InitializationRuleType, RBMPolicy>
     ::Reset()
 {
-  size_t weight = 0;
-  weight+= rbmPolicy.Parameters().n_elem;
+  size_t weight = rbmPolicy.Parameters().n_elem;
+
   positiveGradient.set_size(weight, 1);
   negativeGradient.set_size(weight, 1);
+  tempNegativeGradient.set_size(weight, 1);
+
   parameter.set_size(weight, 1);
   parameter.zeros();
   positiveGradient.zeros();
   negativeGradient.zeros();
   tempNegativeGradient.zeros();
   initializeRule.Initialize(parameter, parameter.n_elem, 1);
+
   rbmPolicy.Parameters() = arma::mat(parameter.memptr(), weight, 1, false,
       false);
-  rbmPolicy.PositiveGradient() = arma::mat(positiveGradient.memptr(), weight, 1,
-      false, false);
-  rbmPolicy.NegativeGradient() = arma::mat(negativeGradient.memptr(), weight, 1,
-      false, false);
 
   rbmPolicy.Reset();
-  gibbsTemporary.set_size(rbmPolicy.VisibleLayer().InSize(), 1);
-  negativeSamples.set_size(rbmPolicy.VisibleLayer().InSize(), mSteps);
-  corruptInput.set_size(rbmPolicy.VisibleLayer().InSize(), 1);
-  gibbsTemporary.zeros();
-  corruptInput.zeros();
-  negativeSamples.zeros();
+
   reset = true;
 }
 
@@ -110,10 +102,9 @@ double RBM<InitializationRuleType, RBMPolicy>
 }
 
 template<typename InitializationRuleType, typename RBMPolicy>
-double RBM<InitializationRuleType, RBMPolicy>
-    ::Evaluate(const arma::mat& /* parameters*/, const size_t i)
+double RBM<InitializationRuleType, RBMPolicy>::Evaluate(
+    const arma::mat& /* parameters*/, const size_t i)
 {
-  corruptInput = arma::round(predictors.col(i));
   if (!useMonitoringCost)
   {
     Gibbs(std::move(predictors.col(i)), std::move(negativeSamples));
@@ -129,9 +120,9 @@ double RBM<InitializationRuleType, RBMPolicy>
     else
     {
       // Mean Squared Error
-      rbmPolicy.VisibleLayer().Sample(std::move(predictors.col(i)),
-        std::move(hiddenReconstruction));
-      rbmPolicy.HiddenLayer().Sample(std::move(hiddenReconstruction),
+      rbmPolicy.SampleHidden(std::move(predictors.col(i)),
+          std::move(hiddenReconstruction));
+      rbmPolicy.SampleVisible(std::move(hiddenReconstruction),
           std::move(visibleReconstruction));
       return arma::accu(arma::pow(visibleReconstruction - predictors.col(i),
           2)) / hiddenReconstruction.n_rows;
@@ -184,14 +175,18 @@ void RBM<InitializationRuleType, RBMPolicy>::
     Gradient(arma::mat& /*parameters*/, const size_t input, arma::mat& output)
 {
   // Collect the negative samples
-  rbmPolicy.PositivePhase(std::move(predictors.col(input)));
-  tempNegativeGradient.set_size(negativeGradient.n_rows,
-      negativeGradient.n_cols);
+  rbmPolicy.PositivePhase(std::move(predictors.col(input)),
+      std::move(positiveGradient));
+
+  negativeGradient.zeros();
+
   for (size_t i = 0; i < mSteps; i++)
   {
     Gibbs(std::move(predictors.col(input)), std::move(negativeSamples));
-    rbmPolicy.NegativePhase(std::move(negativeSamples));
-    tempNegativeGradient += negativeGradient;
+    rbmPolicy.NegativePhase(std::move(negativeSamples),
+        std::move(tempNegativeGradient));
+
+    negativeGradient += tempNegativeGradient;
   }
   output = ((negativeGradient / mSteps) - positiveGradient);
 }
@@ -204,19 +199,21 @@ void RBM<InitializationRuleType, RBMPolicy>::
 {
   ar & data::CreateNVP(parameter, "parameter");
   ar & data::CreateNVP(rbmPolicy, "rbmPolicy");
-  ar & data::CreateNVP(rbmPolicy.VisibleLayer(), "visible");
-  ar & data::CreateNVP(rbmPolicy.HiddenLayer(), "hidden");
+  ar & data::CreateNVP(predictors, "predictors");
+  ar & data::CreateNVP(state, "state");
+  ar & data::CreateNVP(numFunctions, "numFunctions");
+  ar & data::CreateNVP(numSteps, "numSteps");
+  ar & data::CreateNVP(mSteps, "mSteps");
+  ar & data::CreateNVP(useMonitoringCost, "useMonitoringCost");
+  ar & data::CreateNVP(persistence, "persistence");
+  ar & data::CreateNVP(reset, "reset");
+  ar & data::CreateNVP(rbmPolicy, "rbmPolicy");
+  ar & data::CreateNVP(rbmPolicy, "rbmPolicy");
 
   // If we are loading, we need to initialize the weights.
   if (Archive::is_loading::value)
   {
-    reset = false;
-
-    size_t weight = 0;
-    weight+= rbmPolicy.VisibleLayer().Parameters().n_elem;
-    rbmPolicy.Parameters() = arma::mat(parameter.memptr(), weight, 1, false,
-      false);
-    rbmPolicy.Reset();
+    Reset();
   }
 }
 

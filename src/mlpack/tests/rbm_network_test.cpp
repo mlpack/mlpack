@@ -22,11 +22,9 @@
 
 #include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
-#include <mlpack/methods/rbm/binary_layer.hpp>
-#include <mlpack/methods/rbm/spike_slab_layer.hpp>
+#include <mlpack/methods/rbm/binary_rbm_policy.hpp>
+#include <mlpack/methods/rbm/spike_slab_rbm_policy.hpp>
 #include <mlpack/methods/rbm/rbm.hpp>
-#include <mlpack/methods/rbm/binary_rbm.hpp>
-#include <mlpack/methods/rbm/ssRBM.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
 #include <mlpack/core/optimizers/minibatch_sgd/minibatch_sgd.hpp>
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
@@ -61,11 +59,9 @@ void BuildVanillaNetwork(MatType& trainData,
    *        
    */
   arma::mat output;
-  BinaryLayer<> visible(trainData.n_rows, hiddenLayerSize, 1);
-  BinaryLayer<> hidden(hiddenLayerSize, trainData.n_rows, 0);
-  BinaryRBM binary_rbm(visible, hidden);
+  BinaryRBMPolicy binary_rbm(trainData.n_rows, hiddenLayerSize);
   GaussianInitialization gaussian(0, 0.1);
-  RBM<GaussianInitialization, BinaryRBM> model(trainData,
+  RBM<GaussianInitialization, BinaryRBMPolicy> model(trainData,
       gaussian, binary_rbm, 1,  true);
 
   model.Reset();
@@ -73,9 +69,6 @@ void BuildVanillaNetwork(MatType& trainData,
   model.Parameters() = arma::mat(
       "-0.23224054, -0.23000632, -0.25701271, -0.25122418, -0.20716651,"
       "-0.20962217, -0.59922456, -0.60003836, -0.6, -0.625, -0.475;");
-  // Check Weight Shared
-  BOOST_REQUIRE_CLOSE(arma::accu(model.Policy().VisibleLayer().Weight() -
-      model.Policy().HiddenLayer().Weight()), 0, 1e-14);
 
   // Check free energy
   arma::vec freeEnergy = arma::mat(
@@ -84,8 +77,6 @@ void BuildVanillaNetwork(MatType& trainData,
   calcultedFreeEnergy.zeros();
   for (size_t i = 0; i < trainData.n_cols; i++)
   {
-    model.Policy().VisibleLayer().ForwardPreActivation(
-        std::move(trainData.col(i)), std::move(output));
     calcultedFreeEnergy(i) = model.FreeEnergy(std::move(trainData.col(i)));
   }
 
@@ -110,6 +101,8 @@ BOOST_AUTO_TEST_CASE(ClassificationTest)
 {
   // Normalised dataset
   int hiddenLayerSize = 100;
+  size_t batchSize = 10;
+  size_t numEpoches = 30;
   arma::mat trainData, testData, dataset;
   arma::mat trainLabelsTemp, testLabelsTemp;
   trainData.load("digits_train.arm");
@@ -134,29 +127,31 @@ BOOST_AUTO_TEST_CASE(ClassificationTest)
   XRbm.zeros();
   YRbm.zeros();
 
-  BinaryLayer<> visible(trainData.n_rows, hiddenLayerSize, 1);
-  BinaryLayer<> hidden(hiddenLayerSize, trainData.n_rows, 0);
-  BinaryRBM binary_rbm(visible, hidden);
+  BinaryRBMPolicy binary_rbm(trainData.n_rows, hiddenLayerSize);
   GaussianInitialization gaussian(0, 0.1);
-  RBM<GaussianInitialization, BinaryRBM> model(trainData,
-      gaussian, binary_rbm, 1,  true, true);
-  MiniBatchSGD msgd(10, 0.06, trainData.n_cols * 20, 0, true);
+  RBM<GaussianInitialization, BinaryRBMPolicy> model(trainData,
+      gaussian, binary_rbm, 1,  1, true, false);
+
+  size_t numRBMIterations = trainData.n_cols * numEpoches;
+  numRBMIterations /= batchSize;
+
+  MiniBatchSGD msgd(batchSize, 0.06, numRBMIterations, 0, true);
   model.Reset();
-  model.Policy().VisibleLayer().Bias().ones();
-  model.Policy().HiddenLayer().Bias().ones();
+  model.Policy().VisibleBias().ones();
+  model.Policy().HiddenBias().ones();
   // test the reset function
   model.Train(trainData, msgd);
 
   for (size_t i = 0; i < trainData.n_cols; i++)
   {
-    model.Policy().VisibleLayer().Forward(std::move(trainData.col(i)),
+    model.Policy().HiddenMean(std::move(trainData.col(i)),
         std::move(output));
     XRbm.col(i) = output;
   }
 
   for (size_t i = 0; i < testData.n_cols; i++)
   {
-    model.Policy().VisibleLayer().Forward(std::move(testData.col(i)),
+    model.Policy().HiddenMean(std::move(testData.col(i)),
       std::move(output));
     YRbm.col(i) = output;
   }
@@ -174,15 +169,112 @@ BOOST_AUTO_TEST_CASE(ClassificationTest)
 
   double classificationAccuray = regressor2.ComputeAccuracy(testData,
    testLabels);
-  std::cout << "Softmax Accuracy" << classificationAccuray << std::endl;
+  std::cout << "Softmax Accuracy = " << classificationAccuray << std::endl;
 
   L_BFGS optimizer1(numBasis, numIterations);
   SoftmaxRegression regressor1(XRbm, trainLabels, numClasses,
         0.001, false, optimizer1);
   double classificationAccuray1 = regressor1.ComputeAccuracy(YRbm, testLabels);
-  std::cout << "RBM Accuracy" <<classificationAccuray1 << std::endl;
+  std::cout << "RBM Accuracy = " <<classificationAccuray1 << std::endl;
   BOOST_REQUIRE_GE(classificationAccuray1, classificationAccuray);
 }
+
+BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
+{
+  size_t batchSize = 10;
+  size_t numEpoches = 30;
+  int hiddenLayerSize = 100;
+  double radius = 0;
+  double tempRadius = 0;
+  arma::mat trainData, testData, dataset;
+  arma::mat trainLabelsTemp, testLabelsTemp;
+  trainData.load("digits_train.arm");
+  testData.load("digits_test.arm");
+  trainLabelsTemp.load("digits_train_label.arm");
+  testLabelsTemp.load("digits_test_label.arm");
+  GaussianInitialization gaussian(0, 0.1);
+
+  arma::Row<size_t> trainLabels = arma::zeros<arma::Row<size_t>>(1,
+      trainLabelsTemp.n_cols);
+  arma::Row<size_t> testLabels = arma::zeros<arma::Row<size_t>>(1,
+      testLabelsTemp.n_cols);
+
+  for (size_t i = 0; i < trainLabelsTemp.n_cols; ++i)
+    trainLabels(i) = arma::as_scalar(trainLabelsTemp.col(i));
+
+  for (size_t i = 0; i < testLabelsTemp.n_cols; ++i)
+    testLabels(i) = arma::as_scalar(testLabelsTemp.col(i));
+
+  for (size_t i = 0; i < trainData.n_cols; i++)
+  {
+    tempRadius = arma::norm(trainData.col(i));
+    if (radius < tempRadius)
+      radius = tempRadius;
+  }
+
+  size_t poolSize = 1;
+
+  arma::mat output;
+  arma::mat XRbm(hiddenLayerSize + poolSize * hiddenLayerSize,
+      trainData.n_cols);
+  arma::mat YRbm(hiddenLayerSize + poolSize * hiddenLayerSize,
+      testLabels.n_cols);
+
+  XRbm.zeros();
+  YRbm.zeros();
+  arma::mat slabPenalty(poolSize, hiddenLayerSize);
+  slabPenalty.fill(5);
+
+  SpikeSlabRBMPolicy ss_rbm(trainData.n_rows, hiddenLayerSize, poolSize, slabPenalty, radius);
+  RBM<GaussianInitialization, SpikeSlabRBMPolicy> modelssRBM(trainData, gaussian, ss_rbm,
+      1, 1, true, false);
+
+  size_t numRBMIterations = trainData.n_cols * numEpoches;
+  numRBMIterations /= batchSize;
+
+  MiniBatchSGD msgd(batchSize, 0.06, numRBMIterations, 0, true);
+  modelssRBM.Reset();
+  modelssRBM.Policy().VisiblePenalty().fill(5);
+  modelssRBM.Policy().SpikeBias().ones();
+  modelssRBM.Train(trainData, msgd);
+  for (size_t i = 0; i < trainData.n_cols; i++)
+  {
+    modelssRBM.Policy().HiddenMean(std::move(trainData.col(i)),
+        std::move(output));
+    XRbm.col(i) = output;
+  }
+
+  for (size_t i = 0; i < testData.n_cols; i++)
+  {
+    modelssRBM.Policy().HiddenMean(std::move(testData.col(i)),
+      std::move(output));
+    YRbm.col(i) = output;
+  }
+  const size_t numClasses = 10; // Number of classes.
+  const size_t numBasis = 5; // Parameter required for L-BFGS algorithm.
+  const size_t numIterations = 100; // Maximum number of iterations.
+
+  // Use an instantiated optimizer for the training.
+  L_BFGS optimizer(numBasis, numIterations);
+  SoftmaxRegression regressor2(trainData, trainLabels,
+      numClasses, 0.001, false, optimizer);
+
+  arma::Row<size_t> predictions1, predictions2;
+  // Vectors to store predictions in.
+
+  double classificationAccuray = regressor2.ComputeAccuracy(testData,
+   testLabels);
+  std::cout << "Softmax Accuracy = " << classificationAccuray << std::endl;
+  L_BFGS optimizer1(numBasis, numIterations);
+  SoftmaxRegression regressor1(XRbm, trainLabels, numClasses,
+        0.001, false, optimizer1);
+  double classificationAccuray1 = regressor1.ComputeAccuracy(YRbm, testLabels);
+  std::cout << "ssRBM Accuracy = " <<classificationAccuray1 << std::endl;
+
+    BOOST_REQUIRE_GE(classificationAccuray1, classificationAccuray);
+}
+
+/*
 template<typename MatType = arma::mat>
 void BuildSSRbmNetwork(arma::mat& trainData,
                        const size_t hiddenLayerSize)
@@ -198,30 +290,34 @@ void BuildSSRbmNetwork(arma::mat& trainData,
     if (radius < tempRadius)
       radius = tempRadius;
   }
-
-  SpikeSlabLayer<> spikeVisible(trainData.n_rows, hiddenLayerSize, 3, radius,
-      1);
-  SpikeSlabLayer<> spikeHidden(hiddenLayerSize, trainData.n_rows, 3, radius, 0);
+  // slab bias k * n
+  arma::mat slabBias(3, hiddenLayerSize);
+  slabBias.fill(1.5);
+  SpikeSlabLayer<> spikeVisible(trainData.n_rows, hiddenLayerSize, 3, slabBias,
+      radius, 1);
+  SpikeSlabLayer<> spikeHidden(hiddenLayerSize, trainData.n_rows, 3, slabBias,
+      radius, 0);
   ssRBM ss_rbm(spikeVisible, spikeHidden);
   RBM<GaussianInitialization, ssRBM> modelssRBM(trainData, gaussian, ss_rbm,
       2, true, true);
-  MiniBatchSGD msgd(10, 0.06, trainData.n_cols * 20, 0, true);
+  MiniBatchSGD msgd(10, 0.006, 2, 0, true);
   modelssRBM.Reset();
-  modelssRBM.Policy().VisibleLayer().LambdaBias() = "10; 15; 20";
+  modelssRBM.Policy().VisibleLayer().LambdaBias() = "10; 10; 10";
   modelssRBM.Policy().VisibleLayer().SpikeBias().fill(-1);
-  modelssRBM.Policy().VisibleLayer().SlabBias().fill(1.5);
   arma::vec calcultedFreeEnergy(4);
   calcultedFreeEnergy.zeros();
   for (size_t i = 0; i < trainData.n_cols; i++)
   {
     calcultedFreeEnergy(i) = modelssRBM.FreeEnergy(std::move(trainData.col(i)));
   }
+  std::cout << "Here" << std::endl;
   modelssRBM.Policy().PositivePhase(arma::mat(trainData.col(0)));
   modelssRBM.Policy().NegativePhase(arma::mat(trainData.col(0)));
-  modelssRBM.Train(trainData, msgd);
+  // modelssRBM.Train(trainData, msgd);
   BOOST_REQUIRE_EQUAL(modelssRBM.Policy().VisibleLayer().SlabBias().n_rows, 3);
   BOOST_REQUIRE_EQUAL(modelssRBM.Policy().VisibleLayer().SlabBias().n_cols, 2);
 }
+
 BOOST_AUTO_TEST_CASE(ssRBMMiscTest)
 {
   arma::mat X = arma::mat("0, 0, 0;"
@@ -231,4 +327,7 @@ BOOST_AUTO_TEST_CASE(ssRBMMiscTest)
   X = X.t();
   BuildSSRbmNetwork<>(X, 2);
 }
+*
+*/
+
 BOOST_AUTO_TEST_SUITE_END();
