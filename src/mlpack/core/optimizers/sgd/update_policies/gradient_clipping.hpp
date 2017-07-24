@@ -25,7 +25,7 @@ namespace optimization {
  * 
  * @tparam UpdatePolicy A type of UpdatePolicy that sould be wrapped around.
  */
-template<typename UpdatePolicy>
+template<typename UpdatePolicyType>
 class GradientClipping
 {
  public:
@@ -34,12 +34,12 @@ class GradientClipping
    * 
    * @param minGradient Minimum possible value of gradient element.
    * @param maxGradient Maximum possible value of gradient element.
-   * @param updatePolicy An instance of the UpdatePolicy
+   * @param updatePolicy An instance of the UpdatePolicyType
    *                     used for actual optimization.
    */
   GradientClipping(const double minGradient,
                    const double maxGradient,
-                   UpdatePolicy updatePolicy) :
+                   UpdatePolicyType& updatePolicy) :
     minGradient(minGradient),
     maxGradient(maxGradient),
     updatePolicy(updatePolicy)
@@ -73,12 +73,25 @@ class GradientClipping
               const arma::mat& gradient)
   {
     // First, clip the gradient.
-    gradient.transform(
-        [&](double val)
-        { return std::min(std::max(val, minGradient), maxGradient); });
+    arma::mat clippedGradient = arma::clamp(gradient, minGradient, maxGradient);
     // And only then do the update.
-    updatePolicy.Update(iterate, stepSize, gradient);
+    updatePolicy.Update(iterate, stepSize, clippedGradient);
   }
+
+  //! Get the update policy.
+  UpdatePolicyType& UpdatePolicy() const { return updatePolicy; }
+  //! Modify the update policy.
+  UpdatePolicyType& UpdatePolicy() { return updatePolicy; }
+
+  //! Get the minimum gradient value.
+  double MinGradient() const { return minGradient; }
+  //! Modify the minimum gradient value.
+  double& MinGradient() { return minGradient; }
+
+  //! Get the maximum gradient value.
+  double MaxGradient() const { return maxGradient; }
+  //! Modify the maximum gradient value.
+  double& MaxGradient() { return maxGradient; }
  private:
   //! Minimum possible value of gradient element.
   double minGradient;
@@ -87,7 +100,7 @@ class GradientClipping
   double maxGradient;
 
   //! An instance of the UpdatePolicy used for actual optimization.
-  UpdatePolicy updatePolicy;
+  UpdatePolicyType updatePolicy;
 };
 
 } // namespace optimization

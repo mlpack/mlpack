@@ -36,8 +36,11 @@ class CrossEntropyError
  public:
   /**
    * Create the CrossEntropyError object.
+   * 
+   * @param eps The minimum value used for computing logarithms
+   *            and denominators in a numerically stable way.
    */
-  CrossEntropyError();
+  CrossEntropyError(double eps = 1e-10);
 
   /*
    * Computes the cross-entropy function.
@@ -74,6 +77,11 @@ class CrossEntropyError
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
+  //! Get the epsilon.
+  double Eps() const { return eps; }
+  //! Modify the epsilon.
+  double& Eps() { return eps; }
+
   /**
    * Serialize the layer
    */
@@ -89,6 +97,9 @@ class CrossEntropyError
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
+
+  //! The minimum value used for computing logarithms and denominators
+  double eps;
 }; // class CrossEntropyError
 
 } // namespace ann

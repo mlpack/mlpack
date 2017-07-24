@@ -26,7 +26,7 @@ using namespace mlpack::ann;
 
 BOOST_AUTO_TEST_SUITE(ANNLayerTest);
 
-// Helper function whcih calls the Reset function of the given module.
+// Helper function which calls the Reset function of the given module.
 template<class T>
 void ResetFunction(
     T& layer,
@@ -531,7 +531,7 @@ BOOST_AUTO_TEST_CASE(JacobianLinearNoBiasLayerTest)
 /**
  * LinearNoBias layer numerically gradient test.
  */
-BOOST_AUTO_TEST_CASE(GradientLinearNoBiadLayerTest)
+BOOST_AUTO_TEST_CASE(GradientLinearNoBiasLayerTest)
 {
   // LinearNoBias function gradient instantiation.
   struct GradientFunction

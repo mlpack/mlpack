@@ -41,23 +41,6 @@ BOOST_AUTO_TEST_CASE(SimpleSGDTestFunction)
   BOOST_REQUIRE_SMALL(coordinates[2], 1e-7);
 }
 
-// Test checking that gradient clipping works with vanilla SGD.
-BOOST_AUTO_TEST_CASE(ClippedSGDTestFunction)
-{
-  SGDTestFunction f;
-  VanillaUpdate vanillaUpdate;
-  GradientClipping<VanillaUpdate> update(-3., +3., vanillaUpdate);
-  StandardSGD s(0.0003, 5000000, 1e-9, true);
-
-  arma::mat coordinates = f.GetInitialPoint();
-  double result = s.Optimize(f, coordinates);
-
-  BOOST_REQUIRE_CLOSE(result, -1.0, 0.05);
-  BOOST_REQUIRE_SMALL(coordinates[0], 1e-3);
-  BOOST_REQUIRE_SMALL(coordinates[1], 1e-7);
-  BOOST_REQUIRE_SMALL(coordinates[2], 1e-7);
-}
-
 BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
 {
   // Loop over several variants.
