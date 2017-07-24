@@ -232,10 +232,6 @@ inline double ParallelSGD<ExponentialBackoff>::Optimize(
   arma::Col<size_t> visitationOrder = arma::linspace<arma::Col<size_t>>(0,
       (function.NumFunctions() - 1), function.NumFunctions());
 
-  // A random number generator instance to be used for shuffling the order of
-  // visitation.
-  std::mt19937 gen{ std::random_device()() };
-
   const arma::mat data = function.Dataset();
 
   // Iterate till the objective is within tolerance or the maximum number of
@@ -276,7 +272,8 @@ inline double ParallelSGD<ExponentialBackoff>::Optimize(
     double stepSize = decayPolicy.StepSize(i);
 
     if (shuffle) // Determine order of visitation.
-      std::shuffle(visitationOrder.begin(), visitationOrder.end(), gen);
+      std::shuffle(visitationOrder.begin(), visitationOrder.end(),
+          mlpack::math::randGen);
 
     #pragma omp parallel
     {

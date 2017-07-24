@@ -13,6 +13,7 @@
 #define MLPACK_CORE_OPTIMIZERS_PARALLEL_SGD_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/math/random.hpp>
 #include "decay_policies/constant_step.hpp"
 
 namespace mlpack {
