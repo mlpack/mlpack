@@ -7,16 +7,16 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_RBM_BINARY_RBM_POLICY_IMPL_HPP
-#define MLPACK_METHODS_RBM_BINARY_RBM_POLICY_IMPL_HPP
+#ifndef MLPACK_METHODS_ANN_RBM_BINARY_RBM_POLICY_IMPL_HPP
+#define MLPACK_METHODS_ANN_RBM_BINARY_RBM_POLICY_IMPL_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/prereqs.hpp>
 
 #include "binary_rbm_policy.hpp"
 
-namespace mlpack{
-namespace rbm{
+namespace mlpack {
+namespace ann {
 
 inline BinaryRBMPolicy::BinaryRBMPolicy(size_t visibleSize, size_t hiddenSize) :
     visibleSize(visibleSize),
@@ -156,6 +156,6 @@ void BinaryRBMPolicy::Serialize(Archive& ar, const unsigned int /* version */)
   ar & data::CreateNVP(hiddenBias, "hiddenBias");
 }
 
-} // namespace rbm
+} // namespace ann
 } // namespace mlpack
-#endif // MLPACK_METHODS_RBM_BINARY_RBM_POLICY_IMPL_HPP
+#endif // MLPACK_METHODS_ANN_RBM_BINARY_RBM_POLICY_IMPL_HPP

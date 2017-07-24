@@ -8,8 +8,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_METHODS_RBM_RBM_IMPL_HPP
-#define MLPACK_METHODS_RBM_RBM_IMPL_HPP
+#ifndef MLPACK_METHODS_ANN_RBM_IMPL_HPP
+#define MLPACK_METHODS_ANN_RBM_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "rbm.hpp"
@@ -18,17 +18,10 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/math/random.hpp>
 
-
-#include <mlpack/methods/ann/layer/layer.hpp>
-#include <mlpack/methods/ann/layer/base_layer.hpp>
-
 #include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
 
-using namespace mlpack;
-using namespace mlpack::ann;
-
 namespace mlpack {
-namespace rbm /** Restricted Boltzmann Machine. */ {
+namespace ann /** Artificial neural networks. */ {
 
 
 template<typename InitializationRuleType, typename RBMPolicy>
@@ -53,8 +46,7 @@ RBM<InitializationRuleType, RBMPolicy>::RBM(
 }
 
 template<typename InitializationRuleType, typename RBMPolicy>
-void RBM<InitializationRuleType, RBMPolicy>
-    ::Reset()
+void RBM<InitializationRuleType, RBMPolicy>::Reset()
 {
   size_t weight = rbmPolicy.Parameters().n_elem;
 
@@ -217,6 +209,6 @@ void RBM<InitializationRuleType, RBMPolicy>::
   }
 }
 
-} // namespace rbm
+} // namespace ann
 } // namespace mlpack
-#endif
+#endif // MLPACK_METHODS_ANN_RBM_IMPL_HPP

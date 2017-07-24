@@ -1,11 +1,11 @@
 
-#ifndef MLPACK_METHODS_RBM_SPIKE_SLAB_RBM_POLICY_IMPL_HPP
-#define MLPACK_METHODS_RBM_SPIKE_SLAB_RBM_POLICY_IMPL_HPP
+#ifndef MLPACK_METHODS_ANN_RBM_SPIKE_SLAB_RBM_POLICY_IMPL_HPP
+#define MLPACK_METHODS_ANN_RBM_SPIKE_SLAB_RBM_POLICY_IMPL_HPP
 
 #include "spike_slab_rbm_policy.hpp"
 
-namespace mlpack{
-namespace rbm{
+namespace mlpack {
+namespace ann {
 
 inline SpikeSlabRBMPolicy::SpikeSlabRBMPolicy(const size_t visibleSize,
       const size_t hiddenSize,
@@ -321,8 +321,8 @@ void SpikeSlabRBMPolicy::Serialize(Archive& ar,
   }
 }
 
-} // namespace rbm
+} // namespace ann
 } // namespace mlpack
 
 
-#endif // MLPACK_METHODS_RBM_SPIKE_SLAB_RBM_POLICY_IMPL_HPP
+#endif // MLPACK_METHODS_ANN_RBM_SPIKE_SLAB_RBM_POLICY_IMPL_HPP

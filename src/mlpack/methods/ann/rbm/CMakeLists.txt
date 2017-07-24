@@ -3,8 +3,6 @@
 set(SOURCES
   binary_rbm_policy.hpp
   binary_rbm_policy_impl.hpp
-  rbm.hpp
-  rbm_impl.hpp
   spike_slab_rbm_policy.hpp
   spike_slab_rbm_policy_impl.hpp
 )

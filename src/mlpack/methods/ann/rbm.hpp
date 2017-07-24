@@ -7,25 +7,19 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_RBM_RBM_HPP
-#define MLPACK_METHODS_RBM_RBM_HPP
+#ifndef MLPACK_METHODS_ANN_RBM_HPP
+#define MLPACK_METHODS_ANN_RBM_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/math/random.hpp>
 
-#include <mlpack/methods/ann/layer/layer.hpp>
-#include <mlpack/methods/ann/layer/base_layer.hpp>
-
 #include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 
-using namespace mlpack;
-using namespace mlpack::ann;
-
 namespace mlpack {
-namespace rbm /** Restricted Boltzmann Machine.  */ {
+namespace ann /** Artificial neural networks.  */ {
 
 template<typename InitializationRuleType, typename RBMPolicy>
 class RBM
@@ -177,7 +171,9 @@ class RBM
   //! Locally-stored output of the preActivation function used in FreeEnergy
   arma::mat preActivation;
 };
-} // namespace rbm
+} // namespace ann
 } // namespace mlpack
+
 #include "rbm_impl.hpp"
-#endif
+
+#endif // MLPACK_METHODS_ANN_RBM_HPP

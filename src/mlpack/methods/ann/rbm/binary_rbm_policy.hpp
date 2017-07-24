@@ -1,5 +1,5 @@
 /**
- * @file binary_rbm.hpp
+ * @file binary_rbm_policy.hpp
  * @author Kris Singh
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -7,8 +7,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_RBM_BINARY_RBM_POLICY_HPP
-#define MLPACK_METHODS_RBM_BINARY_RBM_POLICY_HPP
+#ifndef MLPACK_METHODS_ANN_RBM_BINARY_RBM_POLICY_HPP
+#define MLPACK_METHODS_ANN_RBM_BINARY_RBM_POLICY_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/prereqs.hpp>
@@ -16,10 +16,7 @@
 #include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
 
 namespace mlpack{
-namespace rbm{
-
-using mlpack::ann::SoftplusFunction;
-using mlpack::ann::LogisticFunction;
+namespace ann{
 
 class BinaryRBMPolicy
 {
@@ -104,9 +101,9 @@ class BinaryRBMPolicy
   //! Locally-stored corrupInput used for Pseudo-Likelihood
   arma::mat corruptInput;
 };
-} // namespace rbm
+} // namespace ann
 } // namespace mlpack
 
 #include "binary_rbm_policy_impl.hpp"
 
-#endif // MLPACK_METHODS_RBM_BINARY_RBM_POLICY_HPP
+#endif // MLPACK_METHODS_ANN_RBM_BINARY_RBM_POLICY_HPP

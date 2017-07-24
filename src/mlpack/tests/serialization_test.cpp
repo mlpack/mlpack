@@ -34,9 +34,9 @@
 #include <mlpack/methods/lsh/lsh_search.hpp>
 #include <mlpack/methods/decision_stump/decision_stump.hpp>
 #include <mlpack/methods/lars/lars.hpp>
-#include <mlpack/methods/rbm/rbm.hpp>
-#include <mlpack/methods/rbm/binary_rbm_policy.hpp>
-#include <mlpack/methods/rbm/spike_slab_rbm_policy.hpp>
+#include <mlpack/methods/ann/rbm.hpp>
+#include <mlpack/methods/ann/rbm/binary_rbm_policy.hpp>
+#include <mlpack/methods/ann/rbm/spike_slab_rbm_policy.hpp>
 
 using namespace mlpack;
 using namespace mlpack::distribution;
@@ -50,7 +50,6 @@ using namespace mlpack::naive_bayes;
 using namespace mlpack::neighbor;
 using namespace mlpack::decision_stump;
 using namespace mlpack::ann;
-using namespace mlpack::rbm;
 
 using namespace arma;
 using namespace boost;

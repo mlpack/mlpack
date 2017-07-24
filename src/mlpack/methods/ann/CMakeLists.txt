@@ -3,6 +3,8 @@
 set(SOURCES
   ffn.hpp
   ffn_impl.hpp
+  rbm.hpp
+  rbm_impl.hpp
   rnn.hpp
   rnn_impl.hpp
 )
@@ -21,3 +23,4 @@ add_subdirectory(activation_functions)
 add_subdirectory(init_rules)
 add_subdirectory(layer)
 add_subdirectory(convolution_rules)
+add_subdirectory(rbm)

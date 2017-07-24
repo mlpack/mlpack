@@ -1,25 +1,20 @@
 /**
- * @file ssRBM.hpp
+ * @file spike_slab_rbm_policy.hpp
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_RBM_SSRBM_HPP
-#define MLPACK_METHODS_RBM_SSRBM_HPP
+#ifndef MLPACK_METHODS_ANN_RBM_SPIKE_SLAB_RBM_POLICY_HPP
+#define MLPACK_METHODS_ANN_RBM_SPIKE_SLAB_RBM_POLICY_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/prereqs.hpp>
-#include <mlpack/methods/ann/layer/layer.hpp>
-#include <mlpack/methods/ann/layer/base_layer.hpp>
 #include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
 
-namespace mlpack{
-namespace rbm{
-
-using mlpack::ann::SoftplusFunction;
-using mlpack::ann::LogisticFunction;
+namespace mlpack {
+namespace ann {
 
 class SpikeSlabRBMPolicy
 {
@@ -125,9 +120,9 @@ class SpikeSlabRBMPolicy
 
   arma::mat slabMean;
 };
-} // namespace rbm
+} // namespace ann
 } // namespace mlpack
 
 #include "spike_slab_rbm_policy_impl.hpp"
 
-#endif
+#endif // MLPACK_METHODS_ANN_RBM_SPIKE_SLAB_RBM_POLICY_HPP

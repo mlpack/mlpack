@@ -22,9 +22,9 @@
 
 #include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
-#include <mlpack/methods/rbm/binary_rbm_policy.hpp>
-#include <mlpack/methods/rbm/spike_slab_rbm_policy.hpp>
-#include <mlpack/methods/rbm/rbm.hpp>
+#include <mlpack/methods/ann/rbm/binary_rbm_policy.hpp>
+#include <mlpack/methods/ann/rbm/spike_slab_rbm_policy.hpp>
+#include <mlpack/methods/ann/rbm.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
 #include <mlpack/core/optimizers/minibatch_sgd/minibatch_sgd.hpp>
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
@@ -34,7 +34,7 @@
 #include "test_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::rbm;
+using namespace mlpack::ann;
 using namespace mlpack::optimization;
 using namespace mlpack::regression;
 
