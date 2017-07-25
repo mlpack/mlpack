@@ -59,6 +59,7 @@ class NeuralTuringMachine
    */
   NeuralTuringMachine(const size_t inSize,
                       const size_t outSize,
+                      const size_t numMem,
                       const size_t memSize,
                       const size_t shiftSize);
 
@@ -150,6 +151,8 @@ class NeuralTuringMachine
   //! Locally-stored number of output units.
   size_t outSize;
 
+  size_t numMem;
+
   //! Number of steps to backpropagate through time (BPTT).
   size_t memSize;
 
@@ -165,17 +168,20 @@ class NeuralTuringMachine
 
   LayerTypes addGate;
 
+  LayerTypes temp;
+  LayerTypes temp2;
+
   std::list<arma::mat> memoryHistory;
   std::list<arma::mat>::iterator bMemoryHistory;
 
   std::list<arma::mat> lReads;
+  std::list<arma::mat>::iterator gReads;
 
-  std::list<arma::mat> lOutputs;
+  arma::mat dRead;
 
   std::vector<LayerTypes> controller;
 
-  std::list<arma::mat> prevWeights;
-  std::list<arma::mat>::iterator weightsForwardIterator;
+  arma::mat prevWeightDelta;
 
   //! Locally-stored weight object.
   OutputDataType weights;
@@ -198,20 +204,8 @@ class NeuralTuringMachine
   //! Locally-stored number of gradient steps.
   size_t gradientStep;
 
-  //! Locally-stored cell parameters.
-  std::vector<arma::mat> cellParameter;
-
-  //! Locally-stored output parameters.
-  std::vector<arma::mat> outParameter;
-
   //! Locally-stored previous error.
   arma::mat prevError;
-
-  //! Locally-stored cell activation error.
-  arma::mat cellActivationError;
-
-  //! Locally-stored foget gate error.
-  arma::mat forgetGateError;
 
   //! If true dropout and scaling is disabled, see notes above.
   bool deterministic;

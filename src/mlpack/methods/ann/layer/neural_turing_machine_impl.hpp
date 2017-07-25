@@ -29,20 +29,30 @@ template <typename InputDataType, typename OutputDataType>
 NeuralTuringMachine<InputDataType, OutputDataType>::NeuralTuringMachine(
     const size_t inSize,
     const size_t outSize,
+    const size_t numMem,
     const size_t memSize,
     const size_t shiftSize) :
     inSize(inSize),
     outSize(outSize),
+    numMem(numMem),
     memSize(memSize),
     shiftSize(shiftSize),
     deterministic(false)
 {
-  readHead = new MemoryHead<>(inSize, outSize, memSize, shiftSize);
+  readHead = new MemoryHead<>(outSize, numMem, memSize, shiftSize);
 
-  //writeHead = new MemoryHead<>(inSize, outSize, memSize, shiftSize);
+  writeHead = new MemoryHead<>(outSize, numMem, memSize, shiftSize);
+
+  temp = new Linear<>(inSize + memSize, outSize);
+  temp2 = new Linear<>(outSize, outSize);
+
+  network.push_back(temp);
+  network.push_back(temp2);
+
+  controller.push_back(temp);
+  controller.push_back(temp2);
 
   network.push_back(readHead);
-  //network.push_back(writeHead);
 
   //controllerToLinear = new Linear<>(outSize, 2 * memSize);
   //eraseGate = new SigmoidLayer<>();
@@ -52,10 +62,11 @@ NeuralTuringMachine<InputDataType, OutputDataType>::NeuralTuringMachine(
   //network.push_back(eraseGate);
   //network.push_back(addGate);
 
-  memoryHistory.push_back(arma::ones(outSize, memSize));
+  memoryHistory.push_back(arma::ones(numMem, memSize));
   bMemoryHistory = memoryHistory.end();
 
-  //lReads.push_back(arma::ones(memSize, 1));
+  lReads.push_back(arma::ones(memSize, 1));
+  gReads = lReads.end();
 
   // controller network
   // TODO: Create API for user to build the controller.
@@ -69,39 +80,61 @@ template<typename eT>
 void NeuralTuringMachine<InputDataType, OutputDataType>::Forward(
     arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
+  std::cout << "In Forward" << std::endl;
+
+  std::cout << input << std::endl;
+  std::cout << lReads.back() << std::endl;
+
   // Create input to the controller.
-  //arma::vec newInput = arma::join_vert(input, lReads.back());
+  arma::vec newInput = arma::join_vert(input, lReads.back());
+
+  std::cout << "In Forward" << std::endl;
 
   // Forward pass through the controller.
-  //boost::apply_visitor(ForwardVisitor(std::move(newInput), std::move(
-  //    boost::apply_visitor(outputParameterVisitor, controller.front()))),
-  //    controller.front());
+  boost::apply_visitor(ForwardVisitor(std::move(newInput), std::move(
+      boost::apply_visitor(outputParameterVisitor, controller.front()))),
+      controller.front());
 
-  //for (size_t i = 1; i < controller.size(); ++i)
-  //{
-  //  boost::apply_visitor(ForwardVisitor(
-  //      std::move(boost::apply_visitor(outputParameterVisitor, controller[i - 1])),
-  //      std::move(boost::apply_visitor(outputParameterVisitor, controller[i]))),
-  //      controller[i]);
-  //}
+  std::cout << "In Forward" << std::endl;
+
+  for (size_t i = 1; i < controller.size(); ++i)
+  {
+    boost::apply_visitor(ForwardVisitor(
+        std::move(boost::apply_visitor(outputParameterVisitor, controller[i - 1])),
+        std::move(boost::apply_visitor(outputParameterVisitor, controller[i]))),
+        controller[i]);
+  }
+
+  std::cout << "In Forward" << std::endl;
 
   // Get controller output.
-  //arma::mat& controllerOutput = boost::apply_visitor(outputParameterVisitor,
-  //  network.back());
+  arma::mat& controllerOutput = boost::apply_visitor(outputParameterVisitor,
+      controller.back());
+
+  std::cout << "In Forward" << std::endl;
 
   // Acess to current memory.
   arma::mat& cMemory = memoryHistory.back();
 
+  std::cout << "In Forward" << std::endl;
+
+  std::cout << controllerOutput << std::endl;
+
   // Pass the controller output through read head.
-  boost::apply_visitor(ForwardWithMemoryVisitor(std::move(input),
+  boost::apply_visitor(ForwardWithMemoryVisitor(std::move(controllerOutput),
       std::move(cMemory),
       std::move(boost::apply_visitor(outputParameterVisitor, readHead))),
       readHead);
+
+  std::cout << boost::apply_visitor(outputParameterVisitor, readHead) << std::endl;
+
   const arma::mat& readWeights = boost::apply_visitor(outputParameterVisitor,
       readHead);
 
+  std::cout << "In Forward" << std::endl;
+
   // Read memory with read weights
-  //lReads.push_back(readWeights * cMemory);
+  lReads.push_back(arma::trans(cMemory) * readWeights);
 
   // Pass the controller output through write head.
   //boost::apply_visitor(ForwardWithMemoryVisitor(std::move(controllerOutput),
@@ -151,7 +184,9 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Forward(
   // Store the new memory.
   memoryHistory.push_back(cMemory);
 
-  output = readWeights;
+  output = controllerOutput;
+
+  std::cout << "Forward end" << std::endl;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -159,23 +194,51 @@ template<typename eT>
 void NeuralTuringMachine<InputDataType, OutputDataType>::Backward(
   const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
+  std::cout << "In Backward" << std::endl;
   if(bMemoryHistory == memoryHistory.end())
   {
-    bMemoryHistory = --(--memoryHistory.end());
+    bMemoryHistory = --(memoryHistory.end());
   }
+  else
+  {
+    // Load the memory content used at this time.
+    arma::mat& memory = *bMemoryHistory;
 
-  arma::mat& memory = *bMemoryHistory;
+    // Delta of the read
+    dRead = memory * boost::apply_visitor(deltaVisitor, controller.front()).submat(inSize, 0, inSize + memSize - 1, 0);
+
+    // Backward delta of read.
+    boost::apply_visitor(BackwardWithMemoryVisitor(std::move(boost::apply_visitor(
+        outputParameterVisitor, readHead)), std::move(memory), std::move(dRead),
+        std::move(boost::apply_visitor(deltaVisitor, readHead))),
+        readHead);
+
+    gy += boost::apply_visitor(deltaVisitor, readHead);
+  }
 
   prevError = gy;
 
-  boost::apply_visitor(BackwardWithMemoryVisitor(std::move(boost::apply_visitor(
-      outputParameterVisitor, readHead)), std::move(memory), std::move(gy),
-      std::move(boost::apply_visitor(deltaVisitor, readHead))),
-      readHead);
+  // Backward through controller.
+  boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
+      outputParameterVisitor, controller.back())), std::move(prevError),
+      std::move(boost::apply_visitor(deltaVisitor, controller.back()))),
+      controller.back());
 
-  g = boost::apply_visitor(deltaVisitor, readHead);
+  for(int i = controller.size() - 2;i >= 0;i--)
+  {
+    boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
+        outputParameterVisitor, controller[i])),
+        std::move(boost::apply_visitor(deltaVisitor, controller[i + 1])),
+        std::move(boost::apply_visitor(deltaVisitor, controller[i]))),
+        controller[i]);
+  }
+
+  // Return the delta of the input
+  g = boost::apply_visitor(deltaVisitor, controller.front()).submat(0, 0, inSize - 1, 0);
 
   bMemoryHistory--;
+
+  std::cout << "Backward end" << std::endl;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -185,8 +248,43 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Gradient(
     arma::Mat<eT>&& /* error */,
     arma::Mat<eT>&& /* gradient */)
 {
-  boost::apply_visitor(GradientVisitor(std::move(input), std::move(prevError)),
-      readHead);
+  std::cout << "In Gradient" << std::endl;
+
+  if(gReads == lReads.end())
+  {
+    gReads = --(--lReads.end());
+  }
+  else
+  {
+    // Gradient of the Read head
+    boost::apply_visitor(GradientVisitor(std::move(boost::apply_visitor(
+        outputParameterVisitor, controller.back())),
+        std::move(dRead)),
+        readHead);
+  }
+
+  const arma::mat& read = *gReads;
+
+  // Gradient of the controller
+  boost::apply_visitor(GradientVisitor(std::move(boost::apply_visitor(
+      outputParameterVisitor, controller[controller.size() - 2])),
+      std::move(prevError)), controller.back());
+
+  for(size_t i = controller.size() - 2;i > 0;i--)
+  {
+    boost::apply_visitor(GradientVisitor(std::move(boost::apply_visitor(
+        outputParameterVisitor, controller[i - 1])),
+        std::move(boost::apply_visitor(deltaVisitor, controller[i + 1]))),
+        controller[i]);
+  }
+
+  boost::apply_visitor(GradientVisitor(std::move(arma::join_vert(input, read)),
+      std::move(boost::apply_visitor(deltaVisitor, controller[1]))),
+      controller.front());
+
+  gReads--;
+
+  std::cout << "Gradient end" << std::endl;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -194,8 +292,12 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::ResetCell()
 {
   memoryHistory.clear();
 
-  memoryHistory.push_back(arma::ones(outSize, memSize));
+  memoryHistory.push_back(arma::ones(numMem, memSize));
   bMemoryHistory = memoryHistory.end();
+
+  lReads.clear();
+  lReads.push_back(arma::ones(memSize, 1));
+  gReads = lReads.end();
 }
 
 template<typename InputDataType, typename OutputDataType>

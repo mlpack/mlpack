@@ -883,7 +883,7 @@ BOOST_AUTO_TEST_CASE(GradientNTMTest)
       model = new RNN<NegativeLogLikelihood<> >(input, target, rho);
       model->Add<IdentityLayer<> >();
       model->Add<Linear<> >(1, 10);
-      model->Add<NeuralTuringMachine<> >(10, 3, 5, 1);
+      model->Add<NeuralTuringMachine<> >(10, 3, 3, 5, 1);
       model->Add<Linear<> >(3, 3);
       model->Add<LogSoftMax<> >();
     }
@@ -1014,7 +1014,7 @@ BOOST_AUTO_TEST_CASE(ForwardNeuralTuringMachineTest)
   arma::mat memory = arma::ones(5, 5);
   arma::mat input = arma::ones(5, 1);
 
-  NeuralTuringMachine<> ntm(5, 5, 5, 5);
+  NeuralTuringMachine<> ntm(5, 5, 3, 5, 5);
 
   NetworkInitialization<ConstInitialization> networkInit(ConstInitialization(1));
   networkInit.Initialize(ntm.Model(), ntm.Parameters());
