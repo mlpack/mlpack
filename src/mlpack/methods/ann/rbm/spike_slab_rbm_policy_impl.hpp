@@ -24,6 +24,7 @@ inline SpikeSlabRBMPolicy::SpikeSlabRBMPolicy(const size_t visibleSize,
   assert(slabPenalty.n_rows == poolSize);
   assert(slabPenalty.n_cols == hiddenSize);
 
+  visibleMean.set_size(visibleSize, 1);
   spikeMean.set_size(hiddenSize, 1);
   spikeSamples.set_size(hiddenSize, 1);
   slabMean.set_size(poolSize, hiddenSize);
@@ -269,14 +270,16 @@ inline void SpikeSlabRBMPolicy::SampleVisible(arma::mat&& input,
 {
   const size_t numMaxTrials = 10;
 
-  VisibleMean(std::move(input), std::move(output));
+  VisibleMean(std::move(input), std::move(visibleMean));
+
+  output.set_size(visibleSize, 1);
 
   for (size_t k = 0; k < numMaxTrials; k++)
   {
     for (size_t i = 0; i < visibleSize; i++)
     {
       assert(visiblePenalty[i] > 0);
-      output(i) = math::RandNormal(output(i), 1.0 / visiblePenalty[i]);
+      output(i) = math::RandNormal(visibleMean(i), 1.0 / visiblePenalty[i]);
     }
     if (arma::norm(output) < radius)
       break;

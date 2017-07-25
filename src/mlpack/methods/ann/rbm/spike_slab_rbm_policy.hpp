@@ -114,6 +114,8 @@ class SpikeSlabRBMPolicy
 
   arma::mat visiblePenalty;
 
+  arma::mat visibleMean;
+
   arma::mat spikeMean;
 
   arma::mat spikeSamples;
