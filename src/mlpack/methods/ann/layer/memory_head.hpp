@@ -100,16 +100,18 @@ class MemoryHead
   void BackwardWithMemory(const arma::Mat<eT>&& /* input */,
                           const arma::Mat<eT>&& memory,
                           arma::Mat<eT>&& gy,
-                          arma::Mat<eT>&& g);
+                          arma::Mat<eT>&& g,
+                          arma::Mat<eT>&& gM);
 
   template<typename eT>
   void Backward(const arma::Mat<eT>&& input,
                 arma::Mat<eT>&& gy,
                 arma::Mat<eT>&& g)
   {
+    arma::mat dM;
     arma::mat memory = arma::ones<arma::mat>(outSize, memSize);
     BackwardWithMemory(std::move(input), std::move(memory), std::move(gy),
-        std::move(g));
+        std::move(g), std::move(dM));
   }
 
   /*

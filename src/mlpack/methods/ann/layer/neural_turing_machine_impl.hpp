@@ -183,10 +183,12 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Backward(
     // Delta of the read
     dRead = memory * boost::apply_visitor(deltaVisitor, controller.front()).submat(inSize, 0, inSize + memSize - 1, 0);
 
+    arma::mat dM;
+
     // Backward delta of read.
     boost::apply_visitor(BackwardWithMemoryVisitor(std::move(boost::apply_visitor(
         outputParameterVisitor, readHead)), std::move(memory), std::move(dRead),
-        std::move(boost::apply_visitor(deltaVisitor, readHead))),
+        std::move(boost::apply_visitor(deltaVisitor, readHead)), std::move(dM)),
         readHead);
 
     gy += boost::apply_visitor(deltaVisitor, readHead);

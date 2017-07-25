@@ -108,7 +108,7 @@ void MemoryHead<InputDataType, OutputDataType>::ForwardWithMemory(
   const double& gammaT = lGammaT.back();
 
   // Perform cosine similarity with memory content
-  lConsineT.push_back(arma::normalise(memory) * arma::normalise(kT));
+  lConsineT.push_back(arma::normalise(memory, 1) * arma::normalise(kT));
   const arma::vec& cosSimilarity = lConsineT.back();
 
   // Build wC with bT and softmax
@@ -163,7 +163,7 @@ template<typename eT>
 void MemoryHead<InputDataType, OutputDataType>::BackwardWithMemory(
   const arma::Mat<eT>&& /* input */,
   const arma::Mat<eT>&& memory,
-  arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
+  arma::Mat<eT>&& gy, arma::Mat<eT>&& g, arma::Mat<eT>&& gM)
 {
   double sum = 0;
   double sum2 = 0;
@@ -303,8 +303,8 @@ void MemoryHead<InputDataType, OutputDataType>::BackwardWithMemory(
     boost::apply_visitor(outputParameterVisitor, inputLinear)(memSize, 0)) *
     arma::as_scalar(arma::sum(dWe % consineT % wE));
 
-  // Derivative with normalisation.
-  arma::vec dKt = arma::trans(arma::normalise(memory)) * dCosineT;
+  // Differentiation of kT with normalisation.
+  arma::vec dKt = arma::trans(arma::normalise(memory, 1)) * dCosineT;
 
   const arma::vec& kT = boost::apply_visitor(outputParameterVisitor,
     kTNonLinear);
@@ -314,6 +314,20 @@ void MemoryHead<InputDataType, OutputDataType>::BackwardWithMemory(
   // Differentiation without normalization.
   dKt = arma::sum((arma::eye(memSize, memSize) - (kT * arma::trans(kT) /
     (kTNorm * kTNorm))) / kTNorm, 1) % dKt;
+
+  // Differentiation of Memory with normalization.
+  gM = dCosineT * arma::trans(arma::normalise(kT));
+
+  // Differentiation of Memory without normalization.
+  size_t colIndex = 0;
+  gM.each_row([&] (arma::rowvec& v)
+  {
+    double n = arma::norm(memory.col(colIndex));
+    v = arma::sum((arma::eye(memSize, memSize) - (arma::trans(memory.col(colIndex)) * arma::trans(memory.col(colIndex)) /
+    (n * n))) / n) % v;
+
+    colIndex++;
+  });
 
   boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
       outputParameterVisitor, kTNonLinear)), std::move(dKt),

@@ -37,7 +37,8 @@ class BackwardWithMemoryVisitor : public boost::static_visitor<void>
   BackwardWithMemoryVisitor(arma::mat&& input,
                             arma::mat&& memory,
                             arma::mat&& error,
-                            arma::mat&& delta);
+                            arma::mat&& delta,
+                            arma::mat&& dM);
 
   //! Execute the BackwardWithMemory() function.
   template<typename LayerType>
@@ -49,7 +50,8 @@ class BackwardWithMemoryVisitor : public boost::static_visitor<void>
   template<typename T>
   typename std::enable_if<
       HasBackwardWithMemoryCheck<T, void(T::*)(const arma::mat&&,
-      const arma::mat&&, arma::mat&&, arma::mat&&)>::value, void>::type
+      const arma::mat&&, arma::mat&&, arma::mat&&, arma::mat&&)>::value,
+      void>::type
   BackwardWithMemory(T* layer) const;
 
   //! Do not execute the BackwardWithMemory() function for a module which
@@ -57,7 +59,8 @@ class BackwardWithMemoryVisitor : public boost::static_visitor<void>
   template<typename T>
   typename std::enable_if<
       !HasBackwardWithMemoryCheck<T, void(T::*)(const arma::mat&&,
-      const arma::mat&&, arma::mat&&, arma::mat&&)>::value, void>::type
+      const arma::mat&&, arma::mat&&, arma::mat&&, arma::mat&&)>::value,
+      void>::type
   BackwardWithMemory(T* layer) const;
 
   //! The input parameter set.
@@ -71,6 +74,9 @@ class BackwardWithMemoryVisitor : public boost::static_visitor<void>
 
   //! The delta parameter.
   arma::mat&& delta;
+
+  //! The delta of memory
+  arma::mat& dM;
 };
 
 } // namespace ann
