@@ -95,6 +95,7 @@ class AdaBoost
    */
   AdaBoost(const MatType& data,
            const arma::Row<size_t>& labels,
+           const size_t numClasses,
            const WeakLearnerType& other,
            const size_t iterations = 100,
            const double tolerance = 1e-6);
@@ -114,7 +115,7 @@ class AdaBoost
   double& Tolerance() { return tolerance; }
 
   //! Get the number of classes this model is trained on.
-  size_t Classes() const { return classes; }
+  size_t NumClasses() const { return numClasses; }
 
   //! Get the number of weak learners in the model.
   size_t WeakLearners() const { return alpha.size(); }
@@ -142,6 +143,7 @@ class AdaBoost
    */
   void Train(const MatType& data,
              const arma::Row<size_t>& labels,
+             const size_t numClasses,
              const WeakLearnerType& learner,
              const size_t iterations = 100,
              const double tolerance = 1e-6);
@@ -163,7 +165,7 @@ class AdaBoost
 
  private:
   //! The number of classes in the model.
-  size_t classes;
+  size_t numClasses;
   // The tolerance for change in rt and when to stop.
   double tolerance;
 

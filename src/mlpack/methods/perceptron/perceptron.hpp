@@ -75,12 +75,15 @@ class Perceptron
    * @param other The other initiated Perceptron object from which we copy the
    *       values from.
    * @param data The data on which to train this Perceptron object on.
-   * @param D Weight vector to use while training. For boosting purposes.
    * @param labels The labels of data.
+   * @param numClasses Number of classes in the data.
+   * @param instanceWeights Weight vector to use while training. For boosting
+   *      purposes.
    */
   Perceptron(const Perceptron& other,
              const MatType& data,
              const arma::Row<size_t>& labels,
+             const size_t numClasses,
              const arma::rowvec& instanceWeights);
 
   /**
@@ -93,13 +96,14 @@ class Perceptron
    * multiple datasets sequentially.
    *
    * @param data Dataset on which training should be performed.
-   * @param labels Labels of the dataset.  Make sure that these labels don't
-   *      contain any values greater than NumClasses()!
+   * @param labels Labels of the dataset.
+   * @param numClasses Number of classes in the data.
    * @param instanceWeights Cost matrix. Stores the cost of mispredicting
    *      instances.  This is useful for boosting.
    */
   void Train(const MatType& data,
              const arma::Row<size_t>& labels,
+             const size_t numClasses,
              const arma::rowvec& instanceWeights = arma::rowvec());
 
   /**
