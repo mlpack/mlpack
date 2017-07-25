@@ -47,10 +47,10 @@ void CrossEntropyError<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void CrossEntropyError<InputDataType, OutputDataType>::Serialize(
-    Archive& /* ar */,
+    Archive& ar,
     const unsigned int /* version */)
 {
-  // Nothing to do here.
+  ar & data::CreateNVP(eps, "eps");
 }
 
 } // namespace ann

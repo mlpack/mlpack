@@ -146,7 +146,7 @@ class SGD
   bool& ResetPolicy() { return resetPolicy; }
 
   //! Get the update policy.
-  UpdatePolicyType UpdatePolicy() const { return updatePolicy; }
+  const UpdatePolicyType& UpdatePolicy() const { return updatePolicy; }
   //! Modify the update policy.
   UpdatePolicyType& UpdatePolicy() { return updatePolicy; }
 
