@@ -238,6 +238,7 @@ inline void SpikeSlabRBMPolicy::VisibleMean(arma::mat&& input,
 {
   assert(input.n_elem == hiddenSize + poolSize * hiddenSize);
   output.set_size(visibleSize, 1);
+  output.zeros();
 
   arma::mat spike(input.memptr(), hiddenSize, 1, false, false);
   arma::mat slab(input.memptr() + hiddenSize, poolSize, hiddenSize, false,
