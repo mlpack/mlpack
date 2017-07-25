@@ -37,10 +37,10 @@ BOOST_AUTO_TEST_CASE(ClippedVanillaUpdateTest)
   arma::mat coordinates = arma::zeros(3, 3);
   // Setting step = 1 to make math easy.
   double stepSize = 1.0;
-  arma::mat dummyGradient = { {-6, +6, 0}, {1, 2, 3}, {-3, 0, +4} };
+  arma::mat dummyGradient("-6 6 0; 1 2 3; -3 0 4;");
   update.Update(coordinates, stepSize, dummyGradient);
   // After clipping, we should get the following coordinates:
-  arma::mat targetCoordinates = { { 3, -3, 0}, {-1, -2, -3}, {3, 0, -3} };
+  arma::mat targetCoordinates("3 -3 0; -1 -2 -3; 3 0 -3;");
   BOOST_REQUIRE_SMALL(arma::abs(coordinates - targetCoordinates).max(), 1e-7);
 }
 
@@ -55,9 +55,9 @@ BOOST_AUTO_TEST_CASE(ClippedMomentumUpdateTest)
 
   arma::mat coordinates = arma::zeros(3, 3);
   double stepSize = 1.0;
-  arma::mat dummyGradient = { {-6, +6, 0}, {1, 2, 3}, {-3, 0, +4} };
+  arma::mat dummyGradient("-6 6 0; 1 2 3; -3 0 4;");
   update.Update(coordinates, stepSize, dummyGradient);
-  arma::mat targetCoordinates = { { 3, -3, 0}, {-1, -2, -3}, {3, 0, -3} };
+  arma::mat targetCoordinates("3 -3 0; -1 -2 -3; 3 0 -3;");
   // On the first Update() call the parameters
   // should just be equal to (-gradient).
   BOOST_REQUIRE_SMALL(arma::abs(coordinates - targetCoordinates).max(), 1e-7);
