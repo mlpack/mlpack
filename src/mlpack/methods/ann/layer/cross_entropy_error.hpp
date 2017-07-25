@@ -83,7 +83,7 @@ class CrossEntropyError
   double& Eps() { return eps; }
 
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);

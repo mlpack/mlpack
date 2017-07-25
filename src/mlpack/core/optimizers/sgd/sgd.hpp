@@ -96,12 +96,6 @@ class SGD
    *                     parameters.
    * @param resetPolicy Flag that determines whether update policy parameters
    *                    are reset before every Optimize call.
-   * @param clipGradient Flag that determines whether gradient should be
-   *                     clipped to some range before every SGD step.
-   * @param minGradient Minimum gradient value
-   *                    (affects optimization iff clipGradient flag is on).
-   * @param maxGradient Maximum gradient value
-   *                    (affects optimization iff clipGradient flag is on).
    */
   SGD(const double stepSize = 0.01,
       const size_t maxIterations = 100000,
