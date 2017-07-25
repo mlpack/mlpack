@@ -39,6 +39,9 @@ NeuralTuringMachine<InputDataType, OutputDataType>::NeuralTuringMachine(
     shiftSize(shiftSize),
     deterministic(false)
 {
+  memInit = new Linear<>(inSize, numMem * memSize);
+  network.push_back(memInit);
+
   readHead = new MemoryHead<>(outSize, numMem, memSize, shiftSize);
 
   writeHead = new MemoryHead<>(outSize, numMem, memSize, shiftSize);
@@ -100,8 +103,14 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Forward(
   arma::mat& controllerOutput = boost::apply_visitor(outputParameterVisitor,
       controller.back());
 
+  // Create memory from memInit.(For testing).
+  boost::apply_visitor(ForwardVisitor(std::move(arma::ones(inSize, 1)), std::move(
+      boost::apply_visitor(outputParameterVisitor, memInit))),
+      memInit);
+  arma::mat cMemory = arma::reshape(boost::apply_visitor(outputParameterVisitor, memInit), numMem, memSize);
+
   // Acess to current memory.
-  arma::mat& cMemory = memoryHistory.back();
+  //arma::mat& cMemory = memoryHistory.back();
 
   // Pass the controller output through read head.
   boost::apply_visitor(ForwardWithMemoryVisitor(std::move(controllerOutput),
@@ -183,13 +192,14 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Backward(
     // Delta of the read
     dRead = memory * boost::apply_visitor(deltaVisitor, controller.front()).submat(inSize, 0, inSize + memSize - 1, 0);
 
-    arma::mat dM;
-
     // Backward delta of read.
     boost::apply_visitor(BackwardWithMemoryVisitor(std::move(boost::apply_visitor(
         outputParameterVisitor, readHead)), std::move(memory), std::move(dRead),
-        std::move(boost::apply_visitor(deltaVisitor, readHead)), std::move(dM)),
+        std::move(boost::apply_visitor(deltaVisitor, readHead)), std::move(dMem)),
         readHead);
+
+    // Add memory gradient from read operation.
+    dMem += boost::apply_visitor(outputParameterVisitor, readHead) * arma::trans(boost::apply_visitor(deltaVisitor, controller.front()).submat(inSize, 0, inSize + memSize - 1, 0));
 
     gy += boost::apply_visitor(deltaVisitor, readHead);
   }
@@ -235,6 +245,12 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Gradient(
         outputParameterVisitor, controller.back())),
         std::move(dRead)),
         readHead);
+
+    // Gradient of memInit
+    arma::mat dM = arma::reshape(dMem, numMem * memSize, 1);
+
+    boost::apply_visitor(GradientVisitor(std::move(arma::ones(inSize, 1)),
+      std::move(dM)), memInit);
   }
 
   const arma::mat& read = *gReads;

@@ -319,14 +319,14 @@ void MemoryHead<InputDataType, OutputDataType>::BackwardWithMemory(
   gM = dCosineT * arma::trans(arma::normalise(kT));
 
   // Differentiation of Memory without normalization.
-  size_t colIndex = 0;
+  size_t memRow = 0;
   gM.each_row([&] (arma::rowvec& v)
   {
-    double n = arma::norm(memory.col(colIndex));
-    v = arma::sum((arma::eye(memSize, memSize) - (arma::trans(memory.col(colIndex)) * arma::trans(memory.col(colIndex)) /
+    double n = arma::norm(memory.row(memRow));
+    v = arma::sum((arma::eye(memSize, memSize) - (arma::trans(memory.row(memRow)) * memory.row(memRow) /
     (n * n))) / n) % v;
 
-    colIndex++;
+    memRow++;
   });
 
   boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(

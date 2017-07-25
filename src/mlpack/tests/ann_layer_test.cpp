@@ -839,8 +839,8 @@ BOOST_AUTO_TEST_CASE(GradientMemoryHeadTest)
       model = new RNN<NegativeLogLikelihood<> >(input, target, rho);
       model->Add<IdentityLayer<> >();
       model->Add<Linear<> >(1, 10);
-      model->Add<MemoryHead<> >(10, 3, 5, 1);
-      model->Add<Linear<> >(3, 3);
+      model->Add<MemoryHead<> >(10, 1, 5, 1);
+      model->Add<Linear<> >(1, 3);
       model->Add<LogSoftMax<> >();
     }
 
@@ -883,7 +883,7 @@ BOOST_AUTO_TEST_CASE(GradientNTMTest)
       model = new RNN<NegativeLogLikelihood<> >(input, target, rho);
       model->Add<IdentityLayer<> >();
       model->Add<Linear<> >(1, 10);
-      model->Add<NeuralTuringMachine<> >(10, 3, 3, 5, 1);
+      model->Add<NeuralTuringMachine<> >(10, 3, 1, 5, 1);
       model->Add<Linear<> >(3, 3);
       model->Add<LogSoftMax<> >();
     }
