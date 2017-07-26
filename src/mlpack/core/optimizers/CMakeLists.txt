@@ -5,6 +5,7 @@ set(DIRS
   aug_lagrangian
   fw
   gradient_descent
+  grid_search
   lbfgs
   minibatch_sgd
   rmsprop
