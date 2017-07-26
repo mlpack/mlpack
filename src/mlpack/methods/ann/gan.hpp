@@ -42,25 +42,36 @@ typename IntializerType = RandomInitialization>
 class GenerativeAdversarialNetwork
 {
  public:
-  GenerativeAdversarialNetwork(arma::mat trainData, arma::mat trainLables,
+  GenerativeAdversarialNetwork(arma::mat& trainData,
       IntializerType initializeRule,
       Generator& generator,
       Discriminator& discriminator,
       size_t batchSize,
+      size_t iterations,
+      size_t diteration,
       size_t generatorInSize);
 
   // Reset function
   void Reset();
 
+  // Generate data for generator and discriminator
+  void GenerateData(arma::mat& batchData, arma::mat& batchResponses,
+      size_t offset);
+
   // Train function
   template<typename OptimizerType>
-  void Train(OptimizerType& Optimizer, size_t iterations, size_t k);
+  void Train(OptimizerType& Optimizer);
 
+  // Evaluate function
   double Evaluate(const arma::mat& parameters,
                   const size_t i,
                   const bool deterministic = true);
   /**
    * Gradient function 
+   * 
+   * @param parameters present parameters of the network
+   * @param i index of the predictors
+   * @param gradient variable to store the present gradient
    */
   void Gradient(const arma::mat& parameters, const size_t i,
       arma::mat& gradient);
@@ -92,7 +103,7 @@ class GenerativeAdversarialNetwork
    * @param numSamples number of samples to be generated from the distribution
    * @param args the aruments of the distribution to samples from
    */
-  void Generate(size_t numSamples, arma::mat&& fakeData, arma::mat&& noiseData);
+  void Generate(arma::mat&& fakeData, arma::mat&& noiseData);
   //! Return the initial point for the optimization.
   const arma::mat& Parameters() const { return parameter; }
   //! Modify the initial point for the optimization.
@@ -104,6 +115,8 @@ class GenerativeAdversarialNetwork
   void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
+  //! Locally stored train data
+  arma::mat& trainData;
   //! Locally stored Intialiser
   IntializerType  initializeRule;
   //! Locally stored parameters of the network
@@ -118,10 +131,18 @@ class GenerativeAdversarialNetwork
   bool trainGenerator;
   //! Locally stored batch size parameter
   size_t batchSize;
+  //! Locally stored number of iterations of discriminator
+  size_t diteration;
   //! Locally stored input size for generator
   size_t generatorInSize;
+  //! Locally stored number of iterations
+  size_t iterations;
   //! Locally stored reset parmaeter
   bool reset;
+  //! Locally stored discriminator data
+  arma::mat dData;
+  //! Locally stored generator data
+  arma::mat gData;
   //! Locally stored delta visitor
   DeltaVisitor deltaVisitor;
   //! Locally stored parameter for training data
@@ -139,9 +160,9 @@ class GenerativeAdversarialNetwork
   //! Locally stored fake Labels used for training
   arma::mat fakeLables;
   //! Locally stored train data comprising of real and fake data
-  arma::mat tempTrainData;
+  arma::mat batchData;
   //! Locally stored temp variable comprisiong of read and fake labels
-  arma::mat tempLabels;
+  arma::mat batchLabels;
   //! Locally-stored output parameter visitor.
   OutputParameterVisitor outputParameterVisitor;
   //! Locally-stored weight size visitor.
@@ -151,7 +172,7 @@ class GenerativeAdversarialNetwork
   //! Locally stored gradient parameters
   arma::mat gradient;
   //! Locally stored gradient for discriminator
-  arma::mat gradientDisriminator;
+  arma::mat gradientDiscriminator;
   //! Locally stored gradient for generator
   arma::mat gradientGenerator;
   //! Locally stored output of the generator network

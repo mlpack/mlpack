@@ -34,19 +34,17 @@ BOOST_AUTO_TEST_SUITE(GANNetworkTest);
 
 BOOST_AUTO_TEST_CASE(GanTest)
 {
-    size_t hiddenLayerSize1 = 500;
+  size_t hiddenLayerSize1 = 500;
   size_t hiddenLayerSize2 = 500;
-  size_t gOutputSize = 64;
+  size_t gOutputSize = 784;
   size_t gInputSize = 100;
   size_t dOutputSize = 1;
   size_t maxEpochs = 10;
-  size_t batchSize = 10;
+  size_t batchSize = 100;
   // Load the dataset
   arma::mat trainData, dataset;
-  arma::mat trainLabels;
-  trainData.load("digits_train.arm");
-  trainLabels.load("digits_train_label.arm");
-
+  trainData.load("train4.txt");
+  std::cout << arma::size(trainData) << std::endl;
   // Discriminator network
   FFN<CrossEntropyError<> > discriminator;
   discriminator.Add<Linear<> >(gOutputSize, hiddenLayerSize1);
@@ -68,13 +66,12 @@ BOOST_AUTO_TEST_CASE(GanTest)
   // Intialisation function
   GaussianInitialization gaussian(0, 0.1);
   // Optimizer
-  MiniBatchSGD msgd(batchSize, 0.06, 2, 0.001, true);
+  MiniBatchSGD msgd(batchSize, 0.05, trainData.n_cols, 0.001, true);
   // GAN model
-  GenerativeAdversarialNetwork<FFN<CrossEntropyError<>>,
-      FFN<CrossEntropyError<>>,
+  GenerativeAdversarialNetwork<FFN<CrossEntropyError<>>, FFN<CrossEntropyError<>>,
       GaussianInitialization> gan(
-      trainData, trainLabels, gaussian, generator, discriminator, batchSize,
+      trainData, gaussian, generator, discriminator, batchSize, 100, 10,
       gInputSize);
-  gan.Train(msgd, 100, 1);
+  gan.Train(msgd);
 }
 BOOST_AUTO_TEST_SUITE_END();
