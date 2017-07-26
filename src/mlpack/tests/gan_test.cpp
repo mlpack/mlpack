@@ -39,7 +39,6 @@ BOOST_AUTO_TEST_CASE(GanTest)
   size_t gOutputSize = 784;
   size_t gInputSize = 100;
   size_t dOutputSize = 1;
-  size_t maxEpochs = 10;
   size_t batchSize = 100;
   // Load the dataset
   arma::mat trainData, dataset;

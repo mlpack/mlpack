@@ -48,7 +48,7 @@ class GenerativeAdversarialNetwork
       Discriminator& discriminator,
       size_t batchSize,
       size_t iterations,
-      size_t diteration,
+      size_t disIteration,
       size_t generatorInSize);
 
   // Reset function
@@ -131,20 +131,17 @@ class GenerativeAdversarialNetwork
   bool trainGenerator;
   //! Locally stored batch size parameter
   size_t batchSize;
-  //! Locally stored number of iterations of discriminator
-  size_t diteration;
-  //! Locally stored input size for generator
-  size_t generatorInSize;
   //! Locally stored number of iterations
   size_t iterations;
+  //! Locally stored number of iterations of discriminator
+  size_t disIteration;
+  //! Locally stored input size for generator
+  size_t generatorInSize;
   //! Locally stored reset parmaeter
   bool reset;
-  //! Locally stored discriminator data
-  arma::mat dData;
-  //! Locally stored generator data
-  arma::mat gData;
   //! Locally stored delta visitor
   DeltaVisitor deltaVisitor;
+
   //! Locally stored parameter for training data
   arma::mat predictors;
   //! Locally stored responses
@@ -153,22 +150,25 @@ class GenerativeAdversarialNetwork
   arma::mat currentInput;
   //! Locally stored current target
   arma::mat currentTarget;
-  //! Locally stored fake data used for training
-  arma::mat fakeData;
+
   //! Locally stored noise samples
   arma::mat noiseData;
-  //! Locally stored fake Labels used for training
-  arma::mat fakeLables;
-  //! Locally stored train data comprising of real and fake data
-  arma::mat batchData;
-  //! Locally stored temp variable comprisiong of read and fake labels
-  arma::mat batchLabels;
+  //! Locally stored data fake + real
+  arma::mat data;
+  //! Locally stored labels fake + real
+  arma::mat labels;
+  //! Locally stored discriminator fake Data
+  arma::mat disFakeData;
+  //! Locally stored generator fake data
+  arma::mat genFakeData;
+
   //! Locally-stored output parameter visitor.
   OutputParameterVisitor outputParameterVisitor;
   //! Locally-stored weight size visitor.
   WeightSizeVisitor weightSizeVisitor;
   //! Locally-stored reset visitor.
   ResetVisitor resetVisitor;
+
   //! Locally stored gradient parameters
   arma::mat gradient;
   //! Locally stored gradient for discriminator

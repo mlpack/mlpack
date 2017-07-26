@@ -13,6 +13,7 @@
 #include "gan.hpp"
 
 #include <mlpack/core.hpp>
+#include <chrono>
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/math/random.hpp>
 #include <assert.h>
@@ -44,7 +45,7 @@ GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
     Discriminator& discriminator,
     size_t batchSize,
     size_t iterations,
-    size_t diteration,
+    size_t disIteration,
     size_t generatorInSize):
     trainData(trainData),
     initializeRule(initializeRule),
@@ -53,7 +54,7 @@ GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
     trainGenerator(false),
     batchSize(batchSize),
     iterations(iterations),
-    diteration(diteration),
+    disIteration(disIteration),
     generatorInSize(generatorInSize),
     reset(false)
 {
@@ -111,52 +112,67 @@ void GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
 
 template<typename Generator, typename Discriminator, typename IntializerType>
 void GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
-::GenerateData(arma::mat& batchData, arma::mat& batchResponses, size_t offset)
+::GenerateData(arma::mat& data, arma::mat& labels, size_t offset)
 {
-  if (diteration * batchSize > trainData.n_cols)
+  if (disIteration * batchSize > trainData.n_cols)
   {
     std::cout << "k value too large" << std::endl;
     return;
   }
+  // enery iteration since std::move
+  data.set_size(trainData.n_rows, (batchSize * disIteration * 2) + batchSize);
+  labels.set_size(1, (batchSize * disIteration * 2) + batchSize);
+  noiseData.set_size(generatorInSize, batchSize * disIteration + batchSize);
+
+  size_t endColRealData = 2 * batchSize * disIteration;
+  size_t endColFakeData = batchSize * disIteration;
+  size_t n_rows = trainData.n_rows;
 
   if (!trainGenerator)
   {
-    size_t temp =  batchSize * diteration;
-    batchData.set_size(trainData.n_rows, 2 * temp);
-    batchResponses.set_size(1, 2 * temp);
-    noiseData.set_size(generatorInSize, temp);
-    dData.set_size(trainData.n_rows, temp);
-    Generate(std::move(dData), std::move(noiseData));
+    // fake data discriminator
+    disFakeData = arma::mat(data.memptr(), n_rows,
+        batchSize * disIteration, false, false);
+    // real data
+    data.cols(endColFakeData, endColRealData - 1) =
+        arma::mat(trainData.memptr() + offset, n_rows, batchSize * disIteration,
+        true, false);
+    
+    Generate(std::move(disFakeData), std::move(noiseData.cols(0,
+        endColFakeData - 1)));
 
-    batchData.cols(0, temp - 1) = arma::mat(dData.memptr(),
-        trainData.n_rows, temp, false, false);
-    batchData.cols(temp, batchData.n_cols - 1) = 
-        arma::mat(trainData.memptr() + offset, trainData.n_rows,
-        temp, false, false);
+    labels.cols(0, endColFakeData - 1).zeros();
+    labels.cols(endColFakeData, endColRealData - 1).ones();
 
-    batchResponses.cols(0, temp - 1).zeros();
-    batchResponses.cols(temp, batchResponses.n_cols - 1).ones();
+    this->predictors = std::move(data.cols(0, endColRealData - 1));
+    this->responses = std::move(labels.cols(0, endColRealData - 1));
+    assert(trainData.n_rows == n_rows);
 
-    this->predictors = std::move(batchData);
-    this->responses = std::move(batchLabels);
     numFunctions = predictors.n_cols;
     discriminator.predictors = this->predictors;
     discriminator.responses = this->responses;
+    generator.predictors = std::move(noiseData.cols(0, endColFakeData - 1));
+    generator.responses = this->responses;
   }
   else
   {
-    noiseData.set_size(generatorInSize, batchSize);
-    batchData.set_size(trainData.n_rows, batchSize);
-    gData.set_size(trainData.n_rows, batchSize);
-    batchResponses.set_size(1, batchSize);
-    Generate(std::move(gData), std::move(noiseData));
-    batchData = std::move(gData);
-    batchResponses.ones();
-    this->predictors = std::move(noiseData);
-    this->responses = std::move(batchResponses);
+    // fake data generator
+    genFakeData = arma::mat(data.memptr() + disFakeData.n_elem, n_rows,
+        batchSize, false, false);
+    Generate(std::move(genFakeData), std::move(noiseData.cols(endColFakeData,
+        noiseData.n_cols - 1)));
+    // real label for generator's fake data
+    labels.cols(endColRealData, labels.n_cols - 1).ones();
+    this->predictors = std::move(noiseData.cols(endColFakeData,
+        noiseData.n_cols - 1));
+    this->responses = std::move(labels.cols(endColRealData, labels.n_cols - 1));
+    assert(trainData.n_rows == n_rows);
+
     numFunctions = predictors.n_cols;
-    discriminator.predictors = batchData;
+    discriminator.predictors = std::move(genFakeData);
     discriminator.responses = this->responses;
+    generator.predictors = this->predictors;
+    generator.responses = this->responses;
   }
 }
 
@@ -167,25 +183,30 @@ void GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
 {
   if (!reset)
     Reset();
-
+  std::chrono::time_point<std::chrono::system_clock> start, end;
   for (size_t i = 0; i < iterations; i++)
   {
+    std::cout << "iteration #" << i << std::endl;
+    start = std::chrono::system_clock::now();
     size_t offset = 0;
     // last batch
     if (offset + batchSize >  trainData.n_cols)
       offset -=  offset + batchSize - trainData.n_cols;
 
     // Generate fake data for discrminator to train on.
-    GenerateData(batchData, batchLabels, offset);
-    offset += batchSize * diteration;
+    GenerateData(data, labels, offset);
+    offset += batchSize * disIteration;
     Optimizer.Optimize(*this, parameter);
 
     // Training Generator
     trainGenerator = true;
-    GenerateData(batchData, batchLabels, 0);
+    GenerateData(data, labels, 0);
     Optimizer.Optimize(*this, parameter);
     // set train generator to false
     trainGenerator = false;
+    end = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed_seconds = end-start;
+    std::cout<< "elapsed time: " << elapsed_seconds.count() << "s\n";
   }
 }
 
@@ -241,7 +262,6 @@ void GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
     generator.currentInput = predictors.col(i);
     generator.Gradient();
   }
-  std::cout << arma::size(gradient) << std::endl;
 
   // Freeze weights of discrminator if generator is training
   if (!trainGenerator)
