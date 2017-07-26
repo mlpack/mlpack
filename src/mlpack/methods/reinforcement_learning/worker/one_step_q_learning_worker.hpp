@@ -153,8 +153,7 @@ class OneStepQLearningWorker
 
       if (terminal)
         break;
-      else
-        state = nextState;
+      state = nextState;
 
       // Update global target network.
       if (totalSteps % config.TargetNetworkSyncInterval() == 0)
