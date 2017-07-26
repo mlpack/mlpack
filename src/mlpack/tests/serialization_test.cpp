@@ -34,11 +34,9 @@
 #include <mlpack/methods/lsh/lsh_search.hpp>
 #include <mlpack/methods/decision_stump/decision_stump.hpp>
 #include <mlpack/methods/lars/lars.hpp>
-#include <mlpack/methods/rbm/rbm.hpp>
-#include <mlpack/methods/rbm/binary_rbm.hpp>
-#include <mlpack/methods/rbm/ssRBM.hpp>
-#include <mlpack/methods/rbm/binary_layer.hpp>
-#include <mlpack/methods/rbm/spike_slab_layer.hpp>
+#include <mlpack/methods/ann/rbm.hpp>
+#include <mlpack/methods/ann/rbm/binary_rbm_policy.hpp>
+#include <mlpack/methods/ann/rbm/spike_slab_rbm_policy.hpp>
 
 using namespace mlpack;
 using namespace mlpack::distribution;
@@ -52,7 +50,6 @@ using namespace mlpack::naive_bayes;
 using namespace mlpack::neighbor;
 using namespace mlpack::decision_stump;
 using namespace mlpack::ann;
-using namespace mlpack::rbm;
 
 using namespace arma;
 using namespace boost;
@@ -1697,34 +1694,47 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeTest)
   }
 }
 
-BOOST_AUTO_TEST_CASE(RBMTest)
+BOOST_AUTO_TEST_CASE(BinaryRBMTest)
 {
   arma::mat data;
   size_t hiddenLayerSize = 5;
   data.randu(3, 100);
-  BinaryLayer<> visible(data.n_rows, hiddenLayerSize, 1);
-  BinaryLayer<> hidden(hiddenLayerSize, data.n_rows, 0);
-  BinaryRBM binary_rbm(visible, hidden);
+
+  BinaryRBMPolicy binary_rbm(data.n_rows, hiddenLayerSize);
   GaussianInitialization gaussian(0, 0.1);
-  RBM<GaussianInitialization, BinaryRBM > Rbm(data,
+  RBM<GaussianInitialization, BinaryRBMPolicy > Rbm(data,
       gaussian, binary_rbm, 1,  true, true);
-  RBM<GaussianInitialization, BinaryRBM > RbmXml(data,
+  RBM<GaussianInitialization, BinaryRBMPolicy > RbmXml(data,
       gaussian, binary_rbm, 1,  true, true);
-  RBM<GaussianInitialization, BinaryRBM > RbmText(data,
+  RBM<GaussianInitialization, BinaryRBMPolicy > RbmText(data,
       gaussian, binary_rbm, 1,  true, true);
-  RBM<GaussianInitialization, BinaryRBM > RbmBinary(data,
+  RBM<GaussianInitialization, BinaryRBMPolicy > RbmBinary(data,
       gaussian, binary_rbm, 1,  true, true);
   Rbm.Reset();
 
   SerializeObjectAll(Rbm, RbmXml, RbmText, RbmBinary);
   CheckMatrices(Rbm.Parameters(), RbmXml.Parameters(), RbmText.Parameters(),
       RbmBinary.Parameters());
-  CheckMatrices(Rbm.Policy().VisibleLayer().Bias(),
-      RbmXml.Policy().VisibleLayer().Bias());
-  CheckMatrices(Rbm.Policy().VisibleLayer().Bias(),
-        RbmText.Policy().VisibleLayer().Bias());
-  CheckMatrices(Rbm.Policy().VisibleLayer().Bias(),
-        RbmBinary.Policy().VisibleLayer().Bias());
+  CheckMatrices(Rbm.Policy().VisibleBias(),
+      RbmXml.Policy().VisibleBias());
+  CheckMatrices(Rbm.Policy().VisibleBias(),
+        RbmText.Policy().VisibleBias());
+  CheckMatrices(Rbm.Policy().VisibleBias(),
+        RbmBinary.Policy().VisibleBias());
+
+  CheckMatrices(Rbm.Policy().HiddenBias(),
+      RbmXml.Policy().HiddenBias());
+  CheckMatrices(Rbm.Policy().HiddenBias(),
+        RbmText.Policy().HiddenBias());
+  CheckMatrices(Rbm.Policy().HiddenBias(),
+        RbmBinary.Policy().HiddenBias());
+
+  CheckMatrices(Rbm.Policy().Weight(),
+      RbmXml.Policy().Weight());
+  CheckMatrices(Rbm.Policy().Weight(),
+        RbmText.Policy().Weight());
+  CheckMatrices(Rbm.Policy().Weight(),
+        RbmBinary.Policy().Weight());
 }
 
 BOOST_AUTO_TEST_SUITE_END();

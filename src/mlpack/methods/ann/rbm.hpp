@@ -7,25 +7,19 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_RBM_RBM_HPP
-#define MLPACK_METHODS_RBM_RBM_HPP
+#ifndef MLPACK_METHODS_ANN_RBM_HPP
+#define MLPACK_METHODS_ANN_RBM_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/math/random.hpp>
 
-#include <mlpack/methods/ann/layer/layer.hpp>
-#include <mlpack/methods/ann/layer/base_layer.hpp>
-
 #include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 
-using namespace mlpack;
-using namespace mlpack::ann;
-
 namespace mlpack {
-namespace rbm /** Restricted Boltzmann Machine.  */ {
+namespace ann /** Artificial neural networks.  */ {
 
 template<typename InitializationRuleType, typename RBMPolicy>
 class RBM
@@ -150,13 +144,13 @@ class RBM
   //! Locally-stored number of functions varaiable
   size_t numFunctions;
   //! Locally-stored number of steps in gibbs sampling
-  const size_t numSteps;
+  size_t numSteps;
   //! Locally-stored number of negative samples used in ssRBM
-  const size_t mSteps;
+  size_t mSteps;
   //! Locally-stored monitoring cost
-  const bool useMonitoringCost;
+  bool useMonitoringCost;
   //! Locally-stored persistent cd-k or not
-  const bool persistence;
+  bool persistence;
   //! Locally-stored reset variable
   bool reset;
 
@@ -167,8 +161,6 @@ class RBM
   //! Locally-stored negative samples from gibbs Distribution
   arma::mat negativeSamples;
   //! Locally-stored temporary negative samples
-  arma::mat tempNegativeSmaples;
-  //! Locally-stored gradient for  negative phase
   arma::mat negativeGradient;
   //! Locally-stored temproray negative gradient used for negative phase
   arma::mat tempNegativeGradient;
@@ -178,12 +170,10 @@ class RBM
   arma::mat gibbsTemporary;
   //! Locally-stored output of the preActivation function used in FreeEnergy
   arma::mat preActivation;
-  //! Locally-stored corrupInput used for Pseudo-Likelihood
-  arma::mat corruptInput;
-  //! Locally-stored softplus output used for Cross-Entropy Loss
-  arma::mat softOutput;
 };
-} // namespace rbm
+} // namespace ann
 } // namespace mlpack
+
 #include "rbm_impl.hpp"
-#endif
+
+#endif // MLPACK_METHODS_ANN_RBM_HPP
