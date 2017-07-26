@@ -201,9 +201,9 @@ BOOST_AUTO_TEST_CASE(feedForwardNetworkCMAES)
 double minVal = 0, range = 1;
 for (int i = 0; i<irisTrainData.n_rows; i++)
 {
- minVal = irisTrainData.row(i).min();
- range  = irisTrainData.row(i).max() - minVal;
- irisTrainData.row(i) =  (irisTrainData.row(i) - minVal)/range;
+minVal = irisTrainData.row(i).min();
+range  = irisTrainData.row(i).max() - minVal;
+irisTrainData.row(i) =  (irisTrainData.row(i) - minVal)/range;
 }
 
 arma::mat irisTrainLabels;
@@ -220,8 +220,8 @@ range  = irisTestData.row(i).max() - minVal;
 irisTestData.row(i) =  (irisTestData.row(i) - minVal)/range;
 }
 
- arma::mat irisTestLabels;
-  data::Load("iris_test_labels.csv", irisTestLabels, true);
+arma::mat irisTestLabels;
+data::Load("iris_test_labels.csv", irisTestLabels, true);
 
 BuildVanillaNetwork<>
 (irisTrainData, irisTrainLabels, irisTestData, irisTestLabels, 3, 8, 70, 0.1);
