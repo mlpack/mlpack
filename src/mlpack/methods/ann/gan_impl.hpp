@@ -90,6 +90,12 @@ void GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
   discriminator.Parameters() = arma::mat(parameter.memptr() + generatorWeights,
       discriminatorWeights, 1, false, false);
 
+  // Todo remove this
+  size_t idx = RandInt(0, parameter.n_rows);
+  std::cout << "idx" << idx << std::endl;
+  assert(discriminator.Parameters()(idx) == parameter(generator.Parameters().n_rows + idx));
+  assert(generator.Parameters()(idx) == parameter(idx));
+  // 
   // Reset both the generator and discriminator
   for (size_t i = 0; i < generator.network.size(); ++i)
   {
@@ -106,7 +112,10 @@ void GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
 
     boost::apply_visitor(resetVisitor, discriminator.network[i]);
   }
-
+  // Todo remove this
+  assert(boost::apply_visitor(weightSizeVisitor, discriminator.network[idx]) > 0);
+  assert(boost::apply_visitor(weightSizeVisitor, generator.network[idx]) > 0);
+  //
   reset = true;
 }
 
@@ -147,6 +156,8 @@ void GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
     this->predictors = std::move(data.cols(0, endColRealData - 1));
     this->responses = std::move(labels.cols(0, endColRealData - 1));
     assert(trainData.n_rows == n_rows);
+    // Todo Remove this
+    size_t idx = RandInt(endColFakeData, endColRealData - 1);
 
     numFunctions = predictors.n_cols;
     discriminator.predictors = this->predictors;
