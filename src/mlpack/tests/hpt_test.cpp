@@ -10,12 +10,14 @@
  */
 
 #include <mlpack/core/cv/metrics/mse.hpp>
+#include <mlpack/core/cv/metrics/accuracy.hpp>
 #include <mlpack/core/cv/simple_cv.hpp>
 #include <mlpack/core/hpt/bind.hpp>
 #include <mlpack/core/hpt/cv_function.hpp>
 #include <mlpack/core/hpt/hpt.hpp>
 #include <mlpack/core/optimizers/grid_search/grid_search.hpp>
 #include <mlpack/methods/lars/lars.hpp>
+#include <mlpack/methods/logistic_regression/logistic_regression.hpp>
 
 #include <boost/test/unit_test.hpp>
 
@@ -170,6 +172,40 @@ BOOST_AUTO_TEST_CASE(HPTTest)
   BOOST_REQUIRE_CLOSE(expectedObjective, hpt.BestObjective(), 1e-5);
   BOOST_REQUIRE_CLOSE(expectedLambda1, actualLambda1, 1e-5);
   BOOST_REQUIRE_CLOSE(expectedLambda2, actualLambda2, 1e-5);
+}
+
+/**
+ * Test HyperParamterTuner maximizes Accuracy rather than minimizes it.
+ */
+BOOST_AUTO_TEST_CASE(HPTMaximizationTest)
+{
+  // Initializing a linearly separable dataset.
+  arma::mat xs = arma::linspace<arma::rowvec>(0.0, 10.0, 50);
+  arma::Row<size_t> ys = arma::join_rows(arma::zeros<arma::Row<size_t>>(25),
+      arma::ones<arma::Row<size_t>>(25));
+
+  // We will train and validate on the same dataset.
+  double validationSize = 0.5;
+  arma::mat doubledXs = arma::join_rows(xs, xs);
+  arma::Row<size_t> doubledYs = arma::join_rows(ys, ys);
+
+  // Defining lambdas to choose from. Zero should be preferred since big lambdas
+  // are likely to restrict capabilities of logistic regression.
+  arma::vec lambdas{0.0, 1e12};
+
+  // Making sure that the assumption above is true.
+  SimpleCV<LogisticRegression<>, Accuracy>
+    cv(validationSize, doubledXs, doubledYs);
+  BOOST_REQUIRE_GT(cv.Evaluate(0.0), cv.Evaluate(1e12));
+
+  HyperParameterTuner<LogisticRegression<>, Accuracy, SimpleCV>
+      hpt(validationSize, doubledXs, doubledYs);
+
+  double actualLambda;
+  std::tie(actualLambda) = hpt.Optimize(lambdas);
+
+  BOOST_REQUIRE_CLOSE(hpt.BestObjective(), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(actualLambda, 0.0, 1e-5);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

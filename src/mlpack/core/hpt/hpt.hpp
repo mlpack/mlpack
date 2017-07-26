@@ -137,8 +137,24 @@ class HyperParameterTuner
       std::is_same<Optimizer, mlpack::optimization::GridSearch>::value,
       "HyperParameterTuner now supports only the GridSearch optimizer");
 
+  /**
+   * A decorator that returns negated values of the original metric.
+   */
+  template<typename OriginalMetric>
+  struct Negated
+  {
+    static double Evaluate(MLAlgorithm& model,
+                           const MatType& xs,
+                           const PredictionsType& ys)
+    { return -OriginalMetric::Evaluate(model, xs, ys); }
+  };
+
   //! A short alias for the full type of the cross-validation.
-  using CVType = CV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>;
+  using CVType = typename std::conditional<Metric::NeedsMinimization,
+      CV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
+      CV<MLAlgorithm, Negated<Metric>, MatType, PredictionsType,
+          WeightsType>>::type;
+
 
   //! The cross-validation object for assessing sets of hyper-parameters.
   CVType cv;

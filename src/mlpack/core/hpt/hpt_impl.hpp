@@ -145,7 +145,9 @@ void HyperParameterTuner<MLAlgorithm,
   static const size_t totalArgs = std::tuple_size<ArgsTuple>::value;
 
   CVFunction<CVType, totalArgs, BoundArgs...> cvFunction(cv, boundArgs...);
-  bestObjective = optimizer.Optimize(cvFunction, bestParams);
+  bestObjective = Metric::NeedsMinimization?
+      optimizer.Optimize(cvFunction, bestParams) :
+      -optimizer.Optimize(cvFunction, bestParams);
 }
 
 template<typename MLAlgorithm,
