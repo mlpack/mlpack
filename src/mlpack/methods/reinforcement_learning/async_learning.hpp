@@ -86,24 +86,29 @@ class AsyncLearning
   template <typename Measure>
   void Train(Measure& measure);
 
-  //! Get and modify training config.
+  //! Get training config.
   TrainingConfig& Config() { return config; }
+  //! Modify training config.
   const TrainingConfig& Config() const { return config; }
 
-  //! Get and modify learning network.
+  //! Get learning network.
   NetworkType& Network() { return learningNetwork; }
+  //! Modify learning network.
   const NetworkType& Network() const { return learningNetwork; }
 
-  //! Get and modify behavior policy.
+  //! Get behavior policy.
   PolicyType& Policy() { return policy; }
+  //! Modify behavior policy.
   const PolicyType& Policy() const { return policy; }
 
-  //! Get and modify optimizer.
+  //! Get optimizer.
   UpdaterType& Updater() { return updater; }
+  //! Modify optimizer.
   const UpdaterType& Updater() const { return updater; }
 
-  //! Get and modify the environment.
+  //! Get the environment.
   EnvironmentType& Environment() { return environment; }
+  //! Modify the environment.
   const EnvironmentType& Environment() const { return environment; }
 
  private:

@@ -74,7 +74,8 @@ class OneStepQLearningWorker
     std::vector<TransitionType> pending(config.UpdateInterval());
     size_t pendingIndex = 0;
 
-    while (!stop && (!config.StepLimit() || steps < config.StepLimit())) {
+    while (!stop && (!config.StepLimit() || steps < config.StepLimit()))
+    {
       // Interact with the environment.
       arma::colvec actionValue;
       network.Predict(state.Encode(), actionValue);

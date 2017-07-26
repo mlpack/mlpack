@@ -22,99 +22,132 @@ class TrainingConfig
   TrainingConfig() : stepLimit(0), gradientLimit(40), doubleQLearning(false)
   { /* Nothing to do here. */ }
 
-  /**
-   * Get and modify the number workers.
-   * This is valid only for async RL agent.
-   **/
-  size_t NumOfWorkers() const { return numOfWorkers; }
-  size_t& NumOfWorkers() { return numOfWorkers; }
+  TrainingConfig(
+      size_t numWorkers,
+      size_t updateInterval,
+      size_t targetNetworkSyncInterval,
+      size_t stepLimit,
+      size_t explorationSteps,
+      double stepSize,
+      double discount,
+      double gradientLimit,
+      bool doubleQLearning) :
+      numWorkers(numWorkers),
+      updateInterval(updateInterval),
+      targetNetworkSyncInterval(targetNetworkSyncInterval),
+      stepLimit(stepLimit),
+      explorationSteps(explorationSteps),
+      stepSize(stepSize),
+      discount(discount),
+      gradientLimit(gradientLimit),
+      doubleQLearning(doubleQLearning)
+  { /* Nothing to do here. */ }
 
-  /**
-   * Get and modify the update interval, which is similar to batch size,
-   * however the update is done one by one.
-   * This is valid only for async RL agent.
-   */
+  //! Get the amount of workers.
+  size_t NumWorkers() const { return numWorkers; }
+  //! Modify the amount of workers.
+  size_t& NumWorkers() { return numWorkers; }
+
+  //! Get the update interval.
   size_t UpdateInterval() const { return updateInterval; }
+  //! Modify the update interval.
   size_t& UpdateInterval() { return updateInterval; }
 
-  /**
-   * Get and modify the interval for syncing target network.
-   * This is valid for both async RL agent and q-learning agent.
-   */
+  //! Get the interval for syncing target network.
   size_t TargetNetworkSyncInterval() const
   { return targetNetworkSyncInterval; }
+  //! Modify the interval for syncing target network.
   size_t& TargetNetworkSyncInterval() { return targetNetworkSyncInterval; }
 
-  /**
-   * Get and modify the maximum steps of each episode.
-   * Setting it to 0 means no limit.
-   * This is valid for both async RL agent and q-learning agent.
-   */
+  //! Get the maximum steps of each episode.
   size_t StepLimit() const { return stepLimit; }
+  /**
+   * Modify the maximum steps of each episode.
+   * Setting it to 0 means no limit.
+   */
   size_t& StepLimit() { return stepLimit; }
 
-  /**
-   * Get and modify the exploration steps.
-   * The agent won't start learn until those steps have passed.
-   * This is valid only for q-learning agent.
-   */
+  //! Get the exploration steps.
   size_t ExplorationSteps() const { return explorationSteps; }
+  //! Modify the exploration steps.
   size_t& ExplorationSteps() { return explorationSteps; }
 
-  /**
-   * Get and modify the step size of the optimizer.
-   * This is valid for both async RL agent and q-learning agent.
-   */
+  //! Get the step size of the optimizer.
   double StepSize() const { return stepSize; }
+  //! Modify the step size of the optimizer.
   double& StepSize() { return stepSize; }
 
-  /**
-   * Get and modify the discount rate for future reward.
-   * This is valid for both async RL agent and q-learning agent.
-   */
+  //! Get the discount rate for future reward.
   double Discount() const { return discount; }
+  //! Modify the discount rate for future reward.
   double& Discount() { return discount; }
 
-  /**
-   * Get and modify the limit of update gradient.
-   * This is valid only for async RL agent.
-   */
+  //! Get the limit of update gradient.
   double GradientLimit() const { return gradientLimit; }
+  //! Modify the limit of update gradient.
   double& GradientLimit() { return gradientLimit; }
 
-  /**
-   * Get and modify the indicator of double q-learning.
-   * This is valid only for q-learning agent.
-   */
+  //! Get the indicator of double q-learning.
   bool DoubleQLearning() const { return doubleQLearning; }
+  //! Modify the indicator of double q-learning.
   bool& DoubleQLearning() { return doubleQLearning; }
 
  private:
-  //! Locally-stored number of workers.
-  size_t numOfWorkers;
+  /**
+   * Locally-stored number of workers.
+   * This is valid only for async RL agent.
+   */
+  size_t numWorkers;
 
-  //! Locally-stored update interval.
+  /**
+   * Locally-stored update interval.
+   * Update interval is similar to batch size,
+   * however the update is done one by one.
+   * This is valid only for async RL agent.
+   */
   size_t updateInterval;
 
-  //! Locally-stored interval for syncing target network.
+  /**
+   * Locally-stored interval for syncing target network.
+   * This is valid for both async RL agent and q-learning agent.
+   */
   size_t targetNetworkSyncInterval;
 
-  //! Locally-stored step limit of each episode.
+  /**
+   * Locally-stored step limit of each episode.
+   * This is valid for both async RL agent and q-learning agent.
+   */
   size_t stepLimit;
 
-  //! Locally-stored exploration steps before learning.
+  /**
+   * Locally-stored exploration steps before learning.
+   * The agent won't start learn until those steps have passed.
+   * This is valid only for q-learning agent.
+   */
   size_t explorationSteps;
 
-  //! Locally-stored step size of optimizer.
+  /**
+   * Locally-stored step size of optimizer.
+   * This is valid for both async RL agent and q-learning agent.
+   */
   double stepSize;
 
-  //! Locally-stored discount rate for future reward.
+  /**
+   * Locally-stored discount rate for future reward.
+   * This is valid for both async RL agent and q-learning agent.
+   */
   double discount;
 
-  //! Locally-stored gradient limit.
+  /**
+   * Locally-stored gradient limit.
+   * This is valid only for async RL agent.
+   */
   double gradientLimit;
 
-  //! Locally-stored indicator for double q-learning.
+  /**
+   * Locally-stored indicator for double q-learning.
+   * This is valid only for q-learning agent.
+   */
   bool doubleQLearning;
 };
 

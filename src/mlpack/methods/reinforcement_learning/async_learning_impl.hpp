@@ -74,16 +74,16 @@ void AsyncLearning<
   // Make sure OpenMP will start desired number of threads.
   omp_set_dynamic(0);
   // An extra thread for test.
-  omp_set_num_threads(config.NumOfWorkers() + 1);
+  omp_set_num_threads(config.NumWorkers() + 1);
 
   // All the variables that doesn't show up in this list will be copied.
   #pragma omp parallel for shared(learningNetwork, targetNetwork, \
       stop, totalSteps, policy)
-  for (omp_size_t i = 0; i <= config.NumOfWorkers(); ++i)
+  for (omp_size_t i = 0; i <= config.NumWorkers(); ++i)
   {
     while (!stop)
     {
-      if (i < config.NumOfWorkers())
+      if (i < config.NumWorkers())
       {
         WorkerType::Episode(learningNetwork, targetNetwork, stop, totalSteps,
             policy, updater, environment, config, false);
