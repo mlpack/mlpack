@@ -42,7 +42,7 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
   if (UseWeights)
   {
     sortedWeights.set_size(sortedLabels.n_elem);
-    // The weights must keep the same order of labels
+    // The weights must keep the same order as the labels.
     for (size_t i = 0; i < sortedLabels.n_elem; ++i)
       sortedWeights[i] = weights[sortedIndices[i]];
   }

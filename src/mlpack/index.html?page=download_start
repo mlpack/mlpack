@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+	<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.0//EN" "http://www.wapforum.org/DTD/xhtml-mobile10.dtd">
+	<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+		<head>
+			<meta name="google-site-verification" content="RUfcacp9zqu8tsM7T5o59TGK0PyfA1832Y3YKGVTw4s" />
+			
+	
+
+			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+			
+			<title>File not found</title>
+			
+			<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1" />
+			<meta name="keywords" content="file sharing,mobile file sharing,folder sharing,upload file,upload large file,mobile,upload,share,sharing,free" />
+			<meta name="description" content="reliable file sharing service for mobile phones that enables you to upload and share your files for free" />
+			
+			<meta property="og:type" content="website" />
+			<meta property="og:title" content="File not found" />
+			<meta property="og:url" content="http://upfile.mobi/index.php?&page=file&f=&p=" />
+			<meta property="og:image" content="/ui/images/logo_fb.png" />
+			<meta property="og:site_name" content="file sharing service" />
+			<meta property="og:email" content="info_upfile@yahoo.com" />
+			
+			<meta xmlns:fb="//www.facebook.com/2008/fbml" property="fb:page_id" content="458607864196916" />
+			
+			<link rel="stylesheet" href="/ui/css/upload_v4.css" type="text/css" />
+			<link rel="stylesheet" href="/ui/css/file_v6.css" type="text/css" />
+			<link rel="icon" href="/favicon.png" type="image/x-icon" />
+			<link rel="shortcut icon" href="/favicon.png" type="image/x-icon" />
+			<link rel="image_src" href="/ui/images/logo_fb.png" />
+			
+			<!--<script type="text/javascript" src="/ui/js/main.js?v=0.6"></script>-->
+
+		
+		</head>
+		
+			
+			<body style="display:block;width:100%">
+			
+
+
+
+				
+				
+				<div class="header">
+
+					<center>
+						<div style="max-width: 800px;">
+																	<table width="100%" cellpadding="0" cellspacing="0">
+											<tbody>
+												<tr>
+													<td width="10%">
+														<a href="http://upfile.mobi"> <img src="/ui/images/logo.png" /> </a>
+															
+													</td>
+													<td width="45%">
+														<a class="header_item" href="/index.php?page=login">
+															<div style="background-image: url(/ui/images/icon_16x16_login.png);" class="icon"></div> Login														</a>
+													</td>
+													<td width="45%">
+														<a class="header_item" href="/index.php?page=register">
+															<div style="background-image: url(/ui/images/icon_16x16_register.png);" class="icon"></div> Registration														</a>
+													</td>
+													<td>
+													<td>
+														<label class="collapse" for="_1"><div class='sprite en'></div></label>
+														<input id="_1" type="checkbox"> 
+														<div class="filelanguages">
+															<a href="/index.php?page=language&code=gb&redirect=http%3A%2F%2Fupfile.mobi%2Findex.php%3F%26page%3Dfile%26f%3D%26p%3D"><div class='sprite gb'></div>en</a>
+															<a href="/index.php?page=language&code=id&redirect=http%3A%2F%2Fupfile.mobi%2Findex.php%3F%26page%3Dfile%26f%3D%26p%3D"><div class='sprite id'></div>id</a> 
+															<a href="/index.php?page=language&code=pt-br&redirect=http%3A%2F%2Fupfile.mobi%2Findex.php%3F%26page%3Dfile%26f%3D%26p%3D"><div class='sprite pt-br'></div>pt-br</a>
+															<a href="/index.php?page=language&code=fa&redirect=http%3A%2F%2Fupfile.mobi%2Findex.php%3F%26page%3Dfile%26f%3D%26p%3D"><div class='sprite fa'></div>fa</a>
+															<a href="/index.php?page=language&code=tr&redirect=http%3A%2F%2Fupfile.mobi%2Findex.php%3F%26page%3Dfile%26f%3D%26p%3D"><div class='sprite tr'></div>tr</a>
+															<a href="/index.php?page=language&code=vi&redirect=http%3A%2F%2Fupfile.mobi%2Findex.php%3F%26page%3Dfile%26f%3D%26p%3D"><div class='sprite vi'></div>vi</a>
+															<a href="/index.php?page=language&code=zh-cn&redirect=http%3A%2F%2Fupfile.mobi%2Findex.php%3F%26page%3Dfile%26f%3D%26p%3D"><div class='sprite zh-cn'></div>ch</a>
+														</div>
+													</td>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+												
+						</div>
+					</center>
+				</div>
+				
+				
+
+				
+										<!-- <script async="async" type="text/javascript" src="//go.mobisla.com/notice.php?p=15714&interactive=1&pushup=1"></script> -->
+
+										<div style="padding: 10px;">
+		- No file with id <b></b>
+		<div class="line"></div>
+		Possible causes: violation of <a style="text-decoration: underline;" href="/index.php?page=help&act=rules">Terms &amp; Conditions</a>, removed by author, lifetime was expired.		</div>
+		<div class="title">
+		&#187; Uploaded files	</div>
+	
+	<div style="margin-bottom: 0px;" class="content">
+		<form action="http://upfile.mobi/index.php?page=search" method="GET">
+			<input type="hidden" name="page" value="search" />
+			
+			File name:<br/>
+						<input class="button" type="submit" value="Search" />
+		</form>
+	</div>
+			<div style="margin-bottom:5px;margin-top:5px">
+				
+								<div class="list_item">
+									<table width="100%">
+										<tr>
+											<td width="50px">
+												<div style="width: 50px; text-align: center;">
+													<a style="text-decoration: none;" href="/LssMkIAwy1G">
+														<img style="vertical-align: middle;" width="45px" src="/ui/images/types/45x45/rar.png" />
+													</a>
+												</div>
+											</td>
+											<td>
+												<div class="listname">
+													<a href="/LssMkIAwy1G">CHCBKYN part2.rar</a>
+												</div>
+												<div style="margin-top: 5px; color: #535353;">
+													size: 200 MB,
+													date: 2017-07-20												</div>
+											</td>
+										
+										</tr>
+									</table>
+								</div>
+							
+								<div class="list_item">
+									<table width="100%">
+										<tr>
+											<td width="50px">
+												<div style="width: 50px; text-align: center;">
+													<a style="text-decoration: none;" href="/fAIpRlgorkB">
+														<img style="vertical-align: middle;" width="45px" src="/ui/images/types/45x45/rar.png" />
+													</a>
+												</div>
+											</td>
+											<td>
+												<div class="listname">
+													<a href="/fAIpRlgorkB">CHCBKYN part1.rar</a>
+												</div>
+												<div style="margin-top: 5px; color: #535353;">
+													size: 200 MB,
+													date: 2017-07-20												</div>
+											</td>
+										
+										</tr>
+									</table>
+								</div>
+							
+								<div class="list_item">
+									<table width="100%">
+										<tr>
+											<td width="50px">
+												<div style="width: 50px; text-align: center;">
+													<a style="text-decoration: none;" href="/bbvhKrpBl0r">
+														<img style="vertical-align: middle;" width="45px" src="/ui/images/types/45x45/default.png" />
+													</a>
+												</div>
+											</td>
+											<td>
+												<div class="listname">
+													<a href="/bbvhKrpBl0r">shareII.ktcu</a>
+												</div>
+												<div style="margin-top: 5px; color: #535353;">
+													size: 1.5 KB,
+													date: 2017-07-20												</div>
+											</td>
+										
+										</tr>
+									</table>
+								</div>
+							
+								<div class="list_item">
+									<table width="100%">
+										<tr>
+											<td width="50px">
+												<div style="width: 50px; text-align: center;">
+													<a style="text-decoration: none;" href="/sMlURDkykSn">
+														<img style="vertical-align: middle;" width="45px" src="/ui/images/types/45x45/default.png" />
+													</a>
+												</div>
+											</td>
+											<td>
+												<div class="listname">
+													<a href="/sMlURDkykSn">Axis Premi Indo Wuzz.ehi</a>
+												</div>
+												<div style="margin-top: 5px; color: #535353;">
+													size: 2.81 KB,
+													date: 2017-07-20												</div>
+											</td>
+										
+										</tr>
+									</table>
+								</div>
+							
+								<div class="list_item">
+									<table width="100%">
+										<tr>
+											<td width="50px">
+												<div style="width: 50px; text-align: center;">
+													<a style="text-decoration: none;" href="/JBk82Gh7580">
+														<img style="vertical-align: middle;" width="45px" src="/ui/images/types/45x45/default.png" />
+													</a>
+												</div>
+											</td>
+											<td>
+												<div class="listname">
+													<a href="/JBk82Gh7580">Drakweb30 day.ehi</a>
+												</div>
+												<div style="margin-top: 5px; color: #535353;">
+													size: 7.5 KB,
+													date: 2017-07-20												</div>
+											</td>
+										
+										</tr>
+									</table>
+								</div>
+							
+								<div class="list_item">
+									<table width="100%">
+										<tr>
+											<td width="50px">
+												<div style="width: 50px; text-align: center;">
+													<a style="text-decoration: none;" href="/m5x5hfve5IZ">
+														<img style="vertical-align: middle;" width="45px" src="/ui/images/types/45x45/default.png" />
+													</a>
+												</div>
+											</td>
+											<td>
+												<div class="listname">
+													<a href="/m5x5hfve5IZ">DrakwebV3 2.ehi</a>
+												</div>
+												<div style="margin-top: 5px; color: #535353;">
+													size: 3.28 KB,
+													date: 2017-07-20												</div>
+											</td>
+										
+										</tr>
+									</table>
+								</div>
+							
+								<div class="list_item">
+									<table width="100%">
+										<tr>
+											<td width="50px">
+												<div style="width: 50px; text-align: center;">
+													<a style="text-decoration: none;" href="/nZdi8l4uyHr">
+														<img style="vertical-align: middle;" width="45px" src="/ui/images/types/45x45/default.png" />
+													</a>
+												</div>
+											</td>
+											<td>
+												<div class="listname">
+													<a href="/nZdi8l4uyHr">DrakwebV2 3.ehi</a>
+												</div>
+												<div style="margin-top: 5px; color: #535353;">
+													size: 3.06 KB,
+													date: 2017-07-20												</div>
+											</td>
+										
+										</tr>
+									</table>
+								</div>
+							
+								<div class="list_item">
+									<table width="100%">
+										<tr>
+											<td width="50px">
+												<div style="width: 50px; text-align: center;">
+													<a style="text-decoration: none;" href="/W5fqmW4VgV3">
+														<img style="vertical-align: middle;" width="45px" src="/ui/images/types/45x45/default.png" />
+													</a>
+												</div>
+											</td>
+											<td>
+												<div class="listname">
+													<a href="/W5fqmW4VgV3">DrakwebV1 1.ehi</a>
+												</div>
+												<div style="margin-top: 5px; color: #535353;">
+													size: 3.16 KB,
+													date: 2017-07-20												</div>
+											</td>
+										
+										</tr>
+									</table>
+								</div>
+							
+								<div class="list_item">
+									<table width="100%">
+										<tr>
+											<td width="50px">
+												<div style="width: 50px; text-align: center;">
+													<a style="text-decoration: none;" href="/jctTr9qjRIJ">
+														<img style="vertical-align: middle;" width="45px" src="/ui/images/types/45x45/zip.png" />
+													</a>
+												</div>
+											</td>
+											<td>
+												<div class="listname">
+													<a href="/jctTr9qjRIJ">[Zing4u.Vn]-DATA-Grand-Theft-Auto-Vice-City-v1.07.zip</a>
+												</div>
+												<div style="margin-top: 5px; color: #535353;">
+													size: 994.96 MB,
+													date: 2017-07-20												</div>
+											</td>
+										
+										</tr>
+									</table>
+								</div>
+							
+								<div class="list_item">
+									<table width="100%">
+										<tr>
+											<td width="50px">
+												<div style="width: 50px; text-align: center;">
+													<a style="text-decoration: none;" href="/2U7iALsYUED">
+														<img style="vertical-align: middle;" width="45px" src="/ui/images/types/45x45/default.png" />
+													</a>
+												</div>
+											</td>
+											<td>
+												<div class="listname">
+													<a href="/2U7iALsYUED">Axis Hitz MEDAN.</a>
+												</div>
+												<div style="margin-top: 5px; color: #535353;">
+													size: 5.25 KB,
+													date: 2017-07-20												</div>
+											</td>
+										
+										</tr>
+									</table>
+								</div>
+										</div>
+							<div style="text-align: center; padding-bottom: 10px; padding-top: 14px;">
+															<a href="http://upfile.mobi/index.php?page=search"page=file&f=&p=&pg=1&id=" class="page_item selected">											1									</a>
+																	<a href="http://upfile.mobi/index.php?page=search"page=file&f=&p=&pg=2&id=" class="page_item ">											2									</a>
+																	<a href="http://upfile.mobi/index.php?page=search"page=file&f=&p=&pg=3&id=" class="page_item ">											3									</a>
+													</div>
+							<div class="footer">
+				<center>
+					<div style="max-width: 800px;">
+						<table width="100%" cellpadding="0" cellspacing="0">
+							<tbody>
+								<tr>
+									<td width="34%">
+										<a class="footer_item" href="/index.php">
+											<div style="background-image: url(/ui/images/icon_16x16_home.png);" class="icon"></div> Home										</a>
+									</td>
+									<td width="33%">
+										<a class="footer_item" href="/index.php?page=search">
+											<div style="background-image: url(/ui/images/icon_16x16_catalog.png);" class="icon"></div> Catalog										</a>
+									</td>
+									<td width="33%">
+										<a class="footer_item" href="/index.php?page=contact">
+											<div style="background-image: url(/ui/images/icon_16x16_contact.png);" class="icon"></div> Contact										</a>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</center>
+			</div>
+			
+		</div>
+	</body>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-31703645-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+			
+
+
+
+
+</html>

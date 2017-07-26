@@ -42,14 +42,14 @@ namespace rl {
  *
  * @tparam EnvironmentType The environment of the reinforcement learning task.
  * @tparam NetworkType The network to compute action value.
- * @tparam OptimizerType The optimizer to train the network.
+ * @tparam UpdaterType How to apply gradients when training.
  * @tparam PolicyType Behavior policy of the agent.
  * @tparam ReplayType Experience replay method.
  */
 template <
   typename EnvironmentType,
   typename NetworkType,
-  typename OptimizerType,
+  typename UpdaterType,
   typename PolicyType,
   typename ReplayType = RandomReplay<EnvironmentType>
 >
@@ -69,7 +69,7 @@ class QLearning
    * object, be sure to use std::move to avoid unnecessary copy.
    *
    * @param network The network to compute action value.
-   * @param optimizer The optimizer to train the network.
+   * @param stepSize Learning rate.
    * @param discount Discount for future return.
    * @param policy Behavior policy of the agent.
    * @param replayMethod Experience replay method.
@@ -78,10 +78,11 @@ class QLearning
    * @param explorationSteps Steps before starting to learn.
    * @param doubleQLearning Whether to use double Q-Learning.
    * @param stepLimit Maximum steps in each episode, 0 means no limit.
+   * @param updater How to apply gradients when training.
    * @param environment Reinforcement learning task.
    */
   QLearning(NetworkType network,
-            OptimizerType optimizer,
+            const double stepSize,
             const double discount,
             PolicyType policy,
             ReplayType replayMethod,
@@ -89,6 +90,7 @@ class QLearning
             const size_t explorationSteps,
             const bool doubleQLearning = false,
             const size_t stepLimit = 0,
+            UpdaterType updater = UpdaterType(),
             EnvironmentType environment = EnvironmentType());
 
   /**
@@ -127,8 +129,11 @@ class QLearning
   //! Locally-stored target network.
   NetworkType targetNetwork;
 
-  //! Locally-stored optimizer.
-  OptimizerType optimizer;
+  //! Locally-stored learning rate.
+  double stepSize;
+
+  //! Locally-stored updater.
+  UpdaterType updater;
 
   //! Discount factor of future return.
   double discount;

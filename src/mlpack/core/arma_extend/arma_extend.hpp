@@ -62,13 +62,8 @@ namespace arma {
   #include "glue_ccov_meat.hpp"
   #include "fn_ccov.hpp"
 
-  // index to subscript and vice versa
-  #include "fn_ind2sub.hpp"
   // inplace_reshape()
   #include "fn_inplace_reshape.hpp"
-
-  // unary minus for sparse matrices
-  #include "operator_minus.hpp"
 };
 
 #endif
