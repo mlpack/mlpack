@@ -196,34 +196,34 @@ BOOST_AUTO_TEST_CASE(feedForwardNetworkCMAES)
 {
   arma::mat irisTrainData;
   data::Load("iris_train.csv", irisTrainData, true);
- 
- //normalize train data
- double minVal=0,range=1;
- for(int i=0; i<irisTrainData.n_rows; i++)
- {
-   minVal = irisTrainData.row(i).min();
-   range  = irisTrainData.row(i).max() - minVal;
-   irisTrainData.row(i) =  (irisTrainData.row(i) - minVal)/range;
- }
 
- arma::mat irisTrainLabels;
- data::Load("iris_train_labels.csv", irisTrainLabels, true);
+// normalize train data
+double minVal = 0, range = 1;
+for (int i = 0; i<irisTrainData.n_rows; i++)
+{
+ minVal = irisTrainData.row(i).min();
+ range  = irisTrainData.row(i).max() - minVal;
+ irisTrainData.row(i) =  (irisTrainData.row(i) - minVal)/range;
+}
 
- arma::mat irisTestData;
- data::Load("iris_test.csv", irisTestData, true);
+arma::mat irisTrainLabels;
+data::Load("iris_train_labels.csv", irisTrainLabels, true);
 
-  //normalize test data
- for(int i=0; i<irisTestData.n_rows; i++)
- {
-  minVal = irisTestData.row(i).min();
-  range  = irisTestData.row(i).max() - minVal;
-  irisTestData.row(i) =  (irisTestData.row(i) - minVal)/range;
- }
+arma::mat irisTestData;
+data::Load("iris_test.csv", irisTestData, true);
 
-   arma::mat irisTestLabels;
-    data::Load("iris_test_labels.csv", irisTestLabels, true);
+// normalize test data
+for (int i = 0; i<irisTestData.n_rows; i++)
+{
+minVal = irisTestData.row(i).min();
+range  = irisTestData.row(i).max() - minVal;
+irisTestData.row(i) =  (irisTestData.row(i) - minVal)/range;
+}
 
- BuildVanillaNetwork<>
+ arma::mat irisTestLabels;
+  data::Load("iris_test_labels.csv", irisTestLabels, true);
+
+BuildVanillaNetwork<>
 (irisTrainData, irisTrainLabels, irisTestData, irisTestLabels, 3, 8, 70, 0.1);
 }
 BOOST_AUTO_TEST_SUITE_END();
