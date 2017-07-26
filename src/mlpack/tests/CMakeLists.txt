@@ -37,6 +37,7 @@ add_executable(mlpack_test
   gradient_descent_test.cpp
   hmm_test.cpp
   hoeffding_tree_test.cpp
+  hpt_test.cpp
   hyperplane_test.cpp
   imputation_test.cpp
   init_rules_test.cpp

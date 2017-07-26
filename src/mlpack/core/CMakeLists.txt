@@ -5,6 +5,7 @@ set(DIRS
   cv
   data
   dists
+  hpt
   kernels
   math
   metrics
