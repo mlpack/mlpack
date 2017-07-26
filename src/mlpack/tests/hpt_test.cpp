@@ -13,6 +13,7 @@
 #include <mlpack/core/cv/simple_cv.hpp>
 #include <mlpack/core/hpt/bind.hpp>
 #include <mlpack/core/hpt/cv_function.hpp>
+#include <mlpack/core/hpt/hpt.hpp>
 #include <mlpack/core/optimizers/grid_search/grid_search.hpp>
 #include <mlpack/methods/lars/lars.hpp>
 
@@ -137,6 +138,38 @@ BOOST_AUTO_TEST_CASE(GridSearchTest)
   BOOST_REQUIRE_CLOSE(expectedObjective, actualObjective, 1e-5);
   BOOST_REQUIRE_CLOSE(expectedLambda1, actualParameters(0, 0), 1e-5);
   BOOST_REQUIRE_CLOSE(expectedLambda2, actualParameters(1, 0), 1e-5);
+}
+
+/**
+ * Test HyperParameterTuner.
+ */
+BOOST_AUTO_TEST_CASE(HPTTest)
+{
+  arma::mat xs;
+  arma::rowvec ys;
+  double validationSize;
+  InitProneToOverfittingData(xs, ys, validationSize);
+
+  bool transposeData = true;
+  bool useCholesky = false;
+  arma::vec lambda1Set =
+      arma::join_rows(arma::vec{0}, arma::logspace<arma::vec>(-3, 2, 6));
+  arma::vec lambda2Set{0.0, 0.05, 0.5, 5.0};
+
+  double expectedLambda1, expectedLambda2, expectedObjective;
+  FindLARSBestLambdas(xs, ys, validationSize, transposeData, useCholesky,
+      lambda1Set, lambda2Set, expectedLambda1, expectedLambda2,
+      expectedObjective);
+
+  double actualLambda1, actualLambda2;
+  HyperParameterTuner<LARS, MSE, SimpleCV, GridSearch>
+      hpt(validationSize, xs, ys);
+  std::tie(actualLambda1, actualLambda2) = hpt.Optimize(Bind(transposeData),
+      Bind(useCholesky), lambda1Set, lambda2Set);
+
+  BOOST_REQUIRE_CLOSE(expectedObjective, hpt.BestObjective(), 1e-5);
+  BOOST_REQUIRE_CLOSE(expectedLambda1, actualLambda1, 1e-5);
+  BOOST_REQUIRE_CLOSE(expectedLambda2, actualLambda2, 1e-5);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

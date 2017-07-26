@@ -2,6 +2,9 @@ set(SOURCES
   bind.hpp
   cv_function.hpp
   cv_function_impl.hpp
+  deduce_hp_types.hpp
+  hpt.hpp
+  hpt_impl.hpp
 )
 
 set(DIR_SRCS)
