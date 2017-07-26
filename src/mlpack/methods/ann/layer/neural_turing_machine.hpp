@@ -163,6 +163,7 @@ class NeuralTuringMachine
   LayerTypes writeHead;
 
   LayerTypes controllerToLinear;
+  arma::mat controllerToLinearError;
 
   LayerTypes eraseGate;
 
@@ -170,8 +171,6 @@ class NeuralTuringMachine
 
   LayerTypes temp;
   LayerTypes temp2;
-
-  LayerTypes memInit;
 
   arma::mat dMem;
 
@@ -182,6 +181,8 @@ class NeuralTuringMachine
   std::list<arma::mat>::iterator gReads;
 
   arma::mat dRead;
+
+  arma::mat dWriteHead;
 
   std::vector<LayerTypes> controller;
 
