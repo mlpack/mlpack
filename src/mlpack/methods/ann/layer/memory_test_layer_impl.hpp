@@ -20,7 +20,7 @@
 #include "../visitor/backward_visitor.hpp"
 #include "../visitor/gradient_visitor.hpp"
 #include "../visitor/forward_with_memory_test_visitor.hpp"
-#include "../visitor/backward_with_memory_visitor.hpp"
+#include "../visitor/backward_with_memory_test_visitor.hpp"
 #include "../visitor/reset_cell_visitor.hpp"
 
 namespace mlpack {
@@ -80,11 +80,11 @@ void MemoryTest<InputDataType, OutputDataType>::Backward(
   arma::mat& memory = boost::apply_visitor(outputParameterVisitor, initMem);
 
   // Backward pass through testLayer.
-  boost::apply_visitor(BackwardWithMemoryVisitor(std::move(boost::apply_visitor(
-        outputParameterVisitor, testLayer)), std::move(input),
-        std::move(arma::mat(memory.memptr(), numMem, memSize, false)),
-        std::move(gy), std::move(boost::apply_visitor(deltaVisitor, testLayer)),
-        std::move(dMem)), testLayer);
+  boost::apply_visitor(BackwardWithMemoryTestVisitor(std::move(
+      boost::apply_visitor(outputParameterVisitor, testLayer)),
+      std::move(input), std::move(arma::mat(memory.memptr(), numMem, memSize,
+      false)), std::move(gy), std::move(boost::apply_visitor(deltaVisitor,
+      testLayer)), std::move(dMem)), testLayer);
 
   g = boost::apply_visitor(deltaVisitor, testLayer);
 }

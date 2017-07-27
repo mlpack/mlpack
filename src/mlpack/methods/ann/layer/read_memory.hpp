@@ -109,6 +109,32 @@ class ReadMemory
                           arma::Mat<eT>&& g,
                           arma::Mat<eT>&& gM);
 
+  /**
+   * Ordinary feed backward pass of a neural network, calculating the function
+   * f(x) by propagating x backwards trough f. Using the results from the feed
+   * forward pass.
+   *
+   * @param input The propagated input activation.
+   * @param memory The current memory content.
+   * @param gy The backpropagated error.
+   * @param g The calculated gradient.
+   */
+  template<typename eT>
+  void BackwardWithMemoryTest(const arma::Mat<eT>&& output,
+                              const arma::Mat<eT>&& input,
+                              const arma::Mat<eT>&& memory,
+                              arma::Mat<eT>&& gy,
+                              arma::Mat<eT>&& g,
+                              arma::Mat<eT>&& gM)
+  {
+    BackwardWithMemory(std::move(output),
+                       std::move(input),
+                       std::move(memory),
+                       std::move(gy),
+                       std::move(g),
+                       std::move(gM));
+  }
+
   template<typename eT>
   void Backward(const arma::Mat<eT>&& output,
                 const arma::Mat<eT>&& input,

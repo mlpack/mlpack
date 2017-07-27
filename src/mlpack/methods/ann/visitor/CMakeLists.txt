@@ -5,6 +5,8 @@ set(SOURCES
   add_visitor_impl.hpp
   backward_visitor.hpp
   backward_visitor_impl.hpp
+  backward_with_memory_test_visitor.hpp
+  backward_with_memory_test_visitor_impl.hpp
   backward_with_memory_visitor.hpp
   backward_with_memory_visitor_impl.hpp
   copy_visitor.hpp
