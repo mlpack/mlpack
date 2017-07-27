@@ -377,14 +377,18 @@ void RNN<OutputLayerType, InitializationRuleType>::Backward()
 {
   boost::apply_visitor(BackwardVisitor(
         std::move(boost::apply_visitor(outputParameterVisitor, network.back())),
-        std::move(error), std::move(boost::apply_visitor(deltaVisitor,
-        network.back()))), network.back());
+        std::move(boost::apply_visitor(outputParameterVisitor,
+        network[network.size() - 2])), std::move(error),
+        std::move(boost::apply_visitor(deltaVisitor, network.back()))),
+        network.back());
 
   for (size_t i = 2; i < network.size(); ++i)
   {
     boost::apply_visitor(BackwardVisitor(
         std::move(boost::apply_visitor(outputParameterVisitor,
         network[network.size() - i])), std::move(boost::apply_visitor(
+        outputParameterVisitor, network[network.size() - i - 1])),
+        std::move(boost::apply_visitor(
         deltaVisitor, network[network.size() - i + 1])), std::move(
         boost::apply_visitor(deltaVisitor, network[network.size() - i]))),
         network[network.size() - i]);

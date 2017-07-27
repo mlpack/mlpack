@@ -63,6 +63,8 @@ set(SOURCES
   neural_turing_machine_impl.hpp
   parametric_relu.hpp
   parametric_relu_impl.hpp
+  read_memory.hpp
+  read_memory_impl.hpp
   recurrent.hpp
   recurrent_impl.hpp
   recurrent_attention.hpp

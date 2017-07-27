@@ -70,7 +70,10 @@ void MemoryTest<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void MemoryTest<InputDataType, OutputDataType>::Backward(
-  const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
+  const arma::Mat<eT>&& /* output */,
+  const arma::Mat<eT>&& input,
+  arma::Mat<eT>&& gy,
+  arma::Mat<eT>&& g)
 {
   prevError = gy;
 
@@ -78,9 +81,9 @@ void MemoryTest<InputDataType, OutputDataType>::Backward(
 
   // Backward pass through testLayer.
   boost::apply_visitor(BackwardWithMemoryVisitor(std::move(boost::apply_visitor(
-        outputParameterVisitor, testLayer)), std::move(arma::mat(
-        memory.memptr(), numMem, memSize, false)), std::move(gy),
-        std::move(boost::apply_visitor(deltaVisitor, testLayer)),
+        outputParameterVisitor, testLayer)), std::move(input),
+        std::move(arma::mat(memory.memptr(), numMem, memSize, false)),
+        std::move(gy), std::move(boost::apply_visitor(deltaVisitor, testLayer)),
         std::move(dMem)), testLayer);
 
   g = boost::apply_visitor(deltaVisitor, testLayer);

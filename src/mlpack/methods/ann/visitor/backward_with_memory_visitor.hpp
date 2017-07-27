@@ -34,7 +34,18 @@ class BackwardWithMemoryVisitor : public boost::static_visitor<void>
    * Execute the BackwardWithMemory() function given the input, current memory
    * and output parameter.
    */
-  BackwardWithMemoryVisitor(arma::mat&& input,
+  BackwardWithMemoryVisitor(arma::mat&& output,
+                            const arma::mat&& input,
+                            arma::mat&& memory,
+                            arma::mat&& error,
+                            arma::mat&& delta,
+                            arma::mat&& dM);
+
+  /**
+   * Execute the BackwardWithMemory() function given the input, current memory
+   * and output parameter.
+   */
+  BackwardWithMemoryVisitor(arma::mat&& output,
                             arma::mat&& memory,
                             arma::mat&& error,
                             arma::mat&& delta,
@@ -50,8 +61,8 @@ class BackwardWithMemoryVisitor : public boost::static_visitor<void>
   template<typename T>
   typename std::enable_if<
       HasBackwardWithMemoryCheck<T, void(T::*)(const arma::mat&&,
-      const arma::mat&&, arma::mat&&, arma::mat&&, arma::mat&&)>::value,
-      void>::type
+      const arma::mat&&, const arma::mat&&, arma::mat&&, arma::mat&&,
+      arma::mat&&)>::value, void>::type
   BackwardWithMemory(T* layer) const;
 
   //! Do not execute the BackwardWithMemory() function for a module which
@@ -59,12 +70,17 @@ class BackwardWithMemoryVisitor : public boost::static_visitor<void>
   template<typename T>
   typename std::enable_if<
       !HasBackwardWithMemoryCheck<T, void(T::*)(const arma::mat&&,
-      const arma::mat&&, arma::mat&&, arma::mat&&, arma::mat&&)>::value,
-      void>::type
+      const arma::mat&&, const arma::mat&&, arma::mat&&, arma::mat&&,
+      arma::mat&&)>::value, void>::type
   BackwardWithMemory(T* layer) const;
 
+  arma::mat dummyInput;
+
+  //! The output parameter set.
+  arma::mat&& output;
+
   //! The input parameter set.
-  arma::mat&& input;
+  const arma::mat&& input;
 
   //! Content of memory.
   arma::mat&& memory;

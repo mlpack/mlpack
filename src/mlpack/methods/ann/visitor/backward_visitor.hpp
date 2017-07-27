@@ -30,13 +30,43 @@ class BackwardVisitor : public boost::static_visitor<void>
  public:
   //! Execute the Backward() function given the input, error and delta
   //! parameter.
-  BackwardVisitor(arma::mat&& input, arma::mat&& error, arma::mat&& delta);
+  BackwardVisitor(arma::mat&& output, arma::mat&& error, arma::mat&& delta);
+
+  //! Execute the Backward() function given the input, error and delta
+  //! parameter.
+  BackwardVisitor(arma::mat&& output,
+                  arma::mat&& input,
+                  arma::mat&& error,
+                  arma::mat&& delta);
 
   //! Execute the Backward() function.
   template<typename LayerType>
   void operator()(LayerType* layer) const;
 
  private:
+  //! Execute the Backward() function with memory for a module which
+  //! implements BackwardWithMemory() function
+  template<typename T>
+  typename std::enable_if<
+      HasBackwardCheck<T, void(T::*)(const arma::mat&&,
+      const arma::mat&&, arma::mat&&, arma::mat&&)>::value,
+      void>::type
+  Backward(T* layer) const;
+
+  //! Do not execute the BackwardWithMemory() function for a module which
+  //! doesn't implement ForwardWithMemory() function.
+  template<typename T>
+  typename std::enable_if<
+      !HasBackwardCheck<T, void(T::*)(const arma::mat&&,
+      const arma::mat&&, arma::mat&&, arma::mat&&)>::value,
+      void>::type
+  Backward(T* layer) const;
+
+  arma::mat dummyInput;
+
+  //! The output parameter set.
+  arma::mat&& output;
+
   //! The input parameter set.
   arma::mat&& input;
 

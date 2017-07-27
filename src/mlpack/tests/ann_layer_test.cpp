@@ -839,7 +839,51 @@ BOOST_AUTO_TEST_CASE(GradientMemoryHeadTest)
       model = new RNN<NegativeLogLikelihood<> >(input, target, rho);
       model->Add<IdentityLayer<> >();
       model->Add<Linear<> >(1, 10);
-      model->Add<MemoryTest<> >(10, 1, 1, 5, new MemoryHead<>(10, 1, 5, 1));
+      model->Add<MemoryTest<> >(10, 3, 3, 5, new MemoryHead<>(10, 3, 5, 1));
+      model->Add<Linear<> >(3, 3);
+      model->Add<LogSoftMax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      arma::mat output;
+      double error = model->Evaluate(model->Parameters(), 0);
+      model->Gradient(model->Parameters(), 0, gradient);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    RNN<NegativeLogLikelihood<> >* model;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+}
+
+/**
+ * Check if the gradients computed by MemoryHead cell are close enough to the
+ * approximation of the gradients.
+ */
+BOOST_AUTO_TEST_CASE(GradientReadMemoryTest)
+{
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randu(5, 1);
+      target = arma::mat("1; 1; 1; 1; 1;");
+      const size_t rho = 5;
+
+      model = new RNN<NegativeLogLikelihood<> >(input, target, rho);
+      model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(1, 1);
+      model->Add<MemoryTest<> >(1, 5, 1, 5, new ReadMemory<>());
       model->Add<Linear<> >(1, 3);
       model->Add<LogSoftMax<> >();
     }

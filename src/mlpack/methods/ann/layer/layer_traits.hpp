@@ -98,6 +98,11 @@ HAS_MEM_FUNC(ForwardWithMemory, HasForwardWithMemoryCheck);
 // BackwardWithMemory() function.
 HAS_MEM_FUNC(BackwardWithMemory, HasBackwardWithMemoryCheck);
 
+// This gives us a HasBackwardCheck<T, U> type (where U is a function
+// pointer) we can use with SFINAE to catch when a type has a
+// Backward(...) function.
+HAS_MEM_FUNC(Backward, HasBackwardCheck);
+
 // This gives us a HasRewardCheck<T, U> type (where U is a function pointer) we
 // can use with SFINAE to catch when a type has a Reward() function.
 HAS_MEM_FUNC(Reward, HasRewardCheck);

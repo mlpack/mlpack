@@ -97,21 +97,23 @@ class MemoryHead
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void BackwardWithMemory(const arma::Mat<eT>&& /* input */,
+  void BackwardWithMemory(const arma::Mat<eT>&& /* output */,
+                          const arma::Mat<eT>&& /* input */,
                           const arma::Mat<eT>&& memory,
                           arma::Mat<eT>&& gy,
                           arma::Mat<eT>&& g,
                           arma::Mat<eT>&& gM);
 
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& input,
+  void Backward(const arma::Mat<eT>&& output,
+                const arma::Mat<eT>&& input,
                 arma::Mat<eT>&& gy,
                 arma::Mat<eT>&& g)
   {
     arma::mat dM;
     arma::mat memory = arma::ones<arma::mat>(outSize, memSize);
-    BackwardWithMemory(std::move(input), std::move(memory), std::move(gy),
-        std::move(g), std::move(dM));
+    BackwardWithMemory(std::move(output), std::move(input), std::move(memory),
+        std::move(gy), std::move(g), std::move(dM));
   }
 
   /*
