@@ -34,6 +34,10 @@ BOOST_AUTO_TEST_SUITE(AsyncLearningTest);
 // Test async one step q-learning in Cart Pole.
 BOOST_AUTO_TEST_CASE(OneStepQLearningTest)
 {
+  /**
+   * This is for the Travis CI server, in your own machine you shuold use more
+   * threads.
+   */
   omp_set_num_threads(1);
 
   // Set up the network.
@@ -45,18 +49,6 @@ BOOST_AUTO_TEST_CASE(OneStepQLearningTest)
   model.Add<ReLULayer<>>();
   model.Add<Linear<>>(20, 2);
 
-  /**
-   * Load the pre-trained network.
-   * Notice that even you train the network from scratch, it should also be
-   * pretty fast in a modern laptop (e.g. 2s in a macbook pro 2016).
-   * Here we load the pre-trained network mainly for the mlpack test server.
-   */
-  std::string fileName("async_one_step_q_learning_network.bin");
-  bool loadNetwork = false;
-  bool storeNetwork = false;
-  if (loadNetwork)
-    data::Load(fileName, "network", model);
-
   // Set up the policy.
   using Policy = GreedyPolicy<CartPole>;
   AggregatedPolicy<Policy> policy({Policy(0.7, 5000, 0.1),
@@ -67,10 +59,6 @@ BOOST_AUTO_TEST_CASE(OneStepQLearningTest)
   TrainingConfig config;
   config.StepSize() = 0.0001;
   config.Discount() = 0.99;
-  /**
-   * When training from scratch, you should set proper number of
-   * workers (e.g. 16).
-   */
   config.NumWorkers() = 16;
   config.UpdateInterval() = 6;
   config.StepLimit() = 200;
@@ -100,10 +88,6 @@ BOOST_AUTO_TEST_CASE(OneStepQLearningTest)
 
   agent.Train(measure);
   Log::Debug << "Total test episodes: " << testEpisodes << std::endl;
-
-  // Store the trained network.
-  if (storeNetwork)
-    data::Save(fileName, "network", agent.Network(), false);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
