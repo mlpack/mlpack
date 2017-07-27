@@ -144,8 +144,8 @@ template <
   typename UpdaterType,
   typename PolicyType
 >
-using OneStepQLearning = AsyncLearning<OneStepQLearningWorker<EnvironmentType, 
-    NetworkType, UpdaterType, PolicyType>, EnvironmentType, NetworkType, 
+using OneStepQLearning = AsyncLearning<OneStepQLearningWorker<EnvironmentType,
+    NetworkType, UpdaterType, PolicyType>, EnvironmentType, NetworkType,
     UpdaterType, PolicyType>;
 
 } // namespace rl
