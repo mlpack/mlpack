@@ -77,6 +77,8 @@ set(SOURCES
   sequential_impl.hpp
   vr_class_reward_impl.hpp
   vr_class_reward_impl.hpp
+  write_memory.hpp
+  write_memory_impl.hpp
 )
 
 # Add directory name to sources.

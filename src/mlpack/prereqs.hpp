@@ -65,7 +65,7 @@ using enable_if_t = typename enable_if<B, T>::type;
 #undef BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS
 #undef BOOST_MPL_LIMIT_LIST_SIZE
 #define BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS
-#define BOOST_MPL_LIMIT_LIST_SIZE 40
+#define BOOST_MPL_LIMIT_LIST_SIZE 50
 
 // We'll need the necessary boost::serialization features, as well as what we
 // use with mlpack.  In Boost 1.59 and newer, the BOOST_PFTO code is no longer
