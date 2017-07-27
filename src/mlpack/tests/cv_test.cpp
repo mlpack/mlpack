@@ -129,6 +129,10 @@ BOOST_AUTO_TEST_CASE(PredictionsTypeTest)
       arma::Row<char>>();
 }
 
+/**
+ * Test MetaInfoExtractor correctly identifies whether a given machine learning
+ * algorithm supports weighted learning.
+ */
 BOOST_AUTO_TEST_CASE(SupportsWeightsTest)
 {
   static_assert(MetaInfoExtractor<LinearRegression>::SupportsWeights,
