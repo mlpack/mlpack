@@ -20,9 +20,6 @@
 #include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
 #include <mlpack/methods/reinforcement_learning/policy/aggregated_policy.hpp>
 #include <mlpack/methods/reinforcement_learning/training_config.hpp>
-#include <boost/serialization/serialization.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -37,6 +34,8 @@ BOOST_AUTO_TEST_SUITE(AsyncLearningTest);
 // Test async one step q-learning in Cart Pole.
 BOOST_AUTO_TEST_CASE(OneStepQLearningTest)
 {
+  omp_set_num_threads(1);
+
   // Set up the network.
   FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
       GaussianInitialization(0, 0.001));
@@ -53,7 +52,7 @@ BOOST_AUTO_TEST_CASE(OneStepQLearningTest)
    * Here we load the pre-trained network mainly for the mlpack test server.
    */
   std::string fileName("async_one_step_q_learning_network.bin");
-  bool loadNetwork = true;
+  bool loadNetwork = false;
   bool storeNetwork = false;
   if (loadNetwork)
     data::Load(fileName, "network", model);
@@ -72,7 +71,7 @@ BOOST_AUTO_TEST_CASE(OneStepQLearningTest)
    * When training from scratch, you should set proper number of
    * workers (e.g. 16).
    */
-  config.NumWorkers() = 1;
+  config.NumWorkers() = 16;
   config.UpdateInterval() = 6;
   config.StepLimit() = 200;
   config.TargetNetworkSyncInterval() = 200;
@@ -84,7 +83,7 @@ BOOST_AUTO_TEST_CASE(OneStepQLearningTest)
   size_t pos = 0;
   size_t testEpisodes = 0;
   auto measure = [&rewards, &pos, &testEpisodes](double reward) {
-    size_t maxEpisode = 100000;
+    size_t maxEpisode = 10000;
     if (testEpisodes > maxEpisode)
       BOOST_REQUIRE(false);
     testEpisodes++;

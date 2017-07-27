@@ -128,6 +128,13 @@ class AsyncLearning
   EnvironmentType environment;
 };
 
+// Forward declaration.
+template <
+  typename EnvironmentType,
+  typename NetworkType,
+  typename UpdaterType,
+  typename PolicyType
+>
 class OneStepQLearningWorker;
 
 // Convenient typedef for async one step q-learning.
@@ -137,8 +144,9 @@ template <
   typename UpdaterType,
   typename PolicyType
 >
-using OneStepQLearning = AsyncLearning<OneStepQLearningWorker,
-    EnvironmentType, NetworkType, UpdaterType, PolicyType>;
+using OneStepQLearning = AsyncLearning<OneStepQLearningWorker<EnvironmentType, 
+    NetworkType, UpdaterType, PolicyType>, EnvironmentType, NetworkType, 
+    UpdaterType, PolicyType>;
 
 } // namespace rl
 } // namespace mlpack

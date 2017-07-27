@@ -14,6 +14,7 @@
 #define MLPACK_METHODS_RL_ASYNC_LEARNING_IMPL_HPP
 
 #include <mlpack/prereqs.hpp>
+#include "queue"
 
 namespace mlpack {
 namespace rl {
@@ -31,16 +32,17 @@ AsyncLearning<
   NetworkType,
   UpdaterType,
   PolicyType
->::AsyncLearning(TrainingConfig config,
-                 NetworkType network,
-                 PolicyType policy,
-                 UpdaterType updater,
-                 EnvironmentType environment):
-  config(std::move(config)),
-  learningNetwork(std::move(network)),
-  policy(std::move(policy)),
-  updater(std::move(updater)),
-  environment(std::move(environment))
+>::AsyncLearning(
+    TrainingConfig config,
+    NetworkType network,
+    PolicyType policy,
+    UpdaterType updater,
+    EnvironmentType environment):
+    config(std::move(config)),
+    learningNetwork(std::move(network)),
+    policy(std::move(policy)),
+    updater(std::move(updater)),
+    environment(std::move(environment))
 { /* Nothing to do here. */ };
 
 template <
@@ -67,31 +69,61 @@ void AsyncLearning<
   if (learningNetwork.Parameters().is_empty())
     learningNetwork.ResetParameters();
   NetworkType targetNetwork = learningNetwork;
-  bool stop = false;
   size_t totalSteps = 0;
   PolicyType policy = this->policy;
+  bool stop = false;
 
-  // Make sure OpenMP will start desired number of threads.
-  omp_set_dynamic(0);
-  // An extra thread for test.
-  omp_set_num_threads(config.NumWorkers() + 1);
-
-  // All the variables that doesn't show up in this list will be copied.
-  #pragma omp parallel for shared(learningNetwork, targetNetwork, \
-      stop, totalSteps, policy)
-  for (omp_size_t i = 0; i <= config.NumWorkers(); ++i)
+  // Set up worker pool, worker 0 will be deterministic for evaluation.
+  std::vector<WorkerType> workers;
+  for (size_t i = 0; i <= config.NumWorkers(); ++i)
   {
-    while (!stop)
+    workers.push_back(WorkerType(updater, environment, config, !i));
+    workers.back().Initialize(learningNetwork);
+  }
+  // Set up task queue corresponding to worker pool.
+  std::queue<size_t> tasks;
+  for (size_t i = 0; i <= config.NumWorkers(); ++i)
+    tasks.push(i);
+
+  // Synchronization for get/put task.
+  omp_lock_t tasksLock;
+  omp_init_lock(&tasksLock);
+
+  #pragma omp parallel shared(stop, workers, tasks, learningNetwork, \
+      targetNetwork, totalSteps, policy)
+  {
+    #pragma omp task
     {
-      if (i < config.NumWorkers())
+      #pragma omp critical
       {
-        WorkerType::Episode(learningNetwork, targetNetwork, stop, totalSteps,
-            policy, updater, environment, config, false);
+        Log::Debug << "Thread " << omp_get_thread_num() <<
+            " started." << std::endl;
       }
-      else
+      while (!stop)
       {
-        stop = measure(WorkerType::Episode(learningNetwork, targetNetwork, stop,
-            totalSteps, policy, updater, environment, config, true));
+        // Assign task to current thread from queue.
+        omp_set_lock(&tasksLock);
+        if (tasks.empty()) {
+          omp_unset_lock(&tasksLock);
+          continue;
+        }
+        int task = tasks.front();
+        tasks.pop();
+        omp_unset_lock(&tasksLock);
+
+        // Get corresponding worker.
+        WorkerType& worker = workers[task];
+        double episodeReturn;
+        if (worker.Step(learningNetwork, targetNetwork, totalSteps,
+            policy, episodeReturn) && !task)
+        {
+          stop = measure(episodeReturn);
+        }
+
+        // Put task back to queue.
+        omp_set_lock(&tasksLock);
+        tasks.push(task);
+        omp_unset_lock(&tasksLock);
       }
     }
   }
