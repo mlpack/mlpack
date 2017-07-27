@@ -149,14 +149,14 @@ size_t SimpleCV<MLAlgorithm,
                 WeightsType>::CalculateAndAssertNumberOfTrainingPoints(
     const double validationSize)
 {
-  if (validationSize < 0.0F || validationSize > 1.0F)
+  if (validationSize < 0.0 || validationSize > 1.0)
     throw std::invalid_argument("SimpleCV: the validationSize parameter should "
         "be more than 0 and less than 1");
 
   if (xs.n_cols < 2)
     throw std::invalid_argument("SimpleCV: 2 or more data points are expected");
 
-  size_t trainingPoints = roundf(xs.n_cols * (1.0F - validationSize));
+  size_t trainingPoints = round(xs.n_cols * (1.0 - validationSize));
 
   if (trainingPoints == 0 || trainingPoints == xs.n_cols)
     throw std::invalid_argument("SimpleCV: the validationSize parameter is "
