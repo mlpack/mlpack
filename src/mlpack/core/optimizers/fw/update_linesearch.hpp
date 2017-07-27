@@ -38,9 +38,9 @@ class UpdateLineSearch
    */
   UpdateLineSearch(const size_t maxIter = 100000,
                    const double tolerance = 1e-5) :
-      maxIter(maxIter), tolerance(tolerance)
+      tolerance(tolerance), maxIter(maxIter)
   {/* Do nothing */}
-  
+
 
   /**
    * Update rule for FrankWolfe, optimize with line search using secant method.
@@ -112,7 +112,7 @@ class UpdateLineSearch
    *         0 means x1, 1 means x2.
    */
   template<typename FunctionType>
-  double LineSearchSecant(const FunctionType& function,
+  double LineSearchSecant(FunctionType& function,
                           const arma::mat& x1,
                           const arma::mat& x2)
   {
@@ -177,12 +177,12 @@ class UpdateLineSearch
    * @return Derivative of function(x0 + gamma * deltaX) with respect to gamma.
    */
   template<typename FunctionType>
-  double Derivative(const FunctionType& function,
+  double Derivative(FunctionType& function,
                     const arma::mat& x0,
                     const arma::mat& deltaX,
                     const double gamma)
   {
-    arma::mat gradient;
+    arma::mat gradient(x0.n_rows, x0.n_cols);
     function.Gradient(x0 + gamma * deltaX, gradient);
     return arma::dot(gradient, deltaX);
   }
