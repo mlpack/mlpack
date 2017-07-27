@@ -323,8 +323,9 @@ void MemoryHead<InputDataType, OutputDataType>::BackwardWithMemory(
   gM.each_row([&] (arma::rowvec& v)
   {
     double n = arma::norm(memory.row(memRow));
-    v = arma::sum((arma::eye(memSize, memSize) - (arma::trans(memory.row(memRow)) * memory.row(memRow) /
-    (n * n))) / n) % v;
+    v = arma::sum((arma::eye(memSize, memSize) -
+        (arma::trans(memory.row(memRow)) * memory.row(memRow) /
+        (n * n))) / n) % v;
 
     memRow++;
   });

@@ -53,6 +53,8 @@ set(SOURCES
   mean_squared_error_impl.hpp
   memory_head.hpp
   memory_head_impl.hpp
+  memory_test.hpp
+  memory_test_impl.hpp
   multiply_constant.hpp
   multiply_constant_impl.hpp
   negative_log_likelihood.hpp
