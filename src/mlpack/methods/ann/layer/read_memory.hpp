@@ -57,6 +57,24 @@ class ReadMemory
 
   /**
    * Feed forward pass of a neural network, evaluating the function
+   * f(x) by propagating the activity forward given the current memory content.
+   *
+   * @param input Input data used for evaluating the specified function.
+   * @param output Resulting output activation.
+   * @param memory Current memory content.
+   */
+  template<typename eT>
+  void ForwardWithMemoryTest(arma::Mat<eT>&& input,
+                             const arma::Mat<eT>&& memory,
+                             arma::Mat<eT>&& output)
+  {
+    ForwardWithMemory(std::move(input),
+                      std::move(memory),
+                      std::move(output));
+  }
+
+  /**
+   * Feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward.
    *
    * Function used for testing the class. Creates fixed memory to be used in

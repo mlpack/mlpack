@@ -19,7 +19,7 @@
 #include "../visitor/forward_visitor.hpp"
 #include "../visitor/backward_visitor.hpp"
 #include "../visitor/gradient_visitor.hpp"
-#include "../visitor/forward_with_memory_visitor.hpp"
+#include "../visitor/forward_with_memory_test_visitor.hpp"
 #include "../visitor/backward_with_memory_visitor.hpp"
 #include "../visitor/reset_cell_visitor.hpp"
 
@@ -59,7 +59,7 @@ void MemoryTest<InputDataType, OutputDataType>::Forward(
   arma::mat& memory = boost::apply_visitor(outputParameterVisitor, initMem);
 
   // Pass memory and input to the test layer.
-  boost::apply_visitor(ForwardWithMemoryVisitor(std::move(input),
+  boost::apply_visitor(ForwardWithMemoryTestVisitor(std::move(input),
       std::move(arma::mat(memory.memptr(), numMem, memSize, false)),
       std::move(boost::apply_visitor(outputParameterVisitor, testLayer))),
       testLayer);
