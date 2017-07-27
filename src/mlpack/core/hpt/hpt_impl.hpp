@@ -148,6 +148,7 @@ void HyperParameterTuner<MLAlgorithm,
   bestObjective = Metric::NeedsMinimization?
       optimizer.Optimize(cvFunction, bestParams) :
       -optimizer.Optimize(cvFunction, bestParams);
+  bestModel = std::move(cvFunction.BestModel());
 }
 
 template<typename MLAlgorithm,

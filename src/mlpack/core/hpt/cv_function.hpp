@@ -53,6 +53,13 @@ class CVFunction
    */
   double Evaluate(const arma::mat& parameters);
 
+  //! The used machine learning algorithm.
+  using MLAlgorithm = typename
+      std::remove_reference<decltype(std::declval<CVType>().Model())>::type;
+
+  //! Access and modify the best model so far.
+  MLAlgorithm& BestModel() { return bestModel; }
+
  private:
   //! The type of tuples of BoundArgs.
   using BoundArgsTupleType = std::tuple<BoundArgs...>;
@@ -76,6 +83,12 @@ class CVFunction
 
   //! The bound arguments.
   BoundArgsTupleType boundArgs;
+
+  //! The best objective so far.
+  double bestObjective;
+
+  //! The best model so far.
+  MLAlgorithm bestModel;
 
   /**
    * Collect all arguments and run cross-validation.

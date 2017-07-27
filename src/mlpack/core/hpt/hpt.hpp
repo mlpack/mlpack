@@ -132,6 +132,9 @@ class HyperParameterTuner
   //! Access the performance measurement of the best model from the last run.
   double BestObjective() const { return bestObjective; }
 
+  //! Access and modify the best model from the last run.
+  MLAlgorithm& BestModel() { return bestModel; }
+
  private:
   static_assert(
       std::is_same<Optimizer, mlpack::optimization::GridSearch>::value,
@@ -164,6 +167,9 @@ class HyperParameterTuner
 
   //! The best objective from the last run.
   double bestObjective;
+
+  //! The best model from the last run.
+  MLAlgorithm bestModel;
 
   /**
    * The set of methods to initialize the GridSearh optimizer. We basically need

@@ -36,7 +36,11 @@ struct CVFunction<CVType, TotalArgs, BoundArgs...>::UseBoundArg<
 
 template<typename CVType, size_t TotalArgs, typename... BoundArgs>
 CVFunction<CVType, TotalArgs, BoundArgs...>::CVFunction(
-    CVType& cv, const BoundArgs&... args) : cv(cv), boundArgs(args...) {}
+    CVType& cv, const BoundArgs&... args) :
+    cv(cv),
+    boundArgs(args...),
+    bestObjective(std::numeric_limits<double>::max())
+{ /* Nothing left to do. */ }
 
 template<typename CVType, size_t TotalArgs, typename... BoundArgs>
 double CVFunction<CVType, TotalArgs, BoundArgs...>::Evaluate(
@@ -67,7 +71,18 @@ double CVFunction<CVType, TotalArgs, BoundArgs...>::Evaluate(
     const arma::mat& /* parameters */,
     const Args&... args)
 {
-  return cv.Evaluate(args...);
+  double objective = cv.Evaluate(args...);
+
+  // Change the best model if we have got a better score, or if we probably
+  // have not assigned any valid (trained) model yet.
+  if (bestObjective > objective ||
+      bestObjective == std::numeric_limits<double>::max())
+  {
+    bestObjective = objective;
+    bestModel = std::move(cv.Model());
+  }
+
+  return objective;
 }
 
 template<typename CVType, size_t TotalArgs, typename... BoundArgs>

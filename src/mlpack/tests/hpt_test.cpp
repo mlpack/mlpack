@@ -172,6 +172,14 @@ BOOST_AUTO_TEST_CASE(HPTTest)
   BOOST_REQUIRE_CLOSE(expectedObjective, hpt.BestObjective(), 1e-5);
   BOOST_REQUIRE_CLOSE(expectedLambda1, actualLambda1, 1e-5);
   BOOST_REQUIRE_CLOSE(expectedLambda2, actualLambda2, 1e-5);
+
+  /* Checking that the model provided by the hyper-parameter tuner shows the
+   * same performance. */
+  size_t validationFirstColumn = round(xs.n_cols * (1.0 - validationSize));
+  arma::mat validationXs = xs.cols(validationFirstColumn, xs.n_cols - 1);
+  arma::rowvec validationYs = ys.cols(validationFirstColumn, ys.n_cols - 1);
+  double objective = MSE::Evaluate(hpt.BestModel(), validationXs, validationYs);
+  BOOST_REQUIRE_CLOSE(expectedObjective, objective, 1e-5);
 }
 
 /**
