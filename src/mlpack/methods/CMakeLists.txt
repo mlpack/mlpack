@@ -30,6 +30,7 @@ set(DIRS
   emst
   fastmks
   gmm
+  hdbscan
   hmm
   hoeffding_trees
   kernel_pca

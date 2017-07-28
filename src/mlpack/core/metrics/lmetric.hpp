@@ -116,7 +116,6 @@ typedef LMetric<2, true> EuclideanDistance;
  */
 typedef LMetric<INT_MAX, false> ChebyshevDistance;
 
-
 } // namespace metric
 } // namespace mlpack
 
