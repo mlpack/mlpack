@@ -40,14 +40,17 @@ BOOST_AUTO_TEST_SUITE(CVTest);
  */
 BOOST_AUTO_TEST_CASE(AccuracyTest)
 {
-  // Making linearly separable data.
-  arma::mat data =
-    arma::mat("1 0; 2 0; 3 0; 4 0; 5 0; 1 1; 2 1; 3 1; 4 1; 5 1").t();
-  arma::Row<size_t> trainingLabels("0 0 0 0 0 1 1 1 1 1");
+  // Using the same data for training and testing.
+  arma::mat data = arma::linspace<arma::rowvec>(1.0, 10.0, 10);
 
-  LogisticRegression<> lr(data, trainingLabels);
+  // Labels that will be considered as "ground truth".
+  arma::Row<size_t> labels("0 0 1 0 0  1 0 1 0 1");
 
-  arma::Row<size_t> labels("0 0 1 0 0 1 0 1 0 1"); // 70%-correct labels
+  // Labels that make the data linearly separable. These labels will be
+  // predicted in response to the data since we use them for training.
+  arma::Row<size_t> predictedLabels("0 0 0 0 0  1 1 1 1 1");
+
+  LogisticRegression<> lr(data, predictedLabels);
 
   BOOST_REQUIRE_CLOSE(Accuracy::Evaluate(lr, data, labels), 0.7, 1e-5);
 }
