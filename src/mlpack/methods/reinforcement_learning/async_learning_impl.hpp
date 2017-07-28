@@ -92,7 +92,7 @@ void AsyncLearning<
   /**
    * Compute the number of threads for the for-loop. In general, we should use
    * OpenMP task rather than for-loop, here we do so to be compatible with some
-   * compiler.
+   * compiler. We can switch to OpenMP task once MSVC supports OpenMP 3.0.
    */
   size_t numThreads = 0;
   #pragma omp parallel reduction(+:numThreads)
