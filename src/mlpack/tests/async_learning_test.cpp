@@ -80,7 +80,7 @@ BOOST_AUTO_TEST_CASE(OneStepQLearningTest)
     // Maybe underestimated.
     double avgReward = arma::mean(rewards);
     Log::Debug << "Average return: " << avgReward
-               << " Episode return: " << reward << std::endl;
+        << " Episode return: " << reward << std::endl;
     if (avgReward > 60)
       return true;
     return false;

@@ -116,7 +116,7 @@ void AsyncLearning<
         omp_unset_lock(&tasksLock);
         continue;
       }
-      int task = tasks.front();
+      size_t task = tasks.front();
       tasks.pop();
       omp_unset_lock(&tasksLock);
 
