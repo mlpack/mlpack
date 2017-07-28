@@ -35,17 +35,20 @@ WriteMemory<InputDataType, OutputDataType>::WriteMemory(const size_t inSize,
   memSize(memSize),
   shiftSize(shiftSize)
 {
-  inputToLinear = new Linear<>(inSize, memSize);
+  inputToLinear = new Linear<>(inSize, 2 * memSize);
 
   addGate = new TanHLayer<>();
+  eraseGate = new SigmoidLayer<>();
 
   writeHead = new MemoryHead<>(inSize, numMem, memSize, shiftSize);
 
   network.push_back(inputToLinear);
   network.push_back(addGate);
+  network.push_back(eraseGate);
   network.push_back(writeHead);
 
   dWriteHead.set_size(numMem, 1);
+  prevError.set_size(2 * memSize, 1);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -53,14 +56,24 @@ template<typename eT>
 void WriteMemory<InputDataType, OutputDataType>::ForwardWithMemory(
     arma::Mat<eT>&& input, const arma::Mat<eT>&& memory, arma::Mat<eT>&& output)
 {
-  // Generate AddVec
+  // Pass through linear layer.
   boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
       boost::apply_visitor(outputParameterVisitor, inputToLinear))),
       inputToLinear);
-  boost::apply_visitor(ForwardVisitor(std::move(boost::apply_visitor(outputParameterVisitor, inputToLinear)), std::move(
+
+  arma::mat& lOutput = boost::apply_visitor(outputParameterVisitor, inputToLinear);
+
+  // Generate AddVec
+  boost::apply_visitor(ForwardVisitor(std::move(lOutput.submat(0, 0, memSize - 1, 0)), std::move(
       boost::apply_visitor(outputParameterVisitor, addGate))),
       addGate);
   const arma::mat& addVec = boost::apply_visitor(outputParameterVisitor, addGate);
+
+  // Generate EraseVec
+  boost::apply_visitor(ForwardVisitor(std::move(lOutput.submat(memSize, 0, 2 * memSize - 1, 0)), std::move(
+      boost::apply_visitor(outputParameterVisitor, eraseGate))),
+      eraseGate);
+  const arma::mat& eraseVec = boost::apply_visitor(outputParameterVisitor, eraseGate);
 
   // Generate write weights
   boost::apply_visitor(ForwardWithMemoryVisitor(std::move(input),
@@ -76,8 +89,6 @@ void WriteMemory<InputDataType, OutputDataType>::ForwardWithMemory(
   }
 
   output = memory;
-
-  arma::mat eraseVec = 0.2 * arma::ones(memSize, 1);
 
   auto addVecIt = addVec.begin();
   auto eraseVecIt = eraseVec.begin();
@@ -99,24 +110,37 @@ void WriteMemory<InputDataType, OutputDataType>::BackwardWithMemory(
   const arma::Mat<eT>&& memory,
   arma::Mat<eT>&& gy, arma::Mat<eT>&& g, arma::Mat<eT>&& gM)
 {
+  const arma::mat& writeWeights = boost::apply_visitor(outputParameterVisitor, writeHead);
+
   // Backward through AddGate
-  arma::mat dAddGate = arma::trans(gy) * boost::apply_visitor(outputParameterVisitor,
+  arma::mat dGate = arma::trans(gy) * boost::apply_visitor(outputParameterVisitor,
       writeHead);
 
   boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-      outputParameterVisitor, addGate)), std::move(dAddGate),
+      outputParameterVisitor, addGate)), std::move(dGate),
       std::move(boost::apply_visitor(deltaVisitor, addGate))),
       addGate);
 
-  prevError = boost::apply_visitor(deltaVisitor, addGate);
+  prevError.submat(0, 0, memSize - 1, 0) = boost::apply_visitor(deltaVisitor, addGate);
 
+  // Backward through EraseGate
+  dGate = -(arma::trans(gy % memory) * writeWeights);
+
+  boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
+      outputParameterVisitor, eraseGate)), std::move(dGate),
+      std::move(boost::apply_visitor(deltaVisitor, eraseGate))),
+      eraseGate);
+
+  prevError.submat(memSize, 0, 2 * memSize - 1, 0) = boost::apply_visitor(deltaVisitor, eraseGate);
+
+  // Backward through linear layer.
   boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
       outputParameterVisitor, inputToLinear)), std::move(prevError),
       std::move(boost::apply_visitor(deltaVisitor, inputToLinear))),
       inputToLinear);
 
   const arma::mat& addVec = boost::apply_visitor(outputParameterVisitor, addGate);
-  arma::mat eraseVec = 0.2 * arma::ones(memSize, 1);
+  const arma::mat& eraseVec = boost::apply_visitor(outputParameterVisitor, eraseGate);
 
   // Error of writeHead.
   size_t rowIndex = 0;
@@ -132,8 +156,6 @@ void WriteMemory<InputDataType, OutputDataType>::BackwardWithMemory(
         outputParameterVisitor, writeHead)), std::move(memory), std::move(dWriteHead),
         std::move(boost::apply_visitor(deltaVisitor, writeHead)), std::move(gM)),
         writeHead);
-
-  const arma::mat& writeWeights = boost::apply_visitor(outputParameterVisitor, writeHead);
 
   // Memory gradient from operations.
   rowIndex = 0;

@@ -229,6 +229,8 @@ class WriteMemory
 
   LayerTypes addGate;
 
+  LayerTypes eraseGate;
+
   LayerTypes writeHead;
 
   arma::mat prevError;
