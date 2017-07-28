@@ -18,22 +18,32 @@
 #include "../visitor/forward_visitor.hpp"
 #include "../visitor/backward_visitor.hpp"
 #include "../visitor/gradient_visitor.hpp"
+#include "../visitor/reset_cell_visitor.hpp"
+#include "../visitor/forward_with_memory_visitor.hpp"
+#include "../visitor/backward_with_memory_visitor.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template <typename InputDataType, typename OutputDataType>
 WriteMemory<InputDataType, OutputDataType>::WriteMemory(const size_t inSize,
-                                                        const size_t memSize) :
+                                                        const size_t numMem,
+                                                        const size_t memSize,
+                                                        const size_t shiftSize) :
   inSize(inSize),
-  memSize(memSize)
+  numMem(numMem),
+  memSize(memSize),
+  shiftSize(shiftSize)
 {
   inputToLinear = new Linear<>(inSize, memSize);
 
   addGate = new TanHLayer<>();
 
+  writeHead = new MemoryHead<>(inSize, numMem, memSize, shiftSize);
+
   network.push_back(inputToLinear);
   network.push_back(addGate);
+  network.push_back(writeHead);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -41,21 +51,35 @@ template<typename eT>
 void WriteMemory<InputDataType, OutputDataType>::ForwardWithMemory(
     arma::Mat<eT>&& input, const arma::Mat<eT>&& memory, arma::Mat<eT>&& output)
 {
+  // Generate AddVec
   boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
       boost::apply_visitor(outputParameterVisitor, inputToLinear))),
       inputToLinear);
-
   boost::apply_visitor(ForwardVisitor(std::move(boost::apply_visitor(outputParameterVisitor, inputToLinear)), std::move(
       boost::apply_visitor(outputParameterVisitor, addGate))),
       addGate);
+  const arma::mat& addVec = boost::apply_visitor(outputParameterVisitor, addGate);
+
+  // Generate write weights
+  boost::apply_visitor(ForwardWithMemoryVisitor(std::move(input),
+      std::move(memory),
+      std::move(boost::apply_visitor(outputParameterVisitor, writeHead))),
+      writeHead);
+  const arma::mat& writeWeights = boost::apply_visitor(outputParameterVisitor,
+      writeHead);
+
+  if(writeWeights.n_rows != memory.n_rows)
+  {
+    std::cout << "Incorrect Size" << std::endl;
+  }
 
   output = memory;
 
-  auto addVecIt = boost::apply_visitor(outputParameterVisitor, addGate).begin();
+  auto addVecIt = addVec.begin();
 
   output.each_col([&](arma::vec& v)
   {
-    v += (*addVecIt * arma::ones(memory.n_rows, 1));
+    v += (*addVecIt * writeWeights);
 
     addVecIt++;
   });
@@ -69,9 +93,9 @@ void WriteMemory<InputDataType, OutputDataType>::BackwardWithMemory(
   const arma::Mat<eT>&& memory,
   arma::Mat<eT>&& gy, arma::Mat<eT>&& g, arma::Mat<eT>&& gM)
 {
-  arma::mat dAddGate = arma::trans(gy) * arma::ones(memory.n_rows, 1);
-
-  gM = gy;
+  // Backward through AddGate
+  arma::mat dAddGate = arma::trans(gy) * boost::apply_visitor(outputParameterVisitor,
+      writeHead);
 
   boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
       outputParameterVisitor, addGate)), std::move(dAddGate),
@@ -85,7 +109,21 @@ void WriteMemory<InputDataType, OutputDataType>::BackwardWithMemory(
       std::move(boost::apply_visitor(deltaVisitor, inputToLinear))),
       inputToLinear);
 
-  g = boost::apply_visitor(deltaVisitor, inputToLinear);
+  // Error of writeHead.
+  dWriteHead = gy * boost::apply_visitor(outputParameterVisitor, addGate);
+
+  // Backward through writeHead
+  boost::apply_visitor(BackwardWithMemoryVisitor(std::move(boost::apply_visitor(
+        outputParameterVisitor, writeHead)), std::move(memory), std::move(dWriteHead),
+        std::move(boost::apply_visitor(deltaVisitor, writeHead)), std::move(gM)),
+        writeHead);
+
+  // Memory gradient from AddOperation
+  gM += gy;
+
+  // Error of input
+  g = boost::apply_visitor(deltaVisitor, writeHead);
+  g += boost::apply_visitor(deltaVisitor, inputToLinear);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -98,6 +136,19 @@ void WriteMemory<InputDataType, OutputDataType>::Gradient(
   boost::apply_visitor(GradientVisitor(std::move(input),
           std::move(prevError)),
           inputToLinear);
+
+  boost::apply_visitor(GradientVisitor(std::move(input),
+          std::move(dWriteHead)),
+          writeHead);
+}
+
+template<typename InputDataType, typename OutputDataType>
+void WriteMemory<InputDataType, OutputDataType>::ResetCell()
+{
+  for(auto layer : network)
+  {
+    boost::apply_visitor(ResetCellVisitor(), layer);
+  }
 }
 
 template<typename InputDataType, typename OutputDataType>

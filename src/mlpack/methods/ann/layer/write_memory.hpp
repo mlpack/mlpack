@@ -19,6 +19,8 @@
 
 #include "layer_types.hpp"
 
+#include "memory_head.hpp"
+
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -45,7 +47,10 @@ class WriteMemory
    * @param memSize Memory size in each memory block.
    * @param shiftSize Circular convolutional shift size used.
    */
-  WriteMemory(const size_t inSize, const size_t memSize);
+  WriteMemory(const size_t inSize,
+              const size_t numMem,
+              const size_t memSize,
+              const size_t shiftSize);
 
   /**
    * Feed forward pass of a neural network, evaluating the function
@@ -166,6 +171,12 @@ class WriteMemory
                 arma::Mat<eT>&& /* error */,
                 arma::Mat<eT>&& /* gradient */);
 
+  /*
+   * Resets the cell to accept a new input.
+   * This breaks the BPTT chain starts a new one.
+   */
+  void ResetCell();
+
   //! The value of the deterministic parameter.
   bool Deterministic() const { return deterministic; }
   //! Modify the value of the deterministic parameter.
@@ -208,13 +219,21 @@ class WriteMemory
  private:
   size_t inSize;
 
+  size_t numMem;
+
   size_t memSize;
+
+  size_t shiftSize;
 
   LayerTypes inputToLinear;
 
   LayerTypes addGate;
 
+  LayerTypes writeHead;
+
   arma::mat prevError;
+
+  arma::mat dWriteHead;
 
   //! Locally-stored weight object.
   OutputDataType weights;

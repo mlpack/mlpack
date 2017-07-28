@@ -21,7 +21,7 @@ namespace ann {
 
 //! ForwardWithMemoryVisitor visitor class.
 inline ForwardWithMemoryVisitor::ForwardWithMemoryVisitor(arma::mat&& input,
-                                                          arma::mat&& memory,
+                                                          const arma::mat&& memory,
                                                           arma::mat&& output) :
     input(std::move(input)),
     memory(std::move(memory)),

@@ -35,7 +35,7 @@ class ForwardWithMemoryVisitor : public boost::static_visitor<void>
    * and output parameter.
    */
   ForwardWithMemoryVisitor(arma::mat&& input,
-                           arma::mat&& memory,
+                           const arma::mat&& memory,
                            arma::mat&& output);
 
   //! Execute the FowardWithMemory() function.
@@ -63,7 +63,7 @@ class ForwardWithMemoryVisitor : public boost::static_visitor<void>
   arma::mat&& input;
 
   //! The memory content.
-  arma::mat&& memory;
+  const arma::mat&& memory;
 
   //! The output parameter set.
   arma::mat&& output;

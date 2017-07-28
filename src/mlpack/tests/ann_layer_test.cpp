@@ -926,8 +926,8 @@ BOOST_AUTO_TEST_CASE(GradientWriteMemoryTest)
 
       model = new RNN<NegativeLogLikelihood<> >(input, target, rho);
       model->Add<IdentityLayer<> >();
-      model->Add<Linear<> >(1, 1);
-      model->Add<MemoryTest<> >(1, 5, 3, 5, new WriteMemory<>(1, 5));
+      model->Add<Linear<> >(1, 3);
+      model->Add<MemoryTest<> >(3, 5, 3, 5, new WriteMemory<>(3, 3, 5, 1));
       model->Add<Linear<> >(15, 3);
       model->Add<LogSoftMax<> >();
     }

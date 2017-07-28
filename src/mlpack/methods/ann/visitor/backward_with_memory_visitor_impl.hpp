@@ -10,20 +10,20 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_VISITOR_BACKWARD_WITH_MEMORY_TEST_VISITOR_IMPL_HPP
-#define MLPACK_METHODS_ANN_VISITOR_BACKWARD_WITH_MEMORY_TEST_VISITOR_IMPL_HPP
+#ifndef MLPACK_METHODS_ANN_VISITOR_BACKWARD_WITH_MEMORY_VISITOR_IMPL_HPP
+#define MLPACK_METHODS_ANN_VISITOR_BACKWARD_WITH_MEMORY_VISITOR_IMPL_HPP
 
 // In case it hasn't been included yet.
-#include "backward_with_memory_test_visitor.hpp"
+#include "backward_with_memory_visitor.hpp"
 
 namespace mlpack {
 namespace ann {
 
 //! BackwardWithMemoryVisitor visitor class.
-inline BackwardWithMemoryTestVisitor::BackwardWithMemoryTestVisitor(
+inline BackwardWithMemoryVisitor::BackwardWithMemoryVisitor(
   arma::mat&& output,
   const arma::mat&& input,
-  arma::mat&& memory,
+  const arma::mat&& memory,
   arma::mat&& error,
   arma::mat&& delta,
   arma::mat&& dM) :
@@ -37,9 +37,9 @@ inline BackwardWithMemoryTestVisitor::BackwardWithMemoryTestVisitor(
   /* Nothing to do here. */
 }
 
-inline BackwardWithMemoryTestVisitor::BackwardWithMemoryTestVisitor(
+inline BackwardWithMemoryVisitor::BackwardWithMemoryVisitor(
   arma::mat&& output,
-  arma::mat&& memory,
+  const arma::mat&& memory,
   arma::mat&& error,
   arma::mat&& delta,
   arma::mat&& dM) :
@@ -54,19 +54,19 @@ inline BackwardWithMemoryTestVisitor::BackwardWithMemoryTestVisitor(
 }
 
 template<typename LayerType>
-inline void BackwardWithMemoryTestVisitor::operator()(LayerType* layer) const
+inline void BackwardWithMemoryVisitor::operator()(LayerType* layer) const
 {
-  BackwardWithMemoryTest(layer);
+  BackwardWithMemory(layer);
 }
 
 template<typename T>
 inline typename std::enable_if<
-    HasBackwardWithMemoryTestCheck<T, void(T::*)(const arma::mat&&,
+    HasBackwardWithMemoryCheck<T, void(T::*)(const arma::mat&&,
     const arma::mat&&, const arma::mat&&, arma::mat&&, arma::mat&&,
     arma::mat&&)>::value, void>::type
-BackwardWithMemoryTestVisitor::BackwardWithMemoryTest(T* layer) const
+BackwardWithMemoryVisitor::BackwardWithMemory(T* layer) const
 {
-  layer->BackwardWithMemoryTest(std::move(output),
+  layer->BackwardWithMemory(std::move(output),
                                 std::move(input),
                                 std::move(memory),
                                 std::move(error),
@@ -76,10 +76,10 @@ BackwardWithMemoryTestVisitor::BackwardWithMemoryTest(T* layer) const
 
 template<typename T>
 inline typename std::enable_if<
-    !HasBackwardWithMemoryTestCheck<T, void(T::*)(const arma::mat&&,
+    !HasBackwardWithMemoryCheck<T, void(T::*)(const arma::mat&&,
     const arma::mat&&, const arma::mat&&, arma::mat&&, arma::mat&&,
     arma::mat&&)>::value, void>::type
-BackwardWithMemoryTestVisitor::BackwardWithMemoryTest(T* /* layer */) const
+BackwardWithMemoryVisitor::BackwardWithMemory(T* /* layer */) const
 {
   /* Nothing to do here. */
 }

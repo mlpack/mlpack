@@ -36,7 +36,7 @@ class BackwardWithMemoryVisitor : public boost::static_visitor<void>
    */
   BackwardWithMemoryVisitor(arma::mat&& output,
                             const arma::mat&& input,
-                            arma::mat&& memory,
+                            const arma::mat&& memory,
                             arma::mat&& error,
                             arma::mat&& delta,
                             arma::mat&& dM);
@@ -46,7 +46,7 @@ class BackwardWithMemoryVisitor : public boost::static_visitor<void>
    * and output parameter.
    */
   BackwardWithMemoryVisitor(arma::mat&& output,
-                            arma::mat&& memory,
+                            const arma::mat&& memory,
                             arma::mat&& error,
                             arma::mat&& delta,
                             arma::mat&& dM);
@@ -83,7 +83,7 @@ class BackwardWithMemoryVisitor : public boost::static_visitor<void>
   const arma::mat&& input;
 
   //! Content of memory.
-  arma::mat&& memory;
+  const arma::mat&& memory;
 
   //! The error parameter.
   arma::mat&& error;
