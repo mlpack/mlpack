@@ -44,6 +44,8 @@ WriteMemory<InputDataType, OutputDataType>::WriteMemory(const size_t inSize,
   network.push_back(inputToLinear);
   network.push_back(addGate);
   network.push_back(writeHead);
+
+  dWriteHead.set_size(numMem, 1);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -75,13 +77,17 @@ void WriteMemory<InputDataType, OutputDataType>::ForwardWithMemory(
 
   output = memory;
 
+  arma::mat eraseVec = 0.2 * arma::ones(memSize, 1);
+
   auto addVecIt = addVec.begin();
+  auto eraseVecIt = eraseVec.begin();
 
   output.each_col([&](arma::vec& v)
   {
-    v += (*addVecIt * writeWeights);
+    v = (v - (*eraseVecIt * (writeWeights % v))) + (*addVecIt * writeWeights);
 
     addVecIt++;
+    eraseVecIt++;
   });
 }
 
@@ -109,8 +115,17 @@ void WriteMemory<InputDataType, OutputDataType>::BackwardWithMemory(
       std::move(boost::apply_visitor(deltaVisitor, inputToLinear))),
       inputToLinear);
 
+  const arma::mat& addVec = boost::apply_visitor(outputParameterVisitor, addGate);
+  arma::mat eraseVec = 0.2 * arma::ones(memSize, 1);
+
   // Error of writeHead.
-  dWriteHead = gy * boost::apply_visitor(outputParameterVisitor, addGate);
+  size_t rowIndex = 0;
+  gy.each_row([&] (arma::rowvec& v)
+  {
+    dWriteHead(rowIndex, 0) = arma::as_scalar(v * addVec - ((memory.row(rowIndex) % v) * eraseVec));
+
+    rowIndex++;
+  });
 
   // Backward through writeHead
   boost::apply_visitor(BackwardWithMemoryVisitor(std::move(boost::apply_visitor(
@@ -118,7 +133,16 @@ void WriteMemory<InputDataType, OutputDataType>::BackwardWithMemory(
         std::move(boost::apply_visitor(deltaVisitor, writeHead)), std::move(gM)),
         writeHead);
 
-  // Memory gradient from AddOperation
+  const arma::mat& writeWeights = boost::apply_visitor(outputParameterVisitor, writeHead);
+
+  // Memory gradient from operations.
+  rowIndex = 0;
+  gy.each_row([&] (arma::rowvec& v)
+  {
+    v -= v % (arma::trans(eraseVec) * writeWeights(rowIndex, 0));
+
+    rowIndex++;
+  });
   gM += gy;
 
   // Error of input
