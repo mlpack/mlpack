@@ -1715,26 +1715,74 @@ BOOST_AUTO_TEST_CASE(BinaryRBMTest)
   SerializeObjectAll(Rbm, RbmXml, RbmText, RbmBinary);
   CheckMatrices(Rbm.Parameters(), RbmXml.Parameters(), RbmText.Parameters(),
       RbmBinary.Parameters());
-  CheckMatrices(Rbm.Policy().VisibleBias(),
-      RbmXml.Policy().VisibleBias());
-  CheckMatrices(Rbm.Policy().VisibleBias(),
-        RbmText.Policy().VisibleBias());
-  CheckMatrices(Rbm.Policy().VisibleBias(),
-        RbmBinary.Policy().VisibleBias());
+  CheckMatrices(Rbm.Policy().VisibleBias(), RbmXml.Policy().VisibleBias());
+  CheckMatrices(Rbm.Policy().VisibleBias(), RbmText.Policy().VisibleBias());
+  CheckMatrices(Rbm.Policy().VisibleBias(), RbmBinary.Policy().VisibleBias());
 
-  CheckMatrices(Rbm.Policy().HiddenBias(),
-      RbmXml.Policy().HiddenBias());
-  CheckMatrices(Rbm.Policy().HiddenBias(),
-        RbmText.Policy().HiddenBias());
-  CheckMatrices(Rbm.Policy().HiddenBias(),
-        RbmBinary.Policy().HiddenBias());
+  CheckMatrices(Rbm.Policy().HiddenBias(), RbmXml.Policy().HiddenBias());
+  CheckMatrices(Rbm.Policy().HiddenBias(), RbmText.Policy().HiddenBias());
+  CheckMatrices(Rbm.Policy().HiddenBias(), RbmBinary.Policy().HiddenBias());
+
+  CheckMatrices(Rbm.Policy().Weight(), RbmXml.Policy().Weight());
+  CheckMatrices(Rbm.Policy().Weight(), RbmText.Policy().Weight());
+  CheckMatrices(Rbm.Policy().Weight(), RbmBinary.Policy().Weight());
+}
+
+BOOST_AUTO_TEST_CASE(ssRBMTest)
+{
+  arma::mat data;
+  size_t hiddenLayerSize = 5;
+  data.randu(3, 100);
+  double slabPenalty = 1;
+  double radius, tempRadius;
+  for (size_t i = 0; i < data.n_cols; i++)
+  {
+    tempRadius = arma::norm(data.col(i));
+    if (radius < tempRadius)
+      radius = tempRadius;
+  }
+
+  size_t poolSize = 1;
+
+  SpikeSlabRBMPolicy ss_rbm(data.n_rows, hiddenLayerSize, poolSize,
+      slabPenalty, radius);
+  GaussianInitialization gaussian(0, 0.1);
+  RBM<GaussianInitialization, SpikeSlabRBMPolicy > Rbm(data,
+      gaussian, ss_rbm, 1,  true, true);
+  RBM<GaussianInitialization, SpikeSlabRBMPolicy> RbmXml(data,
+      gaussian, ss_rbm, 1,  true, true);
+  RBM<GaussianInitialization, SpikeSlabRBMPolicy> RbmText(data,
+      gaussian, ss_rbm, 1,  true, true);
+  RBM<GaussianInitialization, SpikeSlabRBMPolicy> RbmBinary(data,
+      gaussian, ss_rbm, 1,  true, true);
+  Rbm.Reset();
+  Rbm.Policy().VisiblePenalty().fill(15);
+  Rbm.Policy().SpikeBias().ones();
+
+  SerializeObjectAll(Rbm, RbmXml, RbmText, RbmBinary);
+  CheckMatrices(Rbm.Parameters(), RbmXml.Parameters(), RbmText.Parameters(),
+      RbmBinary.Parameters());
+
+  CheckMatrices(Rbm.Policy().VisiblePenalty(), 
+      RbmXml.Policy().VisiblePenalty());
+  CheckMatrices(Rbm.Policy().VisiblePenalty(),
+      RbmText.Policy().VisiblePenalty());
+  CheckMatrices(Rbm.Policy().VisiblePenalty(), 
+      RbmBinary.Policy().VisiblePenalty());
+
+  CheckMatrices(Rbm.Policy().SpikeBias(),
+      RbmXml.Policy().SpikeBias());
+  CheckMatrices(Rbm.Policy().SpikeBias(),
+      RbmText.Policy().SpikeBias());
+  CheckMatrices(Rbm.Policy().SpikeBias(),
+      RbmBinary.Policy().SpikeBias());
 
   CheckMatrices(Rbm.Policy().Weight(),
       RbmXml.Policy().Weight());
   CheckMatrices(Rbm.Policy().Weight(),
-        RbmText.Policy().Weight());
+      RbmText.Policy().Weight());
   CheckMatrices(Rbm.Policy().Weight(),
-        RbmBinary.Policy().Weight());
+      RbmBinary.Policy().Weight());
 }
 
 BOOST_AUTO_TEST_SUITE_END();

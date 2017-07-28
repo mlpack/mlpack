@@ -222,20 +222,20 @@ BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
 
   XRbm.zeros();
   YRbm.zeros();
-  arma::mat slabPenalty(poolSize, hiddenLayerSize);
-  slabPenalty.fill(5);
+  double slabPenalty = 2;
 
-  SpikeSlabRBMPolicy ss_rbm(trainData.n_rows, hiddenLayerSize, poolSize, slabPenalty, radius);
-  RBM<GaussianInitialization, SpikeSlabRBMPolicy> modelssRBM(trainData, gaussian, ss_rbm,
-      1, 1, true, false);
+  SpikeSlabRBMPolicy ss_rbm(trainData.n_rows, hiddenLayerSize, poolSize,
+      slabPenalty, radius);
+  RBM<GaussianInitialization, SpikeSlabRBMPolicy> modelssRBM(trainData,
+      gaussian, ss_rbm, 1, 1, true, false);
 
   size_t numRBMIterations = trainData.n_cols * numEpoches;
   numRBMIterations /= batchSize;
 
   MiniBatchSGD msgd(batchSize, 0.06, numRBMIterations, 0, true);
   modelssRBM.Reset();
-  modelssRBM.Policy().VisiblePenalty().fill(5);
-  modelssRBM.Policy().SpikeBias().ones();
+  modelssRBM.Policy().VisiblePenalty().fill(0);
+  modelssRBM.Policy().SpikeBias().fill(15);
   modelssRBM.Train(trainData, msgd);
   for (size_t i = 0; i < trainData.n_cols; i++)
   {
@@ -272,64 +272,7 @@ BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
   double classificationAccuray1 = regressor1.ComputeAccuracy(YRbm, testLabels);
   std::cout << "ssRBM Accuracy = " <<classificationAccuray1 << std::endl;
 
-    BOOST_REQUIRE_GE(classificationAccuray1, classificationAccuray);
+  BOOST_REQUIRE_GE(classificationAccuray1, 70);
 }
-
-/*
->>>>>>> ssRBM1
-template<typename MatType = arma::mat>
-void BuildSSRbmNetwork(arma::mat& trainData,
-                       const size_t hiddenLayerSize)
-{
-  // Dummy Test to show that ssRBM is working
-  // Train function gets into chol() error
-  GaussianInitialization gaussian(0, 0.1);
-  double radius = 0;
-  double tempRadius = 0;
-  for (size_t i = 0; i < trainData.n_cols; i++)
-  {
-    tempRadius = arma::norm(trainData.col(i));
-    if (radius < tempRadius)
-      radius = tempRadius;
-  }
-  // slab bias k * n
-  arma::mat slabBias(3, hiddenLayerSize);
-  slabBias.fill(1.5);
-  SpikeSlabLayer<> spikeVisible(trainData.n_rows, hiddenLayerSize, 3, slabBias,
-      radius, 1);
-  SpikeSlabLayer<> spikeHidden(hiddenLayerSize, trainData.n_rows, 3, slabBias,
-      radius, 0);
-  ssRBM ss_rbm(spikeVisible, spikeHidden);
-  RBM<GaussianInitialization, ssRBM> modelssRBM(trainData, gaussian, ss_rbm,
-      2, true, true);
-  MiniBatchSGD msgd(10, 0.006, 2, 0, true);
-  modelssRBM.Reset();
-  modelssRBM.Policy().VisibleLayer().LambdaBias() = "10; 10; 10";
-  modelssRBM.Policy().VisibleLayer().SpikeBias().fill(-1);
-  arma::vec calcultedFreeEnergy(4);
-  calcultedFreeEnergy.zeros();
-  for (size_t i = 0; i < trainData.n_cols; i++)
-  {
-    calcultedFreeEnergy(i) = modelssRBM.FreeEnergy(std::move(trainData.col(i)));
-  }
-  std::cout << "Here" << std::endl;
-  modelssRBM.Policy().PositivePhase(arma::mat(trainData.col(0)));
-  modelssRBM.Policy().NegativePhase(arma::mat(trainData.col(0)));
-  // modelssRBM.Train(trainData, msgd);
-  BOOST_REQUIRE_EQUAL(modelssRBM.Policy().VisibleLayer().SlabBias().n_rows, 3);
-  BOOST_REQUIRE_EQUAL(modelssRBM.Policy().VisibleLayer().SlabBias().n_cols, 2);
-}
-
-BOOST_AUTO_TEST_CASE(ssRBMMiscTest)
-{
-  arma::mat X = arma::mat("0, 0, 0;"
-                          "0, 1, 1;"
-                          "1, 0, 1;"
-                          "1, 1, 1;");
-  X = X.t();
-  BuildSSRbmNetwork<>(X, 2);
-}
-*
-*/
 
 BOOST_AUTO_TEST_SUITE_END();

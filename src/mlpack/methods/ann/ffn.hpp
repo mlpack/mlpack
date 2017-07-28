@@ -176,7 +176,7 @@ class FFN
                 const size_t i,
                 arma::mat& gradient);
 
- /*
+  /*
    * Add a new module to the model.
    *
    * @param args The layer parameter.
@@ -203,12 +203,6 @@ class FFN
    * Reset the module infomration (weights/parameters).
    */
   void ResetParameters();
-
-  // Return the network
-  const std::vector<LayerTypes>& Network() const {return network;}
-  // Return the OuptutLayerType
-  const OutputLayerType OutputLayer() const { return outputLayer;}
-  OutputLayerType OutputLayer() {return outputLayer;}
 
   //! Serialize the model.
   template<typename Archive>
@@ -241,6 +235,14 @@ class FFN
 
  private:
   // Helper functions.
+  /**
+   * The Forward algorithm (part of the Forward-Backward algorithm).  Computes
+   * forward probabilities for each module.
+   *
+   * @param input Data sequence to compute probabilities for.
+   */
+  void Forward(arma::mat&& input);
+
   /**
    * Prepare the network for the given data.
    * This function won't actually trigger training process.

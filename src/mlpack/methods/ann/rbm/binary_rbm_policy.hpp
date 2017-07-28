@@ -53,12 +53,40 @@ class BinaryRBMPolicy
    */
   void NegativePhase(arma::mat&& negativeSamples, arma::mat&& gradient);
 
+  /**
+   * Visible mean function calcultes the forward pass for
+   * the visible layer.
+   *
+   * @param input hidden neurons
+   * @param output visible neuron activations
+   */
   void VisibleMean(arma::mat&& input, arma::mat&& output);
 
+  /**
+   * Hidden mean function calcultes the forward pass for
+   * the hidden layer.
+   *
+   * @param input visible neurons
+   * @param output hidden neuron activations
+   */
   void HiddenMean(arma::mat&& input, arma::mat&& output);
 
+  /**
+   * SampleVisible function samples the visible 
+   * layer using bernoulli function.
+   *
+   * @param input hidden neurons
+   * @param output sampled visible neurons
+   */
   void SampleVisible(arma::mat&& input, arma::mat&& output);
 
+  /**
+   * SampleHidden function samples the hidden 
+   * layer using bernoulli function.
+   *
+   * @param input visible neurons
+   * @param output sampled hidden neurons
+   */
   void SampleHidden(arma::mat&& input, arma::mat&& output);
 
   template<typename Archive>
@@ -68,34 +96,57 @@ class BinaryRBMPolicy
   const arma::mat& Parameters() const { return parameter; }
   //! Modify the initial point for the optimization.
   arma::mat& Parameters() { return parameter; }
-
+  //! Return the weights of the network
   const arma::mat& Weight() const { return weight; }
+  //! Modify the weight of the network
   arma::mat& Weight() { return weight; }
 
+  //! Return the visible bias of the network
   const arma::mat& VisibleBias() const { return visibleBias; }
+  //! Modify the visible bias of the network
   arma::mat& VisibleBias() { return visibleBias; }
 
+  //! Return the hidden bias of the network
   const arma::mat& HiddenBias() const { return hiddenBias; }
+  //! Modify the  hidden bias of the network
   arma::mat& HiddenBias() { return hiddenBias; }
 
+  //! Get the visible size
+  size_t const& VisibleSize() const { return visibleSize; }
+  //! Get the hidden size
+  size_t const& HiddenSize() const { return hiddenSize; }
+
  private:
+  /**
+   * VisiblePreAction function calculates the pre activation
+   * values given the hidden input units.
+   *
+   * @param input hidden unit neuron
+   * @param ouput visible unit pre-activation values
+   */
   void VisiblePreActivation(arma::mat&& input, arma::mat&& output);
+  /**
+   * HiddenPreActivation function calculates the pre activation
+   * values given the hidden input units.
+   *
+   * @param input visible unit neuron
+   * @param ouput hidden unit pre-activation values
+   */
   void HiddenPreActivation(arma::mat&& input, arma::mat&& output);
 
  private:
+  //! Locally stored number of visible neurons
   size_t visibleSize;
-
+  //! Locally stored number of hidden neurons
   size_t hiddenSize;
-
-  // Parameter weights of the network
+  //! Locally stored  Parameters of the network
   arma::mat parameter;
-
+  //! Locally stored weight of the network
   arma::mat weight;
-
+  //! Locally stored biases of the visible layer
   arma::mat visibleBias;
-
+  //! Locally stored biases of hidden layer
   arma::mat hiddenBias;
-
   //! Locally-stored output of the preActivation function used in FreeEnergy
   arma::mat preActivation;
   //! Locally-stored corrupInput used for Pseudo-Likelihood

@@ -10,7 +10,7 @@ namespace ann {
 inline SpikeSlabRBMPolicy::SpikeSlabRBMPolicy(const size_t visibleSize,
       const size_t hiddenSize,
       const size_t poolSize,
-      const arma::mat& slabPenalty, 
+      const double slabPenalty, 
       double radius):
       visibleSize(visibleSize),
       hiddenSize(hiddenSize),
@@ -21,8 +21,8 @@ inline SpikeSlabRBMPolicy::SpikeSlabRBMPolicy(const size_t visibleSize,
   parameter.set_size(visibleSize * hiddenSize * poolSize +
       visibleSize + hiddenSize);
 
-  assert(slabPenalty.n_rows == poolSize);
-  assert(slabPenalty.n_cols == hiddenSize);
+  assert(slabPenalty.n_rows == 1);
+  assert(slabPenalty.n_cols == 1);
 
   visibleMean.set_size(visibleSize, 1);
   spikeMean.set_size(hiddenSize, 1);
@@ -33,14 +33,20 @@ inline SpikeSlabRBMPolicy::SpikeSlabRBMPolicy(const size_t visibleSize,
 // Reset function
 inline void SpikeSlabRBMPolicy::Reset()
 {
+  // Weight shape D * K * N
   weight = arma::cube(parameter.memptr(), visibleSize, poolSize, hiddenSize,
       false, false);
 
+  // spike bias shape N * 1
   spikeBias = arma::mat(parameter.memptr() + weight.n_elem, hiddenSize, 1,
       false, false);
 
+  // visible penalty 1 * 1 => D * D(when used)
   visiblePenalty = arma::mat(parameter.memptr() + weight.n_elem +
-      spikeBias.n_elem, visibleSize, 1, false, false);
+      spikeBias.n_elem, 1, 1, false, false);
+
+  diagInvSlabPenalty = 1.0 / slabPenalty * arma::eye(poolSize, poolSize);
+  diagSlabPenalty = slabPenalty * arma::eye(poolSize, poolSize);
 }
 
 /**
@@ -58,14 +64,14 @@ inline double SpikeSlabRBMPolicy::FreeEnergy(arma::mat&& input)
   assert(input.n_rows == visibleSize);
   assert(input.n_cols == 1);
 
-  double freeEnergy = 0.5 * arma::as_scalar(input.t() *
-    arma::diagmat(visiblePenalty) * input);
+  scalarVisiblePenalty = visiblePenalty(0, 0);
 
-  for (size_t i = 0; i < hiddenSize; i++)
-  {
-    for (size_t k = 0; k < poolSize; k++)
-      freeEnergy -= 0.5 * std::log(2.0 * M_PI / slabPenalty(k, i));
-  }
+  double freeEnergy = 0.5 * arma::as_scalar(input.t() *
+      scalarVisiblePenalty * input);
+
+  assert(std::isfinite(std::log(2.0 * M_PI / slabPenalty)));
+  freeEnergy -= 0.5 * hiddenSize * poolSize *
+      std::log((2.0 * M_PI) / slabPenalty);
 
   for (size_t i = 0; i < hiddenSize; i++)
   {
@@ -75,10 +81,10 @@ inline double SpikeSlabRBMPolicy::FreeEnergy(arma::mat&& input)
     {
       sum += arma::as_scalar(input.t() * weight.slice(i).col(k)) *
           arma::as_scalar(input.t() * weight.slice(i).col(k)) /
-          (2.0 * slabPenalty(k, i));
+          (2.0 * slabPenalty);
     }
 
-    freeEnergy -= SoftplusFunction::Fn(spikeBias(i) + sum);
+    freeEnergy -= SoftplusFunction::Fn(spikeBias(i) - sum);
   }
 
   return freeEnergy;
@@ -101,6 +107,8 @@ inline double SpikeSlabRBMPolicy::Evaluate(arma::mat& /*predictors*/,
 inline void SpikeSlabRBMPolicy::PositivePhase(arma::mat&& input,
     arma::mat&& gradient)
 {
+  assert(input.n_rows == visibleSize);
+  assert(input.n_cols == 1);
   arma::cube weightGrad = arma::cube(gradient.memptr(), visibleSize, poolSize,
       hiddenSize, false, false);
 
@@ -108,7 +116,7 @@ inline void SpikeSlabRBMPolicy::PositivePhase(arma::mat&& input,
       hiddenSize, 1, false, false);
 
   arma::mat visiblePenaltyGrad = arma::mat(gradient.memptr() +
-      weightGrad.n_elem + spikeBiasGrad.n_elem, visibleSize, 1, false, false);
+      weightGrad.n_elem + spikeBiasGrad.n_elem, 1, 1, false, false);
 
   SpikeMean(std::move(input), std::move(spikeMean));
   SampleSpike(std::move(spikeMean), std::move(spikeSamples));
@@ -122,13 +130,14 @@ inline void SpikeSlabRBMPolicy::PositivePhase(arma::mat&& input,
   for (size_t i = 0; i < hiddenSize; i++)
     spikeBiasGrad(i) = spikeMean(i);
   // positive lambda bias
-  for (size_t i = 0 ; i < visibleSize; i++)
-    visiblePenaltyGrad(i) = -0.5 * input(i) * input(i);
+  visiblePenaltyGrad = -0.5 * input.t() * input;
 }
 
 inline void SpikeSlabRBMPolicy::NegativePhase(arma::mat&& negativeSamples,
     arma::mat&& gradient)
 {
+  assert(negativeSamples.n_rows == visibleSize);
+  assert(negativeSamples.n_cols == 1);
   arma::cube weightGrad = arma::cube(gradient.memptr(), visibleSize, poolSize,
       hiddenSize, false, false);
 
@@ -136,7 +145,7 @@ inline void SpikeSlabRBMPolicy::NegativePhase(arma::mat&& negativeSamples,
       hiddenSize, 1, false, false);
 
   arma::mat visiblePenaltyGrad = arma::mat(gradient.memptr() +
-      weightGrad.n_elem + spikeBiasGrad.n_elem, visibleSize, 1, false, false);
+      weightGrad.n_elem + spikeBiasGrad.n_elem, 1, 1, false, false);
 
   SpikeMean(std::move(negativeSamples), std::move(spikeMean));
   SampleSpike(std::move(spikeMean), std::move(spikeSamples));
@@ -151,8 +160,7 @@ inline void SpikeSlabRBMPolicy::NegativePhase(arma::mat&& negativeSamples,
   for (size_t i = 0; i < hiddenSize; i++)
     spikeBiasGrad(i) = spikeMean(i);
   // positive lambda bias
-  for (size_t i = 0 ; i < visibleSize; i++)
-    visiblePenaltyGrad(i) = -0.5 * negativeSamples(i) * negativeSamples(i);
+  visiblePenaltyGrad = -0.5 * negativeSamples.t() * negativeSamples;
 }
 
 inline void SpikeSlabRBMPolicy::SpikeMean(arma::mat&& visible,
@@ -167,7 +175,7 @@ inline void SpikeSlabRBMPolicy::SpikeMean(arma::mat&& visible,
   for (size_t i = 0; i < hiddenSize; i++)
   {
     spikeMean(i) = LogisticFunction::Fn(0.5 * arma::as_scalar(visible.t() *
-        weight.slice(i) * arma::diagmat(slabPenalty.col(i)).i() *
+        weight.slice(i) * diagInvSlabPenalty *
         weight.slice(i).t() * visible) + spikeBias(i));
   }
 }
@@ -200,13 +208,13 @@ inline void SpikeSlabRBMPolicy::SlabMean(arma::mat&& visible, arma::mat&& spike,
   assert(weight.n_rows == visibleSize);
   assert(weight.n_cols == poolSize);
 
-  assert(slabPenalty.n_rows == poolSize);
-  assert(slabPenalty.n_cols == hiddenSize);
+  assert(slabPenalty.n_rows == 1);
+  assert(slabPenalty.n_cols == 1);
 
   for (size_t i = 0; i < hiddenSize; i++)
   {
-    slabMean.col(i) = spike(i) * arma::diagmat(slabPenalty.col(i)).i() *
-        weight.slice(i).t() * visible;
+    slabMean.col(i) = arma::as_scalar(spike(i) * 
+        diagInvSlabPenalty * weight.slice(i).t() * visible);
   }
 }
 
@@ -220,15 +228,12 @@ inline void SpikeSlabRBMPolicy::SampleSlab(arma::mat&& slabMean,
   assert(slab.n_rows == poolSize);
   assert(slab.n_cols == hiddenSize);
 
-  assert(slabPenalty.n_rows == poolSize);
-  assert(slabPenalty.n_cols == hiddenSize);
-
   for (size_t i = 0; i < hiddenSize; i++)
   {
     for (size_t j = 0; j < poolSize; j++)
     {
       assert(slabPenalty(j, i) > 0);
-      slab(j, i) = math::RandNormal(slabMean(j, i), 1.0 / slabPenalty(j, i));
+      slab(j, i) = math::RandNormal(slabMean(j, i), 1.0 / slabPenalty);
     }
   }
 }
@@ -237,6 +242,7 @@ inline void SpikeSlabRBMPolicy::VisibleMean(arma::mat&& input,
     arma::mat&& output)
 {
   assert(input.n_elem == hiddenSize + poolSize * hiddenSize);
+  scalarVisiblePenalty = visiblePenalty(0, 0);
   output.set_size(visibleSize, 1);
   output.zeros();
 
@@ -247,7 +253,8 @@ inline void SpikeSlabRBMPolicy::VisibleMean(arma::mat&& input,
   for (size_t i = 0; i < hiddenSize; i++)
     output += weight.slice(i) * slab.col(i) * spike(i);
 
-  output = arma::diagmat(visiblePenalty).i() * output;
+  output = (1.0 / scalarVisiblePenalty * arma::eye(visibleSize, visibleSize)) *
+      output;
 }
 
 inline void SpikeSlabRBMPolicy::HiddenMean(arma::mat&& input,
@@ -267,9 +274,10 @@ inline void SpikeSlabRBMPolicy::HiddenMean(arma::mat&& input,
 
 
 inline void SpikeSlabRBMPolicy::SampleVisible(arma::mat&& input,
-    arma::mat&& output)
+    arma::mat&& output, size_t norm)
 {
   const size_t numMaxTrials = 10;
+  scalarVisiblePenalty = visiblePenalty(0,0);
 
   VisibleMean(std::move(input), std::move(visibleMean));
 
@@ -279,10 +287,10 @@ inline void SpikeSlabRBMPolicy::SampleVisible(arma::mat&& input,
   {
     for (size_t i = 0; i < visibleSize; i++)
     {
-      assert(visiblePenalty[i] > 0);
-      output(i) = math::RandNormal(visibleMean(i), 1.0 / visiblePenalty[i]);
+      assert(visiblePenalty > 0);
+      output(i) = math::RandNormal(visibleMean(i), 1.0 / scalarVisiblePenalty);
     }
-    if (arma::norm(output) < radius)
+    if (arma::norm(output, norm) < radius)
       break;
   }
 }
@@ -322,6 +330,7 @@ void SpikeSlabRBMPolicy::Serialize(Archive& ar,
     spikeMean.set_size(hiddenSize, 1);
     spikeSamples.set_size(hiddenSize, 1);
     slabMean.set_size(poolSize, hiddenSize);
+    Reset();
   }
 }
 

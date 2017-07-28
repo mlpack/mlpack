@@ -150,10 +150,6 @@ void BinaryRBMPolicy::Serialize(Archive& ar, const unsigned int /* version */)
 {
   ar & data::CreateNVP(visibleSize, "visibleSize");
   ar & data::CreateNVP(hiddenSize, "hiddenSize");
-  ar & data::CreateNVP(parameter, "parameter");
-  ar & data::CreateNVP(weight, "weight");
-  ar & data::CreateNVP(visibleBias, "visibleBias");
-  ar & data::CreateNVP(hiddenBias, "hiddenBias");
 }
 
 } // namespace ann

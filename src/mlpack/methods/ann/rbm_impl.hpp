@@ -52,6 +52,7 @@ void RBM<InitializationRuleType, RBMPolicy>::Reset()
 
   positiveGradient.set_size(weight, 1);
   negativeGradient.set_size(weight, 1);
+  negativeSamples.set_size(rbmPolicy.VisibleSize(), 1);
   tempNegativeGradient.set_size(weight, 1);
 
   parameter.set_size(weight, 1);
@@ -63,7 +64,6 @@ void RBM<InitializationRuleType, RBMPolicy>::Reset()
 
   rbmPolicy.Parameters() = arma::mat(parameter.memptr(), weight, 1, false,
       false);
-
   rbmPolicy.Reset();
   reset = true;
 }
@@ -98,7 +98,9 @@ double RBM<InitializationRuleType, RBMPolicy>::Evaluate(
 {
   if (!useMonitoringCost)
   {
-    Gibbs(std::move(predictors.col(i)), std::move(negativeSamples));
+    // negative samples used here are from previous iteration
+    if (negativeSamples.is_empty())
+      Gibbs(std::move(predictors.col(i)), std::move(negativeSamples));
     return (FreeEnergy(std::move(predictors.col(i))) -
         FreeEnergy(std::move(negativeSamples)));
   }
@@ -165,6 +167,7 @@ template<typename InitializationRuleType, typename RBMPolicy>
 void RBM<InitializationRuleType, RBMPolicy>::
     Gradient(arma::mat& /*parameters*/, const size_t input, arma::mat& output)
 {
+  positiveGradient.zeros();
   // Collect the negative samples
   rbmPolicy.PositivePhase(std::move(predictors.col(input)),
       std::move(positiveGradient));
@@ -190,21 +193,29 @@ void RBM<InitializationRuleType, RBMPolicy>::
 {
   ar & data::CreateNVP(parameter, "parameter");
   ar & data::CreateNVP(rbmPolicy, "rbmPolicy");
-  ar & data::CreateNVP(predictors, "predictors");
   ar & data::CreateNVP(state, "state");
   ar & data::CreateNVP(numFunctions, "numFunctions");
   ar & data::CreateNVP(numSteps, "numSteps");
   ar & data::CreateNVP(mSteps, "mSteps");
   ar & data::CreateNVP(useMonitoringCost, "useMonitoringCost");
   ar & data::CreateNVP(persistence, "persistence");
-  ar & data::CreateNVP(reset, "reset");
-  ar & data::CreateNVP(rbmPolicy, "rbmPolicy");
   ar & data::CreateNVP(rbmPolicy, "rbmPolicy");
 
   // If we are loading, we need to initialize the weights.
   if (Archive::is_loading::value)
   {
-    Reset();
+  size_t weight = rbmPolicy.Parameters().n_elem;
+  positiveGradient.set_size(weight, 1);
+  negativeGradient.set_size(weight, 1);
+  negativeSamples.set_size(rbmPolicy.VisibleSize(), 1);
+  tempNegativeGradient.set_size(weight, 1);
+  positiveGradient.zeros();
+  negativeGradient.zeros();
+  tempNegativeGradient.zeros();
+  rbmPolicy.Parameters() = arma::mat(parameter.memptr(), weight, 1, false,
+      false);
+  rbmPolicy.Reset();
+  reset = true;
   }
 }
 
