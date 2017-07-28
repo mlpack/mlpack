@@ -14,6 +14,13 @@
 
 #include <mlpack/prereqs.hpp>
 
+#include "../visitor/delta_visitor.hpp"
+#include "../visitor/output_parameter_visitor.hpp"
+
+#include "layer_types.hpp"
+
+#include "memory_head.hpp"
+
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -40,7 +47,10 @@ class ReadMemory
    * @param memSize Memory size in each memory block.
    * @param shiftSize Circular convolutional shift size used.
    */
-  ReadMemory();
+  ReadMemory(const size_t inSize,
+             const size_t numMem,
+             const size_t memSize,
+             const size_t shiftSize);
 
   /**
    * Feed forward pass of a neural network, evaluating the function
@@ -147,6 +157,34 @@ class ReadMemory
         std::move(gy), std::move(g), std::move(dM));
   }
 
+  /*
+   * Calculate the gradient using the output delta and the input activation.
+   *
+   * @param input The input parameter used for calculating the gradient.
+   * @param error The calculated error.
+   * @param gradient The calculated gradient.
+   */
+  template<typename eT>
+  void Gradient(arma::Mat<eT>&& input,
+                arma::Mat<eT>&& /* error */,
+                arma::Mat<eT>&& /* gradient */);
+
+  /*
+   * Resets the cell to accept a new input.
+   * This breaks the BPTT chain starts a new one.
+   */
+  void ResetCell();
+
+  //! The value of the deterministic parameter.
+  bool Deterministic() const { return deterministic; }
+  //! Modify the value of the deterministic parameter.
+  bool& Deterministic() { return deterministic; }
+
+  //! Get the parameters.
+  OutputDataType const& Parameters() const { return weights; }
+  //! Modify the parameters.
+  OutputDataType& Parameters() { return weights; }
+
   //! Get the input parameter.
   InputDataType const& InputParameter() const { return inputParameter; }
   //! Modify the input parameter.
@@ -162,6 +200,14 @@ class ReadMemory
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
+  //! Get the gradient.
+  OutputDataType const& Gradient() const { return gradient; }
+  //! Modify the gradient.
+  OutputDataType& Gradient() { return gradient; }
+
+  //! Get the model modules.
+  std::vector<LayerTypes>& Model() { return network; }
+
   /**
    * Serialize the layer
    */
@@ -169,8 +215,38 @@ class ReadMemory
   void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
+  size_t inSize;
+
+  size_t numMem;
+
+  size_t memSize;
+
+  size_t shiftSize;
+
+  LayerTypes readHead;
+
+  arma::mat dReadHead;
+
+  //! Locally-stored weight object.
+  OutputDataType weights;
+
+  //! Locally-stored output parameter visitor.
+  OutputParameterVisitor outputParameterVisitor;
+
+  //! Locally-stored delta visitor.
+  DeltaVisitor deltaVisitor;
+
   //! Locally-stored delta object.
   OutputDataType delta;
+
+  //! Locally-stored list of network modules.
+  std::vector<LayerTypes> network;
+
+  //! If true dropout and scaling is disabled, see notes above.
+  bool deterministic;
+
+  //! Locally-stored gradient object.
+  OutputDataType gradient;
 
   //! Locally-stored input parameter object.
   InputDataType inputParameter;

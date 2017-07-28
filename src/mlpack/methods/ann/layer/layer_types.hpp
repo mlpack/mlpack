@@ -34,7 +34,6 @@
 #include <mlpack/methods/ann/layer/parametric_relu.hpp>
 #include <mlpack/methods/ann/layer/reinforce_normal.hpp>
 #include <mlpack/methods/ann/layer/select.hpp>
-#include <mlpack/methods/ann/layer/read_memory.hpp>
 
 // Convolution modules.
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
@@ -58,6 +57,7 @@ template<typename InputDataType, typename OutputDataType> class VRClassReward;
 template<typename InputDataType, typename OutputDataType> class MemoryHead;
 template<typename InputDataType, typename OutputDataType> class MemoryTest;
 template<typename InputDataType, typename OutputDataType> class WriteMemory;
+template<typename InputDataType, typename OutputDataType> class ReadMemory;
 template<typename InputDataType, typename OutputDataType>
     class NeuralTuringMachine;
 

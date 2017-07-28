@@ -17,13 +17,27 @@
 
 #include <algorithm>
 
+#include "../visitor/reset_cell_visitor.hpp"
+#include "../visitor/forward_with_memory_visitor.hpp"
+#include "../visitor/backward_with_memory_visitor.hpp"
+#include "../visitor/gradient_visitor.hpp"
+
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template <typename InputDataType, typename OutputDataType>
-ReadMemory<InputDataType, OutputDataType>::ReadMemory()
+ReadMemory<InputDataType, OutputDataType>::ReadMemory(const size_t inSize,
+                                                      const size_t numMem,
+                                                      const size_t memSize,
+                                                      const size_t shiftSize) :
+  inSize(inSize),
+  numMem(numMem),
+  memSize(memSize),
+  shiftSize(shiftSize)
 {
-  // Nothing to do.
+  readHead = new MemoryHead<>(inSize, numMem, memSize, shiftSize);
+
+  network.push_back(readHead);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -31,22 +45,60 @@ template<typename eT>
 void ReadMemory<InputDataType, OutputDataType>::ForwardWithMemory(
     arma::Mat<eT>&& input, const arma::Mat<eT>&& memory, arma::Mat<eT>&& output)
 {
-  output = arma::trans(memory) * input;
+  // Forward pass through read head.
+  boost::apply_visitor(ForwardWithMemoryVisitor(std::move(input),
+      std::move(memory),
+      std::move(boost::apply_visitor(outputParameterVisitor, readHead))),
+      readHead);
+  const arma::mat& readWeights = boost::apply_visitor(outputParameterVisitor,
+      readHead);
+
+  output = arma::trans(memory) * readWeights;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void ReadMemory<InputDataType, OutputDataType>::BackwardWithMemory(
   const arma::Mat<eT>&& /* output */,
-  const arma::Mat<eT>&& input,
+  const arma::Mat<eT>&& /* input */,
   const arma::Mat<eT>&& memory,
   arma::Mat<eT>&& gy, arma::Mat<eT>&& g, arma::Mat<eT>&& gM)
 {
-  // Delta of the read.
-  g = memory * gy;
+  // Delta of the read weights.
+  dReadHead = memory * gy;
 
-  // Delta of memory.
-  gM = input * arma::trans(gy);
+  // Backward pass through readHead.
+  boost::apply_visitor(BackwardWithMemoryVisitor(std::move(boost::apply_visitor(
+        outputParameterVisitor, readHead)), std::move(memory), std::move(dReadHead),
+        std::move(boost::apply_visitor(deltaVisitor, readHead)), std::move(gM)),
+        readHead);
+
+  g = boost::apply_visitor(deltaVisitor, readHead);
+
+  // Delta of memory from read operation.
+  gM += boost::apply_visitor(outputParameterVisitor,
+      readHead) * arma::trans(gy);
+}
+
+template<typename InputDataType, typename OutputDataType>
+template<typename eT>
+void ReadMemory<InputDataType, OutputDataType>::Gradient(
+    arma::Mat<eT>&& input,
+    arma::Mat<eT>&& /* error */,
+    arma::Mat<eT>&& /* gradient */)
+{
+  boost::apply_visitor(GradientVisitor(std::move(input),
+          std::move(dReadHead)),
+          readHead);
+}
+
+template<typename InputDataType, typename OutputDataType>
+void ReadMemory<InputDataType, OutputDataType>::ResetCell()
+{
+  for(auto layer : network)
+  {
+    boost::apply_visitor(ResetCellVisitor(), layer);
+  }
 }
 
 template<typename InputDataType, typename OutputDataType>

@@ -31,5 +31,6 @@
 #include "concat.hpp"
 #include "vr_class_reward.hpp"
 #include "write_memory.hpp"
+#include "read_memory.hpp"
 
 #endif
