@@ -15,10 +15,19 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
+#include <mlpack/core/optimizers/parallel_sgd/parallel_sgd.hpp>
+#include <mlpack/core/optimizers/parallel_sgd/decay_policies/exponential_backoff.hpp>
 
 namespace mlpack {
 namespace svd {
 
+/**
+ * The data is stored in a matrix of type MatType, so that this class can be
+ * used with both dense and sparse matrix types.
+ *
+ * @tparam MatType The matrix type of the dataset.
+ */
+template <typename MatType = arma::mat>
 class RegularizedSVDFunction
 {
  public:
@@ -31,7 +40,7 @@ class RegularizedSVDFunction
    * @param rank Rank used for matrix factorization.
    * @param lambda Regularization parameter used for optimization.
    */
-  RegularizedSVDFunction(const arma::mat& data,
+  RegularizedSVDFunction(const MatType& data,
                          const size_t rank,
                          const double lambda);
 
@@ -62,6 +71,22 @@ class RegularizedSVDFunction
   void Gradient(const arma::mat& parameters,
                 arma::mat& gradient) const;
 
+  /**
+   * Evaluates the gradient of the cost function over one training example.
+   * This function is useful for optimizers like SGD. The type of the gradient
+   * parameter is a template argument to allow the computation of a sparse
+   * gradient.
+   *
+   * @tparam GradType The type of the gradient out-param.
+   * @param parameters Parameters(user/item matrices) of the decomposition.
+   * @param id The index of the training example.
+   * @param gradient Calculated gradient for the parameters.
+   */
+  template <typename GradType>
+  void Gradient(const arma::mat& parameters,
+                size_t id,
+                GradType& gradient) const;
+
   //! Return the initial point for the optimization.
   const arma::mat& GetInitialPoint() const { return initialPoint; }
 
@@ -85,7 +110,7 @@ class RegularizedSVDFunction
 
  private:
   //! Rating data.
-  const arma::mat& data;
+  const MatType& data;
   //! Initial parameter point.
   arma::mat initialPoint;
   //! Rank used for matrix factorization.
@@ -105,17 +130,26 @@ namespace mlpack {
 namespace optimization {
 
   /**
-   * Template specialization for SGD optimizer. Used because the gradient
-   * affects only a small number of parameters per example, and thus the normal
-   * abstraction does not work as fast as we might like it to.
+   * Template specialization for the SGD and parallel SGD optimizer. Used
+   * because the gradient affects only a small number of parameters per example,
+   * and thus the normal abstraction does not work as fast as we might like it
+   * to.
    */
-  template<>
-  template<>
-  double StandardSGD::Optimize(
-      mlpack::svd::RegularizedSVDFunction& function,
+  template <>
+  template <>
+  inline double StandardSGD::Optimize(
+      mlpack::svd::RegularizedSVDFunction<arma::mat>& function,
+      arma::mat& parameters);
+
+  template <>
+  template <>
+  inline double ParallelSGD<ExponentialBackoff>::Optimize(
+      mlpack::svd::RegularizedSVDFunction<arma::mat>& function,
       arma::mat& parameters);
 
 } // namespace optimization
 } // namespace mlpack
+
+#include "regularized_svd_function_impl.hpp"
 
 #endif
