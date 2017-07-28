@@ -3,6 +3,7 @@
 set(SOURCES
   accuracy.hpp
   accuracy_impl.hpp
+  facilities.hpp
   mse.hpp
   mse_impl.hpp
 )
