@@ -89,42 +89,50 @@ void AsyncLearning<
   omp_lock_t tasksLock;
   omp_init_lock(&tasksLock);
 
-  #pragma omp parallel shared(stop, workers, tasks, learningNetwork, \
+  /**
+   * Compute the number of threads for the for-loop. In general, we should use
+   * OpenMP task rather than for-loop, here we do so to be compatible with some
+   * compiler.
+   */
+  size_t numThreads = 0;
+  #pragma omp parallel reduction(+:numThreads)
+  numThreads++;
+  Log::Debug << numThreads << " threads will be used in total." << std::endl;
+
+  #pragma omp parallel for shared(stop, workers, tasks, learningNetwork, \
       targetNetwork, totalSteps, policy)
+  for (omp_size_t i = 0; i < numThreads; ++i)
   {
-    #pragma omp task
+    #pragma omp critical
     {
-      #pragma omp critical
-      {
-        Log::Debug << "Thread " << omp_get_thread_num() <<
-            " started." << std::endl;
-      }
-      while (!stop)
-      {
-        // Assign task to current thread from queue.
-        omp_set_lock(&tasksLock);
-        if (tasks.empty()) {
-          omp_unset_lock(&tasksLock);
-          continue;
-        }
-        int task = tasks.front();
-        tasks.pop();
+      Log::Debug << "Thread " << omp_get_thread_num() <<
+          " started." << std::endl;
+    }
+    while (!stop)
+    {
+      // Assign task to current thread from queue.
+      omp_set_lock(&tasksLock);
+      if (tasks.empty()) {
         omp_unset_lock(&tasksLock);
-
-        // Get corresponding worker.
-        WorkerType& worker = workers[task];
-        double episodeReturn;
-        if (worker.Step(learningNetwork, targetNetwork, totalSteps,
-            policy, episodeReturn) && !task)
-        {
-          stop = measure(episodeReturn);
-        }
-
-        // Put task back to queue.
-        omp_set_lock(&tasksLock);
-        tasks.push(task);
-        omp_unset_lock(&tasksLock);
+        continue;
       }
+      int task = tasks.front();
+      tasks.pop();
+      omp_unset_lock(&tasksLock);
+
+      // Get corresponding worker.
+      WorkerType& worker = workers[task];
+      double episodeReturn;
+      if (worker.Step(learningNetwork, targetNetwork, totalSteps,
+          policy, episodeReturn) && !task)
+      {
+        stop = measure(episodeReturn);
+      }
+
+      // Put task back to queue.
+      omp_set_lock(&tasksLock);
+      tasks.push(task);
+      omp_unset_lock(&tasksLock);
     }
   }
 
