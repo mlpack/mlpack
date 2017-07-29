@@ -76,7 +76,6 @@ class MemoryTest
    */
   template<typename eT>
   void Backward(const arma::Mat<eT>&& /* output */,
-                const arma::Mat<eT>&& input,
                 arma::Mat<eT>&& gy,
                 arma::Mat<eT>&& g);
 

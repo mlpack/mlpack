@@ -19,31 +19,12 @@
 namespace mlpack {
 namespace ann {
 
-//! BackwardWithMemoryVisitor visitor class.
-inline BackwardWithMemoryTestVisitor::BackwardWithMemoryTestVisitor(arma::mat&& output,
-                                                            const arma::mat&&
-                                                              input,
-                                                            arma::mat&& memory,
-                                                            arma::mat&& error,
-                                                            arma::mat&& delta,
-                                                            arma::mat&& dM) :
-    output(std::move(output)),
-    input(std::move(input)),
-    memory(std::move(memory)),
-    error(std::move(error)),
-    delta(std::move(delta)),
-    dM(dM)
-{
-  /* Nothing to do here. */
-}
-
 inline BackwardWithMemoryTestVisitor::BackwardWithMemoryTestVisitor(arma::mat&& output,
                                                             arma::mat&& memory,
                                                             arma::mat&& error,
                                                             arma::mat&& delta,
                                                             arma::mat&& dM) :
     output(std::move(output)),
-    input(std::move(dummyInput)),
     memory(std::move(memory)),
     error(std::move(error)),
     delta(std::move(delta)),
@@ -61,22 +42,21 @@ inline void BackwardWithMemoryTestVisitor::operator()(LayerType* layer) const
 template<typename T>
 inline typename std::enable_if<
     HasBackwardWithMemoryTestCheck<T, void(T::*)(const arma::mat&&,
-    const arma::mat&&, const arma::mat&&, arma::mat&&, arma::mat&&,
+    const arma::mat&&, arma::mat&&, arma::mat&&,
     arma::mat&&)>::value, void>::type
 BackwardWithMemoryTestVisitor::BackwardWithMemoryTest(T* layer) const
 {
   layer->BackwardWithMemoryTest(std::move(output),
-                            std::move(input),
-                            std::move(memory),
-                            std::move(error),
-                            std::move(delta),
-                            std::move(dM));
+                                std::move(memory),
+                                std::move(error),
+                                std::move(delta),
+                                std::move(dM));
 }
 
 template<typename T>
 inline typename std::enable_if<
     !HasBackwardWithMemoryTestCheck<T, void(T::*)(const arma::mat&&,
-    const arma::mat&&, const arma::mat&&, arma::mat&&, arma::mat&&,
+    const arma::mat&&, arma::mat&&, arma::mat&&,
     arma::mat&&)>::value, void>::type
 BackwardWithMemoryTestVisitor::BackwardWithMemoryTest(T* /* layer */) const
 {

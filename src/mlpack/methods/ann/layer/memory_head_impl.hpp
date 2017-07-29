@@ -162,7 +162,6 @@ template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void MemoryHead<InputDataType, OutputDataType>::BackwardWithMemory(
   const arma::Mat<eT>&& /* output */,
-  const arma::Mat<eT>&& /* input */,
   const arma::Mat<eT>&& memory,
   arma::Mat<eT>&& gy,
   arma::Mat<eT>&& g,

@@ -24,23 +24,12 @@ namespace mlpack {
 namespace ann {
 
 /**
- * BackwardWithMemoryVisitor executes the BackwardWithMemory() function given the
- * input, memory and output parameter.
+ * BackwardWithMemoryVisitor executes the BackwardWithMemory() function given
+ * the input, memory and output parameter.
  */
 class BackwardWithMemoryVisitor : public boost::static_visitor<void>
 {
  public:
-  /**
-   * Execute the BackwardWithMemory() function given the input, current memory
-   * and output parameter.
-   */
-  BackwardWithMemoryVisitor(arma::mat&& output,
-                            const arma::mat&& input,
-                            const arma::mat&& memory,
-                            arma::mat&& error,
-                            arma::mat&& delta,
-                            arma::mat&& dM);
-
   /**
    * Execute the BackwardWithMemory() function given the input, current memory
    * and output parameter.
@@ -61,7 +50,7 @@ class BackwardWithMemoryVisitor : public boost::static_visitor<void>
   template<typename T>
   typename std::enable_if<
       HasBackwardWithMemoryCheck<T, void(T::*)(const arma::mat&&,
-      const arma::mat&&, const arma::mat&&, arma::mat&&, arma::mat&&,
+      const arma::mat&&, arma::mat&&, arma::mat&&,
       arma::mat&&)>::value, void>::type
   BackwardWithMemory(T* layer) const;
 
@@ -70,17 +59,12 @@ class BackwardWithMemoryVisitor : public boost::static_visitor<void>
   template<typename T>
   typename std::enable_if<
       !HasBackwardWithMemoryCheck<T, void(T::*)(const arma::mat&&,
-      const arma::mat&&, const arma::mat&&, arma::mat&&, arma::mat&&,
+      const arma::mat&&, arma::mat&&, arma::mat&&,
       arma::mat&&)>::value, void>::type
   BackwardWithMemory(T* layer) const;
 
-  arma::mat dummyInput;
-
   //! The output parameter set.
   arma::mat&& output;
-
-  //! The input parameter set.
-  const arma::mat&& input;
 
   //! Content of memory.
   const arma::mat&& memory;
