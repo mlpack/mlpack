@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_MEMORY_UNIT_HPP
-#define MLPACK_METHODS_ANN_LAYER_MEMORY_UNIT_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_NTM_HPP
+#define MLPACK_METHODS_ANN_LAYER_NTM_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -27,6 +27,8 @@
 #include "sequential.hpp"
 
 #include "memory_head.hpp"
+#include "read_memory.hpp"
+#include "write_memory.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -158,16 +160,9 @@ class NeuralTuringMachine
 
   size_t shiftSize;
 
-  LayerTypes readHead;
+  LayerTypes readMem;
 
-  LayerTypes writeHead;
-
-  LayerTypes controllerToLinear;
-  arma::mat controllerToLinearError;
-
-  LayerTypes eraseGate;
-
-  LayerTypes addGate;
+  LayerTypes writeMem;
 
   LayerTypes temp;
   LayerTypes temp2;
