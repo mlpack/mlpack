@@ -30,6 +30,7 @@ add_executable(mlpack_test
   feedforward_network_test.cpp
   frankwolfe_test.cpp
   gmm_test.cpp
+  gradient_clipping_test.cpp
   gradient_descent_test.cpp
   hmm_test.cpp
   hoeffding_tree_test.cpp
