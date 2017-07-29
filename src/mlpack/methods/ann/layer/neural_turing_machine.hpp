@@ -168,6 +168,7 @@ class NeuralTuringMachine
   LayerTypes temp2;
 
   arma::mat dMem;
+  arma::mat dMemPrev;
 
   std::list<arma::mat> memoryHistory;
   std::list<arma::mat>::iterator bMemoryHistory;
