@@ -19,23 +19,9 @@ namespace mlpack {
 namespace ann {
 
 //! BackwardVisitor visitor class.
-inline BackwardVisitor::BackwardVisitor(arma::mat&& output,
+inline BackwardVisitor::BackwardVisitor(arma::mat&& input,
                                         arma::mat&& error,
                                         arma::mat&& delta) :
-  output(std::move(output)),
-  input(std::move(dummyInput)),
-  error(std::move(error)),
-  delta(std::move(delta))
-{
-  /* Nothing to do here. */
-}
-
-//! BackwardVisitor visitor class.
-inline BackwardVisitor::BackwardVisitor(arma::mat&& output,
-                                        arma::mat&& input,
-                                        arma::mat&& error,
-                                        arma::mat&& delta) :
-  output(std::move(output)),
   input(std::move(input)),
   error(std::move(error)),
   delta(std::move(delta))
@@ -46,30 +32,7 @@ inline BackwardVisitor::BackwardVisitor(arma::mat&& output,
 template<typename LayerType>
 inline void BackwardVisitor::operator()(LayerType* layer) const
 {
-  Backward(layer);
-}
-
-template<typename T>
-inline typename std::enable_if<
-    HasBackwardCheck<T, void(T::*)(const arma::mat&&,
-    const arma::mat&&, arma::mat&&, arma::mat&&)>::value,
-    void>::type
-BackwardVisitor::Backward(T* layer) const
-{
-  layer->Backward(std::move(output),
-                  std::move(input),
-                  std::move(error),
-                  std::move(delta));
-}
-
-template<typename T>
-inline typename std::enable_if<
-    !HasBackwardCheck<T, void(T::*)(const arma::mat&&,
-    const arma::mat&&, arma::mat&&, arma::mat&&)>::value,
-    void>::type
-BackwardVisitor::Backward(T* layer) const
-{
-  layer->Backward(std::move(output), std::move(error), std::move(delta));
+  layer->Backward(std::move(input), std::move(error), std::move(delta));
 }
 
 } // namespace ann
