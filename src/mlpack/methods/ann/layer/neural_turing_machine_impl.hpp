@@ -1,9 +1,8 @@
 /**
- * @file memory_unit_impl.hpp
+ * @file neural_turing_machine_impl.hpp
  * @author Sumedh Ghaisas
  *
- * Implementation of the LSTM class, which implements a lstm network
- * layer.
+ * Implementation of NeuralTuringMachine layer.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -62,14 +61,6 @@ NeuralTuringMachine<InputDataType, OutputDataType>::NeuralTuringMachine(
 
   backwardStep = 0;
   gradientStep = 0;
-
-  //dMem = arma::zeros(numMem, memSize);
-
-  // controller network
-  // TODO: Create API for user to build the controller.
-  //LayerTypes temp = new Linear<>(inSize + memSize, outSize);
-  //network.push_back(temp);
-  //controller.push_back(temp);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -88,9 +79,9 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Forward(
   for (size_t i = 1; i < controller.size(); ++i)
   {
     boost::apply_visitor(ForwardVisitor(
-        std::move(boost::apply_visitor(outputParameterVisitor, controller[i - 1])),
-        std::move(boost::apply_visitor(outputParameterVisitor, controller[i]))),
-        controller[i]);
+        std::move(boost::apply_visitor(outputParameterVisitor,
+        controller[i - 1])), std::move(boost::apply_visitor(
+        outputParameterVisitor, controller[i]))), controller[i]);
   }
 
   // Get controller output.
@@ -112,7 +103,8 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Forward(
       std::move(cMemory),
       std::move(boost::apply_visitor(outputParameterVisitor, writeMem))),
       writeMem);
-  memoryHistory.push_back(boost::apply_visitor(outputParameterVisitor, writeMem));
+  memoryHistory.push_back(boost::apply_visitor(outputParameterVisitor,
+      writeMem));
 
   output = controllerOutput;
 }
@@ -132,36 +124,41 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Backward(
   else
   {
     // Set the error for last read.
-    dRead = boost::apply_visitor(deltaVisitor, controller.front()).submat(inSize, 0, inSize + memSize - 1, 0);
+    dRead = boost::apply_visitor(deltaVisitor, controller.front())
+        .submat(inSize, 0, inSize + memSize - 1, 0);
 
     if(backwardStep > 1)
     {
       dMemPrev = std::move(dMem);
 
       // Backward pass through read operation.
-      boost::apply_visitor(BackwardWithMemoryVisitor(std::move(boost::apply_visitor(
-          outputParameterVisitor, readMem)), std::move(*bMemoryHistory), std::move(dRead),
-          std::move(boost::apply_visitor(deltaVisitor, readMem)), std::move(dMem)),
-          readMem);
+      boost::apply_visitor(BackwardWithMemoryVisitor(std::move(
+          boost::apply_visitor(outputParameterVisitor, readMem)),
+          std::move(*bMemoryHistory), std::move(dRead),
+          std::move(boost::apply_visitor(deltaVisitor, readMem)),
+          std::move(dMem)), readMem);
 
       // Backward pass through write operation.
       arma::mat dMemTemp;
-      boost::apply_visitor(BackwardWithMemoryVisitor(std::move(boost::apply_visitor(
-          outputParameterVisitor, writeMem)), std::move(*bMemoryHistory), std::move(dMemPrev),
-          std::move(boost::apply_visitor(deltaVisitor, writeMem)), std::move(dMemTemp)),
-          writeMem);
+      boost::apply_visitor(BackwardWithMemoryVisitor(std::move(
+          boost::apply_visitor(outputParameterVisitor, writeMem)),
+          std::move(*bMemoryHistory), std::move(dMemPrev),
+          std::move(boost::apply_visitor(deltaVisitor, writeMem)),
+          std::move(dMemTemp)), writeMem);
 
       dMem += dMemTemp;
 
-      prevError = gy + boost::apply_visitor(deltaVisitor, readMem) + boost::apply_visitor(deltaVisitor, writeMem);
+      prevError = gy + boost::apply_visitor(deltaVisitor, readMem) +
+          boost::apply_visitor(deltaVisitor, writeMem);
     }
     else
     {
       // Backward pass through read operation.
-      boost::apply_visitor(BackwardWithMemoryVisitor(std::move(boost::apply_visitor(
-          outputParameterVisitor, readMem)), std::move(*bMemoryHistory), std::move(dRead),
-          std::move(boost::apply_visitor(deltaVisitor, readMem)), std::move(dMem)),
-          readMem);
+      boost::apply_visitor(BackwardWithMemoryVisitor(std::move(
+          boost::apply_visitor(outputParameterVisitor, readMem)),
+          std::move(*bMemoryHistory), std::move(dRead),
+          std::move(boost::apply_visitor(deltaVisitor, readMem)),
+          std::move(dMem)), readMem);
 
       prevError = gy + boost::apply_visitor(deltaVisitor, readMem);
     }
@@ -183,7 +180,8 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Backward(
   }
 
   // Return the delta of the input
-  g = boost::apply_visitor(deltaVisitor, controller.front()).submat(0, 0, inSize - 1, 0);
+  g = boost::apply_visitor(deltaVisitor, controller.front()).submat(0, 0,
+      inSize - 1, 0);
 
   bMemoryHistory--;
   backwardStep++;
@@ -231,8 +229,8 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Gradient(
         controller[i]);
   }
 
-  boost::apply_visitor(GradientVisitor(std::move(arma::join_vert(input, *gReads)),
-      std::move(boost::apply_visitor(deltaVisitor, controller[1]))),
+  boost::apply_visitor(GradientVisitor(std::move(arma::join_vert(input,
+      *gReads)), std::move(boost::apply_visitor(deltaVisitor, controller[1]))),
       controller.front());
 
   gReads--;

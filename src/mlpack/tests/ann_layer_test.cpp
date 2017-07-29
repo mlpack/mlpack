@@ -867,7 +867,7 @@ BOOST_AUTO_TEST_CASE(GradientMemoryHeadTest)
 }
 
 /**
- * Check if the gradients computed by MemoryHead cell are close enough to the
+ * Check if the gradients computed by ReadMemory cell are close enough to the
  * approximation of the gradients.
  */
 BOOST_AUTO_TEST_CASE(GradientReadMemoryTest)
@@ -911,7 +911,7 @@ BOOST_AUTO_TEST_CASE(GradientReadMemoryTest)
 }
 
 /**
- * Check if the gradients computed by MemoryHead cell are close enough to the
+ * Check if the gradients computed by WriteMemory cell are close enough to the
  * approximation of the gradients.
  */
 BOOST_AUTO_TEST_CASE(GradientWriteMemoryTest)
@@ -955,7 +955,7 @@ BOOST_AUTO_TEST_CASE(GradientWriteMemoryTest)
 }
 
 /**
- * Check if the gradients computed by MemoryHead cell are close enough to the
+ * Check if the gradients computed by NTM cell are close enough to the
  * approximation of the gradients.
  */
 BOOST_AUTO_TEST_CASE(GradientNTMTest)
@@ -1092,20 +1092,6 @@ BOOST_AUTO_TEST_CASE(ForwardMemoryHeadTest)
 
   BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::trans(
       arma::normalise(cosSimilarity)) * arma::normalise(weights)), 1, 1e-2);
-}
-
-/**
- * NeuralTuringMachine manual forward test.
- */
-BOOST_AUTO_TEST_CASE(ForwardNeuralTuringMachineTest)
-{
-  arma::mat memory = arma::ones(5, 5);
-  arma::mat input = arma::ones(5, 1);
-
-  NeuralTuringMachine<> ntm(5, 5, 3, 5, 5);
-
-  NetworkInitialization<ConstInitialization> networkInit(ConstInitialization(1));
-  networkInit.Initialize(ntm.Model(), ntm.Parameters());
 }
 
 /**

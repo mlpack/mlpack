@@ -28,7 +28,9 @@ namespace ann /** Artificial Neural Network. */ {
 /**
  * An implementation of a MemoryTest layer.
  *
- * This layer is used in testing layers which handle memory.
+ * This layer is used in testing layers which handle memory. The layer a fake
+ * memory with linear layer and checks if the layer to be tested returns correct
+ * gradient with respect to memory.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -47,7 +49,9 @@ class MemoryTest
    *
    * @param inSize The number of input units.
    * @param outSize The number of output units.
-   * @param rho Maximum number of steps to backpropagate through time (BPTT).
+   * @param numMem Number of memory location.
+   * @param memSize Memory size of each location.
+   * @param testLayer Object of the layer to be tested by this layer.
    */
   MemoryTest(const size_t inSize,
              const size_t outSize,

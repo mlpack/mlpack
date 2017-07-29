@@ -1,9 +1,10 @@
 /**
- * @file memory_unit.hpp
+ * @file neural_turing_machine.hpp
  * @author Sumedh Ghaisas
  *
- * Definition of the LSTM class, which implements a lstm network
- * layer.
+ * Definition of the Neural Turing Machine class.
+ *
+ * //TODO add reference
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -34,7 +35,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * An implementation of a lstm network layer.
+ * An implementation of Neural Turing Machine Layer.
  *
  * This class allows specification of the type of the activation functions used
  * for the gates and cells and also of the type of the function used to
@@ -53,11 +54,14 @@ class NeuralTuringMachine
 {
  public:
   /**
-   * Create the LSTM layer object using the specified parameters.
+   * Create the Neural Turing Machine layer object using the specified
+   * parameters.
    *
    * @param inSize The number of input units.
    * @param outSize The number of output units.
-   * @param rho Maximum number of steps to backpropagate through time (BPTT).
+   * @param numMem Number of memory locations to use.
+   * @param memSize Size of each memory location.
+   * @param shiftSize Circular shift rotation size.
    */
   NeuralTuringMachine(const size_t inSize,
                       const size_t outSize,
@@ -153,36 +157,51 @@ class NeuralTuringMachine
   //! Locally-stored number of output units.
   size_t outSize;
 
+  //! Number of memory locations.
   size_t numMem;
 
-  //! Number of steps to backpropagate through time (BPTT).
+  //! Size of memory locations.
   size_t memSize;
 
+  //! Circular shift rotation size.
   size_t shiftSize;
 
+  //! Memory read layer.
   LayerTypes readMem;
 
+  //! Memory write layer.
   LayerTypes writeMem;
 
+  //! Temporary controller.
   LayerTypes temp;
   LayerTypes temp2;
 
+  //! Locally stored memory content error.
   arma::mat dMem;
+
+  //! Locally stored previous memory content error.
   arma::mat dMemPrev;
 
+  //! Storing all the memory contents for backward pass.
   std::list<arma::mat> memoryHistory;
+
+  //! Backward pass iterator to stored memory content.
   std::list<arma::mat>::iterator bMemoryHistory;
 
+  //! Storing all the memory reads for backward pass.
   std::list<arma::mat> lReads;
+
+  //! Backward pass iterator to stored memory reads.
   std::list<arma::mat>::iterator gReads;
 
+  //! Locally stored memory read error.
   arma::mat dRead;
 
+  //! Locally stored memory write error.
   arma::mat dWriteHead;
 
+  //! controller network
   std::vector<LayerTypes> controller;
-
-  arma::mat prevWeightDelta;
 
   //! Locally-stored weight object.
   OutputDataType weights;
@@ -195,9 +214,6 @@ class NeuralTuringMachine
 
   //! Locally-stored list of network modules.
   std::vector<LayerTypes> network;
-
-  //! Locally-stored number of forward steps.
-  size_t forwardStep;
 
   //! Locally-stored number of backward steps.
   size_t backwardStep;

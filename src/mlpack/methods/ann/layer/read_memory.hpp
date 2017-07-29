@@ -1,8 +1,8 @@
 /**
- * @file memory_unit.hpp
+ * @file read_memory.hpp
  * @author Sumedh Ghaisas
  *
- * Definition of Memory Head used Neural Turing Machine
+ * Definition of Read Memory layer used in Neural Turing Machine.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -25,7 +25,9 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * An implementation of a memory head used in NTM.
+ * An implementation of a Read Memory used in NTM.
+ * The layer takes the controller output as input and computes the read memory
+ * content.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -40,10 +42,10 @@ class ReadMemory
 {
  public:
   /**
-   * Create the Memory Head layer object using the specified parameters.
+   * Create the Read Memory layer object using the specified parameters.
    *
    * @param inSize The number of input units.
-   * @param outSize Size of the output weight vector.
+   * @param numMem Number of memory locations.
    * @param memSize Memory size in each memory block.
    * @param shiftSize Circular convolutional shift size used.
    */
@@ -69,6 +71,8 @@ class ReadMemory
    * Feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward given the current memory content.
    *
+   * This function is used in testing the layer with MemoryTest layer.
+   *
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    * @param memory Current memory content.
@@ -87,8 +91,7 @@ class ReadMemory
    * Feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward.
    *
-   * Function used for testing the class. Creates fixed memory to be used in
-   * forward propagation.
+   * This function is used in testing the layer without MemoryTest layer.
    *
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
@@ -97,7 +100,7 @@ class ReadMemory
   template<typename eT>
   void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output)
   {
-    arma::mat memory = arma::ones<arma::mat>(3, 5);
+    arma::mat memory = arma::ones<arma::mat>(numMem, memSize);
     ForwardWithMemory(std::move(input), std::move(memory), std::move(output));
   }
 
@@ -123,6 +126,8 @@ class ReadMemory
    * f(x) by propagating x backwards trough f. Using the results from the feed
    * forward pass.
    *
+   * This function is used in testing the layer with MemoryTest layer.
+   *
    * @param input The propagated input activation.
    * @param memory The current memory content.
    * @param gy The backpropagated error.
@@ -142,13 +147,24 @@ class ReadMemory
                        std::move(gM));
   }
 
+  /**
+   * Ordinary feed backward pass of a neural network, calculating the function
+   * f(x) by propagating x backwards trough f. Using the results from the feed
+   * forward pass.
+   *
+   * This function is used in testing the layer without MemoryTest layer.
+   *
+   * @param input The propagated input activation.
+   * @param gy The backpropagated error.
+   * @param g The calculated gradient.
+   */
   template<typename eT>
   void Backward(const arma::Mat<eT>&& output,
                 arma::Mat<eT>&& gy,
                 arma::Mat<eT>&& g)
   {
     arma::mat dM;
-    arma::mat memory = arma::ones<arma::mat>(3, 5);
+    arma::mat memory = arma::ones<arma::mat>(numMem, memSize);
     BackwardWithMemory(std::move(output), std::move(memory),
         std::move(gy), std::move(g), std::move(dM));
   }
@@ -211,16 +227,22 @@ class ReadMemory
   void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
+  //! Locally-stored number of input units.
   size_t inSize;
 
+  //! Number of memory locations.
   size_t numMem;
 
+  //! Memory size in each memory block.
   size_t memSize;
 
+  //! Shifting size used in circular convolution.
   size_t shiftSize;
 
+  //! Read head to create reading weights.
   LayerTypes readHead;
 
+  //! Locally stored error of last operation by read head.
   arma::mat dReadHead;
 
   //! Locally-stored weight object.
@@ -249,7 +271,7 @@ class ReadMemory
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-}; // class LSTM
+}; // class ReadMemory
 
 } // namespace ann
 } // namespace mlpack

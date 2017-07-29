@@ -1,8 +1,8 @@
 /**
- * @file memory_unit_impl.hpp
+ * @file memory_read_impl.hpp
  * @author Sumedh Ghaisas
  *
- * Implementation of memory head layer, used in Neural Turing Machine.
+ * Implementation of Read Memory layer, used in Neural Turing Machine.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -68,9 +68,9 @@ void ReadMemory<InputDataType, OutputDataType>::BackwardWithMemory(
 
   // Backward pass through readHead.
   boost::apply_visitor(BackwardWithMemoryVisitor(std::move(boost::apply_visitor(
-        outputParameterVisitor, readHead)), std::move(memory), std::move(dReadHead),
-        std::move(boost::apply_visitor(deltaVisitor, readHead)), std::move(gM)),
-        readHead);
+        outputParameterVisitor, readHead)), std::move(memory),
+        std::move(dReadHead), std::move(boost::apply_visitor(deltaVisitor,
+        readHead)), std::move(gM)), readHead);
 
   g = boost::apply_visitor(deltaVisitor, readHead);
 

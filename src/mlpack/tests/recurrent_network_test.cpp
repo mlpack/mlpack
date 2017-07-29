@@ -615,9 +615,9 @@ void ReberGrammarTestNTMNetwork(bool embedded = false)
 
     RNN<MeanSquaredError<> > model(5);
 
-    model.Add<Linear<> >(inputSize, 3);
-    model.Add<NeuralTuringMachine<> >(3, 3, 3, 5, 1);
-    model.Add<Linear<> >(3, outputSize);
+    model.Add<Linear<> >(inputSize, 1);
+    model.Add<NeuralTuringMachine<> >(1, 1, 3, 5, 1);
+    model.Add<Linear<> >(1, outputSize);
     model.Add<SigmoidLayer<> >();
 
     StandardSGD opt(0.1, 2, -50000);

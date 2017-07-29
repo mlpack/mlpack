@@ -1,9 +1,8 @@
 /**
- * @file backward_with_memory_visitor_impl.hpp
+ * @file backward_with_memory_test_visitor_impl.hpp
  * @author Sumedh Ghaisas
  *
- * Implementation of the BackwardWithMemory() function(which accepts memory)
- * layer abstraction.
+ * Implementation of the BackwardWithTestMemoryVisitor.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -19,11 +18,12 @@
 namespace mlpack {
 namespace ann {
 
-inline BackwardWithMemoryTestVisitor::BackwardWithMemoryTestVisitor(arma::mat&& output,
-                                                            arma::mat&& memory,
-                                                            arma::mat&& error,
-                                                            arma::mat&& delta,
-                                                            arma::mat&& dM) :
+inline BackwardWithMemoryTestVisitor::BackwardWithMemoryTestVisitor(
+  arma::mat&& output,
+  arma::mat&& memory,
+  arma::mat&& error,
+  arma::mat&& delta,
+  arma::mat&& dM) :
     output(std::move(output)),
     memory(std::move(memory)),
     error(std::move(error)),

@@ -2,7 +2,7 @@
  * @file memory_unit.hpp
  * @author Sumedh Ghaisas
  *
- * Definition of Memory Head used Neural Turing Machine
+ * Definition of Memory Head layer used in Neural Turing Machine.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -72,6 +72,8 @@ class MemoryHead
    * Feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward given the current memory content.
    *
+   * This function is used in testing the layer with MemoryTest layer.
+   *
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    * @param memory Current memory content.
@@ -90,8 +92,7 @@ class MemoryHead
    * Feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward.
    *
-   * Function used for testing the class. Creates fixed memory to be used in
-   * forward propagation.
+   * Function used for testing the class without MemoryTest layer.
    *
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
@@ -115,7 +116,7 @@ class MemoryHead
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void BackwardWithMemory(const arma::Mat<eT>&& /* output */,
+  void BackwardWithMemory(const arma::Mat<eT>&& /* input */,
                           const arma::Mat<eT>&& memory,
                           arma::Mat<eT>&& gy,
                           arma::Mat<eT>&& g,
@@ -126,25 +127,39 @@ class MemoryHead
    * f(x) by propagating x backwards trough f. Using the results from the feed
    * forward pass.
    *
+   * This function is used in testing the layer with MemoryTest layer.
+   *
    * @param input The propagated input activation.
    * @param memory The current memory content.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void BackwardWithMemoryTest(const arma::Mat<eT>&& output,
+  void BackwardWithMemoryTest(const arma::Mat<eT>&& input,
                               const arma::Mat<eT>&& memory,
                               arma::Mat<eT>&& gy,
                               arma::Mat<eT>&& g,
                               arma::Mat<eT>&& gM)
   {
-    BackwardWithMemory(std::move(output),
+    BackwardWithMemory(std::move(input),
                        std::move(memory),
                        std::move(gy),
                        std::move(g),
                        std::move(gM));
   }
 
+  /**
+   * Ordinary feed backward pass of a neural network, calculating the function
+   * f(x) by propagating x backwards trough f. Using the results from the feed
+   * forward pass.
+   *
+   * This function is used in testing the layer without MemoryTest layer.
+   *
+   * @param input The propagated input activation.
+   * @param memory The current memory content.
+   * @param gy The backpropagated error.
+   * @param g The calculated gradient.
+   */
   template<typename eT>
   void Backward(const arma::Mat<eT>&& output,
                 arma::Mat<eT>&& gy,
@@ -229,7 +244,7 @@ class MemoryHead
   //! Store the previous output weights.
   std::list<arma::mat> prevWeights;
 
-  //! Iterator to previous output weights ,used by backward.
+  //! Iterator to previous output weights, used by backward.
   std::list<arma::mat>::iterator weightsBackwardIterator;
 
   //! Store the delta received at the linear input layer.
@@ -345,7 +360,7 @@ class MemoryHead
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-}; // class LSTM
+}; // class MemoryHead
 
 } // namespace ann
 } // namespace mlpack

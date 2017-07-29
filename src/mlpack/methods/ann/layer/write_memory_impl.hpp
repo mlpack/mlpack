@@ -1,8 +1,8 @@
 /**
- * @file memory_unit_impl.hpp
+ * @file write_memory_impl.hpp
  * @author Sumedh Ghaisas
  *
- * Implementation of memory head layer, used in Neural Turing Machine.
+ * Implementation of Write Memory layer, used in Neural Turing Machine.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -26,14 +26,15 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template <typename InputDataType, typename OutputDataType>
-WriteMemory<InputDataType, OutputDataType>::WriteMemory(const size_t inSize,
-                                                        const size_t numMem,
-                                                        const size_t memSize,
-                                                        const size_t shiftSize) :
-  inSize(inSize),
-  numMem(numMem),
-  memSize(memSize),
-  shiftSize(shiftSize)
+WriteMemory<InputDataType, OutputDataType>::WriteMemory(
+  const size_t inSize,
+  const size_t numMem,
+  const size_t memSize,
+  const size_t shiftSize) :
+    inSize(inSize),
+    numMem(numMem),
+    memSize(memSize),
+    shiftSize(shiftSize)
 {
   inputToLinear = new Linear<>(inSize, 2 * memSize);
 
@@ -61,19 +62,22 @@ void WriteMemory<InputDataType, OutputDataType>::ForwardWithMemory(
       boost::apply_visitor(outputParameterVisitor, inputToLinear))),
       inputToLinear);
 
-  arma::mat& lOutput = boost::apply_visitor(outputParameterVisitor, inputToLinear);
+  arma::mat& lOutput = boost::apply_visitor(outputParameterVisitor,
+      inputToLinear);
 
   // Generate AddVec
-  boost::apply_visitor(ForwardVisitor(std::move(lOutput.submat(0, 0, memSize - 1, 0)), std::move(
-      boost::apply_visitor(outputParameterVisitor, addGate))),
+  boost::apply_visitor(ForwardVisitor(std::move(lOutput.submat(0, 0,
+      memSize - 1, 0)), std::move(boost::apply_visitor(outputParameterVisitor,
+      addGate))), addGate);
+  const arma::mat& addVec = boost::apply_visitor(outputParameterVisitor,
       addGate);
-  const arma::mat& addVec = boost::apply_visitor(outputParameterVisitor, addGate);
 
   // Generate EraseVec
-  boost::apply_visitor(ForwardVisitor(std::move(lOutput.submat(memSize, 0, 2 * memSize - 1, 0)), std::move(
-      boost::apply_visitor(outputParameterVisitor, eraseGate))),
+  boost::apply_visitor(ForwardVisitor(std::move(lOutput.submat(memSize, 0,
+      2 * memSize - 1, 0)), std::move(boost::apply_visitor(
+      outputParameterVisitor, eraseGate))), eraseGate);
+  const arma::mat& eraseVec = boost::apply_visitor(outputParameterVisitor,
       eraseGate);
-  const arma::mat& eraseVec = boost::apply_visitor(outputParameterVisitor, eraseGate);
 
   // Generate write weights
   boost::apply_visitor(ForwardWithMemoryVisitor(std::move(input),
@@ -82,11 +86,6 @@ void WriteMemory<InputDataType, OutputDataType>::ForwardWithMemory(
       writeHead);
   const arma::mat& writeWeights = boost::apply_visitor(outputParameterVisitor,
       writeHead);
-
-  if(writeWeights.n_rows != memory.n_rows)
-  {
-    std::cout << "Incorrect Size" << std::endl;
-  }
 
   output = memory;
 
@@ -109,18 +108,20 @@ void WriteMemory<InputDataType, OutputDataType>::BackwardWithMemory(
   const arma::Mat<eT>&& memory,
   arma::Mat<eT>&& gy, arma::Mat<eT>&& g, arma::Mat<eT>&& gM)
 {
-  const arma::mat& writeWeights = boost::apply_visitor(outputParameterVisitor, writeHead);
+  const arma::mat& writeWeights = boost::apply_visitor(outputParameterVisitor,
+      writeHead);
 
   // Backward through AddGate
-  arma::mat dGate = arma::trans(gy) * boost::apply_visitor(outputParameterVisitor,
-      writeHead);
+  arma::mat dGate = arma::trans(gy) * boost::apply_visitor(
+      outputParameterVisitor, writeHead);
 
   boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
       outputParameterVisitor, addGate)), std::move(dGate),
       std::move(boost::apply_visitor(deltaVisitor, addGate))),
       addGate);
 
-  prevError.submat(0, 0, memSize - 1, 0) = boost::apply_visitor(deltaVisitor, addGate);
+  prevError.submat(0, 0, memSize - 1, 0) = boost::apply_visitor(deltaVisitor,
+      addGate);
 
   // Backward through EraseGate
   dGate = -(arma::trans(gy % memory) * writeWeights);
@@ -130,7 +131,8 @@ void WriteMemory<InputDataType, OutputDataType>::BackwardWithMemory(
       std::move(boost::apply_visitor(deltaVisitor, eraseGate))),
       eraseGate);
 
-  prevError.submat(memSize, 0, 2 * memSize - 1, 0) = boost::apply_visitor(deltaVisitor, eraseGate);
+  prevError.submat(memSize, 0, 2 * memSize - 1, 0) = boost::apply_visitor(
+      deltaVisitor, eraseGate);
 
   // Backward through linear layer.
   boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
@@ -138,23 +140,26 @@ void WriteMemory<InputDataType, OutputDataType>::BackwardWithMemory(
       std::move(boost::apply_visitor(deltaVisitor, inputToLinear))),
       inputToLinear);
 
-  const arma::mat& addVec = boost::apply_visitor(outputParameterVisitor, addGate);
-  const arma::mat& eraseVec = boost::apply_visitor(outputParameterVisitor, eraseGate);
+  const arma::mat& addVec = boost::apply_visitor(outputParameterVisitor,
+      addGate);
+  const arma::mat& eraseVec = boost::apply_visitor(outputParameterVisitor,
+      eraseGate);
 
   // Error of writeHead.
   size_t rowIndex = 0;
   gy.each_row([&] (arma::rowvec& v)
   {
-    dWriteHead(rowIndex, 0) = arma::as_scalar(v * addVec - ((memory.row(rowIndex) % v) * eraseVec));
+    dWriteHead(rowIndex, 0) = arma::as_scalar(v * addVec -
+        ((memory.row(rowIndex) % v) * eraseVec));
 
     rowIndex++;
   });
 
   // Backward through writeHead
   boost::apply_visitor(BackwardWithMemoryVisitor(std::move(boost::apply_visitor(
-        outputParameterVisitor, writeHead)), std::move(memory), std::move(dWriteHead),
-        std::move(boost::apply_visitor(deltaVisitor, writeHead)), std::move(gM)),
-        writeHead);
+        outputParameterVisitor, writeHead)), std::move(memory),
+        std::move(dWriteHead), std::move(boost::apply_visitor(deltaVisitor,
+        writeHead)), std::move(gM)), writeHead);
 
   // Memory gradient from operations.
   rowIndex = 0;

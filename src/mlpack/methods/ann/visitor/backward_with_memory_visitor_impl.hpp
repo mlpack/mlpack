@@ -2,7 +2,7 @@
  * @file backward_with_memory_visitor_impl.hpp
  * @author Sumedh Ghaisas
  *
- * Implementation of the BackwardWithMemoryVisitor layer abstraction.
+ * Implementation of the BackwardWithMemoryVisitor.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the

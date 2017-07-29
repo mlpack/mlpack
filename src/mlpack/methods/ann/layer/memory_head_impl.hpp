@@ -2,7 +2,7 @@
  * @file memory_unit_impl.hpp
  * @author Sumedh Ghaisas
  *
- * Implementation of memory head layer, used in Neural Turing Machine.
+ * Implementation of Memory Head layer, used in Neural Turing Machine.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the

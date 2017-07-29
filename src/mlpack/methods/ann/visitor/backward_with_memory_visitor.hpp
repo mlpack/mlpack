@@ -2,10 +2,8 @@
  * @file backward_with_memory_visitor.hpp
  * @author Sumedh Ghaisas
  *
- * This file provides an abstraction for the BackwardWithMemory() function which
- * also accepts the current memory conten for different layers and automatically
- * directs any parameter to the right layer type. This visitor is useful the
- * networks which deals with external memory content.
+ * This file provides an abstraction for the BackwardWithMemory() function.
+ * The function is used in layers which requires 'memory' as input.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -25,7 +23,7 @@ namespace ann {
 
 /**
  * BackwardWithMemoryVisitor executes the BackwardWithMemory() function given
- * the input, memory and output parameter.
+ * the input, memory and output parameter (if the function exists).
  */
 class BackwardWithMemoryVisitor : public boost::static_visitor<void>
 {
