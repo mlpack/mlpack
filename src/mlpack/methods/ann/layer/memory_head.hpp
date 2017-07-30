@@ -241,6 +241,9 @@ class MemoryHead
   //! Shifting size used in circular convolution.
   size_t shiftSize;
 
+  //! All zeros vector for initialization.
+  arma::mat allZeros;
+
   //! Store the previous output weights.
   std::list<arma::mat> prevWeights;
 
@@ -332,7 +335,7 @@ class MemoryHead
   SoftplusFunction bTNonLinear;
 
   //! Locally-stored hidden state module.
-  SoftplusFunction gTNonLinear;
+  LogisticFunction gTNonLinear;
 
   //! Locally-stored forget gate module.
   SoftplusFunction gammaTNonLinear;
