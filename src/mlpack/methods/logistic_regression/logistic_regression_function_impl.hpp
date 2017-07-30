@@ -99,6 +99,40 @@ double LogisticRegressionFunction<MatType>::Evaluate(
 }
 
 /**
+ * Evaluate the logistic regression objective function given the estimated
+ * parameters for a given batch from a given point.
+ */
+template<typename MatType>
+  double Evaluate(const arma::mat& parameters,
+                  const size_t begin,
+                  const size_t batchSize) const
+{
+  // Calculating the regularization term.
+  const double regularization = 0.5 * lambda *
+    arma::dot(parameters.col(0).subvec(begin, batchSize - 1),
+              parameters.col(0).subvec(begin, batchSize - 1));
+
+  // Calculating the hypothesis that has to be passed to the sigmoid function.
+  const arma::vec exponents = parameters(0, 0) + predictors.t() *
+    parameters.col(0).subvec(begin, batchSize - 1);
+  //Calculating the sigmoid function values.
+  const arma::vec sigmoid = 1.0 / (1.0 + arma::exp(-exponents));
+
+  // Iterating for the given batch size from a given point
+  double result = 0.0;
+  for (size_t i = begin; i < batchSize; ++i)
+  {
+    if (responses[i] == 1)
+      result += log(sigmoid[i]);
+    else
+      result += log(1.0 - sigmoid[i]);
+  }
+
+  // Invert the result, because it's a minimization.
+  return -result + regularization;
+}
+
+/**
  * Evaluate the logistic regression objective function, but with only one point.
  * This is useful for optimizers that use a separable objective function, such
  * as SGD.
@@ -144,19 +178,40 @@ void LogisticRegressionFunction<MatType>::Gradient(
       sigmoids).t() + regularization;
 }
 
+//! Evaluate the gradient of the logistic regression objective function for a given batch size.
+template<typename MatType>
+void Gradient(const arma::mat& parameters,
+                const size_t begin,
+                const size_t batchSize,
+                arma::mat& gradient) const
+{
+  // Regularization term.
+  arma::mat regularization;
+  regularization = lambda * parameters.col(0).subvec(begin, batchSize - 1);
+
+  const arma::rowvec sigmoids = (1 / (1 + arma::exp(-parameters(0, 0)
+      - parameters.col(0).subvec(begin, batchSize - 1).t() * predictors)));
+
+  gradient.set_size(batchSize);
+  gradient[0] = -arma::accu(responses - sigmoids);
+  gradient.col(0).subvec(begin, batchSize - 1) = -predictors * (responses -
+      sigmoids).t() + regularization;  
+}
+
 /**
  * Evaluate the individual gradients of the logistic regression objective
  * function with respect to individual points.  This is useful for optimizers
  * that use a separable objective function, such as SGD.
  */
-template<typename MatType>
+template <typename MatType>
+template <typename GradType>
 void LogisticRegressionFunction<MatType>::Gradient(
     const arma::mat& parameters,
     const size_t i,
-    arma::mat& gradient) const
+    GradType& gradient) const
 {
   // Calculate the regularization term.
-  arma::mat regularization;
+  GradType regularization;
   regularization = lambda * parameters.col(0).subvec(1, parameters.n_elem - 1)
       / predictors.n_cols;
 
