@@ -181,12 +181,6 @@ class ReadMemory
                 arma::Mat<eT>&& /* error */,
                 arma::Mat<eT>&& /* gradient */);
 
-  /*
-   * Resets the cell to accept a new input.
-   * This breaks the BPTT chain starts a new one.
-   */
-  void ResetCell();
-
   //! The value of the deterministic parameter.
   bool Deterministic() const { return deterministic; }
   //! Modify the value of the deterministic parameter.

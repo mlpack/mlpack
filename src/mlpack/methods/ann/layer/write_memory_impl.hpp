@@ -193,15 +193,6 @@ void WriteMemory<InputDataType, OutputDataType>::Gradient(
 }
 
 template<typename InputDataType, typename OutputDataType>
-void WriteMemory<InputDataType, OutputDataType>::ResetCell()
-{
-  for (auto layer : network)
-  {
-    boost::apply_visitor(ResetCellVisitor(), layer);
-  }
-}
-
-template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void WriteMemory<InputDataType, OutputDataType>::Serialize(
     Archive& /* ar */, const unsigned int /* version */)

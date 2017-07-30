@@ -92,15 +92,6 @@ void ReadMemory<InputDataType, OutputDataType>::Gradient(
 }
 
 template<typename InputDataType, typename OutputDataType>
-void ReadMemory<InputDataType, OutputDataType>::ResetCell()
-{
-  for (auto layer : network)
-  {
-    boost::apply_visitor(ResetCellVisitor(), layer);
-  }
-}
-
-template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void ReadMemory<InputDataType, OutputDataType>::Serialize(
     Archive& /* ar */, const unsigned int /* version */)

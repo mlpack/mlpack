@@ -2,7 +2,7 @@
  * @file reset_cell_visitor.hpp
  * @author Sumedh Ghaisas
  *
- * Boost static visitor abstraction for calling ResetCell function on RNN cells. 
+ * Boost static visitor abstraction for calling ResetCell function on RNN cells.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -31,7 +31,7 @@ class ResetCellVisitor : public boost::static_visitor<void>
   void operator()(LayerType* layer) const;
 
  private:
-  //! Execute the ResetCell() function for a module which implements 
+  //! Execute the ResetCell() function for a module which implements
   //! the ResetCell() function.
   template<typename T>
   typename std::enable_if<
@@ -44,6 +44,20 @@ class ResetCellVisitor : public boost::static_visitor<void>
   typename std::enable_if<
       !HasResetCellCheck<T, void(T::*)()>::value, void>::type
   ResetCell(T* layer) const;
+
+  //! Execute the ResetCell() function for a layer model which implements
+  //! the Model() function.
+  template<typename T>
+  typename std::enable_if<
+      HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
+  ResetCellModel(T* layer) const;
+
+  //! Execute the ResetCell() function for a layer model which implements
+  //! the Model() function.
+  template<typename T>
+  typename std::enable_if<
+      !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
+  ResetCellModel(T* layer) const;
 };
 
 } // namespace ann
