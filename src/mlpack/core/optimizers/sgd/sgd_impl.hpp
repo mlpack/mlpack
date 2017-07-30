@@ -110,18 +110,6 @@ double SGD<UpdatePolicyType>::Optimize(
     else
       function.Gradient(iterate, currentFunction, gradient);
 
-    // Clip the gradient.
-    if (clipGradient)
-    {
-      gradient.transform
-      (
-        [&](double val)
-        {
-          return std::min(std::max(val, minGradient), maxGradient);
-        }
-      );
-    }
-
     // Use the update policy to take a step.
     updatePolicy.Update(iterate, stepSize, gradient);
 
