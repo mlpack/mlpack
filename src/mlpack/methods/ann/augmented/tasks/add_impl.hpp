@@ -43,9 +43,15 @@ const void AddTask::Generate(arma::field<arma::mat>& input,
   {
     if (!fixedLength)
     {
+      std::vector<double> weights(bitLen - 1);
+      // We have two binary numbers with exactly two digits (10 and 11).
+      weights[0] = 2;
+      // Increasing length by 1 double the number of valid numbers.
+      for (size_t i = 1; i < bitLen - 1; ++i)
+        weights[i] = 2 * weights[i - 1];
       // Generate random uniform length from [2..maxLength].
-      sizeA = mlpack::math::RandInt(2, bitLen + 1);
-      sizeB = mlpack::math::RandInt(2, bitLen + 1);
+      sizeA = 2 + mlpack::math::RandInt(weights);
+      sizeB = 2 + mlpack::math::RandInt(weights);
     }
     // Construct sequence of the form
     // (binary number with sizeA bits) + '+'
