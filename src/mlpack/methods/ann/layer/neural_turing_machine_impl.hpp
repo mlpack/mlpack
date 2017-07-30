@@ -114,7 +114,7 @@ template<typename eT>
 void NeuralTuringMachine<InputDataType, OutputDataType>::Backward(
   const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
-  if(bMemoryHistory == memoryHistory.end())
+  if (bMemoryHistory == memoryHistory.end())
   {
     bMemoryHistory = --(--(memoryHistory.end()));
     backwardStep = 0;
@@ -127,7 +127,7 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Backward(
     dRead = boost::apply_visitor(deltaVisitor, controller.front())
         .submat(inSize, 0, inSize + memSize - 1, 0);
 
-    if(backwardStep > 1)
+    if (backwardStep > 1)
     {
       dMemPrev = std::move(dMem);
 
@@ -170,7 +170,7 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Backward(
       std::move(boost::apply_visitor(deltaVisitor, controller.back()))),
       controller.back());
 
-  for(int i = controller.size() - 2;i >= 0;i--)
+  for (int i = controller.size() - 2; i >= 0; i--)
   {
     boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
         outputParameterVisitor, controller[i])),
@@ -194,7 +194,7 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Gradient(
     arma::Mat<eT>&& /* error */,
     arma::Mat<eT>&& /* gradient */)
 {
-  if(gReads == lReads.end())
+  if (gReads == lReads.end())
   {
     gReads = --(--lReads.end());
 
@@ -221,7 +221,7 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Gradient(
       outputParameterVisitor, controller[controller.size() - 2])),
       std::move(prevError)), controller.back());
 
-  for(size_t i = controller.size() - 2;i > 0;i--)
+  for (size_t i = controller.size() - 2; i > 0; i--)
   {
     boost::apply_visitor(GradientVisitor(std::move(boost::apply_visitor(
         outputParameterVisitor, controller[i - 1])),
@@ -257,7 +257,6 @@ template<typename Archive>
 void NeuralTuringMachine<InputDataType, OutputDataType>::Serialize(
     Archive& ar, const unsigned int /* version */)
 {
-
 }
 
 } // namespace ann

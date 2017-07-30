@@ -94,7 +94,7 @@ void ReadMemory<InputDataType, OutputDataType>::Gradient(
 template<typename InputDataType, typename OutputDataType>
 void ReadMemory<InputDataType, OutputDataType>::ResetCell()
 {
-  for(auto layer : network)
+  for (auto layer : network)
   {
     boost::apply_visitor(ResetCellVisitor(), layer);
   }

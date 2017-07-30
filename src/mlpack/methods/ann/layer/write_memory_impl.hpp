@@ -195,7 +195,7 @@ void WriteMemory<InputDataType, OutputDataType>::Gradient(
 template<typename InputDataType, typename OutputDataType>
 void WriteMemory<InputDataType, OutputDataType>::ResetCell()
 {
-  for(auto layer : network)
+  for (auto layer : network)
   {
     boost::apply_visitor(ResetCellVisitor(), layer);
   }

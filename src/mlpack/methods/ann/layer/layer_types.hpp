@@ -59,7 +59,7 @@ template<typename InputDataType, typename OutputDataType> class MemoryTest;
 template<typename InputDataType, typename OutputDataType> class WriteMemory;
 template<typename InputDataType, typename OutputDataType> class ReadMemory;
 template<typename InputDataType, typename OutputDataType>
-    class NeuralTuringMachine;
+class NeuralTuringMachine;
 
 template<
     typename OutputLayerType,

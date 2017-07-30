@@ -126,7 +126,7 @@ void MemoryHead<InputDataType, OutputDataType>::ForwardWithMemory(
   // Perform circular convolution with sT
   arma::mat shiftVec = arma::shift(arma::flipud(sT), 1, 1);
   size_t numRep = memSize / (2 * shiftSize + 1);
-  if(numRep > 1)
+  if (numRep > 1)
   {
     shiftVec = arma::repmat(shiftVec, numRep, 1);
   }
@@ -172,7 +172,7 @@ void MemoryHead<InputDataType, OutputDataType>::BackwardWithMemory(
 
   arma::vec dWDash(outSize, 1, arma::fill::none);
 
-  if(weightsBackwardIterator == prevWeights.end())
+  if (weightsBackwardIterator == prevWeights.end())
   {
     bWdash = (--lWDash.end());
     bGammaT = (--lGammaT.end());
@@ -232,7 +232,7 @@ void MemoryHead<InputDataType, OutputDataType>::BackwardWithMemory(
 
   arma::vec dWTilde = (gammaT + 1) * (dWDash % arma::pow(wTilde, gammaT));
 
-  // delta of gammaT
+  // delta of gammaT.
   prevError(outSize + 2 + 2 * shiftSize + 1, 0) = gammaTNonLinear.Deriv(
     boost::apply_visitor(outputParameterVisitor, inputLinear)
     (memSize + 2 + 2 * shiftSize + 1, 0)) *
@@ -244,7 +244,7 @@ void MemoryHead<InputDataType, OutputDataType>::BackwardWithMemory(
 
   size_t rowIndex = 2 * shiftSize + 1;
 
-  while(rowIndex < shiftMatrix.n_rows)
+  while (rowIndex < shiftMatrix.n_rows)
   {
     const arma::mat& toAdd = dShiftMatrix.submat(rowIndex, 0,
       std::min(rowIndex + 2 * shiftSize, (size_t)shiftMatrix.n_rows - 1),
@@ -258,7 +258,7 @@ void MemoryHead<InputDataType, OutputDataType>::BackwardWithMemory(
 
   size_t colIndex = 2 * shiftSize + 1;
 
-  while(colIndex < shiftMatrix.n_cols)
+  while (colIndex < shiftMatrix.n_cols)
   {
     const arma::mat& toAdd = dShiftMatrix.submat(0, colIndex, 2 * shiftSize,
       std::min(colIndex + 2 * shiftSize, (size_t)shiftMatrix.n_cols - 1));
@@ -276,7 +276,7 @@ void MemoryHead<InputDataType, OutputDataType>::BackwardWithMemory(
     dSt += v;
   });
 
-  // dSt
+  // dSt.
   dSt = sT % arma::flipud(std::move(dSt));
   prevError.submat(memSize + 2, 0, memSize + 2 + 2 * shiftSize, 0) =
     dSt - arma::sum(dSt * arma::trans(sT), 1);
@@ -285,7 +285,7 @@ void MemoryHead<InputDataType, OutputDataType>::BackwardWithMemory(
 
   prevDW = (1 - gT) * dWg;
 
-  //d_gt
+  // d_gt.
   prevError(memSize + 1, 0) = gTNonLinear.Deriv(
     boost::apply_visitor(outputParameterVisitor, inputLinear)(memSize + 1, 0)) *
     arma::as_scalar(arma::sum(dWg % (wC - *weightsBackwardIterator)));
@@ -300,7 +300,7 @@ void MemoryHead<InputDataType, OutputDataType>::BackwardWithMemory(
 
   arma::vec dCosineT = (dWe % wE) * bT;
 
-  // d_bt
+  // d_bt.
   prevError(memSize, 0) = bTNonLinear.Deriv(
     boost::apply_visitor(outputParameterVisitor, inputLinear)(memSize, 0)) *
     arma::as_scalar(arma::sum(dWe % consineT % wE));
@@ -369,7 +369,6 @@ void MemoryHead<InputDataType, OutputDataType>::Gradient(
     arma::Mat<eT>&& /* error */,
     arma::Mat<eT>&& /* gradient */)
 {
-
   boost::apply_visitor(GradientVisitor(std::move(input), std::move(prevError)),
       inputLinear);
 }

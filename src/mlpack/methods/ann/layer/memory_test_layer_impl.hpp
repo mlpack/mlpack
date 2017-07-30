@@ -115,7 +115,7 @@ template<typename Archive>
 void MemoryTest<InputDataType, OutputDataType>::Serialize(
     Archive& ar, const unsigned int /* version */)
 {
-
+  // Testing layer. Nothing to serialise
 }
 
 } // namespace ann
