@@ -106,7 +106,7 @@ add_executable(mlpack_test
   ub_tree_test.cpp
   union_find_test.cpp
   vantage_point_tree_test.cpp
-)
+        scd_test.cpp)
 # Link dependencies of test executable.
 target_link_libraries(mlpack_test
   mlpack
