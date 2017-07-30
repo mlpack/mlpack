@@ -78,6 +78,42 @@ inline int RandInt(const int lo, const int hiExclusive)
 }
 
 /**
+ * Generates a random integer from range [0, N) with given probabilities
+ * P(0), P(1), ..., P(N-1) (arbitrary discrete distribution).
+ * 
+ * @param weights Probabilities of individual numbers. Note that the function
+ *                accepts unnormalized probabilties as long as they are
+ *                non-negative and sum to a positive number.
+ * @return A random integer sampled from the specified distribution.
+ */
+inline int RandInt(const std::vector<double>& weights)
+{
+  std::vector<double> slots(weights.size());
+  double runningSum = 0;
+  for (size_t i = 0; i < weights.size(); ++i) {
+    double el = weights[i];
+    if (el < 0) {
+      std::ostringstream oss;
+      oss << "Probabilities should be non-negative."
+          << std::endl;
+      throw std::invalid_argument(oss.str());
+    }
+    else {
+      runningSum += el;
+      slots[i] = runningSum;
+    }
+  }
+  if (runningSum <= 0) {
+    std::ostringstream oss;
+    oss << "Sum of probabilites should be positive."
+        << std::endl;
+    throw std::invalid_argument(oss.str());
+  }
+  for (double& el : slots) el /= runningSum;
+  return std::lower_bound(slots.begin(), slots.end(), Random()) - slots.begin();
+}
+
+/**
  * Generates a normally distributed random number with mean 0 and variance 1.
  */
 inline double RandNormal()
