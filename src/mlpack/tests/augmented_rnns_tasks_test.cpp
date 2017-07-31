@@ -22,11 +22,6 @@
 #include <mlpack/methods/ann/augmented/tasks/add.hpp>
 #include <mlpack/methods/ann/augmented/tasks/score.hpp>
 
-#include <mlpack/core/optimizers/adam/adam.hpp>
-#include <mlpack/methods/ann/layer/layer.hpp>
-#include <mlpack/methods/ann/layer/leaky_relu.hpp>
-#include <mlpack/methods/ann/rnn.hpp>
-
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
@@ -37,9 +32,6 @@ using std::make_pair;
 using namespace mlpack::ann::augmented;
 using namespace mlpack::ann::augmented::tasks;
 using namespace mlpack::ann::augmented::scorers;
-
-using namespace mlpack::ann;
-using namespace mlpack::optimization;
 
 using mlpack::data::Binarize;
 
@@ -128,7 +120,7 @@ class HardCodedSortModel {
   void Predict(arma::field<arma::mat>& predictors,
                arma::field<arma::mat>& labels)
   {
-    auto sz = predictors.n_elem;
+    size_t sz = predictors.n_elem;
     labels = arma::field<arma::mat>(sz);
     for (size_t i = 0; i < sz; ++i)
     {
@@ -157,10 +149,9 @@ class HardCodedAddModel {
     predictors.reshape(3, predictors.n_elem / 3);
     assert(predictors.n_rows == 3);
     int num_A = 0, num_B = 0;
-    bool num = false; // true iff we have already seen the separating symbol
-    size_t len = predictors.n_cols;
+    bool num = false; // True iff we have already seen the separating symbol.
     size_t cnt = 0;
-    for (size_t i = 0; i < len; ++i) {
+    for (size_t i = 0; i < predictors.n_cols; ++i) {
       double digit = arma::as_scalar(arma::find(1 == predictors.col(i), 1));
       if (digit != 0 && digit != 1)
       {
@@ -193,9 +184,9 @@ class HardCodedAddModel {
       assert(num_A + num_B == 0);
       binary_seq.push_back(0);
     }
-    size_t tot_len = binary_seq.size();
-    labels = arma::zeros(3, tot_len);
-    for (size_t j = 0; j < tot_len; ++j) {
+    size_t totLen = binary_seq.size();
+    labels = arma::zeros(3, totLen);
+    for (size_t j = 0; j < totLen; ++j) {
       labels.at(binary_seq[j], j) = 1;
     }
     labels.reshape(predictors.n_elem, 1);

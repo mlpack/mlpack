@@ -24,14 +24,17 @@ SortTask::SortTask(const size_t maxLength,
                    bool addSeparator)
   : maxLength(maxLength), bitLen(bitLen), addSeparator(addSeparator)
 {
-  if (maxLength <= 1) {
+  if (maxLength <= 1)
+  {
     std::ostringstream oss;
-    oss << "SortTask::SortTask(): maximum sequence length (" << maxLength << ") "
+    oss << "SortTask::SortTask(): maximum sequence length ("
+        << maxLength << ") "
         << "should be at least 2!"
         << std::endl;
     throw std::invalid_argument(oss.str());
   }
-  if (bitLen <= 0) {
+  if (bitLen <= 0)
+  {
     std::ostringstream oss;
     oss << "SortTask::SortTask(): binary length (" << bitLen << ") "
         << "is not positive!"

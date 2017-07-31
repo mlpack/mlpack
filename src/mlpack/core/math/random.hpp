@@ -88,30 +88,22 @@ inline int RandInt(const int lo, const int hiExclusive)
  */
 inline int RandInt(const arma::vec& weights)
 {
-  // Build cumulative probabilities from event probabilities.
-  std::vector<double> slots(weights.size());
-  double runningSum = 0;
-  for (size_t i = 0; i < weights.size(); ++i) {
-    double el = weights(i);
-    if (el < 0) {
-      std::ostringstream oss;
+  // Check that constraints on weights parameter are satisfied.
+  if (arma::min(weights) < 0) {
+    std::ostringstream oss;
       oss << "Probabilities should be non-negative."
           << std::endl;
       throw std::invalid_argument(oss.str());
-    }
-    else {
-      runningSum += el;
-      slots[i] = runningSum;
-    }
   }
-  if (runningSum <= 0) {
+  double sum = arma::accu(weights);
+  if (sum <= 0) {
     std::ostringstream oss;
     oss << "Sum of probabilites should be positive."
         << std::endl;
     throw std::invalid_argument(oss.str());
   }
-  // Normalize probabilities.
-  for (double& el : slots) el /= runningSum;
+  // Build normalized cumulative probabilities from event probabilities.
+  arma::vec slots = arma::cumsum(weights) / sum;
   return std::lower_bound(slots.begin(), slots.end(), Random()) - slots.begin();
 }
 

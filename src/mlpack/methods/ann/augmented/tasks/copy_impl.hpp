@@ -60,7 +60,10 @@ const void CopyTask::Generate(arma::field<arma::mat>& input,
     if (!fixedLength)
     {            
       arma::vec weights(maxLength - 1);
+      // We have two binary numbers with exactly two digits (10 and 11).
+      // Increasing length by 1 double the number of valid numbers.
       weights = arma::exp2(arma::linspace(1, maxLength - 1, maxLength - 1));
+
       size = 2 + mlpack::math::RandInt(weights);
     }
     arma::colvec vecInput = arma::randi<arma::colvec>(
