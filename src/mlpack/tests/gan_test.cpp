@@ -69,8 +69,8 @@ BOOST_AUTO_TEST_CASE(GanTest)
   // GAN model
   GenerativeAdversarialNetwork<FFN<CrossEntropyError<>>, FFN<CrossEntropyError<>>,
       GaussianInitialization> gan(
-      trainData, gaussian, generator, discriminator, batchSize, 100, 10,
+      trainData, gaussian, generator, discriminator, batchSize, 10,
       gInputSize);
-  gan.Train(msgd);
+  // gan.Train(msgd);
 }
 BOOST_AUTO_TEST_SUITE_END();

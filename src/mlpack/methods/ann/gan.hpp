@@ -46,17 +46,15 @@ class GenerativeAdversarialNetwork
       IntializerType initializeRule,
       Generator& generator,
       Discriminator& discriminator,
-      size_t batchSize,
-      size_t iterations,
       size_t disIteration,
+      size_t batchSize,
       size_t generatorInSize);
 
   // Reset function
   void Reset();
 
   // Generate data for generator and discriminator
-  void GenerateData(arma::mat& batchData, arma::mat& batchResponses,
-      size_t offset);
+  void GenerateData();
 
   // Train function
   template<typename OptimizerType>
@@ -98,12 +96,13 @@ class GenerativeAdversarialNetwork
    * samples from a given distribution with 
    * given args. Samples are stored in a local variable.
    *
-   * @tparam NoiseFunction the distribution to sample from
-   * @tparam Args the arguments types for args of the distribution
    * @param numSamples number of samples to be generated from the distribution
    * @param args the aruments of the distribution to samples from
    */
-  void Generate(arma::mat&& fakeData, arma::mat&& noiseData);
+  void GenerateNoise(arma::mat&& fakeData, arma::mat&& noiseData);
+
+  void CheckMatrices(const arma::Mat<double>& a, const arma::Mat<double>& b);
+
   //! Return the initial point for the optimization.
   const arma::mat& Parameters() const { return parameter; }
   //! Modify the initial point for the optimization.
@@ -131,6 +130,8 @@ class GenerativeAdversarialNetwork
   bool trainGenerator;
   //! Locally stored batch size parameter
   size_t batchSize;
+  //! Locally stored offset for predictors
+  size_t offset;
   //! Locally stored number of iterations
   size_t iterations;
   //! Locally stored number of iterations of discriminator
