@@ -80,10 +80,11 @@ BOOST_AUTO_TEST_CASE(WeightedRandomTest)
   const size_t iterations = 50000;
   for (std::vector<double> weightSet : weights)
   {
+    arma::vec armaWeights(weightSet);
     std::vector<int> count(weightSet.size(), 0);
     for (size_t iter = 0; iter < iterations; ++iter)
     {
-      count[RandInt(weightSet)]++;
+      count[RandInt(armaWeights)]++;
     }
 
     for (size_t i = 0; i < weightSet.size(); ++i)

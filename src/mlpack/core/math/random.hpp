@@ -86,13 +86,13 @@ inline int RandInt(const int lo, const int hiExclusive)
  *                non-negative and sum to a positive number.
  * @return A random integer sampled from the specified distribution.
  */
-inline int RandInt(const std::vector<double>& weights)
+inline int RandInt(const arma::vec& weights)
 {
   // Build cumulative probabilities from event probabilities.
   std::vector<double> slots(weights.size());
   double runningSum = 0;
   for (size_t i = 0; i < weights.size(); ++i) {
-    double el = weights[i];
+    double el = weights(i);
     if (el < 0) {
       std::ostringstream oss;
       oss << "Probabilities should be non-negative."

@@ -58,14 +58,9 @@ const void CopyTask::Generate(arma::field<arma::mat>& input,
   for (size_t i = 0; i < batchSize; ++i)
   {
     if (!fixedLength)
-    {      
-      std::vector<double> weights(maxLength - 1);
-      // We have four binary sequences with exactly two digits.
-      weights[0] = 2;
-      // Increasing length by 1 double the number of valid numbers.
-      for (size_t i = 1; i < maxLength - 1; ++i)
-        weights[i] = 2 * weights[i - 1];
-      // Generate random uniform length from [2..maxLength].
+    {            
+      arma::vec weights(maxLength - 1);
+      weights = arma::exp2(arma::linspace(1, maxLength - 1, maxLength - 1));
       size = 2 + mlpack::math::RandInt(weights);
     }
     arma::colvec vecInput = arma::randi<arma::colvec>(
