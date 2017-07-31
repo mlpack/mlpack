@@ -583,27 +583,4 @@ BOOST_AUTO_TEST_CASE(RangeContainsRange)
   BOOST_REQUIRE_EQUAL(b.Contains(a), true);
 }
 
-BOOST_AUTO_TEST_CASE(WeightedRandomTest) {
-  std::vector<std::vector<double>> weights = {
-    {1},
-    {0, 0, 1, 0, 0},
-    {1, 0, 0},
-    {0, 0, 1},
-    {0.25, 0.25, 0.5},
-    {0.9, 0.05, 0.05},
-    {0.5, 0.1, 0.1, 0.1, 0.1, 0.1}
-  };
-  const size_t iterations = 10000;
-  for (std::vector<double> weightSet : weights) {
-    std::vector<int> count(weightSet.size(), 0);
-    for (size_t iter = 0; iter < iterations; ++iter) {
-      count[RandInt(weightSet)]++;
-    }
-
-    for (size_t i = 0; i < weightSet.size(); ++i) {
-      BOOST_REQUIRE_SMALL(weightSet[i] - count[i] * 1.0 / iterations, 1e-2);
-    }
-  }
-}
-
 BOOST_AUTO_TEST_SUITE_END();

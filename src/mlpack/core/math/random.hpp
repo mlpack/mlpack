@@ -88,6 +88,7 @@ inline int RandInt(const int lo, const int hiExclusive)
  */
 inline int RandInt(const std::vector<double>& weights)
 {
+  // Build cumulative probabilities from event probabilities.
   std::vector<double> slots(weights.size());
   double runningSum = 0;
   for (size_t i = 0; i < weights.size(); ++i) {
@@ -109,6 +110,7 @@ inline int RandInt(const std::vector<double>& weights)
         << std::endl;
     throw std::invalid_argument(oss.str());
   }
+  // Normalize probabilities.
   for (double& el : slots) el /= runningSum;
   return std::lower_bound(slots.begin(), slots.end(), Random()) - slots.begin();
 }

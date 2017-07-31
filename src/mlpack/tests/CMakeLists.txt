@@ -79,6 +79,7 @@ add_executable(mlpack_test
   quic_svd_test.cpp
   radical_test.cpp
   random_forest_test.cpp
+  random_test.cpp
   randomized_svd_test.cpp
   range_search_test.cpp
   rectangle_tree_test.cpp
