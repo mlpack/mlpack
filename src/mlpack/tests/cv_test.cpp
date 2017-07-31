@@ -14,6 +14,7 @@
 #include <mlpack/core/cv/meta_info_extractor.hpp>
 #include <mlpack/core/cv/metrics/accuracy.hpp>
 #include <mlpack/core/cv/metrics/mse.hpp>
+#include <mlpack/core/cv/metrics/precision.hpp>
 #include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/init_rules/zero_init.hpp>
@@ -23,12 +24,14 @@
 #include <mlpack/methods/lars/lars.hpp>
 #include <mlpack/methods/linear_regression/linear_regression.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
+#include <mlpack/methods/naive_bayes/naive_bayes_classifier.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
 
 #include <boost/test/unit_test.hpp>
 
 using namespace mlpack::ann;
 using namespace mlpack::cv;
+using namespace mlpack::naive_bayes;
 using namespace mlpack::optimization;
 using namespace mlpack::regression;
 using namespace mlpack::tree;
@@ -36,9 +39,9 @@ using namespace mlpack::tree;
 BOOST_AUTO_TEST_SUITE(CVTest);
 
 /*
- * Test the accuracy metric.
+ * Test metrics for binary classification.
  */
-BOOST_AUTO_TEST_CASE(AccuracyTest)
+BOOST_AUTO_TEST_CASE(BinaryClassificationMetricsTest)
 {
   // Using the same data for training and testing.
   arma::mat data = arma::linspace<arma::rowvec>(1.0, 10.0, 10);
@@ -53,6 +56,39 @@ BOOST_AUTO_TEST_CASE(AccuracyTest)
   LogisticRegression<> lr(data, predictedLabels);
 
   BOOST_REQUIRE_CLOSE(Accuracy::Evaluate(lr, data, labels), 0.7, 1e-5);
+
+  BOOST_REQUIRE_CLOSE(Precision<Binary>::Evaluate(lr, data, labels), 0.6, 1e-5);
+}
+
+/**
+ * Test metrics for multiclass classification.
+ */
+BOOST_AUTO_TEST_CASE(MulticlassClassificationMetricsTest)
+{
+  // Using the same data for training and testing.
+  arma::mat data = arma::linspace<arma::rowvec>(1.0, 12.0, 12);
+
+  // Labels that will be considered as "ground truth".
+  arma::Row<size_t> labels("0 1  0 1  2 2 1 2  3 3 3 3");
+
+  // These labels should be predicted in response to the data since we use them
+  // for training.
+  arma::Row<size_t> predictedLabels("0 0  1 1  2 2 2 2  3 3 3 3");
+  size_t numClasses = 4;
+
+  NaiveBayesClassifier<> nb(data, predictedLabels, numClasses);
+
+  // Assert that the Naive Bayes model really predicts the labels above in
+  // response to the data.
+  BOOST_REQUIRE_CLOSE(Accuracy::Evaluate(nb, data, predictedLabels), 1.0, 1e-5);
+
+  double microaveragedPrecision = double(1 + 1 + 3 + 4) / 12;
+  BOOST_REQUIRE_CLOSE(Precision<Micro>::Evaluate(nb, data, labels),
+      microaveragedPrecision, 1e-5);
+
+  double macroaveragedPrecision = (0.5 + 0.5 + 0.75 + 1.0) / 4;
+  BOOST_REQUIRE_CLOSE(Precision<Macro>::Evaluate(nb, data, labels),
+      macroaveragedPrecision, 1e-5);
 }
 
 /*
