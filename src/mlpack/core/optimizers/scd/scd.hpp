@@ -36,7 +36,7 @@ namespace optimization {
  *  double Evaluate(const arma::mat& coordinates);
  *  void FeatureGradient(const arma::mat& coordinates,
  *                       const size_t j,
- *                       double& gradient);
+ *                       arma::sp_mat& gradient);
  *
  *  NumFeatures() should return the number of features in the decision variable.
  *  Evaluate gives the value of the loss function at the current decision
@@ -51,9 +51,89 @@ namespace optimization {
 template <typename DescentPolicyType = RandomDescent>
 class SCD
 {
-  public:
+ public:
+  /**
+   * Construct the SCD optimizer with the given function and parameters. The
+   * default value here are not necessarily good for every problem, so it is
+   * suggested that the values used are tailored for the task at hand. The
+   * maximum number of iterations refers to the maximum number of "descents"
+   * the algorithm does (in one iteration, the algorithm updates the
+   * decision variable numFeatures times).
+   *
+   * @param stepSize Step size for each iteration.
+   * @param maxIterations Maximum number of iterations allowed (0 means to
+   *    limit).
+   * @param tolerance Maximum absolute tolerance to terminate the algorithm.
+   * @param updateInterval The interval at which the objective is to be
+   *    reported and checked for convergence.
+   * @param descentPolicy The policy to use for picking up the coordinate to
+   *    descend on.
+   */
+  SCD(const double stepSize = 0.01,
+      const size_t maxIterations = 100000,
+      const double tolerance = 1e-5,
+      const size_t updateInterval = 1e3,
+      const DescentPolicyType descentPolicy = DescentPolicyType());
+
+  /**
+   * Optimize the given function using stochastic coordinate descent. The
+   * given starting point will be modified to store the finishing point of
+   * the optimization, and the final objective value is returned.
+   *
+   * @tparam ResolvableFunctionType Type of the function to be optimized.
+   * @param function Function to optimize.
+   * @param iterate Starting point (will be modified).
+   * @return Objective value at the final point.
+   */
+  template <typename ResolvableFunctionType>
+  double Optimize(ResolvableFunctionType& function, arma::mat& iterate);
+
+  //! Get the step size.
+  double StepSize() const { return stepSize; }
+  //! Modify the step size.
+  double& StepSize() { return stepSize; }
+
+  //! Get the maximum number of iterations (0 indicates no limit).
+  size_t MaxIterations() const { return maxIterations; }
+  //! Modify the maximum number of iterations (0 indicates no limit).
+  size_t& MaxIterations() { return maxIterations; }
+
+  //! Get the tolerance for termination.
+  double Tolerance() const { return tolerance; }
+  //! Modify the tolerance for termination.
+  double& Tolerance() { return tolerance; }
+
+  //! Get the update interval for reporting objective.
+  size_t UpdateInterval() const { return updateInterval; }
+  //! Modify the update interval for reporting objective.
+  size_t& UpdateInterval() { return updateInterval; }
+
+  //! Get the descent policy.
+  DescentPolicyType DescentPolicy() const { return descentPolicy; }
+  //! Modify the descent policy.
+  DescentPolicyType& DescentPolicy() { return descentPolicy; }
+
+ private:
+  //! The step size for each example.
+  double stepSize;
+
+  //! The maximum number of allowed iterations.
+  size_t maxIterations;
+
+  //! The tolerance for termination.
+  double tolerance;
+
+  //! The update interval for reporting objective and testing for convergence.
+  size_t updateInterval;
+
+  //! The descent policy used to pick the coordinates for the update.
+  DescentPolicyType descentPolicy;
 };
 
-} 
+} // namespace optimization
 } // namespace mlpack
+
+// Include implementation.
+#include "scd_impl.hpp"
+
 #endif

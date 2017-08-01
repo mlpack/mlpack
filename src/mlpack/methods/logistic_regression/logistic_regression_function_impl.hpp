@@ -170,6 +170,26 @@ void LogisticRegressionFunction<MatType>::Gradient(
       * (responses[i] - sigmoid) + regularization;
 }
 
+/**
+ * Evaluate the partial gradient of the logistic regression objective
+ * function with respect to the individual features in the parameter.
+ */
+template <typename MatType>
+void LogisticRegressionFunction<MatType>::FeatureGradient(
+    const arma::mat& parameters,
+    const size_t j,
+    arma::sp_mat& gradient) const
+{
+  arma::mat denseGrad;
+
+  Gradient(parameters, denseGrad);
+
+  gradient.set_size(denseGrad.size());
+
+  gradient(0, 0) = denseGrad[0];
+  gradient(j + 1, 0) = denseGrad(j + 1, 0);
+}
+
 } // namespace regression
 } // namespace mlpack
 

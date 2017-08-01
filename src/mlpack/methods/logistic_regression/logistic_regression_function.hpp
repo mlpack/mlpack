@@ -104,11 +104,29 @@ class LogisticRegressionFunction
                 const size_t i,
                 arma::mat& gradient) const;
 
+  /**
+   * Evaluate the gradient of the logistic regression log-likelihood function
+   * with the given parameters, and with respect to only one feature in the
+   * dataset.  This is useful for optimizers such as SCD, which require
+   * partial gradients.
+   *
+   * @param parameters Vector of logistic regression parameters.
+   * @param j Index of the feature with respect to which the gradient is to
+   *    be computed.
+   * @param gradient Vector to output gradient into.
+   */
+  void FeatureGradient(const arma::mat& parameters,
+                       const size_t j,
+                       arma::sp_mat& gradient) const;
+
   //! Return the initial point for the optimization.
   const arma::mat& GetInitialPoint() const { return initialPoint; }
 
   //! Return the number of separable functions (the number of predictor points).
   size_t NumFunctions() const { return predictors.n_cols; }
+
+  //! Return the number of features.
+  size_t NumFeatures() const { return predictors.n_rows; }
 
  private:
   //! The initial point, from which to start the optimization.
