@@ -39,7 +39,6 @@ namespace cv {
  *
  * @tparam AS An average strategy.
  */
-
 template<AverageStrategy AS>
 class Precision
 {
