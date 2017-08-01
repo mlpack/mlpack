@@ -23,14 +23,14 @@ href="https://keon.io/mlpack/mlpack-on-windows/">Keon's excellent tutorial</a>.
 
 @section Download latest mlpack build
 Download latest mlpack build from here:
-<a href="http://www.mlpack.org/files/mlpack-2.2.3.tar.gz">mlpack-2.2.3</a>
+<a href="http://www.mlpack.org/files/mlpack-2.2.4.tar.gz">mlpack-2.2.4</a>
 
 @section builddir Creating Build Directory
 
 Once the mlpack source is unpacked, you should create a build directory.
 
 @code
-$ cd mlpack-2.2.3
+$ cd mlpack-2.2.4
 $ mkdir build
 @endcode
 
@@ -42,7 +42,7 @@ enough.
 mlpack depends on the following libraries, which need to be installed on the
 system and have headers present:
 
- - Armadillo >= 4.200.0 (with LAPACK support)
+ - Armadillo >= 6.500.0 (with LAPACK support)
  - Boost (math_c99, program_options, serialization, unit_test_framework, heap,
           spirit) >= 1.49
 

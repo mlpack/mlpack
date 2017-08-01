@@ -12,6 +12,8 @@ set(SOURCES
   best_binary_numeric_split_impl.hpp
   gini_gain.hpp
   information_gain.hpp
+  multiple_random_dimension_select.hpp
+  random_dimension_select.hpp
 )
 
 # Add directory name to sources.

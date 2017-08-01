@@ -19,8 +19,8 @@ namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The cross-entropy performance function measures the network's
- * performance according to the cross-entropy
- * between the input and target distributions.
+ * performance according to the cross-entropy between the input
+ * and target distributions.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -36,8 +36,11 @@ class CrossEntropyError
  public:
   /**
    * Create the CrossEntropyError object.
+   * 
+   * @param eps The minimum value used for computing logarithms
+   *            and denominators in a numerically stable way.
    */
-  CrossEntropyError();
+  CrossEntropyError(double eps = 1e-10);
 
   /*
    * Computes the cross-entropy function.
@@ -74,8 +77,13 @@ class CrossEntropyError
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
+  //! Get the epsilon.
+  double Eps() const { return eps; }
+  //! Modify the epsilon.
+  double& Eps() { return eps; }
+
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
@@ -89,6 +97,9 @@ class CrossEntropyError
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
+
+  //! The minimum value used for computing logarithms and denominators
+  double eps;
 }; // class CrossEntropyError
 
 } // namespace ann

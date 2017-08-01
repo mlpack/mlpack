@@ -19,7 +19,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-CrossEntropyError<InputDataType, OutputDataType>::CrossEntropyError()
+CrossEntropyError<InputDataType, OutputDataType>::CrossEntropyError(double eps)
+  : eps(eps)
 {
   // Nothing to do here.
 }
@@ -29,8 +30,8 @@ template<typename eT>
 double CrossEntropyError<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>&& input, const arma::Mat<eT>&& target)
 {
-  return -arma::accu(target % arma::trunc_log(input) +
-                     (1. - target) % arma::trunc_log(1. - input));
+  return -arma::accu(target % arma::log(input + eps) +
+                     (1. - target) % arma::log(1. - input + eps));
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -40,7 +41,7 @@ void CrossEntropyError<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>&& target,
     arma::Mat<eT>&& output)
 {
-  output = (1. - target) / (1. - input + 1e-2) - target / (input + 1e-2);
+  output = (1. - target) / (1. - input + eps) - target / (input + eps);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -50,6 +51,10 @@ void CrossEntropyError<InputDataType, OutputDataType>::Serialize(
     const unsigned int /* version */)
 {
   // Nothing to do here.
+    Archive& ar,
+    const unsigned int /* version */)
+{
+  ar & data::CreateNVP(eps, "eps");
 }
 
 } // namespace ann
