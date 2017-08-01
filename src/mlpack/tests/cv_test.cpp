@@ -15,6 +15,7 @@
 #include <mlpack/core/cv/metrics/accuracy.hpp>
 #include <mlpack/core/cv/metrics/mse.hpp>
 #include <mlpack/core/cv/metrics/precision.hpp>
+#include <mlpack/core/cv/metrics/recall.hpp>
 #include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/init_rules/zero_init.hpp>
@@ -58,6 +59,8 @@ BOOST_AUTO_TEST_CASE(BinaryClassificationMetricsTest)
   BOOST_REQUIRE_CLOSE(Accuracy::Evaluate(lr, data, labels), 0.7, 1e-5);
 
   BOOST_REQUIRE_CLOSE(Precision<Binary>::Evaluate(lr, data, labels), 0.6, 1e-5);
+
+  BOOST_REQUIRE_CLOSE(Recall<Binary>::Evaluate(lr, data, labels), 0.75, 1e-5);
 }
 
 /**
@@ -86,9 +89,17 @@ BOOST_AUTO_TEST_CASE(MulticlassClassificationMetricsTest)
   BOOST_REQUIRE_CLOSE(Precision<Micro>::Evaluate(nb, data, labels),
       microaveragedPrecision, 1e-5);
 
+  double microaveragedRecall = double(1 + 1 + 3 + 4) / 12;
+  BOOST_REQUIRE_CLOSE(Recall<Micro>::Evaluate(nb, data, labels),
+      microaveragedRecall, 1e-5);
+
   double macroaveragedPrecision = (0.5 + 0.5 + 0.75 + 1.0) / 4;
   BOOST_REQUIRE_CLOSE(Precision<Macro>::Evaluate(nb, data, labels),
       macroaveragedPrecision, 1e-5);
+
+  double macroaveragedRecall = (0.5 + 1.0 / 3 + 1.0 + 1.0) / 4;
+  BOOST_REQUIRE_CLOSE(Recall<Macro>::Evaluate(nb, data, labels),
+      macroaveragedRecall, 1e-5);
 }
 
 /*

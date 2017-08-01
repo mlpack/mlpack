@@ -9,6 +9,8 @@ set(SOURCES
   mse_impl.hpp
   precision.hpp
   precision_impl.hpp
+  recall.hpp
+  recall_impl.hpp
 )
 
 # Add directory name to sources.
