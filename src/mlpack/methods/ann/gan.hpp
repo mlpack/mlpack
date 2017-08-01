@@ -136,6 +136,8 @@ class GenerativeAdversarialNetwork
   size_t iterations;
   //! Locally stored number of iterations of discriminator
   size_t disIteration;
+  //! Locally stored number counter for number of iteration of disc training
+  size_t iterationDiscriminator;
   //! Locally stored input size for generator
   size_t generatorInSize;
   //! Locally stored reset parmaeter

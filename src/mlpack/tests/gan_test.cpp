@@ -71,6 +71,6 @@ BOOST_AUTO_TEST_CASE(GanTest)
       GaussianInitialization> gan(
       trainData, gaussian, generator, discriminator, batchSize, 10,
       gInputSize);
-  // gan.Train(msgd);
+  gan.Train(msgd);
 }
 BOOST_AUTO_TEST_SUITE_END();
