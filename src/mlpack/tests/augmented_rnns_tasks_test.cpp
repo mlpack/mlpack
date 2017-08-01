@@ -151,7 +151,8 @@ class HardCodedAddModel {
     int num_A = 0, num_B = 0;
     bool num = false; // True iff we have already seen the separating symbol.
     size_t cnt = 0;
-    for (size_t i = 0; i < predictors.n_cols; ++i) {
+    for (size_t i = 0; i < predictors.n_cols; ++i)
+    {
       double digit = arma::as_scalar(arma::find(1 == predictors.col(i), 1));
       if (digit != 0 && digit != 1)
       {
@@ -176,27 +177,32 @@ class HardCodedAddModel {
     }
     int total = num_A + num_B;
     vector<int> binary_seq;
-    while (total > 0) {
+    while (total > 0)
+    {
       binary_seq.push_back(total & 1);
       total >>= 1;
     }
-    if (binary_seq.empty()) {
+    if (binary_seq.empty())
+    {
       assert(num_A + num_B == 0);
       binary_seq.push_back(0);
     }
     size_t totLen = binary_seq.size();
     labels = arma::zeros(3, totLen);
-    for (size_t j = 0; j < totLen; ++j) {
+    for (size_t j = 0; j < totLen; ++j)
+    {
       labels.at(binary_seq[j], j) = 1;
     }
     labels.reshape(predictors.n_elem, 1);
   }
   void Predict(
       arma::field<arma::mat>& predictors,
-      arma::field<arma::mat>& labels) {
+      arma::field<arma::mat>& labels)
+  {
     size_t sz = predictors.n_elem;
     labels = arma::field<arma::mat>(sz);
-    for (size_t i = 0; i < sz; ++i) {
+    for (size_t i = 0; i < sz; ++i)
+    {
       Predict(predictors.at(i), labels.at(i));
     }
   }

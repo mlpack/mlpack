@@ -89,14 +89,16 @@ inline int RandInt(const int lo, const int hiExclusive)
 inline int RandInt(const arma::vec& weights)
 {
   // Check that constraints on weights parameter are satisfied.
-  if (arma::min(weights) < 0) {
+  if (arma::min(weights) < 0)
+  {
     std::ostringstream oss;
       oss << "Probabilities should be non-negative."
           << std::endl;
       throw std::invalid_argument(oss.str());
   }
   double sum = arma::accu(weights);
-  if (sum <= 0) {
+  if (sum <= 0)
+  {
     std::ostringstream oss;
     oss << "Sum of probabilites should be positive."
         << std::endl;
