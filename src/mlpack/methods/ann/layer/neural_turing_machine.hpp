@@ -62,12 +62,14 @@ class NeuralTuringMachine
    * @param numMem Number of memory locations to use.
    * @param memSize Size of each memory location.
    * @param shiftSize Circular shift rotation size.
+   * @param controller The controller network to use.
    */
   NeuralTuringMachine(const size_t inSize,
                       const size_t outSize,
                       const size_t numMem,
                       const size_t memSize,
-                      const size_t shiftSize);
+                      const size_t shiftSize,
+                      LayerTypes controller);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -172,9 +174,8 @@ class NeuralTuringMachine
   //! Memory write layer.
   LayerTypes writeMem;
 
-  //! Temporary controller.
-  LayerTypes temp;
-  LayerTypes temp2;
+  //! Controller.
+  LayerTypes controller;
 
   //! Locally stored memory content error.
   arma::mat dMem;
@@ -199,9 +200,6 @@ class NeuralTuringMachine
 
   //! Locally stored memory write error.
   arma::mat dWriteHead;
-
-  //! controller network
-  std::vector<LayerTypes> controller;
 
   //! Locally-stored weight object.
   OutputDataType weights;

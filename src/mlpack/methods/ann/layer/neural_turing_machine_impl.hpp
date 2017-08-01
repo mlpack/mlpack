@@ -30,22 +30,17 @@ NeuralTuringMachine<InputDataType, OutputDataType>::NeuralTuringMachine(
     const size_t outSize,
     const size_t numMem,
     const size_t memSize,
-    const size_t shiftSize) :
+    const size_t shiftSize,
+    LayerTypes controller) :
     inSize(inSize),
     outSize(outSize),
     numMem(numMem),
     memSize(memSize),
     shiftSize(shiftSize),
+    controller(controller),
     deterministic(false)
 {
-  temp = new Linear<>(inSize + memSize, outSize);
-  temp2 = new Linear<>(outSize, outSize);
-
-  network.push_back(temp);
-  network.push_back(temp2);
-
-  controller.push_back(temp);
-  controller.push_back(temp2);
+  network.push_back(controller);
 
   readMem = new ReadMemory<>(outSize, numMem, memSize, shiftSize);
   writeMem = new WriteMemory<>(outSize, numMem, memSize, shiftSize);
@@ -73,20 +68,12 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Forward(
 
   // Forward pass through the controller.
   boost::apply_visitor(ForwardVisitor(std::move(newInput), std::move(
-      boost::apply_visitor(outputParameterVisitor, controller.front()))),
-      controller.front());
-
-  for (size_t i = 1; i < controller.size(); ++i)
-  {
-    boost::apply_visitor(ForwardVisitor(
-        std::move(boost::apply_visitor(outputParameterVisitor,
-        controller[i - 1])), std::move(boost::apply_visitor(
-        outputParameterVisitor, controller[i]))), controller[i]);
-  }
+      boost::apply_visitor(outputParameterVisitor, controller))),
+      controller);
 
   // Get controller output.
   arma::mat& controllerOutput = boost::apply_visitor(outputParameterVisitor,
-      controller.back());
+      controller);
 
   // Acess to current memory.
   arma::mat& cMemory = memoryHistory.back();
@@ -124,7 +111,7 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Backward(
   else
   {
     // Set the error for last read.
-    dRead = boost::apply_visitor(deltaVisitor, controller.front())
+    dRead = boost::apply_visitor(deltaVisitor, controller)
         .submat(inSize, 0, inSize + memSize - 1, 0);
 
     if (backwardStep > 1)
@@ -166,21 +153,12 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Backward(
 
   // Backward through controller.
   boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-      outputParameterVisitor, controller.back())), std::move(prevError),
-      std::move(boost::apply_visitor(deltaVisitor, controller.back()))),
-      controller.back());
-
-  for (int i = controller.size() - 2; i >= 0; i--)
-  {
-    boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-        outputParameterVisitor, controller[i])),
-        std::move(boost::apply_visitor(deltaVisitor, controller[i + 1])),
-        std::move(boost::apply_visitor(deltaVisitor, controller[i]))),
-        controller[i]);
-  }
+      outputParameterVisitor, controller)), std::move(prevError),
+      std::move(boost::apply_visitor(deltaVisitor, controller))),
+      controller);
 
   // Return the delta of the input
-  g = boost::apply_visitor(deltaVisitor, controller.front()).submat(0, 0,
+  g = boost::apply_visitor(deltaVisitor, controller).submat(0, 0,
       inSize - 1, 0);
 
   bMemoryHistory--;
@@ -203,35 +181,23 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Gradient(
   else
   {
     boost::apply_visitor(GradientVisitor(std::move(boost::apply_visitor(
-        outputParameterVisitor, controller.back())),
+        outputParameterVisitor, controller)),
         std::move(dRead)),
         readMem);
 
     if (gradientStep > 1)
     {
       boost::apply_visitor(GradientVisitor(std::move(boost::apply_visitor(
-          outputParameterVisitor, controller.back())),
+          outputParameterVisitor, controller)),
           std::move(dMemPrev)),
           writeMem);
     }
   }
 
   // Gradient of the controller
-  boost::apply_visitor(GradientVisitor(std::move(boost::apply_visitor(
-      outputParameterVisitor, controller[controller.size() - 2])),
-      std::move(prevError)), controller.back());
-
-  for (size_t i = controller.size() - 2; i > 0; i--)
-  {
-    boost::apply_visitor(GradientVisitor(std::move(boost::apply_visitor(
-        outputParameterVisitor, controller[i - 1])),
-        std::move(boost::apply_visitor(deltaVisitor, controller[i + 1]))),
-        controller[i]);
-  }
-
   boost::apply_visitor(GradientVisitor(std::move(arma::join_vert(input,
-      *gReads)), std::move(boost::apply_visitor(deltaVisitor, controller[1]))),
-      controller.front());
+      *gReads)), std::move(prevError)),
+      controller);
 
   gReads--;
   gradientStep++;

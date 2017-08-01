@@ -531,7 +531,7 @@ void ReberGrammarTestNetwork(size_t hiddenSize = 4,
 
 /**
  * Train the specified network and the construct a Reber grammar dataset.
- */
+
 void ReberGrammarTestNTMNetwork(bool embedded = false)
 {
   // Reber state transition matrix. (The last two columns are the indices to the
@@ -601,7 +601,7 @@ void ReberGrammarTestNTMNetwork(bool embedded = false)
    *            .     .
    *            .     .
    *            .......
-   */
+
   // It isn't guaranteed that the recurrent network will converge in the
   // specified number of iterations using random weights. If this works 1 of 5
   // times, I'm fine with that. All I want to know is that the network is able
@@ -688,7 +688,7 @@ void ReberGrammarTestNTMNetwork(bool embedded = false)
 
 /**
  * Train the specified networks on a Reber grammar dataset.
- */
+
 BOOST_AUTO_TEST_CASE(NTMReberGrammarTest)
 {
   ReberGrammarTestNTMNetwork(false);
@@ -696,12 +696,12 @@ BOOST_AUTO_TEST_CASE(NTMReberGrammarTest)
 
 /**
  * Train the specified networks on a Reber grammar dataset.
- */
+
 BOOST_AUTO_TEST_CASE(NTMEmbeddedReberGrammarTest)
 {
   ReberGrammarTestNTMNetwork(true);
 }
-
+*/
 /**
  * Train the specified networks on a Reber grammar dataset.
  */

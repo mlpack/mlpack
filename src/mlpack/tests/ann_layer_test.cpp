@@ -780,6 +780,55 @@ BOOST_AUTO_TEST_CASE(GradientLSTMLayerTest)
 }
 
 /**
+ * FFN (as a layer) numerically gradient test.
+ */
+BOOST_AUTO_TEST_CASE(GradientFFNLayerTest)
+{
+  // FFN(as layer) function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randu(5, 1);
+      target = arma::mat("1; 1; 1; 1; 1");
+      const size_t rho = 5;
+
+      FFN<>* ffn = new FFN<>();
+      ffn->Add(new Linear<>(10, 3));
+      ffn->Add(new GRU<>(3, 3, rho));
+      ffn->Add(new Linear<>(3, 3));
+
+      model = new RNN<NegativeLogLikelihood<> >(input, target, rho);
+      model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(1, 10);
+      model->Add((LayerTypes)ffn);
+      model->Add<LogSoftMax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      arma::mat output;
+      double error = model->Evaluate(model->Parameters(), 0);
+      model->Gradient(model->Parameters(), 0, gradient);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    RNN<NegativeLogLikelihood<> >* model;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+}
+
+
+/**
  * Check if the gradients computed by GRU cell are close enough to the
  * approximation of the gradients.
  */
@@ -968,10 +1017,14 @@ BOOST_AUTO_TEST_CASE(GradientNTMTest)
       target = arma::mat("1; 1; 1; 1; 1;");
       const size_t rho = 5;
 
+      FFN<>* controller = new FFN<>();
+      controller->Add(new Linear<>(10 + 5, 3));
+      controller->Add(new Linear<>(3, 3));
+
       model = new RNN<NegativeLogLikelihood<> >(input, target, rho);
       model->Add<IdentityLayer<> >();
       model->Add<Linear<> >(1, 10);
-      model->Add<NeuralTuringMachine<> >(10, 3, 3, 5, 1);
+      model->Add<NeuralTuringMachine<> >(10, 3, 3, 5, 1, controller);
       model->Add<Linear<> >(3, 3);
       model->Add<LogSoftMax<> >();
     }
