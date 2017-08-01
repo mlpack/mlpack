@@ -47,10 +47,6 @@ void CrossEntropyError<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void CrossEntropyError<InputDataType, OutputDataType>::Serialize(
-    Archive& /* ar */,
-    const unsigned int /* version */)
-{
-  // Nothing to do here.
     Archive& ar,
     const unsigned int /* version */)
 {
