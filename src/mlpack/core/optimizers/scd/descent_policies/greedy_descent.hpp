@@ -43,12 +43,10 @@ class GreedyDescent
                         const arma::mat& iterate,
                         const ResolvableFunctionType& function)
   {
-
     for (size_t i = 0; i < function.NumFeatures(); ++i)
     {
       double featureGrad = function.FeatureGradient(iterate, i);
     }
-
   }
 };
 

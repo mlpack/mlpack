@@ -56,9 +56,13 @@ double SCD<DescentPolicyType>::Optimize(ResolvableFunctionType& function,
     iterate -= stepSize * gradient;
 
     // Check for convergence.
-    if(i % updateInterval == 0)
+    if (i % updateInterval == 0)
     {
       overallObjective = function.Evaluate(iterate);
+
+      // Output current objective function.
+      Log::Info << "SCD: iteration " << i << ", objective " << overallObjective
+          << "." << std::endl;
 
       if (std::isnan(overallObjective) || std::isinf(overallObjective))
       {

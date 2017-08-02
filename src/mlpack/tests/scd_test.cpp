@@ -30,9 +30,9 @@ BOOST_AUTO_TEST_CASE(PreCalcSCDTest)
   arma::Row<size_t> responses("1  1  0;");
 
 
-  LogisticRegressionFunction<arma::mat> f(predictors, responses);
+  LogisticRegressionFunction<arma::mat> f(predictors, responses, 0.0001);
 
-  SCD<> s(0.002);
+  SCD<> s(0.01, 20000, 1e-5);
   arma::mat iterate = f.InitialPoint();
 
   double objective = s.Optimize(f, iterate);
