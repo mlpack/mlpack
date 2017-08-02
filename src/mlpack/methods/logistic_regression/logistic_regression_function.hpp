@@ -81,6 +81,10 @@ class LogisticRegressionFunction
    */
   double Evaluate(const arma::mat& parameters, const size_t i) const;
 
+  double Evaluate(const arma::mat& parameters,
+                  const size_t begin,
+                  const size_t batchSize) const;
+
   /**
    * Evaluate the gradient of the logistic regression log-likelihood function
    * with the given parameters.
@@ -106,6 +110,11 @@ class LogisticRegressionFunction
   void Gradient(const arma::mat& parameters,
                 const size_t i,
                 GradType& gradient) const;
+
+  void Gradient(const arma::mat& parameters,
+                const size_t begin,
+                const size_t batchSize,
+                arma::mat& gradient) const;
 
   //! Return the initial point for the optimization.
   const arma::mat& GetInitialPoint() const { return initialPoint; }

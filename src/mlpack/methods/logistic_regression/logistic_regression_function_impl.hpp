@@ -125,6 +125,36 @@ double LogisticRegressionFunction<MatType>::Evaluate(
     return -log(1.0 - sigmoid) + regularization;
 }
 
+template<typename MatType>
+double LogisticRegressionFunction<MatType>::Evaluate(const arma::mat& parameters,
+                  const size_t begin,
+                  const size_t batchSize) const
+{
+  // Calculating the regularization term.
+  const double regularization = 0.5 * lambda *
+    arma::dot(parameters.col(0).subvec(begin, batchSize - 1),
+              parameters.col(0).subvec(begin, batchSize - 1));
+
+  // Calculating the hypothesis that has to be passed to the sigmoid function.
+  const arma::vec exponents = parameters(0, 0) + predictors.t() *
+    parameters.col(0).subvec(begin, batchSize - 1);
+  //Calculating the sigmoid function values.
+  const arma::vec sigmoid = 1.0 / (1.0 + arma::exp(-exponents));
+
+  // Iterating for the given batch size from a given point
+  double result = 0.0;
+  for (size_t i = begin; i < batchSize; ++i)
+  {
+    if (responses[i] == 1)
+      result += log(sigmoid[i]);
+    else
+      result += log(1.0 - sigmoid[i]);
+  }
+
+  // Invert the result, because it's a minimization.
+  return -result + regularization;
+}
+
 //! Evaluate the gradient of the logistic regression objective function.
 template<typename MatType>
 void LogisticRegressionFunction<MatType>::Gradient(
@@ -170,6 +200,27 @@ void LogisticRegressionFunction<MatType>::Gradient(
   gradient.col(0).subvec(1, parameters.n_elem - 1) = -predictors.col(i)
       * (responses[i] - sigmoid) + regularization;
 }
+
+template<typename MatType>
+void LogisticRegressionFunction<MatType>::Gradient(
+                const arma::mat& parameters,
+                const size_t begin,
+                const size_t batchSize,
+                arma::mat& gradient) const
+{
+  // Regularization term.
+  arma::mat regularization;
+  regularization = lambda * parameters.col(0).subvec(begin, batchSize - 1);
+
+  const arma::rowvec sigmoids = (1 / (1 + arma::exp(-parameters(0, 0)
+      - parameters.col(0).subvec(begin, batchSize - 1).t() * predictors)));
+
+  gradient.set_size(batchSize);
+  gradient[0] = -arma::accu(responses - sigmoids);
+  gradient.col(0).subvec(begin, batchSize - 1) = -predictors * (responses -
+      sigmoids).t() + regularization;  
+}
+
 
 } // namespace regression
 } // namespace mlpack
