@@ -72,8 +72,8 @@ const void CopyTask::Generate(arma::field<arma::mat>& input,
       arma::repmat(vecInput, nRepeats, 1));
     size_t totSize = vecInput.n_elem + addSeparator + vecLabel.n_elem;
     input(i) = arma::zeros(totSize, 2);
-    input(i).col(0).rows(0, vecInput.n_elem-1) =
-      vecInput;
+    input(i).col(0).rows(0, vecInput.n_elem - 1) =
+        vecInput;
     if (addSeparator)
       input(i).at(vecInput.n_elem, 0) = 0.5;
     input(i).col(1).rows(addSeparator + vecInput.n_elem, totSize - 1) =
