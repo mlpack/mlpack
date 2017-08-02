@@ -28,7 +28,7 @@ namespace naive_bayes /** The Naive Bayes Classifier. */ {
  * last row of the data input to the constructor.
  *
  * Mathematically, it computes P(X_i = x_i | Y = y_j) for each feature X_i for
- * each of the labels y_j.  Alongwith this, it also computes the class
+ * each of the labels y_j.  Along with this, it also computes the class
  * probabilities P(Y = y_j).
  *
  * For classifying a data point (x_1, x_2, ..., x_n), it computes the following:
@@ -45,8 +45,12 @@ namespace naive_bayes /** The Naive Bayes Classifier. */ {
  * @endcode
  *
  * The ModelMatType template parameter specifies the internal matrix type that
- * NaiveBayesClassifier will use to hold the model.  This can be arma::mat,
- * arma::fmat, or any other Armadillo (or Armadillo-compatible) object.
+ * NaiveBayesClassifier will use to hold the means, variances, and weights that
+ * make up the Naive Bayes model.  This can be arma::mat, arma::fmat, or any
+ * other Armadillo (or Armadillo-compatible) object.  Because ModelMatType may
+ * be different than the type of the data the model is trained on, now training
+ * is possible with subviews, sparse matrices, or anything else, while still
+ * storing the model as a ModelMatType internally.
  *
  * @tparam ModelMatType Internal matrix type to use to store the model.
  */
@@ -70,7 +74,7 @@ class NaiveBayesClassifier
    *
    * @param data Training data points.
    * @param labels Labels corresponding to training data points.
-   * @param classes Number of classes in this classifier.
+   * @param numClasses Number of classes in this classifier.
    * @param incrementalVariance If true, an incremental algorithm is used to
    *     calculate the variance; this can prevent loss of precision in some
    *     cases, but will be somewhat slower to calculate.
@@ -78,7 +82,7 @@ class NaiveBayesClassifier
   template<typename MatType>
   NaiveBayesClassifier(const MatType& data,
                        const arma::Row<size_t>& labels,
-                       const size_t classes,
+                       const size_t numClasses,
                        const bool incrementalVariance = false);
 
   /**
@@ -88,7 +92,7 @@ class NaiveBayesClassifier
    * meaningless.
    */
   NaiveBayesClassifier(const size_t dimensionality = 0,
-                       const size_t classes = 0);
+                       const size_t numClasses = 0);
 
   /**
    * Train the Naive Bayes classifier on the given dataset.  If the incremental
@@ -102,12 +106,15 @@ class NaiveBayesClassifier
    * Probabilities() individually to set them to the right size.
    *
    * @param data The dataset to train on.
+   * @param labels The labels for the dataset.
+   * @param numClasses The numbe of classes in the dataset.
    * @param incremental Whether or not to use the incremental algorithm for
    *      training.
    */
   template<typename MatType>
   void Train(const MatType& data,
              const arma::Row<size_t>& labels,
+             const size_t numClasses,
              const bool incremental = true);
 
   /**
@@ -181,11 +188,13 @@ class NaiveBayesClassifier
    * @param predictions This will be filled with predictions for each point.
    * @param probabilities This will be filled with class probabilities for each
    *      point. Each row represents a point.
+   * @tparam MatType Type of data to be classified.
+   * @tparam ProbabilitiesMatType Type to store output probabilities in.
    */
-  template<typename MatType>
+  template<typename MatType, typename ProbabilitiesMatType>
   void Classify(const MatType& data,
                 arma::Row<size_t>& predictions,
-                ModelMatType& probabilities) const;
+                ProbabilitiesMatType& probabilities) const;
 
   //! Get the sample means for each class.
   const ModelMatType& Means() const { return means; }

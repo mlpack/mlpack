@@ -28,7 +28,9 @@ add_executable(mlpack_test
   emst_test.cpp
   fastmks_test.cpp
   feedforward_network_test.cpp
+  frankwolfe_test.cpp
   gmm_test.cpp
+  gradient_clipping_test.cpp
   gradient_descent_test.cpp
   hmm_test.cpp
   hoeffding_tree_test.cpp
@@ -67,6 +69,7 @@ add_executable(mlpack_test
   nmf_test.cpp
   nystroem_method_test.cpp
   octree_test.cpp
+  parallel_sgd_test.cpp
   pca_test.cpp
   perceptron_test.cpp
   prefixedoutstream_test.cpp

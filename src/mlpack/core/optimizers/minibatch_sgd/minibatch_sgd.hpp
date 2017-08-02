@@ -105,6 +105,8 @@ class MiniBatchSGDType
    * @param updatePolicy Instantiated update policy used to adjust the given
    *     parameters.
    * @param decayPolicy Instantiated decay policy used to adjust the step size.
+   * @param resetPolicy Flag that determines whether update policy parameters
+   *                    are reset before every Optimize call.
    */
   MiniBatchSGDType(const size_t batchSize = 1000,
                    const double stepSize = 0.01,
@@ -112,7 +114,8 @@ class MiniBatchSGDType
                    const double tolerance = 1e-5,
                    const bool shuffle = true,
                    const UpdatePolicyType& updatePolicy = UpdatePolicyType(),
-                   const DecayPolicyType& decayPolicy = DecayPolicyType());
+                   const DecayPolicyType& decayPolicy = DecayPolicyType(),
+                   const bool resetPolicy = true);
 
   /**
    * Optimize the given function using mini-batch SGD.  The given starting point
@@ -122,10 +125,13 @@ class MiniBatchSGDType
    * @tparam DecomposableFunctionType Type of the function to be optimized.
    * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
+   * @param resetPolicy Flag indicating whether update policy
+   *                   should be reset before running optimization.
    * @return Objective value of the final point.
    */
   template<typename DecomposableFunctionType>
-  double Optimize(DecomposableFunctionType& function, arma::mat& iterate);
+  double Optimize(DecomposableFunctionType& function,
+                  arma::mat& iterate);
 
   //! Get the batch size.
   size_t BatchSize() const { return batchSize; }
@@ -151,6 +157,13 @@ class MiniBatchSGDType
   bool Shuffle() const { return shuffle; }
   //! Modify whether or not the individual functions are shuffled.
   bool& Shuffle() { return shuffle; }
+
+  //! Get whether or not the update policy parameters
+  //! are reset before Optimize call.
+  bool ResetPolicy() const { return resetPolicy; }
+  //! Modify whether or not the update policy parameters
+  //! are reset before Optimize call.
+  bool& ResetPolicy() { return resetPolicy; }
 
   //! Get the update policy.
   UpdatePolicyType UpdatePolicy() const { return updatePolicy; }
@@ -184,6 +197,10 @@ class MiniBatchSGDType
 
   //! The decay policy used to update the parameters in each iteration.
   DecayPolicyType decayPolicy;
+
+  //! Flag that determines whether update policy parameters
+  //! are reset before every Optimize call.
+  bool resetPolicy;
 };
 
 using MiniBatchSGD = MiniBatchSGDType<VanillaUpdate, NoDecay>;

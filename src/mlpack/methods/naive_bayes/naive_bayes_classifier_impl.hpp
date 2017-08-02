@@ -30,7 +30,7 @@ template<typename MatType>
 NaiveBayesClassifier<ModelMatType>::NaiveBayesClassifier(
     const MatType& data,
     const arma::Row<size_t>& labels,
-    const size_t classes,
+    const size_t numClasses,
     const bool incremental) :
     trainingPoints(0) // Set when we call Train().
 {
@@ -45,29 +45,30 @@ NaiveBayesClassifier<ModelMatType>::NaiveBayesClassifier(
   // algorithm).
   if (incremental)
   {
-    probabilities.zeros(classes);
-    means.zeros(dimensionality, classes);
-    variances.zeros(dimensionality, classes);
+    probabilities.zeros(numClasses);
+    means.zeros(data.n_rows, numClasses);
+    variances.zeros(data.n_rows, numClasses);
   }
   else
   {
-    probabilities.set_size(classes);
-    means.set_size(dimensionality, classes);
-    variances.set_size(dimensionality, classes);
+    probabilities.set_size(numClasses);
+    means.set_size(data.n_rows, numClasses);
+    variances.set_size(data.n_rows, numClasses);
   }
-  Train(data, labels, incremental);
+
+  Train(data, labels, numClasses, incremental);
 }
 
 template<typename ModelMatType>
 NaiveBayesClassifier<ModelMatType>::NaiveBayesClassifier(
     const size_t dimensionality,
-    const size_t classes) :
+    const size_t numClasses) :
     trainingPoints(0)
 {
   // Initialize model to 0.
-  probabilities.zeros(classes);
-  means.zeros(dimensionality, classes);
-  variances.zeros(dimensionality, classes);
+  probabilities.zeros(numClasses);
+  means.zeros(dimensionality, numClasses);
+  variances.zeros(dimensionality, numClasses);
 }
 
 template<typename ModelMatType>
@@ -75,11 +76,32 @@ template<typename MatType>
 void NaiveBayesClassifier<ModelMatType>::Train(
     const MatType& data,
     const arma::Row<size_t>& labels,
+    const size_t numClasses,
     const bool incremental)
 {
   static_assert(std::is_same<ElemType, typename MatType::elem_type>::value,
       "NaiveBayesClassifier: element type of given data must match the element "
       "type of the model!");
+
+  // Do we need to resize the model?
+  if (probabilities.n_elem != numClasses)
+  {
+    // Perform training, after initializing the model to 0 (that is, if Train()
+    // won't do that for us, which it won't if we're using the incremental
+    // algorithm).
+    if (incremental)
+    {
+      probabilities.zeros(numClasses);
+      means.zeros(data.n_rows, numClasses);
+      variances.zeros(data.n_rows, numClasses);
+    }
+    else
+    {
+      probabilities.set_size(numClasses);
+      means.set_size(data.n_rows, numClasses);
+      variances.set_size(data.n_rows, numClasses);
+    }
+  }
 
   // Calculate the class probabilities as well as the sample mean and variance
   // for each of the features with respect to each of the labels.
@@ -107,7 +129,7 @@ void NaiveBayesClassifier<ModelMatType>::Train(
   }
   else
   {
-    // Set all parameters to zero
+    // Set all parameters to zero.
     probabilities.zeros();
     means.zeros();
     variances.zeros();
@@ -235,6 +257,10 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
   static_assert(std::is_same<ElemType, typename VecType::elem_type>::value,
       "NaiveBayesClassifier: element type of given data must match the element "
       "type of the model!");
+  static_assert(std::is_same<ElemType,
+                             typename ProbabilitiesVecType::elem_type>::value,
+      "NaiveBayesClassifier: element type of given data must match the element "
+      "type of the model!");
 
   // log(Prob(Y|X)) = Log(Prob(X|Y)) + Log(Prob(Y)) - Log(Prob(X));
   // But LogLikelihood() gives us the unnormalized log likelihood which is
@@ -275,13 +301,17 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
 }
 
 template<typename ModelMatType>
-template<typename MatType>
+template<typename MatType, typename ProbabilitiesMatType>
 void NaiveBayesClassifier<ModelMatType>::Classify(
     const MatType& data,
     arma::Row<size_t>& predictions,
-    ModelMatType& predictionProbs) const
+    ProbabilitiesMatType& predictionProbs) const
 {
   static_assert(std::is_same<ElemType, typename MatType::elem_type>::value,
+      "NaiveBayesClassifier: element type of given data must match the element "
+      "type of the model!");
+  static_assert(std::is_same<ElemType,
+                             typename ProbabilitiesMatType::elem_type>::value,
       "NaiveBayesClassifier: element type of given data must match the element "
       "type of the model!");
 
