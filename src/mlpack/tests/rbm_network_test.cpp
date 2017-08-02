@@ -59,9 +59,9 @@ void BuildVanillaNetwork(MatType& trainData,
    *        
    */
   arma::mat output;
-  BinaryRBMPolicy binary_rbm(trainData.n_rows, hiddenLayerSize);
+  BinaryRBMPolicy<> binary_rbm(trainData.n_rows, hiddenLayerSize);
   GaussianInitialization gaussian(0, 0.1);
-  RBM<GaussianInitialization, BinaryRBMPolicy> model(trainData,
+  RBM<GaussianInitialization, BinaryRBMPolicy<>> model(trainData,
       gaussian, binary_rbm, 1,  true);
 
   model.Reset();
@@ -127,9 +127,9 @@ BOOST_AUTO_TEST_CASE(ClassificationTest)
   XRbm.zeros();
   YRbm.zeros();
 
-  BinaryRBMPolicy binary_rbm(trainData.n_rows, hiddenLayerSize);
+  BinaryRBMPolicy<> binary_rbm(trainData.n_rows, hiddenLayerSize);
   GaussianInitialization gaussian(0, 0.1);
-  RBM<GaussianInitialization, BinaryRBMPolicy> model(trainData,
+  RBM<GaussianInitialization, BinaryRBMPolicy<>> model(trainData,
       gaussian, binary_rbm, 1,  1, true, false);
 
   size_t numRBMIterations = trainData.n_cols * numEpoches;
@@ -224,9 +224,9 @@ BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
   YRbm.zeros();
   double slabPenalty = 2;
 
-  SpikeSlabRBMPolicy ss_rbm(trainData.n_rows, hiddenLayerSize, poolSize,
+  SpikeSlabRBMPolicy<> ss_rbm(trainData.n_rows, hiddenLayerSize, poolSize,
       slabPenalty, radius);
-  RBM<GaussianInitialization, SpikeSlabRBMPolicy> modelssRBM(trainData,
+  RBM<GaussianInitialization, SpikeSlabRBMPolicy<>> modelssRBM(trainData,
       gaussian, ss_rbm, 1, 1, true, false);
 
   size_t numRBMIterations = trainData.n_cols * numEpoches;

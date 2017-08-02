@@ -98,9 +98,7 @@ double RBM<InitializationRuleType, RBMPolicy>::Evaluate(
 {
   if (!useMonitoringCost)
   {
-    // negative samples used here are from previous iteration
-    if (negativeSamples.is_empty())
-      Gibbs(std::move(predictors.col(i)), std::move(negativeSamples));
+    Gibbs(std::move(predictors.col(i)), std::move(negativeSamples));
     return (FreeEnergy(std::move(predictors.col(i))) -
         FreeEnergy(std::move(negativeSamples)));
   }
