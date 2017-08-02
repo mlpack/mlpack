@@ -20,9 +20,9 @@ namespace cv {
 
 /**
  * F1 is a metric of performance for classification algorithms that for binary
- * classification is equal to 2 * precision * recall / (precision + recall). For
- * multiclass classification the F1 metric can be used with the following
- * strategies for averaging.
+ * classification is equal to @f$ 2 * precision * recall / (precision + recall)
+ * @f$. For multiclass classification the F1 metric can be used with the
+ * following strategies for averaging.
  * 1. Micro. The result is calculated by the above formula, but microaveraged
  * precision and microaveraged recall are used.
  * 2. Macro. F1 is calculated for each class (with values used for calculation

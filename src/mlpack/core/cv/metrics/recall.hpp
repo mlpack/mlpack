@@ -20,18 +20,25 @@ namespace cv {
 
 /**
  * Recall is a metric of performance for classification algorithms that for
- * binary classification is equal to tp / (tp + fn), where tp and fn are the
- * numbers of true positives and false negatives respectively. For multiclass
- * classification the recall metric can be used with the following strategies
- * for averaging.
- * 1. Micro. If there are N + 1 classes in total, the result is equal to
- * (tp0 + tp1 + ... + tpN) / (tp0 + tp1 + ... + tpN + fn0 + fn1 + ... fnN),
- * where tpI and fnI are the numbers of true positives and false negatives
- * respectively for the class (label) I.
- * 2. Macro. If there are N + 1 classes in total, the result is equal to the
- * mean of values tp0 / (tp0 + fn0), tp1 / (tp1 + fn1), ..., tpN / (tpN + fnN),
- * where tpI and fnI are the numbers of true positives and false negatives
- * respectively for the class (label) I.
+ * binary classification is equal to @f$ tp / (tp + fn) @f$, where @f$ tp @f$
+ * and @f$ fn @f$ are the numbers of true positives and false negatives
+ * respectively. For multiclass classification the recall metric can be used
+ * with the following strategies for averaging.
+ * 1. Micro. If there are @f$ N + 1 @f$ classes in total, the result is equal to
+ * @f[
+ * (tp_0 + tp_1 + \ldots + tp_N) / (tp_0 + tp_1 + \ldots + tp_N + fn_0 + fn_1 +
+ * \ldots + fn_N),
+ * @f]
+ * where @f$ tp_i @f$ and @f$ fn_i @f$ are the numbers of true
+ * positives and false negatives respectively for the class (label) @f$ i @f$.
+ * 2. Macro. If there are @f$ N + 1 @f$ classes in total, the result is equal to
+ * the mean of the values
+ * @f[
+ * tp_0 / (tp_0 + fn_0), tp_1 / (tp_1 + fn_1), \ldots, tp_N / (tp_N + fn_N),
+ * @f]
+ * where @f$ tp_i @f$ and @f$ fn_i @f$ are the
+ * numbers of true positives and false negatives respectively for the class
+ * (label) @f$ i @f$.
  *
  * In the case of binary classification (AS = Binary) positives are assumed to
  * have labels equal to 1, whereas negatives are assumed to have labels equal to

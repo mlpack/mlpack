@@ -20,18 +20,25 @@ namespace cv {
 
 /**
  * Precision is a metric of performance for classification algorithms that for
- * binary classification is equal to tp / (tp + fp), where tp and fp are the
- * numbers of true positives and false positives respectively. For multiclass
- * classification the precision metric can be used with the following strategies
- * for averaging.
- * 1. Micro. If there are N + 1 classes in total, the result is equal to
- * (tp0 + tp1 + ... + tpN) / (tp0 + tp1 + ... + tpN + fp0 + fp1 + ... fpN),
- * where tpI and fpI are the numbers of true positives and false positives
- * respectively for the class (label) I.
- * 2. Macro. If there are N + 1 classes in total, the result is equal to the
- * mean of values tp0 / (tp0 + fp0), tp1 / (tp1 + fp1), ..., tpN / (tpN + fpN),
- * where tpI and fpI are the numbers of true positives and false positives
- * respectively for the class (label) I.
+ * binary classification is equal to @f$ tp / (tp + fp) @f$, where @f$ tp @f$
+ * and @f$ fp @f$ are the numbers of true positives and false positives
+ * respectively. For multiclass classification the precision metric can be used
+ * with the following strategies for averaging.
+ * 1. Micro. If there are @f$ N + 1 @f$ classes in total, the result is equal to
+ * @f[
+ * (tp_0 + tp_1 + \ldots + tp_N) / (tp_0 + tp_1 + \ldots + tp_N + fp_0 + fp_1 +
+ * \ldots + fp_N),
+ * @f]
+ * where @f$ tp_i @f$ and @f$ fp_i @f$ are the numbers of true
+ * positives and false positives respectively for the class (label) @f$ i @f$.
+ * 2. Macro. If there are @f$ N + 1 @f$ classes in total, the result is equal to
+ * the mean of the values
+ * @f[
+ * tp_0 / (tp_0 + fp_0), tp_1 / (tp_1 + fp_1), \ldots, tp_N / (tp_N + fp_N),
+ * @f]
+ * where @f$ tp_i @f$ and @f$ fp_i @f$ are the
+ * numbers of true positives and false positives respectively for the class
+ * (label) @f$ i @f$.
  *
  * In the case of binary classification (AS = Binary) positives are assumed to
  * have labels equal to 1, whereas negatives are assumed to have labels equal to
