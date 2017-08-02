@@ -221,8 +221,8 @@ inline void SpikeSlabRBMPolicy<InputDataType, OutputDataType>
 
   for (size_t i = 0; i < hiddenSize; i++)
   {
-    slabMean.col(i) = arma::as_scalar(invSlabPenalty * spike(i) *
-        weight.slice(i).t() * visible);
+    slabMean.col(i) = invSlabPenalty * spike(i) *
+        weight.slice(i).t() * visible;
   }
 }
 
