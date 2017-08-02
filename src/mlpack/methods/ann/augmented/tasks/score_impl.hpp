@@ -35,7 +35,7 @@ const double SequencePrecision(arma::field<MatType> trueOutputs,
         << "of ground-truth sequences ("
         << trueOutputs.n_elem << ")"
         << std::endl;
-    throw std::invalid_argument(oss.str());    
+    throw std::invalid_argument(oss.str());
   }
 
   for (size_t i = 0; i < testSize; i++)

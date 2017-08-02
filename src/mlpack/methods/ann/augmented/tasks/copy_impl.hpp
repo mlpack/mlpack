@@ -27,7 +27,7 @@ CopyTask::CopyTask(const size_t maxLength,
     nRepeats(nRepeats),
     addSeparator(addSeparator)
 {
-  if (maxLength <= 1) 
+  if (maxLength <= 1)
   {
     std::ostringstream oss;
     oss << "CopyTask::CopyTask(): maximum sequence length ("
@@ -58,7 +58,7 @@ const void CopyTask::Generate(arma::field<arma::mat>& input,
   for (size_t i = 0; i < batchSize; ++i)
   {
     if (!fixedLength)
-    {            
+    {
       arma::vec weights(maxLength - 1);
       // We have two binary numbers with exactly two digits (10 and 11).
       // Increasing length by 1 double the number of valid numbers.

@@ -66,7 +66,7 @@ double EpanechnikovKernel::GradientForSquaredDistance(const double
   if (distanceSquared < bandwidthSquared)
   {
     return -1 * inverseBandwidthSquared;
-  } 
+  }
   else if (distanceSquared > bandwidthSquared &&
              distanceSquared >= 0)
   {

@@ -70,7 +70,7 @@ class CopyTask
                       arma::field<arma::mat>& labels,
                       const size_t batchSize,
                       bool fixedLength = false);
-  
+
   /**
    * Generate dataset of a given size and store it in
    * arma::mat object.

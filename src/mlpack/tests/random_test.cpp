@@ -44,7 +44,7 @@ BOOST_AUTO_TEST_CASE(DiscreteUniformRandomTest)
       BOOST_REQUIRE_SMALL(
         1.0 / (hiExclusive - lo) - count[i] * 1.0 / iterations, 1e-2);
     }
-  }  
+  }
 
   // Here we also test RandInt(hiExclusive) overload.
   for (std::pair<int, int> range : ranges)
