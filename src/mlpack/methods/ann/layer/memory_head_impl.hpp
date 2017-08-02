@@ -37,7 +37,8 @@ MemoryHead<InputDataType, OutputDataType>::MemoryHead(
     deterministic(false)
 {
   // Build linear for kT + bT + gT + sT + gammaT
-  inputLinear = new Linear<>(inSize, (memSize) + (1) + (1) + (2 * shiftSize + 1));
+  inputLinear = new Linear<>(inSize, (memSize) + (1) + (1) +
+      (2 * shiftSize + 1) + (1));
 
   // kT non linearity.
   kTNonLinear = new TanHLayer<>();
@@ -48,7 +49,8 @@ MemoryHead<InputDataType, OutputDataType>::MemoryHead(
   prevWeights.push_back(arma::zeros<arma::mat>(outSize, 1));
   weightsBackwardIterator = prevWeights.end();
 
-  prevError = arma::zeros<arma::mat>((memSize) + (1) + (1) + (2 * shiftSize + 1), 1);
+  prevError = arma::zeros<arma::mat>((memSize) + (1) + (1) +
+      (2 * shiftSize + 1) + (1), 1);
 
   bWdash = lWDash.end();
   bGammaT = lGammaT.end();
@@ -95,9 +97,14 @@ void MemoryHead<InputDataType, OutputDataType>::ForwardWithMemory(
   arma::vec temp = arma::exp(lOutput.submat(memSize + 2, 0,
     memSize + 2 + 2 * shiftSize, 0));
   temp = temp / arma::as_scalar(arma::sum(temp));
-  lSt.push_back(lOutput.submat(memSize + 2, 0,
-    memSize + 2 + 2 * shiftSize, 0));
+  lSt.push_back(std::move(temp));
   const arma::vec& sT = lSt.back();
+
+  // Build gammaT with non linearity
+  lGammaT.push_back(gammaTNonLinear.Fn(arma::as_scalar(
+    lOutput.submat(memSize + 2 + 2 * shiftSize + 1, 0,
+    memSize + 2 + 2 * shiftSize + 1, 0))));
+  const double& gammaT = lGammaT.back();
 
   // Perform cosine similarity with memory content
   lConsineT.push_back(arma::normalise(memory, 2, 1) * arma::normalise(kT));
@@ -117,7 +124,8 @@ void MemoryHead<InputDataType, OutputDataType>::ForwardWithMemory(
 
   // Perform circular convolution with sT
   arma::mat shiftVec = arma::shift(arma::flipud(sT), 1);
-  size_t numRep = outSize / (2 * shiftSize + 1);
+  size_t numRep = std::ceil(((double)outSize) / (2 * shiftSize + 1));
+
   if (numRep > 1)
   {
     shiftVec = arma::repmat(shiftVec, numRep, 1);
@@ -135,9 +143,20 @@ void MemoryHead<InputDataType, OutputDataType>::ForwardWithMemory(
   lWTilde.push_back(arma::trans(arma::trans(wG) * shiftMatrix));
   const arma::vec& wTilde = lWTilde.back();
 
-  output = wTilde;
+  // Sharpening
+  lWDash.push_back(arma::pow(wTilde, gammaT + 1));
+  const arma::vec& wDash = lWDash.back();
 
-  prevWeights.push_back(output);
+  output = wDash / arma::as_scalar(arma::sum(wDash));
+
+  if (!deterministic)
+  {
+    prevWeights.push_back(output);
+  }
+  else
+  {
+    prevWeights.back() = output;
+  }
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -158,6 +177,10 @@ void MemoryHead<InputDataType, OutputDataType>::BackwardWithMemory(
     bGt = (--lGt.end());
     bShiftMatrix = (--lShiftMatrix.end());
     bWg = (--lWg.end());
+    bWTilde = (--lWTilde.end());
+    bSt = (--lSt.end());
+    bWdash = (--lWDash.end());
+    bGammaT = (--lGammaT.end());
 
     weightsBackwardIterator = --(--prevWeights.end());
   }
@@ -174,9 +197,30 @@ void MemoryHead<InputDataType, OutputDataType>::BackwardWithMemory(
   const double& gT = *bGt;
   const arma::mat wG = *bWg;
   const arma::mat& shiftMatrix = *bShiftMatrix;
+  const arma::vec& wTilde = *bWTilde;
+  const arma::vec& sT = *bSt;
+  const double& gammaT = *bGammaT;
+  const arma::mat& wDash = *bWdash;
+
+  // Error of output
+  arma::mat& dW = gy;
+
+  // Error of wDash
+  double sum1 = arma::as_scalar(arma::sum(wDash));
+  double sum2 = arma::as_scalar(arma::sum(dW % wDash)) / (sum1 * sum1);
+  dW.for_each([&] (double& val)
+  {
+    val = (val / sum1) - sum2;
+  });
+
+  // Error of gammaT
+  prevError(memSize + 2 + 2 * shiftSize + 1, 0) = gammaTNonLinear.Deriv(
+    boost::apply_visitor(outputParameterVisitor, inputLinear)
+    (memSize + 2 + 2 * shiftSize + 1, 0)) *
+    arma::as_scalar(arma::sum(dW % wDash % arma::log(wTilde)));
 
   // Error of Wtilde
-  arma::mat dW = gy;
+  dW %= (gammaT + 1) * arma::pow(wTilde, gammaT);
 
   // Error of shiftMatrix
   arma::mat dShiftMatrix = wG * arma::trans(dW);
@@ -202,6 +246,8 @@ void MemoryHead<InputDataType, OutputDataType>::BackwardWithMemory(
     const arma::mat& toAdd = dShiftMatrix.submat(0, colIndex, 2 * shiftSize,
       std::min(colIndex + 2 * shiftSize, (size_t)shiftMatrix.n_cols - 1));
     dShiftMatrix.submat(0, 0, 2 * shiftSize, toAdd.n_cols - 1) += toAdd;
+
+    colIndex += 2 * shiftSize + 1;
   }
 
   arma::mat sDShiftMatrix = dShiftMatrix.submat(0, 0, 2 * shiftSize,
@@ -209,14 +255,22 @@ void MemoryHead<InputDataType, OutputDataType>::BackwardWithMemory(
 
   arma::vec dSt = arma::zeros(2 * shiftSize + 1);
 
-  sDShiftMatrix.each_col([&](arma::vec& v)
+  colIndex = 0;
+  dShiftMatrix.each_col([&](arma::vec& v)
   {
-    dSt = std::move(arma::shift(std::move(dSt), 1));
-    dSt += v;
+    if (colIndex < 2 * shiftSize + 1)
+    {
+      dSt = std::move(arma::shift(std::move(dSt), 1));
+      dSt += v.submat(0, 0, 2 * shiftSize, 0);
+    }
+
+    colIndex++;
   });
 
   // Error of St
-  dSt = arma::flipud(dSt);
+  dSt = arma::flipud(dSt) % sT;
+  sum1 = arma::as_scalar(arma::sum(dSt));
+  dSt -= sum1 * sT;
   prevError.submat(memSize + 2, 0, memSize + 2 + 2 * shiftSize, 0) = dSt;
 
   // Error of Wg.
@@ -233,8 +287,8 @@ void MemoryHead<InputDataType, OutputDataType>::BackwardWithMemory(
   dW *= gT;
 
   // Error of We
-  double sum1 = arma::as_scalar(arma::sum(wE));
-  double sum2 = arma::as_scalar(arma::sum(wE % dW));
+  sum1 = arma::as_scalar(arma::sum(wE));
+  sum2 = arma::as_scalar(arma::sum(wE % dW));
   dW.for_each([&] (double& val)
   {
     val = (val / sum1) - (sum2 / (sum1 * sum1));
@@ -306,6 +360,10 @@ void MemoryHead<InputDataType, OutputDataType>::BackwardWithMemory(
   bGt--;
   bShiftMatrix--;
   bWg--;
+  bWTilde--;
+  bSt--;
+  bGammaT--;
+  bWdash--;
 
   weightsBackwardIterator--;
 }
@@ -328,7 +386,8 @@ void MemoryHead<InputDataType, OutputDataType>::ResetCell()
   prevWeights.push_back(arma::zeros<arma::mat>(outSize, 1));
   weightsBackwardIterator = prevWeights.end();
 
-  prevError = arma::zeros<arma::mat>((memSize) + (1) + (1) + (2 * shiftSize + 1), 1);
+  prevError = arma::zeros<arma::mat>((memSize) + (1) + (1) +
+      (2 * shiftSize + 1) + (1), 1);
 
   lWDash.clear();
   lGammaT.clear();

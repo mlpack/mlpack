@@ -1024,7 +1024,7 @@ BOOST_AUTO_TEST_CASE(GradientNTMTest)
       model = new RNN<NegativeLogLikelihood<> >(input, target, rho);
       model->Add<IdentityLayer<> >();
       model->Add<Linear<> >(1, 10);
-      model->Add<NeuralTuringMachine<> >(10, 3, 3, 5, 1, controller);
+      model->Add<NeuralTuringMachine<> >(10, 3, 6, 10, 1, controller);
       model->Add<Linear<> >(3, 3);
       model->Add<LogSoftMax<> >();
     }
