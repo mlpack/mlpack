@@ -40,9 +40,9 @@ GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
     IntializerType initializeRule,
     Generator& generator,
     Discriminator& discriminator,
+    size_t noiseInsize,
     size_t batchSize,
-    size_t disIteration,
-    size_t generatorInSize):
+    size_t disIteration):
     trainData(trainData),
     initializeRule(initializeRule),
     generator(generator),
@@ -73,9 +73,11 @@ void GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
         generator.network[i]);
 
   assert(generatorWeights > 0);
+
   for (size_t i = 0; i < discriminator.network.size(); ++i)
     discriminatorWeights += boost::apply_visitor(weightSizeVisitor,
         discriminator.network[i]);
+
   assert(discriminatorWeights > 0);
 
   parameter.set_size(generatorWeights + discriminatorWeights, 1);
@@ -86,8 +88,8 @@ void GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
   generator.Parameters() = arma::mat(parameter.memptr(), generatorWeights,
       1, false, false);
 
-  discriminator.Parameters() = arma::mat(parameter.memptr() + generatorWeights,
-      discriminatorWeights, 1, false, false);
+  discriminator.Parameters() = arma::mat(parameter.memptr() +
+      generatorWeights.n_elem, discriminatorWeights, 1, false, false);
 
   // Reset both the generator and discriminator
   for (size_t i = 0; i < generator.network.size(); ++i)
@@ -104,6 +106,7 @@ void GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
 
     boost::apply_visitor(resetVisitor, discriminator.network[i]);
   }
+
   reset = true;
 }
 
@@ -123,7 +126,7 @@ void GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
   if (!trainGenerator)
   {
     predictors.set_size(trainData.n_rows, batchSize);
-    noiseData.set_size(generatorInSize, disBatchSize);
+    noiseData.set_size(noiseInsize, disBatchSize);
     
     disFakeData = arma::mat(predictors.memptr(), n_rows, disBatchSize,
         false, false);
@@ -146,8 +149,8 @@ void GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
   }
   else
   {
-    predictors.set_size(generatorInSize, batchSize);
-    noiseData.set_size(generatorInSize, batchSize);
+    predictors.set_size(noiseInsize, batchSize);
+    noiseData.set_size(noiseInsize, batchSize);
     
     noiseData = arma::mat(predictors.memptr(), generatorInSize,
         batchSize, false, false);

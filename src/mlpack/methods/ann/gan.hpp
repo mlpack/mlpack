@@ -12,7 +12,7 @@
 
 #include <mlpack/core.hpp>
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/math/random.hpp>
+
 
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/layer/base_layer.hpp>
@@ -21,10 +21,6 @@
 #include <mlpack/methods/ann/visitor/reset_visitor.hpp>
 #include <mlpack/methods/ann/visitor/weight_size_visitor.hpp>
 #include <mlpack/methods/ann/visitor/weight_set_visitor.hpp>
-
-#include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
-#include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
-#include <mlpack/core/dists/gaussian_distribution.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 
 using namespace mlpack;
@@ -34,9 +30,8 @@ using namespace mlpack::math;
 using namespace mlpack::distribution;
 
 namespace mlpack {
-namespace ann /** Restricted Boltzmann Machine.  */ {
-template<
-typename Generator = FFN<>,
+namespace ann /** artifical neural network **/ {
+template<typename Generator = FFN<>,
 typename Discriminator = FFN<>,
 typename IntializerType = RandomInitialization>
 class GenerativeAdversarialNetwork
@@ -46,9 +41,9 @@ class GenerativeAdversarialNetwork
       IntializerType initializeRule,
       Generator& generator,
       Discriminator& discriminator,
+      size_t noiseInSize,
       size_t disIteration,
-      size_t batchSize,
-      size_t generatorInSize);
+      size_t batchSize);
 
   // Reset function
   void Reset();
@@ -65,7 +60,9 @@ class GenerativeAdversarialNetwork
                   const size_t i,
                   const bool deterministic = true);
   /**
-   * Gradient function 
+   * Gradient function for gan. 
+   * This function passes the gradients for both 
+   * training of the generator and discriminator.
    * 
    * @param parameters present parameters of the network
    * @param i index of the predictors
@@ -84,7 +81,7 @@ class GenerativeAdversarialNetwork
 
   /**
    * This function predicts the output of the network
-   * on the given input
+   * on the given input.
    *
    * @param input  the input  the discriminator network
    * @param output result of the discriminator network
@@ -100,8 +97,6 @@ class GenerativeAdversarialNetwork
    * @param args the aruments of the distribution to samples from
    */
   void GenerateNoise(arma::mat&& fakeData, arma::mat&& noiseData);
-
-  void CheckMatrices(const arma::Mat<double>& a, const arma::Mat<double>& b);
 
   //! Return the initial point for the optimization.
   const arma::mat& Parameters() const { return parameter; }
@@ -139,7 +134,7 @@ class GenerativeAdversarialNetwork
   //! Locally stored number counter for number of iteration of disc training
   size_t iterationDiscriminator;
   //! Locally stored input size for generator
-  size_t generatorInSize;
+  size_t noiseInSize;
   //! Locally stored reset parmaeter
   bool reset;
   //! Locally stored delta visitor
