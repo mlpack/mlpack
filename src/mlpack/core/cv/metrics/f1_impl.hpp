@@ -12,8 +12,8 @@
 #ifndef MLPACK_CORE_CV_METRICS_F1_IMPL_HPP
 #define MLPACK_CORE_CV_METRICS_F1_IMPL_HPP
 
+#include <mlpack/core/cv/metrics/accuracy.hpp>
 #include <mlpack/core/cv/metrics/facilities.hpp>
-#include <mlpack/core/cv/metrics/precision.hpp>
 
 namespace mlpack {
 namespace cv {
@@ -48,8 +48,8 @@ double F1<Micro>::Evaluate(MLAlgorithm& model,
   AssertSizes(data, labels, "F1<Micro>::Evaluate()");
 
   // Microaveraged F1 is really the same as microaveraged precision and
-  // microaveraged recall.
-  return Precision<Micro>::Evaluate(model, data, labels);
+  // microaveraged recall, which are in turn the same as accuracy.
+  return Accuracy::Evaluate(model, data, labels);
 }
 
 template<>

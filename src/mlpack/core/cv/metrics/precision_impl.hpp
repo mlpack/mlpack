@@ -12,6 +12,7 @@
 #ifndef MLPACK_CORE_CV_METRICS_PRECISION_IMPL_HPP
 #define MLPACK_CORE_CV_METRICS_PRECISION_IMPL_HPP
 
+#include <mlpack/core/cv/metrics/accuracy.hpp>
 #include <mlpack/core/cv/metrics/facilities.hpp>
 
 namespace mlpack {
@@ -42,16 +43,8 @@ double Precision<Micro>::Evaluate(MLAlgorithm& model,
 {
   AssertSizes(data, labels, "Precision<Micro>::Evaluate()");
 
-  arma::Row<size_t> predictedLabels;
-  model.Classify(data, predictedLabels);
-
-  size_t numClasses = arma::max(labels) + 1;
-
-  size_t tpTotal = 0;
-  for (size_t c = 0; c < numClasses; ++c)
-    tpTotal += arma::sum((labels == c) % (predictedLabels == c));
-
-  return double(tpTotal) / labels.n_elem;
+  // Microaveraged precision turns out to be just accuracy.
+  return Accuracy::Evaluate(model, data, labels);
 }
 
 template<>
