@@ -101,24 +101,23 @@ class SimpleCV :
   //! A short alias for CVBase.
   using Base = CVBase<MLAlgorithm, MatType, PredictionsType, WeightsType>;
 
-  /**
-   * Variables for storing the whole dataset.
-   */
+  //! All input data points.
   MatType xs;
+  //! All input predictions.
   PredictionsType ys;
+  //! All input weights (optional).
   WeightsType weights;
 
-  /**
-   * Variables for storing the training dataset.
-   */
+  //! The training data points.
   MatType trainingXs;
+  //! The training predictions.
   PredictionsType trainingYs;
+  //! The training weights (optional).
   WeightsType trainingWeights;
 
-  /**
-   * Variables for storing the validation dataset.
-   */
+  //! The validation data points.
   MatType validationXs;
+  //! The validation predictions.
   PredictionsType validationYs;
 
   //! A pointer to the last trained model.

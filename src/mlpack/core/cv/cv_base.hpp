@@ -153,6 +153,7 @@ class CVBase
          const WeightsInType& weights);
 
  protected:
+  //! A short alias for MetaInfoExtractor.
   using MIE =
       MetaInfoExtractor<MLAlgorithm, MatType, PredictionsType, WeightsType>;
 
@@ -282,8 +283,8 @@ class CVBase
                                 const WeightsType& weights);
 
   /**
-   * A set of methods for training models depending on what parameters are
-   * optional and what parameters are required for MLAlgorithm.
+   * Construct a trained MLAlgorithm model if MLAlgorithm doesn't take the
+   * numClasses parameter.
    */
   template<typename... MLAlgorithmArgs,
            bool Enabled = !MIE::TakesNumClasses,
@@ -292,6 +293,10 @@ class CVBase
                                           const PredictionsType& ys,
                                           const MLAlgorithmArgs&... args);
 
+  /**
+   * Construct a trained MLAlgorithm model if MLAlgorithm takes the
+   * numClasses parameter.
+   */
   template<typename... MLAlgorithmArgs,
            bool Enabled = MIE::TakesNumClasses & !MIE::TakesDatasetInfo,
            typename = typename std::enable_if<Enabled>::type,
@@ -300,6 +305,10 @@ class CVBase
                                           const PredictionsType& ys,
                                           const MLAlgorithmArgs&... args);
 
+  /**
+   * Construct a trained MLAlgorithm model if MLAlgorithm takes the
+   * numClasses parameter and a data::DatasetInfo parameter.
+   */
   template<typename... MLAlgorithmArgs,
            bool Enabled = MIE::TakesNumClasses & MIE::TakesDatasetInfo,
            typename = typename std::enable_if<Enabled>::type,
@@ -309,6 +318,10 @@ class CVBase
                                           const PredictionsType& ys,
                                           const MLAlgorithmArgs&... args);
 
+  /**
+   * Construct a trained MLAlgorithm model if MLAlgorithm doesn't take the
+   * numClasses parameter.
+   */
   template<typename... MLAlgorithmArgs,
            bool Enabled = !MIE::TakesNumClasses,
            typename = typename std::enable_if<Enabled>::type>
@@ -317,6 +330,10 @@ class CVBase
                                           const WeightsType& weights,
                                           const MLAlgorithmArgs&... args);
 
+  /**
+   * Construct a trained MLAlgorithm model if MLAlgorithm takes the
+   * numClasses parameter.
+   */
   template<typename... MLAlgorithmArgs,
            bool Enabled = MIE::TakesNumClasses & !MIE::TakesDatasetInfo,
            typename = typename std::enable_if<Enabled>::type,
@@ -326,6 +343,10 @@ class CVBase
                                           const WeightsType& weights,
                                           const MLAlgorithmArgs&... args);
 
+  /**
+   * Construct a trained MLAlgorithm model if MLAlgorithm takes the
+   * numClasses parameter and a data::DatasetInfo parameter.
+   */
   template<typename... MLAlgorithmArgs,
            bool Enabled = MIE::TakesNumClasses & MIE::TakesDatasetInfo,
            typename = typename std::enable_if<Enabled>::type,
@@ -341,6 +362,9 @@ class CVBase
    * treated separately - there are models that can be constructed with and
    * without a data:DatasetInfo parameter and models that can be constructed
    * only with a data::DatasetInfo parameter.
+   *
+   * Construct a trained MLAlgorithm model when it can be constructed without a
+   * data::DatasetInfo parameter.
    */
   template<bool ConstructableWithoutDatasetInfo,
            typename... MLAlgorithmArgs,
@@ -350,6 +374,10 @@ class CVBase
                                           const PredictionsType& ys,
                                           const MLAlgorithmArgs&... args);
 
+  /**
+   * Construct a trained MLAlgorithm model when it can't be constructed without
+   * a data::DatasetInfo parameter.
+   */
   template<bool ConstructableWithoutDatasetInfo,
            typename... MLAlgorithmArgs,
            typename =
