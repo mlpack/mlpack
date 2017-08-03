@@ -279,7 +279,10 @@ inline double ParallelSGD<ExponentialBackoff>::Optimize(
     {
       // Each processor gets a subset of the instances.
       // Each subset is of size threadShareSize.
-      size_t threadId = omp_get_thread_num();
+      size_t threadId = 0;
+      #ifdef HAS_OPENMP
+        threadId = omp_get_thread_num();
+      #endif
 
       for (size_t j = threadId * threadShareSize;
           j < (threadId + 1) * threadShareSize && j < visitationOrder.n_elem;
