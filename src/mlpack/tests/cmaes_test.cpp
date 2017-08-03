@@ -37,22 +37,21 @@ using namespace mlpack::regression;
 BOOST_AUTO_TEST_SUITE(CMAESTest);
 
 // a simple rosenbrock function implemented
-  class rosenbrockFunc
+class rosenbrockFunc
+{
+ public:
+  int N;
+
+  rosenbrockFunc(int x){ N = x-1; }
+
+  double NumFunctions(){return N;}
+
+  double Evaluate(arma::mat& x, int i)
   {
-     public:
-    
-    int N;
-
-    rosenbrockFunc(int x){ N = x-1; }
-
-    double NumFunctions(){return N;}
-
-    double Evaluate(arma::mat& x, int i)
-    {
-      return 100.*pow((pow((x[i]), 2) - x[i+1]), 2)
-      + pow((1.-x[i]), 2);
-    }
-  };
+    return 100.*pow((pow((x[i]), 2) - x[i+1]), 2)
+    + pow((1.-x[i]), 2);
+  }
+};
 
 
 BOOST_AUTO_TEST_CASE(SimpleCMAESTestFunction)

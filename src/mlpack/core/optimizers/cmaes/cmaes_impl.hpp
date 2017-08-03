@@ -141,32 +141,34 @@ double iters, double evalEnd, double functionHistory)
   template<typename funcType>
   double CMAES::Optimize(funcType& function, arma::mat& arr)
   {
-     arFunvals.set_size(lambda);
+    arFunvals.set_size(lambda);
     init();
     int funNo = function.NumFunctions();
 
     arma::Col<double> x(N);
 
-  while (!testForTermination())
-  {
-    // Generate lambda new search points, sample population
-    samplePopulation();
-    arFunvals.fill(0);
-    // evaluate the new search points using the given evaluate
-    // function by the user
-  for (int i = 0; i < lambda; ++i)
- {
-   x = population.submat(i, 0, i, N-1).t();
+    while (!testForTermination())
+    {
+      // Generate lambda new search points, sample population
+      samplePopulation();
+      arFunvals.fill(0);
 
-   for (int j = 0; j < funNo; j++)
-   arFunvals[i] += function.Evaluate(x, j);
- }
-  // update the search distribution used for sampleDistribution()
-  updateDistribution(arFunvals);
-  }
+      // evaluate the new search points using the given evaluate
+      // function by the user
+      for (int i = 0; i < lambda; ++i)
+      {
+       x = population.submat(i, 0, i, N-1).t();
 
-  // get best estimator for the optimum
-  arr = xmean;
+       for (int j = 0; j < funNo; j++)
+       arFunvals[i] += function.Evaluate(x, j);
+      }
+
+      // update the search distribution used for sampleDistribution()
+      updateDistribution(arFunvals);
+    }
+
+    // get best estimator for the optimum
+    arr = xmean;
 
     double funs = 0;
     for (int j = 0; j < funNo; j++)
@@ -303,9 +305,9 @@ void CMAES::samplePopulation()
     bool diag = diagonalCov == 1 || diagonalCov >= gen;
 
     // calculate eigensystem
-    if(!eigensysIsUptodate)
+    if (!eigensysIsUptodate)
     {
-      if(!diag)
+      if (!diag)
         updateEigensystem(false);
       else
       {
@@ -609,7 +611,7 @@ void CMAES::updateEigensystem(bool force)
   {
     update();
 
-    if(!force)
+    if (!force)
     {
       if (eigensysIsUptodate)
         return;
@@ -631,7 +633,7 @@ void CMAES::updateEigensystem(bool force)
     toc();
 
     // find largest and smallest eigenvalue,
-    //they are supposed to be sorted anyway
+    // they are supposed to be sorted anyway
     minEW = rgD.min();
     maxEW = rgD.max();
 
