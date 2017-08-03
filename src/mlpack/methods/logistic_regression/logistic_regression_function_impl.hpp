@@ -130,7 +130,8 @@ double LogisticRegressionFunction<MatType>::Evaluate(
  * parameters for a given batch from a given point.
  */
 template<typename MatType>
-double LogisticRegressionFunction<MatType>::Evaluate(const arma::mat& parameters,
+double LogisticRegressionFunction<MatType>::Evaluate(
+                  const arma::mat& parameters,
                   const size_t begin,
                   const size_t batchSize) const
 {
@@ -142,7 +143,7 @@ double LogisticRegressionFunction<MatType>::Evaluate(const arma::mat& parameters
   // Calculating the hypothesis that has to be passed to the sigmoid function.
   const arma::vec exponents = parameters(0, 0) + predictors.t() *
     parameters.col(0).subvec(begin, batchSize - 1);
-  //Calculating the sigmoid function values.
+  // Calculating the sigmoid function values.
   const arma::vec sigmoid = 1.0 / (1.0 + arma::exp(-exponents));
 
   // Iterating for the given batch size from a given point
@@ -205,7 +206,8 @@ void LogisticRegressionFunction<MatType>::Gradient(
       * (responses[i] - sigmoid) + regularization;
 }
 
-//! Evaluate the gradient of the logistic regression objective function for a given batch size.
+//! Evaluate the gradient of the logistic regression
+//  objective function for a given batch size.
 template<typename MatType>
 void LogisticRegressionFunction<MatType>::Gradient(
                 const arma::mat& parameters,
@@ -223,7 +225,7 @@ void LogisticRegressionFunction<MatType>::Gradient(
   gradient.set_size(batchSize);
   gradient[0] = -arma::accu(responses - sigmoids);
   gradient.col(0).subvec(begin, batchSize - 1) = -predictors * (responses -
-      sigmoids).t() + regularization;  
+      sigmoids).t() + regularization;
 }
 
 
