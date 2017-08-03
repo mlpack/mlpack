@@ -41,9 +41,9 @@ class GenerativeAdversarialNetwork
       IntializerType initializeRule,
       Generator& generator,
       Discriminator& discriminator,
+      size_t batchSize,
       size_t noiseInSize,
-      size_t disIteration,
-      size_t batchSize);
+      size_t disIteration);
 
   // Reset function
   void Reset();
@@ -125,6 +125,8 @@ class GenerativeAdversarialNetwork
   bool trainGenerator;
   //! Locally stored batch size parameter
   size_t batchSize;
+  //! Locally stored input size for generator
+  size_t noiseInSize;
   //! Locally stored offset for predictors
   size_t offset;
   //! Locally stored number of iterations
@@ -133,8 +135,6 @@ class GenerativeAdversarialNetwork
   size_t disIteration;
   //! Locally stored number counter for number of iteration of disc training
   size_t iterationDiscriminator;
-  //! Locally stored input size for generator
-  size_t noiseInSize;
   //! Locally stored reset parmaeter
   bool reset;
   //! Locally stored delta visitor
@@ -175,6 +175,10 @@ class GenerativeAdversarialNetwork
   arma::mat gradientGenerator;
   //! Locally stored output of the generator network
   arma::mat ganOutput;
+
+  arma::mat fakeData1;
+  arma::mat noiseData1;
+  std::string name;
 };
 } // namespace ann
 } // namespace mlpack

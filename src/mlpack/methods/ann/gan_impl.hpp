@@ -40,8 +40,8 @@ GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
     IntializerType initializeRule,
     Generator& generator,
     Discriminator& discriminator,
-    size_t noiseInsize,
     size_t batchSize,
+    size_t noiseInSize,
     size_t disIteration):
     trainData(trainData),
     initializeRule(initializeRule),
@@ -49,7 +49,8 @@ GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
     discriminator(discriminator),
     trainGenerator(false),
     batchSize(batchSize),
-    generatorInSize(generatorInSize),
+    noiseInSize(noiseInSize),
+    disIteration(2 * disIteration),
     reset(false)
 {
   discriminator.network.insert(discriminator.network.begin(),
@@ -57,7 +58,6 @@ GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
   trainGenerator = false;
   iterations = 1;
   offset = 0;
-  disIteration = 2 * disIteration;
   iterationDiscriminator = disIteration;
 }
 
@@ -65,6 +65,7 @@ template<typename Generator, typename Discriminator, typename IntializerType>
 void GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
 ::Reset()
 {
+  std::cout << "Reset function" << std::endl;
   size_t generatorWeights = 0;
   size_t discriminatorWeights = 0;
 
@@ -89,7 +90,7 @@ void GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
       1, false, false);
 
   discriminator.Parameters() = arma::mat(parameter.memptr() +
-      generatorWeights.n_elem, discriminatorWeights, 1, false, false);
+      generator.Parameters().n_elem, discriminatorWeights, 1, false, false);
 
   // Reset both the generator and discriminator
   for (size_t i = 0; i < generator.network.size(); ++i)
@@ -120,19 +121,16 @@ void GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
   size_t n_rows = trainData.n_rows;
   size_t disBatchSize = std::floor(batchSize / 2.0);
 
-  if (iterations % batchSize == 0)
-    std::cout << iterations << std::endl;
-
   if (!trainGenerator)
   {
     predictors.set_size(trainData.n_rows, batchSize);
-    noiseData.set_size(noiseInsize, disBatchSize);
+    noiseData.set_size(noiseInSize, disBatchSize);
     
     disFakeData = arma::mat(predictors.memptr(), n_rows, disBatchSize,
         false, false);
     
     predictors.cols(disBatchSize, batchSize - 1) =arma::mat(
-        trainData.memptr() + offset, n_rows, disBatchSize,
+        trainData.memptr() + offset, n_rows, batchSize - disBatchSize,
         true, false);
 
     discriminator.predictors = arma::mat(predictors.memptr(), n_rows, batchSize,
@@ -149,10 +147,10 @@ void GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
   }
   else
   {
-    predictors.set_size(noiseInsize, batchSize);
-    noiseData.set_size(noiseInsize, batchSize);
+    predictors.set_size(noiseInSize, batchSize);
+    noiseData.set_size(noiseInSize, batchSize);
     
-    noiseData = arma::mat(predictors.memptr(), generatorInSize,
+    noiseData = arma::mat(predictors.memptr(), noiseInSize,
         batchSize, false, false);
     genFakeData = arma::mat(discriminator.predictors.memptr(), n_rows,
         batchSize, false, false);
@@ -204,18 +202,18 @@ void GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
       Reset();
     }
     gradient = arma::zeros<arma::mat>(parameter.n_rows, 1);
+    // Gradient for generator network
+    gradientGenerator = arma::mat(gradient.memptr(),
+      generator.Parameters().n_rows, 1, false, false);
+
+    // Gradient for discriminator network
+    gradientDiscriminator = arma::mat(gradient.memptr() + gradientGenerator.n_elem,
+      discriminator.Parameters().n_rows, 1, false, false);
   }
   else
   {
     gradient.zeros();
   }
-  // Gradient for generator network
-  gradientGenerator = arma::mat(gradient.memptr(),
-      generator.Parameters().n_rows, 1, false, false);
-
-  // Gradient for discriminator network
-  gradientDiscriminator = arma::mat(gradient.memptr() + gradientGenerator.n_elem,
-      discriminator.Parameters().n_rows, 1, false, false);
 
   // get the gradients of the discriminator
   discriminator.Gradient(parameters, i, gradientDiscriminator);
@@ -240,7 +238,7 @@ void GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
   // if full batch seen then alternate training
   if (iterations % numFunctions == 0)
   {
-    if (!trainGenerator && iterationDiscriminator==0)
+    if (!trainGenerator && iterationDiscriminator==1)
     {
       trainGenerator = true;
       GenerateData();
@@ -255,6 +253,17 @@ void GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
     }
   }
   iterations++;
+  /*
+  if (iterations % (batchSize * 50) == 0)
+  {
+    std::cout << "Here " << std::endl;
+    fakeData1.set_size(trainData.n_rows, 10);
+    noiseData1.set_size(100, 10);
+    GenerateNoise(std::move(fakeData1), std::move(noiseData1));
+    name = "fakeData" + std::to_string((int)iterations) + ".txt";
+    fakeData1.save(name, arma::raw_ascii);
+  }
+  */
 }
 
 template<typename Generator, typename Discriminator, typename IntializerType>
