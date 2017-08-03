@@ -125,6 +125,10 @@ double LogisticRegressionFunction<MatType>::Evaluate(
     return -log(1.0 - sigmoid) + regularization;
 }
 
+/**
+ * Evaluate the logistic regression objective function given the estimated
+ * parameters for a given batch from a given point.
+ */
 template<typename MatType>
 double LogisticRegressionFunction<MatType>::Evaluate(const arma::mat& parameters,
                   const size_t begin,
@@ -201,6 +205,7 @@ void LogisticRegressionFunction<MatType>::Gradient(
       * (responses[i] - sigmoid) + regularization;
 }
 
+//! Evaluate the gradient of the logistic regression objective function for a given batch size.
 template<typename MatType>
 void LogisticRegressionFunction<MatType>::Gradient(
                 const arma::mat& parameters,
