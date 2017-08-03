@@ -116,7 +116,7 @@ double Optimize(funcType& function, arma::mat& arr);
   double mucov;
   //! Variance effective selection mass, should be lambda/4.
   double mueff;
-   //! Weights used to recombinate the mean sum up to one.
+  //! Weights used to recombinate the mean sum up to one.
   arma::vec weights;
   /**
   * Damping parameter for step-size adaption, d = inifinity or 0 means adaption
@@ -180,7 +180,7 @@ double Optimize(funcType& function, arma::mat& arr);
   short isstarted = 1;
   double lastdiff = 0;
   double tictoczwischensumme = 0;
-  double totaltime = 0; 
+  double totaltime = 0;
   double totaltotaltime = 0;
   double tictoctime = 0;
   double lasttictoctime = 0;
@@ -242,7 +242,6 @@ void tic();
 double toc();
 //! @return time between last call of timings_*() and now
 double update();
-
 };
 } // namespace optimization
 } // namespace mlpack

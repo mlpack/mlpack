@@ -48,17 +48,17 @@ double iters, double evalEnd, double functionHistory)
      N = objectDim;
     if ( N <= 0)
     throw std::runtime_error("Problem dimension N undefined.");
-    
+
     if (evalEnd != 0) stopTolFun = evalEnd;
     if (functionHistory != 0) stopTolFunHist = functionHistory;
-    
+
     if (start == 0)
     { Log::Warn << " WARNING: initial start point undefined." <<
      "Please specify if incorrect results detected."
      << "DEFAULT = 0.5...0.5." << std::endl;
      start = 0.5;
     }
-    
+
     if (stdDivs == 0)
     {
      Log::Warn << "WARNING: initialStandardDeviations undefined."
@@ -144,26 +144,25 @@ double iters, double evalEnd, double functionHistory)
      arFunvals.set_size(lambda);
     init();
     int funNo = function.NumFunctions();
-    
+
     arma::Col<double> x(N);
 
   while (!testForTermination())
   {
-    
     // Generate lambda new search points, sample population
     samplePopulation();
     arFunvals.fill(0);
     // evaluate the new search points using the given evaluate
     // function by the user
-    for (int i = 0; i < lambda; ++i)
-   {
-      x = population.submat(i, 0, i, N-1).t();
+  for (int i = 0; i < lambda; ++i)
+ {
+   x = population.submat(i, 0, i, N-1).t();
 
    for (int j = 0; j < funNo; j++)
-     arFunvals[i] += function.Evaluate(x, j);
-   }
-    // update the search distribution used for sampleDistribution()
-      updateDistribution(arFunvals);
+   arFunvals[i] += function.Evaluate(x, j);
+ }
+  // update the search distribution used for sampleDistribution()
+  updateDistribution(arFunvals);
   }
 
   // get best estimator for the optimum
@@ -176,7 +175,7 @@ double iters, double evalEnd, double functionHistory)
     return funs;
   }
 
-   void CMAES::adaptC2(const int hsig)
+  void CMAES::adaptC2(const int hsig)
   {
     bool diag = diagonalCov == 1 || diagonalCov >= gen;
 
@@ -257,14 +256,14 @@ double iters, double evalEnd, double functionHistory)
     xBestEver.set_size(N+2);
     xBestEver[N] = std::numeric_limits<double>::max();
     rgD.set_size(N);
-    C.set_size(N,N);
-    B.set_size(N,N);
+    C.set_size(N, N);
+    B.set_size(N, N);
     functionValues.set_size(lambda);
     historySize = 10 + (int) ceil(3.*10.*N/lambda);
     funcValueHistory.set_size(historySize);
     index.set_size(lambda);
-    for(int i = 0; i < lambda; ++i) index[i] = i;
-    population.set_size(lambda,N+1);
+    for (int i = 0; i < lambda; ++i) index[i] = i;
+    population.set_size(lambda, N+1);
     functionValues.fill(std::numeric_limits<double>::max());
     funcValueHistory.fill(std::numeric_limits<double>::max());
     B.zeros();
@@ -287,9 +286,9 @@ double iters, double evalEnd, double functionHistory)
     mindiagC = arma::min(C.diag());
 
     xmean = xold = xstart;
-   
-      for(int i = 0; i < N; ++i)
-        xmean[i] += sigma*rgD[i]*mlpack::math::RandNormal();
+
+    for (int i = 0; i < N; ++i)
+    xmean[i] += sigma*rgD[i]*mlpack::math::RandNormal();
   }
 
   /**
@@ -384,40 +383,42 @@ void CMAES::updateDistribution(arma::vec& fitnessValues)
       << std::endl << "Reconsider the formulation of the objective function";
     }
 
-for(int i = (int)historySize - 1; i > 0; --i)
+for (int i = (int)historySize - 1; i > 0; --i)
       funcValueHistory[i] = funcValueHistory[i - 1];
     funcValueHistory[0] = fitnessValues[index[0]];
 
     // update xbestever
-    if(xBestEver[N] > population(index[0],N) || gen == 1)
-      for(int i = 0; i <= N; ++i)
+    if (xBestEver[N] > population(index[0], N) || gen == 1)
+    {
+      for (int i = 0; i <= N; ++i)
       {
-        xBestEver[i] = population(index[0],i);
+        xBestEver[i] = population(index[0], i);
         xBestEver[N+1] = countevals;
       }
+    }
 
     const double sqrtmueffdivsigma = std::sqrt(mueff) / sigma;
     // calculate xmean and rgBDz~N(0,C)
-    for(int i = 0; i < N; ++i)
+    for (int i = 0; i < N; ++i)
     {
       xold[i] = xmean[i];
       xmean[i] = 0.;
-      for(int iNk = 0; iNk < mu; ++iNk)
-        xmean[i] += weights[iNk]*population(index[iNk],i);
+      for (int iNk = 0; iNk < mu; ++iNk)
+        xmean[i] += weights[iNk]*population(index[iNk], i);
       BDz[i] = sqrtmueffdivsigma*(xmean[i]-xold[i]);
     }
 
     // calculate z := D^(-1)* B^(-1)* rgBDz into rgdTmp
-    for(int i = 0; i < N; ++i)
+    for (int i = 0; i < N; ++i)
     {
       double sum;
-      if(diag)
+      if (diag)
         sum = BDz[i];
       else
       {
         sum = 0.;
-        for(int j = 0; j < N; ++j)
-          sum += B(j,i)*BDz[j];
+        for (int j = 0; j < N; ++j)
+          sum += B(j, i)*BDz[j];
       }
       tempRandom[i] = sum/rgD[i];
     }
@@ -425,22 +426,22 @@ for(int i = (int)historySize - 1; i > 0; --i)
     // cumulation for sigma (ps) using B*z
     const double sqrtFactor = std::sqrt(cs*(double(2)-cs));
     const double invps = double(1)-cs;
-    for(int i = 0; i < N; ++i)
+    for (int i = 0; i < N; ++i)
     {
       double sum;
-      if(diag)
+      if (diag)
         sum = tempRandom[i];
       else
       {
         sum = double(0);
-        for(int j = 0; j < N; ++j)
-          sum += B(i,j)*tempRandom[j];
+        for (int j = 0; j < N; ++j)
+          sum += B(i, j)*tempRandom[j];
       }
       ps[i] = invps*ps[i] + sqrtFactor*sum;
     }
 
-   // calculate norm(ps)^2
-    double psxps = std::pow(arma::norm(ps), 2);
+    // calculate norm(ps)^2
+   double psxps = std::pow(arma::norm(ps), 2);
 
     // cumulation for covariance matrix (pc) using B*D*z~N(0,C)
     int hsig = std::sqrt(psxps) / std::sqrt(double(1)
@@ -485,7 +486,7 @@ bool CMAES::testForTermination()
 
     // TolFun
     int rangeIndex = (int) std::min((int)gen, historySize-1);
-    range = std::max( arma::max(funcValueHistory.subvec(0, rangeIndex)) ,
+    range = std::max(arma::max(funcValueHistory.subvec(0, rangeIndex)) ,
         functionValues.max()) -
         std::min(arma::min(funcValueHistory.subvec(0, rangeIndex)),
         functionValues.min());
@@ -610,13 +611,13 @@ void CMAES::updateEigensystem(bool force)
 
     if(!force)
     {
-      if(eigensysIsUptodate)
+      if (eigensysIsUptodate)
         return;
       // return on modulo generation number
-      if(gen < genOfEigensysUpdate + updateCmode.modulo)
+      if (gen < genOfEigensysUpdate + updateCmode.modulo)
         return;
       // return on time percentage
-      if(updateCmode.maxtime < 1.00
+      if (updateCmode.maxtime < 1.00
           && tictoctime > updateCmode.maxtime* totaltime
           && tictoctime > 0.0002)
         {
@@ -629,7 +630,8 @@ void CMAES::updateEigensystem(bool force)
     eigen(rgD, B, tempRandom);
     toc();
 
-    // find largest and smallest eigenvalue, they are supposed to be sorted anyway
+    // find largest and smallest eigenvalue,
+    //they are supposed to be sorted anyway
     minEW = rgD.min();
     maxEW = rgD.max();
 
@@ -645,13 +647,12 @@ void CMAES::updateEigensystem(bool force)
    * @param diag (output) N eigenvalues. 
    * @param Q (output) Columns are normalized eigenvectors.
    */
-  
+
   void CMAES::eigen(arma::vec& diag, arma::mat& Q, arma::vec& rgtmp)
   {
-      for(int i = 0; i < N; ++i)
-        for(int j = 0; j <= i; ++j)
-          Q(i,j) = Q(j,i) = C(i,j);
-    
+      for (int i = 0; i < N; ++i)
+        for (int j = 0; j <= i; ++j)
+          Q(i, j) = Q(j, i) = C(i, j);
 
     householder(Q, diag, rgtmp);
     ql(diag, rgtmp, Q);
@@ -667,7 +668,6 @@ void CMAES::updateEigensystem(bool force)
    */
   void CMAES::ql(arma::vec& d, arma::vec& e, arma::mat& V)
   {
-   
     double f(0);
     double tst1(0);
     const double eps(2.22e-16); // 2.0^-52.0 = 2.22e-16
@@ -676,21 +676,21 @@ void CMAES::updateEigensystem(bool force)
     e.subvec(0, N-2) = e.subvec(1, N-1);
     e[N-1] = 0.;
 
-    for(int l = 0; l < N; l++)
+    for (int l = 0; l < N; l++)
     {
       // find small subdiagonal element
       const double smallSDElement = std::fabs(d[l]) + std::fabs(e[l]);
-      if(tst1 < smallSDElement) tst1 = smallSDElement;
+      if (tst1 < smallSDElement) tst1 = smallSDElement;
       const double epsTst1 = eps*tst1;
       int m = l;
-      while(m < N)
+      while (m < N)
       {
-        if(std::fabs(e[m]) <= epsTst1) break;
+        if (std::fabs(e[m]) <= epsTst1) break;
         m++;
       }
 
       // if m == l, d[l] is an eigenvalue, otherwise, iterate.
-      if(m > l)
+      if (m > l)
       {
         do {
           double h, g = d[l];
@@ -698,13 +698,13 @@ void CMAES::updateEigensystem(bool force)
           double r = myhypot(p, double(1));
 
           // compute implicit shift
-          if(p < 0) r = -r;
+          if (p < 0) r = -r;
           const double pr = p+r;
           d[l] = e[l]/pr;
           h = g - d[l];
           const double dl1 = e[l]*pr;
           d[l+1] = dl1;
-          for(int i=l+2; i<N; i++) d[i] -= h;
+          for (int i = l+2; i < N; i++) d[i] -= h;
           f += h;
 
           // implicit QL transformation.
@@ -714,7 +714,7 @@ void CMAES::updateEigensystem(bool force)
           double c3(1);
           double s(0);
           double s2(0);
-          for(int i = m-1; i >= l; i--)
+          for (int i = m-1; i >= l; i--)
           {
             c3 = c2;
             c2 = c;
@@ -729,11 +729,11 @@ void CMAES::updateEigensystem(bool force)
             d[i+1] = h + s*(c*g + s*d[i]);
 
             // accumulate transformation.
-            for(int k = 0; k < N; k++)
+            for (int k = 0; k < N; k++)
             {
-              double& Vki1 = V(k,i+1);
+              double& Vki1 = V(k, i+1);
               h = Vki1;
-              double& Vki = V(k,i);
+              double& Vki = V(k, i);
               Vki1 = s*Vki + c*h;
               Vki *= c; Vki -= s*h;
             }
@@ -741,7 +741,7 @@ void CMAES::updateEigensystem(bool force)
           p = -s*s2*c3*e[l+1]*e[l]/dl1;
           e[l] = s*p;
           d[l] = c*p;
-        } while(std::fabs(e[l]) > epsTst1);
+        } while (std::fabs(e[l]) > epsTst1);
       }
       d[l] += f;
       e[l] = 0.0;
@@ -762,24 +762,24 @@ void CMAES::updateEigensystem(bool force)
       d = V.submat(N-1, 0, N-1, N-1).t();
 
     // Householder reduction to tridiagonal form
-    for(int i = N - 1; i > 0; i--)
+    for (int i = N - 1; i > 0; i--)
     {
       // scale to avoid under/overflow
       double h = 0.0;
       double scale = arma::accu(arma::abs(d));
-      if(scale == 0.0)
+      if (scale == 0.0)
       {
         e[i] = d[i-1];
           d.subvec(0, i-1) = V.submat(i-1, 0, i-1, i-1);
           V.submat(i, 0, i, i-1).fill(0.0);
-          V.submat(0, i, i-1, i).fill(0.0); 
+          V.submat(0, i, i-1, i).fill(0.0);
       }
       else
       {
         // generate Householder vector
           d.subvec(0, i-1) /= scale;
           h = arma::accu(d.subvec(0, i-1) % d.subvec(0, i-1));
-    
+
         double& dim1 = d[i-1];
         double f = dim1;
         double g = f > 0 ? -std::sqrt(h) : std::sqrt(h);
@@ -789,16 +789,16 @@ void CMAES::updateEigensystem(bool force)
         e.subvec(0, i-1).fill(0.0);
 
         // apply similarity transformation to remaining columns
-        for(int j = 0; j < i; j++)
+        for (int j = 0; j < i; j++)
         {
           f = d[j];
-          V(j,i) = f;
+          V(j, i) = f;
           double& ej = e[j];
-          g = ej + V(j,j)* f;
+          g = ej + V(j, j)* f;
 
-          for(int k = j + 1; k <= i - 1; k++)
+          for (int k = j + 1; k <= i - 1; k++)
           {
-            double& Vkj = V(k,j);
+            double& Vkj = V(k, j);
             g += Vkj*d[k];
             e[k] += Vkj*f;
           }
@@ -807,26 +807,26 @@ void CMAES::updateEigensystem(bool force)
         }
 
         f = 0.0;
-        for(int j = 0; j < i; j++)
+        for (int j = 0; j < i; j++)
         {
           e[j] /= h;
           f += e[j]* d[j];
         }
         double hh = f / (h + h);
-        for(int j = 0; j < i; j++)
+        for (int j = 0; j < i; j++)
         {
           e[j] -= hh*d[j];
         }
-        for(int j = 0; j < i; j++)
+        for (int j = 0; j < i; j++)
         {
           f = d[j];
           g = e[j];
-          for(int k = j; k <= i - 1; k++)
+          for (int k = j; k <= i - 1; k++)
           {
-            V(k,j) -= f*e[k] + g*d[k];
+            V(k, j) -= f*e[k] + g*d[k];
           }
-          d[j] = V(i-1,j);
-          V(i,j) = 0.0;
+          d[j] = V(i-1, j);
+          V(i, j) = 0.0;
         }
       }
       d[i] = h;
@@ -834,19 +834,20 @@ void CMAES::updateEigensystem(bool force)
 
     // accumulate transformations
     const int nm1 = N-1;
-    for(int i = 0; i < nm1; i++)
+    for (int i = 0; i < nm1; i++)
     {
       double h;
-      double& Vii = V(i,i);
-      V(N-1,i) = Vii;
+      double& Vii = V(i, i);
+      V(N-1, i) = Vii;
       Vii = 1.0;
       h = d[i+1];
-      if(h != 0.0)
+      if (h != 0.0)
       {
-        d.subvec(0, i) = V.submat(0 ,i+1, i, i+1) / h;
-        for(int j = 0; j <= i; j++) 
+        d.subvec(0, i) = V.submat(0, i+1, i, i+1) / h;
+        for (int j = 0; j <= i; j++)
         {
-          double g = arma::accu( V.submat(0, i+1, i, i+1) % V.submat(0, j, i, j) );
+          double g = arma::accu(V.submat(0, i+1, i, i+1)
+            % V.submat(0, j, i, j));
           V.submat(0, j, i, j) -= g*d.subvec(0, i);
         }
       }
@@ -854,21 +855,20 @@ void CMAES::updateEigensystem(bool force)
     }
       d.subvec(0, N-1) = V.submat(N-1, 0,  N-1, N-1).t();
       V.submat(N-1, 0,  N-1, N-1).fill(0.0);
-    
-     V(N-1,N-1) = 1.0;
+
+     V(N-1, N-1) = 1.0;
      e[0] = 0.0;
   }
-  
 
   double CMAES::myhypot(double a, double b)
 {
   const register double fabsa = std::fabs(a), fabsb = std::fabs(b);
-  if(fabsa > fabsb)
+  if (fabsa > fabsb)
   {
     const register double r = b / a;
     return fabsa*std::sqrt(double(1)+r*r);
   }
-  else if(b != double(0))
+  else if (b != double(0))
   {
     const register double r = a / b;
     return fabsb*std::sqrt(double(1)+r*r);
@@ -881,18 +881,17 @@ void CMAES::updateEigensystem(bool force)
   {
     double diffc, difft;
     clock_t lc = lastclock;
-    time_t lt = lasttime; 
-    lastclock = clock(); 
+    time_t lt = lasttime;
+    lastclock = clock();
     lasttime = time(NULL);
-    diffc = (double) (lastclock - lc) / CLOCKS_PER_SEC; 
-    difft = difftime(lasttime, lt); 
-    lastdiff = difft; 
-    
-    if(diffc > 0 && difft < 1000) lastdiff = diffc;
+    diffc = (double) (lastclock - lc) / CLOCKS_PER_SEC;
+    difft = difftime(lasttime, lt);
+    lastdiff = difft;
+
+    if (diffc > 0 && difft < 1000) lastdiff = diffc;
     totaltime += lastdiff;
     totaltotaltime += lastdiff;
-    
-    if(istic)
+    if (istic)
     {
       tictoczwischensumme += lastdiff;
       tictoctime += lastdiff;

@@ -39,7 +39,8 @@ BOOST_AUTO_TEST_SUITE(CMAESTest);
 // a simple rosenbrock function implemented
   class rosenbrockFunc
   {
-    public:
+     public:
+    
     int N;
 
     rosenbrockFunc(int x){ N = x-1; }
@@ -48,9 +49,9 @@ BOOST_AUTO_TEST_SUITE(CMAESTest);
 
     double Evaluate(arma::mat& x, int i)
     {
-      return 100.*pow((pow((x[i]),2)-x[i+1]),2) + pow((1.-x[i]),2);
+      return 100.*pow((pow((x[i]), 2) - x[i+1]), 2)
+      + pow((1.-x[i]), 2);
     }
-
   };
 
 
@@ -133,7 +134,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTestWithCMAES)
 
 BOOST_AUTO_TEST_CASE(rosenbrockFunctionCMAES)
 {
-   for(int i=2; i< 15; i++)
+  for (int i = 2; i < 15; i++)
   {
     rosenbrockFunc test(i);
 
@@ -142,7 +143,7 @@ BOOST_AUTO_TEST_CASE(rosenbrockFunctionCMAES)
     arma::vec coordinates(i);
     double result = s.Optimize(test, coordinates);
 
-    for(int j = 0; j < i-1; j++)
+    for (int j = 0; j < i-1; j++)
       BOOST_REQUIRE_SMALL(coordinates[i], 1e-3);
   }
 }
