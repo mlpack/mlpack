@@ -36,6 +36,9 @@ namespace cv {
  * In the case of multiclass classification it is assumed that there are
  * instances of every label from 0 to max(labels) among input data points.
  *
+ * The returned value for F1 will be zero if both precision and recall turn out
+ * to be zeros.
+ *
  * @tparam AS An average strategy.
  */
 template<AverageStrategy AS>

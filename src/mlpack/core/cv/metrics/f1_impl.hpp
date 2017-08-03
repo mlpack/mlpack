@@ -36,7 +36,8 @@ double F1<Binary>::Evaluate(MLAlgorithm& model,
   double precision = double(tp) / numberOfPositivePredictions;
   double recall = double(tp) / numberOfPositiveClassInstances;
 
-  return 2.0 * precision * recall / (precision + recall);
+  return (precision + recall == 0.0) ? 0.0 :
+      2.0 * precision * recall / (precision + recall);
 }
 
 template<>
@@ -74,7 +75,8 @@ double F1<Macro>::Evaluate(MLAlgorithm& model,
 
     double precision = double(tp) / numberOfPositivePredictions;
     double recall = double(tp) / numberOfClassInstances;
-    f1s(c) = 2.0 * precision * recall / (precision + recall);
+    f1s(c) = (precision + recall == 0.0) ? 0.0 :
+        2.0 * precision * recall / (precision + recall);
   }
 
   return arma::mean(f1s);
