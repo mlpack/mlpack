@@ -133,7 +133,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTestWithCMAES)
 
 BOOST_AUTO_TEST_CASE(rosenbrockFunctionCMAES)
 {
-  for (int i = 2; i < 15; i++)
+  for (int i = 5; i < 50; i+=5)
   {
     rosenbrockFunc test(i);
 
@@ -143,7 +143,7 @@ BOOST_AUTO_TEST_CASE(rosenbrockFunctionCMAES)
     double result = s.Optimize(test, coordinates);
 
     for (int j = 0; j < i-1; j++)
-      BOOST_REQUIRE_CLOSE(coordinates[i], 1, 1);
+      BOOST_REQUIRE_CLOSE(coordinates[j], 1, 10);
   }
 }
 BOOST_AUTO_TEST_SUITE_END();
