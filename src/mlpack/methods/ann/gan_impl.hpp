@@ -202,18 +202,19 @@ void GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
       Reset();
     }
     gradient = arma::zeros<arma::mat>(parameter.n_rows, 1);
-    // Gradient for generator network
-    gradientGenerator = arma::mat(gradient.memptr(),
-      generator.Parameters().n_rows, 1, false, false);
-
-    // Gradient for discriminator network
-    gradientDiscriminator = arma::mat(gradient.memptr() + gradientGenerator.n_elem,
-      discriminator.Parameters().n_rows, 1, false, false);
   }
   else
   {
     gradient.zeros();
   }
+
+  // Gradient for generator network
+  gradientGenerator = arma::mat(gradient.memptr(),
+    generator.Parameters().n_rows, 1, false, false);
+
+  // Gradient for discriminator network
+  gradientDiscriminator = arma::mat(gradient.memptr() + gradientGenerator.n_elem,
+    discriminator.Parameters().n_rows, 1, false, false);
 
   // get the gradients of the discriminator
   discriminator.Gradient(parameters, i, gradientDiscriminator);
@@ -253,6 +254,13 @@ void GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
     }
   }
   iterations++;
+  std::cout << "gradient generator" << std::endl;
+  gradient.rows(0, 5).print();
+  std::cout << "parameters generator" << std::endl;
+  parameter.rows(0, 5).print();
+  std::cout << "parameters discriminator" << std::endl;
+  parameter.rows(generator.Parameters().n_rows, generator.Parameters().n_rows + 5).print();
+
   /*
   if (iterations % (batchSize * 50) == 0)
   {
