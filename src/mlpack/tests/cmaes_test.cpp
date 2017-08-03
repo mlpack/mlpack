@@ -36,78 +36,23 @@ using namespace mlpack::regression;
 
 BOOST_AUTO_TEST_SUITE(CMAESTest);
 
-/**
- * Train and evaluate a vanilla network with the specified structure.
- */
-template<typename MatType = arma::mat>
-void BuildVanillaNetwork(MatType& trainData,
-                         MatType& trainLabels,
-                         MatType& testData,
-                         MatType& testLabels,
-                         const size_t outputSize,
-                         const size_t hiddenLayerSize,
-                         const size_t maxEpochs,
-                         const double classificationErrorThreshold)
-{
-  /*
-   * Construct a feed forward network with trainData.n_rows input nodes,
-   * hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
-   * network structure looks like:
-   *
-   *  Input         Hidden        Output
-   *  Layer         Layer         Layer
-   * +-----+       +-----+       +-----+
-   * |     |       |     |       |     |
-   * |     +------>|     +------>|     |
-   * |     |     +>|     |     +>|     |
-   * +-----+     | +--+--+     | +-----+
-   *             |             |
-   *  Bias       |  Bias       |
-   *  Layer      |  Layer      |
-   * +-----+     | +-----+     |
-   * |     |     | |     |     |
-   * |     +-----+ |     +-----+
-   * |     |       |     |
-   * +-----+       +-----+
-   */
-
-  FFN<NegativeLogLikelihood<> > model;
-  model.Add<Linear<> >(trainData.n_rows, hiddenLayerSize);
-  model.Add<SigmoidLayer<> >();
-  model.Add<Linear<> >(hiddenLayerSize, outputSize);
-  model.Add<LogSoftMax<> >();
-
-  int dim = trainData.n_rows * hiddenLayerSize +  hiddenLayerSize * outputSize;
-  arma::mat start1(dim, 1); start1.fill(0.5);
-  arma::mat initialStdDeviations1(dim, 1); initialStdDeviations1.fill(0.3);
-
-  CMAES opt(dim, start1, initialStdDeviations1, 50000, 1e-8);
-
-  model.Train(trainData, trainLabels, opt);
-
-  MatType predictionTemp;
-  model.Predict(testData, predictionTemp);
-  MatType prediction = arma::zeros<MatType>(1, predictionTemp.n_cols);
-
-  for (size_t i = 0; i < predictionTemp.n_cols; ++i)
+// a simple rosenbrock function implemented
+  class rosenbrockFunc
   {
-    prediction(i) = arma::as_scalar(arma::find(
-        arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
-  }
+    public:
+    int N;
 
-  size_t error = 0;
-  for (size_t i = 0; i < testData.n_cols; i++)
-  {
-    if (int(arma::as_scalar(prediction.col(i))) ==
-        int(arma::as_scalar(testLabels.col(i))))
+    rosenbrockFunc(int x){ N = x-1; }
+
+    double NumFunctions(){return N;}
+
+    double Evaluate(arma::mat& x, int i)
     {
-      error++;
+      return 100.*pow((pow((x[i]),2)-x[i+1]),2) + pow((1.-x[i]),2);
     }
-  }
 
-  double classificationError = 1 - double(error) / testData.n_cols;
-  BOOST_REQUIRE_LE(classificationError, classificationErrorThreshold);
-}
+  };
+
 
 BOOST_AUTO_TEST_CASE(SimpleCMAESTestFunction)
 {
@@ -115,10 +60,7 @@ BOOST_AUTO_TEST_CASE(SimpleCMAESTestFunction)
 
   size_t N = test.NumFunctions();
 
-  arma::mat start(N, 1); start.fill(0.5);
-  arma::mat initialStdDeviations(N, 1); initialStdDeviations.fill(1.5);
-
-  CMAES s(N, start, initialStdDeviations, 10000, 1e-18);
+  CMAES s(N, 0.5, 0.3, 10000, 1e-13, 1e-13);
 
   arma::mat coordinates(N, 1);
   double result = s.Optimize(test, coordinates);
@@ -128,9 +70,6 @@ BOOST_AUTO_TEST_CASE(SimpleCMAESTestFunction)
   BOOST_REQUIRE_SMALL(coordinates[1], 1e-7);
   BOOST_REQUIRE_SMALL(coordinates[2], 1e-7);
 }
-
-// written by Marcus Edel and modified for CMAES by Kartik Nighania
-// to test CMAES as an optimizer for logistic regression optimization
 
 BOOST_AUTO_TEST_CASE(LogisticRegressionTestWithCMAES)
 {
@@ -180,7 +119,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTestWithCMAES)
   arma::mat start1(dim, 1); start1.fill(0.5);
   arma::mat initialStdDeviations1(dim, 1); initialStdDeviations1.fill(1.5);
 
-  CMAES test1(dim, start1, initialStdDeviations1, 50000, 1e-7);
+  CMAES test1(dim, 05, 0.3, 10000, 1e-10, 1e-10);
 
   LogisticRegression<> lr(shuffledData, shuffledResponses, test1, 0.5);
 
@@ -192,38 +131,19 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTestWithCMAES)
   BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6); // 0.6% error tolerance.
 }
 
-BOOST_AUTO_TEST_CASE(feedForwardNetworkCMAES)
+BOOST_AUTO_TEST_CASE(rosenbrockFunctionCMAES)
 {
-  arma::mat irisTrainData;
-  data::Load("iris_train.csv", irisTrainData, true);
+   for(int i=2; i< 15; i++)
+  {
+    rosenbrockFunc test(i);
 
-// normalize train data
-double minVal = 0, range = 1;
-for (int i = 0; i<irisTrainData.n_rows; i++)
-{
-minVal = irisTrainData.row(i).min();
-range  = irisTrainData.row(i).max() - minVal;
-irisTrainData.row(i) =  (irisTrainData.row(i) - minVal)/range;
-}
+    CMAES s(i, 0.5, 0.3, 100000, 1e-16, 1e-15);
 
-arma::mat irisTrainLabels;
-data::Load("iris_train_labels.csv", irisTrainLabels, true);
+    arma::vec coordinates(i);
+    double result = s.Optimize(test, coordinates);
 
-arma::mat irisTestData;
-data::Load("iris_test.csv", irisTestData, true);
-
-// normalize test data
-for (int i = 0; i<irisTestData.n_rows; i++)
-{
-minVal = irisTestData.row(i).min();
-range  = irisTestData.row(i).max() - minVal;
-irisTestData.row(i) =  (irisTestData.row(i) - minVal)/range;
-}
-
-arma::mat irisTestLabels;
-data::Load("iris_test_labels.csv", irisTestLabels, true);
-
-BuildVanillaNetwork<>
-(irisTrainData, irisTrainLabels, irisTestData, irisTestLabels, 3, 8, 70, 0.1);
+    for(int j = 0; j < i-1; j++)
+      BOOST_REQUIRE_SMALL(coordinates[i], 1e-3);
+  }
 }
 BOOST_AUTO_TEST_SUITE_END();
