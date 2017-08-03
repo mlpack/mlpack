@@ -48,12 +48,21 @@ NeuralTuringMachine<InputDataType, OutputDataType>::NeuralTuringMachine(
   network.push_back(readMem);
   network.push_back(writeMem);
 
-  memoryHistory.push_back(arma::ones(numMem, memSize));
+  allZeros = arma::zeros<arma::mat>(memSize, 1);
+
+  allOnes = arma::ones<arma::mat>(numMem, memSize);
+
+  memoryHistory.push_back(std::move(arma::mat(allOnes.memptr(),
+      allOnes.n_rows, allOnes.n_cols, false, true)));
+
   bMemoryHistory = memoryHistory.end();
 
-  lReads.push_back(arma::zeros(memSize, 1));
+  lReads.push_back(std::move(arma::mat(allZeros.memptr(),
+      allZeros.n_rows, allZeros.n_cols, false, true)));
+
   gReads = lReads.end();
 
+  forwardStep = 0;
   backwardStep = 0;
   gradientStep = 0;
 }
@@ -94,6 +103,8 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Forward(
       writeMem));
 
   output = controllerOutput;
+
+  forwardStep++;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -207,15 +218,22 @@ template<typename InputDataType, typename OutputDataType>
 void NeuralTuringMachine<InputDataType, OutputDataType>::ResetCell()
 {
   memoryHistory.clear();
-  memoryHistory.push_back(arma::ones(numMem, memSize));
+
+  memoryHistory.push_back(std::move(arma::mat(allOnes.memptr(),
+      allOnes.n_rows, allOnes.n_cols, false, true)));
+
   bMemoryHistory = memoryHistory.end();
 
   lReads.clear();
-  lReads.push_back(arma::zeros(memSize, 1));
+
+  lReads.push_back(std::move(arma::mat(allZeros.memptr(),
+      allZeros.n_rows, allZeros.n_cols, false, true)));
+
   gReads = lReads.end();
 
   backwardStep = 0;
   gradientStep = 0;
+  forwardStep = 0;
 }
 
 template<typename InputDataType, typename OutputDataType>

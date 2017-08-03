@@ -183,6 +183,12 @@ class NeuralTuringMachine
   //! Locally stored previous memory content error.
   arma::mat dMemPrev;
 
+  //! All zeros vector for initializing read.
+  arma::mat allZeros;
+
+  //! All ones matrix for initializing memory.
+  arma::mat allOnes;
+
   //! Storing all the memory contents for backward pass.
   std::list<arma::mat> memoryHistory;
 
@@ -212,6 +218,9 @@ class NeuralTuringMachine
 
   //! Locally-stored list of network modules.
   std::vector<LayerTypes> network;
+
+  //! Locally-stored number of forward steps.
+  size_t forwardStep;
 
   //! Locally-stored number of backward steps.
   size_t backwardStep;
