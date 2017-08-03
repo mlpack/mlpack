@@ -18,9 +18,18 @@
 namespace mlpack {
 namespace cv {
 
-template<>
+template<AverageStrategy AS, size_t PC /* PositiveClass */>
 template<typename MLAlgorithm, typename DataType>
-double Precision<Binary>::Evaluate(MLAlgorithm& model,
+double Precision<AS, PC>::Evaluate(MLAlgorithm& model,
+                                   const DataType& data,
+                                   const arma::Row<size_t>& labels)
+{
+  return Evaluate<AS>(model, data, labels);
+}
+
+template<AverageStrategy AS, size_t PC /* PositiveClass */>
+template<AverageStrategy _AS, typename MLAlgorithm, typename DataType, typename>
+double Precision<AS, PC>::Evaluate(MLAlgorithm& model,
                                    const DataType& data,
                                    const arma::Row<size_t>& labels)
 {
@@ -29,17 +38,18 @@ double Precision<Binary>::Evaluate(MLAlgorithm& model,
   arma::Row<size_t> predictedLabels;
   model.Classify(data, predictedLabels);
 
-  size_t tp = arma::sum(labels % predictedLabels);
-  size_t numberOfPositivePredictions = arma::sum(predictedLabels);
+  size_t tp = arma::sum((labels == PC) % (predictedLabels == PC));
+  size_t numberOfPositivePredictions = arma::sum(predictedLabels == PC);
 
   return double(tp) / numberOfPositivePredictions;
 }
 
-template<>
-template<typename MLAlgorithm, typename DataType>
-double Precision<Micro>::Evaluate(MLAlgorithm& model,
-                                  const DataType& data,
-                                  const arma::Row<size_t>& labels)
+template<AverageStrategy AS, size_t PC /* PositiveClass */>
+template<AverageStrategy _AS, typename MLAlgorithm, typename DataType, typename,
+    typename>
+double Precision<AS, PC>::Evaluate(MLAlgorithm& model,
+                                   const DataType& data,
+                                   const arma::Row<size_t>& labels)
 {
   AssertSizes(data, labels, "Precision<Micro>::Evaluate()");
 
@@ -47,11 +57,12 @@ double Precision<Micro>::Evaluate(MLAlgorithm& model,
   return Accuracy::Evaluate(model, data, labels);
 }
 
-template<>
-template<typename MLAlgorithm, typename DataType>
-double Precision<Macro>::Evaluate(MLAlgorithm& model,
-                                  const DataType& data,
-                                  const arma::Row<size_t>& labels)
+template<AverageStrategy AS, size_t PC /* PositiveClass */>
+template<AverageStrategy _AS, typename MLAlgorithm, typename DataType, typename,
+    typename, typename>
+double Precision<AS, PC>::Evaluate(MLAlgorithm& model,
+                                   const DataType& data,
+                                   const arma::Row<size_t>& labels)
 {
   AssertSizes(data, labels, "Precision<Macro>::Evaluate()");
 

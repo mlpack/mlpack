@@ -18,9 +18,18 @@
 namespace mlpack {
 namespace cv {
 
-template<>
+template<AverageStrategy AS, size_t PC /* PositiveClass */>
 template<typename MLAlgorithm, typename DataType>
-double Recall<Binary>::Evaluate(MLAlgorithm& model,
+double Recall<AS, PC>::Evaluate(MLAlgorithm& model,
+                                const DataType& data,
+                                const arma::Row<size_t>& labels)
+{
+  return Evaluate<AS>(model, data, labels);
+}
+
+template<AverageStrategy AS, size_t PC /* PositiveClass */>
+template<AverageStrategy _AS, typename MLAlgorithm, typename DataType, typename>
+double Recall<AS, PC>::Evaluate(MLAlgorithm& model,
                                 const DataType& data,
                                 const arma::Row<size_t>& labels)
 {
@@ -29,17 +38,18 @@ double Recall<Binary>::Evaluate(MLAlgorithm& model,
   arma::Row<size_t> predictedLabels;
   model.Classify(data, predictedLabels);
 
-  size_t tp = arma::sum(labels % predictedLabels);
-  size_t numberOfPositiveClassInstances = arma::sum(labels);
+  size_t tp = arma::sum((labels == PC) % (predictedLabels == PC));
+  size_t numberOfPositiveClassInstances = arma::sum(labels == PC);
 
   return double(tp) / numberOfPositiveClassInstances;
 }
 
-template<>
-template<typename MLAlgorithm, typename DataType>
-double Recall<Micro>::Evaluate(MLAlgorithm& model,
-                               const DataType& data,
-                               const arma::Row<size_t>& labels)
+template<AverageStrategy AS, size_t PC /* PositiveClass */>
+template<AverageStrategy _AS, typename MLAlgorithm, typename DataType, typename,
+    typename>
+double Recall<AS, PC>::Evaluate(MLAlgorithm& model,
+                                const DataType& data,
+                                const arma::Row<size_t>& labels)
 {
   AssertSizes(data, labels, "Recall<Micro>::Evaluate()");
 
@@ -47,11 +57,12 @@ double Recall<Micro>::Evaluate(MLAlgorithm& model,
   return Accuracy::Evaluate(model, data, labels);
 }
 
-template<>
-template<typename MLAlgorithm, typename DataType>
-double Recall<Macro>::Evaluate(MLAlgorithm& model,
-                               const DataType& data,
-                               const arma::Row<size_t>& labels)
+template<AverageStrategy AS, size_t PC /* PositiveClass */>
+template<AverageStrategy _AS, typename MLAlgorithm, typename DataType, typename,
+    typename, typename>
+double Recall<AS, PC>::Evaluate(MLAlgorithm& model,
+                                const DataType& data,
+                                const arma::Row<size_t>& labels)
 {
   AssertSizes(data, labels, "Recall<Macro>::Evaluate()");
 

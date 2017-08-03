@@ -40,13 +40,11 @@ namespace cv {
  * numbers of true positives and false positives respectively for the class
  * (label) @f$ i @f$.
  *
- * In the case of binary classification (AS = Binary) positives are assumed to
- * have labels equal to 1, whereas negatives are assumed to have labels equal to
- * 0.
- *
  * @tparam AS An average strategy.
+ * @tparam PositiveClass In the case of binary classification (AS = Binary)
+ *     positives are assumed to have labels equal to this value.
  */
-template<AverageStrategy AS>
+template<AverageStrategy AS, size_t PositiveClass = 1>
 class Precision
 {
  public:
@@ -67,6 +65,43 @@ class Precision
    * to maximize the metric.
    */
   static const bool NeedsMinimization = false;
+
+ private:
+  /**
+   * Run classification and calculate precision for binary classification.
+   */
+  template<AverageStrategy _AS,
+           typename MLAlgorithm,
+           typename DataType,
+           typename = std::enable_if_t<_AS == Binary>>
+  static double Evaluate(MLAlgorithm& model,
+                        const DataType& data,
+                        const arma::Row<size_t>& labels);
+
+  /**
+   * Run classification and calculate microaveraged precision.
+   */
+  template<AverageStrategy _AS,
+           typename MLAlgorithm,
+           typename DataType,
+           typename = std::enable_if_t<_AS == Micro>,
+           typename = void>
+  static double Evaluate(MLAlgorithm& model,
+                        const DataType& data,
+                        const arma::Row<size_t>& labels);
+
+  /**
+   * Run classification and calculate macroaveraged precision.
+   */
+  template<AverageStrategy _AS,
+           typename MLAlgorithm,
+           typename DataType,
+           typename = std::enable_if_t<_AS == Macro>,
+           typename = void,
+           typename = void>
+  static double Evaluate(MLAlgorithm& model,
+                        const DataType& data,
+                        const arma::Row<size_t>& labels);
 };
 
 } // namespace cv

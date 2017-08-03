@@ -18,9 +18,18 @@
 namespace mlpack {
 namespace cv {
 
-template<>
+template<AverageStrategy AS, size_t PC /* PositiveClass */>
 template<typename MLAlgorithm, typename DataType>
-double F1<Binary>::Evaluate(MLAlgorithm& model,
+double F1<AS, PC>::Evaluate(MLAlgorithm& model,
+                            const DataType& data,
+                            const arma::Row<size_t>& labels)
+{
+  return Evaluate<AS>(model, data, labels);
+}
+
+template<AverageStrategy AS, size_t PC /* PositiveClass */>
+template<AverageStrategy _AS, typename MLAlgorithm, typename DataType, typename>
+double F1<AS, PC>::Evaluate(MLAlgorithm& model,
                             const DataType& data,
                             const arma::Row<size_t>& labels)
 {
@@ -29,9 +38,9 @@ double F1<Binary>::Evaluate(MLAlgorithm& model,
   arma::Row<size_t> predictedLabels;
   model.Classify(data, predictedLabels);
 
-  size_t tp = arma::sum(labels % predictedLabels);
-  size_t numberOfPositivePredictions = arma::sum(predictedLabels);
-  size_t numberOfPositiveClassInstances = arma::sum(labels);
+  size_t tp = arma::sum((labels == PC) % (predictedLabels == PC));
+  size_t numberOfPositivePredictions = arma::sum(predictedLabels == PC);
+  size_t numberOfPositiveClassInstances = arma::sum(labels == PC);
 
   double precision = double(tp) / numberOfPositivePredictions;
   double recall = double(tp) / numberOfPositiveClassInstances;
@@ -40,11 +49,12 @@ double F1<Binary>::Evaluate(MLAlgorithm& model,
       2.0 * precision * recall / (precision + recall);
 }
 
-template<>
-template<typename MLAlgorithm, typename DataType>
-double F1<Micro>::Evaluate(MLAlgorithm& model,
-                           const DataType& data,
-                           const arma::Row<size_t>& labels)
+template<AverageStrategy AS, size_t PC /* PositiveClass */>
+template<AverageStrategy _AS, typename MLAlgorithm, typename DataType, typename,
+    typename>
+double F1<AS, PC>::Evaluate(MLAlgorithm& model,
+                            const DataType& data,
+                            const arma::Row<size_t>& labels)
 {
   AssertSizes(data, labels, "F1<Micro>::Evaluate()");
 
@@ -53,11 +63,12 @@ double F1<Micro>::Evaluate(MLAlgorithm& model,
   return Accuracy::Evaluate(model, data, labels);
 }
 
-template<>
-template<typename MLAlgorithm, typename DataType>
-double F1<Macro>::Evaluate(MLAlgorithm& model,
-                           const DataType& data,
-                           const arma::Row<size_t>& labels)
+template<AverageStrategy AS, size_t PC /* PositiveClass */>
+template<AverageStrategy _AS, typename MLAlgorithm, typename DataType, typename,
+    typename, typename>
+double F1<AS, PC>::Evaluate(MLAlgorithm& model,
+                            const DataType& data,
+                            const arma::Row<size_t>& labels)
 {
   AssertSizes(data, labels, "F1<Macro>::Evaluate()");
 
