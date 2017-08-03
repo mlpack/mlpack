@@ -46,7 +46,11 @@ MemoryHead<InputDataType, OutputDataType>::MemoryHead(
   network.push_back(inputLinear);
   network.push_back(kTNonLinear);
 
-  prevWeights.push_back(arma::zeros<arma::mat>(outSize, 1));
+  allZeros = arma::zeros<arma::mat>(outSize, 1);
+
+  prevWeights.push_back(std::move(arma::mat(allZeros.memptr(),
+      allZeros.n_rows, allZeros.n_cols, false, true)));
+
   weightsBackwardIterator = prevWeights.end();
 
   prevError = arma::zeros<arma::mat>((memSize) + (1) + (1) +
@@ -155,8 +159,18 @@ void MemoryHead<InputDataType, OutputDataType>::ForwardWithMemory(
   }
   else
   {
-    prevWeights.back() = output;
+    if (forwardStep == 0)
+    {
+      prevWeights.clear();
+      prevWeights.push_back(output);
+    }
+    else
+    {
+      prevWeights.back() = output;
+    }
   }
+
+  forwardStep++;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -383,7 +397,10 @@ template<typename InputDataType, typename OutputDataType>
 void MemoryHead<InputDataType, OutputDataType>::ResetCell()
 {
   prevWeights.clear();
-  prevWeights.push_back(arma::zeros<arma::mat>(outSize, 1));
+
+  prevWeights.push_back(std::move(arma::mat(allZeros.memptr(),
+    allZeros.n_rows, allZeros.n_cols, false, true)));
+
   weightsBackwardIterator = prevWeights.end();
 
   prevError = arma::zeros<arma::mat>((memSize) + (1) + (1) +
@@ -412,6 +429,8 @@ void MemoryHead<InputDataType, OutputDataType>::ResetCell()
   bWc = lWc.end();
   bBt = lBt.end();
   bCosineT = lConsineT.end();
+
+  forwardStep = 0;
 }
 
 template<typename InputDataType, typename OutputDataType>

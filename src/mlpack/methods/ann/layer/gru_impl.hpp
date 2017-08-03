@@ -69,7 +69,7 @@ GRU<InputDataType, OutputDataType>::GRU(
   allZeros = arma::zeros<arma::mat>(outSize, batchSize);
 
   outParameter.push_back(std::move(arma::mat(allZeros.memptr(),
-    allZeros.n_rows, allZeros.n_cols, false, true)));
+      allZeros.n_rows, allZeros.n_cols, false, true)));
 
   prevOutput = outParameter.begin();
   backIterator = outParameter.end();

@@ -244,6 +244,9 @@ class MemoryHead
   //! All zeros vector for initialization.
   arma::mat allZeros;
 
+  //! Forward pass count.
+  size_t forwardStep;
+
   //! Store the previous output weights.
   std::list<arma::mat> prevWeights;
 
