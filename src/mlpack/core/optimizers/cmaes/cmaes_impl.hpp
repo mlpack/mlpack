@@ -443,7 +443,7 @@ for (int i = (int)historySize - 1; i > 0; --i)
     }
 
     // calculate norm(ps)^2
-   double psxps = std::pow(arma::norm(ps), 2);
+    double psxps = std::pow(arma::norm(ps), 2);
 
     // cumulation for covariance matrix (pc) using B*D*z~N(0,C)
     int hsig = std::sqrt(psxps) / std::sqrt(double(1)
