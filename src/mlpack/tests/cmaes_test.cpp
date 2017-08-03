@@ -143,7 +143,7 @@ BOOST_AUTO_TEST_CASE(rosenbrockFunctionCMAES)
     double result = s.Optimize(test, coordinates);
 
     for (int j = 0; j < i-1; j++)
-      BOOST_REQUIRE_SMALL(coordinates[i], 1e-3);
+      BOOST_REQUIRE_CLOSE(coordinates[i], 1, 1);
   }
 }
 BOOST_AUTO_TEST_SUITE_END();
