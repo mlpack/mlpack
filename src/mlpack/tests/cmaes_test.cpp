@@ -34,8 +34,6 @@ using namespace mlpack::optimization::test;
 using namespace mlpack::distribution;
 using namespace mlpack::regression;
 
-mlpack::math::RandomSeed(std::time(NULL));
-
 BOOST_AUTO_TEST_SUITE(CMAESTest);
 
 BOOST_AUTO_TEST_CASE(SimpleCMAESTestFunction)
@@ -117,6 +115,8 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTestWithCMAES)
 
 BOOST_AUTO_TEST_CASE(rosenbrockFunctionCMAES)
 {
+  mlpack::math::RandomSeed(std::time(NULL));
+
   // Loop over several variants.
   for (size_t i = 10; i < 50; i += 5)
   {
