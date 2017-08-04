@@ -64,7 +64,7 @@ class OneStepQLearningWorker
   void Initialize(NetworkType& learningNetwork)
   {
     updater.Initialize(learningNetwork.Parameters().n_rows,
-                       learningNetwork.Parameters().n_cols);
+        learningNetwork.Parameters().n_cols);
     // Build local network.
     network = learningNetwork;
   }
@@ -112,7 +112,9 @@ class OneStepQLearningWorker
       return false;
     }
 
-    #pragma omp atomic
+    #ifdef HAS_OPENMP
+      #pragma omp atomic
+    #endif
     totalSteps++;
 
     pending[pendingIndex] = std::make_tuple(state, action, reward, nextState);
@@ -129,7 +131,9 @@ class OneStepQLearningWorker
 
         // Compute the target state-action value.
         arma::colvec actionValue;
-        #pragma omp critical
+        #ifdef HAS_OPENMP
+          #pragma omp critical
+        #endif
         {
           targetNetwork.Predict(
               std::get<3>(transition).Encode(), actionValue);
@@ -171,7 +175,9 @@ class OneStepQLearningWorker
     // Update global target network.
     if (totalSteps % config.TargetNetworkSyncInterval() == 0)
     {
-      #pragma omp critical
+      #ifdef HAS_OPENMP
+        #pragma omp critical
+      #endif
       { targetNetwork = learningNetwork; }
     }
 

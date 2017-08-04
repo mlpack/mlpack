@@ -38,7 +38,9 @@ BOOST_AUTO_TEST_CASE(OneStepQLearningTest)
    * This is for the Travis CI server, in your own machine you shuold use more
    * threads.
    */
-  omp_set_num_threads(1);
+  #ifdef HAS_OPENMP
+    omp_set_num_threads(1);
+  #endif
 
   // Set up the network.
   FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
