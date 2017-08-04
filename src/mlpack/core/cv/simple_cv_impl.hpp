@@ -103,8 +103,7 @@ SimpleCV<MLAlgorithm,
     weights(weights)
 {
   Base::AssertDataConsistency(this->xs, this->ys, this->weights);
-  InitTrainingAndValidationSets(validationSize);
-  trainingWeights = GetSubset(this->weights, 0, trainingXs.n_cols - 1);
+  InitTrainingAndValidationSetsWithWeights(validationSize);
 }
 
 template<typename MLAlgorithm,
@@ -128,8 +127,7 @@ SimpleCV<MLAlgorithm,
     weights(weights)
 {
   Base::AssertDataConsistency(this->xs, this->ys, this->weights);
-  InitTrainingAndValidationSets(validationSize);
-  trainingWeights = GetSubset(this->weights, 0, trainingXs.n_cols - 1);
+  InitTrainingAndValidationSetsWithWeights(validationSize);
 }
 
 template<typename MLAlgorithm,
@@ -154,8 +152,7 @@ SimpleCV<MLAlgorithm,
     weights(weights)
 {
   Base::AssertDataConsistency(this->xs, this->ys, this->weights);
-  InitTrainingAndValidationSets(validationSize);
-  trainingWeights = GetSubset(this->weights, 0, trainingXs.n_cols - 1);
+  InitTrainingAndValidationSetsWithWeights(validationSize);
 }
 
 template<typename MLAlgorithm,
@@ -211,6 +208,22 @@ void SimpleCV<MLAlgorithm,
 
   validationXs = GetSubset(xs, numberOfTrainingPoints, xs.n_cols - 1);
   validationYs = GetSubset(ys, numberOfTrainingPoints, xs.n_cols - 1);
+}
+
+template<typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+void SimpleCV<MLAlgorithm,
+              Metric,
+              MatType,
+              PredictionsType,
+              WeightsType>::InitTrainingAndValidationSetsWithWeights(
+    const double validationSize)
+{
+  InitTrainingAndValidationSets(validationSize);
+  trainingWeights = GetSubset(weights, 0, trainingXs.n_cols - 1);
 }
 
 template<typename MLAlgorithm,

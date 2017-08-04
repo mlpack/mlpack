@@ -244,6 +244,11 @@ class SimpleCV :
   void InitTrainingAndValidationSets(const double validationSize);
 
   /**
+   * Initialize training and validation sets with weights.
+   */
+  void InitTrainingAndValidationSetsWithWeights(const double validationSize);
+
+  /**
    * Calculate the number of training points and assert it is legitimate.
    */
   size_t CalculateAndAssertNumberOfTrainingPoints(const double validationSize);
