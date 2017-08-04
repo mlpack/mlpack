@@ -22,16 +22,140 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename... CVBaseArgs>
+template<typename MatInType, typename PredictionsInType>
 SimpleCV<MLAlgorithm,
          Metric,
          MatType,
          PredictionsType,
          WeightsType>::SimpleCV(const double validationSize,
-                                const CVBaseArgs&... args) :
-    Base(args...)
+                                const MatInType& xs,
+                                const PredictionsInType& ys) :
+    Base(xs, ys),
+    xs(xs),
+    ys(ys)
 {
-  Init(validationSize, Base::ExtractDataArgs(args...));
+  Base::AssertDataConsistency(this->xs, this->ys);
+  InitTrainingAndValidationSets(validationSize);
+}
+
+template<typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+template<typename MatInType, typename PredictionsInType>
+SimpleCV<MLAlgorithm,
+         Metric,
+         MatType,
+         PredictionsType,
+         WeightsType>::SimpleCV(const double validationSize,
+                                const MatInType& xs,
+                                const PredictionsInType& ys,
+                                const size_t numClasses) :
+    Base(xs, ys, numClasses),
+    xs(xs),
+    ys(ys)
+{
+  Base::AssertDataConsistency(this->xs, this->ys);
+  InitTrainingAndValidationSets(validationSize);
+}
+
+template<typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+template<typename MatInType, typename PredictionsInType>
+SimpleCV<MLAlgorithm,
+         Metric,
+         MatType,
+         PredictionsType,
+         WeightsType>::SimpleCV(const double validationSize,
+                                const MatInType& xs,
+                                const data::DatasetInfo& datasetInfo,
+                                const PredictionsInType& ys,
+                                const size_t numClasses) :
+    Base(xs, datasetInfo, ys, numClasses),
+    xs(xs),
+    ys(ys)
+{
+  Base::AssertDataConsistency(this->xs, this->ys);
+  InitTrainingAndValidationSets(validationSize);
+}
+
+template<typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+template<typename MatInType, typename PredictionsInType, typename WeightsInType>
+SimpleCV<MLAlgorithm,
+         Metric,
+         MatType,
+         PredictionsType,
+         WeightsType>::SimpleCV(const double validationSize,
+                                const MatInType& xs,
+                                const PredictionsInType& ys,
+                                const WeightsInType& weights) :
+    Base(xs, ys, weights),
+    xs(xs),
+    ys(ys),
+    weights(weights)
+{
+  Base::AssertDataConsistency(this->xs, this->ys, this->weights);
+  InitTrainingAndValidationSets(validationSize);
+  trainingWeights = GetSubset(this->weights, 0, trainingXs.n_cols - 1);
+}
+
+template<typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+template<typename MatInType, typename PredictionsInType, typename WeightsInType>
+SimpleCV<MLAlgorithm,
+         Metric,
+         MatType,
+         PredictionsType,
+         WeightsType>::SimpleCV(const double validationSize,
+                                const MatInType& xs,
+                                const PredictionsInType& ys,
+                                const size_t numClasses,
+                                const WeightsInType& weights) :
+    Base(xs, ys, numClasses, weights),
+    xs(xs),
+    ys(ys),
+    weights(weights)
+{
+  Base::AssertDataConsistency(this->xs, this->ys, this->weights);
+  InitTrainingAndValidationSets(validationSize);
+  trainingWeights = GetSubset(this->weights, 0, trainingXs.n_cols - 1);
+}
+
+template<typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+template<typename MatInType, typename PredictionsInType, typename WeightsInType>
+SimpleCV<MLAlgorithm,
+         Metric,
+         MatType,
+         PredictionsType,
+         WeightsType>::SimpleCV(const double validationSize,
+                                const MatInType& xs,
+                                const data::DatasetInfo& datasetInfo,
+                                const PredictionsInType& ys,
+                                const size_t numClasses,
+                                const WeightsInType& weights) :
+    Base(xs, datasetInfo, ys, numClasses, weights),
+    xs(xs),
+    ys(ys),
+    weights(weights)
+{
+  Base::AssertDataConsistency(this->xs, this->ys, this->weights);
+  InitTrainingAndValidationSets(validationSize);
+  trainingWeights = GetSubset(this->weights, 0, trainingXs.n_cols - 1);
 }
 
 template<typename MLAlgorithm,
@@ -65,54 +189,6 @@ MLAlgorithm& SimpleCV<MLAlgorithm,
         "SimpleCV::Model(): attempted to access an uninitialized model");
 
   return *modelPtr;
-}
-
-template<typename MLAlgorithm,
-         typename Metric,
-         typename MatType,
-         typename PredictionsType,
-         typename WeightsType>
-template<typename DataArgsTupleT,
-         typename>
-void SimpleCV<MLAlgorithm,
-              Metric,
-              MatType,
-              PredictionsType,
-              WeightsType>::Init(const double validationSize,
-                                 const DataArgsTupleT& dataArgsTuple)
-{
-  xs = std::get<0>(dataArgsTuple);
-  ys = std::get<1>(dataArgsTuple);
-
-  Base::AssertDataConsistency(xs, ys);
-
-  InitTrainingAndValidationSets(validationSize);
-}
-
-template<typename MLAlgorithm,
-         typename Metric,
-         typename MatType,
-         typename PredictionsType,
-         typename WeightsType>
-template<typename DataArgsTupleT,
-         typename,
-         typename>
-void SimpleCV<MLAlgorithm,
-              Metric,
-              MatType,
-              PredictionsType,
-              WeightsType>::Init(const double validationSize,
-                                 const DataArgsTupleT& dataArgsTuple)
-{
-  xs = std::get<0>(dataArgsTuple);
-  ys = std::get<1>(dataArgsTuple);
-  weights = std::get<2>(dataArgsTuple);
-
-  Base::AssertDataConsistency(xs, ys, weights);
-
-  InitTrainingAndValidationSets(validationSize);
-
-  trainingWeights = GetSubset(weights, 0, trainingXs.n_cols - 1);
 }
 
 template<typename MLAlgorithm,

@@ -24,12 +24,8 @@ namespace cv {
  * set.
  *
  * To construct a SimpleCV object you need to pass the validationSize parameter
- * and arguments that specify data. For the latter see the CVBase constructors
- * as a reference - the CVBase constructors take exactly the same arguments as
- * ones that are supposed to be passed after the validationSize parameter in the
- * SimpleCV constructor.
- *
- * For example, SoftmaxRegression can be validated in the following way.
+ * and arguments that specify data. For example, SoftmaxRegression can be
+ * validated in the following way.
  *
  * @code
  * // 100-point 5-dimensional random dataset.
@@ -74,15 +70,134 @@ class SimpleCV :
 {
  public:
   /**
-   * This constructor splits data into training and validation sets.
+   * This constructor can be used for regression algorithms and for binary
+   * classification algorithms.
    *
-   * @param validationSize A proportion (between 0 and 1) of the data used as a
+   * @param validationSize A proportion (between 0 and 1) of data used as a
    *     validation set.
-   * @param args Basic constructor arguments for MLAlgortithm (see the CVBase
-   *     constructors for reference).
+   * @param xs Data points to cross-validate on.
+   * @param ys Predictions (labels for classification algorithms and responses
+   *     for regression algorithms) for each data point.
+   *
+   * @tparam MatInType A type that can be converted to MatType.
+   * @tparam PredictionsInType A type that can be converted to PredictionsType.
    */
-  template<typename... CVBaseArgs>
-  SimpleCV(const double validationSize, const CVBaseArgs&... args);
+  template<typename MatInType, typename PredictionsInType>
+  SimpleCV(const double validationSize,
+           const MatInType& xs,
+           const PredictionsInType& ys);
+
+  /**
+   * This constructor can be used for multiclass classification algorithms.
+   *
+   * @param validationSize A proportion (between 0 and 1) of data used as a
+   *     validation set.
+   * @param xs Data points to cross-validate on.
+   * @param ys Labels for each data point.
+   * @param numClasses Number of classes in the dataset.
+   *
+   * @tparam MatInType A type that can be converted to MatType.
+   * @tparam PredictionsInType A type that can be converted to PredictionsType.
+   */
+  template<typename MatInType, typename PredictionsInType>
+  SimpleCV(const double validationSize,
+           const MatInType& xs,
+           const PredictionsInType& ys,
+           const size_t numClasses);
+
+  /**
+   * This constructor can be used for multiclass classification algorithms that
+   * can take a data::DatasetInfo parameter.
+   *
+   * @param validationSize A proportion (between 0 and 1) of data used as a
+   *     validation set.
+   * @param xs Data points to cross-validate on.
+   * @param datasetInfo Type information for each dimension of the dataset.
+   * @param ys Labels for each data point.
+   * @param numClasses Number of classes in the dataset.
+   *
+   * @tparam MatInType A type that can be converted to MatType.
+   * @tparam PredictionsInType A type that can be converted to PredictionsType.
+   */
+  template<typename MatInType, typename PredictionsInType>
+  SimpleCV(const double validationSize,
+           const MatInType& xs,
+           const data::DatasetInfo& datasetInfo,
+           const PredictionsInType& ys,
+           const size_t numClasses);
+
+  /**
+   * This constructor can be used for regression and binary classification
+   * algorithms that support weighted learning.
+   *
+   * @param validationSize A proportion (between 0 and 1) of data used as a
+   *     validation set.
+   * @param xs Data points to cross-validate on.
+   * @param ys Predictions (labels for classification algorithms and responses
+   *     for regression algorithms) for each data point.
+   * @param weights Observation weights (for boosting).
+   *
+   * @tparam MatInType A type that can be converted to MatType.
+   * @tparam PredictionsInType A type that can be converted to PredictionsType.
+   * @tparam WeightsInType A type that can be converted to WeightsType.
+   */
+  template<typename MatInType,
+           typename PredictionsInType,
+           typename WeightsInType>
+  SimpleCV(const double validationSize,
+           const MatInType& xs,
+           const PredictionsInType& ys,
+           const WeightsInType& weights);
+
+  /**
+   * This constructor can be used for multiclass classification algorithms that
+   * support weighted learning.
+   *
+   * @param validationSize A proportion (between 0 and 1) of data used as a
+   *     validation set.
+   * @param xs Data points to cross-validate on.
+   * @param ys Labels for each data point.
+   * @param numClasses Number of classes in the dataset.
+   * @param weights Observation weights (for boosting).
+   *
+   * @tparam MatInType A type that can be converted to MatType.
+   * @tparam PredictionsInType A type that can be converted to PredictionsType.
+   * @tparam WeightsInType A type that can be converted to WeightsType.
+   */
+  template<typename MatInType,
+           typename PredictionsInType,
+           typename WeightsInType>
+  SimpleCV(const double validationSize,
+           const MatInType& xs,
+           const PredictionsInType& ys,
+           const size_t numClasses,
+           const WeightsInType& weights);
+
+  /**
+   * This constructor can be used for multiclass classification algorithms that
+   * can take a data::DatasetInfo parameter and support weighted learning.
+   *
+   * @param validationSize A proportion (between 0 and 1) of data used as a
+   *     validation set.
+   * @param xs Data points to cross-validate on.
+   * @param datasetInfo Type information for each dimension of the dataset.
+   * @param ys Labels for each data point.
+   * @param numClasses Number of classes in the dataset.
+   * @param weights Observation weights (for boosting).
+   *
+   * @tparam MatInType A type that can be converted to MatType.
+   * @tparam PredictionsInType A type that can be converted to PredictionsType.
+   * @tparam WeightsInType A type that can be converted to WeightsType.
+   */
+  template<typename MatInType,
+           typename PredictionsInType,
+           typename WeightsInType>
+  SimpleCV(const double validationSize,
+           const MatInType& xs,
+           const data::DatasetInfo& datasetInfo,
+           const PredictionsInType& ys,
+           const size_t numClasses,
+           const WeightsInType& weights);
 
   /**
    * Train on the training set and assess performance on the validation set by
@@ -122,23 +237,6 @@ class SimpleCV :
 
   //! A pointer to the last trained model.
   std::unique_ptr<MLAlgorithm> modelPtr;
-
-  /**
-   * Initialize without weights.
-   */
-  template<typename DataArgsTupleT,
-           typename = typename std::enable_if<
-               std::tuple_size<DataArgsTupleT>::value == 2>::type>
-  void Init(const double validationSize, const DataArgsTupleT& dataArgsTuple);
-
-  /**
-   * Initialize with weights.
-   */
-  template<typename DataArgsTupleT,
-           typename = typename std::enable_if<
-               std::tuple_size<DataArgsTupleT>::value == 3>::type,
-           typename = void>
-  void Init(const double validationSize, const DataArgsTupleT& dataArgsTuple);
 
   /**
    * Initialize training and validation sets.
