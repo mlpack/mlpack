@@ -36,24 +36,6 @@ using namespace mlpack::regression;
 
 BOOST_AUTO_TEST_SUITE(CMAESTest);
 
-// a simple rosenbrock function implemented
-class rosenbrockFunc
-{
- public:
-  int N;
-
-  rosenbrockFunc(int x){ N = x-1; }
-
-  double NumFunctions(){return N;}
-
-  double Evaluate(arma::mat& x, int i)
-  {
-    return 100.*pow((pow((x[i]), 2) - x[i+1]), 2)
-    + pow((1.-x[i]), 2);
-  }
-};
-
-
 BOOST_AUTO_TEST_CASE(SimpleCMAESTestFunction)
 {
   SGDTestFunction test;
@@ -133,17 +115,21 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTestWithCMAES)
 
 BOOST_AUTO_TEST_CASE(rosenbrockFunctionCMAES)
 {
-  for (int i = 5; i < 50; i+=5)
+  // Loop over several variants.
+  for (size_t i = 10; i < 50; i += 5)
   {
-    rosenbrockFunc test(i);
+    // Create the generalized Rosenbrock function.
+    GeneralizedRosenbrockFunction f(i);
 
-    CMAES s(i, 0.5, 0.3, 100000, 1e-16, 1e-15);
+    CMAES s(i, 0.5, 0.3, 100000, 1e-16, 1e-16);
 
-    arma::vec coordinates(i);
-    double result = s.Optimize(test, coordinates);
-
-    for (int j = 0; j < i-1; j++)
-      BOOST_REQUIRE_CLOSE(coordinates[j], 1, 10);
+    arma::mat coordinates = f.GetInitialPoint();
+    double result = s.Optimize(f, coordinates);
+    
+    BOOST_REQUIRE_SMALL(result, 1e-6);
+    for (size_t j = 0; j < i; ++j)
+    BOOST_REQUIRE_CLOSE(coordinates[j], (double) 1.0, 1e-2);
   }
 }
+
 BOOST_AUTO_TEST_SUITE_END();
