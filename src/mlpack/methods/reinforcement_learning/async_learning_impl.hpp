@@ -97,24 +97,20 @@ void AsyncLearning<
    * compiler. We can switch to OpenMP task once MSVC supports OpenMP 3.0.
    */
   size_t numThreads = 0;
-  #ifdef HAS_OPENMP
-    #pragma omp parallel reduction(+:numThreads)
-  #endif
+  #pragma omp parallel reduction(+:numThreads)
   numThreads++;
   Log::Debug << numThreads << " threads will be used in total." << std::endl;
 
-  #ifdef HAS_OPENMP
-    #pragma omp parallel for shared(stop, workers, tasks, learningNetwork, \
-        targetNetwork, totalSteps, policy)
-  #endif
+  #pragma omp parallel for shared(stop, workers, tasks, learningNetwork, \
+      targetNetwork, totalSteps, policy)
   for (omp_size_t i = 0; i < numThreads; ++i)
   {
-    #ifdef HAS_OPENMP
-      #pragma omp critical
-    #endif
+    #pragma omp critical
     {
-      Log::Debug << "Thread " << omp_get_thread_num() <<
-          " started." << std::endl;
+      #ifdef HAS_OPENMP
+        Log::Debug << "Thread " << omp_get_thread_num() <<
+            " started." << std::endl;
+      #endif
     }
     while (!stop)
     {
