@@ -34,7 +34,6 @@ using namespace mlpack::optimization::test;
 using namespace mlpack::distribution;
 using namespace mlpack::regression;
 
-  
 mlpack::math::RandomSeed(std::time(NULL));
 
 BOOST_AUTO_TEST_SUITE(CMAESTest);
