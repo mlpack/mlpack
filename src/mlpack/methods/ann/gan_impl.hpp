@@ -184,7 +184,21 @@ double GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
   Forward(std::move(currentInput));
   double res = discriminator.outputLayer.Forward(std::move(
       boost::apply_visitor(outputParameterVisitor,
-      discriminator.network.back())), std::move(currentTarget)); 
+      discriminator.network.back())), std::move(currentTarget));
+  if (trainGenerator)
+  {
+    std::cout << "trainGenerator = " << std::endl;
+    std::cout << "currentInput = " << currentInput.rows(0, 5) << std::endl;
+    std::cout << "responses = " << currentTarget << std::endl;
+    std::cout << "res" << res << std::endl;
+  }
+  else
+  {
+    std::cout << "trainDiscriminator = " << std::endl;
+    std::cout << "currentInput = " << currentInput.rows(0, 5) << std::endl;
+    std::cout << "responses = " << currentTarget << std::endl;
+    std::cout << "res" << res << std::endl;
+  }
   return res;
 }
 
@@ -254,14 +268,16 @@ void GenerativeAdversarialNetwork<Generator, Discriminator, IntializerType>
     }
   }
   iterations++;
+  /*
   std::cout << "gradient generator" << std::endl;
   gradient.rows(0, 5).print();
+  std::cout << "discriminator generator" << std::endl;
+  gradient.rows(generator.Parameters().n_rows, generator.Parameters().n_rows + 5).print();
   std::cout << "parameters generator" << std::endl;
   parameter.rows(0, 5).print();
   std::cout << "parameters discriminator" << std::endl;
   parameter.rows(generator.Parameters().n_rows, generator.Parameters().n_rows + 5).print();
 
-  /*
   if (iterations % (batchSize * 50) == 0)
   {
     std::cout << "Here " << std::endl;
