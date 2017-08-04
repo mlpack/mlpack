@@ -18,8 +18,8 @@
 namespace mlpack {
 namespace ann {
 
-template <typename InputDataType, typename OutputDataType>
-inline BinaryRBMPolicy<InputDataType, OutputDataType>
+template<typename DataType>
+inline BinaryRBMPolicy<DataType>
     ::BinaryRBMPolicy(size_t visibleSize, size_t hiddenSize) :
     visibleSize(visibleSize),
     hiddenSize(hiddenSize)
@@ -28,13 +28,13 @@ inline BinaryRBMPolicy<InputDataType, OutputDataType>
 }
 
 // Reset function
-template <typename InputDataType, typename OutputDataType>
-inline void BinaryRBMPolicy<InputDataType, OutputDataType>::Reset()
+template<typename DataType>
+inline void BinaryRBMPolicy<DataType>::Reset()
 {
-  weight = arma::mat(parameter.memptr(), hiddenSize, visibleSize, false, false);
-  hiddenBias = arma::mat(parameter.memptr() + weight.n_elem,
+  weight = DataType(parameter.memptr(), hiddenSize, visibleSize, false, false);
+  hiddenBias = DataType(parameter.memptr() + weight.n_elem,
       hiddenSize, 1, false, false);
-  visibleBias = arma::mat(parameter.memptr() + weight.n_elem +
+  visibleBias = DataType(parameter.memptr() + weight.n_elem +
       hiddenBias.n_elem , visibleSize, 1, false, false);
 }
 
@@ -44,21 +44,21 @@ inline void BinaryRBMPolicy<InputDataType, OutputDataType>::Reset()
  *
  * @param input the visible layer
  */ 
-template <typename InputDataType, typename OutputDataType>
-inline double BinaryRBMPolicy<InputDataType, OutputDataType>
-    ::FreeEnergy(InputDataType&& input)
+template<typename DataType>
+inline double BinaryRBMPolicy<DataType>
+    ::FreeEnergy(DataType&& input)
 {
   HiddenPreActivation(std::move(input), std::move(preActivation));
   SoftplusFunction::Fn(preActivation, preActivation);
   return  -(arma::accu(preActivation) + arma::dot(input, visibleBias));
 }
 
-template <typename InputDataType, typename OutputDataType>
-inline double BinaryRBMPolicy<InputDataType, OutputDataType>
-    ::Evaluate(InputDataType& predictors, size_t i)
+template<typename DataType>
+inline double BinaryRBMPolicy<DataType>
+    ::Evaluate(DataType& predictors, size_t i)
 {
   size_t idx = RandInt(0, predictors.n_rows);
-  arma::mat temp = arma::round(predictors.col(i));
+  DataType temp = arma::round(predictors.col(i));
   corruptInput = temp;
   corruptInput.row(idx) = 1 - corruptInput.row(idx);
   return std::log(LogisticFunction::Fn(FreeEnergy(std::move(corruptInput)) -
@@ -71,17 +71,17 @@ inline double BinaryRBMPolicy<InputDataType, OutputDataType>
  * 
  * @param input the visible layer type
  */
-template <typename InputDataType, typename OutputDataType>
-inline void BinaryRBMPolicy<InputDataType, OutputDataType>
-    ::PositivePhase(InputDataType&& input, OutputDataType&& gradient)
+template<typename DataType>
+inline void BinaryRBMPolicy<DataType>
+    ::PositivePhase(DataType&& input, DataType&& gradient)
 {
-  arma::mat weightGrad = arma::mat(gradient.memptr(),
+  DataType weightGrad = DataType(gradient.memptr(),
       hiddenSize, visibleSize, false, false);
 
-  arma::mat hiddenBiasGrad = arma::mat(gradient.memptr() + weightGrad.n_elem,
+  DataType hiddenBiasGrad = DataType(gradient.memptr() + weightGrad.n_elem,
       hiddenSize, 1, false, false);
 
-  arma::mat visibleBiasGrad = arma::mat(gradient.memptr() + weightGrad.n_elem +
+  DataType visibleBiasGrad = DataType(gradient.memptr() + weightGrad.n_elem +
       hiddenBiasGrad.n_elem, visibleSize, 1, false, false);
 
   HiddenMean(std::move(input), std::move(hiddenBiasGrad));
@@ -95,17 +95,17 @@ inline void BinaryRBMPolicy<InputDataType, OutputDataType>
  * 
  * @param input the negative samples sampled from gibbs distribution
  */
-template <typename InputDataType, typename OutputDataType>
-inline void BinaryRBMPolicy<InputDataType, OutputDataType>
-    ::NegativePhase(InputDataType&& negativeSamples, OutputDataType&& gradient)
+template<typename DataType>
+inline void BinaryRBMPolicy<DataType>
+    ::NegativePhase(DataType&& negativeSamples, DataType&& gradient)
 {
-  arma::mat weightGrad = arma::mat(gradient.memptr(),
+  DataType weightGrad = DataType(gradient.memptr(),
       hiddenSize, visibleSize, false, false);
 
-  arma::mat hiddenBiasGrad = arma::mat(gradient.memptr() + weightGrad.n_elem,
+  DataType hiddenBiasGrad = DataType(gradient.memptr() + weightGrad.n_elem,
       hiddenSize, 1, false, false);
 
-  arma::mat visibleBiasGrad = arma::mat(gradient.memptr() + weightGrad.n_elem +
+  DataType visibleBiasGrad = DataType(gradient.memptr() + weightGrad.n_elem +
       hiddenBiasGrad.n_elem, visibleSize, 1, false, false);
 
   HiddenMean(std::move(negativeSamples), std::move(hiddenBiasGrad));
@@ -113,25 +113,25 @@ inline void BinaryRBMPolicy<InputDataType, OutputDataType>
   visibleBiasGrad = negativeSamples;
 }
 
-template <typename InputDataType, typename OutputDataType>
-inline void BinaryRBMPolicy<InputDataType, OutputDataType>
-    ::VisibleMean(InputDataType&& input, OutputDataType&& output)
+template<typename DataType>
+inline void BinaryRBMPolicy<DataType>
+    ::VisibleMean(DataType&& input, DataType&& output)
 {
   VisiblePreActivation(std::move(input), std::move(output));
   LogisticFunction::Fn(output, output);
 }
 
-template <typename InputDataType, typename OutputDataType>
-inline void BinaryRBMPolicy<InputDataType, OutputDataType>
-    ::HiddenMean(InputDataType&& input, OutputDataType&& output)
+template<typename DataType>
+inline void BinaryRBMPolicy<DataType>
+    ::HiddenMean(DataType&& input, DataType&& output)
 {
   HiddenPreActivation(std::move(input), std::move(output));
   LogisticFunction::Fn(output, output);
 }
 
-template <typename InputDataType, typename OutputDataType>
-inline void BinaryRBMPolicy<InputDataType, OutputDataType>
-    ::SampleVisible(InputDataType&& input, OutputDataType&& output)
+template<typename DataType>
+inline void BinaryRBMPolicy<DataType>
+    ::SampleVisible(DataType&& input, DataType&& output)
 {
   VisibleMean(std::move(input), std::move(output));
 
@@ -139,9 +139,9 @@ inline void BinaryRBMPolicy<InputDataType, OutputDataType>
     output(i) = math::RandBernoulli(output(i));
 }
 
-template <typename InputDataType, typename OutputDataType>
-inline void BinaryRBMPolicy<InputDataType, OutputDataType>
-    ::SampleHidden(InputDataType&& input, OutputDataType&& output)
+template<typename DataType>
+inline void BinaryRBMPolicy<DataType>
+    ::SampleHidden(DataType&& input, DataType&& output)
 {
   HiddenMean(std::move(input), std::move(output));
 
@@ -149,23 +149,23 @@ inline void BinaryRBMPolicy<InputDataType, OutputDataType>
     output(i) = math::RandBernoulli(output(i));
 }
 
-template <typename InputDataType, typename OutputDataType>
-inline void BinaryRBMPolicy<InputDataType, OutputDataType>
-    ::VisiblePreActivation(InputDataType&& input, OutputDataType&& output)
+template<typename DataType>
+inline void BinaryRBMPolicy<DataType>
+    ::VisiblePreActivation(DataType&& input, DataType&& output)
 {
   output = weight.t() * input + visibleBias;
 }
 
-template <typename InputDataType, typename OutputDataType>
-inline void BinaryRBMPolicy<InputDataType, OutputDataType>
-    ::HiddenPreActivation(InputDataType&& input, OutputDataType&& output)
+template<typename DataType>
+inline void BinaryRBMPolicy<DataType>
+    ::HiddenPreActivation(DataType&& input, DataType&& output)
 {
   output = weight * input + hiddenBias;
 }
 
-template <typename InputDataType, typename OutputDataType>
+template<typename DataType>
 template<typename Archive>
-void BinaryRBMPolicy<InputDataType, OutputDataType>
+void BinaryRBMPolicy<DataType>
     ::Serialize(Archive& ar, const unsigned int /* version */)
 {
   ar & data::CreateNVP(visibleSize, "visibleSize");

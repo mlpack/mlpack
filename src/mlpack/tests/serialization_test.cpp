@@ -1700,15 +1700,15 @@ BOOST_AUTO_TEST_CASE(BinaryRBMTest)
   size_t hiddenLayerSize = 5;
   data.randu(3, 100);
 
-  BinaryRBMPolicy binary_rbm(data.n_rows, hiddenLayerSize);
+  BinaryRBMPolicy<> binary_rbm(data.n_rows, hiddenLayerSize);
   GaussianInitialization gaussian(0, 0.1);
-  RBM<GaussianInitialization, BinaryRBMPolicy > Rbm(data,
+  RBM<GaussianInitialization, BinaryRBMPolicy<> > Rbm(data,
       gaussian, binary_rbm, 1,  true, true);
-  RBM<GaussianInitialization, BinaryRBMPolicy > RbmXml(data,
+  RBM<GaussianInitialization, BinaryRBMPolicy<> > RbmXml(data,
       gaussian, binary_rbm, 1,  true, true);
-  RBM<GaussianInitialization, BinaryRBMPolicy > RbmText(data,
+  RBM<GaussianInitialization, BinaryRBMPolicy<> > RbmText(data,
       gaussian, binary_rbm, 1,  true, true);
-  RBM<GaussianInitialization, BinaryRBMPolicy > RbmBinary(data,
+  RBM<GaussianInitialization, BinaryRBMPolicy<> > RbmBinary(data,
       gaussian, binary_rbm, 1,  true, true);
   Rbm.Reset();
 
@@ -1744,16 +1744,16 @@ BOOST_AUTO_TEST_CASE(ssRBMTest)
 
   size_t poolSize = 1;
 
-  SpikeSlabRBMPolicy ss_rbm(data.n_rows, hiddenLayerSize, poolSize,
+  SpikeSlabRBMPolicy<> ss_rbm(data.n_rows, hiddenLayerSize, poolSize,
       slabPenalty, radius);
   GaussianInitialization gaussian(0, 0.1);
-  RBM<GaussianInitialization, SpikeSlabRBMPolicy > Rbm(data,
+  RBM<GaussianInitialization, SpikeSlabRBMPolicy<> > Rbm(data,
       gaussian, ss_rbm, 1,  true, true);
-  RBM<GaussianInitialization, SpikeSlabRBMPolicy> RbmXml(data,
+  RBM<GaussianInitialization, SpikeSlabRBMPolicy<>> RbmXml(data,
       gaussian, ss_rbm, 1,  true, true);
-  RBM<GaussianInitialization, SpikeSlabRBMPolicy> RbmText(data,
+  RBM<GaussianInitialization, SpikeSlabRBMPolicy<>> RbmText(data,
       gaussian, ss_rbm, 1,  true, true);
-  RBM<GaussianInitialization, SpikeSlabRBMPolicy> RbmBinary(data,
+  RBM<GaussianInitialization, SpikeSlabRBMPolicy<>> RbmBinary(data,
       gaussian, ss_rbm, 1,  true, true);
   Rbm.Reset();
   Rbm.Policy().VisiblePenalty().fill(15);

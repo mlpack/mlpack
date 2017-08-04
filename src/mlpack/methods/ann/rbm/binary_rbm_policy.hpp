@@ -17,8 +17,7 @@
 
 namespace mlpack{
 namespace ann{
-template <typename InputDataType = arma::mat,
-          typename OutputDataType = arma::mat>
+template <typename DataType = arma::mat>
 class BinaryRBMPolicy
 {
  public:
@@ -34,9 +33,9 @@ class BinaryRBMPolicy
    *
    * @param input the visible layer
    */ 
-  double FreeEnergy(InputDataType&& input);
+  double FreeEnergy(DataType&& input);
 
-  double Evaluate(InputDataType& predictors, size_t i);
+  double Evaluate(DataType& predictors, size_t i);
 
   /**
    * Positive Gradient function. This function calculates the positive
@@ -44,7 +43,7 @@ class BinaryRBMPolicy
    * 
    * @param input the visible layer type
    */
-  void PositivePhase(InputDataType&& input, OutputDataType&& gradient);
+  void PositivePhase(DataType&& input, DataType&& gradient);
 
   /**
    * Negative Gradient function. This function calculates the negative
@@ -52,8 +51,7 @@ class BinaryRBMPolicy
    * 
    * @param input the negative samples sampled from gibbs distribution
    */
-  void NegativePhase(InputDataType&& negativeSamples,
-      OutputDataType&& gradient);
+  void NegativePhase(DataType&& negativeSamples, DataType&& gradient);
 
   /**
    * Visible mean function calcultes the forward pass for
@@ -62,7 +60,7 @@ class BinaryRBMPolicy
    * @param input hidden neurons
    * @param output visible neuron activations
    */
-  void VisibleMean(InputDataType && input, OutputDataType&& output);
+  void VisibleMean(DataType&& input, DataType&& output);
 
   /**
    * Hidden mean function calcultes the forward pass for
@@ -71,7 +69,7 @@ class BinaryRBMPolicy
    * @param input visible neurons
    * @param output hidden neuron activations
    */
-  void HiddenMean(InputDataType&& input, OutputDataType&& output);
+  void HiddenMean(DataType&& input, DataType&& output);
 
   /**
    * SampleVisible function samples the visible 
@@ -80,7 +78,7 @@ class BinaryRBMPolicy
    * @param input hidden neurons
    * @param output sampled visible neurons
    */
-  void SampleVisible(InputDataType&& input, OutputDataType&& output);
+  void SampleVisible(DataType&& input, DataType&& output);
 
   /**
    * SampleHidden function samples the hidden 
@@ -89,29 +87,29 @@ class BinaryRBMPolicy
    * @param input visible neurons
    * @param output sampled hidden neurons
    */
-  void SampleHidden(InputDataType&& input, OutputDataType&& output);
+  void SampleHidden(DataType&& input, DataType&& output);
 
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
 
   //! Return the initial point for the optimization.
-  const InputDataType& Parameters() const { return parameter; }
+  const DataType& Parameters() const { return parameter; }
   //! Modify the initial point for the optimization.
-  InputDataType& Parameters() { return parameter; }
+  DataType& Parameters() { return parameter; }
   //! Return the weights of the network
-  const OutputDataType& Weight() const { return weight; }
+  const DataType& Weight() const { return weight; }
   //! Modify the weight of the network
-  OutputDataType& Weight() { return weight; }
+  DataType& Weight() { return weight; }
 
   //! Return the visible bias of the network
-  const InputDataType& VisibleBias() const { return visibleBias; }
+  const DataType& VisibleBias() const { return visibleBias; }
   //! Modify the visible bias of the network
-  InputDataType& VisibleBias() { return visibleBias; }
+  DataType& VisibleBias() { return visibleBias; }
 
   //! Return the hidden bias of the network
-  const InputDataType& HiddenBias() const { return hiddenBias; }
+  const DataType& HiddenBias() const { return hiddenBias; }
   //! Modify the  hidden bias of the network
-  InputDataType& HiddenBias() { return hiddenBias; }
+  DataType& HiddenBias() { return hiddenBias; }
 
   //! Get the visible size
   size_t const& VisibleSize() const { return visibleSize; }
@@ -126,7 +124,7 @@ class BinaryRBMPolicy
    * @param input hidden unit neuron
    * @param ouput visible unit pre-activation values
    */
-  void VisiblePreActivation(InputDataType&& input, OutputDataType&& output);
+  void VisiblePreActivation(DataType&& input, DataType&& output);
   /**
    * HiddenPreActivation function calculates the pre activation
    * values given the hidden input units.
@@ -134,7 +132,7 @@ class BinaryRBMPolicy
    * @param input visible unit neuron
    * @param ouput hidden unit pre-activation values
    */
-  void HiddenPreActivation(InputDataType&& input, OutputDataType&& output);
+  void HiddenPreActivation(DataType&& input, DataType&& output);
 
  private:
   //! Locally stored number of visible neurons
@@ -142,17 +140,17 @@ class BinaryRBMPolicy
   //! Locally stored number of hidden neurons
   size_t hiddenSize;
   //! Locally stored  Parameters of the network
-  InputDataType parameter;
+  DataType parameter;
   //! Locally stored weight of the network
-  InputDataType weight;
+  DataType weight;
   //! Locally stored biases of the visible layer
-  OutputDataType visibleBias;
+  DataType visibleBias;
   //! Locally stored biases of hidden layer
-  OutputDataType hiddenBias;
+  DataType hiddenBias;
   //! Locally-stored output of the preActivation function used in FreeEnergy
-  InputDataType preActivation;
+  DataType preActivation;
   //! Locally-stored corrupInput used for Pseudo-Likelihood
-  InputDataType corruptInput;
+  DataType corruptInput;
 };
 } // namespace ann
 } // namespace mlpack

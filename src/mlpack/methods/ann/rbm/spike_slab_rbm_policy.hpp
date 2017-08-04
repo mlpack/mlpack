@@ -16,18 +16,17 @@
 
 namespace mlpack {
 namespace ann {
-
-template<typename InputDataType = arma::mat, 
-         typename OutputDataType = arma::mat>
+template<typename DataType = arma::mat>
 class SpikeSlabRBMPolicy
 {
  public:
+  typedef typename DataType::elem_type ElemType;
   // Intialise the visible and hiddenl layer of the network
   SpikeSlabRBMPolicy(const size_t visibleSize,
       const size_t hiddenSize,
       const size_t poolSize,
-      const double slabPenalty, 
-      double radius);
+      const ElemType slabPenalty, 
+      ElemType radius);
 
   // Reset function
   void Reset();
@@ -42,13 +41,13 @@ class SpikeSlabRBMPolicy
    *
    * @param input the visible layer
    */ 
-  double FreeEnergy(InputDataType&& input);
+  ElemType FreeEnergy(DataType&& input);
 
   /**
    * Evaluate function is used by the Optimizer to 
    * find the perfomance of the network on the currentInput
    */
-  double Evaluate(InputDataType& /*predictors*/, size_t /*i*/);
+  ElemType Evaluate(DataType& /*predictors*/, size_t /*i*/);
 
   /**
    * Positive Phase calculates the gradient on the
@@ -58,7 +57,7 @@ class SpikeSlabRBMPolicy
    * @param input the visible input
    * @param output the computed gradient
    */
-  void PositivePhase(InputDataType&& input, OutputDataType&& gradient);
+  void PositivePhase(DataType&& input, DataType&& gradient);
 
   /**
    * Negative Phase calculates the gradient on the
@@ -68,7 +67,7 @@ class SpikeSlabRBMPolicy
    * @param input the visible input
    * @param output the computed gradient
    */
-  void NegativePhase(InputDataType&& negativeSamples, OutputDataType&& gradient);
+  void NegativePhase(DataType&& negativeSamples, DataType&& gradient);
 
   /**
    * Visible Mean function calculates the mean of the
@@ -78,7 +77,7 @@ class SpikeSlabRBMPolicy
    * @param input consists of spike and slab variables
    * @param output the mean of the of the Normal distribution
    */
-  void VisibleMean(InputDataType&& input, OutputDataType&& output);
+  void VisibleMean(DataType&& input, DataType&& output);
 
   /**
    * Hidden Mean function calculates the
@@ -89,7 +88,7 @@ class SpikeSlabRBMPolicy
    * @param input consists of visible input.
    * @param output consits of the spike samples and slab samples
    */
-  void HiddenMean(InputDataType&& input, OutputDataType&& output);
+  void HiddenMean(DataType&& input, DataType&& output);
   
   /**
    * Sample Visible function sample 
@@ -101,7 +100,7 @@ class SpikeSlabRBMPolicy
    * @param output consits of visible layer.
    * @param norm norm used for rejection sampling
    */
-  void SampleVisible(InputDataType&& input, OutputDataType&& output);
+  void SampleVisible(DataType&& input, DataType&& output);
 
   /**
    * Sample Hidden function samples 
@@ -112,31 +111,31 @@ class SpikeSlabRBMPolicy
    * @param input consists of visible and spike variables
    * @param output consits of slab units.
    */
-  void SampleHidden(InputDataType&& input, OutputDataType&& output);
+  void SampleHidden(DataType&& input, DataType&& output);
 
   // Serialize function
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
 
   //! Return the initial point for the optimization.
-  const OutputDataType& Parameters() const { return parameter; }
+  const DataType& Parameters() const { return parameter; }
   //! Modify the initial point for the optimization.
-  OutputDataType& Parameters() { return parameter; }
+  DataType& Parameters() { return parameter; }
 
   //! Get the weight variables
   arma::cube const& Weight() const { return weight; }
   arma::cube& Weight() { return weight; }
 
   //! Get the regulaliser associated with spike variables
-  OutputDataType const& SpikeBias() const { return spikeBias; }
-  OutputDataType& SpikeBias() { return spikeBias; }
+  DataType const& SpikeBias() const { return spikeBias; }
+  DataType& SpikeBias() { return spikeBias; }
 
   //! Get the regulaliser associated with slab variables
-  double const& SlabPenalty() const { return slabPenalty; }
+  ElemType const& SlabPenalty() const { return invSlabPenalty; }
 
   //! Get the regulaliser associated with visible variables
-  OutputDataType const& VisiblePenalty() const { return visiblePenalty; }
-  OutputDataType& VisiblePenalty() { return visiblePenalty; }
+  DataType const& VisiblePenalty() const { return visiblePenalty; }
+  DataType& VisiblePenalty() { return visiblePenalty; }
 
   //! Get the visible size
   size_t const& VisibleSize() const { return visibleSize; }
@@ -154,14 +153,14 @@ class SpikeSlabRBMPolicy
    * @param visible the visible layer
    * @param spikeMean hidden layer
    */
-  void SpikeMean(InputDataType&& visible, OutputDataType&& spikeMean);
+  void SpikeMean(DataType&& visible, DataType&& spikeMean);
   /**
    * Sample Spike function samples the spike
    * function using bernoulli distribution
    * @param spikeMean indicates P(h|v)
    * @param spike the sampled 0/1 spike variables
    */
-  void SampleSpike(InputDataType&& spikeMean, OutputDataType&& spike);
+  void SampleSpike(DataType&& spikeMean, DataType&& spike);
 
   /**
    * SlabMean function calculates the mean of 
@@ -172,8 +171,8 @@ class SpikeSlabRBMPolicy
    * @param spike the spike variables from hidden layer
    * @param slabMean the mean of the normal distribution
    */
-  void SlabMean(InputDataType&& visible, InputDataType&& spike,
-      OutputDataType&& slabMean);
+  void SlabMean(DataType&& visible, DataType&& spike,
+      DataType&& slabMean);
   /**
    * SampleSlab function calculates the
    * normal distribution P(s|v,h).
@@ -183,10 +182,8 @@ class SpikeSlabRBMPolicy
    * @slabMean mean of the normal distribution
    * @slab sample slab variable from the normal distribution
    */
-  void SampleSlab(InputDataType&& slabMean, OutputDataType&& slab);
+  void SampleSlab(DataType&& slabMean, DataType&& slab);
 
-
- private:
   //! Locally stored parameters number of visible neurons
   size_t visibleSize;
   //! Locally stored parameters number of hidden neurons
@@ -194,29 +191,29 @@ class SpikeSlabRBMPolicy
   //! Locally stored parameters poolSize 
   size_t poolSize;
   //! Locally stored parameters
-  OutputDataType parameter;
+  DataType parameter;
   //! Locally stored weight of the network (visibleSize * poolSize * hiddenSize)
   arma::cube weight;
   //! Locally stored spikeBias (hiddenSize * 1)
-  InputDataType spikeBias;
+  DataType spikeBias;
   //! Locally stored slabPenalty
-  double slabPenalty;
+  ElemType slabPenalty;
   //! Locally stored iverse of slabPenalty
-  double invSlabPenalty;
+  ElemType invSlabPenalty;
   //! Locally stored radius used for rejection sampling
-  double radius;
+  ElemType radius;
   //! Locally stored visible Penalty(1 * 1)
-  InputDataType visiblePenalty;
+  DataType visiblePenalty;
   //! Locally stored saclar visible Penalty
-  double scalarVisiblePenalty;
+  ElemType scalarVisiblePenalty;
   //! Locally stored mean of the P(v | s,h)
-  OutputDataType visibleMean;
+  DataType visibleMean;
   //! Locally stored mean of the P(v | h)
-  OutputDataType spikeMean;
+  DataType spikeMean;
   //! Locally stored spike variables
-  OutputDataType spikeSamples;
+  DataType spikeSamples;
   //! Locally stored mean of the P(s | v, h)
-  OutputDataType slabMean;
+  DataType slabMean;
 };
 } // namespace ann
 } // namespace mlpack
