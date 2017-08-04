@@ -79,13 +79,13 @@ class CVBase
          const size_t numClasses);
 
   /**
-   * Assert there is an equal number of data points and predictions.
+   * Assert there is the equal number of data points and predictions.
    */
   static void AssertDataConsistency(const MatType& xs,
                                     const PredictionsType& ys);
 
   /**
-   * Assert weighted learning is supported and there is an equal number of data
+   * Assert weighted learning is supported and there is the equal number of data
    * points, predictions, and weights.
    */
   static void AssertDataConsistency(const MatType& xs,
