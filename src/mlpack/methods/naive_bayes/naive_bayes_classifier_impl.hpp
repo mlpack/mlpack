@@ -29,46 +29,63 @@ template<typename MatType>
 NaiveBayesClassifier<MatType>::NaiveBayesClassifier(
     const MatType& data,
     const arma::Row<size_t>& labels,
-    const size_t classes,
+    const size_t numClasses,
     const bool incremental) :
     trainingPoints(0) // Set when we call Train().
 {
-  const size_t dimensionality = data.n_rows;
-
-  // Perform training, after initializing the model to 0 (that is, if Train()
-  // won't do that for us, which it won't if we're using the incremental
-  // algorithm).
   if (incremental)
   {
-    probabilities.zeros(classes);
-    means.zeros(dimensionality, classes);
-    variances.zeros(dimensionality, classes);
+    probabilities.zeros(numClasses);
+    means.zeros(data.n_rows, numClasses);
+    variances.zeros(data.n_rows, numClasses);
   }
   else
   {
-    probabilities.set_size(classes);
-    means.set_size(dimensionality, classes);
-    variances.set_size(dimensionality, classes);
+    probabilities.set_size(numClasses);
+    means.set_size(data.n_rows, numClasses);
+    variances.set_size(data.n_rows, numClasses);
   }
-  Train(data, labels, incremental);
+
+  Train(data, labels, numClasses, incremental);
 }
 
 template<typename MatType>
 NaiveBayesClassifier<MatType>::NaiveBayesClassifier(const size_t dimensionality,
-                                                    const size_t classes) :
+                                                    const size_t numClasses) :
     trainingPoints(0)
 {
   // Initialize model to 0.
-  probabilities.zeros(classes);
-  means.zeros(dimensionality, classes);
-  variances.zeros(dimensionality, classes);
+  probabilities.zeros(numClasses);
+  means.zeros(dimensionality, numClasses);
+  variances.zeros(dimensionality, numClasses);
 }
 
 template<typename MatType>
 void NaiveBayesClassifier<MatType>::Train(const MatType& data,
                                           const arma::Row<size_t>& labels,
+                                          const size_t numClasses,
                                           const bool incremental)
 {
+  // Do we need to resize the model?
+  if (probabilities.n_elem != numClasses)
+  {
+    // Perform training, after initializing the model to 0 (that is, if Train()
+    // won't do that for us, which it won't if we're using the incremental
+    // algorithm).
+    if (incremental)
+    {
+      probabilities.zeros(numClasses);
+      means.zeros(data.n_rows, numClasses);
+      variances.zeros(data.n_rows, numClasses);
+    }
+    else
+    {
+      probabilities.set_size(numClasses);
+      means.set_size(data.n_rows, numClasses);
+      variances.set_size(data.n_rows, numClasses);
+    }
+  }
+
   // Calculate the class probabilities as well as the sample mean and variance
   // for each of the features with respect to each of the labels.
   if (incremental)
@@ -95,7 +112,7 @@ void NaiveBayesClassifier<MatType>::Train(const MatType& data,
   }
   else
   {
-    // Set all parameters to zero
+    // Set all parameters to zero.
     probabilities.zeros();
     means.zeros();
     variances.zeros();

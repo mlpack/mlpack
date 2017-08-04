@@ -23,14 +23,14 @@ href="https://keon.io/mlpack/mlpack-on-windows/">Keon's excellent tutorial</a>.
 
 @section Download latest mlpack build
 Download latest mlpack build from here:
-<a href="http://www.mlpack.org/files/mlpack-2.2.3.tar.gz">mlpack-2.2.3</a>
+<a href="http://www.mlpack.org/files/mlpack-2.2.4.tar.gz">mlpack-2.2.4</a>
 
 @section builddir Creating Build Directory
 
 Once the mlpack source is unpacked, you should create a build directory.
 
 @code
-$ cd mlpack-2.2.3
+$ cd mlpack-2.2.4
 $ mkdir build
 @endcode
 

@@ -40,12 +40,12 @@ class DecisionStump
    *
    * @param data Input, training data.
    * @param labels Labels of training data.
-   * @param classes Number of distinct classes in labels.
+   * @param numClasses Number of distinct classes in labels.
    * @param bucketSize Minimum size of bucket when splitting.
    */
   DecisionStump(const MatType& data,
                 const arma::Row<size_t>& labels,
-                const size_t classes,
+                const size_t numClasses,
                 const size_t bucketSize = 10);
 
   /**
@@ -62,6 +62,7 @@ class DecisionStump
   DecisionStump(const DecisionStump<>& other,
                 const MatType& data,
                 const arma::Row<size_t>& labels,
+                const size_t numClasses,
                 const arma::rowvec& weights);
 
   /**
@@ -78,12 +79,12 @@ class DecisionStump
    *
    * @param data Dataset to train on.
    * @param labels Labels for each point in the dataset.
-   * @param classes Number of classes in the dataset.
+   * @param numClasses Number of classes in the dataset.
    * @param bucketSize Minimum size of bucket when splitting.
    */
   void Train(const MatType& data,
              const arma::Row<size_t>& labels,
-             const size_t classes,
+             const size_t numClasses,
              const size_t bucketSize);
 
   /**
@@ -94,13 +95,13 @@ class DecisionStump
    * @param data Dataset to train on.
    * @param labels Labels for each point in the dataset.
    * @param weights Weights for each point in the dataset.
-   * @param classes Number of classes in the dataset.
+   * @param numClasses Number of classes in the dataset.
    * @param bucketSize Minimum size of bucket when splitting.
    */
   void Train(const MatType& data,
              const arma::Row<size_t>& labels,
              const arma::rowvec& weights,
-             const size_t classes,
+             const size_t numClasses,
              const size_t bucketSize);
 
   /**
@@ -134,7 +135,7 @@ class DecisionStump
 
  private:
   //! The number of classes (we must store this for boosting).
-  size_t classes;
+  size_t numClasses;
   //! The minimum number of points in a bucket.
   size_t bucketSize;
 
