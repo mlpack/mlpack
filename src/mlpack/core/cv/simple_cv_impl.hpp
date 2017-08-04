@@ -30,7 +30,6 @@ SimpleCV<MLAlgorithm,
          WeightsType>::SimpleCV(const double validationSize,
                                 const MatInType& xs,
                                 const PredictionsInType& ys) :
-    Base(xs, ys),
     xs(xs),
     ys(ys)
 {
@@ -52,7 +51,7 @@ SimpleCV<MLAlgorithm,
                                 const MatInType& xs,
                                 const PredictionsInType& ys,
                                 const size_t numClasses) :
-    Base(xs, ys, numClasses),
+    Base(numClasses),
     xs(xs),
     ys(ys)
 {
@@ -75,7 +74,7 @@ SimpleCV<MLAlgorithm,
                                 const data::DatasetInfo& datasetInfo,
                                 const PredictionsInType& ys,
                                 const size_t numClasses) :
-    Base(xs, datasetInfo, ys, numClasses),
+    Base(datasetInfo, numClasses),
     xs(xs),
     ys(ys)
 {
@@ -97,7 +96,6 @@ SimpleCV<MLAlgorithm,
                                 const MatInType& xs,
                                 const PredictionsInType& ys,
                                 const WeightsInType& weights) :
-    Base(xs, ys, weights),
     xs(xs),
     ys(ys),
     weights(weights)
@@ -121,7 +119,7 @@ SimpleCV<MLAlgorithm,
                                 const PredictionsInType& ys,
                                 const size_t numClasses,
                                 const WeightsInType& weights) :
-    Base(xs, ys, numClasses, weights),
+    Base(numClasses),
     xs(xs),
     ys(ys),
     weights(weights)
@@ -146,7 +144,7 @@ SimpleCV<MLAlgorithm,
                                 const PredictionsInType& ys,
                                 const size_t numClasses,
                                 const WeightsInType& weights) :
-    Base(xs, datasetInfo, ys, numClasses, weights),
+    Base(datasetInfo, numClasses),
     xs(xs),
     ys(ys),
     weights(weights)

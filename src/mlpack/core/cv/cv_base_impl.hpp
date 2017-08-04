@@ -19,12 +19,11 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename MatInType, typename PredictionsInType>
+template<typename>
 CVBase<MLAlgorithm,
        MatType,
        PredictionsType,
-       WeightsType>::CVBase(const MatInType&,
-                            const PredictionsInType&) :
+       WeightsType>::CVBase() :
     isDatasetInfoPassed(false)
 {
   static_assert(!MIE::TakesNumClasses,
@@ -35,13 +34,11 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename MatInType, typename PredictionsInType>
+template<typename>
 CVBase<MLAlgorithm,
        MatType,
        PredictionsType,
-       WeightsType>::CVBase(const MatInType&,
-                            const PredictionsInType&,
-                            const size_t numClasses) :
+       WeightsType>::CVBase(const size_t numClasses) :
     isDatasetInfoPassed(false),
     numClasses(numClasses)
 {
@@ -53,13 +50,11 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename MatInType, typename PredictionsInType>
+template<typename>
 CVBase<MLAlgorithm,
        MatType,
        PredictionsType,
-       WeightsType>::CVBase(const MatInType&,
-                            const data::DatasetInfo& datasetInfo,
-                            const PredictionsInType&,
+       WeightsType>::CVBase(const data::DatasetInfo& datasetInfo,
                             const size_t numClasses) :
     datasetInfo(datasetInfo),
     isDatasetInfoPassed(true),
@@ -69,71 +64,6 @@ CVBase<MLAlgorithm,
       "The given MLAlgorithm does not take the numClasses parameter");
   static_assert(MIE::TakesDatasetInfo,
       "The given MLAlgorithm does not accept a data::DatasetInfo parameter");
-}
-
-template<typename MLAlgorithm,
-         typename MatType,
-         typename PredictionsType,
-         typename WeightsType>
-template<typename MatInType, typename PredictionsInType, typename WeightsInType>
-CVBase<MLAlgorithm,
-       MatType,
-       PredictionsType,
-       WeightsType>::CVBase(const MatInType&,
-                            const PredictionsInType&,
-                            const WeightsInType&) :
-    isDatasetInfoPassed(false)
-{
-  static_assert(!MIE::TakesNumClasses,
-      "The given MLAlgorithm requires the numClasses parameter");
-  static_assert(MIE::SupportsWeights,
-      "The given MLAlgorithm does not support weighted learning");
-}
-
-template<typename MLAlgorithm,
-         typename MatType,
-         typename PredictionsType,
-         typename WeightsType>
-template<typename MatInType, typename PredictionsInType, typename WeightsInType>
-CVBase<MLAlgorithm,
-       MatType,
-       PredictionsType,
-       WeightsType>::CVBase(const MatInType&,
-                            const PredictionsInType&,
-                            const size_t numClasses,
-                            const WeightsInType&) :
-    isDatasetInfoPassed(false),
-    numClasses(numClasses)
-{
-  static_assert(MIE::TakesNumClasses,
-      "The given MLAlgorithm does not take the numClasses parameter");
-  static_assert(MIE::SupportsWeights,
-      "The given MLAlgorithm does not support weighted learning");
-}
-
-template<typename MLAlgorithm,
-         typename MatType,
-         typename PredictionsType,
-         typename WeightsType>
-template<typename MatInType, typename PredictionsInType, typename WeightsInType>
-CVBase<MLAlgorithm,
-       MatType,
-       PredictionsType,
-       WeightsType>::CVBase(const MatInType&,
-                            const data::DatasetInfo& datasetInfo,
-                            const PredictionsInType&,
-                            const size_t numClasses,
-                            const WeightsInType&) :
-    datasetInfo(datasetInfo),
-    isDatasetInfoPassed(true),
-    numClasses(numClasses)
-{
-  static_assert(MIE::TakesNumClasses,
-      "The given MLAlgorithm does not take the numClasses parameter");
-  static_assert(MIE::TakesDatasetInfo,
-      "The given MLAlgorithm does not accept a data::DatasetInfo parameter");
-  static_assert(MIE::SupportsWeights,
-      "The given MLAlgorithm does not support weighted learning");
 }
 
 template<typename MLAlgorithm,
@@ -193,6 +123,9 @@ void CVBase<MLAlgorithm,
                                                 const PredictionsType& ys,
                                                 const WeightsType& weights)
 {
+  static_assert(MIE::SupportsWeights,
+      "The given MLAlgorithm does not support weighted learning");
+
   AssertSizeEquality(xs, ys);
   AssertWeightsSize(xs, weights);
 }

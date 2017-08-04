@@ -23,9 +23,8 @@ namespace cv {
  * numClasses) and to assert that the machine learning algorithm and data
  * satisfy certain conditions.
  *
- * This class is not meant to be used directly by users. Rather use the CVBase
- * constructors as a reference for what additional arguments are accepted by
- * cross-validation strategies like SimpleCV or KFoldCV.
+ * This class is not meant to be used directly by users. To cross-validate
+ * rather use end-user classes like SimpleCV or KFoldCV.
  *
  * @tparam MLAlgorithm A machine learning algorithm.
  * @tparam MatType The type of data.
@@ -39,119 +38,6 @@ template<typename MLAlgorithm,
          typename WeightsType>
 class CVBase
 {
- public:
-  /**
-   * This constructor can be used for regression algorithms and for binary
-   * classification algorithms.
-   *
-   * @param xs Dataset to cross-validate on.
-   * @param ys Predictions (labels for classification algorithms and responses
-   *     for regression algorithms) for each point from the dataset.
-   *
-   * @tparam MatInType A type that can be converted to MatType.
-   * @tparam PredictionsInType A type that can be converted to PredictionsType.
-   */
-  template<typename MatInType, typename PredictionsInType>
-  CVBase(const MatInType& xs,
-         const PredictionsInType& ys);
-
-  /**
-   * This constructor can be used for multiclass classification algorithms.
-   *
-   * @param xs Dataset to cross-validate on.
-   * @param ys Labels for each point from the dataset.
-   * @param numClasses Number of classes in the dataset.
-   *
-   * @tparam MatInType A type that can be converted to MatType.
-   * @tparam PredictionsInType A type that can be converted to PredictionsType.
-   */
-  template<typename MatInType, typename PredictionsInType>
-  CVBase(const MatInType& xs,
-         const PredictionsInType& ys,
-         const size_t numClasses);
-
-  /**
-   * This constructor can be used for multiclass classification algorithms that
-   * can take a data::DatasetInfo parameter.
-   *
-   * @param xs Dataset to cross-validate on.
-   * @param datasetInfo Type information for each dimension of the dataset.
-   * @param ys Labels for each point from the dataset.
-   * @param numClasses Number of classes in the dataset.
-   *
-   * @tparam MatInType A type that can be converted to MatType.
-   * @tparam PredictionsInType A type that can be converted to PredictionsType.
-   */
-  template<typename MatInType, typename PredictionsInType>
-  CVBase(const MatInType& xs,
-         const data::DatasetInfo& datasetInfo,
-         const PredictionsInType& ys,
-         const size_t numClasses);
-
-  /**
-   * This constructor can be used for regression and binary classification
-   * algorithms that support weighted learning.
-   *
-   * @param xs Dataset to cross-validate on.
-   * @param ys Predictions (labels for classification algorithms and responses
-   *     for regression algorithms) for each point from the dataset.
-   * @param weights Observation weights (for boosting).
-   *
-   * @tparam MatInType A type that can be converted to MatType.
-   * @tparam PredictionsInType A type that can be converted to PredictionsType.
-   * @tparam WeightsInType A type that can be converted to WeightsType.
-   */
-  template<typename MatInType,
-           typename PredictionsInType,
-           typename WeightsInType>
-  CVBase(const MatInType& xs,
-         const PredictionsInType& ys,
-         const WeightsInType& weights);
-
-  /**
-   * This constructor can be used for multiclass classification algorithms that
-   * support weighted learning.
-   *
-   * @param xs Dataset to cross-validate on.
-   * @param ys Labels for each point from the dataset.
-   * @param numClasses Number of classes in the dataset.
-   * @param weights Observation weights (for boosting).
-   *
-   * @tparam MatInType A type that can be converted to MatType.
-   * @tparam PredictionsInType A type that can be converted to PredictionsType.
-   * @tparam WeightsInType A type that can be converted to WeightsType.
-   */
-  template<typename MatInType,
-           typename PredictionsInType,
-           typename WeightsInType>
-  CVBase(const MatInType& xs,
-         const PredictionsInType& ys,
-         const size_t numClasses,
-         const WeightsInType& weights);
-
-  /**
-   * This constructor can be used for multiclass classification algorithms that
-   * can take a data::DatasetInfo parameter and support weighted learning.
-   *
-   * @param xs Dataset to cross-validate on.
-   * @param datasetInfo Type information for each dimension of the dataset.
-   * @param ys Labels for each point from the dataset.
-   * @param numClasses Number of classes in the dataset.
-   * @param weights Observation weights (for boosting).
-   *
-   * @tparam MatInType A type that can be converted to MatType.
-   * @tparam PredictionsInType A type that can be converted to PredictionsType.
-   * @tparam WeightsInType A type that can be converted to WeightsType.
-   */
-  template<typename MatInType,
-           typename PredictionsInType,
-           typename WeightsInType>
-  CVBase(const MatInType& xs,
-         const data::DatasetInfo& datasetInfo,
-         const PredictionsInType& ys,
-         const size_t numClasses,
-         const WeightsInType& weights);
-
  protected:
   //! A short alias for MetaInfoExtractor.
   using MIE =
@@ -161,13 +47,46 @@ class CVBase
       "The given MLAlgorithm is not supported by MetaInfoExtractor");
 
   /**
+   * Assert that MLAlgorithm doesn't take any additional basic parameters like
+   * numClasses.
+   *
+   * The constructor is templated to avoid instantiation before being called.
+   */
+  template<typename = void>
+  CVBase();
+
+  /**
+   * Assert that MLAlgorithm takes the numClasses parameter and store it.
+   *
+   * The constructor is templated to avoid instantiation before being called.
+   *
+   * @param numClasses Number of classes in the dataset.
+   */
+  template<typename = void>
+  CVBase(const size_t numClasses);
+
+  /**
+   * Assert that MLAlgorithm takes the numClasses parameter and a
+   * data::DatasetInfo parameter and store them.
+   *
+   * The constructor is templated to avoid instantiation before being called.
+   *
+   * @param datasetInfo Type information for each dimension of the dataset.
+   * @param numClasses Number of classes in the dataset.
+   */
+  template<typename = void>
+  CVBase(const data::DatasetInfo& datasetInfo,
+         const size_t numClasses);
+
+  /**
    * Assert there is an equal number of data points and predictions.
    */
   static void AssertDataConsistency(const MatType& xs,
                                     const PredictionsType& ys);
 
   /**
-   * Assert there is an equal number of data points, predictions, and weights.
+   * Assert weighted learning is supported and there is an equal number of data
+   * points, predictions, and weights.
    */
   static void AssertDataConsistency(const MatType& xs,
                                     const PredictionsType& ys,
