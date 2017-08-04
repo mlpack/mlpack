@@ -20,6 +20,7 @@ namespace ann /* Artificial Neural Network */ {
 namespace augmented /* Augmented neural network */ {
 
 template<
+  typename Controller,
   typename EmbedTransformationType,
   typename JoinTransformationType,
   typename SearchTransformationType,
@@ -46,7 +47,7 @@ public:
   void Evaluate(const arma::mat& predictors,
                 const arma::mat& responses);
 private:
-  TreeMemory::iterator Attention() const;
+  arma::mat Attention() const;
   
   arma::mat Output(TreeMemory::iterator memoryCell) const;
   
@@ -61,6 +62,12 @@ private:
   void Gradient(arma::mat&& input,
                 arma::mat&& error,
                 arma::mat&& gradient);
+
+  TreeMemory<double, JoinTransformationType, WriteTransformationType> memory;
+  size_t memorySize;
+  SearchTransformationType search;
+  EmbedTransformationType embed;
+  Controller controller;
 };
 } // namespace augmented
 } // namespace ann

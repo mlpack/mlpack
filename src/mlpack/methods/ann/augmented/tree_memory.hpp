@@ -28,6 +28,7 @@ public:
   void Update(size_t pos, T el);
 
   T Get(size_t index);
+  T& Get(size_t index);
   T GetCell(size_t memIndex);
 
   inline size_t Root();
@@ -35,6 +36,12 @@ public:
   inline size_t Right(size_t origin);
   inline size_t Parent(size_t child);
   inline size_t LeafIndex(size_t leafPos);
+
+  size_t MemorySize() const { return memorySize; }
+  size_t& MemorySize() { return memorySize; }
+
+  size_t ActualMemorySize() const { return actualMemorySize; }
+  size_t& ActualMemorySize() { return actualMemorySize; }
 private:
   std::vector<T> memory;
   J joinFunction;

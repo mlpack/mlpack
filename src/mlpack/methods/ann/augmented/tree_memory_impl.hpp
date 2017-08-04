@@ -39,6 +39,12 @@ inline T TreeMemory<T, J, W>::Get(size_t index) {
 }
 
 template<typename T, typename J, typename W>
+inline T& TreeMemory<T, J, W>::Get(size_t index) {
+  assert(0 <= index && index < memory.size());
+  return memory[index];
+}
+
+template<typename T, typename J, typename W>
 inline T TreeMemory<T, J, W>::GetCell(size_t index) {
   assert(0 <= index && index < memory.size());
   return memory[index];
