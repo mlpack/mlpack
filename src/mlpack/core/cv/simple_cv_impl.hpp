@@ -173,24 +173,6 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-MLAlgorithm& SimpleCV<MLAlgorithm,
-                      Metric,
-                      MatType,
-                      PredictionsType,
-                      WeightsType>::Model()
-{
-  if (modelPtr == nullptr)
-    throw std::logic_error(
-        "SimpleCV::Model(): attempted to access an uninitialized model");
-
-  return *modelPtr;
-}
-
-template<typename MLAlgorithm,
-         typename Metric,
-         typename MatType,
-         typename PredictionsType,
-         typename WeightsType>
 void SimpleCV<MLAlgorithm,
               Metric,
               MatType,
@@ -264,9 +246,9 @@ double SimpleCV<MLAlgorithm,
                 PredictionsType,
                 WeightsType>::TrainAndEvaluate(const MLAlgorithmArgs&... args)
 {
-  modelPtr = this->Train(trainingXs, trainingYs, args...);
+  this->Train(model, trainingXs, trainingYs, args...);
 
-  return Metric::Evaluate(*modelPtr, validationXs, validationYs);
+  return Metric::Evaluate(model, validationXs, validationYs);
 }
 
 template<typename MLAlgorithm,
@@ -282,11 +264,11 @@ double SimpleCV<MLAlgorithm,
                 WeightsType>::TrainAndEvaluate(const MLAlgorithmArgs&... args)
 {
   if (trainingWeights.n_elem > 0)
-    modelPtr = this->Train(trainingXs, trainingYs, trainingWeights, args...);
+    this->Train(model, trainingXs, trainingYs, trainingWeights, args...);
   else
-    modelPtr = this->Train(trainingXs, trainingYs, args...);
+    this->Train(model, trainingXs, trainingYs, args...);
 
-  return Metric::Evaluate(*modelPtr, validationXs, validationYs);
+  return Metric::Evaluate(model, validationXs, validationYs);
 }
 
 } // namespace cv

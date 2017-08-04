@@ -210,7 +210,7 @@ class SimpleCV :
   double Evaluate(const MLAlgorithmArgs&... args);
 
   //! Access and modify the last trained model.
-  MLAlgorithm& Model();
+  MLAlgorithm& Model() { return model; }
 
  private:
   //! A short alias for CVBase.
@@ -235,8 +235,8 @@ class SimpleCV :
   //! The validation predictions.
   PredictionsType validationYs;
 
-  //! A pointer to the last trained model.
-  std::unique_ptr<MLAlgorithm> modelPtr;
+  //! The last trained model.
+  MLAlgorithm model;
 
   /**
    * Initialize training and validation sets.

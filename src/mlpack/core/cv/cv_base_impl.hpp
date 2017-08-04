@@ -71,15 +71,13 @@ template<typename MLAlgorithm,
          typename PredictionsType,
          typename WeightsType>
 template<typename... MLAlgorithmArgs>
-std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
-                                    MatType,
-                                    PredictionsType,
-                                    WeightsType>::Train(
+void CVBase<MLAlgorithm, MatType, PredictionsType, WeightsType>::Train(
+    MLAlgorithm& result,
     const MatType& xs,
     const PredictionsType& ys,
     const MLAlgorithmArgs&... args)
 {
-  return TrainModel(xs, ys, args...);
+  TrainModel(result, xs, ys, args...);
 }
 
 template<typename MLAlgorithm,
@@ -87,16 +85,14 @@ template<typename MLAlgorithm,
          typename PredictionsType,
          typename WeightsType>
 template<typename... MLAlgorithmArgs>
-std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
-                                    MatType,
-                                    PredictionsType,
-                                    WeightsType>::Train(
+void CVBase<MLAlgorithm, MatType, PredictionsType, WeightsType>::Train(
+    MLAlgorithm& result,
     const MatType& xs,
     const PredictionsType& ys,
     const WeightsType& weights,
     const MLAlgorithmArgs&... args)
 {
-  return TrainModel(xs, ys, weights, args...);
+  TrainModel(result, xs, ys, weights, args...);
 }
 
 template<typename MLAlgorithm,
@@ -175,10 +171,8 @@ template<typename MLAlgorithm,
          typename PredictionsType,
          typename WeightsType>
 template<typename... MLAlgorithmArgs, bool Enabled, typename>
-std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
-                                    MatType,
-                                    PredictionsType,
-                                    WeightsType>::TrainModel(
+void CVBase<MLAlgorithm, MatType, PredictionsType, WeightsType>::TrainModel(
+    MLAlgorithm& result,
     const MatType& xs,
     const PredictionsType& ys,
     const MLAlgorithmArgs&... args)
@@ -188,7 +182,7 @@ std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
           MLAlgorithmArgs...>::value,
       "The given MLAlgorithm is not constructible from the passed arguments");
 
-  return std::unique_ptr<MLAlgorithm>(new MLAlgorithm(xs, ys, args...));
+  result = MLAlgorithm(xs, ys, args...);
 }
 
 template<typename MLAlgorithm,
@@ -196,10 +190,8 @@ template<typename MLAlgorithm,
          typename PredictionsType,
          typename WeightsType>
 template<typename... MLAlgorithmArgs, bool Enabled, typename, typename>
-std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
-                                    MatType,
-                                    PredictionsType,
-                                    WeightsType>::TrainModel(
+void CVBase<MLAlgorithm, MatType, PredictionsType, WeightsType>::TrainModel(
+    MLAlgorithm& result,
     const MatType& xs,
     const PredictionsType& ys,
     const MLAlgorithmArgs&... args)
@@ -209,8 +201,7 @@ std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
           const size_t, MLAlgorithmArgs...>::value,
       "The given MLAlgorithm is not constructible from the passed arguments");
 
-  return std::unique_ptr<MLAlgorithm>(
-      new MLAlgorithm(xs, ys, numClasses, args...));
+  result = MLAlgorithm(xs, ys, numClasses, args...);
 }
 
 template<typename MLAlgorithm,
@@ -219,10 +210,8 @@ template<typename MLAlgorithm,
          typename WeightsType>
 template<typename... MLAlgorithmArgs, bool Enabled, typename, typename,
     typename>
-std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
-                                    MatType,
-                                    PredictionsType,
-                                    WeightsType>::TrainModel(
+void CVBase<MLAlgorithm, MatType, PredictionsType, WeightsType>::TrainModel(
+    MLAlgorithm& result,
     const MatType& xs,
     const PredictionsType& ys,
     const MLAlgorithmArgs&... args)
@@ -237,7 +226,7 @@ std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
   static const bool constructableWithoutDatasetInfo =
       std::is_constructible<MLAlgorithm, const MatType&, const PredictionsType&,
           const size_t, MLAlgorithmArgs...>::value;
-  return TrainModel<constructableWithoutDatasetInfo>(xs, ys, args...);
+  TrainModel<constructableWithoutDatasetInfo>(result, xs, ys, args...);
 }
 
 template<typename MLAlgorithm,
@@ -245,10 +234,8 @@ template<typename MLAlgorithm,
          typename PredictionsType,
          typename WeightsType>
 template<typename... MLAlgorithmArgs, bool Enabled, typename>
-std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
-                                    MatType,
-                                    PredictionsType,
-                                    WeightsType>::TrainModel(
+void CVBase<MLAlgorithm, MatType, PredictionsType, WeightsType>::TrainModel(
+    MLAlgorithm& result,
     const MatType& xs,
     const PredictionsType& ys,
     const WeightsType& weights,
@@ -259,8 +246,7 @@ std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
           const WeightsType&, MLAlgorithmArgs...>::value,
       "The given MLAlgorithm is not constructible from the passed arguments");
 
-  return std::unique_ptr<MLAlgorithm>(
-      new MLAlgorithm(xs, ys, weights, args...));
+  result = MLAlgorithm(xs, ys, weights, args...);
 }
 
 template<typename MLAlgorithm,
@@ -268,10 +254,8 @@ template<typename MLAlgorithm,
          typename PredictionsType,
          typename WeightsType>
 template<typename... MLAlgorithmArgs, bool Enabled, typename, typename>
-std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
-                                    MatType,
-                                    PredictionsType,
-                                    WeightsType>::TrainModel(
+void CVBase<MLAlgorithm, MatType, PredictionsType, WeightsType>::TrainModel(
+    MLAlgorithm& result,
     const MatType& xs,
     const PredictionsType& ys,
     const WeightsType& weights,
@@ -282,8 +266,7 @@ std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
           const size_t, const WeightsType&, MLAlgorithmArgs...>::value,
       "The given MLAlgorithm is not constructible from the passed arguments");
 
-  return std::unique_ptr<MLAlgorithm>(
-      new MLAlgorithm(xs, ys, numClasses, weights, args...));
+  result = MLAlgorithm(xs, ys, numClasses, weights, args...);
 }
 
 template<typename MLAlgorithm,
@@ -292,10 +275,8 @@ template<typename MLAlgorithm,
          typename WeightsType>
 template<typename... MLAlgorithmArgs, bool Enabled, typename, typename,
     typename>
-std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
-                                    MatType,
-                                    PredictionsType,
-                                    WeightsType>::TrainModel(
+void CVBase<MLAlgorithm, MatType, PredictionsType, WeightsType>::TrainModel(
+    MLAlgorithm& result,
     const MatType& xs,
     const PredictionsType& ys,
     const WeightsType& weights,
@@ -311,7 +292,7 @@ std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
   static const bool constructableWithoutDatasetInfo =
       std::is_constructible<MLAlgorithm, const MatType&, const PredictionsType&,
           const size_t, const WeightsType&, MLAlgorithmArgs...>::value;
-  return TrainModel<constructableWithoutDatasetInfo>(xs, ys, weights, args...);
+  TrainModel<constructableWithoutDatasetInfo>(result, xs, ys, weights, args...);
 }
 
 template<typename MLAlgorithm,
@@ -320,20 +301,16 @@ template<typename MLAlgorithm,
          typename WeightsType>
 template<bool ConstructableWithoutDatasetInfo, typename... MLAlgorithmArgs,
     typename>
-std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
-                                    MatType,
-                                    PredictionsType,
-                                    WeightsType>::TrainModel(
+void CVBase<MLAlgorithm, MatType, PredictionsType, WeightsType>::TrainModel(
+    MLAlgorithm& result,
     const MatType& xs,
     const PredictionsType& ys,
     const MLAlgorithmArgs&... args)
 {
   if (isDatasetInfoPassed)
-    return std::unique_ptr<MLAlgorithm>(
-        new MLAlgorithm(xs, datasetInfo, ys, numClasses, args...));
+    result = MLAlgorithm(xs, datasetInfo, ys, numClasses, args...);
   else
-    return std::unique_ptr<MLAlgorithm>(
-        new MLAlgorithm(xs, ys, numClasses, args...));
+    result = MLAlgorithm(xs, ys, numClasses, args...);
 }
 
 template<typename MLAlgorithm,
@@ -342,10 +319,8 @@ template<typename MLAlgorithm,
          typename WeightsType>
 template<bool ConstructableWithoutDatasetInfo, typename... MLAlgorithmArgs,
     typename, typename>
-std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
-                                    MatType,
-                                    PredictionsType,
-                                    WeightsType>::TrainModel(
+void CVBase<MLAlgorithm, MatType, PredictionsType, WeightsType>::TrainModel(
+    MLAlgorithm& result,
     const MatType& xs,
     const PredictionsType& ys,
     const MLAlgorithmArgs&... args)
@@ -354,8 +329,7 @@ std::unique_ptr<MLAlgorithm> CVBase<MLAlgorithm,
     throw std::invalid_argument(
         "The given MLAlgorithm requires a data::DatasetInfo parameter");
 
-  return std::unique_ptr<MLAlgorithm>(
-      new MLAlgorithm(xs, datasetInfo, ys, numClasses, args...));
+  result = MLAlgorithm(xs, datasetInfo, ys, numClasses, args...);
 }
 
 } // namespace cv
