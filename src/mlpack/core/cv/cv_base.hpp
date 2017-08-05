@@ -18,7 +18,7 @@ namespace mlpack {
 namespace cv {
 
 /**
- * A base class for cross-validation. It serves to handle basic non-data
+ * An auxiliary class for cross-validation. It serves to handle basic non-data
  * constructor parameters of a machine learning algorithm (like datasetInfo or
  * numClasses) and to assert that the machine learning algorithm and data
  * satisfy certain conditions.
@@ -38,13 +38,10 @@ template<typename MLAlgorithm,
          typename WeightsType>
 class CVBase
 {
- protected:
+ public:
   //! A short alias for MetaInfoExtractor.
   using MIE =
       MetaInfoExtractor<MLAlgorithm, MatType, PredictionsType, WeightsType>;
-
-  static_assert(MIE::IsSupported,
-      "The given MLAlgorithm is not supported by MetaInfoExtractor");
 
   /**
    * Assert that MLAlgorithm doesn't take any additional basic parameters like
@@ -114,6 +111,9 @@ class CVBase
              const MLAlgorithmArgs&... args);
 
  private:
+  static_assert(MIE::IsSupported,
+      "The given MLAlgorithm is not supported by MetaInfoExtractor");
+
   //! A variable for storing a data::DatasetInfo parameter if it is passed.
   const data::DatasetInfo datasetInfo;
   //! An indicator whether a data::DatasetInfo parameter has been passed.

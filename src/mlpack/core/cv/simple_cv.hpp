@@ -65,8 +65,7 @@ template<typename MLAlgorithm,
          typename WeightsType =
              typename MetaInfoExtractor<MLAlgorithm, MatType,
                  PredictionsType>::WeightsType>
-class SimpleCV :
-    private CVBase<MLAlgorithm, MatType, PredictionsType, WeightsType>
+class SimpleCV
 {
  public:
   /**
@@ -215,6 +214,9 @@ class SimpleCV :
  private:
   //! A short alias for CVBase.
   using Base = CVBase<MLAlgorithm, MatType, PredictionsType, WeightsType>;
+
+  //! An auxiliary object.
+  Base base;
 
   //! All input data points.
   MatType xs;

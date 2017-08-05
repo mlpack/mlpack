@@ -51,7 +51,7 @@ SimpleCV<MLAlgorithm,
                                 const MatInType& xs,
                                 const PredictionsInType& ys,
                                 const size_t numClasses) :
-    Base(numClasses),
+    base(numClasses),
     xs(xs),
     ys(ys)
 {
@@ -74,7 +74,7 @@ SimpleCV<MLAlgorithm,
                                 const data::DatasetInfo& datasetInfo,
                                 const PredictionsInType& ys,
                                 const size_t numClasses) :
-    Base(datasetInfo, numClasses),
+    base(datasetInfo, numClasses),
     xs(xs),
     ys(ys)
 {
@@ -119,7 +119,7 @@ SimpleCV<MLAlgorithm,
                                 const PredictionsInType& ys,
                                 const size_t numClasses,
                                 const WeightsInType& weights) :
-    Base(numClasses),
+    base(numClasses),
     xs(xs),
     ys(ys),
     weights(weights)
@@ -144,7 +144,7 @@ SimpleCV<MLAlgorithm,
                                 const PredictionsInType& ys,
                                 const size_t numClasses,
                                 const WeightsInType& weights) :
-    Base(datasetInfo, numClasses),
+    base(datasetInfo, numClasses),
     xs(xs),
     ys(ys),
     weights(weights)
@@ -246,7 +246,7 @@ double SimpleCV<MLAlgorithm,
                 PredictionsType,
                 WeightsType>::TrainAndEvaluate(const MLAlgorithmArgs&... args)
 {
-  this->Train(model, trainingXs, trainingYs, args...);
+  base.Train(model, trainingXs, trainingYs, args...);
 
   return Metric::Evaluate(model, validationXs, validationYs);
 }
@@ -264,9 +264,9 @@ double SimpleCV<MLAlgorithm,
                 WeightsType>::TrainAndEvaluate(const MLAlgorithmArgs&... args)
 {
   if (trainingWeights.n_elem > 0)
-    this->Train(model, trainingXs, trainingYs, trainingWeights, args...);
+    base.Train(model, trainingXs, trainingYs, trainingWeights, args...);
   else
-    this->Train(model, trainingXs, trainingYs, args...);
+    base.Train(model, trainingXs, trainingYs, args...);
 
   return Metric::Evaluate(model, validationXs, validationYs);
 }
