@@ -376,11 +376,11 @@ void CMAES::updateDistribution(arma::vec& fitnessValues)
 
     // Generate index
      int i, j;
-    for(i = 1, index[0] = 0; i < lambda; ++i)
+    for (i = 1, index[0] = 0; i < lambda; ++i)
     {
-      for(j = i; j > 0; --j)
+      for (j = i; j > 0; --j)
       {
-        if(fitnessValues[index[j - 1]] < fitnessValues[i])
+        if (fitnessValues[index[j - 1]] < fitnessValues[i])
           break;
         index[j] = index[j - 1];
       }
@@ -394,7 +394,8 @@ void CMAES::updateDistribution(arma::vec& fitnessValues)
       sigma *= std::exp(double(0.2) + cs / damps);
 
       Log::Warn << "Warning: sigma increased due to equal function values"
-      << std::endl << "Reconsider the formulation of the objective function" << std::endl;
+      << std::endl << "Reconsider the formulation of the objective function"
+      << std::endl;
     }
 
 for (int i = (int)historySize - 1; i > 0; --i)
