@@ -85,12 +85,6 @@ void AsyncLearning<
   for (size_t i = 0; i <= config.NumWorkers(); ++i)
     tasks.push(i);
 
-  // Synchronization for get/put task.
-  #ifdef HAS_OPENMP
-    omp_lock_t tasksLock;
-    omp_init_lock(&tasksLock);
-  #endif
-
   /**
    * Compute the number of threads for the for-loop. In general, we should use
    * OpenMP task rather than for-loop, here we do so to be compatible with some
@@ -112,22 +106,25 @@ void AsyncLearning<
             " started." << std::endl;
       #endif
     }
+    size_t task = std::numeric_limits<size_t>::max();
     while (!stop)
     {
       // Assign task to current thread from queue.
-      #ifdef HAS_OPENMP
-        omp_set_lock(&tasksLock);
-        if (tasks.empty())
+      #pragma omp critical
+      {
+        if (task != std::numeric_limits<size_t>::max())
+          tasks.push(task);
+
+        if (!tasks.empty())
         {
-          omp_unset_lock(&tasksLock);
-          continue;
+          task = tasks.front();
+          tasks.pop();
         }
-      #endif
-      size_t task = tasks.front();
-      tasks.pop();
-      #ifdef HAS_OPENMP
-        omp_unset_lock(&tasksLock);
-      #endif
+      };
+
+      // This may happen when threads are more than workers.
+      if (task == std::numeric_limits<size_t>::max())
+        continue;
 
       // Get corresponding worker.
       WorkerType& worker = workers[task];
@@ -137,15 +134,6 @@ void AsyncLearning<
       {
         stop = measure(episodeReturn);
       }
-
-      // Put task back to queue.
-      #ifdef HAS_OPENMP
-        omp_set_lock(&tasksLock);
-      #endif
-      tasks.push(task);
-      #ifdef HAS_OPENMP
-        omp_unset_lock(&tasksLock);
-      #endif
     }
   }
 
