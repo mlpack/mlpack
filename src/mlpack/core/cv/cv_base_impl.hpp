@@ -19,7 +19,6 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename>
 CVBase<MLAlgorithm,
        MatType,
        PredictionsType,
@@ -34,7 +33,6 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename>
 CVBase<MLAlgorithm,
        MatType,
        PredictionsType,
@@ -50,7 +48,6 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename>
 CVBase<MLAlgorithm,
        MatType,
        PredictionsType,

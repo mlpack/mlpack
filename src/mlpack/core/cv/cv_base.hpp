@@ -46,32 +46,23 @@ class CVBase
   /**
    * Assert that MLAlgorithm doesn't take any additional basic parameters like
    * numClasses.
-   *
-   * The constructor is templated to avoid instantiation before being called.
    */
-  template<typename = void>
   CVBase();
 
   /**
    * Assert that MLAlgorithm takes the numClasses parameter and store it.
    *
-   * The constructor is templated to avoid instantiation before being called.
-   *
    * @param numClasses Number of classes in the dataset.
    */
-  template<typename = void>
   CVBase(const size_t numClasses);
 
   /**
    * Assert that MLAlgorithm takes the numClasses parameter and a
    * data::DatasetInfo parameter and store them.
    *
-   * The constructor is templated to avoid instantiation before being called.
-   *
    * @param datasetInfo Type information for each dimension of the dataset.
    * @param numClasses Number of classes in the dataset.
    */
-  template<typename = void>
   CVBase(const data::DatasetInfo& datasetInfo,
          const size_t numClasses);
 
