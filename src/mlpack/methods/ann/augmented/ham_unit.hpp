@@ -19,20 +19,13 @@ namespace mlpack {
 namespace ann /* Artificial Neural Network */ {
 namespace augmented /* Augmented neural network */ {
 
-template<
-  typename Controller,
-  typename EmbedTransformationType,
-  typename JoinTransformationType,
-  typename SearchTransformationType,
-  typename WriteTransformationType
->
 class HAMUnit {
 public:
-  HAMUnit(int memorySize, Controller& controller,
-          EmbedTransformationType& embed,
-          JoinTransformationType& join,
-          SearchTransformationType& search,
-          WriteTransformationType& write);
+  HAMUnit(int memorySize, LayerTypes& controller,
+          LayerTypes& embed,
+          LayerTypes& join,
+          LayerTypes& search,
+          LayerTypes& write);
   
   template<
     template<typename, typename...> class OptimizerType =
@@ -48,10 +41,6 @@ public:
                 const arma::mat& responses);
 private:
   arma::mat Attention() const;
-  
-  arma::mat Output(TreeMemory::iterator memoryCell) const;
-  
-  void Update(Memory::iterator memoryCell);
 
   void Forward(arma::mat&& input, arma::mat&& output);
 
@@ -65,9 +54,13 @@ private:
 
   TreeMemory<double, JoinTransformationType, WriteTransformationType> memory;
   size_t memorySize;
-  SearchTransformationType search;
-  EmbedTransformationType embed;
-  Controller controller;
+  LayerTypes search;
+  LayerTypes embed;
+  LayerTypes controller;
+
+  // Currently prcessed sequence.
+  arma::mat sequence;
+  size_t t;
 };
 } // namespace augmented
 } // namespace ann

@@ -18,13 +18,6 @@ namespace mlpack {
 namespace ann /* Artificial Neural Network */ {
 namespace augmented /* Augmented neural network */ {
 
-template<
-  typename C,
-  typename E,
-  typename J,
-  typename S,
-  typename W
->
 HAMUnit::HAMUnit(int memorySize,
                  C& controller,
                  E& embed,
@@ -32,29 +25,26 @@ HAMUnit::HAMUnit(int memorySize,
                  S& search,
                  W& write)
   : memorySize(memorySize),
-    search(search), embed(embed), controller(controller)
+    search(search), embed(embed), controller(controller), t(0)
 {
   memory = TreeMemory<double, J, W>(memorySize, join, write);
 }
 
-template<
-  typename C,
-  typename E,
-  typename J,
-  typename S,
-  typename W
->
 arma::vec HAMUnit::Attention() const
 {
   size_t nodesCnt = 2 * memory.ActualMemorySize() - 1;
   arma::vec probabilities(nodesCnt);
   probabilities(0) = 1;
-  // TODO Query the controller state.
+  arma::vec hController = sequence.col(t++);
   for (size_t node = 1; node < nodesCnt; ++node) {
     size_t parent = memory.Parent(node);
     bool dir = node == memory.Left(parent);
-    // TODO Call search on concat of current state and controller state..
-    double prob = 0.5;
+    arma::vec h(hController.n_elem + memory.GetCell(parent).n_elem);
+    h.rows(0, hController.n_elem - 1) = hController;
+    h.rows(hController.n_elem,
+           hController.n_elem + memory.GetCell(parent).n_elem - 1)
+        = memory.GetCell(parent);
+    double prob = search.Forward(h);
     if (!dir) prob = 1. - prob;
     probabilities(node) = prob * probabilities(parent);
   }
@@ -65,18 +55,13 @@ arma::vec HAMUnit::Attention() const
   return leafAttention;
 }
 
-template<
-  typename C,
-  typename E,
-  typename J,
-  typename S,
-  typename W
->
 void HAMUnit::Forward(arma::mat&& input, arma::mat&& output) {
-  // TODO Embed input to the memory.
+  sequence = input;
+  memory.Initialize(sequence);
+  t = 0;
 
   arma::vec attention = Attention();
-  double input = 0;
+  arma::vec input = arma::zeros(memory.Get(0).n_elem);
   for (size_t i = 0; i < memorySize; ++i)
   {
     input += leafAttention.at(i) * memory.Get(i);
@@ -87,8 +72,7 @@ void HAMUnit::Forward(arma::mat&& input, arma::mat&& output) {
   for (size_t i = 0; i < memory.MemorySize(); ++i)
   {
     memory.Get(i) *= attention.at(i);
-    // TODO Call for write operation.
-    memory.Get(i) += (1. - attention.at(i)) * 0.5;
+    memory.Get(i) += (1. - attention.at(i)) * write.Forward(sequence.col(t++));
   }
 
   // Update phase - hopefully a cleaner version of the Update from TreeMemory.
