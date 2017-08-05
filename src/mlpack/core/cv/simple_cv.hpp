@@ -241,14 +241,28 @@ class SimpleCV
   MLAlgorithm model;
 
   /**
-   * Initialize training and validation sets.
+   * Assert data consistency and initialize fields required for running
+   * cross-validation.
    */
-  void InitTrainingAndValidationSets(const double validationSize);
+  template<typename MatInType,
+           typename PredictionsInType>
+  SimpleCV(Base&& base,
+           const double validationSize,
+           const MatInType& xs,
+           const PredictionsInType& ys);
 
   /**
-   * Initialize training and validation sets with weights.
+   * Assert data consistency and initialize fields required for running
+   * cross-validation in the case of weighted learning.
    */
-  void InitTrainingAndValidationSetsWithWeights(const double validationSize);
+  template<typename MatInType,
+           typename PredictionsInType,
+           typename WeightsInType>
+  SimpleCV(Base&& base,
+           const double validationSize,
+           const MatInType& xs,
+           const PredictionsInType& ys,
+           const WeightsInType& weights);
 
   /**
    * Calculate the number of training points and assert it is legitimate.
