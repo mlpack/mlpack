@@ -158,55 +158,35 @@ class KFoldCV :
    * We take the ith validation subset after the ith training subset if
    * i < k - 1 and before it otherwise.
    */
-  size_t ValidationSubsetFirstCol(const size_t i)
-  {
-    return i < k - 1? binSize * i + trainingSubsetSize : binSize * (i - 1);
-  }
+  inline size_t ValidationSubsetFirstCol(const size_t i);
 
   /**
    * Get the ith training subset from a variable of a matrix type.
    */
   template<typename ElementType>
-  arma::Mat<ElementType> GetTrainingSubset(arma::Mat<ElementType>& m,
-                                           const size_t i)
-  {
-    return arma::Mat<ElementType>(m.colptr(binSize * i), m.n_rows,
-        trainingSubsetSize, false, true);
-  }
+  inline arma::Mat<ElementType> GetTrainingSubset(arma::Mat<ElementType>& m,
+                                                  const size_t i);
 
   /**
    * Get the ith training subset from a variable of a row type.
    */
   template<typename ElementType>
-  arma::Row<ElementType> GetTrainingSubset(arma::Row<ElementType>& r,
-                                           const size_t i)
-  {
-    return arma::Row<ElementType>(r.colptr(binSize * i), trainingSubsetSize,
-        false, true);
-  }
+  inline arma::Row<ElementType> GetTrainingSubset(arma::Row<ElementType>& r,
+                                                  const size_t i);
 
   /**
    * Get the ith validation subset from a variable of a matrix type.
    */
   template<typename ElementType>
-  arma::Mat<ElementType> GetValidationSubset(arma::Mat<ElementType>& m,
-                                             const size_t i)
-  {
-    return arma::Mat<ElementType>(m.colptr(ValidationSubsetFirstCol(i)),
-        m.n_rows, binSize, false, true);
-  }
+  inline arma::Mat<ElementType> GetValidationSubset(arma::Mat<ElementType>& m,
+                                                    const size_t i);
 
   /**
    * Get the ith validation subset from a variable of a row type.
    */
   template<typename ElementType>
-  arma::Row<ElementType> GetValidationSubset(arma::Row<ElementType>& r,
-                                             const size_t i)
-  {
-    return arma::Row<ElementType>(r.colptr(ValidationSubsetFirstCol(i)),
-        binSize, false, true);
-  }
-
+  inline arma::Row<ElementType> GetValidationSubset(arma::Row<ElementType>& r,
+                                                    const size_t i);
 };
 
 } // namespace cv

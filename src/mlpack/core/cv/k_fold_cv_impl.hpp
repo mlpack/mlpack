@@ -184,6 +184,92 @@ double KFoldCV<MLAlgorithm,
   return arma::mean(evaluations);
 }
 
+template<typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+size_t KFoldCV<MLAlgorithm,
+               Metric,
+               MatType,
+               PredictionsType,
+               WeightsType>::ValidationSubsetFirstCol(const size_t i)
+{
+  return i < k - 1? binSize * i + trainingSubsetSize : binSize * (i - 1);
+}
+
+template<typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+template<typename ElementType>
+arma::Mat<ElementType> KFoldCV<MLAlgorithm,
+                               Metric,
+                               MatType,
+                               PredictionsType,
+                               WeightsType>::GetTrainingSubset(
+    arma::Mat<ElementType>& m,
+    const size_t i)
+{
+  return arma::Mat<ElementType>(m.colptr(binSize * i), m.n_rows,
+      trainingSubsetSize, false, true);
+}
+
+template<typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+template<typename ElementType>
+arma::Row<ElementType> KFoldCV<MLAlgorithm,
+                               Metric,
+                               MatType,
+                               PredictionsType,
+                               WeightsType>::GetTrainingSubset(
+    arma::Row<ElementType>& r,
+    const size_t i)
+{
+  return arma::Row<ElementType>(r.colptr(binSize * i), trainingSubsetSize,
+      false, true);
+}
+
+template<typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+template<typename ElementType>
+arma::Mat<ElementType> KFoldCV<MLAlgorithm,
+                               Metric,
+                               MatType,
+                               PredictionsType,
+                               WeightsType>::GetValidationSubset(
+    arma::Mat<ElementType>& m,
+    const size_t i)
+{
+  return arma::Mat<ElementType>(m.colptr(ValidationSubsetFirstCol(i)), m.n_rows,
+      binSize, false, true);
+}
+
+template<typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+template<typename ElementType>
+arma::Row<ElementType> KFoldCV<MLAlgorithm,
+                               Metric,
+                               MatType,
+                               PredictionsType,
+                               WeightsType>::GetValidationSubset(
+    arma::Row<ElementType>& r,
+    const size_t i)
+{
+  return arma::Row<ElementType>(r.colptr(ValidationSubsetFirstCol(i)), binSize,
+      false, true);
+}
+
 } // namespace cv
 } // namespace mlpack
 
