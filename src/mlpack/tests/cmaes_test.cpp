@@ -127,7 +127,9 @@ BOOST_AUTO_TEST_CASE(rosenbrockFunctionCMAES)
 
     arma::mat coordinates = f.GetInitialPoint();
     double result = s.Optimize(f, coordinates);
-    coordinates = arma::abs(coordinates); // just in case we get -0.999 in rare cases
+
+    // just in case we get -0.999 in rare cases
+    coordinates = arma::abs(coordinates);
 
     for (size_t j = 0; j < i; ++j)
     BOOST_REQUIRE_CLOSE(coordinates[j], (double) 1.0, 1e-2);
