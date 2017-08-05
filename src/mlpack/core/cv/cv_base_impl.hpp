@@ -105,43 +105,12 @@ void CVBase<MLAlgorithm,
             WeightsType>::AssertDataConsistency(const MatType& xs,
                                                 const PredictionsType& ys)
 {
-  AssertSizeEquality(xs, ys);
-}
-
-template<typename MLAlgorithm,
-         typename MatType,
-         typename PredictionsType,
-         typename WeightsType>
-void CVBase<MLAlgorithm,
-            MatType,
-            PredictionsType,
-            WeightsType>::AssertDataConsistency(const MatType& xs,
-                                                const PredictionsType& ys,
-                                                const WeightsType& weights)
-{
-  static_assert(MIE::SupportsWeights,
-      "The given MLAlgorithm does not support weighted learning");
-
-  AssertSizeEquality(xs, ys);
-  AssertWeightsSize(xs, weights);
-}
-
-template<typename MLAlgorithm,
-         typename MatType,
-         typename PredictionsType,
-         typename WeightsType>
-void CVBase<MLAlgorithm,
-            MatType,
-            PredictionsType,
-            WeightsType>::AssertSizeEquality(const MatType& xs,
-                                             const PredictionsType& ys)
-{
   if (xs.n_cols != ys.n_cols)
   {
     std::ostringstream oss;
-    oss << "CVBase::AssertSizeEquality(): number of data points (" << xs.n_cols
-        << ") does not match number of predictions (" << ys.n_cols << ")!"
-        << std::endl;
+    oss << "CVBase::AssertDataConsistency(): number of data points ("
+        << xs.n_cols << ") does not match number of predictions (" << ys.n_cols
+        << ")!" << std::endl;
     throw std::invalid_argument(oss.str());
   }
 }
@@ -153,13 +122,16 @@ template<typename MLAlgorithm,
 void CVBase<MLAlgorithm,
             MatType,
             PredictionsType,
-            WeightsType>::AssertWeightsSize(const MatType& xs,
-                                            const WeightsType& weights)
+            WeightsType>::AssertWeightsConsistency(const MatType& xs,
+                                                   const WeightsType& weights)
 {
+  static_assert(MIE::SupportsWeights,
+      "The given MLAlgorithm does not support weighted learning");
+
   if (weights.n_elem != xs.n_cols)
   {
     std::ostringstream oss;
-    oss << "CVBase::AssertWeightsSize(): number of weights ("
+    oss << "CVBase::AssertWeightsConsistency(): number of weights ("
         << weights.n_elem << ") does not match number of data points ("
         << xs.n_cols << ")!" << std::endl;
     throw std::invalid_argument(oss.str());

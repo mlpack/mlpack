@@ -171,7 +171,7 @@ SimpleCV<MLAlgorithm,
 {
   this->weights = weights;
 
-  Base::AssertDataConsistency(this->xs, this->ys, this->weights);
+  Base::AssertWeightsConsistency(this->xs, this->weights);
 
   trainingWeights = GetSubset(this->weights, 0, trainingXs.n_cols - 1);
 }

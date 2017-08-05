@@ -83,11 +83,10 @@ class CVBase
 
   /**
    * Assert weighted learning is supported and there is the equal number of data
-   * points, predictions, and weights.
+   * points and weights.
    */
-  static void AssertDataConsistency(const MatType& xs,
-                                    const PredictionsType& ys,
-                                    const WeightsType& weights);
+  static void AssertWeightsConsistency(const MatType& xs,
+                                       const WeightsType& weights);
 
   /**
    * Train MLAlgorithm with given data points, predictions, and hyperparameters
