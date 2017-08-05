@@ -270,6 +270,22 @@ class SimpleCV
   size_t CalculateAndAssertNumberOfTrainingPoints(const double validationSize);
 
   /**
+   * Get the specified submatrix without coping the data.
+   */
+  template<typename ElementType>
+  arma::Mat<ElementType> GetSubset(arma::Mat<ElementType>& m,
+                                   const size_t firstCol,
+                                   const size_t lastCol);
+
+  /**
+   * Get the specified subrow without coping the data.
+   */
+  template<typename ElementType>
+  arma::Row<ElementType> GetSubset(arma::Row<ElementType>& r,
+                                   const size_t firstCol,
+                                   const size_t lastCol);
+
+  /**
    * Train and run evaluation in the case of non-weighted learning.
    */
   template<typename... MLAlgorithmArgs,
@@ -285,30 +301,6 @@ class SimpleCV
            typename = typename std::enable_if<Enabled>::type,
            typename = void>
   double TrainAndEvaluate(const MLAlgorithmArgs&... args);
-
-  /**
-   * Get the specified submatrix without coping the data.
-   */
-  template<typename ElementType>
-  arma::Mat<ElementType> GetSubset(arma::Mat<ElementType>& m,
-                                   const size_t firstCol,
-                                   const size_t lastCol)
-  {
-    return arma::Mat<ElementType>(m.colptr(firstCol), m.n_rows,
-        lastCol - firstCol + 1, false, true);
-  }
-
-  /**
-   * Get the specified subrow without coping the data.
-   */
-  template<typename ElementType>
-  arma::Row<ElementType> GetSubset(arma::Row<ElementType>& r,
-                                   const size_t firstCol,
-                                   const size_t lastCol)
-  {
-    return arma::Row<ElementType>(r.colptr(firstCol), lastCol - firstCol + 1,
-        false, true);
-  }
 };
 
 } // namespace cv

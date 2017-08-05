@@ -224,6 +224,44 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
+template<typename ElementType>
+arma::Mat<ElementType> SimpleCV<MLAlgorithm,
+                                Metric,
+                                MatType,
+                                PredictionsType,
+                                WeightsType>::GetSubset(
+    arma::Mat<ElementType>& m,
+    const size_t firstCol,
+    const size_t lastCol)
+{
+  return arma::Mat<ElementType>(m.colptr(firstCol), m.n_rows,
+      lastCol - firstCol + 1, false, true);
+}
+
+template<typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+template<typename ElementType>
+arma::Row<ElementType> SimpleCV<MLAlgorithm,
+                                Metric,
+                                MatType,
+                                PredictionsType,
+                                WeightsType>::GetSubset(
+    arma::Row<ElementType>& r,
+    const size_t firstCol,
+    const size_t lastCol)
+{
+  return arma::Row<ElementType>(r.colptr(firstCol), lastCol - firstCol + 1,
+      false, true);
+}
+
+template<typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
 template<typename... MLAlgorithmArgs, bool Enabled, typename>
 double SimpleCV<MLAlgorithm,
                 Metric,
