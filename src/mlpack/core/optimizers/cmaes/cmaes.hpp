@@ -146,7 +146,7 @@ double Optimize(funcType& function, arma::mat& arr);
   //! x-vectors, lambda offspring.
   arma::mat population;
   //! Sorting index of sample population.
-  arma::uvec index;
+  arma::vec index;
   //! History of function values.
   arma::vec funcValueHistory;
   int historySize;

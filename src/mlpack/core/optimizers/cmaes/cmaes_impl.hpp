@@ -375,14 +375,26 @@ void CMAES::updateDistribution(arma::vec& fitnessValues)
      population.col(N) = functionValues = fitnessValues;
 
     // Generate index
-     index = arma::sort_index(fitnessValues);
+     int i, j;
+    for(i = 1, index[0] = 0; i < lambda; ++i)
+    {
+      for(j = i; j > 0; --j)
+      {
+        if(fitnessValues[index[j - 1]] < fitnessValues[i])
+          break;
+        index[j] = index[j - 1];
+      }
+
+      index[j] = i;
+    }
+
     // Test if function values are identical, escape flat fitness
     if (fitnessValues[index[0]] == fitnessValues[index[(int) lambda / 2]])
     {
       sigma *= std::exp(double(0.2) + cs / damps);
 
       Log::Warn << "Warning: sigma increased due to equal function values"
-      << std::endl << "Reconsider the formulation of the objective function";
+      << std::endl << "Reconsider the formulation of the objective function" << std::endl;
     }
 
 for (int i = (int)historySize - 1; i > 0; --i)
