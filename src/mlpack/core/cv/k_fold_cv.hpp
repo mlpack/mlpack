@@ -95,12 +95,11 @@ class KFoldCV :
   //! The number of bins in the dataset.
   const size_t k;
 
-  /**
-   * Variables for storing the extended (by repeating the first k - 2 bins)
-   * dataset.
-   */
+  //! The extended (by repeating the first k - 2 bins) data points.
   MatType xs;
+  //! The extended (by repeating the first k - 2 bins) predictions.
   PredictionsType ys;
+  //! The extended (by repeating the first k - 2 bins) weights.
   WeightsType weights;
 
   //! The size of each bin in terms of data points.
