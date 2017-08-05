@@ -11,6 +11,7 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/math/random.hpp>
+#include <mlpack/core/dists/discrete_distribution.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -81,10 +82,12 @@ BOOST_AUTO_TEST_CASE(WeightedRandomTest)
   for (std::vector<double> weightSet : weights)
   {
     arma::vec armaWeights(weightSet);
+    mlpack::distribution::DiscreteDistribution d(1); // One-dimensional discrete distribution.
+    d.Probabilities(0) = std::move(armaWeights);
     std::vector<int> count(weightSet.size(), 0);
     for (size_t iter = 0; iter < iterations; ++iter)
     {
-      count[RandInt(armaWeights)]++;
+      count[d.Random()(0)]++;
     }
 
     for (size_t i = 0; i < weightSet.size(); ++i)

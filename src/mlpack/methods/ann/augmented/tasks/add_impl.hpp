@@ -49,8 +49,11 @@ const void AddTask::Generate(arma::field<arma::mat>& input,
       // Increasing length by 1 double the number of valid numbers.
       weights = arma::exp2(arma::linspace(1, bitLen - 1, bitLen - 1));
 
-      sizeA = 2 + mlpack::math::RandInt(weights);
-      sizeB = 2 + mlpack::math::RandInt(weights);
+      mlpack::distribution::DiscreteDistribution d(1);
+      d.Probabilities(0) = std::move(weights);
+
+      sizeA = 2 + d.Random()(0);
+      sizeB = 2 + d.Random()(0);
     }
     // Construct sequence of the form
     // (binary number with sizeA bits) + '+' + (binary number with sizeB bits).

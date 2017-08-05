@@ -64,7 +64,10 @@ const void CopyTask::Generate(arma::field<arma::mat>& input,
       // Increasing length by 1 double the number of valid numbers.
       weights = arma::exp2(arma::linspace(1, maxLength - 1, maxLength - 1));
 
-      size = 2 + mlpack::math::RandInt(weights);
+      mlpack::distribution::DiscreteDistribution d(1);
+      d.Probabilities(0) = std::move(weights);
+
+      size = 2 + d.Random()(0);
     }
     arma::colvec vecInput = arma::randi<arma::colvec>(
       size, arma::distr_param(0, 1));
