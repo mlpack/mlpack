@@ -1,0 +1,141 @@
+/*!
+
+@file cmaes.txt
+@author Kartik Nighania
+@brief Tutorial on how to use the CMAES optimizer class.
+
+@page cmaestutorial CMAES Optimizer tutorial (mlpack_cmaes)
+
+@section intro_cmaestut Introduction
+
+The CMA-ES (Evolution Strategy with Covariance Matrix Adaptation) is a
+robust search/optimization method. The goal is to minimize a given
+ objective function, \f$f: R^N \rightarrow R\f$. The CMA-ES should be
+ applied, if e.g. BFGS and/or conjugate gradient methods fail due to a
+ rugged search landscape (e.g. discontinuities, outliers, noise, local
+ optima, etc.). Learning the covariance matrix in the CMA-ES is similar
+ to learning the inverse Hessian matrix in a quasi-Newton method. On
+ smooth landscapes the CMA-ES is roughly ten times slower than BFGS,
+ assuming derivatives are not directly available. For up to \f$N=10\f$
+ parameters the simplex direct search method (Nelder & Mead) is
+ sometimes faster, but less robust than CMA-ES.  On considerably hard
+ problems the search (a single run) is expected to take between
+ \f$100\cdot N\f$ and \f$300\cdot N^2\f$ function evaluations.
+
+@section toc_cmaestut Table of Contents
+
+A list of all the sections this tutorial contains.
+
+ - \ref intro_cmaestut
+ - \ref toc_cmaestut
+ - \ref cmaes_cmaestut
+   - \ref cmaes_ex1_cmaestut
+ - \ref further_doc_cmaestut
+
+@section cmaes_cmaestut The 'CMAES' optimizer class
+
+The 'CMAES' class is a simple implementation of CMAES optimizer to converge a given 
+function or model.
+
+Using the CMAES class is very simple and can be divided into 3 simple steps- 
+
+1) The optimizer takes a function class which has the function described that user wants
+ to converge. 
+
+2) The CMAES object is made in which the constructor requires 5 input parameters out of 
+which only 1 parameter is compulsory.
+
+@code
+CMAES(int objectDim = 0, double start = 0, double stdDivs = 0, double iters = 0,
+double evalEnd = 0, double functionHistory = 0);
+@endcode
+
+3) The function can then be given to the optimizer by calling the optimize method.
+
+@code
+double Optimize(funcType& function, arma::mat& coordinate);
+@endcode
+
+This returns the final result in double. Also each variable value that led to the result
+ is put into armadillo mat/vec coordinate given by the user.
+
+@subsection cmaes_ex1_cmaestut Making the function Class.
+
+Let us take a function to compute.
+
+\f
+f(x,y,z) = -e^{-|x|} + y^2 + z^4 + 3*z^2
+\f
+
+@code
+#include <mlpack/core.hpp>
+#include <mlpack/core/optimizers/cmaes/cmaes.hpp>
+
+using namespace std;
+using namespace arma;
+using namespace mlpack::optimization;
+
+class cmaesTestFunction
+{
+  public:
+  int NumFunctions(void) { return 3; }
+
+   double Evaluate(arma::mat& coordinates, ssize_t i)
+  {
+    switch (i)
+        {
+        case 0: return -exp(-abs(coordinates[0]));
+        break;
+        
+        case 1: return pow(coordinates[1], 2);
+        break;
+        
+        case 2: return pow(coordinates[2], 4) + 3 * pow(coordinates[2], 2);
+        }
+  }
+  
+};
+@endcode
+
+the class must have two methods.
+
+1) NumFunctions return type int. As you can see in Evaluate method that we have divided the
+ function into 3 parts according to the 3 x, y and z coordinate we are dealing with.
+
+2) The Evaluate method which provides coordinates and expects a return of the function based
+ on those. See here coordinate[0] is treated as x and in the same way coordinate[1] for y and
+  coordinate[2] for z and the function is returned. This method lets the optimizer know the
+   function that it has to converge.
+
+Note : The user can also return 1 in NumFunctions and directly return the whole function in a
+ single iteration. But using in parts is recommended due to compatibility with other mlpack 
+ functions if you are using incase any. The code will then look like this - 
+
+@code
+#include <mlpack/core.hpp>
+#include <mlpack/core/optimizers/cmaes/cmaes.hpp>
+
+using namespace std;
+using namespace arma;
+using namespace mlpack::optimization;
+
+class cmaesTestFunction
+{
+  public:
+  int NumFunctions(void) { return 1; }
+
+  double Evaluate(arma::mat& coordinates, ssize_t i)
+  {
+    return -exp(-abs(coordinates[0])) + pow(coordinates[1], 2) + pow(coordinates[2], 4)
+    + 3 * pow(coordinates[2], 2);
+  }
+  
+};
+@endcode
+
+@section further_doc_cmaestut Further documentation
+
+For further documentation on the LinearRegression class, consult the
+\ref mlpack::regression::LinearRegression "complete API documentation".
+
+*/

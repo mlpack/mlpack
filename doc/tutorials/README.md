@@ -29,6 +29,7 @@ These tutorials introduce the various methods mlpack offers, aimed at users who 
 * [Euclidean Minimum Spanning Trees tutorial (mlpack_emst)](http://www.mlpack.org/docs/mlpack-git/doxygen.php?doc=emst_tutorial.html)
 * [Alternating Matrix Factorization Tutorial](http://www.mlpack.org/docs/mlpack-git/doxygen.php?doc=amftutorial.html)
 * [Collaborative Filtering Tutorial](http://www.mlpack.org/docs/mlpack-git/doxygen.php?doc=cftutorial.html)
+* [CMAES optimizer tutorial](http://www.mlpack.org/docs/mlpack-git/doxygen.php?doc=cmaestutorial.html)
 
 
 ### Policy Class Documentation
