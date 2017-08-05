@@ -195,7 +195,7 @@ size_t KFoldCV<MLAlgorithm,
                PredictionsType,
                WeightsType>::ValidationSubsetFirstCol(const size_t i)
 {
-  return i < k - 1? binSize * i + trainingSubsetSize : binSize * (i - 1);
+  return (i < k - 1) ? (binSize * i + trainingSubsetSize) : (binSize * (i - 1));
 }
 
 template<typename MLAlgorithm,
