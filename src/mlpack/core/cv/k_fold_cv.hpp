@@ -159,7 +159,7 @@ class KFoldCV :
    * We take the ith validation subset after the ith training subset if
    * i < k - 1 and before it otherwise.
    */
-  size_t ValidationSubsetFirtsCol(const size_t i)
+  size_t ValidationSubsetFirstCol(const size_t i)
   {
     return i < k - 1? binSize * i + trainingSubsetSize : binSize * (i - 1);
   }
@@ -193,7 +193,7 @@ class KFoldCV :
   arma::Mat<ElementType> GetValidationSubset(arma::Mat<ElementType>& m,
                                              const size_t i)
   {
-    return arma::Mat<ElementType>(m.colptr(ValidationSubsetFirtsCol(i)),
+    return arma::Mat<ElementType>(m.colptr(ValidationSubsetFirstCol(i)),
         m.n_rows, binSize, false, true);
   }
 
@@ -204,7 +204,7 @@ class KFoldCV :
   arma::Row<ElementType> GetValidationSubset(arma::Row<ElementType>& r,
                                              const size_t i)
   {
-    return arma::Row<ElementType>(r.colptr(ValidationSubsetFirtsCol(i)),
+    return arma::Row<ElementType>(r.colptr(ValidationSubsetFirstCol(i)),
         binSize, false, true);
   }
 
