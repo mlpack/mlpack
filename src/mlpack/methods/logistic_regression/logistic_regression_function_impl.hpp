@@ -137,12 +137,12 @@ double LogisticRegressionFunction<MatType>::Evaluate(
 {
   // Calculating the regularization term.
   const double regularization = 0.5 * lambda *
-    arma::dot(parameters.col(0).subvec(begin, batchSize - 1),
+      arma::dot(parameters.col(0).subvec(begin, batchSize - 1),
               parameters.col(0).subvec(begin, batchSize - 1));
 
   // Calculating the hypothesis that has to be passed to the sigmoid function.
   const arma::vec exponents = parameters(0, 0) + predictors.t() *
-    parameters.col(0).subvec(begin, batchSize - 1);
+      parameters.col(0).subvec(begin, batchSize - 1);
   // Calculating the sigmoid function values.
   const arma::vec sigmoid = 1.0 / (1.0 + arma::exp(-exponents));
 
