@@ -27,21 +27,59 @@ class SparseTestFunction
 {
  public:
   //! Set members in the default constructor.
-  SparseTestFunction();
+  SparseTestFunction()
+  {
+    intercepts = arma::vec("20 12 15 100");
+    bi = arma::vec("-4 -2 -3 -8");
+  }
 
   //! Return 4 (the number of functions).
   size_t NumFunctions() const { return 4; }
 
+  //! Return 4 (the number of features).
+  size_t NumFeatures() const { return 4; }
+
   //! Get the starting point.
   arma::mat GetInitialPoint() const { return arma::mat("0; 0; 0; 0;"); }
 
+  //! Evaluate all the functions.
+  double Evaluate(const arma::mat& coordinates, const size_t i) const
+  {
+    return coordinates[i] * coordinates[i] + bi[i] * coordinates[i] +
+      intercepts[i];
+  }
+
   //! Evaluate a function.
-  double Evaluate(const arma::mat& coordinates, const size_t i) const;
+  double Evaluate(const arma::mat& coordinates) const
+  {
+    double objective = 0.0;
+    for (size_t i = 0; i < NumFunctions(); ++i)
+    {
+      objective += coordinates[i] * coordinates[i] + bi[i] * coordinates[i] +
+        intercepts[i];
+    }
+
+    return objective;
+  }
 
   //! Evaluate the gradient of a function.
   void Gradient(const arma::mat& coordinates,
                 const size_t i,
-                arma::sp_mat& gradient) const;
+                arma::sp_mat& gradient) const
+  {
+    gradient = arma::sp_mat(coordinates.n_rows, 1);
+    gradient[i] = 2 * coordinates[i] + bi[i];
+  }
+
+  //! Evaluate the gradient of a feature function.
+  void FeatureGradient(const arma::mat& coordinates,
+                       const size_t j,
+                       arma::sp_mat& gradient) const
+  {
+    gradient = arma::sp_mat(coordinates.n_rows, 1);
+    gradient[j] = 2 * coordinates[j] + bi[j];
+  }
+
  private:
   // Each quadratic polynomial is monic. The intercept and coefficient of the
   // first order term is stored.
@@ -56,8 +94,5 @@ class SparseTestFunction
 } // namespace test
 } // namespace optimization
 } // namespace mlpack
-
-// Include implementation
-#include "sparse_test_function_impl.hpp"
 
 #endif
