@@ -13,6 +13,7 @@
 #define MLPACK_CORE_CV_SIMPLE_CV_IMPL_HPP
 
 #include <cmath>
+#include <utility>
 
 namespace mlpack {
 namespace cv {
@@ -22,15 +23,16 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename MatInType, typename PredictionsInType>
+template<typename MIT, typename PIT>
 SimpleCV<MLAlgorithm,
          Metric,
          MatType,
          PredictionsType,
          WeightsType>::SimpleCV(const double validationSize,
-                                const MatInType& xs,
-                                const PredictionsInType& ys) :
-    SimpleCV(Base(), validationSize, xs, ys)
+                                MIT&& xs,
+                                PIT&& ys) :
+    SimpleCV(Base(), validationSize, std::forward<MIT>(xs),
+        std::forward<PIT>(ys))
 { /* Nothing left to do. */ }
 
 template<typename MLAlgorithm,
@@ -38,16 +40,17 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename MatInType, typename PredictionsInType>
+template<typename MIT, typename PIT>
 SimpleCV<MLAlgorithm,
          Metric,
          MatType,
          PredictionsType,
          WeightsType>::SimpleCV(const double validationSize,
-                                const MatInType& xs,
-                                const PredictionsInType& ys,
+                                MIT&& xs,
+                                PIT&& ys,
                                 const size_t numClasses) :
-    SimpleCV(Base(numClasses), validationSize, xs, ys)
+    SimpleCV(Base(numClasses), validationSize, std::forward<MIT>(xs),
+        std::forward<PIT>(ys))
 { /* Nothing left to do. */ }
 
 template<typename MLAlgorithm,
@@ -55,17 +58,18 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename MatInType, typename PredictionsInType>
+template<typename MIT, typename PIT>
 SimpleCV<MLAlgorithm,
          Metric,
          MatType,
          PredictionsType,
          WeightsType>::SimpleCV(const double validationSize,
-                                const MatInType& xs,
+                                MIT&& xs,
                                 const data::DatasetInfo& datasetInfo,
-                                const PredictionsInType& ys,
+                                PIT&& ys,
                                 const size_t numClasses) :
-    SimpleCV(Base(datasetInfo, numClasses), validationSize, xs, ys)
+    SimpleCV(Base(datasetInfo, numClasses), validationSize,
+        std::forward<MIT>(xs), std::forward<PIT>(ys))
 { /* Nothing left to do. */ }
 
 template<typename MLAlgorithm,
@@ -73,16 +77,17 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename MatInType, typename PredictionsInType, typename WeightsInType>
+template<typename MIT, typename PIT, typename WIT>
 SimpleCV<MLAlgorithm,
          Metric,
          MatType,
          PredictionsType,
          WeightsType>::SimpleCV(const double validationSize,
-                                const MatInType& xs,
-                                const PredictionsInType& ys,
-                                const WeightsInType& weights) :
-    SimpleCV(Base(), validationSize, xs, ys, weights)
+                                MIT&& xs,
+                                PIT&& ys,
+                                WIT&& weights) :
+    SimpleCV(Base(), validationSize, std::forward<MIT>(xs),
+        std::forward<PIT>(ys), std::forward<WIT>(weights))
 { /* Nothing left to do. */ }
 
 template<typename MLAlgorithm,
@@ -90,17 +95,18 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename MatInType, typename PredictionsInType, typename WeightsInType>
+template<typename MIT, typename PIT, typename WIT>
 SimpleCV<MLAlgorithm,
          Metric,
          MatType,
          PredictionsType,
          WeightsType>::SimpleCV(const double validationSize,
-                                const MatInType& xs,
-                                const PredictionsInType& ys,
+                                MIT&& xs,
+                                PIT&& ys,
                                 const size_t numClasses,
-                                const WeightsInType& weights) :
-    SimpleCV(Base(numClasses), validationSize, xs, ys, weights)
+                                WIT&& weights) :
+    SimpleCV(Base(numClasses), validationSize, std::forward<MIT>(xs),
+        std::forward<PIT>(ys), std::forward<WIT>(weights))
 { /* Nothing left to do. */ }
 
 template<typename MLAlgorithm,
@@ -108,18 +114,20 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename MatInType, typename PredictionsInType, typename WeightsInType>
+template<typename MIT, typename PIT, typename WIT>
 SimpleCV<MLAlgorithm,
          Metric,
          MatType,
          PredictionsType,
          WeightsType>::SimpleCV(const double validationSize,
-                                const MatInType& xs,
+                                MIT&& xs,
                                 const data::DatasetInfo& datasetInfo,
-                                const PredictionsInType& ys,
+                                PIT&& ys,
                                 const size_t numClasses,
-                                const WeightsInType& weights) :
-    SimpleCV(Base(datasetInfo, numClasses), validationSize, xs, ys, weights)
+                                WIT&& weights) :
+    SimpleCV(Base(datasetInfo, numClasses), validationSize,
+        std::forward<MIT>(xs), std::forward<PIT>(ys),
+        std::forward<WIT>(weights))
 { /* Nothing left to do. */ }
 
 template<typename MLAlgorithm,
@@ -127,18 +135,18 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename MatInType, typename PredictionsInType>
+template<typename MIT, typename PIT>
 SimpleCV<MLAlgorithm,
          Metric,
          MatType,
          PredictionsType,
          WeightsType>::SimpleCV(Base&& base,
                                 const double validationSize,
-                                const MatInType& xs,
-                                const PredictionsInType& ys) :
+                                MIT&& xs,
+                                PIT&& ys) :
     base(std::move(base)),
-    xs(xs),
-    ys(ys)
+    xs(std::forward<MIT>(xs)),
+    ys(std::forward<PIT>(ys))
 {
   Base::AssertDataConsistency(this->xs, this->ys);
 
@@ -157,19 +165,20 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename MatInType, typename PredictionsInType, typename WeightsInType>
+template<typename MIT, typename PIT, typename WIT>
 SimpleCV<MLAlgorithm,
          Metric,
          MatType,
          PredictionsType,
          WeightsType>::SimpleCV(Base&& base,
                                 const double validationSize,
-                                const MatInType& xs,
-                                const PredictionsInType& ys,
-                                const WeightsInType& weights) :
-    SimpleCV(std::move(base), validationSize, xs, ys)
+                                MIT&& xs,
+                                PIT&& ys,
+                                WIT&& weights) :
+    SimpleCV(std::move(base), validationSize, std::forward<MIT>(xs),
+        std::forward<PIT>(ys))
 {
-  this->weights = weights;
+  this->weights = std::forward<WIT>(weights);
 
   Base::AssertWeightsConsistency(this->xs, this->weights);
 

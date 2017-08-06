@@ -83,8 +83,8 @@ class SimpleCV
    */
   template<typename MatInType, typename PredictionsInType>
   SimpleCV(const double validationSize,
-           const MatInType& xs,
-           const PredictionsInType& ys);
+           MatInType&& xs,
+           PredictionsInType&& ys);
 
   /**
    * This constructor can be used for multiclass classification algorithms.
@@ -100,8 +100,8 @@ class SimpleCV
    */
   template<typename MatInType, typename PredictionsInType>
   SimpleCV(const double validationSize,
-           const MatInType& xs,
-           const PredictionsInType& ys,
+           MatInType&& xs,
+           PredictionsInType&& ys,
            const size_t numClasses);
 
   /**
@@ -120,9 +120,9 @@ class SimpleCV
    */
   template<typename MatInType, typename PredictionsInType>
   SimpleCV(const double validationSize,
-           const MatInType& xs,
+           MatInType&& xs,
            const data::DatasetInfo& datasetInfo,
-           const PredictionsInType& ys,
+           PredictionsInType&& ys,
            const size_t numClasses);
 
   /**
@@ -144,9 +144,9 @@ class SimpleCV
            typename PredictionsInType,
            typename WeightsInType>
   SimpleCV(const double validationSize,
-           const MatInType& xs,
-           const PredictionsInType& ys,
-           const WeightsInType& weights);
+           MatInType&& xs,
+           PredictionsInType&& ys,
+           WeightsInType&& weights);
 
   /**
    * This constructor can be used for multiclass classification algorithms that
@@ -167,10 +167,10 @@ class SimpleCV
            typename PredictionsInType,
            typename WeightsInType>
   SimpleCV(const double validationSize,
-           const MatInType& xs,
-           const PredictionsInType& ys,
+           MatInType&& xs,
+           PredictionsInType&& ys,
            const size_t numClasses,
-           const WeightsInType& weights);
+           WeightsInType&& weights);
 
   /**
    * This constructor can be used for multiclass classification algorithms that
@@ -192,11 +192,11 @@ class SimpleCV
            typename PredictionsInType,
            typename WeightsInType>
   SimpleCV(const double validationSize,
-           const MatInType& xs,
+           MatInType&& xs,
            const data::DatasetInfo& datasetInfo,
-           const PredictionsInType& ys,
+           PredictionsInType&& ys,
            const size_t numClasses,
-           const WeightsInType& weights);
+           WeightsInType&& weights);
 
   /**
    * Train on the training set and assess performance on the validation set by
@@ -248,8 +248,8 @@ class SimpleCV
            typename PredictionsInType>
   SimpleCV(Base&& base,
            const double validationSize,
-           const MatInType& xs,
-           const PredictionsInType& ys);
+           MatInType&& xs,
+           PredictionsInType&& ys);
 
   /**
    * Assert data consistency and initialize fields required for running
@@ -260,9 +260,9 @@ class SimpleCV
            typename WeightsInType>
   SimpleCV(Base&& base,
            const double validationSize,
-           const MatInType& xs,
-           const PredictionsInType& ys,
-           const WeightsInType& weights);
+           MatInType&& xs,
+           PredictionsInType&& ys,
+           WeightsInType&& weights);
 
   /**
    * Calculate the number of training points and assert it is legitimate.
