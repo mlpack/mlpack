@@ -40,11 +40,9 @@ BOOST_AUTO_TEST_CASE(SimpleCMAESTestFunction)
 {
   SGDTestFunction test;
 
-  size_t N = test.NumFunctions();
+  CMAES s(3, 0.5, 0.3, 10000, 1e-13, 1e-13);
 
-  CMAES s(N, 0.5, 0.3, 10000, 1e-13, 1e-13);
-
-  arma::mat coordinates(N, 1);
+  arma::mat coordinates(3, 1);
   double result = s.Optimize(test, coordinates);
 
   BOOST_REQUIRE_CLOSE(result, -1.0, 0.05);
@@ -98,10 +96,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTestWithCMAES)
   }
 
   int dim = shuffledData.n_rows + 1;
-  arma::mat start1(dim, 1); start1.fill(0.5);
-  arma::mat initialStdDeviations1(dim, 1); initialStdDeviations1.fill(1.5);
-
-  CMAES test1(dim, 05, 0.3, 10000, 1e-10, 1e-10);
+  CMAES test1(dim, 0.5, 0.3, 10000, 1e-10, 1e-10);
 
   LogisticRegression<> lr(shuffledData, shuffledResponses, test1, 0.5);
 
