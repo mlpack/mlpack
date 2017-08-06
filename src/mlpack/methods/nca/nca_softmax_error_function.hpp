@@ -78,6 +78,10 @@ class SoftmaxErrorFunction
    */
   double Evaluate(const arma::mat& covariance, const size_t i);
 
+  double Evaluate(const arma::mat& covariance,
+                  const size_t begin,
+                  const size_t batchSize) const;
+
   /**
    * Evaluate the gradient of the softmax function for the given covariance
    * matrix.  This is the non-separable implementation, where the objective
@@ -105,6 +109,11 @@ class SoftmaxErrorFunction
   void Gradient(const arma::mat& covariance,
                 const size_t i,
                 GradType& gradient);
+  
+  void Gradient(const arma::mat& parameters,
+                const size_t begin,
+                const size_t batchSize,
+                arma::mat& gradient) const;
 
   /**
    * Get the initial point.
