@@ -1017,14 +1017,19 @@ BOOST_AUTO_TEST_CASE(GradientNTMTest)
       target = arma::mat("1; 1; 1; 1; 1;");
       const size_t rho = 5;
 
+      size_t numMem = 6;
+      size_t memSize = 10;
+      size_t shiftSize = 1;
+
       FFN<>* controller = new FFN<>();
-      controller->Add(new Linear<>(10 + 5, 3));
+      controller->Add(new Linear<>(10 + memSize, 3));
       controller->Add(new Linear<>(3, 3));
 
       model = new RNN<NegativeLogLikelihood<> >(input, target, rho);
       model->Add<IdentityLayer<> >();
       model->Add<Linear<> >(1, 10);
-      model->Add<NeuralTuringMachine<> >(10, 3, 6, 10, 1, controller);
+      model->Add<NeuralTuringMachine<> >(10, 3, numMem, memSize, shiftSize,
+          controller);
       model->Add<Linear<> >(3, 3);
       model->Add<LogSoftMax<> >();
     }
