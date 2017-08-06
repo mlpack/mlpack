@@ -44,7 +44,7 @@ Using the CMAES class is very simple and can be divided into 3 simple steps-
 to converge. 
 
 2) The CMAES object is made in which the constructor requires 6 input parameters out of 
-which only 1 parameter is compulsory.
+which only the dimension of the function to converge is a compulsory parameter.
 
 @code
 CMAES(int objectDim, double start, double stdDivs, double iters,
