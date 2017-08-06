@@ -31,7 +31,9 @@ class SGDTestFunction
   //! Nothing to do for the constructor.
   SGDTestFunction() { }
 
-  //! Shuffling the elements
+  /**
+  * Shuffle the order of function visitation.  This may be called by the optimizer.
+  */
   void Shuffle();
 
   //! Return 3 (the number of functions).
