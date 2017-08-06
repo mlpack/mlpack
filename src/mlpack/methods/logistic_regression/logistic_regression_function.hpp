@@ -53,6 +53,11 @@ class LogisticRegressionFunction
   const arma::vec& Responses() const { return responses; }
 
   /**
+  * Shuffle the order of function visitation.  This may be called by the optimizer.
+  */
+  void Shuffle();
+
+  /**
    * Evaluate the logistic regression log-likelihood function with the given
    * parameters.  Note that if a point has 0 probability of being classified
    * directly with the given parameters, then Evaluate() will return nan (this
