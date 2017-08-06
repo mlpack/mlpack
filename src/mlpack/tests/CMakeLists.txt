@@ -28,13 +28,14 @@ add_executable(mlpack_test
   emst_test.cpp
   fastmks_test.cpp
   feedforward_network_test.cpp
+  frankwolfe_test.cpp
   gmm_test.cpp
+  gradient_clipping_test.cpp
   gradient_descent_test.cpp
   hmm_test.cpp
   hoeffding_tree_test.cpp
   hyperplane_test.cpp
   imputation_test.cpp
-  ind2sub_test.cpp
   init_rules_test.cpp
   kernel_pca_test.cpp
   kernel_test.cpp
@@ -61,12 +62,14 @@ add_executable(mlpack_test
   metric_test.cpp
   minibatch_sgd_test.cpp
   mlpack_test.cpp
+  mock_categorical_data.hpp
   momentum_sgd_test.cpp
   nbc_test.cpp
   nca_test.cpp
   nmf_test.cpp
   nystroem_method_test.cpp
   octree_test.cpp
+  parallel_sgd_test.cpp
   pca_test.cpp
   perceptron_test.cpp
   prefixedoutstream_test.cpp
@@ -74,6 +77,7 @@ add_executable(mlpack_test
   qdafn_test.cpp
   quic_svd_test.cpp
   radical_test.cpp
+  random_forest_test.cpp
   randomized_svd_test.cpp
   range_search_test.cpp
   rectangle_tree_test.cpp

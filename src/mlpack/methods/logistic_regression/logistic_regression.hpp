@@ -29,6 +29,10 @@ namespace regression {
  * parameter; for instance, logistic regression can be performed on sparse
  * datasets by specifying arma::sp_mat as the MatType parameter.
  *
+ * LogisticRegression can be used for general classification tasks, but the
+ * class is restricted to support only two classes.  For multiclass logistic
+ * regression, see mlpack::regression::SoftmaxRegression.
+ *
  * @tparam MatType Type of data matrix.
  */
 template<typename MatType = arma::mat>
@@ -52,6 +56,31 @@ class LogisticRegression
    */
   LogisticRegression(const MatType& predictors,
                      const arma::Row<size_t>& responses,
+                     const double lambda = 0);
+  /**
+   * Construct the LogisticRegression class with the given labeled training
+   * data.  This will train the model.  Optionally, specify lambda, which is the
+   * penalty parameter for L2-regularization.  If not specified, it is set to 0,
+   * which results in standard (unregularized) logistic regression.
+   *
+   * It is not possible to set a custom optimizer with this constructor.  Either
+   * use a constructor that does not train and call Train() with a custom
+   * optimizer type, or use the constructor that takes an instantiated
+   * optimizer.  (This unfortunate situation is a language restriction of C++.)
+   *
+   * This constructor is necessary for the cross-validation code and
+   * hyper-parameter tuner to work, but it isn't suggested for regular use since
+   * it requires the extra numClasses parameter (which must always be 2 because
+   * LogisticRegression is a binary classifier).
+   *
+   * @param predictors Input training variables.
+   * @param responses Outputs resulting from input training variables.
+   * @param numClasses Number of classes in the dataset (must be 2).
+   * @param lambda L2-regularization parameter.
+   */
+  LogisticRegression(const MatType& predictors,
+                     const arma::Row<size_t>& responses,
+                     const size_t numClasses,
                      const double lambda = 0);
 
   /**
@@ -118,13 +147,20 @@ class LogisticRegression
    * optimization.  If this is not what you want, then you should access the
    * parameters vector directly with Parameters() and modify it as desired.
    *
+   * The numClasses parameter can be ignored: it is only required by the
+   * cross-validation and hyper-parameter tuner.  Since it must always be set to
+   * 2 for LogisticRegression (because LogisticRegression is a binary
+   * classifier), it can always be omitted.
+   *
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
+   * @param numClasses Number of classes in the training set (must be 2).
    */
   template<typename OptimizerType = mlpack::optimization::L_BFGS>
   void Train(const MatType& predictors,
-             const arma::Row<size_t>& responses);
+             const arma::Row<size_t>& responses,
+             const size_t numClasses = 2);
 
   /**
    * Train the LogisticRegression model with the given instantiated optimizer.

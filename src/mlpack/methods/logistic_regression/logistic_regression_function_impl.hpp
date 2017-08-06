@@ -149,14 +149,15 @@ void LogisticRegressionFunction<MatType>::Gradient(
  * function with respect to individual points.  This is useful for optimizers
  * that use a separable objective function, such as SGD.
  */
-template<typename MatType>
+template <typename MatType>
+template <typename GradType>
 void LogisticRegressionFunction<MatType>::Gradient(
     const arma::mat& parameters,
     const size_t i,
-    arma::mat& gradient) const
+    GradType& gradient) const
 {
   // Calculate the regularization term.
-  arma::mat regularization;
+  GradType regularization;
   regularization = lambda * parameters.col(0).subvec(1, parameters.n_elem - 1)
       / predictors.n_cols;
 

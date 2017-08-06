@@ -172,7 +172,7 @@ BOOST_AUTO_TEST_CASE(SeparateTrainTest)
 
   NaiveBayesClassifier<> nbc(trainData, labels, classes, true);
   NaiveBayesClassifier<> nbcTrain(trainData.n_rows, classes);
-  nbcTrain.Train(trainData, labels, false);
+  nbcTrain.Train(trainData, labels, classes, false);
 
   BOOST_REQUIRE_EQUAL(nbc.Means().n_rows, nbcTrain.Means().n_rows);
   BOOST_REQUIRE_EQUAL(nbc.Means().n_cols, nbcTrain.Means().n_cols);
@@ -225,7 +225,7 @@ BOOST_AUTO_TEST_CASE(SeparateTrainIncrementalTest)
 
   NaiveBayesClassifier<> nbc(trainData, labels, classes, true);
   NaiveBayesClassifier<> nbcTrain(trainData.n_rows, classes);
-  nbcTrain.Train(trainData, labels, true);
+  nbcTrain.Train(trainData, labels, classes, true);
 
   BOOST_REQUIRE_EQUAL(nbc.Means().n_rows, nbcTrain.Means().n_rows);
   BOOST_REQUIRE_EQUAL(nbc.Means().n_cols, nbcTrain.Means().n_cols);

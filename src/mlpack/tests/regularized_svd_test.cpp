@@ -11,12 +11,15 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/regularized_svd/regularized_svd.hpp>
+#include <mlpack/core/optimizers/parallel_sgd/parallel_sgd.hpp>
+#include <mlpack/core/optimizers/parallel_sgd/decay_policies/constant_step.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::svd;
+using namespace mlpack::optimization;
 
 BOOST_AUTO_TEST_SUITE(RegularizedSVDTest);
 
@@ -41,7 +44,7 @@ BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionRandomEvaluate)
   data(1, numRatings - 1) = numItems - 1;
 
   // Make a RegularizedSVDFunction with zero regularization.
-  RegularizedSVDFunction rSVDFunc(data, rank, 0);
+  RegularizedSVDFunction<arma::mat> rSVDFunc(data, rank, 0);
 
   for (size_t i = 0; i < numTrials; i++)
   {
@@ -89,9 +92,9 @@ BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionRegularizationEvaluate)
 
   // Make three RegularizedSVDFunction objects with different amounts of
   // regularization.
-  RegularizedSVDFunction rSVDFuncNoReg(data, rank, 0);
-  RegularizedSVDFunction rSVDFuncSmallReg(data, rank, 0.5);
-  RegularizedSVDFunction rSVDFuncBigReg(data, rank, 20);
+  RegularizedSVDFunction<arma::mat> rSVDFuncNoReg(data, rank, 0);
+  RegularizedSVDFunction<arma::mat> rSVDFuncSmallReg(data, rank, 0.5);
+  RegularizedSVDFunction<arma::mat> rSVDFuncBigReg(data, rank, 20);
 
   for (size_t i = 0; i < numTrials; i++)
   {
@@ -146,8 +149,8 @@ BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionGradient)
 
   // Make two RegularizedSVDFunction objects, one with regularization and one
   // without.
-  RegularizedSVDFunction rSVDFunc1(data, rank, 0);
-  RegularizedSVDFunction rSVDFunc2(data, rank, 0.5);
+  RegularizedSVDFunction<arma::mat> rSVDFunc1(data, rank, 0);
+  RegularizedSVDFunction<arma::mat> rSVDFunc2(data, rank, 0.5);
 
   // Calculate gradients for both the objects.
   arma::mat gradient1, gradient2;
@@ -225,8 +228,69 @@ BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionOptimize)
   }
 
   // Make the Reg SVD function and the optimizer.
-  RegularizedSVDFunction rSVDFunc(data, rank, lambda);
+  RegularizedSVDFunction<arma::mat> rSVDFunc(data, rank, lambda);
   mlpack::optimization::StandardSGD optimizer(alpha, iterations * numRatings);
+
+  // Obtain optimized parameters after training.
+  arma::mat optParameters = arma::randu(rank, numUsers + numItems);
+  optimizer.Optimize(rSVDFunc, optParameters);
+
+  // Get predicted ratings from optimized parameters.
+  arma::mat predictedData(1, numRatings);
+  for (size_t i = 0; i < numRatings; i++)
+  {
+    predictedData(0, i) = arma::dot(optParameters.col(data(0, i)),
+                                    optParameters.col(numUsers + data(1, i)));
+  }
+
+  // Calculate relative error.
+  const double relativeError = arma::norm(data.row(2) - predictedData, "frob") /
+                               arma::norm(data, "frob");
+
+  // Relative error should be small.
+  BOOST_REQUIRE_SMALL(relativeError, 1e-2);
+}
+
+// Test Regularized SVD with parallel SGD.
+BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionOptimizeHOGWILD)
+{
+  // Define useful constants.
+  const size_t numUsers = 50;
+  const size_t numItems = 50;
+  const size_t numRatings = 100;
+  const size_t rank = 10;
+  const double alpha = 0.01;
+  const double lambda = 0.01;
+
+  // Initiate random parameters.
+  arma::mat parameters = arma::randu(rank, numUsers + numItems);
+
+  // Make a random rating dataset.
+  arma::mat data = arma::randu(3, numRatings);
+  data.row(0) = floor(data.row(0) * numUsers);
+  data.row(1) = floor(data.row(1) * numItems);
+
+  // Manually set last row to maximum user and maximum item.
+  data(0, numRatings - 1) = numUsers - 1;
+  data(1, numRatings - 1) = numItems - 1;
+
+  // Make rating entries based on the parameters.
+  for (size_t i = 0; i < numRatings; i++)
+  {
+    data(2, i) = arma::dot(parameters.col(data(0, i)),
+                           parameters.col(numUsers + data(1, i)));
+  }
+
+  // Make the Reg SVD function and the optimizer.
+  RegularizedSVDFunction<arma::mat> rSVDFunc(data, rank, lambda);
+
+  ConstantStep decayPolicy(alpha);
+
+  // Iterate till convergence.
+  // The threadShareSize is chosen such that each function gets optimized.
+  ParallelSGD<ConstantStep> optimizer(0,
+      std::ceil((float) rSVDFunc.NumFunctions() / omp_get_max_threads()), 1e-5,
+      true, decayPolicy);
 
   // Obtain optimized parameters after training.
   arma::mat optParameters = arma::randu(rank, numUsers + numItems);
