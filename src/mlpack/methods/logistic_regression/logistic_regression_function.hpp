@@ -83,13 +83,13 @@ class LogisticRegressionFunction
 
   /**
    * Evaluate the logistic regression log-likelihood function with the given
-   * parameters using the given batch size from a given point.  This is useful for optimizers
+   * parameters using the given batch size from the given point index.  This is useful for optimizers
    * such as SGD, which require a separable objective function.  Note that if
-   * the point has 0 probability of being classified correctly with the given
+   * the points have 0 probability of being classified correctly with the given
    * parameters, then Evaluate() will return nan (this is kind of a corner case
    * and should not happen for reasonable models).
    *
-   * The optimum (minimum) of this function is 0.0, and occurs when the point is
+   * The optimum (minimum) of this function is 0.0, and occurs when the points are
    * classified correctly with very high probability.
    *
    * @param parameters Vector of logistic regression parameters.
