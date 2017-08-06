@@ -49,21 +49,21 @@ double SGDTestFunction::Evaluate(const arma::mat& coordinates,
 
   for (int i = begin; i < begin + batchSize; i++)
   {
-      switch (visitationOrder(i))
-      {
-        case 0:
-          objective -= std::exp(-std::abs(coordinates[0]));
-          break;
+    switch (visitationOrder(i))
+    {
+      case 0:
+        objective -= std::exp(-std::abs(coordinates[0]));
+        break;
 
-        case 1:
-          objective += std::pow(coordinates[1], 2);
-          break;
+      case 1:
+        objective += std::pow(coordinates[1], 2);
+        break;
 
-        case 2:
-          objective += std::pow(coordinates[2], 4) + \
-                       3 * std::pow(coordinates[2], 2);
-          break;
-      }
+      case 2:
+        objective += std::pow(coordinates[2], 4) + \
+                     3 * std::pow(coordinates[2], 2);
+        break;
+    }
   }
 
   return objective;
