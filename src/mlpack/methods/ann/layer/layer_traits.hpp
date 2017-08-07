@@ -98,7 +98,7 @@ HAS_MEM_FUNC(InputHeight, HasInputHeight);
 
 // This gives us a HasRho<T, U> type (where U is a function pointer) we
 // can use with SFINAE to catch when a type has a Rho() function.
-HAS_MEM_FUNC(InputHeight, HasRho);
+HAS_MEM_FUNC(Rho, HasRho);
 
 } // namespace ann
 } // namespace mlpack

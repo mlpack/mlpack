@@ -11,6 +11,7 @@ add_executable(mlpack_test
   armadillo_svd_test.cpp
   arma_extend_test.cpp
   aug_lagrangian_test.cpp
+  augmented_rnns_tasks_test.cpp
   binarize_test.cpp
   block_krylov_svd_test.cpp
   cf_test.cpp
@@ -78,6 +79,7 @@ add_executable(mlpack_test
   quic_svd_test.cpp
   radical_test.cpp
   random_forest_test.cpp
+  random_test.cpp
   randomized_svd_test.cpp
   range_search_test.cpp
   rectangle_tree_test.cpp
