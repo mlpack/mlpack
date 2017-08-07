@@ -84,21 +84,19 @@ class CVBase
    * depending on what CVBase constructor has been called.
    */
   template<typename... MLAlgorithmArgs>
-  void Train(MLAlgorithm& result,
-             const MatType& xs,
-             const PredictionsType& ys,
-             const MLAlgorithmArgs&... args);
+  std::unique_ptr<MLAlgorithm> Train(const MatType& xs,
+                                     const PredictionsType& ys,
+                                     const MLAlgorithmArgs&... args);
 
   /**
    * Train MLAlgorithm with given data points, predictions, weights, and
    * hyperparameters depending on what CVBase constructor has been called.
    */
   template<typename... MLAlgorithmArgs>
-  void Train(MLAlgorithm& result,
-             const MatType& xs,
-             const PredictionsType& ys,
-             const WeightsType& weights,
-             const MLAlgorithmArgs&... args);
+  std::unique_ptr<MLAlgorithm> Train(const MatType& xs,
+                                     const PredictionsType& ys,
+                                     const WeightsType& weights,
+                                     const MLAlgorithmArgs&... args);
 
  private:
   static_assert(MIE::IsSupported,
@@ -130,10 +128,9 @@ class CVBase
   template<typename... MLAlgorithmArgs,
            bool Enabled = !MIE::TakesNumClasses,
            typename = typename std::enable_if<Enabled>::type>
-  void TrainModel(MLAlgorithm& result,
-                  const MatType& xs,
-                  const PredictionsType& ys,
-                  const MLAlgorithmArgs&... args);
+  std::unique_ptr<MLAlgorithm> TrainModel(const MatType& xs,
+                                          const PredictionsType& ys,
+                                          const MLAlgorithmArgs&... args);
 
   /**
    * Construct a trained MLAlgorithm model if MLAlgorithm takes the
@@ -143,10 +140,9 @@ class CVBase
            bool Enabled = MIE::TakesNumClasses & !MIE::TakesDatasetInfo,
            typename = typename std::enable_if<Enabled>::type,
            typename = void>
-  void TrainModel(MLAlgorithm& result,
-                  const MatType& xs,
-                  const PredictionsType& ys,
-                  const MLAlgorithmArgs&... args);
+  std::unique_ptr<MLAlgorithm> TrainModel(const MatType& xs,
+                                          const PredictionsType& ys,
+                                          const MLAlgorithmArgs&... args);
 
   /**
    * Construct a trained MLAlgorithm model if MLAlgorithm takes the
@@ -157,10 +153,9 @@ class CVBase
            typename = typename std::enable_if<Enabled>::type,
            typename = void,
            typename = void>
-  void TrainModel(MLAlgorithm& result,
-                  const MatType& xs,
-                  const PredictionsType& ys,
-                  const MLAlgorithmArgs&... args);
+  std::unique_ptr<MLAlgorithm> TrainModel(const MatType& xs,
+                                          const PredictionsType& ys,
+                                          const MLAlgorithmArgs&... args);
 
   /**
    * Construct a trained MLAlgorithm model if MLAlgorithm doesn't take the
@@ -169,11 +164,10 @@ class CVBase
   template<typename... MLAlgorithmArgs,
            bool Enabled = !MIE::TakesNumClasses,
            typename = typename std::enable_if<Enabled>::type>
-  void TrainModel(MLAlgorithm& result,
-                  const MatType& xs,
-                  const PredictionsType& ys,
-                  const WeightsType& weights,
-                  const MLAlgorithmArgs&... args);
+  std::unique_ptr<MLAlgorithm> TrainModel(const MatType& xs,
+                                          const PredictionsType& ys,
+                                          const WeightsType& weights,
+                                          const MLAlgorithmArgs&... args);
 
   /**
    * Construct a trained MLAlgorithm model if MLAlgorithm takes the
@@ -183,11 +177,10 @@ class CVBase
            bool Enabled = MIE::TakesNumClasses & !MIE::TakesDatasetInfo,
            typename = typename std::enable_if<Enabled>::type,
            typename = void>
-  void TrainModel(MLAlgorithm& result,
-                  const MatType& xs,
-                  const PredictionsType& ys,
-                  const WeightsType& weights,
-                  const MLAlgorithmArgs&... args);
+  std::unique_ptr<MLAlgorithm> TrainModel(const MatType& xs,
+                                          const PredictionsType& ys,
+                                          const WeightsType& weights,
+                                          const MLAlgorithmArgs&... args);
 
   /**
    * Construct a trained MLAlgorithm model if MLAlgorithm takes the
@@ -198,11 +191,10 @@ class CVBase
            typename = typename std::enable_if<Enabled>::type,
            typename = void,
            typename = void>
-  void TrainModel(MLAlgorithm& result,
-                  const MatType& xs,
-                  const PredictionsType& ys,
-                  const WeightsType& weights,
-                  const MLAlgorithmArgs&... args);
+  std::unique_ptr<MLAlgorithm> TrainModel(const MatType& xs,
+                                          const PredictionsType& ys,
+                                          const WeightsType& weights,
+                                          const MLAlgorithmArgs&... args);
 
   /**
    * When MLAlgorithm supports a data::DatasetInfo parameter, training should be
@@ -217,10 +209,9 @@ class CVBase
            typename... MLAlgorithmArgs,
            typename =
                typename std::enable_if<ConstructableWithoutDatasetInfo>::type>
-  void TrainModel(MLAlgorithm& result,
-                  const MatType& xs,
-                  const PredictionsType& ys,
-                  const MLAlgorithmArgs&... args);
+  std::unique_ptr<MLAlgorithm> TrainModel(const MatType& xs,
+                                          const PredictionsType& ys,
+                                          const MLAlgorithmArgs&... args);
 
   /**
    * Construct a trained MLAlgorithm model when it can't be constructed without
@@ -231,10 +222,9 @@ class CVBase
            typename =
                typename std::enable_if<!ConstructableWithoutDatasetInfo>::type,
            typename = void>
-  void TrainModel(MLAlgorithm& result,
-                  const MatType& xs,
-                  const PredictionsType& ys,
-                  const MLAlgorithmArgs&... args);
+  std::unique_ptr<MLAlgorithm> TrainModel(const MatType& xs,
+                                          const PredictionsType& ys,
+                                          const MLAlgorithmArgs&... args);
 };
 
 } // namespace cv
