@@ -26,7 +26,7 @@ struct PreBoundArg;
  * Mark the given argument as one that should be bound. It can be applied to
  * arguments that are passed to the Optimize method of HyperParameterTuner.
  *
- * The implementation avoids data coping. If the passed argument is an l-value
+ * The implementation avoids data copying. If the passed argument is an l-value
  * reference, we store it as a const l-value rerefence inside the returned
  * PreBoundArg object. If the passed argument is an r-value reference,
  * ligth-weight coping (by taking possesion of the r-value) will be made during

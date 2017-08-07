@@ -39,8 +39,8 @@ namespace hpt {
  *
  * // Using 80% of data for training and remaining 20% for assessing MSE.
  * double validationSize = 0.2;
- * HyperParamterTuner<LinearRegression, MSE, SimpleCV> hpt(validationSize, data,
- *     responses);
+ * HyperParameterTuner<LinearRegression, MSE, SimpleCV> hpt(validationSize,
+ *     data, responses);
  *
  * // Finding the best value for lambda from the values 0.0, 0.001, 0.01, 0.1,
  * // and 1.0.
@@ -54,7 +54,7 @@ namespace hpt {
  * lambda1 and lambda2 values for LARS.
  *
  * @code
- * HyperParamterTuner<LARS, MSE, SimpleCV> hpt2(validationSize, data,
+ * HyperParameterTuner<LARS, MSE, SimpleCV> hpt2(validationSize, data,
  *     responses);
  *
  * bool transposeData = true;
@@ -172,8 +172,8 @@ class HyperParameterTuner
   MLAlgorithm bestModel;
 
   /**
-   * The set of methods to initialize the GridSearh optimizer. We basically need
-   * to go through all arguments passed to the Optimize method, gather all
+   * The set of methods to initialize the GridSearch optimizer. We basically
+   * need to go through all arguments passed to the Optimize method, gather all
    * non-bound arguments (collections) and pass them into the GridSearch
    * constructor.
    */
