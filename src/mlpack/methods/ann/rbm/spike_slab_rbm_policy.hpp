@@ -21,7 +21,15 @@ class SpikeSlabRBMPolicy
 {
  public:
   typedef typename DataType::elem_type ElemType;
-  // Intialise the visible and hidden layer of the network
+  /**
+   * Intialise the visible and hidden layer of the network
+   *
+   * @param visibleSize Number of visible neurons
+   * @param hiddenSize Number of hidden neurons
+   * @param poolSize Number of hidden neuron to pool together
+   * @param slabPenalty Regulariser of slab varaibles
+   * @param radius Feasible regions for visible layer samples
+   */
   SpikeSlabRBMPolicy(const size_t visibleSize,
       const size_t hiddenSize,
       const size_t poolSize,
@@ -174,8 +182,7 @@ class SpikeSlabRBMPolicy
    * @param spike the spike variables from hidden layer
    * @param slabMean the mean of the normal distribution
    */
-  void SlabMean(DataType&& visible, DataType&& spike,
-      DataType&& slabMean);
+  void SlabMean(DataType&& visible, DataType&& spike, DataType&& slabMean);
   /**
    * SampleSlab function samples from the
    * normal distribution P(s|v,h).

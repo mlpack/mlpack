@@ -177,7 +177,7 @@ BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
 
   MiniBatchSGD msgd(batchSize, 0.06, numRBMIterations, 0, true);
   modelssRBM.Reset();
-  modelssRBM.Policy().VisiblePenalty().fill(0);
+  modelssRBM.Policy().VisiblePenalty().fill(10);
   modelssRBM.Policy().SpikeBias().fill(15);
   modelssRBM.Train(trainData, msgd);
   for (size_t i = 0; i < trainData.n_cols; i++)

@@ -35,6 +35,7 @@ class RBM
    * @tparam IntialiserType rule to intialise the parameters of the network
    * @param predictors training data
    * @param numSteps Number of gibbs steps sampling
+   * @param mSteps Number of negative samples to average neg gradient over
    * @param useMonitoringCost evaluation function to use
    * @param persistence indicates to use persistent CD
    */
@@ -52,8 +53,8 @@ class RBM
    * Train the network using the Opitimzer with given set of args.
    * the optimiser sets the parameters of the network for providing
    * most likely parameters given the inputs
-   * @param: predictors data points
-   * @param: optimizer Optimizer type
+   * @param predictors data points
+   * @param optimizer Optimizer type
    */
   template<typename OptimizerType>
   void Train(const arma::Mat<eT>& predictors, OptimizerType& optimizer);
@@ -70,7 +71,7 @@ class RBM
  /** 
   * This function calculates
   * the free energy of the model
-  * @param: input data point 
+  * @param input data point 
   */
   double FreeEnergy(arma::Mat<eT>&& input);
 

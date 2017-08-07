@@ -7,17 +7,17 @@
 namespace mlpack {
 namespace ann {
 template<typename DataType>
-SpikeSlabRBMPolicy<DataType>
-      ::SpikeSlabRBMPolicy(const size_t visibleSize,
-      const size_t hiddenSize,
-      const size_t poolSize,
-      const ElemType slabPenalty,
-      ElemType radius):
-      visibleSize(visibleSize),
-      hiddenSize(hiddenSize),
-      poolSize(poolSize),
-      slabPenalty(slabPenalty),
-      radius(2 * radius)
+SpikeSlabRBMPolicy<DataType>::SpikeSlabRBMPolicy(
+    const size_t visibleSize,
+    const size_t hiddenSize,
+    const size_t poolSize,
+    const ElemType slabPenalty,
+    ElemType radius):
+    visibleSize(visibleSize),
+    hiddenSize(hiddenSize),
+    poolSize(poolSize),
+    slabPenalty(slabPenalty),
+    radius(2 * radius)
 {
   parameter.set_size(visibleSize * hiddenSize * poolSize +
       visibleSize + hiddenSize);
@@ -80,15 +80,16 @@ SpikeSlabRBMPolicy<DataType>::FreeEnergy(DataType&& input)
 template<typename DataType>
 typename SpikeSlabRBMPolicy<DataType>::ElemType
 SpikeSlabRBMPolicy<DataType>::Evaluate(DataType& /*predictors*/,
-    size_t /*i*/)
+                                       size_t /*i*/)
 {
   // Return 0 here since we don't have evaluate in case of persistence
   return 0;
 }
 
 template<typename DataType>
-void SpikeSlabRBMPolicy<DataType>
-    ::PositivePhase(DataType&& input, DataType&& gradient)
+void SpikeSlabRBMPolicy<DataType>::PositivePhase(
+    DataType&& input,
+    DataType&& gradient)
 {
   assert(input.n_rows == visibleSize);
   assert(input.n_cols == 1);
@@ -117,8 +118,9 @@ void SpikeSlabRBMPolicy<DataType>
 }
 
 template<typename DataType>
-void SpikeSlabRBMPolicy<DataType>
-    ::NegativePhase(DataType&& negativeSamples, DataType&& gradient)
+void SpikeSlabRBMPolicy<DataType>::NegativePhase(
+    DataType&& negativeSamples,
+    DataType&& gradient)
 {
   assert(negativeSamples.n_rows == visibleSize);
   assert(negativeSamples.n_cols == 1);
@@ -148,8 +150,9 @@ void SpikeSlabRBMPolicy<DataType>
 }
 
 template<typename DataType>
-void SpikeSlabRBMPolicy<DataType>
-    ::SpikeMean(DataType&& visible, DataType&& spikeMean)
+void SpikeSlabRBMPolicy<DataType>::SpikeMean(
+    DataType&& visible,
+    DataType&& spikeMean)
 {
   assert(visible.n_rows == visibleSize);
   assert(visible.n_cols == 1);
@@ -166,8 +169,9 @@ void SpikeSlabRBMPolicy<DataType>
 }
 
 template<typename DataType>
-void SpikeSlabRBMPolicy<DataType>
-    ::SampleSpike(DataType&& spikeMean, DataType&& spike)
+void SpikeSlabRBMPolicy<DataType>::SampleSpike(
+    DataType&& spikeMean,
+    DataType&& spike)
 {
   assert(spikeMean.n_rows == hiddenSize);
   assert(spikeMean.n_cols == 1);
@@ -180,8 +184,10 @@ void SpikeSlabRBMPolicy<DataType>
 }
 
 template<typename DataType>
-void SpikeSlabRBMPolicy<DataType>
-    ::SlabMean(DataType&& visible, DataType&& spike, DataType&& slabMean)
+void SpikeSlabRBMPolicy<DataType>::SlabMean(
+    DataType&& visible,
+    DataType&& spike,
+    DataType&& slabMean)
 {
   assert(visible.n_rows == visibleSize);
   assert(visible.n_cols == 1);
@@ -203,8 +209,9 @@ void SpikeSlabRBMPolicy<DataType>
 }
 
 template<typename DataType>
-void SpikeSlabRBMPolicy<DataType>
-    ::SampleSlab(DataType&& slabMean, DataType&& slab)
+void SpikeSlabRBMPolicy<DataType>::SampleSlab(
+    DataType&& slabMean,
+    DataType&& slab)
 {
   assert(slabMean.n_rows == poolSize);
   assert(slabMean.n_cols == hiddenSize);
@@ -222,8 +229,9 @@ void SpikeSlabRBMPolicy<DataType>
 }
 
 template<typename DataType>
-void SpikeSlabRBMPolicy<DataType>
-    ::VisibleMean(DataType&& input, DataType&& output)
+void SpikeSlabRBMPolicy<DataType>::VisibleMean(
+    DataType&& input,
+    DataType&& output)
 {
   assert(input.n_elem == hiddenSize + poolSize * hiddenSize);
   output.set_size(visibleSize, 1);
@@ -240,8 +248,9 @@ void SpikeSlabRBMPolicy<DataType>
 }
 
 template<typename DataType>
-void SpikeSlabRBMPolicy<DataType>
-    ::HiddenMean(DataType&& input, DataType&& output)
+void SpikeSlabRBMPolicy<DataType>::HiddenMean(
+    DataType&& input,
+    DataType&& output)
 {
   assert(input.n_elem == visibleSize);
   output.set_size(hiddenSize + poolSize * hiddenSize, 1);
@@ -256,26 +265,30 @@ void SpikeSlabRBMPolicy<DataType>
 }
 
 template<typename DataType>
-void SpikeSlabRBMPolicy<DataType>
-    ::SampleVisible(DataType&& input, DataType&& output)
+void SpikeSlabRBMPolicy<DataType>::SampleVisible(
+    DataType&& input,
+    DataType&& output)
 {
   const size_t numMaxTrials = 10;
+  size_t k = 0;
 
   VisibleMean(std::move(input), std::move(visibleMean));
 
   output.set_size(visibleSize, 1);
 
-  for (size_t k = 0; k < numMaxTrials; k++)
+  assert(visiblePenalty(0) > 0);
+
+  for (k = 0; k < numMaxTrials; k++)
   {
     for (size_t i = 0; i < visibleSize; i++)
     {
-      assert(visiblePenalty(0) > 0);
       output(i) = math::RandNormal(visibleMean(i), 1.0 / visiblePenalty(0));
     }
     if (arma::norm(output, 2) < radius)
       break;
   }
-  if (arma::norm(output, 2) > radius)
+
+  if (k == numMaxTrials)
   {
     Log::Warn << "Outputs are still not in visible unit"
               << arma::norm(output, 2)
@@ -285,8 +298,9 @@ void SpikeSlabRBMPolicy<DataType>
 }
 
 template<typename DataType>
-void SpikeSlabRBMPolicy<DataType>
-    ::SampleHidden(DataType&& input, DataType&& output)
+void SpikeSlabRBMPolicy<DataType>::SampleHidden(
+    DataType&& input,
+    DataType&& output)
 {
   assert(input.n_elem == visibleSize);
   output.set_size(hiddenSize + poolSize * hiddenSize, 1);
@@ -303,7 +317,8 @@ void SpikeSlabRBMPolicy<DataType>
 
 template<typename DataType>
 template<typename Archive>
-void SpikeSlabRBMPolicy<DataType>::Serialize(Archive& ar,
+void SpikeSlabRBMPolicy<DataType>::Serialize(
+    Archive& ar,
     const unsigned int /* version */)
 {
   ar & data::CreateNVP(visibleSize, "visibleSize");

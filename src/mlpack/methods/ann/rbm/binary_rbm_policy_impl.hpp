@@ -60,8 +60,9 @@ typename BinaryRBMPolicy<DataType>::ElemType BinaryRBMPolicy<DataType>
 }
 
 template<typename DataType>
-void BinaryRBMPolicy<DataType>
-    ::PositivePhase(DataType&& input, DataType&& gradient)
+void BinaryRBMPolicy<DataType>::PositivePhase(
+    DataType&& input,
+    DataType&& gradient)
 {
   DataType weightGrad = DataType(gradient.memptr(),
       hiddenSize, visibleSize, false, false);
@@ -78,8 +79,9 @@ void BinaryRBMPolicy<DataType>
 }
 
 template<typename DataType>
-void BinaryRBMPolicy<DataType>
-    ::NegativePhase(DataType&& negativeSamples, DataType&& gradient)
+void BinaryRBMPolicy<DataType>::NegativePhase(
+    DataType&& negativeSamples,
+    DataType&& gradient)
 {
   DataType weightGrad = DataType(gradient.memptr(),
       hiddenSize, visibleSize, false, false);
@@ -96,24 +98,27 @@ void BinaryRBMPolicy<DataType>
 }
 
 template<typename DataType>
-void BinaryRBMPolicy<DataType>
-    ::VisibleMean(DataType&& input, DataType&& output)
+void BinaryRBMPolicy<DataType>::VisibleMean(
+    DataType&& input,
+    DataType&& output)
 {
   VisiblePreActivation(std::move(input), std::move(output));
   LogisticFunction::Fn(output, output);
 }
 
 template<typename DataType>
-void BinaryRBMPolicy<DataType>
-    ::HiddenMean(DataType&& input, DataType&& output)
+void BinaryRBMPolicy<DataType>::HiddenMean(
+    DataType&& input,
+    DataType&& output)
 {
   HiddenPreActivation(std::move(input), std::move(output));
   LogisticFunction::Fn(output, output);
 }
 
 template<typename DataType>
-void BinaryRBMPolicy<DataType>
-    ::SampleVisible(DataType&& input, DataType&& output)
+void BinaryRBMPolicy<DataType>::SampleVisible(
+    DataType&& input,
+    DataType&& output)
 {
   VisibleMean(std::move(input), std::move(output));
 
@@ -122,8 +127,9 @@ void BinaryRBMPolicy<DataType>
 }
 
 template<typename DataType>
-void BinaryRBMPolicy<DataType>
-    ::SampleHidden(DataType&& input, DataType&& output)
+void BinaryRBMPolicy<DataType>::SampleHidden(
+    DataType&& input,
+    DataType&& output)
 {
   HiddenMean(std::move(input), std::move(output));
 
@@ -132,23 +138,26 @@ void BinaryRBMPolicy<DataType>
 }
 
 template<typename DataType>
-void BinaryRBMPolicy<DataType>
-    ::VisiblePreActivation(DataType&& input, DataType&& output)
+void BinaryRBMPolicy<DataType>::VisiblePreActivation(
+    DataType&& input,
+    DataType&& output)
 {
   output = weight.t() * input + visibleBias;
 }
 
 template<typename DataType>
-void BinaryRBMPolicy<DataType>
-    ::HiddenPreActivation(DataType&& input, DataType&& output)
+void BinaryRBMPolicy<DataType>::HiddenPreActivation(
+    DataType&& input,
+    DataType&& output)
 {
   output = weight * input + hiddenBias;
 }
 
 template<typename DataType>
 template<typename Archive>
-void BinaryRBMPolicy<DataType>
-    ::Serialize(Archive& ar, const unsigned int /* version */)
+void BinaryRBMPolicy<DataType>::Serialize(
+    Archive& ar,
+    const unsigned int /* version */)
 {
   ar & data::CreateNVP(visibleSize, "visibleSize");
   ar & data::CreateNVP(hiddenSize, "hiddenSize");

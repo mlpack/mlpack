@@ -70,8 +70,9 @@ void RBM<InitializationRuleType, RBMPolicy>::Reset()
 
 template<typename InitializationRuleType, typename RBMPolicy>
 template<typename OptimizerType>
-void RBM<InitializationRuleType, RBMPolicy>::
-    Train(const arma::Mat<eT>& predictors, OptimizerType& optimizer)
+void RBM<InitializationRuleType, RBMPolicy>::Train(
+    const arma::Mat<eT>& predictors,
+    OptimizerType& optimizer)
 {
   numFunctions = predictors.n_cols;
   this->predictors = std::move(predictors);
@@ -86,15 +87,15 @@ void RBM<InitializationRuleType, RBMPolicy>::
 }
 
 template<typename InitializationRuleType, typename RBMPolicy>
-double RBM<InitializationRuleType, RBMPolicy>
-    ::FreeEnergy(arma::Mat<eT>&& input)
+double RBM<InitializationRuleType, RBMPolicy>::FreeEnergy(arma::Mat<eT>&& input)
 {
   return rbmPolicy.FreeEnergy(std::move(input));
 }
 
 template<typename InitializationRuleType, typename RBMPolicy>
 double RBM<InitializationRuleType, RBMPolicy>::Evaluate(
-    const arma::Mat<eT>& /* parameters*/, const size_t i)
+    const arma::Mat<eT>& /* parameters*/,
+    const size_t i)
 {
   if (!useMonitoringCost)
   {
@@ -122,22 +123,26 @@ double RBM<InitializationRuleType, RBMPolicy>::Evaluate(
 }
 
 template<typename InitializationRuleType, typename RBMPolicy>
-void RBM<InitializationRuleType, RBMPolicy>::
-    SampleHidden(arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+void RBM<InitializationRuleType, RBMPolicy>::SampleHidden(
+    arma::Mat<eT>&& input,
+    arma::Mat<eT>&& output)
 {
   rbmPolicy.SampleHidden(std::move(input), std::move(output));
 }
 
 template<typename InitializationRuleType, typename RBMPolicy>
-void RBM<InitializationRuleType, RBMPolicy>::
-    SampleVisible(arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+void RBM<InitializationRuleType, RBMPolicy>::SampleVisible(
+    arma::Mat<eT>&& input,
+    arma::Mat<eT>&& output)
 {
   rbmPolicy.SampleVisible(std::move(input), std::move(output));
 }
 
 template<typename InitializationRuleType, typename RBMPolicy>
-void RBM<InitializationRuleType, RBMPolicy>::
-    Gibbs(arma::Mat<eT>&& input, arma::Mat<eT>&& output, size_t steps)
+void RBM<InitializationRuleType, RBMPolicy>::Gibbs(
+    arma::Mat<eT>&& input,
+    arma::Mat<eT>&& output,
+    size_t steps)
 {
   steps = (steps == SIZE_MAX) ? this-> numSteps: steps;
 
@@ -163,7 +168,9 @@ void RBM<InitializationRuleType, RBMPolicy>::
 
 template<typename InitializationRuleType, typename RBMPolicy>
 void RBM<InitializationRuleType, RBMPolicy>::Gradient(
-    arma::Mat<eT>& /*parameters*/, const size_t input, arma::Mat<eT>& output)
+    arma::Mat<eT>& /*parameters*/,
+    const size_t input,
+    arma::Mat<eT>& output)
 {
   positiveGradient.zeros();
   // Collect the negative samples
