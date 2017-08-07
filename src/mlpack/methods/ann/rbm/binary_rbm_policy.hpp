@@ -21,40 +21,55 @@ template <typename DataType = arma::mat>
 class BinaryRBMPolicy
 {
  public:
-  // Intialise the visible and hiddenl layer of the network
+  typedef typename DataType::elem_type ElemType;
+  /**
+   * Intialise the visible and hidden layer of the network
+   * @param visibelSize number of visible neurons
+   * @param hiddenSize number of hidden neurons
+   */
   BinaryRBMPolicy(size_t visibleSize, size_t hiddenSize);
 
   // Reset function
   void Reset();
 
   /**
-   * Free energy of the spike and slab variable
-   * the free energy of the ssRBM is given my
+   * Free Energy of the binary RBM.
+   * The free energy is given by
+   * $-b^Tv - \sum_{i=1}^M log(1 + e^{c_j+v^TW_j})$ 
    *
    * @param input the visible layer
    */ 
-  double FreeEnergy(DataType&& input);
-
-  double Evaluate(DataType& predictors, size_t i);
+  ElemType FreeEnergy(DataType&& input);
 
   /**
-   * Positive Gradient function. This function calculates the positive
-   * phase for the binary rbm gradient calculation
+   * Evaluate function computes the 
+   * evaluation of the RBM at the given
+   * input in the case persistent = true
+   * @param predictors training data of the network
+   * @param i the idx of the current input
+   */ 
+  ElemType Evaluate(DataType& predictors, size_t i);
+
+  /**
+   * Calculate the Gradient of the RBM network on the 
+   * visible input from the training data.
    * 
    * @param input the visible layer type
+   * @param gradient the gradient of the rbm network
    */
   void PositivePhase(DataType&& input, DataType&& gradient);
 
   /**
-   * Negative Gradient function. This function calculates the negative
-   * phase for the binary rbm gradient calculation
+   * Calculate the Gradient of the RBM network on the sampled
+   * visible input from gibbs sampling
    * 
    * @param input the negative samples sampled from gibbs distribution
+   * @param gradient the gradient of the rbm network
    */
   void NegativePhase(DataType&& negativeSamples, DataType&& gradient);
 
   /**
-   * Visible mean function calcultes the forward pass for
+   * Visible mean function calcultes the mean for
    * the visible layer.
    *
    * @param input hidden neurons
@@ -63,7 +78,7 @@ class BinaryRBMPolicy
   void VisibleMean(DataType&& input, DataType&& output);
 
   /**
-   * Hidden mean function calcultes the forward pass for
+   * Hidden mean function calcultes the mean for
    * the hidden layer.
    *
    * @param input visible neurons
@@ -89,12 +104,13 @@ class BinaryRBMPolicy
    */
   void SampleHidden(DataType&& input, DataType&& output);
 
+  //! Serialize the model.
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
 
-  //! Return the initial point for the optimization.
+  //! Return the parameters of the network
   const DataType& Parameters() const { return parameter; }
-  //! Modify the initial point for the optimization.
+  //! Modify the parameters of the network
   DataType& Parameters() { return parameter; }
   //! Return the weights of the network
   const DataType& Weight() const { return weight; }

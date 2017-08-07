@@ -19,17 +19,18 @@ namespace mlpack {
 namespace ann {
 
 template<typename DataType>
-inline BinaryRBMPolicy<DataType>
+BinaryRBMPolicy<DataType>
     ::BinaryRBMPolicy(size_t visibleSize, size_t hiddenSize) :
     visibleSize(visibleSize),
     hiddenSize(hiddenSize)
 {
   parameter.set_size((visibleSize * hiddenSize) + visibleSize + hiddenSize, 1);
+  static_assert(std::is_same<DataType, arma::Mat<ElemType>>::value, "DataType must be arma::Mat");
 }
 
 // Reset function
 template<typename DataType>
-inline void BinaryRBMPolicy<DataType>::Reset()
+void BinaryRBMPolicy<DataType>::Reset()
 {
   weight = DataType(parameter.memptr(), hiddenSize, visibleSize, false, false);
   hiddenBias = DataType(parameter.memptr() + weight.n_elem,
@@ -38,14 +39,8 @@ inline void BinaryRBMPolicy<DataType>::Reset()
       hiddenBias.n_elem , visibleSize, 1, false, false);
 }
 
-/**
- * Free energy of the spike and slab variable
- * the free energy of the ssRBM is given my
- *
- * @param input the visible layer
- */ 
 template<typename DataType>
-inline double BinaryRBMPolicy<DataType>
+typename BinaryRBMPolicy<DataType>::ElemType BinaryRBMPolicy<DataType>
     ::FreeEnergy(DataType&& input)
 {
   HiddenPreActivation(std::move(input), std::move(preActivation));
@@ -54,7 +49,7 @@ inline double BinaryRBMPolicy<DataType>
 }
 
 template<typename DataType>
-inline double BinaryRBMPolicy<DataType>
+typename BinaryRBMPolicy<DataType>::ElemType BinaryRBMPolicy<DataType>
     ::Evaluate(DataType& predictors, size_t i)
 {
   size_t idx = RandInt(0, predictors.n_rows);
@@ -65,14 +60,8 @@ inline double BinaryRBMPolicy<DataType>
       FreeEnergy(std::move(temp)))) * predictors.n_rows;
 }
 
-/**
- * Positive Gradient function. This function calculates the positive
- * phase for the binary rbm gradient calculation
- * 
- * @param input the visible layer type
- */
 template<typename DataType>
-inline void BinaryRBMPolicy<DataType>
+void BinaryRBMPolicy<DataType>
     ::PositivePhase(DataType&& input, DataType&& gradient)
 {
   DataType weightGrad = DataType(gradient.memptr(),
@@ -89,14 +78,8 @@ inline void BinaryRBMPolicy<DataType>
   visibleBiasGrad = input;
 }
 
-/**
- * Negative Gradient function. This function calculates the negative
- * phase for the binary rbm gradient calculation
- * 
- * @param input the negative samples sampled from gibbs distribution
- */
 template<typename DataType>
-inline void BinaryRBMPolicy<DataType>
+void BinaryRBMPolicy<DataType>
     ::NegativePhase(DataType&& negativeSamples, DataType&& gradient)
 {
   DataType weightGrad = DataType(gradient.memptr(),
@@ -114,7 +97,7 @@ inline void BinaryRBMPolicy<DataType>
 }
 
 template<typename DataType>
-inline void BinaryRBMPolicy<DataType>
+void BinaryRBMPolicy<DataType>
     ::VisibleMean(DataType&& input, DataType&& output)
 {
   VisiblePreActivation(std::move(input), std::move(output));
@@ -122,7 +105,7 @@ inline void BinaryRBMPolicy<DataType>
 }
 
 template<typename DataType>
-inline void BinaryRBMPolicy<DataType>
+void BinaryRBMPolicy<DataType>
     ::HiddenMean(DataType&& input, DataType&& output)
 {
   HiddenPreActivation(std::move(input), std::move(output));
@@ -130,7 +113,7 @@ inline void BinaryRBMPolicy<DataType>
 }
 
 template<typename DataType>
-inline void BinaryRBMPolicy<DataType>
+void BinaryRBMPolicy<DataType>
     ::SampleVisible(DataType&& input, DataType&& output)
 {
   VisibleMean(std::move(input), std::move(output));
@@ -140,7 +123,7 @@ inline void BinaryRBMPolicy<DataType>
 }
 
 template<typename DataType>
-inline void BinaryRBMPolicy<DataType>
+void BinaryRBMPolicy<DataType>
     ::SampleHidden(DataType&& input, DataType&& output)
 {
   HiddenMean(std::move(input), std::move(output));
@@ -150,14 +133,14 @@ inline void BinaryRBMPolicy<DataType>
 }
 
 template<typename DataType>
-inline void BinaryRBMPolicy<DataType>
+void BinaryRBMPolicy<DataType>
     ::VisiblePreActivation(DataType&& input, DataType&& output)
 {
   output = weight.t() * input + visibleBias;
 }
 
 template<typename DataType>
-inline void BinaryRBMPolicy<DataType>
+void BinaryRBMPolicy<DataType>
     ::HiddenPreActivation(DataType&& input, DataType&& output)
 {
   output = weight * input + hiddenBias;

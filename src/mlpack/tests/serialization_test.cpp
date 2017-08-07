@@ -1763,11 +1763,11 @@ BOOST_AUTO_TEST_CASE(ssRBMTest)
   CheckMatrices(Rbm.Parameters(), RbmXml.Parameters(), RbmText.Parameters(),
       RbmBinary.Parameters());
 
-  CheckMatrices(Rbm.Policy().VisiblePenalty(), 
+  CheckMatrices(Rbm.Policy().VisiblePenalty(),
       RbmXml.Policy().VisiblePenalty());
   CheckMatrices(Rbm.Policy().VisiblePenalty(),
       RbmText.Policy().VisiblePenalty());
-  CheckMatrices(Rbm.Policy().VisiblePenalty(), 
+  CheckMatrices(Rbm.Policy().VisiblePenalty(),
       RbmBinary.Policy().VisiblePenalty());
 
   CheckMatrices(Rbm.Policy().SpikeBias(),

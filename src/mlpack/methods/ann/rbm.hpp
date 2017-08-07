@@ -32,6 +32,7 @@ class RBM
    * using the intialise rule. 
    *
    * @tparam IntialiserType rule to intialise the parameters of the network
+   * @param predictors training data
    * @param numSteps Number of gibbs steps sampling
    * @param useMonitoringCost evaluation function to use
    * @param persistence indicates to use persistent CD
@@ -47,12 +48,11 @@ class RBM
   void Reset();
 
   /* 
-   * Train the netwrok using the Opitimzer with given set of args.
-   * the optimiser sets the paratmeters of the network for providing
+   * Train the network using the Opitimzer with given set of args.
+   * the optimiser sets the parameters of the network for providing
    * most likely parameters given the inputs
    * @param: predictors data points
    * @param: optimizer Optimizer type
-   * @param: Args arguments for the optimizers
    */
   template<typename OptimizerType>
   void Train(const arma::mat& predictors, OptimizerType& optimizer);
@@ -113,17 +113,17 @@ class RBM
   //! Return the number of separable functions (the number of predictor points).
   size_t NumFunctions() const { return numFunctions; }
 
-  //! Return the number of separable functions (the number of predictor points).
+  //! Return the number of stes of gibbs sampling.
   size_t NumSteps() const { return numSteps; }
 
-  //! Return the initial point for the optimization.
+  //! Return the parameters of the network
   const arma::mat& Parameters() const { return parameter; }
-  //! Modify the initial point for the optimization.
+  //! Modify the parameters of the network
   arma::mat& Parameters() { return parameter; }
 
-  //! Return the initial point for the optimization.
+  //! Retutrn the rbm policy for the network
   const RBMPolicy& Policy() const { return rbmPolicy; }
-  //! Modify the initial point for the optimization.
+  //! Modify the rbm policy for the network
   RBMPolicy& Policy() { return rbmPolicy; }
 
   //! Serialize the model.
@@ -131,9 +131,9 @@ class RBM
   void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-  // Locally stored parameters of the network
+  //! Locally stored parameters of the network
   arma::mat parameter;
-  // Policy type of RBM
+  //! Policy type of RBM
   RBMPolicy rbmPolicy;
   //! The matrix of data points (predictors).
   arma::mat predictors;
@@ -141,11 +141,11 @@ class RBM
   InitializationRuleType initializeRule;
   //! Locally-stored state of the persistent cdk.
   arma::mat state;
-  //! Locally-stored number of functions varaiable
+  //! Locally-stored number of data points
   size_t numFunctions;
   //! Locally-stored number of steps in gibbs sampling
   size_t numSteps;
-  //! Locally-stored number of negative samples used in ssRBM
+  //! Locally-stored number of negative samples
   size_t mSteps;
   //! Locally-stored monitoring cost
   bool useMonitoringCost;
@@ -154,13 +154,14 @@ class RBM
   //! Locally-stored reset variable
   bool reset;
 
-  //! Locally-stored reset variable
+  //! Locally-stored reconstructed output from hidden layer
   arma::mat hiddenReconstruction;
+  //! Locally-stored reconstructed output from visible layer
   arma::mat visibleReconstruction;
 
   //! Locally-stored negative samples from gibbs Distribution
   arma::mat negativeSamples;
-  //! Locally-stored temporary negative samples
+  //! Locally-stored gradients from the negative phase
   arma::mat negativeGradient;
   //! Locally-stored temproray negative gradient used for negative phase
   arma::mat tempNegativeGradient;

@@ -25,7 +25,7 @@ class SpikeSlabRBMPolicy
   SpikeSlabRBMPolicy(const size_t visibleSize,
       const size_t hiddenSize,
       const size_t poolSize,
-      const ElemType slabPenalty, 
+      const ElemType slabPenalty,
       ElemType radius);
 
   // Reset function
@@ -89,7 +89,7 @@ class SpikeSlabRBMPolicy
    * @param output consits of the spike samples and slab samples
    */
   void HiddenMean(DataType&& input, DataType&& output);
-  
+
   /**
    * Sample Visible function sample 
    * the visible outputs from the normal distribution with
@@ -98,7 +98,6 @@ class SpikeSlabRBMPolicy
    * 
    * @param input consists of spike and slab variables
    * @param output consits of visible layer.
-   * @param norm norm used for rejection sampling
    */
   void SampleVisible(DataType&& input, DataType&& output);
 
@@ -113,13 +112,13 @@ class SpikeSlabRBMPolicy
    */
   void SampleHidden(DataType&& input, DataType&& output);
 
-  // Serialize function
+  //! Serialize function
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
 
-  //! Return the initial point for the optimization.
+  //! Return the parameters of the network
   const DataType& Parameters() const { return parameter; }
-  //! Modify the initial point for the optimization.
+  //! Modify the parameters of the network
   DataType& Parameters() { return parameter; }
 
   //! Get the weight variables
@@ -128,13 +127,15 @@ class SpikeSlabRBMPolicy
 
   //! Get the regulaliser associated with spike variables
   DataType const& SpikeBias() const { return spikeBias; }
+  //! Modify the regulaliser associated with spike variables
   DataType& SpikeBias() { return spikeBias; }
 
   //! Get the regulaliser associated with slab variables
-  ElemType const& SlabPenalty() const { return invSlabPenalty; }
+  ElemType const& SlabPenalty() const { return 1.0 / slabPenalty; }
 
   //! Get the regulaliser associated with visible variables
   DataType const& VisiblePenalty() const { return visiblePenalty; }
+  //! Modify the regulaliser associated with visible variables
   DataType& VisiblePenalty() { return visiblePenalty; }
 
   //! Get the visible size
@@ -174,7 +175,7 @@ class SpikeSlabRBMPolicy
   void SlabMean(DataType&& visible, DataType&& spike,
       DataType&& slabMean);
   /**
-   * SampleSlab function calculates the
+   * SampleSlab function samples from the
    * normal distribution P(s|v,h).
    * Where the mean is given by h_i*\alpha^{-1}*W_i^T*v 
    * variance is givenby \alpha^{-1}
@@ -184,28 +185,24 @@ class SpikeSlabRBMPolicy
    */
   void SampleSlab(DataType&& slabMean, DataType&& slab);
 
-  //! Locally stored parameters number of visible neurons
+  //! Locally stored number of visible neurons
   size_t visibleSize;
-  //! Locally stored parameters number of hidden neurons
+  //! Locally stored number of hidden neurons
   size_t hiddenSize;
-  //! Locally stored parameters poolSize 
+  //! Locally stored variable poolSize 
   size_t poolSize;
   //! Locally stored parameters
   DataType parameter;
   //! Locally stored weight of the network (visibleSize * poolSize * hiddenSize)
-  arma::cube weight;
+  arma::Cube<ElemType> weight;
   //! Locally stored spikeBias (hiddenSize * 1)
   DataType spikeBias;
   //! Locally stored slabPenalty
   ElemType slabPenalty;
-  //! Locally stored iverse of slabPenalty
-  ElemType invSlabPenalty;
   //! Locally stored radius used for rejection sampling
   ElemType radius;
   //! Locally stored visible Penalty(1 * 1)
   DataType visiblePenalty;
-  //! Locally stored saclar visible Penalty
-  ElemType scalarVisiblePenalty;
   //! Locally stored mean of the P(v | s,h)
   DataType visibleMean;
   //! Locally stored mean of the P(v | h)

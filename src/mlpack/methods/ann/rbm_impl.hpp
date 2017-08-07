@@ -202,18 +202,18 @@ void RBM<InitializationRuleType, RBMPolicy>::
   // If we are loading, we need to initialize the weights.
   if (Archive::is_loading::value)
   {
-  size_t weight = rbmPolicy.Parameters().n_elem;
-  positiveGradient.set_size(weight, 1);
-  negativeGradient.set_size(weight, 1);
-  negativeSamples.set_size(rbmPolicy.VisibleSize(), 1);
-  tempNegativeGradient.set_size(weight, 1);
-  positiveGradient.zeros();
-  negativeGradient.zeros();
-  tempNegativeGradient.zeros();
-  rbmPolicy.Parameters() = arma::mat(parameter.memptr(), weight, 1, false,
-      false);
-  rbmPolicy.Reset();
-  reset = true;
+    size_t weight = rbmPolicy.Parameters().n_elem;
+    positiveGradient.set_size(weight, 1);
+    negativeGradient.set_size(weight, 1);
+    negativeSamples.set_size(rbmPolicy.VisibleSize(), 1);
+    tempNegativeGradient.set_size(weight, 1);
+    positiveGradient.zeros();
+    negativeGradient.zeros();
+    tempNegativeGradient.zeros();
+    rbmPolicy.Parameters() = arma::mat(parameter.memptr(), weight, 1, false,
+        false);
+    rbmPolicy.Reset();
+    reset = true;
   }
 }
 
