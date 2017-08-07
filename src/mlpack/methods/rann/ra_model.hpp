@@ -39,7 +39,7 @@ using RAType = RASearch<SortPolicy,
 template<typename SortPolicy>
 struct RAModelName
 {
-  static const std::string Name() { return "rank_approx_search_model";};
+  static const std::string Name() { return "rank_approx_search_model"; };
 };
 
 /**

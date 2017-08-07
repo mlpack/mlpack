@@ -288,7 +288,7 @@ template<typename SortPolicy,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void RASearch<SortPolicy, MetricType, MatType, TreeType>::Train(
-  Tree* referenceTree)
+    Tree* referenceTree)
 {
   if (naive)
     throw std::invalid_argument("cannot train on given reference tree when "

@@ -25,10 +25,10 @@ void MonoSearchVisitor::operator()(RAType* ra) const
 {
   if(ra)
     return ra->Search(k, neighbors, distances);
-  throw std::runtime_error("no rank-apporximate model initialized");
+  throw std::runtime_error("no rank-approximate model initialized");
 }
 
-//! Save the parameters for the rank-apporximate search.
+//! Save the parameters for the rank-approximate search.
 template<typename SortPolicy>
 BiSearchVisitor<SortPolicy>::BiSearchVisitor(const arma::mat& querySet,
                                  const size_t k,
@@ -51,7 +51,7 @@ void BiSearchVisitor<SortPolicy>::operator()(RATypeT<TreeType>* ra) const
 {
   if(ra)
     return ra->Search(querySet, k, neighbors, distances);
-  throw std::runtime_error("no rank-apporximate model initialized");
+  throw std::runtime_error("no rank-approximate model initialized");
 }
 
 //! Bichromatic search on the given RAType specialized for KDTrees.
@@ -60,7 +60,7 @@ void BiSearchVisitor<SortPolicy>::operator()(RATypeT<tree::KDTree>* ra) const
 {
   if(ra)
     return SearchLeaf(ra);
-  throw std::runtime_error("no rank-apporximate search model initialized");
+  throw std::runtime_error("no rank-approximate search model initialized");
 }
 
 //! Bichromatic search on the given RAType specialized for Octrees.
@@ -69,7 +69,7 @@ void BiSearchVisitor<SortPolicy>::operator()(RATypeT<tree::Octree>* ra) const
 {
   if(ra)
     return SearchLeaf(ra);
-  throw std::runtime_error("no rank-apporximate search model initialized");
+  throw std::runtime_error("no rank-approximate search model initialized");
 }
 
 //! Bichromatic search on the given RAType considering the leafSize.
@@ -125,7 +125,7 @@ void TrainVisitor<SortPolicy>::operator()(RATypeT<TreeType>* ra) const
 {
   if(ra)
     return ra->Train(std::move(referenceSet));
-  throw std::runtime_error("no rank-apporximate search model initialized");
+  throw std::runtime_error("no rank-approximate search model initialized");
 }
 
 //! Train on the given RAType specialized for KDTrees.
@@ -134,7 +134,7 @@ void TrainVisitor<SortPolicy>::operator()(RATypeT<tree::KDTree>* ra) const
 {
   if(ra)
     return TrainLeaf(ra);
-  throw std::runtime_error("no rank-apporximate search model initialized");
+  throw std::runtime_error("no rank-approximate search model initialized");
 }
 
 //! Train on the given RAType specialized for Octrees.
@@ -143,7 +143,7 @@ void TrainVisitor<SortPolicy>::operator()(RATypeT<tree::Octree>* ra) const
 {
   if(ra)
     return TrainLeaf(ra);
-  throw std::runtime_error("no rank-apporximate search model is initialized");
+  throw std::runtime_error("no rank-approximate search model is initialized");
 }
 
 //! Train on the given RAType considering the leafSize.
@@ -176,7 +176,7 @@ size_t& SingleSampleLimitVisitor::operator()(RAType* ra) const
 {
   if(ra)
     return ra->SingleSampleLimit();
-  throw std::runtime_error("no rank-apporximate search model is initialized");
+  throw std::runtime_error("no rank-approximate search model is initialized");
 }
 
 //! Exposes the FirstLeafExact() method of the given RAType.
@@ -185,7 +185,7 @@ bool& FirstLeafExactVisitor::operator()(RAType* ra) const
 {
   if(ra)
     return ra->FirstLeafExact();
-  throw std::runtime_error("no rank-apporximate search model is initialized");
+  throw std::runtime_error("no rank-approximate search model is initialized");
 }
 
 //! Exposes the SampleAtLeaves() method of the given RAType.
@@ -194,7 +194,7 @@ bool& SampleAtLeavesVisitor::operator()(RAType* ra) const
 {
   if(ra)
     return ra->SampleAtLeaves();
-  throw std::runtime_error("no rank-apporximate search model is initialized");
+  throw std::runtime_error("no rank-approximate search model is initialized");
 }
 
 //! Exposes the Alpha() method of the given RAType instance.
@@ -203,7 +203,7 @@ double& AlphaVisitor::operator()(RAType* ra) const
 {
   if(ra)
     return ra->Alpha();
-  throw std::runtime_error("no rank-apporximate model is initialized");
+  throw std::runtime_error("no rank-approximate model is initialized");
 }
 
 //! Exposes the Tau() method of the given RAType instance.
@@ -212,7 +212,7 @@ double& TauVisitor::operator()(RAType* ra) const
 {
   if(ra)
     return ra->Tau();
-  throw std::runtime_error("no rank-apporximate model is initialized");
+  throw std::runtime_error("no rank-approximate model is initialized");
 }
 
 //! Exposes the SingleMode() method of the given RAType.
@@ -221,7 +221,7 @@ bool& SingleModeVisitor::operator()(RAType* ra) const
 {
   if(ra)
     return ra->SingleMode();
-  throw std::runtime_error("no rank-apporximate model is intialized");
+  throw std::runtime_error("no rank-approximate model is intialized");
 }
 
 //! Exposes the referenceSet of the given RAType.
@@ -230,7 +230,7 @@ const arma::mat& ReferenceSetVisitor::operator()(RAType* ra) const
 {
   if(ra)
     return ra->ReferenceSet();
-  throw std::runtime_error("no rank-apporximate model is intialized");
+  throw std::runtime_error("no rank-approximate model is intialized");
 }
 
 //! Save parameters for serializing
@@ -255,7 +255,7 @@ bool& NaiveVisitor::operator()(RAType* ra) const
 {
   if(ra)
     return ra->Naive();
-  throw std::runtime_error("no rank-apporximate search model is intialized");
+  throw std::runtime_error("no rank-approximate search model is intialized");
 }
 
 //! For cleaning memory
@@ -519,36 +519,36 @@ void RAModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
   switch (treeType)
   {
     case KD_TREE:
-      raSearch = new RAType<SortPolicy, tree::KDTree> (naive, singleMode);
+      raSearch = new RAType<SortPolicy, tree::KDTree>(naive, singleMode);
       break;
     case COVER_TREE:
-      raSearch = new RAType<SortPolicy, tree::StandardCoverTree> (naive,
+      raSearch = new RAType<SortPolicy, tree::StandardCoverTree>(naive,
           singleMode);
       break;
     case R_TREE:
-      raSearch = new RAType<SortPolicy, tree::RTree> (naive, singleMode);
+      raSearch = new RAType<SortPolicy, tree::RTree>(naive, singleMode);
       break;
     case R_STAR_TREE:
-      raSearch = new RAType<SortPolicy, tree::RStarTree> (naive, singleMode);
+      raSearch = new RAType<SortPolicy, tree::RStarTree>(naive, singleMode);
       break;
     case X_TREE:
-      raSearch = new RAType<SortPolicy, tree::XTree> (naive, singleMode);
+      raSearch = new RAType<SortPolicy, tree::XTree>(naive, singleMode);
       break;
     case HILBERT_R_TREE:
-      raSearch = new RAType<SortPolicy, tree::HilbertRTree> (naive, singleMode);
+      raSearch = new RAType<SortPolicy, tree::HilbertRTree>(naive, singleMode);
       break;
     case R_PLUS_TREE:
-      raSearch = new RAType<SortPolicy, tree::RPlusTree> (naive, singleMode);
+      raSearch = new RAType<SortPolicy, tree::RPlusTree>(naive, singleMode);
       break;
     case R_PLUS_PLUS_TREE:
-      raSearch = new RAType<SortPolicy, tree::RPlusPlusTree> (naive,
+      raSearch = new RAType<SortPolicy, tree::RPlusPlusTree>(naive,
           singleMode);
       break;
     case UB_TREE:
-      raSearch = new RAType<SortPolicy, tree::UBTree> (naive, singleMode);
+      raSearch = new RAType<SortPolicy, tree::UBTree>(naive, singleMode);
       break;
     case OCTREE:
-      raSearch = new RAType<SortPolicy, tree::Octree> (naive, singleMode);
+      raSearch = new RAType<SortPolicy, tree::Octree>(naive, singleMode);
       break;
   }
 
