@@ -19,9 +19,7 @@ namespace mlpack {
 namespace bindings {
 namespace python {
 
-// NOLINT(runtime/string) -- it's technically against the style guidelines to
-// have a global static string variable, but for this case it is actually
-// necessary for our testing.
+// NOLINT(runtime/string)
 std::string programName; // Needed for linking.
 
 } // namespace python
