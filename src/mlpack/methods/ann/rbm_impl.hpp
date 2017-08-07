@@ -15,8 +15,6 @@
 #include "rbm.hpp"
 
 #include <mlpack/core.hpp>
-#include <mlpack/prereqs.hpp>
-#include <mlpack/core/math/random.hpp>
 
 #include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
 
@@ -26,7 +24,7 @@ namespace ann /** Artificial neural networks. */ {
 
 template<typename InitializationRuleType, typename RBMPolicy>
 RBM<InitializationRuleType, RBMPolicy>::RBM(
-    arma::Mat<eT> predictors,
+    arma::Mat<ElemType> predictors,
     InitializationRuleType initializeRule,
     RBMPolicy rbmPolicy,
     const size_t numSteps,
@@ -62,7 +60,7 @@ void RBM<InitializationRuleType, RBMPolicy>::Reset()
   tempNegativeGradient.zeros();
   initializeRule.Initialize(parameter, parameter.n_elem, 1);
 
-  rbmPolicy.Parameters() = arma::Mat<eT>(parameter.memptr(), weight, 1, false,
+  rbmPolicy.Parameters() = arma::Mat<ElemType>(parameter.memptr(), weight, 1, false,
       false);
   rbmPolicy.Reset();
   reset = true;
@@ -71,7 +69,7 @@ void RBM<InitializationRuleType, RBMPolicy>::Reset()
 template<typename InitializationRuleType, typename RBMPolicy>
 template<typename OptimizerType>
 void RBM<InitializationRuleType, RBMPolicy>::Train(
-    const arma::Mat<eT>& predictors,
+    const arma::Mat<ElemType>& predictors,
     OptimizerType& optimizer)
 {
   numFunctions = predictors.n_cols;
@@ -87,20 +85,20 @@ void RBM<InitializationRuleType, RBMPolicy>::Train(
 }
 
 template<typename InitializationRuleType, typename RBMPolicy>
-double RBM<InitializationRuleType, RBMPolicy>::FreeEnergy(arma::Mat<eT>&& input)
+double RBM<InitializationRuleType, RBMPolicy>::FreeEnergy(arma::Mat<ElemType>&& input)
 {
   return rbmPolicy.FreeEnergy(std::move(input));
 }
 
 template<typename InitializationRuleType, typename RBMPolicy>
 double RBM<InitializationRuleType, RBMPolicy>::Evaluate(
-    const arma::Mat<eT>& /* parameters*/,
+    const arma::Mat<ElemType>& /* parameters*/,
     const size_t i)
 {
   if (!useMonitoringCost)
   {
     Gibbs(std::move(predictors.col(i)), std::move(negativeSamples));
-    return (FreeEnergy(std::move(predictors.col(i))) -
+    return std::fabs(FreeEnergy(std::move(predictors.col(i))) -
         FreeEnergy(std::move(negativeSamples)));
   }
   else
@@ -124,24 +122,24 @@ double RBM<InitializationRuleType, RBMPolicy>::Evaluate(
 
 template<typename InitializationRuleType, typename RBMPolicy>
 void RBM<InitializationRuleType, RBMPolicy>::SampleHidden(
-    arma::Mat<eT>&& input,
-    arma::Mat<eT>&& output)
+    arma::Mat<ElemType>&& input,
+    arma::Mat<ElemType>&& output)
 {
   rbmPolicy.SampleHidden(std::move(input), std::move(output));
 }
 
 template<typename InitializationRuleType, typename RBMPolicy>
 void RBM<InitializationRuleType, RBMPolicy>::SampleVisible(
-    arma::Mat<eT>&& input,
-    arma::Mat<eT>&& output)
+    arma::Mat<ElemType>&& input,
+    arma::Mat<ElemType>&& output)
 {
   rbmPolicy.SampleVisible(std::move(input), std::move(output));
 }
 
 template<typename InitializationRuleType, typename RBMPolicy>
 void RBM<InitializationRuleType, RBMPolicy>::Gibbs(
-    arma::Mat<eT>&& input,
-    arma::Mat<eT>&& output,
+    arma::Mat<ElemType>&& input,
+    arma::Mat<ElemType>&& output,
     size_t steps)
 {
   steps = (steps == SIZE_MAX) ? this-> numSteps: steps;
@@ -168,9 +166,9 @@ void RBM<InitializationRuleType, RBMPolicy>::Gibbs(
 
 template<typename InitializationRuleType, typename RBMPolicy>
 void RBM<InitializationRuleType, RBMPolicy>::Gradient(
-    arma::Mat<eT>& /*parameters*/,
+    arma::Mat<ElemType>& /*parameters*/,
     const size_t input,
-    arma::Mat<eT>& output)
+    arma::Mat<ElemType>& output)
 {
   positiveGradient.zeros();
   // Collect the negative samples
@@ -217,7 +215,7 @@ void RBM<InitializationRuleType, RBMPolicy>::
     positiveGradient.zeros();
     negativeGradient.zeros();
     tempNegativeGradient.zeros();
-    rbmPolicy.Parameters() = arma::Mat<eT>(parameter.memptr(), weight, 1, false,
+    rbmPolicy.Parameters() = arma::Mat<ElemType>(parameter.memptr(), weight, 1, false,
         false);
     rbmPolicy.Reset();
     reset = true;

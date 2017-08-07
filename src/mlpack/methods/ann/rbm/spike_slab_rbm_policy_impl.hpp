@@ -66,9 +66,8 @@ SpikeSlabRBMPolicy<DataType>::FreeEnergy(DataType&& input)
 
     for (size_t k = 0; k < poolSize; k++)
     {
-      sum += arma::as_scalar(input.t() * weight.slice(i).col(k)) *
-          arma::as_scalar(input.t() * weight.slice(i).col(k)) /
-          (2.0 * slabPenalty);
+      sum += arma::as_scalar(arma::pow(input.t() * weight.slice(i).col(k), 2) /
+          (2.0 * slabPenalty));
     }
 
     freeEnergy -= SoftplusFunction::Fn(spikeBias(i) - sum);
@@ -111,8 +110,7 @@ void SpikeSlabRBMPolicy<DataType>::PositivePhase(
     weightGrad.slice(i) = input * slabMean.col(i).t() * spikeMean(i);
 
   // positive hidden bias gradient
-  for (size_t i = 0; i < hiddenSize; i++)
-    spikeBiasGrad(i) = spikeMean(i);
+  spikeBiasGrad = spikeMean;
   // positive lambda bias
   visiblePenaltyGrad = -0.5 * input.t() * input;
 }
@@ -143,8 +141,7 @@ void SpikeSlabRBMPolicy<DataType>::NegativePhase(
     weightGrad.slice(i) = negativeSamples * slabMean.col(i).t() * spikeMean(i);
 
   // positive hidden bias gradient
-  for (size_t i = 0; i < hiddenSize; i++)
-    spikeBiasGrad(i) = spikeMean(i);
+  spikeBiasGrad = spikeMean;
   // positive lambda bias
   visiblePenaltyGrad = -0.5 * negativeSamples.t() * negativeSamples;
 }

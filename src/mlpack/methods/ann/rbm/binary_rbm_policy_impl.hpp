@@ -11,7 +11,6 @@
 #define MLPACK_METHODS_ANN_RBM_BINARY_RBM_POLICY_IMPL_HPP
 
 #include <mlpack/core.hpp>
-#include <mlpack/prereqs.hpp>
 
 #include "binary_rbm_policy.hpp"
 
@@ -20,7 +19,7 @@ namespace ann {
 
 template<typename DataType>
 BinaryRBMPolicy<DataType>
-    ::BinaryRBMPolicy(size_t visibleSize, size_t hiddenSize) :
+    ::BinaryRBMPolicy(const size_t visibleSize, const size_t hiddenSize) :
     visibleSize(visibleSize),
     hiddenSize(hiddenSize)
 {

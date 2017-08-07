@@ -165,7 +165,7 @@ BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
 
   XRbm.zeros();
   YRbm.zeros();
-  double slabPenalty = 2;
+  double slabPenalty = 5;
 
   SpikeSlabRBMPolicy<> ss_rbm(trainData.n_rows, hiddenLayerSize, poolSize,
       slabPenalty, radius);
@@ -177,8 +177,8 @@ BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
 
   MiniBatchSGD msgd(batchSize, 0.06, numRBMIterations, 0, true);
   modelssRBM.Reset();
-  modelssRBM.Policy().VisiblePenalty().fill(10);
-  modelssRBM.Policy().SpikeBias().fill(15);
+  modelssRBM.Policy().VisiblePenalty().fill(5);
+  modelssRBM.Policy().SpikeBias().fill(1);
   modelssRBM.Train(trainData, msgd);
   for (size_t i = 0; i < trainData.n_cols; i++)
   {
@@ -215,7 +215,7 @@ BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
   double classificationAccuray1 = regressor1.ComputeAccuracy(YRbm, testLabels);
   std::cout << "ssRBM Accuracy = " <<classificationAccuray1 << std::endl;
 
-  BOOST_REQUIRE_GE(classificationAccuray1, 70);
+  BOOST_REQUIRE_GE(classificationAccuray1, classificationAccuray);
 }
 
 template<typename MatType = arma::mat>
