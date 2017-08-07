@@ -40,63 +40,6 @@ using namespace mlpack::regression;
 
 BOOST_AUTO_TEST_SUITE(RbmNetworkTest);
 
-template<typename MatType = arma::mat>
-void BuildVanillaNetwork(MatType& trainData,
-                         const size_t hiddenLayerSize)
-{
-  /*
-   * Construct a feed forward network with trainData.n_rows input nodes,
-   * hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
-   * network structure looks like:
-   *
-   *  Visible       Hidden        
-   *  Layer         Layer         
-   * +-----+       +-----+       
-   * |     |       |     |            
-   * |     +<----->|     |
-   * |     |       |     | 
-   * +-----+       +-----+     
-   *        
-   */
-  arma::mat output;
-  BinaryRBMPolicy<> binary_rbm(trainData.n_rows, hiddenLayerSize);
-  GaussianInitialization gaussian(0, 0.1);
-  RBM<GaussianInitialization, BinaryRBMPolicy<>> model(trainData,
-      gaussian, binary_rbm, 1,  true);
-
-  model.Reset();
-  // Set the parmaeters from a learned rbm sklearn random state 23
-  model.Parameters() = arma::mat(
-      "-0.23224054, -0.23000632, -0.25701271, -0.25122418, -0.20716651,"
-      "-0.20962217, -0.59922456, -0.60003836, -0.6, -0.625, -0.475;");
-
-  // Check free energy
-  arma::vec freeEnergy = arma::mat(
-      "-0.87523715, 0.50615066, 0.46923476, 1.21509084;");
-  arma::vec calcultedFreeEnergy(4);
-  calcultedFreeEnergy.zeros();
-  for (size_t i = 0; i < trainData.n_cols; i++)
-  {
-    calcultedFreeEnergy(i) = model.FreeEnergy(std::move(trainData.col(i)));
-  }
-
-  for (size_t i = 0; i < freeEnergy.n_elem; i++)
-    BOOST_REQUIRE_CLOSE(calcultedFreeEnergy(i), freeEnergy(i), 1e-5);
-}
-BOOST_AUTO_TEST_CASE(MiscTest)
-{
-  /**
-   * Train and evaluate a vanilla network with the specified structure.
-   */
-
-  arma::mat X = arma::mat("0, 0, 0;"
-                          "0, 1, 1;"
-                          "1, 0, 1;"
-                          "1, 1, 1;");
-  X = X.t();
-  BuildVanillaNetwork<>(X, 2);
-}
-
 BOOST_AUTO_TEST_CASE(ClassificationTest)
 {
   // Normalised dataset
@@ -276,23 +219,23 @@ BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
 }
 
 template<typename MatType = arma::mat>
-void FloatBuildVanillaNetwork(MatType& trainData,
+void BuildVanillaNetwork(MatType& trainData,
                          const size_t hiddenLayerSize)
 {
-  arma::Mat<float> output;
-  BinaryRBMPolicy<arma::Mat<float>> binary_rbm(trainData.n_rows, hiddenLayerSize);
+  MatType output;
+  BinaryRBMPolicy<MatType> binary_rbm(trainData.n_rows, hiddenLayerSize);
   GaussianInitialization gaussian(0, 0.1);
-  RBM<GaussianInitialization, BinaryRBMPolicy<arma::Mat<float>>> model(trainData,
+  RBM<GaussianInitialization, BinaryRBMPolicy<MatType>> model(trainData,
       gaussian, binary_rbm, 1,  true);
 
   model.Reset();
   // Set the parmaeters from a learned rbm sklearn random state 23
-  model.Parameters() = arma::Mat<float>(
+  model.Parameters() = MatType(
       "-0.23224054, -0.23000632, -0.25701271, -0.25122418, -0.20716651,"
       "-0.20962217, -0.59922456, -0.60003836, -0.6, -0.625, -0.475;");
 
   // Check free energy
-  arma::Col<float> freeEnergy = arma::Mat<float>(
+  arma::Col<float> freeEnergy = MatType(
       "-0.87523715, 0.50615066, 0.46923476, 1.21509084;");
   arma::vec calcultedFreeEnergy(4);
   calcultedFreeEnergy.zeros();
@@ -302,11 +245,11 @@ void FloatBuildVanillaNetwork(MatType& trainData,
   }
 
   for (size_t i = 0; i < freeEnergy.n_elem; i++)
-    BOOST_REQUIRE_CLOSE(calcultedFreeEnergy(i), freeEnergy(i), 1e-5);
+    BOOST_REQUIRE_CLOSE(calcultedFreeEnergy(i), freeEnergy(i), 1e-3);
 
 }
 
-BOOST_AUTO_TEST_CASE(FloatTest)
+BOOST_AUTO_TEST_CASE(MiscTest)
 {
   /**
    * Train and evaluate a vanilla network with the specified structure.
