@@ -15,6 +15,7 @@
 #define MLPACK_METHODS_AUGMENTED_TASKS_ADD_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/dists/discrete_distribution.hpp>
 
 namespace mlpack {
 namespace ann /* Artificial Neural Network */ {
