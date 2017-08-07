@@ -202,6 +202,9 @@ class RNN
   //! Modify the initial point for the optimization.
   arma::mat& Parameters() { return parameter; }
 
+  //! Return the maximum length of backpropagation through time.
+  const size_t& Rho() const { return rho; }
+  //! Modify the maximum length of backpropagation through time.
   size_t& Rho() { return rho; }
 
   //! Serialize the model.
