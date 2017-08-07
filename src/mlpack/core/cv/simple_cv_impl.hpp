@@ -12,9 +12,6 @@
 #ifndef MLPACK_CORE_CV_SIMPLE_CV_IMPL_HPP
 #define MLPACK_CORE_CV_SIMPLE_CV_IMPL_HPP
 
-#include <cmath>
-#include <utility>
-
 namespace mlpack {
 namespace cv {
 
