@@ -39,7 +39,7 @@ using RAType = RASearch<SortPolicy,
 template<typename SortPolicy>
 struct RAModelName
 {
-  static const std::string Name() { return "rank_approx_search_model"; };
+  static const std::string Name() { return "rank_approx_search_model"; }
 };
 
 /**
@@ -141,7 +141,7 @@ class TrainVisitor : public boost::static_visitor<void>
   //! Train on the given RAType considering the leafSize.
   template<typename RAType>
   void TrainLeaf(RAType* ra) const;
- 
+
  public:
   //! Alias template necessary for visual c++ compiler.
   template<template<typename TreeMetricType,
@@ -326,7 +326,8 @@ class RAModel
   bool randomBasis;
   //! The basis to project into.
   arma::mat q;
-  
+
+  //! The rank-approximate model.
   boost::variant<RAType<SortPolicy, tree::KDTree>*,
                  RAType<SortPolicy, tree::StandardCoverTree>*,
                  RAType<SortPolicy, tree::RTree>*,
@@ -336,7 +337,7 @@ class RAModel
                  RAType<SortPolicy, tree::RPlusTree>*,
                  RAType<SortPolicy, tree::RPlusPlusTree>*,
                  RAType<SortPolicy, tree::UBTree>*,
-                 RAType<SortPolicy, tree::Octree>*> raSearch; 
+                 RAType<SortPolicy, tree::Octree>*> raSearch;
 
  public:
   /**
