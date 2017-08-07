@@ -152,6 +152,9 @@ class LSTM
   //! Number of steps to backpropagate through time (BPTT).
   size_t rho;
 
+  //! Current batch size.
+  size_t batchSize;
+
   //! Locally-stored weight object.
   OutputDataType weights;
 

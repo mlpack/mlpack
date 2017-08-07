@@ -37,6 +37,7 @@ LSTM<InputDataType, OutputDataType>::LSTM(
     inSize(inSize),
     outSize(outSize),
     rho(rho),
+    batchSize(1),
     forwardStep(0),
     backwardStep(0),
     gradientStep(0),
@@ -64,9 +65,9 @@ LSTM<InputDataType, OutputDataType>::LSTM(
   network.push_back(cellModule);
   network.push_back(cellActivationModule);
 
-  prevError = arma::zeros<arma::mat>(4 * outSize, 1);
+  prevError = arma::zeros<arma::mat>(4 * outSize, batchSize);
 
-  allZeros = arma::zeros<arma::mat>(outSize, 1);
+  allZeros = arma::zeros<arma::mat>(outSize, batchSize);
 
   outParameter.push_back(std::move(arma::mat(allZeros.memptr(),
     allZeros.n_rows, allZeros.n_cols, false, false)));
@@ -86,6 +87,12 @@ template<typename eT>
 void LSTM<InputDataType, OutputDataType>::Forward(
     arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
+  if (input.n_cols != batchSize)
+  {
+    batchSize = input.n_cols;
+    prevError.resize(3 * outSize, batchSize);
+  }
+
   boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
       boost::apply_visitor(outputParameterVisitor, input2GateModule))),
       input2GateModule);
@@ -98,20 +105,23 @@ void LSTM<InputDataType, OutputDataType>::Forward(
       boost::apply_visitor(outputParameterVisitor, output2GateModule);
 
   boost::apply_visitor(ForwardVisitor(std::move(output.submat(
-      0, 0, 1 * outSize - 1, 0)), std::move(boost::apply_visitor(
+      0, 0, 1 * outSize - 1, batchSize - 1)), std::move(boost::apply_visitor(
       outputParameterVisitor, inputGateModule))), inputGateModule);
 
   boost::apply_visitor(ForwardVisitor(std::move(output.submat(
-      1 * outSize, 0, 2 * outSize - 1, 0)), std::move(boost::apply_visitor(
-      outputParameterVisitor, hiddenStateModule))), hiddenStateModule);
+      1 * outSize, 0, 2 * outSize - 1, batchSize - 1)), std::move(
+      boost::apply_visitor(outputParameterVisitor, hiddenStateModule))),
+      hiddenStateModule);
 
   boost::apply_visitor(ForwardVisitor(std::move(output.submat(
-      2 * outSize, 0, 3 * outSize - 1, 0)), std::move(boost::apply_visitor(
-      outputParameterVisitor, forgetGateModule))), forgetGateModule);
+      2 * outSize, 0, 3 * outSize - 1, batchSize - 1)), std::move(
+      boost::apply_visitor(outputParameterVisitor, forgetGateModule))),
+      forgetGateModule);
 
   boost::apply_visitor(ForwardVisitor(std::move(output.submat(
-      3 * outSize, 0, 4 * outSize - 1, 0)), std::move(boost::apply_visitor(
-      outputParameterVisitor, outputGateModule))), outputGateModule);
+      3 * outSize, 0, 4 * outSize - 1, batchSize - 1)), std::move(
+      boost::apply_visitor(outputParameterVisitor, outputGateModule))),
+      outputGateModule);
 
   // Update the cell (nextCell): cmul1 + cmul2
   // where cmul1 is input gate * hidden state and
@@ -187,8 +197,14 @@ void LSTM<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void LSTM<InputDataType, OutputDataType>::Backward(
-  const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
+  const arma::Mat<eT>&& input, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
+  if (input.n_cols != batchSize)
+  {
+    batchSize = input.n_cols;
+    prevError.resize(3 * outSize, batchSize);
+  }
+
   if ((outParameter.size() - backwardStep  - 1) % rho != 0 && backwardStep != 0)
   {
     gy += boost::apply_visitor(deltaVisitor, output2GateModule);
@@ -249,14 +265,14 @@ void LSTM<InputDataType, OutputDataType>::Backward(
       std::move(boost::apply_visitor(deltaVisitor, outputGateModule))),
       outputGateModule);
 
-  prevError.submat(0, 0, 1 * outSize - 1, 0) = boost::apply_visitor(
+  prevError.submat(0, 0, 1 * outSize - 1, batchSize - 1) = boost::apply_visitor(
       deltaVisitor, inputGateModule);
-  prevError.submat(1 * outSize, 0, 2 * outSize - 1, 0) = boost::apply_visitor(
-      deltaVisitor, hiddenStateModule);
-  prevError.submat(2 * outSize, 0, 3 * outSize - 1, 0) = boost::apply_visitor(
-      deltaVisitor, forgetGateModule);
-  prevError.submat(3 * outSize, 0, 4 * outSize - 1, 0) = boost::apply_visitor(
-      deltaVisitor, outputGateModule);
+  prevError.submat(1 * outSize, 0, 2 * outSize - 1, batchSize - 1) =
+      boost::apply_visitor(deltaVisitor, hiddenStateModule);
+  prevError.submat(2 * outSize, 0, 3 * outSize - 1, batchSize - 1) =
+      boost::apply_visitor(deltaVisitor, forgetGateModule);
+  prevError.submat(3 * outSize, 0, 4 * outSize - 1, batchSize - 1) =
+      boost::apply_visitor(deltaVisitor, outputGateModule);
 
   boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
       outputParameterVisitor, input2GateModule)), std::move(prevError),
