@@ -25,7 +25,6 @@ BinaryRBMPolicy<DataType>
     hiddenSize(hiddenSize)
 {
   parameter.set_size((visibleSize * hiddenSize) + visibleSize + hiddenSize, 1);
-  static_assert(std::is_same<DataType, arma::Mat<ElemType>>::value, "DataType must be arma::Mat");
 }
 
 // Reset function

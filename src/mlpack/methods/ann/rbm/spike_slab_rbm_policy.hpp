@@ -189,7 +189,7 @@ class SpikeSlabRBMPolicy
   size_t visibleSize;
   //! Locally stored number of hidden neurons
   size_t hiddenSize;
-  //! Locally stored variable poolSize 
+  //! Locally stored variable poolSize
   size_t poolSize;
   //! Locally stored parameters
   DataType parameter;

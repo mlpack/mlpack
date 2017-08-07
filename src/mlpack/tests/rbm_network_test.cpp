@@ -275,4 +275,49 @@ BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
   BOOST_REQUIRE_GE(classificationAccuray1, 70);
 }
 
+template<typename MatType = arma::mat>
+void FloatBuildVanillaNetwork(MatType& trainData,
+                         const size_t hiddenLayerSize)
+{
+  arma::Mat<float> output;
+  BinaryRBMPolicy<arma::Mat<float>> binary_rbm(trainData.n_rows, hiddenLayerSize);
+  GaussianInitialization gaussian(0, 0.1);
+  RBM<GaussianInitialization, BinaryRBMPolicy<arma::Mat<float>>> model(trainData,
+      gaussian, binary_rbm, 1,  true);
+
+  model.Reset();
+  // Set the parmaeters from a learned rbm sklearn random state 23
+  model.Parameters() = arma::Mat<float>(
+      "-0.23224054, -0.23000632, -0.25701271, -0.25122418, -0.20716651,"
+      "-0.20962217, -0.59922456, -0.60003836, -0.6, -0.625, -0.475;");
+
+  // Check free energy
+  arma::Col<float> freeEnergy = arma::Mat<float>(
+      "-0.87523715, 0.50615066, 0.46923476, 1.21509084;");
+  arma::vec calcultedFreeEnergy(4);
+  calcultedFreeEnergy.zeros();
+  for (size_t i = 0; i < trainData.n_cols; i++)
+  {
+    calcultedFreeEnergy(i) = model.FreeEnergy(std::move(trainData.col(i)));
+  }
+
+  for (size_t i = 0; i < freeEnergy.n_elem; i++)
+    BOOST_REQUIRE_CLOSE(calcultedFreeEnergy(i), freeEnergy(i), 1e-5);
+
+}
+
+BOOST_AUTO_TEST_CASE(FloatTest)
+{
+  /**
+   * Train and evaluate a vanilla network with the specified structure.
+   */
+
+  arma::Mat<float> X = arma::Mat<float>("0.0, 0.0, 0.0;"
+                          "0.0, 1.0, 1.0;"
+                          "1.0, 0.0, 1.0;"
+                          "1.0, 1.0, 1.0;");
+  X = X.t();
+  BuildVanillaNetwork<arma::Mat<float>>(X, 2);
+}
+
 BOOST_AUTO_TEST_SUITE_END();

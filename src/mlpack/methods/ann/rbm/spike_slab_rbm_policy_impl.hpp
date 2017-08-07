@@ -277,7 +277,8 @@ void SpikeSlabRBMPolicy<DataType>
   }
   if (arma::norm(output, 2) > radius)
   {
-    Log::Warn << "Outputs are still not in visible unit" << arma::norm(output,2)
+    Log::Warn << "Outputs are still not in visible unit"
+              << arma::norm(output, 2)
               << "terminating optimization." << std::endl;
     return ;
   }

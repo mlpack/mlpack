@@ -26,6 +26,7 @@ class RBM
 {
  public:
   using NetworkType = RBM<InitializationRuleType, RBMPolicy>;
+  typedef typename RBMPolicy::ElemType eT;
 
   /* 
    * Intalise all the parameters of the network
@@ -37,7 +38,7 @@ class RBM
    * @param useMonitoringCost evaluation function to use
    * @param persistence indicates to use persistent CD
    */
-  RBM(arma::mat predictors, InitializationRuleType initializeRule,
+  RBM(arma::Mat<eT> predictors, InitializationRuleType initializeRule,
       RBMPolicy rbmPolicy,
       const size_t numSteps = 1,
       const size_t mSteps = 1,
@@ -55,7 +56,7 @@ class RBM
    * @param: optimizer Optimizer type
    */
   template<typename OptimizerType>
-  void Train(const arma::mat& predictors, OptimizerType& optimizer);
+  void Train(const arma::Mat<eT>& predictors, OptimizerType& optimizer);
 
  /**
   * Evaluate the rbm network with the given parameters.
@@ -64,14 +65,14 @@ class RBM
   * @param parameters Matrix model parameters.
   * @param i Index of point to use for objective function evaluation.
   */
-  double Evaluate(const arma::mat& parameters, const size_t i);
+  double Evaluate(const arma::Mat<eT>& parameters, const size_t i);
 
  /** 
   * This function calculates
   * the free energy of the model
   * @param: input data point 
   */
-  double FreeEnergy(arma::mat&& input);
+  double FreeEnergy(arma::Mat<eT>&& input);
 
  /*
   * This functions samples the hidden
@@ -80,7 +81,7 @@ class RBM
   * @param input visible layer input
   * @param output the sampled hidden layer
   */
-  void SampleHidden(arma::mat&& input, arma::mat&& output);
+  void SampleHidden(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
 
   /*
   * This functions samples the visible
@@ -89,7 +90,7 @@ class RBM
   * @param input hidden layer
   * @param output the sampled visible layer 
   */
-  void SampleVisible(arma::mat&& input, arma::mat&& output);
+  void SampleVisible(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
 
  /*
   * This function does the k-step
@@ -99,7 +100,7 @@ class RBM
   * @param output: stores the negative sample
   * @param steps: number of gibbs sampling steps
   */
-  void Gibbs(arma::mat&& input, arma::mat&& output, size_t steps = SIZE_MAX);
+  void Gibbs(arma::Mat<eT>&& input, arma::Mat<eT>&& output, size_t steps = SIZE_MAX);
 
   /*
    * Calculates the gradients for the rbm network
@@ -108,7 +109,7 @@ class RBM
    * @param input index the visible layer/data point
    * @param output store the gradients
    */
-  void Gradient(arma::mat& parameters, const size_t input, arma::mat& output);
+  void Gradient(arma::Mat<eT>& parameters, const size_t input, arma::Mat<eT>& output);
 
   //! Return the number of separable functions (the number of predictor points).
   size_t NumFunctions() const { return numFunctions; }
@@ -117,9 +118,9 @@ class RBM
   size_t NumSteps() const { return numSteps; }
 
   //! Return the parameters of the network
-  const arma::mat& Parameters() const { return parameter; }
+  const arma::Mat<eT>& Parameters() const { return parameter; }
   //! Modify the parameters of the network
-  arma::mat& Parameters() { return parameter; }
+  arma::Mat<eT>& Parameters() { return parameter; }
 
   //! Retutrn the rbm policy for the network
   const RBMPolicy& Policy() const { return rbmPolicy; }
@@ -132,15 +133,15 @@ class RBM
 
  private:
   //! Locally stored parameters of the network
-  arma::mat parameter;
+  arma::Mat<eT> parameter;
   //! Policy type of RBM
   RBMPolicy rbmPolicy;
   //! The matrix of data points (predictors).
-  arma::mat predictors;
+  arma::Mat<eT> predictors;
   // Intialiser
   InitializationRuleType initializeRule;
   //! Locally-stored state of the persistent cdk.
-  arma::mat state;
+  arma::Mat<eT> state;
   //! Locally-stored number of data points
   size_t numFunctions;
   //! Locally-stored number of steps in gibbs sampling
@@ -155,22 +156,22 @@ class RBM
   bool reset;
 
   //! Locally-stored reconstructed output from hidden layer
-  arma::mat hiddenReconstruction;
+  arma::Mat<eT> hiddenReconstruction;
   //! Locally-stored reconstructed output from visible layer
-  arma::mat visibleReconstruction;
+  arma::Mat<eT> visibleReconstruction;
 
   //! Locally-stored negative samples from gibbs Distribution
-  arma::mat negativeSamples;
+  arma::Mat<eT> negativeSamples;
   //! Locally-stored gradients from the negative phase
-  arma::mat negativeGradient;
+  arma::Mat<eT> negativeGradient;
   //! Locally-stored temproray negative gradient used for negative phase
-  arma::mat tempNegativeGradient;
+  arma::Mat<eT> tempNegativeGradient;
   //! Locally-stored gradient for positive phase
-  arma::mat positiveGradient;
+  arma::Mat<eT> positiveGradient;
   //! Locally-stored temporary output of gibbs chain
-  arma::mat gibbsTemporary;
+  arma::Mat<eT> gibbsTemporary;
   //! Locally-stored output of the preActivation function used in FreeEnergy
-  arma::mat preActivation;
+  arma::Mat<eT> preActivation;
 };
 } // namespace ann
 } // namespace mlpack
