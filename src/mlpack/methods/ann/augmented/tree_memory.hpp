@@ -13,23 +13,22 @@
 #ifndef MLPACK_METHODS_AUGMENTED_TREE_MEMORY_HPP
 #define MLPACK_METHODS_AUGMENTED_TREE_MEMORY_HPP
 
-#include <vector>
-
 namespace mlpack {
 namespace ann /* Artificial Neural Network */ {
 namespace augmented /* Augmented neural network */ {
 template<typename T, typename J, typename W>
 class TreeMemory {
 public:
-  TreeMemory(size_t size, J joiner, W writer);
+  TreeMemory(size_t size, size_t memDim, J joiner, W writer);
 
-  void Initialize(std::vector<T>& leafValues);
+  void Initialize(arma::Mat<T>& leafValues);
 
-  void Update(size_t pos, T el);
+  void Update(size_t pos, arma::Col<T> el);
 
-  T Get(size_t index);
-  T& Get(size_t index);
-  T GetCell(size_t memIndex);
+  arma::Col<T> Leaf(size_t index) const;
+  arma::subview_col<T> Leaf(size_t index);
+  arma::Col<T> Cell(size_t memIndex) const;
+  arma::subview_col<T> Cell(size_t memIndex);
 
   inline size_t Root();
   inline size_t Left(size_t origin);
@@ -43,10 +42,11 @@ public:
   size_t ActualMemorySize() const { return actualMemorySize; }
   size_t& ActualMemorySize() { return actualMemorySize; }
 private:
-  std::vector<T> memory;
+  arma::Mat<T> memory;
   J joinFunction;
   W writeFunction;
   size_t memorySize;
+  size_t memoryDim;
   size_t actualMemorySize;
 };
 } // namespace augmented

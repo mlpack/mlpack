@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_AUGMENTED_HAM_UNIT_IMPL_HPP
-#define MLPACK_METHODS_AUGMENTED_HAM_UNIT_IMPL_HPP
+#ifndef MLPACK_METHODS_ANN_AUGMENTED_HAM_UNIT_IMPL_HPP
+#define MLPACK_METHODS_ANN_AUGMENTED_HAM_UNIT_IMPL_HPP
 
 #include "ham_unit.hpp"
 

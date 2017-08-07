@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_AUGMENTED_HAM_UNIT_HPP
-#define MLPACK_METHODS_AUGMENTED_HAM_UNIT_HPP
+#ifndef MLPACK_METHODS_ANN_AUGMENTED_HAM_UNIT_HPP
+#define MLPACK_METHODS_ANN_AUGMENTED_HAM_UNIT_HPP
 
 #include "tree_memory.hpp"
 
@@ -20,8 +20,9 @@ namespace ann /* Artificial Neural Network */ {
 namespace augmented /* Augmented neural network */ {
 
 class HAMUnit {
-public:
-  HAMUnit(int memorySize, LayerTypes& controller,
+ public:
+  HAMUnit(int memorySize,
+          LayerTypes& controller,
           LayerTypes& embed,
           LayerTypes& join,
           LayerTypes& search,
@@ -39,7 +40,7 @@ public:
 
   void Evaluate(const arma::mat& predictors,
                 const arma::mat& responses);
-private:
+ private:
   arma::mat Attention() const;
 
   void Forward(arma::mat&& input, arma::mat&& output);
