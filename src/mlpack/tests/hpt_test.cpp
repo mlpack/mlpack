@@ -203,7 +203,7 @@ BOOST_AUTO_TEST_CASE(HPTMaximizationTest)
 
   // Making sure that the assumption above is true.
   SimpleCV<LogisticRegression<>, Accuracy>
-    cv(validationSize, doubledXs, doubledYs);
+      cv(validationSize, doubledXs, doubledYs);
   BOOST_REQUIRE_GT(cv.Evaluate(0.0), cv.Evaluate(1e12));
 
   HyperParameterTuner<LogisticRegression<>, Accuracy, SimpleCV>
