@@ -257,7 +257,7 @@ class SerializeVisitor : public boost::static_visitor<void>
  public:
   //! Serialize the given model.
   template<typename RAType>
-  void operator()(RAType* ra) const;
+  void operator()(RAType*& ra) const;
 
   //! Construct the SerializeVisitor with the given archive and name.
   SerializeVisitor(Archive& ar, const std::string& name);

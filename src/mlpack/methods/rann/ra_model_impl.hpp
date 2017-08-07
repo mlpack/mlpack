@@ -244,7 +244,7 @@ SerializeVisitor<Archive>::SerializeVisitor(Archive& ar,
 //! Serializes the given RAType instance.
 template<typename Archive>
 template<typename RAType>
-void SerializeVisitor<Archive>::operator()(RAType* ra) const
+void SerializeVisitor<Archive>::operator()(RAType*& ra) const
 {
   ar & data::CreateNVP(ra, name);
 }
