@@ -45,6 +45,7 @@ class BinaryRBMPolicy
    * Evaluate function computes the 
    * evaluation of the RBM at the given
    * input in the case persistent = true
+   *
    * @param predictors training data of the network
    * @param i the idx of the current input
    */ 
@@ -143,7 +144,7 @@ class BinaryRBMPolicy
   void VisiblePreActivation(DataType&& input, DataType&& output);
   /**
    * HiddenPreActivation function calculates the pre activation
-   * values given the hidden input units.
+   * values given the visible input units.
    *
    * @param input visible unit neuron
    * @param ouput hidden unit pre-activation values

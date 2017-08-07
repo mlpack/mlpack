@@ -21,7 +21,7 @@ class SpikeSlabRBMPolicy
 {
  public:
   typedef typename DataType::elem_type ElemType;
-  // Intialise the visible and hiddenl layer of the network
+  // Intialise the visible and hidden layer of the network
   SpikeSlabRBMPolicy(const size_t visibleSize,
       const size_t hiddenSize,
       const size_t poolSize,
@@ -46,23 +46,24 @@ class SpikeSlabRBMPolicy
   /**
    * Evaluate function is used by the Optimizer to 
    * find the perfomance of the network on the currentInput
+   *
+   * @param predictors the training data
+   * @param i the idx of the current input
    */
   ElemType Evaluate(DataType& /*predictors*/, size_t /*i*/);
 
   /**
-   * Positive Phase calculates the gradient on the
-   * given data point. 
-   *
-   *
-   * @param input the visible input
-   * @param output the computed gradient
+   * Calculate the Gradient of the RBM network on the 
+   * visible input from the training data.
+   * 
+   * @param input the visible layer type
+   * @param gradient the gradient of the rbm network
    */
   void PositivePhase(DataType&& input, DataType&& gradient);
 
   /**
-   * Negative Phase calculates the gradient on the
-   * negative sample obtained for the given data point
-   * using gibbs sampling. 
+   * Calculate the Gradient of the RBM network on the sampled
+   * visible input from gibbs sampling
    *
    * @param input the visible input
    * @param output the computed gradient
@@ -80,7 +81,7 @@ class SpikeSlabRBMPolicy
   void VisibleMean(DataType&& input, DataType&& output);
 
   /**
-   * Hidden Mean function calculates the
+   * Hidden Mean function calculates the mean of the 
    * normal distribution of P(s|v,h).
    * Where the mean is given by h_i*\alpha^{-1}*W_i^T*v 
    * variance is givenby \alpha^{-1}
@@ -91,8 +92,8 @@ class SpikeSlabRBMPolicy
   void HiddenMean(DataType&& input, DataType&& output);
 
   /**
-   * Sample Visible function sample 
-   * the visible outputs from the normal distribution with
+   * Sample Visible function samples
+   * the visible layer from the normal distribution with
    * mean \Lambda^{-1} \sum_{i=1}^N W_i * s_i * h_i and 
    * variance \Lambda^{-1}
    * 
@@ -121,8 +122,9 @@ class SpikeSlabRBMPolicy
   //! Modify the parameters of the network
   DataType& Parameters() { return parameter; }
 
-  //! Get the weight variables
+  //! Get the weight of the network
   arma::cube const& Weight() const { return weight; }
+  //! Modify the weights of the network
   arma::cube& Weight() { return weight; }
 
   //! Get the regulaliser associated with spike variables
@@ -147,9 +149,9 @@ class SpikeSlabRBMPolicy
 
  private:
   /**
-   * Spike Mean function calculates the following distribution
-   * P(h|v) which is given by
-   *  sigm(v^T*W_i*\alpha_i^{-1}*W_i^T*v + b_i)
+   * Spike Mean function calculates the mean of the following
+   * distribution P(h|v) where mean  is given by
+   * sigm(v^T*W_i*\alpha_i^{-1}*W_i^T*v + b_i)
    *
    * @param visible the visible layer
    * @param spikeMean hidden layer
