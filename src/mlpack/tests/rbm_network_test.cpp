@@ -246,7 +246,6 @@ void BuildVanillaNetwork(MatType& trainData,
 
   for (size_t i = 0; i < freeEnergy.n_elem; i++)
     BOOST_REQUIRE_CLOSE(calcultedFreeEnergy(i), freeEnergy(i), 1e-3);
-
 }
 
 BOOST_AUTO_TEST_CASE(MiscTest)

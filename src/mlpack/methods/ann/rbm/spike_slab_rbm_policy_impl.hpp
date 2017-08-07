@@ -280,7 +280,7 @@ void SpikeSlabRBMPolicy<DataType>
     Log::Warn << "Outputs are still not in visible unit"
               << arma::norm(output, 2)
               << "terminating optimization." << std::endl;
-    return ;
+    return;
   }
 }
 

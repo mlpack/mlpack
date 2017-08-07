@@ -162,8 +162,8 @@ void RBM<InitializationRuleType, RBMPolicy>::
 }
 
 template<typename InitializationRuleType, typename RBMPolicy>
-void RBM<InitializationRuleType, RBMPolicy>::
-    Gradient(arma::Mat<eT>& /*parameters*/, const size_t input, arma::Mat<eT>& output)
+void RBM<InitializationRuleType, RBMPolicy>::Gradient(
+    arma::Mat<eT>& /*parameters*/, const size_t input, arma::Mat<eT>& output)
 {
   positiveGradient.zeros();
   // Collect the negative samples

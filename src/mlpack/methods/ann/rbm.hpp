@@ -100,7 +100,8 @@ class RBM
   * @param output: stores the negative sample
   * @param steps: number of gibbs sampling steps
   */
-  void Gibbs(arma::Mat<eT>&& input, arma::Mat<eT>&& output, size_t steps = SIZE_MAX);
+  void Gibbs(arma::Mat<eT>&& input, arma::Mat<eT>&& output,
+      size_t steps = SIZE_MAX);
 
   /*
    * Calculates the gradients for the rbm network
@@ -109,7 +110,8 @@ class RBM
    * @param input index the visible layer/data point
    * @param output store the gradients
    */
-  void Gradient(arma::Mat<eT>& parameters, const size_t input, arma::Mat<eT>& output);
+  void Gradient(arma::Mat<eT>& parameters, const size_t input,
+      arma::Mat<eT>& output);
 
   //! Return the number of separable functions (the number of predictor points).
   size_t NumFunctions() const { return numFunctions; }
