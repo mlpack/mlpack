@@ -293,7 +293,7 @@ double SimpleCV<MLAlgorithm,
                 PredictionsType,
                 WeightsType>::TrainAndEvaluate(const MLAlgorithmArgs&... args)
 {
-  modelPtr = base.Train(trainingXs, trainingYs, args...);
+  modelPtr.reset(new MLAlgorithm(base.Train(trainingXs, trainingYs, args...)));
 
   return Metric::Evaluate(*modelPtr, validationXs, validationYs);
 }
@@ -311,9 +311,11 @@ double SimpleCV<MLAlgorithm,
                 WeightsType>::TrainAndEvaluate(const MLAlgorithmArgs&... args)
 {
   if (trainingWeights.n_elem > 0)
-    modelPtr = base.Train(trainingXs, trainingYs, trainingWeights, args...);
+    modelPtr.reset(new MLAlgorithm(
+        base.Train(trainingXs, trainingYs, trainingWeights, args...)));
   else
-    modelPtr = base.Train(trainingXs, trainingYs, args...);
+    modelPtr.reset(new MLAlgorithm(
+        base.Train(trainingXs, trainingYs, args...)));
 
   return Metric::Evaluate(*modelPtr, validationXs, validationYs);
 }
