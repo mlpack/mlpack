@@ -300,7 +300,7 @@ class RASearch
    * Set the reference tree to a new reference tree.
    */
   void Train(Tree* referenceTree);
-  
+
   /**
    * Compute the rank approximate nearest neighbors of each query point in the
    * query set and store the output in the given matrices. The matrices will be

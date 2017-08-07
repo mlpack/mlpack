@@ -23,7 +23,7 @@ namespace neighbor {
 template<typename RAType>
 void MonoSearchVisitor::operator()(RAType* ra) const
 {
-  if(ra)
+  if (ra)
     return ra->Search(k, neighbors, distances);
   throw std::runtime_error("no rank-approximate model initialized");
 }
@@ -49,7 +49,7 @@ template<template<typename TreeMetricType,
                   typename TreeMatType> class TreeType>
 void BiSearchVisitor<SortPolicy>::operator()(RATypeT<TreeType>* ra) const
 {
-  if(ra)
+  if (ra)
     return ra->Search(querySet, k, neighbors, distances);
   throw std::runtime_error("no rank-approximate model initialized");
 }
@@ -58,7 +58,7 @@ void BiSearchVisitor<SortPolicy>::operator()(RATypeT<TreeType>* ra) const
 template<typename SortPolicy>
 void BiSearchVisitor<SortPolicy>::operator()(RATypeT<tree::KDTree>* ra) const
 {
-  if(ra)
+  if (ra)
     return SearchLeaf(ra);
   throw std::runtime_error("no rank-approximate search model initialized");
 }
@@ -67,7 +67,7 @@ void BiSearchVisitor<SortPolicy>::operator()(RATypeT<tree::KDTree>* ra) const
 template<typename SortPolicy>
 void BiSearchVisitor<SortPolicy>::operator()(RATypeT<tree::Octree>* ra) const
 {
-  if(ra)
+  if (ra)
     return SearchLeaf(ra);
   throw std::runtime_error("no rank-approximate search model initialized");
 }
@@ -77,7 +77,7 @@ template<typename SortPolicy>
 template<typename RAType>
 void BiSearchVisitor<SortPolicy>::SearchLeaf(RAType* ra) const
 {
-  if(!ra->Naive() && !ra->SingleMode())
+  if (!ra->Naive() && !ra->SingleMode())
   {
     // Build a second tree and search
     Timer::Start("tree_building");
@@ -123,7 +123,7 @@ template<template<typename TreeMetricType,
                   typename TreeMatType> class TreeType>
 void TrainVisitor<SortPolicy>::operator()(RATypeT<TreeType>* ra) const
 {
-  if(ra)
+  if (ra)
     return ra->Train(std::move(referenceSet));
   throw std::runtime_error("no rank-approximate search model initialized");
 }
@@ -132,7 +132,7 @@ void TrainVisitor<SortPolicy>::operator()(RATypeT<TreeType>* ra) const
 template<typename SortPolicy>
 void TrainVisitor<SortPolicy>::operator()(RATypeT<tree::KDTree>* ra) const
 {
-  if(ra)
+  if (ra)
     return TrainLeaf(ra);
   throw std::runtime_error("no rank-approximate search model initialized");
 }
@@ -141,7 +141,7 @@ void TrainVisitor<SortPolicy>::operator()(RATypeT<tree::KDTree>* ra) const
 template<typename SortPolicy>
 void TrainVisitor<SortPolicy>::operator()(RATypeT<tree::Octree>* ra) const
 {
-  if(ra)
+  if (ra)
     return TrainLeaf(ra);
   throw std::runtime_error("no rank-approximate search model is initialized");
 }
@@ -152,7 +152,7 @@ template<typename RAType>
 void TrainVisitor<SortPolicy>::TrainLeaf(RAType* ra) const
 {
   // Build tree, if necessary
-  if(ra->Naive())
+  if (ra->Naive())
   {
     ra->Train(std::move(referenceSet));
   }
@@ -174,7 +174,7 @@ void TrainVisitor<SortPolicy>::TrainLeaf(RAType* ra) const
 template<typename RAType>
 size_t& SingleSampleLimitVisitor::operator()(RAType* ra) const
 {
-  if(ra)
+  if (ra)
     return ra->SingleSampleLimit();
   throw std::runtime_error("no rank-approximate search model is initialized");
 }
@@ -183,7 +183,7 @@ size_t& SingleSampleLimitVisitor::operator()(RAType* ra) const
 template<typename RAType>
 bool& FirstLeafExactVisitor::operator()(RAType* ra) const
 {
-  if(ra)
+  if (ra)
     return ra->FirstLeafExact();
   throw std::runtime_error("no rank-approximate search model is initialized");
 }
@@ -192,7 +192,7 @@ bool& FirstLeafExactVisitor::operator()(RAType* ra) const
 template<typename RAType>
 bool& SampleAtLeavesVisitor::operator()(RAType* ra) const
 {
-  if(ra)
+  if (ra)
     return ra->SampleAtLeaves();
   throw std::runtime_error("no rank-approximate search model is initialized");
 }
@@ -201,7 +201,7 @@ bool& SampleAtLeavesVisitor::operator()(RAType* ra) const
 template<typename RAType>
 double& AlphaVisitor::operator()(RAType* ra) const
 {
-  if(ra)
+  if (ra)
     return ra->Alpha();
   throw std::runtime_error("no rank-approximate model is initialized");
 }
@@ -210,7 +210,7 @@ double& AlphaVisitor::operator()(RAType* ra) const
 template<typename RAType>
 double& TauVisitor::operator()(RAType* ra) const
 {
-  if(ra)
+  if (ra)
     return ra->Tau();
   throw std::runtime_error("no rank-approximate model is initialized");
 }
@@ -219,7 +219,7 @@ double& TauVisitor::operator()(RAType* ra) const
 template<typename RAType>
 bool& SingleModeVisitor::operator()(RAType* ra) const
 {
-  if(ra)
+  if (ra)
     return ra->SingleMode();
   throw std::runtime_error("no rank-approximate model is intialized");
 }
@@ -228,7 +228,7 @@ bool& SingleModeVisitor::operator()(RAType* ra) const
 template<typename RAType>
 const arma::mat& ReferenceSetVisitor::operator()(RAType* ra) const
 {
-  if(ra)
+  if (ra)
     return ra->ReferenceSet();
   throw std::runtime_error("no rank-approximate model is intialized");
 }
@@ -253,7 +253,7 @@ void SerializeVisitor<Archive>::operator()(RAType*& ra) const
 template<typename RAType>
 bool& NaiveVisitor::operator()(RAType* ra) const
 {
-  if(ra)
+  if (ra)
     return ra->Naive();
   throw std::runtime_error("no rank-approximate search model is intialized");
 }
@@ -283,7 +283,7 @@ RAModel<SortPolicy>::RAModel(const RAModel& other) :
     randomBasis(other.randomBasis),
     raSearch(other.raSearch)
 {
-
+  // Nothing to do.
 }
 
 // Move constructor.
@@ -581,7 +581,8 @@ void RAModel<SortPolicy>::Search(arma::mat&& querySet,
     Log::Info << "brute-force (naive) rank-approximate search...";
   Log::Info << std::endl;
 
-  BiSearchVisitor<SortPolicy> search(querySet, k, neighbors, distances, leafSize);
+  BiSearchVisitor<SortPolicy> search(querySet, k, neighbors, distances,
+      leafSize);
   boost::apply_visitor(search, raSearch);
 }
 
