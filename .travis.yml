@@ -1,15 +1,18 @@
 sudo: required
-dist: trusty
+dist: xenial
 language: cpp
 
 before_install:
   - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
   - sudo apt-get update -qq
-  - sudo apt-get install -qq g++-4.8 libarmadillo-dev libarmadillo4 libboost1.54-all-dev
-  - sudo pip install cython setuptools numpy pandas
   - export CC=gcc-4.8
   - export CXX=g++-4.8
   - printenv
+  - sudo apt-get install libopenblas-dev && sudo apt-get install liblapack-dev
+  - sudo apt-get install -qq g++-4.8 libboost1.54-all-dev
+  - sudo pip install cython setuptools numpy pandas
+  - curl http://masterblaster.mlpack.org:5005/armadillo-6.500.5.tar.gz | tar xvz && cd armadillo*
+  - cmake . && make && sudo make install && cd ..
   - sudo cp .travis/config.hpp /usr/include/armadillo_bits/config.hpp
 install:
   - mkdir build && cd build && cmake -DDEBUG=OFF -DPROFILE=OFF -DPYTHON=/usr/bin/python .. && make -j2

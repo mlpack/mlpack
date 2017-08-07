@@ -26,7 +26,7 @@ using namespace mlpack::ann;
 
 BOOST_AUTO_TEST_SUITE(ANNLayerTest);
 
-// Helper function whcih calls the Reset function of the given module.
+// Helper function which calls the Reset function of the given module.
 template<class T>
 void ResetFunction(
     T& layer,
@@ -531,7 +531,7 @@ BOOST_AUTO_TEST_CASE(JacobianLinearNoBiasLayerTest)
 /**
  * LinearNoBias layer numerically gradient test.
  */
-BOOST_AUTO_TEST_CASE(GradientLinearNoBiadLayerTest)
+BOOST_AUTO_TEST_CASE(GradientLinearNoBiasLayerTest)
 {
   // LinearNoBias function gradient instantiation.
   struct GradientFunction
@@ -912,15 +912,59 @@ BOOST_AUTO_TEST_CASE(SimpleLogSoftmaxLayerTest)
   LogSoftMax<> module;
 
   // Test the Forward function.
-  input = arma::mat("0.5 0.5");
+  input = arma::mat("0.5; 0.5");
   module.Forward(std::move(input), std::move(output));
   BOOST_REQUIRE_SMALL(arma::accu(arma::abs(
-    arma::mat("-0.6931 -0.6931") - output)), 1e-3);
+    arma::mat("-0.6931; -0.6931") - output)), 1e-3);
 
   // Test the Backward function.
   error = arma::zeros(input.n_rows, input.n_cols);
+  // Assume LogSoftmax layer is always associated with NLL output layer.
+  error(1, 0) = -1;
   module.Backward(std::move(input), std::move(error), std::move(delta));
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
+  BOOST_REQUIRE_SMALL(arma::accu(arma::abs(
+      arma::mat("1.6487; 0.6487") - delta)), 1e-3);
+}
+
+/*
+ * Simple test for the cross-entropy error performance function.
+ */
+BOOST_AUTO_TEST_CASE(SimpleCrossEntropyErrorLayerTest)
+{
+  arma::mat input1, input2, output, target1, target2;
+  CrossEntropyError<> module(1e-6);
+
+  // Test the Forward function on a user generator input and compare it against
+  // the manually calculated result.
+  input1 = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5");
+  target1 = arma::zeros(1, 8);
+  double error1 = module.Forward(std::move(input1), std::move(target1));
+  BOOST_REQUIRE_SMALL(error1 - 8 * std::log(2), 2e-5);
+
+  input2 = arma::mat("0 1 1 0 1 0 0 1");
+  target2 = arma::mat("0 1 1 0 1 0 0 1");
+  double error2 = module.Forward(std::move(input2), std::move(target2));
+  BOOST_REQUIRE_SMALL(error2, 1e-5);
+
+  // Test the Backward function.
+  module.Backward(std::move(input1), std::move(target1), std::move(output));
+  for (double el : output) {
+    // For the 0.5 constant vector we should get 1 / (1 - 0.5) = 2 everywhere.
+    BOOST_REQUIRE_SMALL(el - 2, 5e-6);
+  }
+  BOOST_REQUIRE_EQUAL(output.n_rows, input1.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input1.n_cols);
+
+  module.Backward(std::move(input2), std::move(target2), std::move(output));
+  for (size_t i = 0; i < 8; ++i) {
+    double el = output.at(0, i);
+    if (input2.at(i) == 0)
+      BOOST_REQUIRE_SMALL(el - 1, 2e-6);
+    else
+      BOOST_REQUIRE_SMALL(el + 1, 2e-6);
+  }
+  BOOST_REQUIRE_EQUAL(output.n_rows, input2.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input2.n_cols);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

@@ -56,6 +56,7 @@ set(DIRS
   quic_svd
   radical
   randomized_svd
+  random_forest
   range_search
   rann
 #  rmva

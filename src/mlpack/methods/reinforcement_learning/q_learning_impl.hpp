@@ -20,18 +20,18 @@ namespace rl {
 template <
   typename EnvironmentType,
   typename NetworkType,
-  typename OptimizerType,
+  typename UpdaterType,
   typename PolicyType,
   typename ReplayType
 >
 QLearning<
   EnvironmentType,
   NetworkType,
-  OptimizerType,
+  UpdaterType,
   PolicyType,
   ReplayType
 >::QLearning(NetworkType network,
-             OptimizerType optimizer,
+             const double stepSize,
              const double discount,
              PolicyType policy,
              ReplayType replayMethod,
@@ -39,9 +39,11 @@ QLearning<
              const size_t explorationsSteps,
              const bool doubleQLearning,
              const size_t stepLimit,
+             UpdaterType updater,
              EnvironmentType environment):
     learningNetwork(std::move(network)),
-    optimizer(std::move(optimizer)),
+    stepSize(stepSize),
+    updater(std::move(updater)),
     discount(discount),
     policy(std::move(policy)),
     replayMethod(std::move(replayMethod)),
@@ -54,20 +56,22 @@ QLearning<
     deterministic(false)
 {
   learningNetwork.ResetParameters();
+  this->updater.Initialize(learningNetwork.Parameters().n_rows,
+      learningNetwork.Parameters().n_cols);
   targetNetwork = learningNetwork;
 }
 
 template <
   typename EnvironmentType,
   typename NetworkType,
-  typename OptimizerType,
+  typename UpdaterType,
   typename PolicyType,
   typename ReplayType
 >
 arma::Col<size_t> QLearning<
   EnvironmentType,
   NetworkType,
-  OptimizerType,
+  UpdaterType,
   PolicyType,
   ReplayType
 >::BestAction(const arma::mat& actionValues)
@@ -85,14 +89,14 @@ arma::Col<size_t> QLearning<
 template <
   typename EnvironmentType,
   typename NetworkType,
-  typename OptimizerType,
+  typename UpdaterType,
   typename BehaviorPolicyType,
   typename ReplayType
 >
 double QLearning<
   EnvironmentType,
   NetworkType,
-  OptimizerType,
+  UpdaterType,
   BehaviorPolicyType,
   ReplayType
 >::Step()
@@ -148,7 +152,7 @@ double QLearning<
 
   // Compute the update target.
   arma::mat target;
-  learningNetwork.Predict(sampledStates, target);
+  learningNetwork.Forward(sampledStates, target);
   for (size_t i = 0; i < sampledNextStates.n_cols; ++i)
   {
     target(sampledActions[i], i) = sampledRewards[i] +
@@ -156,7 +160,9 @@ double QLearning<
   }
 
   // Learn form experience.
-  learningNetwork.Train(sampledStates, target, optimizer);
+  arma::mat gradients;
+  learningNetwork.Backward(target, gradients);
+  updater.Update(learningNetwork.Parameters(), stepSize, gradients);
 
   return reward;
 }
@@ -164,14 +170,14 @@ double QLearning<
 template <
   typename EnvironmentType,
   typename NetworkType,
-  typename OptimizerType,
+  typename UpdaterType,
   typename BehaviorPolicyType,
   typename ReplayType
 >
 double QLearning<
   EnvironmentType,
   NetworkType,
-  OptimizerType,
+  UpdaterType,
   BehaviorPolicyType,
   ReplayType
 >::Episode()

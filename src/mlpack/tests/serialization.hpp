@@ -33,7 +33,9 @@ template<typename CubeType,
 void TestArmadilloSerialization(arma::Cube<CubeType>& x)
 {
   // First save it.
-  std::ofstream ofs("test", std::ios::binary);
+  // Use type_info name to get unique file name for serialization test files.
+  std::string fileName = FilterFileName(typeid(IArchiveType).name());
+  std::ofstream ofs(fileName, std::ios::binary);
   OArchiveType o(ofs);
 
   bool success = true;
@@ -52,7 +54,7 @@ void TestArmadilloSerialization(arma::Cube<CubeType>& x)
   // Now load it.
   arma::Cube<CubeType> orig(x);
   success = true;
-  std::ifstream ifs("test", std::ios::binary);
+  std::ifstream ifs(fileName, std::ios::binary);
   IArchiveType i(ifs);
 
   try
@@ -63,6 +65,8 @@ void TestArmadilloSerialization(arma::Cube<CubeType>& x)
   {
     success = false;
   }
+
+  remove(fileName.c_str());
 
   BOOST_REQUIRE_EQUAL(success, true);
 
@@ -88,8 +92,6 @@ void TestArmadilloSerialization(arma::Cube<CubeType>& x)
       }
     }
   }
-
-  remove("test");
 }
 
 // Test all serialization strategies.
@@ -111,7 +113,8 @@ template<typename MatType,
 void TestArmadilloSerialization(MatType& x)
 {
   // First save it.
-  std::ofstream ofs("test", std::ios::binary);
+  std::string fileName = FilterFileName(typeid(IArchiveType).name());
+  std::ofstream ofs(fileName, std::ios::binary);
   OArchiveType o(ofs);
 
   bool success = true;
@@ -130,7 +133,7 @@ void TestArmadilloSerialization(MatType& x)
   // Now load it.
   MatType orig(x);
   success = true;
-  std::ifstream ifs("test", std::ios::binary);
+  std::ifstream ifs(fileName, std::ios::binary);
   IArchiveType i(ifs);
 
   try
@@ -141,6 +144,8 @@ void TestArmadilloSerialization(MatType& x)
   {
     success = false;
   }
+
+  remove(fileName.c_str());
 
   BOOST_REQUIRE_EQUAL(success, true);
 
@@ -154,8 +159,6 @@ void TestArmadilloSerialization(MatType& x)
         BOOST_REQUIRE_SMALL(double(x(j, i)), 1e-8);
       else
         BOOST_REQUIRE_CLOSE(double(orig(j, i)), double(x(j, i)), 1e-8);
-
-  remove("test");
 }
 
 // Test all serialization strategies.
@@ -175,7 +178,8 @@ void TestAllArmadilloSerialization(MatType& x)
 template<typename T, typename IArchiveType, typename OArchiveType>
 void SerializeObject(T& t, T& newT)
 {
-  std::ofstream ofs("test", std::ios::binary);
+  std::string fileName = FilterFileName(typeid(T).name());
+  std::ofstream ofs(fileName, std::ios::binary);
   OArchiveType o(ofs);
 
   bool success = true;
@@ -191,7 +195,7 @@ void SerializeObject(T& t, T& newT)
 
   BOOST_REQUIRE_EQUAL(success, true);
 
-  std::ifstream ifs("test", std::ios::binary);
+  std::ifstream ifs(fileName, std::ios::binary);
   IArchiveType i(ifs);
 
   try
@@ -203,6 +207,8 @@ void SerializeObject(T& t, T& newT)
     success = false;
   }
   ifs.close();
+
+  remove(fileName.c_str());
 
   BOOST_REQUIRE_EQUAL(success, true);
 }
@@ -223,7 +229,8 @@ void SerializeObjectAll(T& t, T& xmlT, T& textT, T& binaryT)
 template<typename T, typename IArchiveType, typename OArchiveType>
 void SerializePointerObject(T* t, T*& newT)
 {
-  std::ofstream ofs("test", std::ios::binary);
+  std::string fileName = FilterFileName(typeid(T).name());
+  std::ofstream ofs(fileName, std::ios::binary);
   OArchiveType o(ofs);
 
   bool success = true;
@@ -239,7 +246,7 @@ void SerializePointerObject(T* t, T*& newT)
 
   BOOST_REQUIRE_EQUAL(success, true);
 
-  std::ifstream ifs("test", std::ios::binary);
+  std::ifstream ifs(fileName, std::ios::binary);
   IArchiveType i(ifs);
 
   try
@@ -251,6 +258,8 @@ void SerializePointerObject(T* t, T*& newT)
     success = false;
   }
   ifs.close();
+
+  remove(fileName.c_str());
 
   BOOST_REQUIRE_EQUAL(success, true);
 }

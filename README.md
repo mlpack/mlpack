@@ -1,26 +1,27 @@
-<h1 align="center">
-  <a href="http://mlpack.org"><img src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="background-color:rgba(0,0,0,0);" height=260 alt="mlpack: a scalable C++ machine learning library"></a>
+<h2 align="center">
+  <a href="http://mlpack.org"><img src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="background-color:rgba(0,0,0,0);" height=230 alt="mlpack: a scalable C++ machine learning library"></a>
   <br>a scalable C++ machine learning library<br>
-</h1>
+</h2>
 
-<p align="center">
+<h5 align="center">
   <a href="http://mlpack.org">Home</a> |
   <a href="http://www.mlpack.org/docs/mlpack-git/doxygen.php">Documentation</a> |
   <a href="http://www.mlpack.org/involved.html">Community</a> |
   <a href="http://www.mlpack.org/help.html">Help</a> |
   <a href="http://webchat.freenode.net/?channels=mlpack">IRC Chat</a>
-</p>
+</h5>
 
 <p align="center">
-  <a href="http://masterblaster.mlpack.org/job/mlpack%20-%20git%20commit%20test/"><img src="https://img.shields.io/jenkins/s/http/masterblaster.mlpack.org/job/mlpack%20-%20git%20commit%20test.svg?label=Linux%20build" alt="Jenkins"></a>
-  <a href="https://ci.appveyor.com/project/mlpack/mlpack"><img src="https://img.shields.io/appveyor/ci/mlpack/mlpack/master.svg?label=Windows%20build" alt="Appveyor"></a>
-  <a href="https://coveralls.io/github/mlpack/mlpack?branch=master"><img src="https://img.shields.io/coveralls/mlpack/mlpack/master.svg" alt="Coveralls"></a>
+  <a href="http://masterblaster.mlpack.org/job/mlpack%20-%20git%20commit%20test/"><img src="https://img.shields.io/jenkins/s/http/masterblaster.mlpack.org/job/mlpack%20-%20git%20commit%20test.svg?label=Linux%20build&style=flat-square" alt="Jenkins"></a>
+  <a href="https://ci.appveyor.com/project/mlpack/mlpack"><img src="https://img.shields.io/appveyor/ci/mlpack/mlpack/master.svg?label=Windows%20build&style=flat-square&logoWidth=0.1" alt="Appveyor"></a>
+  <a href="https://coveralls.io/github/mlpack/mlpack?branch=master"><img src="https://img.shields.io/coveralls/mlpack/mlpack/master.svg?style=flat-square" alt="Coveralls"></a>
+  <a href="https://opensource.org/licenses/BSD-3-Clause"><img src="https://img.shields.io/badge/License-BSD%203--Clause-blue.svg?style=flat-square" alt="License"></a>
 </p>
 
 <p align="center">
   <em>
     Download:
-    <a href="http://www.mlpack.org/files/mlpack-2.2.3.tar.gz">current stable version (2.2.3)</a>
+    <a href="http://www.mlpack.org/files/mlpack-2.2.4.tar.gz">current stable version (2.2.4)</a>
   </em>
 </p>
 
@@ -73,7 +74,7 @@ Citations are beneficial for the growth and improvement of mlpack.
 
 mlpack has the following dependencies:
 
-      Armadillo     >= 4.200.0
+      Armadillo     >= 6.500.0
       Boost (program_options, math_c99, unit_test_framework, serialization,
              spirit)
       CMake         >= 2.8.5

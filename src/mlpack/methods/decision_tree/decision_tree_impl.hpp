@@ -360,7 +360,7 @@ void DecisionTree<FitnessFunction,
   // Pass off work to the Train() method.
   arma::rowvec weights; // Fake weights, not used.
   Train<false>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpLabels, numClasses,
-      minimumLeafSize);
+      weights, minimumLeafSize);
 }
 
 //! Train on the given data, assuming all dimensions are numeric.
@@ -984,6 +984,28 @@ size_t DecisionTree<FitnessFunction,
         classProbabilities, *this);
 }
 
+// Get the number of classes in the tree.
+template<typename FitnessFunction,
+         template<typename> class NumericSplitType,
+         template<typename> class CategoricalSplitType,
+         typename DimensionSelectionType,
+         typename ElemType,
+         bool NoRecursion>
+size_t DecisionTree<FitnessFunction,
+                    NumericSplitType,
+                    CategoricalSplitType,
+                    DimensionSelectionType,
+                    ElemType,
+                    NoRecursion>::NumClasses() const
+{
+  // Recurse to the nearest child and return the number of elements in the
+  // probability vector.
+  if (children.size() == 0)
+    return classProbabilities.n_elem;
+  else
+    return children[0]->NumClasses();
+}
+
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
@@ -1018,7 +1040,7 @@ void DecisionTree<FitnessFunction,
 
   // Now normalize into probabilities.
   classProbabilities /= UseWeights ? sumWeights : labels.n_elem;
-  arma::uword maxIndex;
+  arma::uword maxIndex = 0;
   classProbabilities.max(maxIndex);
   dimensionTypeOrMajorityClass = (size_t) maxIndex;
 }

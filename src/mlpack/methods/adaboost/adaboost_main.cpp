@@ -219,8 +219,11 @@ void mlpackMain()
     else if (weakLearner == "perceptron")
       m.WeakLearnerType() = AdaBoostModel::WeakLearnerTypes::PERCEPTRON;
 
+    const size_t numClasses = m.Mappings().n_elem;
+    Log::Info << numClasses << " classes in dataset." << endl;
+
     Timer::Start("adaboost_training");
-    m.Train(trainingData, labels, iterations, tolerance);
+    m.Train(trainingData, labels, numClasses, iterations, tolerance);
     Timer::Stop("adaboost_training");
   }
   else
