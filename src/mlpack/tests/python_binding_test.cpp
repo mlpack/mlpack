@@ -19,7 +19,6 @@ namespace mlpack {
 namespace bindings {
 namespace python {
 
-// NOLINT(*)
 std::string programName; // Needed for linking.
 
 } // namespace python
