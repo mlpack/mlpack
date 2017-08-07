@@ -14,6 +14,7 @@
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
+#include <mlpack/methods/ann/init_rules/const_init.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/rnn.hpp>
@@ -776,6 +777,188 @@ BOOST_AUTO_TEST_CASE(GradientLSTMLayerTest)
   } function;
 
   BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+}
+
+/**
+ * Check if the gradients computed by GRU cell are close enough to the
+ * approximation of the gradients.
+ */
+BOOST_AUTO_TEST_CASE(GradientGRULayerTest)
+{
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randu(5, 1);
+      target = arma::mat("1; 1; 1; 1; 1");
+      const size_t rho = 5;
+
+      model = new RNN<NegativeLogLikelihood<> >(input, target, rho);
+      model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(1, 10);
+      model->Add<GRU<> >(10, 3, rho);
+      model->Add<LogSoftMax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      arma::mat output;
+      double error = model->Evaluate(model->Parameters(), 0);
+      model->Gradient(model->Parameters(), 0, gradient);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    RNN<NegativeLogLikelihood<> >* model;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+}
+
+/**
+ * Check if the gradients computed by MemoryHead cell are close enough to the
+ * approximation of the gradients.
+ */
+BOOST_AUTO_TEST_CASE(GradientMemoryHeadTest)
+{
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randu(5, 1);
+      target = arma::mat("1; 1; 1; 1; 1;");
+      const size_t rho = 5;
+
+      model = new RNN<NegativeLogLikelihood<> >(input, target, rho);
+      model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(1, 10);
+      model->Add<MemoryHead<> >(10, 3, 5, 1);
+      model->Add<Linear<> >(3, 3);
+      model->Add<LogSoftMax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      arma::mat output;
+      double error = model->Evaluate(model->Parameters(), 0);
+      model->Gradient(model->Parameters(), 0, gradient);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    RNN<NegativeLogLikelihood<> >* model;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+}
+
+/**
+ * GRU layer manual forward test.
+ */
+BOOST_AUTO_TEST_CASE(ForwardGRULayerTest)
+{
+  GRU<> gru(3, 3, 5);
+
+  // Initialize the weights to all ones.
+  NetworkInitialization<ConstInitialization>
+    networkInit(ConstInitialization(1));
+  networkInit.Initialize(gru.Model(), gru.Parameters());
+
+  // Provide input of all ones.
+  arma::mat input = arma::ones(3, 1);
+  arma::mat output;
+
+  gru.Forward(std::move(input), std::move(output));
+
+  // Compute the z_t gate output.
+  arma::mat expectedOutput = arma::ones(3, 1);
+  expectedOutput *= -4;
+  expectedOutput = arma::exp(expectedOutput);
+  expectedOutput = arma::ones(3, 1) / (arma::ones(3, 1) + expectedOutput);
+  expectedOutput = (arma::ones(3, 1)  - expectedOutput) % expectedOutput;
+
+  // For the first input the output should be equal to the output of
+  // gate z_t as the previous output fed to the cell is all zeros.
+  BOOST_REQUIRE_LE(arma::as_scalar(arma::trans(output) * expectedOutput), 1e-2);
+
+  expectedOutput = output;
+
+  gru.Forward(std::move(input), std::move(output));
+
+  double s = arma::as_scalar(arma::sum(expectedOutput));
+
+  // Compute the value of z_t gate for the second input.
+  arma::mat z_t = arma::ones(3, 1);
+  z_t *= -(s + 4);
+  z_t = arma::exp(z_t);
+  z_t = arma::ones(3, 1) / (arma::ones(3, 1) + z_t);
+
+  // Compute the value of o_t gate for the second input.
+  arma::mat o_t = arma::ones(3, 1);
+  o_t *= -(arma::as_scalar(arma::sum(expectedOutput % z_t)) + 4);
+  o_t = arma::exp(o_t);
+  o_t = arma::ones(3, 1) / (arma::ones(3, 1) + o_t);
+
+  // Expected output for the second input.
+  expectedOutput = z_t % expectedOutput + (arma::ones(3, 1) - z_t) % o_t;
+
+  BOOST_REQUIRE_LE(arma::as_scalar(arma::trans(output) * expectedOutput), 1e-2);
+}
+
+/**
+ * MemoryHead manual forward test.
+ */
+BOOST_AUTO_TEST_CASE(ForwardMemoryHeadTest)
+{
+  MemoryHead<> mh(5, 5, 5, 1);
+
+  arma::mat memory = arma::ones(5, 5);
+  arma::mat input = arma::ones(5, 1);
+
+  NetworkInitialization<ConstInitialization> networkInit(ConstInitialization(1));
+  networkInit.Initialize(mh.Model(), mh.Parameters());
+
+  arma::mat weights;
+  mh.Forward(std::move(input), std::move(memory), std::move(weights));
+
+  // approximate k_t gate output
+  arma::mat k_t = arma::ones<arma::mat>(5, 1);
+
+  double b_t = 6.0;
+  double g_t = 1.0;
+  double gamma_t = 6.0;
+
+  arma::mat cosSimilarity = arma::normalise(memory, 1) * k_t /
+    arma::norm(k_t);
+
+  arma::mat w_c = arma::exp(b_t * cosSimilarity);
+  w_c = w_c / arma::as_scalar(arma::sum(arma::sum(w_c)));
+
+  // Build w_g with g_t
+  arma::mat w_g = g_t * w_c;
+
+  arma::mat shiftMatrix = arma::ones<arma::mat>(5, 5);
+  arma::mat w_tilde = arma::trans(arma::trans(w_g) * shiftMatrix);
+
+  arma::mat w_dash = arma::pow(w_tilde, gamma_t + 1);
+  w_dash = w_dash / arma::as_scalar(arma::sum(arma::sum(w_dash)));
+
+  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::trans(arma::normalise(cosSimilarity)) *
+    arma::normalise(weights)), 1, 1e-2);
 }
 
 /**

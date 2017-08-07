@@ -182,8 +182,6 @@ void GenerateReber(const arma::Mat<char>& transitions, std::string& reber)
     idx = arma::as_scalar(transitions.submat(idx, grammerIdx + 2, idx,
         grammerIdx + 2)) - '0';
   } while (idx != 0);
-
-  reber =  "BPTVVE";
 }
 
 /**
@@ -289,6 +287,7 @@ void GenerateNextEmbeddedReber(const arma::Mat<char>& transitions,
 /**
  * Train the specified network and the construct a Reber grammar dataset.
  */
+template<typename RecurrentLayerType>
 void ReberGrammarTestNetwork(bool embedded = false)
 {
   // Reber state transition matrix. (The last two columns are the indices to the
@@ -369,14 +368,12 @@ void ReberGrammarTestNetwork(bool embedded = false)
   {
     const size_t outputSize = 7;
     const size_t inputSize = 7;
-    const size_t rho = trainInput.at(0, 0).n_elem / inputSize;
 
-    RNN<MeanSquaredError<> > model(rho);
+    RNN<MeanSquaredError<> > model(5);
 
-    model.Add<IdentityLayer<> >();
-    model.Add<Linear<> >(inputSize, 14);
-    model.Add<LSTM<> >(14, 7, rho);
-    model.Add<Linear<> >(7, outputSize);
+    model.Add<Linear<> >(inputSize, 1);
+    model.Add<RecurrentLayerType>(1, 1, 10000);
+    model.Add<Linear<> >(1, outputSize);
     model.Add<SigmoidLayer<> >();
 
     StandardSGD opt(0.1, 2, -50000);
@@ -388,7 +385,7 @@ void ReberGrammarTestNetwork(bool embedded = false)
       {
         inputTemp = trainInput.at(0, j);
         labelsTemp = trainLabels.at(0, j);
-
+        model.Rho() = inputTemp.n_elem / inputSize;
         model.Train(inputTemp, labelsTemp, opt);
       }
     }
@@ -401,8 +398,8 @@ void ReberGrammarTestNetwork(bool embedded = false)
       arma::mat output, prediction;
       arma::mat input = testInput.at(0, i);
 
+      model.Rho() = input.n_elem / inputSize;
       model.Predict(input, prediction);
-      data::Binarize(prediction, output, 0.5);
 
       const size_t reberGrammerSize = 7;
       std::string inputReber = "";
@@ -410,9 +407,6 @@ void ReberGrammarTestNetwork(bool embedded = false)
       size_t reberError = 0;
       for (size_t j = 0; j < (output.n_elem / reberGrammerSize); j++)
       {
-        if (arma::sum(arma::sum(output.submat(j * reberGrammerSize, 0, (j + 1) *
-            reberGrammerSize - 1, 0))) != 1) break;
-
         char predictedSymbol, inputSymbol;
         std::string reberChoices;
 
@@ -451,17 +445,33 @@ void ReberGrammarTestNetwork(bool embedded = false)
 /**
  * Train the specified networks on a Reber grammar dataset.
  */
-BOOST_AUTO_TEST_CASE(ReberGrammarTest)
+BOOST_AUTO_TEST_CASE(LSTMReberGrammarTest)
 {
-  ReberGrammarTestNetwork(false);
+  ReberGrammarTestNetwork<LSTM<>>(false);
 }
 
 /**
  * Train the specified networks on an embedded Reber grammar dataset.
  */
-BOOST_AUTO_TEST_CASE(EmbeddedReberGrammarTest)
+BOOST_AUTO_TEST_CASE(LSTMEmbeddedReberGrammarTest)
 {
-  ReberGrammarTestNetwork(true);
+  ReberGrammarTestNetwork<LSTM<>>(true);
+}
+
+/**
+ * Train the specified networks on a Reber grammar dataset.
+ */
+BOOST_AUTO_TEST_CASE(GRUReberGrammarTest)
+{
+  ReberGrammarTestNetwork<GRU<>>(false);
+}
+
+/**
+ * Train the specified networks on an embedded Reber grammar dataset.
+ */
+BOOST_AUTO_TEST_CASE(GRUEmbeddedReberGrammarTest)
+{
+  ReberGrammarTestNetwork<GRU<>>(true);
 }
 
 /*
@@ -524,6 +534,7 @@ void GenerateDistractedSequence(arma::mat& input, arma::mat& output)
  * Train the specified network and the construct distracted sequence recall
  * dataset.
  */
+template<typename RecurrentLayerType>
 void DistractedSequenceRecallTestNetwork()
 {
   const size_t trainDistractedSequenceCount = 800;
@@ -572,9 +583,9 @@ void DistractedSequenceRecallTestNetwork()
   {
     RNN<MeanSquaredError<> > model(rho);
     model.Add<IdentityLayer<> >();
-    model.Add<Linear<> >(inputSize, 14);
-    model.Add<LSTM<> >(14, 7, rho);
-    model.Add<Linear<> >(7, outputSize);
+    model.Add<Linear<> >(inputSize, 4);
+    model.Add<RecurrentLayerType>(4, 4, rho);
+    model.Add<Linear<> >(4, outputSize);
     model.Add<SigmoidLayer<> >();
 
     StandardSGD opt(0.1, 2, -50000);
@@ -629,9 +640,18 @@ void DistractedSequenceRecallTestNetwork()
  * Train the specified networks on the Derek D. Monner's distracted sequence
  * recall task.
  */
-BOOST_AUTO_TEST_CASE(DistractedSequenceRecallTest)
+BOOST_AUTO_TEST_CASE(LSTMDistractedSequenceRecallTest)
 {
-  DistractedSequenceRecallTestNetwork();
+  DistractedSequenceRecallTestNetwork<LSTM<>>();
+}
+
+/**
+ * Train the specified networks on the Derek D. Monner's distracted sequence
+ * recall task.
+ */
+BOOST_AUTO_TEST_CASE(GRUDistractedSequenceRecallTest)
+{
+  DistractedSequenceRecallTestNetwork<GRU<>>();
 }
 
 BOOST_AUTO_TEST_SUITE_END();

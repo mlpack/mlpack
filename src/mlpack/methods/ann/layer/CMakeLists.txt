@@ -24,6 +24,8 @@ set(SOURCES
   elu_impl.hpp
   glimpse.hpp
   glimpse_impl.hpp
+  gru.hpp
+  gru_impl.hpp
   hard_tanh.hpp
   hard_tanh_impl.hpp
   join.hpp
@@ -49,6 +51,8 @@ set(SOURCES
   mean_pooling_impl.hpp
   mean_squared_error.hpp
   mean_squared_error_impl.hpp
+  memory_head.hpp
+  memory_head_impl.hpp
   multiply_constant.hpp
   multiply_constant_impl.hpp
   negative_log_likelihood.hpp
