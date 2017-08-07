@@ -36,7 +36,7 @@ BOOST_AUTO_TEST_CASE(CVFunctionTest)
 {
   arma::mat xs = arma::randn(5, 100);
   arma::vec beta = arma::randn(5, 1);
-  arma::mat ys = beta.t() * xs + 0.1 * arma::randn(5, 1);
+  arma::rowvec ys = beta.t() * xs + 0.1 * arma::randn(1, 100);
 
   SimpleCV<LARS, MSE> cv(0.2, xs, ys);
 
