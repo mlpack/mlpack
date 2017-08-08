@@ -15,3 +15,5 @@ endforeach()
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_subdirectory(tasks)
+# Add directory name to sources.
+set(MLPACK_SRCS ${MLPACK_SRCS} PARENT_SCOPE)

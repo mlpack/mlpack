@@ -948,7 +948,8 @@ BOOST_AUTO_TEST_CASE(SimpleCrossEntropyErrorLayerTest)
 
   // Test the Backward function.
   module.Backward(std::move(input1), std::move(target1), std::move(output));
-  for (double el : output) {
+  for (double el : output)
+  {
     // For the 0.5 constant vector we should get 1 / (1 - 0.5) = 2 everywhere.
     BOOST_REQUIRE_SMALL(el - 2, 5e-6);
   }
@@ -956,7 +957,8 @@ BOOST_AUTO_TEST_CASE(SimpleCrossEntropyErrorLayerTest)
   BOOST_REQUIRE_EQUAL(output.n_cols, input1.n_cols);
 
   module.Backward(std::move(input2), std::move(target2), std::move(output));
-  for (size_t i = 0; i < 8; ++i) {
+  for (size_t i = 0; i < 8; ++i)
+  {
     double el = output.at(0, i);
     if (input2.at(i) == 0)
       BOOST_REQUIRE_SMALL(el - 1, 2e-6);

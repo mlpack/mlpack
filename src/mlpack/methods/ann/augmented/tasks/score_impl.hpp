@@ -21,21 +21,29 @@ namespace augmented /* Augmented neural network */ {
 namespace scorers /* Scoring utilities for augmented */ {
 
 template<typename MatType>
-double SequencePrecision(arma::field<MatType> trueOutputs,
-                         arma::field<MatType> predOutputs)
+const double SequencePrecision(arma::field<MatType> trueOutputs,
+                               arma::field<MatType> predOutputs,
+                               double tol)
 {
   double score = 0;
   size_t testSize = trueOutputs.n_elem;
-  assert(testSize == predOutputs.n_elem);
+  if (trueOutputs.n_elem != predOutputs.n_elem)
+  {
+    std::ostringstream oss;
+    oss << "SequencePrecision(): number of predicted sequences ("
+        << predOutputs.n_elem << ") should be equal to the number "
+        << "of ground-truth sequences ("
+        << trueOutputs.n_elem << ")"
+        << std::endl;
+    throw std::invalid_argument(oss.str());
+  }
 
   for (size_t i = 0; i < testSize; i++)
   {
-    MatType delta = arma::abs(trueOutputs.at(i) - predOutputs.at(i));
-    delta.reshape(delta.n_elem, 1);
-    arma::vec deltaVec = arma::conv_to<arma::vec>::from(delta);
-    double maxDelta = arma::max(deltaVec);
-    double eps = 1e-4;
-    if (maxDelta < eps)
+    arma::vec delta = arma::vectorise(arma::abs(
+      trueOutputs.at(i) - predOutputs.at(i)));
+    double maxDelta = arma::max(delta);
+    if (maxDelta < tol)
     {
       score++;
     }

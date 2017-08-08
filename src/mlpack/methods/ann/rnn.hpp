@@ -210,7 +210,6 @@ class RNN
   size_t Rho() const { return rho; }
   //! Modify the maximum number of steps to backpropagate through time (BPTT).
   size_t& Rho() { return rho; }
-
  private:
   // Helper functions.
   /**

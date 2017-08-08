@@ -100,7 +100,8 @@ class SphericalKernel
   {
     return (t <= bandwidth) ? 1.0 : 0.0;
   }
-  double Gradient(double t) {
+  double Gradient(double t)
+  {
     return t == bandwidth ? arma::datum::nan : 0.0;
   }
 
