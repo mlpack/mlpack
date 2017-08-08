@@ -58,8 +58,7 @@ template<typename MLAlgorithm,
          typename WeightsType =
              typename MetaInfoExtractor<MLAlgorithm, MatType,
                  PredictionsType>::WeightsType>
-class KFoldCV :
-    private CVBase<MLAlgorithm, MatType, PredictionsType, WeightsType>
+class KFoldCV
 {
  public:
   /**
@@ -168,6 +167,9 @@ class KFoldCV :
  private:
   //! A short alias for CVBase.
   using Base = CVBase<MLAlgorithm, MatType, PredictionsType, WeightsType>;
+
+  //! An auxiliary object.
+  Base base;
 
   //! The number of bins in the dataset.
   const size_t k;

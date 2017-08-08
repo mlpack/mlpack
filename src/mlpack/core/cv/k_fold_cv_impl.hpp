@@ -127,7 +127,7 @@ KFoldCV<MLAlgorithm,
                               const size_t k,
                               const MatType& xs,
                               const PredictionsType& ys) :
-  Base(std::move(base)), k(k)
+  base(std::move(base)), k(k)
 {
   if (k < 2)
     throw std::invalid_argument("KFoldCV: k should not be less than 2");
@@ -230,7 +230,7 @@ double KFoldCV<MLAlgorithm,
 
   for (size_t i = 0; i < k; ++i)
   {
-    MLAlgorithm&& model  = this->Train(GetTrainingSubset(xs, i),
+    MLAlgorithm&& model  = base.Train(GetTrainingSubset(xs, i),
         GetTrainingSubset(ys, i), args...);
     evaluations(i) = Metric::Evaluate(model, GetValidationSubset(xs, i),
         GetValidationSubset(ys, i));
@@ -258,9 +258,9 @@ double KFoldCV<MLAlgorithm,
   for (size_t i = 0; i < k; ++i)
   {
     MLAlgorithm&& model = (weights.n_elem > 0) ?
-        this->Train(GetTrainingSubset(xs, i), GetTrainingSubset(ys, i),
+        base.Train(GetTrainingSubset(xs, i), GetTrainingSubset(ys, i),
             GetTrainingSubset(weights, i), args...) :
-        this->Train(GetTrainingSubset(xs, i), GetTrainingSubset(ys, i),
+        base.Train(GetTrainingSubset(xs, i), GetTrainingSubset(ys, i),
             args...);
     evaluations(i) = Metric::Evaluate(model, GetValidationSubset(xs, i),
         GetValidationSubset(ys, i));
