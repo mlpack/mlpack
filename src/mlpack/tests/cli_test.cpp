@@ -52,6 +52,8 @@ BOOST_FIXTURE_TEST_SUITE(CLITest, CLITestDestroyer);
  */
 void AddRequiredCLIOptions()
 {
+  CLI::ClearSettings();
+
   // These will register with CLI immediately.
   CLIOption<bool> help(false, "help", "Default help info.", "h", "bool");
   CLIOption<string> info("", "info", "Get help on a specific module or option.",
@@ -457,6 +459,7 @@ BOOST_AUTO_TEST_CASE(OutputUnsignedColParamTest)
   CLI::GetParam<arma::Col<size_t>>("vector") = dataset;
 
   // Write the file.
+  EndProgram();
   CLI::ClearSettings();
   AddRequiredCLIOptions();
 
