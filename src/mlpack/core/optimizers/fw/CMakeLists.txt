@@ -1,4 +1,5 @@
 set(SOURCES
+  atoms.hpp
   frank_wolfe.hpp
   frank_wolfe_impl.hpp
   constr_lpball.hpp
