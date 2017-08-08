@@ -215,9 +215,15 @@ BOOST_AUTO_TEST_CASE(BlindHAMUnitTest) {
   // Embed model is just an identity function.
   FFN<MeanSquaredError<> > embedModel;
   embedModel.Add<Linear<> >(nDim, nDim);
-  //embedModel.Parameters().zeros();
-  std::cerr << embedModel.Parameters() << "\n";
-  embedModel.Parameters() = arma::eye(nDim, nDim);
+  embedModel.ResetParameters();
+  // Identity = apply identity linear transformation + add zero bias.
+  embedModel.Parameters().rows(0, nDim * nDim - 1) =
+      arma::vectorise(arma::eye(nDim, nDim));
+  embedModel.Parameters().rows(nDim * nDim, nDim * nDim + nDim - 1) =
+      arma::zeros(nDim);
+  arma::mat embedPredictors = arma::reshape(arma::mat("1 2 3 4"), nDim, 1), embedResponses;
+  embedModel.Predict(embedPredictors, embedResponses);
+  std::cerr << "\n" << embedResponses << "\n";
   // Join function is mean of its two vector inputs.
   FFN<MeanSquaredError<> > joinModel;
   embedModel.Add<Linear<> >(2 * nDim, nDim);
