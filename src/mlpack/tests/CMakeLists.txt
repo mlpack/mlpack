@@ -33,6 +33,7 @@ add_executable(mlpack_test
   gmm_test.cpp
   gradient_clipping_test.cpp
   gradient_descent_test.cpp
+  ham_test.cpp
   hmm_test.cpp
   hoeffding_tree_test.cpp
   hyperplane_test.cpp
