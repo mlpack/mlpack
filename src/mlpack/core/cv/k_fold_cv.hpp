@@ -23,12 +23,8 @@ namespace cv {
  * classification algorithms.
  *
  * To construct a KFoldCV object you need to pass the k parameter and arguments
- * that specify data. For the latter see the CVBase constructors as a reference
- * - the CVBase constructors take exactly the same arguments as ones that are
- * supposed to be passed after the k parameter in the KFoldCV constructor.
- *
- * For example, you can run 10-fold cross-validation for SoftmaxRegression in
- * the following way.
+ * that specify data. For example, you can run 10-fold cross-validation for
+ * SoftmaxRegression in the following way.
  *
  * @code
  * // 100-point 5-dimensional random dataset.
@@ -67,14 +63,95 @@ class KFoldCV :
 {
  public:
   /**
-   * Construct an object for running k-fold cross-validation.
+   * This constructor can be used for regression algorithms and for binary
+   * classification algorithms.
    *
    * @param k Number of folds (should be at least 2).
-   * @param args Basic constructor arguments for MLAlgortithm (see the CVBase
-   *     constructors for reference).
+   * @param xs Data points to cross-validate on.
+   * @param ys Predictions (labels for classification algorithms and responses
+   *     for regression algorithms) for each data point.
    */
-  template<typename... CVBaseArgs>
-  KFoldCV(const size_t k, const CVBaseArgs&... args);
+  KFoldCV(const size_t k,
+          const MatType& xs,
+          const PredictionsType& ys);
+
+  /**
+   * This constructor can be used for multiclass classification algorithms.
+   *
+   * @param k Number of folds (should be at least 2).
+   * @param xs Data points to cross-validate on.
+   * @param ys Labels for each data point.
+   * @param numClasses Number of classes in the dataset.
+   */
+  KFoldCV(const size_t k,
+          const MatType& xs,
+          const PredictionsType& ys,
+          const size_t numClasses);
+
+  /**
+   * This constructor can be used for multiclass classification algorithms that
+   * can take a data::DatasetInfo parameter.
+   *
+   * @param k Number of folds (should be at least 2).
+   * @param xs Data points to cross-validate on.
+   * @param datasetInfo Type information for each dimension of the dataset.
+   * @param ys Labels for each data point.
+   * @param numClasses Number of classes in the dataset.
+   */
+  KFoldCV(const size_t k,
+          const MatType& xs,
+          const data::DatasetInfo& datasetInfo,
+          const PredictionsType& ys,
+          const size_t numClasses);
+
+  /**
+   * This constructor can be used for regression and binary classification
+   * algorithms that support weighted learning.
+   *
+   * @param k Number of folds (should be at least 2).
+   * @param xs Data points to cross-validate on.
+   * @param ys Predictions (labels for classification algorithms and responses
+   *     for regression algorithms) for each data point.
+   * @param weights Observation weights (for boosting).
+   */
+  KFoldCV(const size_t k,
+          const MatType& xs,
+          const PredictionsType& ys,
+          const WeightsType& weights);
+
+  /**
+   * This constructor can be used for multiclass classification algorithms that
+   * support weighted learning.
+   *
+   * @param k Number of folds (should be at least 2).
+   * @param xs Data points to cross-validate on.
+   * @param ys Labels for each data point.
+   * @param numClasses Number of classes in the dataset.
+   * @param weights Observation weights (for boosting).
+   */
+  KFoldCV(const size_t k,
+          const MatType& xs,
+          const PredictionsType& ys,
+          const size_t numClasses,
+          const WeightsType& weights);
+
+  /**
+   * This constructor can be used for multiclass classification algorithms that
+   * can take a data::DatasetInfo parameter and support weighted learning.
+   *
+   * @param k Number of folds (should be at least 2).
+   * @param xs Data points to cross-validate on.
+   * @param datasetInfo Type information for each dimension of the dataset.
+   * @param ys Labels for each data point.
+   * @param numClasses Number of classes in the dataset.
+   * @param weights Observation weights (for boosting).
+   */
+  KFoldCV(const size_t k,
+          const MatType& xs,
+          const data::DatasetInfo& datasetInfo,
+          const PredictionsType& ys,
+          const size_t numClasses,
+          const WeightsType& weights);
 
   /**
    * Run k-fold cross-validation.
@@ -112,21 +189,23 @@ class KFoldCV :
   std::unique_ptr<MLAlgorithm> modelPtr;
 
   /**
-   * Initialize without weights.
+   * Assert the k parameter and data consistency and initialize fields required
+   * for running k-fold cross-validation.
    */
-  template<typename DataArgsTupleT,
-           typename = typename std::enable_if<
-               std::tuple_size<DataArgsTupleT>::value == 2>::type>
-  void Init(const DataArgsTupleT& dataArgsTuple);
+  KFoldCV(Base&& base,
+          const size_t k,
+          const MatType& xs,
+          const PredictionsType& ys);
 
   /**
-   * Initialize with weights.
+   * Assert the k parameter and data consistency and initialize fields required
+   * for running k-fold cross-validation in the case of weighted learning.
    */
-  template<typename DataArgsTupleT,
-           typename = typename std::enable_if<
-               std::tuple_size<DataArgsTupleT>::value == 3>::type,
-           typename = void>
-  void Init(const DataArgsTupleT& dataArgsTuple);
+  KFoldCV(Base&& base,
+          const size_t k,
+          const MatType& xs,
+          const PredictionsType& ys,
+          const WeightsType& weights);
 
   /**
    * Initialize the given destination matrix with the given source joined with

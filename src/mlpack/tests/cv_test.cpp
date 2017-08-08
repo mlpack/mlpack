@@ -340,18 +340,16 @@ BOOST_AUTO_TEST_CASE(KFoldCVAccuracyTest)
   // it is tested separately.
   arma::mat data("0 1 2 3 100 101 102 103 104 5");
   arma::Row<size_t> labels("0 0 0 0 1 1 1 1 1 1");
-  // This parameter should be passed into the cross-validation constructor
-  // after merging #1038.
   size_t numClasses = 2;
 
   // 10-fold cross-validation.
-  KFoldCV<NaiveBayesClassifier<>, Accuracy> cv(10, data, labels);
+  KFoldCV<NaiveBayesClassifier<>, Accuracy> cv(10, data, labels, numClasses);
 
   // We should succeed in classifying separately the first nine samples, and
   // fail with the remaining one.
   double expectedAccuracy = (9 * 1.0 + 0.0) / 10;
 
-  BOOST_REQUIRE_CLOSE(cv.Evaluate(numClasses), expectedAccuracy, 1e-5);
+  BOOST_REQUIRE_CLOSE(cv.Evaluate(), expectedAccuracy, 1e-5);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

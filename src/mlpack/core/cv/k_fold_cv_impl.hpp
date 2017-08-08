@@ -20,19 +20,143 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename... CVBaseArgs>
 KFoldCV<MLAlgorithm,
         Metric,
         MatType,
         PredictionsType,
         WeightsType>::KFoldCV(const size_t k,
-                              const CVBaseArgs&... args) :
-    Base(args...), k(k)
+                              const MatType& xs,
+                              const PredictionsType& ys) :
+    KFoldCV(Base(), k, xs, ys)
+{ /* Nothing left to do. */ }
+
+template<typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+KFoldCV<MLAlgorithm,
+        Metric,
+        MatType,
+        PredictionsType,
+        WeightsType>::KFoldCV(const size_t k,
+                              const MatType& xs,
+                              const PredictionsType& ys,
+                              const size_t numClasses) :
+    KFoldCV(Base(numClasses), k, xs, ys)
+{ /* Nothing left to do. */ }
+
+template<typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+KFoldCV<MLAlgorithm,
+        Metric,
+        MatType,
+        PredictionsType,
+        WeightsType>::KFoldCV(const size_t k,
+                              const MatType& xs,
+                              const data::DatasetInfo& datasetInfo,
+                              const PredictionsType& ys,
+                              const size_t numClasses) :
+    KFoldCV(Base(datasetInfo, numClasses), k, xs, ys)
+{ /* Nothing left to do. */ }
+
+template<typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+KFoldCV<MLAlgorithm,
+        Metric,
+        MatType,
+        PredictionsType,
+        WeightsType>::KFoldCV(const size_t k,
+                              const MatType& xs,
+                              const PredictionsType& ys,
+                              const WeightsType& weights) :
+    KFoldCV(Base(), k, xs, ys, weights)
+{ /* Nothing left to do. */ }
+
+template<typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+KFoldCV<MLAlgorithm,
+        Metric,
+        MatType,
+        PredictionsType,
+        WeightsType>::KFoldCV(const size_t k,
+                              const MatType& xs,
+                              const PredictionsType& ys,
+                              const size_t numClasses,
+                              const WeightsType& weights) :
+    KFoldCV(Base(numClasses), k, xs, ys, weights)
+{ /* Nothing left to do. */ }
+
+template<typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+KFoldCV<MLAlgorithm,
+        Metric,
+        MatType,
+        PredictionsType,
+        WeightsType>::KFoldCV(const size_t k,
+                              const MatType& xs,
+                              const data::DatasetInfo& datasetInfo,
+                              const PredictionsType& ys,
+                              const size_t numClasses,
+                              const WeightsType& weights) :
+    KFoldCV(Base(datasetInfo, numClasses), k, xs, ys, weights)
+{ /* Nothing left to do. */ }
+
+template<typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+KFoldCV<MLAlgorithm,
+        Metric,
+        MatType,
+        PredictionsType,
+        WeightsType>::KFoldCV(Base&& base,
+                              const size_t k,
+                              const MatType& xs,
+                              const PredictionsType& ys) :
+  Base(std::move(base)), k(k)
 {
   if (k < 2)
     throw std::invalid_argument("KFoldCV: k should not be less than 2");
 
-  Init(Base::ExtractDataArgs(args...));
+  Base::AssertDataConsistency(xs, ys);
+
+  InitKFoldCVMat(xs, this->xs);
+  InitKFoldCVMat(ys, this->ys);
+}
+
+template<typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+KFoldCV<MLAlgorithm,
+        Metric,
+        MatType,
+        PredictionsType,
+        WeightsType>::KFoldCV(Base&& base,
+                              const size_t k,
+                              const MatType& xs,
+                              const PredictionsType& ys,
+                              const WeightsType& weights) :
+    KFoldCV(std::move(base), k, xs, ys)
+{
+  Base::AssertWeightsConsistency(xs, weights);
+
+  InitKFoldCVMat(weights, this->weights);
 }
 
 template<typename MLAlgorithm,
@@ -73,46 +197,6 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename DataArgsTupleT,
-         typename>
-void KFoldCV<MLAlgorithm,
-             Metric,
-             MatType,
-             PredictionsType,
-             WeightsType>::Init(const DataArgsTupleT& dataArgsTuple)
-{
-  InitKFoldCVMat(std::get<0>(dataArgsTuple), xs);
-  InitKFoldCVMat(std::get<1>(dataArgsTuple), ys);
-
-  Base::AssertDataConsistency(xs, ys);
-}
-
-template<typename MLAlgorithm,
-         typename Metric,
-         typename MatType,
-         typename PredictionsType,
-         typename WeightsType>
-template<typename DataArgsTupleT,
-         typename,
-         typename>
-void KFoldCV<MLAlgorithm,
-             Metric,
-             MatType,
-             PredictionsType,
-             WeightsType>::Init(const DataArgsTupleT& dataArgsTuple)
-{
-  InitKFoldCVMat(std::get<0>(dataArgsTuple), xs);
-  InitKFoldCVMat(std::get<1>(dataArgsTuple), ys);
-  InitKFoldCVMat(std::get<2>(dataArgsTuple), weights);
-
-  Base::AssertDataConsistency(xs, ys, weights);
-}
-
-template<typename MLAlgorithm,
-         typename Metric,
-         typename MatType,
-         typename PredictionsType,
-         typename WeightsType>
 template<typename SourceType, typename DestinationType>
 void KFoldCV<MLAlgorithm,
              Metric,
@@ -146,10 +230,12 @@ double KFoldCV<MLAlgorithm,
 
   for (size_t i = 0; i < k; ++i)
   {
-    modelPtr = this->Train(GetTrainingSubset(xs, i), GetTrainingSubset(ys, i),
-        args...);
-    evaluations(i) = Metric::Evaluate(*modelPtr, GetValidationSubset(xs, i),
+    MLAlgorithm&& model  = this->Train(GetTrainingSubset(xs, i),
+        GetTrainingSubset(ys, i), args...);
+    evaluations(i) = Metric::Evaluate(model, GetValidationSubset(xs, i),
         GetValidationSubset(ys, i));
+    if (i == k - 1)
+      modelPtr.reset(new MLAlgorithm(std::move(model)));
   }
 
   return arma::mean(evaluations);
@@ -171,14 +257,15 @@ double KFoldCV<MLAlgorithm,
 
   for (size_t i = 0; i < k; ++i)
   {
-    if (weights.n_elem > 0)
-      modelPtr = this->Train(GetTrainingSubset(xs, i), GetTrainingSubset(ys, i),
-          GetTrainingSubset(weights, i), args...);
-    else
-      modelPtr = this->Train(GetTrainingSubset(xs, i), GetTrainingSubset(ys, i),
-          args...);
-    evaluations(i) = Metric::Evaluate(*modelPtr, GetValidationSubset(xs, i),
+    MLAlgorithm&& model = (weights.n_elem > 0) ?
+        this->Train(GetTrainingSubset(xs, i), GetTrainingSubset(ys, i),
+            GetTrainingSubset(weights, i), args...) :
+        this->Train(GetTrainingSubset(xs, i), GetTrainingSubset(ys, i),
+            args...);
+    evaluations(i) = Metric::Evaluate(model, GetValidationSubset(xs, i),
         GetValidationSubset(ys, i));
+    if (i == k - 1)
+      modelPtr.reset(new MLAlgorithm(std::move(model)));
   }
 
   return arma::mean(evaluations);
