@@ -36,7 +36,7 @@ class UpdateSpan
    *
    * @param function Function to be optimized in FrankWolfe algorithm.
    */
-  UpdateSpan()
+  UpdateSpan(bool isPrune = false) : isPrune(isPrune)
   { /* Do nothing. */ }
 
   /**
@@ -55,6 +55,10 @@ class UpdateSpan
               arma::mat& newCoords,
               const size_t numIter)
   {
+    double oldF;
+    if (isPrune)
+      oldF = function.Evaluate(oldCoords);
+
     // Add new atom into soluton space.
     atoms.AddAtom(s);
 
@@ -65,10 +69,20 @@ class UpdateSpan
     // x has coords of only the current atoms, recover the solution
     // to the original size.
     atoms.RecoverVector(newCoords);
+
+    // Prune the support.
+    if (isPrune)
+    {
+      double F = 0.25 * oldF + 0.75 * function.Evaluate(newCoords);
+      atoms.PruneSupport(F, function);
+      atoms.RecoverVector(newCoords);
+    }
+
   }
 
  private:
   Atoms atoms;
+  bool isPrune;
 }; // class UpdateSpan
 
 } // namespace optimization

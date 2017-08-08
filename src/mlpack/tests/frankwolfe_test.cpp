@@ -93,6 +93,35 @@ BOOST_AUTO_TEST_CASE(regularizedOMP)
   }
 }
 
+/**
+ * Simple test of Orthogonal Matching Pursuit with support prune.
+ */
+BOOST_AUTO_TEST_CASE(PruneSupportOMP)
+{
+  // The dictionary is input as columns of A.
+  int k = 3;
+  mat B1 = {{1, 0, 1}, {0, 1, 1}, {0, 0, 1}};
+  mat B2 = randu(k, k);
+  mat A = join_horiz(B1, B2); // The dictionary is input as columns of A.
+  vec b = {1, 1, 0}; // Vector to be sparsely approximated.
+
+  FuncSq f(A, b);
+  ConstrLpBallSolver linearConstrSolver(1);
+  UpdateSpan updateRule(true);
+
+  OMP s(linearConstrSolver, updateRule);
+  
+  vec coordinates = zeros<vec>(k + 3);
+  double result = s.Optimize(f, coordinates);
+  
+  BOOST_REQUIRE_SMALL(result, 1e-10);
+  BOOST_REQUIRE_SMALL(coordinates[0] - 1, 1e-10);
+  BOOST_REQUIRE_SMALL(coordinates[1] - 1, 1e-10);
+  for (int ii = 2; ii < (k + 3); ii++)
+  {
+    BOOST_REQUIRE_SMALL(coordinates[ii], 1e-10);
+  }
+}
 
 
 /**

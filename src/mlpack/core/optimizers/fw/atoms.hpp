@@ -12,6 +12,7 @@
 #define MLPACK_CORE_OPTIMIZERS_FW_ATOMS_HPP
 
 #include <mlpack/prereqs.hpp>
+#include "func_sq.hpp"
 
 namespace mlpack {
 namespace optimization {
@@ -36,15 +37,72 @@ class Atoms
     }
   }
   
-  /**
-   * Recover the solution coordinate from the coefficients of current atoms.
-   *
-   * @param y output recovered vector.
-   */
+  
+  //! Recover the solution coordinate from the coefficients of current atoms.
   void RecoverVector(arma::mat& x)
   {
     x = currentAtoms * currentCoeffs;
   }
+
+  /** 
+   * Prune the support, delete previous atoms if they don't contribute much.
+   * See Algorithm 2 of paper:
+   * @code
+   * @article{RaoShaWri:2015Forward--backward,
+   *    Author = {Rao, Nikhil and Shah, Parikshit and Wright, Stephen},
+   *    Journal = {IEEE Transactions on Signal Processing},
+   *    Number = {21},
+   *    Pages = {5798--5811},
+   *    Publisher = {IEEE},
+   *    Title = {Forward--backward greedy algorithms for atomic norm regularization},
+   *    Volume = {63},
+   *    Year = {2015}
+   * }
+   * @endcode
+   *
+   * @param F thresholding number.
+   * @param function function to be optimized.
+   */
+  void PruneSupport(const double F, FuncSq& function)
+  {
+    arma::mat atomSqTerm = function.MatrixA() * currentAtoms;
+    atomSqTerm = sum(square(atomSqTerm), 0);
+    atomSqTerm = 0.5 * atomSqTerm.t() % square(currentCoeffs);
+
+    while (true)
+    {
+      // Solve for current gradient.
+      arma::mat x;
+      RecoverVector(x);
+      arma::mat gradient(size(x));
+      function.Gradient(x, gradient);
+
+      // Find possible atom to be deleted.
+      arma::vec gap = atomSqTerm - currentCoeffs % trans(gradient.t() * currentAtoms);
+      arma::uword ind;
+      gap.min(ind);
+
+      // Try deleting the atom.
+      arma::mat newAtoms = currentAtoms;
+      newAtoms.shed_col(ind);
+      // Recalculate the coefficients.
+      arma::vec newCoeffs = solve(function.MatrixA() * newAtoms, function.Vectorb());
+      // Evaluate the function again.
+      double Fnew = function.Evaluate(newAtoms * newCoeffs);
+      
+      if (Fnew > F)
+        // Should not delete the atom.
+        break;
+      else {
+        // Delete the atom from current atoms.
+        currentAtoms = newAtoms;
+        currentCoeffs = newCoeffs;
+        atomSqTerm.shed_row(ind);
+      } // else
+    } // while
+  }
+
+
 
 //  template<typename FunctionType>
 //  void ProjectedGradientEnhancement(double tau,
@@ -79,44 +137,6 @@ class Atoms
 //    
 //    
 //  }
-  
-//  //! Prune the support, delete previous atoms if not necessary.
-//  void PruneSupport(const double F)
-//  {
-//    arma::mat newAtoms = currentAtoms;
-//    arma::vec newCoeff = currentCoeffs;
-//    arma::vec b = function.Vectorb();
-//    
-//    bool flag = true;
-//    
-//    while (flag)
-//    {
-//      // Solve for current gradient
-//      arma::vec g;
-//      function.GradientFunc(new_coeff, g, new_atoms, b);
-//      
-//      // Find possible atom to be deleted
-//      arma::vec v = sum(new_atoms % new_atoms, 0);
-//      v = 0.5*v.t() % new_coeff % new_coeff - new_coeff % g;
-//      arma::uword ind = v.index_min();
-//      
-//      // Try deleting the atom.
-//      new_atoms.shed_row(ind);
-//      new_indices.shed_row(ind);
-//      new_coeff = solve(new_atoms, b);  // recalculate the coeff
-//      double F_new = function.EvaluateFunc(new_coeff, new_atoms, b);
-//      
-//      if (F_new > F)
-//        // should not delete the atom
-//        flag = false;
-//      else {
-//        // delete the atom from current atoms
-//        atoms_current = new_atoms;
-//        current_indices = new_indices;
-//        x = new_coeff;
-//      }
-//    }
-//  }
 
   
   //! Get the current atom coefficients.
@@ -128,16 +148,14 @@ class Atoms
   const arma::mat& CurrentAtoms() const { return currentAtoms; }
   //! Modify the current atoms.
   arma::mat& CurrentAtoms() { return currentAtoms; }
-  
+
  private:
   //! Coefficients of current atoms.
   arma::vec currentCoeffs;
-  
+
   //! Current atoms in the solution space.
   arma::mat currentAtoms;
-  
-  //! Flag for support prune.
-  bool isPrune = false;
+
 
   // Projection to L1 ball with norm tau.
 //  void ProjectionToL1(const double tau)
