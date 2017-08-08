@@ -328,6 +328,10 @@ BOOST_AUTO_TEST_CASE(KFoldCVMSETest)
       double((1 - 0) * (1 - 0) + (3 - 1) * (3 - 1)) / 2 * 2 / 2;
 
   BOOST_REQUIRE_CLOSE(cv.Evaluate(), expectedMSE, 1e-5);
+
+  // Assert we can access a trained model without the exception of
+  // uninitialization.
+  cv.Model();
 }
 
 /**
@@ -349,6 +353,10 @@ BOOST_AUTO_TEST_CASE(KFoldCVAccuracyTest)
   double expectedAccuracy = (9 * 1.0 + 0.0) / 10;
 
   BOOST_REQUIRE_CLOSE(cv.Evaluate(), expectedAccuracy, 1e-5);
+
+  // Assert we can access a trained model without the exception of
+  // uninitialization.
+  cv.Model();
 }
 
 BOOST_AUTO_TEST_SUITE_END();
