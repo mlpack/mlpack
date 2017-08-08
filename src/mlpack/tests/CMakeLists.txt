@@ -10,6 +10,7 @@ add_executable(mlpack_test
   ann_layer_test.cpp
   armadillo_svd_test.cpp
   arma_extend_test.cpp
+  async_learning_test.cpp
   aug_lagrangian_test.cpp
   augmented_rnns_tasks_test.cpp
   binarize_test.cpp
@@ -133,6 +134,7 @@ add_custom_command(TARGET mlpack_test
 
 # The list of long running parallel tests
 set(parallel_tests
+  "AsyncLearningTest"
   "SdpPrimalDualTest;SVDIncrementalTest;SVDBatchTest;"
   "LocalCoordinateCodingTest;FeedForwardNetworkTest;SparseAutoencoderTest;"
   "GMMTest;CFTest;ConvolutionalNetworkTest;HMMTest;LARSTest;"
