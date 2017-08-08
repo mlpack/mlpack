@@ -21,8 +21,7 @@ namespace augmented /* Augmented neural network */ {
 
 class HAMUnit {
  public:
-  HAMUnit(int memorySize,
-          LayerTypes& controller,
+  HAMUnit(size_t memorySize,
           LayerTypes& embed,
           LayerTypes& join,
           LayerTypes& search,
@@ -40,6 +39,9 @@ class HAMUnit {
 
   void Evaluate(const arma::mat& predictors,
                 const arma::mat& responses);
+
+  TreeMemory<double, LayerTypes, LayerTypes> Memory() const { return memory; }
+  TreeMemory<double, LayerTypes, LayerTypes>& Memory() { return memory; }
  private:
   arma::mat Attention() const;
 
@@ -53,11 +55,10 @@ class HAMUnit {
                 arma::mat&& error,
                 arma::mat&& gradient);
 
-  TreeMemory<double, JoinTransformationType, WriteTransformationType> memory;
+  TreeMemory<double, LayerTypes, LayerTypes> memory;
   size_t memorySize;
   LayerTypes search;
   LayerTypes embed;
-  LayerTypes controller;
 
   // Currently prcessed sequence.
   arma::mat sequence;

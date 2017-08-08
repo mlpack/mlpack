@@ -19,11 +19,14 @@
 #include <mlpack/core/data/binarize.hpp>
 
 #include <mlpack/methods/ann/augmented/tree_memory.hpp>
+#include <mlpack/methods/ann/layer/layer_types.hpp>
+#include <mlpack/methods/ann/ffn.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
 using namespace mlpack::ann::augmented;
+using namespace mlpack::ann;
 
 template<typename T>
 struct ReplaceWriter
@@ -205,6 +208,35 @@ BOOST_AUTO_TEST_CASE(TreeMemoryTestArbitrary) {
       mem.Root()
     );
   }
+}
+
+BOOST_AUTO_TEST_CASE(BlindHAMUnitTest) {
+  size_t nDim = 4, seqLen = 4;
+  // Embed model is just an identity function.
+  FFN<MeanSquaredError<> > embedModel;
+  embedModel.Add<Linear<> >(nDim, nDim);
+  embedModel.Parameters().zeros();
+  std::cerr << embedModel.Parameters() << "\n";
+  embedModel.Parameters() = arma::eye(nDim, nDim);
+  // Join function is mean of its two vector inputs.
+  FFN<MeanSquaredError<> > joinModel;
+  embedModel.Add<Linear<> >(2 * nDim, nDim);
+  embedModel.Parameters().cols(0, nDim - 1) = 0.5 * arma::eye(nDim, nDim);
+  embedModel.Parameters().cols(nDim, 2 * nDim - 1) =
+      0.5 * arma::eye(nDim, nDim);
+  // Write function is replacing its old input with its new input.
+  FFN<MeanSquaredError<> > writeModel;
+  embedModel.Add<Linear<> >(2 * nDim, nDim);
+  embedModel.Parameters().cols(0, nDim - 1) = 0.5 * arma::zeros(nDim, nDim);
+  embedModel.Parameters().cols(nDim, 2 * nDim - 1) =
+      0.5 * arma::eye(nDim, nDim);
+  // Search model is a constant model that ignores its input and returns 1 / 3.
+  FFN<MeanSquaredError<> > searchModel;
+  embedModel.Add<Linear<> >(2 * nDim, 1);
+  embedModel.Parameters().cols(0, nDim - 1) = 0.5 * arma::zeros(nDim, nDim);
+  embedModel.Parameters().cols(nDim, 2 * nDim - 1) =
+      0.5 * arma::eye(nDim, nDim);
+  embedModel.Add<SigmoidLayer<> >();
 }
 
 BOOST_AUTO_TEST_SUITE_END();

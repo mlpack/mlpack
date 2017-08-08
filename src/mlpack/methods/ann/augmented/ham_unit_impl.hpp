@@ -18,14 +18,12 @@ namespace mlpack {
 namespace ann /* Artificial Neural Network */ {
 namespace augmented /* Augmented neural network */ {
 
-HAMUnit::HAMUnit(int memorySize,
-                 C& controller,
-                 E& embed,
-                 J& join,
-                 S& search,
-                 W& write)
-  : memorySize(memorySize),
-    search(search), embed(embed), controller(controller), t(0)
+HAMUnit::HAMUnit(size_t memorySize,
+                 LayerTypes& embed,
+                 LayerTypes& join,
+                 LayerTypes& search,
+                 LayerTypes& write)
+  : memorySize(memorySize), search(search), embed(embed), t(0)
 {
   memory = TreeMemory<double, J, W>(memorySize, join, write);
 }
@@ -39,11 +37,11 @@ arma::vec HAMUnit::Attention() const
   for (size_t node = 1; node < nodesCnt; ++node) {
     size_t parent = memory.Parent(node);
     bool dir = node == memory.Left(parent);
-    arma::vec h(hController.n_elem + memory.GetCell(parent).n_elem);
+    arma::vec h(hController.n_elem + memory.Cell(parent).n_elem);
     h.rows(0, hController.n_elem - 1) = hController;
     h.rows(hController.n_elem,
-           hController.n_elem + memory.GetCell(parent).n_elem - 1)
-        = memory.GetCell(parent);
+           hController.n_elem + memory.Cell(parent).n_elem - 1)
+        = memory.Cell(parent);
     double prob = search.Forward(h);
     if (!dir) prob = 1. - prob;
     probabilities(node) = prob * probabilities(parent);
@@ -56,7 +54,7 @@ arma::vec HAMUnit::Attention() const
 }
 
 void HAMUnit::Forward(arma::mat&& input, arma::mat&& output) {
-  sequence = input;
+  sequence = embed.Forward(input);
   memory.Initialize(sequence);
   t = 0;
 
