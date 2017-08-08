@@ -34,21 +34,20 @@ BOOST_AUTO_TEST_SUITE(GANNetworkTest);
 
 BOOST_AUTO_TEST_CASE(GanTest)
 {
-  size_t hiddenLayerSize1 = 500;
-  size_t hiddenLayerSize2 = 500;
-  size_t gOutputSize = 784;
+  size_t hiddenLayerSize1 = 128;
+  size_t gOutputSize;
   size_t gInputSize = 100;
   size_t dOutputSize = 1;
   size_t batchSize = 100;
   // Load the dataset
   arma::mat trainData, dataset;
   trainData.load("train4.txt");
+  trainData = trainData.cols(0, 1000);
   std::cout << arma::size(trainData) << std::endl;
+  gOutputSize = trainData.n_rows;
   // Discriminator network
   FFN<CrossEntropyError<> > discriminator;
   discriminator.Add<Linear<> >(gOutputSize, hiddenLayerSize1);
-  discriminator.Add<ReLULayer<>>();
-  discriminator.Add<Linear<> >(hiddenLayerSize1, hiddenLayerSize2);
   discriminator.Add<ReLULayer<>>();
   discriminator.Add<Linear<> >(hiddenLayerSize1, dOutputSize);
   discriminator.Add<SigmoidLayer<> >();
@@ -57,20 +56,23 @@ BOOST_AUTO_TEST_CASE(GanTest)
   FFN<CrossEntropyError<>> generator;
   generator.Add<Linear<> >(gInputSize, hiddenLayerSize1);
   generator.Add<ReLULayer<> >();
-  generator.Add<Linear<> >(hiddenLayerSize1, hiddenLayerSize2);
-  generator.Add<ReLULayer<> >();
-  generator.Add<Linear<> >(hiddenLayerSize2, gOutputSize);
+  generator.Add<Linear<> >(hiddenLayerSize1, gOutputSize);
   generator.Add<SigmoidLayer<> >();
 
   // Intialisation function
   GaussianInitialization gaussian(0, 0.1);
   // Optimizer
-  MiniBatchSGD msgd(batchSize, 0.05, trainData.n_cols, 0.001, true);
+  StandardSGD sgd(0.5, trainData.n_cols * 50, 0.001, true);
   // GAN model
   GenerativeAdversarialNetwork<FFN<CrossEntropyError<>>, FFN<CrossEntropyError<>>,
       GaussianInitialization> gan(
-      trainData, gaussian, generator, discriminator, batchSize, 10,
-      gInputSize);
-  gan.Train(msgd);
+      trainData, gaussian, generator, discriminator, batchSize, gInputSize, 10);
+
+  gan.Train(sgd);
+  arma::mat fakeData(trainData.n_rows, 10), noiseData(gInputSize, 10);
+  for (size_t i = 0; i < 10; i++)
+    gan.GenerateNoise(std::move(fakeData), std::move(noiseData));
+
+  fakeData.save("fakeData.txt", arma::raw_ascii);
 }
 BOOST_AUTO_TEST_SUITE_END();

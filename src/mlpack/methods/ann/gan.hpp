@@ -33,12 +33,12 @@ namespace mlpack {
 namespace ann /** artifical neural network **/ {
 template<typename Generator = FFN<>,
 typename Discriminator = FFN<>,
-typename IntializerType = RandomInitialization>
+typename InitializationRuleType = GaussianInitialization>
 class GenerativeAdversarialNetwork
 {
  public:
   GenerativeAdversarialNetwork(arma::mat& trainData,
-      IntializerType initializeRule,
+      InitializationRuleType initializeRule,
       Generator& generator,
       Discriminator& discriminator,
       size_t batchSize,
@@ -112,7 +112,7 @@ class GenerativeAdversarialNetwork
   //! Locally stored train data
   arma::mat& trainData;
   //! Locally stored Intialiser
-  IntializerType  initializeRule;
+  InitializationRuleType  initializeRule;
   //! Locally stored parameters of the network
   arma::mat parameter;
   //! Locally stored generator
