@@ -327,7 +327,6 @@ BOOST_AUTO_TEST_CASE(KFoldCVMSETest)
   double expectedMSE =
       double((1 - 0) * (1 - 0) + (3 - 1) * (3 - 1)) / 2 * 2 / 2;
 
-
   BOOST_REQUIRE_CLOSE(cv.Evaluate(), expectedMSE, 1e-5);
 }
 
