@@ -19,7 +19,7 @@
 #include <mlpack/core/data/binarize.hpp>
 
 #include <mlpack/methods/ann/augmented/tree_memory.hpp>
-#include <mlpack/methods/ann/layer/layer_types.hpp>
+#include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 
 #include <boost/test/unit_test.hpp>
@@ -215,7 +215,7 @@ BOOST_AUTO_TEST_CASE(BlindHAMUnitTest) {
   // Embed model is just an identity function.
   FFN<MeanSquaredError<> > embedModel;
   embedModel.Add<Linear<> >(nDim, nDim);
-  embedModel.Parameters().zeros();
+  //embedModel.Parameters().zeros();
   std::cerr << embedModel.Parameters() << "\n";
   embedModel.Parameters() = arma::eye(nDim, nDim);
   // Join function is mean of its two vector inputs.
