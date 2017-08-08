@@ -85,6 +85,14 @@ using enable_if_t = typename enable_if<B, T>::type;
 #include <mlpack/core/data/serialization_shim.hpp>
 #include <mlpack/core/data/serialization_template_version.hpp>
 
+// If we have Boost 1.58 or older and are using C++14, the compilation is likely
+// to fail due to boost::visitor issues.  We will pre-emptively fail.
+#if __cplusplus > 201103L && BOOST_VERSION < 105900
+#error Use of C++14 mode with Boost < 1.59 is known to cause compilation \
+problems.  Instead specify the C++11 standard (-std=c++11 with gcc or clang), \
+or upgrade Boost to 1.59 or newer.
+#endif
+
 // Now include Armadillo through the special mlpack extensions.
 #include <mlpack/core/arma_extend/arma_extend.hpp>
 #include <mlpack/core/util/arma_traits.hpp>
