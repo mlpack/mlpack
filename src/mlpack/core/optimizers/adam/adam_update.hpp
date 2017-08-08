@@ -39,6 +39,7 @@ namespace optimization {
  * }
  * @endcode
  */
+template<typename MatrixType = arma::mat>
 class AdamUpdate
 {
  public:
@@ -71,8 +72,8 @@ class AdamUpdate
   void Initialize(const size_t rows,
                   const size_t cols)
   {
-    m = arma::zeros<arma::mat>(rows, cols);
-    v = arma::zeros<arma::mat>(rows, cols);
+    m = arma::zeros<MatrixType>(rows, cols);
+    v = arma::zeros<MatrixType>(rows, cols);
   }
 
   /**
@@ -82,9 +83,9 @@ class AdamUpdate
    * @param stepSize Step size to be used for the given iteration.
    * @param gradient The gradient matrix.
    */
-  void Update(arma::mat& iterate,
+  void Update(MatrixType& iterate,
               const double stepSize,
-              const arma::mat& gradient)
+              const MatrixType& gradient)
   {
     // Increment the iteration counter variable.
     ++iteration;
@@ -134,10 +135,10 @@ class AdamUpdate
   double beta2;
 
   // The exponential moving average of gradient values.
-  arma::mat m;
+  MatrixType m;
 
   // The exponential moving average of squared gradient values.
-  arma::mat v;
+  MatrixType v;
 
   // The number of iterations.
   double iteration;

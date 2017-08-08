@@ -36,13 +36,14 @@ namespace ann /** Artificial Neural Network. */ {
  */
 template<
   typename OutputLayerType = NegativeLogLikelihood<>,
-  typename InitializationRuleType = RandomInitialization
+  typename InitializationRuleType = RandomInitialization,
+  typename MatrixType = arma::mat
 >
 class RNN
 {
  public:
   //! Convenience typedef for the internal model construction.
-  using NetworkType = RNN<OutputLayerType, InitializationRuleType>;
+  using NetworkType = RNN<OutputLayerType, InitializationRuleType, MatrixType>;
 
   /**
    * Create the RNN object with the given predictors and responses set (this is
@@ -81,8 +82,8 @@ class RNN
    * @param initializeRule Optional instantiated InitializationRule object
    *        for initializing the network parameter.
    */
-  RNN(arma::mat predictors,
-      arma::mat responses,
+  RNN(MatrixType predictors,
+      MatrixType responses,
       const size_t rho,
       const bool single = false,
       OutputLayerType outputLayer = OutputLayerType(),
@@ -108,8 +109,8 @@ class RNN
    * @param optimizer Instantiated optimizer used to train the model.
    */
   template<typename OptimizerType>
-  void Train(arma::mat predictors,
-             arma::mat responses,
+  void Train(MatrixType predictors,
+             MatrixType responses,
              OptimizerType& optimizer);
 
   /**
@@ -129,7 +130,7 @@ class RNN
    * @param responses Outputs results from input training variables.
    */
   template<typename OptimizerType = mlpack::optimization::StandardSGD>
-  void Train(arma::mat predictors, arma::mat responses);
+  void Train(MatrixType predictors, MatrixType responses);
 
   /**
    * Predict the responses to a given set of predictors. The responses will
@@ -142,7 +143,7 @@ class RNN
    * @param predictors Input predictors.
    * @param results Matrix to put output predictions of responses into.
    */
-  void Predict(arma::mat predictors, arma::mat& results);
+  void Predict(MatrixType predictors, MatrixType& results);
 
   /**
    * Evaluate the recurrent neural network with the given parameters. This
@@ -153,7 +154,7 @@ class RNN
    * @param deterministic Whether or not to train or test the model. Note some
    *        layer act differently in training or testing mode.
    */
-  double Evaluate(const arma::mat& /* parameters */,
+  double Evaluate(const MatrixType& /* parameters */,
                   const size_t i,
                   const bool deterministic = true);
 
@@ -167,9 +168,9 @@ class RNN
    * @param i Index of points to use for objective function gradient evaluation.
    * @param gradient Matrix to output gradient into.
    */
-  void Gradient(const arma::mat& parameters,
+  void Gradient(const MatrixType& parameters,
                 const size_t i,
-                arma::mat& gradient);
+                MatrixType& gradient);
 
   /*
    * Add a new module to the model.
@@ -198,9 +199,9 @@ class RNN
   size_t NumFunctions() const { return numFunctions; }
 
   //! Return the initial point for the optimization.
-  const arma::mat& Parameters() const { return parameter; }
+  const MatrixType& Parameters() const { return parameter; }
   //! Modify the initial point for the optimization.
-  arma::mat& Parameters() { return parameter; }
+  MatrixType& Parameters() { return parameter; }
 
   //! Serialize the model.
   template<typename Archive>
@@ -218,7 +219,7 @@ class RNN
    *
    * @param input Data sequence to compute probabilities for.
    */
-  void Forward(arma::mat&& input);
+  void Forward(MatrixType&& input);
 
   /**
    * The Backward algorithm (part of the Forward-Backward algorithm). Computes
@@ -238,7 +239,7 @@ class RNN
    * @param predictors Input predictors.
    * @param results Vector to put output prediction of a response into.
    */
-  void SinglePredict(const arma::mat& predictors, arma::mat& results);
+  void SinglePredict(const MatrixType& predictors, MatrixType& results);
 
   /**
    * Reset the module infomration (weights/parameters).
@@ -254,7 +255,7 @@ class RNN
   /**
    * Reset the gradient for all modules that implement the Gradient function.
    */
-  void ResetGradients(arma::mat& gradient);
+  void ResetGradients(MatrixType& gradient);
 
   //! Number of steps to backpropagate through time (BPTT).
   size_t rho;
@@ -288,22 +289,22 @@ class RNN
   std::vector<LayerTypes> network;
 
   //! The matrix of data points (predictors).
-  arma::mat predictors;
+  MatrixType predictors;
 
   //! The matrix of responses to the input data points.
-  arma::mat responses;
+  MatrixType responses;
 
   //! Matrix of (trained) parameters.
-  arma::mat parameter;
+  MatrixType parameter;
 
   //! The number of separable functions (the number of predictor points).
   size_t numFunctions;
 
   //! The current error for the backward pass.
-  arma::mat error;
+  MatrixType error;
 
   //! THe current input of the forward/backward pass.
-  arma::mat currentInput;
+  MatrixType currentInput;
 
   //! Locally-stored delta visitor.
   DeltaVisitor deltaVisitor;
@@ -312,7 +313,7 @@ class RNN
   OutputParameterVisitor outputParameterVisitor;
 
   //! List of all module parameters for the backward pass (BBTT).
-  std::vector<arma::mat> moduleOutputParameter;
+  std::vector<MatrixType> moduleOutputParameter;
 
   //! Locally-stored weight size visitor.
   WeightSizeVisitor weightSizeVisitor;

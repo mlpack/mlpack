@@ -50,10 +50,10 @@ namespace optimization {
  * is required. This class must implement the following function:
  *
  *   size_t NumFunctions();
- *   double Evaluate(const arma::mat& coordinates, const size_t i);
- *   void Gradient(const arma::mat& coordinates,
+ *   double Evaluate(const MatrixType& coordinates, const size_t i);
+ *   void Gradient(const MatrixType& coordinates,
  *                 const size_t i,
- *                 arma::mat& gradient);
+ *                 MatrixType& gradient);
  *
  * NumFunctions() should return the number of functions (\f$n\f$), and in the
  * other two functions, the parameter i refers to which individual function (or
@@ -65,7 +65,10 @@ namespace optimization {
  *
  * @tparam UpdateRule Adam optimizer update rule to be used.
  */
-template<typename UpdateRule = AdamUpdate>
+template<
+    typename MatrixType = arma::mat,
+    typename UpdateRule = AdamUpdate<MatrixType>
+>
 class AdamType
 {
  public:
@@ -107,7 +110,7 @@ class AdamType
    * @return Objective value of the final point.
    */
   template<typename DecomposableFunctionType>
-  double Optimize(DecomposableFunctionType& function, arma::mat& iterate)
+  double Optimize(DecomposableFunctionType& function, MatrixType& iterate)
   {
     return optimizer.Optimize(function, iterate);
   }
@@ -152,9 +155,9 @@ class AdamType
   SGD<UpdateRule> optimizer;
 };
 
-using Adam = AdamType<AdamUpdate>;
+using Adam = AdamType<arma::mat, AdamUpdate<>>;
 
-using AdaMax = AdamType<AdaMaxUpdate>;
+using AdaMax = AdamType<arma::mat, AdaMaxUpdate>;
 
 } // namespace optimization
 } // namespace mlpack

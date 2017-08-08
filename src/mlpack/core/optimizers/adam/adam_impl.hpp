@@ -21,8 +21,8 @@
 namespace mlpack {
 namespace optimization {
 
-template<typename UpdateRule>
-AdamType<UpdateRule>::AdamType(
+template<typename MatrixType, typename UpdateRule>
+AdamType<MatrixType, UpdateRule>::AdamType(
     const double stepSize,
     const double beta1,
     const double beta2,
