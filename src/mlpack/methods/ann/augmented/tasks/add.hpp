@@ -43,10 +43,10 @@ class AddTask
 {
  public:
   /**
-  * Creates an instance of the binary addition task.
-  *
-  * @param bitLen Maximum binary length of added numbers.
-  */
+   * Creates an instance of the binary addition task.
+   *
+   * @param bitLen Maximum binary length of added numbers.
+   */
   AddTask(const size_t bitLen);
 
   /**
@@ -58,10 +58,10 @@ class AddTask
    * @param fixedLength Flag that indicates whether
    *                    the method should return sequences of even length.
    */
-  const void Generate(arma::field<arma::mat>& input,
-                      arma::field<arma::mat>& labels,
-                      const size_t batchSize,
-                      const bool fixedLength = false);
+  void Generate(arma::field<arma::mat>& input,
+                arma::field<arma::mat>& labels,
+                const size_t batchSize,
+                const bool fixedLength = false) const;
 
   /**
    * Generate dataset of a given size and store it in
@@ -71,9 +71,9 @@ class AddTask
    * @param labels The variable to store output sequences.
    * @param batchSize The dataset size.
    */
-  const void Generate(arma::mat& input,
-                      arma::mat& labels,
-                      const size_t batchSize);
+  void Generate(arma::mat& input,
+                arma::mat& labels,
+                const size_t batchSize) const;
 
  private:
   // Maximum binary length of numbers.
@@ -89,9 +89,10 @@ class AddTask
    *              and 2 corresponds to `+` sign, which acts as a separator.
    * @param output Reference parameter for storing final representations. 
    */
-  const void Binarize(const arma::field<arma::vec>& input,
-                      arma::field<arma::mat>& output);
+  void Binarize(const arma::field<arma::vec>& input,
+                arma::field<arma::mat>& output) const;
 };
+
 } // namespace tasks
 } // namespace augmented
 } // namespace ann

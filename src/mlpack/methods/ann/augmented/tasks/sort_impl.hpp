@@ -43,10 +43,10 @@ SortTask::SortTask(const size_t maxLength,
   }
 }
 
-const void SortTask::Generate(arma::field<arma::mat>& input,
-                              arma::field<arma::mat>& labels,
-                              const size_t batchSize,
-                              bool fixedLength)
+void SortTask::Generate(arma::field<arma::mat>& input,
+                        arma::field<arma::mat>& labels,
+                        const size_t batchSize,
+                        bool fixedLength) const
 {
   input = arma::field<arma::mat>(batchSize);
   labels = arma::field<arma::mat>(batchSize);
@@ -97,9 +97,9 @@ const void SortTask::Generate(arma::field<arma::mat>& input,
   }
 }
 
-const void SortTask::Generate(arma::mat& input,
-                              arma::mat& labels,
-                              const size_t batchSize)
+void SortTask::Generate(arma::mat& input,
+                        arma::mat& labels,
+                        const size_t batchSize) const
 {
   arma::field<arma::mat> fieldInput, fieldLabels;
   Generate(fieldInput, fieldLabels, batchSize, true);

@@ -42,6 +42,7 @@ class HardCodedCopyModel
 {
  public:
   HardCodedCopyModel() : nRepeats(1) {}
+
   void Train(arma::field<arma::mat>& predictors,
              arma::field<arma::mat>& labels)
   {
@@ -56,6 +57,7 @@ class HardCodedCopyModel
     assert(oneCnt % zeroCnt == 0);
     nRepeats = oneCnt / zeroCnt;
   }
+
   void Predict(arma::mat& predictors,
                arma::mat& labels)
   {
@@ -68,6 +70,7 @@ class HardCodedCopyModel
       labels.at(seqLen+i) = predictors.at(2 * (i % seqLen));
     }
   }
+
   void Predict(arma::field<arma::mat>& predictors,
                arma::field<arma::mat>& labels)
   {
@@ -84,14 +87,17 @@ class HardCodedCopyModel
 };
 
 // The dummy model that simply sorts the sequence.
-class HardCodedSortModel {
+class HardCodedSortModel
+{
  public:
   HardCodedSortModel(size_t bitLen) : bitLen(bitLen) {}
+
   void Train(arma::field<arma::mat>& predictors,
              arma::field<arma::mat>& labels)
   {
     assert(predictors.n_elem == labels.n_elem);
   }
+
   void Predict(arma::mat& predictors,
                arma::mat& labels)
   {
@@ -117,6 +123,7 @@ class HardCodedSortModel {
     }
     labels.reshape(predictors.n_elem, 1);
   }
+
   void Predict(arma::field<arma::mat>& predictors,
                arma::field<arma::mat>& labels)
   {
@@ -133,14 +140,17 @@ class HardCodedSortModel {
 };
 
 // The dummy model that simply add two binary numbers.
-class HardCodedAddModel {
+class HardCodedAddModel
+{
  public:
   HardCodedAddModel() {}
-  void Train(arma::field<arma::mat>& predictors,
-             arma::field<arma::mat>& labels)
+
+  void Train(arma::field<arma::mat>& /* predictors */,
+             arma::field<arma::mat>& /* labels */)
   {
     return;
   }
+
   void Predict(arma::mat& predictors,
                arma::mat& labels)
   {
@@ -195,6 +205,7 @@ class HardCodedAddModel {
     }
     labels.reshape(predictors.n_elem, 1);
   }
+
   void Predict(
       arma::field<arma::mat>& predictors,
       arma::field<arma::mat>& labels)
