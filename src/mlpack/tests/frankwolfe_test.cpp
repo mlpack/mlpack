@@ -14,6 +14,7 @@
 #include <mlpack/core/optimizers/fw/constr_lpball.hpp>
 #include <mlpack/core/optimizers/fw/update_span.hpp>
 #include <mlpack/core/optimizers/fw/update_classic.hpp>
+#include <mlpack/core/optimizers/fw/update_linesearch.hpp>
 #include <mlpack/core/optimizers/fw/func_sq.hpp>
 #include <mlpack/core/optimizers/fw/test_func_fw.hpp>
 
@@ -27,6 +28,7 @@ using namespace mlpack::optimization;
 
 BOOST_AUTO_TEST_SUITE(FrankWolfeTest);
 
+
 /**
  * Simple test of Orthogonal Matching Pursuit algorithm.
  */
@@ -36,13 +38,13 @@ BOOST_AUTO_TEST_CASE(OMPTest)
   mat B1 = eye(3, 3);
   mat B2 = 0.1 * randn(3, k);
   mat A = join_horiz(B1, B2); // The dictionary is input as columns of A.
-  vec b("1; 1; 0"); // Vector to be sparsely approximated.
+  vec b = {1, 1, 0}; // Vector to be sparsely approximated.
 
   FuncSq f(A, b);
-  ConstrLpBallSolver linear_constr_solver(1);
-  UpdateSpan update_rule;
+  ConstrLpBallSolver linearConstrSolver(1);
+  UpdateSpan updateRule;
 
-  OMP s(linear_constr_solver, update_rule);
+  OMP s(linearConstrSolver, updateRule);
 
   vec coordinates = zeros<vec>(k + 3);
   double result = s.Optimize(f, coordinates);
@@ -58,20 +60,56 @@ BOOST_AUTO_TEST_CASE(OMPTest)
 }
 
 /**
+ * Simple test of Orthogonal Matching Pursuit with regularization.
+ */
+BOOST_AUTO_TEST_CASE(regularizedOMP)
+{
+  int k = 10;
+  mat B1 = 0.1 * eye(k, k);
+  mat B2 = 100 * randn(k, k);
+  mat A = join_horiz(B1, B2); // The dictionary is input as columns of A.
+  vec b(k); // Vector to be sparsely approximated.
+  b(0) = 1;
+  b(1) = 1;
+  vec lambda(A.n_cols);
+  for (size_t ii = 0; ii < A.n_cols; ii++)
+    lambda(ii) = norm(A.col(ii), 2);
+  
+  FuncSq f(A, b);
+  ConstrLpBallSolver linearConstrSolver(1, lambda);
+  UpdateSpan updateRule;
+  
+  OMP s(linearConstrSolver, updateRule);
+  
+  vec coordinates = zeros<vec>(2 * k);
+  double result = s.Optimize(f, coordinates);
+  
+  BOOST_REQUIRE_SMALL(result, 1e-10);
+  BOOST_REQUIRE_SMALL(coordinates[0] - 10, 1e-10);
+  BOOST_REQUIRE_SMALL(coordinates[1] - 10, 1e-10);
+  for (int ii = 2; ii < 2 * k; ++ii)
+  {
+    BOOST_REQUIRE_SMALL(coordinates[ii], 1e-10);
+  }
+}
+
+
+
+/**
  * A very simple test of classic Frank-Wolfe algorithm.
  * The constrained domain used is unit lp ball.
  */
 BOOST_AUTO_TEST_CASE(ClassicFW)
 {
   TestFuncFW f;
-  double p = 1;   // Constraint set is unit lp ball.
-  ConstrLpBallSolver linear_constr_solver(p);
-  UpdateClassic update_rule;
+  double p = 2;   // Constraint set is unit lp ball.
+  ConstrLpBallSolver linearConstrSolver(p);
+  UpdateClassic updateRule;
 
   FrankWolfe<ConstrLpBallSolver, UpdateClassic>
-      s(linear_constr_solver, update_rule);
+      s(linearConstrSolver, updateRule);
 
-  vec coordinates = zeros<vec>(3);
+  vec coordinates = randu<vec>(3);
   double result = s.Optimize(f, coordinates);
 
   BOOST_REQUIRE_SMALL(result, 1e-4);
@@ -79,6 +117,32 @@ BOOST_AUTO_TEST_CASE(ClassicFW)
   BOOST_REQUIRE_SMALL(coordinates[1] - 0.2, 1e-4);
   BOOST_REQUIRE_SMALL(coordinates[2] - 0.3, 1e-4);
 }
+
+/**
+ * Exactly the same problem with ClassicFW.
+ * The update step performs a line search now.
+ * It converges much faster.
+ */
+BOOST_AUTO_TEST_CASE(FWLineSearch)
+{
+  TestFuncFW f;
+  double p = 2;   // Constraint set is unit lp ball.
+  ConstrLpBallSolver linearConstrSolver(p);
+  UpdateLineSearch updateRule;
+  
+  FrankWolfe<ConstrLpBallSolver, UpdateLineSearch>
+      s(linearConstrSolver, updateRule);
+  
+  vec coordinates = randu<vec>(3);
+  double result = s.Optimize(f, coordinates);
+  
+  BOOST_REQUIRE_SMALL(result, 1e-4);
+  BOOST_REQUIRE_SMALL(coordinates[0] - 0.1, 1e-4);
+  BOOST_REQUIRE_SMALL(coordinates[1] - 0.2, 1e-4);
+  BOOST_REQUIRE_SMALL(coordinates[2] - 0.3, 1e-4);
+}
+
+
 
 
 BOOST_AUTO_TEST_SUITE_END();
