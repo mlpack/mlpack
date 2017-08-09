@@ -118,7 +118,9 @@ class HyperParameterTuner
    * All arguments should be passed in the same order as if the corresponding
    * hyper-paramters would be passed into the Evaluate method of the given CV
    * class (in the order as they appear in the constructor(s) of the given
-   * MLAlgorithm).
+   * MLAlgorithm). Also, arguments for all required hyper-parameters (ones that
+   * don't have default values in the corresponding MLAlgorithm constructor)
+   * should be provided.
    *
    * The method returns a tuple of values for hyper-parameters that haven't been
    * bound.
