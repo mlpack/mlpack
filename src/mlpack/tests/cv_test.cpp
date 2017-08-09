@@ -359,4 +359,87 @@ BOOST_AUTO_TEST_CASE(KFoldCVAccuracyTest)
   cv.Model();
 }
 
+/**
+ * Test k-fold cross-validation with weighted linear regression.
+ */
+BOOST_AUTO_TEST_CASE(KFoldCVWithWeightedLRTest)
+{
+  // Each fold will be filled with this dataset.
+  arma::mat data("1 2 3 4");
+  arma::rowvec responses("1 2 30 40");
+  arma::rowvec weights("1 1 0 0");
+
+  KFoldCV<LinearRegression, MSE> cv(2, arma::join_rows(data, data),
+      arma::join_rows(responses, responses), arma::join_rows(weights, weights));
+  cv.Evaluate();
+
+  arma::mat testData("3 4");
+  arma::rowvec testResponses("3 4");
+
+  double mse = MSE::Evaluate(cv.Model(), testData, testResponses);
+
+  BOOST_REQUIRE_CLOSE(1.0 - mse, 1.0, 1e-5);
+}
+
+/**
+ * Test k-fold cross-validation with decision trees constructed in multiple
+ * ways.
+ */
+BOOST_AUTO_TEST_CASE(KFoldCVWithDTTest)
+{
+  arma::mat originalData;
+  arma::Row<size_t> originalLabels;
+  data::DatasetInfo datasetInfo;
+  MockCategoricalData(originalData, originalLabels, datasetInfo);
+
+  // Each fold will be filled with this dataset.
+  arma::mat data = originalData.cols(0, 1199);
+  arma::Row<size_t> labels = originalLabels.cols(0, 1199);
+  arma::rowvec weights(data.n_cols, arma::fill::randu);
+
+  arma::mat doubledData = arma::join_rows(data, data);
+  arma::Row<size_t> doubledLabels = arma::join_rows(labels, labels);
+  arma::rowvec doubledWeights = arma::join_rows(weights, weights);
+
+  size_t numClasses = 3;
+  size_t minimumLeafSize = 8;
+
+  {
+    KFoldCV<DecisionTree<InformationGain>, Accuracy> cv(2, doubledData,
+        doubledLabels, numClasses);
+    cv.Evaluate(minimumLeafSize);
+    arma::Row<size_t> predictedLabels = PredictLabelsWithDT(data, data, labels,
+        numClasses, minimumLeafSize);
+    double accuracy = Accuracy::Evaluate(cv.Model(), data, predictedLabels);
+    BOOST_REQUIRE_CLOSE(accuracy, 1.0, 1e-5);
+  }
+  {
+    KFoldCV<DecisionTree<InformationGain>, Accuracy> cv(2, doubledData,
+        datasetInfo, doubledLabels, numClasses);
+    cv.Evaluate(minimumLeafSize);
+    arma::Row<size_t> predictedLabels = PredictLabelsWithDT(data, data,
+        datasetInfo, labels, numClasses, minimumLeafSize);
+    double accuracy = Accuracy::Evaluate(cv.Model(), data, predictedLabels);
+    BOOST_REQUIRE_CLOSE(accuracy, 1.0, 1e-5);
+  }
+  {
+    KFoldCV<DecisionTree<InformationGain>, Accuracy> cv(2, doubledData,
+        doubledLabels, numClasses, doubledWeights);
+    cv.Evaluate(minimumLeafSize);
+    arma::Row<size_t> predictedLabels = PredictLabelsWithDT(data, data, labels,
+        numClasses, weights, minimumLeafSize);
+    double accuracy = Accuracy::Evaluate(cv.Model(), data, predictedLabels);
+    BOOST_REQUIRE_CLOSE(accuracy, 1.0, 1e-5);
+  }
+  {
+    KFoldCV<DecisionTree<InformationGain>, Accuracy> cv(2, doubledData,
+        datasetInfo, doubledLabels, numClasses, doubledWeights);
+    cv.Evaluate(minimumLeafSize);
+    arma::Row<size_t> predictedLabels = PredictLabelsWithDT(data, data,
+        datasetInfo, labels, numClasses, weights, minimumLeafSize);
+    double accuracy = Accuracy::Evaluate(cv.Model(), data, predictedLabels);
+    BOOST_REQUIRE_CLOSE(accuracy, 1.0, 1e-5);
+  }
+}
+
 BOOST_AUTO_TEST_SUITE_END();
