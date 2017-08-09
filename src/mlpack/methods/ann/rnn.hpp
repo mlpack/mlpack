@@ -302,7 +302,7 @@ class RNN
   //! The current error for the backward pass.
   arma::mat error;
 
-  //! THe current input of the forward/backward pass.
+  //! The current input of the forward/backward pass.
   arma::mat currentInput;
 
   //! Locally-stored delta visitor.

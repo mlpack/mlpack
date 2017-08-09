@@ -233,21 +233,28 @@ BOOST_AUTO_TEST_CASE(BlindHAMUnitTest) {
   joinModel.Parameters().rows(2 * nDim * nDim, 2 * nDim * nDim + nDim - 1) = arma::zeros(nDim);
   arma::mat joinPredictors = arma::reshape(arma::mat("1 2 3 4 4 3 2 1"), 2 * nDim, 1), joinResponses;
   joinModel.Predict(joinPredictors, joinResponses);
-  std::cerr << "\n" << joinModel.Parameters() << "\n";
-  std::cerr << "\nJOIN:\n" << joinPredictors << "->\n" << joinResponses << "\n";
+  std::cerr << "\nJOIN:\n" << joinResponses << "\n";
   // Write function is replacing its old input with its new input.
   FFN<MeanSquaredError<> > writeModel;
-  embedModel.Add<Linear<> >(2 * nDim, nDim);
-  embedModel.Parameters().cols(0, nDim - 1) = 0.5 * arma::zeros(nDim, nDim);
-  embedModel.Parameters().cols(nDim, 2 * nDim - 1) =
-      0.5 * arma::eye(nDim, nDim);
+  writeModel.Add<Linear<> >(2 * nDim, nDim);
+  writeModel.ResetParameters();
+  writeModel.Parameters().rows(0, nDim * nDim - 1) = arma::zeros(nDim * nDim);
+  writeModel.Parameters().rows(nDim * nDim, 2 * nDim * nDim - 1) =
+      arma::vectorise(arma::eye(nDim, nDim));
+  writeModel.Parameters().rows(2 * nDim * nDim, 2 * nDim * nDim + nDim - 1) = arma::zeros(nDim);
+  arma::mat writePredictors = arma::reshape(arma::mat("1 2 3 4 4 3 2 1"), 2 * nDim, 1), writeResponses;
+  writeModel.Predict(writePredictors, writeResponses);
+  std::cerr << "\nWRITE:\n" << writeResponses << "\n";
   // Search model is a constant model that ignores its input and returns 1 / 3.
   FFN<MeanSquaredError<> > searchModel;
-  embedModel.Add<Linear<> >(2 * nDim, 1);
-  embedModel.Parameters().cols(0, nDim - 1) = 0.5 * arma::zeros(nDim, nDim);
-  embedModel.Parameters().cols(nDim, 2 * nDim - 1) =
-      0.5 * arma::eye(nDim, nDim);
-  embedModel.Add<SigmoidLayer<> >();
+  searchModel.Add<Linear<> >(2 * nDim, 1);
+  searchModel.ResetParameters();
+  searchModel.Parameters().rows(0, 2 * nDim - 1) = arma::zeros(2 * nDim);
+  searchModel.Parameters().at(2 * nDim) = -log(2);
+  searchModel.Add<SigmoidLayer<> >();
+  arma::mat searchPredictors = arma::reshape(arma::mat("1 2 3 4 4 3 2 1"), 2 * nDim, 1), searchResponses;
+  searchModel.Predict(writePredictors, writeResponses);
+  std::cerr << "\nSEARCH:\n" << writeResponses << "\n";
 }
 
 BOOST_AUTO_TEST_SUITE_END();
