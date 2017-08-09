@@ -49,10 +49,10 @@ class UpdateSpan
    * @param numIter current iteration number.
    */
   void Update(FuncSq& function,
-              const arma::mat& /* oldCoords */,
+              const arma::mat& oldCoords,
               const arma::mat& s,
               arma::mat& newCoords,
-              const size_t /* numIter */)
+              const size_t numIter)
   {
     double oldF;
     if (isPrune)
