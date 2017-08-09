@@ -34,8 +34,7 @@ class HAMUnit {
   >
   void Train(const MatType& predictors,
              const MatType& responses,
-             OptimizerType<Controller> optimizer,
-             double gamma);
+             OptimizerType<Controller> optimizer);
 
   void Evaluate(const arma::mat& predictors,
                 const arma::mat& responses);
