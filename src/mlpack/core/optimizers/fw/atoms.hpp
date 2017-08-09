@@ -33,7 +33,8 @@ class Atoms
     else
     {
       currentAtoms.insert_cols(0, v);
-      currentCoeffs.insert_rows(0, c);
+      arma::vec cVec = {c};
+      currentCoeffs.insert_rows(0, cVec);
     }
   }
   
@@ -104,39 +105,37 @@ class Atoms
 
 
 
-//  template<typename FunctionType>
-//  void ProjectedGradientEnhancement(double tau,
-//                                    FunctionType& function,
-//                                    double stepSize,
-//                                    size_t maxIteration = 100,
-//                                    double tolerance = 1e-3)
-//  {
-//    // Gradient Descent.
-//    arma::mat g;
-//    arma::mat x;
-//    RecoverVector(x);
-//    double value = function.Evaluate(x);
-//    
-//    for (size_t iter = 1; iter<maxIteration; iter++)
-//    {
-//      function.Gradient(x, g);
-//      g = currentAtoms.t() * g;
-//      currentCoeffs = currentCoeffs - stepSize * g;
-//
-//      // Projection
-//      ProjectionToL1(tau);
-//
-//      RecoverVector(x);
-//      double valueNew = function.Evaluate(x);
-//
-//      if (std::abs(value - valueNew) < tolerance)
-//        break;
-//
-//      value = valueNew;
-//    }
-//    
-//    
-//  }
+  template<typename FunctionType>
+  void ProjectedGradientEnhancement(FunctionType& function,
+                                    double tau,
+                                    double stepSize,
+                                    size_t maxIteration = 100,
+                                    double tolerance = 1e-3)
+  {
+    // Gradient Descent.
+    arma::mat x;
+    RecoverVector(x);
+    double value = function.Evaluate(x);
+    
+    for (size_t iter = 1; iter<maxIteration; iter++)
+    {
+      arma::mat g;
+      function.Gradient(x, g);
+      g = currentAtoms.t() * g;
+      currentCoeffs = currentCoeffs - stepSize * g;
+
+      // Projection to l1 ball with norm tau.
+      ProjectionToL1(tau);
+
+      RecoverVector(x);
+      double valueNew = function.Evaluate(x);
+
+      if ((value - valueNew) < tolerance)
+        break;
+
+      value = valueNew;
+    }
+  }
 
   
   //! Get the current atom coefficients.
@@ -157,40 +156,40 @@ class Atoms
   arma::mat currentAtoms;
 
 
-  // Projection to L1 ball with norm tau.
-//  void ProjectionToL1(const double tau)
-//  {
-//    arma::vec tmp = arma::abs(currentCoeffs);
-//    if (arma::accu(tmp) <= tau)
-//      return;
-//
-//    arma::uvec ind = arma::sort_index(tmp, "descend");
-//    tmp = tmp(ind);
-//    arma::vec tmpSum = arma::cumsum(tmp);
-//
-//    double nu = 0;
-//    size_t rho;
-//    for (rho = tmp.n_rows-1; rho >= 0; rho--)
-//    {
-//      nu = tmp(rho) - (tmpSum(rho) - tau)/rho;
-//      if (nu <= 0)
-//      {
-//        rho++;
-//        break;
-//      }
-//    }
-//    double theta = (tmpSum(rho) - tau)/rho;
-//    
-//    // Threshold on currentCoeffs with theta.
-//    for (arma::uword j = 0; j< tmp.n_rows; j++)
-//    {
-//      if (currentCoeffs(j) >=0)
-//        currentCoeffs(j) = std::max(currentCoeffs(j)-theta, 0);
-//      else
-//        currentcoeffs(j) = std::min(currentCoeffs(j)+theta, 0);
-//    }
-//    
-//  }
+  /**
+   * Projection of currentCoeffs to L1 ball with norm tau.
+   */
+  void ProjectionToL1(const double tau)
+  {
+    arma::vec simplexSol = arma::abs(currentCoeffs);
+    
+    // Already with atom norm <= tau.
+    if (arma::accu(simplexSol) <= tau)
+      return;
+
+    simplexSol = arma::sort(simplexSol, "descend");
+    arma::vec simplexSum = arma::cumsum(simplexSol);
+
+    double nu = 0;
+    size_t rho;
+    for (size_t j = 1; j <= simplexSol.n_rows; j++)
+    {
+      rho = simplexSol.n_rows - j;
+      nu = simplexSol(rho) - (simplexSum(rho) - tau)/(rho + 1);
+      if (nu > 0)
+        break;
+    }
+    double theta = (simplexSum(rho) - tau)/rho;
+    
+    // Threshold on absolute value of currentCoeffs with theta.
+    for (arma::uword j = 0; j< simplexSol.n_rows; j++)
+    {
+      if (currentCoeffs(j) >=0.0)
+        currentCoeffs(j) = std::max(currentCoeffs(j)-theta, 0.0);
+      else
+        currentCoeffs(j) = std::min(currentCoeffs(j)+theta, 0.0);
+    }
+  }
   
 
 }; // class Atoms

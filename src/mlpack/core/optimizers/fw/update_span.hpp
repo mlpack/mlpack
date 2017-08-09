@@ -44,7 +44,7 @@ class UpdateSpan
    * solution space.
    *
    * @param function function to be optimized.
-   * @param oldCoords previous solution coords, not used in this update rule.
+   * @param oldCoords previous solution coords.
    * @param s current linearConstrSolution result.
    * @param newCoords output new solution coords.
    * @param numIter current iteration number.

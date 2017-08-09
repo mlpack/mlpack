@@ -6,6 +6,7 @@ set(SOURCES
   update_classic.hpp
   update_span.hpp
   update_linesearch.hpp
+  update_full_correction.hpp
   func_sq.hpp
   test_func_fw.hpp
 )

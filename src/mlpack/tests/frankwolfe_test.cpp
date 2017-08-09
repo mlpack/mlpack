@@ -13,6 +13,7 @@
 #include <mlpack/core/optimizers/fw/frank_wolfe.hpp>
 #include <mlpack/core/optimizers/fw/constr_lpball.hpp>
 #include <mlpack/core/optimizers/fw/update_span.hpp>
+#include <mlpack/core/optimizers/fw/update_full_correction.hpp>
 #include <mlpack/core/optimizers/fw/update_classic.hpp>
 #include <mlpack/core/optimizers/fw/update_linesearch.hpp>
 #include <mlpack/core/optimizers/fw/func_sq.hpp>
@@ -123,6 +124,36 @@ BOOST_AUTO_TEST_CASE(PruneSupportOMP)
   }
 }
 
+/**
+ * Simple test of sparse soluton in atom domain with atom norm constraint.
+ */
+BOOST_AUTO_TEST_CASE(AtomNormConstraint)
+{
+  int k = 5;
+  mat B1 = eye(3, 3);
+  mat B2 = 0.1 * randn(3, k);
+  mat A = join_horiz(B1, B2); // The dictionary is input as columns of A.
+  vec b = {1, 1, 0}; // Vector to be sparsely approximated.
+
+  FuncSq f(A, b);
+  ConstrLpBallSolver linearConstrSolver(1);
+  UpdateFullCorrection updateRule(2, 0.2);
+  
+  FrankWolfe<ConstrLpBallSolver, UpdateFullCorrection>
+    s(linearConstrSolver, updateRule);
+  
+  vec coordinates = zeros<vec>(k + 3);
+  double result = s.Optimize(f, coordinates);
+
+  BOOST_REQUIRE_SMALL(result, 1e-10);
+  BOOST_REQUIRE_SMALL(coordinates[0] - 1, 1e-10);
+  BOOST_REQUIRE_SMALL(coordinates[1] - 1, 1e-10);
+  for (int ii = 2; ii < (k + 3); ii++)
+  {
+    BOOST_REQUIRE_SMALL(coordinates[ii], 1e-10);
+  }
+}
+
 
 /**
  * A very simple test of classic Frank-Wolfe algorithm.
@@ -170,8 +201,5 @@ BOOST_AUTO_TEST_CASE(FWLineSearch)
   BOOST_REQUIRE_SMALL(coordinates[1] - 0.2, 1e-4);
   BOOST_REQUIRE_SMALL(coordinates[2] - 0.3, 1e-4);
 }
-
-
-
 
 BOOST_AUTO_TEST_SUITE_END();
