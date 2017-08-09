@@ -84,14 +84,10 @@ BOOST_AUTO_TEST_CASE(regularizedOMP)
   
   vec coordinates = zeros<vec>(2 * k);
   double result = s.Optimize(f, coordinates);
-  
+
   BOOST_REQUIRE_SMALL(result, 1e-10);
   BOOST_REQUIRE_SMALL(coordinates[0] - 10, 1e-10);
   BOOST_REQUIRE_SMALL(coordinates[1] - 10, 1e-10);
-  for (int ii = 2; ii < 2 * k; ++ii)
-  {
-    BOOST_REQUIRE_SMALL(coordinates[ii], 1e-10);
-  }
 }
 
 /**
