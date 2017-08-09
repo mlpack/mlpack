@@ -13,7 +13,11 @@
 #ifndef MLPACK_METHODS_ANN_AUGMENTED_HAM_UNIT_HPP
 #define MLPACK_METHODS_ANN_AUGMENTED_HAM_UNIT_HPP
 
+#include <mlpack/methods/ann/layer/layer.hpp>
+
 #include "tree_memory.hpp"
+
+using namespace mlpack::ann;
 
 namespace mlpack {
 namespace ann /* Artificial Neural Network */ {

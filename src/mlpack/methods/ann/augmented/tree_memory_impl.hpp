@@ -12,9 +12,13 @@
 #ifndef MLPACK_METHODS_AUGMENTED_TREE_MEMORY_IMPL_HPP
 #define MLPACK_METHODS_AUGMENTED_TREE_MEMORY_IMPL_HPP
 
+#include <mlpack/methods/ann/layer/layer.hpp>
+
 #include <cassert>
 
 #include "tree_memory.hpp"
+
+using namespace mlpack::ann;
 
 namespace mlpack {
 namespace ann /* Artificial Neural Network */ {
@@ -22,8 +26,8 @@ namespace augmented /* Augmented neural network */ {
 template<typename T>
 TreeMemory<T>::TreeMemory(size_t size,
                           size_t memDim,
-                          LayerTypes joiner,
-                          LayerTypes writer)
+                          FFN joiner,
+                          FFN writer)
 {
   memorySize = size;
   memoryDim = memDim;
