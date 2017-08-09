@@ -25,7 +25,6 @@ namespace optimization {
  * used as update step for FrankWolfe algorithm.
  *
  * Currently only works for function in FuncSq class.
- *
  */
 class UpdateSpan
 {
@@ -77,11 +76,13 @@ class UpdateSpan
       atoms.PruneSupport(F, function);
       atoms.RecoverVector(newCoords);
     }
-
   }
 
  private:
+  //! Atoms information.
   Atoms atoms;
+
+  //! Flag for support prune step.
   bool isPrune;
 }; // class UpdateSpan
 

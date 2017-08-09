@@ -20,9 +20,29 @@
 namespace mlpack {
 namespace optimization {
 
+/**
+ * Full correction approach to update the solution.
+ *
+ * UpdateSpan class reoptimize the solution in the span of all current atoms,
+ * which is used in OMP, which only focus on sparsity.
+ *
+ * UpdateFullCorrection class reoptimize the solution in a similar way, however,
+ * the solutions need to satisfy the constraint that the atom norm has to be
+ * smaller than or equal to tau. This constraint optimization problem is solved
+ * by projected gradient method. See Atoms.ProjectedEnhancement().
+ *
+ * Currently only works for function in FuncSq class.
+ *
+ */
 class UpdateFullCorrection
 {
  public:
+  /**
+   * Construct UpdateFullCorrection class.
+   *
+   * @param tau atom norm constraint.
+   * @param stepSize step size used in projected gradient method.
+   */
   UpdateFullCorrection(double tau, double stepSize):
     tau(tau), stepSize(stepSize)
   { /* Do nothing. */ }

@@ -17,12 +17,21 @@
 namespace mlpack {
 namespace optimization {
 
+/**
+ * Class to hold the information and operations of current atoms in the
+ * soluton space.
+ */
 class Atoms
 {
  public:
-  Atoms(){}
+  Atoms(){ /* Nothing to do. */ }
   
-  //! Add atom into the solution space.
+  /**
+   * Add atom into the solution space.
+   *
+   * @param v new atom to be added.
+   * @param c coefficient of the new atom.
+   */
   void AddAtom(const arma::mat& v, const double c = 0)
   {
     if (currentAtoms.is_empty())
@@ -37,8 +46,8 @@ class Atoms
       currentCoeffs.insert_rows(0, cVec);
     }
   }
-  
-  
+
+
   //! Recover the solution coordinate from the coefficients of current atoms.
   void RecoverVector(arma::mat& x)
   {
@@ -104,7 +113,33 @@ class Atoms
   }
 
 
-
+  /**
+   * Enhance the solution in the convex hull of current atoms with atom norm
+   * constraint tau. Used in UpdateFullCorrection class for update step.
+   *
+   * Minimize the function in the atom domain defined by current atoms,
+   * where the solution still need to have atom norm (defined by current atoms)
+   * less than or equal to tau. We use projected gradient method to solve it,
+   * see the "Enhancement step" of the following paper:
+   * @code
+   * @article{RaoShaWri:2015Forward--backward,
+   *    Author = {Rao, Nikhil and Shah, Parikshit and Wright, Stephen},
+   *    Journal = {IEEE Transactions on Signal Processing},
+   *    Number = {21},
+   *    Pages = {5798--5811},
+   *    Publisher = {IEEE},
+   *    Title = {Forward--backward greedy algorithms for atomic norm regularization},
+   *    Volume = {63},
+   *    Year = {2015}
+   * }
+   * @endcode
+   *
+   * @param function function to be minimized.
+   * @param tau atom norm constraint.
+   * @param stepSize step size for projected gradient method.
+   * @param maxIteration maximum iteration number.
+   * @param tolerance tolerance for projected gradient method.
+   */
   template<typename FunctionType>
   void ProjectedGradientEnhancement(FunctionType& function,
                                     double tau,
@@ -112,19 +147,19 @@ class Atoms
                                     size_t maxIteration = 100,
                                     double tolerance = 1e-3)
   {
-    // Gradient Descent.
     arma::mat x;
     RecoverVector(x);
     double value = function.Evaluate(x);
     
     for (size_t iter = 1; iter<maxIteration; iter++)
     {
+      // Update currentCoeffs with gradient descent method.
       arma::mat g;
       function.Gradient(x, g);
       g = currentAtoms.t() * g;
       currentCoeffs = currentCoeffs - stepSize * g;
 
-      // Projection to l1 ball with norm tau.
+      // Projection of currentCoeffs to satisfy the atom norm constraint.
       ProjectionToL1(tau);
 
       RecoverVector(x);
@@ -158,6 +193,9 @@ class Atoms
 
   /**
    * Projection of currentCoeffs to L1 ball with norm tau.
+   * Used in ProjectedGradientEnhancement().
+   *
+   * @param tau atom norm constraint.
    */
   void ProjectionToL1(const double tau)
   {
