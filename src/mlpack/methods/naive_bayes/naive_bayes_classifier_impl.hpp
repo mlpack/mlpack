@@ -25,14 +25,24 @@
 namespace mlpack {
 namespace naive_bayes {
 
+template<typename ModelMatType>
 template<typename MatType>
-NaiveBayesClassifier<MatType>::NaiveBayesClassifier(
+NaiveBayesClassifier<ModelMatType>::NaiveBayesClassifier(
     const MatType& data,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
     const bool incremental) :
     trainingPoints(0) // Set when we call Train().
 {
+  static_assert(std::is_same<ElemType, typename MatType::elem_type>::value,
+      "NaiveBayesClassifier: element type of given data must match the element "
+      "type of the model!");
+
+  const size_t dimensionality = data.n_rows;
+
+  // Perform training, after initializing the model to 0 (that is, if Train()
+  // won't do that for us, which it won't if we're using the incremental
+  // algorithm).
   if (incremental)
   {
     probabilities.zeros(numClasses);
@@ -49,9 +59,10 @@ NaiveBayesClassifier<MatType>::NaiveBayesClassifier(
   Train(data, labels, numClasses, incremental);
 }
 
-template<typename MatType>
-NaiveBayesClassifier<MatType>::NaiveBayesClassifier(const size_t dimensionality,
-                                                    const size_t numClasses) :
+template<typename ModelMatType>
+NaiveBayesClassifier<ModelMatType>::NaiveBayesClassifier(
+    const size_t dimensionality,
+    const size_t numClasses) :
     trainingPoints(0)
 {
   // Initialize model to 0.
@@ -60,12 +71,18 @@ NaiveBayesClassifier<MatType>::NaiveBayesClassifier(const size_t dimensionality,
   variances.zeros(dimensionality, numClasses);
 }
 
+template<typename ModelMatType>
 template<typename MatType>
-void NaiveBayesClassifier<MatType>::Train(const MatType& data,
-                                          const arma::Row<size_t>& labels,
-                                          const size_t numClasses,
-                                          const bool incremental)
+void NaiveBayesClassifier<ModelMatType>::Train(
+    const MatType& data,
+    const arma::Row<size_t>& labels,
+    const size_t numClasses,
+    const bool incremental)
 {
+  static_assert(std::is_same<ElemType, typename MatType::elem_type>::value,
+      "NaiveBayesClassifier: element type of given data must match the element "
+      "type of the model!");
+
   // Do we need to resize the model?
   if (probabilities.n_elem != numClasses)
   {
@@ -158,11 +175,15 @@ void NaiveBayesClassifier<MatType>::Train(const MatType& data,
   trainingPoints += data.n_cols;
 }
 
-template<typename MatType>
+template<typename ModelMatType>
 template<typename VecType>
-void NaiveBayesClassifier<MatType>::Train(const VecType& point,
-                                          const size_t label)
+void NaiveBayesClassifier<ModelMatType>::Train(const VecType& point,
+                                               const size_t label)
 {
+  static_assert(std::is_same<ElemType, typename VecType::elem_type>::value,
+      "NaiveBayesClassifier: element type of given data must match the element "
+      "type of the model!");
+
   // We must use the incremental algorithm here.
   probabilities *= trainingPoints;
   probabilities[label]++;
@@ -179,18 +200,18 @@ void NaiveBayesClassifier<MatType>::Train(const VecType& point,
   probabilities /= trainingPoints;
 }
 
+template<typename ModelMatType>
 template<typename MatType>
-template<typename VecType>
-void NaiveBayesClassifier<MatType>::LogLikelihood(
-    const VecType& point,
-    arma::vec& logLikelihoods) const
+void NaiveBayesClassifier<ModelMatType>::LogLikelihood(
+    const MatType& data,
+    ModelMatType& logLikelihoods) const
 {
-  // Check that the number of features in the test data is same as in the
-  // training data.
-  Log::Assert(point.n_rows == means.n_rows);
+  static_assert(std::is_same<ElemType, typename MatType::elem_type>::value,
+      "NaiveBayesClassifier: element type of given data must match the element "
+      "type of the model!");
 
-  logLikelihoods = arma::log(probabilities);
-  arma::mat invVar = 1.0 / variances;
+  logLikelihoods = arma::log(arma::repmat(probabilities, 1, data.n_cols));
+  ModelMatType invVar = 1.0 / variances;
 
   // Calculate the joint log likelihood of point for each of the
   // means.n_cols.
@@ -200,36 +221,25 @@ void NaiveBayesClassifier<MatType>::LogLikelihood(
   {
     // This is an adaptation of gmm::phi() for the case where the covariance is
     // a diagonal matrix.
-    arma::vec diffs = point - means.col(i);
-    arma::vec rhs = -0.5 * arma::diagmat(invVar.col(i)) * diffs;
-    double exponent = arma::accu(diffs % rhs); // log(exp(value)) == value
+    ModelMatType diffs = data - arma::repmat(means.col(i), 1, data.n_cols);
+    ModelMatType rhs = -0.5 * arma::diagmat(invVar.col(i)) * diffs;
+    arma::Mat<ElemType> exponents = arma::sum(diffs % rhs, 0);
 
-    // Calculate point log likelihood as sum of logs to decrease floating point
-    // errors.
-    logLikelihoods(i) += (point.n_rows / -2.0 * log(2 * M_PI) - 0.5 *
-        log(arma::det(arma::diagmat(variances.col(i)))) + exponent);
+    logLikelihoods.row(i) += (data.n_rows / -2.0 * log(2 * M_PI) - 0.5 *
+        std::log(arma::det(arma::diagmat(variances.col(i)))) + exponents);
   }
 }
 
-template<typename MatType>
-void NaiveBayesClassifier<MatType>::LogLikelihood(
-    const MatType& data,
-    arma::mat& logLikelihoods) const
-{
-  logLikelihoods.set_size(means.n_cols, data.n_cols);
-  for (size_t i = 0; i < data.n_cols; ++i)
-  {
-    arma::vec v = logLikelihoods.unsafe_col(i);
-    LogLikelihood(data.col(i), v);
-  }
-}
-
-template<typename MatType>
+template<typename ModelMatType>
 template<typename VecType>
-size_t NaiveBayesClassifier<MatType>::Classify(const VecType& point) const
+size_t NaiveBayesClassifier<ModelMatType>::Classify(const VecType& point) const
 {
+  static_assert(std::is_same<ElemType, typename VecType::elem_type>::value,
+      "NaiveBayesClassifier: element type of given data must match the element "
+      "type of the model!");
+
   // Find the label(class) with max log likelihood.
-  arma::vec logLikelihoods;
+  ModelMatType logLikelihoods;
   LogLikelihood(point, logLikelihoods);
 
   arma::uword maxIndex = 0;
@@ -237,17 +247,26 @@ size_t NaiveBayesClassifier<MatType>::Classify(const VecType& point) const
   return maxIndex;
 }
 
-template<typename MatType>
-template<typename VecType>
-void NaiveBayesClassifier<MatType>::Classify(const VecType& point,
-                                             size_t& prediction,
-                                             arma::vec& probabilities) const
+template<typename ModelMatType>
+template<typename VecType, typename ProbabilitiesVecType>
+void NaiveBayesClassifier<ModelMatType>::Classify(
+    const VecType& point,
+    size_t& prediction,
+    ProbabilitiesVecType& probabilities) const
 {
+  static_assert(std::is_same<ElemType, typename VecType::elem_type>::value,
+      "NaiveBayesClassifier: element type of given data must match the element "
+      "type of the model!");
+  static_assert(std::is_same<ElemType,
+                             typename ProbabilitiesVecType::elem_type>::value,
+      "NaiveBayesClassifier: element type of given data must match the element "
+      "type of the model!");
+
   // log(Prob(Y|X)) = Log(Prob(X|Y)) + Log(Prob(Y)) - Log(Prob(X));
   // But LogLikelihood() gives us the unnormalized log likelihood which is
   // Log(Prob(X|Y)) + Log(Prob(Y)) so we need to subtract the normalization
   // term.
-  arma::vec logLikelihoods;
+  ModelMatType logLikelihoods;
   LogLikelihood(point, logLikelihoods);
   const double logProbX = log(arma::accu(exp(logLikelihoods))); // Log(Prob(X)).
   logLikelihoods -= logProbX;
@@ -258,14 +277,19 @@ void NaiveBayesClassifier<MatType>::Classify(const VecType& point,
   probabilities = exp(logLikelihoods); // log(exp(value)) == value.
 }
 
+template<typename ModelMatType>
 template<typename MatType>
-void NaiveBayesClassifier<MatType>::Classify(
+void NaiveBayesClassifier<ModelMatType>::Classify(
     const MatType& data,
     arma::Row<size_t>& predictions) const
 {
+  static_assert(std::is_same<ElemType, typename MatType::elem_type>::value,
+      "NaiveBayesClassifier: element type of given data must match the element "
+      "type of the model!");
+
   predictions.set_size(data.n_cols);
 
-  arma::mat logLikelihoods;
+  ModelMatType logLikelihoods;
   LogLikelihood(data, logLikelihoods);
 
   for (size_t i = 0; i < data.n_cols; ++i)
@@ -276,18 +300,28 @@ void NaiveBayesClassifier<MatType>::Classify(
   }
 }
 
-template<typename MatType>
-void NaiveBayesClassifier<MatType>::Classify(
+template<typename ModelMatType>
+template<typename MatType, typename ProbabilitiesMatType>
+void NaiveBayesClassifier<ModelMatType>::Classify(
     const MatType& data,
     arma::Row<size_t>& predictions,
-    arma::mat& predictionProbs) const
+    ProbabilitiesMatType& predictionProbs) const
 {
+  static_assert(std::is_same<ElemType, typename MatType::elem_type>::value,
+      "NaiveBayesClassifier: element type of given data must match the element "
+      "type of the model!");
+  static_assert(std::is_same<ElemType,
+                             typename ProbabilitiesMatType::elem_type>::value,
+      "NaiveBayesClassifier: element type of given data must match the element "
+      "type of the model!");
+
   predictions.set_size(data.n_cols);
 
-  arma::mat logLikelihoods;
+  ModelMatType logLikelihoods;
   LogLikelihood(data, logLikelihoods);
 
-  arma::vec logProbX(data.n_cols); // log(Prob(X)) for each point.
+  // This will hold log(Prob(X)) for each point.
+  arma::Col<ElemType> logProbX(data.n_cols);
   for (size_t j = 0; j < data.n_cols; ++j)
   {
     logProbX(j) = log(arma::accu(exp(logLikelihoods.col(j))));
@@ -305,10 +339,11 @@ void NaiveBayesClassifier<MatType>::Classify(
   }
 }
 
-template<typename MatType>
+template<typename ModelMatType>
 template<typename Archive>
-void NaiveBayesClassifier<MatType>::Serialize(Archive& ar,
-                                              const unsigned int /* version */)
+void NaiveBayesClassifier<ModelMatType>::Serialize(
+    Archive& ar,
+    const unsigned int /* version */)
 {
   ar & data::CreateNVP(means, "means");
   ar & data::CreateNVP(variances, "variances");

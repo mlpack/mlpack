@@ -16,6 +16,7 @@
 #include <mlpack/prereqs.hpp>
 
 #include "replay/random_replay.hpp"
+#include "training_config.hpp"
 
 namespace mlpack {
 namespace rl {
@@ -68,28 +69,17 @@ class QLearning
    * If you want to pass in a parameter and discard the original parameter
    * object, be sure to use std::move to avoid unnecessary copy.
    *
+   * @param config Hyper-parameters for training.
    * @param network The network to compute action value.
-   * @param stepSize Learning rate.
-   * @param discount Discount for future return.
    * @param policy Behavior policy of the agent.
    * @param replayMethod Experience replay method.
-   * @param targetNetworkSyncInterval Interval (steps) to sync the target
-   *        network.
-   * @param explorationSteps Steps before starting to learn.
-   * @param doubleQLearning Whether to use double Q-Learning.
-   * @param stepLimit Maximum steps in each episode, 0 means no limit.
    * @param updater How to apply gradients when training.
    * @param environment Reinforcement learning task.
    */
-  QLearning(NetworkType network,
-            const double stepSize,
-            const double discount,
+  QLearning(TrainingConfig config,
+            NetworkType network,
             PolicyType policy,
             ReplayType replayMethod,
-            const size_t targetNetworkSyncInterval,
-            const size_t explorationSteps,
-            const bool doubleQLearning = false,
-            const size_t stepLimit = 0,
             UpdaterType updater = UpdaterType(),
             EnvironmentType environment = EnvironmentType());
 
@@ -123,38 +113,23 @@ class QLearning
    */
   arma::Col<size_t> BestAction(const arma::mat& actionValues);
 
+  //! Locally-stored hyper-parameters.
+  TrainingConfig config;
+
   //! Locally-stored learning network.
   NetworkType learningNetwork;
 
   //! Locally-stored target network.
   NetworkType targetNetwork;
 
-  //! Locally-stored learning rate.
-  double stepSize;
-
   //! Locally-stored updater.
   UpdaterType updater;
-
-  //! Discount factor of future return.
-  double discount;
 
   //! Locally-stored behavior policy.
   PolicyType policy;
 
   //! Locally-stored experience method.
   ReplayType replayMethod;
-
-  //! Interval (steps) to update target network.
-  size_t targetNetworkSyncInterval;
-
-  //! Random steps before starting to learn.
-  size_t explorationSteps;
-
-  //! Whether to use double Q-Learning.
-  bool doubleQLearning;
-
-  //! Maximum steps for each episode.
-  size_t stepLimit;
 
   //! Locally-stored reinforcement learning task.
   EnvironmentType environment;

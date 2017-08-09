@@ -60,7 +60,8 @@ void PReLU<InputDataType, OutputDataType>::Gradient(
     const arma::Mat<eT>&& input, arma::Mat<eT>&& error,
     arma::Mat<eT>&& gradient)
 {
-  if (gradient.n_elem == 0) {
+  if (gradient.n_elem == 0)
+  {
     gradient = arma::zeros<arma::mat>(1, 1);
   }
 
