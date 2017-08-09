@@ -25,7 +25,7 @@ HAMUnit::HAMUnit(size_t memorySize,
                  LayerTypes& write)
   : memorySize(memorySize), search(search), embed(embed), t(0)
 {
-  memory = TreeMemory<double, J, W>(memorySize, join, write);
+  memory = TreeMemory<double>(memorySize, join, write);
 }
 
 arma::vec HAMUnit::Attention() const
@@ -54,40 +54,27 @@ arma::vec HAMUnit::Attention() const
 }
 
 void HAMUnit::Forward(arma::mat&& input, arma::mat&& output) {
-  sequence = embed.Forward(input);
+  sequence = embed.Predict(input);
   memory.Initialize(sequence);
-  t = 0;
-
-  arma::vec attention = Attention();
-  arma::vec input = arma::zeros(memory.Get(0).n_elem);
-  for (size_t i = 0; i < memorySize; ++i)
+  for (t = 0; t < input.n_cols; ++t)
   {
-    input += leafAttention.at(i) * memory.Get(i);
+    arma::vec attention = Attention();
+    arma::vec input = arma::zeros(memory.Get(0).n_elem);
+    for (size_t i = 0; i < memorySize; ++i)
+    {
+      input += leafAttention.at(i) * memory.Get(i);
+    }
+    output.at(t) = 0; // TODO?
+
+    // Write phase.
+    for (size_t i = 0; i < memory.MemorySize(); ++i)
+    {
+      arma::vec prevMemory = memory.Get(i);
+      memory.Update(i, write.Forward(memory.Stack(memory.Get(i), input)))
+      memory.Get(i) *= attention.at(i);
+      memory.Get(i) += (1. - attention.at(i)) * prevMemory;
+    }
   }
-  // TODO Feed input to the controller and get output from it.
-
-  // Write phase.
-  for (size_t i = 0; i < memory.MemorySize(); ++i)
-  {
-    memory.Get(i) *= attention.at(i);
-    memory.Get(i) += (1. - attention.at(i)) * write.Forward(sequence.col(t++));
-  }
-
-  // Update phase - hopefully a cleaner version of the Update from TreeMemory.
-}
-
-void HAMUnit::Gradient(arma::mat&& input,
-                       arma::mat&& error,
-                       arma::mat&& gradient)
-{
-  // Compute gradients for attention values for all nodes, startng from root.
-  // For root it's (of course) zero, for nodes it's computed as
-  // grad(parent value * step probability).
-
-  // Input gradient is sum(attention gradient * leaf value)
-  // - how to get node value *before* write phase?
-
-  // After that, just return controller gradient * input gradient.
 }
 
 } // namespace augmented

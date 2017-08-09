@@ -16,14 +16,15 @@
 namespace mlpack {
 namespace ann /* Artificial Neural Network */ {
 namespace augmented /* Augmented neural network */ {
-template<typename T, typename J, typename W>
+template<typename T>
 class TreeMemory {
 public:
-  TreeMemory(size_t size, size_t memDim, J joiner, W writer);
+  TreeMemory(size_t size, size_t memDim, LayerTypes joiner, LayerTypes writer);
 
   void Initialize(arma::Mat<T>& leafValues);
 
   void Update(size_t pos, arma::Col<T> el);
+  void Rebuild();
 
   arma::Col<T> Leaf(size_t index) const;
   arma::subview_col<T> Leaf(size_t index);
@@ -37,14 +38,13 @@ public:
   inline size_t LeafIndex(size_t leafPos);
 
   size_t MemorySize() const { return memorySize; }
-  size_t& MemorySize() { return memorySize; }
-
   size_t ActualMemorySize() const { return actualMemorySize; }
-  size_t& ActualMemorySize() { return actualMemorySize; }
 private:
+  arma::Mat<T> Stack(arma::Mat<T>& left, arma::Mat<T>& right);
+
   arma::Mat<T> memory;
-  J joinFunction;
-  W writeFunction;
+  LayerTypes joinFunction;
+  LayerTypes writeFunction;
   size_t memorySize;
   size_t memoryDim;
   size_t actualMemorySize;

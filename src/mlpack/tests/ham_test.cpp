@@ -28,17 +28,27 @@
 using namespace mlpack::ann::augmented;
 using namespace mlpack::ann;
 
-template<typename T>
-struct ReplaceWriter
+LayerTypes ReplaceWriter(size_t dim)
 {
-  arma::Col<T> operator() (arma::Col<T> a, arma::Col<T> b) { return b; }
-};
+  FFN<MeanSquaredError<> > writeModel;
+  writeModel.Add<Linear<> >(2 * dim, dim);
+  writeModel.ResetParameters();
+  writeModel.Parameters().rows(0, dim * dim - 1) = arma::zeros(dim * dim);
+  writeModel.Parameters().rows(dim * dim, 2 * dim * dim - 1) =
+      arma::vectorise(arma::eye(dim, dim));
+  writeModel.Parameters().rows(2 * dim * dim, 2 * dim * dim + dim - 1) = arma::zeros(dim);
+  return writeModel;
+}
 
-template<typename T>
-struct AddJoiner
-{
-  arma::Col<T> operator() (arma::Col<T> a, arma::Col<T> b) { return a + b; }
-};
+LayerTypes AddJoiner(size_t dim) {
+  FFN<MeanSquaredError<> > joinModel;
+  joinModel.Add<Linear<> >(2 * dim, dim);
+  joinModel.ResetParameters();
+  joinModel.Parameters().rows(0, dim * dim - 1) = arma::vectorise(arma::eye(dim, dim));
+  joinModel.Parameters().rows(dim * dim, 2 * dim * dim - 1) = arma::vectorise(arma::eye(dim, dim));
+  joinModel.Parameters().rows(2 * dim * dim, 2 * dim * dim + dim - 1) = arma::zeros(dim);
+  return joinModel;
+}
 
 template<typename T>
 arma::Mat<T> convertToArma(std::vector<std::vector<T>> stlArray)
@@ -57,11 +67,12 @@ BOOST_AUTO_TEST_SUITE(HAMTest);
 
 BOOST_AUTO_TEST_CASE(TreeMemoryTestMinimum)
 {
-  AddJoiner<double> J;
-  ReplaceWriter<double> W;
+  /*AddJoiner<double> J;
+  ReplaceWriter<double> W;*/
+  LayerTypes J = AddJoiner(1), W = ReplaceWriter(1);
   // With these definitions, mem is exactly one of the well-known data structres
   // in competitive programming - segment tree.
-  TreeMemory<double, AddJoiner<double>, ReplaceWriter<double>> mem(1, 1, J, W);
+  TreeMemory<double> mem(1, 1, J, W);
   std::vector<std::vector<double>> initMemSTL = {{0}};
   arma::mat initMem = convertToArma(initMemSTL);
   mem.Initialize(initMem);
@@ -74,10 +85,11 @@ BOOST_AUTO_TEST_CASE(TreeMemoryTestMinimum)
 
 BOOST_AUTO_TEST_CASE(TreeMemoryTestMinimumNDim)
 {
-  AddJoiner<double> J;
-  ReplaceWriter<double> W;
+  /*AddJoiner<double> J;
+  ReplaceWriter<double> W;*/
   size_t memSize = 5;
-  TreeMemory<double, AddJoiner<double>, ReplaceWriter<double>> mem(
+  LayerTypes J = AddJoiner(memSize), W = ReplaceWriter(memSize);
+  TreeMemory<double> mem(
       1, memSize, J, W);
   std::vector<std::vector<double>> initMemSTL = {{0, 0, 0, 0, 0}};
   arma::mat initMem = convertToArma(initMemSTL);
@@ -94,9 +106,10 @@ BOOST_AUTO_TEST_CASE(TreeMemoryTestMinimumNDim)
 
 BOOST_AUTO_TEST_CASE(TreeMemoryTestPowerOfTwo)
 {
-  AddJoiner<double> J;
-  ReplaceWriter<double> W;
-  TreeMemory<double, AddJoiner<double>, ReplaceWriter<double>> mem(8, 1, J, W);
+  /*AddJoiner<double> J;
+  ReplaceWriter<double> W;*/
+  LayerTypes J = AddJoiner(1), W = ReplaceWriter(1);
+  TreeMemory<double> mem(8, 1, J, W);
   std::vector<std::vector<double>> initMemSTL =
       {{0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}};
   arma::mat initMem = convertToArma(initMemSTL);
@@ -125,10 +138,11 @@ BOOST_AUTO_TEST_CASE(TreeMemoryTestPowerOfTwo)
 
 BOOST_AUTO_TEST_CASE(TreeMemoryTestPowerOfTwoNDim)
 {
-  AddJoiner<double> J;
-  ReplaceWriter<double> W;
+  /*AddJoiner<double> J;
+  ReplaceWriter<double> W;*/
   size_t memSize = 4;
-  TreeMemory<double, AddJoiner<double>, ReplaceWriter<double>> mem(
+  LayerTypes J = AddJoiner(memSize), W = ReplaceWriter(memSize);
+  TreeMemory<double> mem(
       8, memSize, J, W);
   std::vector<std::vector<double>> initMemSTL =
       {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
@@ -168,9 +182,10 @@ BOOST_AUTO_TEST_CASE(TreeMemoryTestPowerOfTwoNDim)
 }
 
 BOOST_AUTO_TEST_CASE(TreeMemoryTestArbitrary) {
-  AddJoiner<double> J;
-  ReplaceWriter<double> W;
-  TreeMemory<double, AddJoiner<double>, ReplaceWriter<double>> mem(9, 1, J, W);
+  /*AddJoiner<double> J;
+  ReplaceWriter<double> W;*/
+  LayerTypes J = AddJoiner(1), W = ReplaceWriter(1);
+  TreeMemory<double> mem(9, 1, J, W);
   std::vector<std::vector<double>> initMemSTL =
       {{0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}};
   arma::mat initMem = convertToArma(initMemSTL);
@@ -221,19 +236,13 @@ BOOST_AUTO_TEST_CASE(BlindHAMUnitTest) {
       arma::vectorise(arma::eye(nDim, nDim));
   embedModel.Parameters().rows(nDim * nDim, nDim * nDim + nDim - 1) =
       arma::zeros(nDim);
-  arma::mat embedPredictors = arma::reshape(arma::mat("1 2 3 4"), nDim, 1), embedResponses;
-  embedModel.Predict(embedPredictors, embedResponses);
-  std::cerr << "\nEMBED:\n" << embedResponses << "\n";
-  // Join function is mean of its two vector inputs.
+  // Join function is sum of its two vector inputs.
   FFN<MeanSquaredError<> > joinModel;
   joinModel.Add<Linear<> >(2 * nDim, nDim);
   joinModel.ResetParameters();
-  joinModel.Parameters().rows(0, nDim * nDim - 1) = arma::vectorise(0.5 * arma::eye(nDim, nDim));
-  joinModel.Parameters().rows(nDim * nDim, 2 * nDim * nDim - 1) = arma::vectorise(0.5 * arma::eye(nDim, nDim));
+  joinModel.Parameters().rows(0, nDim * nDim - 1) = arma::vectorise(arma::eye(nDim, nDim));
+  joinModel.Parameters().rows(nDim * nDim, 2 * nDim * nDim - 1) = arma::vectorise(arma::eye(nDim, nDim));
   joinModel.Parameters().rows(2 * nDim * nDim, 2 * nDim * nDim + nDim - 1) = arma::zeros(nDim);
-  arma::mat joinPredictors = arma::reshape(arma::mat("1 2 3 4 4 3 2 1"), 2 * nDim, 1), joinResponses;
-  joinModel.Predict(joinPredictors, joinResponses);
-  std::cerr << "\nJOIN:\n" << joinResponses << "\n";
   // Write function is replacing its old input with its new input.
   FFN<MeanSquaredError<> > writeModel;
   writeModel.Add<Linear<> >(2 * nDim, nDim);
@@ -242,9 +251,6 @@ BOOST_AUTO_TEST_CASE(BlindHAMUnitTest) {
   writeModel.Parameters().rows(nDim * nDim, 2 * nDim * nDim - 1) =
       arma::vectorise(arma::eye(nDim, nDim));
   writeModel.Parameters().rows(2 * nDim * nDim, 2 * nDim * nDim + nDim - 1) = arma::zeros(nDim);
-  arma::mat writePredictors = arma::reshape(arma::mat("1 2 3 4 4 3 2 1"), 2 * nDim, 1), writeResponses;
-  writeModel.Predict(writePredictors, writeResponses);
-  std::cerr << "\nWRITE:\n" << writeResponses << "\n";
   // Search model is a constant model that ignores its input and returns 1 / 3.
   FFN<MeanSquaredError<> > searchModel;
   searchModel.Add<Linear<> >(2 * nDim, 1);
@@ -252,9 +258,6 @@ BOOST_AUTO_TEST_CASE(BlindHAMUnitTest) {
   searchModel.Parameters().rows(0, 2 * nDim - 1) = arma::zeros(2 * nDim);
   searchModel.Parameters().at(2 * nDim) = -log(2);
   searchModel.Add<SigmoidLayer<> >();
-  arma::mat searchPredictors = arma::reshape(arma::mat("1 2 3 4 4 3 2 1"), 2 * nDim, 1), searchResponses;
-  searchModel.Predict(writePredictors, writeResponses);
-  std::cerr << "\nSEARCH:\n" << writeResponses << "\n";
 }
 
 BOOST_AUTO_TEST_SUITE_END();
