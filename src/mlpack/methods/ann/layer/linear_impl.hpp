@@ -50,6 +50,7 @@ void Linear<InputDataType, OutputDataType>::Forward(
 {
   output = weight * input;
   output.each_col() += bias;
+  std::cerr << "\n***DEBUG***\nWeights:\n" << weight << "\nBias:\n" << bias << "\n";
 }
 
 template<typename InputDataType, typename OutputDataType>
