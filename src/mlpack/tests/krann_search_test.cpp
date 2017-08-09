@@ -274,6 +274,7 @@ BOOST_AUTO_TEST_CASE(SingleDatasetSearch)
 // Test single-tree rank-approximate search with cover trees.
 BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
 {
+  math::RandomSeed(std::time(NULL));
   arma::mat refData;
   arma::mat queryData;
 
@@ -294,7 +295,7 @@ BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
   arma::Mat<size_t> qrRanks;
   data::Load("rann_test_qr_ranks.csv", qrRanks, true, false); // No transpose.
 
-  size_t numRounds = 1000;
+  size_t numRounds = 100;
   arma::Col<size_t> numSuccessRounds(queryData.n_cols);
   numSuccessRounds.fill(0);
 
@@ -335,6 +336,7 @@ BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
 // Test dual-tree rank-approximate search with cover trees.
 BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
 {
+  math::RandomSeed(std::time(NULL));
   arma::mat refData;
   arma::mat queryData;
 
@@ -359,7 +361,7 @@ BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
   arma::Mat<size_t> qrRanks;
   data::Load("rann_test_qr_ranks.csv", qrRanks, true, false); // No transpose.
 
-  size_t numRounds = 1000;
+  size_t numRounds = 100;
   arma::Col<size_t> numSuccessRounds(queryData.n_cols);
   numSuccessRounds.fill(0);
 
