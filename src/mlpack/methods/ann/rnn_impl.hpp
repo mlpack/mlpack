@@ -180,6 +180,10 @@ void RNN<OutputLayerType, InitializationRuleType>::SinglePredict(
     inputSize = predictors.n_elem / rho;
     prevRho = rho;
   }
+  else if (inputSize == 0)
+  {
+    inputSize = predictors.n_elem / rho;
+  }
 
   for (size_t seqNum = 0; seqNum < rho; ++seqNum)
   {
@@ -220,6 +224,11 @@ double RNN<OutputLayerType, InitializationRuleType>::Evaluate(
     inputSize = input.n_elem / rho;
     targetSize = target.n_elem / rho;
     prevRho = rho;
+  }
+  else if (inputSize == 0)
+  {
+    inputSize = input.n_elem / rho;
+    targetSize = target.n_elem / rho;
   }
 
   double performance = 0;
