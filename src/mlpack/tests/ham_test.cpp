@@ -223,13 +223,20 @@ BOOST_AUTO_TEST_CASE(BlindHAMUnitTest) {
       arma::zeros(nDim);
   arma::mat embedPredictors = arma::reshape(arma::mat("1 2 3 4"), nDim, 1), embedResponses;
   embedModel.Predict(embedPredictors, embedResponses);
-  std::cerr << "\n" << embedResponses << "\n";
+  std::cerr << "\nEMBED:\n" << embedResponses << "\n";
   // Join function is mean of its two vector inputs.
   FFN<MeanSquaredError<> > joinModel;
-  embedModel.Add<Linear<> >(2 * nDim, nDim);
-  embedModel.Parameters().cols(0, nDim - 1) = 0.5 * arma::eye(nDim, nDim);
-  embedModel.Parameters().cols(nDim, 2 * nDim - 1) =
-      0.5 * arma::eye(nDim, nDim);
+  joinModel.Add<Linear<> >(2 * nDim, nDim);
+  joinModel.ResetParameters();
+  arma::mat joinParams = arma::zeros(2 * nDim + nDim, nDim);
+  joinParams.rows(0, nDim - 1) = 0.5 * arma::eye(nDim, nDim);
+  joinParams.rows(nDim, 2 * nDim - 1) = 0.5 * arma::eye(nDim, nDim);
+  joinModel.Parameters() = arma::vectorise(joinParams.t());
+  arma::mat joinPredictors = arma::reshape(arma::mat("1 2 3 4 4 3 2 1"), 2 * nDim, 1), joinResponses;
+  joinModel.Predict(joinPredictors, joinResponses);
+  std::cerr << "\n" << joinParams << "\n";
+  std::cerr << "\n" << joinModel.Parameters() << "\n";
+  std::cerr << "\nJOIN:\n" << joinPredictors << "->\n" << joinResponses << "\n";
   // Write function is replacing its old input with its new input.
   FFN<MeanSquaredError<> > writeModel;
   embedModel.Add<Linear<> >(2 * nDim, nDim);
