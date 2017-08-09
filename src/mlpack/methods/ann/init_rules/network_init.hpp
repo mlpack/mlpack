@@ -56,10 +56,13 @@ class NetworkInitialization
       size_t parameterOffset = 0)
   {
     // Determine the number of parameter/weights of the given network.
-    size_t weights = 0;
-    for (size_t i = 0; i < network.size(); ++i)
-      weights += boost::apply_visitor(weightSizeVisitor, network[i]);
-    parameter.set_size(weights, 1);
+    if (parameter.is_empty())
+    {
+      size_t weights = 0;
+      for (size_t i = 0; i < network.size(); ++i)
+        weights += boost::apply_visitor(weightSizeVisitor, network[i]);
+      parameter.set_size(weights, 1);
+    }
 
     // Initialize the network layer by layer or the complete network.
     if (ann::InitTraits<InitializationRuleType>::UseLayer)

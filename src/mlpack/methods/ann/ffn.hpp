@@ -361,8 +361,8 @@ class FFN
   //! Locally-stored copy visitor
   CopyVisitor copyVisitor;
 
-template<typename Generator, typename Discriminator, typename IntializerType>
-friend class GenerativeAdversarialNetwork;
+template<typename Model, typename IntializerType>
+friend class GAN;
 }; // class FFN
 
 } // namespace ann

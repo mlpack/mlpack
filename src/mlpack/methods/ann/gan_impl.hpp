@@ -13,8 +13,8 @@
 #include "gan.hpp"
 
 #include <mlpack/core.hpp>
-#include <mlpack/prereqs.hpp>
-#include <mlpack/core/math/random.hpp>
+#include <boost/test/unit_test.hpp>
+#include <mlpack/tests/test_tools.hpp>
 
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/layer/base_layer.hpp>
@@ -35,103 +35,85 @@ using namespace mlpack::distribution;
 
 namespace mlpack {
 namespace ann /** artifical neural network  */ {
-template<typename Generator,
-         typename Discriminator,
-         typename InitializationRuleType>
-GenerativeAdversarialNetwork<Generator,
-    Discriminator,
-    InitializationRuleType>
-::GenerativeAdversarialNetwork(arma::mat& trainData,
+template<typename Model, typename InitializationRuleType>
+GAN<Model, InitializationRuleType>::GAN(
+    arma::mat& trainData,
+    arma::mat& noiseData,
+    Model& generator,
+    Model& discriminator,
     InitializationRuleType initializeRule,
-    Generator& generator,
-    Discriminator& discriminator,
     size_t batchSize,
-    size_t noiseInSize,
     size_t disIteration):
     trainData(trainData),
-    initializeRule(initializeRule),
+    noiseData(noiseData),
     generator(generator),
     discriminator(discriminator),
+    initializeRule(initializeRule),
     trainGenerator(false),
     batchSize(batchSize),
-    noiseInSize(noiseInSize),
     disIteration(2 * disIteration),
     reset(false)
 {
-  discriminator.network.insert(discriminator.network.begin(),
+  // Insert IdentityLayer for Joing the generator and discriminator
+  discriminator.network.insert(
+      discriminator.network.begin(), 
       new IdentityLayer<>());
   trainGenerator = false;
-  iterations = 1;
+  counter = 1;
   offset = 0;
   iterationDiscriminator = disIteration;
 }
 
-template<typename Generator,
-         typename Discriminator,
-         typename InitializationRuleType>
-void GenerativeAdversarialNetwork<Generator,
-    Discriminator,
-    InitializationRuleType>
-::Reset()
+template<typename Model, typename InitializationRuleType>
+void GAN<Model, InitializationRuleType>::Reset()
 {
-  std::cout << "Reset function" << std::endl;
-  size_t generatorWeights = 0;
-  size_t discriminatorWeights = 0;
+  size_t genWeights = 0;
+  size_t discWeights = 0;
+  NetworkInitialization<InitializationRuleType> networkInit(initializeRule);
 
   for (size_t i = 0; i < generator.network.size(); ++i)
-    generatorWeights += boost::apply_visitor(weightSizeVisitor,
-        generator.network[i]);
-
-  assert(generatorWeights > 0);
+    genWeights += boost::apply_visitor(weightSizeVisitor, generator.network[i]);
 
   for (size_t i = 0; i < discriminator.network.size(); ++i)
-    discriminatorWeights += boost::apply_visitor(weightSizeVisitor,
+    discWeights += boost::apply_visitor(weightSizeVisitor, 
         discriminator.network[i]);
 
-  assert(discriminatorWeights > 0);
+  parameter.set_size(genWeights + discWeights, 1);
 
-  parameter.set_size(generatorWeights + discriminatorWeights, 1);
-
-  NetworkInitialization<InitializationRuleType> networkInit(initializeRule);
   // Intialise the parmaeters generator
   networkInit.Initialize(generator.network, parameter);
   // Intialise the parameters discriminator
-  networkInit.Initialize(discriminator.network, parameter, generatorWeights);
-
+  networkInit.Initialize(discriminator.network, parameter, genWeights);
+  generator.Parameters() = arma::mat(
+      parameter.memptr(), genWeights, 1, false, false);
+  discriminator.Parameters() = arma::mat(
+      parameter.memptr() + genWeights, discWeights, 1 , false, false);
   reset = true;
 }
 
-template<typename Generator,
-         typename Discriminator,
-         typename InitializationRuleType>
-void GenerativeAdversarialNetwork<Generator,
-    Discriminator,
-    InitializationRuleType>
-::GenerateData()
+template<typename Model, typename InitializationRuleType>
+void GAN<Model, InitializationRuleType>::CreateBatch()
 {
   responses.set_size(1, batchSize);
   discriminator.responses = arma::mat(responses.memptr(), 1, batchSize,
         false, false);
   size_t n_rows = trainData.n_rows;
   size_t disBatchSize = std::floor(batchSize / 2.0);
+  std::cout << "offset = " << offset << std::endl;
 
   if (!trainGenerator)
   {
-    predictors.set_size(trainData.n_rows, batchSize);
-    noiseData.set_size(noiseInSize, disBatchSize);
+    predictors.set_size(n_rows, batchSize);
     
-    disFakeData = arma::mat(predictors.memptr(), n_rows, disBatchSize,
-        false, false);
-    
+    predictors.cols(0, disBatchSize - 1) = arma::mat(trainData.memptr() + offset, 
+          n_rows, disBatchSize, false, false);
+
     predictors.cols(disBatchSize, batchSize - 1) =arma::mat(
-        trainData.memptr() + offset, n_rows, batchSize - disBatchSize,
-        true, false);
+        noiseData.memptr() + offset, n_rows, batchSize - disBatchSize,
+        false, false);
 
     discriminator.predictors = arma::mat(predictors.memptr(), n_rows, batchSize,
         false, false);
-
-    GenerateNoise(std::move(disFakeData), std::move(noiseData.cols(0,
-        disBatchSize - 1)));
 
     responses.cols(0, disBatchSize - 1).zeros();
     responses.cols(disBatchSize, batchSize - 1).ones();
@@ -141,62 +123,53 @@ void GenerativeAdversarialNetwork<Generator,
   }
   else
   {
-    predictors.set_size(noiseInSize, batchSize);
-    noiseData.set_size(noiseInSize, batchSize);
-    
-    noiseData = arma::mat(predictors.memptr(), noiseInSize,
-        batchSize, false, false);
-    genFakeData = arma::mat(discriminator.predictors.memptr(), n_rows,
-        batchSize, false, false);
-    GenerateNoise(std::move(genFakeData), std::move(noiseData));
-    
+    predictors.set_size(noiseData.n_rows, batchSize);
+    discriminator.predictors.set_size(n_rows, batchSize);
+
+    predictors.cols(0, batchSize - 1) = arma::mat(noiseData.memptr() + offset,
+        noiseData.n_rows, batchSize, false, false);
+
+    for (size_t i = 0; i < batchSize; i++)
+    {
+      generator.Forward(std::move(predictors.col(i)));
+      discriminator.predictors.col(i) = boost::apply_visitor(
+          outputParameterVisitor, generator.network.back());
+    }
     responses.ones();
     this->numFunctions = predictors.n_cols;
   }
 }
 
-template<typename Generator,
-         typename Discriminator,
-         typename InitializationRuleType>
+template<typename Model, typename InitializationRuleType>
 template<typename OptimizerType>
-void GenerativeAdversarialNetwork<Generator,
-    Discriminator,
-    InitializationRuleType>
-::Train(OptimizerType& Optimizer)
+void GAN<Model, InitializationRuleType>::Train(OptimizerType& Optimizer)
 {
   if (!reset)
     Reset();
   offset = 0;
   trainGenerator = false;
-  GenerateData();
+  CreateBatch();
   Optimizer.Optimize(*this, parameter);
 }
 
-template<typename Generator,
-         typename Discriminator,
-         typename InitializationRuleType>
-double GenerativeAdversarialNetwork<Generator,
-    Discriminator,
-    InitializationRuleType>::Evaluate(const arma::mat& /*parameters*/,
-                                      const size_t i,
-                                      const bool /*deterministic*/)
+template<typename Model, typename InitializationRuleType>
+double GAN<Model, InitializationRuleType>::Evaluate(
+    const arma::mat& /*parameters*/,
+    const size_t i)
 {
   currentInput = this->predictors.unsafe_col(i);
   currentTarget = this->responses.unsafe_col(i);
   Forward(std::move(currentInput));
-  double res = discriminator.outputLayer.Forward(std::move(
-      boost::apply_visitor(outputParameterVisitor,
-      discriminator.network.back())), std::move(currentTarget));
+  double res = discriminator.outputLayer.Forward(
+      std::move(boost::apply_visitor(
+          outputParameterVisitor, 
+          discriminator.network.back())), std::move(currentTarget));
   return res;
 }
 
-template<typename Generator,
-         typename Discriminator,
-         typename InitializationRuleType>
-void GenerativeAdversarialNetwork<Generator,
-    Discriminator,
-    InitializationRuleType>::Gradient(const arma::mat& parameters,
-                                      const size_t i, arma::mat& gradient)
+template<typename Model, typename InitializationRuleType>
+void GAN<Model, InitializationRuleType>::
+Gradient(const arma::mat& parameters, const size_t i, arma::mat& gradient)
 {
   if (!reset)
     Reset();
@@ -219,8 +192,9 @@ void GenerativeAdversarialNetwork<Generator,
     generator.Parameters().n_rows, 1, false, false);
 
   // Gradient for discriminator network
-  gradientDiscriminator = arma::mat(gradient.memptr() + gradientGenerator.n_elem,
-    discriminator.Parameters().n_rows, 1, false, false);
+  gradientDiscriminator = arma::mat(gradient.memptr() + 
+      gradientGenerator.n_elem,
+      discriminator.Parameters().n_rows, 1, false, false);
 
   // get the gradients of the discriminator
   discriminator.Gradient(parameters, i, gradientDiscriminator);
@@ -242,37 +216,45 @@ void GenerativeAdversarialNetwork<Generator,
   else
     gradientDiscriminator.zeros();
 
-  // if full batch seen then alternate training
-  if (iterations % numFunctions == 0)
+  // If full batch seen then alternate training
+  if (counter % numFunctions == 0)
   {
+    // If we trained the discriminator for discIteration * 2
     if (!trainGenerator && iterationDiscriminator==1)
     {
       trainGenerator = true;
-      GenerateData();
+      CreateBatch();
       iterationDiscriminator = 2 * disIteration;
     }
     else
     {
       trainGenerator = false;
       offset = (offset + batchSize) % trainData.n_cols;
-      GenerateData();
+      CreateBatch();
       iterationDiscriminator--;
     }
   }
-  iterations++;
-  std::cout << "parameters generator" << std::endl;
-  parameter.rows(0, 10).print();
-  std::cout << "parameters discriminator" << std::endl;
-  parameter.rows(generator.Parameters().n_rows,
-      generator.Parameters().n_rows + 10).print();
+  size_t temp = gradientGenerator.n_rows;
+  // Check the parameters
+  CheckMatrices(parameters.rows(0, 5), generator.Parameters().rows(0, 5));
+  CheckMatrices(parameters.rows(temp, temp +5), 
+                discriminator.Parameters().rows(0, 5));
+
+  // Check the Gradients
+  /*
+  std::cout << "Generator Gradients" << std::endl;
+  gradient.rows(0, 5).print();
+  std::cout << "Discriminator Gradient" << std::endl;
+  gradient.rows(temp, temp + 5).print();
+  */
+  CheckMatrices(gradient.rows(0, 5), gradientGenerator.rows(0, 5));
+  CheckMatrices(gradient.rows(temp, temp +5), 
+                gradientDiscriminator.rows(0, 5));
+  counter++;
 }
 
-template<typename Generator,
-         typename Discriminator,
-         typename InitializationRuleType>
-void GenerativeAdversarialNetwork<Generator,
-    Discriminator,
-    InitializationRuleType>::Forward(arma::mat&& input)
+template<typename Model, typename InitializationRuleType>
+void GAN<Model, InitializationRuleType>::Forward(arma::mat&& input)
 {
   if (!reset)
     Reset();
@@ -286,18 +268,16 @@ void GenerativeAdversarialNetwork<Generator,
   else
   {
     generator.Forward(std::move(input));
-    ganOutput = boost::apply_visitor(outputParameterVisitor,
+    ganOutput = boost::apply_visitor(
+        outputParameterVisitor,
         generator.network.back());
     discriminator.Forward(std::move(ganOutput));
-  }
+}
 }
 
-template<typename Generator,
-         typename Discriminator,
-         typename InitializationRuleType>
-void GenerativeAdversarialNetwork<Generator,
-    Discriminator,
-    InitializationRuleType>::Predict(arma::mat&& input, arma::mat& output)
+template<typename Model, typename InitializationRuleType>
+void GAN<Model, InitializationRuleType>::
+Predict(arma::mat&& input, arma::mat& output)
 {
   if (!reset)
     Reset();
@@ -309,27 +289,6 @@ void GenerativeAdversarialNetwork<Generator,
 
   output = boost::apply_visitor(outputParameterVisitor,
       discriminator.network.back());
-}
-
-template<typename Generator,
-         typename Discriminator,
-         typename InitializationRuleType>
-void GenerativeAdversarialNetwork<Generator,
-    Discriminator,
-    InitializationRuleType>
-::GenerateNoise(arma::mat&& fakeData,
-                arma::mat&& noiseData)
-{
-  if (!reset)
-    Reset();
-
-  noiseData.imbue( [&]() { return arma::as_scalar(RandNormal()); });
-  for (size_t i = 0; i < noiseData.n_cols; i++)
-  {
-    generator.Forward(std::move(noiseData.col(i)));
-    fakeData.col(i) = boost::apply_visitor(outputParameterVisitor,
-        generator.network.back());
-  }
 }
 } // namespace ann
 } // namespace mlpack
