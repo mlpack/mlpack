@@ -195,6 +195,17 @@ class Atoms
    * Projection of currentCoeffs to L1 ball with norm tau.
    * Used in ProjectedGradientEnhancement().
    *
+   * See the paper:
+   * @code
+   * @inproceedings{DucShaSin:2008Efficient,
+   *    Author = {Duchi, John and Shalev-Shwartz, Shai and Singer, Yoram and Chandra, Tushar},
+   *    Booktitle = {Proceedings of the 25th international conference on Machine learning},
+   *    Organization = {ACM},
+   *    Pages = {272--279},
+   *    Title = {Efficient projections onto the l 1-ball for learning in high dimensions},
+   *    Year = {2008}}
+   * @endcode
+   *
    * @param tau atom norm constraint.
    */
   void ProjectionToL1(const double tau)
