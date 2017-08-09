@@ -132,10 +132,11 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
 }
 
 //! The separable implementation.
-template<typename MetricType>
+template <typename MetricType>
+template <typename GradType>
 void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
                                                 const size_t i,
-                                                arma::mat& gradient)
+                                                GradType& gradient)
 {
   // We will need to calculate p_i before this evaluation is done, so these two
   // variables will hold the information necessary for that.
@@ -144,8 +145,8 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
 
   // The gradient involves two matrix terms which are eventually combined into
   // one.
-  arma::mat firstTerm;
-  arma::mat secondTerm;
+  GradType firstTerm;
+  GradType secondTerm;
 
   firstTerm.zeros(coordinates.n_rows, coordinates.n_cols);
   secondTerm.zeros(coordinates.n_rows, coordinates.n_cols);
@@ -166,7 +167,7 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
     // If the points are in the same class, we must add to the second term of
     // the gradient as well as the numerator of p_i.  We will divide by the
     // denominator of p_ik later.  For x_ik we are not using stretched points.
-    arma::vec x_ik = dataset.col(i) - dataset.col(k);
+    GradType x_ik = dataset.col(i) - dataset.col(k);
     if (labels[i] == labels[k])
     {
       numerator += eval;

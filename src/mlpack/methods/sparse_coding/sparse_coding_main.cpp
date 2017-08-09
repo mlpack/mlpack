@@ -22,7 +22,7 @@ using namespace mlpack::sparse_coding;
 PROGRAM_INFO("Sparse Coding", "An implementation of Sparse Coding with "
     "Dictionary Learning, which achieves sparsity via an l1-norm regularizer on"
     " the codes (LASSO) or an (l1+l2)-norm regularizer on the codes (the "
-    "Elastic Net).  Given a dense data matrix X with n points and d dimensions,"
+    "Elastic Net).  Given a dense data matrix X with d dimensions and n points,"
     " sparse coding seeks to find a dense dictionary matrix D with k atoms in "
     "d dimensions, and a sparse coding matrix Z with n points in k dimensions."
     "\n\n"

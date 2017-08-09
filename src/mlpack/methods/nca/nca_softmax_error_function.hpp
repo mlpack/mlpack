@@ -14,6 +14,7 @@
 #define MLPACK_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTION_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/metrics/lmetric.hpp>
 
 namespace mlpack {
 namespace nca {
@@ -92,15 +93,18 @@ class SoftmaxErrorFunction
    * matrix on only one point of the dataset.  This is the separable
    * implementation, where the objective function is decomposed into the sum of
    * many objective functions, and here, only one of those constituent objective
-   * functions is returned.
+   * functions is returned. The type of the gradient parameter is a template
+   * argument to allow the computation of a sparse gradient.
    *
+   * @tparam GradType The type of the gradient out-param.
    * @param covariance Covariance matrix of Mahalanobis distance.
    * @param i Index of point to use for objective function.
    * @param gradient Matrix to store the calculated gradient in.
    */
+  template <typename GradType>
   void Gradient(const arma::mat& covariance,
                 const size_t i,
-                arma::mat& gradient);
+                GradType& gradient);
 
   /**
    * Get the initial point.

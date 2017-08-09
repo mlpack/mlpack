@@ -206,6 +206,10 @@ class RNN
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
 
+  //! Get the maximum number of steps to backpropagate through time (BPTT).
+  size_t Rho() const { return rho; }
+  //! Modify the maximum number of steps to backpropagate through time (BPTT).
+  size_t& Rho() { return rho; }
  private:
   // Helper functions.
   /**
@@ -254,6 +258,9 @@ class RNN
 
   //! Number of steps to backpropagate through time (BPTT).
   size_t rho;
+
+  //! Number of steps to backpropagate through time (BPTT) at the previous step.
+  size_t prevRho;
 
   //! Instantiated outputlayer used to evaluate the network.
   OutputLayerType outputLayer;

@@ -14,11 +14,13 @@
 #include <mlpack/core/cv/meta_info_extractor.hpp>
 #include <mlpack/core/cv/metrics/accuracy.hpp>
 #include <mlpack/core/cv/metrics/mse.hpp>
+#include <mlpack/core/cv/simple_cv.hpp>
 #include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/init_rules/zero_init.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/decision_tree/decision_tree.hpp>
+#include <mlpack/methods/decision_tree/information_gain.hpp>
 #include <mlpack/methods/hoeffding_trees/hoeffding_tree.hpp>
 #include <mlpack/methods/lars/lars.hpp>
 #include <mlpack/methods/linear_regression/linear_regression.hpp>
@@ -26,7 +28,9 @@
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
 
 #include <boost/test/unit_test.hpp>
+#include "mock_categorical_data.hpp"
 
+using namespace mlpack;
 using namespace mlpack::ann;
 using namespace mlpack::cv;
 using namespace mlpack::optimization;
@@ -125,6 +129,25 @@ BOOST_AUTO_TEST_CASE(PredictionsTypeTest)
       arma::Row<char>>();
 }
 
+/**
+ * Test MetaInfoExtractor correctly identifies whether a given machine learning
+ * algorithm supports weighted learning.
+ */
+BOOST_AUTO_TEST_CASE(SupportsWeightsTest)
+{
+  static_assert(MetaInfoExtractor<LinearRegression>::SupportsWeights,
+      "Value should be true");
+  static_assert(MetaInfoExtractor<DecisionTree<>>::SupportsWeights,
+      "Value should be true");
+  static_assert(MetaInfoExtractor<DecisionTree<>, arma::mat, arma::urowvec,
+      arma::Row<float>>::SupportsWeights, "Value should be true");
+
+  static_assert(!MetaInfoExtractor<LARS>::SupportsWeights,
+      "Value should be false");
+  static_assert(!MetaInfoExtractor<LogisticRegression<>>::SupportsWeights,
+      "Value should be false");
+}
+
 template<typename Class,
          typename ExpectedWT,
          typename PassedMT = arma::mat,
@@ -144,10 +167,6 @@ BOOST_AUTO_TEST_CASE(WeightsTypeTest)
   CheckWeightsType<DecisionTree<>, arma::rowvec>();
   CheckWeightsType<DecisionTree<>, arma::Row<float>, arma::mat,
       arma::Row<size_t>, arma::Row<float>>();
-
-  CheckWeightsType<FFN<>, void>();
-  CheckWeightsType<LARS, void>();
-  CheckWeightsType<LogisticRegression<>, void>();
 }
 
 BOOST_AUTO_TEST_CASE(TakesDatasetInfoTest)
@@ -170,6 +189,123 @@ BOOST_AUTO_TEST_CASE(TakesNumClassesTest)
       "Value should be false");
   static_assert(!MetaInfoExtractor<LARS>::TakesNumClasses,
       "Value should be false");
+}
+
+/**
+ * Test the simple cross-validation strategy implementation with the Accuracy
+ * metric.
+ */
+BOOST_AUTO_TEST_CASE(SimpleCVAccuracyTest)
+{
+  // Using the first half of data for training and the rest for validation.
+  // The validation labels are 75% correct.
+  arma::mat data =
+    arma::mat("1 0; 2 0; 1 1; 2 1; 1 0; 2 0; 1 1; 2 1").t();
+  arma::Row<size_t> labels("0 0 1 1 0 1 1 1");
+
+  SimpleCV<LogisticRegression<>, Accuracy> cv(0.5, data, labels);
+
+  BOOST_REQUIRE_CLOSE(cv.Evaluate(), 0.75, 1e-5);
+}
+
+/**
+ * Test the simple cross-validation strategy implementation with the MSE metric.
+ */
+BOOST_AUTO_TEST_CASE(SimpleCVMSETest)
+{
+  // Using the first two points for training and remaining three for validation.
+  // See the test MSETest for more explanation.
+  arma::mat data("0 1 2 3 4");
+  arma::rowvec responses("-1 0 1 3 5");
+
+  double expectedMSE = (0 * 0 + 1 * 1 + 2 * 2) / 3.0;
+
+  SimpleCV<LinearRegression, MSE> cv(0.6, data, responses);
+
+  BOOST_REQUIRE_CLOSE(cv.Evaluate(), expectedMSE, 1e-5);
+
+  arma::mat noiseData("-1 -2 -3 -4 -5");
+  arma::rowvec noiseResponses("10 20 30 40 50");
+
+  arma::mat allData = arma::join_rows(noiseData, data);
+  arma::rowvec allResponces = arma::join_rows(noiseResponses, responses);
+
+  arma::rowvec weights = arma::join_rows(arma::zeros(noiseData.n_cols).t(),
+      arma::ones(data.n_cols).t());
+
+  SimpleCV<LinearRegression, MSE> weightedCV(0.3, allData, allResponces,
+      weights);
+
+  BOOST_REQUIRE_CLOSE(weightedCV.Evaluate(), expectedMSE, 1e-5);
+
+  arma::rowvec weights2 = arma::join_rows(arma::zeros(noiseData.n_cols - 1).t(),
+      arma::ones(data.n_cols + 1).t());
+
+  SimpleCV<LinearRegression, MSE> weightedCV2(0.3, allData, allResponces,
+      weights2);
+
+  BOOST_REQUIRE_GT(std::abs(weightedCV2.Evaluate() - expectedMSE), 1e-5);
+}
+
+template<typename... DTArgs>
+arma::Row<size_t> PredictLabelsWithDT(const arma::mat& data,
+                                      const DTArgs&... args)
+{
+  DecisionTree<InformationGain> dt(args...);
+  arma::Row<size_t> predictedLabels;
+  dt.Classify(data, predictedLabels);
+  return predictedLabels;
+}
+
+/**
+ * Test the simple cross-validation strategy implementation with decision trees
+ * constructed in multiple ways.
+ */
+BOOST_AUTO_TEST_CASE(SimpleCVWithDTTest)
+{
+  arma::mat data;
+  arma::Row<size_t> labels;
+  data::DatasetInfo datasetInfo;
+  MockCategoricalData(data, labels, datasetInfo);
+
+  arma::mat trainingData = data.cols(0, 1999);
+  arma::mat testData = data.cols(2000, 3999);
+  arma::Row<size_t> trainingLabels = labels.subvec(0, 1999);
+
+  arma::rowvec weights(4000, arma::fill::randu);
+
+  size_t numClasses = 3;
+  size_t minimumLeafSize = 8;
+
+  {
+    arma::Row<size_t> predictedLabels = PredictLabelsWithDT(testData,
+        trainingData, trainingLabels, numClasses, minimumLeafSize);
+    SimpleCV<DecisionTree<InformationGain>, Accuracy> cv(0.5, data,
+        arma::join_rows(trainingLabels, predictedLabels), numClasses);
+    BOOST_REQUIRE_CLOSE(cv.Evaluate(minimumLeafSize), 1.0, 1e-5);
+  }
+  {
+    arma::Row<size_t> predictedLabels = PredictLabelsWithDT(testData,
+        trainingData, datasetInfo, trainingLabels, numClasses, minimumLeafSize);
+    SimpleCV<DecisionTree<InformationGain>, Accuracy> cv(0.5, data, datasetInfo,
+        arma::join_rows(trainingLabels, predictedLabels), numClasses);
+    BOOST_REQUIRE_CLOSE(cv.Evaluate(minimumLeafSize), 1.0, 1e-5);
+  }
+  {
+    arma::Row<size_t> predictedLabels = PredictLabelsWithDT(testData,
+        trainingData, trainingLabels, numClasses, weights, minimumLeafSize);
+    SimpleCV<DecisionTree<InformationGain>, Accuracy> cv(0.5, data,
+        arma::join_rows(trainingLabels, predictedLabels), numClasses, weights);
+    BOOST_REQUIRE_CLOSE(cv.Evaluate(minimumLeafSize), 1.0, 1e-5);
+  }
+  {
+    arma::Row<size_t> predictedLabels = PredictLabelsWithDT(testData,
+        trainingData, datasetInfo, trainingLabels, numClasses, weights,
+        minimumLeafSize);
+    SimpleCV<DecisionTree<InformationGain>, Accuracy> cv(0.5, data, datasetInfo,
+        arma::join_rows(trainingLabels, predictedLabels), numClasses, weights);
+    BOOST_REQUIRE_CLOSE(cv.Evaluate(minimumLeafSize), 1.0, 1e-5);
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END();

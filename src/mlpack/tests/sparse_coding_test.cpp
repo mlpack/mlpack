@@ -60,7 +60,8 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestCodingStepLasso)
   uword nPoints = X.n_cols;
 
   // Normalize each point since these are images.
-  for (uword i = 0; i < nPoints; ++i) {
+  for (uword i = 0; i < nPoints; ++i)
+  {
     X.col(i) /= norm(X.col(i), 2);
   }
 

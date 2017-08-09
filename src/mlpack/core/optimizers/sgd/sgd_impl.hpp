@@ -29,12 +29,14 @@ SGD<UpdatePolicyType>::SGD(
     const size_t maxIterations,
     const double tolerance,
     const bool shuffle,
-    const UpdatePolicyType updatePolicy) :
+    const UpdatePolicyType updatePolicy,
+    const bool resetPolicy) :
     stepSize(stepSize),
     maxIterations(maxIterations),
     tolerance(tolerance),
     shuffle(shuffle),
-    updatePolicy(updatePolicy)
+    updatePolicy(updatePolicy),
+    resetPolicy(resetPolicy)
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
@@ -65,7 +67,8 @@ double SGD<UpdatePolicyType>::Optimize(
     overallObjective += function.Evaluate(iterate, i);
 
   // Initialize the update policy.
-  updatePolicy.Initialize(iterate.n_rows, iterate.n_cols);
+  if (resetPolicy)
+    updatePolicy.Initialize(iterate.n_rows, iterate.n_cols);
 
   // Now iterate!
   arma::mat gradient(iterate.n_rows, iterate.n_cols);
