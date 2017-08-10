@@ -49,12 +49,14 @@ void GridSearch::Optimize(FunctionType& function,
                           size_t i)
 {
   if (i < parameterValueCollections.size())
+  {
     for (double value : parameterValueCollections[i])
     {
       currentParameters(i) = value;
       Optimize(function, bestObjective, bestParameters, currentParameters,
           i + 1);
     }
+  }
   else
   {
     double objective = function.Evaluate(currentParameters);
