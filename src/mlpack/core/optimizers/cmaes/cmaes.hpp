@@ -303,7 +303,6 @@ double Toc();
 
 //! @return time between last call of timings_*() and now
 double Update();
-
 };
 } // namespace optimization
 } // namespace mlpack
