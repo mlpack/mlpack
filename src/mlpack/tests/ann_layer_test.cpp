@@ -980,7 +980,7 @@ BOOST_AUTO_TEST_CASE(SimpleMeanSquaredErrorLayerTest)
   // Test the Forward function on a user generator input and compare it against
   // the manually calculated result.
   input = arma::mat("1.0 0.0 1.0 0.0 -1.0 0.0 -1.0 0.0");
-  target = arma::zeros(8, 1);
+  target = arma::zeros(1, 8);
   double error = module.Forward(std::move(input), std::move(target));
   BOOST_REQUIRE_EQUAL(error, 0.5);
 
