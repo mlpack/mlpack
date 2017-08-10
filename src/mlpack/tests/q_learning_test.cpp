@@ -21,6 +21,7 @@
 #include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
 #include <mlpack/core/optimizers/adam/adam_update.hpp>
 #include <mlpack/core/optimizers/rmsprop/rmsprop_update.hpp>
+#include <mlpack/methods/reinforcement_learning/training_config.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -48,10 +49,18 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
   GreedyPolicy<CartPole> policy(1.0, 1000, 0.1);
   RandomReplay<CartPole> replayMethod(10, 10000);
 
+  TrainingConfig config;
+  config.StepSize() = 0.01;
+  config.Discount() = 0.9;
+  config.TargetNetworkSyncInterval() = 100;
+  config.ExplorationSteps() = 100;
+  config.DoubleQLearning() = false;
+  config.StepLimit() = 200;
+
   // Set up DQN agent.
   QLearning<CartPole, decltype(model), AdamUpdate, decltype(policy)>
-      agent(std::move(model), 0.01, 0.9, std::move(policy),
-          std::move(replayMethod), 100, 100, false, 200);
+      agent(std::move(config), std::move(model), std::move(policy),
+          std::move(replayMethod));
 
   arma::running_stat<double> averageReturn;
   size_t episodes = 0;
@@ -113,10 +122,18 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
     GreedyPolicy<CartPole> policy(1.0, 1000, 0.1);
     RandomReplay<CartPole> replayMethod(10, 10000);
 
+    TrainingConfig config;
+    config.StepSize() = 0.01;
+    config.Discount() = 0.9;
+    config.TargetNetworkSyncInterval() = 100;
+    config.ExplorationSteps() = 100;
+    config.DoubleQLearning() = false;
+    config.StepLimit() = 200;
+
     // Set up the DQN agent.
     QLearning<CartPole, decltype(model), RMSPropUpdate, decltype(policy)>
-        agent(std::move(model), 0.01, 0.9, std::move(policy),
-            std::move(replayMethod), 100, 100, true, 200);
+        agent(std::move(config), std::move(model), std::move(policy),
+            std::move(replayMethod));
 
     arma::running_stat<double> averageReturn;
 

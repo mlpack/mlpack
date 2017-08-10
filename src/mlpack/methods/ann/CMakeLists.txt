@@ -24,3 +24,5 @@ add_subdirectory(init_rules)
 add_subdirectory(layer)
 add_subdirectory(convolution_rules)
 add_subdirectory(rbm)
+add_subdirectory(augmented)
+

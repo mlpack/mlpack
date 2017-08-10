@@ -39,6 +39,8 @@ set(SOURCES
   reset_visitor_impl.hpp
   reward_set_visitor.hpp
   reward_set_visitor_impl.hpp
+  rho_set_visitor.hpp
+  rho_set_visitor_impl.hpp
   save_output_parameter_visitor.hpp
   save_output_parameter_visitor_impl.hpp
   set_input_height_visitor.hpp

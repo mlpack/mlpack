@@ -94,15 +94,18 @@ class LogisticRegressionFunction
    * Evaluate the gradient of the logistic regression log-likelihood function
    * with the given parameters, and with respect to only one point in the
    * dataset.  This is useful for optimizers such as SGD, which require a
-   * separable objective function.
+   * separable objective function.  The type of the gradient parameter is a
+   * template argument to allow the computation of a sparse gradient.
    *
+   * @tparam GradType The type of the gradient out-param.
    * @param parameters Vector of logistic regression parameters.
    * @param i Index of points to use for objective function gradient evaluation.
    * @param gradient Vector to output gradient into.
    */
+  template <typename GradType>
   void Gradient(const arma::mat& parameters,
                 const size_t i,
-                arma::mat& gradient) const;
+                GradType& gradient) const;
 
   //! Return the initial point for the optimization.
   const arma::mat& GetInitialPoint() const { return initialPoint; }

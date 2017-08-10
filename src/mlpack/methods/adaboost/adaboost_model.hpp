@@ -77,6 +77,7 @@ class AdaBoostModel
   //! Train the model.
   void Train(const arma::mat& data,
              const arma::Row<size_t>& labels,
+             const size_t numClasses,
              const size_t iterations,
              const double tolerance);
 

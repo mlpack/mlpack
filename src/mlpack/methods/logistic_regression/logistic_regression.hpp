@@ -29,6 +29,10 @@ namespace regression {
  * parameter; for instance, logistic regression can be performed on sparse
  * datasets by specifying arma::sp_mat as the MatType parameter.
  *
+ * LogisticRegression can be used for general classification tasks, but the
+ * class is restricted to support only two classes.  For multiclass logistic
+ * regression, see mlpack::regression::SoftmaxRegression.
+ *
  * @tparam MatType Type of data matrix.
  */
 template<typename MatType = arma::mat>

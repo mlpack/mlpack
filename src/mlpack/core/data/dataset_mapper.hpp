@@ -77,7 +77,8 @@ class DatasetMapper
   /**
    * Return the string that corresponds to a given value in a given dimension.
    * If the string is not a valid mapping in the given dimension, a
-   * std::invalid_argument is thrown.
+   * std::invalid_argument is thrown.  Note that this does not remove the
+   * mapping.
    *
    * @param value Mapped value for string.
    * @param dimension Dimension to unmap string from.
@@ -88,7 +89,8 @@ class DatasetMapper
   /**
    * Return the value that corresponds to a given string in a given dimension.
    * If the value is not a valid mapping in the given dimension, a
-   * std::invalid_argument is thrown.
+   * std::invalid_argument is thrown.  Note that this does not remove the
+   * mapping.
    *
    * @param string Mapped string for value.
    * @param dimension Dimension to unmap string from.
