@@ -46,7 +46,7 @@ class UpdateFullCorrection
   UpdateFullCorrection(double tau, double stepSize):
     tau(tau), stepSize(stepSize)
   { /* Do nothing. */ }
-  
+
   /**
    * Update rule for FrankWolfe, recalculate the coefficents of of current
    * atoms, while satisfying the norm constraint.

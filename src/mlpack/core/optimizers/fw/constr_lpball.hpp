@@ -63,7 +63,7 @@ class ConstrLpBallSolver
    */
   ConstrLpBallSolver(const double p) : p(p)
   { /* Do nothing. */ }
-    
+
   /**
    * Construct the solver of constrained problem, with regularization parameter
    * lambda here.
@@ -119,7 +119,7 @@ class ConstrLpBallSolver
       s.max(k);  // k is the linear index of the largest element.
       s.zeros();
       s(k) = - mlpack::math::Sign(v(k));
-      
+
       if (regFlag)
         s = s / lambda;
     }
@@ -127,7 +127,7 @@ class ConstrLpBallSolver
     {
       Log::Fatal << "Wrong norm p!" << std::endl;
     }
-    
+
     return;
   }
 
@@ -140,7 +140,7 @@ class ConstrLpBallSolver
   bool RegFlag() const {return regFlag;}
   //! Modify regularization flag.
   bool& RegFlag() {return regFlag;}
-  
+
   //! Get the regularization parameter.
   arma::vec Lambda() const {return lambda;}
   //! Modify the regularization parameter.

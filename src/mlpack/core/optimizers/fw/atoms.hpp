@@ -25,7 +25,7 @@ class Atoms
 {
  public:
   Atoms(){ /* Nothing to do. */ }
-  
+
   /**
    * Add atom into the solution space.
    *
@@ -88,7 +88,8 @@ class Atoms
       function.Gradient(x, gradient);
 
       // Find possible atom to be deleted.
-      arma::vec gap = atomSqTerm - currentCoeffs % trans(gradient.t() * currentAtoms);
+      arma::vec gap = atomSqTerm -
+          currentCoeffs % trans(gradient.t() * currentAtoms);
       arma::uword ind;
       gap.min(ind);
 
@@ -96,14 +97,16 @@ class Atoms
       arma::mat newAtoms = currentAtoms;
       newAtoms.shed_col(ind);
       // Recalculate the coefficients.
-      arma::vec newCoeffs = solve(function.MatrixA() * newAtoms, function.Vectorb());
+      arma::vec newCoeffs =
+          solve(function.MatrixA() * newAtoms, function.Vectorb());
       // Evaluate the function again.
       double Fnew = function.Evaluate(newAtoms * newCoeffs);
-      
+
       if (Fnew > F)
         // Should not delete the atom.
         break;
-      else {
+      else
+      {
         // Delete the atom from current atoms.
         currentAtoms = newAtoms;
         currentCoeffs = newCoeffs;
@@ -150,7 +153,7 @@ class Atoms
     arma::mat x;
     RecoverVector(x);
     double value = function.Evaluate(x);
-    
+
     for (size_t iter = 1; iter<maxIteration; iter++)
     {
       // Update currentCoeffs with gradient descent method.
@@ -172,12 +175,12 @@ class Atoms
     }
   }
 
-  
+
   //! Get the current atom coefficients.
   const arma::vec& CurrentCoeffs() const { return currentCoeffs; }
   //! Modify the current atom coefficients.
   arma::vec& CurrentCoeffs() { return currentCoeffs; }
-  
+
   //! Get the current atoms.
   const arma::mat& CurrentAtoms() const { return currentAtoms; }
   //! Modify the current atoms.
@@ -211,7 +214,7 @@ class Atoms
   void ProjectionToL1(const double tau)
   {
     arma::vec simplexSol = arma::abs(currentCoeffs);
-    
+
     // Already with atom norm <= tau.
     if (arma::accu(simplexSol) <= tau)
       return;
@@ -229,7 +232,7 @@ class Atoms
         break;
     }
     double theta = (simplexSum(rho) - tau)/rho;
-    
+
     // Threshold on absolute value of currentCoeffs with theta.
     for (arma::uword j = 0; j< simplexSol.n_rows; j++)
     {
@@ -239,11 +242,8 @@ class Atoms
         currentCoeffs(j) = std::min(currentCoeffs(j)+theta, 0.0);
     }
   }
-  
-
 }; // class Atoms
 }  // namespace optimization
 }  // namespace mlpack
-
 
 #endif

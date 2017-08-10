@@ -81,7 +81,7 @@ class UpdateLineSearch
   double Tolerance() const {return tolerance;}
   //! Modify the tolerance for termination.
   double& Tolerance() {return tolerance;}
-  
+
   //! Get the maximum number of iterations (0 indicates no limit).
   size_t MaxIterations() const { return maxIter; }
   //! Modify the maximum number of iterations (0 indicates no limit).
@@ -90,7 +90,7 @@ class UpdateLineSearch
  private:
   //! Tolerance for convergence.
   double tolerance;
-  
+
   //! Max number of iterations.
   size_t maxIter;
 
@@ -123,14 +123,14 @@ class UpdateLineSearch
     double derivative = Derivative(function, x1, deltaX, 0);
     double derivativeNew = Derivative(function, x1, deltaX, 1);
     double secant = derivativeNew - derivative;
-    
+
     if (derivative >= 0.0) // Optimal solution at left endpoint.
       return 0.0;
     else if (derivativeNew <= 0.0) // Optimal solution at righ endpoint.
       return 1.0;
     else if (secant < tolerance) // function too flat, just take left endpoint.
       return 0.0;
-    
+
     // Line search by Secant Method.
     for (size_t k = 0; k < maxIter; ++k)
     {
@@ -140,19 +140,19 @@ class UpdateLineSearch
         Log::Fatal << "LineSearchSecant: Function is not convex!" << std::endl;
         return 0.0;
       }
-      
+
       // Solve new gamma.
       double gammaNew = gamma - derivative / secant;
       gammaNew = std::max(gammaNew, 0.0);
       gammaNew = std::min(gammaNew, 1.0);
-      
+
       // Update secant, gamma and derivative
       derivativeNew = Derivative(function, x1, deltaX, gammaNew);
       secant = (derivativeNew - derivative) / (gammaNew - gamma);
       gamma = gammaNew;
       derivative = derivativeNew;
-      
-      if(std::fabs(derivative) < tolerance)
+
+      if (std::fabs(derivative) < tolerance)
       {
         Log::Info << "LineSearchSecant: minimized within tolerance "
             << tolerance << "; " << "terminating optimization." << std::endl;
@@ -165,7 +165,7 @@ class UpdateLineSearch
 
     return gamma;
   }  // LineSearchSecant()
-  
+
   /**
    * Derivative of the function along the search line.
    *

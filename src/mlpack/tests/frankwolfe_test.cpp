@@ -75,13 +75,13 @@ BOOST_AUTO_TEST_CASE(regularizedOMP)
   vec lambda(A.n_cols);
   for (size_t ii = 0; ii < A.n_cols; ii++)
     lambda(ii) = norm(A.col(ii), 2);
-  
+
   FuncSq f(A, b);
   ConstrLpBallSolver linearConstrSolver(1, lambda);
   UpdateSpan updateRule;
-  
+
   OMP s(linearConstrSolver, updateRule);
-  
+
   vec coordinates = zeros<vec>(2 * k);
   double result = s.Optimize(f, coordinates);
 
@@ -107,10 +107,10 @@ BOOST_AUTO_TEST_CASE(PruneSupportOMP)
   UpdateSpan updateRule(true);
 
   OMP s(linearConstrSolver, updateRule);
-  
+
   vec coordinates = zeros<vec>(k + 3);
   double result = s.Optimize(f, coordinates);
-  
+
   BOOST_REQUIRE_SMALL(result, 1e-10);
   BOOST_REQUIRE_SMALL(coordinates[0] - 1, 1e-10);
   BOOST_REQUIRE_SMALL(coordinates[1] - 1, 1e-10);
@@ -134,10 +134,10 @@ BOOST_AUTO_TEST_CASE(AtomNormConstraint)
   FuncSq f(A, b);
   ConstrLpBallSolver linearConstrSolver(1);
   UpdateFullCorrection updateRule(2, 0.2);
-  
+
   FrankWolfe<ConstrLpBallSolver, UpdateFullCorrection>
     s(linearConstrSolver, updateRule);
-  
+
   vec coordinates = zeros<vec>(k + 3);
   double result = s.Optimize(f, coordinates);
 
@@ -185,13 +185,13 @@ BOOST_AUTO_TEST_CASE(FWLineSearch)
   double p = 2;   // Constraint set is unit lp ball.
   ConstrLpBallSolver linearConstrSolver(p);
   UpdateLineSearch updateRule;
-  
+
   FrankWolfe<ConstrLpBallSolver, UpdateLineSearch>
       s(linearConstrSolver, updateRule);
-  
+
   vec coordinates = randu<vec>(3);
   double result = s.Optimize(f, coordinates);
-  
+
   BOOST_REQUIRE_SMALL(result, 1e-4);
   BOOST_REQUIRE_SMALL(coordinates[0] - 0.1, 1e-4);
   BOOST_REQUIRE_SMALL(coordinates[1] - 0.2, 1e-4);

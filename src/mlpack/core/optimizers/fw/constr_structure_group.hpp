@@ -199,16 +199,19 @@ class GroupLpBall
       // inf-norm, return 1-norm
       return arma::norm(yk, 1);
     }
-    else if (p > 1.0) {
+    else if (p > 1.0)
+    {
       // p norm, return q-norm
       double q = 1.0 / (1.0 - 1.0/p);
       return  arma::norm(yk, q);
     }
-    else if (p == 1.0) {
+    else if (p == 1.0)
+    {
       // 1-norm, return inf-norm
       return arma::norm(yk, "inf");
     }
-    else {
+    else
+    {
       Log::Fatal << "Wrong norm p!" << std::endl;
       return 0.0;
     }
@@ -233,8 +236,8 @@ class GroupLpBall
 };
 
 
-}// namespace optimization
-}// namespace mlpack
+} // namespace optimization
+} // namespace mlpack
 
 
 
