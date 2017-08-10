@@ -13,7 +13,7 @@
 #ifndef MLPACK_CORE_HPT_DEDUCE_HP_TYPES_HPP
 #define MLPACK_CORE_HPT_DEDUCE_HP_TYPES_HPP
 
-#include <mlpack/core/hpt/bind.hpp>
+#include <mlpack/core/hpt/fixed.hpp>
 
 namespace mlpack {
 namespace hpt {
@@ -60,10 +60,10 @@ struct DeduceHyperParameterTypes<Collection, Args...>
 /**
  * Defining DeduceHyperParameterTypes for the case when not all argument types
  * have been processed, and the next one is the type of an argument that should
- * be bound.
+ * be fixed.
  */
 template<typename T, typename... Args>
-struct DeduceHyperParameterTypes<PreBoundArg<T>, Args...>
+struct DeduceHyperParameterTypes<PreFixedArg<T>, Args...>
 {
   template<typename... HPTypes>
   struct ResultHolder

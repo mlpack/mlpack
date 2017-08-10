@@ -130,7 +130,7 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<size_t I, typename ArgsTuple, typename... BoundArgs, typename>
+template<size_t I, typename ArgsTuple, typename... FixedArgs, typename>
 void HyperParameterTuner<MLAlgorithm,
                          Metric,
                          CV,
@@ -140,12 +140,12 @@ void HyperParameterTuner<MLAlgorithm,
                          WeightsType>::InitCVFunctionAndOptimize(
     const ArgsTuple& /* args */,
     arma::mat& bestParams,
-    BoundArgs... boundArgs)
+    FixedArgs... fixedArgs)
 {
   static const size_t totalArgs = std::tuple_size<ArgsTuple>::value;
 
-  CVFunction<CVType, MLAlgorithm, totalArgs, BoundArgs...>
-      cvFunction(cv, boundArgs...);
+  CVFunction<CVType, MLAlgorithm, totalArgs, FixedArgs...>
+      cvFunction(cv, fixedArgs...);
   bestObjective = Metric::NeedsMinimization?
       optimizer.Optimize(cvFunction, bestParams) :
       -optimizer.Optimize(cvFunction, bestParams);
@@ -159,7 +159,7 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<size_t I, class ArgsTuple, class... BoundArgs, class, class>
+template<size_t I, class ArgsTuple, class... FixedArgs, class, class>
 void HyperParameterTuner<MLAlgorithm,
                          Metric,
                          CV,
@@ -169,14 +169,14 @@ void HyperParameterTuner<MLAlgorithm,
                          WeightsType>::InitCVFunctionAndOptimize(
     const ArgsTuple& args,
     arma::mat& bestParams,
-    BoundArgs... boundArgs)
+    FixedArgs... fixedArgs)
 {
-  using PreBoundArgT = typename std::remove_reference<
+  using PreFixedArgT = typename std::remove_reference<
       typename std::tuple_element<I, ArgsTuple>::type>::type;
-  using BoundArgT = BoundArg<typename PreBoundArgT::Type, I>;
+  using FixedArgT = FixedArg<typename PreFixedArgT::Type, I>;
 
-  InitCVFunctionAndOptimize<I + 1>(args, bestParams, boundArgs...,
-       BoundArgT{std::get<I>(args).value});
+  InitCVFunctionAndOptimize<I + 1>(args, bestParams, fixedArgs...,
+       FixedArgT{std::get<I>(args).value});
 }
 
 template<typename MLAlgorithm,
@@ -186,7 +186,7 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<size_t I, class ArgsTuple, class... BoundArgs, class, class, class>
+template<size_t I, class ArgsTuple, class... FixedArgs, class, class, class>
 void HyperParameterTuner<MLAlgorithm,
                          Metric,
                          CV,
@@ -196,9 +196,9 @@ void HyperParameterTuner<MLAlgorithm,
                          WeightsType>::InitCVFunctionAndOptimize(
     const ArgsTuple& args,
     arma::mat& bestParams,
-    BoundArgs... boundArgs)
+    FixedArgs... fixedArgs)
 {
-  InitCVFunctionAndOptimize<I + 1>(args, bestParams, boundArgs...);
+  InitCVFunctionAndOptimize<I + 1>(args, bestParams, fixedArgs...);
 }
 
 template<typename MLAlgorithm,

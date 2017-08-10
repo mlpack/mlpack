@@ -50,7 +50,7 @@ namespace hpt {
  * @endcode
  *
  * When some hyper-parameters should not be optimized, you can specify values
- * for them with the Bind function as in the following example of finding good
+ * for them with the Fixed function as in the following example of finding good
  * lambda1 and lambda2 values for LARS.
  *
  * @code
@@ -63,8 +63,8 @@ namespace hpt {
  * arma::vec lambda2Set{0.0, 0.002, 0.02, 0.2, 2.0};
  *
  * double bestLambda1, bestLambda2;
- * std::tie(bestLambda1, bestLambda2) = hpt2.Optimize(Bind(transposeData),
- *     Bind(useCholesky), lambda1Set, lambda2Set);
+ * std::tie(bestLambda1, bestLambda2) = hpt2.Optimize(Fixed(transposeData),
+ *     Fixed(useCholesky), lambda1Set, lambda2Set);
  * @endcode
  *
  * @tparam MLAlgorithm A machine learning algorithm.
@@ -112,7 +112,7 @@ class HyperParameterTuner
    *   The set of values should be an STL-compatible container (it should
    *   provide begin() and end() methods returning iterators).
    * 2. A starting value (when using any other optimizer than GridSearch).
-   * 3. A value bound by using the function mlpack::hpt::Bind. In this case the
+   * 3. A value fixed by using the function mlpack::hpt::Fixed. In this case the
    *   hyper-parameter will not be optimized.
    *
    * All arguments should be passed in the same order as if the corresponding
@@ -123,7 +123,7 @@ class HyperParameterTuner
    * should be provided.
    *
    * The method returns a tuple of values for hyper-parameters that haven't been
-   * bound.
+   * fixed.
    *
    * @param args Arguments corresponding to hyper-parameters (see the method
    *   description for more information).
@@ -176,7 +176,7 @@ class HyperParameterTuner
   /**
    * The set of methods to initialize the GridSearch optimizer. We basically
    * need to go through all arguments passed to the Optimize method, gather all
-   * non-bound arguments (collections) and pass them into the GridSearch
+   * non-fixed arguments (collections) and pass them into the GridSearch
    * constructor.
    */
   template<size_t I,
@@ -190,7 +190,7 @@ class HyperParameterTuner
            typename ArgsTuple,
            typename... Collections,
            typename = std::enable_if_t<I < std::tuple_size<ArgsTuple>::value>,
-           typename = std::enable_if_t<IsPreBoundArg<
+           typename = std::enable_if_t<IsPreFixedArg<
                typename std::tuple_element<I, ArgsTuple>::type>::value>>
   inline void InitGridSearch(const ArgsTuple& args,
                              Collections... collections);
@@ -199,7 +199,7 @@ class HyperParameterTuner
            typename ArgsTuple,
            typename... Collections,
            typename = std::enable_if_t<I < std::tuple_size<ArgsTuple>::value>,
-           typename = std::enable_if_t<!IsPreBoundArg<
+           typename = std::enable_if_t<!IsPreFixedArg<
                typename std::tuple_element<I, ArgsTuple>::type>::value>,
            typename = void>
   inline void InitGridSearch(const ArgsTuple& args,
@@ -209,37 +209,37 @@ class HyperParameterTuner
    * The set of methods to initialize a cost function (CVFunction) object and
    * run optimization to find the best hyper-parameters. To initialize a
    * CVFunction object we go through all arguments passed to the Optimize
-   * method, gather all bound values and pass them into the CVFunction
+   * method, gather all fixed values and pass them into the CVFunction
    * constructor.
    */
   template<size_t I,
            typename ArgsTuple,
-           typename... BoundArgs,
+           typename... FixedArgs,
            typename = std::enable_if_t<I == std::tuple_size<ArgsTuple>::value>>
   inline void InitCVFunctionAndOptimize(const ArgsTuple& args,
                                         arma::mat& bestParams,
-                                        BoundArgs... boundArgs);
+                                        FixedArgs... fixedArgs);
 
   template<size_t I,
            typename ArgsTuple,
-           typename... BoundArgs,
+           typename... FixedArgs,
            typename = std::enable_if_t<I < std::tuple_size<ArgsTuple>::value>,
-           typename = std::enable_if_t<IsPreBoundArg<
+           typename = std::enable_if_t<IsPreFixedArg<
                typename std::tuple_element<I, ArgsTuple>::type>::value>>
   inline void InitCVFunctionAndOptimize(const ArgsTuple& args,
                                         arma::mat& bestParams,
-                                        BoundArgs... boundArgs);
+                                        FixedArgs... fixedArgs);
 
   template<size_t I,
            typename ArgsTuple,
-           typename... BoundArgs,
+           typename... FixedArgs,
            typename = std::enable_if_t<I < std::tuple_size<ArgsTuple>::value>,
-           typename = std::enable_if_t<!IsPreBoundArg<
+           typename = std::enable_if_t<!IsPreFixedArg<
                typename std::tuple_element<I, ArgsTuple>::type>::value>,
            typename = void>
   inline void InitCVFunctionAndOptimize(const ArgsTuple& args,
                                         arma::mat& bestParams,
-                                        BoundArgs... boundArgs);
+                                        FixedArgs... fixedArgs);
 
   /**
    * The set of methods to convert the given arma::vec vector to the tuple of

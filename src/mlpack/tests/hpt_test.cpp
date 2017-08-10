@@ -12,8 +12,8 @@
 #include <mlpack/core/cv/metrics/mse.hpp>
 #include <mlpack/core/cv/metrics/accuracy.hpp>
 #include <mlpack/core/cv/simple_cv.hpp>
-#include <mlpack/core/hpt/bind.hpp>
 #include <mlpack/core/hpt/cv_function.hpp>
+#include <mlpack/core/hpt/fixed.hpp>
 #include <mlpack/core/hpt/hpt.hpp>
 #include <mlpack/core/optimizers/grid_search/grid_search.hpp>
 #include <mlpack/methods/lars/lars.hpp>
@@ -29,7 +29,7 @@ using namespace mlpack::regression;
 BOOST_AUTO_TEST_SUITE(HPTTest);
 
 /**
- * Test CVFunction runs cross-validation in according with specified bound
+ * Test CVFunction runs cross-validation in according with specified fixed
  * arguments and passed parameters.
  */
 BOOST_AUTO_TEST_CASE(CVFunctionTest)
@@ -45,10 +45,10 @@ BOOST_AUTO_TEST_CASE(CVFunctionTest)
   double lambda1 = 1.0;
   double lambda2 = 2.0;
 
-  BoundArg<bool, 1> boundUseCholesky{useCholesky};
-  BoundArg<double, 3> boundLambda1{lambda2};
-  CVFunction<decltype(cv), LARS, 4, BoundArg<bool, 1>, BoundArg<double, 3>>
-      cvFun(cv, boundUseCholesky, boundLambda1);
+  FixedArg<bool, 1> fixedUseCholesky{useCholesky};
+  FixedArg<double, 3> fixedLambda1{lambda2};
+  CVFunction<decltype(cv), LARS, 4, FixedArg<bool, 1>, FixedArg<double, 3>>
+      cvFun(cv, fixedUseCholesky, fixedLambda1);
 
   double expected = cv.Evaluate(transposeData, useCholesky, lambda1, lambda2);
   double actual = cvFun.Evaluate(arma::vec{double(transposeData), lambda1});
@@ -139,7 +139,7 @@ BOOST_AUTO_TEST_CASE(GridSearchTest)
   SimpleCV<LARS, MSE> cv(validationSize, xs, ys);
 
   GridSearch optimizer(lambda1Set, lambda2Set);
-  CVFunction<decltype(cv), LARS, 4, BoundArg<bool, 0>, BoundArg<bool, 1>>
+  CVFunction<decltype(cv), LARS, 4, FixedArg<bool, 0>, FixedArg<bool, 1>>
       cvFun(cv, {transposeData}, {useCholesky});
   arma::mat actualParameters;
   double actualObjective = optimizer.Optimize(cvFun, actualParameters);
@@ -177,8 +177,8 @@ BOOST_AUTO_TEST_CASE(HPTTest)
   double actualLambda1, actualLambda2;
   HyperParameterTuner<LARS, MSE, SimpleCV, GridSearch>
       hpt(validationSize, xs, ys);
-  std::tie(actualLambda1, actualLambda2) = hpt.Optimize(Bind(transposeData),
-      Bind(useCholesky), lambda1Set, lambda2Set);
+  std::tie(actualLambda1, actualLambda2) = hpt.Optimize(Fixed(transposeData),
+      Fixed(useCholesky), lambda1Set, lambda2Set);
 
   BOOST_REQUIRE_CLOSE(expectedObjective, hpt.BestObjective(), 1e-5);
   BOOST_REQUIRE_CLOSE(expectedLambda1, actualLambda1, 1e-5);
