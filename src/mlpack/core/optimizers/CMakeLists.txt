@@ -3,6 +3,7 @@ set(DIRS
   ada_grad
   adam
   aug_lagrangian
+  fw
   cmaes
   gradient_descent
   lbfgs
