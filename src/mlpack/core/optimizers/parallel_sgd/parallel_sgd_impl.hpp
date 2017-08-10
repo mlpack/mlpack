@@ -82,16 +82,21 @@ double ParallelSGD<DecayPolicyType>::Optimize(
     double stepSize = decayPolicy.StepSize(i);
 
     // Shuffle for uniform sampling of functions by each thread.
-
-    if (shuffle) // Determine order of visitation.
+    if (shuffle)
+    {
+      // Determine order of visitation.
       std::shuffle(visitationOrder.begin(), visitationOrder.end(),
           mlpack::math::randGen);
+    }
 
     #pragma omp parallel
     {
       // Each processor gets a subset of the instances.
-      // Each subset is of size threadShareSize.
-      size_t threadId = omp_get_thread_num();
+      // Each subset is of size threadShareSize
+      size_t threadId = 0;
+      #ifdef HAS_OPENMP
+        threadId = omp_get_thread_num();
+      #endif
 
       for (size_t j = threadId * threadShareSize;
           j < (threadId + 1) * threadShareSize && j < visitationOrder.n_elem;
@@ -119,6 +124,7 @@ double ParallelSGD<DecayPolicyType>::Optimize(
       }
     }
   }
+
   Log::Info << "\n Parallel SGD terminated with objective : "
     << overallObjective << std::endl;
   return overallObjective;
