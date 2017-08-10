@@ -153,9 +153,9 @@ class BinaryRBMPolicy
 
  private:
   //! Locally stored number of visible neurons.
-  const size_t visibleSize;
+  size_t visibleSize;
   //! Locally stored number of hidden neurons
-  const size_t hiddenSize;
+  size_t hiddenSize;
   //! Locally stored  Parameters of the network.
   DataType parameter;
   //! Locally stored weight of the network.

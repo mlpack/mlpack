@@ -37,6 +37,7 @@
 #include <mlpack/methods/ann/rbm.hpp>
 #include <mlpack/methods/ann/rbm/binary_rbm_policy.hpp>
 #include <mlpack/methods/ann/rbm/spike_slab_rbm_policy.hpp>
+#include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 
 using namespace mlpack;
 using namespace mlpack::distribution;

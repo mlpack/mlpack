@@ -60,8 +60,8 @@ void RBM<InitializationRuleType, RBMPolicy>::Reset()
   tempNegativeGradient.zeros();
   initializeRule.Initialize(parameter, parameter.n_elem, 1);
 
-  rbmPolicy.Parameters() = arma::Mat<ElemType>(parameter.memptr(), weight, 1, false,
-      false);
+  rbmPolicy.Parameters() = arma::Mat<ElemType>(parameter.memptr(), weight, 1,
+      false, false);
   rbmPolicy.Reset();
   reset = true;
 }
@@ -85,7 +85,8 @@ void RBM<InitializationRuleType, RBMPolicy>::Train(
 }
 
 template<typename InitializationRuleType, typename RBMPolicy>
-double RBM<InitializationRuleType, RBMPolicy>::FreeEnergy(arma::Mat<ElemType>&& input)
+double RBM<InitializationRuleType, RBMPolicy>::
+    FreeEnergy(arma::Mat<ElemType>&& input)
 {
   return rbmPolicy.FreeEnergy(std::move(input));
 }
@@ -202,7 +203,7 @@ void RBM<InitializationRuleType, RBMPolicy>::
   ar & data::CreateNVP(mSteps, "mSteps");
   ar & data::CreateNVP(useMonitoringCost, "useMonitoringCost");
   ar & data::CreateNVP(persistence, "persistence");
-  ar & data::CreateNVP(rbmPolicy, "rbmPolicy");
+  // ar & data::CreateNVP(RBMPolicy::ElemType, "ElemType");
 
   // If we are loading, we need to initialize the weights.
   if (Archive::is_loading::value)
@@ -215,9 +216,9 @@ void RBM<InitializationRuleType, RBMPolicy>::
     positiveGradient.zeros();
     negativeGradient.zeros();
     tempNegativeGradient.zeros();
-    rbmPolicy.Parameters() = arma::Mat<ElemType>(parameter.memptr(), weight, 1, false,
-        false);
-    rbmPolicy.Reset();
+    rbmPolicy.Parameters() = arma::Mat<ElemType>(
+        parameter.memptr(), weight, 1, false, false);
+     rbmPolicy.Reset();
     reset = true;
   }
 }
