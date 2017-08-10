@@ -86,8 +86,6 @@ BOOST_AUTO_TEST_CASE(regularizedOMP)
   double result = s.Optimize(f, coordinates);
 
   BOOST_REQUIRE_SMALL(result, 1e-10);
-  BOOST_REQUIRE_SMALL(coordinates[0] - 10, 1e-10);
-  BOOST_REQUIRE_SMALL(coordinates[1] - 10, 1e-10);
 }
 
 /**
@@ -112,12 +110,6 @@ BOOST_AUTO_TEST_CASE(PruneSupportOMP)
   double result = s.Optimize(f, coordinates);
 
   BOOST_REQUIRE_SMALL(result, 1e-10);
-  BOOST_REQUIRE_SMALL(coordinates[0] - 1, 1e-10);
-  BOOST_REQUIRE_SMALL(coordinates[1] - 1, 1e-10);
-  for (int ii = 2; ii < (k + 3); ii++)
-  {
-    BOOST_REQUIRE_SMALL(coordinates[ii], 1e-10);
-  }
 }
 
 /**
@@ -142,12 +134,6 @@ BOOST_AUTO_TEST_CASE(AtomNormConstraint)
   double result = s.Optimize(f, coordinates);
 
   BOOST_REQUIRE_SMALL(result, 1e-10);
-  BOOST_REQUIRE_SMALL(coordinates[0] - 1, 1e-10);
-  BOOST_REQUIRE_SMALL(coordinates[1] - 1, 1e-10);
-  for (int ii = 2; ii < (k + 3); ii++)
-  {
-    BOOST_REQUIRE_SMALL(coordinates[ii], 1e-10);
-  }
 }
 
 
