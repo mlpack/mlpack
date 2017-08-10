@@ -60,6 +60,9 @@ void InitProneToOverfittingData(arma::mat& xs,
                                 arma::rowvec& ys,
                                 double& validationSize)
 {
+  // Making the function generate the same data for all callers.
+  arma::arma_rng::set_seed(11);
+
   // Total number of data points.
   size_t N = 10;
   // Total number of features (all except the first one are redundant).
@@ -129,6 +132,10 @@ BOOST_AUTO_TEST_CASE(GridSearchTest)
       lambda1Set, lambda2Set, expectedLambda1, expectedLambda2,
       expectedObjective);
 
+  // We should get these values (it has been found empirically).
+  BOOST_REQUIRE_CLOSE(expectedLambda1, 0.01, 1e-5);
+  BOOST_REQUIRE_CLOSE(expectedLambda2, 0.05, 1e-5);
+
   SimpleCV<LARS, MSE> cv(validationSize, xs, ys);
 
   GridSearch optimizer(lambda1Set, lambda2Set);
@@ -162,6 +169,10 @@ BOOST_AUTO_TEST_CASE(HPTTest)
   FindLARSBestLambdas(xs, ys, validationSize, transposeData, useCholesky,
       lambda1Set, lambda2Set, expectedLambda1, expectedLambda2,
       expectedObjective);
+
+  // We should get these values (it has been found empirically).
+  BOOST_REQUIRE_CLOSE(expectedLambda1, 0.01, 1e-5);
+  BOOST_REQUIRE_CLOSE(expectedLambda2, 0.05, 1e-5);
 
   double actualLambda1, actualLambda2;
   HyperParameterTuner<LARS, MSE, SimpleCV, GridSearch>
