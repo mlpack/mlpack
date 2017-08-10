@@ -18,9 +18,12 @@
 namespace mlpack {
 namespace optimization {
 
-CMAES::CMAES(int objectDim,
-double start, double stdDivs,
-double iters, double evalEnd, double functionHistory)
+CMAES::CMAES(const int objectDim,
+             const double start,
+             const double stdDivs,
+             const double iters,
+             const double evalEnd,
+             const double functionHistory)
       :
         N(-1),
         stopMaxFunEvals(-1),
@@ -38,7 +41,15 @@ double iters, double evalEnd, double functionHistory)
         cs(-1),
         ccumcov(-1),
         ccov(-1),
-        facupdateCmode(1)
+        facupdateCmode(1),
+        istic(0),
+        isstarted(1),
+        lastdiff(0),
+        tictoczwischensumme(0),
+        totaltime(0),
+        totaltotaltime(0),
+        tictoctime(0),
+        lasttictoctime(0)
   {
     stStopFitness.flg = false;
     stStopFitness.val = -std::numeric_limits<double>::max();
@@ -52,25 +63,28 @@ double iters, double evalEnd, double functionHistory)
     if (evalEnd != 0) stopTolFun = evalEnd;
     if (functionHistory != 0) stopTolFunHist = functionHistory;
 
-    if (start == 0)
+    double start1 = start;
+    double stdDivs1 = stdDivs;
+
+    if (start1 == 0)
     { Log::Warn << " WARNING: initial start point undefined." <<
      "Please specify if incorrect results detected."
      << "DEFAULT = 0.5...0.5." << std::endl;
-     start = 0.5;
+     start1 = 0.5;
     }
 
-    if (stdDivs == 0)
+    if (stdDivs1 == 0)
     {
      Log::Warn << "WARNING: initialStandardDeviations undefined."
      << " Please specify if incorrect results detected. DEFAULT = 0.3...0.3."
      << std::endl;
-     stdDivs = 0.3;
+     stdDivs1 = 0.3;
     }
 
     xstart.set_size(N);
-    xstart.fill(start);
+    xstart.fill(start1);
     rgInitialStds.set_size(N);
-    rgInitialStds.fill(stdDivs);
+    rgInitialStds.fill(stdDivs1);
 
     diagonalCov = 0;
 
@@ -138,19 +152,19 @@ double iters, double evalEnd, double functionHistory)
       updateCmode.maxtime = 0.20;
   }
 
-  template<typename funcType>
-  double CMAES::Optimize(funcType& function, arma::mat& arr)
+  template<typename FuncType>
+  double CMAES::Optimize(FuncType& function, arma::mat& arr)
   {
     arFunvals.set_size(lambda);
-    init();
+    Init();
     int funNo = function.NumFunctions();
 
     arma::Col<double> x(N);
 
-    while (!testForTermination())
+    while (!TestForTermination())
     {
       // Generate lambda new search points, sample population
-      samplePopulation();
+      SamplePopulation();
       arFunvals.fill(0);
 
       // evaluate the new search points using the given evaluate
@@ -164,7 +178,7 @@ double iters, double evalEnd, double functionHistory)
       }
 
       // update the search distribution used for sampleDistribution()
-      updateDistribution(arFunvals);
+      UpdateDistribution(arFunvals);
     }
 
     // get best estimator for the optimum
@@ -177,7 +191,7 @@ double iters, double evalEnd, double functionHistory)
     return funs;
   }
 
-  void CMAES::adaptC2(const int hsig)
+  void CMAES::AdaptC2(const int hsig)
   {
     bool diag = diagonalCov == 1 || diagonalCov >= gen;
 
@@ -229,7 +243,7 @@ double iters, double evalEnd, double functionHistory)
    * pass them to updateDistribution()
    */
 
-  void CMAES::init()
+  void CMAES::Init()
   {
     double trace = arma::accu(arma::pow(rgInitialStds, 2));
     sigma = std::sqrt(trace/N);
@@ -300,7 +314,7 @@ double iters, double evalEnd, double functionHistory)
    * normally distributed samples.
    */
 
-void CMAES::samplePopulation()
+void CMAES::SamplePopulation()
   {
     bool diag = diagonalCov == 1 || diagonalCov >= gen;
 
@@ -308,7 +322,7 @@ void CMAES::samplePopulation()
     if (!eigensysIsUptodate)
     {
       if (!diag)
-        updateEigensystem(false);
+        UpdateEigenSystem(false);
       else
       {
         rgD = arma::sqrt(C.diag());
@@ -363,7 +377,7 @@ void CMAES::samplePopulation()
 * @param fitnessValues An array of \f$\lambda\f$ function values.
 * @return Mean value of the new distribution. 
 */
-void CMAES::updateDistribution(arma::vec& fitnessValues)
+void CMAES::UpdateDistribution(arma::vec& fitnessValues)
 {
     bool diag = diagonalCov == 1 || diagonalCov >= gen;
 
@@ -468,7 +482,7 @@ for (int i = (int)historySize - 1; i > 0; --i)
       pc[i] = ccumcovinv*pc[i] + hsigFactor*BDz[i];
 
     // update of C
-    adaptC2(hsig);
+    AdaptC2(hsig);
 
     // update of sigma
     sigma *= std::exp(((std::sqrt(psxps) / chiN) - double(1))* cs / damps);
@@ -484,7 +498,7 @@ for (int i = (int)historySize - 1; i > 0; --i)
    * that contains the matched stop criteria via getStopMessage().
    * @return Does any stop criterion match?
    */
-bool CMAES::testForTermination()
+bool CMAES::TestForTermination()
   {
     double range, fac;
     int iAchse, iKoo;
@@ -620,9 +634,9 @@ bool CMAES::testForTermination()
    * @param force For force == true the eigendecomposion is conducted even if
    *              eigenvector and values seem to be up to date.
    */
-void CMAES::updateEigensystem(bool force)
+void CMAES::UpdateEigenSystem(bool force)
   {
-    update();
+    Update();
 
     if (!force)
     {
@@ -641,9 +655,9 @@ void CMAES::updateEigensystem(bool force)
       }
     }
 
-    tic();
-    eigen(rgD, B, tempRandom);
-    toc();
+    Tic();
+    Eigen(rgD, B, tempRandom);
+    Toc();
 
     // find largest and smallest eigenvalue,
     // they are supposed to be sorted anyway
@@ -663,14 +677,14 @@ void CMAES::updateEigensystem(bool force)
    * @param Q (output) Columns are normalized eigenvectors.
    */
 
-  void CMAES::eigen(arma::vec& diag, arma::mat& Q, arma::vec& rgtmp)
+  void CMAES::Eigen(arma::vec& diag, arma::mat& Q, arma::vec& rgtmp)
   {
       for (int i = 0; i < N; ++i)
         for (int j = 0; j <= i; ++j)
           Q(i, j) = Q(j, i) = C(i, j);
 
-    householder(Q, diag, rgtmp);
-    ql(diag, rgtmp, Q);
+    Householder(Q, diag, rgtmp);
+    Ql(diag, rgtmp, Q);
   }
 
   /**
@@ -681,7 +695,7 @@ void CMAES::updateEigensystem(bool force)
    * @param V input: matrix output of Householder. output: basis of
    *          eigenvectors, according to d
    */
-  void CMAES::ql(arma::vec& d, arma::vec& e, arma::mat& V)
+  void CMAES::Ql(arma::vec& d, arma::vec& e, arma::mat& V)
   {
     double f(0);
     double tst1(0);
@@ -710,7 +724,7 @@ void CMAES::updateEigensystem(bool force)
         do {
           double h, g = d[l];
           double p = (d[l+1] - g) / (double(2)*e[l]);
-          double r = myhypot(p, double(1));
+          double r = MyHypot(p, double(1));
 
           // compute implicit shift
           if (p < 0) r = -r;
@@ -736,7 +750,7 @@ void CMAES::updateEigensystem(bool force)
             s2 = s;
             g = c*e[i];
             h = c*p;
-            r = myhypot(p, e[i]);
+            r = MyHypot(p, e[i]);
             e[i+1] = s*r;
             s = e[i]/r;
             c = p/r;
@@ -772,7 +786,7 @@ void CMAES::updateEigensystem(bool force)
    * @param e output: [0..n-1], off diagonal (elements 1..n-1)
    */
 
-  void CMAES::householder(arma::mat& V, arma::vec& d, arma::vec& e)
+  void CMAES::Householder(arma::mat& V, arma::vec& d, arma::vec& e)
   {
       d = V.submat(N-1, 0, N-1, N-1).t();
 
@@ -875,7 +889,7 @@ void CMAES::updateEigensystem(bool force)
      e[0] = 0.0;
   }
 
-  double CMAES::myhypot(double a, double b)
+  double CMAES::MyHypot(double a, double b)
 {
   const register double fabsa = std::fabs(a), fabsb = std::fabs(b);
   if (fabsa > fabsb)
@@ -892,7 +906,7 @@ void CMAES::updateEigensystem(bool force)
     return double(0);
 }
 
-  double CMAES::update()
+  double CMAES::Update()
   {
     double diffc, difft;
     clock_t lc = lastclock;
@@ -914,15 +928,15 @@ void CMAES::updateEigensystem(bool force)
     return lastdiff;
   }
 
-  void CMAES::tic()
+  void CMAES::Tic()
   {
-    update();
+    Update();
     istic = 1;
   }
 
-  double CMAES::toc()
+  double CMAES::Toc()
   {
-    update();
+    Update();
     lasttictoctime = tictoczwischensumme;
     tictoczwischensumme = 0;
     istic = 0;
