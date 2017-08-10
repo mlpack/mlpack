@@ -15,9 +15,12 @@
 namespace mlpack {
 namespace hpt {
 
-template<typename CVType, size_t TotalArgs, typename... BoundArgs>
+template<typename CVType,
+         typename MLAlgorithm,
+         size_t TotalArgs,
+         typename... BoundArgs>
 template<size_t BAIndex, size_t PIndex>
-struct CVFunction<CVType, TotalArgs, BoundArgs...>::UseBoundArg<
+struct CVFunction<CVType, MLAlgorithm, TotalArgs, BoundArgs...>::UseBoundArg<
     BAIndex, PIndex, true>
 {
   using BoundArgType =
@@ -26,48 +29,63 @@ struct CVFunction<CVType, TotalArgs, BoundArgs...>::UseBoundArg<
   static const bool value = BoundArgType::index == BAIndex + PIndex;
 };
 
-template<typename CVType, size_t TotalArgs, typename... BoundArgs>
+template<typename CVType,
+         typename MLAlgorithm,
+         size_t TotalArgs,
+         typename... BoundArgs>
 template<size_t BAIndex, size_t PIndex>
-struct CVFunction<CVType, TotalArgs, BoundArgs...>::UseBoundArg<
+struct CVFunction<CVType, MLAlgorithm, TotalArgs, BoundArgs...>::UseBoundArg<
     BAIndex, PIndex, false>
 {
   static const bool value = false;
 };
 
-template<typename CVType, size_t TotalArgs, typename... BoundArgs>
-CVFunction<CVType, TotalArgs, BoundArgs...>::CVFunction(
+template<typename CVType,
+         typename MLAlgorithm,
+         size_t TotalArgs,
+         typename... BoundArgs>
+CVFunction<CVType, MLAlgorithm, TotalArgs, BoundArgs...>::CVFunction(
     CVType& cv, const BoundArgs&... args) :
     cv(cv),
     boundArgs(args...),
     bestObjective(std::numeric_limits<double>::max())
 { /* Nothing left to do. */ }
 
-template<typename CVType, size_t TotalArgs, typename... BoundArgs>
-double CVFunction<CVType, TotalArgs, BoundArgs...>::Evaluate(
+template<typename CVType,
+         typename MLAlgorithm,
+         size_t TotalArgs,
+         typename... BoundArgs>
+double CVFunction<CVType, MLAlgorithm, TotalArgs, BoundArgs...>::Evaluate(
     const arma::mat& parameters)
 {
   return Evaluate<0, 0>(parameters);
 }
 
-template<typename CVType, size_t TotalArgs, typename... BoundArgs>
+template<typename CVType,
+         typename MLAlgorithm,
+         size_t TotalArgs,
+         typename... BoundArgs>
 template<size_t BAIndex,
          size_t PIndex,
          typename... Args,
          typename>
-double CVFunction<CVType, TotalArgs, BoundArgs...>::Evaluate(
+double CVFunction<CVType, MLAlgorithm, TotalArgs, BoundArgs...>::Evaluate(
     const arma::mat& parameters,
     const Args&... args)
 {
   return PutNextArg<BAIndex, PIndex>(parameters, args...);
 }
 
-template<typename CVType, size_t TotalArgs, typename... BoundArgs>
+template<typename CVType,
+         typename MLAlgorithm,
+         size_t TotalArgs,
+         typename... BoundArgs>
 template<size_t BAIndex,
          size_t PIndex,
          typename... Args,
          typename,
          typename>
-double CVFunction<CVType, TotalArgs, BoundArgs...>::Evaluate(
+double CVFunction<CVType, MLAlgorithm, TotalArgs, BoundArgs...>::Evaluate(
     const arma::mat& /* parameters */,
     const Args&... args)
 {
@@ -85,12 +103,15 @@ double CVFunction<CVType, TotalArgs, BoundArgs...>::Evaluate(
   return objective;
 }
 
-template<typename CVType, size_t TotalArgs, typename... BoundArgs>
+template<typename CVType,
+         typename MLAlgorithm,
+         size_t TotalArgs,
+         typename... BoundArgs>
 template<size_t BAIndex,
          size_t PIndex,
          typename... Args,
          typename>
-double CVFunction<CVType, TotalArgs, BoundArgs...>::PutNextArg(
+double CVFunction<CVType, MLAlgorithm, TotalArgs, BoundArgs...>::PutNextArg(
     const arma::mat& parameters,
     const Args&... args)
 {
@@ -98,13 +119,16 @@ double CVFunction<CVType, TotalArgs, BoundArgs...>::PutNextArg(
       parameters, args..., std::get<BAIndex>(boundArgs).value);
 }
 
-template<typename CVType, size_t TotalArgs, typename... BoundArgs>
+template<typename CVType,
+         typename MLAlgorithm,
+         size_t TotalArgs,
+         typename... BoundArgs>
 template<size_t BAIndex,
          size_t PIndex,
          typename... Args,
          typename,
          typename>
-double CVFunction<CVType, TotalArgs, BoundArgs...>::PutNextArg(
+double CVFunction<CVType, MLAlgorithm, TotalArgs, BoundArgs...>::PutNextArg(
     const arma::mat& parameters,
     const Args&... args)
 {

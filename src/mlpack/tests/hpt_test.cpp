@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE(CVFunctionTest)
 
   BoundArg<bool, 1> boundUseCholesky{useCholesky};
   BoundArg<double, 3> boundLambda1{lambda2};
-  CVFunction<decltype(cv), 4, BoundArg<bool, 1>, BoundArg<double, 3>>
+  CVFunction<decltype(cv), LARS, 4, BoundArg<bool, 1>, BoundArg<double, 3>>
       cvFun(cv, boundUseCholesky, boundLambda1);
 
   double expected = cv.Evaluate(transposeData, useCholesky, lambda1, lambda2);
@@ -139,7 +139,7 @@ BOOST_AUTO_TEST_CASE(GridSearchTest)
   SimpleCV<LARS, MSE> cv(validationSize, xs, ys);
 
   GridSearch optimizer(lambda1Set, lambda2Set);
-  CVFunction<decltype(cv), 4, BoundArg<bool, 0>, BoundArg<bool, 1>>
+  CVFunction<decltype(cv), LARS, 4, BoundArg<bool, 0>, BoundArg<bool, 1>>
       cvFun(cv, {transposeData}, {useCholesky});
   arma::mat actualParameters;
   double actualObjective = optimizer.Optimize(cvFun, actualParameters);

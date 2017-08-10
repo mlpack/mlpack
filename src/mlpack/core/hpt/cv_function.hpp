@@ -25,13 +25,17 @@ namespace hpt {
  * hyper-parameters see HyperParameterTuner.
  *
  * @tparam CVType A cross-validation strategy.
+ * @tparam MLAlgorithm The machine learning algorithm used in cross-validation.
  * @tparam TotalArgs The total number of arguments that are supposed to be
  *     passed to the Evaluate method of a CVType object.
  * @tparam BoundArgs Types of arguments (wrapped into the BoundArg struct) that
  *     should be passed into the Evaluate method of a CVType object but are not
  *     going to be passed into the Evaluate method of a CVFunction object.
  */
-template<typename CVType, size_t TotalArgs, typename... BoundArgs>
+template<typename CVType,
+         typename MLAlgorithm,
+         size_t TotalArgs,
+         typename... BoundArgs>
 class CVFunction
 {
  public:
@@ -52,10 +56,6 @@ class CVFunction
    *     be passed into the Evaluate method of the CVType object.
    */
   double Evaluate(const arma::mat& parameters);
-
-  //! The used machine learning algorithm.
-  using MLAlgorithm = typename
-      std::remove_reference<decltype(std::declval<CVType>().Model())>::type;
 
   //! Access and modify the best model so far.
   MLAlgorithm& BestModel() { return bestModel; }
