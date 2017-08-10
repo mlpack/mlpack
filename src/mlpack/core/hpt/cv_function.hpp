@@ -70,12 +70,12 @@ class CVFunction
 
   /**
    * A struct that finds out whether the next argument for the Evaluate method
-   * of a CVType object should be a bound argument at the position BAIndex
-   * rather than an element of parameters at the position PIndex.
+   * of a CVType object should be a bound argument at the position BoundArgIndex
+   * rather than an element of parameters at the position ParamIndex.
    */
-  template<size_t BAIndex,
-           size_t PIndex,
-           bool BoundArgsIndexInRange = BAIndex < BoundArgsAmount>
+  template<size_t BoundArgIndex,
+           size_t ParamIndex,
+           bool BoundArgsIndexInRange = BoundArgIndex < BoundArgsAmount>
   struct UseBoundArg;
 
   //! A reference to the cross-validation object.
@@ -93,42 +93,43 @@ class CVFunction
   /**
    * Collect all arguments and run cross-validation.
    */
-  template<size_t BAIndex,
-           size_t PIndex,
+  template<size_t BoundArgIndex,
+           size_t ParamIndex,
            typename... Args,
-           typename =
-               typename std::enable_if<BAIndex + PIndex < TotalArgs>::type>
+           typename = typename
+               std::enable_if<BoundArgIndex + ParamIndex < TotalArgs>::type>
   inline double Evaluate(const arma::mat& parameters, const Args&... args);
 
   /**
    * Run cross-validation with the collected arguments.
    */
-  template<size_t BAIndex,
-           size_t PIndex,
+  template<size_t BoundArgIndex,
+           size_t ParamIndex,
            typename... Args,
-           typename =
-               typename std::enable_if<BAIndex + PIndex == TotalArgs>::type,
+           typename = typename
+               std::enable_if<BoundArgIndex + ParamIndex == TotalArgs>::type,
            typename = void>
   inline double Evaluate(const arma::mat& parameters, const Args&... args);
 
   /**
-   * Put the bound argument (at the BAIndex position) as the next one.
+   * Put the bound argument (at the BoundArgIndex position) as the next one.
    */
-  template<size_t BAIndex,
-           size_t PIndex,
+  template<size_t BoundArgIndex,
+           size_t ParamIndex,
            typename... Args,
            typename = typename std::enable_if<
-               UseBoundArg<BAIndex, PIndex>::value>::type>
+               UseBoundArg<BoundArgIndex, ParamIndex>::value>::type>
   inline double PutNextArg(const arma::mat& parameters, const Args&... args);
 
   /**
-   * Put the element (at the PIndex position) of the parameters as the next one.
+   * Put the element (at the ParamIndex position) of the parameters as the next
+   * one.
    */
-  template<size_t BAIndex,
-           size_t PIndex,
+  template<size_t BoundArgIndex,
+           size_t ParamIndex,
            typename... Args,
            typename = typename std::enable_if<
-               !UseBoundArg<BAIndex, PIndex>::value>::type,
+               !UseBoundArg<BoundArgIndex, ParamIndex>::value>::type,
            typename = void>
   inline double PutNextArg(const arma::mat& parameters, const Args&... args);
 };

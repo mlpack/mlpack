@@ -19,23 +19,23 @@ template<typename CVType,
          typename MLAlgorithm,
          size_t TotalArgs,
          typename... BoundArgs>
-template<size_t BAIndex, size_t PIndex>
+template<size_t BoundArgIndex, size_t ParamIndex>
 struct CVFunction<CVType, MLAlgorithm, TotalArgs, BoundArgs...>::UseBoundArg<
-    BAIndex, PIndex, true>
+    BoundArgIndex, ParamIndex, true>
 {
   using BoundArgType =
-      typename std::tuple_element<BAIndex, BoundArgsTupleType>::type;
+      typename std::tuple_element<BoundArgIndex, BoundArgsTupleType>::type;
 
-  static const bool value = BoundArgType::index == BAIndex + PIndex;
+  static const bool value = BoundArgType::index == BoundArgIndex + ParamIndex;
 };
 
 template<typename CVType,
          typename MLAlgorithm,
          size_t TotalArgs,
          typename... BoundArgs>
-template<size_t BAIndex, size_t PIndex>
+template<size_t BoundArgIndex, size_t ParamIndex>
 struct CVFunction<CVType, MLAlgorithm, TotalArgs, BoundArgs...>::UseBoundArg<
-    BAIndex, PIndex, false>
+    BoundArgIndex, ParamIndex, false>
 {
   static const bool value = false;
 };
@@ -65,23 +65,23 @@ template<typename CVType,
          typename MLAlgorithm,
          size_t TotalArgs,
          typename... BoundArgs>
-template<size_t BAIndex,
-         size_t PIndex,
+template<size_t BoundArgIndex,
+         size_t ParamIndex,
          typename... Args,
          typename>
 double CVFunction<CVType, MLAlgorithm, TotalArgs, BoundArgs...>::Evaluate(
     const arma::mat& parameters,
     const Args&... args)
 {
-  return PutNextArg<BAIndex, PIndex>(parameters, args...);
+  return PutNextArg<BoundArgIndex, ParamIndex>(parameters, args...);
 }
 
 template<typename CVType,
          typename MLAlgorithm,
          size_t TotalArgs,
          typename... BoundArgs>
-template<size_t BAIndex,
-         size_t PIndex,
+template<size_t BoundArgIndex,
+         size_t ParamIndex,
          typename... Args,
          typename,
          typename>
@@ -107,24 +107,24 @@ template<typename CVType,
          typename MLAlgorithm,
          size_t TotalArgs,
          typename... BoundArgs>
-template<size_t BAIndex,
-         size_t PIndex,
+template<size_t BoundArgIndex,
+         size_t ParamIndex,
          typename... Args,
          typename>
 double CVFunction<CVType, MLAlgorithm, TotalArgs, BoundArgs...>::PutNextArg(
     const arma::mat& parameters,
     const Args&... args)
 {
-  return Evaluate<BAIndex + 1, PIndex>(
-      parameters, args..., std::get<BAIndex>(boundArgs).value);
+  return Evaluate<BoundArgIndex + 1, ParamIndex>(
+      parameters, args..., std::get<BoundArgIndex>(boundArgs).value);
 }
 
 template<typename CVType,
          typename MLAlgorithm,
          size_t TotalArgs,
          typename... BoundArgs>
-template<size_t BAIndex,
-         size_t PIndex,
+template<size_t BoundArgIndex,
+         size_t ParamIndex,
          typename... Args,
          typename,
          typename>
@@ -132,8 +132,8 @@ double CVFunction<CVType, MLAlgorithm, TotalArgs, BoundArgs...>::PutNextArg(
     const arma::mat& parameters,
     const Args&... args)
 {
-  return Evaluate<BAIndex, PIndex + 1>(
-      parameters, args..., parameters(PIndex, 0));
+  return Evaluate<BoundArgIndex, ParamIndex + 1>(
+      parameters, args..., parameters(ParamIndex, 0));
 }
 
 } // namespace hpt
