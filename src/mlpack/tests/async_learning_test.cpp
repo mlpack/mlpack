@@ -72,7 +72,8 @@ BOOST_AUTO_TEST_CASE(OneStepQLearningTest)
   arma::vec rewards(20, arma::fill::zeros);
   size_t pos = 0;
   size_t testEpisodes = 0;
-  auto measure = [&rewards, &pos, &testEpisodes](double reward) {
+  auto measure = [&rewards, &pos, &testEpisodes](double reward)
+  {
     size_t maxEpisode = 10000;
     if (testEpisodes > maxEpisode)
       BOOST_REQUIRE(false);
@@ -105,7 +106,7 @@ BOOST_AUTO_TEST_CASE(OneStepSarsaTest)
 
   // Set up the network.
   FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
-  GaussianInitialization(0, 0.001));
+      GaussianInitialization(0, 0.001));
   model.Add<Linear<>>(4, 20);
   model.Add<ReLULayer<>>();
   model.Add<Linear<>>(20, 20);
@@ -133,7 +134,8 @@ BOOST_AUTO_TEST_CASE(OneStepSarsaTest)
   arma::vec rewards(20, arma::fill::zeros);
   size_t pos = 0;
   size_t testEpisodes = 0;
-  auto measure = [&rewards, &pos, &testEpisodes](double reward) {
+  auto measure = [&rewards, &pos, &testEpisodes](double reward)
+  {
     size_t maxEpisode = 100000;
     if (testEpisodes > maxEpisode)
       BOOST_REQUIRE(false);
@@ -166,7 +168,7 @@ BOOST_AUTO_TEST_CASE(NStepQLearningTest)
 
   // Set up the network.
   FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
-  GaussianInitialization(0, 0.001));
+      GaussianInitialization(0, 0.001));
   model.Add<Linear<>>(4, 20);
   model.Add<ReLULayer<>>();
   model.Add<Linear<>>(20, 20);
@@ -194,7 +196,8 @@ BOOST_AUTO_TEST_CASE(NStepQLearningTest)
   arma::vec rewards(20, arma::fill::zeros);
   size_t pos = 0;
   size_t testEpisodes = 0;
-  auto measure = [&rewards, &pos, &testEpisodes](double reward) {
+  auto measure = [&rewards, &pos, &testEpisodes](double reward)
+  {
     size_t maxEpisode = 100000;
     if (testEpisodes > maxEpisode)
       BOOST_REQUIRE(false);
