@@ -13,13 +13,20 @@
 #ifndef MLPACK_METHODS_AUGMENTED_TREE_MEMORY_HPP
 #define MLPACK_METHODS_AUGMENTED_TREE_MEMORY_HPP
 
+#include <mlpack/methods/ann/ffn.hpp>
+#include <mlpack/methods/ann/layer/layer.hpp>
+
 namespace mlpack {
 namespace ann /* Artificial Neural Network */ {
 namespace augmented /* Augmented neural network */ {
-template<typename T>
+template<
+  typename T,
+  typename J = FFN<MeanSquaredError<>>,
+  typename W = FFN<MeanSquaredError<>>
+>
 class TreeMemory {
 public:
-  TreeMemory(size_t size, size_t memDim, LayerTypes joiner, LayerTypes writer);
+  TreeMemory(size_t size, size_t memDim, J joiner, W writer);
 
   void Initialize(arma::Mat<T>& leafValues);
 
@@ -39,12 +46,12 @@ public:
 
   size_t MemorySize() const { return memorySize; }
   size_t ActualMemorySize() const { return actualMemorySize; }
-private:
-  arma::Mat<T> Stack(arma::Mat<T>& left, arma::Mat<T>& right);
 
+  arma::Mat<T> Stack(arma::Mat<T> left, arma::Mat<T> right);
+private:
   arma::Mat<T> memory;
-  LayerTypes joinFunction;
-  LayerTypes writeFunction;
+  J joinFunction;
+  W writeFunction;
   size_t memorySize;
   size_t memoryDim;
   size_t actualMemorySize;

@@ -28,7 +28,7 @@
 using namespace mlpack::ann::augmented;
 using namespace mlpack::ann;
 
-LayerTypes ReplaceWriter(size_t dim)
+FFN<MeanSquaredError<> > ReplaceWriter(size_t dim)
 {
   FFN<MeanSquaredError<> > writeModel;
   writeModel.Add<Linear<> >(2 * dim, dim);
@@ -40,7 +40,7 @@ LayerTypes ReplaceWriter(size_t dim)
   return writeModel;
 }
 
-LayerTypes AddJoiner(size_t dim) {
+FFN<MeanSquaredError<> > AddJoiner(size_t dim) {
   FFN<MeanSquaredError<> > joinModel;
   joinModel.Add<Linear<> >(2 * dim, dim);
   joinModel.ResetParameters();
@@ -69,7 +69,7 @@ BOOST_AUTO_TEST_CASE(TreeMemoryTestMinimum)
 {
   /*AddJoiner<double> J;
   ReplaceWriter<double> W;*/
-  LayerTypes J = AddJoiner(1), W = ReplaceWriter(1);
+  FFN<MeanSquaredError<> > J = AddJoiner(1), W = ReplaceWriter(1);
   // With these definitions, mem is exactly one of the well-known data structres
   // in competitive programming - segment tree.
   TreeMemory<double> mem(1, 1, J, W);
@@ -88,7 +88,7 @@ BOOST_AUTO_TEST_CASE(TreeMemoryTestMinimumNDim)
   /*AddJoiner<double> J;
   ReplaceWriter<double> W;*/
   size_t memSize = 5;
-  LayerTypes J = AddJoiner(memSize), W = ReplaceWriter(memSize);
+  FFN<MeanSquaredError<> > J = AddJoiner(memSize), W = ReplaceWriter(memSize);
   TreeMemory<double> mem(
       1, memSize, J, W);
   std::vector<std::vector<double>> initMemSTL = {{0, 0, 0, 0, 0}};
@@ -108,7 +108,7 @@ BOOST_AUTO_TEST_CASE(TreeMemoryTestPowerOfTwo)
 {
   /*AddJoiner<double> J;
   ReplaceWriter<double> W;*/
-  LayerTypes J = AddJoiner(1), W = ReplaceWriter(1);
+  FFN<MeanSquaredError<> > J = AddJoiner(1), W = ReplaceWriter(1);
   TreeMemory<double> mem(8, 1, J, W);
   std::vector<std::vector<double>> initMemSTL =
       {{0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}};
@@ -141,7 +141,7 @@ BOOST_AUTO_TEST_CASE(TreeMemoryTestPowerOfTwoNDim)
   /*AddJoiner<double> J;
   ReplaceWriter<double> W;*/
   size_t memSize = 4;
-  LayerTypes J = AddJoiner(memSize), W = ReplaceWriter(memSize);
+  FFN<MeanSquaredError<> > J = AddJoiner(memSize), W = ReplaceWriter(memSize);
   TreeMemory<double> mem(
       8, memSize, J, W);
   std::vector<std::vector<double>> initMemSTL =
@@ -184,7 +184,7 @@ BOOST_AUTO_TEST_CASE(TreeMemoryTestPowerOfTwoNDim)
 BOOST_AUTO_TEST_CASE(TreeMemoryTestArbitrary) {
   /*AddJoiner<double> J;
   ReplaceWriter<double> W;*/
-  LayerTypes J = AddJoiner(1), W = ReplaceWriter(1);
+  FFN<MeanSquaredError<> > J = AddJoiner(1), W = ReplaceWriter(1);
   TreeMemory<double> mem(9, 1, J, W);
   std::vector<std::vector<double>> initMemSTL =
       {{0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}};

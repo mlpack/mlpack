@@ -12,22 +12,25 @@
 #ifndef MLPACK_METHODS_AUGMENTED_TREE_MEMORY_IMPL_HPP
 #define MLPACK_METHODS_AUGMENTED_TREE_MEMORY_IMPL_HPP
 
-#include <mlpack/methods/ann/layer/layer.hpp>
-
 #include <cassert>
 
 #include "tree_memory.hpp"
+#include <mlpack/methods/ann/layer/layer.hpp>
 
 using namespace mlpack::ann;
 
 namespace mlpack {
 namespace ann /* Artificial Neural Network */ {
 namespace augmented /* Augmented neural network */ {
-template<typename T>
-TreeMemory<T>::TreeMemory(size_t size,
+template<
+  typename T,
+  typename J,
+  typename W
+>
+TreeMemory<T, J, W>::TreeMemory(size_t size,
                           size_t memDim,
-                          FFN joiner,
-                          FFN writer)
+                          J joiner,
+                          W writer)
 {
   memorySize = size;
   memoryDim = memDim;
@@ -41,68 +44,68 @@ TreeMemory<T>::TreeMemory(size_t size,
   writeFunction = writer;
 }
 
-template<typename T>
-inline arma::Col<T> TreeMemory<T>::Leaf(size_t index) const
+template<typename T, typename J, typename W>
+inline arma::Col<T> TreeMemory<T, J, W>::Leaf(size_t index) const
 {
   assert(0 <= index && index < memorySize);
   return memory.col(actualMemorySize - 1 + index);
 }
 
-template<typename T>
-inline arma::subview_col<T> TreeMemory<T>::Leaf(size_t index)
+template<typename T, typename J, typename W>
+inline arma::subview_col<T> TreeMemory<T, J, W>::Leaf(size_t index)
 {
   assert(0 <= index && index < memorySize);
   return memory.col(actualMemorySize - 1 + index);
 }
 
-template<typename T>
-inline arma::Col<T> TreeMemory<T>::Cell(size_t index) const
+template<typename T, typename J, typename W>
+inline arma::Col<T> TreeMemory<T, J, W>::Cell(size_t index) const
 {
   assert(0 <= index && index < memory.size());
   return memory.col(index);
 }
 
-template<typename T>
-inline arma::subview_col<T> TreeMemory<T>::Cell(size_t index)
+template<typename T, typename J, typename W>
+inline arma::subview_col<T> TreeMemory<T, J, W>::Cell(size_t index)
 {
   assert(0 <= index && index < memory.size());
   return memory.col(index);
 }
 
-template<typename T>
-inline size_t TreeMemory<T>::Root()
+template<typename T, typename J, typename W>
+inline size_t TreeMemory<T, J, W>::Root()
 {
   return 0;
 }
 
-template<typename T>
-inline size_t TreeMemory<T>::Left(size_t origin)
+template<typename T, typename J, typename W>
+inline size_t TreeMemory<T, J, W>::Left(size_t origin)
 {
   return (origin << 1) + 1;
 }
 
-template<typename T>
-inline size_t TreeMemory<T>::Right(size_t origin)
+template<typename T, typename J, typename W>
+inline size_t TreeMemory<T, J, W>::Right(size_t origin)
 {
   return (origin << 1) + 2;
 }
 
-template<typename T>
-inline size_t TreeMemory<T>::LeafIndex(size_t leafPos)
+template<typename T, typename J, typename W>
+inline size_t TreeMemory<T, J, W>::LeafIndex(size_t leafPos)
 {
   assert(0 <= leafPos && leafPos < memorySize);
   return actualMemorySize - 1 + leafPos;
 }
 
-template<typename T>
-inline size_t TreeMemory<T>::Parent(size_t child)
+template<typename T, typename J, typename W>
+inline size_t TreeMemory<T, J, W>::Parent(size_t child)
 {
   if (child == 0) return actualMemorySize;
   return ((child + 1) >> 1) - 1;
 }
 
-template<typename T>
-void TreeMemory<T>::Initialize(arma::Mat<T>& leafValues)
+template<typename T, typename J, typename W>
+void TreeMemory<T, J, W>::Initialize(arma::Mat<T>& leafValues)
 {
   assert(leafValues.n_cols <= memorySize);
   // First, write in the leaf nodes.
@@ -116,26 +119,31 @@ void TreeMemory<T>::Initialize(arma::Mat<T>& leafValues)
     size_t l = Left(i), r = Right(i);
     assert(l <= r);
     if (r > lastWrittenIdx) continue;
-    joinFunction.Predict(Stack(Cell(l), Cell(r)), Cell(i));
+    arma::Mat<T> newCellValue;
+    joinFunction.Predict(Stack(Cell(l), Cell(r)), newCellValue);
+    Cell(i) = newCellValue;
   }
 }
 
-template<typename T>
-void TreeMemory<T>::Update(size_t pos, arma::Col<T> el)
+template<typename T, typename J, typename W>
+void TreeMemory<T, J, W>::Update(size_t pos, arma::Col<T> el)
 {
   assert(pos >= 0 && pos < memorySize);
   size_t start = actualMemorySize - 1 + pos;
-  writeFunction(Stack(Cell(start), el), Cell(start));
+  arma::Mat<T> newCellValue;
+  writeFunction.Predict(Stack(Cell(start), el), newCellValue);
+  Cell(start) = newCellValue;
   while (start != Root())
   {
     start = Parent(start);
     size_t l = Left(start), r = Right(start);
-    joinFunction(Stack(Cell(l), Cell(r)), Cell(start));
+    joinFunction.Predict(Stack(Cell(l), Cell(r)), newCellValue);
+    Cell(start) = newCellValue;
   }
 }
 
-template<typename T>
-arma::Mat<T> TreeMemory<T>::Stack(arma::Mat<T> left, arma::Mat<T> right)
+template<typename T, typename J, typename W>
+arma::Mat<T> TreeMemory<T, J, W>::Stack(arma::Mat<T> left, arma::Mat<T> right)
 {
   assert(left.n_cols == right.n_cols);
   arma::Mat<T> result(left.n_rows + right.n_rows, left.n_cols);
