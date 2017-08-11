@@ -15,6 +15,7 @@
 #include <mlpack/methods/ann/gan.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
 #include <mlpack/core/optimizers/adam/adam.hpp>
+#include <mlpack/core/optimizers/minibatch_sgd/minibatch_sgd_impl.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
