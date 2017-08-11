@@ -39,7 +39,8 @@ BOOST_AUTO_TEST_CASE(OMPTest)
   mat B1 = eye(3, 3);
   mat B2 = 0.1 * randn(3, k);
   mat A = join_horiz(B1, B2); // The dictionary is input as columns of A.
-  vec b = {1, 1, 0}; // Vector to be sparsely approximated.
+  vec b;
+  b << 1 << 1 << 0; // Vector to be sparsely approximated.
 
   FuncSq f(A, b);
   ConstrLpBallSolver linearConstrSolver(1);
@@ -95,10 +96,14 @@ BOOST_AUTO_TEST_CASE(PruneSupportOMP)
 {
   // The dictionary is input as columns of A.
   int k = 3;
-  mat B1 = {{1, 0, 1}, {0, 1, 1}, {0, 0, 1}};
+  mat B1;
+  B1 << 1 << 0 << 1 << endr
+    << 0 << 1 << 1 << endr
+    << 0 << 0 << 1 << endr;
   mat B2 = randu(k, k);
   mat A = join_horiz(B1, B2); // The dictionary is input as columns of A.
-  vec b = {1, 1, 0}; // Vector to be sparsely approximated.
+  vec b;
+  b << 1 << 1 << 0; // Vector to be sparsely approximated.
 
   FuncSq f(A, b);
   ConstrLpBallSolver linearConstrSolver(1);
@@ -121,7 +126,8 @@ BOOST_AUTO_TEST_CASE(AtomNormConstraint)
   mat B1 = eye(3, 3);
   mat B2 = 0.1 * randn(3, k);
   mat A = join_horiz(B1, B2); // The dictionary is input as columns of A.
-  vec b = {1, 1, 0}; // Vector to be sparsely approximated.
+  vec b;
+  b << 1 << 1 << 0; // Vector to be sparsely approximated.
 
   FuncSq f(A, b);
   ConstrLpBallSolver linearConstrSolver(1);

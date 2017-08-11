@@ -37,12 +37,14 @@ class Atoms
     if (currentAtoms.is_empty())
     {
       CurrentAtoms() = v;
-      CurrentCoeffs() = c;
+      CurrentCoeffs().set_size(1);
+      CurrentCoeffs().fill(c);
     }
     else
     {
       currentAtoms.insert_cols(0, v);
-      arma::vec cVec = {c};
+      arma::vec cVec(1);
+      cVec(0) = c;
       currentCoeffs.insert_rows(0, cVec);
     }
   }
