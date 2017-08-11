@@ -3,8 +3,8 @@ dist: xenial
 language: cpp
 
 env:
-  - CMAKE_OPTIONS="-DDEBUG=OFF -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF"
-  - CMAKE_OPTIONS="-DDEBUG=ON -DPROFILE=OFF -DPYTHON=/usr/bin/python"
+  - CMAKE_OPTIONS="-DDEBUG=OFF -DPROFILE=OFF -DPYTHON=/usr/bin/python"
+  - CMAKE_OPTIONS="-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF"
 
 before_install:
   - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
