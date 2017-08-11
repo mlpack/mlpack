@@ -235,7 +235,7 @@ void BuildVanillaNetwork(MatType& trainData,
       "-0.20962217, -0.59922456, -0.60003836, -0.6, -0.625, -0.475;");
 
   // Check free energy
-  arma::Col<float> freeEnergy = MatType(
+  arma::Mat<float> freeEnergy = MatType(
       "-0.87523715, 0.50615066, 0.46923476, 1.21509084;");
   arma::vec calcultedFreeEnergy(4);
   calcultedFreeEnergy.zeros();
