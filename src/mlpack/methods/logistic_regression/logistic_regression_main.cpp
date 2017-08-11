@@ -11,6 +11,8 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
+
 #include "logistic_regression.hpp"
 
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
@@ -30,49 +32,72 @@ PROGRAM_INFO("L2-regularized Logistic Regression and Prediction",
     "\n\n"
     "where y takes values 0 or 1."
     "\n\n"
-    "This program allows loading a logistic regression model from a file (-i) "
-    "or training a logistic regression model given training data (-t), or both "
+    "This program allows loading a logistic regression model (via the " +
+    PRINT_PARAM_STRING("input_model") + " parameter) "
+    "or training a logistic regression model given training data (specified "
+    "with the " + PRINT_PARAM_STRING("training") + " parameter), or both "
     "those things at once.  In addition, this program allows classification on "
-    "a test dataset (-T) and will save the classification results to the given "
-    "output file (-o).  The logistic regression model itself may be saved with "
-    "a file specified using the -m option."
+    "a test dataset (specified with the " + PRINT_PARAM_STRING("test") + " "
+    "parameter) and the classification results may be saved with the " +
+    PRINT_PARAM_STRING("output") + " output parameter.  The trained logistic "
+    "regression model may be saved using the " +
+    PRINT_PARAM_STRING("output_model") + " output parameter."
     "\n\n"
-    "The training data given with the -t option should have class labels as its"
-    " last dimension (so, if the training data is in CSV format, labels should "
-    "be the last column).  Alternately, the -l (--labels_file) option may be "
-    "used to specify a separate file of labels."
+    "The training data, if specified, may have class labels as its last "
+    "dimension.  Alternately, the " + PRINT_PARAM_STRING("labels") + " "
+    "parameter may be used to specify a separate matrix of labels."
     "\n\n"
     "When a model is being trained, there are many options.  L2 regularization "
-    "(to prevent overfitting) can be specified with the -l option, and the "
-    "optimizer used to train the model can be specified with the --optimizer "
-    "option.  Available options are 'sgd' (stochastic gradient descent), "
-    "'lbfgs' (the L-BFGS optimizer), and 'minibatch-sgd' (minibatch stochastic "
-    "gradient descent).  There are also various parameters for the optimizer; "
-    "the --max_iterations parameter specifies the maximum number of allowed "
-     "iterations, and the --tolerance (-e) parameter specifies the tolerance "
-    "for convergence.  For the SGD and mini-batch SGD optimizers, the "
-    "--step_size parameter controls the step size taken at each iteration by "
-    "the optimizer.  The batch size for mini-batch SGD is controlled with the "
-    "--batch_size (-b) parameter.  If the objective function for your data is "
-    "oscillating between Inf and 0, the step size is probably too large.  There"
-    " are more parameters for the optimizers, but the C++ interface must be "
-    "used to access these."
+    "(to prevent overfitting) can be specified with the " +
+    PRINT_PARAM_STRING("lambda") + " option, and the "
+    "optimizer used to train the model can be specified with the " +
+    PRINT_PARAM_STRING("optimizer") + " parameter.  Available options are "
+    "'sgd' (stochastic gradient descent), 'lbfgs' (the L-BFGS optimizer), and "
+    "'minibatch-sgd' (minibatch stochastic gradient descent).  There are also "
+    "various parameters for the optimizer; the " +
+    PRINT_PARAM_STRING("max_iterations") + " parameter specifies the maximum "
+    "number of allowed iterations, and the " +
+    PRINT_PARAM_STRING("tolerance") + " parameter specifies the tolerance for "
+    " convergence.  For the SGD and mini-batch SGD optimizers, the " +
+    PRINT_PARAM_STRING("step_size") + " parameter controls the step size taken"
+    " at each iteration by the optimizer.  The batch size for mini-batch SGD is"
+    " controlled with the " + PRINT_PARAM_STRING("batch_size") + " parameter."
+    " If the objective function for your data is oscillating between Inf and 0,"
+    " the step size is probably too large.  There are more parameters for the "
+    "optimizers, but the C++ interface must be used to access these."
     "\n\n"
     "For SGD, an iteration refers to a single point, and for mini-batch SGD, an"
     " iteration refers to a single batch.  So to take a single pass over the "
-    "dataset with SGD, --max_iterations should be set to the number of points "
-    "in the dataset."
+    "dataset with SGD, " + PRINT_PARAM_STRING("max_iterations") + " should be"
+    " set to the number of points in the dataset."
     "\n\n"
     "Optionally, the model can be used to predict the responses for another "
-    "matrix of data points, if --test_file is specified.  The --test_file "
-    "option can be specified without --input_file, so long as an existing "
-    "logistic regression model is given with --model_file.  The output "
-    "predictions from the logistic regression model are stored in the file "
-    "given with --output_predictions."
+    "matrix of data points, if " + PRINT_PARAM_STRING("test") + " is "
+    "specified.  The " + PRINT_PARAM_STRING("test") + " parameter can be "
+    "specified without the " + PRINT_PARAM_STRING("training") + " parameter, "
+    "so long as an existing logistic regression model is given with the " +
+    PRINT_PARAM_STRING("input_model") + " parameter.  The output predictions "
+    "from the logistic regression model may be saved with the " +
+    PRINT_PARAM_STRING("output") + " parameter."
     "\n\n"
     "This implementation of logistic regression does not support the general "
-    "multi-class case but instead only the two-class case.  Any responses must "
-    "be either 0 or 1.");
+    "multi-class case but instead only the two-class case.  Any labels must "
+    "be either 0 or 1.  For more classes, see the softmax_regression program."
+    "\n\n"
+    "As an example, to train a logistic regression model on the data '" +
+    PRINT_DATASET("data") + "' with labels '" + PRINT_DATASET("labels") + "' "
+    "with L2 regularization of 0.1, saving the model to '" +
+    PRINT_MODEL("lr_model") + "', the following command may be used:"
+    "\n\n" +
+    PRINT_CALL("logistic_regression", "training", "data", "labels", "labels",
+        "lambda", 0.1, "output_model", "lr_model") +
+    "\n\n"
+    "Then, to use that model to predict classes for the dataset '" +
+    PRINT_DATASET("test") + "', storing the output predictions in '" +
+    PRINT_DATASET("predictions") + "', the following command may be used: "
+    "\n\n" +
+    PRINT_CALL("logistic_regression", "input_model", "lr_model", "test", "test",
+        "output", "predictions"));
 
 // Training parameters.
 PARAM_MATRIX_IN("training", "A matrix containing the training set (the matrix "
@@ -110,10 +135,8 @@ PARAM_DOUBLE_IN("decision_boundary", "Decision boundary for prediction; if the "
     "logistic function for a point is less than the boundary, the class is "
     "taken to be 0; otherwise, the class is 1.", "d", 0.5);
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   // Collect command-line options.
   const double lambda = CLI::GetParam<double>("lambda");
   const string optimizerType = CLI::GetParam<string>("optimizer");
@@ -273,7 +296,7 @@ int main(int argc, char** argv)
     if (CLI::HasParam("output"))
     {
       Log::Info << "Predicting classes of points in '"
-          << CLI::GetUnmappedParam<arma::mat>("test") << "'." << endl;
+          << CLI::GetPrintableParam<arma::mat>("test") << "'." << endl;
       model.Classify(testSet, predictions, decisionBoundary);
 
       CLI::GetParam<arma::Row<size_t>>("output") = std::move(predictions);
@@ -282,7 +305,7 @@ int main(int argc, char** argv)
     if (CLI::HasParam("output_probabilities"))
     {
       Log::Info << "Calculating class probabilities of points in '"
-          << CLI::GetUnmappedParam<arma::mat>("test") << "'." << endl;
+          << CLI::GetPrintableParam<arma::mat>("test") << "'." << endl;
       arma::mat probabilities;
       model.Classify(testSet, probabilities);
 
@@ -294,10 +317,8 @@ int main(int argc, char** argv)
   if (CLI::HasParam("output_model"))
   {
     Log::Info << "Saving model to '"
-        << CLI::GetUnmappedParam<LogisticRegression<>>("output_model") << "'."
+        << CLI::GetPrintableParam<LogisticRegression<>>("output_model") << "'."
         << endl;
     CLI::GetParam<LogisticRegression<>>("output_model") = std::move(model);
   }
-
-  CLI::Destroy();
 }

@@ -4,23 +4,25 @@
  *
  * Output a parameter of different types using template metaprogramming.
  */
-#ifndef MLPACK_CORE_UTIL_OUTPUT_PARAM_HPP
-#define MLPACK_CORE_UTIL_OUTPUT_PARAM_HPP
+#ifndef MLPACK_BINDINGS_CLI_OUTPUT_PARAM_HPP
+#define MLPACK_BINDINGS_CLI_OUTPUT_PARAM_HPP
 
 #include <mlpack/prereqs.hpp>
-#include "param_data.hpp"
+#include <mlpack/core/util/param_data.hpp>
+#include <mlpack/core/util/is_std_vector.hpp>
 
 namespace mlpack {
-namespace util {
+namespace bindings {
+namespace cli {
 
 /**
  * Output an option (print to stdout).
  */
 template<typename T>
 void OutputParamImpl(
-    const ParamData& data,
+    const util::ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::disable_if<IsStdVector<T>>::type* = 0,
+    const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
     const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
     const typename boost::disable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0);
@@ -30,15 +32,15 @@ void OutputParamImpl(
  */
 template<typename T>
 void OutputParamImpl(
-    const ParamData& data,
-    const typename boost::enable_if<IsStdVector<T>>::type* = 0);
+    const util::ParamData& data,
+    const typename boost::enable_if<util::IsStdVector<T>>::type* = 0);
 
 /**
  * Output a matrix option (this saves it to the given file).
  */
 template<typename T>
 void OutputParamImpl(
-    const ParamData& data,
+    const util::ParamData& data,
     const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0);
 
 /**
@@ -46,7 +48,7 @@ void OutputParamImpl(
  */
 template<typename T>
 void OutputParamImpl(
-    const ParamData& data,
+    const util::ParamData& data,
     const typename boost::enable_if<data::HasSerialize<T>>::type* = 0);
 
 /**
@@ -54,7 +56,7 @@ void OutputParamImpl(
  */
 template<typename T>
 void OutputParamImpl(
-    const ParamData& data,
+    const util::ParamData& data,
     const typename boost::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0);
 
@@ -63,12 +65,15 @@ void OutputParamImpl(
  * module.
  */
 template<typename T>
-void OutputParam(const ParamData& data)
+void OutputParam(const util::ParamData& data,
+                 const void* /* input */,
+                 void* /* output */)
 {
   OutputParamImpl<T>(data);
 }
 
-} // namespace util
+} // namespace cli
+} // namespace bindings
 } // namespace mlpack
 
 // Include implementation.

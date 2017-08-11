@@ -11,6 +11,7 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 
 #include "kmeans.hpp"
 #include "allow_empty_clusters.hpp"
@@ -27,42 +28,63 @@ using namespace std;
 
 // Define parameters for the executable.
 PROGRAM_INFO("K-Means Clustering", "This program performs K-Means clustering "
-    "on the given dataset, storing the learned cluster assignments either as "
-    "a column of labels in the file containing the input dataset or in a "
-    "separate file.  Empty clusters are not allowed by default; when a cluster "
-    "becomes empty, the point furthest from the centroid of the cluster with "
-    "maximum variance is taken to fill that cluster."
+    "on the given dataset.  It can return the learned cluster assignments, and "
+    "the centroids of the clusters.  Empty clusters are not allowed by default;"
+    " when a cluster becomes empty, the point furthest from the centroid of the"
+    " cluster with maximum variance is taken to fill that cluster."
     "\n\n"
     "Optionally, the Bradley and Fayyad approach (\"Refining initial points for"
     " k-means clustering\", 1998) can be used to select initial points by "
-    "specifying the --refined_start (-r) option.  This approach works by taking"
-    " random samples of the dataset; to specify the number of samples, the "
-    "--samples parameter is used, and to specify the percentage of the dataset "
-    "to be used in each sample, the --percentage parameter is used (it should "
-    "be a value between 0.0 and 1.0)."
+    "specifying the " + PRINT_PARAM_STRING("refined_start") + " parameter.  "
+    "This approach works by taking random samplings of the dataset; to specify "
+    "the number of samplings, the " + PRINT_PARAM_STRING("samplings") +
+    " parameter is used, and to specify the percentage of the dataset to be "
+    "used in each sample, the " + PRINT_PARAM_STRING("percentage") +
+    " parameter is used (it should be a value between 0.0 and 1.0)."
     "\n\n"
     "There are several options available for the algorithm used for each Lloyd "
-    "iteration, specified with the --algorithm (-a) option.  The standard O(kN)"
-    " approach can be used ('naive').  Other options include the Pelleg-Moore "
-    "tree-based algorithm ('pelleg-moore'), Elkan's triangle-inequality based "
-    "algorithm ('elkan'), Hamerly's modification to Elkan's algorithm "
-    "('hamerly'), the dual-tree k-means algorithm ('dualtree'), and the "
-    "dual-tree k-means algorithm using the cover tree ('dualtree-covertree')."
+    "iteration, specified with the " + PRINT_PARAM_STRING("algorithm") + " "
+    " option.  The standard O(kN) approach can be used ('naive').  Other "
+    "options include the Pelleg-Moore tree-based algorithm ('pelleg-moore'), "
+    "Elkan's triangle-inequality based algorithm ('elkan'), Hamerly's "
+    "modification to Elkan's algorithm ('hamerly'), the dual-tree k-means "
+    "algorithm ('dualtree'), and the dual-tree k-means algorithm using the "
+    "cover tree ('dualtree-covertree')."
     "\n\n"
     "The behavior for when an empty cluster is encountered can be modified with"
-    " the --allow_empty_clusters (-e) option.  When this option is specified "
-    "and there is a cluster owning no points at the end of an iteration, that "
-    "cluster's centroid will simply remain in its position from the previous "
-    "iteration. If the --kill_empty_clusters (-E) option is specified, then "
+    " the " + PRINT_PARAM_STRING("allow_empty_clusters") + " option.  When "
+    "this option is specified and there is a cluster owning no points at the "
+    "end of an iteration, that cluster's centroid will simply remain in its "
+    "position from the previous iteration. If the " +
+    PRINT_PARAM_STRING("kill_empty_clusters") + " option is specified, then "
     "when a cluster owns no points at the end of an iteration, the cluster "
     "centroid is simply filled with DBL_MAX, killing it and effectively "
     "reducing k for the rest of the computation.  Note that the default option "
     "when neither empty cluster option is specified can be time-consuming to "
-    "calculate; therefore, specifying -e or -E will often accelerate runtime."
+    "calculate; therefore, specifying either of these parameters will often "
+    "accelerate runtime."
     "\n\n"
-    "As of October 2014, the --overclustering option has been removed.  If you "
-    "want this support back, let us know---file a bug at "
-    "https://github.com/mlpack/mlpack/ or get in touch through another means.");
+    "Initial clustering assignments may be specified using the " +
+    PRINT_PARAM_STRING("initial_centroids") + " parameter, and the maximum "
+    "number of iterations may be specified with the " +
+    PRINT_PARAM_STRING("max_iterations") + " parameter."
+    "\n\n"
+    "As an example, to use Hamerly's algorithm to perform k-means clustering "
+    "with k=10 on the dataset " + PRINT_DATASET("data") + ", saving the "
+    "centroids to " + PRINT_DATASET("centroids") + " and the assignments for "
+    "each point to " + PRINT_DATASET("assignments") + ", the following "
+    "command could be used:"
+    "\n\n" +
+    PRINT_CALL("kmeans", "input", "data", "clusters", 10, "output",
+        "assignments", "centroid", "centroids") +
+    "\n\n"
+    "To run k-means on that same dataset with initial centroids specified in " +
+    PRINT_DATASET("initial") + " with a maximum of 500 iterations, "
+    "storing the output centroids in " + PRINT_DATASET("final") + " the "
+    "following command may be used:"
+    "\n\n" +
+    PRINT_CALL("kmeans", "input", "data", "initial_centroids", "initial",
+        "clusters", 10, "max_iterations", 500, "centroid", "final"));
 
 // Required options.
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform clustering on.", "i");
@@ -72,7 +94,7 @@ PARAM_INT_IN_REQ("clusters", "Number of clusters to find (0 autodetects from "
 // Output options.
 PARAM_FLAG("in_place", "If specified, a column containing the learned cluster "
     "assignments will be added to the input dataset file.  In this case, "
-    "--output_file is overridden.", "P");
+    "--output_file is overridden. (Do not use in Python.)", "P");
 PARAM_MATRIX_OUT("output", "Matrix to store output labels or labeled data to.",
     "o");
 PARAM_MATRIX_OUT("centroid", "If specified, the centroids of each cluster will "
@@ -117,10 +139,8 @@ template<typename InitialPartitionPolicy,
          template<class, class> class LloydStepType>
 void RunKMeans(const InitialPartitionPolicy& ipp);
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   // Initialize random seed.
   if (CLI::GetParam<int>("seed") != 0)
     math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
@@ -279,27 +299,18 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
 
       // Save the dataset.  We have to do a little trickery to get it to save
       // the input file correctly.
-      CLI::GetUnmappedParam<arma::mat>("output") =
-          CLI::GetUnmappedParam<arma::mat>("input");
+      CLI::GetPrintableParam<arma::mat>("output") =
+          CLI::GetPrintableParam<arma::mat>("input");
       CLI::GetParam<arma::mat>("output") = std::move(dataset);
     }
     else
     {
       if (CLI::HasParam("labels_only"))
       {
-        // Save only the labels.  But the labels are a different type so we need
-        // to do a bit of trickery to get them to save as the right type: we'll
-        // add another option with type Mat<size_t> called 'output_labels', then
-        // set the 'output' option to nothing, and set the 'output_labels'
-        // option to what the user passed for 'output'.
-        CLI::Add<arma::Mat<size_t>>(arma::Mat<size_t>(), "output_labels",
-            "Labels for input dataset.", '\0', false, false, false);
-        CLI::GetUnmappedParam<arma::Mat<size_t>>("output_labels") =
-            CLI::GetUnmappedParam<arma::mat>("output");
-        CLI::GetUnmappedParam<arma::mat>("output") = "";
-
-        CLI::GetParam<arma::Mat<size_t>>("output_labels") =
-            std::move(assignments);
+        // Save only the labels.  TODO: figure out how to get this to output an
+        // arma::Mat<size_t> instead of an arma::mat.
+        CLI::GetParam<arma::mat>("output") =
+            arma::conv_to<arma::mat>::from(assignments);
       }
       else
       {

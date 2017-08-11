@@ -11,6 +11,7 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 #include "dt_utils.hpp"
 
 using namespace mlpack;
@@ -20,31 +21,34 @@ using namespace std;
 PROGRAM_INFO("Density Estimation With Density Estimation Trees",
     "This program performs a number of functions related to Density Estimation "
     "Trees.  The optimal Density Estimation Tree (DET) can be trained on a set "
-    "of data (specified by --training_file or -t) using cross-validation (with "
-    "number of folds specified by --folds).  This trained density estimation "
-    "tree may then be saved to a model file with the --output_model_file (-M) "
-    "option."
+    "of data (specified by " + PRINT_PARAM_STRING("training") + ") using "
+    "cross-validation (with number of folds specified with the " +
+    PRINT_PARAM_STRING("folds") + " parameter).  This trained density "
+    "estimation tree may then be saved with the " +
+    PRINT_PARAM_STRING("output_model") + " output parameter."
     "\n\n"
-    "The variable importances of each dimension may be saved with the "
-    "--vi_file (-i) option, and the density estimates on each training point "
-    "may be saved to the file specified with the --training_set_estimates_file "
-    "(-e) option."
+    "The variable importances (that is, the feature importance values for each "
+    "dimension) may be saved with the " + PRINT_PARAM_STRING("vi") + " output"
+    " parameter, and the density estimates for each training point may be saved"
+    " with the " + PRINT_PARAM_STRING("training_set_estimates") + " output "
+    "parameter."
     "\n\n"
     "This program also can provide density estimates for a set of test points, "
-    "specified in the --test_file (-T) file.  The density estimation tree used "
-    "for this task will be the tree that was trained on the given training "
-    "points, or a tree stored in the file given with the --input_model_file "
-    "(-m) parameter.  The density estimates for the test points may be saved "
-    "into the file specified with the --test_set_estimates_file (-E) option.");
+    "specified in the " + PRINT_PARAM_STRING("test") + " parameter.  The "
+    "density estimation tree used for this task will be the tree that was "
+    "trained on the given training points, or a tree given as the parameter " +
+    PRINT_PARAM_STRING("input_model") + ".  The density estimates for the test"
+    " points may be saved using the " +
+    PRINT_PARAM_STRING("test_set_estimates") + " output parameter.");
 
 // Input data files.
 PARAM_MATRIX_IN("training", "The data set on which to build a density "
     "estimation tree.", "t");
 
 // Input or output model.
-PARAM_MODEL_IN(DTree<arma::mat>, "input_model", "Trained density estimation "
+PARAM_MODEL_IN(DTree<>, "input_model", "Trained density estimation "
     "tree to load.", "m");
-PARAM_MODEL_OUT(DTree<arma::mat>, "output_model", "Output to save trained "
+PARAM_MODEL_OUT(DTree<>, "output_model", "Output to save trained "
     "density estimation tree to.", "M");
 
 // Output data files.
@@ -72,10 +76,8 @@ PARAM_FLAG("volume_regularization", "This flag gives the used the option to use"
     "penalize low volume leaves.", "R");
 */
 
-int main(int argc, char *argv[])
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   // Validate input parameters.
   if (CLI::HasParam("training") && CLI::HasParam("input_model"))
     Log::Fatal << "Only one of --training_file (-t) or --input_model_file (-m) "
@@ -192,6 +194,4 @@ int main(int argc, char *argv[])
   // Clean up memory, if we need to.
   if (!CLI::HasParam("input_model") && !CLI::HasParam("output_model"))
     delete tree;
-
-  CLI::Destroy();
 }

@@ -1,24 +1,30 @@
 /**
- * @file option.hpp
- * @author Matthew Amidon
+ * @file test_option.hpp
+ * @author Ryan Curtin
  *
- * Definition of the Option class, which is used to define parameters which are
- * used by CLI.  The ProgramDoc class also resides here.
+ * Definition of the TestOption class, which is used to define parameters for
+ * CLI for use inside of mlpack_test.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_UTIL_OPTION_HPP
-#define MLPACK_CORE_UTIL_OPTION_HPP
+#ifndef MLPACK_CORE_BINDINGS_TESTS_TEST_OPTION_HPP
+#define MLPACK_CORE_BINDINGS_TESTS_TEST_OPTION_HPP
 
 #include <string>
 
-#include "cli.hpp"
+#include <mlpack/core/util/cli.hpp>
+#include "get_printable_param.hpp"
+#include "get_param.hpp"
 
 namespace mlpack {
-namespace util {
+namespace bindings {
+namespace tests {
+
+// Defined in mlpack_main.hpp.
+extern std::string programName;
 
 /**
  * A static object whose constructor registers a parameter with the CLI class.
@@ -26,10 +32,10 @@ namespace util {
  * PARAM_FLAG(), PARAM_DOUBLE(), PARAM_INT(), PARAM_STRING(), or other similar
  * macros to declare these objects instead of declaring them directly.
  *
- * @see core/io/cli.hpp, mlpack::CLI
+ * @see core/util/cli.hpp, mlpack::CLI
  */
 template<typename N>
-class Option
+class TestOption
 {
  public:
   /**
@@ -42,21 +48,53 @@ class Option
    *      we would pass "help").
    * @param description A short string describing the option.
    * @param alias Short name of the parameter. "" for no alias.
+   * @param cppName Name of the C++ type of this parameter (i.e. "int").
    * @param required Whether or not the option is required at runtime.
    * @param input Whether or not the option is an input option.
    * @param noTranspose If the parameter is a matrix and this is true, then the
    *      matrix will not be transposed on loading.
    */
-  Option(const N defaultValue,
-         const std::string& identifier,
-         const std::string& description,
-         const std::string& alias,
-         const bool required = false,
-         const bool input = true,
-         const bool noTranspose = false)
+  TestOption(const N defaultValue,
+            const std::string& identifier,
+            const std::string& description,
+            const std::string& alias,
+            const std::string& cppName,
+            const bool required = false,
+            const bool input = true,
+            const bool noTranspose = false)
   {
-    CLI::Add<N>(defaultValue, identifier, description, alias[0], required,
-        input, noTranspose);
+    // Create the ParamData object to give to CLI.
+    util::ParamData data;
+
+    data.desc = description;
+    data.name = identifier;
+    data.tname = TYPENAME(N);
+    data.alias = alias[0];
+    data.wasPassed = false;
+    data.noTranspose = noTranspose;
+    data.required = required;
+    data.input = input;
+    data.loaded = false;
+    data.cppType = cppName;
+    data.value = boost::any(defaultValue);
+
+    const std::string tname = data.tname;
+
+    CLI::RestoreSettings(programName, false);
+
+    // Set some function pointers that we need.
+    CLI::GetSingleton().functionMap[tname]["GetPrintableParam"] =
+        &GetPrintableParam<N>;
+    CLI::GetSingleton().functionMap[tname]["GetParam"] = &GetParam<N>;
+
+    CLI::Add(std::move(data));
+
+    // If this is an output option, set it as passed.
+    if (!input)
+      CLI::SetPassed(identifier);
+
+    CLI::StoreSettings(programName);
+    CLI::ClearSettings();
   }
 };
 
@@ -89,7 +127,8 @@ class ProgramDoc
   std::string documentation;
 };
 
-} // namespace util
+} // namespace tests
+} // namespace bindings
 } // namespace mlpack
 
 #endif

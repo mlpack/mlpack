@@ -4,22 +4,23 @@
  *
  * Return the default value of a parameter, depending on its type.
  */
-#ifndef MLPACK_CORE_UTIL_DEFAULT_PARAM_IMPL_HPP
-#define MLPACK_CORE_UTIL_DEFAULT_PARAM_IMPL_HPP
+#ifndef MLPACK_BINDINGS_CLI_DEFAULT_PARAM_IMPL_HPP
+#define MLPACK_BINDINGS_CLI_DEFAULT_PARAM_IMPL_HPP
 
 #include "default_param.hpp"
 
 namespace mlpack {
-namespace util {
+namespace bindings {
+namespace cli {
 
 /**
  * Return the default value of an option.
  */
 template<typename T>
 std::string DefaultParamImpl(
-    const ParamData& data,
+    const util::ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
-    const typename boost::disable_if<IsStdVector<T>>::type* /* junk */,
+    const typename boost::disable_if<util::IsStdVector<T>>::type* /* junk */,
     const typename boost::disable_if<data::HasSerialize<T>>::type* /* junk */,
     const typename boost::disable_if<std::is_same<T, std::string>>::type*,
     const typename boost::disable_if<std::is_same<T,
@@ -35,8 +36,8 @@ std::string DefaultParamImpl(
  */
 template<typename T>
 std::string DefaultParamImpl(
-    const ParamData& data,
-    const typename boost::enable_if<IsStdVector<T>>::type* /* junk */)
+    const util::ParamData& data,
+    const typename boost::enable_if<util::IsStdVector<T>>::type* /* junk */)
 {
   // Print each element in an array delimited by square brackets.
   std::ostringstream oss;
@@ -49,25 +50,39 @@ std::string DefaultParamImpl(
 }
 
 /**
+ * Return the default value of a string option.
+ */
+template<typename T>
+std::string DefaultParamImpl(
+    const util::ParamData& data,
+    const typename boost::enable_if<std::is_same<T, std::string>>::type*)
+{
+  const std::string& s = *boost::any_cast<std::string>(&data.value);
+  return "'" + s + "'";
+}
+
+/**
  * Return the default value of a matrix option (this returns the default
  * filename, or '' if the default is no file).
  */
 template<typename T>
 std::string DefaultParamImpl(
-    const ParamData& data,
+    const util::ParamData& data,
     const typename boost::enable_if_c<
         arma::is_arma_type<T>::value ||
         data::HasSerialize<T>::value ||
         std::is_same<T, std::tuple<mlpack::data::DatasetInfo,
-                                   arma::mat>>::value ||
-        std::is_same<T, std::string>::value>::type* /* junk */)
+                                   arma::mat>>::value>::type* /* junk */)
 {
   // Get the filename and return it, or return an empty string.
-  const std::string& filename = boost::any_cast<std::string>(data.value);
+  typedef std::tuple<T, std::string> TupleType;
+  const TupleType& tuple = *boost::any_cast<TupleType>(&data.value);
+  const std::string& filename = std::get<1>(tuple);
   return "'" + filename + "'";
 }
 
-} // namespace util
+} // namespace cli
+} // namespace bindings
 } // namespace mlpack
 
 #endif
