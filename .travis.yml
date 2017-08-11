@@ -3,8 +3,8 @@ dist: xenial
 language: cpp
 
 env:
-  - CMAKE_OPTIONS="-DDEBUG=OFF -DPROFILE=OFF"
-  - CMAKE_OPTIONS="-DDEBUG=ON -DPROFILE=OFF"
+  - CMAKE_OPTIONS="-DDEBUG=OFF -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF"
+  - CMAKE_OPTIONS="-DDEBUG=ON -DPROFILE=OFF -DPYTHON=/usr/bin/python"
 
 before_install:
   - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
@@ -20,7 +20,7 @@ before_install:
   - sudo cp .travis/config.hpp /usr/include/armadillo_bits/config.hpp
 
 install:
-  - mkdir build && cd build && cmake $CMAKE_OPTIONS -DPYTHON=/usr/bin/python .. && make -j2
+  - mkdir build && cd build && cmake $CMAKE_OPTIONS .. && make -j2
 
 script:
   - CTEST_OUTPUT_ON_FAILURE=1 travis_wait 30 ctest -j2
