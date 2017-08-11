@@ -14,6 +14,7 @@
 #include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 
 #include <string>
 #include <fstream>
@@ -33,25 +34,25 @@ using namespace mlpack::metric;
 typedef NSModel<NearestNeighborSort> KNNModel;
 
 // Information about the program itself.
-PROGRAM_INFO("k-Nearest-Neighbors",
+PROGRAM_INFO("k-Nearest-Neighbors Search",
     "This program will calculate the k-nearest-neighbors of a set of "
     "points using kd-trees or cover trees (cover tree support is experimental "
     "and may be slow). You may specify a separate set of "
     "reference points and query points, or just a reference set which will be "
     "used as both the reference and query set."
     "\n\n"
-    "For example, the following will calculate the 5 nearest neighbors of each"
-    "point in 'input.csv' and store the distances in 'distances.csv' and the "
-    "neighbors in the file 'neighbors.csv':"
-    "\n\n"
-    "$ mlpack_knn --k=5 --reference_file=input.csv "
-    "--distances_file=distances.csv\n --neighbors_file=neighbors.csv"
+    "For example, the following command will calculate the 5 nearest neighbors "
+    "of each point in " + PRINT_DATASET("input") + " and store the distances "
+    "in " + PRINT_DATASET("distances") + " and the neighbors in " +
+    PRINT_DATASET("neighbors") + ": "
+    "\n\n" +
+    PRINT_CALL("knn", "k", 5, "reference", "input", "neighbors", "neighbors") +
     "\n\n"
     "The output files are organized such that row i and column j in the "
-    "neighbors output file corresponds to the index of the point in the "
-    "reference set which is the i'th nearest neighbor from the point in the "
-    "query set with index j.  Row i and column j in the distances output file "
-    "corresponds to the distance between those two points.");
+    "neighbors output matrix corresponds to the index of the point in the "
+    "reference set which is the j'th nearest neighbor from the point in the "
+    "query set with index i.  Row j and column i in the distances output matrix"
+    " corresponds to the distance between those two points.");
 
 // Define our input parameters that this program will take.
 PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");
@@ -103,11 +104,8 @@ PARAM_FLAG("single_mode", "(Deprecated) If true, single-tree search is used "
 PARAM_DOUBLE_IN("epsilon", "If specified, will do approximate nearest neighbor "
     "search with given relative error.", "e", 0);
 
-int main(int argc, char *argv[])
+void mlpackMain()
 {
-  // Give CLI the command line parameters the user passed in.
-  CLI::ParseCommandLine(argc, argv);
-
   if (CLI::GetParam<int>("seed") != 0)
     math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
   else
@@ -297,7 +295,7 @@ int main(int argc, char *argv[])
     arma::mat referenceSet = std::move(CLI::GetParam<arma::mat>("reference"));
 
     Log::Info << "Loaded reference data from '"
-        << CLI::GetUnmappedParam<arma::mat>("reference") << "' ("
+        << CLI::GetPrintableParam<arma::mat>("reference") << "' ("
         << referenceSet.n_rows << " x " << referenceSet.n_cols << ")."
         << endl;
 
@@ -319,7 +317,7 @@ int main(int argc, char *argv[])
       knn.LeafSize() = size_t(lsInt);
 
     Log::Info << "Loaded kNN model from '"
-        << CLI::GetUnmappedParam<KNNModel>("input_model") << "' (trained on "
+        << CLI::GetPrintableParam<KNNModel>("input_model") << "' (trained on "
         << knn.Dataset().n_rows << "x" << knn.Dataset().n_cols << " dataset)."
         << endl;
   }
@@ -334,7 +332,7 @@ int main(int argc, char *argv[])
     {
       queryData = std::move(CLI::GetParam<arma::mat>("query"));
       Log::Info << "Loaded query data from '"
-          << CLI::GetUnmappedParam<arma::mat>("query") << "' ("
+          << CLI::GetPrintableParam<arma::mat>("query") << "' ("
           << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
     }
 
@@ -404,6 +402,4 @@ int main(int argc, char *argv[])
 
   if (CLI::HasParam("output_model"))
     CLI::GetParam<KNNModel>("output_model") = std::move(knn);
-
-  CLI::Destroy();
 }

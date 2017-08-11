@@ -20,3 +20,4 @@ add_subdirectory(initialization_methods)
 add_subdirectory(learning_policies)
 
 add_cli_executable(perceptron)
+add_python_binding(perceptron)

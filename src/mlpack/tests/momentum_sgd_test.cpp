@@ -11,6 +11,7 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
+#include <mlpack/core/optimizers/sgd/update_policies/gradient_clipping.hpp>
 #include <mlpack/core/optimizers/sgd/update_policies/momentum_update.hpp>
 #include <mlpack/core/optimizers/lbfgs/test_functions.hpp>
 #include <mlpack/core/optimizers/sgd/test_function.hpp>

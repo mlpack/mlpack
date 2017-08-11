@@ -11,6 +11,7 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 
 #include "fastmks.hpp"
 #include "fastmks_model.hpp"
@@ -23,28 +24,33 @@ using namespace mlpack::tree;
 using namespace mlpack::metric;
 
 PROGRAM_INFO("FastMKS (Fast Max-Kernel Search)",
-    "This program will find the k maximum kernel of a set of points, "
+    "This program will find the k maximum kernels of a set of points, "
     "using a query set and a reference set (which can optionally be the same "
     "set). More specifically, for each point in the query set, the k points in"
     " the reference set with maximum kernel evaluations are found.  The kernel "
-    "function used is specified by --kernel."
+    "function used is specified with the " + PRINT_PARAM_STRING("kernel") +
+    " parameter."
     "\n\n"
-    "For example, the following command will calculate, for each point in "
-    "'query.csv', the five points in 'reference.csv' with maximum kernel "
-    "evaluation using the linear kernel.  The kernel evaluations are stored in "
-    "'kernels.csv' and the indices are stored in 'indices.csv'."
+    "For example, the following command will calculate, for each point in the "
+    "query set " + PRINT_DATASET("query") + ", the five points in the "
+    "reference set " + PRINT_DATASET("reference") + " with maximum kernel "
+    "evaluation using the linear kernel.  The kernel evaluations may be saved "
+    "with the  " + PRINT_DATASET("kernels") + " output parameter and the "
+    "indices may be saved with the " + PRINT_DATASET("indices") + " output "
+    "parameter."
+    "\n\n" +
+    PRINT_CALL("fastmks", "k", 5, "reference", "reference", "query", "query",
+        "indices", "indices", "kernels", "kernels", "kernel", "linear") +
     "\n\n"
-    "$ fastmks --k 5 --reference_file reference.csv --query_file query.csv\n"
-    "  --indices_file indices.csv --kernels_file kernels.csv --kernel linear"
+    "The output matrices are organized such that row i and column j in the "
+    "indices matrix corresponds to the index of the point in the reference set "
+    "that has j'th largest kernel evaluation with the point in the query set "
+    "with index i.  Row i and column j in the kernels matrix corresponds to the"
+    " kernel evaluation between those two points."
     "\n\n"
-    "The output files are organized such that row i and column j in the indices"
-    " output file corresponds to the index of the point in the reference set "
-    "that has i'th largest kernel evaluation with the point in the query set "
-    "with index j.  Row i and column j in the kernels output file corresponds "
-    "to the kernel evaluation between those two points."
-    "\n\n"
-    "This executable performs FastMKS using a cover tree.  The base used to "
-    "build the cover tree can be specified with the --base option.");
+    "This program performs FastMKS using a cover tree.  The base used to build "
+    "the cover tree can be specified with the " + PRINT_PARAM_STRING("base") +
+    " parameter.");
 
 // Model-building parameters.
 PARAM_MATRIX_IN("reference", "The reference dataset.", "r");
@@ -76,10 +82,8 @@ PARAM_FLAG("single", "If true, single-tree search is used (as opposed to "
 PARAM_MATRIX_OUT("kernels", "Output matrix of kernels.", "p");
 PARAM_UMATRIX_OUT("indices", "Output matrix of indices.", "i");
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   // Validate command-line parameters.
   if (CLI::HasParam("reference") && CLI::HasParam("input_model"))
     Log::Fatal << "Cannot specify both --reference_file (-r) and "
@@ -246,6 +250,4 @@ int main(int argc, char** argv)
   // Save the model, if requested.
   if (CLI::HasParam("output_model"))
     CLI::GetParam<FastMKSModel>("output_model") = std::move(model);
-
-  CLI::Destroy();
 }

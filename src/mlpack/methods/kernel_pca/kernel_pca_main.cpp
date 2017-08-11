@@ -24,6 +24,7 @@
 #include <mlpack/core/kernels/spherical_kernel.hpp>
 #include <mlpack/core/kernels/triangular_kernel.hpp>
 #include <mlpack/methods/hoeffding_trees/hoeffding_tree.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/nystroem_method/ordered_selection.hpp>
 #include <mlpack/methods/nystroem_method/random_selection.hpp>
 #include <mlpack/methods/nystroem_method/kmeans_selection.hpp>
@@ -48,11 +49,12 @@ PROGRAM_INFO("Kernel Principal Components Analysis",
     "For the case where a linear kernel is used, this reduces to regular "
     "PCA."
     "\n\n"
-    "For example, the following will perform KPCA on the 'input.csv' file using"
-    " the gaussian kernel and store the transformed date in the "
-    "'transformed.csv' file."
-    "\n\n"
-    "$ kernel_pca -i input.csv -k gaussian -o transformed.csv"
+    "For example, the following command will perform KPCA on the dataset " +
+    PRINT_DATASET("input") + " using the Gaussian kernel, and saving the "
+    "transformed data to " + PRINT_DATASET("transformed") + ": "
+    "\n\n" +
+    PRINT_CALL("kernel_pca", "input", "input", "kernel", "gaussian", "output",
+        "transformed") +
     "\n\n"
     "The kernels that are supported are listed below:"
     "\n\n"
@@ -78,16 +80,19 @@ PROGRAM_INFO("Kernel Principal Components Analysis",
     "    K(x, y) = 1 - (x^T y) / (|| x || * || y ||)\n"
     "\n"
     "The parameters for each of the kernels should be specified with the "
-    "options --bandwidth, --kernel_scale, --offset, or --degree (or a "
-    "combination of those options)."
+    "options " + PRINT_PARAM_STRING("bandwidth") + ", " +
+    PRINT_PARAM_STRING("kernel_scale") + ", " +
+    PRINT_PARAM_STRING("offset") + ", or " + PRINT_PARAM_STRING("degree") +
+    " (or a combination of those parameters)."
     "\n\n"
-    "Optionally, the nystr\u00F6m method (\"Using the Nystroem method to speed "
+    "Optionally, the Nystr\u00F6m method (\"Using the Nystroem method to speed "
     "up kernel machines\", 2001) can be used to calculate the kernel matrix by "
-    "specifying the --nystroem_method (-n) option. This approach works by using"
-    " a subset of the data as basis to reconstruct the kernel matrix; to "
-    "specify the sampling scheme, the --sampling parameter is used, the "
-    "sampling scheme for the nystr\u00F6m method can be chosen from the "
-    "following list: kmeans, random, ordered.");
+    "specifying the " + PRINT_PARAM_STRING("nystroem_method") + " parameter. "
+    "This approach works by using a subset of the data as basis to reconstruct "
+    "the kernel matrix; to specify the sampling scheme, the " +
+    PRINT_PARAM_STRING("sampling") + " parameter is used.  The "
+    "sampling scheme for the Nystr\u00F6m method can be chosen from the "
+    "following list: 'kmeans', 'random', 'ordered'.");
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform KPCA on.", "i");
 PARAM_MATRIX_OUT("output", "Matrix to save modified dataset to.", "o");
@@ -158,11 +163,8 @@ void RunKPCA(arma::mat& dataset,
   }
 }
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  // Parse command line options.
-  CLI::ParseCommandLine(argc, argv);
-
   if (!CLI::HasParam("output"))
     Log::Warn << "--output_file is not specified; no output will be saved!"
         << endl;

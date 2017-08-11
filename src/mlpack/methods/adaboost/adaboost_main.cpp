@@ -1,6 +1,6 @@
-/*
- * @file: adaboost_main.cpp
- * @author: Udit Saxena
+/**
+ * @file adaboost_main.cpp
+ * @author Udit Saxena
  *
  * Implementation of the AdaBoost main program.
  *
@@ -34,6 +34,7 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/data/normalize_labels.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 #include "adaboost.hpp"
 #include "adaboost_model.hpp"
 
@@ -58,17 +59,35 @@ PROGRAM_INFO("AdaBoost", "This program implements the AdaBoost (or Adaptive "
     "\n\n"
     "This program allows training of an AdaBoost model, and then application of"
     " that model to a test dataset.  To train a model, a dataset must be passed"
-    " with the --training_file (-t) option.  Labels can be given with the "
-    "--labels_file (-l) option; if no labels file is specified, the labels will"
-    " be assumed to be the last column of the input dataset.  Alternately, an "
-    "AdaBoost model may be loaded with the --input_model_file (-m) option."
+    " with the " + PRINT_PARAM_STRING("training") + " option.  Labels can be "
+    "given with the " + PRINT_PARAM_STRING("labels") + " option; if no labels "
+    "are specified, the labels will be assumed to be the last column of the "
+    "input dataset.  Alternately, an AdaBoost model may be loaded with the " +
+    PRINT_PARAM_STRING("input_model") + " option."
     "\n\n"
     "Once a model is trained or loaded, it may be used to provide class "
     "predictions for a given test dataset.  A test dataset may be specified "
-    "with the --test_file (-T) parameter.  The predicted classes for each point"
-    " in the test dataset will be saved into the file specified by the "
-    "--output_file (-o) parameter.  The AdaBoost model itself may be saved to "
-    "a file specified by the --output_model_file (-M) parameter.");
+    "with the " + PRINT_PARAM_STRING("test") + " parameter.  The predicted "
+    "classes for each point in the test dataset are output to the " +
+    PRINT_PARAM_STRING("output") + " output parameter.  The AdaBoost model "
+    "itself is output to the " + PRINT_PARAM_STRING("output_model") +
+    "output parameter."
+    "\n\n"
+    "For example, to run AdaBoost on an input dataset " +
+    PRINT_DATASET("data") + " with perceptrons as the weak learner type, "
+    "storing the trained model in " + PRINT_MODEL("model") + ", one could "
+    "use the following command: "
+    "\n\n" +
+    PRINT_CALL("adaboost", "training", "data", "output", "model",
+        "weak_learner", "perceptron") +
+    "\n\n"
+    "Similarly, an already-trained model in " + PRINT_MODEL("model") + " can"
+    " be used to provide class predictions from test data " +
+    PRINT_DATASET("test_data") + " and store the output in " +
+    PRINT_DATASET("predictions") + " with the following command: "
+    "\n\n" +
+    PRINT_CALL("adaboost", "input_model", "model", "test", "test_data",
+        "output", "predictions"));
 
 // Input for training.
 PARAM_MATRIX_IN("training", "Dataset for training AdaBoost.", "t");
@@ -91,10 +110,8 @@ PARAM_MODEL_IN(AdaBoostModel, "input_model", "Input AdaBoost model.", "m");
 PARAM_MODEL_OUT(AdaBoostModel, "output_model", "Output trained AdaBoost model.",
     "M");
 
-int main(int argc, char *argv[])
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   // Check input parameters and issue warnings/errors as necessary.
 
   // The user cannot specify both a training file and an input model file.
@@ -240,6 +257,4 @@ int main(int argc, char *argv[])
   // Should we save the model, too?
   if (CLI::HasParam("output_model"))
     CLI::GetParam<AdaBoostModel>("output_model") = std::move(m);
-
-  CLI::Destroy();
 }

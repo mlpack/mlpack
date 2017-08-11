@@ -34,7 +34,7 @@ void RegularizedSVD<OptimizerType>::Apply(const arma::mat& data,
                                           arma::mat& v)
 {
   // Make the optimizer object using a RegularizedSVDFunction object.
-  RegularizedSVDFunction rSVDFunc(data, rank, lambda);
+  RegularizedSVDFunction<arma::mat> rSVDFunc(data, rank, lambda);
   mlpack::optimization::StandardSGD optimizer(alpha, iterations * data.n_cols);
 
   // Get optimized parameters.
