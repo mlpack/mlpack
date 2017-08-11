@@ -1,11 +1,44 @@
-# If we are not supposed to make Python bindings, define the macro so it does
-# nothing and leave this file.
-if (NOT BUILD_PYTHON_BINDINGS)
+macro (not_found_return message)
+  message(STATUS "${message}")
   macro (add_python_binding name)
     # Do nothing.
   endmacro ()
 
   return()
+endmacro ()
+
+# If we are not supposed to make Python bindings, define the macro so it does
+# nothing and leave this file.
+if (NOT BUILD_PYTHON_BINDINGS)
+  not_found_return("Not building Python bindings.")
+endif ()
+
+# Generate Python setuptools file.
+# We can probably use FindPythonInterp when we require CMake 3.0.
+find_program(PYTHON "python" REQUIRED)
+if (NOT PYTHON)
+  not_found_return("Python not found; not building Python bindings.")
+else ()
+  message(STATUS "Found Python: ${PYTHON}")
+endif ()
+
+# Import find_python_module.
+include(${CMAKE_SOURCE_DIR}/CMake/FindPythonModule.cmake)
+find_python_module(distutils)
+if (NOT PY_DISTUTILS)
+  not_found_return("distutils not found; not building Python bindings.")
+endif ()
+find_python_module(Cython)
+if (NOT PY_CYTHON)
+  not_found_return("Cython not found; not building Python bindings.")
+endif ()
+find_python_module(numpy)
+if (NOT PY_NUMPY)
+  not_found_return("numpy not found; not building Python bindings.")
+endif ()
+find_python_module(pandas)
+if (NOT PY_PANDAS)
+  not_found_return("pandas not found; not building Python bindings.")
 endif ()
 
 # Nothing in this directory will be compiled into mlpack.
@@ -53,21 +86,6 @@ set(TEST_SOURCES
   tests/dataset_info_test.py
   tests/test_python_binding.py
 )
-
-# Generate Python setuptools file.
-# We can probably use FindPythonInterp when we require CMake 3.0.
-find_program(PYTHON "python" REQUIRED)
-
-# Import find_python_module.
-include(${CMAKE_SOURCE_DIR}/CMake/FindPythonModule.cmake)
-set(DISTUTILS_FIND_REQUIRED 1)
-set(CYTHON_FIND_REQUIRED 1)
-set(NUMPY_FIND_REQUIRED 1)
-set(PANDAS_FIND_REQUIRED 1)
-find_python_module(distutils)
-find_python_module(Cython)
-find_python_module(numpy)
-find_python_module(pandas)
 
 # Set the include directories correctly.
 get_property(CYTHON_INCLUDE_DIRECTORIES DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
