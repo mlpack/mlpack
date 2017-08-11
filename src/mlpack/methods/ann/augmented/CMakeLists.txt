@@ -3,6 +3,8 @@
 set(SOURCES
   tree_memory.hpp
   tree_memory_impl.hpp
+  ham_unit.hpp
+  ham_unit_impl.hpp
 )
 
 # Add directory name to sources.

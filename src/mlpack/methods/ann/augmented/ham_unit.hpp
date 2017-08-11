@@ -14,39 +14,40 @@
 #define MLPACK_METHODS_ANN_AUGMENTED_HAM_UNIT_HPP
 
 #include <mlpack/methods/ann/layer/layer.hpp>
+#include <mlpack/methods/ann/layer/layer.hpp>
 
 #include "tree_memory.hpp"
 
 using namespace mlpack::ann;
+using namespace mlpack::optimization;
 
 namespace mlpack {
 namespace ann /* Artificial Neural Network */ {
 namespace augmented /* Augmented neural network */ {
 
-class HAMUnit {
+template<
+  typename E = FFN<MeanSquaredError<>>,
+  typename J = FFN<MeanSquaredError<>>,
+  typename S = FFN<MeanSquaredError<>>,
+  typename W = FFN<MeanSquaredError<>>
+>
+class HAMUnit
+{
  public:
   HAMUnit(size_t memorySize,
-          LayerTypes& embed,
-          LayerTypes& join,
-          LayerTypes& search,
-          LayerTypes& write);
-  
-  template<
-    template<typename, typename...> class OptimizerType =
-        mlpack::optimization::StandardSGD,
-    typename... OptimizerTypeArgs
-  >
-  void Train(const MatType& predictors,
-             const MatType& responses,
-             OptimizerType<Controller> optimizer);
+          size_t memoryDim,
+          E& embed,
+          J& join,
+          S& search,
+          W& write);
 
   void Evaluate(const arma::mat& predictors,
                 const arma::mat& responses);
 
-  TreeMemory<double, LayerTypes, LayerTypes> Memory() const { return memory; }
-  TreeMemory<double, LayerTypes, LayerTypes>& Memory() { return memory; }
+  TreeMemory<double, J, W> Memory() const { return memory; }
+  TreeMemory<double, J, W>& Memory() { return memory; }
  private:
-  arma::mat Attention() const;
+  arma::vec Attention() const;
 
   void Forward(arma::mat&& input, arma::mat&& output);
 
@@ -58,12 +59,12 @@ class HAMUnit {
                 arma::mat&& error,
                 arma::mat&& gradient);
 
-  TreeMemory<double, LayerTypes, LayerTypes> memory;
-  size_t memorySize;
-  LayerTypes search;
-  LayerTypes embed;
+  TreeMemory<double, J, W> memory;
+  size_t memorySize, memoryDim;
+  S search;
+  E embed;
 
-  // Currently prcessed sequence.
+  // Currently processed sequence.
   arma::mat sequence;
   size_t t;
 };

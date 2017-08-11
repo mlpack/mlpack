@@ -19,6 +19,7 @@
 #include <mlpack/core/data/binarize.hpp>
 
 #include <mlpack/methods/ann/augmented/tree_memory.hpp>
+#include <mlpack/methods/ann/augmented/ham_unit.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 
@@ -258,6 +259,8 @@ BOOST_AUTO_TEST_CASE(BlindHAMUnitTest) {
   searchModel.Parameters().rows(0, 2 * nDim - 1) = arma::zeros(2 * nDim);
   searchModel.Parameters().at(2 * nDim) = -log(2);
   searchModel.Add<SigmoidLayer<> >();
+
+  HAMUnit<> hamUnit(seqLen, embedModel, joinModel, searchModel, writeModel);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
