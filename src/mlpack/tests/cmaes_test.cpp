@@ -127,7 +127,7 @@ BOOST_AUTO_TEST_CASE(rosenbrockFunctionCMAES)
     coordinates = arma::abs(coordinates);
 
     for (size_t j = 0; j < i; ++j)
-    BOOST_REQUIRE_CLOSE(coordinates[j], (double) 1.0, 1e-2);
+    BOOST_REQUIRE_CLOSE(coordinates[j], (double) 1.0, 1e-1);
   }
 }
 
