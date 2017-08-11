@@ -42,14 +42,14 @@ class SparseTestFunction
   //! Get the starting point.
   arma::mat GetInitialPoint() const { return arma::mat("0; 0; 0; 0;"); }
 
-  //! Evaluate all the functions.
+  //! Evaluate a function.
   double Evaluate(const arma::mat& coordinates, const size_t i) const
   {
     return coordinates[i] * coordinates[i] + bi[i] * coordinates[i] +
       intercepts[i];
   }
 
-  //! Evaluate a function.
+  //! Evaluate all the functions.
   double Evaluate(const arma::mat& coordinates) const
   {
     double objective = 0.0;

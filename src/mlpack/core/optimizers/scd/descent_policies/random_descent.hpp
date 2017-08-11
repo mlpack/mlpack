@@ -26,7 +26,9 @@ class RandomDescent
  public:
   /**
    * The DescentFeature method is used to get the descent coordinate for the
-   * current iteration.
+   * current iteration of the SCD optimizer. For more information regarding the
+   * interface of this policy with the optimizer, have a look at the SCD
+   * implementation.
    *
    * @tparam ResolvableFunctionType The type of the function to be optimized.
    * @param numEpoch The iteration number for which the feature is to be
