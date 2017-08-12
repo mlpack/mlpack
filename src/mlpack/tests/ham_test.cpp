@@ -261,6 +261,12 @@ BOOST_AUTO_TEST_CASE(BlindHAMUnitTest) {
   searchModel.Add<SigmoidLayer<> >();
 
   HAMUnit<> hamUnit(seqLen, nDim, embedModel, joinModel, searchModel, writeModel);
+
+  arma::mat input("1 0 0 0; 0 1 0 0; 0 0 1 0; 0 0 0 1;");
+  input = input.t();
+  arma::mat output;
+  hamUnit.Predict(std::move(input), std::move(output));
+  std::cerr << "Output (hopefully 0):\n" << output << "\n";
 }
 
 BOOST_AUTO_TEST_SUITE_END();

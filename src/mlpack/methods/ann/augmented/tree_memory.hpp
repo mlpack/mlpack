@@ -38,16 +38,16 @@ public:
   arma::Col<T> Cell(size_t memIndex) const;
   arma::subview_col<T> Cell(size_t memIndex);
 
-  inline size_t Root();
-  inline size_t Left(size_t origin);
-  inline size_t Right(size_t origin);
-  inline size_t Parent(size_t child);
-  inline size_t LeafIndex(size_t leafPos);
+  inline size_t Root() const;
+  inline size_t Left(size_t origin) const;
+  inline size_t Right(size_t origin) const;
+  inline size_t Parent(size_t child) const;
+  inline size_t LeafIndex(size_t leafPos) const;
 
   size_t MemorySize() const { return memorySize; }
   size_t ActualMemorySize() const { return actualMemorySize; }
 
-  arma::Mat<T> Stack(arma::Mat<T> left, arma::Mat<T> right);
+  arma::Mat<T> Stack(arma::Mat<T> left, arma::Mat<T> right) const;
 private:
   arma::Mat<T> memory;
   J joinFunction;

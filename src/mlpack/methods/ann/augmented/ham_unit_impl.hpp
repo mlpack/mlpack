@@ -26,19 +26,18 @@ HAMUnit<E, J, S, W>::HAMUnit(size_t memorySize,
                  S& search,
                  W& write)
   : memorySize(memorySize), memoryDim(memoryDim),
-    search(search), embed(embed), t(0),
+    search(search), embed(embed),
     memory(TreeMemory<double, J, S>(memorySize, memoryDim, join, write))
 {
-  // Nothing else to do here.
+  this->t = 0;
 }
 
 template<typename E, typename J, typename S, typename W>
-arma::vec HAMUnit<E, J, S, W>::Attention() const
+arma::vec HAMUnit<E, J, S, W>::Attention()
 {
   size_t nodesCnt = 2 * memory.ActualMemorySize() - 1;
   arma::vec probabilities(nodesCnt);
   probabilities(0) = 1;
-  t++;
   arma::vec hController = sequence.col(t);
   for (size_t node = 1; node < nodesCnt; ++node) {
     size_t parent = memory.Parent(node);
@@ -48,7 +47,9 @@ arma::vec HAMUnit<E, J, S, W>::Attention() const
     h.rows(hController.n_elem,
            hController.n_elem + memory.Cell(parent).n_elem - 1)
         = memory.Cell(parent);
-    double prob = search.Forward(h);
+    arma::mat searchOutput;
+    search.Predict(h, searchOutput);
+    double prob = searchOutput.at(0, 0);
     if (!dir) prob = 1. - prob;
     probabilities(node) = prob * probabilities(parent);
   }
@@ -56,31 +57,38 @@ arma::vec HAMUnit<E, J, S, W>::Attention() const
          to = memory.LeafIndex(memory.MemorySize() - 1);
   arma::vec leafAttention = probabilities.rows(from, to);
   assert(abs(arma::accu(leafAttention) - 1) < 1e-4);
+  std::cerr << "Attention:\n" << leafAttention;
   return leafAttention;
 }
 
 template<typename E, typename J, typename S, typename W>
-void HAMUnit<E, J, S, W>::Forward(arma::mat&& input, arma::mat&& output) {
-  sequence = embed.Predict(input);
+void HAMUnit<E, J, S, W>::Predict(arma::mat&& input, arma::mat&& output) {
+  embed.Predict(input, sequence);
   memory.Initialize(sequence);
+  output = arma::zeros(input.n_cols, 1);
+  std::cerr << "Sequence length is " << input.n_cols << "\n";
   for (t = 0; t < input.n_cols; ++t)
   {
+    std::cerr << "Tick " << t << "\n";
     arma::vec attention = Attention();
-    arma::vec input = arma::zeros(memory.Get(0).n_elem);
+    arma::vec input = arma::zeros(memory.Leaf(0).n_elem);
     for (size_t i = 0; i < memorySize; ++i)
     {
-      input += attention.at(i) * memory.Get(i);
+      input += attention.at(i) * memory.Leaf(i);
+      std::cerr << "After reading " << i+1 << " input is:\n" << input;
     }
-    output.at(t) = 0; // TODO?
+    output.at(t, 0) = 0; // TODO?
 
+    std::cerr << "Final input is:" << input << "\n" << "Writing.\n";
     // Write phase.
-    for (size_t i = 0; i < memory.MemorySize(); ++i)
+    for (size_t i = 0; i < memorySize; ++i)
     {
-      arma::vec prevMemory = memory.Get(i);
+      arma::vec prevMemory = memory.Leaf(i);
       memory.Update(i, input);
-      memory.Get(i) *= attention.at(i);
-      memory.Get(i) += (1. - attention.at(i)) * prevMemory;
+      memory.Leaf(i) *= attention.at(i);
+      memory.Leaf(i) += (1. - attention.at(i)) * prevMemory;
     }
+    std::cerr << "Memory rebuilt.\n";
   }
 }
 
