@@ -26,9 +26,10 @@ HAMUnit<E, J, S, W>::HAMUnit(size_t memorySize,
                  S& search,
                  W& write)
   : memorySize(memorySize), memoryDim(memoryDim),
-    search(search), embed(embed), t(0)
+    search(search), embed(embed), t(0),
+    memory(TreeMemory<double, J, S>(memorySize, memoryDim, join, write))
 {
-  memory = TreeMemory<double, J, S>(memorySize, join, write);
+  // Nothing else to do here.
 }
 
 template<typename E, typename J, typename S, typename W>

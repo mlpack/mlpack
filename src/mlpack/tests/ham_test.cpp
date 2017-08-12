@@ -260,7 +260,7 @@ BOOST_AUTO_TEST_CASE(BlindHAMUnitTest) {
   searchModel.Parameters().at(2 * nDim) = -log(2);
   searchModel.Add<SigmoidLayer<> >();
 
-  HAMUnit<> hamUnit(seqLen, embedModel, joinModel, searchModel, writeModel);
+  HAMUnit<> hamUnit(seqLen, nDim, embedModel, joinModel, searchModel, writeModel);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
