@@ -35,7 +35,7 @@ progress to complex, extensible uses.
  - \ref amftutorial
  - \ref cftutorial
  - \ref akfntutorial
- - \ref cmaes
+ - \ref cmaestutorial
 
 @section policy_tut Policy Class Documentation
 
