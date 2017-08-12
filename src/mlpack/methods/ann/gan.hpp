@@ -11,8 +11,6 @@
 #define MLPACK_METHODS_ANN_GAN_HPP
 
 #include <mlpack/core.hpp>
-#include <boost/test/unit_test.hpp>
-#include <mlpack/tests/test_tools.hpp>
 
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/layer/base_layer.hpp>
@@ -51,25 +49,15 @@ class GAN
    * @param disIteration Ratio of number of training step for Disc to Gen
    */
   GAN(arma::mat& trainData,
-      arma::mat& noiseData,
       Model& generator,
       Model& discriminator,
       InitializationRuleType initializeRule,
+      size_t noiseDim,
       size_t batchSize,
-      size_t disIteration);
+      size_t generatorUpdateStep);
 
   // Reset function
   void Reset();
-
-  /**
-   * Generate data for generator and discriminator
-   * The function prepares the data according to 
-   * if the generator is being trained or the 
-   * discriminator is being trained.
-   * It prepares the training data for each batch for 
-   * training of the Generator and Discriminator
-   */
-  void CreateBatch();
 
   // Train function
   template<typename OptimizerType>
@@ -127,12 +115,11 @@ class GAN
   void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
+  //! Locally stored parameter for training data.
+  arma::mat predictors;
   //! Locally stored parameters of the network.
   arma::mat parameter;
-  //! Locally stored train data.
-  arma::mat& trainData;
-  //! Locally stored noise samples.
-  arma::mat noiseData;
+
   //! Locally stored generator network.
   Model& generator;
   //! Locally stored discriminator network.
@@ -141,24 +128,23 @@ class GAN
   InitializationRuleType  initializeRule;
   //! Locally stored number of data points.
   size_t numFunctions;
-  //! Locally stored trainGenerator parmaeter.
-  bool trainGenerator;
+
   //! Locally stored batch size parameter.
   size_t batchSize;
+
   //! Locally stored offset for predictors and noise data.
   size_t offset;
   //! Locally stored number of iterations that have been completed.
   size_t counter;
-  //! Locally stored number of iterations of discriminator.
-  size_t disIteration;
-  //! Locally stored number counter for number of iteration of disc training.
-  size_t iterationDiscriminator;
+
+  size_t currentBatch;
+
+  size_t generatorUpdateStep;
+
   //! Locally stored reset parmaeter.
   bool reset;
   //! Locally stored delta visitor.
   DeltaVisitor deltaVisitor;
-  //! Locally stored parameter for training data.
-  arma::mat predictors;
   //! Locally stored responses.
   arma::mat responses;
   //! Locally stored current input.
@@ -175,6 +161,10 @@ class GAN
   arma::mat gradient;
   //! Locally stored gradient for discriminator.
   arma::mat gradientDiscriminator;
+
+  arma::mat noiseGradientDiscriminator;
+
+  arma::mat noise;
   //! Locally stored gradient for generator.
   arma::mat gradientGenerator;
   //! Locally stored output of the generator network.

@@ -14,8 +14,7 @@
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 #include <mlpack/methods/ann/gan.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
-#include <mlpack/core/optimizers/adam/adam.hpp>
-#include <mlpack/core/optimizers/minibatch_sgd/minibatch_sgd_impl.hpp>
+#include <mlpack/core/optimizers/minibatch_sgd/minibatch_sgd.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -38,10 +37,9 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionTest)
   size_t hiddenLayerSize1 = 6;
   size_t hiddenLayerSize2 = 5;
   size_t batchSize = 200;
-  arma::mat trainData(1, 1000), noiseData(1, 1000);
+  arma::mat trainData(1, 1000);
   double mean = -1;
   double variance = -1;
-  noiseData.imbue([&]() { return arma::as_scalar(Random(-1, 1));});
   trainData.imbue( [&]() { return arma::as_scalar(RandNormal(mean, variance));});
   // trainData.save('trainData.txt', arma::raw_ascii);
 
@@ -60,11 +58,11 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionTest)
   // Shuffle the input
   trainData = arma::shuffle(trainData);
   MomentumUpdate momentum(0.6);
-  AdamType<> optimizer(0.001, 0.9, 0.999, 1e-5, trainData.n_cols * 10, true);
+  MiniBatchSGD optimizer(batchSize, 0.1, 10000, 1e-5, true);
   // Create Gan
   GaussianInitialization gaussian(0, 0.1);
-  GAN<> gan(trainData, noiseData, generator, discriminator, gaussian,
-      batchSize, 10);
+  GAN<> gan(trainData, generator, discriminator, gaussian,
+      batchSize, 1, 10);
   gan.Train(optimizer);
   arma::mat result;
   arma::mat noise(1, 1);
@@ -80,40 +78,43 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionTest)
 
 BOOST_AUTO_TEST_CASE(GanTest)
 {
-  size_t hiddenLayerSize1 = 128;
+  size_t hiddenLayerSize1 = 500;
   size_t gOutputSize;
   size_t dOutputSize = 1;
   size_t batchSize = 100;
   // Load the dataset
   arma::mat trainData, dataset, noiseData;
   trainData.load("train4.txt");
-  std::cout << arma::size(trainData) << std::endl;
+  trainData = trainData.cols(1, 1000);
   noiseData.set_size(100, trainData.n_cols);
   noiseData.imbue([&]() { return arma::as_scalar(RandNormal(0, 1));});
   std::cout << arma::size(trainData) << std::endl;
   gOutputSize = trainData.n_rows;
   // Discriminator network
-  FFN<CrossEntropyError<> > discriminator;
-  discriminator.Add<Linear<> >(gOutputSize, hiddenLayerSize1);
-  discriminator.Add<ReLULayer<>>();
-  discriminator.Add<Linear<> >(hiddenLayerSize1, dOutputSize);
-  discriminator.Add<SigmoidLayer<> >();
+  FFN<CrossEntropyError<>> discriminator;
+  discriminator.Add<Linear<>>(gOutputSize, hiddenLayerSize1);
+  discriminator.Add<SigmoidLayer<>>();
+  discriminator.Add<Linear<>>(hiddenLayerSize1, hiddenLayerSize1);
+  discriminator.Add<SigmoidLayer<>>();
+  discriminator.Add<Linear<>>(hiddenLayerSize1, dOutputSize);
+  discriminator.Add<SigmoidLayer<>>();
 
   // Generator network
   FFN<CrossEntropyError<>> generator;
-  generator.Add<Linear<> >(noiseData.n_rows, hiddenLayerSize1);
-  generator.Add<ReLULayer<> >();
-  generator.Add<Linear<> >(hiddenLayerSize1, gOutputSize);
-  generator.Add<SigmoidLayer<> >();
+  generator.Add<Linear<>>(noiseData.n_rows, hiddenLayerSize1);
+  generator.Add<SigmoidLayer<>>();
+  generator.Add<Linear<>>(hiddenLayerSize1, hiddenLayerSize1);
+  generator.Add<SigmoidLayer<>>();
+  generator.Add<Linear<>>(hiddenLayerSize1, gOutputSize);
+  generator.Add<SigmoidLayer<>>();
 
   // Intialisation function
   GaussianInitialization gaussian(0, 0.1);
   // Optimizer
-  AdamType<> optimizer(0.001, 0.9, 0.999, 1e-5, trainData.n_cols * 20, true);
+  MiniBatchSGD optimizer(batchSize, 0.1, 10000, 1e-5, true);
   // GAN model
-  GAN<> gan(trainData, noiseData, generator, discriminator, gaussian,
-      batchSize, 10);
-
+  GAN<> gan(trainData, generator, discriminator, gaussian,
+      batchSize, 1, 10);
   gan.Train(optimizer);
 
   // Generate samples
