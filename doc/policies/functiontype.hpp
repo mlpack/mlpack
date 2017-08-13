@@ -82,9 +82,10 @@ To evaluate the loss function at the given coordinates, same as the
 \c FunctionType interface.
 
 @code
-void FeatureGradient(const arma::mat& coordinates, const size_t j, arma::sp_mat& gradient);
+void FeatureGradient(const arma::mat& coordinates, const size_t j, double& gradient);
 @endcode
 
 To evaluate the gradient at the given coordinates, where \c gradient is an
-out-param for the required gradient. The out-param is a sparse matrix.
+out-param for the required gradient. The out-param is a scalar value, for
+storing the gradient of the jth feature.
 */
