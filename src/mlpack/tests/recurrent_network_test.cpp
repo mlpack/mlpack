@@ -291,7 +291,7 @@ void GenerateNextRecursiveReber(const arma::Mat<char>& transitions,
   size_t state = 0;
   size_t numPs = 0;
 
-  for (size_t cIndex = 0;cIndex < reber.length();cIndex++)
+  for (size_t cIndex = 0; cIndex < reber.length(); cIndex++)
   {
     char c = reber[cIndex];
 
