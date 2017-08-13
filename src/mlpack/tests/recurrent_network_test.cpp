@@ -542,7 +542,7 @@ BOOST_AUTO_TEST_CASE(LSTMReberGrammarTest)
  */
 BOOST_AUTO_TEST_CASE(LSTMRecursiveReberGrammarTest)
 {
-  ReberGrammarTestNetwork<LSTM<>>(15, true);
+  ReberGrammarTestNetwork<LSTM<>>(20, true);
 }
 
 /**
@@ -558,7 +558,7 @@ BOOST_AUTO_TEST_CASE(GRUReberGrammarTest)
  */
 BOOST_AUTO_TEST_CASE(GRURecursiveReberGrammarTest)
 {
-  ReberGrammarTestNetwork<GRU<>>(15, true);
+  ReberGrammarTestNetwork<GRU<>>(20, true);
 }
 
 /*
