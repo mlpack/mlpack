@@ -15,6 +15,8 @@
 
 #include <mlpack/prereqs.hpp>
 
+#include <limits>
+
 #include "../visitor/delta_visitor.hpp"
 #include "../visitor/output_parameter_visitor.hpp"
 
@@ -54,7 +56,8 @@ class LSTM
    * @param outSize The number of output units.
    * @param rho Maximum number of steps to backpropagate through time (BPTT).
    */
-  LSTM(const size_t inSize, const size_t outSize, const size_t rho);
+  LSTM(const size_t inSize, const size_t outSize, const size_t rho =
+      std::numeric_limits<size_t>::max());
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function

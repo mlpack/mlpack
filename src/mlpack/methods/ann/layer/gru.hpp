@@ -26,6 +26,7 @@
 #define MLPACK_METHODS_ANN_LAYER_GRU_HPP
 
 #include <list>
+#include <limits>
 
 #include <mlpack/prereqs.hpp>
 
@@ -66,7 +67,8 @@ class GRU
    * @param outSize The number of output units.
    * @param rho Maximum number of steps to backpropagate through time (BPTT).
    */
-  GRU(const size_t inSize, const size_t outSize, const size_t rho);
+  GRU(const size_t inSize, const size_t outSize, const size_t rho =
+      std::numeric_limits<size_t>::max());
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
