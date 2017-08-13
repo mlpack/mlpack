@@ -259,14 +259,22 @@ BOOST_AUTO_TEST_CASE(BlindHAMUnitTest) {
   searchModel.Parameters().rows(0, 2 * nDim - 1) = arma::zeros(2 * nDim);
   searchModel.Parameters().at(2 * nDim) = -log(2);
   searchModel.Add<SigmoidLayer<> >();
+  // Controller is a feedforward model: sigmoid(5x1 + x2 - x3 - 2x4).
+  FFN<CrossEntropyError<> > controller;
+  controller.Add<Linear<> >(nDim, 1);
+  controller.ResetParameters();
+  controller.Parameters().rows(0, nDim - 1) = arma::vec("5 1 -1 -2");
+  controller.Parameters().at(nDim) = 0;
+  controller.Add<SigmoidLayer<> >();
 
-  HAMUnit<> hamUnit(seqLen, nDim, embedModel, joinModel, searchModel, writeModel);
+  HAMUnit<> hamUnit(seqLen, nDim, embedModel, joinModel, searchModel, writeModel, controller);
 
   arma::mat input("1 0 0 0; 0 1 0 0; 0 0 1 0; 0 0 0 1;");
   input = input.t();
   arma::mat output;
   hamUnit.Predict(std::move(input), std::move(output));
-  std::cerr << "Output (hopefully 0):\n" << output << "\n";
+  arma::mat targetOutput("0.4174; 0.4743; 0.5167; 0.5485;");
+  BOOST_REQUIRE_SMALL(arma::abs(output - targetOutput).max(), 1e-4);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

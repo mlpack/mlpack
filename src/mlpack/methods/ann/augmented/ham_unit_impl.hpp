@@ -18,22 +18,23 @@ namespace mlpack {
 namespace ann /* Artificial Neural Network */ {
 namespace augmented /* Augmented neural network */ {
 
-template<typename E, typename J, typename S, typename W>
-HAMUnit<E, J, S, W>::HAMUnit(size_t memorySize,
+template<typename E, typename J, typename S, typename W, typename C>
+HAMUnit<E, J, S, W, C>::HAMUnit(size_t memorySize,
                  size_t memoryDim,
                  E& embed,
                  J& join,
                  S& search,
-                 W& write)
+                 W& write,
+                 C& controller)
   : memorySize(memorySize), memoryDim(memoryDim),
-    search(search), embed(embed),
+    search(search), embed(embed), controller(controller),
     memory(TreeMemory<double, J, S>(memorySize, memoryDim, join, write))
 {
   this->t = 0;
 }
 
-template<typename E, typename J, typename S, typename W>
-arma::vec HAMUnit<E, J, S, W>::Attention()
+template<typename E, typename J, typename S, typename W, typename C>
+arma::vec HAMUnit<E, J, S, W, C>::Attention()
 {
   size_t nodesCnt = 2 * memory.ActualMemorySize() - 1;
   arma::vec probabilities(nodesCnt);
@@ -57,29 +58,26 @@ arma::vec HAMUnit<E, J, S, W>::Attention()
          to = memory.LeafIndex(memory.MemorySize() - 1);
   arma::vec leafAttention = probabilities.rows(from, to);
   assert(abs(arma::accu(leafAttention) - 1) < 1e-4);
-  std::cerr << "Attention:\n" << leafAttention;
   return leafAttention;
 }
 
-template<typename E, typename J, typename S, typename W>
-void HAMUnit<E, J, S, W>::Predict(arma::mat&& input, arma::mat&& output) {
+template<typename E, typename J, typename S, typename W, typename C>
+void HAMUnit<E, J, S, W, C>::Predict(arma::mat&& input, arma::mat&& output) {
   embed.Predict(input, sequence);
   memory.Initialize(sequence);
   output = arma::zeros(input.n_cols, 1);
-  std::cerr << "Sequence length is " << input.n_cols << "\n";
   for (t = 0; t < input.n_cols; ++t)
   {
-    std::cerr << "Tick " << t << "\n";
     arma::vec attention = Attention();
     arma::vec input = arma::zeros(memory.Leaf(0).n_elem);
     for (size_t i = 0; i < memorySize; ++i)
     {
       input += attention.at(i) * memory.Leaf(i);
-      std::cerr << "After reading " << i+1 << " input is:\n" << input;
     }
-    output.at(t, 0) = 0; // TODO?
+    arma::vec controllerOutput;
+    controller.Predict(input, controllerOutput);
+    output.row(t) = controllerOutput;
 
-    std::cerr << "Final input is:" << input << "\n" << "Writing.\n";
     // Write phase.
     for (size_t i = 0; i < memorySize; ++i)
     {
@@ -88,7 +86,6 @@ void HAMUnit<E, J, S, W>::Predict(arma::mat&& input, arma::mat&& output) {
       memory.Leaf(i) *= attention.at(i);
       memory.Leaf(i) += (1. - attention.at(i)) * prevMemory;
     }
-    std::cerr << "Memory rebuilt.\n";
   }
 }
 

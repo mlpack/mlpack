@@ -29,7 +29,8 @@ template<
   typename E = FFN<MeanSquaredError<>>,
   typename J = FFN<MeanSquaredError<>>,
   typename S = FFN<MeanSquaredError<>>,
-  typename W = FFN<MeanSquaredError<>>
+  typename W = FFN<MeanSquaredError<>>,
+  typename C = FFN<CrossEntropyError<>>
 >
 class HAMUnit
 {
@@ -39,7 +40,8 @@ class HAMUnit
           E& embed,
           J& join,
           S& search,
-          W& write);
+          W& write,
+          C& controller);
 
   void Evaluate(const arma::mat& predictors,
                 const arma::mat& responses);
@@ -65,6 +67,7 @@ class HAMUnit
   size_t memorySize, memoryDim;
   S search;
   E embed;
+  C controller;
 
   // Currently processed sequence.
   arma::mat sequence;
