@@ -41,7 +41,7 @@ double SCD<DescentPolicyType>::Optimize(ResolvableFunctionType& function,
   double overallObjective = 0;
   double lastObjective = DBL_MAX;
 
-  arma::sp_mat gradient;
+  double gradient;
 
   // Start iterating.
   for (size_t i = 1; i != maxIterations; ++i)
@@ -53,7 +53,7 @@ double SCD<DescentPolicyType>::Optimize(ResolvableFunctionType& function,
     function.FeatureGradient(iterate, featureIdx, gradient);
 
     // Update the decision variable with the partial gradient.
-    iterate -= stepSize * gradient;
+    iterate[featureIdx] -= stepSize * gradient;
 
     // Check for convergence.
     if (i % updateInterval == 0)

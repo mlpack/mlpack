@@ -20,7 +20,18 @@ namespace optimization {
 /**
  * Greedy descent policy for Stochastic Co-ordinate Descent(SCD). This
  * descent scheme picks a the co-ordinate for the descent with the maximum
- * guaranteed descent.
+ * guaranteed descent, according to the Gauss-Southwell rule. This is a
+ * deterministic approach and is generally more expensive to calculate.
+ *
+ * For more information, refer to the following.
+ * @misc{1506.00552,
+ *   Author = {Julie Nutini and Mark Schmidt and Issam H.
+ *             Laradji and Michael Friedlander and Hoyt Koepke},
+ *   Title = {Coordinate Descent Converges Faster with the Gauss-Southwell Rule
+ *            Than Random Selection},
+ *   Year = {2015},
+ *   Eprint = {arXiv:1506.00552}
+ * }
  */
 class GreedyDescent
 {
@@ -36,17 +47,27 @@ class GreedyDescent
    * @param function The function to be optimized.
    * @return The index of the coordinate to be descended.
    */
-
-  // TODO: Find a way to implement this.
   template <typename ResolvableFunctionType>
-  size_t DescentFeature(const size_t numEpoch,
+  size_t DescentFeature(const size_t /* numEpoch */,
                         const arma::mat& iterate,
                         const ResolvableFunctionType& function)
   {
+    size_t bestFeature = 0;
+    double bestDescent = 0;
     for (size_t i = 0; i < function.NumFeatures(); ++i)
     {
-      double featureGrad = function.FeatureGradient(iterate, i);
+      double fGrad;
+
+      function.FeatureGradient(iterate, i, fGrad);
+
+      if (fGrad > bestDescent)
+      {
+        bestFeature = i;
+        bestDescent = fGrad;
+      }
     }
+
+    return bestFeature;
   }
 };
 

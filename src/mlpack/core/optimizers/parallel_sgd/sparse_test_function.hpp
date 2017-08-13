@@ -74,10 +74,9 @@ class SparseTestFunction
   //! Evaluate the gradient of a feature function.
   void FeatureGradient(const arma::mat& coordinates,
                        const size_t j,
-                       arma::sp_mat& gradient) const
+                       double& gradient) const
   {
-    gradient = arma::sp_mat(coordinates.n_rows, 1);
-    gradient[j] = 2 * coordinates[j] + bi[j];
+    gradient = 2 * coordinates[j] + bi[j];
   }
 
  private:
