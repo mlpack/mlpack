@@ -3,7 +3,6 @@ set(DIRS
   ada_grad
   adam
   aug_lagrangian
-#  discrete
   fw
   gradient_descent
   lbfgs
