@@ -85,6 +85,8 @@ double MiniBatchSGDType<
   arma::mat gradient(iterate.n_rows, iterate.n_cols);
   for (size_t i = 1; i != maxIterations; ++i, ++currentBatch)
   {
+    std::cout << "iterations" << std::endl;
+    std::cout << i << std::endl;
     // Is this iteration the start of a sequence?
     if ((currentBatch % numBatches) == 0)
     {

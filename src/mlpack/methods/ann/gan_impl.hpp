@@ -261,19 +261,7 @@ Gradient(const arma::mat& /*parameters*/, const size_t i, arma::mat& gradient)
   }
 
   counter++;
-
-// TODO: I know the code below looks like crutches.
-// I think it is better to remove batch handling from GAN.
-// For example we could add some functions to the Optimizer API
-// in order to obtain the number of current batch.
-  if (counter >= numFunctions)
-  {
-    counter = 0;
-    currentBatch++;
-    print = true;
-  }
-  else if (counter % batchSize == 0)
-    currentBatch++;
+  // std::cout << counter << std::endl;
 }
 
 template<typename Model, typename InitializationRuleType>
