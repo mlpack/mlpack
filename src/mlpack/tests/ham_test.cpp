@@ -272,7 +272,7 @@ BOOST_AUTO_TEST_CASE(BlindHAMUnitTest) {
   arma::mat input("1 0 0 0; 0 1 0 0; 0 0 1 0; 0 0 0 1;");
   input = input.t();
   arma::mat output;
-  hamUnit.Predict(std::move(input), std::move(output));
+  hamUnit.Forward(std::move(input), std::move(output));
   arma::mat targetOutput("0.4174; 0.4743; 0.5167; 0.5485;");
   BOOST_REQUIRE_SMALL(arma::abs(output - targetOutput).max(), 1e-4);
 }

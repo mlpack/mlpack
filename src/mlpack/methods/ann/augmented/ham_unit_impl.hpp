@@ -34,47 +34,47 @@ HAMUnit<E, J, S, W, C>::HAMUnit(size_t memorySize,
 }
 
 template<typename E, typename J, typename S, typename W, typename C>
-arma::vec HAMUnit<E, J, S, W, C>::Attention()
+void HAMUnit<E, J, S, W, C>::Attention(arma::vec& leafAttention)
 {
   size_t nodesCnt = 2 * memory.ActualMemorySize() - 1;
   arma::vec probabilities(nodesCnt);
   probabilities(0) = 1;
   arma::vec hController = sequence.col(t);
+  arma::vec h(hController.n_elem + memory.Cell(0).n_elem);
+  h.rows(0, hController.n_elem - 1) = hController;
   for (size_t node = 1; node < nodesCnt; ++node) {
     size_t parent = memory.Parent(node);
     bool dir = node == memory.Left(parent);
-    arma::vec h(hController.n_elem + memory.Cell(parent).n_elem);
-    h.rows(0, hController.n_elem - 1) = hController;
     h.rows(hController.n_elem,
            hController.n_elem + memory.Cell(parent).n_elem - 1)
         = memory.Cell(parent);
     arma::mat searchOutput;
     search.Predict(h, searchOutput);
-    double prob = searchOutput.at(0, 0);
+    double prob = searchOutput(0);
     if (!dir) prob = 1. - prob;
     probabilities(node) = prob * probabilities(parent);
   }
   size_t from = memory.LeafIndex(0),
          to = memory.LeafIndex(memory.MemorySize() - 1);
-  arma::vec leafAttention = probabilities.rows(from, to);
+  leafAttention = probabilities.rows(from, to);
   assert(abs(arma::accu(leafAttention) - 1) < 1e-4);
-  return leafAttention;
 }
 
 template<typename E, typename J, typename S, typename W, typename C>
-void HAMUnit<E, J, S, W, C>::Predict(arma::mat&& input, arma::mat&& output) {
+void HAMUnit<E, J, S, W, C>::Forward(arma::mat&& input, arma::mat&& output) {
   embed.Predict(input, sequence);
   memory.Initialize(sequence);
   output = arma::zeros(input.n_cols, 1);
   for (t = 0; t < input.n_cols; ++t)
   {
-    arma::vec attention = Attention();
-    arma::vec input = arma::zeros(memory.Leaf(0).n_elem);
-    for (size_t i = 0; i < memorySize; ++i)
+    arma::vec attention;
+    Attention(attention);
+    arma::vec input = attention.at(0) * memory.Leaf(0);
+    for (size_t i = 1; i < memorySize; ++i)
     {
       input += attention.at(i) * memory.Leaf(i);
     }
-    arma::vec controllerOutput;
+    arma::rowvec controllerOutput;
     controller.Predict(input, controllerOutput);
     output.row(t) = controllerOutput;
 

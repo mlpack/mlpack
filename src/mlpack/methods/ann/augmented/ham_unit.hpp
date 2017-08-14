@@ -49,15 +49,13 @@ class HAMUnit
   TreeMemory<double, J, W> Memory() const { return memory; }
   TreeMemory<double, J, W>& Memory() { return memory; }
 
-  void Predict(arma::mat&& input, arma::mat&& output);
- private:
-  arma::vec Attention();
-
   void Forward(arma::mat&& input, arma::mat&& output);
 
   void Backward(arma::mat&& input,
                 arma::mat&& gy,
                 arma::mat&& g);
+ private:
+  void Attention(arma::vec& attention);
 
   void Gradient(arma::mat&& input,
                 arma::mat&& error,
