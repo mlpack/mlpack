@@ -210,6 +210,20 @@ class SpillTree
   SpillTree(SpillTree&& other);
 
   /**
+   * Copy the spill tree from the other given spill tree.  Be careful!  This can
+   * take a long time and use a lot of memory.
+   *
+   * @param other tree to be replicated.
+   */
+  SpillTree& operator=(const SpillTree& other);
+
+  /**
+   * Move the spill tree from the other given spill tree.  This will leave the
+   * given spill tree empty.
+   */
+  SpillTree& operator=(SpillTree&& other);
+
+  /**
    * Initialize the tree from a boost::serialization archive.
    *
    * @param ar Archive to load tree from.  Must be an iarchive, not an oarchive.

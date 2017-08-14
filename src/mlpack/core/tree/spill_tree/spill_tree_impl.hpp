@@ -237,6 +237,140 @@ SpillTree(SpillTree&& other) :
     right->parent = this;
 }
 
+// Copy operator.
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
+         template<typename SplitMetricType, typename SplitMatType>
+             class SplitType>
+SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>&
+SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
+operator=(const SpillTree& other)
+{
+  // Delete current tree if necessary.
+  delete left;
+  delete right;
+  if (localDataset && parent == NULL)
+    delete dataset;
+
+  if (other.left)
+  {
+    left = new SpillTree(*other.left);
+    left->Parent() = this;
+  }
+
+  if (other.right)
+  {
+    right = new SpillTree(*other.right);
+    right->Parent() = this;
+  }
+
+  parent = other.parent;
+  count = other.count;
+  pointsIndex = other.pointsIndex;
+  overlappingNode = other.overlappingNode;
+  hyperplane = other.hyperplane;
+  bound = BoundType(other.bound);
+  stat = StatisticType(other.stat);
+  parentDistance = other.parentDistance;
+  furthestDescendantDistance = other.furthestDescendantDistance;
+  minimumBoundDistance = other.minimumBoundDistance;
+  // Copy dataset, but only if we are the root of the new tree.
+  if (other.parent == NULL && other.localDataset)
+    dataset = new MatType(*other.dataset);
+  else
+    dataset = other.dataset;
+  localDataset = other.localDataset;
+
+  // If vector of indexes, copy it.
+  if (other.pointsIndex)
+    pointsIndex = new arma::Col<size_t>(*other.pointsIndex);
+
+  // Propagate matrix, but only if we are the root.
+  if (parent == NULL && localDataset)
+  {
+    std::queue<SpillTree*> queue;
+    if (left)
+      queue.push(left);
+    if (right)
+      queue.push(right);
+    while (!queue.empty())
+    {
+      SpillTree* node = queue.front();
+      queue.pop();
+
+      node->dataset = dataset;
+      if (node->left)
+        queue.push(node->left);
+      if (node->right)
+        queue.push(node->right);
+    }
+  }
+
+  return *this;
+}
+// Move operator.
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
+         template<typename SplitMetricType, typename SplitMatType>
+             class SplitType>
+SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>&
+SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
+operator=(SpillTree&& other)
+{
+  // Delete current tree if necessary.
+  delete left;
+  delete right;
+  if (localDataset && parent == NULL)
+    delete localDataset;
+
+  left = other.left;
+  right = other.right;
+  parent = other.parent;
+  count = other.count;
+  pointsIndex = other.pointsIndex;
+  overlappingNode = other.overlappingNode;
+  hyperplane = other.hyperplane;
+  bound = std::move(other.bound);
+  stat = std::move(other.stat);
+  parentDistance = other.parentDistance;
+  furthestDescendantDistance = other.furthestDescendantDistance;
+  minimumBoundDistance = other.minimumBoundDistance;
+  dataset = other.dataset;
+  localDataset = other.localDataset;
+
+  // Now we are a clone of the other tree.  But we must also clear the other
+  // tree's contents, so it doesn't delete anything when it is destructed.
+  other.left = NULL;
+  other.right = NULL;
+  other.count = 0;
+  other.pointsIndex = NULL;
+  other.parentDistance = 0.0;
+  other.furthestDescendantDistance = 0.0;
+  other.minimumBoundDistance = 0.0;
+  if (other.parent == NULL)
+  {
+    other.dataset = new MatType();
+    other.localDataset = true;
+  }
+  else
+  {
+    other.dataset = other.parent.dataset;
+    other.localDataset = false;
+  }
+
+  // Set new parent.
+  if (left)
+    left->parent = this;
+  if (right)
+    right->parent = this;
+
+  return *this;
+}
+
 /**
  * Initialize the tree from an archive.
  */
@@ -728,8 +862,8 @@ SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
     stat(*this),
     parentDistance(0),
     furthestDescendantDistance(0),
-    dataset(NULL),
-    localDataset(false)
+    dataset(new MatType()),
+    localDataset(true)
 {
   // Nothing to do.
 }

@@ -308,4 +308,57 @@ BOOST_AUTO_TEST_CASE(SpillTreeMoveDatasetTest)
   BOOST_REQUIRE_EQUAL(tree.Dataset().n_cols, 1000);
 }
 
+/**
+ * Test the copy constructor.
+ */
+BOOST_AUTO_TEST_CASE(CopyConstructorTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(3, 1000);
+  typedef SPTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+
+  TreeType* tree = new TreeType(std::move(dataset));
+
+  BOOST_REQUIRE_EQUAL(tree->Dataset().n_rows, 3);
+  BOOST_REQUIRE_EQUAL(tree->Dataset().n_cols, 1000);
+
+  TreeType otherTree(*tree);
+  delete tree;
+
+  // Make sure the tree can still be accessed.
+  BOOST_REQUIRE_EQUAL(otherTree.Child(0).Parent(), &otherTree);
+  BOOST_REQUIRE_EQUAL(otherTree.Dataset().n_rows, 3);
+  BOOST_REQUIRE_EQUAL(otherTree.Dataset().n_cols, 1000);
+  BOOST_REQUIRE_EQUAL(otherTree.Child(0).Dataset().n_rows, 3);
+  BOOST_REQUIRE_EQUAL(otherTree.Child(0).Dataset().n_cols, 1000);
+}
+
+/**
+ * Test the move constructor.
+ */
+BOOST_AUTO_TEST_CASE(MoveConstructorTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(3, 1000);
+  typedef SPTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+
+  TreeType* tree = new TreeType(std::move(dataset));
+
+  BOOST_REQUIRE_EQUAL(tree->Dataset().n_rows, 3);
+  BOOST_REQUIRE_EQUAL(tree->Dataset().n_cols, 1000);
+
+  TreeType otherTree(std::move(*tree));
+
+  BOOST_REQUIRE_EQUAL(tree->NumChildren(), 0);
+  BOOST_REQUIRE_EQUAL(tree->Dataset().n_rows, 0);
+  BOOST_REQUIRE_EQUAL(tree->Dataset().n_cols, 1000);
+
+  delete tree;
+
+  // Make sure the tree can still be accessed.
+  BOOST_REQUIRE_EQUAL(otherTree.Child(0).Parent(), &otherTree);
+  BOOST_REQUIRE_EQUAL(otherTree.Dataset().n_rows, 3);
+  BOOST_REQUIRE_EQUAL(otherTree.Dataset().n_cols, 1000);
+  BOOST_REQUIRE_EQUAL(otherTree.Child(0).Dataset().n_rows, 3);
+  BOOST_REQUIRE_EQUAL(otherTree.Child(0).Dataset().n_cols, 1000);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
