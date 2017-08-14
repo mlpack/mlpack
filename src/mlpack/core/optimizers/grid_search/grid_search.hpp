@@ -30,26 +30,23 @@ class GridSearch
 {
  public:
   /**
-   * Initialize a GridSearch object.
-   *
-   * @param collections Collections of values (one for each parameter). Each
-   *     collection should be an STL-compatible container (it should provide
-   *     begin() and end() methods returning iterators).
-   */
-  template<typename... Collections>
-  GridSearch(const Collections&... collections);
-
-  /**
    * Optimize (minimize) the given function by iterating through the all
-   * possible combinations of values for the parameters.
+   * possible combinations of values for the parameters specified in
+   * datasetInfo.
+   *
+   * @param function Function to optimize.
+   * @param bestParameters Variable for storing results.
+   * @param datasetInfo Type information for each dimension of the dataset. It
+   *     should store possible values for each parameter.
+   * @return Objective value of the final point.
    */
   template<typename FunctionType>
-  double Optimize(FunctionType& function, arma::mat& bestParameters);
+  double Optimize(
+      FunctionType& function,
+      arma::mat& bestParameters,
+      data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo);
 
  private:
-  //! Collections of parameter values (one for each parameter).
-  std::vector<std::vector<double>> parameterValueCollections;
-
   /**
    * Iterate through the last (parameterValueCollections.size() - i) dimensions
    * of the grid and change the arguments bestObjective and bestParameters if
@@ -58,30 +55,13 @@ class GridSearch
    * argument.
    */
   template<typename FunctionType>
-  void Optimize(FunctionType& function,
-                double& bestObjective,
-                arma::mat& bestParameters,
-                arma::vec& currentParameters,
-                size_t i);
-
-  /**
-   * Convert each specified collection into a std::vector<double> container and
-   * put results into parameterValueCollections.
-   */
-  template<typename Collection, typename... Collections>
-  void InitParameterValueCollections(const Collection& collection,
-                                     const Collections&... collections)
-  {
-    parameterValueCollections.push_back(
-        std::vector<double>(collection.begin(), collection.end()));
-
-    InitParameterValueCollections(collections...);
-  }
-
-  /**
-   * Finish initialization.
-   */
-  void InitParameterValueCollections() {}
+  void Optimize(
+      FunctionType& function,
+      double& bestObjective,
+      arma::mat& bestParameters,
+      arma::vec& currentParameters,
+      data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
+      size_t i);
 };
 
 } // namespace optimization

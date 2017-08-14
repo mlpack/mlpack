@@ -17,44 +17,55 @@
 namespace mlpack {
 namespace optimization {
 
-template<typename... Collections>
-GridSearch::GridSearch(const Collections&... collections)
-{
-  InitParameterValueCollections(collections...);
-}
-
 template<typename FunctionType>
-double GridSearch::Optimize(FunctionType& function, arma::mat& bestParameters)
+double GridSearch::Optimize(
+    FunctionType& function,
+    arma::mat& bestParameters,
+    data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo)
 {
+  for (size_t i = 0; i < datasetInfo.Dimensionality(); ++i)
+  {
+    if (datasetInfo.Type(i) != data::Datatype::categorical)
+    {
+      std::ostringstream oss;
+      oss << "GridSearch::Optimize(): the dimension " << i
+          << "is not categorical" << std::endl;
+      throw std::invalid_argument(oss.str());
+    }
+  }
+
   double bestObjective = std::numeric_limits<double>::max();
-  bestParameters = arma::mat(parameterValueCollections.size(), 1);
-  arma::vec currentParameters = arma::vec(parameterValueCollections.size());
+  bestParameters = arma::mat(datasetInfo.Dimensionality(), 1);
+  arma::vec currentParameters = arma::vec(datasetInfo.Dimensionality());
 
   /* Initialize best parameters for the case (very unlikely though) when no set
    * of parameters gives an objective value better than
    * std::numeric_limits<double>::max() */
-  for (size_t i = 0; i < parameterValueCollections.size(); ++i)
-    bestParameters(i, 0) = parameterValueCollections[i][0];
+  for (size_t i = 0; i < datasetInfo.Dimensionality(); ++i)
+    bestParameters(i, 0) = datasetInfo.UnmapString(0, i);
 
-  Optimize(function, bestObjective, bestParameters, currentParameters, 0);
+  Optimize(function, bestObjective, bestParameters, currentParameters,
+      datasetInfo, 0);
 
   return bestObjective;
 }
 
 template<typename FunctionType>
-void GridSearch::Optimize(FunctionType& function,
-                          double& bestObjective,
-                          arma::mat& bestParameters,
-                          arma::vec& currentParameters,
-                          size_t i)
+void GridSearch::Optimize(
+    FunctionType& function,
+    double& bestObjective,
+    arma::mat& bestParameters,
+    arma::vec& currentParameters,
+    data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
+    size_t i)
 {
-  if (i < parameterValueCollections.size())
+  if (i < datasetInfo.Dimensionality())
   {
-    for (double value : parameterValueCollections[i])
+    for (size_t j = 0; j < datasetInfo.NumMappings(i); ++j)
     {
-      currentParameters(i) = value;
+      currentParameters(i) = datasetInfo.UnmapString(j, i);
       Optimize(function, bestObjective, bestParameters, currentParameters,
-          i + 1);
+          datasetInfo, i + 1);
     }
   }
   else

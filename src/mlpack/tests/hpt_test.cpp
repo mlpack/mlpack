@@ -22,6 +22,7 @@
 #include <boost/test/unit_test.hpp>
 
 using namespace mlpack::cv;
+using namespace mlpack::data;
 using namespace mlpack::hpt;
 using namespace mlpack::optimization;
 using namespace mlpack::regression;
@@ -130,12 +131,20 @@ BOOST_AUTO_TEST_CASE(GridSearchTest)
       expectedObjective);
 
   SimpleCV<LARS, MSE> cv(validationSize, xs, ys);
-
-  GridSearch optimizer(lambda1Set, lambda2Set);
   CVFunction<decltype(cv), LARS, 4, FixedArg<bool, 0>, FixedArg<bool, 1>>
       cvFun(cv, {transposeData}, {useCholesky});
+
+  IncrementPolicy policy(true);
+  DatasetMapper<IncrementPolicy, double> datasetInfo(policy, 2);
+  for (double lambda1 : lambda1Set)
+    datasetInfo.MapString<size_t>(lambda1, 0);
+  for (double lambda2 : lambda2Set)
+    datasetInfo.MapString<size_t>(lambda2, 1);
+
+  GridSearch optimizer;
   arma::mat actualParameters;
-  double actualObjective = optimizer.Optimize(cvFun, actualParameters);
+  double actualObjective =
+      optimizer.Optimize(cvFun, actualParameters, datasetInfo);
 
   BOOST_REQUIRE_CLOSE(expectedObjective, actualObjective, 1e-5);
   BOOST_REQUIRE_CLOSE(expectedLambda1, actualParameters(0, 0), 1e-5);
