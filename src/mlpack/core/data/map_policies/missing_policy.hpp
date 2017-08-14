@@ -94,6 +94,10 @@ class MissingPolicy
     token >> t; // Could be sped up by only doing this if we need to.
 
     MappedType value = std::numeric_limits<MappedType>::quiet_NaN();
+    // But we can't use that for the map, so we need some other thing that will
+    // represent quiet_NaN().
+    const MappedType mapValue = std::nexttoward(
+        std::numeric_limits<MappedType>::max(), MappedType(0));
 
     // If extraction of the value fails, or if it is a value that is supposed to
     // be mapped, then do mapping.
@@ -110,13 +114,13 @@ class MissingPolicy
         maps[dimension].first.insert(PairType(string, value));
 
         // Insert right mapping too.
-        if (maps[dimension].second.count(value) == 0)
+        if (maps[dimension].second.count(mapValue) == 0)
         {
           // Create new element in reverse map.
-          maps[dimension].second.insert(std::make_pair(value,
+          maps[dimension].second.insert(std::make_pair(mapValue,
               std::vector<std::string>()));
         }
-        maps[dimension].second[value].push_back(string);
+        maps[dimension].second[mapValue].push_back(string);
       }
 
       return value;
