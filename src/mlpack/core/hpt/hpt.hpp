@@ -232,8 +232,8 @@ class HyperParameterTuner
       FixedArgs... fixedArgs);
 
   /**
-   * The set of methods to convert the given arma::vec vector to the tuple of
-   * the target type by gathering all elements in an argument list.
+   * Gather all elements of vector in an argument list and use them to create a
+   * tuple.
    */
   template<typename TupleType,
            size_t I,
@@ -242,6 +242,9 @@ class HyperParameterTuner
                std::enable_if_t<I < std::tuple_size<TupleType>::value>>
   inline TupleType VectorToTuple(const arma::vec& vector, const Args&... args);
 
+  /**
+   * Create a tuple from args.
+   */
   template<typename TupleType,
            size_t I,
            typename... Args,
