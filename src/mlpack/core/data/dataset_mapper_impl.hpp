@@ -86,7 +86,7 @@ inline const std::string& DatasetMapper<PolicyType>::UnmapString(
     const size_t dimension)
 {
   // Throw an exception if the value doesn't exist.
-  if (maps[dimension].first.right.count(value) == 0)
+  if (maps[dimension].second.count(value) == 0)
   {
     std::ostringstream oss;
     oss << "DatasetMapper<PolicyType>::UnmapString(): value '" << value
@@ -94,7 +94,15 @@ inline const std::string& DatasetMapper<PolicyType>::UnmapString(
     throw std::invalid_argument(oss.str());
   }
 
-  return maps[dimension].first.right.at(value);
+  return maps[dimension].second.at(value)[0];
+}
+
+template<typename PolicyType>
+inline size_t DatasetMapper<PolicyType>::NumUnmappings(
+    const size_t value,
+    const size_t dimension) const
+{
+  return maps[dimension].second.count(value);
 }
 
 // Return the value corresponding to a string in a given dimension.
@@ -104,7 +112,7 @@ inline typename PolicyType::MappedType DatasetMapper<PolicyType>::UnmapValue(
     const size_t dimension)
 {
   // Throw an exception if the value doesn't exist.
-  if (maps[dimension].first.left.count(string) == 0)
+  if (maps[dimension].first.count(string) == 0)
   {
     std::ostringstream oss;
     oss << "DatasetMapper<PolicyType>::UnmapValue(): string '" << string
@@ -112,7 +120,7 @@ inline typename PolicyType::MappedType DatasetMapper<PolicyType>::UnmapValue(
     throw std::invalid_argument(oss.str());
   }
 
-  return maps[dimension].first.left.at(string);
+  return maps[dimension].first.at(string);
 }
 
 // Get the type of a particular dimension.
@@ -143,7 +151,7 @@ template<typename PolicyType>
 inline
 size_t DatasetMapper<PolicyType>::NumMappings(const size_t dimension) const
 {
-  return (maps.count(dimension) == 0) ? 0 : maps.at(dimension).second;
+  return (maps.count(dimension) == 0) ? 0 : maps.at(dimension).first.size();
 }
 
 template<typename PolicyType>
@@ -169,8 +177,6 @@ inline void DatasetMapper<PolicyType>::Policy(PolicyType&& policy)
 {
   this->policy = std::forward<PolicyType>(policy);
 }
-
-
 
 } // namespace data
 } // namespace mlpack

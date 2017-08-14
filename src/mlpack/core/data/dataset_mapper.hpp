@@ -17,7 +17,6 @@
 
 #include <mlpack/prereqs.hpp>
 #include <unordered_map>
-#include <boost/bimap.hpp>
 
 #include "map_policies/increment_policy.hpp"
 
@@ -85,6 +84,10 @@ class DatasetMapper
    */
   const std::string& UnmapString(const size_t value, const size_t dimension);
 
+  /**
+   * Get the number of possible unmappings for a string in a given dimension.
+   */
+  size_t NumUnmappings(const size_t value, const size_t dimension) const;
 
   /**
    * Return the value that corresponds to a given string in a given dimension.
@@ -139,13 +142,20 @@ class DatasetMapper
   //! Types of each dimension.
   std::vector<Datatype> types;
 
-  // BiMapType definition
-  using BiMapType = boost::bimap<std::string, typename PolicyType::MappedType>;
+  // Forward mapping type.
+  using ForwardMapType = std::unordered_map<std::string, typename
+      PolicyType::MappedType>;
+
+  // Reverse mapping type.  Multiple inputs may map to a single output, hence
+  // the need for std::vector.
+  using ReverseMapType = std::unordered_map<typename PolicyType::MappedType,
+      std::vector<std::string>>;
 
   // Mappings from strings to integers.
   // Map entries will only exist for dimensions that are categorical.
   // MapType = map<dimension, pair<bimap<string, MappedType>, numMappings>>
-  using MapType = std::unordered_map<size_t, std::pair<BiMapType, size_t>>;
+  using MapType = std::unordered_map<size_t, std::pair<ForwardMapType,
+      ReverseMapType>>;
 
   //! maps object stores string and numerical pairs.
   MapType maps;
