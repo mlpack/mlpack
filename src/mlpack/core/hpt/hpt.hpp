@@ -174,72 +174,62 @@ class HyperParameterTuner
   MLAlgorithm bestModel;
 
   /**
-   * The set of methods to initialize the GridSearch optimizer. We basically
-   * need to go through all arguments passed to the Optimize method, gather all
-   * non-fixed arguments (collections) and pass them into the GridSearch
-   * constructor.
+   * The set of methods to initialize auxiliary objects (a CVFunction object and
+   * the datasetInfo parameter) and run optimization to find the best
+   * hyper-parameters.
+   *
+   * This template is called when we are ready to run optimization.
    */
-  template<size_t I,
+  template<size_t I /* Index of the next argument to handle. */,
            typename ArgsTuple,
-           typename... Collections,
+           typename... FixedArgs,
            typename = std::enable_if_t<I == std::tuple_size<ArgsTuple>::value>>
-  inline void InitGridSearch(const ArgsTuple& args,
-                             Collections... collections);
-
-  template<size_t I,
-           typename ArgsTuple,
-           typename... Collections,
-           typename = std::enable_if_t<I < std::tuple_size<ArgsTuple>::value>,
-           typename = std::enable_if_t<IsPreFixedArg<
-               typename std::tuple_element<I, ArgsTuple>::type>::value>>
-  inline void InitGridSearch(const ArgsTuple& args,
-                             Collections... collections);
-
-  template<size_t I,
-           typename ArgsTuple,
-           typename... Collections,
-           typename = std::enable_if_t<I < std::tuple_size<ArgsTuple>::value>,
-           typename = std::enable_if_t<!IsPreFixedArg<
-               typename std::tuple_element<I, ArgsTuple>::type>::value>,
-           typename = void>
-  inline void InitGridSearch(const ArgsTuple& args,
-                             Collections... collections);
+  inline void InitAndOptimize(
+      const ArgsTuple& args,
+      arma::mat& bestParams,
+      data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
+      FixedArgs... fixedArgs);
 
   /**
-   * The set of methods to initialize a cost function (CVFunction) object and
-   * run optimization to find the best hyper-parameters. To initialize a
-   * CVFunction object we go through all arguments passed to the Optimize
-   * method, gather all fixed values and pass them into the CVFunction
-   * constructor.
+   * The set of methods to initialize auxiliary objects (a CVFunction object and
+   * the datasetInfo parameter) and run optimization to find the best
+   * hyper-parameters.
+   *
+   * This template is called when the next argument should be fixed (should not
+   * be optimized).
    */
-  template<size_t I,
-           typename ArgsTuple,
-           typename... FixedArgs,
-           typename = std::enable_if_t<I == std::tuple_size<ArgsTuple>::value>>
-  inline void InitCVFunctionAndOptimize(const ArgsTuple& args,
-                                        arma::mat& bestParams,
-                                        FixedArgs... fixedArgs);
-
-  template<size_t I,
+  template<size_t I /* Index of the next argument to handle. */,
            typename ArgsTuple,
            typename... FixedArgs,
            typename = std::enable_if_t<I < std::tuple_size<ArgsTuple>::value>,
            typename = std::enable_if_t<IsPreFixedArg<
                typename std::tuple_element<I, ArgsTuple>::type>::value>>
-  inline void InitCVFunctionAndOptimize(const ArgsTuple& args,
-                                        arma::mat& bestParams,
-                                        FixedArgs... fixedArgs);
+  inline void InitAndOptimize(
+      const ArgsTuple& args,
+      arma::mat& bestParams,
+      data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
+      FixedArgs... fixedArgs);
 
-  template<size_t I,
+  /**
+   * The set of methods to initialize auxiliary objects (a CVFunction object and
+   * the datasetInfo parameter) and run optimization to find the best
+   * hyper-parameters.
+   *
+   * This template is called when the next argument should be used to specify
+   * possible values for the hyper-parameter in datasetInfo.
+   */
+  template<size_t I /* Index of the next argument to handle. */,
            typename ArgsTuple,
            typename... FixedArgs,
            typename = std::enable_if_t<I < std::tuple_size<ArgsTuple>::value>,
            typename = std::enable_if_t<!IsPreFixedArg<
                typename std::tuple_element<I, ArgsTuple>::type>::value>,
            typename = void>
-  inline void InitCVFunctionAndOptimize(const ArgsTuple& args,
-                                        arma::mat& bestParams,
-                                        FixedArgs... fixedArgs);
+  inline void InitAndOptimize(
+      const ArgsTuple& args,
+      arma::mat& bestParams,
+      data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
+      FixedArgs... fixedArgs);
 
   /**
    * The set of methods to convert the given arma::vec vector to the tuple of
