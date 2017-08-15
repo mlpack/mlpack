@@ -14,6 +14,7 @@
 #include <mlpack/core/optimizers/scd/descent_policies/greedy_descent.hpp>
 #include <mlpack/core/optimizers/parallel_sgd/sparse_test_function.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression_function.hpp>
+#include <mlpack/methods/softmax_regression/softmax_regression_function.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -58,6 +59,7 @@ BOOST_AUTO_TEST_CASE(DisjointFeatureTest)
   SCD<> s(0.4);
 
   arma::mat iterate = f.GetInitialPoint();
+
   double result = s.Optimize(f, iterate);
 
   // The final value of the objective function should be close to the optimal
@@ -90,5 +92,74 @@ BOOST_AUTO_TEST_CASE(GreedyDescentTest)
 
   BOOST_REQUIRE_EQUAL(descentPolicy.DescentFeature(0, point, f), 1);
 }
+
+/**
+ * Test changes to Logistic regression function.
+ */
+BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionFeatureGradientTest)
+{
+  // Evaluate the gradient and feature gradient and equate.
+  arma::mat predictors("0 0 0.4; 0 0 0.6; 0 0.3 0; 0.2 0 0; 0.2 -0.5 0;");
+  arma::Row<size_t> responses("1  1  0;");
+
+  LogisticRegressionFunction<arma::mat> f(predictors, responses, 0.0001);
+
+  arma::mat testPoint(f.NumFeatures(), 1, arma::fill::randu);
+
+  arma::mat testGradient;
+
+  f.Gradient(testPoint, testGradient);
+
+  for (size_t i = 0; i < f.NumFeatures(); ++i)
+  {
+    arma::sp_mat fGrad;
+    f.FeatureGradient(testPoint, i, fGrad);
+
+    CheckMatrices(testGradient.row(i), arma::mat(fGrad.row(i)));
+  }
+}
+
+/**
+ * Test changes to Softmax regression function.
+ */
+BOOST_AUTO_TEST_CASE(SoftmaxRegressionFeatureGradientTest)
+{
+  const size_t points = 1000;
+  const size_t inputSize = 10;
+  const size_t numClasses = 5;
+
+  // Initialize a random dataset.
+  arma::mat data;
+  data.randu(inputSize, points);
+
+  // Create random class labels.
+  arma::Row<size_t> labels(points);
+  for (size_t i = 0; i < points; i++)
+    labels(i) = math::RandInt(0, numClasses);
+
+  // 2 objects for 2 terms in the cost function. Each term contributes towards
+  // the gradient and thus need to be checked independently.
+  SoftmaxRegressionFunction srf(data, labels, numClasses, 0);
+
+  // Create a random set of parameters.
+  arma::mat parameters;
+  parameters.randu(numClasses, inputSize);
+
+  // Get gradients for the current parameters.
+  arma::mat gradient;
+  srf.Gradient(parameters, gradient);
+
+  // For each parameter.
+  for (size_t j = 0; j < inputSize; j++)
+  {
+    // Get the gradient for this feature.
+    arma::sp_mat fGrad;
+
+    srf.FeatureGradient(parameters, j, fGrad);
+
+    CheckMatrices(gradient.col(j), arma::mat(fGrad.col(j)));
+  }
+}
+
 
 BOOST_AUTO_TEST_SUITE_END();

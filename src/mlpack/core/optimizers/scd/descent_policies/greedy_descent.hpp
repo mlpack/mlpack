@@ -56,14 +56,15 @@ class GreedyDescent
     double bestDescent = 0;
     for (size_t i = 0; i < function.NumFeatures(); ++i)
     {
-      double fGrad;
+      arma::sp_mat fGrad;
 
       function.FeatureGradient(iterate, i, fGrad);
 
-      if (fGrad > bestDescent)
+      double descent = arma::accu(fGrad);
+      if (descent > bestDescent)
       {
         bestFeature = i;
-        bestDescent = fGrad;
+        bestDescent = descent;
       }
     }
 

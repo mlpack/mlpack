@@ -36,7 +36,7 @@ namespace optimization {
  *  double Evaluate(const arma::mat& coordinates);
  *  void FeatureGradient(const arma::mat& coordinates,
  *                       const size_t j,
- *                       double& gradient);
+ *                       arma::sp_mat& gradient);
  *
  *  NumFeatures() should return the number of features in the decision variable.
  *  Evaluate gives the value of the loss function at the current decision

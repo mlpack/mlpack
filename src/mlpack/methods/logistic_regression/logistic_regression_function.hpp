@@ -116,11 +116,11 @@ class LogisticRegressionFunction
    * @param parameters Vector of logistic regression parameters.
    * @param j Index of the feature with respect to which the gradient is to
    *    be computed.
-   * @param gradient Double to output gradient into.
+   * @param gradient Sparse matrix to output gradient into.
    */
   void FeatureGradient(const arma::mat& parameters,
                        const size_t j,
-                       double& gradient) const;
+                       arma::sp_mat& gradient) const;
 
   //! Return the initial point for the optimization.
   const arma::mat& GetInitialPoint() const { return initialPoint; }

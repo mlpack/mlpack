@@ -40,7 +40,7 @@ class SparseTestFunction
   size_t NumFeatures() const { return 4; }
 
   //! Get the starting point.
-  arma::mat GetInitialPoint() const { return arma::mat("0; 0; 0; 0;"); }
+  arma::mat GetInitialPoint() const { return arma::mat("0 0 0 0;"); }
 
   //! Evaluate a function.
   double Evaluate(const arma::mat& coordinates, const size_t i) const
@@ -67,16 +67,17 @@ class SparseTestFunction
                 const size_t i,
                 arma::sp_mat& gradient) const
   {
-    gradient = arma::sp_mat(coordinates.n_rows, 1);
+    gradient = arma::sp_mat(1, coordinates.n_cols);
     gradient[i] = 2 * coordinates[i] + bi[i];
   }
 
   //! Evaluate the gradient of a feature function.
   void FeatureGradient(const arma::mat& coordinates,
                        const size_t j,
-                       double& gradient) const
+                       arma::sp_mat& gradient) const
   {
-    gradient = 2 * coordinates[j] + bi[j];
+    gradient.set_size(1);
+    gradient[0] = 2 * coordinates[j] + bi[j];
   }
 
  private:

@@ -179,20 +179,23 @@ template <typename MatType>
 void LogisticRegressionFunction<MatType>::FeatureGradient(
     const arma::mat& parameters,
     const size_t j,
-    double& gradient) const
+    arma::sp_mat& gradient) const
 {
   const arma::rowvec sigmoids = (1 / (1 + arma::exp(-parameters(0, 0)
       - parameters.col(0).subvec(1, parameters.n_elem - 1).t() * predictors)));
 
   arma::mat diffs = responses - sigmoids;
+
+  gradient.set_size(parameters.size());
+
   if (j == 0)
   {
-    gradient = -arma::accu(diffs);
+    gradient[j] = -arma::accu(diffs);
   }
   else
   {
-    double regularization = lambda * parameters(j, 0);
-    gradient = arma::dot(-predictors.row(j - 1), diffs) + regularization;
+    gradient[j] = arma::dot(-predictors.row(j - 1), diffs) + lambda *
+      parameters(j, 0);
   }
 }
 
