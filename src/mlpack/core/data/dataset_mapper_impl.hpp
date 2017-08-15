@@ -85,7 +85,7 @@ template<typename T>
 inline const std::string& DatasetMapper<PolicyType>::UnmapString(
     const T value,
     const size_t dimension,
-    const size_t unmappingIndex)
+    const size_t unmappingIndex) const
 {
   // If the value is std::numeric_limits<T>::quiet_NaN(), we can't use it as a
   // key---so we will use something else...
@@ -94,7 +94,7 @@ inline const std::string& DatasetMapper<PolicyType>::UnmapString(
       value;
 
   // Throw an exception if the value doesn't exist.
-  if (maps[dimension].second.count(usedValue) == 0)
+  if (maps.at(dimension).second.count(usedValue) == 0)
   {
     std::ostringstream oss;
     oss << "DatasetMapper<PolicyType>::UnmapString(): value '" << value
@@ -102,16 +102,16 @@ inline const std::string& DatasetMapper<PolicyType>::UnmapString(
     throw std::invalid_argument(oss.str());
   }
 
-  if (unmappingIndex >= maps[dimension].second.at(usedValue).size())
+  if (unmappingIndex >= maps.at(dimension).second.at(usedValue).size())
   {
     std::ostringstream oss;
     oss << "DatasetMapper<PolicyType>::UnmapString(): value '" << value
-        << "' only has " << maps[dimension].second.at(usedValue).size()
+        << "' only has " << maps.at(dimension).second.at(usedValue).size()
         << " unmappings, but unmappingIndex is " << unmappingIndex << "!";
     throw std::invalid_argument(oss.str());
   }
 
-  return maps[dimension].second.at(usedValue)[unmappingIndex];
+  return maps.at(dimension).second.at(usedValue)[unmappingIndex];
 }
 
 template<typename PolicyType>

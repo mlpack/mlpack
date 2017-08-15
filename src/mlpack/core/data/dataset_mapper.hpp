@@ -94,7 +94,7 @@ class DatasetMapper
   template<typename T>
   const std::string& UnmapString(const T value,
                                  const size_t dimension,
-                                 const size_t unmappingIndex = 0);
+                                 const size_t unmappingIndex = 0) const;
 
   /**
    * Get the number of possible unmappings for a string in a given dimension.
