@@ -197,21 +197,19 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename SourceType, typename DestinationType>
+template<typename DataType>
 void KFoldCV<MLAlgorithm,
              Metric,
              MatType,
              PredictionsType,
-             WeightsType>::InitKFoldCVMat(const SourceType& source,
-                                          DestinationType& destination)
+             WeightsType>::InitKFoldCVMat(const DataType& source,
+                                          DataType& destination)
 {
-  const DestinationType& sourceAsDT = source;
-
-  binSize = sourceAsDT.n_cols / k;
+  binSize = source.n_cols / k;
   trainingSubsetSize = binSize * (k - 1);
 
-  destination = (k == 2) ? sourceAsDT : arma::join_rows(sourceAsDT,
-      sourceAsDT.cols(0, trainingSubsetSize - binSize - 1));
+  destination = (k == 2) ? source : arma::join_rows(source,
+      source.cols(0, trainingSubsetSize - binSize - 1));
 }
 
 template<typename MLAlgorithm,

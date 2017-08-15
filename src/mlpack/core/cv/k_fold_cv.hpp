@@ -213,8 +213,8 @@ class KFoldCV
    * Initialize the given destination matrix with the given source joined with
    * its first k - 2 bins.
    */
-  template<typename SourceType, typename DestinationType>
-  void InitKFoldCVMat(const SourceType& source, DestinationType& destination);
+  template<typename DataType>
+  void InitKFoldCVMat(const DataType& source, DataType& destination);
 
   /**
    * Train and run evaluation in the case of non-weighted learning.
