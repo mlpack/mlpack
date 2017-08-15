@@ -36,6 +36,7 @@ RNN<OutputLayerType, InitializationRuleType>::RNN(
     OutputLayerType outputLayer,
     InitializationRuleType initializeRule) :
     rho(rho),
+    prevRho(0),
     outputLayer(std::move(outputLayer)),
     initializeRule(std::move(initializeRule)),
     inputSize(0),
@@ -56,6 +57,7 @@ RNN<OutputLayerType, InitializationRuleType>::RNN(
     OutputLayerType outputLayer,
     InitializationRuleType initializeRule) :
     rho(rho),
+    prevRho(0),
     outputLayer(std::move(outputLayer)),
     initializeRule(std::move(initializeRule)),
     inputSize(0),
@@ -180,10 +182,6 @@ void RNN<OutputLayerType, InitializationRuleType>::SinglePredict(
     inputSize = predictors.n_elem / rho;
     prevRho = rho;
   }
-  else if (inputSize == 0)
-  {
-    inputSize = predictors.n_elem / rho;
-  }
 
   for (size_t seqNum = 0; seqNum < rho; ++seqNum)
   {
@@ -225,9 +223,8 @@ double RNN<OutputLayerType, InitializationRuleType>::Evaluate(
     targetSize = target.n_elem / rho;
     prevRho = rho;
   }
-  else if (inputSize == 0)
+  else if (targetSize == 0)
   {
-    inputSize = input.n_elem / rho;
     targetSize = target.n_elem / rho;
   }
 
