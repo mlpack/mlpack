@@ -210,7 +210,7 @@ void KFoldCV<MLAlgorithm,
   binSize = sourceAsDT.n_cols / k;
   trainingSubsetSize = binSize * (k - 1);
 
-  destination = arma::join_rows(sourceAsDT,
+  destination = (k == 2) ? sourceAsDT : arma::join_rows(sourceAsDT,
       sourceAsDT.cols(0, trainingSubsetSize - binSize - 1));
 }
 
