@@ -1,21 +1,34 @@
 /**
- * @file lstm.hpp
- * @author Marcus Edel
+ * @file gru.hpp
+ * @author Sumedh Ghaisas
  *
- * Definition of the LSTM class, which implements a lstm network
- * layer.
+ * Definition of the GRU layer.
+ *
+ * For more information, read the following paper:
+ *
+ * @code
+ * @inproceedings{chung2015gated,
+ *    title     = {Gated Feedback Recurrent Neural Networks.},
+ *    author    = {Chung, Junyoung and G{\"u}l{\c{c}}ehre, Caglar and Cho,
+                  Kyunghyun and Bengio, Yoshua},
+ *    booktitle = {ICML},
+ *    pages     = {2067--2075},
+ *    year      = {2015}
+ * }
+ * @endcode
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_LSTM_HPP
-#define MLPACK_METHODS_ANN_LAYER_LSTM_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_GRU_HPP
+#define MLPACK_METHODS_ANN_LAYER_GRU_HPP
+
+#include <list>
+#include <limits>
 
 #include <mlpack/prereqs.hpp>
-
-#include <limits>
 
 #include "../visitor/delta_visitor.hpp"
 #include "../visitor/output_parameter_visitor.hpp"
@@ -28,11 +41,9 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * An implementation of a lstm network layer.
+ * An implementation of a gru network layer.
  *
- * This class allows specification of the type of the activation functions used
- * for the gates and cells and also of the type of the function used to
- * initialize and update the peephole weights.
+ * This cell can be used in RNN networks.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -43,20 +54,20 @@ template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-class LSTM
+class GRU
 {
  public:
-  //! Create the LSTM object.
-  LSTM();
+  //! Create the GRU object.
+  GRU();
 
   /**
-   * Create the LSTM layer object using the specified parameters.
+   * Create the GRU layer object using the specified parameters.
    *
    * @param inSize The number of input units.
    * @param outSize The number of output units.
    * @param rho Maximum number of steps to backpropagate through time (BPTT).
    */
-  LSTM(const size_t inSize, const size_t outSize, const size_t rho =
+  GRU(const size_t inSize, const size_t outSize, const size_t rho =
       std::numeric_limits<size_t>::max());
 
   /**
@@ -161,17 +172,14 @@ class LSTM
   //! Locally-stored weight object.
   OutputDataType weights;
 
-  //! Locally-stored previous output.
-  std::list<arma::mat>::iterator prevOutput;
-
-  //! Locally-stored previous cell state.
-  std::list<arma::mat>::iterator prevCell;
-
   //! Locally-stored input 2 gate module.
   LayerTypes input2GateModule;
 
   //! Locally-stored output 2 gate module.
   LayerTypes output2GateModule;
+
+  //! Locally-stored output hidden state 2 gate module.
+  LayerTypes outputHidden2GateModule;
 
   //! Locally-stored input gate module.
   LayerTypes inputGateModule;
@@ -181,15 +189,6 @@ class LSTM
 
   //! Locally-stored forget gate module.
   LayerTypes forgetGateModule;
-
-  //! Locally-stored output gate module.
-  LayerTypes outputGateModule;
-
-  //! Locally-stored cell module.
-  LayerTypes cellModule;
-
-  //! Locally-stored cell activation module.
-  LayerTypes cellActivationModule;
 
   //! Locally-stored output parameter visitor.
   OutputParameterVisitor outputParameterVisitor;
@@ -209,16 +208,16 @@ class LSTM
   //! Locally-stored number of gradient steps.
   size_t gradientStep;
 
-  //! Locally-stored cell parameters.
-  std::list<arma::mat> cellParameter;
-
   //! Locally-stored output parameters.
   std::list<arma::mat> outParameter;
 
-  //! Matrix of all zeroes to initialize the output and the cell
+  //! Matrix of all zeroes to initialize the output
   arma::mat allZeros;
 
-  //! Iterator pointed to the last cell output processed by backward
+  //! Iterator pointed to the last output produced by the cell
+  std::list<arma::mat>::iterator prevOutput;
+
+  //! Iterator pointed to the last output processed by backward
   std::list<arma::mat>::iterator backIterator;
 
   //! Iterator pointed to the last output processed by gradient
@@ -226,9 +225,6 @@ class LSTM
 
   //! Locally-stored previous error.
   arma::mat prevError;
-
-  //! Locally-stored foget gate error.
-  arma::mat forgetGateError;
 
   //! If true dropout and scaling is disabled, see notes above.
   bool deterministic;
@@ -244,12 +240,12 @@ class LSTM
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-}; // class LSTM
+}; // class GRU
 
 } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
-#include "lstm_impl.hpp"
+#include "gru_impl.hpp"
 
 #endif

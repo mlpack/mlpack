@@ -19,11 +19,11 @@
 #include "visitor/save_output_parameter_visitor.hpp"
 #include "visitor/forward_visitor.hpp"
 #include "visitor/backward_visitor.hpp"
+#include "visitor/reset_cell_visitor.hpp"
 #include "visitor/deterministic_set_visitor.hpp"
 #include "visitor/gradient_set_visitor.hpp"
 #include "visitor/gradient_visitor.hpp"
 #include "visitor/weight_set_visitor.hpp"
-#include "visitor/rho_set_visitor.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -36,6 +36,7 @@ RNN<OutputLayerType, InitializationRuleType>::RNN(
     OutputLayerType outputLayer,
     InitializationRuleType initializeRule) :
     rho(rho),
+    prevRho(0),
     outputLayer(std::move(outputLayer)),
     initializeRule(std::move(initializeRule)),
     inputSize(0),
@@ -56,6 +57,7 @@ RNN<OutputLayerType, InitializationRuleType>::RNN(
     OutputLayerType outputLayer,
     InitializationRuleType initializeRule) :
     rho(rho),
+    prevRho(0),
     outputLayer(std::move(outputLayer)),
     initializeRule(std::move(initializeRule)),
     inputSize(0),
@@ -111,6 +113,15 @@ void RNN<OutputLayerType, InitializationRuleType>::Train(
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
+void RNN<OutputLayerType, InitializationRuleType>::ResetCells()
+{
+  for (size_t i = 1; i < network.size(); ++i)
+  {
+    boost::apply_visitor(ResetCellVisitor(), network[i]);
+  }
+}
+
+template<typename OutputLayerType, typename InitializationRuleType>
 template<typename OptimizerType>
 void RNN<OutputLayerType, InitializationRuleType>::Train(
     arma::mat predictors, arma::mat responses)
@@ -144,6 +155,8 @@ template<typename OutputLayerType, typename InitializationRuleType>
 void RNN<OutputLayerType, InitializationRuleType>::Predict(
     arma::mat predictors, arma::mat& results)
 {
+  ResetCells();
+
   if (parameter.is_empty())
   {
     ResetParameters();
@@ -172,15 +185,6 @@ template<typename OutputLayerType, typename InitializationRuleType>
 void RNN<OutputLayerType, InitializationRuleType>::SinglePredict(
     const arma::mat& predictors, arma::mat& results)
 {
-  if (prevRho != rho)
-  {
-    for (size_t i = 1; i < network.size(); ++i)
-      boost::apply_visitor(RhoSetVisitor(rho), network[i]);
-
-    inputSize = predictors.n_elem / rho;
-    prevRho = rho;
-  }
-
   for (size_t seqNum = 0; seqNum < rho; ++seqNum)
   {
     currentInput = predictors.rows(seqNum * inputSize,
@@ -213,14 +217,13 @@ double RNN<OutputLayerType, InitializationRuleType>::Evaluate(
   arma::mat target = arma::mat(responses.colptr(i), responses.n_rows,
       1, false, true);
 
-  if (prevRho != rho)
+  if (!inputSize)
   {
-    for (size_t i = 1; i < network.size(); ++i)
-      boost::apply_visitor(RhoSetVisitor(rho), network[i]);
     inputSize = input.n_elem / rho;
     targetSize = target.n_elem / rho;
-    prevRho = rho;
   }
+
+  ResetCells();
 
   double performance = 0;
 
