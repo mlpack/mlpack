@@ -361,7 +361,7 @@ class FFN
   //! Locally-stored copy visitor
   CopyVisitor copyVisitor;
 
-template<typename Model, typename IntializerType>
+template<typename Model, typename IntializerType, typename NoiseType>
 friend class GAN;
 }; // class FFN
 

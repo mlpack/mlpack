@@ -31,7 +31,8 @@ namespace mlpack {
 namespace ann /** artifical neural network **/ {
 template<
 typename Model = FFN<CrossEntropyError<>>,
-typename InitializationRuleType = GaussianInitialization>
+typename InitializationRuleType = GaussianInitialization,
+typename NoiseType = std::normal_distribution<>>
 class GAN
 {
  public:
@@ -52,6 +53,7 @@ class GAN
       Model& generator,
       Model& discriminator,
       InitializationRuleType initializeRule,
+      NoiseType noiseFunction,
       size_t noiseDim,
       size_t batchSize,
       size_t generatorUpdateStep);
@@ -126,6 +128,8 @@ class GAN
   Model& discriminator;
   //! Locally stored Intialiser.
   InitializationRuleType  initializeRule;
+  //! Locally stored Noise function
+  NoiseType noiseFunction;
   //! Locally stored number of data points.
   size_t numFunctions;
 
@@ -136,8 +140,8 @@ class GAN
   size_t offset;
   //! Locally stored number of iterations that have been completed.
   size_t counter;
-
-  size_t currentBatch;
+  //! Locally stored pointer to the currentBatch variable of the optimizer.
+  size_t* currentBatch;
 
   size_t generatorUpdateStep;
 

@@ -61,8 +61,9 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionTest)
   MiniBatchSGD optimizer(batchSize, 0.1, 10000, 1e-5, true);
   // Create Gan
   GaussianInitialization gaussian(0, 0.1);
-  GAN<> gan(trainData, generator, discriminator, gaussian,
-      batchSize, 1, 10);
+  std::normal_distribution<> noiseFunction(0.0, 1.0);
+  GAN<> gan(trainData, generator, discriminator, gaussian, noiseFunction,
+      1, batchSize, 10);
   gan.Train(optimizer);
   arma::mat result;
   arma::mat noise(1, 1);
@@ -112,9 +113,11 @@ BOOST_AUTO_TEST_CASE(GanTest)
   GaussianInitialization gaussian(0, 0.1);
   // Optimizer
   MiniBatchSGD optimizer(batchSize, 0.1, 10000, 1e-5, true);
+
+  std::normal_distribution<> noiseFunction(0.0, 1.0);
   // GAN model
-  GAN<> gan(trainData, generator, discriminator, gaussian,
-      batchSize, 1, 10);
+  GAN<> gan(trainData, generator, discriminator, gaussian, noiseFunction,
+      trainData.n_rows, batchSize, 10);
   gan.Train(optimizer);
 
   // Generate samples
