@@ -165,9 +165,6 @@ class MiniBatchSGDType
   //! are reset before Optimize call.
   bool& ResetPolicy() { return resetPolicy; }
 
-  //! Get the current batch being processed.
-  size_t& CurrentBatch() { return currentBatch; }
-
   //! Get the update policy.
   UpdatePolicyType UpdatePolicy() const { return updatePolicy; }
   //! Modify the update policy.
@@ -204,9 +201,6 @@ class MiniBatchSGDType
   //! Flag that determines whether update policy parameters
   //! are reset before every Optimize call.
   bool resetPolicy;
-
-  //! Current Batch being processed.
-  size_t currentBatch;
 };
 
 using MiniBatchSGD = MiniBatchSGDType<VanillaUpdate, NoDecay>;

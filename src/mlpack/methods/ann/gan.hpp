@@ -140,8 +140,6 @@ class GAN
   size_t offset;
   //! Locally stored number of iterations that have been completed.
   size_t counter;
-  //! Locally stored pointer to the currentBatch variable of the optimizer.
-  size_t* currentBatch;
 
   size_t generatorUpdateStep;
 

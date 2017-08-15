@@ -58,7 +58,6 @@ GAN<Model, InitializationRuleType, NoiseType>::GAN(
       new IdentityLayer<>());
 
   counter = 0;
-  currentBatch = nullptr;
 
   discriminator.deterministic = generator.deterministic = true;
 
@@ -115,7 +114,6 @@ void GAN<Model, InitializationRuleType, NoiseType>::Train(
 {
   if (!reset)
     Reset();
-  currentBatch = &Optimizer.CurrentBatch();
   Optimizer.Optimize(*this, parameter);
 }
 
@@ -200,7 +198,7 @@ Gradient(const arma::mat& /*parameters*/, const size_t i, arma::mat& gradient)
 
   gradientDiscriminator += noiseGradientDiscriminator;
 
-  if (*currentBatch % generatorUpdateStep == 0 && *currentBatch != 0)
+  if (currentBatch % generatorUpdateStep == 0 && currentBatch != 0)
   {
     // Minimize log(1 - D(G(noise)))
     // pass the error from discriminator to generator
@@ -224,6 +222,14 @@ Gradient(const arma::mat& /*parameters*/, const size_t i, arma::mat& gradient)
     }
   }
   counter++;
+  if (counter >= numFunctions)
+  {
+    counter = 0;
+    currentBatch++;
+    print = true;
+  }
+  else if (counter % batchSize == 0)
+    currentBatch++;
 }
 
 template<typename Model, typename InitializationRuleType, typename NoiseType>

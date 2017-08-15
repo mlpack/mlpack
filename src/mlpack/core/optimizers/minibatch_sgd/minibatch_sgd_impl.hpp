@@ -69,7 +69,7 @@ double MiniBatchSGDType<
     visitationOrder = arma::shuffle(visitationOrder);
 
   // To keep track of where we are and how things are going.
-  currentBatch = 0;
+  size_t currentBatch = 0;
   double overallObjective = 0;
   double lastObjective = DBL_MAX;
 
