@@ -40,7 +40,6 @@ using namespace mlpack::ann;
 using namespace mlpack::cv;
 using namespace mlpack::naive_bayes;
 using namespace mlpack::optimization;
-using namespace mlpack::naive_bayes;
 using namespace mlpack::regression;
 using namespace mlpack::tree;
 
