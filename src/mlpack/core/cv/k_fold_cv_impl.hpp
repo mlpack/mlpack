@@ -217,7 +217,7 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename... MLAlgorithmArgs, bool, typename>
+template<typename... MLAlgorithmArgs, bool Enabled, typename>
 double KFoldCV<MLAlgorithm,
                 Metric,
                 MatType,
@@ -244,7 +244,7 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename... MLAlgorithmArgs, bool, typename, typename>
+template<typename... MLAlgorithmArgs, bool Enabled, typename, typename>
 double KFoldCV<MLAlgorithm,
                 Metric,
                 MatType,
