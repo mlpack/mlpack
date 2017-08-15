@@ -36,6 +36,7 @@ RNN<OutputLayerType, InitializationRuleType>::RNN(
     OutputLayerType outputLayer,
     InitializationRuleType initializeRule) :
     rho(rho),
+    prevRho(0),
     outputLayer(std::move(outputLayer)),
     initializeRule(std::move(initializeRule)),
     inputSize(0),
@@ -56,6 +57,7 @@ RNN<OutputLayerType, InitializationRuleType>::RNN(
     OutputLayerType outputLayer,
     InitializationRuleType initializeRule) :
     rho(rho),
+    prevRho(0),
     outputLayer(std::move(outputLayer)),
     initializeRule(std::move(initializeRule)),
     inputSize(0),
