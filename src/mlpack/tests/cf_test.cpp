@@ -32,7 +32,7 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersTest)
 {
   // Dummy number of recommendations.
   size_t numRecs = 3;
-  // GroupLensSmall.csv dataset has 943 users.
+  // GroupLensSmall.csv dataset has 200 users.
   size_t numUsers = 200;
 
   // Matrix to save recommendations into.
