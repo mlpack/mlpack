@@ -274,7 +274,6 @@ BOOST_AUTO_TEST_CASE(SingleDatasetSearch)
 // Test single-tree rank-approximate search with cover trees.
 BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
 {
-  math::RandomSeed(std::time(NULL));
   arma::mat refData;
   arma::mat queryData;
 
@@ -336,7 +335,6 @@ BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
 // Test dual-tree rank-approximate search with cover trees.
 BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
 {
-  math::RandomSeed(std::time(NULL));
   arma::mat refData;
   arma::mat queryData;
 
