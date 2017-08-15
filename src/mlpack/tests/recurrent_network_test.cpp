@@ -670,9 +670,9 @@ void DistractedSequenceRecallTestNetwork()
   {
     RNN<MeanSquaredError<> > model(rho);
     model.Add<IdentityLayer<> >();
-    model.Add<Linear<> >(inputSize, 4);
-    model.Add<RecurrentLayerType>(4, 4);
-    model.Add<Linear<> >(4, outputSize);
+    model.Add<Linear<> >(inputSize, 14);
+    model.Add<RecurrentLayerType>(14, 7);
+    model.Add<Linear<> >(7, outputSize);
     model.Add<SigmoidLayer<> >();
 
     StandardSGD opt(0.1, 2, -50000);
