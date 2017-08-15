@@ -1,0 +1,72 @@
+#!/usr/bin/python
+"""
+A file to generate a setup.py.
+"""
+import os
+import sys
+import numpy as np
+
+# Process input argument --module={name} first if needed.
+module = None
+if "--module=" in sys.argv[-1]:
+  module = sys.argv[-1].split('=')[1]
+  del sys.argv[-1]
+
+from setuptools import setup
+from setuptools.extension import Extension
+from Cython.Distutils import build_ext
+
+pyxs='${MLPACK_PYXS}'.split(';')
+
+# Only build the extensions if we are asked to.
+if os.getenv('NO_BUILD') == '1':
+  modules = []
+else:
+  # This is used for parallel builds; CMake will set PYX_TO_BUILD accordingly.
+  if module is not None:
+    modules=[\
+        Extension('mlpack.' + name.split('.')[0],
+                  ['${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/' +
+                      name],
+                  language='c++',
+                  include_dirs=[ \
+                      np.get_include(), \
+                      '${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/'] +
+                      '${CYTHON_INCLUDE_DIRECTORIES}'.split(';'),
+                  libraries=['mlpack'],
+                  library_dirs=['${CMAKE_BINARY_DIR}/lib/'],
+                  # CMAKE_CXX_FLAGS seems to have an extra space.
+                  extra_compile_args=('-DBINDING_TYPE=BINDING_TYPE_PYX ' + \
+                      '-std=c++11${CMAKE_CXX_FLAGS}').split(' '),
+                  extra_link_args=['${OpenMP_CXX_FLAGS}'],
+                  undef_macros=[] if len("${DISABLE_CFLAGS}") == 0 \
+                      else ['${DISABLE_CFLAGS}']) \
+        for name in pyxs if name == module]
+  else:
+    modules=[\
+        Extension('mlpack.' + name.split('.')[0],
+                  ['${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/' +
+                      name],
+                  language='c++',
+                  include_dirs=[ \
+                      np.get_include(), \
+                      '${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/'] +
+                      '${CYTHON_INCLUDE_DIRECTORIES}'.split(';'),
+                  libraries=['mlpack'],
+                  library_dirs=['${CMAKE_BINARY_DIR}/lib/'],
+                  # CMAKE_CXX_FLAGS seems to have an extra space.
+                  extra_compile_args=('-DBINDING_TYPE=BINDING_TYPE_PYX ' + \
+                      '-std=c++11${CMAKE_CXX_FLAGS}').split(' '),
+                  extra_link_args=['${OpenMP_CXX_FLAGS}'],
+                  undef_macros=[] if len("${DISABLE_CFLAGS}") == 0 \
+                      else ['${DISABLE_CFLAGS}']) \
+        for name in pyxs]
+
+setup(name='mlpack',
+      version='${PACKAGE_VERSION}',
+      package_dir={ '': '${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/' },
+      packages=['mlpack'],
+      cmdclass={ 'build_ext': build_ext },
+      ext_modules = modules,
+      setup_requires=['cython', 'pytest-runner'],
+      tests_require=['pytest'])

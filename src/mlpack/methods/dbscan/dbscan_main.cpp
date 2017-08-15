@@ -9,11 +9,13 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include "dbscan.hpp"
-
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include <mlpack/core/tree/rectangle_tree.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
+
+#include "dbscan.hpp"
 
 using namespace mlpack;
 using namespace mlpack::range;
@@ -27,31 +29,38 @@ PROGRAM_INFO("DBSCAN clustering",
     "accelerated tree-based range search.  The type of tree that is used "
     "may be parameterized, or brute-force range search may also be used."
     "\n\n"
-    "The input dataset to be clustered may be specified with the --input_file "
-    "option, the radius of each range search may be specified with the "
-    "--epsilon option, and the minimum number of points in a cluster may be "
-    "specified with the --min_size option."
+    "The input dataset to be clustered may be specified with the " +
+    PRINT_PARAM_STRING("input") + " parameter; the radius of each range "
+    "search may be specified with the " + PRINT_PARAM_STRING("epsilon") +
+    " parameters, and the minimum number of points in a cluster may be "
+    "specified with the " + PRINT_PARAM_STRING("min_size") + " parameter."
     "\n\n"
-    "The output of the clustering may be saved as --assignments_file or "
-    "--centroids_file; --assignments_file will save the cluster assignments of "
-    "each point, and --centroids_file will save the centroids of each cluster."
+    "The " + PRINT_PARAM_STRING("assignments") + " and " +
+    PRINT_PARAM_STRING("centroids") + " output parameters may be "
+    "used to save the output of the clustering. " +
+    PRINT_PARAM_STRING("assignments") + " contains the cluster assignments of "
+    "each point, and " + PRINT_PARAM_STRING("centroids") + " contains the "
+    "centroids of each cluster."
     "\n\n"
-    "The range search may be controlled with the --tree_type, --single_mode, "
-    "and --naive parameters.  The --tree_type parameter can control the type of"
-    " tree used for range search; this can take a variety of values: 'kd', 'r',"
-    " 'r-star', 'x', 'hilbert-r', 'r-plus', 'r-plus-plus', 'cover', 'ball'. "
-    "The --single_mode option will force single-tree search (as opposed to the "
-    "default dual-tree search).  --single_mode can be useful when the RAM usage"
-    " of batch search is too high.  The --naive option will force brute-force "
-    "range search."
+    "The range search may be controlled with the " +
+    PRINT_PARAM_STRING("tree_type") + ", " +
+    PRINT_PARAM_STRING("single_mode") + ", and " +
+    PRINT_PARAM_STRING("naive") + " parameters.  " +
+    PRINT_PARAM_STRING("tree_type") + " can control the type of tree used for "
+    "range search; this can take a variety of values: 'kd', 'r', 'r-star', 'x',"
+    " 'hilbert-r', 'r-plus', 'r-plus-plus', 'cover', 'ball'. The " +
+    PRINT_PARAM_STRING("single_mode") + " parameter will force single-tree "
+    "search (as opposed to the default dual-tree search), and '" +
+    PRINT_PARAM_STRING("naive") + " will force brute-force range search."
     "\n\n"
-    "An example usage to run DBSCAN on the dataset in input.csv with a radius "
-    "of 0.5 and a minimum cluster size of 5 is given below:"
-    "\n\n"
-    "  $ mlpack_dbscan -i input.csv -e 0.5 -m 5");
+    "An example usage to run DBSCAN on the dataset in " +
+    PRINT_DATASET("input") + " with a radius of 0.5 and a minimum cluster size"
+    " of 5 is given below:"
+    "\n\n" +
+    PRINT_CALL("dbscan", "input", "input", "epsilon", 0.5, "min_size", 5));
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset to cluster.", "i");
-PARAM_UROW_OUT("assignments", "Output vector for assignments of each "
+PARAM_UMATRIX_OUT("assignments", "Output matrix for assignments of each "
     "point.", "a");
 PARAM_MATRIX_OUT("centroids", "Matrix to save output centroids to.", "C");
 
@@ -101,10 +110,8 @@ void RunDBSCAN(RangeSearchType rs = RangeSearchType())
     CLI::GetParam<arma::Row<size_t>>("assignments") = std::move(assignments);
 }
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   if (!CLI::HasParam("assignments") && !CLI::HasParam("centroids"))
     Log::Warn << "Neither --assignments_file nor --centroids_file are "
         << "specified; no output will be saved!" << endl;

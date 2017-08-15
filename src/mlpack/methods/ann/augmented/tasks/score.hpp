@@ -31,9 +31,10 @@ namespace scorers /* Scoring utilities for augmented */ {
 *            which is considered as a model failure.
 */
 template<typename MatType>
-const double SequencePrecision(arma::field<MatType> trueOutputs,
-                               arma::field<MatType> predOutputs,
-                               double tol = 1e-4);
+double SequencePrecision(arma::field<MatType> trueOutputs,
+                         arma::field<MatType> predOutputs,
+                         double tol = 1e-4);
+
 } // namespace scorers
 } // namespace augmented
 } // namespace ann

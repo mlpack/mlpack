@@ -11,6 +11,7 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 #include "gmm.hpp"
 
 using namespace std;
@@ -19,10 +20,19 @@ using namespace mlpack::gmm;
 
 PROGRAM_INFO("GMM Probability Calculator",
     "This program calculates the probability that given points came from a "
-    "given GMM (that is, P(X | gmm)).  The GMM is specified with the "
-    "--input_model_file option, and the points are specified with the "
-    "--input_file option.  The output probabilities are stored in the file "
-    "specified by the --output_file option.");
+    "given GMM (that is, P(X | gmm)).  The GMM is specified with the " +
+    PRINT_PARAM_STRING("input_model") + " parameter, and the points are "
+    "specified with the " + PRINT_PARAM_STRING("input") + " parameter.  The "
+    "output probabilities may be saved via the " +
+    PRINT_PARAM_STRING("output") + " output parameter."
+    "\n\n"
+    "So, for example, to calculate the probabilities of each point in " +
+    PRINT_DATASET("points") + " coming from the pre-trained GMM " +
+    PRINT_MODEL("gmm") + ", while storing those probabilities in " +
+    PRINT_DATASET("probs") + ", the following command could be used:"
+    "\n\n" +
+    PRINT_CALL("gmm_probability", "input_model", "gmm", "input", "points",
+        "output", "probs"));
 
 PARAM_MODEL_IN_REQ(GMM, "input_model", "Input GMM to use as model.", "m");
 PARAM_MATRIX_IN_REQ("input", "Input matrix to calculate probabilities of.",
@@ -30,10 +40,8 @@ PARAM_MATRIX_IN_REQ("input", "Input matrix to calculate probabilities of.",
 
 PARAM_MATRIX_OUT("output", "Matrix to store calculated probabilities in.", "o");
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   if (!CLI::HasParam("output"))
     Log::Warn << "--output_file (-o) is not specified; no results will be "
         << "saved!" << endl;

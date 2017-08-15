@@ -21,9 +21,9 @@ namespace augmented /* Augmented neural network */ {
 namespace scorers /* Scoring utilities for augmented */ {
 
 template<typename MatType>
-const double SequencePrecision(arma::field<MatType> trueOutputs,
-                               arma::field<MatType> predOutputs,
-                               double tol)
+double SequencePrecision(arma::field<MatType> trueOutputs,
+                         arma::field<MatType> predOutputs,
+                         double tol)
 {
   double score = 0;
   size_t testSize = trueOutputs.n_elem;

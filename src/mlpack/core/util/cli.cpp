@@ -16,6 +16,7 @@
 
 #include "cli.hpp"
 #include "log.hpp"
+#include "hyphenate_string.hpp"
 
 #include "cli_deleter.hpp" // To make sure we can delete the singleton.
 #include "version.hpp"
@@ -26,93 +27,33 @@
 using namespace mlpack;
 using namespace mlpack::util;
 
-/* For clarity, we will alias boost's namespace. */
-namespace po = boost::program_options;
-
 // Fake ProgramDoc in case none is supplied.
-static ProgramDoc emptyProgramDoc = ProgramDoc("", "");
+static ProgramDoc emptyProgramDoc = ProgramDoc("", []() { return ""; });
 
 /* Constructors, Destructors, Copy */
 /* Make the constructor private, to preclude unauthorized instances */
-CLI::CLI() : desc("Allowed Options") , didParse(false), doc(&emptyProgramDoc)
+CLI::CLI() : didParse(false), doc(&emptyProgramDoc)
 {
   return;
 }
 
 // Private copy constructor; don't want copies floating around.
-CLI::CLI(const CLI& other) : desc(other.desc),
-    didParse(false), doc(&emptyProgramDoc)
+CLI::CLI(const CLI& /* other */) : didParse(false), doc(&emptyProgramDoc)
 {
   return;
 }
 
-CLI::~CLI()
+void CLI::StopTimers()
 {
-  // We only need to print output parameters if we're not printing any help or
-  // anything like that.
-  if (!HasParam("help") && !HasParam("info"))
-  {
-    // Print any output.
-    std::list<std::string>::const_iterator it = outputOptions.begin();
-    while (it != outputOptions.end())
-    {
-      ParamData& d = parameters[*it];
-      d.outputFunction(d);
-
-      ++it;
-    }
-  }
-
   // Terminate the program timers.
-  std::map<std::string, std::chrono::microseconds>::iterator it2;
-  for (it2 = timer.GetAllTimers().begin(); it2 != timer.GetAllTimers().end();
-       ++it2)
+  std::map<std::string, std::chrono::microseconds>::iterator it;
+  for (it = CLI::GetSingleton().timer.GetAllTimers().begin();
+       it != CLI::GetSingleton().timer.GetAllTimers().end(); ++it)
   {
-    std::string i = (*it2).first;
-    if (timer.GetState(i) == 1)
+    std::string i = (*it).first;
+    if (CLI::GetSingleton().timer.GetState(i) == 1)
       Timer::Stop(i);
   }
-
-  // Did the user ask for verbose output?  If so we need to print everything.
-  // But only if the user did not ask for help or info.
-  if (HasParam("verbose") && !HasParam("help") && !HasParam("info"))
-  {
-    Log::Info << std::endl << "Execution parameters:" << std::endl;
-
-    std::map<std::string, ParamData>::iterator iter = parameters.begin();
-
-    // Print out all the values.
-    while (iter != parameters.end())
-    {
-      std::string key = iter->second.boostName;
-
-      Log::Info << "  " << key << ": ";
-
-      // Now, figure out what type it is, and print it.
-      // We can handle strings, ints, bools, floats, doubles.
-      util::ParamData& data = iter->second;
-      data.printFunction(data);
-      Log::Info << std::endl;
-
-      ++iter;
-    }
-
-    Log::Info << "Program timers:" << std::endl;
-    std::map<std::string, std::chrono::microseconds>::iterator it;
-    for (it = timer.GetAllTimers().begin(); it != timer.GetAllTimers().end();
-        ++it)
-    {
-      std::string i = (*it).first;
-      Log::Info << "  " << i << ": ";
-      timer.PrintTimer((*it).first);
-    }
-  }
-
-  // Notify the user if we are debugging, but only if we actually parsed the
-  // options.  This way this output doesn't show up inexplicably for someone who
-  // may not have wanted it there, such as in Boost unit tests.
-  if (didParse)
-    Log::Debug << "Compiled with debugging symbols." << std::endl;
 }
 
 /**
@@ -129,6 +70,46 @@ void CLI::Destroy()
   }
 }
 
+void CLI::Add(ParamData&& data)
+{
+  // Temporarily define color code escape sequences.
+  #ifndef _WIN32
+    #define BASH_RED "\033[0;31m"
+    #define BASH_CLEAR "\033[0m"
+  #else
+    #define BASH_RED ""
+    #define BASH_CLEAR ""
+  #endif
+
+  // Temporary outstream object for detecting duplicate identifiers.
+  util::PrefixedOutStream outstr(std::cerr,
+        BASH_RED "[FATAL] " BASH_CLEAR, false, true /* fatal */);
+
+  #undef BASH_RED
+  #undef BASH_CLEAR
+
+  // Define identifier and alias maps.
+  std::map<std::string, util::ParamData>& parameters =
+      GetSingleton().parameters;
+  std::map<char, std::string>& aliases = GetSingleton().aliases;
+
+  // If found in current map, print fatal error and terminate the program, but
+  // only if the parameter is not consistent.
+  if (parameters.count(data.name) && !data.persistent)
+    outstr << "Parameter --" << data.name << " (-" << data.alias << ") "
+           << "is defined multiple times with the same identifiers."
+           << std::endl;
+  if (data.alias != '\0' && aliases.count(data.alias) && !data.persistent)
+    outstr << "Parameter --" << data.name << " (-" << data.alias << ") "
+           << "is defined multiple times with the same alias." << std::endl;
+
+  // Add the alias, if necessary.
+  if (data.alias != '\0')
+    GetSingleton().aliases[data.alias] = data.name;
+
+  GetSingleton().parameters[data.name] = std::move(data);
+}
+
 /**
  * See if the specified flag was found while parsing.
  *
@@ -137,7 +118,6 @@ void CLI::Destroy()
 bool CLI::HasParam(const std::string& key)
 {
   std::string usedKey = key;
-  const po::variables_map& vmap = GetSingleton().vmap;
   const std::map<std::string, util::ParamData>& parameters =
       GetSingleton().parameters;
 
@@ -154,55 +134,7 @@ bool CLI::HasParam(const std::string& key)
   }
   const std::string& checkKey = usedKey;
 
-  return (vmap.count(parameters.at(checkKey).boostName) > 0);
-}
-
-/**
- * Hyphenate a string or split it onto multiple 80-character lines, with some
- * amount of padding on each line.  This is used for option output.
- *
- * @param str String to hyphenate (splits are on ' ').
- * @param padding Amount of padding on the left for each new line.
- */
-std::string CLI::HyphenateString(const std::string& str, int padding)
-{
-  size_t margin = 80 - padding;
-  if (str.length() < margin)
-    return str;
-  std::string out("");
-  unsigned int pos = 0;
-  // First try to look as far as possible.
-  while (pos < str.length())
-  {
-    size_t splitpos;
-    // Check that we don't have a newline first.
-    splitpos = str.find('\n', pos);
-    if (splitpos == std::string::npos || splitpos > (pos + margin))
-    {
-      // We did not find a newline.
-      if (str.length() - pos < margin)
-      {
-        splitpos = str.length(); // The rest fits on one line.
-      }
-      else
-      {
-        splitpos = str.rfind(' ', margin + pos); // Find nearest space.
-        if (splitpos <= pos || splitpos == std::string::npos) // Not found.
-          splitpos = pos + margin;
-      }
-    }
-    out += str.substr(pos, (splitpos - pos));
-    if (splitpos < str.length())
-    {
-      out += '\n';
-      out += std::string(padding, ' ');
-    }
-
-    pos = splitpos;
-    if (str[pos] == ' ' || str[pos] == '\n')
-      pos++;
-  }
-  return out;
+  return (parameters.at(checkKey).wasPassed > 0);
 }
 
 // Returns the sole instance of this class.
@@ -212,284 +144,6 @@ CLI& CLI::GetSingleton()
     singleton = new CLI();
 
   return *singleton;
-}
-
-/**
- * Parses the commandline for arguments.
- *
- * @param argc The number of arguments on the commandline.
- * @param argv The array of arguments as strings
- */
-void CLI::ParseCommandLine(int argc, char** line)
-{
-  Timer::Start("total_time");
-
-  GetSingleton().programName = std::string(line[0]);
-  po::variables_map& vmap = GetSingleton().vmap;
-  po::options_description& desc = GetSingleton().desc;
-
-  // Parse the command line, place the options & values into vmap.
-  try
-  {
-    // Get the basic_parsed_options.
-    po::basic_parsed_options<char> bpo(
-        po::parse_command_line(argc, line, desc));
-
-    // Iterate over all the program_options, looking for duplicate parameters.
-    // If we find any, remove the duplicates.  Note that vector options can have
-    // duplicates so we check for those with max_tokens().
-    for (unsigned int i = 0; i < bpo.options.size(); i++)
-    {
-      for (unsigned int j = i + 1; j < bpo.options.size(); j++)
-      {
-        if ((bpo.options[i].string_key == bpo.options[j].string_key) &&
-            (desc.find(bpo.options[i].string_key, false).
-                semantic()->max_tokens() <= 1))
-        {
-          // If a duplicate is found, check to see if either one has a value.
-          if (bpo.options[i].value.size() == 0 &&
-              bpo.options[j].value.size() == 0)
-          {
-            // If neither has a value, consider it a duplicate flag and remove
-            // the duplicate. It's important to not break out of this loop
-            // because there might be another duplicate later on in the vector.
-            bpo.options.erase(bpo.options.begin() + j);
-            --j;
-          }
-          else
-          {
-            // If one or both has a value, produce an error and politely
-            // terminate. We pull the name from the original_tokens, rather than
-            // from the string_key, because the string_key is the parameter
-            // after aliases have been expanded.
-            Log::Fatal << "\"" << bpo.options[j].original_tokens[0] << "\""
-                << " is defined multiple times." << std::endl;
-          }
-        }
-      }
-    }
-
-    // Record the basic_parsed_options
-    po::store(bpo, vmap);
-  }
-  catch (std::exception& ex)
-  {
-    Log::Fatal << "Caught exception from parsing command line:\t";
-    Log::Fatal << ex.what() << std::endl;
-  }
-
-  // Flush the buffer, make sure changes are propagated to vmap.
-  po::notify(vmap);
-
-  // If the user specified any of the default options (--help, --version, or
-  // --info), handle those.
-
-  // --version is prioritized over --help.
-  if (HasParam("version"))
-  {
-    std::cout << GetSingleton().programName << ": part of "
-        << util::GetVersion() << std::endl;
-    exit(0);
-  }
-
-  // Default help message.
-  if (HasParam("help"))
-  {
-    Log::Info.ignoreInput = false;
-    PrintHelp();
-    exit(0); // The user doesn't want to run the program, he wants help.
-  }
-
-  if (HasParam("info"))
-  {
-    Log::Info.ignoreInput = false;
-    std::string str = GetParam<std::string>("info");
-
-    // The info node should always be there, but the user may not have specified
-    // anything.
-    if (str != "")
-    {
-      PrintHelp(str);
-      exit(0);
-    }
-
-    // Otherwise just print the generalized help.
-    PrintHelp();
-    exit(0);
-  }
-
-  if (HasParam("verbose"))
-  {
-    // Give [INFO ] output.
-    Log::Info.ignoreInput = false;
-  }
-
-  // Notify the user if we are debugging.  This is not done in the constructor
-  // because the output streams may not be set up yet.  We also don't want this
-  // message twice if the user just asked for help or information.
-  Log::Debug << "Compiled with debugging symbols." << std::endl;
-
-  // Now, warn the user if they missed any required options.
-  std::list<std::string>& rOpt = GetSingleton().requiredOptions;
-  std::list<std::string>::iterator iter;
-  std::map<std::string, util::ParamData>& parameters =
-      GetSingleton().parameters;
-  for (iter = rOpt.begin(); iter != rOpt.end(); ++iter)
-  {
-    const std::string& boostName = parameters[*iter].boostName;
-    if (!vmap.count(parameters[*iter].boostName))
-      Log::Fatal << "Required option --" << boostName << " is undefined."
-          << std::endl;
-  }
-
-  // Iterate through vmap, and overwrite default values with anything found on
-  // command line.
-  po::variables_map::iterator i;
-  for (i = vmap.begin(); i != vmap.end(); ++i)
-  {
-    // There is not a possibility of an unknown option, since
-    // boost::program_options will throw an exception.  Because some names may
-    // be mapped, we have to look through each ParamData object and get its
-    // boost name.
-    std::string identifier;
-    std::map<std::string, util::ParamData>::const_iterator it =
-        parameters.begin();
-    while (it != parameters.end())
-    {
-      if (it->second.boostName == i->first)
-      {
-        identifier = it->first;
-        break;
-      }
-
-      ++it;
-    }
-
-    util::ParamData& param = parameters[identifier];
-    if (param.isFlag)
-      param.value = boost::any(true);
-    else
-      param.value = vmap[i->first].value();
-  }
-}
-
-/* Prints the descriptions of the current hierarchy. */
-void CLI::PrintHelp(const std::string& param)
-{
-  std::string usedParam = param;
-  std::map<std::string, util::ParamData>& parameters =
-      GetSingleton().parameters;
-  std::map<char, std::string>& aliases = GetSingleton().aliases;
-
-  std::map<std::string, util::ParamData>::iterator iter;
-  ProgramDoc docs = *GetSingleton().doc;
-
-  // If we pass a single param, alias it if necessary.
-  if (usedParam.length() == 1 && aliases.count(usedParam[0]))
-    usedParam = aliases[usedParam[0]];
-
-  // Do we only want to print out one value?
-  if (usedParam != "" && parameters.count(usedParam))
-  {
-    util::ParamData& data = parameters[usedParam];
-    std::string alias = (data.alias != '\0') ? " (-"
-        + std::string(1, data.alias) + ")" : "";
-
-    // Figure out the name of the type.
-    std::string type = " [" + data.stringTypeFunction() + "]";
-
-    // Now, print the descriptions.
-    std::string fullDesc = "  --" + usedParam + alias + type + "  ";
-
-    if (fullDesc.length() <= 32) // It all fits on one line.
-      std::cout << fullDesc << std::string(32 - fullDesc.length(), ' ');
-    else // We need multiple lines.
-      std::cout << fullDesc << std::endl << std::string(32, ' ');
-
-    std::cout << HyphenateString(data.desc, 32) << std::endl;
-    return;
-  }
-  else if (usedParam != "")
-  {
-    // User passed a single variable, but it doesn't exist.
-    std::cerr << "Parameter --" << usedParam << " does not exist."
-        << std::endl;
-    exit(1); // Nothing left to do.
-  }
-
-  // Print out the descriptions.
-  if (docs.programName != "")
-  {
-    std::cout << docs.programName << std::endl << std::endl;
-    std::cout << "  " << HyphenateString(docs.documentation, 2) << std::endl
-        << std::endl;
-  }
-  else
-    std::cout << "[undocumented program]" << std::endl << std::endl;
-
-  for (size_t pass = 0; pass < 3; ++pass)
-  {
-    bool printedHeader = false;
-
-    // Print out the descriptions of everything else.
-    for (iter = parameters.begin(); iter != parameters.end(); ++iter)
-    {
-      util::ParamData& data = iter->second;
-      std::string key = data.boostName;
-      std::string desc = data.desc;
-      std::string alias = (iter->second.alias != '\0') ?
-          std::string(1, iter->second.alias) : "";
-      alias = alias.length() ? " (-" + alias + ")" : alias;
-
-      // Filter un-printed options.
-      if ((pass == 0) && !(data.required && data.input)) // Required input.
-        continue;
-      if ((pass == 1) && !(!data.required && data.input)) // Optional input.
-        continue;
-      if ((pass == 2) && data.input) // Output options only (always optional).
-        continue;
-
-      // For reverse compatibility: this can be removed when these options are
-      // gone in mlpack 3.0.0.  We don't want to print the deprecated options.
-      if (data.name == "inputFile")
-        continue;
-
-      if (!printedHeader)
-      {
-        printedHeader = true;
-        if (pass == 0)
-          std::cout << "Required input options:" << std::endl << std::endl;
-        else if (pass == 1)
-          std::cout << "Optional input options: " << std::endl << std::endl;
-        else if (pass == 2)
-          std::cout << "Optional output options: " << std::endl << std::endl;
-      }
-
-      if (pass >= 1) // Append default value to description.
-        desc += "  Default value " + data.defaultFunction(data) + ".";
-
-      // Now, print the descriptions.
-      std::string type = " [" + data.stringTypeFunction() + "]";
-      std::string fullDesc = "  --" + key + alias + type + "  ";
-
-      if (fullDesc.length() <= 32) // It all fits on one line.
-        std::cout << fullDesc << std::string(32 - fullDesc.length(), ' ');
-      else // We need multiple lines.
-        std::cout << fullDesc << std::endl << std::string(32, ' ');
-
-      std::cout << HyphenateString(desc, 32) << std::endl;
-    }
-
-    if (printedHeader)
-      std::cout << std::endl;
-  }
-
-  // Helpful information at the bottom of the help output, to point the user to
-  // citations and better documentation (if necessary).  See ticket #201.
-  std::cout << HyphenateString("For further information, including relevant "
-      "papers, citations, and theory, consult the documentation found at "
-      "http://www.mlpack.org or included with your distribution of mlpack.", 0)
-      << std::endl;
 }
 
 /**
@@ -506,9 +160,116 @@ void CLI::RegisterProgramDoc(ProgramDoc* doc)
     GetSingleton().doc = doc;
 }
 
-// Add default parameters that are included in every program.
-PARAM_FLAG("help", "Default help info.", "h");
-PARAM_STRING_IN("info", "Get help on a specific module or option.", "", "");
-PARAM_FLAG("verbose", "Display informational messages and the full list of "
-    "parameters and timers at the end of execution.", "v");
-PARAM_FLAG("version", "Display the version of mlpack.", "V");
+// Get the parameters that the CLI object knows about.
+std::map<std::string, ParamData>& CLI::Parameters()
+{
+  return GetSingleton().parameters;
+}
+
+// Get the parameters that the CLI object knows about.
+std::map<char, std::string>& CLI::Aliases()
+{
+  return GetSingleton().aliases;
+}
+
+// Get the program name as set by PROGRAM_INFO().
+std::string CLI::ProgramName()
+{
+  return GetSingleton().doc->programName;
+}
+
+// Set a particular parameter as passed.
+void CLI::SetPassed(const std::string& name)
+{
+  if (GetSingleton().parameters.count(name) == 0)
+    throw std::invalid_argument("CLI::SetPassed(): parameter " + name +
+        " not known!");
+
+  // Set passed to true.
+  GetSingleton().parameters[name].wasPassed = true;
+}
+
+// Store settings.
+void CLI::StoreSettings(const std::string& name)
+{
+  // Take all of the parameters and put them in the map.  Clear anything old
+  // first.
+  std::get<0>(GetSingleton().storageMap[name]) = GetSingleton().parameters;
+  std::get<1>(GetSingleton().storageMap[name]) = GetSingleton().aliases;
+  std::get<2>(GetSingleton().storageMap[name]) = GetSingleton().functionMap;
+
+  ClearSettings();
+}
+
+// Restore settings.
+void CLI::RestoreSettings(const std::string& name, const bool fatal)
+{
+  if (GetSingleton().storageMap.count(name) == 0 && fatal)
+    throw std::invalid_argument("no settings stored under the name '" + name
+        + "'");
+  else if (GetSingleton().storageMap.count(name) == 0 && !fatal)
+  {
+    // Nothing to do, just clear what's there.
+    ClearSettings();
+  }
+  else
+  {
+    GetSingleton().parameters = std::get<0>(GetSingleton().storageMap[name]);
+    GetSingleton().aliases = std::get<1>(GetSingleton().storageMap[name]);
+    GetSingleton().functionMap = std::get<2>(GetSingleton().storageMap[name]);
+  }
+}
+
+// Clear settings.
+void CLI::ClearSettings()
+{
+  // Check for any parameters we need to keep.
+  std::map<std::string, util::ParamData> persistent;
+  std::map<char, std::string> persistentAliases;
+  FunctionMapType persistentFunctions;
+
+  // For the function mappings we have to preserve, we have to collect the
+  // types.
+  std::vector<std::string> persistentTypes;
+
+  std::map<std::string, util::ParamData>::const_iterator it =
+      GetSingleton().parameters.begin();
+  while (it != GetSingleton().parameters.end())
+  {
+    // Is the parameter persistent?
+    if (it->second.persistent)
+    {
+      persistent[it->first] = it->second; // Save the parameter.
+      // Add to the list of types, if it hasn't already been added.
+      if (std::find(persistentTypes.begin(), persistentTypes.end(),
+          it->second.tname) == persistentTypes.end())
+        persistentTypes.push_back(it->second.tname);
+    }
+
+    ++it;
+  }
+
+  // Now check if there are any persistent aliases.
+  std::map<char, std::string>::const_iterator it2 =
+      GetSingleton().aliases.begin();
+  while (it2 != GetSingleton().aliases.end())
+  {
+    // Is this an alias to a persistent parameter?
+    if (GetSingleton().parameters.count(it2->second) > 0)
+      persistentAliases[it2->first] = it2->second; // Save it.
+
+    ++it2;
+  }
+
+  for (size_t i = 0; i < persistentTypes.size(); ++i)
+  {
+    // Add to persistent function map.
+    persistentFunctions[persistentTypes[i]] =
+        GetSingleton().functionMap[persistentTypes[i]];
+  }
+
+  // Save only the persistent parameters.
+  GetSingleton().parameters = persistent;
+  GetSingleton().aliases = persistentAliases;
+  GetSingleton().functionMap = persistentFunctions;
+}

@@ -969,4 +969,40 @@ BOOST_AUTO_TEST_CASE(SimpleCrossEntropyErrorLayerTest)
   BOOST_REQUIRE_EQUAL(output.n_cols, input2.n_cols);
 }
 
+/*
+ * Simple test for the mean squared error performance function.
+ */
+BOOST_AUTO_TEST_CASE(SimpleMeanSquaredErrorLayerTest)
+{
+  arma::mat input, output, target;
+  MeanSquaredError<> module;
+
+  // Test the Forward function on a user generator input and compare it against
+  // the manually calculated result.
+  input = arma::mat("1.0 0.0 1.0 0.0 -1.0 0.0 -1.0 0.0");
+  target = arma::zeros(1, 8);
+  double error = module.Forward(std::move(input), std::move(target));
+  BOOST_REQUIRE_EQUAL(error, 0.5);
+
+  // Test the Backward function.
+  module.Backward(std::move(input), std::move(target), std::move(output));
+  // We subtract a zero vector, so the output should be equal with the input.
+  CheckMatrices(input, output);
+  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+
+  // Test the error function on a single input.
+  input = arma::mat("2");
+  target = arma::mat("3");
+  error = module.Forward(std::move(input), std::move(target));
+  BOOST_REQUIRE_EQUAL(error, 1.0);
+
+  // Test the Backward function on a single input.
+  module.Backward(std::move(input), std::move(target), std::move(output));
+  // Test whether the output is negative.
+  BOOST_REQUIRE_EQUAL(arma::accu(output), -1);
+  BOOST_REQUIRE_EQUAL(output.n_elem, 1);
+}
+
+
 BOOST_AUTO_TEST_SUITE_END();

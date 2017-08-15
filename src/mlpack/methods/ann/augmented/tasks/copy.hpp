@@ -49,28 +49,28 @@ class CopyTask
 {
  public:
   /**
-  * Creates an instance of the sequence copy task.
-  *
-  * @param maxLength Maximum length of sequence
-  *                  that has to be repeated by model.
-  * @param nRepeats Number of repeates required to solve the task.
-  * @param addSeparator Flag indicating whether generator
-  *                     should emit separating symbol after input sequence.
-  */
+   * Creates an instance of the sequence copy task.
+   *
+   * @param maxLength Maximum length of sequence
+   *                  that has to be repeated by model.
+   * @param nRepeats Number of repeates required to solve the task.
+   * @param addSeparator Flag indicating whether generator
+   *                     should emit separating symbol after input sequence.
+   */
   CopyTask(const size_t maxLength,
            const size_t nRepeats,
            const bool addSeparator = false);
   /**
-  * Generate dataset of a given size.
-  *
-  * @param input The variable to store input sequences.
-  * @param labels The variable to store output sequences.
-  * @param batchSize The dataset size.
-  */
-  const void Generate(arma::field<arma::mat>& input,
-                      arma::field<arma::mat>& labels,
-                      const size_t batchSize,
-                      bool fixedLength = false);
+   * Generate dataset of a given size.
+   *
+   * @param input The variable to store input sequences.
+   * @param labels The variable to store output sequences.
+   * @param batchSize The dataset size.
+   */
+  void Generate(arma::field<arma::mat>& input,
+                arma::field<arma::mat>& labels,
+                const size_t batchSize,
+                bool fixedLength = false) const;
 
   /**
    * Generate dataset of a given size and store it in
@@ -80,9 +80,10 @@ class CopyTask
    * @param labels The variable to store output sequences.
    * @param batchSize The dataset size.
    */
-  const void Generate(arma::mat& input,
-                      arma::mat& labels,
-                      const size_t batchSize);
+  void Generate(arma::mat& input,
+                arma::mat& labels,
+                const size_t batchSize) const;
+
  private:
   // Maximum length of a sequence.
   size_t maxLength;
@@ -92,6 +93,7 @@ class CopyTask
   // separator as part of the sequence
   bool addSeparator;
 };
+
 } // namespace tasks
 } // namespace augmented
 } // namespace ann

@@ -22,5 +22,8 @@ endforeach()
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(gmm_train)
+add_python_binding(gmm_train)
 add_cli_executable(gmm_generate)
+add_python_binding(gmm_generate)
 add_cli_executable(gmm_probability)
+add_python_binding(gmm_probability)

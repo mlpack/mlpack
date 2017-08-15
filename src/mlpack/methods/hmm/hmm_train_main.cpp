@@ -11,6 +11,7 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 
 #include "hmm.hpp"
 #include "hmm_model.hpp"
@@ -322,11 +323,8 @@ struct Train
   }
 };
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  // Parse command line options.
-  CLI::ParseCommandLine(argc, argv);
-
   // Set random seed.
   if (CLI::GetParam<int>("seed") != 0)
     RandomSeed((size_t) CLI::GetParam<int>("seed"));
@@ -357,7 +355,7 @@ int main(int argc, char** argv)
 
   if (CLI::HasParam("input_model") && CLI::HasParam("tolerance"))
     Log::Info << "Tolerance of existing model in '"
-        << CLI::GetUnmappedParam<std::string>("input_model") << "' will be "
+        << CLI::GetPrintableParam<std::string>("input_model") << "' will be "
         << "replaced with specified tolerance of " << tolerance << "." << endl;
 
   if (CLI::HasParam("input_model") && CLI::HasParam("type"))
@@ -440,6 +438,4 @@ int main(int argc, char** argv)
   // If necessary, save the output.
   if (CLI::HasParam("output_model"))
     CLI::GetParam<HMMModel>("output_model") = std::move(hmm);
-
-  CLI::Destroy();
 }

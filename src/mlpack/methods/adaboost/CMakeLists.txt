@@ -18,4 +18,5 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_cli_executable (adaboost)
+add_cli_executable(adaboost)
+add_python_binding(adaboost)

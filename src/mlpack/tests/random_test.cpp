@@ -24,7 +24,8 @@ BOOST_AUTO_TEST_SUITE(RandomTest);
 // Test for RandInt() sampler from discrete uniform distribution.
 BOOST_AUTO_TEST_CASE(DiscreteUniformRandomTest)
 {
-  std::vector<std::pair<int, int>> ranges = {
+  std::vector<std::pair<int, int>> ranges =
+  {
     std::make_pair(0, 1),
     std::make_pair(0, 2),
     std::make_pair(-6, -2),
@@ -43,7 +44,7 @@ BOOST_AUTO_TEST_CASE(DiscreteUniformRandomTest)
     for (size_t i = 0; i < count.size(); ++i)
     {
       BOOST_REQUIRE_SMALL(
-        1.0 / (hiExclusive - lo) - count[i] * 1.0 / iterations, 1e-2);
+        1.0 / (hiExclusive - lo) - count[i] * 1.0 / iterations, 0.15);
     }
   }
 
@@ -61,7 +62,7 @@ BOOST_AUTO_TEST_CASE(DiscreteUniformRandomTest)
     for (size_t i = 0; i < count.size(); ++i)
     {
       BOOST_REQUIRE_SMALL(
-        1.0 / (hiExclusive - lo) - count[i] * 1.0 / iterations, 1e-2);
+          1.0 / (hiExclusive - lo) - count[i] * 1.0 / iterations, 0.15);
     }
   }
 }
@@ -91,7 +92,7 @@ BOOST_AUTO_TEST_CASE(WeightedRandomTest)
 
     for (size_t i = 0; i < weightSet.size(); ++i)
     {
-      BOOST_REQUIRE_SMALL(weightSet[i] - count[i] * 1.0 / iterations, 1e-2);
+      BOOST_REQUIRE_SMALL(weightSet[i] - count[i] * 1.0 / iterations, 0.15);
     }
   }
 }
