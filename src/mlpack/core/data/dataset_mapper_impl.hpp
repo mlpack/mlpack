@@ -79,6 +79,36 @@ inline T DatasetMapper<PolicyType>::MapString(const std::string& string,
   return policy.template MapString<MapType, T>(string, dimension, maps, types);
 }
 
+/**
+ * A safe version of isnan() that only gets called when the type has a NaN at
+ * all.  This is a workaround for Visual Studio, which doesn't seem to support
+ * isnan(size_t).
+ */
+template<typename T>
+inline bool isnanSafe(const T& t)
+{
+  return false;
+}
+
+template<>
+inline bool isnanSafe(const double& t)
+{
+  return std::isnan(t);
+}
+
+template<>
+inline bool isnanSafe(const float& t)
+{
+  return std::isnan(t);
+}
+
+template<>
+inline bool isnanSafe(const long double& t)
+{
+  return std::isnan(t);
+}
+
+
 // Return the string corresponding to a value in a given dimension.
 template<typename PolicyType>
 template<typename T>
@@ -89,7 +119,7 @@ inline const std::string& DatasetMapper<PolicyType>::UnmapString(
 {
   // If the value is std::numeric_limits<T>::quiet_NaN(), we can't use it as a
   // key---so we will use something else...
-  const T usedValue = std::isnan(value) ?
+  const T usedValue = isnanSafe(value) ?
       std::nexttoward(std::numeric_limits<T>::max(), T(0)) :
       value;
 
@@ -122,7 +152,7 @@ inline size_t DatasetMapper<PolicyType>::NumUnmappings(
 {
   // If the value is std::numeric_limits<T>::quiet_NaN(), we can't use it as a
   // key---so we will use something else...
-  if (std::isnan(value))
+  if (isnanSafe(value))
   {
     const T newValue = std::nexttoward(std::numeric_limits<T>::max(), T(0));
     return maps.at(dimension).second.at(newValue).size();
