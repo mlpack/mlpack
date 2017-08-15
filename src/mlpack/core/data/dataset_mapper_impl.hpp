@@ -89,7 +89,7 @@ inline const std::string& DatasetMapper<PolicyType>::UnmapString(
 {
   // If the value is std::numeric_limits<T>::quiet_NaN(), we can't use it as a
   // key---so we will use something else...
-  const T usedValue = (value != value) ?
+  const T usedValue = std::isnan(value) ?
       std::nexttoward(std::numeric_limits<T>::max(), T(0)) :
       value;
 
@@ -122,7 +122,7 @@ inline size_t DatasetMapper<PolicyType>::NumUnmappings(
 {
   // If the value is std::numeric_limits<T>::quiet_NaN(), we can't use it as a
   // key---so we will use something else...
-  if (value != value)
+  if (std::isnan(value))
   {
     const T newValue = std::nexttoward(std::numeric_limits<T>::max(), T(0));
     return maps.at(dimension).second.at(newValue).size();
