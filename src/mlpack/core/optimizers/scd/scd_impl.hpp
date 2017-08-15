@@ -53,7 +53,7 @@ double SCD<DescentPolicyType>::Optimize(ResolvableFunctionType& function,
     function.FeatureGradient(iterate, featureIdx, gradient);
 
     // Update the decision variable with the partial gradient.
-    iterate.col(featureIdx) -= stepSize * gradient;
+    iterate -= stepSize * gradient;
 
     // Check for convergence.
     if (i % updateInterval == 0)

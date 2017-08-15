@@ -67,7 +67,7 @@ class SparseTestFunction
                 const size_t i,
                 arma::sp_mat& gradient) const
   {
-    gradient = arma::sp_mat(1, coordinates.n_cols);
+    gradient.zeros(coordinates.size());
     gradient[i] = 2 * coordinates[i] + bi[i];
   }
 
@@ -76,8 +76,8 @@ class SparseTestFunction
                        const size_t j,
                        arma::sp_mat& gradient) const
   {
-    gradient.set_size(1);
-    gradient[0] = 2 * coordinates[j] + bi[j];
+    gradient.zeros(coordinates.size());
+    gradient[j] = 2 * coordinates[j] + bi[j];
   }
 
  private:
