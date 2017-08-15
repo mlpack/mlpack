@@ -20,7 +20,7 @@
 #include <mlpack/core/cv/simple_cv.hpp>
 #include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
-#include <mlpack/methods/ann/init_rules/zero_init.hpp>
+#include <mlpack/methods/ann/init_rules/const_init.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/decision_tree/decision_tree.hpp>
 #include <mlpack/methods/decision_tree/information_gain.hpp>
@@ -150,7 +150,8 @@ BOOST_AUTO_TEST_CASE(MSEMatResponsesTest)
   arma::mat data("1 2");
   arma::mat trainingResponses("1 2; 3 4");
 
-  FFN<MeanSquaredError<>, ZeroInitialization> ffn;
+  FFN<MeanSquaredError<>, ConstInitialization> ffn(MeanSquaredError<>(),
+    ConstInitialization(0));
   ffn.Add<Linear<>>(1, 2);
   ffn.Add<IdentityLayer<>>();
 

@@ -21,7 +21,7 @@
 #include <mlpack/methods/ann/init_rules/oivs_init.hpp>
 #include <mlpack/methods/ann/init_rules/orthogonal_init.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
-#include <mlpack/methods/ann/init_rules/zero_init.hpp>
+#include <mlpack/methods/ann/init_rules/const_init.hpp>
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 
 #include <boost/test/unit_test.hpp>
@@ -91,14 +91,14 @@ BOOST_AUTO_TEST_CASE(OrthogonalInitGainTest)
 }
 
 /**
- * Test the ZeroInitialization class. If you think about it, it's kind of
- * ridiculous to test the zero init rule. But at least we make sure it
+ * Test the ConstInitialization class. If you think about it, it's kind of
+ * ridiculous to test the const init rule. But at least we make sure it
  * builds without any problems.
  */
-BOOST_AUTO_TEST_CASE(ZeroInitTest)
+BOOST_AUTO_TEST_CASE(ConstInitTest)
 {
   arma::mat weights;
-  ZeroInitialization zeroInit;
+  ConstInitialization zeroInit(0);
   zeroInit.Initialize(weights, 100, 100);
 
   bool b = arma::all(arma::vectorise(weights) == 0);
@@ -236,7 +236,8 @@ BOOST_AUTO_TEST_CASE(NetworkInitTest)
 
   // Create a simple network and use the ZeroInitialization rule to
   // initialize the network parameters.
-  FFN<NegativeLogLikelihood<>, ZeroInitialization> zeroModel;
+  FFN<NegativeLogLikelihood<>, ConstInitialization>
+    zeroModel(NegativeLogLikelihood<>(), ConstInitialization(0));
   zeroModel.Add<IdentityLayer<> >();
   zeroModel.Add<Linear<> >(5, 5);
   zeroModel.Add<Linear<> >(5, 2);
