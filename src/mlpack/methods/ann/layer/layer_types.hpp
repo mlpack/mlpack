@@ -44,6 +44,7 @@ namespace mlpack {
 namespace ann {
 
 template<typename InputDataType, typename OutputDataType> class AddMerge;
+class Alias;
 template<typename InputDataType, typename OutputDataType> class Concat;
 template<typename InputDataType, typename OutputDataType> class DropConnect;
 template<typename InputDataType, typename OutputDataType> class Glimpse;
@@ -79,6 +80,7 @@ class RecurrentAttention;
 using LayerTypes = boost::variant<
     Add<arma::mat, arma::mat>*,
     AddMerge<arma::mat, arma::mat>*,
+    Alias*,
     BaseLayer<LogisticFunction, arma::mat, arma::mat>*,
     BaseLayer<IdentityFunction, arma::mat, arma::mat>*,
     BaseLayer<TanhFunction, arma::mat, arma::mat>*,
@@ -119,5 +121,7 @@ using LayerTypes = boost::variant<
 
 } // namespace ann
 } // namespace mlpack
+
+#include "alias_layer.hpp"
 
 #endif

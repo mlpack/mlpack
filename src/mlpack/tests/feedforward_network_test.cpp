@@ -499,4 +499,35 @@ BOOST_AUTO_TEST_CASE(FFNMiscTest)
   movedModel = std::move(copiedModel);
 }
 
+/**
+ * Test that we can successfully have an alias layer.
+ */
+BOOST_AUTO_TEST_CASE(AliasLayerTest)
+{
+  arma::mat dataset(10, 100, arma::fill::randu);
+  arma::mat responses(1, 100, arma::fill::randu);
+
+  FFN<MeanSquaredError<>> network;
+  Linear<> layer(10, 10);
+  network.Add<Alias>(layer);
+  network.Add<Linear<>>(10, 1);
+
+  const arma::mat oldMatrix = layer.Parameters();
+  std::cout << oldMatrix.t();
+
+  const size_t maxEpochs = 1;
+  RMSProp opt(0.01, 0.88, 1e-8, maxEpochs * dataset.n_cols, -1);
+  network.Train(dataset, responses, opt);
+
+  std::cout << "-----\n";
+  std::cout << layer.Parameters().t();
+  std::cout << "-----\n";
+  std::cout << network.Parameters().t();
+
+  // Make sure the layer's parameters have changed.
+  BOOST_REQUIRE_EQUAL(oldMatrix.n_elem, layer.Parameters().n_elem);
+  for (size_t i = 0; i < oldMatrix.n_elem; ++i)
+    BOOST_REQUIRE_GE(std::abs(oldMatrix[i] - layer.Parameters()[i]), 1e-5);
+}
+
 BOOST_AUTO_TEST_SUITE_END();

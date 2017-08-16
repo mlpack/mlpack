@@ -200,7 +200,7 @@ class FFN
   arma::mat& Parameters() { return parameter; }
 
   /**
-   * Reset the module infomration (weights/parameters).
+   * Reset the module information (weights/parameters).
    */
   void ResetParameters();
 
