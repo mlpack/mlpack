@@ -204,7 +204,8 @@ BOOST_AUTO_TEST_CASE(SparseNMFALSTest)
     GivenInitialization g(std::move(iw), std::move(ih));
 
     SimpleResidueTermination srt(1e-10, 10000);
-    AMF<SimpleResidueTermination, GivenInitialization, NMFALSUpdate> nmf(srt, g);
+    AMF<SimpleResidueTermination, GivenInitialization, NMFALSUpdate> nmf(srt,
+        g);
     nmf.Apply(v, r, w, h);
     nmf.Apply(dv, r, dw, dh);
 
