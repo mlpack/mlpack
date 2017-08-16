@@ -43,7 +43,9 @@ RNN<OutputLayerType, InitializationRuleType>::RNN(
     outputSize(0),
     targetSize(0),
     reset(false),
-    single(single)
+    single(single),
+    numFunctions(0),
+    deterministic(true)
 {
   /* Nothing to do here */
 }
@@ -67,6 +69,7 @@ RNN<OutputLayerType, InitializationRuleType>::RNN(
     single(single),
     predictors(std::move(predictors)),
     responses(std::move(responses)),
+    numFunctions(0),
     deterministic(true)
 {
   numFunctions = this->responses.n_cols;
