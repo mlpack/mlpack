@@ -11,6 +11,8 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
+
 #include "sparse_coding.hpp"
 
 using namespace arma;
@@ -26,7 +28,7 @@ PROGRAM_INFO("Sparse Coding", "An implementation of Sparse Coding with "
     " sparse coding seeks to find a dense dictionary matrix D with k atoms in "
     "d dimensions, and a sparse coding matrix Z with n points in k dimensions."
     "\n\n"
-    "The original data matrix X can then be reconstructed as D * Z.  Therefore,"
+    "The original data matrix X can then be reconstructed as Z * D.  Therefore,"
     " this program finds a representation of each point in X as a sparse linear"
     " combination of atoms in the dictionary D."
     "\n\n"
@@ -39,22 +41,27 @@ PROGRAM_INFO("Sparse Coding", "An implementation of Sparse Coding with "
     "\n\n"
     "To run this program, either an input matrix or an already-saved sparse "
     "coding model must be specified.  An input matrix may be specified with the"
-    " --training_file (-t) option, along with the number of atoms in the "
-    "dictionary (--atoms, or -k).  It is also possible to specify an initial "
-    "dictionary for the optimization, with the --initial_dictionary (-i) "
-    "option. An input model may be specified with the --input_model_file (-m) "
-    "option. There are also other training options available."
+    " " + PRINT_PARAM_STRING("training") + " option, along with the number of "
+    "atoms in the dictionary (specified with the " +
+    PRINT_PARAM_STRING("atoms") + " parameter).  It is also possible to specify"
+    " an initial dictionary for the optimization, with the " +
+    PRINT_PARAM_STRING("initial_dictionary") + " parameter.  An input model may"
+    " be specified with the " + PRINT_PARAM_STRING("input_model") +
+    " parameter."
     "\n\n"
-    "As an example, to build a sparse coding model on the dataset in "
-    "data.csv using 200 atoms and an l1-regularization parameter of 0.1, saving"
-    " the model into model.xml, use "
+    "As an example, to build a sparse coding model on the dataset " +
+    PRINT_DATASET("data") + " using 200 atoms and an l1-regularization "
+    "parameter of 0.1, saving the model into " + PRINT_MODEL("model") + ", use "
+    "\n\n" +
+    PRINT_CALL("sparse_coding", "training", "data", "atoms", 200, "lambda1",
+        0.1, "output_model", "model") +
     "\n\n"
-    "$ sparse_coding -t data.csv -k 200 -l 0.1 -M model.xml"
-    "\n\n"
-    "Then, this model could be used to encode a new matrix, otherdata.csv, and "
-    "save the output codes to codes.csv:"
-    "\n\n"
-    "$ sparse_coding -m model.xml -T otherdata.csv -c codes.csv");
+    "Then, this model could be used to encode a new matrix, " +
+    PRINT_DATASET("otherdata") + ", and save the output codes to " +
+    PRINT_DATASET("codes") + ": "
+    "\n\n" +
+    PRINT_CALL("sparse_coding", "input_model", "model", "test", "otherdata",
+        "codes", "codes"));
 
 // Train the model.
 PARAM_MATRIX_IN("training", "Matrix of training data (X).", "t");
@@ -88,10 +95,8 @@ PARAM_MATRIX_OUT("codes", "Matrix to save the output sparse codes of the test "
 
 PARAM_MATRIX_IN("test", "Optional matrix to be encoded by trained model.", "T");
 
-int main(int argc, char* argv[])
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   if (CLI::GetParam<int>("seed") != 0)
     RandomSeed((size_t) CLI::GetParam<int>("seed"));
   else
@@ -176,7 +181,7 @@ int main(int argc, char* argv[])
     if (CLI::HasParam("input_model"))
     {
       Log::Info << "Using dictionary from existing model in '"
-          << CLI::GetUnmappedParam<SparseCoding>("input_model")
+          << CLI::GetPrintableParam<SparseCoding>("input_model")
           << "' as initial dictionary for training." << endl;
       sc.Train<NothingInitializer>(matX);
     }
@@ -219,8 +224,8 @@ int main(int argc, char* argv[])
     if (matY.n_rows != sc.Dictionary().n_rows)
       Log::Fatal << "Model was trained with a dimensionality of "
           << sc.Dictionary().n_rows << ", but data in test file '"
-          << CLI::GetUnmappedParam<arma::mat>("test") << " has a dimensionality"
-          << " of " << matY.n_rows << "!" << endl;
+          << CLI::GetPrintableParam<arma::mat>("test") << " has a "
+          << "dimensionality of " << matY.n_rows << "!" << endl;
 
     // Normalize each point if the user asked for it.
     if (CLI::HasParam("normalize"))
@@ -244,6 +249,4 @@ int main(int argc, char* argv[])
   // Did the user want to save the model?
   if (CLI::HasParam("output_model"))
     CLI::GetParam<SparseCoding>("output_model") = std::move(sc);
-
-  CLI::Destroy();
 }

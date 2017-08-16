@@ -7,6 +7,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/random_forest/random_forest.hpp>
 #include <mlpack/methods/decision_tree/random_dimension_select.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 
 using namespace mlpack;
 using namespace mlpack::tree;
@@ -66,10 +67,8 @@ PARAM_MODEL_IN(RandomForestModel, "input_model", "Pre-trained random forest to "
 PARAM_MODEL_OUT(RandomForestModel, "output_model", "Model to save trained "
     "random forest to.", "M");
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   // Check for incompatible input parameters.
   if (CLI::HasParam("training") && CLI::HasParam("input_model"))
   {
@@ -217,6 +216,4 @@ int main(int argc, char** argv)
   // Did the user want to save the output model?
   if (CLI::HasParam("output_model"))
     CLI::GetParam<RandomForestModel>("output_model") = std::move(rfModel);
-
-  CLI::Destroy();
 }

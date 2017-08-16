@@ -30,6 +30,11 @@ using namespace mlpack::optimization::test;
 
 BOOST_AUTO_TEST_SUITE(ParallelSGDTest);
 
+
+// These tests are only compiled if the user has specified OpenMP to be
+// used.
+#ifdef HAS_OPENMP
+
 /**
  * Test the correctness of the Parallel SGD implementation using a specified
  * sparse test function, with guaranteed disjoint updates between different
@@ -96,6 +101,8 @@ BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
       BOOST_REQUIRE_CLOSE(coordinates[j], (double) 1.0, 0.01);
   }
 }
+
+#endif
 
 /**
  * Test the correctness of the Exponential backoff stepsize decay policy.

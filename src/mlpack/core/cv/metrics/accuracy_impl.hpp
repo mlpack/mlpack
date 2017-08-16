@@ -12,6 +12,8 @@
 #ifndef MLPACK_CORE_CV_METRICS_ACCURACY_IMPL_HPP
 #define MLPACK_CORE_CV_METRICS_ACCURACY_IMPL_HPP
 
+#include <mlpack/core/cv/metrics/facilities.hpp>
+
 namespace mlpack {
 namespace cv {
 
@@ -20,14 +22,7 @@ double Accuracy::Evaluate(MLAlgorithm& model,
                           const DataType& data,
                           const arma::Row<size_t>& labels)
 {
-  if (data.n_cols != labels.n_elem)
-  {
-    std::ostringstream oss;
-    oss << "Accuracy::Evaluate(): number of points (" << data.n_cols << ") "
-        << "does not match number of labels (" << labels.n_elem << ")!"
-        << std::endl;
-    throw std::invalid_argument(oss.str());
-  }
+  AssertSizes(data, labels, "Accuracy::Evaluate()");
 
   arma::Row<size_t> predictedLabels;
   model.Classify(data, predictedLabels);

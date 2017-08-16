@@ -17,6 +17,7 @@ add_executable(mlpack_test
   block_krylov_svd_test.cpp
   cf_test.cpp
   cli_test.cpp
+  cli_binding_test.cpp
   convolutional_network_test.cpp
   convolution_test.cpp
   cosine_tree_test.cpp
@@ -74,6 +75,7 @@ add_executable(mlpack_test
   parallel_sgd_test.cpp
   pca_test.cpp
   perceptron_test.cpp
+  python_binding_test.cpp
   prefixedoutstream_test.cpp
   q_learning_test.cpp
   qdafn_test.cpp
@@ -113,6 +115,7 @@ add_executable(mlpack_test
   ub_tree_test.cpp
   union_find_test.cpp
   vantage_point_tree_test.cpp
+  main_tests/pca_test.cpp
 )
 # Link dependencies of test executable.
 target_link_libraries(mlpack_test

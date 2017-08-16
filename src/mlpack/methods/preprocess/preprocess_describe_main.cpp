@@ -11,6 +11,8 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
+
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 
@@ -27,21 +29,24 @@ PROGRAM_INFO("Descriptive Statistics", "This utility takes a dataset and "
     "statistics to the console. The printed result will look like a table."
     "\n\n"
     "Optionally, width and precision of the output can be adjusted by a user "
-    "using the --width (-w) and --precision (-p). A user can also select a "
-    "specific dimension to analyize if he or she has too many dimensions."
-    "--population (-P) is a flag which can be used when the user wants the "
-    "dataset to be considered as a population. Otherwise, the dataset will "
-    "be considered as a sample."
+    "using the " + PRINT_PARAM_STRING("width") + " and " +
+    PRINT_PARAM_STRING("precision") + " parameters. A user can also select a "
+    "specific dimension to analyze if there are too many dimensions. The " +
+    PRINT_PARAM_STRING("population") + " parameter can be specified when the "
+    "dataset should be considered as a population.  Otherwise, the dataset "
+    "will be considered as a sample."
     "\n\n"
     "So, a simple example where we want to print out statistical facts about "
-    "dataset.csv, and keep the default settings, we could run"
-    "\n\n"
-    "$ mlpack_preprocess_describe -i dataset.csv -v"
+    "the dataset " + PRINT_DATASET("X") + " using the default settings, we "
+    "could run "
+    "\n\n" +
+    PRINT_CALL("preprocess_describe", "input", "X", "verbose", true) +
     "\n\n"
     "If we want to customize the width to 10 and precision to 5 and consider "
     "the dataset as a population, we could run"
-    "\n\n"
-    "$ mlpack_preprocess_describe -i dataset.csv -w 10 -p 5 -P -v");
+    "\n\n" +
+    PRINT_CALL("preprocess_describe", "input", "X", "width", 10, "precision", 5,
+        "verbose", true));
 
 // Define parameters for data.
 PARAM_MATRIX_IN_REQ("input", "Matrix containing data,", "i");
@@ -147,10 +152,8 @@ double StandardError(const size_t size, const double& fStd)
   return fStd / sqrt(size);
 }
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  // Parse command line options.
-  CLI::ParseCommandLine(argc, argv);
   const size_t dimension = static_cast<size_t>(CLI::GetParam<int>("dimension"));
   const size_t precision = static_cast<size_t>(CLI::GetParam<int>("precision"));
   const size_t width = static_cast<size_t>(CLI::GetParam<int>("width"));
