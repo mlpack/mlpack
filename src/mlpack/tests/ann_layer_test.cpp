@@ -14,6 +14,7 @@
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
+#include <mlpack/methods/ann/init_rules/const_init.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/rnn.hpp>
@@ -779,6 +780,104 @@ BOOST_AUTO_TEST_CASE(GradientLSTMLayerTest)
 }
 
 /**
+ * Check if the gradients computed by GRU cell are close enough to the
+ * approximation of the gradients.
+ */
+BOOST_AUTO_TEST_CASE(GradientGRULayerTest)
+{
+  // GRU function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randu(5, 1);
+      target = arma::mat("1; 1; 1; 1; 1");
+      const size_t rho = 5;
+
+      model = new RNN<NegativeLogLikelihood<> >(input, target, rho);
+      model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(1, 10);
+      model->Add<GRU<> >(10, 3, rho);
+      model->Add<LogSoftMax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      arma::mat output;
+      double error = model->Evaluate(model->Parameters(), 0);
+      model->Gradient(model->Parameters(), 0, gradient);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    RNN<NegativeLogLikelihood<> >* model;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+}
+
+/**
+ * GRU layer manual forward test.
+ */
+BOOST_AUTO_TEST_CASE(ForwardGRULayerTest)
+{
+  GRU<> gru(3, 3, 5);
+
+  // Initialize the weights to all ones.
+  NetworkInitialization<ConstInitialization>
+    networkInit(ConstInitialization(1));
+  networkInit.Initialize(gru.Model(), gru.Parameters());
+
+  // Provide input of all ones.
+  arma::mat input = arma::ones(3, 1);
+  arma::mat output;
+
+  gru.Forward(std::move(input), std::move(output));
+
+  // Compute the z_t gate output.
+  arma::mat expectedOutput = arma::ones(3, 1);
+  expectedOutput *= -4;
+  expectedOutput = arma::exp(expectedOutput);
+  expectedOutput = arma::ones(3, 1) / (arma::ones(3, 1) + expectedOutput);
+  expectedOutput = (arma::ones(3, 1)  - expectedOutput) % expectedOutput;
+
+  // For the first input the output should be equal to the output of
+  // gate z_t as the previous output fed to the cell is all zeros.
+  BOOST_REQUIRE_LE(arma::as_scalar(arma::trans(output) * expectedOutput), 1e-2);
+
+  expectedOutput = output;
+
+  gru.Forward(std::move(input), std::move(output));
+
+  double s = arma::as_scalar(arma::sum(expectedOutput));
+
+  // Compute the value of z_t gate for the second input.
+  arma::mat z_t = arma::ones(3, 1);
+  z_t *= -(s + 4);
+  z_t = arma::exp(z_t);
+  z_t = arma::ones(3, 1) / (arma::ones(3, 1) + z_t);
+
+  // Compute the value of o_t gate for the second input.
+  arma::mat o_t = arma::ones(3, 1);
+  o_t *= -(arma::as_scalar(arma::sum(expectedOutput % z_t)) + 4);
+  o_t = arma::exp(o_t);
+  o_t = arma::ones(3, 1) / (arma::ones(3, 1) + o_t);
+
+  // Expected output for the second input.
+  expectedOutput = z_t % expectedOutput + (arma::ones(3, 1) - z_t) % o_t;
+
+  BOOST_REQUIRE_LE(arma::as_scalar(arma::trans(output) * expectedOutput), 1e-2);
+}
+
+
+/**
  * Simple concat module test.
  */
 BOOST_AUTO_TEST_CASE(SimpleConcatLayerTest)
@@ -948,7 +1047,8 @@ BOOST_AUTO_TEST_CASE(SimpleCrossEntropyErrorLayerTest)
 
   // Test the Backward function.
   module.Backward(std::move(input1), std::move(target1), std::move(output));
-  for (double el : output) {
+  for (double el : output)
+  {
     // For the 0.5 constant vector we should get 1 / (1 - 0.5) = 2 everywhere.
     BOOST_REQUIRE_SMALL(el - 2, 5e-6);
   }
@@ -956,7 +1056,8 @@ BOOST_AUTO_TEST_CASE(SimpleCrossEntropyErrorLayerTest)
   BOOST_REQUIRE_EQUAL(output.n_cols, input1.n_cols);
 
   module.Backward(std::move(input2), std::move(target2), std::move(output));
-  for (size_t i = 0; i < 8; ++i) {
+  for (size_t i = 0; i < 8; ++i)
+  {
     double el = output.at(0, i);
     if (input2.at(i) == 0)
       BOOST_REQUIRE_SMALL(el - 1, 2e-6);
@@ -966,5 +1067,41 @@ BOOST_AUTO_TEST_CASE(SimpleCrossEntropyErrorLayerTest)
   BOOST_REQUIRE_EQUAL(output.n_rows, input2.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input2.n_cols);
 }
+
+/*
+ * Simple test for the mean squared error performance function.
+ */
+BOOST_AUTO_TEST_CASE(SimpleMeanSquaredErrorLayerTest)
+{
+  arma::mat input, output, target;
+  MeanSquaredError<> module;
+
+  // Test the Forward function on a user generator input and compare it against
+  // the manually calculated result.
+  input = arma::mat("1.0 0.0 1.0 0.0 -1.0 0.0 -1.0 0.0");
+  target = arma::zeros(1, 8);
+  double error = module.Forward(std::move(input), std::move(target));
+  BOOST_REQUIRE_EQUAL(error, 0.5);
+
+  // Test the Backward function.
+  module.Backward(std::move(input), std::move(target), std::move(output));
+  // We subtract a zero vector, so the output should be equal with the input.
+  CheckMatrices(input, output);
+  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+
+  // Test the error function on a single input.
+  input = arma::mat("2");
+  target = arma::mat("3");
+  error = module.Forward(std::move(input), std::move(target));
+  BOOST_REQUIRE_EQUAL(error, 1.0);
+
+  // Test the Backward function on a single input.
+  module.Backward(std::move(input), std::move(target), std::move(output));
+  // Test whether the output is negative.
+  BOOST_REQUIRE_EQUAL(arma::accu(output), -1);
+  BOOST_REQUIRE_EQUAL(output.n_elem, 1);
+}
+
 
 BOOST_AUTO_TEST_SUITE_END();

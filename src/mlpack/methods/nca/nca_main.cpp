@@ -13,6 +13,7 @@
 #include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/data/normalize_labels.hpp>
 #include <mlpack/core/math/random.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 
 #include "nca.hpp"
@@ -31,8 +32,9 @@ PROGRAM_INFO("Neighborhood Components Analysis (NCA)",
     "accuracy of the neighbor assignments."
     "\n\n"
     "To work, this algorithm needs labeled data.  It can be given as the last "
-    "row of the input dataset (--input_file), or alternatively in a separate "
-    "file (--labels_file)."
+    "row of the input dataset (specified with " + PRINT_PARAM_STRING("input") +
+    "), or alternatively as a separate matrix (specified with " +
+    PRINT_PARAM_STRING("labels") + ")."
     "\n\n"
     "This implementation of NCA uses stochastic gradient descent, mini-batch "
     "stochastic gradient descent, or the L_BFGS optimizer.  These optimizers do"
@@ -40,10 +42,14 @@ PROGRAM_INFO("Neighborhood Components Analysis (NCA)",
     "(NCA's objective function is nonconvex), so the final results could depend"
     " on the random seed or other optimizer parameters."
     "\n\n"
-    "Stochastic gradient descent, specified by --optimizer \"sgd\", depends "
-    "primarily on two parameters: the step size (--step_size) and the maximum "
-    "number of iterations (--max_iterations).  In addition, a normalized "
-    "starting point can be used (--normalize), which is necessary if many "
+    "Stochastic gradient descent, specified by the value 'sgd' for the "
+    "parameter " + PRINT_PARAM_STRING("optimizer") + ", depends "
+    "primarily on two parameters: the step size (specified with " +
+    PRINT_PARAM_STRING("step_size") + ") and the maximum "
+    "number of iterations (specified with " +
+    PRINT_PARAM_STRING("max_iterations") + ").  In addition, a normalized "
+    "starting point can be used by specifying the " +
+    PRINT_PARAM_STRING("normalize") + " parameter, which is necessary if many "
     "warnings of the form 'Denominator of p_i is 0!' are given.  Tuning the "
     "step size can be a tedious affair.  In general, the step size is too large"
     " if the objective is not mostly uniformly decreasing, or if zero-valued "
@@ -52,29 +58,36 @@ PROGRAM_INFO("Neighborhood Components Analysis (NCA)",
     "be done easily once a good step size parameter is found; either increase "
     "the maximum iterations to a large number and allow SGD to find a minimum, "
     "or set the maximum iterations to 0 (allowing infinite iterations) and set "
-    "the tolerance (--tolerance) to define the maximum allowed difference "
-    "between objectives for SGD to terminate.  Be careful---setting the "
-    "tolerance instead of the maximum iterations can take a very long time and "
-    "may actually never converge due to the properties of the SGD optimizer. "
-    "Note that a single iteration of SGD refers to a single point, so to take "
-    "a single pass over the dataset, set --max_iterations equal to the number "
-    "of points in the dataset."
+    "the tolerance (specified by " + PRINT_PARAM_STRING("tolerance") + ") to "
+    "define the maximum allowed difference between objectives for SGD to "
+    "terminate.  Be careful---setting the tolerance instead of the maximum "
+    "iterations can take a very long time and may actually never converge due "
+    "to the properties of the SGD optimizer. Note that a single iteration of "
+    "SGD refers to a single point, so to take a single pass over the dataset, "
+    "set the value of the " + PRINT_PARAM_STRING("max_iterations") +
+    " parameter equal to the number of points in the dataset."
     "\n\n"
-    "The mini-batch SGD optimizer, specified by --optimizer \"minibatch-sgd\", "
-    "has the same parameters as SGD, but the batch size may also be specified "
-    "with the --batch_size (-b) option.  Each iteration of mini-batch SGD "
-    "refers to a single mini-batch."
+    "The mini-batch SGD optimizer, specified by the value 'minibatch-sgd' for "
+    "the parameter " + PRINT_PARAM_STRING("optimizer") + ", has the same "
+    "parameters as SGD, but the batch size may also be specified with the " +
+    PRINT_PARAM_STRING("batch_size") + " option.  Each iteration of mini-batch "
+    "SGD refers to a single mini-batch."
     "\n\n"
-    "The L-BFGS optimizer, specified by --optimizer \"lbfgs\", uses a "
-    "back-tracking line search algorithm to minimize a function.  The "
-    "following parameters are used by L-BFGS: --num_basis (specifies the number"
-    " of memory points used by L-BFGS), --max_iterations, --armijo_constant, "
-    "--wolfe, --tolerance (the optimization is terminated when the gradient "
-    "norm is below this value), --max_line_search_trials, --min_step and "
-    "--max_step (which both refer to the line search routine).  For more "
-    "details on the L-BFGS optimizer, consult either the mlpack L-BFGS "
-    "documentation (in lbfgs.hpp) or the vast set of published literature on "
-    "L-BFGS."
+    "The L-BFGS optimizer, specified by the value 'lbfgs' for the parameter " +
+    PRINT_PARAM_STRING("optimizer") + ", uses a back-tracking line search "
+    "algorithm to minimize a function.  The following parameters are used by "
+    "L-BFGS: " + PRINT_PARAM_STRING("num_basis") + " (specifies the number"
+    " of memory points used by L-BFGS), " +
+    PRINT_PARAM_STRING("max_iterations") + ", " +
+    PRINT_PARAM_STRING("armijo_constant") + ", " +
+    PRINT_PARAM_STRING("wolfe") + ", " + PRINT_PARAM_STRING("tolerance") +
+    " (the optimization is terminated when the gradient norm is below this "
+    "value), " + PRINT_PARAM_STRING("max_line_search_trials") + ", " +
+    PRINT_PARAM_STRING("min_step") + ", and " +
+    PRINT_PARAM_STRING("max_step") + " (which both refer to the line search "
+    "routine).  For more details on the L-BFGS optimizer, consult either the "
+    "mlpack L-BFGS documentation (in lbfgs.hpp) or the vast set of published "
+    "literature on L-BFGS."
     "\n\n"
     "By default, the SGD optimizer is used.");
 
@@ -118,11 +131,8 @@ using namespace mlpack::metric;
 using namespace mlpack::optimization;
 using namespace std;
 
-int main(int argc, char* argv[])
+void mlpackMain()
 {
-  // Parse command line.
-  CLI::ParseCommandLine(argc, argv);
-
   if (CLI::GetParam<int>("seed") != 0)
     math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
   else

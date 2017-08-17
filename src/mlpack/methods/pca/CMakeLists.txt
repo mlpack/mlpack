@@ -3,6 +3,8 @@
 set(SOURCES
   pca.hpp
   pca_impl.hpp
+#  pca_nomain.hpp
+#  pca_nomain.cpp
 )
 
 # Add directory name to sources.
@@ -17,3 +19,4 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 add_subdirectory(decomposition_policies)
 
 add_cli_executable(pca)
+add_python_binding(pca)

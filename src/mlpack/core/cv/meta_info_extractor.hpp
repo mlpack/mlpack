@@ -20,7 +20,7 @@
 namespace mlpack {
 namespace cv {
 
-/*
+/**
  * A wrapper struct for holding a Train form.
  *
  * @tparam MatType The type of data.
@@ -86,11 +86,11 @@ struct TrainForm<MT, PT, WT, true, true> : public TrainFormBase<PT, WT,
 /* A struct for indication that a right method form can't be found */
 struct NotFoundMethodForm
 {
-  using PredictionsType = void;
-  using WeightsType = void;
+  using PredictionsType = void*;
+  using WeightsType = void*;
 };
 
-/*
+/**
  * A type function that selects a right method form. As parameters it takes a
  * machine learning algorithm, a set of HasMethodForm structs, and a set of
  * method forms. Method forms are passed to the internal struct From. The result
@@ -147,7 +147,7 @@ struct SelectMethodForm<MLAlgorithm>
   };
 };
 
-/*
+/**
  * MetaInfoExtractor is a tool for extracting meta information about a given
  * machine learning algorithm. It can be used to automatically extract the type
  * of predictions and weights (if weighted learning is supported), whether the
@@ -218,26 +218,37 @@ class MetaInfoExtractor
       std::false_type, std::true_type>::type;
 
  public:
-  /*
-   * The type of predictions used in MLAlgorithm. It is equal to void if the
+  /**
+   * The type of predictions used in MLAlgorithm. It is equal to void* if the
    * extraction fails.
    */
   using PredictionsType =
       typename Select<TF1, TF2, TF3, TF4, TF5>::Type::PredictionsType;
 
-  /*
-   * The type of weights used in MLAlgorithm. It is equal to void if the
+  /**
+   * The type of weights used in MLAlgorithm. It is equal to void* if the
    * extraction fails.
    */
   using WeightsType =
       typename Select<WTF1, WTF2, WTF3, WTF4, WTF5>::Type::WeightsType;
 
-  /*
+  /**
+   * An indication whether PredictionsType has been identified (i.e. MLAlgorithm
+   * is supported by MetaInfoExtractor).
+   */
+  static const bool IsSupported = !std::is_same<PredictionsType, void*>::value;
+
+  /**
+   * An indication whether MLAlgorithm supports weighted learning.
+   */
+  static const bool SupportsWeights = !std::is_same<WeightsType, void*>::value;
+
+  /**
    * An indication whether MLAlgorithm takes a data::DatasetInfo parameter.
    */
   static const bool TakesDatasetInfo = Selects<TF5>::value;
 
-  /*
+  /**
    * An indication whether MLAlgorithm takes the numClasses (size_t) parameter.
    */
   static const bool TakesNumClasses = Selects<TF4, TF5>::value;

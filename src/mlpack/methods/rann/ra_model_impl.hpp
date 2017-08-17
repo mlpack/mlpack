@@ -19,21 +19,258 @@
 namespace mlpack {
 namespace neighbor {
 
+//! Monochromatic search for the given RAType instance.
+template<typename RAType>
+void MonoSearchVisitor::operator()(RAType* ra) const
+{
+  if (ra)
+    return ra->Search(k, neighbors, distances);
+  throw std::runtime_error("no rank-approximate model initialized");
+}
+
+//! Save the parameters for the rank-approximate search.
+template<typename SortPolicy>
+BiSearchVisitor<SortPolicy>::BiSearchVisitor(const arma::mat& querySet,
+                                 const size_t k,
+                                 arma::Mat<size_t>& neighbors,
+                                 arma::mat& distances,
+                                 const size_t leafSize) :
+    querySet(querySet),
+    k(k),
+    neighbors(neighbors),
+    distances(distances),
+    leafSize(leafSize)
+{};
+
+//! Default Bichromatic search on the given RAType instance.
+template<typename SortPolicy>
+template<template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void BiSearchVisitor<SortPolicy>::operator()(RATypeT<TreeType>* ra) const
+{
+  if (ra)
+    return ra->Search(querySet, k, neighbors, distances);
+  throw std::runtime_error("no rank-approximate model initialized");
+}
+
+//! Bichromatic search on the given RAType specialized for KDTrees.
+template<typename SortPolicy>
+void BiSearchVisitor<SortPolicy>::operator()(RATypeT<tree::KDTree>* ra) const
+{
+  if (ra)
+    return SearchLeaf(ra);
+  throw std::runtime_error("no rank-approximate search model initialized");
+}
+
+//! Bichromatic search on the given RAType specialized for Octrees.
+template<typename SortPolicy>
+void BiSearchVisitor<SortPolicy>::operator()(RATypeT<tree::Octree>* ra) const
+{
+  if (ra)
+    return SearchLeaf(ra);
+  throw std::runtime_error("no rank-approximate search model initialized");
+}
+
+//! Bichromatic search on the given RAType considering the leafSize.
+template<typename SortPolicy>
+template<typename RAType>
+void BiSearchVisitor<SortPolicy>::SearchLeaf(RAType* ra) const
+{
+  if (!ra->Naive() && !ra->SingleMode())
+  {
+    // Build a second tree and search
+    Timer::Start("tree_building");
+    Log::Info << "Building query tree...."<< std::endl;
+    std::vector<size_t> oldFromNewQueries;
+    typename RAType::Tree queryTree(std::move(querySet), oldFromNewQueries,
+        leafSize);
+    Log::Info << "Tree Built." << std::endl;
+    Timer::Stop("tree_building");
+
+    arma::Mat<size_t> neighborsOut;
+    arma::mat distancesOut;
+    ra->Search(&queryTree, k, neighborsOut, distancesOut);
+
+    // Unmap the query points.
+    distances.set_size(distancesOut.n_rows, distancesOut.n_cols);
+    neighbors.set_size(neighborsOut.n_rows, neighborsOut.n_cols);
+    for (size_t i = 0; i < neighborsOut.n_cols; ++i)
+    {
+      neighbors.col(oldFromNewQueries[i]) = neighborsOut.col(i);
+      distances.col(oldFromNewQueries[i]) = distancesOut.col(i);
+    }
+  }
+  else
+  {
+    // Search without building a second tree.
+    ra->Search(querySet, k, neighbors, distances);
+  }
+}
+
+//! Save parameters for the Train.
+template<typename SortPolicy>
+TrainVisitor<SortPolicy>::TrainVisitor(arma::mat&& referenceSet,
+                                       const size_t leafSize) :
+    referenceSet(std::move(referenceSet)),
+    leafSize(leafSize)
+{};
+
+//! Default Train on the given RAType instance.
+template<typename SortPolicy>
+template<template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void TrainVisitor<SortPolicy>::operator()(RATypeT<TreeType>* ra) const
+{
+  if (ra)
+    return ra->Train(std::move(referenceSet));
+  throw std::runtime_error("no rank-approximate search model initialized");
+}
+
+//! Train on the given RAType specialized for KDTrees.
+template<typename SortPolicy>
+void TrainVisitor<SortPolicy>::operator()(RATypeT<tree::KDTree>* ra) const
+{
+  if (ra)
+    return TrainLeaf(ra);
+  throw std::runtime_error("no rank-approximate search model initialized");
+}
+
+//! Train on the given RAType specialized for Octrees.
+template<typename SortPolicy>
+void TrainVisitor<SortPolicy>::operator()(RATypeT<tree::Octree>* ra) const
+{
+  if (ra)
+    return TrainLeaf(ra);
+  throw std::runtime_error("no rank-approximate search model is initialized");
+}
+
+//! Train on the given RAType considering the leafSize.
+template<typename SortPolicy>
+template<typename RAType>
+void TrainVisitor<SortPolicy>::TrainLeaf(RAType* ra) const
+{
+  // Build tree, if necessary
+  if (ra->Naive())
+  {
+    ra->Train(std::move(referenceSet));
+  }
+  else
+  {
+    std::vector<size_t> oldFromNewReferences;
+    typename RAType::Tree* tree =
+        new typename RAType::Tree(std::move(referenceSet), oldFromNewReferences,
+        leafSize);
+    ra->Train(tree);
+
+    // Give the model ownership of the tree and the mappings.
+    ra->treeOwner = true;
+    ra->oldFromNewReferences = std::move(oldFromNewReferences);
+  }
+}
+
+//! Exposes the SingleSampleLimit() method of the given RAType.
+template<typename RAType>
+size_t& SingleSampleLimitVisitor::operator()(RAType* ra) const
+{
+  if (ra)
+    return ra->SingleSampleLimit();
+  throw std::runtime_error("no rank-approximate search model is initialized");
+}
+
+//! Exposes the FirstLeafExact() method of the given RAType.
+template<typename RAType>
+bool& FirstLeafExactVisitor::operator()(RAType* ra) const
+{
+  if (ra)
+    return ra->FirstLeafExact();
+  throw std::runtime_error("no rank-approximate search model is initialized");
+}
+
+//! Exposes the SampleAtLeaves() method of the given RAType.
+template<typename RAType>
+bool& SampleAtLeavesVisitor::operator()(RAType* ra) const
+{
+  if (ra)
+    return ra->SampleAtLeaves();
+  throw std::runtime_error("no rank-approximate search model is initialized");
+}
+
+//! Exposes the Alpha() method of the given RAType instance.
+template<typename RAType>
+double& AlphaVisitor::operator()(RAType* ra) const
+{
+  if (ra)
+    return ra->Alpha();
+  throw std::runtime_error("no rank-approximate model is initialized");
+}
+
+//! Exposes the Tau() method of the given RAType instance.
+template<typename RAType>
+double& TauVisitor::operator()(RAType* ra) const
+{
+  if (ra)
+    return ra->Tau();
+  throw std::runtime_error("no rank-approximate model is initialized");
+}
+
+//! Exposes the SingleMode() method of the given RAType.
+template<typename RAType>
+bool& SingleModeVisitor::operator()(RAType* ra) const
+{
+  if (ra)
+    return ra->SingleMode();
+  throw std::runtime_error("no rank-approximate model is intialized");
+}
+
+//! Exposes the referenceSet of the given RAType.
+template<typename RAType>
+const arma::mat& ReferenceSetVisitor::operator()(RAType* ra) const
+{
+  if (ra)
+    return ra->ReferenceSet();
+  throw std::runtime_error("no rank-approximate model is intialized");
+}
+
+//! Save parameters for serializing
+template<typename Archive>
+SerializeVisitor<Archive>::SerializeVisitor(Archive& ar,
+                                            const std::string& name) :
+    ar(ar),
+    name(name)
+{}
+
+//! Serializes the given RAType instance.
+template<typename Archive>
+template<typename RAType>
+void SerializeVisitor<Archive>::operator()(RAType*& ra) const
+{
+  ar & data::CreateNVP(ra, name);
+}
+
+//! Exposes the Naive() method of the given RAType instance.
+template<typename RAType>
+bool& NaiveVisitor::operator()(RAType* ra) const
+{
+  if (ra)
+    return ra->Naive();
+  throw std::runtime_error("no rank-approximate search model is intialized");
+}
+
+//! For cleaning memory
+template<typename RSType>
+void DeleteVisitor::operator()(RSType* rs) const
+{
+  if (rs)
+    delete rs;
+}
+
 template<typename SortPolicy>
 RAModel<SortPolicy>::RAModel(const TreeTypes treeType, const bool randomBasis) :
     treeType(treeType),
     leafSize(20),
-    randomBasis(randomBasis),
-    kdTreeRA(NULL),
-    coverTreeRA(NULL),
-    rTreeRA(NULL),
-    rStarTreeRA(NULL),
-    xTreeRA(NULL),
-    hilbertRTreeRA(NULL),
-    rPlusTreeRA(NULL),
-    rPlusPlusTreeRA(NULL),
-    ubTreeRA(NULL),
-    octreeRA(NULL)
+    randomBasis(randomBasis)
 {
   // Nothing to do.
 }
@@ -44,37 +281,9 @@ RAModel<SortPolicy>::RAModel(const RAModel& other) :
     treeType(other.treeType),
     leafSize(other.leafSize),
     randomBasis(other.randomBasis),
-    kdTreeRA(NULL),
-    coverTreeRA(NULL),
-    rTreeRA(NULL),
-    rStarTreeRA(NULL),
-    xTreeRA(NULL),
-    hilbertRTreeRA(NULL),
-    rPlusTreeRA(NULL),
-    rPlusPlusTreeRA(NULL),
-    ubTreeRA(NULL),
-    octreeRA(NULL)
+    raSearch(other.raSearch)
 {
-  if (other.kdTreeRA)
-    kdTreeRA = new RAType<tree::KDTree>(*other.kdTreeRA);
-  if (other.coverTreeRA)
-    coverTreeRA = new RAType<tree::StandardCoverTree>(*other.coverTreeRA);
-  if (other.rTreeRA)
-    rTreeRA = new RAType<tree::RTree>(*other.rTreeRA);
-  if (other.rStarTreeRA)
-    rStarTreeRA = new RAType<tree::RStarTree>(*other.rStarTreeRA);
-  if (other.xTreeRA)
-    xTreeRA = new RAType<tree::XTree>(*other.xTreeRA);
-  if (other.hilbertRTreeRA)
-    hilbertRTreeRA = new RAType<tree::HilbertRTree>(*other.hilbertRTreeRA);
-  if (other.rPlusTreeRA)
-    rPlusTreeRA = new RAType<tree::RPlusTree>(*other.rPlusTreeRA);
-  if (other.rPlusPlusTreeRA)
-    rPlusPlusTreeRA = new RAType<tree::RPlusPlusTree>(*other.rPlusPlusTreeRA);
-  if (other.ubTreeRA)
-    ubTreeRA = new RAType<tree::UBTree>(*other.ubTreeRA);
-  if (other.octreeRA)
-    octreeRA = new RAType<tree::Octree>(*other.octreeRA);
+  // Nothing to do.
 }
 
 // Move constructor.
@@ -83,31 +292,13 @@ RAModel<SortPolicy>::RAModel(RAModel&& other) :
     treeType(other.treeType),
     leafSize(other.leafSize),
     randomBasis(other.randomBasis),
-    kdTreeRA(other.kdTreeRA),
-    coverTreeRA(other.coverTreeRA),
-    rTreeRA(other.rTreeRA),
-    rStarTreeRA(other.rStarTreeRA),
-    xTreeRA(other.xTreeRA),
-    hilbertRTreeRA(other.hilbertRTreeRA),
-    rPlusTreeRA(other.rPlusTreeRA),
-    rPlusPlusTreeRA(other.rPlusPlusTreeRA),
-    ubTreeRA(other.ubTreeRA),
-    octreeRA(other.octreeRA)
+    raSearch(other.raSearch)
 {
   // Clear other model.
   other.treeType = TreeTypes::KD_TREE;
   other.leafSize = 20;
   other.randomBasis = false;
-  other.kdTreeRA = NULL;
-  other.coverTreeRA = NULL;
-  other.rTreeRA = NULL;
-  other.rStarTreeRA = NULL;
-  other.xTreeRA = NULL;
-  other.hilbertRTreeRA = NULL;
-  other.rPlusTreeRA = NULL;
-  other.rPlusPlusTreeRA = NULL;
-  other.ubTreeRA = NULL;
-  other.octreeRA = NULL;
+  other.raSearch = decltype(other.raSearch)();
 }
 
 // Copy operator.
@@ -115,41 +306,12 @@ template<typename SortPolicy>
 RAModel<SortPolicy>& RAModel<SortPolicy>::operator=(const RAModel& other)
 {
   // Clear current model.
-  delete kdTreeRA;
-  delete coverTreeRA;
-  delete rTreeRA;
-  delete rStarTreeRA;
-  delete xTreeRA;
-  delete hilbertRTreeRA;
-  delete rPlusTreeRA;
-  delete rPlusPlusTreeRA;
-  delete ubTreeRA;
-  delete octreeRA;
+  boost::apply_visitor(DeleteVisitor(), raSearch);
 
   treeType = other.treeType;
   leafSize = other.leafSize;
   randomBasis = other.randomBasis;
-
-  if (other.kdTreeRA)
-    kdTreeRA = new RAType<tree::KDTree>(*other.kdTreeRA);
-  if (other.coverTreeRA)
-    coverTreeRA = new RAType<tree::StandardCoverTree>(*other.coverTreeRA);
-  if (other.rTreeRA)
-    rTreeRA = new RAType<tree::RTree>(*other.rTreeRA);
-  if (other.rStarTreeRA)
-    rStarTreeRA = new RAType<tree::RStarTree>(*other.rStarTreeRA);
-  if (other.xTreeRA)
-    xTreeRA = new RAType<tree::XTree>(*other.xTreeRA);
-  if (other.hilbertRTreeRA)
-    hilbertRTreeRA = new RAType<tree::HilbertRTree>(*other.hilbertRTreeRA);
-  if (other.rPlusTreeRA)
-    rPlusTreeRA = new RAType<tree::RPlusTree>(*other.rPlusTreeRA);
-  if (other.rPlusPlusTreeRA)
-    rPlusPlusTreeRA = new RAType<tree::RPlusPlusTree>(*other.rPlusPlusTreeRA);
-  if (other.ubTreeRA)
-    ubTreeRA = new RAType<tree::UBTree>(*other.ubTreeRA);
-  if (other.octreeRA)
-    octreeRA = new RAType<tree::Octree>(*other.octreeRA);
+  raSearch = other.raSearch;
 
   return *this;
 }
@@ -157,62 +319,27 @@ RAModel<SortPolicy>& RAModel<SortPolicy>::operator=(const RAModel& other)
 template<typename SortPolicy>
 RAModel<SortPolicy>& RAModel<SortPolicy>::operator=(RAModel&& other)
 {
-  delete kdTreeRA;
-  delete coverTreeRA;
-  delete rTreeRA;
-  delete rStarTreeRA;
-  delete xTreeRA;
-  delete hilbertRTreeRA;
-  delete rPlusTreeRA;
-  delete rPlusPlusTreeRA;
-  delete ubTreeRA;
-  delete octreeRA;
+  boost::apply_visitor(DeleteVisitor(), raSearch);
 
   treeType = other.treeType;
   leafSize = other.leafSize;
   randomBasis = other.randomBasis;
-  kdTreeRA = other.kdTreeRA;
-  coverTreeRA = other.coverTreeRA;
-  rTreeRA = other.rTreeRA;
-  rStarTreeRA = other.rStarTreeRA;
-  xTreeRA = other.xTreeRA;
-  hilbertRTreeRA = other.hilbertRTreeRA;
-  rPlusTreeRA = other.rPlusTreeRA;
-  rPlusPlusTreeRA = other.rPlusPlusTreeRA;
-  ubTreeRA = other.ubTreeRA;
-  octreeRA = other.octreeRA;
+  raSearch = other.raSearch;
 
   // Reset other model.
   other.treeType = TreeTypes::KD_TREE;
   other.leafSize = 20;
   other.randomBasis = false;
-  other.kdTreeRA = NULL;
-  other.coverTreeRA = NULL;
-  other.rTreeRA = NULL;
-  other.rStarTreeRA = NULL;
-  other.xTreeRA = NULL;
-  other.hilbertRTreeRA = NULL;
-  other.rPlusTreeRA = NULL;
-  other.rPlusPlusTreeRA = NULL;
-  other.ubTreeRA = NULL;
-  other.octreeRA = NULL;
+  other.raSearch = decltype(other.raSearch)();
 
   return *this;
 }
 
+// Clean memory, if necessary
 template<typename SortPolicy>
 RAModel<SortPolicy>::~RAModel()
 {
-  delete kdTreeRA;
-  delete coverTreeRA;
-  delete rTreeRA;
-  delete rStarTreeRA;
-  delete xTreeRA;
-  delete hilbertRTreeRA;
-  delete rPlusTreeRA;
-  delete rPlusPlusTreeRA;
-  delete ubTreeRA;
-  delete octreeRA;
+  boost::apply_visitor(DeleteVisitor(), raSearch);
 }
 
 template<typename SortPolicy>
@@ -227,483 +354,103 @@ void RAModel<SortPolicy>::Serialize(Archive& ar,
   // This should never happen, but just in case, be clean with memory.
   if (Archive::is_loading::value)
   {
-    delete kdTreeRA;
-    delete coverTreeRA;
-    delete rTreeRA;
-    delete rStarTreeRA;
-    delete xTreeRA;
-    delete hilbertRTreeRA;
-    delete rPlusTreeRA;
-    delete rPlusPlusTreeRA;
-    delete ubTreeRA;
-    delete octreeRA;
-
-    // Set all the pointers to NULL.
-    kdTreeRA = NULL;
-    coverTreeRA = NULL;
-    rTreeRA = NULL;
-    rStarTreeRA = NULL;
-    xTreeRA = NULL;
-    hilbertRTreeRA = NULL;
-    rPlusPlusTreeRA = NULL;
-    rPlusTreeRA = NULL;
-    ubTreeRA = NULL;
+    boost::apply_visitor(DeleteVisitor(), raSearch);
   }
 
   // We only need to serialize one of the kRANN objects.
-  switch (treeType)
-  {
-    case KD_TREE:
-      ar & data::CreateNVP(kdTreeRA, "ra_model");
-      break;
-    case COVER_TREE:
-      ar & data::CreateNVP(coverTreeRA, "ra_model");
-      break;
-    case R_TREE:
-      ar & data::CreateNVP(rTreeRA, "ra_model");
-      break;
-    case R_STAR_TREE:
-      ar & data::CreateNVP(rStarTreeRA, "ra_model");
-      break;
-    case X_TREE:
-      ar & data::CreateNVP(xTreeRA, "ra_model");
-      break;
-    case HILBERT_R_TREE:
-      ar & data::CreateNVP(hilbertRTreeRA, "ra_model");
-      break;
-    case R_PLUS_TREE:
-      ar & data::CreateNVP(rPlusTreeRA, "ra_model");
-      break;
-    case R_PLUS_PLUS_TREE:
-      ar & data::CreateNVP(rPlusPlusTreeRA, "ra_model");
-      break;
-    case UB_TREE:
-      ar & data::CreateNVP(ubTreeRA, "ra_model");
-      break;
-    case OCTREE:
-      ar & data::CreateNVP(octreeRA, "ra_model");
-      break;
-  }
+  const std::string& name = RAModelName<SortPolicy>::Name();
+  SerializeVisitor<Archive> s(ar, name);
+  boost::apply_visitor(s, raSearch);
 }
 
 template<typename SortPolicy>
 const arma::mat& RAModel<SortPolicy>::Dataset() const
 {
-  if (kdTreeRA)
-    return kdTreeRA->ReferenceSet();
-  else if (coverTreeRA)
-    return coverTreeRA->ReferenceSet();
-  else if (rTreeRA)
-    return rTreeRA->ReferenceSet();
-  else if (rStarTreeRA)
-    return rStarTreeRA->ReferenceSet();
-  else if (xTreeRA)
-    return xTreeRA->ReferenceSet();
-  else if (hilbertRTreeRA)
-    return hilbertRTreeRA->ReferenceSet();
-  else if (rPlusTreeRA)
-    return rPlusTreeRA->ReferenceSet();
-  else if (rPlusPlusTreeRA)
-    return rPlusPlusTreeRA->ReferenceSet();
-  else if (ubTreeRA)
-    return ubTreeRA->ReferenceSet();
-  else if (octreeRA)
-    return octreeRA->ReferenceSet();
-
-  throw std::runtime_error("no rank-approximate nearest neighbor search model "
-      "initialized");
+  return boost::apply_visitor(ReferenceSetVisitor(), raSearch);
 }
 
 template<typename SortPolicy>
 bool RAModel<SortPolicy>::Naive() const
 {
-  if (kdTreeRA)
-    return kdTreeRA->Naive();
-  else if (coverTreeRA)
-    return coverTreeRA->Naive();
-  else if (rTreeRA)
-    return rTreeRA->Naive();
-  else if (rStarTreeRA)
-    return rStarTreeRA->Naive();
-  else if (xTreeRA)
-    return xTreeRA->Naive();
-  else if (hilbertRTreeRA)
-    return hilbertRTreeRA->Naive();
-  else if (rPlusTreeRA)
-    return rPlusTreeRA->Naive();
-  else if (rPlusPlusTreeRA)
-    return rPlusPlusTreeRA->Naive();
-  else if (ubTreeRA)
-    return ubTreeRA->Naive();
-  else if (octreeRA)
-    return octreeRA->Naive();
-
-  throw std::runtime_error("no rank-approximate nearest neighbor search model "
-      "initialized");
+  return boost::apply_visitor(NaiveVisitor(), raSearch);
 }
 
 template<typename SortPolicy>
 bool& RAModel<SortPolicy>::Naive()
 {
-  if (kdTreeRA)
-    return kdTreeRA->Naive();
-  else if (coverTreeRA)
-    return coverTreeRA->Naive();
-  else if (rTreeRA)
-    return rTreeRA->Naive();
-  else if (rStarTreeRA)
-    return rStarTreeRA->Naive();
-  else if (xTreeRA)
-    return xTreeRA->Naive();
-  else if (hilbertRTreeRA)
-    return hilbertRTreeRA->Naive();
-  else if (rPlusTreeRA)
-    return rPlusTreeRA->Naive();
-  else if (rPlusPlusTreeRA)
-    return rPlusPlusTreeRA->Naive();
-  else if (ubTreeRA)
-    return ubTreeRA->Naive();
-  else if (octreeRA)
-    return octreeRA->Naive();
-
-  throw std::runtime_error("no rank-approximate nearest neighbor search model "
-      "initialized");
+  return boost::apply_visitor(NaiveVisitor(), raSearch);
 }
 
 template<typename SortPolicy>
 bool RAModel<SortPolicy>::SingleMode() const
 {
-  if (kdTreeRA)
-    return kdTreeRA->SingleMode();
-  else if (coverTreeRA)
-    return coverTreeRA->SingleMode();
-  else if (rTreeRA)
-    return rTreeRA->SingleMode();
-  else if (rStarTreeRA)
-    return rStarTreeRA->SingleMode();
-  else if (xTreeRA)
-    return xTreeRA->SingleMode();
-  else if (hilbertRTreeRA)
-    return hilbertRTreeRA->SingleMode();
-  else if (rPlusTreeRA)
-    return rPlusTreeRA->SingleMode();
-  else if (rPlusPlusTreeRA)
-    return rPlusPlusTreeRA->SingleMode();
-  else if (ubTreeRA)
-    return ubTreeRA->SingleMode();
-  else if (octreeRA)
-    return octreeRA->SingleMode();
-
-  throw std::runtime_error("no rank-approximate nearest neighbor search model "
-      "initialized");
+  return boost::apply_visitor(SingleModeVisitor(), raSearch);
 }
 
 template<typename SortPolicy>
 bool& RAModel<SortPolicy>::SingleMode()
 {
-  if (kdTreeRA)
-    return kdTreeRA->SingleMode();
-  else if (coverTreeRA)
-    return coverTreeRA->SingleMode();
-  else if (rTreeRA)
-    return rTreeRA->SingleMode();
-  else if (rStarTreeRA)
-    return rStarTreeRA->SingleMode();
-  else if (xTreeRA)
-    return xTreeRA->SingleMode();
-  else if (hilbertRTreeRA)
-    return hilbertRTreeRA->SingleMode();
-  else if (rPlusTreeRA)
-    return rPlusTreeRA->SingleMode();
-  else if (rPlusPlusTreeRA)
-    return rPlusPlusTreeRA->SingleMode();
-  else if (ubTreeRA)
-    return ubTreeRA->SingleMode();
-  else if (octreeRA)
-    return octreeRA->SingleMode();
-
-  throw std::runtime_error("no rank-approximate nearest neighbor search model "
-      "initialized");
+  return boost::apply_visitor(SingleModeVisitor(), raSearch);
 }
 
 template<typename SortPolicy>
 double RAModel<SortPolicy>::Tau() const
 {
-  if (kdTreeRA)
-    return kdTreeRA->Tau();
-  else if (coverTreeRA)
-    return coverTreeRA->Tau();
-  else if (rTreeRA)
-    return rTreeRA->Tau();
-  else if (rStarTreeRA)
-    return rStarTreeRA->Tau();
-  else if (xTreeRA)
-    return xTreeRA->Tau();
-  else if (hilbertRTreeRA)
-    return hilbertRTreeRA->Tau();
-  else if (rPlusTreeRA)
-    return rPlusTreeRA->Tau();
-  else if (rPlusPlusTreeRA)
-    return rPlusPlusTreeRA->Tau();
-  else if (ubTreeRA)
-    return ubTreeRA->Tau();
-  else if (octreeRA)
-    return octreeRA->Tau();
-
-  throw std::runtime_error("no rank-approximate nearest neighbor search model "
-      "initialized");
+  return boost::apply_visitor(TauVisitor(), raSearch);
 }
 
 template<typename SortPolicy>
 double& RAModel<SortPolicy>::Tau()
 {
-  if (kdTreeRA)
-    return kdTreeRA->Tau();
-  else if (coverTreeRA)
-    return coverTreeRA->Tau();
-  else if (rTreeRA)
-    return rTreeRA->Tau();
-  else if (rStarTreeRA)
-    return rStarTreeRA->Tau();
-  else if (xTreeRA)
-    return xTreeRA->Tau();
-  else if (hilbertRTreeRA)
-    return hilbertRTreeRA->Tau();
-  else if (rPlusTreeRA)
-    return rPlusTreeRA->Tau();
-  else if (rPlusPlusTreeRA)
-    return rPlusPlusTreeRA->Tau();
-  else if (ubTreeRA)
-    return ubTreeRA->Tau();
-  else if (octreeRA)
-    return octreeRA->Tau();
-
-  throw std::runtime_error("no rank-approximate nearest neighbor search model "
-      "initialized");
+  return boost::apply_visitor(TauVisitor(), raSearch);
 }
 
 template<typename SortPolicy>
 double RAModel<SortPolicy>::Alpha() const
 {
-  if (kdTreeRA)
-    return kdTreeRA->Alpha();
-  else if (coverTreeRA)
-    return coverTreeRA->Alpha();
-  else if (rTreeRA)
-    return rTreeRA->Alpha();
-  else if (rStarTreeRA)
-    return rStarTreeRA->Alpha();
-  else if (xTreeRA)
-    return xTreeRA->Alpha();
-  else if (hilbertRTreeRA)
-    return hilbertRTreeRA->Alpha();
-  else if (rPlusTreeRA)
-    return rPlusTreeRA->Alpha();
-  else if (rPlusPlusTreeRA)
-    return rPlusPlusTreeRA->Alpha();
-  else if (ubTreeRA)
-    return ubTreeRA->Alpha();
-  else if (octreeRA)
-    return octreeRA->Alpha();
-
-  throw std::runtime_error("no rank-approximate nearest neighbor search model "
-      "initialized");
+  return boost::apply_visitor(AlphaVisitor(), raSearch);
 }
 
 template<typename SortPolicy>
 double& RAModel<SortPolicy>::Alpha()
 {
-  if (kdTreeRA)
-    return kdTreeRA->Alpha();
-  else if (coverTreeRA)
-    return coverTreeRA->Alpha();
-  else if (rTreeRA)
-    return rTreeRA->Alpha();
-  else if (rStarTreeRA)
-    return rStarTreeRA->Alpha();
-  else if (xTreeRA)
-    return xTreeRA->Alpha();
-  else if (hilbertRTreeRA)
-    return hilbertRTreeRA->Alpha();
-  else if (rPlusTreeRA)
-    return rPlusTreeRA->Alpha();
-  else if (rPlusPlusTreeRA)
-    return rPlusPlusTreeRA->Alpha();
-  else if (ubTreeRA)
-    return ubTreeRA->Alpha();
-  else if (octreeRA)
-    return octreeRA->Alpha();
-
-  throw std::runtime_error("no rank-approximate nearest neighbor search model "
-      "initialized");
+  return boost::apply_visitor(AlphaVisitor(), raSearch);
 }
 
 template<typename SortPolicy>
 bool RAModel<SortPolicy>::SampleAtLeaves() const
 {
-  if (kdTreeRA)
-    return kdTreeRA->SampleAtLeaves();
-  else if (coverTreeRA)
-    return coverTreeRA->SampleAtLeaves();
-  else if (rTreeRA)
-    return rTreeRA->SampleAtLeaves();
-  else if (rStarTreeRA)
-    return rStarTreeRA->SampleAtLeaves();
-  else if (xTreeRA)
-    return xTreeRA->SampleAtLeaves();
-  else if (hilbertRTreeRA)
-    return hilbertRTreeRA->SampleAtLeaves();
-  else if (rPlusTreeRA)
-    return rPlusTreeRA->SampleAtLeaves();
-  else if (rPlusPlusTreeRA)
-    return rPlusPlusTreeRA->SampleAtLeaves();
-  else if (ubTreeRA)
-    return ubTreeRA->SampleAtLeaves();
-  else if (octreeRA)
-    return octreeRA->SampleAtLeaves();
-
-  throw std::runtime_error("no rank-approximate nearest neighbor search model "
-      "initialized");
+  return boost::apply_visitor(SampleAtLeavesVisitor(), raSearch);
 }
 
 template<typename SortPolicy>
 bool& RAModel<SortPolicy>::SampleAtLeaves()
 {
-  if (kdTreeRA)
-    return kdTreeRA->SampleAtLeaves();
-  else if (coverTreeRA)
-    return coverTreeRA->SampleAtLeaves();
-  else if (rTreeRA)
-    return rTreeRA->SampleAtLeaves();
-  else if (rStarTreeRA)
-    return rStarTreeRA->SampleAtLeaves();
-  else if (xTreeRA)
-    return xTreeRA->SampleAtLeaves();
-  else if (hilbertRTreeRA)
-    return hilbertRTreeRA->SampleAtLeaves();
-  else if (rPlusTreeRA)
-    return rPlusTreeRA->SampleAtLeaves();
-  else if (rPlusPlusTreeRA)
-    return rPlusPlusTreeRA->SampleAtLeaves();
-  else if (ubTreeRA)
-    return ubTreeRA->SampleAtLeaves();
-  else if (octreeRA)
-    return octreeRA->SampleAtLeaves();
-
-  throw std::runtime_error("no rank-approximate nearest neighbor search model "
-      "initialized");
+  return boost::apply_visitor(SampleAtLeavesVisitor(), raSearch);
 }
 
 template<typename SortPolicy>
 bool RAModel<SortPolicy>::FirstLeafExact() const
 {
-  if (kdTreeRA)
-    return kdTreeRA->FirstLeafExact();
-  else if (coverTreeRA)
-    return coverTreeRA->FirstLeafExact();
-  else if (rTreeRA)
-    return rTreeRA->FirstLeafExact();
-  else if (rStarTreeRA)
-    return rStarTreeRA->FirstLeafExact();
-  else if (xTreeRA)
-    return xTreeRA->FirstLeafExact();
-  else if (hilbertRTreeRA)
-    return hilbertRTreeRA->FirstLeafExact();
-  else if (rPlusTreeRA)
-    return rPlusTreeRA->FirstLeafExact();
-  else if (rPlusPlusTreeRA)
-    return rPlusPlusTreeRA->FirstLeafExact();
-  else if (ubTreeRA)
-    return ubTreeRA->FirstLeafExact();
-  else if (octreeRA)
-    return octreeRA->FirstLeafExact();
-
-  throw std::runtime_error("no rank-approximate nearest neighbor search model "
-      "initialized");
+  return boost::apply_visitor(FirstLeafExactVisitor(), raSearch);
 }
 
 template<typename SortPolicy>
 bool& RAModel<SortPolicy>::FirstLeafExact()
 {
-  if (kdTreeRA)
-    return kdTreeRA->FirstLeafExact();
-  else if (coverTreeRA)
-    return coverTreeRA->FirstLeafExact();
-  else if (rTreeRA)
-    return rTreeRA->FirstLeafExact();
-  else if (rStarTreeRA)
-    return rStarTreeRA->FirstLeafExact();
-  else if (xTreeRA)
-    return xTreeRA->FirstLeafExact();
-  else if (hilbertRTreeRA)
-    return hilbertRTreeRA->FirstLeafExact();
-  else if (rPlusTreeRA)
-    return rPlusTreeRA->FirstLeafExact();
-  else if (rPlusPlusTreeRA)
-    return rPlusPlusTreeRA->FirstLeafExact();
-  else if (ubTreeRA)
-    return ubTreeRA->FirstLeafExact();
-  else if (octreeRA)
-    return octreeRA->FirstLeafExact();
-
-  throw std::runtime_error("no rank-approximate nearest neighbor search model "
-      "initialized");
+  return boost::apply_visitor(FirstLeafExactVisitor(), raSearch);
 }
 
 template<typename SortPolicy>
 size_t RAModel<SortPolicy>::SingleSampleLimit() const
 {
-  if (kdTreeRA)
-    return kdTreeRA->SingleSampleLimit();
-  else if (coverTreeRA)
-    return coverTreeRA->SingleSampleLimit();
-  else if (rTreeRA)
-    return rTreeRA->SingleSampleLimit();
-  else if (rStarTreeRA)
-    return rStarTreeRA->SingleSampleLimit();
-  else if (xTreeRA)
-    return xTreeRA->SingleSampleLimit();
-  else if (hilbertRTreeRA)
-    return hilbertRTreeRA->SingleSampleLimit();
-  else if (rPlusTreeRA)
-    return rPlusTreeRA->SingleSampleLimit();
-  else if (rPlusPlusTreeRA)
-    return rPlusPlusTreeRA->SingleSampleLimit();
-  else if (ubTreeRA)
-    return ubTreeRA->SingleSampleLimit();
-  else if (octreeRA)
-    return octreeRA->SingleSampleLimit();
-
-  throw std::runtime_error("no rank-approximate nearest neighbor search model "
-      "initialized");
+  return boost::apply_visitor(SingleSampleLimitVisitor(), raSearch);
 }
 
 template<typename SortPolicy>
 size_t& RAModel<SortPolicy>::SingleSampleLimit()
 {
-  if (kdTreeRA)
-    return kdTreeRA->SingleSampleLimit();
-  else if (coverTreeRA)
-    return coverTreeRA->SingleSampleLimit();
-  else if (rTreeRA)
-    return rTreeRA->SingleSampleLimit();
-  else if (rStarTreeRA)
-    return rStarTreeRA->SingleSampleLimit();
-  else if (xTreeRA)
-    return xTreeRA->SingleSampleLimit();
-  else if (hilbertRTreeRA)
-    return hilbertRTreeRA->SingleSampleLimit();
-  else if (rPlusTreeRA)
-    return rPlusTreeRA->SingleSampleLimit();
-  else if (rPlusPlusTreeRA)
-    return rPlusPlusTreeRA->SingleSampleLimit();
-  else if (ubTreeRA)
-    return ubTreeRA->SingleSampleLimit();
-  else if (octreeRA)
-    return octreeRA->SingleSampleLimit();
-
-  throw std::runtime_error("no rank-approximate nearest neighbor search model "
-      "initialized");
+  return boost::apply_visitor(SingleSampleLimitVisitor(), raSearch);
 }
 
 template<typename SortPolicy>
@@ -756,16 +503,7 @@ void RAModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
   }
 
   // Clean memory, if necessary.
-  delete kdTreeRA;
-  delete coverTreeRA;
-  delete rTreeRA;
-  delete rStarTreeRA;
-  delete xTreeRA;
-  delete hilbertRTreeRA;
-  delete rPlusTreeRA;
-  delete rPlusPlusTreeRA;
-  delete ubTreeRA;
-  delete octreeRA;
+  boost::apply_visitor(DeleteVisitor(), raSearch);
 
   this->leafSize = leafSize;
 
@@ -781,78 +519,41 @@ void RAModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
   switch (treeType)
   {
     case KD_TREE:
-      // Build tree, if necessary.
-      if (naive)
-      {
-        kdTreeRA = new RAType<tree::KDTree>(std::move(referenceSet), naive,
-            singleMode);
-      }
-      else
-      {
-        std::vector<size_t> oldFromNewReferences;
-        typename RAType<tree::KDTree>::Tree* kdTree =
-            new typename RAType<tree::KDTree>::Tree(std::move(referenceSet),
-            oldFromNewReferences, leafSize);
-        kdTreeRA = new RAType<tree::KDTree>(kdTree, singleMode);
-
-        // Give the model ownership of the tree.
-        kdTreeRA->treeOwner = true;
-        kdTreeRA->oldFromNewReferences = oldFromNewReferences;
-      }
+      raSearch = new RAType<SortPolicy, tree::KDTree>(naive, singleMode);
       break;
     case COVER_TREE:
-      coverTreeRA = new RAType<tree::StandardCoverTree>(std::move(referenceSet),
-          naive, singleMode);
+      raSearch = new RAType<SortPolicy, tree::StandardCoverTree>(naive,
+          singleMode);
       break;
     case R_TREE:
-      rTreeRA = new RAType<tree::RTree>(std::move(referenceSet), naive,
-          singleMode);
+      raSearch = new RAType<SortPolicy, tree::RTree>(naive, singleMode);
       break;
     case R_STAR_TREE:
-      rStarTreeRA = new RAType<tree::RStarTree>(std::move(referenceSet), naive,
-          singleMode);
+      raSearch = new RAType<SortPolicy, tree::RStarTree>(naive, singleMode);
       break;
     case X_TREE:
-      xTreeRA = new RAType<tree::XTree>(std::move(referenceSet), naive,
-          singleMode);
+      raSearch = new RAType<SortPolicy, tree::XTree>(naive, singleMode);
       break;
     case HILBERT_R_TREE:
-      hilbertRTreeRA = new RAType<tree::HilbertRTree>(std::move(referenceSet),
-          naive, singleMode);
+      raSearch = new RAType<SortPolicy, tree::HilbertRTree>(naive, singleMode);
       break;
     case R_PLUS_TREE:
-      rPlusTreeRA = new RAType<tree::RPlusTree>(std::move(referenceSet),
-          naive, singleMode);
+      raSearch = new RAType<SortPolicy, tree::RPlusTree>(naive, singleMode);
       break;
     case R_PLUS_PLUS_TREE:
-      rPlusPlusTreeRA = new RAType<tree::RPlusPlusTree>(std::move(referenceSet),
-          naive, singleMode);
+      raSearch = new RAType<SortPolicy, tree::RPlusPlusTree>(naive,
+          singleMode);
       break;
     case UB_TREE:
-      ubTreeRA = new RAType<tree::UBTree>(std::move(referenceSet),
-          naive, singleMode);
+      raSearch = new RAType<SortPolicy, tree::UBTree>(naive, singleMode);
       break;
     case OCTREE:
-      // Build tree, if necessary.
-      if (naive)
-      {
-        octreeRA = new RAType<tree::Octree>(std::move(referenceSet), naive,
-            singleMode);
-      }
-      else
-      {
-        std::vector<size_t> oldFromNewReferences;
-        typename RAType<tree::Octree>::Tree* octree =
-            new typename RAType<tree::Octree>::Tree(std::move(referenceSet),
-            oldFromNewReferences, leafSize);
-        octreeRA = new RAType<tree::Octree>(octree, singleMode);
-
-        // Give the model ownership of the tree.
-        octreeRA->treeOwner = true;
-        octreeRA->oldFromNewReferences = oldFromNewReferences;
-      }
+      raSearch = new RAType<SortPolicy, tree::Octree>(naive, singleMode);
       break;
   }
+
+  TrainVisitor<SortPolicy> tn(std::move(referenceSet), leafSize);
+  boost::apply_visitor(tn, raSearch);
 
   if (!naive)
   {
@@ -880,103 +581,9 @@ void RAModel<SortPolicy>::Search(arma::mat&& querySet,
     Log::Info << "brute-force (naive) rank-approximate search...";
   Log::Info << std::endl;
 
-  switch (treeType)
-  {
-    case KD_TREE:
-      if (!kdTreeRA->Naive() && !kdTreeRA->SingleMode())
-      {
-        // Build a second tree and search.
-        Timer::Start("tree_building");
-        Log::Info << "Building query tree..." << std::endl;
-        std::vector<size_t> oldFromNewQueries;
-        typename RAType<tree::KDTree>::Tree queryTree(std::move(querySet),
-            oldFromNewQueries, leafSize);
-        Log::Info << "Tree built." << std::endl;
-        Timer::Stop("tree_building");
-
-        arma::Mat<size_t> neighborsOut;
-        arma::mat distancesOut;
-        kdTreeRA->Search(&queryTree, k, neighborsOut, distancesOut);
-
-        // Unmap the query points.
-        distances.set_size(distancesOut.n_rows, distancesOut.n_cols);
-        neighbors.set_size(neighborsOut.n_rows, neighborsOut.n_cols);
-        for (size_t i = 0; i < neighborsOut.n_cols; ++i)
-        {
-          neighbors.col(oldFromNewQueries[i]) = neighborsOut.col(i);
-          distances.col(oldFromNewQueries[i]) = distancesOut.col(i);
-        }
-      }
-      else
-      {
-        // Search without building a second tree.
-        kdTreeRA->Search(querySet, k, neighbors, distances);
-      }
-      break;
-    case COVER_TREE:
-      // No mapping necessary.
-      coverTreeRA->Search(querySet, k, neighbors, distances);
-      break;
-    case R_TREE:
-      // No mapping necessary.
-      rTreeRA->Search(querySet, k, neighbors, distances);
-      break;
-    case R_STAR_TREE:
-      // No mapping necessary.
-      rStarTreeRA->Search(querySet, k, neighbors, distances);
-      break;
-    case X_TREE:
-      // No mapping necessary.
-      xTreeRA->Search(querySet, k, neighbors, distances);
-      break;
-    case HILBERT_R_TREE:
-      // No mapping necessary.
-      hilbertRTreeRA->Search(querySet, k, neighbors, distances);
-      break;
-    case R_PLUS_TREE:
-      // No mapping necessary.
-      rPlusTreeRA->Search(querySet, k, neighbors, distances);
-      break;
-    case R_PLUS_PLUS_TREE:
-      // No mapping necessary.
-      rPlusPlusTreeRA->Search(querySet, k, neighbors, distances);
-      break;
-    case UB_TREE:
-      // No mapping necessary.
-      ubTreeRA->Search(querySet, k, neighbors, distances);
-      break;
-    case OCTREE:
-      if (!octreeRA->Naive() && !octreeRA->SingleMode())
-      {
-        // Build a second tree and search.
-        Timer::Start("tree_building");
-        Log::Info << "Building query tree..." << std::endl;
-        std::vector<size_t> oldFromNewQueries;
-        typename RAType<tree::Octree>::Tree queryTree(std::move(querySet),
-            oldFromNewQueries, leafSize);
-        Log::Info << "Tree built." << std::endl;
-        Timer::Stop("tree_building");
-
-        arma::Mat<size_t> neighborsOut;
-        arma::mat distancesOut;
-        octreeRA->Search(&queryTree, k, neighborsOut, distancesOut);
-
-        // Unmap the query points.
-        distances.set_size(distancesOut.n_rows, distancesOut.n_cols);
-        neighbors.set_size(neighborsOut.n_rows, neighborsOut.n_cols);
-        for (size_t i = 0; i < neighborsOut.n_cols; ++i)
-        {
-          neighbors.col(oldFromNewQueries[i]) = neighborsOut.col(i);
-          distances.col(oldFromNewQueries[i]) = distancesOut.col(i);
-        }
-      }
-      else
-      {
-        // Search without building a second tree.
-        octreeRA->Search(querySet, k, neighbors, distances);
-      }
-      break;
-  }
+  BiSearchVisitor<SortPolicy> search(querySet, k, neighbors, distances,
+      leafSize);
+  boost::apply_visitor(search, raSearch);
 }
 
 template<typename SortPolicy>
@@ -993,39 +600,8 @@ void RAModel<SortPolicy>::Search(const size_t k,
     Log::Info << "brute-force (naive) rank-approximate search...";
   Log::Info << std::endl;
 
-  switch (treeType)
-  {
-    case KD_TREE:
-      kdTreeRA->Search(k, neighbors, distances);
-      break;
-    case COVER_TREE:
-      coverTreeRA->Search(k, neighbors, distances);
-      break;
-    case R_TREE:
-      rTreeRA->Search(k, neighbors, distances);
-      break;
-    case R_STAR_TREE:
-      rStarTreeRA->Search(k, neighbors, distances);
-      break;
-    case X_TREE:
-      xTreeRA->Search(k, neighbors, distances);
-      break;
-    case HILBERT_R_TREE:
-      hilbertRTreeRA->Search(k, neighbors, distances);
-      break;
-    case R_PLUS_TREE:
-      rPlusTreeRA->Search(k, neighbors, distances);
-      break;
-    case R_PLUS_PLUS_TREE:
-      rPlusPlusTreeRA->Search(k, neighbors, distances);
-      break;
-    case UB_TREE:
-      ubTreeRA->Search(k, neighbors, distances);
-      break;
-    case OCTREE:
-      octreeRA->Search(k, neighbors, distances);
-      break;
-  }
+  MonoSearchVisitor search(k, neighbors, distances);
+  boost::apply_visitor(search, raSearch);
 }
 
 template<typename SortPolicy>

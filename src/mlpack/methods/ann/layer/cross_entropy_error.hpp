@@ -19,8 +19,8 @@ namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The cross-entropy performance function measures the network's
- * performance according to the cross-entropy between the input
- * and target distributions.
+ * performance according to the cross-entropy
+ * between the input and target distributions.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).

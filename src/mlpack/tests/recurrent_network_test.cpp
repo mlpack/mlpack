@@ -40,7 +40,7 @@ void GenerateNoisySines(arma::mat& data,
                         const size_t sequences,
                         const double noise = 0.3)
 {
-  arma::colvec x =  arma::linspace<arma::Col<double> >(0,
+  arma::colvec x =  arma::linspace<arma::Col<double>>(0,
       points - 1, points) / points * 20.0;
   arma::colvec y1 = arma::sin(x + arma::as_scalar(arma::randu(1)) * 3.0);
   arma::colvec y2 = arma::sin(x / 2.0 + arma::as_scalar(arma::randu(1)) * 3.0);
@@ -182,23 +182,58 @@ void GenerateReber(const arma::Mat<char>& transitions, std::string& reber)
     idx = arma::as_scalar(transitions.submat(idx, grammerIdx + 2, idx,
         grammerIdx + 2)) - '0';
   } while (idx != 0);
-
-  reber =  "BPTVVE";
 }
 
 /**
- * Generate a random embedded Reber grammar.
+ * Generate a random recursive Reber grammar.
  *
- * @param transitions Embedded Reber grammar transition matrix.
+ * @param transitions Recursive Reber grammar transition matrix.
+ * @param averageRecursion Average recursive depth of the reber grammar.
+ * @param maxRecursion Maximum recursive depth of reber grammar.
  * @param reber The generated embedded Reber grammar string.
+ * @param addEnd Add ending 'E' to the generated grammar.
  */
-void GenerateEmbeddedReber(const arma::Mat<char>& transitions,
-                           std::string& reber)
+void GenerateRecursiveReber(const arma::Mat<char>& transitions,
+                            size_t averageRecursion,
+                            size_t maxRecursion,
+                            std::string& reber,
+                            bool addEnd = true)
 {
-  GenerateReber(transitions, reber);
-  const char c = (rand() % 2) == 1 ? 'P' : 'T';
+  char c = (rand() % averageRecursion) == 1 ? 'P' : 'T';
+
+  if (maxRecursion == 1 || c == 'T')
+  {
+    c = 'T';
+    GenerateReber(transitions, reber);
+  }
+  else
+  {
+    GenerateRecursiveReber(transitions, averageRecursion, --maxRecursion,
+        reber, false);
+  }
+
   reber = c + reber + c;
-  reber = "B" + reber + "E";
+
+  if (addEnd)
+  {
+    reber = "B" + reber + "E";
+  }
+}
+
+/**
+ * Convert a unit vector to a Reber symbol.
+ *
+ * @param translation The unit vector to be converted.
+ * @param symbol The converted unit vector stored as Reber symbol.
+ */
+template<typename MatType>
+void ReberReverseTranslation(const MatType& translation, char& symbol)
+{
+  arma::Col<char> symbols;
+  symbols << 'B' << 'T' << 'S' << 'X' << 'P' << 'V' << 'E' << arma::endr;
+  const int idx = arma::as_scalar(arma::find(translation == 1, 1, "first"));
+
+  symbol = symbols(idx);
 }
 
 /**
@@ -215,21 +250,6 @@ void ReberTranslation(const char symbol, arma::colvec& translation)
 
   translation = arma::zeros<arma::colvec>(7);
   translation(idx) = 1;
-}
-
-/**
- * Convert a unit vector to a Reber symbol.
- *
- * @param translation The unit vector to be converted.
- * @param symbol The converted unit vector stored as Reber symbol.
- */
-void ReberReverseTranslation(const arma::colvec& translation, char& symbol)
-{
-  arma::Col<char> symbols;
-  symbols << 'B' << 'T' << 'S' << 'X' << 'P' << 'V' << 'E' << arma::endr;
-  const int idx = arma::as_scalar(arma::find(translation == 1, 1, "first"));
-
-  symbol = symbols(idx);
 }
 
 /**
@@ -258,30 +278,82 @@ void GenerateNextReber(const arma::Mat<char>& transitions,
 }
 
 /**
- * Given a embedded Reber string, return a embedded Reber string with all
+ * Given a recursive Reber string, return a Reber string with all
  * reachable next symbols.
  *
  * @param transitions The Reber transistion matrix.
  * @param reber The Reber string used to generate all reachable next symbols.
  * @param nextReber All reachable next symbols.
  */
-void GenerateNextEmbeddedReber(const arma::Mat<char>& transitions,
+void GenerateNextRecursiveReber(const arma::Mat<char>& transitions,
                                const std::string& reber, std::string& nextReber)
 {
-  if (reber.length() <= 2)
+  size_t state = 0;
+  size_t numPs = 0;
+
+  for (size_t cIndex = 0; cIndex < reber.length(); cIndex++)
   {
-    nextReber = reber.length() == 1 ? "TP" : "B";
-  }
-  else
-  {
-    size_t pos = reber.find('E');
-    if (pos != std::string::npos)
+    char c = reber[cIndex];
+
+    if (c == 'B' && state == 0)
     {
-      nextReber = pos == reber.length() - 1 ? std::string(1, reber[1]) : "E";
+      state = 1;
+    }
+    else if (c == 'P' && state == 1)
+    {
+      numPs++;
+      state = 1;
+    }
+    else if (c == 'T' && state == 1)
+    {
+      state = 2;
+    }
+    else if (c == 'B' && state == 2)
+    {
+      size_t pos = reber.find('E');
+      if (pos != std::string::npos)
+      {
+        cIndex = pos;
+        state = 4;
+      }
+      else
+      {
+        GenerateNextReber(transitions, reber.substr(cIndex), nextReber);
+        state = 3;
+      }
+    }
+    else if (c == 'T' && state == 4)
+    {
+      state = 5;
+    }
+    else if (c == 'P' && state == 5)
+    {
+      numPs--;
+      state = 5;
+    }
+  }
+
+  if (state == 0 || state == 2)
+  {
+    nextReber = "B";
+  }
+  else if (state == 1)
+  {
+    nextReber = "PT";
+  }
+  else if (state == 4)
+  {
+    nextReber = "T";
+  }
+  else if (state == 5)
+  {
+    if (numPs == 0)
+    {
+      nextReber = "E";
     }
     else
     {
-      GenerateNextReber(transitions, reber.substr(2), nextReber);
+      nextReber = "P";
     }
   }
 }
@@ -289,7 +361,12 @@ void GenerateNextEmbeddedReber(const arma::Mat<char>& transitions,
 /**
  * Train the specified network and the construct a Reber grammar dataset.
  */
-void ReberGrammarTestNetwork(bool embedded = false)
+template<typename RecurrentLayerType>
+void ReberGrammarTestNetwork(size_t hiddenSize = 4,
+                             bool recursive = false,
+                             size_t averageRecursion = 3,
+                             size_t maxRecursion = 5
+                             )
 {
   // Reber state transition matrix. (The last two columns are the indices to the
   // next path).
@@ -313,8 +390,8 @@ void ReberGrammarTestNetwork(bool embedded = false)
   // Generate the training data.
   for (size_t i = 0; i < trainReberGrammarCount; i++)
   {
-    if (embedded)
-      GenerateEmbeddedReber(transitions, trainReber);
+    if (recursive)
+      GenerateRecursiveReber(transitions, 3, 5, trainReber);
     else
       GenerateReber(transitions, trainReber);
 
@@ -331,8 +408,9 @@ void ReberGrammarTestNetwork(bool embedded = false)
   // Generate the test data.
   for (size_t i = 0; i < testReberGrammarCount; i++)
   {
-    if (embedded)
-      GenerateEmbeddedReber(transitions, testReber);
+    if (recursive)
+      GenerateRecursiveReber(transitions, averageRecursion, maxRecursion,
+          testReber);
     else
       GenerateReber(transitions, testReber);
 
@@ -369,17 +447,15 @@ void ReberGrammarTestNetwork(bool embedded = false)
   {
     const size_t outputSize = 7;
     const size_t inputSize = 7;
-    const size_t rho = trainInput.at(0, 0).n_elem / inputSize;
 
-    RNN<MeanSquaredError<> > model(rho);
+    RNN<MeanSquaredError<> > model(5);
 
-    model.Add<IdentityLayer<> >();
-    model.Add<Linear<> >(inputSize, 14);
-    model.Add<LSTM<> >(14, 7, rho);
-    model.Add<Linear<> >(7, outputSize);
+    model.Add<Linear<> >(inputSize, hiddenSize);
+    model.Add<RecurrentLayerType>(hiddenSize, hiddenSize);
+    model.Add<Linear<> >(hiddenSize, outputSize);
     model.Add<SigmoidLayer<> >();
 
-    StandardSGD opt(0.1, 2, -50000);
+    StandardSGD opt(0.01, 2, -50000);
 
     arma::mat inputTemp, labelsTemp;
     for (size_t i = 0; i < (10 + offset); i++)
@@ -389,6 +465,7 @@ void ReberGrammarTestNetwork(bool embedded = false)
         inputTemp = trainInput.at(0, j);
         labelsTemp = trainLabels.at(0, j);
 
+        model.Rho() = inputTemp.n_elem / inputSize;
         model.Train(inputTemp, labelsTemp, opt);
       }
     }
@@ -398,32 +475,36 @@ void ReberGrammarTestNetwork(bool embedded = false)
     // Ask the network to predict the next Reber grammar in the given sequence.
     for (size_t i = 0; i < testReberGrammarCount; i++)
     {
-      arma::mat output, prediction;
+      arma::mat prediction;
       arma::mat input = testInput.at(0, i);
 
+      model.Rho() = input.n_elem / inputSize;
       model.Predict(input, prediction);
-      data::Binarize(prediction, output, 0.5);
 
       const size_t reberGrammerSize = 7;
       std::string inputReber = "";
 
       size_t reberError = 0;
-      for (size_t j = 0; j < (output.n_elem / reberGrammerSize); j++)
-      {
-        if (arma::sum(arma::sum(output.submat(j * reberGrammerSize, 0, (j + 1) *
-            reberGrammerSize - 1, 0))) != 1) break;
 
+      for (size_t j = 0; j < (prediction.n_elem / reberGrammerSize); j++)
+      {
         char predictedSymbol, inputSymbol;
         std::string reberChoices;
 
-        ReberReverseTranslation(output.submat(j * reberGrammerSize, 0, (j + 1) *
-            reberGrammerSize - 1, 0), predictedSymbol);
+        arma::mat currentPrediction = prediction.submat(j * reberGrammerSize, 0,
+            (j + 1) * reberGrammerSize - 1, 0);
+
+        arma::umat output = (currentPrediction == (arma::ones(
+            currentPrediction.n_rows, currentPrediction.n_cols) *
+            arma::as_scalar(arma::max(currentPrediction))));
+
+        ReberReverseTranslation(output, predictedSymbol);
         ReberReverseTranslation(input.submat(j * reberGrammerSize, 0, (j + 1) *
             reberGrammerSize - 1, 0), inputSymbol);
         inputReber += inputSymbol;
 
-        if (embedded)
-          GenerateNextEmbeddedReber(transitions, inputReber, reberChoices);
+        if (recursive)
+          GenerateNextRecursiveReber(transitions, inputReber, reberChoices);
         else
           GenerateNextReber(transitions, inputReber, reberChoices);
 
@@ -431,7 +512,7 @@ void ReberGrammarTestNetwork(bool embedded = false)
           reberError++;
       }
 
-      if (reberError != (output.n_elem / reberGrammerSize))
+      if (reberError != (prediction.n_elem / reberGrammerSize))
         error += 1;
     }
 
@@ -451,17 +532,33 @@ void ReberGrammarTestNetwork(bool embedded = false)
 /**
  * Train the specified networks on a Reber grammar dataset.
  */
-BOOST_AUTO_TEST_CASE(ReberGrammarTest)
+BOOST_AUTO_TEST_CASE(LSTMReberGrammarTest)
 {
-  ReberGrammarTestNetwork(false);
+  ReberGrammarTestNetwork<LSTM<>>(4, false);
 }
 
 /**
  * Train the specified networks on an embedded Reber grammar dataset.
  */
-BOOST_AUTO_TEST_CASE(EmbeddedReberGrammarTest)
+BOOST_AUTO_TEST_CASE(LSTMRecursiveReberGrammarTest)
 {
-  ReberGrammarTestNetwork(true);
+  ReberGrammarTestNetwork<LSTM<>>(20, true);
+}
+
+/**
+ * Train the specified networks on a Reber grammar dataset.
+ */
+BOOST_AUTO_TEST_CASE(GRUReberGrammarTest)
+{
+  ReberGrammarTestNetwork<GRU<>>(4, false);
+}
+
+/**
+ * Train the specified networks on an embedded Reber grammar dataset.
+ */
+BOOST_AUTO_TEST_CASE(GRURecursiveReberGrammarTest)
+{
+  ReberGrammarTestNetwork<GRU<>>(20, true);
 }
 
 /*
@@ -524,6 +621,7 @@ void GenerateDistractedSequence(arma::mat& input, arma::mat& output)
  * Train the specified network and the construct distracted sequence recall
  * dataset.
  */
+template<typename RecurrentLayerType>
 void DistractedSequenceRecallTestNetwork()
 {
   const size_t trainDistractedSequenceCount = 800;
@@ -573,7 +671,7 @@ void DistractedSequenceRecallTestNetwork()
     RNN<MeanSquaredError<> > model(rho);
     model.Add<IdentityLayer<> >();
     model.Add<Linear<> >(inputSize, 14);
-    model.Add<LSTM<> >(14, 7, rho);
+    model.Add<RecurrentLayerType>(14, 7);
     model.Add<Linear<> >(7, outputSize);
     model.Add<SigmoidLayer<> >();
 
@@ -629,9 +727,18 @@ void DistractedSequenceRecallTestNetwork()
  * Train the specified networks on the Derek D. Monner's distracted sequence
  * recall task.
  */
-BOOST_AUTO_TEST_CASE(DistractedSequenceRecallTest)
+BOOST_AUTO_TEST_CASE(LSTMDistractedSequenceRecallTest)
 {
-  DistractedSequenceRecallTestNetwork();
+  DistractedSequenceRecallTestNetwork<LSTM<>>();
+}
+
+/**
+ * Train the specified networks on the Derek D. Monner's distracted sequence
+ * recall task.
+ */
+BOOST_AUTO_TEST_CASE(GRUDistractedSequenceRecallTest)
+{
+  DistractedSequenceRecallTestNetwork<GRU<>>();
 }
 
 BOOST_AUTO_TEST_SUITE_END();
