@@ -52,7 +52,4 @@ class GradientZeroVisitor : public boost::static_visitor<void>
 } // namespace ann
 } // namespace mlpack
 
-// Include implementation.
-#include "gradient_zero_visitor_impl.hpp"
-
 #endif

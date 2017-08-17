@@ -12,9 +12,6 @@
 #ifndef MLPACK_METHODS_ANN_VISITOR_SET_INPUT_WIDTH_VISITOR_IMPL_HPP
 #define MLPACK_METHODS_ANN_VISITOR_SET_INPUT_WIDTH_VISITOR_IMPL_HPP
 
-// In case it hasn't been included yet.
-#include "set_input_width_visitor.hpp"
-
 namespace mlpack {
 namespace ann {
 

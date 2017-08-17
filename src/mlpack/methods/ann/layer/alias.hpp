@@ -7,18 +7,23 @@
  * between multiple networks.  However, it is not threadsafe---so you cannot
  * share parameters between networks in separate threads (although... it should
  * be pretty easy to adapt this class, you just need to add locks).
+ *
+ * You can only alias a layer which implements Parameters() and you
+ * cannot alias a module.
  */
 #ifndef MLPACK_METHODS_ANN_LAYER_ALIAS_LAYER_HPP
 #define MLPACK_METHODS_ANN_LAYER_ALIAS_LAYER_HPP
 
 #include <mlpack/prereqs.hpp>
-#include "layer_types.hpp"
-#include <mlpack/methods/ann/visitor/reset_visitor.hpp>
-#include <mlpack/methods/ann/visitor/add_visitor.hpp>
-
+#include <mlpack/methods/ann/layer/layer_types.hpp>
+#include <mlpack/methods/ann/visitor/visitor.hpp>
 
 namespace mlpack {
 namespace ann {
+
+//class WeightSizeVisitor;
+//class ParametersVisitor;
+//class ParametersSetVisitor;
 
 class Alias
 {
@@ -64,8 +69,11 @@ class Alias
                 arma::Mat<eT>&& error,
                 arma::Mat<eT>&& gradient);
 
-  const arma::mat& OutputParameter() const { return weights; }
-  arma::mat& OutputParameter() { return weights; }
+  const arma::mat& OutputParameter() const { return outputParameter; }
+  arma::mat& OutputParameter() { return outputParameter; }
+
+  arma::mat& Parameters() { return parameter; }
+  const arma::mat& Parameters() const { return parameter; }
 
   const arma::mat& Delta() const;
   arma::mat& Delta();
@@ -74,15 +82,31 @@ class Alias
   void Add(LayerType* newLayer)
   { boost::apply_visitor(AddVisitor(newLayer), layer); }
 
+  size_t WeightSize() const
+  { return boost::apply_visitor(WeightSizeVisitor(), layer); }
+
+  void SetParameters(arma::mat&& parameters)
+  {
+    parameter = parameters;
+    boost::apply_visitor(ParametersSetVisitor(std::move(parameters)), layer);
+  }
+
+  void GetParameters(arma::mat&& parameters)
+  {
+    parameter = parameters;
+    boost::apply_visitor(ParametersVisitor(std::move(parameters)), layer);
+  }
+
  private:
   LayerTypes layer;
-  // Fake weights.
-  arma::mat weights;
+  arma::mat outputParameter;
+  arma::mat parameter;
 };
 
 } // namespace ann
 } // namespace mlpack
 
-#include "alias_layer_impl.hpp"
+#include "alias_impl.hpp"
+#include <mlpack/methods/ann/visitor/visitor_impl.hpp>
 
 #endif

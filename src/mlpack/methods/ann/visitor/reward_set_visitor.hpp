@@ -74,7 +74,4 @@ class RewardSetVisitor : public boost::static_visitor<void>
 } // namespace ann
 } // namespace mlpack
 
-// Include implementation.
-#include "reward_set_visitor_impl.hpp"
-
 #endif

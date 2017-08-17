@@ -77,7 +77,4 @@ class SetInputHeightVisitor : public boost::static_visitor<bool>
 } // namespace ann
 } // namespace mlpack
 
-// Include implementation.
-#include "set_input_height_visitor_impl.hpp"
-
 #endif

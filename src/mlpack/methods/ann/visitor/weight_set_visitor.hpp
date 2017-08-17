@@ -15,6 +15,7 @@
 
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
 #include <mlpack/methods/ann/layer/layer_types.hpp>
+#include <mlpack/methods/ann/layer/alias.hpp>
 
 #include <boost/variant.hpp>
 
@@ -74,8 +75,5 @@ class WeightSetVisitor : public boost::static_visitor<size_t>
 
 } // namespace ann
 } // namespace mlpack
-
-// Include implementation.
-#include "weight_set_visitor_impl.hpp"
 
 #endif

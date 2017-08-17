@@ -14,14 +14,10 @@
 
 #include <mlpack/prereqs.hpp>
 
-#include "visitor/delete_visitor.hpp"
-#include "visitor/delta_visitor.hpp"
-#include "visitor/output_parameter_visitor.hpp"
-#include "visitor/reset_visitor.hpp"
-
 #include "init_rules/network_init.hpp"
 
 #include <mlpack/methods/ann/layer/layer_types.hpp>
+#include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
 

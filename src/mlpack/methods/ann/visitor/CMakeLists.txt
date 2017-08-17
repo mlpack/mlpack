@@ -47,6 +47,8 @@ set(SOURCES
   set_input_height_visitor_impl.hpp
   set_input_width_visitor.hpp
   set_input_width_visitor_impl.hpp
+  visitor.hpp
+  visitor_impl.hpp
   weight_set_visitor.hpp
   weight_set_visitor_impl.hpp
   weight_size_visitor.hpp

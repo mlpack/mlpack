@@ -50,7 +50,4 @@ class BackwardVisitor : public boost::static_visitor<void>
 } // namespace ann
 } // namespace mlpack
 
-// Include implementation.
-#include "backward_visitor_impl.hpp"
-
 #endif

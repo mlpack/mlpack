@@ -12,9 +12,6 @@
 #ifndef MLPACK_METHODS_ANN_VISITOR_GRADIENT_SET_VISITOR_IMPL_HPP
 #define MLPACK_METHODS_ANN_VISITOR_GRADIENT_SET_VISITOR_IMPL_HPP
 
-// In case it hasn't been included yet.
-#include "gradient_set_visitor.hpp"
-
 namespace mlpack {
 namespace ann {
 

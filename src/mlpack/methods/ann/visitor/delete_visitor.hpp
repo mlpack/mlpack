@@ -35,7 +35,4 @@ class DeleteVisitor : public boost::static_visitor<void>
 } // namespace ann
 } // namespace mlpack
 
-// Include implementation.
-#include "delete_visitor_impl.hpp"
-
 #endif

@@ -35,7 +35,4 @@ class DeltaVisitor : public boost::static_visitor<arma::mat&>
 } // namespace ann
 } // namespace mlpack
 
-// Include implementation.
-#include "delta_visitor_impl.hpp"
-
 #endif

@@ -26,5 +26,6 @@
 #include "sequential.hpp"
 #include "concat.hpp"
 #include "vr_class_reward.hpp"
+#include "alias.hpp"
 
 #endif

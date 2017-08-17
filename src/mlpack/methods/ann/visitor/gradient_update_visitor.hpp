@@ -75,7 +75,4 @@ class GradientUpdateVisitor : public boost::static_visitor<size_t>
 } // namespace ann
 } // namespace mlpack
 
-// Include implementation.
-#include "gradient_update_visitor_impl.hpp"
-
 #endif

@@ -15,12 +15,10 @@
 
 #include <mlpack/prereqs.hpp>
 
-#include "../visitor/reset_visitor.hpp"
-#include "../visitor/weight_size_visitor.hpp"
-#include "../visitor/weight_set_visitor.hpp"
+#include <mlpack/methods/ann/layer/layer.hpp>
+#include <mlpack/methods/ann/layer/layer_types.hpp>
 #include "init_rules_traits.hpp"
 
-#include <mlpack/methods/ann/layer/layer_types.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {

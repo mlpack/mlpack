@@ -71,7 +71,4 @@ class RhoSetVisitor : public boost::static_visitor<bool>
 } // namespace ann
 } // namespace mlpack
 
-// Include implementation.
-#include "rho_set_visitor_impl.hpp"
-
 #endif

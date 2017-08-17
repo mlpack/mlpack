@@ -1,0 +1,30 @@
+#ifndef MLPACK_METHODS_ANN_VISITOR_VISITOR_HPP
+#define MLPACK_METHODS_ANN_VISITOR_VISITOR_HPP
+
+#include "add_visitor.hpp"
+#include "backward_visitor.hpp"
+#include "copy_visitor.hpp"
+#include "delete_visitor.hpp"
+#include "delta_visitor.hpp"
+#include "deterministic_set_visitor.hpp"
+#include "forward_visitor.hpp"
+#include "gradient_set_visitor.hpp"
+#include "gradient_update_visitor.hpp"
+#include "gradient_visitor.hpp"
+#include "gradient_zero_visitor.hpp"
+#include "load_output_parameter_visitor.hpp"
+#include "output_height_visitor.hpp"
+#include "output_parameter_visitor.hpp"
+#include "output_width_visitor.hpp"
+#include "parameters_set_visitor.hpp"
+#include "parameters_visitor.hpp"
+#include "reset_visitor.hpp"
+#include "reward_set_visitor.hpp"
+#include "rho_set_visitor.hpp"
+#include "save_output_parameter_visitor.hpp"
+#include "set_input_height_visitor.hpp"
+#include "set_input_width_visitor.hpp"
+#include "weight_set_visitor.hpp"
+#include "weight_size_visitor.hpp"
+
+#endif

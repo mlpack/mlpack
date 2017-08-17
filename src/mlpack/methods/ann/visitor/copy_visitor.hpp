@@ -32,7 +32,5 @@ class CopyVisitor : public boost::static_visitor<LayerTypes>
 } // namespace ann
 } // namespace mlpack
 
-// Include implementation
-#include "copy_visitor_impl.hpp"
 #endif
 

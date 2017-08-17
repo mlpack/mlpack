@@ -68,7 +68,4 @@ class OutputWidthVisitor : public boost::static_visitor<size_t>
 } // namespace ann
 } // namespace mlpack
 
-// Include implementation.
-#include "output_width_visitor_impl.hpp"
-
 #endif

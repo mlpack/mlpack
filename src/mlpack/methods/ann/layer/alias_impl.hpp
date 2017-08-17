@@ -11,7 +11,7 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_ALIAS_LAYER_IMPL_HPP
 #define MLPACK_METHODS_ANN_LAYER_ALIAS_LAYER_IMPL_HPP
 
-#include "alias_layer.hpp"
+#include "alias.hpp"
 
 #include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/visitor/forward_visitor.hpp>

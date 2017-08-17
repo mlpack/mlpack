@@ -12,9 +12,6 @@
 #ifndef MLPACK_METHODS_ANN_VISITOR_PARAMETERS_SET_VISITOR_IMPL_HPP
 #define MLPACK_METHODS_ANN_VISITOR_PARAMETERS_SET_VISITOR_IMPL_HPP
 
-// In case it hasn't been included yet.
-#include "parameters_set_visitor.hpp"
-
 namespace mlpack {
 namespace ann {
 
@@ -29,6 +26,11 @@ template<typename LayerType>
 inline void ParametersSetVisitor::operator()(LayerType *layer) const
 {
   LayerParameters(layer, layer->OutputParameter());
+}
+
+inline void ParametersSetVisitor::operator()(Alias *layer) const
+{
+  layer->SetParameters(std::move(parameters));
 }
 
 template<typename T, typename P>

@@ -122,6 +122,4 @@ using LayerTypes = boost::variant<
 } // namespace ann
 } // namespace mlpack
 
-#include "alias_layer.hpp"
-
 #endif

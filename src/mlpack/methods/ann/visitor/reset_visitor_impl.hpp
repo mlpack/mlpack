@@ -12,9 +12,6 @@
 #ifndef MLPACK_METHODS_ANN_VISITOR_RESET_VISITOR_IMPL_HPP
 #define MLPACK_METHODS_ANN_VISITOR_RESET_VISITOR_IMPL_HPP
 
-// In case it hasn't been included yet.
-#include "reset_visitor.hpp"
-
 namespace mlpack {
 namespace ann {
 

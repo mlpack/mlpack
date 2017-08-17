@@ -35,6 +35,8 @@ class ParametersVisitor : public boost::static_visitor<void>
   template<typename LayerType>
   void operator()(LayerType* layer) const;
 
+  void operator()(Alias* layer) const;
+
  private:
   //! The parameters set.
   arma::mat&& parameters;
@@ -55,8 +57,5 @@ class ParametersVisitor : public boost::static_visitor<void>
 
 } // namespace ann
 } // namespace mlpack
-
-// Include implementation.
-#include "parameters_visitor_impl.hpp"
 
 #endif

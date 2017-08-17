@@ -32,6 +32,8 @@ class WeightSizeVisitor : public boost::static_visitor<size_t>
   template<typename LayerType>
   size_t operator()(LayerType* layer) const;
 
+  size_t operator()(Alias* layer) const;
+
  private:
   //! If the module doesn't implement the Parameters() or Model() function
   //! return 0.
@@ -68,8 +70,5 @@ class WeightSizeVisitor : public boost::static_visitor<size_t>
 
 } // namespace ann
 } // namespace mlpack
-
-// Include implementation.
-#include "weight_size_visitor_impl.hpp"
 
 #endif

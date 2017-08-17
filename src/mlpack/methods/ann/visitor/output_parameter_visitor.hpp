@@ -35,7 +35,4 @@ class OutputParameterVisitor : public boost::static_visitor<arma::mat&>
 } // namespace ann
 } // namespace mlpack
 
-// Include implementation.
-#include "output_parameter_visitor_impl.hpp"
-
 #endif

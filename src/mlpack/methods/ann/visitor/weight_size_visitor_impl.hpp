@@ -12,9 +12,6 @@
 #ifndef MLPACK_METHODS_ANN_VISITOR_WEIGHT_SIZE_VISITOR_IMPL_HPP
 #define MLPACK_METHODS_ANN_VISITOR_WEIGHT_SIZE_VISITOR_IMPL_HPP
 
-// In case it hasn't been included yet.
-#include "weight_size_visitor.hpp"
-
 namespace mlpack {
 namespace ann {
 
@@ -24,6 +21,9 @@ inline size_t WeightSizeVisitor::operator()(LayerType* layer) const
 {
   return LayerSize(layer, layer->OutputParameter());
 }
+
+inline size_t WeightSizeVisitor::operator()(Alias* layer) const
+{ return layer->WeightSize(); }
 
 template<typename T, typename P>
 inline typename std::enable_if<

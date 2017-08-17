@@ -68,7 +68,4 @@ class OutputHeightVisitor : public boost::static_visitor<size_t>
 } // namespace ann
 } // namespace mlpack
 
-// Include implementation.
-#include "output_height_visitor_impl.hpp"
-
 #endif
