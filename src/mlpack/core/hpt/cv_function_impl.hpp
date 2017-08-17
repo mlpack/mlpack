@@ -45,10 +45,15 @@ template<typename CVType,
          size_t TotalArgs,
          typename... BoundArgs>
 CVFunction<CVType, MLAlgorithm, TotalArgs, BoundArgs...>::CVFunction(
-    CVType& cv, const BoundArgs&... args) :
+    CVType& cv,
+    const double relativeDelta,
+    const double minDelta,
+    const BoundArgs&... args) :
     cv(cv),
     boundArgs(args...),
-    bestObjective(std::numeric_limits<double>::max())
+    bestObjective(std::numeric_limits<double>::max()),
+    relativeDelta(relativeDelta),
+    minDelta(minDelta)
 { /* Nothing left to do. */ }
 
 template<typename CVType,
@@ -59,6 +64,26 @@ double CVFunction<CVType, MLAlgorithm, TotalArgs, BoundArgs...>::Evaluate(
     const arma::mat& parameters)
 {
   return Evaluate<0, 0>(parameters);
+}
+
+template<typename CVType,
+         typename MLAlgorithm,
+         size_t TotalArgs,
+         typename... BoundArgs>
+void CVFunction<CVType, MLAlgorithm, TotalArgs, BoundArgs...>::Gradient(
+    const arma::mat& parameters,
+    arma::mat& gradient)
+{
+  gradient = arma::mat(arma::size(parameters));
+  arma::mat increasedParameters = parameters;
+  for (size_t i = 0; i < parameters.n_rows; ++i)
+  {
+    double delta = std::max(std::abs(parameters(i)) * relativeDelta, minDelta);
+    increasedParameters(i) += delta;
+    gradient(i) = (Evaluate(increasedParameters) - Evaluate(parameters)) /
+        delta;
+    increasedParameters(i) = parameters(i);
+  }
 }
 
 template<typename CVType,

@@ -174,6 +174,18 @@ class HyperParameterTuner
   MLAlgorithm bestModel;
 
   /**
+   * The relative increase of arguments for calculation of gradient in
+   * CVFunction.
+   */
+  double relativeDelta;
+
+  /**
+   * The minimum increase of arguments for calculation of gradient in
+   * CVFunction.
+   */
+  double minDelta;
+
+  /**
    * The set of methods to initialize auxiliary objects (a CVFunction object and
    * the datasetInfo parameter) and run optimization to find the best
    * hyper-parameters.

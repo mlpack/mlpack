@@ -49,13 +49,76 @@ BOOST_AUTO_TEST_CASE(CVFunctionTest)
   FixedArg<bool, 1> fixedUseCholesky{useCholesky};
   FixedArg<double, 3> fixedLambda1{lambda2};
   CVFunction<decltype(cv), LARS, 4, FixedArg<bool, 1>, FixedArg<double, 3>>
-      cvFun(cv, fixedUseCholesky, fixedLambda1);
+      cvFun(cv, 0.0, 0.0, fixedUseCholesky, fixedLambda1);
 
   double expected = cv.Evaluate(transposeData, useCholesky, lambda1, lambda2);
   double actual = cvFun.Evaluate(arma::vec{double(transposeData), lambda1});
 
   BOOST_REQUIRE_CLOSE(expected, actual, 1e-5);
 }
+
+/**
+ * This class provides the interface of CV classes, but really implements a
+ * simple quadratic function of three variables.
+ */
+template<typename MLAlgorithm>
+class QuadraticFunction
+{
+ public:
+   QuadraticFunction(double a, double b, double c, double d) :
+     a(a), b(b), c(c), d(d) {}
+
+   double Evaluate(double x, double y, double z)
+   {
+     return a * x * x + b * y * y + c * z * z + d;
+   }
+
+   // Declaring and defining it just in order to provide the same interface as
+   // other CV classes.
+   MLAlgorithm Model()
+   {
+     return MLAlgorithm();
+   }
+
+ private:
+   double a, b, c, d;
+};
+
+/**
+ * Test CVFunction approximates gradient in the expected way.
+ */
+BOOST_AUTO_TEST_CASE(CVFunctionGradientTest)
+{
+  double a = 1.0;
+  double b = -1.5;
+  double c = 2.5;
+  double d = 3.0;
+  QuadraticFunction<LARS> lf(a, b, c, d);
+
+  double relativeDelta = 0.01;
+  double minDelta = 0.001;
+  CVFunction<decltype(lf), LARS, 3> cvFun(lf, relativeDelta, minDelta);
+
+  double x = 0.0;
+  double y = -1.0;
+  double z = 2.0;
+  arma::mat gradient;
+  cvFun.Gradient(arma::vec{x, y, z}, gradient);
+
+  double xDelta = minDelta;
+  double yDelta = relativeDelta * abs(y);
+  double zDelta = relativeDelta * abs(z);
+
+  double aproximateXPartialDerivative = a * (2 * x + xDelta);
+  double aproximateYPartialDerivative = b * (2 * y + yDelta);
+  double aproximateZPartialDerivative = c * (2 * z + zDelta);
+
+  BOOST_REQUIRE_EQUAL(gradient.n_elem, 3);
+  BOOST_REQUIRE_CLOSE(gradient(0), aproximateXPartialDerivative, 1e-5);
+  BOOST_REQUIRE_CLOSE(gradient(1), aproximateYPartialDerivative, 1e-5);
+  BOOST_REQUIRE_CLOSE(gradient(2), aproximateZPartialDerivative, 1e-5);
+}
+
 
 void InitProneToOverfittingData(arma::mat& xs,
                                 arma::rowvec& ys,
@@ -132,7 +195,7 @@ BOOST_AUTO_TEST_CASE(GridSearchTest)
 
   SimpleCV<LARS, MSE> cv(validationSize, xs, ys);
   CVFunction<decltype(cv), LARS, 4, FixedArg<bool, 0>, FixedArg<bool, 1>>
-      cvFun(cv, {transposeData}, {useCholesky});
+      cvFun(cv, 0.0, 0.0, {transposeData}, {useCholesky});
 
   IncrementPolicy policy(true);
   DatasetMapper<IncrementPolicy, double> datasetInfo(policy, 2);

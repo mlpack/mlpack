@@ -43,11 +43,23 @@ class CVFunction
    * Initialize a CVFunction object.
    *
    * @param cv A cross-validation object.
+   * @param relativeDelta Relative increase of arguments for calculation of
+   *     partial derivatives (by the definition). The exact increase for some
+   *     particular argument is equal to the absolute value of the argument
+   *     multiplied by the relative increase (see also the documentation for the
+   *     minDelta parameter).
+   * @param minDelta Minimum increase of arguments for calculation of partial
+   *     derivatives (by the definition). This value is going to be used when it
+   *     is greater than the increase calculated with the rules described in the
+   *     documentation for the relativeDelta parameter.
    * @param BoundArgs Arguments that should be passed into the Evaluate method
    *     of the CVType object but are not going to be passed into the Evaluate
    *     method of this object.
    */
-  CVFunction(CVType& cv, const BoundArgs&... args);
+  CVFunction(CVType& cv,
+             const double relativeDelta,
+             const double minDelta,
+             const BoundArgs&... args);
 
   /**
    * Run cross-validation with the bound and passed parameters.
@@ -56,6 +68,16 @@ class CVFunction
    *     be passed into the Evaluate method of the CVType object.
    */
   double Evaluate(const arma::mat& parameters);
+
+  /**
+   * Evaluate numerically the gradient of the CVFunction with the given
+   * parameters.
+   *
+   * @param parameters Arguments (rather than the bound arguments) that should
+   *     be passed into the Evaluate method of the CVType object.
+   * @param gradient Vector to output the gradient into.
+   */
+  void Gradient(const arma::mat& parameters, arma::mat& gradient);
 
   //! Access and modify the best model so far.
   MLAlgorithm& BestModel() { return bestModel; }
@@ -89,6 +111,12 @@ class CVFunction
 
   //! The best model so far.
   MLAlgorithm bestModel;
+
+  //! Relative increase of arguments for calculation of gradient.
+  double relativeDelta;
+
+  //! Minimum absolute increase of arguments for calculation of gradient.
+  double minDelta;
 
   /**
    * Collect all arguments and run cross-validation.

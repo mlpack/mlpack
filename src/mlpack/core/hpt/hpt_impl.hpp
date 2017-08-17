@@ -32,7 +32,7 @@ HyperParameterTuner<MLAlgorithm,
                     MatType,
                     PredictionsType,
                     WeightsType>::HyperParameterTuner(const CVArgs&... args) :
-    cv(args...) {}
+    cv(args...), relativeDelta(0.01), minDelta(1e-10) {}
 
 template<typename MLAlgorithm,
          typename Metric,
@@ -88,7 +88,7 @@ void HyperParameterTuner<MLAlgorithm,
   static const size_t totalArgs = std::tuple_size<ArgsTuple>::value;
 
   CVFunction<CVType, MLAlgorithm, totalArgs, FixedArgs...>
-      cvFunction(cv, fixedArgs...);
+      cvFunction(cv, relativeDelta, minDelta, fixedArgs...);
   bestObjective = Metric::NeedsMinimization?
       optimizer.Optimize(cvFunction, bestParams, datasetInfo) :
       -optimizer.Optimize(cvFunction, bestParams, datasetInfo);
