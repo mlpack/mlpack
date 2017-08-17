@@ -101,7 +101,7 @@ void HAMUnit<E, J, S, W, C>::RebuildParameters() {
          searchCount = searchParams.n_elem,
          controllerCount = controllerParams.n_elem,
          joinCount = joinParams.n_elem,
-         writeCount = writeParams.n_elem,
+         writeCount = writeParams.n_elem;
   parameters = arma::mat(
       embedCount + searchCount + controllerCount + joinCount + writeCount, 1);
   parameters.rows(0, embedCount - 1) = embedParams;
@@ -109,18 +109,12 @@ void HAMUnit<E, J, S, W, C>::RebuildParameters() {
   parameters.rows(
       embedCount + searchCount, embedCount + searchCount + controllerCount - 1)
       = controllerParams;
-  parameters.rows(searchCount, embedCount + searchCount + controllerCount,
-      searchCount, embedCount + searchCount + controllerCount + joinCount - 1)
+  parameters.rows(embedCount + searchCount + controllerCount,
+      embedCount + searchCount + controllerCount + joinCount - 1)
       = joinParams;
   parameters.rows(
-      searchCount, embedCount + searchCount + controllerCount + joinCount,
+      embedCount + searchCount + controllerCount + joinCount,
       parameters.n_elem - 1) = writeParams;
-  std::cerr << "E:\n" << embedParams;
-  std::cerr << "S:\n" << searchParams;
-  std::cerr << "C:\n" << controllerParams;
-  std::cerr << "J:\n" << joinParams;
-  std::cerr << "W:\n" << writeParams;
-  std::cerr << "Total:\n" << parameters;
 }
 
 template<typename E, typename J, typename S, typename W, typename C>
