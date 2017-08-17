@@ -30,7 +30,7 @@ public:
 
   void Initialize(arma::Mat<T>& leafValues);
 
-  void Update(size_t pos, arma::Col<T> el);
+  void Update(size_t pos, const arma::Col<T>& el);
   void Rebuild();
 
   arma::Col<T> Leaf(size_t index) const;
@@ -47,7 +47,15 @@ public:
   size_t MemorySize() const { return memorySize; }
   size_t ActualMemorySize() const { return actualMemorySize; }
 
-  arma::Mat<T> Stack(arma::Mat<T> left, arma::Mat<T> right) const;
+  void ResetParameters();
+
+  J JoinObject() const { return joinFunction; }
+  J& JoinObject() { return joinFunction; }
+
+  W WriteObject() const { return writeFunction; }
+  W& WriteObject() { return writeFunction; }
+
+  arma::Mat<T> Stack(const arma::Mat<T>& left, const arma::Mat<T>& right) const;
 private:
   arma::Mat<T> memory;
   J joinFunction;

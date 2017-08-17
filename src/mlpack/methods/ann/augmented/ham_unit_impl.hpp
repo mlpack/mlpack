@@ -28,9 +28,10 @@ HAMUnit<E, J, S, W, C>::HAMUnit(size_t memorySize,
                  C& controller)
   : memorySize(memorySize), memoryDim(memoryDim),
     search(search), embed(embed), controller(controller),
-    memory(TreeMemory<double, J, S>(memorySize, memoryDim, join, write))
+    memory(TreeMemory<double, J, S>(memorySize, memoryDim, join, write)),
+    t(0)
 {
-  this->t = 0;
+  // Nothing to do here
 }
 
 template<typename E, typename J, typename S, typename W, typename C>
@@ -87,6 +88,48 @@ void HAMUnit<E, J, S, W, C>::Forward(arma::mat&& input, arma::mat&& output) {
       memory.Leaf(i) += (1. - attention.at(i)) * prevMemory;
     }
   }
+}
+
+template<typename E, typename J, typename S, typename W, typename C>
+void HAMUnit<E, J, S, W, C>::RebuildParameters() {
+  arma::mat embedParams = embed.Parameters();
+  arma::mat searchParams = search.Parameters();
+  arma::mat controllerParams = controller.Parameters();
+  arma::mat joinParams = memory.JoinObject().Parameters();
+  arma::mat writeParams = memory.WriteObject().Parameters();
+  size_t embedCount = embedParams.n_elem,
+         searchCount = searchParams.n_elem,
+         controllerCount = controllerParams.n_elem,
+         joinCount = joinParams.n_elem,
+         writeCount = writeParams.n_elem,
+  parameters = arma::mat(
+      embedCount + searchCount + controllerCount + joinCount + writeCount, 1);
+  parameters.rows(0, embedCount - 1) = embedParams;
+  parameters.rows(embedCount, embedCount + searchCount - 1) = searchParams;
+  parameters.rows(
+      embedCount + searchCount, embedCount + searchCount + controllerCount - 1)
+      = controllerParams;
+  parameters.rows(searchCount, embedCount + searchCount + controllerCount,
+      searchCount, embedCount + searchCount + controllerCount + joinCount - 1)
+      = joinParams;
+  parameters.rows(
+      searchCount, embedCount + searchCount + controllerCount + joinCount,
+      parameters.n_elem - 1) = writeParams;
+  std::cerr << "E:\n" << embedParams;
+  std::cerr << "S:\n" << searchParams;
+  std::cerr << "C:\n" << controllerParams;
+  std::cerr << "J:\n" << joinParams;
+  std::cerr << "W:\n" << writeParams;
+  std::cerr << "Total:\n" << parameters;
+}
+
+template<typename E, typename J, typename S, typename W, typename C>
+void HAMUnit<E, J, S, W, C>::ResetParameters() {
+  search.ResetParameters();
+  embed.ResetParameters();
+  controller.ResetParameters();
+  memory.ResetParameters();
+  RebuildParameters();
 }
 
 } // namespace augmented

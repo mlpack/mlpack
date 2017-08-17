@@ -66,69 +66,81 @@ arma::Mat<T> convertToArma(std::vector<std::vector<T>> stlArray)
 
 BOOST_AUTO_TEST_SUITE(HAMTest);
 
+// Test for TreeMemory operations with 1 memory cell for 1-dim vectors.
 BOOST_AUTO_TEST_CASE(TreeMemoryTestMinimum)
 {
-  /*AddJoiner<double> J;
-  ReplaceWriter<double> W;*/
   FFN<MeanSquaredError<> > J = AddJoiner(1), W = ReplaceWriter(1);
   // With these definitions, mem is exactly one of the well-known data structres
   // in competitive programming - segment tree.
   TreeMemory<double> mem(1, 1, J, W);
+  // Initialize memory with zeros.
   std::vector<std::vector<double>> initMemSTL = {{0}};
   arma::mat initMem = convertToArma(initMemSTL);
   mem.Initialize(initMem);
+  // Check the consistency of memory and its contents.
   BOOST_REQUIRE_EQUAL(mem.Leaf(0).n_elem, 1);
   BOOST_REQUIRE_EQUAL(mem.Leaf(0).at(0, 0), 0.);
+  // Now update the only cell with [12] vector
+  // and check that memory was correctly updated.
   mem.Update(0, arma::mat("12."));
   BOOST_REQUIRE_EQUAL(mem.Leaf(0).n_elem, 1);
   BOOST_REQUIRE_EQUAL(mem.Leaf(0).at(0, 0), 12.);
 }
 
+// Test for TreeMemory operations with 1 memory cell for 5-dim vectors.
 BOOST_AUTO_TEST_CASE(TreeMemoryTestMinimumNDim)
 {
-  /*AddJoiner<double> J;
-  ReplaceWriter<double> W;*/
   size_t memSize = 5;
+  // Initialize memory with zeros.
   FFN<MeanSquaredError<> > J = AddJoiner(memSize), W = ReplaceWriter(memSize);
   TreeMemory<double> mem(
       1, memSize, J, W);
   std::vector<std::vector<double>> initMemSTL = {{0, 0, 0, 0, 0}};
   arma::mat initMem = convertToArma(initMemSTL);
   mem.Initialize(initMem);
+  // Check the consistency of memory and its contents.
   BOOST_REQUIRE_EQUAL(mem.Leaf(0).n_elem, memSize);
   for (size_t i = 0; i < memSize; ++i) {
     BOOST_REQUIRE_EQUAL(mem.Leaf(0).at(i, 0), 0.);
   }
+  // Now update the only cell with [12, ..., 12] vector
+  // and check that memory was correctly updated.
   mem.Update(0, 12 * arma::ones(memSize, 1));
   BOOST_REQUIRE_EQUAL(mem.Leaf(0).n_elem, memSize);
   for (size_t i = 0; i < memSize; ++i)
     BOOST_REQUIRE_EQUAL(mem.Leaf(0).at(i, 0), 12.);
 }
 
+// Test for TreeMemory operations with 8 memory cells for 1-dim vectors.
 BOOST_AUTO_TEST_CASE(TreeMemoryTestPowerOfTwo)
 {
-  /*AddJoiner<double> J;
-  ReplaceWriter<double> W;*/
   FFN<MeanSquaredError<> > J = AddJoiner(1), W = ReplaceWriter(1);
   TreeMemory<double> mem(8, 1, J, W);
+  // Initialize memory with zeros.
   std::vector<std::vector<double>> initMemSTL =
       {{0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}};
   arma::mat initMem = convertToArma(initMemSTL);
   mem.Initialize(initMem);
+  // Check the memory contents.
   for (size_t idx = 0; idx < 15; ++idx)
     BOOST_REQUIRE_EQUAL(mem.Cell(idx).at(0, 0), 0);
+  // Now update the first cell with [1] vector, the second - with [2] vector
+  // and check that memory was correctly updated.
   mem.Update(0, arma::mat("1."));
   mem.Update(1, arma::mat("2."));
   BOOST_REQUIRE_EQUAL(mem.Leaf(0).n_elem, 1);
   BOOST_REQUIRE_EQUAL(mem.Leaf(0).at(0, 0), 1);
   BOOST_REQUIRE_EQUAL(mem.Leaf(0).n_elem, 1);
   BOOST_REQUIRE_EQUAL(mem.Leaf(1).at(0, 0), 2);
+  // Also, check that the parent-child relationships between inner nodes
+  // are correctly enforced by the TreeMemory.
   BOOST_REQUIRE_EQUAL(mem.Cell(
     mem.Parent(mem.LeafIndex(0))).at(0, 0), 3);
   BOOST_REQUIRE_EQUAL(mem.Cell(
     mem.Parent(mem.Parent(mem.LeafIndex(0)))).at(0, 0), 3);  
   BOOST_REQUIRE_EQUAL(mem.Cell(
     mem.Parent(mem.Parent(mem.Parent(mem.LeafIndex(0))))).at(0, 0), 3); 
+  // Finally, check the memory consistency.
   BOOST_REQUIRE_EQUAL(mem.Cell(
     mem.Parent(mem.LeafIndex(0))).n_elem, 1);
   BOOST_REQUIRE_EQUAL(mem.Cell(
@@ -137,19 +149,20 @@ BOOST_AUTO_TEST_CASE(TreeMemoryTestPowerOfTwo)
     mem.Parent(mem.Parent(mem.Parent(mem.LeafIndex(0))))).n_elem, 1); 
 }
 
+// Test for TreeMemory operations with 8 memory cells for 5-dim vectors.
 BOOST_AUTO_TEST_CASE(TreeMemoryTestPowerOfTwoNDim)
 {
-  /*AddJoiner<double> J;
-  ReplaceWriter<double> W;*/
   size_t memSize = 4;
   FFN<MeanSquaredError<> > J = AddJoiner(memSize), W = ReplaceWriter(memSize);
   TreeMemory<double> mem(
       8, memSize, J, W);
+  // Initialize memory with zeros.
   std::vector<std::vector<double>> initMemSTL =
       {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
        {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}};
   arma::mat initMem = convertToArma(initMemSTL);
   mem.Initialize(initMem);
+  // Check the memory contents.
   for (size_t idx = 0; idx < 15; ++idx)
   {
     for (size_t i = 0; i < memSize; ++i)
@@ -157,6 +170,9 @@ BOOST_AUTO_TEST_CASE(TreeMemoryTestPowerOfTwoNDim)
       BOOST_REQUIRE_EQUAL(mem.Cell(idx).at(i, 0), 0);
     }
   }
+  // Now update the first cell with [1, ..., 1] vector,
+  // the second - with [2, ..., 2] vector
+  // and check that memory was correctly updated.
   mem.Update(0, arma::ones(memSize, 1));
   mem.Update(1, 2 * arma::ones(memSize, 1));
   BOOST_REQUIRE_EQUAL(mem.Leaf(0).n_elem, memSize);
@@ -165,6 +181,8 @@ BOOST_AUTO_TEST_CASE(TreeMemoryTestPowerOfTwoNDim)
   BOOST_REQUIRE_EQUAL(mem.Leaf(0).n_elem, memSize);
   for (size_t i = 0; i < memSize; ++i)
     BOOST_REQUIRE_EQUAL(mem.Leaf(1).at(i, 0), 2);
+  // Also, check that the parent-child relationships between inner nodes
+  // are correctly enforced by the TreeMemory.
   for (size_t i = 0; i < memSize; ++i)
   {
     BOOST_REQUIRE_EQUAL(mem.Cell(
@@ -174,6 +192,7 @@ BOOST_AUTO_TEST_CASE(TreeMemoryTestPowerOfTwoNDim)
     BOOST_REQUIRE_EQUAL(mem.Cell(
       mem.Parent(mem.Parent(mem.Parent(mem.LeafIndex(0))))).at(i, 0), 3); 
   }
+  // Finally, check the memory consistency.
   BOOST_REQUIRE_EQUAL(mem.Cell(
     mem.Parent(mem.LeafIndex(0))).n_elem, memSize);
   BOOST_REQUIRE_EQUAL(mem.Cell(
@@ -182,20 +201,27 @@ BOOST_AUTO_TEST_CASE(TreeMemoryTestPowerOfTwoNDim)
     mem.Parent(mem.Parent(mem.Parent(mem.LeafIndex(0))))).n_elem, memSize); 
 }
 
+// Test for TreeMemory operations with 9 memory cells for 1-dim vectors.
 BOOST_AUTO_TEST_CASE(TreeMemoryTestArbitrary) {
-  /*AddJoiner<double> J;
-  ReplaceWriter<double> W;*/
   FFN<MeanSquaredError<> > J = AddJoiner(1), W = ReplaceWriter(1);
   TreeMemory<double> mem(9, 1, J, W);
+  // Initialize memory with zeros.
   std::vector<std::vector<double>> initMemSTL =
       {{0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}};
   arma::mat initMem = convertToArma(initMemSTL);
   mem.Initialize(initMem);
+  // Check the memory contents.
   for (size_t idx = 0; idx < 31; ++idx)
     BOOST_REQUIRE_EQUAL(mem.Cell(idx).at(0, 0), 0);
+  // Now update the first cell with [1] vector,
+  // the second - with [2] vector,
+  // the ninth and the last - with [-3] vector
+  // and check that memory was correctly updated.
   mem.Update(0, arma::mat("1."));
   mem.Update(1, arma::mat("2."));
   mem.Update(8, arma::mat("-3."));
+  // Also, check that the parent-child relationships between inner nodes
+  // are correctly enforced by the TreeMemory.
   BOOST_REQUIRE_EQUAL(mem.Leaf(0).at(0, 0), 1);
   BOOST_REQUIRE_EQUAL(mem.Leaf(1).at(0, 0), 2);
   BOOST_REQUIRE_EQUAL(mem.Cell(
@@ -226,6 +252,8 @@ BOOST_AUTO_TEST_CASE(TreeMemoryTestArbitrary) {
   }
 }
 
+// Testing the forward pass of HAM on predefined EMBED, JOIN, WRITE, SEARCH
+// functions and a predefined FFN controller.
 BOOST_AUTO_TEST_CASE(BlindHAMUnitTest) {
   size_t nDim = 4, seqLen = 4;
   // Embed model is just an identity function.
@@ -267,6 +295,8 @@ BOOST_AUTO_TEST_CASE(BlindHAMUnitTest) {
   controller.Parameters().at(nDim) = 0;
   controller.Add<SigmoidLayer<> >();
 
+  // Now run the HAM unit (the initial sequence is:
+  // [1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1])
   HAMUnit<> hamUnit(seqLen, nDim, embedModel, joinModel, searchModel, writeModel, controller);
 
   arma::mat input("1 0 0 0; 0 1 0 0; 0 0 1 0; 0 0 0 1;");
@@ -275,6 +305,8 @@ BOOST_AUTO_TEST_CASE(BlindHAMUnitTest) {
   hamUnit.Forward(std::move(input), std::move(output));
   arma::mat targetOutput("0.4174; 0.4743; 0.5167; 0.5485;");
   BOOST_REQUIRE_SMALL(arma::abs(output - targetOutput).max(), 1e-4);
+
+  hamUnit.Parameters();
 }
 
 BOOST_AUTO_TEST_SUITE_END();

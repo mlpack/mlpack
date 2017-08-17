@@ -126,7 +126,7 @@ void TreeMemory<T, J, W>::Initialize(arma::Mat<T>& leafValues)
 }
 
 template<typename T, typename J, typename W>
-void TreeMemory<T, J, W>::Update(size_t pos, arma::Col<T> el)
+void TreeMemory<T, J, W>::Update(size_t pos, const arma::Col<T>& el)
 {
   assert(pos >= 0 && pos < memorySize);
   size_t start = actualMemorySize - 1 + pos;
@@ -143,13 +143,21 @@ void TreeMemory<T, J, W>::Update(size_t pos, arma::Col<T> el)
 }
 
 template<typename T, typename J, typename W>
-arma::Mat<T> TreeMemory<T, J, W>::Stack(arma::Mat<T> left, arma::Mat<T> right) const
+arma::Mat<T> TreeMemory<T, J, W>::Stack(
+    const arma::Mat<T>& left,
+    const arma::Mat<T>& right) const
 {
   assert(left.n_cols == right.n_cols);
   arma::Mat<T> result(left.n_rows + right.n_rows, left.n_cols);
   result.rows(0, left.n_rows - 1) = left;
   result.rows(left.n_rows, left.n_rows + right.n_rows - 1) = right;
   return result;
+}
+
+template<typename T, typename J, typename W>
+void TreeMemory<T, J, W>::ResetParameters() {
+  joinFunction.ResetParameters();
+  writeFunction.ResetParameters();
 }
 } // namespace augmented
 } // namespace ann

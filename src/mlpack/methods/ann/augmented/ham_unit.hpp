@@ -54,12 +54,23 @@ class HAMUnit
   void Backward(arma::mat&& input,
                 arma::mat&& gy,
                 arma::mat&& g);
+
+  //! Return the initial point for the optimization.
+  const arma::mat& Parameters() const { RebuildParameters(); return parameters; }
+  //! Modify the initial point for the optimization.
+  arma::mat& Parameters() { RebuildParameters(); return parameters; }
+
+  void ResetParameters();
  private:
   void Attention(arma::vec& attention);
 
   void Gradient(arma::mat&& input,
                 arma::mat&& error,
                 arma::mat&& gradient);
+
+  void RebuildParameters();
+
+  arma::mat parameters;
 
   TreeMemory<double, J, W> memory;
   size_t memorySize, memoryDim;
