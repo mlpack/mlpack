@@ -83,6 +83,54 @@ double SoftmaxErrorFunction<MetricType>::Evaluate(const arma::mat& coordinates,
                                      // minimizer.
 }
 
+//! The separated objective function, which does not use Precalculate(),
+//! for a given batch size and from an initial index.
+template<typename MetricType>
+double SoftmaxErrorFunction<MetricType>::Evaluate(const arma::mat& coordinates,
+                                                  const size_t begin,
+                                                  const size_t batchSize)
+{
+  // Unfortunately each evaluation will take O(N) time because it requires a
+  // scan over all points in the dataset.  Our objective is to compute p_i.
+  double denominator = 0;
+  double numerator = 0;
+  double result = 0;
+
+  // It's quicker to do this now than one point at a time later.
+  stretchedDataset = coordinates * dataset;
+  for(size_t i = begin; i < begin + batchSize; i++)
+  {
+    for (size_t k = 0; k < dataset.n_cols; ++k)
+    {
+      // Don't consider the case where the points are the same.
+      if (k == i)
+        continue;
+
+      // We want to evaluate exp(-D(A x_i, A x_k)).
+      double eval = std::exp(-metric.Evaluate(stretchedDataset.unsafe_col(i),
+                                              stretchedDataset.unsafe_col(k)));
+
+      // If they are in the same class, update the numerator.
+      if (labels[i] == labels[k])
+        numerator += eval;
+
+      denominator += eval;
+    }
+
+    // Now the result is just a simple division, but we have to be sure that the
+    // denominator is not 0.
+    if (denominator == 0.0)
+    {
+      Log::Warn << "Denominator of p_" << i << " is 0!" << std::endl;
+      continue;
+    }
+
+    result += -(numerator / denominator); // Negate because the optimizer is a
+                                       // minimizer.
+    }
+    return result;
+}
+
 //! The non-separable implementation, where Precalculate() is used.
 template<typename MetricType>
 void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
@@ -200,6 +248,78 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
   // Now multiply the first term by p_i, and add the two together and multiply
   // all by 2 * A.  We negate it though, because our optimizer is a minimizer.
   gradient = -2 * coordinates * (p * firstTerm - secondTerm);
+}
+
+//! The separable implementation for a given batch size and an initial index.
+template <typename MetricType>
+template <typename GradType>
+void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
+                                                const size_t begin,
+                                                const size_t batchSize,
+                                                GradType& gradient)
+{
+  firstTerm.zeros(coordinates.n_rows, coordinates.n_cols);
+  secondTerm.zeros(coordinates.n_rows, coordinates.n_cols);
+
+  // Compute the stretched dataset.
+  stretchedDataset = coordinates * dataset;
+  for(size_t i = begin; i < begin + batchSize; i++)
+  {
+    // We will need to calculate p_i before this evaluation is done, so these two
+    // variables will hold the information necessary for that.
+    double numerator = 0;
+    double denominator = 0;
+    // The gradient involves two matrix terms which are eventually combined into
+    // one.
+    GradType firstTerm;
+    GradType secondTerm;
+    for (size_t k = 0; k < dataset.n_cols; ++k)
+    {
+      // Don't consider the case where the points are the same.
+      if (i == k)
+        continue;
+
+      // Calculate the numerator of p_ik.
+      double eval = exp(-metric.Evaluate(stretchedDataset.unsafe_col(i),
+                                         stretchedDataset.unsafe_col(k)));
+
+      // If the points are in the same class, we must add to the second term of
+      // the gradient as well as the numerator of p_i.  We will divide by the
+      // denominator of p_ik later.  For x_ik we are not using stretched points.
+      GradType x_ik = dataset.col(i) - dataset.col(k);
+      if (labels[i] == labels[k])
+      {
+        numerator += eval;
+        secondTerm += eval * x_ik * trans(x_ik);
+      }
+
+      // We always have to add to the denominator of p_i and the first term of the
+      // gradient computation.  We will divide by the denominator of p_ik later.
+      denominator += eval;
+      firstTerm += eval * x_ik * trans(x_ik);
+    }
+
+    // Calculate p_i.
+    double p = 0;
+    if (denominator == 0)
+    {
+      Log::Warn << "Denominator of p_" << i << " is 0!" << std::endl;
+      // If the denominator is zero, then all p_ik should be zero and there is
+      // no gradient contribution from this point.
+      gradient.zeros(coordinates.n_rows, coordinates.n_rows);
+      continue;
+    }
+    else
+    {
+      p = numerator / denominator;
+      firstTerm /= denominator;
+      secondTerm /= denominator;
+    }
+
+    // Now multiply the first term by p_i, and add the two together and multiply
+    // all by 2 * A.  We negate it though, because our optimizer is a minimizer.
+    gradient += -2 * coordinates * (p * firstTerm - secondTerm);
+  }
 }
 
 template<typename MetricType>

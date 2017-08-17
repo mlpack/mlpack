@@ -78,6 +78,18 @@ class SoftmaxErrorFunction
    */
   double Evaluate(const arma::mat& covariance, const size_t i);
 
+  /**
+   * Evaluate the softmax objective function for the given covariance matrix on
+   * the given batch size from a given inital point of the dataset.
+   * This is the separable implementation, where the objective 
+   * function is decomposed into the sum of many objective
+   * functions, and here, only one of those constituent objective functions is
+   * returned.
+   *
+   * @param covariance Covariance matrix of Mahalanobis distance.
+   * @param begin Index of the initial point to use for objective function.
+   * @param batchSize Number of points to use for objective function.
+   */
   double Evaluate(const arma::mat& covariance,
                   const size_t begin,
                   const size_t batchSize) const;
@@ -110,6 +122,21 @@ class SoftmaxErrorFunction
                 const size_t i,
                 GradType& gradient);
   
+  /**
+   * Evaluate the gradient of the softmax function for the given covariance
+   * matrix on the given batch size, from a given initial point of the dataset.
+   * This is the separable implementation, where the objective function is
+   * decomposed into the sum of many objective functions, and here,
+   * only one of those constituent objective functions is returned.
+   * The type of the gradient parameter is a template
+   * argument to allow the computation of a sparse gradient.
+   *
+   * @tparam GradType The type of the gradient out-param.
+   * @param covariance Covariance matrix of Mahalanobis distance.
+   * @param begin Index of the initial point to use for objective function.
+   * @param batchSize Number of points to use for objective function.
+   * @param gradient Matrix to store the calculated gradient in.
+   */
   void Gradient(const arma::mat& parameters,
                 const size_t begin,
                 const size_t batchSize,
