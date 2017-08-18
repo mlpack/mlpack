@@ -36,6 +36,7 @@ BOOST_AUTO_TEST_CASE(GanTest)
   size_t dOutputSize = 1;
   size_t batchSize = 100;
   size_t noiseDim  = 100;
+  size_t numSamples = 10;
 
   // Load the dataset
   arma::mat trainData, dataset, noiseData;
@@ -70,9 +71,9 @@ BOOST_AUTO_TEST_CASE(GanTest)
   // Optimizer
   MiniBatchSGD optimizer(batchSize, 1e-4, 100 * trainData.n_cols, 1e-5, true);
 
-  std::normal_distribution<> noiseFunction(0.0, 1.0);
+  std::function<double ()> noiseFunction = [] () { return math::RandNormal(0, 1); };
   // GAN model
-  GAN<> gan(trainData, generator, discriminator, gaussian, noiseFunction,
+  GAN<FFN<CrossEntropyError<>>, GaussianInitialization, std::function<double ()> > gan(trainData, generator, discriminator, gaussian, noiseFunction,
       trainData.n_rows, batchSize, 10, 10);
   gan.Train(optimizer);
 
@@ -99,7 +100,7 @@ BOOST_AUTO_TEST_CASE(GanTest)
 
     generatedData.submat(dim, i * dim, 2 * dim - 1, i * dim + dim - 1) = samples;
   }
-  std::string output_dataset = "./output_gan_ffn"
+  std::string output_dataset = "./output_gan_ffn";
   Log::Info << "Saving output to " << output_dataset << "..." << std::endl;
   generatedData.save(output_dataset, arma::raw_ascii);
   Log::Info << "Output saved!" << std::endl;

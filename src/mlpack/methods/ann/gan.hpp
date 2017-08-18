@@ -30,9 +30,9 @@ using namespace mlpack::distribution;
 namespace mlpack {
 namespace ann /** artifical neural network **/ {
 template<
-typename Model = FFN<CrossEntropyError<>>,
-typename InitializationRuleType = GaussianInitialization,
-class Noise = std::normal_distribution<>>
+typename Model,
+typename InitializationRuleType,
+class Noise>
 class GAN
 {
  public:
