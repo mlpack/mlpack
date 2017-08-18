@@ -121,7 +121,7 @@ class SoftmaxErrorFunction
   void Gradient(const arma::mat& covariance,
                 const size_t i,
                 GradType& gradient);
-  
+
   /**
    * Evaluate the gradient of the softmax function for the given covariance
    * matrix on the given batch size, from a given initial point of the dataset.

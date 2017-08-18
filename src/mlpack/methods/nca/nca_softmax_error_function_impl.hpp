@@ -98,7 +98,7 @@ double SoftmaxErrorFunction<MetricType>::Evaluate(const arma::mat& coordinates,
 
   // It's quicker to do this now than one point at a time later.
   stretchedDataset = coordinates * dataset;
-  for(size_t i = begin; i < begin + batchSize; i++)
+  for (size_t i = begin; i < begin + batchSize; i++)
   {
     for (size_t k = 0; k < dataset.n_cols; ++k)
     {
@@ -261,10 +261,10 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
 
   // Compute the stretched dataset.
   stretchedDataset = coordinates * dataset;
-  for(size_t i = begin; i < begin + batchSize; i++)
+  for (size_t i = begin; i < begin + batchSize; i++)
   {
-    // We will need to calculate p_i before this evaluation is done, so these two
-    // variables will hold the information necessary for that.
+    // We will need to calculate p_i before this evaluation is done, so 
+    // these two variables will hold the information necessary for that.
     double numerator = 0;
     double denominator = 0;
     // The gradient involves two matrix terms which are eventually combined into
