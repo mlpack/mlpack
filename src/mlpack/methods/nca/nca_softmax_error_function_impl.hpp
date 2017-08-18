@@ -263,7 +263,7 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
   stretchedDataset = coordinates * dataset;
   for (size_t i = begin; i < begin + batchSize; i++)
   {
-    // We will need to calculate p_i before this evaluation is done, so 
+    // We will need to calculate p_i before this evaluation is done, so
     // these two variables will hold the information necessary for that.
     double numerator = 0;
     double denominator = 0;
