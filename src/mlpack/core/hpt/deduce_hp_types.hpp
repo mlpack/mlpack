@@ -61,9 +61,32 @@ struct DeduceHyperParameterTypes<T, Args...>
     using Type = ArithmeticType;
   };
 
+  /**
+   * A type function to check whether Type is a collection type (for that it
+   * should define value_type).
+   */
+  template<typename Type>
+  struct IsCollectionType
+  {
+    using Yes = char[1];
+    using No = char[2];
+
+    template<typename TypeToCheck>
+    static Yes& Check(typename TypeToCheck::value_type*);
+    template<typename>
+    static No& Check(...);
+
+    static const bool value  =
+      sizeof(decltype(Check<Type>(0))) == sizeof(Yes);
+  };
+
   template<typename CollectionType>
   struct ResultHPType<CollectionType, false>
   {
+    static_assert(IsCollectionType<CollectionType>::value,
+        "One of the passed arguments is neither of an arithmetic type, nor of "
+        "a collection type, nor fixed with the Fixed function.");
+
     using Type = typename CollectionType::value_type;
   };
 
