@@ -12,7 +12,7 @@
 #ifndef MLPACK_CORE_OPTIMIZERS_GRADIENT_DESCENT_GRADIENT_DESCENT_HPP
 #define MLPACK_CORE_OPTIMIZERS_GRADIENT_DESCENT_GRADIENT_DESCENT_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <mlpack/core.hpp>
 
 namespace mlpack {
 namespace optimization {
@@ -77,6 +77,27 @@ class GradientDescent
    */
   template<typename FunctionType>
   double Optimize(FunctionType& function, arma::mat& iterate);
+
+  /**
+   * Assert all dimensions are numeric and optimize the given function using
+   * gradient descent. The given starting point will be modified to store the
+   * finishing point of the algorithm, and the final objective value is
+   * returned.
+   *
+   * This overload is intended to be used primarily by the hyper-parameter
+   * tuning module.
+   *
+   * @tparam FunctionType Type of the function to optimize.
+   * @param function Function to optimize.
+   * @param iterate Starting point (will be modified).
+   * @param datasetInfo Type information for each dimension of the dataset.
+   * @return Objective value of the final point.
+   */
+  template<typename FunctionType>
+  double Optimize(
+      FunctionType& function,
+      arma::mat& iterate,
+      data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo);
 
   //! Get the step size.
   double StepSize() const { return stepSize; }

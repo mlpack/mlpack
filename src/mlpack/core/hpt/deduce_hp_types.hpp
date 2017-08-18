@@ -42,16 +42,36 @@ struct DeduceHyperParameterTypes
 
 /**
  * Defining DeduceHyperParameterTypes for the case when not all argument types
- * have been processed, and the next one is a collection type.
+ * have been processed, and the next one (T) is a collection type or an
+ * arithmetic type.
  */
-template<typename Collection, typename... Args>
-struct DeduceHyperParameterTypes<Collection, Args...>
+template<typename T, typename... Args>
+struct DeduceHyperParameterTypes<T, Args...>
 {
+  /**
+   * A type function to deduce the result hyper-parameter type for ArgumentType.
+   */
+  template<typename ArgumentType,
+           bool IsArithmetic = std::is_arithmetic<ArgumentType>::value>
+  struct ResultHPType;
+
+  template<typename ArithmeticType>
+  struct ResultHPType<ArithmeticType, true>
+  {
+    using Type = ArithmeticType;
+  };
+
+  template<typename CollectionType>
+  struct ResultHPType<CollectionType, false>
+  {
+    using Type = typename CollectionType::value_type;
+  };
+
   template<typename... HPTypes>
   struct ResultHolder
   {
     using TupleType = typename DeduceHyperParameterTypes<Args...>::template
-        ResultHolder<HPTypes..., typename Collection::value_type>::TupleType;
+        ResultHolder<HPTypes..., typename ResultHPType<T>::Type>::TupleType;
   };
 
   using TupleType = typename ResultHolder<>::TupleType;

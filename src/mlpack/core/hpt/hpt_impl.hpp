@@ -57,7 +57,7 @@ TupleOfHyperParameters<Args...> HyperParameterTuner<MLAlgorithm,
   data::DatasetMapper<data::IncrementPolicy, double> datasetInfo(policy,
       numberOfParametersToOptimize);
 
-  arma::mat bestParameters;
+  arma::mat bestParameters(numberOfParametersToOptimize, 1);
   const auto argsTuple = std::tie(args...);
 
   InitAndOptimize<0>(argsTuple, bestParameters, datasetInfo);
@@ -131,6 +131,35 @@ template<typename MLAlgorithm,
          typename PredictionsType,
          typename WeightsType>
 template<size_t I, class ArgsTuple, class... FixedArgs, class, class, class>
+void HyperParameterTuner<MLAlgorithm,
+                         Metric,
+                         CV,
+                         Optimizer,
+                         MatType,
+                         PredictionsType,
+                         WeightsType>::InitAndOptimize(
+    const ArgsTuple& args,
+    arma::mat& bestParams,
+    data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
+    FixedArgs... fixedArgs)
+{
+  static const size_t dimension =
+      I - std::tuple_size<std::tuple<FixedArgs...>>::value;
+  datasetInfo.Type(dimension) = data::Datatype::numeric;
+  bestParams(dimension) = std::get<I>(args);
+
+  InitAndOptimize<I + 1>(args, bestParams, datasetInfo, fixedArgs...);
+}
+
+template<typename MLAlgorithm,
+         typename Metric,
+         template<typename, typename, typename, typename, typename> class CV,
+         typename Optimizer,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+template<size_t I, class ArgsTuple, class... FixedArgs, class, class, class,
+    class>
 void HyperParameterTuner<MLAlgorithm,
                          Metric,
                          CV,

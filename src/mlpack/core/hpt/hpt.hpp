@@ -71,7 +71,8 @@ namespace hpt {
  * @tparam Metric A metric to assess the quality of a trained model.
  * @tparam CV A cross-validation strategy used to assess a set of
  *     hyper-parameters.
- * @tparam Optimizer An optimization strategy.
+ * @tparam OptimizerType An optimization strategy (GridSearch and
+ *     GradientDescent are supported).
  * @tparam MatType The type of data.
  * @tparam PredictionsType The type of predictions (should be passed when the
  *     predictions type is a template parameter in Train methods of the given
@@ -84,7 +85,7 @@ namespace hpt {
 template<typename MLAlgorithm,
          typename Metric,
          template<typename, typename, typename, typename, typename> class CV,
-         typename Optimizer = mlpack::optimization::GridSearch,
+         typename OptimizerType = mlpack::optimization::GridSearch,
          typename MatType = arma::mat,
          typename PredictionsType =
              typename cv::MetaInfoExtractor<MLAlgorithm,
@@ -104,6 +105,26 @@ class HyperParameterTuner
    */
   template<typename... CVArgs>
   HyperParameterTuner(const CVArgs& ...args);
+
+  //! Access and modify the optimizer.
+  OptimizerType& Optimizer() { return optimizer; }
+
+  /**
+   * Access and modify relative increase of arguments for calculation of partial
+   * derivatives (by the definition) in gradient-based optimization. The
+   * exact increase for some particular argument is equal to the absolute
+   * value of the argument multiplied by the relative increase (see also the
+   * documentation for MinDelta()).
+   */
+  double& RelativeDelta() { return relativeDelta; }
+
+  /**
+   * Access and modify minimum increase of arguments for calculation of partial
+   * derivatives (by the definition) in gradient-based optimization. This value
+   * is going to be used when it is greater than the increase calculated with
+   * the rules described in the documentation for RelativeDelta().
+   */
+  double& MinDelta() { return minDelta; }
 
   /**
    * Find the best hyper-parameters by using the given Optimizer. For each
@@ -138,10 +159,6 @@ class HyperParameterTuner
   MLAlgorithm& BestModel() { return bestModel; }
 
  private:
-  static_assert(
-      std::is_same<Optimizer, mlpack::optimization::GridSearch>::value,
-      "HyperParameterTuner now supports only the GridSearch optimizer");
-
   /**
    * A decorator that returns negated values of the original metric.
    */
@@ -165,7 +182,7 @@ class HyperParameterTuner
   CVType cv;
 
   //! The optimizer.
-  Optimizer optimizer;
+  OptimizerType optimizer;
 
   //! The best objective from the last run.
   double bestObjective;
@@ -184,6 +201,14 @@ class HyperParameterTuner
    * CVFunction.
    */
   double minDelta;
+
+  /**
+   * A type function to check whether the element I of the tuple type is an
+   * arithmetic type.
+   */
+  template<typename Tuple, size_t I>
+  using IsArithmetic = std::is_arithmetic<typename std::remove_reference<
+      typename std::tuple_element<I, Tuple>::type>::type>;
 
   /**
    * The set of methods to initialize auxiliary objects (a CVFunction object and
@@ -227,6 +252,28 @@ class HyperParameterTuner
    * the datasetInfo parameter) and run optimization to find the best
    * hyper-parameters.
    *
+   * This template is called when the next argument is of an arithmetic type and
+   * should be used as an initial value for the hyper-parameter.
+   */
+  template<size_t I /* Index of the next argument to handle. */,
+           typename ArgsTuple,
+           typename... FixedArgs,
+           typename = std::enable_if_t<I < std::tuple_size<ArgsTuple>::value>,
+           typename = std::enable_if_t<!IsPreFixedArg<
+               typename std::tuple_element<I, ArgsTuple>::type>::value &&
+                   IsArithmetic<ArgsTuple, I>::value>,
+           typename = void>
+  inline void InitAndOptimize(
+      const ArgsTuple& args,
+      arma::mat& bestParams,
+      data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
+      FixedArgs... fixedArgs);
+
+  /**
+   * The set of methods to initialize auxiliary objects (a CVFunction object and
+   * the datasetInfo parameter) and run optimization to find the best
+   * hyper-parameters.
+   *
    * This template is called when the next argument should be used to specify
    * possible values for the hyper-parameter in datasetInfo.
    */
@@ -235,7 +282,9 @@ class HyperParameterTuner
            typename... FixedArgs,
            typename = std::enable_if_t<I < std::tuple_size<ArgsTuple>::value>,
            typename = std::enable_if_t<!IsPreFixedArg<
-               typename std::tuple_element<I, ArgsTuple>::type>::value>,
+               typename std::tuple_element<I, ArgsTuple>::type>::value &&
+                   !IsArithmetic<ArgsTuple, I>::value>,
+           typename = void,
            typename = void>
   inline void InitAndOptimize(
       const ArgsTuple& args,

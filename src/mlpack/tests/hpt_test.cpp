@@ -16,6 +16,7 @@
 #include <mlpack/core/hpt/fixed.hpp>
 #include <mlpack/core/hpt/hpt.hpp>
 #include <mlpack/core/optimizers/grid_search/grid_search.hpp>
+#include <mlpack/core/optimizers/gradient_descent/gradient_descent.cpp>
 #include <mlpack/methods/lars/lars.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
 
@@ -61,16 +62,27 @@ BOOST_AUTO_TEST_CASE(CVFunctionTest)
  * This class provides the interface of CV classes, but really implements a
  * simple quadratic function of three variables.
  */
-template<typename MLAlgorithm>
+template<typename MLAlgorithm,
+         typename Metric = void,
+         typename MatType = void,
+         typename PredictionsType = void,
+         typename WeightsType = void>
 class QuadraticFunction
 {
  public:
-   QuadraticFunction(double a, double b, double c, double d) :
-     a(a), b(b), c(c), d(d) {}
+   QuadraticFunction(double a,
+                     double b,
+                     double c,
+                     double d,
+                     double xMin = 0.0,
+                     double yMin = 0.0,
+                     double zMin = 0.0) :
+     a(a), b(b), c(c), d(d), xMin(xMin), yMin(yMin), zMin(zMin) {}
 
    double Evaluate(double x, double y, double z)
    {
-     return a * x * x + b * y * y + c * z * z + d;
+     return a * pow(x - xMin, 2)  + b * pow(y - yMin, 2) + c * pow(z - zMin, 2)
+         + d;
    }
 
    // Declaring and defining it just in order to provide the same interface as
@@ -81,7 +93,7 @@ class QuadraticFunction
    }
 
  private:
-   double a, b, c, d;
+   double a, b, c, d, xMin, yMin, zMin;
 };
 
 /**
@@ -286,6 +298,48 @@ BOOST_AUTO_TEST_CASE(HPTMaximizationTest)
 
   BOOST_REQUIRE_CLOSE(hpt.BestObjective(), 1.0, 1e-5);
   BOOST_REQUIRE_CLOSE(actualLambda, 0.0, 1e-5);
+}
+
+/**
+ * Test HyperParameterTuner works with GradientDescent.
+ */
+BOOST_AUTO_TEST_CASE(HPTGradientDescentTest)
+{
+  // Constructor arguments for the fake CV function (QuadraticFunction).
+  double a = 1.0;
+  double b = -1.5;
+  double c = 2.5;
+  double d = 3.0;
+
+  // Optimal values for three "hyper-parameters".
+  double xMin = 1.5;
+  double yMin = 0.0;
+  double zMin = -2.0;
+
+  // We pass LARS just because some ML algorithm should be passed. We pass MSE
+  // to tell HyperParameterTuner that the objective function (QuadraticFunction)
+  // should be minimized.
+  HyperParameterTuner<LARS, MSE, QuadraticFunction, GradientDescent>
+      hpt(a, b, c, d, xMin, yMin, zMin);
+
+  // Setting GradientDescent to find more close solution to the optimal one.
+  hpt.Optimizer().StepSize() = 0.1;
+  hpt.Optimizer().Tolerance() = 1e-15;
+
+  // Always using the same small increase of arguments in calculation of partial
+  // derivatives.
+  hpt.RelativeDelta() = 0.0;
+  hpt.MinDelta() = 1e-10;
+
+  // We will try to find optimal values only for two "hyper-parameters".
+  double x0 = 3.0;
+  double y = yMin;
+  double z0 = -3.0;
+
+  double xOptimized, zOptimized;
+  std::tie(xOptimized, zOptimized) = hpt.Optimize(x0, Fixed(y), z0);
+  BOOST_REQUIRE_CLOSE(xOptimized, xMin, 1e-4);
+  BOOST_REQUIRE_CLOSE(zOptimized, zMin, 1e-4);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
