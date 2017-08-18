@@ -33,23 +33,26 @@ using namespace mlpack::distribution;
 
 namespace mlpack {
 namespace ann /** artifical neural network  */ {
-template<typename Model, typename InitializationRuleType, typename NoiseType>
-GAN<Model, InitializationRuleType, NoiseType>::GAN(
+template<typename Model, typename InitializationRuleType, class Noise>
+GAN<Model, InitializationRuleType, Noise>::GAN(
     arma::mat& predictors,
     Model& generator,
     Model& discriminator,
     InitializationRuleType initializeRule,
-    NoiseType noiseFunction,
+    Noise noiseFunction,
     size_t noiseDim,
     size_t batchSize,
-    size_t generatorUpdateStep):
+    size_t generatorUpdateStep,
+    size_t preTrainSize):
     predictors(predictors),
     generator(generator),
     discriminator(discriminator),
     initializeRule(initializeRule),
     noiseFunction(noiseFunction),
+    noiseDim(noiseDim),
     batchSize(batchSize),
     generatorUpdateStep(generatorUpdateStep),
+    preTrainSize(preTrainSize),
     reset(false)
 {
   // Insert IdentityLayer for Joing the generator and discriminator
@@ -58,6 +61,7 @@ GAN<Model, InitializationRuleType, NoiseType>::GAN(
       new IdentityLayer<>());
 
   counter = 0;
+  currentBatch = 0;
 
   discriminator.deterministic = generator.deterministic = true;
 
@@ -76,8 +80,8 @@ GAN<Model, InitializationRuleType, NoiseType>::GAN(
   noise.set_size(noiseDim, 1);
 }
 
-template<typename Model, typename InitializationRuleType, typename NoiseType>
-void GAN<Model, InitializationRuleType, NoiseType>::Reset()
+template<typename Model, typename InitializationRuleType, typename Noise>
+void GAN<Model, InitializationRuleType, Noise>::Reset()
 {
   size_t genWeights = 0;
   size_t discWeights = 0;
@@ -107,9 +111,9 @@ void GAN<Model, InitializationRuleType, NoiseType>::Reset()
 
 
 
-template<typename Model, typename InitializationRuleType, typename NoiseType>
+template<typename Model, typename InitializationRuleType, typename Noise>
 template<typename OptimizerType>
-void GAN<Model, InitializationRuleType, NoiseType>::Train(
+void GAN<Model, InitializationRuleType, Noise>::Train(
     OptimizerType& Optimizer)
 {
   if (!reset)
@@ -117,8 +121,8 @@ void GAN<Model, InitializationRuleType, NoiseType>::Train(
   Optimizer.Optimize(*this, parameter);
 }
 
-template<typename Model, typename InitializationRuleType, typename NoiseType>
-double GAN<Model, InitializationRuleType, NoiseType>::Evaluate(
+template<typename Model, typename InitializationRuleType, typename Noise>
+double GAN<Model, InitializationRuleType, Noise>::Evaluate(
     const arma::mat& /*parameters*/,
     const size_t i)
 {
@@ -134,8 +138,10 @@ double GAN<Model, InitializationRuleType, NoiseType>::Evaluate(
           discriminator.network.back())), std::move(currentTarget));
   noise.imbue( [&]() { return noiseFunction(randGen);} );
   generator.Forward(std::move(noise));
-  discriminator.predictors.col(numFunctions) = boost::apply_visitor(
+  arma::mat temp = boost::apply_visitor(
       outputParameterVisitor, generator.network.back());
+  temp.reshape(discriminator.predictors.n_rows, 1);
+  discriminator.predictors.col(numFunctions) = temp;
   discriminator.Forward(std::move(discriminator.predictors.col(numFunctions)));
   discriminator.responses(numFunctions) = 0;
 
@@ -147,8 +153,8 @@ double GAN<Model, InitializationRuleType, NoiseType>::Evaluate(
   return res;
 }
 
-template<typename Model, typename InitializationRuleType, typename NoiseType>
-void GAN<Model, InitializationRuleType, NoiseType>::
+template<typename Model, typename InitializationRuleType, typename Noise>
+void GAN<Model, InitializationRuleType, Noise>::
 Gradient(const arma::mat& /*parameters*/, const size_t i, arma::mat& gradient)
 {
   if (!reset)
@@ -198,7 +204,7 @@ Gradient(const arma::mat& /*parameters*/, const size_t i, arma::mat& gradient)
 
   gradientDiscriminator += noiseGradientDiscriminator;
 
-  if (currentBatch % generatorUpdateStep == 0 && currentBatch != 0)
+  if (currentBatch % generatorUpdateStep == 0 && preTrainSize != 0)
   {
     // Minimize log(1 - D(G(noise)))
     // pass the error from discriminator to generator
@@ -226,14 +232,21 @@ Gradient(const arma::mat& /*parameters*/, const size_t i, arma::mat& gradient)
   {
     counter = 0;
     currentBatch++;
-    print = true;
   }
   else if (counter % batchSize == 0)
+  {
     currentBatch++;
+    if (preTrainSize > 0)
+    {
+      preTrainSize--;
+    }
+    if (preTrainSize)
+      Log::Info << "Pre Training batch " << preTrainSize << std::endl;
+  }
 }
 
-template<typename Model, typename InitializationRuleType, typename NoiseType>
-void GAN<Model, InitializationRuleType, NoiseType>::Forward(arma::mat&& input)
+template<typename Model, typename InitializationRuleType, typename Noise>
+void GAN<Model, InitializationRuleType, Noise>::Forward(arma::mat&& input)
 {
   if (!reset)
     Reset();
@@ -245,8 +258,8 @@ void GAN<Model, InitializationRuleType, NoiseType>::Forward(arma::mat&& input)
   discriminator.Forward(std::move(ganOutput));
 }
 
-template<typename Model, typename InitializationRuleType, typename NoiseType>
-void GAN<Model, InitializationRuleType, NoiseType>::
+template<typename Model, typename InitializationRuleType, typename Noise>
+void GAN<Model, InitializationRuleType, Noise>::
 Predict(arma::mat&& input, arma::mat& output)
 {
   if (!reset)
