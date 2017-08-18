@@ -125,7 +125,7 @@ BOOST_AUTO_TEST_CASE(ClassificationTest)
 BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
 {
   size_t batchSize = 10;
-  size_t numEpoches = 30;
+  size_t numEpoches = 25;
   int hiddenLayerSize = 100;
   double radius = 0;
   double tempRadius = 0;

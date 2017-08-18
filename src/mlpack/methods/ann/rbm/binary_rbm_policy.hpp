@@ -12,7 +12,6 @@
 
 #include <mlpack/core.hpp>
 
-#include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
 #include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
 
 namespace mlpack{

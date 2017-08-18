@@ -27,5 +27,4 @@
 #include "concat.hpp"
 #include "vr_class_reward.hpp"
 
-
 #endif

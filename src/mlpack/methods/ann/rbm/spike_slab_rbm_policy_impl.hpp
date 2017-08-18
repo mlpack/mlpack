@@ -63,13 +63,8 @@ SpikeSlabRBMPolicy<DataType>::FreeEnergy(DataType&& input)
   for (size_t i = 0; i < hiddenSize; i++)
   {
     ElemType sum = 0;
-
-    for (size_t k = 0; k < poolSize; k++)
-    {
-      sum += arma::as_scalar(arma::pow(input.t() * weight.slice(i).col(k), 2) /
-          (2.0 * slabPenalty));
-    }
-
+    sum = arma::accu(arma::square(input.t() * weight.slice(i))) / 
+        (2.0 * slabPenalty);
     freeEnergy -= SoftplusFunction::Fn(spikeBias(i) - sum);
   }
 
@@ -105,13 +100,12 @@ void SpikeSlabRBMPolicy<DataType>::PositivePhase(
   SampleSpike(std::move(spikeMean), std::move(spikeSamples));
   SlabMean(std::move(input), std::move(spikeSamples), std::move(slabMean));
 
-  // positive weight gradient
+  
   for (size_t i = 0 ; i < hiddenSize; i++)
     weightGrad.slice(i) = input * slabMean.col(i).t() * spikeMean(i);
 
-  // positive hidden bias gradient
   spikeBiasGrad = spikeMean;
-  // positive lambda bias
+
   visiblePenaltyGrad = -0.5 * input.t() * input;
 }
 
@@ -136,13 +130,11 @@ void SpikeSlabRBMPolicy<DataType>::NegativePhase(
   SlabMean(std::move(negativeSamples), std::move(spikeSamples),
       std::move(slabMean));
 
-  // positive weight gradient
   for (size_t i = 0 ; i < hiddenSize; i++)
     weightGrad.slice(i) = negativeSamples * slabMean.col(i).t() * spikeMean(i);
 
-  // positive hidden bias gradient
   spikeBiasGrad = spikeMean;
-  // positive lambda bias
+
   visiblePenaltyGrad = -0.5 * negativeSamples.t() * negativeSamples;
 }
 
@@ -231,8 +223,7 @@ void SpikeSlabRBMPolicy<DataType>::VisibleMean(
     DataType&& output)
 {
   assert(input.n_elem == hiddenSize + poolSize * hiddenSize);
-  output.set_size(visibleSize, 1);
-  output.zeros();
+  output.zeros(visibleSize, 1);
 
   DataType spike(input.memptr(), hiddenSize, 1, false, false);
   DataType slab(input.memptr() + hiddenSize, poolSize, hiddenSize, false,
@@ -287,9 +278,10 @@ void SpikeSlabRBMPolicy<DataType>::SampleVisible(
 
   if (k == numMaxTrials)
   {
-    Log::Warn << "Outputs are still not in visible unit"
-              << arma::norm(output, 2)
-              << "terminating optimization." << std::endl;
+    Log::Warn << "Outputs are still not in visible unit "
+        << arma::norm(output, 2)
+        << " terminating optimization."
+        << std::endl;
     return;
   }
 }

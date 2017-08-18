@@ -43,7 +43,6 @@ typename BinaryRBMPolicy<DataType>::ElemType BinaryRBMPolicy<DataType>
 {
   HiddenPreActivation(std::move(input), std::move(preActivation));
   preActivation = arma::log(1 + arma::trunc_exp(preActivation));
-  // SoftplusFunction::Fn(preActivation, preActivation);
   return  -(arma::accu(preActivation) + arma::dot(input, visibleBias));
 }
 

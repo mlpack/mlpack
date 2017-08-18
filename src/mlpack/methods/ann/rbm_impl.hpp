@@ -28,13 +28,13 @@ RBM<InitializationRuleType, RBMPolicy>::RBM(
     InitializationRuleType initializeRule,
     RBMPolicy rbmPolicy,
     const size_t numSteps,
-    const size_t mSteps,
+    const size_t negSteps,
     const bool useMonitoringCost,
     const bool persistence):
     rbmPolicy(rbmPolicy),
     initializeRule(initializeRule),
     numSteps(numSteps),
-    mSteps(mSteps),
+    negSteps(negSteps),
     useMonitoringCost(useMonitoringCost),
     persistence(persistence),
     reset(false)
@@ -53,8 +53,7 @@ void RBM<InitializationRuleType, RBMPolicy>::Reset()
   negativeSamples.set_size(rbmPolicy.VisibleSize(), 1);
   tempNegativeGradient.set_size(weight, 1);
 
-  parameter.set_size(weight, 1);
-  parameter.zeros();
+  parameter.zeros(weight, 1);
   positiveGradient.zeros();
   negativeGradient.zeros();
   tempNegativeGradient.zeros();
@@ -178,7 +177,7 @@ void RBM<InitializationRuleType, RBMPolicy>::Gradient(
 
   negativeGradient.zeros();
 
-  for (size_t i = 0; i < mSteps; i++)
+  for (size_t i = 0; i < negSteps; i++)
   {
     Gibbs(std::move(predictors.col(input)), std::move(negativeSamples));
     rbmPolicy.NegativePhase(std::move(negativeSamples),
@@ -186,7 +185,7 @@ void RBM<InitializationRuleType, RBMPolicy>::Gradient(
 
     negativeGradient += tempNegativeGradient;
   }
-  output = ((negativeGradient / mSteps) - positiveGradient);
+  output = ((negativeGradient / negSteps) - positiveGradient);
 }
 
 //! Serialize the model.
@@ -200,7 +199,7 @@ void RBM<InitializationRuleType, RBMPolicy>::
   ar & data::CreateNVP(state, "state");
   ar & data::CreateNVP(numFunctions, "numFunctions");
   ar & data::CreateNVP(numSteps, "numSteps");
-  ar & data::CreateNVP(mSteps, "mSteps");
+  ar & data::CreateNVP(negSteps, "negSteps");
   ar & data::CreateNVP(useMonitoringCost, "useMonitoringCost");
   ar & data::CreateNVP(persistence, "persistence");
   // ar & data::CreateNVP(RBMPolicy::ElemType, "ElemType");

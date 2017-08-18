@@ -1695,6 +1695,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeTest)
   }
 }
 
+/**
+ * Build a Binary RBM, then save it and make sure the parameters of the
+ * all the RBM are equal.
+ */
+
 BOOST_AUTO_TEST_CASE(BinaryRBMTest)
 {
   arma::mat data;
@@ -1728,6 +1733,11 @@ BOOST_AUTO_TEST_CASE(BinaryRBMTest)
   CheckMatrices(Rbm.Policy().Weight(), RbmText.Policy().Weight());
   CheckMatrices(Rbm.Policy().Weight(), RbmBinary.Policy().Weight());
 }
+
+/**
+ * Build a ssRBM, then save it and make sure the parameters of the
+ * all the RBM are equal.
+ */
 
 BOOST_AUTO_TEST_CASE(ssRBMTest)
 {

@@ -34,11 +34,10 @@ class RBM
    * Intalise all the parameters of the network
    * using the intialise rule. 
    *
-   * @tparam IntialiserType rule to intialise the parameters of the network.
-   * @tparam rbmPolicy Type of rbm.
+   * @tparam RbmPolicy Class of RBM to use(ssRBM / BinaryRBM).
    * @param predictors Training data to used.
    * @param numSteps Number of gibbs steps sampling.
-   * @param mSteps Number of negative samples to average negative gradient over.
+   * @param negSteps Number of negative samples to average negative gradient.
    * @param useMonitoringCost Indicates whic Evaluation type to use.
    * @param persistence Indicates whether to use persistent CD or not.
    */
@@ -46,7 +45,7 @@ class RBM
       InitializationRuleType initializeRule,
       RBMPolicy rbmPolicy,
       const size_t numSteps = 1,
-      const size_t mSteps = 1,
+      const size_t negSteps = 1,
       const bool useMonitoringCost = true,
       const bool persistence = false);
 
@@ -54,9 +53,12 @@ class RBM
   void Reset();
 
   /* 
-   * Train the network using the Opitimizer with given set of args.
-   * The optimizer sets the parameters of the network for providing
-   * most likely parameters given the inputs.
+   * Train the feedforward network on the given input data.
+   *
+   * This will use the existing model parameters as a starting point for the
+   * optimization. If this is not what you want, then you should access the
+   * parameters vector directly with Parameters() and modify it as desired.
+   *
    * @param predictors Data points / Traing Data.
    * @param optimizer Optimizer type.
    */
@@ -74,6 +76,7 @@ class RBM
 
  /** 
   * This function calculates the free energy of the model.
+  *
   * @param Input data point.
   */
   double FreeEnergy(arma::Mat<ElemType>&& input);
@@ -152,7 +155,7 @@ class RBM
   //! Locally-stored number of steps in gibbs sampling.
   size_t numSteps;
   //! Locally-stored number of negative samples.
-  size_t mSteps;
+  size_t negSteps;
   //! Locally-stored monitoring cost.
   bool useMonitoringCost;
   //! Locally-stored persistent cd-k or not.
@@ -165,7 +168,7 @@ class RBM
   //! Locally-stored reconstructed output from visible layer.
   arma::Mat<ElemType> visibleReconstruction;
 
-  //! Locally-stored negative samples from gibbs Distribution.
+  //! Locally-stored negative samples from gibbs distribution.
   arma::Mat<ElemType> negativeSamples;
   //! Locally-stored gradients from the negative phase.
   arma::Mat<ElemType> negativeGradient;
