@@ -177,6 +177,14 @@ void HyperParameterTuner<MLAlgorithm,
   for (auto value : std::get<I>(args))
     datasetInfo.MapString<size_t>(value, dimension);
 
+  if (datasetInfo.NumMappings(dimension) == 0)
+  {
+      std::ostringstream oss;
+      oss << "HyperParameterTuner::Optimize(): the collection passed as the "
+          << "argument " << I + 1 << " is empty" << std::endl;
+      throw std::invalid_argument(oss.str());
+  }
+
   InitAndOptimize<I + 1>(args, bestParams, datasetInfo, fixedArgs...);
 }
 
