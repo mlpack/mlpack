@@ -130,7 +130,6 @@ double SoftmaxErrorFunction<MetricType>::Evaluate(const arma::mat& coordinates,
     }
     return result;
 }
-
 //! The non-separable implementation, where Precalculate() is used.
 template<typename MetricType>
 void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
@@ -252,11 +251,10 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
 
 //! The separable implementation for a given batch size and an initial index.
 template <typename MetricType>
-template <typename GradType>
 void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
                                                 const size_t begin,
                                                 const size_t batchSize,
-                                                GradType& gradient)
+                                                arma::mat& gradient)
 {
   firstTerm.zeros(coordinates.n_rows, coordinates.n_cols);
   secondTerm.zeros(coordinates.n_rows, coordinates.n_cols);

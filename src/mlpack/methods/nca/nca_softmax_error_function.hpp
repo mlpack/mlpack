@@ -137,11 +137,10 @@ class SoftmaxErrorFunction
    * @param batchSize Number of points to use for objective function.
    * @param gradient Matrix to store the calculated gradient in.
    */
-  template <typename GradType>
   void Gradient(const arma::mat& parameters,
                 const size_t begin,
                 const size_t batchSize,
-                GradType& gradient) const;
+                arma::mat& gradient) const;
 
   /**
    * Get the initial point.
