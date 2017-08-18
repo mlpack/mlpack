@@ -203,6 +203,13 @@ class HyperParameterTuner
   double minDelta;
 
   /**
+   * A type function to check whether the element I of the tuple type is a
+   * PreFixedArg.
+   */
+  template<typename Tuple, size_t I>
+  using IsPreFixed = IsPreFixedArg<typename std::tuple_element<I, Tuple>::type>;
+
+  /**
    * A type function to check whether the element I of the tuple type is an
    * arithmetic type.
    */
@@ -239,8 +246,7 @@ class HyperParameterTuner
            typename ArgsTuple,
            typename... FixedArgs,
            typename = std::enable_if_t<I < std::tuple_size<ArgsTuple>::value>,
-           typename = std::enable_if_t<IsPreFixedArg<
-               typename std::tuple_element<I, ArgsTuple>::type>::value>>
+           typename = std::enable_if_t<IsPreFixed<ArgsTuple, I>::value>>
   inline void InitAndOptimize(
       const ArgsTuple& args,
       arma::mat& bestParams,
@@ -259,8 +265,7 @@ class HyperParameterTuner
            typename ArgsTuple,
            typename... FixedArgs,
            typename = std::enable_if_t<I < std::tuple_size<ArgsTuple>::value>,
-           typename = std::enable_if_t<!IsPreFixedArg<
-               typename std::tuple_element<I, ArgsTuple>::type>::value &&
+           typename = std::enable_if_t<!IsPreFixed<ArgsTuple, I>::value &&
                    IsArithmetic<ArgsTuple, I>::value>,
            typename = void>
   inline void InitAndOptimize(
@@ -281,8 +286,7 @@ class HyperParameterTuner
            typename ArgsTuple,
            typename... FixedArgs,
            typename = std::enable_if_t<I < std::tuple_size<ArgsTuple>::value>,
-           typename = std::enable_if_t<!IsPreFixedArg<
-               typename std::tuple_element<I, ArgsTuple>::type>::value &&
+           typename = std::enable_if_t<!IsPreFixed<ArgsTuple, I>::value &&
                    !IsArithmetic<ArgsTuple, I>::value>,
            typename = void,
            typename = void>
