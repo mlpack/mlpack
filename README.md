@@ -220,12 +220,16 @@ nearest points to that point.
 Each mlpack program has extensive help documentation which details what the
 method does, what each of the parameters are, and how to use them:
 
+    ```shell
     $ mlpack_knn --help
+    ```
 
 Running `mlpack_knn` on one dataset (that is, the query and reference
 datasets are the same) and finding the 5 nearest neighbors is very simple:
 
+    ```shell
     $ mlpack_knn -r dataset.csv -n neighbors_out.csv -d distances_out.csv -k 5 -v
+    ```
 
 The `-v (--verbose)` flag is optional; it gives informational output.  It is not
 unique to `mlpack_knn` but is available in all mlpack programs.  Verbose
@@ -238,17 +242,23 @@ If mlpack is installed to the system, then the mlpack Python bindings should be
 automatically in your PYTHONPATH, and importing mlpack functionality into Python
 should be very simple:
 
+    ```python
     >>> from mlpack import knn
+    ```
 
 Accessing help is easy:
 
+    ```python
     >>> help(knn)
+    ```
 
 The API is similar to the command-line programs.  So, running `knn()`
 (k-nearest-neighbor search) on the numpy matrix `dataset` and finding the 5
 nearest neighbors is very simple:
 
+    ```python
     >>> output = knn(reference=dataset, k=5, verbose=True)
+    ```
 
 This will store the output neighbors in `output['neighbors']` and the output
 distances in `output['distances']`.  Other mlpack bindings function similarly,
@@ -288,4 +298,4 @@ and the git commit list is available at
 
   [commit list](http://lists.mlpack.org/mailman/listinfo/mlpack-git)
 
-Lastly, the IRC channel ```#mlpack``` on Freenode can be used to get help.
+Lastly, the IRC channel `#mlpack` on Freenode can be used to get help.
