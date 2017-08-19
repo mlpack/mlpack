@@ -129,7 +129,7 @@ double Optimize(FuncType& function, arma::mat& arr);
   double stopTolUpXFactor;
 
   //! Check for large sigma increase.
-  size_t flatFitness; 
+  size_t flatFitness;
 
   //! Population size. Number of samples per iteration.
   int lambda;
