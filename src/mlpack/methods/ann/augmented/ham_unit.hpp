@@ -14,7 +14,7 @@
 #define MLPACK_METHODS_ANN_AUGMENTED_HAM_UNIT_HPP
 
 #include <mlpack/methods/ann/layer/layer.hpp>
-#include <mlpack/methods/ann/layer/layer.hpp>
+#include <mlpack/methods/ann/init_rules/random_init.hpp>
 
 #include "tree_memory.hpp"
 
@@ -56,9 +56,9 @@ class HAMUnit
                 arma::mat&& g);
 
   //! Return the initial point for the optimization.
-  const arma::mat& Parameters() const { RebuildParameters(); return parameters; }
+  const arma::mat& Parameters() const { return parameters; }
   //! Modify the initial point for the optimization.
-  arma::mat& Parameters() { RebuildParameters(); return parameters; }
+  arma::mat& Parameters() { return parameters; }
 
   void ResetParameters();
  private:
@@ -77,6 +77,8 @@ class HAMUnit
   S search;
   E embed;
   C controller;
+
+  bool reset;
 
   // Currently processed sequence.
   arma::mat sequence;

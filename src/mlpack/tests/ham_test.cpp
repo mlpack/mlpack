@@ -259,50 +259,64 @@ BOOST_AUTO_TEST_CASE(BlindHAMUnitTest) {
   // Embed model is just an identity function.
   FFN<MeanSquaredError<> > embedModel;
   embedModel.Add<Linear<> >(nDim, nDim);
-  embedModel.ResetParameters();
   // Identity = apply identity linear transformation + add zero bias.
-  embedModel.Parameters().rows(0, nDim * nDim - 1) =
+  arma::mat embedParams = arma::zeros(nDim * nDim + nDim, 1);
+  embedParams.rows(0, nDim * nDim - 1) =
       arma::vectorise(arma::eye(nDim, nDim));
-  embedModel.Parameters().rows(nDim * nDim, nDim * nDim + nDim - 1) =
-      arma::zeros(nDim);
   // Join function is sum of its two vector inputs.
   FFN<MeanSquaredError<> > joinModel;
   joinModel.Add<Linear<> >(2 * nDim, nDim);
-  joinModel.ResetParameters();
-  joinModel.Parameters().rows(0, nDim * nDim - 1) = arma::vectorise(arma::eye(nDim, nDim));
-  joinModel.Parameters().rows(nDim * nDim, 2 * nDim * nDim - 1) = arma::vectorise(arma::eye(nDim, nDim));
-  joinModel.Parameters().rows(2 * nDim * nDim, 2 * nDim * nDim + nDim - 1) = arma::zeros(nDim);
+  arma::mat joinParams = arma::zeros(2 * nDim * nDim + nDim, 1);
+  joinParams.rows(0, nDim * nDim - 1) = arma::vectorise(arma::eye(nDim, nDim));
+  joinParams.rows(nDim * nDim, 2 * nDim * nDim - 1) = arma::vectorise(arma::eye(nDim, nDim));
   // Write function is replacing its old input with its new input.
   FFN<MeanSquaredError<> > writeModel;
   writeModel.Add<Linear<> >(2 * nDim, nDim);
-  writeModel.ResetParameters();
-  writeModel.Parameters().rows(0, nDim * nDim - 1) = arma::zeros(nDim * nDim);
-  writeModel.Parameters().rows(nDim * nDim, 2 * nDim * nDim - 1) =
+  arma::mat writeParams = arma::zeros(2 * nDim * nDim + nDim, 1);
+  writeParams.rows(nDim * nDim, 2 * nDim * nDim - 1) =
       arma::vectorise(arma::eye(nDim, nDim));
-  writeModel.Parameters().rows(2 * nDim * nDim, 2 * nDim * nDim + nDim - 1) = arma::zeros(nDim);
   // Search model is a constant model that ignores its input and returns 1 / 3.
   FFN<MeanSquaredError<> > searchModel;
   searchModel.Add<Linear<> >(2 * nDim, 1);
-  searchModel.ResetParameters();
-  searchModel.Parameters().rows(0, 2 * nDim - 1) = arma::zeros(2 * nDim);
-  searchModel.Parameters().at(2 * nDim) = -log(2);
   searchModel.Add<SigmoidLayer<> >();
+  arma::mat searchParams = arma::zeros(2 * nDim + 1, 1);
+  searchParams.at(2 * nDim) = -log(2);
   // Controller is a feedforward model: sigmoid(5x1 + x2 - x3 - 2x4).
   FFN<CrossEntropyError<> > controller;
   controller.Add<Linear<> >(nDim, 1);
-  controller.ResetParameters();
-  controller.Parameters().rows(0, nDim - 1) = arma::vec("5 1 -1 -2");
-  controller.Parameters().at(nDim) = 0;
   controller.Add<SigmoidLayer<> >();
+  arma::mat controllerParams = arma::zeros(nDim + 1, 1);
+  controllerParams.rows(0, nDim - 1) = arma::vec("5 1 -1 -2");
+
+  // Pack all the parameters into a single vector.
+  arma::mat allParams(
+    embedParams.n_elem + searchParams.n_elem + controllerParams.n_elem +
+    joinParams.n_elem + writeParams.n_elem, 1);
+  size_t ptr = 0;
+  std::vector<arma::mat*> ordering{
+      &embedParams,
+      &searchParams,
+      &controllerParams,
+      &joinParams,
+      &writeParams
+  };
+  for (arma::mat* el : ordering)
+  {
+    allParams.rows(ptr, ptr + el->n_elem - 1) = *el;
+    ptr += el->n_elem;
+  }
 
   // Now run the HAM unit (the initial sequence is:
   // [1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1])
   HAMUnit<> hamUnit(seqLen, nDim, embedModel, joinModel, searchModel, writeModel, controller);
+  hamUnit.ResetParameters();
+  hamUnit.Parameters() = allParams;
 
   arma::mat input("1 0 0 0; 0 1 0 0; 0 0 1 0; 0 0 0 1;");
   input = input.t();
   arma::mat output;
   hamUnit.Forward(std::move(input), std::move(output));
+  std::cerr << output;
   arma::mat targetOutput("0.4174; 0.4743; 0.5167; 0.5485;");
   BOOST_REQUIRE_SMALL(arma::abs(output - targetOutput).max(), 1e-4);
 

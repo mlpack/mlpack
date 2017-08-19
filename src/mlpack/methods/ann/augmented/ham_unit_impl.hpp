@@ -29,7 +29,7 @@ HAMUnit<E, J, S, W, C>::HAMUnit(size_t memorySize,
   : memorySize(memorySize), memoryDim(memoryDim),
     search(search), embed(embed), controller(controller),
     memory(TreeMemory<double, J, S>(memorySize, memoryDim, join, write)),
-    t(0)
+    t(0), reset(false)
 {
   // Nothing to do here
 }
@@ -92,11 +92,11 @@ void HAMUnit<E, J, S, W, C>::Forward(arma::mat&& input, arma::mat&& output) {
 
 template<typename E, typename J, typename S, typename W, typename C>
 void HAMUnit<E, J, S, W, C>::RebuildParameters() {
-  arma::mat embedParams = embed.Parameters();
+    arma::mat embedParams = embed.Parameters();
   arma::mat searchParams = search.Parameters();
   arma::mat controllerParams = controller.Parameters();
   arma::mat joinParams = memory.JoinObject().Parameters();
-  arma::mat writeParams = memory.WriteObject().Parameters();
+arma::mat writeParams = memory.WriteObject().Parameters();
   size_t embedCount = embedParams.n_elem,
          searchCount = searchParams.n_elem,
          controllerCount = controllerParams.n_elem,
@@ -115,6 +115,7 @@ void HAMUnit<E, J, S, W, C>::RebuildParameters() {
   parameters.rows(
       embedCount + searchCount + controllerCount + joinCount,
       parameters.n_elem - 1) = writeParams;
+  reset = true;
 }
 
 template<typename E, typename J, typename S, typename W, typename C>
@@ -123,7 +124,34 @@ void HAMUnit<E, J, S, W, C>::ResetParameters() {
   embed.ResetParameters();
   controller.ResetParameters();
   memory.ResetParameters();
-  RebuildParameters();
+
+  arma::mat embedParams = embed.Parameters();
+  arma::mat searchParams = search.Parameters();
+  arma::mat controllerParams = controller.Parameters();
+  arma::mat joinParams = memory.JoinObject().Parameters();
+  arma::mat writeParams = memory.WriteObject().Parameters();
+
+  size_t embedCount = embedParams.n_elem,
+         searchCount = searchParams.n_elem,
+         controllerCount = controllerParams.n_elem,
+         joinCount = joinParams.n_elem,
+         writeCount = writeParams.n_elem;
+
+  parameters = arma::mat(embedCount + searchCount + controllerCount + joinCount + writeCount, 1);
+
+  embed.Parameters() = arma::mat(parameters.memptr(), embedCount, 1, false, true);
+  search.Parameters() = arma::mat(parameters.memptr() + embedCount, searchCount, 1, false, true);
+  controller.Parameters() = arma::mat(parameters.memptr() + embedCount + searchCount, controllerCount, 1, false, true);
+  memory.JoinObject().Parameters() = arma::mat(parameters.memptr() + embedCount + searchCount + controllerCount, joinCount, 1, false, true);
+  memory.WriteObject().Parameters() = arma::mat(parameters.memptr() + embedCount + searchCount + controllerCount + joinCount, writeCount, 1, false, true);
+
+  std::cerr << "E:\n" << embed.Parameters().t();
+  std::cerr << "S:\n" << search.Parameters().t();
+  std::cerr << "C:\n" << controller.Parameters().t();
+  std::cerr << "J:\n" << memory.JoinObject().Parameters().t();
+  std::cerr << "W:\n" << memory.WriteObject().Parameters().t();
+
+  reset = true;
 }
 
 } // namespace augmented
