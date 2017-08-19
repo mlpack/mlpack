@@ -101,7 +101,7 @@ class LogisticRegression
    */
   LogisticRegression(const MatType& predictors,
                      const arma::Row<size_t>& responses,
-                     const arma::vec& initialPoint,
+                     const arma::rowvec& initialPoint,
                      const double lambda = 0);
 
   /**
@@ -184,9 +184,9 @@ class LogisticRegression
              OptimizerType& optimizer);
 
   //! Return the parameters (the b vector).
-  const arma::vec& Parameters() const { return parameters; }
+  const arma::rowvec& Parameters() const { return parameters; }
   //! Modify the parameters (the b vector).
-  arma::vec& Parameters() { return parameters; }
+  arma::rowvec& Parameters() { return parameters; }
 
   //! Return the lambda value for L2-regularization.
   const double& Lambda() const { return lambda; }

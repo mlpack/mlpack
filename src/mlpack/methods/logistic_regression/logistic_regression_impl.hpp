@@ -25,7 +25,7 @@ LogisticRegression<MatType>::LogisticRegression(
     const MatType& predictors,
     const arma::Row<size_t>& responses,
     const double lambda) :
-    parameters(arma::zeros<arma::vec>(predictors.n_rows + 1)),
+    parameters(arma::rowvec(predictors.n_rows + 1, arma::fill::zeros)),
     lambda(lambda)
 {
   Train(predictors, responses);
@@ -37,7 +37,7 @@ LogisticRegression<MatType>::LogisticRegression(
     const arma::Row<size_t>& responses,
     const size_t numClasses,
     const double lambda) :
-    parameters(arma::zeros<arma::vec>(predictors.n_rows + 1)),
+    parameters(arma::rowvec(predictors.n_rows + 1, arma::fill::zeros)),
     lambda(lambda)
 {
   Train(predictors, responses, numClasses);
@@ -47,7 +47,7 @@ template<typename MatType>
 LogisticRegression<MatType>::LogisticRegression(
     const MatType& predictors,
     const arma::Row<size_t>& responses,
-    const arma::vec& initialPoint,
+    const arma::rowvec& initialPoint,
     const double lambda) :
     parameters(initialPoint),
     lambda(lambda)
@@ -59,7 +59,7 @@ template<typename MatType>
 LogisticRegression<MatType>::LogisticRegression(
     const size_t dimensionality,
     const double lambda) :
-    parameters(arma::zeros<arma::vec>(dimensionality + 1)),
+    parameters(arma::rowvec(predictors.n_rows + 1, arma::fill::zeros)),
     lambda(lambda)
 {
   // No training to do here.
@@ -72,7 +72,7 @@ LogisticRegression<MatType>::LogisticRegression(
     const arma::Row<size_t>& responses,
     OptimizerType& optimizer,
     const double lambda) :
-    parameters(arma::zeros<arma::vec>(predictors.n_rows + 1)),
+    parameters(arma::rowvec(predictors.n_rows + 1, arma::fill::zeros)),
     lambda(lambda)
 {
   Train(predictors, responses, optimizer);
