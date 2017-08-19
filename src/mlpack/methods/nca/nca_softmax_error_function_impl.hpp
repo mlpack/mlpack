@@ -296,8 +296,9 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
         secondTerm += eval * x_ik * trans(x_ik);
       }
 
-      // We always have to add to the denominator of p_i and the first term of the
-      // gradient computation.  We will divide by the denominator of p_ik later.
+      // We always have to add to the denominator of p_i
+      // and the first term of the gradient computation.
+      // We will divide by the denominator of p_ik later.
       denominator += eval;
       firstTerm += eval * x_ik * trans(x_ik);
     }
