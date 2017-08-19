@@ -30,6 +30,11 @@ inline size_t WeightSetVisitor::operator()(LayerType* layer) const
   return LayerSize(layer, std::move(layer->OutputParameter()));
 }
 
+inline size_t WeightSetVisitor::operator()(Alias* layer) const
+{
+  return layer->SetWeight(std::move(weight), offset);
+}
+
 template<typename T, typename P>
 inline typename std::enable_if<
     !HasParametersCheck<T, P&(T::*)()>::value &&

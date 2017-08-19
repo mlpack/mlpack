@@ -48,6 +48,11 @@ template<typename eT>
 void Linear<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
+  arma::mat tmp0 = weights;
+  arma::mat tmp1 = weight;
+//  arma::mat tmp2 = input + 1;
+//  arma::mat tmp = weight * input;
+//  output = tmp;
   output = weight * input;
   output.each_col() += bias;
 }

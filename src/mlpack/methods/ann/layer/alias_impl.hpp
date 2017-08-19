@@ -29,6 +29,8 @@ template<typename eT>
 void Alias::Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
   // Create a new visitor and call the layer's Forward() function.
+//  arma::mat tmp;
+//  boost::apply_visitor(ParametersVisitor(std::move(tmp)), layer);
   boost::apply_visitor(ForwardVisitor(std::move(input), std::move(output)),
       layer);
 }

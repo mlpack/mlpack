@@ -64,6 +64,8 @@ void FFN<OutputLayerType, InitializationRuleType>::ResetData(
   this->predictors = std::move(predictors);
   this->responses = std::move(responses);
   this->deterministic = true;
+//  arma::mat tmp;
+//  boost::apply_visitor(ParametersVisitor(std::move(tmp)), network.front());
   ResetDeterministic();
 
   if (!reset)
@@ -79,6 +81,8 @@ void FFN<OutputLayerType, InitializationRuleType>::Train(
       arma::mat responses,
       OptimizerType& optimizer)
 {
+  arma::mat tmp;
+  boost::apply_visitor(ParametersVisitor(std::move(tmp)), network.front());
   ResetData(std::move(predictors), std::move(responses));
 
   // Train the model.
@@ -248,7 +252,11 @@ void FFN<OutputLayerType, InitializationRuleType>::Gradient(
 template<typename OutputLayerType, typename InitializationRuleType>
 void FFN<OutputLayerType, InitializationRuleType>::ResetParameters()
 {
+  arma::mat tmp;
+  boost::apply_visitor(ParametersVisitor(std::move(tmp)), network.front());
   ResetDeterministic();
+//  arma::mat tmp;
+//  boost::apply_visitor(ParametersVisitor(std::move(tmp)), network.front());
 
   // Reset the network parameter with the given initialization rule.
   NetworkInitialization<InitializationRuleType> networkInit(initializeRule);

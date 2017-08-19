@@ -36,21 +36,24 @@ class Alias
    */
   template<typename LayerType>
   Alias(LayerType& layer) : layer(&layer) {
-    parameter.set_size(boost::apply_visitor(WeightSizeVisitor(), this->layer));
+    parameter.set_size(boost::apply_visitor(WeightSizeVisitor(), this->layer), 1);
+//    arma::mat tmp;
+//    LayerTypes  l(this);
+//    boost::apply_visitor(ParametersVisitor(std::move(tmp)), l);
   };
   template<typename LayerType>
   Alias(LayerType* layer) : layer(layer) {
-    parameter.set_size(boost::apply_visitor(WeightSizeVisitor(), this->layer));
+    parameter.set_size(boost::apply_visitor(WeightSizeVisitor(), this->layer), 1);
   };
   Alias(LayerTypes& layer) : layer(layer) {
-    parameter.set_size(boost::apply_visitor(WeightSizeVisitor(), this->layer));
+    parameter.set_size(boost::apply_visitor(WeightSizeVisitor(), this->layer), 1);
   };
 
   /**
    * Reset the parameters of the layer.
    */
-  void Reset()
-  { boost::apply_visitor(ResetVisitor(), layer); }
+  void Reset() {}
+//  { boost::apply_visitor(ResetVisitor(), layer); }
 
   /**
    * Perform a forward pass of the aliased layer.
@@ -94,6 +97,12 @@ class Alias
 
   size_t WeightSize() const
   { return boost::apply_visitor(WeightSizeVisitor(), layer); }
+
+  size_t SetWeight(arma::mat&& weight, const size_t offset)
+  {
+    parameter = arma::mat(weight.memptr() + offset, parameter.n_rows, parameter.n_cols, false, false);
+    return parameter.n_elem;
+  }
 
   void SetParameters(arma::mat&& parameters)
   {

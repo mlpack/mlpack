@@ -510,6 +510,7 @@ BOOST_AUTO_TEST_CASE(AliasLayerTest)
   FFN<MeanSquaredError<>> network;
   Linear<> layer(10, 10);
   network.Add<Alias>(layer);
+  arma::mat tmp = layer.Parameters();
   network.Add<Linear<>>(10, 1);
 
   const arma::mat oldMatrix = layer.Parameters();
