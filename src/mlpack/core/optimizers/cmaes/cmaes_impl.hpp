@@ -611,7 +611,6 @@ bool CMAES::TestForTermination()
             << (sigma*std::sqrt(C(iKoo , iKoo))) << " in coordinate " << iKoo
             << " without effect" << std::endl;
         return true;
-        break;
       }
     }
 
