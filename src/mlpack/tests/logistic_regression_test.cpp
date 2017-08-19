@@ -41,7 +41,8 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionEvaluate)
   // These were hand-calculated using Octave.
   BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("1 1 1")), 7.0562141665, 1e-5);
   BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("0 0 0")), 2.0794415417, 1e-5);
-  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("-1 -1 -1")), 8.0562141665, 1e-5);
+  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("-1 -1 -1")), 8.0562141665,
+      1e-5);
   BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("200 -40 -40")), 0.0, 1e-5);
   BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("200 -80 0")), 0.0, 1e-5);
   BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("200 -100 20")), 0.0, 1e-5);
@@ -195,20 +196,26 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSeparableEvaluate)
       0.0 /* no regularization */);
 
   // These were hand-calculated using Octave.
-  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("1 1 1"), 0), 4.85873516e-2, 1e-5);
-  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("1 1 1"), 1), 6.71534849e-3, 1e-5);
-  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("1 1 1"), 2), 7.00091146645, 1e-5);
+  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("1 1 1"), 0), 4.85873516e-2,
+      1e-5);
+  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("1 1 1"), 1), 6.71534849e-3,
+      1e-5);
+  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("1 1 1"), 2), 7.00091146645,
+      1e-5);
 
-  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("0 0 0"), 0), 0.6931471805, 1e-5);
-  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("0 0 0"), 1), 0.6931471805, 1e-5);
-  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("0 0 0"), 2), 0.6931471805, 1e-5);
+  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("0 0 0"), 0), 0.6931471805,
+      1e-5);
+  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("0 0 0"), 1), 0.6931471805,
+      1e-5);
+  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("0 0 0"), 2), 0.6931471805,
+      1e-5);
 
   BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("-1 -1 -1"), 0), 3.0485873516,
       1e-5);
   BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("-1 -1 -1"), 1), 5.0067153485,
       1e-5);
-  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("-1 -1 -1"), 2), 9.1146645377e-4,
-      1e-5);
+  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("-1 -1 -1"), 2),
+      9.1146645377e-4, 1e-5);
 
   BOOST_REQUIRE_SMALL(lrf.Evaluate(arma::rowvec("200 -40 -40"), 0), 1e-5);
   BOOST_REQUIRE_SMALL(lrf.Evaluate(arma::rowvec("200 -40 -40"), 1), 1e-5);
