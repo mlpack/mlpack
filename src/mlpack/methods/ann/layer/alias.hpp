@@ -35,10 +35,16 @@ class Alias
    * @param layer Layer to be aliased.
    */
   template<typename LayerType>
-  Alias(LayerType& layer) : layer(&layer) {};
+  Alias(LayerType& layer) : layer(&layer) {
+    parameter.set_size(boost::apply_visitor(WeightSizeVisitor(), this->layer));
+  };
   template<typename LayerType>
-  Alias(LayerType* layer) : layer(layer) {};
-  Alias(LayerTypes& layer) : layer(layer) {};
+  Alias(LayerType* layer) : layer(layer) {
+    parameter.set_size(boost::apply_visitor(WeightSizeVisitor(), this->layer));
+  };
+  Alias(LayerTypes& layer) : layer(layer) {
+    parameter.set_size(boost::apply_visitor(WeightSizeVisitor(), this->layer));
+  };
 
   /**
    * Reset the parameters of the layer.
@@ -69,8 +75,12 @@ class Alias
                 arma::Mat<eT>&& error,
                 arma::Mat<eT>&& gradient);
 
-  const arma::mat& OutputParameter() const { return outputParameter; }
-  arma::mat& OutputParameter() { return outputParameter; }
+  const arma::mat& OutputParameter() const {
+    return boost::apply_visitor(OutputParameterVisitor(), layer);
+  }
+  arma::mat& OutputParameter() {
+    return boost::apply_visitor(OutputParameterVisitor(), layer);
+  }
 
   arma::mat& Parameters() { return parameter; }
   const arma::mat& Parameters() const { return parameter; }
@@ -87,19 +97,18 @@ class Alias
 
   void SetParameters(arma::mat&& parameters)
   {
-    parameter = parameters;
+    parameter = static_cast<const arma::mat&>(parameters);
     boost::apply_visitor(ParametersSetVisitor(std::move(parameters)), layer);
   }
 
   void GetParameters(arma::mat&& parameters)
   {
-    parameter = parameters;
     boost::apply_visitor(ParametersVisitor(std::move(parameters)), layer);
+    parameter = static_cast<const arma::mat&>(parameters);
   }
 
  private:
   LayerTypes layer;
-  arma::mat outputParameter;
   arma::mat parameter;
 };
 
