@@ -117,7 +117,7 @@ double LogisticRegressionFunction<MatType>::Evaluate(
 
   // Calculate sigmoid.
   const double exponent = parameters(0, 0) + arma::dot(predictors.col(i),
-      parameters.tail_cols(parameters.n_elem - 1));
+      parameters.tail_cols(parameters.n_elem - 1).t());
   const double sigmoid = 1.0 / (1.0 + std::exp(-exponent));
 
   if (responses[i] == 1)
@@ -163,7 +163,8 @@ void LogisticRegressionFunction<MatType>::Gradient(
       / predictors.n_cols;
 
   const double sigmoid = 1.0 / (1.0 + std::exp(-parameters(0, 0)
-      - arma::dot(predictors.col(i), parameters.tail_cols(parameters.n_elem - 1))));
+      - arma::dot(
+        predictors.col(i), parameters.tail_cols(parameters.n_elem - 1).t())));
 
   gradient.set_size(arma::size(parameters));
   gradient[0] = -(responses[i] - sigmoid);
