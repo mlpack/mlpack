@@ -24,7 +24,7 @@ namespace rl {
  * @tparam EnvironmentType The type of the reinforcement learning task.
  * @tparam NetworkType The type of the network model.
  * @tparam UpdaterType The type of the optimizer.
- * @tparam PolicyType The type of the behavior policy. *
+ * @tparam PolicyType The type of the behavior policy.
  */
 template <
   typename EnvironmentType,
@@ -41,6 +41,9 @@ class OneStepSarsaWorker
       ActionType>;
 
   /**
+   * Construct one step sarsa worker with the given parameters and
+   * environment.
+   *
    * @param updater The optimizer.
    * @param environment The reinforcement learning task.
    * @param config Hyper-parameters.
@@ -56,7 +59,7 @@ class OneStepSarsaWorker
       config(config),
       deterministic(deterministic),
       pending(config.UpdateInterval())
-  { reset(); }
+  { Reset(); }
 
   /**
    * Initialize the worker.
@@ -111,7 +114,7 @@ class OneStepSarsaWorker
       if (terminal)
       {
         totalReward = episodeReturn;
-        reset();
+        Reset();
         // Sync with latest learning network.
         network = learningNetwork;
         return true;
@@ -131,7 +134,7 @@ class OneStepSarsaWorker
     {
       // Initialize the gradient storage.
       arma::mat totalGradients(learningNetwork.Parameters().n_rows,
-          learningNetwork.Parameters().n_cols);
+          learningNetwork.Parameters().n_cols, arma::fill::zeros);
       for (size_t i = 0; i < pending.size(); ++i)
       {
         TransitionType &transition = pending[i];
@@ -143,9 +146,9 @@ class OneStepSarsaWorker
           targetNetwork.Predict(
               std::get<3>(transition).Encode(), actionValue);
         };
-        double targetActionValue = actionValue[std::get<4>(transition)];
-        if (terminal && i == pending.size() - 1)
-          targetActionValue = 0;
+        double targetActionValue = 0;
+        if (!(terminal && i == pending.size() - 1))
+          targetActionValue = actionValue[std::get<4>(transition)];
         targetActionValue = std::get<2>(transition) +
             config.Discount() * targetActionValue;
 
@@ -189,7 +192,7 @@ class OneStepSarsaWorker
     if (terminal)
     {
       totalReward = episodeReturn;
-      reset();
+      Reset();
       return true;
     }
     state = nextState;
@@ -199,9 +202,9 @@ class OneStepSarsaWorker
 
  private:
   /**
-   * Reset the worker for a new episdoe.
+   * Reset the worker for a new episode.
    */
-  void reset()
+  void Reset()
   {
     steps = 0;
     episodeReturn = 0;

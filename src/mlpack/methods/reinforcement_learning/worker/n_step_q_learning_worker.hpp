@@ -19,12 +19,12 @@ namespace mlpack {
 namespace rl {
 
 /**
- * N step Q-Learning worker.
+ * N-step Q-Learning worker.
  *
  * @tparam EnvironmentType The type of the reinforcement learning task.
  * @tparam NetworkType The type of the network model.
  * @tparam UpdaterType The type of the optimizer.
- * @tparam PolicyType The type of the behavior policy. *
+ * @tparam PolicyType The type of the behavior policy.
  */
 template <
   typename EnvironmentType,
@@ -40,6 +40,9 @@ class NStepQLearningWorker
   using TransitionType = std::tuple<StateType, ActionType, double, StateType>;
 
   /**
+   * Construct N-step Q-Learning worker with the given parameters and
+   * environment.
+   *
    * @param updater The optimizer.
    * @param environment The reinforcement learning task.
    * @param config Hyper-parameters.
@@ -55,7 +58,7 @@ class NStepQLearningWorker
       config(config),
       deterministic(deterministic),
       pending(config.UpdateInterval())
-  { reset(); }
+  { Reset(); }
 
   /**
    * Initialize the worker.
@@ -103,7 +106,7 @@ class NStepQLearningWorker
       if (terminal)
       {
         totalReward = episodeReturn;
-        reset();
+        Reset();
         // Sync with latest learning network.
         network = learningNetwork;
         return true;
@@ -122,7 +125,7 @@ class NStepQLearningWorker
     {
       // Initialize the gradient storage.
       arma::mat totalGradients(learningNetwork.Parameters().n_rows,
-          learningNetwork.Parameters().n_cols);
+          learningNetwork.Parameters().n_cols, arma::fill::zeros);
 
       // Bootstrap from the value of next state.
       arma::colvec actionValue;
@@ -180,7 +183,7 @@ class NStepQLearningWorker
     if (terminal)
     {
       totalReward = episodeReturn;
-      reset();
+      Reset();
       return true;
     }
     state = nextState;
@@ -189,9 +192,9 @@ class NStepQLearningWorker
 
  private:
   /**
-   * Reset the worker for a new episdoe.
+   * Reset the worker for a new episode.
    */
-  void reset()
+  void Reset()
   {
     steps = 0;
     episodeReturn = 0;
