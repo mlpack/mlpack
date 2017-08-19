@@ -94,3 +94,25 @@ install(TARGETS mlpack
   ARCHIVE DESTINATION lib)
 
 add_dependencies(mlpack mlpack_headers)
+
+# If we are building Python bindings, we have to configure setup.py but only
+# after we've recursed into methods/.
+if (BUILD_PYTHON_BINDINGS)
+  # Extract the version number.
+  file(READ "${CMAKE_SOURCE_DIR}/src/mlpack/core/util/version.hpp"
+      VERSION_HPP_CONTENTS)
+  string(REGEX REPLACE ".*#define MLPACK_VERSION_MAJOR ([0-9]+).*" "\\1"
+      MLPACK_VERSION_MAJOR "${VERSION_HPP_CONTENTS}")
+  string(REGEX REPLACE ".*#define MLPACK_VERSION_MINOR ([0-9]+).*" "\\1"
+      MLPACK_VERSION_MINOR "${VERSION_HPP_CONTENTS}")
+  string(REGEX REPLACE ".*#define MLPACK_VERSION_PATCH [\"]?([0-9x]+)[\"]?.*"
+      "\\1" MLPACK_VERSION_PATCH "${VERSION_HPP_CONTENTS}")
+
+  set(PACKAGE_VERSION
+      "${MLPACK_VERSION_MAJOR}.${MLPACK_VERSION_MINOR}.${MLPACK_VERSION_PATCH}")
+
+  get_property(CYTHON_INCLUDE_DIRECTORIES DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+      PROPERTY INCLUDE_DIRECTORIES)
+  configure_file(${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/setup.py.in
+                 ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py)
+endif ()

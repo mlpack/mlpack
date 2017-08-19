@@ -19,3 +19,4 @@ endforeach()
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(local_coordinate_coding)
+add_python_binding(local_coordinate_coding)

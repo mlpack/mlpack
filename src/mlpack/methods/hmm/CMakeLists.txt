@@ -18,7 +18,10 @@ endforeach()
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(hmm_train)
+add_python_binding(hmm_train)
 add_cli_executable(hmm_loglik)
+add_python_binding(hmm_loglik)
 add_cli_executable(hmm_viterbi)
+add_python_binding(hmm_viterbi)
 add_cli_executable(hmm_generate)
-
+add_python_binding(hmm_generate)

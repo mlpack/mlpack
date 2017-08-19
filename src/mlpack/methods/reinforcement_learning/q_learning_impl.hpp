@@ -30,32 +30,23 @@ QLearning<
   UpdaterType,
   PolicyType,
   ReplayType
->::QLearning(NetworkType network,
-             const double stepSize,
-             const double discount,
+>::QLearning(TrainingConfig config,
+             NetworkType network,
              PolicyType policy,
              ReplayType replayMethod,
-             const size_t targetNetworkSyncInterval,
-             const size_t explorationsSteps,
-             const bool doubleQLearning,
-             const size_t stepLimit,
              UpdaterType updater,
              EnvironmentType environment):
+    config(std::move(config)),
     learningNetwork(std::move(network)),
-    stepSize(stepSize),
     updater(std::move(updater)),
-    discount(discount),
     policy(std::move(policy)),
     replayMethod(std::move(replayMethod)),
-    targetNetworkSyncInterval(targetNetworkSyncInterval),
-    explorationSteps(explorationsSteps),
-    doubleQLearning(doubleQLearning),
-    stepLimit(stepLimit),
     environment(std::move(environment)),
     totalSteps(0),
     deterministic(false)
 {
-  learningNetwork.ResetParameters();
+  if (learningNetwork.Parameters().is_empty())
+    learningNetwork.ResetParameters();
   this->updater.Initialize(learningNetwork.Parameters().n_rows,
       learningNetwork.Parameters().n_cols);
   targetNetwork = learningNetwork;
@@ -119,7 +110,7 @@ double QLearning<
   // Update current state.
   state = nextState;
 
-  if (deterministic || totalSteps < explorationSteps)
+  if (deterministic || totalSteps < config.ExplorationSteps())
     return reward;
 
   // Start experience replay.
@@ -138,7 +129,7 @@ double QLearning<
   targetNetwork.Predict(sampledNextStates, nextActionValues);
 
   arma::Col<size_t> bestActions;
-  if (doubleQLearning)
+  if (config.DoubleQLearning())
   {
     // If use double Q-Learning, use learning network to select the best action.
     arma::mat nextActionValues;
@@ -155,14 +146,14 @@ double QLearning<
   learningNetwork.Forward(sampledStates, target);
   for (size_t i = 0; i < sampledNextStates.n_cols; ++i)
   {
-    target(sampledActions[i], i) = sampledRewards[i] +
-        discount * (isTerminal[i] ? 0.0 : nextActionValues(bestActions[i], i));
+    target(sampledActions[i], i) = sampledRewards[i] + config.Discount() *
+        (isTerminal[i] ? 0.0 : nextActionValues(bestActions[i], i));
   }
 
   // Learn form experience.
   arma::mat gradients;
   learningNetwork.Backward(target, gradients);
-  updater.Update(learningNetwork.Parameters(), stepSize, gradients);
+  updater.Update(learningNetwork.Parameters(), config.StepSize(), gradients);
 
   return reward;
 }
@@ -194,7 +185,7 @@ double QLearning<
   // Running until get to the terminal state.
   while (!environment.IsTerminal(state))
   {
-    if (stepLimit && steps >= stepLimit)
+    if (config.StepLimit() && steps >= config.StepLimit())
       break;
 
     totalReturn += Step();
@@ -206,10 +197,10 @@ double QLearning<
     totalSteps++;
 
     // Update target network
-    if (totalSteps % targetNetworkSyncInterval == 0)
+    if (totalSteps % config.TargetNetworkSyncInterval() == 0)
       targetNetwork = learningNetwork;
 
-    if (totalSteps > explorationSteps)
+    if (totalSteps > config.ExplorationSteps())
       policy.Anneal();
   }
 

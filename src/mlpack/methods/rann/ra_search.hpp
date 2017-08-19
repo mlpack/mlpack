@@ -38,7 +38,7 @@ namespace neighbor {
 
 // Forward declaration.
 template<typename SortPolicy>
-class RAModel;
+class TrainVisitor;
 
 /**
  * The RASearch class: This class provides a generic manner to perform
@@ -297,6 +297,11 @@ class RASearch
   void Train(MatType&& referenceSet);
 
   /**
+   * Set the reference tree to a new reference tree.
+   */
+  void Train(Tree* referenceTree);
+
+  /**
    * Compute the rank approximate nearest neighbors of each query point in the
    * query set and store the output in the given matrices. The matrices will be
    * set to the size of n columns by k rows, where n is the number of points in
@@ -451,8 +456,9 @@ class RASearch
   //! Instantiation of kernel.
   MetricType metric;
 
-  //! RAModel can modify internal members as necessary.
-  friend class RAModel<SortPolicy>;
+  //! For access to mappings when building models.
+  template<typename SortPol>
+  friend class TrainVisitor;
 }; // class RASearch
 
 } // namespace neighbor

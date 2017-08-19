@@ -44,7 +44,8 @@ size_t mlpack::neighbor::RAUtil::MinimumSamplesReqd(const size_t n,
 
     if (prob > alpha)
     {
-      if (prob - alpha < 0.001 || ub < lb + 2) {
+      if (prob - alpha < 0.001 || ub < lb + 2)
+      {
         done = true;
         break;
       }
