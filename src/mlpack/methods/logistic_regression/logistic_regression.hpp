@@ -284,7 +284,7 @@ class LogisticRegression
 
  private:
   //! Vector of trained parameters (size: dimensionality plus one).
-  arma::vec parameters;
+  arma::rowvec parameters;
   //! L2-regularization penalty parameter.
   double lambda;
 };

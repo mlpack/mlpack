@@ -27,7 +27,7 @@ LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
     responses(responses),
     lambda(lambda)
 {
-  initialPoint = arma::zeros<arma::mat>(predictors.n_rows + 1, 1);
+  initialPoint = arma::rowvec(predictors.n_rows + 1, arma::fill::zeros);
 
   // Sanity check.
   if (responses.n_elem != predictors.n_cols)
@@ -77,9 +77,9 @@ double LogisticRegressionFunction<MatType>::Evaluate(
 
   // Calculate vectors of sigmoids.  The intercept term is parameters(0, 0) and
   // does not need to be multiplied by any of the predictors.
-  const arma::vec exponents = parameters(0, 0) + predictors.t() *
-      parameters.tail_cols(parameters.n_elem - 1);
-  const arma::vec sigmoid = 1.0 / (1.0 + arma::exp(-exponents));
+  const arma::rowvec exponents = parameters(0, 0) +
+    parameters.tail_cols(parameters.n_elem - 1) * predictors;
+  const arma::rowvec sigmoid = 1.0 / (1.0 + arma::exp(-exponents));
 
   // Assemble full objective function.  Often the objective function and the
   // regularization as given are divided by the number of features, but this
@@ -139,10 +139,10 @@ void LogisticRegressionFunction<MatType>::Gradient(
   const arma::rowvec sigmoids = (1 / (1 + arma::exp(-parameters(0, 0)
       - parameters.tail_cols(parameters.n_elem - 1) * predictors)));
 
-  gradient.set_size(parameters.n_elem);
+  gradient.set_size(arma::size(parameters));
   gradient[0] = -arma::accu(responses - sigmoids);
-  gradient.tail_cols(parameters.n_elem - 1) = -predictors * (responses -
-      sigmoids).t() + regularization;
+  gradient.tail_cols(parameters.n_elem - 1) = (sigmoids - responses) *
+    predictors.t() + regularization;
 }
 
 /**
@@ -165,9 +165,9 @@ void LogisticRegressionFunction<MatType>::Gradient(
   const double sigmoid = 1.0 / (1.0 + std::exp(-parameters(0, 0)
       - arma::dot(predictors.col(i), parameters.tail_cols(parameters.n_elem - 1))));
 
-  gradient.set_size(parameters.n_elem);
+  gradient.set_size(arma::size(parameters));
   gradient[0] = -(responses[i] - sigmoid);
-  gradient.tail_cols(parameters.n_elem - 1) = -predictors.col(i)
+  gradient.tail_cols(parameters.n_elem - 1) = -predictors.col(i).t()
       * (responses[i] - sigmoid) + regularization;
 }
 
@@ -186,7 +186,7 @@ void LogisticRegressionFunction<MatType>::FeatureGradient(
 
   arma::mat diffs = responses - sigmoids;
 
-  gradient.set_size(parameters.size());
+  gradient.set_size(arma::size(parameters));
 
   if (j == 0)
   {
@@ -195,7 +195,7 @@ void LogisticRegressionFunction<MatType>::FeatureGradient(
   else
   {
     gradient[j] = arma::dot(-predictors.row(j - 1), diffs) + lambda *
-      parameters(j, 0);
+      parameters(0, j);
   }
 }
 

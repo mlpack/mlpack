@@ -59,7 +59,7 @@ template<typename MatType>
 LogisticRegression<MatType>::LogisticRegression(
     const size_t dimensionality,
     const double lambda) :
-    parameters(arma::rowvec(predictors.n_rows + 1, arma::fill::zeros)),
+    parameters(arma::rowvec(dimensionality + 1, arma::fill::zeros)),
     lambda(lambda)
 {
   // No training to do here.
@@ -143,8 +143,8 @@ void LogisticRegression<MatType>::Classify(const MatType& dataset,
   // Calculate sigmoid function for each point.  The (1.0 - decisionBoundary)
   // term correctly sets an offset so that floor() returns 0 or 1 correctly.
   labels = arma::conv_to<arma::Row<size_t>>::from((1.0 /
-      (1.0 + arma::exp(-parameters(0) - dataset.t() *
-      parameters.subvec(1, parameters.n_elem - 1)))) +
+      (1.0 + arma::exp(-parameters(0) -
+      parameters.tail_cols(parameters.n_elem - 1) * dataset))) +
       (1.0 - decisionBoundary));
 }
 

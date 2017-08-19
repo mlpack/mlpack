@@ -104,7 +104,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionFeatureGradientTest)
 
   LogisticRegressionFunction<arma::mat> f(predictors, responses, 0.0001);
 
-  arma::mat testPoint(f.NumFeatures(), 1, arma::fill::randu);
+  arma::mat testPoint(1, f.NumFeatures(), arma::fill::randu);
 
   arma::mat testGradient;
 
@@ -115,7 +115,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionFeatureGradientTest)
     arma::sp_mat fGrad;
     f.FeatureGradient(testPoint, i, fGrad);
 
-    CheckMatrices(testGradient.row(i), arma::mat(fGrad.row(i)));
+    CheckMatrices(testGradient.col(i), arma::mat(fGrad.col(i)));
   }
 }
 
