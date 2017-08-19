@@ -130,6 +130,7 @@ double SoftmaxErrorFunction<MetricType>::Evaluate(const arma::mat& coordinates,
     }
     return result;
 }
+
 //! The non-separable implementation, where Precalculate() is used.
 template<typename MetricType>
 void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
@@ -251,11 +252,19 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
 
 //! The separable implementation for a given batch size and an initial index.
 template <typename MetricType>
+template <typename GradType>
 void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
                                                 const size_t begin,
                                                 const size_t batchSize,
-                                                arma::mat& gradient)
+                                                GradType& gradient)
 {
+  // The gradient involves two matrix terms which are eventually combined into
+  // one.
+  GradType firstTerm, secondTerm;
+  // We will need to calculate p_i before this evaluation is done, so
+  // these two variables will hold the information necessary for that.
+  double numerator, denominator;
+
   firstTerm.zeros(coordinates.n_rows, coordinates.n_cols);
   secondTerm.zeros(coordinates.n_rows, coordinates.n_cols);
 
@@ -263,14 +272,10 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
   stretchedDataset = coordinates * dataset;
   for (size_t i = begin; i < begin + batchSize; i++)
   {
-    // We will need to calculate p_i before this evaluation is done, so
-    // these two variables will hold the information necessary for that.
-    double numerator = 0;
-    double denominator = 0;
-    // The gradient involves two matrix terms which are eventually combined into
-    // one.
-    GradType firstTerm;
-    GradType secondTerm;
+    numerator = 0;
+    denominator = 0;
+    firstTerm = 0;
+    secondTerm = 0;
     for (size_t k = 0; k < dataset.n_cols; ++k)
     {
       // Don't consider the case where the points are the same.

@@ -92,7 +92,8 @@ class SoftmaxErrorFunction
    */
   double Evaluate(const arma::mat& covariance,
                   const size_t begin,
-                  const size_t batchSize) const;
+                  const size_t batchSize);
+
 
   /**
    * Evaluate the gradient of the softmax function for the given covariance
@@ -137,10 +138,11 @@ class SoftmaxErrorFunction
    * @param batchSize Number of points to use for objective function.
    * @param gradient Matrix to store the calculated gradient in.
    */
-  void Gradient(const arma::mat& parameters,
+  template <typename GradType>
+  void Gradient(const arma::mat& covariance,
                 const size_t begin,
                 const size_t batchSize,
-                arma::mat& gradient) const;
+                GradType& gradient);
 
   /**
    * Get the initial point.
