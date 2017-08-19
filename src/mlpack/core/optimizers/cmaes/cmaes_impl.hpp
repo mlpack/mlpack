@@ -249,7 +249,7 @@ CMAES::CMAES(const int objectDim,
     double trace = arma::accu(arma::pow(rgInitialStds, 2));
     sigma = std::sqrt(trace/N);
 
-    chiN = std::sqrt((double) N) * (1 - 1/(4*N) + 1/(21*N*N));
+    chiN = std::sqrt((double) N) * (1 - (double)1/(4*N) + (double)1/(21*N*N));
     eigensysIsUptodate = true;
     genOfEigensysUpdate = 0;
 
@@ -565,7 +565,6 @@ bool CMAES::TestForTermination()
             << "deviation recommended."
             << std::endl;
             return true;
-        break;
       }
     }
 
