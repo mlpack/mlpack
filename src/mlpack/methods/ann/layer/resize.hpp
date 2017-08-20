@@ -103,7 +103,6 @@ class Resize
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-
 }; // class Resize
 
 } // namespace ann

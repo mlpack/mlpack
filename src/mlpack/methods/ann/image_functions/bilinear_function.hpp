@@ -51,7 +51,7 @@ class BiLinearFunction
 
     scaleRow = (double)(input.n_rows - 1) / output.n_rows;
     scaleCol = (double)(input.n_cols - 1) / output.n_cols;
-    
+
     for (size_t i = 0; i < output.n_rows; i++)
       for (size_t j = 0; j < output.n_cols; j++)
       {
@@ -66,9 +66,9 @@ class BiLinearFunction
         double deltaR = i * scaleRow - r_origin;
         double deltaC = j * scaleCol - c_origin;
         coff1 = (1 - deltaC) * (1 - deltaC);
-        coff2 =  deltaR * ( 1 - deltaC);
+        coff2 = deltaR * (1 - deltaC);
         coff3 = (1 - deltaR) * deltaC;
-        coff4 =  deltaR * deltaC;
+        coff4 = deltaR * deltaC;
         output(i, j) = tempInput(r_origin, c_origin) * coff1 +
                  tempInput(r_origin + 1, c_origin) * coff2 +
                  tempInput(r_origin, c_origin + 1) * coff3+
@@ -84,7 +84,7 @@ class BiLinearFunction
     // Get dimensions.
     if (input.n_rows != outRowSize || input.n_cols != outColSize)
       tempInput.reshape(outRowSize, outColSize);
-    
+
     scaleRow = (double)(input.n_rows - 1) / output.n_rows;
     scaleCol = (double)(input.n_cols - 1) / output.n_cols;
 
@@ -102,9 +102,9 @@ class BiLinearFunction
         double deltaR = i * scaleRow - r_origin;
         double deltaC = j * scaleCol - c_origin;
         coff1 = (1 - deltaC) * (1 - deltaC);
-        coff2 =  deltaR * ( 1 - deltaC);
+        coff2 = deltaR * (1 - deltaC);
         coff3 = (1 - deltaR) * deltaC;
-        coff4 =  deltaR * deltaC;
+        coff4 = deltaR * deltaC;
         output(i, j) = tempInput(r_origin, c_origin) * coff1 +
                  tempInput(r_origin + 1, c_origin) * coff2 +
                  tempInput(r_origin, c_origin + 1) * coff3+
@@ -112,7 +112,7 @@ class BiLinearFunction
       }
   }
 
-private:
+ private:
   const size_t inRowSize;
   const size_t inColSize;
   const size_t outRowSize;
