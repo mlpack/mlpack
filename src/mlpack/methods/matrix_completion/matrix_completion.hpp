@@ -1,8 +1,9 @@
 /**
  * @file matrix_completion.hpp
  * @author Stephen Tu
+ * @author Chenzhe Diao
  *
- * A thin wrapper around nuclear norm minimization to solve
+ * A thin wrapper around different types of solvers for
  * low rank matrix completion problems.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -13,8 +14,8 @@
 #ifndef MLPACK_METHODS_MATRIX_COMPLETION_MATRIX_COMPLETION_HPP
 #define MLPACK_METHODS_MATRIX_COMPLETION_MATRIX_COMPLETION_HPP
 
-#include <mlpack/core/optimizers/sdp/sdp.hpp>
-#include <mlpack/core/optimizers/sdp/lrsdp.hpp>
+#include "mc_sdp_solver.hpp"
+//#include "mc_fw_solver.hpp"
 
 namespace mlpack {
 namespace matrix_completion {
@@ -50,6 +51,7 @@ namespace matrix_completion {
  *
  * @see LRSDP
  */
+template<typename MCSolverType>
 class MatrixCompletion
 {
  public:
@@ -112,12 +114,9 @@ class MatrixCompletion
   void Recover(arma::mat& recovered);
 
   //! Return the underlying SDP.
-  const optimization::LRSDP<optimization::SDP<arma::sp_mat>>& Sdp() const
-  {
-    return sdp;
-  }
+  const MCSolverType& MCSolver() const { return mcSolver; }
   //! Modify the underlying SDP.
-  optimization::LRSDP<optimization::SDP<arma::sp_mat>>& Sdp() { return sdp; }
+  MCSolverType& MCSolver() { return mcSolver; }
 
  private:
   //! Number of rows in original matrix.
@@ -129,18 +128,16 @@ class MatrixCompletion
   //! Vector containing the values of the known entries.
   arma::mat values;
 
-  //! The underlying SDP to be solved.
-  optimization::LRSDP<optimization::SDP<arma::sp_mat>> sdp;
+  //! The underlying matrix completion optimization solver.
+  MCSolverType mcSolver;
 
   //! Validate the input matrices.
   void CheckValues();
-  //! Initialize the SDP.
-  void InitSDP();
 
-  //! Select a rank of the matrix given that is of size m x n and has p known
-  //! elements.
-  static size_t DefaultRank(const size_t m, const size_t n, const size_t p);
 };
+
+using MatrixCompletionSDP = MatrixCompletion<MCSDPSolver>;
+//using MatrixCompletionFW = MatrixCompletion<MCFWSolver>;
 
 } // namespace matrix_completion
 } // namespace mlpack

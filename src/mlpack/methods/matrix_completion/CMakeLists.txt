@@ -3,6 +3,11 @@
 set(SOURCES
   matrix_completion.hpp
   matrix_completion.cpp
+  mc_sdp_solver.hpp
+#  mc_sgd_solver.hpp
+#  mc_sgd_function.hpp
+#  mc_fw_solver.hpp
+#  mc_fw_function.hpp
 )
 
 # Add directory name to sources.
