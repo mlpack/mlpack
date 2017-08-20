@@ -61,14 +61,14 @@ class HAMUnit
   arma::mat& Parameters() { return parameters; }
 
   void ResetParameters();
+
+  void OutputParameters();
  private:
   void Attention(arma::vec& attention);
 
   void Gradient(arma::mat&& input,
                 arma::mat&& error,
                 arma::mat&& gradient);
-
-  void RebuildParameters();
 
   arma::mat parameters;
 

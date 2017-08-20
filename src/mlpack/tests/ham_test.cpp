@@ -311,6 +311,7 @@ BOOST_AUTO_TEST_CASE(BlindHAMUnitTest) {
   HAMUnit<> hamUnit(seqLen, nDim, embedModel, joinModel, searchModel, writeModel, controller);
   hamUnit.ResetParameters();
   hamUnit.Parameters() = allParams;
+  hamUnit.OutputParameters();
 
   arma::mat input("1 0 0 0; 0 1 0 0; 0 0 1 0; 0 0 0 1;");
   input = input.t();
