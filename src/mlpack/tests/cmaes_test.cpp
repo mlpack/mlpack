@@ -113,7 +113,7 @@ BOOST_AUTO_TEST_CASE(rosenbrockFunctionCMAES)
   mlpack::math::RandomSeed(std::time(NULL));
 
   // Loop over several variants.
-  for (size_t i = 10; i < 50; i += 5)
+  for (size_t i = 5; i < 30; i += 5)
   {
     // Create the generalized Rosenbrock function.
     GeneralizedRosenbrockFunction f(i);
