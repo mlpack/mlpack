@@ -53,8 +53,6 @@ set(SOURCES
   mean_squared_error_impl.hpp
   memory_head.hpp
   memory_head_impl.hpp
-  memory_test.hpp
-  memory_test_impl.hpp
   multiply_constant.hpp
   multiply_constant_impl.hpp
   negative_log_likelihood.hpp
@@ -63,8 +61,6 @@ set(SOURCES
   neural_turing_machine_impl.hpp
   parametric_relu.hpp
   parametric_relu_impl.hpp
-  read_memory.hpp
-  read_memory_impl.hpp
   recurrent.hpp
   recurrent_impl.hpp
   recurrent_attention.hpp

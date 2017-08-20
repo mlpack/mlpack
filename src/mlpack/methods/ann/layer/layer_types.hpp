@@ -58,9 +58,7 @@ template<typename InputDataType, typename OutputDataType> class Recurrent;
 template<typename InputDataType, typename OutputDataType> class Sequential;
 template<typename InputDataType, typename OutputDataType> class VRClassReward;
 template<typename InputDataType, typename OutputDataType> class MemoryHead;
-template<typename InputDataType, typename OutputDataType> class MemoryTest;
 template<typename InputDataType, typename OutputDataType> class WriteMemory;
-template<typename InputDataType, typename OutputDataType> class ReadMemory;
 template<typename InputDataType, typename OutputDataType>
 class NeuralTuringMachine;
 
@@ -123,7 +121,6 @@ using LayerTypes = boost::variant<
     LSTM<arma::mat, arma::mat>*,
     GRU<arma::mat, arma::mat>*,
     MemoryHead<arma::mat, arma::mat>*,
-    MemoryTest<arma::mat, arma::mat>*,
     MaxPooling<arma::mat, arma::mat>*,
     MeanPooling<arma::mat, arma::mat>*,
     MeanSquaredError<arma::mat, arma::mat>*,
@@ -131,7 +128,6 @@ using LayerTypes = boost::variant<
     NegativeLogLikelihood<arma::mat, arma::mat>*,
     NeuralTuringMachine<arma::mat, arma::mat>*,
     PReLU<arma::mat, arma::mat>*,
-    ReadMemory<arma::mat, arma::mat>*,
     Recurrent<arma::mat, arma::mat>*,
     RecurrentAttention<arma::mat, arma::mat>*,
     ReinforceNormal<arma::mat, arma::mat>*,

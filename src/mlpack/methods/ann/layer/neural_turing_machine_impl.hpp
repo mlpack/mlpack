@@ -42,10 +42,10 @@ NeuralTuringMachine<InputDataType, OutputDataType>::NeuralTuringMachine(
 {
   network.push_back(controller);
 
-  readMem = new ReadMemory<>(outSize, numMem, memSize, shiftSize);
+  readHead = new MemoryHead<>(outSize, numMem, memSize, shiftSize);
   writeMem = new WriteMemory<>(outSize, numMem, memSize, shiftSize);
 
-  network.push_back(readMem);
+  network.push_back(readHead);
   network.push_back(writeMem);
 
   allZeros = arma::zeros<arma::mat>(memSize, 1);
@@ -87,12 +87,16 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Forward(
   // Acess to current memory.
   arma::mat& cMemory = memoryHistory.back();
 
-  // Pass the controller output through read memory layer.
+  // Pass the controller output through read head.
   boost::apply_visitor(ForwardWithMemoryVisitor(std::move(controllerOutput),
       std::move(cMemory),
-      std::move(boost::apply_visitor(outputParameterVisitor, readMem))),
-      readMem);
-  lReads.push_back(boost::apply_visitor(outputParameterVisitor, readMem));
+      std::move(boost::apply_visitor(outputParameterVisitor, readHead))),
+      readHead);
+  const arma::mat& readWeights = boost::apply_visitor(outputParameterVisitor,
+      readHead);
+
+  //! Read memory.
+  lReads.push_back(arma::trans(cMemory) * readWeights);
 
   // Pass the controller output through write memory.
   boost::apply_visitor(ForwardWithMemoryVisitor(std::move(controllerOutput),
@@ -121,20 +125,25 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Backward(
   }
   else
   {
-    // Set the error for last read.
-    dRead = boost::apply_visitor(deltaVisitor, controller)
-        .submat(inSize, 0, inSize + memSize - 1, 0);
-
     if (backwardStep > 1)
     {
       dMemPrev = std::move(dMem);
 
-      // Backward pass through read operation.
+      // Delta of the read weights.
+      dReadHead = (*bMemoryHistory) * boost::apply_visitor(deltaVisitor,
+          controller).submat(inSize, 0, inSize + memSize - 1, 0);
+
+      // Backward pass through read head.
       boost::apply_visitor(BackwardWithMemoryVisitor(std::move(
-          boost::apply_visitor(outputParameterVisitor, readMem)),
-          std::move(*bMemoryHistory), std::move(dRead),
-          std::move(boost::apply_visitor(deltaVisitor, readMem)),
-          std::move(dMem)), readMem);
+          boost::apply_visitor(outputParameterVisitor, readHead)),
+          std::move(*bMemoryHistory), std::move(dReadHead),
+          std::move(boost::apply_visitor(deltaVisitor, readHead)),
+          std::move(dMem)), readHead);
+
+      // Delta of memory from read operation.
+      dMem += boost::apply_visitor(outputParameterVisitor,
+          readHead) * arma::trans(boost::apply_visitor(deltaVisitor,
+          controller).submat(inSize, 0, inSize + memSize - 1, 0));
 
       // Backward pass through write operation.
       arma::mat dMemTemp;
@@ -146,19 +155,28 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Backward(
 
       dMem += dMemTemp;
 
-      prevError = gy + boost::apply_visitor(deltaVisitor, readMem) +
+      prevError = gy + boost::apply_visitor(deltaVisitor, readHead) +
           boost::apply_visitor(deltaVisitor, writeMem);
     }
     else
     {
-      // Backward pass through read operation.
-      boost::apply_visitor(BackwardWithMemoryVisitor(std::move(
-          boost::apply_visitor(outputParameterVisitor, readMem)),
-          std::move(*bMemoryHistory), std::move(dRead),
-          std::move(boost::apply_visitor(deltaVisitor, readMem)),
-          std::move(dMem)), readMem);
+      // Delta of the read weights.
+      dReadHead = (*bMemoryHistory) * boost::apply_visitor(deltaVisitor,
+          controller).submat(inSize, 0, inSize + memSize - 1, 0);
 
-      prevError = gy + boost::apply_visitor(deltaVisitor, readMem);
+      // Backward pass through read head.
+      boost::apply_visitor(BackwardWithMemoryVisitor(std::move(
+          boost::apply_visitor(outputParameterVisitor, readHead)),
+          std::move(*bMemoryHistory), std::move(dReadHead),
+          std::move(boost::apply_visitor(deltaVisitor, readHead)),
+          std::move(dMem)), readHead);
+
+      // Delta of memory from read operation.
+      dMem += boost::apply_visitor(outputParameterVisitor,
+          readHead) * arma::trans(boost::apply_visitor(deltaVisitor,
+          controller).submat(inSize, 0, inSize + memSize - 1, 0));
+
+      prevError = gy + boost::apply_visitor(deltaVisitor, readHead);
     }
   }
 
@@ -193,8 +211,8 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Gradient(
   {
     boost::apply_visitor(GradientVisitor(std::move(boost::apply_visitor(
         outputParameterVisitor, controller)),
-        std::move(dRead)),
-        readMem);
+        std::move(dReadHead)),
+        readHead);
 
     if (gradientStep > 1)
     {

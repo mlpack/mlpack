@@ -28,7 +28,6 @@
 #include "sequential.hpp"
 
 #include "memory_head.hpp"
-#include "read_memory.hpp"
 #include "write_memory.hpp"
 
 namespace mlpack {
@@ -168,11 +167,17 @@ class NeuralTuringMachine
   //! Circular shift rotation size.
   size_t shiftSize;
 
-  //! Memory read layer.
-  LayerTypes readMem;
+  //! Memory read head.
+  LayerTypes readHead;
+
+  //! Locally stored read head error.
+  arma::mat dReadHead;
 
   //! Memory write layer.
   LayerTypes writeMem;
+
+  //! Locally stored memory write error.
+  arma::mat dWriteHead;
 
   //! Controller.
   LayerTypes controller;
@@ -200,12 +205,6 @@ class NeuralTuringMachine
 
   //! Backward pass iterator to stored memory reads.
   std::list<arma::mat>::iterator gReads;
-
-  //! Locally stored memory read error.
-  arma::mat dRead;
-
-  //! Locally stored memory write error.
-  arma::mat dWriteHead;
 
   //! Locally-stored weight object.
   OutputDataType weights;
@@ -245,7 +244,7 @@ class NeuralTuringMachine
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-}; // class LSTM
+}; // class NeuralTuringMachine
 
 } // namespace ann
 } // namespace mlpack
