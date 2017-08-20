@@ -54,37 +54,19 @@ class MemoryHead
              const size_t outSize,
              const size_t memSize,
              const size_t shiftSize,
+             const std::list<arma::mat>& memoryHistory,
              arma::mat& dMem);
 
   /**
    * Feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward given the current memory content.
+   * Current memory content is taken from memoryHistory.
    *
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
-   * @param memory Current memory content.
    */
   template<typename eT>
-  void ForwardWithMemory(arma::Mat<eT>&& input,
-                         const arma::Mat<eT>&& memory,
-                         arma::Mat<eT>&& output);
-
-  /**
-   * Feed forward pass of a neural network, evaluating the function
-   * f(x) by propagating the activity forward.
-   *
-   * Function used for testing the class without MemoryTest layer.
-   *
-   * @param input Input data used for evaluating the specified function.
-   * @param output Resulting output activation.
-   * @param memory Current memory content.
-   */
-  template<typename eT>
-  void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output)
-  {
-    arma::mat memory = arma::ones<arma::mat>(outSize, memSize);
-    ForwardWithMemory(std::move(input), std::move(memory), std::move(output));
-  }
+  void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -279,6 +261,9 @@ class MemoryHead
 
   //! Store the delta received with BPTT.
   arma::vec prevDW;
+
+  //! Access to the memory history.
+  const std::list<arma::mat>& memoryHistory;
 
   //! Reference to memory gradient.
   arma::mat& dMem;

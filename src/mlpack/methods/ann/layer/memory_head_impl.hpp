@@ -30,11 +30,13 @@ MemoryHead<InputDataType, OutputDataType>::MemoryHead(
     const size_t outSize,
     const size_t memSize,
     const size_t shiftRange,
+    const std::list<arma::mat>& memoryHistory,
     arma::mat& dMem) :
     inSize(inSize),
     outSize(outSize),
     memSize(memSize),
     shiftSize(shiftRange),
+    memoryHistory(memoryHistory),
     dMem(dMem),
     deterministic(false)
 {
@@ -73,9 +75,11 @@ MemoryHead<InputDataType, OutputDataType>::MemoryHead(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-void MemoryHead<InputDataType, OutputDataType>::ForwardWithMemory(
-    arma::Mat<eT>&& input, const arma::Mat<eT>&& memory, arma::Mat<eT>&& output)
+void MemoryHead<InputDataType, OutputDataType>::Forward(arma::Mat<eT>&& input,
+                                                        arma::Mat<eT>&& output)
 {
+  const arma::mat& memory = memoryHistory.back();
+
   // Pass the input through linear layer.
   boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
       boost::apply_visitor(outputParameterVisitor, inputLinear))),

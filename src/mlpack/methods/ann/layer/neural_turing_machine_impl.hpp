@@ -16,7 +16,6 @@
 #include "neural_turing_machine_impl.hpp"
 
 #include "../visitor/forward_visitor.hpp"
-#include "../visitor/forward_with_memory_visitor.hpp"
 #include "../visitor/backward_with_memory_visitor.hpp"
 #include "../visitor/backward_visitor.hpp"
 #include "../visitor/gradient_visitor.hpp"
@@ -42,8 +41,10 @@ NeuralTuringMachine<InputDataType, OutputDataType>::NeuralTuringMachine(
 {
   network.push_back(controller);
 
-  readHead = new MemoryHead<>(outSize, numMem, memSize, shiftSize, dMem);
-  writeHead = new MemoryHead<>(outSize, numMem, memSize, shiftSize, dMem);
+  readHead = new MemoryHead<>(outSize, numMem, memSize, shiftSize,
+      memoryHistory, dMem);
+  writeHead = new MemoryHead<>(outSize, numMem, memSize, shiftSize,
+      memoryHistory, dMem);
 
   network.push_back(readHead);
   network.push_back(writeHead);
@@ -97,12 +98,10 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Forward(
   arma::mat& controllerOutput = boost::apply_visitor(outputParameterVisitor,
       controller);
 
-  // Acess to current memory.
-  arma::mat& cMemory = memoryHistory.back();
+  const arma::mat& cMemory = memoryHistory.back();
 
   // Pass the controller output through read head.
-  boost::apply_visitor(ForwardWithMemoryVisitor(std::move(controllerOutput),
-      std::move(cMemory),
+  boost::apply_visitor(ForwardVisitor(std::move(controllerOutput),
       std::move(boost::apply_visitor(outputParameterVisitor, readHead))),
       readHead);
   const arma::mat& readWeights = boost::apply_visitor(outputParameterVisitor,
@@ -134,8 +133,7 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Forward(
       eraseGate);
 
   // Generate write weights
-  boost::apply_visitor(ForwardWithMemoryVisitor(std::move(controllerOutput),
-      std::move(cMemory),
+  boost::apply_visitor(ForwardVisitor(std::move(controllerOutput),
       std::move(boost::apply_visitor(outputParameterVisitor, writeHead))),
       writeHead);
   const arma::mat& writeWeights = boost::apply_visitor(outputParameterVisitor,

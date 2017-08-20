@@ -20,7 +20,6 @@
 
 #include "../visitor/delta_visitor.hpp"
 #include "../visitor/output_parameter_visitor.hpp"
-#include "../visitor/forward_with_memory_visitor.hpp"
 #include "../activation_functions/softplus_function.hpp"
 
 #include "layer_types.hpp"
