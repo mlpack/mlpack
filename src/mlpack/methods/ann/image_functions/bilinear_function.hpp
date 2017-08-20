@@ -57,6 +57,11 @@ class BiLinearFunction
         r_origin = std::floor(i * scaleRow);
         c_origin = std::floor(j * scaleCol);
 
+        if (r_origin < 0)
+          r_origin = 0;
+        if (c_origin < 0)
+          c_origin = 0;
+
         if (r_origin > input.n_rows - 2)
           r_origin = input.n_rows - 2;
         if (c_origin > input.n_cols - 2)
@@ -64,10 +69,11 @@ class BiLinearFunction
 
         double deltaR = i * scaleRow - r_origin;
         double deltaC = j * scaleCol - c_origin;
-        coff1 = (1 - deltaC) * (1 - deltaC);
+        coff1 = (1 - deltaR) * (1 - deltaC);
         coff2 = deltaR * (1 - deltaC);
         coff3 = (1 - deltaR) * deltaC;
         coff4 = deltaR * deltaC;
+
 
         output(i, j) =  input(c_origin * input.n_rows + r_origin) * coff1 +
                         input(c_origin * input.n_rows + r_origin + 1) * coff2 +
@@ -100,7 +106,7 @@ class BiLinearFunction
 
         double deltaR = i * scaleRow - r_origin;
         double deltaC = j * scaleCol - c_origin;
-        coff1 = (1 - deltaC) * (1 - deltaC);
+        coff1 = (1 - deltaR) * (1 - deltaC);
         coff2 = deltaR * (1 - deltaC);
         coff3 = (1 - deltaR) * deltaC;
         coff4 = deltaR * deltaC;
@@ -120,8 +126,8 @@ class BiLinearFunction
 
   double scaleRow;
   double scaleCol;
-  size_t r_origin;
-  size_t c_origin;
+  double r_origin;
+  double c_origin;
 
   double coff1;
   double coff2;
