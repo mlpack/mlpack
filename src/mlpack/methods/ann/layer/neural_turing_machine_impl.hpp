@@ -16,7 +16,6 @@
 #include "neural_turing_machine_impl.hpp"
 
 #include "../visitor/forward_visitor.hpp"
-#include "../visitor/backward_with_memory_visitor.hpp"
 #include "../visitor/backward_visitor.hpp"
 #include "../visitor/gradient_visitor.hpp"
 
@@ -188,14 +187,13 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Backward(
           controller).submat(inSize, 0, inSize + memSize - 1, 0));
 
       // Backward pass through read head.
-      boost::apply_visitor(BackwardWithMemoryVisitor(std::move(
+      boost::apply_visitor(BackwardVisitor(std::move(
           boost::apply_visitor(outputParameterVisitor, readHead)),
-          std::move(*bMemoryHistory), std::move(dReadHead),
-          std::move(boost::apply_visitor(deltaVisitor, readHead)),
-          std::move(dMem)), readHead);
+          std::move(dReadHead), std::move(boost::apply_visitor(deltaVisitor,
+          readHead))), readHead);
 
-      const arma::mat& writeWeights = boost::apply_visitor(outputParameterVisitor,
-      writeHead);
+      const arma::mat& writeWeights = boost::apply_visitor(
+          outputParameterVisitor, writeHead);
 
       // Backward through AddGate
       arma::mat dGate = arma::trans(dMemPrev) * writeWeights;
@@ -205,8 +203,8 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Backward(
           std::move(boost::apply_visitor(deltaVisitor, addGate))),
           addGate);
 
-      linearError.submat(0, 0, memSize - 1, 0) = boost::apply_visitor(deltaVisitor,
-          addGate);
+      linearError.submat(0, 0, memSize - 1, 0) = boost::apply_visitor
+          (deltaVisitor, addGate);
 
       // Backward through EraseGate
       dGate = -(arma::trans(dMemPrev % *bMemoryHistory) * writeWeights);
@@ -244,10 +242,10 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Backward(
       dMem += dMemPrev;
 
       // Backward through writeHead
-      boost::apply_visitor(BackwardWithMemoryVisitor(std::move(boost::apply_visitor(
-            outputParameterVisitor, writeHead)), std::move(*bMemoryHistory),
-            std::move(dWriteHead), std::move(boost::apply_visitor(deltaVisitor,
-            writeHead)), std::move(dMem)), writeHead);
+      boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
+            outputParameterVisitor, writeHead)), std::move(dWriteHead),
+            std::move(boost::apply_visitor(deltaVisitor, writeHead))),
+            writeHead);
 
       prevError = gy + boost::apply_visitor(deltaVisitor, readHead) +
           boost::apply_visitor(deltaVisitor, writeHead) +
@@ -265,11 +263,10 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Backward(
           controller).submat(inSize, 0, inSize + memSize - 1, 0));
 
       // Backward pass through read head.
-      boost::apply_visitor(BackwardWithMemoryVisitor(std::move(
+      boost::apply_visitor(BackwardVisitor(std::move(
           boost::apply_visitor(outputParameterVisitor, readHead)),
-          std::move(*bMemoryHistory), std::move(dReadHead),
-          std::move(boost::apply_visitor(deltaVisitor, readHead)),
-          std::move(dMem)), readHead);
+          std::move(dReadHead), std::move(boost::apply_visitor(deltaVisitor,
+          readHead))), readHead);
 
       prevError = gy + boost::apply_visitor(deltaVisitor, readHead);
     }
@@ -304,6 +301,7 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Gradient(
   }
   else
   {
+    // Gradient of read head.
     boost::apply_visitor(GradientVisitor(std::move(boost::apply_visitor(
         outputParameterVisitor, controller)),
         std::move(dReadHead)),
@@ -311,11 +309,13 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Gradient(
 
     if (gradientStep > 1)
     {
+      // Gradient of linear layer.
       boost::apply_visitor(GradientVisitor(std::move(boost::apply_visitor(
           outputParameterVisitor, controller)),
           std::move(linearError)),
           inputToLinear);
 
+      // Gradient of write head.
       boost::apply_visitor(GradientVisitor(std::move(boost::apply_visitor(
           outputParameterVisitor, controller)),
           std::move(dWriteHead)),

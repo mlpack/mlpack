@@ -71,6 +71,7 @@ MemoryHead<InputDataType, OutputDataType>::MemoryHead(
   bWc = lWc.end();
   bBt = lBt.end();
   bCosineT = lConsineT.end();
+  bMemoryHistory = memoryHistory.end();
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -183,7 +184,7 @@ template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void MemoryHead<InputDataType, OutputDataType>::BackwardWithMemory(
   const arma::Mat<eT>&& /* output */,
-  const arma::Mat<eT>&& memory,
+  const arma::Mat<eT>&& m,
   arma::Mat<eT>&& gy,
   arma::Mat<eT>&& g,
   arma::Mat<eT>&& /* gM */)
@@ -201,6 +202,8 @@ void MemoryHead<InputDataType, OutputDataType>::BackwardWithMemory(
     bSt = (--lSt.end());
     bWdash = (--lWDash.end());
     bGammaT = (--lGammaT.end());
+
+    bMemoryHistory = --(--(memoryHistory.end()));
 
     weightsBackwardIterator = --(--prevWeights.end());
   }
@@ -221,6 +224,7 @@ void MemoryHead<InputDataType, OutputDataType>::BackwardWithMemory(
   const arma::vec& sT = *bSt;
   const double& gammaT = *bGammaT;
   const arma::mat& wDash = *bWdash;
+  const arma::mat& memory = *bMemoryHistory;
 
   // Error of output
   arma::mat& dW = gy;
@@ -387,6 +391,8 @@ void MemoryHead<InputDataType, OutputDataType>::BackwardWithMemory(
   bGammaT--;
   bWdash--;
 
+  bMemoryHistory--;
+
   weightsBackwardIterator--;
 }
 
@@ -437,6 +443,7 @@ void MemoryHead<InputDataType, OutputDataType>::ResetCell()
   bWc = lWc.end();
   bBt = lBt.end();
   bCosineT = lConsineT.end();
+  bMemoryHistory = memoryHistory.end();
 
   forwardStep = 0;
 }

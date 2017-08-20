@@ -265,6 +265,9 @@ class MemoryHead
   //! Access to the memory history.
   const std::list<arma::mat>& memoryHistory;
 
+  //! Backward memory history iterator.
+  std::list<arma::mat>::const_iterator bMemoryHistory;
+
   //! Reference to memory gradient.
   arma::mat& dMem;
 

@@ -4,7 +4,15 @@
  *
  * Definition of the Neural Turing Machine class.
  *
- * //TODO add reference
+ * For more information, read the following paper:
+ *
+ * @code
+ * @article{graves2014neural,
+ *    title   = {Neural turing machines},
+ *    author  = {Graves, Alex and Wayne, Greg and Danihelka, Ivo},
+ *    journal = {arXiv preprint arXiv:1410.5401},
+ *    year    = {2014}
+ * }
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
