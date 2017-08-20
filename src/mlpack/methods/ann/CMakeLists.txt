@@ -13,6 +13,7 @@ add_subdirectory(init_rules)
 add_subdirectory(layer)
 add_subdirectory(convolution_rules)
 add_subdirectory(augmented)
+add_subdirectory(image_functions)
 
 # Add directory name to sources.
 set(DIR_SRCS)

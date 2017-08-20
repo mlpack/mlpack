@@ -29,6 +29,10 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
+ *
+ * @tparam InterpolationType Type of the inpterpolation applied to the input
+ *          (BilinearFunction)
+ *
  */
 template <
     typename InputDataType = arma::mat,
