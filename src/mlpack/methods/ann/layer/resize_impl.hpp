@@ -46,7 +46,6 @@ template<typename eT>
 void Resize<InputDataType, OutputDataType, InterpolationType>::Backward(
     const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
-
   policy.DownSample(gy, g);
   // g.resize(g.n_rows * g.n_cols , 1);
 }
