@@ -28,7 +28,6 @@
 #include "sequential.hpp"
 
 #include "memory_head.hpp"
-#include "write_memory.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -173,20 +172,32 @@ class NeuralTuringMachine
   //! Locally stored read head error.
   arma::mat dReadHead;
 
-  //! Memory write layer.
+  //! Memory write head.
   LayerTypes writeMem;
 
   //! Locally stored memory write error.
   arma::mat dWriteHead;
+
+  //! Linear layer to generate erase and add vectors.
+  LayerTypes inputToLinear;
+
+  //! Non linearity for Add operation.
+  LayerTypes addGate;
+
+  //! Non linearity for Erase operation.
+  LayerTypes eraseGate;
+
+  //! Memory head to generate write weights.
+  LayerTypes writeHead;
+
+  //! Locally stored error for linear layer.
+  arma::mat linearError;
 
   //! Controller.
   LayerTypes controller;
 
   //! Locally stored memory content error.
   arma::mat dMem;
-
-  //! Locally stored previous memory content error.
-  arma::mat dMemPrev;
 
   //! All zeros vector for initializing read.
   arma::mat allZeros;
