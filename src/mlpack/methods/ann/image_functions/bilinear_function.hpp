@@ -99,6 +99,11 @@ class BiLinearFunction
         r_origin = std::floor(i * scaleRow);
         c_origin = std::floor(j * scaleCol);
 
+        if (r_origin < 0)
+          r_origin = 0;
+        if (c_origin < 0)
+          c_origin = 0;
+
         if (r_origin > input.n_rows - 2)
           r_origin = input.n_rows - 2;
         if (c_origin > input.n_cols - 2)
