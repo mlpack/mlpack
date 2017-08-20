@@ -96,8 +96,6 @@ class UpdateLineSearch
 
   //! Max number of iterations.
   size_t maxIterations;
-
-
 };  // class UpdateLineSearch
 
 } // namespace optimization

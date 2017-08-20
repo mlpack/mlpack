@@ -79,7 +79,7 @@ double LineSearch::Optimize(FunctionType& function,
       << ") reached; " << "terminating optimization." << std::endl;
 
   x2 = (1 - gamma) * x1 + gamma * x2;
-  return function.Evaluate(x2); 
+  return function.Evaluate(x2);
 }  // Optimize
 
 

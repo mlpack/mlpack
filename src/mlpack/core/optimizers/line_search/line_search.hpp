@@ -83,7 +83,6 @@ class LineSearch
                     const arma::mat& x0,
                     const arma::mat& deltaX,
                     const double gamma);
-
 };  // class LineSearch
 } // namespace optimization
 } // namespace mlpack

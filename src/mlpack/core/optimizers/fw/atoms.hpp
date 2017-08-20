@@ -32,7 +32,7 @@ class Atoms
    * @param v new atom to be added.
    * @param c coefficient of the new atom.
    */
-  void AddAtom(const arma::mat& v, const double c = 0)
+  void AddAtom(const arma::vec& v, const double c = 0)
   {
     if (currentAtoms.is_empty())
     {
