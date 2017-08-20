@@ -4,6 +4,7 @@ set(SOURCES
   frank_wolfe_impl.hpp
   constr_lpball.hpp
   constr_structure_group.hpp
+  constr_matrix_lp.hpp
   update_classic.hpp
   update_span.hpp
   update_linesearch.hpp
