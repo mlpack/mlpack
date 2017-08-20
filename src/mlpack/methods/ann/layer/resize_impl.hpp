@@ -48,7 +48,7 @@ void Resize<InputDataType, OutputDataType, InterpolationType>::Backward(
 {
 
   policy.DownSample(gy, g);
-  g.resize(g.n_rows * g.n_cols , 1);
+  // g.resize(g.n_rows * g.n_cols , 1);
 }
 
 template<typename InputDataType,

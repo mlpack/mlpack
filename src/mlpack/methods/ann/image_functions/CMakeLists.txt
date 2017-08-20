@@ -1,7 +1,7 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  bilinear_impl.hpp
+  bilinear_function.hpp
 )
 
 # Add directory name to sources.

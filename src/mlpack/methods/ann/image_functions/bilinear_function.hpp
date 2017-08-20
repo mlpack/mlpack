@@ -27,12 +27,12 @@ class BiLinearFunction
   BiLinearFunction(
       const size_t inRowSize,
       const size_t inColSize,
-      const size_t scale):
+      const size_t outRowSize,
+      const size_t outColSize):
       inRowSize(inRowSize),
       inColSize(inColSize),
-      outRowSize(2 * inRowSize),
-      outColSize(2 * inColSize),
-      scale(scale)
+      outRowSize(outRowSize),
+      outColSize(outColSize)
   {};
   /**
    * UpSample the given Image
@@ -45,30 +45,33 @@ class BiLinearFunction
   {
     // Get dimensions.
     arma::Mat<eT> tempInput = input;
+    output.set_size(outRowSize, outColSize);
     if (input.n_rows != inRowSize || input.n_cols != inColSize)
       tempInput.reshape(inRowSize, inColSize);
 
-    output.set_size(outRowSize, outColSize);
-
-    if (output.n_rows > tempInput.n_rows)
-      scaleRow = inRowSize / outRowSize;
-    else
-      scaleRow = (inRowSize - 1) / outRowSize;
-
-    if (output.n_cols > tempInput.n_cols)
-      scaleCol = inColSize / outColSize;
-    else
-      scaleCol = (inColSize - 1) / outColSize;
-
-    for (size_t i = 0; i < outRowSize; i++)
-      for (size_t j = 0; j < outColSize; j++)
+    scaleRow = (double)(input.n_rows - 1) / output.n_rows;
+    scaleCol = (double)(input.n_cols - 1) / output.n_cols;
+    
+    for (size_t i = 0; i < output.n_rows; i++)
+      for (size_t j = 0; j < output.n_cols; j++)
       {
         r_origin = std::floor(i * scaleRow);
         c_origin = std::floor(j * scaleCol);
-        GetCoff(i - r_origin, j - c_origin);
-        output = tempInput(r_origin, c_origin) * coff1 +
+
+        if (r_origin > tempInput.n_rows - 2)
+          r_origin = tempInput.n_rows - 2;
+        if (c_origin > tempInput.n_cols - 2)
+          c_origin = tempInput.n_cols - 2;
+
+        double deltaR = i * scaleRow - r_origin;
+        double deltaC = j * scaleCol - c_origin;
+        coff1 = (1 - deltaC) * (1 - deltaC);
+        coff2 =  deltaR * ( 1 - deltaC);
+        coff3 = (1 - deltaR) * deltaC;
+        coff4 =  deltaR * deltaC;
+        output(i, j) = tempInput(r_origin, c_origin) * coff1 +
                  tempInput(r_origin + 1, c_origin) * coff2 +
-                 tempInput(r_origin, c_origin + 1) * coff3 +
+                 tempInput(r_origin, c_origin + 1) * coff3+
                  tempInput(r_origin + 1, c_origin + 1) * coff4;
       }
   }
@@ -77,47 +80,36 @@ class BiLinearFunction
   void DownSample(const arma::Mat<eT>& input, arma::Mat<eT>& output)
   {
     arma::Mat<eT> tempInput = input;
+    output.set_size(inRowSize, inColSize);
     // Get dimensions.
     if (input.n_rows != outRowSize || input.n_cols != outColSize)
       tempInput.reshape(outRowSize, outColSize);
+    
+    scaleRow = (double)(input.n_rows - 1) / output.n_rows;
+    scaleCol = (double)(input.n_cols - 1) / output.n_cols;
 
-    output.set_size(inRowSize, inColSize);
-
-    if (output.n_rows > tempInput.n_rows)
-      scaleRow = inRowSize / outRowSize;
-    else
-      scaleRow = (inRowSize - 1) / outRowSize;
-
-    if (output.n_cols > tempInput.n_cols)
-      scaleCol = inColSize / outColSize;
-    else
-      scaleCol = (inColSize - 1) / outColSize;
-
-    for (size_t i = 0; i < outRowSize; i++)
-      for (size_t j = 0; j < outColSize; j++)
+    for (size_t i = 0; i < output.n_rows; i++)
+      for (size_t j = 0; j < output.n_cols; j++)
       {
         r_origin = std::floor(i * scaleRow);
         c_origin = std::floor(j * scaleCol);
-        GetCoff(i - r_origin, j - c_origin);
-        output = tempInput(r_origin, c_origin) * coff1 +
+
+        if (r_origin > tempInput.n_rows - 2)
+          r_origin = tempInput.n_rows - 2;
+        if (c_origin > tempInput.n_cols - 2)
+          c_origin = tempInput.n_cols - 2;
+
+        double deltaR = i * scaleRow - r_origin;
+        double deltaC = j * scaleCol - c_origin;
+        coff1 = (1 - deltaC) * (1 - deltaC);
+        coff2 =  deltaR * ( 1 - deltaC);
+        coff3 = (1 - deltaR) * deltaC;
+        coff4 =  deltaR * deltaC;
+        output(i, j) = tempInput(r_origin, c_origin) * coff1 +
                  tempInput(r_origin + 1, c_origin) * coff2 +
                  tempInput(r_origin, c_origin + 1) * coff3+
                  tempInput(r_origin + 1, c_origin + 1) * coff4;
       }
-  }
-
-  /**
-   * Computes the first derivative of the logistic function.
-   *
-   * @param x Input data.
-   * @return f'(x)
-   */
-  void GetCoff(const size_t row, const size_t col)
-  {
-    coff1 = (1 - row) * (1 - col);
-    coff2 =  row * ( 1 - col);
-    coff3 = (1 - row) * col;
-    coff4 =   row * col;
   }
 
 private:
@@ -125,16 +117,16 @@ private:
   const size_t inColSize;
   const size_t outRowSize;
   const size_t outColSize;
-  const size_t scale;
+
   double scaleRow;
   double scaleCol;
   size_t r_origin;
   size_t c_origin;
 
-  size_t coff1;
-  size_t coff2;
-  size_t coff3;
-  size_t coff4;
+  double coff1;
+  double coff2;
+  double coff3;
+  double coff4;
 }; // class BiLinearFunction
 
 } // namespace ann
