@@ -220,13 +220,13 @@ Gradient(const arma::mat& /*parameters*/, const size_t i, arma::mat& gradient)
 
     gradientGenerator = -gradientGenerator;
     gradientGenerator *= multiplier;
-/*
+    /*
     if (counter % batchSize == 0)
     {
       Log::Info << "gradientDiscriminator = " << std::max(std::fabs(gradientDiscriminator.min()), std::fabs(gradientDiscriminator.max())) << std::endl;
       Log::Info << "gradientGenerator = " << std::max(std::fabs(gradientGenerator.min()), std::fabs(gradientGenerator.max())) << std::endl;
     }
-*/
+    */
   }
   counter++;
   if (counter >= numFunctions)
