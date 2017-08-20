@@ -42,8 +42,8 @@ NeuralTuringMachine<InputDataType, OutputDataType>::NeuralTuringMachine(
 {
   network.push_back(controller);
 
-  readHead = new MemoryHead<>(outSize, numMem, memSize, shiftSize);
-  writeHead = new MemoryHead<>(outSize, numMem, memSize, shiftSize);
+  readHead = new MemoryHead<>(outSize, numMem, memSize, shiftSize, dMem);
+  writeHead = new MemoryHead<>(outSize, numMem, memSize, shiftSize, dMem);
 
   network.push_back(readHead);
   network.push_back(writeHead);
@@ -184,17 +184,17 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Backward(
       dReadHead = (*bMemoryHistory) * boost::apply_visitor(deltaVisitor,
           controller).submat(inSize, 0, inSize + memSize - 1, 0);
 
+      // Delta of memory from read operation.
+      dMem = boost::apply_visitor(outputParameterVisitor,
+          readHead) * arma::trans(boost::apply_visitor(deltaVisitor,
+          controller).submat(inSize, 0, inSize + memSize - 1, 0));
+
       // Backward pass through read head.
       boost::apply_visitor(BackwardWithMemoryVisitor(std::move(
           boost::apply_visitor(outputParameterVisitor, readHead)),
           std::move(*bMemoryHistory), std::move(dReadHead),
           std::move(boost::apply_visitor(deltaVisitor, readHead)),
           std::move(dMem)), readHead);
-
-      // Delta of memory from read operation.
-      dMem += boost::apply_visitor(outputParameterVisitor,
-          readHead) * arma::trans(boost::apply_visitor(deltaVisitor,
-          controller).submat(inSize, 0, inSize + memSize - 1, 0));
 
       const arma::mat& writeWeights = boost::apply_visitor(outputParameterVisitor,
       writeHead);
@@ -234,31 +234,22 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Backward(
 
       // Error of writeHead.
       size_t rowIndex = 0;
-      dMemPrev.each_row([&] (const arma::rowvec& v)
+      dMemPrev.each_row([&] (arma::rowvec& v)
       {
         dWriteHead(rowIndex, 0) = arma::as_scalar(v * addVec -
             (((*bMemoryHistory).row(rowIndex) % v) * eraseVec));
 
-        rowIndex++;
-      });
-
-      // Backward through writeHead
-      arma::mat dMemTemp;
-      boost::apply_visitor(BackwardWithMemoryVisitor(std::move(boost::apply_visitor(
-            outputParameterVisitor, writeHead)), std::move(*bMemoryHistory),
-            std::move(dWriteHead), std::move(boost::apply_visitor(deltaVisitor,
-            writeHead)), std::move(dMemTemp)), writeHead);
-      dMem += dMemTemp;
-
-      // Memory gradient from operations.
-      rowIndex = 0;
-      dMemPrev.each_row([&] (arma::rowvec& v)
-      {
         v -= v % (arma::trans(eraseVec) * writeWeights(rowIndex, 0));
 
         rowIndex++;
       });
       dMem += dMemPrev;
+
+      // Backward through writeHead
+      boost::apply_visitor(BackwardWithMemoryVisitor(std::move(boost::apply_visitor(
+            outputParameterVisitor, writeHead)), std::move(*bMemoryHistory),
+            std::move(dWriteHead), std::move(boost::apply_visitor(deltaVisitor,
+            writeHead)), std::move(dMem)), writeHead);
 
       prevError = gy + boost::apply_visitor(deltaVisitor, readHead) +
           boost::apply_visitor(deltaVisitor, writeHead) +
@@ -270,17 +261,17 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Backward(
       dReadHead = (*bMemoryHistory) * boost::apply_visitor(deltaVisitor,
           controller).submat(inSize, 0, inSize + memSize - 1, 0);
 
+      // Delta of memory from read operation.
+      dMem = boost::apply_visitor(outputParameterVisitor,
+          readHead) * arma::trans(boost::apply_visitor(deltaVisitor,
+          controller).submat(inSize, 0, inSize + memSize - 1, 0));
+
       // Backward pass through read head.
       boost::apply_visitor(BackwardWithMemoryVisitor(std::move(
           boost::apply_visitor(outputParameterVisitor, readHead)),
           std::move(*bMemoryHistory), std::move(dReadHead),
           std::move(boost::apply_visitor(deltaVisitor, readHead)),
           std::move(dMem)), readHead);
-
-      // Delta of memory from read operation.
-      dMem += boost::apply_visitor(outputParameterVisitor,
-          readHead) * arma::trans(boost::apply_visitor(deltaVisitor,
-          controller).submat(inSize, 0, inSize + memSize - 1, 0));
 
       prevError = gy + boost::apply_visitor(deltaVisitor, readHead);
     }

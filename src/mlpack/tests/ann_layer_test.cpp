@@ -978,49 +978,6 @@ BOOST_AUTO_TEST_CASE(ForwardGRULayerTest)
 }
 
 /**
- * MemoryHead manual forward test.
- */
-BOOST_AUTO_TEST_CASE(ForwardMemoryHeadTest)
-{
-  arma::mat memory = arma::ones(5, 5);
-  arma::mat input = arma::ones(5, 1);
-
-  MemoryHead<> mh(5, 5, 5, 5);
-
-  NetworkInitialization<ConstInitialization>
-      networkInit(ConstInitialization(1));
-  networkInit.Initialize(mh.Model(), mh.Parameters());
-
-  arma::mat weights;
-  mh.ForwardWithMemory(std::move(input), std::move(memory), std::move(weights));
-
-  // approximate k_t gate output
-  arma::mat k_t = arma::ones<arma::mat>(5, 1);
-
-  double b_t = 6.0;
-  double g_t = 1.0;
-  double gamma_t = 6.0;
-
-  arma::mat cosSimilarity = arma::normalise(memory, 1) * k_t /
-    arma::norm(k_t);
-
-  arma::mat w_c = arma::exp(b_t * cosSimilarity);
-  w_c = w_c / arma::as_scalar(arma::sum(arma::sum(w_c)));
-
-  // Build w_g with g_t
-  arma::mat w_g = g_t * w_c;
-
-  arma::mat shiftMatrix = arma::ones<arma::mat>(5, 5);
-  arma::mat w_tilde = arma::trans(arma::trans(w_g) * shiftMatrix);
-
-  arma::mat w_dash = arma::pow(w_tilde, gamma_t + 1);
-  w_dash = w_dash / arma::as_scalar(arma::sum(arma::sum(w_dash)));
-
-  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::trans(
-      arma::normalise(cosSimilarity)) * arma::normalise(weights)), 1, 1e-2);
-}
-
-/**
  * Simple concat module test.
  */
 BOOST_AUTO_TEST_CASE(SimpleConcatLayerTest)

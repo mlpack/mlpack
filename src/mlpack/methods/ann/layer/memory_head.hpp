@@ -53,7 +53,8 @@ class MemoryHead
   MemoryHead(const size_t inSize,
              const size_t outSize,
              const size_t memSize,
-             const size_t shiftSize);
+             const size_t shiftSize,
+             arma::mat& dMem);
 
   /**
    * Feed forward pass of a neural network, evaluating the function
@@ -67,26 +68,6 @@ class MemoryHead
   void ForwardWithMemory(arma::Mat<eT>&& input,
                          const arma::Mat<eT>&& memory,
                          arma::Mat<eT>&& output);
-
-  /**
-   * Feed forward pass of a neural network, evaluating the function
-   * f(x) by propagating the activity forward given the current memory content.
-   *
-   * This function is used in testing the layer with MemoryTest layer.
-   *
-   * @param input Input data used for evaluating the specified function.
-   * @param output Resulting output activation.
-   * @param memory Current memory content.
-   */
-  template<typename eT>
-  void ForwardWithMemoryTest(arma::Mat<eT>&& input,
-                             const arma::Mat<eT>&& memory,
-                             arma::Mat<eT>&& output)
-  {
-    ForwardWithMemory(std::move(input),
-                      std::move(memory),
-                      std::move(output));
-  }
 
   /**
    * Feed forward pass of a neural network, evaluating the function
@@ -121,32 +102,6 @@ class MemoryHead
                           arma::Mat<eT>&& gy,
                           arma::Mat<eT>&& g,
                           arma::Mat<eT>&& gM);
-
-  /**
-   * Ordinary feed backward pass of a neural network, calculating the function
-   * f(x) by propagating x backwards trough f. Using the results from the feed
-   * forward pass.
-   *
-   * This function is used in testing the layer with MemoryTest layer.
-   *
-   * @param input The propagated input activation.
-   * @param memory The current memory content.
-   * @param gy The backpropagated error.
-   * @param g The calculated gradient.
-   */
-  template<typename eT>
-  void BackwardWithMemoryTest(const arma::Mat<eT>&& input,
-                              const arma::Mat<eT>&& memory,
-                              arma::Mat<eT>&& gy,
-                              arma::Mat<eT>&& g,
-                              arma::Mat<eT>&& gM)
-  {
-    BackwardWithMemory(std::move(input),
-                       std::move(memory),
-                       std::move(gy),
-                       std::move(g),
-                       std::move(gM));
-  }
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -324,6 +279,9 @@ class MemoryHead
 
   //! Store the delta received with BPTT.
   arma::vec prevDW;
+
+  //! Reference to memory gradient.
+  arma::mat& dMem;
 
   //! Locally-stored weight object.
   OutputDataType weights;

@@ -29,11 +29,13 @@ MemoryHead<InputDataType, OutputDataType>::MemoryHead(
     const size_t inSize,
     const size_t outSize,
     const size_t memSize,
-    const size_t shiftRange) :
+    const size_t shiftRange,
+    arma::mat& dMem) :
     inSize(inSize),
     outSize(outSize),
     memSize(memSize),
     shiftSize(shiftRange),
+    dMem(dMem),
     deterministic(false)
 {
   // Build linear for kT + bT + gT + sT + gammaT
@@ -180,7 +182,7 @@ void MemoryHead<InputDataType, OutputDataType>::BackwardWithMemory(
   const arma::Mat<eT>&& memory,
   arma::Mat<eT>&& gy,
   arma::Mat<eT>&& g,
-  arma::Mat<eT>&& gM)
+  arma::Mat<eT>&& /* gM */)
 {
   if (bBt == lBt.end())
   {
@@ -330,11 +332,12 @@ void MemoryHead<InputDataType, OutputDataType>::BackwardWithMemory(
   arma::mat nKt = kT / kTNorm;
 
   // Error of memory with normalization.
-  gM = dW * arma::trans(nKt);
+
+  arma::mat dMemTemp = dW * arma::trans(nKt);
 
   // Error of memory without normalization.
   rowIndex = 0;
-  gM.each_row([&] (arma::rowvec& v)
+  dMemTemp.each_row([&] (arma::rowvec& v)
   {
     double n = arma::norm(memory.row(rowIndex));
     nMemory.row(rowIndex) /= n;
@@ -343,6 +346,7 @@ void MemoryHead<InputDataType, OutputDataType>::BackwardWithMemory(
 
     rowIndex++;
   });
+  dMem += dMemTemp;
 
   // Error of Kt with normalization
   arma::mat dKt = arma::trans(nMemory) * dW;
