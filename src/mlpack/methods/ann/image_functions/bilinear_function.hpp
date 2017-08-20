@@ -44,13 +44,11 @@ class BiLinearFunction
   void UpSample(const arma::Mat<eT>& input, arma::Mat<eT>& output)
   {
     // Get dimensions.
-    arma::Mat<eT> tempInput = input;
-    output.set_size(outRowSize, outColSize);
-    if (input.n_rows != inRowSize || input.n_cols != inColSize)
-      tempInput.reshape(inRowSize, inColSize);
+    if (output.is_empty() && (output.n_cols != outColSize || output.n_rows != outRowSize))
+      output = arma::resize(output, outRowSize, outColSize);
 
-    scaleRow = (double)(input.n_rows - 1) / output.n_rows;
-    scaleCol = (double)(input.n_cols - 1) / output.n_cols;
+    scaleRow = (double)input.n_rows / output.n_rows;
+    scaleCol = (double)input.n_cols / output.n_cols;
 
     for (size_t i = 0; i < output.n_rows; i++)
       for (size_t j = 0; j < output.n_cols; j++)
@@ -58,10 +56,10 @@ class BiLinearFunction
         r_origin = std::floor(i * scaleRow);
         c_origin = std::floor(j * scaleCol);
 
-        if (r_origin > tempInput.n_rows - 2)
-          r_origin = tempInput.n_rows - 2;
-        if (c_origin > tempInput.n_cols - 2)
-          c_origin = tempInput.n_cols - 2;
+        if (r_origin > input.n_rows - 2)
+          r_origin = input.n_rows - 2;
+        if (c_origin > input.n_cols - 2)
+          c_origin = input.n_cols - 2;
 
         double deltaR = i * scaleRow - r_origin;
         double deltaC = j * scaleCol - c_origin;
@@ -69,10 +67,9 @@ class BiLinearFunction
         coff2 = deltaR * (1 - deltaC);
         coff3 = (1 - deltaR) * deltaC;
         coff4 = deltaR * deltaC;
-        output(i, j) = tempInput(r_origin, c_origin) * coff1 +
-                 tempInput(r_origin + 1, c_origin) * coff2 +
-                 tempInput(r_origin, c_origin + 1) * coff3+
-                 tempInput(r_origin + 1, c_origin + 1) * coff4;
+        eT temp = input(c_origin * input.n_rows + r_origin );
+        output(i, j) =  temp * coff1 + temp * coff2 + temp * coff3 +
+                        temp * coff4;
       }
   }
 
@@ -80,7 +77,8 @@ class BiLinearFunction
   void DownSample(const arma::Mat<eT>& input, arma::Mat<eT>& output)
   {
     arma::Mat<eT> tempInput = input;
-    output.set_size(inRowSize, inColSize);
+    if (output.is_empty() && (output.n_cols != inColSize || output.n_rows != inRowSize))
+      output = arma::resize(output, inRowSize, inColSize);
     // Get dimensions.
     if (input.n_rows != outRowSize || input.n_cols != outColSize)
       tempInput.reshape(outRowSize, outColSize);
@@ -105,10 +103,9 @@ class BiLinearFunction
         coff2 = deltaR * (1 - deltaC);
         coff3 = (1 - deltaR) * deltaC;
         coff4 = deltaR * deltaC;
-        output(i, j) = tempInput(r_origin, c_origin) * coff1 +
-                 tempInput(r_origin + 1, c_origin) * coff2 +
-                 tempInput(r_origin, c_origin + 1) * coff3+
-                 tempInput(r_origin + 1, c_origin + 1) * coff4;
+        eT temp = input(c_origin * input.n_rows + r_origin );
+        output(i, j) =  temp * coff1 + temp * coff2 + temp * coff3 +
+                        temp * coff4;
       }
   }
 
