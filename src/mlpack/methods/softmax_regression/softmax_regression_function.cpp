@@ -207,8 +207,8 @@ void SoftmaxRegressionFunction::Gradient(const arma::mat& parameters,
 }
 
 void SoftmaxRegressionFunction::FeatureGradient(const arma::mat& parameters,
-    const size_t j,
-    arma::sp_mat& gradient) const
+                                                const size_t j,
+                                                arma::sp_mat& gradient) const
 {
   arma::mat denseGrad;
 

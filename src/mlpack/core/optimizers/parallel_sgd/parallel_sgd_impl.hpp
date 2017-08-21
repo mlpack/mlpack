@@ -52,7 +52,6 @@ double ParallelSGD<DecayPolicyType>::Optimize(
   {
     // Calculate the overall objective.
     lastObjective = overallObjective;
-    overallObjective = 0;
 
     overallObjective = function.Evaluate(iterate);
 

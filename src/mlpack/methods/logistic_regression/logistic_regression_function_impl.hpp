@@ -113,7 +113,7 @@ double LogisticRegressionFunction<MatType>::Evaluate(
   double norm = arma::norm(parameters.tail_cols(parameters.n_elem - 1));
 
   const double regularization = lambda * (1.0 / (2.0 * predictors.n_cols)) *
-    norm * norm;
+      norm * norm;
 
   // Calculate sigmoid.
   const double exponent = parameters(0, 0) + arma::dot(predictors.col(i),
