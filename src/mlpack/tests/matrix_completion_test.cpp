@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE(UniformMatrixCompletionSDP)
   }
 
   arma::mat recovered;
-  MatrixCompletion mc(Xorig.n_rows, Xorig.n_cols, indices, values);
+  MatrixCompletionSDP mc(Xorig.n_rows, Xorig.n_cols, indices, values);
   mc.Recover(recovered);
 
   const double err =

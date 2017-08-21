@@ -142,4 +142,6 @@ using MatrixCompletionSDP = MatrixCompletion<MCSDPSolver>;
 } // namespace matrix_completion
 } // namespace mlpack
 
+#include "matrix_completion_impl.hpp"
+
 #endif

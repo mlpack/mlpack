@@ -9,6 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#ifndef MLPACK_METHODS_MATRIX_COMPLETION_MATRIX_COMPLETION_IMPL_HPP
+#define MLPACK_METHODS_MATRIX_COMPLETION_MATRIX_COMPLETION_IMPL_HPP
 
 #include "matrix_completion.hpp"
 
@@ -88,3 +90,5 @@ void MatrixCompletion<MCSolverType>::Recover(arma::mat& recovered)
 
 } // namespace matrix_completion
 } // namespace mlpack
+
+#endif
