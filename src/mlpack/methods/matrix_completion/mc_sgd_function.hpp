@@ -28,7 +28,7 @@ class MatrixCompletionSGDFunction {
       omegaCol(arma::zeros<arma::uvec>(n))
   { CountOmega(); }
   
-  size_t NumFunctions() {return indices.n_cols};
+  size_t NumFunctions() {return indices.n_cols;};
 
   double Evaluate(const arma::mat& coordinates, const size_t i)
   {
@@ -36,7 +36,7 @@ class MatrixCompletionSGDFunction {
     size_t rightId = indices(1, i);
     
     double f1 = arma::dot(coordinates.row(leftId), coordinates.row(rightId + m));
-    f1 = std::pow(f - values(i), 2);
+    f1 = std::pow(f1 - values(i), 2);
     
     double f2 = std::pow(arma::norm(coordinates.row(leftId), "fro"), 2);
     f2 = mu * f2 / 2.0 / omegaRow(leftId);
@@ -74,9 +74,9 @@ class MatrixCompletionSGDFunction {
   //! Number of columns of the matrix.
   size_t n;
   //! Indices for sparse matrix.
-  arma::umat& indices;
+  arma::umat indices;
   //! Values for sparse matrix.
-  arma::vec& values;
+  arma::vec values;
   //! Rank of recovered matrix.
   size_t r;
   

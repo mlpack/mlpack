@@ -28,15 +28,36 @@ class MCSGDSolver {
               const arma::vec& values,
               const size_t r) :
       function(m, n, indices, values, r),
-      sgd(function),
       leftMat(arma::randu<arma::mat>(m, r)),
       rightMat(arma::randu<arma::mat>(n, r))
   { /* Nothing to do.  */ }
+
+    MCSGDSolver(const size_t m,
+                const size_t n,
+                const arma::umat& indices,
+                const arma::vec& values,
+                const arma::mat& initialPoint) :
+      function(m, n, indices, values, DefaultRank(m, n, indices.n_cols)),
+      leftMat(arma::randu<arma::mat>(m, DefaultRank(m, n, indices.n_cols))),
+      rightMat(arma::randu<arma::mat>(n, DefaultRank(m, n, indices.n_cols)))
+    { /* */ }
+
+    MCSGDSolver(const size_t m,
+                const size_t n,
+                const arma::umat& indices,
+                const arma::vec& values) :
+      function(m, n, indices, values, DefaultRank(m, n, indices.n_cols)),
+      leftMat(arma::randu<arma::mat>(m, DefaultRank(m, n, indices.n_cols))),
+      rightMat(arma::randu<arma::mat>(n, DefaultRank(m, n, indices.n_cols)))
+    { /* */ }
+
+
+
   
   void Recover(arma::mat& recovered, const size_t m, const size_t n)
   {
     arma::mat iterate = arma::join_cols(leftMat, rightMat);
-    sgd.Optimize(iterate);
+    sgd.Optimize(function, iterate);
     
     leftMat = iterate.head_rows(m);
     rightMat = iterate.tail_rows(n);
@@ -45,10 +66,26 @@ class MCSGDSolver {
 
  private:
   MatrixCompletionSGDFunction function;
-  optimization::SGD<MatrixCompletionSGDFunction> sgd;
+  optimization::StandardSGD sgd;
   
   arma::mat leftMat;
   arma::mat rightMat;
+
+  size_t DefaultRank(const size_t m, const size_t n, const size_t p)
+  {
+    // If r = O(sqrt(p)), then we are guaranteed an exact solution.
+    // For more details, see
+    //
+    //   On the rank of extreme matrices in semidefinite programs and the
+    //   multiplicity of optimal eigenvalues.
+    //   Pablo Moscato, Michael Norman, and Gabor Pataki.
+    //   Math Oper. Res., 23(2). 1998.
+    const size_t mpn = m + n;
+    float r = 0.5 + sqrt(0.25 + 2 * p);
+    if (ceil(r) > mpn)
+      r = mpn; // An upper bound on the dimension.
+    return ceil(r);
+  }
 
 };
 }

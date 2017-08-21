@@ -15,7 +15,7 @@
 #define MLPACK_METHODS_MATRIX_COMPLETION_MATRIX_COMPLETION_HPP
 
 #include "mc_sdp_solver.hpp"
-//#include "mc_sgd_solver.hpp"
+#include "mc_sgd_solver.hpp"
 
 namespace mlpack {
 namespace matrix_completion {
@@ -133,7 +133,7 @@ class MatrixCompletion
 };
 
 using MatrixCompletionSDP = MatrixCompletion<MCSDPSolver>;
-//using MatrixCompletionSGD = MatrixCompletion<MCSGDSolver>;
+using MatrixCompletionSGD = MatrixCompletion<MCSGDSolver>;
 
 } // namespace matrix_completion
 } // namespace mlpack
