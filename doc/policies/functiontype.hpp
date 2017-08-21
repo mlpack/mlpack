@@ -2,7 +2,7 @@
 
 @section Overview
 
-\b To represent the various types of loss functions encountered in machine
+To represent the various types of loss functions encountered in machine
 learning problems, mlpack provides the \c FunctionType template parameter in
 the optimizer interface. The various optimizers available in the core library
 rely on this policy to gain the necessary information required by the optimizing
@@ -56,17 +56,41 @@ Evaluate the gradient of the \c i th loss function.
 
 
 \c ParallelSGD optimizer requires a \c SparseFunctionType interface.
-The only difference between the above \c DecomposableFunctionType and
-\c SparseFunctionType interface is the type of the out-param used in the 
-\c Gradient function. \c SparseFunctionType requires the gradient to be in a
-sparse matrix (\c arma::sp_mat), as ParallelSGD, implemented with the HOGWILD!
-scheme of unsynchronised updates, is expected to be relavant only in situations
-where the individual gradients are sparse.
+\c SparseFunctionType requires the gradient to be in a sparse matrix (\c
+arma::sp_mat), as ParallelSGD, implemented with the HOGWILD!  scheme of
+unsynchronised updates, is expected to be relavant only in situations where the
+individual gradients are sparse. So, the interface requires function with the
+following signatures
 
+@code
+size_t NumFunctions();
+@endcode
 
-The \c SCD optimizer requires a \c ResolvableFunctionType interface, to calculate
-partial gradients with respect to individual features. The interface expects the
-following member functions from the function class
+Return the number of functions. In a data-dependent function, this would return
+the number of points in the dataset.
+
+@code
+double Evaluate(const arma::mat& coordinates);
+@endcode
+
+To evaluate the loss function at the given coordinates.
+
+@code
+void Gradient(const arma::mat& coordinates, const size_t i, arma::sp_mat& gradient);
+@endcode
+
+Evaluate the (sparse) gradient of the \c i th loss function.
+
+The \c SCD optimizer requires a \c ResolvableFunctionType interface, to
+calculate partial gradients with respect to individual features. The optimizer
+requires the decision variable to be arranged in a particular fashion to allow
+for disjoint updates. The features should be arranged columnwise in the decision
+variable. For example, in \c SoftmaxRegressionFunction the decision variable has
+size \c numClasses x \c featureSize (+ 1 if an intercept also needs to be fit).
+Similarly, for \c LogisticRegression, the decision variable is a row vector,
+with the number of columns determined by the dimensionality of the dataset.
+
+The interface expects the following member functions from the function class
 
 @code
 size_t NumFeatures();

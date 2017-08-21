@@ -54,10 +54,7 @@ double ParallelSGD<DecayPolicyType>::Optimize(
     lastObjective = overallObjective;
     overallObjective = 0;
 
-    for (size_t j = 0; j < function.NumFunctions(); ++j)
-    {
-      overallObjective += function.Evaluate(iterate, j);
-    }
+    overallObjective = function.Evaluate(iterate);
 
     // Output current objective function.
     Log::Info << "Parallel SGD: iteration " << i << ", objective "
