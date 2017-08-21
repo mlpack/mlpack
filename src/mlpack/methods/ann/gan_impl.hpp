@@ -197,36 +197,35 @@ Gradient(const arma::mat& /*parameters*/, const size_t i, arma::mat& gradient)
   generator.Forward(std::move(noise));
   discriminator.predictors.col(numFunctions) = boost::apply_visitor(
       outputParameterVisitor, generator.network.back());
-  discriminator.responses(numFunctions) = 0;
 
+  discriminator.responses(numFunctions) = 0;
   discriminator.Gradient(discriminator.parameter, numFunctions,
       noiseGradientDiscriminator);
-
   gradientDiscriminator += noiseGradientDiscriminator;
 
   if (currentBatch % generatorUpdateStep == 0 && preTrainSize == 0)
   {
-    // Minimize log(1 - D(G(noise)))
+    // Minimize -log(D(G(noise)))
     // pass the error from discriminator to generator
+    discriminator.responses(numFunctions) = 1;
+    discriminator.Gradient(discriminator.parameter, numFunctions,
+      noiseGradientDiscriminator);
+    Log::Info << boost::apply_visitor(deltaVisitor, discriminator.network[1]) << std::endl;
     generator.error = boost::apply_visitor(deltaVisitor,
         discriminator.network[1]);
+    // set the current input requrired for gradient computation
     generator.currentInput = noise;
     generator.Backward();
     generator.ResetGradients(gradientGenerator);
-    // set the current input requrired for gradient computation
     generator.Gradient();
+    // double multiplier = 1.0;
 
-    double multiplier = 1.0;
-
-    gradientGenerator = -gradientGenerator;
-    gradientGenerator *= multiplier;
-    /*
+    // gradientGenerator *= multiplier;
     if (counter % batchSize == 0)
     {
       Log::Info << "gradientDiscriminator = " << std::max(std::fabs(gradientDiscriminator.min()), std::fabs(gradientDiscriminator.max())) << std::endl;
       Log::Info << "gradientGenerator = " << std::max(std::fabs(gradientGenerator.min()), std::fabs(gradientGenerator.max())) << std::endl;
     }
-    */
   }
   counter++;
   if (counter >= numFunctions)
