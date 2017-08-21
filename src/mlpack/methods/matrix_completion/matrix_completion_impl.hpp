@@ -24,10 +24,9 @@ MatrixCompletion(const size_t m,
                  const arma::umat& indices,
                  const arma::vec& values,
                  const size_t r) :
-    m(m), n(n), indices(indices), values(values),
-    mcSolver(m, n, indices, values, r)
+    m(m), n(n), mcSolver(m, n, indices, values, r)
 {
-  CheckValues();
+  CheckValues(indices, values);
 }
 
 template<typename MCSolverType>
@@ -37,10 +36,9 @@ MatrixCompletion(const size_t m,
                  const arma::umat& indices,
                  const arma::vec& values,
                  const arma::mat& initialPoint) :
-    m(m), n(n), indices(indices), values(values),
-    mcSolver(m, n, indices, values, initialPoint)
+    m(m), n(n), mcSolver(m, n, indices, values, initialPoint)
 {
-  CheckValues();
+  CheckValues(indices, values);
 }
 
 template<typename MCSolverType>
@@ -49,14 +47,14 @@ MatrixCompletion(const size_t m,
                  const size_t n,
                  const arma::umat& indices,
                  const arma::vec& values) :
-    m(m), n(n), indices(indices), values(values),
-    mcSolver(m, n, indices, values)
+    m(m), n(n), mcSolver(m, n, indices, values)
 {
-  CheckValues();
+  CheckValues(indices, values);
 }
 
 template<typename MCSolverType>
-void MatrixCompletion<MCSolverType>::CheckValues()
+void MatrixCompletion<MCSolverType>::
+CheckValues(const arma::umat& indices, const arma::vec& values)
 {
   if (indices.n_rows != 2)
   {

@@ -13,6 +13,10 @@
 #ifndef MLPACK_METHODS_MATRIX_COMPLETION_MC_SGD_SOLVER_HPP
 #define MLPACK_METHODS_MATRIX_COMPLETION_MC_SGD_SOLVER_HPP
 
+#include <mlpack/core/optimizers/sgd/sgd.hpp>
+#include "mc_sgd_function.hpp"
+
+
 namespace mlpack {
 namespace matrix_completion {
 

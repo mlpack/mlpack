@@ -15,7 +15,7 @@
 #define MLPACK_METHODS_MATRIX_COMPLETION_MATRIX_COMPLETION_HPP
 
 #include "mc_sdp_solver.hpp"
-//#include "mc_fw_solver.hpp"
+//#include "mc_sgd_solver.hpp"
 
 namespace mlpack {
 namespace matrix_completion {
@@ -123,21 +123,17 @@ class MatrixCompletion
   size_t m;
   //! Number of columns in original matrix.
   size_t n;
-  //! Matrix containing the indices of the known entries (has two rows).
-  arma::umat indices;
-  //! Vector containing the values of the known entries.
-  arma::mat values;
 
   //! The underlying matrix completion optimization solver.
   MCSolverType mcSolver;
 
   //! Validate the input matrices.
-  void CheckValues();
+  void CheckValues(const arma::umat& indices, const arma::vec& values);
 
 };
 
 using MatrixCompletionSDP = MatrixCompletion<MCSDPSolver>;
-//using MatrixCompletionFW = MatrixCompletion<MCFWSolver>;
+//using MatrixCompletionSGD = MatrixCompletion<MCSGDSolver>;
 
 } // namespace matrix_completion
 } // namespace mlpack
