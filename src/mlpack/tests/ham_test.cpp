@@ -311,24 +311,22 @@ BOOST_AUTO_TEST_CASE(BlindHAMUnitTest) {
   HAMUnit<> hamUnit(seqLen, nDim, embedModel, joinModel, searchModel, writeModel, controller);
   hamUnit.ResetParameters();
   hamUnit.Parameters() = allParams;
-  hamUnit.OutputParameters();
 
   arma::mat input("1 0 0 0; 0 1 0 0; 0 0 1 0; 0 0 0 1;");
   input = input.t();
   arma::mat output;
   hamUnit.Forward(std::move(input), std::move(output));
-  std::cerr << output;
   arma::mat targetOutput("0.4174; 0.4743; 0.5167; 0.5485;");
   BOOST_REQUIRE_SMALL(arma::abs(output - targetOutput).max(), 1e-4);
 
   // Finally, test that the parameters are stored correctly.
   arma::mat params = hamUnit.Parameters();
   std::vector<double> target;
-  for (double el : embedModel.Parameters()) target.push_back(el);
-  for (double el : searchModel.Parameters()) target.push_back(el);
-  for (double el : controller.Parameters()) target.push_back(el);
-  for (double el : joinModel.Parameters()) target.push_back(el);
-  for (double el : writeModel.Parameters()) target.push_back(el);
+  for (double el : embedParams) target.push_back(el);
+  for (double el : searchParams) target.push_back(el);
+  for (double el : controllerParams) target.push_back(el);
+  for (double el : joinParams) target.push_back(el);
+  for (double el : writeParams) target.push_back(el);
   BOOST_REQUIRE_EQUAL(params.n_elem, target.size());
   for (size_t i = 0; i < params.n_elem; ++i) {
     BOOST_REQUIRE_SMALL(params.at(i, 0) - target[i], 1e-4);

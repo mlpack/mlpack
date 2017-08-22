@@ -95,51 +95,32 @@ void HAMUnit<E, J, S, W, C>::Forward(arma::mat&& input, arma::mat&& output)
 template<typename E, typename J, typename S, typename W, typename C>
 void HAMUnit<E, J, S, W, C>::ResetParameters()
 {
-  search.ResetParameters();
   embed.ResetParameters();
+  search.ResetParameters();
   controller.ResetParameters();
   memory.ResetParameters();
 
-  arma::mat embedParams = embed.Parameters();
-  arma::mat searchParams = search.Parameters();
-  arma::mat controllerParams = controller.Parameters();
-  arma::mat joinParams = memory.JoinObject().Parameters();
-  arma::mat writeParams = memory.WriteObject().Parameters();
+  const size_t embedCount = embed.Parameters().n_elem;
+  const size_t searchCount = search.Parameters().n_elem;
+  const size_t controllerCount = controller.Parameters().n_elem;
+  const size_t joinCount = memory.JoinObject().Parameters().n_elem;
+  const size_t writeCount = memory.WriteObject().Parameters().n_elem;
 
-  size_t embedCount = embedParams.n_elem,
-         searchCount = searchParams.n_elem,
-         controllerCount = controllerParams.n_elem,
-         joinCount = joinParams.n_elem,
-         writeCount = writeParams.n_elem;
+  parameters = arma::mat(embedCount + searchCount + controllerCount +
+      joinCount + writeCount, 1);
 
-  parameters = arma::mat(embedCount + searchCount + controllerCount + joinCount + writeCount, 1);
-
-  embed.Parameters() = arma::mat(parameters.memptr(), embedCount, 1, false, false);
-  search.Parameters() = arma::mat(parameters.memptr() + embedCount, searchCount, 1, false, false);
-  controller.Parameters() = arma::mat(parameters.memptr() + embedCount + searchCount, controllerCount, 1, false, false);
-  memory.JoinObject().Parameters() = arma::mat(parameters.memptr() + embedCount + searchCount + controllerCount, joinCount, 1, false, false);
-  memory.WriteObject().Parameters() = arma::mat(parameters.memptr() + embedCount + searchCount + controllerCount + joinCount, writeCount, 1, false, false);
+  NetworkInitialization<> networkInit;
+  networkInit.Initialize(embed.Model(), parameters);
+  networkInit.Initialize(search.Model(), parameters, embedCount);
+  networkInit.Initialize(controller.Model(), parameters, embedCount +
+      searchCount);
+  networkInit.Initialize(memory.JoinObject().Model(), parameters, embedCount +
+      searchCount + controllerCount);
+  networkInit.Initialize(memory.WriteObject().Model(), parameters, embedCount +
+      searchCount + controllerCount + joinCount);
 
   reset = true;
 }
-
-template<typename E, typename J, typename S, typename W, typename C>
-void HAMUnit<E, J, S, W, C>::OutputParameters()
-{
-  if (!reset) return;
-  std::cerr << "E:\n" << embed.Parameters().t();
-  std::cerr << "S:\n" << search.Parameters().t();
-  std::cerr << "C:\n" << controller.Parameters().t();
-  std::cerr << "J:\n" << memory.JoinObject().Parameters().t();
-  std::cerr << "W:\n" << memory.WriteObject().Parameters().t();
-
-  arma::mat input("1 0 0 1 0 1 0 0");
-  input = input.t();
-  arma::mat output;
-  memory.JoinObject().Forward(input, output);
-  std::cerr << output << "\n";
-}
-
 } // namespace augmented
 } // namespace ann
 } // namespace mlpack

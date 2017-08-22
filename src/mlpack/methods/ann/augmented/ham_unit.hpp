@@ -61,8 +61,6 @@ class HAMUnit
   arma::mat& Parameters() { return parameters; }
 
   void ResetParameters();
-
-  void OutputParameters();
  private:
   void Attention(arma::vec& attention);
 
