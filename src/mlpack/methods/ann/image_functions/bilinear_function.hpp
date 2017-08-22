@@ -23,6 +23,14 @@ namespace ann /** Artificial Neural Network. */ {
  */
 class BiLinearFunction
 {
+ /*
+  * The constructor for the bilinear interpolation.
+  * 
+  * @param inRowSize: Number of input rows
+  * @param inColSize: Number of input columns.
+  * @param outRowSize: Number of output rows.
+  * @param outColSie: Number of output columns.
+  */
  public:
   BiLinearFunction(
       const size_t inRowSize,
@@ -35,9 +43,9 @@ class BiLinearFunction
       outColSize(outColSize)
   {};
   /**
-   * UpSample the given Image
+   * UpSample the given input.
    *
-   * @param input Input image.
+   * @param input The input matrix
    * @param output The resulting interpolated output image.
    */
   template<typename eT>
@@ -54,35 +62,41 @@ class BiLinearFunction
     {
       for (size_t j = 0; j < output.n_cols; j++)
       {
-        r_origin = std::floor(i * scaleRow);
-        c_origin = std::floor(j * scaleCol);
+        rOrigin = std::floor(i * scaleRow);
+        cOrigin = std::floor(j * scaleCol);
 
-        if (r_origin < 0)
-          r_origin = 0;
-        if (c_origin < 0)
-          c_origin = 0;
+        if (rOrigin < 0)
+          rOrigin = 0;
+        if (cOrigin < 0)
+          cOrigin = 0;
 
-        if (r_origin > input.n_rows - 2)
-          r_origin = input.n_rows - 2;
-        if (c_origin > input.n_cols - 2)
-          c_origin = input.n_cols - 2;
+        if (rOrigin > input.n_rows - 2)
+          rOrigin = input.n_rows - 2;
+        if (cOrigin > input.n_cols - 2)
+          cOrigin = input.n_cols - 2;
 
-        double deltaR = i * scaleRow - r_origin;
-        double deltaC = j * scaleCol - c_origin;
-        coff1 = (1 - deltaR) * (1 - deltaC);
-        coff2 = deltaR * (1 - deltaC);
-        coff3 = (1 - deltaR) * deltaC;
-        coff4 = deltaR * deltaC;
+        double deltaR = i * scaleRow - rOrigin;
+        double deltaC = j * scaleCol - cOrigin;
+        coeff1 = (1 - deltaR) * (1 - deltaC);
+        coeff2 = deltaR * (1 - deltaC);
+        coeff3 = (1 - deltaR) * deltaC;
+        coeff4 = deltaR * deltaC;
 
 
-        output(i, j) =  input(c_origin * input.n_rows + r_origin) * coff1 +
-                        input(c_origin * input.n_rows + r_origin + 1) * coff2 +
-                        input((c_origin + 1) * input.n_rows + r_origin) * coff3 +
-                        input((c_origin + 1) * input.n_rows + r_origin+1) * coff4;
+        output(i, j) =  input(cOrigin * input.n_rows + rOrigin) * coeff1 +
+                        input(cOrigin * input.n_rows + rOrigin + 1) * coeff2 +
+                        input((cOrigin + 1) * input.n_rows + rOrigin) * coeff3 +
+                        input((cOrigin + 1) * input.n_rows + rOrigin+1) * coeff4;
       }
     }
   }
 
+  /**
+   * DownSample the given input.
+   *
+   * @param input The input matrix
+   * @param output The resulting down-sampled output image.
+   */
   template<typename eT>
   void DownSample(const arma::Mat<eT>& input, arma::Mat<eT>& output)
   {
@@ -96,48 +110,62 @@ class BiLinearFunction
     for (size_t i = 0; i < output.n_rows; i++)
       for (size_t j = 0; j < output.n_cols; j++)
       {
-        r_origin = std::floor(i * scaleRow);
-        c_origin = std::floor(j * scaleCol);
+        rOrigin = std::floor(i * scaleRow);
+        cOrigin = std::floor(j * scaleCol);
 
-        if (r_origin < 0)
-          r_origin = 0;
-        if (c_origin < 0)
-          c_origin = 0;
+        /*
+        if (rOrigin < 0)
+          rOrigin = 0;
+        if (cOrigin < 0)
+          cOrigin = 0;
+        */
 
-        if (r_origin > input.n_rows - 2)
-          r_origin = input.n_rows - 2;
-        if (c_origin > input.n_cols - 2)
-          c_origin = input.n_cols - 2;
+        if (rOrigin > input.n_rows - 2)
+          rOrigin = input.n_rows - 2;
+        if (cOrigin > input.n_cols - 2)
+          cOrigin = input.n_cols - 2;
 
-        double deltaR = i * scaleRow - r_origin;
-        double deltaC = j * scaleCol - c_origin;
-        coff1 = (1 - deltaR) * (1 - deltaC);
-        coff2 = deltaR * (1 - deltaC);
-        coff3 = (1 - deltaR) * deltaC;
-        coff4 = deltaR * deltaC;
+        double deltaR = i * scaleRow - rOrigin;
+        double deltaC = j * scaleCol - cOrigin;
+        coeff1 = (1 - deltaR) * (1 - deltaC);
+        coeff2 = deltaR * (1 - deltaC);
+        coeff3 = (1 - deltaR) * deltaC;
+        coeff4 = deltaR * deltaC;
 
-        output(i, j) =  input(c_origin * input.n_rows + r_origin) * coff1 +
-                        input(c_origin * input.n_rows + r_origin + 1) * coff2 +
-                        input((c_origin + 1) * input.n_rows + r_origin) * coff3 +
-                        input((c_origin + 1) * input.n_rows + r_origin+1) * coff4;
+        output(i, j) =  input(cOrigin * input.n_rows + rOrigin) * coeff1 +
+                        input(cOrigin * input.n_rows + rOrigin + 1) * coeff2 +
+                        input((cOrigin + 1) * input.n_rows + rOrigin) * coeff3 +
+                        input((cOrigin + 1) * input.n_rows + rOrigin+1) * coeff4;
       }
   }
 
  private:
+  //! Locally stored row size of the input.
   const size_t inRowSize;
+  //! Locally stored column size of the input.
   const size_t inColSize;
+  //! Locally stored row size of the output.
   const size_t outRowSize;
+  //! Locally stored column size of the input.
   const size_t outColSize;
 
+  //! Locally stored scaling factor along row.
   double scaleRow;
+  //! Locally stored scaling factor along row.
   double scaleCol;
-  double r_origin;
-  double c_origin;
+  //! Locally stored interger part of the current row idx in input.
+  double rOrigin;
+  //! Locally stored interger part of the current column idx in input.
+  double cOrigin;
 
-  double coff1;
-  double coff2;
-  double coff3;
-  double coff4;
+  //! Locally stored coefficient around given idx.
+  double coeff1;
+  //! Locally stored coefficient around given idx.
+  double coeff2;
+  //! Locally stored coefficient around given idx.
+  double coeff3;
+  //! Locally stored coefficient around given idx.
+  double coeff4;
 }; // class BiLinearFunction
 
 } // namespace ann

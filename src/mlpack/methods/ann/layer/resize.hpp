@@ -16,8 +16,6 @@
 
 #include <mlpack/methods/ann/image_functions/bilinear_function.hpp>
 
-#include "layer_types.hpp"
-
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -35,9 +33,9 @@ namespace ann /** Artificial Neural Network. */ {
  *
  */
 template <
+    class InterpolationType = BiLinearFunction,
     typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat,
-    class InterpolationType = BiLinearFunction
+    typename OutputDataType = arma::mat
 >
 class Resize
 {
