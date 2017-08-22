@@ -1296,7 +1296,7 @@ BOOST_AUTO_TEST_CASE(SimpleResizeLayerTest)
   layer.Forward(std::move(input), std::move(output));
   // Backward pass on the generated input.
   layer.Backward(std::move(input), std::move(output), std::move(inputModified));
-  
+
   CheckMatrices(input, inputModified);
 }
 

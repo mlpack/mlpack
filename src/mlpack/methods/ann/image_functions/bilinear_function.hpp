@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_IMAGE_FUNCTIONS_INTERPOLATION_FUNCTION_HPP
-#define MLPACK_METHODS_ANN_IMAGE_FUNCTIONS_INTERPOLATION_FUNCTION_HPP
+#ifndef MLPACK_METHODS_ANN_IMAGE_FUNCTIONS_BILINEAR_FUNCTION_HPP
+#define MLPACK_METHODS_ANN_IMAGE_FUNCTIONS_BILINEAR_FUNCTION_HPP
 
 #include <mlpack/prereqs.hpp>
 
