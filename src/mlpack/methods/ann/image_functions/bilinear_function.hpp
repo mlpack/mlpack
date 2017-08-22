@@ -70,10 +70,12 @@ class BiLinearFunction
         if (cOrigin < 0)
           cOrigin = 0;
 
+        /*
         if (rOrigin > input.n_rows - 2)
           rOrigin = input.n_rows - 2;
         if (cOrigin > input.n_cols - 2)
           cOrigin = input.n_cols - 2;
+        */
 
         double deltaR = i * scaleRow - rOrigin;
         double deltaC = j * scaleCol - cOrigin;
