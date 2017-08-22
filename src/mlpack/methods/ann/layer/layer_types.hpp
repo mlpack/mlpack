@@ -116,7 +116,7 @@ using LayerTypes = boost::variant<
     Select<arma::mat, arma::mat>*,
     Sequential<arma::mat, arma::mat>*,
     VRClassReward<arma::mat, arma::mat>*,
-    Resize<BiLinearFunction, arma::mat, arma::mat>*,
+    Resize<BiLinearFunction, arma::mat, arma::mat>*
 >;
 
 } // namespace ann
