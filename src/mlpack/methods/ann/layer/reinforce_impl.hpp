@@ -1,9 +1,9 @@
 /**
- * @file reinforce_normal_impl.hpp
- * @author Marcus Edel
+ * @file reinforce_impl.hpp
+ * @author Shangtong Zhang
  *
- * Implementation of the ReinforceNormalLayer class, which implements the
- * REINFORCE algorithm for the normal distribution.
+ * Implementation of the Reinforce class, which implements the policy
+ * gradient algorithm .
  */
 #ifndef MLPACK_METHODS_ANN_LAYER_REINFORCE_IMPL_HPP
 #define MLPACK_METHODS_ANN_LAYER_REINFORCE_IMPL_HPP
@@ -30,9 +30,7 @@ template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void Reinforce<InputDataType, OutputDataType>::Serialize(
     Archive& /* ar */, const unsigned int /* version */)
-{
-  // Nothing to do here.
-}
+{ /* Nothing to do here. */ }
 
 } // namespace ann
 } // namespace mlpack

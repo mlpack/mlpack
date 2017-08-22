@@ -1,8 +1,8 @@
 /**
- * @file log_softmax.hpp
- * @author Marcus Edel
+ * @file policy.hpp
+ * @author Shangtong Zhang
  *
- * Definition of the LogSoftmax class.
+ * Definition of the Policy class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -18,26 +18,26 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of the log softmax layer. The log softmax loss layer computes
- * the multinomial logistic loss of the softmax of its inputs. This layer is
- * meant to be used in combination with the negative log likelihood layer
- * (NegativeLogLikelihoodLayer), which expects that the input contains
- * log-probabilities for each class.
+ * Implementation of the Policy layer, which implements the policy gradient
+ * algorithm with entropy regularization. This layer is meant to be used in
+ * combination with the Reinforce layer.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+template<
+  typename InputDataType = arma::mat,
+  typename OutputDataType = arma::mat
 >
 class Policy
 {
  public:
   /**
-   * Create the LogSoftmax object.
+   * Create the Policy object.
+   *
+   * @param entropyRegularizationWeight Weight of the entropy regularization.
    */
   Policy(double entropyRegularizationWeight = 0.01);
 
@@ -87,6 +87,7 @@ class Policy
   void Serialize(Archive& /* ar */, const unsigned int /* version */);
 
  private:
+  //! Locally-stored weight for entropy regularization.
   double entropyRegularizationWeight;
 
   //! Locally-stored delta object.
@@ -97,7 +98,7 @@ class Policy
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-}; // class LogSoftmax
+}; // class Policy
 
 } // namespace ann
 } // namespace mlpack

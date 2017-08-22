@@ -2,8 +2,7 @@
  * @file reinforce.hpp
  * @author Shangtong Zhang
  *
- * Definition of the ReinforceNormalLayer class, which implements the REINFORCE
- * algorithm for the normal distribution.
+ * Definition of the Reinforce class, which implements the REINFORCE algorithm.
  */
 #ifndef MLPACK_METHODS_ANN_LAYER_REINFORCE_HPP
 #define MLPACK_METHODS_ANN_LAYER_REINFORCE_HPP
@@ -14,8 +13,9 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of the reinforce normal layer. The reinforce normal layer
- * implements the REINFORCE algorithm for the normal distribution.
+ * Implementation of the Reinforce layer, which is meant to be the output layer
+ * for the policy gradient algorithm. When used as the output layer, the last
+ * layer of the network should be the Policy layer.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -23,8 +23,8 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+  typename InputDataType = arma::mat,
+  typename OutputDataType = arma::mat
 >
 class Reinforce
 {
@@ -84,7 +84,7 @@ class Reinforce
 
   //!  Locally-stored output module parameter parameters.
   std::vector<arma::mat> moduleInputParameter;
-}; // class ReinforceNormal
+}; // class Reinforce
 
 } // namespace ann
 } // namespace mlpack

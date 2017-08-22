@@ -66,7 +66,7 @@ void AsyncLearning<
    * So we need to copy them to local variables.
    */
   NetworkType learningNetwork = std::move(this->learningNetwork);
-  if (learningNetwork.Parameters().is_empty())
+  if (!learningNetwork.Initialized())
     learningNetwork.ResetParameters();
   NetworkType targetNetwork = learningNetwork;
   size_t totalSteps = 0;

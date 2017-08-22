@@ -81,10 +81,14 @@ class TrainingConfig
   //! Modify the step size of the optimizer.
   double& StepSize() { return stepSize; }
 
+  //! Get the step size of the optimizer of the actor network.
   double ActorStepSize() const { return actorStepSize; }
+  //! Modify the step size of the optimizer of the actor network.
   double& ActorStepSize() { return actorStepSize; }
 
+  //! Get the step size of the optimizer of the critic network.
   double CriticStepSize() const { return criticStepSize; }
+  //! Modify the step size of the optimizer of the critic network.
   double& CriticStepSize() { return criticStepSize; }
 
   //! Get the discount rate for future reward.
@@ -142,8 +146,16 @@ class TrainingConfig
    */
   double stepSize;
 
+  /**
+   * Locally-stored step size of the optimizer of the actor network.
+   * This is valid only for actor critic methods.
+   */
   double actorStepSize;
 
+  /**
+   * Locally-stored step size of the optimizer of the critic netowrk.
+   * This is valid only for actor critic methods.
+   */
   double criticStepSize;
 
   /**

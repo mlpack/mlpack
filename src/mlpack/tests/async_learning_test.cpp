@@ -219,17 +219,18 @@ BOOST_AUTO_TEST_CASE(NStepQLearningTest)
   Log::Debug << "Total test episodes: " << testEpisodes << std::endl;
 }
 
+// Test async advantage actor critic with Cart Pole.
 BOOST_AUTO_TEST_CASE(ActorCriticTest)
 {
   /**
    * This is for the Travis CI server, in your own machine you shuold use more
    * threads.
    */
-#ifdef HAS_OPENMP
-  omp_set_num_threads(1);
-#endif
+  #ifdef HAS_OPENMP
+    omp_set_num_threads(1);
+  #endif
 
-  // Set up the network.
+  // Set up the actor network.
   FFN<Reinforce<>, GaussianInitialization> actor(Reinforce<>(),
       GaussianInitialization(0, 0.001));
   actor.Add<Linear<>>(4, 100);
@@ -238,6 +239,8 @@ BOOST_AUTO_TEST_CASE(ActorCriticTest)
 //  actor.Add<ReLULayer<>>();
 //  actor.Add<Linear<>>(20, 2);
   actor.Add<Policy<>>(0.1);
+
+  // Set up the critic network.
   FFN<MeanSquaredError<>, GaussianInitialization> critic(MeanSquaredError<>(),
       GaussianInitialization(0, 0.001));
   critic.Add<Linear<>>(4, 100);
@@ -246,11 +249,13 @@ BOOST_AUTO_TEST_CASE(ActorCriticTest)
 //  critic.Add<ReLULayer<>>();
   critic.Add<Linear<>>(100, 1);
 
-  ActorCriticNetwork<decltype(actor), decltype(critic)> model(
-          std::move(actor), std::move(critic));
+  ActorCriticNetwork<decltype(actor), decltype(critic)> model(std::move(actor),
+      std::move(critic));
 
+  // Set up the policy.
   SamplePolicy<CartPole> policy;
 
+  // Set up hyper parameters.
   TrainingConfig config;
   config.ActorStepSize() = 0.001;
   config.CriticStepSize() = 0.01;

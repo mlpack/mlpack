@@ -1,8 +1,8 @@
 /**
- * @file greedy_policy.hpp
+ * @file sample_policy.hpp
  * @author Shangtong Zhang
  *
- * This file is an implementation of epsilon greedy policy.
+ * This file is an implementation of sample policy.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -19,11 +19,9 @@ namespace mlpack {
 namespace rl {
 
 /**
- * Implementation for epsilon greedy policy.
+ * Implementation for sample policy.
  *
- * In general we will select an action greedily based on the action value,
- * however sometimes we will also randomly select an action to encourage
- * exploration.
+ * It will sample an action according to the given probability distribution.
  *
  * @tparam EnvironmentType The reinforcement learning task.
  */
@@ -35,15 +33,15 @@ class SamplePolicy
   using ActionType = typename EnvironmentType::Action;
 
   /**
-   * Sample an action based on given action values.
+   * Sample an action based on given probability distribution.
    *
-   * @param actionValue Values for each action.
-   * @param deterministic Always select the action greedily.
+   * @param actionProb Desired probability distribution.
+   * @param deterministic Always select the action with highest probability.
    * @return Sampled action.
    */
   ActionType Sample(const arma::colvec& actionProb, bool deterministic = false)
   {
-    if (not deterministic)
+    if (!deterministic)
       return static_cast<ActionType>(
           arma::as_scalar(arma::find(actionProb == actionProb.max(), 1)));
 

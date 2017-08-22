@@ -1,9 +1,9 @@
 /**
- * @file n_step_q_learning_worker.hpp
+ * @file actor_critic_worker.hpp
  * @author Shangtong Zhang
  *
- * This file is the definition of NStepQLearningWorker class,
- * which implements an episode for async n step Q-Learning algorithm.
+ * This file is the definition of ActorCriticWorker class,
+ * which implements an episode for async advantage actor critic method.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -19,7 +19,7 @@ namespace mlpack {
 namespace rl {
 
 /**
- * N step Q-Learning worker.
+ * Advantage actor critic worker.
  *
  * @tparam EnvironmentType The type of the reinforcement learning task.
  * @tparam NetworkType The type of the network model.
@@ -40,6 +40,9 @@ class ActorCriticWorker
   using TransitionType = std::tuple<StateType, ActionType, double, StateType>;
 
   /**
+   * Construct advantage actor critic worker with given parameters and
+   * environment.
+   *
    * @param updater The optimizer.
    * @param environment The reinforcement learning task.
    * @param config Hyper-parameters.
@@ -60,6 +63,7 @@ class ActorCriticWorker
 
   /**
    * Initialize the worker.
+   *
    * @param learningNetwork The shared network.
    */
   void Initialize(NetworkType& learningNetwork)
@@ -76,7 +80,7 @@ class ActorCriticWorker
    * The agent will execute one step.
    *
    * @param learningNetwork The shared learning network.
-   * @param targetNetwork The shared target network.
+   * @param targetNetwork Not used.
    * @param totalSteps The shared counter for total steps.
    * @param policy The shared behavior policy.
    * @param totalReward This will be the episode return if the episode ends
@@ -92,8 +96,6 @@ class ActorCriticWorker
     // Interact with the environment.
     arma::colvec actionProb;
     network.Actor().Predict(state.Encode(), actionProb);
-//    if (deterministic)
-//      std::cout << actionProb << std::endl;
     ActionType action = policy.Sample(actionProb, deterministic);
     StateType nextState;
     double reward = environment.Sample(state, action, nextState);
@@ -150,9 +152,10 @@ class ActorCriticWorker
         totalCriticGradients += criticGradients;
 
         network.Actor().Forward(std::get<0>(transition).Encode(), actionProb);
+        // Store the advantage in an one-hot form.
         arma::colvec advantage(actionProb.n_elem, arma::fill::zeros);
         advantage[std::get<1>(transition)] =
-                arma::as_scalar(target - stateValue);
+            arma::as_scalar(target - stateValue);
 
         arma::mat actorGradients;
         network.Actor().Backward(advantage, actorGradients);
@@ -160,18 +163,19 @@ class ActorCriticWorker
       }
 
       // Clamp the accumulated gradients.
-      totalActorGradients.transform(
-          [&](double gradient)
-          { return std::min(std::max(gradient, -config.GradientLimit()),
-          config.GradientLimit()); });
+      auto clamp = [&](double gradient)
+      {
+        return std::min(std::max(gradient, -config.GradientLimit()),
+            config.GradientLimit());
+      };
 
-      totalCriticGradients.transform(
-              [&](double gradient)
-              { return std::min(std::max(gradient, -config.GradientLimit()),
-                                config.GradientLimit()); });
+      totalActorGradients.transform(clamp);
+      totalCriticGradients.transform(clamp);
 
-      actorUpdater.Update(learningNetwork.Actor().Parameters(), config.ActorStepSize(), totalActorGradients);
-      criticUpdater.Update(learningNetwork.Critic().Parameters(), config.CriticStepSize(), totalCriticGradients);
+      actorUpdater.Update(learningNetwork.Actor().Parameters(),
+          config.ActorStepSize(), totalActorGradients);
+      criticUpdater.Update(learningNetwork.Critic().Parameters(),
+          config.CriticStepSize(), totalCriticGradients);
 
       // Sync the local network with the global network.
       network = learningNetwork;
@@ -201,8 +205,10 @@ class ActorCriticWorker
     state = environment.InitialSample();
   }
 
-  //! Locally-stored optimizer.
+  //! Locally-stored optimizer for the actor network.
   UpdaterType actorUpdater;
+
+  //! Locally-stored optimizer for the critic network.
   UpdaterType criticUpdater;
 
   //! Locally-stored task.
