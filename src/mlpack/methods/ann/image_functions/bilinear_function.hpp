@@ -65,11 +65,6 @@ class BiLinearFunction
         rOrigin = std::floor(i * scaleRow);
         cOrigin = std::floor(j * scaleCol);
 
-        if (rOrigin < 0)
-          rOrigin = 0;
-        if (cOrigin < 0)
-          cOrigin = 0;
-
         if (rOrigin > input.n_rows - 2)
           rOrigin = input.n_rows - 2;
         if (cOrigin > input.n_cols - 2)
@@ -104,39 +99,39 @@ class BiLinearFunction
     if (output.is_empty() && (output.n_cols != inColSize || output.n_rows != inRowSize))
       output = arma::resize(output, inRowSize, inColSize);
 
-    scaleRow = (double)(input.n_rows - 1) / output.n_rows;
-    scaleCol = (double)(input.n_cols - 1) / output.n_cols;
+    if (input.n_rows == output.n_rows && input.n_cols == output.n_cols)
+    {
+      output = input;
+    }
+    else
+    {
+      scaleRow = (double)(input.n_rows - 1) / output.n_rows;
+      scaleCol = (double)(input.n_cols - 1) / output.n_cols;
 
-    for (size_t i = 0; i < output.n_rows; i++)
-      for (size_t j = 0; j < output.n_cols; j++)
-      {
-        rOrigin = std::floor(i * scaleRow);
-        cOrigin = std::floor(j * scaleCol);
+      for (size_t i = 0; i < output.n_rows; i++)
+        for (size_t j = 0; j < output.n_cols; j++)
+        {
+          rOrigin = std::floor(i * scaleRow);
+          cOrigin = std::floor(j * scaleCol);
 
-        /*
-        if (rOrigin < 0)
-          rOrigin = 0;
-        if (cOrigin < 0)
-          cOrigin = 0;
-        */
+          if (rOrigin > input.n_rows - 2)
+            rOrigin = input.n_rows - 2;
+          if (cOrigin > input.n_cols - 2)
+            cOrigin = input.n_cols - 2;
 
-        if (rOrigin > input.n_rows - 2)
-          rOrigin = input.n_rows - 2;
-        if (cOrigin > input.n_cols - 2)
-          cOrigin = input.n_cols - 2;
+          double deltaR = i * scaleRow - rOrigin;
+          double deltaC = j * scaleCol - cOrigin;
+          coeff1 = (1 - deltaR) * (1 - deltaC);
+          coeff2 = deltaR * (1 - deltaC);
+          coeff3 = (1 - deltaR) * deltaC;
+          coeff4 = deltaR * deltaC;
 
-        double deltaR = i * scaleRow - rOrigin;
-        double deltaC = j * scaleCol - cOrigin;
-        coeff1 = (1 - deltaR) * (1 - deltaC);
-        coeff2 = deltaR * (1 - deltaC);
-        coeff3 = (1 - deltaR) * deltaC;
-        coeff4 = deltaR * deltaC;
-
-        output(i, j) =  input(cOrigin * input.n_rows + rOrigin) * coeff1 +
-                        input(cOrigin * input.n_rows + rOrigin + 1) * coeff2 +
-                        input((cOrigin + 1) * input.n_rows + rOrigin) * coeff3 +
-                        input((cOrigin + 1) * input.n_rows + rOrigin+1) * coeff4;
+          output(i, j) =  input(cOrigin * input.n_rows + rOrigin) * coeff1 +
+              input(cOrigin * input.n_rows + rOrigin + 1) * coeff2 +
+              input((cOrigin + 1) * input.n_rows + rOrigin) * coeff3 +
+              input((cOrigin + 1) * input.n_rows + rOrigin+1) * coeff4;
       }
+    }
   }
 
  private:
