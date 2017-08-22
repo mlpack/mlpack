@@ -18,6 +18,7 @@
 #include <mlpack/core/cv/metrics/precision.hpp>
 #include <mlpack/core/cv/metrics/recall.hpp>
 #include <mlpack/core/cv/simple_cv.hpp>
+#include <mlpack/core/cv/k_fold_cv.hpp>
 #include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/init_rules/const_init.hpp>
@@ -371,6 +372,137 @@ BOOST_AUTO_TEST_CASE(SimpleCVWithDTTest)
     SimpleCV<DecisionTree<InformationGain>, Accuracy> cv(0.5, data, datasetInfo,
         arma::join_rows(trainingLabels, predictedLabels), numClasses, weights);
     BOOST_REQUIRE_CLOSE(cv.Evaluate(minimumLeafSize), 1.0, 1e-5);
+  }
+}
+
+/**
+ * Test k-fold cross-validation with the MSE metric.
+ */
+BOOST_AUTO_TEST_CASE(KFoldCVMSETest)
+{
+  // Defining dataset with two sets of responses for the same two data points.
+  arma::mat data("0 1  0 1");
+  arma::rowvec responses("0 1  1 3");
+
+  // 2-fold cross-validation.
+  KFoldCV<LinearRegression, MSE> cv(2, data, responses);
+
+  // In each of two validation tests the MSE value should be the same.
+  double expectedMSE =
+      double((1 - 0) * (1 - 0) + (3 - 1) * (3 - 1)) / 2 * 2 / 2;
+
+  BOOST_REQUIRE_CLOSE(cv.Evaluate(), expectedMSE, 1e-5);
+
+  // Assert we can access a trained model without the exception of
+  // uninitialization.
+  cv.Model();
+}
+
+/**
+ * Test k-fold cross-validation with the Accuracy metric.
+ */
+BOOST_AUTO_TEST_CASE(KFoldCVAccuracyTest)
+{
+  // Making a 10-points dataset. The last point should be classified wrong when
+  // it is tested separately.
+  arma::mat data("0 1 2 3 100 101 102 103 104 5");
+  arma::Row<size_t> labels("0 0 0 0 1 1 1 1 1 1");
+  size_t numClasses = 2;
+
+  // 10-fold cross-validation.
+  KFoldCV<NaiveBayesClassifier<>, Accuracy> cv(10, data, labels, numClasses);
+
+  // We should succeed in classifying separately the first nine samples, and
+  // fail with the remaining one.
+  double expectedAccuracy = (9 * 1.0 + 0.0) / 10;
+
+  BOOST_REQUIRE_CLOSE(cv.Evaluate(), expectedAccuracy, 1e-5);
+
+  // Assert we can access a trained model without the exception of
+  // uninitialization.
+  cv.Model();
+}
+
+/**
+ * Test k-fold cross-validation with weighted linear regression.
+ */
+BOOST_AUTO_TEST_CASE(KFoldCVWithWeightedLRTest)
+{
+  // Each fold will be filled with this dataset.
+  arma::mat data("1 2 3 4");
+  arma::rowvec responses("1 2 30 40");
+  arma::rowvec weights("1 1 0 0");
+
+  KFoldCV<LinearRegression, MSE> cv(2, arma::join_rows(data, data),
+      arma::join_rows(responses, responses), arma::join_rows(weights, weights));
+  cv.Evaluate();
+
+  arma::mat testData("3 4");
+  arma::rowvec testResponses("3 4");
+
+  double mse = MSE::Evaluate(cv.Model(), testData, testResponses);
+
+  BOOST_REQUIRE_CLOSE(1.0 - mse, 1.0, 1e-5);
+}
+
+/**
+ * Test k-fold cross-validation with decision trees constructed in multiple
+ * ways.
+ */
+BOOST_AUTO_TEST_CASE(KFoldCVWithDTTest)
+{
+  arma::mat originalData;
+  arma::Row<size_t> originalLabels;
+  data::DatasetInfo datasetInfo;
+  MockCategoricalData(originalData, originalLabels, datasetInfo);
+
+  // Each fold will be filled with this dataset.
+  arma::mat data = originalData.cols(0, 1199);
+  arma::Row<size_t> labels = originalLabels.cols(0, 1199);
+  arma::rowvec weights(data.n_cols, arma::fill::randu);
+
+  arma::mat doubledData = arma::join_rows(data, data);
+  arma::Row<size_t> doubledLabels = arma::join_rows(labels, labels);
+  arma::rowvec doubledWeights = arma::join_rows(weights, weights);
+
+  size_t numClasses = 3;
+  size_t minimumLeafSize = 8;
+
+  {
+    KFoldCV<DecisionTree<InformationGain>, Accuracy> cv(2, doubledData,
+        doubledLabels, numClasses);
+    cv.Evaluate(minimumLeafSize);
+    arma::Row<size_t> predictedLabels = PredictLabelsWithDT(data, data, labels,
+        numClasses, minimumLeafSize);
+    double accuracy = Accuracy::Evaluate(cv.Model(), data, predictedLabels);
+    BOOST_REQUIRE_CLOSE(accuracy, 1.0, 1e-5);
+  }
+  {
+    KFoldCV<DecisionTree<InformationGain>, Accuracy> cv(2, doubledData,
+        datasetInfo, doubledLabels, numClasses);
+    cv.Evaluate(minimumLeafSize);
+    arma::Row<size_t> predictedLabels = PredictLabelsWithDT(data, data,
+        datasetInfo, labels, numClasses, minimumLeafSize);
+    double accuracy = Accuracy::Evaluate(cv.Model(), data, predictedLabels);
+    BOOST_REQUIRE_CLOSE(accuracy, 1.0, 1e-5);
+  }
+  {
+    KFoldCV<DecisionTree<InformationGain>, Accuracy> cv(2, doubledData,
+        doubledLabels, numClasses, doubledWeights);
+    cv.Evaluate(minimumLeafSize);
+    arma::Row<size_t> predictedLabels = PredictLabelsWithDT(data, data, labels,
+        numClasses, weights, minimumLeafSize);
+    double accuracy = Accuracy::Evaluate(cv.Model(), data, predictedLabels);
+    BOOST_REQUIRE_CLOSE(accuracy, 1.0, 1e-5);
+  }
+  {
+    KFoldCV<DecisionTree<InformationGain>, Accuracy> cv(2, doubledData,
+        datasetInfo, doubledLabels, numClasses, doubledWeights);
+    cv.Evaluate(minimumLeafSize);
+    arma::Row<size_t> predictedLabels = PredictLabelsWithDT(data, data,
+        datasetInfo, labels, numClasses, weights, minimumLeafSize);
+    double accuracy = Accuracy::Evaluate(cv.Model(), data, predictedLabels);
+    BOOST_REQUIRE_CLOSE(accuracy, 1.0, 1e-5);
   }
 }
 
