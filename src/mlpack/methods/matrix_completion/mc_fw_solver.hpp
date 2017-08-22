@@ -18,74 +18,73 @@
 
 #include <mlpack/core/optimizers/fw/frank_wolfe.hpp>
 #include <mlpack/core/optimizers/fw/constr_matrix_lp.hpp>
-#include <mlpack/core/optimizers/fw/update_span.hpp>
 #include "mc_fw_function.hpp"
+#include "mc_fw_update_matrix.hpp"
 
 namespace mlpack {
 namespace matrix_completion {
 class MCFWSolver
 {
-public:
-    MCFWSolver(const size_t m,
-               const size_t n,
-               const arma::umat& indices,
-               const arma::vec& values,
-               const size_t r) :
+ public:
+  MCFWSolver(const size_t m,
+             const size_t n,
+             const arma::umat& indices,
+             const arma::vec& values,
+             const size_t r) :
     function(indices, values, m, n), r(r)
     {
-        ConstrMatrixLpBallSolver constr_solver(1);
-        UpdateSpan update_rule(function);
-        
-        fw_solver = optimization::FrankWolfe<MatrixCompletionFWFunction,
-            optimization::ConstrMatrixLpBallSolver,
-            optimization::UpdateSpan<MatrixCompletionFWFunction>>(
-                        function, constr_solver, update_rule);
+      ConstrMatrixLpBallSolver constrSolver(1);
+      UpdateMatrix updateRule;
+
+      fwSolver = optimization::FrankWolfe<
+          optimization::ConstrMatrixLpBallSolver, UpdateMatrix>(
+          constrSolver, updateRule);
     }
-  
-    MCFWSolver(const size_t m,
-                const size_t n,
-                const arma::umat& indices,
-                const arma::vec& values,
-                const arma::mat& initialPoint) :
+
+  MCFWSolver(const size_t m,
+             const size_t n,
+             const arma::umat& indices,
+             const arma::vec& values,
+             const arma::mat& initialPoint) :
     function(indices, values, m, n, initialPoint)
     {
-        ConstrMatrixLpBallSolver constr_solver(1);
-        UpdateSpan update_rule(function);
+      ConstrMatrixLpBallSolver constrSolver(1);
+      UpdateMatrix updateRule;
         
-        fw_solver = optimization::FrankWolfe<MatrixCompletionFWFunction,
-            optimization::ConstrMatrixLpBallSolver,
-            optimization::UpdateSpan<MatrixCompletionFWFunction>>(
-                        function, constr_solver, update_rule);
+      fwSolver = optimization::FrankWolfe<
+          optimization::ConstrMatrixLpBallSolver, UpdateMatrix>(
+          constrSolver, updateRule);
     }
 
     
-    MCFWSolver(const size_t m,
-                const size_t n,
-                const arma::umat& indices,
-                const arma::vec& values) :
-    function(indices, values, m, n)
-    {
-        ConstrMatrixLpBallSolver constr_solver(1);
-        UpdateSpan update_rule(function);
+  MCFWSolver(const size_t m,
+             const size_t n,
+             const arma::umat& indices,
+             const arma::vec& values) :
+      function(indices, values, m, n)
+  {
+      ConstrMatrixLpBallSolver constrSolver(1);
+      UpdateMatrix updateRule;
         
-        fw_solver = optimization::FrankWolfe<MatrixCompletionFWFunction,
-            optimization::ConstrMatrixLpBallSolver,
-            optimization::UpdateSpan<MatrixCompletionFWFunction>>(
-                            function, constr_solver, update_rule);
-    }
+      fwSolver = optimization::FrankWolfe<
+          optimization::ConstrMatrixLpBallSolver, UpdateMatrix>(
+          constrSolver, updateRule);
+  }
 
-    void Recover(arma::mat& recovered, const size_t m, const size_t n)
-    {
-        fw_solver.Optimize(arma::mat& recovered);
-    }
+  void Recover(arma::mat& recovered, const size_t m, const size_t n)
+  {
+    fw_solver.Optimize(function, arma::mat& recovered);
+  }
 
-private:
-    MatrixCompletionFWFunction function;
-    size_t r;
-    
-    optimization::FrankWolfe<MatrixCompletionFWFunction,
-        optimization::ConstrMatrixLpBallSolver,
-        optimization::UpdateSpan<MatrixCompletionFWFunction>> fw_solver;
+ private:
+  //! Function to be optimized.
+  MatrixCompletionFWFunction function;
+
+  //! Rank of the matrix to recover.
+  size_t r;
+
+  optimization::FrankWolfe<optimization::ConstrMatrixLpBallSolver,
+      UpdateMatrix> fwSolver;
 };
 } // namespace matrix_completion
 } // namespace mlpack

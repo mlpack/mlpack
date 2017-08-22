@@ -21,6 +21,8 @@
 #ifndef MLPACK_METHODS_MATRIX_COMPLETION_MC_FW_FUNCTION_HPP
 #define MLPACK_METHODS_MATRIX_COMPLETION_MC_FW_FUNCTION_HPP
 
+#include <mlpack/core/optimizers/fw/frank_wolfe.hpp>
+
 namespace mlpack {
 namespace matrix_completion {
 class MatrixCompletionFWFunction {
@@ -42,22 +44,24 @@ class MatrixCompletionFWFunction {
       initialPoint(initialPoint)
   { /* Nothing to do. */ }
 
-    
+
   double Evaluate(const arma::mat& X)
   {
     double f = 0;
-    for (arma::uword i = 0; i<indices.n_cols; i++) {
+    for (arma::uword i = 0; i < indices.n_cols; i++)
+    {
       arma::uword rind = indices(0, i);
       arma::uword cind = indices(1, i);
       f += std::pow(X(rind, cind) - values(i), 2);
     }
-    return 0.5*f;
+    return 0.5 * f;
   }
-  
+
   void Gradient(const arma::mat& X, arma::mat& gradient)
   {
     arma::vec gradientVal = -values;
-    for (arma::uword i = 0; i<indices.n_cols; i++) {
+    for (arma::uword i = 0; i < indices.n_cols; i++)
+    {
       arma::uword rind = indices(0, i);
       arma::uword cind = indices(1, i);
       gradientVal(i) += X(rind, cind);
@@ -67,15 +71,29 @@ class MatrixCompletionFWFunction {
     gradient = arma::mat(spGradient);
   }
 
+  void GetKnownEntries(const arma::mat& X, arma::vec& xValues)
+  {
+    xValues.set_size(arma::size(values));
+    for (size_t i = 0; i < indices.n_cols; i++)
+      xValues(i) = X(indices(0, i), indices(1, i));
+  }
+
+  //! Get the known elements.
+  const arma::vec& Values() const { return values; }
+
 private:
   //! Indices for sparse matrix.
   arma::umat indices;
+
   //! Values for sparse matrix.
   arma::vec values;
+
   //! Number of rows of the matrix.
   size_t m;
+
   //! Number of columns of the matrix.
   size_t n;
+
   //! Initial point of iterations.
   arma::mat initialPoint;
 };
