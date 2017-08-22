@@ -1285,16 +1285,19 @@ BOOST_AUTO_TEST_CASE(SimpleMeanSquaredErrorLayerTest)
 /*
  * Simple test for the Resize layer
  */
-/*
+
 BOOST_AUTO_TEST_CASE(SimpleResizeLayerTest)
 {
   arma::mat input, output, inputModified;
-  input.randu(10, 10);
+  input.ones(10, 10);
   BiLinearFunction interpolation(input.n_rows, input.n_cols, 20, 20);
   Resize<> layer(interpolation);
+  // Forward pass on the input.
   layer.Forward(std::move(input), std::move(output));
+  // Backward pass on the generated input.
   layer.Backward(std::move(input), std::move(output), std::move(inputModified));
+  
   CheckMatrices(input, inputModified);
-}*/
+}
 
 BOOST_AUTO_TEST_SUITE_END();

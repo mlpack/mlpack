@@ -20,41 +20,45 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType,
-         typename OutputDataType,
-         typename InterpolationType>
-Resize<InputDataType, OutputDataType, InterpolationType>::
+template<class InterpolationType,
+         typename InputDataType,
+         typename OutputDataType
+         >
+Resize<InterpolationType, InputDataType, OutputDataType>::
 Resize(InterpolationType policy): policy(policy)
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType,
-         typename OutputDataType,
-         typename InterpolationType>
+template<class InterpolationType,
+         typename InputDataType,
+         typename OutputDataType
+         >
 template<typename eT>
-void Resize<InputDataType, OutputDataType, InterpolationType>::Forward(
+void Resize<InterpolationType, InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
   policy.UpSample(input, output);
 }
 
-template<typename InputDataType,
-         typename OutputDataType,
-         typename InterpolationType>
+template<class InterpolationType,
+         typename InputDataType,
+         typename OutputDataType
+         >
 template<typename eT>
-void Resize<InputDataType, OutputDataType, InterpolationType>::Backward(
+void Resize<InterpolationType, InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
   policy.DownSample(gy, g);
   // g.resize(g.n_rows * g.n_cols , 1);
 }
 
-template<typename InputDataType,
-         typename OutputDataType,
-         typename InterpolationType>
+template<class InterpolationType,
+         typename InputDataType,
+         typename OutputDataType
+         >
 template<typename Archive>
-void Resize<InputDataType, OutputDataType, InterpolationType>::Serialize(
+void Resize<InterpolationType, InputDataType, OutputDataType>::Serialize(
     Archive& ar, const unsigned int /* version */)
 {
   ar & data::CreateNVP(policy, "policy");
