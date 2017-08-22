@@ -19,6 +19,8 @@
 #include <mlpack/core/optimizers/adam/adam_update.hpp>
 #include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
 #include <mlpack/methods/reinforcement_learning/policy/aggregated_policy.hpp>
+#include <mlpack/methods/reinforcement_learning/policy/sample_policy.hpp>
+#include <mlpack/methods/reinforcement_learning/network/actor_critic.hpp>
 #include <mlpack/methods/reinforcement_learning/training_config.hpp>
 
 #include <boost/test/unit_test.hpp>
@@ -198,6 +200,72 @@ BOOST_AUTO_TEST_CASE(NStepQLearningTest)
   size_t testEpisodes = 0;
   auto measure = [&rewards, &pos, &testEpisodes](double reward)
   {
+    size_t maxEpisode = 100000;
+    if (testEpisodes > maxEpisode)
+      BOOST_REQUIRE(false);
+    testEpisodes++;
+    rewards[pos++] = reward;
+    pos %= rewards.n_elem;
+    // Maybe underestimated.
+    double avgReward = arma::mean(rewards);
+    Log::Debug << "Average return: " << avgReward
+               << " Episode return: " << reward << std::endl;
+    if (avgReward > 60)
+      return true;
+    return false;
+  };
+
+  agent.Train(measure);
+  Log::Debug << "Total test episodes: " << testEpisodes << std::endl;
+}
+
+BOOST_AUTO_TEST_CASE(ActorCriticTest)
+{
+  /**
+   * This is for the Travis CI server, in your own machine you shuold use more
+   * threads.
+   */
+#ifdef HAS_OPENMP
+  omp_set_num_threads(1);
+#endif
+
+  // Set up the network.
+  FFN<Reinforce<>, GaussianInitialization> actor(Reinforce<>(),
+      GaussianInitialization(0, 0.001));
+  actor.Add<Linear<>>(4, 100);
+  actor.Add<ReLULayer<>>();
+  actor.Add<Linear<>>(100, 2);
+//  actor.Add<ReLULayer<>>();
+//  actor.Add<Linear<>>(20, 2);
+  actor.Add<Policy<>>(0.1);
+  FFN<MeanSquaredError<>, GaussianInitialization> critic(MeanSquaredError<>(),
+      GaussianInitialization(0, 0.001));
+  critic.Add<Linear<>>(4, 100);
+  critic.Add<ReLULayer<>>();
+//  critic.Add<Linear<>>(20, 20);
+//  critic.Add<ReLULayer<>>();
+  critic.Add<Linear<>>(100, 1);
+
+  ActorCriticNetwork<decltype(actor), decltype(critic)> model(
+          std::move(actor), std::move(critic));
+
+  SamplePolicy<CartPole> policy;
+
+  TrainingConfig config;
+  config.ActorStepSize() = 0.001;
+  config.CriticStepSize() = 0.01;
+  config.Discount() = 0.99;
+  config.NumWorkers() = 16;
+  config.UpdateInterval() = 6;
+  config.StepLimit() = 200;
+
+  ActorCritic<CartPole, decltype(model), VanillaUpdate, decltype(policy)>
+          agent(std::move(config), std::move(model), std::move(policy));
+
+  arma::vec rewards(20, arma::fill::zeros);
+  size_t pos = 0;
+  size_t testEpisodes = 0;
+  auto measure = [&rewards, &pos, &testEpisodes](double reward) {
     size_t maxEpisode = 100000;
     if (testEpisodes > maxEpisode)
       BOOST_REQUIRE(false);

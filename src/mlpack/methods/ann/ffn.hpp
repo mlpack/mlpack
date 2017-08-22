@@ -233,6 +233,16 @@ class FFN
    */
   double Backward(arma::mat targets, arma::mat& gradients);
 
+  const std::vector<LayerTypes>& Modules() const { return network; }
+  std::vector<LayerTypes>& Modules() { return network; }
+
+  /**
+   * Swap the content of this network with given network.
+   *
+   * @param network Desired source network.
+   */
+  void Swap(FFN& network);
+
  private:
   // Helper functions.
   /**
@@ -275,12 +285,7 @@ class FFN
    */
   void ResetGradients(arma::mat& gradient);
 
-  /**
-   * Swap the content of this network with given network.
-   *
-   * @param network Desired source network.
-   */
-  void Swap(FFN& network);
+
 
   //! Instantiated outputlayer used to evaluate the network.
   OutputLayerType outputLayer;

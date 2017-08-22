@@ -18,6 +18,7 @@
 #include "worker/one_step_q_learning_worker.hpp"
 #include "worker/one_step_sarsa_worker.hpp"
 #include "worker/n_step_q_learning_worker.hpp"
+#include "worker/actor_critic_worker.hpp"
 #include "training_config.hpp"
 
 namespace mlpack {
@@ -231,6 +232,16 @@ template <
 using NStepQLearning = AsyncLearning<NStepQLearningWorker<EnvironmentType,
     NetworkType, UpdaterType, PolicyType>, EnvironmentType, NetworkType,
     UpdaterType, PolicyType>;
+
+template <
+        typename EnvironmentType,
+        typename NetworkType,
+        typename UpdaterType,
+        typename PolicyType
+>
+using ActorCritic = AsyncLearning<ActorCriticWorker<EnvironmentType,
+        NetworkType, UpdaterType, PolicyType>, EnvironmentType, NetworkType,
+        UpdaterType, PolicyType>;
 
 } // namespace rl
 } // namespace mlpack

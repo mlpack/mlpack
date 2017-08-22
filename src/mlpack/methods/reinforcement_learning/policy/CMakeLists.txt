@@ -3,6 +3,7 @@
 set(SOURCES
   aggregated_policy.hpp
   greedy_policy.hpp
+  sample_policy.hpp
 )
 
 # Add directory name to sources.
