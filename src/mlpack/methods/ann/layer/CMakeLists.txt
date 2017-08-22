@@ -55,8 +55,8 @@ set(SOURCES
   negative_log_likelihood_impl.hpp
   parametric_relu.hpp
   parametric_relu_impl.hpp
-        policy.hpp
-        policy_impl.hpp
+  policy.hpp
+  policy_impl.hpp
   recurrent.hpp
   recurrent_impl.hpp
   recurrent_attention.hpp
