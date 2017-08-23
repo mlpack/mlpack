@@ -201,7 +201,7 @@ class FFN
   arma::mat& Parameters() { return parameter; }
 
   /**
-   * Reset the module infomration (weights/parameters).
+   * Reset the module information (weights/parameters).
    */
   void ResetParameters();
 
@@ -381,10 +381,10 @@ class FFN
   //! The current error for the backward pass.
   arma::mat error;
 
-  //! THe current input of the forward/backward pass.
+  //! The current input of the forward/backward pass.
   arma::mat currentInput;
 
-  //! THe current target of the forward/backward pass.
+  //! The current target of the forward/backward pass.
   arma::mat currentTarget;
 
   //! Locally-stored delta visitor.
