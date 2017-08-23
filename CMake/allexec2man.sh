@@ -12,7 +12,7 @@ exec2man="$1"
 outdir="$2"
 
 mkdir -p "$outdir"
-for program in `find . -perm /u=x,g=x,o=x | \
+for program in `find . -perm /u=x,g=x,o=x -iname 'mlpack_*' | \
                 grep -v '[.]$' | \
                 grep -v '_test$' | \
                 sed 's|^./||'`; do

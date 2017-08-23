@@ -26,3 +26,4 @@ endforeach()
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(decision_tree)
+add_python_binding(decision_tree)

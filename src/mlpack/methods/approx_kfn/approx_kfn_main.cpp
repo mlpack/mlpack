@@ -12,6 +12,7 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/cli.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 #include "drusilla_select.hpp"
 #include "qdafn.hpp"
 
@@ -37,23 +38,54 @@ PROGRAM_INFO("Approximate furthest neighbor search",
     "that typically, the 'ds' algorithm requires far fewer tables and "
     "projections than the 'qdafn' algorithm."
     "\n\n"
-    "Specify a reference set (set to search in) with --reference_file, "
-    "specify a query set with --query_file, and specify algorithm parameters "
-    "with --num_tables (-t) and --num_projections (-p) (or don't and defaults "
-    "will be used).  The algorithm to be used (either 'ds'---the default---or "
-    "'qdafn') may be specified with --algorithm.  Also specify the number of "
-    "neighbors to search for with --k.  Each of those options also has short "
-    "names; see the detailed parameter documentation below."
+    "Specify a reference set (set to search in) with " +
+    PRINT_PARAM_STRING("reference") + ", specify a query set with " +
+    PRINT_PARAM_STRING("query") + ", and specify algorithm parameters with " +
+    PRINT_PARAM_STRING("num_tables") + " and " +
+    PRINT_PARAM_STRING("num_projections") + " (or don't and defaults will be "
+    "used).  The algorithm to be used (either 'ds'---the default---or 'qdafn') "
+    " may be specified with " + PRINT_PARAM_STRING("algorithm") + ".  Also "
+    "specify the number of neighbors to search for with " +
+    PRINT_PARAM_STRING("k") + "."
     "\n\n"
-    "If no query file is specified, the reference set will be used as the "
-    "query set.  A model may be saved with --output_model_file (-M), and an "
-    "input model may be loaded instead of specifying a reference set with "
-    "--input_model_file (-m)."
+    "If no query set is specified, the reference set will be used as the "
+    "query set.  The " + PRINT_PARAM_STRING("output_model") + " output "
+    "parameter may be used to store the built model, and an input model may be "
+    "loaded instead of specifying a reference set with the " +
+    PRINT_PARAM_STRING("input_model") + " option."
     "\n\n"
-    "Results for each query point are stored in the files specified by "
-    "--neighbors_file and --distances_file.  This is in the same format as the "
-    "mlpack_kfn and mlpack_knn programs: each row holds the k distances or "
-    "neighbor indices for each query point.");
+    "Results for each query point can be stored with the " +
+    PRINT_PARAM_STRING("neighbors") + " and " +
+    PRINT_PARAM_STRING("distances") + " output parameters.  Each row of these "
+    "output matrices holds the k distances or neighbor indices for each query "
+    "point."
+    "\n\n"
+    "For example, to find the 5 approximate furthest neighbors with " +
+    PRINT_DATASET("reference_set") + " as the reference set and " +
+    PRINT_DATASET("query_set") + " as the query set using DrusillaSelect, "
+    "storing the furthest neighbor indices to " + PRINT_DATASET("neighbors") +
+    " and the furthest neighbor distances to " + PRINT_DATASET("distances") +
+    ", one could call"
+    "\n\n" +
+    PRINT_CALL("approx_kfn", "query", "query_set", "reference", "reference_set",
+        "k", 5, "algorithm", "ds", "neighbors", "neighbors", "distances",
+        "distances") +
+    "\n\n"
+    "and to perform approximate all-furthest-neighbors search with k=1 on the "
+    "set " + PRINT_DATASET("data") + " storing only the furthest neighbor "
+    "distances to " + PRINT_DATASET("distances") + ", one could call"
+    "\n\n" +
+    PRINT_CALL("approx_kfn", "reference", "reference_set", "k", 1, "distances",
+        "distances") +
+    "\n\n"
+    "A trained model can be re-used.  If a model has been previously saved to "
+    + PRINT_MODEL("model") + ", then we may find 3 approximate furthest "
+    "neighbors on a query set " + PRINT_DATASET("new_query_set") + " using "
+    "that model and store the furthest neighbor indices into " +
+    PRINT_DATASET("neighbors") + " by calling"
+    "\n\n" +
+    PRINT_CALL("approx_kfn", "input_model", "model", "query", "new_query_set",
+        "k", 3, "neighbors", "neighbors"));
 
 PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");
 PARAM_MATRIX_IN("query", "Matrix containing query points.", "q");
@@ -108,10 +140,8 @@ PARAM_MODEL_IN(ApproxKFNModel, "input_model", "File containing input model.",
 PARAM_MODEL_OUT(ApproxKFNModel, "output_model", "File to save output model to.",
     "M");
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   if (!CLI::HasParam("reference") && !CLI::HasParam("input_model"))
     Log::Fatal << "Either --reference_file (-r) or --input_model_file (-m) must"
         << " be specified!" << endl;
@@ -264,7 +294,4 @@ int main(int argc, char** argv)
   // Should we save the model?
   if (CLI::HasParam("output_model"))
     CLI::GetParam<ApproxKFNModel>("output_model") = std::move(m);
-
-  // Save any output variables.
-  CLI::Destroy();
 }

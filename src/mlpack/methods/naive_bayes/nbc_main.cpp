@@ -15,6 +15,7 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/data/normalize_labels.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 
 #include "naive_bayes_classifier.hpp"
 
@@ -28,20 +29,43 @@ PROGRAM_INFO("Parametric Naive Bayes Classifier",
     "training set, or loads a model from the given model file, and then may use"
     " that trained model to classify the points in a given test set."
     "\n\n"
-    "Labels are expected to be the last row of the training set "
-    "(--training_file), but labels can also be passed in separately as their "
-    "own file (--labels_file).  If training is not desired, a pre-existing "
-    "model can be loaded with the --input_model_file (-m) option."
+    "The training set is specified with the " +
+    PRINT_PARAM_STRING("training") + " parameter.  Labels may be either the "
+    "last row of the training set, or alternately the " +
+    PRINT_PARAM_STRING("labels") + " parameter may be specified to pass a "
+    "separate matrix of labels."
     "\n\n"
-    "The '--incremental_variance' option can be used to force the training to "
-    "use an incremental algorithm for calculating variance.  This is slower, "
-    "but can help avoid loss of precision in some cases."
+    "If training is not desired, a pre-existing model may be loaded with the " +
+    PRINT_PARAM_STRING("input_model") + " parameter."
     "\n\n"
-    "If classifying a test set is desired, the test set should be in the file "
-    "specified with the --test_file (-T) option, and the classifications will "
-    "be saved to the file specified with the --output_file (-o) option.  If "
-    "saving a trained model is desired, the --output_model_file (-M) option "
-    "should be given.");
+    "\n\n"
+    "The " + PRINT_PARAM_STRING("incremental_variance") + " parameter can be "
+    "used to force the training to use an incremental algorithm for calculating"
+    " variance.  This is slower, but can help avoid loss of precision in some "
+    "cases."
+    "\n\n"
+    "If classifying a test set is desired, the test set may be specified with "
+    "the " + PRINT_PARAM_STRING("test") + " parameter, and the "
+    "classifications may be saved with the " + PRINT_PARAM_STRING("output") +
+    " output parameter.  If saving the trained model is desired, this may be "
+    "done with the " + PRINT_PARAM_STRING("output_model") + " output "
+    "parameter."
+    "\n\n"
+    "For example, to train a Naive Bayes classifier on the dataset " +
+    PRINT_DATASET("data") + " with labels " + PRINT_DATASET("labels") + " "
+    "and save the model to " + PRINT_MODEL("nbc_model") + ", the following "
+    "command may be used:"
+    "\n\n" +
+    PRINT_CALL("nbc", "training", "data", "labels", "labels", "output_model",
+        "nbc_model") +
+    "\n\n"
+    "Then, to use " + PRINT_MODEL("nbc_model") + " to predict the classes of "
+    "the dataset " + PRINT_DATASET("test_set") + " and save the predicted "
+    "classes to " + PRINT_DATASET("predictions") + ", the following command "
+    "may be used:"
+    "\n\n" +
+    PRINT_CALL("nbc", "input_model", "nbc_model", "test", "test_set", "output",
+        "predictions"));
 
 // A struct for saving the model with mappings.
 struct NBCModel
@@ -80,10 +104,8 @@ PARAM_UROW_OUT("output", "The matrix in which the predicted labels for the"
 PARAM_MATRIX_OUT("output_probs", "The matrix in which the predicted probability"
     " of labels for the test set will be written.", "p");
 
-int main(int argc, char* argv[])
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   // Check input parameters.
   if (CLI::HasParam("training") && CLI::HasParam("input_model"))
     Log::Fatal << "Cannot specify both --training_file (-t) and "
@@ -191,6 +213,4 @@ int main(int argc, char* argv[])
 
   if (CLI::HasParam("output_model"))
     CLI::GetParam<NBCModel>("output_model") = std::move(model);
-
-  CLI::Destroy();
 }

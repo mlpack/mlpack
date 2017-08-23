@@ -251,6 +251,10 @@ BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionOptimize)
   BOOST_REQUIRE_SMALL(relativeError, 1e-2);
 }
 
+// The test is only compiled if the user has specified OpenMP to be
+// used.
+#ifdef HAS_OPENMP
+
 // Test Regularized SVD with parallel SGD.
 BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionOptimizeHOGWILD)
 {
@@ -311,5 +315,7 @@ BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionOptimizeHOGWILD)
   // Relative error should be small.
   BOOST_REQUIRE_SMALL(relativeError, 1e-2);
 }
+
+#endif
 
 BOOST_AUTO_TEST_SUITE_END();
