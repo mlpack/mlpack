@@ -12,6 +12,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/optimizers/scd/scd.hpp>
 #include <mlpack/core/optimizers/scd/descent_policies/greedy_descent.hpp>
+#include <mlpack/core/optimizers/scd/descent_policies/cyclic_descent.hpp>
 #include <mlpack/core/optimizers/parallel_sgd/sparse_test_function.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression_function.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression_function.hpp>
@@ -93,6 +94,57 @@ BOOST_AUTO_TEST_CASE(GreedyDescentTest)
   point[1] = 10;
 
   BOOST_REQUIRE_EQUAL(descentPolicy.DescentFeature(0, point, f), 1);
+}
+
+/** 
+ * Test the cyclic descent policy.
+ */
+BOOST_AUTO_TEST_CASE(CyclicDescentTest)
+{
+  const size_t features = 10;
+  struct DummyFunction
+  {
+    static size_t NumFeatures()
+    {
+      return features;
+    }
+  };
+
+  DummyFunction dummy;
+
+  CyclicDescent descentPolicy;
+
+  for(size_t i = 0; i < 15; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(descentPolicy.DescentFeature(i, arma::mat(), dummy), i %
+        features);
+  }
+}
+
+/**
+ * Test the random descent policy.
+ */
+BOOST_AUTO_TEST_CASE(RandomDescentTest)
+{
+  const size_t features = 10;
+  struct DummyFunction
+  {
+    static size_t NumFeatures()
+    {
+      return features;
+    }
+  };
+
+  DummyFunction dummy;
+
+  CyclicDescent descentPolicy;
+
+  for(size_t i = 0; i < 100; ++i)
+  {
+    size_t j = descentPolicy.DescentFeature(i, arma::mat(), dummy);
+    BOOST_REQUIRE_LT(j, features);
+    BOOST_REQUIRE_GE(j, 0);
+  }
 }
 
 /**

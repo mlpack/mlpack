@@ -30,18 +30,18 @@ class CyclicDescent
    * current iteration.
    *
    * @tparam ResolvableFunctionType The type of the function to be optimized.
-   * @param numEpoch The iteration number for which the feature is to be
+   * @param iteration The iteration number for which the feature is to be
    *    obtained.
    * @param iterate The current value of the decision variable.
    * @param function The function to be optimized.
    * @return The index of the coordinate to be descended.
    */
   template <typename ResolvableFunctionType>
-  size_t DescentFeature(const size_t numEpoch,
+  static size_t DescentFeature(const size_t iteration,
                         const arma::mat& /* iterate */,
                         const ResolvableFunctionType& function)
   {
-    return numEpoch % function.NumFeatures();
+    return iteration % function.NumFeatures();
   }
 };
 
