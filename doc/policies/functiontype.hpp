@@ -47,8 +47,7 @@ size_t NumFunctions();
 double Evaluate(const arma::mat& coordinates, const size_t i);
 @endcode
 
-
-@code 
+@code
 // Evaluate the gradient of the 'i' th loss function at the given coordinates,
 // where 'gradient' is an output parameter for the required gradient.
 void Gradient(const arma::mat& coordinates, const size_t i, arma::mat& gradient);

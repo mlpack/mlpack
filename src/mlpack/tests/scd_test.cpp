@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE(GreedyDescentTest)
   BOOST_REQUIRE_EQUAL(descentPolicy.DescentFeature(0, point, f), 1);
 }
 
-/** 
+/**
  * Test the cyclic descent policy.
  */
 BOOST_AUTO_TEST_CASE(CyclicDescentTest)
@@ -114,7 +114,7 @@ BOOST_AUTO_TEST_CASE(CyclicDescentTest)
 
   CyclicDescent descentPolicy;
 
-  for(size_t i = 0; i < 15; ++i)
+  for (size_t i = 0; i < 15; ++i)
   {
     BOOST_REQUIRE_EQUAL(descentPolicy.DescentFeature(i, arma::mat(), dummy), i %
         features);
@@ -139,7 +139,7 @@ BOOST_AUTO_TEST_CASE(RandomDescentTest)
 
   CyclicDescent descentPolicy;
 
-  for(size_t i = 0; i < 100; ++i)
+  for (size_t i = 0; i < 100; ++i)
   {
     size_t j = descentPolicy.DescentFeature(i, arma::mat(), dummy);
     BOOST_REQUIRE_LT(j, features);
@@ -214,6 +214,5 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionPartialGradientTest)
     CheckMatrices(gradient.col(j), arma::mat(fGrad.col(j)));
   }
 }
-
 
 BOOST_AUTO_TEST_SUITE_END();

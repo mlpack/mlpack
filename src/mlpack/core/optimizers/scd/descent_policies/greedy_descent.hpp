@@ -24,6 +24,7 @@ namespace optimization {
  * deterministic approach and is generally more expensive to calculate.
  *
  * For more information, refer to the following.
+ * @code
  * @misc{1506.00552,
  *   Author = {Julie Nutini and Mark Schmidt and Issam H.
  *             Laradji and Michael Friedlander and Hoyt Koepke},
@@ -32,6 +33,7 @@ namespace optimization {
  *   Year = {2015},
  *   Eprint = {arXiv:1506.00552}
  * }
+ * @endcode
  */
 class GreedyDescent
 {

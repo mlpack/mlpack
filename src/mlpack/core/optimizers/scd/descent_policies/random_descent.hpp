@@ -20,6 +20,19 @@ namespace optimization {
 /**
  * Random descent policy for Stochastic Coordinate Descent(SCD). This
  * descent scheme picks a the co-ordinate for the descent uniformly randomly.
+ *
+ * For more information, see the following.
+ * @code
+ * @inproceedings{Shalev-Shwartz:2009:SML:1553374.1553493,
+ *   Author = {Shalev-Shwartz, Shai and Tewari, Ambuj},
+ *   Title = {Stochastic Methods for L1 Regularized Loss Minimization},
+ *   Booktitle = {Proceedings of the 26th Annual International Conference on Machine Learning},
+ *   Series = {ICML '09},
+ *   Year = {2009},
+ *   isbn = {978-1-60558-516-1},
+ *   url = {http://doi.acm.org/10.1145/1553374.1553493},
+ * }
+ * @endcode
  */
 class RandomDescent
 {

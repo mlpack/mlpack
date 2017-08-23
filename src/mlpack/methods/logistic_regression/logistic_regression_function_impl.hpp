@@ -71,9 +71,9 @@ double LogisticRegressionFunction<MatType>::Evaluate(
 
   // For the regularization, we ignore the first term, which is the intercept
   // term and take every term except the last one in the decision variable.
-  double norm = arma::norm(parameters.tail_cols(parameters.n_elem - 1));
-
-  const double regularization = 0.5 * lambda * norm * norm;
+  const double regularization = 0.5 * lambda *
+      arma::dot(parameters.tail_cols(parameters.n_elem - 1),
+      parameters.tail_cols(parameters.n_elem - 1));
 
   // Calculate vectors of sigmoids.  The intercept term is parameters(0, 0) and
   // does not need to be multiplied by any of the predictors.
