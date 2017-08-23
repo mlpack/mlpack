@@ -2,7 +2,7 @@
  * @file cyclic_descent.hpp
  * @author Shikhar Bhardwaj
  *
- * Cyclic descent policy for Stochastic Co ordinate Descent (SCD).
+ * Cyclic descent policy for Stochastic Coordinate Descent (SCD).
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -18,7 +18,7 @@ namespace mlpack {
 namespace optimization {
 
 /**
- * Cyclic descent policy for Stochastic Co-ordinate Descent(SCD). This
+ * Cyclic descent policy for Stochastic Coordinate Descent(SCD). This
  * descent scheme picks a the co-ordinate for the descent in a cyclic manner
  * serially.
  */
@@ -47,4 +47,5 @@ class CyclicDescent
 
 } // namespace optimization
 } // namespace mlpack
+
 #endif

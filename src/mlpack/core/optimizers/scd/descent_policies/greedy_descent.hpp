@@ -2,7 +2,7 @@
  * @file greedy_descent.hpp
  * @author Shikhar Bhardwaj
  *
- * Greedy descent policy for Stochastic Co ordinate Descent (SCD).
+ * Greedy descent policy for Stochastic Coordinate Descent (SCD).
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -74,4 +74,5 @@ class GreedyDescent
 
 } // namespace optimization
 } // namespace mlpack
+
 #endif

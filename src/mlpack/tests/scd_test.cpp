@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE(GreedyDescentTest)
 }
 
 /**
- * Test changes to Logistic regression function.
+ * Test that LogisticRegressionFunction::FeatureGradient() works as expected.
  */
 BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionFeatureGradientTest)
 {
@@ -120,9 +120,9 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionFeatureGradientTest)
 }
 
 /**
- * Test changes to Softmax regression function.
+ * Test that SoftmaxRegressionFunction::FeatureGradient() works as expected.
  */
-BOOST_AUTO_TEST_CASE(SoftmaxRegressionFeatureGradientTest)
+BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionFeatureGradientTest)
 {
   const size_t points = 1000;
   const size_t inputSize = 10;

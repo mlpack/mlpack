@@ -2,7 +2,7 @@
  * @file scd.hpp
  * @author Shikhar Bhardwaj
  *
- * Stochastic Co ordinate Descent (SCD).
+ * Stochastic Coordinate Descent (SCD).
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -19,7 +19,7 @@ namespace mlpack {
 namespace optimization {
 
 /**
- * Stochastic Co ordinate descent is a technique for minimizing a function by
+ * Stochastic Coordinate descent is a technique for minimizing a function by
  * doing a line search along a single direction at the current point in the
  * iteration. The direction (or "coordinate") can be chosen cyclically, randomly
  * or in a greedy fashion(depending on the DescentPolicy).

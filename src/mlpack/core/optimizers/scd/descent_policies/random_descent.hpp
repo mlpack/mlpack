@@ -2,7 +2,7 @@
  * @file random_descent.hpp
  * @author Shikhar Bhardwaj
  *
- * Random descent policy for Stochastic Co ordinate Descent (SCD).
+ * Random descent policy for Stochastic Coordinate Descent (SCD).
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -18,7 +18,7 @@ namespace mlpack {
 namespace optimization {
 
 /**
- * Random descent policy for Stochastic Co-ordinate Descent(SCD). This
+ * Random descent policy for Stochastic Coordinate Descent(SCD). This
  * descent scheme picks a the co-ordinate for the descent uniformly randomly.
  */
 class RandomDescent
@@ -48,4 +48,5 @@ class RandomDescent
 
 } // namespace optimization
 } // namespace mlpack
+
 #endif

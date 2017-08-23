@@ -46,7 +46,7 @@ double SCD<DescentPolicyType>::Optimize(ResolvableFunctionType& function,
   // Start iterating.
   for (size_t i = 1; i != maxIterations; ++i)
   {
-    // Get the co ordinate to descend on.
+    // Get the coordinate to descend on.
     size_t featureIdx = descentPolicy.DescentFeature(i, iterate, function);
 
     // Get the partial gradient with respect to this feature.
