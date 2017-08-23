@@ -88,6 +88,8 @@ BOOST_AUTO_TEST_CASE(GreedyDescentTest)
 
   BOOST_REQUIRE_EQUAL(descentPolicy.DescentFeature(0, point, f), 2);
 
+  // Changing the point under consideration, so that the maximum gradient is at
+  // index 1.
   point[1] = 10;
 
   BOOST_REQUIRE_EQUAL(descentPolicy.DescentFeature(0, point, f), 1);

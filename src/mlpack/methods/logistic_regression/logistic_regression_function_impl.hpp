@@ -182,10 +182,8 @@ void LogisticRegressionFunction<MatType>::FeatureGradient(
     const size_t j,
     arma::sp_mat& gradient) const
 {
-  const arma::rowvec sigmoids = (1 / (1 + arma::exp(-parameters(0, 0)
+  const arma::rowvec diffs = responses - (1 / (1 + arma::exp(-parameters(0, 0)
       - parameters.tail_cols(parameters.n_elem - 1) * predictors)));
-
-  arma::mat diffs = responses - sigmoids;
 
   gradient.set_size(arma::size(parameters));
 

@@ -18,68 +18,71 @@ implementations of two public member functions, with the following interface
 and semantics
 
 @code
+// Evaluate the loss function at the given coordinates.
 double Evaluate(const arma::mat& coordinates);
 @endcode
 
-To evaluate the loss function at the given coordinates.
 
 @code
+// Evaluate the gradient at the given coordinates, where 'gradient' is an
+// output parameter for the required gradient.
 void Gradient(const arma::mat& coordinates, arma::mat& gradient);
 @endcode
 
-To evaluate the gradient at the given coordinates, where \c gradient is an
-out-param for the required gradient.
 
 Optimizers like SGD and RMSProp require a \c DecomposableFunctionType having the
 following requirements
 
 @code
+// Return the number of functions. In a data-dependent function, this would
+// return the number of points in the dataset.
 size_t NumFunctions();
 @endcode
 
-Return the number of functions. In a data-dependent function, this would return
-the number of points in the dataset.
 
 @code
+// Evaluate the 'i' th loss function. For example, for a data-dependent
+// function, Evaluate(coordinates, 0) should evaluate the loss function at the
+// first point in the dataset.
 double Evaluate(const arma::mat& coordinates, const size_t i);
 @endcode
 
-Evaluate the \c i th loss function. For example, for a data-dependent function,
-Evaluate(coordinates, 0) should evaluate the loss function at the first point
-in the dataset.
 
 @code 
+// Evaluate the gradient of the 'i' th loss function at the given coordinates,
+// where 'gradient' is an output parameter for the required gradient.
 void Gradient(const arma::mat& coordinates, const size_t i, arma::mat& gradient);
 @endcode
 
-Evaluate the gradient of the \c i th loss function.
 
 
 \c ParallelSGD optimizer requires a \c SparseFunctionType interface.
 \c SparseFunctionType requires the gradient to be in a sparse matrix (\c
 arma::sp_mat), as ParallelSGD, implemented with the HOGWILD!  scheme of
-unsynchronised updates, is expected to be relavant only in situations where the
+unsynchronised updates, is expected to be relevant only in situations where the
 individual gradients are sparse. So, the interface requires function with the
 following signatures
 
 @code
+// Return the number of functions. In a data-dependent function, this would
+// return the number of points in the dataset.
 size_t NumFunctions();
 @endcode
 
-Return the number of functions. In a data-dependent function, this would return
-the number of points in the dataset.
 
 @code
+// Evaluate the loss function at the given coordinates.
 double Evaluate(const arma::mat& coordinates);
 @endcode
 
-To evaluate the loss function at the given coordinates.
 
 @code
+// Evaluate the (sparse) gradient of the 'i' th loss function at the given
+// coordinates, where 'gradient' is an output parameter for the required
+// gradient.
 void Gradient(const arma::mat& coordinates, const size_t i, arma::sp_mat& gradient);
 @endcode
 
-Evaluate the (sparse) gradient of the \c i th loss function.
 
 The \c SCD optimizer requires a \c ResolvableFunctionType interface, to
 calculate partial gradients with respect to individual features. The optimizer
@@ -93,25 +96,20 @@ with the number of columns determined by the dimensionality of the dataset.
 The interface expects the following member functions from the function class
 
 @code
+// Return the number of features in the decision variable.
 size_t NumFeatures();
 @endcode
 
-Return the number of features in the decision variable.
-
 @code
+// Evaluate the loss function at the given coordinates.
 double Evaluate(const arma::mat& coordinates);
 @endcode
 
-To evaluate the loss function at the given coordinates, same as the
-\c FunctionType interface.
-
 @code
-void FeatureGradient(const arma::mat& coordinates, const size_t j, arma::sp_mat& gradient);
+// Evaluate the partial gradient of the loss function with respect to the 'j' th
+// coordinate at the given coordinates, where 'gradient' is an output parameter
+// for the required gradient. The 'gradient' matrix is supposed to be non-zero
+// in the jth column, which contains the relevant partial gradient.
+void PartialGradient(const arma::mat& coordinates, const size_t j, arma::sp_mat& gradient);
 @endcode
-
-To evaluate the gradient at the given coordinates, where \c gradient is an
-out-param for the required gradient. The out-param is a sparse matrix(with
-dimensions equal to the decision variable), for storing the gradient of the
-jth feature.  The \c gradient matrix is supposed to be non-zero in the jth
-column, which contains the relavant partial gradient.
 */
