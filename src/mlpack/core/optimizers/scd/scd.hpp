@@ -34,13 +34,13 @@ namespace optimization {
  *
  *  size_t NumFeatures();
  *  double Evaluate(const arma::mat& coordinates);
- *  void FeatureGradient(const arma::mat& coordinates,
+ *  void PartialGradient(const arma::mat& coordinates,
  *                       const size_t j,
  *                       arma::sp_mat& gradient);
  *
  *  NumFeatures() should return the number of features in the decision variable.
  *  Evaluate gives the value of the loss function at the current decision
- *  variable and FeatureGradient is used to evaluate the partial gradient with
+ *  variable and PartialGradient is used to evaluate the partial gradient with
  *  respect to the jth feature.
  *
  *  @tparam ResolvableFunctionType A function whose partial gradients with

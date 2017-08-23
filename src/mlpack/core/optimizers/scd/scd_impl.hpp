@@ -50,7 +50,7 @@ double SCD<DescentPolicyType>::Optimize(ResolvableFunctionType& function,
     size_t featureIdx = descentPolicy.DescentFeature(i, iterate, function);
 
     // Get the partial gradient with respect to this feature.
-    function.FeatureGradient(iterate, featureIdx, gradient);
+    function.PartialGradient(iterate, featureIdx, gradient);
 
     // Update the decision variable with the partial gradient.
     iterate.col(featureIdx) -= stepSize * gradient.col(featureIdx);

@@ -58,7 +58,7 @@ class GreedyDescent
     {
       arma::sp_mat fGrad;
 
-      function.FeatureGradient(iterate, i, fGrad);
+      function.PartialGradient(iterate, i, fGrad);
 
       double descent = arma::accu(fGrad);
       if (descent > bestDescent)

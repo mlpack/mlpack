@@ -11,7 +11,7 @@ algorithm.
 The \c FunctionType template parameter required by the Optimizer class can have
 additional requirements imposed on it, depending on the type of optimizer used.
 
-@section Interface requirements
+@section requirements Interface requirements
 
 The most basic requirements for the \c FunctionType parameter are the
 implementations of two public member functions, with the following interface

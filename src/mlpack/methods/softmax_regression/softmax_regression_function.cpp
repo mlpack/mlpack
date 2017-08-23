@@ -206,7 +206,7 @@ void SoftmaxRegressionFunction::Gradient(const arma::mat& parameters,
   }
 }
 
-void SoftmaxRegressionFunction::FeatureGradient(const arma::mat& parameters,
+void SoftmaxRegressionFunction::PartialGradient(const arma::mat& parameters,
                                                 const size_t j,
                                                 arma::sp_mat& gradient) const
 {

@@ -177,7 +177,7 @@ void LogisticRegressionFunction<MatType>::Gradient(
  * function with respect to the individual features in the parameter.
  */
 template <typename MatType>
-void LogisticRegressionFunction<MatType>::FeatureGradient(
+void LogisticRegressionFunction<MatType>::PartialGradient(
     const arma::mat& parameters,
     const size_t j,
     arma::sp_mat& gradient) const

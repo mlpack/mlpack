@@ -118,7 +118,7 @@ class LogisticRegressionFunction
    *    be computed.
    * @param gradient Sparse matrix to output gradient into.
    */
-  void FeatureGradient(const arma::mat& parameters,
+  void PartialGradient(const arma::mat& parameters,
                        const size_t j,
                        arma::sp_mat& gradient) const;
 

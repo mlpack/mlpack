@@ -120,7 +120,7 @@ class SoftmaxRegressionFunction
    *    gradient is to be computed.
    * @param gradient Out param for the gradient value.
    */
-  void FeatureGradient(const arma::mat& parameters,
+  void PartialGradient(const arma::mat& parameters,
                        size_t j,
                        arma::sp_mat& gradient) const;
 

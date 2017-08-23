@@ -96,9 +96,9 @@ BOOST_AUTO_TEST_CASE(GreedyDescentTest)
 }
 
 /**
- * Test that LogisticRegressionFunction::FeatureGradient() works as expected.
+ * Test that LogisticRegressionFunction::PartialGradient() works as expected.
  */
-BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionFeatureGradientTest)
+BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionPartialGradientTest)
 {
   // Evaluate the gradient and feature gradient and equate.
   arma::mat predictors("0 0 0.4; 0 0 0.6; 0 0.3 0; 0.2 0 0; 0.2 -0.5 0;");
@@ -115,16 +115,16 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionFeatureGradientTest)
   for (size_t i = 0; i < f.NumFeatures(); ++i)
   {
     arma::sp_mat fGrad;
-    f.FeatureGradient(testPoint, i, fGrad);
+    f.PartialGradient(testPoint, i, fGrad);
 
     CheckMatrices(testGradient.col(i), arma::mat(fGrad.col(i)));
   }
 }
 
 /**
- * Test that SoftmaxRegressionFunction::FeatureGradient() works as expected.
+ * Test that SoftmaxRegressionFunction::PartialGradient() works as expected.
  */
-BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionFeatureGradientTest)
+BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionPartialGradientTest)
 {
   const size_t points = 1000;
   const size_t inputSize = 10;
@@ -157,7 +157,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionFeatureGradientTest)
     // Get the gradient for this feature.
     arma::sp_mat fGrad;
 
-    srf.FeatureGradient(parameters, j, fGrad);
+    srf.PartialGradient(parameters, j, fGrad);
 
     CheckMatrices(gradient.col(j), arma::mat(fGrad.col(j)));
   }
