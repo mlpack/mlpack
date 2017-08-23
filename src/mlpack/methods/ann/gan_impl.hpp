@@ -210,7 +210,8 @@ Gradient(const arma::mat& /*parameters*/, const size_t i, arma::mat& gradient)
     discriminator.responses(numFunctions) = 1;
     discriminator.Gradient(discriminator.parameter, numFunctions,
       noiseGradientDiscriminator);
-    Log::Info << boost::apply_visitor(deltaVisitor, discriminator.network[1]) << std::endl;
+    // Log::Info << "generatorUpdateStep" << std::endl;
+    // Log::Info << boost::apply_visitor(deltaVisitor, discriminator.network[1]) << std::endl;
     generator.error = boost::apply_visitor(deltaVisitor,
         discriminator.network[1]);
     // set the current input requrired for gradient computation
@@ -218,14 +219,16 @@ Gradient(const arma::mat& /*parameters*/, const size_t i, arma::mat& gradient)
     generator.Backward();
     generator.ResetGradients(gradientGenerator);
     generator.Gradient();
-    // double multiplier = 1.0;
+    double multiplier = 1.5;
 
-    // gradientGenerator *= multiplier;
+    gradientGenerator *= multiplier;
+    /*
     if (counter % batchSize == 0)
     {
       Log::Info << "gradientDiscriminator = " << std::max(std::fabs(gradientDiscriminator.min()), std::fabs(gradientDiscriminator.max())) << std::endl;
       Log::Info << "gradientGenerator = " << std::max(std::fabs(gradientGenerator.min()), std::fabs(gradientGenerator.max())) << std::endl;
     }
+    */
   }
   counter++;
   if (counter >= numFunctions)
