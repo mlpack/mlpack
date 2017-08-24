@@ -1285,27 +1285,33 @@ BOOST_AUTO_TEST_CASE(SimpleMeanSquaredErrorLayerTest)
 /*
  * Simple test for the Resize layer
  */
-
 BOOST_AUTO_TEST_CASE(SimpleResizeLayerTest)
 {
-  arma::mat input, input1, input2, output, output1, output2, unzoomedOutput;
-  input1.randn(100, 1);
-  input2.randn(100, 1);
-  input = input1 + input2;
-  
-  BiLinearFunction interpolation(10, 10, 20, 20);
+  arma::mat input, output, unzoomedOutput, expectedOutput;
+  size_t inRowSize = 10;
+  size_t inColSize = 10;
+  size_t outRowSize = 20;
+  size_t outColSize = 20;
+  input.set_size(inRowSize * inColSize, 1);
+  for (size_t i = 0; i < inRowSize; i++)
+    for (size_t j = 0; j < inColSize; j++)
+    input[j * inColSize + i] = 1 * (double)i / inRowSize +
+        1 * double(j) / inColSize;
+
+  expectedOutput.set_size(outRowSize * outColSize, 1);
+  for (size_t i = 0; i < outRowSize; i++)
+    for (size_t j = 0; j < outColSize; j++)
+      expectedOutput[j * outColSize + i] = 1 * i / (double)outRowSize +
+          1 * j / (double)outColSize;
+
+  BiLinearFunction interpolation(inRowSize, inColSize, outRowSize, outColSize);
   Resize<> layer(interpolation);
-  // scale sum
+
   layer.Forward(std::move(input), std::move(output));
-  // scale operands
-  layer.Forward(std::move(input1), std::move(output1));
-  layer.Forward(std::move(input2), std::move(output2));
-  CheckMatrices(output, output1 + output2);
+  CheckMatrices(output - expectedOutput, arma::zeros(output.n_rows), 1e-12);
 
-
-  // down scale the inputs
   layer.Backward(std::move(output), std::move(output), std::move(unzoomedOutput));
-  // CheckMatrices(unzoomedOutput - input, arma::zeros(input.n_rows, 1), 1e-1);
+  CheckMatrices(unzoomedOutput - input, arma::zeros(input.n_rows), 1e-12);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

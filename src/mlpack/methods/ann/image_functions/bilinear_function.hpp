@@ -80,11 +80,11 @@ class BiLinearFunction
         coeff3 = (1 - deltaR) * deltaC;
         coeff4 = deltaR * deltaC;
 
-        output(i * outRowSize + j) =  
-            input(cOrigin * inRowSize + rOrigin) * coeff1 +
-            input(cOrigin * inRowSize + rOrigin + 1) * coeff2 +
-            input((cOrigin + 1) * inRowSize + rOrigin) * coeff3 +
-            input((cOrigin + 1) * inRowSize + rOrigin+1) * coeff4;
+        output(j * outColSize + i) =  
+            input(cOrigin * inColSize + rOrigin) * coeff1 +
+            input(cOrigin * inColSize + rOrigin + 1) * coeff2 +
+            input((cOrigin + 1) * inColSize + rOrigin) * coeff3 +
+            input((cOrigin + 1) * inColSize + rOrigin + 1) * coeff4;
       }
     }
   }
@@ -110,8 +110,8 @@ class BiLinearFunction
     }
     else
     {
-      scaleRow = (double)(outRowSize - 1) / inRowSize;
-      scaleCol = (double)(outColSize - 1) / inColSize;
+      scaleRow = (double)(outRowSize) / inRowSize;
+      scaleCol = (double)(outColSize) / inColSize;
 
       for (size_t i = 0; i < inRowSize; i++)
         for (size_t j = 0; j < inColSize; j++)
@@ -131,11 +131,11 @@ class BiLinearFunction
           coeff3 = (1 - deltaR) * deltaC;
           coeff4 = deltaR * deltaC;
 
-          output(i * inRowSize + j) =  
-              input(cOrigin * outRowSize + rOrigin) * coeff1 +
-              input(cOrigin * outRowSize + rOrigin + 1) * coeff2 +
-              input((cOrigin + 1) * outRowSize + rOrigin) * coeff3 +
-              input((cOrigin + 1) * outRowSize + rOrigin+1) * coeff4;
+          output(j * inColSize + i) =  
+              input(cOrigin * outColSize + rOrigin) * coeff1 +
+              input(cOrigin * outColSize + rOrigin + 1) * coeff2 +
+              input((cOrigin + 1) * outColSize + rOrigin) * coeff3 +
+              input((cOrigin + 1) * outColSize + rOrigin + 1) * coeff4;
       }
     }
   }
