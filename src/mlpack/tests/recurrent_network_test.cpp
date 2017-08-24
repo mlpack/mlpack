@@ -12,6 +12,7 @@
 #include <mlpack/core.hpp>
 
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
+#include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/rnn.hpp>
 #include <mlpack/core/data/binarize.hpp>
@@ -362,7 +363,8 @@ void GenerateNextRecursiveReber(const arma::Mat<char>& transitions,
  * Train the specified network and the construct a Reber grammar dataset.
  */
 template<typename RecurrentLayerType>
-void ReberGrammarTestNetwork(size_t hiddenSize = 4,
+void ReberGrammarTestNetwork(const RecurrentLayerType& recurrentLayer,
+                             size_t hiddenSize = 4,
                              bool recursive = false,
                              size_t averageRecursion = 3,
                              size_t maxRecursion = 5
@@ -451,7 +453,7 @@ void ReberGrammarTestNetwork(size_t hiddenSize = 4,
     RNN<MeanSquaredError<> > model(5);
 
     model.Add<Linear<> >(inputSize, hiddenSize);
-    model.Add<RecurrentLayerType>(hiddenSize, hiddenSize);
+    recurrentLayer(model);
     model.Add<Linear<> >(hiddenSize, outputSize);
     model.Add<SigmoidLayer<> >();
 
@@ -530,184 +532,62 @@ void ReberGrammarTestNetwork(size_t hiddenSize = 4,
 }
 
 /**
- * Train the specified network and the construct a Reber grammar dataset.
-
-void ReberGrammarTestNTMNetwork(bool embedded = false)
-{
-  // Reber state transition matrix. (The last two columns are the indices to the
-  // next path).
-  arma::Mat<char> transitions;
-  transitions << 'T' << 'P' << '1' << '2' << arma::endr
-              << 'X' << 'S' << '3' << '1' << arma::endr
-              << 'V' << 'T' << '4' << '2' << arma::endr
-              << 'X' << 'S' << '2' << '5' << arma::endr
-              << 'P' << 'V' << '3' << '5' << arma::endr
-              << 'E' << 'E' << '0' << '0' << arma::endr;
-
-  const size_t trainReberGrammarCount = 800;
-  const size_t testReberGrammarCount = 400;
-
-  std::string trainReber, testReber;
-  arma::field<arma::mat> trainInput(1, trainReberGrammarCount);
-  arma::field<arma::mat> trainLabels(1, trainReberGrammarCount);
-  arma::field<arma::mat> testInput(1, testReberGrammarCount);
-  arma::colvec translation;
-
-  // Generate the training data.
-  for (size_t i = 0; i < trainReberGrammarCount; i++)
-  {
-    if (embedded)
-      GenerateEmbeddedReber(transitions, trainReber);
-    else
-      GenerateReber(transitions, trainReber);
-
-    for (size_t j = 0; j < trainReber.length() - 1; j++)
-    {
-      ReberTranslation(trainReber[j], translation);
-      trainInput(0, i) = arma::join_cols(trainInput(0, i), translation);
-
-      ReberTranslation(trainReber[j + 1], translation);
-      trainLabels(0, i) = arma::join_cols(trainLabels(0, i), translation);
-    }
-  }
-
-  // Generate the test data.
-  for (size_t i = 0; i < testReberGrammarCount; i++)
-  {
-    if (embedded)
-      GenerateEmbeddedReber(transitions, testReber);
-    else
-      GenerateReber(transitions, testReber);
-
-    for (size_t j = 0; j < testReber.length() - 1; j++)
-    {
-      ReberTranslation(testReber[j], translation);
-      testInput(0, i) = arma::join_cols(testInput(0, i), translation);
-    }
-  }
-
-  /*
-   * Construct a network with 7 input units, layerSize hidden units and 7 output
-   * units. The hidden layer is connected to itself. The network structure looks
-   * like:
-   *
-   *  Input         Hidden        Output
-   * Layer(7)  Layer(layerSize)   Layer(7)
-   * +-----+       +-----+       +-----+
-   * |     |       |     |       |     |
-   * |     +------>|     +------>|     |
-   * |     |    ..>|     |       |     |
-   * +-----+    .  +--+--+       +-- ---+
-   *            .     .
-   *            .     .
-   *            .......
-
-  // It isn't guaranteed that the recurrent network will converge in the
-  // specified number of iterations using random weights. If this works 1 of 5
-  // times, I'm fine with that. All I want to know is that the network is able
-  // to escape from local minima and to solve the task.
-  size_t successes = 0;
-  size_t offset = 0;
-  for (size_t trial = 0; trial < 5; ++trial)
-  {
-    const size_t outputSize = 7;
-    const size_t inputSize = 7;
-
-    RNN<MeanSquaredError<> > model(5);
-
-    model.Add<Linear<> >(inputSize, 1);
-    model.Add<NeuralTuringMachine<> >(1, 1, 3, 5, 1);
-    model.Add<Linear<> >(1, outputSize);
-    model.Add<SigmoidLayer<> >();
-
-    StandardSGD opt(0.1, 2, -50000);
-
-    arma::mat inputTemp, labelsTemp;
-    for (size_t i = 0; i < (10 + offset); i++)
-    {
-      for (size_t j = 0; j < trainReberGrammarCount; j++)
-      {
-        inputTemp = trainInput.at(0, j);
-        labelsTemp = trainLabels.at(0, j);
-        model.Rho() = inputTemp.n_elem / inputSize;
-        model.Train(inputTemp, labelsTemp, opt);
-      }
-    }
-
-    double error = 0;
-
-    // Ask the network to predict the next Reber grammar in the given sequence.
-    for (size_t i = 0; i < testReberGrammarCount; i++)
-    {
-      arma::mat output, prediction;
-      arma::mat input = testInput.at(0, i);
-
-      model.Rho() = input.n_elem / inputSize;
-      model.Predict(input, prediction);
-
-      const size_t reberGrammerSize = 7;
-      std::string inputReber = "";
-
-      size_t reberError = 0;
-      for (size_t j = 0; j < (output.n_elem / reberGrammerSize); j++)
-      {
-        char predictedSymbol, inputSymbol;
-        std::string reberChoices;
-
-        ReberReverseTranslation(output.submat(j * reberGrammerSize, 0, (j + 1) *
-            reberGrammerSize - 1, 0), predictedSymbol);
-        ReberReverseTranslation(input.submat(j * reberGrammerSize, 0, (j + 1) *
-            reberGrammerSize - 1, 0), inputSymbol);
-        inputReber += inputSymbol;
-
-        if (embedded)
-          GenerateNextEmbeddedReber(transitions, inputReber, reberChoices);
-        else
-          GenerateNextReber(transitions, inputReber, reberChoices);
-
-        if (reberChoices.find(predictedSymbol) != std::string::npos)
-          reberError++;
-      }
-
-      if (reberError != (output.n_elem / reberGrammerSize))
-        error += 1;
-    }
-
-    error /= testReberGrammarCount;
-    if (error <= 0.2)
-    {
-      ++successes;
-      break;
-    }
-
-    offset += 3;
-  }
-
-  BOOST_REQUIRE_GE(successes, 1);
-}
-
-/**
  * Train the specified networks on a Reber grammar dataset.
-
+ */
 BOOST_AUTO_TEST_CASE(NTMReberGrammarTest)
 {
-  ReberGrammarTestNTMNetwork(false);
+  size_t hiddenSize = 4;
+  size_t numMem = 3;
+  size_t memSize = 5;
+  size_t shiftSize = 1;
+
+  auto fun = [&](RNN<MeanSquaredError<> >& model)
+  {
+    FFN<>* controller = new FFN<>();
+    controller->Add(new Linear<>(hiddenSize + memSize, hiddenSize));
+    controller->Add(new GRU<>(hiddenSize, hiddenSize));
+
+    model.Add<NeuralTuringMachine<> >(hiddenSize, hiddenSize, numMem, memSize,
+        shiftSize, controller);
+  };
+
+  ReberGrammarTestNetwork(fun, hiddenSize, false);
 }
 
 /**
  * Train the specified networks on a Reber grammar dataset.
-
-BOOST_AUTO_TEST_CASE(NTMEmbeddedReberGrammarTest)
+ */
+BOOST_AUTO_TEST_CASE(NTMRecursiveReberGrammarTest)
 {
-  ReberGrammarTestNTMNetwork(true);
+  size_t hiddenSize = 20;
+  size_t numMem = 3;
+  size_t memSize = 5;
+  size_t shiftSize = 1;
+
+  auto fun = [&](RNN<MeanSquaredError<> >& model)
+  {
+    FFN<>* controller = new FFN<>();
+    controller->Add(new Linear<>(hiddenSize + memSize, hiddenSize));
+    controller->Add(new GRU<>(hiddenSize, hiddenSize));
+
+    model.Add<NeuralTuringMachine<> >(hiddenSize, hiddenSize, numMem, memSize,
+        shiftSize, controller);
+  };
+
+  ReberGrammarTestNetwork(fun, hiddenSize, true);
 }
-*/
+
 /**
  * Train the specified networks on a Reber grammar dataset.
  */
 BOOST_AUTO_TEST_CASE(LSTMReberGrammarTest)
 {
-  ReberGrammarTestNetwork<LSTM<>>(4, false);
+  auto fun = [&](RNN<MeanSquaredError<> >& model)
+  {
+    model.Add<LSTM<>>(4, 4);
+  };
+
+  ReberGrammarTestNetwork(fun, 4, false);
 }
 
 /**
@@ -715,7 +595,12 @@ BOOST_AUTO_TEST_CASE(LSTMReberGrammarTest)
  */
 BOOST_AUTO_TEST_CASE(LSTMRecursiveReberGrammarTest)
 {
-  ReberGrammarTestNetwork<LSTM<>>(20, true);
+  auto fun = [&](RNN<MeanSquaredError<> >& model)
+  {
+    model.Add<LSTM<>>(20, 20);
+  };
+
+  ReberGrammarTestNetwork(fun, 20, true);
 }
 
 /**
@@ -723,7 +608,12 @@ BOOST_AUTO_TEST_CASE(LSTMRecursiveReberGrammarTest)
  */
 BOOST_AUTO_TEST_CASE(GRUReberGrammarTest)
 {
-  ReberGrammarTestNetwork<GRU<>>(4, false);
+  auto fun = [&](RNN<MeanSquaredError<> >& model)
+  {
+    model.Add<GRU<>>(4, 4);
+  };
+
+  ReberGrammarTestNetwork(fun, 4, false);
 }
 
 /**
@@ -731,7 +621,12 @@ BOOST_AUTO_TEST_CASE(GRUReberGrammarTest)
  */
 BOOST_AUTO_TEST_CASE(GRURecursiveReberGrammarTest)
 {
-  ReberGrammarTestNetwork<GRU<>>(20, true);
+  auto fun = [&](RNN<MeanSquaredError<> >& model)
+  {
+    model.Add<GRU<>>(20, 20);
+  };
+
+  ReberGrammarTestNetwork(fun, 20, true);
 }
 
 /*

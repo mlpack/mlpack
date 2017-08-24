@@ -182,12 +182,10 @@ void MemoryHead<InputDataType, OutputDataType>::Forward(arma::Mat<eT>&& input,
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-void MemoryHead<InputDataType, OutputDataType>::BackwardWithMemory(
+void MemoryHead<InputDataType, OutputDataType>::Backward(
   const arma::Mat<eT>&& /* output */,
-  const arma::Mat<eT>&& m,
   arma::Mat<eT>&& gy,
-  arma::Mat<eT>&& g,
-  arma::Mat<eT>&& /* gM */)
+  arma::Mat<eT>&& g)
 {
   if (bBt == lBt.end())
   {

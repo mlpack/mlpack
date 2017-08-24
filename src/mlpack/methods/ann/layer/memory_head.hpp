@@ -28,7 +28,12 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * An implementation of a memory head used in NTM.
+ * Given an input, MemoryHead computes weights over which the memory locations
+ * will be accessed. Each memory location will be given a weight and the sum of
+ * weights is always one.
+ *
+ * MemoryHead is used in Neural Turing Machine to compute the weights for
+ * reading and writing memory.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -49,6 +54,8 @@ class MemoryHead
    * @param outSize Size of the output weight vector.
    * @param memSize Memory size in each memory block.
    * @param shiftSize Circular convolutional shift size used.
+   * @param memoryHistory Access to the memory
+   * @param dMem Location to store the gradient w.r.t. memory
    */
   MemoryHead(const size_t inSize,
              const size_t outSize,
@@ -73,23 +80,6 @@ class MemoryHead
    * f(x) by propagating x backwards trough f. Using the results from the feed
    * forward pass.
    *
-   * @param input The propagated input activation.
-   * @param memory The current memory content.
-   * @param gy The backpropagated error.
-   * @param g The calculated gradient.
-   */
-  template<typename eT>
-  void BackwardWithMemory(const arma::Mat<eT>&& /* input */,
-                          const arma::Mat<eT>&& memory,
-                          arma::Mat<eT>&& gy,
-                          arma::Mat<eT>&& g,
-                          arma::Mat<eT>&& gM);
-
-  /**
-   * Ordinary feed backward pass of a neural network, calculating the function
-   * f(x) by propagating x backwards trough f. Using the results from the feed
-   * forward pass.
-   *
    * This function is used in testing the layer without MemoryTest layer.
    *
    * @param input The propagated input activation.
@@ -100,13 +90,7 @@ class MemoryHead
   template<typename eT>
   void Backward(const arma::Mat<eT>&& output,
                 arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g)
-  {
-    arma::mat dM;
-    arma::mat memory = arma::ones<arma::mat>(outSize, memSize);
-    BackwardWithMemory(std::move(output), std::move(memory),
-        std::move(gy), std::move(g), std::move(dM));
-  }
+                arma::Mat<eT>&& g);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
