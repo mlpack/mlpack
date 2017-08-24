@@ -42,10 +42,11 @@ void Policy<InputDataType, OutputDataType>::Backward(
 {
   arma::mat adv = arma::repmat(arma::sum(advantage), advantage.n_rows, 1);
   arma::mat gradientPolicy = advantage - adv % prob;
-  arma::mat logProb = arma::log(prob);
+  arma::mat logProb = arma::trunc_log(prob);
   arma::mat tmp = prob % (logProb + 1);
   size_t n = advantage.n_rows;
-  arma::mat gradientKL = arma::sum((arma::trans(arma::eye(n, n) - arma::repmat(prob, 1, n)) % arma::repmat(tmp, 1, n)));
+  arma::mat gradientKL = arma::sum((arma::eye(n, n) -
+      arma::repmat(arma::trans(prob), n, 1)) % arma::repmat(tmp, 1, n));
   arma::inplace_trans(gradientKL);
   g = -gradientPolicy + entropyRegularizationWeight * gradientKL;
 }
