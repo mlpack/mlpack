@@ -13,6 +13,7 @@
 #define MLPACK_METHODS_ANN_IMAGE_FUNCTIONS_BILINEAR_FUNCTION_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <assert.h>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -51,24 +52,26 @@ class BiLinearFunction
   template<typename eT>
   void UpSample(const arma::Mat<eT>& input, arma::Mat<eT>& output)
   {
-    // Get dimensions.
-    if (output.is_empty() && (output.n_cols != outColSize || output.n_rows != outRowSize))
-      output = arma::resize(output, outRowSize, outColSize);
+    if (output.is_empty())
+      output.set_size(outRowSize * outColSize, 1);
 
-    scaleRow = (double)input.n_rows / (double) output.n_rows;
-    scaleCol = (double)input.n_cols / (double) output.n_cols;
+    assert(output.n_rows == outRowSize * outColSize);
+    assert(output.n_cols == 1);
 
-    for (size_t i = 0; i < output.n_rows; i++)
+    scaleRow = (double)inRowSize / (double) outRowSize;
+    scaleCol = (double)inColSize / (double) outColSize;
+
+    for (size_t i = 0; i < outRowSize; i++)
     {
-      for (size_t j = 0; j < output.n_cols; j++)
+      for (size_t j = 0; j < outColSize; j++)
       {
         rOrigin = std::floor(i * scaleRow);
         cOrigin = std::floor(j * scaleCol);
 
-        if (rOrigin > input.n_rows - 2)
-          rOrigin = input.n_rows - 2;
-        if (cOrigin > input.n_cols - 2)
-          cOrigin = input.n_cols - 2;
+        if (rOrigin > inRowSize - 2)
+          rOrigin = inRowSize - 2;
+        if (cOrigin > inColSize - 2)
+          cOrigin = inColSize - 2;
 
         double deltaR = i * scaleRow - rOrigin;
         double deltaC = j * scaleCol - cOrigin;
@@ -77,11 +80,11 @@ class BiLinearFunction
         coeff3 = (1 - deltaR) * deltaC;
         coeff4 = deltaR * deltaC;
 
-
-        output(i, j) =  input(cOrigin * input.n_rows + rOrigin) * coeff1 +
-                        input(cOrigin * input.n_rows + rOrigin + 1) * coeff2 +
-                        input((cOrigin + 1) * input.n_rows + rOrigin) * coeff3 +
-                        input((cOrigin + 1) * input.n_rows + rOrigin+1) * coeff4;
+        output(i * outRowSize + j) =  
+            input(cOrigin * inRowSize + rOrigin) * coeff1 +
+            input(cOrigin * inRowSize + rOrigin + 1) * coeff2 +
+            input((cOrigin + 1) * inRowSize + rOrigin) * coeff3 +
+            input((cOrigin + 1) * inRowSize + rOrigin+1) * coeff4;
       }
     }
   }
@@ -95,29 +98,31 @@ class BiLinearFunction
   template<typename eT>
   void DownSample(const arma::Mat<eT>& input, arma::Mat<eT>& output)
   {
+    if (output.is_empty())
+      output.set_size(inRowSize * inColSize, 1);
 
-    if (output.is_empty() && (output.n_cols != inColSize || output.n_rows != inRowSize))
-      output = arma::resize(output, inRowSize, inColSize);
+    assert(output.n_rows == inRowSize * inColSize);
+    assert(output.n_cols == 1);
 
-    if (input.n_rows == output.n_rows && input.n_cols == output.n_cols)
+    if (input.n_elem == output.n_elem)
     {
       output = input;
     }
     else
     {
-      scaleRow = (double)(input.n_rows - 1) / output.n_rows;
-      scaleCol = (double)(input.n_cols - 1) / output.n_cols;
+      scaleRow = (double)(outRowSize - 1) / inRowSize;
+      scaleCol = (double)(outColSize - 1) / inColSize;
 
-      for (size_t i = 0; i < output.n_rows; i++)
-        for (size_t j = 0; j < output.n_cols; j++)
+      for (size_t i = 0; i < inRowSize; i++)
+        for (size_t j = 0; j < inColSize; j++)
         {
           rOrigin = std::floor(i * scaleRow);
           cOrigin = std::floor(j * scaleCol);
 
-          if (rOrigin > input.n_rows - 2)
-            rOrigin = input.n_rows - 2;
-          if (cOrigin > input.n_cols - 2)
-            cOrigin = input.n_cols - 2;
+          if (rOrigin > outRowSize - 2)
+            rOrigin = outRowSize - 2;
+          if (cOrigin > outColSize - 2)
+            cOrigin = outColSize - 2;
 
           double deltaR = i * scaleRow - rOrigin;
           double deltaC = j * scaleCol - cOrigin;
@@ -126,12 +131,24 @@ class BiLinearFunction
           coeff3 = (1 - deltaR) * deltaC;
           coeff4 = deltaR * deltaC;
 
-          output(i, j) =  input(cOrigin * input.n_rows + rOrigin) * coeff1 +
-              input(cOrigin * input.n_rows + rOrigin + 1) * coeff2 +
-              input((cOrigin + 1) * input.n_rows + rOrigin) * coeff3 +
-              input((cOrigin + 1) * input.n_rows + rOrigin+1) * coeff4;
+          output(i * inRowSize + j) =  
+              input(cOrigin * outRowSize + rOrigin) * coeff1 +
+              input(cOrigin * outRowSize + rOrigin + 1) * coeff2 +
+              input((cOrigin + 1) * outRowSize + rOrigin) * coeff3 +
+              input((cOrigin + 1) * outRowSize + rOrigin+1) * coeff4;
       }
     }
+  }
+  /**
+   * Serialize the layer.
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(inRowSize, "inRowSize");
+    ar & data::CreateNVP(inColSize, "inColSize");
+    ar & data::CreateNVP(outRowSize, "outRowSize");
+    ar & data::CreateNVP(outColSize, "outColSize");
   }
 
  private:
