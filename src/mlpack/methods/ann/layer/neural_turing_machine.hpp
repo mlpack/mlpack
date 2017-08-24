@@ -40,11 +40,11 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * An implementation of Neural Turing Machine Layer.
- *
- * This class allows specification of the type of the activation functions used
- * for the gates and cells and also of the type of the function used to
- * initialize and update the peephole weights.
+ * In Neural Turing Mahine, the expressiveness of a neural network,
+ * (or controller) is increased by attaching a memory to it. The input to this
+ * modified neural network consists of original input and the read memory. In
+ * turn the controller decides which memory locations to read and which memory
+ * locations to write. The controller output is taken as the final output.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
