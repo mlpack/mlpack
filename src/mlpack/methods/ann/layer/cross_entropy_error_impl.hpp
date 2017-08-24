@@ -50,7 +50,7 @@ void CrossEntropyError<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  ar & data::CreateNVP(eps, "eps");
+  ar & BOOST_SERIALIZATION_NVP(eps);
 }
 
 } // namespace ann

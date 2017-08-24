@@ -330,9 +330,9 @@ template<typename Archive>
 void GRU<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & data::CreateNVP(inSize, "inSize");
-  ar & data::CreateNVP(outSize, "outSize");
-  ar & data::CreateNVP(rho, "rho");
+  ar & BOOST_SERIALIZATION_NVP(inSize);
+  ar & BOOST_SERIALIZATION_NVP(outSize);
+  ar & BOOST_SERIALIZATION_NVP(rho);
 }
 
 } // namespace ann

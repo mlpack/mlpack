@@ -210,10 +210,10 @@ template<typename Archive>
 void RecurrentAttention<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & data::CreateNVP(rho, "rho");
-  ar & data::CreateNVP(outSize, "outSize");
-  ar & data::CreateNVP(forwardStep, "forwardStep");
-  ar & data::CreateNVP(backwardStep, "backwardStep");
+  ar & BOOST_SERIALIZATION_NVP(rho);
+  ar & BOOST_SERIALIZATION_NVP(outSize);
+  ar & BOOST_SERIALIZATION_NVP(forwardStep);
+  ar & BOOST_SERIALIZATION_NVP(backwardStep);
 }
 
 } // namespace ann

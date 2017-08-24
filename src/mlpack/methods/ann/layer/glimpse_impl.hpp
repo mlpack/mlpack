@@ -210,12 +210,12 @@ template<typename Archive>
 void Glimpse<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & data::CreateNVP(inSize, "inSize");
-  ar & data::CreateNVP(size, "size");
-  ar & data::CreateNVP(depth, "depth");
-  ar & data::CreateNVP(scale, "scale");
-  ar & data::CreateNVP(inputWidth, "inputWidth");
-  ar & data::CreateNVP(location, "location");
+  ar & BOOST_SERIALIZATION_NVP(inSize);
+  ar & BOOST_SERIALIZATION_NVP(size);
+  ar & BOOST_SERIALIZATION_NVP(depth);
+  ar & BOOST_SERIALIZATION_NVP(scale);
+  ar & BOOST_SERIALIZATION_NVP(inputWidth);
+  ar & BOOST_SERIALIZATION_NVP(location);
 }
 
 } // namespace ann

@@ -65,8 +65,8 @@ template<typename Archive>
 void Select<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & data::CreateNVP(index, "index");
-  ar & data::CreateNVP(elements, "elements");
+  ar & BOOST_SERIALIZATION_NVP(index);
+  ar & BOOST_SERIALIZATION_NVP(elements);
 }
 
 } // namespace ann

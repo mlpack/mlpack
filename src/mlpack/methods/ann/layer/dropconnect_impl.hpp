@@ -115,8 +115,8 @@ void DropConnect<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  ar & data::CreateNVP(ratio, "ratio");
-  ar & data::CreateNVP(scale, "scale");
+  ar & BOOST_SERIALIZATION_NVP(ratio);
+  ar & BOOST_SERIALIZATION_NVP(scale);
 }
 
 }  // namespace ann

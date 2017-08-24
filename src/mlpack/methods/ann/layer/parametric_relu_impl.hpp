@@ -75,7 +75,7 @@ void PReLU<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  ar & data::CreateNVP(alpha, "alpha");
+  ar & BOOST_SERIALIZATION_NVP(alpha);
 }
 
 } // namespace ann

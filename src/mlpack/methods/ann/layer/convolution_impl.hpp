@@ -308,18 +308,18 @@ void Convolution<
 >::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & data::CreateNVP(inSize, "inSize");
-  ar & data::CreateNVP(outSize, "outSize");
-  ar & data::CreateNVP(kW, "kW");
-  ar & data::CreateNVP(kH, "kH");
-  ar & data::CreateNVP(dW, "dW");
-  ar & data::CreateNVP(dH, "dH");
-  ar & data::CreateNVP(padW, "padW");
-  ar & data::CreateNVP(padH, "padH");
-  ar & data::CreateNVP(inputWidth, "inputWidth");
-  ar & data::CreateNVP(inputHeight, "inputHeight");
-  ar & data::CreateNVP(outputWidth, "outputWidth");
-  ar & data::CreateNVP(outputHeight, "outputHeight");
+  ar & BOOST_SERIALIZATION_NVP(inSize);
+  ar & BOOST_SERIALIZATION_NVP(outSize);
+  ar & BOOST_SERIALIZATION_NVP(kW);
+  ar & BOOST_SERIALIZATION_NVP(kH);
+  ar & BOOST_SERIALIZATION_NVP(dW);
+  ar & BOOST_SERIALIZATION_NVP(dH);
+  ar & BOOST_SERIALIZATION_NVP(padW);
+  ar & BOOST_SERIALIZATION_NVP(padH);
+  ar & BOOST_SERIALIZATION_NVP(inputWidth);
+  ar & BOOST_SERIALIZATION_NVP(inputHeight);
+  ar & BOOST_SERIALIZATION_NVP(outputWidth);
+  ar & BOOST_SERIALIZATION_NVP(outputHeight);
 }
 
 } // namespace ann

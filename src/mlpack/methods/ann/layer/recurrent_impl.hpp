@@ -213,7 +213,11 @@ template<typename Archive>
 void Recurrent<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & data::CreateNVP(rho, "rho");
+  ar & BOOST_SERIALIZATION_NVP(startModule);
+  ar & BOOST_SERIALIZATION_NVP(inputModule);
+  ar & BOOST_SERIALIZATION_NVP(feedbackModule);
+  ar & BOOST_SERIALIZATION_NVP(transferModule);
+  ar & BOOST_SERIALIZATION_NVP(rho);
 }
 
 } // namespace ann

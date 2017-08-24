@@ -42,7 +42,7 @@ template<typename Archive>
 void MultiplyConstant<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & data::CreateNVP(scalar, "scalar");
+  ar & BOOST_SERIALIZATION_NVP(scalar);
 }
 
 } // namespace ann
