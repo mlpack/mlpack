@@ -69,7 +69,7 @@ void LinearNoBias<InputDataType, OutputDataType>::Gradient(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void LinearNoBias<InputDataType, OutputDataType>::Serialize(
+void LinearNoBias<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
   ar & data::CreateNVP(weights, "weights");

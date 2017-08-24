@@ -107,7 +107,7 @@ void MeanPooling<InputDataType, OutputDataType>::Backward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void MeanPooling<InputDataType, OutputDataType>::Serialize(
+void MeanPooling<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {

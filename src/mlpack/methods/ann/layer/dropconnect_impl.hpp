@@ -111,7 +111,7 @@ void DropConnect<InputDataType, OutputDataType>::Gradient(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void DropConnect<InputDataType, OutputDataType>::Serialize(
+void DropConnect<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {

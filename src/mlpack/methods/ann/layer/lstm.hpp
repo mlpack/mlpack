@@ -143,7 +143,7 @@ class LSTM
    * Serialize the layer
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Locally-stored number of input units.

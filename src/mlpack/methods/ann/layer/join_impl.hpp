@@ -46,7 +46,7 @@ void Join<InputDataType, OutputDataType>::Backward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void Join<InputDataType, OutputDataType>::Serialize(
+void Join<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {

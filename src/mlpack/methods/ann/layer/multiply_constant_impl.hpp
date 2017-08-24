@@ -39,7 +39,7 @@ void MultiplyConstant<InputDataType, OutputDataType>::Backward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void MultiplyConstant<InputDataType, OutputDataType>::Serialize(
+void MultiplyConstant<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
   ar & data::CreateNVP(scalar, "scalar");

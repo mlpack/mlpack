@@ -70,7 +70,7 @@ void Dropout<InputDataType, OutputDataType>::Backward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void Dropout<InputDataType, OutputDataType>::Serialize(
+void Dropout<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {

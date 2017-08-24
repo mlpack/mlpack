@@ -207,7 +207,7 @@ void Glimpse<InputDataType, OutputDataType>::Backward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void Glimpse<InputDataType, OutputDataType>::Serialize(
+void Glimpse<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
   ar & data::CreateNVP(inSize, "inSize");

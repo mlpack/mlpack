@@ -327,7 +327,7 @@ void GRU<InputDataType, OutputDataType>::ResetCell()
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void GRU<InputDataType, OutputDataType>::Serialize(
+void GRU<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
   ar & data::CreateNVP(weights, "weights");

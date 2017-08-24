@@ -133,7 +133,7 @@ void MaxPooling<InputDataType, OutputDataType>::Backward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void MaxPooling<InputDataType, OutputDataType>::Serialize(
+void MaxPooling<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {

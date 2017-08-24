@@ -60,7 +60,7 @@ void Lookup<InputDataType, OutputDataType>::Gradient(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void Lookup<InputDataType, OutputDataType>::Serialize(
+void Lookup<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
   ar & data::CreateNVP(weights, "weights");

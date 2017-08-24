@@ -148,7 +148,7 @@ class Concat
    * Serialize the layer
    */
   template<typename Archive>
-  void Serialize(Archive& /* ar */, const unsigned int /* version */);
+  void serialize(Archive& /* ar */, const unsigned int /* version */);
 
  private:
   //! Parameter which indicates if the modules should be exposed.

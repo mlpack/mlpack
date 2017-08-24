@@ -71,7 +71,7 @@ void PReLU<InputDataType, OutputDataType>::Gradient(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void PReLU<InputDataType, OutputDataType>::Serialize(
+void PReLU<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {

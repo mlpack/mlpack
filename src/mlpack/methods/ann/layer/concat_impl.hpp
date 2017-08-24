@@ -150,7 +150,7 @@ void Concat<InputDataType, OutputDataType>::Gradient(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void Concat<InputDataType, OutputDataType>::Serialize(
+void Concat<InputDataType, OutputDataType>::serialize(
     Archive& /* ar */, const unsigned int /* version */)
 {
   // Nothing to do here.
