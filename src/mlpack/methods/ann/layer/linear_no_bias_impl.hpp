@@ -72,7 +72,6 @@ template<typename Archive>
 void LinearNoBias<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & data::CreateNVP(weights, "weights");
   ar & data::CreateNVP(inSize, "inSize");
   ar & data::CreateNVP(outSize, "outSize");
 }
