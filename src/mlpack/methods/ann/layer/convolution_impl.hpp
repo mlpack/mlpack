@@ -316,7 +316,6 @@ void Convolution<
   ar & data::CreateNVP(dH, "dH");
   ar & data::CreateNVP(padW, "padW");
   ar & data::CreateNVP(padH, "padH");
-  ar & data::CreateNVP(weights, "weights");
   ar & data::CreateNVP(inputWidth, "inputWidth");
   ar & data::CreateNVP(inputHeight, "inputHeight");
   ar & data::CreateNVP(outputWidth, "outputWidth");

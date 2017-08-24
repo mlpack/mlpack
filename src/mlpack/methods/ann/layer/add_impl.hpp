@@ -60,7 +60,7 @@ template<typename Archive>
 void Add<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & data::CreateNVP(weights, "weights");
+  // Nothing to serialize.
 }
 
 } // namespace ann

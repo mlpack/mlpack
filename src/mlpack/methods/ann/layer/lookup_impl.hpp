@@ -63,7 +63,6 @@ template<typename Archive>
 void Lookup<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & data::CreateNVP(weights, "weights");
   ar & data::CreateNVP(inSize, "inSize");
   ar & data::CreateNVP(outSize, "outSize");
 }
