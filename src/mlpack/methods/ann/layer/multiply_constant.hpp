@@ -32,7 +32,7 @@ class MultiplyConstant
   /**
    * Create the MultiplyConstant object.
    */
-  MultiplyConstant(const double scalar);
+  MultiplyConstant(const double scalar = 1.0);
 
   /**
    * Ordinary feed forward pass of a neural network. Multiply the input with the

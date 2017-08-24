@@ -24,6 +24,17 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
+template<typename InputDataType, typename OutputDataType>
+Recurrent<InputDataType, OutputDataType>::Recurrent() :
+    rho(0),
+    forwardStep(0),
+    backwardStep(0),
+    gradientStep(0),
+    deterministic(false)
+{
+  // Nothing to do.
+}
+
 template <typename InputDataType, typename OutputDataType>
 template<
     typename StartModuleType,

@@ -26,6 +26,16 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
+template<typename InputDataType, typename OutputDataType>
+RecurrentAttention<InputDataType, OutputDataType>::RecurrentAttention() :
+    rho(0),
+    forwardStep(0),
+    backwardStep(0),
+    deterministic(false)
+{
+  // Nothing to do.
+}
+
 template <typename InputDataType, typename OutputDataType>
 template<typename RNNModuleType, typename ActionModuleType>
 RecurrentAttention<InputDataType, OutputDataType>::RecurrentAttention(

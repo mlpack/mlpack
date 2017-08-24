@@ -34,7 +34,7 @@ class ReinforceNormal
    *
    * @param stdev Standard deviation used during the forward and backward pass.
    */
-  ReinforceNormal(const double stdev);
+  ReinforceNormal(const double stdev = 1.0);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function

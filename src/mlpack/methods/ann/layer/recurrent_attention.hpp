@@ -56,6 +56,12 @@ class RecurrentAttention
 {
  public:
   /**
+   * Default constructor: this will not give a usable RecurrentAttention object,
+   * so be sure to set all the parameters before use.
+   */
+  RecurrentAttention();
+
+  /**
    * Create the RecurrentAttention object using the specified modules.
    *
    * @param start The module output size.
