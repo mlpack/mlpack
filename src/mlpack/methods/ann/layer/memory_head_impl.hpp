@@ -36,6 +36,7 @@ MemoryHead<InputDataType, OutputDataType>::MemoryHead(
     outSize(outSize),
     memSize(memSize),
     shiftSize(shiftRange),
+    forwardStep(0),
     memoryHistory(memoryHistory),
     dMem(dMem),
     deterministic(false)
