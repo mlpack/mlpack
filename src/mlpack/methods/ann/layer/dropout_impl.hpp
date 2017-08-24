@@ -76,6 +76,9 @@ void Dropout<InputDataType, OutputDataType>::serialize(
 {
   ar & BOOST_SERIALIZATION_NVP(ratio);
   ar & BOOST_SERIALIZATION_NVP(rescale);
+
+  // Reset scale.
+  scale = 1.0 / (1.0 - ratio);
 }
 
 } // namespace ann

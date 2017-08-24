@@ -23,17 +23,17 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
 PReLU<InputDataType, OutputDataType>::PReLU(
-    const double user_alpha) : user_alpha(user_alpha)
+    const double userAlpha) : userAlpha(userAlpha)
 {
   alpha.set_size(1, 1);
-  alpha(0) = user_alpha;
+  alpha(0) = userAlpha;
 }
 
 template<typename InputDataType, typename OutputDataType>
 void PReLU<InputDataType, OutputDataType>::Reset()
 {
   //! Set value of alpha to the one given by user.
-  alpha(0) = user_alpha;
+  alpha(0) = userAlpha;
 }
 
 template<typename InputDataType, typename OutputDataType>

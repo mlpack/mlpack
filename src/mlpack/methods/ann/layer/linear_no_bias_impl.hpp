@@ -74,6 +74,11 @@ void LinearNoBias<InputDataType, OutputDataType>::serialize(
 {
   ar & BOOST_SERIALIZATION_NVP(inSize);
   ar & BOOST_SERIALIZATION_NVP(outSize);
+
+  // This is inefficient, but necessary so that WeightSetVisitor sets the right
+  // size.
+  if (Archive::is_loading::value)
+    weights.set_size(outSize * inSize, 1);
 }
 
 } // namespace ann

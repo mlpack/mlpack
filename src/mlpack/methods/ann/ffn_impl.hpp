@@ -134,7 +134,9 @@ void FFN<OutputLayerType, InitializationRuleType>::Forward(
     arma::mat inputs, arma::mat& results)
 {
   if (parameter.is_empty())
+  {
     ResetParameters();
+  }
 
   if (!deterministic)
   {
@@ -387,6 +389,11 @@ void FFN<OutputLayerType, InitializationRuleType>::Serialize(
   ar & data::CreateNVP(height, "height");
   ar & data::CreateNVP(currentInput, "currentInput");
   ar & data::CreateNVP(currentTarget, "currentTarget");
+
+  // Be sure to clear other layers before loading.
+  if (Archive::is_loading::value)
+    network.clear();
+
   ar & BOOST_SERIALIZATION_NVP(network);
 
   // If we are loading, we need to initialize the weights.
@@ -402,6 +409,10 @@ void FFN<OutputLayerType, InitializationRuleType>::Serialize(
 
       boost::apply_visitor(resetVisitor, network[i]);
     }
+
+    deterministic = true;
+    ResetDeterministic();
+    reset = true;
   }
 }
 

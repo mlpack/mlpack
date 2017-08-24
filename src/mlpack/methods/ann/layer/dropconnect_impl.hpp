@@ -117,6 +117,7 @@ void DropConnect<InputDataType, OutputDataType>::serialize(
 {
   ar & BOOST_SERIALIZATION_NVP(ratio);
   ar & BOOST_SERIALIZATION_NVP(scale);
+  ar & BOOST_SERIALIZATION_NVP(network);
 }
 
 }  // namespace ann

@@ -320,6 +320,9 @@ void Convolution<
   ar & BOOST_SERIALIZATION_NVP(inputHeight);
   ar & BOOST_SERIALIZATION_NVP(outputWidth);
   ar & BOOST_SERIALIZATION_NVP(outputHeight);
+
+  if (Archive::is_loading::value)
+    weights.set_size((outSize * inSize * kW * kH) + outSize, 1);
 }
 
 } // namespace ann

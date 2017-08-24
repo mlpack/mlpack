@@ -52,6 +52,9 @@ template<typename Archive>
 void AddMerge<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
+  if (Archive::is_loading::value)
+    network.clear();
+
   ar & BOOST_SERIALIZATION_NVP(network);
 }
 
