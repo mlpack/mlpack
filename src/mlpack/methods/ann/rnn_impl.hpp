@@ -418,6 +418,7 @@ void RNN<OutputLayerType, InitializationRuleType>::Serialize(
   ar & data::CreateNVP(outputSize, "outputSize");
   ar & data::CreateNVP(targetSize, "targetSize");
   ar & data::CreateNVP(currentInput, "currentInput");
+  ar & BOOST_SERIALIZATION_NVP(network);
 
   // If we are loading, we need to initialize the weights.
   if (Archive::is_loading::value)
