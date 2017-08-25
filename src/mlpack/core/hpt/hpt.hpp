@@ -110,19 +110,36 @@ class HyperParameterTuner
   OptimizerType& Optimizer() { return optimizer; }
 
   /**
-   * Access and modify relative increase of arguments for calculation of partial
-   * derivatives (by the definition) in gradient-based optimization. The
-   * exact increase for some particular argument is equal to the absolute
-   * value of the argument multiplied by the relative increase (see also the
-   * documentation for MinDelta()).
+   * Get relative increase of arguments for calculation of partial
+   * derivatives (by the definition) in gradient-based optimization. The exact
+   * increase for some particular argument is equal to the absolute value of the
+   * argument multiplied by the relative increase (see also the documentation
+   * for MinDelta()).
+   */
+  double RelativeDelta() const { return relativeDelta; }
+
+  /**
+   * Modify relative increase of arguments for calculation of partial
+   * derivatives (by the definition) in gradient-based optimization. The exact
+   * increase for some particular argument is equal to the absolute value of the
+   * argument multiplied by the relative increase (see also the documentation
+   * for MinDelta()).
    */
   double& RelativeDelta() { return relativeDelta; }
 
   /**
-   * Access and modify minimum increase of arguments for calculation of partial
-   * derivatives (by the definition) in gradient-based optimization. This value
-   * is going to be used when it is greater than the increase calculated with
-   * the rules described in the documentation for RelativeDelta().
+   * Get minimum increase of arguments for calculation of partial derivatives
+   * (by the definition) in gradient-based optimization. This value is going to
+   * be used when it is greater than the increase calculated with the rules
+   * described in the documentation for RelativeDelta().
+   */
+  double MinDelta() const { return minDelta; }
+
+  /**
+   * Modify minimum increase of arguments for calculation of partial derivatives
+   * (by the definition) in gradient-based optimization. This value is going to
+   * be used when it is greater than the increase calculated with the rules
+   * described in the documentation for RelativeDelta().
    */
   double& MinDelta() { return minDelta; }
 
@@ -152,10 +169,13 @@ class HyperParameterTuner
   template<typename... Args>
   TupleOfHyperParameters<Args...> Optimize(const Args&... args);
 
-  //! Access the performance measurement of the best model from the last run.
+  //! Get the performance measurement of the best model from the last run.
   double BestObjective() const { return bestObjective; }
 
-  //! Access and modify the best model from the last run.
+  //! Get the best model from the last run.
+  const MLAlgorithm& BestModel() const { return bestModel; }
+
+  //! Modify the best model from the last run.
   MLAlgorithm& BestModel() { return bestModel; }
 
  private:
