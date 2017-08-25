@@ -296,6 +296,15 @@ class RSModel
   RSModel(const TreeTypes treeType = TreeTypes::KD_TREE,
           const bool randomBasis = false);
 
+  //! Copy constructor.
+  RSModel(const RSModel& other);
+  //! Move constructor.
+  RSModel(RSModel&& other);
+  //! Copy operator.
+  RSModel& operator=(const RSModel& other);
+  //! Move operator.
+  RSModel& operator=(RSModel&& other);
+
   /**
    * Clean memory, if necessary.
    */
