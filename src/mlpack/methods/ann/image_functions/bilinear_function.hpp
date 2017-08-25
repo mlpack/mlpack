@@ -55,9 +55,9 @@ class BiLinearFunction
   void UpSample(const arma::Mat<eT>& input, arma::Mat<eT>& output)
   {
     if (output.is_empty())
-      output.set_size(outRowSize * outColSize, 1);
+      output.set_size(outRowSize * outColSize * depth, 1);
 
-    assert(output.n_rows == outRowSize * outColSize);
+    assert(output.n_rows == outRowSize * outColSize * depth);
     assert(output.n_cols == 1);
 
     scaleRow = (double)inRowSize / (double) outRowSize;
@@ -84,11 +84,13 @@ class BiLinearFunction
           coeff3 = (1 - deltaR) * deltaC;
           coeff4 = deltaR * deltaC;
 
+          double depth = k * inRowSize * inColSize;
+
           output(k * outRowSize * outColSize + j * outColSize + i) =
-              input(k* inRowSize * inColSize + cOrigin * inColSize + rOrigin) * coeff1 +
-              input(k* inRowSize * inColSize + cOrigin * inColSize + rOrigin + 1) * coeff2 +
-              input(k* inRowSize * inColSize + (cOrigin + 1) * inColSize + rOrigin) * coeff3 +
-              input(k* inRowSize * inColSize + (cOrigin + 1) * inColSize + rOrigin + 1) * coeff4;
+              input(depth + cOrigin * inColSize + rOrigin) * coeff1 +
+              input(depth + cOrigin * inColSize + rOrigin + 1) * coeff2 +
+              input(depth + (cOrigin + 1) * inColSize + rOrigin) * coeff3 +
+              input(depth + (cOrigin + 1) * inColSize + rOrigin + 1) * coeff4;
         }
       }
     }
@@ -104,9 +106,9 @@ class BiLinearFunction
   void DownSample(const arma::Mat<eT>& input, arma::Mat<eT>& output)
   {
     if (output.is_empty())
-      output.set_size(inRowSize * inColSize, 1);
+      output.set_size(inRowSize * inColSize * depth, 1);
 
-    assert(output.n_rows == inRowSize * inColSize);
+    assert(output.n_rows == inRowSize * inColSize * depth);
     assert(output.n_cols == 1);
 
     if (input.n_elem == output.n_elem)
@@ -137,11 +139,14 @@ class BiLinearFunction
             coeff3 = (1 - deltaR) * deltaC;
             coeff4 = deltaR * deltaC;
 
+            size_t depth = k * outColSize * outRowSize;
+
             output(k * inColSize * inRowSize + j * inColSize + i) =
-                input(k * outColSize * outRowSize + cOrigin * outColSize + rOrigin) * coeff1 +
-                input(k * outColSize * outRowSize + cOrigin * outColSize + rOrigin + 1) * coeff2 +
-                input(k * outColSize * outRowSize + (cOrigin + 1) * outColSize + rOrigin) * coeff3 +
-                input(k * outColSize * outRowSize + (cOrigin + 1) * outColSize + rOrigin + 1) * coeff4;
+                input(depth + cOrigin * outColSize + rOrigin) * coeff1 +
+                input(depth + cOrigin * outColSize + rOrigin + 1) * coeff2 +
+                input(depth + (cOrigin + 1) * outColSize + rOrigin) * coeff3 +
+                input(depth + (cOrigin + 1) * outColSize + rOrigin + 1) * 
+                    coeff4;
           }
     }
   }
