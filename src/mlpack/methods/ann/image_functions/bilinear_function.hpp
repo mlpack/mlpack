@@ -72,7 +72,6 @@ class BiLinearFunction
           rOrigin = inRowSize - 2;
         if (cOrigin > inColSize - 2)
           cOrigin = inColSize - 2;
-        
 
         double deltaR = i * scaleRow - rOrigin;
         double deltaC = j * scaleCol - cOrigin;
@@ -81,7 +80,7 @@ class BiLinearFunction
         coeff3 = (1 - deltaR) * deltaC;
         coeff4 = deltaR * deltaC;
 
-        output(j * outColSize + i) =  
+        output(j * outColSize + i) =
             input(cOrigin * inColSize + rOrigin) * coeff1 +
             input(cOrigin * inColSize + rOrigin + 1) * coeff2 +
             input((cOrigin + 1) * inColSize + rOrigin) * coeff3 +
@@ -132,7 +131,7 @@ class BiLinearFunction
           coeff3 = (1 - deltaR) * deltaC;
           coeff4 = deltaR * deltaC;
 
-          output(j * inColSize + i) =  
+          output(j * inColSize + i) =
               input(cOrigin * outColSize + rOrigin) * coeff1 +
               input(cOrigin * outColSize + rOrigin + 1) * coeff2 +
               input((cOrigin + 1) * outColSize + rOrigin) * coeff3 +

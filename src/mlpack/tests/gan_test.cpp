@@ -51,29 +51,35 @@ BOOST_AUTO_TEST_CASE(GanTest)
 
   // Create the Discrminator network
   FFN<CrossEntropyError<>> discriminator;
-  discriminator.Add<Linear<>> (generatorOutputSize, discriminatorHiddenLayerSize * 2);
+  discriminator.Add<Linear<>> (
+      generatorOutputSize, discriminatorHiddenLayerSize * 2);
   discriminator.Add<ReLULayer<>>();
-  discriminator.Add<Linear<>> (discriminatorHiddenLayerSize * 2, discriminatorHiddenLayerSize * 2);
+  discriminator.Add<Linear<>> (
+      discriminatorHiddenLayerSize * 2, discriminatorHiddenLayerSize * 2);
   discriminator.Add<ReLULayer<>>();
-  discriminator.Add<Linear<>> (discriminatorHiddenLayerSize * 2, discriminatorHiddenLayerSize * 2);
+  discriminator.Add<Linear<>> (
+      discriminatorHiddenLayerSize * 2, discriminatorHiddenLayerSize * 2);
   discriminator.Add<ReLULayer<>>();
-  discriminator.Add<Linear<>> (discriminatorHiddenLayerSize * 2, discriminatorOutputSize);
+  discriminator.Add<Linear<>> (
+      discriminatorHiddenLayerSize * 2, discriminatorOutputSize);
   discriminator.Add<SigmoidLayer<>>();
   // Create the Generator network
   FFN<CrossEntropyError<>> generator;
   generator.Add<Linear<>>(noiseDim, generatorHiddenLayerSize);
   generator.Add<SoftPlusLayer<>>();
   generator.Add<Linear<>>(generatorHiddenLayerSize, generatorOutputSize);
-  
+
   // Create Gan
   GaussianInitialization gaussian(0, 0.1);
-  std::function<double ()> noiseFunction = [] () { return math::Random(-8, 8) + math::RandNormal(0, 1) * 0.01;};
-  GAN<FFN<CrossEntropyError<>>, GaussianInitialization, std::function<double ()>>
-
+  std::function<double ()> noiseFunction = [](){ return math::Random(-8, 8) + 
+      math::RandNormal(0, 1) * 0.01;};
+  GAN<FFN<CrossEntropyError<>>,
+      GaussianInitialization,
+      std::function<double ()>>
   gan(trainData, generator, discriminator, gaussian, noiseFunction,
       noiseDim, batchSize, generatorUpdateStep, discriminatorPreTrain);
   gan.Reset();
-  
+
   std::cout << "Loading Parameters" << std::endl;
   arma::mat parameters, generatorParameters;
   parameters.load("preTrainedGAN.arm");
@@ -102,16 +108,20 @@ BOOST_AUTO_TEST_CASE(GanTest)
     samples.reshape(dim, dim);
     samples = samples.t();
 
-    generatedData.submat(dim, i * dim, 2 * dim - 1, i * dim + dim - 1) = samples;
+    generatedData.submat(dim, 
+        i * dim, 2 * dim - 1, i * dim + dim - 1) = samples;
   }
 
-  double generatedMean = arma::as_scalar(arma::mean(generatedData.rows(0, dim - 1), 1));
-  double originalMean = arma::as_scalar(arma::mean(generatedData.rows(dim, 2 * dim - 1), 1));
-  double generatedStd = arma::as_scalar(arma::stddev(generatedData.rows(0, dim - 1), 0, 1));
-  double originalStd = arma::as_scalar(arma::stddev(generatedData.rows(dim, 2 * dim - 1), 0, 1));
+  double generatedMean = arma::as_scalar(arma::mean(
+      generatedData.rows(0, dim - 1), 1));
+  double originalMean = arma::as_scalar(arma::mean(
+      generatedData.rows(dim, 2 * dim - 1), 1));
+  double generatedStd = arma::as_scalar(arma::stddev(
+      generatedData.rows(0, dim - 1), 0, 1));
+  double originalStd = arma::as_scalar(arma::stddev(
+      generatedData.rows(dim, 2 * dim - 1), 0, 1));
 
   BOOST_REQUIRE_LE(generatedMean - originalMean, 0.2);
   BOOST_REQUIRE_LE(generatedStd - originalStd, 0.2);
-
 }
 BOOST_AUTO_TEST_SUITE_END();

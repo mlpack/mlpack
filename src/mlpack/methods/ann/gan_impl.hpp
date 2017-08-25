@@ -57,7 +57,7 @@ GAN<Model, InitializationRuleType, Noise>::GAN(
 {
   // Insert IdentityLayer for Joing the generator and discriminator
   discriminator.network.insert(
-      discriminator.network.begin(), 
+      discriminator.network.begin(),
       new IdentityLayer<>());
 
   counter = 0;
@@ -92,7 +92,7 @@ void GAN<Model, InitializationRuleType, Noise>::Reset()
     genWeights += boost::apply_visitor(weightSizeVisitor, generator.network[i]);
 
   for (size_t i = 0; i < discriminator.network.size(); ++i)
-    discWeights += boost::apply_visitor(weightSizeVisitor, 
+    discWeights += boost::apply_visitor(weightSizeVisitor,
         discriminator.network[i]);
 
   parameter.set_size(genWeights + discWeights, 1);
@@ -134,7 +134,7 @@ double GAN<Model, InitializationRuleType, Noise>::Evaluate(
   discriminator.Forward(std::move(currentInput));
   double res = discriminator.outputLayer.Forward(
       std::move(boost::apply_visitor(
-          outputParameterVisitor, 
+          outputParameterVisitor,
           discriminator.network.back())), std::move(currentTarget));
   noise.imbue( [&]() { return noiseFunction();} );
   generator.Forward(std::move(noise));
@@ -148,7 +148,7 @@ double GAN<Model, InitializationRuleType, Noise>::Evaluate(
   currentTarget = discriminator.responses.unsafe_col(numFunctions);
   res += discriminator.outputLayer.Forward(
         std::move(boost::apply_visitor(
-            outputParameterVisitor, 
+            outputParameterVisitor,
             discriminator.network.back())), std::move(currentTarget));
   return res;
 }
@@ -186,7 +186,7 @@ Gradient(const arma::mat& /*parameters*/, const size_t i, arma::mat& gradient)
   gradientGenerator = arma::mat(gradient.memptr(),
       generator.Parameters().n_elem, 1, false, false);
 
-  gradientDiscriminator = arma::mat(gradient.memptr() + 
+  gradientDiscriminator = arma::mat(gradient.memptr() +
       gradientGenerator.n_elem,
       discriminator.Parameters().n_elem, 1, false, false);
 
@@ -210,11 +210,8 @@ Gradient(const arma::mat& /*parameters*/, const size_t i, arma::mat& gradient)
     discriminator.responses(numFunctions) = 1;
     discriminator.Gradient(discriminator.parameter, numFunctions,
       noiseGradientDiscriminator);
-    // Log::Info << "generatorUpdateStep" << std::endl;
-    // Log::Info << boost::apply_visitor(deltaVisitor, discriminator.network[1]) << std::endl;
     generator.error = boost::apply_visitor(deltaVisitor,
         discriminator.network[1]);
-    // set the current input requrired for gradient computation
     generator.currentInput = noise;
     generator.Backward();
     generator.ResetGradients(gradientGenerator);
@@ -222,11 +219,6 @@ Gradient(const arma::mat& /*parameters*/, const size_t i, arma::mat& gradient)
     double multiplier = 1.5;
 
     gradientGenerator *= multiplier;
-    if (counter % batchSize == 0)
-    {
-      Log::Info << "gradientDiscriminator = " << std::max(std::fabs(gradientDiscriminator.min()), std::fabs(gradientDiscriminator.max())) << std::endl;
-      Log::Info << "gradientGenerator = " << std::max(std::fabs(gradientGenerator.min()), std::fabs(gradientGenerator.max())) << std::endl;
-    }
   }
   counter++;
   if (counter >= numFunctions)
