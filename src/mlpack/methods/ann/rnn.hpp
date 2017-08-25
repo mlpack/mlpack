@@ -202,14 +202,14 @@ class RNN
   //! Modify the initial point for the optimization.
   arma::mat& Parameters() { return parameter; }
 
+  //! Return the maximum length of backpropagation through time.
+  const size_t& Rho() const { return rho; }
+  //! Modify the maximum length of backpropagation through time.
+  size_t& Rho() { return rho; }
+
   //! Serialize the model.
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
-
-  //! Get the maximum number of steps to backpropagate through time (BPTT).
-  size_t Rho() const { return rho; }
-  //! Modify the maximum number of steps to backpropagate through time (BPTT).
-  size_t& Rho() { return rho; }
  private:
   // Helper functions.
   /**
@@ -219,6 +219,11 @@ class RNN
    * @param input Data sequence to compute probabilities for.
    */
   void Forward(arma::mat&& input);
+
+  /**
+   * Reset the state of RNN cells in the network for new input sequence.
+   */
+  void ResetCells();
 
   /**
    * The Backward algorithm (part of the Forward-Backward algorithm). Computes

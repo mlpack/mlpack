@@ -32,10 +32,10 @@ AddTask::AddTask(const size_t bitLen) : bitLen(bitLen)
   }
 }
 
-const void AddTask::Generate(arma::field<arma::mat>& input,
-                             arma::field<arma::mat>& labels,
-                             const size_t batchSize,
-                             bool fixedLength)
+void AddTask::Generate(arma::field<arma::mat>& input,
+                       arma::field<arma::mat>& labels,
+                       const size_t batchSize,
+                       bool fixedLength) const
 {
   arma::field<arma::vec> vecInput = arma::field<arma::colvec>(batchSize);
   arma::field<arma::vec> vecLabels = arma::field<arma::colvec>(batchSize);
@@ -117,9 +117,9 @@ const void AddTask::Generate(arma::field<arma::mat>& input,
   }
 }
 
-const void AddTask::Generate(arma::mat& input,
-                             arma::mat& labels,
-                             const size_t batchSize)
+void AddTask::Generate(arma::mat& input,
+                       arma::mat& labels,
+                       const size_t batchSize) const
 {
   arma::field<arma::mat> fieldInput, fieldLabels;
   Generate(fieldInput, fieldLabels, batchSize, true);
@@ -132,8 +132,8 @@ const void AddTask::Generate(arma::mat& input,
   }
 }
 
-const void AddTask::Binarize(const arma::field<arma::vec>& input,
-                             arma::field<arma::mat>& output)
+void AddTask::Binarize(const arma::field<arma::vec>& input,
+                       arma::field<arma::mat>& output) const
 {
   output = arma::field<arma::mat>(input.n_elem);
   for (size_t i = 0; i < input.n_elem; ++i)

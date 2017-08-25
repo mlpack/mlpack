@@ -28,13 +28,7 @@ class ConstInitialization
   /**
    *  Create the ConstantInitialization object.
    */
-  ConstInitialization(const double initVal) : initVal(initVal)
-  { /* Nothing to do here */ }
-
-  /**
-   *  Create the ConstantInitialization object with initVal = 0.
-   */
-  ConstInitialization() : initVal(0.0)
+  ConstInitialization(const double initVal = 0) : initVal(initVal)
   { /* Nothing to do here */ }
 
   /**

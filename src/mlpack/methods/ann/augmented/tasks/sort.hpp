@@ -42,29 +42,30 @@ class SortTask
 {
  public:
   /**
-  * Creates an instance of the sequence sort task.
-  *
-  * @param maxLength Maximum length of the number sequence.
-  * @param bitLen Binary length of sorted numbers.
-  * @param addSeparator Flag indicating whether generator
-  *                     should emit separating symbol after input sequence.
-  */
+   * Creates an instance of the sequence sort task.
+   *
+   * @param maxLength Maximum length of the number sequence.
+   * @param bitLen Binary length of sorted numbers.
+   * @param addSeparator Flag indicating whether generator
+   *                     should emit separating symbol after input sequence.
+   */
   SortTask(const size_t maxLength,
            const size_t bitLen,
            bool addSeparator = false);
+
   /**
-  * Generate dataset of a given size.
-  *
-  * @param input The variable to store input sequences.
-  * @param labels The variable to store output sequences.
-  * @param batchSize The dataset size.
-  * @param fixedLength Flag indicating whether generator
-  *                    should emit sequences of pairwise equal length.
-  */
-  const void Generate(arma::field<arma::mat>& input,
-                      arma::field<arma::mat>& labels,
+   * Generate dataset of a given size.
+   *
+   * @param input The variable to store input sequences.
+   * @param labels The variable to store output sequences.
+   * @param batchSize The dataset size.
+   * @param fixedLength Flag indicating whether generator
+   *                    should emit sequences of pairwise equal length.
+   */
+  void Generate(arma::field<arma::mat>& input,
+                arma::field<arma::mat>& labels,
                       const size_t batchSize,
-                      bool fixedLength = false);
+                      bool fixedLength = false) const;
   /**
    * Generate dataset of a given size and store it in
    * arma::mat object.
@@ -73,9 +74,9 @@ class SortTask
    * @param labels The variable to store output sequences.
    * @param batchSize The dataset size.
    */
-  const void Generate(arma::mat& input,
-                      arma::mat& labels,
-                      const size_t batchSize);
+  void Generate(arma::mat& input,
+                arma::mat& labels,
+                const size_t batchSize) const;
 
  private:
   // Maximum length of the sequence.
@@ -86,6 +87,7 @@ class SortTask
   // separator as part of the sequence
   bool addSeparator;
 };
+
 } // namespace tasks
 } // namespace augmented
 } // namespace ann

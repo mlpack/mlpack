@@ -70,13 +70,6 @@ class LinearRegression
                    const bool intercept = true);
 
   /**
-   * Copy constructor.
-   *
-   * @param linearRegression the other instance to copy parameters from.
-   */
-  LinearRegression(const LinearRegression& linearRegression);
-
-  /**
    * Empty constructor.  This gives a non-working model, so make sure Train() is
    * called (or make sure the model parameters are set) before calling
    * Predict()!

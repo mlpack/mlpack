@@ -47,10 +47,10 @@ CopyTask::CopyTask(const size_t maxLength,
   // Just storing task-specific parameters.
 }
 
-const void CopyTask::Generate(arma::field<arma::mat>& input,
-                              arma::field<arma::mat>& labels,
-                              const size_t batchSize,
-                              bool fixedLength)
+void CopyTask::Generate(arma::field<arma::mat>& input,
+                        arma::field<arma::mat>& labels,
+                        const size_t batchSize,
+                        bool fixedLength) const
 {
   input = arma::field<arma::mat>(batchSize);
   labels = arma::field<arma::mat>(batchSize);
@@ -89,9 +89,9 @@ const void CopyTask::Generate(arma::field<arma::mat>& input,
   }
 }
 
-const void CopyTask::Generate(arma::mat& input,
-                              arma::mat& labels,
-                              const size_t batchSize)
+void CopyTask::Generate(arma::mat& input,
+                        arma::mat& labels,
+                        const size_t batchSize) const
 {
   arma::field<arma::mat> fieldInput, fieldLabels;
   Generate(fieldInput, fieldLabels, batchSize, true);
