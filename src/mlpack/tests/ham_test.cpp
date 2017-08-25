@@ -37,7 +37,8 @@ FFN<MeanSquaredError<> > ReplaceWriter(size_t dim)
   writeModel.Parameters().rows(0, dim * dim - 1) = arma::zeros(dim * dim);
   writeModel.Parameters().rows(dim * dim, 2 * dim * dim - 1) =
       arma::vectorise(arma::eye(dim, dim));
-  writeModel.Parameters().rows(2 * dim * dim, 2 * dim * dim + dim - 1) = arma::zeros(dim);
+  writeModel.Parameters().rows(2 * dim * dim, 2 * dim * dim + dim - 1) =
+      arma::zeros(dim);
   return writeModel;
 }
 
@@ -45,9 +46,12 @@ FFN<MeanSquaredError<> > AddJoiner(size_t dim) {
   FFN<MeanSquaredError<> > joinModel;
   joinModel.Add<Linear<> >(2 * dim, dim);
   joinModel.ResetParameters();
-  joinModel.Parameters().rows(0, dim * dim - 1) = arma::vectorise(arma::eye(dim, dim));
-  joinModel.Parameters().rows(dim * dim, 2 * dim * dim - 1) = arma::vectorise(arma::eye(dim, dim));
-  joinModel.Parameters().rows(2 * dim * dim, 2 * dim * dim + dim - 1) = arma::zeros(dim);
+  joinModel.Parameters().rows(0, dim * dim - 1) =
+      arma::vectorise(arma::eye(dim, dim));
+  joinModel.Parameters().rows(dim * dim, 2 * dim * dim - 1) =
+      arma::vectorise(arma::eye(dim, dim));
+  joinModel.Parameters().rows(2 * dim * dim, 2 * dim * dim + dim - 1) =
+      arma::zeros(dim);
   return joinModel;
 }
 
@@ -137,16 +141,16 @@ BOOST_AUTO_TEST_CASE(TreeMemoryTestPowerOfTwo)
   BOOST_REQUIRE_EQUAL(mem.Cell(
     mem.Parent(mem.LeafIndex(0))).at(0, 0), 3);
   BOOST_REQUIRE_EQUAL(mem.Cell(
-    mem.Parent(mem.Parent(mem.LeafIndex(0)))).at(0, 0), 3);  
+    mem.Parent(mem.Parent(mem.LeafIndex(0)))).at(0, 0), 3);
   BOOST_REQUIRE_EQUAL(mem.Cell(
-    mem.Parent(mem.Parent(mem.Parent(mem.LeafIndex(0))))).at(0, 0), 3); 
+    mem.Parent(mem.Parent(mem.Parent(mem.LeafIndex(0))))).at(0, 0), 3);
   // Finally, check the memory consistency.
   BOOST_REQUIRE_EQUAL(mem.Cell(
     mem.Parent(mem.LeafIndex(0))).n_elem, 1);
   BOOST_REQUIRE_EQUAL(mem.Cell(
-    mem.Parent(mem.Parent(mem.LeafIndex(0)))).n_elem, 1);  
+    mem.Parent(mem.Parent(mem.LeafIndex(0)))).n_elem, 1);
   BOOST_REQUIRE_EQUAL(mem.Cell(
-    mem.Parent(mem.Parent(mem.Parent(mem.LeafIndex(0))))).n_elem, 1); 
+    mem.Parent(mem.Parent(mem.Parent(mem.LeafIndex(0))))).n_elem, 1);
 }
 
 // Test for TreeMemory operations with 8 memory cells for 5-dim vectors.
@@ -188,17 +192,17 @@ BOOST_AUTO_TEST_CASE(TreeMemoryTestPowerOfTwoNDim)
     BOOST_REQUIRE_EQUAL(mem.Cell(
       mem.Parent(mem.LeafIndex(0))).at(i, 0), 3);
     BOOST_REQUIRE_EQUAL(mem.Cell(
-      mem.Parent(mem.Parent(mem.LeafIndex(0)))).at(i, 0), 3);  
+      mem.Parent(mem.Parent(mem.LeafIndex(0)))).at(i, 0), 3);
     BOOST_REQUIRE_EQUAL(mem.Cell(
-      mem.Parent(mem.Parent(mem.Parent(mem.LeafIndex(0))))).at(i, 0), 3); 
+      mem.Parent(mem.Parent(mem.Parent(mem.LeafIndex(0))))).at(i, 0), 3);
   }
   // Finally, check the memory consistency.
   BOOST_REQUIRE_EQUAL(mem.Cell(
     mem.Parent(mem.LeafIndex(0))).n_elem, memSize);
   BOOST_REQUIRE_EQUAL(mem.Cell(
-    mem.Parent(mem.Parent(mem.LeafIndex(0)))).n_elem, memSize);  
+    mem.Parent(mem.Parent(mem.LeafIndex(0)))).n_elem, memSize);
   BOOST_REQUIRE_EQUAL(mem.Cell(
-    mem.Parent(mem.Parent(mem.Parent(mem.LeafIndex(0))))).n_elem, memSize); 
+    mem.Parent(mem.Parent(mem.Parent(mem.LeafIndex(0))))).n_elem, memSize);
 }
 
 // Test for TreeMemory operations with 9 memory cells for 1-dim vectors.
@@ -229,9 +233,9 @@ BOOST_AUTO_TEST_CASE(TreeMemoryTestArbitrary) {
   BOOST_REQUIRE_EQUAL(mem.Cell(
     mem.Parent(mem.Parent(mem.LeafIndex(0)))).at(0, 0), 3);
   BOOST_REQUIRE_EQUAL(mem.Cell(
-    mem.Parent(mem.Parent(mem.Parent(mem.LeafIndex(0))))).at(0, 0), 3); 
+    mem.Parent(mem.Parent(mem.Parent(mem.LeafIndex(0))))).at(0, 0), 3);
   BOOST_REQUIRE_EQUAL(mem.Cell(
-    mem.Parent(mem.Parent(mem.Parent(mem.Parent(mem.LeafIndex(0)))))).at(0, 0), 
+    mem.Parent(mem.Parent(mem.Parent(mem.Parent(mem.LeafIndex(0)))))).at(0, 0),
     0);
   BOOST_REQUIRE_EQUAL(mem.Leaf(8).at(0, 0), -3);
   BOOST_REQUIRE_EQUAL(mem.Cell(
@@ -239,7 +243,7 @@ BOOST_AUTO_TEST_CASE(TreeMemoryTestArbitrary) {
   BOOST_REQUIRE_EQUAL(mem.Cell(
     mem.Parent(mem.Parent(mem.LeafIndex(8)))).at(0, 0), -3);
   BOOST_REQUIRE_EQUAL(mem.Cell(
-    mem.Parent(mem.Parent(mem.Parent(mem.LeafIndex(8))))).at(0, 0), -3); 
+    mem.Parent(mem.Parent(mem.Parent(mem.LeafIndex(8))))).at(0, 0), -3);
   BOOST_REQUIRE_EQUAL(mem.Parent(mem.LeafIndex(0)),
                       mem.Parent(mem.LeafIndex(1)));
   for (size_t i = 0; i < 9; ++i) {
@@ -247,8 +251,7 @@ BOOST_AUTO_TEST_CASE(TreeMemoryTestArbitrary) {
     // but at least it fits in 80 charactes.
     BOOST_REQUIRE_EQUAL(
       mem.Parent(mem.Parent(mem.Parent(mem.Parent(mem.LeafIndex(i))))),
-      mem.Root()
-    );
+      mem.Root());
   }
 }
 
@@ -268,7 +271,8 @@ BOOST_AUTO_TEST_CASE(BlindHAMUnitTest) {
   joinModel.Add<Linear<> >(2 * nDim, nDim);
   arma::mat joinParams = arma::zeros(2 * nDim * nDim + nDim, 1);
   joinParams.rows(0, nDim * nDim - 1) = arma::vectorise(arma::eye(nDim, nDim));
-  joinParams.rows(nDim * nDim, 2 * nDim * nDim - 1) = arma::vectorise(arma::eye(nDim, nDim));
+  joinParams.rows(nDim * nDim, 2 * nDim * nDim - 1) =
+      arma::vectorise(arma::eye(nDim, nDim));
   // Write function is replacing its old input with its new input.
   FFN<MeanSquaredError<> > writeModel;
   writeModel.Add<Linear<> >(2 * nDim, nDim);
@@ -308,7 +312,8 @@ BOOST_AUTO_TEST_CASE(BlindHAMUnitTest) {
 
   // Now run the HAM unit (the initial sequence is:
   // [1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1])
-  HAMUnit<> hamUnit(seqLen, nDim, embedModel, joinModel, searchModel, writeModel, controller);
+  HAMUnit<> hamUnit(
+      seqLen, nDim, embedModel, joinModel, searchModel, writeModel, controller);
   hamUnit.ResetParameters();
   hamUnit.Parameters() = allParams;
 

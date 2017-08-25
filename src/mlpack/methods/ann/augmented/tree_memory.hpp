@@ -29,7 +29,7 @@ template<
   typename W = FFN<MeanSquaredError<>>
 >
 class TreeMemory {
-public:
+ public:
   /**
    * Initialize the memory components. 
    * 
@@ -63,7 +63,7 @@ public:
    * @param index Index of the leaf node 
    *              (0 corresponds to the leftmost leaf of the tree)
    */
-  arma::Col<T> Leaf(size_t index) const;  
+  arma::Col<T> Leaf(size_t index) const;
   /**
    * Modify the value of the leaf node.
    * 
@@ -166,7 +166,8 @@ public:
    * @param right [description]
    */
   arma::Mat<T> Stack(const arma::Mat<T>& left, const arma::Mat<T>& right) const;
-private:
+
+ private:
   //! The storage for all node values.
   arma::Mat<T> memory;
   //! Join function.

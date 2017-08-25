@@ -74,7 +74,7 @@ class HAMUnit
   /**
    * Return the TreeMemory instance used in the unit.
    */
-  TreeMemory<double, J, W> Memory() const { return memory; }  
+  TreeMemory<double, J, W> Memory() const { return memory; }
   /**
    * Modify the TreeMemory instance used in the unit.
    */
