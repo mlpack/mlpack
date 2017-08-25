@@ -28,66 +28,70 @@ using namespace std::placeholders;
 
 BOOST_AUTO_TEST_SUITE(GANNetworkTest);
 
-
+/*
+ * Load pre trained network values
+ * for generating distribution that
+ * is close to N(4, 0.5)
+ */
 BOOST_AUTO_TEST_CASE(GanTest)
 {
-  size_t hiddenLayerSize1 = 1024;
-  size_t gOutputSize;
-  size_t dOutputSize = 1;
-  size_t batchSize = 100;
-  size_t noiseDim  = 100;
-  size_t numSamples = 10;
+  size_t generatorHiddenLayerSize = 8;
+  size_t discriminatorHiddenLayerSize = 8;
+  size_t generatorOutputSize = 1;
+  size_t discriminatorOutputSize = 1;
+  size_t discriminatorPreTrain = 0;
+  size_t batchSize = 8;
+  size_t noiseDim = 1;
+  size_t generatorUpdateStep = 1;
+  size_t numSamples = 10000;
 
-  // Load the dataset
-  arma::mat trainData, dataset, noiseData;
-  trainData.load("train4.txt");
-  trainData = trainData.cols(1, 1000);
-  noiseData.set_size(100, trainData.n_cols);
-  noiseData.imbue([&]() { return arma::as_scalar(RandNormal(0, 1));});
-  std::cout << arma::size(trainData) << std::endl;
-  gOutputSize = trainData.n_rows;
-  // Discriminator network
+  arma::mat trainData(1, 10000);
+  trainData.imbue( [&]() { return arma::as_scalar(RandNormal(4, 0.5));});
+  trainData = arma::sort(trainData);
+
+  // Create the Discrminator network
   FFN<CrossEntropyError<>> discriminator;
-  discriminator.Add<Linear<>>(trainData.n_cols, hiddenLayerSize1);
-  discriminator.Add<LeakyReLU<>>(0.2);
-  discriminator.Add<Linear<>>(hiddenLayerSize1, hiddenLayerSize1 / 2);
-  discriminator.Add<LeakyReLU<>>(0.2);
-  discriminator.Add<Linear<>>(hiddenLayerSize1 / 2, hiddenLayerSize1 / 4);
-  discriminator.Add<LeakyReLU<>>(0.2);
-  discriminator.Add<Linear<>>(hiddenLayerSize1 / 4, 1);
+  discriminator.Add<Linear<>> (generatorOutputSize, discriminatorHiddenLayerSize * 2);
+  discriminator.Add<ReLULayer<>>();
+  discriminator.Add<Linear<>> (discriminatorHiddenLayerSize * 2, discriminatorHiddenLayerSize * 2);
+  discriminator.Add<ReLULayer<>>();
+  discriminator.Add<Linear<>> (discriminatorHiddenLayerSize * 2, discriminatorHiddenLayerSize * 2);
+  discriminator.Add<ReLULayer<>>();
+  discriminator.Add<Linear<>> (discriminatorHiddenLayerSize * 2, discriminatorOutputSize);
   discriminator.Add<SigmoidLayer<>>();
-
-  // Generator network
+  // Create the Generator network
   FFN<CrossEntropyError<>> generator;
-  generator.Add<Linear<>>(noiseDim, hiddenLayerSize1 / 4);
-  generator.Add<LeakyReLU<>>(0.2);
-  generator.Add<Linear<>>(hiddenLayerSize1 / 4, hiddenLayerSize1 / 2);
-  generator.Add<LeakyReLU<>>(0.2);
-  generator.Add<Linear<>>(hiddenLayerSize1 / 2, trainData.n_cols);
-  generator.Add<SigmoidLayer<>>();
+  generator.Add<Linear<>>(noiseDim, generatorHiddenLayerSize);
+  generator.Add<SoftPlusLayer<>>();
+  generator.Add<Linear<>>(generatorHiddenLayerSize, generatorOutputSize);
+  
+  // Create Gan
+  GaussianInitialization gaussian(0, 0.1);
+  std::function<double ()> noiseFunction = [] () { return math::Random(-8, 8) + math::RandNormal(0, 1) * 0.01;};
+  GAN<FFN<CrossEntropyError<>>, GaussianInitialization, std::function<double ()>>
 
-  // Intialisation function
-  GaussianInitialization gaussian(0, 1);
-  // Optimizer
-  MiniBatchSGD optimizer(batchSize, 1e-4, 100 * trainData.n_cols, 1e-5, true);
-
-  std::function<double ()> noiseFunction = [] () { return math::RandNormal(0, 1); };
-  // GAN model
-  GAN<FFN<CrossEntropyError<>>, GaussianInitialization, std::function<double ()> > gan(trainData, generator, discriminator, gaussian, noiseFunction,
-      trainData.n_rows, batchSize, 10, 10);
-  gan.Train(optimizer);
+  gan(trainData, generator, discriminator, gaussian, noiseFunction,
+      noiseDim, batchSize, generatorUpdateStep, discriminatorPreTrain);
+  gan.Reset();
+  
+  std::cout << "Loading Parameters" << std::endl;
+  arma::mat parameters, generatorParameters;
+  parameters.load("preTrainedGAN.arm");
+  gan.Parameters() = parameters;
 
   // Generate samples
   Log::Info << "Sampling..." << std::endl;
   arma::mat noise(noiseDim, 1);
+
   size_t dim = std::sqrt(trainData.n_rows);
   arma::mat generatedData(2 * dim, dim * numSamples);
+
   for (size_t i = 0; i < numSamples; i++)
   {
     arma::mat samples;
-    noise.imbue( [&]() { return math::Random(0, 1); } );
-    generator.Forward(noise, samples);
+    noise.imbue( [&]() { return noiseFunction(); } );
 
+    generator.Forward(noise, samples);
     samples.reshape(dim, dim);
     samples = samples.t();
 
@@ -100,9 +104,14 @@ BOOST_AUTO_TEST_CASE(GanTest)
 
     generatedData.submat(dim, i * dim, 2 * dim - 1, i * dim + dim - 1) = samples;
   }
-  std::string output_dataset = "./output_gan_ffn";
-  Log::Info << "Saving output to " << output_dataset << "..." << std::endl;
-  generatedData.save(output_dataset, arma::raw_ascii);
-  Log::Info << "Output saved!" << std::endl;
+
+  double generatedMean = arma::as_scalar(arma::mean(generatedData.rows(0, dim - 1), 1));
+  double originalMean = arma::as_scalar(arma::mean(generatedData.rows(dim, 2 * dim - 1), 1));
+  double generatedStd = arma::as_scalar(arma::stddev(generatedData.rows(0, dim - 1), 0, 1));
+  double originalStd = arma::as_scalar(arma::stddev(generatedData.rows(dim, 2 * dim - 1), 0, 1));
+
+  BOOST_REQUIRE_LE(generatedMean - originalMean, 0.2);
+  BOOST_REQUIRE_LE(generatedStd - originalStd, 0.2);
+
 }
 BOOST_AUTO_TEST_SUITE_END();
