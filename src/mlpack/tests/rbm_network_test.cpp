@@ -107,9 +107,6 @@ BOOST_AUTO_TEST_CASE(ClassificationTest)
   SoftmaxRegression regressor2(trainData, trainLabels,
       numClasses, 0.001, false, optimizer);
 
-  arma::Row<size_t> predictions1, predictions2;
-  // Vectors to store predictions in.
-
   double classificationAccuray = regressor2.ComputeAccuracy(testData,
    testLabels);
   std::cout << "Softmax Accuracy = " << classificationAccuray << std::endl;
@@ -125,8 +122,8 @@ BOOST_AUTO_TEST_CASE(ClassificationTest)
 BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
 {
   size_t batchSize = 10;
-  size_t numEpoches = 25;
-  int hiddenLayerSize = 100;
+  size_t numEpoches = 10;
+  int hiddenLayerSize = 80;
   double radius = 0;
   double tempRadius = 0;
   arma::mat trainData, testData, dataset;
@@ -135,7 +132,7 @@ BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
   testData.load("digits_test.arm");
   trainLabelsTemp.load("digits_train_label.arm");
   testLabelsTemp.load("digits_test_label.arm");
-  GaussianInitialization gaussian(0, 0.1);
+  GaussianInitialization gaussian(0, 1);
 
   arma::Row<size_t> trainLabels = arma::zeros<arma::Row<size_t>>(1,
       trainLabelsTemp.n_cols);
@@ -165,7 +162,7 @@ BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
 
   XRbm.zeros();
   YRbm.zeros();
-  double slabPenalty = 5;
+  double slabPenalty = 8;
 
   SpikeSlabRBMPolicy<> ss_rbm(trainData.n_rows, hiddenLayerSize, poolSize,
       slabPenalty, radius);
@@ -197,25 +194,13 @@ BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
   const size_t numBasis = 5; // Parameter required for L-BFGS algorithm.
   const size_t numIterations = 100; // Maximum number of iterations.
 
-  // Use an instantiated optimizer for the training.
-  L_BFGS optimizer(numBasis, numIterations);
-  SoftmaxRegression regressor2(trainData, trainLabels,
-      numClasses, 0.001, false, optimizer);
-
-  arma::Row<size_t> predictions1, predictions2;
-  // Vectors to store predictions in.
-
-  double classificationAccuray = regressor2.ComputeAccuracy(testData,
-   testLabels);
-  std::cout << "Softmax Accuracy = " << classificationAccuray << std::endl;
-
   L_BFGS optimizer1(numBasis, numIterations);
   SoftmaxRegression regressor1(XRbm, trainLabels, numClasses,
         0.001, false, optimizer1);
   double classificationAccuray1 = regressor1.ComputeAccuracy(YRbm, testLabels);
   std::cout << "ssRBM Accuracy = " <<classificationAccuray1 << std::endl;
 
-  BOOST_REQUIRE_GE(classificationAccuray1, classificationAccuray);
+  BOOST_REQUIRE_GE(classificationAccuray1, 70);
 }
 
 template<typename MatType = arma::mat>

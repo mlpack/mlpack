@@ -63,7 +63,7 @@ SpikeSlabRBMPolicy<DataType>::FreeEnergy(DataType&& input)
   for (size_t i = 0; i < hiddenSize; i++)
   {
     ElemType sum = 0;
-    sum = arma::accu(arma::square(input.t() * weight.slice(i))) / 
+    sum = arma::accu(arma::square(input.t() * weight.slice(i))) /
         (2.0 * slabPenalty);
     freeEnergy -= SoftplusFunction::Fn(spikeBias(i) - sum);
   }
@@ -100,7 +100,6 @@ void SpikeSlabRBMPolicy<DataType>::PositivePhase(
   SampleSpike(std::move(spikeMean), std::move(spikeSamples));
   SlabMean(std::move(input), std::move(spikeSamples), std::move(slabMean));
 
-  
   for (size_t i = 0 ; i < hiddenSize; i++)
     weightGrad.slice(i) = input * slabMean.col(i).t() * spikeMean(i);
 
