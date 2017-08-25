@@ -14,6 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <unordered_map>
+#include <boost/bimap.hpp>
 #include <mlpack/core/data/map_policies/datatype.hpp>
 
 namespace mlpack {
@@ -106,32 +107,23 @@ class IncrementPolicy
     // or we have no mappings for the given dimension at all.  In either case,
     // we create a mapping.
     if (maps.count(dimension) == 0 ||
-        maps[dimension].first.count(string) == 0)
+        maps[dimension].first.left.count(string) == 0)
     {
       // This string does not exist yet.
-      size_t numMappings = maps[dimension].first.size();
+      size_t& numMappings = maps[dimension].second;
 
       // Change type of the feature to categorical.
       if (numMappings == 0)
         types[dimension] = Datatype::categorical;
 
-      typedef std::pair<std::string, MappedType> PairType;
+      typedef boost::bimap<std::string, MappedType>::value_type PairType;
       maps[dimension].first.insert(PairType(string, numMappings));
-
-      // Do we need to create the second map?
-      if (maps[dimension].second.count(numMappings) == 0)
-      {
-        maps[dimension].second.insert(std::make_pair(numMappings,
-            std::vector<std::string>()));
-      }
-      maps[dimension].second[numMappings].push_back(string);
-
-      return T(numMappings);
+      return T(numMappings++);
     }
     else
     {
       // This string already exists in the mapping.
-      return maps[dimension].first.at(string);
+      return maps[dimension].first.left.at(string);
     }
   }
 }; // class IncrementPolicy

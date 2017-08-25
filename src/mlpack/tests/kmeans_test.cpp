@@ -608,7 +608,7 @@ BOOST_AUTO_TEST_CASE(DTNNTest)
 
   for (size_t t = 0; t < trials; ++t)
   {
-    arma::mat dataset(10, 300);
+    arma::mat dataset(10, 1000);
     dataset.randu();
 
     const size_t k = 5 * (t + 1);
@@ -640,7 +640,7 @@ BOOST_AUTO_TEST_CASE(DTNNCoverTreeTest)
 
   for (size_t t = 0; t < trials; ++t)
   {
-    arma::mat dataset(10, 300);
+    arma::mat dataset(10, 1000);
     dataset.randu();
 
     const size_t k = 5;

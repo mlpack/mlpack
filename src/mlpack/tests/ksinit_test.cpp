@@ -228,8 +228,8 @@ void AvgCrossValidation(arma::mat& dataset,
  */
 BOOST_AUTO_TEST_CASE(IrisDataset)
 {
-  double trainErrorThreshold = 0.01;
-  double validationErrorThreshold = 0.01;
+  double trainErrorThreshold = 0.001;
+  double validationErrorThreshold = 0.001;
 
   arma::mat dataset, labels;
 
@@ -253,7 +253,7 @@ BOOST_AUTO_TEST_CASE(IrisDataset)
     double avgTrainError, avgValidationError;
 
     // Run the CV for 10 times.
-    AvgCrossValidation(dataset, 1, 10, 3, 15, avgTrainError,
+    AvgCrossValidation(dataset, 1, 10, 3, 52, avgTrainError,
         avgValidationError);
 
     if (avgTrainError <= trainErrorThreshold &&
@@ -313,8 +313,8 @@ BOOST_AUTO_TEST_CASE(NonLinearFunctionApproximation)
   {
     double avgTrainError, avgValidationError;
 
-    // Run CV 5 times.
-    AvgCrossValidation(dataset, 3, 5, 10, 10, avgTrainError,
+    // Run CV 10 times.
+    AvgCrossValidation(dataset, 3, 10, 10, 20, avgTrainError,
         avgValidationError);
 
     if (avgTrainError <= trainErrorThreshold &&

@@ -38,9 +38,9 @@ AugLagrangianFunction<LagrangianFunction>::AugLagrangianFunction(
     LagrangianFunction& function,
     const arma::vec& lambda,
     const double sigma) :
-    function(function),
     lambda(lambda),
-    sigma(sigma)
+    sigma(sigma),
+    function(function)
 {
   // Nothing else to do.
 }

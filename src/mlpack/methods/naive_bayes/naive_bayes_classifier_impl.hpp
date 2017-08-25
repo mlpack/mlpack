@@ -38,6 +38,8 @@ NaiveBayesClassifier<ModelMatType>::NaiveBayesClassifier(
       "NaiveBayesClassifier: element type of given data must match the element "
       "type of the model!");
 
+  const size_t dimensionality = data.n_rows;
+
   // Perform training, after initializing the model to 0 (that is, if Train()
   // won't do that for us, which it won't if we're using the incremental
   // algorithm).

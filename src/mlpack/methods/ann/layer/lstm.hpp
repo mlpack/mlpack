@@ -15,7 +15,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-#include <limits>
+#include <boost/ptr_container/ptr_vector.hpp>
 
 #include "../visitor/delta_visitor.hpp"
 #include "../visitor/output_parameter_visitor.hpp"
@@ -56,8 +56,7 @@ class LSTM
    * @param outSize The number of output units.
    * @param rho Maximum number of steps to backpropagate through time (BPTT).
    */
-  LSTM(const size_t inSize, const size_t outSize, const size_t rho =
-      std::numeric_limits<size_t>::max());
+  LSTM(const size_t inSize, const size_t outSize, const size_t rho);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -94,12 +93,6 @@ class LSTM
   void Gradient(arma::Mat<eT>&& input,
                 arma::Mat<eT>&& /* error */,
                 arma::Mat<eT>&& /* gradient */);
-
-  /*
-   * Resets the cell to accept a new input.
-   * This breaks the BPTT chain starts a new one.
-   */
-  void ResetCell();
 
   //! The value of the deterministic parameter.
   bool Deterministic() const { return deterministic; }
@@ -155,17 +148,14 @@ class LSTM
   //! Number of steps to backpropagate through time (BPTT).
   size_t rho;
 
-  //! Current batch size.
-  size_t batchSize;
-
   //! Locally-stored weight object.
   OutputDataType weights;
 
   //! Locally-stored previous output.
-  std::list<arma::mat>::iterator prevOutput;
+  arma::mat prevOutput;
 
   //! Locally-stored previous cell state.
-  std::list<arma::mat>::iterator prevCell;
+  arma::mat prevCell;
 
   //! Locally-stored input 2 gate module.
   LayerTypes input2GateModule;
@@ -210,22 +200,16 @@ class LSTM
   size_t gradientStep;
 
   //! Locally-stored cell parameters.
-  std::list<arma::mat> cellParameter;
+  std::vector<arma::mat> cellParameter;
 
   //! Locally-stored output parameters.
-  std::list<arma::mat> outParameter;
-
-  //! Matrix of all zeroes to initialize the output and the cell
-  arma::mat allZeros;
-
-  //! Iterator pointed to the last cell output processed by backward
-  std::list<arma::mat>::iterator backIterator;
-
-  //! Iterator pointed to the last output processed by gradient
-  std::list<arma::mat>::iterator gradIterator;
+  std::vector<arma::mat> outParameter;
 
   //! Locally-stored previous error.
   arma::mat prevError;
+
+  //! Locally-stored cell activation error.
+  arma::mat cellActivationError;
 
   //! Locally-stored foget gate error.
   arma::mat forgetGateError;

@@ -121,7 +121,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
   // Now run mini-batch SGD with a couple of batch sizes.
   for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
   {
-    MiniBatchSGD mbsgd(batchSize, 0.01, 10000, 1e-3);
+    MiniBatchSGD mbsgd(batchSize);
     LogisticRegression<> lr(shuffledData, shuffledResponses, mbsgd, 0.5);
 
     // Ensure that the error is close to zero.
