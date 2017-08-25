@@ -14,6 +14,8 @@
 
 #include "ham_unit.hpp"
 
+#include <mlpack/methods/ann/init_rules/const_init.hpp>
+
 namespace mlpack {
 namespace ann /* Artificial Neural Network */ {
 namespace augmented /* Augmented neural network */ {
@@ -109,7 +111,7 @@ void HAMUnit<E, J, S, W, C>::ResetParameters()
   parameters = arma::mat(embedCount + searchCount + controllerCount +
       joinCount + writeCount, 1);
 
-  NetworkInitialization<> networkInit;
+  NetworkInitialization<ConstInitialization> networkInit();
   networkInit.Initialize(embed.Model(), parameters);
   networkInit.Initialize(search.Model(), parameters, embedCount);
   networkInit.Initialize(controller.Model(), parameters, embedCount +
