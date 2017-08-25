@@ -67,8 +67,14 @@ class GRU
    * @param outSize The number of output units.
    * @param rho Maximum number of steps to backpropagate through time (BPTT).
    */
-  GRU(const size_t inSize, const size_t outSize, const size_t rho =
-      std::numeric_limits<size_t>::max());
+  GRU(const size_t inSize,
+      const size_t outSize,
+      const size_t rho = std::numeric_limits<size_t>::max());
+
+  /**
+   * Delete the GRU and the layers it holds.
+   */
+  ~GRU();
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -195,6 +201,9 @@ class GRU
 
   //! Locally-stored delta visitor.
   DeltaVisitor deltaVisitor;
+
+  //! Locally-stored delete visitor.
+  DeleteVisitor deleteVisitor;
 
   //! Locally-stored list of network modules.
   std::vector<LayerTypes> network;

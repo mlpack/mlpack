@@ -392,7 +392,11 @@ void FFN<OutputLayerType, InitializationRuleType>::Serialize(
 
   // Be sure to clear other layers before loading.
   if (Archive::is_loading::value)
+  {
+    std::for_each(network.begin(), network.end(),
+        boost::apply_visitor(deleteVisitor));
     network.clear();
+  }
 
   ar & BOOST_SERIALIZATION_NVP(network);
 
@@ -412,7 +416,6 @@ void FFN<OutputLayerType, InitializationRuleType>::Serialize(
 
     deterministic = true;
     ResetDeterministic();
-    reset = true;
   }
 }
 

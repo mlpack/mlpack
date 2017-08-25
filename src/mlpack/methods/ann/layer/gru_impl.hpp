@@ -77,6 +77,17 @@ GRU<InputDataType, OutputDataType>::GRU(
 }
 
 template<typename InputDataType, typename OutputDataType>
+GRU<InputDataType, OutputDataType>::~GRU()
+{
+  boost::apply_visitor(deleteVisitor, input2GateModule);
+  boost::apply_visitor(deleteVisitor, output2GateModule);
+  boost::apply_visitor(deleteVisitor, outputHidden2GateModule);
+  boost::apply_visitor(deleteVisitor, inputGateModule);
+  boost::apply_visitor(deleteVisitor, forgetGateModule);
+  boost::apply_visitor(deleteVisitor, hiddenStateModule);
+}
+
+template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void GRU<InputDataType, OutputDataType>::Forward(
     arma::Mat<eT>&& input, arma::Mat<eT>&& output)
@@ -330,9 +341,27 @@ template<typename Archive>
 void GRU<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
+  // If necessary, clean memory from the old model.
+  if (Archive::is_loading::value)
+  {
+    boost::apply_visitor(deleteVisitor, input2GateModule);
+    boost::apply_visitor(deleteVisitor, output2GateModule);
+    boost::apply_visitor(deleteVisitor, outputHidden2GateModule);
+    boost::apply_visitor(deleteVisitor, inputGateModule);
+    boost::apply_visitor(deleteVisitor, forgetGateModule);
+    boost::apply_visitor(deleteVisitor, hiddenStateModule);
+  }
+
   ar & BOOST_SERIALIZATION_NVP(inSize);
   ar & BOOST_SERIALIZATION_NVP(outSize);
   ar & BOOST_SERIALIZATION_NVP(rho);
+
+  ar & BOOST_SERIALIZATION_NVP(input2GateModule);
+  ar & BOOST_SERIALIZATION_NVP(output2GateModule);
+  ar & BOOST_SERIALIZATION_NVP(outputHidden2GateModule);
+  ar & BOOST_SERIALIZATION_NVP(inputGateModule);
+  ar & BOOST_SERIALIZATION_NVP(forgetGateModule);
+  ar & BOOST_SERIALIZATION_NVP(hiddenStateModule);
 }
 
 } // namespace ann

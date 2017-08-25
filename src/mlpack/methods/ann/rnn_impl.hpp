@@ -25,9 +25,10 @@
 #include "visitor/gradient_visitor.hpp"
 #include "visitor/weight_set_visitor.hpp"
 
+#include <boost/serialization/variant.hpp>
+
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
-
 
 template<typename OutputLayerType, typename InitializationRuleType>
 RNN<OutputLayerType, InitializationRuleType>::RNN(
@@ -418,6 +419,14 @@ void RNN<OutputLayerType, InitializationRuleType>::Serialize(
   ar & data::CreateNVP(outputSize, "outputSize");
   ar & data::CreateNVP(targetSize, "targetSize");
   ar & data::CreateNVP(currentInput, "currentInput");
+
+  if (Archive::is_loading::value)
+  {
+    std::for_each(network.begin(), network.end(),
+        boost::apply_visitor(deleteVisitor));
+    network.clear();
+  }
+
   ar & BOOST_SERIALIZATION_NVP(network);
 
   // If we are loading, we need to initialize the weights.
@@ -433,6 +442,9 @@ void RNN<OutputLayerType, InitializationRuleType>::Serialize(
 
       boost::apply_visitor(resetVisitor, layer);
     }
+
+    deterministic = true;
+    ResetDeterministic();
   }
 }
 

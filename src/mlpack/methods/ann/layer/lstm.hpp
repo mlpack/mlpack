@@ -56,8 +56,14 @@ class LSTM
    * @param outSize The number of output units.
    * @param rho Maximum number of steps to backpropagate through time (BPTT).
    */
-  LSTM(const size_t inSize, const size_t outSize, const size_t rho =
-      std::numeric_limits<size_t>::max());
+  LSTM(const size_t inSize,
+       const size_t outSize,
+       const size_t rho = std::numeric_limits<size_t>::max());
+
+  /**
+   * Delete the LSTM and the layers it holds.
+   */
+  ~LSTM();
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function

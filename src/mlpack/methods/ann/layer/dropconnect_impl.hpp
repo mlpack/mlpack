@@ -115,9 +115,21 @@ void DropConnect<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
+  // Delete the old network first, if needed.
+  if (Archive::is_loading::value)
+  {
+    boost::apply_visitor(DeleteVisitor(), baseLayer);
+  }
+
   ar & BOOST_SERIALIZATION_NVP(ratio);
   ar & BOOST_SERIALIZATION_NVP(scale);
-  ar & BOOST_SERIALIZATION_NVP(network);
+  ar & BOOST_SERIALIZATION_NVP(baseLayer);
+
+  if (Archive::is_loading::value)
+  {
+    network.clear();
+    network.push_back(baseLayer);
+  }
 }
 
 }  // namespace ann

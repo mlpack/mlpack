@@ -214,6 +214,9 @@ void RecurrentAttention<InputDataType, OutputDataType>::serialize(
   ar & BOOST_SERIALIZATION_NVP(outSize);
   ar & BOOST_SERIALIZATION_NVP(forwardStep);
   ar & BOOST_SERIALIZATION_NVP(backwardStep);
+
+  ar & BOOST_SERIALIZATION_NVP(rnnModule);
+  ar & BOOST_SERIALIZATION_NVP(actionModule);
 }
 
 } // namespace ann

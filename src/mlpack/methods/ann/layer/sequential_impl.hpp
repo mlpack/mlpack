@@ -149,9 +149,17 @@ void Sequential<InputDataType, OutputDataType>::Gradient(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void Sequential<InputDataType, OutputDataType>::serialize(
-    Archive& /* ar */, const unsigned int /* version */)
+    Archive& ar, const unsigned int /* version */)
 {
-  // Nothing to do here.
+  // If loading, delete the old layers.
+  if (Archive::is_loading::value)
+  {
+    for (LayerTypes& layer : network)
+      boost::apply_visitor(deleteVisitor, layer);
+  }
+
+  ar & BOOST_SERIALIZATION_NVP(model);
+  ar & BOOST_SERIALIZATION_NVP(network);
 }
 
 } // namespace ann

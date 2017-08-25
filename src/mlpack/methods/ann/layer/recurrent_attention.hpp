@@ -201,17 +201,8 @@ class RecurrentAttention
   //! Locally-stored weight object.
   OutputDataType parameters;
 
-  //! Locally-stored initial module.
-  LayerTypes initialModule;
-
-  //! Locally-stored recurrent module.
-  LayerTypes recurrentModule;
-
   //! Locally-stored model modules.
   std::vector<LayerTypes> network;
-
-  //! Locally-stored merge module.
-  LayerTypes mergeModule;
 
   //! Locally-stored weight size visitor.
   WeightSizeVisitor weightSizeVisitor;
