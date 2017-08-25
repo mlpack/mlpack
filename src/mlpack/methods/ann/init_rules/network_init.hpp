@@ -45,25 +45,29 @@ class NetworkInitialization
     // Nothing to do here.
   }
 
-  /**
+ /**
    * Initialize the specified network and store the results in the given
    * parameter.
    *
    * @param network Network that should be initialized.
    * @param parameter The network parameter.
    */
-  void Initialize(const std::vector<LayerTypes>& network, arma::mat& parameter)
+  void Initialize(const std::vector<LayerTypes>& network, arma::mat& parameter,
+      size_t parameterOffset = 0)
   {
     // Determine the number of parameter/weights of the given network.
-    size_t weights = 0;
-    for (size_t i = 0; i < network.size(); ++i)
-      weights += boost::apply_visitor(weightSizeVisitor, network[i]);
-    parameter.set_size(weights, 1);
+    if (parameter.is_empty())
+    {
+      size_t weights = 0;
+      for (size_t i = 0; i < network.size(); ++i)
+        weights += boost::apply_visitor(weightSizeVisitor, network[i]);
+      parameter.set_size(weights, 1);
+    }
 
     // Initialize the network layer by layer or the complete network.
     if (ann::InitTraits<InitializationRuleType>::UseLayer)
     {
-      for (size_t i = 0, offset = 0; i < network.size(); ++i)
+      for (size_t i = 0, offset = parameterOffset; i < network.size(); ++i)
       {
         // Initialize the layer with the specified parameter/weight
         // initialization rule.
@@ -86,14 +90,14 @@ class NetworkInitialization
     // WeightSetVisitor also sets the parameter/weights of the inner modules.
     // Inner Modules are held by the parent module e.g. the concat module can
     // hold various other modules.
-    for (size_t i = 0, offset = 0; i < network.size(); ++i)
+    for (size_t i = 0, offset = parameterOffset; i < network.size(); ++i)
     {
       offset += boost::apply_visitor(WeightSetVisitor(std::move(parameter),
           offset), network[i]);
 
       boost::apply_visitor(resetVisitor, network[i]);
     }
-  }
+}
 
  private:
   //! Instantiated InitializationRule object for initializing the network
