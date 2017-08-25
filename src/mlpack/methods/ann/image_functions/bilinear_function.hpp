@@ -37,11 +37,13 @@ class BiLinearFunction
       const size_t inRowSize,
       const size_t inColSize,
       const size_t outRowSize,
-      const size_t outColSize):
+      const size_t outColSize,
+      const size_t depth = 1):
       inRowSize(inRowSize),
       inColSize(inColSize),
       outRowSize(outRowSize),
-      outColSize(outColSize)
+      outColSize(outColSize),
+      depth(depth)
   {};
   /**
    * UpSample the given input.
@@ -61,30 +63,33 @@ class BiLinearFunction
     scaleRow = (double)inRowSize / (double) outRowSize;
     scaleCol = (double)inColSize / (double) outColSize;
 
-    for (size_t i = 0; i < outRowSize; i++)
+    for (size_t k = 0; k < depth; k++)
     {
-      for (size_t j = 0; j < outColSize; j++)
+      for (size_t i = 0; i < outRowSize; i++)
       {
-        rOrigin = std::floor(i * scaleRow);
-        cOrigin = std::floor(j * scaleCol);
+        for (size_t j = 0; j < outColSize; j++)
+        {
+          rOrigin = std::floor(i * scaleRow);
+          cOrigin = std::floor(j * scaleCol);
 
-        if (rOrigin > inRowSize - 2)
-          rOrigin = inRowSize - 2;
-        if (cOrigin > inColSize - 2)
-          cOrigin = inColSize - 2;
+          if (rOrigin > inRowSize - 2)
+            rOrigin = inRowSize - 2;
+          if (cOrigin > inColSize - 2)
+            cOrigin = inColSize - 2;
 
-        double deltaR = i * scaleRow - rOrigin;
-        double deltaC = j * scaleCol - cOrigin;
-        coeff1 = (1 - deltaR) * (1 - deltaC);
-        coeff2 = deltaR * (1 - deltaC);
-        coeff3 = (1 - deltaR) * deltaC;
-        coeff4 = deltaR * deltaC;
+          double deltaR = i * scaleRow - rOrigin;
+          double deltaC = j * scaleCol - cOrigin;
+          coeff1 = (1 - deltaR) * (1 - deltaC);
+          coeff2 = deltaR * (1 - deltaC);
+          coeff3 = (1 - deltaR) * deltaC;
+          coeff4 = deltaR * deltaC;
 
-        output(j * outColSize + i) =
-            input(cOrigin * inColSize + rOrigin) * coeff1 +
-            input(cOrigin * inColSize + rOrigin + 1) * coeff2 +
-            input((cOrigin + 1) * inColSize + rOrigin) * coeff3 +
-            input((cOrigin + 1) * inColSize + rOrigin + 1) * coeff4;
+          output(k * outRowSize * outColSize + j * outColSize + i) =
+              input(k* inRowSize * inColSize + cOrigin * inColSize + rOrigin) * coeff1 +
+              input(k* inRowSize * inColSize + cOrigin * inColSize + rOrigin + 1) * coeff2 +
+              input(k* inRowSize * inColSize + (cOrigin + 1) * inColSize + rOrigin) * coeff3 +
+              input(k* inRowSize * inColSize + (cOrigin + 1) * inColSize + rOrigin + 1) * coeff4;
+        }
       }
     }
   }
@@ -113,30 +118,31 @@ class BiLinearFunction
       scaleRow = (double)(outRowSize) / inRowSize;
       scaleCol = (double)(outColSize) / inColSize;
 
-      for (size_t i = 0; i < inRowSize; i++)
-        for (size_t j = 0; j < inColSize; j++)
-        {
-          rOrigin = std::floor(i * scaleRow);
-          cOrigin = std::floor(j * scaleCol);
+      for (size_t k = 0; k < depth; k++)
+        for (size_t i = 0; i < inRowSize; i++)
+          for (size_t j = 0; j < inColSize; j++)
+          {
+            rOrigin = std::floor(i * scaleRow);
+            cOrigin = std::floor(j * scaleCol);
 
-          if (rOrigin > outRowSize - 2)
-            rOrigin = outRowSize - 2;
-          if (cOrigin > outColSize - 2)
-            cOrigin = outColSize - 2;
+            if (rOrigin > outRowSize - 2)
+              rOrigin = outRowSize - 2;
+            if (cOrigin > outColSize - 2)
+              cOrigin = outColSize - 2;
 
-          double deltaR = i * scaleRow - rOrigin;
-          double deltaC = j * scaleCol - cOrigin;
-          coeff1 = (1 - deltaR) * (1 - deltaC);
-          coeff2 = deltaR * (1 - deltaC);
-          coeff3 = (1 - deltaR) * deltaC;
-          coeff4 = deltaR * deltaC;
+            double deltaR = i * scaleRow - rOrigin;
+            double deltaC = j * scaleCol - cOrigin;
+            coeff1 = (1 - deltaR) * (1 - deltaC);
+            coeff2 = deltaR * (1 - deltaC);
+            coeff3 = (1 - deltaR) * deltaC;
+            coeff4 = deltaR * deltaC;
 
-          output(j * inColSize + i) =
-              input(cOrigin * outColSize + rOrigin) * coeff1 +
-              input(cOrigin * outColSize + rOrigin + 1) * coeff2 +
-              input((cOrigin + 1) * outColSize + rOrigin) * coeff3 +
-              input((cOrigin + 1) * outColSize + rOrigin + 1) * coeff4;
-      }
+            output(k * inColSize * inRowSize + j * inColSize + i) =
+                input(k * outColSize * outRowSize + cOrigin * outColSize + rOrigin) * coeff1 +
+                input(k * outColSize * outRowSize + cOrigin * outColSize + rOrigin + 1) * coeff2 +
+                input(k * outColSize * outRowSize + (cOrigin + 1) * outColSize + rOrigin) * coeff3 +
+                input(k * outColSize * outRowSize + (cOrigin + 1) * outColSize + rOrigin + 1) * coeff4;
+          }
     }
   }
   /**
@@ -160,6 +166,8 @@ class BiLinearFunction
   const size_t outRowSize;
   //! Locally stored column size of the input.
   const size_t outColSize;
+  //! Locally stored depth of the input.
+  const size_t depth;
 
   //! Locally stored scaling factor along row.
   double scaleRow;
