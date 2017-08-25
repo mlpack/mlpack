@@ -76,12 +76,13 @@ void CVFunction<CVType, MLAlgorithm, TotalArgs, BoundArgs...>::Gradient(
 {
   gradient = arma::mat(arma::size(parameters));
   arma::mat increasedParameters = parameters;
+  double originalParametersEvaluation = Evaluate(parameters);
   for (size_t i = 0; i < parameters.n_rows; ++i)
   {
     double delta = std::max(std::abs(parameters(i)) * relativeDelta, minDelta);
     increasedParameters(i) += delta;
-    gradient(i) = (Evaluate(increasedParameters) - Evaluate(parameters)) /
-        delta;
+    gradient(i) =
+        (Evaluate(increasedParameters) - originalParametersEvaluation) / delta;
     increasedParameters(i) = parameters(i);
   }
 }
