@@ -21,7 +21,7 @@
 #include "init_rules_traits.hpp"
 
 #include <mlpack/methods/ann/layer/layer_types.hpp>
-#include <mlpack/methods/ann/init_rules/zero_init.hpp>
+#include "zero_init.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
