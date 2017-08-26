@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_SUITE(NystroemMethodTest);
 BOOST_AUTO_TEST_CASE(FullRankTest)
 {
   // Run several trials.
-  for (size_t trial = 0; trial < 5; ++trial)
+  for (size_t trial = 0; trial < 3; ++trial)
   {
     arma::mat data;
     data.randu(5, trial * 200);
@@ -168,9 +168,9 @@ BOOST_AUTO_TEST_CASE(GermanTest)
 
   for (size_t trial = 0; trial < 5; ++trial)
   {
-    // We will repeat each trial 20 times.
+    // We will repeat each trial 5 times.
     double avgError = 0.0;
-    for (size_t z = 1; z < 21; ++z)
+    for (size_t z = 1; z < 6; ++z)
     {
       NystroemMethod<GaussianKernel, KMeansSelection<> > nm(dataset, gk,
           size_t((double((trial + 1) * 2) / 100.0) * dataset.n_cols));
@@ -194,7 +194,7 @@ BOOST_AUTO_TEST_CASE(GermanTest)
       }
     }
 
-    avgError /= 20;
+    avgError /= 5;
 
     // Ensure that this is within tolerance, which is at least as good as the
     // paper's results (plus a little bit for noise).
