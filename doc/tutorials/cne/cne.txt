@@ -40,7 +40,7 @@ A list of all the sections this tutorial contains.
 The CNE class is a simple implementation of cne optimizer to converge a given 
 neural network.
 
-Using the cne class is very simple and can be divided into 3 simple steps- 
+Using the cne class is very simple and can be divided into 3 simple steps:
 
 1) The CNE object is made in which the constructor requires 7 input parameters.
    The default values and detailed explaination have been discussed in a seperate
