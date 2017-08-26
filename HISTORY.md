@@ -1,3 +1,9 @@
+### mlpack 2.2.5
+###### 2017-08-25
+  * Compilation fix for some systems (#1082).
+
+  * Fix PARAM_INT_OUT() (#1100).
+
 ### mlpack 2.2.4
 ###### 2017-07-18
   * Speed and memory improvements for DBSCAN. --single_mode can now be used for
