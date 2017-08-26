@@ -14,7 +14,7 @@
 #define MLPACK_METHODS_ANN_LAYER_LSTM_IMPL_HPP
 
 // In case it hasn't yet been included.
-#include "lstm.hpp"
+#include "linear.hpp"
 
 #include "../visitor/forward_visitor.hpp"
 #include "../visitor/backward_visitor.hpp"
@@ -37,7 +37,6 @@ LSTM<InputDataType, OutputDataType>::LSTM(
     inSize(inSize),
     outSize(outSize),
     rho(rho),
-    batchSize(1),
     forwardStep(0),
     backwardStep(0),
     gradientStep(0),
@@ -65,21 +64,13 @@ LSTM<InputDataType, OutputDataType>::LSTM(
   network.push_back(cellModule);
   network.push_back(cellActivationModule);
 
-  prevError = arma::zeros<arma::mat>(4 * outSize, batchSize);
+  prevOutput = arma::zeros<arma::mat>(outSize, 1);
+  prevCell = arma::zeros<arma::mat>(outSize, 1);
+  prevError = arma::zeros<arma::mat>(4 * outSize, 1);
+  cellActivationError = arma::zeros<arma::mat>(outSize, 1);
 
-  allZeros = arma::zeros<arma::mat>(outSize, batchSize);
-
-  outParameter.push_back(std::move(arma::mat(allZeros.memptr(),
-    allZeros.n_rows, allZeros.n_cols, false, false)));
-
-  cellParameter.push_back(std::move(arma::mat(allZeros.memptr(),
-    allZeros.n_rows, allZeros.n_cols, false, false)));
-
-  prevOutput = outParameter.begin();
-  prevCell = cellParameter.begin();
-
-  backIterator = cellParameter.end();
-  gradIterator = outParameter.end();
+  cellParameter.reserve(rho);
+  outParameter.reserve(rho);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -87,17 +78,17 @@ template<typename eT>
 void LSTM<InputDataType, OutputDataType>::Forward(
     arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
-  if (input.n_cols != batchSize)
+  if (!deterministic)
   {
-    batchSize = input.n_cols;
-    prevError.resize(3 * outSize, batchSize);
+    cellParameter.push_back(prevCell);
+    outParameter.push_back(prevOutput);
   }
 
   boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
       boost::apply_visitor(outputParameterVisitor, input2GateModule))),
       input2GateModule);
 
-  boost::apply_visitor(ForwardVisitor(std::move(*prevOutput), std::move(
+  boost::apply_visitor(ForwardVisitor(std::move(prevOutput), std::move(
       boost::apply_visitor(outputParameterVisitor, output2GateModule))),
       output2GateModule);
 
@@ -105,33 +96,30 @@ void LSTM<InputDataType, OutputDataType>::Forward(
       boost::apply_visitor(outputParameterVisitor, output2GateModule);
 
   boost::apply_visitor(ForwardVisitor(std::move(output.submat(
-      0, 0, 1 * outSize - 1, batchSize - 1)), std::move(boost::apply_visitor(
+      0, 0, 1 * outSize - 1, 0)), std::move(boost::apply_visitor(
       outputParameterVisitor, inputGateModule))), inputGateModule);
 
   boost::apply_visitor(ForwardVisitor(std::move(output.submat(
-      1 * outSize, 0, 2 * outSize - 1, batchSize - 1)), std::move(
-      boost::apply_visitor(outputParameterVisitor, hiddenStateModule))),
-      hiddenStateModule);
+      1 * outSize, 0, 2 * outSize - 1, 0)), std::move(boost::apply_visitor(
+      outputParameterVisitor, hiddenStateModule))), hiddenStateModule);
 
   boost::apply_visitor(ForwardVisitor(std::move(output.submat(
-      2 * outSize, 0, 3 * outSize - 1, batchSize - 1)), std::move(
-      boost::apply_visitor(outputParameterVisitor, forgetGateModule))),
-      forgetGateModule);
+      2 * outSize, 0, 3 * outSize - 1, 0)), std::move(boost::apply_visitor(
+      outputParameterVisitor, forgetGateModule))), forgetGateModule);
 
   boost::apply_visitor(ForwardVisitor(std::move(output.submat(
-      3 * outSize, 0, 4 * outSize - 1, batchSize - 1)), std::move(
-      boost::apply_visitor(outputParameterVisitor, outputGateModule))),
-      outputGateModule);
+      3 * outSize, 0, 4 * outSize - 1, 0)), std::move(boost::apply_visitor(
+      outputParameterVisitor, outputGateModule))), outputGateModule);
 
   // Update the cell (nextCell): cmul1 + cmul2
   // where cmul1 is input gate * hidden state and
   // cmul2 is forget gate * cell (prevCell).
-  arma::mat tempPrevCell = (boost::apply_visitor(outputParameterVisitor,
+  prevCell = (boost::apply_visitor(outputParameterVisitor,
       inputGateModule) % boost::apply_visitor(outputParameterVisitor,
       hiddenStateModule)) + (boost::apply_visitor(outputParameterVisitor,
-      forgetGateModule) % *prevCell);
+      forgetGateModule) % prevCell);
 
-  boost::apply_visitor(ForwardVisitor(std::move(tempPrevCell), std::move(
+  boost::apply_visitor(ForwardVisitor(std::move(prevCell), std::move(
       boost::apply_visitor(outputParameterVisitor, cellModule))), cellModule);
 
   boost::apply_visitor(ForwardVisitor(std::move(boost::apply_visitor(
@@ -142,77 +130,25 @@ void LSTM<InputDataType, OutputDataType>::Forward(
       cellActivationModule) % boost::apply_visitor(outputParameterVisitor,
       outputGateModule);
 
+  prevOutput = output;
+
   forwardStep++;
   if (forwardStep == rho)
   {
     forwardStep = 0;
-    if (!deterministic)
-    {
-      outParameter.push_back(std::move(arma::mat(allZeros.memptr(),
-        allZeros.n_rows, allZeros.n_cols, false, false)));
-
-      cellParameter.push_back(std::move(arma::mat(allZeros.memptr(),
-        allZeros.n_rows, allZeros.n_cols, false, false)));
-
-      prevOutput = --outParameter.end();
-      prevCell = --cellParameter.end();
-    }
-    else
-    {
-      *prevOutput = std::move(arma::mat(allZeros.memptr(),
-        allZeros.n_rows, allZeros.n_cols, false, false));
-
-      *prevCell = std::move(arma::mat(allZeros.memptr(),
-        allZeros.n_rows, allZeros.n_cols, false, false));
-    }
-  }
-  else if (!deterministic)
-  {
-    outParameter.push_back(output);
-    cellParameter.push_back(std::move(tempPrevCell));
-    prevOutput = --outParameter.end();
-    prevCell = --cellParameter.end();
-  }
-  else
-  {
-    if (forwardStep == 1)
-    {
-      outParameter.clear();
-      cellParameter.clear();
-
-      outParameter.push_back(output);
-      cellParameter.push_back(std::move(tempPrevCell));
-
-      prevOutput = outParameter.begin();
-      prevCell = cellParameter.begin();
-    }
-    else
-    {
-      *prevOutput = output;
-      *prevCell = std::move(tempPrevCell);
-    }
+    prevOutput.zeros();
+    prevCell.zeros();
   }
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void LSTM<InputDataType, OutputDataType>::Backward(
-  const arma::Mat<eT>&& input, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
+  const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
-  if (input.n_cols != batchSize)
-  {
-    batchSize = input.n_cols;
-    prevError.resize(3 * outSize, batchSize);
-  }
-
-  if ((outParameter.size() - backwardStep  - 1) % rho != 0 && backwardStep != 0)
+  if (backwardStep > 0)
   {
     gy += boost::apply_visitor(deltaVisitor, output2GateModule);
-  }
-
-  if (backIterator == cellParameter.end())
-  {
-    backIterator = --(--cellParameter.end());
   }
 
   arma::mat g1 = boost::apply_visitor(outputParameterVisitor,
@@ -226,7 +162,7 @@ void LSTM<InputDataType, OutputDataType>::Backward(
       std::move(boost::apply_visitor(deltaVisitor, cellActivationModule))),
       cellActivationModule);
 
-  arma::mat cellActivationError = boost::apply_visitor(deltaVisitor,
+  cellActivationError = boost::apply_visitor(deltaVisitor,
       cellActivationModule);
 
   if (backwardStep > 0)
@@ -243,7 +179,8 @@ void LSTM<InputDataType, OutputDataType>::Backward(
   forgetGateError = boost::apply_visitor(outputParameterVisitor,
       forgetGateModule) % cellActivationError;
 
-  arma::mat g7 = *backIterator % cellActivationError;
+  arma::mat g7 = cellParameter[cellParameter.size() -
+      backwardStep - 1] % cellActivationError;
 
   boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
       outputParameterVisitor, inputGateModule)), std::move(g5),
@@ -265,14 +202,14 @@ void LSTM<InputDataType, OutputDataType>::Backward(
       std::move(boost::apply_visitor(deltaVisitor, outputGateModule))),
       outputGateModule);
 
-  prevError.submat(0, 0, 1 * outSize - 1, batchSize - 1) = boost::apply_visitor(
+  prevError.submat(0, 0, 1 * outSize - 1, 0) = boost::apply_visitor(
       deltaVisitor, inputGateModule);
-  prevError.submat(1 * outSize, 0, 2 * outSize - 1, batchSize - 1) =
-      boost::apply_visitor(deltaVisitor, hiddenStateModule);
-  prevError.submat(2 * outSize, 0, 3 * outSize - 1, batchSize - 1) =
-      boost::apply_visitor(deltaVisitor, forgetGateModule);
-  prevError.submat(3 * outSize, 0, 4 * outSize - 1, batchSize - 1) =
-      boost::apply_visitor(deltaVisitor, outputGateModule);
+  prevError.submat(1 * outSize, 0, 2 * outSize - 1, 0) = boost::apply_visitor(
+      deltaVisitor, hiddenStateModule);
+  prevError.submat(2 * outSize, 0, 3 * outSize - 1, 0) = boost::apply_visitor(
+      deltaVisitor, forgetGateModule);
+  prevError.submat(3 * outSize, 0, 4 * outSize - 1, 0) = boost::apply_visitor(
+      deltaVisitor, outputGateModule);
 
   boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
       outputParameterVisitor, input2GateModule)), std::move(prevError),
@@ -285,7 +222,11 @@ void LSTM<InputDataType, OutputDataType>::Backward(
       output2GateModule);
 
   backwardStep++;
-  backIterator--;
+  if (backwardStep == rho)
+  {
+    backwardStep = 0;
+    cellParameter.clear();
+  }
 
   g = boost::apply_visitor(deltaVisitor, input2GateModule);
 }
@@ -297,40 +238,19 @@ void LSTM<InputDataType, OutputDataType>::Gradient(
     arma::Mat<eT>&& /* error */,
     arma::Mat<eT>&& /* gradient */)
 {
-  if (gradIterator == outParameter.end())
-  {
-    gradIterator = --(--outParameter.end());
-  }
-
   boost::apply_visitor(GradientVisitor(std::move(input), std::move(prevError)),
       input2GateModule);
 
   boost::apply_visitor(GradientVisitor(
-      std::move(*gradIterator),
+      std::move(outParameter[outParameter.size() - gradientStep - 1]),
       std::move(prevError)), output2GateModule);
 
-  gradIterator--;
-}
-
-template<typename InputDataType, typename OutputDataType>
-void LSTM<InputDataType, OutputDataType>::ResetCell()
-{
-  outParameter.clear();
-  outParameter.push_back(std::move(arma::mat(allZeros.memptr(),
-    allZeros.n_rows, allZeros.n_cols, false, false)));
-
-  cellParameter.clear();
-  cellParameter.push_back(std::move(arma::mat(allZeros.memptr(),
-    allZeros.n_rows, allZeros.n_cols, false, false)));
-
-  prevOutput = outParameter.begin();
-  prevCell = cellParameter.begin();
-
-  backIterator = cellParameter.end();
-  gradIterator = outParameter.end();
-
-  forwardStep = 0;
-  backwardStep = 0;
+  gradientStep++;
+  if (gradientStep == rho)
+  {
+    gradientStep = 0;
+    outParameter.clear();
+  }
 }
 
 template<typename InputDataType, typename OutputDataType>

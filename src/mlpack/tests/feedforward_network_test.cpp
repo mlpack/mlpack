@@ -135,7 +135,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
   // Because 92 percent of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
   BuildVanillaNetwork<>
-      (trainData, trainLabels, testData, testLabels, 3, 8, 10, 0.1);
+      (trainData, trainLabels, testData, testLabels, 3, 8, 70, 0.1);
 
   dataset.load("mnist_first250_training_4s_and_9s.arm");
 
@@ -149,7 +149,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
 
   // Vanilla neural net with logistic activation function.
   BuildVanillaNetwork<>
-      (dataset, labels, dataset, labels, 2, 10, 10, 0.2);
+      (dataset, labels, dataset, labels, 2, 10, 50, 0.2);
 }
 
 BOOST_AUTO_TEST_CASE(ForwardBackwardTest)
@@ -179,14 +179,14 @@ BOOST_AUTO_TEST_CASE(ForwardBackwardTest)
 
   size_t iteration = 0;
   bool converged = false;
-  while (iteration < 100)
+  while (iteration < 1000)
   {
     arma::running_stat<double> error;
     size_t batchStart = 0;
     while (batchStart < dataset.n_cols)
     {
       size_t batchEnd = std::min(batchStart + batchSize,
-          (size_t) dataset.n_cols);
+          (size_t)dataset.n_cols);
       arma::mat currentData = dataset.cols(batchStart, batchEnd - 1);
       arma::mat currentLabels = labels.cols(batchStart, batchEnd - 1);
       arma::mat currentResuls;
@@ -214,17 +214,16 @@ BOOST_AUTO_TEST_CASE(ForwardBackwardTest)
         }
       }
 
-      error(1 - (double) correct / batchSize);
+      error(1 - (double)correct / batchSize);
     }
     Log::Debug << "Current training error: " << error.mean() << std::endl;
     iteration++;
-    if (error.mean() < 0.05)
+    if (error.mean() < 0.01)
     {
       converged = true;
       break;
     }
   }
-
   BOOST_REQUIRE(converged);
 }
 
@@ -338,7 +337,7 @@ BOOST_AUTO_TEST_CASE(DropoutNetworkTest)
   // Because 92 percent of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
   BuildDropoutNetwork<>
-      (trainData, trainLabels, testData, testLabels, 3, 8, 10, 0.1);
+      (trainData, trainLabels, testData, testLabels, 3, 8, 70, 0.1);
 
   dataset.load("mnist_first250_training_4s_and_9s.arm");
 
@@ -352,7 +351,7 @@ BOOST_AUTO_TEST_CASE(DropoutNetworkTest)
 
   // Vanilla neural net with logistic activation function.
   BuildDropoutNetwork<>
-      (dataset, labels, dataset, labels, 2, 10, 10, 0.2);
+      (dataset, labels, dataset, labels, 2, 10, 50, 0.2);
 }
 
 /**
@@ -467,7 +466,7 @@ BOOST_AUTO_TEST_CASE(DropConnectNetworkTest)
   // Because 92 percent of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
   BuildDropConnectNetwork<>
-      (trainData, trainLabels, testData, testLabels, 3, 8, 10, 0.1);
+      (trainData, trainLabels, testData, testLabels, 3, 8, 70, 0.1);
 
   dataset.load("mnist_first250_training_4s_and_9s.arm");
 
@@ -481,7 +480,7 @@ BOOST_AUTO_TEST_CASE(DropConnectNetworkTest)
 
   // Vanilla neural net with logistic activation function.
   BuildDropConnectNetwork<>
-      (dataset, labels, dataset, labels, 2, 10, 10, 0.2);
+      (dataset, labels, dataset, labels, 2, 10, 50, 0.2);
 }
 
 /**

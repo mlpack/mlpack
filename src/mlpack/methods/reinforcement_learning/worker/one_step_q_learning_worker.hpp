@@ -40,9 +40,6 @@ class OneStepQLearningWorker
   using TransitionType = std::tuple<StateType, ActionType, double, StateType>;
 
   /**
-   * Construct one step Q-Learning worker with the given parameters and
-   * environment.
-   *
    * @param updater The optimizer.
    * @param environment The reinforcement learning task.
    * @param config Hyper-parameters.
@@ -58,7 +55,7 @@ class OneStepQLearningWorker
       config(config),
       deterministic(deterministic),
       pending(config.UpdateInterval())
-  { Reset(); }
+  { reset(); }
 
   /**
    * Initialize the worker.
@@ -106,7 +103,7 @@ class OneStepQLearningWorker
       if (terminal)
       {
         totalReward = episodeReturn;
-        Reset();
+        reset();
         // Sync with latest learning network.
         network = learningNetwork;
         return true;
@@ -125,7 +122,7 @@ class OneStepQLearningWorker
     {
       // Initialize the gradient storage.
       arma::mat totalGradients(learningNetwork.Parameters().n_rows,
-          learningNetwork.Parameters().n_cols, arma::fill::zeros);
+          learningNetwork.Parameters().n_cols);
       for (size_t i = 0; i < pending.size(); ++i)
       {
         TransitionType &transition = pending[i];
@@ -183,7 +180,7 @@ class OneStepQLearningWorker
     if (terminal)
     {
       totalReward = episodeReturn;
-      Reset();
+      reset();
       return true;
     }
     state = nextState;
@@ -192,9 +189,9 @@ class OneStepQLearningWorker
 
  private:
   /**
-   * Reset the worker for a new episode.
+   * Reset the worker for a new episdoe.
    */
-  void Reset()
+  void reset()
   {
     steps = 0;
     episodeReturn = 0;

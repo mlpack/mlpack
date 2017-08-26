@@ -90,8 +90,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
   model.Add<Linear<> >(10, 2);
   model.Add<LogSoftMax<> >();
 
-  // Train for only 8 epochs.
-  RMSProp opt(0.001, 0.88, 1e-8, 8 * nPoints, -1);
+  RMSProp opt(0.001, 0.88, 1e-8, 5000, -1);
 
   model.Train(X, Y, opt);
 
@@ -115,7 +114,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
   }
 
   double classificationError = 1 - double(correct) / X.n_cols;
-  BOOST_REQUIRE_LE(classificationError, 0.25);
+  BOOST_REQUIRE_LE(classificationError, 0.2);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
