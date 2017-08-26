@@ -148,7 +148,7 @@ double LogisticRegressionFunction<MatType>::Evaluate(
 
   // Iterating for the given batch size from a given point
   double result = 0.0;
-  for (size_t i = begin; i < batchSize; ++i)
+  for (size_t i = begin; i < begin + batchSize; ++i)
   {
     if (responses[i] == 1)
       result += log(sigmoid[i]);
