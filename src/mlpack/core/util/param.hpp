@@ -107,7 +107,7 @@
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_INT_OUT(ID, DESC) \
-    PARAM_IN(int, ID, DESC, "", 0, false)
+    PARAM_OUT(int, ID, DESC, "", 0, false)
 
 /**
  * Define a double input parameter.
