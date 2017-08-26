@@ -145,7 +145,7 @@ class BiLinearFunction
                 input(depth + cOrigin * outColSize + rOrigin) * coeff1 +
                 input(depth + cOrigin * outColSize + rOrigin + 1) * coeff2 +
                 input(depth + (cOrigin + 1) * outColSize + rOrigin) * coeff3 +
-                input(depth + (cOrigin + 1) * outColSize + rOrigin + 1) * 
+                input(depth + (cOrigin + 1) * outColSize + rOrigin + 1) *
                     coeff4;
           }
     }

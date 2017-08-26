@@ -71,11 +71,11 @@ BOOST_AUTO_TEST_CASE(GanTest)
 
   // Create Gan
   GaussianInitialization gaussian(0, 0.1);
-  std::function<double ()> noiseFunction = [](){ return math::Random(-8, 8) + 
+  std::function<double ()> noiseFunction = [](){ return math::Random(-8, 8) +
       math::RandNormal(0, 1) * 0.01;};
   GAN<FFN<CrossEntropyError<>>,
       GaussianInitialization,
-      std::function<double ()>>
+      std::function<double()>>
   gan(trainData, generator, discriminator, gaussian, noiseFunction,
       noiseDim, batchSize, generatorUpdateStep, discriminatorPreTrain);
   gan.Reset();
@@ -108,7 +108,7 @@ BOOST_AUTO_TEST_CASE(GanTest)
     samples.reshape(dim, dim);
     samples = samples.t();
 
-    generatedData.submat(dim, 
+    generatedData.submat(dim,
         i * dim, 2 * dim - 1, i * dim + dim - 1) = samples;
   }
 
