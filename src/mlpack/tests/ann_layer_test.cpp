@@ -1310,7 +1310,8 @@ BOOST_AUTO_TEST_CASE(SimpleResizeLayerTest)
   layer.Forward(std::move(input), std::move(output));
   CheckMatrices(output - expectedOutput, arma::zeros(output.n_rows), 1e-12);
 
-  layer.Backward(std::move(output), std::move(output), std::move(unzoomedOutput));
+  layer.Backward(std::move(output), std::move(output), 
+        std::move(unzoomedOutput));
   CheckMatrices(unzoomedOutput - input, arma::zeros(input.n_rows), 1e-12);
 }
 
