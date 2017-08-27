@@ -21,15 +21,14 @@
 <p align="center">
   <em>
     Download:
-    <a href="http://www.mlpack.org/files/mlpack-2.2.5.tar.gz">current stable version (2.2.5)</a>
+    <a href="http://www.mlpack.org/files/mlpack-2.2.4.tar.gz">current stable version (2.2.4)</a>
   </em>
 </p>
 
 **mlpack** is an intuitive, fast, scalable C++ machine learning library, meant to be
 a machine learning analog to LAPACK. It aims to implement a wide array of
 machine learning methods and functions as a "swiss army knife" for machine
-learning researchers.  In addition to its powerful C++ interface, mlpack also
-provides command-line programs and Python bindings.
+learning researchers.
 
 ### 0. Contents
 
@@ -38,9 +37,8 @@ provides command-line programs and Python bindings.
   3. [Dependencies](#3-dependencies)
   4. [Building mlpack from source](#4-building-mlpack-from-source)
   5. [Running mlpack programs](#5-running-mlpack-programs)
-  6. [Using mlpack from Python](#6-using-mlpack-from-python)
-  7. [Further documentation](#7-further-documentation)
-  8. [Bug reporting](#8-bug-reporting)
+  6. [Further documentation](#6-further-documentation)
+  7. [Bug reporting](#7-bug-reporting)
 
 ###  1. Introduction
 
@@ -84,14 +82,6 @@ mlpack has the following dependencies:
 All of those should be available in your distribution's package manager.  If
 not, you will have to compile each of them by hand.  See the documentation for
 each of those packages for more information.
-
-If you would like use or build the mlpack Python bindings, make sure that the
-following Python packages are installed:
-
-      setuptools
-      cython
-      numpy
-      pandas
 
 If you are compiling Armadillo by hand, ensure that LAPACK and BLAS are enabled.
 
@@ -146,15 +136,9 @@ Options are specified with the -D flag.  A list of options allowed:
     BOOST_ROOT=(/path/to/boost/): path to root of boost installation
     ARMADILLO_INCLUDE_DIR=(/path/to/armadillo/include/): path to Armadillo headers
     ARMADILLO_LIBRARY=(/path/to/armadillo/libarmadillo.so): Armadillo library
-    BUILD_CLI_EXECUTABLES=(ON/OFF): whether or not to build command-line programs
-    BUILD_PYTHON_BINDINGS=(ON/OFF): whether or not to build Python bindings
 
 Other tools can also be used to configure CMake, but those are not documented
 here.
-
-By default, command-line programs will be built, and if the Python dependencies
-(Cython, setuptools, numpy, pandas) are available, then Python bindings will
-also be built.
 
 Once CMake is configured, building the library is as simple as typing 'make'.
 This will build all library components as well as 'mlpack_test'.
@@ -182,9 +166,7 @@ write permissions to those three directories), and simply type
 You can now run the executables by name; you can link against mlpack with
     `-lmlpack`
 and the mlpack headers are found in
-    `/usr/local/include/mlpack/`
-and if Python bindings were built, they will be accessible with the `mlpack`
-package in Python.
+    `/usr/local/include/mlpack/`.
 
 If running the programs (i.e. `$ mlpack_knn -h`) gives an error of the form
 
@@ -220,52 +202,19 @@ nearest points to that point.
 Each mlpack program has extensive help documentation which details what the
 method does, what each of the parameters are, and how to use them:
 
-```shell
-$ mlpack_knn --help
-```
+    $ mlpack_knn --help
 
 Running `mlpack_knn` on one dataset (that is, the query and reference
 datasets are the same) and finding the 5 nearest neighbors is very simple:
 
-```shell
-$ mlpack_knn -r dataset.csv -n neighbors_out.csv -d distances_out.csv -k 5 -v
-```
+    $ mlpack_knn -r dataset.csv -n neighbors_out.csv -d distances_out.csv -k 5 -v
 
 The `-v (--verbose)` flag is optional; it gives informational output.  It is not
 unique to `mlpack_knn` but is available in all mlpack programs.  Verbose
 output also gives timing output at the end of the program, which can be very
 useful.
 
-### 6. Using mlpack from Python
-
-If mlpack is installed to the system, then the mlpack Python bindings should be
-automatically in your PYTHONPATH, and importing mlpack functionality into Python
-should be very simple:
-
-```python
->>> from mlpack import knn
-```
-
-Accessing help is easy:
-
-```python
->>> help(knn)
-```
-
-The API is similar to the command-line programs.  So, running `knn()`
-(k-nearest-neighbor search) on the numpy matrix `dataset` and finding the 5
-nearest neighbors is very simple:
-
-```python
->>> output = knn(reference=dataset, k=5, verbose=True)
-```
-
-This will store the output neighbors in `output['neighbors']` and the output
-distances in `output['distances']`.  Other mlpack bindings function similarly,
-and the input/output parameters exactly match those of the command-line
-programs.
-
-### 7. Further documentation
+### 6. Further documentation
 
 The documentation given here is only a fraction of the available documentation
 for mlpack.  If doxygen is installed, you can type `make doc` to build the
@@ -277,7 +226,7 @@ older versions of mlpack:
   - [Development Site (Github)](https://www.github.com/mlpack/mlpack/)
   - [API documentation](http://www.mlpack.org/docs/mlpack-git/doxygen.php)
 
-### 8. Bug reporting
+### 7. Bug reporting
 
    (see also [mlpack help](http://www.mlpack.org/help.html))
 
@@ -298,4 +247,4 @@ and the git commit list is available at
 
   [commit list](http://lists.mlpack.org/mailman/listinfo/mlpack-git)
 
-Lastly, the IRC channel `#mlpack` on Freenode can be used to get help.
+Lastly, the IRC channel ```#mlpack``` on Freenode can be used to get help.
