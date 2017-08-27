@@ -42,11 +42,6 @@ LinearRegression::LinearRegression(const arma::mat& predictors,
   Train(predictors, responses, weights, intercept);
 }
 
-LinearRegression::LinearRegression(const LinearRegression& linearRegression) :
-    parameters(linearRegression.parameters),
-    lambda(linearRegression.lambda)
-{ /* Nothing to do. */ }
-
 void LinearRegression::Train(const arma::mat& predictors,
                              const arma::vec& responses,
                              const bool intercept,

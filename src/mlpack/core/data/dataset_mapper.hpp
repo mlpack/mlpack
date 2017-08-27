@@ -17,7 +17,6 @@
 
 #include <mlpack/prereqs.hpp>
 #include <unordered_map>
-#include <boost/bimap.hpp>
 
 #include "map_policies/increment_policy.hpp"
 
@@ -80,11 +79,28 @@ class DatasetMapper
    * std::invalid_argument is thrown.  Note that this does not remove the
    * mapping.
    *
+   * If the mapping is non-unique (i.e. many strings can map to the same value),
+   * then you can pass a different value for unmappingIndex to get a different
+   * string that maps to the given value.  unmappingIndex should be in the range
+   * from 0 to (NumUnmappings(value, dimension) - 1).
+   *
+   * If the mapping is unique (which it is for DatasetInfo), then the
+   * unmappingIndex parameter can be left as the default.
+   *
    * @param value Mapped value for string.
    * @param dimension Dimension to unmap string from.
+   * @param unmappingIndex Index of non-unique unmapping (optional).
    */
-  const std::string& UnmapString(const size_t value, const size_t dimension);
+  template<typename T>
+  const std::string& UnmapString(const T value,
+                                 const size_t dimension,
+                                 const size_t unmappingIndex = 0) const;
 
+  /**
+   * Get the number of possible unmappings for a string in a given dimension.
+   */
+  template<typename T>
+  size_t NumUnmappings(const T value, const size_t dimension) const;
 
   /**
    * Return the value that corresponds to a given string in a given dimension.
@@ -139,13 +155,20 @@ class DatasetMapper
   //! Types of each dimension.
   std::vector<Datatype> types;
 
-  // BiMapType definition
-  using BiMapType = boost::bimap<std::string, typename PolicyType::MappedType>;
+  // Forward mapping type.
+  using ForwardMapType = std::unordered_map<std::string, typename
+      PolicyType::MappedType>;
+
+  // Reverse mapping type.  Multiple inputs may map to a single output, hence
+  // the need for std::vector.
+  using ReverseMapType = std::unordered_map<typename PolicyType::MappedType,
+      std::vector<std::string>>;
 
   // Mappings from strings to integers.
   // Map entries will only exist for dimensions that are categorical.
   // MapType = map<dimension, pair<bimap<string, MappedType>, numMappings>>
-  using MapType = std::unordered_map<size_t, std::pair<BiMapType, size_t>>;
+  using MapType = std::unordered_map<size_t, std::pair<ForwardMapType,
+      ReverseMapType>>;
 
   //! maps object stores string and numerical pairs.
   MapType maps;
