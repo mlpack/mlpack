@@ -6,7 +6,9 @@ set(DIRS
   fw
   gradient_descent
   lbfgs
+  line_search
   minibatch_sgd
+  proximal
   rmsprop
   sa
   sdp
