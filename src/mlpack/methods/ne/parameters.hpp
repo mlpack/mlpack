@@ -57,8 +57,7 @@ class Parameters
   //! Probability to mutate a genome's weight.
   double mutateWeightProb;
 
-  //! Probability to mutate a genome's weight in biased way
- //! (add Gaussian perturb noise).
+  //! Probability to mutate a genome's weight in biased way.
   double perturbWeightProb;
 
   //! The Gaussian noise variance when mutating genome weights.
@@ -85,13 +84,11 @@ class Parameters
   //! Probability to turn disabled link to enabled.
   double mutateDisabledProb;
 
-  //! When number of species exceed this value, start to remove stale
- //! and weak species in population.
- int numSpeciesThreshold;
+  //! Maximum number of species allowed in population.
+  int numSpeciesThreshold;
 
   //! Whether the activation function of new neuron is random or not.
   bool randomTypeNewNeuron;
-
 };
 
 }  // namespace ne
