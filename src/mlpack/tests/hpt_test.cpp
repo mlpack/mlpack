@@ -196,8 +196,7 @@ BOOST_AUTO_TEST_CASE(GridSearchTest)
 
   bool transposeData = true;
   bool useCholesky = false;
-  arma::vec lambda1Set =
-      arma::join_cols(arma::vec{0}, arma::logspace<arma::vec>(-3, 2, 6));
+  arma::vec lambda1Set{0, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0};
   std::array<double, 4> lambda2Set{{0.0, 0.05, 0.5, 5.0}};
 
   double expectedLambda1, expectedLambda2, expectedObjective;
@@ -238,8 +237,7 @@ BOOST_AUTO_TEST_CASE(HPTTest)
 
   bool transposeData = true;
   bool useCholesky = false;
-  arma::vec lambda1Set =
-      arma::join_cols(arma::vec{0}, arma::logspace<arma::vec>(-3, 2, 6));
+  arma::vec lambda1Set{0, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0};
   arma::vec lambda2Set{0.0, 0.05, 0.5, 5.0};
 
   double expectedLambda1, expectedLambda2, expectedObjective;
