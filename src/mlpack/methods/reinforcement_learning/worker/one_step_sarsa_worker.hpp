@@ -1,17 +1,17 @@
 /**
- * @file one_step_q_learning_worker.hpp
+ * @file one_step_sarsa_worker.hpp
  * @author Shangtong Zhang
  *
- * This file is the definition of OneStepQLearningWorker class,
- * which implements an episode for async one step Q-Learning algorithm.
+ * This file is the definition of OneStepSarsaWorker class,
+ * which implements an episode for async one step Sarsa algorithm.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_RL_WORKER_ONE_STEP_Q_LEARNING_WORKER_HPP
-#define MLPACK_METHODS_RL_WORKER_ONE_STEP_Q_LEARNING_WORKER_HPP
+#ifndef MLPACK_METHODS_RL_WORKER_ONE_STEP_SARSA_WORKER_HPP
+#define MLPACK_METHODS_RL_WORKER_ONE_STEP_SARSA_WORKER_HPP
 
 #include <mlpack/methods/reinforcement_learning/training_config.hpp>
 
@@ -19,12 +19,12 @@ namespace mlpack {
 namespace rl {
 
 /**
- * One step Q-Learning worker.
+ * One step Sarsa worker.
  *
  * @tparam EnvironmentType The type of the reinforcement learning task.
  * @tparam NetworkType The type of the network model.
  * @tparam UpdaterType The type of the optimizer.
- * @tparam PolicyType The type of the behavior policy. *
+ * @tparam PolicyType The type of the behavior policy.
  */
 template <
   typename EnvironmentType,
@@ -32,15 +32,16 @@ template <
   typename UpdaterType,
   typename PolicyType
 >
-class OneStepQLearningWorker
+class OneStepSarsaWorker
 {
  public:
   using StateType = typename EnvironmentType::State;
   using ActionType = typename EnvironmentType::Action;
-  using TransitionType = std::tuple<StateType, ActionType, double, StateType>;
+  using TransitionType = std::tuple<StateType, ActionType, double, StateType,
+      ActionType>;
 
   /**
-   * Construct one step Q-Learning worker with the given parameters and
+   * Construct one step sarsa worker with the given parameters and
    * environment.
    *
    * @param updater The optimizer.
@@ -48,7 +49,7 @@ class OneStepQLearningWorker
    * @param config Hyper-parameters.
    * @param deterministic Whether it should be deterministic.
    */
-  OneStepQLearningWorker(
+  OneStepSarsaWorker(
       const UpdaterType& updater,
       const EnvironmentType& environment,
       const TrainingConfig& config,
@@ -90,12 +91,19 @@ class OneStepQLearningWorker
             double& totalReward)
   {
     // Interact with the environment.
-    arma::colvec actionValue;
-    network.Predict(state.Encode(), actionValue);
-    ActionType action = policy.Sample(actionValue, deterministic);
+    if (action == ActionType::size)
+    {
+      // Invalid action means we are at the beginning of an episode.
+      arma::colvec actionValue;
+      network.Predict(state.Encode(), actionValue);
+      action = policy.Sample(actionValue, deterministic);
+    }
     StateType nextState;
     double reward = environment.Sample(state, action, nextState);
     bool terminal = environment.IsTerminal(nextState);
+    arma::colvec actionValue;
+    network.Predict(nextState.Encode(), actionValue);
+    ActionType nextAction = policy.Sample(actionValue, deterministic);
 
     episodeReturn += reward;
     steps++;
@@ -112,14 +120,15 @@ class OneStepQLearningWorker
         return true;
       }
       state = nextState;
+      action = nextAction;
       return false;
     }
 
     #pragma omp atomic
     totalSteps++;
 
-    pending[pendingIndex] = std::make_tuple(state, action, reward, nextState);
-    pendingIndex++;
+    pending[pendingIndex++] =
+        std::make_tuple(state, action, reward, nextState, nextAction);
 
     if (terminal || pendingIndex >= config.UpdateInterval())
     {
@@ -137,9 +146,9 @@ class OneStepQLearningWorker
           targetNetwork.Predict(
               std::get<3>(transition).Encode(), actionValue);
         };
-        double targetActionValue = actionValue.max();
-        if (terminal && i == pending.size() - 1)
-          targetActionValue = 0;
+        double targetActionValue = 0;
+        if (!(terminal && i == pending.size() - 1))
+          targetActionValue = actionValue[std::get<4>(transition)];
         targetActionValue = std::get<2>(transition) +
             config.Discount() * targetActionValue;
 
@@ -187,6 +196,7 @@ class OneStepQLearningWorker
       return true;
     }
     state = nextState;
+    action = nextAction;
     return false;
   }
 
@@ -200,6 +210,7 @@ class OneStepQLearningWorker
     episodeReturn = 0;
     pendingIndex = 0;
     state = environment.InitialSample();
+    action = ActionType::size;
   }
 
   //! Locally-stored optimizer.
@@ -231,6 +242,9 @@ class OneStepQLearningWorker
 
   //! Current state of the agent.
   StateType state;
+
+  //! Current action of the agent.
+  ActionType action;
 };
 
 } // namespace rl

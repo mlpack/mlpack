@@ -30,6 +30,7 @@ BOOST_AUTO_TEST_SUITE(CLIBindingTest);
  */
 BOOST_AUTO_TEST_CASE(CLIOptionTest)
 {
+  CLI::ClearSettings();
   CLIOption<double> co1(0.0, "test", "test2", "t", "double", false, true,
       false);
 

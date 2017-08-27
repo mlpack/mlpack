@@ -5,6 +5,8 @@ add_subdirectory(metrics)
 set(SOURCES
   cv_base.hpp
   cv_base_impl.hpp
+  k_fold_cv.hpp
+  k_fold_cv_impl.hpp
   meta_info_extractor.hpp
   simple_cv.hpp
   simple_cv_impl.hpp

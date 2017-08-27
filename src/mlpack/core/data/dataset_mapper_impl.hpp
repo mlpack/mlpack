@@ -79,14 +79,52 @@ inline T DatasetMapper<PolicyType>::MapString(const std::string& string,
   return policy.template MapString<MapType, T>(string, dimension, maps, types);
 }
 
+/**
+ * A safe version of isnan() that only gets called when the type has a NaN at
+ * all.  This is a workaround for Visual Studio, which doesn't seem to support
+ * isnan(size_t).
+ */
+template<typename T>
+inline bool isnanSafe(const T& t)
+{
+  return false;
+}
+
+template<>
+inline bool isnanSafe(const double& t)
+{
+  return std::isnan(t);
+}
+
+template<>
+inline bool isnanSafe(const float& t)
+{
+  return std::isnan(t);
+}
+
+template<>
+inline bool isnanSafe(const long double& t)
+{
+  return std::isnan(t);
+}
+
+
 // Return the string corresponding to a value in a given dimension.
 template<typename PolicyType>
+template<typename T>
 inline const std::string& DatasetMapper<PolicyType>::UnmapString(
-    const size_t value,
-    const size_t dimension)
+    const T value,
+    const size_t dimension,
+    const size_t unmappingIndex) const
 {
+  // If the value is std::numeric_limits<T>::quiet_NaN(), we can't use it as a
+  // key---so we will use something else...
+  const T usedValue = isnanSafe(value) ?
+      std::nexttoward(std::numeric_limits<T>::max(), T(0)) :
+      value;
+
   // Throw an exception if the value doesn't exist.
-  if (maps[dimension].first.right.count(value) == 0)
+  if (maps.at(dimension).second.count(usedValue) == 0)
   {
     std::ostringstream oss;
     oss << "DatasetMapper<PolicyType>::UnmapString(): value '" << value
@@ -94,7 +132,33 @@ inline const std::string& DatasetMapper<PolicyType>::UnmapString(
     throw std::invalid_argument(oss.str());
   }
 
-  return maps[dimension].first.right.at(value);
+  if (unmappingIndex >= maps.at(dimension).second.at(usedValue).size())
+  {
+    std::ostringstream oss;
+    oss << "DatasetMapper<PolicyType>::UnmapString(): value '" << value
+        << "' only has " << maps.at(dimension).second.at(usedValue).size()
+        << " unmappings, but unmappingIndex is " << unmappingIndex << "!";
+    throw std::invalid_argument(oss.str());
+  }
+
+  return maps.at(dimension).second.at(usedValue)[unmappingIndex];
+}
+
+template<typename PolicyType>
+template<typename T>
+inline size_t DatasetMapper<PolicyType>::NumUnmappings(
+    const T value,
+    const size_t dimension) const
+{
+  // If the value is std::numeric_limits<T>::quiet_NaN(), we can't use it as a
+  // key---so we will use something else...
+  if (isnanSafe(value))
+  {
+    const T newValue = std::nexttoward(std::numeric_limits<T>::max(), T(0));
+    return maps.at(dimension).second.at(newValue).size();
+  }
+
+  return maps.at(dimension).second.at(value).size();
 }
 
 // Return the value corresponding to a string in a given dimension.
@@ -104,7 +168,7 @@ inline typename PolicyType::MappedType DatasetMapper<PolicyType>::UnmapValue(
     const size_t dimension)
 {
   // Throw an exception if the value doesn't exist.
-  if (maps[dimension].first.left.count(string) == 0)
+  if (maps[dimension].first.count(string) == 0)
   {
     std::ostringstream oss;
     oss << "DatasetMapper<PolicyType>::UnmapValue(): string '" << string
@@ -112,7 +176,7 @@ inline typename PolicyType::MappedType DatasetMapper<PolicyType>::UnmapValue(
     throw std::invalid_argument(oss.str());
   }
 
-  return maps[dimension].first.left.at(string);
+  return maps[dimension].first.at(string);
 }
 
 // Get the type of a particular dimension.
@@ -143,7 +207,7 @@ template<typename PolicyType>
 inline
 size_t DatasetMapper<PolicyType>::NumMappings(const size_t dimension) const
 {
-  return (maps.count(dimension) == 0) ? 0 : maps.at(dimension).second;
+  return (maps.count(dimension) == 0) ? 0 : maps.at(dimension).first.size();
 }
 
 template<typename PolicyType>
@@ -169,8 +233,6 @@ inline void DatasetMapper<PolicyType>::Policy(PolicyType&& policy)
 {
   this->policy = std::forward<PolicyType>(policy);
 }
-
-
 
 } // namespace data
 } // namespace mlpack

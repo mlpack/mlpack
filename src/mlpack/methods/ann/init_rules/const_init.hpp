@@ -1,17 +1,18 @@
 /**
- * @file zero_init.hpp
- * @author Marcus Edel
+ * @file const_init.hpp
+ * @author Sumedh Ghaisas
  *
  * Intialization rule for the neural networks. This simple initialization is
- * performed by assigning a zero matrix to the weight matrix.
+ * performed by assigning a matrix of all constant values to the weight
+ * matrix.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_INIT_RULES_ZERO_INIT_HPP
-#define MLPACK_METHODS_ANN_INIT_RULES_ZERO_INIT_HPP
+#ifndef MLPACK_METHODS_ANN_INIT_RULES_CONST_INIT_HPP
+#define MLPACK_METHODS_ANN_INIT_RULES_CONST_INIT_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -19,15 +20,16 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * This class is used to initialize randomly the weight matrix.
+ * This class is used to initialize weight matrix with constant values.
  */
-class ZeroInitialization
+class ConstInitialization
 {
  public:
   /**
-   *  Create the ZeroInitialization object.
+   *  Create the ConstantInitialization object.
    */
-  ZeroInitialization() { /* Nothing to do here */ }
+  ConstInitialization(const double initVal) : initVal(initVal)
+  { /* Nothing to do here */ }
 
   /**
    * Initialize the elements of the specified weight matrix.
@@ -39,7 +41,8 @@ class ZeroInitialization
   template<typename eT>
   void Initialize(arma::Mat<eT>& W, const size_t rows, const size_t cols)
   {
-    W = arma::zeros<arma::Mat<eT> >(rows, cols);
+    W.set_size(rows, cols);
+    W.fill(initVal);
   }
 
   /**
@@ -55,9 +58,19 @@ class ZeroInitialization
                   const size_t cols,
                   const size_t slices)
   {
-    W = arma::zeros<arma::Cube<eT> >(rows, cols, slices);
+    W.set_size(rows, cols, slices);
+    W.fill(initVal);
   }
-}; // class ZeroInitialization
+
+  //! Get the initialization value.
+  double const& InitValue() const { return initVal; }
+  //! Modify the initialization value.
+  double& initValue() { return initVal; }
+
+ private:
+  //! Value to be initialized with
+  double initVal;
+}; // class ConstInitialization
 
 } // namespace ann
 } // namespace mlpack

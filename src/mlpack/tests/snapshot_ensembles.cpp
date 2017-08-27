@@ -118,7 +118,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
   // Now run SGDR with snapshot ensembles on a couple of batch sizes.
   for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
   {
-    SnapshotSGDR<> sgdr(50, 2.0, batchSize);
+    SnapshotSGDR<> sgdr(50, 2.0, batchSize, 0.01, 10000, 1e-3);
     LogisticRegression<> lr(shuffledData, shuffledResponses, sgdr, 0.5);
 
     // Ensure that the error is close to zero.
