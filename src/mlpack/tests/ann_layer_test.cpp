@@ -14,6 +14,7 @@
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
+#include <mlpack/methods/ann/init_rules/const_init.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/rnn.hpp>
@@ -925,6 +926,42 @@ BOOST_AUTO_TEST_CASE(SimpleLogSoftmaxLayerTest)
   BOOST_REQUIRE_SMALL(arma::accu(arma::abs(
       arma::mat("1.6487; 0.6487") - delta)), 1e-3);
 }
+
+BOOST_AUTO_TEST_CASE(SimpleCrossEntropyErrorLogitLayerTest)
+{
+  arma::mat input1, input2, output, target1, target2, expectedOutput;
+  CrossEntropyErrorLogits<> module;
+
+  // Test the Forward function on a user generator input and compare it against
+  // the manually calculated result.
+  input1 = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5");
+  target1 = arma::zeros(1, 8);
+  double error1 = module.Forward(std::move(input1), std::move(target1));
+  // value computed using tf
+  BOOST_REQUIRE_SMALL(error1 - 0.97407699, 1e-7);
+
+  input2 = arma::mat("1 2 3 4 5");
+  target2 = arma::mat("0 0 1 0 1");
+  double error2 = module.Forward(std::move(input2), std::move(target2));
+  BOOST_REQUIRE_SMALL(error2 - 1.5027283, 1e-6);
+
+  // Test the Backward function.
+  module.Backward(std::move(input1), std::move(target1), std::move(output));
+  for (size_t i = 0; i < output.n_elem; i++)
+    BOOST_REQUIRE_SMALL(output(i) - 0.62245929, 1e-5);
+  BOOST_REQUIRE_EQUAL(output.n_rows, input1.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input1.n_cols);
+
+  expectedOutput = arma::mat(
+      "0.7310586 0.88079709 -0.04742587 0.98201376 -0.00669285");
+  module.Backward(std::move(input2), std::move(target2), std::move(output));
+  for (size_t i = 0; i < output.n_elem; i++)
+    BOOST_REQUIRE_SMALL(output(i) - expectedOutput(i), 1e-5);
+
+  BOOST_REQUIRE_EQUAL(output.n_rows, input2.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input2.n_cols);
+}
+
 
 /*
  * Simple test for the cross-entropy error performance function.
