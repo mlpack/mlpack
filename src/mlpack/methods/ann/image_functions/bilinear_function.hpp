@@ -84,11 +84,13 @@ class BiLinearFunction
           coeff3 = (1 - deltaR) * deltaC;
           coeff4 = deltaR * deltaC;
 
+          size_t ptr = k * inRowSize * inColSize + cOrigin * inColSize + rOrigin
+
           output(k * outRowSize * outColSize + j * outColSize + i) =
-              input(k* inRowSize * inColSize + cOrigin * inColSize + rOrigin) * coeff1 +
-              input(k* inRowSize * inColSize + cOrigin * inColSize + rOrigin + 1) * coeff2 +
-              input(k* inRowSize * inColSize + (cOrigin + 1) * inColSize + rOrigin) * coeff3 +
-              input(k* inRowSize * inColSize + (cOrigin + 1) * inColSize + rOrigin + 1) * coeff4;
+              input(ptr) * coeff1 +
+              input(ptr + 1) * coeff2 +
+              input(ptr + inColSize) * coeff3 +
+              input(ptr + inColSize + 1) * coeff4;
         }
       }
     }
@@ -137,11 +139,13 @@ class BiLinearFunction
             coeff3 = (1 - deltaR) * deltaC;
             coeff4 = deltaR * deltaC;
 
+            size_t ptr = k * outColSize * outRowSize;
+
             output(k * inColSize * inRowSize + j * inColSize + i) =
-                input(k * outColSize * outRowSize + cOrigin * outColSize + rOrigin) * coeff1 +
-                input(k * outColSize * outRowSize + cOrigin * outColSize + rOrigin + 1) * coeff2 +
-                input(k * outColSize * outRowSize + (cOrigin + 1) * outColSize + rOrigin) * coeff3 +
-                input(k * outColSize * outRowSize + (cOrigin + 1) * outColSize + rOrigin + 1) * coeff4;
+                input(ptr) * coeff1 +
+                input(ptr + 1) * coeff2 +
+                input(prt + outColSize) * coeff3 +
+                input(ptr + outColSize + 1) * coeff4;
           }
     }
   }
