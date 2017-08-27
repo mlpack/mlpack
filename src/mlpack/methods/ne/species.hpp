@@ -158,7 +158,7 @@ class Species
    */
   void AddGenome(Genome& genome)
   {
-    genome.Id(nextGenomeId);  // NOTICE: thus we changed genome id when add to species.
+    genome.Id(nextGenomeId);
     genomes.push_back(genome);
     ++nextGenomeId;
   }
@@ -167,7 +167,7 @@ class Species
   //! Id of species.
   int id;
 
-  //! Stale age (how many generations that its best fitness doesn't improve) of species.
+  //! Number of generations for which fitness remains same.
   int staleAge;
 
   //! Best fitness.
@@ -178,7 +178,6 @@ class Species
 
   //! Next genome id.
   int nextGenomeId;
-
 };
 
 }  // namespace ne

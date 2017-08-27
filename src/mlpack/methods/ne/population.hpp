@@ -159,7 +159,7 @@ class Population
    */
   void AddSpecies(Species& species)
   {
-    species.Id(nextSpeciesId);  // NOTICE: thus we changed species id when add to population.
+    species.Id(nextSpeciesId);
     this->species.push_back(species);
     ++nextSpeciesId;
   }
@@ -203,7 +203,6 @@ class Population
 
   //! Next genome id.
   int nextGenomeId;
-
 };
 
 }  // namespace ne

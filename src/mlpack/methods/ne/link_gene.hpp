@@ -78,13 +78,14 @@ class LinkGene
       weight = linkGene.weight;
       enabled = linkGene.enabled;
     }
-   return *this;
+
+    return *this;
   }
 
   /**
    * Set fromNeuronId.
    */
-  void FromNeuronId(int fromNeuronId) { this->fromNeuronId = fromNeuronId; } 
+  void FromNeuronId(int fromNeuronId) { this->fromNeuronId = fromNeuronId; }
 
   /**
    * Get fromNeuronId.
@@ -146,7 +147,6 @@ class LinkGene
 
   //! Enabled or not.
   bool enabled;
- 
 };
 
 }  // namespace ne
