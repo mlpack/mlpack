@@ -48,6 +48,7 @@ set(DIRS
   matrix_completion
   naive_bayes
   nca
+  ne
   neighbor_search
   nmf
 #  lmf

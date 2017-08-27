@@ -4,7 +4,6 @@ set(DIRS
   adam
   aug_lagrangian
   fw
-  cmaes
   gradient_descent
   lbfgs
   minibatch_sgd
