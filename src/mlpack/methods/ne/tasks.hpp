@@ -659,7 +659,7 @@ class TaskDoublePole
 /**
  * This class defines task mountain car.
  */
-class TaskMountainCar 
+class TaskMountainCar
 {
  public:
   // Low bound of position.

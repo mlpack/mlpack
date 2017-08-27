@@ -23,7 +23,7 @@ namespace ne {
  * This class defines a genome.
  * A genome is consist of a group of genes.
  */
-class Genome 
+class Genome
 {
  public:
   //! Neurons.
@@ -419,7 +419,7 @@ return false;
     {
       double weight = mlpack::math::Random(lo, hi);
       linkGenes[i].Weight(weight);
-   }
+    }
   }
 
   /**
@@ -459,7 +459,7 @@ return false;
     const char* boolEnabledString[] = { "False", "True" };
 
     std::cout << "Neurons: " << neuronGenes.size() << std::endl;
-    for(size_t i = 0; i < neuronGenes.size(); ++i)
+    for (size_t i = 0; i < neuronGenes.size(); ++i)
     {
       printf(" Gene:(id=%i, type=%s, activation func=%s,"
              " input=%f, response=%f, depth=%.3f)\n",
@@ -472,7 +472,7 @@ return false;
     }
 
     std::cout << "Links: " << linkGenes.size() << std::endl;
-    for(size_t i = 0; i < linkGenes.size(); ++i)
+    for (size_t i = 0; i < linkGenes.size(); ++i)
     {
       printf("Link:(from=%i, to=%i, weight=%f, enabled=%s,"
              "innovation=%i)\n",
@@ -487,7 +487,6 @@ return false;
   }
 
  private:
-
   //! Genome id.
   int id;
 

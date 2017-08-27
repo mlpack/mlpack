@@ -363,7 +363,7 @@ class NEAT
 
     // -1 means not exist.
     return -1;
-  } 
+  }
 
   /**
    * Mutate: add new link to genome.
@@ -544,14 +544,17 @@ class NEAT
     if (innovIdx != -1)
     {
       // Check whether this genome already contains the neuron.
-      int neuronIdx = genome.GetNeuronIndex(neuronInnovations[innovIdx].newNeuronId);
-      
+      int neuronIdx = genome.GetNeuronIndex(neuronInnovations[innovIdx].
+                      newNeuronId);
+
       // The neuron already exist.
       if (neuronIdx != -1)
       {
         // Enable the input and output link.
-        int inputLinkIdx = genome.GetLinkIndex(neuronInnovations[innovIdx].newInputLinkInnovId);
-        int outputLinkIdx = genome.GetLinkIndex(neuronInnovations[innovIdx].newOutputLinkInnovId);
+        int inputLinkIdx = genome.GetLinkIndex(neuronInnovations[innovIdx].
+                           newInputLinkInnovId);
+        int outputLinkIdx = genome.GetLinkIndex(neuronInnovations[innovIdx].
+                            newOutputLinkInnovId);
         genome.linkGenes[inputLinkIdx].Enabled(true);
         genome.linkGenes[outputLinkIdx].Enabled(true);
       }
@@ -759,16 +762,20 @@ class NEAT
         childGenome.AddLink(momGenome.linkGenes[i]);
 
         // Add from neuron.
-        int idxInChild = childGenome.GetNeuronIndex(momGenome.linkGenes[i].FromNeuronId());
-        int idxInParent = momGenome.GetNeuronIndex(momGenome.linkGenes[i].FromNeuronId());
+        int idxInChild = childGenome.GetNeuronIndex(momGenome.linkGenes[i].
+                         FromNeuronId());
+        int idxInParent = momGenome.GetNeuronIndex(momGenome.linkGenes[i].
+                          FromNeuronId());
         if (idxInChild == -1)
         {
           childGenome.AddHiddenNeuron(momGenome.neuronGenes[idxInParent]);
         }
 
         // Add to neuron.
-        idxInChild = childGenome.GetNeuronIndex(momGenome.linkGenes[i].ToNeuronId());
-        idxInParent = momGenome.GetNeuronIndex(momGenome.linkGenes[i].ToNeuronId());
+        idxInChild = childGenome.GetNeuronIndex(momGenome.
+                     linkGenes[i].ToNeuronId());
+        idxInParent = momGenome.GetNeuronIndex(momGenome.
+                      linkGenes[i].ToNeuronId());
         if (idxInChild == -1)
         {
           childGenome.AddHiddenNeuron(momGenome.neuronGenes[idxInParent]);
@@ -782,16 +789,20 @@ class NEAT
         childGenome.AddLink(momGenome.linkGenes[i]);
 
         // Add from neuron.
-        int idxInChild = childGenome.GetNeuronIndex(momGenome.linkGenes[i].FromNeuronId());
-        int idxInParent = momGenome.GetNeuronIndex(momGenome.linkGenes[i].FromNeuronId());
+        int idxInChild = childGenome.GetNeuronIndex(momGenome.
+                         linkGenes[i].FromNeuronId());
+        int idxInParent = momGenome.GetNeuronIndex(momGenome.
+                          linkGenes[i].FromNeuronId());
         if (idxInChild == -1)
         {
           childGenome.AddHiddenNeuron(momGenome.neuronGenes[idxInParent]);
         }
 
         // Add to neuron.
-        idxInChild = childGenome.GetNeuronIndex(momGenome.linkGenes[i].ToNeuronId());
-        idxInParent = momGenome.GetNeuronIndex(momGenome.linkGenes[i].ToNeuronId());
+        idxInChild = childGenome.GetNeuronIndex(momGenome.
+                                 linkGenes[i].ToNeuronId());
+        idxInParent = momGenome.GetNeuronIndex(momGenome.
+                                 linkGenes[i].ToNeuronId());
         if (idxInChild == -1)
         {
           childGenome.AddHiddenNeuron(momGenome.neuronGenes[idxInParent]);
@@ -805,16 +816,21 @@ class NEAT
         childGenome.AddLink(dadGenome.linkGenes[idx]);
 
         // Add from neuron.
-        int idxInChild = childGenome.GetNeuronIndex(dadGenome.linkGenes[idx].FromNeuronId());
-        int idxInParent = dadGenome.GetNeuronIndex(dadGenome.linkGenes[idx].FromNeuronId());
+        int idxInChild = childGenome.GetNeuronIndex(dadGenome.linkGenes[idx].
+                         FromNeuronId());
+        int idxInParent = dadGenome.GetNeuronIndex(dadGenome.linkGenes[idx].
+                         FromNeuronId());
+
         if (idxInChild == -1)
         {
           childGenome.AddHiddenNeuron(dadGenome.neuronGenes[idxInParent]);
         }
 
         // Add to neuron.
-        idxInChild = childGenome.GetNeuronIndex(dadGenome.linkGenes[idx].ToNeuronId());
-        idxInParent = dadGenome.GetNeuronIndex(dadGenome.linkGenes[idx].ToNeuronId());
+        idxInChild = childGenome.GetNeuronIndex(dadGenome.
+                     linkGenes[idx].ToNeuronId());
+        idxInParent = dadGenome.GetNeuronIndex(dadGenome.
+                     linkGenes[idx].ToNeuronId());
         if (idxInChild == -1)
         {
           childGenome.AddHiddenNeuron(dadGenome.neuronGenes[idxInParent]);
@@ -837,12 +853,12 @@ class NEAT
   void Crossover(Genome& genome1, Genome& genome2, Genome& childGenome)
   {
     if (CompareGenome(genome1, genome2))
-    { 
+    {
       // Genome1 is better.
       CrossoverLinkAndNeuron(genome1, genome2, childGenome);
     }
     else
-    { 
+    {
       // Genome2 is better.
       CrossoverLinkAndNeuron(genome2, genome1, childGenome);
     }
@@ -882,7 +898,7 @@ class NEAT
     double deltaD = numDisjoint / largerGenomeSize;
 
     return deltaD;
- }
+  }
 
   /**
    * Measure two genomes' weight difference.
@@ -905,8 +921,10 @@ class NEAT
       if (linkContainedInGenome2)
       {
         int linkEnabledInGenome2 = (int) genome2.linkGenes[idx].Enabled();
-        deltaW += std::abs(genome1.linkGenes[i].Weight() * linkEnabledInGenome1 -
-                          genome2.linkGenes[idx].Weight() * linkEnabledInGenome2);
+        deltaW += std::abs(genome1.linkGenes[i].Weight() *
+                           linkEnabledInGenome1 -
+                           genome2.linkGenes[idx].Weight() *
+                           linkEnabledInGenome2);
         ++coincident;
       }
     }
@@ -977,7 +995,7 @@ class NEAT
     for (std::vector<Species>::iterator it = population.species.begin();
          it != population.species.end();  /*it++*/)
     {
-      if(it->StaleAge() > staleAgeThreshold)
+      if (it->StaleAge() > staleAgeThreshold)
       {
         it = population.species.erase(it);
       }
@@ -1175,7 +1193,7 @@ class NEAT
     // Mutate add forward link.
     double p = mutateAddForwardLinkProb;
     while (p > 0)
-    {  
+    {
       // so p can be bigger than 1 and mutate can happen multiple times.
       if (mlpack::math::Random() < p)
       {
