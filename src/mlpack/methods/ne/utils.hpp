@@ -69,7 +69,7 @@ int RandPosNeg()
  */
 int RandInt(int x, int y)
 {
-	boost::random::uniform_int_distribution<> dist(x, y);
+  boost::random::uniform_int_distribution<> dist(x, y);
     return dist(rng);
 }
 

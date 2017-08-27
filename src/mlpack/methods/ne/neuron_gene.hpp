@@ -50,8 +50,8 @@ class NeuronGene
    * Default constructor.
    */
   NeuronGene() {}
-  
-  /**
+
+/**
    * Parametric constructor.
    *
    * @param id Neuron's ID.
@@ -63,11 +63,11 @@ class NeuronGene
    * @param activation Neuron's activation value.
    */
   NeuronGene(int id,
-  	         NeuronType type,
-  	         ActivationFuncType actFuncType,
+             NeuronType type,
+             ActivationFuncType actFuncType,
              double depth,
              std::vector<double> coordinate,
-  	         double input,
+             double input,
              double activation):
     id(id),
     type(type),
@@ -78,47 +78,47 @@ class NeuronGene
     activation(activation)
   {}
 
-  // /**
-  //  * Copy constructor.
-  //  * 
-  //  * @param neuronGene The neuron to be copied.
-  //  */
-  // NeuronGene(const NeuronGene& neuronGene)
-  // {
-  // 	id = neuronGene.id;
-  // 	type = neuronGene.type;
-  // 	actFuncType = neuronGene.actFuncType;
-  //   depth = neuronGene.depth;
-  //   coordinate = neuronGene.coordinate;
-  // 	input = neuronGene.input;
-  //   activation = neuronGene.activation;
-  // }
+  /**
+   * Copy constructor.
+   *
+  * @param neuronGene The neuron to be copied.
+   */
+  NeuronGene(const NeuronGene& neuronGene)
+  {
+    id = neuronGene.id;
+    type = neuronGene.type;
+    actFuncType = neuronGene.actFuncType;
+    depth = neuronGene.depth;
+    coordinate = neuronGene.coordinate;
+    input = neuronGene.input;
+    activation = neuronGene.activation;
+  }
 
-  // /**
-  //  * Destructor.
-  //  */
-  // ~NeuronGene() {}
+  /**
+   * Destructor.
+   */
+  ~NeuronGene() {}
 
-  // *
-  //  * Operator =.
-  //  *
-  //  * @param neuronGene The neuron to be compared with.
-   
-  // NeuronGene& operator =(const NeuronGene& neuronGene)
-  // {
-  //   if (this != &neuronGene)
-  //   {
-  //     id = neuronGene.id;
-  //     type = neuronGene.type;
-  //     actFuncType = neuronGene.actFuncType;
-  //     depth = neuronGene.depth;
-  //     coordinate = neuronGene.coordinate;
-  //     input = neuronGene.input;
-  //     activation = neuronGene.activation;
-  //   }
-    
-  //   return *this;
-  // }  
+  /**
+   * Operator =.
+   *
+   * @param neuronGene The neuron to be compared with.
+   */
+  NeuronGene& operator =(const NeuronGene& neuronGene)
+  {
+    if (this != &neuronGene)
+    {
+      id = neuronGene.id;
+      type = neuronGene.type;
+      actFuncType = neuronGene.actFuncType;
+      depth = neuronGene.depth;
+      coordinate = neuronGene.coordinate;
+      input = neuronGene.input;
+      activation = neuronGene.activation;
+    }
+
+return *this;
+  }  
 
   /**
    * Get neuron id.
@@ -197,8 +197,8 @@ class NeuronGene
   {
     switch (actFuncType)
     { // TODO: more cases.
-      case SIGMOID:                   
-        activation = ann::LogisticFunction::fn(input);
+      case SIGMOID:
+            activation = ann::LogisticFunction::fn(input);
         break;
       case TANH:
         activation = ann::TanhFunction::fn(input);
@@ -213,28 +213,6 @@ class NeuronGene
         activation = ann::LogisticFunction::fn(input);
         break;
     }
-  }
-
-  //! Serialize the model.
-  template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
-  {
-    ar & data::CreateNVP(id, "id");
-    ar & data::CreateNVP(type, "type");
-    ar & data::CreateNVP(depth, "depth");
-    ar & data::CreateNVP(actFuncType, "actFuncType");
-    ar & data::CreateNVP(coordinate, "coordinate");
-  }
-
-/**
- * Non-intrusive serialization for Neighbor Search class. We need this
- * definition because we are going to use the serialize function for boost
- * variant, which will look for a serialize function for its member types.
- */
-  template<typename Archive>
-  void serialize(Archive& ar, const unsigned int version)
-  {
-    Serialize(ar, version);
   }
 
  private:
@@ -253,8 +231,8 @@ class NeuronGene
   //! Activation.
   double activation;
 
-  //! Depth. INPUT and BIAS is 0, OUTPUT is 1. HIDDEN is between 0 and 1. 
-  //! Calculate activate by sequence.
+  //! Depth. INPUT and BIAS is 0, OUTPUT is 1. HIDDEN is between 0 and 1.
+ //! Calculate activate by sequence.
   double depth;
 
   //! Coordinate of neuron.

@@ -35,14 +35,14 @@ class Genome
   /**
    * Default constructor.
    */
-  Genome(): 
-    id(-1),
+  Genome():
+   id(-1),
     numInput(0),
     numOutput(0),
     fitness(DBL_MAX)
   {}
-  
-  /**
+
+/**
    * Construct the Genome object with the given parameters.
    *
    * @param id Genome identifier.
@@ -53,7 +53,7 @@ class Genome
    * @param fitness Initial fitness.
    */
   Genome(int id,
-  	     const std::vector<NeuronGene>& neuronGenes,
+         const std::vector<NeuronGene>& neuronGenes,
          const std::vector<LinkGene>& linkGenes,
          int numInput,
          int numOutput,
@@ -66,45 +66,45 @@ class Genome
     fitness(fitness)
   {}
 
-  // /**
-  //  * Copy constructor.
-  //  *
-  //  * @param genome The copied genome.
-  //  */
-  // Genome(const Genome& genome)
-  // {
-  //   id = genome.id;
-  //   neuronGenes = genome.neuronGenes;
-  //   linkGenes = genome.linkGenes;
-  //   numInput = genome.numInput;
-  //   numOutput = genome.numOutput;
-  //   fitness = genome.fitness;
-  // }
+  /**
+   * Copy constructor.
+   *
+   * @param genome The copied genome.
+   */
+  Genome(const Genome& genome)
+  {
+    id = genome.id;
+    neuronGenes = genome.neuronGenes;
+    linkGenes = genome.linkGenes;
+    numInput = genome.numInput;
+    numOutput = genome.numOutput;
+    fitness = genome.fitness;
+  }
 
-  // *
-  //  * Destructor.
-   
-  // ~Genome() {}
+  /**
+   * Destructor.
+   */
+  ~Genome() {}
 
-  // /**
-  //  * Operator =.
-  //  *
-  //  * @param genome The genome to be compared with.
-  //  */
-  // Genome& operator =(const Genome& genome)
-  // {
-  //   if (this != &genome)
-  //   {
-  //     id = genome.id;
-  //     neuronGenes = genome.neuronGenes;
-  //     linkGenes = genome.linkGenes;
-  //     numInput = genome.numInput;
-  //     numOutput = genome.numOutput;
-  //     fitness = genome.fitness;
-  //   }
+  /**
+   * Operator =.
+   *
+   * @param genome The genome to be compared with.
+   */
+  Genome& operator =(const Genome& genome)
+  {
+    if (this != &genome)
+    {
+      id = genome.id;
+      neuronGenes = genome.neuronGenes;
+      linkGenes = genome.linkGenes;
+      numInput = genome.numInput;
+      numOutput = genome.numOutput;
+      fitness = genome.fitness;
+    }
 
-  //   return *this;
-  // }
+    return *this;
+  }
 
   /**
    * Get genome id.
@@ -136,9 +136,9 @@ class Genome
    */
   void NumOutput(int numOutput) { this->numOutput = numOutput; }
 
-  
-  double& Fitness() { return fitness; }
-
+  /**
+   * Get fitness.
+   */
   double Fitness() const { return fitness; }
 
   /**
@@ -150,8 +150,8 @@ class Genome
    * Get neuron number.
    */
   int NumNeuron() const { return neuronGenes.size(); }
-  
-  /**
+
+/**
    * Get link number.
    */
   int NumLink() const { return linkGenes.size(); }
@@ -178,8 +178,8 @@ class Genome
   {
     int numOutput = 0;
     for (int i = 0; i < neuronGenes.size(); ++i)
-    {  
-      if (neuronGenes[i].Type() == OUTPUT)
+    {
+    if (neuronGenes[i].Type() == OUTPUT)
         ++numOutput;
     }
 
@@ -200,8 +200,8 @@ class Genome
         return true;
       }
     }
-    
-    return false;
+
+return false;
   }
 
   /**
@@ -314,8 +314,8 @@ class Genome
     {
       double depth;
       LinkGene link;
- 
-      DepthAndLink(double d, LinkGene& l) : depth(d), link(l) {}
+
+     DepthAndLink(double d, LinkGene& l) : depth(d), link(l) {}
 
       bool operator < (const DepthAndLink& dL) const
       {
@@ -348,46 +348,25 @@ class Genome
 
   /**
    * Activate genome.
-   * 
-   * Calculate genome's output given input.
+   *
+  * Calculate genome's output given input.
    * The last dimension of input is always 1 for bias. If 0, then means no bias.
    *
    * @param input Input of the genome.
    */
-  template<typename VecType>
-  void Classify(const VecType& point, VecType& response)
-  {
-    std::vector<double> input;
-    for (size_t i = 0; i < point.n_elem; ++i)
-    {
-      input.push_back(point(i));
-    }
-    input.push_back(1.0);
-
-    Activate(input);
-    std::vector<double> output;
-    Output(output);
-
-    response = VecType(output.size());
-    for (size_t i = 0; i < output.size(); ++i)
-    {
-      response(i) = output[i];
-    }
-  }
-
   void Activate(std::vector<double>& input)
   {
     assert(input.size() == numInput);
 
     SortLinkGenes();
-    
-    // Set all neurons' input to be 0.
+
+// Set all neurons' input to be 0.
     for (int i = 0; i < NumNeuron(); ++i)
     {
       neuronGenes[i].Input(0);
     }
-    
-    // Set input neurons.
+
+// Set input neurons.
     for (int i = 0; i < numInput; ++i)
     {
       neuronGenes[i].Input(input[i]);  // assume INPUT, BIAS, OUTPUT, HIDDEN sequence
@@ -399,13 +378,13 @@ class Genome
     {
       int toNeuronIdx = GetNeuronIndex(linkGenes[i].ToNeuronId());
       int fromNeuronIdx = GetNeuronIndex(linkGenes[i].FromNeuronId());
-      double input = neuronGenes[toNeuronIdx].Input() + 
-                     neuronGenes[fromNeuronIdx].Activation() * 
-                     linkGenes[i].Weight() *
+      double input = neuronGenes[toNeuronIdx].Input() +
+                    neuronGenes[fromNeuronIdx].Activation() *
+                    linkGenes[i].Weight() *
                      linkGenes[i].Enabled();
       neuronGenes[toNeuronIdx].Input(input);
-        
-      if ( (i == NumLink() - 1) ||
+  
+if ( (i == NumLink() - 1) ||
            (GetNeuronIndex(linkGenes[i + 1].ToNeuronId()) != toNeuronIdx))
       {
         neuronGenes[toNeuronIdx].CalcActivation();
@@ -438,8 +417,8 @@ class Genome
     for (int i = 0; i < linkGenes.size(); ++i)
     {
       double weight = mlpack::math::Random(lo, hi);
-      linkGenes[i].Weight(weight); 
-    }
+      linkGenes[i].Weight(weight);
+   }
   }
 
   /**
@@ -500,36 +479,12 @@ class Genome
     printf("----------------------------Genome End----------------------------\n");
   }
 
-  //! Serialize the model.
-  template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
-  {
-    ar & data::CreateNVP(id, "id");
-    ar & data::CreateNVP(numInput, "numInput");
-    ar & data::CreateNVP(numOutput, "numOutput");
-    ar & data::CreateNVP(fitness, "fitness");
-
-    ar & data::CreateNVP(neuronGenes, "neuronGenes");
-    ar & data::CreateNVP(linkGenes, "linkGenes");
-  }
-
-  /**
- * Non-intrusive serialization for Neighbor Search class. We need this
- * definition because we are going to use the serialize function for boost
- * variant, which will look for a serialize function for its member types.
- */
-  template<typename Archive>
-  void serialize(Archive& ar, const unsigned int version)
-  {
-    Serialize(ar, version);
-  }
-
  private:
   //! Genome id.
   int id;
 
   //! Input length (include bias).
-  int numInput;
+ int numInput;
 
   //! Output length.
   int numOutput;

@@ -26,14 +26,14 @@ class Population
   //! Species contained by this population.
   std::vector<Species> species;
 
-  /** 
+  /**
    * Default constructor.
    */
   Population():
     bestFitness(DBL_MAX),
     nextSpeciesId(0),
     nextGenomeId(0)
-  {} 
+  {}
 
   /**
    * Parametric constructor.
@@ -92,13 +92,7 @@ class Population
   /**
    * Get best genome.
    */
-  // Genome BestGenome() const { return bestGenome; }
-
-
-  //! Get the render parameter.
-  Genome const& BestGenome() const { return bestGenome; }
-  //! Modify the render parameter.
-  Genome& BestGenome() { return bestGenome; }
+  Genome BestGenome() const { return bestGenome; }
 
   /**
    * Set next species id.
@@ -195,18 +189,6 @@ class Population
       }
     }
     nextGenomeId = id + 1;
-  }
-
-  //! Serialize the model.
-  template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
-  {
-    ar & data::CreateNVP(bestFitness, "bestFitness");
-    ar & data::CreateNVP(bestGenome, "bestGenome");
-    ar & data::CreateNVP(nextSpeciesId, "nextSpeciesId");
-    ar & data::CreateNVP(nextGenomeId, "nextGenomeId");
-
-    ar & data::CreateNVP(species, "species");
   }
 
  private:
