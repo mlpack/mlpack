@@ -279,8 +279,7 @@ BOOST_AUTO_TEST_CASE(DatasetMapperNonStringMapping)
 
   BOOST_REQUIRE_EQUAL(dm.NumMappings(0), 3);
 
-  // BOOST_REQUIRE_EQUAL(dm.Type(0), data::Datatype::categorical);
-	BOOST_REQUIRE(dm.Type(0) == data::Datatype::categorical);
+  BOOST_REQUIRE(dm.Type(0) == data::Datatype::categorical);
 
   BOOST_REQUIRE_EQUAL(dm.UnmapValue(5.0, 0), 0);
   BOOST_REQUIRE_EQUAL(dm.UnmapValue(4.3, 0), 1);

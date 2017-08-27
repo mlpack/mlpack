@@ -70,30 +70,30 @@ template<typename MLAlgorithm,
 class QuadraticFunction
 {
  public:
-   QuadraticFunction(double a,
-                     double b,
-                     double c,
-                     double d,
-                     double xMin = 0.0,
-                     double yMin = 0.0,
-                     double zMin = 0.0) :
-     a(a), b(b), c(c), d(d), xMin(xMin), yMin(yMin), zMin(zMin) {}
+  QuadraticFunction(double a,
+                    double b,
+                    double c,
+                    double d,
+                    double xMin = 0.0,
+                    double yMin = 0.0,
+                    double zMin = 0.0) :
+      a(a), b(b), c(c), d(d), xMin(xMin), yMin(yMin), zMin(zMin) {}
 
-   double Evaluate(double x, double y, double z)
-   {
-     return a * pow(x - xMin, 2)  + b * pow(y - yMin, 2) + c * pow(z - zMin, 2)
-         + d;
-   }
+  double Evaluate(double x, double y, double z)
+  {
+    return a * pow(x - xMin, 2)  + b * pow(y - yMin, 2) + c * pow(z - zMin, 2)
+        + d;
+  }
 
-   // Declaring and defining it just in order to provide the same interface as
-   // other CV classes.
-   MLAlgorithm Model()
-   {
-     return MLAlgorithm();
-   }
+  // Declaring and defining it just in order to provide the same interface as
+  // other CV classes.
+  MLAlgorithm Model()
+  {
+    return MLAlgorithm();
+  }
 
  private:
-   double a, b, c, d, xMin, yMin, zMin;
+  double a, b, c, d, xMin, yMin, zMin;
 };
 
 /**
