@@ -36,7 +36,7 @@ class Genome
    * Default constructor.
    */
   Genome():
-   id(-1),
+    id(-1),
     numInput(0),
     numOutput(0),
     fitness(DBL_MAX)
@@ -231,7 +231,7 @@ return false;
    */
   int GetNeuronIndex(int id) const
   {
-    for(int i = 0; i < NumNeuron(); ++i)
+    for (int i = 0; i < NumNeuron(); ++i)
     {
       if (neuronGenes[i].Id() == id)
         return i;
@@ -247,7 +247,7 @@ return false;
    */
   int GetLinkIndex(int innovId) const
   {
-    for(int i = 0; i < NumLink(); ++i)
+    for (int i = 0; i < NumLink(); ++i)
     {
       if (linkGenes[i].InnovationId() == innovId)
         return i;
@@ -263,7 +263,7 @@ return false;
    */
   bool ContainEnabledLink(int innovId) const
   {
-    for(int i = 0; i < NumLink(); ++i)
+    for (int i = 0; i < NumLink(); ++i)
     {
       if (linkGenes[i].InnovationId() == innovId &&
           linkGenes[i].Enabled())
@@ -280,7 +280,7 @@ return false;
    */
   bool ContainLink(int innovId) const
   {
-    for(int i = 0; i < NumLink(); ++i)
+    for (int i = 0; i < NumLink(); ++i)
     {
       if (linkGenes[i].InnovationId() == innovId)
         return true;
@@ -315,7 +315,7 @@ return false;
       double depth;
       LinkGene link;
 
-     DepthAndLink(double d, LinkGene& l) : depth(d), link(l) {}
+      DepthAndLink(double d, LinkGene& l) : depth(d), link(l) {}
 
       bool operator < (const DepthAndLink& dL) const
       {
@@ -360,16 +360,17 @@ return false;
 
     SortLinkGenes();
 
-// Set all neurons' input to be 0.
+    // Set all neurons' input to be 0.
     for (int i = 0; i < NumNeuron(); ++i)
     {
       neuronGenes[i].Input(0);
     }
 
-// Set input neurons.
+    // Set input neurons.
     for (int i = 0; i < numInput; ++i)
     {
-      neuronGenes[i].Input(input[i]);  // assume INPUT, BIAS, OUTPUT, HIDDEN sequence
+      // Assume INPUT, BIAS, OUTPUT, HIDDEN sequence.
+      neuronGenes[i].Input(input[i]);
       neuronGenes[i].Activation(input[i]);
     }
 
@@ -383,9 +384,9 @@ return false;
                     linkGenes[i].Weight() *
                      linkGenes[i].Enabled();
       neuronGenes[toNeuronIdx].Input(input);
-  
-if ( (i == NumLink() - 1) ||
-           (GetNeuronIndex(linkGenes[i + 1].ToNeuronId()) != toNeuronIdx))
+
+      if ((i == NumLink() - 1) ||
+          (GetNeuronIndex(linkGenes[i + 1].ToNeuronId()) != toNeuronIdx))
       {
         neuronGenes[toNeuronIdx].CalcActivation();
       }
@@ -449,15 +450,19 @@ if ( (i == NumLink() - 1) ||
    */
   void PrintGenome()
   {
-    printf("---------------------------Genome Start---------------------------\n");
-    const char* enumNeuronTypetring[] = { "NONE", "INPUT", "BIAS", "HIDDEN", "OUTPUT" };
-    const char* enumActivationFuncTypeString[] = { "SIGMOID", "TANH", "LINEAR", "RELU" };  //NOTICE: keep the same with the enum type.
+    printf("---------------------------Genome Start"
+           "---------------------------\n");
+    const char* enumNeuronTypetring[] =
+    { "NONE", "INPUT", "BIAS", "HIDDEN", "OUTPUT" };
+    const char* enumActivationFuncTypeString[] =
+    { "SIGMOID", "TANH", "LINEAR", "RELU" };
     const char* boolEnabledString[] = { "False", "True" };
 
     std::cout << "Neurons: " << neuronGenes.size() << std::endl;
     for(size_t i = 0; i < neuronGenes.size(); ++i)
     {
-      printf("  Gene:(id=%i, type=%s, activation func=%s, input=%f, response=%f, depth=%.3f)\n",
+      printf(" Gene:(id=%i, type=%s, activation func=%s,"
+             " input=%f, response=%f, depth=%.3f)\n",
              neuronGenes[i].Id(),
              enumNeuronTypetring[neuronGenes[i].Type()],
              enumActivationFuncTypeString[neuronGenes[i].ActFuncType()],
@@ -469,29 +474,31 @@ if ( (i == NumLink() - 1) ||
     std::cout << "Links: " << linkGenes.size() << std::endl;
     for(size_t i = 0; i < linkGenes.size(); ++i)
     {
-      printf("  Link:(from=%i, to=%i, weight=%f, enabled=%s, innovation=%i)\n",
+      printf("Link:(from=%i, to=%i, weight=%f, enabled=%s,"
+             "innovation=%i)\n",
              linkGenes[i].FromNeuronId(),
              linkGenes[i].ToNeuronId(),
              linkGenes[i].Weight(),
              boolEnabledString[linkGenes[i].Enabled()],
              linkGenes[i].InnovationId());
     }
-    printf("----------------------------Genome End----------------------------\n");
+    printf("----------------------------Genome End"
+           "----------------------------\n");
   }
 
  private:
+
   //! Genome id.
   int id;
 
   //! Input length (include bias).
- int numInput;
+  int numInput;
 
   //! Output length.
   int numOutput;
 
   //! Genome fitness.
   double fitness;
-
 };
 
 }  // namespace ne
