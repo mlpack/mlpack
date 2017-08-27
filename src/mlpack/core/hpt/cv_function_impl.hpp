@@ -23,8 +23,8 @@ template<size_t BoundArgIndex, size_t ParamIndex>
 struct CVFunction<CVType, MLAlgorithm, TotalArgs, BoundArgs...>::UseBoundArg<
     BoundArgIndex, ParamIndex, true>
 {
-  using BoundArgType =
-      typename std::tuple_element<BoundArgIndex, BoundArgsTupleType>::type;
+  using BoundArgType = typename
+      std::tuple_element<BoundArgIndex, std::tuple<BoundArgs...>>::type;
 
   static const bool value = BoundArgType::index == BoundArgIndex + ParamIndex;
 };
