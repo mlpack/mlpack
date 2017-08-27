@@ -14,22 +14,11 @@
 
 #include <mlpack/core.hpp>
 
-#include <mlpack/methods/ann/layer/layer.hpp>
-#include <mlpack/methods/ann/layer/base_layer.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/init_rules/network_init.hpp>
 #include <mlpack/methods/ann/visitor/output_parameter_visitor.hpp>
 
 #include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
-#include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
-#include <mlpack/core/dists/gaussian_distribution.hpp>
-#include <mlpack/methods/ann/init_rules/random_init.hpp>
-
-using namespace mlpack;
-using namespace mlpack::ann;
-using namespace mlpack::optimization;
-using namespace mlpack::math;
-using namespace mlpack::distribution;
 
 namespace mlpack {
 namespace ann /** artifical neural network  */ {
@@ -43,7 +32,8 @@ GAN<Model, InitializationRuleType, Noise>::GAN(
     size_t noiseDim,
     size_t batchSize,
     size_t generatorUpdateStep,
-    size_t preTrainSize):
+    size_t preTrainSize,
+    double multiplier):
     predictors(predictors),
     generator(generator),
     discriminator(discriminator),
@@ -53,9 +43,10 @@ GAN<Model, InitializationRuleType, Noise>::GAN(
     batchSize(batchSize),
     generatorUpdateStep(generatorUpdateStep),
     preTrainSize(preTrainSize),
+    multiplier(multiplier),
     reset(false)
 {
-  // Insert IdentityLayer for Joing the generator and discriminator
+  // Insert IdentityLayer for joining the generator and discriminator
   discriminator.network.insert(
       discriminator.network.begin(),
       new IdentityLayer<>());
@@ -140,7 +131,7 @@ double GAN<Model, InitializationRuleType, Noise>::Evaluate(
   generator.Forward(std::move(noise));
   arma::mat temp = boost::apply_visitor(
       outputParameterVisitor, generator.network.back());
-  temp.reshape(discriminator.predictors.n_rows, 1);
+
   discriminator.predictors.col(numFunctions) = temp;
   discriminator.Forward(std::move(discriminator.predictors.col(numFunctions)));
   discriminator.responses(numFunctions) = 0;

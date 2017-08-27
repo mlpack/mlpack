@@ -12,27 +12,16 @@
 
 #include <mlpack/core.hpp>
 
-#include <mlpack/methods/ann/layer/layer.hpp>
-#include <mlpack/methods/ann/layer/base_layer.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/visitor/output_parameter_visitor.hpp>
 #include <mlpack/methods/ann/visitor/reset_visitor.hpp>
 #include <mlpack/methods/ann/visitor/weight_size_visitor.hpp>
 #include <mlpack/methods/ann/visitor/weight_set_visitor.hpp>
-#include <mlpack/methods/ann/init_rules/random_init.hpp>
 
-using namespace mlpack;
-using namespace mlpack::ann;
-using namespace mlpack::optimization;
-using namespace mlpack::math;
-using namespace mlpack::distribution;
 
 namespace mlpack {
 namespace ann /** artifical neural network **/ {
-template<
-typename Model,
-typename InitializationRuleType,
-class Noise>
+template<typename Model, typename InitializationRuleType, class Noise>
 class GAN
 {
  public:
@@ -40,14 +29,17 @@ class GAN
    * Constructor for GAN class
    *
    * @tparam Model The class type of generator and discriminator.
-   * @tparam InitializationRuleType Type of Intializer.
-   * @param generator Generator network.
+   
    * @param trainData The real data.
-   * @param noiseData The data generated from randomly.
+   * @param generator Generator network.
    * @param discriminator Discriminator network.
+   * @param InitializationRuleType Type of Intializer.
+   * @param noiseFunction The noise function to use.
    * @param batchSize BatchSize to be used for training.
-   * @param noiseInSize Input size of the generator network.
-   * @param disIteration Ratio of number of training step for Disc to Gen
+   * @param generatorUpdateStep Num of steps of discriminator training before 
+   *                            updating generator.
+   * @param preTrainSize Num of preTraining step of discriminator.
+   * @parma multiplier Ratio of learning rate of discriminator to the generator.
    */
   GAN(arma::mat& trainData,
       Model& generator,
@@ -57,7 +49,8 @@ class GAN
       size_t noiseDim,
       size_t batchSize,
       size_t generatorUpdateStep,
-      size_t preTrainSize);
+      size_t preTrainSize,
+      double multiplier);
 
   // Reset function
   void Reset();
@@ -118,11 +111,10 @@ class GAN
   void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-  //! Locally stored parameter for training data.
+  //! Locally stored parameter for training data + noise data.
   arma::mat predictors;
   //! Locally stored parameters of the network.
   arma::mat parameter;
-
   //! Locally stored generator network.
   Model& generator;
   //! Locally stored discriminator network.
@@ -131,24 +123,22 @@ class GAN
   InitializationRuleType  initializeRule;
   //! Locally stored Noise function
   Noise noiseFunction;
+  //! Locally stored input dimension of the generator network.
   size_t noiseDim;
   //! Locally stored number of data points.
   size_t numFunctions;
-
   //! Locally stored batch size parameter.
   size_t batchSize;
-
-  //! Locally stored offset for predictors and noise data.
-  size_t offset;
   //! Locally stored number of iterations that have been completed.
   size_t counter;
   //! Locally stored batch number which is being processed.
   size_t currentBatch;
-
+  //! Locally stored number of training step before generator is trained.
   size_t generatorUpdateStep;
-
+  //! Locally stored number of pre-train step for discriminator.
   size_t preTrainSize;
-
+  //! Locally stored learning rate ratio for generator network.
+  double multiplier;
   //! Locally stored reset parmaeter.
   bool reset;
   //! Locally stored delta visitor.
@@ -169,9 +159,9 @@ class GAN
   arma::mat gradient;
   //! Locally stored gradient for discriminator.
   arma::mat gradientDiscriminator;
-
+  //! Locally stored gradient for noise data in the predictors.
   arma::mat noiseGradientDiscriminator;
-
+  //! Locally stored noise using the noise function.
   arma::mat noise;
   //! Locally stored gradient for generator.
   arma::mat gradientGenerator;

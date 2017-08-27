@@ -13,6 +13,8 @@
 
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 #include <mlpack/methods/ann/gan.hpp>
+#include <mlpack/methods/ann/ffn.hpp>
+#include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
 #include <mlpack/core/optimizers/minibatch_sgd/minibatch_sgd.hpp>
 
@@ -44,6 +46,7 @@ BOOST_AUTO_TEST_CASE(GanTest)
   size_t noiseDim = 1;
   size_t generatorUpdateStep = 1;
   size_t numSamples = 10000;
+  double multiplier = 1;
 
   arma::mat trainData(1, 10000);
   trainData.imbue( [&]() { return arma::as_scalar(RandNormal(4, 0.5));});
@@ -77,7 +80,8 @@ BOOST_AUTO_TEST_CASE(GanTest)
       GaussianInitialization,
       std::function<double()>>
   gan(trainData, generator, discriminator, gaussian, noiseFunction,
-      noiseDim, batchSize, generatorUpdateStep, discriminatorPreTrain);
+      noiseDim, batchSize, generatorUpdateStep, discriminatorPreTrain,
+      multiplier);
   gan.Reset();
 
   std::cout << "Loading Parameters" << std::endl;
