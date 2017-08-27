@@ -104,25 +104,26 @@ BOOST_AUTO_TEST_CASE(ClassificationTest)
 
   // Use an instantiated optimizer for the training.
   L_BFGS optimizer(numBasis, numIterations);
-  SoftmaxRegression regressor2(trainData, trainLabels,
+  SoftmaxRegression regressor(trainData, trainLabels,
       numClasses, 0.001, false, optimizer);
 
-  double classificationAccuray = regressor2.ComputeAccuracy(testData,
+  double classificationAccuray = regressor.ComputeAccuracy(testData,
    testLabels);
   std::cout << "Softmax Accuracy = " << classificationAccuray << std::endl;
 
-  L_BFGS optimizer1(numBasis, numIterations);
-  SoftmaxRegression regressor1(XRbm, trainLabels, numClasses,
-        0.001, false, optimizer1);
-  double classificationAccuray1 = regressor1.ComputeAccuracy(YRbm, testLabels);
-  std::cout << "RBM Accuracy = " <<classificationAccuray1 << std::endl;
-  BOOST_REQUIRE_GE(classificationAccuray1, classificationAccuray);
+  L_BFGS rbmOptimizer(numBasis, numIterations);
+  SoftmaxRegression rbmRegressor(XRbm, trainLabels, numClasses,
+        0.001, false, rbmOptimizer);
+  double rbmClassificationAccuracy = rbmRegressor.ComputeAccuracy(YRbm,
+      testLabels);
+  std::cout << "RBM Accuracy = " << rbmClassificationAccuracy << std::endl;
+  BOOST_REQUIRE_GE(rbmClassificationAccuracy, classificationAccuray);
 }
 
 BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
 {
   size_t batchSize = 10;
-  size_t numEpoches = 10;
+  size_t numEpoches = 3;
   int hiddenLayerSize = 80;
   double radius = 0;
   double tempRadius = 0;
@@ -152,7 +153,8 @@ BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
       radius = tempRadius;
   }
 
-  size_t poolSize = 1;
+  size_t poolSize = 2;
+  radius *= 1.3;
 
   arma::mat output;
   arma::mat XRbm(hiddenLayerSize + poolSize * hiddenLayerSize,
@@ -172,7 +174,7 @@ BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
   size_t numRBMIterations = trainData.n_cols * numEpoches;
   numRBMIterations /= batchSize;
 
-  MiniBatchSGD msgd(batchSize, 0.06, numRBMIterations, 0, true);
+  MiniBatchSGD msgd(batchSize, 0.02, numRBMIterations, 0, true);
   modelssRBM.Reset();
   modelssRBM.Policy().VisiblePenalty().fill(5);
   modelssRBM.Policy().SpikeBias().fill(1);
@@ -194,13 +196,14 @@ BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
   const size_t numBasis = 5; // Parameter required for L-BFGS algorithm.
   const size_t numIterations = 100; // Maximum number of iterations.
 
-  L_BFGS optimizer1(numBasis, numIterations);
-  SoftmaxRegression regressor1(XRbm, trainLabels, numClasses,
-        0.001, false, optimizer1);
-  double classificationAccuray1 = regressor1.ComputeAccuracy(YRbm, testLabels);
-  std::cout << "ssRBM Accuracy = " <<classificationAccuray1 << std::endl;
+  L_BFGS ssRbmOptimizer(numBasis, numIterations);
+  SoftmaxRegression ssRbmRegressor(XRbm, trainLabels, numClasses,
+        0.001, false, ssRbmOptimizer);
+  double ssRbmClassificationAccuracy = ssRbmRegressor.ComputeAccuracy(
+      YRbm, testLabels);
+  std::cout << "ssRBM Accuracy = " << ssRbmClassificationAccuracy << std::endl;
 
-  BOOST_REQUIRE_GE(classificationAccuray1, 70);
+  BOOST_REQUIRE_GE(ssRbmClassificationAccuracy, 76.18);
 }
 
 template<typename MatType = arma::mat>
