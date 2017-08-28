@@ -1,0 +1,345 @@
+/*!
+
+@file cne.txt
+@author Kartik Nighania
+@brief Tutorial on how to use the CNE optimizer class.
+
+@page cnetutorial CNE Optimizer tutorial
+
+@section intro_cnetut Introduction
+
+Conventional Neural Evolution (CNE) is a class of evolutionary algorithms
+focused on dealing with fixed topology networks.
+\ref mlpack::optimization::cne "The CNE class" implements this algorithm as
+an optimization technique to converge a given function to minima.
+
+The algorithm works by creating a fixed number of candidates, with random
+weights.  Each candidate is tested upon the training set, and a fitness score is
+assigned to it. Given the selection percentage of best candidates by the user,
+for a single generation that many percentage of candidates are selected for the
+next generation and the rest are removed. The selected candidates for a
+particular generation then become the parents for the next generation and
+evolution takes place.
+
+@section toc_cnetut Table of Contents
+
+A list of all the sections this tutorial contains.
+
+ - \ref intro_cnetut
+ - \ref toc_cnetut
+ - \ref cne_cnetut
+   - \ref cne_ex1_cnetut
+   - \ref cne_ex2_cnetut
+   - \ref cne_ex3_cnetut
+   - \ref cne_ex4_cnetut
+ - \ref further_doc_cnetut
+
+@section cne_cnetut The CNE optimizer class
+
+The CNE class is a simple implementation of the CNE optimizer to converge a
+given neural network.
+
+Using the CNE class is very simple and can be divided into 3 simple steps:
+
+1) The CNE object is made in which the constructor requires 7 input parameters.
+   The default values and detailed explaination have been discussed in a separate
+   section below.
+
+@code
+CNE opt(const size_t populationSize,
+        const size_t maxGenerations,
+        const double mutationProb,
+        const double mutationSize,
+        const double selectPercent,
+        const double finalValue,
+        const double fitnessHist);
+@endcode
+
+2) Making a neural network model and giving CNE as an optimizer to train the model.
+   For our test, we will be using a feed forward network or vanilla network from the
+   artificial neural network class.
+
+
+3) The trained model can then be used by calling:
+
+@code
+void Predict(const arma::mat& predictors, arma::mat& results);
+@endcode
+
+Given the data to predict in armadillo matrix format. Matrix result is modified
+and the output of prediction is stored in it.
+
+@subsection cne_ex1_cnetut The constructor parameters.
+
+@code
+CNE(const size_t populationSize = 500,
+    const size_t maxGenerations = 5000,
+    const double mutationProb = 0.1,
+    const double mutationSize = 0.02,
+    const double selectPercent = 0.2,
+    const double tolerance = 1e-5,
+    const double objectiveChange = 1e-5);
+@endcode
+
+All the parameters are optional.
+The default values provided over here are not necessarily suitable for a
+given function. Therefore it is highly recommended to adjust the
+parameters according to the problem.
+
+
+The constructor parameters are as follows -
+
+1) populationSize: The number of candidates in the population.
+                   Default value is 500 candidates.
+
+Note: @c populationSize should be at least greator than or equal to 4.
+
+2) maxGenerations: The maximum number of generations allowed for CNE.
+                   Default value is 5000.
+
+Note: the algorithm may terminate in between if the termination conditions
+specified by the user are met.
+
+3) mutationProb:   Probability that a weight will get mutated. The more the
+                   the value between [0, 1] the more chances of mutation in 
+                   link weights.
+                   Default value is 0.1.
+
+4) mutationSize:   The range of mutation noise to be added. This range
+                   is between 0 and mutationSize.
+                   Default value is 0.02.
+
+Note: This is not a constant but a range from which the mutation noise will be
+chosen.
+
+5) selectPercent:  The percentage of candidates to select to become the
+                   the next generation. Value between 0 and 1. Where 1
+                   represents 100%.
+                   Default value is 0.2.
+
+6) tolerance:      The final value of the objective function for termination.
+                   Not considered if not provided by the user.
+                   Default value is 1e-5.
+
+Note: If set to negative value, tolerance will not be taken into consideration.
+
+7) objectiveChange: Minimum change in best fitness values between two consecutive
+                   generations should be greater than objectiveChange value.
+                   Default value is 1e-5.
+
+Note: If set to negative value, objectiveChange will not be taken into consideration.
+
+@subsection cne_ex2_cnetut Creating a model using the mlpack ANN class
+
+Creating a model using mlpack's ANN class is simple and straightforward.
+Below is an example of a feedforward neural network.
+
+@code
+FFN<NegativeLogLikelihood<> > network;
+network.Add<Linear<> >(2, 2);
+network.Add<SigmoidLayer<> >();
+network.Add<Linear<> >(2, 2);
+network.Add<LogSoftMax<> >();
+@endcode
+
+First an object is created with the name @c network of type @c FFN (feedforward
+network).  Layers can be added by calling the @c Add() method and specifying the
+type of layer and the arguments necessary to construct the layer.
+
+In this example we will be using 2 input nodes, 2 hidden nodes, and 2 output
+layer nodes.  To train the network, we can use the following code:
+
+@code
+network.Train(train, labels, opt);
+@endcode
+
+The @c Train() method takes the following three parameters:
+
+1) @c train: The armadillo training data matrix.
+
+Note: Data points are arranged columnwise, where each column represents one
+      data point. Therefore the number of training data provided is the 
+      number of columns in the dataset.
+
+2) @c labels: The output of the training data in armadillo format.
+
+Note: This is also columnwise as the training dataset matrix.
+
+3) @c opt: The type of optimizer. We will be using CNE in this tutorial.
+
+The @c Predict() method can be called after training to obtain the result:
+
+@code
+network.Predict(test, predictions);
+@endcode
+
+The parameter definitions for @c Predict() are:
+
+1) @c test: armadillo test set matrix in the above test set specified format.
+
+2) @c predictors: Will be modified by the model and output based on the test
+              case prediction will be added in this matrix.
+
+@subsection cne_ex3_cnetut Complete example
+
+In this example we will have two input nodes and the output should be the XOR of
+the two values.  As mentioned before, our network structure is 2 input, 2 hidden
+and 2 output nodes.
+
+@code
+#include <mlpack/core.hpp>
+
+#include <mlpack/methods/ann/layer/layer.hpp>
+#include <mlpack/methods/ann/ffn.hpp>
+
+#include <mlpack/core/optimizers/cne/cne.hpp>
+
+using namespace mlpack;
+using namespace mlpack::ann;
+using namespace mlpack::optimization;
+
+int main()
+{
+ /*
+   * Create the four cases for XOR with two variable
+   *
+   *  Input    Output
+   * 0 XOR 0  =  0
+   * 1 XOR 1  =  0
+   * 0 XOR 1  =  1
+   * 1 XOR 0  =  1
+   */
+  arma::mat train("1,0,0,1;1,0,1,0");
+  arma::mat labels("1,1,2,2");
+
+  // Network with 2 input nodes, 2 hidden nodes, and 2 output layer nodes.
+  FFN<NegativeLogLikelihood<> > network;
+
+  network.Add<Linear<> >(2, 2);
+  network.Add<SigmoidLayer<> >();
+  network.Add<Linear<> >(2, 2);
+  network.Add<LogSoftMax<> >();
+
+  // CNE object.
+  CNE opt(20, 5000, 0.1, 0.02, 0.2, 0, 0);
+
+  // Train the network with CNE.
+  network.Train(train, labels, opt);
+
+  // Predict for the same train data.
+  arma::mat predictionTemp;
+  network.Predict(train, predictionTemp);
+
+  arma::mat prediction = arma::zeros<arma::mat>(1, predictionTemp.n_cols);
+
+  for (size_t i = 0; i < predictionTemp.n_cols; ++i)
+  {
+    prediction(i) = arma::as_scalar(arma::find(
+        arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
+  }
+
+  // Print the results.
+  for(size_t i = 0; i < 4; i++)
+    std::cout << prediction << std::endl;
+}
+@endcode
+
+@subsection cne_ex4_cnetut Logistic regression using CNE as an optimizer
+
+Though CNE stands for Conventional "Neural" Evolution, we have implemented it as
+a generic optimizer. Therefore, it is able to converge for logistic regression
+function also.
+
+The code below uses mlpack's @c LogisticRegression class, optimizing with CNE (a
+separate tutorial exists for LogisticRegression).
+
+@code
+#include <mlpack/core.hpp>
+
+#include <mlpack/methods/logistic_regression/logistic_regression.hpp>
+
+#include <mlpack/methods/ann/layer/layer.hpp>
+#include <mlpack/methods/ann/ffn.hpp>
+
+#include <mlpack/core/optimizers/cne/cne.hpp>
+
+using namespace std;
+using namespace arma;
+using namespace mlpack;
+using namespace mlpack::ann;
+using namespace mlpack::optimization;
+using namespace mlpack::optimization::test;
+
+using namespace mlpack::distribution;
+using namespace mlpack::regression;
+
+int main()
+{
+  // Generate a two-Gaussian dataset.
+  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
+
+  arma::mat data(3, 1000);
+  arma::Row<size_t> responses(1000);
+  for (size_t i = 0; i < 500; ++i)
+  {
+    data.col(i) = g1.Random();
+    responses[i] = 0;
+  }
+  for (size_t i = 500; i < 1000; ++i)
+  {
+    data.col(i) = g2.Random();
+    responses[i] = 1;
+  }
+
+  // Shuffle the dataset.
+  arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0,
+      data.n_cols - 1, data.n_cols));
+  arma::mat shuffledData(3, 1000);
+  arma::Row<size_t> shuffledResponses(1000);
+  for (size_t i = 0; i < data.n_cols; ++i)
+  {
+    shuffledData.col(i) = data.col(indices[i]);
+    shuffledResponses[i] = responses[indices[i]];
+  }
+
+  // Create a test set.
+  arma::mat testData(3, 1000);
+  arma::Row<size_t> testResponses(1000);
+  for (size_t i = 0; i < 500; ++i)
+  {
+    testData.col(i) = g1.Random();
+    testResponses[i] = 0;
+  }
+  for (size_t i = 500; i < 1000; ++i)
+  {
+    testData.col(i) = g2.Random();
+    testResponses[i] = 1;
+  }
+
+  // *******************************************************************
+
+  CNE opt(50, 2000, 0.1, 0.02, 0.2, 1, 0);
+
+  LogisticRegression<> lr(shuffledData, shuffledResponses, opt, 0.5);
+
+  // *******************************************************************
+
+  // Ensure that the error is close to zero. This is 100% means no error
+  const double acc = lr.ComputeAccuracy(data, responses);
+  cout << acc << endl;
+
+  // Check if optimization happened correctly or not by using test set.
+  const double testAcc = lr.ComputeAccuracy(testData, testResponses);
+
+  // 100% means no error.
+  cout << testAcc << endl;
+}
+@endcode
+
+@section further_doc_cnetut Further documentation 
+
+For further documentation on the CNE class, consult the
+\ref mlpack::optimization::cne "complete API documentation".
+
+*/
