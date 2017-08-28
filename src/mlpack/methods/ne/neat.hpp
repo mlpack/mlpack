@@ -1111,6 +1111,7 @@ class NEAT
       if (weak)
       {
         population.RemoveSpecies(i);
+        i--;
       }
     }
   }
@@ -1127,6 +1128,7 @@ class NEAT
       if (population.species[i].genomes.size() == 0)
       {
         population.species.erase(population.species.begin() + i);
+        i--;
       }
     }
   }
