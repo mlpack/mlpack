@@ -321,7 +321,7 @@ class HyperParameterTuner
    * tuple.
    */
   template<typename TupleType,
-           size_t I,
+           size_t I /* Index of the element in vector to handle. */,
            typename... Args,
            typename = typename
                std::enable_if_t<(I < std::tuple_size<TupleType>::value)>>
@@ -331,7 +331,7 @@ class HyperParameterTuner
    * Create a tuple from args.
    */
   template<typename TupleType,
-           size_t I,
+           size_t I /* Index of the element in vector to handle. */,
            typename... Args,
            typename = typename
                std::enable_if_t<I == std::tuple_size<TupleType>::value>,
