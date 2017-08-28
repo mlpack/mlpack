@@ -146,11 +146,11 @@ void MemoryHead<InputDataType, OutputDataType>::Forward(arma::Mat<eT>&& input,
   lShiftMatrix.push_back(arma::mat(outSize, outSize, arma::fill::none));
   arma::mat& shiftMatrix = lShiftMatrix.back();
 
-  shiftMatrix.each_col([&](arma::vec& a)
+  for (size_t colIndex = 0; colIndex < shiftMatrix.n_cols; colIndex++)
   {
-    a = shiftVec.submat(0, 0, wG.n_rows - 1, 0);
+    shiftMatrix.col(colIndex) = shiftVec.submat(0, 0, wG.n_rows - 1, 0);
     shiftVec = arma::shift(std::move(shiftVec), 1);
-  });
+  }
 
   lWTilde.push_back(arma::trans(arma::trans(wG) * shiftMatrix));
   const arma::vec& wTilde = lWTilde.back();
@@ -277,18 +277,14 @@ void MemoryHead<InputDataType, OutputDataType>::Backward(
     2 * shiftSize);
 
   arma::vec dSt = arma::zeros(2 * shiftSize + 1);
-
-  colIndex = 0;
-  dShiftMatrix.each_col([&](arma::vec& v)
+  for (colIndex = 0; colIndex < dShiftMatrix.n_cols; colIndex++)
   {
     if (colIndex < 2 * shiftSize + 1)
     {
-      dSt = std::move(arma::shift(std::move(dSt), 1));
-      dSt += v.submat(0, 0, 2 * shiftSize, 0);
+      dSt = std::move(arma::shift(std::move(dSt), 1)) +
+          dShiftMatrix.col(colIndex).submat(0, 0, 2 * shiftSize, 0);
     }
-
-    colIndex++;
-  });
+  }
 
   // Error of St
   dSt = arma::flipud(dSt) % sT;
@@ -343,16 +339,14 @@ void MemoryHead<InputDataType, OutputDataType>::Backward(
   arma::mat dMemTemp = dW * arma::trans(nKt);
 
   // Error of memory without normalization.
-  rowIndex = 0;
-  dMemTemp.each_row([&] (arma::rowvec& v)
+  for (rowIndex = 0; rowIndex < dMemTemp.n_rows; rowIndex++)
   {
     double n = arma::norm(memory.row(rowIndex));
     nMemory.row(rowIndex) /= n;
-    v = (v - (nMemory.row(rowIndex) * arma::as_scalar(arma::sum(
-        nMemory.row(rowIndex) % v)))) / n;
-
-    rowIndex++;
-  });
+    dMemTemp.row(rowIndex) = (dMemTemp.row(rowIndex) - (nMemory.row(rowIndex) *
+        arma::as_scalar(arma::sum(nMemory.row(rowIndex) %
+        dMemTemp.row(rowIndex))))) / n;
+  }
   dMem += dMemTemp;
 
   // Error of Kt with normalization

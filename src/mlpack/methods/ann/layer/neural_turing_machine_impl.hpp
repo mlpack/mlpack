@@ -143,14 +143,15 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Forward(
   auto addVecIt = addVec.begin();
   auto eraseVecIt = eraseVec.begin();
 
-  nMemory.each_col([&](arma::vec& v)
+  for (size_t colIndex = 0; colIndex < nMemory.n_cols; colIndex++)
   {
-    v = (v - (*eraseVecIt * (writeWeights % v))) + (*addVecIt * writeWeights);
+    nMemory.col(colIndex) = (nMemory.col(colIndex) -
+        (*eraseVecIt * (writeWeights % nMemory.col(colIndex)))) +
+        (*addVecIt * writeWeights);
 
     addVecIt++;
     eraseVecIt++;
-  });
-
+  }
 
   memoryHistory.push_back(std::move(nMemory));
 
@@ -229,16 +230,15 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Backward(
           eraseGate);
 
       // Error of writeHead.
-      size_t rowIndex = 0;
-      dMemPrev.each_row([&] (arma::rowvec& v)
+      for (size_t rowIndex = 0; rowIndex < dMemPrev.n_rows; rowIndex++)
       {
-        dWriteHead(rowIndex, 0) = arma::as_scalar(v * addVec -
-            (((*bMemoryHistory).row(rowIndex) % v) * eraseVec));
+        dWriteHead(rowIndex, 0) = arma::as_scalar(dMemPrev.row(rowIndex) *
+            addVec - (((*bMemoryHistory).row(rowIndex) %
+            dMemPrev.row(rowIndex)) * eraseVec));
 
-        v -= v % (arma::trans(eraseVec) * writeWeights(rowIndex, 0));
-
-        rowIndex++;
-      });
+        dMemPrev.row(rowIndex) -= dMemPrev.row(rowIndex) %
+            (arma::trans(eraseVec) * writeWeights(rowIndex, 0));
+      }
       dMem += dMemPrev;
 
       // Backward through writeHead
