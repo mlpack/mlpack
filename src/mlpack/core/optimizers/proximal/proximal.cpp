@@ -29,7 +29,7 @@ namespace optimization {
  *
  * This is just a soft thresholding.
  */
-static void Proximal::ProjectToL1Ball(arma::vec& v, double tau)
+void Proximal::ProjectToL1Ball(arma::vec& v, double tau)
 {
   arma::vec simplexSol = arma::abs(v);
 
@@ -65,7 +65,7 @@ static void Proximal::ProjectToL1Ball(arma::vec& v, double tau)
  * Approximate the vector v with a tau-sparse vector.
  * This is a hard-thresholding.
  */
-static void Proximal::ProjectToL0Ball(arma::vec& v, int tau)
+void Proximal::ProjectToL0Ball(arma::vec& v, int tau)
 {
   arma::uvec indices = arma::sort_index(arma::abs(v));
   arma::uword numberToKill = v.n_elem - tau;
