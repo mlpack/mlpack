@@ -215,7 +215,7 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<typename TupleType, size_t, typename... Args, typename, typename>
+template<typename TupleType, size_t I, typename... Args, typename, typename>
 TupleType HyperParameterTuner<MLAlgorithm,
                            Metric,
                            CV,

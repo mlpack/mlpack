@@ -97,7 +97,7 @@ class CVFunction
    */
   template<size_t BoundArgIndex,
            size_t ParamIndex,
-           bool BoundArgsIndexInRange = BoundArgIndex < BoundArgsAmount>
+           bool BoundArgsIndexInRange = (BoundArgIndex < BoundArgsAmount)>
   struct UseBoundArg;
 
   //! A reference to the cross-validation object.
@@ -125,7 +125,7 @@ class CVFunction
            size_t ParamIndex,
            typename... Args,
            typename = typename
-               std::enable_if<BoundArgIndex + ParamIndex < TotalArgs>::type>
+               std::enable_if<(BoundArgIndex + ParamIndex < TotalArgs)>::type>
   inline double Evaluate(const arma::mat& parameters, const Args&... args);
 
   /**

@@ -53,7 +53,10 @@ BOOST_AUTO_TEST_CASE(CVFunctionTest)
       cvFun(cv, 0.0, 0.0, fixedUseCholesky, fixedLambda1);
 
   double expected = cv.Evaluate(transposeData, useCholesky, lambda1, lambda2);
-  double actual = cvFun.Evaluate(arma::vec{double(transposeData), lambda1});
+  arma::vec parameters(2);
+  parameters(0) = transposeData;
+  parameters(1) = lambda1;
+  double actual = cvFun.Evaluate(parameters);
 
   BOOST_REQUIRE_CLOSE(expected, actual, 1e-5);
 }
@@ -115,7 +118,7 @@ BOOST_AUTO_TEST_CASE(CVFunctionGradientTest)
   double y = -1.0;
   double z = 2.0;
   arma::mat gradient;
-  cvFun.Gradient(arma::vec{x, y, z}, gradient);
+  cvFun.Gradient(arma::vec("0.0 -1.0 2.0"), gradient);
 
   double xDelta = minDelta;
   double yDelta = relativeDelta * abs(y);
@@ -196,7 +199,7 @@ BOOST_AUTO_TEST_CASE(GridSearchTest)
 
   bool transposeData = true;
   bool useCholesky = false;
-  arma::vec lambda1Set{0, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0};
+  arma::vec lambda1Set("0 0.001 0.01 0.1 1.0 10.0 100.0");
   std::array<double, 4> lambda2Set{{0.0, 0.05, 0.5, 5.0}};
 
   double expectedLambda1, expectedLambda2, expectedObjective;
@@ -237,8 +240,8 @@ BOOST_AUTO_TEST_CASE(HPTTest)
 
   bool transposeData = true;
   bool useCholesky = false;
-  arma::vec lambda1Set{0, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0};
-  arma::vec lambda2Set{0.0, 0.05, 0.5, 5.0};
+  arma::vec lambda1Set("0 0.001 0.01 0.1 1.0 10.0 100.0");
+  arma::vec lambda2Set("0.0 0.05 0.5 5.0");
 
   double expectedLambda1, expectedLambda2, expectedObjective;
   FindLARSBestLambdas(xs, ys, validationSize, transposeData, useCholesky,
@@ -281,7 +284,7 @@ BOOST_AUTO_TEST_CASE(HPTMaximizationTest)
 
   // Defining lambdas to choose from. Zero should be preferred since big lambdas
   // are likely to restrict capabilities of logistic regression.
-  arma::vec lambdas{0.0, 1e12};
+  arma::vec lambdas("0 1e12");
 
   // Making sure that the assumption above is true.
   SimpleCV<LogisticRegression<>, Accuracy>

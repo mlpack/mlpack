@@ -265,7 +265,7 @@ class HyperParameterTuner
   template<size_t I /* Index of the next argument to handle. */,
            typename ArgsTuple,
            typename... FixedArgs,
-           typename = std::enable_if_t<I < std::tuple_size<ArgsTuple>::value>,
+           typename = std::enable_if_t<(I < std::tuple_size<ArgsTuple>::value)>,
            typename = std::enable_if_t<IsPreFixed<ArgsTuple, I>::value>>
   inline void InitAndOptimize(
       const ArgsTuple& args,
@@ -284,7 +284,7 @@ class HyperParameterTuner
   template<size_t I /* Index of the next argument to handle. */,
            typename ArgsTuple,
            typename... FixedArgs,
-           typename = std::enable_if_t<I < std::tuple_size<ArgsTuple>::value>,
+           typename = std::enable_if_t<(I < std::tuple_size<ArgsTuple>::value)>,
            typename = std::enable_if_t<!IsPreFixed<ArgsTuple, I>::value &&
                    IsArithmetic<ArgsTuple, I>::value>,
            typename = void>
@@ -305,7 +305,7 @@ class HyperParameterTuner
   template<size_t I /* Index of the next argument to handle. */,
            typename ArgsTuple,
            typename... FixedArgs,
-           typename = std::enable_if_t<I < std::tuple_size<ArgsTuple>::value>,
+           typename = std::enable_if_t<(I < std::tuple_size<ArgsTuple>::value)>,
            typename = std::enable_if_t<!IsPreFixed<ArgsTuple, I>::value &&
                    !IsArithmetic<ArgsTuple, I>::value>,
            typename = void,
@@ -324,7 +324,7 @@ class HyperParameterTuner
            size_t I,
            typename... Args,
            typename = typename
-               std::enable_if_t<I < std::tuple_size<TupleType>::value>>
+               std::enable_if_t<(I < std::tuple_size<TupleType>::value)>>
   inline TupleType VectorToTuple(const arma::vec& vector, const Args&... args);
 
   /**
