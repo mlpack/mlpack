@@ -84,7 +84,7 @@ class BiLinearFunction
           coeff3 = (1 - deltaR) * deltaC;
           coeff4 = deltaR * deltaC;
 
-          size_t ptr = k * inRowSize * inColSize + cOrigin * inColSize + 
+          size_t ptr = k * inRowSize * inColSize + cOrigin * inColSize +
               rOrigin;
 
           output(k * outRowSize * outColSize + j * outColSize + i) =
@@ -140,7 +140,7 @@ class BiLinearFunction
             coeff3 = (1 - deltaR) * deltaC;
             coeff4 = deltaR * deltaC;
 
-            size_t ptr =  k * outRowSize * outColSize + cOrigin * outColSize + 
+            size_t ptr =  k * outRowSize * outColSize + cOrigin * outColSize +
                 rOrigin;
 
             output(k * inColSize * inRowSize + j * inColSize + i) =
