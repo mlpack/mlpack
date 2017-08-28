@@ -35,6 +35,7 @@ class Proximal {
    *
    * @param v Input vector to be approxmated, the output optimal vector is
    *          also saved in v.
+   * @param tau Norm of l1 ball.
    */
   static void ProjectToL1Ball(arma::vec& v, double tau);
 
@@ -47,6 +48,7 @@ class Proximal {
    *
    * @param v Input vector to be approxmated, the output optimal vector is
    *          also saved in v.
+   * @param tau Norm of l0 ball.
    */
   static void ProjectToL0Ball(arma::vec& v, int tau);
 };  // class Proximal
