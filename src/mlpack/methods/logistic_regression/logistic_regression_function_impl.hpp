@@ -137,12 +137,12 @@ double LogisticRegressionFunction<MatType>::Evaluate(
 {
   // Calculating the regularization term.
   const double regularization = 0.5 * lambda *
-      arma::dot(parameters.col(0).subvec(begin, batchSize - 1),
-              parameters.col(0).subvec(begin, batchSize - 1));
+      arma::dot(parameters.col(0).subvec(1, parameters.n_elem - 1),
+              parameters.col(0).subvec(1, parameters.n_elem - 1));
 
   // Calculating the hypothesis that has to be passed to the sigmoid function.
   const arma::vec exponents = parameters(0, 0) + predictors.t() *
-      parameters.col(0).subvec(begin, batchSize - 1);
+      parameters.col(0).subvec(1, parameters.n_elem - 1);
   // Calculating the sigmoid function values.
   const arma::vec sigmoid = 1.0 / (1.0 + arma::exp(-exponents));
 
@@ -217,10 +217,10 @@ void LogisticRegressionFunction<MatType>::Gradient(
 {
   // Regularization term.
   arma::mat regularization;
-  regularization = lambda * parameters.col(0).subvec(begin, batchSize - 1);
+  regularization = lambda * parameters.col(0).subvec(1, parameters.n_elem - 1);
 
   const arma::rowvec sigmoids = (1 / (1 + arma::exp(-parameters(0, 0)
-      - parameters.col(0).subvec(begin, batchSize - 1).t() * predictors)));
+      - parameters.col(0).subvec(1, parameters.n_elem - 1).t() * predictors)));
 
   gradient.set_size(batchSize);
   gradient[0] = -arma::accu(responses - sigmoids);
