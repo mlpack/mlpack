@@ -196,7 +196,6 @@ class Atoms
 
   //! Current atoms in the solution space.
   arma::mat currentAtoms;
-
 }; // class Atoms
 }  // namespace optimization
 }  // namespace mlpack
