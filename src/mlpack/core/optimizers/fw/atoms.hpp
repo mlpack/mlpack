@@ -12,6 +12,7 @@
 #define MLPACK_CORE_OPTIMIZERS_FW_ATOMS_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/optimizers/proximal/proximal.hpp>
 #include "func_sq.hpp"
 
 namespace mlpack {
@@ -156,6 +157,7 @@ class Atoms
     RecoverVector(x);
     double value = function.Evaluate(x);
 
+    Proximal proximal(tau);
     for (size_t iter = 1; iter<maxIteration; iter++)
     {
       // Update currentCoeffs with gradient descent method.
@@ -165,7 +167,7 @@ class Atoms
       currentCoeffs = currentCoeffs - stepSize * g;
 
       // Projection of currentCoeffs to satisfy the atom norm constraint.
-      ProjectionToL1(tau);
+      proximal.ProjectToL1Ball(currentCoeffs);
 
       RecoverVector(x);
       double valueNew = function.Evaluate(x);
@@ -195,55 +197,6 @@ class Atoms
   //! Current atoms in the solution space.
   arma::mat currentAtoms;
 
-
-  /**
-   * Projection of currentCoeffs to L1 ball with norm tau.
-   * Used in ProjectedGradientEnhancement().
-   *
-   * See the paper:
-   * @code
-   * @inproceedings{DucShaSin:2008Efficient,
-   *    Author = {Duchi, John and Shalev-Shwartz, Shai and Singer, Yoram and Chandra, Tushar},
-   *    Booktitle = {Proceedings of the 25th international conference on Machine learning},
-   *    Organization = {ACM},
-   *    Pages = {272--279},
-   *    Title = {Efficient projections onto the l 1-ball for learning in high dimensions},
-   *    Year = {2008}}
-   * @endcode
-   *
-   * @param tau atom norm constraint.
-   */
-  void ProjectionToL1(const double tau)
-  {
-    arma::vec simplexSol = arma::abs(currentCoeffs);
-
-    // Already with atom norm <= tau.
-    if (arma::accu(simplexSol) <= tau)
-      return;
-
-    simplexSol = arma::sort(simplexSol, "descend");
-    arma::vec simplexSum = arma::cumsum(simplexSol);
-
-    double nu = 0;
-    size_t rho;
-    for (size_t j = 1; j <= simplexSol.n_rows; j++)
-    {
-      rho = simplexSol.n_rows - j;
-      nu = simplexSol(rho) - (simplexSum(rho) - tau)/(rho + 1);
-      if (nu > 0)
-        break;
-    }
-    double theta = (simplexSum(rho) - tau)/rho;
-
-    // Threshold on absolute value of currentCoeffs with theta.
-    for (arma::uword j = 0; j< simplexSol.n_rows; j++)
-    {
-      if (currentCoeffs(j) >=0.0)
-        currentCoeffs(j) = std::max(currentCoeffs(j)-theta, 0.0);
-      else
-        currentCoeffs(j) = std::min(currentCoeffs(j)+theta, 0.0);
-    }
-  }
 }; // class Atoms
 }  // namespace optimization
 }  // namespace mlpack
