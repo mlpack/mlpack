@@ -85,7 +85,7 @@ inline T DatasetMapper<PolicyType>::MapString(const std::string& string,
  * isnan(size_t).
  */
 template<typename T>
-inline bool isnanSafe(const T& t)
+inline bool isnanSafe(const T& /* t */)
 {
   return false;
 }
