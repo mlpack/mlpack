@@ -65,6 +65,11 @@ class MemoryHead
              arma::mat& dMem);
 
   /**
+   * Delete the MemoryHead and the layers it holds.
+   */
+  ~MemoryHead();
+
+  /**
    * Feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward given the current memory content.
    * Current memory content is taken from memoryHistory.
@@ -147,7 +152,7 @@ class MemoryHead
    * Serialize the layer
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Locally-stored number of input units.
@@ -278,6 +283,9 @@ class MemoryHead
 
   //! Locally-stored delta visitor.
   DeltaVisitor deltaVisitor;
+
+  //! Locally-stored delete visitor.
+  DeleteVisitor deleteVisitor;
 
   //! Locally-stored list of network modules.
   std::vector<LayerTypes> network;

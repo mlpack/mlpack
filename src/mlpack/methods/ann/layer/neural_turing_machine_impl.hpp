@@ -80,6 +80,17 @@ NeuralTuringMachine<InputDataType, OutputDataType>::NeuralTuringMachine(
   gradientStep = 0;
 }
 
+template <typename InputDataType, typename OutputDataType>
+NeuralTuringMachine<InputDataType, OutputDataType>::~NeuralTuringMachine()
+{
+  boost::apply_visitor(deleteVisitor, readHead);
+  boost::apply_visitor(deleteVisitor, writeHead);
+  boost::apply_visitor(deleteVisitor, controller);
+  boost::apply_visitor(deleteVisitor, inputToLinear);
+  boost::apply_visitor(deleteVisitor, eraseGate);
+  boost::apply_visitor(deleteVisitor, addGate);
+}
+
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void NeuralTuringMachine<InputDataType, OutputDataType>::Forward(
@@ -356,9 +367,31 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::ResetCell()
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void NeuralTuringMachine<InputDataType, OutputDataType>::Serialize(
+void NeuralTuringMachine<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
+  if (Archive::is_loading::value)
+  {
+    boost::apply_visitor(deleteVisitor, readHead);
+    boost::apply_visitor(deleteVisitor, writeHead);
+    boost::apply_visitor(deleteVisitor, controller);
+    boost::apply_visitor(deleteVisitor, inputToLinear);
+    boost::apply_visitor(deleteVisitor, eraseGate);
+    boost::apply_visitor(deleteVisitor, addGate);
+  }
+
+  ar & BOOST_SERIALIZATION_NVP(inSize);
+  ar & BOOST_SERIALIZATION_NVP(outSize);
+  ar & BOOST_SERIALIZATION_NVP(numMem);
+  ar & BOOST_SERIALIZATION_NVP(memSize);
+  ar & BOOST_SERIALIZATION_NVP(shiftSize);
+
+  ar & BOOST_SERIALIZATION_NVP(readHead);
+  ar & BOOST_SERIALIZATION_NVP(writeHead);
+  ar & BOOST_SERIALIZATION_NVP(controller);
+  ar & BOOST_SERIALIZATION_NVP(inputToLinear);
+  ar & BOOST_SERIALIZATION_NVP(eraseGate);
+  ar & BOOST_SERIALIZATION_NVP(addGate);
 }
 
 } // namespace ann

@@ -77,6 +77,11 @@ class NeuralTuringMachine
                       LayerTypes controller);
 
   /**
+   * Delete the NeuralTuringMachine and the layers it holds.
+   */
+  ~NeuralTuringMachine();
+
+  /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
    *
@@ -155,7 +160,7 @@ class NeuralTuringMachine
    * Serialize the layer
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Locally-stored number of input units.
@@ -178,9 +183,6 @@ class NeuralTuringMachine
 
   //! Locally stored read head error.
   arma::mat dReadHead;
-
-  //! Memory write head.
-  LayerTypes writeMem;
 
   //! Locally stored memory write error.
   arma::mat dWriteHead;
@@ -232,6 +234,9 @@ class NeuralTuringMachine
 
   //! Locally-stored delta visitor.
   DeltaVisitor deltaVisitor;
+
+  //! Locally-stored delete visitor.
+  DeleteVisitor deleteVisitor;
 
   //! Locally-stored list of network modules.
   std::vector<LayerTypes> network;

@@ -75,6 +75,13 @@ MemoryHead<InputDataType, OutputDataType>::MemoryHead(
   bMemoryHistory = memoryHistory.end();
 }
 
+template <typename InputDataType, typename OutputDataType>
+MemoryHead<InputDataType, OutputDataType>::~MemoryHead()
+{
+  boost::apply_visitor(deleteVisitor, inputLinear);
+  boost::apply_visitor(deleteVisitor, kTNonLinear);
+}
+
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void MemoryHead<InputDataType, OutputDataType>::Forward(arma::Mat<eT>&& input,
@@ -443,9 +450,22 @@ void MemoryHead<InputDataType, OutputDataType>::ResetCell()
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void MemoryHead<InputDataType, OutputDataType>::Serialize(
-    Archive& /* ar */, const unsigned int /* version */)
+void MemoryHead<InputDataType, OutputDataType>::serialize(
+    Archive& ar, const unsigned int /* version */)
 {
+  if (Archive::is_loading::value)
+  {
+    boost::apply_visitor(deleteVisitor, inputLinear);
+    boost::apply_visitor(deleteVisitor, kTNonLinear);
+  }
+
+  ar & BOOST_SERIALIZATION_NVP(inSize);
+  ar & BOOST_SERIALIZATION_NVP(outSize);
+  ar & BOOST_SERIALIZATION_NVP(memSize);
+  ar & BOOST_SERIALIZATION_NVP(shiftSize);
+
+  ar & BOOST_SERIALIZATION_NVP(inputLinear);
+  ar & BOOST_SERIALIZATION_NVP(kTNonLinear);
 }
 
 } // namespace ann
