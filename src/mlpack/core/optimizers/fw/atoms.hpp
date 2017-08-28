@@ -157,7 +157,6 @@ class Atoms
     RecoverVector(x);
     double value = function.Evaluate(x);
 
-    Proximal proximal(tau);
     for (size_t iter = 1; iter<maxIteration; iter++)
     {
       // Update currentCoeffs with gradient descent method.
@@ -167,7 +166,7 @@ class Atoms
       currentCoeffs = currentCoeffs - stepSize * g;
 
       // Projection of currentCoeffs to satisfy the atom norm constraint.
-      proximal.ProjectToL1Ball(currentCoeffs);
+      Proximal::ProjectToL1Ball(currentCoeffs, tau);
 
       RecoverVector(x);
       double valueNew = function.Evaluate(x);

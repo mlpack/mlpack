@@ -14,8 +14,6 @@
 namespace mlpack {
 namespace optimization {
 
-Proximal::Proximal(double tau): tau(tau) {/* Nothing to do. */}
-
 /**
  * Projection of the vector v onto l1 ball with norm tau.
  * See the paper:
@@ -31,7 +29,7 @@ Proximal::Proximal(double tau): tau(tau) {/* Nothing to do. */}
  *
  * This is just a soft thresholding.
  */
-void Proximal::ProjectToL1Ball(arma::vec& v)
+static void Proximal::ProjectToL1Ball(arma::vec& v, double tau)
 {
   arma::vec simplexSol = arma::abs(v);
 
@@ -67,7 +65,7 @@ void Proximal::ProjectToL1Ball(arma::vec& v)
  * Approximate the vector v with a tau-sparse vector.
  * This is a hard-thresholding.
  */
-void Proximal::ProjectToL0Ball(arma::vec& v)
+static void Proximal::ProjectToL0Ball(arma::vec& v, int tau)
 {
   arma::uvec indices = arma::sort_index(arma::abs(v));
   arma::uword numberToKill = v.n_elem - tau;
