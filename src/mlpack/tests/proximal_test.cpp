@@ -37,17 +37,14 @@ BOOST_AUTO_TEST_CASE(ProjectToL1)
   vec v = randu<vec>(D);
   v = normalise(v, 1);
 
-  Proximal proximalIn(tau1);  // v is inside the ball.
-  Proximal proximalOut(tau2); // v is outside the ball.
-
   // v is inside the l1 ball, so the projection will not change v.
   vec v1 = v;
-  proximalIn.ProjectToL1Ball(v1);
+  Proximal::ProjectToL1Ball(v1, tau1);
   BOOST_REQUIRE_SMALL(norm(v - v1, 2), 1e-10);
 
   // v is outside the l1 ball, so the projection should find the closest.
   vec v2 = v;
-  proximalOut.ProjectToL1Ball(v2);
+  Proximal::ProjectToL1Ball(v2, tau2);
   double distance = norm(v2 - v, 2);
   for (size_t i = 1; i < 1000; i++)
   {
@@ -72,9 +69,8 @@ BOOST_AUTO_TEST_CASE(ProjectToL0)
   // Vector to be projected.
   vec v = randn<vec>(D);
 
-  Proximal proximal(tau);
   vec v0 = v;
-  proximal.ProjectToL0Ball(v0);
+  Proximal::ProjectToL0Ball(v0, tau);
   double distance = norm(v0 - v, 2);
 
   for (size_t i = 1; i < 1000; i++)
