@@ -31,6 +31,7 @@ class BiLinearFunction
   * @param inColSize: Number of input columns.
   * @param outRowSize: Number of output rows.
   * @param outColSie: Number of output columns.
+  * @param depth: Number of slices of input.
   */
  public:
   BiLinearFunction(
@@ -55,13 +56,13 @@ class BiLinearFunction
   void UpSample(const arma::Mat<eT>& input, arma::Mat<eT>& output)
   {
     if (output.is_empty())
-      output.set_size(outRowSize * outColSize, 1);
+      output.set_size(outRowSize * outColSize * depth, 1);
 
     assert(output.n_rows == outRowSize * outColSize);
     assert(output.n_cols == 1);
 
-    scaleRow = (double)inRowSize / (double) outRowSize;
-    scaleCol = (double)inColSize / (double) outColSize;
+    double scaleRow = (double)inRowSize / (double) outRowSize;
+    double scaleCol = (double)inColSize / (double) outColSize;
 
     for (size_t k = 0; k < depth; k++)
     {
@@ -69,8 +70,8 @@ class BiLinearFunction
       {
         for (size_t j = 0; j < outColSize; j++)
         {
-          rOrigin = std::floor(i * scaleRow);
-          cOrigin = std::floor(j * scaleCol);
+          double rOrigin = std::floor(i * scaleRow);
+          double cOrigin = std::floor(j * scaleCol);
 
           if (rOrigin > inRowSize - 2)
             rOrigin = inRowSize - 2;
@@ -79,10 +80,10 @@ class BiLinearFunction
 
           double deltaR = i * scaleRow - rOrigin;
           double deltaC = j * scaleCol - cOrigin;
-          coeff1 = (1 - deltaR) * (1 - deltaC);
-          coeff2 = deltaR * (1 - deltaC);
-          coeff3 = (1 - deltaR) * deltaC;
-          coeff4 = deltaR * deltaC;
+          double coeff1 = (1 - deltaR) * (1 - deltaC);
+          double coeff2 = deltaR * (1 - deltaC);
+          double coeff3 = (1 - deltaR) * deltaC;
+          double coeff4 = deltaR * deltaC;
 
           size_t ptr = k * inRowSize * inColSize + cOrigin * inColSize +
               rOrigin;
@@ -101,32 +102,34 @@ class BiLinearFunction
    * DownSample the given input.
    *
    * @param input The input matrix
+   * @param gradient The computed backward gradient
    * @param output The resulting down-sampled output image.
    */
   template<typename eT>
-  void DownSample(const arma::Mat<eT>& input, arma::Mat<eT>& output)
+  void DownSample(const arma::Mat<eT>& /*input*/, 
+      const arma::Mat<eT>& gradient, arma::Mat<eT>& output)
   {
     if (output.is_empty())
-      output.set_size(inRowSize * inColSize, 1);
+      output.set_size(inRowSize * inColSize * depth, 1);
 
     assert(output.n_rows == inRowSize * inColSize);
     assert(output.n_cols == 1);
 
-    if (input.n_elem == output.n_elem)
+    if (gradient.n_elem == output.n_elem)
     {
-      output = input;
+      output = gradient;
     }
     else
     {
-      scaleRow = (double)(outRowSize) / inRowSize;
-      scaleCol = (double)(outColSize) / inColSize;
+      double scaleRow = (double)(outRowSize) / inRowSize;
+      double scaleCol = (double)(outColSize) / inColSize;
 
       for (size_t k = 0; k < depth; k++)
         for (size_t i = 0; i < inRowSize; i++)
           for (size_t j = 0; j < inColSize; j++)
           {
-            rOrigin = std::floor(i * scaleRow);
-            cOrigin = std::floor(j * scaleCol);
+            double rOrigin = std::floor(i * scaleRow);
+            double cOrigin = std::floor(j * scaleCol);
 
             if (rOrigin > outRowSize - 2)
               rOrigin = outRowSize - 2;
@@ -135,19 +138,19 @@ class BiLinearFunction
 
             double deltaR = i * scaleRow - rOrigin;
             double deltaC = j * scaleCol - cOrigin;
-            coeff1 = (1 - deltaR) * (1 - deltaC);
-            coeff2 = deltaR * (1 - deltaC);
-            coeff3 = (1 - deltaR) * deltaC;
-            coeff4 = deltaR * deltaC;
+            double coeff1 = (1 - deltaR) * (1 - deltaC);
+            double coeff2 = deltaR * (1 - deltaC);
+            double coeff3 = (1 - deltaR) * deltaC;
+            double coeff4 = deltaR * deltaC;
 
             size_t ptr =  k * outRowSize * outColSize + cOrigin * outColSize +
                 rOrigin;
 
             output(k * inColSize * inRowSize + j * inColSize + i) =
-                input(ptr) * coeff1 +
-                input(ptr + 1) * coeff2 +
-                input(ptr + outColSize) * coeff3 +
-                input(ptr + outColSize + 1) * coeff4;
+                gradient(ptr) * coeff1 +
+                gradient(ptr + 1) * coeff2 +
+                gradient(ptr + outColSize) * coeff3 +
+                gradient(ptr + outColSize + 1) * coeff4;
           }
     }
   }
@@ -161,6 +164,7 @@ class BiLinearFunction
     ar & data::CreateNVP(inColSize, "inColSize");
     ar & data::CreateNVP(outRowSize, "outRowSize");
     ar & data::CreateNVP(outColSize, "outColSize");
+    ar & data::CreateNVP(depth, "depth");
   }
 
  private:
@@ -174,24 +178,6 @@ class BiLinearFunction
   const size_t outColSize;
   //! Locally stored depth of the input.
   const size_t depth;
-
-  //! Locally stored scaling factor along row.
-  double scaleRow;
-  //! Locally stored scaling factor along row.
-  double scaleCol;
-  //! Locally stored interger part of the current row idx in input.
-  double rOrigin;
-  //! Locally stored interger part of the current column idx in input.
-  double cOrigin;
-
-  //! Locally stored coefficient around given idx.
-  double coeff1;
-  //! Locally stored coefficient around given idx.
-  double coeff2;
-  //! Locally stored coefficient around given idx.
-  double coeff3;
-  //! Locally stored coefficient around given idx.
-  double coeff4;
 }; // class BiLinearFunction
 
 } // namespace ann

@@ -46,8 +46,6 @@ class Resize
   /**
    * Forward pass through the Resize layer. The resize layer interpolates 
    * the matrix using the given interpolation method.
-   * If the size of the input and output are same the Forward layer
-   * does no nothing.
    *
    * @param input Input the input matrix to interpolate
    * @param output The interpolated matrix.
@@ -65,7 +63,7 @@ class Resize
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
+  void Backward(const arma::Mat<eT>&& input,
                 arma::Mat<eT>&& gy,
                 arma::Mat<eT>&& g);
 
