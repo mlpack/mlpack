@@ -106,7 +106,7 @@ class BiLinearFunction
    * @param output The resulting down-sampled output image.
    */
   template<typename eT>
-  void DownSample(const arma::Mat<eT>& /*input*/, 
+  void DownSample(const arma::Mat<eT>& /*input*/,
       const arma::Mat<eT>& gradient, arma::Mat<eT>& output)
   {
     if (output.is_empty())
