@@ -38,7 +38,6 @@ class Proximal {
   //! Modify the norm of the lp ball.
   double& Tau() { return tau; }
 
-  
   /**
    * Project the vector onto the l1 ball with norm tau. That is, we will solve
    * for:

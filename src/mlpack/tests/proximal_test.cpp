@@ -90,7 +90,6 @@ BOOST_AUTO_TEST_CASE(ProjectToL0)
     double distanceNew = norm(v - vNew, 2);
     BOOST_REQUIRE_GE(distanceNew, distance);
   }
-
 }
 
 BOOST_AUTO_TEST_SUITE_END();
