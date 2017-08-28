@@ -37,6 +37,7 @@ BOOST_AUTO_TEST_SUITE(PythonBindingsTest);
  */
 BOOST_AUTO_TEST_CASE(PyOptionTest)
 {
+  CLI::ClearSettings();
   programName = "test";
   PyOption<double> po1(0.0, "test", "test2", "t", "double", false, true, false);
 

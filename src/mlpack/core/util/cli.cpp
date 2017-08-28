@@ -255,7 +255,7 @@ void CLI::ClearSettings()
   while (it2 != GetSingleton().aliases.end())
   {
     // Is this an alias to a persistent parameter?
-    if (GetSingleton().parameters.count(it2->second) > 0)
+    if (persistent.count(it2->second) > 0)
       persistentAliases[it2->first] = it2->second; // Save it.
 
     ++it2;
