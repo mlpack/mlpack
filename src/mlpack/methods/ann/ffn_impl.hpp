@@ -226,6 +226,17 @@ double FFN<OutputLayerType, InitializationRuleType>::Evaluate(
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
+double FFN<OutputLayerType, InitializationRuleType>::Evaluate(
+    const arma::mat& parameters)
+{
+  double res = 0;
+  for (size_t i = 0; i < predictors.n_cols; ++i)
+    res += Evaluate(parameters, i, true);
+
+  return res;
+}
+
+template<typename OutputLayerType, typename InitializationRuleType>
 void FFN<OutputLayerType, InitializationRuleType>::Gradient(
     const arma::mat& parameters, const size_t i, arma::mat& gradient)
 {
