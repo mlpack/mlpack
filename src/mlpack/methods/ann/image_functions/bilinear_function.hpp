@@ -59,7 +59,7 @@ class BiLinearFunction
     if (output.is_empty())
       output.set_size(outRowSize * outColSize * depth, 1);
 
-    assert(output.n_rows == outRowSize * outColSize);
+    assert(output.n_rows == outRowSize * outColSize * depth);
     assert(output.n_cols == 1);
 
     double scaleRow = (double)inRowSize / (double) outRowSize;
@@ -101,6 +101,10 @@ class BiLinearFunction
 
   /**
    * DownSample the given input.
+   * This is equivalent to the Backward the pass for the layer.
+   * Since, the layer dose not have any learnable parameters
+   * we just have downsample the gradient to make it's size
+   * compatible with the input size.
    *
    * @param input The input matrix
    * @param gradient The computed backward gradient
@@ -113,7 +117,7 @@ class BiLinearFunction
     if (output.is_empty())
       output.set_size(inRowSize * inColSize * depth, 1);
 
-    assert(output.n_rows == inRowSize * inColSize);
+    assert(output.n_rows == inRowSize * inColSize * depth);
     assert(output.n_cols == 1);
 
     if (gradient.n_elem == output.n_elem)
