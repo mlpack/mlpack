@@ -48,6 +48,7 @@ void SigmoidCrossEntropyError<InputDataType, OutputDataType>::Backward(
     arma::Mat<eT>&& output)
 {
   arma::mat temp;
+  output = input;
 
   arma::uvec positive = arma::find(input > 0);
   arma::uvec negative = arma::find(input < 0 || input == 0);
