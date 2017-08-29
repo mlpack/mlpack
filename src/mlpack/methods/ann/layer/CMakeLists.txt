@@ -16,8 +16,6 @@ set(SOURCES
   convolution_impl.hpp
   cross_entropy_error.hpp
   cross_entropy_error_impl.hpp
-  cross_entropy_error_with_logits.hpp
-  cross_entropy_error_with_logits_impl.hpp
   dropconnect.hpp
   dropconnect_impl.hpp
   dropout.hpp
@@ -67,6 +65,8 @@ set(SOURCES
   recurrent_attention_impl.hpp
   reinforce_normal.hpp
   reinforce_normal_impl.hpp
+  sigmoid_cross_entropy_error.hpp
+  sigmoid_cross_entropy_error_impl.hpp
   select.hpp
   select_impl.hpp
   sequential.hpp
