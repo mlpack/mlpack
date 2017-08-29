@@ -1,5 +1,5 @@
 /**
- * @file cross_entropy_error_with_logits.hpp
+ * @file sigmoid_cross_entropy_error.hpp
  * @author Kris Singh
  *
  * Definition of the cross-entropy with logit performance function.
@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_CROSS_ENTROPY_LOGIT_ERROR_HPP
-#define MLPACK_METHODS_ANN_LAYER_CROSS_ENTROPY_LOGIT_ERROR_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_SIGMOID_CROSS_ENTROPY_ERROR_HPP
+#define MLPACK_METHODS_ANN_LAYER_SIGMOID_CROSS_ENTROPY_ERROR_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -18,7 +18,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * The cross-entropy with logits performance function measures the network's
+ * The SigmoidCrossEntropyError performance function measures the network's
  * performance according to the cross-entropy function.
  * between the input and target distributions.
  * For more detail look here goo.gl/tRjS6j
@@ -32,19 +32,16 @@ template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-class CrossEntropyErrorLogits
+class SigmoidCrossEntropyError
 {
  public:
   /**
-   * Create the CrossEntropyErrorLogits object.
-   * 
-   * @param eps The minimum value used for computing logarithms
-   *            and denominators in a numerically stable way.
+   * Create the SigmoidCrossEntropyError object.
    */
-  CrossEntropyErrorLogits();
+  SigmoidCrossEntropyError();
 
   /*
-   * Computes the cross-entropy with logits function.
+   * Computes the Sigmoid CrossEntropy Error functions.
    *
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
@@ -82,7 +79,7 @@ class CrossEntropyErrorLogits
    * Serialize the layer.
    */
   template<typename Archive>
-  void Serialize(Archive& /* ar */, const unsigned int /* version */);
+  void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Locally-stored delta object.
@@ -93,12 +90,13 @@ class CrossEntropyErrorLogits
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-}; // class CrossEntropyErrorLogits
+
+}; // class SigmoidCrossEntropy
 
 } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
-#include "cross_entropy_error_with_logits_impl.hpp"
+#include "sigmoid_cross_entropy_error_impl.hpp"
 
 #endif
