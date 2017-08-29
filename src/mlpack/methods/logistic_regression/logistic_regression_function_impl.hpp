@@ -141,8 +141,8 @@ double LogisticRegressionFunction<MatType>::Evaluate(
               parameters.col(0).subvec(1, parameters.n_elem - 1));
 
   // Calculating the hypothesis that has to be passed to the sigmoid function.
-  const arma::vec exponents = parameters(0, 0) + predictors.t() *
-      parameters.col(0).subvec(1, parameters.n_elem - 1);
+  const arma::vec exponents = parameters(0, 0) + arma::dot(predictors.cols(begin, begin + batchSize),
+      parameters.col(0).subvec(1, parameters.n_elem - 1));
   // Calculating the sigmoid function values.
   const arma::vec sigmoid = 1.0 / (1.0 + arma::exp(-exponents));
 
