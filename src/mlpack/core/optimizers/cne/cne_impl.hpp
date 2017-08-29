@@ -45,7 +45,8 @@ double CNE::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
 {
   // Make sure for evolution to work at least four candidates are present.
   if (populationSize < 4)
-    throw std::logic_error("Population size should be atleast 4!");
+    throw std::logic_error("CNE::Optimize(): population size should be at least"
+        " 4!");
 
   // Find the number of elite canditates from population.
   numElite = floor(selectPercent * populationSize);
@@ -55,13 +56,13 @@ double CNE::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
 
   // Terminate if two parents can not be created.
   if (numElite < 2)
-    throw std::logic_error("Unable to select two parents."
-                           " Increase selection percentage.");
+    throw std::logic_error("CNE::Optimize(): unable to select two parents. "
+        "Increase selection percentage.");
 
   // Terminate if at least two childs are not possible.
-  if ((populationSize - numElite) < 2 )
-    throw std::logic_error("No space to accomodate even 2 childs."
-                           " Increase population size.");
+  if ((populationSize - numElite) < 2)
+    throw std::logic_error("CNE::Optimize(): no space to accomodate even 2 "
+        "children. Increase population size.");
 
   // Get the number of functions to iterate.
   const size_t numFun = function.NumFunctions();
@@ -77,7 +78,7 @@ double CNE::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
   double fitness = 0;
   double lastBestFitness = 0;
 
-  Log::Info << "CNE initialized successfully. Optimization started"
+  Log::Info << "CNE initialized successfully. Optimization started."
       << std::endl;
 
   // Find the fitness before optimization using given iterate parameters.
@@ -111,18 +112,18 @@ double CNE::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
     // Check for termination criteria.
     if (tolerance >= fitnessValues.min())
     {
-        Log::Info << "Terminating. Given fitness criteria " << tolerance
-            << " > " << fitnessValues.min() << std::endl;
-        break;
+      Log::Info << "CNE::Optimize(): terminating. Given fitness criteria "
+          << tolerance << " > " << fitnessValues.min() << "." << std::endl;
+      break;
     }
 
     // Check for termination criteria.
     if (lastBestFitness - fitnessValues.min() < objectiveChange)
     {
-        Log::Info << "Terminating. Fitness History change "
-            << (lastBestFitness - fitnessValues.min())
-            << " < " << objectiveChange << std::endl;
-        break;
+      Log::Info << "CNE::Optimize(): terminating. Fitness history change "
+          << (lastBestFitness - fitnessValues.min())
+          << " < " << objectiveChange << "." << std::endl;
+      break;
     }
 
     // Store the best fitness of present generation.
@@ -170,7 +171,7 @@ void CNE::Reproduce()
       }
     }
 
-    // Parents generates 2 childs replacing the droped out candidates.
+    // Parents generate 2 children replacing the dropped-out candidates.
     // Also finding the index of these candidates in the population matrix.
     Crossover(index[mom], index[dad], index[i], index[i + 1]);
   }
@@ -180,23 +181,23 @@ void CNE::Reproduce()
   Mutate();
 }
 
-//! Crossover parents to create new childs.
+//! Crossover parents to create new children.
 void CNE::Crossover(const size_t mom,
                     const size_t dad,
                     const size_t child1,
                     const size_t child2)
 {
-  // Replace the cadidates with parents at their place.
+  // Replace the candidates with parents at their place.
   population.slice(child1) = population.slice(mom);
   population.slice(child2) = population.slice(dad);
 
   // Preallocate random selection vector (values between 0 and 1).
   arma::vec selection = arma::randu(elements);
 
-  // Randomly alter mom and dad genome weights to get two different childs.
+  // Randomly alter mom and dad genome weights to get two different children.
   for (size_t i = 0; i < elements; i++)
   {
-    // Using it to alter the weights of the childs.
+    // Using it to alter the weights of the children.
     if (selection(i) > 0.5)
     {
       population.slice(child1)(i) = population.slice(mom)(i);
