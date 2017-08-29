@@ -222,9 +222,9 @@ void LogisticRegressionFunction<MatType>::Gradient(
   const arma::rowvec sigmoids = (1 / (1 + arma::exp(-parameters(0, 0)
       - parameters.col(0).subvec(1, parameters.n_elem - 1).t() * predictors)));
 
-  gradient.set_size(batchSize);
+  gradient.set_size(parameters.n_elem);
   gradient[0] = -arma::accu(responses - sigmoids);
-  gradient.col(0).subvec(begin, batchSize - 1) = -predictors * (responses -
+  gradient.col(0).subvec(begin, batchSize - 1) = -predictors.col(begin, begin + batchSize) * (responses -
       sigmoids).t() + regularization;
 }
 
