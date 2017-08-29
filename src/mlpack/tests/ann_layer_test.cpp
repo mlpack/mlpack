@@ -14,7 +14,6 @@
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
-#include <mlpack/methods/ann/init_rules/const_init.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/rnn.hpp>
@@ -927,10 +926,10 @@ BOOST_AUTO_TEST_CASE(SimpleLogSoftmaxLayerTest)
       arma::mat("1.6487; 0.6487") - delta)), 1e-3);
 }
 
-BOOST_AUTO_TEST_CASE(SimpleCrossEntropyErrorLogitLayerTest)
+BOOST_AUTO_TEST_CASE(SimpleSigmoidCrossEntropyLayerTest)
 {
   arma::mat input1, input2, output, target1, target2, expectedOutput;
-  CrossEntropyErrorLogits<> module;
+  SigmoidCrossEntropyError<> module;
 
   // Test the Forward function on a user generator input and compare it against
   // the manually calculated result.
@@ -938,12 +937,12 @@ BOOST_AUTO_TEST_CASE(SimpleCrossEntropyErrorLogitLayerTest)
   target1 = arma::zeros(1, 8);
   double error1 = module.Forward(std::move(input1), std::move(target1));
   // value computed using tf
-  BOOST_REQUIRE_SMALL(error1 - 0.97407699, 1e-7);
+  BOOST_REQUIRE_SMALL(error1 / input1.n_elem - 0.97407699, 1e-7);
 
   input2 = arma::mat("1 2 3 4 5");
   target2 = arma::mat("0 0 1 0 1");
   double error2 = module.Forward(std::move(input2), std::move(target2));
-  BOOST_REQUIRE_SMALL(error2 - 1.5027283, 1e-6);
+  BOOST_REQUIRE_SMALL(error2 / input2.n_elem - 1.5027283, 1e-6);
 
   // Test the Backward function.
   module.Backward(std::move(input1), std::move(target1), std::move(output));
@@ -960,6 +959,7 @@ BOOST_AUTO_TEST_CASE(SimpleCrossEntropyErrorLogitLayerTest)
 
   BOOST_REQUIRE_EQUAL(output.n_rows, input2.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input2.n_cols);
+
 }
 
 
