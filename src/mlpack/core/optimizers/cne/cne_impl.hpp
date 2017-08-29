@@ -45,27 +45,31 @@ double CNE::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
 {
   // Make sure for evolution to work at least four candidates are present.
   if (populationSize < 4)
+  {
     throw std::logic_error("CNE::Optimize(): population size should be at least"
         " 4!");
+  }
 
   // Find the number of elite canditates from population.
   numElite = floor(selectPercent * populationSize);
 
   // Making sure we have even number of candidates to remove and create.
-  if ((populationSize - numElite) % 2 != 0) numElite--;
+  if ((populationSize - numElite) % 2 != 0)
+    numElite--;
 
   // Terminate if two parents can not be created.
   if (numElite < 2)
+  {
     throw std::logic_error("CNE::Optimize(): unable to select two parents. "
         "Increase selection percentage.");
+  }
 
   // Terminate if at least two childs are not possible.
   if ((populationSize - numElite) < 2)
+  {
     throw std::logic_error("CNE::Optimize(): no space to accomodate even 2 "
         "children. Increase population size.");
-
-  // Get the number of functions to iterate.
-  const size_t numFun = function.NumFunctions();
+  }
 
   // Set the population size and fill random values [0,1].
   population = arma::randu(iterate.n_rows, iterate.n_cols, populationSize);
@@ -75,15 +79,12 @@ double CNE::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
 
   // initializing helper variables.
   fitnessValues.set_size(populationSize);
-  double fitness = 0;
-  double lastBestFitness = 0;
 
   Log::Info << "CNE initialized successfully. Optimization started."
       << std::endl;
 
   // Find the fitness before optimization using given iterate parameters.
-  for (size_t j = 0; j < numFun; j++)
-    lastBestFitness += function.Evaluate(iterate, j);
+  size_t lastBestFitness = function.Evaluate(iterate);
 
   // Iterate until maximum number of generations is obtained.
   for (size_t gen = 1; gen <= maxGenerations; gen++)
@@ -95,12 +96,7 @@ double CNE::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
        iterate = population.slice(i);
 
        // Find fitness of candidate.
-       for (size_t j = 0; j < numFun; j++)
-         fitness += function.Evaluate(iterate, j);
-
-       // Save fitness value of the evaluated candidate.
-       fitnessValues[i] = fitness;
-       fitness = 0;
+       fitnessValues[i] = function.Evaluate(iterate);
     }
 
     Log::Info << "Generation number: " << gen << " best fitness = "
@@ -133,11 +129,7 @@ double CNE::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
   // Set the best candidate into the network parameters.
   iterate = population.slice(index(0));
 
-  // Find the objective function value from the best candidate found.
-  for (size_t j = 0; j < numFun; j++)
-    fitness += function.Evaluate(iterate, j);
-
-  return fitness;
+  return function.Evaluate(iterate);
 }
 
 //! Reproduce candidates to create the next generation.

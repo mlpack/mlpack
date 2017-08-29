@@ -150,9 +150,10 @@ class FFN
    */
   void Predict(arma::mat predictors, arma::mat& results);
 
-  /**
-   * Evaluate the feedforward network with the given parameters. This function
-   * is usually called by the optimizer to train the model.
+   /**
+   * Evaluate the feedforward network with the given parameters, but using only
+   * one data point. This is useful for optimizers such as SGD, which require a
+   * separable objective function.
    *
    * @param parameters Matrix model parameters.
    * @param i Index of point to use for objective function evaluation.
@@ -162,6 +163,16 @@ class FFN
   double Evaluate(const arma::mat& parameters,
                   const size_t i,
                   const bool deterministic = true);
+
+  /**
+   * Evaluate the feedforward network with the given parameters. This function
+   * is usually called by the optimizer to train the model.
+   *
+   * @param parameters Matrix model parameters.
+   * @param deterministic Whether or not to train or test the model. Note some
+   *        layer act differently in training or testing mode.
+   */
+  double Evaluate(const arma::mat& parameters);
 
   /**
    * Evaluate the gradient of the feedforward network with the given parameters,

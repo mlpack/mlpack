@@ -3,7 +3,7 @@
  * @author Marcus Edel
  * @author Kartik Nighania
  *
- * Test file for CNE (Conventional Neural Evolution)
+ * Test file for CNE (Conventional Neural Evolution).
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -14,13 +14,12 @@
 
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
-
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
+
+#include <mlpack/core/optimizers/cne/cne.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
-
-#include <mlpack/core/optimizers/cne/cne.hpp>
 
 using namespace mlpack;
 using namespace mlpack::ann;
@@ -41,7 +40,7 @@ BOOST_AUTO_TEST_CASE(CNEXORTest)
    *
    *  Input    Output
    * 0 XOR 0  =  0
-   * 1 XOR 1  =  0 
+   * 1 XOR 1  =  0
    * 0 XOR 1  =  1
    * 1 XOR 0  =  1
    */
@@ -56,8 +55,8 @@ BOOST_AUTO_TEST_CASE(CNEXORTest)
   network.Add<Linear<> >(2, 2);
   network.Add<LogSoftMax<> >();
 
-  // CNE object
-  CNE opt(50, 5000, 0.1, 0.02, 0.2, 0.1, -1);
+  // CNE object.
+  CNE opt(60, 5000, 0.1, 0.02, 0.2, 0.1, -1);
 
   // Training the network with CNE
   network.Train(train, labels, opt);

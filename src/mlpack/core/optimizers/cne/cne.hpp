@@ -66,19 +66,10 @@ namespace optimization {
  *
  * The final value and the parameters are returned by the Optimize() method.
  *
- * For CNE to work, a DecomposableFunctionType template parameter is required.
+ * For CNE to work, a FunctionType template parameter is required.
  * This class must implement the following function:
  *
- * size_t NumFunctions();
- *
- * NumFunctions() should return the number of functions or data points in
- * the dataset.
- *
- * double Evaluate(const arma::mat& coordinates, const size_t i);
- *
- * The parameter i refers to which individual function is being evaluated.
- * The function will evaluate the objective function on the data point i in
- * the dataset.
+ *   double Evaluate(const arma::mat& iterate);
  */
 class CNE
 {
@@ -91,19 +82,18 @@ class CNE
    * parameters according to the problem.
    *
    * @param populationSize The number of candidates in the population.
-   *        This should be at least 4 in size.
+   *     This should be at least 4 in size.
    * @param maxGenerations The maximum number of generations allowed for CNE.
-   * @param mutationProb Probability that a weight will get mutated. 
+   * @param mutationProb Probability that a weight will get mutated.
    * @param mutationSize The range of mutation noise to be added. This range
-   *                     is between 0 and mutationSize.
+   *     is between 0 and mutationSize.
    * @param selectPercent The percentage of candidates to select to become the
-   *                      the next generation.
+   *     the next generation.
    * @param tolerance The final value of the objective function for termination.
-   *                  If set to negative value, tolerance is not considered.
+   *     If set to negative value, tolerance is not considered.
    * @param objectiveChange Minimum change in best fitness values between two
-   *                        consecutive generations should be greater than
-   *                        threshold. If set to negative value, objectiveChange is not
-   *                        considered.
+   *     consecutive generations should be greater than threshold. If set to
+   *     negative value, objectiveChange is not considered.
    */
   CNE(const size_t populationSize = 500,
       const size_t maxGenerations = 5000,
@@ -169,8 +159,7 @@ class CNE
   void Mutate();
 
   /**
-   * Crossover parents and create new childs. 
-   * Two parents create two new childs.
+   * Crossover parents and create new childs. Two parents create two new childs.
    *
    * @param mom First parent from the elite population.
    * @param dad Second parent from the elite population.
@@ -201,17 +190,11 @@ class CNE
   //! Maximum number of generations before termination criteria is met.
   size_t maxGenerations;
 
-  //! Number of candidates to become parent for the next generation.
-  size_t numElite;
-
-  //! Store the number of elements in a cube slice or a matrix column.
-  size_t elements;
+  //! Probability that a weight will get mutated.
+  double mutationProb;
 
   //! The range of mutation noise to be added.
   double mutationSize;
-
-  //! Probability that a weight will get mutated.
-  double mutationProb;
 
   //! The percentage of best candidates to be selected for parents.
   double selectPercent;
@@ -221,6 +204,12 @@ class CNE
 
   //! Minimum change in best fitness values between two generations.
   double objectiveChange;
+
+  //! Number of candidates to become parent for the next generation.
+  size_t numElite;
+
+  //! Store the number of elements in a cube slice or a matrix column.
+  size_t elements;
 };
 
 } // namespace optimization
