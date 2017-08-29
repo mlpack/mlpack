@@ -15,7 +15,8 @@
 #define MLPACK_METHODS_MATRIX_COMPLETION_MATRIX_COMPLETION_HPP
 
 #include "mc_sdp_solver.hpp"
-#include "mc_sgd_solver.hpp"
+//#include "mc_sgd_solver.hpp"
+#include "mc_fw_solver.hpp"
 
 namespace mlpack {
 namespace matrix_completion {
@@ -67,11 +68,13 @@ class MatrixCompletion
    *    length p).
    * @param r Maximum rank of solution.
    */
+  /*
   MatrixCompletion(const size_t m,
                    const size_t n,
                    const arma::umat& indices,
                    const arma::vec& values,
                    const size_t r);
+  */
 
   /**
    * Construct a matrix completion problem, specifying the initial point of the
@@ -85,11 +88,15 @@ class MatrixCompletion
    *    length p).
    * @param initialPoint Starting point for the SDP optimization.
    */
+
+  /*
   MatrixCompletion(const size_t m,
                    const size_t n,
                    const arma::umat& indices,
                    const arma::vec& values,
                    const arma::mat& initialPoint);
+
+  */
 
   /**
    * Construct a matrix completion problem.
@@ -106,6 +113,12 @@ class MatrixCompletion
                    const arma::umat& indices,
                    const arma::vec& values);
 
+  MatrixCompletion(const size_t m,
+                   const size_t n,
+                   const arma::umat& indices,
+                   const arma::vec& values,
+                   const double tau);
+
   /**
    * Solve the underlying SDP to fill in the remaining values.
    *
@@ -113,9 +126,9 @@ class MatrixCompletion
    */
   void Recover(arma::mat& recovered);
 
-  //! Return the underlying SDP.
+  //! Return the underlying matrix completion solver.
   const MCSolverType& MCSolver() const { return mcSolver; }
-  //! Modify the underlying SDP.
+  //! Modify the underlying matrix completion solver.
   MCSolverType& MCSolver() { return mcSolver; }
 
  private:
@@ -133,7 +146,8 @@ class MatrixCompletion
 };
 
 using MatrixCompletionSDP = MatrixCompletion<MCSDPSolver>;
-using MatrixCompletionSGD = MatrixCompletion<MCSGDSolver>;
+//using MatrixCompletionSGD = MatrixCompletion<MCSGDSolver>;
+using MatrixCompletionFW  = MatrixCompletion<MCFWSolver>;
 
 } // namespace matrix_completion
 } // namespace mlpack

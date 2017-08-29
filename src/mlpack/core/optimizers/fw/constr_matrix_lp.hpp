@@ -65,8 +65,8 @@ class ConstrMatrixLpBallSolver
     // singular value vector.
     arma::vec SingularVal;
 
-    // Solve for SVD
-    if (svd_econ(U, SingularVal, V, X))
+    // Solve for SVD.
+    if (!svd_econ(U, SingularVal, V, X))
       Log::Fatal << "ConstrMatrixLpBallSolver: armadillo svd_econ() failed!";
 
     // Change the singular value vector to its optimal dual,

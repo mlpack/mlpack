@@ -26,6 +26,8 @@ namespace matrix_completion {
 class MCFWSolver
 {
  public:
+
+ /*
   MCFWSolver(const size_t m,
              const size_t n,
              const arma::umat& indices,
@@ -34,7 +36,7 @@ class MCFWSolver
     function(indices, values, m, n), r(r)
     {
       ConstrMatrixLpBallSolver constrSolver(1);
-      UpdateMatrix updateRule;
+      optimization::UpdateMatrix updateRule;
 
       fwSolver = optimization::FrankWolfe<
           optimization::ConstrMatrixLpBallSolver, UpdateMatrix>(
@@ -49,39 +51,41 @@ class MCFWSolver
     function(indices, values, m, n, initialPoint)
     {
       ConstrMatrixLpBallSolver constrSolver(1);
-      UpdateMatrix updateRule;
+      optimization::UpdateMatrix updateRule;
         
       fwSolver = optimization::FrankWolfe<
           optimization::ConstrMatrixLpBallSolver, UpdateMatrix>(
           constrSolver, updateRule);
     }
+*/
 
-    
   MCFWSolver(const size_t m,
              const size_t n,
              const arma::umat& indices,
              const arma::vec& values) :
-      function(indices, values, m, n)
-  {
-      ConstrMatrixLpBallSolver constrSolver(1);
-      UpdateMatrix updateRule;
-        
-      fwSolver = optimization::FrankWolfe<
-          optimization::ConstrMatrixLpBallSolver, UpdateMatrix>(
-          constrSolver, updateRule);
-  }
+      function(indices, values, m, n),
+      fwSolver(optimization::ConstrMatrixLpBallSolver(1),
+        UpdateMatrix(1))
+  { Log::Fatal << "No such constructor!" << std::endl;  }
+
+  MCFWSolver(const size_t m,
+             const size_t n,
+             const arma::umat& indices,
+             const arma::vec& values,
+             const double tau) :
+    function(indices, values, m, n),
+    fwSolver(optimization::ConstrMatrixLpBallSolver(1),
+        UpdateMatrix(tau), 1000)
+    {}
 
   void Recover(arma::mat& recovered, const size_t m, const size_t n)
   {
-    fw_solver.Optimize(function, arma::mat& recovered);
+    fwSolver.Optimize(function, recovered);
   }
 
  private:
   //! Function to be optimized.
   MatrixCompletionFWFunction function;
-
-  //! Rank of the matrix to recover.
-  size_t r;
 
   optimization::FrankWolfe<optimization::ConstrMatrixLpBallSolver,
       UpdateMatrix> fwSolver;

@@ -17,6 +17,7 @@
 namespace mlpack {
 namespace matrix_completion {
 
+/*
 template<typename MCSolverType>
 MatrixCompletion<MCSolverType>::
 MatrixCompletion(const size_t m,
@@ -40,6 +41,7 @@ MatrixCompletion(const size_t m,
 {
   CheckValues(indices, values);
 }
+*/
 
 template<typename MCSolverType>
 MatrixCompletion<MCSolverType>::
@@ -51,6 +53,19 @@ MatrixCompletion(const size_t m,
 {
   CheckValues(indices, values);
 }
+
+template<typename MCSolverType>
+MatrixCompletion<MCSolverType>::
+MatrixCompletion(const size_t m,
+                 const size_t n,
+                 const arma::umat& indices,
+                 const arma::vec& values,
+                 const double tau) :
+    m(m), n(n), mcSolver(m, n, indices, values, tau)
+{
+  CheckValues(indices, values);
+}
+
 
 template<typename MCSolverType>
 void MatrixCompletion<MCSolverType>::

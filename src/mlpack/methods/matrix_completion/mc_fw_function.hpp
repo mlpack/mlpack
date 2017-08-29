@@ -27,6 +27,7 @@ namespace mlpack {
 namespace matrix_completion {
 class MatrixCompletionFWFunction {
  public:
+
   MatrixCompletionFWFunction(const arma::umat& indices,
                              const arma::vec& values,
                              const size_t m,

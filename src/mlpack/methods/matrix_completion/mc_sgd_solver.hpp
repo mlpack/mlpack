@@ -22,6 +22,8 @@ namespace matrix_completion {
 
 class MCSGDSolver {
  public:
+
+/*
   MCSGDSolver(const size_t m,
               const size_t n,
               const arma::umat& indices,
@@ -30,7 +32,7 @@ class MCSGDSolver {
       function(m, n, indices, values, r),
       leftMat(arma::randu<arma::mat>(m, r)),
       rightMat(arma::randu<arma::mat>(n, r))
-  { /* Nothing to do.  */ }
+  {  }
 
     MCSGDSolver(const size_t m,
                 const size_t n,
@@ -40,8 +42,8 @@ class MCSGDSolver {
       function(m, n, indices, values, DefaultRank(m, n, indices.n_cols)),
       leftMat(arma::randu<arma::mat>(m, DefaultRank(m, n, indices.n_cols))),
       rightMat(arma::randu<arma::mat>(n, DefaultRank(m, n, indices.n_cols)))
-    { /* */ }
-
+    {  }
+*/
     MCSGDSolver(const size_t m,
                 const size_t n,
                 const arma::umat& indices,
@@ -49,8 +51,19 @@ class MCSGDSolver {
       function(m, n, indices, values, DefaultRank(m, n, indices.n_cols)),
       leftMat(arma::randu<arma::mat>(m, DefaultRank(m, n, indices.n_cols))),
       rightMat(arma::randu<arma::mat>(n, DefaultRank(m, n, indices.n_cols)))
-    { /* */ }
+    {  }
 
+    MCSGDSolver(const size_t m,
+                const size_t n,
+                const arma::umat& indices,
+                const arma::vec& values,
+                const double tau) :
+      function(m, n, indices, values, DefaultRank(m, n, indices.n_cols)),
+      leftMat(arma::randu<arma::mat>(m, DefaultRank(m, n, indices.n_cols))),
+      rightMat(arma::randu<arma::mat>(n, DefaultRank(m, n, indices.n_cols)))
+    {
+      Log::Fatal << "No such constructor for SGD solver!" << std::endl;
+    }
 
 
   

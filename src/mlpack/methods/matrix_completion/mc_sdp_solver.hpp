@@ -24,6 +24,8 @@ namespace matrix_completion {
 class MCSDPSolver
 {
 public:
+
+/*
     MCSDPSolver(const size_t m,
                 const size_t n,
                 const arma::umat& indices,
@@ -39,6 +41,7 @@ public:
                 const arma::mat& initialPoint) :
     sdp(indices.n_cols, 0, initialPoint)
     { InitSDP(m, n, indices, values); }
+*/
     
     MCSDPSolver(const size_t m,
                 const size_t n,
@@ -47,6 +50,18 @@ public:
     sdp(indices.n_cols, 0,
         arma::randu<arma::mat>(m + n, DefaultRank(m, n, indices.n_cols)))
     { InitSDP(m, n, indices, values); }
+
+    MCSDPSolver(const size_t m,
+                const size_t n,
+                const arma::umat& indices,
+                const arma::vec& values,
+                const double tau) :
+    sdp(indices.n_cols, 0,
+        arma::randu<arma::mat>(m + n, DefaultRank(m, n, indices.n_cols)))
+
+    {
+      Log::Fatal << "No such constructor for SDP solver!" << std::endl;
+    }
     
     void Recover(arma::mat& recovered, const size_t m, const size_t n)
     {
