@@ -26,21 +26,22 @@ namespace optimization {
  * focused on dealing with fixed topology. This class implements this algorithm
  * as an optimization technique to converge a given function to minima.
  *
- * The algorithm works by creating a fixed number of candidates, with random
- * weights.  Each candidate is tested upon the training set, and a fitness score
- * is assigned to it. Given the selection percentage of best candidates by the
- * user, for a single generation that many percentage of candidates are selected
- * for the next generation and the rest are removed The selected candidates for
- * a particular generation then become the parents for the next generation and
- * evolution takes place.
+ * The algorithm works by creating a fixed number of candidates. The candidates
+ * are simply the network parameters that are untrained. Given the train and 
+ * test set. Each candidate is tested upon the training set or 1 epoch and then
+ * a fitness score is assigned to it. Given the selection percentage of best
+ * candidates by the user, for a single generation that many percentage of 
+ * candidates were selected for the next generation and the rest were removed
+ * The selected candidates for a particular generation then become the parent 
+ * for the next generation and evolution takes place.
  *
  * The evolution process basically takes place in two types:
  * - Crossover
- * - Mutation
+ * - Mutation 
  *
- * Crossover takes two parents and generates two children from them. Both the
- * children have properties inherited by their parents. The parameters of the
- * parents are mixed using equal probability selection, creating two children.
+ * Crossover takes two parents and generates two childs from them. Both the
+ * child have properties inherited by their parents. The parameters of the
+ * parents gets mixed using equal probability selection, creating two childs.
  * This is just a mix of link weights or the parameters.
  *
  * In mutation parameters are updated by pertubating small noise.
@@ -53,24 +54,25 @@ namespace optimization {
  * the mutation probability taken as a constructor parameter decides the amount
  * of mutation addition into the network.
  *
- * Both the above mentioned processes create new candidates as well as change
- * the existing candidates to obtain better candidates in the next generation.
+ * Both the above mentioned process creates new candidates as well as changes
+ * the existing candidates to obtain better candidates in the next generated.
  *
- * The whole process then repeats for multiple generation until at least one of
+ * The whole process then repeats for multiple generation until atleast one of 
  * the termination criteria is met:
  *
  * 1) The final value of the objective function (Not considered if not provided).
  * 2) The maximum number of generation reached (optional but highly recommended).
- * 3) Minimum change in best fitness values between two consecutive generations
- *    should be greater than a threshold value (Not considered if not provided).
+ * 3) Minimum change in best fitness values between two consecutive generations 
+ *    should be greater than a threshold value (Not considered if not provided). 
  *
- * The final value and the parameters are returned by the Optimize() method.
+ * After which the final value and the parameters are returned by the optimize
+ * method.
  *
  * For CNE to work, a DecomposableFunctionType template parameter is required.
  * This class must implement the following function:
  *
  * size_t NumFunctions();
- *
+ * 
  * NumFunctions() should return the number of functions or data points in
  * the dataset.
  *
@@ -85,13 +87,13 @@ class CNE
  public:
   /**
    * Constructor for the CNE optimizer.
-   *
+   * 
    * The default values provided over here are not necessarily suitable for a
    * given function. Therefore it is highly recommended to adjust the
    * parameters according to the problem.
    *
    * @param populationSize The number of candidates in the population.
-   *        This should be at least 4 in size.
+   *        This should be atleast 4 in size.
    * @param maxGenerations The maximum number of generations allowed for CNE.
    * @param mutationProb Probability that a weight will get mutated. 
    * @param mutationSize The range of mutation noise to be added. This range
