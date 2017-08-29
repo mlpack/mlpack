@@ -90,7 +90,6 @@ class SigmoidCrossEntropyError
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-
 }; // class SigmoidCrossEntropy
 
 } // namespace ann

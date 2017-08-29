@@ -959,7 +959,6 @@ BOOST_AUTO_TEST_CASE(SimpleSigmoidCrossEntropyLayerTest)
 
   BOOST_REQUIRE_EQUAL(output.n_rows, input2.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input2.n_cols);
-
 }
 
 
