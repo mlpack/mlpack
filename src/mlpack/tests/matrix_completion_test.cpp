@@ -64,4 +64,41 @@ BOOST_AUTO_TEST_CASE(UniformMatrixCompletionSDP)
   }
 }
 
+
+BOOST_AUTO_TEST_CASE(UniformMatrixCompletionFW)
+{
+  arma::mat Xorig, values;
+  arma::umat indices;
+
+  data::Load("completion_X.csv", Xorig, true, false);
+  data::Load("completion_indices.csv", indices, true, false);
+
+  values.set_size(indices.n_cols);
+  for (size_t i = 0; i < indices.n_cols; ++i)
+  {
+    values(i) = Xorig(indices(0, i), indices(1, i));
+  }
+
+  arma::vec s = arma::svd(Xorig);
+  double tau = arma::sum(s);
+  arma::mat recovered = arma::zeros<arma::mat>(Xorig.n_rows, Xorig.n_cols);
+  MatrixCompletionFW mc(Xorig.n_rows, Xorig.n_cols, indices, values, tau);
+  mc.Recover(recovered);
+
+  const double err =
+    arma::norm(Xorig - recovered, "fro") /
+    arma::norm(Xorig, "fro");
+  BOOST_REQUIRE_SMALL(err, 1e-5);
+
+  for (size_t i = 0; i < indices.n_cols; ++i)
+  {
+    BOOST_REQUIRE_CLOSE(
+      recovered(indices(0, i), indices(1, i)),
+      Xorig(indices(0, i), indices(1, i)),
+      1e-5);
+  }
+}
+
+
+
 BOOST_AUTO_TEST_SUITE_END();

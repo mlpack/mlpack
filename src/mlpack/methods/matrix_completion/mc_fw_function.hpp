@@ -67,7 +67,7 @@ class MatrixCompletionFWFunction {
       arma::uword cind = indices(1, i);
       gradientVal(i) += X(rind, cind);
     }
-    
+
     arma::sp_mat spGradient(indices, gradientVal);
     gradient = arma::mat(spGradient);
   }

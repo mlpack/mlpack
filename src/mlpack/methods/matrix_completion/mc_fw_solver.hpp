@@ -75,7 +75,7 @@ class MCFWSolver
              const double tau) :
     function(indices, values, m, n),
     fwSolver(optimization::ConstrMatrixLpBallSolver(1),
-        UpdateMatrix(tau), 1000)
+        UpdateMatrix(tau), 10000)
     {}
 
   void Recover(arma::mat& recovered, const size_t m, const size_t n)

@@ -14,6 +14,7 @@
 #define MLPACK_METHODS_MATRIX_COMPLETION_MC_FW_UPDATE_MATRIX_HPP
 
 #include "mc_fw_function.hpp"
+#include <mlpack/core/optimizers/proximal/proximal.hpp>
 
 namespace mlpack {
 namespace matrix_completion {
@@ -42,6 +43,10 @@ class UpdateMatrix {
     currentCoeffs = (1.0 - gamma) * currentCoeffs;
     AddAtom(s, gamma * tau);
 
+    // Enhancement step, to find better coefficients.
+//    ProjectedGradientEnhancement(function, 0.9);
+    
+    // Truncation step, to find a new set of atoms for better representation.
     RecoverVector(newCoords);
     double fOld = function.Evaluate(oldCoords);
     double fNew = function.Evaluate(newCoords);
@@ -124,6 +129,47 @@ class UpdateMatrix {
     for (arma::uword i = 0; i < s.n_rows; i++)
       currentAtoms.slice(i) = U.col(i) * arma::trans(V.col(i));
   } // Truncation()
+  
+  void ProjectedGradientEnhancement(MatrixCompletionFWFunction& function,
+                                    double stepSize,
+                                    size_t maxIterations = 100,
+                                    double tolerance = 1e-3)
+  {
+    arma::mat x;
+    RecoverVector(x);
+    double value = function.Evaluate(x);
+    
+    for (size_t iter = 1; iter < maxIterations; iter++)
+    {
+      // Update currentCoeffs with gradient descent method.
+      arma::vec entries;
+      function.GetKnownEntries(x, entries);
+      entries = entries - function.Values();
+
+      arma::vec gradient(currentCoeffs.n_elem);
+      for (size_t i = 0; i < gradient.n_elem; i++)
+      {
+        arma::vec entriesAtom;
+        function.GetKnownEntries(currentAtoms.slice(i), entriesAtom);
+
+        gradient(i) = arma::dot(entriesAtom, entries);
+      }
+      currentCoeffs = currentCoeffs - stepSize * gradient;
+//      currentCoeffs = currentCoeffs - 1/std::sqrt(iter) * gradient;
+
+      
+      // Projection of currentCoeffs to satisfy the atom norm constraint.
+      optimization::Proximal::ProjectToL1Ball(currentCoeffs, tau);
+
+      RecoverVector(x);
+      double valueNew = function.Evaluate(x);
+      
+      if ((value - valueNew) < tolerance)
+        break;
+      
+      value = valueNew;
+    }
+  }
 
 };  // class UpdateMatrix
 
