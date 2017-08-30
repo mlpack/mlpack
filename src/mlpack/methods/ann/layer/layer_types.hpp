@@ -51,6 +51,7 @@ template<typename InputDataType, typename OutputDataType> class Linear;
 template<typename InputDataType, typename OutputDataType> class LinearNoBias;
 template<typename InputDataType, typename OutputDataType> class LSTM;
 template<typename InputDataType, typename OutputDataType> class GRU;
+template<typename InputDataType, typename OutputDataType> class FastLSTM;
 template<typename InputDataType, typename OutputDataType> class Recurrent;
 template<typename InputDataType, typename OutputDataType> class Sequential;
 template<typename InputDataType, typename OutputDataType> class VRClassReward;
@@ -105,6 +106,7 @@ using LayerTypes = boost::variant<
     Lookup<arma::mat, arma::mat>*,
     LSTM<arma::mat, arma::mat>*,
     GRU<arma::mat, arma::mat>*,
+    FastLSTM<arma::mat, arma::mat>*,
     MaxPooling<arma::mat, arma::mat>*,
     MeanPooling<arma::mat, arma::mat>*,
     MeanSquaredError<arma::mat, arma::mat>*,

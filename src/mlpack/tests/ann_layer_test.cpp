@@ -152,7 +152,7 @@ double CheckGradient(FunctionType& function, const double eps = 1e-7)
 
   estGradient = arma::zeros(orgGradient.n_rows, orgGradient.n_cols);
 
-  // compute numeric approximations to gradient.
+  // Compute numeric approximations to gradient.
   for (size_t i = 0; i < orgGradient.n_elem; ++i)
   {
     double tmp = function.Parameters()(i);
@@ -780,6 +780,52 @@ BOOST_AUTO_TEST_CASE(GradientLSTMLayerTest)
 }
 
 /**
+ * FastLSTM layer numerically gradient test.
+ */
+BOOST_AUTO_TEST_CASE(GradientFastLSTMLayerTest)
+{
+  // Fast LSTM function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randu(5, 1);
+      target = arma::mat("1; 1; 1; 1; 1");
+      const size_t rho = 5;
+
+      model = new RNN<NegativeLogLikelihood<> >(input, target, rho);
+      model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(1, 10);
+      model->Add<FastLSTM<> >(10, 3, rho);
+      model->Add<LogSoftMax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      arma::mat output;
+      double error = model->Evaluate(model->Parameters(), 0);
+      model->Gradient(model->Parameters(), 0, gradient);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    RNN<NegativeLogLikelihood<> >* model;
+    arma::mat input, target;
+  } function;
+
+  // The threshold should be << 0.1 but since the Fast LSTM layer uses an
+  // approximation of the sigmoid function the estimated gradient is not
+  // correct.
+  BOOST_REQUIRE_LE(CheckGradient(function), 0.2);
+}
+
+/**
  * Check if the gradients computed by GRU cell are close enough to the
  * approximation of the gradients.
  */
@@ -1102,6 +1148,5 @@ BOOST_AUTO_TEST_CASE(SimpleMeanSquaredErrorLayerTest)
   BOOST_REQUIRE_EQUAL(arma::accu(output), -1);
   BOOST_REQUIRE_EQUAL(output.n_elem, 1);
 }
-
 
 BOOST_AUTO_TEST_SUITE_END();
