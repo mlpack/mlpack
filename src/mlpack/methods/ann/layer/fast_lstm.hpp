@@ -14,21 +14,22 @@
 #define MLPACK_METHODS_ANN_LAYER_FAST_LSTM_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <limits>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * An implementation of a faster version of the LSTM network layer. Basically by
- * combining the calculation of the input, forget, output gates and hidden state
- * in a single step. The standard formula changes as follows:
+ * An implementation of a faster version of the Fast LSTM network layer.
+ * Basically by combining the calculation of the input, forget, output gates
+ * and hidden state in a single step. The standard formula changes as follows:
  *
  * @f{eqnarray}{
  * i &=& sigmoid(W \cdot x + W \cdot h + b)
  * f &=& sigmoid(W  \cdot x + W \cdot h + b)
  * z &=& tanh(W \cdot x + W \cdot h + b)
  * c &=& f \cdot c + i \cdot z
- * o &=& sigmoid(W /cdot x + W \cdot h + b)
+ * o &=& sigmoid(W \cdot x + W \cdot h + b)
  * h &=& o \cdot tanh(c)
  * @f}
  *
@@ -72,7 +73,9 @@ class FastLSTM
    * @param outSize The number of output units.
    * @param rho Maximum number of steps to backpropagate through time (BPTT).
    */
-  FastLSTM(const size_t inSize, const size_t outSize, const size_t rho);
+  FastLSTM(const size_t inSize,
+           const size_t outSize,
+           const size_t rho = std::numeric_limits<size_t>::max());
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -94,7 +97,7 @@ class FastLSTM
    * @param g The calculated gradient.
    */
   template<typename InputType, typename ErrorType, typename GradientType>
-  void Backward(const InputType&& /* input */,
+  void Backward(const InputType&& input,
                 ErrorType&& gy,
                 GradientType&& g);
 
@@ -104,10 +107,12 @@ class FastLSTM
   void Reset();
 
   /*
-   * Resets the cell to accept a new input.
-   * This breaks the BPTT chain starts a new one.
+   * Resets the cell to accept a new input. This breaks the BPTT chain starts a
+   * new one.
+   *
+   * @param size The current maximum number of steps through time.
    */
-  void ResetCell();
+  void ResetCell(const size_t size);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -118,8 +123,8 @@ class FastLSTM
    */
   template<typename InputType, typename ErrorType, typename GradientType>
   void Gradient(InputType&& input,
-                ErrorType&& /* error */,
-                GradientType&& /* gradient */);
+                ErrorType&& error,
+                GradientType&& gradient);
 
   //! Get the maximum number of steps to backpropagate through time (BPTT).
   size_t Rho() const { return rho; }
@@ -158,7 +163,6 @@ class FastLSTM
   void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-
   /**
    * This speeds up the sigmoid operation by using an approximation.
    *
@@ -288,6 +292,9 @@ class FastLSTM
 
   //! Locally-stored output parameters.
   OutputDataType outParameter;
+
+  //! Locally-stored current rho size.
+  size_t rhoSize;
 }; // class FastLSTM
 
 } // namespace ann

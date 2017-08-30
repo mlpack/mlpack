@@ -311,7 +311,7 @@ void GRU<InputDataType, OutputDataType>::Gradient(
 }
 
 template<typename InputDataType, typename OutputDataType>
-void GRU<InputDataType, OutputDataType>::ResetCell()
+void GRU<InputDataType, OutputDataType>::ResetCell(const size_t /* size */)
 {
   outParameter.clear();
   outParameter.push_back(std::move(arma::mat(allZeros.memptr(),

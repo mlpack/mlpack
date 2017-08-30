@@ -36,7 +36,8 @@ FastLSTM<InputDataType, OutputDataType>::FastLSTM(
     gradientStep(0),
     batchSize(0),
     batchStep(0),
-    gradientStepIdx(0)
+    gradientStepIdx(0),
+    rhoSize(rho)
 {
   // Weights for: input to gate layer (4 * outsize * inSize + 4 * outsize)
   // and output to gate (4 * outSize).
@@ -61,13 +62,22 @@ void FastLSTM<InputDataType, OutputDataType>::Reset()
 }
 
 template<typename InputDataType, typename OutputDataType>
-void FastLSTM<InputDataType, OutputDataType>::ResetCell()
+void FastLSTM<InputDataType, OutputDataType>::ResetCell(const size_t size)
 {
-  forwardStep = 0;
-  backwardStep = batchSize * rho - 1;
-  gradientStep = batchSize * rho - 1;
+  if (size == std::numeric_limits<size_t>::max())
+    return;
 
-  const size_t rhoBatchSize = rho * batchSize;
+  rhoSize = size;
+
+  if (batchSize == 0)
+    return;
+
+  forwardStep = 0;
+  gradientStepIdx = 0;
+  backwardStep = batchSize * size - 1;
+  gradientStep = batchSize * size - 1;
+
+  const size_t rhoBatchSize = size * batchSize;
   if (gate.is_empty() || gate.n_cols < rhoBatchSize)
   {
     gate.set_size(4 * outSize, rhoBatchSize);
@@ -79,10 +89,10 @@ void FastLSTM<InputDataType, OutputDataType>::ResetCell()
     if (prevOutput.is_empty())
     {
       prevOutput = arma::zeros<OutputDataType>(outSize, batchSize);
-      cell = arma::zeros(outSize, rho * batchSize);
+      cell = arma::zeros(outSize, size * batchSize);
       cellActivationError = arma::zeros<OutputDataType>(outSize, batchSize);
       outParameter = arma::zeros<OutputDataType>(
-          outSize, (rho + 1) * batchSize);
+          outSize, (size + 1) * batchSize);
     }
     else
     {
@@ -90,9 +100,9 @@ void FastLSTM<InputDataType, OutputDataType>::ResetCell()
       // size specifications, while preserving the elements as well as the
       // layout of the elements.
       prevOutput.resize(outSize, batchSize);
-      cell.resize(outSize, rho * batchSize);
+      cell.resize(outSize, size * batchSize);
       cellActivationError.resize(outSize, batchSize);
-      outParameter.resize(outSize, (rho + 1) * batchSize);
+      outParameter.resize(outSize, (size + 1) * batchSize);
     }
   }
 }
@@ -108,7 +118,7 @@ void FastLSTM<InputDataType, OutputDataType>::Forward(
   {
     batchSize = input.n_cols;
     batchStep = batchSize - 1;
-    ResetCell();
+    ResetCell(rhoSize);
   }
 
   gate.cols(forwardStep, forwardStep + batchStep) = input2GateWeight * input +
@@ -123,7 +133,6 @@ void FastLSTM<InputDataType, OutputDataType>::Forward(
   stateActivation.cols(forwardStep, forwardStep + batchStep) = arma::tanh(
       gate.submat(3 * outSize, forwardStep, 4 * outSize - 1,
       forwardStep + batchStep));
-
 
   // Update the cell: cmul1 + cmul2
   // where cmul1 is input gate * hidden state and
@@ -143,7 +152,7 @@ void FastLSTM<InputDataType, OutputDataType>::Forward(
         stateActivation.cols(forwardStep, forwardStep + batchStep) +
         gateActivation.submat(2 * outSize, forwardStep, 3 * outSize - 1,
         forwardStep + batchStep) %
-        cell.cols(forwardStep - batchSize, forwardStep);
+        cell.cols(forwardStep - batchSize, forwardStep - batchSize + batchStep);
   }
 
   cellActivation.cols(forwardStep, forwardStep + batchStep) =
@@ -152,7 +161,7 @@ void FastLSTM<InputDataType, OutputDataType>::Forward(
   outParameter.cols(forwardStep + batchSize,
       forwardStep + batchSize + batchStep) = cellActivation.cols(
       forwardStep, forwardStep + batchStep) % gateActivation.submat(
-      1 * outSize, forwardStep, 2 * outSize - 1, forwardStep + batchStep);
+      outSize, forwardStep, 2 * outSize - 1, forwardStep + batchStep);
 
   output = OutputType(outParameter.memptr() +
       (forwardStep + batchSize) * outSize, outSize, batchSize, false, false);
@@ -174,7 +183,7 @@ void FastLSTM<InputDataType, OutputDataType>::Backward(
     gy += output2GateWeight.t() * prevError;
   }
 
-  cellActivationError = gy % gateActivation.submat(1 * outSize,
+  cellActivationError = gy % gateActivation.submat(outSize,
       backwardStep - batchStep, 2 * outSize - 1, backwardStep) %
       (1 - arma::pow(cellActivation.cols(backwardStep - batchStep,
       backwardStep), 2));
@@ -200,12 +209,12 @@ void FastLSTM<InputDataType, OutputDataType>::Backward(
     prevError.submat(2 * outSize, 0, 3 * outSize - 1, batchStep).zeros();
   }
 
-  prevError.submat(0, 0,1 * outSize - 1, batchStep) =
+  prevError.submat(0, 0, outSize - 1, batchStep) =
       stateActivation.cols(backwardStep - batchStep,
       backwardStep) % cellActivationError % gateActivation.submat(
-      0, backwardStep - batchStep, 1 * outSize - 1, backwardStep) %
+      0, backwardStep - batchStep, outSize - 1, backwardStep) %
       (1.0 - gateActivation.submat(
-      0, backwardStep - batchStep, 1 * outSize - 1, backwardStep));
+      0, backwardStep - batchStep, outSize - 1, backwardStep));
 
   prevError.submat(3 * outSize, 0, 4 * outSize - 1, batchStep) =
       gateActivation.submat(0, backwardStep - batchStep,
@@ -215,9 +224,9 @@ void FastLSTM<InputDataType, OutputDataType>::Backward(
   prevError.submat(outSize, 0, 2 * outSize - 1, batchStep) =
       cellActivation.cols(backwardStep - batchStep,
       backwardStep) % gy % gateActivation.submat(
-      1 * outSize, backwardStep - batchStep, 2 * outSize - 1, backwardStep) %
+       outSize, backwardStep - batchStep, 2 * outSize - 1, backwardStep) %
       (1.0 - gateActivation.submat(
-      1 * outSize, backwardStep - batchStep, 2 * outSize - 1, backwardStep));
+      outSize, backwardStep - batchStep, 2 * outSize - 1, backwardStep));
 
   g = input2GateWeight.t() * prevError;
 
@@ -233,15 +242,14 @@ void FastLSTM<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename ErrorType, typename GradientType>
 void FastLSTM<InputDataType, OutputDataType>::Gradient(
-    InputType&& input,
-    ErrorType&& /* error */,
-    GradientType&& gradient)
+    InputType&& input, ErrorType&& /* error */, GradientType&& gradient)
 {
   // Gradient of the input to gate layer.
   gradient.submat(0, 0, input2GateWeight.n_elem - 1, 0) =
       arma::vectorise(prevError * input.t());
+
   gradient.submat(input2GateWeight.n_elem, 0, input2GateWeight.n_elem +
-      input2GateBias.n_elem - 1, 0) = arma::mean(prevError, 1);
+      input2GateBias.n_elem - 1, 0) = arma::sum(prevError, 1);
 
   // Gradient of the output to gate layer.
   gradient.submat(input2GateWeight.n_elem + input2GateBias.n_elem, 0,

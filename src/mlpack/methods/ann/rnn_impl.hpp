@@ -36,7 +36,6 @@ RNN<OutputLayerType, InitializationRuleType>::RNN(
     OutputLayerType outputLayer,
     InitializationRuleType initializeRule) :
     rho(rho),
-    prevRho(0),
     outputLayer(std::move(outputLayer)),
     initializeRule(std::move(initializeRule)),
     inputSize(0),
@@ -59,7 +58,6 @@ RNN<OutputLayerType, InitializationRuleType>::RNN(
     OutputLayerType outputLayer,
     InitializationRuleType initializeRule) :
     rho(rho),
-    prevRho(0),
     outputLayer(std::move(outputLayer)),
     initializeRule(std::move(initializeRule)),
     inputSize(0),
@@ -120,7 +118,7 @@ void RNN<OutputLayerType, InitializationRuleType>::ResetCells()
 {
   for (size_t i = 1; i < network.size(); ++i)
   {
-    boost::apply_visitor(ResetCellVisitor(), network[i]);
+    boost::apply_visitor(ResetCellVisitor(rho), network[i]);
   }
 }
 

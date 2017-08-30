@@ -264,9 +264,6 @@ class RNN
   //! Number of steps to backpropagate through time (BPTT).
   size_t rho;
 
-  //! Number of steps to backpropagate through time (BPTT) at the previous step.
-  size_t prevRho;
-
   //! Instantiated outputlayer used to evaluate the network.
   OutputLayerType outputLayer;
 
