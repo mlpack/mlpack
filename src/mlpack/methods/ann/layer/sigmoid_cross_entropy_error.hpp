@@ -52,7 +52,8 @@ class SigmoidCrossEntropyError
    * @param output Resulting output activation.
    */
   template<typename eT>
-  inline double Forward(const arma::Mat<eT>&& input, const arma::Mat<eT>&& target);
+  inline double Forward(const arma::Mat<eT>&& input,
+                        const arma::Mat<eT>&& target);
   /**
    * Ordinary feed backward pass of a neural network.
    *
