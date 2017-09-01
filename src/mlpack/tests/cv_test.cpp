@@ -45,7 +45,7 @@ using namespace mlpack::tree;
 
 BOOST_AUTO_TEST_SUITE(CVTest);
 
-/*
+/**
  * Test metrics for binary classification.
  */
 BOOST_AUTO_TEST_CASE(BinaryClassificationMetricsTest)
@@ -122,7 +122,7 @@ BOOST_AUTO_TEST_CASE(MulticlassClassificationMetricsTest)
       macroaveragedF1, 1e-5);
 }
 
-/*
+/**
  * Test the mean squared error.
  */
 BOOST_AUTO_TEST_CASE(MSETest)
@@ -143,7 +143,7 @@ BOOST_AUTO_TEST_CASE(MSETest)
   BOOST_REQUIRE_CLOSE(MSE::Evaluate(lr, data, responses), expectedMSE, 1e-5);
 }
 
-/*
+/**
  * Test the mean squared error with matrix responses.
  */
 BOOST_AUTO_TEST_CASE(MSEMatResponsesTest)
