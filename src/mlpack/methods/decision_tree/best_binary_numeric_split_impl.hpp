@@ -93,7 +93,7 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     }
 
     // Corner case: is this the best possible split?
-    if (gain == 0.0)
+    if (gain >= 0.0)
     {
       // We can take a shortcut: no split will be better than this, so just take
       // this one.

@@ -571,7 +571,7 @@ void DecisionTree<FitnessFunction,
     }
 
     // If the gain is the best possible, no need to keep looking.
-    if (bestGain == 0.0)
+    if (bestGain >= 0.0)
       break;
   }
 
@@ -719,7 +719,7 @@ void DecisionTree<FitnessFunction,
     }
 
     // If the gain is the best possible, no need to keep looking.
-    if (bestGain == 0.0)
+    if (bestGain >= 0.0)
       break;
   }
 
