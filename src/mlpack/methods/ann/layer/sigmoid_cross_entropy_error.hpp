@@ -21,6 +21,11 @@ namespace ann /** Artificial Neural Network. */ {
  * The SigmoidCrossEntropyError performance function measures the network's
  * performance according to the cross-entropy function.
  * between the input and target distributions.
+ * This function calculates the cross entropy
+ * given the real values instead of providing the sigmoid activations.
+ * The functions is much more numerically stable as can be found from the 
+ * formula below.
+ * max(x, 0) - x * z + log(1 + exp(-abs(x)))
  * For more detail look here goo.gl/tRjS6j
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
@@ -47,7 +52,7 @@ class SigmoidCrossEntropyError
    * @param output Resulting output activation.
    */
   template<typename eT>
-  double Forward(const arma::Mat<eT>&& input, const arma::Mat<eT>&& target);
+  inline double Forward(const arma::Mat<eT>&& input, const arma::Mat<eT>&& target);
   /**
    * Ordinary feed backward pass of a neural network.
    *
@@ -56,7 +61,7 @@ class SigmoidCrossEntropyError
    * @param output The calculated error.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& input,
+  inline void Backward(const arma::Mat<eT>&& input,
                 const arma::Mat<eT>&& target,
                 arma::Mat<eT>&& output);
 

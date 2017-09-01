@@ -1143,6 +1143,10 @@ BOOST_AUTO_TEST_CASE(SimpleLogSoftmaxLayerTest)
       arma::mat("1.6487; 0.6487") - delta)), 1e-3);
 }
 
+/*
+ * Simple test for the Sigmoid Cross Entropy Layer.
+ */
+
 BOOST_AUTO_TEST_CASE(SimpleSigmoidCrossEntropyLayerTest)
 {
   arma::mat input1, input2, output, target1, target2, expectedOutput;
@@ -1153,7 +1157,7 @@ BOOST_AUTO_TEST_CASE(SimpleSigmoidCrossEntropyLayerTest)
   input1 = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5");
   target1 = arma::zeros(1, 8);
   double error1 = module.Forward(std::move(input1), std::move(target1));
-  // value computed using tf
+  // Value computed using tensorflow.
   BOOST_REQUIRE_SMALL(error1 / input1.n_elem - 0.97407699, 1e-7);
 
   input2 = arma::mat("1 2 3 4 5");

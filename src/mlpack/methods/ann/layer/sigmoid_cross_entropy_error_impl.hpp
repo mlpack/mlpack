@@ -28,7 +28,7 @@ SigmoidCrossEntropyError<InputDataType, OutputDataType>
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-double SigmoidCrossEntropyError<InputDataType, OutputDataType>::Forward(
+inline double SigmoidCrossEntropyError<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>&& input, const arma::Mat<eT>&& target)
 {
   arma::uvec positive = arma::find(input > 0);
@@ -42,13 +42,13 @@ double SigmoidCrossEntropyError<InputDataType, OutputDataType>::Forward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-void SigmoidCrossEntropyError<InputDataType, OutputDataType>::Backward(
+inline  void SigmoidCrossEntropyError<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>&& input,
     const arma::Mat<eT>&& target,
     arma::Mat<eT>&& output)
 {
   arma::mat temp;
-  output = input;
+  output.set_size(input.n_rows, input.n_cols);
 
   arma::uvec positive = arma::find(input > 0);
   arma::uvec negative = arma::find(input < 0 || input == 0);
