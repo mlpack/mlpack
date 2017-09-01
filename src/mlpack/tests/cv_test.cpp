@@ -181,6 +181,10 @@ void CheckPredictionsType()
       "Should be the same");
 }
 
+/**
+ * Test MetaInfoExtractor correctly recognizes the type of predictions for a
+ * given machine learning algorithm.
+ */
 BOOST_AUTO_TEST_CASE(PredictionsTypeTest)
 {
   CheckPredictionsType<LinearRegression, arma::rowvec>();
@@ -228,6 +232,10 @@ void CheckWeightsType()
       "Should be the same");
 }
 
+/**
+ * Test MetaInfoExtractor correctly recognizes the type of weights for a given
+ * machine learning algorithm.
+ */
 BOOST_AUTO_TEST_CASE(WeightsTypeTest)
 {
   CheckWeightsType<LinearRegression, arma::rowvec>();
@@ -236,6 +244,10 @@ BOOST_AUTO_TEST_CASE(WeightsTypeTest)
       arma::Row<size_t>, arma::Row<float>>();
 }
 
+/**
+ * Test MetaInfoExtractor correctly identifies whether a given machine learning
+ * algorithm takes a data:DatasetInfo parameter.
+ */
 BOOST_AUTO_TEST_CASE(TakesDatasetInfoTest)
 {
   static_assert(MetaInfoExtractor<DecisionTree<>>::TakesDatasetInfo,
@@ -246,6 +258,10 @@ BOOST_AUTO_TEST_CASE(TakesDatasetInfoTest)
       "Value should be false");
 }
 
+/**
+ * Test MetaInfoExtractor correctly identifies whether a given machine learning
+ * algorithm takes the numClasses parameter.
+ */
 BOOST_AUTO_TEST_CASE(TakesNumClassesTest)
 {
   static_assert(MetaInfoExtractor<DecisionTree<>>::TakesNumClasses,
