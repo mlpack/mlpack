@@ -11,6 +11,8 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
+
 #include <mlpack/methods/hoeffding_trees/hoeffding_tree.hpp>
 #include <mlpack/methods/hoeffding_trees/binary_numeric_split.hpp>
 #include <mlpack/methods/hoeffding_trees/information_gain.hpp>
@@ -25,28 +27,45 @@ using namespace mlpack::data;
 PROGRAM_INFO("Hoeffding trees",
     "This program implements Hoeffding trees, a form of streaming decision tree"
     " suited best for large (or streaming) datasets.  This program supports "
-    "both categorical and numeric data stored in the ARFF format.  Given an "
-    "input dataset, this program is able to train the tree with numerous "
-    "training options, and save the model to a file.  The program is also able "
-    "to use a trained model or a model from file in order to predict classes "
-    "for a given test set."
+    "both categorical and numeric data.  Given an input dataset, this program "
+    "is able to train the tree with numerous training options, and save the "
+    "model to a file.  The program is also able to use a trained model or a "
+    "model from file in order to predict classes for a given test set."
     "\n\n"
-    "The training file and associated labels are specified with the "
-    "--training_file and --labels_file options, respectively.  The training "
-    "file must be in ARFF format.  The training may be performed in batch mode "
-    "(like a typical decision tree algorithm) by specifying the --batch_mode "
-    "option, but this may not be the best option for large datasets."
+    "The training file and associated labels are specified with the " +
+    PRINT_PARAM_STRING("training") + " and " + PRINT_PARAM_STRING("labels") +
+    " parameters, respectively.  The training may be performed in batch mode "
+    "(like a typical decision tree algorithm) by specifying the " +
+    PRINT_PARAM_STRING("batch_mode") + " option, but this may not be the best "
+    "option for large datasets."
     "\n\n"
-    "When a model is trained, it may be saved to a file with the "
-    "--output_model_file (-M) option.  A model may be loaded from file for "
-    "further training or testing with the --input_model_file (-m) option."
+    "When a model is trained, it may be saved via the " +
+    PRINT_PARAM_STRING("output_model") + " output parameter.  A model may be "
+    "loaded from file for further training or testing with the " +
+    PRINT_PARAM_STRING("input_model") + " parameter."
     "\n\n"
-    "A test file may be specified with the --test_file (-T) option, and if "
-    "performance numbers are desired for that test set, labels may be specified"
-    " with the --test_labels_file (-L) option.  Predictions for each test point"
-    " will be stored in the file specified by --predictions_file (-p) and "
-    "probabilities for each predictions will be stored in the file specified by"
-    " the --probabilities_file (-P) option.");
+    "Test data may be specified with the " + PRINT_PARAM_STRING("test") + " "
+    "parameter, and if performance statistics are desired for that test set, "
+    "labels may be specified with the " + PRINT_PARAM_STRING("test_labels") +
+    " parameter.  Predictions for each test point may be saved with the " +
+    PRINT_PARAM_STRING("predictions") + " output parameter, and class "
+    "probabilities for each prediction may be saved with the " +
+    PRINT_PARAM_STRING("probabilities") + " output parameter."
+    "\n\n"
+    "For example, to train a Hoeffding tree with confidence 0.99 with data " +
+    PRINT_DATASET("dataset") + ", saving the trained tree to " +
+    PRINT_MODEL("tree") + ", the following command may be used:"
+    "\n\n" +
+    PRINT_CALL("hoeffding_tree", "training", "dataset", "confidence", 0.99,
+        "output_model", "tree") +
+    "\n\n"
+    "Then, this tree may be used to make predictions on the test set " +
+    PRINT_DATASET("test_set") + ", saving the predictions into " +
+    PRINT_DATASET("predictions") + " and the class probabilities into " +
+    PRINT_DATASET("class_probs") + " with the following command: "
+    "\n\n" +
+    PRINT_CALL("hoeffding_tree", "input_model", "tree", "test", "test_set",
+        "predictions", "predictions", "probabilities", "class_probs"));
 
 PARAM_MATRIX_AND_INFO_IN("training", "Training dataset (may be categorical).",
     "t");
@@ -89,10 +108,8 @@ PARAM_INT_IN("observations_before_binning", "If the 'domingos' split strategy "
 // Convenience typedef.
 typedef tuple<DatasetInfo, arma::mat> TupleType;
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   // Check input parameters for validity.
   const string numericSplitStrategy =
       CLI::GetParam<string>("numeric_split_strategy");
@@ -272,6 +289,4 @@ int main(int argc, char** argv)
   // Check the accuracy on the training set.
   if (CLI::HasParam("output_model"))
     CLI::GetParam<HoeffdingTreeModel>("output_model") = std::move(model);
-
-  CLI::Destroy();
 }

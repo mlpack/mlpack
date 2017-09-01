@@ -188,7 +188,6 @@ BOOST_AUTO_TEST_CASE(SparseNMFALSTest)
 
   while (sparseResidue != sparseResidue && denseResidue != denseResidue)
   {
-    mlpack::math::RandomSeed(std::time(NULL));
     mat w, h;
     sp_mat v;
     v.sprandu(10, 10, 0.3);
@@ -199,12 +198,15 @@ BOOST_AUTO_TEST_CASE(SparseNMFALSTest)
     mat dw, dh;
     size_t r = 5;
 
+    // Get an initialization.
+    arma::mat iw, ih;
+    RandomAcolInitialization<>::Initialize(v, r, iw, ih);
+    GivenInitialization g(std::move(iw), std::move(ih));
+
     SimpleResidueTermination srt(1e-10, 10000);
-    AMF<SimpleResidueTermination, RandomInitialization, NMFALSUpdate> nmf(srt);
-    const size_t seed = mlpack::math::RandInt(1000000);
-    mlpack::math::RandomSeed(seed);
+    AMF<SimpleResidueTermination, GivenInitialization, NMFALSUpdate> nmf(srt,
+        g);
     nmf.Apply(v, r, w, h);
-    mlpack::math::RandomSeed(seed);
     nmf.Apply(dv, r, dw, dh);
 
     // Reconstruct matrices.

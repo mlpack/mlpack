@@ -13,6 +13,7 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
 
@@ -89,11 +90,8 @@ PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
 PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
     "dual-tree search).", "S");
 
-int main(int argc, char *argv[])
+void mlpackMain()
 {
-  // Give CLI the command line parameters the user passed in.
-  CLI::ParseCommandLine(argc, argv);
-
   if (CLI::GetParam<int>("seed") != 0)
     math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
   else
@@ -202,7 +200,7 @@ int main(int argc, char *argv[])
     arma::mat referenceSet = std::move(CLI::GetParam<arma::mat>("reference"));
 
     Log::Info << "Loaded reference data from '"
-        << CLI::GetUnmappedParam<arma::mat>("reference") << "' ("
+        << CLI::GetPrintableParam<arma::mat>("reference") << "' ("
         << referenceSet.n_rows << "x" << referenceSet.n_cols << ")." << endl;
 
     const size_t leafSize = size_t(lsInt);
@@ -215,7 +213,7 @@ int main(int argc, char *argv[])
     rs = std::move(CLI::GetParam<RSModel>("input_model"));
 
     Log::Info << "Loaded range search model from '"
-        << CLI::GetUnmappedParam<RSModel>("input_model") << "' ("
+        << CLI::GetPrintableParam<RSModel>("input_model") << "' ("
         << "trained on " << rs.Dataset().n_rows << "x" << rs.Dataset().n_cols
         << " dataset)." << endl;
 
@@ -239,7 +237,7 @@ int main(int argc, char *argv[])
     {
       queryData = std::move(CLI::GetParam<arma::mat>("query"));
       Log::Info << "Loaded query data from '"
-          << CLI::GetUnmappedParam<arma::mat>("query") << "' ("
+          << CLI::GetPrintableParam<arma::mat>("query") << "' ("
           << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
     }
 
@@ -321,6 +319,4 @@ int main(int argc, char *argv[])
   // Save the output model, if desired.
   if (CLI::HasParam("output_model"))
     CLI::GetParam<RSModel>("output_model") = std::move(rs);
-
-  CLI::Destroy();
 }
