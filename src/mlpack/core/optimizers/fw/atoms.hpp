@@ -50,7 +50,9 @@ class Atoms
       cVec(0) = c;
       currentCoeffs.insert_rows(0, cVec);
       double tmp = std::pow(norm(function.MatrixA() * v, 2), 2);
-      atomSqTerm.insert_rows(0, tmp);
+      arma::vec tmpVec(1);
+      tmpVec(0) = tmp;
+      atomSqTerm.insert_rows(0, tmpVec);
     }
   }
 
