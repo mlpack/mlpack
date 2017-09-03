@@ -25,7 +25,7 @@ namespace ann /** Artificial Neural Network. */ {
  * given the real values instead of providing the sigmoid activations.
  * The functions is much more numerically stable as can be found from the 
  * formula below.
- * max(x, 0) - x * z + log(1 + exp(-abs(x)))
+ * \f$max(x, 0) - x * z + \log(1 +  e^{-|x|})\f$
  * For more detail look here goo.gl/tRjS6j
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
@@ -63,8 +63,8 @@ class SigmoidCrossEntropyError
    */
   template<typename eT>
   inline void Backward(const arma::Mat<eT>&& input,
-                const arma::Mat<eT>&& target,
-                arma::Mat<eT>&& output);
+                       const arma::Mat<eT>&& target,
+                       arma::Mat<eT>&& output);
 
   //! Get the input parameter.
   InputDataType& InputParameter() const { return inputParameter; }

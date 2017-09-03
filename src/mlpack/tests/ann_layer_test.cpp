@@ -1044,5 +1044,4 @@ BOOST_AUTO_TEST_CASE(SimpleMeanSquaredErrorLayerTest)
   BOOST_REQUIRE_EQUAL(output.n_elem, 1);
 }
 
-
 BOOST_AUTO_TEST_SUITE_END();
