@@ -1182,7 +1182,6 @@ BOOST_AUTO_TEST_CASE(SimpleSigmoidCrossEntropyLayerTest)
   BOOST_REQUIRE_EQUAL(output.n_cols, input2.n_cols);
 }
 
-
 /*
  * Simple test for the cross-entropy error performance function.
  */
