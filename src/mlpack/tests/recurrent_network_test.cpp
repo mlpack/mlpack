@@ -40,8 +40,8 @@ void GenerateNoisySines(arma::mat& data,
                         const size_t sequences,
                         const double noise = 0.3)
 {
-  arma::colvec x =  arma::linspace<arma::Col<double> >(0,
-      points - 1, points) / points * 20.0;
+  arma::colvec x =  arma::linspace<arma::colvec>(0, points - 1, points) /
+      points * 20.0;
   arma::colvec y1 = arma::sin(x + arma::as_scalar(arma::randu(1)) * 3.0);
   arma::colvec y2 = arma::sin(x / 2.0 + arma::as_scalar(arma::randu(1)) * 3.0);
 
@@ -534,7 +534,7 @@ void ReberGrammarTestNetwork(const size_t hiddenSize = 4,
  */
 BOOST_AUTO_TEST_CASE(LSTMRecursiveReberGrammarTest)
 {
-  ReberGrammarTestNetwork<LSTM<> >(20, true, 3, 5, 12);
+  ReberGrammarTestNetwork<LSTM<> >(10, false);
 }
 
 /**
@@ -586,8 +586,7 @@ void GenerateDistractedSequence(arma::mat& input, arma::mat& output)
   input = arma::zeros<arma::mat>(10, 10);
   output = arma::zeros<arma::mat>(3, 10);
 
-  arma::Col<size_t> index = arma::shuffle(arma::linspace<arma::Col<size_t> >(
-      0, 7, 8));
+  arma::uvec index = arma::shuffle(arma::linspace<arma::uvec>(0, 7, 8));
 
   // Set the target in the input sequence and the corresponding targets in the
   // output sequence by following the correct order.

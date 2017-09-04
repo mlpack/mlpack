@@ -152,9 +152,9 @@ class FastLSTM
   OutputDataType& Delta() { return delta; }
 
   //! Get the gradient.
-  OutputDataType const& Gradient() const { return gradient; }
+  OutputDataType const& Gradient() const { return grad; }
   //! Modify the gradient.
-  OutputDataType& Gradient() { return gradient; }
+  OutputDataType& Gradient() { return grad; }
 
   /**
    * Serialize the layer
@@ -252,7 +252,7 @@ class FastLSTM
   OutputDataType delta;
 
   //! Locally-stored gradient object.
-  OutputDataType gradient;
+  OutputDataType grad;
 
   //! Locally-stored input parameter object.
   InputDataType inputParameter;
