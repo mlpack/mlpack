@@ -115,6 +115,8 @@ class HyperParameterTuner
    * increase for some particular argument is equal to the absolute value of the
    * argument multiplied by the relative increase (see also the documentation
    * for MinDelta()).
+   *
+   * The default value is 0.01.
    */
   double RelativeDelta() const { return relativeDelta; }
 
@@ -124,6 +126,8 @@ class HyperParameterTuner
    * increase for some particular argument is equal to the absolute value of the
    * argument multiplied by the relative increase (see also the documentation
    * for MinDelta()).
+   *
+   * The default value is 0.01.
    */
   double& RelativeDelta() { return relativeDelta; }
 
@@ -132,6 +136,8 @@ class HyperParameterTuner
    * (by the definition) in gradient-based optimization. This value is going to
    * be used when it is greater than the increase calculated with the rules
    * described in the documentation for RelativeDelta().
+   *
+   * The default value is 1e-10.
    */
   double MinDelta() const { return minDelta; }
 
@@ -140,6 +146,8 @@ class HyperParameterTuner
    * (by the definition) in gradient-based optimization. This value is going to
    * be used when it is greater than the increase calculated with the rules
    * described in the documentation for RelativeDelta().
+   *
+   * The default value is 1e-10.
    */
   double& MinDelta() { return minDelta; }
 
