@@ -27,6 +27,10 @@ class InformationGain
  public:
   /**
    * Given a set of labels, calculate the information gain of those labels.
+   * Note that it is possible that due to floating-point representation issues,
+   * it is possible that the gain returned can be very slightly greater than 0!
+   * Thus, if you are checking for a perfect fit, be sure to use 'gain >= 0.0'
+   * not 'gain == 0.0'.
    *
    * @param labels Labels of the dataset.
    * @param numClasses Number of classes in the dataset.

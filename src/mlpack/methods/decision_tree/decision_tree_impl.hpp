@@ -166,6 +166,7 @@ DecisionTree<FitnessFunction,
              DimensionSelectionType,
              ElemType,
              NoRecursion>::DecisionTree(const size_t numClasses) :
+    splitDimension(0),
     dimensionTypeOrMajorityClass(0),
     classProbabilities(numClasses)
 {
@@ -241,6 +242,9 @@ DecisionTree<FitnessFunction,
              ElemType,
              NoRecursion>::operator=(const DecisionTree& other)
 {
+  if (this == &other)
+    return *this; // Nothing to copy.
+
   // Clean memory if needed.
   for (size_t i = 0; i < children.size(); ++i)
     delete children[i];
@@ -282,6 +286,9 @@ DecisionTree<FitnessFunction,
              ElemType,
              NoRecursion>::operator=(DecisionTree&& other)
 {
+  if (this == &other)
+    return *this; // Nothing to move.
+
   // Clean memory if needed.
   for (size_t i = 0; i < children.size(); ++i)
     delete children[i];
@@ -571,7 +578,7 @@ void DecisionTree<FitnessFunction,
     }
 
     // If the gain is the best possible, no need to keep looking.
-    if (bestGain == 0.0)
+    if (bestGain >= 0.0)
       break;
   }
 
@@ -719,7 +726,7 @@ void DecisionTree<FitnessFunction,
     }
 
     // If the gain is the best possible, no need to keep looking.
-    if (bestGain == 0.0)
+    if (bestGain >= 0.0)
       break;
   }
 
