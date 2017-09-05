@@ -14,10 +14,8 @@
 
 
 #include <mlpack/prereqs.hpp>
-#include "update_classic.hpp"
 #include "update_span.hpp"
 #include "constr_lpball.hpp"
-#include "func_sq.hpp"
 
 namespace mlpack {
 namespace optimization {

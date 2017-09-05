@@ -53,6 +53,7 @@ add_executable(mlpack_test
   lbfgs_test.cpp
   lin_alg_test.cpp
   linear_regression_test.cpp
+  line_search_test.cpp
   load_save_test.cpp
   local_coordinate_coding_test.cpp
   logistic_regression_test.cpp
@@ -78,6 +79,7 @@ add_executable(mlpack_test
   perceptron_test.cpp
   python_binding_test.cpp
   prefixedoutstream_test.cpp
+  proximal_test.cpp
   q_learning_test.cpp
   qdafn_test.cpp
   quic_svd_test.cpp
