@@ -1,6 +1,7 @@
 /**
  * @file matrix_completion_impl.hpp
  * @author Stephen Tu
+ * @author Chenzhe Diao
  *
  * Implementation of MatrixCompletion class.
  *
@@ -17,7 +18,6 @@
 namespace mlpack {
 namespace matrix_completion {
 
-/*
 template<typename MCSolverType>
 MatrixCompletion<MCSolverType>::
 MatrixCompletion(const size_t m,
@@ -41,7 +41,6 @@ MatrixCompletion(const size_t m,
 {
   CheckValues(indices, values);
 }
-*/
 
 template<typename MCSolverType>
 MatrixCompletion<MCSolverType>::

@@ -2,8 +2,8 @@
  * @file mc_fw_solver.hpp
  * @author Chenzhe Diao
  *
- * A thin wrapper around Matrix Schatten p-norm minimization to solve
- * low rank matrix completion problems using FrankWolfe type solver.
+ * A thin wrapper to use Frank-Wolfe type optimizer to solve low rank matrix
+ * completion problems.
  *
  * Matrix Schatten p-norm is just the lp norm of the matrix singular
  * value vector.
@@ -23,60 +23,79 @@
 
 namespace mlpack {
 namespace matrix_completion {
+
+/**
+ * This class implements the Frank-Wolfe type algorithm for solving
+ * matrix completion problems. That is, given known values M_ij's, the
+ * following optimization problem is solved to fill in the remaining unknown
+ * values of X:
+ *
+ * \f[
+ *   min 1/2 \sum_{(i,j)\in \Omega} (X_ij - M_ij)^2 \qquad s.t.~ ||X||_* <= tau.
+ * \f]
+ *
+ * where ||X||_* denotes the nuclear norm (sum of singular values of X).
+ *
+ * This type of optimizer needs some prior knowledge of nuclear norm estimate
+ * tau, which is input as constraint. All the constructors without tau are not
+ * applicable for this solver.
+ *
+ * To solve this optimization problem, a Frank-Wolfe (Conditional Gradient) type
+ * algorithm is used. See
+ *
+ * @code
+ * Rao N, Shah P, Wright S
+ * Forward--backward greedy algorithms for atomic norm regularization.
+ *
+ * IEEE Transactions on Signal Processing 63(21):5798–5811
+ * @endcode
+ *
+ */
 class MCFWSolver
 {
  public:
-
- /*
-  MCFWSolver(const size_t m,
-             const size_t n,
-             const arma::umat& indices,
-             const arma::vec& values,
-             const size_t r) :
-    function(indices, values, m, n), r(r)
-    {
-      ConstrMatrixLpBallSolver constrSolver(1);
-      optimization::UpdateMatrix updateRule;
-
-      fwSolver = optimization::FrankWolfe<
-          optimization::ConstrMatrixLpBallSolver, UpdateMatrix>(
-          constrSolver, updateRule);
-    }
-
-  MCFWSolver(const size_t m,
-             const size_t n,
-             const arma::umat& indices,
-             const arma::vec& values,
-             const arma::mat& initialPoint) :
-    function(indices, values, m, n, initialPoint)
-    {
-      ConstrMatrixLpBallSolver constrSolver(1);
-      optimization::UpdateMatrix updateRule;
-        
-      fwSolver = optimization::FrankWolfe<
-          optimization::ConstrMatrixLpBallSolver, UpdateMatrix>(
-          constrSolver, updateRule);
-    }
-*/
-
-  MCFWSolver(const size_t m,
-             const size_t n,
-             const arma::umat& indices,
-             const arma::vec& values) :
-      function(indices, values, m, n),
-      fwSolver(optimization::ConstrMatrixLpBallSolver(1),
-        UpdateMatrix(1))
-  { Log::Fatal << "No such constructor!" << std::endl;  }
+  //! Constraint solver to find a new atom for matrix completion problem.
+  //! Schatten 1-norm is just the nuclear norm.
+  using ConstraintSolver = optimization::ConstrMatrixLpBallSolver;
 
   MCFWSolver(const size_t m,
              const size_t n,
              const arma::umat& indices,
              const arma::vec& values,
              const double tau) :
-    function(indices, values, m, n),
-    fwSolver(optimization::ConstrMatrixLpBallSolver(1),
-        UpdateMatrix(tau), 10000)
-    {}
+      function(indices, values, m, n),
+      fwSolver(ConstraintSolver(1), UpdateMatrix(tau), 10000000)
+  { /* Nothing to do. */ }
+
+  //! This constructor type is not supported.
+  MCFWSolver(const size_t m,
+             const size_t n,
+             const arma::umat& indices,
+             const arma::vec& values,
+             const size_t r) :
+      function(indices, values, m, n),
+      fwSolver(ConstraintSolver(1), UpdateMatrix(0))
+  { Log::Fatal << "No such constructor!" << std::endl; }
+
+  //! This constructor type is not supported.
+  MCFWSolver(const size_t m,
+             const size_t n,
+             const arma::umat& indices,
+             const arma::vec& values,
+             const arma::mat& initialPoint) :
+      function(indices, values, m, n),
+      fwSolver(ConstraintSolver(1), UpdateMatrix(0))
+  { Log::Fatal << "No such constructor!" << std::endl; }
+
+  //! This constructor type is not supported.
+  MCFWSolver(const size_t m,
+             const size_t n,
+             const arma::umat& indices,
+             const arma::vec& values) :
+      function(indices, values, m, n),
+      fwSolver(ConstraintSolver(1), UpdateMatrix(0))
+  { Log::Fatal << "No such constructor!" << std::endl; }
+
 
   void Recover(arma::mat& recovered, const size_t m, const size_t n)
   {
@@ -87,8 +106,8 @@ class MCFWSolver
   //! Function to be optimized.
   MatrixCompletionFWFunction function;
 
-  optimization::FrankWolfe<optimization::ConstrMatrixLpBallSolver,
-      UpdateMatrix> fwSolver;
+  //! Frank Wolfe type optimization solver.
+  optimization::FrankWolfe<ConstraintSolver, UpdateMatrix> fwSolver;
 };
 } // namespace matrix_completion
 } // namespace mlpack

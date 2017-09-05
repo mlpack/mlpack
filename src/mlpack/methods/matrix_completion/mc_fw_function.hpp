@@ -2,16 +2,14 @@
  * @file mc_fw_function.hpp
  * @author Chenzhe Diao
  *
- * Optimization object function for matrix completion problem.
+ * Optimization object function for matrix completion problem using Frank-Wolfe
+ * type algorithms.
  *
  *\f[
  * f(X) = 0.5* \sum_{(i,j)\in \Omega} |X_{i,j}-M_{i,j}|^2
  *\f]
  *
- * Used in FrankWolfe Type solver.
- *
- * Matrix Schatten p-norm is just the lp norm of the matrix singular
- * value vector.
+ * Used in mc_fw_solver.hpp.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -27,25 +25,30 @@ namespace mlpack {
 namespace matrix_completion {
 class MatrixCompletionFWFunction {
  public:
-
+  /**
+   * Construct the object function.
+   *
+   * @param indices Matrix containing the indices of the known entries (must be
+   *    [2 x p]).
+   * @param values Vector containing the values of the known entries (must be
+   *    length p).
+   * @param m Number of rows of original matrix.
+   * @param n Number of columns of original matrix.
+   */
   MatrixCompletionFWFunction(const arma::umat& indices,
                              const arma::vec& values,
                              const size_t m,
                              const size_t n) :
-      indices(indices), values(values), m(m), n(n),
-      initialPoint(m, n, arma::fill::zeros)
+      indices(indices), values(values), m(m), n(n)
   { /* Nothing to do. */ }
 
-  MatrixCompletionFWFunction(const arma::umat& indices,
-                             const arma::vec& values,
-                             const size_t m,
-                             const size_t n,
-                             const arma::mat initialPoint) :
-      indices(indices), values(values), m(m), n(n),
-      initialPoint(initialPoint)
-  { /* Nothing to do. */ }
-
-
+  /**
+   * Object function.
+   *
+   * f(X) = 0.5 * \sum_{i,j} (X_ij - M_ij)^2
+   *
+   * where M_ij is the known matrix entries.
+   */
   double Evaluate(const arma::mat& X)
   {
     double f = 0;
@@ -58,6 +61,15 @@ class MatrixCompletionFWFunction {
     return 0.5 * f;
   }
 
+  /**
+   * Gradient of the objective function.
+   *
+   * gradient_ij = X_ij - M_ij,  for ij \in \Omega
+   * gradient_ij = 0,   otherwise.
+   *
+   * @param X input matrix, with size m x n.
+   * @param gradient output gradient matrix.
+   */
   void Gradient(const arma::mat& X, arma::mat& gradient)
   {
     arma::vec gradientVal = -values;
@@ -72,6 +84,12 @@ class MatrixCompletionFWFunction {
     gradient = arma::mat(spGradient);
   }
 
+  /**
+   * Get the values of a given matrix at positions with known "indices".
+   *
+   * @param X Input given matrix.
+   * @param xValues Output entries of the matrix X.
+   */
   void GetKnownEntries(const arma::mat& X, arma::vec& xValues)
   {
     xValues.set_size(arma::size(values));
@@ -94,10 +112,7 @@ private:
 
   //! Number of columns of the matrix.
   size_t n;
-
-  //! Initial point of iterations.
-  arma::mat initialPoint;
-};
+}; // class MatrixCompletionFWFunction
 }  // namespace matrix_completion
 }  // namespace mlpack
 

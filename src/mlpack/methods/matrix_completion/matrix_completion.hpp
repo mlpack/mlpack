@@ -22,10 +22,13 @@ namespace mlpack {
 namespace matrix_completion {
 
 /**
- * This class implements the popular nuclear norm minimization heuristic for
- * matrix completion problems. That is, given known values M_ij's, the
- * following optimization problem (semi-definite program) is solved to fill in
- * the remaining unknown values of X
+ * This class implements a wrapper for different types of solvers of matrix
+ * completion problems. That is, we want to recover a large low rank matrix,
+ * with only a few elements in the matrix known. There are quite many
+ * mathematical models and numerical algorithms to solve this kind of problems.
+ * This class only provide a wrapper using class templates.
+ *
+ * Popular models are:
  *
  *   min ||X||_* subj to X_ij = M_ij
  *
@@ -38,7 +41,15 @@ namespace matrix_completion {
  *   Benjamin Recht. JMLR 11.
  *   http://arxiv.org/pdf/0910.0651v2.pdf
  *
- * An example of how to use this class is shown below:
+ * Or
+ *
+ * \f[
+ * min \sum_{(i,j) \in \Omega} (X_ij - M_ij)^2, \qquad
+ * s.t. ||X||_* <= tau
+ * \f]
+ *
+ *
+ * Example of the usage of the code is:
  *
  * @code
  * size_t m, n;         // size of unknown matrix
@@ -46,11 +57,10 @@ namespace matrix_completion {
  * arma::vec values;    // contains the known values [n_entries]
  * arma::mat recovered; // will contain the completed matrix
  *
- * MatrixCompletion mc(m, n, indices, values);
+ * MatrixCompletion<MCSolverType> mc(m, n, indices, values);
  * mc.Recover(recovered);
  * @endcode
  *
- * @see LRSDP
  */
 template<typename MCSolverType>
 class MatrixCompletion
@@ -68,13 +78,11 @@ class MatrixCompletion
    *    length p).
    * @param r Maximum rank of solution.
    */
-  /*
   MatrixCompletion(const size_t m,
                    const size_t n,
                    const arma::umat& indices,
                    const arma::vec& values,
                    const size_t r);
-  */
 
   /**
    * Construct a matrix completion problem, specifying the initial point of the
@@ -86,17 +94,14 @@ class MatrixCompletion
    *    [2 x p]).
    * @param values Vector containing the values of the known entries (must be
    *    length p).
-   * @param initialPoint Starting point for the SDP optimization.
+   * @param initialPoint Starting point optimization.
    */
-
-  /*
   MatrixCompletion(const size_t m,
                    const size_t n,
                    const arma::umat& indices,
                    const arma::vec& values,
                    const arma::mat& initialPoint);
 
-  */
 
   /**
    * Construct a matrix completion problem.
@@ -113,6 +118,17 @@ class MatrixCompletion
                    const arma::umat& indices,
                    const arma::vec& values);
 
+  /**
+   * Construct a matrix completion problem.
+   *
+   * @param m Number of rows of original matrix.
+   * @param n Number of columns of original matrix.
+   * @param indices Matrix containing the indices of the known entries (must be
+   *    [2 x p]).
+   * @param values Vector containing the values of the known entries (must be
+   *    length p).
+   * @param tau Maximum nuclear norm constraint of the solution.
+   */
   MatrixCompletion(const size_t m,
                    const size_t n,
                    const arma::umat& indices,
@@ -120,7 +136,7 @@ class MatrixCompletion
                    const double tau);
 
   /**
-   * Solve the underlying SDP to fill in the remaining values.
+   * Solve the underlying optimization problem to fill in the remaining values.
    *
    * @param recovered Will contain the completed matrix.
    */

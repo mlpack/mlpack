@@ -19,9 +19,26 @@
 namespace mlpack {
 namespace matrix_completion {
 
+/**
+ * Update rule for matrix completion problem using Frank-Wolfe type solver.
+ *
+ * The implementation follows:
+ * @code
+ * Rao N, Shah P, Wright S  (2015)
+ * Forward--backward greedy algorithms for atomic norm regularization.
+ * IEEE Transactions on Signal Processing 63(21):5798–5811
+ * @endcode
+ *
+ * Since the nuclear norm could be viewed as an atom norm, the code here also
+ * contains the atom operations, such as AddAtom() and RecoverMatrix().
+ *
+ * The implementation also added the enhancement step and truncation step to
+ * make the algorithm converge faster.
+ */
 class UpdateMatrix {
  public:
-  UpdateMatrix(double tau): tau(tau) {/* Nothing to do. */}
+  UpdateMatrix(double tau, size_t rank = 0): tau(tau), rank(rank)
+  {/* Nothing to do. */}
 
   void Update(MatrixCompletionFWFunction& function,
               const arma::mat& oldCoords,
@@ -47,26 +64,35 @@ class UpdateMatrix {
 //    ProjectedGradientEnhancement(function, 0.9);
     
     // Truncation step, to find a new set of atoms for better representation.
-    RecoverVector(newCoords);
+    RecoverMatrix(newCoords);
     double fOld = function.Evaluate(oldCoords);
     double fNew = function.Evaluate(newCoords);
     double f = 0.5 * fOld + 0.5 * fNew;
     Truncation(f, function);
 
-    RecoverVector(newCoords);
+    RecoverMatrix(newCoords);
   }
 
 
  private:
   //! Atom norm constraint.
   double tau;
+  
+  //! Maximum rank, that is, maximum number of atoms used.
+  size_t rank;
 
-  //! Current matrix Atoms.
+  //! Current matrix Atoms, each atom is a rank one matrix.
   arma::cube currentAtoms;
 
   //! Current coefficients of the atoms.
   arma::vec currentCoeffs;
 
+  /**
+   * Add a rank one matrix into the current atoms.
+   *
+   * @param v rank one matrix to be added.
+   * @param c coefficient of this atom.
+   */
   void AddAtom(const arma::mat& v, const double c = 0)
   {
     if (currentAtoms.is_empty())
@@ -87,34 +113,57 @@ class UpdateMatrix {
     }
   }
 
-  //! Recover the solution coordinate from the coefficients of current atoms.
-  void RecoverVector(arma::mat& x)
+  /**
+   * Recover the solution matrix from the coefficients of current atoms.
+   * @param x output matrix, which is the linear combination of all the current
+   *          atoms.
+   */
+  void RecoverMatrix(arma::mat& x)
   {
     x = arma::zeros<arma::mat>(currentAtoms.n_rows, currentAtoms.n_cols);
     for (arma::uword i = 0; i < currentCoeffs.n_rows; i++)
       x += currentAtoms.slice(i) * currentCoeffs(i);
   }
   
+  /**
+   * Truncation step.
+   * Redefine the current atoms set by recalculating the SVD, and delete
+   * the rank one matrices that don't contribute much in the optimizaton
+   * problem.
+   *
+   * This step can promote sparsity (low rank), and also make the convergence
+   * faster.
+   *
+   * See Algorithm 3 of
+   * @code
+   * Rao N, Shah P, Wright S  (2015)
+   * Forward--backward greedy algorithms for atomic norm regularization.
+   * IEEE Transactions on Signal Processing 63(21):5798–5811
+   * @endcode
+   *
+   * @param F threshold number.
+   * @param function function to be optimized.
+   */
   void Truncation(const double F, MatrixCompletionFWFunction& function)
   {
     arma::mat X;
-    RecoverVector(X);
+    RecoverMatrix(X);
 
     arma::mat U, V;
     arma::vec s;
     arma::uword k;
     if(!arma::svd_econ(U, s, V, X))
       Log::Fatal << "Truncation: armadillo svd_econ() failed!";
-    size_t rank = s.n_elem;
+    size_t r = s.n_elem;
     
-    for (size_t i = 1; i < rank; i++)
+    for (size_t i = 1; i < r; i++)
     {
-      // Try deleting the rank one matrix with smallest coefficient.
+      // Try deleting the matrix atom with smallest coefficient.
       s.min(k);
       X = X - s(k) * U.col(k) * arma::trans(V.col(k));
       
       // Cannot delete atom, just break.
-      if (function.Evaluate(X) > F)
+      if ((function.Evaluate(X) > F))
         break;
       
       // Delete this atom.
@@ -130,18 +179,32 @@ class UpdateMatrix {
       currentAtoms.slice(i) = U.col(i) * arma::trans(V.col(i));
   } // Truncation()
   
+  /**
+   * Enhancement step. Recalculate the coefficients of the atoms. That is,
+   * try to get smaller object function value with updating the singular values
+   * only, without changing the left and right singular vectors. In order to
+   * impose the nuclear norm constraint, projected gradient method is used.
+   *
+   * Notice that for matrix completion problem, the object function has Lipchitz
+   * constant 1. So theoretically the step size for projected gradient method
+   * could be anything smaller than 1.
+   *
+   * See algorithm 1 of the above mentioned paper.
+   */
   void ProjectedGradientEnhancement(MatrixCompletionFWFunction& function,
-                                    double stepSize,
+                                    double stepSize = 0.9,
                                     size_t maxIterations = 100,
                                     double tolerance = 1e-3)
   {
     arma::mat x;
-    RecoverVector(x);
+    RecoverMatrix(x);
     double value = function.Evaluate(x);
     
     for (size_t iter = 1; iter < maxIterations; iter++)
     {
       // Update currentCoeffs with gradient descent method.
+      // We caculate the gradient directly here, so we don't need to generate
+      // a large sparse matrix.
       arma::vec entries;
       function.GetKnownEntries(x, entries);
       entries = entries - function.Values();
@@ -155,13 +218,11 @@ class UpdateMatrix {
         gradient(i) = arma::dot(entriesAtom, entries);
       }
       currentCoeffs = currentCoeffs - stepSize * gradient;
-//      currentCoeffs = currentCoeffs - 1/std::sqrt(iter) * gradient;
-
       
       // Projection of currentCoeffs to satisfy the atom norm constraint.
       optimization::Proximal::ProjectToL1Ball(currentCoeffs, tau);
 
-      RecoverVector(x);
+      RecoverMatrix(x);
       double valueNew = function.Evaluate(x);
       
       if ((value - valueNew) < tolerance)
@@ -172,8 +233,6 @@ class UpdateMatrix {
   }
 
 };  // class UpdateMatrix
-
-
 
 } // namespace matrix_completion
 } // namespace mlpack
