@@ -21,10 +21,10 @@ namespace data {
 
 class IncrementPolicy;
 
-template<typename PolicyType>
+template<typename PolicyType, typename InputType>
 class DatasetMapper;
 
-using DatasetInfo = DatasetMapper<IncrementPolicy>;
+using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
 
 } // namespace data
 } // namespace mlpack

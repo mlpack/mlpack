@@ -22,16 +22,22 @@
 
 namespace mlpack {
 namespace data {
+
 /**
- * Auxiliary information for a dataset, including mappings to/from strings and
- * the datatype of each dimension.  DatasetMapper objects are optionally
- * produced by data::Load(), and store the type of each dimension
+ * Auxiliary information for a dataset, including mappings to/from strings (or
+ * other types) and the datatype of each dimension.  DatasetMapper objects are
+ * optionally produced by data::Load(), and store the type of each dimension
  * (Datatype::numeric or Datatype::categorical) as well as mappings from strings
  * to unsigned integers and vice versa.
  *
- * @tparam PolicyType Mapping policy used to specify MapString();
+ * DatasetMapper objects can also map from arbitrary types; the type to map from
+ * can be specified with the InputType template parameter.  By default, the
+ * InputType parameter is std::string.
+ *
+ * @tparam PolicyType Mapping policy used to specify MapString().
+ * @tparam InputType Type of input to be mapped.
  */
-template <typename PolicyType>
+template<typename PolicyType, typename InputType = std::string>
 class DatasetMapper
 {
  public:
@@ -50,32 +56,32 @@ class DatasetMapper
   explicit DatasetMapper(PolicyType& policy, const size_t dimensionality = 0);
 
   /**
-   * Preprocessing: during a first pass of the data, pass the strings on to the
+   * Preprocessing: during a first pass of the data, pass the input on to the
    * MapPolicy if they are needed.
    *
-   * @param string String to map.
+   * @param input Input to map.
    * @param dimension Dimension to map for.
    */
   template<typename T>
-  void MapFirstPass(const std::string& string, const size_t dimension);
+  void MapFirstPass(const InputType& input, const size_t dimension);
 
   /**
-   * Given the string and the dimension to which it belongs, return its numeric
-   * mapping.  If no mapping yet exists, the string is added to the list of
+   * Given the input and the dimension to which it belongs, return its numeric
+   * mapping.  If no mapping yet exists, the input is added to the list of
    * mappings for the given dimension.  The dimension parameter refers to the
    * index of the dimension of the string (i.e. the row in the dataset).
    *
    * @tparam T Numeric type to map to (int/double/float/etc.).
-   * @param string String to find/create mapping for.
+   * @param input Input to find/create mapping for.
    * @param dimension Index of the dimension of the string.
    */
   template<typename T>
-  T MapString(const std::string& string,
+  T MapString(const InputType& input,
               const size_t dimension);
 
   /**
-   * Return the string that corresponds to a given value in a given dimension.
-   * If the string is not a valid mapping in the given dimension, a
+   * Return the input that corresponds to a given value in a given dimension.
+   * If the value is not a valid mapping in the given dimension, a
    * std::invalid_argument is thrown.  Note that this does not remove the
    * mapping.
    *
@@ -87,14 +93,14 @@ class DatasetMapper
    * If the mapping is unique (which it is for DatasetInfo), then the
    * unmappingIndex parameter can be left as the default.
    *
-   * @param value Mapped value for string.
+   * @param value Mapped value for input.
    * @param dimension Dimension to unmap string from.
    * @param unmappingIndex Index of non-unique unmapping (optional).
    */
   template<typename T>
-  const std::string& UnmapString(const T value,
-                                 const size_t dimension,
-                                 const size_t unmappingIndex = 0) const;
+  const InputType& UnmapString(const T value,
+                               const size_t dimension,
+                               const size_t unmappingIndex = 0) const;
 
   /**
    * Get the number of possible unmappings for a string in a given dimension.
@@ -103,16 +109,16 @@ class DatasetMapper
   size_t NumUnmappings(const T value, const size_t dimension) const;
 
   /**
-   * Return the value that corresponds to a given string in a given dimension.
+   * Return the value that corresponds to a given input in a given dimension.
    * If the value is not a valid mapping in the given dimension, a
    * std::invalid_argument is thrown.  Note that this does not remove the
    * mapping.
    *
-   * @param string Mapped string for value.
-   * @param dimension Dimension to unmap string from.
+   * @param input Mapped input for value.
+   * @param dimension Dimension to unmap input from.
    */
-  typename PolicyType::MappedType UnmapValue(const std::string& string,
-                                            const size_t dimension);
+  typename PolicyType::MappedType UnmapValue(const InputType& input,
+                                             const size_t dimension);
 
   //! Return the type of a given dimension (numeric or categorical).
   Datatype Type(const size_t dimension) const;
@@ -156,13 +162,13 @@ class DatasetMapper
   std::vector<Datatype> types;
 
   // Forward mapping type.
-  using ForwardMapType = std::unordered_map<std::string, typename
+  using ForwardMapType = typename std::unordered_map<InputType, typename
       PolicyType::MappedType>;
 
   // Reverse mapping type.  Multiple inputs may map to a single output, hence
   // the need for std::vector.
   using ReverseMapType = std::unordered_map<typename PolicyType::MappedType,
-      std::vector<std::string>>;
+      std::vector<InputType>>;
 
   // Mappings from strings to integers.
   // Map entries will only exist for dimensions that are categorical.

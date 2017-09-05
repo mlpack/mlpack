@@ -78,8 +78,8 @@ struct ParameterType<arma::Mat<eT>>
  * For matrix+dataset info types, we should accept a std::string.
  */
 template<typename eT, typename PolicyType>
-struct ParameterType<std::tuple<mlpack::data::DatasetMapper<PolicyType>,
-                     arma::Mat<eT>>>
+struct ParameterType<std::tuple<mlpack::data::DatasetMapper<PolicyType,
+                         std::string>, arma::Mat<eT>>>
 {
   typedef std::string type;
 };
