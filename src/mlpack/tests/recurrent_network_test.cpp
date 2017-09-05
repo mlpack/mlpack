@@ -551,7 +551,6 @@ BOOST_AUTO_TEST_CASE(LSTMRecursiveReberGrammarTest)
  */
 BOOST_AUTO_TEST_CASE(GRUReberGrammarTest)
 {
-  math::RandomSeed(std::time(NULL));
   ReberGrammarTestNetwork<GRU<>>(4, false);
 }
 
