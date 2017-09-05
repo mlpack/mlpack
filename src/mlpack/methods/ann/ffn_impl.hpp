@@ -36,7 +36,9 @@ FFN<OutputLayerType, InitializationRuleType>::FFN(
     initializeRule(std::move(initializeRule)),
     width(0),
     height(0),
-    reset(false)
+    reset(false),
+    numFunctions(0),
+    deterministic(true)
 {
   /* Nothing to do here */
 }

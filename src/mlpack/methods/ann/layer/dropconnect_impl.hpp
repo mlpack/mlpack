@@ -28,7 +28,10 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-DropConnect<InputDataType, OutputDataType>::DropConnect()
+DropConnect<InputDataType, OutputDataType>::DropConnect() :
+    ratio(0.5),
+    scale(2.0),
+    deterministic(true)
 {
   // Nothing to do here.
 }

@@ -19,7 +19,9 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-Join<InputDataType, OutputDataType>::Join()
+Join<InputDataType, OutputDataType>::Join() :
+    inSizeRows(0),
+    inSizeCols(0)
 {
   // Nothing to do here.
 }

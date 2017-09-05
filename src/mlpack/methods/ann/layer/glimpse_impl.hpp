@@ -28,7 +28,11 @@ Glimpse<InputDataType, OutputDataType>::Glimpse(
     depth(depth),
     scale(scale),
     inputWidth(inputWidth),
-    inputHeight(inputHeight)
+    inputHeight(inputHeight),
+    outputWidth(size),
+    outputHeight(size),
+    inputDepth(0),
+    deterministic(true)
 {
   // Nothing to do here.
 }
