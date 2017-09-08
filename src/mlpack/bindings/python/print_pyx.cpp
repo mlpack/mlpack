@@ -88,7 +88,7 @@ void PrintPYX(const ProgramDoc& programInfo,
 
   // Import the program we will be using.
   cout << "cdef extern from \"<" << mainFilename << ">\" nogil:" << endl;
-  cout << "  cdef int mlpackMain() nogil except +RuntimeError" << endl;
+  cout << "  cdef void mlpackMain() nogil except +RuntimeError" << endl;
   cout << "  " << endl;
   // Print any class definitions we need to have.
   std::set<std::string> classes;
