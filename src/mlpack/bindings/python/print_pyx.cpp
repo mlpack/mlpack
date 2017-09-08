@@ -72,7 +72,8 @@ void PrintPYX(const ProgramDoc& programInfo,
   cout << "cimport arma_numpy" << endl;
   cout << "from cli cimport CLI" << endl;
   cout << "from cli cimport SetParam, SetParamWithInfo" << endl;
-  cout << "from cli cimport EnableVerbose" << endl;
+  cout << "from cli cimport EnableVerbose, DisableBacktrace"
+      << endl;
   cout << "from cli cimport MoveFromPtr, MoveToPtr" << endl;
   cout << "from matrix_utils import to_matrix, to_matrix_with_info" << endl;
   cout << endl;
@@ -167,6 +168,9 @@ void PrintPYX(const ProgramDoc& programInfo,
   cout << "A dict containing each of the named output parameters will be "
       << "returned." << endl;
   cout << "  \"\"\"" << endl;
+
+  // Disable backtraces.
+  cout << "  DisableBacktrace()" << endl;
 
   // Restore the parameters.
   cout << "  CLI.RestoreSettings(\"" << programInfo.programName << "\")";

@@ -100,6 +100,14 @@ inline void EnableVerbose()
   Log::Info.ignoreInput = false;
 }
 
+/**
+ * Disable backtraces.
+ */
+inline void DisableBacktrace()
+{
+  Log::Fatal.backtrace = false;
+}
+
 } // namespace util
 } // namespace mlpack
 
