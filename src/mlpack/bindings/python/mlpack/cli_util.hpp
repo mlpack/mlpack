@@ -108,6 +108,15 @@ inline void DisableBacktrace()
   Log::Fatal.backtrace = false;
 }
 
+/**
+ * Reset the status of all timers.
+ */
+inline void ResetTimers()
+{
+  // Just get a new object---removes all old timers.
+  CLI::GetSingleton().timer = Timers();
+}
+
 } // namespace util
 } // namespace mlpack
 
