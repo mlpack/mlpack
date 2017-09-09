@@ -18,7 +18,8 @@ start.
  - \ref iodoc
  - \ref timer
  - \ref sample
- - \ref cv_and_hpt
+ - \ref cv
+ - \ref hpt
 
 @section method_tut Method-specific Tutorials
 
