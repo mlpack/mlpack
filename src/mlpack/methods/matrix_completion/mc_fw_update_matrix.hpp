@@ -37,7 +37,7 @@ namespace matrix_completion {
  */
 class UpdateMatrix {
  public:
-  UpdateMatrix(double tau, size_t rank = 0): tau(tau), rank(rank)
+  UpdateMatrix(double tau): tau(tau)
   {/* Nothing to do. */}
 
   void Update(MatrixCompletionFWFunction& function,
@@ -60,9 +60,6 @@ class UpdateMatrix {
     currentCoeffs = (1.0 - gamma) * currentCoeffs;
     AddAtom(s, gamma * tau);
 
-    // Enhancement step, to find better coefficients.
-//    ProjectedGradientEnhancement(function, 0.9);
-    
     // Truncation step, to find a new set of atoms for better representation.
     RecoverMatrix(newCoords);
     double fOld = function.Evaluate(oldCoords);
@@ -77,9 +74,6 @@ class UpdateMatrix {
  private:
   //! Atom norm constraint.
   double tau;
-  
-  //! Maximum rank, that is, maximum number of atoms used.
-  size_t rank;
 
   //! Current matrix Atoms, each atom is a rank one matrix.
   arma::cube currentAtoms;
@@ -115,6 +109,7 @@ class UpdateMatrix {
 
   /**
    * Recover the solution matrix from the coefficients of current atoms.
+   *
    * @param x output matrix, which is the linear combination of all the current
    *          atoms.
    */
@@ -124,9 +119,10 @@ class UpdateMatrix {
     for (arma::uword i = 0; i < currentCoeffs.n_rows; i++)
       x += currentAtoms.slice(i) * currentCoeffs(i);
   }
-  
+
   /**
    * Truncation step.
+   *
    * Redefine the current atoms set by recalculating the SVD, and delete
    * the rank one matrices that don't contribute much in the optimizaton
    * problem.
@@ -155,17 +151,17 @@ class UpdateMatrix {
     if(!arma::svd_econ(U, s, V, X))
       Log::Fatal << "Truncation: armadillo svd_econ() failed!";
     size_t r = s.n_elem;
-    
+
     for (size_t i = 1; i < r; i++)
     {
       // Try deleting the matrix atom with smallest coefficient.
       s.min(k);
       X = X - s(k) * U.col(k) * arma::trans(V.col(k));
-      
+
       // Cannot delete atom, just break.
       if ((function.Evaluate(X) > F))
         break;
-      
+
       // Delete this atom.
       U.shed_col(k);
       V.shed_col(k);
@@ -178,7 +174,7 @@ class UpdateMatrix {
     for (arma::uword i = 0; i < s.n_rows; i++)
       currentAtoms.slice(i) = U.col(i) * arma::trans(V.col(i));
   } // Truncation()
-  
+
   /**
    * Enhancement step. Recalculate the coefficients of the atoms. That is,
    * try to get smaller object function value with updating the singular values
@@ -199,7 +195,7 @@ class UpdateMatrix {
     arma::mat x;
     RecoverMatrix(x);
     double value = function.Evaluate(x);
-    
+
     for (size_t iter = 1; iter < maxIterations; iter++)
     {
       // Update currentCoeffs with gradient descent method.
@@ -218,16 +214,16 @@ class UpdateMatrix {
         gradient(i) = arma::dot(entriesAtom, entries);
       }
       currentCoeffs = currentCoeffs - stepSize * gradient;
-      
+
       // Projection of currentCoeffs to satisfy the atom norm constraint.
       optimization::Proximal::ProjectToL1Ball(currentCoeffs, tau);
 
       RecoverMatrix(x);
       double valueNew = function.Evaluate(x);
-      
+
       if ((value - valueNew) < tolerance)
         break;
-      
+
       value = valueNew;
     }
   }

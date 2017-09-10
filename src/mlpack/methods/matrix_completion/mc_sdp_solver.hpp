@@ -111,7 +111,6 @@ public:
               const double tau) :
       sdp(indices.n_cols, 0,
           arma::randu<arma::mat>(m + n, DefaultRank(m, n, indices.n_cols)))
-
     {
       Log::Fatal << "No such constructor for SDP solver!" << std::endl;
     }
@@ -148,7 +147,7 @@ private:
             r = mpn; // An upper bound on the dimension.
         return ceil(r);
     }
-    
+
     void InitSDP(const size_t m, const size_t n,
                  const arma::umat& indices,
                  const arma::vec& values)
@@ -163,7 +162,6 @@ private:
             sdp.SDP().SparseA()[i](m + indices(1, i), indices(0, i)) = 1.;
         }
     }
-
 };
 }
 }

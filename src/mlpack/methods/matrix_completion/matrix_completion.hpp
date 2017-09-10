@@ -15,7 +15,6 @@
 #define MLPACK_METHODS_MATRIX_COMPLETION_MATRIX_COMPLETION_HPP
 
 #include "mc_sdp_solver.hpp"
-//#include "mc_sgd_solver.hpp"
 #include "mc_fw_solver.hpp"
 
 namespace mlpack {
@@ -28,23 +27,25 @@ namespace matrix_completion {
  * mathematical models and numerical algorithms to solve this kind of problems.
  * This class only provide a wrapper using class templates.
  *
- * Popular models are:
+ * The model solved using SDP solver is:
  *
- *   min ||X||_* subj to X_ij = M_ij
+ * \f[
+ *   min ||X||_* subj to X_ij = M_ij, \qquad (i,j) \in \Omega
+ * \f]
  *
  * where ||X||_* denotes the nuclear norm (sum of singular values of X).
  *
- * For a theoretical treatment of the conditions necessary for exact recovery,
- * see the following paper:
+ * For a theoretical treatment of the conditions necessary for exact recovery
+ * using the above model, see the following paper:
  *
  *   A Simpler Appoarch to Matrix Completion.
  *   Benjamin Recht. JMLR 11.
  *   http://arxiv.org/pdf/0910.0651v2.pdf
  *
- * Or
+ * The model solved using FrankWolfe solver is:
  *
  * \f[
- * min \sum_{(i,j) \in \Omega} (X_ij - M_ij)^2, \qquad
+ * min \sum_{(i,j) \in \Omega} 0.5 * (X_ij - M_ij)^2, \qquad
  * s.t. ||X||_* <= tau
  * \f]
  *
@@ -70,6 +71,8 @@ class MatrixCompletion
    * Construct a matrix completion problem, specifying the maximum rank of the
    * solution.
    *
+   * This constructor could be used in MatrixCompletionSDP class.
+   *
    * @param m Number of rows of original matrix.
    * @param n Number of columns of original matrix.
    * @param indices Matrix containing the indices of the known entries (must be
@@ -87,6 +90,8 @@ class MatrixCompletion
   /**
    * Construct a matrix completion problem, specifying the initial point of the
    * optimization.
+   *
+   * This constructor could be used in MatrixCompletionSDP class.
    *
    * @param m Number of rows of original matrix.
    * @param n Number of columns of original matrix.
@@ -106,6 +111,8 @@ class MatrixCompletion
   /**
    * Construct a matrix completion problem.
    *
+   * This constructor could be used in MatrixCompletionSDP class.
+   *
    * @param m Number of rows of original matrix.
    * @param n Number of columns of original matrix.
    * @param indices Matrix containing the indices of the known entries (must be
@@ -120,6 +127,8 @@ class MatrixCompletion
 
   /**
    * Construct a matrix completion problem.
+   *
+   * This constructor could be used in MatrixCompletionFW class.
    *
    * @param m Number of rows of original matrix.
    * @param n Number of columns of original matrix.
@@ -161,8 +170,10 @@ class MatrixCompletion
 
 };
 
+//! Matrix Completion using SDP Solver.
 using MatrixCompletionSDP = MatrixCompletion<MCSDPSolver>;
-//using MatrixCompletionSGD = MatrixCompletion<MCSGDSolver>;
+
+//! Matrix Completion using Frank-Wolfe Solver.
 using MatrixCompletionFW  = MatrixCompletion<MCFWSolver>;
 
 } // namespace matrix_completion

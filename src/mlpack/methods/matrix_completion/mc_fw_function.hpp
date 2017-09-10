@@ -9,6 +9,9 @@
  * f(X) = 0.5* \sum_{(i,j)\in \Omega} |X_{i,j}-M_{i,j}|^2
  *\f]
  *
+ * \f$ \Omega \f$ is specified "indices", while \f$ M_{i,j} \f$ is saved in
+ * "values".
+ *
  * Used in mc_fw_solver.hpp.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the

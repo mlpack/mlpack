@@ -58,13 +58,25 @@ class MCFWSolver
   //! Schatten 1-norm is just the nuclear norm.
   using ConstraintSolver = optimization::ConstrMatrixLpBallSolver;
 
+  /**
+   * Construct a matrix completion problem solver, specifying the initial point
+   * of the optimization.
+   *
+   * @param m Number of rows of original matrix.
+   * @param n Number of columns of original matrix.
+   * @param indices Matrix containing the indices of the known entries (must be
+   *    [2 x p]).
+   * @param values Vector containing the values of the known entries (must be
+   *    length p).
+   * @param tau Nuclear norm in constraint.
+   */
   MCFWSolver(const size_t m,
              const size_t n,
              const arma::umat& indices,
              const arma::vec& values,
              const double tau) :
       function(indices, values, m, n),
-      fwSolver(ConstraintSolver(1), UpdateMatrix(tau), 10000000)
+      fwSolver(ConstraintSolver(1), UpdateMatrix(tau), 50000)
   { /* Nothing to do. */ }
 
   //! This constructor type is not supported.
@@ -96,7 +108,11 @@ class MCFWSolver
       fwSolver(ConstraintSolver(1), UpdateMatrix(0))
   { Log::Fatal << "No such constructor!" << std::endl; }
 
-
+  /**
+   * Recover the low-rank matrix.
+   *
+   * @param recovered Matrix to save the output of the recovered matrix.
+   */
   void Recover(arma::mat& recovered, const size_t m, const size_t n)
   {
     fwSolver.Optimize(function, recovered);
