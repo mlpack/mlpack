@@ -51,7 +51,6 @@ template<typename DecomposableFunctionType>
 double DownpourSGD<UpdatePolicyType, DecayPolicyType>::Optimize(
   DecomposableFunctionType& function, arma::mat& iterate)
 {
-
   // To keep track of where we are and how things are going.
   double currentObjectiv = 0;
   double overallObjective = 0;
@@ -164,7 +163,6 @@ double DownpourSGD<UpdatePolicyType, DecayPolicyType>::Optimize(
 
       // Now iterate!
       arma::mat gradient(iterate.n_rows, iterate.n_cols);
-      //while(true)
       for (size_t i = 1;
           i != (maxIterations == 0 ? 0 : maxIterations * 2 + 10); ++i)
       {

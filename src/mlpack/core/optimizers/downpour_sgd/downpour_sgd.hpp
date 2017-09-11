@@ -1,6 +1,6 @@
 /**
  * @file downpour_sgd.hpp
- * @author Ryan Curtin
+ * @author Marcus Edel
  *
  * Downpour Stochastic Gradient Descent (SGD).
  *
