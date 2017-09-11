@@ -251,7 +251,7 @@ void CheckDistance(TreeType& tree, TreeType* node = NULL)
 BOOST_AUTO_TEST_CASE(UBTreeDistanceTest)
 {
   typedef UBTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
-  arma::mat dataset(8, 1000);
+  arma::mat dataset(8, 200);
 
   dataset.randu();
 

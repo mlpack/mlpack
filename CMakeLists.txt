@@ -10,6 +10,7 @@ option(MATLAB_BINDINGS "Compile MATLAB bindings if MATLAB is found." OFF)
 option(TEST_VERBOSE "Run test cases with verbose output." OFF)
 option(BUILD_TESTS "Build tests." ON)
 option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
+option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
 option(BUILD_SHARED_LIBS
     "Compile shared libraries (if OFF, static libraries are compiled)." ON)
 option(BUILD_WITH_COVERAGE
@@ -266,7 +267,23 @@ set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.
 set(Boost_ADDITIONAL_VERSIONS
-  "1.49.0" "1.50.0" "1.51.0" "1.52.0" "1.53.0" "1.54.0" "1.55.0")
+  "1.65.1" "1.65.0" "1.65"
+  "1.64.1" "1.64.0" "1.64"
+  "1.63.1" "1.63.0" "1.63"
+  "1.62.1" "1.62.0" "1.62"
+  "1.61.1" "1.61.0" "1.61"
+  "1.60.1" "1.60.0" "1.60"
+  "1.59.1" "1.59.0" "1.59"
+  "1.58.1" "1.58.0" "1.58"
+  "1.57.1" "1.57.0" "1.57"
+  "1.56.1" "1.56.0" "1.56"
+  "1.55.1" "1.55.0" "1.55"
+  "1.54.1" "1.54.0" "1.54"
+  "1.53.1" "1.53.0" "1.53"
+  "1.52.1" "1.52.0" "1.52"
+  "1.51.1" "1.51.0" "1.51"
+  "1.50.1" "1.50.0" "1.50"
+  "1.49.1" "1.49.0" "1.49")
 find_package(Boost 1.49
     COMPONENTS
       program_options

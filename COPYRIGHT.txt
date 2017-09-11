@@ -82,6 +82,7 @@ Copyright:
   Copyright 2017, Franciszek Stokowacki <franek.stokowacki@gmail.com>
   Copyright 2017, Samikshya Chand <samikshya289@gmail.com>
   Copyright 2017, N Rajiv Vaidyanathan <rajivvaidyanathan4@gmail.com>
+  Copyright 2017, Kartik Nighania <kartiknighania@gmail.com>
   
 License: BSD-3-clause
   All rights reserved.

@@ -24,7 +24,8 @@ namespace optimization {
  * ball and l1 ball with specific norm.
  * It can be used in projected gradient method.
  */
-class Proximal {
+class Proximal
+{
  public:
   /**
    * Project the vector onto the l1 ball with norm tau. That is, we will solve

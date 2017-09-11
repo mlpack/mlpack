@@ -33,13 +33,15 @@ class Atoms
    * @param v new atom to be added.
    * @param c coefficient of the new atom.
    */
-  void AddAtom(const arma::mat& v, const double c = 0)
+  void AddAtom(const arma::vec& v, FuncSq& function, const double c = 0)
   {
     if (currentAtoms.is_empty())
     {
       CurrentAtoms() = v;
       CurrentCoeffs().set_size(1);
       CurrentCoeffs().fill(c);
+      atomSqTerm.set_size(1);
+      atomSqTerm(0) = std::pow(norm(function.MatrixA() * v, 2), 2);
     }
     else
     {
@@ -47,6 +49,10 @@ class Atoms
       arma::vec cVec(1);
       cVec(0) = c;
       currentCoeffs.insert_rows(0, cVec);
+      double tmp = std::pow(norm(function.MatrixA() * v, 2), 2);
+      arma::vec tmpVec(1);
+      tmpVec(0) = tmp;
+      atomSqTerm.insert_rows(0, tmpVec);
     }
   }
 
@@ -57,7 +63,7 @@ class Atoms
     x = currentAtoms * currentCoeffs;
   }
 
-  /** 
+  /**
    * Prune the support, delete previous atoms if they don't contribute much.
    * See Algorithm 2 of paper:
    * @code
@@ -78,11 +84,9 @@ class Atoms
    */
   void PruneSupport(const double F, FuncSq& function)
   {
-    arma::mat atomSqTerm = function.MatrixA() * currentAtoms;
-    atomSqTerm = sum(square(atomSqTerm), 0);
-    atomSqTerm = 0.5 * atomSqTerm.t() % square(currentCoeffs);
+    arma::vec sqTerm = 0.5 * atomSqTerm % square(currentCoeffs);
 
-    while (true)
+    while (currentAtoms.n_cols > 1)
     {
       // Solve for current gradient.
       arma::mat x;
@@ -91,17 +95,28 @@ class Atoms
       function.Gradient(x, gradient);
 
       // Find possible atom to be deleted.
-      arma::vec gap = atomSqTerm -
+      arma::vec gap = sqTerm -
           currentCoeffs % trans(gradient.t() * currentAtoms);
       arma::uword ind;
       gap.min(ind);
 
       // Try deleting the atom.
-      arma::mat newAtoms = currentAtoms;
-      newAtoms.shed_col(ind);
-      // Recalculate the coefficients.
+      arma::mat newAtoms(currentAtoms.n_rows, currentAtoms.n_cols - 1);
+      if (ind > 0)
+        newAtoms.cols(0, ind - 1) = currentAtoms.cols(0, ind - 1);
+      if (ind < (currentAtoms.n_cols - 1))
+      {
+        newAtoms.cols(ind, newAtoms.n_cols - 1) =
+            currentAtoms.cols(ind + 1, currentAtoms.n_cols - 1);
+      }
+
+      // Reoptimize the coefficients, we brute-forcely reoptimize in the span,
+      // which would be used in UpdateSpan class. Alternatively, if you want to
+      // add an atom norm constraint, you could use projected gradient method,
+      // see the implementaton of ProjectedGradientEnhancement().
       arma::vec newCoeffs =
           solve(function.MatrixA() * newAtoms, function.Vectorb());
+
       // Evaluate the function again.
       double Fnew = function.Evaluate(newAtoms * newCoeffs);
 
@@ -114,6 +129,7 @@ class Atoms
         currentAtoms = newAtoms;
         currentCoeffs = newCoeffs;
         atomSqTerm.shed_row(ind);
+        sqTerm.shed_row(ind);
       } // else
     } // while
   }
@@ -146,8 +162,7 @@ class Atoms
    * @param maxIteration maximum iteration number.
    * @param tolerance tolerance for projected gradient method.
    */
-  template<typename FunctionType>
-  void ProjectedGradientEnhancement(FunctionType& function,
+  void ProjectedGradientEnhancement(FuncSq& function,
                                     double tau,
                                     double stepSize,
                                     size_t maxIteration = 100,
@@ -195,6 +210,10 @@ class Atoms
 
   //! Current atoms in the solution space.
   arma::mat currentAtoms;
+
+  //! Atom square term: ||A * atom||^2, used in PruneSupport(). It is computed
+  //! when an atom is added.
+  arma::vec atomSqTerm;
 }; // class Atoms
 }  // namespace optimization
 }  // namespace mlpack

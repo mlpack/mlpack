@@ -54,12 +54,8 @@ class UpdateSpan
               arma::mat& newCoords,
               const size_t numIter)
   {
-    double oldF;
-    if (isPrune)
-      oldF = function.Evaluate(oldCoords);
-
     // Add new atom into soluton space.
-    atoms.AddAtom(s);
+    atoms.AddAtom(s, function);
 
     // Reoptimize the solution in the current space.
     arma::vec b = function.Vectorb();
@@ -72,6 +68,7 @@ class UpdateSpan
     // Prune the support.
     if (isPrune)
     {
+      double oldF = function.Evaluate(oldCoords);
       double F = 0.25 * oldF + 0.75 * function.Evaluate(newCoords);
       atoms.PruneSupport(F, function);
       atoms.RecoverVector(newCoords);

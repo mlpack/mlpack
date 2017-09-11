@@ -243,19 +243,19 @@ BOOST_AUTO_TEST_CASE(GaussianMatrixSensingSDP)
   arma::mat coordinates;
   coordinates.eye(m + n, ceil(r));
 
-  LRSDP<SDP<arma::sp_mat>> sensing(0, p, coordinates);
+  LRSDP<SDP<arma::sp_mat>> sensing(0, p, coordinates, 15);
   sensing.SDP().C().eye(m + n, m + n);
   sensing.SDP().DenseB() = 2. * b;
 
-  const auto block_rows = arma::span(0, m - 1);
-  const auto block_cols = arma::span(m, m + n - 1);
+  const auto blockRows = arma::span(0, m - 1);
+  const auto blockCols = arma::span(m, m + n - 1);
 
   for (size_t i = 0; i < p; ++i)
   {
     const arma::mat Ai = arma::reshape(A.row(i), n, m);
     sensing.SDP().DenseA()[i].zeros(m + n, m + n);
-    sensing.SDP().DenseA()[i](block_rows, block_cols) = trans(Ai);
-    sensing.SDP().DenseA()[i](block_cols, block_rows) = Ai;
+    sensing.SDP().DenseA()[i](blockRows, blockCols) = trans(Ai);
+    sensing.SDP().DenseA()[i](blockCols, blockRows) = Ai;
   }
 
   double finalValue = sensing.Optimize(coordinates);
@@ -266,14 +266,14 @@ BOOST_AUTO_TEST_CASE(GaussianMatrixSensingSDP)
   {
     const arma::mat Ai = arma::reshape(A.row(i), n, m);
     const double measurement =
-        arma::dot(trans(Ai), rrt(block_rows, block_cols));
-    BOOST_REQUIRE_CLOSE(measurement, b(i), 1e-3);
+        arma::dot(trans(Ai), rrt(blockRows, blockCols));
+    BOOST_REQUIRE_CLOSE(measurement, b(i), 0.05);
   }
 
   // check matrix recovery
-  const double err = arma::norm(Xorig - rrt(block_rows, block_cols), "fro") /
+  const double err = arma::norm(Xorig - rrt(blockRows, blockCols), "fro") /
       arma::norm(Xorig, "fro");
-  BOOST_REQUIRE_SMALL(err, 1e-3);
+  BOOST_REQUIRE_SMALL(err, 0.05);
 }
 
 /**

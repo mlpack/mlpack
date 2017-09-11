@@ -11,6 +11,8 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
+
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
 #include "mean_shift.hpp"
 
@@ -22,8 +24,24 @@ using namespace std;
 // Define parameters for the executable.
 PROGRAM_INFO("Mean Shift Clustering", "This program performs mean shift "
     "clustering on the given dataset, storing the learned cluster assignments "
-    "either as a column of labels in the file containing the input dataset or "
-    "in a separate file.");
+    "either as a column of labels in the input dataset or separately."
+    "\n\n"
+    "The input dataset should be specified with the " +
+    PRINT_PARAM_STRING("input") + " parameter, and the radius used for search"
+    " can be specified with the " + PRINT_PARAM_STRING("radius") + " "
+    "parameter.  The maximum number of iterations before algorithm termination "
+    "is controlled with the " + PRINT_PARAM_STRING("max_iterations") + " "
+    "parameter."
+    "\n\n"
+    "The output labels may be saved with the " + PRINT_PARAM_STRING("output") +
+    " output parameter and the centroids of each cluster may be saved with the"
+    " " + PRINT_PARAM_STRING("centroid") + " output parameter."
+    "\n\n"
+    "For example, to run mean shift clustering on the dataset " +
+    PRINT_DATASET("data") + " and store the centroids to " +
+    PRINT_DATASET("centroids") + ", the following command may be used: "
+    "\n\n" +
+    PRINT_CALL("mean_shift", "input", "data", "centroid", "centroids"));
 
 // Required options.
 PARAM_MATRIX_IN("input", "Input dataset to perform clustering on.", "i");
@@ -31,7 +49,7 @@ PARAM_MATRIX_IN("input", "Input dataset to perform clustering on.", "i");
 // Output options.
 PARAM_FLAG("in_place", "If specified, a column containing the learned cluster "
     "assignments will be added to the input dataset file.  In this case, "
-    "--output_file is overridden.", "P");
+    "--output_file is overridden.  (Do not use with Python.)", "P");
 PARAM_FLAG("labels_only", "If specified, only the output labels will be "
     "written to the file specified by --output_file.", "l");
 PARAM_MATRIX_OUT("output", "Matrix to write output labels or labeled data to.",
@@ -47,10 +65,8 @@ PARAM_DOUBLE_IN("radius", "If the distance between two centroids is less than "
     "the given radius, one will be removed.  A radius of 0 or less means an "
     "estimate will be calculated and used for the radius.", "r", 0);
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   if (!CLI::HasParam("input"))
     Log::Fatal << "--input_file must be specified!" << endl;
 
@@ -111,8 +127,8 @@ int main(int argc, char** argv)
     // Save the dataset.  This takes a little trickery, because we have to set
     // the output matrix parameter to have the same filename associated with it
     // as the input.
-    CLI::GetUnmappedParam<arma::mat>("output") =
-        CLI::GetUnmappedParam<arma::mat>("input");
+    CLI::GetPrintableParam<arma::mat>("output") =
+        CLI::GetPrintableParam<arma::mat>("input");
     CLI::GetParam<arma::mat>("output") = std::move(dataset);
   }
   else if (CLI::HasParam("output"))
@@ -131,14 +147,10 @@ int main(int argc, char** argv)
     }
     else
     {
-      // We have to add an unsigned matrix output parameter so we can save the
-      // labels as the right type.
-      CLI::Add<arma::Mat<size_t>>(arma::Mat<size_t>(), "output_labels",
-          "Labels for input dataset.", '\0', false, false, true);
-      CLI::GetUnmappedParam<arma::Mat<size_t>>("output_labels") =
-          CLI::GetUnmappedParam<arma::mat>("output");
-      CLI::GetParam<arma::Mat<size_t>>("output_labels") =
-          std::move(assignments);
+      // TODO: figure out how to output as an arma::Mat<size_t> so that files
+      // aren't way larger than needed.
+      CLI::GetParam<arma::mat>("output") =
+          arma::conv_to<arma::mat>::from(assignments);
     }
   }
 

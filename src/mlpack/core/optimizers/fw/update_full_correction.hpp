@@ -71,7 +71,7 @@ class UpdateFullCorrection
     gamma = gamma / std::pow(arma::norm(A * v, "fro"), 2);
     gamma = std::min(gamma, 1.0);
     atoms.CurrentCoeffs() = (1.0 - gamma) * atoms.CurrentCoeffs();
-    atoms.AddAtom(s, gamma * tau);
+    atoms.AddAtom(s, function, gamma * tau);
 
     // Projected gradient method for enhancement.
     atoms.ProjectedGradientEnhancement(function, tau, stepSize);

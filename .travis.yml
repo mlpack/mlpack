@@ -3,8 +3,8 @@ dist: xenial
 language: cpp
 
 env:
-  - CMAKE_OPTIONS="-DDEBUG=OFF -DPROFILE=OFF"
-  - CMAKE_OPTIONS="-DDEBUG=ON -DPROFILE=OFF"
+  - CMAKE_OPTIONS="-DDEBUG=OFF -DPROFILE=OFF -DPYTHON=/usr/bin/python"
+  - CMAKE_OPTIONS="-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF"
 
 before_install:
   - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
@@ -14,6 +14,7 @@ before_install:
   - printenv
   - sudo apt-get install libopenblas-dev && sudo apt-get install liblapack-dev
   - sudo apt-get install -qq g++-4.8 libboost1.54-all-dev
+  - sudo pip install cython setuptools numpy pandas
   - curl http://masterblaster.mlpack.org:5005/armadillo-6.500.5.tar.gz | tar xvz && cd armadillo*
   - cmake . && make && sudo make install && cd ..
   - sudo cp .travis/config.hpp /usr/include/armadillo_bits/config.hpp

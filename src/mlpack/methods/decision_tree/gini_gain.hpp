@@ -31,6 +31,11 @@ class GiniGain
    * Evaluate the Gini impurity on the given set of labels.  RowType should be
    * an Armadillo vector that holds size_t objects.
    *
+   * Note that it is possible that due to floating-point representation issues,
+   * it is possible that the gain returned can be very slightly greater than 0!
+   * Thus, if you are checking for a perfect fit, be sure to use 'gain >= 0.0'
+   * not 'gain == 0.0'.
+   *
    * @param labels Set of labels to evaluate Gini impurity on.
    * @param numClasses Number of classes in the dataset.
    * @param weights Weight of labels.

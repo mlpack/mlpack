@@ -14,21 +14,28 @@
 
 #include <mlpack/prereqs.hpp>
 #include <unordered_map>
-#include <boost/bimap.hpp>
 #include <mlpack/core/data/map_policies/datatype.hpp>
 
 namespace mlpack {
 namespace data {
+
 /**
  * IncrementPolicy is used as a helper class for DatasetMapper. It tells how the
  * strings should be mapped. Purpose of this policy is to map all dimension if
  * one if the variables in a dimension turns out to be a categorical variable.
  * IncrementPolicy maps strings to incrementing unsigned integers (size_t).
- * The first string to be mapped will be mapped to 0, the next to 1 and so on.
+ * The first input to be mapped will be mapped to 0, the next to 1 and so on.
+ *
+ * If the 'forceAllMappings' parameter is set to true, this will always map.
+ * Otherwise, inputs will only be mapped if they cannot be cast to the output
+ * type via a stringstream extraction.
  */
 class IncrementPolicy
 {
  public:
+  IncrementPolicy(const bool forceAllMappings = false) :
+      forceAllMappings(forceAllMappings) { }
+
   // typedef of MappedType
   using MappedType = size_t;
 
@@ -38,8 +45,8 @@ class IncrementPolicy
   /**
    * Determine if the dimension is numeric or categorical.
    */
-  template<typename T>
-  void MapFirstPass(const std::string& string,
+  template<typename T, typename InputType>
+  void MapFirstPass(const InputType& input,
                     const size_t dim,
                     std::vector<Datatype>& types)
   {
@@ -49,83 +56,95 @@ class IncrementPolicy
       return;
     }
 
-    // Otherwise we need to attempt to read the value.  If the read fails, the
-    // dimension is categorical; otherwise we leave it at the default of
-    // numeric.
-    std::stringstream token;
-    token.str(string);
-    T val;
-    token >> val;
-
-    if (token.fail() || !token.eof())
+    if (forceAllMappings)
     {
-      // Parsing failed; the dimension is categorical.
       types[dim] = Datatype::categorical;
+    }
+    else
+    {
+      // Attempt to convert the input to an output type via a stringstream.
+      std::stringstream token;
+      token << input;
+      T val;
+      token >> val;
+
+      if (token.fail() || !token.eof())
+        types[dim] = Datatype::categorical;
     }
   }
 
   /**
-   * Given the string and the dimension to which the it belongs, and the maps
+   * Given the input and the dimension to which the it belongs, and the maps
    * and types given by the DatasetMapper class, returns its numeric mapping.
-   * If no mapping yet exists, the string is added to the list of mappings for
+   * If no mapping yet exists, the input is added to the list of mappings for
    * the given dimension. This function is used as a helper function for
    * DatasetMapper class.
    *
    * @tparam MapType Type of unordered_map that contains mapped value pairs
-   * @param string String to find/create mapping for.
-   * @param dimension Index of the dimension of the string.
+   * @param input Input to find/create mapping for.
+   * @param dimension Index of the dimension of the input.
    * @param maps Unordered map given by the DatasetMapper.
    * @param types Vector containing the type information about each dimensions.
    */
-  template<typename MapType, typename T>
-  T MapString(const std::string& string,
+  template<typename MapType, typename T, typename InputType>
+  T MapString(const InputType& input,
               const size_t dimension,
               MapType& maps,
               std::vector<Datatype>& types)
   {
     // If we are in a categorical dimension we already know we need to map.
-    if (types[dimension] == Datatype::numeric)
+    if (types[dimension] == Datatype::numeric && !forceAllMappings)
     {
-      // Check if this string needs to be mapped or if it can be read
+      // Check if this input needs to be mapped or if it can be read
       // directly as a number.  This will be true if nothing else in this
       // dimension has yet been mapped, but this can't be read as a number.
       std::stringstream token;
-      token.str(string);
+      token << input;
       T val;
       token >> val;
 
       if (!token.fail() && token.eof())
-      {
-        // We can return what we have.
         return val;
-      }
+
+      // Otherwise, we must map.
     }
 
-    // The token must be mapped.
-
-    // If this condition is true, either we have no mapping for the given string
+    // If this condition is true, either we have no mapping for the given input
     // or we have no mappings for the given dimension at all.  In either case,
     // we create a mapping.
     if (maps.count(dimension) == 0 ||
-        maps[dimension].first.left.count(string) == 0)
+        maps[dimension].first.count(input) == 0)
     {
-      // This string does not exist yet.
-      size_t& numMappings = maps[dimension].second;
+      // This input does not exist yet.
+      size_t numMappings = maps[dimension].first.size();
 
       // Change type of the feature to categorical.
       if (numMappings == 0)
         types[dimension] = Datatype::categorical;
 
-      typedef boost::bimap<std::string, MappedType>::value_type PairType;
-      maps[dimension].first.insert(PairType(string, numMappings));
-      return T(numMappings++);
+      typedef typename std::pair<InputType, MappedType> PairType;
+      maps[dimension].first.insert(PairType(input, numMappings));
+
+      // Do we need to create the second map?
+      if (maps[dimension].second.count(numMappings) == 0)
+      {
+        maps[dimension].second.insert(std::make_pair(numMappings,
+            std::vector<InputType>()));
+      }
+      maps[dimension].second[numMappings].push_back(input);
+
+      return T(numMappings);
     }
     else
     {
-      // This string already exists in the mapping.
-      return maps[dimension].first.left.at(string);
+      // This input already exists in the mapping.
+      return maps[dimension].first.at(input);
     }
   }
+
+ private:
+  // Whether or not we should map all tokens.
+  bool forceAllMappings;
 }; // class IncrementPolicy
 
 } // namespace data

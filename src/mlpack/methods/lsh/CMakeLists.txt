@@ -18,3 +18,4 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 # The code to compute the approximate neighbor for the given query and reference
 # sets with p-stable LSH.
 add_cli_executable(lsh)
+add_python_binding(lsh)
