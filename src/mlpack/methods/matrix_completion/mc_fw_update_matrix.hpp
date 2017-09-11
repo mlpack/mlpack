@@ -60,6 +60,9 @@ class UpdateMatrix {
     currentCoeffs = (1.0 - gamma) * currentCoeffs;
     AddAtom(s, gamma * tau);
 
+    ProjectedGradientEnhancement(function, 0.6);
+
+
     // Truncation step, to find a new set of atoms for better representation.
     RecoverMatrix(newCoords);
     double fOld = function.Evaluate(oldCoords);

@@ -76,7 +76,7 @@ class MCFWSolver
              const arma::vec& values,
              const double tau) :
       function(indices, values, m, n),
-      fwSolver(ConstraintSolver(1), UpdateMatrix(tau), 50000)
+      fwSolver(ConstraintSolver(1), UpdateMatrix(tau), 140000)
   { /* Nothing to do. */ }
 
   //! This constructor type is not supported.
