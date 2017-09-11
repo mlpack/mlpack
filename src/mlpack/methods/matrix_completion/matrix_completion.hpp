@@ -167,7 +167,6 @@ class MatrixCompletion
 
   //! Validate the input matrices.
   void CheckValues(const arma::umat& indices, const arma::vec& values);
-
 };
 
 //! Matrix Completion using SDP Solver.

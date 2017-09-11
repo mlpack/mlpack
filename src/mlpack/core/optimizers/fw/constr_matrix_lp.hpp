@@ -20,7 +20,6 @@
 
 namespace mlpack {
 namespace optimization {
- 
 /**
  * LinearConstrSolver for FrankWolfe algorithm. The constraint is in matrix
  * atom domain, that is defined by unit ball under Schatten Matrix Norms.
@@ -43,7 +42,7 @@ class ConstrMatrixLpBallSolver
   ConstrMatrixLpBallSolver(const double p):
       p(p), vector_lp_solver(p)
   {/* Nothing to do. */}
- 
+
   //! Get the p-norm.
   double P() const { return p; }
   //! Modify the p-norm.

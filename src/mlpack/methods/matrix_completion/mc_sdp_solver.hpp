@@ -44,7 +44,7 @@ namespace matrix_completion {
  */
 class MCSDPSolver
 {
-public:
+ public:
   /**
    * Construct a matrix completion problem, specifying the maximum rank of the
    * solution.
@@ -128,10 +128,10 @@ public:
     recovered = recovered(arma::span(0, m - 1), arma::span(m, m + n - 1));
   }
 
-private:
+ private:
     //! The underlying SDP to be solved.
     optimization::LRSDP<optimization::SDP<arma::sp_mat>> sdp;
-    
+
     size_t DefaultRank(const size_t m, const size_t n, const size_t p)
     {
         // If r = O(sqrt(p)), then we are guaranteed an exact solution.
@@ -163,8 +163,7 @@ private:
         }
     }
 };
-}
-}
+} // namespace matrix_completion
+} // namespace mlpack
 
 #endif
-

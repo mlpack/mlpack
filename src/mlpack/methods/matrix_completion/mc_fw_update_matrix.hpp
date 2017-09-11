@@ -151,8 +151,8 @@ class UpdateMatrix {
     arma::mat U, V;
     arma::vec s;
     arma::uword k;
-    if(!arma::svd_econ(U, s, V, X))
-      Log::Fatal << "Truncation: armadillo svd_econ() failed!";
+    if (!arma::svd_econ(U, s, V, X))
+      Log::Fatal << "Truncation: armadillo svd_econ() failed!" << std::endl;
     size_t r = s.n_elem;
 
     for (size_t i = 1; i < r; i++)
@@ -230,7 +230,6 @@ class UpdateMatrix {
       value = valueNew;
     }
   }
-
 };  // class UpdateMatrix
 
 } // namespace matrix_completion

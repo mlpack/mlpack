@@ -103,7 +103,7 @@ class MatrixCompletionFWFunction {
   //! Get the known elements.
   const arma::vec& Values() const { return values; }
 
-private:
+ private:
   //! Indices for sparse matrix.
   arma::umat indices;
 
