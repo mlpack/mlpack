@@ -32,7 +32,8 @@ cdef extern from "numpy/arrayobject.h":
 cdef extern from "<mlpack/bindings/python/mlpack/arma_util.hpp>":
   void SetMemState[T](T& m, int state)
 
-cdef arma.Mat[double]* numpy_to_mat_d(numpy.ndarray[numpy.double_t, ndim=2] X):
+cdef arma.Mat[double]* numpy_to_mat_d(numpy.ndarray[numpy.double_t, ndim=2] X) \
+    except +:
   """
   Convert a numpy ndarray to a matrix.
   """
@@ -48,7 +49,8 @@ cdef arma.Mat[double]* numpy_to_mat_d(numpy.ndarray[numpy.double_t, ndim=2] X):
 
   return m
 
-cdef arma.Mat[size_t]* numpy_to_mat_s(numpy.ndarray[numpy.npy_intp, ndim=2] X):
+cdef arma.Mat[size_t]* numpy_to_mat_s(numpy.ndarray[numpy.npy_intp, ndim=2] X) \
+    except +:
   """
   Convert a numpy ndarray to a matrix.
   """
@@ -65,7 +67,8 @@ cdef arma.Mat[size_t]* numpy_to_mat_s(numpy.ndarray[numpy.npy_intp, ndim=2] X):
 
   return m
 
-cdef numpy.ndarray[numpy.double_t, ndim=2] mat_to_numpy_d(arma.Mat[double]& X):
+cdef numpy.ndarray[numpy.double_t, ndim=2] mat_to_numpy_d(arma.Mat[double]& X) \
+    except +:
   """
   Convert an Armadillo object to a numpy ndarray.
   """
@@ -82,7 +85,8 @@ cdef numpy.ndarray[numpy.double_t, ndim=2] mat_to_numpy_d(arma.Mat[double]& X):
 
   return output
 
-cdef numpy.ndarray[numpy.npy_intp, ndim=2] mat_to_numpy_s(arma.Mat[size_t]& X):
+cdef numpy.ndarray[numpy.npy_intp, ndim=2] mat_to_numpy_s(arma.Mat[size_t]& X) \
+    except +:
   """
   Convert an Armadillo object to a numpy ndarray.
   """
@@ -99,7 +103,8 @@ cdef numpy.ndarray[numpy.npy_intp, ndim=2] mat_to_numpy_s(arma.Mat[size_t]& X):
 
   return output
 
-cdef arma.Row[double]* numpy_to_row_d(numpy.ndarray[numpy.double_t, ndim=1] X):
+cdef arma.Row[double]* numpy_to_row_d(numpy.ndarray[numpy.double_t, ndim=1] X) \
+    except +:
   """
   Convert a numpy one-dimensional ndarray to a row.
   """
@@ -116,7 +121,8 @@ cdef arma.Row[double]* numpy_to_row_d(numpy.ndarray[numpy.double_t, ndim=1] X):
 
   return m
 
-cdef arma.Row[size_t]* numpy_to_row_s(numpy.ndarray[numpy.npy_intp, ndim=1] X):
+cdef arma.Row[size_t]* numpy_to_row_s(numpy.ndarray[numpy.npy_intp, ndim=1] X) \
+    except +:
   """
   Convert a numpy one-dimensional ndarray to a row.
   """
@@ -133,7 +139,8 @@ cdef arma.Row[size_t]* numpy_to_row_s(numpy.ndarray[numpy.npy_intp, ndim=1] X):
 
   return m
 
-cdef numpy.ndarray[numpy.double_t, ndim=1] row_to_numpy_d(arma.Row[double]& X):
+cdef numpy.ndarray[numpy.double_t, ndim=1] row_to_numpy_d(arma.Row[double]& X) \
+    except +:
   """
   Convert an Armadillo row vector to a one-dimensional numpy ndarray.
   """
@@ -148,7 +155,8 @@ cdef numpy.ndarray[numpy.double_t, ndim=1] row_to_numpy_d(arma.Row[double]& X):
 
   return output
 
-cdef numpy.ndarray[numpy.npy_intp, ndim=1] row_to_numpy_s(arma.Row[size_t]& X):
+cdef numpy.ndarray[numpy.npy_intp, ndim=1] row_to_numpy_s(arma.Row[size_t]& X) \
+    except +:
   """
   Convert an Armadillo row vector to a one-dimensional numpy ndarray.
   """
@@ -163,7 +171,8 @@ cdef numpy.ndarray[numpy.npy_intp, ndim=1] row_to_numpy_s(arma.Row[size_t]& X):
 
   return output
 
-cdef arma.Col[double]* numpy_to_col_d(numpy.ndarray[numpy.double_t, ndim=1] X):
+cdef arma.Col[double]* numpy_to_col_d(numpy.ndarray[numpy.double_t, ndim=1] X) \
+    except +:
   """
   Convert a numpy one-dimensional ndarray to a column vector.
   """
@@ -180,7 +189,8 @@ cdef arma.Col[double]* numpy_to_col_d(numpy.ndarray[numpy.double_t, ndim=1] X):
 
   return m
 
-cdef arma.Col[size_t]* numpy_to_col_s(numpy.ndarray[numpy.npy_intp, ndim=1] X):
+cdef arma.Col[size_t]* numpy_to_col_s(numpy.ndarray[numpy.npy_intp, ndim=1] X) \
+    except +:
   """
   Convert a numpy one-dimensional ndarray to a column vector.
   """
@@ -197,7 +207,8 @@ cdef arma.Col[size_t]* numpy_to_col_s(numpy.ndarray[numpy.npy_intp, ndim=1] X):
 
   return m
 
-cdef numpy.ndarray[numpy.double_t, ndim=1] col_to_numpy_d(arma.Col[double]& X):
+cdef numpy.ndarray[numpy.double_t, ndim=1] col_to_numpy_d(arma.Col[double]& X) \
+    except +:
   """
   Convert an Armadillo column vector to a one-dimensional numpy ndarray.
   """
@@ -212,7 +223,8 @@ cdef numpy.ndarray[numpy.double_t, ndim=1] col_to_numpy_d(arma.Col[double]& X):
 
   return output
 
-cdef numpy.ndarray[numpy.npy_intp, ndim=1] col_to_numpy_s(arma.Col[size_t]& X):
+cdef numpy.ndarray[numpy.npy_intp, ndim=1] col_to_numpy_s(arma.Col[size_t]& X) \
+    except +:
   """
   Convert an Armadillo column vector to a one-dimensional numpy ndarray.
   """

@@ -65,8 +65,11 @@ std::string PrintInputOptions(const std::string& paramName,
     {
       // Print the input option.
       std::ostringstream oss;
-      oss << paramName << "=" <<
-          PrintValue(value, d.tname == TYPENAME(std::string));
+      if (paramName != "lambda") // Don't print Python keywords.
+        oss << paramName << "=";
+      else
+        oss << paramName << "_=";
+      oss << PrintValue(value, d.tname == TYPENAME(std::string));
       result = oss.str();
     }
   }
@@ -192,7 +195,12 @@ inline std::string ProgramCallClose()
 inline std::string ParamString(const std::string& paramName)
 {
   // For a Python binding we don't need to know the type.
-  return "'" + paramName + "'";
+
+  // Make sure that we don't print reserved keywords.
+  if (paramName == "lambda")
+    return "'" + paramName + "_'";
+  else
+    return "'" + paramName + "'";
 }
 
 /**
@@ -203,7 +211,10 @@ template<typename T>
 inline std::string ParamString(const std::string& paramName, const T& value)
 {
   std::ostringstream oss;
-  oss << paramName << "=" << value;
+  if (paramName == "lambda") // Don't print reserved keywords.
+    oss << paramName << "_=" << value;
+  else
+    oss << paramName << "=" << value;
   return oss.str();
 }
 
