@@ -18,31 +18,33 @@ from libcpp cimport bool
 cdef extern from "<mlpack/core/util/cli.hpp>" namespace "mlpack" nogil:
   cdef cppclass CLI:
     @staticmethod
-    (T&) GetParam[T](string) nogil
+    (T&) GetParam[T](string) nogil except +
 
     @staticmethod
-    void SetPassed(string) nogil
+    void SetPassed(string) nogil except +
 
     @staticmethod
-    void Destroy() nogil
+    void Destroy() nogil except +
 
     @staticmethod
-    void StoreSettings(string) nogil
+    void StoreSettings(string) nogil except +
 
     @staticmethod
-    void RestoreSettings(string) nogil
+    void RestoreSettings(string) nogil except +
 
     @staticmethod
-    void ClearSettings() nogil
+    void ClearSettings() nogil except +
 
 cdef extern from "<mlpack/bindings/python/mlpack/cli_util.hpp>" \
     namespace "mlpack::util" nogil:
-  void SetParam[T](string, const T&) nogil
-  void SetParamWithInfo[T](string, const T&, const bool*) nogil
-  (T&) GetParamWithInfo[T](string) nogil
-  void EnableVerbose() nogil
+  void SetParam[T](string, const T&) nogil except +
+  void SetParamWithInfo[T](string, const T&, const bool*) nogil except +
+  (T&) GetParamWithInfo[T](string) nogil except +
+  void EnableVerbose() nogil except +
+  void DisableBacktrace() nogil except +
+  void ResetTimers() nogil except +
 
 cdef extern from "<mlpack/bindings/python/mlpack/move.hpp>" \
     namespace "mlpack::util" nogil:
-  void MoveFromPtr[T](T&, T*) nogil
-  void MoveToPtr[T](T*, T&) nogil
+  void MoveFromPtr[T](T&, T*) nogil except +
+  void MoveToPtr[T](T*, T&) nogil except +
