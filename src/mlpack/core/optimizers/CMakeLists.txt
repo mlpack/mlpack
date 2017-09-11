@@ -4,6 +4,7 @@ set(DIRS
   adam
   aug_lagrangian
   cne
+  downpour_sgd
   fw
   gradient_descent
   grid_search

@@ -268,13 +268,31 @@ set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
 # updated as time goes on and new versions are released.
 set(Boost_ADDITIONAL_VERSIONS
   "1.49.0" "1.50.0" "1.51.0" "1.52.0" "1.53.0" "1.54.0" "1.55.0")
+find_package(Boost 1.49 COMPONENTS mpi)
 find_package(Boost 1.49
     COMPONENTS
+      mpi
       program_options
       unit_test_framework
       serialization
     REQUIRED
 )
+
+# Detect MPI support. If MPI is supported the libaries are returned and added
+# and the HAS_MPI definition is added for compilation.
+#
+# This way we can skip calls to functions defined in mpi.h with code like:
+# #ifdef HAS_MPI
+# {
+#   ... MPI code here ...
+# }
+# #endif
+find_package(MPI)
+if(Boost_MPI_FOUND AND MPI_FOUND)
+  set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${MPI_LIBRARIES})
+  set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${MPI_INCLUDE_PATH})
+  add_definitions(-DHAS_MPI)
+endif()
 
 link_directories(${Boost_LIBRARY_DIRS})
 
