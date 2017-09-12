@@ -287,7 +287,6 @@ set(Boost_ADDITIONAL_VERSIONS
 find_package(Boost 1.49 COMPONENTS mpi)
 find_package(Boost 1.49
     COMPONENTS
-      mpi
       program_options
       unit_test_framework
       serialization

@@ -198,7 +198,17 @@ double DownpourSGD<UpdatePolicyType, DecayPolicyType>::Optimize(
           // Evaluate the gradient for this mini-batch.
           const size_t offset = batchSize *
               visitationOrder[currentBatch + batchOffset];
-          function.Gradient(iterate, offset, gradient);
+
+          if (batchOffset == 0)
+          {
+            function.Gradient(iterate, offset, gradient);
+          }
+          else
+          {
+            function.Gradient(iterate, offset, funcGradient);
+            gradient += funcGradient;
+          }
+
           if (visitationOrder[currentBatch] != numBatches - 1)
           {
             for (size_t j = 1; j < batchSize; ++j)
