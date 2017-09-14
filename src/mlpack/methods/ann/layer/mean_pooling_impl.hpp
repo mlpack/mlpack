@@ -107,14 +107,14 @@ void MeanPooling<InputDataType, OutputDataType>::Backward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void MeanPooling<InputDataType, OutputDataType>::Serialize(
+void MeanPooling<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  ar & data::CreateNVP(kW, "kW");
-  ar & data::CreateNVP(kH, "kH");
-  ar & data::CreateNVP(dW, "dW");
-  ar & data::CreateNVP(dH, "dH");
+  ar & BOOST_SERIALIZATION_NVP(kW);
+  ar & BOOST_SERIALIZATION_NVP(kH);
+  ar & BOOST_SERIALIZATION_NVP(dW);
+  ar & BOOST_SERIALIZATION_NVP(dH);
 }
 
 } // namespace ann

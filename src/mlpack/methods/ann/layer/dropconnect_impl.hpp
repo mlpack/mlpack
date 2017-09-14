@@ -28,7 +28,10 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-DropConnect<InputDataType, OutputDataType>::DropConnect()
+DropConnect<InputDataType, OutputDataType>::DropConnect() :
+    ratio(0.5),
+    scale(2.0),
+    deterministic(true)
 {
   // Nothing to do here.
 }
@@ -111,12 +114,25 @@ void DropConnect<InputDataType, OutputDataType>::Gradient(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void DropConnect<InputDataType, OutputDataType>::Serialize(
+void DropConnect<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  ar & data::CreateNVP(ratio, "ratio");
-  ar & data::CreateNVP(scale, "scale");
+  // Delete the old network first, if needed.
+  if (Archive::is_loading::value)
+  {
+    boost::apply_visitor(DeleteVisitor(), baseLayer);
+  }
+
+  ar & BOOST_SERIALIZATION_NVP(ratio);
+  ar & BOOST_SERIALIZATION_NVP(scale);
+  ar & BOOST_SERIALIZATION_NVP(baseLayer);
+
+  if (Archive::is_loading::value)
+  {
+    network.clear();
+    network.push_back(baseLayer);
+  }
 }
 
 }  // namespace ann

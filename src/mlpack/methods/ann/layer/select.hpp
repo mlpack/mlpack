@@ -38,7 +38,7 @@ class Select
    * @param index The column which should be extracted from the given input.
    * @param elements The number of elements that should be used.
    */
-  Select(const size_t index, const size_t elements = 0);
+  Select(const size_t index = 0, const size_t elements = 0);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -83,7 +83,7 @@ class Select
    * Serialize the layer
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Locally-stored column index.

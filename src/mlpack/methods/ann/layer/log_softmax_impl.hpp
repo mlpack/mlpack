@@ -73,7 +73,7 @@ void LogSoftMax<InputDataType, OutputDataType>::Backward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void LogSoftMax<InputDataType, OutputDataType>::Serialize(
+void LogSoftMax<InputDataType, OutputDataType>::serialize(
     Archive& /* ar */,
     const unsigned int /* version */)
 {

@@ -69,12 +69,16 @@ void LinearNoBias<InputDataType, OutputDataType>::Gradient(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void LinearNoBias<InputDataType, OutputDataType>::Serialize(
+void LinearNoBias<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & data::CreateNVP(weights, "weights");
-  ar & data::CreateNVP(inSize, "inSize");
-  ar & data::CreateNVP(outSize, "outSize");
+  ar & BOOST_SERIALIZATION_NVP(inSize);
+  ar & BOOST_SERIALIZATION_NVP(outSize);
+
+  // This is inefficient, but necessary so that WeightSetVisitor sets the right
+  // size.
+  if (Archive::is_loading::value)
+    weights.set_size(outSize * inSize, 1);
 }
 
 } // namespace ann

@@ -60,12 +60,11 @@ void Lookup<InputDataType, OutputDataType>::Gradient(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void Lookup<InputDataType, OutputDataType>::Serialize(
+void Lookup<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & data::CreateNVP(weights, "weights");
-  ar & data::CreateNVP(inSize, "inSize");
-  ar & data::CreateNVP(outSize, "outSize");
+  ar & BOOST_SERIALIZATION_NVP(inSize);
+  ar & BOOST_SERIALIZATION_NVP(outSize);
 }
 
 } // namespace ann

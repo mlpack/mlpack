@@ -56,6 +56,12 @@ class RecurrentAttention
 {
  public:
   /**
+   * Default constructor: this will not give a usable RecurrentAttention object,
+   * so be sure to set all the parameters before use.
+   */
+  RecurrentAttention();
+
+  /**
    * Create the RecurrentAttention object using the specified modules.
    *
    * @param start The module output size.
@@ -142,7 +148,7 @@ class RecurrentAttention
    * Serialize the layer
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Calculate the gradient of the attention module.
@@ -195,17 +201,8 @@ class RecurrentAttention
   //! Locally-stored weight object.
   OutputDataType parameters;
 
-  //! Locally-stored initial module.
-  LayerTypes initialModule;
-
-  //! Locally-stored recurrent module.
-  LayerTypes recurrentModule;
-
   //! Locally-stored model modules.
   std::vector<LayerTypes> network;
-
-  //! Locally-stored merge module.
-  LayerTypes mergeModule;
 
   //! Locally-stored weight size visitor.
   WeightSizeVisitor weightSizeVisitor;

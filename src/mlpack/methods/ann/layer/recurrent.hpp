@@ -44,6 +44,12 @@ class Recurrent
 {
  public:
   /**
+   * Default constructor---this will create a Recurrent object that can't be
+   * used, so be careful!  Make sure to set all the parameters before use.
+   */
+  Recurrent();
+
+  /**
    * Create the Recurrent object using the specified modules.
    *
    * @param start The start module.
@@ -135,7 +141,7 @@ class Recurrent
    * Serialize the layer
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Locally-stored start module.
