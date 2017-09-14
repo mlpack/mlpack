@@ -268,27 +268,27 @@ void FastLSTM<InputDataType, OutputDataType>::Gradient(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void FastLSTM<InputDataType, OutputDataType>::Serialize(
+void FastLSTM<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & data::CreateNVP(weights, "weights");
-  ar & data::CreateNVP(inSize, "inSize");
-  ar & data::CreateNVP(outSize, "outSize");
-  ar & data::CreateNVP(rho, "rho");
-  ar & data::CreateNVP(batchSize, "batchSize");
-  ar & data::CreateNVP(batchStep, "batchStep");
-  ar & data::CreateNVP(forwardStep, "forwardStep");
-  ar & data::CreateNVP(backwardStep, "backwardStep");
-  ar & data::CreateNVP(gradientStep, "gradientStep");
-  ar & data::CreateNVP(gradientStepIdx, "gradientStepIdx");
-  ar & data::CreateNVP(cell, "cell");
-  ar & data::CreateNVP(stateActivation, "stateActivation");
-  ar & data::CreateNVP(gateActivation, "gateActivation");
-  ar & data::CreateNVP(gate, "gate");
-  ar & data::CreateNVP(cellActivation, "cellActivation");
-  ar & data::CreateNVP(forgetGateError, "forgetGateError");
-  ar & data::CreateNVP(prevError, "prevError");
-  ar & data::CreateNVP(outParameter, "outParameter");
+  ar & BOOST_SERIALIZATION_NVP(weights);
+  ar & BOOST_SERIALIZATION_NVP(inSize);
+  ar & BOOST_SERIALIZATION_NVP(outSize);
+  ar & BOOST_SERIALIZATION_NVP(rho);
+  ar & BOOST_SERIALIZATION_NVP(batchSize);
+  ar & BOOST_SERIALIZATION_NVP(batchStep);
+  ar & BOOST_SERIALIZATION_NVP(forwardStep);
+  ar & BOOST_SERIALIZATION_NVP(backwardStep);
+  ar & BOOST_SERIALIZATION_NVP(gradientStep);
+  ar & BOOST_SERIALIZATION_NVP(gradientStepIdx);
+  ar & BOOST_SERIALIZATION_NVP(cell);
+  ar & BOOST_SERIALIZATION_NVP(stateActivation);
+  ar & BOOST_SERIALIZATION_NVP(gateActivation);
+  ar & BOOST_SERIALIZATION_NVP(gate);
+  ar & BOOST_SERIALIZATION_NVP(cellActivation);
+  ar & BOOST_SERIALIZATION_NVP(forgetGateError);
+  ar & BOOST_SERIALIZATION_NVP(prevError);
+  ar & BOOST_SERIALIZATION_NVP(outParameter);
 }
 
 } // namespace ann

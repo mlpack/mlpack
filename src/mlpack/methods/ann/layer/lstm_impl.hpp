@@ -424,7 +424,7 @@ void LSTM<InputDataType, OutputDataType>::Gradient(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void LSTM<InputDataType, OutputDataType>::Serialize(
+void LSTM<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
   ar & BOOST_SERIALIZATION_NVP(weights);
