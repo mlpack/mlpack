@@ -532,7 +532,7 @@ void ReberGrammarTestNetwork(const size_t hiddenSize = 4,
 /**
  * Train the specified networks on an embedded Reber grammar dataset.
  */
-BOOST_AUTO_TEST_CASE(LSTMRecursiveReberGrammarTest)
+BOOST_AUTO_TEST_CASE(LSTMReberGrammarTest)
 {
   ReberGrammarTestNetwork<LSTM<> >(10, false);
 }
@@ -540,9 +540,9 @@ BOOST_AUTO_TEST_CASE(LSTMRecursiveReberGrammarTest)
 /**
  * Train the specified networks on an embedded Reber grammar dataset.
  */
-BOOST_AUTO_TEST_CASE(FastLSTMRecursiveReberGrammarTest)
+BOOST_AUTO_TEST_CASE(FastLSTMReberGrammarTest)
 {
-  ReberGrammarTestNetwork<FastLSTM<> >(25, true);
+  ReberGrammarTestNetwork<FastLSTM<> >(8, false);
 }
 
 /**

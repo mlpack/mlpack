@@ -172,8 +172,7 @@ class FastLSTM
   template<typename InputType, typename OutputType>
   void FastSigmoid(InputType&& input, OutputType&& sigmoids)
   {
-    #pragma omp parallel for
-    for (omp_size_t i = 0; i < input.n_elem; ++i)
+    for (size_t i = 0; i < input.n_elem; ++i)
       sigmoids(i) = FastSigmoid(input(i));
   }
 
@@ -200,12 +199,11 @@ class FastLSTM
     {
       ElemType xx = -x;
       if (xx < 1.7)
-        z = (1.5 * xx / (1 + xx));
+        z = -(1.5 * xx / (1 + xx));
       else if (xx < 3)
-        z = (0.935409070603099 + 0.0458812946797165 * (xx - 1.7));
+        z = -(0.935409070603099 + 0.0458812946797165 * (xx - 1.7));
       else
-        z = 0.99505475368673;
-      z = -z;
+        z = -0.99505475368673;
     }
 
     return 0.5 * (z + 1.0);
