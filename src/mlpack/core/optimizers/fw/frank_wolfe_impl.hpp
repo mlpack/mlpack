@@ -82,7 +82,7 @@ Optimize(FunctionType& function, arma::mat& iterate)
   Log::Info << "Frank Wolfe: maximum iterations (" << maxIterations
       << ") reached; " << "terminating optimization." << std::endl;
   return currentObjective;
-}
+} // Optimize()
 
 
 } // namespace optimization

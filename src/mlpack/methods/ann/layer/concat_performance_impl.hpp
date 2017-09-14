@@ -104,7 +104,7 @@ void ConcatPerformance<
     OutputLayerType,
     InputDataType,
     OutputDataType
->::Serialize(Archive& /* ar */, const unsigned int /* version */)
+>::serialize(Archive& /* ar */, const unsigned int /* version */)
 {
   // Nothing to do here.
 }

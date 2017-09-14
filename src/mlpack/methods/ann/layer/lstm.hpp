@@ -297,13 +297,13 @@ class LSTM
   OutputDataType outParameter;
 
   //! Locally-stored input cell error parameter.
-  arma::mat inputCellError;
+  OutputDataType inputCellError;
 
   //! Locally-stored input gate error.
-  arma::mat inputGateError;
+  OutputDataType inputGateError;
 
   //! Locally-stored hidden layer error.
-  arma::mat hiddenError;
+  OutputDataType hiddenError;
 
   //! Locally-stored current rho size.
   size_t rhoSize;

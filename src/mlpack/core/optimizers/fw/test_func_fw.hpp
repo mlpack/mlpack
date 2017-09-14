@@ -51,6 +51,7 @@ class TestFuncFW
    */
   void Gradient(const arma::mat& coords, arma::mat& gradient)
   {
+    gradient.set_size(3, 1);
     gradient[0] = coords[0] - 0.1;
     gradient[1] = coords[1] - 0.2;
     gradient[2] = coords[2] - 0.3;

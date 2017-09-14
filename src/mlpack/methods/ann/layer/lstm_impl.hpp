@@ -270,8 +270,9 @@ void LSTM<InputDataType, OutputDataType>::Backward(
       (1.0 - outputGateActivation.cols(backwardStep - batchStep,
       backwardStep)));
 
-  arma::mat cellError = gy % outputGateActivation.cols(backwardStep - batchStep,
-      backwardStep) % (1 - arma::pow(cellActivation.cols(backwardStep -
+  OutputDataType cellError = gy %
+      outputGateActivation.cols(backwardStep - batchStep, backwardStep) %
+      (1 - arma::pow(cellActivation.cols(backwardStep -
       batchStep, backwardStep), 2)) + outputGateError.each_col() %
       cell2GateOutputWeight;
 
@@ -426,24 +427,24 @@ template<typename Archive>
 void LSTM<InputDataType, OutputDataType>::Serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & data::CreateNVP(weights, "weights");
-  ar & data::CreateNVP(inSize, "inSize");
-  ar & data::CreateNVP(outSize, "outSize");
-  ar & data::CreateNVP(rho, "rho");
-  ar & data::CreateNVP(batchSize, "batchSize");
-  ar & data::CreateNVP(batchStep, "batchStep");
-  ar & data::CreateNVP(forwardStep, "forwardStep");
-  ar & data::CreateNVP(backwardStep, "backwardStep");
-  ar & data::CreateNVP(gradientStep, "gradientStep");
-  ar & data::CreateNVP(gradientStepIdx, "gradientStepIdx");
-  ar & data::CreateNVP(cell, "cell");
-  ar & data::CreateNVP(inputGateActivation, "inputGateActivation");
-  ar & data::CreateNVP(forgetGateActivation, "forgetGateActivation");
-  ar & data::CreateNVP(outputGateActivation, "outputGateActivation");
-  ar & data::CreateNVP(hiddenLayerActivation, "hiddenLayerActivation");
-  ar & data::CreateNVP(cellActivation, "cellActivation");
-  ar & data::CreateNVP(prevError, "prevError");
-  ar & data::CreateNVP(outParameter, "outParameter");
+  ar & BOOST_SERIALIZATION_NVP(weights);
+  ar & BOOST_SERIALIZATION_NVP(inSize);
+  ar & BOOST_SERIALIZATION_NVP(outSize);
+  ar & BOOST_SERIALIZATION_NVP(rho);
+  ar & BOOST_SERIALIZATION_NVP(batchSize);
+  ar & BOOST_SERIALIZATION_NVP(batchStep);
+  ar & BOOST_SERIALIZATION_NVP(forwardStep);
+  ar & BOOST_SERIALIZATION_NVP(backwardStep);
+  ar & BOOST_SERIALIZATION_NVP(gradientStep);
+  ar & BOOST_SERIALIZATION_NVP(gradientStepIdx);
+  ar & BOOST_SERIALIZATION_NVP(cell);
+  ar & BOOST_SERIALIZATION_NVP(inputGateActivation);
+  ar & BOOST_SERIALIZATION_NVP(forgetGateActivation);
+  ar & BOOST_SERIALIZATION_NVP(outputGateActivation);
+  ar & BOOST_SERIALIZATION_NVP(hiddenLayerActivation);
+  ar & BOOST_SERIALIZATION_NVP(cellActivation);
+  ar & BOOST_SERIALIZATION_NVP(prevError);
+  ar & BOOST_SERIALIZATION_NVP(outParameter);
 }
 
 } // namespace ann

@@ -67,6 +67,35 @@ double GradientDescent::Optimize(
   return overallObjective;
 }
 
+template<typename FunctionType>
+double GradientDescent::Optimize(
+    FunctionType& function,
+    arma::mat& iterate,
+    data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo)
+{
+  if (datasetInfo.Dimensionality() != iterate.n_rows)
+  {
+      std::ostringstream oss;
+      oss << "GradientDescent::Optimize(): expected information about "
+          << iterate.n_rows << " dimensions in datasetInfo, but found about "
+          << datasetInfo.Dimensionality() << std::endl;
+      throw std::invalid_argument(oss.str());
+  }
+
+  for (size_t i = 0; i < datasetInfo.Dimensionality(); ++i)
+  {
+    if (datasetInfo.Type(i) != data::Datatype::numeric)
+    {
+      std::ostringstream oss;
+      oss << "GradientDescent::Optimize(): the dimension " << i
+          << "is not numeric" << std::endl;
+      throw std::invalid_argument(oss.str());
+    }
+  }
+
+  return Optimize(function, iterate);
+}
+
 } // namespace optimization
 } // namespace mlpack
 

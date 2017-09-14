@@ -417,7 +417,7 @@ void mlpackMain()
     typeId = HMMType::DiscreteHMM;
   else if (type == "gaussian")
     typeId = HMMType::GaussianHMM;
-  else if (type == "gmm")
+  else
     typeId = HMMType::GaussianMixtureModelHMM;
 
   // If we have a model file, we can autodetect the type.

@@ -7,7 +7,7 @@
  * '--param_name=x' or '--param_name'.
  */
 #ifndef MLPACK_BINDINGS_CLI_PRINT_DOC_FUNCTIONS_HPP
-#define MLPACK_BINDINGS_CLI_PRINT_DOC_FUCNTIONS_HPP
+#define MLPACK_BINDINGS_CLI_PRINT_DOC_FUNCTIONS_HPP
 
 #include <mlpack/core/util/hyphenate_string.hpp>
 

@@ -42,7 +42,7 @@ class Lookup
    * @param inSize The number of input units.
    * @param outSize The number of output units.
    */
-  Lookup(const size_t inSize, const size_t outSize);
+  Lookup(const size_t inSize = 0, const size_t outSize = 0);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -109,7 +109,7 @@ class Lookup
    * Serialize the layer
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Locally-stored number of input units.

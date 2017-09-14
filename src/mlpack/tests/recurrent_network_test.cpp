@@ -18,6 +18,7 @@
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
+#include "serialization.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
@@ -741,6 +742,71 @@ BOOST_AUTO_TEST_CASE(FastLSTMDistractedSequenceRecallTest)
 BOOST_AUTO_TEST_CASE(GRUDistractedSequenceRecallTest)
 {
   DistractedSequenceRecallTestNetwork<GRU<> >(4, 8);
+}
+
+/**
+ * Make sure the RNN can be properly serialized.
+ */
+BOOST_AUTO_TEST_CASE(SerializationTest)
+{
+  const size_t rho = 10;
+
+  // Generate 12 (2 * 6) noisy sines. A single sine contains rho
+  // points/features.
+  arma::mat input, labelsTemp;
+  GenerateNoisySines(input, labelsTemp, rho, 6);
+
+  arma::mat labels = arma::zeros<arma::mat>(rho, labelsTemp.n_cols);
+  for (size_t i = 0; i < labelsTemp.n_cols; ++i)
+  {
+    const int value = arma::as_scalar(arma::find(
+        arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1)) + 1;
+    labels.col(i).fill(value);
+  }
+
+  /**
+   * Construct a network with 1 input unit, 4 hidden units and 10 output
+   * units. The hidden layer is connected to itself. The network structure
+   * looks like:
+   *
+   *  Input         Hidden        Output
+   * Layer(1)      Layer(4)      Layer(10)
+   * +-----+       +-----+       +-----+
+   * |     |       |     |       |     |
+   * |     +------>|     +------>|     |
+   * |     |    ..>|     |       |     |
+   * +-----+    .  +--+--+       +-----+
+   *            .     .
+   *            .     .
+   *            .......
+   */
+  Add<> add(4);
+  Linear<> lookup(1, 4);
+  SigmoidLayer<> sigmoidLayer;
+  Linear<> linear(4, 4);
+  Recurrent<> recurrent(add, lookup, linear, sigmoidLayer, rho);
+
+  RNN<> model(rho);
+  model.Add<IdentityLayer<> >();
+  model.Add(recurrent);
+  model.Add<Linear<> >(4, 10);
+  model.Add<LogSoftMax<> >();
+
+  StandardSGD opt(0.1, input.n_cols /* 1 epoch */, -100);
+  model.Train(input, labels, opt);
+
+  // Serialize the network.
+  RNN<> xmlModel(1), textModel(3), binaryModel(5);
+  SerializeObjectAll(model, xmlModel, textModel, binaryModel);
+
+  // Take predictions, check the output.
+  arma::mat prediction, xmlPrediction, textPrediction, binaryPrediction;
+  model.Predict(input, prediction);
+  xmlModel.Predict(input, xmlPrediction);
+  textModel.Predict(input, textPrediction);
+  binaryModel.Predict(input, binaryPrediction);
+
+  CheckMatrices(prediction, xmlPrediction, textPrediction, binaryPrediction);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

@@ -15,6 +15,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include "func_sq.hpp"
+#include "atoms.hpp"
 
 namespace mlpack {
 namespace optimization {
@@ -24,7 +25,6 @@ namespace optimization {
  * used as update step for FrankWolfe algorithm.
  *
  * Currently only works for function in FuncSq class.
- *
  */
 class UpdateSpan
 {
@@ -35,7 +35,7 @@ class UpdateSpan
    *
    * @param function Function to be optimized in FrankWolfe algorithm.
    */
-  UpdateSpan()
+  UpdateSpan(bool isPrune = false) : isPrune(isPrune)
   { /* Do nothing. */ }
 
   /**
@@ -43,81 +43,45 @@ class UpdateSpan
    * solution space.
    *
    * @param function function to be optimized.
-   * @param oldCoords previous solution coords, not used in this update rule.
+   * @param oldCoords previous solution coords.
    * @param s current linearConstrSolution result.
    * @param newCoords output new solution coords.
    * @param numIter current iteration number.
    */
   void Update(FuncSq& function,
-              const arma::mat& /* oldCoords */,
+              const arma::mat& oldCoords,
               const arma::mat& s,
               arma::mat& newCoords,
-              const size_t /* numIter */)
+              const size_t numIter)
   {
     // Add new atom into soluton space.
-    arma::uvec ind = find(s, 1);
-    AddAtom(function, ind(0));
+    atoms.AddAtom(s, function);
 
     // Reoptimize the solution in the current space.
     arma::vec b = function.Vectorb();
-    arma::vec x = solve(currentAtoms, b);
+    atoms.CurrentCoeffs() = solve(function.MatrixA() * atoms.CurrentAtoms(), b);
 
     // x has coords of only the current atoms, recover the solution
     // to the original size.
-    RecoverVector(x, function.MatrixA().n_cols, newCoords);
+    atoms.RecoverVector(newCoords);
+
+    // Prune the support.
+    if (isPrune)
+    {
+      double oldF = function.Evaluate(oldCoords);
+      double F = 0.25 * oldF + 0.75 * function.Evaluate(newCoords);
+      atoms.PruneSupport(F, function);
+      atoms.RecoverVector(newCoords);
+    }
   }
-
-  //! Get the current atom indices.
-  const arma::uvec& CurrentIndices() const { return currentIndices; }
-  //! Modify the current atom indices.
-  arma::uvec& CurrentIndices() { return currentIndices; }
-
-  //! Get the current atoms.
-  const arma::mat& CurrentAtoms() const { return currentAtoms; }
-  //! Modify the current atoms.
-  arma::mat& CurrentAtoms() { return currentAtoms; }
 
  private:
-  //! Indices of the atoms in the current solution space.
-  arma::uvec currentIndices;
+  //! Atoms information.
+  Atoms atoms;
 
-  //! Current atoms in the solution space, ordered as currentIndices.
-  arma::mat currentAtoms;
-
-  //! Add atom into the solution space.
-  void AddAtom(FuncSq& function, const arma::uword k)
-  {
-    if (currentIndices.is_empty())
-    {
-      CurrentIndices() = k;
-      CurrentAtoms() = (function.MatrixA()).col(k);
-    }
-    else
-    {
-      arma::uvec vk(1);
-      vk = k;
-      currentIndices.insert_rows(0, vk);
-
-      arma::mat atom = (function.MatrixA()).col(k);
-      currentAtoms.insert_cols(0, atom);
-    }
-  }
-
-  /**
-   * Recover the solution coordinate from the coefficients of current atoms.
-   *
-   * @param x input coefficients of current atoms.
-   * @param n dimension of the recovered vector.
-   * @param y output recovered vector.
-   */
-  void RecoverVector(const arma::vec& x, const size_t n, arma::mat& y)
-  {
-    y.zeros(n, 1);
-    arma::uword len = currentIndices.size();
-    for (size_t ii = 0; ii < len; ++ii)
-      y(currentIndices(ii)) = x(ii);
-  }
-};
+  //! Flag for support prune step.
+  bool isPrune;
+}; // class UpdateSpan
 
 } // namespace optimization
 } // namespace mlpack
