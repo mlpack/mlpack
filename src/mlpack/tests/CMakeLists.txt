@@ -95,6 +95,7 @@ add_executable(mlpack_test
   rl_components_test.cpp
   rmsprop_test.cpp
   sa_test.cpp
+  scd_test.cpp
   sdp_primal_dual_test.cpp
   serialization.hpp
   serialization.cpp
@@ -121,6 +122,7 @@ add_executable(mlpack_test
   vantage_point_tree_test.cpp
   main_tests/pca_test.cpp
 )
+
 # Link dependencies of test executable.
 target_link_libraries(mlpack_test
   mlpack

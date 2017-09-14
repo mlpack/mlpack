@@ -205,3 +205,35 @@ void SoftmaxRegressionFunction::Gradient(const arma::mat& parameters,
                lambda * parameters;
   }
 }
+
+void SoftmaxRegressionFunction::PartialGradient(const arma::mat& parameters,
+                                                const size_t j,
+                                                arma::sp_mat& gradient) const
+{
+  gradient.zeros(arma::size(parameters));
+
+  arma::mat probabilities;
+  GetProbabilitiesMatrix(parameters, probabilities);
+
+  // Calculate the required part of the gradient.
+  arma::mat inner = probabilities - groundTruth;
+  if (fitIntercept)
+  {
+    if (j == 0)
+    {
+      gradient.col(j) =
+          inner * arma::ones<arma::mat>(data.n_cols, 1) / data.n_cols +
+          lambda * parameters.col(0);
+    }
+    else
+    {
+      gradient.col(j) = inner * data.row(j).t() / data.n_cols + lambda *
+          parameters.col(j);
+    }
+  }
+  else
+  {
+    gradient.col(j) = inner * data.row(j).t() / data.n_cols + lambda *
+        parameters.col(j);
+  }
+}
