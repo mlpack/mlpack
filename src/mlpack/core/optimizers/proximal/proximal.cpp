@@ -18,13 +18,16 @@ namespace optimization {
  * Projection of the vector v onto l1 ball with norm tau.
  * See the paper:
  * @code
- * @inproceedings{DucShaSin:2008Efficient,
- *    Author = {Duchi, John and Shalev-Shwartz, Shai and Singer, Yoram and Chandra, Tushar},
- *    Booktitle = {Proceedings of the 25th international conference on Machine learning},
- *    Organization = {ACM},
- *    Pages = {272--279},
- *    Title = {Efficient projections onto the l 1-ball for learning in high dimensions},
- *    Year = {2008}}
+ * @inproceedings{DucShaSin2008Efficient,
+ *    author       = {Duchi, John and Shalev-Shwartz, Shai and Singer,
+ *                    Yoram and Chandra, Tushar},
+ *    booktitle    = {Proceedings of the 25th international conference on
+ *                    Machine learning},
+ *    organization = {ACM},
+ *    pages        = {272--279},
+ *    title        = {Efficient projections onto the l 1-ball for learning in
+ *                    high dimensions},
+ *    year         = {2008}}
  * @endcode
  *
  * This is just a soft thresholding.

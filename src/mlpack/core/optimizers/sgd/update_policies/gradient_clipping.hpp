@@ -22,7 +22,7 @@ namespace optimization {
  * and feeding a clipped gradient to them instead of the normal one.
  * (Clipping here is implemented as
  * \f$ g_{\text{clipped}} = \max(g_{\text{min}}, \min(g_{\text{min}}, g))) \f$.)
- * 
+ *
  * @tparam UpdatePolicy A type of UpdatePolicy that sould be wrapped around.
  */
 template<typename UpdatePolicyType>
@@ -31,7 +31,7 @@ class GradientClipping
  public:
   /**
    * Constructor for creating a GradientClipping instance.
-   * 
+   *
    * @param minGradient Minimum possible value of gradient element.
    * @param maxGradient Maximum possible value of gradient element.
    * @param updatePolicy An instance of the UpdatePolicyType
@@ -63,7 +63,7 @@ class GradientClipping
   /**
    * Update step. First, the gradient is clipped, and then the actual update
    * policy does whatever update it needs to do.
-   * 
+   *
    * @param iterate Parameters that minimize the function.
    * @param stepSize Step size to be used for the given iteration.
    * @param gradient The gradient matrix.
@@ -92,6 +92,7 @@ class GradientClipping
   double MaxGradient() const { return maxGradient; }
   //! Modify the maximum gradient value.
   double& MaxGradient() { return maxGradient; }
+
  private:
   //! Minimum possible value of gradient element.
   double minGradient;

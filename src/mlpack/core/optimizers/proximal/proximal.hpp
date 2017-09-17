@@ -19,7 +19,7 @@
 namespace mlpack {
 namespace optimization {
 
-/** 
+/**
  * Approximate a vector with another vector on lp ball. Currently support l0
  * ball and l1 ball with specific norm.
  * It can be used in projected gradient method.

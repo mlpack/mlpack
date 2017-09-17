@@ -25,13 +25,13 @@ namespace optimization {
  *
  * For more information, refer to the following.
  * @code
- * @misc{1506.00552,
- *   Author = {Julie Nutini and Mark Schmidt and Issam H.
+ * @misc{Nutini2015,
+ *   author = {Julie Nutini and Mark Schmidt and Issam H.
  *             Laradji and Michael Friedlander and Hoyt Koepke},
- *   Title = {Coordinate Descent Converges Faster with the Gauss-Southwell Rule
- *            Than Random Selection},
- *   Year = {2015},
- *   Eprint = {arXiv:1506.00552}
+ *   title  = {Coordinate Descent Converges Faster with the Gauss-Southwell Rule
+ *             Than Random Selection},
+ *   year   = {2015},
+ *   eprint = {arXiv:1506.00552}
  * }
  * @endcode
  */
@@ -51,8 +51,8 @@ class GreedyDescent
    */
   template <typename ResolvableFunctionType>
   static size_t DescentFeature(const size_t /* iteration */,
-                        const arma::mat& iterate,
-                        const ResolvableFunctionType& function)
+                               const arma::mat& iterate,
+                               const ResolvableFunctionType& function)
   {
     size_t bestFeature = 0;
     double bestDescent = 0;
