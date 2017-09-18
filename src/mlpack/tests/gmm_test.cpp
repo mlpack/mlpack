@@ -264,12 +264,12 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
                                                        "0.6 1.1 0.1;"
                                                        "0.5 0.1 1.0");
 
-  // Now we'll generate points and probabilities.  1500 points.  Slower than I
+  // Now we'll generate points and probabilities.  2000 points.  Slower than I
   // would like...
-  arma::mat points(3, 5000);
-  arma::vec probabilities(5000);
+  arma::mat points(3, 2000);
+  arma::vec probabilities(2000);
 
-  for (size_t i = 0; i < 5000; i++)
+  for (size_t i = 0; i < 2000; i++)
   {
     double randValue = math::Random();
 
@@ -298,7 +298,8 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
   // Now train the model.
   GMM g(3, 3); // 3 dimensions, 3 components (the fourth component is fake).
 
-  g.Train(points, probabilities, 8);
+  EMFit<> fitter(100, 1e-5);
+  g.Train(points, probabilities, 3, false, fitter);
 
   // Now check the results.  We need to order by weights so that when we do the
   // checking, things will be correct.
@@ -550,12 +551,7 @@ BOOST_AUTO_TEST_CASE(PositiveDefiniteConstraintTest)
     PositiveDefiniteConstraint::ApplyConstraint(cov);
 
     arma::mat c;
-    #if (ARMA_VERSION_MAJOR < 4) || \
-        ((ARMA_VERSION_MAJOR == 4) && (ARMA_VERSION_MINOR < 500))
-      BOOST_REQUIRE(arma::chol(c, cov));
-    #else
-      BOOST_REQUIRE(arma::chol(c, cov, "lower"));
-    #endif
+    BOOST_REQUIRE(arma::chol(c, cov, "lower"));
   }
 }
 

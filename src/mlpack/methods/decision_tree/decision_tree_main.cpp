@@ -9,7 +9,9 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 #include "decision_tree.hpp"
 
 using namespace std;
@@ -21,28 +23,50 @@ PROGRAM_INFO("Decision tree",
     "numeric features and associated labels for each point in the dataset, this"
     " program can train a decision tree on that data."
     "\n\n"
-    "The training file and associated labels are specified with the "
-    "--training_file and --labels_file options, respectively.  The labels "
-    "should be in the range [0, num_classes - 1]. Optionally, if --labels_file "
-    "is not specified, the labels are assumed to be the last dimension of the "
-    "training dataset."
+    "The training file and associated labels are specified with the " +
+    PRINT_PARAM_STRING("training") + " and " + PRINT_PARAM_STRING("labels") +
+    " parameters, respectively.  The labels should be in the range [0, "
+    "num_classes - 1]. Optionally, if " +
+    PRINT_PARAM_STRING("labels") + " is not specified, the labels are assumed "
+    "to be the last dimension of the training dataset."
     "\n\n"
-    "When a model is trained, it may be saved to file with the "
-    "--output_model_file (-M) option.  A model may be loaded from file for "
-    "predictions with the --input_model_file (-m) option.  The "
-    "--input_model_file option may not be specified when the --training_file "
-    "option is specified.  The --minimum_leaf_size (-n) parameter specifies "
-    "the minimum number of training points that must fall into each leaf for "
-    "it to be split.  If --print_training_error (-e) is specified, the training"
-    " error will be printed."
+    "When a model is trained, the " + PRINT_PARAM_STRING("output_model") + " "
+    "output parameter may be used to save the trained model.  A model may be "
+    "loaded for predictions with the " + PRINT_PARAM_STRING("input_model") +
+    "' parameter.  The " + PRINT_PARAM_STRING("input_model") + " parameter "
+    "may not be specified when the " + PRINT_PARAM_STRING("training") + " "
+    "parameter is specified.  The " + PRINT_PARAM_STRING("minimum_leaf_size") +
+    " parameter specifies the minimum number of training points that must fall"
+    " into each leaf for it to be split.  If " +
+    PRINT_PARAM_STRING("print_training_error") + " is specified, the training "
+    "error will be printed."
     "\n\n"
-    "A file containing test data may be specified with the --test_file (-T) "
-    "option, and if performance numbers are desired for that test set, labels "
-    "may be specified with the --test_labels_file (-L) option.  Predictions f"
-    "for each test point may be stored into the file specified by the "
-    "--predictions_file (-p) option.  Class probabilities for each prediction "
-    "will be stored in the file specified by the --probabilities_file (-P) "
-    "option.");
+    "Test data may be specified with the " + PRINT_PARAM_STRING("test") + " "
+    "parameter, and if performance numbers are desired for that test set, "
+    "labels may be specified with the " + PRINT_PARAM_STRING("test_labels") +
+    " parameter.  Predictions for each test point may be saved via the " +
+    PRINT_PARAM_STRING("predictions") + " output parameter.  Class "
+    "probabilities for each prediction may be saved with the " +
+    PRINT_PARAM_STRING("probabilities") + " output parameter."
+    "\n\n"
+    "For example, to train a decision tree with a minimum leaf size of 20 on "
+    "the dataset contained in " + PRINT_DATASET("data") + " with labels " +
+    PRINT_DATASET("labels") + ", saving the output model to " +
+    PRINT_MODEL("tree") + " and printing the training error, one could "
+    "call"
+    "\n\n" +
+    PRINT_CALL("decision_tree", "training", "data", "labels", "labels",
+        "output_model", "tree", "minimum_leaf_size", 20,
+        "print_training_error", true) +
+    "\n\n"
+    "Then, to use that model to classify points in " +
+    PRINT_DATASET("test_set") + " and print the test error given the "
+    "labels " + PRINT_DATASET("test_labels") + " using that model, while "
+    "saving the predictions for each point to " +
+    PRINT_DATASET("predictions") + ", one could call "
+    "\n\n" +
+    PRINT_CALL("decision_tree", "input_model", "tree", "test", "test_set",
+        "test_labels", "test_labels", "predictions", "predictions"));
 
 // Datasets.
 PARAM_MATRIX_IN("training", "Matrix of training points.", "t");
@@ -90,10 +114,8 @@ PARAM_MODEL_IN(DecisionTreeModel, "input_model", "Pre-trained decision tree, "
 PARAM_MODEL_OUT(DecisionTreeModel, "output_model", "Output for trained decision"
     " tree.", "M");
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   // Check parameters.
   if (CLI::HasParam("training") && CLI::HasParam("input_model"))
     Log::Fatal << "Cannot specify both --training_file and --input_model_file!"
@@ -224,6 +246,4 @@ int main(int argc, char** argv)
   // Do we need to save the model?
   if (CLI::HasParam("output_model"))
     CLI::GetParam<DecisionTreeModel>("output_model") = std::move(model);
-
-  CLI::Destroy();
 }

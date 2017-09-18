@@ -63,7 +63,7 @@ void NegativeLogLikelihood<InputDataType, OutputDataType>::Backward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void NegativeLogLikelihood<InputDataType, OutputDataType>::Serialize(
+void NegativeLogLikelihood<InputDataType, OutputDataType>::serialize(
     Archive& /* ar */,
     const unsigned int /* version */)
 {

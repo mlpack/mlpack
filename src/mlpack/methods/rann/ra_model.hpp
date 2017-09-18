@@ -18,11 +18,273 @@
 #include <mlpack/core/tree/cover_tree.hpp>
 #include <mlpack/core/tree/rectangle_tree.hpp>
 #include <mlpack/core/tree/octree.hpp>
-
+#include <boost/variant.hpp>
 #include "ra_search.hpp"
 
 namespace mlpack {
 namespace neighbor {
+
+/**
+ * Alias template for RASearch
+ */
+template<typename SortPolicy,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+using RAType = RASearch<SortPolicy,
+                        metric::EuclideanDistance,
+                        arma::mat,
+                        TreeType>;
+
+template<typename SortPolicy>
+struct RAModelName
+{
+  static const std::string Name() { return "rank_approx_search_model"; }
+};
+
+/**
+ * MonoSearchVisitor executes a monochromatic neighbor search on the given
+ * RAType. We don't make any difference for different instantiation of RAType.
+ */
+class MonoSearchVisitor : public boost::static_visitor<void>
+{
+ private:
+  //! Number of neighbors to search for.
+  const size_t k;
+  //! Result matrix for neighbors.
+  arma::Mat<size_t>& neighbors;
+  //! Result matrix for distances.
+  arma::mat& distances;
+
+ public:
+  //! Perform monochromatic nearest neighbor search.
+  template<typename RAType>
+  void operator()(RAType* ra) const;
+
+  //! Construct the MonoSearchVisitor object with the given parameters.
+  MonoSearchVisitor(const size_t k,
+                    arma::Mat<size_t>& neighbors,
+                    arma::mat& distances) :
+      k(k),
+      neighbors(neighbors),
+      distances(distances)
+  {};
+};
+
+/**
+ * BiSearchVisitor executes a bichromatic neighbor search on the given RAType.
+ * We use template specialization to differentiate those tree types types that
+ * accept leafSize as a parameter. In these cases, before doing neighbor search
+ * a query tree with proper leafSize is built from the querySet.
+ */
+template<typename SortPolicy>
+class BiSearchVisitor : public boost::static_visitor<void>
+{
+ private:
+  //! The query set for the bichromatic search.
+  const arma::mat& querySet;
+  //! The number of neighbors to search for.
+  const size_t k;
+  //! The results matrix for neighbors.
+  arma::Mat<size_t>& neighbors;
+  //! The result matrix for distances.
+  arma::mat& distances;
+  //! The number of points in a leaf (for BinarySpaceTrees).
+  const size_t leafSize;
+
+  //! Bichromatic neighbor search on the given RAType considering leafSize.
+  template<typename RAType>
+  void SearchLeaf(RAType* ra) const;
+
+ public:
+  //! Alias template necessary for visual c++ compiler.
+  template<template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+  using RATypeT = RAType<SortPolicy, TreeType>;
+
+  //! Default Bichromatic neighbor search on the given RAType instance.
+  template<template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+  void operator()(RATypeT<TreeType>* ra) const;
+
+  //! Bichromatic search on the given RAType specialized for KDTrees.
+  void operator()(RATypeT<tree::KDTree>* ra) const;
+
+  //! Bichromatic search on the given RAType specialized for octrees.
+  void operator()(RATypeT<tree::Octree>* ra) const;
+
+  //! Construct the BiSearchVisitor.
+  BiSearchVisitor(const arma::mat& querySet,
+                  const size_t k,
+                  arma::Mat<size_t>& neighbors,
+                  arma::mat& distances,
+                  const size_t leafSize);
+};
+
+/**
+ * TrainVisitor sets the reference set to a new reference set on the given
+ * RAType. We use template specialization to differentiate those trees that 
+ * accept leafSize as a parameter. In these cases, a reference tree with proper
+ * leafSize is built from the referenceSet.
+ */
+template<typename SortPolicy>
+class TrainVisitor : public boost::static_visitor<void>
+{
+ private:
+  //! The reference set to use for training.
+  arma::mat&& referenceSet;
+  //! The leaf size, used only by BinarySpaceTree.
+  size_t leafSize;
+
+  //! Train on the given RAType considering the leafSize.
+  template<typename RAType>
+  void TrainLeaf(RAType* ra) const;
+
+ public:
+  //! Alias template necessary for visual c++ compiler.
+  template<template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+  using RATypeT = RAType<SortPolicy, TreeType>;
+
+  //! Default Train on the given RAType instance.
+  template<template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+  void operator()(RATypeT<TreeType>* ra) const;
+
+  //! Train on the given RAType specialized for KDTrees.
+  void operator()(RATypeT<tree::KDTree>* ra) const;
+
+  //! Train on the given RAType specialized for Octrees.
+  void operator()(RATypeT<tree::Octree>* ra) const;
+
+  //! Construct the TrainVisitor object with the given reference set, leafSize
+  //! for BinarySpaceTrees.
+  TrainVisitor(arma::mat&& referenceSet,
+               const size_t leafSize);
+};
+
+/**
+ * Exposes the SingleSampleLimit() method of the given RAType.
+ */
+class SingleSampleLimitVisitor : public boost::static_visitor<size_t&>
+{
+ public:
+  template<typename RAType>
+  size_t& operator()(RAType* ra) const;
+};
+
+/**
+ * Exposes the FirstLeafExact() method of the given RAType.
+ */
+class FirstLeafExactVisitor : public boost::static_visitor<bool&>
+{
+ public:
+  template<typename RAType>
+  bool& operator()(RAType* ra) const;
+};
+
+/**
+ * Exposes the SampleAtLeaves() method of the given RAType.
+ */
+class SampleAtLeavesVisitor : public boost::static_visitor<bool&>
+{
+ public:
+  //! Return SampleAtLeaves (whether or not sampling is done at leaves).
+  template<typename RAType>
+  bool& operator()(RAType *) const;
+};
+
+/**
+ * Exposes the Alpha() method of the given RAType.
+ */
+class AlphaVisitor : public boost::static_visitor<double&>
+{
+ public:
+  //! Return Alpha parameter.
+  template<typename RAType>
+  double& operator()(RAType* ra) const;
+};
+
+/**
+ * Exposes the Tau() method of the given RAType.
+ */
+class TauVisitor : public boost::static_visitor<double&>
+{
+ public:
+  //! Get a reference to the Tau parameter.
+  template<typename RAType>
+  double& operator()(RAType* ra) const;
+};
+
+/**
+ * Exposes the SingleMode() method of the given RAType.
+ */
+class SingleModeVisitor : public boost::static_visitor<bool&>
+{
+ public:
+  //! Get a reference to the SingleMode parameter of the given RASearch object.
+  template<typename RAType>
+  bool& operator()(RAType* ra) const;
+};
+
+/**
+ * Exposes the referenceSet of the given RAType.
+ */
+class ReferenceSetVisitor : public boost::static_visitor<const arma::mat&>
+{
+ public:
+  //! Return the reference set.
+  template<typename RAType>
+  const arma::mat& operator()(RAType* ra) const;
+};
+
+/**
+ * Exposes the serialize method of the give RAType instance.
+ */
+template<typename Archive>
+class SerializeVisitor : public boost::static_visitor<void>
+{
+ private:
+  //! Archive to serialize to.
+  Archive& ar;
+  //! Name of the model to serialize.
+  const std::string& name;
+
+ public:
+  //! Serialize the given model.
+  template<typename RAType>
+  void operator()(RAType*& ra) const;
+
+  //! Construct the SerializeVisitor with the given archive and name.
+  SerializeVisitor(Archive& ar, const std::string& name);
+};
+
+/**
+ * DeleteVisitor deletes the give RAType Instance.
+ */
+class DeleteVisitor : public boost::static_visitor<void>
+{
+ public:
+  //! Delete the RAType Object.
+  template<typename RAType> void operator()(RAType* ra) const;
+};
+
+/**
+ * NaiveVisitor exposes the Naive() method of the given RAType.
+ */
+class NaiveVisitor : public boost::static_visitor<bool&>
+{
+ public:
+  /**
+   * Get a reference to the naive parameter of the given RASearch object.
+   */
+  template<typename RAType>
+  bool& operator()(RAType* ra) const;
+};
 
 /**
  * The RAModel class provides an abstraction for the RASearch class, abstracting
@@ -65,35 +327,17 @@ class RAModel
   //! The basis to project into.
   arma::mat q;
 
-  //! Typedef the RASearch class we'll use.
-  template<template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-  using RAType = RASearch<SortPolicy,
-                          metric::EuclideanDistance,
-                          arma::mat,
-                          TreeType>;
-
-  //! Non-NULL if the kd-tree is used.
-  RAType<tree::KDTree>* kdTreeRA;
-  //! Non-NULL if the cover tree is used.
-  RAType<tree::StandardCoverTree>* coverTreeRA;
-  //! Non-NULL if the R tree is used.
-  RAType<tree::RTree>* rTreeRA;
-  //! Non-NULL if the R* tree is used.
-  RAType<tree::RStarTree>* rStarTreeRA;
-  //! Non-NULL if the X tree is used.
-  RAType<tree::XTree>* xTreeRA;
-  //! Non-NULL if the Hilbert R tree is used.
-  RAType<tree::HilbertRTree>* hilbertRTreeRA;
-  //! Non-NULL if the R+ tree is used.
-  RAType<tree::RPlusTree>* rPlusTreeRA;
-  //! Non-NULL if the R++ tree is used.
-  RAType<tree::RPlusPlusTree>* rPlusPlusTreeRA;
-  //! Non-NULL if the UB tree is used.
-  RAType<tree::UBTree>* ubTreeRA;
-  //! Non-NULL if the octree is used.
-  RAType<tree::Octree>* octreeRA;
+  //! The rank-approximate model.
+  boost::variant<RAType<SortPolicy, tree::KDTree>*,
+                 RAType<SortPolicy, tree::StandardCoverTree>*,
+                 RAType<SortPolicy, tree::RTree>*,
+                 RAType<SortPolicy, tree::RStarTree>*,
+                 RAType<SortPolicy, tree::XTree>*,
+                 RAType<SortPolicy, tree::HilbertRTree>*,
+                 RAType<SortPolicy, tree::RPlusTree>*,
+                 RAType<SortPolicy, tree::RPlusPlusTree>*,
+                 RAType<SortPolicy, tree::UBTree>*,
+                 RAType<SortPolicy, tree::Octree>*> raSearch;
 
  public:
   /**

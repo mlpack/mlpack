@@ -13,6 +13,7 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 
 #include "hmm.hpp"
 #include "hmm_model.hpp"
@@ -29,10 +30,24 @@ using namespace arma;
 using namespace std;
 
 PROGRAM_INFO("Hidden Markov Model (HMM) Sequence Generator", "This "
-    "utility takes an already-trained HMM (--model_file) and generates a "
-    "random observation sequence and hidden state sequence based on its "
-    "parameters, saving them to the specified files (--output_file and "
-    "--state_file)");
+    "utility takes an already-trained HMM, specified as the " +
+    PRINT_PARAM_STRING("model") + " parameter, and generates a random "
+    "observation sequence and hidden state sequence based on its parameters. "
+    "The observation sequence may be saved with the " +
+    PRINT_PARAM_STRING("output") + " output parameter, and the internal state "
+    " sequence may be saved with the " + PRINT_PARAM_STRING("state") + " output"
+    " parameter."
+    "\n\n"
+    "The state to start the sequence in may be specified with the " +
+    PRINT_PARAM_STRING("start_state") + " parameter."
+    "\n\n"
+    "For example, to generate a sequence of length 150 from the HMM " +
+    PRINT_MODEL("hmm") + " and save the observation sequence to " +
+    PRINT_DATASET("observations") + " and the hidden state sequence to " +
+    PRINT_DATASET("states") + ", the following command may be used: "
+    "\n\n" +
+    PRINT_CALL("hmm_generate", "model", "hmm", "length", 150, "output",
+        "observations", "state", "states"));
 
 PARAM_MODEL_IN_REQ(HMMModel, "model", "Trained HMM to generate sequences with.",
     "m");
@@ -75,11 +90,8 @@ struct Generate
   }
 };
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  // Parse command line options.
-  CLI::ParseCommandLine(argc, argv);
-
   if (!CLI::HasParam("output") && !CLI::HasParam("state"))
     Log::Warn << "Neither --output_file nor --state_file are specified; no "
         << "output will be saved!" << endl;

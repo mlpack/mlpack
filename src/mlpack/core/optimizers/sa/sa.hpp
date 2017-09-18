@@ -65,13 +65,14 @@ class SA
    * Construct the SA optimizer with the given parameters.
    *
    * @param coolingSchedule Instantiated cooling schedule.
-   * @param maxIterations Maximum number of iterations allowed (0 indicates no limit).
+   * @param maxIterations Maximum number of iterations allowed
+   *    (0 indicates no limit).
    * @param initT Initial temperature.
    * @param initMoves Number of initial iterations without changing temperature.
    * @param moveCtrlSweep Sweeps per feedback move control.
    * @param tolerance Tolerance to consider system frozen.
    * @param maxToleranceSweep Maximum sweeps below tolerance to consider system
-   *      frozen.
+   *    frozen.
    * @param maxMoveCoef Maximum move size.
    * @param initMoveCoef Initial move size.
    * @param gain Proportional control in feedback move control.

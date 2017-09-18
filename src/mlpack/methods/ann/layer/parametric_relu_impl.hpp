@@ -23,17 +23,17 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
 PReLU<InputDataType, OutputDataType>::PReLU(
-    const double user_alpha) : user_alpha(user_alpha)
+    const double userAlpha) : userAlpha(userAlpha)
 {
   alpha.set_size(1, 1);
-  alpha(0) = user_alpha;
+  alpha(0) = userAlpha;
 }
 
 template<typename InputDataType, typename OutputDataType>
 void PReLU<InputDataType, OutputDataType>::Reset()
 {
   //! Set value of alpha to the one given by user.
-  alpha(0) = user_alpha;
+  alpha(0) = userAlpha;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -60,7 +60,8 @@ void PReLU<InputDataType, OutputDataType>::Gradient(
     const arma::Mat<eT>&& input, arma::Mat<eT>&& error,
     arma::Mat<eT>&& gradient)
 {
-  if (gradient.n_elem == 0) {
+  if (gradient.n_elem == 0)
+  {
     gradient = arma::zeros<arma::mat>(1, 1);
   }
 
@@ -70,11 +71,11 @@ void PReLU<InputDataType, OutputDataType>::Gradient(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void PReLU<InputDataType, OutputDataType>::Serialize(
+void PReLU<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  ar & data::CreateNVP(alpha, "alpha");
+  ar & BOOST_SERIALIZATION_NVP(alpha);
 }
 
 } // namespace ann

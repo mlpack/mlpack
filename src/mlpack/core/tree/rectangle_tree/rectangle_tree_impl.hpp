@@ -1065,7 +1065,8 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
         children.resize(maxNumChildren + 1);
       }
 
-      for (size_t i = 0; i < child->NumChildren(); i++) {
+      for (size_t i = 0; i < child->NumChildren(); i++)
+      {
         children[i] = child->children[i];
         children[i]->Parent() = this;
         child->children[i] = NULL;

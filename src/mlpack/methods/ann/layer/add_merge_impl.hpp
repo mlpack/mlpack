@@ -49,10 +49,13 @@ void AddMerge<InputDataType, OutputDataType>::Backward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void AddMerge<InputDataType, OutputDataType>::Serialize(
+void AddMerge<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & data::CreateNVP(network, "network");
+  if (Archive::is_loading::value)
+    network.clear();
+
+  ar & BOOST_SERIALIZATION_NVP(network);
 }
 
 } // namespace ann

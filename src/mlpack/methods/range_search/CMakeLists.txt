@@ -8,7 +8,6 @@ set(SOURCES
   range_search_stat.hpp
   rs_model.hpp
   rs_model_impl.hpp
-  rs_model.cpp
 )
 
 # Add directory name to sources.
@@ -21,3 +20,4 @@ endforeach()
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(range_search)
+#add_python_binding(range_search)

@@ -53,7 +53,7 @@ class PReLU
    *
    * @param alpha Non zero gradient
    */
-  PReLU(const double user_alpha = 0.03);
+  PReLU(const double userAlpha = 0.03);
 
   /*
    * Reset the layer parameter.
@@ -128,7 +128,7 @@ class PReLU
    * Serialize the layer.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   /**
@@ -201,7 +201,7 @@ class PReLU
   OutputDataType gradient;
 
   //! Leakyness Parameter given by user in the range 0 < alpha < 1.
-  double user_alpha;
+  double userAlpha;
 }; // class PReLU
 
 } // namespace ann

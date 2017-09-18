@@ -10,6 +10,10 @@ if (BUILD_CLI_EXECUTABLES)
     mlpack
     ${COMPILER_SUPPORT_LIBRARIES}
   )
+  # Make sure that we set BINDING_TYPE to cli so the command-line program is
+  # compiled with the correct int main() call.
+  set_target_properties(mlpack_${name} PROPERTIES COMPILE_FLAGS
+      -DBINDING_TYPE=BINDING_TYPE_CLI)
   install(TARGETS mlpack_${name} RUNTIME DESTINATION bin)
 endif ()
 endmacro ()
@@ -52,8 +56,10 @@ set(DIRS
   quic_svd
   radical
   randomized_svd
+  random_forest
   range_search
   rann
+#  rmva
   regularized_svd
   softmax_regression
   sparse_autoencoder
@@ -66,3 +72,4 @@ foreach(dir ${DIRS})
 endforeach()
 
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
+set(MLPACK_PYXS ${MLPACK_PYXS} PARENT_SCOPE)

@@ -94,8 +94,8 @@ class Glimpse
    * @param inputWidth The input width of the given input data.
    * @param inputHeight The input height of the given input data.
    */
-  Glimpse(const size_t inSize,
-          const size_t size,
+  Glimpse(const size_t inSize = 0,
+          const size_t size = 0,
           const size_t depth = 3,
           const size_t scale = 2,
           const size_t inputWidth = 0,
@@ -173,7 +173,7 @@ class Glimpse
    * Serialize the layer.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   /*

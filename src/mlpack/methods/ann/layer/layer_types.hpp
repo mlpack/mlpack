@@ -18,6 +18,7 @@
 #include <mlpack/methods/ann/layer/add.hpp>
 #include <mlpack/methods/ann/layer/base_layer.hpp>
 #include <mlpack/methods/ann/layer/constant.hpp>
+#include <mlpack/methods/ann/layer/cross_entropy_error.hpp>
 #include <mlpack/methods/ann/layer/dropout.hpp>
 #include <mlpack/methods/ann/layer/elu.hpp>
 #include <mlpack/methods/ann/layer/hard_tanh.hpp>
@@ -49,6 +50,7 @@ template<typename InputDataType, typename OutputDataType> class Glimpse;
 template<typename InputDataType, typename OutputDataType> class Linear;
 template<typename InputDataType, typename OutputDataType> class LinearNoBias;
 template<typename InputDataType, typename OutputDataType> class LSTM;
+template<typename InputDataType, typename OutputDataType> class GRU;
 template<typename InputDataType, typename OutputDataType> class Recurrent;
 template<typename InputDataType, typename OutputDataType> class Sequential;
 template<typename InputDataType, typename OutputDataType> class VRClassReward;
@@ -89,6 +91,7 @@ using LayerTypes = boost::variant<
     Convolution<NaiveConvolution<ValidConvolution>,
                 NaiveConvolution<FullConvolution>,
                 NaiveConvolution<ValidConvolution>, arma::mat, arma::mat>*,
+    CrossEntropyError<arma::mat, arma::mat>*,
     DropConnect<arma::mat, arma::mat>*,
     Dropout<arma::mat, arma::mat>*,
     ELU<arma::mat, arma::mat>*,
@@ -101,6 +104,7 @@ using LayerTypes = boost::variant<
     LogSoftMax<arma::mat, arma::mat>*,
     Lookup<arma::mat, arma::mat>*,
     LSTM<arma::mat, arma::mat>*,
+    GRU<arma::mat, arma::mat>*,
     MaxPooling<arma::mat, arma::mat>*,
     MeanPooling<arma::mat, arma::mat>*,
     MeanSquaredError<arma::mat, arma::mat>*,

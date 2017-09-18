@@ -14,6 +14,8 @@ set(SOURCES
   constant_impl.hpp
   convolution.hpp
   convolution_impl.hpp
+  cross_entropy_error.hpp
+  cross_entropy_error_impl.hpp
   dropconnect.hpp
   dropconnect_impl.hpp
   dropout.hpp
@@ -22,6 +24,8 @@ set(SOURCES
   elu_impl.hpp
   glimpse.hpp
   glimpse_impl.hpp
+  gru.hpp
+  gru_impl.hpp
   hard_tanh.hpp
   hard_tanh_impl.hpp
   join.hpp

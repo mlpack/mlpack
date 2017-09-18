@@ -40,13 +40,13 @@ namespace ann /** Artificial Neural Network. */ {
  *    x & : x > 0 \\
  *    alpha(e^x - 1) & : x \le 0
  *   \end{array}
- * \right
+ * \right. \\
  * f'(x) &=& \left\{
  *   \begin{array}{lr}
  *     1 & : x > 0 \\
  *     y + alpha & : x \le 0
  *   \end{array}
- * \right
+ * \right.
  * @f}
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
@@ -116,7 +116,7 @@ class ELU
    * Serialize the layer.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   /**

@@ -23,6 +23,8 @@
 #include "visitor/set_input_height_visitor.hpp"
 #include "visitor/set_input_width_visitor.hpp"
 
+#include <boost/serialization/variant.hpp>
+
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -34,7 +36,9 @@ FFN<OutputLayerType, InitializationRuleType>::FFN(
     initializeRule(std::move(initializeRule)),
     width(0),
     height(0),
-    reset(false)
+    reset(false),
+    numFunctions(0),
+    deterministic(true)
 {
   /* Nothing to do here */
 }
@@ -132,7 +136,9 @@ void FFN<OutputLayerType, InitializationRuleType>::Forward(
     arma::mat inputs, arma::mat& results)
 {
   if (parameter.is_empty())
+  {
     ResetParameters();
+  }
 
   if (!deterministic)
   {
@@ -221,6 +227,17 @@ double FFN<OutputLayerType, InitializationRuleType>::Evaluate(
   Forward(std::move(currentInput));
   double res = outputLayer.Forward(std::move(boost::apply_visitor(
       outputParameterVisitor, network.back())), std::move(currentTarget));
+
+  return res;
+}
+
+template<typename OutputLayerType, typename InitializationRuleType>
+double FFN<OutputLayerType, InitializationRuleType>::Evaluate(
+    const arma::mat& parameters)
+{
+  double res = 0;
+  for (size_t i = 0; i < predictors.n_cols; ++i)
+    res += Evaluate(parameters, i, true);
 
   return res;
 }
@@ -386,6 +403,16 @@ void FFN<OutputLayerType, InitializationRuleType>::Serialize(
   ar & data::CreateNVP(currentInput, "currentInput");
   ar & data::CreateNVP(currentTarget, "currentTarget");
 
+  // Be sure to clear other layers before loading.
+  if (Archive::is_loading::value)
+  {
+    std::for_each(network.begin(), network.end(),
+        boost::apply_visitor(deleteVisitor));
+    network.clear();
+  }
+
+  ar & BOOST_SERIALIZATION_NVP(network);
+
   // If we are loading, we need to initialize the weights.
   if (Archive::is_loading::value)
   {
@@ -399,6 +426,9 @@ void FFN<OutputLayerType, InitializationRuleType>::Serialize(
 
       boost::apply_visitor(resetVisitor, network[i]);
     }
+
+    deterministic = true;
+    ResetDeterministic();
   }
 }
 

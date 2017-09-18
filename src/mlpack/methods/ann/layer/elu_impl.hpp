@@ -46,11 +46,11 @@ void ELU<InputDataType, OutputDataType>::Backward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void ELU<InputDataType, OutputDataType>::Serialize(
+void ELU<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  ar & data::CreateNVP(alpha, "alpha");
+  ar & BOOST_SERIALIZATION_NVP(alpha);
 }
 
 } // namespace ann

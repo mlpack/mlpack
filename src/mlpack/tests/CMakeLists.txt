@@ -10,11 +10,15 @@ add_executable(mlpack_test
   ann_layer_test.cpp
   armadillo_svd_test.cpp
   arma_extend_test.cpp
+  async_learning_test.cpp
   aug_lagrangian_test.cpp
+  augmented_rnns_tasks_test.cpp
   binarize_test.cpp
   block_krylov_svd_test.cpp
   cf_test.cpp
   cli_test.cpp
+  cli_binding_test.cpp
+  cne_test.cpp
   convolutional_network_test.cpp
   convolution_test.cpp
   cosine_tree_test.cpp
@@ -28,13 +32,15 @@ add_executable(mlpack_test
   emst_test.cpp
   fastmks_test.cpp
   feedforward_network_test.cpp
+  frankwolfe_test.cpp
   gmm_test.cpp
+  gradient_clipping_test.cpp
   gradient_descent_test.cpp
   hmm_test.cpp
   hoeffding_tree_test.cpp
+  hpt_test.cpp
   hyperplane_test.cpp
   imputation_test.cpp
-  ind2sub_test.cpp
   init_rules_test.cpp
   kernel_pca_test.cpp
   kernel_test.cpp
@@ -48,6 +54,7 @@ add_executable(mlpack_test
   lbfgs_test.cpp
   lin_alg_test.cpp
   linear_regression_test.cpp
+  line_search_test.cpp
   load_save_test.cpp
   local_coordinate_coding_test.cpp
   logistic_regression_test.cpp
@@ -61,19 +68,25 @@ add_executable(mlpack_test
   metric_test.cpp
   minibatch_sgd_test.cpp
   mlpack_test.cpp
+  mock_categorical_data.hpp
   momentum_sgd_test.cpp
   nbc_test.cpp
   nca_test.cpp
   nmf_test.cpp
   nystroem_method_test.cpp
   octree_test.cpp
+  parallel_sgd_test.cpp
   pca_test.cpp
   perceptron_test.cpp
+  python_binding_test.cpp
   prefixedoutstream_test.cpp
+  proximal_test.cpp
   q_learning_test.cpp
   qdafn_test.cpp
   quic_svd_test.cpp
   radical_test.cpp
+  random_forest_test.cpp
+  random_test.cpp
   randomized_svd_test.cpp
   range_search_test.cpp
   rectangle_tree_test.cpp
@@ -82,6 +95,7 @@ add_executable(mlpack_test
   rl_components_test.cpp
   rmsprop_test.cpp
   sa_test.cpp
+  scd_test.cpp
   sdp_primal_dual_test.cpp
   serialization.hpp
   serialization.cpp
@@ -106,7 +120,9 @@ add_executable(mlpack_test
   ub_tree_test.cpp
   union_find_test.cpp
   vantage_point_tree_test.cpp
+  main_tests/pca_test.cpp
 )
+
 # Link dependencies of test executable.
 target_link_libraries(mlpack_test
   mlpack
@@ -127,6 +143,7 @@ add_custom_command(TARGET mlpack_test
 
 # The list of long running parallel tests
 set(parallel_tests
+  "AsyncLearningTest"
   "SdpPrimalDualTest;SVDIncrementalTest;SVDBatchTest;"
   "LocalCoordinateCodingTest;FeedForwardNetworkTest;SparseAutoencoderTest;"
   "GMMTest;CFTest;ConvolutionalNetworkTest;HMMTest;LARSTest;"

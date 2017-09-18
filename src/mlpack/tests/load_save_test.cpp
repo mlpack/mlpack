@@ -13,6 +13,7 @@
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/data/load_arff.hpp>
+#include <mlpack/core/data/map_policies/missing_policy.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -651,12 +652,6 @@ BOOST_AUTO_TEST_CASE(SavePGMBinaryTest)
   remove("test_file.pgm");
 }
 
-// Don't perform any HDF5 tests on Armadillo 4.300-4.400 (inclusive).  A bug
-// causes loading to fail.
-#if ((ARMA_VERSION_MAJOR == 4) && \
-        (ARMA_VERSION_MINOR < 300 || ARMA_VERSION_MINOR > 400)) || \
-    (ARMA_VERSION_MAJOR >= 5)
-
 #if defined(ARMA_USE_HDF5)
 /**
  * Make sure load as HDF5 is successful.
@@ -770,22 +765,6 @@ BOOST_AUTO_TEST_CASE(SaveHDF5Test)
   remove("test_file.hdf5");
   remove("test_file.he5");
 }
-#else
-/**
- * Ensure saving as HDF5 fails.
- */
-BOOST_AUTO_TEST_CASE(NoHDF5Test)
-{
-  arma::mat test;
-  test.randu(5, 5);
-
-  // Stop warnings.
-  BOOST_REQUIRE(data::Save("test_file.h5", test) == false);
-  BOOST_REQUIRE(data::Save("test_file.hdf5", test) == false);
-  BOOST_REQUIRE(data::Save("test_file.hdf", test) == false);
-  BOOST_REQUIRE(data::Save("test_file.he5", test) == false);
-}
-#endif
 
 #endif
 
@@ -1990,6 +1969,29 @@ BOOST_AUTO_TEST_CASE(LoadCSVNoTransposeTXTTest)
   BOOST_REQUIRE_EQUAL(dataset[7], 8);
 
   remove("test.txt");
+}
+
+/**
+ * Make sure DatasetMapper properly unmaps from non-unique strings.
+ */
+BOOST_AUTO_TEST_CASE(DatasetMapperNonUniqueTest)
+{
+  DatasetMapper<MissingPolicy> dm(1);
+
+  // Map a couple of strings; they'll map to quiet_NaN().
+  dm.MapString<double>("0.5", 0); // No mapping created.
+  dm.MapString<double>("hello", 0); // Mapping created.
+  dm.MapString<double>("goodbye", 0);
+  dm.MapString<double>("cheese", 0);
+
+  double nan = std::numeric_limits<double>::quiet_NaN();
+  BOOST_REQUIRE_EQUAL(dm.NumMappings(0), 3);
+  BOOST_REQUIRE_EQUAL(dm.NumUnmappings(nan, 0), 3);
+
+  BOOST_REQUIRE_EQUAL(dm.UnmapString(nan, 0), "hello");
+  BOOST_REQUIRE_EQUAL(dm.UnmapString(nan, 0, 0), "hello");
+  BOOST_REQUIRE_EQUAL(dm.UnmapString(nan, 0, 1), "goodbye");
+  BOOST_REQUIRE_EQUAL(dm.UnmapString(nan, 0, 2), "cheese");
 }
 
 BOOST_AUTO_TEST_SUITE_END();

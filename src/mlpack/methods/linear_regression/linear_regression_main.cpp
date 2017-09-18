@@ -11,6 +11,8 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
+
 #include "linear_regression.hpp"
 
 using namespace mlpack;
@@ -20,22 +22,47 @@ using namespace std;
 
 PROGRAM_INFO("Simple Linear Regression and Prediction",
     "An implementation of simple linear regression and simple ridge regression "
-    "using ordinary least squares. This solves the problem\n\n"
-    "  y = X * b + e\n\n"
-    "where X (--input_file) and y (the last column of --input_file, or "
-    "--input_responses) are known and b is the desired variable.  If the "
-    "covariance matrix (X'X) is not invertible, or if the solution is "
-    "overdetermined, then specify a Tikhonov regularization constant (--lambda)"
-    " greater than 0, which will regularize the covariance matrix to make it "
-    "invertible.  The calculated b is saved to disk (--output_file).\n"
-    "\n"
+    "using ordinary least squares. This solves the problem"
+    "\n\n"
+    "  y = X * b + e"
+    "\n\n"
+    "where X (specified by " + PRINT_PARAM_STRING("training") + ") and y "
+    "(specified either as the last column of the input matrix " +
+    PRINT_PARAM_STRING("training") + " or via the " +
+    PRINT_PARAM_STRING("training_responses") + " parameter) are known and b is"
+    " the desired variable.  If the covariance matrix (X'X) is not invertible, "
+    "or if the solution is overdetermined, then specify a Tikhonov "
+    "regularization constant (with " + PRINT_PARAM_STRING("lambda") + ") "
+    "greater than 0, which will regularize the covariance matrix to make it "
+    "invertible.  The calculated b may be saved with the " +
+    PRINT_PARAM_STRING("output_predictions") + " output parameter."
+    "\n\n"
     "Optionally, the calculated value of b is used to predict the responses for"
-    " another matrix X' (--test_file):\n\n"
-    "   y' = X' * b\n\n"
-    "and these predicted responses, y', are saved to a file "
-    "(--output_predictions).  This type of regression is related to "
-    "least-angle regression, which mlpack implements with the 'lars' "
-    "executable.");
+    " another matrix X' (specified by the " + PRINT_PARAM_STRING("test") + " "
+    "parameter):"
+    "\n\n"
+    "   y' = X' * b"
+    "\n\n"
+    "and the predicted responses y' may be saved with the " +
+    PRINT_PARAM_STRING("output_predictions") + " output parameter.  This type "
+    "of regression is related to least-angle regression, which mlpack "
+    "implements as the 'lars' program."
+    "\n\n"
+    "For example, to run a linear regression on the dataset " +
+    PRINT_DATASET("X") + " with responses " + PRINT_DATASET("y") + ", saving "
+    "the trained model to " + PRINT_MODEL("lr_model") + ", the following "
+    "command could be used:"
+    "\n\n" +
+    PRINT_CALL("linear_regression", "training", "X", "training_responses", "y",
+        "output_model", "lr_model") +
+    "\n\n"
+    "Then, to use " + PRINT_MODEL("lr_model") + " to predict responses for a "
+    "test set " + PRINT_DATASET("X_test") + ", saving the predictions to " +
+    PRINT_DATASET("X_test_responses") + ", the following command could be "
+    "used:"
+    "\n\n" +
+    PRINT_CALL("linear_regression", "input_model", "lr_model", "test", "X_test",
+        "output_predictions", "X_test_responses"));
 
 PARAM_MATRIX_IN("training", "Matrix containing training set X (regressors).",
     "t");
@@ -57,11 +84,8 @@ PARAM_COL_OUT("output_predictions", "If --test_file is specified, this "
 PARAM_DOUBLE_IN("lambda", "Tikhonov regularization for ridge regression.  If 0,"
     " the method reduces to linear regression.", "l", 0.0);
 
-int main(int argc, char* argv[])
+void mlpackMain()
 {
-  // Handle parameters.
-  CLI::ParseCommandLine(argc, argv);
-
   const double lambda = CLI::GetParam<double>("lambda");
 
   if (!CLI::HasParam("test") && CLI::HasParam("output_predictions"))
@@ -178,7 +202,7 @@ int main(int argc, char* argv[])
     {
       Log::Fatal << "The model was trained on " << lr.Parameters().n_elem - 1
           << "-dimensional data, but the test points in '"
-          << CLI::GetUnmappedParam<mat>("test") << "' are " << points.n_rows
+          << CLI::GetPrintableParam<mat>("test") << "' are " << points.n_rows
           << "-dimensional!" << endl;
     }
 
@@ -192,6 +216,4 @@ int main(int argc, char* argv[])
     if (CLI::HasParam("output_predictions"))
       CLI::GetParam<vec>("output_predictions") = std::move(predictions);
   }
-
-  CLI::Destroy();
 }

@@ -3,9 +3,14 @@ set(DIRS
   ada_grad
   adam
   aug_lagrangian
+  cne
+  fw
   gradient_descent
+  grid_search
   lbfgs
+  line_search
   minibatch_sgd
+  proximal
   rmsprop
   sa
   sdp

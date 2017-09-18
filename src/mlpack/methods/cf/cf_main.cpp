@@ -9,10 +9,10 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/math/random.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/amf/amf.hpp>
 #include <mlpack/methods/regularized_svd/regularized_svd.hpp>
 #include <mlpack/methods/amf/termination_policies/max_iteration_termination.hpp>
@@ -25,31 +25,35 @@ using namespace mlpack::svd;
 using namespace std;
 
 // Document program.
-PROGRAM_INFO("Collaborating Filtering", "This program performs collaborative "
+PROGRAM_INFO("Collaborative Filtering", "This program performs collaborative "
     "filtering (CF) on the given dataset. Given a list of user, item and "
-    "preferences (--training_file) the program will perform a matrix "
-    "decomposition and then can perform a series of actions related to "
-    "collaborative filtering.  Alternately, the program can load an existing "
-    "saved CF model with the --input_model_file (-m) option and then use that "
-    "model to provide recommendations or predict values."
+    "preferences (the " + PRINT_PARAM_STRING("training") + " parameter), "
+    "the program will perform a matrix decomposition and then can perform a "
+    "series of actions related to collaborative filtering.  Alternately, the "
+    "program can load an existing saved CF model with the " +
+    PRINT_PARAM_STRING("input_model") + " parameter and then use that model "
+    "to provide recommendations or predict values."
     "\n\n"
-    "The input file should contain a 3-column matrix of ratings, where the "
-    "first column is the user, the second column is the item, and the third "
-    "column is that user's rating of that item.  Both the users and items "
-    "should be numeric indices, not names. The indices are assumed to start "
-    "from 0."
+    "The input matrix should be a 3-dimensional matrix of ratings, where the "
+    "first dimension is the user, the second dimension is the item, and the "
+    "third dimension is that user's rating of that item.  Both the users and "
+    "items should be numeric indices, not names. The indices are assumed to "
+    "start from 0."
     "\n\n"
     "A set of query users for which recommendations can be generated may be "
-    "specified with the --query_file (-q) option; alternately, recommendations "
-    "may be generated for every user in the dataset by specifying the "
-    "--all_user_recommendations (-A) option.  In addition, the number of "
-    "recommendations per user to generate can be specified with the "
-    "--recommendations (-r) parameter, and the number of similar users (the "
-    "size of the neighborhood) to be considered when generating recommendations"
-    " can be specified with the --neighborhood (-n) option."
+    "specified with the " + PRINT_PARAM_STRING("query") + " parameter; "
+    "alternately, recommendations may be generated for every user in the "
+    "dataset by specifying the " +
+    PRINT_PARAM_STRING("all_user_recommendations") + " parameter.  In "
+    "addition, the number of recommendations per user to generate can be "
+    "specified with the " + PRINT_PARAM_STRING("recommendations") + " "
+    "parameter, and the number of similar users (the size of the neighborhood) "
+    " to be considered when generating recommendations can be specified with "
+    "the " + PRINT_PARAM_STRING("neighborhood") + " parameter."
     "\n\n"
     "For performing the matrix decomposition, the following optimization "
-    "algorithms can be specified via the --algorithm (-a) parameter: "
+    "algorithms can be specified via the " + PRINT_PARAM_STRING("algorithm") +
+    " parameter: "
     "\n"
     "'RegSVD' -- Regularized SVD using a SGD optimizer\n"
     "'NMF' -- Non-negative matrix factorization with alternating least squares "
@@ -58,8 +62,23 @@ PROGRAM_INFO("Collaborating Filtering", "This program performs collaborative "
     "'SVDIncompleteIncremental' -- SVD incomplete incremental learning\n"
     "'SVDCompleteIncremental' -- SVD complete incremental learning\n"
     "\n"
-    "A trained model may be saved to a file with the --output_model_file (-M) "
-    "parameter.");
+    "A trained model may be saved to with the " +
+    PRINT_PARAM_STRING("output_model") + " output parameter."
+    "\n\n"
+    "To train a CF model on a dataset " + PRINT_DATASET("training_set") + " "
+    "using NMF for decomposition and saving the trained model to " +
+    PRINT_MODEL("model") + ", one could call: "
+    "\n\n" +
+    PRINT_CALL("cf", "training", "training_set", "algorithm", "NMF",
+        "output_model", "model") +
+    "\n\n"
+    "Then, to use this model to generate recommendations for the list of users "
+    "in the query set " + PRINT_DATASET("users") + ", storing 5 "
+    "recommendations in " + PRINT_DATASET("recommendations") + ", one could "
+    "call "
+    "\n\n" +
+    PRINT_CALL("cf", "input_model", "model", "query", "users",
+        "recommendations", 5, "output", "recommendations"));
 
 // Parameters for training a model.
 PARAM_MATRIX_IN("training", "Input dataset to perform CF on.", "t");
@@ -243,11 +262,8 @@ void AssembleFactorizerType(const std::string& algorithm,
   }
 }
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  // Parse command line options.
-  CLI::ParseCommandLine(argc, argv);
-
   if (CLI::GetParam<int>("seed") == 0)
     math::RandomSeed(std::time(NULL));
   else
@@ -321,6 +337,4 @@ int main(int argc, char** argv)
 
     PerformAction(c);
   }
-
-  CLI::Destroy();
 }

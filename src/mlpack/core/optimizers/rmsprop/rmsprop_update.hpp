@@ -66,8 +66,7 @@ class RMSPropUpdate
    * @param rows Number of rows in the gradient matrix.
    * @param cols Number of columns in the gradient matrix.
    */
-  void Initialize(const size_t rows,
-                  const size_t cols)
+  void Initialize(const size_t rows, const size_t cols)
   {
     // Leaky sum of squares of parameter gradient.
     meanSquaredGradient = arma::zeros<arma::mat>(rows, cols);
