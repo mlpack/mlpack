@@ -164,7 +164,7 @@ class EMFit
 
   // Armadillo uses uword internally as an OpenMP index type, which crashes
   // Visual Studio.
-  #ifdef _WIN32
+  #ifndef _WIN32
   /**
    * Use the Armadillo gmm_diag clusterer to train a GMM with diagonal
    * covariance.  If InitialClusteringType == kmeans::KMeans<>, this will use
