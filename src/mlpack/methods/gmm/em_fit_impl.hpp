@@ -41,12 +41,15 @@ void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::Estimate(
     const bool useInitialModel)
 {
   // Shortcut: if the user is using the DiagonalConstraint, then we will call
-  // out to Armadillo.
+  // out to Armadillo.  But Armadillo uses uword internally as an OpenMP index
+  // type, which crashes Visual Studio, so don't do this on Windows.
+  #ifndef _WIN32
   if (std::is_same<CovarianceConstraintPolicy, DiagonalConstraint>::value)
   {
     ArmadilloGMMWrapper(observations, dists, weights, useInitialModel);
     return;
   }
+  #endif
 
   // Only perform initial clustering if the user wanted it.
   if (!useInitialModel)
@@ -325,6 +328,9 @@ void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::Serialize(
   ar & CreateNVP(constraint, "constraint");
 }
 
+// Armadillo uses uword internally as an OpenMP index type, which crashes Visual
+// Studio.
+#ifndef _WIN32
 template<typename InitialClusteringType, typename CovarianceConstraintPolicy>
 void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::
 ArmadilloGMMWrapper(const arma::mat& observations,
@@ -382,6 +388,7 @@ ArmadilloGMMWrapper(const arma::mat& observations,
     dists[i].Covariance(std::move(arma::diagmat(g.dcovs.col(i))));
   }
 }
+#endif
 
 } // namespace gmm
 } // namespace mlpack
