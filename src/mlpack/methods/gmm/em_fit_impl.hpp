@@ -334,9 +334,11 @@ ArmadilloGMMWrapper(const arma::mat& observations,
 {
   arma::gmm_diag g;
 
-  // Warn the user that tolerance isn't used for convergence here.
-  Log::Warn << "GMM::Train(): tolerance ignored when training GMMs with "
-      << "DiagonalConstraint." << std::endl;
+  // Warn the user that tolerance isn't used for convergence here if they've
+  // specified a non-default value.
+  if (tolerance != EMFit().Tolerance())
+    Log::Warn << "GMM::Train(): tolerance ignored when training GMMs with "
+        << "DiagonalConstraint." << std::endl;
 
   // If the initial clustering is the default k-means, we'll just use
   // Armadillo's implementation.  If mlpack ever changes k-means defaults to use
