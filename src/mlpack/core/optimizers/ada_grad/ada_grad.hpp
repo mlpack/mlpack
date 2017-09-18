@@ -31,7 +31,8 @@ namespace optimization {
  * @code
  * @article{duchi2011adaptive,
  *   author  = {Duchi, John and Hazan, Elad and Singer, Yoram},
- *   title   = {Adaptive subgradient methods for online learning and stochastic optimization},
+ *   title   = {Adaptive subgradient methods for online learning and stochastic
+ *              optimization},
  *   journal = {Journal of Machine Learning Research},
  *   volume  = {12},
  *   number  = {Jul},

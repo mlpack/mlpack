@@ -72,7 +72,8 @@ void PrintPYX(const ProgramDoc& programInfo,
   cout << "cimport arma_numpy" << endl;
   cout << "from cli cimport CLI" << endl;
   cout << "from cli cimport SetParam, SetParamWithInfo" << endl;
-  cout << "from cli cimport EnableVerbose" << endl;
+  cout << "from cli cimport EnableVerbose, DisableBacktrace, ResetTimers"
+      << endl;
   cout << "from cli cimport MoveFromPtr, MoveToPtr" << endl;
   cout << "from matrix_utils import to_matrix, to_matrix_with_info" << endl;
   cout << endl;
@@ -88,7 +89,7 @@ void PrintPYX(const ProgramDoc& programInfo,
 
   // Import the program we will be using.
   cout << "cdef extern from \"<" << mainFilename << ">\" nogil:" << endl;
-  cout << "  cdef int mlpackMain() nogil except +RuntimeError" << endl;
+  cout << "  cdef void mlpackMain() nogil except +RuntimeError" << endl;
   cout << "  " << endl;
   // Print any class definitions we need to have.
   std::set<std::string> classes;
@@ -167,6 +168,10 @@ void PrintPYX(const ProgramDoc& programInfo,
   cout << "A dict containing each of the named output parameters will be "
       << "returned." << endl;
   cout << "  \"\"\"" << endl;
+
+  // Reset any timers and disable backtraces.
+  cout << "  ResetTimers()" << endl;
+  cout << "  DisableBacktrace()" << endl;
 
   // Restore the parameters.
   cout << "  CLI.RestoreSettings(\"" << programInfo.programName << "\")";

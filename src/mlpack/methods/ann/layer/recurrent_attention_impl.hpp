@@ -26,6 +26,16 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
+template<typename InputDataType, typename OutputDataType>
+RecurrentAttention<InputDataType, OutputDataType>::RecurrentAttention() :
+    rho(0),
+    forwardStep(0),
+    backwardStep(0),
+    deterministic(false)
+{
+  // Nothing to do.
+}
+
 template <typename InputDataType, typename OutputDataType>
 template<typename RNNModuleType, typename ActionModuleType>
 RecurrentAttention<InputDataType, OutputDataType>::RecurrentAttention(
@@ -197,13 +207,16 @@ void RecurrentAttention<InputDataType, OutputDataType>::Gradient(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void RecurrentAttention<InputDataType, OutputDataType>::Serialize(
+void RecurrentAttention<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & data::CreateNVP(rho, "rho");
-  ar & data::CreateNVP(outSize, "outSize");
-  ar & data::CreateNVP(forwardStep, "forwardStep");
-  ar & data::CreateNVP(backwardStep, "backwardStep");
+  ar & BOOST_SERIALIZATION_NVP(rho);
+  ar & BOOST_SERIALIZATION_NVP(outSize);
+  ar & BOOST_SERIALIZATION_NVP(forwardStep);
+  ar & BOOST_SERIALIZATION_NVP(backwardStep);
+
+  ar & BOOST_SERIALIZATION_NVP(rnnModule);
+  ar & BOOST_SERIALIZATION_NVP(actionModule);
 }
 
 } // namespace ann

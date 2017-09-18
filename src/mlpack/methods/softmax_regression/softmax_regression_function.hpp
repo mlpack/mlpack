@@ -111,17 +111,29 @@ class SoftmaxRegressionFunction
    */
   void Gradient(const arma::mat& parameters, arma::mat& gradient) const;
 
+  /**
+   * Evaluates the gradient values of the objective function given the current
+   * set of parameters for a single feature indexed by j.
+   *
+   * @param parameters Current values of the model parameters.
+   * @param j The index of the feature with respect to which the partial
+   *    gradient is to be computed.
+   * @param gradient Out param for the gradient value.
+   */
+  void PartialGradient(const arma::mat& parameters,
+                       size_t j,
+                       arma::sp_mat& gradient) const;
+
   //! Return the initial point for the optimization.
   const arma::mat& GetInitialPoint() const { return initialPoint; }
 
   //! Gets the number of classes.
   size_t NumClasses() const { return numClasses; }
 
-  //! Gets the features size of the training data
-  size_t FeatureSize() const
+  //! Gets the features size of the training data.
+  size_t NumFeatures() const
   {
-    return fitIntercept ? initialPoint.n_cols - 1 :
-                          initialPoint.n_cols;
+    return initialPoint.n_cols;
   }
 
   //! Sets the regularization parameter.

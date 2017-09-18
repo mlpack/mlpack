@@ -32,7 +32,7 @@ class MultiplyConstant
   /**
    * Create the MultiplyConstant object.
    */
-  MultiplyConstant(const double scalar);
+  MultiplyConstant(const double scalar = 1.0);
 
   /**
    * Ordinary feed forward pass of a neural network. Multiply the input with the
@@ -74,7 +74,7 @@ class MultiplyConstant
    * Serialize the layer.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Locally-stored constant scalar value.

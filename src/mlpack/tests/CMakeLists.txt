@@ -38,6 +38,7 @@ add_executable(mlpack_test
   gradient_descent_test.cpp
   hmm_test.cpp
   hoeffding_tree_test.cpp
+  hpt_test.cpp
   hyperplane_test.cpp
   imputation_test.cpp
   init_rules_test.cpp
@@ -53,6 +54,7 @@ add_executable(mlpack_test
   lbfgs_test.cpp
   lin_alg_test.cpp
   linear_regression_test.cpp
+  line_search_test.cpp
   load_save_test.cpp
   local_coordinate_coding_test.cpp
   logistic_regression_test.cpp
@@ -78,6 +80,7 @@ add_executable(mlpack_test
   perceptron_test.cpp
   python_binding_test.cpp
   prefixedoutstream_test.cpp
+  proximal_test.cpp
   q_learning_test.cpp
   qdafn_test.cpp
   quic_svd_test.cpp
@@ -92,6 +95,7 @@ add_executable(mlpack_test
   rl_components_test.cpp
   rmsprop_test.cpp
   sa_test.cpp
+  scd_test.cpp
   sdp_primal_dual_test.cpp
   serialization.hpp
   serialization.cpp
@@ -118,6 +122,7 @@ add_executable(mlpack_test
   vantage_point_tree_test.cpp
   main_tests/pca_test.cpp
 )
+
 # Link dependencies of test executable.
 target_link_libraries(mlpack_test
   mlpack

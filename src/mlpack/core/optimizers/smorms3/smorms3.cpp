@@ -16,10 +16,10 @@ namespace mlpack {
 namespace optimization {
 
 SMORMS3::SMORMS3(const double stepSize,
-                                           const double epsilon,
-                                           const size_t maxIterations,
-                                           const double tolerance,
-                                           const bool shuffle) :
+                 const double epsilon,
+                 const size_t maxIterations,
+                 const double tolerance,
+                 const bool shuffle) :
     optimizer(stepSize,
               maxIterations,
               tolerance,

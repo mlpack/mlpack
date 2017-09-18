@@ -223,9 +223,9 @@ void mlpackMain()
   {
     // Set the size of the parameters vector, if necessary.
     if (!CLI::HasParam("labels"))
-      model.Parameters() = arma::zeros<arma::vec>(regressors.n_rows - 1);
-    else
       model.Parameters() = arma::zeros<arma::vec>(regressors.n_rows);
+    else
+      model.Parameters() = arma::zeros<arma::vec>(regressors.n_rows + 1);
   }
 
   // Check if the responses are in a separate file.

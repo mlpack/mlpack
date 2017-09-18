@@ -83,6 +83,19 @@ LSTM<InputDataType, OutputDataType>::LSTM(
 }
 
 template<typename InputDataType, typename OutputDataType>
+LSTM<InputDataType, OutputDataType>::~LSTM()
+{
+  boost::apply_visitor(DeleteVisitor(), input2GateModule);
+  boost::apply_visitor(DeleteVisitor(), output2GateModule);
+  boost::apply_visitor(DeleteVisitor(), inputGateModule);
+  boost::apply_visitor(DeleteVisitor(), hiddenStateModule);
+  boost::apply_visitor(DeleteVisitor(), forgetGateModule);
+  boost::apply_visitor(DeleteVisitor(), outputGateModule);
+  boost::apply_visitor(DeleteVisitor(), cellModule);
+  boost::apply_visitor(DeleteVisitor(), cellActivationModule);
+}
+
+template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void LSTM<InputDataType, OutputDataType>::Forward(
     arma::Mat<eT>&& input, arma::Mat<eT>&& output)
@@ -335,13 +348,34 @@ void LSTM<InputDataType, OutputDataType>::ResetCell()
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void LSTM<InputDataType, OutputDataType>::Serialize(
+void LSTM<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & data::CreateNVP(weights, "weights");
-  ar & data::CreateNVP(inSize, "inSize");
-  ar & data::CreateNVP(outSize, "outSize");
-  ar & data::CreateNVP(rho, "rho");
+  // Clear old layers, if needed.
+  if (Archive::is_loading::value)
+  {
+    boost::apply_visitor(DeleteVisitor(), input2GateModule);
+    boost::apply_visitor(DeleteVisitor(), output2GateModule);
+    boost::apply_visitor(DeleteVisitor(), inputGateModule);
+    boost::apply_visitor(DeleteVisitor(), hiddenStateModule);
+    boost::apply_visitor(DeleteVisitor(), forgetGateModule);
+    boost::apply_visitor(DeleteVisitor(), outputGateModule);
+    boost::apply_visitor(DeleteVisitor(), cellModule);
+    boost::apply_visitor(DeleteVisitor(), cellActivationModule);
+  }
+
+  ar & BOOST_SERIALIZATION_NVP(inSize);
+  ar & BOOST_SERIALIZATION_NVP(outSize);
+  ar & BOOST_SERIALIZATION_NVP(rho);
+
+  ar & BOOST_SERIALIZATION_NVP(input2GateModule);
+  ar & BOOST_SERIALIZATION_NVP(output2GateModule);
+  ar & BOOST_SERIALIZATION_NVP(inputGateModule);
+  ar & BOOST_SERIALIZATION_NVP(hiddenStateModule);
+  ar & BOOST_SERIALIZATION_NVP(forgetGateModule);
+  ar & BOOST_SERIALIZATION_NVP(outputGateModule);
+  ar & BOOST_SERIALIZATION_NVP(cellModule);
+  ar & BOOST_SERIALIZATION_NVP(cellActivationModule);
 }
 
 } // namespace ann

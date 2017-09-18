@@ -40,7 +40,7 @@ else:
                       '-std=c++11${CMAKE_CXX_FLAGS}').split(' '),
                   extra_link_args=['${OpenMP_CXX_FLAGS}'],
                   undef_macros=[] if len("${DISABLE_CFLAGS}") == 0 \
-                      else ['${DISABLE_CFLAGS}']) \
+                      else '${DISABLE_CFLAGS}'.split(';')) \
         for name in pyxs if name == module]
   else:
     modules=[\
@@ -59,7 +59,7 @@ else:
                       '-std=c++11${CMAKE_CXX_FLAGS}').split(' '),
                   extra_link_args=['${OpenMP_CXX_FLAGS}'],
                   undef_macros=[] if len("${DISABLE_CFLAGS}") == 0 \
-                      else ['${DISABLE_CFLAGS}']) \
+                      else '${DISABLE_CFLAGS}'.split(';')) \
         for name in pyxs]
 
 setup(name='mlpack',

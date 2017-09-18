@@ -57,10 +57,13 @@ void Add<InputDataType, OutputDataType>::Gradient(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void Add<InputDataType, OutputDataType>::Serialize(
+void Add<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & data::CreateNVP(weights, "weights");
+  ar & BOOST_SERIALIZATION_NVP(outSize);
+
+  if (Archive::is_loading::value)
+    weights.set_size(outSize, 1);
 }
 
 } // namespace ann

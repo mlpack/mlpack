@@ -19,6 +19,7 @@
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
+#include "serialization.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
@@ -498,6 +499,72 @@ BOOST_AUTO_TEST_CASE(FFNMiscTest)
   copiedModel = model;
   auto movedModel(std::move(model));
   movedModel = std::move(copiedModel);
+}
+
+/**
+ * Test that serialization works ok.
+ */
+BOOST_AUTO_TEST_CASE(SerializationTest)
+{
+  // Load the dataset.
+  arma::mat dataset;
+  data::Load("thyroid_train.csv", dataset, true);
+
+  arma::mat trainData = dataset.submat(0, 0, dataset.n_rows - 4,
+      dataset.n_cols - 1);
+
+  arma::mat trainLabelsTemp = dataset.submat(dataset.n_rows - 3, 0,
+      dataset.n_rows - 1, dataset.n_cols - 1);
+  arma::mat trainLabels = arma::zeros<arma::mat>(1, trainLabelsTemp.n_cols);
+  for (size_t i = 0; i < trainLabelsTemp.n_cols; ++i)
+  {
+    trainLabels(i) = arma::as_scalar(arma::find(
+        arma::max(trainLabelsTemp.col(i)) == trainLabelsTemp.col(i), 1)) + 1;
+  }
+
+  data::Load("thyroid_test.csv", dataset, true);
+
+  arma::mat testData = dataset.submat(0, 0, dataset.n_rows - 4,
+      dataset.n_cols - 1);
+
+  arma::mat testLabelsTemp = dataset.submat(dataset.n_rows - 3, 0,
+      dataset.n_rows - 1, dataset.n_cols - 1);
+
+  arma::mat testLabels = arma::zeros<arma::mat>(1, testLabelsTemp.n_cols);
+  for (size_t i = 0; i < testLabels.n_cols; ++i)
+  {
+    testLabels(i) = arma::as_scalar(arma::find(
+        arma::max(testLabelsTemp.col(i)) == testLabelsTemp.col(i), 1)) + 1;
+  }
+
+  // Vanilla neural net with logistic activation function.
+  // Because 92 percent of the patients are not hyperthyroid the neural
+  // network must be significant better than 92%.
+  FFN<NegativeLogLikelihood<> > model;
+  model.Add<Linear<> >(trainData.n_rows, 8);
+  model.Add<SigmoidLayer<> >();
+  model.Add<Dropout<> >();
+  model.Add<Linear<> >(8, 3);
+  model.Add<LogSoftMax<> >();
+
+  RMSProp opt(0.01, 0.88, 1e-8, trainData.n_cols /* 1 epoch */, -1);
+
+  model.Train(trainData, trainLabels, opt);
+
+  FFN<NegativeLogLikelihood<>> xmlModel, textModel, binaryModel;
+  xmlModel.Add<Linear<>>(10, 10); // Layer that will get removed.
+
+  // Serialize into other models.
+  SerializeObjectAll(model, xmlModel, textModel, binaryModel);
+
+  arma::mat predictions, xmlPredictions, textPredictions, binaryPredictions;
+  model.Predict(testData, predictions);
+  xmlModel.Predict(testData, xmlPredictions);
+  textModel.Predict(testData, textPredictions);
+  textModel.Predict(testData, binaryPredictions);
+
+  CheckMatrices(predictions, xmlPredictions, textPredictions,
+      binaryPredictions);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
