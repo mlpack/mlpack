@@ -79,6 +79,8 @@ set(CYTHON_SOURCES
   mlpack/cli_util.hpp
   mlpack/move.hpp
   mlpack/matrix_utils.py
+  mlpack/serialization.hpp
+  mlpack/serialization.pxd
   setup.cfg
 )
 

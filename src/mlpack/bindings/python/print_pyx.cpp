@@ -76,6 +76,7 @@ void PrintPYX(const ProgramDoc& programInfo,
       << endl;
   cout << "from cli cimport MoveFromPtr, MoveToPtr" << endl;
   cout << "from matrix_utils import to_matrix, to_matrix_with_info" << endl;
+  cout << "from serialization cimport SerializeIn, SerializeOut" << endl;
   cout << endl;
   cout << "import numpy as np" << endl;
   cout << "cimport numpy as np" << endl;
