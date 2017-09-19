@@ -127,7 +127,7 @@ inline std::string ParamString(const std::string& paramName)
     if (d.alias != '\0')
       alias = " (-" + std::string(1, d.alias) + ")";
 
-    return "'" + output + alias + "'";
+    return output + alias;
   }
   else
   {
