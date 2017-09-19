@@ -29,6 +29,7 @@
 #include <mlpack/bindings/cli/print_doc_functions.hpp>
 
 #define PRINT_PARAM_STRING mlpack::bindings::cli::ParamString
+#define PRINT_PARAM_VALUE mlpack::bindings::cli::PrintValue
 #define PRINT_CALL mlpack::bindings::cli::ProgramCall
 #define PRINT_DATASET mlpack::bindings::cli::PrintDataset
 #define PRINT_MODEL mlpack::bindings::cli::PrintModel
@@ -66,6 +67,7 @@ int main(int argc, char** argv)
 
 // These functions will do nothing.
 #define PRINT_PARAM_STRING(A) std::string(" ")
+#define PRINT_PARAM_VALUE(A) std::string(" ")
 #define PRINT_DATASET(A) std::string(" ")
 #define PRINT_MODEL(A) std::string(" ")
 #define PRINT_CALL(...) std::string(" ")
@@ -99,6 +101,7 @@ using Option = mlpack::bindings::tests::TestOption<T>;
 #include <mlpack/bindings/python/print_doc_functions.hpp>
 
 #define PRINT_PARAM_STRING mlpack::bindings::python::ParamString
+#define PRINT_PARAM_VALUE mlpack::bindings::python::PrintValue
 #define PRINT_DATASET mlpack::bindings::python::PrintDataset
 #define PRINT_MODEL mlpack::bindings::python::PrintModel
 #define PRINT_CALL mlpack::bindings::python::ProgramCall
@@ -137,4 +140,47 @@ PARAM_FLAG("verbose", "Display informational messages and the full list of "
        "including <mlpack/core/util/mlpack_main.hpp>.";
 
 #endif
+
+/**
+ * Define some utility functions for checking parameter values.
+ */
+
+namespace mlpack {
+
+/**
+ * Check that the arguments are given.
+ */
+void RequireOnlyOnePassed(
+    const std::vector<std::string>& constraints,
+    const bool fatal = true,
+    const std::string& customErrorMessage = "");
+
+void RequireAtLeastOnePassed(
+    const std::vector<std::string>& constraints,
+    const bool fatal,
+    const std::string& customErrorMessage);
+
+/**
+ * Ensure that an argument is in a given range.
+ */
+template<typename T>
+void RequireParamInSet(const std::string& paramName,
+                       const std::vector<T>& set,
+                       const bool fatal,
+                       const std::string& errorMessage);
+
+template<typename T>
+void RequireParamValue(const std::string& paramName,
+                       const std::function<bool(T)>& conditional,
+                       const bool fatal,
+                       const std::string& errorMessage);
+
+void ReportIgnoredParam(
+    const std::vector<std::pair<std::string, bool>>& constraints,
+    const std::string& paramName);
+
+} // namespace mlpack
+
+#include "mlpack_main_impl.hpp"
+
 #endif
