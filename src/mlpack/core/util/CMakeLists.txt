@@ -15,6 +15,8 @@ set(SOURCES
   is_std_vector.hpp
   log.hpp
   log.cpp
+  mlpack_main.hpp
+  mlpack_main_impl.hpp
   nulloutstream.hpp
   param_data.hpp
   prefixedoutstream.hpp
