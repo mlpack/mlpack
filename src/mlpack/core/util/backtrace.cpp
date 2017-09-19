@@ -96,7 +96,7 @@ void Backtrace::GetAddress(int maxDepth)
 
     frame.address = addressHandler.dli_saddr;
 
-    DecodeAddress((long)frame.address);
+    DecodeAddress((long) frame.address);
   }
 }
 
@@ -126,9 +126,9 @@ void Backtrace::DecodeAddress(long addr)
 
     bfd_check_format(abfd, bfd_object);
 
-    unsigned storage_needed = bfd_get_symtab_upper_bound(abfd);
-    syms = (asymbol **) malloc(storage_needed);
-    unsigned cSymbols = bfd_canonicalize_symtab(abfd, syms);
+    unsigned storageNeeded = bfd_get_symtab_upper_bound(abfd);
+    syms = (asymbol **) malloc(storageNeeded);
+    bfd_canonicalize_symtab(abfd, syms);
 
     text = bfd_get_section_by_name(abfd, ".text");
   }
