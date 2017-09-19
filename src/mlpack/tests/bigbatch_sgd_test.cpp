@@ -35,8 +35,6 @@ void CreateLogisticRegressionTestData(arma::mat& data,
                                       arma::Row<size_t>& testResponses,
                                       arma::Row<size_t>& shuffledResponses)
 {
-  mlpack::math::RandomSeed(std::time(NULL));
-
   // Generate a two-Gaussian dataset.
   GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
   GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
@@ -93,14 +91,10 @@ BOOST_AUTO_TEST_CASE(BBSBBLogisticRegressionTest)
       responses, testResponses, shuffledResponses);
 
   // Now run big-batch SGD with a couple of batch sizes.
-  for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
+  for (size_t batchSize = 5; batchSize < 40; batchSize += 5)
   {
-    LogisticRegression<> lr(shuffledData.n_rows, 0.5);
-
-    LogisticRegressionFunction<> lrf(shuffledData, shuffledResponses, 0.5);
-    BBS_BB<LogisticRegressionFunction<>> mbsgd(
-        lrf, batchSize, 0.01, 0.1, 20000);
-    lr.Train(mbsgd);
+    BBS_BB bbsgd(batchSize, 0.01, 0.1, 6000, 1e-3);
+    LogisticRegression<> lr(shuffledData, shuffledResponses, bbsgd, 0.5);
 
     // Ensure that the error is close to zero.
     const double acc = lr.ComputeAccuracy(data, responses);
@@ -124,14 +118,10 @@ BOOST_AUTO_TEST_CASE(BBSArmijoLogisticRegressionTest)
       responses, testResponses, shuffledResponses);
 
   // Now run big-batch SGD with a couple of batch sizes.
-  for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
+  for (size_t batchSize = 5; batchSize < 40; batchSize += 5)
   {
-    LogisticRegression<> lr(shuffledData.n_rows, 0.5);
-
-    LogisticRegressionFunction<> lrf(shuffledData, shuffledResponses, 0.5);
-    BBS_Armijo<LogisticRegressionFunction<>> mbsgd(
-        lrf, batchSize, 0.01, 0.1, 20000);
-    lr.Train(mbsgd);
+    BBS_Armijo bbsgd(batchSize, 0.01, 0.1, 6000, 1e-3);
+    LogisticRegression<> lr(shuffledData, shuffledResponses, bbsgd, 0.5);
 
     // Ensure that the error is close to zero.
     const double acc = lr.ComputeAccuracy(data, responses);

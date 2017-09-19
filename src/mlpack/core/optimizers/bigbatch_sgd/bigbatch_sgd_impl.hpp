@@ -18,29 +18,28 @@
 namespace mlpack {
 namespace optimization {
 
-template<typename DecomposableFunctionType, typename UpdatePolicyType>
-BigBatchSGD<DecomposableFunctionType, UpdatePolicyType>::BigBatchSGD(
-    DecomposableFunctionType& function,
+template<typename UpdatePolicyType>
+BigBatchSGD<UpdatePolicyType>::BigBatchSGD(
     const size_t batchSize,
     const double stepSize,
     const double batchDelta,
     const size_t maxIterations,
     const double tolerance,
     const bool shuffle) :
-    function(function),
     batchSize(batchSize),
     stepSize(stepSize),
     batchDelta(batchDelta),
     maxIterations(maxIterations),
     tolerance(tolerance),
     shuffle(shuffle),
-    updatePolicy(UpdatePolicyType(function))
+    updatePolicy(UpdatePolicyType())
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
-template<typename DecomposableFunctionType, typename UpdatePolicyType>
-double BigBatchSGD<DecomposableFunctionType, UpdatePolicyType>::Optimize(
-    arma::mat& iterate)
+template<typename UpdatePolicyType>
+template<typename DecomposableFunctionType>
+double BigBatchSGD<UpdatePolicyType>::Optimize(
+    DecomposableFunctionType& function, arma::mat& iterate)
 {
   // Find the number of functions.
   const size_t numFunctions = function.NumFunctions();
@@ -194,7 +193,7 @@ double BigBatchSGD<DecomposableFunctionType, UpdatePolicyType>::Optimize(
       if ((offset + batchSize) > numFunctions)
         backtrackingBatchSize = numFunctions - offset;
 
-      updatePolicy.Update(stepSize, iterate, gradient, gB, vB, offset,
+      updatePolicy.Update(function, stepSize, iterate, gradient, gB, vB, offset,
           batchSize, backtrackingBatchSize, reset);
 
       // Update the iterate.
@@ -232,8 +231,6 @@ double BigBatchSGD<DecomposableFunctionType, UpdatePolicyType>::Optimize(
       for (size_t j = 0; j < lastBatchSize; ++j)
         overallObjective += function.Evaluate(iterate, offset + j);
     }
-
-
   }
 
   Log::Info << "Big-batch SGD: maximum iterations (" << maxIterations << ") "

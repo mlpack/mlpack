@@ -37,7 +37,6 @@ namespace optimization {
  * }
  * @endcode
  */
-template<typename DecomposableFunctionType>
 class BacktrackingLineSearch
 {
  public:
@@ -49,15 +48,15 @@ class BacktrackingLineSearch
    *
    * @param function Function to be optimized (minimized).
    */
-  BacktrackingLineSearch(DecomposableFunctionType& function,
-                         const double searchParameter = 0.1) :
-      function(function),
+  BacktrackingLineSearch(const double searchParameter = 0.1) :
       searchParameter(searchParameter)
   { /* Nothing to do here. */ }
 
   /**
    * This function is called in each iteration.
    *
+   * @tparam DecomposableFunctionType Type of the function to be optimized.
+   * @param function Function to be optimized (minimized).
    * @param stepSize Step size to be used for the given iteration.
    * @param iterate Parameters that minimize the function.
    * @param gradient The gradient matrix.
@@ -68,7 +67,9 @@ class BacktrackingLineSearch
    *        given iteration.
    * @param reset Reset the step size decay parameter.
    */
-  void Update(double& stepSize,
+  template<typename DecomposableFunctionType>
+  void Update(DecomposableFunctionType& function,
+              double& stepSize,
               arma::mat& iterate,
               const arma::mat& gradient,
               const double gradientNorm,
@@ -103,9 +104,6 @@ class BacktrackingLineSearch
   }
 
  private:
-  //! The instantiated function.
-  DecomposableFunctionType& function;
-
   //! The search parameter for each iteration.
   double searchParameter;
 };

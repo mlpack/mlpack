@@ -86,13 +86,10 @@ namespace optimization {
  * function on the first point in the dataset (presumably, the dataset is held
  * internally in the DecomposableFunctionType).
  *
- * @tparam DecomposableFunctionType Decomposable objective function type to be
- *         minimized.
+ * @tparam UpdatePolicyType Update policy used during the iterative update
+ *     process. By default the AdaptiveStepsize update policy is used.
  */
-template<
-    typename DecomposableFunctionType,
-    typename UpdatePolicyType = AdaptiveStepsize<DecomposableFunctionType>
->
+template<typename UpdatePolicyType = AdaptiveStepsize>
 class BigBatchSGD
 {
  public:
@@ -103,7 +100,6 @@ class BigBatchSGD
    * at hand.  The maximum number of iterations refers to the maximum number of
    * batches that are processed.
    *
-   * @param function Function to be optimized (minimized).
    * @param batchSize Initial batch size.
    * @param stepSize Step size for each iteration.
    * @param batchDelta Factor for the batch update step.
@@ -113,8 +109,7 @@ class BigBatchSGD
    * @param shuffle If true, the batch order is shuffled; otherwise, each
    *        batch is visited in linear order.
    */
-  BigBatchSGD(DecomposableFunctionType& function,
-              const size_t batchSize = 1000,
+  BigBatchSGD(const size_t batchSize = 1000,
               const double stepSize = 0.01,
               const double batchDelta = 0.1,
               const size_t maxIterations = 100000,
@@ -125,15 +120,14 @@ class BigBatchSGD
    * will be modified to store the finishing point of the algorithm, and the
    * final objective value is returned.
    *
+   * @tparam DecomposableFunctionType Type of the function to be optimized.
+   * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
-  double Optimize(arma::mat& iterate);
-
-  //! Get the instantiated function to be optimized.
-  const DecomposableFunctionType& Function() const { return function; }
-  //! Modify the instantiated function.
-  DecomposableFunctionType& Function() { return function; }
+  template<typename DecomposableFunctionType>
+  double Optimize(DecomposableFunctionType& function,
+                  arma::mat& iterate);
 
   //! Get the batch size.
   size_t BatchSize() const { return batchSize; }
@@ -171,9 +165,6 @@ class BigBatchSGD
   UpdatePolicyType& UpdatePolicy() { return updatePolicy; }
 
  private:
-  //! The instantiated function.
-  DecomposableFunctionType& function;
-
   //! The size of the current batch.
   size_t batchSize;
 
@@ -197,15 +188,8 @@ class BigBatchSGD
   UpdatePolicyType updatePolicy;
 };
 
-template<typename DecomposableFunctionType>
-using BBS_Armijo = BigBatchSGD<
-    DecomposableFunctionType,
-    BacktrackingLineSearch<DecomposableFunctionType> >;
-
-template<typename DecomposableFunctionType>
-using BBS_BB = BigBatchSGD<
-    DecomposableFunctionType,
-    AdaptiveStepsize<DecomposableFunctionType> >;
+using BBS_Armijo = BigBatchSGD<BacktrackingLineSearch>;
+using BBS_BB = BigBatchSGD<AdaptiveStepsize>;
 
 } // namespace optimization
 } // namespace mlpack

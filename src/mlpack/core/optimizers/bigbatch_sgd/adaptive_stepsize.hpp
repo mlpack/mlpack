@@ -37,7 +37,6 @@ namespace optimization {
  * }
  * @endcode
  */
-template<typename DecomposableFunctionType>
 class AdaptiveStepsize
 {
  public:
@@ -47,23 +46,21 @@ class AdaptiveStepsize
    * problem, so it is suggested that the values used be tailored to the task at
    * hand.
    *
-   * @param function Function to be optimized (minimized).
    * @param backtrackStepSize The backtracking step size for each iteration.
    * @param searchParameter The backtracking search parameter for each
    *        iteration.
    */
-  AdaptiveStepsize(DecomposableFunctionType& function,
-                   const double backtrackStepSize = 0.1,
+  AdaptiveStepsize(const double backtrackStepSize = 0.1,
                    const double searchParameter = 0.1) :
-      function(function),
       backtrackStepSize(backtrackStepSize),
-      searchParameter(searchParameter),
-      numFunctions(function.NumFunctions())
+      searchParameter(searchParameter)
   { /* Nothing to do here. */ }
 
   /**
    * This function is called in each iteration.
    *
+   * @tparam DecomposableFunctionType Type of the function to be optimized.
+   * @param function Function to be optimized (minimized).
    * @param stepSize Step size to be used for the given iteration.
    * @param iterate Parameters that minimize the function.
    * @param gradient The gradient matrix.
@@ -74,7 +71,9 @@ class AdaptiveStepsize
    *        given iteration.
    * @param reset Reset the step size decay parameter.
    */
-  void Update(double& stepSize,
+  template<typename DecomposableFunctionType>
+  void Update(DecomposableFunctionType& function,
+              double& stepSize,
               arma::mat& iterate,
               const arma::mat& gradient,
               const double gradientNorm,
@@ -84,7 +83,7 @@ class AdaptiveStepsize
               const size_t backtrackingBatchSize,
               const bool /* reset */)
   {
-    Backtracking(stepSize, iterate, gradient, gradientNorm, offset,
+    Backtracking(function, stepSize, iterate, gradient, gradientNorm, offset,
         backtrackingBatchSize);
 
     // Update the iterate.
@@ -102,10 +101,10 @@ class AdaptiveStepsize
     }
 
     // Stepsize smoothing.
-    stepSize *= (1 - ((double) batchSize / numFunctions));
-    stepSize += stepSizeDecay * ((double) batchSize / numFunctions);
+    stepSize *= (1 - ((double) batchSize / function.NumFunctions()));
+    stepSize += stepSizeDecay * ((double) batchSize / function.NumFunctions());
 
-    Backtracking(stepSize, iterate, gradient, gradientNorm, offset,
+    Backtracking(function, stepSize, iterate, gradient, gradientNorm, offset,
         backtrackingBatchSize);
   }
 
@@ -125,6 +124,8 @@ class AdaptiveStepsize
    * Armijo–Goldstein condition to determine the maximum amount to move along
    * the given search direction.
    *
+   * @tparam DecomposableFunctionType Type of the function to be optimized.
+   * @param function Function to be optimized (minimized).
    * @param stepSize Step size to be used for the given iteration.
    * @param iterate Parameters that minimize the function.
    * @param gradient The gradient matrix.
@@ -132,7 +133,9 @@ class AdaptiveStepsize
    * @param offset The batch offset to be used for the given iteration.
    * @param backtrackingBatchSize The backtracking batch size.
    */
-  void Backtracking(double& stepSize,
+  template<typename DecomposableFunctionType>
+  void Backtracking(DecomposableFunctionType& function,
+                    double& stepSize,
                     const arma::mat& iterate,
                     const arma::mat& gradient,
                     const double gradientNorm,
@@ -160,17 +163,11 @@ class AdaptiveStepsize
     }
   }
 
-  //! The instantiated function.
-  DecomposableFunctionType& function;
-
   //! The backtracking step size for each iteration.
   double backtrackStepSize;
 
   //! The search parameter for each iteration.
   double searchParameter;
-
-  //! Number of functions.
-  const size_t numFunctions;
 };
 
 } // namespace optimization
