@@ -18,11 +18,16 @@ before_install:
   - curl http://masterblaster.mlpack.org:5005/armadillo-6.500.5.tar.gz | tar xvz && cd armadillo*
   - cmake . && make && sudo make install && cd ..
   - sudo cp .travis/config.hpp /usr/include/armadillo_bits/config.hpp
+  - sudo update-alternatives --install "/usr/bin/ld" "ld" "/usr/bin/ld.gold" 20
+  - sudo update-alternatives --install "/usr/bin/ld" "ld" "/usr/bin/ld.bfd" 10
+  - sudo update-alternatives --set ld /usr/bin/ld.gold
+  - ld --version
 
 install:
   - mkdir build && cd build && cmake $CMAKE_OPTIONS .. && make -j2
 
 script:
+  - export OMP_NUM_THREADS=2
   - CTEST_OUTPUT_ON_FAILURE=1 travis_wait 30 ctest -j2
 
 notifications:
