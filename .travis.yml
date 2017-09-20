@@ -20,7 +20,7 @@ before_install:
   - sudo cp .travis/config.hpp /usr/include/armadillo_bits/config.hpp
   - sudo update-alternatives --install "/usr/bin/ld" "ld" "/usr/bin/ld.gold" 20
   - sudo update-alternatives --install "/usr/bin/ld" "ld" "/usr/bin/ld.bfd" 10
-  - sudo update-alternatives --config ld
+  - sudo update-alternatives --set ld /usr/bin/ld.gold
   - ld --version
 
 install:
