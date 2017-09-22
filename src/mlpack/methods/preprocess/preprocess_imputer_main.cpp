@@ -37,14 +37,15 @@ PROGRAM_INFO("Impute Data", "This utility takes a dataset and converts user "
     "$ mlpack_preprocess_imputer -i dataset.csv -o result.csv -m NULL -d 0 \n"
     "> -s listwise_deletion");
 
-PARAM_STRING_IN_REQ("input_file", "File containing data,", "i");
-PARAM_STRING_OUT("output_file", "File to save output", "o");
-PARAM_STRING_IN("missing_value", "User defined missing value", "m", "");
-PARAM_STRING_IN("strategy", "imputation strategy to be applied. Strategies "
+PARAM_STRING_IN_REQ("input_file", "File containing data.", "i");
+PARAM_STRING_OUT("output_file", "File to save output into.", "o");
+PARAM_STRING_IN_REQ("missing_value", "User defined missing value.", "m");
+PARAM_STRING_IN_REQ("strategy", "imputation strategy to be applied. Strategies "
     "should be one of 'custom', 'mean', 'median', and 'listwise_deletion'.",
-    "s", "");
-PARAM_DOUBLE_IN("custom_value", "user_defined custom value", "c", 0.0);
-PARAM_INT_IN("dimension", "the dimension to apply imputation", "d", 0);
+    "s");
+PARAM_DOUBLE_IN("custom_value", "User-defined custom imputation value.", "c",
+    0.0);
+PARAM_INT_IN("dimension", "The dimension to apply imputation to.", "d", 0);
 
 using namespace mlpack;
 using namespace arma;
@@ -60,44 +61,19 @@ void mlpackMain()
   const size_t dimension = (size_t) CLI::GetParam<int>("dimension");
   string strategy = CLI::GetParam<string>("strategy");
 
-  // The program needs user-defined missing values.
-  // Missing values can be any list of strings such as "1", "a", "NULL".
-  if (!CLI::HasParam("missing_value"))
-    Log::Fatal << "--missing_value must be specified in order to perform "
-        << "any imputation strategies." << endl;
-
-  if (!CLI::HasParam("strategy"))
-    Log::Fatal << "--strategy must be specified in order to perform "
-        << "imputation."<< endl;
-
-  if (!CLI::HasParam("output_file"))
-    Log::Warn << "--output_file is not specified, no "
-        << "results from this program will be saved!" << endl;
+  RequireParamInSet<string>("strategy", { "custom", "mean", "median",
+      "listwise_deletion" }, true, "unknown imputation strategy");
+  RequireAtLeastOnePassed({ "output_file" }, false, "no output will be saved");
 
   if (!CLI::HasParam("dimension"))
     Log::Warn << "--dimension is not specified, the imputation will be "
         << "applied to all dimensions."<< endl;
 
-  // If custom value is specified, and imputation strategy is not,
-  // set imputation strategy to "custom"
-  if (CLI::HasParam("custom_value") && !CLI::HasParam("strategy"))
-  {
-    strategy = "custom";
-    Log::Warn << "--custom_value is specified without --strategy, "
-        << "--strategy is automatically set to 'custom'." << endl;
-  }
-
-  // Custom value and any other impute strategies cannot be specified at
-  // the same time.
-  if (CLI::HasParam("custom_value") && CLI::HasParam("strategy") &&
-      strategy != "custom")
-    Log::Fatal << "--custom_value cannot be specified with "
-        << "impute strategies excluding 'custom' strategy" << endl;
-
-  // custom_value must be specified when using "custom" imputation strategy
-  if ((strategy == "custom") && !CLI::HasParam("custom_value"))
-    Log::Fatal << "--custom_value must be specified when using "
-        << "'custom' strategy" << endl;
+  if (strategy != "custom")
+    ReportIgnoredParam({{ }}, "custom_value");
+  else
+    RequireAtLeastOnePassed({ "custom_value" }, true, "must pass custom "
+        "imputation value when using 'custom' imputation strategy");
 
   arma::mat input;
   // Policy tells how the DatasetMapper should map the values.

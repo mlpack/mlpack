@@ -119,23 +119,18 @@ void mlpackMain()
   const int maxIterations = CLI::GetParam<int>("max_iterations");
 
   // One of inputFile and modelFile must be specified.
-  if (!CLI::HasParam("input_model") && !CLI::HasParam("training"))
-    Log::Fatal << "One of --input_model_file or --training_file must be "
-        << "specified." << endl;
+  RequireOnlyOnePassed({ "input_model", "training" }, true);
+  if (CLI::HasParam("training"))
+    RequireAtLeastOnePassed({ "labels" }, true, "if training data is specified,"
+        " labels must also be specified");
+  ReportIgnoredParam({{ "training", false }}, "labels");
 
-  if ((CLI::HasParam("training") || CLI::HasParam("labels")) &&
-      !(CLI::HasParam("training") && CLI::HasParam("labels")))
-    Log::Fatal << "--labels_file must be specified with --training_file!"
-        << endl;
-
-  if (maxIterations < 0)
-    Log::Fatal << "Invalid value for maximum iterations (" << maxIterations
-        << ")! Must be greater than or equal to 0." << endl;
+  RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; }, true,
+      "maximum number of iterations must be greater than or equal to 0");
 
   // Make sure we have an output file of some sort.
-  if (!CLI::HasParam("output_model") && !CLI::HasParam("predictions"))
-    Log::Warn << "Neither --output_model_file nor --predictions_file are set; "
-        << "no results from this program will be saved." << endl;
+  RequireAtLeastOnePassed({ "output_model", "predictions" }, false, "no results"
+      " will be saved");
 
   using SM = SoftmaxRegression;
   unique_ptr<SM> sm = TrainSoftmax<SM>(maxIterations);
@@ -171,19 +166,8 @@ void TestClassifyAcc(size_t numClasses, const Model& model)
       !CLI::HasParam("test_labels"))
     return;
 
-  if (CLI::HasParam("test_labels") && !CLI::HasParam("test"))
-  {
-    Log::Warn << "--test_labels specified, but --test_file is not specified."
-        << "  The parameter will be ignored." << endl;
-    return;
-  }
-
-  if (CLI::HasParam("predictions") && !CLI::HasParam("test"))
-  {
-    Log::Warn << "--predictions_file specified, but --test_file is not "
-        << "specified.  The parameter will be ignored." << endl;
-    return;
-  }
+  ReportIgnoredParam({{ "test", false }}, "test_labels");
+  ReportIgnoredParam({{ "test", false }}, "predictions");
 
   // Get the test dataset, and get predictions.
   arma::mat testData = std::move(CLI::GetParam<arma::mat>("test"));
@@ -203,9 +187,10 @@ void TestClassifyAcc(size_t numClasses, const Model& model)
 
     if (testData.n_cols != testLabels.n_elem)
     {
-      Log::Fatal << "Test data in --test_data has " << testData.n_cols
-          << " points, but labels in --test_labels have "
-          << testLabels.n_elem << " labels!" << endl;
+      Log::Fatal << "Test data given with " << PRINT_PARAM_STRING("test")
+          << " has " << testData.n_cols << " points, but labels in "
+          << PRINT_PARAM_STRING("test_labels") << " have " << testLabels.n_elem
+          << " labels!" << endl;
     }
 
     vector<size_t> bingoLabels(numClasses, 0);

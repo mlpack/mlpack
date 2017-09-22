@@ -112,95 +112,65 @@ void mlpackMain()
     math::RandomSeed((size_t) std::time(NULL));
 
   // A user cannot specify both reference data and a model.
-  if (CLI::HasParam("reference") && CLI::HasParam("input_model"))
-    Log::Fatal << "Only one of --reference_file (-r) or --input_model_file (-m)"
-        << " may be specified!" << endl;
+  RequireOnlyOnePassed({ "reference", "input_model" }, true);
 
-  // A user must specify one of them...
-  if (!CLI::HasParam("reference") && !CLI::HasParam("input_model"))
-    Log::Fatal << "No model specified (--input_model_file) and no reference "
-        << "data specified (--reference_file)!  One must be provided." << endl;
-
-  if (CLI::HasParam("input_model"))
-  {
-    // Notify the user of parameters that will be ignored.
-    if (CLI::HasParam("tree_type"))
-      Log::Warn << "--tree_type (-t) will be ignored because --input_model_file"
-          << " is specified." << endl;
-    if (CLI::HasParam("random_basis"))
-      Log::Warn << "--random_basis (-R) will be ignored because "
-          << "--input_model_file is specified." << endl;
-    if (CLI::HasParam("tau"))
-      Log::Warn << "--tau (-u) will be ignored because --input_model_file is "
-          "specified." << endl;
-    if (CLI::HasParam("rho"))
-      Log::Warn << "--rho (-b) will be ignored because --input_model_file is "
-          "specified." << endl;
-    // Notify the user of parameters that will be only be considered for query
-    // tree.
-    if (CLI::HasParam("leaf_size"))
-      Log::Warn << "--leaf_size (-l) will only be considered for the query "
-          "tree, because --input_model_file is specified." << endl;
-  }
+  ReportIgnoredParam({{ "input_model", true }}, "tree_type");
+  ReportIgnoredParam({{ "input_model", true }}, "random_basis");
+  ReportIgnoredParam({{ "input_model", true }}, "tau");
+  ReportIgnoredParam({{ "input_model", true }}, "rho");
+  if (CLI::HasParam("input_model") && CLI::HasParam("leaf_size"))
+      Log::Warn << PRINT_PARAM_STRING("leaf_size") << " will only be considered"
+          << " for the query tree, because --input_model_file is specified."
+          << endl;
 
   // The user should give something to do...
-  if (!CLI::HasParam("k") && !CLI::HasParam("output_model"))
-    Log::Warn << "Neither -k nor --output_model_file are specified, so no "
-        << "results from this program will be saved!" << endl;
+  RequireAtLeastOnePassed({ "k", "output_model" }, false,
+      "no results will be saved");
 
   // If the user specifies k but no output files, they should be warned.
-  if (CLI::HasParam("k") &&
-      !(CLI::HasParam("neighbors") || CLI::HasParam("distances")))
-    Log::Warn << "Neither --neighbors_file nor --distances_file is specified, "
-        << "so the nearest neighbor search results will not be saved!" << endl;
+  if (CLI::HasParam("k"))
+    RequireAtLeastOnePassed({ "neighbors", "distances" }, false,
+        "nearest neighbor search results will not be saved");
 
   // If the user specifies output files but no k, they should be warned.
-  if ((CLI::HasParam("neighbors") || CLI::HasParam("distances")) &&
-      !CLI::HasParam("k"))
-    Log::Warn << "An output file for nearest neighbor search is given ("
-        << "--neighbors_file or --distances_file), but nearest neighbor search "
-        << "is not being performed because k (--k) is not specified!  No "
-        << "results will be saved." << endl;
-
-  if (!CLI::HasParam("k") && CLI::HasParam("true_neighbors"))
-    Log::Warn << "--true_neighbors_file (-T) ignored because no search is being"
-        << " performed (--k is not specified)." << endl;
-
-  if (!CLI::HasParam("k") && CLI::HasParam("true_distances"))
-    Log::Warn << "--true_distances_file (-D) ignored because no search is being"
-        << " performed (--k is not specified)." << endl;
+  ReportIgnoredParam({{ "k", false }}, "neighbors");
+  ReportIgnoredParam({{ "k", false }}, "distances");
+  ReportIgnoredParam({{ "k", false }}, "true_neighbors");
+  ReportIgnoredParam({{ "k", false }}, "true_distances");
 
   // Sanity check on leaf size.
+  RequireParamValue<int>("leaf_size", [](int x) { return x > 0; },
+      true, "leaf size must be positive");
   const int lsInt = CLI::GetParam<int>("leaf_size");
-  if (lsInt < 1)
-    Log::Fatal << "Invalid leaf size: " << lsInt << ".  Must be greater "
-        "than 0." << endl;
 
   // Sanity check on tau.
+  RequireParamValue<double>("tau", [](double x) { return x >= 0.0; },
+      true, "tau must be positive");
   const double tau = CLI::GetParam<double>("tau");
-  if (tau < 0)
-    Log::Fatal << "Invalid tau: " << tau << ".  Must be non-negative. " << endl;
-  if (CLI::HasParam("tau") && "spill" != CLI::GetParam<string>("tree_type"))
-    Log::Fatal << "Tau parameter is only valid for spill trees." << endl;
+
 
   // Sanity check on rho.
   const double rho = CLI::GetParam<double>("rho");
-  if (rho < 0 || rho > 1)
-    Log::Fatal << "Invalid rho: " << rho << ".  Must be in the range [0,1]. "
-        << endl;
-  if (CLI::HasParam("rho") && "spill" != CLI::GetParam<string>("tree_type"))
-    Log::Fatal << "Rho parameter is only valid for spill trees." << endl;
+  RequireParamValue<double>("rho",
+      [](double x) { return x >= 0.0 && x <= 1.0; }, true,
+      "rho must be in the range [0, 1]");
+  if (CLI::GetParam<string>("tree_type") != "spill")
+  {
+    ReportIgnoredParam({{ }}, "tau");
+    ReportIgnoredParam({{ }}, "rho");
+  }
 
   // Sanity check on epsilon.
   const double epsilon = CLI::GetParam<double>("epsilon");
-  if (epsilon < 0)
-    Log::Fatal << "Invalid epsilon: " << epsilon << ".  Must be non-negative. "
-        << endl;
+  RequireParamValue<double>("epsilon", [](double x) { return x >= 0.0; }, true,
+      "epsilon must be positive");
 
   // We either have to load the reference data, or we have to load the model.
   KNNModel knn;
 
   const string algorithm = CLI::GetParam<string>("algorithm");
+  RequireParamInSet<string>("algorithm", { "naive", "single_tree", "dual_tree",
+      "greedy" }, true, "unknown neighbor search algorithm");
   NeighborSearchMode searchMode = DUAL_TREE_MODE;
 
   if (algorithm == "naive")
@@ -211,10 +181,6 @@ void mlpackMain()
     searchMode = DUAL_TREE_MODE;
   else if (algorithm == "greedy")
     searchMode = GREEDY_SINGLE_TREE_MODE;
-  else
-    Log::Fatal << "Unknown neighbor search algorithm '" << algorithm << "'; "
-        << "valid choices are 'naive', 'single_tree', 'dual_tree' and 'greedy'."
-        << endl;
 
   if (CLI::HasParam("single_mode"))
   {
@@ -250,6 +216,9 @@ void mlpackMain()
     const bool randomBasis = CLI::HasParam("random_basis");
 
     KNNModel::TreeTypes tree = KNNModel::KD_TREE;
+    RequireParamInSet<string>("tree_type", { "kd", "cover", "r", "r-star",
+        "ball", "x", "hilbert-r", "r-plus", "r-plus-plus", "spill", "vp", "rp",
+        "max-rp", "ub", "oct" }, true, "unknown tree type");
     if (treeType == "kd")
       tree = KNNModel::KD_TREE;
     else if (treeType == "cover")
@@ -280,11 +249,6 @@ void mlpackMain()
       tree = KNNModel::UB_TREE;
     else if (treeType == "oct")
       tree = KNNModel::OCTREE;
-    else
-      Log::Fatal << "Unknown tree type '" << treeType << "'; valid choices are "
-          << "'kd', 'vp', 'rp', 'max-rp', 'ub', 'cover', 'r', 'r-star', 'x', "
-          << "'ball', 'hilbert-r', 'r-plus', 'r-plus-plus', 'spill', and "
-          << "'oct'." << endl;
 
     knn.TreeType() = tree;
     knn.RandomBasis() = randomBasis;
@@ -366,8 +330,9 @@ void mlpackMain()
     if (CLI::HasParam("true_distances"))
     {
       if (knn.TreeType() != KNNModel::SPILL_TREE && knn.Epsilon() == 0)
-        Log::Warn << "--true_distances_file (-D) specified, but the search is "
-            << "exact, so there is no need to calculate the error!" << endl;
+        Log::Warn << PRINT_PARAM_STRING("true_distances") << "specified, but "
+            << "the search is exact, so there is no need to calculate the "
+            << "error!" << endl;
 
       arma::mat trueDistances =
           std::move(CLI::GetParam<arma::mat>("true_distances"));
@@ -385,8 +350,9 @@ void mlpackMain()
     if (CLI::HasParam("true_neighbors"))
     {
       if (knn.TreeType() != KNNModel::SPILL_TREE && knn.Epsilon() == 0)
-        Log::Warn << "--true_neighbors_file (-T) specified, but the search is "
-            << "exact, so there is no need to calculate the recall!" << endl;
+        Log::Warn << PRINT_PARAM_STRING("true_neighbors") << " specified, but "
+            << " the search is exact, so there is no need to calculate the "
+            << "recall!" << endl;
 
       arma::Mat<size_t> trueNeighbors =
           std::move(CLI::GetParam<arma::Mat<size_t>>("true_neighbors"));

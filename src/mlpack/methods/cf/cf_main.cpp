@@ -238,8 +238,8 @@ void AssembleFactorizerType(const std::string& algorithm,
     }
     else if (algorithm == "RegSVD")
     {
-      Log::Fatal << "--iteration_only_termination not supported with 'RegSVD' "
-          << "algorithm!" << endl;
+      Log::Fatal << PRINT_PARAM_STRING("iteration_only_termination") << " not "
+          << "supported with 'RegSVD' algorithm!" << endl;
     }
   }
   else
@@ -270,27 +270,22 @@ void mlpackMain()
     math::RandomSeed(CLI::GetParam<int>("seed"));
 
   // Validate parameters.
-  if (CLI::HasParam("training") && CLI::HasParam("input_model"))
-    Log::Fatal << "Only one of --training_file (-t) or --input_model_file (-m) "
-        << "may be specified!" << endl;
-
-  if (!CLI::HasParam("training") && !CLI::HasParam("input_model"))
-    Log::Fatal << "Neither --training_file (-t) nor --input_model_file (-m) are"
-        << " specified!" << endl;
+  RequireOnlyOnePassed({ "training", "input_model" }, true);
 
   // Check that nothing stupid is happening.
-  if (CLI::HasParam("query") && CLI::HasParam("all_user_recommendations"))
-    Log::Fatal << "Both --query_file and --all_user_recommendations are given, "
-        << "but only one is allowed!" << endl;
+  if (CLI::HasParam("query") || CLI::HasParam("all_user_recommendations"))
+    RequireOnlyOnePassed({ "query", "all_user_recommendations" }, true);
 
-  if (!CLI::HasParam("output") && !CLI::HasParam("output_model"))
-    Log::Warn << "Neither --output_file nor --output_model_file are specified; "
-        << "no output will be saved." << endl;
+  RequireAtLeastOnePassed({ "output", "output_model" }, false,
+      "no output will be saved");
+  if (CLI::HasParam("query") || CLI::HasParam("all_user_recommendations"))
+    ReportIgnoredParam({{ }}, "output");
 
-  if (CLI::HasParam("output") && !(CLI::HasParam("query") ||
-      CLI::HasParam("all_user_recommendations")))
-    Log::Warn << "--output_file is ignored because neither --query_file nor "
-        << "--all_user_recommendations are specified." << endl;
+  RequireParamInSet<string>("algorithm", { "NMF", "BatchSVD",
+      "SVDIncompleteIncremental", "SVDCompleteIncremental", "RegSVD" }, true,
+      "unknown algorithm");
+
+  ReportIgnoredParam({{ "iteration_only_termination", true }}, "min_residue");
 
   // Either load from a model, or train a model.
   if (CLI::HasParam("training"))
@@ -308,23 +303,6 @@ void mlpackMain()
     Log::Info << "Performing CF matrix decomposition on dataset..." << endl;
 
     const string algo = CLI::GetParam<string>("algorithm");
-
-    // Issue an error if an invalid factorizer is used.
-    if (algo != "NMF" &&
-        algo != "BatchSVD" &&
-        algo != "SVDIncompleteIncremental" &&
-        algo != "SVDCompleteIncremental" &&
-        algo != "RegSVD")
-      Log::Fatal << "Invalid decomposition algorithm.  Choices are 'NMF', "
-          << "'BatchSVD', 'SVDIncompleteIncremental', 'SVDCompleteIncremental',"
-          << " and 'RegSVD'." << endl;
-
-    // Issue a warning if the user provided a minimum residue but it will be
-    // ignored.
-    if (CLI::HasParam("min_residue") &&
-        CLI::HasParam("iteration_only_termination"))
-      Log::Warn << "--min_residue ignored, because --iteration_only_termination"
-          << " is specified." << endl;
 
     // Perform the factorization and do whatever the user wanted.
     AssembleFactorizerType(algo, dataset,

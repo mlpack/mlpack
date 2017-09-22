@@ -123,24 +123,13 @@ void mlpackMain()
   const size_t maxIterations = (size_t) CLI::GetParam<int>("max_iterations");
 
   // We must either load a model or train a model.
-  if (!CLI::HasParam("input_model") && !CLI::HasParam("training"))
-    Log::Fatal << "Either an input model must be specified with "
-        << "--input_model_file or training data must be given "
-        << "(--training_file)!" << endl;
+  RequireAtLeastOnePassed({ "input_model", "training" }, true);
 
   // If the user isn't going to save the output model or any predictions, we
   // should issue a warning.
-  if (!CLI::HasParam("output_model") && !CLI::HasParam("test"))
-    Log::Warn << "Output will not be saved!  (Neither --test_file nor "
-        << "--output_model_file are specified.)" << endl;
-
-  if (!CLI::HasParam("test") && CLI::HasParam("output"))
-    Log::Warn << "--output_file will be ignored because --test_file is not "
-        << "specified." << endl;
-
-  if (CLI::HasParam("test") && !CLI::HasParam("output"))
-    Log::Warn << "--output_file not specified, so the predictions for "
-        << "--test_file will not be saved." << endl;
+  RequireAtLeastOnePassed({ "output_model", "output" }, false,
+      "no output will be saved");
+  ReportIgnoredParam({{ "test", true }}, "output");
 
   // Now, load our model, if there is one.
   PerceptronModel p;

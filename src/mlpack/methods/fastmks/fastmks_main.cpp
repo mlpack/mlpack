@@ -85,60 +85,28 @@ PARAM_UMATRIX_OUT("indices", "Output matrix of indices.", "i");
 void mlpackMain()
 {
   // Validate command-line parameters.
-  if (CLI::HasParam("reference") && CLI::HasParam("input_model"))
-    Log::Fatal << "Cannot specify both --reference_file (-r) and "
-        << "--input_model_file (-m)!" << endl;
+  RequireOnlyOnePassed({ "reference", "input_model" }, true);
 
-  if (!CLI::HasParam("reference") && !CLI::HasParam("input_model"))
-    Log::Fatal << "Must specify either --reference_file (-r) or "
-        << "--input_model_file (-m)!" << endl;
+  ReportIgnoredParam({{ "input_model", true }}, "kernel");
+  ReportIgnoredParam({{ "input_model", true }}, "bandwidth");
+  ReportIgnoredParam({{ "input_model", true }}, "degree");
+  ReportIgnoredParam({{ "input_model", true }}, "offset");
 
-  if (CLI::HasParam("input_model"))
-  {
-    if (CLI::HasParam("kernel"))
-      Log::Warn << "--kernel (-k) ignored because --input_model_file (-m) is "
-          << "specified." << endl;
-    if (CLI::HasParam("bandwidth"))
-      Log::Warn << "--bandwidth (-w) ignored because --input_model_file (-m) is"
-          << " specified." << endl;
-    if (CLI::HasParam("degree"))
-      Log::Warn << "--degree (-d) ignored because --input_model_file (-m) is "
-          << " specified." << endl;
-    if (CLI::HasParam("offset"))
-      Log::Warn << "--offset (-o) ignored because --input_model_file (-m) is "
-          << " specified." << endl;
-  }
+  ReportIgnoredParam({{ "k", false }}, "indices");
+  ReportIgnoredParam({{ "k", false }}, "kernels");
+  ReportIgnoredParam({{ "k", false }}, "query");
 
-  if (!CLI::HasParam("k") &&
-      (CLI::HasParam("indices") || CLI::HasParam("kernels")))
-    Log::Warn << "--indices_file and --kernels_file ignored, because no search "
-        << "task is specified (i.e., --k is not specified)!" << endl;
-
-  if (CLI::HasParam("k") &&
-      !(CLI::HasParam("indices") || CLI::HasParam("kernels")))
-    Log::Warn << "Search specified with --k, but no output will be saved "
-        << "because neither --indices_file nor --kernels_file are specified!"
-        << endl;
-
-  if (CLI::HasParam("query") && !CLI::HasParam("k"))
-    Log::Warn << "--query_file ignored, because no search task is specified "
-        << "(i.e., --k is not specified)!" << endl;
+  if (CLI::HasParam("k"))
+    RequireAtLeastOnePassed({ "indices", "kernels" }, false,
+        "no output will be saved");
 
   // Check on kernel type.
-  const string kernelType = CLI::GetParam<string>("kernel");
-  if ((kernelType != "linear") && (kernelType != "polynomial") &&
-      (kernelType != "cosine") && (kernelType != "gaussian") &&
-      (kernelType != "triangular") && (kernelType != "hyptan") &&
-      (kernelType != "epanechnikov"))
-  {
-    Log::Fatal << "Invalid kernel type: '" << kernelType << "'; must be "
-        << "'linear', 'polynomial', 'cosine', 'gaussian', 'triangular', or "
-        << "'epanechnikov'." << endl;
-  }
+  RequireParamInSet<string>("kernel", { "linear", "polynomial", "cosine",
+      "gaussian", "triangular", "hyptan", "epanechnikov" }, true,
+      "unknown kernel type");
 
   // Naive mode overrides single mode.
-  if (CLI::HasParam("naive") && CLI::HasParam("single"))
-    Log::Warn << "--single ignored because --naive is present." << endl;
+  ReportIgnoredParam({{ "naive", true }}, "single");
 
   FastMKSModel model;
   arma::mat referenceData;

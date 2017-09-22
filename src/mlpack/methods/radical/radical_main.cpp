@@ -64,9 +64,8 @@ void mlpackMain()
   else
     RandomSeed((size_t) std::time(NULL));
 
-  if (!CLI::HasParam("output_ic") && !CLI::HasParam("output_unmixing"))
-    Log::Warn << "Neither --output_ic_file nor --output_unmixing_file were "
-        << "specified; no output will be saved!" << endl;
+  RequireAtLeastOnePassed({ "output_ic", "output_unmixing" }, false, "no output"
+      " will be saved");
 
   // Load the data.
   mat matX = std::move(CLI::GetParam<mat>("input"));

@@ -105,24 +105,12 @@ PARAM_INT_IN("bucket_size", "The minimum number of training points in each "
 void mlpackMain()
 {
   // Check that the parameters are reasonable.
-  if (CLI::HasParam("training") && CLI::HasParam("input_model"))
-  {
-    Log::Fatal << "Both --training_file and --input_model_file are specified, "
-        << "but a trained model cannot be retrained.  Only one of these options"
-        << " may be specified." << endl;
-  }
+  RequireOnlyOnePassed({ "training", "input_model" }, true);
+  RequireAtLeastOnePassed({ "output_model", "prediction" }, false, "no results "
+      "will be saved");
 
-  if (!CLI::HasParam("training") && !CLI::HasParam("input_model"))
-  {
-    Log::Fatal << "Neither --training_file nor --input_model_file are given; "
-        << "one must be specified." << endl;
-  }
-
-  if (!CLI::HasParam("output_model") && !CLI::HasParam("predictions"))
-  {
-    Log::Warn << "Neither --output_model_file nor --predictions_file are "
-        << "specified; no results will be saved!" << endl;
-  }
+  RequireParamValue<int>("bucket_size", [](int x) { return x > 0; }, true,
+      "bucket size must be positive");
 
   // We must either load a model, or train a new stump.
   DSModel model;

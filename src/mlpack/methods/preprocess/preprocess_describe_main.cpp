@@ -62,13 +62,13 @@ PARAM_FLAG("row_major", "If specified, the program will calculate statistics "
     "represents a point, so this option is generally not necessary.)", "r");
 
 /**
-* Calculates the sum of deviations to the Nth Power.
-*
-* @param input Vector that captures a dimension of a dataset.
-* @param rowMean Mean of the given vector.
-* @param n Degree of power.
-* @return sum of nth power deviations.
-*/
+ * Calculates the sum of deviations to the Nth Power.
+ *
+ * @param input Vector that captures a dimension of a dataset.
+ * @param rowMean Mean of the given vector.
+ * @param n Degree of power.
+ * @return sum of nth power deviations.
+ */
 double SumNthPowerDeviations(const arma::rowvec& input,
                              const double& fMean,
                              size_t n)

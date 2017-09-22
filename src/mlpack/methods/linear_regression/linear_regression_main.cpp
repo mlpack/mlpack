@@ -88,9 +88,9 @@ void mlpackMain()
 {
   const double lambda = CLI::GetParam<double>("lambda");
 
-  if (!CLI::HasParam("test") && CLI::HasParam("output_predictions"))
-    Log::Warn << "--output_predictions_file (-o) ignored because --test_file "
-        << "(-T) is not specified." << endl;
+  RequireOnlyOnePassed({ "training", "input_model" }, true);
+
+  ReportIgnoredParam({{ "test", true }}, "output_predictions");
 
   mat regressors;
   rowvec responses;
@@ -99,52 +99,19 @@ void mlpackMain()
   lr.Lambda() = lambda;
 
   bool computeModel = false;
-
-  // We want to determine if an input file XOR model file were given.
-  if (!CLI::HasParam("training"))
-  {
-    if (!CLI::HasParam("input_model"))
-      Log::Fatal << "You must specify either --input_file or --model_file."
-          << endl;
-    else // The model file was specified, no problems.
-      computeModel = false;
-  }
-  // The user specified an input file but no model file, no problems.
-  else if (!CLI::HasParam("input_model"))
+  if (!CLI::HasParam("input_model"))
     computeModel = true;
-
-  // The user specified both an input file and model file.
-  // This is ambiguous -- which model should we use? A generated one or given
-  // one?  Report error and exit.
-  else
-  {
-    Log::Fatal << "You must specify either --input_file or --input_model_file, "
-        << "not both." << endl;
-  }
-
-  if (CLI::HasParam("test") && !CLI::HasParam("output_predictions"))
-    Log::Warn << "--test_file (-t) specified, but --output_predictions_file "
-        << "(-o) is not; no results will be saved." << endl;
 
   // If they specified a model file, we also need a test file or we
   // have nothing to do.
-  if (!computeModel && !CLI::HasParam("test"))
-  {
-    Log::Fatal << "When specifying --model_file, you must also specify "
-        << "--test_file." << endl;
-  }
+  if (!computeModel)
+    RequireAtLeastOnePassed({ "test" }, true, "test points must be specified "
+        "when an input model is given");
 
-  if (!computeModel && CLI::HasParam("lambda"))
-  {
-    Log::Warn << "--lambda ignored because no model is being trained." << endl;
-  }
+  ReportIgnoredParam({{ "input_model", true }}, "lambda");
 
-  if (!CLI::HasParam("output_model") &&
-      !CLI::HasParam("output_predictions"))
-  {
-    Log::Warn << "Neither --output_model_file nor --output_predictions_file are"
-        << " specified; no output will be saved!" << endl;
-  }
+  RequireAtLeastOnePassed({ "output_model", "output_predictions" }, false,
+      "no output will be saved");
 
   // An input file was given and we need to generate the model.
   if (computeModel)

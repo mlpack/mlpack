@@ -142,49 +142,42 @@ PARAM_MODEL_OUT(ApproxKFNModel, "output_model", "File to save output model to.",
 
 void mlpackMain()
 {
-  if (!CLI::HasParam("reference") && !CLI::HasParam("input_model"))
-    Log::Fatal << "Either --reference_file (-r) or --input_model_file (-m) must"
-        << " be specified!" << endl;
-  if (CLI::HasParam("reference") && CLI::HasParam("input_model"))
-    Log::Fatal << "Only one of --reference_file (-r) or --input_model_file (-m)"
-        << " can be specified!" << endl;
-  if (!CLI::HasParam("output_model") && !CLI::HasParam("k"))
-    Log::Warn << "Neither --output_model_file (-M) nor --k (-k) are specified;"
-        << " no task will be performed." << endl;
-  if (!CLI::HasParam("neighbors") && !CLI::HasParam("distances") &&
-      !CLI::HasParam("output_model"))
-    Log::Warn << "None of --output_model_file (-M), --neighbors_file (-n), or "
-        << "--distances_file (-d) are specified; no output will be saved!"
-        << endl;
-  if (CLI::GetParam<string>("algorithm") != "ds" &&
-      CLI::GetParam<string>("algorithm") != "qdafn")
-    Log::Fatal << "Unknown algorithm '" << CLI::GetParam<string>("algorithm")
-        << "'; must be 'ds' or 'qdafn'!" << endl;
-  if (CLI::HasParam("k") && !(CLI::HasParam("reference") ||
-                              CLI::HasParam("query")))
-    Log::Fatal << "If search is being performed, then either --query_file "
-        << "or --reference_file must be specified!" << endl;
+  // We have to pass either a reference set or an input model.
+  RequireOnlyOnePassed({ "reference", "input_model" });
 
-  if (CLI::GetParam<int>("num_tables") <= 0)
-    Log::Fatal << "Invalid --num_tables value ("
-        << CLI::GetParam<int>("num_tables") << "); must be greater than 0!"
-        << endl;
-  if (CLI::GetParam<int>("num_projections") <= 0)
-    Log::Fatal << "Invalid --num_projections value ("
-        << CLI::GetParam<int>("num_projections") << "); must be greater than 0!"
-        << endl;
+  // Warn if no task will be performed.
+  RequireAtLeastOnePassed({ "output_model", "k" }, false,
+      "no task will be performed");
 
-  if (CLI::HasParam("calculate_error") && !CLI::HasParam("k"))
-    Log::Warn << "--calculate_error ignored because --k is not specified."
-        << endl;
-  if (CLI::HasParam("exact_distances") && !CLI::HasParam("calculate_error"))
-    Log::Warn << "--exact_distances_file ignored beceause --calculate_error is "
-        << "not specified." << endl;
-  if (CLI::HasParam("calculate_error") &&
-      !CLI::HasParam("exact_distances") &&
-      !CLI::HasParam("reference"))
-    Log::Fatal << "Cannot calculate error without either --exact_distances_file"
-        << " or --reference_file specified!" << endl;
+  // Warn if no output is going to be saved.
+  RequireAtLeastOnePassed({ "neighbors", "distances", "output_model" }, false,
+      "no output will be saved");
+
+  // Check that the user specified a valid algorithm.
+  RequireParamInSet<string>("algorithm", { "ds", "qdafn" }, true,
+      "unknown algorithm");
+
+  // If we are searching, we need a set to search in.
+  if (CLI::HasParam("k"))
+    RequireAtLeastOnePassed({ "reference", "query" }, true,
+        "if search is being performed, at least one set must be specified");
+
+  // Validate parameters.
+  if (CLI::HasParam("k"))
+    RequireParamValue<int>("k", [](int x) { return x > 0; }, true,
+        "number of neighbors to search for must be positive");
+  RequireParamValue<int>("num_tables", [](int x) { return x > 0; }, true,
+      "number of tables must be positive");
+  RequireParamValue<int>("num_projections", [](int x) { return x > 0; }, true,
+      "number of projections must be positive");
+
+  ReportIgnoredParam({{ "k", false }}, "calculate_error");
+  ReportIgnoredParam({{ "calculate_error", false }}, "exact_distances");
+
+  if (CLI::HasParam("calculate_error"))
+    RequireAtLeastOnePassed({ "exact_distances", "reference" }, true,
+        "if error is to be calculated, either precalculated exact distances or "
+        "the reference set must be passed");
 
   // Do the building of a model, if necessary.
   ApproxKFNModel m;

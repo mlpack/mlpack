@@ -146,64 +146,48 @@ void mlpackMain()
   const size_t maxIterations = (size_t) CLI::GetParam<int>("max_iterations");
   const double decisionBoundary = CLI::GetParam<double>("decision_boundary");
 
-  // One of inputFile and modelFile must be specified.
-  if (!CLI::HasParam("training") && !CLI::HasParam("input_model"))
-    Log::Fatal << "One of --input_model_file or --training_file must be "
-        << "specified." << endl;
+  // One of training and input_model must be specified.
+  RequireAtLeastOnePassed({ "training", "input_model" }, true);
 
   // If no output file is given, the user should know that the model will not be
   // saved, but only if a model is being trained.
-  if (!CLI::HasParam("output_model") && CLI::HasParam("training"))
-    Log::Warn << "--output_model_file not given; trained model will not be "
-        << "saved." << endl;
+  if (CLI::HasParam("training"))
+    RequireAtLeastOnePassed({ "output_model" }, false, "trained model will not "
+        "be saved");
 
-  if (CLI::HasParam("test") && !CLI::HasParam("output") &&
-      !CLI::HasParam("output_probabilities"))
-    Log::Warn << "--test_file specified, but neither --output_file nor "
-        << "--output_probabilities_file are specified; no test "
-        << "output will be saved!" << endl;
+  RequireAtLeastOnePassed({ "output_model", "output", "output_probabilities" },
+      false, "no output will be saved");
 
-  if (CLI::HasParam("output") && !CLI::HasParam("test"))
-    Log::Warn << "--output_file ignored because --test_file is not specified."
-        << endl;
-
-  if (CLI::HasParam("output_probabilities") && !CLI::HasParam("test"))
-    Log::Warn << "--output_probabilities_file ignored because --test_file is "
-        << "not specified." << endl;
+  ReportIgnoredParam({{ "test", false }}, "output");
+  ReportIgnoredParam({{ "test", false }}, "output_probabilities");
 
   // Tolerance needs to be positive.
-  if (tolerance < 0.0)
-    Log::Fatal << "Tolerance must be positive (received " << tolerance << ")."
-        << endl;
+  RequireParamValue<double>("tolerance", [](double x) { return x > 0.0; },
+      true, "tolerance must be positive");
 
   // Optimizer has to be L-BFGS or SGD.
-  if (optimizerType != "lbfgs" && optimizerType != "sgd" &&
-      optimizerType != "minibatch-sgd")
-    Log::Fatal << "--optimizer must be 'lbfgs', 'sgd', or 'minibatch-sgd'."
-        << endl;
+  RequireParamInSet<string>("optimizer", { "lbfgs", "sgd", "minibatch-sgd" },
+      true, "unknown optimizer");
 
   // Lambda must be positive.
-  if (lambda < 0.0)
-    Log::Fatal << "L2-regularization parameter (--lambda) must be positive ("
-        << "received " << lambda << ")." << endl;
+  RequireParamValue<double>("lambda", [](double x) { return x >= 0.0; },
+      true, "lambda must be positive or zero");
 
   // Decision boundary must be between 0 and 1.
-  if (decisionBoundary < 0.0 || decisionBoundary > 1.0)
-    Log::Fatal << "Decision boundary (--decision_boundary) must be between 0.0 "
-        << "and 1.0 (received " << decisionBoundary << ")." << endl;
+  RequireParamValue<double>("decision_boundary",
+      [](double x) { return x >= 0.0 && x <= 1.0; }, true,
+      "decision boundary must be between 0.0 and 1.0");
 
-  if ((stepSize < 0.0) &&
-      (optimizerType == "sgd" || optimizerType == "minibatch-sgd"))
-    Log::Fatal << "Step size (--step_size) must be positive (received "
-        << stepSize << ")." << endl;
-
+  RequireParamValue<double>("step_size", [](double x) { return x >= 0.0; },
+      true, "step size must be positive");
   if (CLI::HasParam("step_size") && optimizerType == "lbfgs")
-    Log::Warn << "Step size (--step_size) ignored because 'sgd' optimizer is "
-        << "not being used." << endl;
+    Log::Warn << "Step size (" << PRINT_PARAM_STRING("step_size") << " ignored "
+        << "because 'sgd' optimizer is not being used." << endl;
 
   if (CLI::HasParam("batch_size") && optimizerType != "minibatch-sgd")
-    Log::Warn << "Batch size (--batch_size) ignored because 'minibatch-sgd' "
-        << "optimizer is not being used." << endl;
+    Log::Warn << "Batch size (" << PRINT_PARAM_STRING("batch_size") << ") "
+        << "ignored because 'minibatch-sgd' optimizer is not being used."
+        << endl;
 
   // These are the matrices we might use.
   arma::mat regressors;
@@ -233,8 +217,8 @@ void mlpackMain()
   {
     responses = std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
     if (responses.n_cols != regressors.n_cols)
-      Log::Fatal << "The labels (--labels_file) must have the same number of "
-          << "points as the training dataset (--training_file)." << endl;
+      Log::Fatal << "The labels must have the same number of points as the "
+          << "training dataset." << endl;
   }
   else if (CLI::HasParam("training"))
   {
@@ -252,6 +236,8 @@ void mlpackMain()
   // Now, do the training.
   if (CLI::HasParam("training"))
   {
+    model.Lambda() = lambda;
+
     if (optimizerType == "sgd")
     {
       SGD<> sgdOpt;
@@ -315,10 +301,5 @@ void mlpackMain()
   }
 
   if (CLI::HasParam("output_model"))
-  {
-    Log::Info << "Saving model to '"
-        << CLI::GetPrintableParam<LogisticRegression<>>("output_model") << "'."
-        << endl;
     CLI::GetParam<LogisticRegression<>>("output_model") = std::move(model);
-  }
 }

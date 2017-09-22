@@ -106,37 +106,16 @@ void mlpackMain()
   double lambda2 = CLI::GetParam<double>("lambda2");
   bool useCholesky = CLI::HasParam("use_cholesky");
 
-  // Check parameters -- make sure everything given makes sense.  These checks
-  // can be simplified to HasParam() after the reverse compatibility options are
-  // removed.
-  if (CLI::HasParam("input") && !CLI::HasParam("responses"))
-    Log::Fatal << "--input_file (-i) is specified, but --responses_file (-r) is"
-        << " not!" << endl;
+  // Check parameters -- make sure everything given makes sense.
+  RequireOnlyOnePassed({ "input", "input_model" }, true);
+  if (CLI::HasParam("input"))
+    RequireOnlyOnePassed({ "responses" }, true, "if input data is specified, "
+        "responses must also be specified");
+  ReportIgnoredParam({{ "input", false }}, "responses");
 
-  if (CLI::HasParam("responses") && !CLI::HasParam("input"))
-    Log::Fatal << "--responses_file (-r) is specified, but --input_file (-i) is"
-        << " not!" << endl;
-
-  if (!CLI::HasParam("input") && !CLI::HasParam("input_model"))
-    Log::Fatal << "No input data specified (with --input_file (-i) and "
-        << "--responses_file (-r)), and no input model specified (with "
-        << "--input_model_file (-m))!" << endl;
-
-  if (CLI::HasParam("input") && CLI::HasParam("input_model"))
-    Log::Fatal << "Both --input_file (-i) and --input_model_file (-m) are "
-        << "specified, but only one may be specified!" << endl;
-
-  if (!CLI::HasParam("output_predictions") && !CLI::HasParam("output_model"))
-    Log::Warn << "--output_predictions_file (-o) and --output_model_file (-M) "
-        << "are not specified; no results will be saved!" << endl;
-
-  if ((CLI::HasParam("output_predictions")) && !CLI::HasParam("test"))
-    Log::Warn << "--output_predictions_file (-o) specified, but --test_file "
-        << "(-t) is not; no results will be saved." << endl;
-
-  if (CLI::HasParam("test") && !CLI::HasParam("output_predictions"))
-    Log::Warn << "--test_file (-t) specified, but --output_predictions_file "
-        << "(-o) is not; no results will be saved." << endl;
+  RequireAtLeastOnePassed({ "output_predictions", "output_model" }, false,
+      "no results will be saved");
+  ReportIgnoredParam({{ "test", true }}, "output_predictions");
 
   // Initialize the object.
   LARS lars(useCholesky, lambda1, lambda2);

@@ -79,40 +79,23 @@ PARAM_FLAG("volume_regularization", "This flag gives the used the option to use"
 void mlpackMain()
 {
   // Validate input parameters.
-  if (CLI::HasParam("training") && CLI::HasParam("input_model"))
-    Log::Fatal << "Only one of --training_file (-t) or --input_model_file (-m) "
-        << "may be specified!" << endl;
+  RequireOnlyOnePassed({ "training", "input_model" }, true);
 
-  if (!CLI::HasParam("training") && !CLI::HasParam("input_model"))
-    Log::Fatal << "Neither --training_file (-t) nor --input_model_file (-m) "
-        << "are specified!" << endl;
+  ReportIgnoredParam({{ "training", false }}, "training_set_estimates");
+  ReportIgnoredParam({{ "training", false }}, "folds");
+  ReportIgnoredParam({{ "training", false }}, "min_leaf_size");
+  ReportIgnoredParam({{ "training", false }}, "max_leaf_size");
 
-  if (!CLI::HasParam("training"))
-  {
-    if (CLI::HasParam("training_set_estimates"))
-      Log::Warn << "--training_set_estimates_file (-e) ignored because "
-          << "--training_file (-t) is not specified." << endl;
-    if (CLI::HasParam("folds"))
-      Log::Warn << "--folds (-f) ignored because --training_file (-t) is not "
-          << "specified." << endl;
-    if (CLI::HasParam("min_leaf_size"))
-      Log::Warn << "--min_leaf_size (-l) ignored because --training_file (-t) "
-          << "is not specified." << endl;
-    if (CLI::HasParam("max_leaf_size"))
-      Log::Warn << "--max_leaf_size (-L) ignored because --training_file (-t) "
-          << "is not specified." << endl;
-  }
-  else if (!CLI::HasParam("output_model") &&
-           !CLI::HasParam("training_set_estimates") &&
-           !CLI::HasParam("vi"))
-  {
-    Log::Warn << "None of --output_model_file (-M), --training_set_estimates "
-        << "(-e), or --vi (-i) are specified; no output will be saved!" << endl;
-  }
+  if (CLI::HasParam("training"))
+    RequireAtLeastOnePassed({ "output_model", "training_set_estimates", "vi" },
+        false, "no output will be saved");
 
-  if (!CLI::HasParam("test") && CLI::HasParam("test_set_estimates"))
-    Log::Warn << "--test_set_estimates_file (-E) ignored because --test_file "
-        << "(-T) is not specified." << endl;
+  ReportIgnoredParam({{ "test", false }}, "test_set_estimates");
+
+  RequireParamValue<int>("max_leaf_size", [](int x) { return x > 0; }, true,
+      "maximum leaf size must be positive");
+  RequireParamValue<int>("min_leaf_size", [](int x) { return x > 0; }, true,
+      "minimum leaf size must be positive");
 
   // Are we training a DET or loading from file?
   DTree<arma::mat, int>* tree;

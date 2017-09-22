@@ -93,34 +93,12 @@ void mlpackMain()
   size_t secondHashSize = CLI::GetParam<int>("second_hash_size");
   size_t bucketSize = CLI::GetParam<int>("bucket_size");
 
-  if (CLI::HasParam("input_model") && CLI::HasParam("reference"))
-  {
-    Log::Fatal << "Cannot specify both --reference_file and --input_model_file!"
-        << " Either create a new model with --reference_file or use an existing"
-        << " model with --input_model_file." << endl;
-  }
-
-  if (!CLI::HasParam("input_model") && !CLI::HasParam("reference"))
-  {
-    Log::Fatal << "Must specify either --input_model_file or --reference_file!"
-        << endl;
-  }
-
-  if (!CLI::HasParam("neighbors") && !CLI::HasParam("distances") &&
-      !CLI::HasParam("output_model"))
-  {
-    Log::Warn << "Neither --neighbors_file, --distances_file, nor "
-        << "--output_model_file are specified; no results will be saved."
-        << endl;
-  }
-
-  if ((CLI::HasParam("query") && !CLI::HasParam("k")) ||
-      (!CLI::HasParam("query") && !CLI::HasParam("reference") &&
-       CLI::HasParam("k")))
-  {
-    Log::Fatal << "Both --query_file or --reference_file and --k must be "
-        << "specified if search is to be done!" << endl;
-  }
+  RequireOnlyOnePassed({ "input_model", "reference" }, true);
+  RequireAtLeastOnePassed({ "neighbors", "distances", "output_model" }, false,
+      "no results will be saved");
+  if (CLI::HasParam("k"))
+    RequireAtLeastOnePassed({ "query", "reference" }, true, "must pass set to "
+        "search");
 
   if (CLI::HasParam("input_model") && CLI::HasParam("k") &&
       !CLI::HasParam("query"))
@@ -130,13 +108,8 @@ void mlpackMain()
         << CLI::GetPrintableParam<LSHSearch<>>("input_model") << "'." << endl;
   }
 
-  if (!CLI::HasParam("k") && CLI::HasParam("neighbors"))
-    Log::Warn << "--neighbors_file ignored because --k is not specified."
-        << endl;
-
-  if (!CLI::HasParam("k") && CLI::HasParam("distances"))
-    Log::Warn << "--distances_file ignored because --k is not specified."
-        << endl;
+  ReportIgnoredParam({{ "k", false }}, "neighbors");
+  ReportIgnoredParam({{ "k", false }}, "distances");
 
   // These declarations are here so that the matrices don't go out of scope.
   arma::mat referenceData;
@@ -162,7 +135,7 @@ void mlpackMain()
   if (CLI::HasParam("reference"))
   {
     referenceData = std::move(CLI::GetParam<arma::mat>("reference"));
-    Log::Info << "Loaded reference data from '"
+    Log::Info << "Using reference data from '"
         << CLI::GetPrintableParam<arma::mat>("reference") << "' ("
         << referenceData.n_rows << " x " << referenceData.n_cols << ")."
         << endl;
@@ -204,7 +177,7 @@ void mlpackMain()
     // Load the true neighbors.
     arma::Mat<size_t> trueNeighbors =
         std::move(CLI::GetParam<arma::Mat<size_t>>("true_neighbors"));
-    Log::Info << "Loaded true neighbor indices from '"
+    Log::Info << "Using true neighbor indices from '"
         << CLI::GetPrintableParam<arma::Mat<size_t>>("true_neighbors") << "'."
         << endl;
 

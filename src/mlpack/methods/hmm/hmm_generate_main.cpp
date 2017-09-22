@@ -92,9 +92,8 @@ struct Generate
 
 void mlpackMain()
 {
-  if (!CLI::HasParam("output") && !CLI::HasParam("state"))
-    Log::Warn << "Neither --output_file nor --state_file are specified; no "
-        << "output will be saved!" << endl;
+  RequireAtLeastOnePassed({ "output", "state" }, false, "no output will be "
+      "saved");
 
   // Set random seed.
   if (CLI::GetParam<int>("seed") != 0)

@@ -60,16 +60,15 @@ void mlpackMain()
 
   // Check on data parameters.
   if (!CLI::HasParam("dimension"))
-    Log::Warn << "You did not specify --dimension, so the program will perform "
-        << "binarize on every dimension." << endl;
+    Log::Warn << "You did not specify " << PRINT_PARAM_STRING("dimension")
+        << ", so the program will perform binarization on every dimension."
+        << endl;
 
   if (!CLI::HasParam("threshold"))
-    Log::Warn << "You did not specify --threshold, so the threshold will be "
-        << "automatically set to '0.0'." << endl;
+    Log::Warn << "You did not specify " << PRINT_PARAM_STRING("threshold")
+        << ", so the threshold will be automatically set to '0.0'." << endl;
 
-  if (!CLI::HasParam("output"))
-    Log::Warn << "You did not specify --output_file, so no result will be "
-        << "saved." << endl;
+  RequireAtLeastOnePassed({ "output" }, false, "no output will be saved");
 
   // Load the data.
   arma::mat input = std::move(CLI::GetParam<arma::mat>("input"));
@@ -82,7 +81,7 @@ void mlpackMain()
   }
   else
   {
-    // binarize the whole data
+    // Binarize the whole dataset.
     data::Binarize<double>(input, output, threshold);
   }
   Timer::Stop("binarize");

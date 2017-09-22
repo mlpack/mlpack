@@ -103,55 +103,25 @@ void mlpackMain()
     RandomSeed((size_t) time(NULL));
 
   // Check for parameter validity.
-  if (CLI::HasParam("input_model") && CLI::HasParam("initial_dictionary"))
-    Log::Fatal << "Cannot specify both --input_model_file (-m) and "
-        << "--initial_dictionary (-i)!" << endl;
+  RequireOnlyOnePassed({ "input_model", "initial_dictionary" }, true);
 
-  if (CLI::HasParam("training") && !CLI::HasParam("atoms"))
-    Log::Fatal << "If --training_file is specified, the number of atoms in the "
-        << "dictionary must be specified with --atoms (-k)!" << endl;
+  if (CLI::HasParam("training"))
+    RequireAtLeastOnePassed({ "atoms" }, true, "if training data is specified, "
+        "the number of atoms in the dictionary must also be specified");
 
-  if (!CLI::HasParam("training") && !CLI::HasParam("input_model"))
-    Log::Fatal << "One of --training_file (-t) or --input_model_file (-m) must "
-        << "be specified!" << endl;
+  RequireAtLeastOnePassed({ "codes", "dictionary", "output_model" }, false,
+      "no output will be saved");
 
-  if (!CLI::HasParam("codes") && !CLI::HasParam("dictionary") &&
-      !CLI::HasParam("output_model"))
-    Log::Warn << "Neither --codes_file (-c), --dictionary_file (-d), nor "
-        << "--output_model_file (-M) are specified; no output will be saved."
-        << endl;
+  ReportIgnoredParam({{ "test", false }}, "codes");
 
-  if (CLI::HasParam("codes") && !CLI::HasParam("test"))
-    Log::Fatal << "--codes_file (-c) is specified, but no test matrix ("
-        << "specified with --test_file or -T) is given to encode!" << endl;
-
-  if (!CLI::HasParam("training"))
-  {
-    if (CLI::HasParam("atoms"))
-      Log::Warn << "--atoms (-k) ignored because --training_file (-t) is not "
-          << "specified." << endl;
-    if (CLI::HasParam("lambda1"))
-      Log::Warn << "--lambda1 (-l) ignored because --training_file (-t) is not "
-          << "specified." << endl;
-    if (CLI::HasParam("lambda2"))
-      Log::Warn << "--lambda2 (-L) ignored because --training_file (-t) is not "
-          << "specified." << endl;
-    if (CLI::HasParam("initial_dictionary"))
-      Log::Warn << "--initial_dictionary (-i) ignored because --training_file "
-          << "(-t) is not specified." << endl;
-    if (CLI::HasParam("max_iterations"))
-      Log::Warn << "--max_iterations (-n) ignored because --training_file (-t) "
-          << "is not specified." << endl;
-    if (CLI::HasParam("normalize"))
-      Log::Warn << "--normalize (-N) ignored because --training_file (-t) is "
-          << "not specified." << endl;
-    if (CLI::HasParam("objective_tolerance"))
-      Log::Warn << "--objective_tolerance (-o) ignored because --training_file "
-          << "(-t) is not specified." << endl;
-    if (CLI::HasParam("newton_tolerance"))
-      Log::Warn << "--newton_tolerance (-w) ignored because --training_file "
-          << "(-t) is not specified." << endl;
-  }
+  ReportIgnoredParam({{ "training", false }}, "atoms");
+  ReportIgnoredParam({{ "training", false }}, "lambda1");
+  ReportIgnoredParam({{ "training", false }}, "lambda2");
+  ReportIgnoredParam({{ "training", false }}, "initial_dictionary");
+  ReportIgnoredParam({{ "training", false }}, "max_iterations");
+  ReportIgnoredParam({{ "training", false }}, "normalize");
+  ReportIgnoredParam({{ "training", false }}, "objective_tolerance");
+  ReportIgnoredParam({{ "training", false }}, "newton_tolerance");
 
   // Do we have an existing model?
   SparseCoding sc(0, 0.0);

@@ -82,9 +82,7 @@ struct Viterbi
 
 void mlpackMain()
 {
-  if (!CLI::HasParam("output"))
-    Log::Warn << "--output_file (-o) is not specified; no results will be "
-        << "saved!" << endl;
+  RequireAtLeastOnePassed({ "output" }, false, "no results will be saved");
 
   CLI::GetParam<HMMModel>("input_model").PerformAction<Viterbi>((void*) NULL);
 }

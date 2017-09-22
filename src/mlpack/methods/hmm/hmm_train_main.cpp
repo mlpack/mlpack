@@ -338,19 +338,15 @@ void mlpackMain()
   const double tolerance = CLI::GetParam<double>("tolerance");
 
   // Verify that either a model or a type was given.
-  if (!CLI::HasParam("input_model") && type == "")
-    Log::Fatal << "No model file specified and no HMM type given!  At least "
-        << "one is required." << endl;
+  RequireAtLeastOnePassed({ "input", "type" }, true);
 
   // If no model is specified, make sure we are training with valid parameters.
   if (!CLI::HasParam("input_model"))
   {
     // Validate number of states.
-    if (!CLI::HasParam("states"))
-      Log::Fatal << "Must specify number of states if model file is not "
-          << "specified!" << endl;
-    if (CLI::GetParam<int>("states") <= 0)
-      Log::Fatal << "Must specify a positive number of states!" << endl;
+    RequireAtLeastOnePassed({ "states" }, true);
+    RequireParamValue<int>("states", [](int x) { return x > 0; }, true,
+        "number of states must be positive");
   }
 
   if (CLI::HasParam("input_model") && CLI::HasParam("tolerance"))
@@ -358,13 +354,11 @@ void mlpackMain()
         << CLI::GetPrintableParam<std::string>("input_model") << "' will be "
         << "replaced with specified tolerance of " << tolerance << "." << endl;
 
-  if (CLI::HasParam("input_model") && CLI::HasParam("type"))
-    Log::Warn << "--type ignored because --input_model_file specified." << endl;
+  ReportIgnoredParam({{ "input_model", true }}, "type");
 
-  if (!CLI::HasParam("input_model") &&
-      (type != "discrete") && (type != "gaussian") && (type != "gmm"))
-    Log::Fatal << "Unknown type '" << type << "'; must be 'discrete', "
-        << "'gaussian', or 'gmm'!" << endl;
+  if (!CLI::HasParam("input_model"))
+    RequireParamInSet<string>("type", { "discrete", "gaussian", "gmm" }, true,
+        "unknown HMM type");
 
   // Load the input data.
   vector<mat> trainSeq;

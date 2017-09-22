@@ -34,7 +34,7 @@ void SparseSVMFunction::Gradient(
   // Evaluate the gradient of the hinge loss function.
   double dot = 1 - labels(id) * arma::dot(parameters, dataset.col(id));
   gradient = (dot < 0) ? GradType(parameters.n_rows, 1) :
-    (-1 * GradType(dataset.col(id) * labels(id)));
+      (-1 * GradType(dataset.col(id) * labels(id)));
 }
 
 size_t SparseSVMFunction::NumFunctions()

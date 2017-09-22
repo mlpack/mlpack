@@ -117,33 +117,17 @@ PARAM_MODEL_OUT(DecisionTreeModel, "output_model", "Output for trained decision"
 void mlpackMain()
 {
   // Check parameters.
-  if (CLI::HasParam("training") && CLI::HasParam("input_model"))
-    Log::Fatal << "Cannot specify both --training_file and --input_model_file!"
-        << endl;
+  RequireOnlyOnePassed({ "training", "input_model" }, true);
+  ReportIgnoredParam({{ "test", false }}, "test_labels");
+  RequireAtLeastOnePassed({ "output_model", "probabilities", "predictions",
+      "test_labels" }, false, "no output will be saved");
+  ReportIgnoredParam({{ "training", false }}, "print_training_error");
 
-  if (CLI::HasParam("test_labels") && !CLI::HasParam("test"))
-    Log::Warn << "--test_labels_file ignored because --test_file is not passed."
-        << endl;
+  ReportIgnoredParam({{ "test", false }}, "predictions");
+  ReportIgnoredParam({{ "test", false }}, "predictions");
 
-  if (!CLI::HasParam("output_model") && !CLI::HasParam("probabilities") &&
-      !CLI::HasParam("predictions") && !CLI::HasParam("test_labels"))
-    Log::Warn << "None of --output_model_file, --probabilities_file, or "
-        << "--predictions_file are given, and accuracy is not being calculated;"
-        << " no output will be saved!" << endl;
-
-  if (CLI::HasParam("print_training_error") && !CLI::HasParam("training"))
-    Log::Warn << "--print_training_error ignored because --training_file is not"
-        << " specified." << endl;
-
-  if (!CLI::HasParam("test"))
-  {
-    if (CLI::HasParam("probabilities"))
-      Log::Warn << "--probabilities_file ignored because --test_file is not "
-          << "specified." << endl;
-    if (CLI::HasParam("predictions"))
-      Log::Warn << "--predictions_file ignored because --test_file is not "
-          << "specified." << endl;
-  }
+  RequireParamValue<int>("leaf_size", [](int x) { return x > 0; }, true,
+      "leaf size must be positive");
 
   // Load the model or build the tree.
   DecisionTreeModel model;

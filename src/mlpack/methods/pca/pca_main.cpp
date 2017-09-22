@@ -104,9 +104,12 @@ void mlpackMain()
   arma::mat& dataset = CLI::GetParam<arma::mat>("input");
 
   // Issue a warning if the user did not specify an output file.
-  if (!CLI::HasParam("output"))
-    Log::Warn << "--output_file is not specified; no output will be "
-        << "saved." << endl;
+  RequireAtLeastOnePassed({ "output" }, false, "no output will be saved");
+
+  // Check decomposition method validity.
+  RequireParamInSet<string>("decomposition_method", { "exact", "randomized",
+      "randomized-block-krylov", "quic" }, true,
+      "unknown decomposition method");
 
   // Find out what dimension we want.
   size_t newDimension = dataset.n_rows; // No reduction, by default.
@@ -145,13 +148,6 @@ void mlpackMain()
   else if (decompositionMethod == "quic")
   {
     RunPCA<QUICSVDPolicy>(dataset, newDimension, scale, varToRetain);
-  }
-  else
-  {
-    // Invalid decomposition method.
-    Log::Fatal << "Invalid decomposition method ('" << decompositionMethod
-        << "'); valid choices are 'exact', 'randomized', "
-        << "'randomized-block-krylov', 'quic'." << endl;
   }
 
   // Now save the results.

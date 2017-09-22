@@ -73,31 +73,15 @@ void mlpackMain()
   const double radius = CLI::GetParam<double>("radius");
   const int maxIterations = CLI::GetParam<int>("max_iterations");
 
-  if (maxIterations < 0)
-  {
-    Log::Fatal << "Invalid value for maximum iterations (" << maxIterations <<
-        ")! Must be greater than or equal to 0." << endl;
-  }
+  RequireParamValue<int>("max_iterations", [](int x) { return x > 0; }, true,
+      "maximum iterations must be greater than or equal to 0");
 
   // Make sure we have an output file if we're not doing the work in-place.
-  if (!CLI::HasParam("in_place") && !CLI::HasParam("output") &&
-      !CLI::HasParam("centroid"))
-  {
-    Log::Warn << "--output_file, --in_place, and --centroid_file are not set; "
-        << "no results will be saved." << endl;
-  }
-
-  if (CLI::HasParam("labels_only") && !CLI::HasParam("output"))
-    Log::Warn << "--labels_only ignored because --output_file is not specified."
-        << endl;
-
-  if (CLI::HasParam("in_place") && CLI::HasParam("output"))
-    Log::Warn << "--output_file ignored because --in_place is specified."
-        << endl;
-
-  if (CLI::HasParam("in_place") && CLI::HasParam("labels_only"))
-    Log::Warn << "--labels_only ignored because --in_place is specified."
-        << endl;
+  RequireAtLeastOnePassed({ "in_place", "output", "centroid" }, false,
+      "no results will be saved");
+  ReportIgnoredParam({{ "output", false }}, "labels_only");
+  ReportIgnoredParam({{ "in_place", true }}, "output");
+  ReportIgnoredParam({{ "in_place", true }}, "labels_only");
 
   arma::mat dataset = std::move(CLI::GetParam<arma::mat>("input"));
   arma::mat centroids;

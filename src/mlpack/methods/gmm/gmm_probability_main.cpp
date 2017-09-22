@@ -42,9 +42,7 @@ PARAM_MATRIX_OUT("output", "Matrix to store calculated probabilities in.", "o");
 
 void mlpackMain()
 {
-  if (!CLI::HasParam("output"))
-    Log::Warn << "--output_file (-o) is not specified; no results will be "
-        << "saved!" << endl;
+  RequireAtLeastOnePassed({ "output" }, false, "no results will be saved");
 
   // Get the GMM and the points.
   GMM gmm = std::move(CLI::GetParam<GMM>("input_model"));
