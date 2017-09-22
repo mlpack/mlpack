@@ -67,7 +67,7 @@ int main(int argc, char** argv)
 
 // These functions will do nothing.
 #define PRINT_PARAM_STRING(A) std::string(" ")
-#define PRINT_PARAM_VALUE(A) std::string(" ")
+#define PRINT_PARAM_VALUE(A, B) std::string(" ")
 #define PRINT_DATASET(A) std::string(" ")
 #define PRINT_MODEL(A) std::string(" ")
 #define PRINT_CALL(...) std::string(" ")
@@ -157,8 +157,8 @@ void RequireOnlyOnePassed(
 
 void RequireAtLeastOnePassed(
     const std::vector<std::string>& constraints,
-    const bool fatal,
-    const std::string& customErrorMessage);
+    const bool fatal = true,
+    const std::string& customErrorMessage = "");
 
 /**
  * Ensure that an argument is in a given range.

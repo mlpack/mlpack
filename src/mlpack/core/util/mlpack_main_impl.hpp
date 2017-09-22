@@ -47,20 +47,22 @@ inline void RequireOnlyOnePassed(
   }
   else if (set == 0)
   {
+    stream << (fatal ? "Must " : "Should ");
+
     // Give different output depending on whether 1, 2, or more parameters are
     // given.
     if (constraints.size() == 1)
     {
-      stream << "Must specify " << PRINT_PARAM_STRING(constraints[0]);
+      stream << "specify " << PRINT_PARAM_STRING(constraints[0]);
     }
     else if (constraints.size() == 2)
     {
-      stream << "Must specify one of " << PRINT_PARAM_STRING(constraints[0]) << " or "
+      stream << "specify one of " << PRINT_PARAM_STRING(constraints[0]) << " or "
           << PRINT_PARAM_STRING(constraints[1]);
     }
     else
     {
-      stream << "Must specify one of ";
+      stream << "specify one of ";
       for (size_t i = 0; i < constraints.size() - 1; ++i)
         stream << PRINT_PARAM_STRING(constraints[i]) << ", ";
       stream << "or " << PRINT_PARAM_STRING(constraints[constraints.size() - 1]);
@@ -86,26 +88,30 @@ inline void RequireAtLeastOnePassed(
   if (set == 0)
   {
     util::PrefixedOutStream& stream = fatal ? Log::Fatal : Log::Warn;
+    stream << (fatal ? "Must " : "Should ");
     if (constraints.size() == 1)
     {
       // This shouldn't happen... just use PARAM_*_REQ()...
-      stream << "Must pass " << PRINT_PARAM_STRING(constraints[0]);
+      stream << "pass " << PRINT_PARAM_STRING(constraints[0]);
     }
     else if (constraints.size() == 2)
     {
-      stream << "Must pass either " << PRINT_PARAM_STRING(constraints[0])
+      stream << "pass either " << PRINT_PARAM_STRING(constraints[0])
           << " or " << PRINT_PARAM_STRING(constraints[1]) << " or both";
     }
     else
     {
-      stream << "Must pass one of ";
+      stream << "pass one of ";
       for (size_t i = 0; i < constraints.size() - 1; ++i)
         stream << PRINT_PARAM_STRING(constraints[i]) << ", ";
       stream << "or " << PRINT_PARAM_STRING(constraints[constraints.size() - 1]);
     }
 
     // Append custom error message.
-    stream << "; " << errorMessage << "!" << std::endl;
+    if (!errorMessage.empty())
+      stream << "; " << errorMessage << "!" << std::endl;
+    else
+      stream << "!" << std::endl;
   }
 }
 
@@ -120,13 +126,14 @@ void RequireParamInSet(const std::string& name,
     // The item was not found in the set.
     util::PrefixedOutStream& stream = fatal ? Log::Fatal : Log::Warn;
     stream << "Invalid value of " << PRINT_PARAM_STRING(name) << " specified ("
-        << PRINT_PARAM_VALUE(CLI::GetParam<T>(name)) << "); ";
+        << PRINT_PARAM_VALUE(CLI::GetParam<T>(name), true) << "); ";
     if (!errorMessage.empty())
       stream << errorMessage << "; ";
     stream << "must be one of ";
     for (size_t i = 0; i < set.size() - 1; ++i)
-      stream << PRINT_PARAM_VALUE(set[i]) << ", ";
-    stream << "or " << PRINT_PARAM_VALUE(set[set.size() - 1]) << "!" << std::endl;
+      stream << PRINT_PARAM_VALUE(set[i], true) << ", ";
+    stream << "or " << PRINT_PARAM_VALUE(set[set.size() - 1], true) << "!"
+        << std::endl;
   }
 }
 
@@ -143,8 +150,8 @@ void RequireParamValue(const std::string& name,
     // The condition failed.
     util::PrefixedOutStream& stream = fatal ? Log::Fatal : Log::Warn;
     stream << "Invalid value of " << PRINT_PARAM_STRING(name) << " specified ("
-        << PRINT_PARAM_VALUE(CLI::GetParam<T>(name)) << "); " << errorMessage << "!"
-        << std::endl;
+        << PRINT_PARAM_VALUE(CLI::GetParam<T>(name), false) << "); "
+        << errorMessage << "!" << std::endl;
   }
 }
 
@@ -163,8 +170,9 @@ inline void ReportIgnoredParam(
     }
   }
 
-  // If the condition is satisfied, then report that the parameter is ignored.
-  if (condition)
+  // If the condition is satisfied, then report that the parameter is ignored
+  // (if the user passed it).
+  if (condition && CLI::HasParam(paramName))
   {
     // The output will be different depending on whether there are 1, 2, or more
     // constraints.
