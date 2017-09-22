@@ -19,7 +19,7 @@ namespace cli {
  * Given a parameter type, print the corresponding value.
  */
 template<typename T>
-inline std::string PrintValue(const T& value, bool quotes = true);
+inline std::string PrintValue(const T& value, bool quotes);
 
 /**
  * Print a dataset type parameter (add .csv and return).
