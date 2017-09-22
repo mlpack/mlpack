@@ -28,7 +28,7 @@ find_python_module(distutils)
 if (NOT PY_DISTUTILS)
   not_found_return("distutils not found; not building Python bindings.")
 endif ()
-find_python_module(Cython)
+find_python_module(Cython 0.24)
 if (NOT PY_CYTHON)
   not_found_return("Cython not found; not building Python bindings.")
 endif ()
@@ -65,6 +65,7 @@ set(BINDING_SOURCES
   py_option.hpp
   strip_type.hpp
   mlpack/arma_util.hpp
+  setup.cfg
 )
 
 # These are all the files we need to compile Cython bindings for mlpack that are
@@ -140,6 +141,12 @@ add_custom_command(TARGET python POST_BUILD
 
 add_dependencies(python python_copy)
 
+# Configure installation script file.
+execute_process(COMMAND ${PYTHON}
+    "${CMAKE_CURRENT_SOURCE_DIR}/print_python_version.py" "${CMAKE_INSTALL_PREFIX}"
+    OUTPUT_VARIABLE NEW_PYTHONPATH)
+install(CODE "set(ENV{PYTHONPATH} ${NEW_PYTHONPATH})")
+install(CODE "execute_process(COMMAND mkdir -p ${NEW_PYTHONPATH})")
 install(CODE "execute_process(COMMAND ${PYTHON}
     ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py install
     --prefix=${CMAKE_INSTALL_PREFIX})")
@@ -180,7 +187,7 @@ if (BUILD_PYTHON_BINDINGS)
   # distutils will determine whether or not it *actually* needs to be rebuilt.
   add_custom_target(build_pyx_${name}
       ${PYTHON} ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py
-          build_ext --inplace --module=${name}.pyx
+          build_ext --module=${name}.pyx
       DEPENDS generate_pyx_${name}
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/
       COMMENT "Building Cython binding ${name}.so...")
