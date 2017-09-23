@@ -7,6 +7,7 @@ set(DIRS
   fw
   gradient_descent
   grid_search
+  iqn
   lbfgs
   line_search
   minibatch_sgd
