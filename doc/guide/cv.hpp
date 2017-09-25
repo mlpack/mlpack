@@ -204,7 +204,7 @@ class CustomMeasure
                          const DataType& data,
                          const ResponsesType& labels)
   {
-    // Inside the function you should call model.Predict() and compare the
+    // Inside the method you should call model.Predict() and compare the
     // values with the labels, in order to get the desired performance measure
     // and return it.
   }
@@ -229,14 +229,15 @@ parameter:
 
 In addition, there are two more template parameters, but these are automatically
 extracted from the given \c MLAlgorithm class, and users should not need to
-specify these parameters.
+specify these parameters except when using an unconventional type like
+\c arma::fmat for data points.
 
 The general structure of the \c KFoldCV and \c SimpleCV classes is split into
 two parts:
 
  - The constructor: create the object, and store the data for the \c MLAlgorithm
         training.
- - The \c Evaluate() function: take any non-data parameters for the
+ - The \c Evaluate() method: take any non-data parameters for the
         \c MLAlgorithm and calculate the desired performance measure.
 
 This split is important because it defines the API: all data-related parameters
@@ -292,13 +293,13 @@ regression, you could call the constructor
 call the constructor \c "KFoldCV(k, xs, ys, numClasses)" and for \c SimpleCV you
 would call the constructor \c "SimpleCV(pct, xs, ys, numClasses)".
 
-@subsection cvbasic_api_evaluate The Evaluate() function
+@subsection cvbasic_api_evaluate The Evaluate() method
 
-The other function that \c KFoldCV and \c SimpleCV have is the function to
+The other method that \c KFoldCV and \c SimpleCV have is the method to
 actually calculate the performance measure: \c Evaluate().  The \c Evaluate()
-function takes any hyperparameters that would follow the data arguments to the
-constructor or \c Train() function of the given \c MLAlgorithm.  The
-\c Evaluate() function takes no more arguments than that, and returns the
+method takes any hyperparameters that would follow the data arguments to the
+constructor or \c Train() method of the given \c MLAlgorithm.  The
+\c Evaluate() method takes no more arguments than that, and returns the
 desired performance measure on the dataset.
 
 Therefore, let us suppose that we are interested in cross-validating the
@@ -322,10 +323,10 @@ constructor
                     OptimizerType optimizer = OptimizerType());
 @endcode
 
-Note that all parameters are \c numClasses are optional.  This means that we can
-specify none or any of them in our call to \c Evaluate().  Below is some example
-code showing three different ways we can call \c Evaluate() with the \c cv
-object from the code snippet above.
+Note that all parameters after are \c numClasses are optional.  This means that
+we can specify none or any of them in our call to \c Evaluate().  Below is some
+example code showing three different ways we can call \c Evaluate() with the
+\c cv object from the code snippet above.
 
 @code
 // First, call with all defaults.
@@ -341,7 +342,7 @@ double result3 = cv.Evaluate(0.5, false, sgd);
 @endcode
 
 The same general idea applies to any \c MLAlgorithm: all hyperparameters must be
-passed to the \c Evaluate() function of \c KFoldCV or \c SimpleCV.
+passed to the \c Evaluate() method of \c KFoldCV or \c SimpleCV.
 
 @section cvbasic_further Further references
 

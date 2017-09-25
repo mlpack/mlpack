@@ -36,7 +36,7 @@ optimization strategy (\ref optimization::GridSearch "GridSearch" will be used b
 default) you are going to use.  Then, you must pass the same arguments as for
 the cross-validation classes: the data and labels (or responses) to use are
 given to the constructor, and the possible hyperparameter values are given to
-the \c HyperParameterTuner::Optimize() function, which returns the best
+the \c HyperParameterTuner::Optimize() method, which returns the best
 algorithm configuration as a \c std::tuple<>.
 
 Let's see some examples.
@@ -75,7 +75,7 @@ that we have specified what values should be tried.
 @section hptfixed Fixed Arguments
 
 When some hyper-parameters should not be optimized, you can specify values
-for them with the \c Fixed() function as in the following example of trying to
+for them with the \c Fixed() method as in the following example of trying to
 find good \c lambda1 and \c lambda2 values for \ref regression::LARS "LARS"
 (least-angle regression).
 
@@ -115,8 +115,8 @@ constructor:
 
 In some cases we may wish to optimize a hyperparameter over the space of all
 possible real values, instead of providing a grid in which to search.
-Alternately, we may know approximately optimal values from a grid search for a
-real-valued hyperparameter, but wish to further tune those values.
+Alternately, we may know approximately optimal values from a grid search for
+real-valued hyperparameters, but wish to further tune those values.
 
 In this case, we can use a gradient-based optimizer for hyperparameter search.
 In the following example, we try to optimize the \c lambda1 and \c lambda2
@@ -151,7 +151,7 @@ The \c HyperParameterTuner class is very similar to the
 there are a few important differences.
 
 First, the \c HyperParameterTuner accepts five different hyperparameters; only
-the first two of these are required:
+the first three of these are required:
 
   - \c MLAlgorithm This is the algorithm to be used.
   - \c Metric This is the performance measure to be used; see
@@ -167,7 +167,8 @@ the first two of these are required:
         \c double.
 
 The last two template parameters are automatically inferred by the
-\c HyperParameterTuner and should not need to be manually specified.
+\c HyperParameterTuner and should not need to be manually specified, unless an
+unconventional data type like \c arma::fmat is being used for data points.
 
 Typically, \ref cv::SimpleCV "SimpleCV" is a good choice for \c CVType because
 it takes so much less time to compute than full \ref cv::KFoldCV "KFoldCV";
