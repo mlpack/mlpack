@@ -218,10 +218,14 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
 {
   // Now, do validation of input options.
   if (!CLI::HasParam("initial_centroids"))
+  {
     RequireParamValue<int>("clusters", [](int x) { return x > 0; }, true,
         "number of clusters must be positive");
+  }
   else
+  {
     ReportIgnoredParam({{ "initial_centroids", true }}, "clusters");
+  }
 
   int clusters = CLI::GetParam<int>("clusters");
   if (clusters == 0 && CLI::HasParam("initial_centroids"))

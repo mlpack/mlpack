@@ -164,8 +164,10 @@ void mlpackMain()
 
   // Validate parameters.
   if (CLI::HasParam("k"))
+  {
     RequireParamValue<int>("k", [](int x) { return x > 0; }, true,
         "number of neighbors to search for must be positive");
+  }
   RequireParamValue<int>("num_tables", [](int x) { return x > 0; }, true,
       "number of tables must be positive");
   RequireParamValue<int>("num_projections", [](int x) { return x > 0; }, true,
@@ -175,9 +177,11 @@ void mlpackMain()
   ReportIgnoredParam({{ "calculate_error", false }}, "exact_distances");
 
   if (CLI::HasParam("calculate_error"))
+  {
     RequireAtLeastOnePassed({ "exact_distances", "reference" }, true,
         "if error is to be calculated, either precalculated exact distances or "
         "the reference set must be passed");
+  }
 
   // Do the building of a model, if necessary.
   ApproxKFNModel m;

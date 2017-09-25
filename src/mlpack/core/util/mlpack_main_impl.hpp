@@ -37,7 +37,8 @@ inline void RequireOnlyOnePassed(
       stream << "Can only pass one of ";
       for (size_t i = 0 ; i < constraints.size() - 1; ++i)
         stream << PRINT_PARAM_STRING(constraints[i]) << ", ";
-      stream << "or " << PRINT_PARAM_STRING(constraints[constraints.size() - 1]);
+      stream << "or "
+          << PRINT_PARAM_STRING(constraints[constraints.size() - 1]);
     }
 
     // Append a custom message.
@@ -57,15 +58,16 @@ inline void RequireOnlyOnePassed(
     }
     else if (constraints.size() == 2)
     {
-      stream << "specify one of " << PRINT_PARAM_STRING(constraints[0]) << " or "
-          << PRINT_PARAM_STRING(constraints[1]);
+      stream << "specify one of " << PRINT_PARAM_STRING(constraints[0])
+          << " or " << PRINT_PARAM_STRING(constraints[1]);
     }
     else
     {
       stream << "specify one of ";
       for (size_t i = 0; i < constraints.size() - 1; ++i)
         stream << PRINT_PARAM_STRING(constraints[i]) << ", ";
-      stream << "or " << PRINT_PARAM_STRING(constraints[constraints.size() - 1]);
+      stream << "or "
+          << PRINT_PARAM_STRING(constraints[constraints.size() - 1]);
     }
 
     // Append a custom message.
@@ -104,7 +106,8 @@ inline void RequireAtLeastOnePassed(
       stream << "pass one of ";
       for (size_t i = 0; i < constraints.size() - 1; ++i)
         stream << PRINT_PARAM_STRING(constraints[i]) << ", ";
-      stream << "or " << PRINT_PARAM_STRING(constraints[constraints.size() - 1]);
+      stream << "or "
+          << PRINT_PARAM_STRING(constraints[constraints.size() - 1]);
     }
 
     // Append custom error message.
