@@ -39,18 +39,17 @@ double IQN::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
   double overallObjective = 0;
 
   arma::cube y(iterate.n_rows, iterate.n_cols, numFunctions);
-  arma::cube t(iterate.n_rows, iterate.n_cols, numFunctions);
+  arma::cube t(iterate.n_elem, 1, numFunctions);
   arma::cube Q(iterate.n_elem, iterate.n_elem, numFunctions);
-
-  t.slice(0) = arma::randn(iterate.n_rows, iterate.n_cols);
+  arma::mat initialIterate = arma::randn(iterate.n_rows, iterate.n_cols);
+  arma::mat B = arma::eye(iterate.n_elem, iterate.n_elem);
 
   arma::mat g = arma::zeros(iterate.n_rows, iterate.n_cols);
   for (size_t i = 0; i < numFunctions; ++i)
   {
-    if (i > 0)
-      t.slice(i) = t.slice(0);
-
-    function.Gradient(t.slice(0), i, y.slice(i));
+    t.slice(i) = arma::mat(initialIterate.memptr(), iterate.n_elem,
+        1, false, false);
+    function.Gradient(initialIterate, i, y.slice(i));
     Q.slice(i).eye();
 
     g += y.slice(i);
@@ -58,8 +57,12 @@ double IQN::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
   g /= numFunctions;
 
   arma::mat gradient(iterate.n_rows, iterate.n_cols);
-  arma::mat B = arma::eye(iterate.n_elem, iterate.n_elem);
   arma::mat u = t.slice(0);
+
+  // Convenience alias to avoid multiple use of arma::vectorise.
+  arma::mat iterateVec = arma::mat(iterate.memptr(), iterate.n_elem,
+      1, false, false);
+  arma::mat gVec = arma::mat(g.memptr(), iterate.n_elem, 1, false, false);
 
   for (size_t i = 1; i != maxIterations; ++i)
   {
@@ -68,58 +71,33 @@ double IQN::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
       // Cyclicly iterating through the nnumber of functions.
       const size_t it = ((j + 1) % numFunctions);
 
-      if (arma::norm(iterate - t.slice(it)) > 0)
+      if (arma::norm(iterateVec - t.slice(it)) > 0)
       {
         function.Gradient(iterate, it, gradient);
-        const arma::mat s = iterate - t.slice(it);
-        const arma::mat yy = gradient - y.slice(it);
+        const arma::mat s = iterateVec - t.slice(it);
+        const arma::mat yy = arma::vectorise(gradient - y.slice(it));
 
-        if (iterate.n_rows > iterate.n_cols)
-        {
-          const arma::mat stochasticHessian = Q.slice(it) + yy * yy.t() /
+         const arma::mat stochasticHessian = Q.slice(it) + yy * yy.t() /
               arma::as_scalar(yy.t() * s) - Q.slice(it) * s * s.t() *
               Q.slice(it) / arma::as_scalar(s.t() * Q.slice(it) * s);
 
-           // Update aggregate Hessian approximation.
-           B += (1.0 / numFunctions) * (stochasticHessian - Q.slice(it));
+        // Update aggregate Hessian approximation.
+        B += (1.0 / numFunctions) * (stochasticHessian - Q.slice(it));
 
-           // Update aggregate Hessian-variable product.
-           u += (1.0 / numFunctions) * (stochasticHessian * iterate -
-              Q.slice(it) * t.slice(it));
+        // Update aggregate Hessian-variable product.
+        u += (1.0 / numFunctions) * (stochasticHessian * iterateVec -
+            Q.slice(it) * t.slice(it));
 
-           // Update aggregate gradient.
-           g += (1.0 / numFunctions) * (gradient - y.slice(it));
+        // Update aggregate gradient.
+        g += (1.0 / numFunctions) * (gradient - y.slice(it));
 
-           // Update the function information tables.
-           Q.slice(it) = stochasticHessian;
-           y.slice(it) = gradient;
-           t.slice(it) = iterate;
+        // Update the function information tables.
+        Q.slice(it) = stochasticHessian;
+        y.slice(it) = gradient;
+        t.slice(it) = iterateVec;
 
-           iterate = stepSize * B.i() * (u - g) + (1 - stepSize) * iterate;
-        }
-        else
-        {
-          const arma::mat stochasticHessian = Q.slice(it).t() + yy.t() * yy /
-              arma::as_scalar(yy * s.t()) - Q.slice(it).t() * s.t() * s *
-              Q.slice(it).t() / arma::as_scalar(s * Q.slice(it).t() * s.t());
-
-          // Update aggregate Hessian approximation.
-          B += (1.0 / numFunctions) * (stochasticHessian - Q.slice(it));
-
-          // Update aggregate Hessian-variable product.
-          u += (1.0 / numFunctions) * (iterate * stochasticHessian -
-              t.slice(it) * Q.slice(it));
-
-          // Update aggregate gradient.
-          g += (1.0 / numFunctions) * (gradient - y.slice(it));
-
-          // Update the function information tables.
-          Q.slice(it) = stochasticHessian;
-          y.slice(it) = gradient;
-          t.slice(it) = iterate;
-
-          iterate = stepSize * (u - g) * B.i() + (1 - stepSize) * iterate;
-        }
+        iterateVec = stepSize * B.i() * (u - gVec) +
+            (1 - stepSize) * iterateVec;
       }
     }
 
