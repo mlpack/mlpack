@@ -66,10 +66,12 @@ performance measure, we can write the following piece of code.
   double softmaxAccuracy = cv.Evaluate(lambda);
 @endcode
 
-Note that the \c Evaluate method of \c KFoldCV takes any hyperparameters of the
-algorithm---that is, anything that is not \c data, \c labels, or \c numClasses.
-To be more specific, in this example the \c Evaluate method relies on the
-following \ref regression::SoftmaxRegression "SoftmaxRegression" constructor:
+Note that the \c Evaluate method of \c KFoldCV takes any hyperparameters of an
+algorithm---that is, anything that is not \c data, \c labels, \c numClasses,
+\c datasetInfo, or \c weights (those last three may not be present for every
+algorithm type).  To be more specific, in this example the \c Evaluate method
+relies on the following \ref regression::SoftmaxRegression "SoftmaxRegression"
+constructor:
 
 @code
   template<typename OptimizerType = mlpack::optimization::L_BFGS>
