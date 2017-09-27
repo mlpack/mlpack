@@ -54,6 +54,11 @@ LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
     this->initialPoint = arma::rowvec(predictors.n_rows + 1, arma::fill::zeros);
 }
 
+void Shuffle(const arma::mat& parameters)
+{
+  return arma::shuffle(parameters);
+}
+
 /**
  * Evaluate the logistic regression objective function given the estimated
  * parameters.
@@ -136,15 +141,16 @@ double LogisticRegressionFunction<MatType>::Evaluate(
                   const size_t begin,
                   const size_t batchSize) const
 {
+  parameters = Shuffle(parameters);
   // Calculating the regularization term.
   const double regularization = 0.5 * lambda *
-      arma::dot(parameters.col(0).subvec(1, parameters.n_elem - 1),
-              parameters.col(0).subvec(1, parameters.n_elem - 1));
+      arma::dot(parameters.col(0).subvec(begin, begin + batchSize),
+              parameters.col(0).subvec(begin, begin + batchSize));
 
   // Calculating the hypothesis that has to be passed to the sigmoid function.
   const arma::vec exponents = parameters(0, 0) + arma::dot(
       predictors.cols(begin, begin + batchSize),
-      parameters.col(0).subvec(1, parameters.n_elem - 1));
+      parameters.col(0).subvec(begin, begin + batchSize));
   // Calculating the sigmoid function values.
   const arma::vec sigmoid = 1.0 / (1.0 + arma::exp(-exponents));
 
@@ -219,10 +225,10 @@ void LogisticRegressionFunction<MatType>::Gradient(
 {
   // Regularization term.
   arma::mat regularization;
-  regularization = lambda * parameters.col(0).subvec(1, parameters.n_elem - 1);
+  regularization = lambda * parameters.col(0).subvec(begin, begin + batchSize);
 
   const arma::rowvec sigmoids = (1 / (1 + arma::exp(-parameters(0, 0)
-      - parameters.col(0).subvec(1, parameters.n_elem - 1).t() * predictors)));
+      - parameters.col(0).subvec(begin, begin + batchSize).t() * predictors)));
 
   gradient.set_size(parameters.n_elem);
   gradient[0] = -arma::accu(responses - sigmoids);

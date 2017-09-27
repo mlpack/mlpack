@@ -53,9 +53,10 @@ class LogisticRegressionFunction
   const arma::vec& Responses() const { return responses; }
 
   /**
-  * Shuffle the order of function visitation.  This may be called by the optimizer.
+  * Shuffle the order of points. This may be called by the optimizer.
+  * @param Vector of logistic regression parameters.
   */
-  void Shuffle();
+  void Shuffle(const arma::mat& parameters);
 
   /**
    * Evaluate the logistic regression log-likelihood function with the given
