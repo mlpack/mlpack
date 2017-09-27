@@ -25,6 +25,7 @@ namespace test {
 class SGDTestFunction
 {
  private:
+  //! Contains the order in which the points would be visited
   arma::Col<size_t> visitationOrder;
 
  public:

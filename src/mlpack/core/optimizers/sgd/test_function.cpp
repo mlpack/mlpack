@@ -22,8 +22,8 @@ void SGDTestFunction::Shuffle()
       (NumFunctions() - 1), NumFunctions()));
 }
 
-double SGDTestFunction::Evaluate(const arma::mat& coordinates, const size_t i)
-    const
+double SGDTestFunction::Evaluate(const arma::mat& coordinates,
+                                 const size_t i) const
 {
   switch (i)
   {
@@ -34,7 +34,8 @@ double SGDTestFunction::Evaluate(const arma::mat& coordinates, const size_t i)
       return std::pow(coordinates[1], 2);
 
     case 2:
-      return std::pow(coordinates[2], 4) + 3 * std::pow(coordinates[2], 2);
+      return std::pow(coordinates[2], 4) +
+          3 * std::pow(coordinates[2], 2);
 
     default:
       return 0;
@@ -47,7 +48,7 @@ double SGDTestFunction::Evaluate(const arma::mat& coordinates,
 {
   double objective = 0;
 
-  for (int i = begin; i < begin + batchSize; i++)
+  for (size_t i = begin; i < begin + batchSize; i++)
   {
     switch (visitationOrder(i))
     {
@@ -60,8 +61,8 @@ double SGDTestFunction::Evaluate(const arma::mat& coordinates,
         break;
 
       case 2:
-        objective += std::pow(coordinates[2], 4) + \
-                     3 * std::pow(coordinates[2], 2);
+        objective += std::pow(coordinates[2], 4) +
+            3 * std::pow(coordinates[2], 2);
         break;
     }
   }
