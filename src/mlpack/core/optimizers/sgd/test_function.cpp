@@ -122,5 +122,4 @@ void SGDTestFunction::Gradient(const arma::mat& coordinates,
     }
   }
 
-  gradient /= batchSize;
 }
