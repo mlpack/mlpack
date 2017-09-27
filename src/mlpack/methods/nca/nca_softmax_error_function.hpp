@@ -58,6 +58,12 @@ class SoftmaxErrorFunction
                        MetricType metric = MetricType());
 
   /**
+  * Shuffle the order of points. This may be called by the optimizer.
+  * @param covariance Covariance matrix of Mahalanobis distance.
+  */
+  void Shuffle(const arma::mat& covariance);
+
+  /**
    * Evaluate the softmax function for the given covariance matrix.  This is the
    * non-separable implementation, where the objective function is not
    * decomposed into the sum of several objective functions.

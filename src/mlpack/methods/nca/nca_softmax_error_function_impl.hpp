@@ -30,6 +30,15 @@ SoftmaxErrorFunction<MetricType>::SoftmaxErrorFunction(
     precalculated(false)
 { /* nothing to do */ }
 
+/**
+* Shuffle the order of points. This may be called by the optimizer.
+* @param covariance Covariance matrix of Mahalanobis distance.
+*/
+void Shuffle(const arma::mat& covariance)
+{
+  return arma::shuffle(covariance);
+}
+
 //! The non-separable implementation, which uses Precalculate() to save time.
 template<typename MetricType>
 double SoftmaxErrorFunction<MetricType>::Evaluate(const arma::mat& coordinates)
@@ -95,6 +104,8 @@ double SoftmaxErrorFunction<MetricType>::Evaluate(const arma::mat& coordinates,
   double denominator = 0;
   double numerator = 0;
   double result = 0;
+
+  coordinates = Shuffle(coordinates);
 
   // It's quicker to do this now than one point at a time later.
   stretchedDataset = coordinates * dataset;
