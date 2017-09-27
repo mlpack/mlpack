@@ -53,7 +53,10 @@ LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
       initialPoint.n_cols != 1)
     this->initialPoint = arma::rowvec(predictors.n_rows + 1, arma::fill::zeros);
 }
-
+/**
+* Shuffle the order of points. This may be called by the optimizer.
+* @param parameters Vector of logistic regression parameters.
+*/
 void Shuffle(const arma::mat& parameters)
 {
   return arma::shuffle(parameters);

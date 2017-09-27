@@ -54,7 +54,7 @@ class LogisticRegressionFunction
 
   /**
   * Shuffle the order of points. This may be called by the optimizer.
-  * @param Vector of logistic regression parameters.
+  * @param parameters Vector of logistic regression parameters.
   */
   void Shuffle(const arma::mat& parameters);
 
