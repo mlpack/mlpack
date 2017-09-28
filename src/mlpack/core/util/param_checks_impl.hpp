@@ -1,15 +1,16 @@
 /**
- * @file mlpack_main_impl.hpp
+ * @file param_checks_impl.hpp
  * @author Ryan Curtin
  *
  * Utility function implementation for checking arguments, and so forth.
  */
-#ifndef MLPACK_CORE_UTIL_MLPACK_MAIN_IMPL_HPP
-#define MLPACK_CORE_UTIL_MLPACK_MAIN_IMPL_HPP
+#ifndef MLPACK_CORE_UTIL_PARAM_CHECKS_IMPL_HPP
+#define MLPACK_CORE_UTIL_PARAM_CHECKS_IMPL_HPP
 
-#include "mlpack_main.hpp"
+#include "param_checks.hpp"
 
 namespace mlpack {
+namespace util {
 
 // Check that the arguments are given.
 inline void RequireOnlyOnePassed(
@@ -17,6 +18,9 @@ inline void RequireOnlyOnePassed(
     const bool fatal,
     const std::string& errorMessage)
 {
+  if (BINDING_IGNORE_CHECK(constraints))
+    return;
+
   size_t set = 0;
   for (size_t i = 0; i < constraints.size(); ++i)
     if (CLI::HasParam(constraints[i]))
@@ -82,6 +86,9 @@ inline void RequireAtLeastOnePassed(
     const bool fatal,
     const std::string& errorMessage)
 {
+  if (BINDING_IGNORE_CHECK(constraints))
+    return;
+
   size_t set = 0;
   for (size_t i = 0; i < constraints.size(); ++i)
     if (CLI::HasParam(constraints[i]))
@@ -124,6 +131,9 @@ void RequireParamInSet(const std::string& name,
                             const bool fatal,
                             const std::string& errorMessage)
 {
+  if (BINDING_IGNORE_CHECK(name))
+    return;
+
   if (std::find(set.begin(), set.end(), CLI::GetParam<T>(name)) == set.end())
   {
     // The item was not found in the set.
@@ -146,6 +156,9 @@ void RequireParamValue(const std::string& name,
                             const bool fatal,
                             const std::string& errorMessage)
 {
+  if (BINDING_IGNORE_CHECK(name))
+    return;
+
   // We need to make sure that the condition holds.
   bool condition = conditional(CLI::GetParam<T>(name));
   if (!condition)
@@ -162,6 +175,9 @@ inline void ReportIgnoredParam(
     const std::vector<std::pair<std::string, bool>>& constraints,
     const std::string& paramName)
 {
+  if (BINDING_IGNORE_CHECK(paramName))
+    return;
+
   // Determine whether or not the condition is true.
   bool condition = true;
   for (size_t i = 0; i < constraints.size(); ++i)
@@ -220,6 +236,7 @@ inline void ReportIgnoredParam(
   }
 }
 
+} // namespace util
 } // namespace mlpack
 
 #endif

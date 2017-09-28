@@ -16,8 +16,9 @@ set(SOURCES
   log.hpp
   log.cpp
   mlpack_main.hpp
-  mlpack_main_impl.hpp
   nulloutstream.hpp
+  param_checks.hpp
+  param_checks_impl.hpp
   param_data.hpp
   prefixedoutstream.hpp
   prefixedoutstream.cpp

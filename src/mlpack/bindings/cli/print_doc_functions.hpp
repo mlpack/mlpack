@@ -59,6 +59,14 @@ std::string ProgramCall(const std::string& programName, Args... args);
  */
 inline std::string ParamString(const std::string& paramName);
 
+/**
+ * Return whether or not a runtime check on parameters should be ignored.  We
+ * don't ignore any runtime checks for CLI bindings, so this always returns
+ * false.
+ */
+template<typename T>
+inline bool IgnoreCheck(const T& /* t */) { return false; }
+
 } // namespace cli
 } // namespace bindings
 } // namespace mlpack

@@ -9,7 +9,9 @@
  * CLI::Destroy() automatically called on exit.
  *
  * This file should *only* be included by a program that is meant to be a
- * command-line program or a binding to another language.
+ * command-line program or a binding to another language.  This file also
+ * includes param_checks.hpp, which contains functions that are used to check
+ * parameter values at runtime.
  */
 #ifndef MLPACK_CORE_UTIL_MLPACK_MAIN_HPP
 #define MLPACK_CORE_UTIL_MLPACK_MAIN_HPP
@@ -33,6 +35,7 @@
 #define PRINT_CALL mlpack::bindings::cli::ProgramCall
 #define PRINT_DATASET mlpack::bindings::cli::PrintDataset
 #define PRINT_MODEL mlpack::bindings::cli::PrintModel
+#define BINDING_IGNORE_CHECK mlpack::bindings::cli::IgnoreCheck
 
 namespace mlpack {
 namespace util {
@@ -64,6 +67,7 @@ int main(int argc, char** argv)
 #elif(BINDING_TYPE == BINDING_TYPE_TEST) // This is a unit test.
 
 #include <mlpack/bindings/tests/test_option.hpp>
+#include <mlpack/bindings/tests/ignore_check.hpp>
 
 // These functions will do nothing.
 #define PRINT_PARAM_STRING(A) std::string(" ")
@@ -71,6 +75,7 @@ int main(int argc, char** argv)
 #define PRINT_DATASET(A) std::string(" ")
 #define PRINT_MODEL(A) std::string(" ")
 #define PRINT_CALL(...) std::string(" ")
+#define BINDING_IGNORE_CHECK mlpack::bindings::tests::IgnoreCheck
 
 namespace mlpack {
 namespace util {
@@ -105,6 +110,7 @@ using Option = mlpack::bindings::tests::TestOption<T>;
 #define PRINT_DATASET mlpack::bindings::python::PrintDataset
 #define PRINT_MODEL mlpack::bindings::python::PrintModel
 #define PRINT_CALL mlpack::bindings::python::ProgramCall
+#define BINDING_IGNORE_CHECK mlpack::bindings::python::IgnoreCheck
 
 namespace mlpack {
 namespace util {
@@ -141,46 +147,6 @@ PARAM_FLAG("verbose", "Display informational messages and the full list of "
 
 #endif
 
-/**
- * Define some utility functions for checking parameter values.
- */
-
-namespace mlpack {
-
-/**
- * Check that the arguments are given.
- */
-void RequireOnlyOnePassed(
-    const std::vector<std::string>& constraints,
-    const bool fatal = true,
-    const std::string& customErrorMessage = "");
-
-void RequireAtLeastOnePassed(
-    const std::vector<std::string>& constraints,
-    const bool fatal = true,
-    const std::string& customErrorMessage = "");
-
-/**
- * Ensure that an argument is in a given range.
- */
-template<typename T>
-void RequireParamInSet(const std::string& paramName,
-                       const std::vector<T>& set,
-                       const bool fatal,
-                       const std::string& errorMessage);
-
-template<typename T>
-void RequireParamValue(const std::string& paramName,
-                       const std::function<bool(T)>& conditional,
-                       const bool fatal,
-                       const std::string& errorMessage);
-
-void ReportIgnoredParam(
-    const std::vector<std::pair<std::string, bool>>& constraints,
-    const std::string& paramName);
-
-} // namespace mlpack
-
-#include "mlpack_main_impl.hpp"
+#include "param_checks.hpp"
 
 #endif
