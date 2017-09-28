@@ -1044,6 +1044,7 @@ void DTree<MatType, TagType>::Serialize(Archive& ar,
     ar & CreateNVP(maxVals, "maxVals");
     ar & CreateNVP(minVals, "minVals");
 
+    // This is added in order to reduce (dramatically!) the model file size.
     if (Archive::is_loading::value && left && right)
       FillMinMax(minVals, maxVals);
   }

@@ -172,7 +172,7 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
   while (dtree->SubtreeLeaves() > 1)
   {
     std::pair<double, double> treeSeq(oldAlpha,
-        dtree.SubtreeLeavesLogNegError());
+        dtree->SubtreeLeavesLogNegError());
     prunedSequence.push_back(treeSeq);
     oldAlpha = alpha;
     alpha = dtree->PruneAndUpdate(oldAlpha, dataset.n_cols, useVolumeReg);
