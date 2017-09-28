@@ -62,7 +62,7 @@ PROGRAM_INFO("DBSCAN clustering",
     PRINT_CALL("dbscan", "input", "input", "epsilon", 0.5, "min_size", 5));
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset to cluster.", "i");
-PARAM_UMATRIX_OUT("assignments", "Output matrix for assignments of each "
+PARAM_UROW_OUT("assignments", "Output matrix for assignments of each "
     "point.", "a");
 PARAM_MATRIX_OUT("centroids", "Matrix to save output centroids to.", "C");
 

@@ -147,7 +147,7 @@ void mlpackMain()
   RequireOnlyOnePassed({ "reference", "input_model" });
 
   // Warn if no task will be performed.
-  RequireAtLeastOnePassed({ "output_model", "k" }, false,
+  RequireAtLeastOnePassed({ "reference", "k" }, false,
       "no task will be performed");
 
   // Warn if no output is going to be saved.
@@ -174,6 +174,9 @@ void mlpackMain()
   RequireParamValue<int>("num_projections", [](int x) { return x > 0; }, true,
       "number of projections must be positive");
 
+  ReportIgnoredParam({{ "input_model", true }}, "algorithm");
+  ReportIgnoredParam({{ "input_model", true }}, "num_tables");
+  ReportIgnoredParam({{ "input_model", true }}, "num_projections");
   ReportIgnoredParam({{ "k", false }}, "calculate_error");
   ReportIgnoredParam({{ "calculate_error", false }}, "exact_distances");
 
@@ -216,7 +219,7 @@ void mlpackMain()
   }
   else
   {
-    // We must load the model from file.
+    // We must load the model from what was passed.
     m = std::move(CLI::GetParam<ApproxKFNModel>("input_model"));
   }
 

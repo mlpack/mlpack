@@ -120,14 +120,14 @@ void mlpackMain()
   // Check parameters.
   RequireOnlyOnePassed({ "training", "input_model" }, true);
   ReportIgnoredParam({{ "test", false }}, "test_labels");
-  RequireAtLeastOnePassed({ "output_model", "probabilities", "predictions",
-      "test_labels" }, false, "no output will be saved");
+  RequireAtLeastOnePassed({ "output_model", "probabilities", "predictions" },
+      false, "no output will be saved");
   ReportIgnoredParam({{ "training", false }}, "print_training_error");
 
   ReportIgnoredParam({{ "test", false }}, "predictions");
   ReportIgnoredParam({{ "test", false }}, "predictions");
 
-  RequireParamValue<int>("leaf_size", [](int x) { return x > 0; }, true,
+  RequireParamValue<int>("minimum_leaf_size", [](int x) { return x > 0; }, true,
       "leaf size must be positive");
 
   // Load the model or build the tree.

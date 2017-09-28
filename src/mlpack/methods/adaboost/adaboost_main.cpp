@@ -136,6 +136,10 @@ void mlpackMain()
   ReportIgnoredParam({{ "training", false }}, "tolerance");
   ReportIgnoredParam({{ "training", false }}, "iterations");
 
+  // If we gave an input model but no test set, issue a warning.
+  if (CLI::HasParam("input_model"))
+    RequireAtLeastOnePassed({ "test" }, false, "no task will be performed");
+
   RequireAtLeastOnePassed({ "output_model", "output" }, false,
       "no results will be saved");
 

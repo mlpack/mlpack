@@ -107,11 +107,13 @@ void mlpackMain()
 {
   // Check that the parameters are reasonable.
   RequireOnlyOnePassed({ "training", "input_model" }, true);
-  RequireAtLeastOnePassed({ "output_model", "prediction" }, false, "no results "
+  RequireAtLeastOnePassed({ "output_model", "predictions" }, false, "no results "
       "will be saved");
 
   RequireParamValue<int>("bucket_size", [](int x) { return x > 0; }, true,
       "bucket size must be positive");
+
+  ReportIgnoredParam({{ "test", false }}, "predictions");
 
   // We must either load a model, or train a new stump.
   DSModel model;
