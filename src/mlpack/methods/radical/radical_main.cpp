@@ -53,6 +53,7 @@ PARAM_FLAG("objective", "If set, an estimate of the final objective function "
 using namespace mlpack;
 using namespace mlpack::radical;
 using namespace mlpack::math;
+using namespace mlpack::util;
 using namespace std;
 using namespace arma;
 

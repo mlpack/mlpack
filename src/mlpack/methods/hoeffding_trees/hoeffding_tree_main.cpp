@@ -23,6 +23,7 @@ using namespace std;
 using namespace mlpack;
 using namespace mlpack::tree;
 using namespace mlpack::data;
+using namespace mlpack::util;
 
 PROGRAM_INFO("Hoeffding trees",
     "This program implements Hoeffding trees, a form of streaming decision tree"

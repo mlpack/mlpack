@@ -20,6 +20,7 @@ using namespace std;
 using namespace mlpack;
 using namespace mlpack::math;
 using namespace mlpack::sparse_coding;
+using namespace mlpack::util;
 
 PROGRAM_INFO("Sparse Coding", "An implementation of Sparse Coding with "
     "Dictionary Learning, which achieves sparsity via an l1-norm regularizer on"

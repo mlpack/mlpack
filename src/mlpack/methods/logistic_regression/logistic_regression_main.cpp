@@ -22,6 +22,7 @@ using namespace std;
 using namespace mlpack;
 using namespace mlpack::regression;
 using namespace mlpack::optimization;
+using namespace mlpack::util;
 
 PROGRAM_INFO("L2-regularized Logistic Regression and Prediction",
     "An implementation of L2-regularized logistic regression using either the "

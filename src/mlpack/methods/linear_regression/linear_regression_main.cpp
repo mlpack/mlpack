@@ -17,6 +17,7 @@
 
 using namespace mlpack;
 using namespace mlpack::regression;
+using namespace mlpack::util;
 using namespace arma;
 using namespace std;
 

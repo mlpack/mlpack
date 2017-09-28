@@ -21,6 +21,7 @@
 using namespace std;
 using namespace mlpack;
 using namespace mlpack::regression;
+using namespace mlpack::util;
 
 // Define parameters for the executable.
 PROGRAM_INFO("Softmax Regression", "This program performs softmax regression, "

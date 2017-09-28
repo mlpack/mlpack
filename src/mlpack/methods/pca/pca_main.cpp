@@ -22,6 +22,7 @@
 
 using namespace mlpack;
 using namespace mlpack::pca;
+using namespace mlpack::util;
 using namespace std;
 
 // Document program.

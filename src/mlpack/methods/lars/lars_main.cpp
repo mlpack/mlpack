@@ -19,6 +19,7 @@ using namespace arma;
 using namespace std;
 using namespace mlpack;
 using namespace mlpack::regression;
+using namespace mlpack::util;
 
 PROGRAM_INFO("LARS", "An implementation of LARS: Least Angle Regression "
     "(Stagewise/laSso).  This is a stage-wise homotopy-based algorithm for "

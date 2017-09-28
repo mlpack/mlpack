@@ -21,6 +21,7 @@
 using namespace std;
 using namespace mlpack;
 using namespace mlpack::neighbor;
+using namespace mlpack::util;
 
 // Information about the program itself.
 PROGRAM_INFO("K-Approximate-Nearest-Neighbor Search with LSH",

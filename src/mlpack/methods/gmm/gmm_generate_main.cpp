@@ -17,6 +17,7 @@
 using namespace std;
 using namespace mlpack;
 using namespace mlpack::gmm;
+using namespace mlpack::util;
 
 PROGRAM_INFO("GMM Sample Generator",
     "This program is able to generate samples from a pre-trained GMM (use "

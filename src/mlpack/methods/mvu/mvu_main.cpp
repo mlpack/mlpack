@@ -31,6 +31,7 @@ PARAM_INT_IN("num_neighbors", "Number of nearest neighbors to consider while "
 using namespace mlpack;
 using namespace mlpack::mvu;
 using namespace mlpack::math;
+using namespace mlpack::util;
 using namespace arma;
 using namespace std;
 

@@ -21,6 +21,7 @@
 
 using namespace mlpack;
 using namespace mlpack::naive_bayes;
+using namespace mlpack::util;
 using namespace std;
 using namespace arma;
 

@@ -24,6 +24,7 @@
 
 using namespace mlpack;
 using namespace mlpack::kmeans;
+using namespace mlpack::util;
 using namespace std;
 
 // Define parameters for the executable.

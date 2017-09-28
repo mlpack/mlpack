@@ -44,6 +44,7 @@ using namespace arma;
 using namespace mlpack::adaboost;
 using namespace mlpack::decision_stump;
 using namespace mlpack::perceptron;
+using namespace mlpack::util;
 
 PROGRAM_INFO("AdaBoost", "This program implements the AdaBoost (or Adaptive "
     "Boosting) algorithm. The variant of AdaBoost implemented here is "

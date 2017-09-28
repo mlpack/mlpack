@@ -17,6 +17,7 @@
 using namespace std;
 using namespace mlpack;
 using namespace mlpack::gmm;
+using namespace mlpack::util;
 
 PROGRAM_INFO("GMM Probability Calculator",
     "This program calculates the probability that given points came from a "

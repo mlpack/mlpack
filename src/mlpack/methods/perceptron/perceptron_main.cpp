@@ -21,6 +21,7 @@
 
 using namespace mlpack;
 using namespace mlpack::perceptron;
+using namespace mlpack::util;
 using namespace std;
 using namespace arma;
 

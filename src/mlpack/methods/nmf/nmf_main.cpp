@@ -23,6 +23,7 @@
 
 using namespace mlpack;
 using namespace mlpack::amf;
+using namespace mlpack::util;
 using namespace std;
 
 // Document program.

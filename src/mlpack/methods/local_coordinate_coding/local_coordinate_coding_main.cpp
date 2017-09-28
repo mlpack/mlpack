@@ -21,6 +21,7 @@ using namespace mlpack;
 using namespace mlpack::math;
 using namespace mlpack::lcc;
 using namespace mlpack::sparse_coding; // For NothingInitializer.
+using namespace mlpack::util;
 
 PROGRAM_INFO("Local Coordinate Coding",
     "An implementation of Local Coordinate Coding (LCC), which "

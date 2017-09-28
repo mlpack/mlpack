@@ -11,6 +11,7 @@
 
 using namespace mlpack;
 using namespace mlpack::tree;
+using namespace mlpack::util;
 using namespace std;
 
 PROGRAM_INFO("Random forests",

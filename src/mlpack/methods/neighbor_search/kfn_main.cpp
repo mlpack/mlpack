@@ -27,6 +27,7 @@ using namespace mlpack;
 using namespace mlpack::neighbor;
 using namespace mlpack::tree;
 using namespace mlpack::metric;
+using namespace mlpack::util;
 
 // Convenience typedef.
 typedef NSModel<FurthestNeighborSort> KFNModel;

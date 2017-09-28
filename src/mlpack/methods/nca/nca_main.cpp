@@ -129,6 +129,7 @@ using namespace mlpack;
 using namespace mlpack::nca;
 using namespace mlpack::metric;
 using namespace mlpack::optimization;
+using namespace mlpack::util;
 using namespace std;
 
 void mlpackMain()

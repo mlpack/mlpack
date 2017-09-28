@@ -67,6 +67,7 @@ PARAM_DOUBLE_IN("test_ratio", "Ratio of test set; if not set,"
 PARAM_INT_IN("seed", "Random seed (0 for std::time(NULL)).", "s", 0);
 
 using namespace mlpack;
+using namespace mlpack::util;
 using namespace arma;
 using namespace std;
 

@@ -50,6 +50,7 @@ PARAM_DOUBLE_IN("threshold", "Threshold to be applied for binarization. If not "
     "set, the threshold defaults to 0.0.", "t", 0.0);
 
 using namespace mlpack;
+using namespace mlpack::util;
 using namespace arma;
 using namespace std;
 

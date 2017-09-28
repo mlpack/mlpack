@@ -16,6 +16,7 @@
 
 using namespace mlpack;
 using namespace mlpack::det;
+using namespace mlpack::util;
 using namespace std;
 
 PROGRAM_INFO("Density Estimation With Density Estimation Trees",

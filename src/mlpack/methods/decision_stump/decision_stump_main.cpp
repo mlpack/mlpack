@@ -17,6 +17,7 @@
 
 using namespace mlpack;
 using namespace mlpack::decision_stump;
+using namespace mlpack::util;
 using namespace std;
 using namespace arma;
 

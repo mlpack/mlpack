@@ -17,6 +17,7 @@
 using namespace std;
 using namespace mlpack;
 using namespace mlpack::tree;
+using namespace mlpack::util;
 
 PROGRAM_INFO("Decision tree",
     "Train and evaluate using a decision tree.  Given a dataset containing "

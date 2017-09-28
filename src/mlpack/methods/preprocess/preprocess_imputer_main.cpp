@@ -48,6 +48,7 @@ PARAM_DOUBLE_IN("custom_value", "User-defined custom imputation value.", "c",
 PARAM_INT_IN("dimension", "The dimension to apply imputation to.", "d", 0);
 
 using namespace mlpack;
+using namespace mlpack::util;
 using namespace arma;
 using namespace std;
 using namespace data;

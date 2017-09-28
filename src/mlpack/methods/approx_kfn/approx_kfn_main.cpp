@@ -18,6 +18,7 @@
 
 using namespace mlpack;
 using namespace mlpack::neighbor;
+using namespace mlpack::util;
 using namespace std;
 
 PROGRAM_INFO("Approximate furthest neighbor search",
