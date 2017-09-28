@@ -28,6 +28,23 @@ namespace data {
 
 template<typename eT>
 bool Save(const std::string& filename,
+          const arma::Col<eT>& vec,
+          const bool fatal)
+{
+  // Don't transpose: one observation per line (for CSVs at least).
+  return Save(filename, vec, fatal, false);
+}
+
+template<typename eT>
+bool Save(const std::string& filename,
+          const arma::Row<eT>& rowvec,
+          const bool fatal)
+{
+  return Save(filename, rowvec, fatal, true);
+}
+
+template<typename eT>
+bool Save(const std::string& filename,
           const arma::Mat<eT>& matrix,
           const bool fatal,
           bool transpose)
@@ -138,10 +155,8 @@ bool Save(const std::string& filename,
   Log::Info << "Saving " << stringType << " to '" << filename << "'."
       << std::endl;
 
-  // Transpose the matrix.  If we are saving HDF5, Armadillo already transposes
-  // this on save, so we don't need to.
-  if ((transpose && saveType != arma::hdf5_binary) ||
-      (!transpose && saveType == arma::hdf5_binary))
+  // Transpose the matrix.
+  if (transpose)
   {
     arma::Mat<eT> tmp = trans(matrix);
 

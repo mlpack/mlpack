@@ -41,7 +41,7 @@ class Constant
    * @param outSize The number of output units.
    * @param scalar The constant value used to create the constant output.
    */
-  Constant(const size_t outSize, const double scalar);
+  Constant(const size_t outSize = 0, const double scalar = 0.0);
 
   /**
    * Ordinary feed forward pass of a neural network. The forward pass fills the
@@ -85,7 +85,7 @@ class Constant
    * Serialize the layer.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Locally-stored number of input units.

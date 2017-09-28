@@ -28,8 +28,12 @@
 #define MLPACK_METHODS_ANN_INIT_RULES_KATHIRVALAVAKUMAR_SUBAVATHI_INIT_HPP
 
 #include <mlpack/prereqs.hpp>
+
+#include "init_rules_traits.hpp"
+#include "random_init.hpp"
+
 #include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
-#include <mlpack/methods/ann/init_rules/random_init.hpp>
+
 #include <iostream>
 
 namespace mlpack {
@@ -111,8 +115,18 @@ class KathirvalavakumarSubavathiInitialization
   arma::rowvec dataSum;
 
   //! Parameter that defines the active region.
-  const double s;
+  double s;
 }; // class KathirvalavakumarSubavathiInitialization
+
+//! Initialization traits of the kathirvalavakumar subavath initialization rule.
+template<>
+class InitTraits<KathirvalavakumarSubavathiInitialization>
+{
+ public:
+  //! The kathirvalavakumar subavath initialization rule is applied over the
+  //! entire network.
+  static const bool UseLayer = false;
+};
 
 
 } // namespace ann

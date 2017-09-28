@@ -1,6 +1,7 @@
 /**
  * @file naive_bayes_classifier.hpp
  * @author Parikshit Ram (pram@cc.gatech.edu)
+ * @author Shihao Jing (shihao.jing810@gmail.com)
  *
  * A Naive Bayes Classifier which parametrically estimates the distribution of
  * the features.  It is assumed that the features have been sampled from a
@@ -27,7 +28,7 @@ namespace naive_bayes /** The Naive Bayes Classifier. */ {
  * last row of the data input to the constructor.
  *
  * Mathematically, it computes P(X_i = x_i | Y = y_j) for each feature X_i for
- * each of the labels y_j.  Alongwith this, it also computes the class
+ * each of the labels y_j.  Along with this, it also computes the class
  * probabilities P(Y = y_j).
  *
  * For classifying a data point (x_1, x_2, ..., x_n), it computes the following:
@@ -42,11 +43,24 @@ namespace naive_bayes /** The Naive Bayes Classifier. */ {
  *
  * nbc.Classify(testing_data, results);
  * @endcode
+ *
+ * The ModelMatType template parameter specifies the internal matrix type that
+ * NaiveBayesClassifier will use to hold the means, variances, and weights that
+ * make up the Naive Bayes model.  This can be arma::mat, arma::fmat, or any
+ * other Armadillo (or Armadillo-compatible) object.  Because ModelMatType may
+ * be different than the type of the data the model is trained on, now training
+ * is possible with subviews, sparse matrices, or anything else, while still
+ * storing the model as a ModelMatType internally.
+ *
+ * @tparam ModelMatType Internal matrix type to use to store the model.
  */
-template<typename MatType = arma::mat>
+template<typename ModelMatType = arma::mat>
 class NaiveBayesClassifier
 {
  public:
+  // Convenience typedef.
+  typedef typename ModelMatType::elem_type ElemType;
+
   /**
    * Initializes the classifier as per the input and then trains it by
    * calculating the sample mean and variances.
@@ -60,14 +74,15 @@ class NaiveBayesClassifier
    *
    * @param data Training data points.
    * @param labels Labels corresponding to training data points.
-   * @param classes Number of classes in this classifier.
+   * @param numClasses Number of classes in this classifier.
    * @param incrementalVariance If true, an incremental algorithm is used to
    *     calculate the variance; this can prevent loss of precision in some
    *     cases, but will be somewhat slower to calculate.
    */
+  template<typename MatType>
   NaiveBayesClassifier(const MatType& data,
                        const arma::Row<size_t>& labels,
-                       const size_t classes,
+                       const size_t numClasses,
                        const bool incrementalVariance = false);
 
   /**
@@ -77,7 +92,7 @@ class NaiveBayesClassifier
    * meaningless.
    */
   NaiveBayesClassifier(const size_t dimensionality = 0,
-                       const size_t classes = 0);
+                       const size_t numClasses = 0);
 
   /**
    * Train the Naive Bayes classifier on the given dataset.  If the incremental
@@ -91,11 +106,15 @@ class NaiveBayesClassifier
    * Probabilities() individually to set them to the right size.
    *
    * @param data The dataset to train on.
+   * @param labels The labels for the dataset.
+   * @param numClasses The numbe of classes in the dataset.
    * @param incremental Whether or not to use the incremental algorithm for
    *      training.
    */
+  template<typename MatType>
   void Train(const MatType& data,
              const arma::Row<size_t>& labels,
+             const size_t numClasses,
              const bool incremental = true);
 
   /**
@@ -110,35 +129,87 @@ class NaiveBayesClassifier
   void Train(const VecType& point, const size_t label);
 
   /**
-   * Given a bunch of data points, this function evaluates the class of each of
-   * those data points, and puts it in the vector 'results'.
+   * Classify the given point, using the trained NaiveBayesClassifier model. The
+   * predicted label is returned.
+   *
+   * @param point Point to classify.
+   */
+  template<typename VecType>
+  size_t Classify(const VecType& point) const;
+
+  /**
+   * Classify the given point using the trained NaiveBayesClassifier model and
+   * also return estimates of the probability for each class in the given
+   * vector.
+   *
+   * @param point Point to classify.
+   * @param prediction This will be set to the predicted class of the point.
+   * @param probabilities This will be filled with class probabilities for the
+   *      point.
+   */
+  template<typename VecType, typename ProbabilitiesVecType>
+  void Classify(const VecType& point,
+                size_t& prediction,
+                ProbabilitiesVecType& probabilities) const;
+
+  /**
+   * Classify the given points using the trained NaiveBayesClassifier model.
+   * The predicted labels for each point are stored in the given vector.
    *
    * @code
    * arma::mat test_data; // each column is a test point
    * arma::Row<size_t> results;
    * ...
-   * nbc.Classify(test_data, &results);
+   * nbc.Classify(test_data, results);
    * @endcode
    *
    * @param data List of data points.
-   * @param results Vector that class predictions will be placed into.
+   * @param predictions Vector that class predictions will be placed into.
    */
-  void Classify(const MatType& data, arma::Row<size_t>& results);
+  template<typename MatType>
+  void Classify(const MatType& data,
+                arma::Row<size_t>& predictions) const;
+
+  /**
+   * Classify the given points using the trained NaiveBayesClassifier model and
+   * also return estimates of the probabilities for each class in the given
+   * matrix.  The predicted labels for each point are stored in the given
+   * vector.
+   *
+   * @code
+   * arma::mat test_data; // each column is a test point
+   * arma::Row<size_t> results;
+   * arma::mat resultsProbs;
+   * ...
+   * nbc.Classify(test_data, results, resultsProbs);
+   * @endcode
+   *
+   * @param data Set of points to classify.
+   * @param predictions This will be filled with predictions for each point.
+   * @param probabilities This will be filled with class probabilities for each
+   *      point. Each row represents a point.
+   * @tparam MatType Type of data to be classified.
+   * @tparam ProbabilitiesMatType Type to store output probabilities in.
+   */
+  template<typename MatType, typename ProbabilitiesMatType>
+  void Classify(const MatType& data,
+                arma::Row<size_t>& predictions,
+                ProbabilitiesMatType& probabilities) const;
 
   //! Get the sample means for each class.
-  const MatType& Means() const { return means; }
+  const ModelMatType& Means() const { return means; }
   //! Modify the sample means for each class.
-  MatType& Means() { return means; }
+  ModelMatType& Means() { return means; }
 
   //! Get the sample variances for each class.
-  const MatType& Variances() const { return variances; }
+  const ModelMatType& Variances() const { return variances; }
   //! Modify the sample variances for each class.
-  MatType& Variances() { return variances; }
+  ModelMatType& Variances() { return variances; }
 
   //! Get the prior probabilities for each class.
-  const arma::vec& Probabilities() const { return probabilities; }
+  const ModelMatType& Probabilities() const { return probabilities; }
   //! Modify the prior probabilities for each class.
-  arma::vec& Probabilities() { return probabilities; }
+  ModelMatType& Probabilities() { return probabilities; }
 
   //! Serialize the classifier.
   template<typename Archive>
@@ -146,13 +217,25 @@ class NaiveBayesClassifier
 
  private:
   //! Sample mean for each class.
-  MatType means;
+  ModelMatType means;
   //! Sample variances for each class.
-  MatType variances;
-  //! Class probabilities.
-  arma::vec probabilities;
+  ModelMatType variances;
+  //! Class probabilities; this has the shape of a column vector.
+  ModelMatType probabilities;
   //! Number of training points seen so far.
   size_t trainingPoints;
+
+  /**
+   * Compute the unnormalized posterior log probability of given points (log
+   * likelihood). Results are returned as arma::mat, and each column represents
+   * a point, each row represents log likelihood of a class.
+   *
+   * @param data Set of points to compute posterior log probability for.
+   * @param logLikelihoods Matrix to store log likelihoods in.
+   */
+  template<typename MatType>
+  void LogLikelihood(const MatType& data,
+                     ModelMatType& logLikelihoods) const;
 };
 
 } // namespace naive_bayes

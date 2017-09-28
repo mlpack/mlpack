@@ -1,6 +1,6 @@
-/*
- * @file: adaboost_main.cpp
- * @author: Udit Saxena
+/**
+ * @file adaboost_main.cpp
+ * @author Udit Saxena
  *
  * Implementation of the AdaBoost main program.
  *
@@ -34,6 +34,7 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/data/normalize_labels.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 #include "adaboost.hpp"
 #include "adaboost_model.hpp"
 
@@ -58,25 +59,43 @@ PROGRAM_INFO("AdaBoost", "This program implements the AdaBoost (or Adaptive "
     "\n\n"
     "This program allows training of an AdaBoost model, and then application of"
     " that model to a test dataset.  To train a model, a dataset must be passed"
-    " with the --training_file (-t) option.  Labels can be given with the "
-    "--labels_file (-l) option; if no labels file is specified, the labels will"
-    " be assumed to be the last column of the input dataset.  Alternately, an "
-    "AdaBoost model may be loaded with the --input_model_file (-m) option."
+    " with the " + PRINT_PARAM_STRING("training") + " option.  Labels can be "
+    "given with the " + PRINT_PARAM_STRING("labels") + " option; if no labels "
+    "are specified, the labels will be assumed to be the last column of the "
+    "input dataset.  Alternately, an AdaBoost model may be loaded with the " +
+    PRINT_PARAM_STRING("input_model") + " option."
     "\n\n"
     "Once a model is trained or loaded, it may be used to provide class "
     "predictions for a given test dataset.  A test dataset may be specified "
-    "with the --test_file (-T) parameter.  The predicted classes for each point"
-    " in the test dataset will be saved into the file specified by the "
-    "--output_file (-o) parameter.  The AdaBoost model itself may be saved to "
-    "a file specified by the --output_model_file (-M) parameter.");
+    "with the " + PRINT_PARAM_STRING("test") + " parameter.  The predicted "
+    "classes for each point in the test dataset are output to the " +
+    PRINT_PARAM_STRING("output") + " output parameter.  The AdaBoost model "
+    "itself is output to the " + PRINT_PARAM_STRING("output_model") +
+    "output parameter."
+    "\n\n"
+    "For example, to run AdaBoost on an input dataset " +
+    PRINT_DATASET("data") + " with perceptrons as the weak learner type, "
+    "storing the trained model in " + PRINT_MODEL("model") + ", one could "
+    "use the following command: "
+    "\n\n" +
+    PRINT_CALL("adaboost", "training", "data", "output", "model",
+        "weak_learner", "perceptron") +
+    "\n\n"
+    "Similarly, an already-trained model in " + PRINT_MODEL("model") + " can"
+    " be used to provide class predictions from test data " +
+    PRINT_DATASET("test_data") + " and store the output in " +
+    PRINT_DATASET("predictions") + " with the following command: "
+    "\n\n" +
+    PRINT_CALL("adaboost", "input_model", "model", "test", "test_data",
+        "output", "predictions"));
 
 // Input for training.
 PARAM_MATRIX_IN("training", "Dataset for training AdaBoost.", "t");
-PARAM_UMATRIX_IN("labels", "Labels for the training set.", "l");
+PARAM_UROW_IN("labels", "Labels for the training set.", "l");
 
 // Classification options.
 PARAM_MATRIX_IN("test", "Test dataset.", "T");
-PARAM_UMATRIX_OUT("output", "Predicted labels for the test set.", "o");
+PARAM_UROW_OUT("output", "Predicted labels for the test set.", "o");
 
 // Training options.
 PARAM_INT_IN("iterations", "The maximum number of boosting iterations to be run"
@@ -91,10 +110,8 @@ PARAM_MODEL_IN(AdaBoostModel, "input_model", "Input AdaBoost model.", "m");
 PARAM_MODEL_OUT(AdaBoostModel, "output_model", "Output trained AdaBoost model.",
     "M");
 
-int main(int argc, char *argv[])
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   // Check input parameters and issue warnings/errors as necessary.
 
   // The user cannot specify both a training file and an input model file.
@@ -170,25 +187,20 @@ int main(int argc, char *argv[])
     mat trainingData = std::move(CLI::GetParam<arma::mat>("training"));
 
     // Load labels.
-    arma::Mat<size_t> labelsIn;
+    arma::Row<size_t> labelsIn;
 
     if (CLI::HasParam("labels"))
     {
       // Load labels.
-      labelsIn = std::move(CLI::GetParam<arma::Mat<size_t>>("labels"));
-
-      if (labelsIn.n_rows > 1)
-        labelsIn = labelsIn.t();
-      if (labelsIn.n_rows > 1)
-        Log::Fatal << "Labels must be one-dimensional!" << std::endl;
+      labelsIn = std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
     }
     else
     {
       // Extract the labels as the last dimension of the training data.
       Log::Info << "Using the last dimension of training set as labels."
           << endl;
-      labelsIn = conv_to<Mat<size_t>>::from(
-          trainingData.row(trainingData.n_rows - 1)).t();
+      labelsIn = conv_to<Row<size_t>>::from(
+          trainingData.row(trainingData.n_rows - 1));
       trainingData.shed_row(trainingData.n_rows - 1);
     }
 
@@ -196,7 +208,7 @@ int main(int argc, char *argv[])
     Row<size_t> labels;
 
     // Normalize the labels.
-    data::NormalizeLabels(labelsIn.row(0), labels, m.Mappings());
+    data::NormalizeLabels(labelsIn, labels, m.Mappings());
 
     // Get other training parameters.
     const double tolerance = CLI::GetParam<double>("tolerance");
@@ -207,8 +219,11 @@ int main(int argc, char *argv[])
     else if (weakLearner == "perceptron")
       m.WeakLearnerType() = AdaBoostModel::WeakLearnerTypes::PERCEPTRON;
 
+    const size_t numClasses = m.Mappings().n_elem;
+    Log::Info << numClasses << " classes in dataset." << endl;
+
     Timer::Start("adaboost_training");
-    m.Train(trainingData, labels, iterations, tolerance);
+    m.Train(trainingData, labels, numClasses, iterations, tolerance);
     Timer::Stop("adaboost_training");
   }
   else
@@ -236,12 +251,10 @@ int main(int argc, char *argv[])
     data::RevertLabels(predictedLabels, m.Mappings(), results);
 
     if (CLI::HasParam("output"))
-      CLI::GetParam<arma::Mat<size_t>>("output") = std::move(results);
+      CLI::GetParam<arma::Row<size_t>>("output") = std::move(results);
   }
 
   // Should we save the model, too?
   if (CLI::HasParam("output_model"))
     CLI::GetParam<AdaBoostModel>("output_model") = std::move(m);
-
-  CLI::Destroy();
 }

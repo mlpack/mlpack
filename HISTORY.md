@@ -1,6 +1,60 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Speed and memory improvements for DBSCAN.  --single_mode can now be used for
+    situations where previously RAM usage was too high.
+
+  * Bump minimum required version of Armadillo to 6.500.0.
+
+  * Add automatically generated Python bindings.  These have the same interface
+    as the command-line programs.
+
+### mlpack 2.2.5
+###### 2017-08-25
+  * Compilation fix for some systems (#1082).
+
+  * Fix PARAM_INT_OUT() (#1100).
+
+### mlpack 2.2.4
+###### 2017-07-18
+  * Speed and memory improvements for DBSCAN. --single_mode can now be used for
+    situations where previously RAM usage was too high.
+
+  * Fix bug in CF causing incorrect recommendations.
+
+### mlpack 2.2.3
+###### 2017-05-24
+  * Bug fix for --predictions_file in mlpack_decision_tree program.
+
+### mlpack 2.2.2
+###### 2017-05-04
+  * Install backwards-compatibility mlpack_allknn and mlpack_allkfn programs;
+    note they are deprecated and will be removed in mlpack 3.0.0 (#992).
+
+  * Fix RStarTree bug that surfaced on OS X only (#964).
+
+  * Small fixes for MiniBatchSGD and SGD and tests.
+
+### mlpack 2.2.1
+###### 2017-04-13
+  * Compilation fix for mlpack_nca and mlpack_test on older Armadillo versions
+    (#984).
+
+### mlpack 2.2.0
+###### 2017-03-21
   * Bugfix for mlpack_knn program (#816).
+
+  * Add decision tree implementation in methods/decision_tree/.  This is very
+    similar to a C4.5 tree learner.
+
+  * Add DBSCAN implementation in methods/dbscan/.
+
+  * Add support for multidimensional discrete distributions (#810, #830).
+
+  * Better output for Log::Debug/Log::Info/Log::Warn/Log::Fatal for Armadillo
+    objects (#895, #928).
+
+  * Refactor categorical CSV loading with boost::spirit for faster loading
+    (#681).
 
 ### mlpack 2.1.1
 ###### 2016-12-22

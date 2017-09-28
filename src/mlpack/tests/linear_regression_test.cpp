@@ -30,10 +30,10 @@ BOOST_AUTO_TEST_CASE(LinearRegressionTestCase)
   arma::mat points(3, 10);
 
   // Responses is the "correct" value for each point in predictors and points.
-  arma::vec responses(10);
+  arma::rowvec responses(10);
 
   // The values we get back when we predict for points.
-  arma::vec predictions(10);
+  arma::rowvec predictions(10);
 
   // We'll randomly select some coefficients for the linear response.
   arma::vec coeffs;
@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_CASE(ComputeErrorTest)
   arma::mat predictors;
   predictors << 0 << 1 << 2 << 4 << 8 << 16 << arma::endr
              << 16 << 8 << 4 << 2 << 1 << 0 << arma::endr;
-  arma::vec responses = "0 2 4 3 8 8";
+  arma::rowvec responses = "0 2 4 3 8 8";
 
   // http://www.mlpack.org/trac/ticket/298
   // This dataset gives a cost of 1.189500337 (as calculated in Octave).
@@ -95,7 +95,7 @@ BOOST_AUTO_TEST_CASE(ComputeErrorPerfectFitTest)
   arma::mat predictors;
   predictors << 0 << 1 << 2 << 1 << 6 << 2 << arma::endr
              << 0 << 1 << 2 << 2 << 2 << 6 << arma::endr;
-  arma::vec responses = "0 2 4 3 8 8";
+  arma::rowvec responses = "0 2 4 3 8 8";
 
   LinearRegression lr(predictors, responses);
 
@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE(RidgeRegressionTest)
   // Create empty dataset.
   arma::mat data;
   data.zeros(10, 5000); // 10-dimensional, 5000 points.
-  arma::vec responses;
+  arma::rowvec responses;
   responses.zeros(5000); // 5000 points.
 
   // Any lambda greater than 0 works to make the predictors covariance matrix
@@ -121,7 +121,7 @@ BOOST_AUTO_TEST_CASE(RidgeRegressionTest)
   LinearRegression lr(data, responses, 0.0001);
 
   // Now just make sure that it predicts some more zeros.
-  arma::vec predictedResponses;
+  arma::rowvec predictedResponses;
   lr.Predict(data, predictedResponses);
 
   for (size_t i = 0; i < 5000; ++i)
@@ -140,10 +140,10 @@ BOOST_AUTO_TEST_CASE(RidgeRegressionTestCase)
   arma::mat points(3, 10);
 
   // Responses is the "correct" value for each point in predictors and points.
-  arma::vec responses(10);
+  arma::rowvec responses(10);
 
   // The values we get back when we predict for points.
-  arma::vec predictions(10);
+  arma::rowvec predictions(10);
 
   // We'll randomly select some coefficients for the linear response.
   arma::vec coeffs;
@@ -186,7 +186,7 @@ BOOST_AUTO_TEST_CASE(LinearRegressionTrainTest)
 {
   // Random dataset.
   arma::mat dataset = arma::randu<arma::mat>(5, 1000);
-  arma::vec responses = arma::randu<arma::vec>(1000);
+  arma::rowvec responses = arma::randu<arma::rowvec>(1000);
 
   LinearRegression lr(dataset, responses, 0.3);
   LinearRegression lrTrain;

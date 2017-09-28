@@ -51,6 +51,11 @@ class Concat
   Concat(const bool model = true, const bool same = true);
 
   /**
+   * Destroy the layers held by the model.
+   */
+  ~Concat();
+
+  /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
    *
@@ -85,6 +90,14 @@ class Concat
   void Gradient(arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& error,
                 arma::Mat<eT>&& /* gradient */);
+
+  /*
+   * Add a new module to the model.
+   *
+   * @param layer The Layer to be added to the model.
+   */
+  template<typename LayerType>
+  void Add(const LayerType& layer) { network.push_back(new LayerType(layer)); }
 
   /*
    * Add a new module to the model.
@@ -140,7 +153,7 @@ class Concat
    * Serialize the layer
    */
   template<typename Archive>
-  void Serialize(Archive& /* ar */, const unsigned int /* version */);
+  void serialize(Archive& /* ar */, const unsigned int /* version */);
 
  private:
   //! Parameter which indicates if the modules should be exposed.

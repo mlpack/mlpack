@@ -174,8 +174,9 @@ class GaussianDistribution
 * @param x List of observations.
 * @param probabilities Output log probabilities for each input observation.
 */
-inline void GaussianDistribution::LogProbability(const arma::mat& x,
-                                                 arma::vec& logProbabilities) const
+inline void GaussianDistribution::LogProbability(
+    const arma::mat& x,
+    arma::vec& logProbabilities) const
 {
   // Column i of 'diffs' is the difference between x.col(i) and the mean.
   arma::mat diffs = x - (mean * arma::ones<arma::rowvec>(x.n_cols));

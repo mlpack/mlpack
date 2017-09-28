@@ -2,6 +2,7 @@
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
   softmax_regression.hpp
+  softmax_regression.cpp
   softmax_regression_impl.hpp
   softmax_regression_function.hpp
   softmax_regression_function.cpp
@@ -17,3 +18,4 @@ endforeach()
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(softmax_regression)
+add_python_binding(softmax_regression)

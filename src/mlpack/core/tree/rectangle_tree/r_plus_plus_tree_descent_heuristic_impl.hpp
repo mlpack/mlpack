@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_PLUS_TREE_DESCENT_HEURISTIC_IMPL_HPP
-#define MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_PLUS_TREE_DESCENT_HEURISTIC_IMPL_HPP
+#ifndef MLPACK_CORE_TREE_RECTANGLE_TREE_RPP_TREE_DESCENT_HEURISTIC_IMPL_HPP
+#define MLPACK_CORE_TREE_RECTANGLE_TREE_RPP_TREE_DESCENT_HEURISTIC_IMPL_HPP
 
 #include "r_plus_plus_tree_descent_heuristic.hpp"
 #include "../hrectbound.hpp"
@@ -50,4 +50,4 @@ size_t RPlusPlusTreeDescentHeuristic::ChooseDescentNode(
 } // namespace tree
 } // namespace mlpack
 
-#endif // MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_PLUS_TREE_DESCENT_HEURISTIC_IMPL_HPP
+#endif // MLPACK_CORE_TREE_RECTANGLE_TREE_RPP_TREE_DESCENT_HEURISTIC_IMPL_HPP

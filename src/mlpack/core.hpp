@@ -59,6 +59,7 @@
  * - mlpack_approx_kfn
  * - mlpack_cf
  * - mlpack_decision_stump
+ * - mlpack_decision_tree
  * - mlpack_det
  * - mlpack_emst
  * - mlpack_fastmks
@@ -99,6 +100,8 @@
  *  - @ref iodoc
  *  - @ref timer
  *  - @ref sample
+ *  - @ref cv
+ *  - @ref hpt
  *  - @ref verinfo
  *
  * Tutorials on specific methods are also available.
@@ -207,6 +210,22 @@
  *   - Mike Izbicki <mike@izbicki.me>
  *   - Sudhanshu Ranjan <sranjan.sud@gmail.com>
  *   - Piyush Jaiswal <piyush.jaiswal@st.niituniversity.in>
+ *   - Dinesh Raj <dinu.iota@gmail.com>
+ *   - Prasanna Patil <prasannapatil08@gmail.com>
+ *   - Lakshya Agrawal <zeeshan.lakshya@gmail.com>
+ *   - Vivek Pal <vivekpal.dtu@gmail.com>
+ *   - Praveen Ch <chvsp972911@gmail.com>
+ *   - Kirill Mishchenko <ki.mishchenko@gmail.com>
+ *   - Abhinav Moudgil <abhinavmoudgil95@gmail.com>
+ *   - Thyrix Yang <thyrixyang@gmail.com>
+ *   - Sagar B Hathwar <sagarbhathwar@gmail.com>
+ *   - Nishanth Hegde <hegde.nishanth@gmail.com>
+ *   - Parminder Singh <parmsingh101@gmail.com>
+ *   - CodeAi (deep learning bug detector) <benjamin.bales@assrc.us>
+ *   - Franciszek Stokowacki <franek.stokowacki@gmail.com>
+ *   - Samikshya Chand <samikshya289@gmail.com>
+ *   - N Rajiv Vaidyanathan <rajivvaidyanathan4@gmail.com>
+ *   - Kartik Nighania <kartiknighania@gmail.com>
  */
 
 // First, include all of the prerequisites.
@@ -230,7 +249,8 @@
 #include <mlpack/core/dists/gaussian_distribution.hpp>
 #include <mlpack/core/dists/laplace_distribution.hpp>
 #include <mlpack/core/dists/gamma_distribution.hpp>
-//mlpack::backtrace only for linux
+
+// mlpack::backtrace only for linux
 #ifdef HAS_BFD_DL
   #include <mlpack/core/util/backtrace.hpp>
 #endif

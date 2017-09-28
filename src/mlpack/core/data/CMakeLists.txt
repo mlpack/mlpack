@@ -5,8 +5,13 @@ set(SOURCES
   dataset_mapper_impl.hpp
   extension.hpp
   format.hpp
+  load_csv.hpp
+  load_csv.cpp
   load.hpp
+  load_model_impl.hpp
+  load_vec_impl.hpp
   load_impl.hpp
+  load.cpp
   load_arff.hpp
   load_arff_impl.hpp
   normalize_labels.hpp
@@ -24,6 +29,10 @@ set(DIR_SRCS)
 foreach(file ${SOURCES})
     set(DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
 endforeach()
+
+# Add subdirectories.
+add_subdirectory(imputation_methods)
+add_subdirectory(map_policies)
 
 # Append sources (with directory name) to list of all mlpack sources (used at
 # parent scope).

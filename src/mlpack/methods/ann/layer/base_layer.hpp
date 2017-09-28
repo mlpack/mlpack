@@ -65,7 +65,7 @@ class BaseLayer
   template<typename InputType, typename OutputType>
   void Forward(const InputType&& input, OutputType&& output)
   {
-    ActivationFunction::fn(input, output);
+    ActivationFunction::Fn(input, output);
   }
 
   /**
@@ -83,7 +83,7 @@ class BaseLayer
                 arma::Mat<eT>&& g)
   {
     arma::Mat<eT> derivative;
-    ActivationFunction::deriv(input, derivative);
+    ActivationFunction::Deriv(input, derivative);
     g = gy % derivative;
   }
 
@@ -106,7 +106,7 @@ class BaseLayer
    * Serialize the layer.
    */
   template<typename Archive>
-  void Serialize(Archive& /* ar */, const unsigned int /* version */)
+  void serialize(Archive& /* ar */, const unsigned int /* version */)
   {
     /* Nothing to do here */
   }

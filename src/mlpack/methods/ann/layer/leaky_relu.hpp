@@ -99,7 +99,7 @@ class LeakyReLU
    * Serialize the layer.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   /**
@@ -165,7 +165,6 @@ class LeakyReLU
 
   //! Leakyness Parameter in the range 0 <alpha< 1
   double alpha;
-
 }; // class LeakyReLU
 
 } // namespace ann

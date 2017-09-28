@@ -41,8 +41,8 @@ BOOST_AUTO_TEST_CASE(SimpleDiscreteHMMTestViterbi)
   arma::vec initial("1 0"); // Default MATLAB initial states.
   arma::mat transition("0.7 0.3; 0.3 0.7");
   std::vector<DiscreteDistribution> emission(2);
-  emission[0] = DiscreteDistribution("0.9 0.1");
-  emission[1] = DiscreteDistribution("0.2 0.8");
+  emission[0] = DiscreteDistribution(std::vector<arma::vec>{"0.9 0.1"});
+  emission[1] = DiscreteDistribution(std::vector<arma::vec>{"0.2 0.8"});
 
   HMM<DiscreteDistribution> hmm(initial, transition, emission);
 
@@ -78,9 +78,12 @@ BOOST_AUTO_TEST_CASE(BorodovskyHMMTestViterbi)
                        "0.5 0.5 0.6");
   // Four emission states: A, C, G, T.  Start state doesn't emit...
   std::vector<DiscreteDistribution> emission(3);
-  emission[0] = DiscreteDistribution("0.25 0.25 0.25 0.25");
-  emission[1] = DiscreteDistribution("0.20 0.30 0.30 0.20");
-  emission[2] = DiscreteDistribution("0.30 0.20 0.20 0.30");
+  emission[0] = DiscreteDistribution(
+      std::vector<arma::vec>{"0.25 0.25 0.25 0.25"});
+  emission[1] = DiscreteDistribution(
+      std::vector<arma::vec>{"0.20 0.30 0.30 0.20"});
+  emission[2] = DiscreteDistribution(
+      std::vector<arma::vec>{"0.30 0.20 0.20 0.30"});
 
   HMM<DiscreteDistribution> hmm(initial, transition, emission);
 
@@ -118,8 +121,8 @@ BOOST_AUTO_TEST_CASE(ForwardBackwardTwoState)
   arma::vec initial("0.1 0.4");
   arma::mat transition("0.1 0.9; 0.4 0.6");
   std::vector<DiscreteDistribution> emis(2);
-  emis[0] = DiscreteDistribution("0.85 0.15 0.00 0.00");
-  emis[1] = DiscreteDistribution("0.00 0.00 0.50 0.50");
+  emis[0] = DiscreteDistribution(std::vector<arma::vec>{"0.85 0.15 0.00 0.00"});
+  emis[1] = DiscreteDistribution(std::vector<arma::vec>{"0.00 0.00 0.50 0.50"});
 
   HMM<DiscreteDistribution> hmm(initial, transition, emis);
 
@@ -1002,7 +1005,7 @@ BOOST_AUTO_TEST_CASE(GMMHMMLoadSaveTest)
   // Create a GMM HMM, save it, and load it.
   HMM<GMM> hmm(3, GMM(4, 3));
 
-  for(size_t j = 0; j < hmm.Emission().size(); ++j)
+  for (size_t j = 0; j < hmm.Emission().size(); ++j)
   {
     hmm.Emission()[j].Weights().randu();
     for (size_t i = 0; i < hmm.Emission()[j].Gaussians(); ++i)
@@ -1055,7 +1058,7 @@ BOOST_AUTO_TEST_CASE(GMMHMMLoadSaveTest)
 
         for (size_t k = 0; k < hmm.Emission()[j].Dimensionality(); ++k)
         {
-          BOOST_REQUIRE_CLOSE(hmm.Emission()[j].Component(i).Covariance()(l,k),
+          BOOST_REQUIRE_CLOSE(hmm.Emission()[j].Component(i).Covariance()(l, k),
               hmm2.Emission()[j].Component(i).Covariance()(l, k), 1e-3);
         }
       }
@@ -1072,7 +1075,7 @@ BOOST_AUTO_TEST_CASE(GaussianHMMLoadSaveTest)
   HMM<GaussianDistribution> hmm(3, GaussianDistribution(2));
 
 
-  for(size_t j = 0; j < hmm.Emission().size(); ++j)
+  for (size_t j = 0; j < hmm.Emission().size(); ++j)
   {
     hmm.Emission()[j].Mean().randu();
     arma::mat covariance = arma::randu<arma::mat>(
@@ -1112,7 +1115,7 @@ BOOST_AUTO_TEST_CASE(GaussianHMMLoadSaveTest)
           hmm2.Emission()[j].Mean()[i], 1e-3);
       for (size_t k = 0; k < hmm.Emission()[j].Dimensionality(); ++k)
       {
-        BOOST_REQUIRE_CLOSE(hmm.Emission()[j].Covariance()(i,k),
+        BOOST_REQUIRE_CLOSE(hmm.Emission()[j].Covariance()(i, k),
             hmm2.Emission()[j].Covariance()(i, k), 1e-3);
       }
     }
@@ -1140,7 +1143,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLoadSaveTest)
   HMM<DiscreteDistribution> hmm(3, DiscreteDistribution(3));
 
 
-  for(size_t j = 0; j < hmm.Emission().size(); ++j)
+  for (size_t j = 0; j < hmm.Emission().size(); ++j)
   {
     hmm.Emission()[j].Probabilities() = arma::randu<arma::vec>(3);
     hmm.Emission()[j].Probabilities() /= accu(emission[j].Probabilities());

@@ -14,12 +14,18 @@ set(SOURCES
   constant_impl.hpp
   convolution.hpp
   convolution_impl.hpp
+  cross_entropy_error.hpp
+  cross_entropy_error_impl.hpp
   dropconnect.hpp
   dropconnect_impl.hpp
   dropout.hpp
   dropout_impl.hpp
+  elu.hpp
+  elu_impl.hpp
   glimpse.hpp
   glimpse_impl.hpp
+  gru.hpp
+  gru_impl.hpp
   hard_tanh.hpp
   hard_tanh_impl.hpp
   join.hpp
@@ -49,6 +55,8 @@ set(SOURCES
   multiply_constant_impl.hpp
   negative_log_likelihood.hpp
   negative_log_likelihood_impl.hpp
+  parametric_relu.hpp
+  parametric_relu_impl.hpp
   recurrent.hpp
   recurrent_impl.hpp
   recurrent_attention.hpp

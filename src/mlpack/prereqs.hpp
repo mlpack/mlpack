@@ -30,10 +30,9 @@
 #include <climits>
 #include <cfloat>
 #include <cstdint>
-#include <iostream>
 #include <stdexcept>
 #include <tuple>
-#include <queue>
+#include <utility>
 
 // But if it's not defined, we'll do it.
 #ifndef M_PI
@@ -86,6 +85,14 @@ using enable_if_t = typename enable_if<B, T>::type;
 #include <mlpack/core/data/serialization_shim.hpp>
 #include <mlpack/core/data/serialization_template_version.hpp>
 
+// If we have Boost 1.58 or older and are using C++14, the compilation is likely
+// to fail due to boost::visitor issues.  We will pre-emptively fail.
+#if __cplusplus > 201103L && BOOST_VERSION < 105900
+#error Use of C++14 mode with Boost < 1.59 is known to cause compilation \
+problems.  Instead specify the C++11 standard (-std=c++11 with gcc or clang), \
+or upgrade Boost to 1.59 or newer.
+#endif
+
 // Now include Armadillo through the special mlpack extensions.
 #include <mlpack/core/arma_extend/arma_extend.hpp>
 #include <mlpack/core/util/arma_traits.hpp>
@@ -94,7 +101,7 @@ using enable_if_t = typename enable_if<B, T>::type;
 // defines.
 #include <mlpack/core/util/arma_config_check.hpp>
 
-// All code should have access to logging
+// All code should have access to logging.
 #include <mlpack/core/util/log.hpp>
 #include <mlpack/core/util/timers.hpp>
 
@@ -105,5 +112,15 @@ using enable_if_t = typename enable_if<B, T>::type;
   #pragma warning(disable : 4519)
   #define ARMA_USE_CXX11
 #endif
+// This can be removed with Visual Studio supports an OpenMP version with
+// unsigned loop variables.
+#ifdef _WIN32
+  #define omp_size_t intmax_t
+#else
+  #define omp_size_t size_t
+#endif
+
+// We need to be able to mark functions deprecated.
+#include <mlpack/core/util/deprecated.hpp>
 
 #endif

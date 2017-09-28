@@ -70,8 +70,8 @@ class OivsInitialization
                      const int k = 5,
                      const double gamma = 0.9) :
       k(k), gamma(gamma),
-      b(std::abs(ActivationFunction::inv(1 - epsilon) -
-                 ActivationFunction::inv(epsilon)))
+      b(std::abs(ActivationFunction::Inv(1 - epsilon) -
+                 ActivationFunction::Inv(epsilon)))
   {
   }
 
@@ -114,13 +114,13 @@ class OivsInitialization
 
  private:
   //! Parameter to control the activation region width.
-  const int k;
+  int k;
 
   //! Parameter to define the uniform random range.
-  const double gamma;
+  double gamma;
 
   //! Parameter to control the activation region.
-  const double b;
+  double b;
 }; // class OivsInitialization
 
 

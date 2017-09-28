@@ -10,6 +10,21 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+// We'll use CLIOptions.
+#include <mlpack/bindings/cli/cli_option.hpp>
+
+namespace mlpack {
+namespace util {
+
+template<typename T>
+using Option = mlpack::bindings::cli::CLIOption<T>;
+
+} // namespace util
+} // namespace mlpack
+
+#include <mlpack/core/util/param.hpp>
+#include <mlpack/bindings/cli/parse_command_line.hpp>
+#include <mlpack/bindings/cli/end_program.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -18,13 +33,14 @@ using namespace mlpack;
 using namespace mlpack::util;
 using namespace mlpack::kernel;
 using namespace mlpack::data;
+using namespace mlpack::bindings::cli;
 using namespace std;
 
 // When we run these tests, we have to nuke the existing CLI object that's
 // created by default.
 struct CLITestDestroyer
 {
-  CLITestDestroyer() { CLI::Destroy(); }
+  CLITestDestroyer() { CLI::ClearSettings(); }
 };
 
 BOOST_FIXTURE_TEST_SUITE(CLITest, CLITestDestroyer);
@@ -36,11 +52,17 @@ BOOST_FIXTURE_TEST_SUITE(CLITest, CLITestDestroyer);
  */
 void AddRequiredCLIOptions()
 {
-  CLI::Add<bool>(false, "help", "Default help info.", 'h');
-  CLI::Add<string>("", "info", "Get help on a specific module or option.");
-  CLI::Add<bool>(false, "verbose", "Display informational messages and the full"
-      " list of parameters and timers at the end of execution.", 'v');
-  CLI::Add<bool>(false, "version", "Display the version of mlpack.", 'V');
+  CLI::ClearSettings();
+
+  // These will register with CLI immediately.
+  CLIOption<bool> help(false, "help", "Default help info.", "h", "bool");
+  CLIOption<string> info("", "info", "Get help on a specific module or option.",
+      "", "string");
+  CLIOption<bool> verbose(false, "verbose", "Display information messages and "
+      "the full list of parameters and timers at the end of execution.", "v",
+      "bool");
+  CLIOption<bool> version(false, "version", "Display the version of mlpack.",
+      "V", "bool");
 }
 
 /**
@@ -53,7 +75,7 @@ BOOST_AUTO_TEST_CASE(TestCLIAdd)
 
   // Check that the CLI::HasParam returns false if no value has been specified
   // on the commandline and ignores any programmatical assignments.
-  CLI::Add<bool>(false, "global/bool", "True or False", 'a');
+  CLIOption<bool> b(false, "global/bool", "True or false.", "a", "bool");
 
   // CLI::HasParam should return false here.
   BOOST_REQUIRE(!CLI::HasParam("global/bool"));
@@ -95,7 +117,8 @@ BOOST_AUTO_TEST_CASE(TestDuplicateFlag)
   argv[2] = "--test";
 
   // This should not throw an exception.
-  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+  BOOST_REQUIRE_NO_THROW(
+      ParseCommandLine(argc, const_cast<char**>(argv)));
 }
 
 /**
@@ -115,7 +138,7 @@ BOOST_AUTO_TEST_CASE(TestDuplicateParam)
 
   // This should throw an exception.
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(CLI::ParseCommandLine(argc, const_cast<char**>(argv)),
+  BOOST_REQUIRE_THROW(ParseCommandLine(argc, const_cast<char**>(argv)),
       runtime_error);
   Log::Fatal.ignoreInput = false;
 }
@@ -136,17 +159,14 @@ BOOST_AUTO_TEST_CASE(TestBooleanOption)
 
   // Now, if we specify this flag, it should be true.
   int argc = 2;
-  char* argv[2];
-  argv[0] = strcpy(new char[strlen("programname") + 1], "programname");
-  argv[1] = strcpy(new char[strlen("--flag_test") + 1], "--flag_test");
+  const char* argv[2];
+  argv[0] = "programname";
+  argv[1] = "--flag_test";
 
-  CLI::ParseCommandLine(argc, argv);
+  ParseCommandLine(argc, const_cast<char**>(argv));
 
   BOOST_REQUIRE_EQUAL(CLI::GetParam<bool>("flag_test"), true);
   BOOST_REQUIRE_EQUAL(CLI::HasParam("flag_test"), true);
-
-  delete[] argv[0];
-  delete[] argv[1];
 }
 
 /**
@@ -167,7 +187,7 @@ BOOST_AUTO_TEST_CASE(TestVectorOption)
   argv[4] = "4";
 
   Log::Fatal.ignoreInput = true;
-  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+  ParseCommandLine(argc, const_cast<char**>(argv));
   Log::Fatal.ignoreInput = false;
 
   BOOST_REQUIRE(CLI::HasParam("test_vec"));
@@ -200,7 +220,7 @@ BOOST_AUTO_TEST_CASE(TestVectorOption2)
   argv[6] = "4";
 
 //  Log::Fatal.ignoreInput = true;
-  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+  ParseCommandLine(argc, const_cast<char**>(argv));
 //  Log::Fatal.ignoreInput = false;
 
   BOOST_REQUIRE(CLI::HasParam("test2_vec"));
@@ -213,13 +233,348 @@ BOOST_AUTO_TEST_CASE(TestVectorOption2)
   BOOST_REQUIRE_EQUAL(v[2], 4);
 }
 
+BOOST_AUTO_TEST_CASE(InputColVectorParamTest)
+{
+  AddRequiredCLIOptions();
+
+  PARAM_COL_IN("vector", "Test vector", "l");
+
+  // Fake arguments.
+  const char* argv[3];
+  argv[0] = "./test";
+  argv[1] = "-l";
+  argv[2] = "iris_test_labels.csv";
+
+  int argc = 3;
+
+  // The const-cast is a little hacky but should be fine...
+  Log::Fatal.ignoreInput = true;
+  ParseCommandLine(argc, const_cast<char**>(argv));
+  Log::Fatal.ignoreInput = false;
+
+  // The --vector parameter should exist.
+  BOOST_REQUIRE(CLI::HasParam("vector"));
+  // The --vector_file parameter should not exist (it should be transparent from
+  // inside the program).
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(CLI::HasParam("vector_file"), runtime_error);
+  Log::Fatal.ignoreInput = false;
+
+  arma::vec vec1 = CLI::GetParam<arma::vec>("vector");
+  arma::vec vec2 = CLI::GetParam<arma::vec>("vector");
+
+  BOOST_REQUIRE_EQUAL(vec1.n_rows, 63);
+  BOOST_REQUIRE_EQUAL(vec2.n_rows, 63);
+
+  for (size_t i = 0; i < vec1.n_elem; ++i)
+    BOOST_REQUIRE_CLOSE(vec1[i], vec2[i], 1e-10);
+}
+
+BOOST_AUTO_TEST_CASE(InputUnsignedColVectorParamTest)
+{
+  AddRequiredCLIOptions();
+
+  PARAM_UCOL_IN("vector", "Test vector", "l");
+
+  // Fake arguments.
+  const char* argv[3];
+  argv[0] = "./test";
+  argv[1] = "-l";
+  argv[2] = "iris_test_labels.csv";
+
+  int argc = 3;
+
+  // The const-cast is a little hacky but should be fine...
+  Log::Fatal.ignoreInput = true;
+  ParseCommandLine(argc, const_cast<char**>(argv));
+  Log::Fatal.ignoreInput = false;
+
+  // The --vector parameter should exist.
+  BOOST_REQUIRE(CLI::HasParam("vector"));
+  // The --vector_file parameter should not exist (it should be transparent from
+  // inside the program).
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(CLI::HasParam("vector_file"), runtime_error);
+  Log::Fatal.ignoreInput = false;
+
+  arma::Col<size_t> vec1 = CLI::GetParam<arma::Col<size_t>>("vector");
+  arma::Col<size_t> vec2 = CLI::GetParam<arma::Col<size_t>>("vector");
+
+  BOOST_REQUIRE_EQUAL(vec1.n_rows, 63);
+  BOOST_REQUIRE_EQUAL(vec2.n_rows, 63);
+
+  for (size_t i = 0; i < vec1.n_elem; ++i)
+    BOOST_REQUIRE_EQUAL(vec1[i], vec2[i]);
+}
+
+BOOST_AUTO_TEST_CASE(InputRowVectorParamTest)
+{
+  AddRequiredCLIOptions();
+
+  PARAM_ROW_IN("row", "Test vector", "l");
+
+  // Fake arguments.
+  const char* argv[3];
+  argv[0] = "./test";
+  argv[1] = "-l";
+  argv[2] = "testRes.csv";
+
+  int argc = 3;
+
+  // The const-cast is a little hacky but should be fine...
+  Log::Fatal.ignoreInput = true;
+  ParseCommandLine(argc, const_cast<char**>(argv));
+  Log::Fatal.ignoreInput = false;
+
+  // The --vector parameter should exist.
+  BOOST_REQUIRE(CLI::HasParam("row"));
+  // The --vector_file parameter should not exist (it should be transparent from
+  // inside the program).
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(CLI::HasParam("row_file"), runtime_error);
+  Log::Fatal.ignoreInput = false;
+
+  arma::rowvec vec1 = CLI::GetParam<arma::rowvec>("row");
+  arma::rowvec vec2 = CLI::GetParam<arma::rowvec>("row");
+
+  BOOST_REQUIRE_EQUAL(vec1.n_cols, 7);
+  BOOST_REQUIRE_EQUAL(vec2.n_cols, 7);
+
+  for (size_t i = 0; i < vec1.n_elem; ++i)
+    BOOST_REQUIRE_CLOSE(vec1[i], vec2[i], 1e-10);
+}
+
+BOOST_AUTO_TEST_CASE(InputUnsignedRowVectorParamTest)
+{
+  AddRequiredCLIOptions();
+
+  PARAM_UROW_IN("row", "Test vector", "l");
+
+  // Fake arguments.
+  const char* argv[3];
+  argv[0] = "./test";
+  argv[1] = "-l";
+  argv[2] = "testRes.csv";
+
+  int argc = 3;
+
+  // The const-cast is a little hacky but should be fine...
+  Log::Fatal.ignoreInput = true;
+  ParseCommandLine(argc, const_cast<char**>(argv));
+  Log::Fatal.ignoreInput = false;
+
+  // The --vector parameter should exist.
+  BOOST_REQUIRE(CLI::HasParam("row"));
+  // The --vector_file parameter should not exist (it should be transparent from
+  // inside the program).
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(CLI::HasParam("row_file"), runtime_error);
+  Log::Fatal.ignoreInput = false;
+
+  arma::Row<size_t> vec1 = CLI::GetParam<arma::Row<size_t>>("row");
+  arma::Row<size_t> vec2 = CLI::GetParam<arma::Row<size_t>>("row");
+
+  BOOST_REQUIRE_EQUAL(vec1.n_cols, 7);
+  BOOST_REQUIRE_EQUAL(vec2.n_cols, 7);
+
+  for (size_t i = 0; i < vec1.n_elem; ++i)
+    BOOST_REQUIRE_EQUAL(vec1[i], vec2[i]);
+}
+
+BOOST_AUTO_TEST_CASE(OutputColParamTest)
+{
+  AddRequiredCLIOptions();
+
+  // --vector is an output parameter.
+  PARAM_COL_OUT("vector", "Test vector", "l");
+
+  // Set some fake arguments.
+  const char* argv[3];
+  argv[0] = "./test";
+  argv[1] = "-l";
+  argv[2] = "test.csv";
+
+  int argc = 3;
+
+  ParseCommandLine(argc, const_cast<char**>(argv));
+
+  // The --vector parameter should exist.
+  BOOST_REQUIRE(CLI::HasParam("vector"));
+  // The --vector_file parameter should not exist (it should be transparent from
+  // inside the program).
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(CLI::HasParam("vector_file"), runtime_error);
+  Log::Fatal.ignoreInput = false;
+
+  // Since it's an output parameter, we don't need any input and don't need to
+  // call ParseCommandLine().
+  arma::vec dataset = arma::randu<arma::vec>(100);
+  CLI::GetParam<arma::vec>("vector") = dataset;
+
+  // Write the file.
+  EndProgram();
+  CLI::ClearSettings();
+  AddRequiredCLIOptions();
+
+  // Now load the vector back and make sure it was saved correctly.
+  arma::vec dataset2;
+  data::Load("test.csv", dataset2);
+
+  BOOST_REQUIRE_EQUAL(dataset.n_rows, dataset2.n_rows);
+  for (size_t i = 0; i < dataset.n_elem; ++i)
+    BOOST_REQUIRE_CLOSE(dataset[i], dataset2[i], 1e-10);
+
+  // Remove the file.
+  remove("test.csv");
+}
+
+BOOST_AUTO_TEST_CASE(OutputUnsignedColParamTest)
+{
+  AddRequiredCLIOptions();
+
+  // --vector is an output parameter.
+  PARAM_UCOL_OUT("vector", "Test vector", "l");
+
+  // Set some fake arguments.
+  const char* argv[3];
+  argv[0] = "./test";
+  argv[1] = "-l";
+  argv[2] = "test.csv";
+
+  int argc = 3;
+
+  ParseCommandLine(argc, const_cast<char**>(argv));
+
+  // The --vector parameter should exist.
+  BOOST_REQUIRE(CLI::HasParam("vector"));
+  // The --vector_file parameter should not exist (it should be transparent from
+  // inside the program).
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(CLI::HasParam("vector_file"), runtime_error);
+  Log::Fatal.ignoreInput = false;
+
+  // Since it's an output parameter, we don't need any input and don't need to
+  // call ParseCommandLine().
+  arma::Col<size_t> dataset = arma::randi<arma::Col<size_t>>(100);
+  CLI::GetParam<arma::Col<size_t>>("vector") = dataset;
+
+  // Write the file.
+  EndProgram();
+  CLI::ClearSettings();
+  AddRequiredCLIOptions();
+
+  // Now load the vector back and make sure it was saved correctly.
+  arma::Col<size_t> dataset2;
+  data::Load("test.csv", dataset2);
+
+  BOOST_REQUIRE_EQUAL(dataset.n_rows, dataset2.n_rows);
+  for (size_t i = 0; i < dataset.n_elem; ++i)
+    BOOST_REQUIRE_EQUAL(dataset[i], dataset2[i]);
+
+  // Remove the file.
+  remove("test.csv");
+}
+
+BOOST_AUTO_TEST_CASE(OutputRowParamTest)
+{
+  AddRequiredCLIOptions();
+
+  // --row is an output parameter.
+  PARAM_ROW_OUT("row", "Test vector", "l");
+
+  // Set some fake arguments.
+  const char* argv[3];
+  argv[0] = "./test";
+  argv[1] = "-l";
+  argv[2] = "test.csv";
+
+  int argc = 3;
+
+  ParseCommandLine(argc, const_cast<char**>(argv));
+
+  // The --row parameter should exist.
+  BOOST_REQUIRE(CLI::HasParam("row"));
+  // The --row_file parameter should not exist (it should be transparent from
+  // inside the program).
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(CLI::HasParam("row_file"), runtime_error);
+  Log::Fatal.ignoreInput = false;
+
+  // Since it's an output parameter, we don't need any input and don't need to
+  // call ParseCommandLine().
+  arma::rowvec dataset = arma::randu<arma::rowvec>(100);
+  CLI::GetParam<arma::rowvec>("row") = dataset;
+
+  // Write the file.
+  EndProgram();
+  CLI::ClearSettings();
+  AddRequiredCLIOptions();
+
+  // Now load the row vector back and make sure it was saved correctly.
+  arma::rowvec dataset2;
+  data::Load("test.csv", dataset2);
+
+  BOOST_REQUIRE_EQUAL(dataset.n_cols, dataset2.n_cols);
+  for (size_t i = 0; i < dataset.n_elem; ++i)
+    BOOST_REQUIRE_CLOSE(dataset[i], dataset2[i], 1e-10);
+
+  // Remove the file.
+  remove("test.csv");
+}
+
+BOOST_AUTO_TEST_CASE(OutputUnsignedRowParamTest)
+{
+  AddRequiredCLIOptions();
+
+  // --row is an output parameter.
+  PARAM_UROW_OUT("row", "Test vector", "l");
+
+  // Set some fake arguments.
+  const char* argv[3];
+  argv[0] = "./test";
+  argv[1] = "-l";
+  argv[2] = "test.csv";
+
+  int argc = 3;
+
+  ParseCommandLine(argc, const_cast<char**>(argv));
+
+  // The --row parameter should exist.
+  BOOST_REQUIRE(CLI::HasParam("row"));
+  // The --row_file parameter should not exist (it should be transparent from
+  // inside the program).
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(CLI::HasParam("row_file"), runtime_error);
+  Log::Fatal.ignoreInput = false;
+
+  // Since it's an output parameter, we don't need any input and don't need to
+  // call ParseCommandLine().
+  arma::Row<size_t> dataset = arma::randi<arma::Row<size_t>>(100);
+  CLI::GetParam<arma::Row<size_t>>("row") = dataset;
+
+  // Write the file.
+  EndProgram();
+  CLI::ClearSettings();
+  AddRequiredCLIOptions();
+
+  // Now load the row vector back and make sure it was saved correctly.
+  arma::Row<size_t> dataset2;
+  data::Load("test.csv", dataset2);
+
+  BOOST_REQUIRE_EQUAL(dataset.n_cols, dataset2.n_cols);
+  for (size_t i = 0; i < dataset.n_elem; ++i)
+    BOOST_REQUIRE_EQUAL(dataset[i], dataset2[i]);
+
+  // Remove the file.
+  remove("test.csv");
+}
+
 BOOST_AUTO_TEST_CASE(InputMatrixParamTest)
 {
   AddRequiredCLIOptions();
 
   // --matrix is an input parameter; it won't be transposed.
-  CLI::Add<arma::mat>(arma::mat(), "matrix", "Test matrix", 'm', false, true,
-      false);
+  PARAM_MATRIX_IN("matrix", "Test matrix", "m");
 
   // Set some fake arguments.
   const char* argv[3];
@@ -231,7 +586,7 @@ BOOST_AUTO_TEST_CASE(InputMatrixParamTest)
 
   // The const-cast is a little hacky but should be fine...
   Log::Fatal.ignoreInput = true;
-  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+  ParseCommandLine(argc, const_cast<char**>(argv));
   Log::Fatal.ignoreInput = false;
 
   // The --matrix parameter should exist.
@@ -259,8 +614,7 @@ BOOST_AUTO_TEST_CASE(InputMatrixNoTransposeParamTest)
   AddRequiredCLIOptions();
 
   // --matrix is a non-transposed input parameter.
-  CLI::Add<arma::mat>(arma::mat(), "matrix", "Test matrix", 'm', false, true,
-      true);
+  PARAM_TMATRIX_IN("matrix", "Test matrix", "m");
 
   // Set some fake arguments.
   const char* argv[3];
@@ -271,7 +625,7 @@ BOOST_AUTO_TEST_CASE(InputMatrixNoTransposeParamTest)
   int argc = 3;
 
   // The const-cast is a little hacky but should be fine...
-  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+  ParseCommandLine(argc, const_cast<char**>(argv));
 
   // The --matrix parameter should exist.
   BOOST_REQUIRE(CLI::HasParam("matrix"));
@@ -298,8 +652,7 @@ BOOST_AUTO_TEST_CASE(OutputMatrixParamTest)
   AddRequiredCLIOptions();
 
   // --matrix is an output parameter.
-  CLI::Add<arma::mat>(arma::mat(), "matrix", "Test matrix", 'm', false, false,
-      false);
+  PARAM_MATRIX_OUT("matrix", "Test matrix", "m");
 
   // Set some fake arguments.
   const char* argv[3];
@@ -309,7 +662,7 @@ BOOST_AUTO_TEST_CASE(OutputMatrixParamTest)
 
   int argc = 3;
 
-  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+  ParseCommandLine(argc, const_cast<char**>(argv));
 
   // The --matrix parameter should exist.
   BOOST_REQUIRE(CLI::HasParam("matrix"));
@@ -325,7 +678,8 @@ BOOST_AUTO_TEST_CASE(OutputMatrixParamTest)
   CLI::GetParam<arma::mat>("matrix") = dataset;
 
   // Write the file.
-  CLI::Destroy();
+  EndProgram();
+  CLI::ClearSettings();
   AddRequiredCLIOptions();
 
   // Now load the matrix back and make sure it was saved correctly.
@@ -346,8 +700,7 @@ BOOST_AUTO_TEST_CASE(OutputMatrixNoTransposeParamTest)
   AddRequiredCLIOptions();
 
   // --matrix is an output parameter.
-  CLI::Add<arma::mat>(arma::mat(), "matrix", "Test matrix", 'm', false, false,
-      true);
+  PARAM_TMATRIX_OUT("matrix", "Test matrix", "m");
 
   // Set some fake arguments.
   const char* argv[3];
@@ -357,7 +710,7 @@ BOOST_AUTO_TEST_CASE(OutputMatrixNoTransposeParamTest)
 
   int argc = 3;
 
-  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+  ParseCommandLine(argc, const_cast<char**>(argv));
 
   // The --matrix parameter should exist.
   BOOST_REQUIRE(CLI::HasParam("matrix"));
@@ -373,7 +726,8 @@ BOOST_AUTO_TEST_CASE(OutputMatrixNoTransposeParamTest)
   CLI::GetParam<arma::mat>("matrix") = dataset;
 
   // Write the file.
-  CLI::Destroy();
+  EndProgram();
+  CLI::ClearSettings();
   AddRequiredCLIOptions();
 
   // Now load the matrix back and make sure it was saved correctly.
@@ -393,7 +747,7 @@ BOOST_AUTO_TEST_CASE(IntParamTest)
 {
   AddRequiredCLIOptions();
 
-  CLI::Add<int>(0, "int", "Test int", 'i', false, true, false);
+  PARAM_INT_IN("int", "Test int", "i", 0);
 
   const char* argv[3];
   argv[0] = "./test";
@@ -402,7 +756,7 @@ BOOST_AUTO_TEST_CASE(IntParamTest)
 
   int argc = 3;
 
-  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+  ParseCommandLine(argc, const_cast<char**>(argv));
 
   BOOST_REQUIRE(CLI::HasParam("int"));
   BOOST_REQUIRE_EQUAL(CLI::GetParam<int>("int"), 3);
@@ -412,7 +766,7 @@ BOOST_AUTO_TEST_CASE(StringParamTest)
 {
   AddRequiredCLIOptions();
 
-  CLI::Add<string>("", "string", "Test string", 's', false, true, false);
+  PARAM_STRING_IN("string", "Test string", "s", "");
 
   const char* argv[3];
   argv[0] = "./test";
@@ -421,7 +775,7 @@ BOOST_AUTO_TEST_CASE(StringParamTest)
 
   int argc = 3;
 
-  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+  ParseCommandLine(argc, const_cast<char**>(argv));
 
   BOOST_REQUIRE(CLI::HasParam("string"));
   BOOST_REQUIRE_EQUAL(CLI::GetParam<string>("string"), string("3"));
@@ -431,7 +785,7 @@ BOOST_AUTO_TEST_CASE(DoubleParamTest)
 {
   AddRequiredCLIOptions();
 
-  CLI::Add<double>(0.0, "double", "Test double", 'd', false, true, false);
+  PARAM_DOUBLE_IN("double", "Test double", "d", 0.0);
 
   const char* argv[3];
   argv[0] = "./test";
@@ -440,7 +794,7 @@ BOOST_AUTO_TEST_CASE(DoubleParamTest)
 
   int argc = 3;
 
-  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+  ParseCommandLine(argc, const_cast<char**>(argv));
 
   BOOST_REQUIRE(CLI::HasParam("double"));
   BOOST_REQUIRE_CLOSE(CLI::GetParam<double>("double"), 3.12, 1e-10);
@@ -450,8 +804,7 @@ BOOST_AUTO_TEST_CASE(RequiredOptionTest)
 {
   AddRequiredCLIOptions();
 
-  CLI::Add<double>(0.0, "double", "Required test double", 'd', true, true,
-      false);
+  PARAM_DOUBLE_IN_REQ("double", "Required test double", "d");
 
   const char* argv[1];
   argv[0] = "./test";
@@ -459,7 +812,7 @@ BOOST_AUTO_TEST_CASE(RequiredOptionTest)
   int argc = 1;
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(CLI::ParseCommandLine(argc, const_cast<char**>(argv)),
+  BOOST_REQUIRE_THROW(ParseCommandLine(argc, const_cast<char**>(argv)),
       runtime_error);
   Log::Fatal.ignoreInput = false;
 }
@@ -475,65 +828,46 @@ BOOST_AUTO_TEST_CASE(UnknownOptionTest)
   int argc = 2;
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(CLI::ParseCommandLine(argc, const_cast<char**>(argv)),
+  BOOST_REQUIRE_THROW(ParseCommandLine(argc, const_cast<char**>(argv)),
       runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
- * Test that GetUnmappedParam() works.
+ * Test that GetPrintableParam() works.
  */
 BOOST_AUTO_TEST_CASE(UnmappedParamTest)
 {
   AddRequiredCLIOptions();
 
-  CLI::Add<arma::mat>(arma::mat(), "matrix", "Test matrix", 'm', false, true,
-      true);
-  CLI::Add<arma::mat>(arma::mat(), "matrix2", "Test matrix", 'M', false, false,
-      true);
-  CLI::Add<double>(0.0, "double", "Test double", 'd', false, true, false);
-  CLI::Add<double>(0.0, "double2", "Test double", 'D', false, true, false);
-  CLI::Add<GaussianKernel>(GaussianKernel(), "kernel", "Test kernel", 'k',
-      false, true, true);
-  CLI::Add<GaussianKernel>(GaussianKernel(), "kernel2", "Test kernel", 'K',
-      false, false, true);
+  PARAM_MATRIX_IN("matrix", "Test matrix", "m");
+  PARAM_MATRIX_OUT("matrix2", "Test matrix", "M");
+  PARAM_MODEL_IN(GaussianKernel, "kernel", "Test kernel", "k");
+  PARAM_MODEL_OUT(GaussianKernel, "kernel2", "Test kernel", "K");
 
-  const char* argv[11];
+  const char* argv[9];
   argv[0] = "./test";
   argv[1] = "--matrix_file";
   argv[2] = "file1.csv";
   argv[3] = "-M";
   argv[4] = "file2.csv";
-  argv[5] = "-d";
-  argv[6] = "1.334";
-  argv[7] = "-k";
-  argv[8] = "kernel.txt";
-  argv[9] = "-K";
-  argv[10] = "kernel2.txt";
+  argv[5] = "-k";
+  argv[6] = "kernel.txt";
+  argv[7] = "-K";
+  argv[8] = "kernel2.txt";
 
-  int argc = 11;
+  int argc = 9;
 
-  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+  ParseCommandLine(argc, const_cast<char**>(argv));
 
   // Now check that we can get unmapped parameters.
-  BOOST_REQUIRE_EQUAL(CLI::GetUnmappedParam<arma::mat>("matrix"), "file1.csv");
-  BOOST_REQUIRE_EQUAL(CLI::GetUnmappedParam<arma::mat>("matrix2"), "file2.csv");
-  BOOST_REQUIRE_CLOSE(CLI::GetUnmappedParam<double>("double"), 1.334, 1e-10);
-  BOOST_REQUIRE_SMALL(CLI::GetUnmappedParam<double>("double2"), 1e-10);
-  BOOST_REQUIRE_EQUAL(CLI::GetUnmappedParam<GaussianKernel>("kernel"),
+  BOOST_REQUIRE_EQUAL(CLI::GetPrintableParam<arma::mat>("matrix"), "file1.csv");
+  BOOST_REQUIRE_EQUAL(CLI::GetPrintableParam<arma::mat>("matrix2"),
+      "file2.csv");
+  BOOST_REQUIRE_EQUAL(CLI::GetPrintableParam<GaussianKernel>("kernel"),
       "kernel.txt");
-  BOOST_REQUIRE_EQUAL(CLI::GetUnmappedParam<GaussianKernel>("kernel2"),
+  BOOST_REQUIRE_EQUAL(CLI::GetPrintableParam<GaussianKernel>("kernel2"),
       "kernel2.txt");
-
-  // Can we assign an unmapped parameter?
-  CLI::GetUnmappedParam<arma::mat>("matrix2") =
-      CLI::GetUnmappedParam<arma::mat>("matrix");
-  CLI::GetUnmappedParam<GaussianKernel>("kernel2") =
-      CLI::GetUnmappedParam<GaussianKernel>("kernel");
-
-  BOOST_REQUIRE_EQUAL(CLI::GetUnmappedParam<arma::mat>("matrix2"), "file1.csv");
-  BOOST_REQUIRE_EQUAL(CLI::GetUnmappedParam<GaussianKernel>("kernel2"),
-      "kernel.txt");
 
   remove("kernel.txt");
 }
@@ -546,8 +880,7 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
 {
   AddRequiredCLIOptions();
 
-  CLI::Add<GaussianKernel>(GaussianKernel(), "kernel", "Test kernel", 'k',
-      false, false);
+  PARAM_MODEL_OUT(GaussianKernel, "kernel", "Test kernel", "k");
 
   const char* argv[3];
   argv[0] = "./test";
@@ -556,7 +889,7 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
 
   int argc = 3;
 
-  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+  ParseCommandLine(argc, const_cast<char**>(argv));
 
   // Create the kernel we'll save.
   GaussianKernel gk(0.5);
@@ -564,15 +897,15 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   CLI::GetParam<GaussianKernel>("kernel") = move(gk);
 
   // Save it.
-  CLI::Destroy();
+  EndProgram();
+  CLI::ClearSettings();
 
   // Now create a new CLI object and load it.
   AddRequiredCLIOptions();
 
-  CLI::Add<GaussianKernel>(GaussianKernel(), "kernel", "Test kernel", 'k',
-      false, true);
+  PARAM_MODEL_IN(GaussianKernel, "kernel", "Test kernel", "k");
 
-  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+  ParseCommandLine(argc, const_cast<char**>(argv));
 
   // Load the kernel from file.
   GaussianKernel gk2 = move(CLI::GetParam<GaussianKernel>("kernel"));
@@ -590,8 +923,7 @@ BOOST_AUTO_TEST_CASE(RequiredModelTest)
 {
   AddRequiredCLIOptions();
 
-  CLI::Add<GaussianKernel>(GaussianKernel(), "kernel", "Test kernel", 'k', true,
-      true);
+  PARAM_MODEL_IN_REQ(GaussianKernel, "kernel", "Test kernel", "k");
 
   // Don't specify any input parameters.
   const char* argv[1];
@@ -600,7 +932,7 @@ BOOST_AUTO_TEST_CASE(RequiredModelTest)
   int argc = 1;
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(CLI::ParseCommandLine(argc, const_cast<char**>(argv)),
+  BOOST_REQUIRE_THROW(ParseCommandLine(argc, const_cast<char**>(argv)),
       runtime_error);
   Log::Fatal.ignoreInput = false;
 }
@@ -622,7 +954,7 @@ BOOST_AUTO_TEST_CASE(MatrixAndDatasetInfoTest)
   f << endl;
   f << "@attribute three STRING" << endl;
   f << endl;
-  f << "\% a comment line " << endl;
+  f << "%% a comment line " << endl;
   f << endl;
   f << "@data" << endl;
   f << "hello, 1, moo" << endl;
@@ -633,8 +965,7 @@ BOOST_AUTO_TEST_CASE(MatrixAndDatasetInfoTest)
 
   // Add options.
   typedef tuple<DatasetInfo, arma::mat> TupleType;
-  CLI::Add<TupleType>(TupleType(), "dataset", "Test dataset", 'd', false,
-      true);
+  PARAM_MATRIX_AND_INFO_IN("dataset", "Test dataset", "d");
 
   const char* argv[3];
   argv[0] = "./test";
@@ -643,7 +974,7 @@ BOOST_AUTO_TEST_CASE(MatrixAndDatasetInfoTest)
 
   int argc = 3;
 
-  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+  ParseCommandLine(argc, const_cast<char**>(argv));
 
   // Get the dataset and info.
   DatasetInfo info = move(get<0>(CLI::GetParam<TupleType>("dataset")));
@@ -686,13 +1017,13 @@ BOOST_AUTO_TEST_CASE(RawIntegralParameter)
 {
   AddRequiredCLIOptions();
 
-  CLI::Add<double>(0.0, "double", "Test double", 'd', false, true);
+  PARAM_DOUBLE_IN("double", "Test double", "d", 0.0);
 
   const char* argv[1];
   argv[0] = "./test";
   int argc = 1;
 
-  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+  ParseCommandLine(argc, const_cast<char**>(argv));
 
   // Set the double.
   CLI::GetRawParam<double>("double") = 3.0;
@@ -719,7 +1050,7 @@ BOOST_AUTO_TEST_CASE(RawDatasetInfoLoadParameter)
   f << endl;
   f << "@attribute three STRING" << endl;
   f << endl;
-  f << "\% a comment line " << endl;
+  f << "%% a comment line " << endl;
   f << endl;
   f << "@data" << endl;
   f << "hello, 1, moo" << endl;
@@ -728,8 +1059,7 @@ BOOST_AUTO_TEST_CASE(RawDatasetInfoLoadParameter)
   f << "hello, -1.3, goodbye" << endl;
   f.close();
 
-  CLI::Add<tuple<DatasetInfo, arma::mat>>(tuple<DatasetInfo, arma::mat>(),
-      "tuple", "Test tuple", 't', false, true);
+  PARAM_MATRIX_AND_INFO_IN("tuple", "Test tuple", "t");
 
   const char* argv[3];
   argv[0] = "./test";
@@ -737,17 +1067,17 @@ BOOST_AUTO_TEST_CASE(RawDatasetInfoLoadParameter)
   argv[2] = "test.arff";
   int argc = 3;
 
-  CLI::ParseCommandLine(argc, const_cast<char**>(argv));
+  ParseCommandLine(argc, const_cast<char**>(argv));
 
   // Create a pre-filled DatasetInfo object.
   DatasetInfo info(3);
   info.Type(0) = Datatype::categorical;
   info.Type(2) = Datatype::categorical;
-  info.MapString("seven", 0); // This will have mapped value 0.
-  info.MapString("cheese", 0); // This will have mapped value 1.
-  info.MapString("hello", 0); // This will have mapped value 2.
-  info.MapString("goodbye", 2); // This will have mapped value 0.
-  info.MapString("moo", 2); // This will have mapped value 1.
+  info.MapString<size_t>("seven", 0); // This will have mapped value 0.
+  info.MapString<size_t>("cheese", 0); // This will have mapped value 1.
+  info.MapString<size_t>("hello", 0); // This will have mapped value 2.
+  info.MapString<size_t>("goodbye", 2); // This will have mapped value 0.
+  info.MapString<size_t>("moo", 2); // This will have mapped value 1.
 
   // Now set the dataset info.
   std::get<0>(CLI::GetRawParam<tuple<DatasetInfo, arma::mat>>("tuple")) = info;
@@ -771,6 +1101,23 @@ BOOST_AUTO_TEST_CASE(RawDatasetInfoLoadParameter)
   BOOST_REQUIRE_SMALL(dataset(2, 3), 1e-5);
 
   remove("test.arff");
+}
+
+/**
+ * Make sure typenames are properly stored.
+ */
+BOOST_AUTO_TEST_CASE(CppNameTest)
+{
+  AddRequiredCLIOptions();
+
+  // Add a few parameters.
+  PARAM_MATRIX_IN("matrix", "Test matrix", "m");
+  PARAM_DOUBLE_IN("double", "Test double", "d", 0.0);
+
+  // Check that the C++ typenames are right.
+  BOOST_REQUIRE_EQUAL(CLI::Parameters().at("matrix").cppType, "arma::mat");
+  BOOST_REQUIRE_EQUAL(CLI::Parameters().at("help").cppType, "bool");
+  BOOST_REQUIRE_EQUAL(CLI::Parameters().at("double").cppType, "double");
 }
 
 BOOST_AUTO_TEST_SUITE_END();

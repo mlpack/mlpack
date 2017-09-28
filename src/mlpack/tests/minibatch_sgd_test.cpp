@@ -38,19 +38,19 @@ BOOST_AUTO_TEST_SUITE(MiniBatchSGDTest);
 BOOST_AUTO_TEST_CASE(SGDSimilarityTest)
 {
   SGDTestFunction f;
-  SGD<SGDTestFunction> s(f, 0.0003, 5000000, 1e-9, false);
-  MiniBatchSGD<SGDTestFunction> ms(f, 1, 0.0003, 5000000, 1e-9, false);
+  StandardSGD s(0.0003, 100000, 1e-4, false);
+  MiniBatchSGD ms(1, 0.0003, 100000, 1e-4, false);
 
   arma::mat sCoord = f.GetInitialPoint();
   arma::mat msCoord = f.GetInitialPoint();
 
-  const double sResult = s.Optimize(sCoord);
-  const double msResult = s.Optimize(msCoord);
+  const double sResult = s.Optimize(f, sCoord);
+  const double msResult = ms.Optimize(f, msCoord);
 
-  BOOST_REQUIRE_CLOSE(sResult, msResult, 1e-8);
-  BOOST_REQUIRE_CLOSE(sCoord[0], msCoord[0], 1e-8);
-  BOOST_REQUIRE_CLOSE(sCoord[1], msCoord[1], 1e-8);
-  BOOST_REQUIRE_CLOSE(sCoord[2], msCoord[2], 1e-8);
+  BOOST_REQUIRE_CLOSE(sResult, msResult, 1e-2);
+  BOOST_REQUIRE_CLOSE(sCoord[0], msCoord[0], 1e-2);
+  BOOST_REQUIRE_CLOSE(sCoord[1], msCoord[1], 1e-2);
+  BOOST_REQUIRE_CLOSE(sCoord[2], msCoord[2], 1e-2);
 }
 
 /*
@@ -80,14 +80,14 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
   GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
   GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
 
-  arma::mat data(3, 1000);
-  arma::Row<size_t> responses(1000);
-  for (size_t i = 0; i < 500; ++i)
+  arma::mat data(3, 500);
+  arma::Row<size_t> responses(500);
+  for (size_t i = 0; i < 250; ++i)
   {
     data.col(i) = g1.Random();
     responses[i] = 0;
   }
-  for (size_t i = 500; i < 1000; ++i)
+  for (size_t i = 250; i < 500; ++i)
   {
     data.col(i) = g2.Random();
     responses[i] = 1;
@@ -96,8 +96,8 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
   // Shuffle the dataset.
   arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0,
       data.n_cols - 1, data.n_cols));
-  arma::mat shuffledData(3, 1000);
-  arma::Row<size_t> shuffledResponses(1000);
+  arma::mat shuffledData(3, 500);
+  arma::Row<size_t> shuffledResponses(500);
   for (size_t i = 0; i < data.n_cols; ++i)
   {
     shuffledData.col(i) = data.col(indices[i]);
@@ -105,14 +105,14 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
   }
 
   // Create a test set.
-  arma::mat testData(3, 1000);
-  arma::Row<size_t> testResponses(1000);
-  for (size_t i = 0; i < 500; ++i)
+  arma::mat testData(3, 500);
+  arma::Row<size_t> testResponses(500);
+  for (size_t i = 0; i < 250; ++i)
   {
     testData.col(i) = g1.Random();
     testResponses[i] = 0;
   }
-  for (size_t i = 500; i < 1000; ++i)
+  for (size_t i = 250; i < 500; ++i)
   {
     testData.col(i) = g2.Random();
     testResponses[i] = 1;
@@ -121,11 +121,8 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
   // Now run mini-batch SGD with a couple of batch sizes.
   for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
   {
-    LogisticRegression<> lr(shuffledData.n_rows, 0.5);
-
-    LogisticRegressionFunction<> lrf(shuffledData, shuffledResponses, 0.5);
-    MiniBatchSGD<LogisticRegressionFunction<>> mbsgd(lrf, batchSize);
-    lr.Train(mbsgd);
+    MiniBatchSGD mbsgd(batchSize, 0.01, 10000, 1e-3);
+    LogisticRegression<> lr(shuffledData, shuffledResponses, mbsgd, 0.5);
 
     // Ensure that the error is close to zero.
     const double acc = lr.ComputeAccuracy(data, responses);
@@ -149,11 +146,10 @@ BOOST_AUTO_TEST_CASE(ZeroBatchSizeTest)
   // Create the generalized Rosenbrock function.
   GeneralizedRosenbrockFunction f(10);
 
-  MiniBatchSGD<GeneralizedRosenbrockFunction> s(
-      f, f.NumFunctions() - 1, 0.01, 3);
+  MiniBatchSGD s(f.NumFunctions() - 1, 0.01, 3);
 
   arma::mat coordinates = f.GetInitialPoint();
-  s.Optimize(coordinates);
+  s.Optimize(f, coordinates);
 
   const bool finite = coordinates.is_finite();
   BOOST_REQUIRE_EQUAL(finite, true);

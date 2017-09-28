@@ -15,7 +15,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-#include <boost/ptr_container/ptr_vector.hpp>
+#include <limits>
 
 #include "../visitor/delta_visitor.hpp"
 #include "../visitor/output_parameter_visitor.hpp"
@@ -56,7 +56,14 @@ class LSTM
    * @param outSize The number of output units.
    * @param rho Maximum number of steps to backpropagate through time (BPTT).
    */
-  LSTM(const size_t inSize, const size_t outSize, const size_t rho);
+  LSTM(const size_t inSize,
+       const size_t outSize,
+       const size_t rho = std::numeric_limits<size_t>::max());
+
+  /**
+   * Delete the LSTM and the layers it holds.
+   */
+  ~LSTM();
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -93,6 +100,12 @@ class LSTM
   void Gradient(arma::Mat<eT>&& input,
                 arma::Mat<eT>&& /* error */,
                 arma::Mat<eT>&& /* gradient */);
+
+  /*
+   * Resets the cell to accept a new input.
+   * This breaks the BPTT chain starts a new one.
+   */
+  void ResetCell();
 
   //! The value of the deterministic parameter.
   bool Deterministic() const { return deterministic; }
@@ -136,10 +149,9 @@ class LSTM
    * Serialize the layer
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-
   //! Locally-stored number of input units.
   size_t inSize;
 
@@ -149,14 +161,17 @@ class LSTM
   //! Number of steps to backpropagate through time (BPTT).
   size_t rho;
 
+  //! Current batch size.
+  size_t batchSize;
+
   //! Locally-stored weight object.
   OutputDataType weights;
 
   //! Locally-stored previous output.
-  arma::mat prevOutput;
+  std::list<arma::mat>::iterator prevOutput;
 
   //! Locally-stored previous cell state.
-  arma::mat prevCell;
+  std::list<arma::mat>::iterator prevCell;
 
   //! Locally-stored input 2 gate module.
   LayerTypes input2GateModule;
@@ -201,16 +216,22 @@ class LSTM
   size_t gradientStep;
 
   //! Locally-stored cell parameters.
-  std::vector<arma::mat> cellParameter;
+  std::list<arma::mat> cellParameter;
 
   //! Locally-stored output parameters.
-  std::vector<arma::mat> outParameter;
+  std::list<arma::mat> outParameter;
+
+  //! Matrix of all zeroes to initialize the output and the cell
+  arma::mat allZeros;
+
+  //! Iterator pointed to the last cell output processed by backward
+  std::list<arma::mat>::iterator backIterator;
+
+  //! Iterator pointed to the last output processed by gradient
+  std::list<arma::mat>::iterator gradIterator;
 
   //! Locally-stored previous error.
   arma::mat prevError;
-
-  //! Locally-stored cell activation error.
-  arma::mat cellActivationError;
 
   //! Locally-stored foget gate error.
   arma::mat forgetGateError;

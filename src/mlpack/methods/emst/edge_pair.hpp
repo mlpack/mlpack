@@ -63,7 +63,6 @@ class EdgePair
   double Distance() const { return distance; }
   //! Modify the distance.
   double& Distance() { return distance; }
-
 }; // class EdgePair
 
 } // namespace emst

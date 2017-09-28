@@ -1,6 +1,7 @@
 /**
  * @file convolutional_network_test.cpp
  * @author Marcus Edel
+ * @author Abhinav Moudgil
  *
  * Tests the convolutional neural network.
  *
@@ -14,6 +15,7 @@
 #include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
+#include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -21,7 +23,6 @@
 using namespace mlpack;
 using namespace mlpack::ann;
 using namespace mlpack::optimization;
-
 
 BOOST_AUTO_TEST_SUITE(ConvolutionalNetworkTest);
 
@@ -46,11 +47,13 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
   {
     if (i < nPoints / 2)
     {
-      Y(i) = 4;
+      // Assign label "1" to all samples with digit = 4
+      Y(i) = 1;
     }
     else
     {
-      Y(i) = 9;
+      // Assign label "2" to all samples with digit = 9
+      Y(i) = 2;
     }
   }
 
@@ -71,7 +74,8 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
    * |   |      +-+   |      +-+   |      +-+   |      +-+   |    |   |
    * +---+        +---+        +---+        +---+        +---+    +---+
    */
-  FFN<NegativeLogLikelihood<> > model;
+
+  FFN<NegativeLogLikelihood<>, RandomInitialization> model;
 
   model.Add<Convolution<> >(1, 8, 5, 5, 1, 1, 0, 0, 28, 28);
   model.Add<ReLULayer<> >();
@@ -81,14 +85,15 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
   model.Add<MaxPooling<> >(2, 2, 2, 2);
   model.Add<Linear<> >(192, 20);
   model.Add<ReLULayer<> >();
-  model.Add<Linear<> >(20, 30);
+  model.Add<Linear<> >(20, 10);
   model.Add<ReLULayer<> >();
-  model.Add<Linear<> >(30, 10);
+  model.Add<Linear<> >(10, 2);
   model.Add<LogSoftMax<> >();
 
-  RMSprop<decltype(model)> opt(model, 0.01, 0.88, 1e-8, 5000, -1);
+  // Train for only 8 epochs.
+  RMSProp opt(0.001, 0.88, 1e-8, 8 * nPoints, -1);
 
-  model.Train(std::move(X), std::move(Y), opt);
+  model.Train(X, Y, opt);
 
   arma::mat predictionTemp;
   model.Predict(X, predictionTemp);
@@ -97,20 +102,20 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
   for (size_t i = 0; i < predictionTemp.n_cols; ++i)
   {
     prediction(i) = arma::as_scalar(arma::find(
-        arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
+          arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
   }
 
-  size_t error = 0;
+  size_t correct = 0;
   for (size_t i = 0; i < X.n_cols; i++)
   {
     if (prediction(i) == Y(i))
     {
-      error++;
+      correct++;
     }
   }
 
-  double classificationError = 1 - double(error) / X.n_cols;
-  BOOST_REQUIRE_LE(classificationError, 0.2);
+  double classificationError = 1 - double(correct) / X.n_cols;
+  BOOST_REQUIRE_LE(classificationError, 0.25);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

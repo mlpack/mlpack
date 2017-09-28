@@ -41,8 +41,8 @@ namespace det /** Density Estimation Trees */ {
  * }
  * @endcode
  */
-template <typename MatType,
-          typename TagType = int>
+template<typename MatType = arma::mat,
+         typename TagType = int>
 class DTree
 {
  public:
@@ -330,7 +330,6 @@ class DTree
   void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-
   // Utility methods.
 
   /**

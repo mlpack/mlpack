@@ -11,6 +11,7 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 
 #include "hmm.hpp"
 #include "hmm_model.hpp"
@@ -54,9 +55,9 @@ PARAM_FLAG("batch", "If true, input_file (and if passed, labels_file) are "
     "expected to contain a list of files to use as input observation sequences "
     "(and label sequences).", "b");
 PARAM_INT_IN("states", "Number of hidden states in HMM (necessary, unless "
-    "model_file is specified.", "n", 0);
+    "model_file is specified).", "n", 0);
 PARAM_INT_IN("gaussians", "Number of gaussians in each GMM (necessary when type"
-    " is 'gmm'.", "g", 0);
+    " is 'gmm').", "g", 0);
 PARAM_MODEL_IN(HMMModel, "input_model", "Pre-existing HMM model to initialize "
     "training with.", "m");
 PARAM_STRING_IN("labels_file", "Optional file of hidden states, used for "
@@ -92,20 +93,18 @@ struct Init
   {
     // Maximum observation is necessary so we know how to train the discrete
     // distribution.
-    size_t maxEmission = 0;
+    arma::Col<size_t> maxEmissions(trainSeq[0].n_rows);
+    maxEmissions.zeros();
     for (vector<mat>::iterator it = trainSeq.begin(); it != trainSeq.end();
          ++it)
     {
-      size_t maxSeq = size_t(as_scalar(max(trainSeq[0], 1))) + 1;
-      if (maxSeq > maxEmission)
-        maxEmission = maxSeq;
+      arma::Col<size_t> maxSeqs =
+          arma::conv_to<arma::Col<size_t>>::from(arma::max(*it, 1)) + 1;
+      maxEmissions = arma::max(maxEmissions, maxSeqs);
     }
 
-    Log::Info << maxEmission << " discrete observations in the input data."
-        << endl;
-
     hmm = HMM<DiscreteDistribution>(size_t(states),
-        DiscreteDistribution(maxEmission), tolerance);
+        DiscreteDistribution(maxEmissions), tolerance);
   }
 
   //! Helper function to create Gaussian HMM.
@@ -324,11 +323,8 @@ struct Train
   }
 };
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  // Parse command line options.
-  CLI::ParseCommandLine(argc, argv);
-
   // Set random seed.
   if (CLI::GetParam<int>("seed") != 0)
     RandomSeed((size_t) CLI::GetParam<int>("seed"));
@@ -359,7 +355,7 @@ int main(int argc, char** argv)
 
   if (CLI::HasParam("input_model") && CLI::HasParam("tolerance"))
     Log::Info << "Tolerance of existing model in '"
-        << CLI::GetUnmappedParam<std::string>("input_model") << "' will be "
+        << CLI::GetPrintableParam<std::string>("input_model") << "' will be "
         << "replaced with specified tolerance of " << tolerance << "." << endl;
 
   if (CLI::HasParam("input_model") && CLI::HasParam("type"))
@@ -421,7 +417,7 @@ int main(int argc, char** argv)
     typeId = HMMType::DiscreteHMM;
   else if (type == "gaussian")
     typeId = HMMType::GaussianHMM;
-  else if (type == "gmm")
+  else
     typeId = HMMType::GaussianMixtureModelHMM;
 
   // If we have a model file, we can autodetect the type.
@@ -442,6 +438,4 @@ int main(int argc, char** argv)
   // If necessary, save the output.
   if (CLI::HasParam("output_model"))
     CLI::GetParam<HMMModel>("output_model") = std::move(hmm);
-
-  CLI::Destroy();
 }

@@ -10,6 +10,8 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
+
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
 #include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
 
@@ -28,44 +30,65 @@ PROGRAM_INFO("Softmax Regression", "This program performs softmax regression, "
     "for test data."
     "\n\n"
     "Training a softmax regression model is done by giving a file of training "
-    "points with --training_file (-t) and their corresponding labels with "
-    "--labels_file (-l).  The number of classes can be manually specified with "
-    "the --number_of_classes (-n) option, and the maximum number of iterations "
-    "of the L-BFGS optimizer can be specified with the --max_iterations (-M) "
-    "option.  The L2 regularization constant can be specified with --lambda "
-    "(-r), and if an intercept term is not desired in the model, the "
-    "--no_intercept (-N) can be specified."
+    "points with the " + PRINT_PARAM_STRING("training") + " parameter and their"
+    " corresponding labels with the " + PRINT_PARAM_STRING("labels") +
+    " parameter. The number of classes can be manually specified with the " +
+    PRINT_PARAM_STRING("number_of_classes") + " parameter, and the maximum " +
+    "number of iterations of the L-BFGS optimizer can be specified with the " +
+    PRINT_PARAM_STRING("max_iterations") + " parameter.  The L2 regularization "
+    "constant can be specified with the " + PRINT_PARAM_STRING("lambda") +
+    " parameter and if an intercept term is not desired in the model, the " +
+    PRINT_PARAM_STRING("no_intercept") + " parameter can be specified."
     "\n\n"
-    "The trained model can be saved to a file with the --output_model_file (-m)"
-    " option.  If training is not desired, but only testing is, a model can be "
-    "loaded with the --input_model_file (-i) option.  At the current time, a "
-    "loaded model cannot be trained further, so specifying both -i and -t is "
-    "not allowed."
+    "The trained model can be saved with the " +
+    PRINT_PARAM_STRING("output_model") + " output parameter. If training is not"
+    " desired, but only testing is, a model can be loaded with the " +
+    PRINT_PARAM_STRING("input_model") + " parameter.  At the current time, a "
+    "loaded model cannot be trained further, so specifying both " +
+    PRINT_PARAM_STRING("input_model") + " and " +
+    PRINT_PARAM_STRING("training") + " is not allowed."
     "\n\n"
     "The program is also able to evaluate a model on test data.  A test dataset"
-    " can be specified with the --test_data (-T) option.  Class predictions "
-    "will be saved in the file specified with the --predictions_file (-p) "
-    "option.  If labels are specified for the test data, with the --test_labels"
-    " (-L) option, then the program will print the accuracy of the predictions "
-    "on the given test set and its corresponding labels.");
+    " can be specified with the " + PRINT_PARAM_STRING("test") + " parameter. "
+    "Class predictions can be saved with the " +
+    PRINT_PARAM_STRING("predictions") + " output parameter.  If labels are "
+    "specified for the test data with the " +
+    PRINT_PARAM_STRING("test_labels") + " parameter, then the program will "
+    "print the accuracy of the predictions on the given test set and its "
+    "corresponding labels."
+    "\n\n"
+    "For example, to train a softmax regression model on the data " +
+    PRINT_DATASET("dataset") + " with labels " + PRINT_DATASET("labels") +
+    " with a maximum of 1000 iterations for training, saving the trained model "
+    "to " + PRINT_MODEL("sr_model") + ", the following command can be used: "
+    "\n\n" +
+    PRINT_CALL("softmax_regression", "training", "dataset", "labels", "labels",
+        "output_model", "sr_model") +
+    "\n\n"
+    "Then, to use " + PRINT_MODEL("sr_model") + " to classify the test points "
+    "in " + PRINT_DATASET("test_points") + ", saving the output predictions to"
+    " " + PRINT_DATASET("predictions") + ", the following command can be used:"
+    "\n\n" +
+    PRINT_CALL("softmax_regression", "input_model", "sr_model", "test",
+        "test_points", "predictions", "predictions"));
 
 // Required options.
 PARAM_MATRIX_IN("training", "A matrix containing the training set (the matrix "
     "of predictors, X).", "t");
-PARAM_UMATRIX_IN("labels", "A matrix containing labels (0 or 1) for the points "
+PARAM_UROW_IN("labels", "A matrix containing labels (0 or 1) for the points "
     "in the training set (y). The labels must order as a row.", "l");
 
 // Model loading/saving.
-PARAM_MODEL_IN(SoftmaxRegression<>, "input_model", "File containing existing "
+PARAM_MODEL_IN(SoftmaxRegression, "input_model", "File containing existing "
     "model (parameters).", "m");
-PARAM_MODEL_OUT(SoftmaxRegression<>, "output_model", "File to save trained "
+PARAM_MODEL_OUT(SoftmaxRegression, "output_model", "File to save trained "
     "softmax regression model to.", "M");
 
 // Testing.
 PARAM_MATRIX_IN("test", "Matrix containing test dataset.", "T");
-PARAM_UMATRIX_OUT("predictions", "Matrix to save predictions for test dataset "
+PARAM_UROW_OUT("predictions", "Matrix to save predictions for test dataset "
     "into.", "p");
-PARAM_UMATRIX_IN("test_labels", "Matrix containing test labels.", "L");
+PARAM_UROW_IN("test_labels", "Matrix containing test labels.", "L");
 
 // Softmax configuration options.
 PARAM_INT_IN("max_iterations", "Maximum number of iterations before "
@@ -85,16 +108,14 @@ size_t CalculateNumberOfClasses(const size_t numClasses,
 
 // Test the accuracy of the model.
 template<typename Model>
-void TestPredictAcc(const size_t numClasses, const Model& model);
+void TestClassifyAcc(const size_t numClasses, const Model& model);
 
 // Build the softmax model given the parameters.
 template<typename Model>
 unique_ptr<Model> TrainSoftmax(const size_t maxIterations);
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   const int maxIterations = CLI::GetParam<int>("max_iterations");
 
   // One of inputFile and modelFile must be specified.
@@ -116,15 +137,13 @@ int main(int argc, char** argv)
     Log::Warn << "Neither --output_model_file nor --predictions_file are set; "
         << "no results from this program will be saved." << endl;
 
-  using SM = SoftmaxRegression<>;
+  using SM = SoftmaxRegression;
   unique_ptr<SM> sm = TrainSoftmax<SM>(maxIterations);
 
-  TestPredictAcc(sm->NumClasses(), *sm);
+  TestClassifyAcc(sm->NumClasses(), *sm);
 
   if (CLI::HasParam("output_model"))
     CLI::GetParam<SM>("output_model") = std::move(*sm);
-
-  CLI::Destroy();
 }
 
 size_t CalculateNumberOfClasses(const size_t numClasses,
@@ -143,7 +162,7 @@ size_t CalculateNumberOfClasses(const size_t numClasses,
 }
 
 template<typename Model>
-void TestPredictAcc(size_t numClasses, const Model& model)
+void TestClassifyAcc(size_t numClasses, const Model& model)
 {
   using namespace mlpack;
 
@@ -170,18 +189,17 @@ void TestPredictAcc(size_t numClasses, const Model& model)
   arma::mat testData = std::move(CLI::GetParam<arma::mat>("test"));
 
   arma::Row<size_t> predictLabels;
-  model.Predict(testData, predictLabels);
+  model.Classify(testData, predictLabels);
 
   // Save predictions, if desired.
   if (CLI::HasParam("predictions"))
-    CLI::GetParam<arma::Mat<size_t>>("predictions") = std::move(predictLabels);
+    CLI::GetParam<arma::Row<size_t>>("predictions") = std::move(predictLabels);
 
   // Calculate accuracy, if desired.
   if (CLI::HasParam("test_labels"))
   {
-    arma::Mat<size_t> tmpTestLabels =
-        CLI::GetParam<arma::Mat<size_t>>("test_labels");
-    arma::Row<size_t> testLabels = tmpTestLabels.row(0);
+    arma::Row<size_t> testLabels =
+      std::move(CLI::GetParam<arma::Row<size_t>>("test_labels"));
 
     if (testData.n_cols != testLabels.n_elem)
     {
@@ -232,9 +250,8 @@ unique_ptr<Model> TrainSoftmax(const size_t maxIterations)
   else
   {
     arma::mat trainData = std::move(CLI::GetParam<arma::mat>("training"));
-    arma::Mat<size_t> tmpTrainLabels =
-        std::move(CLI::GetParam<arma::Mat<size_t>>("labels"));
-    arma::Row<size_t> trainLabels = tmpTrainLabels.row(0);
+    arma::Row<size_t> trainLabels =
+        std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
 
     if (trainData.n_cols != trainLabels.n_elem)
       Log::Fatal << "Samples of input_data should same as the size of "
@@ -245,12 +262,10 @@ unique_ptr<Model> TrainSoftmax(const size_t maxIterations)
 
     const bool intercept = CLI::HasParam("no_intercept") ? false : true;
 
-    SRF smFunction(trainData, trainLabels, numClasses, intercept,
-        CLI::GetParam<double>("lambda"));
-
     const size_t numBasis = 5;
-    optimization::L_BFGS<SRF> optimizer(smFunction, numBasis, maxIterations);
-    sm.reset(new Model(optimizer));
+    optimization::L_BFGS optimizer(numBasis, maxIterations);
+    sm.reset(new Model(trainData, trainLabels, numClasses,
+        CLI::GetParam<double>("lambda"), intercept, std::move(optimizer)));
   }
 
   return sm;

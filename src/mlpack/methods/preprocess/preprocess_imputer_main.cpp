@@ -11,7 +11,9 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/data/load_impl.hpp>
 #include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/data/imputer.hpp>
 #include <mlpack/core/data/dataset_mapper.hpp>
 #include <mlpack/core/data/map_policies/increment_policy.hpp>
@@ -49,10 +51,8 @@ using namespace arma;
 using namespace std;
 using namespace data;
 
-int main(int argc, char** argv)
+void mlpackMain()
 {
-  CLI::ParseCommandLine(argc, argv);
-
   const string inputFile = CLI::GetParam<string>("input_file");
   const string outputFile = CLI::GetParam<string>("output_file");
   const string missingValue = CLI::GetParam<string>("missing_value");
@@ -154,7 +154,8 @@ int main(int argc, char** argv)
     else if (strategy == "custom")
     {
       CustomImputation<double> strat(customValue);
-      Imputer<double, MapperType, CustomImputation<double>> imputer(info, strat);
+      Imputer<double, MapperType, CustomImputation<double>> imputer(
+          info, strat);
     }
     else
     {

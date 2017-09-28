@@ -50,7 +50,7 @@ namespace distribution {
  */
 class GammaDistribution
 {
-  public:
+ public:
     /**
      * Construct the Gamma distribution with the given number of dimensions
      * (default 0); each parameter will be initialized to 0.
@@ -80,7 +80,7 @@ class GammaDistribution
     /**
      * Destructor.
      */
-    ~GammaDistribution() {};
+    ~GammaDistribution() {}
 
     /**
      * This function trains (fits distribution parameters) to new data or the
@@ -88,7 +88,7 @@ class GammaDistribution
      *
      * @param rdata Reference data to fit parameters to.
      * @param tol Convergence tolerance. This is *not* an absolute measure:
-     *    It will stop the approximation once the *change* in the value is 
+     *    It will stop the approximation once the *change* in the value is
      *    smaller than tol.
      */
     void Train(const arma::mat& rdata, const double tol = 1e-8);
@@ -101,7 +101,7 @@ class GammaDistribution
      * @param probabilities The probability of each observation. One value per
      *     column of the observations matrix.
      * @param tol Convergence tolerance. This is *not* an absolute measure:
-     *    It will stop the approximation once the *change* in the value is 
+     *    It will stop the approximation once the *change* in the value is
      *    smaller than tol.
      */
     void Train(const arma::mat& observations,
@@ -192,7 +192,7 @@ class GammaDistribution
     //! Get the dimensionality of the distribution.
     size_t Dimensionality() const { return alpha.n_elem; }
 
-  private:
+ private:
     //! Array of fitted alphas.
     arma::vec alpha;
     //! Array of fitted betas.
@@ -214,7 +214,7 @@ class GammaDistribution
                           const double tol);
 };
 
-} // namespace distributions.
-} // namespace mlpack.
+} // namespace distribution
+} // namespace mlpack
 
 #endif

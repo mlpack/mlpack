@@ -30,6 +30,14 @@ Concat<InputDataType, OutputDataType>::Concat(
 }
 
 template<typename InputDataType, typename OutputDataType>
+Concat<InputDataType, OutputDataType>::~Concat()
+{
+  // Clear memory.
+  std::for_each(network.begin(), network.end(),
+      boost::apply_visitor(deleteVisitor));
+}
+
+template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Concat<InputDataType, OutputDataType>::Forward(
     arma::Mat<eT>&& input, arma::Mat<eT>&& output)
@@ -137,23 +145,37 @@ void Concat<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Concat<InputDataType, OutputDataType>::Gradient(
-    arma::Mat<eT>&& /* input */,
+    arma::Mat<eT>&& input,
     arma::Mat<eT>&& error,
     arma::Mat<eT>&& /* gradient */)
 {
   for (size_t i = 0; i < network.size(); ++i)
   {
-    boost::apply_visitor(GradientVisitor(std::move(boost::apply_visitor(
-        outputParameterVisitor, network[i])), std::move(error)), network[i]);
+    boost::apply_visitor(GradientVisitor(std::move(input),
+        std::move(error)), network[i]);
   }
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void Concat<InputDataType, OutputDataType>::Serialize(
-    Archive& /* ar */, const unsigned int /* version */)
+void Concat<InputDataType, OutputDataType>::serialize(
+    Archive& ar, const unsigned int /* version */)
 {
-  // Nothing to do here.
+  ar & BOOST_SERIALIZATION_NVP(model);
+  ar & BOOST_SERIALIZATION_NVP(same);
+
+  // Do we have to load or save a model?
+  if (model)
+  {
+    // Clear memory first, if needed.
+    if (Archive::is_loading::value)
+    {
+      std::for_each(network.begin(), network.end(),
+          boost::apply_visitor(deleteVisitor));
+    }
+
+    ar & BOOST_SERIALIZATION_NVP(network);
+  }
 }
 
 } // namespace ann

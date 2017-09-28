@@ -17,3 +17,4 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 add_subdirectory(kernel_rules)
 
 add_cli_executable(kernel_pca)
+add_python_binding(kernel_pca)

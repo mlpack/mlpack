@@ -45,7 +45,7 @@ template <
 >
 class Convolution
 {
-public:
+ public:
   //! Create the Convolution object.
   Convolution();
 
@@ -165,10 +165,9 @@ public:
    * Serialize the layer
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-
   /*
    * Return the convolution output size.
    *

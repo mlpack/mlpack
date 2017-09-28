@@ -45,7 +45,7 @@ namespace nca /** Neighborhood Components Analysis. */ {
  * @endcode
  */
 template<typename MetricType = metric::SquaredEuclideanDistance,
-         template<typename> class OptimizerType = optimization::SGD>
+         typename OptimizerType = optimization::StandardSGD>
 class NCA
 {
  public:
@@ -83,10 +83,8 @@ class NCA
   const arma::Row<size_t>& Labels() const { return labels; }
 
   //! Get the optimizer.
-  const OptimizerType<SoftmaxErrorFunction<MetricType> >& Optimizer() const
-  { return optimizer; }
-  OptimizerType<SoftmaxErrorFunction<MetricType> >& Optimizer()
-  { return optimizer; }
+  const OptimizerType& Optimizer() const { return optimizer; }
+  OptimizerType& Optimizer() { return optimizer; }
 
  private:
   //! Dataset reference.
@@ -101,7 +99,7 @@ class NCA
   SoftmaxErrorFunction<MetricType> errorFunction;
 
   //! The optimizer to use.
-  OptimizerType<SoftmaxErrorFunction<MetricType> > optimizer;
+  OptimizerType optimizer;
 };
 
 } // namespace nca

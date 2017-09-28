@@ -3,8 +3,9 @@
  * @author Ryan Curtin
  *
  * An implementation of a naively-implemented step of the Lloyd algorithm for
- * k-means clustering.  This may still be the best choice for small datasets or
- * datasets with very high dimensionality.
+ * k-means clustering, using OpenMP for parallelization over multiple threads.
+ * This may still be the best choice for small datasets or datasets with very
+ * high dimensionality.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -13,6 +14,7 @@
  */
 #ifndef MLPACK_METHODS_KMEANS_NAIVE_KMEANS_HPP
 #define MLPACK_METHODS_KMEANS_NAIVE_KMEANS_HPP
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace kmeans {

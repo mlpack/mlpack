@@ -102,7 +102,7 @@ void RandomizedSVD::Apply(const arma::mat& data,
     }
 
     // Computing the LU decomposition is more efficient than computing the QR
-    // decomposition, so we only use in the last iteration, a pivoted QR
+    // decomposition, so we only use it in the last iteration, a pivoted QR
     // decomposition which renormalizes Q, ensuring that the columns of Q are
     // orthonormal.
     if (i < (maxIterations - 1))

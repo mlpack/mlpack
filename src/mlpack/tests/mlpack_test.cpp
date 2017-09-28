@@ -12,8 +12,6 @@
  */
 #define BOOST_TEST_MODULE mlpackTest
 
-#include <mlpack/core/util/log.hpp>
-
 #include <boost/version.hpp>
 
 // We only need to do this for old Boost versions.
@@ -21,8 +19,71 @@
   #define BOOST_AUTO_TEST_MAIN
 #endif
 
+#if BOOST_VERSION >= 105900
+  #include <boost/test/tree/visitor.hpp>
+  #include <boost/test/tree/traverse.hpp>
+#endif
+
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
+
+/*
+ * Class for traversing all Boost tests tree and building tree structure for
+ * simple output.
+ */
+struct TestsVisitor : boost::unit_test::test_tree_visitor
+{
+  /*
+   * Enter specified Boost unit test case.
+   *
+   * @param test Boost unit test case.
+   */
+  void visit(boost::unit_test::test_case const& test)
+  {
+    std::cout << std::string(indentations, ' ') << std::string(test.p_name)
+        << "*" << std::endl;
+  }
+
+  /*
+   * Enter specified Boost unit test suite.
+   *
+   * @param test Boost unit test suite.
+   */
+  bool test_suite_start(boost::unit_test::test_suite const& suite)
+  {
+    // For backward compatibility we omit the master suite.
+    if (first)
+    {
+      first = false;
+      return true;
+    }
+
+    std::cout << std::string(indentations, ' ') << std::string(suite.p_name)
+        << "*" << std::endl;
+
+    // Increase tab width (4 spaces).
+    indentations += 4;
+
+    return true;
+  }
+
+  /*
+   * Leave specified Boost unit test suite.
+   *
+   * @param test Boost unit test case.
+   */
+  void test_suite_finish(boost::unit_test::test_suite const& /* suite */)
+  {
+    // Decrease tab width (4 spaces).
+    indentations -= 4;
+  }
+
+  //! The indentation level.
+  size_t indentations = 0;
+
+  //! To keep track of where we are.
+  bool first = true;
+};
 
 /**
  * Provide a global fixture for each test.
@@ -49,6 +110,22 @@ struct GlobalFixture
       mlpack::Log::Info.ignoreInput = true;
       mlpack::Log::Warn.ignoreInput = true;
     #endif
+
+    for (int i = 0; i < boost::unit_test::framework::master_test_suite().argc;
+        i++)
+    {
+      std::string argument(
+          boost::unit_test::framework::master_test_suite().argv[i]);
+
+      // Print Boost test hierarchy.
+      if (argument == "--list_content")
+      {
+        TestsVisitor testsVisitor;
+        traverse_test_tree(boost::unit_test::framework::master_test_suite(),
+            testsVisitor);
+        exit(0);
+      }
+    }
   }
 };
 

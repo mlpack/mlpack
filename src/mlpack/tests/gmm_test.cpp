@@ -111,17 +111,8 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMOneGaussian)
     arma::mat actualCovar = ccov(data, 1 /* biased estimator */);
 
     // Check the model to see that it is correct.
-    BOOST_REQUIRE_CLOSE(gmm.Component(0).Mean()[0], actualMean(0), 1e-5);
-    BOOST_REQUIRE_CLOSE(gmm.Component(0).Mean()[1], actualMean(1), 1e-5);
-
-    BOOST_REQUIRE_CLOSE(gmm.Component(0).Covariance()(0, 0),
-        actualCovar(0, 0), 1e-5);
-    BOOST_REQUIRE_CLOSE(gmm.Component(0).Covariance()(0, 1),
-        actualCovar(0, 1), 1e-5);
-    BOOST_REQUIRE_CLOSE(gmm.Component(0).Covariance()(1, 0),
-        actualCovar(1, 0), 1e-5);
-    BOOST_REQUIRE_CLOSE(gmm.Component(0).Covariance()(1, 1),
-        actualCovar(1, 1), 1e-5);
+    CheckMatrices(gmm.Component(0).Mean(), actualMean);
+    CheckMatrices(gmm.Component(0).Covariance(), actualCovar);
 
     BOOST_REQUIRE_CLOSE(gmm.Weights()[0], 1.0, 1e-5);
   }
@@ -208,16 +199,10 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussians)
   for (size_t i = 0; i < gaussians; i++)
   {
     // Check the mean.
-    for (size_t j = 0; j < dims; j++)
-      BOOST_REQUIRE_CLOSE(gmm.Component(sortTry[i]).Mean()[j],
-          (means[sortRef[i]])[j], 0.001);
-
+    CheckMatrices(gmm.Component(sortTry[i]).Mean(), means[sortRef[i]], 1e-3);
     // Check the covariance.
-    for (size_t row = 0; row < dims; row++)
-      for (size_t col = 0; col < dims; col++)
-        BOOST_REQUIRE_CLOSE(gmm.Component(sortTry[i]).Covariance()(row, col),
-            (covars[sortRef[i]])(row, col), 0.05);
-
+    CheckMatrices(gmm.Component(sortTry[i]).Covariance(), covars[sortRef[i]],
+                  0.05);
     // Check the weight.
     BOOST_REQUIRE_CLOSE(gmm.Weights()[sortTry[i]], weights[sortRef[i]],
         0.001);
@@ -279,12 +264,12 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
                                                        "0.6 1.1 0.1;"
                                                        "0.5 0.1 1.0");
 
-  // Now we'll generate points and probabilities.  1500 points.  Slower than I
+  // Now we'll generate points and probabilities.  2000 points.  Slower than I
   // would like...
-  arma::mat points(3, 5000);
-  arma::vec probabilities(5000);
+  arma::mat points(3, 2000);
+  arma::vec probabilities(2000);
 
-  for (size_t i = 0; i < 5000; i++)
+  for (size_t i = 0; i < 2000; i++)
   {
     double randValue = math::Random();
 
@@ -313,7 +298,8 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
   // Now train the model.
   GMM g(3, 3); // 3 dimensions, 3 components (the fourth component is fake).
 
-  g.Train(points, probabilities, 8);
+  EMFit<> fitter(100, 1e-5);
+  g.Train(points, probabilities, 3, false, fitter);
 
   // Now check the results.  We need to order by weights so that when we do the
   // checking, things will be correct.
@@ -509,7 +495,7 @@ BOOST_AUTO_TEST_CASE(GMMLoadSaveTest)
   }
 
   // Remove clutter.
-  //remove("test-gmm-save.xml");
+  // remove("test-gmm-save.xml");
 
   BOOST_REQUIRE_EQUAL(gmm.Gaussians(), gmm2.Gaussians());
   BOOST_REQUIRE_EQUAL(gmm.Dimensionality(), gmm2.Dimensionality());
@@ -565,13 +551,7 @@ BOOST_AUTO_TEST_CASE(PositiveDefiniteConstraintTest)
     PositiveDefiniteConstraint::ApplyConstraint(cov);
 
     arma::mat c;
-    #if (ARMA_VERSION_MAJOR < 4) || \
-        ((ARMA_VERSION_MAJOR == 4) && (ARMA_VERSION_MINOR < 500))
-    BOOST_REQUIRE(arma::chol(c, cov));
-    #else
     BOOST_REQUIRE(arma::chol(c, cov, "lower"));
-    #endif
-
   }
 }
 
@@ -776,5 +756,105 @@ BOOST_AUTO_TEST_CASE(UseExistingModelTest)
   }
 }
 
+/**
+ * Make sure we can fit a diagonal GMM reasonably.
+ */
+BOOST_AUTO_TEST_CASE(DiagonalGMMTrainTest)
+{
+  Log::Warn.ignoreInput = false;
+  // We'll have three diagonal-covariance Gaussian distributions from this
+  // mixture.
+  distribution::GaussianDistribution d1("0.0 1.0 0.0", "1.0 0.0 0.0;"
+                                                       "0.0 0.8 0.0;"
+                                                       "0.0 0.0 1.0");
+  distribution::GaussianDistribution d2("2.0 -1.0 5.0", "3.0 0.0 0.0;"
+                                                        "0.0 1.2 0.0;"
+                                                        "0.0 0.0 1.3");
+  distribution::GaussianDistribution d3("0.0 5.0 -3.0", "2.0 0.0 0.0;"
+                                                        "0.0 0.3 0.0;"
+                                                        "0.0 0.0 1.0");
+
+  // Now we'll generate points and probabilities.  1500 points.  Slower than I
+  // would like...
+  arma::mat points(3, 5000);
+
+  for (size_t i = 0; i < 5000; i++)
+  {
+    double randValue = math::Random();
+
+    if (randValue <= 0.20) // p(d1) = 0.20
+      points.col(i) = d1.Random();
+    else if (randValue <= 0.50) // p(d2) = 0.30
+      points.col(i) = d2.Random();
+    else // p(d3) = 0.50
+      points.col(i) = d3.Random();
+  }
+
+  // Now train the model.  3 dimensions, 3 components.
+  GMM g(3, 3);
+
+  g.Train<EMFit<kmeans::KMeans<>, DiagonalConstraint>>(points, 5);
+
+  // Now check the results.  We need to order by weights so that when we do the
+  // checking, things will be correct.
+  arma::uvec sortedIndices = sort_index(g.Weights());
+
+  // First Gaussian (d1).
+  BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[0]] - 0.2, 0.1);
+
+  for (size_t i = 0; i < 3; i++)
+    BOOST_REQUIRE_SMALL((g.Component(sortedIndices[0]).Mean()[i]
+        - d1.Mean()[i]), 0.4);
+
+  for (size_t row = 0; row < 3; ++row)
+  {
+    for (size_t col = 0; col < 3; ++col)
+    {
+      const double v = g.Component(sortedIndices[0]).Covariance()(row, col);
+      if (row == col)
+        BOOST_REQUIRE_SMALL(v - d1.Covariance()(row, col), 0.5);
+      else
+        BOOST_REQUIRE_SMALL(v, 1e-5);
+    }
+  }
+
+  // Second Gaussian (d2).
+  BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[1]] - 0.3, 0.1);
+
+  for (size_t i = 0; i < 3; i++)
+    BOOST_REQUIRE_SMALL((g.Component(sortedIndices[1]).Mean()[i]
+        - d2.Mean()[i]), 0.4);
+
+  for (size_t row = 0; row < 3; ++row)
+  {
+    for (size_t col = 0; col < 3; ++col)
+    {
+      const double v = g.Component(sortedIndices[1]).Covariance()(row, col);
+      if (row == col)
+        BOOST_REQUIRE_SMALL(v - d2.Covariance()(row, col), 0.5);
+      else
+        BOOST_REQUIRE_SMALL(v, 1e-5);
+    }
+  }
+
+  // Third Gaussian (d3).
+  BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[2]] - 0.5, 0.1);
+
+  for (size_t i = 0; i < 3; ++i)
+    BOOST_REQUIRE_SMALL((g.Component(sortedIndices[2]).Mean()[i]
+        - d3.Mean()[i]), 0.4);
+
+  for (size_t row = 0; row < 3; ++row)
+  {
+    for (size_t col = 0; col < 3; ++col)
+    {
+      const double v = g.Component(sortedIndices[2]).Covariance()(row, col);
+      if (row == col)
+        BOOST_REQUIRE_SMALL(v - d3.Covariance()(row, col), 0.5);
+      else
+        BOOST_REQUIRE_SMALL(v, 1e-5);
+    }
+  }
+}
 
 BOOST_AUTO_TEST_SUITE_END();

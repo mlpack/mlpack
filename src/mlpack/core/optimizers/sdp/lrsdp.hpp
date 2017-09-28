@@ -36,23 +36,31 @@ class LRSDP
    * function, use the function SDP() in order to access the SDPType object
    * associated with this optimizer.
    *
-   * @param numConstraints Number of constraints in the problem.
+   * @param numSparseConstraints Number of sparse constraints in the problem.
+   * @param numDenseConstraints Number of dense constraints in the problem.
    * @param initialPoint Initial point of the optimization.
+   * @param maxIterations Maximum number of iterations.
    */
   LRSDP(const size_t numSparseConstraints,
         const size_t numDenseConstraints,
-        const arma::mat& initialPoint);
+        const arma::mat& initialPoint,
+        const size_t maxIterations = 1000);
 
   /**
    * Create an LRSDP object with the given SDP problem to be solved, and the
    * given initial point.  Note that the SDP may be modified later by calling
    * SDP() to access the object.
    *
+   * TODO: this is currently not implemented.
+   *
    * @param sdp SDP to be solved.
    * @param initialPoint Initial point of the optimization.
-   */
+   * @param maxIterations Maximum number of iterations.
+   *
   LRSDP(const SDPType& sdp,
-        const arma::mat& initialPoint);
+        const arma::mat& initialPoint,
+        const size_t maxIterations = 1000);
+   */
 
   /**
    * Optimize the LRSDP and return the final objective value.  The given
@@ -73,16 +81,22 @@ class LRSDP
   LRSDPFunction<SDPType>& Function() { return function; }
 
   //! Return the augmented Lagrangian object.
-  const AugLagrangian<LRSDPFunction<SDPType>>& AugLag() const { return augLag; }
+  const AugLagrangian& AugLag() const { return augLag; }
   //! Modify the augmented Lagrangian object.
-  AugLagrangian<LRSDPFunction<SDPType>>& AugLag() { return augLag; }
+  AugLagrangian& AugLag() { return augLag; }
+
+  //! Get the maximum number of iterations.
+  size_t MaxIterations() const { return maxIterations; }
+  //! Modify the maximum number of iterations.
+  size_t& MaxIterations() { return maxIterations; }
 
  private:
+  //! Augmented lagrangian optimizer.
+  AugLagrangian augLag;
   //! Function to optimize, which the AugLagrangian object holds.
   LRSDPFunction<SDPType> function;
-
-  //! The AugLagrangian object which will be used for optimization.
-  AugLagrangian<LRSDPFunction<SDPType>> augLag;
+  //! The maximum number of iterations for optimization.
+  size_t maxIterations;
 };
 
 } // namespace optimization

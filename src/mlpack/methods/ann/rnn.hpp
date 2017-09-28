@@ -18,7 +18,8 @@
 #include "visitor/delta_visitor.hpp"
 #include "visitor/output_parameter_visitor.hpp"
 #include "visitor/reset_visitor.hpp"
-#include "visitor/weight_size_visitor.hpp"
+
+#include "init_rules/network_init.hpp"
 
 #include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
@@ -45,9 +46,12 @@ class RNN
 
   /**
    * Create the RNN object with the given predictors and responses set (this is
-   * the set that is used to train the network) and the given optimizer.
+   * the set that is used to train the network).
    * Optionally, specify which initialize rule and performance function should
    * be used.
+   *
+   * If you want to pass in a parameter and discard the original parameter
+   * object, be sure to use std::move to avoid unnecessary copy.
    *
    * @param rho Maximum number of steps to backpropagate through time (BPTT).
    * @param single Predict only the last element of the input sequence.
@@ -62,9 +66,12 @@ class RNN
 
   /**
    * Create the RNN object with the given predictors and responses set (this is
-   * the set that is used to train the network) and the given optimizer.
+   * the set that is used to train the network).
    * Optionally, specify which initialize rule and performance function should
    * be used.
+   *
+   * If you want to pass in a parameter and discard the original parameter
+   * object, be sure to use std::move to avoid unnecessary copy.
    *
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
@@ -74,8 +81,8 @@ class RNN
    * @param initializeRule Optional instantiated InitializationRule object
    *        for initializing the network parameter.
    */
-  RNN(const arma::mat& predictors,
-      const arma::mat& responses,
+  RNN(arma::mat predictors,
+      arma::mat responses,
       const size_t rho,
       const bool single = false,
       OutputLayerType outputLayer = OutputLayerType(),
@@ -92,17 +99,18 @@ class RNN
    * optimization. If this is not what you want, then you should access the
    * parameters vector directly with Parameters() and modify it as desired.
    *
+   * If you want to pass in a parameter and discard the original parameter
+   * object, be sure to use std::move to avoid unnecessary copy.
+   *
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
    * @param optimizer Instantiated optimizer used to train the model.
    */
-  template<
-      template<typename> class OptimizerType = mlpack::optimization::SGD
-  >
-  void Train(const arma::mat& predictors,
-             const arma::mat& responses,
-             OptimizerType<NetworkType>& optimizer);
+  template<typename OptimizerType>
+  void Train(arma::mat predictors,
+             arma::mat responses,
+             OptimizerType& optimizer);
 
   /**
    * Train the recurrent neural network on the given input data. By default, the
@@ -113,24 +121,28 @@ class RNN
    * optimization. If this is not what you want, then you should access the
    * parameters vector directly with Parameters() and modify it as desired.
    *
+   * If you want to pass in a parameter and discard the original parameter
+   * object, be sure to use std::move to avoid unnecessary copy.
+   *
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
    */
-  template<
-      template<typename> class OptimizerType = mlpack::optimization::SGD
-  >
-  void Train(const arma::mat& predictors, const arma::mat& responses);
+  template<typename OptimizerType = mlpack::optimization::StandardSGD>
+  void Train(arma::mat predictors, arma::mat responses);
 
   /**
    * Predict the responses to a given set of predictors. The responses will
    * reflect the output of the given output layer as returned by the
    * output layer function.
    *
+   * If you want to pass in a parameter and discard the original parameter
+   * object, be sure to use std::move to avoid unnecessary copy.
+   *
    * @param predictors Input predictors.
-   * @param responses Matrix to put output predictions of responses into.
+   * @param results Matrix to put output predictions of responses into.
    */
-  void Predict(arma::mat& predictors, arma::mat& responses);
+  void Predict(arma::mat predictors, arma::mat& results);
 
   /**
    * Evaluate the recurrent neural network with the given parameters. This
@@ -190,10 +202,14 @@ class RNN
   //! Modify the initial point for the optimization.
   arma::mat& Parameters() { return parameter; }
 
+  //! Return the maximum length of backpropagation through time.
+  const size_t& Rho() const { return rho; }
+  //! Modify the maximum length of backpropagation through time.
+  size_t& Rho() { return rho; }
+
   //! Serialize the model.
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
-
  private:
   // Helper functions.
   /**
@@ -203,6 +219,11 @@ class RNN
    * @param input Data sequence to compute probabilities for.
    */
   void Forward(arma::mat&& input);
+
+  /**
+   * Reset the state of RNN cells in the network for new input sequence.
+   */
+  void ResetCells();
 
   /**
    * The Backward algorithm (part of the Forward-Backward algorithm). Computes
@@ -220,9 +241,9 @@ class RNN
    * Predict the response of the given input sequence.
    *
    * @param predictors Input predictors.
-   * @param responses Vector to put output prediction of a response into.
+   * @param results Vector to put output prediction of a response into.
    */
-  void SinglePredict(const arma::mat& predictors, arma::mat& responses);
+  void SinglePredict(const arma::mat& predictors, arma::mat& results);
 
   /**
    * Reset the module infomration (weights/parameters).
@@ -242,6 +263,9 @@ class RNN
 
   //! Number of steps to backpropagate through time (BPTT).
   size_t rho;
+
+  //! Number of steps to backpropagate through time (BPTT) at the previous step.
+  size_t prevRho;
 
   //! Instantiated outputlayer used to evaluate the network.
   OutputLayerType outputLayer;

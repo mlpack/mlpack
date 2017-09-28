@@ -1,14 +1,21 @@
 set(DIRS
-  adadelta
+  ada_delta
+  ada_grad
   adam
   aug_lagrangian
+  cne
+  fw
   gradient_descent
+  grid_search
   lbfgs
+  line_search
   minibatch_sgd
+  proximal
   rmsprop
   sa
   sdp
   sgd
+  smorms3
 )
 
 foreach(dir ${DIRS})

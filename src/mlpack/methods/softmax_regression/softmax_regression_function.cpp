@@ -9,7 +9,7 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
- #include "softmax_regression_function.hpp"
+#include "softmax_regression_function.hpp"
 
 using namespace mlpack;
 using namespace mlpack::regression;
@@ -73,8 +73,8 @@ void SoftmaxRegressionFunction::InitializeWeights(
  * labels. The output is in the form of a matrix, which leads to simpler
  * calculations in the Evaluate() and Gradient() methods.
  */
-void SoftmaxRegressionFunction::GetGroundTruthMatrix(const arma::Row<size_t>& labels,
-                                                     arma::sp_mat& groundTruth)
+void SoftmaxRegressionFunction::GetGroundTruthMatrix(
+    const arma::Row<size_t>& labels, arma::sp_mat& groundTruth)
 {
   // Calculate the ground truth matrix according to the labels passed. The
   // ground truth matrix is a matrix of dimensions 'numClasses * numExamples',
@@ -87,7 +87,7 @@ void SoftmaxRegressionFunction::GetGroundTruthMatrix(const arma::Row<size_t>& la
 
   // Row pointers are the labels of the examples, and column pointers are the
   // number of cumulative entries made uptil that column.
-  for(size_t i = 0; i < labels.n_elem; i++)
+  for (size_t i = 0; i < labels.n_elem; i++)
   {
     rowPointers(i) = labels(i);
     colPointers(i+1) = i + 1;
@@ -203,5 +203,37 @@ void SoftmaxRegressionFunction::Gradient(const arma::mat& parameters,
   {
     gradient = (probabilities - groundTruth) * data.t() / data.n_cols +
                lambda * parameters;
+  }
+}
+
+void SoftmaxRegressionFunction::PartialGradient(const arma::mat& parameters,
+                                                const size_t j,
+                                                arma::sp_mat& gradient) const
+{
+  gradient.zeros(arma::size(parameters));
+
+  arma::mat probabilities;
+  GetProbabilitiesMatrix(parameters, probabilities);
+
+  // Calculate the required part of the gradient.
+  arma::mat inner = probabilities - groundTruth;
+  if (fitIntercept)
+  {
+    if (j == 0)
+    {
+      gradient.col(j) =
+          inner * arma::ones<arma::mat>(data.n_cols, 1) / data.n_cols +
+          lambda * parameters.col(0);
+    }
+    else
+    {
+      gradient.col(j) = inner * data.row(j).t() / data.n_cols + lambda *
+          parameters.col(j);
+    }
+  }
+  else
+  {
+    gradient.col(j) = inner * data.row(j).t() / data.n_cols + lambda *
+        parameters.col(j);
   }
 }

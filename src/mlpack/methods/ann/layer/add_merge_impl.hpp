@@ -14,7 +14,7 @@
 #define MLPACK_METHODS_ANN_LAYER_ADD_MERGE_IMPL_HPP
 
 // In case it hasn't yet been included.
-#include "add_merge_impl.hpp"
+#include "add_merge.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -49,10 +49,13 @@ void AddMerge<InputDataType, OutputDataType>::Backward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void AddMerge<InputDataType, OutputDataType>::Serialize(
+void AddMerge<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & data::CreateNVP(network, "network");
+  if (Archive::is_loading::value)
+    network.clear();
+
+  ar & BOOST_SERIALIZATION_NVP(network);
 }
 
 } // namespace ann

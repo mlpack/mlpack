@@ -13,13 +13,7 @@
 #ifndef MLPACK_CORE_UTIL_PREFIXEDOUTSTREAM_HPP
 #define MLPACK_CORE_UTIL_PREFIXEDOUTSTREAM_HPP
 
-#include <iostream>
-#include <iomanip>
-#include <string>
-#include <streambuf>
-#include <stdexcept>
-
-#include <mlpack/core/util/sfinae_utility.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace util {
@@ -60,13 +54,17 @@ class PrefixedOutStream
    * @param ignoreInput If true, the stream will not be printed.
    * @param fatal If true, a std::runtime_error exception is thrown after
    *     printing a newline.
+   * @param backtrace If true, attempt to print a backtrace (will only be
+   *     done if HAS_BFD_DL is defined).
    */
   PrefixedOutStream(std::ostream& destination,
                     const char* prefix,
                     bool ignoreInput = false,
-                    bool fatal = false) :
+                    bool fatal = false,
+                    bool backtrace = true) :
       destination(destination),
       ignoreInput(ignoreInput),
+      backtrace(backtrace),
       prefix(prefix),
       // We want the first call to operator<< to prefix the prefix so we set
       // carriageReturned to true.
@@ -119,16 +117,38 @@ class PrefixedOutStream
   //! Discards input, prints nothing if true.
   bool ignoreInput;
 
+  //! If true, on a fatal error, a backtrace will be printed if HAS_BFD_DL is
+  //! defined.
+  bool backtrace;
+
  private:
   /**
    * Conducts the base logic required in all the operator << overloads.  Mostly
    * just a good idea to reduce copy-pasta.
    *
+   * This overload is for non-Armadillo objects, which need special handling
+   * during printing.
+   *
    * @tparam T The type of the data to output.
    * @param val The The data to be output.
    */
   template<typename T>
-  void BaseLogic(const T& val);
+  typename std::enable_if<!arma::is_arma_type<T>::value>::type
+  BaseLogic(const T& val);
+
+  /**
+   * Conducts the base logic required in all the operator << overloads.  Mostly
+   * just a good idea to reduce copy-pasta.
+   *
+   * This overload is for Armadillo objects, which need special handling during
+   * printing.
+   *
+   * @tparam T The type of the data to output.
+   * @param val The The data to be output.
+   */
+  template<typename T>
+  typename std::enable_if<arma::is_arma_type<T>::value>::type
+  BaseLogic(const T& val);
 
   /**
    * Output the prefix, but only if we need to and if we are allowed to.

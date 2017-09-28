@@ -18,27 +18,25 @@ namespace mlpack {
 namespace emst {
 
 //! Call the tree constructor that does mapping.
-template<typename MatType, typename TreeType>
+template<typename TreeType, typename MatType>
 TreeType* BuildTree(
-    MatType& dataset,
+    MatType&& dataset,
     std::vector<size_t>& oldFromNew,
-    const typename std::enable_if_t<
-        tree::TreeTraits<TreeType>::RearrangesDataset, TreeType
-    >* = 0)
+    const typename std::enable_if<
+        tree::TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
 {
-  return new TreeType(dataset, oldFromNew);
+  return new TreeType(std::forward<MatType>(dataset), oldFromNew);
 }
 
 //! Call the tree constructor that does not do mapping.
-template<typename MatType, typename TreeType>
+template<typename TreeType, typename MatType>
 TreeType* BuildTree(
-    const MatType& dataset,
+    MatType&& dataset,
     const std::vector<size_t>& /* oldFromNew */,
-    const typename std::enable_if_t<
-        tree::TreeTraits<TreeType>::RearrangesDataset == false, TreeType
-    >* = 0)
+    const typename std::enable_if<
+        !tree::TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
 {
-  return new TreeType(dataset);
+  return new TreeType(std::forward<MatType>(dataset));
 }
 
 /**
@@ -55,8 +53,7 @@ DualTreeBoruvka<MetricType, MatType, TreeType>::DualTreeBoruvka(
     const MatType& dataset,
     const bool naive,
     const MetricType metric) :
-    tree(naive ? NULL : BuildTree<MatType, Tree>(const_cast<MatType&>(dataset),
-        oldFromNew)),
+    tree(naive ? NULL : BuildTree<Tree>(dataset, oldFromNew)),
     data(naive ? dataset : tree->Dataset()),
     ownTree(!naive),
     naive(naive),
@@ -205,7 +202,7 @@ void DualTreeBoruvka<MetricType, MatType, TreeType>::AddAllEdges()
     size_t outEdge = neighborsOutComponent[component];
     if (connections.Find(inEdge) != connections.Find(outEdge))
     {
-      //totalDist = totalDist + dist;
+      // totalDist = totalDist + dist;
       // changed to make this agree with the cover tree code
       totalDist += neighborsDistances[component];
       AddEdge(inEdge, outEdge, neighborsDistances[component]);

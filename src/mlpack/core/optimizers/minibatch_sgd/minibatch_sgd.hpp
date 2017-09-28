@@ -13,6 +13,8 @@
 #define MLPACK_CORE_OPTIMIZERS_MINIBATCH_SGD_MINIBATCH_SGD_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/optimizers/sgd/update_policies/vanilla_update.hpp>
+#include <mlpack/core/optimizers/minibatch_sgd/decay_policies/no_decay.hpp>
 
 namespace mlpack {
 namespace optimization {
@@ -69,9 +71,21 @@ namespace optimization {
  *
  * @tparam DecomposableFunctionType Decomposable objective function type to be
  *     minimized.
+ * @tparam update Update policy used during the iterative update process.
+ *     By default the vanilla update policy
+ *     (see mlpack::optimization::VanillaUpdate) is used.
+ * @tparam UpdatePolicyType Update policy used during the iterative update
+ *     process. By default the vanilla update policy
+ *     (see mlpack::optimization::VanillaUpdate) is used.
+ * @tparam DecayPolicyType Decay policy used during the iterative update
+ *     process to adjust the step size. By default the step size isn't going to
+ *     be adjusted.
  */
-template<typename DecomposableFunctionType>
-class MiniBatchSGD
+template<
+    typename UpdatePolicyType = VanillaUpdate,
+    typename DecayPolicyType = NoDecay
+>
+class MiniBatchSGDType
 {
  public:
   /**
@@ -81,7 +95,6 @@ class MiniBatchSGD
    * at hand.  The maximum number of iterations refers to the maximum number of
    * mini-batches that are processed.
    *
-   * @param function Function to be optimized (minimized).
    * @param batchSize Size of each mini-batch.
    * @param stepSize Step size for each iteration.
    * @param maxIterations Maximum number of iterations allowed (0 means no
@@ -89,28 +102,36 @@ class MiniBatchSGD
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    * @param shuffle If true, the mini-batch order is shuffled; otherwise, each
    *     mini-batch is visited in linear order.
+   * @param updatePolicy Instantiated update policy used to adjust the given
+   *     parameters.
+   * @param decayPolicy Instantiated decay policy used to adjust the step size.
+   * @param resetPolicy Flag that determines whether update policy parameters
+   *                    are reset before every Optimize call.
    */
-  MiniBatchSGD(DecomposableFunctionType& function,
-               const size_t batchSize = 1000,
-               const double stepSize = 0.01,
-               const size_t maxIterations = 100000,
-               const double tolerance = 1e-5,
-               const bool shuffle = true);
+  MiniBatchSGDType(const size_t batchSize = 1000,
+                   const double stepSize = 0.01,
+                   const size_t maxIterations = 100000,
+                   const double tolerance = 1e-5,
+                   const bool shuffle = true,
+                   const UpdatePolicyType& updatePolicy = UpdatePolicyType(),
+                   const DecayPolicyType& decayPolicy = DecayPolicyType(),
+                   const bool resetPolicy = true);
 
   /**
    * Optimize the given function using mini-batch SGD.  The given starting point
    * will be modified to store the finishing point of the algorithm, and the
    * final objective value is returned.
    *
+   * @tparam DecomposableFunctionType Type of the function to be optimized.
+   * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
+   * @param resetPolicy Flag indicating whether update policy
+   *                   should be reset before running optimization.
    * @return Objective value of the final point.
    */
-  double Optimize(arma::mat& iterate);
-
-  //! Get the instantiated function to be optimized.
-  const DecomposableFunctionType& Function() const { return function; }
-  //! Modify the instantiated function.
-  DecomposableFunctionType& Function() { return function; }
+  template<typename DecomposableFunctionType>
+  double Optimize(DecomposableFunctionType& function,
+                  arma::mat& iterate);
 
   //! Get the batch size.
   size_t BatchSize() const { return batchSize; }
@@ -137,10 +158,24 @@ class MiniBatchSGD
   //! Modify whether or not the individual functions are shuffled.
   bool& Shuffle() { return shuffle; }
 
- private:
-  //! The instantiated function.
-  DecomposableFunctionType& function;
+  //! Get whether or not the update policy parameters
+  //! are reset before Optimize call.
+  bool ResetPolicy() const { return resetPolicy; }
+  //! Modify whether or not the update policy parameters
+  //! are reset before Optimize call.
+  bool& ResetPolicy() { return resetPolicy; }
 
+  //! Get the update policy.
+  UpdatePolicyType UpdatePolicy() const { return updatePolicy; }
+  //! Modify the update policy.
+  UpdatePolicyType& UpdatePolicy() { return updatePolicy; }
+
+  //! Get the decay policy.
+  DecayPolicyType DecayPolicy() const { return decayPolicy; }
+  //! Modify the decay policy.
+  DecayPolicyType& DecayPolicy() { return decayPolicy; }
+
+ private:
   //! The size of each mini-batch.
   size_t batchSize;
 
@@ -156,7 +191,19 @@ class MiniBatchSGD
   //! Controls whether or not the individual functions are shuffled when
   //! iterating.
   bool shuffle;
+
+  //! The update policy used to update the parameters in each iteration.
+  UpdatePolicyType updatePolicy;
+
+  //! The decay policy used to update the parameters in each iteration.
+  DecayPolicyType decayPolicy;
+
+  //! Flag that determines whether update policy parameters
+  //! are reset before every Optimize call.
+  bool resetPolicy;
 };
+
+using MiniBatchSGD = MiniBatchSGDType<VanillaUpdate, NoDecay>;
 
 } // namespace optimization
 } // namespace mlpack

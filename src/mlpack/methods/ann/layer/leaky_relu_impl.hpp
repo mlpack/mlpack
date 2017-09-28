@@ -47,11 +47,11 @@ void LeakyReLU<InputDataType, OutputDataType>::Backward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void LeakyReLU<InputDataType, OutputDataType>::Serialize(
+void LeakyReLU<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  ar & data::CreateNVP(alpha, "alpha");
+  ar & BOOST_SERIALIZATION_NVP(alpha);
 }
 
 } // namespace ann

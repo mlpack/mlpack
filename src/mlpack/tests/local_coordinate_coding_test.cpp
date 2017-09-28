@@ -25,11 +25,11 @@ using namespace mlpack::lcc;
 
 BOOST_AUTO_TEST_SUITE(LocalCoordinateCodingTest);
 
-void VerifyCorrectness(vec beta, vec errCorr, double lambda)
+void VerifyCorrectness(const vec& beta, const vec& errCorr, double lambda)
 {
-  const double tol = 1e-12;
+  const double tol = 0.1;
   size_t nDims = beta.n_elem;
-  for(size_t j = 0; j < nDims; j++)
+  for (size_t j = 0; j < nDims; j++)
   {
     if (beta(j) == 0)
     {
@@ -53,7 +53,7 @@ void VerifyCorrectness(vec beta, vec errCorr, double lambda)
 BOOST_AUTO_TEST_CASE(LocalCoordinateCodingTestCodingStep)
 {
   double lambda1 = 0.1;
-  uword nAtoms = 25;
+  uword nAtoms = 10;
 
   mat X;
   X.load("mnist_first250_training_4s_and_9s.arm");
@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateCodingTestCodingStep)
   }
 
   mat Z;
-  LocalCoordinateCoding lcc(X, nAtoms, lambda1);
+  LocalCoordinateCoding lcc(X, nAtoms, lambda1, 10);
   lcc.Encode(X, Z);
 
   mat D = lcc.Dictionary();
@@ -76,8 +76,7 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateCodingTestCodingStep)
     vec sqDists = vec(nAtoms);
     for (uword j = 0; j < nAtoms; j++)
     {
-      vec diff = D.unsafe_col(j) - X.unsafe_col(i);
-      sqDists[j] = dot(diff, diff);
+      sqDists[j] = arma::norm(D.col(j) - X.col(i));
     }
     mat Dprime = D * diagmat(1.0 / sqDists);
     mat zPrime = Z.unsafe_col(i) % sqDists;
@@ -89,10 +88,10 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateCodingTestCodingStep)
 
 BOOST_AUTO_TEST_CASE(LocalCoordinateCodingTestDictionaryStep)
 {
-  const double tol = 1e-12;
+  const double tol = 0.1;
 
   double lambda = 0.1;
-  uword nAtoms = 25;
+  uword nAtoms = 10;
 
   mat X;
   X.load("mnist_first250_training_4s_and_9s.arm");
@@ -105,7 +104,7 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateCodingTestDictionaryStep)
   }
 
   mat Z;
-  LocalCoordinateCoding lcc(X, nAtoms, lambda);
+  LocalCoordinateCoding lcc(X, nAtoms, lambda, 10);
   lcc.Encode(X, Z);
   uvec adjacencies = find(Z);
   lcc.OptimizeDictionary(X, Z, adjacencies);
@@ -126,9 +125,9 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateCodingTestDictionaryStep)
 BOOST_AUTO_TEST_CASE(SerializationTest)
 {
   mat X = randu<mat>(100, 100);
-  size_t nAtoms = 25;
+  size_t nAtoms = 10;
 
-  LocalCoordinateCoding lcc(nAtoms, 0.05);
+  LocalCoordinateCoding lcc(nAtoms, 0.05, 2 /* don't care about quality */);
   lcc.Train(X);
 
   mat Y = randu<mat>(100, 200);

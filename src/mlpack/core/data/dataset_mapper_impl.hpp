@@ -20,15 +20,16 @@ namespace mlpack {
 namespace data {
 
 // Default constructor.
-template<typename PolicyType>
-inline DatasetMapper<PolicyType>::DatasetMapper(const size_t dimensionality) :
+template<typename PolicyType, typename InputType>
+inline DatasetMapper<PolicyType, InputType>::DatasetMapper(
+    const size_t dimensionality) :
     types(dimensionality, Datatype::numeric)
 {
   // Nothing to initialize here.
 }
 
-template<typename PolicyType>
-inline DatasetMapper<PolicyType>::DatasetMapper(PolicyType& policy,
+template<typename PolicyType, typename InputType>
+inline DatasetMapper<PolicyType, InputType>::DatasetMapper(PolicyType& policy,
     const size_t dimensionality) :
     types(dimensionality, Datatype::numeric),
     policy(std::move(policy))
@@ -36,66 +37,156 @@ inline DatasetMapper<PolicyType>::DatasetMapper(PolicyType& policy,
   // Nothing to initialize here.
 }
 
-// When we want to insert value into the map,
-// we could use the policy to map the string
-template<typename PolicyType>
-inline typename PolicyType::MappedType DatasetMapper<PolicyType>::MapString(
-    const std::string& string,
-    const size_t dimension)
+// Utility helper function to call MapFirstPass.
+template<typename PolicyType, typename InputType, typename T>
+void CallMapFirstPass(
+    PolicyType& policy,
+    const InputType& input,
+    const size_t dimension,
+    std::vector<Datatype>& types,
+    const typename std::enable_if<PolicyType::NeedsFirstPass>::type* = 0)
 {
-  return policy.template MapString<MapType>(string, dimension, maps, types);
+  policy.template MapFirstPass<T>(input, dimension, types);
 }
 
-// Return the string corresponding to a value in a given dimension.
-template<typename PolicyType>
-inline const std::string& DatasetMapper<PolicyType>::UnmapString(
-    const size_t value,
+// Utility helper function that doesn't call anything.
+template<typename PolicyType, typename InputType, typename T>
+void CallMapFirstPass(
+    PolicyType& /* policy */,
+    const InputType& /* input */,
+    const size_t /* dimension */,
+    std::vector<Datatype>& /* types */,
+    const typename std::enable_if<!PolicyType::NeedsFirstPass>::type* = 0)
+{
+  // Nothing to do here.
+}
+
+template<typename PolicyType, typename InputType>
+template<typename T>
+void DatasetMapper<PolicyType, InputType>::MapFirstPass(const InputType& input,
+                                                        const size_t dimension)
+{
+  // Call the correct overload (via SFINAE).
+  CallMapFirstPass<PolicyType, InputType, T>(policy, input, dimension, types);
+}
+
+// When we want to insert value into the map, we use the policy to map the
+// input.
+template<typename PolicyType, typename InputType>
+template<typename T>
+inline T DatasetMapper<PolicyType, InputType>::MapString(
+    const InputType& input,
     const size_t dimension)
 {
+  return policy.template MapString<MapType, T>(input, dimension, maps, types);
+}
+
+/**
+ * A safe version of isnan() that only gets called when the type has a NaN at
+ * all.  This is a workaround for Visual Studio, which doesn't seem to support
+ * isnan(size_t).
+ */
+template<typename T>
+inline bool isnanSafe(const T& /* t */)
+{
+  return false;
+}
+
+template<>
+inline bool isnanSafe(const double& t)
+{
+  return std::isnan(t);
+}
+
+template<>
+inline bool isnanSafe(const float& t)
+{
+  return std::isnan(t);
+}
+
+template<>
+inline bool isnanSafe(const long double& t)
+{
+  return std::isnan(t);
+}
+
+
+// Return the input corresponding to a value in a given dimension.
+template<typename PolicyType, typename InputType>
+template<typename T>
+inline const InputType& DatasetMapper<PolicyType, InputType>::UnmapString(
+    const T value,
+    const size_t dimension,
+    const size_t unmappingIndex) const
+{
+  // If the value is std::numeric_limits<T>::quiet_NaN(), we can't use it as a
+  // key---so we will use something else...
+  const T usedValue = isnanSafe(value) ?
+      std::nexttoward(std::numeric_limits<T>::max(), T(0)) :
+      value;
+
   // Throw an exception if the value doesn't exist.
-  if (maps[dimension].first.right.count(value) == 0)
+  if (maps.at(dimension).second.count(usedValue) == 0)
   {
     std::ostringstream oss;
-    oss << "DatasetMapper<PolicyType>::UnmapString(): value '" << value
-        << "' unknown for dimension " << dimension;
+    oss << "DatasetMapper<PolicyType, InputType>::UnmapString(): value '"
+        << value << "' unknown for dimension " << dimension;
     throw std::invalid_argument(oss.str());
   }
 
-  return maps[dimension].first.right.at(value);
-}
-
-// Return the value corresponding to a string in a given dimension.
-template<typename PolicyType>
-inline typename PolicyType::MappedType DatasetMapper<PolicyType>::UnmapValue(
-    const std::string& string,
-    const size_t dimension)
-{
-  // Throw an exception if the value doesn't exist.
-  if (maps[dimension].first.left.count(string) == 0)
+  if (unmappingIndex >= maps.at(dimension).second.at(usedValue).size())
   {
     std::ostringstream oss;
-    oss << "DatasetMapper<PolicyType>::UnmapValue(): string '" << string
-        << "' unknown for dimension " << dimension;
+    oss << "DatasetMapper<PolicyType, InputType>::UnmapString(): value '"
+        << value << "' only has "
+        << maps.at(dimension).second.at(usedValue).size()
+        << " unmappings, but unmappingIndex is " << unmappingIndex << "!";
     throw std::invalid_argument(oss.str());
   }
 
-  return maps[dimension].first.left.at(string);
+  return maps.at(dimension).second.at(usedValue)[unmappingIndex];
 }
 
-template<typename PolicyType>
-template<typename eT>
-inline void DatasetMapper<PolicyType>::MapTokens(
-    const std::vector<std::string>& tokens,
-    size_t& row,
-    arma::Mat<eT>& matrix)
+template<typename PolicyType, typename InputType>
+template<typename T>
+inline size_t DatasetMapper<PolicyType, InputType>::NumUnmappings(
+    const T value,
+    const size_t dimension) const
 {
-  return policy.template MapTokens<eT, MapType>(tokens, row, matrix, maps,
-                                                types);
+  // If the value is std::numeric_limits<T>::quiet_NaN(), we can't use it as a
+  // key---so we will use something else...
+  if (isnanSafe(value))
+  {
+    const T newValue = std::nexttoward(std::numeric_limits<T>::max(), T(0));
+    return maps.at(dimension).second.at(newValue).size();
+  }
+
+  return maps.at(dimension).second.at(value).size();
+}
+
+// Return the value corresponding to an input in a given dimension.
+template<typename PolicyType, typename InputType>
+inline typename PolicyType::MappedType
+DatasetMapper<PolicyType, InputType>::UnmapValue(
+    const InputType& input,
+    const size_t dimension)
+{
+  // Throw an exception if the value doesn't exist.
+  if (maps[dimension].first.count(input) == 0)
+  {
+    std::ostringstream oss;
+    oss << "DatasetMapper<PolicyType, InputType>::UnmapValue(): input '"
+        << input << "' unknown for dimension " << dimension;
+    throw std::invalid_argument(oss.str());
+  }
+
+  return maps[dimension].first.at(input);
 }
 
 // Get the type of a particular dimension.
-template<typename PolicyType>
-inline Datatype DatasetMapper<PolicyType>::Type(const size_t dimension) const
+template<typename PolicyType, typename InputType>
+inline Datatype DatasetMapper<PolicyType, InputType>::Type(
+    const size_t dimension) const
 {
   if (dimension >= types.size())
   {
@@ -108,8 +199,9 @@ inline Datatype DatasetMapper<PolicyType>::Type(const size_t dimension) const
   return types[dimension];
 }
 
-template<typename PolicyType>
-inline Datatype& DatasetMapper<PolicyType>::Type(const size_t dimension)
+template<typename PolicyType, typename InputType>
+inline Datatype& DatasetMapper<PolicyType, InputType>::Type(
+    const size_t dimension)
 {
   if (dimension >= types.size())
     types.resize(dimension + 1, Datatype::numeric);
@@ -117,38 +209,36 @@ inline Datatype& DatasetMapper<PolicyType>::Type(const size_t dimension)
   return types[dimension];
 }
 
-template<typename PolicyType>
-inline
-size_t DatasetMapper<PolicyType>::NumMappings(const size_t dimension) const
+template<typename PolicyType, typename InputType>
+inline size_t
+DatasetMapper<PolicyType, InputType>::NumMappings(const size_t dimension) const
 {
-  return (maps.count(dimension) == 0) ? 0 : maps.at(dimension).second;
+  return (maps.count(dimension) == 0) ? 0 : maps.at(dimension).first.size();
 }
 
-template<typename PolicyType>
-inline size_t DatasetMapper<PolicyType>::Dimensionality() const
+template<typename PolicyType, typename InputType>
+inline size_t DatasetMapper<PolicyType, InputType>::Dimensionality() const
 {
   return types.size();
 }
 
-template<typename PolicyType>
-inline const PolicyType& DatasetMapper<PolicyType>::Policy() const
+template<typename PolicyType, typename InputType>
+inline const PolicyType& DatasetMapper<PolicyType, InputType>::Policy() const
 {
   return this->policy;
 }
 
-template<typename PolicyType>
-inline PolicyType& DatasetMapper<PolicyType>::Policy()
+template<typename PolicyType, typename InputType>
+inline PolicyType& DatasetMapper<PolicyType, InputType>::Policy()
 {
   return this->policy;
 }
 
-template<typename PolicyType>
-inline void DatasetMapper<PolicyType>::Policy(PolicyType&& policy)
+template<typename PolicyType, typename InputType>
+inline void DatasetMapper<PolicyType, InputType>::Policy(PolicyType&& policy)
 {
   this->policy = std::forward<PolicyType>(policy);
 }
-
-
 
 } // namespace data
 } // namespace mlpack

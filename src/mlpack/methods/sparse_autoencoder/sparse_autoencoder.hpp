@@ -59,12 +59,7 @@ namespace nn {
  * This implementation allows the use of arbitrary mlpack optimizers via the
  * OptimizerType template parameter.
  *
- * @tparam OptimizerType The optimizer to use; by default this is L-BFGS.  Any
- *     mlpack optimizer can be used here.
  */
-template<
-  template<typename> class OptimizerType = mlpack::optimization::L_BFGS
->
 class SparseAutoencoder
 {
  public:
@@ -74,6 +69,7 @@ class SparseAutoencoder
    * optionally. Changing these parameters will have an effect on regularization
    * and sparsity of the model.
    *
+   * @tparam OptimizerType The optimizer to use.
    * @param data Input data with each column as one example.
    * @param visibleSize Size of input vector expected at the visible layer.
    * @param hiddenSize Size of input vector expected at the hidden layer.
@@ -81,23 +77,14 @@ class SparseAutoencoder
    * @param beta KL divergence parameter.
    * @param rho Sparsity parameter.
    */
+  template<typename OptimizerType = mlpack::optimization::L_BFGS>
   SparseAutoencoder(const arma::mat& data,
                     const size_t visibleSize,
                     const size_t hiddenSize,
                     const double lambda = 0.0001,
                     const double beta = 3,
-                    const double rho = 0.01);
-
-  /**
-   * Construct the sparse autoencoder model with the given training data. This
-   * will train the model. This overload takes an already instantiated optimizer
-   * and uses it to train the model. The optimizer should hold an instantiated
-   * SparseAutoencoderFunction object for the function to operate upon. This
-   * option should be preferred when the optimizer options are to be changed.
-   *
-   * @param optimizer Instantiated optimizer with instantiated error function.
-   */
-  SparseAutoencoder(OptimizerType<SparseAutoencoderFunction>& optimizer);
+                    const double rho = 0.01,
+                    OptimizerType optimizer = OptimizerType());
 
   /**
    * Transforms the provided data into the representation learned by the sparse

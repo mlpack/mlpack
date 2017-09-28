@@ -70,8 +70,9 @@ size_t MinimalSplitsNumberSweep<SplitPolicy>::SweepNonLeafNode(
     }
 
     // Check if the split is possible.
-    if (numTreeOneChildren <= node->MaxNumChildren() && numTreeOneChildren > 0 &&
-        numTreeTwoChildren <= node->MaxNumChildren() && numTreeTwoChildren > 0)
+    if (numTreeOneChildren <= node->MaxNumChildren() &&
+        numTreeOneChildren > 0 && numTreeTwoChildren <= node->MaxNumChildren()
+        && numTreeTwoChildren > 0)
     {
       // Evaluate the cost using the number of splits and balancing.
       size_t balance;

@@ -55,20 +55,17 @@ namespace regression {
  * arma::vec predictions1, predictions2; // Vectors to store predictions in.
  *
  * // Obtain predictions from both the learned models.
- * regressor1.Predict(test_data, predictions1);
- * regressor2.Predict(test_data, predictions2);
+ * regressor1.Classify(test_data, predictions1);
+ * regressor2.Classify(test_data, predictions2);
  * @endcode
  */
-template<
-  template<typename> class OptimizerType = mlpack::optimization::L_BFGS
->
 class SoftmaxRegression
 {
  public:
   /**
    * Initialize the SoftmaxRegression without performing training.  Default
-   * value of lambda is 0.0001.  Be sure to use Train() before calling Predict()
-   * or ComputeAccuracy(), otherwise the results may be meaningless.
+   * value of lambda is 0.0001.  Be sure to use Train() before calling
+   * Classify() or ComputeAccuracy(), otherwise the results may be meaningless.
    *
    * @param inputSize Size of the input feature vector.
    * @param numClasses Number of classes for classification.
@@ -84,39 +81,82 @@ class SoftmaxRegression
    * passed, which controls the amount of L2-regularization in the objective
    * function. By default, the model takes a small value.
    *
+   * @tparam OptimizerType Desired optimizer type.
    * @param data Input training features. Each column associate with one sample
    * @param labels Labels associated with the feature data.
    * @param inputSize Size of the input feature vector.
    * @param numClasses Number of classes for classification.
+   * @param optimizer Desired optimizer.
    * @param lambda L2-regularization constant.
    * @param fitIntercept add intercept term or not.
    */
+  template<typename OptimizerType = mlpack::optimization::L_BFGS>
   SoftmaxRegression(const arma::mat& data,
                     const arma::Row<size_t>& labels,
                     const size_t numClasses,
                     const double lambda = 0.0001,
-                    const bool fitIntercept = false);
-
-  /**
-   * Construct the softmax regression model with the given training data. This
-   * will train the model. This overload takes an already instantiated optimizer
-   * and uses it to train the model. The optimizer should hold an instantiated
-   * SoftmaxRegressionFunction object for the function to operate upon. This
-   * option should be preferred when the optimizer options are to be changed.
-   *
-   * @param optimizer Instantiated optimizer with instantiated error function.
-   */
-  SoftmaxRegression(OptimizerType<SoftmaxRegressionFunction>& optimizer);
+                    const bool fitIntercept = false,
+                    OptimizerType optimizer = OptimizerType());
 
   /**
    * Predict the class labels for the provided feature points. The function
    * calculates the probabilities for every class, given a data point. It then
    * chooses the class which has the highest probability among all.
    *
+   * This method is deprecated and will be removed in mlpack 3.0.0. You should
+   * use Classify() instead.
+   *
    * @param testData Matrix of data points for which predictions are to be made.
    * @param predictions Vector to store the predictions in.
    */
-  void Predict(const arma::mat& testData, arma::Row<size_t>& predictions) const;
+  mlpack_deprecated void Predict(const arma::mat& testData,
+                                 arma::Row<size_t>& predictions) const;
+
+  /**
+   * Classify the given points, returning the predicted labels for each point.
+   * The function calculates the probabilities for every class, given a data
+   * point. It then chooses the class which has the highest probability among
+   * all.
+   *
+   * @param dataset Set of points to classify.
+   * @param labels Predicted labels for each point.
+   */
+  void Classify(const arma::mat& dataset, arma::Row<size_t>& labels) const;
+
+  /**
+   * Classify the given point. The predicted class label is returned.
+   * The function calculates the probabilites for every class, given the point.
+   * It then chooses the class which has the highest probability among all.
+   *
+   * @param point Point to be classified.
+   * @return Predicted class label of the point.
+   */
+  template<typename VecType>
+  size_t Classify(const VecType& point) const;
+
+  /**
+   * Classify the given points, returning class probabilities and predicted
+   * class label for each point.
+   * The function calculates the probabilities for every class, given a data
+   * point. It then chooses the class which has the highest probability among
+   * all.
+   *
+   * @param dataset Matrix of data points to be classified.
+   * @param labels Predicted labels for each point.
+   * @param probabilities Class probabilities for each point.
+   */
+  void Classify(const arma::mat& dataset,
+                arma::Row<size_t>& labels,
+                arma::mat& probabilites) const;
+
+  /**
+   * Classify the given points, returning class probabilities for each point.
+   *
+   * @param dataset Matrix of data points to be classified.
+   * @param probabilities Class probabilities for each point.
+   */
+  void Classify(const arma::mat& dataset,
+                arma::mat& probabilities) const;
 
   /**
    * Computes accuracy of the learned model given the feature data and the
@@ -130,24 +170,20 @@ class SoftmaxRegression
                          const arma::Row<size_t>& labels) const;
 
   /**
-   * Train the softmax regression model with the given optimizer.
-   * The optimizer should hold an instantiated
-   * SoftmaxRegressionFunction object for the function to operate upon. This
-   * option should be preferred when the optimizer options are to be changed.
-   * @param optimizer Instantiated optimizer with instantiated error function.
-   * @return Objective value of the final point.
-   */
-  double Train(OptimizerType<SoftmaxRegressionFunction>& optimizer);
-
-  /**
    * Train the softmax regression with the given training data.
+   *
+   * @tparam OptimizerType Desired optimizer type.
    * @param data Input data with each column as one example.
    * @param labels Labels associated with the feature data.
    * @param numClasses Number of classes for classification.
+   * @param optimizer Desired optimizer.
    * @return Objective value of the final point.
    */
-  double Train(const arma::mat &data, const arma::Row<size_t>& labels,
-               const size_t numClasses);
+  template<typename OptimizerType = mlpack::optimization::L_BFGS>
+  double Train(const arma::mat& data,
+               const arma::Row<size_t>& labels,
+               const size_t numClasses,
+               OptimizerType optimizer = OptimizerType());
 
   //! Sets the number of classes.
   size_t& NumClasses() { return numClasses; }

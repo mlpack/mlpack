@@ -54,14 +54,10 @@ namespace svd {
  * rSVD.Apply(data, rank, u, v);
  * @endcode
  */
-
-template<
-  template<typename> class OptimizerType = mlpack::optimization::SGD
->
+template<typename OptimizerType = mlpack::optimization::StandardSGD>
 class RegularizedSVD
 {
  public:
-
   /**
    * Constructor for Regularized SVD. Obtains the user and item matrices after
    * training on the passed data. The constructor initiates an object of class

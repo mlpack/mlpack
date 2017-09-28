@@ -51,7 +51,7 @@ template <
 >
 class MaxPooling
 {
-public:
+ public:
   //! Create the MaxPooling object.
   MaxPooling();
 
@@ -138,10 +138,9 @@ public:
    * Serialize the layer
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-
  /**
    * Apply pooling to the input and store the results.
    *

@@ -12,24 +12,24 @@
 #ifndef MLPACK_CORE_OPTIMIZERS_GRADIENT_DESCENT_GRADIENT_DESCENT_HPP
 #define MLPACK_CORE_OPTIMIZERS_GRADIENT_DESCENT_GRADIENT_DESCENT_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <mlpack/core.hpp>
 
 namespace mlpack {
 namespace optimization {
 
 /**
- * Gradient Descent is a technique to minimize a function. To find a local 
- * minimum of a function using gradient descent, one takes steps proportional 
- * to the negative of the gradient of the function at the current point, 
+ * Gradient Descent is a technique to minimize a function. To find a local
+ * minimum of a function using gradient descent, one takes steps proportional
+ * to the negative of the gradient of the function at the current point,
  * producing the following update scheme:
  *
  * \f[
  * A_{j + 1} = A_j + \alpha \nabla F(A)
  * \f]
  *
- * where \f$ \alpha \f$ is a parameter which specifies the step size. \f$ F \f$ 
+ * where \f$ \alpha \f$ is a parameter which specifies the step size. \f$ F \f$
  * is the function being optimized. The algorithm continues until \f$ j
- * \f$ reaches the maximum number of iterations---or when an update produces 
+ * \f$ reaches the maximum number of iterations---or when an update produces
  * an improvement within a certain tolerance \f$ \epsilon \f$.  That is,
  *
  * \f[
@@ -45,18 +45,14 @@ namespace optimization {
  *   double Evaluate(const arma::mat& coordinates);
  *   void Gradient(const arma::mat& coordinates,
  *                 arma::mat& gradient);
- *
- * @tparam FunctionType Decomposable objective function type to be
- *     minimized.
  */
-template<typename FunctionType>
 class GradientDescent
 {
  public:
   /**
-   * Construct the Gradient Descent optimizer with the given function and 
-   * parameters.  The defaults here are not necessarily good for the given 
-   * problem, so it is suggested that the values used be tailored to the task 
+   * Construct the Gradient Descent optimizer with the given function and
+   * parameters.  The defaults here are not necessarily good for the given
+   * problem, so it is suggested that the values used be tailored to the task
    * at hand.
    *
    * @param function Function to be optimized (minimized).
@@ -65,25 +61,43 @@ class GradientDescent
    *     limit).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    */
-  GradientDescent(FunctionType& function,
-      const double stepSize = 0.01,
-      const size_t maxIterations = 100000,
-      const double tolerance = 1e-5);
+  GradientDescent(const double stepSize = 0.01,
+                  const size_t maxIterations = 100000,
+                  const double tolerance = 1e-5);
 
   /**
-   * Optimize the given function using gradient descent.  The given starting 
-   * point will be modified to store the finishing point of the algorithm, and 
+   * Optimize the given function using gradient descent.  The given starting
+   * point will be modified to store the finishing point of the algorithm, and
    * the final objective value is returned.
    *
+   * @tparam FunctionType Type of the function to optimize.
+   * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
-  double Optimize(arma::mat& iterate);
+  template<typename FunctionType>
+  double Optimize(FunctionType& function, arma::mat& iterate);
 
-  //! Get the instantiated function to be optimized.
-  const FunctionType& Function() const { return function; }
-  //! Modify the instantiated function.
-  FunctionType& Function() { return function; }
+  /**
+   * Assert all dimensions are numeric and optimize the given function using
+   * gradient descent. The given starting point will be modified to store the
+   * finishing point of the algorithm, and the final objective value is
+   * returned.
+   *
+   * This overload is intended to be used primarily by the hyper-parameter
+   * tuning module.
+   *
+   * @tparam FunctionType Type of the function to optimize.
+   * @param function Function to optimize.
+   * @param iterate Starting point (will be modified).
+   * @param datasetInfo Type information for each dimension of the dataset.
+   * @return Objective value of the final point.
+   */
+  template<typename FunctionType>
+  double Optimize(
+      FunctionType& function,
+      arma::mat& iterate,
+      data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo);
 
   //! Get the step size.
   double StepSize() const { return stepSize; }
@@ -101,9 +115,6 @@ class GradientDescent
   double& Tolerance() { return tolerance; }
 
  private:
-  //! The instantiated function.
-  FunctionType& function;
-
   //! The step size for each example.
   double stepSize;
 
@@ -117,7 +128,6 @@ class GradientDescent
 } // namespace optimization
 } // namespace mlpack
 
-// Include implementation.
 #include "gradient_descent_impl.hpp"
 
 #endif

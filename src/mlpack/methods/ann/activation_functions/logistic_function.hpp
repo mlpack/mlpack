@@ -28,7 +28,7 @@ namespace ann /** Artificial Neural Network. */ {
  */
 class LogisticFunction
 {
-  public:
+ public:
   /**
    * Computes the logistic function.
    *
@@ -36,7 +36,7 @@ class LogisticFunction
    * @return f(x).
    */
   template<typename eT>
-  static double fn(const eT x)
+  static double Fn(const eT x)
   {
     if (x < arma::Datum<eT>::log_max)
     {
@@ -56,7 +56,7 @@ class LogisticFunction
    * @param y The resulting output activation.
    */
   template<typename InputVecType, typename OutputVecType>
-  static void fn(const InputVecType& x, OutputVecType& y)
+  static void Fn(const InputVecType& x, OutputVecType& y)
   {
     y = (1.0 / (1 + arma::exp(-x)));
   }
@@ -67,7 +67,7 @@ class LogisticFunction
    * @param x Input data.
    * @return f'(x)
    */
-  static double deriv(const double y)
+  static double Deriv(const double y)
   {
     return y * (1.0 - y);
   }
@@ -79,7 +79,7 @@ class LogisticFunction
    * @param x The resulting derivatives.
    */
   template<typename InputVecType, typename OutputVecType>
-  static void deriv(const InputVecType& y, OutputVecType& x)
+  static void Deriv(const InputVecType& y, OutputVecType& x)
   {
     x = y % (1.0 - y);
   }
@@ -90,7 +90,7 @@ class LogisticFunction
    * @param y Input data.
    * @return f^{-1}(y)
    */
-  static double inv(const double y)
+  static double Inv(const double y)
   {
     return arma::trunc_log(y / (1 - y));
   }
@@ -102,7 +102,7 @@ class LogisticFunction
    * @return  x The resulting inverse of the input data.
    */
   template<typename InputVecType, typename OutputVecType>
-  static void inv(const InputVecType& y, OutputVecType& x)
+  static void Inv(const InputVecType& y, OutputVecType& x)
   {
     x = arma::trunc_log(y / (1 - y));
   }

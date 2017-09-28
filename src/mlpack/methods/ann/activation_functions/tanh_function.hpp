@@ -28,14 +28,14 @@ namespace ann /** Artificial Neural Network. */ {
  */
 class TanhFunction
 {
-  public:
+ public:
   /**
    * Computes the tanh function.
    *
    * @param x Input data.
    * @return f(x).
    */
-  static double fn(const double x)
+  static double Fn(const double x)
   {
     return std::tanh(x);
   }
@@ -47,7 +47,7 @@ class TanhFunction
    * @param y The resulting output activation.
    */
   template<typename InputVecType, typename OutputVecType>
-  static void fn(const InputVecType& x, OutputVecType& y)
+  static void Fn(const InputVecType& x, OutputVecType& y)
   {
     y = arma::tanh(x);
   }
@@ -58,7 +58,7 @@ class TanhFunction
    * @param y Input data.
    * @return f'(x)
    */
-  static double deriv(const double y)
+  static double Deriv(const double y)
   {
     return 1 - std::pow(y, 2);
   }
@@ -70,7 +70,7 @@ class TanhFunction
    * @param x The resulting derivatives.
    */
   template<typename InputVecType, typename OutputVecType>
-  static void deriv(const InputVecType& y, OutputVecType& x)
+  static void Deriv(const InputVecType& y, OutputVecType& x)
   {
     x = 1 - arma::pow(y, 2);
   }
@@ -81,7 +81,7 @@ class TanhFunction
    * @param y Input data.
    * @return f^{-1}(x)
    */
-  static double inv(const double y)
+  static double Inv(const double y)
   {
     return std::atanh(y);
   }
@@ -93,7 +93,7 @@ class TanhFunction
    * @param x The resulting inverse of the input data.
    */
   template<typename InputVecType, typename OutputVecType>
-  static void inv(const InputVecType& y, OutputVecType& x)
+  static void Inv(const InputVecType& y, OutputVecType& x)
   {
     x = arma::atanh(y);
   }

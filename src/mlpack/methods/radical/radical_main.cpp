@@ -12,13 +12,26 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/math/random.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 #include "radical.hpp"
 
 PROGRAM_INFO("RADICAL", "An implementation of RADICAL, a method for independent"
     "component analysis (ICA).  Assuming that we have an input matrix X, the"
     "goal is to find a square unmixing matrix W such that Y = W * X and the "
     "dimensions of Y are independent components.  If the algorithm is running"
-    "particularly slowly, try reducing the number of replicates.");
+    "particularly slowly, try reducing the number of replicates."
+    "\n\n"
+    "The input matrix to perform ICA on should be specified with the " +
+    PRINT_PARAM_STRING("input") + " parameter.  The output matrix Y may be "
+    "saved with the " + PRINT_PARAM_STRING("output_ic") + " output parameter, "
+    "and the output unmixing matrix W may be saved with the " +
+    PRINT_PARAM_STRING("output_unmixing") + " output parameter."
+    "\n\n"
+    "For example, to perform ICA on the matrix " + PRINT_DATASET("X") + " with "
+    "40 replicates, saving the independent components to " +
+    PRINT_DATASET("ic") + ", the following command may be used: "
+    "\n\n" +
+    PRINT_CALL("radical", "input", "X", "replicates", 40, "output_ic", "ic"));
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset for ICA.", "i");
 
@@ -43,11 +56,8 @@ using namespace mlpack::math;
 using namespace std;
 using namespace arma;
 
-int main(int argc, char* argv[])
+void mlpackMain()
 {
-  // Handle parameters.
-  CLI::ParseCommandLine(argc, argv);
-
   // Set random seed.
   if (CLI::GetParam<int>("seed") != 0)
     RandomSeed((size_t) CLI::GetParam<int>("seed"));

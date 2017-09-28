@@ -36,6 +36,7 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 # The code to compute the rank-approximate neighbor for the given query and
 # reference sets.
 add_cli_executable(krann)
+add_python_binding(krann)
 
 if (BUILD_CLI_EXECUTABLES)
   # Compatibility: retain mlpack_allkrann until mlpack 3.0.0.
@@ -45,7 +46,9 @@ if (BUILD_CLI_EXECUTABLES)
   add_custom_command(TARGET mlpack_krann POST_BUILD
       COMMAND ${CMAKE_COMMAND} -E copy
       $<TARGET_FILE:mlpack_krann>
-      $<TARGET_FILE_DIR:mlpack_krann>/mlpack_allkrann${kfn_ext}
+      $<TARGET_FILE_DIR:mlpack_krann>/mlpack_allkrann${krann_ext}
   )
-endif ()
 
+  install(PROGRAMS $<TARGET_FILE_DIR:mlpack_kfn>/mlpack_allkrann${krann_ext}
+      DESTINATION bin)
+endif ()

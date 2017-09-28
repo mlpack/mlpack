@@ -453,9 +453,6 @@ BOOST_AUTO_TEST_CASE(RefinedStartTest)
 }
 
 #ifdef ARMA_HAS_SPMAT
-// Can't do this test on Armadillo 3.4; var(SpBase) is not implemented.
-#if !((ARMA_VERSION_MAJOR == 3) && (ARMA_VERSION_MINOR == 4))
-
 /**
  * Make sure sparse k-means works okay.
  */
@@ -500,7 +497,6 @@ BOOST_AUTO_TEST_CASE(SparseKMeansTest)
   BOOST_REQUIRE_EQUAL(assignments[11], clusterTwo);
 }
 
-#endif // Exclude Armadillo 3.4.
 #endif // ARMA_HAS_SPMAT
 
 BOOST_AUTO_TEST_CASE(ElkanTest)
@@ -612,7 +608,7 @@ BOOST_AUTO_TEST_CASE(DTNNTest)
 
   for (size_t t = 0; t < trials; ++t)
   {
-    arma::mat dataset(10, 1000);
+    arma::mat dataset(10, 300);
     dataset.randu();
 
     const size_t k = 5 * (t + 1);
@@ -644,7 +640,7 @@ BOOST_AUTO_TEST_CASE(DTNNCoverTreeTest)
 
   for (size_t t = 0; t < trials; ++t)
   {
-    arma::mat dataset(10, 1000);
+    arma::mat dataset(10, 300);
     dataset.randu();
 
     const size_t k = 5;

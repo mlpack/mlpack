@@ -16,7 +16,7 @@
 namespace mlpack {
 namespace svd {
 
-template<template<typename> class OptimizerType>
+template<typename OptimizerType>
 RegularizedSVD<OptimizerType>::RegularizedSVD(const size_t iterations,
                                               const double alpha,
                                               const double lambda) :
@@ -27,20 +27,19 @@ RegularizedSVD<OptimizerType>::RegularizedSVD(const size_t iterations,
   // Nothing to do.
 }
 
-template<template<typename> class OptimizerType>
+template<typename OptimizerType>
 void RegularizedSVD<OptimizerType>::Apply(const arma::mat& data,
                                           const size_t rank,
                                           arma::mat& u,
                                           arma::mat& v)
 {
   // Make the optimizer object using a RegularizedSVDFunction object.
-  RegularizedSVDFunction rSVDFunc(data, rank, lambda);
-  mlpack::optimization::SGD<RegularizedSVDFunction> optimizer(rSVDFunc, alpha,
-      iterations * data.n_cols);
+  RegularizedSVDFunction<arma::mat> rSVDFunc(data, rank, lambda);
+  mlpack::optimization::StandardSGD optimizer(alpha, iterations * data.n_cols);
 
   // Get optimized parameters.
   arma::mat parameters = rSVDFunc.GetInitialPoint();
-  optimizer.Optimize(parameters);
+  optimizer.Optimize(rSVDFunc, parameters);
 
   // Constants for extracting user and item matrices.
   const size_t numUsers = max(data.row(0)) + 1;

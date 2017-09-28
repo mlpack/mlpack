@@ -28,7 +28,9 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # Add mlpack_knn and mlpack_kfn executables.
 add_cli_executable(knn)
+add_python_binding(knn)
 add_cli_executable(kfn)
+add_python_binding(kfn)
 
 if (BUILD_CLI_EXECUTABLES)
   # -- mlpack_knn/mlpack_kfn compatibility start --
@@ -49,4 +51,9 @@ if (BUILD_CLI_EXECUTABLES)
       COMMAND ${CMAKE_COMMAND} -E copy
       $<TARGET_FILE:mlpack_kfn> $<TARGET_FILE_DIR:mlpack_kfn>/mlpack_allkfn${kfn_ext}
   )
+
+  install(PROGRAMS $<TARGET_FILE_DIR:mlpack_kfn>/mlpack_allkfn${kfn_ext}
+      DESTINATION bin)
+  install(PROGRAMS $<TARGET_FILE_DIR:mlpack_knn>/mlpack_allknn${knn_ext}
+      DESTINATION bin)
 endif ()

@@ -23,18 +23,19 @@ using namespace mlpack::regression;
 
 BOOST_AUTO_TEST_SUITE(LARSTest);
 
-void GenerateProblem(arma::mat& X, arma::vec& y, size_t nPoints, size_t nDims)
+void GenerateProblem(
+    arma::mat& X, arma::rowvec& y, size_t nPoints, size_t nDims)
 {
   X = arma::randn(nDims, nPoints);
   arma::vec beta = arma::randn(nDims, 1);
-  y = trans(X) * beta;
+  y = beta.t() * X;
 }
 
 void LARSVerifyCorrectness(arma::vec beta, arma::vec errCorr, double lambda)
 {
   size_t nDims = beta.n_elem;
   const double tol = 1e-10;
-  for(size_t j = 0; j < nDims; j++)
+  for (size_t j = 0; j < nDims; j++)
   {
     if (beta(j) == 0)
     {
@@ -57,14 +58,14 @@ void LARSVerifyCorrectness(arma::vec beta, arma::vec errCorr, double lambda)
 void LassoTest(size_t nPoints, size_t nDims, bool elasticNet, bool useCholesky)
 {
   arma::mat X;
-  arma::vec y;
+  arma::rowvec y;
 
   for (size_t i = 0; i < 100; i++)
   {
     GenerateProblem(X, y, nPoints, nDims);
 
     // Armadillo's median is broken, so...
-    arma::vec sortedAbsCorr = sort(abs(X * y));
+    arma::vec sortedAbsCorr = sort(abs(X * y.t()));
     double lambda1 = sortedAbsCorr(nDims / 2);
     double lambda2;
     if (elasticNet)
@@ -78,7 +79,7 @@ void LassoTest(size_t nPoints, size_t nDims, bool elasticNet, bool useCholesky)
     lars.Train(X, y, betaOpt);
 
     arma::vec errCorr = (X * trans(X) + lambda2 *
-        arma::eye(nDims, nDims)) * betaOpt - X * y;
+        arma::eye(nDims, nDims)) * betaOpt - X * y.t();
 
     LARSVerifyCorrectness(betaOpt, errCorr, lambda1);
   }
@@ -116,7 +117,7 @@ BOOST_AUTO_TEST_CASE(CholeskySingularityTest)
   data::Load("lars_dependent_x.csv", X);
   data::Load("lars_dependent_y.csv", Y);
 
-  arma::vec y = Y.row(0).t();
+  arma::rowvec y = Y.row(0);
 
   // Test for a couple values of lambda1.
   for (double lambda1 = 0.0; lambda1 < 1.0; lambda1 += 0.1)
@@ -125,7 +126,7 @@ BOOST_AUTO_TEST_CASE(CholeskySingularityTest)
     arma::vec betaOpt;
     lars.Train(X, y, betaOpt);
 
-    arma::vec errCorr = (X * X.t()) * betaOpt - X * y;
+    arma::vec errCorr = (X * X.t()) * betaOpt - X * y.t();
 
     LARSVerifyCorrectness(betaOpt, errCorr, lambda1);
   }
@@ -140,7 +141,7 @@ BOOST_AUTO_TEST_CASE(NoCholeskySingularityTest)
   data::Load("lars_dependent_x.csv", X);
   data::Load("lars_dependent_y.csv", Y);
 
-  arma::vec y = Y.row(0).t();
+  arma::rowvec y = Y.row(0);
 
   // Test for a couple values of lambda1.
   for (double lambda1 = 0.0; lambda1 < 1.0; lambda1 += 0.1)
@@ -149,7 +150,7 @@ BOOST_AUTO_TEST_CASE(NoCholeskySingularityTest)
     arma::vec betaOpt;
     lars.Train(X, y, betaOpt);
 
-    arma::vec errCorr = (X * X.t()) * betaOpt - X * y;
+    arma::vec errCorr = (X * X.t()) * betaOpt - X * y.t();
 
     // #373: this test fails on i386 only sometimes.
 //    LARSVerifyCorrectness(betaOpt, errCorr, lambda1);
@@ -165,7 +166,7 @@ BOOST_AUTO_TEST_CASE(PredictTest)
     bool useCholesky = bool(i);
 
     arma::mat X;
-    arma::vec y;
+    arma::rowvec y;
 
     GenerateProblem(X, y, 1000, 100);
 
@@ -180,9 +181,9 @@ BOOST_AUTO_TEST_CASE(PredictTest)
         // Calculate what the actual error should be with these regression
         // parameters.
         arma::vec betaOptPred = (X * X.t()) * betaOpt;
-        arma::vec predictions;
+        arma::rowvec predictions;
         lars.Predict(X, predictions);
-        arma::vec adjPred = X * predictions;
+        arma::vec adjPred = X * predictions.t();
 
         BOOST_REQUIRE_EQUAL(predictions.n_elem, 1000);
         for (size_t i = 0; i < betaOptPred.n_elem; ++i)
@@ -200,7 +201,7 @@ BOOST_AUTO_TEST_CASE(PredictTest)
 BOOST_AUTO_TEST_CASE(PredictRowMajorTest)
 {
   arma::mat X;
-  arma::vec y;
+  arma::rowvec y;
   GenerateProblem(X, y, 1000, 100);
 
   // Set lambdas to 0.
@@ -211,7 +212,7 @@ BOOST_AUTO_TEST_CASE(PredictRowMajorTest)
 
   // Get both row-major and column-major predictions.  Make sure they are the
   // same.
-  arma::vec rowMajorPred, colMajorPred;
+  arma::rowvec rowMajorPred, colMajorPred;
 
   lars.Predict(X, colMajorPred);
   lars.Predict(X.t(), rowMajorPred, true);
@@ -232,11 +233,11 @@ BOOST_AUTO_TEST_CASE(PredictRowMajorTest)
 BOOST_AUTO_TEST_CASE(RetrainTest)
 {
   arma::mat origX;
-  arma::vec origY;
+  arma::rowvec origY;
   GenerateProblem(origX, origY, 1000, 50);
 
   arma::mat newX;
-  arma::vec newY;
+  arma::rowvec newY;
   GenerateProblem(newX, newY, 750, 75);
 
   LARS lars(false, 0.1, 0.1);
@@ -247,7 +248,7 @@ BOOST_AUTO_TEST_CASE(RetrainTest)
   lars.Train(newX, newY, betaOpt);
 
   arma::vec errCorr = (newX * trans(newX) + 0.1 *
-        arma::eye(75, 75)) * betaOpt - newX * newY;
+        arma::eye(75, 75)) * betaOpt - newX * newY.t();
 
   LARSVerifyCorrectness(betaOpt, errCorr, 0.1);
 }
@@ -259,11 +260,11 @@ BOOST_AUTO_TEST_CASE(RetrainTest)
 BOOST_AUTO_TEST_CASE(RetrainCholeskyTest)
 {
   arma::mat origX;
-  arma::vec origY;
+  arma::rowvec origY;
   GenerateProblem(origX, origY, 1000, 50);
 
   arma::mat newX;
-  arma::vec newY;
+  arma::rowvec newY;
   GenerateProblem(newX, newY, 750, 75);
 
   LARS lars(true, 0.1, 0.1);
@@ -274,9 +275,81 @@ BOOST_AUTO_TEST_CASE(RetrainCholeskyTest)
   lars.Train(newX, newY, betaOpt);
 
   arma::vec errCorr = (newX * trans(newX) + 0.1 *
-        arma::eye(75, 75)) * betaOpt - newX * newY;
+        arma::eye(75, 75)) * betaOpt - newX * newY.t();
 
   LARSVerifyCorrectness(betaOpt, errCorr, 0.1);
+}
+
+/**
+ * Make sure that we get correct solution coefficients when running training
+ * and accessing solution coefficients separately.
+ */
+BOOST_AUTO_TEST_CASE(TrainingAndAccessingBetaTest)
+{
+  arma::mat X;
+  arma::rowvec y;
+
+  GenerateProblem(X, y, 1000, 100);
+
+  LARS lars1;
+  arma::vec beta;
+  lars1.Train(X, y, beta);
+
+  LARS lars2;
+  lars2.Train(X, y);
+
+  BOOST_REQUIRE_EQUAL(beta.n_elem, lars2.Beta().n_elem);
+  for (size_t i = 0; i < beta.n_elem; ++i)
+    BOOST_REQUIRE_CLOSE(beta[i], lars2.Beta()[i], 1e-5);
+}
+
+/**
+ * Make sure that we learn the same when running training separately and through
+ * constructor. Test it with default parameters.
+ */
+BOOST_AUTO_TEST_CASE(TrainingConstructorWithDefaultsTest)
+{
+  arma::mat X;
+  arma::rowvec y;
+
+  GenerateProblem(X, y, 1000, 100);
+
+  LARS lars1;
+  arma::vec beta;
+  lars1.Train(X, y, beta);
+
+  LARS lars2(X, y);
+
+  BOOST_REQUIRE_EQUAL(beta.n_elem, lars2.Beta().n_elem);
+  for (size_t i = 0; i < beta.n_elem; ++i)
+    BOOST_REQUIRE_CLOSE(beta[i], lars2.Beta()[i], 1e-5);
+}
+
+/**
+ * Make sure that we learn the same when running training separately and through
+ * constructor. Test it with non default parameters.
+ */
+BOOST_AUTO_TEST_CASE(TrainingConstructorWithNonDefaultsTest)
+{
+  arma::mat X;
+  arma::rowvec y;
+
+  GenerateProblem(X, y, 1000, 100);
+
+  bool transposeData = true;
+  bool useCholesky = true;
+  double lambda1 = 0.2;
+  double lambda2 = 0.4;
+
+  LARS lars1(useCholesky, lambda1, lambda2);
+  arma::vec beta;
+  lars1.Train(X, y, beta);
+
+  LARS lars2(X, y, transposeData, useCholesky, lambda1, lambda2);
+
+  BOOST_REQUIRE_EQUAL(beta.n_elem, lars2.Beta().n_elem);
+  for (size_t i = 0; i < beta.n_elem; ++i)
+    BOOST_REQUIRE_CLOSE(beta[i], lars2.Beta()[i], 1e-5);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

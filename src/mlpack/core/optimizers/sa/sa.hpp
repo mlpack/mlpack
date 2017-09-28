@@ -41,8 +41,8 @@ namespace optimization {
  * The system is considered "frozen" when its score fails to change more then
  * tolerance for maxToleranceSweep consecutive sweeps.
  *
- * For SA to work, the FunctionType parameter must implement the following
- * two methods:
+ * For SA to work, the FunctionType template class, used by the Optimize()
+ * method, must implement the following two methods:
  *
  *   double Evaluate(const arma::mat& coordinates);
  *   arma::mat& GetInitialPoint();
@@ -55,34 +55,29 @@ namespace optimization {
  * which returns the next temperature given current temperature and the value
  * of the function being optimized.
  *
- * @tparam FunctionType objective function type to be minimized.
  * @tparam CoolingScheduleType type for cooling schedule
  */
-template<
-    typename FunctionType,
-    typename CoolingScheduleType = ExponentialSchedule
->
+template<typename CoolingScheduleType = ExponentialSchedule>
 class SA
 {
  public:
   /**
-   * Construct the SA optimizer with the given function and parameters.
+   * Construct the SA optimizer with the given parameters.
    *
-   * @param function Function to be minimized.
    * @param coolingSchedule Instantiated cooling schedule.
-   * @param maxIterations Maximum number of iterations allowed (0 indicates no limit).
+   * @param maxIterations Maximum number of iterations allowed
+   *    (0 indicates no limit).
    * @param initT Initial temperature.
    * @param initMoves Number of initial iterations without changing temperature.
    * @param moveCtrlSweep Sweeps per feedback move control.
    * @param tolerance Tolerance to consider system frozen.
    * @param maxToleranceSweep Maximum sweeps below tolerance to consider system
-   *      frozen.
+   *    frozen.
    * @param maxMoveCoef Maximum move size.
    * @param initMoveCoef Initial move size.
    * @param gain Proportional control in feedback move control.
    */
-  SA(FunctionType& function,
-     CoolingScheduleType& coolingSchedule,
+  SA(CoolingScheduleType& coolingSchedule,
      const size_t maxIterations = 1000000,
      const double initT = 10000.,
      const size_t initMoves = 1000,
@@ -98,15 +93,13 @@ class SA
    * point will be modified to store the finishing point of the algorithm, and
    * the final objective value is returned.
    *
+   * @tparam FunctionType Type of function to optimize.
+   * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
-  double Optimize(arma::mat& iterate);
-
-  //! Get the instantiated function to be optimized.
-  const FunctionType& Function() const { return function; }
-  //! Modify the instantiated function.
-  FunctionType& Function() { return function; }
+  template<typename FunctionType>
+  double Optimize(FunctionType& function, arma::mat& iterate);
 
   //! Get the temperature.
   double Temperature() const { return temperature; }
@@ -143,19 +136,7 @@ class SA
   //! Modify the maximum number of iterations.
   size_t& MaxIterations() { return maxIterations; }
 
-  //! Get the maximum move size of each parameter.
-  arma::mat MaxMove() const { return maxMove; }
-  //! Modify the maximum move size of each parameter.
-  arma::mat& MaxMove() { return maxMove; }
-
-  //! Get move size of each parameter.
-  arma::mat MoveSize() const { return moveSize; }
-  //! Modify move size of each parameter.
-  arma::mat& MoveSize() { return moveSize; }
-
  private:
-  //! The function to be optimized.
-  FunctionType& function;
   //! The cooling schedule being used.
   CoolingScheduleType& coolingSchedule;
   //! The maximum number of iterations.
@@ -170,13 +151,12 @@ class SA
   double tolerance;
   //! Number of sweeps in tolerance before system is considered frozen.
   size_t maxToleranceSweep;
+  //! Maximum move.
+  double maxMoveCoef;
+  //! Initial move size.
+  double initMoveCoef;
   //! Proportional control in feedback move control.
   double gain;
-
-  //! Maximum move size of each parameter.
-  arma::mat maxMove;
-  //! Move size of each parameter.
-  arma::mat moveSize;
 
   /**
    * GenerateMove proposes a move on element iterate(idx), and determines if
@@ -188,13 +168,17 @@ class SA
    *
    * @param iterate Current optimization position.
    * @param accept Matrix representing which parameters have had accepted moves.
+   * @param moveSize Strides for a move.
    * @param energy Current energy of the system.
    * @param idx Current parameter to modify.
    * @param sweepCounter Current counter representing how many sweeps have been
    *      completed.
    */
-  void GenerateMove(arma::mat& iterate,
+  template<typename FunctionType>
+  void GenerateMove(FunctionType& function,
+                    arma::mat& iterate,
                     arma::mat& accept,
+                    arma::mat& moveSize,
                     double& energy,
                     size_t& idx,
                     size_t& sweepCounter);
@@ -217,7 +201,7 @@ class SA
    * @param nMoves Number of moves since last call.
    * @param accept Matrix representing which parameters have had accepted moves.
    */
-  void MoveControl(const size_t nMoves, arma::mat& accept);
+  void MoveControl(const size_t nMoves, arma::mat& accept, arma::mat& moveSize);
 };
 
 } // namespace optimization

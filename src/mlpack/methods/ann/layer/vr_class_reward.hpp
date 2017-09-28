@@ -107,14 +107,14 @@ class VRClassReward
    * Serialize the layer
    */
   template<typename Archive>
-  void Serialize(Archive& /* ar */, const unsigned int /* version */);
+  void serialize(Archive& /* ar */, const unsigned int /* version */);
 
  private:
   //! Locally-stored value to scale the reward.
-  const double scale;
+  double scale;
 
   //! If true take the average over all batches.
-  const bool sizeAverage;
+  bool sizeAverage;
 
   //! Locally stored reward parameter.
   double reward;

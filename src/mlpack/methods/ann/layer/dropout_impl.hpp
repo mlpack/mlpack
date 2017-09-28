@@ -24,6 +24,7 @@ Dropout<InputDataType, OutputDataType>::Dropout(
     const double ratio, const bool rescale) :
     ratio(ratio),
     scale(1.0 / (1.0 - ratio)),
+    deterministic(true),
     rescale(rescale)
 {
   // Nothing to do here.
@@ -70,12 +71,15 @@ void Dropout<InputDataType, OutputDataType>::Backward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void Dropout<InputDataType, OutputDataType>::Serialize(
+void Dropout<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  ar & data::CreateNVP(ratio, "ratio");
-  ar & data::CreateNVP(rescale, "rescale");
+  ar & BOOST_SERIALIZATION_NVP(ratio);
+  ar & BOOST_SERIALIZATION_NVP(rescale);
+
+  // Reset scale.
+  scale = 1.0 / (1.0 - ratio);
 }
 
 } // namespace ann

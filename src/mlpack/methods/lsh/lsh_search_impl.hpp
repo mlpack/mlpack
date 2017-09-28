@@ -298,7 +298,7 @@ void LSHSearch<SortPolicy>::Train(const arma::mat& referenceSet,
     // For a single table, let the 'numProj' projections be denoted by 'proj_i'
     // and the corresponding offset be 'offset_i'.  Then the key of a single
     // point is obtained as:
-    // key = { floor( (<proj_i, point> + offset_i) / 'hashWidth' ) forall i }
+    // key = { floor((<proj_i, point> + offset_i) / 'hashWidth') forall i }
     arma::mat offsetMat = arma::repmat(offsets.unsafe_col(i), 1,
                                        referenceSet.n_cols);
     arma::mat hashMat = projections.slice(i).t() * (referenceSet);
@@ -368,7 +368,6 @@ void LSHSearch<SortPolicy>::Train(const arma::mat& referenceSet,
       const size_t index = bucketRowInHashTable[hashInd];
       if (bucketContentSize[index] < maxSize)
         secondHashTable[index](bucketContentSize[index]++) = j;
-
     } // Loop over all points in the reference set.
   } // Loop over tables.
 
@@ -552,7 +551,6 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
     const size_t T,
     arma::mat& additionalProbingBins) const
 {
-
   // No additional bins requested. Our work is done.
   if (T == 0)
     return;
@@ -626,12 +624,11 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
     // smallest and the second smallest, it's obvious that score(Ae) >
     // score(As). Therefore the second perturbation vector is ALWAYS the vector
     // containing only the second-lowest scoring perturbation.
-
     double minscore2 = scores[0];
     size_t minloc2 = 0;
-    for (size_t s = 0; s < (2 * numProj); ++s) // here we can't start from 1
+    for (size_t s = 0; s < (2 * numProj); ++s) // Here we can't start from 1.
     {
-      if (minscore2 > scores[s] && s != minloc) //second smallest
+      if (minscore2 > scores[s] && s != minloc) // Second smallest.
       {
         minscore2 = scores[s];
         minloc2 = s;
@@ -644,13 +641,11 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
   }
 
   // General case: more than 2 perturbation vectors require use of minheap.
-
   // Sort everything in increasing order.
   arma::uvec sortidx = arma::sort_index(scores);
   scores = scores(sortidx);
   actions = actions(sortidx);
   positions = positions(sortidx);
-
 
   // Theory:
   // A probing sequence is a sequence of T probing bins where a query's
@@ -683,7 +678,7 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
   > minHeap; // our minheap
 
   // Start by adding the lowest scoring set to the minheap.
-  minHeap.push( std::make_pair(PerturbationScore(Ao, scores), 0) );
+  minHeap.push(std::make_pair(PerturbationScore(Ao, scores), 0));
 
   // Loop invariable: after pvec iterations, additionalProbingBins contains pvec
   // valid codes of the lowest-scoring bins (bins most likely to contain
@@ -699,8 +694,9 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
 
       // Shift operation on Ai (replace max with max+1).
       std::vector<bool> As = Ai;
+
+      // Don't add invalid sets.
       if (PerturbationShift(As) && PerturbationValid(As))
-        // Don't add invalid sets.
       {
         perturbationSets.push_back(As); // add shifted set to sets
         minHeap.push(
@@ -710,22 +706,23 @@ void LSHSearch<SortPolicy>::GetAdditionalProbingBins(
 
       // Expand operation on Ai (add max+1 to set).
       std::vector<bool> Ae = Ai;
+
+      // Don't add invalid sets.
       if (PerturbationExpand(Ae) && PerturbationValid(Ae))
-        // Don't add invalid sets.
       {
         perturbationSets.push_back(Ae); // add expanded set to sets
         minHeap.push(
             std::make_pair(PerturbationScore(Ae, scores),
             perturbationSets.size() - 1));
       }
-
-    } while (!PerturbationValid(Ai));//Discard invalid perturbations
+    } while (!PerturbationValid(Ai)); // Discard invalid perturbations
 
     // Found valid perturbation set Ai. Construct perturbation vector from set.
     for (size_t pos = 0; pos < Ai.size(); ++pos)
+    {
       // If Ai[pos] is marked, add action to probing vector.
-      additionalProbingBins(positions(pos), pvec)
-          += Ai[pos] ? actions(pos) : 0;
+      additionalProbingBins(positions(pos), pvec) += Ai[pos] ? actions(pos) : 0;
+    }
   }
 }
 
@@ -756,6 +753,7 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
   arma::mat queryCodesNotFloored(numProj, numTablesToSearch);
   for (size_t i = 0; i < numTablesToSearch; i++)
     queryCodesNotFloored.unsafe_col(i) = projections.slice(i).t() * queryPoint;
+
   queryCodesNotFloored += offsets.cols(0, numTablesToSearch - 1);
   allProjInTables = arma::floor(queryCodesNotFloored / hashWidth);
 
@@ -788,12 +786,11 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
       // the primary hash table).
       hashMat(arma::span(1, T), i) = // Compute code of rows 1:end of column i
         arma::conv_to< arma::Col<size_t> >:: // floor by typecasting to size_t
-        from( secondHashWeights.t() * additionalProbingBins );
+        from(secondHashWeights.t() * additionalProbingBins);
       for (size_t p = 1; p < T + 1; ++p)
         hashMat(p, i) = (hashMat(p, i) % secondHashSize);
     }
   }
-
 
   // Count number of points hashed in the same bucket as the query.
   size_t maxNumPoints = 0;
@@ -836,9 +833,11 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
         size_t tableRow = bucketRowInHashTable[hashInd];
 
         if (tableRow < secondHashSize && bucketContentSize[tableRow] > 0)
+        {
           // Pick the indices in the bucket corresponding to hashInd.
           for (size_t j = 0; j < bucketContentSize[tableRow]; ++j)
             refPointsConsidered[ secondHashTable[tableRow](j) ]++;
+        }
       }
     }
 
@@ -865,9 +864,11 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
         const size_t tableRow = bucketRowInHashTable[hashInd];
 
         if (tableRow < secondHashSize)
-         // Store all secondHashTable points in the candidates set.
-         for (size_t j = 0; j < bucketContentSize[tableRow]; ++j)
-           refPointsConsideredSmall(start++) = secondHashTable[tableRow](j);
+        {
+          // Store all secondHashTable points in the candidates set.
+          for (size_t j = 0; j < bucketContentSize[tableRow]; ++j)
+            refPointsConsideredSmall(start++) = secondHashTable[tableRow](j);
+       }
       }
     }
 
@@ -934,22 +935,11 @@ void LSHSearch<SortPolicy>::Search(const arma::mat& querySet,
   Timer::Start("computing_neighbors");
 
   // Parallelization to process more than one query at a time.
-#ifdef _WIN32
-  // Tiny workaround: Visual Studio only implements OpenMP 2.0, which doesn't
-  // support unsigned loop variables. If we're building for Visual Studio, use
-  // the intmax_t type instead.
   #pragma omp parallel for \
       shared(resultingNeighbors, distances) \
       schedule(dynamic)\
       reduction(+:avgIndicesReturned)
-  for (intmax_t i = 0; i < (intmax_t) querySet.n_cols; ++i)
-#else
-  #pragma omp parallel for \
-      shared(resultingNeighbors, distances) \
-      schedule(dynamic)\
-      reduction(+:avgIndicesReturned)
-  for (size_t i = 0; i < querySet.n_cols; ++i)
-#endif
+  for (omp_size_t i = 0; i < (omp_size_t) querySet.n_cols; ++i)
   {
     // Go through every query point.
     // Hash every query into every hash table and eventually into the
@@ -1011,22 +1001,11 @@ Search(const size_t k,
   Timer::Start("computing_neighbors");
 
   // Parallelization to process more than one query at a time.
-#ifdef _WIN32
-  // Tiny workaround: Visual Studio only implements OpenMP 2.0, which doesn't
-  // support unsigned loop variables. If we're building for Visual Studio, use
-  // the intmax_t type instead.
   #pragma omp parallel for \
       shared(resultingNeighbors, distances) \
       schedule(dynamic)\
       reduction(+:avgIndicesReturned)
-  for (intmax_t i = 0; i < (intmax_t) referenceSet->n_cols; ++i)
-#else
-  #pragma omp parallel for \
-      shared(resultingNeighbors, distances) \
-      schedule(dynamic)\
-      reduction(+:avgIndicesReturned)
-  for (size_t i = 0; i < referenceSet->n_cols; ++i)
-#endif
+  for (omp_size_t i = 0; i < (omp_size_t) referenceSet->n_cols; ++i)
   {
     // Go through every query point.
     // Hash every query into every hash table and eventually into the
@@ -1146,7 +1125,7 @@ void LSHSearch<SortPolicy>::Serialize(Archive& ar,
       // the value referenceSet->n_cols is seen.
 
       size_t len = 0;
-      for ( ; len < tmpSecondHashTable.n_rows; ++len)
+      for (; len < tmpSecondHashTable.n_rows; ++len)
         if (tmpSecondHashTable(len, i) == referenceSet->n_cols)
           break;
 

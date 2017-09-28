@@ -32,15 +32,15 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersTest)
 {
   // Dummy number of recommendations.
   size_t numRecs = 3;
-  // GroupLens100k.csv dataset has 943 users.
-  size_t numUsers = 943;
+  // GroupLensSmall.csv dataset has 200 users.
+  size_t numUsers = 200;
 
   // Matrix to save recommendations into.
   arma::Mat<size_t> recommendations;
 
   // Load GroupLens data.
   arma::mat dataset;
-  data::Load("GroupLens100k.csv", dataset);
+  data::Load("GroupLensSmall.csv", dataset);
 
   // Make data into sparse matrix.
   arma::sp_mat cleanedData;
@@ -80,7 +80,7 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserTest)
 
   // Load GroupLens data.
   arma::mat dataset;
-  data::Load("GroupLens100k.csv", dataset);
+  data::Load("GroupLensSmall.csv", dataset);
 
   // Make data into sparse matrix.
   arma::sp_mat cleanedData;
@@ -105,7 +105,7 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracyTest)
 {
   // Load the GroupLens dataset; then, we will remove some values from it.
   arma::mat dataset;
-  data::Load("GroupLens100k.csv", dataset);
+  data::Load("GroupLensSmall.csv", dataset);
 
   // Save the columns we've removed.
   arma::mat savedCols(3, 300); // Remove 300 5-star ratings.
@@ -186,11 +186,12 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracyTest)
       ++failures;
   }
 
-  // Make sure the right item showed up in at least 2/3 of the recommendations.
+  // Make sure the right item showed up in at least 1/3 of the recommendations.
   // Random chance (that is, if we selected recommendations randomly) for this
   // GroupLens dataset would give somewhere around a 10% success rate (failures
-  // would be closer to 270).
-  BOOST_REQUIRE_LT(failures, 100);
+  // would be closer to 270).  The failure rate is allowed to be so high because
+  // the dataset used here is pretty small and it is hard to generalize.
+  BOOST_REQUIRE_LT(failures, 200);
 }
 
 // Make sure that Predict() is returning reasonable results.
@@ -198,7 +199,7 @@ BOOST_AUTO_TEST_CASE(CFPredictTest)
 {
   // Load the GroupLens dataset; then, we will remove some values from it.
   arma::mat dataset;
-  data::Load("GroupLens100k.csv", dataset);
+  data::Load("GroupLensSmall.csv", dataset);
 
   // Save the columns we've removed.
   arma::mat savedCols(3, 300); // Remove 300 5-star ratings.
@@ -264,7 +265,7 @@ BOOST_AUTO_TEST_CASE(CFBatchPredictTest)
 {
   // Load the GroupLens dataset; then, we will remove some values from it.
   arma::mat dataset;
-  data::Load("GroupLens100k.csv", dataset);
+  data::Load("GroupLensSmall.csv", dataset);
 
   // Save the columns we've removed.
   arma::mat savedCols(3, 300); // Remove 300 5-star ratings.
@@ -336,7 +337,7 @@ BOOST_AUTO_TEST_CASE(TrainTest)
 
   // Now retrain with data we know about.
   arma::mat dataset;
-  data::Load("GroupLens100k.csv", dataset);
+  data::Load("GroupLensSmall.csv", dataset);
 
   // Save the columns we've removed.
   arma::mat savedCols(3, 300); // Remove 300 5-star ratings.
@@ -406,7 +407,7 @@ BOOST_AUTO_TEST_CASE(EmptyConstructorTrainTest)
 
   // Now retrain with data we know about.
   arma::mat dataset;
-  data::Load("GroupLens100k.csv", dataset);
+  data::Load("GroupLensSmall.csv", dataset);
 
   // Save the columns we've removed.
   arma::mat savedCols(3, 300); // Remove 300 5-star ratings.
@@ -473,7 +474,7 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
 {
   // Load a dataset to train on.
   arma::mat dataset;
-  data::Load("GroupLens100k.csv", dataset);
+  data::Load("GroupLensSmall.csv", dataset);
 
   arma::sp_mat cleanedData;
   CF::CleanData(dataset, cleanedData);

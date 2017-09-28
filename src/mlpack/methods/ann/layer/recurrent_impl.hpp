@@ -24,6 +24,17 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
+template<typename InputDataType, typename OutputDataType>
+Recurrent<InputDataType, OutputDataType>::Recurrent() :
+    rho(0),
+    forwardStep(0),
+    backwardStep(0),
+    gradientStep(0),
+    deterministic(false)
+{
+  // Nothing to do.
+}
+
 template <typename InputDataType, typename OutputDataType>
 template<
     typename StartModuleType,
@@ -146,7 +157,7 @@ void Recurrent<InputDataType, OutputDataType>::Backward(
     boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
         outputParameterVisitor, feedbackModule)), std::move(
         boost::apply_visitor(deltaVisitor, recurrentModule)), std::move(
-        boost::apply_visitor(deltaVisitor, feedbackModule))),feedbackModule);
+        boost::apply_visitor(deltaVisitor, feedbackModule))), feedbackModule);
   }
   else
   {
@@ -199,10 +210,57 @@ void Recurrent<InputDataType, OutputDataType>::Gradient(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void Recurrent<InputDataType, OutputDataType>::Serialize(
+void Recurrent<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & data::CreateNVP(rho, "rho");
+  // Clean up memory, if we are loading.
+  if (Archive::is_loading::value)
+  {
+    // Clear old things, if needed.
+    boost::apply_visitor(DeleteVisitor(), initialModule);
+    boost::apply_visitor(DeleteVisitor(), mergeModule);
+    boost::apply_visitor(DeleteVisitor(), recurrentModule);
+
+    boost::apply_visitor(DeleteVisitor(), startModule);
+    boost::apply_visitor(DeleteVisitor(), inputModule);
+    boost::apply_visitor(DeleteVisitor(), feedbackModule);
+    boost::apply_visitor(DeleteVisitor(), transferModule);
+
+    network.clear();
+  }
+
+  ar & BOOST_SERIALIZATION_NVP(startModule);
+  ar & BOOST_SERIALIZATION_NVP(inputModule);
+  ar & BOOST_SERIALIZATION_NVP(feedbackModule);
+  ar & BOOST_SERIALIZATION_NVP(transferModule);
+  ar & BOOST_SERIALIZATION_NVP(rho);
+
+  // Set up the network.
+  if (Archive::is_loading::value)
+  {
+    initialModule = new Sequential<>();
+    mergeModule = new AddMerge<>();
+    recurrentModule = new Sequential<>(false);
+
+    boost::apply_visitor(AddVisitor(inputModule), initialModule);
+    boost::apply_visitor(AddVisitor(startModule), initialModule);
+    boost::apply_visitor(AddVisitor(transferModule), initialModule);
+
+    boost::apply_visitor(weightSizeVisitor, startModule);
+    boost::apply_visitor(weightSizeVisitor, inputModule);
+    boost::apply_visitor(weightSizeVisitor, feedbackModule);
+    boost::apply_visitor(weightSizeVisitor, transferModule);
+
+    boost::apply_visitor(AddVisitor(inputModule), mergeModule);
+    boost::apply_visitor(AddVisitor(feedbackModule), mergeModule);
+    boost::apply_visitor(AddVisitor(mergeModule), recurrentModule);
+    boost::apply_visitor(AddVisitor(transferModule), recurrentModule);
+
+    network.push_back(initialModule);
+    network.push_back(mergeModule);
+    network.push_back(feedbackModule);
+    network.push_back(recurrentModule);
+  }
 }
 
 } // namespace ann

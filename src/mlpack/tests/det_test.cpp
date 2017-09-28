@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE(TestWithinRange)
 
 BOOST_AUTO_TEST_CASE(TestFindSplit)
 {
-  arma::mat testData(3,5);
+  arma::mat testData(3, 5);
 
   testData << 4 << 5 << 7 << 3 << 5 << arma::endr
            << 5 << 0 << 1 << 7 << 1 << arma::endr
@@ -102,16 +102,17 @@ BOOST_AUTO_TEST_CASE(TestFindSplit)
 
   DTree<arma::mat> testDTree(testData);
 
-  size_t obDim, trueDim;
-  double trueLeftError, obLeftError, trueRightError, obRightError, obSplit, trueSplit;
+  size_t obDim;
+  double obLeftError, obRightError, obSplit;
 
-  trueDim = 2;
-  trueSplit = 5.5;
-  trueLeftError = 2 * log(2.0 / 5.0) - (log(7.0) + log(4.0) + log(4.5));
-  trueRightError = 2 * log(3.0 / 5.0) - (log(7.0) + log(4.0) + log(2.5));
+  size_t trueDim = 2;
+  double trueSplit = 5.5;
+  double trueLeftError = 2 * log(2.0 / 5.0) - (log(7.0) + log(4.0) + log(4.5));
+  double trueRightError = 2 * log(3.0 / 5.0) - (log(7.0) + log(4.0) + log(2.5));
 
   testDTree.logVolume = log(7.0) + log(4.0) + log(7.0);
-  BOOST_REQUIRE(testDTree.FindSplit(testData, obDim, obSplit, obLeftError, obRightError, 1));
+  BOOST_REQUIRE(testDTree.FindSplit(
+      testData, obDim, obSplit, obLeftError, obRightError, 1));
 
   BOOST_REQUIRE(trueDim == obDim);
   BOOST_REQUIRE_CLOSE(trueSplit, obSplit, 1e-10);
@@ -136,7 +137,8 @@ BOOST_AUTO_TEST_CASE(TestSplitData)
   size_t splitDim = 2;
   double trueSplitVal = 5.5;
 
-  size_t splitInd = testDTree.SplitData(testData, splitDim, trueSplitVal, oTest);
+  size_t splitInd = testDTree.SplitData(
+      testData, splitDim, trueSplitVal, oTest);
 
   BOOST_REQUIRE_EQUAL(splitInd, 2); // 2 points on left side.
 
@@ -149,58 +151,62 @@ BOOST_AUTO_TEST_CASE(TestSplitData)
 
 BOOST_AUTO_TEST_CASE(TestSparseFindSplit)
 {
-  arma::mat realData(4,7);
-  
+  arma::mat realData(4, 7);
+
   realData << .0 << 4 << 5 << 7 << 0 << 5 << 0 << arma::endr
            << .0 << 5 << 0 << 0 << 1 << 7 << 1 << arma::endr
            << .0 << 5 << 6 << 7 << 1 << 0 << 8 << arma::endr
            << -1 << 2 << 5 << 0 << 0 << 0 << 0 << arma::endr;
-  
+
   arma::sp_mat testData(realData);
-  
+
   DTree<arma::sp_mat> testDTree(testData);
-  
-  size_t obDim, trueDim;
-  double trueLeftError, obLeftError, trueRightError, obRightError, obSplit, trueSplit;
-  
-  trueDim = 1;
-  trueSplit = .5;
-  trueLeftError = 2 * log(3.0 / 7.0) - (log(7.0) + log(0.5) + log(8.0) + log(6.0));
-  trueRightError = 2 * log(4.0 / 7.0) - (log(7.0) + log(6.5) + log(8.0) + log(6.0));
-  
+
+  size_t obDim;
+  double obLeftError, obRightError, obSplit;
+
+  size_t trueDim = 1;
+  double trueSplit = .5;
+  double trueLeftError = 2 * log(3.0 / 7.0) -
+      (log(7.0) + log(0.5) + log(8.0) + log(6.0));
+  double trueRightError = 2 * log(4.0 / 7.0) -
+      (log(7.0) + log(6.5) + log(8.0) + log(6.0));
+
   testDTree.logVolume = log(7.0) + log(7.0) + log(8.0) + log(6.0);
-  BOOST_REQUIRE(testDTree.FindSplit(testData, obDim, obSplit, obLeftError, obRightError, 1));
-  
+  BOOST_REQUIRE(testDTree.FindSplit(
+      testData, obDim, obSplit, obLeftError, obRightError, 1));
+
   BOOST_REQUIRE(trueDim == obDim);
   BOOST_REQUIRE_CLOSE(trueSplit, obSplit, 1e-10);
-  
+
   BOOST_REQUIRE_CLOSE(trueLeftError, obLeftError, 1e-10);
   BOOST_REQUIRE_CLOSE(trueRightError, obRightError, 1e-10);
 }
 
 BOOST_AUTO_TEST_CASE(TestSparseSplitData)
 {
-  arma::mat realData(4,7);
-  
+  arma::mat realData(4, 7);
+
   realData << .0 << 4 << 5 << 7 << 0 << 5 << 0 << arma::endr
            << .0 << 5 << 0 << 0 << 1 << 7 << 1 << arma::endr
            << .0 << 5 << 6 << 7 << 1 << 0 << 8 << arma::endr
            << -1 << 2 << 5 << 0 << 0 << 0 << 0 << arma::endr;
-  
+
   arma::sp_mat testData(realData);
-  
+
   DTree<arma::sp_mat> testDTree(testData);
-  
+
   arma::Col<size_t> oTest(7);
   oTest << 1 << 2 << 3 << 4 << 5 << 6 << 7;
-  
+
   size_t splitDim = 1;
   double trueSplitVal = .5;
-  
-  size_t splitInd = testDTree.SplitData(testData, splitDim, trueSplitVal, oTest);
-  
+
+  size_t splitInd = testDTree.SplitData(
+      testData, splitDim, trueSplitVal, oTest);
+
   BOOST_REQUIRE_EQUAL(splitInd, 3); // 2 points on left side.
-  
+
   BOOST_REQUIRE_EQUAL(oTest[0], 1);
   BOOST_REQUIRE_EQUAL(oTest[1], 4);
   BOOST_REQUIRE_EQUAL(oTest[2], 3);

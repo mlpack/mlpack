@@ -46,9 +46,7 @@ PrimalDualSolver<SDPType>::PrimalDualSolver(const SDPType& sdp)
     primalInfeasTol(1e-7),
     dualInfeasTol(1e-7),
     maxIterations(1000)
-{
-
-}
+{ /* Nothing to do. */ }
 
 template <typename SDPType>
 PrimalDualSolver<SDPType>::PrimalDualSolver(const SDPType& sdp,
@@ -113,13 +111,7 @@ PrimalDualSolver<SDPType>::PrimalDualSolver(const SDPType& sdp,
 static inline double
 Alpha(const arma::mat& A, const arma::mat& dA, double tau)
 {
-  // On Armadillo < 4.500, the "lower" option isn't available.
-#if (ARMA_VERSION_MAJOR < 4) || \
-    ((ARMA_VERSION_MAJOR == 4) && (ARMA_VERSION_MINOR < 500))
-  const arma::mat L = arma::chol(A).t(); // This is less efficient.
-#else
   const arma::mat L = arma::chol(A, "lower");
-#endif
   const arma::mat Linv = arma::inv(arma::trimatl(L));
   // TODO(stephentu): We only want the top eigenvalue, we should
   // be able to do better than full eigen-decomposition.

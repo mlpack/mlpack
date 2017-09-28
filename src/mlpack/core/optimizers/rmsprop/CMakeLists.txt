@@ -1,6 +1,7 @@
 set(SOURCES
   rmsprop.hpp
-  rmsprop_impl.hpp
+  rmsprop.cpp
+  rmsprop_update.hpp
 )
 
 set(DIR_SRCS)

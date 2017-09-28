@@ -57,7 +57,8 @@ void LocalCoordinateCoding::Encode(const arma::mat& data, arma::mat& codes)
     // Run LARS for this point, by making an alias of the point and passing
     // that.
     arma::vec beta = codes.unsafe_col(i);
-    lars.Train(dictPrime, data.unsafe_col(i), beta, false);
+    arma::rowvec responses = data.unsafe_col(i).t();
+    lars.Train(dictPrime, responses, beta, false);
     beta %= invW; // Remember, beta is an alias of codes.col(i).
   }
 }

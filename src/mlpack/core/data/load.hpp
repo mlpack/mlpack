@@ -14,8 +14,8 @@
 #ifndef MLPACK_CORE_DATA_LOAD_HPP
 #define MLPACK_CORE_DATA_LOAD_HPP
 
+#include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/log.hpp>
-#include <mlpack/core/arma_extend/arma_extend.hpp> // Includes Armadillo.
 #include <string>
 
 #include "format.hpp"
@@ -65,6 +65,112 @@ bool Load(const std::string& filename,
           const bool transpose = true);
 
 /**
+ * Don't document these with doxygen; these declarations aren't helpful to
+ * users.
+ *
+ * @cond
+ */
+
+extern template bool Load<int>(const std::string&,
+                               arma::Mat<int>&,
+                               const bool,
+                               const bool);
+
+// size_t and uword should be one of these three typedefs.
+extern template bool Load<unsigned int>(const std::string&,
+                                        arma::Mat<unsigned int>&,
+                                        const bool,
+                                        const bool);
+
+extern template bool Load<unsigned long>(const std::string&,
+                                         arma::Mat<unsigned long>&,
+                                         const bool,
+                                         const bool);
+
+extern template bool Load<unsigned long long>(const std::string&,
+                                              arma::Mat<unsigned long long>&,
+                                              const bool,
+                                              const bool);
+
+extern template bool Load<float>(const std::string&,
+                                 arma::Mat<float>&,
+                                 const bool,
+                                 const bool);
+
+extern template bool Load<double>(const std::string&,
+                                  arma::Mat<double>&,
+                                  const bool,
+                                  const bool);
+
+/**
+ * @endcond
+ */
+
+/**
+ * Load a column vector from a file, guessing the filetype from the extension.
+ *
+ * The supported types of files are the same as found in Armadillo:
+ *
+ *  - CSV (csv_ascii), denoted by .csv, or optionally .txt
+ *  - TSV (raw_ascii), denoted by .tsv, .csv, or .txt
+ *  - ASCII (raw_ascii), denoted by .txt
+ *  - Armadillo ASCII (arma_ascii), also denoted by .txt
+ *  - PGM (pgm_binary), denoted by .pgm
+ *  - PPM (ppm_binary), denoted by .ppm
+ *  - Raw binary (raw_binary), denoted by .bin
+ *  - Armadillo binary (arma_binary), denoted by .bin
+ *  - HDF5, denoted by .hdf, .hdf5, .h5, or .he5
+ *
+ * If the file extension is not one of those types, an error will be given.
+ * This is preferable to Armadillo's default behavior of loading an unknown
+ * filetype as raw_binary, which can have very confusing effects.
+ *
+ * If the parameter 'fatal' is set to true, a std::runtime_error exception will
+ * be thrown if the matrix does not load successfully.
+ *
+ * @param filename Name of file to load.
+ * @param colvec Column vector to load contents of file into.
+ * @param fatal If an error should be reported as fatal (default false).
+ * @return Boolean value indicating success or failure of load.
+ */
+template<typename eT>
+bool Load(const std::string& filename,
+          arma::Col<eT>& vec,
+          const bool fatal = false);
+
+/**
+ * Load a row vector from a file, guessing the filetype from the extension.
+ *
+ * The supported types of files are the same as found in Armadillo:
+ *
+ *  - CSV (csv_ascii), denoted by .csv, or optionally .txt
+ *  - TSV (raw_ascii), denoted by .tsv, .csv, or .txt
+ *  - ASCII (raw_ascii), denoted by .txt
+ *  - Armadillo ASCII (arma_ascii), also denoted by .txt
+ *  - PGM (pgm_binary), denoted by .pgm
+ *  - PPM (ppm_binary), denoted by .ppm
+ *  - Raw binary (raw_binary), denoted by .bin
+ *  - Armadillo binary (arma_binary), denoted by .bin
+ *  - HDF5, denoted by .hdf, .hdf5, .h5, or .he5
+ *
+ * If the file extension is not one of those types, an error will be given.
+ * This is preferable to Armadillo's default behavior of loading an unknown
+ * filetype as raw_binary, which can have very confusing effects.
+ *
+ * If the parameter 'fatal' is set to true, a std::runtime_error exception will
+ * be thrown if the matrix does not load successfully.
+ *
+ * @param filename Name of file to load.
+ * @param colvec Column vector to load contents of file into.
+ * @param fatal If an error should be reported as fatal (default false).
+ * @return Boolean value indicating success or failure of load.
+ */
+template<typename eT>
+bool Load(const std::string& filename,
+          arma::Row<eT>& rowvec,
+          const bool fatal = false);
+
+/**
  * Loads a matrix from a file, guessing the filetype from the extension and
  * mapping categorical features with a DatasetMapper object.  This will
  * transpose the matrix (unless the transpose parameter is set to false).
@@ -104,6 +210,52 @@ bool Load(const std::string& filename,
           const bool transpose = true);
 
 /**
+ * Don't document these with doxygen; they aren't helpful for users to know
+ * about.
+ *
+ * @cond
+ */
+
+extern template bool Load<int, IncrementPolicy>(
+    const std::string&,
+    arma::Mat<int>&,
+    DatasetMapper<IncrementPolicy>&,
+    const bool,
+    const bool);
+
+extern template bool Load<arma::u32, IncrementPolicy>(
+    const std::string&,
+    arma::Mat<arma::u32>&,
+    DatasetMapper<IncrementPolicy>&,
+    const bool,
+    const bool);
+
+extern template bool Load<arma::u64, IncrementPolicy>(
+    const std::string&,
+    arma::Mat<arma::u64>&,
+    DatasetMapper<IncrementPolicy>&,
+    const bool,
+    const bool);
+
+extern template bool Load<float, IncrementPolicy>(
+    const std::string&,
+    arma::Mat<float>&,
+    DatasetMapper<IncrementPolicy>&,
+    const bool,
+    const bool);
+
+extern template bool Load<double, IncrementPolicy>(
+    const std::string&,
+    arma::Mat<double>&,
+    DatasetMapper<IncrementPolicy>&,
+    const bool,
+    const bool);
+
+/**
+ * @endcond
+ */
+
+/**
  * Load a model from a file, guessing the filetype from the extension, or,
  * optionally, loading the specified format.  If automatic extension detection
  * is used and the filetype cannot be determined, an error will be given.
@@ -138,7 +290,9 @@ bool Load(const std::string& filename,
 } // namespace data
 } // namespace mlpack
 
-// Include implementation.
-#include "load_impl.hpp"
+// Include implementation of model-loading Load() overload.
+#include "load_model_impl.hpp"
+// Include implementation of Load() for vectors.
+#include "load_vec_impl.hpp"
 
 #endif

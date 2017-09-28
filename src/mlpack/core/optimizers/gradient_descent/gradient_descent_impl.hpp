@@ -18,22 +18,10 @@
 namespace mlpack {
 namespace optimization {
 
-template<typename FunctionType>
-GradientDescent<FunctionType>::GradientDescent(
-    FunctionType& function,
-    const double stepSize,
-    const size_t maxIterations,
-    const double tolerance) :
-    function(function),
-    stepSize(stepSize),
-    maxIterations(maxIterations),
-    tolerance(tolerance)
-{ /* Nothing to do. */ }
-
 //! Optimize the function (minimize).
 template<typename FunctionType>
-double GradientDescent<FunctionType>::Optimize(
-    arma::mat& iterate)
+double GradientDescent::Optimize(
+    FunctionType& function, arma::mat& iterate)
 {
   // To keep track of where we are and how things are going.
   double overallObjective = function.Evaluate(iterate);
@@ -44,20 +32,20 @@ double GradientDescent<FunctionType>::Optimize(
   for (size_t i = 1; i != maxIterations; ++i)
   {
     // Output current objective function.
-    Log::Info << "Gradient Descent: iteration " << i << ", objective " 
+    Log::Info << "Gradient Descent: iteration " << i << ", objective "
         << overallObjective << "." << std::endl;
 
     if (std::isnan(overallObjective) || std::isinf(overallObjective))
     {
-      Log::Warn << "Gradient Descent: converged to " << overallObjective 
-          << "; terminating" << " with failure.  Try a smaller step size?" 
+      Log::Warn << "Gradient Descent: converged to " << overallObjective
+          << "; terminating" << " with failure.  Try a smaller step size?"
           << std::endl;
       return overallObjective;
     }
 
     if (std::abs(lastObjective - overallObjective) < tolerance)
     {
-      Log::Info << "Gradient Descent: minimized within tolerance " 
+      Log::Info << "Gradient Descent: minimized within tolerance "
           << tolerance << "; " << "terminating optimization." << std::endl;
       return overallObjective;
     }
@@ -74,9 +62,38 @@ double GradientDescent<FunctionType>::Optimize(
     overallObjective = function.Evaluate(iterate);
   }
 
-  Log::Info << "Gradient Descent: maximum iterations (" << maxIterations 
+  Log::Info << "Gradient Descent: maximum iterations (" << maxIterations
       << ") reached; " << "terminating optimization." << std::endl;
   return overallObjective;
+}
+
+template<typename FunctionType>
+double GradientDescent::Optimize(
+    FunctionType& function,
+    arma::mat& iterate,
+    data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo)
+{
+  if (datasetInfo.Dimensionality() != iterate.n_rows)
+  {
+      std::ostringstream oss;
+      oss << "GradientDescent::Optimize(): expected information about "
+          << iterate.n_rows << " dimensions in datasetInfo, but found about "
+          << datasetInfo.Dimensionality() << std::endl;
+      throw std::invalid_argument(oss.str());
+  }
+
+  for (size_t i = 0; i < datasetInfo.Dimensionality(); ++i)
+  {
+    if (datasetInfo.Type(i) != data::Datatype::numeric)
+    {
+      std::ostringstream oss;
+      oss << "GradientDescent::Optimize(): the dimension " << i
+          << "is not numeric" << std::endl;
+      throw std::invalid_argument(oss.str());
+    }
+  }
+
+  return Optimize(function, iterate);
 }
 
 } // namespace optimization

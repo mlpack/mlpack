@@ -48,7 +48,8 @@ template<typename eT>
 void Linear<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
-  output = (weight * input) + bias;
+  output = weight * input;
+  output.each_col() += bias;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -68,17 +69,22 @@ void Linear<InputDataType, OutputDataType>::Gradient(
 {
   gradient.submat(0, 0, weight.n_elem - 1, 0) = arma::vectorise(
       error * input.t());
-  gradient.submat(weight.n_elem, 0, gradient.n_elem - 1, 0) = error;
+  gradient.submat(weight.n_elem, 0, gradient.n_elem - 1, 0) =
+      arma::mean(error, 1);
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void Linear<InputDataType, OutputDataType>::Serialize(
+void Linear<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & data::CreateNVP(weights, "weights");
-  ar & data::CreateNVP(inSize, "inSize");
-  ar & data::CreateNVP(outSize, "outSize");
+  ar & BOOST_SERIALIZATION_NVP(inSize);
+  ar & BOOST_SERIALIZATION_NVP(outSize);
+
+  // This is inefficient, but we have to allocate this memory so that
+  // WeightSetVisitor gets the right size.
+  if (Archive::is_loading::value)
+    weights.set_size(outSize * inSize + outSize, 1);
 }
 
 } // namespace ann

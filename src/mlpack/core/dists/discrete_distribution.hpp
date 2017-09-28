@@ -48,7 +48,8 @@ class DiscreteDistribution
   /**
    * Default constructor, which creates a distribution that has no observations.
    */
-  DiscreteDistribution() { /* nothing to do */ }
+  DiscreteDistribution() :
+      probabilities(std::vector<arma::vec>(1)){ /* Nothing to do. */ }
 
   /**
    * Define the discrete distribution as having numObservations possible
@@ -59,32 +60,60 @@ class DiscreteDistribution
    *    can have.
    */
   DiscreteDistribution(const size_t numObservations) :
-      probabilities(arma::ones<arma::vec>(numObservations) / numObservations)
-  { /* nothing to do */ }
+      probabilities(std::vector<arma::vec>(1,
+          arma::ones<arma::vec>(numObservations) / numObservations))
+  { /* Nothing to do. */ }
 
   /**
-   * Define the discrete distribution as having the given probabilities for each
+   * Define the multidimensional discrete distribution as having numObservations possible
+   * observations.  The probability in each state will be set to (1 /
+   * numObservations of each dimension).
+   *
+   * @param numObservations Number of possible observations this distribution
+   *    can have.
+   */
+  DiscreteDistribution(const arma::Col<size_t>& numObservations)
+  {
+    for (size_t i = 0; i < numObservations.n_elem; i++)
+    {
+      const size_t numObs = size_t(numObservations[i]);
+      if (numObs <= 0)
+      {
+        std::ostringstream oss;
+        oss << "number of observations for dimension " << i << " is 0, but "
+            << "must be greater than 0";
+        throw std::invalid_argument(oss.str());
+      }
+      probabilities.push_back(arma::ones<arma::vec>(numObs) / numObs);
+    }
+  }
+
+  /**
+   * Define the multidimensional discrete distribution as having the given probabilities for each
    * observation.
    *
    * @param probabilities Probabilities of each possible observation.
    */
-  DiscreteDistribution(const arma::vec& probabilities)
+  DiscreteDistribution(const std::vector<arma::vec>& probabilities)
   {
-    // We must be sure that our distribution is normalized.
-    double sum = accu(probabilities);
-    if (sum > 0)
-      this->probabilities = probabilities / sum;
-    else
+    for (size_t i = 0; i < probabilities.size(); i++)
     {
-      this->probabilities.set_size(probabilities.n_elem);
-      this->probabilities.fill(1 / probabilities.n_elem);
+      arma::vec temp = probabilities[i];
+      double sum = accu(temp);
+      if (sum > 0)
+        this->probabilities.push_back(temp / sum);
+      else
+      {
+        this->probabilities.push_back(arma::ones<arma::vec>(temp.n_elem)
+            / temp.n_elem);
+      }
     }
   }
 
   /**
    * Get the dimensionality of the distribution.
    */
-  static size_t Dimensionality() { return 1; }
+  size_t Dimensionality() const { return probabilities.size(); }
 
   /**
    * Return the probability of the given observation.  If the observation is
@@ -96,19 +125,33 @@ class DiscreteDistribution
    */
   double Probability(const arma::vec& observation) const
   {
-    // Adding 0.5 helps ensure that we cast the floating point to a size_t
-    // correctly.
-    const size_t obs = size_t(observation[0] + 0.5);
-
-    // Ensure that the observation is within the bounds.
-    if (obs >= probabilities.n_elem)
+    double probability = 1.0;
+    // Ensure the observation has the same dimension with the probabilities
+    if (observation.n_elem != probabilities.size())
     {
-      Log::Debug << "DiscreteDistribution::Probability(): received observation "
-          << obs << "; observation must be in [0, " << probabilities.n_elem
-          << "] for this distribution." << std::endl;
+      Log::Fatal << "DiscreteDistribution::Probability(): observation has "
+          << "incorrect dimension " << observation.n_elem << " but should have "
+          << "dimension " << probabilities.size() << "!" << std::endl;
     }
 
-    return probabilities(obs);
+    for (size_t dimension = 0; dimension < observation.n_elem; dimension++)
+    {
+      // Adding 0.5 helps ensure that we cast the floating point to a size_t
+      // correctly.
+      const size_t obs = size_t(observation(dimension) + 0.5);
+
+      // Ensure that the observation is within the bounds.
+      if (obs >= probabilities[dimension].n_elem)
+      {
+        Log::Fatal << "DiscreteDistribution::Probability(): received "
+            << "observation " << obs << "; observation must be in [0, "
+            << probabilities[dimension].n_elem << "] for this distribution."
+            << std::endl;
+      }
+      probability *= probabilities[dimension][obs];
+    }
+
+    return probability;
   }
 
   /**
@@ -121,7 +164,7 @@ class DiscreteDistribution
    */
   double LogProbability(const arma::vec& observation) const
   {
-    // TODO: consider storing log_probabilities instead
+    // TODO: consider storing log probabilities instead?
     return log(Probability(observation));
   }
 
@@ -155,10 +198,11 @@ class DiscreteDistribution
   void Train(const arma::mat& observations,
              const arma::vec& probabilities);
 
-  //! Return the vector of probabilities.
-  const arma::vec& Probabilities() const { return probabilities; }
-  //! Modify the vector of probabilities.
-  arma::vec& Probabilities() { return probabilities; }
+  //! Return the vector of probabilities for the given dimension.
+  arma::vec& Probabilities(const size_t dim = 0) { return probabilities[dim]; }
+  //! Modify the vector of probabilities for the given dimension.
+  const arma::vec& Probabilities(const size_t dim = 0) const
+  { return probabilities[dim]; }
 
   /**
    * Serialize the distribution.
@@ -166,12 +210,30 @@ class DiscreteDistribution
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */)
   {
-    // We only need to save the probabilities, since that's all we hold.
-    ar & data::CreateNVP(probabilities, "probabilities");
+    // We serialize the vector manually since there seem to be some problems
+    // with some boost versions.
+    size_t dimensionality;
+    dimensionality = probabilities.size();
+    ar & data::CreateNVP(dimensionality, "dimensionality");
+
+    if (Archive::is_loading::value)
+    {
+      probabilities.clear();
+      probabilities.resize(dimensionality);
+    }
+
+    for (size_t i = 0; i < dimensionality; ++i)
+    {
+      std::ostringstream oss;
+      oss << "probabilities" << i;
+      ar & data::CreateNVP(probabilities[i], oss.str());
+    }
   }
 
  private:
-  arma::vec probabilities;
+  //! The probabilities for each dimension; each arma::vec represents the
+  //! probabilities for the observations in each dimension.
+  std::vector<arma::vec> probabilities;
 };
 
 } // namespace distribution

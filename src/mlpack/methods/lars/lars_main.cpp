@@ -11,6 +11,7 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 
 #include "lars.hpp"
 
@@ -22,36 +23,63 @@ using namespace mlpack::regression;
 PROGRAM_INFO("LARS", "An implementation of LARS: Least Angle Regression "
     "(Stagewise/laSso).  This is a stage-wise homotopy-based algorithm for "
     "L1-regularized linear regression (LASSO) and L1+L2-regularized linear "
-    "regression (Elastic Net).\n"
-    "\n"
+    "regression (Elastic Net)."
+    "\n\n"
     "This program is able to train a LARS/LASSO/Elastic Net model or load a "
     "model from file, output regression predictions for a test set, and save "
     "the trained model to a file.  The LARS algorithm is described in more "
-    "detail below:\n"
-    "\n"
+    "detail below:"
+    "\n\n"
     "Let X be a matrix where each row is a point and each column is a "
-    "dimension, and let y be a vector of targets.\n"
-    "\n"
-    "The Elastic Net problem is to solve\n\n"
+    "dimension, and let y be a vector of targets."
+    "\n\n"
+    "The Elastic Net problem is to solve"
+    "\n\n"
     "  min_beta 0.5 || X * beta - y ||_2^2 + lambda_1 ||beta||_1 +\n"
-    "      0.5 lambda_2 ||beta||_2^2\n\n"
-    "If --lambda1 > 0 and --lambda2 = 0, the problem is the LASSO.\n"
-    "If --lambda1 > 0 and --lambda2 > 0, the problem is the Elastic Net.\n"
-    "If --lambda1 = 0 and --lambda2 > 0, the problem is ridge regression.\n"
-    "If --lambda1 = 0 and --lambda2 = 0, the problem is unregularized linear "
-    "regression.\n"
-    "\n"
-    "For efficiency reasons, it is not recommended to use this algorithm with "
-    "--lambda_1 = 0.  In that case, use the 'linear_regression' program, which "
-    "implements both unregularized linear regression and ridge regression.\n"
-    "\n"
-    "To train a LARS/LASSO/Elastic Net model, the --input_file and "
-    "--responses_file parameters must be given.  The --lambda1 --lambda2, and "
-    "--use_cholesky arguments control the training parameters.  A trained model"
-    " can be saved with the --output_model_file, or, if training is not desired"
-    " at all, a model can be loaded with --input_model_file.  Any output "
-    "predictions from a test file can be saved into the file specified by the "
-    "--output_predictions option.");
+    "      0.5 lambda_2 ||beta||_2^2"
+    "\n\n"
+    "If lambda1 > 0 and lambda2 = 0, the problem is the LASSO.\n"
+    "If lambda1 > 0 and lambda2 > 0, the problem is the Elastic Net.\n"
+    "If lambda1 = 0 and lambda2 > 0, the problem is ridge regression.\n"
+    "If lambda1 = 0 and lambda2 = 0, the problem is unregularized linear "
+    "regression."
+    "\n\n"
+    "For efficiency reasons, it is not recommended to use this algorithm with"
+    " " + PRINT_PARAM_STRING("lambda1") + " = 0.  In that case, use the "
+    "'linear_regression' program, which implements both unregularized linear "
+    "regression and ridge regression."
+    "\n\n"
+    "To train a LARS/LASSO/Elastic Net model, the " +
+    PRINT_PARAM_STRING("input") + " and " + PRINT_PARAM_STRING("responses") +
+    " parameters must be given.  The " + PRINT_PARAM_STRING("lambda1") +
+    ", " + PRINT_PARAM_STRING("lambda2") + ", and " +
+    PRINT_PARAM_STRING("use_cholesky") + " parameters control the training "
+    "options.  A trained model can be saved with the " +
+    PRINT_PARAM_STRING("output_model") + ".  If no training is desired at all,"
+    " a model can be passed via the " + PRINT_PARAM_STRING("input_model") +
+    " parameter."
+    "\n\n"
+    "The program can also provide predictions for test data using either the "
+    "trained model or the given input model.  Test points can be specified with"
+    " the " + PRINT_PARAM_STRING("test") + " parameter.  Predicted responses "
+    "to the test points can be saved with the " +
+    PRINT_PARAM_STRING("output_predictions") + " output parameter."
+    "\n\n"
+    "For example, the following command trains a model on the data " +
+    PRINT_DATASET("data") + " and responses " + PRINT_DATASET("responses") +
+    " with lambda1 set to 0.4 and lambda2 set to 0 (so, LASSO is being "
+    "solved), and then the model is saved to " + PRINT_MODEL("lasso_model") +
+    ":"
+    "\n\n" +
+    PRINT_CALL("lars", "input", "data", "responses", "responses", "lambda1",
+        0.4, "lambda2", 0.0, "output_model", "lasso_model") +
+    "\n\n"
+    "The following command uses the " + PRINT_MODEL("lasso_model") + " to "
+    "provide predicted responses for the data " + PRINT_DATASET("test") + " "
+    "and save those responses to " + PRINT_DATASET("test_predictions") + ": "
+    "\n\n" +
+    PRINT_CALL("lars", "input_model", "lasso_model", "test", "test",
+        "output_predictions", "test_predictions"));
 
 PARAM_TMATRIX_IN("input", "Matrix of covariates (X).", "i");
 PARAM_MATRIX_IN("responses", "Matrix of responses/observations (y).", "r");
@@ -72,11 +100,8 @@ PARAM_DOUBLE_IN("lambda2", "Regularization parameter for l2-norm penalty.", "L",
 PARAM_FLAG("use_cholesky", "Use Cholesky decomposition during computation "
     "rather than explicitly computing the full Gram matrix.", "c");
 
-int main(int argc, char* argv[])
+void mlpackMain()
 {
-  // Handle parameters,
-  CLI::ParseCommandLine(argc, argv);
-
   double lambda1 = CLI::GetParam<double>("lambda1");
   double lambda2 = CLI::GetParam<double>("lambda2");
   bool useCholesky = CLI::HasParam("use_cholesky");
@@ -128,9 +153,9 @@ int main(int argc, char* argv[])
     mat matY = std::move(CLI::GetParam<arma::mat>("responses"));
 
     // Make sure y is oriented the right way.
-    if (matY.n_rows == 1)
+    if (matY.n_cols == 1)
       matY = trans(matY);
-    if (matY.n_cols > 1)
+    if (matY.n_rows > 1)
       Log::Fatal << "Only one column or row allowed in responses file!" << endl;
 
     if (matY.n_elem != matX.n_rows)
@@ -138,7 +163,8 @@ int main(int argc, char* argv[])
           << endl;
 
     vec beta;
-    lars.Train(matX, matY.unsafe_col(0), beta, false /* do not transpose */);
+    arma::rowvec y = std::move(matY);
+    lars.Train(matX, y, beta, false /* do not transpose */);
   }
   else // We must have --input_model_file.
   {
@@ -159,16 +185,14 @@ int main(int argc, char* argv[])
           << "is not equal to the dimensionality of the model ("
           << lars.BetaPath().back().n_elem << ")!" << endl;
 
-    arma::vec predictions;
+    arma::rowvec predictions;
     lars.Predict(testPoints.t(), predictions, false);
 
-    // Save test predictions.  One per line, so, don't transpose on save.
+    // Save test predictions (one per line).
     if (CLI::HasParam("output_predictions"))
-      CLI::GetParam<arma::mat>("output_predictions") = std::move(predictions);
+      CLI::GetParam<arma::mat>("output_predictions") = predictions.t();
   }
 
   if (CLI::HasParam("output_model"))
     CLI::GetParam<LARS>("output_model") = std::move(lars);
-
-  CLI::Destroy();
 }

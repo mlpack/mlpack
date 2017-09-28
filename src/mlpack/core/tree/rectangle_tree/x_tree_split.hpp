@@ -42,14 +42,14 @@ class XTreeSplit
    * necessary, this split will propagate upwards through the tree.
    */
   template<typename TreeType>
-  static void SplitLeafNode(TreeType *tree,std::vector<bool>& relevels);
+  static void SplitLeafNode(TreeType *tree, std::vector<bool>& relevels);
 
   /**
    * Split a non-leaf node using the "default" algorithm.  If this is a root
    * node, the tree increases in depth.
    */
   template<typename TreeType>
-  static bool SplitNonLeafNode(TreeType *tree,std::vector<bool>& relevels);
+  static bool SplitNonLeafNode(TreeType *tree, std::vector<bool>& relevels);
 
  private:
   /**
@@ -62,13 +62,12 @@ class XTreeSplit
    * Comparator for sorting with std::pair. This comparator works a little bit
    * faster then the default comparator.
    */
-  template<typename ElemType>
-  static bool PairComp(const std::pair<ElemType, size_t>& p1,
-                       const std::pair<ElemType, size_t>& p2)
+  template<typename ElemType, typename SecondType>
+  static bool PairComp(const std::pair<ElemType, SecondType>& p1,
+                       const std::pair<ElemType, SecondType>& p2)
   {
     return p1.first < p2.first;
   }
-
 };
 
 } // namespace tree

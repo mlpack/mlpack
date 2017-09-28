@@ -8,7 +8,9 @@
 #define MLPACK_METHODS_ADABOOST_ADABOOST_MODEL_HPP
 
 #include <mlpack/core.hpp>
-#include "adaboost.hpp"
+
+// Use forward declaration instead of include to accelerate compilation.
+class AdaBoost;
 
 namespace mlpack {
 namespace adaboost {
@@ -75,6 +77,7 @@ class AdaBoostModel
   //! Train the model.
   void Train(const arma::mat& data,
              const arma::Row<size_t>& labels,
+             const size_t numClasses,
              const size_t iterations,
              const double tolerance);
 

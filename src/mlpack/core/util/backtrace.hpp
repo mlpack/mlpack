@@ -91,6 +91,6 @@ class Backtrace
   static std::vector<Frames> stack;
 };
 
-}; //namespace mlpack
+}; // namespace mlpack
 
 #endif

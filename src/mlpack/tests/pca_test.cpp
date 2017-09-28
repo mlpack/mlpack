@@ -15,6 +15,7 @@
 #include <mlpack/methods/pca/decomposition_policies/exact_svd_method.hpp>
 #include <mlpack/methods/pca/decomposition_policies/quic_svd_method.hpp>
 #include <mlpack/methods/pca/decomposition_policies/randomized_svd_method.hpp>
+#include <mlpack/methods/pca/decomposition_policies/randomized_block_krylov_method.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -31,15 +32,17 @@ using namespace mlpack::distribution;
  * specified decomposition policy.
  */
 template<typename DecompositionPolicy>
-void ArmaComparisonPCA()
+void ArmaComparisonPCA(
+    const bool scaleData = false,
+    const DecompositionPolicy& decomposition = DecompositionPolicy())
 {
   arma::mat coeff, coeff1, score, score1;
   arma::vec eigVal, eigVal1;
 
   arma::mat data = arma::randu<arma::mat>(3, 1000);
 
-  PCAType<DecompositionPolicy> exactPCA;
-  exactPCA.Apply(data, score1, eigVal1, coeff1);
+  PCAType<DecompositionPolicy> pcaType(scaleData, decomposition);
+  pcaType.Apply(data, score1, eigVal1, coeff1);
 
   princomp(coeff, score, eigVal, trans(data));
 
@@ -58,7 +61,9 @@ void ArmaComparisonPCA()
  * (which should be correct!) using the specified decomposition policy.
  */
 template<typename DecompositionPolicy>
-void PCADimensionalityReduction()
+void PCADimensionalityReduction(
+    const bool scaleData = false,
+    const DecompositionPolicy& decomposition = DecompositionPolicy())
 {
   // Fake, simple dataset.  The results we will compare against are from MATLAB.
   mat data("1 0 2 3 9;"
@@ -66,7 +71,7 @@ void PCADimensionalityReduction()
            "6 7 3 1 8");
 
   // Now run PCA to reduce the dimensionality.
-  PCAType<DecompositionPolicy> p;
+  PCAType<DecompositionPolicy> p(scaleData, decomposition);
   const double varRetained = p.Apply(data, 2); // Reduce to 2 dimensions.
 
   // Compare with correct results.
@@ -169,6 +174,16 @@ BOOST_AUTO_TEST_CASE(ArmaComparisonExactPCATest)
 }
 
 /**
+ * Compare the output of our randomized block krylov PCA implementation with
+ * Armadillo's.
+ */
+BOOST_AUTO_TEST_CASE(ArmaComparisonRandomizedBlockKrylovPCATest)
+{
+  RandomizedBlockKrylovSVDPolicy decomposition(5);
+  ArmaComparisonPCA<RandomizedBlockKrylovSVDPolicy>(false, decomposition);
+}
+
+/**
  * Compare the output of our randomized-SVD PCA implementation with Armadillo's.
  */
 BOOST_AUTO_TEST_CASE(ArmaComparisonRandomizedPCATest)
@@ -183,6 +198,17 @@ BOOST_AUTO_TEST_CASE(ArmaComparisonRandomizedPCATest)
 BOOST_AUTO_TEST_CASE(ExactPCADimensionalityReductionTest)
 {
   PCADimensionalityReduction<ExactSVDPolicy>();
+}
+
+/**
+ * Test that dimensionality reduction with randomized block krylov PCA works the
+ * same way MATLAB does (which should be correct!).
+ */
+BOOST_AUTO_TEST_CASE(RandomizedBlockKrylovPCADimensionalityReductionTest)
+{
+  RandomizedBlockKrylovSVDPolicy decomposition(5);
+  PCADimensionalityReduction<RandomizedBlockKrylovSVDPolicy>(false,
+      decomposition);
 }
 
 /**
@@ -212,7 +238,6 @@ BOOST_AUTO_TEST_CASE(QUICPCADimensionalityReductionTest)
   size_t successes = 0;
   for (size_t trial = 0; trial < 5; ++trial)
   {
-
     PCAType<ExactSVDPolicy> exactPCA;
     const double varRetainedExact = exactPCA.Apply(data, 1);
 
@@ -280,8 +305,8 @@ BOOST_AUTO_TEST_CASE(PCAScalingTest)
   BOOST_REQUIRE_CLOSE(std::abs(eigvec(2, 1)), 1.0, 0.2);
 
   // The third component should have the same absolute value characteristics as
-  // the first.
-  BOOST_REQUIRE_CLOSE(std::abs(eigvec(0, 0)), sqrt(2) / 2, 0.2); // 20% tolerance.
+  // the first (plus 20% tolerance).
+  BOOST_REQUIRE_CLOSE(std::abs(eigvec(0, 0)), sqrt(2) / 2, 0.2);
   BOOST_REQUIRE_CLOSE(std::abs(eigvec(1, 0)), sqrt(2) / 2, 0.2);
   BOOST_REQUIRE_SMALL(eigvec(2, 0), 0.08); // Large tolerance for noise.
 

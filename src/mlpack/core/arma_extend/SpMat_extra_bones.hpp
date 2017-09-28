@@ -23,21 +23,3 @@ void serialize(Archive& ar, const unsigned int version);
 typedef SpCol<elem_type>   vec_type;
 typedef SpCol<elem_type>   col_type;
 typedef SpRow<elem_type>   row_type;
-
-/*
- * Extra functions for SpMat<eT>
- * Adding definition of row_col_iterator to generalize with Mat<eT>::row_col_iterator
- */
-#if ARMA_VERSION_MAJOR < 4 || \
-    (ARMA_VERSION_MAJOR == 4 && ARMA_VERSION_MINOR < 349)
-typedef iterator row_col_iterator;
-typedef const_iterator const_row_col_iterator;
-
-// begin for iterator row_col_iterator
-inline const_row_col_iterator begin_row_col() const;
-inline row_col_iterator begin_row_col();
-
-// end for iterator row_col_iterator
-inline const_row_col_iterator end_row_col() const;
-inline row_col_iterator end_row_col();
-#endif
