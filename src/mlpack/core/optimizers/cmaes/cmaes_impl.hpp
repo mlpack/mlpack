@@ -56,17 +56,17 @@ double CMAES::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
   // Step size control parameters.
   arma::vec sigma(3);
   sigma(0) = 0.3 * (upperBound - lowerBound);
-  const double cs = (muEffective + 2) / (iterate.n_elem + muEffective + 5);
+  const double cs = (muEffective + 2.0) / (iterate.n_elem + muEffective + 5.0);
   const double ds = 1 + cs + 2 * std::max(std::sqrt((muEffective - 1) /
       (iterate.n_elem + 1)) - 1, 0.0);
-  const double enn = std::sqrt(iterate.n_elem) * (1 - 1 /
-      (4 * iterate.n_elem) + 1 / (21 * std::pow(iterate.n_elem, 2)));
+  const double enn = std::sqrt(iterate.n_elem) * (1.0 - 1.0 /
+      (4.0 * iterate.n_elem) + 1.0 / (21 * std::pow(iterate.n_elem, 2)));
 
   // Covariance update parameters.
   // Cumulation for distribution.
-  const double cc = (4 + muEffective / iterate.n_elem) /
+  const double cc = (4.0 + muEffective / iterate.n_elem) /
       (4 + iterate.n_elem + 2 * muEffective / iterate.n_elem);
-  const double h = (1.4 + 2 / (iterate.n_elem + 1)) * enn;
+  const double h = (1.4 + 2.0 / (iterate.n_elem + 1.0)) * enn;
 
 
   const double c1 = 2 / (std::pow(iterate.n_elem + 1.3, 2) + muEffective);
