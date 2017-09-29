@@ -140,7 +140,6 @@ class SPALeRAStepsize
 
       // Reset evaluation and Page-Hinkley counter parameter.
       mu0 = un = mn = relaxedObjective = phCounter = eveCounter = 0;
-
     }
     else
     {
