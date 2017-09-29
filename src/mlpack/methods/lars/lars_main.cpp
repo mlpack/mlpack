@@ -110,8 +110,10 @@ void mlpackMain()
   // Check parameters -- make sure everything given makes sense.
   RequireOnlyOnePassed({ "input", "input_model" }, true);
   if (CLI::HasParam("input"))
+  {
     RequireOnlyOnePassed({ "responses" }, true, "if input data is specified, "
         "responses must also be specified");
+  }
   ReportIgnoredParam({{ "input", false }}, "responses");
 
   RequireAtLeastOnePassed({ "output_predictions", "output_model" }, false,

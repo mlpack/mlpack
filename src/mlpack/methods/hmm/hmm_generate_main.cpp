@@ -74,9 +74,11 @@ struct Generate
 
     Log::Info << "Generating sequence of length " << length << "..." << endl;
     if (startState >= hmm.Transition().n_rows)
+    {
       Log::Fatal << "Invalid start state (" << startState << "); must be "
           << "between 0 and number of states (" << hmm.Transition().n_rows
           << ")!" << endl;
+    }
 
     hmm.Generate(length, observations, sequence, startState);
 

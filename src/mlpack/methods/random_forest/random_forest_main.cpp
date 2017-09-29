@@ -76,8 +76,10 @@ void mlpackMain()
   ReportIgnoredParam({{ "training", false }}, "print_training_accuracy");
 
   if (CLI::HasParam("test"))
+  {
     RequireAtLeastOnePassed({ "probabilities", "predictions" }, "no test output"
         " will be saved");
+  }
 
   ReportIgnoredParam({{ "test", false }}, "test_labels");
 
@@ -85,8 +87,10 @@ void mlpackMain()
       "the trained forest model will not be used or saved");
 
   if (CLI::HasParam("training"))
+  {
     RequireAtLeastOnePassed({ "labels" }, true, "must pass labels when training"
         " set given");
+  }
 
   RequireParamValue<int>("num_trees", [](int x) { return x > 0; }, true,
       "number of trees in forest must be positive");

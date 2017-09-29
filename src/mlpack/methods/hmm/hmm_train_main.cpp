@@ -118,10 +118,14 @@ struct Init
 
     // Verify dimensionality of data.
     for (size_t i = 0; i < trainSeq.size(); ++i)
+    {
       if (trainSeq[i].n_rows != dimensionality)
+      {
         Log::Fatal << "Observation sequence " << i << " dimensionality ("
             << trainSeq[i].n_rows << " is incorrect (should be "
             << dimensionality << ")!" << endl;
+      }
+    }
 
     // Get the model and initialize it.
     hmm = HMM<GaussianDistribution>(size_t(states),
@@ -139,12 +143,16 @@ struct Init
     const int gaussians = CLI::GetParam<int>("gaussians");
 
     if (gaussians == 0)
-      Log::Fatal << "Number of gaussians for each GMM must be specified (-g) "
+    {
+      Log::Fatal << "Number of gaussians for each GMM must be specified "
           << "when type = 'gmm'!" << endl;
+    }
 
     if (gaussians < 0)
+    {
       Log::Fatal << "Invalid number of gaussians (" << gaussians << "); must "
           << "be greater than or equal to 1." << endl;
+    }
 
     // Create HMM object.
     hmm = HMM<GMM>(size_t(states), GMM(size_t(gaussians), dimensionality),
@@ -152,8 +160,10 @@ struct Init
 
     // Issue a warning if the user didn't give labels.
     if (!CLI::HasParam("labels_file"))
+    {
       Log::Warn << "Unlabeled training of GMM HMMs is almost certainly not "
           << "going to produce good results!" << endl;
+    }
   }
 
   //! Helper function for discrete emission distributions.
@@ -223,11 +233,15 @@ struct Train
     // dimensionality of our HMM's emissions.
     vector<mat>& trainSeq = *trainSeqPtr;
     for (size_t i = 0; i < trainSeq.size(); ++i)
+    {
       if (trainSeq[i].n_rows != hmm.Emission()[0].Dimensionality())
+      {
         Log::Fatal << "Dimensionality of training sequence " << i << " ("
             << trainSeq[i].n_rows << ") is not equal to the dimensionality of "
             << "the HMM (" << hmm.Emission()[0].Dimensionality() << ")!"
             << endl;
+      }
+    }
 
     vector<arma::Row<size_t>> labelSeq; // May be empty.
     if (CLI::HasParam("labels_file"))
@@ -293,9 +307,11 @@ struct Train
 
         // Verify the same number of observations as the data.
         if (label.n_elem != trainSeq[labelSeq.size()].n_cols)
+        {
           Log::Fatal << "Label sequence " << labelSeq.size() << " does not have"
               << " the same number of points as observation sequence "
               << labelSeq.size() << "!" << endl;
+        }
 
         // Check all of the labels.
         for (size_t i = 0; i < label.n_cols; ++i)
@@ -350,15 +366,19 @@ void mlpackMain()
   }
 
   if (CLI::HasParam("input_model") && CLI::HasParam("tolerance"))
+  {
     Log::Info << "Tolerance of existing model in '"
         << CLI::GetPrintableParam<std::string>("input_model") << "' will be "
         << "replaced with specified tolerance of " << tolerance << "." << endl;
+  }
 
   ReportIgnoredParam({{ "input_model", true }}, "type");
 
   if (!CLI::HasParam("input_model"))
+  {
     RequireParamInSet<string>("type", { "discrete", "gaussian", "gmm" }, true,
         "unknown HMM type");
+  }
 
   // Load the input data.
   vector<mat> trainSeq;
@@ -371,8 +391,10 @@ void mlpackMain()
     fstream f(inputFile.c_str(), ios_base::in);
 
     if (!f.is_open())
+    {
       Log::Fatal << "Could not open '" << inputFile << "' for reading."
           << endl;
+    }
 
     // Now read each line in.
     char lineBuf[1024]; // Max 1024 characters... hopefully long enough.

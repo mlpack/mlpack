@@ -120,9 +120,11 @@ void mlpackMain()
   ReportIgnoredParam({{ "input_model", true }}, "tau");
   ReportIgnoredParam({{ "input_model", true }}, "rho");
   if (CLI::HasParam("input_model") && CLI::HasParam("leaf_size"))
-      Log::Warn << PRINT_PARAM_STRING("leaf_size") << " will only be considered"
-          << " for the query tree, because --input_model_file is specified."
-          << endl;
+  {
+    Log::Warn << PRINT_PARAM_STRING("leaf_size") << " will only be considered"
+        << " for the query tree, because --input_model_file is specified."
+        << endl;
+  }
 
   // The user should give something to do...
   RequireAtLeastOnePassed({ "k", "output_model" }, false,
@@ -130,8 +132,10 @@ void mlpackMain()
 
   // If the user specifies k but no output files, they should be warned.
   if (CLI::HasParam("k"))
+  {
     RequireAtLeastOnePassed({ "neighbors", "distances" }, false,
         "nearest neighbor search results will not be saved");
+  }
 
   // If the user specifies output files but no k, they should be warned.
   ReportIgnoredParam({{ "k", false }}, "neighbors");

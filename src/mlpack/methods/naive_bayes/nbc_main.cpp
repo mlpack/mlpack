@@ -160,9 +160,11 @@ void mlpackMain()
     mat testingData = std::move(CLI::GetParam<mat>("test"));
 
     if (testingData.n_rows != model.nbc.Means().n_rows)
+    {
       Log::Fatal << "Test data dimensionality (" << testingData.n_rows << ") "
           << "must be the same as training data (" << model.nbc.Means().n_rows
           << ")!" << std::endl;
+    }
 
     // Time the running of the Naive Bayes Classifier.
     Row<size_t> predictions;

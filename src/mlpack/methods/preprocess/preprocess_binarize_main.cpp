@@ -61,13 +61,17 @@ void mlpackMain()
 
   // Check on data parameters.
   if (!CLI::HasParam("dimension"))
+  {
     Log::Warn << "You did not specify " << PRINT_PARAM_STRING("dimension")
         << ", so the program will perform binarization on every dimension."
         << endl;
+  }
 
   if (!CLI::HasParam("threshold"))
+  {
     Log::Warn << "You did not specify " << PRINT_PARAM_STRING("threshold")
         << ", so the threshold will be automatically set to '0.0'." << endl;
+  }
 
   RequireAtLeastOnePassed({ "output" }, false, "no output will be saved");
 

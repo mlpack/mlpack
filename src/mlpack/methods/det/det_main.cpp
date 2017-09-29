@@ -88,8 +88,10 @@ void mlpackMain()
   ReportIgnoredParam({{ "training", false }}, "max_leaf_size");
 
   if (CLI::HasParam("training"))
+  {
     RequireAtLeastOnePassed({ "output_model", "training_set_estimates", "vi" },
         false, "no output will be saved");
+  }
 
   ReportIgnoredParam({{ "test", false }}, "test_set_estimates");
 

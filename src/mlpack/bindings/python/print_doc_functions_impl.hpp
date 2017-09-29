@@ -220,33 +220,27 @@ inline std::string ParamString(const std::string& paramName, const T& value)
 
 inline bool IgnoreCheck(const std::string& paramName)
 {
-  if (!CLI::Parameters()[paramName].input)
-    return true;
-  return false;
+  return !CLI::Parameters()[paramName].input;
 }
 
 inline bool IgnoreCheck(const std::vector<std::string>& constraints)
 {
-  bool anyOutput = false;
   for (size_t i = 0; i < constraints.size(); ++i)
     if (!CLI::Parameters()[constraints[i]].input)
-      anyOutput = true;
+      return true;
 
-  return anyOutput;
+  return false;
 }
 
 inline bool IgnoreCheck(
     const std::vector<std::pair<std::string, bool>>& constraints,
     const std::string& paramName)
 {
-  bool anyOutput = false;
   for (size_t i = 0; i < constraints.size(); ++i)
     if (!CLI::Parameters()[constraints[i].first].input)
-      anyOutput = true;
+      return true;
 
-  anyOutput &= !CLI::Parameters()[paramName].input;
-
-  return anyOutput;
+  return !CLI::Parameters()[paramName].input;
 }
 
 } // namespace python

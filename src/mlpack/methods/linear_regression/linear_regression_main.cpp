@@ -106,8 +106,10 @@ void mlpackMain()
   // If they specified a model file, we also need a test file or we
   // have nothing to do.
   if (!computeModel)
+  {
     RequireAtLeastOnePassed({ "test" }, true, "test points must be specified "
         "when an input model is given");
+  }
 
   ReportIgnoredParam({{ "input_model", true }}, "lambda");
 
@@ -136,8 +138,10 @@ void mlpackMain()
       Timer::Stop("load_responses");
 
       if (responses.n_cols != regressors.n_cols)
+      {
         Log::Fatal << "The responses must have the same number of rows as the "
-            "training file." << endl;
+            "training set." << endl;
+      }
     }
 
     Timer::Start("regression");

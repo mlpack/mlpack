@@ -117,8 +117,10 @@ void mlpackMain()
 
   // If the user specifies k but no output files, they should be warned.
   if (CLI::HasParam("k"))
+  {
     RequireAtLeastOnePassed({ "neighbors", "distances" }, false, "no nearest "
         "neighbor search results will be saved");
+  }
 
   // If the user specifies output files but no k, they should be warned.
   ReportIgnoredParam({{ "k", false }}, "neighbors");

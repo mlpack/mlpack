@@ -98,8 +98,10 @@ void mlpackMain()
   RequireAtLeastOnePassed({ "neighbors", "distances", "output_model" }, false,
       "no results will be saved");
   if (CLI::HasParam("k"))
+  {
     RequireAtLeastOnePassed({ "query", "reference" }, true, "must pass set to "
         "search");
+  }
 
   if (CLI::HasParam("input_model") && CLI::HasParam("k") &&
       !CLI::HasParam("query"))

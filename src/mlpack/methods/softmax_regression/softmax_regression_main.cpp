@@ -122,8 +122,10 @@ void mlpackMain()
   // One of inputFile and modelFile must be specified.
   RequireOnlyOnePassed({ "input_model", "training" }, true);
   if (CLI::HasParam("training"))
+  {
     RequireAtLeastOnePassed({ "labels" }, true, "if training data is specified,"
         " labels must also be specified");
+  }
   ReportIgnoredParam({{ "training", false }}, "labels");
 
   RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; }, true,

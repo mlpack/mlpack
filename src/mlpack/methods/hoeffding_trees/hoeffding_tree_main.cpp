@@ -127,8 +127,10 @@ void mlpackMain()
   ReportIgnoredParam({{ "training", false }}, "passes");
 
   if (CLI::HasParam("test"))
+  {
     RequireAtLeastOnePassed({ "predictions", "probabilities", "test_labels" },
         false, "no output will be given");
+  }
 
   RequireParamInSet<string>("numeric_split_strategy", { "domingos", "binary" },
       true, "unrecognized numeric split strategy");

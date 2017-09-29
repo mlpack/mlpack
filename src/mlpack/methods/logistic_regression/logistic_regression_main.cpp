@@ -153,8 +153,10 @@ void mlpackMain()
   // If no output file is given, the user should know that the model will not be
   // saved, but only if a model is being trained.
   if (CLI::HasParam("training"))
+  {
     RequireAtLeastOnePassed({ "output_model" }, false, "trained model will not "
         "be saved");
+  }
 
   RequireAtLeastOnePassed({ "output_model", "output", "output_probabilities" },
       false, "no output will be saved");
@@ -182,13 +184,17 @@ void mlpackMain()
   RequireParamValue<double>("step_size", [](double x) { return x >= 0.0; },
       true, "step size must be positive");
   if (CLI::HasParam("step_size") && optimizerType == "lbfgs")
+  {
     Log::Warn << "Step size (" << PRINT_PARAM_STRING("step_size") << " ignored "
         << "because 'sgd' optimizer is not being used." << endl;
+  }
 
   if (CLI::HasParam("batch_size") && optimizerType != "minibatch-sgd")
+  {
     Log::Warn << "Batch size (" << PRINT_PARAM_STRING("batch_size") << ") "
         << "ignored because 'minibatch-sgd' optimizer is not being used."
         << endl;
+  }
 
   // These are the matrices we might use.
   arma::mat regressors;

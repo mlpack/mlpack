@@ -67,9 +67,11 @@ struct Viterbi
 
     // Verify correct dimensionality.
     if (dataSeq.n_rows != hmm.Emission()[0].Dimensionality())
+    {
       Log::Fatal << "Observation dimensionality (" << dataSeq.n_rows << ") "
           << "does not match HMM Gaussian dimensionality ("
           << hmm.Emission()[0].Dimensionality() << ")!" << endl;
+    }
 
     arma::Row<size_t> sequence;
     hmm.Predict(dataSeq, sequence);

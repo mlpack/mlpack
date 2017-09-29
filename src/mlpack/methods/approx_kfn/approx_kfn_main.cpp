@@ -160,8 +160,10 @@ void mlpackMain()
 
   // If we are searching, we need a set to search in.
   if (CLI::HasParam("k"))
+  {
     RequireAtLeastOnePassed({ "reference", "query" }, true,
         "if search is being performed, at least one set must be specified");
+  }
 
   // Validate parameters.
   if (CLI::HasParam("k"))

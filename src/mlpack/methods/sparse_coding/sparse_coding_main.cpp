@@ -107,8 +107,10 @@ void mlpackMain()
   RequireOnlyOnePassed({ "input_model", "initial_dictionary" }, true);
 
   if (CLI::HasParam("training"))
+  {
     RequireAtLeastOnePassed({ "atoms" }, true, "if training data is specified, "
         "the number of atoms in the dictionary must also be specified");
+  }
 
   RequireAtLeastOnePassed({ "codes", "dictionary", "output_model" }, false,
       "no output will be saved");

@@ -149,10 +149,14 @@ void mlpackMain()
     Log::Info << "Training perceptron on dataset '"
         << CLI::GetPrintableParam<mat>("training");
     if (CLI::HasParam("labels"))
+    {
       Log::Info << "' with labels in '"
           << CLI::GetPrintableParam<Row<size_t>>("labels") << "'";
+    }
     else
+    {
       Log::Info << "'";
+    }
     Log::Info << " for a maximum of " << maxIterations << " iterations."
         << endl;
 

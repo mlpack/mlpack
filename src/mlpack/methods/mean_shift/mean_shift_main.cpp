@@ -45,7 +45,7 @@ PROGRAM_INFO("Mean Shift Clustering", "This program performs mean shift "
     PRINT_CALL("mean_shift", "input", "data", "centroid", "centroids"));
 
 // Required options.
-PARAM_MATRIX_IN("input", "Input dataset to perform clustering on.", "i");
+PARAM_MATRIX_IN_REQ("input", "Input dataset to perform clustering on.", "i");
 
 // Output options.
 PARAM_FLAG("in_place", "If specified, a column containing the learned cluster "
@@ -68,9 +68,6 @@ PARAM_DOUBLE_IN("radius", "If the distance between two centroids is less than "
 
 void mlpackMain()
 {
-  if (!CLI::HasParam("input"))
-    Log::Fatal << "--input_file must be specified!" << endl;
-
   const double radius = CLI::GetParam<double>("radius");
   const int maxIterations = CLI::GetParam<int>("max_iterations");
 

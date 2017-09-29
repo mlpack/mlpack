@@ -98,8 +98,10 @@ void mlpackMain()
   ReportIgnoredParam({{ "k", false }}, "query");
 
   if (CLI::HasParam("k"))
+  {
     RequireAtLeastOnePassed({ "indices", "kernels" }, false,
         "no output will be saved");
+  }
 
   // Check on kernel type.
   RequireParamInSet<string>("kernel", { "linear", "polynomial", "cosine",

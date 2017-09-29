@@ -67,8 +67,10 @@ void mlpackMain()
   RequireAtLeastOnePassed({ "output_file" }, false, "no output will be saved");
 
   if (!CLI::HasParam("dimension"))
-    Log::Warn << "--dimension is not specified, the imputation will be "
+  {
+    Log::Warn << "--dimension is not specified; the imputation will be "
         << "applied to all dimensions."<< endl;
+  }
 
   if (strategy != "custom")
     ReportIgnoredParam({{ }}, "custom_value");
