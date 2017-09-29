@@ -56,7 +56,7 @@ class LogisticRegressionFunction
   * Shuffle the order of points. This may be called by the optimizer.
   * @param parameters Vector of logistic regression parameters.
   */
-  void Shuffle(const arma::mat& parameters);
+  const arma::mat& Shuffle(const arma::mat& parameters);
 
   /**
    * Evaluate the logistic regression log-likelihood function with the given

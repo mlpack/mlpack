@@ -34,7 +34,8 @@ SoftmaxErrorFunction<MetricType>::SoftmaxErrorFunction(
 * Shuffle the order of points. This may be called by the optimizer.
 * @param covariance Covariance matrix of Mahalanobis distance.
 */
-void Shuffle(const arma::mat& covariance)
+
+const arma::mat& Shuffle(const arma::mat& covariance)
 {
   return arma::shuffle(covariance);
 }

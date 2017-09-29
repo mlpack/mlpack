@@ -57,7 +57,7 @@ LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
 * Shuffle the order of points. This may be called by the optimizer.
 * @param parameters Vector of logistic regression parameters.
 */
-void Shuffle(const arma::mat& parameters)
+const arma::mat& Shuffle(const arma::mat& parameters)
 {
   return arma::shuffle(parameters);
 }
