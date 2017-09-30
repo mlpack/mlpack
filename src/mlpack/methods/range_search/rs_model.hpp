@@ -331,7 +331,7 @@ class RSModel
 
   //! Serialize the range search model.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
   //! Expose the dataset.
   const arma::mat& Dataset() const;
@@ -420,7 +420,7 @@ class RSModel
 } // namespace range
 } // namespace mlpack
 
-// Include implementation (of Serialize() and inline functions).
+// Include implementation (of serialize() and inline functions).
 #include "rs_model_impl.hpp"
 
 #endif

@@ -248,7 +248,7 @@ class CF
    * Serialize the CF model to the given archive.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Number of users for similarity.

@@ -2,7 +2,7 @@
  * @file rs_model_impl.hpp
  * @author Ryan Curtin
  *
- * Implementation of Serialize() and inline functions for RSModel.
+ * Implementation of serialize() and inline functions for RSModel.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -458,7 +458,7 @@ template<typename Archive>
 template<typename RSType>
 void SerializeVisitor<Archive>::operator()(RSType* rs) const
 {
-  ar & data::CreateNVP(rs, name);
+  ar & BOOST_SERIALIZATION_NVP(rs);
 }
 
 //! Return whether single mode enabled
@@ -481,13 +481,11 @@ bool& NaiveVisitor::operator()(RSType* rs) const
 
 // Serialize the model.
 template<typename Archive>
-void RSModel::Serialize(Archive& ar, const unsigned int /* version */)
+void RSModel::serialize(Archive& ar, const unsigned int /* version */)
 {
-  using data::CreateNVP;
-
-  ar & CreateNVP(treeType, "treeType");
-  ar & CreateNVP(randomBasis, "randomBasis");
-  ar & CreateNVP(q, "q");
+  ar & BOOST_SERIALIZATION_NVP(treeType);
+  ar & BOOST_SERIALIZATION_NVP(randomBasis);
+  ar & BOOST_SERIALIZATION_NVP(q);
 
   // This should never happen, but just in case...
   if (Archive::is_loading::value)

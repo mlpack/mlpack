@@ -942,7 +942,7 @@ template<typename MetricType,
              class SplitType>
 template<typename Archive>
 void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
-    Serialize(Archive& ar, const unsigned int /* version */)
+    serialize(Archive& ar, const unsigned int /* version */)
 {
   using data::CreateNVP;
 

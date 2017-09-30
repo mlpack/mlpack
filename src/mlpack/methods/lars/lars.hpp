@@ -337,7 +337,7 @@ class LARS
    * Serialize the LARS model.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Gram matrix.
@@ -428,7 +428,7 @@ class LARS
 } // namespace regression
 } // namespace mlpack
 
-// Include implementation of Serialize().
+// Include implementation of serialize().
 #include "lars_impl.hpp"
 
 #endif
