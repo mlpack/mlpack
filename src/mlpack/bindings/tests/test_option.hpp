@@ -55,13 +55,13 @@ class TestOption
    *      matrix will not be transposed on loading.
    */
   TestOption(const N defaultValue,
-            const std::string& identifier,
-            const std::string& description,
-            const std::string& alias,
-            const std::string& cppName,
-            const bool required = false,
-            const bool input = true,
-            const bool noTranspose = false)
+             const std::string& identifier,
+             const std::string& description,
+             const std::string& alias,
+             const std::string& cppName,
+             const bool required = false,
+             const bool input = true,
+             const bool noTranspose = false)
   {
     // Create the ParamData object to give to CLI.
     util::ParamData data;
@@ -77,6 +77,7 @@ class TestOption
     data.loaded = false;
     data.cppType = cppName;
     data.value = boost::any(defaultValue);
+    data.persistent = true;
 
     const std::string tname = data.tname;
 
