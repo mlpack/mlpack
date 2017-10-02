@@ -410,7 +410,7 @@ Octree<MetricType, StatisticType, MatType>::Octree(
     Octree() // Create an empty tree.
 {
   // De-serialize the tree into this object.
-  ar >> data::CreateNVP(*this, "tree");
+  ar >> BOOST_SERIALIZATION_NVP(*this);
 }
 
 template<typename MetricType, typename StatisticType, typename MatType>
@@ -629,12 +629,10 @@ Octree<MetricType, StatisticType, MatType>::RangeDistance(
 //! Serialize the tree.
 template<typename MetricType, typename StatisticType, typename MatType>
 template<typename Archive>
-void Octree<MetricType, StatisticType, MatType>::Serialize(
+void Octree<MetricType, StatisticType, MatType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  using data::CreateNVP;
-
   // If we're loading and we have children, they need to be deleted.
   if (Archive::is_loading::value)
   {
@@ -646,13 +644,13 @@ void Octree<MetricType, StatisticType, MatType>::Serialize(
       delete dataset;
   }
 
-  ar & CreateNVP(begin, "begin");
-  ar & CreateNVP(count, "count");
-  ar & CreateNVP(bound, "bound");
-  ar & CreateNVP(stat, "stat");
-  ar & CreateNVP(parentDistance, "parentDistance");
-  ar & CreateNVP(furthestDescendantDistance, "furthestDescendantDistance");
-  ar & CreateNVP(metric, "metric");
+  ar & BOOST_SERIALIZATION_NVP(begin);
+  ar & BOOST_SERIALIZATION_NVP(count);
+  ar & BOOST_SERIALIZATION_NVP(bound);
+  ar & BOOST_SERIALIZATION_NVP(stat);
+  ar & BOOST_SERIALIZATION_NVP(parentDistance);
+  ar & BOOST_SERIALIZATION_NVP(furthestDescendantDistance);
+  ar & BOOST_SERIALIZATION_NVP(metric);
 
   // Due to quirks of boost::serialization, depending on how the user
   // serializes the tree, it's possible that the root of the tree will
@@ -662,35 +660,25 @@ void Octree<MetricType, StatisticType, MatType>::Serialize(
   bool hasFakeParent = false;
   if (Archive::is_saving::value && parent != NULL && parent->parent == NULL)
   {
-    Octree* fakeParent = NULL;
+    Octree* oldParent = parent;
+    parent = NULL;
     hasFakeParent = true;
-    ar & CreateNVP(fakeParent, "parent");
-    ar & CreateNVP(hasFakeParent, "hasFakeParent");
+    ar & BOOST_SERIALIZATION_NVP(parent);
+    ar & BOOST_SERIALIZATION_NVP(hasFakeParent);
+    parent = oldParent;
   }
   else
   {
-    ar & CreateNVP(parent, "parent");
-    ar & CreateNVP(hasFakeParent, "hasFakeParent");
+    ar & BOOST_SERIALIZATION_NVP(parent);
+    ar & BOOST_SERIALIZATION_NVP(hasFakeParent);
   }
 
   // Only serialize the dataset if we don't have a fake parent.  Otherwise, the
   // real parent will come and set it later.
   if (!hasFakeParent)
-    ar & CreateNVP(dataset, "dataset");
+    ar & BOOST_SERIALIZATION_NVP(dataset);
 
-  size_t numChildren = 0;
-  if (Archive::is_saving::value)
-    numChildren = children.size();
-  ar & CreateNVP(numChildren, "numChildren");
-  if (Archive::is_loading::value)
-    children.resize(numChildren);
-
-  for (size_t i = 0; i < numChildren; ++i)
-  {
-    std::ostringstream oss;
-    oss << "child" << i;
-    ar & CreateNVP(children[i], oss.str());
-  }
+  ar & BOOST_SERIALIZATION_NVP(children);
 
   // Fix the child pointers, if they were set to a fake parent.
   if (Archive::is_loading::value && parent == NULL)

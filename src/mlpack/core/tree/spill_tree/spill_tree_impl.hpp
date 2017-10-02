@@ -255,7 +255,7 @@ SpillTree(
 {
   // We've delegated to the constructor which gives us an empty tree, and now we
   // can serialize from it.
-  ar >> data::CreateNVP(*this, "tree");
+  ar >> BOOST_SERIALIZATION_NVP(*this);
 }
 
 /**
@@ -745,10 +745,8 @@ template<typename MetricType,
              class SplitType>
 template<typename Archive>
 void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
-    Serialize(Archive& ar, const unsigned int /* version */)
+    serialize(Archive& ar, const unsigned int /* version */)
 {
-  using data::CreateNVP;
-
   // If we're loading, and we have children, they need to be deleted.
   if (Archive::is_loading::value)
   {
@@ -760,23 +758,23 @@ void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
       delete dataset;
   }
 
-  ar & CreateNVP(parent, "parent");
-  ar & CreateNVP(count, "count");
-  ar & CreateNVP(pointsIndex, "pointsIndex");
-  ar & CreateNVP(overlappingNode, "overlappingNode");
-  ar & CreateNVP(hyperplane, "hyperplane");
-  ar & CreateNVP(bound, "bound");
-  ar & CreateNVP(stat, "statistic");
-  ar & CreateNVP(parentDistance, "parentDistance");
-  ar & CreateNVP(furthestDescendantDistance, "furthestDescendantDistance");
-  ar & CreateNVP(dataset, "dataset");
+  ar & BOOST_SERIALIZATION_NVP(parent);
+  ar & BOOST_SERIALIZATION_NVP(count);
+  ar & BOOST_SERIALIZATION_NVP(pointsIndex);
+  ar & BOOST_SERIALIZATION_NVP(overlappingNode);
+  ar & BOOST_SERIALIZATION_NVP(hyperplane);
+  ar & BOOST_SERIALIZATION_NVP(bound);
+  ar & BOOST_SERIALIZATION_NVP(stat);
+  ar & BOOST_SERIALIZATION_NVP(parentDistance);
+  ar & BOOST_SERIALIZATION_NVP(furthestDescendantDistance);
+  ar & BOOST_SERIALIZATION_NVP(dataset);
 
   if (Archive::is_loading::value && parent == NULL)
     localDataset = true;
 
   // Save children last; otherwise boost::serialization gets confused.
-  ar & CreateNVP(left, "left");
-  ar & CreateNVP(right, "right");
+  ar & BOOST_SERIALIZATION_NVP(left);
+  ar & BOOST_SERIALIZATION_NVP(right);
 
   // Due to quirks of boost::serialization, if a tree is saved as an object and
   // not a pointer, the first level of the tree will be duplicated on load.

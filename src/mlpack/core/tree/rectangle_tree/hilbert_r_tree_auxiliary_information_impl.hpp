@@ -178,12 +178,11 @@ NullifyData()
 template<typename TreeType,
          template<typename> class HilbertValueType>
 template<typename Archive>
-void HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::
-Serialize(Archive& ar, const unsigned int /* version */)
+void HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::serialize(
+    Archive& ar,
+    const unsigned int /* version */)
 {
-  using data::CreateNVP;
-
-  ar & CreateNVP(hilbertValue, "hilbertValue");
+  ar & BOOST_SERIALIZATION_NVP(hilbertValue);
 }
 
 

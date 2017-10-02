@@ -74,10 +74,10 @@ class HyperbolicTangentKernel
 
   //! Serialize the kernel.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(scale, "scale");
-    ar & data::CreateNVP(offset, "offset");
+    ar & BOOST_SERIALIZATION_NVP(scale);
+    ar & BOOST_SERIALIZATION_NVP(offset);
   }
 
  private:
