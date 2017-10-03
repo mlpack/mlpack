@@ -189,20 +189,7 @@ class DTree
    * @param tag Tag for the next leaf; leave at 0 for the initial call.
    */
   TagType TagTree(const TagType& tag = 0, bool internal = false);
-  
-  
-  /**
-   * Traverses all nodes of the tree, including the inner ones. On each node
-   * two methods of the `enumer` are called:
-   *
-   * Enter(DTree* node, DTree* parent);
-   * Leave(Dtree* node, DTree* parent);
-   *
-   * @param walker An instance of custom class, receiver of the enumeration.
-   */
-  template <class Walker>
-  void EnumerateTree(Walker& walker) const;
-  
+
 
   /**
    * Return the tag of the leaf containing the query.  This is useful for
@@ -211,6 +198,7 @@ class DTree
    * @param query Query to search for.
    */
   TagType FindBucket(const VecType& query) const;
+
 
   /**
    * Compute the variable importance of each dimension in the learned tree.
@@ -316,6 +304,18 @@ class DTree
   double AlphaUpper() const { return alphaUpper; }
   //! Return the current bucket's ID, if leaf, or -1 otherwise
   TagType BucketTag() const { return bucketTag; }
+  //! Return the number of children in this node.
+  size_t NumChildren() const { return !left ? 0 : 2; }
+
+  /**
+   * Return the specified child (0 will be left, 1 will be right).  If the index
+   * is greater than 1, this will return the right child.
+   *
+   * @param child Index of child to return.
+   */
+  DTree& Child(const size_t child) const { return !child ? *left : *right; }
+
+  DTree*& ChildPtr(const size_t child) { return (!child) ? left : right; }
 
   //! Return the maximum values.
   const StatType& MaxVals() const { return maxVals; }
@@ -349,10 +349,9 @@ class DTree
                    const size_t splitDim,
                    const ElemType splitValue,
                    arma::Col<size_t>& oldFromNew) const;
-  
+
   void  FillMinMax(const StatType& mins,
                    const StatType& maxs);
-
 };
 
 } // namespace det

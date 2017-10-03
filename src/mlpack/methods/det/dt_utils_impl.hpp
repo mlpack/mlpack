@@ -14,6 +14,7 @@
 #define MLPACK_METHODS_DET_DT_UTILS_IMPL_HPP
 
 #include "dt_utils.hpp"
+#include <mlpack/core/tree/enumerate_tree.hpp>
 
 namespace mlpack {
 namespace det {
@@ -65,7 +66,7 @@ void PrintLeafMembership(DTree<MatType, int>* dtree,
 
   return;
 }
-    
+
 template <typename MatType, typename TagType>
 void PrintVariableImportance(const DTree<MatType, TagType>* dtree,
                              const std::string viFile)
@@ -156,17 +157,18 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
 
     outfile.close();
   }
-  
+
   if (skipPruning)
     return dtree;
 
   if (folds == dataset.n_cols)
     Log::Info << "Performing leave-one-out cross validation." << std::endl;
   else
-    Log::Info << "Performing " << folds << "-fold cross validation." << std::endl;
-  
-  Timer::Start("prunning_sequence");
-  
+    Log::Info << "Performing " << folds << "-fold cross validation." <<
+      std::endl;
+
+  Timer::Start("pruning_sequence");
+
   // Sequentially prune and save the alpha values and the values of c_t^2 * r_t.
   std::vector<std::pair<double, double> > prunedSequence;
   while (dtree->SubtreeLeaves() > 1)
@@ -186,10 +188,11 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
     Log::Assert(dtree->SubtreeLeavesLogNegError() <= treeSeq.second);
   }
 
-  std::pair<double, double> treeSeq(oldAlpha, dtree->SubtreeLeavesLogNegError());
+  std::pair<double, double> treeSeq(oldAlpha,
+                                    dtree->SubtreeLeavesLogNegError());
   prunedSequence.push_back(treeSeq);
 
-  Timer::Stop("prunning_sequence");
+  Timer::Stop("pruning_sequence");
   Log::Info << prunedSequence.size() << " trees in the sequence; maximum alpha:"
       << " " << oldAlpha << "." << std::endl;
 
@@ -205,7 +208,7 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
   // implementation. omp_size_t is the appropriate type according to the
   // platform.
   #pragma omp parallel for default(none) \
-      shared(cvData, prunedSequence, regularizationConstants)
+      shared(prunedSequence, regularizationConstants)
   for (omp_size_t fold = 0; fold < (omp_size_t) folds; fold++)
   {
     // Break up data into train and test sets.
@@ -338,6 +341,71 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
       << "pruned tree; optimal alpha: " << oldAlpha << "." << std::endl;
 
   return dtree;
+}
+
+template <typename MatType>
+PathCacher::PathCacher(PathCacher::PathFormat fmt, DTree<MatType, int>* dtree) :
+  format(fmt)
+{
+  // Here we use TagTree()'s output to determine the number of _nodes_ in the tree).
+  pathCache.resize(dtree->TagTree(0, true));
+  pathCache[0] = PathCacheType::value_type(-1, "");
+  tree::EnumerateTree(dtree, *this);
+}
+
+template <typename MatType>
+void  PathCacher::Enter(const DTree<MatType, int>* node,
+                        const DTree<MatType, int>* parent)
+{
+  if (parent == nullptr)
+    return;
+
+  int tag = node->BucketTag();
+
+  path.push_back(PathType::value_type(parent->Left() == node, tag));
+  pathCache[tag] = PathCacheType::value_type(parent->BucketTag(),
+                                             (node->SubtreeLeaves() > 1) ?
+                                             "" : BuildString());
+}
+
+template <typename MatType>
+void  PathCacher::Leave(const DTree<MatType, int>* ,
+                        const DTree<MatType, int>* parent)
+{
+  if (parent != nullptr)
+    path.pop_back();
+}
+
+std::string PathCacher::BuildString()
+{
+  std::string str("");
+  for (PathType::iterator it = path.begin(); it != path.end(); it++)
+  {
+    switch (format)
+    {
+      case FormatLR:
+        str += it->first ? "L" : "R";
+        break;
+      case FormatLR_ID:
+        str += (it->first ? "L" : "R") + std::to_string(it->second);
+        break;
+      case FormatID_LR:
+        str += std::to_string(it->second) + (it->first ? "L" : "R");
+        break;
+    }
+  }
+
+  return str;
+}
+
+int PathCacher::ParentOf(int tag) const
+{
+  return pathCache[tag].first;
+}
+
+const std::string& PathCacher::PathFor(int tag) const
+{
+  return pathCache[tag].second;
 }
 
 } // namespace det
