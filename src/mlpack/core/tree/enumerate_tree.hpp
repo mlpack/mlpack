@@ -41,6 +41,7 @@ void EnumerateTreeImpl(TreeType* tree, Walker& walker, bool root)
 
 } // namespace enumerate
 
+
 /**
  * Traverses all nodes of the tree, including the inner ones. On each node
  * two methods of the `enumer` are called:
