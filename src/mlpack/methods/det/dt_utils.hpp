@@ -77,7 +77,7 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
  */
 class PathCacher
 {
-public:
+ public:
   enum PathFormat
   {
     FormatLR,
@@ -102,7 +102,7 @@ public:
 
   size_t              NumNodes() const { return pathCache.size(); }
 
-protected:
+ protected:
   typedef std::list<std::pair<bool, int> >            PathType;
   typedef std::vector<std::pair<int, std::string> >   PathCacheType;
 

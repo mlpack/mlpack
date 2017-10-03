@@ -347,7 +347,8 @@ template <typename MatType>
 PathCacher::PathCacher(PathCacher::PathFormat fmt, DTree<MatType, int>* dtree) :
   format(fmt)
 {
-  // Here we use TagTree()'s output to determine the number of _nodes_ in the tree).
+  // Here we use TagTree()'s output to determine the
+  // number of _nodes_ in the tree.
   pathCache.resize(dtree->TagTree(0, true));
   pathCache[0] = PathCacheType::value_type(-1, "");
   tree::EnumerateTree(dtree, *this);
@@ -411,4 +412,4 @@ const std::string& PathCacher::PathFor(int tag) const
 } // namespace det
 } // namespace mlpack
 
-#endif
+#endif // MLPACK_METHODS_DET_DT_UTILS_IMPL_HPP
