@@ -191,6 +191,9 @@ template <typename MatType, typename TagType>
 DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(
     const DTree<MatType, TagType>& obj)
 {
+  if (this == &obj)
+    return *this;
+
   // Copy the values from the other tree.
   start = obj.start;
   end = obj.end;
@@ -213,7 +216,7 @@ DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(
 
   // Copy the children.
   left = ((obj.left == NULL) ? NULL : new DTree(*obj.left));
-  left = ((obj.right == NULL) ? NULL : new DTree(*obj.right));
+  right = ((obj.right == NULL) ? NULL : new DTree(*obj.right));
 
   return *this;
 }
@@ -258,6 +261,9 @@ template <typename MatType, typename TagType>
 DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(
     DTree<MatType, TagType>&& obj)
 {
+  if (this == &obj)
+    return *this;
+
   // Move the values from the other tree.
   start = obj.start;
   end = obj.end;
