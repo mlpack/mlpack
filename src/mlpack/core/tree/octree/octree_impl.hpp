@@ -652,43 +652,10 @@ void Octree<MetricType, StatisticType, MatType>::serialize(
   ar & BOOST_SERIALIZATION_NVP(furthestDescendantDistance);
   ar & BOOST_SERIALIZATION_NVP(metric);
 
-  // Due to quirks of boost::serialization, depending on how the user
-  // serializes the tree, it's possible that the root of the tree will
-  // accidentally be serialized twice.  So if we are a first-level child, we
-  // avoid serializing the parent.  The true (non-duplicated) parent will fix
-  // the parent link.
-  bool hasFakeParent = false;
-  if (Archive::is_saving::value && parent != NULL && parent->parent == NULL)
-  {
-    Octree* oldParent = parent;
-    parent = NULL;
-    hasFakeParent = true;
-    ar & BOOST_SERIALIZATION_NVP(parent);
-    ar & BOOST_SERIALIZATION_NVP(hasFakeParent);
-    parent = oldParent;
-  }
-  else
-  {
-    ar & BOOST_SERIALIZATION_NVP(parent);
-    ar & BOOST_SERIALIZATION_NVP(hasFakeParent);
-  }
-
-  // Only serialize the dataset if we don't have a fake parent.  Otherwise, the
-  // real parent will come and set it later.
-  if (!hasFakeParent)
-    ar & BOOST_SERIALIZATION_NVP(dataset);
+  ar & BOOST_SERIALIZATION_NVP(parent);
+  ar & BOOST_SERIALIZATION_NVP(dataset);
 
   ar & BOOST_SERIALIZATION_NVP(children);
-
-  // Fix the child pointers, if they were set to a fake parent.
-  if (Archive::is_loading::value && parent == NULL)
-  {
-    for (size_t i = 0; i < children.size(); ++i)
-    {
-      children[i]->dataset = this->dataset;
-      children[i]->parent = this;
-    }
-  }
 }
 
 //! Split the node.

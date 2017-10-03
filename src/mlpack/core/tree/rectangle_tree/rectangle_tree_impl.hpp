@@ -1269,22 +1269,6 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   if (Archive::is_loading::value)
     children.resize(maxNumChildren + 1);
 
-  // Due to quirks of boost::serialization, depending on how the user serializes
-  // the tree, the root node may be duplicated.  Therefore we don't allow
-  // children of the root to serialize the parent, and we fix the parent link
-  // after serializing the children when loading below.
-  if (Archive::is_saving::value && parent != NULL && parent->Parent() == NULL)
-  {
-    RectangleTree* oldParent = parent;
-    parent = NULL;
-    ar & BOOST_SERIALIZATION_NVP(parent);
-    parent = oldParent;
-  }
-  else
-  {
-    ar & BOOST_SERIALIZATION_NVP(parent);
-  }
-
   ar & BOOST_SERIALIZATION_NVP(begin);
   ar & BOOST_SERIALIZATION_NVP(count);
   ar & BOOST_SERIALIZATION_NVP(numDescendants);
@@ -1294,10 +1278,8 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   ar & BOOST_SERIALIZATION_NVP(stat);
   ar & BOOST_SERIALIZATION_NVP(parentDistance);
   ar & BOOST_SERIALIZATION_NVP(dataset);
-
-  // If we are loading and we are the root, we own the dataset.
-  if (Archive::is_loading::value && parent == NULL)
-    ownsDataset = true;
+  ar & BOOST_SERIALIZATION_NVP(ownsDataset);
+  ar & BOOST_SERIALIZATION_NVP(parent);
 
   ar & BOOST_SERIALIZATION_NVP(points);
   ar & BOOST_SERIALIZATION_NVP(auxiliaryInfo);
@@ -1307,18 +1289,6 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   for (size_t i = numChildren; i < maxNumChildren + 1; ++i)
     children[i] = NULL;
   ar & BOOST_SERIALIZATION_NVP(children);
-//  children.resize(maxNumChildren + 1);
-
-  // Fix the parent links for the children, if necessary.
-  if (Archive::is_loading::value && parent == NULL)
-  {
-    // Look through each child individually.
-    for (size_t i = 0; i < numChildren; ++i)
-    {
-      children[i]->ownsDataset = false;
-      children[i]->Parent() = this;
-    }
-  }
 }
 
 } // namespace tree

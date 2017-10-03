@@ -1599,23 +1599,7 @@ void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::serialize(
   ar & BOOST_SERIALIZATION_NVP(stat);
   ar & BOOST_SERIALIZATION_NVP(numDescendants);
 
-  // Due to quirks of boost::serialization, depending on how the user
-  // serializes the tree, it's possible that the root of the tree will
-  // accidentally be serialized twice.  So if we are a first-level child, we
-  // avoid serializing the parent.  The true (non-duplicated) parent will fix
-  // the parent link.
-  if (Archive::is_saving::value && parent != NULL && parent->Parent() == NULL)
-  {
-    CoverTree* oldParent = parent;
-    parent = NULL;
-    ar & BOOST_SERIALIZATION_NVP(parent);
-    parent = oldParent;
-  }
-  else
-  {
-    ar & BOOST_SERIALIZATION_NVP(parent);
-  }
-
+  ar & BOOST_SERIALIZATION_NVP(parent);
   ar & BOOST_SERIALIZATION_NVP(parentDistance);
   ar & BOOST_SERIALIZATION_NVP(furthestDescendantDistance);
   ar & BOOST_SERIALIZATION_NVP(metric);
