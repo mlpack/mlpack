@@ -144,7 +144,7 @@ double BigBatchSGD<UpdatePolicyType>::Optimize(
           batchVisitationOrder = arma::linspace<arma::Col<size_t>>(offset +
               batchSize, (offset + batchSize + batchOffset - 1), batchOffset);
         }
-        else if ((offset - batchOffset) >= 0)
+        else if (((int) offset - (int) batchOffset) >= 0)
         {
           batchVisitationOrder = arma::linspace<arma::Col<size_t>>(offset -
               batchOffset, offset - 1, batchOffset);

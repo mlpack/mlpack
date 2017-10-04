@@ -91,7 +91,7 @@ BOOST_AUTO_TEST_CASE(BBSBBLogisticRegressionTest)
       responses, testResponses, shuffledResponses);
 
   // Now run big-batch SGD with a couple of batch sizes.
-  for (size_t batchSize = 5; batchSize < 40; batchSize += 5)
+  for (size_t batchSize = 30; batchSize < 40; batchSize += 5)
   {
     BBS_BB bbsgd(batchSize, 0.01, 0.1, 6000, 1e-3);
     LogisticRegression<> lr(shuffledData, shuffledResponses, bbsgd, 0.5);
@@ -118,7 +118,7 @@ BOOST_AUTO_TEST_CASE(BBSArmijoLogisticRegressionTest)
       responses, testResponses, shuffledResponses);
 
   // Now run big-batch SGD with a couple of batch sizes.
-  for (size_t batchSize = 5; batchSize < 40; batchSize += 5)
+  for (size_t batchSize = 30; batchSize < 40; batchSize += 5)
   {
     BBS_Armijo bbsgd(batchSize, 0.01, 0.1, 6000, 1e-3);
     LogisticRegression<> lr(shuffledData, shuffledResponses, bbsgd, 0.5);
