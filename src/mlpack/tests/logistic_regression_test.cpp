@@ -196,38 +196,38 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSeparableEvaluate)
       0.0 /* no regularization */);
 
   // These were hand-calculated using Octave.
-  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("1 1 1"), 0), 4.85873516e-2,
+  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("1 1 1"), 0, 1), 4.85873516e-2,
       1e-5);
-  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("1 1 1"), 1), 6.71534849e-3,
+  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("1 1 1"), 1, 1), 6.71534849e-3,
       1e-5);
-  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("1 1 1"), 2), 7.00091146645,
-      1e-5);
-
-  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("0 0 0"), 0), 0.6931471805,
-      1e-5);
-  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("0 0 0"), 1), 0.6931471805,
-      1e-5);
-  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("0 0 0"), 2), 0.6931471805,
+  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("1 1 1"), 2, 1), 7.00091146645,
       1e-5);
 
-  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("-1 -1 -1"), 0), 3.0485873516,
+  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("0 0 0"), 0, 1), 0.6931471805,
       1e-5);
-  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("-1 -1 -1"), 1), 5.0067153485,
+  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("0 0 0"), 1, 1), 0.6931471805,
       1e-5);
-  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("-1 -1 -1"), 2),
+  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("0 0 0"), 2, 1), 0.6931471805,
+      1e-5);
+
+  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("-1 -1 -1"), 0, 1),
+      3.0485873516, 1e-5);
+  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("-1 -1 -1"), 1, 1),
+      5.0067153485, 1e-5);
+  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::rowvec("-1 -1 -1"), 2, 1),
       9.1146645377e-4, 1e-5);
 
-  BOOST_REQUIRE_SMALL(lrf.Evaluate(arma::rowvec("200 -40 -40"), 0), 1e-5);
-  BOOST_REQUIRE_SMALL(lrf.Evaluate(arma::rowvec("200 -40 -40"), 1), 1e-5);
-  BOOST_REQUIRE_SMALL(lrf.Evaluate(arma::rowvec("200 -40 -40"), 2), 1e-5);
+  BOOST_REQUIRE_SMALL(lrf.Evaluate(arma::rowvec("200 -40 -40"), 0, 1), 1e-5);
+  BOOST_REQUIRE_SMALL(lrf.Evaluate(arma::rowvec("200 -40 -40"), 1, 1), 1e-5);
+  BOOST_REQUIRE_SMALL(lrf.Evaluate(arma::rowvec("200 -40 -40"), 2, 1), 1e-5);
 
-  BOOST_REQUIRE_SMALL(lrf.Evaluate(arma::rowvec("200 -80 0"), 0), 1e-5);
-  BOOST_REQUIRE_SMALL(lrf.Evaluate(arma::rowvec("200 -80 0"), 1), 1e-5);
-  BOOST_REQUIRE_SMALL(lrf.Evaluate(arma::rowvec("200 -80 0"), 2), 1e-5);
+  BOOST_REQUIRE_SMALL(lrf.Evaluate(arma::rowvec("200 -80 0"), 0, 1), 1e-5);
+  BOOST_REQUIRE_SMALL(lrf.Evaluate(arma::rowvec("200 -80 0"), 1, 1), 1e-5);
+  BOOST_REQUIRE_SMALL(lrf.Evaluate(arma::rowvec("200 -80 0"), 2, 1), 1e-5);
 
-  BOOST_REQUIRE_SMALL(lrf.Evaluate(arma::rowvec("200 -100 20"), 0), 1e-5);
-  BOOST_REQUIRE_SMALL(lrf.Evaluate(arma::rowvec("200 -100 20"), 1), 1e-5);
-  BOOST_REQUIRE_SMALL(lrf.Evaluate(arma::rowvec("200 -100 20"), 2), 1e-5);
+  BOOST_REQUIRE_SMALL(lrf.Evaluate(arma::rowvec("200 -100 20"), 0, 1), 1e-5);
+  BOOST_REQUIRE_SMALL(lrf.Evaluate(arma::rowvec("200 -100 20"), 1, 1), 1e-5);
+  BOOST_REQUIRE_SMALL(lrf.Evaluate(arma::rowvec("200 -100 20"), 2, 1), 1e-5);
 }
 
 /**
@@ -271,10 +271,10 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionRegularizationSeparableEvaluate)
 
     for (size_t j = 0; j < points; ++j)
     {
-      BOOST_REQUIRE_CLOSE(lrfNoReg.Evaluate(parameters, j) + smallRegTerm,
-          lrfSmallReg.Evaluate(parameters, j), 1e-5);
-      BOOST_REQUIRE_CLOSE(lrfNoReg.Evaluate(parameters, j) + bigRegTerm,
-          lrfBigReg.Evaluate(parameters, j), 1e-5);
+      BOOST_REQUIRE_CLOSE(lrfNoReg.Evaluate(parameters, j, 1) + smallRegTerm,
+          lrfSmallReg.Evaluate(parameters, j, 1), 1e-5);
+      BOOST_REQUIRE_CLOSE(lrfNoReg.Evaluate(parameters, j, 1) + bigRegTerm,
+          lrfBigReg.Evaluate(parameters, j, 1), 1e-5);
     }
   }
 }
@@ -295,20 +295,20 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionSeparableGradient)
   arma::rowvec gradient;
 
   // If the model is at the optimum, then the gradient should be zero.
-  lrf.Gradient(arma::rowvec("200 -40 -40"), 0, gradient);
+  lrf.Gradient(arma::rowvec("200 -40 -40"), 0, gradient, 1);
 
   BOOST_REQUIRE_EQUAL(gradient.n_elem, 3);
   BOOST_REQUIRE_SMALL(gradient[0], 1e-15);
   BOOST_REQUIRE_SMALL(gradient[1], 1e-15);
   BOOST_REQUIRE_SMALL(gradient[2], 1e-15);
 
-  lrf.Gradient(arma::rowvec("200 -40 -40"), 1, gradient);
+  lrf.Gradient(arma::rowvec("200 -40 -40"), 1, gradient, 1);
   BOOST_REQUIRE_EQUAL(gradient.n_elem, 3);
   BOOST_REQUIRE_SMALL(gradient[0], 1e-15);
   BOOST_REQUIRE_SMALL(gradient[1], 1e-15);
   BOOST_REQUIRE_SMALL(gradient[2], 1e-15);
 
-  lrf.Gradient(arma::rowvec("200 -40 -40"), 2, gradient);
+  lrf.Gradient(arma::rowvec("200 -40 -40"), 2, gradient, 1);
   BOOST_REQUIRE_EQUAL(gradient.n_elem, 3);
   BOOST_REQUIRE_SMALL(gradient[0], 1e-15);
   BOOST_REQUIRE_SMALL(gradient[1], 1e-15);
@@ -317,19 +317,19 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionSeparableGradient)
   // Perturb two elements in the wrong way, so they need to become smaller.  For
   // the first two data points, classification is still correct so the gradient
   // should be zero.
-  lrf.Gradient(arma::rowvec("200 -30 -30"), 0, gradient);
+  lrf.Gradient(arma::rowvec("200 -30 -30"), 0, gradient, 1);
   BOOST_REQUIRE_EQUAL(gradient.n_elem, 3);
   BOOST_REQUIRE_SMALL(gradient[0], 1e-15);
   BOOST_REQUIRE_SMALL(gradient[1], 1e-15);
   BOOST_REQUIRE_SMALL(gradient[2], 1e-15);
 
-  lrf.Gradient(arma::rowvec("200 -30 -30"), 1, gradient);
+  lrf.Gradient(arma::rowvec("200 -30 -30"), 1, gradient, 1);
   BOOST_REQUIRE_EQUAL(gradient.n_elem, 3);
   BOOST_REQUIRE_SMALL(gradient[0], 1e-15);
   BOOST_REQUIRE_SMALL(gradient[1], 1e-15);
   BOOST_REQUIRE_SMALL(gradient[2], 1e-15);
 
-  lrf.Gradient(arma::rowvec("200 -30 -30"), 2, gradient);
+  lrf.Gradient(arma::rowvec("200 -30 -30"), 2, gradient, 1);
   BOOST_REQUIRE_EQUAL(gradient.n_elem, 3);
   BOOST_REQUIRE_GE(gradient[1], 0.0);
   BOOST_REQUIRE_GE(gradient[2], 0.0);
@@ -337,18 +337,18 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionSeparableGradient)
   // Perturb two elements in the other wrong way, so they need to become larger.
   // For the first and last data point, classification is still correct so the
   // gradient should be zero.
-  lrf.Gradient(arma::rowvec("200 -60 -60"), 0, gradient);
+  lrf.Gradient(arma::rowvec("200 -60 -60"), 0, gradient, 1);
   BOOST_REQUIRE_EQUAL(gradient.n_elem, 3);
   BOOST_REQUIRE_SMALL(gradient[0], 1e-15);
   BOOST_REQUIRE_SMALL(gradient[1], 1e-15);
   BOOST_REQUIRE_SMALL(gradient[2], 1e-15);
 
-  lrf.Gradient(arma::rowvec("200 -30 -30"), 1, gradient);
+  lrf.Gradient(arma::rowvec("200 -30 -30"), 1, gradient, 1);
   BOOST_REQUIRE_EQUAL(gradient.n_elem, 3);
   BOOST_REQUIRE_LE(gradient[1], 0.0);
   BOOST_REQUIRE_LE(gradient[2], 0.0);
 
-  lrf.Gradient(arma::rowvec("200 -60 -60"), 2, gradient);
+  lrf.Gradient(arma::rowvec("200 -60 -60"), 2, gradient, 1);
   BOOST_REQUIRE_EQUAL(gradient.n_elem, 3);
   BOOST_REQUIRE_SMALL(gradient[0], 1e-15);
   BOOST_REQUIRE_SMALL(gradient[1], 1e-15);
@@ -456,9 +456,9 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionRegularizationSeparableGradient)
     // Test separable gradient for each point.  Regularization will be the same.
     for (size_t k = 0; k < points; ++k)
     {
-      lrfNoReg.Gradient(parameters, k, gradient);
-      lrfSmallReg.Gradient(parameters, k, smallRegGradient);
-      lrfBigReg.Gradient(parameters, k, bigRegGradient);
+      lrfNoReg.Gradient(parameters, k, gradient, 1);
+      lrfSmallReg.Gradient(parameters, k, smallRegGradient, 1);
+      lrfBigReg.Gradient(parameters, k, bigRegGradient, 1);
 
       // Check sizes of gradients.
       BOOST_REQUIRE_EQUAL(gradient.n_elem, parameters.n_elem);
@@ -515,7 +515,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSGDSimpleTest)
 
   // Create a logistic regression object using a custom SGD object with a much
   // smaller tolerance.
-  StandardSGD sgd(0.005, 32, 500000, 1e-10);
+  StandardSGD sgd(0.005, 1, 500000, 1e-10);
   LogisticRegression<> lr(data, responses, sgd, 0.001);
 
   // Test sigmoid function.
