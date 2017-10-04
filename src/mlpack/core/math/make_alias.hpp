@@ -72,6 +72,28 @@ arma::SpCol<ElemType> MakeAlias(const arma::SpCol<ElemType>& input)
   return arma::SpCol<ElemType>(input);
 }
 
+/**
+ * Clear an alias so that no data is overwritten.  This resets the matrix if it
+ * is an alias (and does nothing otherwise).
+ */
+template<typename ElemType>
+void ClearAlias(arma::Mat<ElemType>& mat)
+{
+  if (mat.mem_state >= 1)
+    mat.reset();
+}
+
+/**
+ * Clear an alias for a sparse matrix.  This does nothing because no sparse
+ * matrices can have aliases.
+ */
+template<typename ElemType>
+void ClearAlias(arma::SpMat<ElemType>& /* mat */)
+{
+  // Nothing to do.
+}
+
+
 } // namespace math
 } // namespace mlpack
 
