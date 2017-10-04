@@ -120,14 +120,19 @@ class GeneralizedRosenbrockFunction
    */
   GeneralizedRosenbrockFunction(int n);
 
+  void Shuffle();
+
   double Evaluate(const arma::mat& coordinates) const;
   void Gradient(const arma::mat& coordinates, arma::mat& gradient) const;
 
   size_t NumFunctions() const { return n - 1; }
-  double Evaluate(const arma::mat& coordinates, const size_t i) const;
+  double Evaluate(const arma::mat& coordinates,
+                  const size_t i,
+                  const size_t batchSize = 1) const;
   void Gradient(const arma::mat& coordinates,
                 const size_t i,
-                arma::mat& gradient) const;
+                arma::mat& gradient,
+                const size_t batchSize = 1) const;
 
   void Gradient(const arma::mat& coordinates,
                 const size_t i,
@@ -138,6 +143,7 @@ class GeneralizedRosenbrockFunction
  private:
   arma::mat initialPoint;
   int n; // Dimensionality
+  arma::Row<size_t> visitationOrder; // For shuffling.
 };
 
 /**

@@ -55,10 +55,13 @@ namespace optimization {
  * This class must implement the following function:
  *
  *   size_t NumFunctions();
- *   double Evaluate(const arma::mat& coordinates, const size_t i);
+ *   double Evaluate(const arma::mat& coordinates,
+ *                   const size_t i,
+ *                   const size_t batchSize);
  *   void Gradient(const arma::mat& coordinates,
  *                 const size_t i,
- *                 arma::mat& gradient);
+ *                 arma::mat& gradient,
+ *                 const size_t batchSize);
  *
  * NumFunctions() should return the number of functions (\f$n\f$), and in the
  * other two functions, the parameter i refers to which individual function (or
@@ -85,6 +88,7 @@ class SGD
    * equal one pass over the dataset).
    *
    * @param stepSize Step size for each iteration.
+   * @param batchSize Batch size to use for each step.
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *     limit).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
@@ -96,6 +100,7 @@ class SGD
    *                    are reset before every Optimize call.
    */
   SGD(const double stepSize = 0.01,
+      const size_t batchSize = 32,
       const size_t maxIterations = 100000,
       const double tolerance = 1e-5,
       const bool shuffle = true,
@@ -120,6 +125,11 @@ class SGD
   double StepSize() const { return stepSize; }
   //! Modify the step size.
   double& StepSize() { return stepSize; }
+
+  //! Get the batch size.
+  size_t BatchSize() const { return batchSize; }
+  //! Modify the batch size.
+  size_t& BatchSize() { return batchSize; }
 
   //! Get the maximum number of iterations (0 indicates no limit).
   size_t MaxIterations() const { return maxIterations; }
@@ -151,6 +161,9 @@ class SGD
  private:
   //! The step size for each example.
   double stepSize;
+
+  //! The batch size for processing.
+  size_t batchSize;
 
   //! The maximum number of allowed iterations.
   size_t maxIterations;

@@ -141,6 +141,15 @@ GeneralizedRosenbrockFunction::GeneralizedRosenbrockFunction(int n) : n(n)
 }
 
 /**
+ * Shuffle the data points.
+ */
+void GeneralizedRosenbrockFunction::Shuffle()
+{
+  visitationOrder = arma::shuffle(arma::linspace<arma::Row<size_t>>(0, n - 1,
+      n));
+}
+
+/**
  * Calculate the objective function.
  */
 double GeneralizedRosenbrockFunction::Evaluate(const arma::mat& coordinates)
@@ -178,22 +187,36 @@ void GeneralizedRosenbrockFunction::Gradient(const arma::mat& coordinates,
 
 //! Calculate the objective function of one of the individual functions.
 double GeneralizedRosenbrockFunction::Evaluate(const arma::mat& coordinates,
-                                               const size_t i) const
+                                               const size_t i,
+                                               const size_t batchSize) const
 {
-  return 100 * std::pow((std::pow(coordinates[i], 2) - coordinates[i + 1]), 2) +
-      std::pow(1 - coordinates[i], 2);
+  double objective = 0.0;
+  for (size_t j = i; j < i + batchSize; ++j)
+  {
+    objective += 100 * std::pow((std::pow(coordinates[visitationOrder[j]], 2) -
+        coordinates[visitationOrder[j + 1]]), 2) +
+        std::pow(1 - coordinates[visitationOrder[j]], 2);
+  }
+
+  return objective;
 }
 
 //! Calculate the gradient of one of the individual functions.
 void GeneralizedRosenbrockFunction::Gradient(const arma::mat& coordinates,
                                              const size_t i,
-                                             arma::mat& gradient) const
+                                             arma::mat& gradient,
+                                             const size_t batchSize) const
 {
   gradient.zeros(n);
 
-  gradient[i] = 400 * (std::pow(coordinates[i], 3) - coordinates[i] *
-      coordinates[i + 1]) + 2 * (coordinates[i] - 1);
-  gradient[i + 1] = 200 * (coordinates[i + 1] - std::pow(coordinates[i], 2));
+  for (size_t j = i; j < i + batchSize; ++j)
+  {
+    const size_t p = visitationOrder[j];
+    const size_t pn = visitationOrder[j + 1];
+    gradient[p] = 400 * (std::pow(coordinates[p], 3) - coordinates[p] *
+        coordinates[pn]) + 2 * (coordinates[p] - 1);
+    gradient[pn] = 200 * (coordinates[j + 1] - std::pow(coordinates[p], 2));
+  }
 }
 
 void GeneralizedRosenbrockFunction::Gradient(const arma::mat& coordinates,
@@ -202,9 +225,12 @@ void GeneralizedRosenbrockFunction::Gradient(const arma::mat& coordinates,
 {
   gradient.set_size(n);
 
-  gradient[i] = 400 * (std::pow(coordinates[i], 3) - coordinates[i] *
-      coordinates[i + 1]) + 2 * (coordinates[i] - 1);
-  gradient[i + 1] = 200 * (coordinates[i + 1] - std::pow(coordinates[i], 2));
+  const size_t p = visitationOrder[i];
+  const size_t pn = visitationOrder[i + 1];
+
+  gradient[p] = 400 * (std::pow(coordinates[p], 3) - coordinates[p] *
+      coordinates[pn]) + 2 * (coordinates[p] - 1);
+  gradient[pn] = 200 * (coordinates[pn] - std::pow(coordinates[p], 2));
 }
 
 const arma::mat& GeneralizedRosenbrockFunction::GetInitialPoint() const

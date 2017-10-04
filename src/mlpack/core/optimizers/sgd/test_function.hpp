@@ -28,8 +28,8 @@ class SGDTestFunction
   arma::Col<size_t> visitationOrder;
 
  public:
-  //! Nothing to do for the constructor.
-  SGDTestFunction() { }
+  //! Initialize the SGDTestFunction.
+  SGDTestFunction();
 
   /**
   * Shuffle the order of function visitation.  This may be called by the optimizer.
@@ -58,8 +58,8 @@ class SGDTestFunction
   //! Evaluate the gradient of a function for a particular batch-size
   void Gradient(const arma::mat& coordinates,
                 const size_t begin,
-                const size_t batchSize,
-                arma::mat& gradient) const;
+                arma::mat& gradient,
+                const size_t batchSize) const;
 };
 
 } // namespace test

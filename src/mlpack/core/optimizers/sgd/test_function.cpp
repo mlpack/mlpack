@@ -16,6 +16,11 @@ using namespace mlpack;
 using namespace mlpack::optimization;
 using namespace mlpack::optimization::test;
 
+SGDTestFunction::SGDTestFunction() :
+    visitationOrder(arma::linspace<arma::Col<size_t>>(0, NumFunctions() - 1,
+        NumFunctions()))
+{ }
+
 void SGDTestFunction::Shuffle()
 {
   visitationOrder = arma::shuffle(arma::linspace<arma::Col<size_t> >(0,
@@ -95,8 +100,8 @@ void SGDTestFunction::Gradient(const arma::mat& coordinates,
 
 void SGDTestFunction::Gradient(const arma::mat& coordinates,
                                const size_t begin,
-                               const size_t batchSize,
-                               arma::mat& gradient) const
+                               arma::mat& gradient,
+                               const size_t batchSize) const
 {
   gradient.zeros(3);
 
