@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_SUITE(RMSPropTest);
 BOOST_AUTO_TEST_CASE(SimpleRMSPropTestFunction)
 {
   SGDTestFunction f;
-  RMSProp optimizer(1e-3, 0.99, 1e-8, 5000000, 1e-9, true);
+  RMSProp optimizer(1e-3, 1, 0.99, 1e-8, 5000000, 1e-9, true);
 
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);

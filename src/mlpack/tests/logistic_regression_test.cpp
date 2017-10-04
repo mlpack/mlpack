@@ -515,7 +515,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSGDSimpleTest)
 
   // Create a logistic regression object using a custom SGD object with a much
   // smaller tolerance.
-  StandardSGD sgd(0.005, 500000, 1e-10);
+  StandardSGD sgd(0.005, 32, 500000, 1e-10);
   LogisticRegression<> lr(data, responses, sgd, 0.001);
 
   // Test sigmoid function.
@@ -563,7 +563,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSGDRegularizationSimpleTest)
 
   // Create a logistic regression object using custom SGD with a much smaller
   // tolerance.
-  StandardSGD sgd(0.005, 500000, 1e-10);
+  StandardSGD sgd(0.005, 32, 500000, 1e-10);
   LogisticRegression<> lr(data, responses, sgd, 0.001);
 
   // Test sigmoid function.

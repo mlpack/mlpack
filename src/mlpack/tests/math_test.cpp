@@ -583,4 +583,76 @@ BOOST_AUTO_TEST_CASE(RangeContainsRange)
   BOOST_REQUIRE_EQUAL(b.Contains(a), true);
 }
 
+/**
+ * Make sure shuffling data works.
+ */
+BOOST_AUTO_TEST_CASE(ShuffleTest)
+{
+  arma::mat data(3, 10, arma::fill::zeros);
+  arma::Row<size_t> labels(10);
+  for (size_t i = 0; i < 10; ++i)
+  {
+    data(0, i) = i;
+    labels[i] = i;
+  }
+
+  arma::mat outputData;
+  arma::Row<size_t> outputLabels;
+
+  ShuffleData(data, labels, outputData, outputLabels);
+
+  BOOST_REQUIRE_EQUAL(outputData.n_rows, data.n_rows);
+  BOOST_REQUIRE_EQUAL(outputData.n_cols, data.n_cols);
+  BOOST_REQUIRE_EQUAL(outputLabels.n_elem, labels.n_elem);
+
+  // Make sure we only have each point once.
+  arma::Row<size_t> counts(10, arma::fill::zeros);
+  for (size_t i = 0; i < 10; ++i)
+  {
+    BOOST_REQUIRE_EQUAL((size_t) outputData(0, i), labels[i]);
+    BOOST_REQUIRE_SMALL(outputData(1, i), 1e-5);
+    BOOST_REQUIRE_SMALL(outputData(2, i), 1e-5);
+    counts[labels[i]]++;
+  }
+
+  for (size_t i = 0; i < 10; ++i)
+    BOOST_REQUIRE_EQUAL(counts[i], 1);
+}
+
+/**
+ * Make sure shuffling sparse data works.
+ */
+BOOST_AUTO_TEST_CASE(SparseShuffleTest)
+{
+  arma::sp_mat data(3, 10);
+  arma::Row<size_t> labels(10);
+  for (size_t i = 0; i < 10; ++i)
+  {
+    data(0, i) = i;
+    labels[i] = i;
+  }
+
+  arma::sp_mat outputData;
+  arma::Row<size_t> outputLabels;
+
+  ShuffleData(data, labels, outputData, outputLabels);
+
+  BOOST_REQUIRE_EQUAL(outputData.n_rows, data.n_rows);
+  BOOST_REQUIRE_EQUAL(outputData.n_cols, data.n_cols);
+  BOOST_REQUIRE_EQUAL(outputLabels.n_elem, labels.n_elem);
+
+  // Make sure we only have each point once.
+  arma::Row<size_t> counts(10, arma::fill::zeros);
+  for (size_t i = 0; i < 10; ++i)
+  {
+    BOOST_REQUIRE_EQUAL((size_t) outputData(0, i), labels[i]);
+    BOOST_REQUIRE_SMALL((double) outputData(1, i), 1e-5);
+    BOOST_REQUIRE_SMALL((double) outputData(2, i), 1e-5);
+    counts[labels[i]]++;
+  }
+
+  for (size_t i = 0; i < 10; ++i)
+    BOOST_REQUIRE_EQUAL(counts[i], 1);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
