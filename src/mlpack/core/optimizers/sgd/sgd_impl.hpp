@@ -59,8 +59,7 @@ double SGD<UpdatePolicyType>::Optimize(
   // Calculate the first objective function.
   for (size_t i = 0; i < numFunctions; i += batchSize)
   {
-    const size_t effectiveBatchSize = std::max(batchSize, numFunctions -
-        currentFunction);
+    const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
     overallObjective += function.Evaluate(iterate, i, effectiveBatchSize);
   }
 
@@ -105,13 +104,14 @@ double SGD<UpdatePolicyType>::Optimize(
     }
 
     // Find the effective batch size (the last batch may be smaller).
-    const size_t effectiveBatchSize = std::max(batchSize,
+    const size_t effectiveBatchSize = std::min(batchSize,
         numFunctions - currentFunction);
 
     function.Gradient(iterate, currentFunction, gradient, effectiveBatchSize);
 
     // Use the update policy to take a step.
-    updatePolicy.Update(iterate, stepSize, gradient);
+    for (size_t k = 0; k < effectiveBatchSize; ++k) // hack...
+      updatePolicy.Update(iterate, stepSize, gradient);
 
     overallObjective += function.Evaluate(iterate, currentFunction,
         effectiveBatchSize);
@@ -127,8 +127,7 @@ double SGD<UpdatePolicyType>::Optimize(
   overallObjective = 0;
   for (size_t i = 0; i < numFunctions; i += batchSize)
   {
-    const size_t effectiveBatchSize = std::max(batchSize, numFunctions -
-        currentFunction);
+    const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
     overallObjective += function.Evaluate(iterate, i, effectiveBatchSize);
   }
   return overallObjective;
