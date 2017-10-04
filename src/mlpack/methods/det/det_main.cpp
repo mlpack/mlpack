@@ -73,14 +73,11 @@ PARAM_STRING_IN("path_format", "The format of path printing - lr|id-lr|lr-id",
 PARAM_STRING_OUT("tag_counters_file", "The file to output number of points "
                  "that went to each leaf.", "c");
 
-PARAM_STRING_OUT("raw_estimates_file", "The file to output the estimations from"
-                 " the unpruned tree.", "u");
-
 PARAM_STRING_OUT("tag_file", "The file to output the tags (and possibly paths)"
                  " for each sample in the test set.", "g");
 
 PARAM_FLAG("skip_pruning", "Whether to bypass the pruning process and output "
-              "the unpruned tree only", "s");
+              "the unpruned tree only.", "s");
 
 // Parameters for the training algorithm.
 PARAM_INT_IN("folds", "The number of folds of cross-validation to perform for "
@@ -164,13 +161,12 @@ void mlpackMain()
     size_t folds = CLI::GetParam<int>("folds");
 
     if (folds == 0)
-        folds = trainingData.n_cols;
+      folds = trainingData.n_cols;
 
     // Obtain the optimal tree.
     Timer::Start("det_training");
     tree = Trainer<arma::mat, int>(trainingData, folds, regularization,
                                    maxLeafSize, minLeafSize,
-                                   CLI::GetParam<string>("raw_estimates_file"),
                                    skipPruning);
     Timer::Stop("det_training");
 
@@ -224,7 +220,7 @@ void mlpackMain()
   if (CLI::HasParam("tag_file"))
   {
     const arma::mat& estimationData =
-      CLI::HasParam("test") ? testData : trainingData;
+        CLI::HasParam("test") ? testData : trainingData;
     const string tagFile = CLI::GetParam<string>("tag_file");
     std::ofstream ofs;
     ofs.open(tagFile, std::ofstream::out);

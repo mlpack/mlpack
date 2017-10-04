@@ -112,7 +112,6 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
                                  const bool useVolumeReg,
                                  const size_t maxLeafSize,
                                  const size_t minLeafSize,
-                                 const std::string unprunedTreeOutput,
                                  const bool skipPruning)
 {
   // Initialize the tree.
@@ -135,28 +134,6 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
   Timer::Stop("tree_growing");
   Log::Info << dtree->SubtreeLeaves() << " leaf nodes in the tree using full "
       << "dataset; minimum alpha: " << alpha << "." << std::endl;
-
-  // Compute densities for the training points in the full tree, if we were
-  // asked for this.
-  if (unprunedTreeOutput != "")
-  {
-    std::ofstream outfile(unprunedTreeOutput.c_str());
-    if (outfile.good())
-    {
-      for (size_t i = 0; i < dataset.n_cols; ++i)
-      {
-        arma::vec testPoint = dataset.unsafe_col(i);
-        outfile << dtree->ComputeValue(testPoint) << std::endl;
-      }
-    }
-    else
-    {
-      Log::Warn << "Can't open '" << unprunedTreeOutput << "' to write computed"
-          << " densities to." << std::endl;
-    }
-
-    outfile.close();
-  }
 
   if (skipPruning)
     return dtree;
