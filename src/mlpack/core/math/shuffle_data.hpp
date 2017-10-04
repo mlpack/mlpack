@@ -69,7 +69,9 @@ void ShuffleData(const MatType& inputPoints,
 
   outputPoints = MatType(locations, values, inputPoints.n_rows,
       inputPoints.n_cols, true);
-  outputLabels = inputLabels.cols(ordering);
+  outputLabels.set_size(inputLabels.n_elem);
+  for (size_t i = 0; i < inputLabels.n_elem; ++i)
+    outputLabels[ordering[i]] = inputLabels[i];
 }
 
 } // namespace math
