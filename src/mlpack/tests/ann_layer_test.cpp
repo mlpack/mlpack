@@ -737,6 +737,43 @@ BOOST_AUTO_TEST_CASE(SimpleAddMergeLayerTest)
 }
 
 /**
+ * Test the LSTM layer with a user defined rho parameter and without.
+ */
+BOOST_AUTO_TEST_CASE(LSTMRrhoTest)
+{
+  const size_t rho = 5;
+  arma::mat input = arma::randu(5, 1);
+  arma::mat target = arma::mat("1; 1; 1; 1; 1");
+  RandomInitialization init(0.5, 0.5);
+
+  // Create model with user defined rho parameter.
+  RNN<NegativeLogLikelihood<>, RandomInitialization> modelA(
+      input, target, rho, false, NegativeLogLikelihood<>(), init);
+  modelA.Add<IdentityLayer<> >();
+  modelA.Add<Linear<> >(1, 10);
+
+  // Use LSTM layer with rho.
+  modelA.Add<LSTM<> >(10, 3, rho);
+  modelA.Add<LogSoftMax<> >();
+
+  // Create model without user defined rho parameter.
+  RNN<NegativeLogLikelihood<> > modelB(
+      input, target, rho, false, NegativeLogLikelihood<>(), init);
+  modelB.Add<IdentityLayer<> >();
+  modelB.Add<Linear<> >(1, 10);
+
+  // Use LSTM layer with rho = MAXSIZE.
+  modelB.Add<LSTM<> >(10, 3);
+  modelB.Add<LogSoftMax<> >();
+
+  optimization::StandardSGD opt(0.1, 5, -100, false);
+  modelA.Train(input, target, opt);
+  modelB.Train(input, target, opt);
+
+  CheckMatrices(modelB.Parameters(), modelA.Parameters());
+}
+
+/**
  * LSTM layer numerically gradient test.
  */
 BOOST_AUTO_TEST_CASE(GradientLSTMLayerTest)
@@ -777,6 +814,43 @@ BOOST_AUTO_TEST_CASE(GradientLSTMLayerTest)
   } function;
 
   BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+}
+
+/**
+ * Test the FastLSTM layer with a user defined rho parameter and without.
+ */
+BOOST_AUTO_TEST_CASE(FastLSTMRrhoTest)
+{
+  const size_t rho = 5;
+  arma::mat input = arma::randu(5, 1);
+  arma::mat target = arma::mat("1; 1; 1; 1; 1");
+  RandomInitialization init(0.5, 0.5);
+
+  // Create model with user defined rho parameter.
+  RNN<NegativeLogLikelihood<>, RandomInitialization> modelA(
+      input, target, rho, false, NegativeLogLikelihood<>(), init);
+  modelA.Add<IdentityLayer<> >();
+  modelA.Add<Linear<> >(1, 10);
+
+  // Use FastLSTM layer with rho.
+  modelA.Add<FastLSTM<> >(10, 3, rho);
+  modelA.Add<LogSoftMax<> >();
+
+  // Create model without user defined rho parameter.
+  RNN<NegativeLogLikelihood<> > modelB(
+      input, target, rho, false, NegativeLogLikelihood<>(), init);
+  modelB.Add<IdentityLayer<> >();
+  modelB.Add<Linear<> >(1, 10);
+
+  // Use FastLSTM layer with rho = MAXSIZE.
+  modelB.Add<FastLSTM<> >(10, 3);
+  modelB.Add<LogSoftMax<> >();
+
+  optimization::StandardSGD opt(0.1, 5, -100, false);
+  modelA.Train(input, target, opt);
+  modelB.Train(input, target, opt);
+
+  CheckMatrices(modelB.Parameters(), modelA.Parameters());
 }
 
 /**

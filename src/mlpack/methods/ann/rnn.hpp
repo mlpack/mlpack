@@ -207,6 +207,11 @@ class RNN
   //! Modify the maximum length of backpropagation through time.
   size_t& Rho() { return rho; }
 
+  /**
+   * Reset the module infomration (weights/parameters).
+   */
+  void ResetParameters();
+
   //! Serialize the model.
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
@@ -244,11 +249,6 @@ class RNN
    * @param results Vector to put output prediction of a response into.
    */
   void SinglePredict(const arma::mat& predictors, arma::mat& results);
-
-  /**
-   * Reset the module infomration (weights/parameters).
-   */
-  void ResetParameters();
 
   /**
    * Reset the module status by setting the current deterministic parameter

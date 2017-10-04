@@ -36,7 +36,8 @@ LSTM<InputDataType, OutputDataType>::LSTM(
     batchSize(0),
     batchStep(0),
     gradientStepIdx(0),
-    rhoSize(rho)
+    rhoSize(rho),
+    bpttSteps(0)
 {
   weights.set_size(4 * outSize * inSize + 7 * outSize +
       4 * outSize * outSize, 1);
@@ -53,6 +54,7 @@ void LSTM<InputDataType, OutputDataType>::ResetCell(const size_t size)
   if (batchSize == 0)
     return;
 
+  bpttSteps = std::min(rho, rhoSize);
   forwardStep = 0;
   gradientStepIdx = 0;
   backwardStep = batchSize * size - 1;
@@ -248,7 +250,7 @@ void LSTM<InputDataType, OutputDataType>::Forward(
       (forwardStep + batchSize) * outSize, outSize, batchSize, false, false);
 
   forwardStep += batchSize;
-  if ((forwardStep / batchSize) == rho)
+  if ((forwardStep / batchSize) == bpttSteps)
   {
     forwardStep = 0;
   }
@@ -318,9 +320,9 @@ void LSTM<InputDataType, OutputDataType>::Backward(
 
   backwardStep -= batchSize;
   gradientStepIdx++;
-  if (gradientStepIdx == rho)
+  if (gradientStepIdx == bpttSteps)
   {
-    backwardStep = rho - 1;
+    backwardStep = bpttSteps - 1;
     gradientStepIdx = 0;
   }
 }
@@ -414,7 +416,7 @@ void LSTM<InputDataType, OutputDataType>::Gradient(
 
   if (gradientStep == 0)
   {
-    gradientStep = batchSize * rho - 1;
+    gradientStep = batchSize * bpttSteps - 1;
   }
   else
   {
@@ -431,6 +433,7 @@ void LSTM<InputDataType, OutputDataType>::serialize(
   ar & BOOST_SERIALIZATION_NVP(inSize);
   ar & BOOST_SERIALIZATION_NVP(outSize);
   ar & BOOST_SERIALIZATION_NVP(rho);
+  ar & BOOST_SERIALIZATION_NVP(bpttSteps);
   ar & BOOST_SERIALIZATION_NVP(batchSize);
   ar & BOOST_SERIALIZATION_NVP(batchStep);
   ar & BOOST_SERIALIZATION_NVP(forwardStep);

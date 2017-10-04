@@ -293,6 +293,9 @@ class FastLSTM
 
   //! Locally-stored current rho size.
   size_t rhoSize;
+
+  //! Current backpropagate through time steps.
+  size_t bpttSteps;
 }; // class FastLSTM
 
 } // namespace ann

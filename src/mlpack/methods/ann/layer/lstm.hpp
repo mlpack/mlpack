@@ -307,6 +307,9 @@ class LSTM
 
   //! Locally-stored current rho size.
   size_t rhoSize;
+
+  //! Current backpropagate through time steps.
+  size_t bpttSteps;
 }; // class LSTM
 
 } // namespace ann
