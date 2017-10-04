@@ -189,6 +189,7 @@ void SerializeObject(T& t, T& newT)
   }
   catch (boost::archive::archive_exception& e)
   {
+    std::cerr << e.what() << std::endl;
     success = false;
   }
   ofs.close();
@@ -204,6 +205,7 @@ void SerializeObject(T& t, T& newT)
   }
   catch (boost::archive::archive_exception& e)
   {
+    std::cout << e.what() << "\n";
     success = false;
   }
   ifs.close();
@@ -240,6 +242,7 @@ void SerializePointerObject(T* t, T*& newT)
   }
   catch (boost::archive::archive_exception& e)
   {
+    std::cout << e.what() << "\n";
     success = false;
   }
   ofs.close();
@@ -255,6 +258,7 @@ void SerializePointerObject(T* t, T*& newT)
   }
   catch (std::exception& e)
   {
+    std::cout << e.what() << "\n";
     success = false;
   }
   ifs.close();

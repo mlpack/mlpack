@@ -161,10 +161,8 @@ class HoeffdingTreeModel
    * Serialize the model.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(type, "type");
-
     // Clear memory if needed.
     if (Archive::is_loading::value)
     {
@@ -186,28 +184,28 @@ class HoeffdingTreeModel
       // Create fake tree to load into if needed.
       if (Archive::is_loading::value)
         giniHoeffdingTree = new GiniHoeffdingTreeType(info, 1, 1);
-      ar & data::CreateNVP(*giniHoeffdingTree, "giniHoeffdingTree");
+      ar & BOOST_SERIALIZATION_NVP(*giniHoeffdingTree);
     }
     else if (type == GINI_BINARY)
     {
       // Create fake tree to load into if needed.
       if (Archive::is_loading::value)
         giniBinaryTree = new GiniBinaryTreeType(info, 1, 1);
-      ar & data::CreateNVP(*giniBinaryTree, "giniBinaryTree");
+      ar & BOOST_SERIALIZATION_NVP(*giniBinaryTree);
     }
     else if (type == INFO_HOEFFDING)
     {
       // Create fake tree to load into if needed.
       if (Archive::is_loading::value)
         infoHoeffdingTree = new InfoHoeffdingTreeType(info, 1, 1);
-      ar & data::CreateNVP(*infoHoeffdingTree, "infoHoeffdingTree");
+      ar & BOOST_SERIALIZATION_NVP(*infoHoeffdingTree);
     }
     else if (type == INFO_BINARY)
     {
       // Create fake tree to load into if needed.
       if (Archive::is_loading::value)
         infoBinaryTree = new InfoBinaryTreeType(info, 1, 1);
-      ar & data::CreateNVP(*infoBinaryTree, "infoBinaryTree");
+      ar & BOOST_SERIALIZATION_NVP(*infoBinaryTree);
     }
   }
 

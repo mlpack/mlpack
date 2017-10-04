@@ -1082,15 +1082,13 @@ template<typename SortPolicy,
          template<typename> class SingleTreeTraversalType>
 template<typename Archive>
 void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
-DualTreeTraversalType, SingleTreeTraversalType>::Serialize(
+DualTreeTraversalType, SingleTreeTraversalType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  using data::CreateNVP;
-
   // Serialize preferences for search.
-  ar & CreateNVP(searchMode, "searchMode");
-  ar & CreateNVP(treeNeedsReset, "treeNeedsReset");
+  ar & BOOST_SERIALIZATION_NVP(searchMode);
+  ar & BOOST_SERIALIZATION_NVP(treeNeedsReset);
 
   // If we are doing naive search, we serialize the dataset.  Otherwise we
   // serialize the tree.
@@ -1105,8 +1103,8 @@ DualTreeTraversalType, SingleTreeTraversalType>::Serialize(
       setOwner = true; // We will own the reference set when we load it.
     }
 
-    ar & CreateNVP(referenceSet, "referenceSet");
-    ar & CreateNVP(metric, "metric");
+    ar & BOOST_SERIALIZATION_NVP(referenceSet);
+    ar & BOOST_SERIALIZATION_NVP(metric);
 
     // If we are loading, set the tree to NULL and clean up memory if necessary.
     if (Archive::is_loading::value)
@@ -1131,8 +1129,8 @@ DualTreeTraversalType, SingleTreeTraversalType>::Serialize(
       treeOwner = true;
     }
 
-    ar & CreateNVP(referenceTree, "referenceTree");
-    ar & CreateNVP(oldFromNewReferences, "oldFromNewReferences");
+    ar & BOOST_SERIALIZATION_NVP(referenceTree);
+    ar & BOOST_SERIALIZATION_NVP(oldFromNewReferences);
 
     // If we are loading, set the dataset accordingly and clean up memory if
     // necessary.

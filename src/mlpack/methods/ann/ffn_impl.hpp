@@ -394,14 +394,14 @@ void FFN<OutputLayerType, InitializationRuleType>::Gradient()
 
 template<typename OutputLayerType, typename InitializationRuleType>
 template<typename Archive>
-void FFN<OutputLayerType, InitializationRuleType>::Serialize(
+void FFN<OutputLayerType, InitializationRuleType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & data::CreateNVP(parameter, "parameter");
-  ar & data::CreateNVP(width, "width");
-  ar & data::CreateNVP(height, "height");
-  ar & data::CreateNVP(currentInput, "currentInput");
-  ar & data::CreateNVP(currentTarget, "currentTarget");
+  ar & BOOST_SERIALIZATION_NVP(parameter);
+  ar & BOOST_SERIALIZATION_NVP(width);
+  ar & BOOST_SERIALIZATION_NVP(height);
+  ar & BOOST_SERIALIZATION_NVP(currentInput);
+  ar & BOOST_SERIALIZATION_NVP(currentTarget);
 
   // Be sure to clear other layers before loading.
   if (Archive::is_loading::value)

@@ -125,12 +125,11 @@ void RPlusPlusTreeAuxiliaryInformation<TreeType>::NullifyData()
  */
 template<typename TreeType>
 template<typename Archive>
-void RPlusPlusTreeAuxiliaryInformation<TreeType>::
-Serialize(Archive& ar, const unsigned int /* version */)
+void RPlusPlusTreeAuxiliaryInformation<TreeType>::serialize(
+    Archive& ar,
+    const unsigned int /* version */)
 {
-  using data::CreateNVP;
-
-  ar & CreateNVP(outerBound, "outerBound");
+  ar & BOOST_SERIALIZATION_NVP(outerBound);
 }
 
 } // namespace tree

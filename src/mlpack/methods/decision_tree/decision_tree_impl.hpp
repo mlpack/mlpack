@@ -932,11 +932,9 @@ void DecisionTree<FitnessFunction,
                   CategoricalSplitType,
                   DimensionSelectionType,
                   ElemType,
-                  NoRecursion>::Serialize(Archive& ar,
+                  NoRecursion>::serialize(Archive& ar,
                                           const unsigned int /* version */)
 {
-  using data::CreateNVP;
-
   // Clean memory if needed.
   if (Archive::is_loading::value)
   {
@@ -947,7 +945,7 @@ void DecisionTree<FitnessFunction,
 
   // Serialize the children first.
   size_t numChildren = children.size();
-  ar & CreateNVP(numChildren, "numChildren");
+  ar & BOOST_SERIALIZATION_NVP(numChildren);
   if (Archive::is_loading::value)
   {
     children.resize(numChildren, NULL);
@@ -959,13 +957,13 @@ void DecisionTree<FitnessFunction,
   {
     std::ostringstream name;
     name << "child" << i;
-    ar & CreateNVP(*children[i], name.str());
+    ar & BOOST_SERIALIZATION_NVP(*children[i]);
   }
 
   // Now serialize the rest of the object.
-  ar & CreateNVP(splitDimension, "splitDimension");
-  ar & CreateNVP(dimensionTypeOrMajorityClass, "dimensionTypeOrMajorityClass");
-  ar & CreateNVP(classProbabilities, "classProbabilities");
+  ar & BOOST_SERIALIZATION_NVP(splitDimension);
+  ar & BOOST_SERIALIZATION_NVP(dimensionTypeOrMajorityClass);
+  ar & BOOST_SERIALIZATION_NVP(classProbabilities);
 }
 
 template<typename FitnessFunction,

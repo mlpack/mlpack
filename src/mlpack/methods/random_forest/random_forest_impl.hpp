@@ -385,7 +385,7 @@ void RandomForest<
     NumericSplitType,
     CategoricalSplitType,
     ElemType
->::Serialize(Archive& ar, const unsigned int /* version */)
+>::serialize(Archive& ar, const unsigned int /* version */)
 {
   size_t numTrees;
   if (Archive::is_loading::value)
@@ -393,18 +393,13 @@ void RandomForest<
   else
     numTrees = trees.size();
 
-  ar & data::CreateNVP(numTrees, "numTrees");
+  ar & BOOST_SERIALIZATION_NVP(numTrees);
 
   // Allocate space if needed.
   if (Archive::is_loading::value)
     trees.resize(numTrees);
 
-  for (size_t i = 0; i < numTrees; ++i)
-  {
-    std::ostringstream oss;
-    oss << "tree" << i;
-    ar & data::CreateNVP(trees[i], oss.str());
-  }
+  ar & BOOST_SERIALIZATION_NVP(trees);
 }
 
 template<

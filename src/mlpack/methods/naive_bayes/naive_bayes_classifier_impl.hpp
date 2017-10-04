@@ -339,13 +339,13 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
 
 template<typename ModelMatType>
 template<typename Archive>
-void NaiveBayesClassifier<ModelMatType>::Serialize(
+void NaiveBayesClassifier<ModelMatType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  ar & data::CreateNVP(means, "means");
-  ar & data::CreateNVP(variances, "variances");
-  ar & data::CreateNVP(probabilities, "probabilities");
+  ar & BOOST_SERIALIZATION_NVP(means);
+  ar & BOOST_SERIALIZATION_NVP(variances);
+  ar & BOOST_SERIALIZATION_NVP(probabilities);
 }
 
 } // namespace naive_bayes

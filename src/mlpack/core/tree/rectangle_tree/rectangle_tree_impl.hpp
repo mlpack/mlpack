@@ -252,7 +252,7 @@ RectangleTree(
     RectangleTree() // Use default constructor.
 {
   // Now serialize.
-  ar >> data::CreateNVP(*this, "tree");
+  ar >> BOOST_SERIALIZATION_NVP(*this);
 }
 
 /**
@@ -1248,12 +1248,10 @@ template<typename MetricType,
          template<typename> class AuxiliaryInformationType>
 template<typename Archive>
 void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
-                   AuxiliaryInformationType>::
-    Serialize(Archive& ar,
-              const unsigned int /* version */)
+                   AuxiliaryInformationType>::serialize(
+    Archive& ar,
+    const unsigned int /* version */)
 {
-  using data::CreateNVP;
-
   // Clean up memory, if necessary.
   if (Archive::is_loading::value)
   {
@@ -1265,62 +1263,32 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
       delete dataset;
   }
 
-  ar & CreateNVP(maxNumChildren, "maxNumChildren");
-  ar & CreateNVP(minNumChildren, "minNumChildren");
-  ar & CreateNVP(numChildren, "numChildren");
-
-  // Due to quirks of boost::serialization, depending on how the user serializes
-  // the tree, the root node may be duplicated.  Therefore we don't allow
-  // children of the root to serialize the parent, and we fix the parent link
-  // after serializing the children when loading below.
-  if (Archive::is_saving::value && parent != NULL && parent->Parent() == NULL)
-  {
-    RectangleTree* fakeParent = NULL;
-    ar & CreateNVP(fakeParent, "parent");
-  }
-  else
-  {
-    ar & CreateNVP(parent, "parent");
-  }
-
-  ar & CreateNVP(begin, "begin");
-  ar & CreateNVP(count, "count");
-  ar & CreateNVP(numDescendants, "numDescendants");
-  ar & CreateNVP(maxLeafSize, "maxLeafSize");
-  ar & CreateNVP(minLeafSize, "minLeafSize");
-  ar & CreateNVP(bound, "bound");
-  ar & CreateNVP(stat, "stat");
-  ar & CreateNVP(parentDistance, "parentDistance");
-  ar & CreateNVP(dataset, "dataset");
-
-  // If we are loading and we are the root, we own the dataset.
-  if (Archive::is_loading::value && parent == NULL)
-    ownsDataset = true;
-
-  ar & CreateNVP(points, "points");
-  ar & CreateNVP(auxiliaryInfo, "auxiliaryInfo");
-
-  // Because 'children' holds mlpack types (that have Serialize()), we can't use
-  // the std::vector serialization.
+  ar & BOOST_SERIALIZATION_NVP(maxNumChildren);
+  ar & BOOST_SERIALIZATION_NVP(minNumChildren);
+  ar & BOOST_SERIALIZATION_NVP(numChildren);
   if (Archive::is_loading::value)
-    children.resize(numChildren);
-  for (size_t i = 0; i < numChildren; ++i)
-  {
-    std::ostringstream oss;
-    oss << "child" << i;
-    ar & CreateNVP(children[i], oss.str());
-  }
+    children.resize(maxNumChildren + 1);
 
-  // Fix the parent links for the children, if necessary.
-  if (Archive::is_loading::value && parent == NULL)
-  {
-    // Look through each child individually.
-    for (size_t i = 0; i < children.size(); ++i)
-    {
-      children[i]->ownsDataset = false;
-      children[i]->Parent() = this;
-    }
-  }
+  ar & BOOST_SERIALIZATION_NVP(begin);
+  ar & BOOST_SERIALIZATION_NVP(count);
+  ar & BOOST_SERIALIZATION_NVP(numDescendants);
+  ar & BOOST_SERIALIZATION_NVP(maxLeafSize);
+  ar & BOOST_SERIALIZATION_NVP(minLeafSize);
+  ar & BOOST_SERIALIZATION_NVP(bound);
+  ar & BOOST_SERIALIZATION_NVP(stat);
+  ar & BOOST_SERIALIZATION_NVP(parentDistance);
+  ar & BOOST_SERIALIZATION_NVP(dataset);
+  ar & BOOST_SERIALIZATION_NVP(ownsDataset);
+  ar & BOOST_SERIALIZATION_NVP(parent);
+
+  ar & BOOST_SERIALIZATION_NVP(points);
+  ar & BOOST_SERIALIZATION_NVP(auxiliaryInfo);
+
+  // Since we may or may not be holding children, we need to serialize _only_
+  // numChildren children.
+  for (size_t i = numChildren; i < maxNumChildren + 1; ++i)
+    children[i] = NULL;
+  ar & BOOST_SERIALIZATION_NVP(children);
 }
 
 } // namespace tree

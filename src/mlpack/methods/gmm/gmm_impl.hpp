@@ -191,27 +191,20 @@ double GMM::Train(const arma::mat& observations,
  * Serialize the object.
  */
 template<typename Archive>
-void GMM::Serialize(Archive& ar, const unsigned int /* version */)
+void GMM::serialize(Archive& ar, const unsigned int /* version */)
 {
-  using data::CreateNVP;
-
-  ar & CreateNVP(gaussians, "gaussians");
-  ar & CreateNVP(dimensionality, "dimensionality");
+  ar & BOOST_SERIALIZATION_NVP(gaussians);
+  ar & BOOST_SERIALIZATION_NVP(dimensionality);
 
   // Load (or save) the gaussians.  Not going to use the default std::vector
-  // serialize here because it won't call out correctly to Serialize() for each
+  // serialize here because it won't call out correctly to serialize() for each
   // Gaussian distribution.
   if (Archive::is_loading::value)
     dists.resize(gaussians);
 
-  for (size_t i = 0; i < gaussians; ++i)
-  {
-    std::ostringstream oss;
-    oss << "dist" << i;
-    ar & CreateNVP(dists[i], oss.str());
-  }
+  ar & BOOST_SERIALIZATION_NVP(dists);
 
-  ar & CreateNVP(weights, "weights");
+  ar & BOOST_SERIALIZATION_NVP(weights);
 }
 
 } // namespace gmm

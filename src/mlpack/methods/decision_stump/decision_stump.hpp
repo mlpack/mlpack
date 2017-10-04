@@ -131,7 +131,7 @@ class DecisionStump
 
   //! Serialize the decision stump.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! The number of classes (we must store this for boosting).

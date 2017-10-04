@@ -587,12 +587,12 @@ void HMM<Distribution>::Backward(const arma::mat& dataSeq,
 //! Serialize the HMM.
 template<typename Distribution>
 template<typename Archive>
-void HMM<Distribution>::Serialize(Archive& ar, const unsigned int /* version */)
+void HMM<Distribution>::serialize(Archive& ar, const unsigned int /* version */)
 {
-  ar & data::CreateNVP(dimensionality, "dimensionality");
-  ar & data::CreateNVP(tolerance, "tolerance");
-  ar & data::CreateNVP(transition, "transition");
-  ar & data::CreateNVP(initial, "initial");
+  ar & BOOST_SERIALIZATION_NVP(dimensionality);
+  ar & BOOST_SERIALIZATION_NVP(tolerance);
+  ar & BOOST_SERIALIZATION_NVP(transition);
+  ar & BOOST_SERIALIZATION_NVP(initial);
 
   // Now serialize each emission.  If we are loading, we must resize the vector
   // of emissions correctly.
@@ -600,12 +600,7 @@ void HMM<Distribution>::Serialize(Archive& ar, const unsigned int /* version */)
     emission.resize(transition.n_rows);
 
   // Load the emissions; generate the correct name for each one.
-  for (size_t i = 0; i < emission.size(); ++i)
-  {
-    std::ostringstream oss;
-    oss << "emission" << i;
-    ar & data::CreateNVP(emission[i], oss.str());
-  }
+    ar & BOOST_SERIALIZATION_NVP(emission);
 }
 
 } // namespace hmm

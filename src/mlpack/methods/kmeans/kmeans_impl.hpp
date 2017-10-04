@@ -347,12 +347,12 @@ void KMeans<MetricType,
             InitialPartitionPolicy,
             EmptyClusterPolicy,
             LloydStepType,
-            MatType>::Serialize(Archive& ar, const unsigned int /* version */)
+            MatType>::serialize(Archive& ar, const unsigned int /* version */)
 {
-  ar & data::CreateNVP(maxIterations, "max_iterations");
-  ar & data::CreateNVP(metric, "metric");
-  ar & data::CreateNVP(partitioner, "partitioner");
-  ar & data::CreateNVP(emptyClusterAction, "emptyClusterAction");
+  ar & BOOST_SERIALIZATION_NVP(maxIterations);
+  ar & BOOST_SERIALIZATION_NVP(metric);
+  ar & BOOST_SERIALIZATION_NVP(partitioner);
+  ar & BOOST_SERIALIZATION_NVP(emptyClusterAction);
 }
 
 } // namespace kmeans
