@@ -46,13 +46,13 @@ CLI::CLI(const CLI& /* other */) : didParse(false), doc(&emptyProgramDoc)
 void CLI::StopTimers()
 {
   // Terminate the program timers.
-  std::map<std::string, std::chrono::microseconds>::iterator it;
-  for (it = CLI::GetSingleton().timer.GetAllTimers().begin();
-       it != CLI::GetSingleton().timer.GetAllTimers().end(); ++it)
+  for (auto it : CLI::GetSingleton().timer.GetAllTimers())
   {
-    std::string i = (*it).first;
-    if (CLI::GetSingleton().timer.GetState(i) == 1)
-      Timer::Stop(i);
+    for (auto it2 : it.second)
+    {
+      if (CLI::GetSingleton().timer.GetState(it2.first, it.first) == 1)
+        CLI::GetSingleton().timer.StopTimer(it2.first, it.first);
+    }
   }
 }
 

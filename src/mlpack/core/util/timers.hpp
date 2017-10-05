@@ -15,7 +15,9 @@
 
 #include <map>
 #include <string>
-#include <chrono> // chrono library for cross platform timer calculation
+#include <chrono> // chrono library for cross platform timer calculation.
+#include <thread> // std::thread is used for thread safety.
+#include <list>
 
 #if defined(_WIN32)
   // uint64_t isn't defined on every windows.
@@ -33,7 +35,9 @@ namespace mlpack {
 /**
  * The timer class provides a way for mlpack methods to be timed.  The three
  * methods contained in this class allow a named timer to be started and
- * stopped, and its value to be obtained.
+ * stopped, and its value to be obtained.  A named timer is specific to the
+ * thread it is running on, so if you start a timer in one thread, it cannot be
+ * stopped from a different thread.
  */
 class Timer
 {
@@ -78,14 +82,23 @@ class Timers
   /**
    * Returns a copy of all the timers used via this interface.
    */
-  std::map<std::string, std::chrono::microseconds>& GetAllTimers();
+  std::map<std::thread::id, std::map<std::string, std::chrono::microseconds>>&
+      GetAllTimers();
+
+  /**
+   * Returns a list of all timer names.
+   */
+  std::list<std::string> GetAllTimerNames();
 
   /**
    * Returns a copy of the timer specified.
    *
    * @param timerName The name of the timer in question.
+   * @param threadId Id of the thread accessing the timer.
    */
-  std::chrono::microseconds GetTimer(const std::string& timerName);
+  std::chrono::microseconds GetTimer(
+      const std::string& timerName,
+      const std::thread::id& threadId = std::thread::id());
 
   /**
    * Prints the specified timer.  If it took longer than a minute to complete
@@ -102,32 +115,38 @@ class Timers
    * length of both runs of the timer.
    *
    * @param timerName The name of the timer in question.
+   * @param threadId Id of the thread accessing the timer.
    */
-  void StartTimer(const std::string& timerName);
+  void StartTimer(const std::string& timerName,
+                  const std::thread::id& threadId = std::thread::id());
 
   /**
-   * Halts the timer, and replaces it's value with
-   * the delta time from it's start
+   * Halts the timer, and replaces its value with the delta time from its start.
    *
    * @param timerName The name of the timer in question.
+   * @param threadId Id of the thread accessing the timer.
    */
-  void StopTimer(const std::string& timerName);
+  void StopTimer(const std::string& timerName,
+                 const std::thread::id& threadId = std::thread::id());
 
   /**
    * Returns state of the given timer.
    *
    * @param timerName The name of the timer in question.
+   * @param threadId Id of the thread accessing the timer.
    */
-  bool GetState(std::string timerName);
+  bool GetState(const std::string& timerName,
+                const std::thread::id& threadId = std::thread::id());
 
  private:
   //! A map of all the timers that are being tracked.
-  std::map<std::string, std::chrono::microseconds> timers;
+  std::map<std::thread::id, std::map<std::string, std::chrono::microseconds>>
+      timers;
   //! A map that contains whether or not each timer is currently running.
-  std::map<std::string, bool> timerState;
+  std::map<std::thread::id, std::map<std::string, bool>> timerState;
   //! A map for the starting values of the timers.
-  std::map<std::string, std::chrono::high_resolution_clock::time_point>
-      timerStartTime;
+  std::map<std::thread::id, std::map<std::string,
+      std::chrono::high_resolution_clock::time_point>> timerStartTime;
 
   std::chrono::high_resolution_clock::time_point GetTime();
 };

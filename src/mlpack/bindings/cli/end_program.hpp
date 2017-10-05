@@ -61,13 +61,12 @@ inline void EndProgram()
     }
 
     Log::Info << "Program timers:" << std::endl;
-    std::map<std::string, std::chrono::microseconds>::iterator it2;
-    for (it2 = CLI::GetSingleton().timer.GetAllTimers().begin();
-         it2 != CLI::GetSingleton().timer.GetAllTimers().end(); ++it2)
+    std::list<std::string> timerNames =
+        CLI::GetSingleton().timer.GetAllTimerNames();
+    for (auto it2 : timerNames)
     {
-      std::string i = (*it2).first;
-      Log::Info << "  " << i << ": ";
-      CLI::GetSingleton().timer.PrintTimer((*it2).first);
+      Log::Info << "  " << it2 << ": ";
+      CLI::GetSingleton().timer.PrintTimer(it2);
     }
   }
 }
