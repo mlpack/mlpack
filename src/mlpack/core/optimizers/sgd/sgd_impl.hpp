@@ -110,8 +110,7 @@ double SGD<UpdatePolicyType>::Optimize(
     function.Gradient(iterate, currentFunction, gradient, effectiveBatchSize);
 
     // Use the update policy to take a step.
-    for (size_t k = 0; k < effectiveBatchSize; ++k) // hack...
-      updatePolicy.Update(iterate, stepSize, gradient);
+    updatePolicy.Update(iterate, stepSize, gradient);
 
     overallObjective += function.Evaluate(iterate, currentFunction,
         effectiveBatchSize);
