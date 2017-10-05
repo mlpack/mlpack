@@ -24,8 +24,8 @@ SoftmaxErrorFunction<MetricType>::SoftmaxErrorFunction(
     const arma::mat& dataset,
     const arma::Row<size_t>& labels,
     MetricType metric) :
-    dataset(math::MakeAlias(const_cast<arma::mat&>(dataset))),
-    labels(math::MakeAlias(const_cast<arma::Row<size_t>&>(labels))),
+    dataset(math::MakeAlias(const_cast<arma::mat&>(dataset), false)),
+    labels(math::MakeAlias(const_cast<arma::Row<size_t>&>(labels), false)),
     metric(metric),
     precalculated(false)
 { /* nothing to do */ }
@@ -168,8 +168,7 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
   // these two variables will hold the information necessary for that.
   double numerator, denominator;
 
-  firstTerm.zeros(coordinates.n_rows, coordinates.n_cols);
-  secondTerm.zeros(coordinates.n_rows, coordinates.n_cols);
+  gradient.zeros(coordinates.n_rows, coordinates.n_rows);
 
   // Compute the stretched dataset.
   stretchedDataset = coordinates * dataset;
@@ -177,6 +176,10 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
   {
     numerator = 0;
     denominator = 0;
+
+    firstTerm.zeros(coordinates.n_rows, coordinates.n_cols);
+    secondTerm.zeros(coordinates.n_rows, coordinates.n_cols);
+
     for (size_t k = 0; k < dataset.n_cols; ++k)
     {
       // Don't consider the case where the points are the same.
@@ -211,7 +214,6 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
       Log::Warn << "Denominator of p_" << i << " is 0!" << std::endl;
       // If the denominator is zero, then all p_ik should be zero and there is
       // no gradient contribution from this point.
-      gradient.zeros(coordinates.n_rows, coordinates.n_rows);
       continue;
     }
     else

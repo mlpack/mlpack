@@ -24,8 +24,9 @@ LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
     const arma::Row<size_t>& responses,
     const double lambda) :
     // We promise to be well-behaved... the elements won't be modified.
-    predictors(math::MakeAlias(const_cast<MatType&>(predictors))),
-    responses(math::MakeAlias(const_cast<arma::Row<size_t>&>(responses))),
+    predictors(math::MakeAlias(const_cast<MatType&>(predictors), false)),
+    responses(math::MakeAlias(const_cast<arma::Row<size_t>&>(responses),
+        false)),
     lambda(lambda)
 {
   initialPoint = arma::rowvec(predictors.n_rows + 1, arma::fill::zeros);
@@ -48,8 +49,9 @@ LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
     const double lambda) :
     initialPoint(initialPoint),
     // We promise to be well-behaved... the elements won't be modified.
-    predictors(math::MakeAlias(const_cast<MatType&>(predictors))),
-    responses(math::MakeAlias(const_cast<arma::Row<size_t>&>(responses))),
+    predictors(math::MakeAlias(const_cast<MatType&>(predictors), false)),
+    responses(math::MakeAlias(const_cast<arma::Row<size_t>&>(responses),
+        false)),
     lambda(lambda)
 {
   // To check if initialPoint is compatible with predictors.

@@ -12,61 +12,73 @@ namespace mlpack {
 namespace math {
 
 /**
- * Make an alias of a dense matrix.
+ * Make an alias of a dense matrix.  If strict is true, then the alias cannot be
+ * resized or pointed at new memory.
  */
 template<typename ElemType>
-arma::Mat<ElemType> MakeAlias(arma::Mat<ElemType>& input)
+arma::Mat<ElemType> MakeAlias(arma::Mat<ElemType>& input,
+                              const bool strict = true)
 {
   // Use the advanced constructor.
   return arma::Mat<ElemType>(input.memptr(), input.n_rows, input.n_cols, false,
-      true);
+      strict);
 }
 
 /**
- * Make an alias of a dense row.
+ * Make an alias of a dense row.  If strict is true, then the alias cannot be
+ * resized or pointed at new memory.
  */
 template<typename ElemType>
-arma::Row<ElemType> MakeAlias(arma::Row<ElemType>& input)
+arma::Row<ElemType> MakeAlias(arma::Row<ElemType>& input,
+                              const bool strict = true)
 {
   // Use the advanced constructor.
-  return arma::Row<ElemType>(input.memptr(), input.n_elem, false, true);
+  return arma::Row<ElemType>(input.memptr(), input.n_elem, false, strict);
 }
 
 /**
- * Make an alias of a dense column.
+ * Make an alias of a dense column.  If strict is true, then the alias cannot be
+ * resized or pointed at new memory.
  */
 template<typename ElemType>
-arma::Col<ElemType> MakeAlias(arma::Col<ElemType>& input)
+arma::Col<ElemType> MakeAlias(arma::Col<ElemType>& input,
+                              const bool strict = true)
 {
   // Use the advanced constructor.
-  return arma::Col<ElemType>(input.memptr(), input.n_elem, false, true);
+  return arma::Col<ElemType>(input.memptr(), input.n_elem, false, strict);
 }
 
 /**
- * Make a copy of a sparse matrix (an alias is not possible).
+ * Make a copy of a sparse matrix (an alias is not possible).  The strict
+ * parameter is ignored.
  */
 template<typename ElemType>
-arma::SpMat<ElemType> MakeAlias(const arma::SpMat<ElemType>& input)
+arma::SpMat<ElemType> MakeAlias(const arma::SpMat<ElemType>& input,
+                                const bool /* strict */ = true)
 {
   // Make a copy...
   return arma::SpMat<ElemType>(input);
 }
 
 /**
- * Make a copy of a sparse row (an alias is not possible).
+ * Make a copy of a sparse row (an alias is not possible).  The strict
+ * parameter is ignored.
  */
 template<typename ElemType>
-arma::SpRow<ElemType> MakeAlias(const arma::SpRow<ElemType>& input)
+arma::SpRow<ElemType> MakeAlias(const arma::SpRow<ElemType>& input,
+                                const bool /* strict */ = true)
 {
   // Make a copy...
   return arma::SpRow<ElemType>(input);
 }
 
 /**
- * Make a copy of a sparse column (an alias is not possible).
+ * Make a copy of a sparse column (an alias is not possible).  The strict
+ * parameter is ignored.
  */
 template<typename ElemType>
-arma::SpCol<ElemType> MakeAlias(const arma::SpCol<ElemType>& input)
+arma::SpCol<ElemType> MakeAlias(const arma::SpCol<ElemType>& input,
+                                const bool /* strict */ = true)
 {
   // Make a copy...
   return arma::SpCol<ElemType>(input);
