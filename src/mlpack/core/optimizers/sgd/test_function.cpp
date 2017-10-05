@@ -52,7 +52,7 @@ double SGDTestFunction::Evaluate(const arma::mat& coordinates,
 {
   double objective = 0;
 
-  for (int i = begin; i < begin + batchSize; i++)
+  for (size_t i = begin; i < begin + batchSize; i++)
   {
     switch (visitationOrder(i))
     {
