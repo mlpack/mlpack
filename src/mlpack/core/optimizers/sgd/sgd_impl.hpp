@@ -23,14 +23,15 @@
 namespace mlpack {
 namespace optimization {
 
-template<typename UpdatePolicyType>
-SGD<UpdatePolicyType>::SGD(
+template<typename UpdatePolicyType, typename DecayPolicyType>
+SGD<UpdatePolicyType, DecayPolicyType>::SGD(
     const double stepSize,
     const size_t batchSize,
     const size_t maxIterations,
     const double tolerance,
     const bool shuffle,
-    const UpdatePolicyType updatePolicy,
+    const UpdatePolicyType& updatePolicy,
+    const DecayPolicyType& decayPolicy,
     const bool resetPolicy) :
     stepSize(stepSize),
     batchSize(batchSize),
@@ -38,13 +39,14 @@ SGD<UpdatePolicyType>::SGD(
     tolerance(tolerance),
     shuffle(shuffle),
     updatePolicy(updatePolicy),
+    decayPolicy(decayPolicy),
     resetPolicy(resetPolicy)
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
-template<typename UpdatePolicyType>
+template<typename UpdatePolicyType, typename DecayPolicyType>
 template<typename DecomposableFunctionType>
-double SGD<UpdatePolicyType>::Optimize(
+double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
     DecomposableFunctionType& function,
     arma::mat& iterate)
 {
@@ -114,6 +116,9 @@ double SGD<UpdatePolicyType>::Optimize(
 
     overallObjective += function.Evaluate(iterate, currentFunction,
         effectiveBatchSize);
+
+    // Now update the learning rate if requested by the user.
+    decayPolicy.Update(iterate, stepSize, gradient);
 
     i += effectiveBatchSize;
     currentFunction += effectiveBatchSize;

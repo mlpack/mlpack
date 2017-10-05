@@ -32,8 +32,8 @@ SnapshotSGDR<UpdatePolicyType>::SnapshotSGDR(
     const UpdatePolicyType& updatePolicy) :
     batchSize(batchSize),
     accumulate(accumulate),
-    optimizer(OptimizerType(batchSize,
-                            stepSize,
+    optimizer(OptimizerType(stepSize,
+                            batchSize,
                             maxIterations,
                             tolerance,
                             shuffle,

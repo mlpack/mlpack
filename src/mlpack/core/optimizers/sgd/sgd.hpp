@@ -15,8 +15,9 @@
 #define MLPACK_CORE_OPTIMIZERS_SGD_SGD_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/optimizers/sgd/update_policies/vanilla_update.hpp>
-#include <mlpack/core/optimizers/sgd/update_policies/momentum_update.hpp>
+#include "update_policies/vanilla_update.hpp"
+#include "update_policies/momentum_update.hpp"
+#include "decay_policies/no_decay.hpp"
 
 namespace mlpack {
 namespace optimization {
@@ -74,8 +75,12 @@ namespace optimization {
  * @tparam UpdatePolicyType update policy used by SGD during the iterative update
  *     process. By default vanilla update policy (see
  *     mlpack::optimization::VanillaUpdate) is used.
+ * @tparam DecayPolicyType Decay policy used during the iterative update
+ *     process to adjust the step size. By default the step size isn't going to
+ *     be adjusted (i.e. NoDecay is used).
  */
-template<typename UpdatePolicyType = VanillaUpdate>
+template<typename UpdatePolicyType = VanillaUpdate,
+         typename DecayPolicyType = NoDecay>
 class SGD
 {
  public:
@@ -96,6 +101,7 @@ class SGD
    *     function is visited in linear order.
    * @param updatePolicy Instantiated update policy used to adjust the given
    *                     parameters.
+   * @param decayPolicy Instantiated decay policy used to adjust the step size.
    * @param resetPolicy Flag that determines whether update policy parameters
    *                    are reset before every Optimize call.
    */
@@ -104,7 +110,8 @@ class SGD
       const size_t maxIterations = 100000,
       const double tolerance = 1e-5,
       const bool shuffle = true,
-      const UpdatePolicyType updatePolicy = UpdatePolicyType(),
+      const UpdatePolicyType& updatePolicy = UpdatePolicyType(),
+      const DecayPolicyType& decayPolicy = DecayPolicyType(),
       const bool resetPolicy = true);
 
   /**
@@ -158,6 +165,11 @@ class SGD
   //! Modify the update policy.
   UpdatePolicyType& UpdatePolicy() { return updatePolicy; }
 
+  //! Get the step size decay policy.
+  const DecayPolicyType& DecayPolicy() const { return decayPolicy; }
+  //! Modify the step size decay policy.
+  DecayPolicyType& DecayPolicy() { return decayPolicy; }
+
  private:
   //! The step size for each example.
   double stepSize;
@@ -177,6 +189,9 @@ class SGD
 
   //! The update policy used to update the parameters in each iteration.
   UpdatePolicyType updatePolicy;
+
+  //! The decay policy used to update the step size.
+  DecayPolicyType decayPolicy;
 
   //! Flag indicating whether update policy
   //! should be reset before running optimization.
