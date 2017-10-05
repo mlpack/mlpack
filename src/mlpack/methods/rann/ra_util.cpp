@@ -65,7 +65,6 @@ size_t mlpack::neighbor::RAUtil::MinimumSamplesReqd(const size_t n,
       }
       else
       {
-        done = true;
         break;
       }
     }
