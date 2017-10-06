@@ -63,11 +63,7 @@ void CLI::StopTimers()
  */
 void CLI::Destroy()
 {
-  if (singleton != NULL)
-  {
-    delete singleton;
-    singleton = NULL; // Reset pointer.
-  }
+  singleton.reset();
 }
 
 void CLI::Add(ParamData&& data)
@@ -140,10 +136,10 @@ bool CLI::HasParam(const std::string& key)
 // Returns the sole instance of this class.
 CLI& CLI::GetSingleton()
 {
-  if (singleton == NULL)
-    singleton = new CLI();
+  if (!singleton.get())
+    singleton.reset(new CLI());
 
-  return *singleton;
+  return *(singleton.get());
 }
 
 /**

@@ -20,6 +20,7 @@
 #include <string>
 
 #include <boost/any.hpp>
+#include <boost/thread/tss.hpp>
 
 #include <mlpack/prereqs.hpp>
 
@@ -309,7 +310,7 @@ class CLI
 
  private:
   //! The singleton itself.
-  static CLI* singleton;
+  static boost::thread_specific_ptr<CLI> singleton;
 
   //! True, if CLI was used to parse command line options.
  public:
