@@ -889,25 +889,25 @@ double DTree<MatType, TagType>::ComputeValue(const VecType& query) const
 
 // Index the buckets for possible usage later.
 template <typename MatType, typename TagType>
-TagType DTree<MatType, TagType>::TagTree(const TagType& tag, bool internal)
+TagType DTree<MatType, TagType>::TagTree(const TagType& tag, bool every)
 {
   if (subtreeLeaves == 1)
   {
     // Only label leaves.
     bucketTag = tag;
-    return (tag + 1);
+    return ++tag;
   }
 
   TagType nextTag;
-  if (internal)
+  if (every)
   {
     bucketTag = tag;
-    nextTag = tag + 1;
+    nextTag = ++tag;
   }
   else
     nextTag = tag;
 
-  return right->TagTree(left->TagTree(nextTag, internal), internal);
+  return right->TagTree(left->TagTree(nextTag, every), every);
 }
 
 template <typename MatType, typename TagType>

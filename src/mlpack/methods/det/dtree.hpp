@@ -184,11 +184,13 @@ class DTree
   /**
    * Index the buckets for possible usage later; this results in every leaf in
    * the tree having a specific tag (accessible with BucketTag()).  This
-   * function calls itself recursively.
+   * function calls itself recursively. The tag is incremented with
+   * `operator++()`, so any `TagType` overriding it will do.
    *
    * @param tag Tag for the next leaf; leave at 0 for the initial call.
+   * @param everyNodde Whether to increment on every node, not just leaves.
    */
-  TagType TagTree(const TagType& tag = 0, bool internal = false);
+  TagType TagTree(const TagType& tag = 0, bool everyNode = false);
 
 
   /**
