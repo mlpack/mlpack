@@ -895,14 +895,14 @@ TagType DTree<MatType, TagType>::TagTree(const TagType& tag, bool every)
   {
     // Only label leaves.
     bucketTag = tag;
-    return ++tag;
+    return (tag + 1);
   }
 
   TagType nextTag;
   if (every)
   {
     bucketTag = tag;
-    nextTag = ++tag;
+    nextTag = (tag + 1);
   }
   else
     nextTag = tag;
