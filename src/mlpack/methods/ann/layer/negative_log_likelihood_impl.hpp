@@ -25,12 +25,11 @@ NegativeLogLikelihood<InputDataType, OutputDataType>::NegativeLogLikelihood()
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename eT>
+template<typename InputType, typename TargetType>
 double NegativeLogLikelihood<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>&& input, arma::Mat<eT>&& target)
+    const InputType&& input, TargetType&& target)
 {
   double output = 0;
-
   for (size_t i = 0; i < input.n_cols; ++i)
   {
     size_t currentTarget = target(i) - 1;
@@ -44,13 +43,13 @@ double NegativeLogLikelihood<InputDataType, OutputDataType>::Forward(
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename eT>
+template<typename InputType, typename TargetType, typename OutputType>
 void NegativeLogLikelihood<InputDataType, OutputDataType>::Backward(
-      const arma::Mat<eT>&& input,
-      const arma::Mat<eT>&& target,
-      arma::Mat<eT>&& output)
+      const InputType&& input,
+      const TargetType&& target,
+      OutputType&& output)
 {
-  output = arma::zeros<arma::Mat<eT> >(input.n_rows, input.n_cols);
+  output = arma::zeros<OutputType>(input.n_rows, input.n_cols);
   for (size_t i = 0; i < input.n_cols; ++i)
   {
     size_t currentTarget = target(i) - 1;
