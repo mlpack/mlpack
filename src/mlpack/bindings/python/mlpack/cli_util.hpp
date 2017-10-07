@@ -101,6 +101,14 @@ inline void EnableVerbose()
 }
 
 /**
+ * Turn verbose output off.
+ */
+inline void DisableVerbose()
+{
+  Log::Info.ignoreInput = true;
+}
+
+/**
  * Disable backtraces.
  */
 inline void DisableBacktrace()

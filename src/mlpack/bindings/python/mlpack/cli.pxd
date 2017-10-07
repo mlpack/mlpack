@@ -41,6 +41,7 @@ cdef extern from "<mlpack/bindings/python/mlpack/cli_util.hpp>" \
   void SetParamWithInfo[T](string, const T&, const bool*) nogil except +
   (T&) GetParamWithInfo[T](string) nogil except +
   void EnableVerbose() nogil except +
+  void DisableVerbose() nogil except +
   void DisableBacktrace() nogil except +
   void ResetTimers() nogil except +
 
