@@ -117,6 +117,9 @@ void mlpackMain()
 
   RequireAtLeastOnePassed({ "training", "input_model" }, true);
 
+  RequireAtLeastOnePassed({ "output_model", "predictions", "probabilities",
+      "test_labels" }, false, "no output will be given");
+
   ReportIgnoredParam({{ "test", false }}, "probabilities");
   ReportIgnoredParam({{ "test", false }}, "predictions");
 

@@ -49,7 +49,8 @@ PROGRAM_INFO("Hidden Markov Model (HMM) Training", "This program allows a "
     "--model_file.");
 
 PARAM_STRING_IN_REQ("input_file", "File containing input observations.", "i");
-PARAM_STRING_IN_REQ("type", "Type of HMM: discrete | gaussian | gmm.", "t");
+PARAM_STRING_IN("type", "Type of HMM: discrete | gaussian | gmm.", "t",
+    "gaussian");
 
 PARAM_FLAG("batch", "If true, input_file (and if passed, labels_file) are "
     "expected to contain a list of files to use as input observation sequences "
@@ -353,14 +354,12 @@ void mlpackMain()
   const bool batch = CLI::HasParam("batch");
   const double tolerance = CLI::GetParam<double>("tolerance");
 
-  // Verify that either a model or a type was given.
-  RequireAtLeastOnePassed({ "input", "type" }, true);
-
   // If no model is specified, make sure we are training with valid parameters.
   if (!CLI::HasParam("input_model"))
   {
     // Validate number of states.
     RequireAtLeastOnePassed({ "states" }, true);
+    RequireAtLeastOnePassed({ "type" }, true);
     RequireParamValue<int>("states", [](int x) { return x > 0; }, true,
         "number of states must be positive");
   }

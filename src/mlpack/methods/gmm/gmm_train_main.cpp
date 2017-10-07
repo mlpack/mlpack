@@ -136,6 +136,9 @@ void mlpackMain()
   ReportIgnoredParam({{ "diagonal_covariance", true }}, "no_force_positive");
   RequireAtLeastOnePassed({ "output_model" }, false, "no model will be saved");
 
+  RequireParamValue<double>("noise", [](double x) { return x >= 0.0; }, true,
+      "variance of noise must be greater than or equal to 0");
+
   arma::mat dataPoints = std::move(CLI::GetParam<arma::mat>("input"));
 
   // Do we need to add noise to the dataset?
