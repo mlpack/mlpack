@@ -46,8 +46,8 @@ double CMAES::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
 
   // Parent weights.
   const size_t mu = std::round(lambda / 2);
-  arma::vec w = std::log(mu + 0.5) - arma::log(arma::conv_to<arma::vec>::from(
-      arma::linspace<arma::uvec>(1, mu, mu + 1)));
+  arma::vec w = std::log(mu + 0.5) - arma::log(
+    arma::linspace<arma::vec>(0, mu - 1, mu) + 1.0);
   w /= arma::sum(w);
 
   // Number of effective solutions.
@@ -67,7 +67,6 @@ double CMAES::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
   const double cc = (4.0 + muEffective / iterate.n_elem) /
       (4 + iterate.n_elem + 2 * muEffective / iterate.n_elem);
   const double h = (1.4 + 2.0 / (iterate.n_elem + 1.0)) * enn;
-
 
   const double c1 = 2 / (std::pow(iterate.n_elem + 1.3, 2) + muEffective);
   const double alphaMu = 2;
@@ -92,9 +91,9 @@ double CMAES::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
   arma::cube pStep(iterate.n_rows, iterate.n_cols, lambda);
   arma::cube pPosition(iterate.n_rows, iterate.n_cols, lambda);
   arma::vec pObjective(lambda);
-  arma::cube ps = arma::zeros(iterate.n_rows, iterate.n_cols, 3);
-  arma::cube pc = arma::zeros(iterate.n_rows, iterate.n_cols, 3);
-  arma::cube C(iterate.n_elem, iterate.n_elem, 3);
+  arma::cube ps = arma::zeros(iterate.n_rows, iterate.n_cols, 2);
+  arma::cube pc = arma::zeros(iterate.n_rows, iterate.n_cols, 2);
+  arma::cube C(iterate.n_elem, iterate.n_elem, 2);
   C.slice(0).eye();
 
   // Covariance matrix parameters.
@@ -109,8 +108,8 @@ double CMAES::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
   for (size_t i = 1; i < maxIterations; ++i)
   {
     // To keep track of where we are.
-    const size_t idx0 = (i - 1) % 3;
-    const size_t idx1 = i % 3;
+    const size_t idx0 = (i - 1) % 2;
+    const size_t idx1 = i % 2;
 
     const arma::mat covLower = arma::chol(C.slice(idx0), "lower");
 
@@ -224,10 +223,19 @@ double CMAES::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
     }
 
     arma::eig_sym(eigval, eigvec, C.slice(idx1));
-    if (arma::any(eigval < 0))
+    const arma::uvec negativeEigval = find(eigval < 0, 1);
+    if (!negativeEigval.is_empty())
     {
-      eigval = arma::max(eigval, eigvalZero);
-      C.slice(idx1) = eigvec * diagmat(eigval) / eigvec;
+      if (negativeEigval(0) == 0)
+      {
+        C.slice(idx1).zeros();
+      }
+      else
+      {
+        C.slice(idx1) = eigvec.cols(0, negativeEigval(0) - 1) *
+            arma::diagmat(eigval.subvec(0, negativeEigval(0) - 1)) *
+            eigvec.cols(0, negativeEigval(0) - 1).t();
+      }
     }
 
     // Output current objective function.
