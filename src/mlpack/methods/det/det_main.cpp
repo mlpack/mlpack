@@ -71,10 +71,10 @@ PARAM_MATRIX_OUT("vi", "The output variable importance values for each "
     "feature.", "i");
 
 // Tagging and path printing options
-PARAM_STRING_IN("path_format", "The format of path printing - lr|id-lr|lr-id",
-                "p", "lr");
+PARAM_STRING_IN("path_format", "The format of path printing: 'lr', 'id-lr', or "
+    "'lr-id'.", "p", "lr");
 
-PARAM_STRING_OUT("tag_counters_file", "The file to output number of points "
+PARAM_STRING_OUT("tag_counters_file", "The file to output the number of points "
                  "that went to each leaf.", "c");
 
 PARAM_STRING_OUT("tag_file", "The file to output the tags (and possibly paths)"
