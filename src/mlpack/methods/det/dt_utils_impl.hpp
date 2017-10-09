@@ -320,9 +320,9 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
   return dtree;
 }
 
-template <typename MatType>
+template<typename MatType>
 PathCacher::PathCacher(PathCacher::PathFormat fmt, DTree<MatType, int>* dtree) :
-  format(fmt)
+    format(fmt)
 {
   // Here we use TagTree()'s output to determine the
   // number of _nodes_ in the tree.
@@ -331,9 +331,9 @@ PathCacher::PathCacher(PathCacher::PathFormat fmt, DTree<MatType, int>* dtree) :
   tree::EnumerateTree(dtree, *this);
 }
 
-template <typename MatType>
-void  PathCacher::Enter(const DTree<MatType, int>* node,
-                        const DTree<MatType, int>* parent)
+template<typename MatType>
+void PathCacher::Enter(const DTree<MatType, int>* node,
+                       const DTree<MatType, int>* parent)
 {
   if (parent == nullptr)
     return;
@@ -346,9 +346,9 @@ void  PathCacher::Enter(const DTree<MatType, int>* node,
                                              "" : BuildString());
 }
 
-template <typename MatType>
-void  PathCacher::Leave(const DTree<MatType, int>* ,
-                        const DTree<MatType, int>* parent)
+template<typename MatType>
+void PathCacher::Leave(const DTree<MatType, int>* /* node */,
+                       const DTree<MatType, int>* parent)
 {
   if (parent != nullptr)
     path.pop_back();

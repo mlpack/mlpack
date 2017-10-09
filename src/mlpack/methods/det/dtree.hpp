@@ -46,12 +46,12 @@ template<typename MatType = arma::mat,
 class DTree
 {
  public:
-  /**
-   * The actual, underlying type we're working with.
-   */
-  typedef typename MatType::elem_type     ElemType;
-  typedef typename MatType::vec_type      VecType;
-  typedef typename arma::Col<ElemType>    StatType;
+  //! The actual, underlying type we're working with.
+  typedef typename MatType::elem_type  ElemType;
+  //! The type of vector we are using.
+  typedef typename MatType::vec_type   VecType;
+  //! The statistic type we are holding.
+  typedef typename arma::Col<ElemType> StatType;
 
   /**
    * Create an empty density estimation tree.

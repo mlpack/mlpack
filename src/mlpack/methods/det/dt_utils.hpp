@@ -71,40 +71,68 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
                                  const bool skipPruning = false);
 
 /**
- * The class responsible for cacheing the path to each node of the tree. Its instance
- * is provided to EnumerateTree() utility ONCE and it caches the paths to all the
- * leafs and then easily (and quickly) retrieves these paths for each test entry.
+ * This class is responsible for caching the path to each node of the tree. Its
+ * instance is provided to EnumerateTree() utility ONCE and it caches the paths
+ * to all the leafs and then easily (and quickly) retrieves these paths for each
+ * test entry.
  */
 class PathCacher
 {
  public:
+  /**
+   * Possible formats to use for output.
+   */
   enum PathFormat
   {
+    //! Print only whether we went left or right.
     FormatLR,
+    //! Print the direction, then the tag of the node.
     FormatLR_ID,
+    //! Print the tag of the node, then the direction.
     FormatID_LR
   };
 
-  template <typename MatType>
+  /**
+   * Construct a PathCacher object on the given tree with the given format.
+   *
+   * @param fmt Format to use for output.
+   * @param tree Tree to cache paths in.
+   */
+  template<typename MatType>
   PathCacher(PathFormat fmt, DTree<MatType, int>* tree);
 
-  template <typename MatType>
-  void  Enter(const DTree<MatType, int>* node,
-              const DTree<MatType, int>* parent);
+  /**
+   * Enter a given node.
+   */
+  template<typename MatType>
+  void Enter(const DTree<MatType, int>* node,
+             const DTree<MatType, int>* parent);
 
-  template <typename MatType>
-  void  Leave(const DTree<MatType, int>* node,
-              const DTree<MatType, int>* parent);
+  /**
+   * Leave the given node.
+   */
+  template<typename MatType>
+  void Leave(const DTree<MatType, int>* node,
+             const DTree<MatType, int>* parent);
 
-  const std::string&  PathFor(int tag) const;
+  /**
+   * Return the constructed path for a given tag.
+   */
+  const std::string& PathFor(int tag) const;
 
-  int                 ParentOf(int tag) const;
+  /**
+   * Get the parent tag of a given tag.
+   */
+  int ParentOf(int tag) const;
 
-  size_t              NumNodes() const { return pathCache.size(); }
+  /**
+   * Get the number of nodes in the path cache.
+   */
+  size_t NumNodes() const { return pathCache.size(); }
 
  protected:
-  typedef std::list<std::pair<bool, int> >            PathType;
-  typedef std::vector<std::pair<int, std::string> >   PathCacheType;
+  typedef std::list<std::pair<bool, int>>          PathType;
+  typedef std::vector<std::pair<int, std::string>> PathCacheType;
 
   PathType      path;
   PathFormat    format;
