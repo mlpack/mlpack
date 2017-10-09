@@ -18,6 +18,8 @@
   #include <windows.h>
 #endif
 
+#include <thread>
+
 #include <mlpack/core.hpp>
 
 #include <boost/test/unit_test.hpp>
@@ -88,6 +90,37 @@ BOOST_AUTO_TEST_CASE(TwiceStartTimerTest)
   Timer::Start("test_timer");
 
   BOOST_REQUIRE_THROW(Timer::Start("test_timer"), std::runtime_error);
+}
+
+BOOST_AUTO_TEST_CASE(MultithreadTimerTest)
+{
+  // Make three different threads all start a timer then stop a timer.
+  std::thread threads[3];
+  for (size_t i = 0; i < 3; ++i)
+  {
+    threads[i] = std::thread([]()
+        {
+          Timer::Start("thread_timer");
+
+          #ifdef _WIN32
+          Sleep(20);
+          #else
+          usleep(20000);
+          #endif
+
+          Timer::Stop("thread_timer");
+	
+	  BOOST_REQUIRE(Timer::Get("thread_timer") > std::chrono::microseconds(19000));
+
+        });
+  }
+
+  for (size_t i = 0; i < 3; ++i)
+    threads[i].join();
+
+  // If we made it this far without a problem, then the multithreaded part has
+  // worked.  Ensure that on the main thread there is no "thread_timer".
+  BOOST_REQUIRE_EQUAL(Timer::Get("thread_timer").count(), 0);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

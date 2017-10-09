@@ -32,7 +32,7 @@ using namespace mlpack::util;
   #define BASH_CLEAR ""
 #endif
 
-CLI* CLI::singleton = NULL;
+boost::thread_specific_ptr<CLI> CLI::singleton;
 
 // Only output debugging output if in debug mode.
 #ifdef DEBUG
