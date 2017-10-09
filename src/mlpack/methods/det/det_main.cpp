@@ -33,6 +33,11 @@ PROGRAM_INFO("Density Estimation With Density Estimation Trees",
     " with the " + PRINT_PARAM_STRING("training_set_estimates") + " output "
     "parameter."
     "\n\n"
+    "Enabling path printing for each node outputs strings like `LRLRLR` for "
+    "each entry in the test set, or training one, if test is not provided. "
+    "If `lr-id` or `id-lr` is provided, it'll also print the id (tag) of the "
+    "node (not just leaf!) in tree along the path to the leaf."
+    "\n\n"
     "This program also can provide density estimates for a set of test points, "
     "specified in the " + PRINT_PARAM_STRING("test") + " parameter.  The "
     "density estimation tree used for this task will be the tree that was "
@@ -61,6 +66,19 @@ PARAM_MATRIX_OUT("test_set_estimates", "The output estimates on the test set "
 PARAM_MATRIX_OUT("vi", "The output variable importance values for each "
     "feature.", "i");
 
+// Tagging and path printing options
+PARAM_STRING_IN("path_format", "The format of path printing - lr|id-lr|lr-id",
+                "p", "lr");
+
+PARAM_STRING_OUT("tag_counters_file", "The file to output number of points "
+                 "that went to each leaf.", "c");
+
+PARAM_STRING_OUT("tag_file", "The file to output the tags (and possibly paths)"
+                 " for each sample in the test set.", "g");
+
+PARAM_FLAG("skip_pruning", "Whether to bypass the pruning process and output "
+              "the unpruned tree only.", "s");
+
 // Parameters for the training algorithm.
 PARAM_INT_IN("folds", "The number of folds of cross-validation to perform for "
     "the estimation (0 is LOOCV)", "f", 10);
@@ -76,71 +94,80 @@ PARAM_FLAG("volume_regularization", "This flag gives the used the option to use"
     "penalize low volume leaves.", "R");
 */
 
+
 void mlpackMain()
 {
   // Validate input parameters.
   if (CLI::HasParam("training") && CLI::HasParam("input_model"))
-    Log::Fatal << "Only one of --training_file (-t) or --input_model_file (-m) "
-        << "may be specified!" << endl;
+    Log::Fatal << "Only one of " << PRINT_PARAM_STRING("training") << " or " <<
+      PRINT_PARAM_STRING("input_model") << " may be specified!" << endl;
 
   if (!CLI::HasParam("training") && !CLI::HasParam("input_model"))
-    Log::Fatal << "Neither --training_file (-t) nor --input_model_file (-m) "
-        << "are specified!" << endl;
+    Log::Fatal << "Neither " << PRINT_PARAM_STRING("training") << " nor " <<
+      PRINT_PARAM_STRING("input_model") << " are specified!" << endl;
+
+  if (CLI::HasParam("tag_file") &&
+      !CLI::HasParam("training") && !CLI::HasParam("test"))
+  {
+    Log::Fatal << "Neither " << PRINT_PARAM_STRING("training") << " nor " <<
+      PRINT_PARAM_STRING("test") << " are specified, but needed when " <<
+      PRINT_PARAM_STRING("tag_file") << " is asked." << endl;
+  }
 
   if (!CLI::HasParam("training"))
   {
     if (CLI::HasParam("training_set_estimates"))
-      Log::Warn << "--training_set_estimates_file (-e) ignored because "
-          << "--training_file (-t) is not specified." << endl;
+      Log::Warn << PRINT_PARAM_STRING("training_set_estimates") <<
+        " ignored because " << PRINT_PARAM_STRING("training") <<
+        " is not specified." << endl;
     if (CLI::HasParam("folds"))
-      Log::Warn << "--folds (-f) ignored because --training_file (-t) is not "
-          << "specified." << endl;
+      Log::Warn << PRINT_PARAM_STRING("folds") << " ignored because " <<
+        PRINT_PARAM_STRING("training") << " is not specified." << endl;
     if (CLI::HasParam("min_leaf_size"))
-      Log::Warn << "--min_leaf_size (-l) ignored because --training_file (-t) "
-          << "is not specified." << endl;
+      Log::Warn << PRINT_PARAM_STRING("min_leaf_size") << " ignored because " <<
+        PRINT_PARAM_STRING("training") << " is not specified." << endl;
     if (CLI::HasParam("max_leaf_size"))
-      Log::Warn << "--max_leaf_size (-L) ignored because --training_file (-t) "
-          << "is not specified." << endl;
+      Log::Warn << PRINT_PARAM_STRING("max_leaf_size") << " ignored because " <<
+        PRINT_PARAM_STRING("training") << " is not specified." << endl;
   }
   else if (!CLI::HasParam("output_model") &&
            !CLI::HasParam("training_set_estimates") &&
            !CLI::HasParam("vi"))
   {
-    Log::Warn << "None of --output_model_file (-M), --training_set_estimates "
-        << "(-e), or --vi (-i) are specified; no output will be saved!" << endl;
+    Log::Warn << "None of " << PRINT_PARAM_STRING("output_model") << ", " <<
+      PRINT_PARAM_STRING("training_set_estimates") << ", or " <<
+      PRINT_PARAM_STRING("vi") << " are specified; no output will be saved!" <<
+      endl;
   }
 
   if (!CLI::HasParam("test") && CLI::HasParam("test_set_estimates"))
-    Log::Warn << "--test_set_estimates_file (-E) ignored because --test_file "
-        << "(-T) is not specified." << endl;
+    Log::Warn << PRINT_PARAM_STRING("test_set_estimates") << " ignored " <<
+      "because " << PRINT_PARAM_STRING("test") << " is not specified." << endl;
 
   // Are we training a DET or loading from file?
   DTree<arma::mat, int>* tree;
+  arma::mat trainingData;
+  arma::mat testData;
+
   if (CLI::HasParam("training"))
   {
-    arma::mat trainingData = std::move(CLI::GetParam<arma::mat>("training"));
-
-    // Cross-validation here.
-    size_t folds = CLI::GetParam<int>("folds");
-    if (folds == 0)
-    {
-      folds = trainingData.n_cols;
-      Log::Info << "Performing leave-one-out cross validation." << endl;
-    }
-    else
-    {
-      Log::Info << "Performing " << folds << "-fold cross validation." << endl;
-    }
+    trainingData = std::move(CLI::GetParam<arma::mat>("training"));
 
     const bool regularization = false;
 //    const bool regularization = CLI::HasParam("volume_regularization");
     const int maxLeafSize = CLI::GetParam<int>("max_leaf_size");
     const int minLeafSize = CLI::GetParam<int>("min_leaf_size");
+    const bool skipPruning = CLI::HasParam("skip_pruning");
+    size_t folds = CLI::GetParam<int>("folds");
+
+    if (folds == 0)
+      folds = trainingData.n_cols;
 
     // Obtain the optimal tree.
     Timer::Start("det_training");
     tree = Trainer<arma::mat, int>(trainingData, folds, regularization,
-        maxLeafSize, minLeafSize, "");
+                                   maxLeafSize, minLeafSize,
+                                   skipPruning);
     Timer::Stop("det_training");
 
     // Compute training set estimates, if desired.
@@ -166,25 +193,112 @@ void mlpackMain()
   // the given file.
   if (CLI::HasParam("test"))
   {
-    arma::mat testData = std::move(CLI::GetParam<arma::mat>("test"));
-
-    // Compute test set densities.
-    Timer::Start("det_test_set_estimation");
-    arma::rowvec testDensities(testData.n_cols);
-    for (size_t i = 0; i < testData.n_cols; i++)
-      testDensities[i] = tree->ComputeValue(testData.unsafe_col(i));
-    Timer::Stop("det_test_set_estimation");
-
+    testData = std::move(CLI::GetParam<arma::mat>("test"));
     if (CLI::HasParam("test_set_estimates"))
+    {
+      // Compute test set densities.
+      Timer::Start("det_test_set_estimation");
+      arma::rowvec testDensities(testData.n_cols);
+
+      for (size_t i = 0; i < testData.n_cols; i++)
+        testDensities[i] = tree->ComputeValue(testData.unsafe_col(i));
+
+      Timer::Stop("det_test_set_estimation");
+
       CLI::GetParam<arma::mat>("test_set_estimates") = std::move(testDensities);
+    }
+
+    // Print variable importance.
+    if (CLI::HasParam("vi"))
+    {
+      arma::vec importances;
+      tree->ComputeVariableImportance(importances);
+      CLI::GetParam<arma::mat>("vi") = importances.t();
+    }
   }
 
-  // Print variable importance.
-  if (CLI::HasParam("vi"))
+  if (CLI::HasParam("tag_file"))
   {
-    arma::vec importances;
-    tree->ComputeVariableImportance(importances);
-    CLI::GetParam<arma::mat>("vi") = std::move(importances.t());
+    const arma::mat& estimationData =
+        CLI::HasParam("test") ? testData : trainingData;
+    const string tagFile = CLI::GetParam<string>("tag_file");
+    std::ofstream ofs;
+    ofs.open(tagFile, std::ofstream::out);
+
+    arma::Row<size_t> counters;
+
+    Timer::Start("det_test_set_tagging");
+    if (!ofs.is_open())
+    {
+      Log::Warn << "Unable to open file '" << tagFile
+        << "' to save tag membership info."
+        << std::endl;
+    }
+    else if (CLI::HasParam("path_format"))
+    {
+      const bool reqCounters = CLI::HasParam("tag_counters_file");
+      const string pathFormat = CLI::GetParam<string>("path_format");
+
+      PathCacher::PathFormat theFormat;
+      if (pathFormat == "lr" || pathFormat == "LR")
+        theFormat = PathCacher::FormatLR;
+      else if (pathFormat == "lr-id" || pathFormat == "LR-ID")
+        theFormat = PathCacher::FormatLR_ID;
+      else if (pathFormat == "id-lr" || pathFormat == "ID-LR")
+        theFormat = PathCacher::FormatID_LR;
+      else
+      {
+        Log::Warn << "Unknown path format specified: '" << pathFormat
+          << "'. Valid are: lr | lr-id | id-lr. Defaults to 'lr'." << endl;
+        theFormat = PathCacher::FormatLR;
+      }
+
+      PathCacher path(theFormat, tree);
+      counters.zeros(path.NumNodes());
+
+      for (size_t i = 0; i < estimationData.n_cols; i++)
+      {
+        int tag = tree->FindBucket(estimationData.unsafe_col(i));
+
+        ofs << tag << " " << path.PathFor(tag) << std::endl;
+        for (; tag >= 0 && reqCounters; tag = path.ParentOf(tag))
+          counters(tag) += 1;
+      }
+
+      ofs.close();
+
+      if (reqCounters)
+      {
+        ofs.open(CLI::GetParam<string>("tag_counters_file"),
+                 std::ofstream::out);
+
+        for (size_t j = 0; j < counters.n_elem; ++j)
+          ofs << j << " "
+              << counters(j) << " "
+              << path.PathFor(j) << endl;
+
+        ofs.close();
+      }
+    }
+    else
+    {
+      int numLeaves = tree->TagTree();
+      counters.zeros(numLeaves);
+
+      for (size_t i = 0; i < estimationData.n_cols; i++)
+      {
+        const int tag = tree->FindBucket(estimationData.unsafe_col(i));
+
+        ofs << tag << std::endl;
+        counters(tag) += 1;
+      }
+
+      if (CLI::HasParam("tag_counters_file"))
+        data::Save(CLI::GetParam<string>("tag_counters_file"), counters);
+    }
+
+    Timer::Stop("det_test_set_tagging");
+    ofs.close();
   }
 
   // Save the model, if desired.
