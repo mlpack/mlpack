@@ -117,6 +117,14 @@ inline void ResetTimers()
   CLI::GetSingleton().timer = Timers();
 }
 
+/**
+ * Enable timing.
+ */
+inline void EnableTimers()
+{
+  Timer::Enabled() = true;
+}
+
 } // namespace util
 } // namespace mlpack
 

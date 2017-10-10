@@ -71,13 +71,31 @@ class Timer
    * @param name Name of timer to return value of.
    */
   static std::chrono::microseconds Get(const std::string& name);
+
+  /**
+   * Enable timing of mlpack programs.  Do not run this while timers are
+   * running!
+   */
+  static void EnableTiming();
+
+  /**
+   * Disable timing of mlpack programs.  Do not run this while timers are
+   * running!
+   */
+  static void DisableTiming();
+
+  /**
+   * Stop and reset all running timers.  This removes all knowledge of any
+   * existing timers.
+   */
+  static void ResetAll();
 };
 
 class Timers
 {
  public:
-  //! Nothing to do for the constructor.
-  Timers() { }
+  //! Default to disabled.
+  Timers() : enabled(false) { }
 
   /**
    * Returns a copy of all the timers used via this interface.
@@ -138,6 +156,11 @@ class Timers
   bool GetState(const std::string& timerName,
                 const std::thread::id& threadId = std::thread::id());
 
+  //! Modify whether or not timing is enabled.
+  bool& Enabled() { return enabled; }
+  //! Get whether or not timing is enabled.
+  bool Enabled() const { return enabled; }
+
  private:
   //! A map of all the timers that are being tracked.
   std::map<std::thread::id, std::map<std::string, std::chrono::microseconds>>
@@ -149,6 +172,9 @@ class Timers
       std::chrono::high_resolution_clock::time_point>> timerStartTime;
 
   std::chrono::high_resolution_clock::time_point GetTime();
+
+  //! Whether or not timing is enabled.
+  bool enabled;
 };
 
 } // namespace mlpack

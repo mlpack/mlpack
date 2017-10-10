@@ -50,6 +50,26 @@ microseconds Timer::Get(const string& name)
   return result;
 }
 
+// Enable timing.
+void Timer::EnableTiming()
+{
+  CLI::GetSingleton().timer.Enabled() = true;
+}
+
+// Disable timing.
+void Timer::DisableTiming()
+{
+  CLI::GetSingleton().timer.Enabled() = false;
+}
+
+// Reset all timers.  Save state of enabled.
+void Timer::ResetAll()
+{
+  bool wasEnabled = CLI::GetSingleton().timer.Enabled();
+  CLI::GetSingleton().timer = Timers();
+  CLI::GetSingleton().timer.Enabled() = wasEnabled;
+}
+
 map<thread::id, map<string, microseconds>>&
 Timers::GetAllTimers()
 {

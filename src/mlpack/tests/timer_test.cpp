@@ -33,6 +33,7 @@ BOOST_AUTO_TEST_SUITE(TimerTest);
  */
 BOOST_AUTO_TEST_CASE(MultiRunTimerTest)
 {
+  Timer::EnableTiming();
   Timer::Start("test_timer");
 
   // On Windows (or, at least, in Windows not using VS2010) we cannot use
@@ -73,26 +74,33 @@ BOOST_AUTO_TEST_CASE(MultiRunTimerTest)
   Timer::Stop("test_timer");
 
   BOOST_REQUIRE_GE(Timer::Get("test_timer").count(), 40000);
+  Timer::DisableTiming();
 }
 
 BOOST_AUTO_TEST_CASE(TwiceStopTimerTest)
 {
+  Timer::EnableTiming();
   Timer::Start("test_timer");
   Timer::Stop("test_timer");
 
   BOOST_REQUIRE_THROW(Timer::Stop("test_timer"), std::runtime_error);
+
+  Timer::DisableTiming();
 }
 
 BOOST_AUTO_TEST_CASE(TwiceStartTimerTest)
 {
+  Timer::EnableTiming();
   Timer::Start("test_timer");
 
   BOOST_REQUIRE_THROW(Timer::Start("test_timer"), std::runtime_error);
   Timer::Stop("test_timer");
+  Timer::DisableTiming();
 }
 
 BOOST_AUTO_TEST_CASE(MultithreadTimerTest)
 {
+  Timer::EnableTiming();
   // Make three different threads all start a timer then stop a timer.
   std::thread threads[3];
   for (size_t i = 0; i < 3; ++i)
