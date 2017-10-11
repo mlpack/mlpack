@@ -15,6 +15,7 @@
 
 #include "gmm.hpp"
 #include "no_constraint.hpp"
+#include "diagonal_constraint.hpp"
 
 #include <mlpack/methods/kmeans/refined_start.hpp>
 
@@ -51,6 +52,11 @@ PROGRAM_INFO("Gaussian Mixture Model (GMM) Training",
     PRINT_PARAM_STRING("refined_start") + " is specified, then the "
     "Bradley-Fayyad refined start initialization will be used.  This can often "
     "lead to better clustering results."
+    "\n\n"
+    "The 'diagonal_covariance' flag will cause the learned covariances to be "
+    "diagonal matrices.  This significantly simplifies the model itself and "
+    "causes training to be faster, but restricts the ability to fit more "
+    "complex GMMs."
     "\n\n"
     "If GMM training fails with an error indicating that a covariance matrix "
     "could not be inverted, make sure that the " +
@@ -94,6 +100,8 @@ PARAM_FLAG("no_force_positive", "Do not force the covariance matrices to be "
     "positive definite.", "P");
 PARAM_INT_IN("max_iterations", "Maximum number of iterations of EM algorithm "
     "(passing 0 will run until convergence).", "n", 250);
+PARAM_FLAG("diagonal_covariance", "Force the covariance of the Gaussians to "
+    "be diagonal.  This can accelerate training time significantly.", "d");
 
 // Parameters for dataset modification.
 PARAM_DOUBLE_IN("noise", "Variance of zero-mean Gaussian noise to add to data.",
@@ -127,6 +135,11 @@ void mlpackMain()
     Log::Fatal << "Invalid number of Gaussians (" << gaussians << "); must "
         "be greater than or equal to 1." << std::endl;
   }
+
+  if (CLI::HasParam("diagonal_covariance") &&
+      CLI::HasParam("no_force_positive"))
+    Log::Warn << "--no_force_positive ignored because --diagonal_covariance is "
+        << "specified!" << endl;
 
   if (!CLI::HasParam("output_model"))
     Log::Warn << "--output_model_file is not specified, so no model will be "
@@ -163,6 +176,7 @@ void mlpackMain()
   const size_t maxIterations = (size_t) CLI::GetParam<int>("max_iterations");
   const double tolerance = CLI::GetParam<double>("tolerance");
   const bool forcePositive = !CLI::HasParam("no_force_positive");
+  const bool diagonalCovariance = CLI::HasParam("diagonal_covariance");
 
   // This gets a bit weird because we need different types depending on whether
   // --refined_start is specified.
@@ -186,9 +200,18 @@ void mlpackMain()
     KMeansType k(1000, metric::SquaredEuclideanDistance(),
         RefinedStart(samplings, percentage));
 
-    // Depending on the value of 'forcePositive', we have to use different
-    // types.
-    if (forcePositive)
+    // Depending on the value of forcePositive and diagonalCovariance, we have
+    // to use different types.
+    if (diagonalCovariance)
+    {
+      // Compute the parameters of the model using the EM algorithm.
+      Timer::Start("em");
+      EMFit<KMeansType, DiagonalConstraint> em(maxIterations, tolerance, k);
+      likelihood = gmm.Train(dataPoints, CLI::GetParam<int>("trials"), false,
+          em);
+      Timer::Stop("em");
+    }
+    else if (forcePositive)
     {
       // Compute the parameters of the model using the EM algorithm.
       Timer::Start("em");
@@ -209,8 +232,18 @@ void mlpackMain()
   }
   else
   {
-    // Depending on the value of forcePositive, we have to use different types.
-    if (forcePositive)
+    // Depending on the value of forcePositive and diagonalCovariance, we have
+    // to use different types.
+    if (diagonalCovariance)
+    {
+      // Compute the parameters of the model using the EM algorithm.
+      Timer::Start("em");
+      EMFit<kmeans::KMeans<>, DiagonalConstraint> em(maxIterations, tolerance);
+      likelihood = gmm.Train(dataPoints, CLI::GetParam<int>("trials"), false,
+          em);
+      Timer::Stop("em");
+    }
+    else if (forcePositive)
     {
       // Compute the parameters of the model using the EM algorithm.
       Timer::Start("em");

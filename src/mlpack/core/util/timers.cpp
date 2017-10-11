@@ -111,7 +111,6 @@ void Timers::PrintTimer(const std::string& timerName)
         Log::Info << ", ";
       Log::Info << s.count() << "." << std::setw(1)
           << (totalDurationMicroSec.count() / 100000) << " secs";
-      output = true;
     }
 
     Log::Info << ")";

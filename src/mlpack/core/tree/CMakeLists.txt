@@ -120,6 +120,7 @@ set(SOURCES
   statistic.hpp
   traversal_info.hpp
   tree_traits.hpp
+  enumerate_tree.hpp
 )
 
 # add directory name to sources
