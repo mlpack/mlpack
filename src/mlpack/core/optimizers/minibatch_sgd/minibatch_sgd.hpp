@@ -14,7 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/optimizers/sgd/update_policies/vanilla_update.hpp>
-#include <mlpack/core/optimizers/minibatch_sgd/decay_policies/no_decay.hpp>
+#include <mlpack/core/optimizers/sgd/decay_policies/no_decay.hpp>
 
 namespace mlpack {
 namespace optimization {

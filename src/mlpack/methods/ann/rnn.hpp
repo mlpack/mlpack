@@ -149,12 +149,16 @@ class RNN
    * function is usually called by the optimizer to train the model.
    *
    * @param parameters Matrix model parameters.
-   * @param i Index of point to use for objective function evaluation.
+   * @param begin Index of the starting point to use for objective function
+   *        evaluation.
+   * @param batchSize Number of points to be passed at a time to use for
+   *        objective function evaluation.
    * @param deterministic Whether or not to train or test the model. Note some
    *        layer act differently in training or testing mode.
    */
-  double Evaluate(const arma::mat& /* parameters */,
-                  const size_t i,
+  double Evaluate(const arma::mat& parameters,
+                  const size_t begin,
+                  const size_t batchSize,
                   const bool deterministic = true);
 
   /**
@@ -164,12 +168,22 @@ class RNN
    * function.
    *
    * @param parameters Matrix of the model parameters to be optimized.
-   * @param i Index of points to use for objective function gradient evaluation.
+   * @param begin Index of the starting point to use for objective function
+   *        gradient evaluation.
    * @param gradient Matrix to output gradient into.
+   * @param batchSize Number of points to be processed as a batch for objective
+   *        function gradient evaluation.
    */
   void Gradient(const arma::mat& parameters,
-                const size_t i,
-                arma::mat& gradient);
+                const size_t begin,
+                arma::mat& gradient,
+                const size_t batchSize);
+
+  /**
+   * Shuffle the order of function visitation. This may be called by the
+   * optimizer.
+   */
+  void Shuffle();
 
   /*
    * Add a new module to the model.
@@ -235,7 +249,8 @@ class RNN
    * Iterate through all layer modules and update the the gradient using the
    * layer defined optimizer.
    */
-  void Gradient();
+  template<typename InputType>
+  void Gradient(InputType&& input);
 
   /*
    * Predict the response of the given input sequence.
@@ -307,9 +322,6 @@ class RNN
   //! The current error for the backward pass.
   arma::mat error;
 
-  //! THe current input of the forward/backward pass.
-  arma::mat currentInput;
-
   //! Locally-stored delta visitor.
   DeltaVisitor deltaVisitor;
 
@@ -330,6 +342,9 @@ class RNN
 
   //! The current evaluation mode (training or testing).
   bool deterministic;
+
+  //! The current gradient for the gradient pass.
+  arma::mat currentGradient;
 }; // class RNN
 
 } // namespace ann

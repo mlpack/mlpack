@@ -161,12 +161,12 @@ BOOST_AUTO_TEST_CASE(SoftmaxSeparableObjective)
   // his notebook).  As a result of lack of precision of the by-hand result, the
   // tolerance is fairly high.
   arma::mat coordinates = arma::eye<arma::mat>(2, 2);
-  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 0), -0.22480, 0.01);
-  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 1), -0.30613, 0.01);
-  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 2), -0.22480, 0.01);
-  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 3), -0.22480, 0.01);
-  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 4), -0.30613, 0.01);
-  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 5), -0.22480, 0.01);
+  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 0, 1), -0.22480, 0.01);
+  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 1, 1), -0.30613, 0.01);
+  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 2, 1), -0.22480, 0.01);
+  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 3, 1), -0.22480, 0.01);
+  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 4, 1), -0.30613, 0.01);
+  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 5, 1), -0.22480, 0.01);
 }
 
 /**
@@ -185,10 +185,10 @@ BOOST_AUTO_TEST_CASE(OptimalSoftmaxSeparableObjective)
 
   // Use a very close tolerance for optimality; we need to be sure this function
   // gives optimal results correctly.
-  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 0), -1.0, 1e-10);
-  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 1), -1.0, 1e-10);
-  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 2), -1.0, 1e-10);
-  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 3), -1.0, 1e-10);
+  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 0, 1), -1.0, 1e-10);
+  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 1, 1), -1.0, 1e-10);
+  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 2, 1), -1.0, 1e-10);
+  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 3, 1), -1.0, 1e-10);
 }
 
 /**
@@ -206,42 +206,42 @@ BOOST_AUTO_TEST_CASE(SoftmaxSeparableGradient)
   arma::mat coordinates = arma::eye<arma::mat>(2, 2);
   arma::mat gradient(2, 2);
 
-  sef.Gradient(coordinates, 0, gradient);
+  sef.Gradient(coordinates, 0, gradient, 1);
 
   BOOST_REQUIRE_CLOSE(gradient(0, 0), -2.0 * 0.0069708, 0.01);
   BOOST_REQUIRE_CLOSE(gradient(0, 1), -2.0 * -0.0101707, 0.01);
   BOOST_REQUIRE_CLOSE(gradient(1, 0), -2.0 * -0.0101707, 0.01);
   BOOST_REQUIRE_CLOSE(gradient(1, 1), -2.0 * -0.14359, 0.01);
 
-  sef.Gradient(coordinates, 1, gradient);
+  sef.Gradient(coordinates, 1, gradient, 1);
 
   BOOST_REQUIRE_CLOSE(gradient(0, 0), -2.0 * 0.008496, 0.01);
   BOOST_REQUIRE_SMALL(gradient(0, 1), 1e-5);
   BOOST_REQUIRE_SMALL(gradient(1, 0), 1e-5);
   BOOST_REQUIRE_CLOSE(gradient(1, 1), -2.0 * -0.12238, 0.01);
 
-  sef.Gradient(coordinates, 2, gradient);
+  sef.Gradient(coordinates, 2, gradient, 1);
 
   BOOST_REQUIRE_CLOSE(gradient(0, 0), -2.0 * 0.0069708, 0.01);
   BOOST_REQUIRE_CLOSE(gradient(0, 1), -2.0 * 0.0101707, 0.01);
   BOOST_REQUIRE_CLOSE(gradient(1, 0), -2.0 * 0.0101707, 0.01);
   BOOST_REQUIRE_CLOSE(gradient(1, 1), -2.0 * -0.1435886, 0.01);
 
-  sef.Gradient(coordinates, 3, gradient);
+  sef.Gradient(coordinates, 3, gradient, 1);
 
   BOOST_REQUIRE_CLOSE(gradient(0, 0), -2.0 * 0.0069708, 0.01);
   BOOST_REQUIRE_CLOSE(gradient(0, 1), -2.0 * 0.0101707, 0.01);
   BOOST_REQUIRE_CLOSE(gradient(1, 0), -2.0 * 0.0101707, 0.01);
   BOOST_REQUIRE_CLOSE(gradient(1, 1), -2.0 * -0.1435886, 0.01);
 
-  sef.Gradient(coordinates, 4, gradient);
+  sef.Gradient(coordinates, 4, gradient, 1);
 
   BOOST_REQUIRE_CLOSE(gradient(0, 0), -2.0 * 0.008496, 0.01);
   BOOST_REQUIRE_SMALL(gradient(0, 1), 1e-5);
   BOOST_REQUIRE_SMALL(gradient(1, 0), 1e-5);
   BOOST_REQUIRE_CLOSE(gradient(1, 1), -2.0 * -0.12238, 0.01);
 
-  sef.Gradient(coordinates, 5, gradient);
+  sef.Gradient(coordinates, 5, gradient, 1);
 
   BOOST_REQUIRE_CLOSE(gradient(0, 0), -2.0 * 0.0069708, 0.01);
   BOOST_REQUIRE_CLOSE(gradient(0, 1), -2.0 * -0.0101707, 0.01);

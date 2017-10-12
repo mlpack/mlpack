@@ -9,12 +9,11 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
-
 #ifndef MLPACK_METHODS_REGULARIZED_SVD_REGULARIZED_FUNCTION_SVD_IMPL_HPP
 #define MLPACK_METHODS_REGULARIZED_SVD_REGULARIZED_FUNCTION_SVD_IMPL_HPP
 
 #include "regularized_svd_function.hpp"
+#include <mlpack/core/math/make_alias.hpp>
 
 namespace mlpack {
 namespace svd {
@@ -23,7 +22,7 @@ template <typename MatType>
 RegularizedSVDFunction<MatType>::RegularizedSVDFunction(const MatType& data,
                                                         const size_t rank,
                                                         const double lambda) :
-    data(data),
+    data(math::MakeAlias(const_cast<MatType&>(data), false)),
     rank(rank),
     lambda(lambda)
 {
@@ -33,6 +32,13 @@ RegularizedSVDFunction<MatType>::RegularizedSVDFunction(const MatType& data,
 
   // Initialize the parameters.
   initialPoint.randu(rank, numUsers + numItems);
+}
+
+template<typename MatType>
+void RegularizedSVDFunction<MatType>::Shuffle()
+{
+  data = data.cols(arma::shuffle(arma::linspace<arma::uvec>(0, data.n_cols - 1,
+      data.n_cols)));
 }
 
 template <typename MatType>
@@ -74,25 +80,33 @@ const
 
 template <typename MatType>
 double RegularizedSVDFunction<MatType>::Evaluate(const arma::mat& parameters,
-                                                 const size_t i) const
+                                                 const size_t start,
+                                                 const size_t batchSize) const
 {
-  // Indices for accessing the the correct parameter columns.
-  const size_t user = data(0, i);
-  const size_t item = data(1, i) + numUsers;
+  // It's possible this loop could be changed so that it's SIMD-vectorized.
+  double objective = 0.0;
+  for (size_t i = start; i < start + batchSize; ++i)
+  {
+    // Indices for accessing the the correct parameter columns.
+    const size_t user = data(0, i);
+    const size_t item = data(1, i) + numUsers;
 
-  // Calculate the squared error in the prediction.
-  const double rating = data(2, i);
-  double ratingError = rating - arma::dot(parameters.col(user),
-                                          parameters.col(item));
-  double ratingErrorSquared = ratingError * ratingError;
+    // Calculate the squared error in the prediction.
+    const double rating = data(2, i);
+    double ratingError = rating - arma::dot(parameters.col(user),
+                                            parameters.col(item));
+    double ratingErrorSquared = ratingError * ratingError;
 
-  // Calculate the regularization penalty corresponding to the parameters.
-  double userVecNorm = arma::norm(parameters.col(user), 2);
-  double itemVecNorm = arma::norm(parameters.col(item), 2);
-  double regularizationError = lambda * (userVecNorm * userVecNorm +
-                                         itemVecNorm * itemVecNorm);
+    // Calculate the regularization penalty corresponding to the parameters.
+    double userVecNorm = arma::norm(parameters.col(user), 2);
+    double itemVecNorm = arma::norm(parameters.col(item), 2);
+    double regularizationError = lambda * (userVecNorm * userVecNorm +
+                                           itemVecNorm * itemVecNorm);
 
-  return (ratingErrorSquared + regularizationError);
+    objective += (ratingErrorSquared + regularizationError);
+  }
+
+  return objective;
 }
 
 template <typename MatType>
@@ -133,25 +147,30 @@ void RegularizedSVDFunction<MatType>::Gradient(const arma::mat& parameters,
 template <typename MatType>
 template <typename GradType>
 void RegularizedSVDFunction<MatType>::Gradient(const arma::mat& parameters,
-                                               size_t id,
-                                               GradType &gradient) const
+                                               const size_t start,
+                                               GradType& gradient,
+                                               const size_t batchSize) const
 {
   gradient.zeros(rank, numUsers + numItems);
 
-  const size_t user = data(0, id);
-  const size_t item = data(1, id) + numUsers;
+  // It's possible this could be SIMD-vectorized for additional speedup.
+  for (size_t i = start; i < start + batchSize; ++i)
+  {
+    const size_t user = data(0, i);
+    const size_t item = data(1, i) + numUsers;
 
-  // Prediction error for the example.
-  const double rating = data(2, id);
-  double ratingError = rating - arma::dot(parameters.col(user),
-                                          parameters.col(item));
+    // Prediction error for the example.
+    const double rating = data(2, i);
+    double ratingError = rating - arma::dot(parameters.col(user),
+                                            parameters.col(item));
 
-  // Gradient is non-zero only for the parameter columns corresponding to the
-  // example.
-  gradient.col(user) += 2 * (lambda * parameters.col(user) -
-                             ratingError * parameters.col(item));
-  gradient.col(item) += 2 * (lambda * parameters.col(item) -
-                             ratingError * parameters.col(user));
+    // Gradient is non-zero only for the parameter columns corresponding to the
+    // example.
+    gradient.col(user) += 2 * (lambda * parameters.col(user) -
+                               ratingError * parameters.col(item));
+    gradient.col(item) += 2 * (lambda * parameters.col(item) -
+                               ratingError * parameters.col(user));
+  }
 }
 
 } // namespace svd

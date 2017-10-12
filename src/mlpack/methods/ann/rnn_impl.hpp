@@ -191,9 +191,8 @@ void RNN<OutputLayerType, InitializationRuleType>::SinglePredict(
 {
   for (size_t seqNum = 0; seqNum < rho; ++seqNum)
   {
-    currentInput = predictors.rows(seqNum * inputSize,
-        (seqNum + 1) * inputSize - 1);
-    Forward(std::move(currentInput));
+    Forward(std::move(predictors.rows(seqNum * inputSize,
+        (seqNum + 1) * inputSize - 1)));
 
     results.rows(seqNum * outputSize, (seqNum + 1) * outputSize - 1) =
         boost::apply_visitor(outputParameterVisitor, network.back());
@@ -202,7 +201,10 @@ void RNN<OutputLayerType, InitializationRuleType>::SinglePredict(
 
 template<typename OutputLayerType, typename InitializationRuleType>
 double RNN<OutputLayerType, InitializationRuleType>::Evaluate(
-    const arma::mat& /* parameters */, const size_t i, const bool deterministic)
+    const arma::mat& /* parameters */,
+    const size_t begin,
+    const size_t batchSize,
+    const bool deterministic)
 {
   if (parameter.is_empty())
   {
@@ -216,19 +218,14 @@ double RNN<OutputLayerType, InitializationRuleType>::Evaluate(
     ResetDeterministic();
   }
 
-  arma::mat input = arma::mat(predictors.colptr(i), predictors.n_rows,
-      1, false, true);
-  arma::mat target = arma::mat(responses.colptr(i), responses.n_rows,
-      1, false, true);
-
   if (!inputSize)
   {
-    inputSize = input.n_elem / rho;
-    targetSize = target.n_elem / rho;
+    inputSize = predictors.n_rows / rho;
+    targetSize = responses.n_rows / rho;
   }
   else if (targetSize == 0)
   {
-    targetSize = target.n_elem / rho;
+    targetSize = responses.n_rows / rho;
   }
 
   ResetCells();
@@ -237,11 +234,8 @@ double RNN<OutputLayerType, InitializationRuleType>::Evaluate(
 
   for (size_t seqNum = 0; seqNum < rho; ++seqNum)
   {
-    currentInput = input.rows(seqNum * inputSize, (seqNum + 1) * inputSize - 1);
-    arma::mat currentTarget = target.rows(seqNum * targetSize,
-        (seqNum + 1) * targetSize - 1);
-
-    Forward(std::move(currentInput));
+    Forward(std::move(predictors.submat(seqNum * inputSize, begin,
+        (seqNum + 1) * inputSize - 1, begin + batchSize - 1)));
 
     if (!deterministic)
     {
@@ -253,13 +247,15 @@ double RNN<OutputLayerType, InitializationRuleType>::Evaluate(
     }
 
     performance += outputLayer.Forward(std::move(boost::apply_visitor(
-        outputParameterVisitor, network.back())), std::move(currentTarget));
+        outputParameterVisitor, network.back())),
+        std::move(responses.submat(seqNum * targetSize, begin,
+        (seqNum + 1) * targetSize - 1, begin + batchSize - 1)));
   }
 
-  if (!outputSize)
+  if (outputSize == 0)
   {
     outputSize = boost::apply_visitor(outputParameterVisitor,
-        network.back()).n_elem;
+        network.back()).n_elem / batchSize;
   }
 
   return performance;
@@ -267,8 +263,12 @@ double RNN<OutputLayerType, InitializationRuleType>::Evaluate(
 
 template<typename OutputLayerType, typename InitializationRuleType>
 void RNN<OutputLayerType, InitializationRuleType>::Gradient(
-    const arma::mat& parameters, const size_t i, arma::mat& gradient)
+    const arma::mat& parameters,
+    const size_t begin,
+    arma::mat& gradient,
+    const size_t batchSize)
 {
+  // Initialize passed gradient.
   if (gradient.is_empty())
   {
     if (parameter.is_empty())
@@ -284,25 +284,20 @@ void RNN<OutputLayerType, InitializationRuleType>::Gradient(
     gradient.zeros();
   }
 
-  Evaluate(parameters, i, false);
+  Evaluate(parameters, begin, batchSize, false);
 
-  arma::mat currentGradient = arma::zeros<arma::mat>(parameter.n_rows,
-      parameter.n_cols);
+  // Initialize current/working gradient.
+  if (currentGradient.is_empty())
+  {
+    currentGradient = arma::zeros<arma::mat>(parameter.n_rows,
+        parameter.n_cols);
+  }
+
   ResetGradients(currentGradient);
-
-  arma::mat input = arma::mat(predictors.colptr(i), predictors.n_rows,
-      1, false, true);
-  arma::mat target = arma::mat(responses.colptr(i), responses.n_rows,
-      1, false, true);
 
   for (size_t seqNum = 0; seqNum < rho; ++seqNum)
   {
     currentGradient.zeros();
-
-    arma::mat currentTarget = target.rows((rho - seqNum - 1) * targetSize,
-        (rho - seqNum) * targetSize - 1);
-    currentInput = input.rows((rho - seqNum - 1) * inputSize,
-        (rho - seqNum) * inputSize - 1);
 
     for (size_t l = 0; l < network.size(); ++l)
     {
@@ -317,14 +312,23 @@ void RNN<OutputLayerType, InitializationRuleType>::Gradient(
     else
     {
       outputLayer.Backward(std::move(boost::apply_visitor(
-          outputParameterVisitor, network.back())), std::move(currentTarget),
+          outputParameterVisitor, network.back())),
+          std::move(responses.submat((rho - seqNum - 1) * targetSize, begin,
+          (rho - seqNum) * targetSize - 1, begin + batchSize - 1)),
           std::move(error));
     }
 
     Backward();
-    Gradient();
+    Gradient(std::move(predictors.submat((rho - seqNum - 1) * inputSize, begin,
+        (rho - seqNum) * inputSize - 1, begin + batchSize - 1)));
     gradient += currentGradient;
   }
+}
+
+template<typename OutputLayerType, typename InitializationRuleType>
+void RNN<OutputLayerType, InitializationRuleType>::Shuffle()
+{
+  math::ShuffleData(predictors, responses, predictors, responses);
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
@@ -393,9 +397,10 @@ void RNN<OutputLayerType, InitializationRuleType>::Backward()
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-void RNN<OutputLayerType, InitializationRuleType>::Gradient()
+template<typename InputType>
+void RNN<OutputLayerType, InitializationRuleType>::Gradient(InputType&& input)
 {
-  boost::apply_visitor(GradientVisitor(std::move(currentInput), std::move(
+  boost::apply_visitor(GradientVisitor(std::move(input), std::move(
       boost::apply_visitor(deltaVisitor, network[1]))), network.front());
 
   for (size_t i = 1; i < network.size() - 1; ++i)
@@ -418,7 +423,6 @@ void RNN<OutputLayerType, InitializationRuleType>::Serialize(
   ar & data::CreateNVP(inputSize, "inputSize");
   ar & data::CreateNVP(outputSize, "outputSize");
   ar & data::CreateNVP(targetSize, "targetSize");
-  ar & data::CreateNVP(currentInput, "currentInput");
 
   if (Archive::is_loading::value)
   {
