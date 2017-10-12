@@ -89,7 +89,7 @@ double WoodFunction::Evaluate(const arma::mat& coordinates)
                      /* f3(x) */ 90 * std::pow(x4 - std::pow(x3, 2), 2) +
                      /* f4(x) */ std::pow(1 - x3, 2) +
                      /* f5(x) */ 10 * std::pow(x2 + x4 - 2, 2) +
-                     /* f6(x) */ (1 / 10) * std::pow(x2 - x4, 2);
+                     /* f6(x) */ (1.0 / 10.0) * std::pow(x2 - x4, 2);
 
   return objective;
 }

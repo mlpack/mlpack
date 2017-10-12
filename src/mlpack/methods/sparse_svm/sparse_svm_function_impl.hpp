@@ -42,7 +42,7 @@ double SparseSVMFunction::Evaluate(const arma::mat& parameters,
 {
   // The hinge loss function.
   const size_t lastId = firstId + batchSize - 1;
-  return arma::accu(arma::max(0.0, 1 - labels.subvec(firstId, lastId) % 
+  return arma::accu(arma::max(0.0, 1 - labels.subvec(firstId, lastId) %
       dataset.cols(firstId, lastId) *
       arma::repmat(parameters, 1, batchSize).t()));
 }
@@ -56,7 +56,7 @@ void SparseSVMFunction::Gradient(
 {
   // Evaluate the gradient of the hinge loss function.
   const size_t lastId = firstId + batchSize - 1;
-  arma::vec dots = 1 - labels.subvec(firstId, lastId) % 
+  arma::vec dots = 1 - labels.subvec(firstId, lastId) %
       dataset.cols(firstId, lastId) *
       arma::repmat(parameters, 1, batchSize).t();
   gradient = GradType(parameters.n_rows, 1);

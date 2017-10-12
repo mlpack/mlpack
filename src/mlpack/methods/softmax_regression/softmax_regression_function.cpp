@@ -292,9 +292,9 @@ void SoftmaxRegressionFunction::Gradient(const arma::mat& parameters,
   }
   else
   {
-    gradient = (probabilities - groundTruth.cols(start, start + batchSize - 1)) *
-        data.cols(start, start + batchSize - 1).t() / batchSize +
-        lambda * parameters;
+    gradient = (probabilities - groundTruth.cols(start, start + batchSize - 1))
+        * data.cols(start, start + batchSize - 1).t() / batchSize
+        + lambda * parameters;
   }
 }
 
