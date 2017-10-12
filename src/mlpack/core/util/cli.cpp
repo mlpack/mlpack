@@ -43,19 +43,6 @@ CLI::CLI(const CLI& /* other */) : didParse(false), doc(&emptyProgramDoc)
   return;
 }
 
-void CLI::StopTimers()
-{
-  // Terminate the program timers.
-  for (auto it : CLI::GetSingleton().timer.GetAllTimers())
-  {
-    for (auto it2 : it.second)
-    {
-      if (CLI::GetSingleton().timer.GetState(it2.first, it.first) == 1)
-        CLI::GetSingleton().timer.StopTimer(it2.first, it.first);
-    }
-  }
-}
-
 /**
  * Destroy the CLI object.  This resets the pointer to the singleton, so in case
  * someone tries to access it after destruction, a new one will be made (the

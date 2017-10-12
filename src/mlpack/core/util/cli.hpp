@@ -203,11 +203,6 @@ class CLI
   static std::string GetPrintableParam(const std::string& identifier);
 
   /**
-   * Stop all of the timers.
-   */
-  static void StopTimers();
-
-  /**
    * Destroy the CLI object.  This resets the pointer to the singleton, so in
    * case someone tries to access it after destruction, a new one will be made
    * (the program will not fail).

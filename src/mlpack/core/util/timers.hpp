@@ -17,6 +17,7 @@
 #include <string>
 #include <chrono> // chrono library for cross platform timer calculation.
 #include <thread> // std::thread is used for thread safety.
+#include <mutex>
 #include <list>
 
 #if defined(_WIN32)
@@ -100,23 +101,21 @@ class Timers
   /**
    * Returns a copy of all the timers used via this interface.
    */
-  std::map<std::thread::id, std::map<std::string, std::chrono::microseconds>>&
-      GetAllTimers();
+  std::map<std::string, std::chrono::microseconds>& GetAllTimers();
 
   /**
-   * Returns a list of all timer names.
+   * Reset the timers.  This stops all running timers and removes them.  Whether
+   * or not timing is enabled will not be changed.
    */
-  std::list<std::string> GetAllTimerNames();
+  void Reset();
 
   /**
-   * Returns a copy of the timer specified.
+   * Returns a copy of the timer specified.  This contains the sum of the timing
+   * results for timers that have been stopped with this name.
    *
    * @param timerName The name of the timer in question.
-   * @param threadId Id of the thread accessing the timer.
    */
-  std::chrono::microseconds GetTimer(
-      const std::string& timerName,
-      const std::thread::id& threadId = std::thread::id());
+  std::chrono::microseconds GetTimer(const std::string& timerName);
 
   /**
    * Prints the specified timer.  If it took longer than a minute to complete
@@ -156,6 +155,11 @@ class Timers
   bool GetState(const std::string& timerName,
                 const std::thread::id& threadId = std::thread::id());
 
+  /**
+   * Stop all timers.
+   */
+  void StopAllTimers();
+
   //! Modify whether or not timing is enabled.
   bool& Enabled() { return enabled; }
   //! Get whether or not timing is enabled.
@@ -163,8 +167,9 @@ class Timers
 
  private:
   //! A map of all the timers that are being tracked.
-  std::map<std::thread::id, std::map<std::string, std::chrono::microseconds>>
-      timers;
+  std::map<std::string, std::chrono::microseconds> timers;
+  //! A mutex for modifying the timers.
+  std::mutex timersMutex;
   //! A map that contains whether or not each timer is currently running.
   std::map<std::thread::id, std::map<std::string, bool>> timerState;
   //! A map for the starting values of the timers.

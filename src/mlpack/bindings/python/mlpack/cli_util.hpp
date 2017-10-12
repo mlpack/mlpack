@@ -114,7 +114,7 @@ inline void DisableBacktrace()
 inline void ResetTimers()
 {
   // Just get a new object---removes all old timers.
-  CLI::GetSingleton().timer = Timers();
+  CLI::GetSingleton().timer.Reset();
 }
 
 /**
@@ -122,7 +122,7 @@ inline void ResetTimers()
  */
 inline void EnableTimers()
 {
-  Timer::Enabled() = true;
+  Timer::EnableTiming();
 }
 
 } // namespace util

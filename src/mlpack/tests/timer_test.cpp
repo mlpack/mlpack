@@ -98,6 +98,7 @@ BOOST_AUTO_TEST_CASE(TwiceStartTimerTest)
   Timer::DisableTiming();
 }
 
+#include <errno.h>
 BOOST_AUTO_TEST_CASE(MultithreadTimerTest)
 {
   Timer::EnableTiming();
@@ -112,7 +113,10 @@ BOOST_AUTO_TEST_CASE(MultithreadTimerTest)
           #ifdef _WIN32
           Sleep(20);
           #else
-          usleep(20000);
+          int restarts = 0;
+          // Catch occasional EINTR failures.
+          while (usleep(20000) != 0 && restarts < 3)
+            ++restarts;
           #endif
 
           Timer::Stop("thread_timer");

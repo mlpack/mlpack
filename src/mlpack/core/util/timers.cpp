@@ -42,12 +42,7 @@ void Timer::Stop(const string& name)
  */
 microseconds Timer::Get(const string& name)
 {
-  microseconds result(0);
-  for (auto it : CLI::GetSingleton().timer.GetAllTimers())
-    if (it.second.count(name) > 0)
-      result += it.second[name];
-
-  return result;
+  return CLI::GetSingleton().timer.GetTimer(name);
 }
 
 // Enable timing.
@@ -65,34 +60,25 @@ void Timer::DisableTiming()
 // Reset all timers.  Save state of enabled.
 void Timer::ResetAll()
 {
-  bool wasEnabled = CLI::GetSingleton().timer.Enabled();
-  CLI::GetSingleton().timer = Timers();
-  CLI::GetSingleton().timer.Enabled() = wasEnabled;
+  CLI::GetSingleton().timer.Reset();
 }
 
-map<thread::id, map<string, microseconds>>&
-Timers::GetAllTimers()
+// Reset a Timers object.
+void Timers::Reset()
+{
+  timers.clear();
+  timerStartTime.clear();
+  timerState.clear();
+}
+
+map<string, microseconds>& Timers::GetAllTimers()
 {
   return timers;
 }
 
-list<string> Timers::GetAllTimerNames()
+microseconds Timers::GetTimer(const string& timerName)
 {
-  list<string> l;
-  for (auto it : CLI::GetSingleton().timer.GetAllTimers())
-    for (auto it2 : it.second)
-      l.push_back(it2.first);
-
-  // Filter duplicates.
-  l.unique();
-
-  return l;
-}
-
-microseconds Timers::GetTimer(const string& timerName,
-                              const thread::id& threadId)
-{
-  return timers[threadId][timerName];
+  return timers[timerName];
 }
 
 bool Timers::GetState(const string& timerName,
@@ -103,12 +89,8 @@ bool Timers::GetState(const string& timerName,
 
 void Timers::PrintTimer(const string& timerName)
 {
-  microseconds totalDuration(0);
-  for (auto it : timers)
-    if (it.second.count(timerName) > 0)
-      totalDuration += it.second[timerName];
-
   // Convert microseconds to seconds.
+  microseconds totalDuration = GetTimer(timerName);
   seconds totalDurationSec = duration_cast<seconds>(totalDuration);
   microseconds totalDurationMicroSec =
       duration_cast<microseconds>(totalDuration % seconds(1));
@@ -166,6 +148,19 @@ void Timers::PrintTimer(const string& timerName)
   Log::Info << endl;
 }
 
+void Timers::StopAllTimers()
+{
+  // Terminate the program timers.
+  for (auto it : timerState)
+  {
+    for (auto it2 : it.second)
+    {
+      if (timerState[it.first][it2.first] == 1)
+        StopTimer(it2.first, it.first);
+    }
+  }
+}
+
 high_resolution_clock::time_point Timers::GetTime()
 {
   return high_resolution_clock::now();
@@ -174,7 +169,8 @@ high_resolution_clock::time_point Timers::GetTime()
 void Timers::StartTimer(const string& timerName,
                         const thread::id& threadId)
 {
-  if ((timerState[threadId][timerName] == 1) && (timerName != "total_time"))
+  timersMutex.lock();
+  if ((timerState[threadId][timerName]) && (timerName != "total_time"))
   {
     ostringstream error;
     error << "Timer::Start(): timer '" << timerName
@@ -182,23 +178,24 @@ void Timers::StartTimer(const string& timerName,
     throw runtime_error(error.str());
   }
 
-  timerState[threadId][timerName] = true;
-
   high_resolution_clock::time_point currTime = GetTime();
 
-  // If the timer is added first time.
-  if (timers[threadId].count(timerName) == 0)
+  // If the timer is added for the first time.
+  if (timers.count(timerName) == 0)
   {
-    timers[threadId][timerName] = (microseconds) 0;
+    timers[timerName] = (microseconds) 0;
   }
 
+  timerState[threadId][timerName] = true;
   timerStartTime[threadId][timerName] = currTime;
+  timersMutex.unlock();
 }
 
 void Timers::StopTimer(const string& timerName,
                        const thread::id& threadId)
 {
-  if ((timerState[threadId][timerName] == 0) && (timerName != "total_time"))
+  timersMutex.lock();
+  if ((!timerState[threadId][timerName]) && (timerName != "total_time"))
   {
     ostringstream error;
     error << "Timer::Stop(): timer '" << timerName
@@ -206,11 +203,19 @@ void Timers::StopTimer(const string& timerName,
     throw runtime_error(error.str());
   }
 
-  timerState[threadId][timerName] = false;
-
   high_resolution_clock::time_point currTime = GetTime();
 
   // Calculate the delta time.
-  timers[threadId][timerName] += duration_cast<microseconds>(currTime -
+  timerState[threadId][timerName] = false;
+  timers[timerName] += duration_cast<microseconds>(currTime -
       timerStartTime[threadId][timerName]);
+
+  // Remove the entries.
+  timerState[threadId].erase(timerName);
+  timerStartTime[threadId].erase(timerName);
+  if (timerState[threadId].empty())
+    timerState.erase(threadId);
+  if (timerStartTime[threadId].empty())
+    timerStartTime.erase(threadId);
+  timersMutex.unlock();
 }
