@@ -333,6 +333,8 @@ class CLI
 
   //! Private copy constructor; we don't want copies floating around.
   CLI(const CLI& other);
+  //! Private copy operator; we don't want copies floating around.
+  CLI& operator=(const CLI& other);
 };
 
 } // namespace mlpack
