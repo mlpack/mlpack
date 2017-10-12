@@ -61,7 +61,7 @@ class SoftmaxErrorFunction
   * Shuffle the order of points. This may be called by the optimizer.
   * @param covariance Covariance matrix of Mahalanobis distance.
   */
-  const arma::mat& Shuffle(const arma::mat& covariance);
+  //arma::mat Shuffle(const arma::mat& covariance);
 
   /**
    * Evaluate the softmax function for the given covariance matrix.  This is the
@@ -82,7 +82,7 @@ class SoftmaxErrorFunction
    * @param covariance Covariance matrix of Mahalanobis distance.
    * @param i Index of point to use for objective function.
    */
-  double Evaluate(const arma::mat& covariance, const size_t i);
+  //double Evaluate(const arma::mat& covariance, const size_t i);
 
   /**
    * Evaluate the softmax objective function for the given covariance matrix on
@@ -98,7 +98,7 @@ class SoftmaxErrorFunction
    */
   double Evaluate(const arma::mat& covariance,
                   const size_t begin,
-                  const size_t batchSize);
+                  const size_t batchSize = 1);
 
 
   /**
@@ -124,11 +124,11 @@ class SoftmaxErrorFunction
    * @param i Index of point to use for objective function.
    * @param gradient Matrix to store the calculated gradient in.
    */
-  template <typename GradType>
+/*  template <typename GradType>
   void Gradient(const arma::mat& covariance,
                 const size_t i,
                 GradType& gradient);
-
+*/
   /**
    * Evaluate the gradient of the softmax function for the given covariance
    * matrix on the given batch size, from a given initial point of the dataset.
@@ -147,8 +147,8 @@ class SoftmaxErrorFunction
   template <typename GradType>
   void Gradient(const arma::mat& covariance,
                 const size_t begin,
-                const size_t batchSize,
-                GradType& gradient);
+                GradType& gradient,
+                const size_t batchSize = 1);
 
   /**
    * Get the initial point.

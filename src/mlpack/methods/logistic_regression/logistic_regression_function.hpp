@@ -56,7 +56,7 @@ class LogisticRegressionFunction
   * Shuffle the order of points. This may be called by the optimizer.
   * @param parameters Vector of logistic regression parameters.
   */
-  const arma::mat& Shuffle(const arma::mat& parameters);
+  //arma::mat Shuffle(const arma::mat& parameters);
 
   /**
    * Evaluate the logistic regression log-likelihood function with the given
@@ -85,7 +85,7 @@ class LogisticRegressionFunction
    * @param parameters Vector of logistic regression parameters.
    * @param i Index of point to use for objective function evaluation.
    */
-  double Evaluate(const arma::mat& parameters, const size_t i) const;
+  //double Evaluate(const arma::mat& parameters, const size_t i) const;
 
   /**
    * Evaluate the logistic regression log-likelihood function with the given
@@ -105,7 +105,7 @@ class LogisticRegressionFunction
 
   double Evaluate(const arma::mat& parameters,
                   const size_t begin,
-                  const size_t batchSize) const;
+                  const size_t batchSize = 1) const;
 
   /**
    * Evaluate the gradient of the logistic regression log-likelihood function
@@ -128,11 +128,11 @@ class LogisticRegressionFunction
    * @param i Index of points to use for objective function gradient evaluation.
    * @param gradient Vector to output gradient into.
    */
-  template <typename GradType>
+/*  template <typename GradType>
   void Gradient(const arma::mat& parameters,
                 const size_t i,
                 GradType& gradient) const;
-
+*/
   /**
    * Evaluate the gradient of the logistic regression log-likelihood function
    * with the given parameters, for the given batch size from a given point the
@@ -147,8 +147,8 @@ class LogisticRegressionFunction
 
   void Gradient(const arma::mat& parameters,
                 const size_t begin,
-                const size_t batchSize,
-                arma::mat& gradient) const;
+                arma::mat& gradient,
+                const size_t batchSize = 1) const;
   /**
    * Evaluate the gradient of the logistic regression log-likelihood function
    * with the given parameters, and with respect to only one feature in the

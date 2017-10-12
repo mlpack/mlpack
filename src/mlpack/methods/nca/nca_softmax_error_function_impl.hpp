@@ -34,11 +34,10 @@ SoftmaxErrorFunction<MetricType>::SoftmaxErrorFunction(
 * Shuffle the order of points. This may be called by the optimizer.
 * @param covariance Covariance matrix of Mahalanobis distance.
 */
-
-const arma::mat& Shuffle(const arma::mat& covariance)
+/*arma::mat Shuffle(const arma::mat& covariance)
 {
   return arma::shuffle(covariance);
-}
+}*/
 
 //! The non-separable implementation, which uses Precalculate() to save time.
 template<typename MetricType>
@@ -52,7 +51,7 @@ double SoftmaxErrorFunction<MetricType>::Evaluate(const arma::mat& coordinates)
 };
 
 //! The separated objective function, which does not use Precalculate().
-template<typename MetricType>
+/*template<typename MetricType>
 double SoftmaxErrorFunction<MetricType>::Evaluate(const arma::mat& coordinates,
                                                   const size_t i)
 {
@@ -92,7 +91,7 @@ double SoftmaxErrorFunction<MetricType>::Evaluate(const arma::mat& coordinates,
   return -(numerator / denominator); // Negate because the optimizer is a
                                      // minimizer.
 }
-
+*/
 //! The separated objective function, which does not use Precalculate(),
 //! for a given batch size and from an initial index.
 template<typename MetricType>
@@ -106,7 +105,7 @@ double SoftmaxErrorFunction<MetricType>::Evaluate(const arma::mat& coordinates,
   double numerator = 0;
   double result = 0;
 
-  coordinates = Shuffle(coordinates);
+  //coordinates = Shuffle(coordinates);
 
   // It's quicker to do this now than one point at a time later.
   stretchedDataset = coordinates * dataset;
@@ -190,7 +189,7 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
   // Assemble the final gradient.
   gradient = -2 * coordinates * sum;
 }
-
+/*
 //! The separable implementation.
 template <typename MetricType>
 template <typename GradType>
@@ -261,14 +260,14 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
   // all by 2 * A.  We negate it though, because our optimizer is a minimizer.
   gradient = -2 * coordinates * (p * firstTerm - secondTerm);
 }
-
+*/
 //! The separable implementation for a given batch size and an initial index.
 template <typename MetricType>
 template <typename GradType>
 void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
                                                 const size_t begin,
-                                                const size_t batchSize,
-                                                GradType& gradient)
+                                                GradType& gradient,
+                                                const size_t batchSize)
 {
   // The gradient involves two matrix terms which are eventually combined into
   // one.
@@ -286,8 +285,8 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
   {
     numerator = 0;
     denominator = 0;
-    firstTerm = 0;
-    secondTerm = 0;
+    //firstTerm = 0;
+    //secondTerm = 0;
     for (size_t k = 0; k < dataset.n_cols; ++k)
     {
       // Don't consider the case where the points are the same.
