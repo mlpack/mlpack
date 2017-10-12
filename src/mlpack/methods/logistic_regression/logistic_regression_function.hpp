@@ -89,7 +89,7 @@ class LogisticRegressionFunction
    */
   double Evaluate(const arma::mat& parameters,
                   const size_t begin,
-                  const size_t batchSize) const;
+                  const size_t batchSize = 1) const;
 
   /**
    * Evaluate the gradient of the logistic regression log-likelihood function
@@ -117,7 +117,7 @@ class LogisticRegressionFunction
   void Gradient(const arma::mat& parameters,
                 const size_t begin,
                 GradType& gradient,
-                const size_t batchSize) const;
+                const size_t batchSize = 1) const;
 
   /**
    * Evaluate the gradient of the logistic regression log-likelihood function
