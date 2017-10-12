@@ -23,18 +23,22 @@ LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
     const MatType& predictors,
     const arma::Row<size_t>& responses,
     const double lambda) :
-    predictors(predictors),
-    responses(responses),
+    // We promise to be well-behaved... the elements won't be modified.
+    predictors(math::MakeAlias(const_cast<MatType&>(predictors), false)),
+    responses(math::MakeAlias(const_cast<arma::Row<size_t>&>(responses),
+        false)),
     lambda(lambda)
 {
   initialPoint = arma::rowvec(predictors.n_rows + 1, arma::fill::zeros);
 
   // Sanity check.
   if (responses.n_elem != predictors.n_cols)
+  {
     Log::Fatal << "LogisticRegressionFunction::LogisticRegressionFunction(): "
         << "predictors matrix has " << predictors.n_cols << " points, but "
         << "responses vector has " << responses.n_elem << " elements (should be"
         << " " << predictors.n_cols << ")!" << std::endl;
+  }
 }
 
 template<typename MatType>
@@ -44,8 +48,10 @@ LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
     const arma::vec& initialPoint,
     const double lambda) :
     initialPoint(initialPoint),
-    predictors(predictors),
-    responses(responses),
+    // We promise to be well-behaved... the elements won't be modified.
+    predictors(math::MakeAlias(const_cast<MatType&>(predictors), false)),
+    responses(math::MakeAlias(const_cast<arma::Row<size_t>&>(responses),
+        false)),
     lambda(lambda)
 {
   // To check if initialPoint is compatible with predictors.
@@ -61,6 +67,26 @@ LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
 {
   return arma::shuffle(parameters);
 }*/
+
+/**
+ * Shuffle the datapoints.
+ */
+template<typename MatType>
+void LogisticRegressionFunction<MatType>::Shuffle()
+{
+  MatType newPredictors;
+  arma::Row<size_t> newResponses;
+
+  math::ShuffleData(predictors, responses, newPredictors, newResponses);
+
+  // If we are an alias, make sure we don't write to the original data.
+  math::ClearAlias(predictors);
+  math::ClearAlias(responses);
+
+  // Take ownership of the new data.
+  predictors = std::move(newPredictors);
+  responses = std::move(newResponses);
+}
 
 /**
  * Evaluate the logistic regression objective function given the estimated
@@ -107,35 +133,6 @@ double LogisticRegressionFunction<MatType>::Evaluate(
 }
 
 /**
- * Evaluate the logistic regression objective function, but with only one point.
- * This is useful for optimizers that use a separable objective function, such
- * as SGD.
- */
-/*
-template<typename MatType>
-double LogisticRegressionFunction<MatType>::Evaluate(
-    const arma::mat& parameters,
-    const size_t i) const
-{
-  // Calculate the regularization term.  We must divide by the number of points,
-  // so that sum(Evaluate(parameters, [1:points])) == Evaluate(parameters).
-  double norm = arma::norm(parameters.tail_cols(parameters.n_elem - 1));
-
-  const double regularization = lambda * (1.0 / (2.0 * predictors.n_cols)) *
-      norm * norm;
-
-  // Calculate sigmoid.
-  const double exponent = parameters(0, 0) + arma::dot(predictors.col(i),
-      parameters.tail_cols(parameters.n_elem - 1).t());
-  const double sigmoid = 1.0 / (1.0 + std::exp(-exponent));
-
-  if (responses[i] == 1)
-    return -log(sigmoid) + regularization;
-  else
-    return -log(1.0 - sigmoid) + regularization;
-}
-*/
-/**
  * Evaluate the logistic regression objective function given the estimated
  * parameters for a given batch from a given point.
  */
@@ -147,25 +144,24 @@ double LogisticRegressionFunction<MatType>::Evaluate(
 {
   //parameters = Shuffle(parameters);
   // Calculating the regularization term.
-  const double regularization = 0.5 * lambda *
+  const double regularization = lambda *
+      (batchSize / (2.0 * predictors.n_cols)) *
       arma::dot(parameters.tail_cols(parameters.n_elem - 1),
-      parameters.tail_cols(parameters.n_elem - 1));
+                parameters.tail_cols(parameters.n_elem - 1));
 
   // Calculating the hypothesis that has to be passed to the sigmoid function.
-  /*const arma::mat exponents = parameters(0, 0) + arma::dot(
-      predictors.cols(begin, begin + batchSize)*
-      parameters.tail_cols(parameters.n_elem - 1).t());*/
   const arma::rowvec exponents = parameters(0, 0) +
       parameters.tail_cols(parameters.n_elem - 1) *
       predictors.cols(begin, begin + batchSize - 1);
+
   // Calculating the sigmoid function values.
-  const arma::mat sigmoid =1.0 / (1.0 + arma::exp(-exponents));
+  const arma::rowvec sigmoid = 1.0 / (1.0 + arma::exp(-exponents));
 
   // Iterating for the given batch size from a given point
   double result = 0.0;
-  for (size_t i = begin; i < begin + batchSize; ++i)
+  for (size_t i = 0; i < batchSize; ++i)
   {
-    if (responses[i] == 1)
+    if (responses[i + begin] == 1)
       result += log(sigmoid[i]);
     else
       result += log(1.0 - sigmoid[i]);
@@ -191,57 +187,36 @@ void LogisticRegressionFunction<MatType>::Gradient(
   gradient.set_size(arma::size(parameters));
   gradient[0] = -arma::accu(responses - sigmoids);
   gradient.tail_cols(parameters.n_elem - 1) = (sigmoids - responses) *
-    predictors.t() + regularization;
+      predictors.t() + regularization;
 }
 
-/**
- * Evaluate the individual gradients of the logistic regression objective
- * function with respect to individual points.  This is useful for optimizers
- * that use a separable objective function, such as SGD.
- */
-/*template <typename MatType>
-template <typename GradType>
-void LogisticRegressionFunction<MatType>::Gradient(
-    const arma::mat& parameters,
-    const size_t i,
-    GradType& gradient) const
-{
-  // Calculate the regularization term.
-  GradType regularization;
-  regularization = lambda * parameters.tail_cols(parameters.n_elem - 1)
-      / predictors.n_cols;
-
-  const double sigmoid = 1.0 / (1.0 + std::exp(-parameters(0, 0)
-      - arma::dot(
-        predictors.col(i), parameters.tail_cols(parameters.n_elem - 1).t())));
-
-  gradient.set_size(arma::size(parameters));
-  gradient[0] = -(responses[i] - sigmoid);
-  gradient.tail_cols(parameters.n_elem - 1) = -predictors.col(i).t()
-      * (responses[i] - sigmoid) + regularization;
-}
-*/
-//! Evaluate the gradient of the logistic regression
-//  objective function for a given batch size.
+//! Evaluate the gradient of the logistic regression objective function for a
+//! given batch size.
 template<typename MatType>
+template<typename GradType>
 void LogisticRegressionFunction<MatType>::Gradient(
                 const arma::mat& parameters,
                 const size_t begin,
-                arma::mat& gradient,
+                GradType& gradient,
                 const size_t batchSize) const
 {
   // Regularization term.
   arma::mat regularization;
-  regularization = lambda * parameters.col(0).subvec(begin, begin + batchSize);
+  regularization = lambda * parameters.tail_cols(parameters.n_elem - 1)
+      / predictors.n_cols * batchSize;
 
-  const arma::rowvec sigmoids = (1 / (1 + arma::exp(-parameters(0, 0)
-      - parameters.col(0).subvec(begin, begin + batchSize).t() * predictors)));
+  const arma::rowvec exponents = parameters(0, 0) +
+      parameters.tail_cols(parameters.n_elem - 1) *
+      predictors.cols(begin, begin + batchSize - 1);
+  // Calculating the sigmoid function values.
+  const arma::rowvec sigmoids = 1.0 / (1.0 + arma::exp(-exponents));
 
-  gradient.set_size(parameters.n_elem);
-  gradient[0] = -arma::accu(responses - sigmoids);
-  gradient.col(0).subvec(begin, batchSize - 1) = -predictors.cols(begin,
-      begin + batchSize) *(responses -
-      sigmoids).t() + regularization;
+  gradient.set_size(parameters.n_rows, parameters.n_cols);
+  gradient[0] = -arma::accu(responses.subvec(begin, begin + batchSize - 1) -
+      sigmoids);
+  gradient.tail_cols(parameters.n_elem - 1) =
+      arma::sum((responses.subvec(begin, begin + batchSize - 1) - sigmoids) *
+      -predictors.cols(begin, begin + batchSize - 1).t(), 0) + regularization;
 }
 
 /**

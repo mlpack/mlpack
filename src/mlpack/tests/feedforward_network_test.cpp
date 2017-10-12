@@ -68,8 +68,8 @@ void BuildVanillaNetwork(MatType& trainData,
   model.Add<Linear<> >(hiddenLayerSize, outputSize);
   model.Add<LogSoftMax<> >();
 
-  RMSProp opt(0.01, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
-
+  // RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
+  RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
   model.Train(trainData, trainLabels, opt);
 
   MatType predictionTemp;
@@ -271,7 +271,7 @@ void BuildDropoutNetwork(MatType& trainData,
   model.Add<Linear<> >(hiddenLayerSize, outputSize);
   model.Add<LogSoftMax<> >();
 
-  RMSProp opt(0.01, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
+  RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
 
   model.Train(trainData, trainLabels, opt);
 
@@ -400,7 +400,7 @@ void BuildDropConnectNetwork(MatType& trainData,
   model.Add<DropConnect<> >(hiddenLayerSize, outputSize);
   model.Add<LogSoftMax<> >();
 
-  RMSProp opt(0.01, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
+  RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
 
   model.Train(trainData, trainLabels, opt);
 
@@ -547,7 +547,7 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   model.Add<Linear<> >(8, 3);
   model.Add<LogSoftMax<> >();
 
-  RMSProp opt(0.01, 0.88, 1e-8, trainData.n_cols /* 1 epoch */, -1);
+  RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols /* 1 epoch */, -1);
 
   model.Train(trainData, trainLabels, opt);
 

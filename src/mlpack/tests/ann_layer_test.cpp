@@ -253,8 +253,8 @@ BOOST_AUTO_TEST_CASE(GradientAddLayerTest)
     double Gradient(arma::mat& gradient) const
     {
       arma::mat output;
-      double error = model->Evaluate(model->Parameters(), 0);
-      model->Gradient(model->Parameters(), 0, gradient);
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
       return error;
     }
 
@@ -474,8 +474,8 @@ BOOST_AUTO_TEST_CASE(GradientLinearLayerTest)
     double Gradient(arma::mat& gradient) const
     {
       arma::mat output;
-      double error = model->Evaluate(model->Parameters(), 0);
-      model->Gradient(model->Parameters(), 0, gradient);
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
       return error;
     }
 
@@ -557,8 +557,8 @@ BOOST_AUTO_TEST_CASE(GradientLinearNoBiasLayerTest)
     double Gradient(arma::mat& gradient) const
     {
       arma::mat output;
-      double error = model->Evaluate(model->Parameters(), 0);
-      model->Gradient(model->Parameters(), 0, gradient);
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
       return error;
     }
 
@@ -765,8 +765,8 @@ BOOST_AUTO_TEST_CASE(GradientLSTMLayerTest)
     double Gradient(arma::mat& gradient) const
     {
       arma::mat output;
-      double error = model->Evaluate(model->Parameters(), 0);
-      model->Gradient(model->Parameters(), 0, gradient);
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
       return error;
     }
 
@@ -809,8 +809,8 @@ BOOST_AUTO_TEST_CASE(GradientGRULayerTest)
     double Gradient(arma::mat& gradient) const
     {
       arma::mat output;
-      double error = model->Evaluate(model->Parameters(), 0);
-      model->Gradient(model->Parameters(), 0, gradient);
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
       return error;
     }
 
@@ -946,8 +946,8 @@ BOOST_AUTO_TEST_CASE(GradientConcatLayerTest)
     double Gradient(arma::mat& gradient) const
     {
       arma::mat output;
-      double error = model->Evaluate(model->Parameters(), 0);
-      model->Gradient(model->Parameters(), 0, gradient);
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
       return error;
     }
 

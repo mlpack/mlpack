@@ -75,7 +75,7 @@ double MiniBatchSGDType<
 
   // Calculate the first objective function.
   for (size_t i = 0; i < numFunctions; ++i)
-    overallObjective += function.Evaluate(iterate, i);
+    overallObjective += function.Evaluate(iterate, i, 1);
 
   // Initialize the update policy.
   if (resetPolicy)
@@ -118,13 +118,13 @@ double MiniBatchSGDType<
 
     // Evaluate the gradient for this mini-batch.
     const size_t offset = batchSize * visitationOrder[currentBatch];
-    function.Gradient(iterate, offset, gradient);
+    function.Gradient(iterate, offset, gradient, 1);
     if (visitationOrder[currentBatch] != numBatches - 1)
     {
       for (size_t j = 1; j < batchSize; ++j)
       {
         arma::mat funcGradient;
-        function.Gradient(iterate, offset + j, funcGradient);
+        function.Gradient(iterate, offset + j, funcGradient, 1);
         gradient += funcGradient;
       }
 
@@ -133,7 +133,7 @@ double MiniBatchSGDType<
 
       // Add that to the overall objective function.
       for (size_t j = 0; j < batchSize; ++j)
-        overallObjective += function.Evaluate(iterate, offset + j);
+        overallObjective += function.Evaluate(iterate, offset + j, 1);
     }
     else
     {
@@ -142,7 +142,7 @@ double MiniBatchSGDType<
       for (size_t j = 1; j < lastBatchSize; ++j)
       {
         arma::mat funcGradient;
-        function.Gradient(iterate, offset + j, funcGradient);
+        function.Gradient(iterate, offset + j, funcGradient, 1);
         gradient += funcGradient;
       }
 
@@ -161,7 +161,7 @@ double MiniBatchSGDType<
 
       // Add that to the overall objective function.
       for (size_t j = 0; j < lastBatchSize; ++j)
-        overallObjective += function.Evaluate(iterate, offset + j);
+        overallObjective += function.Evaluate(iterate, offset + j, 1);
     }
 
     // Now update the learning rate if requested by the user.
@@ -174,7 +174,7 @@ double MiniBatchSGDType<
   // Calculate final objective.
   overallObjective = 0;
   for (size_t i = 0; i < numFunctions; ++i)
-    overallObjective += function.Evaluate(iterate, i);
+    overallObjective += function.Evaluate(iterate, i, 1);
 
   return overallObjective;
 }

@@ -29,8 +29,8 @@ SGDR<UpdatePolicyType>::SGDR(
     const bool shuffle,
     const UpdatePolicyType& updatePolicy) :
     batchSize(batchSize),
-    optimizer(OptimizerType(batchSize,
-                            stepSize,
+    optimizer(OptimizerType(stepSize,
+                            batchSize,
                             maxIterations,
                             tolerance,
                             shuffle,

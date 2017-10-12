@@ -49,8 +49,8 @@ class VRClassReward
    * @param target The target vector, that contains the class index in the range
    *        between 1 and the number of classes.
    */
-  template<typename eT>
-  double Forward(const arma::Mat<eT>&& input, const arma::Mat<eT>&& target);
+  template<typename InputType, typename TargetType>
+  double Forward(const InputType&& input, const TargetType&& target);
 
   /**
    * Ordinary feed backward pass of a neural network. The negative log
@@ -63,10 +63,10 @@ class VRClassReward
    *        between 1 and the number of classes.
    * @param output The calculated error.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>&& input,
-                const arma::Mat<eT>&& target,
-                arma::Mat<eT>&& output);
+  template<typename InputType, typename TargetType, typename OutputType>
+  void Backward(const InputType&& input,
+                const TargetType&& target,
+                OutputType&& output);
 
   //! Get the input parameter.
   InputDataType& InputParameter() const {return inputParameter; }
