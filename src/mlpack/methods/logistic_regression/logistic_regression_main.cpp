@@ -16,7 +16,6 @@
 #include "logistic_regression.hpp"
 
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
-#include <mlpack/core/optimizers/minibatch_sgd/minibatch_sgd.hpp>
 
 using namespace std;
 using namespace mlpack;
@@ -52,24 +51,22 @@ PROGRAM_INFO("L2-regularized Logistic Regression and Prediction",
     PRINT_PARAM_STRING("lambda") + " option, and the "
     "optimizer used to train the model can be specified with the " +
     PRINT_PARAM_STRING("optimizer") + " parameter.  Available options are "
-    "'sgd' (stochastic gradient descent), 'lbfgs' (the L-BFGS optimizer), and "
-    "'minibatch-sgd' (minibatch stochastic gradient descent).  There are also "
-    "various parameters for the optimizer; the " +
+    "'sgd' (stochastic gradient descent) and 'lbfgs' (the L-BFGS optimizer).  "
+    "There are also various parameters for the optimizer; the " +
     PRINT_PARAM_STRING("max_iterations") + " parameter specifies the maximum "
     "number of allowed iterations, and the " +
     PRINT_PARAM_STRING("tolerance") + " parameter specifies the tolerance for "
-    " convergence.  For the SGD and mini-batch SGD optimizers, the " +
+    " convergence.  For the SGD optimizer, the " +
     PRINT_PARAM_STRING("step_size") + " parameter controls the step size taken"
-    " at each iteration by the optimizer.  The batch size for mini-batch SGD is"
-    " controlled with the " + PRINT_PARAM_STRING("batch_size") + " parameter."
-    " If the objective function for your data is oscillating between Inf and 0,"
-    " the step size is probably too large.  There are more parameters for the "
+    " at each iteration by the optimizer.  The batch size for SGD is controlled"
+    " with the " + PRINT_PARAM_STRING("batch_size") + " parameter. If the "
+    "objective function for your data is oscillating between Inf and 0, the "
+    "step size is probably too large.  There are more parameters for the "
     "optimizers, but the C++ interface must be used to access these."
     "\n\n"
-    "For SGD, an iteration refers to a single point, and for mini-batch SGD, an"
-    " iteration refers to a single batch.  So to take a single pass over the "
-    "dataset with SGD, " + PRINT_PARAM_STRING("max_iterations") + " should be"
-    " set to the number of points in the dataset."
+    "For SGD, an iteration refers to a single point. So to take a single pass "
+    "over the dataset with SGD, " + PRINT_PARAM_STRING("max_iterations") +
+    " should be set to the number of points in the dataset."
     "\n\n"
     "Optionally, the model can be used to predict the responses for another "
     "matrix of data points, if " + PRINT_PARAM_STRING("test") + " is "
@@ -114,9 +111,9 @@ PARAM_DOUBLE_IN("tolerance", "Convergence tolerance for optimizer.", "e",
     1e-10);
 PARAM_INT_IN("max_iterations", "Maximum iterations for optimizer (0 indicates "
     "no limit).", "n", 10000);
-PARAM_DOUBLE_IN("step_size", "Step size for SGD and mini-batch SGD optimizers.",
+PARAM_DOUBLE_IN("step_size", "Step size for SGD optimizer.",
     "s", 0.01);
-PARAM_INT_IN("batch_size", "Batch size for mini-batch SGD.", "b", 50);
+PARAM_INT_IN("batch_size", "Batch size for SGD.", "b", 64);
 
 // Model loading/saving.
 PARAM_MODEL_IN(LogisticRegression<>, "input_model", "Existing model "
@@ -177,10 +174,8 @@ void mlpackMain()
         << endl;
 
   // Optimizer has to be L-BFGS or SGD.
-  if (optimizerType != "lbfgs" && optimizerType != "sgd" &&
-      optimizerType != "minibatch-sgd")
-    Log::Fatal << "--optimizer must be 'lbfgs', 'sgd', or 'minibatch-sgd'."
-        << endl;
+  if (optimizerType != "lbfgs" && optimizerType != "sgd")
+    Log::Fatal << "--optimizer must be 'lbfgs', or 'sgd'." << endl;
 
   // Lambda must be positive.
   if (lambda < 0.0)
@@ -193,7 +188,7 @@ void mlpackMain()
         << "and 1.0 (received " << decisionBoundary << ")." << endl;
 
   if ((stepSize < 0.0) &&
-      (optimizerType == "sgd" || optimizerType == "minibatch-sgd"))
+      (optimizerType == "sgd"))
     Log::Fatal << "Step size (--step_size) must be positive (received "
         << stepSize << ")." << endl;
 
@@ -201,8 +196,8 @@ void mlpackMain()
     Log::Warn << "Step size (--step_size) ignored because 'sgd' optimizer is "
         << "not being used." << endl;
 
-  if (CLI::HasParam("batch_size") && optimizerType != "minibatch-sgd")
-    Log::Warn << "Batch size (--batch_size) ignored because 'minibatch-sgd' "
+  if (CLI::HasParam("batch_size") && optimizerType != "sgd")
+    Log::Warn << "Batch size (--batch_size) ignored because 'sgd' "
         << "optimizer is not being used." << endl;
 
   // These are the matrices we might use.
@@ -223,9 +218,9 @@ void mlpackMain()
   {
     // Set the size of the parameters vector, if necessary.
     if (!CLI::HasParam("labels"))
-      model.Parameters() = arma::zeros<arma::vec>(regressors.n_rows);
+      model.Parameters() = arma::zeros<arma::rowvec>(regressors.n_rows);
     else
-      model.Parameters() = arma::zeros<arma::vec>(regressors.n_rows + 1);
+      model.Parameters() = arma::zeros<arma::rowvec>(regressors.n_rows + 1);
   }
 
   // Check if the responses are in a separate file.
@@ -258,6 +253,7 @@ void mlpackMain()
       sgdOpt.MaxIterations() = maxIterations;
       sgdOpt.Tolerance() = tolerance;
       sgdOpt.StepSize() = stepSize;
+      sgdOpt.BatchSize() = batchSize;
       Log::Info << "Training model with SGD optimizer." << endl;
 
       // This will train the model.
@@ -272,18 +268,6 @@ void mlpackMain()
 
       // This will train the model.
       model.Train(regressors, responses, lbfgsOpt);
-    }
-    else if (optimizerType == "minibatch-sgd")
-    {
-      MiniBatchSGD mbsgdOpt;
-      mbsgdOpt.BatchSize() = batchSize;
-      mbsgdOpt.Tolerance() = tolerance;
-      mbsgdOpt.StepSize() = stepSize;
-      mbsgdOpt.MaxIterations() = maxIterations;
-      Log::Info << "Training model with mini-batch SGD optimizer (batch size "
-          << batchSize << ")." << endl;
-
-      model.Train(regressors, responses, mbsgdOpt);
     }
   }
 
