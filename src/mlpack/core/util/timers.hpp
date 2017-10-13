@@ -19,6 +19,7 @@
 #include <thread> // std::thread is used for thread safety.
 #include <mutex>
 #include <list>
+#include <atomic>
 
 #if defined(_WIN32)
   // uint64_t isn't defined on every windows.
@@ -101,7 +102,7 @@ class Timers
   /**
    * Returns a copy of all the timers used via this interface.
    */
-  std::map<std::string, std::chrono::microseconds>& GetAllTimers();
+  std::map<std::string, std::chrono::microseconds> GetAllTimers();
 
   /**
    * Reset the timers.  This stops all running timers and removes them.  Whether
@@ -161,7 +162,7 @@ class Timers
   void StopAllTimers();
 
   //! Modify whether or not timing is enabled.
-  bool& Enabled() { return enabled; }
+  std::atomic<bool>& Enabled() { return enabled; }
   //! Get whether or not timing is enabled.
   bool Enabled() const { return enabled; }
 
@@ -170,16 +171,12 @@ class Timers
   std::map<std::string, std::chrono::microseconds> timers;
   //! A mutex for modifying the timers.
   std::mutex timersMutex;
-  //! A map that contains whether or not each timer is currently running.
-  std::map<std::thread::id, std::map<std::string, bool>> timerState;
   //! A map for the starting values of the timers.
   std::map<std::thread::id, std::map<std::string,
       std::chrono::high_resolution_clock::time_point>> timerStartTime;
 
-  std::chrono::high_resolution_clock::time_point GetTime();
-
   //! Whether or not timing is enabled.
-  bool enabled;
+  std::atomic<bool> enabled;
 };
 
 } // namespace mlpack

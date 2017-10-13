@@ -98,7 +98,6 @@ BOOST_AUTO_TEST_CASE(TwiceStartTimerTest)
   Timer::DisableTiming();
 }
 
-#include <errno.h>
 BOOST_AUTO_TEST_CASE(MultithreadTimerTest)
 {
   Timer::EnableTiming();
@@ -130,6 +129,22 @@ BOOST_AUTO_TEST_CASE(MultithreadTimerTest)
   // worked.  Next we ensure that the total timer time is counting multiple
   // threads.
   BOOST_REQUIRE(Timer::Get("thread_timer") > std::chrono::microseconds(50000));
+}
+
+BOOST_AUTO_TEST_CASE(DisabledTimingTest)
+{
+  // It should be disabled by default but let's be paranoid.
+  Timer::DisableTiming();
+
+  Timer::Start("test_timer");
+  #ifdef _WIN32
+  Sleep(20);
+  #else
+  usleep(20000);
+  #endif
+  Timer::Stop("test_timer");
+
+  BOOST_REQUIRE(Timer::Get("test_timer") == std::chrono::microseconds(0));
 }
 
 BOOST_AUTO_TEST_SUITE_END();
