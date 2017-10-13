@@ -316,16 +316,14 @@ double EMFit<InitialClusteringType, CovarianceConstraintPolicy>::LogLikelihood(
 
 template<typename InitialClusteringType, typename CovarianceConstraintPolicy>
 template<typename Archive>
-void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::Serialize(
+void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  using data::CreateNVP;
-
-  ar & CreateNVP(maxIterations, "maxIterations");
-  ar & CreateNVP(tolerance, "tolerance");
-  ar & CreateNVP(clusterer, "clusterer");
-  ar & CreateNVP(constraint, "constraint");
+  ar & BOOST_SERIALIZATION_NVP(maxIterations);
+  ar & BOOST_SERIALIZATION_NVP(tolerance);
+  ar & BOOST_SERIALIZATION_NVP(clusterer);
+  ar & BOOST_SERIALIZATION_NVP(constraint);
 }
 
 // Armadillo uses uword internally as an OpenMP index type, which crashes Visual

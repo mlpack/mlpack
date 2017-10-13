@@ -46,9 +46,9 @@ class RangeSearchStat
 
   //! Serialize the statistic.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(lastDistance, "lastDistance");
+    ar & BOOST_SERIALIZATION_NVP(lastDistance);
   }
 
  private:

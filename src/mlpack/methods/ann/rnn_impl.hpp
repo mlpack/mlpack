@@ -409,16 +409,16 @@ void RNN<OutputLayerType, InitializationRuleType>::Gradient()
 
 template<typename OutputLayerType, typename InitializationRuleType>
 template<typename Archive>
-void RNN<OutputLayerType, InitializationRuleType>::Serialize(
+void RNN<OutputLayerType, InitializationRuleType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & data::CreateNVP(parameter, "parameter");
-  ar & data::CreateNVP(rho, "rho");
-  ar & data::CreateNVP(single, "single");
-  ar & data::CreateNVP(inputSize, "inputSize");
-  ar & data::CreateNVP(outputSize, "outputSize");
-  ar & data::CreateNVP(targetSize, "targetSize");
-  ar & data::CreateNVP(currentInput, "currentInput");
+  ar & BOOST_SERIALIZATION_NVP(parameter);
+  ar & BOOST_SERIALIZATION_NVP(rho);
+  ar & BOOST_SERIALIZATION_NVP(single);
+  ar & BOOST_SERIALIZATION_NVP(inputSize);
+  ar & BOOST_SERIALIZATION_NVP(outputSize);
+  ar & BOOST_SERIALIZATION_NVP(targetSize);
+  ar & BOOST_SERIALIZATION_NVP(currentInput);
 
   if (Archive::is_loading::value)
   {

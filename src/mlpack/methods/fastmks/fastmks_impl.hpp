@@ -509,15 +509,13 @@ template<typename KernelType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 template<typename Archive>
-void FastMKS<KernelType, MatType, TreeType>::Serialize(
+void FastMKS<KernelType, MatType, TreeType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  using data::CreateNVP;
-
   // Serialize preferences for search.
-  ar & CreateNVP(naive, "naive");
-  ar & CreateNVP(singleMode, "singleMode");
+  ar & BOOST_SERIALIZATION_NVP(naive);
+  ar & BOOST_SERIALIZATION_NVP(singleMode);
 
   // If we are doing naive search, serialize the dataset.  Otherwise we
   // serialize the tree.
@@ -531,8 +529,8 @@ void FastMKS<KernelType, MatType, TreeType>::Serialize(
       setOwner = true;
     }
 
-    ar & CreateNVP(referenceSet, "referenceSet");
-    ar & CreateNVP(metric, "metric");
+    ar & BOOST_SERIALIZATION_NVP(referenceSet);
+    ar & BOOST_SERIALIZATION_NVP(metric);
   }
   else
   {
@@ -545,7 +543,7 @@ void FastMKS<KernelType, MatType, TreeType>::Serialize(
       treeOwner = true;
     }
 
-    ar & CreateNVP(referenceTree, "referenceTree");
+    ar & BOOST_SERIALIZATION_NVP(referenceTree);
 
     if (Archive::is_loading::value)
     {

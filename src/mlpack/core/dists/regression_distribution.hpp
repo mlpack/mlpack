@@ -74,10 +74,10 @@ class RegressionDistribution
    * Serialize the distribution.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(rf, "rf");
-    ar & data::CreateNVP(err, "err");
+    ar & BOOST_SERIALIZATION_NVP(rf);
+    ar & BOOST_SERIALIZATION_NVP(err);
   }
 
   //! Return regression function.

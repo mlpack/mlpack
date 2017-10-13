@@ -377,32 +377,32 @@ void serialize(
                    SingleTreeTraversalType>& ns,
     const unsigned int version)
 {
-  ns.Serialize(ar, version);
+  ns.serialize(ar, version);
 }
 
 //! Serialize the kNN model.
 template<typename SortPolicy>
 template<typename Archive>
-void NSModel<SortPolicy>::Serialize(Archive& ar, const unsigned int version)
+void NSModel<SortPolicy>::serialize(Archive& ar, const unsigned int version)
 {
-  ar & data::CreateNVP(treeType, "treeType");
+  ar & BOOST_SERIALIZATION_NVP(treeType);
   // Backward compatibility: older versions of NSModel didn't include these
   // parameters.
   if (version > 0)
   {
-    ar & data::CreateNVP(leafSize, "leafSize");
-    ar & data::CreateNVP(tau, "tau");
-    ar & data::CreateNVP(rho, "rho");
+    ar & BOOST_SERIALIZATION_NVP(leafSize);
+    ar & BOOST_SERIALIZATION_NVP(tau);
+    ar & BOOST_SERIALIZATION_NVP(rho);
   }
-  ar & data::CreateNVP(randomBasis, "randomBasis");
-  ar & data::CreateNVP(q, "q");
+  ar & BOOST_SERIALIZATION_NVP(randomBasis);
+  ar & BOOST_SERIALIZATION_NVP(q);
 
   // This should never happen, but just in case, be clean with memory.
   if (Archive::is_loading::value)
     boost::apply_visitor(DeleteVisitor(), nSearch);
 
   const std::string& name = NSModelName<SortPolicy>::Name();
-  ar & data::CreateNVP(nSearch, name);
+  ar & BOOST_SERIALIZATION_NVP(nSearch);
 }
 
 //! Expose the dataset.

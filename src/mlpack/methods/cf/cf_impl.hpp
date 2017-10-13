@@ -155,17 +155,15 @@ void CF::Train(const arma::sp_mat& data,
 
 //! Serialize the model.
 template<typename Archive>
-void CF::Serialize(Archive& ar, const unsigned int /* version */)
+void CF::serialize(Archive& ar, const unsigned int /* version */)
 {
   // This model is simple; just serialize all the members.  No special handling
   // required.
-  using data::CreateNVP;
-
-  ar & CreateNVP(numUsersForSimilarity, "numUsersForSimilarity");
-  ar & CreateNVP(rank, "rank");
-  ar & CreateNVP(w, "w");
-  ar & CreateNVP(h, "h");
-  ar & CreateNVP(cleanedData, "cleanedData");
+  ar & BOOST_SERIALIZATION_NVP(numUsersForSimilarity);
+  ar & BOOST_SERIALIZATION_NVP(rank);
+  ar & BOOST_SERIALIZATION_NVP(w);
+  ar & BOOST_SERIALIZATION_NVP(h);
+  ar & BOOST_SERIALIZATION_NVP(cleanedData);
 }
 
 } // namespace cf

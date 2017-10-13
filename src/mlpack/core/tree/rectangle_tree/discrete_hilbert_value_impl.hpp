@@ -514,16 +514,15 @@ void DiscreteHilbertValue<TreeElemType>::RedistributeHilbertValues(
 
 template<typename TreeElemType>
 template<typename Archive>
-void DiscreteHilbertValue<TreeElemType>::
-Serialize(Archive& ar, const unsigned int /* version */)
+void DiscreteHilbertValue<TreeElemType>::serialize(
+    Archive& ar,
+    const unsigned int /* version */)
 {
-  using data::CreateNVP;
-
-  ar & CreateNVP(localHilbertValues, "localHilbertValues");
-  ar & CreateNVP(ownsLocalHilbertValues, "ownsLocalHilbertValues");
-  ar & CreateNVP(numValues, "numValues");
-  ar & CreateNVP(valueToInsert, "valueToInsert");
-  ar & CreateNVP(ownsValueToInsert, "ownsValueToInsert");
+  ar & BOOST_SERIALIZATION_NVP(localHilbertValues);
+  ar & BOOST_SERIALIZATION_NVP(ownsLocalHilbertValues);
+  ar & BOOST_SERIALIZATION_NVP(numValues);
+  ar & BOOST_SERIALIZATION_NVP(valueToInsert);
+  ar & BOOST_SERIALIZATION_NVP(ownsValueToInsert);
 }
 
 } // namespace tree

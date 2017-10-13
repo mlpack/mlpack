@@ -1062,11 +1062,9 @@ double LSHSearch<SortPolicy>::ComputeRecall(
 
 template<typename SortPolicy>
 template<typename Archive>
-void LSHSearch<SortPolicy>::Serialize(Archive& ar,
+void LSHSearch<SortPolicy>::serialize(Archive& ar,
                                       const unsigned int version)
 {
-  using data::CreateNVP;
-
   // If we are loading, we are going to own the reference set.
   if (Archive::is_loading::value)
   {
@@ -1074,10 +1072,10 @@ void LSHSearch<SortPolicy>::Serialize(Archive& ar,
       delete referenceSet;
     ownsSet = true;
   }
-  ar & CreateNVP(referenceSet, "referenceSet");
+  ar & BOOST_SERIALIZATION_NVP(referenceSet);
 
-  ar & CreateNVP(numProj, "numProj");
-  ar & CreateNVP(numTables, "numTables");
+  ar & BOOST_SERIALIZATION_NVP(numProj);
+  ar & BOOST_SERIALIZATION_NVP(numTables);
 
   // Delete existing projections, if necessary.
   if (Archive::is_loading::value)
@@ -1088,7 +1086,7 @@ void LSHSearch<SortPolicy>::Serialize(Archive& ar,
   if (version == 0)
   {
     std::vector<arma::mat> tmpProj;
-    ar & CreateNVP(tmpProj, "projections");
+    ar & BOOST_SERIALIZATION_NVP(tmpProj);
 
     projections.set_size(tmpProj[0].n_rows, tmpProj[0].n_cols, tmpProj.size());
     for (size_t i = 0; i < tmpProj.size(); ++i)
@@ -1096,14 +1094,14 @@ void LSHSearch<SortPolicy>::Serialize(Archive& ar,
   }
   else
   {
-    ar & CreateNVP(projections, "projections");
+    ar & BOOST_SERIALIZATION_NVP(projections);
   }
 
-  ar & CreateNVP(offsets, "offsets");
-  ar & CreateNVP(hashWidth, "hashWidth");
-  ar & CreateNVP(secondHashSize, "secondHashSize");
-  ar & CreateNVP(secondHashWeights, "secondHashWeights");
-  ar & CreateNVP(bucketSize, "bucketSize");
+  ar & BOOST_SERIALIZATION_NVP(offsets);
+  ar & BOOST_SERIALIZATION_NVP(hashWidth);
+  ar & BOOST_SERIALIZATION_NVP(secondHashSize);
+  ar & BOOST_SERIALIZATION_NVP(secondHashWeights);
+  ar & BOOST_SERIALIZATION_NVP(bucketSize);
   // needs specific handling for new version
 
   // Backward compatibility: in older versions of LSHSearch, the secondHashTable
@@ -1112,7 +1110,7 @@ void LSHSearch<SortPolicy>::Serialize(Archive& ar,
   if (version == 0)
   {
     arma::Mat<size_t> tmpSecondHashTable;
-    ar & CreateNVP(tmpSecondHashTable, "secondHashTable");
+    ar & BOOST_SERIALIZATION_NVP(tmpSecondHashTable);
 
     // The old secondHashTable was stored in row-major format, so we transpose
     // it.
@@ -1140,7 +1138,7 @@ void LSHSearch<SortPolicy>::Serialize(Archive& ar,
     size_t tables;
     if (Archive::is_saving::value)
       tables = secondHashTable.size();
-    ar & CreateNVP(tables, "numSecondHashTables");
+    ar & BOOST_SERIALIZATION_NVP(tables);
 
     // Set size of second hash table if needed.
     if (Archive::is_loading::value)
@@ -1149,12 +1147,7 @@ void LSHSearch<SortPolicy>::Serialize(Archive& ar,
       secondHashTable.resize(tables);
     }
 
-    for (size_t i = 0; i < secondHashTable.size(); ++i)
-    {
-      std::ostringstream oss;
-      oss << "secondHashTable" << i;
-      ar & CreateNVP(secondHashTable[i], oss.str());
-    }
+    ar & BOOST_SERIALIZATION_NVP(secondHashTable);
   }
 
   // Backward compatibility: old versions of LSHSearch held bucketContentSize
@@ -1166,8 +1159,8 @@ void LSHSearch<SortPolicy>::Serialize(Archive& ar,
     // it.  But we can't do that until we have bucketRowInHashTable, so we also
     // have to load that.
     arma::Col<size_t> tmpBucketContentSize;
-    ar & CreateNVP(tmpBucketContentSize, "bucketContentSize");
-    ar & CreateNVP(bucketRowInHashTable, "bucketRowInHashTable");
+    ar & BOOST_SERIALIZATION_NVP(tmpBucketContentSize);
+    ar & BOOST_SERIALIZATION_NVP(bucketRowInHashTable);
 
     // Compress into a smaller vector by just dropping all of the zeros.
     bucketContentSize.set_size(secondHashTable.size());
@@ -1177,11 +1170,11 @@ void LSHSearch<SortPolicy>::Serialize(Archive& ar,
   }
   else
   {
-    ar & CreateNVP(bucketContentSize, "bucketContentSize");
-    ar & CreateNVP(bucketRowInHashTable, "bucketRowInHashTable");
+    ar & BOOST_SERIALIZATION_NVP(bucketContentSize);
+    ar & BOOST_SERIALIZATION_NVP(bucketRowInHashTable);
   }
 
-  ar & CreateNVP(distanceEvaluations, "distanceEvaluations");
+  ar & BOOST_SERIALIZATION_NVP(distanceEvaluations);
 }
 
 } // namespace neighbor

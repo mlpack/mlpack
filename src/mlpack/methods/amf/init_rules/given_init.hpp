@@ -61,10 +61,10 @@ class GivenInitialization
 
   //! Serialize the object (in this case, there is nothing to serialize).
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(w, "w");
-    ar & data::CreateNVP(h, "h");
+    ar & BOOST_SERIALIZATION_NVP(w);
+    ar & BOOST_SERIALIZATION_NVP(h);
   }
 
  private:

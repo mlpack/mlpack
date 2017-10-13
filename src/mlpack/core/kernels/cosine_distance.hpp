@@ -43,7 +43,7 @@ class CosineDistance
 
   //! Serialize the class (there's nothing to save).
   template<typename Archive>
-  void Serialize(Archive& /* ar */, const unsigned int /* version */) { }
+  void serialize(Archive& /* ar */, const unsigned int /* version */) { }
 };
 
 //! Kernel traits for the cosine distance.

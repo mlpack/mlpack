@@ -108,9 +108,9 @@ class HoeffdingCategoricalSplit
 
   //! Serialize the categorical split.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(sufficientStatistics, "sufficientStatistics");
+    ar & BOOST_SERIALIZATION_NVP(sufficientStatistics);
   }
 
  private:

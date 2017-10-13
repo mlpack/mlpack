@@ -250,7 +250,7 @@ class FastMKS
 
   //! Serialize the model.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! The reference dataset.  We never own this; only the tree or a higher level
