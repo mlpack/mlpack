@@ -55,7 +55,7 @@ class BinaryNumericSplit
    *
    * @param numClasses Number of classes in dataset.
    */
-  BinaryNumericSplit(const size_t numClasses);
+  BinaryNumericSplit(const size_t numClasses = 0);
 
   /**
    * Create the BinaryNumericSplit object with the given number of classes,

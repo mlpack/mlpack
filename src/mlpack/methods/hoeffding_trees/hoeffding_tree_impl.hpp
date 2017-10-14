@@ -149,6 +149,32 @@ HoeffdingTree<
   }
 }
 
+template<typename FitnessFunction,
+         template<typename> class NumericSplitType,
+         template<typename> class CategoricalSplitType>
+HoeffdingTree<
+    FitnessFunction,
+    NumericSplitType,
+    CategoricalSplitType
+>::HoeffdingTree() :
+    dimensionMappings(
+        new std::unordered_map<size_t, std::pair<size_t, size_t>>()),
+    ownsMappings(true),
+    numSamples(0),
+    numClasses(0),
+    maxSamples(size_t(-1)),
+    checkInterval(100),
+    minSamples(100),
+    datasetInfo(new data::DatasetInfo()),
+    ownsInfo(true),
+    successProbability(0.95),
+    splitDimension(size_t(-1)),
+    categoricalSplit(0),
+    numericSplit()
+{
+  // Nothing to do.
+}
+
 // Copy constructor.
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
@@ -269,6 +295,62 @@ void HoeffdingTree<
     for (size_t i = 0; i < data.n_cols; ++i)
       Train(data.col(i), labels[i]);
   }
+}
+
+//! Train on a set of points.
+template<typename FitnessFunction,
+         template<typename> class NumericSplitType,
+         template<typename> class CategoricalSplitType>
+template<typename MatType>
+void HoeffdingTree<
+    FitnessFunction,
+    NumericSplitType,
+    CategoricalSplitType
+>::Train(const MatType& data,
+         const data::DatasetInfo& info,
+         const arma::Row<size_t>& labels,
+         const bool batchTraining)
+{
+  // Take over new DatasetInfo.
+  if (ownsInfo)
+    delete datasetInfo;
+  datasetInfo = &info;
+  ownsInfo = false;
+
+  // Generate mappings.
+  if (ownsMappings)
+    delete dimensionMappings;
+
+  const CategoricalSplitType<FitnessFunction> categoricalSplitIn(0, 0);
+  const NumericSplitType<FitnessFunction>& numericSplitIn(0);
+
+  dimensionMappings =
+      new std::unordered_map<size_t, std::pair<size_t, size_t>>();
+  for (size_t i = 0; i < datasetInfo->Dimensionality(); ++i)
+  {
+    if (datasetInfo->Type(i) == data::Datatype::categorical)
+    {
+      categoricalSplits.push_back(CategoricalSplitType<FitnessFunction>(
+          datasetInfo->NumMappings(i), numClasses, categoricalSplitIn));
+      (*dimensionMappings)[i] = std::make_pair(data::Datatype::categorical,
+          categoricalSplits.size() - 1);
+    }
+    else
+    {
+      numericSplits.push_back(NumericSplitType<FitnessFunction>(numClasses,
+          numericSplitIn));
+      (*dimensionMappings)[i] = std::make_pair(data::Datatype::numeric,
+          numericSplits.size() - 1);
+    }
+  }
+
+  // Remove any old children.
+  for (size_t i = 0; i < children.size(); ++i)
+    delete children[i];
+  children.clear();
+
+  // Now train.
+  Train(data, labels, batchTraining);
 }
 
 //! Train on one point.
@@ -778,31 +860,18 @@ void HoeffdingTree<
       ar & BOOST_SERIALIZATION_NVP(numericSplit);
 
     // Serialize the children, because we have split.
-    size_t numChildren;
-    if (Archive::is_saving::value)
-      numChildren = children.size();
-    ar & BOOST_SERIALIZATION_NVP(numChildren);
-    if (Archive::is_loading::value) // If needed, allocate space.
-    {
-      children.resize(numChildren, NULL);
-      for (size_t i = 0; i < numChildren; ++i)
-        children[i] = new HoeffdingTree(data::DatasetInfo(0), 0);
-    }
-
-    for (size_t i = 0; i < numChildren; ++i)
-    {
-      std::ostringstream name;
-      name << "child" << i;
-      ar & BOOST_SERIALIZATION_NVP(*children[i]);
-
-      // The child doesn't actually own its own DatasetInfo.  We do.  The same
-      // applies for the dimension mappings.
-      children[i]->ownsInfo = false;
-      children[i]->ownsMappings = false;
-    }
+    ar & BOOST_SERIALIZATION_NVP(children);
 
     if (Archive::is_loading::value)
     {
+      for (size_t i = 0; i < children.size(); ++i)
+      {
+        // The child doesn't actually own its own DatasetInfo.  We do.  The same
+        // applies for the dimension mappings.
+        children[i]->ownsInfo = false;
+        children[i]->ownsMappings = false;
+      }
+
       numericSplits.clear();
       categoricalSplits.clear();
 

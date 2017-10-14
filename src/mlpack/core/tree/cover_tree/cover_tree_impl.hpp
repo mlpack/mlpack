@@ -581,7 +581,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     CoverTree() // Create an empty CoverTree.
 {
   // Now, serialize to our empty tree.
-  ar >> BOOST_SERIALIZATION_NVP(*this);
+  ar >> boost::serialization::make_nvp("this", *this);
 }
 
 

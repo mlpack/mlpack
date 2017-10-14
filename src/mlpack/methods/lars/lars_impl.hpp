@@ -32,7 +32,8 @@ void LARS::serialize(Archive& ar, const unsigned int /* version */)
   }
   else
   {
-    ar & BOOST_SERIALIZATION_NVP(const_cast<arma::mat&>(*matGram));
+    ar & boost::serialization::make_nvp("matGramInternal",
+        (const_cast<arma::mat&>(*matGram)));
   }
 
   ar & BOOST_SERIALIZATION_NVP(matUtriCholFactor);

@@ -944,21 +944,7 @@ void DecisionTree<FitnessFunction,
   }
 
   // Serialize the children first.
-  size_t numChildren = children.size();
-  ar & BOOST_SERIALIZATION_NVP(numChildren);
-  if (Archive::is_loading::value)
-  {
-    children.resize(numChildren, NULL);
-    for (size_t i = 0; i < numChildren; ++i)
-      children[i] = new DecisionTree();
-  }
-
-  for (size_t i = 0; i < numChildren; ++i)
-  {
-    std::ostringstream name;
-    name << "child" << i;
-    ar & BOOST_SERIALIZATION_NVP(*children[i]);
-  }
+  ar & BOOST_SERIALIZATION_NVP(children);
 
   // Now serialize the rest of the object.
   ar & BOOST_SERIALIZATION_NVP(splitDimension);

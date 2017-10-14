@@ -65,7 +65,7 @@ class HoeffdingNumericSplit
    * @param observationsBeforeBinning Number of points to see before binning is
    *      performed.
    */
-  HoeffdingNumericSplit(const size_t numClasses,
+  HoeffdingNumericSplit(const size_t numClasses = 0,
                         const size_t bins = 10,
                         const size_t observationsBeforeBinning = 100);
 

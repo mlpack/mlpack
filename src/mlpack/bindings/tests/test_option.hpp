@@ -77,7 +77,7 @@ class TestOption
     data.loaded = false;
     data.cppType = cppName;
     data.value = boost::any(defaultValue);
-    data.persistent = true;
+    data.persistent = false;
 
     const std::string tname = data.tname;
 

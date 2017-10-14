@@ -54,8 +54,8 @@ class HoeffdingCategoricalSplit
    * @param numCategories Number of categories in this dimension.
    * @param numClasses Number of classes in this dimension.
    */
-  HoeffdingCategoricalSplit(const size_t numCategories,
-                            const size_t numClasses);
+  HoeffdingCategoricalSplit(const size_t numCategories = 0,
+                            const size_t numClasses = 0);
 
   /**
    * Create the HoeffdingCategoricalSplit given a number of categories for this
