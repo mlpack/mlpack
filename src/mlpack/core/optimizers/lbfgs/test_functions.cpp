@@ -113,10 +113,10 @@ void WoodFunction::Gradient(const arma::mat& coordinates,
   gradient.set_size(4, 1);
   gradient[0] = 400 * (std::pow(x1, 3) - x2 * x1) - 2 * (1 - x1);
   gradient[1] = 200 * (x2 - std::pow(x1, 2)) + 20 * (x2 + x4 - 2) +
-      (1 / 5) * (x2 - x4);
+      (1.0 / 5.0) * (x2 - x4);
   gradient[2] = 360 * (std::pow(x3, 3) - x4 * x3) - 2 * (1 - x3);
   gradient[3] = 180 * (x4 - std::pow(x3, 2)) + 20 * (x2 + x4 - 2) -
-      (1 / 5) * (x2 - x4);
+      (1.0 / 5.0) * (x2 - x4);
 }
 
 const arma::mat& WoodFunction::GetInitialPoint() const
