@@ -96,7 +96,7 @@ class SPALeRAStepsize
               const arma::mat& gradient)
   {
     // The ratio of mini-batch size to training set size; needed for the
-    // Page-Hinkley relaxed objetive computations.
+    // Page-Hinkley relaxed objective computations.
     const double mbRatio = batchSize / (double) numFunctions;
 
     // Page-Hinkley iteration, check if we have to reset the parameter and
