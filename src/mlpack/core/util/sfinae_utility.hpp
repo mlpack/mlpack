@@ -103,6 +103,9 @@ struct MethodFormDetector<Class, MethodForm, 7>
 } // namespace sfinae
 } // namespace mlpack
 
+//! Utility struct for checking signatures.
+template<typename U, U> struct SigCheck : std::true_type {};
+
 /*
  * Constructs a template supporting the SFINAE pattern.
  *
@@ -122,15 +125,16 @@ struct MethodFormDetector<Class, MethodForm, 7>
  * @param FUNC the name of the function to check for. For example: ToString
  */
 #define HAS_MEM_FUNC(FUNC, NAME)                                               \
+template<typename T, typename sig, typename = std::true_type>                  \
+struct NAME : std::false_type {};                                              \
+                                                                               \
 template<typename T, typename sig>                                             \
-struct NAME {                                                                  \
-  typedef char yes[1];                                                         \
-  typedef char no [2];                                                         \
-  template<typename U, U> struct type_check;                                   \
-  template<typename _1> static yes &chk(type_check<sig, &_1::FUNC> *);         \
-  template<typename   > static no  &chk(...);                                  \
-  static bool const value = sizeof(chk<T>(0)) == sizeof(yes);                  \
-};
+struct NAME                                                                    \
+<                                                                              \
+  T,                                                                           \
+  sig,                                                                         \
+  std::integral_constant<bool, SigCheck<sig, &T::FUNC>::value>                 \
+> : std::true_type {};
 
 /*
  * HAS_METHOD_FORM generates a template that allows to check at compile time
