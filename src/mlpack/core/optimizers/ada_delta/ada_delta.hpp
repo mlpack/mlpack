@@ -102,14 +102,16 @@ class AdaDelta
   double Optimize(DecomposableFunctionType& function, arma::mat& iterate)
   {
     static_assert(static_checks::HasNumFunctions<DecomposableFunctionType,
-        NumFunctionsForm>::value,
+        static_checks::NumFunctionsForm>::value,
         "The FunctionType does not have a correct definition of NumFunctions.");
     static_assert(static_checks::HasDecomposableEvaluate<
-        DecomposableFunctionType, DecomposableEvaluateForm>::value,
+        DecomposableFunctionType,
+        static_checks::DecomposableEvaluateForm>::value,
         "The FunctionType does not have a correct definition of a decomposable"
         " Evaluate function.");
     static_assert(static_checks::HasDecomposableGradient<
-        DecomposableFunctionType, DecomposableGradientForm>::value,
+        DecomposableFunctionType,
+        static_checks::DecomposableGradientForm>::value,
         "The FunctionType does not have a correct definition of a decomposable"
         " Gradient function.");
     return optimizer.Optimize(function, iterate);
