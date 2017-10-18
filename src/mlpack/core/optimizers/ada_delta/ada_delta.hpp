@@ -18,6 +18,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
+#include <mlpack/core/util/functiontype_method_forms.hpp>
 #include "ada_delta_update.hpp"
 
 namespace mlpack {
@@ -89,7 +90,8 @@ class AdaDelta
   /**
    * Optimize the given function using AdaDelta. The given starting point will
    * be modified to store the finishing point of the algorithm, and the final
-   * objective value is returned.
+   * objective value is returned. The DecomposableFunctionType is checked for
+   * API consistency at compile time.
    *
    * @tparam DecomposableFunctionType Type of the function to optimize.
    * @param function Function to optimize.
@@ -99,6 +101,17 @@ class AdaDelta
   template<typename DecomposableFunctionType>
   double Optimize(DecomposableFunctionType& function, arma::mat& iterate)
   {
+    static_assert(static_checks::HasNumFunctions<DecomposableFunctionType,
+        NumFunctionsForm>::value,
+        "The FunctionType does not have a correct definition of NumFunctions.");
+    static_assert(static_checks::HasDecomposableEvaluate<
+        DecomposableFunctionType, DecomposableEvaluateForm>::value,
+        "The FunctionType does not have a correct definition of a decomposable"
+        " Evaluate function.");
+    static_assert(static_checks::HasDecomposableGradient<
+        DecomposableFunctionType, DecomposableGradientForm>::value,
+        "The FunctionType does not have a correct definition of a decomposable"
+        " Gradient function.");
     return optimizer.Optimize(function, iterate);
   }
 
