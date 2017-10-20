@@ -23,20 +23,22 @@ namespace data {
 
 // This gives us a HasSerializeCheck<T, U> type (where U is a function pointer)
 // we can use with SFINAE to catch when a type has a Serialize() function.
-HAS_MEM_FUNC(serialize, HasSerializeCheck);
+HAS_EXACT_METHOD_FORM(serialize, HasSerializeCheck);
 
 // Don't call this with a non-class.  HasSerializeFunction::value is true if the
 // type T has a static or non-static Serialize() function.
 template<typename T>
 struct HasSerializeFunction
 {
-  static const bool value =
-      // Non-static version.
-      HasSerializeCheck<T, void(T::*)(boost::archive::xml_oarchive&,
-                                      const unsigned int)>::value ||
-      // Static version.
-      HasSerializeCheck<T, void(*)(boost::archive::xml_oarchive&,
-                                   const unsigned int)>::value;
+  template<typename C>
+  using NonStaticSerialize = void(C::*)(boost::archive::xml_oarchive&,
+                                        const unsigned int);
+  template<typename /* C */>
+  using StaticSerialize = void(*)(boost::archive::xml_oarchive&,
+                                  const unsigned int);
+
+  static const bool value = HasSerializeCheck<T, NonStaticSerialize>::value ||
+                            HasSerializeCheck<T, StaticSerialize>::value;
 };
 
 template<typename T>
