@@ -491,8 +491,8 @@ BOOST_AUTO_TEST_CASE(PReLUFunctionTest)
 BOOST_AUTO_TEST_CASE(SwishFunctionTest)
 {
   const arma::colvec desiredActivations("-0.238405 3.07466 4.45055 \
-                                         -3.05183208657e-42 0.731058 -0.26894 1.76159 \
-                                         0");
+                                         -3.05183208657e-42 0.731058 -0.26894 \
+                                         1.76159 0");
 
   const arma::colvec desiredDerivatives("0.3819171 1.0856295 1.039218 \
                                          0.5 0.83540367 0.3671335 1.073787\
