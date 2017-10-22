@@ -179,6 +179,11 @@ class FFN
    * and with respect to only one point in the dataset. This is useful for
    * optimizers such as SGD, which require a separable objective function.
    *
+   * Its a dummy Evaluate function for the optimizer to save an extra Forward
+   * pass while optimizing. Function returns previously stored result. 
+   * The actual forward pass is done by function 'ForwardCall', called while 
+   * computing Gradient.
+   *
    * @param parameters Matrix of the model parameters to be optimized.
    * @param i Index of points to use for objective function gradient evaluation.
    * @param gradient Matrix to output gradient into.
@@ -245,6 +250,20 @@ class FFN
   double Backward(arma::mat targets, arma::mat& gradients);
 
  private:
+  /**
+   * Evaluate the feedforward network with the given parameters. This function
+   * is usually called by the optimizer to train the model.
+   *
+   * @param parameters Matrix model parameters.
+   * @param i Index of point to use for objective function evaluation.
+   * @param deterministic Whether or not to train or test the model. Note some
+   *        layer act differently in training or testing mode.
+   */
+  double ForwardCall(const arma::mat& parameters,
+                     const size_t i,
+                     const bool deterministic = true);
+  
+ 
   // Helper functions.
   /**
    * The Forward algorithm (part of the Forward-Backward algorithm).  Computes
@@ -326,6 +345,12 @@ class FFN
 
   //! The current error for the backward pass.
   arma::mat error;
+  
+  //! Cost achieved in the last Forward call
+  double currentCost = -1;
+  
+  //! Objective function index used for the last evaluation call
+  size_t currentFunctionIndex = 0;
 
   //! THe current input of the forward/backward pass.
   arma::mat currentInput;

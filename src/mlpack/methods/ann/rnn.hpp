@@ -213,6 +213,20 @@ class RNN
  private:
   // Helper functions.
   /**
+   * Evaluate the recurrent neural network with the given parameters. This
+   * function is usually called by the optimizer to train the model.
+   *
+   * @param parameters Matrix model parameters.
+   * @param i Index of point to use for objective function evaluation.
+   * @param deterministic Whether or not to train or test the model. Note some
+   *        layer act differently in training or testing mode.
+   */
+  double ForwardCall(const arma::mat& /* parameters */,
+                     const size_t i,
+                     const bool deterministic = true);
+
+  
+  /**
    * The Forward algorithm (part of the Forward-Backward algorithm).  Computes
    * forward probabilities for each module.
    *
@@ -306,6 +320,12 @@ class RNN
 
   //! The current error for the backward pass.
   arma::mat error;
+  
+  //! Cost achieved in the last Forward call
+  double currentCost = -1;
+  
+  //! Objective function index used for the last evaluation call
+  size_t currentFunctionIndex = 0;
 
   //! THe current input of the forward/backward pass.
   arma::mat currentInput;
