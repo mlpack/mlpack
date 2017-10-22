@@ -2,6 +2,7 @@
  * @file timers.cpp
  * @author Matthew Amidon
  * @author Marcus Edel
+ * @author Ryan Curtin
  *
  * Implementation of timers.
  *
