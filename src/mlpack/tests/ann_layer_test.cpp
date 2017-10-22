@@ -1103,5 +1103,37 @@ BOOST_AUTO_TEST_CASE(SimpleMeanSquaredErrorLayerTest)
   BOOST_REQUIRE_EQUAL(output.n_elem, 1);
 }
 
+/*
+ * Simple test for the Resize layer
+ */
+BOOST_AUTO_TEST_CASE(SimpleResizeLayerTest)
+{
+  arma::mat input, output, unzoomedOutput, expectedOutput;
+  size_t inRowSize = 10;
+  size_t inColSize = 10;
+  size_t outRowSize = 20;
+  size_t outColSize = 20;
+  input.set_size(inRowSize * inColSize, 1);
+  for (size_t i = 0; i < inRowSize; i++)
+    for (size_t j = 0; j < inColSize; j++)
+    input[j * inColSize + i] = 1 * (double)i / inRowSize +
+        1 * double(j) / inColSize;
+
+  expectedOutput.set_size(outRowSize * outColSize, 1);
+  for (size_t i = 0; i < outRowSize; i++)
+    for (size_t j = 0; j < outColSize; j++)
+      expectedOutput[j * outColSize + i] = 1 * i / (double)outRowSize +
+          1 * j / (double)outColSize;
+
+  BiLinearFunction interpolation(inRowSize, inColSize, outRowSize, outColSize);
+  Resize<> layer(interpolation);
+
+  layer.Forward(std::move(input), std::move(output));
+  CheckMatrices(output - expectedOutput, arma::zeros(output.n_rows), 1e-12);
+
+  layer.Backward(std::move(output), std::move(output),
+      std::move(unzoomedOutput));
+  CheckMatrices(unzoomedOutput - input, arma::zeros(input.n_rows), 1e-12);
+}
 
 BOOST_AUTO_TEST_SUITE_END();

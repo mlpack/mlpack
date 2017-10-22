@@ -15,6 +15,7 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/optimizers/sgd/update_policies/vanilla_update.hpp>
 #include <mlpack/core/optimizers/minibatch_sgd/decay_policies/no_decay.hpp>
+#include <mlpack/core/optimizers/adam/adam_update.hpp>
 
 namespace mlpack {
 namespace optimization {
@@ -204,6 +205,7 @@ class MiniBatchSGDType
 };
 
 using MiniBatchSGD = MiniBatchSGDType<VanillaUpdate, NoDecay>;
+using AdamBatchSGD = MiniBatchSGDType<AdamUpdate, NoDecay>;
 
 } // namespace optimization
 } // namespace mlpack

@@ -92,6 +92,10 @@ double MiniBatchSGDType<
       Log::Info << "Mini-batch SGD: iteration " << i << ", objective "
           << overallObjective << "." << std::endl;
 
+      Log::Info << "Last objective" << lastObjective << std::endl;
+
+      Log::Info << "Gradient = " << arma::max(gradient) << std::endl;
+
       if (std::isnan(overallObjective) || std::isinf(overallObjective))
       {
         Log::Warn << "Mini-batch SGD: converged to " << overallObjective
@@ -127,7 +131,6 @@ double MiniBatchSGDType<
         function.Gradient(iterate, offset + j, funcGradient);
         gradient += funcGradient;
       }
-
       // Now update the iterate.
       updatePolicy.Update(iterate, stepSize / batchSize, gradient);
 
