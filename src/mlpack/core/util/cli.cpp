@@ -43,18 +43,8 @@ CLI::CLI(const CLI& /* other */) : didParse(false), doc(&emptyProgramDoc)
   return;
 }
 
-void CLI::StopTimers()
-{
-  // Terminate the program timers.
-  std::map<std::string, std::chrono::microseconds>::iterator it;
-  for (it = CLI::GetSingleton().timer.GetAllTimers().begin();
-       it != CLI::GetSingleton().timer.GetAllTimers().end(); ++it)
-  {
-    std::string i = (*it).first;
-    if (CLI::GetSingleton().timer.GetState(i) == 1)
-      Timer::Stop(i);
-  }
-}
+// Private copy operator; don't want copies floating around.
+CLI& CLI::operator=(const CLI& /* other */) { return *this; }
 
 /**
  * Destroy the CLI object.  This resets the pointer to the singleton, so in case
