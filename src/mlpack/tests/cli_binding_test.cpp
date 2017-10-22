@@ -9,7 +9,6 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
- /**
 #include <mlpack/core.hpp>
 #include <mlpack/bindings/cli/cli_option.hpp>
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
@@ -24,12 +23,11 @@ using namespace mlpack::bindings::cli;
 using namespace mlpack::kernel;
 
 BOOST_AUTO_TEST_SUITE(CLIBindingTest);
-*/
+
 /**
  * Ensure that we can construct a CLIOption object, and that it will add itself
  * to the CLI instance.
  */
-/**
 BOOST_AUTO_TEST_CASE(CLIOptionTest)
 {
   CLI::ClearSettings();
@@ -63,11 +61,10 @@ BOOST_AUTO_TEST_CASE(CLIOptionTest)
 
   CLI::ClearSettings();
 }
-*/
+
 /**
  * Make sure GetParam() works.
  */
- /**
 BOOST_AUTO_TEST_CASE(GetParamDoubleTest)
 {
   util::ParamData d;
@@ -532,4 +529,3 @@ BOOST_AUTO_TEST_CASE(SetParamDatasetInfoMatTest)
 }
 
 BOOST_AUTO_TEST_SUITE_END();
-*/
