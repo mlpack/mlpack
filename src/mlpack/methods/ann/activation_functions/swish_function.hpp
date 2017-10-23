@@ -42,6 +42,18 @@ class SwishFunction
   }
 
   /**
+   * Computes the swish function using a matrix as input.
+   *
+   * @param x Input data.
+   * @param y The resulting output activation.
+   */
+  template<typename eT>
+  static void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
+  {
+    y = x / (1.0 + arma::exp(-x));
+  }
+
+  /**
    * Computes the swish function.
    *
    * @param x Input data.
