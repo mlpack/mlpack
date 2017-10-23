@@ -266,6 +266,13 @@ double RNN<OutputLayerType, InitializationRuleType>::Evaluate(
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
+double RNN<OutputLayerType, InitializationRuleType>::Evaluate(
+    const arma::mat& /* parameters */, const size_t i)
+{
+  return Evaluate(arma::mat(), i, true);
+}
+
+template<typename OutputLayerType, typename InitializationRuleType>
 void RNN<OutputLayerType, InitializationRuleType>::Gradient(
     const arma::mat& parameters, const size_t i, arma::mat& gradient)
 {

@@ -41,12 +41,12 @@ class B
 
 class C
 {
-  public:
-    size_t NumConstraints() const;
-    double Evaluate(const arma::mat&) const;
-    void Gradient(const arma::mat&, arma::mat&) const;
-    double EvaluateConstraint(const size_t, const arma::mat&) const;
-    void GradientConstraint(const size_t, const arma::mat&, arma::mat&) const;
+ public:
+  size_t NumConstraints() const;
+  double Evaluate(const arma::mat&) const;
+  void Gradient(const arma::mat&, arma::mat&) const;
+  double EvaluateConstraint(const size_t, const arma::mat&) const;
+  void GradientConstraint(const size_t, const arma::mat&, arma::mat&) const;
 };
 
 class D
@@ -79,9 +79,9 @@ BOOST_AUTO_TEST_CASE(DecomposableFunctionTypeCheckTest)
       "CheckDecomposableEvaluate static check failed.");
   static_assert(CheckDecomposableEvaluate<B>::value,
       "CheckDecomposableEvaluate static check failed.");
-  static_assert(!CheckDecomposableEvaluate<C>::value, 
+  static_assert(!CheckDecomposableEvaluate<C>::value,
       "CheckDecomposableEvaluate static check failed.");
-  static_assert(!CheckDecomposableEvaluate<D>::value, 
+  static_assert(!CheckDecomposableEvaluate<D>::value,
       "CheckDecomposableEvaluate static check failed.");
 
   static_assert(CheckDecomposableGradient<A>::value,
@@ -90,7 +90,7 @@ BOOST_AUTO_TEST_CASE(DecomposableFunctionTypeCheckTest)
       "CheckDecomposableGradient static check failed.");
   static_assert(!CheckDecomposableGradient<C>::value,
       "CheckDecomposableGradient static check failed.");
-  static_assert(!CheckDecomposableGradient<D>::value, 
+  static_assert(!CheckDecomposableGradient<D>::value,
       "CheckDecomposableGradient static check failed.");
 }
 
