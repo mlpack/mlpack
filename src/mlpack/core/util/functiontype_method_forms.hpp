@@ -159,9 +159,66 @@ template <typename FunctionType>
 struct CheckGradientConstraint
 {
   const static bool value =
-    HasGradientConstraint<FunctionType, GradientConstraintFormConst>::value
-    || HasGradientConstraint<FunctionType,
-    GradientConstraintFormNonConst>::value;
+    HasGradientConstraint<FunctionType, GradientConstraintFormConst>::value ||
+    HasGradientConstraint<FunctionType, GradientConstraintFormNonConst>::value;
+};
+
+/*
+ * Definitions of method forms and checks for the SparseFunctionType API.
+ */
+HAS_METHOD_FORM(Gradient, HasSparseGradient);
+
+template <typename Class, typename...Ts>
+using SparseGradientFormConst = void(Class::*)(const arma::mat&, size_t,
+    arma::sp_mat&) const;
+
+template <typename Class, typename...Ts>
+using SparseGradientFormNonConst = void(Class::*)(const arma::mat&, size_t,
+    arma::sp_mat&);
+
+template <typename FunctionType>
+struct CheckSparseGradient
+{
+  const static bool value =
+    HasSparseGradient<FunctionType, SparseGradientFormConst>::value ||
+    HasSparseGradient<FunctionType, SparseGradientFormNonConst>::value;
+};
+
+/**
+ * Definitions of method forms and checks for the ResolvableFunctionType API.
+ */
+HAS_METHOD_FORM(NumFeatures, HasNumFeatures);
+
+template <typename Class, typename...Ts>
+using NumFeaturesFormConst = size_t(Class::*)() const;
+
+template <typename Class, typename...Ts>
+using NumFeaturesFormNonConst = size_t(Class::*)();
+
+template<typename FunctionType>
+struct CheckNumFeatures
+{
+  const static bool value =
+    HasNumFeatures<FunctionType, NumFeaturesFormConst>::value ||
+    HasNumFeatures<FunctionType, NumFeaturesFormNonConst>::value;
+};
+
+HAS_METHOD_FORM(PartialGradient, HasPartialGradient);
+
+template <typename Class, typename...Ts>
+using PartialGradientFormConst = void(Class::*)(const arma::mat&, size_t,
+    arma::sp_mat&) const;
+
+template <typename Class, typename...Ts>
+using PartialGradientFormNonConst = void(Class::*)(const arma::mat&, size_t,
+    arma::sp_mat&);
+
+template <typename FunctionType>
+struct CheckPartialGradient
+{
+  const static bool value =
+    HasPartialGradient<FunctionType, PartialGradientFormConst>::value ||
+    HasPartialGradient<FunctionType, PartialGradientFormNonConst>::value;
 };
 
 } // namespace static_checks

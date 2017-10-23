@@ -14,6 +14,7 @@
 
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/functiontype_method_forms.hpp>
 #include "update_span.hpp"
 #include "constr_lpball.hpp"
 

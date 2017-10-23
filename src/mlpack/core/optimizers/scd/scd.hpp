@@ -13,6 +13,7 @@
 #define MLPACK_CORE_OPTIMIZERS_SCD_SCD_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/functiontype_method_forms.hpp>
 #include "descent_policies/random_descent.hpp"
 
 namespace mlpack {

@@ -13,6 +13,7 @@
 #define MLPACK_CORE_OPTIMIZERS_SA_SA_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/functiontype_method_forms.hpp>
 
 #include "exponential_schedule.hpp"
 

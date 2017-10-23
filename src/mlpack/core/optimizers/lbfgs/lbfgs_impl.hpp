@@ -173,6 +173,11 @@ bool L_BFGS::LineSearch(FunctionType& function,
 template<typename FunctionType>
 double L_BFGS::Optimize(FunctionType& function, arma::mat& iterate)
 {
+  static_assert(mlpack::static_checks::CheckEvaluate<FunctionType>::value,
+      "The FunctionType does not have a correct definition of Evaluate.");
+  static_assert(mlpack::static_checks::CheckGradient<FunctionType>::value,
+      "The FunctionType does not have a correct definition of Gradient.");
+
   // Ensure that the cubes holding past iterations' information are the right
   // size.  Also set the current best point value to the maximum.
   const size_t rows = iterate.n_rows;

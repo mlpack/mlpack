@@ -23,6 +23,11 @@ template<typename FunctionType>
 double GradientDescent::Optimize(
     FunctionType& function, arma::mat& iterate)
 {
+  static_assert(mlpack::static_checks::CheckEvaluate<FunctionType>::value,
+      "The FunctionType does not have a correct definition of Evaluate.");
+  static_assert(mlpack::static_checks::CheckGradient<FunctionType>::value,
+      "The FunctionType does not have a correct definition of Gradient.");
+
   // To keep track of where we are and how things are going.
   double overallObjective = function.Evaluate(iterate);
   double lastObjective = DBL_MAX;

@@ -42,6 +42,11 @@ template<typename FunctionType>
 double FrankWolfe<LinearConstrSolverType, UpdateRuleType>::
 Optimize(FunctionType& function, arma::mat& iterate)
 {
+  static_assert(mlpack::static_checks::CheckEvaluate<FunctionType>::value,
+      "The FunctionType does not have a correct definition of Evaluate.");
+  static_assert(mlpack::static_checks::CheckGradient<FunctionType>::value,
+      "The FunctionType does not have a correct definition of Gradient.");
+
   // To keep track of the function value.
   double currentObjective = function.Evaluate(iterate);
 

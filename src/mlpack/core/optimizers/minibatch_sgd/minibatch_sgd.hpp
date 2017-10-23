@@ -13,6 +13,7 @@
 #define MLPACK_CORE_OPTIMIZERS_MINIBATCH_SGD_MINIBATCH_SGD_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/functiontype_method_forms.hpp>
 #include <mlpack/core/optimizers/sgd/update_policies/vanilla_update.hpp>
 #include <mlpack/core/optimizers/minibatch_sgd/decay_policies/no_decay.hpp>
 

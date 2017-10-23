@@ -23,6 +23,11 @@ double LineSearch::Optimize(FunctionType& function,
                             const arma::mat& x1,
                             arma::mat& x2)
 {
+  static_assert(mlpack::static_checks::CheckEvaluate<FunctionType>::value,
+      "The FunctionType does not have a correct definition of Evaluate.");
+  static_assert(mlpack::static_checks::CheckGradient<FunctionType>::value,
+      "The FunctionType does not have a correct definition of Gradient.");
+
   // Set up the search line, that is,
   // find the zero of der(gamma) = Derivative(gamma).
   arma::mat deltaX = x2 - x1;
@@ -36,7 +41,7 @@ double LineSearch::Optimize(FunctionType& function,
     x2 = x1;
     return function.Evaluate(x1);
   }
-  else if (derivativeNew <= 0.0) // Optimal solution at righ endpoint.
+  else if (derivativeNew <= 0.0) // Optimal solution at right endpoint.
     return function.Evaluate(x2);
   else if (secant < tolerance) // function too flat, just take left endpoint.
   {
