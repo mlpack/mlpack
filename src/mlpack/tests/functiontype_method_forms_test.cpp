@@ -27,16 +27,22 @@ class A
 {
  public:
   size_t NumFunctions() const;
+  size_t NumFeatures() const;
   double Evaluate(const arma::mat&, const size_t) const;
   void Gradient(const arma::mat&, const size_t, arma::mat&) const;
+  void Gradient(const arma::mat&, const size_t, arma::sp_mat&) const;
+  void PartialGradient(const arma::mat&, const size_t, arma::sp_mat&) const;
 };
 
 class B
 {
  public:
   size_t NumFunctions();
+  size_t NumFeatures();
   double Evaluate(const arma::mat&, const size_t);
   void Gradient(const arma::mat&, const size_t, arma::mat&);
+  void Gradient(const arma::mat&, const size_t, arma::sp_mat&);
+  void PartialGradient(const arma::mat&, const size_t, arma::sp_mat&);
 };
 
 class C
@@ -63,7 +69,6 @@ class D
 /**
  * Test the correctness of the static check for DecomposableFunctionType API.
  */
-
 BOOST_AUTO_TEST_CASE(DecomposableFunctionTypeCheckTest)
 {
   static_assert(CheckNumFunctions<A>::value,
@@ -94,6 +99,9 @@ BOOST_AUTO_TEST_CASE(DecomposableFunctionTypeCheckTest)
       "CheckDecomposableGradient static check failed.");
 }
 
+/**
+ * Test the correctness of the static check for LagrangianFunctionType API.
+ */
 BOOST_AUTO_TEST_CASE(LagrangianFunctionTypeCheckTest)
 {
   static_assert(!CheckEvaluate<A>::value, "CheckEvaluate static check failed.");
@@ -132,6 +140,45 @@ BOOST_AUTO_TEST_CASE(LagrangianFunctionTypeCheckTest)
       "CheckGradientConstraint static check failed.");
   static_assert(CheckGradientConstraint<D>::value,
       "CheckGradientConstraint static check failed.");
+}
+
+/**
+ * Test the correctness of the static check for SparseFunctionType API.
+ */
+BOOST_AUTO_TEST_CASE(SparseFunctionTypeCheckTest)
+{
+  static_assert(CheckSparseGradient<A>::value,
+      "CheckSparseGradient static check failed.");
+  static_assert(CheckSparseGradient<B>::value,
+      "CheckSparseGradient static check failed.");
+  static_assert(!CheckSparseGradient<C>::value,
+      "CheckSparseGradient static check failed.");
+  static_assert(!CheckSparseGradient<D>::value,
+      "CheckSparseGradient static check failed.");
+}
+
+/**
+ * Test the correctness of the static check for SparseFunctionType API.
+ */
+BOOST_AUTO_TEST_CASE(ResolvableFunctionTypeCheckTest)
+{
+  static_assert(CheckNumFeatures<A>::value,
+      "CheckNumFeatures static check failed.");
+  static_assert(CheckNumFeatures<B>::value,
+      "CheckNumFeatures static check failed.");
+  static_assert(!CheckNumFeatures<C>::value,
+      "CheckNumFeatures static check failed.");
+  static_assert(!CheckNumFeatures<D>::value,
+      "CheckNumFeatures static check failed.");
+
+  static_assert(CheckPartialGradient<A>::value,
+      "CheckPartialGradient static check failed.");
+  static_assert(CheckPartialGradient<B>::value,
+      "CheckPartialGradient static check failed.");
+  static_assert(!CheckPartialGradient<C>::value,
+      "CheckPartialGradient static check failed.");
+  static_assert(!CheckPartialGradient<D>::value,
+      "CheckPartialGradient static check failed.");
 }
 
 BOOST_AUTO_TEST_SUITE_END();
