@@ -490,6 +490,7 @@ BOOST_AUTO_TEST_CASE(PReLUFunctionTest)
  */
 BOOST_AUTO_TEST_CASE(SwishFunctionTest)
 {
+  // Hand-calculated values using Python interpreter.
   const arma::colvec desiredActivations("-0.238405 3.07466 4.45055 \
                                          -3.05183208657e-42 0.731058 -0.26894 \
                                          1.76159 0");
