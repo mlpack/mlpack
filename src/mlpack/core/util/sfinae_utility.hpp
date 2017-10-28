@@ -16,6 +16,7 @@
 #define MLPACK_CORE_SFINAE_UTILITY
 
 #include <type_traits>
+#include <cstring>
 
 namespace mlpack {
 namespace sfinae {

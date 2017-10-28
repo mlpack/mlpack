@@ -14,6 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/math/random.hpp>
+#include <mlpack/core/util/functiontype_method_forms.hpp>
 #include "decay_policies/constant_step.hpp"
 
 namespace mlpack {

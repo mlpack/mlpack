@@ -155,7 +155,18 @@ class RNN
    */
   double Evaluate(const arma::mat& /* parameters */,
                   const size_t i,
-                  const bool deterministic = true);
+                  const bool deterministic);
+
+  /**
+   * Evaluate the recurrent neural network with the given parameters. This
+   * function is usually called by the optimizer to train the model. This
+   * overload is provided for compatibility with the DecomposableFunctionType
+   * API, calls the above function with deterministic = true.
+   *
+   * @param parameters Matrix model parameters.
+   * @param i Index of point to use for objective function evaluation.
+   */
+  double Evaluate(const arma::mat& /* parameters */, const size_t i);
 
   /**
    * Evaluate the gradient of the recurrent neural network with the given

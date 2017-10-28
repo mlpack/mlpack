@@ -17,6 +17,7 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/optimizers/sgd/update_policies/vanilla_update.hpp>
 #include <mlpack/core/optimizers/sgd/update_policies/momentum_update.hpp>
+#include <mlpack/core/util/functiontype_method_forms.hpp>
 
 namespace mlpack {
 namespace optimization {

@@ -15,6 +15,7 @@
 #define MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_IMPL_HPP
 
 #include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
+#include <mlpack/core/util/functiontype_method_forms.hpp>
 #include "aug_lagrangian_function.hpp"
 
 namespace mlpack {
@@ -62,6 +63,22 @@ bool AugLagrangian::Optimize(
     arma::mat& coordinates,
     const size_t maxIterations)
 {
+  static_assert(mlpack::static_checks::CheckEvaluate<
+      LagrangianFunctionType>::value,
+      "The FunctionType does not have a correct definition of Evaluate.");
+  static_assert(mlpack::static_checks::CheckGradient<
+      LagrangianFunctionType>::value,
+      "The FunctionType does not have a correct definition of Gradient.");
+  static_assert(mlpack::static_checks::CheckNumConstraints<
+      LagrangianFunctionType>::value,
+      "The FunctionType does not have a correct definition of NumConstraints.");
+  static_assert(mlpack::static_checks::CheckEvaluateConstraint<
+      LagrangianFunctionType>::value, "The FunctionType does not have a correct"
+      " definition of EvaluateConstraint.");
+  static_assert(mlpack::static_checks::CheckGradientConstraint<
+      LagrangianFunctionType>::value, "The FunctionType does not have a correct"
+      " definition of GradientConstraint.");
+
   LagrangianFunctionType& function = augfunc.Function();
 
   // Ensure that we update lambda immediately.

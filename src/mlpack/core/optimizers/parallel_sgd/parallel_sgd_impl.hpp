@@ -38,6 +38,14 @@ double ParallelSGD<DecayPolicyType>::Optimize(
     SparseFunctionType& function,
     arma::mat& iterate)
 {
+  static_assert(static_checks::CheckNumFunctions<SparseFunctionType>::value,
+      "The FunctionType does not have a correct definition of NumFunctions.");
+  static_assert(static_checks::CheckEvaluate<SparseFunctionType>::value,
+      "The FunctionType does not have a correct definition of Evaluate.");
+  static_assert(static_checks::CheckSparseGradient<SparseFunctionType>::value,
+      "The FunctionType does not have a correct definition of a sparse"
+      " Gradient function.");
+
   double overallObjective = DBL_MAX;
   double lastObjective;
 

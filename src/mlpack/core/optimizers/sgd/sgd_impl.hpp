@@ -46,6 +46,18 @@ double SGD<UpdatePolicyType>::Optimize(
     DecomposableFunctionType& function,
     arma::mat& iterate)
 {
+  static_assert(
+      static_checks::CheckNumFunctions<DecomposableFunctionType>::value,
+      "The FunctionType does not have a correct definition of NumFunctions.");
+  static_assert(static_checks::CheckDecomposableEvaluate<
+      DecomposableFunctionType>::value,
+      "The FunctionType does not have a correct definition of a decomposable"
+      " Evaluate function.");
+  static_assert(static_checks::CheckDecomposableGradient<
+      DecomposableFunctionType>::value,
+      "The FunctionType does not have a correct definition of a decomposable"
+      " Gradient function.");
+
   // Find the number of functions to use.
   const size_t numFunctions = function.NumFunctions();
 
