@@ -1,4 +1,8 @@
 set(SOURCES
+  decay_policies/no_decay.hpp
+  update_policies/gradient_clipping.hpp
+  update_policies/momentum_update.hpp
+  update_policies/vanilla_update.hpp
   sgd.hpp
   sgd_impl.hpp
   test_function.hpp

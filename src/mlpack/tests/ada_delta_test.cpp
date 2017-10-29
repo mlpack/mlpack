@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_SUITE(AdaDeltaTest);
 BOOST_AUTO_TEST_CASE(SimpleAdaDeltaTestFunction)
 {
   SGDTestFunction f;
-  AdaDelta optimizer(1.0, 0.99, 1e-8, 5000000, 1e-9, true);
+  AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 5000000, 1e-9, true);
 
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);

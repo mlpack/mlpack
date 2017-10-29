@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_SUITE(SMORMS3Test);
 BOOST_AUTO_TEST_CASE(SimpleSMORMS3TestFunction)
 {
   SGDTestFunction f;
-  SMORMS3 s(0.001, 1e-16, 5000000, 1e-9, true);
+  SMORMS3 s(0.001, 1, 1e-16, 5000000, 1e-9, true);
 
   arma::mat coordinates = f.GetInitialPoint();
   s.Optimize(f, coordinates);

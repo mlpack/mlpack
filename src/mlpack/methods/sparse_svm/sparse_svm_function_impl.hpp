@@ -18,23 +18,56 @@
 
 SparseSVMFunction::SparseSVMFunction(
     const arma::sp_mat& dataset, const arma::vec& labels) :
-  dataset(dataset), labels(labels)
+    dataset(dataset),
+    labels(math::MakeAlias(const_cast<arma::vec&>(labels), false))
 { /* Nothing to do */ }
 
-double SparseSVMFunction::Evaluate(const arma::mat& parameters, size_t id)
+void SparseSVMFunction::Shuffle()
+{
+  arma::sp_mat newDataset;
+  arma::vec newLabels;
+
+  // Shuffle the data.
+  math::ShuffleData(dataset, labels, newDataset, newLabels);
+
+  math::ClearAlias(newLabels);
+
+  dataset = std::move(newDataset);
+  labels = std::move(newLabels);
+}
+
+double SparseSVMFunction::Evaluate(const arma::mat& parameters,
+                                   const size_t firstId,
+                                   const size_t batchSize)
 {
   // The hinge loss function.
-  return std::max(0.0, 1 - labels(id) * arma::dot(dataset.col(id), parameters));
+  const size_t lastId = firstId + batchSize - 1;
+  return arma::accu(arma::max(0.0, 1 - labels.subvec(firstId, lastId) %
+      dataset.cols(firstId, lastId) *
+      arma::repmat(parameters, 1, batchSize).t()));
 }
 
 template <typename GradType>
 void SparseSVMFunction::Gradient(
-    const arma::mat& parameters, size_t id, GradType& gradient)
+    const arma::mat& parameters,
+    const size_t firstId,
+    GradType& gradient,
+    const size_t batchSize)
 {
   // Evaluate the gradient of the hinge loss function.
-  double dot = 1 - labels(id) * arma::dot(parameters, dataset.col(id));
-  gradient = (dot < 0) ? GradType(parameters.n_rows, 1) :
-    (-1 * GradType(dataset.col(id) * labels(id)));
+  const size_t lastId = firstId + batchSize - 1;
+  arma::vec dots = 1 - labels.subvec(firstId, lastId) %
+      dataset.cols(firstId, lastId) *
+      arma::repmat(parameters, 1, batchSize).t();
+  gradient = GradType(parameters.n_rows, 1);
+  for (size_t i = 0; i < batchSize; ++i)
+  {
+    if (dots[i] >= 0)
+    {
+      // Is this correct?
+      gradient += -1 * GradType(dataset.col(id) * labels(id));
+    }
+  }
 }
 
 size_t SparseSVMFunction::NumFunctions()

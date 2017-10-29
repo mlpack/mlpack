@@ -42,6 +42,11 @@ class SoftmaxRegressionFunction
   const arma::mat InitializeWeights();
 
   /**
+   * Shuffle the dataset.
+   */
+  void Shuffle();
+
+  /**
    * Initialize Softmax Regression weights (trainable parameters) with the given
    * parameters.
    *
@@ -85,9 +90,13 @@ class SoftmaxRegressionFunction
    *
    * @param parameters Current values of the model parameters.
    * @param probabilities Pointer to arma::mat which stores the probabilities.
+   * @param start Index of point to start at.
+   * @param batchSize Number of points to calculate probabilities for.
    */
   void GetProbabilitiesMatrix(const arma::mat& parameters,
-                              arma::mat& probabilities) const;
+                              arma::mat& probabilities,
+                              const size_t start,
+                              const size_t batchSize) const;
 
   /**
    * Evaluates the objective function of the softmax regression model using the
@@ -101,6 +110,21 @@ class SoftmaxRegressionFunction
   double Evaluate(const arma::mat& parameters) const;
 
   /**
+   * Evaluate the objective function of the softmax regression model for a
+   * subset of the data points using the given parameters. The cost function has
+   * terms for the log likelihood error and the regularization cost. The
+   * objective function takes a low value when the model generalizes well for
+   * the given training data, while having small parameter values.
+   *
+   * @param parameters Current values of the model parameters.
+   * @param start First index of the data points to use.
+   * @param batchSize Number of data points to evaluate objective for.
+   */
+  double Evaluate(const arma::mat& parameters,
+                  const size_t start,
+                  const size_t batchSize = 1);
+
+  /**
    * Evaluates the gradient values of the objective function given the current
    * set of parameters. The function calculates the probabilities for each class
    * given the parameters, and computes the gradients based on the difference
@@ -110,6 +134,22 @@ class SoftmaxRegressionFunction
    * @param gradient Matrix where gradient values will be stored.
    */
   void Gradient(const arma::mat& parameters, arma::mat& gradient) const;
+
+  /**
+   * Evaluate the gradient of the objective function given the current set of
+   * parameters, on a subset of the data. The function calculates the
+   * probabilities for each class given the parameters, and computes the
+   * gradients based on the difference from the ground truth.
+   *
+   * @param parameters Current values of the model parameters.
+   * @param start First index of the data points to use.
+   * @param gradient Matrix to store gradient into.
+   * @param batchSize Number of data points to evaluate gradient for.
+   */
+  void Gradient(const arma::mat& parameters,
+                const size_t start,
+                arma::mat& gradient,
+                const size_t batchSize = 1);
 
   /**
    * Evaluates the gradient values of the objective function given the current
@@ -145,8 +185,8 @@ class SoftmaxRegressionFunction
   bool FitIntercept() const { return fitIntercept; }
 
  private:
-  //! Training data matrix.
-  const arma::mat& data;
+  //! Training data matrix.  This is an alias until the data is shuffled.
+  arma::mat data;
   //! Label matrix for the provided data.
   arma::sp_mat groundTruth;
   //! Initial parameter point.

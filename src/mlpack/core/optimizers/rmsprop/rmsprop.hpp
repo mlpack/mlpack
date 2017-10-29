@@ -48,10 +48,13 @@ namespace optimization {
  * required. This class must implement the following function:
  *
  *   size_t NumFunctions();
- *   double Evaluate(const arma::mat& coordinates, const size_t i);
+ *   double Evaluate(const arma::mat& coordinates,
+ *                   const size_t i,
+ *                   const size_t batchSize);
  *   void Gradient(const arma::mat& coordinates,
  *                 const size_t i,
- *                 arma::mat& gradient);
+ *                 arma::mat& gradient,
+ *                 const size_t batchSize);
  *
  * NumFunctions() should return the number of functions (\f$n\f$), and in the
  * other two functions, the parameter i refers to which individual function (or
@@ -73,6 +76,7 @@ class RMSProp
    * equal one pass over the dataset).
    *
    * @param stepSize Step size for each iteration.
+   * @param batchSize Number of points to process in each step.
    * @param alpha Smoothing constant, similar to that used in AdaDelta and
    *        momentum methods.
    * @param epsilon Value used to initialise the mean squared gradient parameter.
@@ -83,6 +87,7 @@ class RMSProp
    *        function is visited in linear order.
    */
   RMSProp(const double stepSize = 0.01,
+          const size_t batchSize = 32,
           const double alpha = 0.99,
           const double epsilon = 1e-8,
           const size_t maxIterations = 100000,
@@ -109,6 +114,11 @@ class RMSProp
   double StepSize() const { return optimizer.StepSize(); }
   //! Modify the step size.
   double& StepSize() { return optimizer.StepSize(); }
+
+  //! Get the batch size.
+  size_t BatchSize() const { return optimizer.BatchSize(); }
+  //! Modify the batch size.
+  size_t& BatchSize() { return optimizer.BatchSize(); }
 
   //! Get the smoothing parameter.
   double Alpha() const { return optimizer.UpdatePolicy().Alpha(); }

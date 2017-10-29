@@ -9,7 +9,6 @@ set(DIRS
   grid_search
   lbfgs
   line_search
-  minibatch_sgd
   proximal
   rmsprop
   sa

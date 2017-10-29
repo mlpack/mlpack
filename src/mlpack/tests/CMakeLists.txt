@@ -66,7 +66,6 @@ add_executable(mlpack_test
   maximal_inputs_test.cpp
   mean_shift_test.cpp
   metric_test.cpp
-  minibatch_sgd_test.cpp
   mlpack_test.cpp
   mock_categorical_data.hpp
   momentum_sgd_test.cpp

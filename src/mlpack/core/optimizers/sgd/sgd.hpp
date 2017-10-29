@@ -15,8 +15,9 @@
 #define MLPACK_CORE_OPTIMIZERS_SGD_SGD_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/optimizers/sgd/update_policies/vanilla_update.hpp>
-#include <mlpack/core/optimizers/sgd/update_policies/momentum_update.hpp>
+#include "update_policies/vanilla_update.hpp"
+#include "update_policies/momentum_update.hpp"
+#include "decay_policies/no_decay.hpp"
 
 namespace mlpack {
 namespace optimization {
@@ -55,10 +56,13 @@ namespace optimization {
  * This class must implement the following function:
  *
  *   size_t NumFunctions();
- *   double Evaluate(const arma::mat& coordinates, const size_t i);
+ *   double Evaluate(const arma::mat& coordinates,
+ *                   const size_t i,
+ *                   const size_t batchSize);
  *   void Gradient(const arma::mat& coordinates,
  *                 const size_t i,
- *                 arma::mat& gradient);
+ *                 arma::mat& gradient,
+ *                 const size_t batchSize);
  *
  * NumFunctions() should return the number of functions (\f$n\f$), and in the
  * other two functions, the parameter i refers to which individual function (or
@@ -71,8 +75,12 @@ namespace optimization {
  * @tparam UpdatePolicyType update policy used by SGD during the iterative update
  *     process. By default vanilla update policy (see
  *     mlpack::optimization::VanillaUpdate) is used.
+ * @tparam DecayPolicyType Decay policy used during the iterative update
+ *     process to adjust the step size. By default the step size isn't going to
+ *     be adjusted (i.e. NoDecay is used).
  */
-template<typename UpdatePolicyType = VanillaUpdate>
+template<typename UpdatePolicyType = VanillaUpdate,
+         typename DecayPolicyType = NoDecay>
 class SGD
 {
  public:
@@ -85,6 +93,7 @@ class SGD
    * equal one pass over the dataset).
    *
    * @param stepSize Step size for each iteration.
+   * @param batchSize Batch size to use for each step.
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *     limit).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
@@ -92,14 +101,17 @@ class SGD
    *     function is visited in linear order.
    * @param updatePolicy Instantiated update policy used to adjust the given
    *                     parameters.
+   * @param decayPolicy Instantiated decay policy used to adjust the step size.
    * @param resetPolicy Flag that determines whether update policy parameters
    *                    are reset before every Optimize call.
    */
   SGD(const double stepSize = 0.01,
+      const size_t batchSize = 32,
       const size_t maxIterations = 100000,
       const double tolerance = 1e-5,
       const bool shuffle = true,
-      const UpdatePolicyType updatePolicy = UpdatePolicyType(),
+      const UpdatePolicyType& updatePolicy = UpdatePolicyType(),
+      const DecayPolicyType& decayPolicy = DecayPolicyType(),
       const bool resetPolicy = true);
 
   /**
@@ -120,6 +132,11 @@ class SGD
   double StepSize() const { return stepSize; }
   //! Modify the step size.
   double& StepSize() { return stepSize; }
+
+  //! Get the batch size.
+  size_t BatchSize() const { return batchSize; }
+  //! Modify the batch size.
+  size_t& BatchSize() { return batchSize; }
 
   //! Get the maximum number of iterations (0 indicates no limit).
   size_t MaxIterations() const { return maxIterations; }
@@ -148,9 +165,17 @@ class SGD
   //! Modify the update policy.
   UpdatePolicyType& UpdatePolicy() { return updatePolicy; }
 
+  //! Get the step size decay policy.
+  const DecayPolicyType& DecayPolicy() const { return decayPolicy; }
+  //! Modify the step size decay policy.
+  DecayPolicyType& DecayPolicy() { return decayPolicy; }
+
  private:
   //! The step size for each example.
   double stepSize;
+
+  //! The batch size for processing.
+  size_t batchSize;
 
   //! The maximum number of allowed iterations.
   size_t maxIterations;
@@ -164,6 +189,9 @@ class SGD
 
   //! The update policy used to update the parameters in each iteration.
   UpdatePolicyType updatePolicy;
+
+  //! The decay policy used to update the step size.
+  DecayPolicyType decayPolicy;
 
   //! Flag indicating whether update policy
   //! should be reset before running optimization.
