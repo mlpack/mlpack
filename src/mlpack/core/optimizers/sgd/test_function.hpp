@@ -24,9 +24,17 @@ namespace test {
 //! iterations.
 class SGDTestFunction
 {
+ private:
+  arma::Col<size_t> visitationOrder;
+
  public:
-  //! Nothing to do for the constructor.
-  SGDTestFunction() { }
+  //! Initialize the SGDTestFunction.
+  SGDTestFunction();
+
+  /**
+  * Shuffle the order of function visitation.  This may be called by the optimizer.
+  */
+  void Shuffle();
 
   //! Return 3 (the number of functions).
   size_t NumFunctions() const { return 3; }
@@ -37,10 +45,21 @@ class SGDTestFunction
   //! Evaluate a function.
   double Evaluate(const arma::mat& coordinates, const size_t i) const;
 
+  //! Evaluate a function for a particular batch-size
+  double Evaluate(const arma::mat& coordinates,
+                  const size_t begin,
+                  const size_t batchSize) const;
+
   //! Evaluate the gradient of a function.
   void Gradient(const arma::mat& coordinates,
                 const size_t i,
                 arma::mat& gradient) const;
+
+  //! Evaluate the gradient of a function for a particular batch-size
+  void Gradient(const arma::mat& coordinates,
+                const size_t begin,
+                arma::mat& gradient,
+                const size_t batchSize) const;
 };
 
 } // namespace test

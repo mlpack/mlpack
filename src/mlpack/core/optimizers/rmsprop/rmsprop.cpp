@@ -18,17 +18,18 @@ namespace mlpack {
 namespace optimization {
 
 RMSProp::RMSProp(const double stepSize,
+                 const size_t batchSize,
                  const double alpha,
                  const double epsilon,
                  const size_t maxIterations,
                  const double tolerance,
                  const bool shuffle) :
     optimizer(stepSize,
+              batchSize,
               maxIterations,
               tolerance,
               shuffle,
-              RMSPropUpdate(epsilon,
-                            alpha))
+              RMSPropUpdate(epsilon, alpha))
 { /* Nothing to do. */ }
 
 } // namespace optimization

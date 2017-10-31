@@ -44,6 +44,7 @@ cdef extern from "<mlpack/bindings/python/mlpack/cli_util.hpp>" \
   void DisableVerbose() nogil except +
   void DisableBacktrace() nogil except +
   void ResetTimers() nogil except +
+  void EnableTimers() nogil except +
 
 cdef extern from "<mlpack/bindings/python/mlpack/move.hpp>" \
     namespace "mlpack::util" nogil:

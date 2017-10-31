@@ -19,7 +19,6 @@
 #include "nca.hpp"
 
 #include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
-#include <mlpack/core/optimizers/minibatch_sgd/minibatch_sgd.hpp>
 
 // Define parameters.
 PROGRAM_INFO("Neighborhood Components Analysis (NCA)",
@@ -44,11 +43,11 @@ PROGRAM_INFO("Neighborhood Components Analysis (NCA)",
     "\n\n"
     "Stochastic gradient descent, specified by the value 'sgd' for the "
     "parameter " + PRINT_PARAM_STRING("optimizer") + ", depends "
-    "primarily on two parameters: the step size (specified with " +
-    PRINT_PARAM_STRING("step_size") + ") and the maximum "
-    "number of iterations (specified with " +
-    PRINT_PARAM_STRING("max_iterations") + ").  In addition, a normalized "
-    "starting point can be used by specifying the " +
+    "primarily on three parameters: the step size (specified with " +
+    PRINT_PARAM_STRING("step_size") + "), the batch size (specified with " +
+    PRINT_PARAM_STRING("batch_size") + "), and the maximum number of iterations"
+    " (specified with " + PRINT_PARAM_STRING("max_iterations") + ").  In "
+    "addition, a normalized starting point can be used by specifying the " +
     PRINT_PARAM_STRING("normalize") + " parameter, which is necessary if many "
     "warnings of the form 'Denominator of p_i is 0!' are given.  Tuning the "
     "step size can be a tedious affair.  In general, the step size is too large"
@@ -66,12 +65,6 @@ PROGRAM_INFO("Neighborhood Components Analysis (NCA)",
     "SGD refers to a single point, so to take a single pass over the dataset, "
     "set the value of the " + PRINT_PARAM_STRING("max_iterations") +
     " parameter equal to the number of points in the dataset."
-    "\n\n"
-    "The mini-batch SGD optimizer, specified by the value 'minibatch-sgd' for "
-    "the parameter " + PRINT_PARAM_STRING("optimizer") + ", has the same "
-    "parameters as SGD, but the batch size may also be specified with the " +
-    PRINT_PARAM_STRING("batch_size") + " option.  Each iteration of mini-batch "
-    "SGD refers to a single mini-batch."
     "\n\n"
     "The L-BFGS optimizer, specified by the value 'lbfgs' for the parameter " +
     PRINT_PARAM_STRING("optimizer") + ", uses a back-tracking line search "
@@ -94,8 +87,7 @@ PROGRAM_INFO("Neighborhood Components Analysis (NCA)",
 PARAM_MATRIX_IN_REQ("input", "Input dataset to run NCA on.", "i");
 PARAM_MATRIX_OUT("output", "Output matrix for learned distance matrix.", "o");
 PARAM_UROW_IN("labels", "Labels for input dataset.", "l");
-PARAM_STRING_IN("optimizer", "Optimizer to use; 'sgd', 'minibatch-sgd', or "
-    "'lbfgs'.", "O", "sgd");
+PARAM_STRING_IN("optimizer", "Optimizer to use; 'sgd' or 'lbfgs'.", "O", "sgd");
 
 PARAM_FLAG("normalize", "Use a normalized starting point for optimization. This"
     " is useful for when points are far apart, or when SGD is returning NaN.",
@@ -142,11 +134,11 @@ void mlpackMain()
   RequireAtLeastOnePassed({ "output" }, false, "no output will be saved");
 
   const string optimizerType = CLI::GetParam<string>("optimizer");
-  RequireParamInSet<string>("optimizer", { "sgd", "lbfgs", "minibatch-sgd" },
+  RequireParamInSet<string>("optimizer", { "sgd", "lbfgs" },
       true, "unknown optimizer type");
 
   // Warn on unused parameters.
-  if (optimizerType == "sgd" || optimizerType == "minibatch-sgd")
+  if (optimizerType == "sgd")
   {
     ReportIgnoredParam({{ }}, "num_basis");
     ReportIgnoredParam({{ }}, "armijo_constant");
@@ -229,6 +221,7 @@ void mlpackMain()
     nca.Optimizer().MaxIterations() = maxIterations;
     nca.Optimizer().Tolerance() = tolerance;
     nca.Optimizer().Shuffle() = shuffle;
+    nca.Optimizer().BatchSize() = batchSize;
 
     nca.LearnDistance(distance);
   }
@@ -243,17 +236,6 @@ void mlpackMain()
     nca.Optimizer().MaxLineSearchTrials() = maxLineSearchTrials;
     nca.Optimizer().MinStep() = minStep;
     nca.Optimizer().MaxStep() = maxStep;
-
-    nca.LearnDistance(distance);
-  }
-  else if (optimizerType == "minibatch-sgd")
-  {
-    NCA<LMetric<2>, MiniBatchSGD> nca(data, labels);
-    nca.Optimizer().StepSize() = stepSize;
-    nca.Optimizer().MaxIterations() = maxIterations;
-    nca.Optimizer().Tolerance() = tolerance;
-    nca.Optimizer().Shuffle() = shuffle;
-    nca.Optimizer().BatchSize() = batchSize;
 
     nca.LearnDistance(distance);
   }

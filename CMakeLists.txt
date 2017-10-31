@@ -88,6 +88,8 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   # Link everything with -lm.
   set(COMPILER_SUPPORT_LIBRARIES ${COMPILER_SUPPORT_LIBRARIES} "m")
   set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} "m")
+  # Use -pthread.
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 endif()
 
 # Setup build for test coverage

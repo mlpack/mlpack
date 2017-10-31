@@ -73,7 +73,7 @@ void PrintPYX(const ProgramDoc& programInfo,
   cout << "from cli cimport CLI" << endl;
   cout << "from cli cimport SetParam, SetParamWithInfo" << endl;
   cout << "from cli cimport EnableVerbose, DisableVerbose, DisableBacktrace, "
-      << "ResetTimers" << endl;
+      << "ResetTimers, EnableTimers" << endl;
   cout << "from cli cimport MoveFromPtr, MoveToPtr" << endl;
   cout << "from matrix_utils import to_matrix, to_matrix_with_info" << endl;
   cout << "from serialization cimport SerializeIn, SerializeOut" << endl;
@@ -172,6 +172,7 @@ void PrintPYX(const ProgramDoc& programInfo,
 
   // Reset any timers and disable backtraces.
   cout << "  ResetTimers()" << endl;
+  cout << "  EnableTimers()" << endl;
   cout << "  DisableBacktrace()" << endl;
   cout << "  DisableVerbose()" << endl;
 

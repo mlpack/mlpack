@@ -20,134 +20,136 @@ using namespace det;
 
 namespace details
 {
-  /**
-   * This one sorts and scand the given per-dimension extract and puts all splits
-   * in a vector, that can easily be iterated afterwards. General implementation.
-   */
-  template <typename ElemType, typename MatType>
-  void ExtractSplits(std::vector<std::pair<ElemType, size_t>>& splitVec,
-                     const MatType& data,
-                     size_t dim,
-                     const size_t start,
-                     const size_t end,
-                     const size_t minLeafSize)
-  {
-    static_assert(
-      std::is_same<typename MatType::elem_type, ElemType>::value == true,
-      "The ElemType does not correspond to the matrix's element type.");
 
-    typedef std::pair<ElemType, size_t> SplitItem;
-    const typename MatType::row_type dimVec =
+/**
+ * This one sorts and scand the given per-dimension extract and puts all splits
+ * in a vector, that can easily be iterated afterwards. General implementation.
+ */
+template<typename ElemType, typename MatType>
+void ExtractSplits(std::vector<std::pair<ElemType, size_t>>& splitVec,
+                   const MatType& data,
+                   size_t dim,
+                   const size_t start,
+                   const size_t end,
+                   const size_t minLeafSize)
+{
+  static_assert(
+    std::is_same<typename MatType::elem_type, ElemType>::value == true,
+    "The ElemType does not correspond to the matrix's element type.");
+
+  typedef std::pair<ElemType, size_t> SplitItem;
+  const typename MatType::row_type dimVec =
       arma::sort(data(dim, arma::span(start, end - 1)));
 
-    // Ensure the minimum leaf size on both sides. We need to figure out why
-    // there are spikes if this minLeafSize is enforced here...
-    for (size_t i = minLeafSize - 1; i < dimVec.n_elem - minLeafSize; ++i)
+  // Ensure the minimum leaf size on both sides. We need to figure out why there
+  // are spikes if this minLeafSize is enforced here...
+  for (size_t i = minLeafSize - 1; i < dimVec.n_elem - minLeafSize; ++i)
+  {
+    // This makes sense for real continuous data. This kinda corrupts the data
+    // and estimation if the data is ordinal. Potentially we can fix that by
+    // taking into account ordinality later in the min/max update, but then we
+    // can end-up with a zero-volumed dimension. No good.
+    const ElemType split = (dimVec[i] + dimVec[i + 1]) / 2.0;
+
+    // Check if we can split here (two points are different)
+    if (split != dimVec[i])
+      splitVec.push_back(SplitItem(split, i + 1));
+  }
+}
+
+// Now the custom arma::Mat implementation.
+template<typename ElemType>
+void ExtractSplits(std::vector<std::pair<ElemType, size_t>>& splitVec,
+                   const arma::Mat<ElemType>& data,
+                   size_t dim,
+                   const size_t start,
+                   const size_t end,
+                   const size_t minLeafSize)
+{
+  typedef std::pair<ElemType, size_t> SplitItem;
+  arma::rowvec dimVec = data(dim, arma::span(start, end - 1));
+
+  // We sort these, in-place (it's a copy of the data, anyways).
+  std::sort(dimVec.begin(), dimVec.end());
+
+  for (size_t i = minLeafSize - 1; i < dimVec.n_elem - minLeafSize; ++i)
+  {
+    // This makes sense for real continuous data. This kinda corrupts the data
+    // and estimation if the data is ordinal. Potentially we can fix that by
+    // taking into account ordinality later in the min/max update, but then we
+    // can end-up with a zero-volumed dimension. No good.
+    const ElemType split = (dimVec[i] + dimVec[i + 1]) / 2.0;
+
+    if (split != dimVec[i])
+      splitVec.push_back(SplitItem(split, i + 1));
+  }
+}
+
+// This the custom, sparse optimized implementation of the same routine.
+template<typename ElemType>
+void ExtractSplits(std::vector<std::pair<ElemType, size_t>>& splitVec,
+                   const arma::SpMat<ElemType>& data,
+                   size_t dim,
+                   const size_t start,
+                   const size_t end,
+                   const size_t minLeafSize)
+{
+  // It's common sense, but we also use it in a check later.
+  Log::Assert(minLeafSize > 0);
+
+  typedef std::pair<ElemType, size_t> SplitItem;
+  const size_t n_elem = end - start;
+
+  // Construct a vector of values.
+  const arma::SpRow<ElemType> row = data(dim, arma::span(start, end - 1));
+  std::vector<ElemType> valsVec(row.begin(), row.end());
+
+  // ... and sort it!
+  std::sort(valsVec.begin(), valsVec.end());
+
+  // Now iterate over the values, taking account for the over-the-zeroes jump
+  // and construct the splits vector.
+  const size_t zeroes = n_elem - valsVec.size();
+  ElemType lastVal = -std::numeric_limits<ElemType>::max();
+  size_t padding = 0;
+
+  for (size_t i = 0; i < valsVec.size(); ++i)
+  {
+    const ElemType newVal = valsVec[i];
+    if (lastVal < ElemType(0) && newVal > ElemType(0) && zeroes > 0)
     {
-      // This makes sense for real continuous data. This kinda corrupts the
-      // data and estimation if the data is ordinal. Potentially we can fix
-      // that by taking into account ordinality later in the min/max update,
-      // but then we can end-up with a zero-volumed dimension. No good.
-      const ElemType split = (dimVec[i] + dimVec[i + 1]) / 2.0;
+      Log::Assert(padding == 0); // We should arrive here once!
+
+      // The minLeafSize > 0 also guarantees we're not entering right at the
+      // start.
+      if (i >= minLeafSize && i <= n_elem - minLeafSize)
+        splitVec.push_back(SplitItem(lastVal / 2.0, i));
+
+      padding = zeroes;
+      lastVal = ElemType(0);
+    }
+
+    // This is the normal case.
+    if (i + padding >= minLeafSize && i + padding <= n_elem - minLeafSize)
+    {
+      // This makes sense for real continuous data.  This kinda corrupts the
+      // data and estimation if the data is ordinal. Potentially we can fix that
+      // by taking into account ordinality later in the min/max update, but then
+      // we can end-up with a zero-volumed dimension. No good.
+      const ElemType split = (lastVal + newVal) / 2.0;
 
       // Check if we can split here (two points are different)
-      if (split != dimVec[i])
-        splitVec.push_back(SplitItem(split, i + 1));
+      if (split != newVal)
+        splitVec.push_back(SplitItem(split, i + padding));
     }
+
+    lastVal = newVal;
   }
+}
 
-  // Now the custom arma::Mat implementation
-  template <typename ElemType>
-  void ExtractSplits(std::vector<std::pair<ElemType, size_t>>& splitVec,
-                     const arma::Mat<ElemType>& data,
-                     size_t dim,
-                     const size_t start,
-                     const size_t end,
-                     const size_t minLeafSize)
-  {
-    typedef std::pair<ElemType, size_t> SplitItem;
-    arma::vec dimVec = data(dim, arma::span(start, end - 1)).t();
+} // namespace details
 
-    // We sort these, in-place (it's a copy of the data, anyways).
-    std::sort(dimVec.begin(), dimVec.end());
-
-    for (size_t i = minLeafSize - 1; i < dimVec.n_elem - minLeafSize; ++i)
-    {
-      // This makes sense for real continuous data. This kinda corrupts the
-      // data and estimation if the data is ordinal. Potentially we can fix
-      // that by taking into account ordinality later in the min/max update,
-      // but then we can end-up with a zero-volumed dimension. No good.
-      const ElemType split = (dimVec[i] + dimVec[i + 1]) / 2.0;
-
-      if (split != dimVec[i])
-        splitVec.push_back(SplitItem(split, i + 1));
-    }
-  }
-
-  // This the custom, sparse optimized implementation of the same routine.
-  template <typename ElemType>
-  void ExtractSplits(std::vector<std::pair<ElemType, size_t>>& splitVec,
-                     const arma::SpMat<ElemType>& data,
-                     size_t dim,
-                     const size_t start,
-                     const size_t end,
-                     const size_t minLeafSize)
-  {
-    // It's common sense, but we also use it in a check later.
-    Log::Assert(minLeafSize > 0);
-
-    typedef std::pair<ElemType, size_t> SplitItem;
-    const size_t n_elem = end - start;
-
-    // Construct a vector of values.
-    const arma::SpRow<ElemType> row = data(dim, arma::span(start, end - 1));
-    std::vector<ElemType> valsVec(row.begin(), row.end());
-
-    // ... and sort it!
-    std::sort(valsVec.begin(), valsVec.end());
-
-    // Now iterate over the values, taking account for the over-the-zeroes
-    // jump and construct the splits vector.
-    const size_t zeroes = n_elem - valsVec.size();
-    ElemType lastVal = -std::numeric_limits<ElemType>::max();
-    size_t padding = 0;
-
-    for (size_t i = 0; i < valsVec.size(); ++i)
-    {
-      const ElemType newVal = valsVec[i];
-      if (lastVal < ElemType(0) && newVal > ElemType(0) && zeroes > 0)
-      {
-        Log::Assert(padding == 0); // We should arrive here once!
-
-        // The minLeafSize > 0 also guarantees we're not entering right at the
-        // start.
-        if (i >= minLeafSize && i <= n_elem - minLeafSize)
-          splitVec.push_back(SplitItem(lastVal / 2.0, i));
-
-        padding = zeroes;
-        lastVal = ElemType(0);
-      }
-
-      // the normal case
-      if (i + padding >= minLeafSize && i + padding <= n_elem - minLeafSize)
-      {
-        // This makes sense for real continuous data.  This kinda corrupts the
-        // data and estimation if the data is ordinal. Potentially we can fix
-        // that by taking into account ordinality later in the min/max update,
-        // but then we can end-up with a zero-volumed dimension. No good.
-        const ElemType split = (lastVal + newVal) / 2.0;
-
-        // Check if we can split here (two points are different)
-        if (split != newVal)
-          splitVec.push_back(SplitItem(split, i + padding));
-      }
-
-      lastVal = newVal;
-    }
-  }
-}; // namespace details
-
-template <typename MatType, typename TagType>
+template<typename MatType, typename TagType>
 DTree<MatType, TagType>::DTree() :
     start(0),
     end(0),
@@ -165,7 +167,7 @@ DTree<MatType, TagType>::DTree() :
     right(NULL)
 { /* Nothing to do. */ }
 
-template <typename MatType, typename TagType>
+template<typename MatType, typename TagType>
 DTree<MatType, TagType>::DTree(const DTree& obj) :
     start(obj.start),
     end(obj.end),
@@ -187,10 +189,13 @@ DTree<MatType, TagType>::DTree(const DTree& obj) :
   /* Nothing to do. */
 }
 
-template <typename MatType, typename TagType>
+template<typename MatType, typename TagType>
 DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(
     const DTree<MatType, TagType>& obj)
 {
+  if (this == &obj)
+    return *this;
+
   // Copy the values from the other tree.
   start = obj.start;
   end = obj.end;
@@ -213,12 +218,12 @@ DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(
 
   // Copy the children.
   left = ((obj.left == NULL) ? NULL : new DTree(*obj.left));
-  left = ((obj.right == NULL) ? NULL : new DTree(*obj.right));
+  right = ((obj.right == NULL) ? NULL : new DTree(*obj.right));
 
   return *this;
 }
 
-template <typename MatType, typename TagType>
+template<typename MatType, typename TagType>
 DTree<MatType, TagType>::DTree(DTree&& obj):
     start(obj.start),
     end(obj.end),
@@ -254,10 +259,13 @@ DTree<MatType, TagType>::DTree(DTree&& obj):
   obj.right = NULL;
 }
 
-template <typename MatType, typename TagType>
+template<typename MatType, typename TagType>
 DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(
     DTree<MatType, TagType>&& obj)
 {
+  if (this == &obj)
+    return *this;
+
   // Move the values from the other tree.
   start = obj.start;
   end = obj.end;
@@ -302,8 +310,8 @@ DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(
 }
 
 
-// Root node initializers
-template <typename MatType, typename TagType>
+// Root node initializers.
+template<typename MatType, typename TagType>
 DTree<MatType, TagType>::DTree(const StatType& maxVals,
                                const StatType& minVals,
                                const size_t totalPoints) :
@@ -325,7 +333,7 @@ DTree<MatType, TagType>::DTree(const StatType& maxVals,
     right(NULL)
 { /* Nothing to do. */ }
 
-template <typename MatType, typename TagType>
+template<typename MatType, typename TagType>
 DTree<MatType, TagType>::DTree(MatType & data) :
     start(0),
     end(data.n_cols),
@@ -346,8 +354,8 @@ DTree<MatType, TagType>::DTree(MatType & data) :
   logNegError = LogNegativeError(data.n_cols);
 }
 
-// Non-root node initializers
-template <typename MatType, typename TagType>
+// Non-root node initializers.
+template<typename MatType, typename TagType>
 DTree<MatType, TagType>::DTree(const StatType& maxVals,
                                const StatType& minVals,
                                const size_t start,
@@ -371,7 +379,7 @@ DTree<MatType, TagType>::DTree(const StatType& maxVals,
     right(NULL)
 { /* Nothing to do. */ }
 
-template <typename MatType, typename TagType>
+template<typename MatType, typename TagType>
 DTree<MatType, TagType>::DTree(const StatType& maxVals,
                                const StatType& minVals,
                                const size_t totalPoints,
@@ -395,7 +403,7 @@ DTree<MatType, TagType>::DTree(const StatType& maxVals,
     right(NULL)
 { /* Nothing to do. */ }
 
-template <typename MatType, typename TagType>
+template<typename MatType, typename TagType>
 DTree<MatType, TagType>::~DTree()
 {
     delete left;
@@ -404,7 +412,7 @@ DTree<MatType, TagType>::~DTree()
 
 // This function computes the log-l2-negative-error of a given node from the
 // formula R(t) = log(|t|^2 / (N^2 V_t)).
-template <typename MatType, typename TagType>
+template<typename MatType, typename TagType>
 double DTree<MatType, TagType>::LogNegativeError(const size_t totalPoints) const
 {
   // log(-|t|^2 / (N^2 V_t)) = log(-1) + 2 log(|t|) - 2 log(N) - log(V_t).
@@ -425,7 +433,7 @@ double DTree<MatType, TagType>::LogNegativeError(const size_t totalPoints) const
 // This function finds the best split with respect to the L2-error, by trying
 // all possible splits.  The dataset is the full data set but the start and
 // end are used to obtain the point in this node.
-template <typename MatType, typename TagType>
+template<typename MatType, typename TagType>
 bool DTree<MatType, TagType>::FindSplit(const MatType& data,
                                         size_t& splitDim,
                                         ElemType& splitValue,
@@ -433,7 +441,7 @@ bool DTree<MatType, TagType>::FindSplit(const MatType& data,
                                         double& rightError,
                                         const size_t minLeafSize) const
 {
-  typedef std::pair<ElemType, size_t>   SplitItem;
+  typedef std::pair<ElemType, size_t> SplitItem;
 
   // Ensure the dimensionality of the data is the same as the dimensionality of
   // the bounding rectangle.
@@ -543,7 +551,7 @@ bool DTree<MatType, TagType>::FindSplit(const MatType& data,
   return splitFound;
 }
 
-template <typename MatType, typename TagType>
+template<typename MatType, typename TagType>
 size_t DTree<MatType, TagType>::SplitData(MatType& data,
                                           const size_t splitDim,
                                           const ElemType splitValue,
@@ -577,8 +585,8 @@ size_t DTree<MatType, TagType>::SplitData(MatType& data,
   return left;
 }
 
-// Greedily expand the tree
-template <typename MatType, typename TagType>
+// Greedily expand the tree.
+template<typename MatType, typename TagType>
 double DTree<MatType, TagType>::Grow(MatType& data,
                                      arma::Col<size_t>& oldFromNew,
                                      const bool useVolReg,
@@ -727,7 +735,7 @@ double DTree<MatType, TagType>::Grow(MatType& data,
 }
 
 
-template <typename MatType, typename TagType>
+template<typename MatType, typename TagType>
 double DTree<MatType, TagType>::PruneAndUpdate(const double oldAlpha,
                                                const size_t points,
                                                const bool useVolReg)
@@ -842,7 +850,7 @@ double DTree<MatType, TagType>::PruneAndUpdate(const double oldAlpha,
 //
 // Future improvement: Open up the range with epsilons on both sides where
 // epsilon depends on the density near the boundary.
-template <typename MatType, typename TagType>
+template<typename MatType, typename TagType>
 bool DTree<MatType, TagType>::WithinRange(const VecType& query) const
 {
   for (size_t i = 0; i < query.n_elem; ++i)
@@ -853,7 +861,7 @@ bool DTree<MatType, TagType>::WithinRange(const VecType& query) const
 }
 
 
-template <typename MatType, typename TagType>
+template<typename MatType, typename TagType>
 double DTree<MatType, TagType>::ComputeValue(const VecType& query) const
 {
   Log::Assert(query.n_elem == maxVals.n_elem);
@@ -882,8 +890,8 @@ double DTree<MatType, TagType>::ComputeValue(const VecType& query) const
 }
 
 // Index the buckets for possible usage later.
-template <typename MatType, typename TagType>
-TagType DTree<MatType, TagType>::TagTree(const TagType& tag)
+template<typename MatType, typename TagType>
+TagType DTree<MatType, TagType>::TagTree(const TagType& tag, bool every)
 {
   if (subtreeLeaves == 1)
   {
@@ -891,18 +899,33 @@ TagType DTree<MatType, TagType>::TagTree(const TagType& tag)
     bucketTag = tag;
     return (tag + 1);
   }
-  else
+
+  TagType nextTag;
+  if (every)
   {
-    return right->TagTree(left->TagTree(tag));
+    bucketTag = tag;
+    nextTag = (tag + 1);
   }
+  else
+    nextTag = tag;
+
+  return right->TagTree(left->TagTree(nextTag, every), every);
 }
 
-template <typename MatType, typename TagType>
+template<typename MatType, typename TagType>
 TagType DTree<MatType, TagType>::FindBucket(const VecType& query) const
 {
   Log::Assert(query.n_elem == maxVals.n_elem);
 
-  if (subtreeLeaves == 1) // If we are a leaf...
+  if (root == 1) // If we are the root...
+  {
+    // Check if the query is within range.
+    if (!WithinRange(query))
+      return -1;
+  }
+
+  // If we are a leaf...
+  if (subtreeLeaves == 1)
   {
     return bucketTag;
   }
@@ -915,9 +938,9 @@ TagType DTree<MatType, TagType>::FindBucket(const VecType& query) const
   }
 }
 
-template <typename MatType, typename TagType>
-void
-DTree<MatType, TagType>::ComputeVariableImportance(arma::vec& importances) const
+template<typename MatType, typename TagType>
+void DTree<MatType, TagType>::ComputeVariableImportance(arma::vec& importances)
+    const
 {
   // Clear and set to right size.
   importances.zeros(maxVals.n_elem);
@@ -944,8 +967,31 @@ DTree<MatType, TagType>::ComputeVariableImportance(arma::vec& importances) const
   }
 }
 
-template <typename MatType, typename TagType>
-template <typename Archive>
+template<typename MatType, typename TagType>
+void DTree<MatType, TagType>::FillMinMax(const StatType& mins,
+                                         const StatType& maxs)
+{
+  if (!root)
+  {
+    minVals = mins;
+    maxVals = maxs;
+  }
+
+  if (left && right)
+  {
+    StatType maxValsL(maxs);
+    StatType maxValsR(maxs);
+    StatType minValsL(mins);
+    StatType minValsR(mins);
+
+    maxValsL[splitDim] = minValsR[splitDim] = splitValue;
+    left->FillMinMax(minValsL, maxValsL);
+    right->FillMinMax(minValsR, maxValsR);
+  }
+}
+
+template<typename MatType, typename TagType>
+template<typename Archive>
 void DTree<MatType, TagType>::Serialize(Archive& ar,
                                         const unsigned int /* version */)
 {
@@ -953,8 +999,6 @@ void DTree<MatType, TagType>::Serialize(Archive& ar,
 
   ar & CreateNVP(start, "start");
   ar & CreateNVP(end, "end");
-  ar & CreateNVP(maxVals, "maxVals");
-  ar & CreateNVP(minVals, "minVals");
   ar & CreateNVP(splitDim, "splitDim");
   ar & CreateNVP(splitValue, "splitValue");
   ar & CreateNVP(logNegError, "logNegError");
@@ -976,5 +1020,14 @@ void DTree<MatType, TagType>::Serialize(Archive& ar,
 
   ar & CreateNVP(left, "left");
   ar & CreateNVP(right, "right");
-}
 
+  if (root)
+  {
+    ar & CreateNVP(maxVals, "maxVals");
+    ar & CreateNVP(minVals, "minVals");
+
+    // This is added in order to reduce (dramatically!) the model file size.
+    if (Archive::is_loading::value && left && right)
+      FillMinMax(minVals, maxVals);
+  }
+}

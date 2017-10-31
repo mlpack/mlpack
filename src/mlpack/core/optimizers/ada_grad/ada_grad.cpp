@@ -16,11 +16,13 @@ namespace mlpack {
 namespace optimization {
 
 AdaGrad::AdaGrad(const double stepSize,
+                 const size_t batchSize,
                  const double epsilon,
                  const size_t maxIterations,
                  const double tolerance,
                  const bool shuffle) :
     optimizer(stepSize,
+              batchSize,
               maxIterations,
               tolerance,
               shuffle,

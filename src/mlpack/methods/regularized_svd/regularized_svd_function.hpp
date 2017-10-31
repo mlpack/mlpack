@@ -45,6 +45,11 @@ class RegularizedSVDFunction
                          const double lambda);
 
   /**
+   * Shuffle the points in the dataset.  This may be used by optimizers.
+   */
+  void Shuffle();
+
+  /**
    * Evaluates the cost function over all examples in the data.
    *
    * @param parameters Parameters(user/item matrices) of the decomposition.
@@ -56,10 +61,12 @@ class RegularizedSVDFunction
    * optimizer abstraction which uses one training example at a time.
    *
    * @param parameters Parameters(user/item matrices) of the decomposition.
-   * @param i Index of the training example to be used.
+   * @param start First index of the training examples to be used.
+   * @param batchSize Size of batch to evaluate.
    */
   double Evaluate(const arma::mat& parameters,
-                  const size_t i) const;
+                  const size_t start,
+                  const size_t batchSize = 1) const;
 
   /**
    * Evaluates the full gradient of the cost function over all the training
@@ -79,13 +86,15 @@ class RegularizedSVDFunction
    *
    * @tparam GradType The type of the gradient out-param.
    * @param parameters Parameters(user/item matrices) of the decomposition.
-   * @param id The index of the training example.
+   * @param start The first index of the training examples to use.
    * @param gradient Calculated gradient for the parameters.
+   * @param batchSize Size of batch to calculate gradient for.
    */
   template <typename GradType>
   void Gradient(const arma::mat& parameters,
-                size_t id,
-                GradType& gradient) const;
+                const size_t start,
+                GradType& gradient,
+                const size_t batchSize = 1) const;
 
   //! Return the initial point for the optimization.
   const arma::mat& GetInitialPoint() const { return initialPoint; }
@@ -109,8 +118,8 @@ class RegularizedSVDFunction
   size_t Rank() const { return rank; }
 
  private:
-  //! Rating data.
-  const MatType& data;
+  //! Rating data.  This will be an alias until Shuffle() is called.
+  MatType data;
   //! Initial parameter point.
   arma::mat initialPoint;
   //! Rank used for matrix factorization.

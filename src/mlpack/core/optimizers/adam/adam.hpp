@@ -50,10 +50,13 @@ namespace optimization {
  * is required. This class must implement the following function:
  *
  *   size_t NumFunctions();
- *   double Evaluate(const arma::mat& coordinates, const size_t i);
+ *   double Evaluate(const arma::mat& coordinates,
+ *                   const size_t i,
+ *                   const size_t batchSize);
  *   void Gradient(const arma::mat& coordinates,
  *                 const size_t i,
- *                 arma::mat& gradient);
+ *                 arma::mat& gradient,
+ *                 const size_t batchSize);
  *
  * NumFunctions() should return the number of functions (\f$n\f$), and in the
  * other two functions, the parameter i refers to which individual function (or
@@ -78,6 +81,7 @@ class AdamType
    * equal one pass over the dataset).
    *
    * @param stepSize Step size for each iteration.
+   * @param batchSize Number of points to process in a single step.
    * @param beta1 Exponential decay rate for the first moment estimates.
    * @param beta2 Exponential decay rate for the weighted infinity norm
             estimates.
@@ -89,6 +93,7 @@ class AdamType
    *        function is visited in linear order.
    */
   AdamType(const double stepSize = 0.001,
+           const size_t batchSize = 32,
            const double beta1 = 0.9,
            const double beta2 = 0.999,
            const double eps = 1e-8,
@@ -116,6 +121,11 @@ class AdamType
   double StepSize() const { return optimizer.StepSize(); }
   //! Modify the step size.
   double& StepSize() { return optimizer.StepSize(); }
+
+  //! Get the batch size.
+  size_t BatchSize() const { return optimizer.BatchSize(); }
+  //! Modify the batch size.
+  size_t& BatchSize() { return optimizer.BatchSize(); }
 
   //! Get the smoothing parameter.
   double Beta1() const { return optimizer.UpdatePolicy().Beta1(); }
