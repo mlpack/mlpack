@@ -21,21 +21,28 @@
 namespace mlpack {
 namespace optimization {
 
-CMAES::CMAES(const size_t lambda,
-             const double lowerBound,
-             const double upperBound,
-             const size_t maxIterations,
-             const double tolerance) :
+template<typename SelectionPolicyType>
+CMAES<SelectionPolicyType>::CMAES(const size_t lambda,
+                                  const double lowerBound,
+                                  const double upperBound,
+                                  const size_t batchSize,
+                                  const size_t maxIterations,
+                                  const double tolerance,
+                                  const SelectionPolicyType& selectionPolicy) :
     lambda(lambda),
     lowerBound(lowerBound),
     upperBound(upperBound),
+    batchSize(batchSize),
     maxIterations(maxIterations),
-    tolerance(tolerance)
+    tolerance(tolerance),
+    selectionPolicy(selectionPolicy)
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
+template<typename SelectionPolicyType>
 template<typename DecomposableFunctionType>
-double CMAES::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
+double CMAES<SelectionPolicyType>::Optimize(
+    DecomposableFunctionType& function, arma::mat& iterate)
 {
   // Find the number of functions to use.
   const size_t numFunctions = function.NumFunctions();
@@ -80,9 +87,14 @@ double CMAES::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
 
   arma::mat step = arma::zeros(iterate.n_rows, iterate.n_cols);
 
-  double currentObjective = function.Evaluate(mPosition.slice(0), 0);
-  for (size_t f = 1; f < numFunctions; ++f)
-    currentObjective += function.Evaluate(mPosition.slice(0), f);
+  // Calculate the first objective function.
+  double currentObjective = 0;
+  for (size_t f = 0; f < numFunctions; f += batchSize)
+  {
+    const size_t effectiveBatchSize = std::min(batchSize, numFunctions - f);
+    currentObjective += function.Evaluate(mPosition.slice(0), f,
+        effectiveBatchSize);
+  }
 
   double overallObjective = currentObjective;
   double lastObjective = DBL_MAX;
@@ -129,9 +141,9 @@ double CMAES::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
       pPosition.slice(idx(j)) = mPosition.slice(idx0) + sigma(idx0) *
           pStep.slice(idx(j));
 
-      pObjective(idx(j)) = function.Evaluate(pPosition.slice(idx(j)), 0);
-      for (size_t f = 1; f < numFunctions; ++f)
-        pObjective(idx(j)) += function.Evaluate(pPosition.slice(idx(j)), f);
+      // Calculate the objective function.
+      pObjective(idx(j)) = selectionPolicy.Select(function, batchSize,
+          pPosition.slice(idx(j)));
     }
 
     // Sort population.
@@ -143,9 +155,9 @@ double CMAES::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
 
     mPosition.slice(idx1) = mPosition.slice(idx0) + sigma(idx0) * step;
 
-    currentObjective = function.Evaluate(mPosition.slice(idx1), 0);
-    for (size_t f = 1; f < numFunctions; ++f)
-        currentObjective += function.Evaluate(mPosition.slice(idx1), f);
+    // Calculate the objective function.
+    currentObjective = selectionPolicy.Select(function, batchSize,
+          mPosition.slice(idx1));
 
     // Update best parameters.
     if (currentObjective < overallObjective)

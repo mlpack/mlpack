@@ -17,6 +17,9 @@
 
 #include <mlpack/prereqs.hpp>
 
+#include "full_selection.hpp"
+#include "random_selection.hpp"
+
 namespace mlpack {
 namespace optimization {
 
@@ -56,7 +59,10 @@ namespace optimization {
  * of points in the dataset, and Evaluate(coordinates, 0) will evaluate the
  * objective function on the first point in the dataset (presumably, the dataset
  * is held internally in the DecomposableFunctionType).
+ *
+ * @tparam SelectionPolicy The selection strategy used for the evaluation step.
  */
+template<typename SelectionPolicyType = FullSelection>
 class CMAES
 {
  public:
@@ -70,16 +76,21 @@ class CMAES
    *
    * @param lambda The population size (0 use the default size).
    * @param lowerBound Lower bound of decision variables.
-   * @param upperBound Upper bound of decision variables
+   * @param upperBound Upper bound of decision variables.
+   * @param batchSize Batch size to use for the objective calculation.
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *     limit).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
+   * @param selectionPolicy Instantiated selection policy used to calculate the
+   *     objective.
    */
   CMAES(const size_t lambda = 0,
         const double lowerBound = -10,
         const double upperBound = 10,
+        const size_t batchSize = 32,
         const size_t maxIterations = 1000,
-        const double tolerance = 1e-5);
+        const double tolerance = 1e-5,
+        const SelectionPolicyType& selectionPolicy = SelectionPolicyType());
 
   /**
    * Optimize the given function using CMA-ES. The given starting point will be
@@ -109,6 +120,11 @@ class CMAES
   //! Modify the upper bound of decision variables
   double& UpperBound() { return upperBound; }
 
+  //! Get the batch size.
+  size_t BatchSize() const { return batchSize; }
+  //! Modify the batch size.
+  size_t& BatchSize() { return batchSize; }
+
   //! Get the maximum number of iterations (0 indicates no limit).
   size_t MaxIterations() const { return maxIterations; }
   //! Modify the maximum number of iterations (0 indicates no limit).
@@ -118,6 +134,11 @@ class CMAES
   double Tolerance() const { return tolerance; }
   //! Modify the tolerance for termination.
   double& Tolerance() { return tolerance; }
+
+  //! Get the selection policy.
+  const SelectionPolicyType& SelectionPolicy() const { return selectionPolicy; }
+  //! Modify the selection policy.
+  SelectionPolicyType& SelectionPolicy() { return selectionPolicy; }
 
  private:
   //! Population size.
@@ -129,12 +150,24 @@ class CMAES
   //! Upper bound of decision variables
   double upperBound;
 
+  //! The batch size for processing.
+  size_t batchSize;
+
   //! The maximum number of allowed iterations.
   size_t maxIterations;
 
   //! The tolerance for termination.
   double tolerance;
+
+  //! The selection policy used to calculate the objective.
+  SelectionPolicyType selectionPolicy;
 };
+
+/**
+ * Convenient typedef for CMAES approximation.
+ */
+template <typename SelectionPolicyType = RandomSelection>
+using ApproxCMAES = CMAES<SelectionPolicyType>;
 
 } // namespace optimization
 } // namespace mlpack

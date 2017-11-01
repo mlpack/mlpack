@@ -1,6 +1,8 @@
 set(SOURCES
   cmaes.hpp
   cmaes_impl.hpp
+  full_selection.hpp
+  random_selection.hpp
 )
 
 set(DIR_SRCS)
