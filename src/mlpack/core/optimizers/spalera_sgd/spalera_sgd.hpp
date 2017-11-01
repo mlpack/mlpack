@@ -14,7 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/optimizers/spalera_sgd/spalera_stepsize.hpp>
-#include <mlpack/core/optimizers/minibatch_sgd/decay_policies/no_decay.hpp>
+#include <mlpack/core/optimizers/sgd/decay_policies/no_decay.hpp>
 
 namespace mlpack {
 namespace optimization {
@@ -37,9 +37,9 @@ namespace optimization {
  * \f]
  *
  * where \f$ \alpha \f$ is a parameter which specifies the step size.  Each
- * mini-batch is passed through either sequentially or randomly.  The algorithm
+ * batch is passed through either sequentially or randomly.  The algorithm
  * continues until \f$ j \f$ reaches the maximum number of iterations---or when
- * a full sequence of updates through each of the mini-batches produces an
+ * a full sequence of updates through each of the batches produces an
  * improvement within a certain tolerance \f$ \epsilon \f$.
  *
  * The parameter \f$ \epsilon \f$ is specified by the tolerance parameter tot he
@@ -49,7 +49,7 @@ namespace optimization {
  * This class is useful for data-dependent functions whose objective function
  * can be expressed as a sum of objective functions operating on an individual
  * point.  Then, SPALeRA SGD considers the gradient of the objective function
- * operation on an individual mini-batch of points in its update of \f$ A \f$.
+ * operation on an individual batches in its update of \f$ A \f$.
  *
  * For more information, please refer to:
  *
@@ -89,14 +89,15 @@ class SPALeRASGD
 {
  public:
   /**
-   * Construct the SPALeRASGD optimizer with the given function and
-   * parameters.  The defaults here are not necessarily good for the given
-   * problem, so it is suggested that the values used be tailored for the task
-   * at hand.  The maximum number of iterations refers to the maximum number of
-   * mini-batches that are processed.
+   * Construct the SPALeRASGD optimizer with the given function and parameters.
+   * The defaults here are not necessarily good for the given problem, so it is
+   * suggested that the values used be tailored to the task at hand.  The
+   * maximum number of iterations refers to the maximum number of points that
+   * are processed (i.e., one iteration equals one point; one iteration does not
+   * equal one pass over the dataset).
    *
-   * @param batchSize Size of each mini-batch.
    * @param stepSize Step size for each iteration.
+   * @param batchSize Batch size to use for each step.
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *     limit).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
@@ -104,14 +105,14 @@ class SPALeRASGD
    * @param alpha Memory parameter of the Agnostic Learning Rate adaptation.
    * @param epsilon Numerical stability parameter.
    * @param adaptRate Agnostic learning rate update rate.
-   * @param shuffle If true, the mini-batch order is shuffled; otherwise, each
-   *     mini-batch is visited in linear order.
+   * @param shuffle If true, the function order is shuffled; otherwise, each
+   *    function is visited in linear order.
    * @param decayPolicy Instantiated decay policy used to adjust the step size.
    * @param resetPolicy Flag that determines whether update policy parameters
-   *                    are reset before every Optimize call.
+   *    are reset before every Optimize call.
    */
-  SPALeRASGD(const size_t batchSize = 1000,
-             const double stepSize = 0.01,
+  SPALeRASGD(const double stepSize = 0.01,
+             const size_t batchSize = 32,
              const size_t maxIterations = 100000,
              const double tolerance = 1e-5,
              const double lambda = 0.01,
@@ -133,8 +134,7 @@ class SPALeRASGD
    * @return Objective value of the final point.
    */
   template<typename DecomposableFunctionType>
-  double Optimize(DecomposableFunctionType& function,
-                  arma::mat& iterate);
+  double Optimize(DecomposableFunctionType& function, arma::mat& iterate);
 
   //! Get the batch size.
   size_t BatchSize() const { return batchSize; }
@@ -189,7 +189,7 @@ class SPALeRASGD
   DecayPolicyType& DecayPolicy() { return decayPolicy; }
 
  private:
-  //! The size of each mini-batch.
+  //! The batch size for processing.
   size_t batchSize;
 
   //! The step size for each example.

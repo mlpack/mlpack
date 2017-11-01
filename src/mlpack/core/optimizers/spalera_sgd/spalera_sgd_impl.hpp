@@ -19,8 +19,8 @@ namespace mlpack {
 namespace optimization {
 
 template<typename DecayPolicyType>
-SPALeRASGD<DecayPolicyType>::SPALeRASGD(const size_t batchSize,
-                                        const double stepSize,
+SPALeRASGD<DecayPolicyType>::SPALeRASGD(const double stepSize,
+                                        const size_t batchSize,
                                         const size_t maxIterations,
                                         const double tolerance,
                                         const double lambda,
@@ -30,8 +30,8 @@ SPALeRASGD<DecayPolicyType>::SPALeRASGD(const size_t batchSize,
                                         const bool shuffle,
                                         const DecayPolicyType& decayPolicy,
                                         const bool resetPolicy) :
-    batchSize(batchSize),
     stepSize(stepSize),
+    batchSize(batchSize),
     maxIterations(maxIterations),
     tolerance(tolerance),
     lambda(lambda),
@@ -47,27 +47,20 @@ template<typename DecomposableFunctionType>
 double SPALeRASGD<DecayPolicyType>::Optimize(DecomposableFunctionType& function,
                                              arma::mat& iterate)
 {
-  // Find the number of functions.
+  // Find the number of functions to use.
   const size_t numFunctions = function.NumFunctions();
-  size_t numBatches = numFunctions / batchSize;
-  if (numFunctions % batchSize != 0)
-    ++numBatches; // Capture last few.
-
-  // Batch visitation order.
-  arma::Col<size_t> visitationOrder = arma::linspace<arma::Col<size_t>>(0,
-      (numBatches - 1), numBatches);
-
-  if (shuffle)
-    visitationOrder = arma::shuffle(visitationOrder);
 
   // To keep track of where we are and how things are going.
-  size_t currentBatch = 0;
+  size_t currentFunction = 0;
   double overallObjective = 0;
   double lastObjective = DBL_MAX;
 
   // Calculate the first objective function.
-  for (size_t i = 0; i < numFunctions; ++i)
-    overallObjective += function.Evaluate(iterate, i);
+  for (size_t i = 0; i < numFunctions; i += batchSize)
+  {
+    const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
+    overallObjective += function.Evaluate(iterate, i, effectiveBatchSize);
+  }
 
   double currentObjective = overallObjective / numFunctions;
 
@@ -80,10 +73,12 @@ double SPALeRASGD<DecayPolicyType>::Optimize(DecomposableFunctionType& function,
 
   // Now iterate!
   arma::mat gradient(iterate.n_rows, iterate.n_cols);
-  for (size_t i = 1; i != maxIterations; ++i, ++currentBatch)
+  const size_t actualMaxIterations = (maxIterations == 0) ?
+      std::numeric_limits<size_t>::max() : maxIterations;
+  for (size_t i = 0; i < actualMaxIterations; /* incrementing done manually */)
   {
     // Is this iteration the start of a sequence?
-    if ((currentBatch % numBatches) == 0)
+    if ((currentFunction % numFunctions) == 0)
     {
       // Output current objective function.
       Log::Info << "SPALeRA SGD: iteration " << i << ", objective "
@@ -107,97 +102,50 @@ double SPALeRASGD<DecayPolicyType>::Optimize(DecomposableFunctionType& function,
       // Reset the counter variables.
       lastObjective = overallObjective;
       overallObjective = 0;
-      currentBatch = 0;
+      currentFunction = 0;
 
-      if (shuffle)
-        visitationOrder = arma::shuffle(visitationOrder);
+      if (shuffle) // Determine order of visitation.
+        function.Shuffle();
     }
 
-    // Evaluate the gradient for this mini-batch.
-    const size_t offset = batchSize * visitationOrder[currentBatch];
-    function.Gradient(iterate, offset, gradient);
-    if (visitationOrder[currentBatch] != numBatches - 1)
+    // Find the effective batch size (the last batch may be smaller).
+    const size_t effectiveBatchSize = std::min(batchSize,
+        numFunctions - currentFunction);
+
+    function.Gradient(iterate, currentFunction, gradient, effectiveBatchSize);
+
+    // Use the update policy to take a step.
+    if (!updatePolicy.Update(stepSize, currentObjective, effectiveBatchSize,
+        numFunctions, iterate, gradient))
     {
-      for (size_t j = 1; j < batchSize; ++j)
-      {
-        arma::mat funcGradient;
-        function.Gradient(iterate, offset + j, funcGradient);
-        gradient += funcGradient;
-      }
-
-      // Now update the iterate.
-      if (!updatePolicy.Update(stepSize, currentObjective, batchSize,
-          numFunctions, iterate, gradient))
-      {
-          Log::Warn << "SPALeRA SGD: converged to " << overallObjective << "; "
-              << "terminating with failure.  Try a smaller step size?"
-              << std::endl;
-          return overallObjective;
-      }
-
-      // Add that to the overall objective function.
-      currentObjective = function.Evaluate(iterate, offset);
-      for (size_t j = 1; j < batchSize; ++j)
-        currentObjective += function.Evaluate(iterate, offset + j);
-
-      overallObjective += currentObjective;
-      currentObjective /= batchSize;
-    }
-    else
-    {
-      // Handle last batch differently: it's not a full-size batch.
-      const size_t lastBatchSize = numFunctions - offset - 1;
-      for (size_t j = 1; j < lastBatchSize; ++j)
-      {
-        arma::mat funcGradient;
-        function.Gradient(iterate, offset + j, funcGradient);
-        gradient += funcGradient;
-      }
-
-      // Ensure the last batch size isn't zero, to avoid division by zero before
-      // updating.
-      bool learningRateCheck = true;
-      if (lastBatchSize > 0)
-      {
-        // Now update the iterate.
-        learningRateCheck = updatePolicy.Update(stepSize, currentObjective,
-            lastBatchSize, numFunctions, iterate, gradient);
-      }
-      else
-      {
-        // Now update the iterate.
-        learningRateCheck = updatePolicy.Update(stepSize, currentObjective, 1,
-            numFunctions, iterate, gradient);
-      }
-
-      if (!learningRateCheck)
-      {
         Log::Warn << "SPALeRA SGD: converged to " << overallObjective << "; "
             << "terminating with failure.  Try a smaller step size?"
             << std::endl;
         return overallObjective;
-      }
-
-      // Add that to the overall objective function.
-      currentObjective += function.Evaluate(iterate, offset);
-      for (size_t j = 1; j < lastBatchSize; ++j)
-        currentObjective += function.Evaluate(iterate, offset + j);
-
-      overallObjective += currentObjective;
-      currentObjective /= lastBatchSize;
     }
+
+    currentObjective = function.Evaluate(iterate, currentFunction,
+        effectiveBatchSize);
 
     // Now update the learning rate if requested by the user.
     decayPolicy.Update(iterate, stepSize, gradient);
+
+    i += effectiveBatchSize;
+    currentFunction += effectiveBatchSize;
+    overallObjective += currentObjective;
+    currentObjective /= effectiveBatchSize;
   }
 
-  Log::Info << "SPALeRA SGD: maximum iterations (" << maxIterations << ") "
-      << "reached; terminating optimization." << std::endl;
+  Log::Info << "SPALeRA SGD: maximum iterations (" << maxIterations
+      << ") reached; terminating optimization." << std::endl;
 
   // Calculate final objective.
   overallObjective = 0;
-  for (size_t i = 0; i < numFunctions; ++i)
-    overallObjective += function.Evaluate(iterate, i);
+  for (size_t i = 0; i < numFunctions; i += batchSize)
+  {
+    const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
+    overallObjective += function.Evaluate(iterate, i, effectiveBatchSize);
+  }
 
   return overallObjective;
 }
