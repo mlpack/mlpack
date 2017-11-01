@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_SUITE(CMAESTest);
 BOOST_AUTO_TEST_CASE(SimpleTestFunction)
 {
   SGDTestFunction f;
-  CMAES optimizer(0, -1, 1, 200, -1);
+  CMAES<> optimizer(0, -1, 1, 32, 200, -1);
 
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
@@ -46,16 +46,21 @@ BOOST_AUTO_TEST_CASE(SimpleTestFunction)
 }
 
 /**
- * Run CMA-ES on logistic regression and make sure the results are acceptable.
+ * Create the data for the logistic regression test case.
  */
-BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
+void CreateLogisticRegressionTestData(arma::mat& data,
+                                      arma::mat& testData,
+                                      arma::mat& shuffledData,
+                                      arma::Row<size_t>& responses,
+                                      arma::Row<size_t>& testResponses,
+                                      arma::Row<size_t>& shuffledResponses)
 {
   // Generate a two-Gaussian dataset.
   GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
   GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
 
-  arma::mat data(3, 1000);
-  arma::Row<size_t> responses(1000);
+  data = arma::mat(3, 1000);
+  responses = arma::Row<size_t>(1000);
   for (size_t i = 0; i < 500; ++i)
   {
     data.col(i) = g1.Random();
@@ -70,8 +75,8 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
   // Shuffle the dataset.
   arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0,
       data.n_cols - 1, data.n_cols));
-  arma::mat shuffledData(3, 1000);
-  arma::Row<size_t> shuffledResponses(1000);
+  shuffledData = arma::mat(3, 1000);
+  shuffledResponses = arma::Row<size_t>(1000);
   for (size_t i = 0; i < data.n_cols; ++i)
   {
     shuffledData.col(i) = data.col(indices[i]);
@@ -79,8 +84,8 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
   }
 
   // Create a test set.
-  arma::mat testData(3, 1000);
-  arma::Row<size_t> testResponses(1000);
+  testData = arma::mat(3, 1000);
+  testResponses = arma::Row<size_t>(1000);
   for (size_t i = 0; i < 500; ++i)
   {
     testData.col(i) = g1.Random();
@@ -91,8 +96,44 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
     testData.col(i) = g2.Random();
     testResponses[i] = 1;
   }
+}
 
-  CMAES cmaes(0, -1, 1, 200, 1e-3);
+/**
+ * Run CMA-ES with the full selection policy on logistic regression and
+ * make sure the results are acceptable.
+ */
+BOOST_AUTO_TEST_CASE(CMAESLogisticRegressionTest)
+{
+  arma::mat data, testData, shuffledData;
+  arma::Row<size_t> responses, testResponses, shuffledResponses;
+
+  CreateLogisticRegressionTestData(data, testData, shuffledData,
+      responses, testResponses, shuffledResponses);
+
+  CMAES<> cmaes(0, -1, 1, 32, 200, 1e-3);
+  LogisticRegression<> lr(shuffledData, shuffledResponses, cmaes, 0.5);
+
+  // Ensure that the error is close to zero.
+  const double acc = lr.ComputeAccuracy(data, responses);
+  BOOST_REQUIRE_CLOSE(acc, 100.0, 0.3); // 0.3% error tolerance.
+
+  const double testAcc = lr.ComputeAccuracy(testData, testResponses);
+  BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6); // 0.6% error tolerance.
+}
+
+/**
+ * Run CMA-ES with the random selection policy on logistic regression and
+ * make sure the results are acceptable.
+ */
+BOOST_AUTO_TEST_CASE(ApproxCMAESLogisticRegressionTest)
+{
+  arma::mat data, testData, shuffledData;
+  arma::Row<size_t> responses, testResponses, shuffledResponses;
+
+  CreateLogisticRegressionTestData(data, testData, shuffledData,
+      responses, testResponses, shuffledResponses);
+
+  ApproxCMAES<> cmaes(0, -1, 1, 32, 200, 1e-3);
   LogisticRegression<> lr(shuffledData, shuffledResponses, cmaes, 0.5);
 
   // Ensure that the error is close to zero.
