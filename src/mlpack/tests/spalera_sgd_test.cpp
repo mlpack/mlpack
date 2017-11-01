@@ -72,9 +72,9 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
   }
 
   // Now run mini-batch SGD with a couple of batch sizes.
-  for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
+  for (size_t batchSize = 30; batchSize < 50; batchSize += 5)
   {
-    SPALeRASGD<> mbsgd(0.01, batchSize, 10000, 1e-3);
+    SPALeRASGD<> mbsgd(0.05 / batchSize, batchSize, 10000, 1e-4);
     LogisticRegression<> lr(shuffledData, shuffledResponses, mbsgd, 0.5);
 
     // Ensure that the error is close to zero.
