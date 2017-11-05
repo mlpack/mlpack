@@ -17,7 +17,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-#include <mlpack/core/optimizers/minibatch_sgd/minibatch_sgd.hpp>
+#include <mlpack/core/optimizers/sgd/sgd.hpp>
 #include <mlpack/core/optimizers/sgd/update_policies/momentum_update.hpp>
 #include "snapshot_ensembles.hpp"
 
@@ -62,7 +62,7 @@ class SnapshotSGDR
 {
  public:
   //! Convenience typedef for the internal optimizer construction.
-  using OptimizerType = MiniBatchSGDType<UpdatePolicyType, SnapshotEnsembles>;
+  using OptimizerType = SGD<UpdatePolicyType, SnapshotEnsembles>;
 
   /**
    * Construct the SnapshotSGDR optimizer with snapshot ensembles with the given
@@ -141,6 +141,17 @@ class SnapshotSGDR
   std::vector<arma::mat>& Snapshots()
   {
     return optimizer.DecayPolicy().Snapshots();
+  }
+
+  //! Get the update policy.
+  const UpdatePolicyType& UpdatePolicy() const
+  {
+    return optimizer.UpdatePolicy();
+  }
+  //! Modify the update policy.
+  UpdatePolicyType& UpdatePolicy()
+  {
+    return optimizer.UpdatePolicy();
   }
 
  private:

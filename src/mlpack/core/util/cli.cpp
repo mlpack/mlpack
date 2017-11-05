@@ -43,18 +43,8 @@ CLI::CLI(const CLI& /* other */) : didParse(false), doc(&emptyProgramDoc)
   return;
 }
 
-void CLI::StopTimers()
-{
-  // Terminate the program timers.
-  std::map<std::string, std::chrono::microseconds>::iterator it;
-  for (it = CLI::GetSingleton().timer.GetAllTimers().begin();
-       it != CLI::GetSingleton().timer.GetAllTimers().end(); ++it)
-  {
-    std::string i = (*it).first;
-    if (CLI::GetSingleton().timer.GetState(i) == 1)
-      Timer::Stop(i);
-  }
-}
+// Private copy operator; don't want copies floating around.
+CLI& CLI::operator=(const CLI& /* other */) { return *this; }
 
 /**
  * Destroy the CLI object.  This resets the pointer to the singleton, so in case
@@ -96,12 +86,16 @@ void CLI::Add(ParamData&& data)
   // If found in current map, print fatal error and terminate the program, but
   // only if the parameter is not consistent.
   if (parameters.count(data.name) && !data.persistent)
+  {
     outstr << "Parameter --" << data.name << " (-" << data.alias << ") "
            << "is defined multiple times with the same identifiers."
            << std::endl;
+  }
   if (data.alias != '\0' && aliases.count(data.alias) && !data.persistent)
+  {
     outstr << "Parameter --" << data.name << " (-" << data.alias << ") "
            << "is defined multiple times with the same alias." << std::endl;
+  }
 
   // Add the alias, if necessary.
   if (data.alias != '\0')
@@ -129,8 +123,10 @@ bool CLI::HasParam(const std::string& key)
       usedKey = GetSingleton().aliases[key[0]];
 
     if (!parameters.count(usedKey))
+    {
       Log::Fatal << "Parameter '--" << key << "' does not exist in this "
           << "program." << std::endl;
+    }
   }
   const std::string& checkKey = usedKey;
 
@@ -182,8 +178,10 @@ std::string CLI::ProgramName()
 void CLI::SetPassed(const std::string& name)
 {
   if (GetSingleton().parameters.count(name) == 0)
+  {
     throw std::invalid_argument("CLI::SetPassed(): parameter " + name +
         " not known!");
+  }
 
   // Set passed to true.
   GetSingleton().parameters[name].wasPassed = true;
@@ -205,8 +203,10 @@ void CLI::StoreSettings(const std::string& name)
 void CLI::RestoreSettings(const std::string& name, const bool fatal)
 {
   if (GetSingleton().storageMap.count(name) == 0 && fatal)
+  {
     throw std::invalid_argument("no settings stored under the name '" + name
         + "'");
+  }
   else if (GetSingleton().storageMap.count(name) == 0 && !fatal)
   {
     // Nothing to do, just clear what's there.

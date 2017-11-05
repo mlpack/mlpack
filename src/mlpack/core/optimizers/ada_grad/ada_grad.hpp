@@ -31,7 +31,8 @@ namespace optimization {
  * @code
  * @article{duchi2011adaptive,
  *   author  = {Duchi, John and Hazan, Elad and Singer, Yoram},
- *   title   = {Adaptive subgradient methods for online learning and stochastic optimization},
+ *   title   = {Adaptive subgradient methods for online learning and stochastic
+ *              optimization},
  *   journal = {Journal of Machine Learning Research},
  *   volume  = {12},
  *   number  = {Jul},
@@ -44,10 +45,13 @@ namespace optimization {
  * required. This class must implement the following function:
  *
  *   size_t NumFunctions();
- *   double Evaluate(const arma::mat& coordinates, const size_t i);
+ *   double Evaluate(const arma::mat& coordinates,
+ *                   const size_t i,
+ *                   const size_t batchSize);
  *   void Gradient(const arma::mat& coordinates,
  *                 const size_t i,
- *                 arma::mat& gradient);
+ *                 arma::mat& gradient,
+ *                 const size_t batchSize);
  *
  * NumFunctions() should return the number of functions (\f$n\f$), and in the
  * other two functions, the parameter i refers to which individual function (or
@@ -68,7 +72,8 @@ class AdaGrad
    * are processed (i.e., one iteration equals one point; one iteration does not
    * equal one pass over the dataset).
    *
-   * @param stepSize Step size for each iteration
+   * @param stepSize Step size for each iteration.
+   * @param batchSize Number of points to process in one step.
    * @param epsilon Value used to initialise the squared gradient parameter.
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *        limit).
@@ -77,6 +82,7 @@ class AdaGrad
    *        function is visited in linear order.
    */
   AdaGrad(const double stepSize = 0.01,
+          const size_t batchSize = 32,
           const double epsilon = 1e-8,
           const size_t maxIterations = 100000,
           const double tolerance = 1e-5,
@@ -102,6 +108,11 @@ class AdaGrad
   double StepSize() const { return optimizer.StepSize(); }
   //! Modify the step size.
   double& StepSize() { return optimizer.StepSize(); }
+
+  //! Get the batch size.
+  size_t BatchSize() const { return optimizer.BatchSize(); }
+  //! Modify the batch size.
+  size_t& BatchSize() { return optimizer.BatchSize(); }
 
   //! Get the value used to initialise the squared gradient parameter.
   double Epsilon() const { return optimizer.UpdatePolicy().Epsilon(); }

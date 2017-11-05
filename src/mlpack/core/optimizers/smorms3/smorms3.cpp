@@ -9,18 +9,19 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
 #include "smorms3.hpp"
 
 namespace mlpack {
 namespace optimization {
 
 SMORMS3::SMORMS3(const double stepSize,
-                                           const double epsilon,
-                                           const size_t maxIterations,
-                                           const double tolerance,
-                                           const bool shuffle) :
+                 const size_t batchSize,
+                 const double epsilon,
+                 const size_t maxIterations,
+                 const double tolerance,
+                 const bool shuffle) :
     optimizer(stepSize,
+              batchSize,
               maxIterations,
               tolerance,
               shuffle,

@@ -53,8 +53,7 @@ class SMORMS3Update
    * @param rows Number of rows in the gradient matrix.
    * @param cols Number of columns in the gradient matrix.
    */
-  void Initialize(const size_t rows,
-                  const size_t cols)
+  void Initialize(const size_t rows, const size_t cols)
   {
     // Initialise the parameters mem, g and g2.
     mem = arma::ones<arma::mat>(rows, cols);

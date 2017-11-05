@@ -27,8 +27,7 @@ class DiagonalConstraint
   static void ApplyConstraint(arma::mat& covariance)
   {
     // Save the diagonal only.
-    arma::vec diagonal = covariance.diag();
-    covariance = arma::diagmat(diagonal);
+    covariance = arma::diagmat(arma::clamp(covariance.diag(), 1e-10, DBL_MAX));
   }
 
   //! Serialize the constraint (which holds nothing, so, nothing to do).

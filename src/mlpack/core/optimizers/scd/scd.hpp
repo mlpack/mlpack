@@ -31,19 +31,18 @@ namespace optimization {
  *
  * For more information, see the following.
  * @code
- * @inproceedings{Shalev-Shwartz:2009:SML:1553374.1553493,
- *   Author = {Shalev-Shwartz, Shai and Tewari, Ambuj},
- *   Title = {Stochastic Methods for L1 Regularized Loss Minimization},
- *   Booktitle = {Proceedings of the 26th Annual International Conference on Machine Learning},
- *   Series = {ICML '09},
- *   Year = {2009},
- *   isbn = {978-1-60558-516-1},
- *   url = {http://doi.acm.org/10.1145/1553374.1553493},
+ * @inproceedings{Shalev-Shwartz2009,
+ *   author    = {Shalev-Shwartz, Shai and Tewari, Ambuj},
+ *   title     = {Stochastic Methods for L1 Regularized Loss Minimization},
+ *   booktitle = {Proceedings of the 26th Annual International Conference on
+ *                Machine Learning},
+ *   series    = {ICML '09},
+ *   year      = {2009},
+ *   isbn = {978-1-60558-516-1}
  * }
  * @endcode
  *
- * For SCD to work, a ResolvableFunctionType template parameter is required.
- * This Class must implement the following functions:
+ * For SCD to work, the class must implement the following functions:
  *
  *  size_t NumFeatures();
  *  double Evaluate(const arma::mat& coordinates);
@@ -56,8 +55,6 @@ namespace optimization {
  *  variable and PartialGradient is used to evaluate the partial gradient with
  *  respect to the jth feature.
  *
- *  @tparam ResolvableFunctionType A function whose partial gradients with
- *      respect to the jth feature can be obtained.
  *  @tparam DescentPolicy Descent policy to decide the order in which the
  *      coordinate for descent is selected.
  */

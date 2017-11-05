@@ -23,39 +23,35 @@
 namespace mlpack {
 namespace optimization {
 
-template<typename UpdatePolicyType>
-SGD<UpdatePolicyType>::SGD(
+template<typename UpdatePolicyType, typename DecayPolicyType>
+SGD<UpdatePolicyType, DecayPolicyType>::SGD(
     const double stepSize,
+    const size_t batchSize,
     const size_t maxIterations,
     const double tolerance,
     const bool shuffle,
-    const UpdatePolicyType updatePolicy,
+    const UpdatePolicyType& updatePolicy,
+    const DecayPolicyType& decayPolicy,
     const bool resetPolicy) :
     stepSize(stepSize),
+    batchSize(batchSize),
     maxIterations(maxIterations),
     tolerance(tolerance),
     shuffle(shuffle),
     updatePolicy(updatePolicy),
+    decayPolicy(decayPolicy),
     resetPolicy(resetPolicy)
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
-template<typename UpdatePolicyType>
+template<typename UpdatePolicyType, typename DecayPolicyType>
 template<typename DecomposableFunctionType>
-double SGD<UpdatePolicyType>::Optimize(
+double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
     DecomposableFunctionType& function,
     arma::mat& iterate)
 {
   // Find the number of functions to use.
   const size_t numFunctions = function.NumFunctions();
-
-  // This is used only if shuffle is true.
-  arma::Col<size_t> visitationOrder;
-  if (shuffle)
-  {
-    visitationOrder = arma::shuffle(arma::linspace<arma::Col<size_t>>(0,
-        (numFunctions - 1), numFunctions));
-  }
 
   // To keep track of where we are and how things are going.
   size_t currentFunction = 0;
@@ -63,8 +59,11 @@ double SGD<UpdatePolicyType>::Optimize(
   double lastObjective = DBL_MAX;
 
   // Calculate the first objective function.
-  for (size_t i = 0; i < numFunctions; ++i)
-    overallObjective += function.Evaluate(iterate, i);
+  for (size_t i = 0; i < numFunctions; i += batchSize)
+  {
+    const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
+    overallObjective += function.Evaluate(iterate, i, effectiveBatchSize);
+  }
 
   // Initialize the update policy.
   if (resetPolicy)
@@ -72,7 +71,9 @@ double SGD<UpdatePolicyType>::Optimize(
 
   // Now iterate!
   arma::mat gradient(iterate.n_rows, iterate.n_cols);
-  for (size_t i = 1; i != maxIterations; ++i, ++currentFunction)
+  const size_t actualMaxIterations = (maxIterations == 0) ?
+      std::numeric_limits<size_t>::max() : maxIterations;
+  for (size_t i = 0; i < actualMaxIterations; /* incrementing done manually */)
   {
     // Is this iteration the start of a sequence?
     if ((currentFunction % numFunctions) == 0)
@@ -101,28 +102,26 @@ double SGD<UpdatePolicyType>::Optimize(
       currentFunction = 0;
 
       if (shuffle) // Determine order of visitation.
-        visitationOrder = arma::shuffle(visitationOrder);
+        function.Shuffle();
     }
 
-    // Evaluate the gradient for this iteration.
-    if (shuffle)
-      function.Gradient(iterate, visitationOrder[currentFunction], gradient);
-    else
-      function.Gradient(iterate, currentFunction, gradient);
+    // Find the effective batch size (the last batch may be smaller).
+    const size_t effectiveBatchSize = std::min(batchSize,
+        numFunctions - currentFunction);
+
+    function.Gradient(iterate, currentFunction, gradient, effectiveBatchSize);
 
     // Use the update policy to take a step.
     updatePolicy.Update(iterate, stepSize, gradient);
 
-    // Now add that to the overall objective function.
-    if (shuffle)
-    {
-      overallObjective += function.Evaluate(iterate,
-          visitationOrder[currentFunction]);
-    }
-    else
-    {
-      overallObjective += function.Evaluate(iterate, currentFunction);
-    }
+    overallObjective += function.Evaluate(iterate, currentFunction,
+        effectiveBatchSize);
+
+    // Now update the learning rate if requested by the user.
+    decayPolicy.Update(iterate, stepSize, gradient);
+
+    i += effectiveBatchSize;
+    currentFunction += effectiveBatchSize;
   }
 
   Log::Info << "SGD: maximum iterations (" << maxIterations << ") reached; "
@@ -130,8 +129,11 @@ double SGD<UpdatePolicyType>::Optimize(
 
   // Calculate final objective.
   overallObjective = 0;
-  for (size_t i = 0; i < numFunctions; ++i)
-    overallObjective += function.Evaluate(iterate, i);
+  for (size_t i = 0; i < numFunctions; i += batchSize)
+  {
+    const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
+    overallObjective += function.Evaluate(iterate, i, effectiveBatchSize);
+  }
   return overallObjective;
 }
 

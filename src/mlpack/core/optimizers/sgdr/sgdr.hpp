@@ -16,7 +16,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-#include <mlpack/core/optimizers/minibatch_sgd/minibatch_sgd.hpp>
+#include <mlpack/core/optimizers/sgd/sgd.hpp>
 #include <mlpack/core/optimizers/sgd/update_policies/momentum_update.hpp>
 #include "cyclical_decay.hpp"
 
@@ -49,7 +49,7 @@ class SGDR
 {
  public:
   //! Convenience typedef for the internal optimizer construction.
-  using OptimizerType = MiniBatchSGDType<UpdatePolicyType, CyclicalDecay>;
+  using OptimizerType = SGD<UpdatePolicyType, CyclicalDecay>;
 
   /**
    * Construct the SGDR optimizer with the given function and
@@ -115,6 +115,17 @@ class SGDR
   bool Shuffle() const { return optimizer.Shuffle(); }
   //! Modify whether or not the individual functions are shuffled.
   bool& Shuffle() { return optimizer.Shuffle(); }
+
+  //! Get the update policy.
+  const UpdatePolicyType& UpdatePolicy() const
+  {
+    return optimizer.UpdatePolicy();
+  }
+  //! Modify the update policy.
+  UpdatePolicyType& UpdatePolicy()
+  {
+    return optimizer.UpdatePolicy();
+  }
 
  private:
   //! The size of each mini-batch.

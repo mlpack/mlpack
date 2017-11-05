@@ -116,7 +116,7 @@ BOOST_AUTO_TEST_CASE(SequenceClassificationTest)
     model.Add<Linear<> >(4, 10);
     model.Add<LogSoftMax<> >();
 
-    StandardSGD opt(0.1, 500 * input.n_cols, -100);
+    StandardSGD opt(0.1, 1, 500 * input.n_cols, -100);
     model.Train(input, labels, opt);
 
     arma::mat prediction;
@@ -454,9 +454,8 @@ void ReberGrammarTestNetwork(const size_t hiddenSize = 4,
     model.Add<RecurrentLayerType>(hiddenSize, hiddenSize);
     model.Add<Linear<> >(hiddenSize, outputSize);
     model.Add<SigmoidLayer<> >();
-
-    MomentumSGD opt(0.06, 2, -50000);
-
+    MomentumSGD opt(0.06, 50, 2, -50000);
+    
     arma::mat inputTemp, labelsTemp;
     for (size_t i = 0; i < (iterations + offset); i++)
     {
@@ -668,7 +667,7 @@ void DistractedSequenceRecallTestNetwork(
     model.Add<Linear<> >(hiddenSize, outputSize);
     model.Add<SigmoidLayer<> >();
 
-    StandardSGD opt(0.1, 2, -50000);
+    StandardSGD opt(0.1, 50, 2, -50000);
 
     // We increase the number of iterations (training) if the first run didn't
     // pass.
@@ -792,7 +791,7 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   model.Add<Linear<> >(4, 10);
   model.Add<LogSoftMax<> >();
 
-  StandardSGD opt(0.1, input.n_cols /* 1 epoch */, -100);
+  StandardSGD opt(0.1, 1, input.n_cols /* 1 epoch */, -100);
   model.Train(input, labels, opt);
 
   // Serialize the network.

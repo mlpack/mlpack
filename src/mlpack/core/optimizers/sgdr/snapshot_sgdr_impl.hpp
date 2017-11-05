@@ -32,8 +32,8 @@ SnapshotSGDR<UpdatePolicyType>::SnapshotSGDR(
     const UpdatePolicyType& updatePolicy) :
     batchSize(batchSize),
     accumulate(accumulate),
-    optimizer(OptimizerType(batchSize,
-                            stepSize,
+    optimizer(OptimizerType(stepSize,
+                            batchSize,
                             maxIterations,
                             tolerance,
                             shuffle,
@@ -85,7 +85,7 @@ double SnapshotSGDR<UpdatePolicyType>::Optimize(
     // Calculate final objective.
     overallObjective = 0;
     for (size_t i = 0; i < function.NumFunctions(); ++i)
-      overallObjective += function.Evaluate(iterate, i);
+      overallObjective += function.Evaluate(iterate, i, 1);
   }
 
   return overallObjective;

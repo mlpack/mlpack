@@ -68,8 +68,7 @@ class AdamUpdate
    * @param rows Number of rows in the gradient matrix.
    * @param cols Number of columns in the gradient matrix.
    */
-  void Initialize(const size_t rows,
-                  const size_t cols)
+  void Initialize(const size_t rows, const size_t cols)
   {
     m = arma::zeros<arma::mat>(rows, cols);
     v = arma::zeros<arma::mat>(rows, cols);

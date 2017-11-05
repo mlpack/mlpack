@@ -52,6 +52,11 @@ int main(int argc, char** argv)
 {
   // Parse the command-line options; put them into CLI.
   mlpack::bindings::cli::ParseCommandLine(argc, argv);
+  // Enable timing.
+  mlpack::Timer::EnableTiming();
+
+  // A "total_time" timer is run by default for each mlpack program.
+  mlpack::Timer::Start("total_time");
 
   mlpackMain();
 

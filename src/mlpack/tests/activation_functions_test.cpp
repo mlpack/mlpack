@@ -19,6 +19,7 @@
 #include <mlpack/methods/ann/activation_functions/tanh_function.hpp>
 #include <mlpack/methods/ann/activation_functions/rectifier_function.hpp>
 #include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
+#include <mlpack/methods/ann/activation_functions/swish_function.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -482,6 +483,25 @@ BOOST_AUTO_TEST_CASE(PReLUFunctionTest)
   CheckPReLUActivationCorrect(activationData, desiredActivations);
   CheckPReLUDerivativeCorrect(desiredActivations, desiredDerivatives);
   CheckPReLUGradientCorrect(activationData, desiredGradient);
+}
+
+/**
+ * Basic test of the swish function.
+ */
+BOOST_AUTO_TEST_CASE(SwishFunctionTest)
+{
+  // Hand-calculated values using Python interpreter.
+  const arma::colvec desiredActivations("-0.238405 3.07466 4.45055 \
+                                         -3.05183208657e-42 0.731058 -0.26894 \
+                                         1.76159 0");
+
+  const arma::colvec desiredDerivatives("0.3819171 1.0856295 1.039218 \
+                                         0.5 0.83540367 0.3671335 1.073787\
+                                         0.5");
+
+  CheckActivationCorrect<SwishFunction>(activationData, desiredActivations);
+  CheckDerivativeCorrect<SwishFunction>(desiredActivations,
+      desiredDerivatives);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

@@ -100,6 +100,8 @@
  *  - @ref iodoc
  *  - @ref timer
  *  - @ref sample
+ *  - @ref cv
+ *  - @ref hpt
  *  - @ref verinfo
  *
  * Tutorials on specific methods are also available.
@@ -243,6 +245,8 @@
 #include <mlpack/core/math/lin_alg.hpp>
 #include <mlpack/core/math/range.hpp>
 #include <mlpack/core/math/round.hpp>
+#include <mlpack/core/math/shuffle_data.hpp>
+#include <mlpack/core/math/make_alias.hpp>
 #include <mlpack/core/dists/discrete_distribution.hpp>
 #include <mlpack/core/dists/gaussian_distribution.hpp>
 #include <mlpack/core/dists/laplace_distribution.hpp>
