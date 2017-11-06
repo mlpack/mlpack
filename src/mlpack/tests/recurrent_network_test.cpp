@@ -455,7 +455,7 @@ void ReberGrammarTestNetwork(const size_t hiddenSize = 4,
     model.Add<Linear<> >(hiddenSize, outputSize);
     model.Add<SigmoidLayer<> >();
     MomentumSGD opt(0.06, 50, 2, -50000);
-    
+
     arma::mat inputTemp, labelsTemp;
     for (size_t i = 0; i < (iterations + offset); i++)
     {
