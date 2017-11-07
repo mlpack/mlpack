@@ -66,14 +66,14 @@ double CMAES<SelectionPolicyType>::Optimize(
   const double cs = (muEffective + 2) / (iterate.n_elem + muEffective + 5);
   const double ds = 1 + cs + 2 * std::max(std::sqrt((muEffective - 1) /
       (iterate.n_elem + 1)) - 1, 0.0);
-  const double enn = std::sqrt(iterate.n_elem) * (1 - 1 /
-      (4 * iterate.n_elem) + 1 / (21 * std::pow(iterate.n_elem, 2)));
+  const double enn = std::sqrt(iterate.n_elem) * (1.0 - 1.0 /
+      (4.0 * iterate.n_elem) + 1.0 / (21 * std::pow(iterate.n_elem, 2)));
 
   // Covariance update parameters.
   // Cumulation for distribution.
   const double cc = (4 + muEffective / iterate.n_elem) /
       (4 + iterate.n_elem + 2 * muEffective / iterate.n_elem);
-  const double h = (1.4 + 2 / (iterate.n_elem + 1)) * enn;
+  const double h = (1.4 + 2.0 / (iterate.n_elem + 1.0)) * enn;
 
   const double c1 = 2 / (std::pow(iterate.n_elem + 1.3, 2) + muEffective);
   const double alphaMu = 2;
@@ -104,7 +104,7 @@ double CMAES<SelectionPolicyType>::Optimize(
   arma::cube pPosition(iterate.n_rows, iterate.n_cols, lambda);
   arma::vec pObjective(lambda);
   arma::cube ps = arma::zeros(iterate.n_rows, iterate.n_cols, 2);
-  arma::cube pc = arma::zeros(iterate.n_rows, iterate.n_cols, 2);
+  arma::cube pc = ps;
   arma::cube C(iterate.n_elem, iterate.n_elem, 2);
   C.slice(0).eye();
 
