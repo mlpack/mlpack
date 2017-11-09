@@ -25,11 +25,11 @@ namespace ann /** Artificial Neural Network. */ {
  * and hidden state in a single step. The standard formula changes as follows:
  *
  * @f{eqnarray}{
- * i &=& sigmoid(W \cdot x + W \cdot h + b)
- * f &=& sigmoid(W  \cdot x + W \cdot h + b)
- * z &=& tanh(W \cdot x + W \cdot h + b)
- * c &=& f \cdot c + i \cdot z
- * o &=& sigmoid(W \cdot x + W \cdot h + b)
+ * i &=& sigmoid(W \cdot x + W \cdot h + b) \\
+ * f &=& sigmoid(W  \cdot x + W \cdot h + b) \\
+ * z &=& tanh(W \cdot x + W \cdot h + b) \\
+ * c &=& f \cdot c + i \cdot z \\
+ * o &=& sigmoid(W \cdot x + W \cdot h + b) \\
  * h &=& o \cdot tanh(c)
  * @f}
  *
@@ -46,6 +46,8 @@ namespace ann /** Artificial Neural Network. */ {
  *   year    = {1997}
  * }
  * @endcode
+ *
+ * \see LSTM for a standard implementation of the LSTM layer.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).

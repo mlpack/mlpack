@@ -28,11 +28,11 @@ namespace ann /** Artificial Neural Network. */ {
  * The implementation corresponds to the following algorithm:
  *
  * @f{eqnarray}{
- * i &=& sigmoid(W \cdot x + W \cdot h + W \cdot c + b)
- * f &=& sigmoid(W  \cdot x + W \cdot h + W \cdot c + b)
- * z &=& tanh(W \cdot x + W \cdot h + b)
- * c &=& f \cdot c + i \cdot z
- * o &=& sigmoid(W \cdot x + W \cdot h + W \cdot c + b)
+ * i &=& sigmoid(W \cdot x + W \cdot h + W \cdot c + b) \\
+ * f &=& sigmoid(W  \cdot x + W \cdot h + W \cdot c + b) \\
+ * z &=& tanh(W \cdot x + W \cdot h + b) \\
+ * c &=& f \cdot c + i \cdot z \\
+ * o &=& sigmoid(W \cdot x + W \cdot h + W \cdot c + b) \\
  * h &=& o \cdot tanh(c)
  * @f}
  *
@@ -47,6 +47,9 @@ namespace ann /** Artificial Neural Network. */ {
  *   url     = {http://arxiv.org/abs/1303.5778},
  * }
  * @endcode
+ *
+ * \see FastLSTM for a faster LSTM version which combines the calculation of the
+ * input, forget, output gates and hidden state in a single step.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
