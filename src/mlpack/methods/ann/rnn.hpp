@@ -221,6 +221,11 @@ class RNN
   //! Modify the maximum length of backpropagation through time.
   size_t& Rho() { return rho; }
 
+  /**
+   * Reset the module infomration (weights/parameters).
+   */
+  void ResetParameters();
+
   //! Serialize the model.
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
@@ -261,11 +266,6 @@ class RNN
   void SinglePredict(const arma::mat& predictors, arma::mat& results);
 
   /**
-   * Reset the module infomration (weights/parameters).
-   */
-  void ResetParameters();
-
-  /**
    * Reset the module status by setting the current deterministic parameter
    * for all modules that implement the Deterministic function.
    */
@@ -278,9 +278,6 @@ class RNN
 
   //! Number of steps to backpropagate through time (BPTT).
   size_t rho;
-
-  //! Number of steps to backpropagate through time (BPTT) at the previous step.
-  size_t prevRho;
 
   //! Instantiated outputlayer used to evaluate the network.
   OutputLayerType outputLayer;
