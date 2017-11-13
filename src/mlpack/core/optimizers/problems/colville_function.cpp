@@ -37,10 +37,15 @@ double ColvilleFunction::Evaluate(const arma::mat& coordinates,
   return objective;
 }
 
+double ColvilleFunction::Evaluate(const arma::mat& coordinates) const
+{
+  return Evaluate(coordinates, 0, 1);
+}
+
 void ColvilleFunction::Gradient(const arma::mat& coordinates,
-                               const size_t /* begin */,
-                               arma::mat& gradient,
-                               const size_t /* batchSize */) const
+                                const size_t /* begin */,
+                                arma::mat& gradient,
+                                const size_t /* batchSize */) const
 {
   // For convenience; we assume these temporaries will be optimized out.
   const double x1 = coordinates(0);
@@ -53,4 +58,10 @@ void ColvilleFunction::Gradient(const arma::mat& coordinates,
   gradient(1) = 19.8 * x4 - 200 * std::pow(x1, 2) + 220.2 * x2 - 40;
   gradient(2) = 2 * (180 * x3 * (std::pow(x3, 2) - x4) + x3 - 1);
   gradient(3) = 200.2 * x4 + 19.8 * x2 - 180 * std::pow(x3, 2) - 40;
+}
+
+void ColvilleFunction::Gradient(const arma::mat& coordinates,
+                                arma::mat& gradient)
+{
+  Gradient(coordinates, 0, gradient, 1);
 }

@@ -52,6 +52,11 @@ double RastriginFunction::Evaluate(const arma::mat& coordinates,
   return objective;
 }
 
+double RastriginFunction::Evaluate(const arma::mat& coordinates) const
+{
+  return Evaluate(coordinates, 0, NumFunctions());
+}
+
 void RastriginFunction::Gradient(const arma::mat& coordinates,
                                  const size_t begin,
                                  arma::mat& gradient,
@@ -65,4 +70,10 @@ void RastriginFunction::Gradient(const arma::mat& coordinates,
     gradient(p) += (10.0 * n) * (2 * (coordinates(p) + 10.0 * M_PI *
         std::sin(2.0 * M_PI * coordinates(p))));
   }
+}
+
+void RastriginFunction::Gradient(const arma::mat& coordinates,
+                                 arma::mat& gradient)
+{
+  Gradient(coordinates, 0, gradient, NumFunctions());
 }

@@ -11,6 +11,7 @@ set(DIRS
   iqn
   lbfgs
   line_search
+  problems
   proximal
   rmsprop
   sa

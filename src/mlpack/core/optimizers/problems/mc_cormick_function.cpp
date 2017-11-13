@@ -33,6 +33,11 @@ double McCormickFunction::Evaluate(const arma::mat& coordinates,
   return objective;
 }
 
+double McCormickFunction::Evaluate(const arma::mat& coordinates) const
+{
+  return Evaluate(coordinates, 0, 1);
+}
+
 void McCormickFunction::Gradient(const arma::mat& coordinates,
                                  const size_t /* begin */,
                                  arma::mat& gradient,
@@ -45,4 +50,10 @@ void McCormickFunction::Gradient(const arma::mat& coordinates,
   gradient.set_size(2, 1);
   gradient(0) = std::cos(x1 + x2) + 2 * x1 - 2 * x2 - 1.5;
   gradient(1) = std::cos(x1 + x2) - 2 * x1 + 2 * x2 + 2.5;
+}
+
+void McCormickFunction::Gradient(const arma::mat& coordinates,
+                                 arma::mat& gradient)
+{
+  Gradient(coordinates, 0, gradient, 1);
 }

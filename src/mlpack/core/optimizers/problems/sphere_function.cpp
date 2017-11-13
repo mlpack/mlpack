@@ -51,6 +51,11 @@ double SphereFunction::Evaluate(const arma::mat& coordinates,
   return objective;
 }
 
+double SphereFunction::Evaluate(const arma::mat& coordinates) const
+{
+  Evaluate(coordinates, 0, NumFunctions());
+}
+
 void SphereFunction::Gradient(const arma::mat& coordinates,
                               const size_t begin,
                               arma::mat& gradient,
@@ -63,4 +68,9 @@ void SphereFunction::Gradient(const arma::mat& coordinates,
     const size_t p = visitationOrder[j];
     gradient(p) += 2.0 * coordinates[p];
   }
+}
+
+void SphereFunction::Gradient(const arma::mat& coordinates, arma::mat& gradient)
+{
+  Gradient(coordinates, 0, gradient, 1);
 }
