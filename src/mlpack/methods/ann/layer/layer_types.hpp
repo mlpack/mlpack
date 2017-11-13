@@ -44,6 +44,7 @@ namespace mlpack {
 namespace ann {
 
 template<typename InputDataType, typename OutputDataType> class AddMerge;
+template<typename InputDataType, typename OutputDataType> class BatchNorm;
 template<typename InputDataType, typename OutputDataType> class Concat;
 template<typename InputDataType, typename OutputDataType> class DropConnect;
 template<typename InputDataType, typename OutputDataType> class Glimpse;
@@ -85,6 +86,7 @@ using LayerTypes = boost::variant<
     BaseLayer<IdentityFunction, arma::mat, arma::mat>*,
     BaseLayer<TanhFunction, arma::mat, arma::mat>*,
     BaseLayer<RectifierFunction, arma::mat, arma::mat>*,
+    BatchNorm<arma::mat, arma::mat>*,
     Concat<arma::mat, arma::mat>*,
     ConcatPerformance<NegativeLogLikelihood<arma::mat, arma::mat>,
                       arma::mat, arma::mat>*,
