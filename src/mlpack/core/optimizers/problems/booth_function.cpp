@@ -33,6 +33,11 @@ double BoothFunction::Evaluate(const arma::mat& coordinates,
   return objective;
 }
 
+double BoothFunction::Evaluate(const arma::mat& coordinates) const
+{
+  return Evaluate(coordinates, 0, 1);
+}
+
 void BoothFunction::Gradient(const arma::mat& coordinates,
                              const size_t /* begin */,
                              arma::mat& gradient,
@@ -45,4 +50,9 @@ void BoothFunction::Gradient(const arma::mat& coordinates,
   gradient.set_size(2, 1);
   gradient(0) = 10 * x1 + 8 * x2 - 34;
   gradient(1) = 8 * x1 + 10 * x2 - 38;
+}
+
+void BoothFunction::Gradient(const arma::mat& coordinates, arma::mat& gradient)
+{
+  Gradient(coordinates, 0, gradient, 1);
 }

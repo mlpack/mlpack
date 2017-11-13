@@ -33,6 +33,11 @@ double MatyasFunction::Evaluate(const arma::mat& coordinates,
   return objective;
 }
 
+double MatyasFunction::Evaluate(const arma::mat& coordinates) const
+{
+  return Evaluate(coordinates, 0, 1);
+}
+
 void MatyasFunction::Gradient(const arma::mat& coordinates,
                               const size_t /* begin */,
                               arma::mat& gradient,
@@ -45,4 +50,9 @@ void MatyasFunction::Gradient(const arma::mat& coordinates,
   gradient.set_size(2, 1);
   gradient(0) = 0.52 * x1 - 48 * x2;
   gradient(1) = 0.52 * x2 - 0.48 * x1;
+}
+
+void MatyasFunction::Gradient(const arma::mat& coordinates, arma::mat& gradient)
+{
+  Gradient(coordinates, 0, gradient, 1);
 }

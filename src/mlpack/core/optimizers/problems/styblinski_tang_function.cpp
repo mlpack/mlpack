@@ -46,6 +46,11 @@ double StyblinskiTangFunction::Evaluate(const arma::mat& coordinates,
   return objective;
 }
 
+double StyblinskiTangFunction::Evaluate(const arma::mat& coordinates) const
+{
+  return Evaluate(coordinates, 0, 1);
+}
+
 void StyblinskiTangFunction::Gradient(const arma::mat& coordinates,
                                       const size_t begin,
                                       arma::mat& gradient,
@@ -59,4 +64,10 @@ void StyblinskiTangFunction::Gradient(const arma::mat& coordinates,
     gradient(p) += 0.5 * (4 * std::pow(coordinates(p), 3) -
         32.0 * coordinates(p) + 5.0);
   }
+}
+
+void StyblinskiTangFunction::Gradient(const arma::mat& coordinates,
+                                      arma::mat& gradient)
+{
+  Gradient(coordinates, 0, gradient, 1);
 }
