@@ -19,6 +19,12 @@ namespace mlpack {
 namespace ann {
 
 //! ResetVisitor visitor class.
+inline ResetCellVisitor::ResetCellVisitor(const size_t size) : size(size)
+{
+  /* Nothing to do here. */
+}
+
+//! ResetVisitor visitor class.
 template<typename LayerType>
 inline void ResetCellVisitor::operator()(LayerType* layer) const
 {
@@ -27,15 +33,15 @@ inline void ResetCellVisitor::operator()(LayerType* layer) const
 
 template<typename T>
 inline typename std::enable_if<
-    HasResetCellCheck<T, void(T::*)()>::value, void>::type
+    HasResetCellCheck<T, void(T::*)(const size_t)>::value, void>::type
 ResetCellVisitor::ResetCell(T* layer) const
 {
-  layer->ResetCell();
+  layer->ResetCell(size);
 }
 
 template<typename T>
 inline typename std::enable_if<
-    !HasResetCellCheck<T, void(T::*)()>::value, void>::type
+    !HasResetCellCheck<T, void(T::*)(const size_t)>::value, void>::type
 ResetCellVisitor::ResetCell(T* /* layer */) const
 {
   /* Nothing to do here. */

@@ -113,10 +113,12 @@ class GRU
                 arma::Mat<eT>&& /* gradient */);
 
   /*
-   * Resets the cell to accept a new input.
-   * This breaks the BPTT chain starts a new one.
+   * Resets the cell to accept a new input. This breaks the BPTT chain starts a
+   * new one.
+   *
+   * @param size The current maximum number of steps through time.
    */
-  void ResetCell();
+  void ResetCell(const size_t size);
 
   //! The value of the deterministic parameter.
   bool Deterministic() const { return deterministic; }
