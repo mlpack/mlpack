@@ -33,6 +33,11 @@ double BukinFunction::Evaluate(const arma::mat& coordinates,
   return objective;
 }
 
+double BukinFunction::Evaluate(const arma::mat& coordinates) const
+{
+  return Evaluate(coordinates, 0, NumFunctions());
+}
+
 void BukinFunction::Gradient(const arma::mat& coordinates,
                              const size_t /* begin */,
                              arma::mat& gradient,
@@ -48,4 +53,9 @@ void BukinFunction::Gradient(const arma::mat& coordinates,
       std::pow(x2, 2)), 1.5);
   gradient(1) = (50 * (x2 - 0.01 * std::pow(x1, 2))) /
       std::pow(std::abs(x2 - 0.01 * std::pow(x1, 2)), 1.5);
+}
+
+void BukinFunction::Gradient(const arma::mat& coordinates, arma::mat& gradient)
+{
+  Gradient(coordinates, 0, gradient, NumFunctions());
 }

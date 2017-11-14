@@ -53,7 +53,7 @@ double SphereFunction::Evaluate(const arma::mat& coordinates,
 
 double SphereFunction::Evaluate(const arma::mat& coordinates) const
 {
-  Evaluate(coordinates, 0, NumFunctions());
+  return Evaluate(coordinates, 0, NumFunctions());
 }
 
 void SphereFunction::Gradient(const arma::mat& coordinates,
@@ -72,5 +72,5 @@ void SphereFunction::Gradient(const arma::mat& coordinates,
 
 void SphereFunction::Gradient(const arma::mat& coordinates, arma::mat& gradient)
 {
-  Gradient(coordinates, 0, gradient, 1);
+  Gradient(coordinates, 0, gradient, NumFunctions());
 }

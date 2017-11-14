@@ -54,7 +54,7 @@ class ColvilleFunction
   void Shuffle();
 
   //! Return 1 (the number of functions).
-  size_t NumFunctions() const { return 4; }
+  size_t NumFunctions() const { return 1; }
 
   //! Get the starting point.
   arma::mat GetInitialPoint() const { return arma::mat("-5; 3; 1; -9"); }

@@ -35,7 +35,7 @@ double BoothFunction::Evaluate(const arma::mat& coordinates,
 
 double BoothFunction::Evaluate(const arma::mat& coordinates) const
 {
-  return Evaluate(coordinates, 0, 1);
+  return Evaluate(coordinates, 0, NumFunctions());
 }
 
 void BoothFunction::Gradient(const arma::mat& coordinates,
