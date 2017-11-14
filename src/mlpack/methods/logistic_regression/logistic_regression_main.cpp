@@ -124,9 +124,9 @@ PARAM_MODEL_OUT(LogisticRegression<>, "output_model", "Output for trained "
 
 // Testing.
 PARAM_MATRIX_IN("test", "Matrix containing test dataset.", "T");
-PARAM_UROW_OUT("output", "If --test_file is specified, this matrix is where "
+PARAM_UROW_OUT("output", "If test data is specified, this matrix is where "
     "the predictions for the test set will be saved.", "o");
-PARAM_MATRIX_OUT("output_probabilities", "If --test_file is specified, this "
+PARAM_MATRIX_OUT("output_probabilities", "If test data is specified, this "
     "matrix is where the class probabilities for the test set will be saved.",
     "p");
 PARAM_DOUBLE_IN("decision_boundary", "Decision boundary for prediction; if the "
@@ -180,14 +180,20 @@ void mlpackMain()
 
   RequireParamValue<double>("step_size", [](double x) { return x >= 0.0; },
       true, "step size must be positive");
-  if (CLI::HasParam("step_size") && optimizerType == "lbfgs")
-  {
-    Log::Warn << "Step size (" << PRINT_PARAM_STRING("step_size") << " ignored "
-        << "because 'sgd' optimizer is not being used." << endl;
-  }
 
   if (optimizerType != "sgd")
-    ReportIgnoredParam({{ }}, "batch_size");
+  {
+    if (CLI::HasParam("step_size"))
+    {
+      Log::Warn << PRINT_PARAM_STRING("step_size") << " ignored because "
+          << "optimizer type is not 'sgd'." << std::endl;
+    }
+    if (CLI::HasParam("batch_size"))
+    {
+      Log::Warn << PRINT_PARAM_STRING("batch_size") << " ignored because "
+          << "optimizer type is not 'sgd'." << std::endl;
+    }
+  }
 
   // These are the matrices we might use.
   arma::mat regressors;

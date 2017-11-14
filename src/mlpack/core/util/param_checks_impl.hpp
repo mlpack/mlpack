@@ -152,9 +152,9 @@ void RequireParamInSet(const std::string& name,
 
 template<typename T>
 void RequireParamValue(const std::string& name,
-                            const std::function<bool(T)>& conditional,
-                            const bool fatal,
-                            const std::string& errorMessage)
+                       const std::function<bool(T)>& conditional,
+                       const bool fatal,
+                       const std::string& errorMessage)
 {
   if (BINDING_IGNORE_CHECK(name))
     return;
