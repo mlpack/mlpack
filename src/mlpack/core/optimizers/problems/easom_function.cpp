@@ -35,7 +35,7 @@ double EasomFunction::Evaluate(const arma::mat& coordinates,
 
 double EasomFunction::Evaluate(const arma::mat& coordinates) const
 {
-  return Evaluate(coordinates, 0, 1);
+  return Evaluate(coordinates, 0, NumFunctions());
 }
 
 void EasomFunction::Gradient(const arma::mat& coordinates,
@@ -63,5 +63,5 @@ void EasomFunction::Gradient(const arma::mat& coordinates,
 
 void EasomFunction::Gradient(const arma::mat& coordinates, arma::mat& gradient)
 {
-  Gradient(coordinates, 0, gradient, 1);
+  Gradient(coordinates, 0, gradient, NumFunctions());
 }

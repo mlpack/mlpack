@@ -48,7 +48,7 @@ double StyblinskiTangFunction::Evaluate(const arma::mat& coordinates,
 
 double StyblinskiTangFunction::Evaluate(const arma::mat& coordinates) const
 {
-  return Evaluate(coordinates, 0, 1);
+  return Evaluate(coordinates, 0, NumFunctions());
 }
 
 void StyblinskiTangFunction::Gradient(const arma::mat& coordinates,
@@ -69,5 +69,5 @@ void StyblinskiTangFunction::Gradient(const arma::mat& coordinates,
 void StyblinskiTangFunction::Gradient(const arma::mat& coordinates,
                                       arma::mat& gradient)
 {
-  Gradient(coordinates, 0, gradient, 1);
+  Gradient(coordinates, 0, gradient, NumFunctions());
 }
