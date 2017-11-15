@@ -326,7 +326,7 @@ class HMM
    * Serialize the object.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int version);
+  void serialize(Archive& ar, const unsigned int version);
 
  protected:
   // Helper functions.

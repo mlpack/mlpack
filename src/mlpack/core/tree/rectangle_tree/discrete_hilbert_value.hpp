@@ -280,7 +280,7 @@ class DiscreteHilbertValue
 
  public:
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 };
 
 } // namespace tree

@@ -82,7 +82,7 @@ using enable_if_t = typename enable_if<B, T>::type;
 #ifndef BOOST_PFTO
   #define BOOST_PFTO
 #endif
-#include <mlpack/core/data/serialization_shim.hpp>
+#include <mlpack/core/data/has_serialize.hpp>
 #include <mlpack/core/data/serialization_template_version.hpp>
 
 // If we have Boost 1.58 or older and are using C++14, the compilation is likely

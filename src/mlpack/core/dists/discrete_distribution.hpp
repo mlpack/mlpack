@@ -208,26 +208,9 @@ class DiscreteDistribution
    * Serialize the distribution.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
-    // We serialize the vector manually since there seem to be some problems
-    // with some boost versions.
-    size_t dimensionality;
-    dimensionality = probabilities.size();
-    ar & data::CreateNVP(dimensionality, "dimensionality");
-
-    if (Archive::is_loading::value)
-    {
-      probabilities.clear();
-      probabilities.resize(dimensionality);
-    }
-
-    for (size_t i = 0; i < dimensionality; ++i)
-    {
-      std::ostringstream oss;
-      oss << "probabilities" << i;
-      ar & data::CreateNVP(probabilities[i], oss.str());
-    }
+    ar & BOOST_SERIALIZATION_NVP(probabilities);
   }
 
  private:

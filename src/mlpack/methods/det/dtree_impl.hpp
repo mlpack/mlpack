@@ -990,25 +990,25 @@ void DTree<MatType, TagType>::FillMinMax(const StatType& mins,
   }
 }
 
-template<typename MatType, typename TagType>
-template<typename Archive>
-void DTree<MatType, TagType>::Serialize(Archive& ar,
+template <typename MatType, typename TagType>
+template <typename Archive>
+void DTree<MatType, TagType>::serialize(Archive& ar,
                                         const unsigned int /* version */)
 {
-  using data::CreateNVP;
-
-  ar & CreateNVP(start, "start");
-  ar & CreateNVP(end, "end");
-  ar & CreateNVP(splitDim, "splitDim");
-  ar & CreateNVP(splitValue, "splitValue");
-  ar & CreateNVP(logNegError, "logNegError");
-  ar & CreateNVP(subtreeLeavesLogNegError, "subtreeLeavesLogNegError");
-  ar & CreateNVP(subtreeLeaves, "subtreeLeaves");
-  ar & CreateNVP(root, "root");
-  ar & CreateNVP(ratio, "ratio");
-  ar & CreateNVP(logVolume, "logVolume");
-  ar & CreateNVP(bucketTag, "bucketTag");
-  ar & CreateNVP(alphaUpper, "alphaUpper");
+  ar & BOOST_SERIALIZATION_NVP(start);
+  ar & BOOST_SERIALIZATION_NVP(end);
+  ar & BOOST_SERIALIZATION_NVP(maxVals);
+  ar & BOOST_SERIALIZATION_NVP(minVals);
+  ar & BOOST_SERIALIZATION_NVP(splitDim);
+  ar & BOOST_SERIALIZATION_NVP(splitValue);
+  ar & BOOST_SERIALIZATION_NVP(logNegError);
+  ar & BOOST_SERIALIZATION_NVP(subtreeLeavesLogNegError);
+  ar & BOOST_SERIALIZATION_NVP(subtreeLeaves);
+  ar & BOOST_SERIALIZATION_NVP(root);
+  ar & BOOST_SERIALIZATION_NVP(ratio);
+  ar & BOOST_SERIALIZATION_NVP(logVolume);
+  ar & BOOST_SERIALIZATION_NVP(bucketTag);
+  ar & BOOST_SERIALIZATION_NVP(alphaUpper);
 
   if (Archive::is_loading::value)
   {
@@ -1018,13 +1018,13 @@ void DTree<MatType, TagType>::Serialize(Archive& ar,
       delete right;
   }
 
-  ar & CreateNVP(left, "left");
-  ar & CreateNVP(right, "right");
+  ar & BOOST_SERIALIZATION_NVP(left);
+  ar & BOOST_SERIALIZATION_NVP(right);
 
   if (root)
   {
-    ar & CreateNVP(maxVals, "maxVals");
-    ar & CreateNVP(minVals, "minVals");
+    ar & BOOST_SERIALIZATION_NVP(maxVals);
+    ar & BOOST_SERIALIZATION_NVP(minVals);
 
     // This is added in order to reduce (dramatically!) the model file size.
     if (Archive::is_loading::value && left && right)

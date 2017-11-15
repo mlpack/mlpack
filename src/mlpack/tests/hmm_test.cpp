@@ -1024,7 +1024,7 @@ BOOST_AUTO_TEST_CASE(GMMHMMLoadSaveTest)
   {
     std::ofstream ofs("test-hmm-save.xml");
     boost::archive::xml_oarchive ar(ofs);
-    ar << data::CreateNVP(hmm, "hmm");
+    ar << BOOST_SERIALIZATION_NVP(hmm);
   }
 
   // Load the HMM.
@@ -1032,7 +1032,7 @@ BOOST_AUTO_TEST_CASE(GMMHMMLoadSaveTest)
   {
     std::ifstream ifs("test-hmm-save.xml");
     boost::archive::xml_iarchive ar(ifs);
-    ar >> data::CreateNVP(hmm2, "hmm");
+    ar >> BOOST_SERIALIZATION_NVP(hmm2);
   }
 
   // Remove clutter.
@@ -1090,7 +1090,7 @@ BOOST_AUTO_TEST_CASE(GaussianHMMLoadSaveTest)
   {
     std::ofstream ofs("test-hmm-save.xml");
     boost::archive::xml_oarchive ar(ofs);
-    ar << data::CreateNVP(hmm, "hmm");
+    ar << BOOST_SERIALIZATION_NVP(hmm);
   }
 
   // Load the HMM.
@@ -1098,7 +1098,7 @@ BOOST_AUTO_TEST_CASE(GaussianHMMLoadSaveTest)
   {
     std::ifstream ifs("test-hmm-save.xml");
     boost::archive::xml_iarchive ar(ifs);
-    ar >> data::CreateNVP(hmm2, "hmm");
+    ar >> BOOST_SERIALIZATION_NVP(hmm2);
   }
 
   // Remove clutter.
@@ -1153,7 +1153,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLoadSaveTest)
   {
     std::ofstream ofs("test-hmm-save.xml");
     boost::archive::xml_oarchive ar(ofs);
-    ar << data::CreateNVP(hmm, "hmm");
+    ar << BOOST_SERIALIZATION_NVP(hmm);
   }
 
   // Load the HMM.
@@ -1161,7 +1161,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLoadSaveTest)
   {
     std::ifstream ifs("test-hmm-save.xml");
     boost::archive::xml_iarchive ar(ifs);
-    ar >> data::CreateNVP(hmm2, "hmm");
+    ar >> BOOST_SERIALIZATION_NVP(hmm2);
   }
 
   // Remove clutter.

@@ -147,15 +147,17 @@ class RPlusPlusTreeAuxiliaryInformation
 
   //! Modify the maximum bounding rectangle.
   const BoundType& OuterBound() const { return outerBound; }
+
  private:
   //! The maximum bounding rectangle.
   BoundType outerBound;
+
  public:
   /**
    * Serialize the information.
    */
   template<typename Archive>
-  void Serialize(Archive &, const unsigned int /* version */);
+  void serialize(Archive &, const unsigned int /* version */);
 };
 
 } // namespace tree

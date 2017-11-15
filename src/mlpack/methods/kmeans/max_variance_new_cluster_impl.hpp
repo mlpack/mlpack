@@ -100,7 +100,7 @@ size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
 
 //! Serialize the object.
 template<typename Archive>
-void MaxVarianceNewCluster::Serialize(Archive& /* ar */,
+void MaxVarianceNewCluster::serialize(Archive& /* ar */,
                                       const unsigned int /* version */)
 {
   // Serialization is useless here, because the only thing we store is

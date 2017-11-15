@@ -77,10 +77,10 @@ struct NBCModel
 
   //! Serialize the model.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(nbc, "nbc");
-    ar & data::CreateNVP(mappings, "mappings");
+    ar & BOOST_SERIALIZATION_NVP(nbc);
+    ar & BOOST_SERIALIZATION_NVP(mappings);
   }
 };
 

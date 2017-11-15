@@ -21,7 +21,6 @@ namespace cli {
  */
 template<typename T>
 std::string StringTypeParamImpl(
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
     const typename boost::disable_if<data::HasSerialize<T>>::type* = 0);
 
@@ -31,13 +30,6 @@ std::string StringTypeParamImpl(
 template<typename T>
 std::string StringTypeParamImpl(
     const typename boost::enable_if<util::IsStdVector<T>>::type* = 0);
-
-/**
- * Return a string containing the type of the parameter, for matrix options.
- */
-template<typename T>
-std::string StringTypeParamImpl(
-    const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0);
 
 /**
  * Return a string containing the type of the parameter,

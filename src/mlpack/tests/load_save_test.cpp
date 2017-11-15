@@ -829,10 +829,10 @@ class TestInner
   TestInner(char c, string s) : c(c), s(s) { }
 
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(c, "char");
-    ar & data::CreateNVP(s, "string");
+    ar & BOOST_SERIALIZATION_NVP(c);
+    ar & BOOST_SERIALIZATION_NVP(s);
   }
 
   // Public members for testing.
@@ -846,12 +846,12 @@ class Test
   Test(int x, int y) : x(x), y(y), ina('a', "hello"), inb('b', "goodbye") { }
 
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(x, "x");
-    ar & data::CreateNVP(y, "y");
-    ar & data::CreateNVP(ina, "ina");
-    ar & data::CreateNVP(inb, "inb");
+    ar & BOOST_SERIALIZATION_NVP(x);
+    ar & BOOST_SERIALIZATION_NVP(y);
+    ar & BOOST_SERIALIZATION_NVP(ina);
+    ar & BOOST_SERIALIZATION_NVP(inb);
   }
 
   // Public members for testing.

@@ -422,13 +422,13 @@ HollowBallBound<TMetricType, ElemType>::operator|=(const HollowBallBound& other)
 //! Serialize the BallBound.
 template<typename TMetricType, typename ElemType>
 template<typename Archive>
-void HollowBallBound<TMetricType, ElemType>::Serialize(
+void HollowBallBound<TMetricType, ElemType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  ar & data::CreateNVP(radii, "radii");
-  ar & data::CreateNVP(center, "center");
-  ar & data::CreateNVP(hollowCenter, "hollowCenter");
+  ar & BOOST_SERIALIZATION_NVP(radii);
+  ar & BOOST_SERIALIZATION_NVP(center);
+  ar & BOOST_SERIALIZATION_NVP(hollowCenter);
 
   if (Archive::is_loading::value)
   {
@@ -437,8 +437,8 @@ void HollowBallBound<TMetricType, ElemType>::Serialize(
       delete metric;
   }
 
-  ar & data::CreateNVP(metric, "metric");
-  ar & data::CreateNVP(ownsMetric, "ownsMetric");
+  ar & BOOST_SERIALIZATION_NVP(metric);
+  ar & BOOST_SERIALIZATION_NVP(ownsMetric);
 }
 
 } // namespace bound

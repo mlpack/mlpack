@@ -48,6 +48,7 @@ std::string GetPrintableParamName(
 template<typename T>
 std::string GetPrintableParamName(
     const util::ParamData& data,
+    const typename boost::disable_if<arma::is_arma_type<T>>::type*,
     const typename boost::enable_if<data::HasSerialize<T>>::type*)
 {
   return "--" + data.name + "_file";

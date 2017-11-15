@@ -246,7 +246,7 @@ template<typename Archive>
 template<typename RAType>
 void SerializeVisitor<Archive>::operator()(RAType*& ra) const
 {
-  ar & data::CreateNVP(ra, name);
+  ar & BOOST_SERIALIZATION_NVP(ra);
 }
 
 //! Exposes the Naive() method of the given RAType instance.
@@ -344,12 +344,12 @@ RAModel<SortPolicy>::~RAModel()
 
 template<typename SortPolicy>
 template<typename Archive>
-void RAModel<SortPolicy>::Serialize(Archive& ar,
+void RAModel<SortPolicy>::serialize(Archive& ar,
                                     const unsigned int /* version */)
 {
-  ar & data::CreateNVP(treeType, "treeType");
-  ar & data::CreateNVP(randomBasis, "randomBasis");
-  ar & data::CreateNVP(q, "q");
+  ar & BOOST_SERIALIZATION_NVP(treeType);
+  ar & BOOST_SERIALIZATION_NVP(randomBasis);
+  ar & BOOST_SERIALIZATION_NVP(q);
 
   // This should never happen, but just in case, be clean with memory.
   if (Archive::is_loading::value)

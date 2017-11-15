@@ -581,7 +581,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     CoverTree() // Create an empty CoverTree.
 {
   // Now, serialize to our empty tree.
-  ar >> data::CreateNVP(*this, "tree");
+  ar >> boost::serialization::make_nvp("this", *this);
 }
 
 
@@ -1575,12 +1575,10 @@ template<
     typename RootPointPolicy
 >
 template<typename Archive>
-void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::Serialize(
+void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  using data::CreateNVP;
-
   // If we're loading, and we have children, they need to be deleted.  We may
   // also need to delete the local metric and dataset.
   if (Archive::is_loading::value)
@@ -1594,31 +1592,17 @@ void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::Serialize(
       delete dataset;
   }
 
-  ar & CreateNVP(dataset, "dataset");
-  ar & CreateNVP(point, "point");
-  ar & CreateNVP(scale, "scale");
-  ar & CreateNVP(base, "base");
-  ar & CreateNVP(stat, "stat");
-  ar & CreateNVP(numDescendants, "numDescendants");
+  ar & BOOST_SERIALIZATION_NVP(dataset);
+  ar & BOOST_SERIALIZATION_NVP(point);
+  ar & BOOST_SERIALIZATION_NVP(scale);
+  ar & BOOST_SERIALIZATION_NVP(base);
+  ar & BOOST_SERIALIZATION_NVP(stat);
+  ar & BOOST_SERIALIZATION_NVP(numDescendants);
 
-  // Due to quirks of boost::serialization, depending on how the user
-  // serializes the tree, it's possible that the root of the tree will
-  // accidentally be serialized twice.  So if we are a first-level child, we
-  // avoid serializing the parent.  The true (non-duplicated) parent will fix
-  // the parent link.
-  if (Archive::is_saving::value && parent != NULL && parent->Parent() == NULL)
-  {
-    CoverTree* fakeParent = NULL;
-    ar & CreateNVP(fakeParent, "parent");
-  }
-  else
-  {
-    ar & CreateNVP(parent, "parent");
-  }
-
-  ar & CreateNVP(parentDistance, "parentDistance");
-  ar & CreateNVP(furthestDescendantDistance, "furthestDescendantDistance");
-  ar & CreateNVP(metric, "metric");
+  ar & BOOST_SERIALIZATION_NVP(parent);
+  ar & BOOST_SERIALIZATION_NVP(parentDistance);
+  ar & BOOST_SERIALIZATION_NVP(furthestDescendantDistance);
+  ar & BOOST_SERIALIZATION_NVP(metric);
 
   if (Archive::is_loading::value && parent == NULL)
   {
@@ -1627,16 +1611,7 @@ void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::Serialize(
   }
 
   // Lastly, serialize the children.
-  size_t numChildren = children.size();
-  ar & CreateNVP(numChildren, "numChildren");
-  if (Archive::is_loading::value)
-    children.resize(numChildren);
-  for (size_t i = 0; i < numChildren; ++i)
-  {
-    std::ostringstream oss;
-    oss << "child" << i;
-    ar & CreateNVP(children[i], oss.str());
-  }
+  ar & BOOST_SERIALIZATION_NVP(children);
 
   if (Archive::is_loading::value && parent == NULL)
   {

@@ -97,6 +97,7 @@ T& GetParam(
 template<typename T>
 T& GetParam(
     util::ParamData& d,
+    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
 {
   // If the model is an input model, we have to load it from file.  'value'

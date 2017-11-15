@@ -21,8 +21,6 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 
-#include "serialization_shim.hpp"
-
 namespace mlpack {
 namespace data {
 
@@ -259,17 +257,17 @@ bool Save(const std::string& filename,
     if (f == format::xml)
     {
       boost::archive::xml_oarchive ar(ofs);
-      ar << CreateNVP(t, name);
+      ar << boost::serialization::make_nvp(name.c_str(), t);
     }
     else if (f == format::text)
     {
       boost::archive::text_oarchive ar(ofs);
-      ar << CreateNVP(t, name);
+      ar << boost::serialization::make_nvp(name.c_str(), t);
     }
     else if (f == format::binary)
     {
       boost::archive::binary_oarchive ar(ofs);
-      ar << CreateNVP(t, name);
+      ar << boost::serialization::make_nvp(name.c_str(), t);
     }
 
     return true;

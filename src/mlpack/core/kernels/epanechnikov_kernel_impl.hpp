@@ -78,11 +78,11 @@ double EpanechnikovKernel::ConvolutionIntegral(const VecTypeA& a,
 
 //! Serialize the kernel.
 template<typename Archive>
-void EpanechnikovKernel::Serialize(Archive& ar,
+void EpanechnikovKernel::serialize(Archive& ar,
                                    const unsigned int /* version */)
 {
-  ar & data::CreateNVP(bandwidth, "bandwidth");
-  ar & data::CreateNVP(inverseBandwidthSquared, "inverseBandwidthSquared");
+  ar & BOOST_SERIALIZATION_NVP(bandwidth);
+  ar & BOOST_SERIALIZATION_NVP(inverseBandwidthSquared);
 }
 
 } // namespace kernel

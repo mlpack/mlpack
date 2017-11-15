@@ -54,8 +54,8 @@ class HoeffdingCategoricalSplit
    * @param numCategories Number of categories in this dimension.
    * @param numClasses Number of classes in this dimension.
    */
-  HoeffdingCategoricalSplit(const size_t numCategories,
-                            const size_t numClasses);
+  HoeffdingCategoricalSplit(const size_t numCategories = 0,
+                            const size_t numClasses = 0);
 
   /**
    * Create the HoeffdingCategoricalSplit given a number of categories for this
@@ -108,9 +108,9 @@ class HoeffdingCategoricalSplit
 
   //! Serialize the categorical split.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(sufficientStatistics, "sufficientStatistics");
+    ar & BOOST_SERIALIZATION_NVP(sufficientStatistics);
   }
 
  private:
