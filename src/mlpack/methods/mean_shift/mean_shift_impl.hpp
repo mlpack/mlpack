@@ -27,8 +27,8 @@ namespace mlpack {
 namespace meanshift {
 
 /**
-  * Construct the Mean Shift object.
-  */
+ * Construct the Mean Shift object.
+ */
 template<bool UseKernel, typename KernelType, typename MatType>
 MeanShift<UseKernel, KernelType, MatType>::
 MeanShift(const double radius,

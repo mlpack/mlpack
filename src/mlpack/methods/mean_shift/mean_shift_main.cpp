@@ -71,7 +71,7 @@ void mlpackMain()
   const double radius = CLI::GetParam<double>("radius");
   const int maxIterations = CLI::GetParam<int>("max_iterations");
 
-  RequireParamValue<int>("max_iterations", [](int x) { return x > 0; }, true,
+  RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; }, true,
       "maximum iterations must be greater than or equal to 0");
 
   // Make sure we have an output file if we're not doing the work in-place.
