@@ -89,7 +89,17 @@ void mlpackMain()
   else
     math::RandomSeed((size_t) time(NULL));
 
-  // Get all the parameters.
+  // Get all the parameters after checking them.
+  if (CLI::HasParam("k"))
+  {
+    RequireParamValue<int>("k", [](int x) { return x > 0; }, true,
+        "k must be greater than 0");
+  }
+  RequireParamValue<int>("second_hash_size", [](int x) { return x > 0; }, true,
+      "second hash size must be greater than 0");
+  RequireParamValue<int>("bucket_size", [](int x) { return x > 0; }, true,
+      "bucket size must be greater than 0");
+
   size_t k = CLI::GetParam<int>("k");
   size_t secondHashSize = CLI::GetParam<int>("second_hash_size");
   size_t bucketSize = CLI::GetParam<int>("bucket_size");
@@ -113,6 +123,16 @@ void mlpackMain()
 
   ReportIgnoredParam({{ "k", false }}, "neighbors");
   ReportIgnoredParam({{ "k", false }}, "distances");
+
+  ReportIgnoredParam({{ "reference", false }}, "bucket_size");
+  ReportIgnoredParam({{ "reference", false }}, "second_hash_size");
+  ReportIgnoredParam({{ "reference", false }}, "hash_width");
+
+  if (CLI::HasParam("input_model") && !CLI::HasParam("k"))
+  {
+    Log::Warn << PRINT_PARAM_STRING("k") << " not passed; no search will be "
+        << "performed!" << std::endl;
+  }
 
   // These declarations are here so that the matrices don't go out of scope.
   arma::mat referenceData;
@@ -144,8 +164,8 @@ void mlpackMain()
         << endl;
 
     Timer::Start("hash_building");
-    allkann.Train(referenceData, numProj, numTables, hashWidth, secondHashSize,
-        bucketSize);
+    allkann.Train(std::move(referenceData), numProj, numTables, hashWidth,
+        secondHashSize, bucketSize);
     Timer::Stop("hash_building");
   }
   else if (CLI::HasParam("input_model"))
@@ -170,9 +190,9 @@ void mlpackMain()
     {
       allkann.Search(k, neighbors, distances, 0, numProbes);
     }
-  }
 
-  Log::Info << "Neighbors computed." << endl;
+    Log::Info << "Neighbors computed." << endl;
+  }
 
   // Compute recall, if desired.
   if (CLI::HasParam("true_neighbors"))
@@ -192,10 +212,13 @@ void mlpackMain()
   }
 
   // Save output, if desired.
-  if (CLI::HasParam("distances"))
-    CLI::GetParam<arma::mat>("distances") = std::move(distances);
-  if (CLI::HasParam("neighbors"))
-    CLI::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
+  if (CLI::HasParam("k"))
+  {
+    if (CLI::HasParam("distances"))
+      CLI::GetParam<arma::mat>("distances") = std::move(distances);
+    if (CLI::HasParam("neighbors"))
+      CLI::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
+  }
   if (CLI::HasParam("output_model"))
     CLI::GetParam<LSHSearch<>>("output_model") = std::move(allkann);
 }
