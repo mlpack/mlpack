@@ -189,11 +189,11 @@ class SPALeRASGD
   DecayPolicyType& DecayPolicy() { return decayPolicy; }
 
  private:
-  //! The batch size for processing.
-  size_t batchSize;
-
   //! The step size for each example.
   double stepSize;
+
+  //! The batch size for processing.
+  size_t batchSize;
 
   //! The maximum number of allowed iterations.
   size_t maxIterations;
