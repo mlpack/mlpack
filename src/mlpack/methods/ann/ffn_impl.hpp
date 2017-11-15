@@ -398,7 +398,6 @@ void FFN<OutputLayerType, InitializationRuleType>::serialize(
   ar & BOOST_SERIALIZATION_NVP(width);
   ar & BOOST_SERIALIZATION_NVP(height);
   ar & BOOST_SERIALIZATION_NVP(currentInput);
-  ar & BOOST_SERIALIZATION_NVP(currentTarget);
 
   // Be sure to clear other layers before loading.
   if (Archive::is_loading::value)

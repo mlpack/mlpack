@@ -421,7 +421,6 @@ void RNN<OutputLayerType, InitializationRuleType>::serialize(
   ar & BOOST_SERIALIZATION_NVP(inputSize);
   ar & BOOST_SERIALIZATION_NVP(outputSize);
   ar & BOOST_SERIALIZATION_NVP(targetSize);
-  ar & BOOST_SERIALIZATION_NVP(currentInput);
 
   if (Archive::is_loading::value)
   {
