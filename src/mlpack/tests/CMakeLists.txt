@@ -66,7 +66,6 @@ add_executable(mlpack_test
   maximal_inputs_test.cpp
   mean_shift_test.cpp
   metric_test.cpp
-  minibatch_sgd_test.cpp
   mlpack_test.cpp
   mock_categorical_data.hpp
   momentum_sgd_test.cpp
@@ -107,6 +106,7 @@ add_executable(mlpack_test
   snapshot_ensembles.cpp
   softmax_regression_test.cpp
   sort_policy_test.cpp
+  spalera_sgd_test.cpp
   sparse_autoencoder_test.cpp
   sparse_coding_test.cpp
   spill_tree_test.cpp

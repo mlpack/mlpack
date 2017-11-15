@@ -1,5 +1,7 @@
 set(SOURCES
-  no_decay.hpp
+  spalera_sgd.hpp
+  spalera_sgd_impl.hpp
+  spalera_stepsize.hpp
 )
 
 set(DIR_SRCS)

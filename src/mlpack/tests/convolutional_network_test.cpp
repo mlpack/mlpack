@@ -91,7 +91,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
   model.Add<LogSoftMax<> >();
 
   // Train for only 8 epochs.
-  RMSProp opt(0.001, 0.88, 1e-8, 8 * nPoints, -1);
+  RMSProp opt(0.001, 1, 0.88, 1e-8, 8 * nPoints, -1);
 
   model.Train(X, Y, opt);
 

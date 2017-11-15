@@ -9,13 +9,13 @@ set(DIRS
   grid_search
   lbfgs
   line_search
-  minibatch_sgd
   proximal
   rmsprop
   sa
   sdp
   sgd
   smorms3
+  spalera_sgd
 )
 
 foreach(dir ${DIRS})

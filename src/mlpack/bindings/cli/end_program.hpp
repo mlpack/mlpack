@@ -21,7 +21,7 @@ namespace cli {
 inline void EndProgram()
 {
   // Stop the CLI timers.
-  CLI::StopTimers();
+  CLI::GetSingleton().timer.StopAllTimers();
 
   // Print any output.
   const std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
@@ -61,13 +61,10 @@ inline void EndProgram()
     }
 
     Log::Info << "Program timers:" << std::endl;
-    std::map<std::string, std::chrono::microseconds>::iterator it2;
-    for (it2 = CLI::GetSingleton().timer.GetAllTimers().begin();
-         it2 != CLI::GetSingleton().timer.GetAllTimers().end(); ++it2)
+    for (auto it2 : CLI::GetSingleton().timer.GetAllTimers())
     {
-      std::string i = (*it2).first;
-      Log::Info << "  " << i << ": ";
-      CLI::GetSingleton().timer.PrintTimer((*it2).first);
+      Log::Info << "  " << it2.first << ": ";
+      CLI::GetSingleton().timer.PrintTimer(it2.first);
     }
   }
 }

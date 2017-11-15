@@ -1,54 +1,51 @@
 /**
- * @file sgd_impl.hpp
- * @author Ryan Curtin
- * @author Arun Reddy
- * @author Abhinav Moudgil
+ * @file spalera_sgd_impl.hpp
+ * @author Marcus Edel
  *
- * Implementation of stochastic gradient descent.
+ * Implementation of SPALeRA SGD.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_OPTIMIZERS_SGD_SGD_IMPL_HPP
-#define MLPACK_CORE_OPTIMIZERS_SGD_SGD_IMPL_HPP
-
-#include <mlpack/methods/regularized_svd/regularized_svd_function.hpp>
-#include <mlpack/core/optimizers/sgd/update_policies/vanilla_update.hpp>
+#ifndef MLPACK_CORE_OPTIMIZERS_SPALERA_SGD_SPALERA_SGD_IMPL_HPP
+#define MLPACK_CORE_OPTIMIZERS_SPALERA_SGD_SPALERA_SGD_IMPL_HPP
 
 // In case it hasn't been included yet.
-#include "sgd.hpp"
+#include "spalera_sgd.hpp"
 
 namespace mlpack {
 namespace optimization {
 
-template<typename UpdatePolicyType, typename DecayPolicyType>
-SGD<UpdatePolicyType, DecayPolicyType>::SGD(
-    const double stepSize,
-    const size_t batchSize,
-    const size_t maxIterations,
-    const double tolerance,
-    const bool shuffle,
-    const UpdatePolicyType& updatePolicy,
-    const DecayPolicyType& decayPolicy,
-    const bool resetPolicy) :
+template<typename DecayPolicyType>
+SPALeRASGD<DecayPolicyType>::SPALeRASGD(const double stepSize,
+                                        const size_t batchSize,
+                                        const size_t maxIterations,
+                                        const double tolerance,
+                                        const double lambda,
+                                        const double alpha,
+                                        const double epsilon,
+                                        const double adaptRate,
+                                        const bool shuffle,
+                                        const DecayPolicyType& decayPolicy,
+                                        const bool resetPolicy) :
     stepSize(stepSize),
     batchSize(batchSize),
     maxIterations(maxIterations),
     tolerance(tolerance),
+    lambda(lambda),
     shuffle(shuffle),
-    updatePolicy(updatePolicy),
+    updatePolicy(SPALeRAStepsize(alpha, epsilon, adaptRate)),
     decayPolicy(decayPolicy),
     resetPolicy(resetPolicy)
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
-template<typename UpdatePolicyType, typename DecayPolicyType>
+template<typename DecayPolicyType>
 template<typename DecomposableFunctionType>
-double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
-    DecomposableFunctionType& function,
-    arma::mat& iterate)
+double SPALeRASGD<DecayPolicyType>::Optimize(DecomposableFunctionType& function,
+                                             arma::mat& iterate)
 {
   // Find the number of functions to use.
   const size_t numFunctions = function.NumFunctions();
@@ -65,9 +62,14 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
     overallObjective += function.Evaluate(iterate, i, effectiveBatchSize);
   }
 
+  double currentObjective = overallObjective / numFunctions;
+
   // Initialize the update policy.
   if (resetPolicy)
-    updatePolicy.Initialize(iterate.n_rows, iterate.n_cols);
+  {
+    updatePolicy.Initialize(iterate.n_rows, iterate.n_cols,
+        currentObjective * lambda);
+  }
 
   // Now iterate!
   arma::mat gradient(iterate.n_rows, iterate.n_cols);
@@ -79,20 +81,21 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
     if ((currentFunction % numFunctions) == 0)
     {
       // Output current objective function.
-      Log::Info << "SGD: iteration " << i << ", objective " << overallObjective
-          << "." << std::endl;
+      Log::Info << "SPALeRA SGD: iteration " << i << ", objective "
+          << overallObjective << "." << std::endl;
 
       if (std::isnan(overallObjective) || std::isinf(overallObjective))
       {
-        Log::Warn << "SGD: converged to " << overallObjective << "; terminating"
-            << " with failure.  Try a smaller step size?" << std::endl;
+        Log::Warn << "SPALeRA SGD: converged to " << overallObjective
+            << "; terminating with failure.  Try a smaller step size?"
+            << std::endl;
         return overallObjective;
       }
 
       if (std::abs(lastObjective - overallObjective) < tolerance)
       {
-        Log::Info << "SGD: minimized within tolerance " << tolerance << "; "
-            << "terminating optimization." << std::endl;
+        Log::Info << "SPALeRA SGD: minimized within tolerance " << tolerance
+            << "; terminating optimization." << std::endl;
         return overallObjective;
       }
 
@@ -112,9 +115,16 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
     function.Gradient(iterate, currentFunction, gradient, effectiveBatchSize);
 
     // Use the update policy to take a step.
-    updatePolicy.Update(iterate, stepSize, gradient);
+    if (!updatePolicy.Update(stepSize, currentObjective, effectiveBatchSize,
+        numFunctions, iterate, gradient))
+    {
+        Log::Warn << "SPALeRA SGD: converged to " << overallObjective << "; "
+            << "terminating with failure.  Try a smaller step size?"
+            << std::endl;
+        return overallObjective;
+    }
 
-    overallObjective += function.Evaluate(iterate, currentFunction,
+    currentObjective = function.Evaluate(iterate, currentFunction,
         effectiveBatchSize);
 
     // Now update the learning rate if requested by the user.
@@ -122,10 +132,12 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
 
     i += effectiveBatchSize;
     currentFunction += effectiveBatchSize;
+    overallObjective += currentObjective;
+    currentObjective /= effectiveBatchSize;
   }
 
-  Log::Info << "SGD: maximum iterations (" << maxIterations << ") reached; "
-      << "terminating optimization." << std::endl;
+  Log::Info << "SPALeRA SGD: maximum iterations (" << maxIterations
+      << ") reached; terminating optimization." << std::endl;
 
   // Calculate final objective.
   overallObjective = 0;
@@ -134,6 +146,7 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
     const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
     overallObjective += function.Evaluate(iterate, i, effectiveBatchSize);
   }
+
   return overallObjective;
 }
 

@@ -24,13 +24,22 @@ class SparseSVMFunction{
   SparseSVMFunction(const arma::sp_mat& dataset, const arma::vec& labels);
 
   /**
-   * Evaluate the hinge loss function on the specified datapoint.
+   * Shuffle the dataset.
+   */
+  void Shuffle();
+
+  /**
+   * Evaluate the hinge loss function on the specified datapoints.
    *
    * @param parameters The parameters of the SVM.
-   * @param id Index of the datapoint to use for function evaluation.
+   * @param startId First index of the datapoints to use for function
+   *      evaluation.
+   * @param batchSize Size of batch to process.
    * @return The value of the loss function at the given parameters.
    */
-  double Evaluate(const arma::mat& parameters, size_t id);
+  double Evaluate(const arma::mat& parameters,
+                  const size_t startId,
+                  const size_t batchSize = 1);
 
   /**
    * Evaluate the gradient the gradient of the hinge loss function, following

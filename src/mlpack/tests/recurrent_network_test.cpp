@@ -41,8 +41,8 @@ void GenerateNoisySines(arma::mat& data,
                         const size_t sequences,
                         const double noise = 0.3)
 {
-  arma::colvec x =  arma::linspace<arma::Col<double>>(0,
-      points - 1, points) / points * 20.0;
+  arma::colvec x =  arma::linspace<arma::colvec>(0, points - 1, points) /
+      points * 20.0;
   arma::colvec y1 = arma::sin(x + arma::as_scalar(arma::randu(1)) * 3.0);
   arma::colvec y2 = arma::sin(x / 2.0 + arma::as_scalar(arma::randu(1)) * 3.0);
 
@@ -116,7 +116,7 @@ BOOST_AUTO_TEST_CASE(SequenceClassificationTest)
     model.Add<Linear<> >(4, 10);
     model.Add<LogSoftMax<> >();
 
-    StandardSGD opt(0.1, 500 * input.n_cols, -100);
+    StandardSGD opt(0.1, 1, 500 * input.n_cols, -100);
     model.Train(input, labels, opt);
 
     arma::mat prediction;
@@ -363,11 +363,11 @@ void GenerateNextRecursiveReber(const arma::Mat<char>& transitions,
  * Train the specified network and the construct a Reber grammar dataset.
  */
 template<typename RecurrentLayerType>
-void ReberGrammarTestNetwork(size_t hiddenSize = 4,
-                             bool recursive = false,
-                             size_t averageRecursion = 3,
-                             size_t maxRecursion = 5
-                             )
+void ReberGrammarTestNetwork(const size_t hiddenSize = 4,
+                             const bool recursive = false,
+                             const size_t averageRecursion = 3,
+                             const size_t maxRecursion = 5,
+                             const size_t iterations = 10)
 {
   // Reber state transition matrix. (The last two columns are the indices to the
   // next path).
@@ -379,8 +379,8 @@ void ReberGrammarTestNetwork(size_t hiddenSize = 4,
               << 'P' << 'V' << '3' << '5' << arma::endr
               << 'E' << 'E' << '0' << '0' << arma::endr;
 
-  const size_t trainReberGrammarCount = 800;
-  const size_t testReberGrammarCount = 400;
+  const size_t trainReberGrammarCount = 700;
+  const size_t testReberGrammarCount = 250;
 
   std::string trainReber, testReber;
   arma::field<arma::mat> trainInput(1, trainReberGrammarCount);
@@ -450,16 +450,14 @@ void ReberGrammarTestNetwork(size_t hiddenSize = 4,
     const size_t inputSize = 7;
 
     RNN<MeanSquaredError<> > model(5);
-
     model.Add<Linear<> >(inputSize, hiddenSize);
     model.Add<RecurrentLayerType>(hiddenSize, hiddenSize);
     model.Add<Linear<> >(hiddenSize, outputSize);
     model.Add<SigmoidLayer<> >();
-
-    StandardSGD opt(0.01, 2, -50000);
+    MomentumSGD opt(0.06, 50, 2, -50000);
 
     arma::mat inputTemp, labelsTemp;
-    for (size_t i = 0; i < (10 + offset); i++)
+    for (size_t i = 0; i < (iterations + offset); i++)
     {
       for (size_t j = 0; j < trainReberGrammarCount; j++)
       {
@@ -468,6 +466,7 @@ void ReberGrammarTestNetwork(size_t hiddenSize = 4,
 
         model.Rho() = inputTemp.n_elem / inputSize;
         model.Train(inputTemp, labelsTemp, opt);
+        opt.ResetPolicy() = false;
       }
     }
 
@@ -518,7 +517,7 @@ void ReberGrammarTestNetwork(size_t hiddenSize = 4,
     }
 
     error /= testReberGrammarCount;
-    if (error <= 0.2)
+    if (error <= 0.3)
     {
       ++successes;
       break;
@@ -531,27 +530,19 @@ void ReberGrammarTestNetwork(size_t hiddenSize = 4,
 }
 
 /**
- * Train the specified networks on a Reber grammar dataset.
+ * Train the specified networks on an embedded Reber grammar dataset.
  */
 BOOST_AUTO_TEST_CASE(LSTMReberGrammarTest)
 {
-  ReberGrammarTestNetwork<LSTM<>>(4, false);
+  ReberGrammarTestNetwork<LSTM<> >(10, false);
 }
 
 /**
  * Train the specified networks on an embedded Reber grammar dataset.
  */
-BOOST_AUTO_TEST_CASE(LSTMRecursiveReberGrammarTest)
+BOOST_AUTO_TEST_CASE(FastLSTMReberGrammarTest)
 {
-  ReberGrammarTestNetwork<LSTM<>>(20, true);
-}
-
-/**
- * Train the specified networks on a Reber grammar dataset.
- */
-BOOST_AUTO_TEST_CASE(GRUReberGrammarTest)
-{
-  ReberGrammarTestNetwork<GRU<>>(4, false);
+  ReberGrammarTestNetwork<FastLSTM<> >(8, false);
 }
 
 /**
@@ -559,7 +550,7 @@ BOOST_AUTO_TEST_CASE(GRUReberGrammarTest)
  */
 BOOST_AUTO_TEST_CASE(GRURecursiveReberGrammarTest)
 {
-  ReberGrammarTestNetwork<GRU<>>(20, true);
+  ReberGrammarTestNetwork<GRU<> >(16, true);
 }
 
 /*
@@ -595,8 +586,7 @@ void GenerateDistractedSequence(arma::mat& input, arma::mat& output)
   input = arma::zeros<arma::mat>(10, 10);
   output = arma::zeros<arma::mat>(3, 10);
 
-  arma::Col<size_t> index = arma::shuffle(arma::linspace<arma::Col<size_t> >(
-      0, 7, 8));
+  arma::uvec index = arma::shuffle(arma::linspace<arma::uvec>(0, 7, 8));
 
   // Set the target in the input sequence and the corresponding targets in the
   // output sequence by following the correct order.
@@ -623,10 +613,11 @@ void GenerateDistractedSequence(arma::mat& input, arma::mat& output)
  * dataset.
  */
 template<typename RecurrentLayerType>
-void DistractedSequenceRecallTestNetwork()
+void DistractedSequenceRecallTestNetwork(
+    const size_t cellSize, const size_t hiddenSize)
 {
-  const size_t trainDistractedSequenceCount = 800;
-  const size_t testDistractedSequenceCount = 400;
+  const size_t trainDistractedSequenceCount = 600;
+  const size_t testDistractedSequenceCount = 300;
 
   arma::field<arma::mat> trainInput(1, trainDistractedSequenceCount);
   arma::field<arma::mat> trainLabels(1, trainDistractedSequenceCount);
@@ -646,13 +637,13 @@ void DistractedSequenceRecallTestNetwork()
    * output units. The hidden layer is connected to itself. The network
    * structure looks like:
    *
-   *  Input         Hidden        Output
-   * Layer(10)  Layer(layerSize)   Layer(3)
-   * +-----+       +-----+       +-----+
-   * |     |       |     |       |     |
-   * |     +------>|     +------>|     |
-   * |     |    ..>|     |       |     |
-   * +-----+    .  +--+--+       +-----+
+   *  Input        Recurrent      Hidden       Output
+   * Layer(10)  Layer(cellSize)   Layer(3)     Layer(3)
+   * +-----+       +-----+       +-----+       +-----+
+   * |     |       |     |       |     |       |     |
+   * |     +------>|     +------>|     |------>|     |
+   * |     |    ..>|     |       |     |       |     |
+   * +-----+    .  +--+--+       +-----+       +-----+
    *            .     .
    *            .     .
    *            .......
@@ -671,15 +662,17 @@ void DistractedSequenceRecallTestNetwork()
   {
     RNN<MeanSquaredError<> > model(rho);
     model.Add<IdentityLayer<> >();
-    model.Add<Linear<> >(inputSize, 14);
-    model.Add<RecurrentLayerType>(14, 7);
-    model.Add<Linear<> >(7, outputSize);
+    model.Add<Linear<> >(inputSize, cellSize);
+    model.Add<RecurrentLayerType>(cellSize, hiddenSize);
+    model.Add<Linear<> >(hiddenSize, outputSize);
     model.Add<SigmoidLayer<> >();
 
-    StandardSGD opt(0.1, 2, -50000);
+    StandardSGD opt(0.1, 50, 2, -50000);
 
+    // We increase the number of iterations (training) if the first run didn't
+    // pass.
     arma::mat inputTemp, labelsTemp;
-    for (size_t i = 0; i < (10 + offset); i++)
+    for (size_t i = 0; i < (9 + offset); i++)
     {
       for (size_t j = 0; j < trainDistractedSequenceCount; j++)
       {
@@ -707,7 +700,6 @@ void DistractedSequenceRecallTestNetwork()
     }
 
     error /= testDistractedSequenceCount;
-
     // Can we reproduce the results from the paper. They provide an 95% accuracy
     // on a test set of 1000 randomly selected sequences.
     // Ensure that this is within tolerance, which is at least as good as the
@@ -730,7 +722,16 @@ void DistractedSequenceRecallTestNetwork()
  */
 BOOST_AUTO_TEST_CASE(LSTMDistractedSequenceRecallTest)
 {
-  DistractedSequenceRecallTestNetwork<LSTM<>>();
+  DistractedSequenceRecallTestNetwork<LSTM<> >(4, 8);
+}
+
+/**
+ * Train the specified networks on the Derek D. Monner's distracted sequence
+ * recall task.
+ */
+BOOST_AUTO_TEST_CASE(FastLSTMDistractedSequenceRecallTest)
+{
+  DistractedSequenceRecallTestNetwork<FastLSTM<> >(4, 8);
 }
 
 /**
@@ -739,7 +740,7 @@ BOOST_AUTO_TEST_CASE(LSTMDistractedSequenceRecallTest)
  */
 BOOST_AUTO_TEST_CASE(GRUDistractedSequenceRecallTest)
 {
-  DistractedSequenceRecallTestNetwork<GRU<>>();
+  DistractedSequenceRecallTestNetwork<GRU<> >(4, 8);
 }
 
 /**
@@ -790,7 +791,7 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   model.Add<Linear<> >(4, 10);
   model.Add<LogSoftMax<> >();
 
-  StandardSGD opt(0.1, input.n_cols /* 1 epoch */, -100);
+  StandardSGD opt(0.1, 1, input.n_cols /* 1 epoch */, -100);
   model.Train(input, labels, opt);
 
   // Serialize the network.
