@@ -113,14 +113,21 @@ void mlpackMain()
   // If the user specifies a range but not output files, they should be warned.
   if (CLI::HasParam("min") || CLI::HasParam("max"))
   {
-    RequireAtLeastOnePassed({ "neighbors", "distances" }, false, "no range "
-        "search results will be saved");
+    RequireAtLeastOnePassed({ "neighbors_file", "distances_file" }, false,
+        "no range search results will be saved");
   }
 
   if (!CLI::HasParam("min") && !CLI::HasParam("max"))
   {
-    ReportIgnoredParam("neighbors", "no range is specified for searching");
-    ReportIgnoredParam("distances", "no range is specified for searching");
+    ReportIgnoredParam("neighbors_file", "no range is specified for searching");
+    ReportIgnoredParam("distances_file", "no range is specified for searching");
+  }
+
+  if (CLI::HasParam("input_model") &&
+      (CLI::HasParam("min") || CLI::HasParam("max")))
+  {
+    RequireAtLeastOnePassed({ "query" }, true, "query set must be passed if "
+        "searching is to be done");
   }
 
   // Sanity check on leaf size.
