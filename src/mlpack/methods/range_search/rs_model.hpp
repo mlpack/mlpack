@@ -188,27 +188,6 @@ class DeleteVisitor : public boost::static_visitor<void>
 };
 
 /**
- * Exposes the seralize method of the given RSType.
- */
-template<typename Archive>
-class SerializeVisitor : public boost::static_visitor<void>
-{
- private:
-  //! Archive to serialize to.
-  Archive& ar;
-  //! Name of the model to serialize.
-  const std::string& name;
-
- public:
-  //! Serialize the given model.
-  template<typename RSType>
-  void operator()(RSType* rs) const;
-
-  //! Construct the SerializeVisitor with the given archive and name.
-  SerializeVisitor(Archive& ar, const std::string& name);
-};
-
-/**
  * SingleModeVisitor exposes the SingleMode() method of the given RSType.
  */
 class SingleModeVisitor : public boost::static_visitor<bool&>

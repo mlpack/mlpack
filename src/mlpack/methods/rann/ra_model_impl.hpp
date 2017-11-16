@@ -15,6 +15,7 @@
 // In case it hasn't been included yet.
 #include "ra_model.hpp"
 #include <mlpack/core/math/random_basis.hpp>
+#include <boost/serialization/variant.hpp>
 
 namespace mlpack {
 namespace neighbor {
@@ -233,22 +234,6 @@ const arma::mat& ReferenceSetVisitor::operator()(RAType* ra) const
   throw std::runtime_error("no rank-approximate model is intialized");
 }
 
-//! Save parameters for serializing
-template<typename Archive>
-SerializeVisitor<Archive>::SerializeVisitor(Archive& ar,
-                                            const std::string& name) :
-    ar(ar),
-    name(name)
-{}
-
-//! Serializes the given RAType instance.
-template<typename Archive>
-template<typename RAType>
-void SerializeVisitor<Archive>::operator()(RAType*& ra) const
-{
-  ar & data::CreateNVP(ra, name);
-}
-
 //! Exposes the Naive() method of the given RAType instance.
 template<typename RAType>
 bool& NaiveVisitor::operator()(RAType* ra) const
@@ -281,6 +266,7 @@ RAModel<SortPolicy>::RAModel(const RAModel& other) :
     treeType(other.treeType),
     leafSize(other.leafSize),
     randomBasis(other.randomBasis),
+    q(other.q),
     raSearch(other.raSearch)
 {
   // Nothing to do.
@@ -292,7 +278,8 @@ RAModel<SortPolicy>::RAModel(RAModel&& other) :
     treeType(other.treeType),
     leafSize(other.leafSize),
     randomBasis(other.randomBasis),
-    raSearch(other.raSearch)
+    q(std::move(other.q)),
+    raSearch(std::move(other.raSearch))
 {
   // Clear other model.
   other.treeType = TreeTypes::KD_TREE;
@@ -311,6 +298,7 @@ RAModel<SortPolicy>& RAModel<SortPolicy>::operator=(const RAModel& other)
   treeType = other.treeType;
   leafSize = other.leafSize;
   randomBasis = other.randomBasis;
+  q = other.q;
   raSearch = other.raSearch;
 
   return *this;
@@ -324,7 +312,8 @@ RAModel<SortPolicy>& RAModel<SortPolicy>::operator=(RAModel&& other)
   treeType = other.treeType;
   leafSize = other.leafSize;
   randomBasis = other.randomBasis;
-  raSearch = other.raSearch;
+  q = std::move(other.q);
+  raSearch = std::move(other.raSearch);
 
   // Reset other model.
   other.treeType = TreeTypes::KD_TREE;
@@ -340,6 +329,19 @@ template<typename SortPolicy>
 RAModel<SortPolicy>::~RAModel()
 {
   boost::apply_visitor(DeleteVisitor(), raSearch);
+}
+
+template<typename Archive,
+         typename SortPolicy,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void serialize(
+    Archive& ar,
+    RASearch<SortPolicy, metric::EuclideanDistance, arma::mat, TreeType>& ra,
+    const unsigned int version)
+{
+  ra.Serialize(ar, version);
 }
 
 template<typename SortPolicy>
@@ -359,8 +361,7 @@ void RAModel<SortPolicy>::Serialize(Archive& ar,
 
   // We only need to serialize one of the kRANN objects.
   const std::string& name = RAModelName<SortPolicy>::Name();
-  SerializeVisitor<Archive> s(ar, name);
-  boost::apply_visitor(s, raSearch);
+  ar & data::CreateNVP(raSearch, name);
 }
 
 template<typename SortPolicy>
