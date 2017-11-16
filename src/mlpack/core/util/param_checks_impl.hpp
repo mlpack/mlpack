@@ -236,6 +236,17 @@ inline void ReportIgnoredParam(
   }
 }
 
+inline void ReportIgnoredParam(const std::string& paramName,
+                               const std::string& reason)
+{
+  // If the argument was passed, we need to print the reason.
+  if (CLI::HasParam(paramName))
+  {
+    Log::Warn << PRINT_PARAM_STRING(paramName) << " ignored because "
+        << reason << "!" << std::endl;
+  }
+}
+
 } // namespace util
 } // namespace mlpack
 

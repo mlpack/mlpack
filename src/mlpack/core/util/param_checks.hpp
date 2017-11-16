@@ -149,6 +149,25 @@ void ReportIgnoredParam(
     const std::vector<std::pair<std::string, bool>>& constraints,
     const std::string& paramName);
 
+/**
+ * If the given parameter is passed, report that it is ignored, supplying a
+ * custom reason.  The reason should specify, in short and clear terms, why the
+ * parameter is ignored.  So, for example, the output may be similar to:
+ *
+ * @code
+ * --iterations (-i) ignored because <reason>.
+ * @endcode
+ *
+ * and in this case a good reason might be "SGD is not being used as an
+ * optimizer".  Be sure that when you write the reason, the full message makes
+ * sense.
+ *
+ * @param paramName Name of parameter to check.
+ * @param reason Reason that parameter is ignored, if it is passed.
+ */
+void ReportIgnoredParam(const std::string& paramName,
+                        const std::string& reason);
+
 } // namespace util
 } // namespace mlpack
 

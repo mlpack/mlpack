@@ -280,7 +280,7 @@ void mlpackMain()
   RequireAtLeastOnePassed({ "output", "output_model" }, false,
       "no output will be saved");
   if (CLI::HasParam("query") || CLI::HasParam("all_user_recommendations"))
-    ReportIgnoredParam({{ }}, "output");
+    ReportIgnoredParam("output", "no recommendations requested");
 
   RequireParamInSet<string>("algorithm", { "NMF", "BatchSVD",
       "SVDIncompleteIncremental", "SVDCompleteIncremental", "RegSVD" }, true,
