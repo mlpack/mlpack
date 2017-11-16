@@ -101,6 +101,9 @@ void mlpackMain()
   RequireParamValue<int>("minimum_leaf_size", [](int x) { return x > 0; }, true,
       "minimum leaf size must be greater than 0");
 
+  ReportIgnoredParam({{ "training", false }}, "num_trees");
+  ReportIgnoredParam({{ "training", false }}, "minimum_leaf_size");
+
   RandomForestModel rfModel;
   if (CLI::HasParam("training"))
   {
