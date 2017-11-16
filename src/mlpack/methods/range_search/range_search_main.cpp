@@ -119,8 +119,8 @@ void mlpackMain()
 
   if (!CLI::HasParam("min") && !CLI::HasParam("max"))
   {
-    ReportIgnoredParam({{ }}, "neighbors");
-    ReportIgnoredParam({{ }}, "distances");
+    ReportIgnoredParam("neighbors", "no range is specified for searching");
+    ReportIgnoredParam("distances", "no range is specified for searching");
   }
 
   // Sanity check on leaf size.

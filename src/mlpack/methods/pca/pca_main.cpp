@@ -113,18 +113,19 @@ void mlpackMain()
       "unknown decomposition method");
 
   // Find out what dimension we want.
-  size_t newDimension = dataset.n_rows; // No reduction, by default.
-  if (CLI::GetParam<int>("new_dimensionality") != 0)
-  {
-    // Validate the parameter.
-    newDimension = (size_t) CLI::GetParam<int>("new_dimensionality");
-    if (newDimension > dataset.n_rows)
-    {
-      Log::Fatal << "New dimensionality (" << newDimension
-          << ") cannot be greater than existing dimensionality ("
-          << dataset.n_rows << ")!" << endl;
-    }
-  }
+  RequireParamValue<int>("new_dimensionality", [](int x) { return x >= 0; },
+      true, "new dimensionality must be non-negative");
+  std::ostringstream error;
+  error << "cannot be greater than existing dimensionality (" << dataset.n_rows
+      << ")";
+  RequireParamValue<int>("new_dimensionality",
+      [dataset](int x) { return x <= dataset.n_rows; }, true, error.str());
+
+  RequireParamValue<double>("var_to_retain",
+      [](double x) { return x >= 0.0 && x <= 1.0; }, true,
+      "variance retained must be between 0 and 1");
+  size_t newDimension = (CLI::GetParam<int>("new_dimensionality") == 0) ?
+      dataset.n_rows : CLI::GetParam<int>("new_dimensionality");
 
   // Get the options for running PCA.
   const bool scale = CLI::HasParam("scale");

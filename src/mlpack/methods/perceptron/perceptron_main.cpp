@@ -132,12 +132,16 @@ void mlpackMain()
       "no output will be saved");
   ReportIgnoredParam({{ "test", true }}, "output");
 
+  // Check parameter validity.
+  RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; },
+      true, "maximum number of iterations must be nonnegative");
+
   // Now, load our model, if there is one.
   PerceptronModel p;
   if (CLI::HasParam("input_model"))
   {
-    Log::Info << "Loading saved perceptron from model file '"
-        << CLI::GetPrintableParam<PerceptronModel>("input_model") << "'."
+    Log::Info << "Using saved perceptron from "
+        << CLI::GetPrintableParam<PerceptronModel>("input_model") << "."
         << endl;
 
     p = std::move(CLI::GetParam<PerceptronModel>("input_model"));

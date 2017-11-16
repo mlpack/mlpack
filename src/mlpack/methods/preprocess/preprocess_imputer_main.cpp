@@ -73,7 +73,7 @@ void mlpackMain()
   }
 
   if (strategy != "custom")
-    ReportIgnoredParam({{ }}, "custom_value");
+    ReportIgnoredParam("custom_value", "not using custom imputation strategy");
   else
     RequireAtLeastOnePassed({ "custom_value" }, true, "must pass custom "
         "imputation value when using 'custom' imputation strategy");
@@ -111,8 +111,8 @@ void mlpackMain()
       != dirtyDimensions.end()))
   {
     Log::Warn << "The given dimension of the file does not contain any "
-      << "user-defined missing variables. The program did not perform any "
-      << "imputation." << endl;
+        << "user-defined missing variables. The program did not perform any "
+        << "imputation." << endl;
   }
   else
   {

@@ -140,21 +140,20 @@ void mlpackMain()
   // Warn on unused parameters.
   if (optimizerType == "sgd")
   {
-    ReportIgnoredParam({{ }}, "num_basis");
-    ReportIgnoredParam({{ }}, "armijo_constant");
-    ReportIgnoredParam({{ }}, "wolfe");
-    ReportIgnoredParam({{ }}, "max_line_search_trials");
-    ReportIgnoredParam({{ }}, "min_step");
-    ReportIgnoredParam({{ }}, "max_step");
-
-    if (optimizerType == "sgd")
-      ReportIgnoredParam({{ }}, "batch_size");
+    ReportIgnoredParam("num_basis", "L-BFGS optimizer is not being used");
+    ReportIgnoredParam("armijo_constant", "L-BFGS optimizer is not being used");
+    ReportIgnoredParam("wolfe", "L-BFGS optimizer is not being used");
+    ReportIgnoredParam("max_line_search_trials",
+        "L-BFGS optimizer is not being used");
+    ReportIgnoredParam("min_step", "L-BFGS optimizer is not being used");
+    ReportIgnoredParam("max_step", "L-BFGS optimizer is not being used");
+    ReportIgnoredParam("batch_size", "L-BFGS optimizer is not being used");
   }
   else if (optimizerType == "lbfgs")
   {
-    ReportIgnoredParam({{ }}, "step_size");
-    ReportIgnoredParam({{ }}, "linear_scan");
-    ReportIgnoredParam({{ }}, "batch_size");
+    ReportIgnoredParam("step_size", "SGD optimizer is not being used");
+    ReportIgnoredParam("linear_scan", "SGD optimizer is not being used");
+    ReportIgnoredParam("batch_size", "SGD optimizer is not being used");
   }
 
   const double stepSize = CLI::GetParam<double>("step_size");

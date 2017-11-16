@@ -88,12 +88,6 @@ PARAM_INT_IN("seed", "Random seed (if 0, std::time(NULL) is used).", "s", 0);
 // Search settings.
 PARAM_STRING_IN("algorithm", "Type of neighbor search: 'naive', 'single_tree', "
     "'dual_tree', 'greedy'.", "a", "dual_tree");
-PARAM_FLAG("naive", "(Deprecated) If true, O(n^2) naive mode is used for "
-    "computation. Will be removed in mlpack 3.0.0. Use '--algorithm naive' "
-    "instead.", "N");
-PARAM_FLAG("single_mode", "(Deprecated) If true, single-tree search is used "
-    "(as opposed to dual-tree search). Will be removed in mlpack 3.0.0. Use "
-    "'--algorithm single_tree' instead.", "S");
 PARAM_DOUBLE_IN("epsilon", "If specified, will do approximate furthest neighbor"
     " search with given relative error. Must be in the range [0,1).", "e", 0);
 PARAM_DOUBLE_IN("percentage", "If specified, will do approximate furthest "
@@ -139,6 +133,7 @@ void mlpackMain()
   ReportIgnoredParam({{ "k", false }}, "distances");
   ReportIgnoredParam({{ "k", false }}, "true_neighbors");
   ReportIgnoredParam({{ "k", false }}, "true_distances");
+  ReportIgnoredParam({{ "k", false }}, "query");
 
   // Sanity check on leaf size.
   RequireParamValue<int>("leaf_size", [](int x) { return x > 0; },
@@ -156,7 +151,7 @@ void mlpackMain()
       [](double x) { return x > 0.0 && x <= 1.0; }, true,
       "percentage must be in the range (0, 1]");
 
-  RequireOnlyOnePassed({ "percentage", "epsilon" }, true);
+  ReportIgnoredParam({{ "epsilon", true }}, "percentage");
 
   if (CLI::HasParam("percentage"))
     epsilon = 1 - percentage;
@@ -177,33 +172,6 @@ void mlpackMain()
     searchMode = DUAL_TREE_MODE;
   else if (algorithm == "greedy")
     searchMode = GREEDY_SINGLE_TREE_MODE;
-
-  if (CLI::HasParam("single_mode"))
-  {
-    searchMode = SINGLE_TREE_MODE;
-
-    Log::Warn << "--single_mode is deprecated.  Will be removed in mlpack "
-        "3.0.0. Use '--algorithm single_tree' instead." << endl;
-
-    if (CLI::HasParam("algorithm") && algorithm != "single_tree")
-      Log::Fatal << "Contradiction between options --algorithm " << algorithm <<
-          " and --single_mode." << endl;
-  }
-
-  if (CLI::HasParam("naive"))
-  {
-    searchMode = NAIVE_MODE;
-
-    Log::Warn << "--naive is deprecated.  Will be removed in mlpack 3.0.0. Use "
-        "'--algorithm naive' instead." << endl;
-
-    if (CLI::HasParam("algorithm") && algorithm != "naive")
-      Log::Fatal << "Contradiction between options --algorithm " << algorithm <<
-          " and --naive." << endl;
-
-    if (CLI::HasParam("single_mode"))
-      Log::Warn << "--single_mode ignored because --naive is present." << endl;
-  }
 
   if (CLI::HasParam("reference"))
   {

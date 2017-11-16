@@ -114,6 +114,8 @@ void mlpackMain()
   RequireAtLeastOnePassed({ "output", "output_model", "output_probs" }, false,
       "no output will be saved");
   ReportIgnoredParam({{ "test", false }}, "output");
+  if (CLI::HasParam("input_model") && !CLI::HasParam("test"))
+    Log::Warn << "No test set given; no task will be performed!" << std::endl;
 
   // Either we have to train a model, or load a model.
   NBCModel model;
