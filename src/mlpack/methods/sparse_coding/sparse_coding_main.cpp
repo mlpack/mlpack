@@ -66,7 +66,7 @@ PROGRAM_INFO("Sparse Coding", "An implementation of Sparse Coding with "
 
 // Train the model.
 PARAM_MATRIX_IN("training", "Matrix of training data (X).", "t");
-PARAM_INT_IN("atoms", "Number of atoms in the dictionary.", "k", 0);
+PARAM_INT_IN("atoms", "Number of atoms in the dictionary.", "k", 15);
 
 PARAM_DOUBLE_IN("lambda1", "Sparse coding l1-norm regularization parameter.",
     "l", 0);
@@ -104,7 +104,11 @@ void mlpackMain()
     RandomSeed((size_t) time(NULL));
 
   // Check for parameter validity.
-  RequireOnlyOnePassed({ "input_model", "initial_dictionary" }, true);
+  if (CLI::HasParam("input_model") && CLI::HasParam("initial_dictionary"))
+  {
+    Log::Fatal << "Can only pass one of " << PRINT_PARAM_STRING("input_model")
+        << " or " << PRINT_PARAM_STRING("initial_dictionary") << "!" << endl;
+  }
 
   if (CLI::HasParam("training"))
   {
@@ -125,6 +129,21 @@ void mlpackMain()
   ReportIgnoredParam({{ "training", false }}, "normalize");
   ReportIgnoredParam({{ "training", false }}, "objective_tolerance");
   ReportIgnoredParam({{ "training", false }}, "newton_tolerance");
+
+  RequireParamValue<int>("atoms", [](int x) { return x > 0; }, true,
+      "number of atoms must be positive");
+  RequireParamValue<double>("lambda1", [](double x) { return x >= 0.0; }, true,
+      "lambda1 value must be nonnegative");
+  RequireParamValue<double>("lambda2", [](double x) { return x >= 0.0; }, true,
+      "lambda2 value must be nonnegative");
+  RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; }, true,
+      "maximum number of iterations must be nonnegative");
+  RequireParamValue<double>("objective_tolerance",
+      [](double x) { return x >= 0.0; }, true,
+      "objective function tolerance must be nonnegative");
+  RequireParamValue<double>("newton_tolerance",
+      [](double x) { return x >= 0.0; }, true,
+      "Newton method tolerance must be nonnegative");
 
   // Do we have an existing model?
   SparseCoding sc(0, 0.0);
@@ -196,8 +215,8 @@ void mlpackMain()
 
     if (matY.n_rows != sc.Dictionary().n_rows)
       Log::Fatal << "Model was trained with a dimensionality of "
-          << sc.Dictionary().n_rows << ", but data in test file '"
-          << CLI::GetPrintableParam<arma::mat>("test") << " has a "
+          << sc.Dictionary().n_rows << ", but test data '"
+          << CLI::GetPrintableParam<arma::mat>("test") << "' have a "
           << "dimensionality of " << matY.n_rows << "!" << endl;
 
     // Normalize each point if the user asked for it.
@@ -215,9 +234,12 @@ void mlpackMain()
       CLI::GetParam<arma::mat>("codes") = std::move(codes);
   }
 
-  // Did the user want to save the dictionary?
-  if (CLI::HasParam("dictionary"))
+  // Did the user want to save the dictionary?  If so we can move that, but only
+  // if we are not also saving an output model.
+  if (CLI::HasParam("dictionary") && !CLI::HasParam("output_model"))
     CLI::GetParam<arma::mat>("dictionary") = std::move(sc.Dictionary());
+  else if (CLI::HasParam("dictionary"))
+    CLI::GetParam<arma::mat>("dictionary") = sc.Dictionary();
 
   // Did the user want to save the model?
   if (CLI::HasParam("output_model"))
