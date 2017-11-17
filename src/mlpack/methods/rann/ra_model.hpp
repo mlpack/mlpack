@@ -36,12 +36,6 @@ using RAType = RASearch<SortPolicy,
                         arma::mat,
                         TreeType>;
 
-template<typename SortPolicy>
-struct RAModelName
-{
-  static const std::string Name() { return "rank_approx_search_model"; }
-};
-
 /**
  * MonoSearchVisitor executes a monochromatic neighbor search on the given
  * RAType. We don't make any difference for different instantiation of RAType.
@@ -358,7 +352,7 @@ class RAModel
 
   //! Serialize the model.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
   //! Expose the dataset.
   const arma::mat& Dataset() const;

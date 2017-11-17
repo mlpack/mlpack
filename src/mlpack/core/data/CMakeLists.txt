@@ -5,6 +5,7 @@ set(SOURCES
   dataset_mapper_impl.hpp
   extension.hpp
   format.hpp
+  has_serialize.hpp
   load_csv.hpp
   load_csv.cpp
   load.hpp
@@ -18,7 +19,6 @@ set(SOURCES
   normalize_labels_impl.hpp
   save.hpp
   save_impl.hpp
-  serialization_shim.hpp
   split_data.hpp
   imputer.hpp
   binarize.hpp

@@ -87,10 +87,10 @@ struct DSModel
 
   //! Serialize the model.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(mappings, "mappings");
-    ar & data::CreateNVP(stump, "stump");
+    ar & BOOST_SERIALIZATION_NVP(mappings);
+    ar & BOOST_SERIALIZATION_NVP(stump);
   }
 };
 

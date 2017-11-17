@@ -213,7 +213,7 @@ class NaiveBayesClassifier
 
   //! Serialize the classifier.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Sample mean for each class.

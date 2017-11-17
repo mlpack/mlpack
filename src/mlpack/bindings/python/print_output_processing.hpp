@@ -146,6 +146,7 @@ void PrintOutputProcessing(
     const util::ParamData& d,
     const size_t indent,
     const bool onlyOutput,
+    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
 {
   // Get the type names we need to use.

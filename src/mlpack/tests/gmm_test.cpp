@@ -483,7 +483,7 @@ BOOST_AUTO_TEST_CASE(GMMLoadSaveTest)
   {
     std::ofstream ofs("test-gmm-save.xml");
     boost::archive::xml_oarchive ar(ofs);
-    ar << data::CreateNVP(gmm, "gmm");
+    ar << BOOST_SERIALIZATION_NVP(gmm);
   }
 
   // Load the GMM.
@@ -491,7 +491,7 @@ BOOST_AUTO_TEST_CASE(GMMLoadSaveTest)
   {
     std::ifstream ifs("test-gmm-save.xml");
     boost::archive::xml_iarchive ar(ifs);
-    ar >> data::CreateNVP(gmm2, "gmm");
+    ar >> BOOST_SERIALIZATION_NVP(gmm2);
   }
 
   // Remove clutter.

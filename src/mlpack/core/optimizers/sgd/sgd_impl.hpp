@@ -14,9 +14,6 @@
 #ifndef MLPACK_CORE_OPTIMIZERS_SGD_SGD_IMPL_HPP
 #define MLPACK_CORE_OPTIMIZERS_SGD_SGD_IMPL_HPP
 
-#include <mlpack/methods/regularized_svd/regularized_svd_function.hpp>
-#include <mlpack/core/optimizers/sgd/update_policies/vanilla_update.hpp>
-
 // In case it hasn't been included yet.
 #include "sgd.hpp"
 

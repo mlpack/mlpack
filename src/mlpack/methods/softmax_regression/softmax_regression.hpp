@@ -212,14 +212,12 @@ class SoftmaxRegression
    * Serialize the SoftmaxRegression model.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
-    using mlpack::data::CreateNVP;
-
-    ar & CreateNVP(parameters, "parameters");
-    ar & CreateNVP(numClasses, "numClasses");
-    ar & CreateNVP(lambda, "lambda");
-    ar & CreateNVP(fitIntercept, "fitIntercept");
+    ar & BOOST_SERIALIZATION_NVP(parameters);
+    ar & BOOST_SERIALIZATION_NVP(numClasses);
+    ar & BOOST_SERIALIZATION_NVP(lambda);
+    ar & BOOST_SERIALIZATION_NVP(fitIntercept);
   }
 
  private:

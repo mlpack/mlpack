@@ -100,10 +100,10 @@ class FastMKSStat
 
   //! Serialize the statistic.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(bound, "bound");
-    ar & data::CreateNVP(selfKernel, "selfKernel");
+    ar & BOOST_SERIALIZATION_NVP(bound);
+    ar & BOOST_SERIALIZATION_NVP(selfKernel);
 
     // Void out last kernel information on load.
     if (Archive::is_loading::value)

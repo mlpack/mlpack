@@ -24,7 +24,7 @@
 namespace boost { \
 namespace serialization { \
 SIGNATURE \
-struct version<mlpack::data::SecondShim<T>> \
+struct version<T> \
 { \
   typedef mpl::int_<N> type; \
   typedef mpl::integral_c_tag tag; \

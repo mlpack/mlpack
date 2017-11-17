@@ -103,9 +103,9 @@ class DecisionTreeModel
 
   // Serialize the model.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(tree, "tree");
+    ar & BOOST_SERIALIZATION_NVP(tree);
   }
 };
 

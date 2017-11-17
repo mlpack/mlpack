@@ -130,10 +130,10 @@ class HyperplaneBase
    * Serialization.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(projVect, "projVect");
-    ar & data::CreateNVP(splitVal, "splitVal");
+    ar & BOOST_SERIALIZATION_NVP(projVect);
+    ar & BOOST_SERIALIZATION_NVP(splitVal);
   };
 };
 

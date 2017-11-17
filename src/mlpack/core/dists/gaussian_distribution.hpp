@@ -42,7 +42,7 @@ class GaussianDistribution
   /**
    * Default constructor, which creates a Gaussian with zero dimension.
    */
-  GaussianDistribution() { /* nothing to do */ }
+  GaussianDistribution() : logDetCov(0.0) { /* nothing to do */ }
 
   /**
    * Create a Gaussian distribution with zero mean and identity covariance with
@@ -146,16 +146,14 @@ class GaussianDistribution
    * Serialize the distribution.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
-    using data::CreateNVP;
-
     // We just need to serialize each of the members.
-    ar & CreateNVP(mean, "mean");
-    ar & CreateNVP(covariance, "covariance");
-    ar & CreateNVP(covLower, "covLower");
-    ar & CreateNVP(invCov, "invCov");
-    ar & CreateNVP(logDetCov, "logDetCov");
+    ar & BOOST_SERIALIZATION_NVP(mean);
+    ar & BOOST_SERIALIZATION_NVP(covariance);
+    ar & BOOST_SERIALIZATION_NVP(covLower);
+    ar & BOOST_SERIALIZATION_NVP(invCov);
+    ar & BOOST_SERIALIZATION_NVP(logDetCov);
   }
 
  private:

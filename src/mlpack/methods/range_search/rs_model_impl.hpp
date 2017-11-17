@@ -2,7 +2,7 @@
  * @file rs_model_impl.hpp
  * @author Ryan Curtin
  *
- * Implementation of Serialize() and inline functions for RSModel.
+ * Implementation of serialize() and inline functions for RSModel.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -487,21 +487,18 @@ void serialize(
 
 // Serialize the model.
 template<typename Archive>
-void RSModel::Serialize(Archive& ar, const unsigned int /* version */)
+void RSModel::serialize(Archive& ar, const unsigned int /* version */)
 {
-  using data::CreateNVP;
-
-  ar & CreateNVP(treeType, "treeType");
-  ar & CreateNVP(randomBasis, "randomBasis");
-  ar & CreateNVP(q, "q");
+  ar & BOOST_SERIALIZATION_NVP(treeType);
+  ar & BOOST_SERIALIZATION_NVP(randomBasis);
+  ar & BOOST_SERIALIZATION_NVP(q);
 
   // This should never happen, but just in case...
   if (Archive::is_loading::value)
     boost::apply_visitor(DeleteVisitor(), rSearch);
 
   // We'll only need to serialize one of the model objects, based on the type.
-  const std::string& name = RSModelName::Name();
-  ar & data::CreateNVP(rSearch, name);
+  ar & BOOST_SERIALIZATION_NVP(rSearch);
 }
 
 inline const arma::mat& RSModel::Dataset() const

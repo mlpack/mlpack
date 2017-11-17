@@ -110,6 +110,7 @@ inline std::string GetCythonType(
 template<typename T>
 inline std::string GetCythonType(
     const util::ParamData& d,
+    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
 {
   return d.cppType;

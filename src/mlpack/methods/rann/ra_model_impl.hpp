@@ -346,12 +346,12 @@ void serialize(
 
 template<typename SortPolicy>
 template<typename Archive>
-void RAModel<SortPolicy>::Serialize(Archive& ar,
+void RAModel<SortPolicy>::serialize(Archive& ar,
                                     const unsigned int /* version */)
 {
-  ar & data::CreateNVP(treeType, "treeType");
-  ar & data::CreateNVP(randomBasis, "randomBasis");
-  ar & data::CreateNVP(q, "q");
+  ar & BOOST_SERIALIZATION_NVP(treeType);
+  ar & BOOST_SERIALIZATION_NVP(randomBasis);
+  ar & BOOST_SERIALIZATION_NVP(q);
 
   // This should never happen, but just in case, be clean with memory.
   if (Archive::is_loading::value)
@@ -360,8 +360,7 @@ void RAModel<SortPolicy>::Serialize(Archive& ar,
   }
 
   // We only need to serialize one of the kRANN objects.
-  const std::string& name = RAModelName<SortPolicy>::Name();
-  ar & data::CreateNVP(raSearch, name);
+  ar & BOOST_SERIALIZATION_NVP(raSearch);
 }
 
 template<typename SortPolicy>

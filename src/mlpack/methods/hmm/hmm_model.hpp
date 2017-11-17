@@ -141,9 +141,9 @@ class HMMModel
 
   //! Serialize the model.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(type, "type");
+    ar & BOOST_SERIALIZATION_NVP(type);
 
     // If necessary, clean memory.
     if (Archive::is_loading::value)
@@ -158,11 +158,11 @@ class HMMModel
     }
 
     if (type == HMMType::DiscreteHMM)
-      ar & data::CreateNVP(discreteHMM, "discreteHMM");
+      ar & BOOST_SERIALIZATION_NVP(discreteHMM);
     else if (type == HMMType::GaussianHMM)
-      ar & data::CreateNVP(gaussianHMM, "gaussianHMM");
+      ar & BOOST_SERIALIZATION_NVP(gaussianHMM);
     else if (type == HMMType::GaussianMixtureModelHMM)
-      ar & data::CreateNVP(gmmHMM, "gmmHMM");
+      ar & BOOST_SERIALIZATION_NVP(gmmHMM);
   }
 };
 

@@ -33,11 +33,6 @@ template<template<typename TreeMetricType,
                   typename TreeMatType> class TreeType>
 using RSType = RangeSearch<metric::EuclideanDistance, arma::mat, TreeType>;
 
-struct RSModelName
-{
-  static const std::string Name() { return "range_search_model"; }
-};
-
 /**
  * MonoSearchVisitor executes a monochromatic range search on the given
  * RSType. Range Search is performed on the reference set itself, no querySet.
@@ -310,7 +305,7 @@ class RSModel
 
   //! Serialize the range search model.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
   //! Expose the dataset.
   const arma::mat& Dataset() const;
@@ -399,7 +394,7 @@ class RSModel
 } // namespace range
 } // namespace mlpack
 
-// Include implementation (of Serialize() and inline functions).
+// Include implementation (of serialize() and inline functions).
 #include "rs_model_impl.hpp"
 
 #endif

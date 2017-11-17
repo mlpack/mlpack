@@ -106,14 +106,14 @@ void LocalCoordinateCoding::Train(
 }
 
 template<typename Archive>
-void LocalCoordinateCoding::Serialize(Archive& ar,
+void LocalCoordinateCoding::serialize(Archive& ar,
                                       const unsigned int /* version */)
 {
-  ar & data::CreateNVP(atoms, "atoms");
-  ar & data::CreateNVP(dictionary, "dictionary");
-  ar & data::CreateNVP(lambda, "lambda");
-  ar & data::CreateNVP(maxIterations, "maxIterations");
-  ar & data::CreateNVP(tolerance, "tolerance");
+  ar & BOOST_SERIALIZATION_NVP(atoms);
+  ar & BOOST_SERIALIZATION_NVP(dictionary);
+  ar & BOOST_SERIALIZATION_NVP(lambda);
+  ar & BOOST_SERIALIZATION_NVP(maxIterations);
+  ar & BOOST_SERIALIZATION_NVP(tolerance);
 }
 
 } // namespace lcc
