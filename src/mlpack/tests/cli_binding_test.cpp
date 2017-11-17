@@ -113,6 +113,7 @@ BOOST_AUTO_TEST_CASE(GetParamUnloadedMatTest)
   // Make sure it is not loaded yet.
   d.input = true;
   d.loaded = false;
+  d.noTranspose = false;
 
   // Now getting the parameter should load it.
   arma::mat* output = NULL;
@@ -138,6 +139,7 @@ BOOST_AUTO_TEST_CASE(GetParamUmatTest)
   // Mark it as already loaded.
   d.input = true;
   d.loaded = true;
+  d.noTranspose = false;
 
   arma::Mat<size_t>* output = NULL;
   GetParam<arma::Mat<size_t>>((const util::ParamData&) d, (void*) NULL,
@@ -162,6 +164,7 @@ BOOST_AUTO_TEST_CASE(GetParamUnloadedUmatTest)
   // Make sure it is not loaded yet.
   d.input = true;
   d.loaded = false;
+  d.noTranspose = false;
 
   // Now getting the parameter should load it.
   arma::Mat<size_t>* output = NULL;
@@ -205,6 +208,7 @@ BOOST_AUTO_TEST_CASE(GetParamDatasetInfoMatTest)
   // Make sure it is not loaded yet.
   d.input = true;
   d.loaded = false;
+  d.noTranspose = false;
 
   // Set up object to load into.
   tuple<data::DatasetInfo, arma::mat>* output = NULL;
@@ -275,6 +279,7 @@ BOOST_AUTO_TEST_CASE(RawParamMatTest)
   d.value = boost::any(tuple);
   d.input = true;
   d.loaded = false;
+  d.noTranspose = false;
 
   arma::mat* output = NULL;
   GetRawParam<arma::mat>((const util::ParamData&) d, (void*) NULL,
@@ -326,6 +331,7 @@ BOOST_AUTO_TEST_CASE(GetRawParamDatasetInfoTest)
   // Make sure it is not loaded yet.
   d.input = true;
   d.loaded = false;
+  d.noTranspose = false;
 
   // Set up object to load into.
   tuple<data::DatasetInfo, arma::mat>* output = NULL;
@@ -349,6 +355,7 @@ BOOST_AUTO_TEST_CASE(OutputParamMatTest)
 
   d.value = boost::any(t);
   d.input = false;
+  d.noTranspose = false;
 
   // Now save it.
   OutputParam<arma::mat>((const util::ParamData&) d, (const void*) NULL,
@@ -374,6 +381,7 @@ BOOST_AUTO_TEST_CASE(OutputParamUmatTest)
 
   d.value = boost::any(t);
   d.input = false;
+  d.noTranspose = false;
 
   // Now save it.
   OutputParam<arma::Mat<size_t>>((const util::ParamData&) d, (const void*) NULL,
@@ -513,6 +521,7 @@ BOOST_AUTO_TEST_CASE(SetParamDatasetInfoMatTest)
   tuple<DatasetInfo, arma::mat> t1 = make_tuple(di, m);
   tuple<tuple<DatasetInfo, arma::mat>, string> t2 = make_tuple(t1, filename);
   d.value = boost::any(t2);
+  d.noTranspose = false;
 
   // Now get new filename.
   string newFilename = "new_filename.csv";
