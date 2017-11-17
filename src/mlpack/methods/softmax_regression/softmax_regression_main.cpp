@@ -127,9 +127,15 @@ void mlpackMain()
         " labels must also be specified");
   }
   ReportIgnoredParam({{ "training", false }}, "labels");
+  ReportIgnoredParam({{ "training", false }}, "max_iterations");
+  ReportIgnoredParam({{ "training", false }}, "number_of_classes");
+  ReportIgnoredParam({{ "training", false }}, "lambda");
+  ReportIgnoredParam({{ "training", false }}, "no_intercept");
 
   RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; }, true,
       "maximum number of iterations must be greater than or equal to 0");
+  RequireParamValue<double>("lambda", [](double x) { return x >= 0.0; }, true,
+      "lambda penalty parameter must be greater than or equal to 0");
 
   // Make sure we have an output file of some sort.
   RequireAtLeastOnePassed({ "output_model", "predictions" }, false, "no results"
@@ -165,12 +171,13 @@ void TestClassifyAcc(size_t numClasses, const Model& model)
   using namespace mlpack;
 
   // If there is no test set, there is nothing to test on.
-  if (!CLI::HasParam("test") && !CLI::HasParam("predictions") &&
-      !CLI::HasParam("test_labels"))
-    return;
+  if (!CLI::HasParam("test"))
+  {
+    ReportIgnoredParam({{ "test", false }}, "test_labels");
+    ReportIgnoredParam({{ "test", false }}, "predictions");
 
-  ReportIgnoredParam({{ "test", false }}, "test_labels");
-  ReportIgnoredParam({{ "test", false }}, "predictions");
+    return;
+  }
 
   // Get the test dataset, and get predictions.
   arma::mat testData = std::move(CLI::GetParam<arma::mat>("test"));
