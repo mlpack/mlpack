@@ -41,24 +41,6 @@ using NSType = NeighborSearch<SortPolicy,
                                   NeighborSearchStat<SortPolicy>,
                                   arma::mat>::template DualTreeTraverser>;
 
-template<typename SortPolicy>
-struct NSModelName
-{
-  static const std::string Name() { return "neighbor_search_model"; }
-};
-
-template<>
-struct NSModelName<NearestNeighborSort>
-{
-  static const std::string Name() { return "nearest_neighbor_search_model"; }
-};
-
-template<>
-struct NSModelName<FurthestNeighborSort>
-{
-  static const std::string Name() { return "furthest_neighbor_search_model"; }
-};
-
 /**
  * MonoSearchVisitor executes a monochromatic neighbor search on the given
  * NSType. We don't make any difference for different instantiations of NSType.

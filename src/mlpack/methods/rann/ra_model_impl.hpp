@@ -331,19 +331,6 @@ RAModel<SortPolicy>::~RAModel()
   boost::apply_visitor(DeleteVisitor(), raSearch);
 }
 
-template<typename Archive,
-         typename SortPolicy,
-         template<typename TreeMetricType,
-                  typename TreeStatType,
-                  typename TreeMatType> class TreeType>
-void serialize(
-    Archive& ar,
-    RASearch<SortPolicy, metric::EuclideanDistance, arma::mat, TreeType>& ra,
-    const unsigned int version)
-{
-  ra.Serialize(ar, version);
-}
-
 template<typename SortPolicy>
 template<typename Archive>
 void RAModel<SortPolicy>::serialize(Archive& ar,

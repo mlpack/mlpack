@@ -20,7 +20,7 @@ std::string SerializeOut(T* t, const std::string& name)
   {
     boost::archive::binary_oarchive b(oss);
 
-    b << data::CreateNVP(*t, name);
+    b << boost::serialization::make_nvp(name.c_str(), *t);
   }
   return oss.str();
 }
@@ -31,7 +31,7 @@ void SerializeIn(T* t, const std::string& str, const std::string& name)
   std::istringstream iss(str);
   boost::archive::binary_iarchive b(iss);
 
-  b >> data::CreateNVP(*t, name);
+  b >> boost::serialization::make_nvp(name.c_str(), *t);
 }
 
 } // namespace python

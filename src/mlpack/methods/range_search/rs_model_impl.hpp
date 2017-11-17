@@ -468,23 +468,6 @@ bool& NaiveVisitor::operator()(RSType* rs) const
   throw std::runtime_error("no range search model initialized");
 }
 
-/**
- * Non-intrusive serialization for RangeSearch class. We need this definition
- * because we are going to use the serialize function for boost variant, which
- * will look for a serialize function for its member types.
- */
-template<typename Archive,
-         template<typename TreeMetricType,
-                  typename TreeStatType,
-                  typename TreeMatType> class TreeType>
-void serialize(
-    Archive& ar,
-    RangeSearch<metric::EuclideanDistance, arma::mat, TreeType>& rs,
-    const unsigned int version)
-{
-  rs.Serialize(ar, version);
-}
-
 // Serialize the model.
 template<typename Archive>
 void RSModel::serialize(Archive& ar, const unsigned int /* version */)
