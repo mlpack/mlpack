@@ -5,6 +5,7 @@ set(DIRS
   aug_lagrangian
   cne
   fw
+  cmaes
   gradient_descent
   grid_search
   lbfgs

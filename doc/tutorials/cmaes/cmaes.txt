@@ -1,0 +1,304 @@
+/*!
+
+@file cmaes.txt
+@author Kartik Nighania
+@brief Tutorial on how to use the CMAES optimizer class.
+
+@page cmaestutorial CMAES Optimizer tutorial (mlpack_cmaes)
+
+@section intro_cmaestut Introduction
+
+The CMA-ES (Evolution Strategy with Covariance Matrix Adaptation) is a robust 
+search/optimization method. The goal is to minimize a given objective 
+function, \f$f: R^N \rightarrow R\f$. The CMA-ES should be applied, if e.g. 
+BFGS and/or conjugate gradient methods fail due to a rugged search landscape 
+(e.g. discontinuities, outliers, noise, local optima, etc.). Learning the  
+covariance matrix in the CMA-ES is similar to learning the inverse Hessian matrix in 
+a quasi-Newton method. On smooth landscapes the CMA-ES is roughly ten times slower 
+than BFGS, assuming derivatives are not directly available. For up to \f$N=10\f$ 
+parameters the simplex direct search method (Nelder & Mead) is sometimes faster, but 
+less robust than CMA-ES.  On considerably hard problems the search (a single run) is 
+expected to take between \f$100\cdot N\f$ and \f$300\cdot N^2\f$ function evaluations. 
+
+@section toc_cmaestut Table of Contents
+
+A list of all the sections this tutorial contains.
+
+ - \ref intro_cmaestut
+ - \ref toc_cmaestut
+ - \ref cmaes_cmaestut
+   - \ref cmaes_ex1_cmaestut
+   - \ref cmaes_ex2_cmaestut
+   - \ref cmaes_ex3_cmaestut
+   - \ref cmaes_ex4_cmaestut
+ - \ref further_doc_cmaestut
+
+@section cmaes_cmaestut The 'CMAES' optimizer class
+
+The 'CMAES' class is a simple implementation of CMAES optimizer to converge a given 
+function or model.
+
+Using the CMAES class is very simple and can be divided into 3 simple steps- 
+
+1) The optimizer takes a function class which has the function described that user wants 
+to converge. 
+
+2) The CMAES object is made in which the constructor requires 6 input parameters out of 
+which only the dimension of the function to converge is a compulsory parameter.
+
+@code
+CMAES(int objectDim, double start, double stdDivs, double iters,
+double evalEnd, double functionHistory);
+@endcode
+
+3) The function can then be given to the optimizer by calling the optimize method.
+
+@code
+double Optimize(funcType& function, arma::mat& coordinate);
+@endcode
+
+This returns the final result in double. Also each variable value that led to the result 
+is put into armadillo mat/vec coordinate given by the user.
+
+@subsection cmaes_ex1_cmaestut Making the function Class.
+
+Let us take a function to compute.
+
+\f
+f(x,y,z) = -e^{-|x|} + y^2 + z^4 + 3*z^2
+\f
+
+@code
+class cmaesTestFunction
+{
+  public:
+  int NumFunctions(void) { return 3; }
+
+   double Evaluate(arma::mat& coordinates, ssize_t i)
+  {
+    switch (i)
+        {
+        case 0: return -exp(-abs(coordinates[0]));
+        break;
+        
+        case 1: return pow(coordinates[1], 2);
+        break;
+        
+        case 2: return pow(coordinates[2], 4) + 3 * pow(coordinates[2], 2);
+        }
+  }
+  
+};
+@endcode
+
+the class must have two methods.
+
+1) NumFunctions return type int. As you can see in Evaluate method that we have divided the 
+function into 3 parts according to the 3 x, y and z coordinate we are dealing with.
+
+2) The Evaluate method which provides coordinates and expects a return of the function based 
+on those. See here coordinate[0] is treated as x and in the same way coordinate[1] for y and 
+coordinate[2] for z and the function is returned. This method lets the optimizer know the 
+function that it has to converge. 
+
+Note : The user can also return 1 in NumFunctions and directly return the whole function in a 
+single iteration. But using in parts is recommended due to compatibility with other mlpack 
+functions if you are using incase any. The code will then look like this -  
+
+@code
+class cmaesTestFunction
+{
+  public:
+  int NumFunctions(void) { return 1; }
+
+  double Evaluate(arma::mat& coordinates, ssize_t i)
+  {
+    return -exp(-abs(coordinates[0])) + pow(coordinates[1], 2) + pow(coordinates[2], 4)
+    + 3 * pow(coordinates[2], 2);
+  }
+  
+};
+@endcode
+
+@subsection cmaes_ex2_cmaestut Setting the constructor.
+
+@code
+CMAES(int objectDim, double start, double stdDivs, double iters,
+double evalEnd, double functionHistory);
+@endcode
+
+The constructor parameter are as follows -
+
+1) int objectDim- (not optional) The number of dimensions that your function has.
+
+Note: It's not the number of functions that we gave above in Numfunction. As per our above 
+equation this is 3. As we have x, y, z dimensions in which our function is made. 
+
+2) double start- (default = 0.5) The start point of the Optimizer. This is from where the 
+algorithm will start to converge. 0.5 is by default start point for all dimensions.
+
+3) double stdDivs- (default = 0.3) The standard deviation of the gaussian distribution that 
+the optimizer uses. 0.3 is the default point for all dimensions.
+
+4) double iters- (optional) The maximum number of iterations after which the optimization 
+must stop.
+
+Note: The optimization can also stop in between if the stop critereia meets.
+
+5) double evalEnd (default 1e-12)- the change in function value to see if flat fitness 
+is matched which is the condition mostly when minima is reached.
+
+6) double functionHistory (default 1e-13)- This check for minimum function value difference 
+from the history of function values to check for flat fitness.
+
+Note: If you are not sure about the function. It is recommended to just give the dimension 
+if you are not sure of the objective function. The default values are good for most of the 
+cases.
+
+@subsection cmaes_ex3_cmaestut A complete code
+
+@code
+#include <mlpack/core/optimizers/cmaes/cmaes.hpp> //or <mlpack/core.hpp>
+
+using namespace std;
+using namespace arma; // for armadillo library
+using namespace mlpack::optimization; // for the cmaes class
+
+// User made function class
+// The details about making this class is explained above in its own seperate section.
+
+class cmaesTestFunction
+{
+  public:
+
+  int NumFunctions(void) { return 3; }
+
+   double Evaluate(arma::mat& coordinates, ssize_t i)
+  {
+    switch (i)
+        {
+        case 0: return -exp(-abs(coordinates[0]));
+        break;
+        
+        case 1: return pow(coordinates[1], 2);
+        break;
+        
+        case 2: return pow(coordinates[2], 4) + 3 * pow(coordinates[2], 2);
+        }
+  }
+  
+};
+
+int main()
+{
+  // the above made class object
+  cmaesTestFunction test;
+
+  // the CMAES optimizer object
+  // The parameters of the class are explained above in its seperate section 
+  CMAES opt(3, 0.5, 0.3, 10000, 1e-12, 1e-13);
+ 
+  // armadillo matrix to get the optimized dimension values
+  arma::mat coordinates(3, 1);
+
+  // calling the Optimizer's method to optimize. 
+  double result = opt.Optimize(test, coordinates);
+
+  // printing out the results
+  cout << result << endl;
+  for(int i=0; i<3; i++) cout << coordinates[i] << " ";
+
+return 0;
+}
+@endcode
+
+@subsection cmaes_ex4_cmaestut Using as optimizer with other models
+
+let us use the CMAES function as an optimizer with mlpack logistic regression 
+function. 
+
+@code
+#include <mlpack/core/optimizers/cmaes/cmaes.hpp>
+#include <mlpack/methods/logistic_regression/logistic_regression.hpp>
+
+using namespace std;
+using namespace arma;
+using namespace mlpack::optimization;
+using namespace mlpack::regression;
+
+int main()
+{
+  // Generate a two-Gaussian dataset.
+  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
+
+  arma::mat data(3, 1000);
+  arma::Row<size_t> responses(1000);
+  for (size_t i = 0; i < 500; ++i)
+  {
+    data.col(i) = g1.Random();
+    responses[i] = 0;
+  }
+  for (size_t i = 500; i < 1000; ++i)
+  {
+    data.col(i) = g2.Random();
+    responses[i] = 1;
+  }
+
+  // Shuffle the dataset.
+  arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0,
+      data.n_cols - 1, data.n_cols));
+  arma::mat shuffledData(3, 1000);
+  arma::Row<size_t> shuffledResponses(1000);
+  for (size_t i = 0; i < data.n_cols; ++i)
+  {
+    shuffledData.col(i) = data.col(indices[i]);
+    shuffledResponses[i] = responses[indices[i]];
+  }
+
+  // Create a test set.
+  arma::mat testData(3, 1000);
+  arma::Row<size_t> testResponses(1000);
+  for (size_t i = 0; i < 500; ++i)
+  {
+    testData.col(i) = g1.Random();
+    testResponses[i] = 0;
+  }
+  for (size_t i = 500; i < 1000; ++i)
+  {
+    testData.col(i) = g2.Random();
+    testResponses[i] = 1;
+  }
+
+// ********************************************************************
+  
+  // constructor parameters are defined above in a seperate section
+  int dim = shuffledData.n_rows + 1;
+  CMAES test1(dim, 0.5, 0.3, 10000, 1e-10, 1e-10);
+
+  // giving the logistic regression function CMAES optimizer 
+  LogisticRegression<> lr(shuffledData, shuffledResponses, test1, 0.5);
+
+// ********************************************************************
+
+  // Ensure that the error is close to zero.
+  const double acc = lr.ComputeAccuracy(data, responses);
+
+  // print the accuracy
+  cout << acc << endl;
+
+  const double testAcc = lr.ComputeAccuracy(testData, testResponses);
+ 
+  // printing the accuracy of test data found by the optimized model
+  cout << testAcc << endl;
+
+  return 0;
+}
+@endcode
+
+@section further_doc_cmaestut Further documentation 
+
+For further documentation on the CMAES class, consult the
+\ref mlpack::optimization::CMAES "complete API documentation".
+
+*/

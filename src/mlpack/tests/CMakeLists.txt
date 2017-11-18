@@ -18,6 +18,7 @@ add_executable(mlpack_test
   cf_test.cpp
   cli_test.cpp
   cli_binding_test.cpp
+  cmaes_test.cpp
   cne_test.cpp
   convolutional_network_test.cpp
   convolution_test.cpp
