@@ -15,6 +15,7 @@ set(DIRS
   sdp
   sgd
   smorms3
+  svrg
 )
 
 foreach(dir ${DIRS})
