@@ -13,6 +13,17 @@ http://www.opensource.org/licenses/BSD-3-Clause for more information.
 """
 import numpy as np
 import pandas as pd
+# The CategoricalDtype class has moved multiple times, so this insanity is
+# necessary to import the right version.
+if int(pd.__version__.split('.')[0]) > 0 or \
+   int(pd.__version__.split('.')[1]) >= 20:
+  from pandas.api.types import CategoricalDtype
+elif int(pd.__version__.split('.')[1]) >= 18:
+  from pandas.types.dtypes import CategoricalDtype
+elif int(pd.__version__.split('.')[1]) == 17:
+  from pandas.core.dtypes import CategoricalDtype
+elif int(pd.__version__.split('.')[1]) >= 15:
+  from pandas.core.common import CategoricalDtype
 
 def to_matrix(x, dtype=np.double):
   """
@@ -50,7 +61,7 @@ def to_matrix_with_info(x, dtype):
     # categorical or object, and if so, we need to convert them.  First see if
     # we can take a shortcut without copying.
     dtype_array = x.dtypes.values if len(x.dtypes) > 0 else [x.dtypes]
-    if not any(isinstance(t, pd.types.dtypes.CategoricalDtype)
+    if not any(isinstance(t, CategoricalDtype)
         for t in dtype_array) and \
        not 'object' in dtype_array and \
        not 'str' in dtype_array and \
