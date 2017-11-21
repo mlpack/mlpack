@@ -231,7 +231,7 @@ if (BUILD_PYTHON_BINDINGS)
           test
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)
   set_tests_properties(python_bindings_test
-      PROPERTIES ENVIRONMENT "NO_BUILD=1")
+      PROPERTIES ENVIRONMENT "NO_BUILD=1;LD_LIBRARY_PATH=$ENV{LD_LIBRARY_PATH}:${CMAKE_BINARY_DIR}/lib/")
 endif ()
 
 if (BUILD_TESTS)
