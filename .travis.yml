@@ -11,6 +11,8 @@ before_install:
   - sudo apt-get update -qq
   - printenv
   - sudo apt-get install -qq libopenblas-dev liblapack-dev g++ libboost-all-dev
+  - sudo wget https://launchpadlibrarian.net/260609315/fix-std-vector-load.diff -O /usr/include/fix-std-vector-load.diff
+  - cd /usr/include && sudo patch -p1 < fix-std-vector-load.diff && sudo rm fix-std-vector-load.diff && cd -
   - sudo pip install cython setuptools numpy pandas
   - curl http://masterblaster.mlpack.org:5005/armadillo-6.500.5.tar.gz | tar xvz && cd armadillo*
   - cmake . && make && sudo make install && cd ..
