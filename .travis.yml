@@ -10,6 +10,8 @@ before_install:
   - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
   - sudo apt-get update -qq
   - printenv
+  - ls -lh /var/lib/apt/
+  - ps -ef f | grep apt
   - sudo apt-get install -qq libopenblas-dev liblapack-dev g++ libboost-all-dev
   - sudo wget https://launchpadlibrarian.net/260609315/fix-std-vector-load.diff -O /usr/include/fix-std-vector-load.diff
   - cd /usr/include && sudo patch -p1 < fix-std-vector-load.diff && sudo rm fix-std-vector-load.diff && cd -
