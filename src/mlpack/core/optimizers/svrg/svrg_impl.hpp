@@ -124,7 +124,7 @@ double SVRGType<UpdatePolicyType, DecayPolicyType>::Optimize(
 
       f += effectiveBatchSize;
     }
-    fullGradient /= numBatches;
+    fullGradient /= (double) numFunctions;
 
     // Update the learning rate if requested by the user.
     decayPolicy.Update(iterate, iterate0, gradient, fullGradient, numBatches,
@@ -144,7 +144,8 @@ double SVRGType<UpdatePolicyType, DecayPolicyType>::Optimize(
       function.Gradient(iterate0, f, gradient0, effectiveBatchSize);
 
       // Use the update policy to take a step.
-      updatePolicy.Update(iterate, fullGradient, gradient, gradient0, stepSize);
+      updatePolicy.Update(iterate, fullGradient, gradient, gradient0,
+          effectiveBatchSize, stepSize);
 
       f += effectiveBatchSize;
     }

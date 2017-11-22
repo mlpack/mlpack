@@ -15,6 +15,8 @@
 #ifndef MLPACK_CORE_OPTIMIZERS_SVRG_NO_DECAY_HPP
 #define MLPACK_CORE_OPTIMIZERS_SVRG_NO_DECAY_HPP
 
+#include <mlpack/prereqs.hpp>
+
 namespace mlpack {
 namespace optimization {
 
