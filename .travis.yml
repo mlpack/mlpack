@@ -30,7 +30,7 @@ install:
   - mkdir build && cd build && cmake $CMAKE_OPTIONS .. && make -j2
 
 script:
-  - cd src/mlpack/bindings/python/ && LD_LIBRARY_PATH=lib/ NO_BUILD=1 python setup.py test && cd -
+  - cd src/mlpack/bindings/python/ && LD_LIBRARY_PATH=../../../../lib/ NO_BUILD=1 python setup.py test && cd -
   - CTEST_OUTPUT_ON_FAILURE=1 travis_wait 30 ctest -j2
 
 notifications:
