@@ -2,7 +2,8 @@ set(SOURCES
   svrg.hpp
   svrg_impl.hpp
   no_decay.hpp
-  vanilla_update.hpp
+  barzilai_borwein.hpp
+  svrg_update.hpp
 )
 
 set(DIR_SRCS)

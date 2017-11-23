@@ -14,8 +14,9 @@
 
 #include <mlpack/prereqs.hpp>
 
-#include "vanilla_update.hpp"
+#include "svrg_update.hpp"
 #include "no_decay.hpp"
+#include "barzilai_borwein.hpp"
 
 namespace mlpack {
 namespace optimization {
@@ -95,7 +96,7 @@ namespace optimization {
  *     process to adjust the step size. By default the step size isn't going to
  *     be adjusted (i.e. NoDecay is used).
  */
-template<typename UpdatePolicyType = VanillaUpdate,
+template<typename UpdatePolicyType = SVRGUpdate,
          typename DecayPolicyType = NoDecay>
 class SVRGType
 {
@@ -213,7 +214,17 @@ class SVRGType
   bool resetPolicy;
 };
 
-using SVRG = SVRGType<VanillaUpdate, NoDecay>;
+// Convenience typedefs.
+
+/**
+ * Standard stochastic variance reduced gradient.
+ */
+using SVRG = SVRGType<SVRGUpdate, NoDecay>;
+
+/**
+ * Stochastic variance reduced gradient with Barzilai-Borwein.
+ */
+using SVRG_BB = SVRGType<SVRGUpdate, BarzilaiBorwein>;
 
 } // namespace optimization
 } // namespace mlpack

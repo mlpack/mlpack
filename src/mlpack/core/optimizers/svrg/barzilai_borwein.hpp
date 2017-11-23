@@ -40,6 +40,18 @@ namespace optimization {
 class BarzilaiBorwein
 {
  public:
+  /*
+   * Construct the Barzilai-Borwein decay policy.
+   *
+   * @param maxStepSize The maximum step size.
+   * @param eps The eps coefficient to avoid division by zero (numerical
+   *    stability).
+   */
+  BarzilaiBorwein(const double maxStepSize = DBL_MAX, const double eps = 1e-7) :
+      eps(eps),
+      maxStepSize(maxStepSize)
+  { /* Nothing to do. */}
+
   /**
    * The Initialize method is called by SVRG Optimizer method before the start
    * of the iteration update process.
@@ -57,6 +69,7 @@ class BarzilaiBorwein
    * @param fullGradient The computed full gradient.
    * @param gradient The current gradient matrix at time t.
    * @param gradient The old gradient matrix at time t - 1.
+   * @param numBatches The number of batches.
    * @param stepSize Step size to be used for the given iteration.
    */
   void Update(const arma::mat& iterate,
@@ -69,9 +82,11 @@ class BarzilaiBorwein
     if (!fullGradient0.is_empty())
     {
       // Step size selection based on Barzilai-Borwein (BB).
-      stepSize = std::pow(arma::norm(iterate - iterate0), 2) /
-          arma::dot(iterate - iterate0, fullGradient - fullGradient0) /
+      stepSize = std::pow(arma::norm(iterate - iterate0), 2.0) /
+          (arma::dot(iterate - iterate0, fullGradient - fullGradient0) + eps) /
           (double) numBatches;
+
+      stepSize = std::min(stepSize, maxStepSize);
     }
 
     fullGradient0 = fullGradient;
@@ -80,6 +95,12 @@ class BarzilaiBorwein
  private:
   //! Locally-stored full gradient.
   arma::mat fullGradient0;
+
+  //! The value used for numerical stability.
+  double eps;
+
+  //! The maximum step size.
+  double maxStepSize;
 };
 
 } // namespace optimization
