@@ -11,10 +11,6 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/optimizers/svrg/svrg.hpp>
-#include <mlpack/core/optimizers/katyusha/katyusha.hpp>
-
-#include <mlpack/core/optimizers/lbfgs/test_functions.hpp>
-#include <mlpack/core/optimizers/sgd/test_function.hpp>
 
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
 
@@ -25,7 +21,6 @@ using namespace std;
 using namespace arma;
 using namespace mlpack;
 using namespace mlpack::optimization;
-using namespace mlpack::optimization::test;
 
 using namespace mlpack::distribution;
 using namespace mlpack::regression;
