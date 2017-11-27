@@ -20,12 +20,13 @@ namespace mlpack {
 namespace optimization {
 
 /**
- * IQN is a technique for minimizing a function which
+ * IQN ia an Incremental Quasi-Newton Methodis for minimizing a function which
  * can be expressed as a sum of other functions.  That is, suppose we have
  *
  * \f[
  * f(A) = \sum_{i = 0}^{n} f_i(A)
  * \f]
+ *
  * IQN is the first stochastic quasi- Newton method proven to converge
  * superlinearly in a local neighborhood of the optimal solution.
  *
