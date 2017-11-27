@@ -74,11 +74,13 @@ class IQN
    * equal one pass over the dataset).
    *
    * @param stepSize Step size for each iteration.
+   * @param batchSize Size of each batch.
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *     limit).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    */
   IQN(const double stepSize = 0.01,
+      const size_t batchSize = 10,
       const size_t maxIterations = 100000,
       const double tolerance = 1e-5);
 
@@ -100,6 +102,11 @@ class IQN
   //! Modify the step size.
   double& StepSize() { return stepSize; }
 
+  //! Get the batch size.
+  size_t BatchSize() const { return batchSize; }
+  //! Modify the batch size.
+  size_t& BatchSize() { return batchSize; }
+
   //! Get the maximum number of iterations (0 indicates no limit).
   size_t MaxIterations() const { return maxIterations; }
   //! Modify the maximum number of iterations (0 indicates no limit).
@@ -113,6 +120,9 @@ class IQN
  private:
   //! The step size for each example.
   double stepSize;
+
+  //! The size of each batch.
+  size_t batchSize;
 
   //! The maximum number of allowed iterations.
   size_t maxIterations;

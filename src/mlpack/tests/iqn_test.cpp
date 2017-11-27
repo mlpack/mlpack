@@ -70,15 +70,19 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
     testResponses[i] = 1;
   }
 
-  IQN iqn(0.01, 5000, 1e-3);
-  LogisticRegression<> lr(shuffledData, shuffledResponses, iqn, 0.5);
+  // Now run SGDR with snapshot ensembles on a couple of batch sizes.
+  for (size_t batchSize = 1; batchSize < 9; batchSize += 4)
+  {
+    IQN iqn(0.01, batchSize, 5000, 1e-3);
+    LogisticRegression<> lr(shuffledData, shuffledResponses, iqn, 0.5);
 
-  // Ensure that the error is close to zero.
-  const double acc = lr.ComputeAccuracy(data, responses);
-  BOOST_REQUIRE_CLOSE(acc, 100.0, 0.3); // 0.3% error tolerance.
+    // Ensure that the error is close to zero.
+    const double acc = lr.ComputeAccuracy(data, responses);
+    BOOST_REQUIRE_CLOSE(acc, 100.0, 1.3); // 1.3% error tolerance.
 
-  const double testAcc = lr.ComputeAccuracy(testData, testResponses);
-  BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6); // 0.6% error tolerance.
+    const double testAcc = lr.ComputeAccuracy(testData, testResponses);
+    BOOST_REQUIRE_CLOSE(testAcc, 100.0, 1.6); // 1.6% error tolerance.
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END();
