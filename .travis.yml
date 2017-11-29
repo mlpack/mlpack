@@ -7,17 +7,11 @@ env:
   - CMAKE_OPTIONS="-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF"
 
 before_install:
-  - ps -ef f | grep apt
-  - ps -ef f | grep dpkg
   - sudo systemctl stop apt-daily.service apt-daily.timer
   - sudo systemctl disable apt-daily.service apt-daily.timer
-  - ps -ef f | grep apt
-  - ps -ef f | grep dpkg
   - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
   - sudo apt-get update -qq
   - printenv
-  - ps -ef f | grep apt
-  - ps -ef f | grep dpkg
   - sudo apt-get install -qq libopenblas-dev liblapack-dev g++ libboost-all-dev
   - sudo wget https://launchpadlibrarian.net/260609315/fix-std-vector-load.diff -O /usr/include/fix-std-vector-load.diff
   - cd /usr/include && sudo patch -p1 < fix-std-vector-load.diff && sudo rm fix-std-vector-load.diff && cd -
@@ -30,7 +24,6 @@ install:
   - mkdir build && cd build && cmake $CMAKE_OPTIONS .. && make -j2
 
 script:
-  - cd src/mlpack/bindings/python/ && LD_LIBRARY_PATH=../../../../lib/ NO_BUILD=1 python setup.py test && cd -
   - CTEST_OUTPUT_ON_FAILURE=1 travis_wait 30 ctest -j2
 
 notifications:
