@@ -31,6 +31,12 @@ cdef extern from "numpy/arrayobject.h":
 
 cdef extern from "<mlpack/bindings/python/mlpack/arma_util.hpp>":
   void SetMemState[T](T& m, int state)
+  double* GetMemory(arma.Mat[double]& m)
+  double* GetMemory(arma.Col[double]& m)
+  double* GetMemory(arma.Row[double]& m)
+  size_t* GetMemory(arma.Mat[size_t]& m)
+  size_t* GetMemory(arma.Col[size_t]& m)
+  size_t* GetMemory(arma.Row[size_t]& m)
 
 cdef arma.Mat[double]* numpy_to_mat_d(numpy.ndarray[numpy.double_t, ndim=2] X) \
     except +:
@@ -77,7 +83,7 @@ cdef numpy.ndarray[numpy.double_t, ndim=2] mat_to_numpy_d(arma.Mat[double]& X) \
   dims[0] = <numpy.npy_intp> X.n_cols
   dims[1] = <numpy.npy_intp> X.n_rows
   cdef numpy.ndarray[numpy.double_t, ndim=2] output = \
-      numpy.PyArray_SimpleNewFromData(2, &dims[0], numpy.NPY_DOUBLE, X.memptr())
+      numpy.PyArray_SimpleNewFromData(2, &dims[0], numpy.NPY_DOUBLE, GetMemory(X))
 
   # Transfer memory ownership.
   SetMemState[arma.Mat[double]](X, 1)
@@ -95,7 +101,7 @@ cdef numpy.ndarray[numpy.npy_intp, ndim=2] mat_to_numpy_s(arma.Mat[size_t]& X) \
   dims[0] = <numpy.npy_intp> X.n_cols
   dims[1] = <numpy.npy_intp> X.n_rows
   cdef numpy.ndarray[numpy.npy_intp, ndim=2] output = \
-      numpy.PyArray_SimpleNewFromData(2, &dims[0], numpy.NPY_INTP, X.memptr())
+      numpy.PyArray_SimpleNewFromData(2, &dims[0], numpy.NPY_INTP, GetMemory(X))
 
   # Transfer memory ownership.
   SetMemState[arma.Mat[size_t]](X, 1)
@@ -147,7 +153,7 @@ cdef numpy.ndarray[numpy.double_t, ndim=1] row_to_numpy_d(arma.Row[double]& X) \
   # Extract dimensions.
   cdef numpy.npy_intp dim = <numpy.npy_intp> X.n_elem
   cdef numpy.ndarray[numpy.double_t, ndim=1] output = \
-      numpy.PyArray_SimpleNewFromData(1, &dim, numpy.NPY_DOUBLE, X.memptr())
+      numpy.PyArray_SimpleNewFromData(1, &dim, numpy.NPY_DOUBLE, GetMemory(X))
 
   # Transfer memory ownership.
   SetMemState[arma.Row[double]](X, 1)
@@ -163,7 +169,7 @@ cdef numpy.ndarray[numpy.npy_intp, ndim=1] row_to_numpy_s(arma.Row[size_t]& X) \
   # Extract dimensions.
   cdef numpy.npy_intp dim = <numpy.npy_intp> X.n_elem
   cdef numpy.ndarray[numpy.npy_intp, ndim=1] output = \
-      numpy.PyArray_SimpleNewFromData(1, &dim, numpy.NPY_INTP, X.memptr())
+      numpy.PyArray_SimpleNewFromData(1, &dim, numpy.NPY_INTP, GetMemory(X))
 
   # Transfer memory ownership.
   SetMemState[arma.Row[size_t]](X, 1)
@@ -215,7 +221,7 @@ cdef numpy.ndarray[numpy.double_t, ndim=1] col_to_numpy_d(arma.Col[double]& X) \
   # Extract dimension.
   cdef numpy.npy_intp dim = <numpy.npy_intp> X.n_elem
   cdef numpy.ndarray[numpy.double_t, ndim=1] output = \
-      numpy.PyArray_SimpleNewFromData(1, &dim, numpy.NPY_DOUBLE, X.memptr())
+      numpy.PyArray_SimpleNewFromData(1, &dim, numpy.NPY_DOUBLE, GetMemory(X))
 
   # Transfer memory ownership.
   SetMemState[arma.Col[double]](X, 1)
@@ -231,7 +237,7 @@ cdef numpy.ndarray[numpy.npy_intp, ndim=1] col_to_numpy_s(arma.Col[size_t]& X) \
   # Extract dimension.
   cdef numpy.npy_intp dim = <numpy.npy_intp> X.n_elem
   cdef numpy.ndarray[numpy.npy_intp, ndim=1] output = \
-      numpy.PyArray_SimpleNewFromData(1, &dim, numpy.NPY_INTP, X.memptr())
+      numpy.PyArray_SimpleNewFromData(1, &dim, numpy.NPY_INTP, GetMemory(X))
 
   # Transfer memory ownership.
   SetMemState[arma.Col[size_t]](X, 1)
