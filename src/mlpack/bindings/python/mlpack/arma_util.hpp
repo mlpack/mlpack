@@ -29,112 +29,14 @@ void SetMemState(T& t, int state)
  * internal preallocated memory, in which case we copy that and return a
  * pointer to the memory we just made.
  */
-inline double* GetMemory(arma::mat& m)
+template<typename T>
+inline typename T::elem_type* GetMemory(T& m)
 {
   if (m.mem && m.n_elem <= arma::arma_config::mat_prealloc)
   {
     // We need to allocate new memory.
-    double* mem = arma::memory::acquire<double>(m.n_elem);
-    arma::arrayops::copy(mem, m.memptr(), m.n_elem);
-    return mem;
-  }
-  else
-  {
-    return m.memptr();
-  }
-}
-
-/**
- * Return the matrix's allocated memory pointer, unless the matrix is using its
- * internal preallocated memory, in which case we copy that and return a
- * pointer to the memory we just made.
- */
-inline double* GetMemory(arma::vec& m)
-{
-  if (m.mem && m.n_elem <= arma::arma_config::mat_prealloc)
-  {
-    // We need to allocate new memory.
-    double* mem = arma::memory::acquire<double>(m.n_elem);
-    arma::arrayops::copy(mem, m.memptr(), m.n_elem);
-    return mem;
-  }
-  else
-  {
-    return m.memptr();
-  }
-}
-
-/**
- * Return the matrix's allocated memory pointer, unless the matrix is using its
- * internal preallocated memory, in which case we copy that and return a
- * pointer to the memory we just made.
- */
-inline double* GetMemory(arma::rowvec& m)
-{
-  if (m.mem && m.n_elem <= arma::arma_config::mat_prealloc)
-  {
-    // We need to allocate new memory.
-    double* mem = arma::memory::acquire<double>(m.n_elem);
-    arma::arrayops::copy(mem, m.memptr(), m.n_elem);
-    return mem;
-  }
-  else
-  {
-    return m.memptr();
-  }
-}
-
-/**
- * Return the matrix's allocated memory pointer, unless the matrix is using its
- * internal preallocated memory, in which case we copy that and return a
- * pointer to the memory we just made.
- */
-inline size_t* GetMemory(arma::Mat<size_t>& m)
-{
-  if (m.mem && m.n_elem <= arma::arma_config::mat_prealloc)
-  {
-    // We need to allocate new memory.
-    size_t* mem = arma::memory::acquire<size_t>(m.n_elem);
-    arma::arrayops::copy(mem, m.memptr(), m.n_elem);
-    return mem;
-  }
-  else
-  {
-    return m.memptr();
-  }
-}
-
-/**
- * Return the matrix's allocated memory pointer, unless the matrix is using its
- * internal preallocated memory, in which case we copy that and return a
- * pointer to the memory we just made.
- */
-inline size_t* GetMemory(arma::Col<size_t>& m)
-{
-  if (m.mem && m.n_elem <= arma::arma_config::mat_prealloc)
-  {
-    // We need to allocate new memory.
-    size_t* mem = arma::memory::acquire<size_t>(m.n_elem);
-    arma::arrayops::copy(mem, m.memptr(), m.n_elem);
-    return mem;
-  }
-  else
-  {
-    return m.memptr();
-  }
-}
-
-/**
- * Return the matrix's allocated memory pointer, unless the matrix is using its
- * internal preallocated memory, in which case we copy that and return a
- * pointer to the memory we just made.
- */
-inline size_t* GetMemory(arma::Row<size_t>& m)
-{
-  if (m.mem && m.n_elem <= arma::arma_config::mat_prealloc)
-  {
-    // We need to allocate new memory.
-    size_t* mem = arma::memory::acquire<size_t>(m.n_elem);
+    typename T::elem_type* mem =
+        arma::memory::acquire<typename T::elem_type>(m.n_elem);
     arma::arrayops::copy(mem, m.memptr(), m.n_elem);
     return mem;
   }
