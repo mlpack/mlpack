@@ -137,9 +137,9 @@ class InformationGain
       for (size_t i = 3; i < labels.n_elem; i += 4)
       {
         counts[labels[i - 3]]++;
-        counts[labels[i - 2]]++;
-        counts[labels[i - 1]]++;
-        counts[labels[i]]++;
+        counts2[labels[i - 2]]++;
+        counts3[labels[i - 1]]++;
+        counts4[labels[i]]++;
       }
 
       // Handle leftovers.
