@@ -19,6 +19,8 @@ set(SOURCES
   rastrigin_function.cpp
   schwefel_function.hpp
   schwefel_function.cpp
+  sgd_test_function.hpp
+  sgd_test_function.cpp
   sphere_function.hpp
   sphere_function.cpp
   styblinski_tang_function.hpp
