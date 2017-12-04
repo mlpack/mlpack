@@ -56,7 +56,7 @@ class BoothFunction
   size_t NumFunctions() const { return 1; }
 
   //! Get the starting point.
-  arma::mat GetInitialPoint() const { return arma::mat("-5; 3"); }
+  arma::mat GetInitialPoint() const { return arma::mat("-9; -9"); }
 
   /*
    * Evaluate a function for a particular batch-size.
