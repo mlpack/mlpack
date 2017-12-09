@@ -17,6 +17,7 @@ add_executable(mlpack_test
   block_krylov_svd_test.cpp
   cf_test.cpp
   cli_test.cpp
+  cmaes_test.cpp
   cli_binding_test.cpp
   cne_test.cpp
   convolutional_network_test.cpp
@@ -42,6 +43,7 @@ add_executable(mlpack_test
   hyperplane_test.cpp
   imputation_test.cpp
   init_rules_test.cpp
+  iqn_test.cpp
   kernel_pca_test.cpp
   kernel_test.cpp
   kernel_traits_test.cpp

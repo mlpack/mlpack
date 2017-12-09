@@ -3,10 +3,12 @@ set(DIRS
   ada_grad
   adam
   aug_lagrangian
+  cmaes
   cne
   fw
   gradient_descent
   grid_search
+  iqn
   lbfgs
   line_search
   proximal
