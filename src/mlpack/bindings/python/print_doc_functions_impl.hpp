@@ -226,8 +226,10 @@ inline bool IgnoreCheck(const std::string& paramName)
 inline bool IgnoreCheck(const std::vector<std::string>& constraints)
 {
   for (size_t i = 0; i < constraints.size(); ++i)
+  {
     if (!CLI::Parameters()[constraints[i]].input)
       return true;
+  }
 
   return false;
 }
@@ -237,8 +239,10 @@ inline bool IgnoreCheck(
     const std::string& paramName)
 {
   for (size_t i = 0; i < constraints.size(); ++i)
+  {
     if (!CLI::Parameters()[constraints[i].first].input)
       return true;
+  }
 
   return !CLI::Parameters()[paramName].input;
 }

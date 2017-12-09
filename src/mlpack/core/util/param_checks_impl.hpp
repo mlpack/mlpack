@@ -23,8 +23,10 @@ inline void RequireOnlyOnePassed(
 
   size_t set = 0;
   for (size_t i = 0; i < constraints.size(); ++i)
+  {
     if (CLI::HasParam(constraints[i]))
       ++set;
+  }
 
   util::PrefixedOutStream& stream = fatal ? Log::Fatal : Log::Warn;
   if (set > 1)
@@ -91,8 +93,10 @@ inline void RequireAtLeastOnePassed(
 
   size_t set = 0;
   for (size_t i = 0; i < constraints.size(); ++i)
+  {
     if (CLI::HasParam(constraints[i]))
       ++set;
+  }
 
   if (set == 0)
   {
