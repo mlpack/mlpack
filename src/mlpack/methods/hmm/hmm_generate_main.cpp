@@ -74,9 +74,11 @@ struct Generate
 
     Log::Info << "Generating sequence of length " << length << "..." << endl;
     if (startState >= hmm.Transition().n_rows)
+    {
       Log::Fatal << "Invalid start state (" << startState << "); must be "
           << "between 0 and number of states (" << hmm.Transition().n_rows
           << ")!" << endl;
+    }
 
     hmm.Generate(length, observations, sequence, startState);
 
@@ -92,9 +94,8 @@ struct Generate
 
 void mlpackMain()
 {
-  if (!CLI::HasParam("output") && !CLI::HasParam("state"))
-    Log::Warn << "Neither --output_file nor --state_file are specified; no "
-        << "output will be saved!" << endl;
+  RequireAtLeastOnePassed({ "output", "state" }, false, "no output will be "
+      "saved");
 
   // Set random seed.
   if (CLI::GetParam<int>("seed") != 0)

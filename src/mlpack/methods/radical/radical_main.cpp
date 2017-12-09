@@ -53,6 +53,7 @@ PARAM_FLAG("objective", "If set, an estimate of the final objective function "
 using namespace mlpack;
 using namespace mlpack::radical;
 using namespace mlpack::math;
+using namespace mlpack::util;
 using namespace std;
 using namespace arma;
 
@@ -64,9 +65,19 @@ void mlpackMain()
   else
     RandomSeed((size_t) std::time(NULL));
 
-  if (!CLI::HasParam("output_ic") && !CLI::HasParam("output_unmixing"))
-    Log::Warn << "Neither --output_ic_file nor --output_unmixing_file were "
-        << "specified; no output will be saved!" << endl;
+  RequireAtLeastOnePassed({ "output_ic", "output_unmixing" }, false, "no output"
+      " will be saved");
+
+  // Check validity of parameters.
+  RequireParamValue<int>("replicates", [](int x) { return x > 0; }, true,
+      "number of replicates must be positive");
+  RequireParamValue<double>("noise_std_dev", [](double x) { return x >= 0.0; },
+      true, "standard deviation of Gaussian noise must be greater than or equal"
+      " to 0");
+  RequireParamValue<int>("angles", [](int x) { return x > 0; }, true,
+      "number of angles must be positive");
+  RequireParamValue<int>("sweeps", [](int x) { return x >= 0; }, true,
+      "number of sweeps must be 0 or greater");
 
   // Load the data.
   mat matX = std::move(CLI::GetParam<mat>("input"));

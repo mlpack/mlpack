@@ -24,4 +24,26 @@ void SetMemState(T& t, int state)
   const_cast<arma::uhword&>(t.mem_state) = state;
 }
 
+/**
+ * Return the matrix's allocated memory pointer, unless the matrix is using its
+ * internal preallocated memory, in which case we copy that and return a
+ * pointer to the memory we just made.
+ */
+template<typename T>
+inline typename T::elem_type* GetMemory(T& m)
+{
+  if (m.mem && m.n_elem <= arma::arma_config::mat_prealloc)
+  {
+    // We need to allocate new memory.
+    typename T::elem_type* mem =
+        arma::memory::acquire<typename T::elem_type>(m.n_elem);
+    arma::arrayops::copy(mem, m.memptr(), m.n_elem);
+    return mem;
+  }
+  else
+  {
+    return m.memptr();
+  }
+}
+
 #endif

@@ -50,6 +50,7 @@ PARAM_DOUBLE_IN("threshold", "Threshold to be applied for binarization. If not "
     "set, the threshold defaults to 0.0.", "t", 0.0);
 
 using namespace mlpack;
+using namespace mlpack::util;
 using namespace arma;
 using namespace std;
 
@@ -60,20 +61,31 @@ void mlpackMain()
 
   // Check on data parameters.
   if (!CLI::HasParam("dimension"))
-    Log::Warn << "You did not specify --dimension, so the program will perform "
-        << "binarize on every dimension." << endl;
+  {
+    Log::Warn << "You did not specify " << PRINT_PARAM_STRING("dimension")
+        << ", so the program will perform binarization on every dimension."
+        << endl;
+  }
 
   if (!CLI::HasParam("threshold"))
-    Log::Warn << "You did not specify --threshold, so the threshold will be "
-        << "automatically set to '0.0'." << endl;
+  {
+    Log::Warn << "You did not specify " << PRINT_PARAM_STRING("threshold")
+        << ", so the threshold will be automatically set to '0.0'." << endl;
+  }
 
-  if (!CLI::HasParam("output"))
-    Log::Warn << "You did not specify --output_file, so no result will be "
-        << "saved." << endl;
+  RequireAtLeastOnePassed({ "output" }, false, "no output will be saved");
 
   // Load the data.
   arma::mat input = std::move(CLI::GetParam<arma::mat>("input"));
   arma::mat output;
+
+  RequireParamValue<int>("dimension", [](int x) { return x > 0; }, true,
+      "dimension to binarize must be nonnegative");
+  std::ostringstream error;
+  error << "dimension to binarize must be less than the number of dimensions "
+      << "of the input data (" << input.n_rows << ")";
+  RequireParamValue<int>("dimension",
+      [input](int x) { return x < input.n_rows; }, true, error.str());
 
   Timer::Start("binarize");
   if (CLI::HasParam("dimension"))
@@ -82,7 +94,7 @@ void mlpackMain()
   }
   else
   {
-    // binarize the whole data
+    // Binarize the whole dataset.
     data::Binarize<double>(input, output, threshold);
   }
   Timer::Stop("binarize");

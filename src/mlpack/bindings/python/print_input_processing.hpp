@@ -146,8 +146,15 @@ void PrintInputProcessing(
    *
    * # Detect if the parameter was passed; set if so.
    * if param_name is not None:
-   *   MoveFromPtr[Model](CLI.GetParam[Model]('param_name'),
-   *       (<ModelType?> param_name).modelptr)
+   *   try:
+   *     MoveFromPtr[Model](CLI.GetParam[Model]('param_name'),
+   *         (<ModelType?> param_name).modelptr)
+   *   except TypeError as e:
+   *     if type(param_name).__name__ == "ModelType":
+   *       MoveFromPtr[Model](CLI.GetParam[Model]('param_name'),
+   *           (<ModelType> param_name).modelptr)
+   *     else:
+   *       raise e
    *   CLI.SetPassed(<const string> 'param_name')
    */
   std::cout << prefix << "# Detect if the parameter was passed; set if so."
@@ -155,17 +162,35 @@ void PrintInputProcessing(
   if (!d.required)
   {
     std::cout << prefix << "if " << d.name << " is not None:" << std::endl;
-    std::cout << prefix << "  MoveFromPtr[" << strippedType << "](CLI.GetParam["
-        << strippedType << "]('" << d.name << "'), (<" << strippedType
-        << "Type?> " << d.name << ").modelptr)" << std::endl;
+    std::cout << prefix << "  try:" << std::endl;
+    std::cout << prefix << "    MoveFromPtr[" << strippedType
+        << "](CLI.GetParam[" << strippedType << "]('" << d.name << "'), (<"
+        << strippedType << "Type?> " << d.name << ").modelptr)" << std::endl;
+    std::cout << prefix << "  except TypeError as e:" << std::endl;
+    std::cout << prefix << "    if type(" << d.name << ").__name__ == '"
+        << strippedType << "Type':" << std::endl;
+    std::cout << prefix << "      MoveFromPtr[" << strippedType
+        << "](CLI.GetParam[" << strippedType << "]('" << d.name << "'), (<"
+        << strippedType << "Type> " << d.name << ").modelptr)" << std::endl;
+    std::cout << prefix << "    else:" << std::endl;
+    std::cout << prefix << "      raise e" << std::endl;
     std::cout << prefix << "  CLI.SetPassed(<const string> '" << d.name << "')"
         << std::endl;
   }
   else
   {
-    std::cout << prefix << "MoveFromPtr[" << strippedType << "](CLI.GetParam["
+    std::cout << prefix << "try:" << std::endl;
+    std::cout << prefix << "  MoveFromPtr[" << strippedType << "](CLI.GetParam["
         << strippedType << "]('" << d.name << "'), (<" << strippedType
         << "Type?> " << d.name << ").modelptr)" << std::endl;
+    std::cout << prefix << "except TypeError as e:" << std::endl;
+    std::cout << prefix << "  if type(" << d.name << ").__name__ == '"
+        << strippedType << "Type':" << std::endl;
+    std::cout << prefix << "    MoveFromPtr[" << strippedType
+        << "](CLI.GetParam[" << strippedType << "]('" << d.name << "'), (<"
+        << strippedType << "Type> " << d.name << ").modelptr)" << std::endl;
+    std::cout << prefix << "  else:" << std::endl;
+    std::cout << prefix << "    raise e" << std::endl;
     std::cout << prefix << "CLI.SetPassed(<const string> '" << d.name << "')"
         << std::endl;
   }

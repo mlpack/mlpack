@@ -23,6 +23,7 @@
 
 using namespace mlpack;
 using namespace mlpack::amf;
+using namespace mlpack::util;
 using namespace std;
 
 // Document program.
@@ -89,26 +90,13 @@ void mlpackMain()
   const double minResidue = CLI::GetParam<double>("min_residue");
   const string updateRules = CLI::GetParam<string>("update_rules");
 
-  // Validate rank.
-  if (r < 1)
-  {
-    Log::Fatal << "The rank of the factorization cannot be less than 1."
-        << std::endl;
-  }
+  // Validate parameters.
+  RequireParamValue<int>("rank", [](int x) { return x > 0; }, true,
+      "the rank of the factorization must be greater than 0");
+  RequireParamInSet<string>("update_rules", { "multdist", "multdiv", "als" },
+      true, "unknown update rules");
 
-  if ((updateRules != "multdist") &&
-      (updateRules != "multdiv") &&
-      (updateRules != "als"))
-  {
-    Log::Fatal << "Invalid update rules ('" << updateRules << "'); must be '"
-        << "multdist', 'multdiv', or 'als'." << std::endl;
-  }
-
-  if (!CLI::HasParam("h") && !CLI::HasParam("w"))
-  {
-    Log::Warn << "Neither --h_file nor --w_file are specified, so no output "
-        << "will be saved!" << endl;
-  }
+  RequireAtLeastOnePassed({ "h", "w" }, false, "no output will be saved");
 
   // Load input dataset.
   arma::mat V = std::move(CLI::GetParam<arma::mat>("input"));

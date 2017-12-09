@@ -62,6 +62,15 @@ void PrintClassDefn(
    *
    *   def __dealloc__(self):
    *     del self.modelptr
+   *
+   *   def __getstate__(self):
+   *     return SerializeOut(self.modelptr, "<ModelType>")
+   *
+   *   def __setstate__(self, state):
+   *     SerializeIn(self.modelptr, state, "<ModelType>")
+   *
+   *   def __reduce_ex__(self):
+   *     return (self.__class__, (), self.__getstate__())
    */
   std::cout << "cdef class " << strippedType << "Type:" << std::endl;
   std::cout << "  cdef " << printedType << "* modelptr" << std::endl;
@@ -72,9 +81,18 @@ void PrintClassDefn(
   std::cout << "  def __dealloc__(self):" << std::endl;
   std::cout << "    del self.modelptr" << std::endl;
   std::cout << std::endl;
-
-  // TODO: add some functions for loading models from and saving models to a
-  // filename.
+  std::cout << "  def __getstate__(self):" << std::endl;
+  std::cout << "    return SerializeOut(self.modelptr, \"" << printedType
+      << "\")" << std::endl;
+  std::cout << std::endl;
+  std::cout << "  def __setstate__(self, state):" << std::endl;
+  std::cout << "    SerializeIn(self.modelptr, state, \"" << printedType
+      << "\")" << std::endl;
+  std::cout << std::endl;
+  std::cout << "  def __reduce_ex__(self, version):" << std::endl;
+  std::cout << "    return (self.__class__, (), self.__getstate__())"
+      << std::endl;
+  std::cout << std::endl;
 }
 
 /**

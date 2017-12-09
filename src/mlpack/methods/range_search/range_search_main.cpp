@@ -25,6 +25,7 @@ using namespace mlpack;
 using namespace mlpack::range;
 using namespace mlpack::tree;
 using namespace mlpack::metric;
+using namespace mlpack::util;
 
 // Information about the program itself.
 PROGRAM_INFO("Range Search",
@@ -98,57 +99,41 @@ void mlpackMain()
     math::RandomSeed((size_t) std::time(NULL));
 
   // A user cannot specify both reference data and a model.
-  if (CLI::HasParam("reference") && CLI::HasParam("input_model"))
-    Log::Fatal << "Only one of --reference_file (-r) or --input_model_file (-m)"
-        << " may be specified!" << endl;
+  RequireOnlyOnePassed({ "reference", "input_model" }, true);
 
-  // A user must specify one of them...
-  if (!CLI::HasParam("reference") && !CLI::HasParam("input_model"))
-    Log::Fatal << "No model specified (--input_model_file) and no reference "
-        << "data specified (--reference_file)!  One must be provided." << endl;
-
-  if (CLI::HasParam("input_model"))
-  {
-    // Notify the user of parameters that will be ignored.
-    if (CLI::HasParam("tree_type"))
-      Log::Warn << "--tree_type (-t) will be ignored because --input_model_file"
-          << " is specified." << endl;
-    if (CLI::HasParam("leaf_size"))
-      Log::Warn << "--leaf_size (-l) will be ignored because --input_model_file"
-          << " is specified." << endl;
-    if (CLI::HasParam("random_basis"))
-      Log::Warn << "--random_basis (-R) will be ignored because "
-          << "--input_model_file is specified." << endl;
-    if (CLI::HasParam("naive"))
-      Log::Warn << "--naive (-N) will be ignored because --input_model_file is "
-          << "specified." << endl;
-  }
+  ReportIgnoredParam({{ "input_model", true }}, "tree_type");
+  ReportIgnoredParam({{ "input_model", true }}, "random_basis");
+  ReportIgnoredParam({{ "input_model", true }}, "leaf_size");
+  ReportIgnoredParam({{ "input_model", true }}, "naive");
 
   // The user must give something to do...
-  if (!CLI::HasParam("min") && !CLI::HasParam("max") &&
-      !CLI::HasParam("output_model"))
-    Log::Warn << "Neither --min, --max, nor --output_model_file are specified, "
-        << "so no results from this program will be saved!" << endl;
+  RequireAtLeastOnePassed({ "min", "max", "output_model" }, false, "no results "
+      "will be saved");
 
   // If the user specifies a range but not output files, they should be warned.
-  if ((CLI::HasParam("min") || CLI::HasParam("max")) &&
-      !(CLI::HasParam("neighbors_file") || CLI::HasParam("distances_file")))
-    Log::Warn << "Neither --neighbors_file nor --distances_file is specified, "
-        << "so the range search results will not be saved!" << endl;
+  if (CLI::HasParam("min") || CLI::HasParam("max"))
+  {
+    RequireAtLeastOnePassed({ "neighbors_file", "distances_file" }, false,
+        "no range search results will be saved");
+  }
 
-  // If the user specifies output files but no range, they should be warned.
-  if ((CLI::HasParam("neighbors_file") || CLI::HasParam("distances_file")) &&
-      !(CLI::HasParam("min") || CLI::HasParam("max")))
-    Log::Warn << "An output file for range search is given (--neighbors_file "
-        << "or --distances_file), but range search is not being performed "
-        << "because neither --min nor --max are specified!  No results will be "
-        << "saved." << endl;
+  if (!CLI::HasParam("min") && !CLI::HasParam("max"))
+  {
+    ReportIgnoredParam("neighbors_file", "no range is specified for searching");
+    ReportIgnoredParam("distances_file", "no range is specified for searching");
+  }
+
+  if (CLI::HasParam("input_model") &&
+      (CLI::HasParam("min") || CLI::HasParam("max")))
+  {
+    RequireAtLeastOnePassed({ "query" }, true, "query set must be passed if "
+        "searching is to be done");
+  }
 
   // Sanity check on leaf size.
   int lsInt = CLI::GetParam<int>("leaf_size");
-  if (lsInt < 1)
-    Log::Fatal << "Invalid leaf size: " << lsInt << ".  Must be greater than 0."
-        << endl;
+  RequireParamValue<int>("leaf_size", [](int x) { return x > 0; }, true,
+      "leaf size must be greater than 0");
 
   // We either have to load the reference data, or we have to load the model.
   RSModel rs;
@@ -158,6 +143,9 @@ void mlpackMain()
   {
     // Get all the parameters.
     const string treeType = CLI::GetParam<string>("tree_type");
+    RequireParamInSet<string>("tree_type", { "kd", "cover", "r", "r-star",
+        "ball", "x", "hilbert-r", "r-plus", "r-plus-plus", "vp", "rp", "max-rp",
+        "ub", "oct" }, true, "unknown tree type");
     const bool randomBasis = CLI::HasParam("random_basis");
 
     RSModel::TreeTypes tree = RSModel::KD_TREE;
@@ -189,17 +177,13 @@ void mlpackMain()
       tree = RSModel::UB_TREE;
     else if (treeType == "oct")
       tree = RSModel::OCTREE;
-    else
-      Log::Fatal << "Unknown tree type '" << treeType << "; valid choices are "
-          << "'kd', 'vp', 'rp', 'max-rp', 'ub', 'cover', 'r', 'r-star', 'x', "
-          << "'ball', 'hilbert-r', 'r-plus', 'r-plus-plus', and 'oct'." << endl;
 
     rs.TreeType() = tree;
     rs.RandomBasis() = randomBasis;
 
     arma::mat referenceSet = std::move(CLI::GetParam<arma::mat>("reference"));
 
-    Log::Info << "Loaded reference data from '"
+    Log::Info << "Using reference data from '"
         << CLI::GetPrintableParam<arma::mat>("reference") << "' ("
         << referenceSet.n_rows << "x" << referenceSet.n_cols << ")." << endl;
 
@@ -212,7 +196,7 @@ void mlpackMain()
     // Load the model from file.
     rs = std::move(CLI::GetParam<RSModel>("input_model"));
 
-    Log::Info << "Loaded range search model from '"
+    Log::Info << "Using range search model from '"
         << CLI::GetPrintableParam<RSModel>("input_model") << "' ("
         << "trained on " << rs.Dataset().n_rows << "x" << rs.Dataset().n_cols
         << " dataset)." << endl;
@@ -236,14 +220,15 @@ void mlpackMain()
     if (CLI::HasParam("query"))
     {
       queryData = std::move(CLI::GetParam<arma::mat>("query"));
-      Log::Info << "Loaded query data from '"
+      Log::Info << "Using query data from '"
           << CLI::GetPrintableParam<arma::mat>("query") << "' ("
           << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
     }
 
     // Naive mode overrides single mode.
     if (singleMode && naive)
-      Log::Warn << "--single_mode ignored because --naive is present." << endl;
+      Log::Warn << PRINT_PARAM_STRING("single_mode") << " ignored because "
+          << PRINT_PARAM_STRING("naive") << " is present." << endl;
 
     // Now run the search.
     vector<vector<size_t>> neighbors;

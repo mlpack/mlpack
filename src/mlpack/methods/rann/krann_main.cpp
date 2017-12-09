@@ -23,6 +23,7 @@ using namespace mlpack;
 using namespace mlpack::neighbor;
 using namespace mlpack::tree;
 using namespace mlpack::metric;
+using namespace mlpack::util;
 
 // Convenience typedef.
 typedef RAModel<NearestNeighborSort> RANNModel;
@@ -103,58 +104,35 @@ void mlpackMain()
     math::RandomSeed((size_t) std::time(NULL));
 
   // A user cannot specify both reference data and a model.
-  if (CLI::HasParam("reference") && CLI::HasParam("input_model"))
-    Log::Fatal << "Only one of --reference_file (-r) or --input_model_file (-m)"
-        << " may be specified!" << endl;
+  RequireOnlyOnePassed({ "reference", "input_model" }, true);
 
-  // A user must specify one of them...
-  if (!CLI::HasParam("reference") && !CLI::HasParam("input_model"))
-    Log::Fatal << "No model specified (--input_model_file) and no reference "
-        << "data specified (--reference_file)!  One must be provided." << endl;
-
-  if (CLI::HasParam("input_model"))
-  {
-    // Notify the user of parameters that will be ignored.
-    if (CLI::HasParam("tree_type"))
-      Log::Warn << "--tree_type (-t) will be ignored because --input_model_file"
-          << " is specified." << endl;
-    if (CLI::HasParam("leaf_size"))
-      Log::Warn << "--leaf_size (-l) will be ignored because --input_model_file"
-          << " is specified." << endl;
-    if (CLI::HasParam("random_basis"))
-      Log::Warn << "--random_basis (-R) will be ignored because "
-          << "--input_model_file is specified." << endl;
-    if (CLI::HasParam("naive"))
-      Log::Warn << "--naive (-N) will be ignored because --input_model_file is "
-          << "specified." << endl;
-  }
+  ReportIgnoredParam({{ "input_model", true }}, "tree_type");
+  ReportIgnoredParam({{ "input_model", true }}, "leaf_size");
+  ReportIgnoredParam({{ "input_model", true }}, "random_basis");
+  ReportIgnoredParam({{ "input_model", true }}, "naive");
 
   // The user should give something to do...
-  if (!CLI::HasParam("k") && !CLI::HasParam("output_model"))
-    Log::Warn << "Neither -k nor --output_model_file are specified, so no "
-        << "results from this program will be saved!" << endl;
+  RequireAtLeastOnePassed({ "k", "output_model" }, false, "no results will be "
+      "saved");
 
   // If the user specifies k but no output files, they should be warned.
-  if (CLI::HasParam("k") &&
-      !(CLI::HasParam("neighbors") || CLI::HasParam("distances")))
-    Log::Warn << "Neither --neighbors_file nor --distances_file is specified, "
-        << "so the nearest neighbor search results will not be saved!" << endl;
+  if (CLI::HasParam("k"))
+  {
+    RequireAtLeastOnePassed({ "neighbors", "distances" }, false, "no nearest "
+        "neighbor search results will be saved");
+  }
 
   // If the user specifies output files but no k, they should be warned.
-  if ((CLI::HasParam("neighbors") || CLI::HasParam("distances")) &&
-      !CLI::HasParam("k"))
-    Log::Warn << "An output file for nearest neighbor search is given ("
-        << "--neighbors_file or --distances_file), but nearest neighbor search "
-        << "is not being performed because k (--k) is not specified!  No "
-        << "results will be saved." << endl;
+  ReportIgnoredParam({{ "k", false }}, "neighbors");
+  ReportIgnoredParam({{ "k", false }}, "distances");
+
+  // Naive mode overrides single mode.
+  ReportIgnoredParam({{ "naive", true }}, "single_mode");
 
   // Sanity check on leaf size.
   const int lsInt = CLI::GetParam<int>("leaf_size");
-  if (lsInt < 1)
-  {
-    Log::Fatal << "Invalid leaf size: " << lsInt << ".  Must be greater "
-        "than 0." << endl;
-  }
+  RequireParamValue<int>("leaf_size", [](int x) { return x > 0; }, true,
+      "leaf size must be greater than 0");
 
   // We either have to load the reference data, or we have to load the model.
   RANNModel rann;
@@ -164,6 +142,9 @@ void mlpackMain()
   {
     // Get all the parameters.
     const string treeType = CLI::GetParam<string>("tree_type");
+    RequireParamInSet<string>("tree_type", { "kd", "cover", "r", "r-star", "x",
+        "hilbert-r", "r-plus", "r-plus-plus", "ub", "oct" }, true,
+        "unknown tree type");
     const bool randomBasis = CLI::HasParam("random_basis");
 
     RANNModel::TreeTypes tree = RANNModel::KD_TREE;
@@ -187,17 +168,13 @@ void mlpackMain()
       tree = RANNModel::UB_TREE;
     else if (treeType == "oct")
       tree = RANNModel::OCTREE;
-    else
-      Log::Fatal << "Unknown tree type '" << treeType << "'; valid choices are "
-          << "'kd', 'ub', 'cover', 'r', 'r-star', 'x', 'hilbert-r', "
-          << "'r-plus', 'r-plus-plus', 'oct'." << endl;
 
     rann.TreeType() = tree;
     rann.RandomBasis() = randomBasis;
 
     arma::mat referenceSet = std::move(CLI::GetParam<arma::mat>("reference"));
 
-    Log::Info << "Loaded reference data from '"
+    Log::Info << "Using reference data from '"
         << CLI::GetPrintableParam<arma::mat>("reference") << "' ("
         << referenceSet.n_rows << " x " << referenceSet.n_cols << ")."
         << endl;
@@ -209,7 +186,7 @@ void mlpackMain()
     // Load the model from file.
     rann = std::move(CLI::GetParam<RANNModel>("input_model"));
 
-    Log::Info << "Loaded rank-approximate kNN model from '"
+    Log::Info << "Using rank-approximate kNN model from '"
         << CLI::GetPrintableParam<RANNModel>("input_model") << "' (trained on "
         << rann.Dataset().n_rows << "x" << rann.Dataset().n_cols << " dataset)."
         << endl;
@@ -239,7 +216,7 @@ void mlpackMain()
     if (CLI::HasParam("query"))
     {
       queryData = std::move(CLI::GetParam<arma::mat>("query"));
-      Log::Info << "Loaded query data from '"
+      Log::Info << "Using query data from '"
           << CLI::GetPrintableParam<arma::mat>("query") << "' ("
           << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
     }
@@ -252,12 +229,6 @@ void mlpackMain()
       Log::Fatal << "Invalid k: " << k << "; must be greater than 0 and less ";
       Log::Fatal << "than or equal to the number of reference points (";
       Log::Fatal << rann.Dataset().n_cols << ")." << endl;
-    }
-
-    // Naive mode overrides single mode.
-    if (singleMode && naive)
-    {
-      Log::Warn << "--single_mode ignored because --naive is present." << endl;
     }
 
     arma::Mat<size_t> neighbors;

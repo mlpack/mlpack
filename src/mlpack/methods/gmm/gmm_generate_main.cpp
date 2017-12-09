@@ -17,6 +17,7 @@
 using namespace std;
 using namespace mlpack;
 using namespace mlpack::gmm;
+using namespace mlpack::util;
 
 PROGRAM_INFO("GMM Sample Generator",
     "This program is able to generate samples from a pre-trained GMM (use "
@@ -44,17 +45,15 @@ PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 void mlpackMain()
 {
   // Parameter sanity checks.
-  if (!CLI::HasParam("output"))
-    Log::Warn << "--output_file (-o) is not specified; no results will be "
-        << "saved!" << endl;
+  RequireAtLeastOnePassed({ "output" }, false, "no results will be saved");
 
   if (CLI::GetParam<int>("seed") == 0)
     mlpack::math::RandomSeed(time(NULL));
   else
     mlpack::math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
 
-  if (CLI::GetParam<int>("samples") < 0)
-    Log::Fatal << "Parameter to --samples must be greater than 0!" << endl;
+  RequireParamValue<int>("samples", [](int x) { return x > 0; }, true,
+      "number of samples must be greater than 0");
 
   GMM gmm = std::move(CLI::GetParam<GMM>("input_model"));
 

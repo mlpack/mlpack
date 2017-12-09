@@ -33,11 +33,6 @@ template<template<typename TreeMetricType,
                   typename TreeMatType> class TreeType>
 using RSType = RangeSearch<metric::EuclideanDistance, arma::mat, TreeType>;
 
-struct RSModelName
-{
-  static const std::string Name() { return "range_search_model"; }
-};
-
 /**
  * MonoSearchVisitor executes a monochromatic range search on the given
  * RSType. Range Search is performed on the reference set itself, no querySet.
@@ -185,27 +180,6 @@ class DeleteVisitor : public boost::static_visitor<void>
   //! Delete the RSType object.
   template<typename RSType>
   void operator()(RSType* rs) const;
-};
-
-/**
- * Exposes the seralize method of the given RSType.
- */
-template<typename Archive>
-class SerializeVisitor : public boost::static_visitor<void>
-{
- private:
-  //! Archive to serialize to.
-  Archive& ar;
-  //! Name of the model to serialize.
-  const std::string& name;
-
- public:
-  //! Serialize the given model.
-  template<typename RSType>
-  void operator()(RSType* rs) const;
-
-  //! Construct the SerializeVisitor with the given archive and name.
-  SerializeVisitor(Archive& ar, const std::string& name);
 };
 
 /**

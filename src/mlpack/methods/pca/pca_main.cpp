@@ -22,6 +22,7 @@
 
 using namespace mlpack;
 using namespace mlpack::pca;
+using namespace mlpack::util;
 using namespace std;
 
 // Document program.
@@ -104,23 +105,27 @@ void mlpackMain()
   arma::mat& dataset = CLI::GetParam<arma::mat>("input");
 
   // Issue a warning if the user did not specify an output file.
-  if (!CLI::HasParam("output"))
-    Log::Warn << "--output_file is not specified; no output will be "
-        << "saved." << endl;
+  RequireAtLeastOnePassed({ "output" }, false, "no output will be saved");
+
+  // Check decomposition method validity.
+  RequireParamInSet<string>("decomposition_method", { "exact", "randomized",
+      "randomized-block-krylov", "quic" }, true,
+      "unknown decomposition method");
 
   // Find out what dimension we want.
-  size_t newDimension = dataset.n_rows; // No reduction, by default.
-  if (CLI::GetParam<int>("new_dimensionality") != 0)
-  {
-    // Validate the parameter.
-    newDimension = (size_t) CLI::GetParam<int>("new_dimensionality");
-    if (newDimension > dataset.n_rows)
-    {
-      Log::Fatal << "New dimensionality (" << newDimension
-          << ") cannot be greater than existing dimensionality ("
-          << dataset.n_rows << ")!" << endl;
-    }
-  }
+  RequireParamValue<int>("new_dimensionality", [](int x) { return x >= 0; },
+      true, "new dimensionality must be non-negative");
+  std::ostringstream error;
+  error << "cannot be greater than existing dimensionality (" << dataset.n_rows
+      << ")";
+  RequireParamValue<int>("new_dimensionality",
+      [dataset](int x) { return x <= dataset.n_rows; }, true, error.str());
+
+  RequireParamValue<double>("var_to_retain",
+      [](double x) { return x >= 0.0 && x <= 1.0; }, true,
+      "variance retained must be between 0 and 1");
+  size_t newDimension = (CLI::GetParam<int>("new_dimensionality") == 0) ?
+      dataset.n_rows : CLI::GetParam<int>("new_dimensionality");
 
   // Get the options for running PCA.
   const bool scale = CLI::HasParam("scale");
@@ -145,13 +150,6 @@ void mlpackMain()
   else if (decompositionMethod == "quic")
   {
     RunPCA<QUICSVDPolicy>(dataset, newDimension, scale, varToRetain);
-  }
-  else
-  {
-    // Invalid decomposition method.
-    Log::Fatal << "Invalid decomposition method ('" << decompositionMethod
-        << "'); valid choices are 'exact', 'randomized', "
-        << "'randomized-block-krylov', 'quic'." << endl;
   }
 
   // Now save the results.

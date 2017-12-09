@@ -16,6 +16,7 @@
 #include "rs_model.hpp"
 
 #include <mlpack/core/math/random_basis.hpp>
+#include <boost/serialization/variant.hpp>
 
 namespace mlpack {
 namespace range {
@@ -37,6 +38,7 @@ inline RSModel::RSModel(const RSModel& other) :
     treeType(other.treeType),
     leafSize(other.leafSize),
     randomBasis(other.randomBasis),
+    q(other.q),
     rSearch(other.rSearch)
 {
   // Nothing to do.
@@ -47,7 +49,8 @@ inline RSModel::RSModel(RSModel&& other) :
     treeType(other.treeType),
     leafSize(other.leafSize),
     randomBasis(other.randomBasis),
-    rSearch(other.rSearch)
+    q(std::move(other.q)),
+    rSearch(std::move(other.rSearch))
 {
   // Reset other model.
   other.treeType = TreeTypes::KD_TREE;
@@ -64,6 +67,7 @@ inline RSModel& RSModel::operator=(const RSModel& other)
   treeType = other.treeType;
   leafSize = other.leafSize;
   randomBasis = other.randomBasis;
+  q = other.q;
   rSearch = other.rSearch;
 
   return *this;
@@ -77,7 +81,8 @@ inline RSModel& RSModel::operator=(RSModel&& other)
   treeType = other.treeType;
   leafSize = other.leafSize;
   randomBasis = other.randomBasis;
-  rSearch = other.rSearch;
+  q = std::move(other.q);
+  rSearch = std::move(other.rSearch);
 
   // Reset other model.
   other.treeType = TreeTypes::KD_TREE;
@@ -445,22 +450,6 @@ void DeleteVisitor::operator()(RSType* rs) const
     delete rs;
 }
 
-//! Save parameters for serializing
-template<typename Archive>
-SerializeVisitor<Archive>::SerializeVisitor(Archive& ar,
-                                            const std::string& name) :
-    ar(ar),
-    name(name)
-{}
-
-//! Serializes the given RSType instance.
-template<typename Archive>
-template<typename RSType>
-void SerializeVisitor<Archive>::operator()(RSType* rs) const
-{
-  ar & BOOST_SERIALIZATION_NVP(rs);
-}
-
 //! Return whether single mode enabled
 template<typename RSType>
 bool& SingleModeVisitor::operator()(RSType* rs) const
@@ -492,9 +481,7 @@ void RSModel::serialize(Archive& ar, const unsigned int /* version */)
     boost::apply_visitor(DeleteVisitor(), rSearch);
 
   // We'll only need to serialize one of the model objects, based on the type.
-  const std::string& name = RSModelName::Name();
-  SerializeVisitor<Archive> s(ar, name);
-  boost::apply_visitor(s, rSearch);
+  ar & BOOST_SERIALIZATION_NVP(rSearch);
 }
 
 inline const arma::mat& RSModel::Dataset() const

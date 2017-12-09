@@ -23,6 +23,7 @@ using namespace std;
 using namespace mlpack;
 using namespace mlpack::tree;
 using namespace mlpack::data;
+using namespace mlpack::util;
 
 PROGRAM_INFO("Hoeffding trees",
     "This program implements Hoeffding trees, a form of streaming decision tree"
@@ -114,40 +115,28 @@ void mlpackMain()
   const string numericSplitStrategy =
       CLI::GetParam<string>("numeric_split_strategy");
 
-  if ((CLI::HasParam("predictions") || CLI::HasParam("probabilities")) &&
-       !CLI::HasParam("test"))
-    Log::Fatal << "--test_file must be specified if --predictions_file or "
-        << "--probabilities_file is specified." << endl;
+  RequireAtLeastOnePassed({ "training", "input_model" }, true);
 
-  if (!CLI::HasParam("training") && !CLI::HasParam("input_model"))
-    Log::Fatal << "One of --training_file or --input_model_file must be "
-        << "specified!" << endl;
+  RequireAtLeastOnePassed({ "output_model", "predictions", "probabilities",
+      "test_labels" }, false, "no output will be given");
 
-  if (CLI::HasParam("training") && !CLI::HasParam("labels"))
-    Log::Fatal << "If --training_file is specified, --labels_file must be "
-        << "specified too!" << endl;
+  ReportIgnoredParam({{ "test", false }}, "probabilities");
+  ReportIgnoredParam({{ "test", false }}, "predictions");
 
-  if (!CLI::HasParam("training") && CLI::HasParam("batch_mode"))
-    Log::Warn << "--batch_mode (-b) ignored; no training set provided." << endl;
+  if (CLI::HasParam("training"))
+    RequireOnlyOnePassed({ "labels" }, true);
 
-  if (CLI::HasParam("passes") && CLI::HasParam("batch_mode"))
-    Log::Warn << "--batch_mode (-b) ignored because --passes was specified."
-        << endl;
+  ReportIgnoredParam({{ "training", false }}, "batch_mode");
+  ReportIgnoredParam({{ "training", false }}, "passes");
 
-  if (CLI::HasParam("test") && !CLI::HasParam("predictions") &&
-      !CLI::HasParam("probabilities") && !CLI::HasParam("test_labels"))
-    Log::Warn << "--test_file (-T) is specified, but none of "
-        << "--predictions_file (-p), --probabilities_file (-P), or "
-        << "--test_labels_file (-L) are specified, so no output will be given!"
-        << endl;
-
-  if ((numericSplitStrategy != "domingos") &&
-      (numericSplitStrategy != "binary"))
+  if (CLI::HasParam("test"))
   {
-    Log::Fatal << "Unrecognized numeric split strategy ("
-        << numericSplitStrategy << ")!  Must be 'domingos' or 'binary'."
-        << endl;
+    RequireAtLeastOnePassed({ "predictions", "probabilities", "test_labels" },
+        false, "no output will be given");
   }
+
+  RequireParamInSet<string>("numeric_split_strategy", { "domingos", "binary" },
+      true, "unrecognized numeric split strategy");
 
   // Do we need to load a model or do we already have one?
   HoeffdingTreeModel model;

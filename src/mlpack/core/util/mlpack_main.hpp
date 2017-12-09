@@ -9,7 +9,9 @@
  * CLI::Destroy() automatically called on exit.
  *
  * This file should *only* be included by a program that is meant to be a
- * command-line program or a binding to another language.
+ * command-line program or a binding to another language.  This file also
+ * includes param_checks.hpp, which contains functions that are used to check
+ * parameter values at runtime.
  */
 #ifndef MLPACK_CORE_UTIL_MLPACK_MAIN_HPP
 #define MLPACK_CORE_UTIL_MLPACK_MAIN_HPP
@@ -29,9 +31,11 @@
 #include <mlpack/bindings/cli/print_doc_functions.hpp>
 
 #define PRINT_PARAM_STRING mlpack::bindings::cli::ParamString
+#define PRINT_PARAM_VALUE mlpack::bindings::cli::PrintValue
 #define PRINT_CALL mlpack::bindings::cli::ProgramCall
 #define PRINT_DATASET mlpack::bindings::cli::PrintDataset
 #define PRINT_MODEL mlpack::bindings::cli::PrintModel
+#define BINDING_IGNORE_CHECK mlpack::bindings::cli::IgnoreCheck
 
 namespace mlpack {
 namespace util {
@@ -68,12 +72,15 @@ int main(int argc, char** argv)
 #elif(BINDING_TYPE == BINDING_TYPE_TEST) // This is a unit test.
 
 #include <mlpack/bindings/tests/test_option.hpp>
+#include <mlpack/bindings/tests/ignore_check.hpp>
 
 // These functions will do nothing.
 #define PRINT_PARAM_STRING(A) std::string(" ")
+#define PRINT_PARAM_VALUE(A, B) std::string(" ")
 #define PRINT_DATASET(A) std::string(" ")
 #define PRINT_MODEL(A) std::string(" ")
 #define PRINT_CALL(...) std::string(" ")
+#define BINDING_IGNORE_CHECK mlpack::bindings::tests::IgnoreCheck
 
 namespace mlpack {
 namespace util {
@@ -104,9 +111,11 @@ using Option = mlpack::bindings::tests::TestOption<T>;
 #include <mlpack/bindings/python/print_doc_functions.hpp>
 
 #define PRINT_PARAM_STRING mlpack::bindings::python::ParamString
+#define PRINT_PARAM_VALUE mlpack::bindings::python::PrintValue
 #define PRINT_DATASET mlpack::bindings::python::PrintDataset
 #define PRINT_MODEL mlpack::bindings::python::PrintModel
 #define PRINT_CALL mlpack::bindings::python::ProgramCall
+#define BINDING_IGNORE_CHECK mlpack::bindings::python::IgnoreCheck
 
 namespace mlpack {
 namespace util {
@@ -142,4 +151,7 @@ PARAM_FLAG("verbose", "Display informational messages and the full list of "
        "including <mlpack/core/util/mlpack_main.hpp>.";
 
 #endif
+
+#include "param_checks.hpp"
+
 #endif

@@ -16,6 +16,7 @@
 
 using namespace mlpack;
 using namespace mlpack::det;
+using namespace mlpack::util;
 using namespace std;
 
 PROGRAM_INFO("Density Estimation With Density Estimation Trees",
@@ -102,51 +103,28 @@ PARAM_FLAG("volume_regularization", "This flag gives the used the option to use"
 void mlpackMain()
 {
   // Validate input parameters.
-  if (CLI::HasParam("training") && CLI::HasParam("input_model"))
-    Log::Fatal << "Only one of " << PRINT_PARAM_STRING("training") << " or " <<
-      PRINT_PARAM_STRING("input_model") << " may be specified!" << endl;
+  RequireOnlyOnePassed({ "training", "input_model" }, true);
 
-  if (!CLI::HasParam("training") && !CLI::HasParam("input_model"))
-    Log::Fatal << "Neither " << PRINT_PARAM_STRING("training") << " nor " <<
-      PRINT_PARAM_STRING("input_model") << " are specified!" << endl;
+  ReportIgnoredParam({{ "training", false }}, "training_set_estimates");
+  ReportIgnoredParam({{ "training", false }}, "folds");
+  ReportIgnoredParam({{ "training", false }}, "min_leaf_size");
+  ReportIgnoredParam({{ "training", false }}, "max_leaf_size");
 
-  if (CLI::HasParam("tag_file") &&
-      !CLI::HasParam("training") && !CLI::HasParam("test"))
+  if (CLI::HasParam("tag_file"))
+    RequireAtLeastOnePassed({ "training", "test" }, true);
+
+  if (CLI::HasParam("training"))
   {
-    Log::Fatal << "Neither " << PRINT_PARAM_STRING("training") << " nor " <<
-      PRINT_PARAM_STRING("test") << " are specified, but needed when " <<
-      PRINT_PARAM_STRING("tag_file") << " is asked." << endl;
+    RequireAtLeastOnePassed({ "output_model", "training_set_estimates", "vi",
+        "tag_file", "tag_counters_file" }, false, "no output will be saved");
   }
 
-  if (!CLI::HasParam("training"))
-  {
-    if (CLI::HasParam("training_set_estimates"))
-      Log::Warn << PRINT_PARAM_STRING("training_set_estimates") <<
-        " ignored because " << PRINT_PARAM_STRING("training") <<
-        " is not specified." << endl;
-    if (CLI::HasParam("folds"))
-      Log::Warn << PRINT_PARAM_STRING("folds") << " ignored because " <<
-        PRINT_PARAM_STRING("training") << " is not specified." << endl;
-    if (CLI::HasParam("min_leaf_size"))
-      Log::Warn << PRINT_PARAM_STRING("min_leaf_size") << " ignored because " <<
-        PRINT_PARAM_STRING("training") << " is not specified." << endl;
-    if (CLI::HasParam("max_leaf_size"))
-      Log::Warn << PRINT_PARAM_STRING("max_leaf_size") << " ignored because " <<
-        PRINT_PARAM_STRING("training") << " is not specified." << endl;
-  }
-  else if (!CLI::HasParam("output_model") &&
-           !CLI::HasParam("training_set_estimates") &&
-           !CLI::HasParam("vi"))
-  {
-    Log::Warn << "None of " << PRINT_PARAM_STRING("output_model") << ", " <<
-      PRINT_PARAM_STRING("training_set_estimates") << ", or " <<
-      PRINT_PARAM_STRING("vi") << " are specified; no output will be saved!" <<
-      endl;
-  }
+  ReportIgnoredParam({{ "test", false }}, "test_set_estimates");
 
-  if (!CLI::HasParam("test") && CLI::HasParam("test_set_estimates"))
-    Log::Warn << PRINT_PARAM_STRING("test_set_estimates") << " ignored " <<
-      "because " << PRINT_PARAM_STRING("test") << " is not specified." << endl;
+  RequireParamValue<int>("max_leaf_size", [](int x) { return x > 0; }, true,
+      "maximum leaf size must be positive");
+  RequireParamValue<int>("min_leaf_size", [](int x) { return x > 0; }, true,
+      "minimum leaf size must be positive");
 
   // Are we training a DET or loading from file?
   DTree<arma::mat, int>* tree;

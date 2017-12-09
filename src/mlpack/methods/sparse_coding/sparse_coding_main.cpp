@@ -20,6 +20,7 @@ using namespace std;
 using namespace mlpack;
 using namespace mlpack::math;
 using namespace mlpack::sparse_coding;
+using namespace mlpack::util;
 
 PROGRAM_INFO("Sparse Coding", "An implementation of Sparse Coding with "
     "Dictionary Learning, which achieves sparsity via an l1-norm regularizer on"
@@ -65,7 +66,7 @@ PROGRAM_INFO("Sparse Coding", "An implementation of Sparse Coding with "
 
 // Train the model.
 PARAM_MATRIX_IN("training", "Matrix of training data (X).", "t");
-PARAM_INT_IN("atoms", "Number of atoms in the dictionary.", "k", 0);
+PARAM_INT_IN("atoms", "Number of atoms in the dictionary.", "k", 15);
 
 PARAM_DOUBLE_IN("lambda1", "Sparse coding l1-norm regularization parameter.",
     "l", 0);
@@ -104,54 +105,45 @@ void mlpackMain()
 
   // Check for parameter validity.
   if (CLI::HasParam("input_model") && CLI::HasParam("initial_dictionary"))
-    Log::Fatal << "Cannot specify both --input_model_file (-m) and "
-        << "--initial_dictionary (-i)!" << endl;
-
-  if (CLI::HasParam("training") && !CLI::HasParam("atoms"))
-    Log::Fatal << "If --training_file is specified, the number of atoms in the "
-        << "dictionary must be specified with --atoms (-k)!" << endl;
-
-  if (!CLI::HasParam("training") && !CLI::HasParam("input_model"))
-    Log::Fatal << "One of --training_file (-t) or --input_model_file (-m) must "
-        << "be specified!" << endl;
-
-  if (!CLI::HasParam("codes") && !CLI::HasParam("dictionary") &&
-      !CLI::HasParam("output_model"))
-    Log::Warn << "Neither --codes_file (-c), --dictionary_file (-d), nor "
-        << "--output_model_file (-M) are specified; no output will be saved."
-        << endl;
-
-  if (CLI::HasParam("codes") && !CLI::HasParam("test"))
-    Log::Fatal << "--codes_file (-c) is specified, but no test matrix ("
-        << "specified with --test_file or -T) is given to encode!" << endl;
-
-  if (!CLI::HasParam("training"))
   {
-    if (CLI::HasParam("atoms"))
-      Log::Warn << "--atoms (-k) ignored because --training_file (-t) is not "
-          << "specified." << endl;
-    if (CLI::HasParam("lambda1"))
-      Log::Warn << "--lambda1 (-l) ignored because --training_file (-t) is not "
-          << "specified." << endl;
-    if (CLI::HasParam("lambda2"))
-      Log::Warn << "--lambda2 (-L) ignored because --training_file (-t) is not "
-          << "specified." << endl;
-    if (CLI::HasParam("initial_dictionary"))
-      Log::Warn << "--initial_dictionary (-i) ignored because --training_file "
-          << "(-t) is not specified." << endl;
-    if (CLI::HasParam("max_iterations"))
-      Log::Warn << "--max_iterations (-n) ignored because --training_file (-t) "
-          << "is not specified." << endl;
-    if (CLI::HasParam("normalize"))
-      Log::Warn << "--normalize (-N) ignored because --training_file (-t) is "
-          << "not specified." << endl;
-    if (CLI::HasParam("objective_tolerance"))
-      Log::Warn << "--objective_tolerance (-o) ignored because --training_file "
-          << "(-t) is not specified." << endl;
-    if (CLI::HasParam("newton_tolerance"))
-      Log::Warn << "--newton_tolerance (-w) ignored because --training_file "
-          << "(-t) is not specified." << endl;
+    Log::Fatal << "Can only pass one of " << PRINT_PARAM_STRING("input_model")
+        << " or " << PRINT_PARAM_STRING("initial_dictionary") << "!" << endl;
   }
+
+  if (CLI::HasParam("training"))
+  {
+    RequireAtLeastOnePassed({ "atoms" }, true, "if training data is specified, "
+        "the number of atoms in the dictionary must also be specified");
+  }
+
+  RequireAtLeastOnePassed({ "codes", "dictionary", "output_model" }, false,
+      "no output will be saved");
+
+  ReportIgnoredParam({{ "test", false }}, "codes");
+
+  ReportIgnoredParam({{ "training", false }}, "atoms");
+  ReportIgnoredParam({{ "training", false }}, "lambda1");
+  ReportIgnoredParam({{ "training", false }}, "lambda2");
+  ReportIgnoredParam({{ "training", false }}, "initial_dictionary");
+  ReportIgnoredParam({{ "training", false }}, "max_iterations");
+  ReportIgnoredParam({{ "training", false }}, "normalize");
+  ReportIgnoredParam({{ "training", false }}, "objective_tolerance");
+  ReportIgnoredParam({{ "training", false }}, "newton_tolerance");
+
+  RequireParamValue<int>("atoms", [](int x) { return x > 0; }, true,
+      "number of atoms must be positive");
+  RequireParamValue<double>("lambda1", [](double x) { return x >= 0.0; }, true,
+      "lambda1 value must be nonnegative");
+  RequireParamValue<double>("lambda2", [](double x) { return x >= 0.0; }, true,
+      "lambda2 value must be nonnegative");
+  RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; }, true,
+      "maximum number of iterations must be nonnegative");
+  RequireParamValue<double>("objective_tolerance",
+      [](double x) { return x >= 0.0; }, true,
+      "objective function tolerance must be nonnegative");
+  RequireParamValue<double>("newton_tolerance",
+      [](double x) { return x >= 0.0; }, true,
+      "Newton method tolerance must be nonnegative");
 
   // Do we have an existing model?
   SparseCoding sc(0, 0.0);
@@ -223,8 +215,8 @@ void mlpackMain()
 
     if (matY.n_rows != sc.Dictionary().n_rows)
       Log::Fatal << "Model was trained with a dimensionality of "
-          << sc.Dictionary().n_rows << ", but data in test file '"
-          << CLI::GetPrintableParam<arma::mat>("test") << " has a "
+          << sc.Dictionary().n_rows << ", but test data '"
+          << CLI::GetPrintableParam<arma::mat>("test") << "' have a "
           << "dimensionality of " << matY.n_rows << "!" << endl;
 
     // Normalize each point if the user asked for it.
@@ -242,9 +234,12 @@ void mlpackMain()
       CLI::GetParam<arma::mat>("codes") = std::move(codes);
   }
 
-  // Did the user want to save the dictionary?
-  if (CLI::HasParam("dictionary"))
+  // Did the user want to save the dictionary?  If so we can move that, but only
+  // if we are not also saving an output model.
+  if (CLI::HasParam("dictionary") && !CLI::HasParam("output_model"))
     CLI::GetParam<arma::mat>("dictionary") = std::move(sc.Dictionary());
+  else if (CLI::HasParam("dictionary"))
+    CLI::GetParam<arma::mat>("dictionary") = sc.Dictionary();
 
   // Did the user want to save the model?
   if (CLI::HasParam("output_model"))
