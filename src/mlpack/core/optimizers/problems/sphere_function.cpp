@@ -25,9 +25,9 @@ SphereFunction::SphereFunction(const size_t n) :
   for (size_t i = 0; i < n; ++i) // Set to [-3.12 3.33 -3.12 3.33...].
   {
     if (i % 2 == 1)
-      initialPoint(i) = 3.33;
+      initialPoint(i) = 5;
     else
-      initialPoint(i) = -3.12;
+      initialPoint(i) = -5;
   }
 }
 
