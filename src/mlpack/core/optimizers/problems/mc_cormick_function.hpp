@@ -56,7 +56,7 @@ class McCormickFunction
   size_t NumFunctions() const { return 1; }
 
   //! Get the starting point.
-  arma::mat GetInitialPoint() const { return arma::mat("-1; 2"); }
+  arma::mat GetInitialPoint() const { return arma::mat("-2; 4"); }
 
   /*
    * Evaluate a function for a particular batch-size.
