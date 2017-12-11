@@ -20,6 +20,7 @@ start.
  - \ref sample
  - \ref cv
  - \ref hpt
+ - \ref bindings
 
 @section method_tut Method-specific Tutorials
 
