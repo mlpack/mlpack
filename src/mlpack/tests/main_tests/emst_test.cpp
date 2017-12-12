@@ -100,10 +100,9 @@ BOOST_AUTO_TEST_CASE(EMSTInvalidLeafSizeTest)
   SetInputParam("leaf_size", (int) -1); // Invalid leaf size.
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error("leaf size 
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error("leaf size
                       must be greater than or equal to 1") );
   Log::Fatal.ignoreInput = false;
 }
 
 BOOST_AUTO_TEST_SUITE_END();
-                                                       
