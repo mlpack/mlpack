@@ -227,7 +227,7 @@ SingleLinkageTreeToModifiedBFS(const MatType& singleLinkageTree,
   std::queue<size_t> q;
   q.push(rootOfBFS);
 
-  while( !q.empty())
+  while (!q.empty())
   {
     size_t index, topElement = q.front();
     q.pop();
@@ -289,18 +289,18 @@ CondenseTree(const MatType& singleLinkageTree,
            size_t minClusterSize )
 {
   std::vector<size_t> bfs;
-  size_t resultCounter = 0;// Keeps track of number of elments in result matrix
+  // Keeps track of number of elments in result matrix
+  size_t resultCounter = 0;
   size_t rootOfBFS = 2 * singleLinkageTree.n_cols;
   SingleLinkageTreeToModifiedBFS(singleLinkageTree, bfs, rootOfBFS);
   result.set_size(4, bfs.size() * 2);
   double lambda;
   size_t noOfPoints = singleLinkageTree.n_cols + 1;
   size_t nextLabel = noOfPoints + 1;
-  
-  //stores label of all the clusters
+
+  // stores label of all the clusters
   std::vector<size_t> relabel(2 * singleLinkageTree.n_cols + 1);
   relabel[rootOfBFS] = noOfPoints;
-  
   //if cluster i can be a parent or not
   std::vector<bool> ignore(bfs.size(), false);
   double delta;
@@ -308,22 +308,19 @@ CondenseTree(const MatType& singleLinkageTree,
   std::vector<size_t> bfsOfChild;
 
   for (size_t i = 0; i < bfs.size(); i++)
-  {  
+  {
     currNode = bfs[i];
     //currNode cant be a parent
     if ( ignore[currNode] || currNode < noOfPoints) continue;
-   
     //find left right child clusters, their size and lambda
     leftChild = singleLinkageTree(0, (currNode - noOfPoints));
     rightChild = singleLinkageTree(1, (currNode - noOfPoints));
-    
     leftCount = ((leftChild >= noOfPoints) ?
                   singleLinkageTree(3, (leftChild - noOfPoints)) :
                   1);
     rightCount = ((rightChild >= noOfPoints) ?
                    singleLinkageTree(3, (rightChild - noOfPoints)) :
                    1);
-    
     delta = singleLinkageTree(2, (currNode - noOfPoints));
     if (delta > 0.0)
       lambda = 1.0 / delta;
@@ -401,8 +398,8 @@ CondenseTree(const MatType& singleLinkageTree,
     {
       relabel[leftChild] = relabel[currNode];
       bfsOfChild.resize(0);
-      SingleLinkageTreeToModifiedBFS(singleLinkageTree, 
-                                   bfsOfChild, 
+      SingleLinkageTreeToModifiedBFS(singleLinkageTree,
+                                   bfsOfChild,
                                    rightChild);
       for (size_t j = 0; j < bfsOfChild.size(); j++)
       {
@@ -445,18 +442,18 @@ template<typename NeighborSearch,
                   typename TreeMatType> class TreeType >
 template<typename MatType>
 void HDBSCAN<NeighborSearch,
-             MetricType, 
+             MetricType,
              TreeType>::
 GetStabilities(const MatType& condensedTree,
              std::map<size_t, double>& result)
 {
   size_t largestChild = arma::max(condensedTree.row(1));
   size_t smallestCluster = arma::min(condensedTree.row(0));
-  size_t noOfClusters = arma::max(condensedTree.row(0)) - 
+  size_t noOfClusters = arma::max(condensedTree.row(0)) -
               arma::min(condensedTree.row(0)) + 1;
   for (size_t i = 0; i < noOfClusters; i++)
     result[smallestCluster + i] = 0;
-  if(largestChild < smallestCluster)
+  if (largestChild < smallestCluster)
     largestChild = smallestCluster;
 
   MatType sortedChildData(2, condensedTree.n_cols);
@@ -513,7 +510,7 @@ GetStabilities(const MatType& condensedTree,
 
     result[parent] += (lambda - births[parent]) * childSize;
   }
-}//function getStabilities ends
+} // function getStabilities ends
 
 /**
  * This function coverts a clustered tree to BFS and chooses root 
@@ -543,7 +540,7 @@ GetBfsFromClusteredTree(MatType& clusteredTree,
                                      false);
   visited[rootNode] = true;
   q.push(rootNode);
-  while(!q.empty())
+  while (!q.empty())
   {
     size_t currentNode = q.front();
     resultBFS.push_back(currentNode);
@@ -661,7 +658,7 @@ GetLabels(const MatType& condensedTree,
       //assign the correct cluster
       result[currentPoint] = labelOfClusters[parentOfCurrentPoint];
   }
-}//function getLabels ends
+} // function getLabels ends
 
 /**
  * This functin provides label to each and every point
