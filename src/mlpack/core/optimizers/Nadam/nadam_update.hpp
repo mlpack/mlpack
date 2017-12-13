@@ -43,8 +43,8 @@ class NadamUpdate
    *        parameter.
    * @param beta1 The smoothing parameter.
    */
-  NadamUpdate(const double epsilon = 1e-8,const double beta1 = 0.9)
-  :epsilon(epsilon),beta1(beta1),iteration(0)
+  NadamUpdate(const double epsilon = 1e-8, const double beta1 = 0.9)
+  :epsilon(epsilon), beta1(beta1), iteration(0)
   {
     // Nothing to do.
   }
@@ -78,7 +78,7 @@ class NadamUpdate
     // And update the iterate.
     m *= beta1;
     m += (1 - beta1) * gradient;
-    //biasCorrection=1-beta1^iteration
+    // biasCorrection=1-beta1^iteration
     const double biasCorrection = 1.0 - std::pow(beta1, iteration);
     /*
 	iterate=iterate-((stepsize/(sqrt(v)+epsilon))*(m/biasCorrection))
@@ -96,7 +96,7 @@ class NadamUpdate
   //! Modify the smoothing parameter.
   double& Beta1() { return beta1; }
 
-  private:
+ private:
   // The epsilon value used to initialise the squared gradient parameter.
   double epsilon;
 
