@@ -5,10 +5,11 @@
  * @author Marcus Edel
  * @author Vivek Pal
  *
- * Adam and AdaMax optimizer. Adam is an an algorithm for first-order gradient-
- * -based optimization of stochastic objective functions, based on adaptive
- * estimates of lower-order moments. AdaMax is simply a variant of Adam based
- * on the infinity norm.
+ * Adam, AdaMax and AMSGrad optimizers. Adam is an an algorithm for 
+ * first-order gradient-based optimization of stochastic objective 
+ * functions, based on adaptive estimates of lower-order moments. 
+ * AdaMax is simply a variant of Adam based on the infinity norm. 
+ * AMSGrad is another variant of Adam with guaranteed convergence.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -23,6 +24,7 @@
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
 #include "adam_update.hpp"
 #include "adamax_update.hpp"
+#include "amsgrad_update.hpp"
 
 namespace mlpack {
 namespace optimization {
@@ -43,11 +45,16 @@ namespace optimization {
  *   year    = {2014},
  *   url     = {http://arxiv.org/abs/1412.6980}
  * }
+ * @article{
+ *   title   = {On the convergence of Adam and beyond},
+ *   url     = {https://openreview.net/pdf?id=ryQu7f-RZ}
+ *   year    = {2018}
+ * }
  * @endcode
  *
  *
- * For Adam and AdaMax to work, a DecomposableFunctionType template parameter
- * is required. This class must implement the following function:
+ * For Adam, AdaMax and AMSGrad to work, a DecomposableFunctionType template
+ * parameter is required. This class must implement the following function:
  *
  *   size_t NumFunctions();
  *   double Evaluate(const arma::mat& coordinates,
@@ -165,6 +172,8 @@ class AdamType
 using Adam = AdamType<AdamUpdate>;
 
 using AdaMax = AdamType<AdaMaxUpdate>;
+
+using AMSGrad = AdamType<AMSGradUpdate>;
 
 } // namespace optimization
 } // namespace mlpack
