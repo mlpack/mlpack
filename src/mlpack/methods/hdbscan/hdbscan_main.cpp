@@ -19,11 +19,11 @@ PROGRAM_INFO("HDBSCAN algorithm", "This program helps in clustering "
     "\n\n"
     "The output is saved in a column matrix");
 
-PARAM_STRING_OUT("output_file", 
+PARAM_STRING_OUT("output_file",
                  "Output file. Stores cluster label of each point.",
                  "o");
-PARAM_STRING_IN("input_file", 
-                "Input dataset to cluster", 
+PARAM_STRING_IN("input_file",
+                "Input dataset to cluster",
                 "i",
                 "noFileSelected");
 PARAM_FLAG("single_cluster", "Allow single cluster.", "s");
@@ -34,33 +34,34 @@ int main(int argc, char* argv[])
 {
   CLI::ParseCommandLine(argc, argv);
 
-  // Get minimum cluster size 
+  // Get minimum cluster size
   // and whether to allow single cluster
   size_t minimumClusterSize = (CLI::GetParam<int>("minimumClusterSize"));
   bool allowSingleCluster = CLI::GetParam<bool>("single_cluster");
 
-  if (CLI::GetParam<string>("input_file")=="noFileSelected")
+  if (CLI::GetParam<string>("input_file") == "noFileSelected")
     Log::Fatal<<"--input_file is not speified !"<<endl;
-    
+
   // Warn if output file is not specified
   if (!CLI::HasParam("output_file"))
-  	Log::Warn << "--output_file is not specified, so no output will be saved!"
-	          << endl;
+    Log::Warn << "--output_file is not specified, so no output will be saved!"
+              << endl;
     
   // By default single cluster is disabled
   if (!CLI::HasParam("single_cluster"))
   {
-  	Log::Warn << "--single_cluster is not specified. Default value is false."
-		  <<"Set this to true only if you think it fits your dataset!"<< endl;
-    	allowSingleCluster = false;
+    Log::Warn << "--single_cluster is not specified. Default value is false."
+               <<"Set this to true only if you think it fits your dataset!"
+               << endl;
+      allowSingleCluster = false;
   }
     
   // Default value of minimum cluster size is 10
   if (!CLI::HasParam("minimumClusterSize"))
   {
-	Log::Warn << "--minimumClusterSize is not specified. Default value is 10!"
-    		  << endl;
-    	minimumClusterSize = 10;
+  Log::Warn << "--minimumClusterSize is not specified. Default value is 10!"
+            << endl;
+      minimumClusterSize = 10;
   }
 
   arma::mat dataPoints;

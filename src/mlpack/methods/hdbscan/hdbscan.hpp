@@ -30,22 +30,22 @@ namespace mlpack {
 namespace hdbscan {
 
 template<typename NeighborSearch = neighbor::NeighborSearch
-											<neighbor::NearestNeighborSort , 
+                                             <neighbor::NearestNeighborSort,
                                              metric::EuclideanDistance>,
          typename MetricType = metric::HdbscanMetric,
-          template<typename TreeMetricType,
-                   typename TreeStatType,
-                   typename TreeMatType> class TreeType = tree::BallTree>
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType = tree::BallTree>
 class HDBSCAN
-{ 
+{
  public:
   /**
    * Construct the HDBSCAN object with the given parameters.
    *
    * @param minPoints The number of points present in a cluster.
    */
-  HDBSCAN(const size_t minPoints = 10, 
-  	      bool allowSingleCluster = false);
+  HDBSCAN(const size_t minPoints = 10,
+          bool allowSingleCluster = false);
 
   /**
    * Performs HDBSCAN clustering on the data,
@@ -62,7 +62,7 @@ class HDBSCAN
                arma::Row<size_t>& assignments);
 
  private:
-  //! The parameter to compute core distance (and also 
+  //! The parameter to compute core distance (and also
   // specifies the number of points in clusters now).
   size_t minPoints;
 
@@ -94,7 +94,7 @@ class HDBSCAN
    */
   template<typename MatType>
   void SingleLinkageTreeClustering(const MatType& inputMST, 
-  	                               MatType& singleLinkageTree);
+                                   MatType& singleLinkageTree);
 
   /**
    * Performs a modified bfs on single linkage tree, 
@@ -109,9 +109,9 @@ class HDBSCAN
    * @param rootOfBFS The root node of the BFS
    */
   template < typename MatType>
-  void SingleLinkageTreeToModifiedBFS(const MatType& singleLinkageTree, 
-  	                                  std::vector<size_t>& BFS, 
-  	                                  size_t rootOfBFS);
+  void SingleLinkageTreeToModifiedBFS(const MatType& singleLinkageTree,
+                                      std::vector<size_t>& BFS, 
+                                      size_t rootOfBFS);
 
   /**
    * This function condenses the single linkage tree .
@@ -136,9 +136,9 @@ class HDBSCAN
    *                       in a cluster
    */
   template< typename MatType>
-  void CondenseTree(const MatType& singleLinkageTree, 
-  	                MatType& result, 
-  	                size_t minClusterSize = 10);
+  void CondenseTree(const MatType& singleLinkageTree,
+                    MatType& result,
+                    size_t minClusterSize = 10);
 
   /**
    * This function coverts a clustered tree to BFS and chooses root as the 
@@ -152,9 +152,9 @@ class HDBSCAN
    * @param rootNode The root of the bfs trre.
    */
   template<typename MatType>
-  void GetBfsFromClusteredTree(MatType& clusteredTree, 
-  	                           size_t rootNode, 
-  	                           std::vector<size_t>& resultBFS);
+  void GetBfsFromClusteredTree(MatType& clusteredTree,
+                               size_t rootNode,
+                               std::vector<size_t>& resultBFS);
 
   /**
    * This function helps in assigning labels to all the points 
@@ -170,9 +170,9 @@ class HDBSCAN
    * @param result Matrix whixh will contain final labels of all points.
    */
   template<typename MatType>
-  void GetLabels(const MatType& condensedTree, 
-  	             std::vector<size_t> clusters, 
-  	             arma::Mat<size_t>& result);
+  void GetLabels(const MatType& condensedTree,
+                 std::vector<size_t> clusters,
+                 arma::Mat<size_t>& result);
 
   /**
    * This function helps in computing stabilities 
@@ -193,8 +193,8 @@ class HDBSCAN
    * @param result Stabilities of node.
    */
   template<typename MatType>
-  void GetStabilities(const MatType& condensedTree, 
-  	                  std::map<size_t, double>& result);
+  void GetStabilities(const MatType& condensedTree,
+                      std::map<size_t, double>& result);
 
   /**
    * This functin provides label to each and every point
@@ -205,8 +205,8 @@ class HDBSCAN
    * @param result Matrix whixh will contain final labels of all points.
    */
   template<typename MatType>
-  void GetClusters(MatType& condensedTree, 
-  	               arma::Mat<size_t>& result);
+  void GetClusters(MatType& condensedTree,
+                   arma::Mat<size_t>& result);
 };
 
 } // namespace hdbscan

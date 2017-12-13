@@ -18,12 +18,12 @@ BOOST_AUTO_TEST_SUITE(HDBSCANTest);
 
 BOOST_AUTO_TEST_CASE(singleClusterTest)
 {
-  //Generate 5000 points on 0.1 radius circle.
+  // Generate 5000 points on 0.1 radius circle.
   arma::mat points(2, 5000);
   double pi = 3.14156;
   double theeta;
   for (size_t i = 0; i < 5000; i++)
-  { 
+  {
     theeta = i/5000;
     points(0, i) = 0.1*sin(pi*theeta);
     points(1, i) = 0.1*cos(pi*theeta);
@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(singleClusterTest)
   arma::Row<size_t> assignments;
   h1.Cluster(points, assignments);
 
-  //Some points in the circle will get classified as noise
+  // Some points in the circle will get classified as noise
   for (size_t i = 0; i < assignments.n_cols; i++)
   {
     BOOST_REQUIRE((assignments(i) == 0));
@@ -42,12 +42,12 @@ BOOST_AUTO_TEST_CASE(singleClusterTest)
 
 BOOST_AUTO_TEST_CASE(noiseTest)
 {
-  //Generate 5000 random points on a unit circle.
+  // Generate 5000 random points on a unit circle.
   arma::mat points(2, 5000);
   double pi = 3.14156;
   double theeta;
   for (size_t i = 0; i < 5000; i++)
-  { 
+  {
     theeta = math::Random();
     points(0, i) = sin(pi*theeta);
     points(1, i) = cos(pi*theeta);
@@ -61,7 +61,7 @@ BOOST_AUTO_TEST_CASE(noiseTest)
   arma::Row<size_t> assignments;
   h1.Cluster(points, assignments);
 
-  //The last point must be noise,
+  // The last point must be noise,
   BOOST_REQUIRE(assignments(assignments.n_cols-1) == SIZE_MAX);
 }
 
@@ -83,11 +83,11 @@ BOOST_AUTO_TEST_CASE(GaussiansTest)
     points.col(i) = g2.Random();
   for (size_t i = 200; i < 300; ++i)
     points.col(i) = g3.Random();
-  
+
   HDBSCAN<> h(5, true);
   arma::Row<size_t> assignments;  
 
-  h.Cluster(points, assignments);  
+  h.Cluster(points, assignments);
 
   for (size_t i = 0; i < assignments.n_cols; i++)
   {
