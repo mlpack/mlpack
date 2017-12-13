@@ -625,7 +625,7 @@ GetLabels(const MatType& condensedTree,
         lambdaRootCluster = std::max(lambdaRootCluster, condensedTree(2, i));
     }
 
-    //Mark all the points as noises 
+    // Mark all the points as noises
     for (size_t i = 0; i < rootCluster; i++)
       result[i] = SIZE_MAX;
 
