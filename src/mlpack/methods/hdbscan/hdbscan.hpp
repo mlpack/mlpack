@@ -93,7 +93,7 @@ class HDBSCAN
                               linkage tree is stored.
    */
   template<typename MatType>
-  void SingleLinkageTreeClustering(const MatType& inputMST, 
+  void SingleLinkageTreeClustering(const MatType& inputMST,
                                    MatType& singleLinkageTree);
 
   /**
@@ -110,7 +110,7 @@ class HDBSCAN
    */
   template < typename MatType>
   void SingleLinkageTreeToModifiedBFS(const MatType& singleLinkageTree,
-                                      std::vector<size_t>& BFS, 
+                                      std::vector<size_t>& BFS,
                                       size_t rootOfBFS);
 
   /**

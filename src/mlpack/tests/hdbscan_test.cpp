@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE(GaussiansTest)
     points.col(i) = g3.Random();
 
   HDBSCAN<> h(5, true);
-  arma::Row<size_t> assignments;  
+  arma::Row<size_t> assignments;
 
   h.Cluster(points, assignments);
 

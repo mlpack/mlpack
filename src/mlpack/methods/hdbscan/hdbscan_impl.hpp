@@ -65,7 +65,7 @@ void HDBSCAN<NeighborSearch,
 Cluster(const MatType& data,
         arma::Row<size_t>& assignments)
 {
-  //genearting a matrix with the values of dcore
+  // genearting a matrix with the values of dcore
   arma::Mat<size_t> neighbors;
   arma::mat distances;
   neighborSearch.Train(data);
@@ -83,7 +83,7 @@ Cluster(const MatType& data,
   // create single linkage tree from the MST obtained.
   arma::mat singleLinkageTree;
   SingleLinkageTreeClustering(resultsMST, singleLinkageTree);
-  
+
   // Condense the obtained tree
   arma::mat condensedTree;
   CondenseTree(singleLinkageTree, condensedTree, minPoints);
@@ -194,7 +194,7 @@ SingleLinkageTreeClustering(const MatType& inputMST,
     delta = inputMST(2, i);
     parentOfv1 = u.Find(inputMST(0, i));
     parentOfv2 = u.Find(inputMST(1, i));
-    singleLinkageTree.col(i) = arma::vec({(double)parentOfv1, 
+    singleLinkageTree.col(i) = arma::vec({(double)parentOfv1,
       (double)parentOfv2, delta,
       (double)(u.GetSize(parentOfv1) + u.GetSize(parentOfv2))});
     u.UnionOfTwoClusters(parentOfv1, parentOfv2);
@@ -281,11 +281,11 @@ template<typename NeighborSearch,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType >
 template<typename MatType>
-void HDBSCAN<NeighborSearch,  
-             MetricType, 
+void HDBSCAN<NeighborSearch,
+             MetricType,
              TreeType>::
-CondenseTree(const MatType& singleLinkageTree, 
-           MatType& result, 
+CondenseTree(const MatType& singleLinkageTree,
+           MatType& result,
            size_t minClusterSize )
 {
   std::vector<size_t> bfs;
@@ -301,7 +301,7 @@ CondenseTree(const MatType& singleLinkageTree,
   // stores label of all the clusters
   std::vector<size_t> relabel(2 * singleLinkageTree.n_cols + 1);
   relabel[rootOfBFS] = noOfPoints;
-  //if cluster i can be a parent or not
+  // if cluster i can be a parent or not
   std::vector<bool> ignore(bfs.size(), false);
   double delta;
   size_t leftCount, rightCount, leftChild, rightChild, currNode;
@@ -310,9 +310,9 @@ CondenseTree(const MatType& singleLinkageTree,
   for (size_t i = 0; i < bfs.size(); i++)
   {
     currNode = bfs[i];
-    //currNode cant be a parent
+    // currNode cant be a parent
     if ( ignore[currNode] || currNode < noOfPoints) continue;
-    //find left right child clusters, their size and lambda
+    // find left right child clusters, their size and lambda
     leftChild = singleLinkageTree(0, (currNode - noOfPoints));
     rightChild = singleLinkageTree(1, (currNode - noOfPoints));
     leftCount = ((leftChild >= noOfPoints) ?
@@ -370,7 +370,6 @@ CondenseTree(const MatType& singleLinkageTree,
           result.col(resultCounter) = arma::vec({(double)relabel[currNode],
             (double)subNode, (double)lambda, 1.0});
           resultCounter++;
-
         }
         ignore[subNode] = true;
       }
@@ -500,7 +499,7 @@ GetStabilities(const MatType& condensedTree,
     births[currentChild] = minLambda;
   births[smallestCluster] = 0.0;
 
-  //calculate stability for each cluster now
+  // calculate stability for each cluster now
   size_t parent, childSize;
   for (size_t i = 0; i < condensedTree.n_cols; i++)
   {
@@ -532,7 +531,7 @@ GetBfsFromClusteredTree(MatType& clusteredTree,
 {
   std::queue<size_t> q;
 
-  //Clustered tree is empty
+  // Clustered tree is empty
   if (clusteredTree.n_cols == 0 || clusteredTree.n_rows == 0)
     return;
   std::vector<bool> visited(std::max(arma::max(clusteredTree.row(0)),
@@ -546,7 +545,6 @@ GetBfsFromClusteredTree(MatType& clusteredTree,
     resultBFS.push_back(currentNode);
     visited[currentNode] = true;
     q.pop();
- 
     for (size_t i = 0; i < clusteredTree.n_cols; i++)
       if (clusteredTree(0, i) == currentNode && !visited[clusteredTree(1, i)])
         q.push(clusteredTree(1, i));
@@ -581,12 +579,12 @@ template<typename MatType>
 void HDBSCAN<NeighborSearch,
              MetricType,
              TreeType>::
-GetLabels(const MatType& condensedTree, 
-        std::vector<size_t> clusters, 
+GetLabels(const MatType& condensedTree,
+        std::vector<size_t> clusters,
         arma::Mat<size_t>& result)
 {
-  //Label all the clusters which can be root
-  sort (clusters.begin(), clusters.end());
+  // Label all the clusters which can be root
+  sort(clusters.begin(), clusters.end());
   std::map<size_t, size_t> labelOfClusters;
   for (size_t i = 0; i < clusters.size(); i++)
     labelOfClusters[clusters[i]] = i;
@@ -599,17 +597,17 @@ GetLabels(const MatType& condensedTree,
   size_t rootCluster = arma::min(condensedTree.row(0));
   result.set_size(1, rootCluster);
   emst::UnionFind unionTree(arma::max(condensedTree.row(0))+1);
- 
+
   // Go through all edges in the condensed tree
   // If the child cluster of edge cannot be root of any cluster
   // Merge those clusters
   for (size_t i = 0; i < condensedTree.n_cols; i++)
-    if (! std::binary_search(clusters.begin(),
+    if (!std::binary_search(clusters.begin(),
                            clusters.end(),
                            condensedTree(1, i)))
       unionTree.Union(condensedTree(0, i), condensedTree(1, i));
 
-  //Now assign labels to all the points of the dataset
+  // Now assign labels to all the points of the dataset
   size_t currentPoint, parentOfCurrentPoint;
 
   // If only one cluster is possible
@@ -619,13 +617,13 @@ GetLabels(const MatType& condensedTree,
   // Otherwise it is a noise
   if (clusters.size() == 1 && allowSingleCluster)
   {
-    //find lambda of root cluster
+    // find lambda of root cluster
     double lambdaRootCluster = 0;
     for (size_t i = 0; i < condensedTree.n_cols; i++)
-      {
-        if (condensedTree(0, i) == rootCluster)
-          lambdaRootCluster = std::max(lambdaRootCluster, condensedTree(2, i));
-      }
+    {
+      if (condensedTree(0, i) == rootCluster)
+        lambdaRootCluster = std::max(lambdaRootCluster, condensedTree(2, i));
+    }
 
     //Mark all the points as noises 
     for (size_t i = 0; i < rootCluster; i++)
@@ -636,14 +634,14 @@ GetLabels(const MatType& condensedTree,
     // check if their lambda has value
     // less then that of the root cluster
     for (size_t i = 0; i < condensedTree.n_cols; i++)
-      { 
-        currentPoint = condensedTree(1, i);
-        if (currentPoint >= rootCluster)  continue;
-        parentOfCurrentPoint = unionTree.Find(currentPoint);
-        if (parentOfCurrentPoint == rootCluster && 
-          condensedTree(2, i) >= lambdaRootCluster)
-          result[currentPoint] = 0;
-      }
+    {
+      currentPoint = condensedTree(1, i);
+      if (currentPoint >= rootCluster)  continue;
+      parentOfCurrentPoint = unionTree.Find(currentPoint);
+      if (parentOfCurrentPoint == rootCluster &&
+        condensedTree(2, i) >= lambdaRootCluster)
+        result[currentPoint] = 0;
+    }
 
     return;
   }
@@ -652,10 +650,10 @@ GetLabels(const MatType& condensedTree,
   {
     parentOfCurrentPoint = unionTree.Find(currentPoint);
     if (parentOfCurrentPoint <= rootCluster)
-      //label these points as noise
+      // label these points as noise
       result[currentPoint] = SIZE_MAX;
     else
-      //assign the correct cluster
+      // assign the correct cluster
       result[currentPoint] = labelOfClusters[parentOfCurrentPoint];
   }
 } // function getLabels ends

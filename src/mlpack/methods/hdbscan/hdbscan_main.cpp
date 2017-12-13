@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
   if (!CLI::HasParam("output_file"))
     Log::Warn << "--output_file is not specified, so no output will be saved!"
               << endl;
-    
+
   // By default single cluster is disabled
   if (!CLI::HasParam("single_cluster"))
   {
@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
                << endl;
       allowSingleCluster = false;
   }
-    
+
   // Default value of minimum cluster size is 10
   if (!CLI::HasParam("minimumClusterSize"))
   {
@@ -67,10 +67,10 @@ int main(int argc, char* argv[])
   arma::mat dataPoints;
   data::Load(CLI::GetParam<string>("input_file"), dataPoints, false);
 
-  //check that minimum cluster size is positive
+  // check that minimum cluster size is positive
   if (CLI::GetParam<int>("minimumClusterSize") <= 0)
   {
-    Log::Fatal << "Invalid cluster size (" 
+    Log::Fatal << "Invalid cluster size ("
                << CLI::GetParam<int>("minimumClusterSize")
                << ")!  Must be greater than or equal to 1." << std::endl;
   }
