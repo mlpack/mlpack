@@ -92,7 +92,7 @@ class AmsGradUpdate
 
     // Element wise maximum of past and present squared gradients.
     vImproved = arma::max(vImproved, v);
-    
+
     iterate -= (stepSize * m) / (arma::sqrt(vImproved) + epsilon);
   }
 
