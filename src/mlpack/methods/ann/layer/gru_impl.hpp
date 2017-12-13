@@ -69,7 +69,7 @@ GRU<InputDataType, OutputDataType>::GRU(
   allZeros = arma::zeros<arma::mat>(outSize, batchSize);
 
   outParameter.push_back(std::move(arma::mat(allZeros.memptr(),
-    allZeros.n_rows, allZeros.n_cols, false, true)));
+      allZeros.n_rows, allZeros.n_cols, false, true)));
 
   prevOutput = outParameter.begin();
   backIterator = outParameter.end();
@@ -92,10 +92,27 @@ template<typename eT>
 void GRU<InputDataType, OutputDataType>::Forward(
     arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
+  std::cout << "GRU::Forward(): input " << input.n_rows << "x" << input.n_cols
+<< "; batchSize " << batchSize << "; forwardStep " << forwardStep << "\n";
   if (input.n_cols != batchSize)
   {
     batchSize = input.n_cols;
     prevError.resize(3 * outSize, batchSize);
+    allZeros.zeros(outSize, batchSize);
+    // Batch size better not change during an iteration...
+    if (outParameter.size() > 1)
+    {
+      Log::Fatal << "GRU<>::Forward(): batch size cannot change during a "
+          << "forward pass!" << std::endl;
+    }
+
+    outParameter.clear();
+    outParameter.push_back(std::move(arma::mat(allZeros.memptr(),
+        allZeros.n_rows, allZeros.n_cols, false, true)));
+
+    prevOutput = outParameter.begin();
+    backIterator = outParameter.end();
+    gradIterator = outParameter.end();
   }
 
   // Process the input linearly(zt, rt, ot).
@@ -157,13 +174,13 @@ void GRU<InputDataType, OutputDataType>::Forward(
     if (!deterministic)
     {
       outParameter.push_back(std::move(arma::mat(allZeros.memptr(),
-        allZeros.n_rows, allZeros.n_cols, false, true)));
+          allZeros.n_rows, allZeros.n_cols, false, true)));
       prevOutput = --outParameter.end();
     }
     else
     {
       *prevOutput = std::move(arma::mat(allZeros.memptr(),
-        allZeros.n_rows, allZeros.n_cols, false, true));
+          allZeros.n_rows, allZeros.n_cols, false, true));
     }
   }
   else if (!deterministic)
@@ -192,10 +209,27 @@ template<typename eT>
 void GRU<InputDataType, OutputDataType>::Backward(
   const arma::Mat<eT>&& input, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
+  std::cout << "GRU::Backward(): input " << input.n_rows << "x" << input.n_cols
+<< "; batchSize " << batchSize << "; backwardStep " << backwardStep << "\n";
   if (input.n_cols != batchSize)
   {
     batchSize = input.n_cols;
     prevError.resize(3 * outSize, batchSize);
+    allZeros.zeros(outSize, batchSize);
+    // Batch size better not change during an iteration...
+    if (outParameter.size() > 1)
+    {
+      Log::Fatal << "GRU<>::Forward(): batch size cannot change during a "
+          << "forward pass!" << std::endl;
+    }
+
+    outParameter.clear();
+    outParameter.push_back(std::move(arma::mat(allZeros.memptr(),
+        allZeros.n_rows, allZeros.n_cols, false, true)));
+
+    prevOutput = outParameter.begin();
+    backIterator = outParameter.end();
+    gradIterator = outParameter.end();
   }
 
   if ((outParameter.size() - backwardStep  - 1) % rho != 0 && backwardStep != 0)
@@ -214,7 +248,7 @@ void GRU<InputDataType, OutputDataType>::Backward(
       hiddenStateModule));
 
   // Delta ot.
-  arma::mat dOt = gy % (arma::ones<arma::vec>(outSize) -
+  arma::mat dOt = gy % (arma::ones<arma::mat>(outSize, batchSize) -
       boost::apply_visitor(outputParameterVisitor, inputGateModule));
 
   // Delta of input gate.
@@ -293,10 +327,27 @@ void GRU<InputDataType, OutputDataType>::Gradient(
     arma::Mat<eT>&& /* error */,
     arma::Mat<eT>&& /* gradient */)
 {
+  std::cout << "GRU::Gradient(): input " << input.n_rows << "x" << input.n_cols
+<< "; batchSize " << batchSize << "; gradientStep " << gradientStep << "\n";
   if (input.n_cols != batchSize)
   {
     batchSize = input.n_cols;
     prevError.resize(3 * outSize, batchSize);
+    allZeros.zeros(outSize, batchSize);
+    // Batch size better not change during an iteration...
+    if (outParameter.size() > 1)
+    {
+      Log::Fatal << "GRU<>::Forward(): batch size cannot change during a "
+          << "forward pass!" << std::endl;
+    }
+
+    outParameter.clear();
+    outParameter.push_back(std::move(arma::mat(allZeros.memptr(),
+        allZeros.n_rows, allZeros.n_cols, false, true)));
+
+    prevOutput = outParameter.begin();
+    backIterator = outParameter.end();
+    gradIterator = outParameter.end();
   }
 
   if (gradIterator == outParameter.end())

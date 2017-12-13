@@ -188,11 +188,11 @@ void LSTM<InputDataType, OutputDataType>::Forward(
   if (forwardStep > 0)
   {
     inputGate.cols(forwardStep, forwardStep + batchStep) +=
-        cell2GateInputWeight % cell.cols(forwardStep - batchSize,
+        arma::repmat(cell2GateInputWeight, 1, batchSize) % cell.cols(forwardStep - batchSize,
         forwardStep - batchSize + batchStep);
 
     forgetGate.cols(forwardStep, forwardStep + batchStep) +=
-        cell2GateForgetWeight % cell.cols(forwardStep - batchSize,
+        arma::repmat(cell2GateForgetWeight, 1, batchSize) % cell.cols(forwardStep - batchSize,
         forwardStep - batchSize + batchStep);
   }
 
@@ -283,7 +283,7 @@ void LSTM<InputDataType, OutputDataType>::Backward(
     cellError += inputCellError;
   }
 
-  if (backwardStep != 0)
+  if (backwardStep > batchStep)
   {
     forgetGateError = cell.cols((backwardStep - batchSize) - batchStep,
       (backwardStep - batchSize)) % cellError % (forgetGateActivation.cols(
@@ -305,7 +305,7 @@ void LSTM<InputDataType, OutputDataType>::Backward(
       backwardStep - batchStep, backwardStep), 2));
 
   inputCellError = forgetGateActivation.cols(backwardStep - batchStep,
-      backwardStep) %cellError + forgetGateError.each_col() %
+      backwardStep) % cellError + forgetGateError.each_col() %
       cell2GateForgetWeight + inputGateError.each_col() % cell2GateInputWeight;
 
   g = input2GateInputWeight.t() * inputGateError +
@@ -395,15 +395,15 @@ void LSTM<InputDataType, OutputDataType>::Gradient(
   offset += cell2GateOutputWeight.n_elem;
 
   // Cell2GateForgetWeight and cell2GateInputWeight gradients.
-  if (gradientStep != 0)
+  if (gradientStep > batchStep)
   {
     gradient.submat(offset, 0, offset + cell2GateForgetWeight.n_elem - 1, 0) =
-        arma::sum(forgetGateError % cell.cols(gradientStep - batchStep -
-        batchSize, gradientStep - batchSize), 1);
+        arma::sum(forgetGateError % cell.cols((gradientStep - batchSize) - batchStep,
+        (gradientStep - batchSize)), 1);
     gradient.submat(offset + cell2GateForgetWeight.n_elem, 0, offset +
         cell2GateForgetWeight.n_elem + cell2GateInputWeight.n_elem - 1, 0) =
-        arma::sum(inputGateError % cell.cols(gradientStep - batchStep -
-        batchSize, gradientStep - batchSize), 1);
+        arma::sum(inputGateError % cell.cols((gradientStep - batchSize) - batchStep,
+        (gradientStep - batchSize)), 1);
   }
   else
   {

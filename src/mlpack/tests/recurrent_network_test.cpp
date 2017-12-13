@@ -287,7 +287,8 @@ void GenerateNextReber(const arma::Mat<char>& transitions,
  * @param nextReber All reachable next symbols.
  */
 void GenerateNextRecursiveReber(const arma::Mat<char>& transitions,
-                               const std::string& reber, std::string& nextReber)
+                                const std::string& reber,
+                                std::string& nextReber)
 {
   size_t state = 0;
   size_t numPs = 0;
@@ -741,6 +742,94 @@ BOOST_AUTO_TEST_CASE(FastLSTMDistractedSequenceRecallTest)
 BOOST_AUTO_TEST_CASE(GRUDistractedSequenceRecallTest)
 {
   DistractedSequenceRecallTestNetwork<GRU<> >(4, 8);
+}
+
+/**
+ * Create a simple recurrent neural network for the noisy sines task, and ensure
+ * that it achieves adequate performance when training with the specified batch
+ * size.
+ */
+template<typename RecurrentLayerType>
+void BatchSizeTest(const size_t batchSize)
+{
+  const size_t rho = 10;
+
+  // Generate 12 (2 * 6) noisy sines. A single sine contains rho
+  // points/features.
+  arma::mat input, labelsTemp;
+  GenerateNoisySines(input, labelsTemp, rho, 6);
+
+  arma::mat labels = arma::zeros<arma::mat>(rho, labelsTemp.n_cols);
+  for (size_t i = 0; i < labelsTemp.n_cols; ++i)
+  {
+    const int value = arma::as_scalar(arma::find(
+        arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1)) + 1;
+    labels.col(i).fill(value);
+  }
+
+  RNN<> model(rho);
+  model.Add<Linear<>>(1, 10);
+  model.Add<SigmoidLayer<>>();
+  model.Add<RecurrentLayerType>(10, 10);
+  model.Add<SigmoidLayer<>>();
+  model.Add<Linear<>>(10, 10);
+  model.Add<SigmoidLayer<>>();
+
+  StandardSGD opt(0.1, batchSize, 500 * input.n_cols, -100);
+  model.Train(input, labels, opt);
+
+  arma::mat prediction;
+  model.Predict(input, prediction);
+
+  size_t error = 0;
+  for (size_t i = 0; i < prediction.n_cols; ++i)
+  {
+    arma::mat singlePrediction = prediction.submat((rho - 1) * rho, i,
+        rho * rho - 1, i);
+
+    const int predictionValue = arma::as_scalar(arma::find(
+        arma::max(singlePrediction.col(0)) ==
+        singlePrediction.col(0), 1) + 1);
+
+    const int targetValue = arma::as_scalar(arma::find(
+        arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1)) + 1;
+
+    if (predictionValue == targetValue)
+    {
+      error++;
+    }
+  }
+
+  double classificationError = 1 - double(error) / prediction.n_cols;
+
+  BOOST_REQUIRE_LE(classificationError, 0.2);
+}
+
+/**
+ * Ensure LSTMs work with larger batch sizes.
+ */
+BOOST_AUTO_TEST_CASE(LSTMBatchSizeTest)
+{
+  BatchSizeTest<LSTM<>>(2);
+  BatchSizeTest<LSTM<>>(50);
+}
+
+/**
+ * Ensure fast LSTMs work with larger batch sizes.
+ */
+BOOST_AUTO_TEST_CASE(FastLSTMBatchSizeTest)
+{
+  BatchSizeTest<FastLSTM<>>(2);
+  BatchSizeTest<FastLSTM<>>(50);
+}
+
+/**
+ * Ensure GRUs work with larger batch sizes.
+ */
+BOOST_AUTO_TEST_CASE(GRUBatchSizeTest)
+{
+  BatchSizeTest<GRU<>>(2);
+  BatchSizeTest<GRU<>>(50);
 }
 
 /**

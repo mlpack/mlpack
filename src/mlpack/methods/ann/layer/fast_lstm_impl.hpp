@@ -197,7 +197,7 @@ void FastLSTM<InputDataType, OutputDataType>::Backward(
       backwardStep - batchStep, 3 * outSize - 1, backwardStep) %
       cellActivationError;
 
-  if (backwardStep != 0)
+  if (backwardStep > batchStep)
   {
     prevError.submat(2 * outSize, 0, 3 * outSize - 1, batchStep) =
         cell.cols((backwardStep - batchSize) - batchStep,
@@ -258,13 +258,13 @@ void FastLSTM<InputDataType, OutputDataType>::Gradient(
       gradient.n_elem - 1, 0) = arma::vectorise(prevError *
       outParameter.cols(gradientStep - batchStep, gradientStep).t());
 
-  if (gradientStep == 0)
+  if (gradientStep > batchStep)
   {
-    gradientStep = batchSize * bpttSteps - 1;
+    gradientStep -= batchSize;
   }
   else
   {
-    gradientStep -= batchSize;
+    gradientStep = batchSize * bpttSteps - 1;
   }
 }
 
