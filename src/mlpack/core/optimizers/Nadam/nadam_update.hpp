@@ -43,7 +43,8 @@ class NadamUpdate
    *        parameter.
    * @param beta1 The smoothing parameter.
    */
-  NadamUpdate(const double epsilon = 1e-8,const double beta1 = 0.9) :epsilon(epsilon),beta1(beta1),iteration(0)
+  NadamUpdate(const double epsilon = 1e-8,const double beta1 = 0.9) 
+  :epsilon(epsilon),beta1(beta1),iteration(0)
   {
     // Nothing to do.
   }
