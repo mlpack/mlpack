@@ -7,6 +7,7 @@ add_executable(mlpack_test
   ada_grad_test.cpp
   akfn_test.cpp
   aknn_test.cpp
+  ams_grad_test.cpp
   ann_layer_test.cpp
   armadillo_svd_test.cpp
   arma_extend_test.cpp
