@@ -1,6 +1,8 @@
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  hdbscan_metric.hpp
+  hdbscan_metric_impl.hpp
   ip_metric.hpp
   ip_metric_impl.hpp
   lmetric.hpp
