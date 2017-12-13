@@ -90,9 +90,9 @@ class AmsGradUpdate
     v *= beta2;
     v += (1 - beta2) * (gradient % gradient);
 
-    vImproved = arma::max(vImproved, v);
     // Element wise maximum of past and present squared gradients.
-
+    vImproved = arma::max(vImproved, v);
+    
     iterate -= (stepSize * m) / (arma::sqrt(vImproved) + epsilon);
   }
 
@@ -127,7 +127,7 @@ class AmsGradUpdate
   // The exponential moving average of squared gradient values.
   arma::mat v;
 
-  //The optimal sqaured gradient value.
+  // The optimal sqaured gradient value.
   arma::mat vImproved;
 
   // The number of iterations.

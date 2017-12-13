@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_SUITE(AmsGradTest);
 BOOST_AUTO_TEST_CASE(SimpleAmsGradTestFunction)
 {
   SGDTestFunction f;
-  AmsGrad optimizer(1e-3, 1, 0.9, 0.999, 1e-8, 500000, 1e-9, true);
+  AmsGrad optimizer(1e-3, 1, 0.9, 0.999, 1e-8, 500000, 1e-11, true);
 
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
