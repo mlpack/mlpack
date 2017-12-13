@@ -24,7 +24,7 @@ BOOST_AUTO_TEST_CASE(singleClusterTest)
   double theeta;
   for (size_t i = 0; i < 5000; i++)
   {
-    theeta = i/5000;
+    theeta = (double)i/5000.0;
     points(0, i) = 0.1*sin(pi*theeta);
     points(1, i) = 0.1*cos(pi*theeta);
   }

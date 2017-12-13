@@ -122,7 +122,7 @@ class UnionForSingleLinkageClustering
       sizeVector(i) = 1;
     for (size_t i = n; i < 2*n-1; i++)
       sizeVector(i) = 0;
-      nextLabel = n;
+    nextLabel = n;
   }
   void UnionOfTwoClusters(size_t m, size_t n)
   {
