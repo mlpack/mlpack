@@ -52,8 +52,10 @@ BOOST_AUTO_TEST_CASE(SimpleNadamTestFunction)
 BOOST_AUTO_TEST_CASE(NadamLogisticRegressionTest)
 {
   // Generate a two-Gaussian dataset.
-  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
-  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"),
+  arma::eye<arma::mat>(3, 3));
+  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"),
+  arma::eye<arma::mat>(3, 3));
 
   arma::mat data(3, 1000);
   arma::Row<size_t> responses(1000);

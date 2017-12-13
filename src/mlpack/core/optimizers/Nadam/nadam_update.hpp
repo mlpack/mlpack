@@ -43,15 +43,15 @@ class NadamUpdate
    *        parameter.
    * @param beta1 The smoothing parameter.
    */
-  NadamUpdate(const double epsilon = 1e-8,const double beta1 = 0.9) 
+  NadamUpdate(const double epsilon = 1e-8,const double beta1 = 0.9)
   :epsilon(epsilon),beta1(beta1),iteration(0)
   {
     // Nothing to do.
   }
 
   /**
-   * The Initialize method is called by SGD Optimizer method before the start of
-   * the iteration update process.
+   * The Initialize method is called by SGD Optimizer method before the start 
+   * of the iteration update process.
    *
    * @param rows Number of rows in the gradient matrix.
    * @param cols Number of columns in the gradient matrix.
@@ -69,7 +69,8 @@ class NadamUpdate
    * @param stepSize Step size to be used for the given iteration.
    * @param gradient The gradient matrix.
    */
-  void Update(arma::mat& iterate,const double stepSize,const arma::mat& gradient)
+  void Update(arma::mat& iterate, const double stepSize,
+  const arma::mat& gradient)
   {
     // Increment the iteration counter variable.
     ++iteration;

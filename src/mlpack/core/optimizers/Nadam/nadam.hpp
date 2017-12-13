@@ -2,7 +2,7 @@
  * @file nadam.hpp
  * @author Sourabh Varshney
  *
- * Nadam optimizer. Nadam is an optimizer that combines the effect of Adam and 
+ * Nadam optimizer. Nadam is an optimizer that combines the effect of Adam and
  * NAG to the gradient descent to improve its Performance.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -51,11 +51,12 @@ namespace optimization {
  *
  * NumFunctions() should return the number of functions (\f$n\f$), and in the
  * other two functions, the parameter i refers to which individual function (or
- * gradient) is being evaluated.  So, for the case of a data-dependent function,
- * such as NCA (see mlpack::nca::NCA), NumFunctions() should return the number
- * of points in the dataset, and Evaluate(coordinates, 0) will evaluate the
- * objective function on the first point in the dataset (presumably, the dataset
- * is held internally in the DecomposableFunctionType).
+ * gradient) is being evaluated.  So, for the case of a data-dependent 
+ * function, such as NCA (see mlpack::nca::NCA), NumFunctions() should return 
+ * the number of points in the dataset, and Evaluate(coordinates, 0) will 
+ * evaluate the objective function on the first point in the dataset 
+ * (presumably, the dataset is held internally in the 
+ * DecomposableFunctionType).
  *
  * @tparam UpdateRule Nadam optimizer update rule to be used.
  */
@@ -68,8 +69,8 @@ class NadamType
    * defaults here are not necessarily good for the given problem, so it is
    * suggested that the values used be tailored to the task at hand.  The
    * maximum number of iterations refers to the maximum number of points that
-   * are processed (i.e., one iteration equals one point; one iteration does not
-   * equal one pass over the dataset).
+   * are processed (i.e., one iteration equals one point; one iteration does
+   * not equal one pass over the dataset).
    *
    * @param stepSize Step size for each iteration.
    * @param batchSize Number of points to process in a single step.
