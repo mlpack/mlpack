@@ -25,8 +25,8 @@ BOOST_AUTO_TEST_CASE(singleClusterTest)
   for (size_t i = 0; i < 5000; i++)
   {
     theeta = (double)i/5000.0;
-    points(0, i) = 0.1*sin(pi*theeta);
-    points(1, i) = 0.1*cos(pi*theeta);
+    points(0, i) = 0.1*sin(2*pi*theeta);
+    points(1, i) = 0.1*cos(2*pi*theeta);
   }
 
   HDBSCAN<> h1(5, true);
@@ -49,8 +49,8 @@ BOOST_AUTO_TEST_CASE(noiseTest)
   for (size_t i = 0; i < 5000; i++)
   {
     theeta = math::Random();
-    points(0, i) = sin(pi*theeta);
-    points(1, i) = cos(pi*theeta);
+    points(0, i) = sin(2*pi*theeta);
+    points(1, i) = cos(2*pi*theeta);
   }
 
   points.resize(points.n_rows, points.n_cols+1);

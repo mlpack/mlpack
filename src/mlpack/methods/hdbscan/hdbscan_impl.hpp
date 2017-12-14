@@ -1,4 +1,4 @@
-/**
+  /**
  * @file hdbscan_impl.hpp
  * @author Sudhanshu Ranjan
  *
@@ -619,27 +619,29 @@ GetLabels(const MatType& condensedTree,
   {
     // find lambda of root cluster
     double lambdaRootCluster = 0;
+    size_t temp = 0;
     for (size_t i = 0; i < condensedTree.n_cols; i++)
     {
       if (condensedTree(0, i) == rootCluster)
-        lambdaRootCluster = std::max(lambdaRootCluster, condensedTree(2, i));
+        temp++, lambdaRootCluster = std::max(lambdaRootCluster, condensedTree(2, i));
     }
 
     // Mark all the points as noises
     for (size_t i = 0; i < rootCluster; i++)
       result[i] = SIZE_MAX;
 
+    double eps = std::numeric_limits<double>::epsilon();
+    double eps_error = pow(condensedTree.n_cols, 2) * eps;
     // consider all edges in condensed tree
     // whose child is a single point (not cluster)
     // check if their lambda has value
     // less then that of the root cluster
     for (size_t i = 0; i < condensedTree.n_cols; i++)
-    {
-      currentPoint = condensedTree(1, i);
+    {      currentPoint = condensedTree(1, i);
       if (currentPoint >= rootCluster)  continue;
       parentOfCurrentPoint = unionTree.Find(currentPoint);
       if (parentOfCurrentPoint == rootCluster &&
-        condensedTree(2, i) >= lambdaRootCluster)
+        condensedTree(2, i) + eps_error >= lambdaRootCluster)
         result[currentPoint] = 0;
     }
 
@@ -759,3 +761,4 @@ GetClusters(MatType& condensedTree,
 } // namespace mlpack
 
 #endif
+
