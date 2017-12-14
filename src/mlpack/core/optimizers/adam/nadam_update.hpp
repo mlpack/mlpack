@@ -2,7 +2,7 @@
  * @file nadam_update.hpp
  * @author Sourabh Varshney
  *
- * Nadam optimizer. Nadam is an optimizer that combines the effect of Adam and 
+ * Nadam update rule. Nadam is an optimizer that combines the effect of Adam and 
  * NAG to the gradient descent to improve its Performance.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_OPTIMIZERS_NADAM_NADAM_UPDATE_HPP
-#define MLPACK_CORE_OPTIMIZERS_NADAM_NADAM_UPDATE_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_ADAM_NADAM_UPDATE_HPP
+#define MLPACK_CORE_OPTIMIZERS_ADAM_NADAM_UPDATE_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -24,12 +24,12 @@ namespace optimization {
  * For more information, see the following.
  *
  * @code
- * @article{
- *   author  = {Sebastian Ruder},
- *   title   = {An overview of gradient descent optimization algorithms},
- *   journal = {CoRR},
- *   year    = {2016},
- *   url     = {https://arxiv.org/abs/1609.04747v2}
+ * @misc{
+ *   author  = {},
+ *   title   = {},
+ *   journal = {},
+ *   year    = {},
+ *   url     = {}
  * }
  * @endcode
  */
@@ -42,9 +42,12 @@ class NadamUpdate
    * @param epsilon The epsilon value used to initialise the squared gradient
    *        parameter.
    * @param beta1 The smoothing parameter.
+   * @param beta2 The second moment coefficient
    */
-  NadamUpdate(const double epsilon = 1e-8, const double beta1 = 0.9)
-  :epsilon(epsilon), beta1(beta1), iteration(0)
+  NadamUpdate(const double epsilon = 1e-8,
+	      const double beta1 = 0.9,
+	      const double beta2=0.99)
+  	      :epsilon(epsilon), beta1(beta1), beta2(beta2), iteration(0)
   {
     // Nothing to do.
   }
@@ -60,6 +63,7 @@ class NadamUpdate
   {
     m = arma::zeros<arma::mat>(rows, cols);
     v = arma::zeros<arma::mat>(rows, cols);
+    cum_beta1 = 1;
   }
 
   /**
@@ -69,8 +73,9 @@ class NadamUpdate
    * @param stepSize Step size to be used for the given iteration.
    * @param gradient The gradient matrix.
    */
-  void Update(arma::mat& iterate, const double stepSize,
-  const arma::mat& gradient)
+  void Update(arma::mat& iterate,
+              const double stepSize,
+              const arma::mat& gradient)
   {
     // Increment the iteration counter variable.
     ++iteration;
@@ -78,12 +83,31 @@ class NadamUpdate
     // And update the iterate.
     m *= beta1;
     m += (1 - beta1) * gradient;
-    // biasCorrection=1-beta1^iteration
-    const double biasCorrection = 1.0 - std::pow(beta1, iteration);
-    /*
-	iterate=iterate-((stepsize/(sqrt(v)+epsilon))*(m/biasCorrection))
-    */
-    iterate -= ((stepSize * m)/(biasCorrection1 * (arma::sqrt(v) + epsilon)));
+    
+    v *= beta2;
+    v += (1 - beta2) * gradient % gradient;
+
+    // beta1_t = beta1 * (1 - (0.5 * (0.96 ^ (iteration / 250))))
+    double beta1_t = beta1 * (1 - (0.5 * std::pow(0.96, (iteration / 250))));
+
+    // beta1_t1 = beta1 * (1 - (0.5 * (0.96 ^ ((iteration + 1)/ 250))))
+    double beta1_t1 = beta1 * (1 - (0.5 * std::pow(0.96, ((iteration + 1) / 250))));
+
+    // cum_beta1 *= beta1_t
+    cum_beta1 *= beta1_t;
+    
+    // biasCorrection = 1 - cum_beta1
+    const double biasCorrection1 = 1.0 - cum_beta1;
+
+    // biasCorrection2 = 1 - beta2 ^ iteration
+    const double biasCorrection2 = 1.0 - std::pow(beta2, iteration);
+
+    /* Note :- arma::sqrt(v) + epsilon * sqrt(biasCorrection2) is approximated as
+     *  arma::sqrt(v) + epsilon
+     */
+    iterate -= (stepSize * ((1 - beta1_t) * gradient +beta1_t1 * m)
+               * sqrt(biasCorrection2)) / ((arma::sqrt(v) + epsilon)
+	       * biasCorrection1)
   }
 
   //! Get the value used to initialise the squared gradient parameter.
@@ -91,10 +115,20 @@ class NadamUpdate
   //! Modify the value used to initialise the squared gradient parameter.
   double& Epsilon() { return epsilon; }
 
+  //! Get the value of the cumulative product of decay constants
+  double Cum_beta1() const { return cum_beta1; }
+  //! Modify the value of the cumulative product of decay constants
+  double& Cum_beta1() { return cum_beta1; }
+
   //! Get the smoothing parameter.
   double Beta1() const { return beta1; }
   //! Modify the smoothing parameter.
   double& Beta1() { return beta1; }
+
+  //! Get the second moment coefficient.
+  double Beta2() const { return beta2; }
+  //! Modify the second moment coefficient.
+  double& Beta2() { return beta2; }
 
  private:
   // The epsilon value used to initialise the squared gradient parameter.
@@ -103,11 +137,17 @@ class NadamUpdate
   // The smoothing parameter.
   double beta1;
 
+  // The second moment coefficient.
+  double beta2; 
+
   // The exponential moving average of gradient values.
   arma::mat m;
 
   // The exponential moving average of squared gradient values.
   arma::mat v;
+
+  // The cumulative product of decay constants
+  double cum_beta1;
 
   // The number of iterations.
   double iteration;

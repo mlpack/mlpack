@@ -5,10 +5,11 @@
  * @author Marcus Edel
  * @author Vivek Pal
  *
- * Adam and AdaMax optimizer. Adam is an an algorithm for first-order gradient-
+ * Adam, AdaMax and Nadam optimizer. Adam is an an algorithm for first-order gradient-
  * -based optimization of stochastic objective functions, based on adaptive
  * estimates of lower-order moments. AdaMax is simply a variant of Adam based
- * on the infinity norm.
+ * on the infinity norm. Nadam is an optimizer that combines the effect of Adam and
+ * NAG to the gradient descent to improve its Performance.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -31,7 +32,8 @@ namespace optimization {
  * Adam is an optimizer that computes individual adaptive learning rates for
  * different parameters from estimates of first and second moments of the
  * gradients. AdaMax is a variant of Adam based on the infinity norm as given
- * in the section 7 of the following paper.
+ * in the section 7 of the following paper. Nadam is an optimizer that 
+ * combines the Adam and NAG.
  *
  * For more information, see the following.
  *
@@ -46,7 +48,7 @@ namespace optimization {
  * @endcode
  *
  *
- * For Adam and AdaMax to work, a DecomposableFunctionType template parameter
+ * For Adam, AdaMax and Nadam to work, a DecomposableFunctionType template parameter
  * is required. This class must implement the following function:
  *
  *   size_t NumFunctions();
@@ -165,6 +167,8 @@ class AdamType
 using Adam = AdamType<AdamUpdate>;
 
 using AdaMax = AdamType<AdaMaxUpdate>;
+
+using Nadam = NadamType<NadamUpdate>;
 
 } // namespace optimization
 } // namespace mlpack
