@@ -45,9 +45,9 @@ class NadamUpdate
    * @param beta2 The second moment coefficient
    */
   NadamUpdate(const double epsilon = 1e-8,
-	      const double beta1 = 0.9,
-	      const double beta2=0.99)
-  	      :epsilon(epsilon), beta1(beta1), beta2(beta2), iteration(0)
+              const double beta1 = 0.9,
+              const double beta2 = 0.99)
+              :epsilon(epsilon), beta1(beta1), beta2(beta2), iteration(0)
   {
     // Nothing to do.
   }
@@ -83,7 +83,7 @@ class NadamUpdate
     // And update the iterate.
     m *= beta1;
     m += (1 - beta1) * gradient;
-    
+
     v *= beta2;
     v += (1 - beta2) * gradient % gradient;
 
@@ -91,11 +91,12 @@ class NadamUpdate
     double beta1_t = beta1 * (1 - (0.5 * std::pow(0.96, (iteration / 250))));
 
     // beta1_t1 = beta1 * (1 - (0.5 * (0.96 ^ ((iteration + 1)/ 250))))
-    double beta1_t1 = beta1 * (1 - (0.5 * std::pow(0.96, ((iteration + 1) / 250))));
+    double beta1_t1 = beta1 * (1 - (0.5 *
+                      std::pow(0.96, ((iteration + 1) / 250))));
 
     // cum_beta1 *= beta1_t
     cum_beta1 *= beta1_t;
-    
+
     // biasCorrection = 1 - cum_beta1
     const double biasCorrection1 = 1.0 - cum_beta1;
 
@@ -103,11 +104,11 @@ class NadamUpdate
     const double biasCorrection2 = 1.0 - std::pow(beta2, iteration);
 
     /* Note :- arma::sqrt(v) + epsilon * sqrt(biasCorrection2) is approximated as
-     *  arma::sqrt(v) + epsilon
+     * arma::sqrt(v) + epsilon
      */
     iterate -= (stepSize * ((1 - beta1_t) * gradient +beta1_t1 * m)
                * sqrt(biasCorrection2)) / ((arma::sqrt(v) + epsilon)
-	       * biasCorrection1)
+               * biasCorrection1)
   }
 
   //! Get the value used to initialise the squared gradient parameter.
@@ -138,7 +139,7 @@ class NadamUpdate
   double beta1;
 
   // The second moment coefficient.
-  double beta2; 
+  double beta2;
 
   // The exponential moving average of gradient values.
   arma::mat m;
