@@ -9,10 +9,10 @@ env:
 before_install:
   - sudo systemctl stop apt-daily.service apt-daily.timer
   - sudo systemctl disable apt-daily.service apt-daily.timer
-  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-  - sudo apt-get update -qq
+  - sudo rm -f /var/lib/dpkg/lock && sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+  - sudo rm -f /var/lib/dpkg/lock && sudo apt-get update -qq
   - printenv
-  - sudo apt-get install -qq libopenblas-dev liblapack-dev g++ libboost-all-dev
+  - sudo rm -f /var/lib/dpkg/lock && sudo apt-get install -qq libopenblas-dev liblapack-dev g++ libboost-all-dev
   - sudo wget https://launchpadlibrarian.net/260609315/fix-std-vector-load.diff -O /usr/include/fix-std-vector-load.diff
   - cd /usr/include && sudo patch -p1 < fix-std-vector-load.diff && sudo rm fix-std-vector-load.diff && cd -
   - sudo pip install cython setuptools numpy pandas
