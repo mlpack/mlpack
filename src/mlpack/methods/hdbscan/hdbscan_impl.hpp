@@ -619,11 +619,10 @@ GetLabels(const MatType& condensedTree,
   {
     // find lambda of root cluster
     double lambdaRootCluster = 0;
-    size_t temp = 0;
     for (size_t i = 0; i < condensedTree.n_cols; i++)
     {
       if (condensedTree(0, i) == rootCluster)
-        temp++, lambdaRootCluster = std::max(lambdaRootCluster, condensedTree(2, i));
+        lambdaRootCluster = std::max(lambdaRootCluster, condensedTree(2, i));
     }
 
     // Mark all the points as noises
