@@ -47,7 +47,7 @@ class NadamUpdate
   NadamUpdate(const double epsilon = 1e-8,
               const double beta1 = 0.9,
               const double beta2 = 0.99)
-              :epsilon(epsilon), beta1(beta1), beta2(beta2), iteration(0)
+              :epsilon(epsilon), beta1(beta1), beta2(beta2), iteration(0), cum_beta1(1)
   {
     // Nothing to do.
   }
@@ -63,7 +63,6 @@ class NadamUpdate
   {
     m = arma::zeros<arma::mat>(rows, cols);
     v = arma::zeros<arma::mat>(rows, cols);
-    cum_beta1 = 1;
   }
 
   /**
