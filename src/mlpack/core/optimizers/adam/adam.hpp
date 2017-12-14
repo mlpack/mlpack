@@ -4,6 +4,7 @@
  * @author Vasanth Kalingeri
  * @author Marcus Edel
  * @author Vivek Pal
+ * @author Sourabh Varshney
  *
  * Adam, AdaMax and Nadam optimizer. Adam is an an algorithm for first-order gradient-
  * -based optimization of stochastic objective functions, based on adaptive
@@ -24,6 +25,7 @@
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
 #include "adam_update.hpp"
 #include "adamax_update.hpp"
+#include "nadam_update.hpp"
 
 namespace mlpack {
 namespace optimization {
@@ -168,7 +170,7 @@ using Adam = AdamType<AdamUpdate>;
 
 using AdaMax = AdamType<AdaMaxUpdate>;
 
-using Nadam = NadamType<NadamUpdate>;
+using Nadam = AdamType<NadamUpdate>;
 
 } // namespace optimization
 } // namespace mlpack
