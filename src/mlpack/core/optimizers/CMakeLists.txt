@@ -2,7 +2,6 @@ set(DIRS
   ada_delta
   ada_grad
   adam
-  ams_grad
   aug_lagrangian
   cmaes
   cne

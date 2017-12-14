@@ -45,8 +45,8 @@ class AmsGradUpdate
    * @param beta2 The second moment coefficient.
    */
   AmsGradUpdate(const double epsilon = 1e-8,
-             const double beta1 = 0.9,
-             const double beta2 = 0.999) :
+                const double beta1 = 0.9,
+                const double beta2 = 0.999) :
     epsilon(epsilon),
     beta1(beta1),
     beta2(beta2),
@@ -90,10 +90,14 @@ class AmsGradUpdate
     v *= beta2;
     v += (1 - beta2) * (gradient % gradient);
 
+    const double biasCorrection1 = 1.0 - std::pow(beta1, iteration);
+    const double biasCorrection2 = 1.0 - std::pow(beta2, iteration);
+
     // Element wise maximum of past and present squared gradients.
     vImproved = arma::max(vImproved, v);
 
-    iterate -= (stepSize * m) / (arma::sqrt(vImproved) + epsilon);
+    iterate -= (stepSize * std::sqrt(biasCorrection2) / biasCorrection1) *
+                m / (arma::sqrt(vImproved) + epsilon);
   }
 
   //! Get the value used to initialise the squared gradient parameter.
