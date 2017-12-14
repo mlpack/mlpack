@@ -108,7 +108,7 @@ class NadamUpdate
      */
     iterate -= (stepSize * ((1 - beta1_t) * gradient +beta1_t1 * m)
                * sqrt(biasCorrection2)) / ((arma::sqrt(v) + epsilon)
-               * biasCorrection1)
+               * biasCorrection1);
   }
 
   //! Get the value used to initialise the squared gradient parameter.
