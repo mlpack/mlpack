@@ -73,7 +73,9 @@ BOOST_FIXTURE_TEST_SUITE(EMSTMainTest, EMSTTestFixture);
  */
 BOOST_AUTO_TEST_CASE(EMSTOutputDimensionTest)
 {
-  arma::mat x = arma::randi<arma::mat>(6, 2, arma::distr_param(0, 10));
+  arma::mat x;
+  if (!data::Load("test_data_3_1000.csv", x))
+    BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   // Input random data points.
   SetInputParam("input", std::move(x));
@@ -84,7 +86,7 @@ BOOST_AUTO_TEST_CASE(EMSTOutputDimensionTest)
   // Now check that the output has 3 dimensions.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 3);
   // Check number of output points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 5);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 999);
 }
 
 /**
@@ -93,7 +95,9 @@ BOOST_AUTO_TEST_CASE(EMSTOutputDimensionTest)
  */
 BOOST_AUTO_TEST_CASE(EMSTNaiveOutputDimensionTest)
 {
-  arma::mat x = arma::randi<arma::mat>(6, 2, arma::distr_param(0, 10));
+  arma::mat x;
+  if (!data::Load("test_data_3_1000.csv", x))
+    BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   // Input random data points.
   SetInputParam("input", std::move(x));
@@ -104,7 +108,7 @@ BOOST_AUTO_TEST_CASE(EMSTNaiveOutputDimensionTest)
   // Now check that the output has 3 dimensions.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 3);
   // Check number of output points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 5);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 999);
 }
 
 /**
@@ -112,7 +116,9 @@ BOOST_AUTO_TEST_CASE(EMSTNaiveOutputDimensionTest)
  */
 BOOST_AUTO_TEST_CASE(EMSTInvalidLeafSizeTest)
 {
-  arma::mat x = arma::randi<arma::mat>(6, 2, arma::distr_param(0, 10));
+  arma::mat x;
+  if (!data::Load("test_data_3_1000.csv", x))
+    BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   // Input random data points.
   SetInputParam("input", std::move(x));
@@ -128,7 +134,9 @@ BOOST_AUTO_TEST_CASE(EMSTInvalidLeafSizeTest)
  */
 BOOST_AUTO_TEST_CASE(EMSTFirstTwoOutputRowsIntegerTest)
 {
-  arma::mat x = arma::randi<arma::mat>(6, 2, arma::distr_param(0, 10));
+  arma::mat x;
+  if (!data::Load("test_data_3_1000.csv", x))
+    BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   // Input random data points.
   SetInputParam("input", std::move(x));
