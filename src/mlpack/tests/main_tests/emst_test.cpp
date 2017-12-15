@@ -73,7 +73,7 @@ BOOST_FIXTURE_TEST_SUITE(EMSTMainTest, EMSTTestFixture);
  */
 BOOST_AUTO_TEST_CASE(EMSTOutputDimensionTest)
 {
-  arma::mat x = arma::randi<arma::mat>(6, 2, distr_param(0, 10));
+  arma::mat x = arma::randi<arma::mat>(6, 2, arma::distr_param(0, 10));
 
   // Input random data points.
   SetInputParam("input", std::move(x));
@@ -93,7 +93,7 @@ BOOST_AUTO_TEST_CASE(EMSTOutputDimensionTest)
  */
 BOOST_AUTO_TEST_CASE(EMSTNaiveOutputDimensionTest)
 {
-  arma::mat x = arma::randi<arma::mat>(6, 2, distr_param(0, 10));
+  arma::mat x = arma::randi<arma::mat>(6, 2, arma::distr_param(0, 10));
 
   // Input random data points.
   SetInputParam("input", std::move(x));
@@ -112,15 +112,14 @@ BOOST_AUTO_TEST_CASE(EMSTNaiveOutputDimensionTest)
  */
 BOOST_AUTO_TEST_CASE(EMSTInvalidLeafSizeTest)
 {
-  arma::mat x = arma::randi<arma::mat>(6, 2, distr_param(0, 10));
+  arma::mat x = arma::randi<arma::mat>(6, 2, arma::distr_param(0, 10));
 
   // Input random data points.
   SetInputParam("input", std::move(x));
   SetInputParam("leaf_size", (int) -1); // Invalid leaf size.
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error("leaf size
-                      must be greater than or equal to 1") );
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -129,7 +128,7 @@ BOOST_AUTO_TEST_CASE(EMSTInvalidLeafSizeTest)
  */
 BOOST_AUTO_TEST_CASE(EMSTFirstTwoOutputRowsIntegerTest)
 {
-  arma::mat x = arma::randi<arma::mat>(6, 2, distr_param(0, 10));
+  arma::mat x = arma::randi<arma::mat>(6, 2, arma::distr_param(0, 10));
 
   // Input random data points.
   SetInputParam("input", std::move(x));
