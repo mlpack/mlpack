@@ -17,8 +17,8 @@
 
 #include <string>
 
-//PROGRAM_NAME is used for mlpackMain modification (mlpackMain##PROGRAM_NAME)
-//PROGRAM_NAME_SUBSTUTIDE is used for passing unique program name to TestOption
+// PROGRAM_NAME is used for mlpackMain modification (mlpackMain##PROGRAM_NAME)
+// PROGRAM_NAME_SUBSTUTIDE is used for passing unique program name to TestOption
 #ifdef PROGRAM_NAME
 #define PROGRAM_NAME_SUBSTITUDE PROGRAM_NAME
 #else
@@ -26,9 +26,9 @@
 #define PROGRAM_NAME_SUBSTITUDE programNameSubstitude
 static const std::string programNameSubstitude = "programNameSubstitude";
 #endif
-//The MAIN macro is mlpackMain##PROGRAM_NAME. The goal is to have different
-//names of main procedure for main tests when all method's  main functions
-//are linked into one executable (mlpack_test)
+// The MAIN macro is mlpackMain##PROGRAM_NAME. The goal is to have different
+// names of main procedure for main tests when all method's  main functions
+// are linked into one executable (mlpack_test)
 #define TOKENPASTE1(x, y) x ## y
 #define TOKENPASTE2(x, y) TOKENPASTE1(x, y)
 #define MAIN TOKENPASTE2(mlpackMain, PROGRAM_NAME)

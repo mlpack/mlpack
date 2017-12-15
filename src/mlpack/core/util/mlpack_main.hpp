@@ -148,5 +148,3 @@ PARAM_FLAG("verbose", "Display informational messages and the full list of "
 #include "param_checks.hpp"
 
 #endif
-
-

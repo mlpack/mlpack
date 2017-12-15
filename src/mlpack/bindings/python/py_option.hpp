@@ -43,7 +43,7 @@ class PyOption
            const bool required = false,
            const bool input = true,
            const bool noTranspose = false,
-	   const std::string& /*programName*/ = "")
+           const std::string& /*programName*/ = "")
   {
     // Create the ParamData object to give to CLI.
     util::ParamData data;
