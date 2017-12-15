@@ -55,7 +55,7 @@ struct EMSTTestFixture
 BOOST_FIXTURE_TEST_SUITE(EMSTMainTest, EMSTTestFixture);
 
 /**
- * Make sure that Output has 3 Dimensions.
+ * Make sure that Output has 3 Dimensions and integral number of rows.
  */
 BOOST_AUTO_TEST_CASE(EMSTOutputDimensionTest)
 {
@@ -69,10 +69,12 @@ BOOST_AUTO_TEST_CASE(EMSTOutputDimensionTest)
 
   // Now check that the output has 3 dimensions.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 3);
+  // Check number of output rows.
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 5);
 }
 
 /**
- * Check Naive algorithm Output has 3 Dimensions.
+ * Check Naive algorithm Output has 3 Dimensions and integral number of rows.
  */
 BOOST_AUTO_TEST_CASE(EMSTNaiveOutputDimensionTest)
 {
@@ -86,6 +88,8 @@ BOOST_AUTO_TEST_CASE(EMSTNaiveOutputDimensionTest)
 
   // Now check that the output has 3 dimensions.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 3);
+  // Check number of output rows.
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 5);
 }
 
 /**
