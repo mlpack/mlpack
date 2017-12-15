@@ -96,14 +96,7 @@ using Option = mlpack::bindings::tests::TestOption<T>;
 #undef PROGRAM_INFO
 #define PROGRAM_INFO(NAME, DESC) static mlpack::util::ProgramDoc \
     cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, \
-        []() { return DESC; }); \
-    namespace mlpack { \
-    namespace bindings { \
-    namespace tests { \
-    std::string programName = NAME; \
-    } \
-    } \
-    }
+        []() { return DESC; });
 
 #elif(BINDING_TYPE == BINDING_TYPE_PYX) // This is a Python binding.
 
@@ -155,3 +148,5 @@ PARAM_FLAG("verbose", "Display informational messages and the full list of "
 #include "param_checks.hpp"
 
 #endif
+
+

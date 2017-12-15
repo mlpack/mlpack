@@ -4,8 +4,11 @@
  *
  * Test mlpackMain() of linear_regression_main.cpp.
  */
+#include <string>
+
 #define BINDING_TYPE BINDING_TYPE_TEST
 #define PROGRAM_NAME linearRegressionProgramName
+static const std::string linearRegressionProgramName = "LinearRegression";
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
@@ -40,7 +43,7 @@ struct LinearRegressionTestFixture
   LinearRegressionTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(mlpack::bindings::tests::programName);
+    CLI::RestoreSettings(linearRegressionProgramName);
   }
 
   ~LinearRegressionTestFixture()
@@ -52,11 +55,17 @@ struct LinearRegressionTestFixture
 
 BOOST_FIXTURE_TEST_SUITE(LinearRegressionMainTest, LinearRegressionTestFixture);
 
-BOOST_AUTO_TEST_CASE(LinearRegressionWringResponseSizeTest)
+BOOST_AUTO_TEST_CASE(LinearRegressionWrongResponseSizeTest)
 {
-  std::cout << "1\n";
-  SetInputParam("lambda", 1.0);
-  std::cout << "2\n";
+  arma::mat x = arma::randu<arma::mat>(5, 5);
+  arma::rowvec y = arma::randu<arma::rowvec>(4);
+
+  SetInputParam("training", std::move(x));
+  SetInputParam("training_responses", std::move(y));
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(MAIN(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
 }
 
 BOOST_AUTO_TEST_SUITE_END();

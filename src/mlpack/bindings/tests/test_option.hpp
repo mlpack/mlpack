@@ -61,7 +61,8 @@ class TestOption
              const std::string& cppName,
              const bool required = false,
              const bool input = true,
-             const bool noTranspose = false)
+             const bool noTranspose = false,
+	     const std::string& programName = "")
   {
     // Create the ParamData object to give to CLI.
     util::ParamData data;

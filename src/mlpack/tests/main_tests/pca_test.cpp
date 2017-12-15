@@ -4,7 +4,11 @@
  *
  * Test mlpackMain() of pca_main.cpp.
  */
+#include <string>
+
 #define BINDING_TYPE BINDING_TYPE_TEST
+#define PROGRAM_NAME pcaProgramName
+static const std::string pcaProgramName = "PrincipalComponentAnalysis";
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/pca/pca_main.cpp>
@@ -48,7 +52,7 @@ struct PCATestFixture
   PCATestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(mlpack::bindings::tests::programName);
+    CLI::RestoreSettings(pcaProgramName);
   }
 
   ~PCATestFixture()
@@ -71,7 +75,7 @@ BOOST_AUTO_TEST_CASE(PCADimensionTest)
   SetInputParam("input", std::move(x));
   SetInputParam("new_dimensionality", (int) 3);
 
-  mlpackMain();
+  MAIN();
 
   // Now check that the output has 3 dimensions.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 3);
@@ -91,7 +95,7 @@ BOOST_AUTO_TEST_CASE(PCAVarRetainTest)
   SetInputParam("scale", true);
   SetInputParam("new_dimensionality", (int) 3); // Should be ignored.
 
-  mlpackMain();
+  MAIN();
 
   // Check that the output has 5 dimensions.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 4);
@@ -110,7 +114,7 @@ BOOST_AUTO_TEST_CASE(PCANoVarRetainTest)
   SetInputParam("scale", true);
   SetInputParam("new_dimensionality", (int) 3); // Should be ignored.
 
-  mlpackMain();
+  MAIN();
 
   // Check that the output has 1 dimensions.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 1);
@@ -128,7 +132,7 @@ BOOST_AUTO_TEST_CASE(PCATooHighNewDimensionalityTest)
   SetInputParam("new_dimensionality", (int) 7); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  BOOST_REQUIRE_THROW(MAIN(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
