@@ -1,3 +1,14 @@
+/**
+ * @file emst_test.cpp
+ * @author Manish Kumar
+ *
+ * Test mlpackMain() of emst_main.cpp.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
 #define BINDING_TYPE BINDING_TYPE_TEST
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
@@ -5,6 +16,8 @@
 
 #include <boost/test/unit_test.hpp>
 #include "../test_tools.hpp"
+
+#include <boost/math/special_functions/round.hpp>
 
 using namespace mlpack;
 
@@ -55,7 +68,8 @@ struct EMSTTestFixture
 BOOST_FIXTURE_TEST_SUITE(EMSTMainTest, EMSTTestFixture);
 
 /**
- * Make sure that Output has 3 Dimensions and integral number of rows.
+ * Make sure that Output has 3 Dimensions and
+ * check number of output points.
  */
 BOOST_AUTO_TEST_CASE(EMSTOutputDimensionTest)
 {
@@ -68,13 +82,14 @@ BOOST_AUTO_TEST_CASE(EMSTOutputDimensionTest)
   mlpackMain();
 
   // Now check that the output has 3 dimensions.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 3);
-  // Check number of output rows.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 5);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 3);
+  // Check number of output points.
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 5);
 }
 
 /**
- * Check Naive algorithm Output has 3 Dimensions and integral number of rows.
+ * Check Naive algorithm Output has 3 Dimensions and
+ * check number of output points.
  */
 BOOST_AUTO_TEST_CASE(EMSTNaiveOutputDimensionTest)
 {
@@ -87,9 +102,9 @@ BOOST_AUTO_TEST_CASE(EMSTNaiveOutputDimensionTest)
   mlpackMain();
 
   // Now check that the output has 3 dimensions.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 3);
-  // Check number of output rows.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 5);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 3);
+  // Check number of output points.
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 5);
 }
 
 /**
@@ -107,6 +122,28 @@ BOOST_AUTO_TEST_CASE(EMSTInvalidLeafSizeTest)
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error("leaf size
                       must be greater than or equal to 1") );
   Log::Fatal.ignoreInput = false;
+}
+
+/**
+ * Check that all elements of first two output rows are close to integers.
+ */
+BOOST_AUTO_TEST_CASE(EMSTFirstTwoOutputRowsIntegerTest)
+{
+  arma::mat x = arma::randi<arma::mat>(6, 2, distr_param(0, 10));
+
+  // Input random data points.
+  SetInputParam("input", std::move(x));
+  SetInputParam("leaf_size", (int) 2);
+
+  for (size_t i = 0; i < CLI::GetParam<arma::mat>("output").n_cols; i++)
+  {
+    BOOST_REQUIRE_CLOSE(CLI::GetParam<arma::mat>("output")(0, i),
+                        boost::math::iround(CLI::GetParam<arma::mat>("output")(0, i)),
+                        1e-5);
+    BOOST_REQUIRE_CLOSE(CLI::GetParam<arma::mat>("output")(1, i),
+                        boost::math::iround(CLI::GetParam<arma::mat>("output")(1, i)),
+                        1e-5);
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END();
