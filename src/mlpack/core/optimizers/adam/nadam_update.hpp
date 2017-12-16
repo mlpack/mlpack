@@ -24,12 +24,12 @@ namespace optimization {
  * For more information, see the following.
  *
  * @code
- * @misc{
- *   author  = {},
- *   title   = {},
- *   journal = {},
- *   year    = {},
- *   url     = {}
+ * @techreport{Dozat2015,
+ *   title       = {Incorporating Nesterov momentum into Adam},
+ *   author      = {Timothy Dozat},
+ *   institution = {Stanford University},
+ *   address     = {Stanford},
+ *   year        = {2015}
  * }
  * @endcode
  */
@@ -46,8 +46,13 @@ class NadamUpdate
    */
   NadamUpdate(const double epsilon = 1e-8,
               const double beta1 = 0.9,
-              const double beta2 = 0.99)
-              :epsilon(epsilon), beta1(beta1), beta2(beta2), iteration(0),
+              const double beta2 = 0.99,
+              const double scheduleDecay = 4e-3)
+              :epsilon(epsilon),
+              beta1(beta1),
+              beta2(beta2),
+              scheduleDecay(scheduleDecay),
+              iteration(0),
               cum_beta1(1)
   {
     // Nothing to do.
@@ -87,28 +92,24 @@ class NadamUpdate
     v *= beta2;
     v += (1 - beta2) * gradient % gradient;
 
-    // beta1_t = beta1 * (1 - (0.5 * (0.96 ^ (iteration / 250))))
-    double beta1_t = beta1 * (1 - (0.5 * std::pow(0.96, (iteration / 250))));
+    double beta1T = beta1 * (1 - (0.5 * 
+        std::pow(0.96, iteration * scheduleDecay)));
 
-    // beta1_t1 = beta1 * (1 - (0.5 * (0.96 ^ ((iteration + 1)/ 250))))
-    double beta1_t1 = beta1 * (1 - (0.5 *
-                      std::pow(0.96, ((iteration + 1) / 250))));
+    double beta1T1 = beta1 * (1 - (0.5 *
+        std::pow(0.96, (iteration + 1) * scheduleDecay)));
 
-    // cum_beta1 *= beta1_t
-    cum_beta1 *= beta1_t;
+    cumBeta1 *= beta1T;
 
-    // biasCorrection = 1 - cum_beta1
-    const double biasCorrection1 = 1.0 - cum_beta1;
+    const double biasCorrection1 = 1.0 - cumBeta1;
 
-    // biasCorrection2 = 1 - beta2 ^ iteration
     const double biasCorrection2 = 1.0 - std::pow(beta2, iteration);
 
     /* Note :- arma::sqrt(v) + epsilon * sqrt(biasCorrection2) is approximated as
      * arma::sqrt(v) + epsilon
      */
-    iterate -= (stepSize * ((1 - beta1_t) * gradient +beta1_t1 * m)
-               * sqrt(biasCorrection2)) / ((arma::sqrt(v) + epsilon)
-               * biasCorrection1);
+    iterate -= (stepSize * ((1 - beta1T) * gradient +beta1T1 * m)
+        * sqrt(biasCorrection2)) / ((arma::sqrt(v) + epsilon)
+        * biasCorrection1);
   }
 
   //! Get the value used to initialise the squared gradient parameter.
@@ -116,10 +117,10 @@ class NadamUpdate
   //! Modify the value used to initialise the squared gradient parameter.
   double& Epsilon() { return epsilon; }
 
-  //! Get the value of the cumulative product of decay constants
-  double Cum_beta1() const { return cum_beta1; }
-  //! Modify the value of the cumulative product of decay constants
-  double& Cum_beta1() { return cum_beta1; }
+  //! Get the value of the cumulative product of decay coefficients
+  double CumBeta1() const { return cumBeta1; }
+  //! Modify the value of the cumulative product of decay coefficients
+  double& CumBeta1() { return cumBeta1; }
 
   //! Get the smoothing parameter.
   double Beta1() const { return beta1; }
@@ -130,6 +131,11 @@ class NadamUpdate
   double Beta2() const { return beta2; }
   //! Modify the second moment coefficient.
   double& Beta2() { return beta2; }
+
+  //! Get the dacay parameter for decay coefficients
+  double ScheduleDecay() const { return scheduleDecay; }
+  //! Modify the dacay parameter for decay coefficients
+  double& ScheduleDecay() { return scheduleDecay; }
 
  private:
   // The epsilon value used to initialise the squared gradient parameter.
@@ -147,8 +153,11 @@ class NadamUpdate
   // The exponential moving average of squared gradient values.
   arma::mat v;
 
-  // The cumulative product of decay constants
-  double cum_beta1;
+  // The cumulative product of decay coefficients
+  double cumBeta1;
+
+  // The decay parameter for decay coefficients
+  double scheduleDecay;
 
   // The number of iterations.
   double iteration;
