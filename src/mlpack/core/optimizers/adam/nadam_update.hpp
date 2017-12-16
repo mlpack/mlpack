@@ -43,17 +43,18 @@ class NadamUpdate
    *        parameter.
    * @param beta1 The smoothing parameter.
    * @param beta2 The second moment coefficient
+   * @param scheduleDecay The decay parameter for decay coefficients
    */
   NadamUpdate(const double epsilon = 1e-8,
               const double beta1 = 0.9,
               const double beta2 = 0.99,
               const double scheduleDecay = 4e-3)
-              :epsilon(epsilon),
-              beta1(beta1),
-              beta2(beta2),
-              scheduleDecay(scheduleDecay),
-              iteration(0),
-              cumBeta1(1)
+      :epsilon(epsilon),
+      beta1(beta1),
+      beta2(beta2),
+      scheduleDecay(scheduleDecay),
+      iteration(0),
+      cumBeta1(1)
   {
     // Nothing to do.
   }
@@ -132,9 +133,9 @@ class NadamUpdate
   //! Modify the second moment coefficient.
   double& Beta2() { return beta2; }
 
-  //! Get the dacay parameter for decay coefficients
+  //! Get the decay parameter for decay coefficients
   double ScheduleDecay() const { return scheduleDecay; }
-  //! Modify the dacay parameter for decay coefficients
+  //! Modify the decay parameter for decay coefficients
   double& ScheduleDecay() { return scheduleDecay; }
 
  private:
