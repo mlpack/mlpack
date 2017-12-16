@@ -49,8 +49,8 @@ void BukinFunction::Gradient(const arma::mat& coordinates,
 
   gradient.set_size(2, 1);
   gradient(0) = (0.01 * (x1 + 10)) / std::abs(x1 + 10) -
-      (x1 * (x2 - 0.01 * std::pow(x2, 2))) / std::pow(std::abs(x2 - 0.01 *
-      std::pow(x2, 2)), 1.5);
+      (x1 * (x2 - 0.01 * std::pow(x1, 2))) / std::pow(std::abs(x2 - 0.01 *
+      std::pow(x1, 2)), 1.5);
   gradient(1) = (50 * (x2 - 0.01 * std::pow(x1, 2))) /
       std::pow(std::abs(x2 - 0.01 * std::pow(x1, 2)), 1.5);
 }
