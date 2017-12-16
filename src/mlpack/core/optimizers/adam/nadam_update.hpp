@@ -53,7 +53,7 @@ class NadamUpdate
               beta2(beta2),
               scheduleDecay(scheduleDecay),
               iteration(0),
-              cum_beta1(1)
+              cumBeta1(1)
   {
     // Nothing to do.
   }
