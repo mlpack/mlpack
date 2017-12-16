@@ -21,7 +21,7 @@ StyblinskiTangFunction::StyblinskiTangFunction(const size_t n) :
 
 {
   initialPoint.set_size(n, 1);
-  initialPoint.fill(-4);
+  initialPoint.fill(-5);
 }
 
 void StyblinskiTangFunction::Shuffle()
