@@ -92,7 +92,7 @@ class NadamUpdate
     v *= beta2;
     v += (1 - beta2) * gradient % gradient;
 
-    double beta1T = beta1 * (1 - (0.5 * 
+    double beta1T = beta1 * (1 - (0.5 *
         std::pow(0.96, iteration * scheduleDecay)));
 
     double beta1T1 = beta1 * (1 - (0.5 *
