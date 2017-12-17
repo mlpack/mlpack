@@ -2,8 +2,8 @@
  * @file nadam_update.hpp
  * @author Sourabh Varshney
  *
- * Nadam update rule. Nadam is an optimizer that combines the effect of Adam and 
- * NAG to the gradient descent to improve its Performance.
+ * Nadam update rule. Nadam is an optimizer that combines the effect of Adam
+ * and NAG to the gradient descent to improve its Performance.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -105,12 +105,14 @@ class NadamUpdate
 
     const double biasCorrection2 = 1.0 - std::pow(beta2, iteration);
 
-    /* Note :- arma::sqrt(v) + epsilon * sqrt(biasCorrection2) is approximated as
-     * arma::sqrt(v) + epsilon
+    const double biasCorrection3 = 1.0 - (cumBeta1 * beta1T1);
+
+    /* Note :- arma::sqrt(v) + epsilon * sqrt(biasCorrection2) is approximated
+     * as arma::sqrt(v) + epsilon
      */
-    iterate -= (stepSize * ((1 - beta1T) * gradient +beta1T1 * m)
-        * sqrt(biasCorrection2)) / ((arma::sqrt(v) + epsilon)
-        * biasCorrection1);
+    iterate -= (stepSize * (((1 - beta1T) / biasCorrection1) * gradient
+        + (beta1T1 / biasCorrection3) * m) * sqrt(biasCorrection2))
+        / (arma::sqrt(v) + epsilon);
   }
 
   //! Get the value used to initialise the squared gradient parameter.
