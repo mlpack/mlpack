@@ -188,12 +188,12 @@ void LSTM<InputDataType, OutputDataType>::Forward(
   if (forwardStep > 0)
   {
     inputGate.cols(forwardStep, forwardStep + batchStep) +=
-        arma::repmat(cell2GateInputWeight, 1, batchSize) % cell.cols(forwardStep - batchSize,
-        forwardStep - batchSize + batchStep);
+        arma::repmat(cell2GateInputWeight, 1, batchSize) %
+        cell.cols(forwardStep - batchSize, forwardStep - batchSize + batchStep);
 
     forgetGate.cols(forwardStep, forwardStep + batchStep) +=
-        arma::repmat(cell2GateForgetWeight, 1, batchSize) % cell.cols(forwardStep - batchSize,
-        forwardStep - batchSize + batchStep);
+        arma::repmat(cell2GateForgetWeight, 1, batchSize) %
+        cell.cols(forwardStep - batchSize, forwardStep - batchSize + batchStep);
   }
 
   inputGateActivation.cols(forwardStep, forwardStep + batchStep) = 1.0 /
@@ -398,12 +398,14 @@ void LSTM<InputDataType, OutputDataType>::Gradient(
   if (gradientStep > batchStep)
   {
     gradient.submat(offset, 0, offset + cell2GateForgetWeight.n_elem - 1, 0) =
-        arma::sum(forgetGateError % cell.cols((gradientStep - batchSize) - batchStep,
-        (gradientStep - batchSize)), 1);
+        arma::sum(forgetGateError %
+                  cell.cols((gradientStep - batchSize) - batchStep,
+                            (gradientStep - batchSize)), 1);
     gradient.submat(offset + cell2GateForgetWeight.n_elem, 0, offset +
         cell2GateForgetWeight.n_elem + cell2GateInputWeight.n_elem - 1, 0) =
-        arma::sum(inputGateError % cell.cols((gradientStep - batchSize) - batchStep,
-        (gradientStep - batchSize)), 1);
+        arma::sum(inputGateError %
+                  cell.cols((gradientStep - batchSize) - batchStep,
+                            (gradientStep - batchSize)), 1);
   }
   else
   {
