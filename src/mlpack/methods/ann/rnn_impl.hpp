@@ -102,7 +102,6 @@ void RNN<OutputLayerType, InitializationRuleType>::Train(
   if (!reset)
   {
     ResetParameters();
-    reset = true;
   }
 
   // Train the model.
@@ -139,7 +138,6 @@ void RNN<OutputLayerType, InitializationRuleType>::Train(
   if (!reset)
   {
     ResetParameters();
-    reset = true;
   }
 
   OptimizerType optimizer;
@@ -207,7 +205,6 @@ double RNN<OutputLayerType, InitializationRuleType>::Evaluate(
   if (parameter.is_empty())
   {
     ResetParameters();
-    reset = true;
   }
 
   if (deterministic != this->deterministic)
@@ -272,7 +269,6 @@ void RNN<OutputLayerType, InitializationRuleType>::Gradient(
     if (parameter.is_empty())
     {
       ResetParameters();
-      reset = true;
     }
 
     gradient = arma::zeros<arma::mat>(parameter.n_rows, parameter.n_cols);
@@ -337,6 +333,17 @@ void RNN<OutputLayerType, InitializationRuleType>::ResetParameters()
   // Reset the network parameter with the given initialization rule.
   NetworkInitialization<InitializationRuleType> networkInit(initializeRule);
   networkInit.Initialize(network, parameter);
+
+  reset = true;
+}
+
+template<typename OutputLayerType, typename InitializationRuleType>
+void RNN<OutputLayerType, InitializationRuleType>::Reset()
+{
+  ResetParameters();
+  ResetCells();
+  currentGradient.zeros();
+  ResetGradients(currentGradient);
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>

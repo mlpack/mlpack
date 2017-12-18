@@ -745,12 +745,11 @@ BOOST_AUTO_TEST_CASE(GRUDistractedSequenceRecallTest)
 }
 
 /**
- * Create a simple recurrent neural network for the noisy sines task, and ensure
- * that it achieves adequate performance when training with the specified batch
- * size.
+ * Create a simple recurrent neural network for the noisy sines task, and
+ * require that it produces the exact same network for a few batch sizes.
  */
 template<typename RecurrentLayerType>
-void BatchSizeTest(const size_t batchSize)
+void BatchSizeTest()
 {
   const size_t rho = 10;
 
@@ -775,34 +774,27 @@ void BatchSizeTest(const size_t batchSize)
   model.Add<Linear<>>(10, 10);
   model.Add<SigmoidLayer<>>();
 
-  StandardSGD opt(0.1, batchSize, 500 * input.n_cols, -100);
+  model.Reset();
+  arma::mat initParams = model.Parameters();
+
+  StandardSGD opt(1e-5, 1, 5, -100, false);
   model.Train(input, labels, opt);
 
-  arma::mat prediction;
-  model.Predict(input, prediction);
+  // This is trained with one point.
+  arma::mat outputParams = model.Parameters();
 
-  size_t error = 0;
-  for (size_t i = 0; i < prediction.n_cols; ++i)
-  {
-    arma::mat singlePrediction = prediction.submat((rho - 1) * rho, i,
-        rho * rho - 1, i);
+  model.Reset();
+  model.Parameters() = initParams;
+  opt.BatchSize() = 2;
+  model.Train(input, labels, opt);
 
-    const int predictionValue = arma::as_scalar(arma::find(
-        arma::max(singlePrediction.col(0)) ==
-        singlePrediction.col(0), 1) + 1);
+  CheckMatrices(outputParams, model.Parameters(), 1);
 
-    const int targetValue = arma::as_scalar(arma::find(
-        arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1)) + 1;
+  model.Parameters() = initParams;
+  opt.BatchSize() = 5;
+  model.Train(input, labels, opt);
 
-    if (predictionValue == targetValue)
-    {
-      error++;
-    }
-  }
-
-  double classificationError = 1 - double(error) / prediction.n_cols;
-
-  BOOST_REQUIRE_LE(classificationError, 0.2);
+  CheckMatrices(outputParams, model.Parameters(), 1);
 }
 
 /**
@@ -810,8 +802,7 @@ void BatchSizeTest(const size_t batchSize)
  */
 BOOST_AUTO_TEST_CASE(LSTMBatchSizeTest)
 {
-  BatchSizeTest<LSTM<>>(2);
-  BatchSizeTest<LSTM<>>(50);
+  BatchSizeTest<LSTM<>>();
 }
 
 /**
@@ -819,8 +810,7 @@ BOOST_AUTO_TEST_CASE(LSTMBatchSizeTest)
  */
 BOOST_AUTO_TEST_CASE(FastLSTMBatchSizeTest)
 {
-  BatchSizeTest<FastLSTM<>>(2);
-  BatchSizeTest<FastLSTM<>>(50);
+  BatchSizeTest<FastLSTM<>>();
 }
 
 /**
@@ -828,8 +818,7 @@ BOOST_AUTO_TEST_CASE(FastLSTMBatchSizeTest)
  */
 BOOST_AUTO_TEST_CASE(GRUBatchSizeTest)
 {
-  BatchSizeTest<GRU<>>(2);
-  BatchSizeTest<GRU<>>(50);
+  BatchSizeTest<GRU<>>();
 }
 
 /**
