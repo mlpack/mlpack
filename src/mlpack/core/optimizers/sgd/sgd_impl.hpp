@@ -103,7 +103,8 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
     }
 
     // Find the effective batch size (the last batch may be smaller).
-    const size_t effectiveBatchSize = std::min(batchSize,
+    const size_t effectiveBatchSize = std::min(
+        std::min(batchSize, actualMaxIterations - i),
         numFunctions - currentFunction);
 
     function.Gradient(iterate, currentFunction, gradient, effectiveBatchSize);
