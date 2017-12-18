@@ -80,7 +80,7 @@ void FastLSTM<InputDataType, OutputDataType>::ResetCell(const size_t size)
   gradientStep = batchSize * size - 1;
 
   const size_t rhoBatchSize = size * batchSize;
-  if (gate.is_empty() || gate.n_cols < rhoBatchSize)
+  if (gate.is_empty() || gate.n_cols != rhoBatchSize)
   {
     gate.set_size(4 * outSize, rhoBatchSize);
     gateActivation.set_size(outSize * 3, rhoBatchSize);
