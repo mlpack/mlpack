@@ -92,8 +92,6 @@ template<typename eT>
 void GRU<InputDataType, OutputDataType>::Forward(
     arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
-  std::cout << "GRU::Forward(): input " << input.n_rows << "x" << input.n_cols
-<< "; batchSize " << batchSize << "; forwardStep " << forwardStep << "\n";
   if (input.n_cols != batchSize)
   {
     batchSize = input.n_cols;
@@ -209,8 +207,6 @@ template<typename eT>
 void GRU<InputDataType, OutputDataType>::Backward(
   const arma::Mat<eT>&& input, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
-  std::cout << "GRU::Backward(): input " << input.n_rows << "x" << input.n_cols
-<< "; batchSize " << batchSize << "; backwardStep " << backwardStep << "\n";
   if (input.n_cols != batchSize)
   {
     batchSize = input.n_cols;
@@ -327,8 +323,6 @@ void GRU<InputDataType, OutputDataType>::Gradient(
     arma::Mat<eT>&& /* error */,
     arma::Mat<eT>&& /* gradient */)
 {
-  std::cout << "GRU::Gradient(): input " << input.n_rows << "x" << input.n_cols
-<< "; batchSize " << batchSize << "; gradientStep " << gradientStep << "\n";
   if (input.n_cols != batchSize)
   {
     batchSize = input.n_cols;
