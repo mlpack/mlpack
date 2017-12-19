@@ -29,7 +29,8 @@ namespace optimization {
  *   author      = {Timothy Dozat},
  *   institution = {Stanford University},
  *   address     = {Stanford},
- *   year        = {2015}
+ *   year        = {2015},
+ *   url         = {https://openreview.net/pdf?id=OM0jvwB8jIp57ZJjtNEZ}
  * }
  * @endcode
  */
