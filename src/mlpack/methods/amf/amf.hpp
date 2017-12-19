@@ -151,7 +151,7 @@ typedef amf::AMF<amf::SimpleResidueTermination,
  *
  * @see SVDBatchLearning
  */
-template<class MatType>
+template<typename MatType = arma::mat>
 using SVDBatchFactorizer = amf::AMF<
     amf::SimpleResidueTermination,
     amf::RandomAcolInitialization<>,
@@ -165,7 +165,7 @@ using SVDBatchFactorizer = amf::AMF<
  *
  * @see SVDIncompleteIncrementalLearning
  */
-template<class MatType>
+template<class MatType = arma::mat>
 using SVDIncompleteIncrementalFactorizer = amf::AMF<
     amf::SimpleResidueTermination,
     amf::RandomAcolInitialization<>,
@@ -178,7 +178,7 @@ using SVDIncompleteIncrementalFactorizer = amf::AMF<
  *
  * @see SVDCompleteIncrementalLearning
  */
-template<class MatType>
+template<class MatType = arma::mat>
 using SVDCompleteIncrementalFactorizer = amf::AMF<
     amf::SimpleResidueTermination,
     amf::RandomAcolInitialization<>,
