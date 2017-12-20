@@ -92,7 +92,7 @@ using Option = mlpack::bindings::tests::TestOption<T>;
 }
 }
 
-//testName symbol should be defined in each binding test file
+// testName symbol should be defined in each binding test file
 #include <mlpack/core/util/param.hpp>
 
 #undef PROGRAM_INFO
