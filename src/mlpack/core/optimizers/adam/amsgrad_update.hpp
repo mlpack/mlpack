@@ -20,8 +20,13 @@ namespace optimization {
 
 /**
  * AMSGrad is an exponential moving average variant which along with having 
+<<<<<<< HEAD
  * benefits of optimizers like Adam and RMSProp, also guarantees convergence.
  * Unlike Adam, it uses maximum of past squared gradients rather than their 
+=======
+ * benefits of optimizers like Adam and RmsProp, also guarantees convergence.
+ * Unlike adam, it uses maximum of past squared gradients rather than their 
+>>>>>>> 403f767751113ff07831a412b156ef16fb0fc2e2
  * exponential average for updation.
  *
  * For more information, see the following.
