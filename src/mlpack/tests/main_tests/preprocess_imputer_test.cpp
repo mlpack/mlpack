@@ -112,7 +112,7 @@ BOOST_AUTO_TEST_CASE(PreprocessImputerListwiseDimensionTest)
   // Count number of unavailable entries.
   for (size_t i = 0; i < input_size; i++)
   {
-    if(inputData(1, i) == NAN)
+    if (inputData(1, i) == NAN)
       countNaN++;
   }
 
