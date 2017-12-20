@@ -108,9 +108,15 @@ double SPALeRASGD<DecayPolicyType>::Optimize(DecomposableFunctionType& function,
         function.Shuffle();
     }
 
-    // Find the effective batch size (the last batch may be smaller).
-    const size_t effectiveBatchSize = std::min(batchSize,
-        numFunctions - currentFunction);
+    // Find the effective batch size; we have to take the minimum of three
+    // things:
+    // - the batch size can't be larger than the user-specified batch size;
+    // - the batch size can't be larger than the number of iterations left
+    //       before actualMaxIterations is hit;
+    // - the batch size can't be larger than the number of functions left.
+    const size_t effectiveBatchSize = std::min(
+        std::min(batchSize, actualMaxIterations - i),
+        numFunctions - currentFunction);ons - currentFunction);
 
     function.Gradient(iterate, currentFunction, gradient, effectiveBatchSize);
 
