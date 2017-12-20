@@ -82,7 +82,7 @@ struct Viterbi
   }
 };
 
-void mlpackMain()
+static void mlpackMain()
 {
   RequireAtLeastOnePassed({ "output" }, false, "no results will be saved");
 

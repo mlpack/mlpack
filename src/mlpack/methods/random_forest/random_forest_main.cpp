@@ -68,7 +68,7 @@ PARAM_MODEL_IN(RandomForestModel, "input_model", "Pre-trained random forest to "
 PARAM_MODEL_OUT(RandomForestModel, "output_model", "Model to save trained "
     "random forest to.", "M");
 
-void mlpackMain()
+static void mlpackMain()
 {
   // Check for incompatible input parameters.
   RequireOnlyOnePassed({ "training", "input_model" }, true);

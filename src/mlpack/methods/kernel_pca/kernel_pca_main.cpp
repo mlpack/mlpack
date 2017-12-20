@@ -164,7 +164,7 @@ void RunKPCA(arma::mat& dataset,
   }
 }
 
-void mlpackMain()
+static void mlpackMain()
 {
   RequireAtLeastOnePassed({ "output" }, false, "no output will be saved");
 

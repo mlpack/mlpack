@@ -7,8 +7,7 @@
 #include <string>
 
 #define BINDING_TYPE BINDING_TYPE_TEST
-#define PROGRAM_NAME linearRegressionProgramName
-static const std::string linearRegressionProgramName = "LinearRegression";
+static const std::string testName = "LinearRegression";
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
@@ -43,7 +42,7 @@ struct LinearRegressionTestFixture
   LinearRegressionTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(linearRegressionProgramName);
+    CLI::RestoreSettings(testName);
   }
 
   ~LinearRegressionTestFixture()
@@ -64,7 +63,7 @@ BOOST_AUTO_TEST_CASE(LinearRegressionWrongResponseSizeTest)
   SetInputParam("training_responses", std::move(y));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(MAIN(), std::runtime_error);
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 

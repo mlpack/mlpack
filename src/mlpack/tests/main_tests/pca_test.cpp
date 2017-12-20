@@ -7,8 +7,8 @@
 #include <string>
 
 #define BINDING_TYPE BINDING_TYPE_TEST
-#define PROGRAM_NAME pcaProgramName
-static const std::string pcaProgramName = "PrincipalComponentAnalysis";
+static const std::string testName = "PrincipalComponentAnalysis";
+
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/pca/pca_main.cpp>
@@ -17,16 +17,6 @@ static const std::string pcaProgramName = "PrincipalComponentAnalysis";
 #include "../test_tools.hpp"
 
 using namespace mlpack;
-
-namespace mlpack {
-namespace bindings {
-namespace tests {
-
-extern std::string programName;
-
-}
-}
-}
 
 // Utility function to set a parameter and mark it as passed, using copy
 // semantics.
@@ -52,7 +42,7 @@ struct PCATestFixture
   PCATestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(pcaProgramName);
+    CLI::RestoreSettings(testName);
   }
 
   ~PCATestFixture()
@@ -75,7 +65,7 @@ BOOST_AUTO_TEST_CASE(PCADimensionTest)
   SetInputParam("input", std::move(x));
   SetInputParam("new_dimensionality", (int) 3);
 
-  MAIN();
+  mlpackMain();
 
   // Now check that the output has 3 dimensions.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 3);
@@ -95,7 +85,7 @@ BOOST_AUTO_TEST_CASE(PCAVarRetainTest)
   SetInputParam("scale", true);
   SetInputParam("new_dimensionality", (int) 3); // Should be ignored.
 
-  MAIN();
+  mlpackMain();
 
   // Check that the output has 5 dimensions.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 4);
@@ -114,7 +104,7 @@ BOOST_AUTO_TEST_CASE(PCANoVarRetainTest)
   SetInputParam("scale", true);
   SetInputParam("new_dimensionality", (int) 3); // Should be ignored.
 
-  MAIN();
+  mlpackMain();
 
   // Check that the output has 1 dimensions.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 1);
@@ -132,7 +122,7 @@ BOOST_AUTO_TEST_CASE(PCATooHighNewDimensionalityTest)
   SetInputParam("new_dimensionality", (int) 7); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(MAIN(), std::runtime_error);
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 

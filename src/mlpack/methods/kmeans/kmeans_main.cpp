@@ -140,7 +140,7 @@ template<typename InitialPartitionPolicy,
          template<class, class> class LloydStepType>
 void RunKMeans(const InitialPartitionPolicy& ipp);
 
-void mlpackMain()
+static void mlpackMain()
 {
   // Initialize random seed.
   if (CLI::GetParam<int>("seed") != 0)

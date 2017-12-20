@@ -71,7 +71,7 @@ using namespace mlpack::util;
 using namespace arma;
 using namespace std;
 
-void mlpackMain()
+static void mlpackMain()
 {
   // Parse command line options.
   const double testRatio = CLI::GetParam<double>("test_ratio");

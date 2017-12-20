@@ -72,7 +72,7 @@ using namespace mlpack::metric;
 using namespace mlpack::util;
 using namespace std;
 
-void mlpackMain()
+static void mlpackMain()
 {
   RequireAtLeastOnePassed({ "output" }, false, "no output will be saved");
 

@@ -54,7 +54,7 @@ using namespace mlpack::util;
 using namespace arma;
 using namespace std;
 
-void mlpackMain()
+static void mlpackMain()
 {
   const size_t dimension = (size_t) CLI::GetParam<int>("dimension");
   const double threshold = CLI::GetParam<double>("threshold");

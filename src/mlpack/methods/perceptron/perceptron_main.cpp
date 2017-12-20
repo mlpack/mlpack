@@ -118,7 +118,7 @@ PARAM_MATRIX_IN("test", "A matrix containing the test set.", "T");
 PARAM_UROW_OUT("output", "The matrix in which the predicted labels for the"
     " test set will be written.", "o");
 
-void mlpackMain()
+static void mlpackMain()
 {
   // First, get all parameters and validate them.
   const size_t maxIterations = (size_t) CLI::GetParam<int>("max_iterations");

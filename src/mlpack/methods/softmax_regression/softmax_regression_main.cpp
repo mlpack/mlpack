@@ -115,7 +115,7 @@ void TestClassifyAcc(const size_t numClasses, const Model& model);
 template<typename Model>
 unique_ptr<Model> TrainSoftmax(const size_t maxIterations);
 
-void mlpackMain()
+static void mlpackMain()
 {
   const int maxIterations = CLI::GetParam<int>("max_iterations");
 

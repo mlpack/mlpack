@@ -46,11 +46,12 @@ using Option = mlpack::bindings::cli::CLIOption<T>;
 }
 }
 
+static const std::string testName = "";
 #include <mlpack/core/util/param.hpp>
 #include <mlpack/bindings/cli/parse_command_line.hpp>
 #include <mlpack/bindings/cli/end_program.hpp>
 
-void mlpackMain(); // This is typically defined after this include.
+static void mlpackMain(); // This is typically defined after this include.
 
 int main(int argc, char** argv)
 {
@@ -91,6 +92,7 @@ using Option = mlpack::bindings::tests::TestOption<T>;
 }
 }
 
+//testName symbol should be defined in each binding test file
 #include <mlpack/core/util/param.hpp>
 
 #undef PROGRAM_INFO
@@ -119,6 +121,7 @@ using Option = mlpack::bindings::python::PyOption<T>;
 }
 }
 
+static const std::string testName = "";
 #include <mlpack/core/util/param.hpp>
 
 #undef PROGRAM_INFO
