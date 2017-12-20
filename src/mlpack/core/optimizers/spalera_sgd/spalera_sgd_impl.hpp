@@ -116,7 +116,7 @@ double SPALeRASGD<DecayPolicyType>::Optimize(DecomposableFunctionType& function,
     // - the batch size can't be larger than the number of functions left.
     const size_t effectiveBatchSize = std::min(
         std::min(batchSize, actualMaxIterations - i),
-        numFunctions - currentFunction);ons - currentFunction);
+        numFunctions - currentFunction);
 
     function.Gradient(iterate, currentFunction, gradient, effectiveBatchSize);
 
