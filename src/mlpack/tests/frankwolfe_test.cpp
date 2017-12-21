@@ -81,7 +81,6 @@ BOOST_AUTO_TEST_CASE(regularizedOMP)
   ConstrLpBallSolver linearConstrSolver(1, lambda);
   UpdateSpan updateRule;
 
-  Log::Info.ignoreInput = false;
   OMP s(linearConstrSolver, updateRule);
 
   vec coordinates = zeros<vec>(2 * k);
