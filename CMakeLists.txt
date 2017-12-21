@@ -126,7 +126,7 @@ if(BUILD_WITH_COVERAGE)
 endif()
 
 # For clock_gettime().
-if (UNIX AND NOT APPLE)
+if (UNIX AND NOT APPLE AND NOT HAIKU)
   set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} "rt")
 endif ()
 
