@@ -226,10 +226,11 @@ BOOST_AUTO_TEST_CASE(RandomizedPCADimensionalityReductionTest)
  */
 BOOST_AUTO_TEST_CASE(QUICPCADimensionalityReductionTest)
 {
-  math::RandomSeed(std::time(NULL));
   arma::mat data, data1;
   data::Load("test_data_3_1000.csv", data);
   data1 = data;
+
+  arma::mat backupData(data);
 
   // It isn't guaranteed that the QUIC-SVD will match with the exact SVD method,
   // starting with random samples. If this works 1 of 5 times, I'm fine with
@@ -239,12 +240,17 @@ BOOST_AUTO_TEST_CASE(QUICPCADimensionalityReductionTest)
   size_t successes = 0;
   for (size_t trial = 0; trial < 5; ++trial)
   {
+    if (trial > 0)
+    {
+      data = backupData;
+      data1 = backupData;
+    }
+
     PCAType<ExactSVDPolicy> exactPCA;
     const double varRetainedExact = exactPCA.Apply(data, 1);
 
     PCAType<QUICSVDPolicy> quicPCA;
     const double varRetainedQUIC = quicPCA.Apply(data1, 1);
-
 
     if (std::abs(varRetainedExact - varRetainedQUIC) < 0.2)
     {
