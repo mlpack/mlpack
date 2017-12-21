@@ -54,7 +54,7 @@ class TestOption
    * @param noTranspose If the parameter is a matrix and this is true, then the
    *      matrix will not be transposed on loading.
    * @param testName Name of the test (used for identifiying which binding test 
-   * this option belongs to)
+   *      this option belongs to)
    */
   TestOption(const N defaultValue,
              const std::string& identifier,
